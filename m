@@ -2,41 +2,41 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA397C433F5
-	for <linux-gpio@archiver.kernel.org>; Sat, 21 May 2022 14:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 262E2C433FE
+	for <linux-gpio@archiver.kernel.org>; Sat, 21 May 2022 14:41:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348366AbiEUOaw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 21 May 2022 10:30:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50448 "EHLO
+        id S234259AbiEUOlq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 21 May 2022 10:41:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353151AbiEUOav (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 21 May 2022 10:30:51 -0400
+        with ESMTP id S1355291AbiEUOlp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 21 May 2022 10:41:45 -0400
 Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21922B59;
-        Sat, 21 May 2022 07:30:44 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1653143370; cv=none; 
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6DEF205E5
+        for <linux-gpio@vger.kernel.org>; Sat, 21 May 2022 07:41:44 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1653143152; cv=none; 
         d=zohomail.com; s=zohoarc; 
-        b=YmQVY556BiB5ox5y8PXNUjNRS9ozj0KmNZjYG6fzzLqWPKOljAcAZUugMmn4fFcsMs/AZqSKWdDeRKd0h/xokD9wMmPeUhEUxeGQL6TEWgW50DvxPK5v0f3nzdbiNx8OtQCCozZ5kcWh+KMwnvMNVHo8uICWQEAHvPEPd42zwaw=
+        b=KzRBCy6nuN+o2hvX7VXDJYETFntHoCoojNrRM9VSaWwbLoJ9MXDEdlf8JHmEXhDDbxR4NEbm+rfp9B42SUpwXHGFQZkLxuLbtFwdVgEfdmuSuCPQa+DXNHlDFkEHzRDbsuV3MrlpWhSVOfHHR2N9G0aIwz8ibqEb84nLnkJb8Oc=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1653143370; h=Content-Type:Content-Transfer-Encoding:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=1uplxa2t3JmqaYVHdP2jpDOm9CDjpZeLGLqC5pe6p6U=; 
-        b=APLirMOzbpNRybXIsKwmw1CqKXq5aCeN30dkdlJsHl5XVyMIdjsClOOHzkHIt7DJxvMyJNf1YUQeps7sliMM1UPn5zGcK2oyMDctSK9kxWrr30t1IkZRlOx5RYQ3avVfvIglGwLz1mndcf0ByTt7LQbaAhY/6ZyjdmIZ1rTqB7o=
+        t=1653143152; h=Content-Type:Content-Transfer-Encoding:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=0o0p0h8Ax2NeemybyRFKBFg4kvyShrFo2MI2nwUZclc=; 
+        b=Re3TrzM22+rPOUwA+O9juEp/XlETyA3TKyqOn/YZLPKPAhl1zFUXLTNiizMsVbDrCCkwyVv3bbxvEGxi3GaK59c6PsVn208gOpSIpi6VgpvX8PVaieeO7d86HYRU1Oqsagcgye+D2+2Fhxe9B5vdu2CnfHKKVbzZgIodGwd3I4s=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
         dkim=pass  header.i=zohomail.com;
         spf=pass  smtp.mailfrom=lchen.firstlove@zohomail.com;
         dmarc=pass header.from=<lchen.firstlove@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1653143370;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1653143152;
         s=zm2022; d=zohomail.com; i=lchen.firstlove@zohomail.com;
-        h=Date:Date:From:From:To:To:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To:Cc;
-        bh=1uplxa2t3JmqaYVHdP2jpDOm9CDjpZeLGLqC5pe6p6U=;
-        b=DgOMEtCpUZ2ARhoTMr2uAQ8hXFJgspYlzQSLE9n2DmG9yOgzMrWV548fuOrUdKkV
-        G1chSwAMCVkx4pMC/dzWyXVZ6RmqaPXop1y04YXCFwgoJDfMQ/Ko4PYJmS3cILwrBRm
-        +m4TKssaUEsfhUHZG/Wg+jOTxaPehmVjcpk5I7k0=
+        h=Date:Date:From:From:To:To:Message-ID:In-Reply-To:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To:Cc;
+        bh=0o0p0h8Ax2NeemybyRFKBFg4kvyShrFo2MI2nwUZclc=;
+        b=FdrzD73CjWTFt+Hm6uB92L3xR+23nGpXxmDcny9Bndgv3qZdnMfCtJJQjhpKy2jI
+        8rfjSjMR6bNcNl3+BlMnB3ERdEzUZkkK3koWlNJUricaT74b1ZuwbB5O+k1VV6Y7fmE
+        fdw/lv4jNHtD20YoNce1xh8g9DlSDhCKXlhN5Qj4=
 Received: from mail.zoho.com by mx.zohomail.com
-        with SMTP id 1653143369973677.7315354282247; Sat, 21 May 2022 07:29:29 -0700 (PDT)
+        with SMTP id 1653143150983181.57000929052094; Sat, 21 May 2022 07:25:50 -0700 (PDT)
 Received: from  [45.12.140.94] by mail.zoho.com
-        with HTTP;Sat, 21 May 2022 07:29:29 -0700 (PDT)
-Date:   Sat, 21 May 2022 07:29:29 -0700
+        with HTTP;Sat, 21 May 2022 07:25:50 -0700 (PDT)
+Date:   Sat, 21 May 2022 07:25:50 -0700
 From:   Li Chen <lchen.firstlove@zohomail.com>
 To:     "Mark Brown" <broonie@kernel.org>,
         "linux-kernel" <linux-kernel@vger.kernel.org>,
@@ -53,91 +53,38 @@ To:     "Mark Brown" <broonie@kernel.org>,
         "Jernej Skrabec" <jernej.skrabec@gmail.com>,
         "Samuel Holland" <samuel@sholland.org>,
         "Philipp Zabel" <p.zabel@pengutronix.de>
-Message-ID: <180e705f8de.1012cdc8c45890.1645144071309904245@zohomail.com>
-In-Reply-To: <180e702a15f.e737e37e45859.3135149506136486394@zohomail.com>
-References: <180e702a15f.e737e37e45859.3135149506136486394@zohomail.com>
-Subject: [PATCH 4/4] pinctrl: st: Switch to use regmap_field_test_bits
+Message-ID: <180e702a15f.e737e37e45859.3135149506136486394@zohomail.com>
+In-Reply-To: 
+Subject: [PATCH 0/4] Add regmap_field helpers for simple bit operations
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Importance: Medium
 User-Agent: Zoho Mail
 X-Mailer: Zoho Mail
-Feedback-ID: rr080112267cf364621b3b792c124082760000e7e088bdddfac7607cfb9ed75c25ebb0ae36151ee2127976:zu08011227a6949e549385956098fdd8970000b0614889ccf8be8f90fa47d8a8e113acf06e6c8b3d7d8d0400:rf0801122c15ba42b8235095a91707cffe0000a891b0ca85c325025b4f94f07a70129da6fe31daec4a1e77eb2e73b78d41:ZohoMail
+Feedback-ID: rr08011226a0c92b0a8773c6508a06de8b0000498615caf2de6adef463dc6ad000c21eec5ddab3dbd9b221:zu08011227b19d2d40d37a8becfd63841c000034b6705f54b48ba1b5a2a1cf7cf960982e0544e860dd55949e:rf0801122c239725de1f0a6682d775822a000055882629dd4d26703f9f0ac12d296c5a81d1c3193b491674a3fa194ae69f:ZohoMail
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Li Chen <lchen@ambarella.com>
 
-Appropriately change calls to regmap_field_read() with
-regmap_field_test_bits() for improved readability.
+This series proposes to add simple bit operations for setting, clearing
+and testing specific bits with regmap_field.
 
-Signed-off-by: Li Chen <lchen@ambarella.com>
----
- drivers/pinctrl/pinctrl-st.c | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+Li Chen (4):
+  regmap: provide regmap_field helpers for simple bit operations
+  ASoC: sunxi: Use {regmap/regmap_field}_{set/clear}_bits helpers
+  pinctrl: bcm: Use regmap_field_{set/clear}_bits helpers
+  pinctrl: st: Switch to use regmap_field_test_bits
 
-diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-index 0fea71fd9a00..971b54bb478a 100644
---- a/drivers/pinctrl/pinctrl-st.c
-+++ b/drivers/pinctrl/pinctrl-st.c
-@@ -573,23 +573,18 @@ static void st_pinconf_set_retime_dedicated(struct st_pinctrl *info,
- static void st_pinconf_get_direction(struct st_pio_control *pc,
- 	int pin, unsigned long *config)
- {
--	unsigned int oe_value, pu_value, od_value;
--
- 	if (pc->oe) {
--		regmap_field_read(pc->oe, &oe_value);
--		if (oe_value & BIT(pin))
-+		if (regmap_field_test_bits(pc->oe, BIT(pin)))
- 			ST_PINCONF_PACK_OE(*config);
- 	}
- 
- 	if (pc->pu) {
--		regmap_field_read(pc->pu, &pu_value);
--		if (pu_value & BIT(pin))
-+		if (regmap_field_test_bits(pc->pu, BIT(pin)))
- 			ST_PINCONF_PACK_PU(*config);
- 	}
- 
- 	if (pc->od) {
--		regmap_field_read(pc->od, &od_value);
--		if (od_value & BIT(pin))
-+		if (regmap_field_test_bits(pc->od, &od_value, BIT(pin)))
- 			ST_PINCONF_PACK_OD(*config);
- 	}
- }
-@@ -599,22 +594,22 @@ static int st_pinconf_get_retime_packed(struct st_pinctrl *info,
- {
- 	const struct st_pctl_data *data = info->data;
- 	struct st_retime_packed *rt_p = &pc->rt.rt_p;
--	unsigned int delay_bits, delay, delay0, delay1, val;
-+	unsigned int delay_bits, delay, delay0, delay1;
- 	int output = ST_PINCONF_UNPACK_OE(*config);
- 
--	if (!regmap_field_read(rt_p->retime, &val) && (val & BIT(pin)))
-+	if (!regmap_field_test_bits(rt_p->retime, BIT(pin)))
- 		ST_PINCONF_PACK_RT(*config);
- 
--	if (!regmap_field_read(rt_p->clk1notclk0, &val) && (val & BIT(pin)))
-+	if (!regmap_field_test_bits(rt_p->clk1notclk0, BIT(pin)))
- 		ST_PINCONF_PACK_RT_CLK(*config, 1);
- 
--	if (!regmap_field_read(rt_p->clknotdata, &val) && (val & BIT(pin)))
-+	if (!regmap_field_test_bits(rt_p->clknotdata, BIT(pin)))
- 		ST_PINCONF_PACK_RT_CLKNOTDATA(*config);
- 
--	if (!regmap_field_read(rt_p->double_edge, &val) && (val & BIT(pin)))
-+	if (!regmap_field_test_bits(rt_p->double_edge, BIT(pin)))
- 		ST_PINCONF_PACK_RT_DOUBLE_EDGE(*config);
- 
--	if (!regmap_field_read(rt_p->invertclk, &val) && (val & BIT(pin)))
-+	if (!regmap_field_test_bits(rt_p->invertclk, BIT(pin)))
- 		ST_PINCONF_PACK_RT_INVERTCLK(*config);
- 
- 	regmap_field_read(rt_p->delay_0, &delay0);
+ drivers/base/regmap/regmap.c          | 22 ++++++++
+ drivers/pinctrl/bcm/pinctrl-bcm6358.c |  2 +-
+ drivers/pinctrl/pinctrl-st.c          | 23 ++++----
+ include/linux/regmap.h                | 37 +++++++++++++
+ sound/soc/sunxi/sun4i-codec.c         | 78 +++++++++++----------------
+ 5 files changed, 99 insertions(+), 63 deletions(-)
+
 -- 
 2.36.1
 
