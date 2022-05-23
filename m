@@ -2,114 +2,172 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD6AC433F5
-	for <linux-gpio@archiver.kernel.org>; Mon, 23 May 2022 09:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 915DEC433F5
+	for <linux-gpio@archiver.kernel.org>; Mon, 23 May 2022 10:48:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232752AbiEWJOE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 23 May 2022 05:14:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58132 "EHLO
+        id S234273AbiEWKsI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 23 May 2022 06:48:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232732AbiEWJOD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 May 2022 05:14:03 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2672C46B33
-        for <linux-gpio@vger.kernel.org>; Mon, 23 May 2022 02:14:03 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-2fee9fe48c2so140892097b3.3
-        for <linux-gpio@vger.kernel.org>; Mon, 23 May 2022 02:14:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=SQZsaj0M8fHShXXknzlKyPhMqdrqN8j1Wb/aoO8KOSU=;
-        b=x9yzEPCVMpUEX5ggfloOSfYRwd3Ucvm/la2zeRE/aRDZsLmo7Vpl7HFkkL9STksumZ
-         PkpJ2Ec4rQV469rhN7e5wL1ZFnlab+tOWBxTdIECeQa6DXCZzVvJkR4aFoTot5gCtBFq
-         IaX/NFrX2T+kjvEkzcn7TaucsIOq9nUwz7V6jOxpncJ9TPJynh4S8ohW9cD9cp6s5bEI
-         fBeO3Zm8uMFk5F2nSQW1kcF8zvqTx+NuvTkA22c97/3WYIwlVlZfhZnJrGJ27DoO690l
-         hS6J7wxlhIVryBsWGQUOUQWt5JBsMXjSLq1JY8nKUHIMkyx/0GAyS8Zl4Ek3+MyYqlyt
-         6mdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SQZsaj0M8fHShXXknzlKyPhMqdrqN8j1Wb/aoO8KOSU=;
-        b=oAWswPHfE79zfeFwOXOTZ7QQ21FBIwCPRUac3Wv8q+kNCuiwtExBNmxATgODShe4J1
-         kgCZjFrb7hE4gdC/u+xEybKn8bV5Dfjeyk04lEsETUSx9WBDx630PJN8DArpHGmzz3o7
-         KLgt/g0nLo5W0ugVkqmQMZOJ5bnK9VMTmk4xXx8Rpbi+mzwHL6cY1YCZCeyWzqOarGNx
-         8M0myfCL+ElfCe0AmlKiGlqo3UFVMYcTIZtBJXyfknpp3ghrQ6Fr8G6H5ucJIOEQbUrZ
-         6VSjnoJ+FC91H4Dsb9W86CBMXtC89E+QcUtwfkn1Bmcy3izBk7OWdCSddDyXbRbhY5bR
-         8hJQ==
-X-Gm-Message-State: AOAM530b4akrJezczplZrLGvPsYStApNqRo9AB1RzYi+otrOMaIhPPIO
-        aF65pAIkX6Nu07gYd8hyiPMcjmkBtFqISveSYPYntUdFNMw=
-X-Google-Smtp-Source: ABdhPJxgQLDBBnR26JqlGTi2StmRR07MCVb8Kdv8PsM2z/6EVmtDMUqtw8mTN0odh2BP5lFbmMY5iMm+zZxU6QFgNcE=
-X-Received: by 2002:a81:c07:0:b0:2ff:8a7b:f37c with SMTP id
- 7-20020a810c07000000b002ff8a7bf37cmr14523063ywm.118.1653297242396; Mon, 23
- May 2022 02:14:02 -0700 (PDT)
+        with ESMTP id S234389AbiEWKsE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 May 2022 06:48:04 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 474D54CD5A
+        for <linux-gpio@vger.kernel.org>; Mon, 23 May 2022 03:47:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1653302878; x=1684838878;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fJgg66b9jm9+gczMENkigikNQIHgxVB0H4V9HOUnnaI=;
+  b=lp7f56DnaDwrQhLXWXTNfoq3oo5kINT/g9zSXNV887heVu21i63gfpIA
+   Do/Pb59fRdW6D5jEXUsy3EtJvsaffKoP91tLCA9VO7Cvt2lcL0V/A97K1
+   2Az1i/O0/5DKrfJILPHmpxobvowEWMUaIt0Xces4UBl8tOJDPXB6Iy24+
+   cMRTVIuas+uKbFLpPiIpYHxnpA54I5W8IcfOO+HzBBmsk9DuUCy0259t+
+   RN50QhlXAskMh5jONzZeW6Gg5iM7dwNqm1OC7WI2Nu7vm1Z8KgWxa18dy
+   KQbTYiLbMm1Oay3ci7sTE8kcbHwpPPppirzTOMCguN5KN6ZL4fmohN6i4
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10355"; a="253057781"
+X-IronPort-AV: E=Sophos;i="5.91,246,1647327600"; 
+   d="scan'208";a="253057781"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2022 03:47:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,246,1647327600"; 
+   d="scan'208";a="525864454"
+Received: from lkp-server01.sh.intel.com (HELO db63a1be7222) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 23 May 2022 03:47:55 -0700
+Received: from kbuild by db63a1be7222 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nt5bO-00015s-Ez;
+        Mon, 23 May 2022 10:47:54 +0000
+Date:   Mon, 23 May 2022 18:47:15 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [linusw-pinctrl:devel] BUILD SUCCESS
+ 374e72d721d1b0c545d98d8767a346b9007278ef
+Message-ID: <628b6633.2KyJDrEpyJ5+vj6O%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-References: <20220523083947.840708-1-u.kleine-koenig@pengutronix.de>
- <CACRpkdb10ZdARL1cmAkYVeVzJz4HQs8djrNHs50k7hWfCZxrjg@mail.gmail.com> <20220523090941.fvtjo4lykqgmaqvj@pengutronix.de>
-In-Reply-To: <20220523090941.fvtjo4lykqgmaqvj@pengutronix.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 23 May 2022 11:13:51 +0200
-Message-ID: <CACRpkdZM+iuoENUBbREFO0NYWird1Wwu_dhYvGMC8aUMooiUYQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: adp5588: Remove support for platform setup and
- teardown callbacks
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        kernel@pengutronix.de,
-        Michael Hennerich <michael.hennerich@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, May 23, 2022 at 11:09 AM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> On Mon, May 23, 2022 at 10:43:20AM +0200, Linus Walleij wrote:
-> > On Mon, May 23, 2022 at 10:40 AM Uwe Kleine-K=C3=B6nig
-> > <u.kleine-koenig@pengutronix.de> wrote:
-> >
-> > > If the teardown callback failed in the gpio driver, it fails to free =
-the
-> > > irq (if there is one). The device is removed anyhow. If later on the =
-irq
-> > > triggers, all sorts of unpleasant things might happen (e.g. accessing
-> > > the struct adp5588_gpio which is already freed in the meantime or sta=
-rting
-> > > i2c bus transfers for an unregistered device). Even before irq suppor=
-t was
-> > > added to this driver, exiting early was wrong; back then it failed to
-> > > unregister the gpiochip.
-> > >
-> > > Fortunately these callbacks aren't used any more since at least black=
-fin
-> > > was removed in 2018. So just drop them.
-> > >
-> > > Note that they are not removed from struct adp5588_gpio_platform_data
-> > > because the keyboard driver adp5588-keys.c also makes use of them.
-> > > (I didn't check if the callbacks might have been called twice, maybe =
-there
-> > > is another reason hidden to better not call these functions.)
-> > >
-> > > This patch is a preparation for making i2c remove callbacks return vo=
-id.
-> > >
-> > > Fixes: 80884094e344 ("gpio: adp5588-gpio: new driver for ADP5588 GPIO=
- expanders")
-> > > Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> >
-> > Good riddance!
-> > But also remove the setup and teardown prototypes in
-> > include/linux/platform_data/adp5588.h
->
-> Please reread the commit log. They were not remove on purpose. If you
-> missed that part, you also missed half of the "fun". :-P
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+branch HEAD: 374e72d721d1b0c545d98d8767a346b9007278ef  Merge tag 'intel-pinctrl-v5.19-2' of gitolite.kernel.org:pub/scm/linux/kernel/git/pinctrl/intel into devel
 
-Ugh never review patches before the second cup of coffee.
-What a weird reuse of callbacks. Oh well they are not so weird after
-this.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+elapsed time: 720m
 
-Yours,
-Linus Walleij
+configs tested: 96
+configs skipped: 3
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                              allmodconfig
+arm                                 defconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm64                            allyesconfig
+mips                             allyesconfig
+um                           x86_64_defconfig
+riscv                            allmodconfig
+um                             i386_defconfig
+mips                             allmodconfig
+riscv                            allyesconfig
+m68k                             allyesconfig
+m68k                             allmodconfig
+s390                             allmodconfig
+powerpc                          allmodconfig
+powerpc                          allyesconfig
+s390                             allyesconfig
+sparc                            allyesconfig
+parisc                           allyesconfig
+sh                               allmodconfig
+h8300                            allyesconfig
+xtensa                           allyesconfig
+arc                              allyesconfig
+alpha                            allyesconfig
+nios2                            allyesconfig
+arm                         lpc18xx_defconfig
+mips                        bcm47xx_defconfig
+m68k                        mvme16x_defconfig
+powerpc                     asp8347_defconfig
+powerpc                         ps3_defconfig
+arm                           corgi_defconfig
+mips                         tb0226_defconfig
+arm                        clps711x_defconfig
+arm                          pxa3xx_defconfig
+mips                           jazz_defconfig
+arm                        mvebu_v7_defconfig
+sh                     magicpanelr2_defconfig
+arm                          pxa910_defconfig
+openrisc                         alldefconfig
+mips                     decstation_defconfig
+arm                           sunxi_defconfig
+m68k                                defconfig
+arm                            zeus_defconfig
+arm                            qcom_defconfig
+ia64                                defconfig
+csky                                defconfig
+alpha                               defconfig
+arc                                 defconfig
+s390                                defconfig
+parisc                              defconfig
+parisc64                            defconfig
+nios2                               defconfig
+sparc                               defconfig
+i386                             allyesconfig
+i386                                defconfig
+i386                   debian-10.3-kselftests
+i386                              debian-10.3
+powerpc                           allnoconfig
+i386                 randconfig-a001-20220523
+i386                 randconfig-a006-20220523
+i386                 randconfig-a002-20220523
+i386                 randconfig-a005-20220523
+i386                 randconfig-a003-20220523
+i386                 randconfig-a004-20220523
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+riscv                    nommu_k210_defconfig
+riscv                             allnoconfig
+x86_64                                  kexec
+x86_64                              defconfig
+x86_64                           allyesconfig
+x86_64                               rhel-8.3
+x86_64                          rhel-8.3-func
+x86_64                           rhel-8.3-syz
+x86_64                    rhel-8.3-kselftests
+x86_64                         rhel-8.3-kunit
+
+clang tested configs:
+powerpc                          allyesconfig
+powerpc                     mpc512x_defconfig
+powerpc                      ppc44x_defconfig
+arm                           omap1_defconfig
+arm                            mmp2_defconfig
+mips                     cu1830-neo_defconfig
+x86_64                        randconfig-a012
+x86_64                        randconfig-a014
+x86_64                        randconfig-a016
+i386                 randconfig-a014-20220523
+i386                 randconfig-a011-20220523
+i386                 randconfig-a013-20220523
+i386                 randconfig-a016-20220523
+i386                 randconfig-a012-20220523
+i386                 randconfig-a015-20220523
+x86_64                        randconfig-a005
+x86_64                        randconfig-a003
+x86_64                        randconfig-a001
+hexagon              randconfig-r045-20220522
+hexagon              randconfig-r041-20220522
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
