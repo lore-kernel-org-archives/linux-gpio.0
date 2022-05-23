@@ -2,172 +2,96 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 915DEC433F5
-	for <linux-gpio@archiver.kernel.org>; Mon, 23 May 2022 10:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C6AC433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 23 May 2022 11:39:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234273AbiEWKsI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 23 May 2022 06:48:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60084 "EHLO
+        id S234969AbiEWLj5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 23 May 2022 07:39:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234389AbiEWKsE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 May 2022 06:48:04 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 474D54CD5A
-        for <linux-gpio@vger.kernel.org>; Mon, 23 May 2022 03:47:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1653302878; x=1684838878;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=fJgg66b9jm9+gczMENkigikNQIHgxVB0H4V9HOUnnaI=;
-  b=lp7f56DnaDwrQhLXWXTNfoq3oo5kINT/g9zSXNV887heVu21i63gfpIA
-   Do/Pb59fRdW6D5jEXUsy3EtJvsaffKoP91tLCA9VO7Cvt2lcL0V/A97K1
-   2Az1i/O0/5DKrfJILPHmpxobvowEWMUaIt0Xces4UBl8tOJDPXB6Iy24+
-   cMRTVIuas+uKbFLpPiIpYHxnpA54I5W8IcfOO+HzBBmsk9DuUCy0259t+
-   RN50QhlXAskMh5jONzZeW6Gg5iM7dwNqm1OC7WI2Nu7vm1Z8KgWxa18dy
-   KQbTYiLbMm1Oay3ci7sTE8kcbHwpPPppirzTOMCguN5KN6ZL4fmohN6i4
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10355"; a="253057781"
-X-IronPort-AV: E=Sophos;i="5.91,246,1647327600"; 
-   d="scan'208";a="253057781"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2022 03:47:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,246,1647327600"; 
-   d="scan'208";a="525864454"
-Received: from lkp-server01.sh.intel.com (HELO db63a1be7222) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 23 May 2022 03:47:55 -0700
-Received: from kbuild by db63a1be7222 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nt5bO-00015s-Ez;
-        Mon, 23 May 2022 10:47:54 +0000
-Date:   Mon, 23 May 2022 18:47:15 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- 374e72d721d1b0c545d98d8767a346b9007278ef
-Message-ID: <628b6633.2KyJDrEpyJ5+vj6O%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S234885AbiEWLj4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 May 2022 07:39:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C118E5007F;
+        Mon, 23 May 2022 04:39:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4CC9E612AE;
+        Mon, 23 May 2022 11:39:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AB16C385A9;
+        Mon, 23 May 2022 11:39:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653305993;
+        bh=OC1izSFKp6WFdxo7syUD+g/hsAbJtBJQWFtDt3ICR70=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tyZt64kzOKZP6xetGUFTckdxsa62eMafXrgVAbDd//0jkqffQdTCZMoOkEHg6EI9m
+         pLMh8yGUazKznWaEBqRwVD/I8TRxIV5W2R6G9F8NTitjr5klse8+M5rUDRgi/EjeY6
+         AoBxu5RHQn/rNybEWNcRFjSI2KEu/SkXXyKkqV/stZm+iew5EJM4bf4lIPcOfCrCAr
+         OhHF476tob9ywX43CovxJhDAaiJ2VomR6Wq9J3gA0o/r+MLcn9s4w7WyqO3AFpFIGn
+         J1I5P2qxULTfPTL3gssVrOnznMvD9pM3Mx6O6lO5fQ+goiFfnBrWrFjSzFhf1GybYY
+         lGOTAtSdySwsg==
+Date:   Mon, 23 May 2022 12:39:46 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Li Chen <lchen.firstlove@zohomail.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        linux-sunxi <linux-sunxi@lists.linux.dev>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v2 0/4] Add regmap_field helpers for simple bit operations
+Message-ID: <YotygqDAkAXRRo9d@sirena.org.uk>
+References: <180e702a15f.e737e37e45859.3135149506136486394@zohomail.com>
+ <180eeb93909.12110e2de60158.391061173597432851@zohomail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YPlGNYyWzcAMDZRd"
+Content-Disposition: inline
+In-Reply-To: <180eeb93909.12110e2de60158.391061173597432851@zohomail.com>
+X-Cookie: Sales tax applies.
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: 374e72d721d1b0c545d98d8767a346b9007278ef  Merge tag 'intel-pinctrl-v5.19-2' of gitolite.kernel.org:pub/scm/linux/kernel/git/pinctrl/intel into devel
 
-elapsed time: 720m
+--YPlGNYyWzcAMDZRd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-configs tested: 96
-configs skipped: 3
+On Sun, May 22, 2022 at 07:22:37PM -0700, Li Chen wrote:
+> From: Li Chen <lchen@ambarella.com>
+>=20
+> This series proposes to add simple bit operations for setting, clearing
+> and testing specific bits with regmap_field.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Please don't send new patches in reply to old patches or serieses, this
+makes it harder for both people and tools to understand what is going
+on - it can bury things in mailboxes and make it difficult to keep track
+of what current patches are, both for the new patches and the old ones.
 
-gcc tested configs:
-arm                              allmodconfig
-arm                                 defconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm64                            allyesconfig
-mips                             allyesconfig
-um                           x86_64_defconfig
-riscv                            allmodconfig
-um                             i386_defconfig
-mips                             allmodconfig
-riscv                            allyesconfig
-m68k                             allyesconfig
-m68k                             allmodconfig
-s390                             allmodconfig
-powerpc                          allmodconfig
-powerpc                          allyesconfig
-s390                             allyesconfig
-sparc                            allyesconfig
-parisc                           allyesconfig
-sh                               allmodconfig
-h8300                            allyesconfig
-xtensa                           allyesconfig
-arc                              allyesconfig
-alpha                            allyesconfig
-nios2                            allyesconfig
-arm                         lpc18xx_defconfig
-mips                        bcm47xx_defconfig
-m68k                        mvme16x_defconfig
-powerpc                     asp8347_defconfig
-powerpc                         ps3_defconfig
-arm                           corgi_defconfig
-mips                         tb0226_defconfig
-arm                        clps711x_defconfig
-arm                          pxa3xx_defconfig
-mips                           jazz_defconfig
-arm                        mvebu_v7_defconfig
-sh                     magicpanelr2_defconfig
-arm                          pxa910_defconfig
-openrisc                         alldefconfig
-mips                     decstation_defconfig
-arm                           sunxi_defconfig
-m68k                                defconfig
-arm                            zeus_defconfig
-arm                            qcom_defconfig
-ia64                                defconfig
-csky                                defconfig
-alpha                               defconfig
-arc                                 defconfig
-s390                                defconfig
-parisc                              defconfig
-parisc64                            defconfig
-nios2                               defconfig
-sparc                               defconfig
-i386                             allyesconfig
-i386                                defconfig
-i386                   debian-10.3-kselftests
-i386                              debian-10.3
-powerpc                           allnoconfig
-i386                 randconfig-a001-20220523
-i386                 randconfig-a006-20220523
-i386                 randconfig-a002-20220523
-i386                 randconfig-a005-20220523
-i386                 randconfig-a003-20220523
-i386                 randconfig-a004-20220523
-riscv                               defconfig
-riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
-riscv                    nommu_k210_defconfig
-riscv                             allnoconfig
-x86_64                                  kexec
-x86_64                              defconfig
-x86_64                           allyesconfig
-x86_64                               rhel-8.3
-x86_64                          rhel-8.3-func
-x86_64                           rhel-8.3-syz
-x86_64                    rhel-8.3-kselftests
-x86_64                         rhel-8.3-kunit
+--YPlGNYyWzcAMDZRd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-clang tested configs:
-powerpc                          allyesconfig
-powerpc                     mpc512x_defconfig
-powerpc                      ppc44x_defconfig
-arm                           omap1_defconfig
-arm                            mmp2_defconfig
-mips                     cu1830-neo_defconfig
-x86_64                        randconfig-a012
-x86_64                        randconfig-a014
-x86_64                        randconfig-a016
-i386                 randconfig-a014-20220523
-i386                 randconfig-a011-20220523
-i386                 randconfig-a013-20220523
-i386                 randconfig-a016-20220523
-i386                 randconfig-a012-20220523
-i386                 randconfig-a015-20220523
-x86_64                        randconfig-a005
-x86_64                        randconfig-a003
-x86_64                        randconfig-a001
-hexagon              randconfig-r045-20220522
-hexagon              randconfig-r041-20220522
+-----BEGIN PGP SIGNATURE-----
 
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmKLcoIACgkQJNaLcl1U
+h9CGAwf6Aqcrn3Y6tb7EafFfurQwr3Crsu8tQbSSTQLVF1sEFNE103GaQAMmGrOV
+/gS9YF2ov9GtVEf8S6GQL/kysxuDAx+9Y1bXsi0FSGksQoXsMiZ8uP74w+1vOf1n
+cCrfT1LyFNFSX9K1dGsTa7PBKTVaSfn+gvpLciODmd/kLZ3r74PanNXwrOJ6d7su
+PzsawtBIRto9stB5SYK976MqqPUGrhIazLZP75ovU8Zv5UdYg/Qgb9aMaVKiAVAW
+6XRa/On++FFX3Ob8jcvfjp8krmplQJ43QvVW1ICd9cT4xAnjMKmYz1w241llIfg3
+cxd6zy8OxcjQlcZXn3XVXkwHnAwU4A==
+=mmNk
+-----END PGP SIGNATURE-----
+
+--YPlGNYyWzcAMDZRd--
