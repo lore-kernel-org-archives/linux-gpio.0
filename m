@@ -2,156 +2,114 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1317EC433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 May 2022 20:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1078C4332F
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 May 2022 21:55:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234954AbiEYUTT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 May 2022 16:19:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48878 "EHLO
+        id S232135AbiEYVzG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 May 2022 17:55:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232984AbiEYUTS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 May 2022 16:19:18 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B86D1180C
-        for <linux-gpio@vger.kernel.org>; Wed, 25 May 2022 13:19:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1653509957; x=1685045957;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=9LVvEHUYA+3huG3uMHo0hJqmmgqDRf1EjHEenC0OJqc=;
-  b=cPjHTREmlo0JqoGtVJFyP6o1Fu9lq3yrwb0cVfK8E4NysiOsjSamDJAz
-   SrPI7MZtNjYIz/4WRsdFHHcluM12CRBsAT6V3KBr4QXfZEpE1r5x+oktz
-   HMsA1RimFeoZUrvs9+KjVcOsP5l3ytQQzjWMVVjf+IBoGRDeKfT3CHY3i
-   z1IL+iML48/vyy1EOb3msBfjQQLPi6a0RujjTOkI8hp9hsHRhjQWGwte2
-   DhLUPef5zYXwNlZ/Ft8dRrwBeTr/9CMyxXHh5gJfwCRn0zWbzlUs8rpgQ
-   7+qOf6/cCOiKrMspSS5wALrN2jSYTMvjS3jYTVbaDGVUU4/99hgtlaz8L
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10358"; a="273929683"
-X-IronPort-AV: E=Sophos;i="5.91,250,1647327600"; 
-   d="scan'208";a="273929683"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2022 13:19:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,250,1647327600"; 
-   d="scan'208";a="704164522"
-Received: from lkp-server01.sh.intel.com (HELO db63a1be7222) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 25 May 2022 13:19:15 -0700
-Received: from kbuild by db63a1be7222 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1ntxTP-0003IE-4e;
-        Wed, 25 May 2022 20:19:15 +0000
-Date:   Thu, 26 May 2022 04:18:26 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
- 83969805cc716a7dc6b296c3fb1bc7e5cd7ca321
-Message-ID: <628e8f12.N4Kf/JaqQb9ticTE%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S235471AbiEYVzF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 May 2022 17:55:05 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62683B36FB
+        for <linux-gpio@vger.kernel.org>; Wed, 25 May 2022 14:55:00 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 67-20020a1c1946000000b00397382b44f4so66779wmz.2
+        for <linux-gpio@vger.kernel.org>; Wed, 25 May 2022 14:55:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pensando.io; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/oBh+Znbc88NiDeYaHpcLs3NJcAFoy3MCBRZMNMGpQw=;
+        b=arfvwNzDDLgge/qyXCYs6mi8SFh5fASF9WAvA3CMnMWaUtgiy3QFHT7IU6lKDS2BVh
+         WrL/CARwCWxnEYK5zRUId/2SUMGApf4e7UBK+Zdn3lso/PvChAqUP9DhzLZq2s/6ZgoD
+         7mVF2DH4324yfM97di0AzI26SutPzq4Md+/+M8nW55zkuz+c1CrrYJII0V/mjGbxhM+k
+         TTm4lUAXyVT4A0fFNZA+IKbEmdamDebiDlU6MnFM2Nw4SFeK4zcsDKm4Tyda/deXw34G
+         fHwUjAUPL/WKKTXeekwmgsvqPXjsSnqJnZO1cJ0qoQ2xA501AnbsFOJueL4csev4WMj4
+         Jorw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/oBh+Znbc88NiDeYaHpcLs3NJcAFoy3MCBRZMNMGpQw=;
+        b=oM7GuXdz6MUpDSbiFXtud42dFyYsuusVi8ed0hcUqkTC3cAlJ/dxACMsnuo1QXRl1K
+         Nip0/yMaeQ05SeUwjHN7LitOmzZfXubaDvrxSaNItvzNaglbkW/kA4tSr4UD4hGLqigT
+         OTc2+NP33Y7GQZr3m09FjTcOdX1I5lebZpgKY9r5ub46yxr87sIIL4tuR/ntIsukvYTX
+         TBFvuk+C9frqK1NsH17zZAycwcSpCPnBW8/TDXDZNXgz45BIfqLt/So+ZDZrw+la2Hiv
+         AtwyM2k9/LlsSM2vombMCyxUeR/PnacjxzzkC42Vp+zTPQ9lcIXuCKxMkr7KVDn6W07m
+         goAA==
+X-Gm-Message-State: AOAM532Cl4YaFIPoGNlVqv6kCd7Oce53m601LqyHW1sx7tVSBNxw+UXl
+        nk6M+NxX5lXeDs9Lrd3MFNGpFt5gzm9xq+OPDuD0uw==
+X-Google-Smtp-Source: ABdhPJwEdTcOuaFFxDw66wiF82VdkmXZa5C+ZdHZn9Ask4eKJm/UyqU4NfEyal57N8Yt5HepbbE1akxgZF/HJ+Ov6SQ=
+X-Received: by 2002:a1c:e903:0:b0:397:36b8:795a with SMTP id
+ q3-20020a1ce903000000b0039736b8795amr10328612wmc.98.1653515698905; Wed, 25
+ May 2022 14:54:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+References: <20220406233648.21644-1-brad@pensando.io> <20220406233648.21644-11-brad@pensando.io>
+ <20220412110622.2xsk3k63dafqxib5@mobilestation>
+In-Reply-To: <20220412110622.2xsk3k63dafqxib5@mobilestation>
+From:   Brad Larson <brad@pensando.io>
+Date:   Wed, 25 May 2022 14:54:47 -0700
+Message-ID: <CAK9rFnzp0+80dX_-NYidfVXWJ1sru5mNk1vgVDzoV7VeEekpwQ@mail.gmail.com>
+Subject: Re: [PATCH 10/11] spi: dw: Add support for Pensando Elba SoC
+To:     Serge Semin <fancer.lancer@gmail.com>
+Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Mark Brown <broonie@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Olof Johansson <olof@lixom.net>,
+        David Clear <dac2@pensando.io>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-branch HEAD: 83969805cc716a7dc6b296c3fb1bc7e5cd7ca321  pinctrl: apple: Use a raw spinlock for the regmap
+Hi Sergey,
 
-elapsed time: 725m
+On Tue, Apr 12, 2022 at 4:06 AM Serge Semin <fancer.lancer@gmail.com> wrote:
+>
+> > +static void elba_spics_set_cs(struct dw_spi_elba *dwselba, int cs, int enable)
+> > +{
+> > +     regmap_update_bits(dwselba->regmap, dwselba->reg, ELBA_SPICS_MASK(cs),
+> > +                        ELBA_SPICS_SET(cs, enable));
+> > +}
+> > +
+> > +static void dw_spi_elba_set_cs(struct spi_device *spi, bool enable)
+>
+> The methods naming is ambiguous. Moreover it breaks this module naming
+> convention. Could you change them to something like:
+> dw_spi_elba_override_cs()
+> and
+> dw_spi_elba_set_cs()
+> ?
 
-configs tested: 81
-configs skipped: 3
+Yes, changed elba_spics_set_cs() -> dw_spi_elba_override_cs()
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> > +     /* deassert cs */
+>
+> > +     elba_spics_set_cs(dwselba, 0, 1);
+> > +     elba_spics_set_cs(dwselba, 1, 1);
+>
+> What if the CS lines are of the active-high type? In that case basically
+> you get to do the opposite to what you claim in the comment here.
+>
+> Note the CS setting into the deactivated state is done in the spi_setup()
+> method anyway, at the moment of the peripheral SPI device registration
+> stage (see its calling the spi_set_cs() function). Thus what you are doing
+> here is redundant.
 
-gcc tested configs:
-arm64                               defconfig
-arm64                            allyesconfig
-arm                              allmodconfig
-arm                                 defconfig
-arm                              allyesconfig
-mips                             allyesconfig
-riscv                            allmodconfig
-um                             i386_defconfig
-mips                             allmodconfig
-um                           x86_64_defconfig
-riscv                            allyesconfig
-sparc                            allyesconfig
-ia64                                defconfig
-ia64                             allmodconfig
-ia64                             allyesconfig
-m68k                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-nios2                               defconfig
-arc                              allyesconfig
-csky                                defconfig
-nios2                            allyesconfig
-alpha                               defconfig
-alpha                            allyesconfig
-h8300                            allyesconfig
-xtensa                           allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-s390                                defconfig
-s390                             allmodconfig
-parisc                              defconfig
-parisc64                            defconfig
-parisc                           allyesconfig
-s390                             allyesconfig
-i386                                defconfig
-sparc                               defconfig
-i386                             allyesconfig
-i386                   debian-10.3-kselftests
-i386                              debian-10.3
-powerpc                          allyesconfig
-powerpc                           allnoconfig
-powerpc                          allmodconfig
-x86_64                        randconfig-a006
-x86_64                        randconfig-a004
-x86_64                        randconfig-a002
-x86_64                        randconfig-a013
-x86_64                        randconfig-a011
-x86_64                        randconfig-a015
-i386                          randconfig-a012
-i386                          randconfig-a014
-i386                          randconfig-a016
-arc                  randconfig-r043-20220524
-s390                 randconfig-r044-20220524
-riscv                randconfig-r042-20220524
-riscv                               defconfig
-riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
-riscv                    nommu_k210_defconfig
-riscv                             allnoconfig
-x86_64                                  kexec
-x86_64                              defconfig
-x86_64                           allyesconfig
-x86_64                               rhel-8.3
-x86_64                          rhel-8.3-func
-x86_64                           rhel-8.3-syz
-x86_64                    rhel-8.3-kselftests
-x86_64                         rhel-8.3-kunit
+Yes this is a redundant initialization and is removed.  For Elba these CS lines
+are active-low only.
 
-clang tested configs:
-x86_64                        randconfig-a005
-x86_64                        randconfig-a003
-x86_64                        randconfig-a001
-i386                          randconfig-a002
-i386                          randconfig-a006
-i386                          randconfig-a004
-x86_64                        randconfig-a014
-x86_64                        randconfig-a016
-x86_64                        randconfig-a012
-i386                          randconfig-a013
-i386                          randconfig-a015
-i386                          randconfig-a011
-hexagon              randconfig-r045-20220524
-hexagon              randconfig-r041-20220524
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Regards,
+Brad
