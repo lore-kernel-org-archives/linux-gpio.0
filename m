@@ -2,88 +2,127 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE6BC433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 31 May 2022 15:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D77C433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 31 May 2022 17:30:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241048AbiEaPry (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 31 May 2022 11:47:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37904 "EHLO
+        id S1346560AbiEaRaV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 31 May 2022 13:30:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345882AbiEaPrw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2022 11:47:52 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C5883389D
-        for <linux-gpio@vger.kernel.org>; Tue, 31 May 2022 08:47:51 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id fd25so18113803edb.3
-        for <linux-gpio@vger.kernel.org>; Tue, 31 May 2022 08:47:51 -0700 (PDT)
+        with ESMTP id S1346551AbiEaRaU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2022 13:30:20 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C2239399D
+        for <linux-gpio@vger.kernel.org>; Tue, 31 May 2022 10:30:18 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id wh22so28072178ejb.7
+        for <linux-gpio@vger.kernel.org>; Tue, 31 May 2022 10:30:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Kk5IwDjbWVind0mIbSujA/O0VSYka/USEApE9hKNgoM=;
-        b=JqsjB+COM2GrMrq1mx9ze8MqESvA7R8r7t4s5sdHzopAnS4YBM3DUjyOi1FU4vtb4S
-         H6LNn3jz/U6M6AbztwUQVL0nD1YFueIcRBPJUCXnJh3+fTVI/M3WLUehW1883BEiK42h
-         Et+/VNZPFnI2dZmvVZmgDVGWMl3AwVSxyrCrmQGFlvQ70C1pIQyO0wZQ1so2Yt4Z9f00
-         jKNXC08opGk9QTtyxPoEwFa/Yug+PGbzXT6iC/1hoWssSpMfxjix+XM+bBJa+BqeRADn
-         v/5mzg/pXxEgCFDc4yQc06Ic+kTOJh0xVjlflRWmob+qABrjZyFbiE0uPxNmD1xGXEwc
-         ZPhA==
+        bh=ZJ1Dv/ORClSlD+t4yWurULyU8Rzqx47jCXHy+bRYEDE=;
+        b=s4SFXEhIZO0VXaghT5MstJ3pOKhlcr6UMVHN6702O+K4zb4HghdAQ8ECXuhr5e3cwa
+         1tn6ZRRajJe94KKFptIBpCnK3mbwFFuLTEx/3W4v7zOn6xBBXd1Pmrdu1VoTmzqhztY2
+         NrHukB0XSDydD1LWnNSwgH9eSXZJO+j4JCGIgg1eV/E7+ciDUtFLDsmQ7hEDjxV3xpL3
+         dVg4f+mifOcN7CBo9rgfLB3IdEL8+gnUWSSrAWXeVAtRh5lq7S3aiEQtDBfAefsQ87iC
+         3AMxOmxb5BhxG08XHEmQnRxN0cXK1lq9cGTHNzRsl0sZwOagACD5DfxA4Cp1WGYxLP+1
+         oQ8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Kk5IwDjbWVind0mIbSujA/O0VSYka/USEApE9hKNgoM=;
-        b=MoCT916lCcLQzQu/FxxGGlBt2ssw0NiNqWl/f83JBKcQFrAYU4Ev2EgaJ/Cra98wfs
-         vZS+xuKXzvEsLXJRxaBfBtI1Z6bBSc9LRHS40PNSQKYm5WVly0xldw6C222FCVtA47XF
-         N69bvDjcBMsdS7Vdb4C+Aag5YhA9d2/QuYTBO7CBMGjqOGvJmQvIzn8DHq/nSw2zGP01
-         zGbu6XXt6im0F2bmh/rYGhBrlDu6uJiUXQwIPMmWX3/VZsVfz1VuaIrH7L74PcENZ/zn
-         GJIDv4F+lVdTUhBBOCt35ok9MRpF6BGnTGz3Qojv9GLntbAZJI9TqAfZmWkqsUIla9NP
-         frNw==
-X-Gm-Message-State: AOAM532BpitDJaTD/N9qsjBUzh8uiuBw7Xn+EQupbKHBegeL0l5ojRAN
-        sm8f2+SE8Xp7K/cjqtqwhIgNe6ysC4HYi3gQkhHgBZ82YPBVlQ==
-X-Google-Smtp-Source: ABdhPJxS19lDUWU8uGm6okfLBPWuBY5JV8Z7V11S5rqqWCGew0MeRCTODTWjPeeRRhQFV7xCTsUmcJAy9CsVLzulJqA=
-X-Received: by 2002:a05:6402:2806:b0:42b:67fc:8565 with SMTP id
- h6-20020a056402280600b0042b67fc8565mr46735589ede.230.1654012069925; Tue, 31
- May 2022 08:47:49 -0700 (PDT)
+        bh=ZJ1Dv/ORClSlD+t4yWurULyU8Rzqx47jCXHy+bRYEDE=;
+        b=YUYnX9tFFZIEIJm0qKTVr0r5F9cKDbRsUTCwWI3RnRRL7tAR4/zXigh9zs9R17h1Vq
+         RVbwoo6PatqyS8fDR4TxIwWUV1F6qnQkcTTePzJiAc+OFWBZ+Xr3e0o6cYCgnqomPzyL
+         q5yIOdvTYucrlNHjBhLWBy7fEkabRO5ILKEQdLs6usQkUCIA3gB6KsBMJmwYfqbImNnW
+         fOSlhMGB5ROb/cJtwTtFyr8Q2d6Rn6dSylidyWDlMQB6ARPNeMp1djrWziDv8d7fGmMq
+         HKF1tSEWWUqc8+6vU5B2oFaF4801SigjkYazlyH35bJMdy95L2c6tfiAMdLX9a2iC1lt
+         Yukg==
+X-Gm-Message-State: AOAM531/tc+0bZarazKljFl/LLIyCkH+EmzkpF3Gb+mfTGEii6s5+nHm
+        4MPU/o8k1gsQD80fJ9DntAhTnvTOiUvXX/USfImWHQ==
+X-Google-Smtp-Source: ABdhPJxI+z0snHnBf/Eaz2ZZc3jiRyd33cbbpdKNUYxpFQhigJqknYAUGo56NcUOO8dLH+cZ0kBsp+5vp5BwrNLulUw=
+X-Received: by 2002:a17:907:6eab:b0:6fe:b5e2:7b0e with SMTP id
+ sh43-20020a1709076eab00b006feb5e27b0emr48517985ejc.736.1654018217174; Tue, 31
+ May 2022 10:30:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220531084322.1310250-1-Basavaraj.Natikar@amd.com>
- <20220531084322.1310250-5-Basavaraj.Natikar@amd.com> <YpXsjDEkUVw/KXdu@smile.fi.intel.com>
- <968dd586-afc0-691e-6701-3b031ffd43b1@amd.com>
-In-Reply-To: <968dd586-afc0-691e-6701-3b031ffd43b1@amd.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 31 May 2022 17:47:13 +0200
-Message-ID: <CAHp75VdGLKvNaXrQjxDRzHArMpCGMVve5DQD4pcHLohGEhE9_w@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] pinctrl: amd: Define and use AMD_PINS macro
-To:     Basavaraj Natikar <bnatikar@amd.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+References: <20220427144620.9105-1-pmalgujar@marvell.com> <20220427144620.9105-2-pmalgujar@marvell.com>
+ <CAMRc=Mf91eMF7D6CRtA8-HQ7pdtP343WUGhLG4qti_9zJF4ELQ@mail.gmail.com> <20220525131738.GA10532@Dell2s-9>
+In-Reply-To: <20220525131738.GA10532@Dell2s-9>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 31 May 2022 19:30:06 +0200
+Message-ID: <CAMRc=Mds_cKkdDJUV5h7prfPg-rBms33uFad_S-zzPaws=qfLg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] gpio: thunderx: avoid potential deadlock
+To:     Piyush Malgujar <pmalgujar@marvell.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Robert Richter <rric@kernel.org>, cchavva@marvell.com,
+        wsadowski@marvell.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, May 31, 2022 at 5:27 PM Basavaraj Natikar <bnatikar@amd.com> wrote:
-> On 5/31/2022 3:53 PM, Andy Shevchenko wrote:
-> > On Tue, May 31, 2022 at 02:13:20PM +0530, Basavaraj Natikar wrote:
-
-...
-
-> >> +#define AMD_PINS(...) ((const unsigned int []){__VA_ARGS__})
-> > Do you need to have it as GCC expression?
+On Wed, May 25, 2022 at 3:17 PM Piyush Malgujar <pmalgujar@marvell.com> wrote:
 >
-> yes, or else I will hit the checkpatch error as below
+> On Mon, May 02, 2022 at 01:18:49PM +0200, Bartosz Golaszewski wrote:
+> > On Wed, Apr 27, 2022 at 4:46 PM Piyush Malgujar <pmalgujar@marvell.com> wrote:
+> > >
+> > > Using irqsave/irqrestore locking variants to avoid any deadlock.
+> > >
+> >
+> > I see you'll be resending this anyway so would you mind providing an
+> > example of a deadlock that is possible with no-irqsave variants?
+> > Thanks.
+> >
+> > Bart
+> >
+> Hi Bartosz,
+>
+> Thanks for the review.
+>
+> Please find below the issue scenario:
+> In the case when HARDIRQ-safe -> HARDIRQ-unsafe lock order is detected
+> and interrupt occurs, deadlock could occur.
+>
+> ========================================================
+> WARNING: possible irq lock inversion dependency detected
+> 5.18.0-rc6 #4 Not tainted
+> --------------------------------------------------------
+> swapper/3/0 just changed the state of lock:
+> ffff000110904cd8 (lock_class){-...}-{2:2}, at: handle_fasteoi_ack_irq+0x2c/0x1b0
+> but this lock took another, HARDIRQ-unsafe lock in the past:
+>  (&txgpio->lock){+.+.}-{2:2}
+>
+>
+> and interrupts could create inverse lock ordering between them.
+>
+>
+> other info that might help us debug this:
+>  Possible interrupt unsafe locking scenario:
+>
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&txgpio->lock);
+>                                local_irq_disable();
+>                                lock(lock_class);
+>                                lock(&txgpio->lock);
+>   <Interrupt>
+>     lock(lock_class);
+>
+>  *** DEADLOCK ***
+>
+> ==========================================================
+>
+> Thanks,
+> Piyush
+> > > Signed-off-by: Piyush Malgujar <pmalgujar@marvell.com>
+> > > ---
 
-Does it compile? Does it work? If so, fix checkpatch.
+Thanks. What I meant exactly was: resend it with that info in the
+commit message.
 
-> ----------------------------------------------------
-> ERROR: Macros with complex values should be enclosed in parentheses
-> #31: FILE: drivers/pinctrl/pinctrl-amd.h:285:
-> +#define AMD_PINS(...) (const unsigned int []){__VA_ARGS__}
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Bart
