@@ -2,84 +2,137 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E75AC433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 31 May 2022 21:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E33DC433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 31 May 2022 22:20:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232624AbiEaVTd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 31 May 2022 17:19:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36502 "EHLO
+        id S237879AbiEaWUN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 31 May 2022 18:20:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347946AbiEaVTc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2022 17:19:32 -0400
+        with ESMTP id S1348389AbiEaWUF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2022 18:20:05 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 460359D4DD;
-        Tue, 31 May 2022 14:19:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36D4D9E9C3;
+        Tue, 31 May 2022 15:20:02 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: nfraprado)
-        with ESMTPSA id C06CA1F43F0B
+        with ESMTPSA id 90A671F43F1E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1654031966;
-        bh=68k5y0jKYIIMSTFMtmsmSALMYTfSSep8zYGcyyvXciU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kB8pT4aFB5cbKdOyctjFzW6Hekmjw0u2cSQOLAshFZIQ0pRIK1muB9rFlcFy+4Yoc
-         vJvJMBOOwvWF5XZXf9M0ZFg8p+6rVT2ZynREraW+MyNrqlI7HxyG/38GYV8g5S0Qpt
-         wyMyBoiiYvZAzRMqvXaPnLiYgxEKFC6KahgxPsqaQVXffQ2t2OyZxtBma4piAMcRCJ
-         pa70jEWdaBl/3kLXdVRkPZIEWg6cro/JU1n6IBaTNbQOs3aiAHXML92nrTuDF4YPoi
-         WaCUyqnMxES1EOYtUjER5uKX655zDqtNhyxw8Kyq47+Eb0RRsEV/r9jZCPJ4WJjqjb
-         06xP+NOEp36zw==
-Date:   Tue, 31 May 2022 17:19:21 -0400
-From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
+        s=mail; t=1654035601;
+        bh=dqvPbD0+LyE8BrCyvcj4tkNdD3HuNjmZ6QAi2jlf4lY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KUux18MMXlb51shdebtxX+3nedmXE19+HQ65ny3FB5b7mvKStmQbMrQrhnRE6giNC
+         /EMiebD2qDDTbz1uEfP9PCMOJXrSyMrTSIAEJT7i/paBPNcZRTtQxKlPl8G8FjsNAb
+         ytuWmbomZTbqlPaqDBdFow89+M6nIrqE1cRPhnftfQ6jWYO7Ch9jue4Gu1P57Y9091
+         8TLKZ6Ph4C3kZw/UDE2Sc/StNoAY+0oCu/YiiqK4BFgWZyvAX1ETJ8+YV9OBkksNFz
+         kZx8duSUqP7ZGjSPdSrocuIGABHGsAwWktMdgZG7Pxyl+ElW8UKdsASUU6scbTxBxF
+         gXyofvy9WtO6g==
+From:   =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
         <nfraprado@collabora.com>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>, kernel@collabora.com,
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, kernel@collabora.com,
+        =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
+        <nfraprado@collabora.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v1 0/2] MT8192 pinctrl properties adjustments
-Message-ID: <20220531211921.uhdd2exxv2uhic6x@notapiano>
-References: <20220525155714.1837360-1-nfraprado@collabora.com>
- <74a6159b-40d0-bbc3-5b4a-ebf6ed98bac7@collabora.com>
+Subject: [PATCH v2 1/2] dt-bindings: pinctrl: mt8192: Switch drive-strength-adv for -microamp
+Date:   Tue, 31 May 2022 18:19:53 -0400
+Message-Id: <20220531221954.160036-2-nfraprado@collabora.com>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220531221954.160036-1-nfraprado@collabora.com>
+References: <20220531221954.160036-1-nfraprado@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <74a6159b-40d0-bbc3-5b4a-ebf6ed98bac7@collabora.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, May 30, 2022 at 10:34:19AM +0200, AngeloGioacchino Del Regno wrote:
-> Il 25/05/22 17:57, Nícolas F. R. A. Prado ha scritto:
-> > 
-> > The two patches in this series substitute properties in the mt8192
-> > pinctrl dt-binding for ones which have a clearer meaning and are more
-> > standardized. At this point there's no DT using the mt8192 pinctrl
-> > binding, so if such changes are to be made, they need to happen now.
-> > 
-> > 
-> > Nícolas F. R. A. Prado (2):
-> >    dt-bindings: pinctrl: mt8192: Add drive-strength-microamp
-> >    dt-bindings: pinctrl: mt8192: Use generic bias instead of pull-*-adv
-> > 
-> >   .../bindings/pinctrl/pinctrl-mt8192.yaml      | 58 ++++++-------------
-> >   1 file changed, 18 insertions(+), 40 deletions(-)
-> > 
-> 
-> Hey Nic,
-> 
-> As you know, I definitely agree with these changes, but they don't deserve
-> to get any Fixes tag: backporting should be useless in this case... and you
-> anyway aren't fixing a faulty binding.
+Commit e5fabbe43f3f ("pinctrl: mediatek: paris: Support generic
+PIN_CONFIG_DRIVE_STRENGTH_UA") added support for using
+drive-strength-microamp instead of mediatek,drive-strength-adv.
 
-Alright, I was on the fence on this one, but I can drop the tags for v2.
+Since there aren't any users of mediatek,drive-strength-adv on mt8192
+yet, remove this property and add drive-strength-microamp in its place,
+which has a clearer meaning.
 
-Thanks,
-Nícolas
+While at it, add a new 'if' block to validate that drive-strength and
+drive-strength-microamp aren't used together, since they're mutually
+exclusive.
 
-> 
-> Cheers!
-> Angelo
+Signed-off-by: NÃ­colas F. R. A. Prado <nfraprado@collabora.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogiocchino.delregno@collabora.com>
+
+---
+
+Changes in v2:
+- Added 'if' block to make drive-strength and drive-strength-microamp
+  mutually exclusive
+- Changed commit title to be more precise
+- Dropped Fixes tag
+
+ .../bindings/pinctrl/pinctrl-mt8192.yaml      | 35 ++++++-------------
+ 1 file changed, 10 insertions(+), 25 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8192.yaml b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8192.yaml
+index c90a132fbc79..c8092b218f2f 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8192.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8192.yaml
+@@ -80,31 +80,8 @@ patternProperties:
+               dt-bindings/pinctrl/mt65xx.h. It can only support 2/4/6/8/10/12/14/16mA in mt8192.
+             enum: [2, 4, 6, 8, 10, 12, 14, 16]
+ 
+-          mediatek,drive-strength-adv:
+-            description: |
+-              Describe the specific driving setup property.
+-              For I2C pins, the existing generic driving setup can only support
+-              2/4/6/8/10/12/14/16mA driving. But in specific driving setup, they
+-              can support 0.125/0.25/0.5/1mA adjustment. If we enable specific
+-              driving setup, the existing generic setup will be disabled.
+-              The specific driving setup is controlled by E1E0EN.
+-              When E1=0/E0=0, the strength is 0.125mA.
+-              When E1=0/E0=1, the strength is 0.25mA.
+-              When E1=1/E0=0, the strength is 0.5mA.
+-              When E1=1/E0=1, the strength is 1mA.
+-              EN is used to enable or disable the specific driving setup.
+-              Valid arguments are described as below:
+-              0: (E1, E0, EN) = (0, 0, 0)
+-              1: (E1, E0, EN) = (0, 0, 1)
+-              2: (E1, E0, EN) = (0, 1, 0)
+-              3: (E1, E0, EN) = (0, 1, 1)
+-              4: (E1, E0, EN) = (1, 0, 0)
+-              5: (E1, E0, EN) = (1, 0, 1)
+-              6: (E1, E0, EN) = (1, 1, 0)
+-              7: (E1, E0, EN) = (1, 1, 1)
+-              So the valid arguments are from 0 to 7.
+-            $ref: /schemas/types.yaml#/definitions/uint32
+-            enum: [0, 1, 2, 3, 4, 5, 6, 7]
++          drive-strength-microamp:
++            enum: [125, 250, 500, 1000]
+ 
+           mediatek,pull-up-adv:
+             description: |
+@@ -138,6 +115,14 @@ patternProperties:
+         required:
+           - pinmux
+ 
++        allOf:
++          - if:
++              required:
++                - drive-strength-microamp
++            then:
++              properties:
++                drive-strength: false
++
+         additionalProperties: false
+ 
+ allOf:
+-- 
+2.36.1
+
