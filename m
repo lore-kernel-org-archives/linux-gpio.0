@@ -2,161 +2,61 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A6BEC433F5
-	for <linux-gpio@archiver.kernel.org>; Wed,  1 Jun 2022 07:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58559C433F5
+	for <linux-gpio@archiver.kernel.org>; Wed,  1 Jun 2022 08:00:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242959AbiFAHI5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 1 Jun 2022 03:08:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34874 "EHLO
+        id S1350467AbiFAIAT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 1 Jun 2022 04:00:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344217AbiFAHHP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jun 2022 03:07:15 -0400
-Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A815C28E3D
-        for <linux-gpio@vger.kernel.org>; Wed,  1 Jun 2022 00:07:12 -0700 (PDT)
-Received: by mail-pl1-x64a.google.com with SMTP id y4-20020a17090322c400b001637287812bso669732plg.6
-        for <linux-gpio@vger.kernel.org>; Wed, 01 Jun 2022 00:07:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=Mk17D+aOzb7UCdNS2oz9IAwDr5MmRg+quCipw6fx4RQ=;
-        b=hQa0JnnmV2cX05wxogayF7DAeIwm91UA5DD4Pd0261qK2nG5mlRfb8p0PwXRgLwmcG
-         6gimTBEfRJnzqCBPwGFDLXwY23Jge7qCK5EKBtDVk+4ZHueBZe2ScEh2abiJOXvqClXF
-         aItT2KKmdUihJqxg6KlMJQ+n9hDQfaXwUgpDUXId5vW641rUWKofWrnrujEe72Sytvnk
-         iXsC3g9D+PkO64XwFNhsJCy/xgMMwq44IzwR510vfqTBnn54+HA0yDiVcTK99umRrrcq
-         KawtwQ3E7vKCwmO2izMB9zQh9evWd8zx74HbqExwInwGL34iXnuFQ1QqmbkBW7qSDv5A
-         GPbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=Mk17D+aOzb7UCdNS2oz9IAwDr5MmRg+quCipw6fx4RQ=;
-        b=SQ8dnQCD8/VSx5iTvuhlDaA9nwtDhuKpP+3iF+XrSCdUHEJyOQv+ciG5As5mjTCjAj
-         etW+kYu/wmSjiF+Eg63Ixedl7N3ulR1CpCm0s9AAETWH31g5Qf6mu0Uaoo52umyhsER6
-         ERiAoB8TSmT8OyzWNKQ0LgyTJr1bTO7H1IOgT5hN6sFzPJbaK789KGFjt/gIP97vvIoD
-         gCp4KpHfdN3IqxYCiifwtihQXEnKGXfuIRsO7FQ4eVFxWfBrDK4UV6gPrQpaMHX0XmEu
-         vIIWzm38tTrn+VT8LzS9YEGvDheZeXsOxJcKYlUetX6IRaHmY+lpsCdOS5hzJscfIHji
-         DVxQ==
-X-Gm-Message-State: AOAM530PI5PybB+Avp7NoRNHTEgMJsP7ECeyFYl0RsmL1HlS8msh+ZxK
-        skSp4sHt1yHQNF8hh5ZWzqUpImza9WmFYZw=
-X-Google-Smtp-Source: ABdhPJwo0w/Ul81l80Uz+X1lE0Knuok5VeKXEtMoQ0Yzewr/LH6PL8JE3PUvMoXQAWKjDKNKYDX9hXZkKLb6+II=
-X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:f3aa:cafe:c20a:e136])
- (user=saravanak job=sendgmr) by 2002:a17:902:da8e:b0:164:537:d910 with SMTP
- id j14-20020a170902da8e00b001640537d910mr7067516plx.75.1654067231712; Wed, 01
- Jun 2022 00:07:11 -0700 (PDT)
-Date:   Wed,  1 Jun 2022 00:06:56 -0700
-Message-Id: <20220601070707.3946847-1-saravanak@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.36.1.255.ge46751e96f-goog
-Subject: [PATCH v2 0/9] deferred_probe_timeout logic clean up
-From:   Saravana Kannan <saravanak@google.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Ahern <dsahern@kernel.org>
-Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org
+        with ESMTP id S245619AbiFAIAT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jun 2022 04:00:19 -0400
+X-Greylist: delayed 453 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 01 Jun 2022 01:00:18 PDT
+Received: from mail.forindustry.pl (mail.forindustry.pl [37.187.225.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 142698B089
+        for <linux-gpio@vger.kernel.org>; Wed,  1 Jun 2022 01:00:18 -0700 (PDT)
+Received: by mail.forindustry.pl (Postfix, from userid 1002)
+        id 474C8A3ABF; Wed,  1 Jun 2022 07:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=forindustry.pl;
+        s=mail; t=1654069709;
+        bh=Vw5jk5D1DE7WK/GNf/MxRQNyAyPYcC0rMJLibxKTj58=;
+        h=Date:From:To:Subject:From;
+        b=fPYCbm+pM1Tp2FMxC5lszfD46bZLJmRzwTMqT4krULOpnv2YdQI7Qaao5a2buIx65
+         /YYVjahg+1ymk/ugRv37PoCbNackBBZ2a45aQcRAkmZHQDMD6FazjbHwyDI/6CKJmF
+         ztfFq3H+/cQPw5M/di5SU98UqVJeqgnr4Bpo4mX923clv+CxQPVfvjI1FoeGuo8l21
+         Y2ENdjngzi31ZD6Qqk1kL5tlZu9WoHTV0LaKPqlTbFU2/75oL3VVicNRk7QOdTW7YP
+         /2mvV9TRhsG2yuYLq9ch9B4Rac4PBl22O5wYkH5d1LtBUAreyIfbRxXTJHTGBz7iLU
+         7FPF08n0Jo/ow==
+Received: by mail.forindustry.pl for <linux-gpio@vger.kernel.org>; Wed,  1 Jun 2022 07:45:30 GMT
+Message-ID: <20220601064501-0.1.3k.lmii.0.mrug7zvrh6@forindustry.pl>
+Date:   Wed,  1 Jun 2022 07:45:30 GMT
+From:   =?UTF-8?Q? "Arkadiusz_Soko=C5=82owski" ?= 
+        <arkadiusz.sokolowski@forindustry.pl>
+To:     <linux-gpio@vger.kernel.org>
+Subject: Koszty instalacji fotowoltaicznej
+X-Mailer: mail.forindustry.pl
+MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series is based on linux-next + these 2 small patches applies on top:
-https://lore.kernel.org/lkml/20220526034609.480766-1-saravanak@google.com/
+Dzie=C5=84 dobry,
 
-A lot of the deferred_probe_timeout logic is redundant with
-fw_devlink=on.  Also, enabling deferred_probe_timeout by default breaks
-a few cases.
+stworzyli=C5=9Bmy specjaln=C4=85 ofert=C4=99 dla firm, na kompleksow=C4=85=
+ obs=C5=82ug=C4=99 inwestycji w fotowoltaik=C4=99.
 
-This series tries to delete the redundant logic, simplify the frameworks
-that use driver_deferred_probe_check_state(), enable
-deferred_probe_timeout=10 by default, and fixes the nfsroot failure
-case.
+Specjalizujemy si=C4=99 w zakresie doboru, monta=C5=BCu i serwisie instal=
+acji fotowoltaicznych, dysponujemy najnowocze=C5=9Bniejszymi rozwi=C4=85z=
+ania, kt=C3=B3re zapewni=C4=85 Pa=C5=84stwu oczekiwane rezultaty.
 
-The overall idea of this series is to replace the global behavior of
-driver_deferred_probe_check_state() where all devices give up waiting on
-supplier at the same time with a more granular behavior:
+Mo=C5=BCemy przygotowa=C4=87 dla Pa=C5=84stwa wst=C4=99pn=C4=85 kalkulacj=
+=C4=99 i przeanalizowa=C4=87 efekty mo=C5=BCliwe do osi=C4=85gni=C4=99cia=
+=2E
 
-1. Devices with all their suppliers successfully probed by late_initcall
-   probe as usual and avoid unnecessary deferred probe attempts.
+Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
+temacie?
 
-2. At or after late_initcall, in cases where boot would break because of
-   fw_devlink=on being strict about the ordering, we
-
-   a. Temporarily relax the enforcement to probe any unprobed devices
-      that can probe successfully in the current state of the system.
-      For example, when we boot with a NFS rootfs and no network device
-      has probed.
-   b. Go back to enforcing the ordering for any devices that haven't
-      probed.
-
-3. After deferred probe timeout expires, we permanently give up waiting
-   on supplier devices without drivers. At this point, whatever devices
-   can probe without some of their optional suppliers end up probing.
-
-In the case where module support is disabled, it's fairly
-straightforward and all device probes are completed before the initcalls
-are done.
-
-Patches 1 to 3 are fairly straightforward and can probably be applied
-right away.
-
-Patches 4 to 6 are for fixing the NFS rootfs issue and setting the
-default deferred_probe_timeout back to 10 seconds when modules are
-enabled.
-
-Patches 7 to 9 are further clean up of the deferred_probe_timeout logic
-so that no framework has to know/care about deferred_probe_timeout.
-
-Yoshihiro/Geert,
-
-If you can test this patch series and confirm that the NFS root case
-works, I'd really appreciate that.
-
-Thanks,
-Saravana
-
-v1 -> v2:
-Rewrote the NFS rootfs fix to be a lot less destructive on the
-fw_devlink ordering for devices that don't end up probing during the
-"best effort" attempt at probing all devices needed for a network rootfs
-
-Saravana Kannan (9):
-  PM: domains: Delete usage of driver_deferred_probe_check_state()
-  pinctrl: devicetree: Delete usage of
-    driver_deferred_probe_check_state()
-  net: mdio: Delete usage of driver_deferred_probe_check_state()
-  driver core: Add wait_for_init_devices_probe helper function
-  net: ipconfig: Relax fw_devlink if we need to mount a network rootfs
-  Revert "driver core: Set default deferred_probe_timeout back to 0."
-  driver core: Set fw_devlink.strict=1 by default
-  iommu/of: Delete usage of driver_deferred_probe_check_state()
-  driver core: Delete driver_deferred_probe_check_state()
-
- drivers/base/base.h            |   1 +
- drivers/base/core.c            | 102 ++++++++++++++++++++++++++++++---
- drivers/base/dd.c              |  54 ++++++-----------
- drivers/base/power/domain.c    |   2 +-
- drivers/iommu/of_iommu.c       |   2 +-
- drivers/net/mdio/fwnode_mdio.c |   4 +-
- drivers/pinctrl/devicetree.c   |   2 +-
- include/linux/device/driver.h  |   2 +-
- net/ipv4/ipconfig.c            |   6 ++
- 9 files changed, 126 insertions(+), 49 deletions(-)
-
--- 
-2.36.1.255.ge46751e96f-goog
-
+Pozdrawiam,
+Arkadiusz Soko=C5=82owski
