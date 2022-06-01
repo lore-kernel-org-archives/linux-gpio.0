@@ -2,56 +2,56 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F796C4332F
-	for <linux-gpio@archiver.kernel.org>; Wed,  1 Jun 2022 07:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03775C433F5
+	for <linux-gpio@archiver.kernel.org>; Wed,  1 Jun 2022 07:07:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344932AbiFAHHU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 1 Jun 2022 03:07:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35214 "EHLO
+        id S1350116AbiFAHHk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 1 Jun 2022 03:07:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344576AbiFAHHT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jun 2022 03:07:19 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F6B13614B
-        for <linux-gpio@vger.kernel.org>; Wed,  1 Jun 2022 00:07:18 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-30c2f3431b4so8079067b3.21
-        for <linux-gpio@vger.kernel.org>; Wed, 01 Jun 2022 00:07:18 -0700 (PDT)
+        with ESMTP id S1346244AbiFAHHj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jun 2022 03:07:39 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB088CB0A
+        for <linux-gpio@vger.kernel.org>; Wed,  1 Jun 2022 00:07:23 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 85-20020a250358000000b0065b9b24987aso737201ybd.4
+        for <linux-gpio@vger.kernel.org>; Wed, 01 Jun 2022 00:07:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=s1gsps1j5Ayup9Swk+EXc2kGgnx5nhOnARnKuAKYXv0=;
-        b=ch5YvNSZbFFvNIFbdMWgLJY52Qnpd1NtoLMcbn1rQ4YPVTxYHbxywFyCPzAP3/GdOE
-         KdsrLMveolqX+jFl+h4mIER3kCKjzchkhaA5vc1KaGo6eRizAhbS9sDWsqPUMTwf+grp
-         U7krsYB7Uq2sN+6D6tVvi/PXDklkCU0WIpKMDNVMY9ZLGTpoYdnVYedYDONJOBI2h8x4
-         UIe8XKZmJKhAXeerPesRykxXMFw39fsB+kV+KjPQH/ddcGxWfonhfMLcu+h3NXhKRmfi
-         /YqfTTroCVXlQaiebFvlX5bBi+H7w29MdlZQ5F7xCu5rWKB+fxWysM0OGOqJxtn145ed
-         E/Mg==
+        bh=0HXVJdCIsomGxp3WPSn+2YS1x/Q9SjPFbGK9Hb8FY3Q=;
+        b=Jsx/IdjeTXR9MiQtdujJ0FlEiN2DLL3p1z/+sKrPzQ5PVUHP/npXBXYzqCNA1KWL0X
+         z3oIUD2EKzfWwjtb9Rp9R7DWWWZTVuLSbHgj2j1SyWjMt0zOaH9Yzntys+ofnzk2dj/W
+         f3u0Pu0UOiGibZ6P3V82NUN/7H7F60cOtPgOtUY6yJzIQULjU3s0zTX4zyZV36B4xh4X
+         UlsMI7AImfk8W+elLBcnH2I63UaRpt0wpc2o1GxrV9VXFItxShjqOzLDTBF02tjKFhw5
+         3cRWGoHuDz/LQWJPe0249jYTzWv1t308fA03c3f/rQb7eCTa7XL/8r8ZXPI4kigmDRGo
+         96bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=s1gsps1j5Ayup9Swk+EXc2kGgnx5nhOnARnKuAKYXv0=;
-        b=pgIJXbaUU148ChDAv2SNlUOj0rtRImVaxTiLe9BiyPwLTDOik5peCSslk38lhOXKme
-         WN44WDf6As9cHEkwnpaYLm8+jM0xMb8TK7e+32KUgNrSpOVeF50PY5j87XvDtQbRG1bm
-         rWdk9RP0lMsUZ7WbgTDqLqgkq/c5RS2fJdM/fLS0YpHEYXsMpQYeNAi4bi/uJjgSd5No
-         4pSTxfTW/KsyWPoxKjcITKbREoau0eHdfrRleT36TJO+ZA1ZZJQufcUPTw80IuyOgv9A
-         W6559BowkA6O83WKvTg4d7bxx8PQ+SgenHcD6DZMkYMUHmWVmWCgqiml8VUuzn6BTExt
-         VVVQ==
-X-Gm-Message-State: AOAM530AAXfSKOIJ5MwYtuHS/s+yeEuAasWL2LXBx7MmMR0SskHIQ3mL
-        qjPNgtCJTGZX9PzRO+8bV1jLBmb2PLEKsSI=
-X-Google-Smtp-Source: ABdhPJzzpyv5qo/qKlMQeYH+3Z6qXGo9Ac2yEg0ZjA7JAUgPsaNr7W/YlAhXWO4zqrhgdu1gO/8toNkzEz6BwXE=
+        bh=0HXVJdCIsomGxp3WPSn+2YS1x/Q9SjPFbGK9Hb8FY3Q=;
+        b=e7lNW+hY7B/y5FYnsrMW3gURY8j90ICSGuSvTbQSbBJRTliNi+0g3Q0y6UbQY00iD0
+         nqcfz/kfnvduavgqcwpVPqj5iJOtjrMhivJ3WDDsbDklEbmDH2T5ZjsABhAFCtfy4eqb
+         4YKFHVUoJvJeWsp6Icdkt0TEaxabEOyGTne9KPeBzyCpaSrKI2JdRDFRJzVrHDWcFGoM
+         XqLxfF5MEzUjn2t9dQvGHNFwwGVHuD+Wvv0VSv10LqdWFNoy/Ovj0yR2+xGso7MG6X1X
+         VKaNTMKjK+09b/ZurloB4WA82crVuoZ8bgALCfoc5sJ0IjJeziYOMoFYMt7eD/Q//LJj
+         YR5g==
+X-Gm-Message-State: AOAM531jnun11KuSed3X+bCEAEEBfHMW8Fdh7ZYsMfffhTqzneT7ta58
+        Oy9qQe9o6Bukrx6Or0sKW8v2pzT5Hh/ds1s=
+X-Google-Smtp-Source: ABdhPJwJjzxLgIuLlsumiwwcLunjHDDJmCACEgK5Oc+WJCGQpf48+C4ImTSOeUa5BoryRp796dUO+ICognLJoOA=
 X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:f3aa:cafe:c20a:e136])
- (user=saravanak job=sendgmr) by 2002:a05:6902:2ce:b0:64b:9bbd:34fa with SMTP
- id w14-20020a05690202ce00b0064b9bbd34famr60927760ybh.440.1654067237399; Wed,
- 01 Jun 2022 00:07:17 -0700 (PDT)
-Date:   Wed,  1 Jun 2022 00:06:58 -0700
+ (user=saravanak job=sendgmr) by 2002:a0d:db81:0:b0:30c:2ba5:9e1d with SMTP id
+ d123-20020a0ddb81000000b0030c2ba59e1dmr19834254ywe.519.1654067243146; Wed, 01
+ Jun 2022 00:07:23 -0700 (PDT)
+Date:   Wed,  1 Jun 2022 00:07:00 -0700
 In-Reply-To: <20220601070707.3946847-1-saravanak@google.com>
-Message-Id: <20220601070707.3946847-3-saravanak@google.com>
+Message-Id: <20220601070707.3946847-5-saravanak@google.com>
 Mime-Version: 1.0
 References: <20220601070707.3946847-1-saravanak@google.com>
 X-Mailer: git-send-email 2.36.1.255.ge46751e96f-goog
-Subject: [PATCH v2 2/9] pinctrl: devicetree: Delete usage of driver_deferred_probe_check_state()
+Subject: [PATCH v2 4/9] driver core: Add wait_for_init_devices_probe helper function
 From:   Saravana Kannan <saravanak@google.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
@@ -78,31 +78,281 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Now that fw_devlink=on by default and fw_devlink supports
-"pinctrl-[0-8]" property, the execution will never get to the point
-where driver_deferred_probe_check_state() is called before the supplier
-has probed successfully or before deferred probe timeout has expired.
+Some devices might need to be probed and bound successfully before the
+kernel boot sequence can finish and move on to init/userspace. For
+example, a network interface might need to be bound to be able to mount
+a NFS rootfs.
 
-So, delete the call and replace it with -ENODEV.
+With fw_devlink=on by default, some of these devices might be blocked
+from probing because they are waiting on a optional supplier that
+doesn't have a driver. While fw_devlink will eventually identify such
+devices and unblock the probing automatically, it might be too late by
+the time it unblocks the probing of devices. For example, the IP4
+autoconfig might timeout before fw_devlink unblocks probing of the
+network interface.
+
+This function is available to temporarily try and probe all devices that
+have a driver even if some of their suppliers haven't been added or
+don't have drivers.
+
+The drivers can then decide which of the suppliers are optional vs
+mandatory and probe the device if possible. By the time this function
+returns, all such "best effort" probes are guaranteed to be completed.
+If a device successfully probes in this mode, we delete all fw_devlink
+discovered dependencies of that device where the supplier hasn't yet
+probed successfully because they have to be optional dependencies.
+
+This also means that some devices that aren't needed for init and could
+have waited for their optional supplier to probe (when the supplier's
+module is loaded later on) would end up probing prematurely with limited
+functionality.  So call this function only when boot would fail without
+it.
 
 Signed-off-by: Saravana Kannan <saravanak@google.com>
 ---
- drivers/pinctrl/devicetree.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/base/base.h           |   1 +
+ drivers/base/core.c           | 100 ++++++++++++++++++++++++++++++++--
+ drivers/base/dd.c             |  19 +++++--
+ include/linux/device/driver.h |   1 +
+ 4 files changed, 110 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index 3fb238714718..ef898ee8ca6b 100644
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -129,7 +129,7 @@ static int dt_to_map_one_config(struct pinctrl *p,
- 		np_pctldev = of_get_next_parent(np_pctldev);
- 		if (!np_pctldev || of_node_is_root(np_pctldev)) {
- 			of_node_put(np_pctldev);
--			ret = driver_deferred_probe_check_state(p->dev);
-+			ret = -ENODEV;
- 			/* keep deferring if modules are enabled */
- 			if (IS_ENABLED(CONFIG_MODULES) && !allow_default && ret < 0)
- 				ret = -EPROBE_DEFER;
+diff --git a/drivers/base/base.h b/drivers/base/base.h
+index ab71403d102f..b3a43a164dcd 100644
+--- a/drivers/base/base.h
++++ b/drivers/base/base.h
+@@ -160,6 +160,7 @@ extern int devres_release_all(struct device *dev);
+ extern void device_block_probing(void);
+ extern void device_unblock_probing(void);
+ extern void deferred_probe_extend_timeout(void);
++extern void driver_deferred_probe_trigger(void);
+ 
+ /* /sys/devices directory */
+ extern struct kset *devices_kset;
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 7cd789c4985d..61fdfe99b348 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -54,6 +54,7 @@ static unsigned int defer_sync_state_count = 1;
+ static DEFINE_MUTEX(fwnode_link_lock);
+ static bool fw_devlink_is_permissive(void);
+ static bool fw_devlink_drv_reg_done;
++static bool fw_devlink_best_effort;
+ 
+ /**
+  * fwnode_link_add - Create a link between two fwnode_handles.
+@@ -965,6 +966,11 @@ static void device_links_missing_supplier(struct device *dev)
+ 	}
+ }
+ 
++static bool dev_is_best_effort(struct device *dev)
++{
++	return fw_devlink_best_effort && dev->can_match;
++}
++
+ /**
+  * device_links_check_suppliers - Check presence of supplier drivers.
+  * @dev: Consumer device.
+@@ -984,7 +990,7 @@ static void device_links_missing_supplier(struct device *dev)
+ int device_links_check_suppliers(struct device *dev)
+ {
+ 	struct device_link *link;
+-	int ret = 0;
++	int ret = 0, fwnode_ret = 0;
+ 	struct fwnode_handle *sup_fw;
+ 
+ 	/*
+@@ -997,12 +1003,17 @@ int device_links_check_suppliers(struct device *dev)
+ 		sup_fw = list_first_entry(&dev->fwnode->suppliers,
+ 					  struct fwnode_link,
+ 					  c_hook)->supplier;
+-		dev_err_probe(dev, -EPROBE_DEFER, "wait for supplier %pfwP\n",
+-			      sup_fw);
+-		mutex_unlock(&fwnode_link_lock);
+-		return -EPROBE_DEFER;
++		if (!dev_is_best_effort(dev)) {
++			fwnode_ret = -EPROBE_DEFER;
++			dev_err_probe(dev, -EPROBE_DEFER,
++				    "wait for supplier %pfwP\n", sup_fw);
++		} else {
++			fwnode_ret = -EAGAIN;
++		}
+ 	}
+ 	mutex_unlock(&fwnode_link_lock);
++	if (fwnode_ret == -EPROBE_DEFER)
++		return fwnode_ret;
+ 
+ 	device_links_write_lock();
+ 
+@@ -1012,6 +1023,14 @@ int device_links_check_suppliers(struct device *dev)
+ 
+ 		if (link->status != DL_STATE_AVAILABLE &&
+ 		    !(link->flags & DL_FLAG_SYNC_STATE_ONLY)) {
++
++			if (dev_is_best_effort(dev) &&
++			    link->flags & DL_FLAG_INFERRED &&
++			    !link->supplier->can_match) {
++				ret = -EAGAIN;
++				continue;
++			}
++
+ 			device_links_missing_supplier(dev);
+ 			dev_err_probe(dev, -EPROBE_DEFER,
+ 				      "supplier %s not ready\n",
+@@ -1024,7 +1043,8 @@ int device_links_check_suppliers(struct device *dev)
+ 	dev->links.status = DL_DEV_PROBING;
+ 
+ 	device_links_write_unlock();
+-	return ret;
++
++	return ret ? ret : fwnode_ret;
+ }
+ 
+ /**
+@@ -1289,6 +1309,18 @@ void device_links_driver_bound(struct device *dev)
+ 			 * save to drop the managed link completely.
+ 			 */
+ 			device_link_drop_managed(link);
++		} else if (dev_is_best_effort(dev) &&
++			   link->flags & DL_FLAG_INFERRED &&
++			   link->status != DL_STATE_CONSUMER_PROBE &&
++			   !link->supplier->can_match) {
++			/*
++			 * When dev_is_best_effort() is true, we ignore device
++			 * links to suppliers that don't have a driver.  If the
++			 * consumer device still managed to probe, there's no
++			 * point in maintaining a device link in a weird state
++			 * (consumer probed before supplier). So delete it.
++			 */
++			device_link_drop_managed(link);
+ 		} else {
+ 			WARN_ON(link->status != DL_STATE_CONSUMER_PROBE);
+ 			WRITE_ONCE(link->status, DL_STATE_ACTIVE);
+@@ -1655,6 +1687,62 @@ void fw_devlink_drivers_done(void)
+ 	device_links_write_unlock();
+ }
+ 
++/**
++ * wait_for_init_devices_probe - Try to probe any device needed for init
++ *
++ * Some devices might need to be probed and bound successfully before the kernel
++ * boot sequence can finish and move on to init/userspace. For example, a
++ * network interface might need to be bound to be able to mount a NFS rootfs.
++ *
++ * With fw_devlink=on by default, some of these devices might be blocked from
++ * probing because they are waiting on a optional supplier that doesn't have a
++ * driver. While fw_devlink will eventually identify such devices and unblock
++ * the probing automatically, it might be too late by the time it unblocks the
++ * probing of devices. For example, the IP4 autoconfig might timeout before
++ * fw_devlink unblocks probing of the network interface.
++ *
++ * This function is available to temporarily try and probe all devices that have
++ * a driver even if some of their suppliers haven't been added or don't have
++ * drivers.
++ *
++ * The drivers can then decide which of the suppliers are optional vs mandatory
++ * and probe the device if possible. By the time this function returns, all such
++ * "best effort" probes are guaranteed to be completed. If a device successfully
++ * probes in this mode, we delete all fw_devlink discovered dependencies of that
++ * device where the supplier hasn't yet probed successfully because they have to
++ * be optional dependencies.
++ *
++ * Any devices that didn't successfully probe go back to being treated as if
++ * this function was never called.
++ *
++ * This also means that some devices that aren't needed for init and could have
++ * waited for their optional supplier to probe (when the supplier's module is
++ * loaded later on) would end up probing prematurely with limited functionality.
++ * So call this function only when boot would fail without it.
++ */
++void __init wait_for_init_devices_probe(void)
++{
++	if (!fw_devlink_flags || fw_devlink_is_permissive())
++		return;
++
++	/*
++	 * Wait for all ongoing probes to finish so that the "best effort" is
++	 * only applied to devices that can't probe otherwise.
++	 */
++	wait_for_device_probe();
++
++	pr_info("Trying to probe devices needed for running init ...\n");
++	fw_devlink_best_effort = true;
++	driver_deferred_probe_trigger();
++
++	/*
++	 * Wait for all "best effort" probes to finish before going back to
++	 * normal enforcement.
++	 */
++	wait_for_device_probe();
++	fw_devlink_best_effort = false;
++}
++
+ static void fw_devlink_unblock_consumers(struct device *dev)
+ {
+ 	struct device_link *link;
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 11b0fb6414d3..4a55fbb7e0da 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -172,7 +172,7 @@ static bool driver_deferred_probe_enable;
+  * changes in the midst of a probe, then deferred processing should be triggered
+  * again.
+  */
+-static void driver_deferred_probe_trigger(void)
++void driver_deferred_probe_trigger(void)
+ {
+ 	if (!driver_deferred_probe_enable)
+ 		return;
+@@ -580,7 +580,7 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ {
+ 	bool test_remove = IS_ENABLED(CONFIG_DEBUG_TEST_DRIVER_REMOVE) &&
+ 			   !drv->suppress_bind_attrs;
+-	int ret;
++	int ret, link_ret;
+ 
+ 	if (defer_all_probes) {
+ 		/*
+@@ -592,9 +592,9 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 		return -EPROBE_DEFER;
+ 	}
+ 
+-	ret = device_links_check_suppliers(dev);
+-	if (ret)
+-		return ret;
++	link_ret = device_links_check_suppliers(dev);
++	if (link_ret == -EPROBE_DEFER)
++		return link_ret;
+ 
+ 	pr_debug("bus: '%s': %s: probing driver %s with device %s\n",
+ 		 drv->bus->name, __func__, drv->name, dev_name(dev));
+@@ -633,6 +633,15 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 
+ 	ret = call_driver_probe(dev, drv);
+ 	if (ret) {
++		/*
++		 * If fw_devlink_best_effort is active (denoted by -EAGAIN), the
++		 * device might actually probe properly once some of its missing
++		 * suppliers have probed. So, treat this as if the driver
++		 * returned -EPROBE_DEFER.
++		 */
++		if (link_ret == -EAGAIN)
++			ret = -EPROBE_DEFER;
++
+ 		/*
+ 		 * Return probe errors as positive values so that the callers
+ 		 * can distinguish them from other errors.
+diff --git a/include/linux/device/driver.h b/include/linux/device/driver.h
+index 700453017e1c..2114d65b862f 100644
+--- a/include/linux/device/driver.h
++++ b/include/linux/device/driver.h
+@@ -129,6 +129,7 @@ extern struct device_driver *driver_find(const char *name,
+ 					 struct bus_type *bus);
+ extern int driver_probe_done(void);
+ extern void wait_for_device_probe(void);
++void __init wait_for_init_devices_probe(void);
+ 
+ /* sysfs interface for exporting driver attributes */
+ 
 -- 
 2.36.1.255.ge46751e96f-goog
 
