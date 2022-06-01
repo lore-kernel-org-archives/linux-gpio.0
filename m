@@ -2,43 +2,43 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24482C433F5
-	for <linux-gpio@archiver.kernel.org>; Wed,  1 Jun 2022 10:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9F6C433FE
+	for <linux-gpio@archiver.kernel.org>; Wed,  1 Jun 2022 10:04:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351072AbiFAKEo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 1 Jun 2022 06:04:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45244 "EHLO
+        id S1351605AbiFAKEq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 1 Jun 2022 06:04:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351606AbiFAKDV (ORCPT
+        with ESMTP id S1351635AbiFAKDV (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jun 2022 06:03:21 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2059.outbound.protection.outlook.com [40.107.236.59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 914A0101EB
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam08on2085.outbound.protection.outlook.com [40.107.102.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3907AFD37
         for <linux-gpio@vger.kernel.org>; Wed,  1 Jun 2022 03:03:07 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iAX0w+U8teVEmmoOMg4uAVMLUGzotJgc7K+nNNg5CmVeI01PLKnfO5eH9YWiLNbR6xiK5ry9OoBV1IflNiUZ/NBahv25KgXvO1nDpcS5CFa1LcOKTuZ4+lMFN7EpVK0r5Lvzkvw1JCaXqWk54HloD8rt7Bt/KExlpt9ceywVu9yEl9ZDOc+AQYLcAOXwT9/YBm7uPDt8/xTIoReLLp+2n7dPaVHvxx+CU+4FiYJ7YAYk/bb6n28tzgfmycDQnQ3rbSAlX9EsPb/wPLEYPBQo2ZXfIBbu5hZSScpt/Ox3oEqqWy1xVjgi9ereGkpG98ISsQ9WZYhNLWDNr4cQPUcXkg==
+ b=GU1g4JR8XoMrBYSoqtBfDPudssrz/AND1LiXjefaZcOFY5dEVb5Q5x+lRtGby1z30bhtz5jBhroqwh/wr0Bb+gM7RCrGjxibvthRpvWnxb1NNTHTgnzBtzSpBfS9UcYSbCvr6Zvj8ZLuM4vmgeDJmmQDF6sqlFJlitm26A6REQOoF2ys6xYCNxUZ7J6Smx0KZ0+BTpbDKodoDww+Ger2dnbQdqPHS+zq/QTXWPIFK6XKlxtBb9kX9WmazR2l8V1FBSH11nWS/KAZKMwUZIig2wzlkZSeSwLS8eJd0wmRvBJHj5OpWRc6tjwrUacR9grd4NGtRD0GDPcZLQWRGVHhdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NKWe6F/ToXQNjBb//6e8c9AoUJ7FOu45cCKw5hwEe6g=;
- b=RIZQxsSSuUV/rsbMiLmQb/2vctC5wzalah9gDWJ6cqT7Ir8yaXgtj+pyRwIjHxP6MeXarLK2XmKWnx59UzGGL9ho+e4nnPVfYynGRkr1QyqHYPdiuKBjE+sl8Fqt/DdlzH6xvCSpTcwL0LztD3LCcDoE9HB/6MyqNA6rHaTQaY2p1otDWwFu4HcGkfmS5teAFhSP68d2LSLqGFtnxatsgq5fCZmXLQJwdmhaqjZqJqioTQ/Lxa3ZmwS2KQm5roe+l+bOkkw3g9vmaZeKTjhnaYpA7C83WlZpwkIWS22l8fypVuBNALxXLQe+/9zsr1xJ+eTrmhwUcCyyJmddSy+dFw==
+ bh=i6YFFLLxjAxOPok1RlVpLV6jtwHPA0Fw8HpZ8Oxclyw=;
+ b=OH8UjkOmxp/TMPxVfnfUASguDMlMb6SMfpHm4+FAV5RM9tuX5TnlsTf0exq1InQsb0hwQjFEsfVTbiU1z+0ig66gjLZSm66c1t6efJu3annQ3bmwIo45BJtTacwCIcxNCNOEsB6AeDRIfXXaIsNnmVfIJ8Cxu+eoFA7XrrWuBA81CQrDObPG9B49RV+LIlMUQCHW7FBey29SRcFTuf9vj1K3C7iK5Le1cmFpz54o10znSrcOlGcmoeJ7880kEV945X0dJ3j9hKSz9KT7Po++76X20tdm/pGd61hSrW+/lNs54WbtLY7xovtIRM5M0lKqcEdCa4eMk5CuN9FgJLjc1A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NKWe6F/ToXQNjBb//6e8c9AoUJ7FOu45cCKw5hwEe6g=;
- b=E/f1h7j+OtvMit388p4ML0T6ZUY/z9clsURlcWuVt89PCPniI/vh+FIzGbNNpzGuUcPPb4+zDThKj3VAUczVXQzv0yFB2Qzc43YFFwApbiUELagSC0dsER3oJhbwOPZZSPMAwI871anHX04uK8KTejeSGHZyAaAxU2TCq4cptcM=
-Received: from MW4PR04CA0039.namprd04.prod.outlook.com (2603:10b6:303:6a::14)
- by SJ1PR12MB6049.namprd12.prod.outlook.com (2603:10b6:a03:48c::22) with
+ bh=i6YFFLLxjAxOPok1RlVpLV6jtwHPA0Fw8HpZ8Oxclyw=;
+ b=CCYO3f3DPxj2Du9noWeDhS5nxZviZe71bgbbSgk/8CAFOpmrEL9XbG8hPK+mQiD6NRXx2H5kzs23JOr9eE116U5EQYNfht+FTka+bmh4YA5ID7ofeqcrT3fBplGIb9gMjt0zCyisr4KdWohzSisTlorkrzqcd2nqAis7c0p9aKY=
+Received: from CO2PR18CA0044.namprd18.prod.outlook.com (2603:10b6:104:2::12)
+ by MN2PR12MB4176.namprd12.prod.outlook.com (2603:10b6:208:1d5::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5293.19; Wed, 1 Jun
- 2022 10:03:05 +0000
-Received: from CO1NAM11FT048.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:6a:cafe::9e) by MW4PR04CA0039.outlook.office365.com
- (2603:10b6:303:6a::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.12 via Frontend
- Transport; Wed, 1 Jun 2022 10:03:04 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.12; Wed, 1 Jun
+ 2022 10:03:00 +0000
+Received: from CO1NAM11FT059.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:104:2:cafe::a5) by CO2PR18CA0044.outlook.office365.com
+ (2603:10b6:104:2::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.13 via Frontend
+ Transport; Wed, 1 Jun 2022 10:02:59 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -46,21 +46,21 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1NAM11FT048.mail.protection.outlook.com (10.13.175.148) with Microsoft SMTP
+ CO1NAM11FT059.mail.protection.outlook.com (10.13.174.160) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5314.12 via Frontend Transport; Wed, 1 Jun 2022 10:03:04 +0000
+ 15.20.5314.12 via Frontend Transport; Wed, 1 Jun 2022 10:02:59 +0000
 Received: from jatayu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Wed, 1 Jun
- 2022 05:03:01 -0500
+ 2022 05:02:57 -0500
 From:   Basavaraj Natikar <Basavaraj.Natikar@amd.com>
 To:     <Shyam-sundar.S-k@amd.com>, <linus.walleij@linaro.org>,
         <linux-gpio@vger.kernel.org>, <mika.westerberg@linux.intel.com>,
         <andriy.shevchenko@linux.intel.com>
 CC:     Basavaraj Natikar <Basavaraj.Natikar@amd.com>
-Subject: [PATCH v4 3/6] pinctrl: amd: Use PINCTRL_PINGROUP to manage pingroups
-Date:   Wed, 1 Jun 2022 15:32:11 +0530
-Message-ID: <20220601100214.828595-4-Basavaraj.Natikar@amd.com>
+Subject: [PATCH v4 1/6] pinctrl: Add pingroup and define PINCTRL_PINGROUP
+Date:   Wed, 1 Jun 2022 15:32:09 +0530
+Message-ID: <20220601100214.828595-2-Basavaraj.Natikar@amd.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220601100214.828595-1-Basavaraj.Natikar@amd.com>
 References: <20220601100214.828595-1-Basavaraj.Natikar@amd.com>
@@ -72,85 +72,68 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f4aa9f08-a021-4099-5cea-08da43b5ebad
-X-MS-TrafficTypeDiagnostic: SJ1PR12MB6049:EE_
-X-Microsoft-Antispam-PRVS: <SJ1PR12MB6049D4D551E5A56B8430DB30E6DF9@SJ1PR12MB6049.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 479e6405-b081-473f-ee39-08da43b5e8b2
+X-MS-TrafficTypeDiagnostic: MN2PR12MB4176:EE_
+X-Microsoft-Antispam-PRVS: <MN2PR12MB417694DC454E2E6CE980C28AE6DF9@MN2PR12MB4176.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 0OCM3DYxqIrVUMU+c9LMmmXiFIufrdZTXFOknzKG5cnxJMFh8rMDmMblovDwfpIYpn+eMulqzGvZuUMMguZT4vfZ7g1oLJZ9vSEcAM3g6iOJrl1O/nuCJG8K5AknmtzMEdmBfTZ7DnFhXJ1mdSSmI107ZVr8EwcyNFxYFsnsQVCuE7lyxb36KqO3YYlG84J7RGg5BrVT3/2znFmLKaCMOAtbHA0Z88M0AWTGT8BUB/mo5F++G/qzrdVzcjexLkyo1Lxw1Jw7wcrnMwoUacV7XyWBlJr10TFbMxH73qCSLinuui4yxOX/JHF8Z2LWuGekyx/9shx1eZBslBvF0nNMpfBMZSFMqVAgvC3KwNPjxGsILPomC+WdH3zICaRnW7oLKTM3Ism/nDBaQBYtMBxnUFwRrm5EMm2XjALL8KMwGMOxpaKmbbRSM3LkgOxJcgdf0x/ZzNm1P5wgO03TOrh1YChJAERVvcc/oghd/FsYfsHd10F+9T70+V4/a+MDtZSGTsEW9hp4GwjHXZ5c5roQJjTVTf+ILnuHnF/T3FmRLZnhJEnM8poskvRXGuqfTKk3rIw/MOlLf0bdx2OrMmncr/pVlD3kB1w/oAqxgFxy4uWTm2240ijGQNV1fjFaktu1Mx2uQcnScqcbAYr4jgTNxsAgr7En+3L/1WZu5aCZ5aKcKcSIcfuLHPmCbanSL1jg2hsE7ovL0f4OdHOK4Z4xvfYX5WS5KobM4nlVzPxAZiM=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(7696005)(2616005)(82310400005)(1076003)(4326008)(70586007)(26005)(6666004)(8676002)(86362001)(36860700001)(40460700003)(336012)(426003)(83380400001)(47076005)(16526019)(70206006)(186003)(110136005)(316002)(8936002)(508600001)(81166007)(5660300002)(36756003)(356005)(2906002)(36900700001)(2101003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: w7l09Eblz4CcWDCgwiBgFmbj/gjahxVy9cNAKFbzegxinqwy5pYVE3I15oeMG5wA3/AQ0HeZCF41BGeubXLMGt42vqyjlpH6KbngDOx8VVyOz8IKCIt8cXCcvlr90UYUDwrynOYRxO0DqNtYUsvpm6ymsjVyKud7nx7xt3lDcBv5M7jZy+xCnPeA23BJtH2ihvnrXOdAoFzgmFrsKwCF6TMlhT7dcEIthpYREOoIq7hVdXUusq3SVjkMqQ3pjZ5In2GJXFQHq/r+Rtzkf9zqV0GKt5a6WldACzxd+a8qr+Iej32LOWRZuIBGzeXH8K+0aJc2Q2jUZmk9JQJoI5lv+yRBeS/1Fu8AmC2+u5oAMRvsxY40W7TmaUHuw77fYDhcMO9OFkMUz4Lth7q2MPxAg0oCpwayhVZ/h/tLqJPolmm/YaOAqHIoaOpKtrsn4EnI4Uen1GLVMx9kpxQEpotGsI9IRvaE3gKk75yfx6xpgyuzQ3Do41q+19KuyfeuoqNRySy5DVoAnykkRww29vlDzuccLCyo/GIeQhra12mX0QW03WOIPNGq/X85otNLvF0DgjNa++wKBdlTffJtgV/pXbXSZXpeqDEC+tkEe07+tRe6oKdWcw5ICL66oIB2udn9SYf4qXE5VP8CqE36U+JVeyEzVkAUXW7WTN+q6IJaZzzUv7J8yTZ+Kws5VEqo77xFzIH92RCIFaB+hPQIQA4D3R7PvnGGaNjozcFAvPR+nz4=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(16526019)(110136005)(82310400005)(36860700001)(1076003)(2616005)(70206006)(8676002)(70586007)(81166007)(36756003)(316002)(26005)(4326008)(186003)(6666004)(426003)(40460700003)(2906002)(47076005)(86362001)(336012)(7696005)(5660300002)(8936002)(356005)(508600001)(36900700001)(2101003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2022 10:03:04.6620
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2022 10:02:59.6809
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4aa9f08-a021-4099-5cea-08da43b5ebad
+X-MS-Exchange-CrossTenant-Network-Message-Id: 479e6405-b081-473f-ee39-08da43b5e8b2
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT048.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT059.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6049
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4176
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-AMD pingroup can be extended to support multi-function pins.
-Hence use PINCTRL_PINGROUP to manage and represent larger
-number of pingroups inline.
+Add 'struct pingroup' to represent pingroup and 'PINCTRL_PINGROUP'
+macro for inline use. Both are used to manage and represent
+larger number of pingroups.
 
 Signed-off-by: Basavaraj Natikar <Basavaraj.Natikar@amd.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-amd.h | 36 ++++++-----------------------------
- 1 file changed, 6 insertions(+), 30 deletions(-)
+ include/linux/pinctrl/pinctrl.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/pinctrl/pinctrl-amd.h b/drivers/pinctrl/pinctrl-amd.h
-index 551dfa664ed8..ac3ebfaadb7e 100644
---- a/drivers/pinctrl/pinctrl-amd.h
-+++ b/drivers/pinctrl/pinctrl-amd.h
-@@ -291,36 +291,12 @@ static const unsigned uart0_pins[] = {135, 136, 137, 138, 139};
- static const unsigned uart1_pins[] = {140, 141, 142, 143, 144};
+diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
+index 70b45d28e7a9..4c00ab14d766 100644
+--- a/include/linux/pinctrl/pinctrl.h
++++ b/include/linux/pinctrl/pinctrl.h
+@@ -26,6 +26,26 @@ struct pin_config_item;
+ struct gpio_chip;
+ struct device_node;
  
- static const struct pingroup kerncz_groups[] = {
--	{
--		.name = "i2c0",
--		.pins = i2c0_pins,
--		.npins = 2,
--	},
--	{
--		.name = "i2c1",
--		.pins = i2c1_pins,
--		.npins = 2,
--	},
--	{
--		.name = "i2c2",
--		.pins = i2c2_pins,
--		.npins = 2,
--	},
--	{
--		.name = "i2c3",
--		.pins = i2c3_pins,
--		.npins = 2,
--	},
--	{
--		.name = "uart0",
--		.pins = uart0_pins,
--		.npins = 5,
--	},
--	{
--		.name = "uart1",
--		.pins = uart1_pins,
--		.npins = 5,
--	},
-+	PINCTRL_PINGROUP("i2c0", i2c0_pins, 2),
-+	PINCTRL_PINGROUP("i2c1", i2c1_pins, 2),
-+	PINCTRL_PINGROUP("i2c2", i2c2_pins, 2),
-+	PINCTRL_PINGROUP("i2c3", i2c3_pins, 2),
-+	PINCTRL_PINGROUP("uart0", uart0_pins, 5),
-+	PINCTRL_PINGROUP("uart1", uart1_pins, 5),
- };
- 
- #endif
++/**
++ * struct pingroup - provides information on pingroup
++ * @name: a name for pingroup
++ * @pins: an array of pins in the pingroup
++ * @npins: number of pins in the pingroup
++ */
++struct pingroup {
++	const char *name;
++	const unsigned int *pins;
++	size_t npins;
++};
++
++/* Convenience macro to define a single named or anonymous pingroup */
++#define PINCTRL_PINGROUP(_name, _pins, _npins)	\
++((struct pingroup){				\
++	.name = _name,				\
++	.pins = _pins,				\
++	.npins = _npins,			\
++})
++
+ /**
+  * struct pinctrl_pin_desc - boards/machines provide information on their
+  * pins, pads or other muxable units in this struct
 -- 
 2.25.1
 
