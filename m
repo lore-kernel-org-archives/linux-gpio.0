@@ -2,76 +2,76 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B65C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri,  3 Jun 2022 17:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D7DC433EF
+	for <linux-gpio@archiver.kernel.org>; Fri,  3 Jun 2022 22:12:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244911AbiFCR2x (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 3 Jun 2022 13:28:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53116 "EHLO
+        id S1349287AbiFCWMr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 3 Jun 2022 18:12:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235576AbiFCR2x (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jun 2022 13:28:53 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50EE41F627;
-        Fri,  3 Jun 2022 10:28:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654277332; x=1685813332;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wLTeXAoeUUyhIsn/tZNjxHo1eP+7orIJezeKvINLa2Y=;
-  b=TF38aOPWljVl9gVptNqffHzwNYln/IyddnclFhjssEJeM2ZOZUZZ7nNi
-   kSTOK1P9oZo45YQtK2WuNxFlGTr5lzja69Zve+jf6d6vyH4G/pYYKeJe5
-   qSmGepl5R9+UEt2blPYcIBU4WGuQ5HLpt27wZzhcoiGcGjtOtGZKTBGho
-   5EvjP/sFfCL6jEYneF4skm2aqAYuAkm53jLNiAWDjBm+KyadcumprhuzI
-   VKeDRrUSben8vUQAyL+7B53ldp5SoreUozandWLx8I1d1UZ9qw+8t0nId
-   f4osccBl6aiRcDohavWAQg334pqN4evyaUWdtnLN9dcufv2oDO8MnGFnw
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10367"; a="273868600"
-X-IronPort-AV: E=Sophos;i="5.91,275,1647327600"; 
-   d="scan'208";a="273868600"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2022 10:28:51 -0700
-X-IronPort-AV: E=Sophos;i="5.91,275,1647327600"; 
-   d="scan'208";a="553428640"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2022 10:28:43 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1nxB69-000Sdg-8Z;
-        Fri, 03 Jun 2022 20:28:33 +0300
-Date:   Fri, 3 Jun 2022 20:28:33 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dipen Patel <dipenp@nvidia.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, thierry.reding@gmail.com
-Subject: Re: [PATCH v1 1/1] gpiolib: cdev: Fix kernel doc for struct line
-Message-ID: <YppEwbZSad/pRdUv@smile.fi.intel.com>
-References: <20220520164726.60638-1-andriy.shevchenko@linux.intel.com>
- <d796b54d-7559-f9ff-bb4b-4e75a707db2d@nvidia.com>
- <YppEqYTZyWaulKjI@smile.fi.intel.com>
+        with ESMTP id S232802AbiFCWMr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jun 2022 18:12:47 -0400
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C78E15835
+        for <linux-gpio@vger.kernel.org>; Fri,  3 Jun 2022 15:12:43 -0700 (PDT)
+Received: by mail-yb1-xb2f.google.com with SMTP id a64so16026619ybg.11
+        for <linux-gpio@vger.kernel.org>; Fri, 03 Jun 2022 15:12:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eaQovh/jNhn+4ZSDMBLi4Hu4oK5TztBH/SX2adVzs9U=;
+        b=cF2SWqmlBGbAHMCQ/Y2ZQaPZA2abJroAUw3EPMhL10ibnQ2RDBQWtnskYLsj4z+JBJ
+         VlC5XoBi0rYXP8ZW54YRQpggq4D3DdEjq620ad4zbx/lwICxPtNQnk8G6BOGku+WnlKB
+         eHd7UMaIe9LwErEgw04Cm+j3W5m+lgnLXLwZXWgzg61XAs+y9pCe7atSM/IpbIZJ5qpr
+         KHFiMuYf+FFDowUm8qEFU19rCdaZaPsKZ1arUkBDLXviIF86MfYKnenIdT+CTgNjLzfE
+         yLAn8m5ZTV/ktbA1HjAeNTjf3xNG8r9fKVhGauKSZ9sFNQyHlBRb6NP5uQyRGNsSWZYi
+         IRiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eaQovh/jNhn+4ZSDMBLi4Hu4oK5TztBH/SX2adVzs9U=;
+        b=4i0IZfrfR4PGICzt1jrV3r7Z28ykkLuC6p0pPQ6ZIVmcz+06MW1ddvceNO4UEvubGH
+         pENA97vnQWOCEPkmJ/Jn2uyG1tyPq0zcT9HT+xRPMVTamNr/GoiK4QCahjhiZAyRu09Z
+         SGJkSIsP86ysXl64juHUOsyNZoVER6E5WUqcH3O0k2nI/pHH3a/8VZ5DK0UnZlR5cAsk
+         IHsgxYKYehI1Vh2DnEqFRGM0oylAFJ+rVBQZqO0r6FCmiCqzhDMEn6f3R5AelQX0BZI3
+         Qd6rz61fFLlcVA4IJxPkqPZ1TwPRKcwm/E555nnSzDI99RCsf8Ti0kPxZBxHf7miWfSh
+         CkcQ==
+X-Gm-Message-State: AOAM5334AhN8FDg4NwD5YoQENqUMiqpSzNAUGODWcxlAYtk2yijdWlhv
+        mb7/H4iqLdn18gN7RhGOMrsMR4+9ffuG+unldyit6zJGbLM=
+X-Google-Smtp-Source: ABdhPJwpl5rTuc6qpCodp5pwXaQ9tSIMRwfl1NuEQusCWy0vGIqfVIqI9C4ElvVL3ia2VsoXBQxQJMWhqiINtYIlDiA=
+X-Received: by 2002:a25:1256:0:b0:65d:6433:7993 with SMTP id
+ 83-20020a251256000000b0065d64337993mr12863167ybs.626.1654294362647; Fri, 03
+ Jun 2022 15:12:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YppEqYTZyWaulKjI@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20220601152900.1012813-1-Basavaraj.Natikar@amd.com>
+In-Reply-To: <20220601152900.1012813-1-Basavaraj.Natikar@amd.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 4 Jun 2022 00:12:31 +0200
+Message-ID: <CACRpkdaQQxSO+dSbsFdgmzprJTexepmtBqbuX-X-XP2zVzepsw@mail.gmail.com>
+Subject: Re: [PATCH v6 0/6] Enhancements to AMD pinctrl and implementation of
+ AMD pinmux
+To:     Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+Cc:     Shyam-sundar.S-k@amd.com, linux-gpio@vger.kernel.org,
+        mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jun 03, 2022 at 08:28:09PM +0300, Andy Shevchenko wrote:
-> On Fri, May 20, 2022 at 10:10:49AM -0700, Dipen Patel wrote:
-> > Acked-by: Dipen Patel <dipenp@nvidia.com>
-> 
-> Thanks!
-> 
-> Bart, this can be applied, I think.
+On Wed, Jun 1, 2022 at 5:29 PM Basavaraj Natikar
+<Basavaraj.Natikar@amd.com> wrote:
 
-Or do you want it in my PR?
+> Changes include enhancements to pinctrl-amd and implementing
+> AMD pinmux functionalities.
+>
+> v6:
+>         - avoid nested conditionals.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Patches applied for the next kernel cycle (v5.20).
 
+Special thanks to Andy for reviewing and guiding!
 
+Yours,
+Linus Walleij
