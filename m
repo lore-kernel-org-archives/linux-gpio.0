@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3F9CCA481
-	for <linux-gpio@archiver.kernel.org>; Fri,  3 Jun 2022 13:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 670FCCCA473
+	for <linux-gpio@archiver.kernel.org>; Fri,  3 Jun 2022 13:56:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244898AbiFCN4p (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 3 Jun 2022 09:56:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48686 "EHLO
+        id S244908AbiFCN4s (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 3 Jun 2022 09:56:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244889AbiFCN4m (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jun 2022 09:56:42 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F1DE381BB;
-        Fri,  3 Jun 2022 06:56:40 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id n124-20020a1c2782000000b003972dfca96cso4378143wmn.4;
-        Fri, 03 Jun 2022 06:56:40 -0700 (PDT)
+        with ESMTP id S244899AbiFCN4q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jun 2022 09:56:46 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F01E381BB;
+        Fri,  3 Jun 2022 06:56:45 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id q7so10517515wrg.5;
+        Fri, 03 Jun 2022 06:56:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=cx/gp/Zf/QVveVxqbkMsGI/KUlqkSV+vcSUZPyo3kCI=;
-        b=qXerizvOA8TIf75essVIOe5kIDsQgJljHoxAdQ6GXgfCz02Nlq590sXYdsIuX3aj48
-         XEmkYXi33q3Q12V/x1MXN1v2I1om6nkk9ADN880tSaa+USVy4opnTfXO/lmRi06xgNFf
-         W7y7mq+8gsRdLdoVn683ldRY2m+dPPM5/6mpOFQ3dsWaEl9LwtPx9TI3sBJiFcRw5/qU
-         /C7clgzt64udQ9zsdX7RN1dWCkIPx6yFYTY8p6Plv61LXcgfJ2uW6pq3AG7xbsH7Td+V
-         HDqlunMTxMkm1/rM2M2QOriZiFvOp3jW2S7UgN3o3+VsyZlNE4arvt8ORVVdgNdUEYf4
-         q4UA==
+        bh=wzgvlhk4U9BqT2nWRr42a6fdV0TBkWb1ZUnx7kKgOIY=;
+        b=pOeBBazR97DypyM6LTiK8U40Ar4dflOf6Q9S9ZXiC4YFHvmeZ3EfCTlEmFNfiTkdgM
+         0ezllszEUWwdkzSnfk/+WREnKppZPMhm5y60JvruIX9q0L46SnKE16/KWjzCfoKcOnqP
+         Y7kA+q9E040mvz2ScWokPTlA0Pb4C/hgm5nGOYB1tTW4IrfbDlrZthcVenITfslN4Byj
+         C0SMRkdkB+zz2lXiIJLs673qcL7oTZv9FiiLlDqmwBSVTsG4/BdV81oSYiCypaU6RqUR
+         cDTbdjLeShPuDm5EWdq1sxQA5XHxZF3J+tIGs9xESP0+Idp3wrFlsKo8LJLTys2n6SRU
+         TavA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=cx/gp/Zf/QVveVxqbkMsGI/KUlqkSV+vcSUZPyo3kCI=;
-        b=3fyUStSRFWy91LReTBUx+lDKQGG94hpUSUZJg6oREcAEn+N9IpAIBVdmm+RuMoNlAO
-         46zY5GK9m73NIV0O4JyrCtrWH+wPJYMHRsuaxAv9QbZdsipRiSFOQ4knGYyPzi8N/5FI
-         gwmzWZXOtFGom0Gd/z+nm8p/C1JfCp5rfwKjDuUl8q+JWEMt3bhC8PQRsXoBSWdrzHyY
-         4AWMEuei30i67+VEtrYzt09thE9WHzFgSJxz9wu79xqzxEEl9DdyGo/RBjRAyMTYpfB0
-         5FGg25zgEwsASx6V39vyNjWhM7xQ51B8TUz7BzEDw8gpMVsqaIEE4c3ANMkuVkwJ9mbb
-         v9mA==
-X-Gm-Message-State: AOAM533K832LwGzdEZtIMxPBJ/gS7hJF4hOWIEgtGTV5gZ0XmBM2uqSC
-        BrZgGbadShYKxNdJQmcCQTg=
-X-Google-Smtp-Source: ABdhPJwEGnIUPcLW1uipz+weCaHwWbqgYbvBQB1MMtjgwcETbCj7tNXCCG1TdwRsKBlMGw8R5PfJ+g==
-X-Received: by 2002:a05:600c:1d20:b0:397:5a8b:a30a with SMTP id l32-20020a05600c1d2000b003975a8ba30amr8922975wms.89.1654264598832;
-        Fri, 03 Jun 2022 06:56:38 -0700 (PDT)
+        bh=wzgvlhk4U9BqT2nWRr42a6fdV0TBkWb1ZUnx7kKgOIY=;
+        b=mVPSzVJhQRhLy7aF5j725QeZAoJUEmKQAOL6zROzEFRY08lrv4Vp/lzWw2rMN+YcYb
+         aWl2/IItlCfdqYl69pItgX/8aIEHtX/ZxOCS7KG2gA87RJY+QtJSRY0DS0hKyTpvf4R9
+         lesiksFGzikJznwQOyMeG6I1H2QLFPkDdZWvTxB/6EkpGpadYDC38ogqYZPXtm2vXZ0R
+         oHiqlX2AVxKs34VM/MzMnDJplBsoVX/Z8hcv1F/v1bXKWOLQFZvSGJplkLg6hPD3ls25
+         BxRblK4E13DQ//emt+o+lydcV/9fXjzcMsKuI7gQiJRLGtiGghFrn6ntW+zCPe17ZvrV
+         eFMw==
+X-Gm-Message-State: AOAM530GdJDLQy/q0KDvM61HbCKn9Q8FAvyVqoj/CrYXjA6M/cAceoB3
+        yEWnsiN0dghTYgTZeLKY5CM=
+X-Google-Smtp-Source: ABdhPJxWk27J7hnrwlpGkUoyXJSu5Gy7XQue8d6i2hkYd4tc9wmtAPWITUWiUyH9svhg3F5vANmfKw==
+X-Received: by 2002:adf:e8cd:0:b0:210:2b10:ab22 with SMTP id k13-20020adfe8cd000000b002102b10ab22mr8138830wrn.476.1654264603682;
+        Fri, 03 Jun 2022 06:56:43 -0700 (PDT)
 Received: from localhost (92.40.203.126.threembb.co.uk. [92.40.203.126])
-        by smtp.gmail.com with ESMTPSA id h11-20020a5d688b000000b0020e63ab5d78sm7334245wru.26.2022.06.03.06.56.38
+        by smtp.gmail.com with ESMTPSA id be5-20020a05600c1e8500b003942a244ee6sm9041515wmb.43.2022.06.03.06.56.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jun 2022 06:56:38 -0700 (PDT)
+        Fri, 03 Jun 2022 06:56:43 -0700 (PDT)
 From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
 To:     linus.walleij@linaro.org, brgl@bgdev.pl, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, wens@csie.org, jic23@kernel.org,
@@ -55,9 +55,9 @@ To:     linus.walleij@linaro.org, brgl@bgdev.pl, robh+dt@kernel.org,
 Cc:     lars@metafoo.de, rafael@kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 01/10] regmap-irq: Add get_irq_reg to support unusual register layouts
-Date:   Fri,  3 Jun 2022 14:57:05 +0100
-Message-Id: <20220603135714.12007-2-aidanmacdonald.0x0@gmail.com>
+Subject: [PATCH 04/10] dt-bindings: power: supply: axp20x: Add AXP192 compatible
+Date:   Fri,  3 Jun 2022 14:57:08 +0100
+Message-Id: <20220603135714.12007-5-aidanmacdonald.0x0@gmail.com>
 In-Reply-To: <20220603135714.12007-1-aidanmacdonald.0x0@gmail.com>
 References: <20220603135714.12007-1-aidanmacdonald.0x0@gmail.com>
 MIME-Version: 1.0
@@ -66,140 +66,26 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a new callback, get_irq_reg, for regmap IRQ chips, to support devices
-with unusual register layouts. This is required in the rare cases where
-the offset of an IRQ register is not constant with respect to the base
-register. This is probably best illustrated with an example:
-
-            mask    status
-    IRQ0    0x40    0x44
-    IRQ1    0x41    0x45
-    IRQ2    0x42    0x46
-    IRQ3    0x43    0x47
-    IRQ4    0x4a    0x4d
-
-If we set mask_base = 0x40 and status_base = 0x44, the offsets of each
-register relative to the base are:
-
-            mask    status
-    IRQ0    0       0
-    IRQ1    1       1
-    IRQ2    2       2
-    IRQ3    3       3
-    IRQ4    10      9
-
-The existing mapping mechanisms can't include IRQ4 in the same irqchip
-as IRQ0-3 because the offset of IRQ4's register depends on which type
-of register we're asking for, ie. which base register is used.
-
-The get_irq_reg callback allows drivers to specify an arbitrary mapping
-of (base register, register index) pairs to register addresses, instead
-of the default linear mapping "base_register + register_index". This
-allows unusual layouts, like the one above, to be handled using a single
-regmap IRQ chip.
-
-The drawback is that when get_irq_reg is used, it's impossible to use
-bulk reads for status registers even if some of them are contiguous,
-because the mapping is opaque to regmap-irq. This should be acceptable
-for the case of a few infrequently-polled status registers.
+The AXP192's USB power supply is similar to the AXP202 but it has
+different USB current limits.
 
 Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
 ---
- drivers/base/regmap/regmap-irq.c | 19 +++++++++----------
- include/linux/regmap.h           |  5 +++++
- 2 files changed, 14 insertions(+), 10 deletions(-)
+ .../bindings/power/supply/x-powers,axp20x-usb-power-supply.yaml  | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-index 400c7412a7dc..e50437b18284 100644
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -55,7 +55,9 @@ static int sub_irq_reg(struct regmap_irq_chip_data *data,
- 	unsigned int offset;
- 	int reg = 0;
- 
--	if (!chip->sub_reg_offsets || !chip->not_fixed_stride) {
-+	if (chip->get_irq_reg) {
-+		reg = chip->get_irq_reg(base_reg, i);
-+	} else if (!chip->sub_reg_offsets || !chip->not_fixed_stride) {
- 		/* Assume linear mapping */
- 		reg = base_reg + (i * map->reg_stride * data->irq_reg_stride);
- 	} else {
-@@ -97,7 +99,6 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
- 	struct regmap *map = d->map;
- 	int i, j, ret;
- 	u32 reg;
--	u32 unmask_offset;
- 	u32 val;
- 
- 	if (d->chip->runtime_pm) {
-@@ -141,11 +142,11 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
- 				dev_err(d->map->dev,
- 					"Failed to sync unmasks in %x\n",
- 					reg);
--			unmask_offset = d->chip->unmask_base -
--							d->chip->mask_base;
-+
- 			/* clear mask with unmask_base register */
-+			reg = sub_irq_reg(d, d->chip->unmask_base, i);
- 			ret = regmap_irq_update_bits(d,
--					reg + unmask_offset,
-+					reg,
- 					d->mask_buf_def[i],
- 					d->mask_buf[i]);
- 		} else {
-@@ -480,7 +481,7 @@ static irqreturn_t regmap_irq_thread(int irq, void *d)
- 
- 		}
- 	} else if (!map->use_single_read && map->reg_stride == 1 &&
--		   data->irq_reg_stride == 1) {
-+		   data->irq_reg_stride == 1 && !chip->get_irq_reg) {
- 
- 		u8 *buf8 = data->status_reg_buf;
- 		u16 *buf16 = data->status_reg_buf;
-@@ -632,7 +633,6 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
- 	int ret = -ENOMEM;
- 	int num_type_reg;
- 	u32 reg;
--	u32 unmask_offset;
- 
- 	if (chip->num_regs <= 0)
- 		return -EINVAL;
-@@ -773,10 +773,9 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
- 			ret = regmap_irq_update_bits(d, reg,
- 					 d->mask_buf[i], ~d->mask_buf[i]);
- 		else if (d->chip->unmask_base) {
--			unmask_offset = d->chip->unmask_base -
--					d->chip->mask_base;
-+			reg = sub_irq_reg(d, d->chip->unmask_base, i);
- 			ret = regmap_irq_update_bits(d,
--					reg + unmask_offset,
-+					reg,
- 					d->mask_buf[i],
- 					d->mask_buf[i]);
- 		} else
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index 8952fa3d0d59..4828021ab9e8 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -1495,6 +1495,10 @@ struct regmap_irq_sub_irq_map {
-  *		     after handling the interrupts in regmap_irq_handler().
-  * @set_type_virt:   Driver specific callback to extend regmap_irq_set_type()
-  *		     and configure virt regs.
-+ * @get_irq_reg:     Callback to map a register index in range [0, num_regs[
-+ *		     to a register, relative to a specific base register. This
-+ *		     is mainly useful for devices where the register offsets
-+ *		     change depending on the base register.
-  * @irq_drv_data:    Driver specific IRQ data which is passed as parameter when
-  *		     driver specific pre/post interrupt handler is called.
-  *
-@@ -1545,6 +1549,7 @@ struct regmap_irq_chip {
- 	int (*handle_post_irq)(void *irq_drv_data);
- 	int (*set_type_virt)(unsigned int **buf, unsigned int type,
- 			     unsigned long hwirq, int reg);
-+	int (*get_irq_reg)(unsigned int base_reg, int i);
- 	void *irq_drv_data;
- };
- 
+diff --git a/Documentation/devicetree/bindings/power/supply/x-powers,axp20x-usb-power-supply.yaml b/Documentation/devicetree/bindings/power/supply/x-powers,axp20x-usb-power-supply.yaml
+index 0c371b55c9e1..e800b3b97f0d 100644
+--- a/Documentation/devicetree/bindings/power/supply/x-powers,axp20x-usb-power-supply.yaml
++++ b/Documentation/devicetree/bindings/power/supply/x-powers,axp20x-usb-power-supply.yaml
+@@ -22,6 +22,7 @@ properties:
+   compatible:
+     oneOf:
+       - enum:
++          - x-powers,axp192-usb-power-supply
+           - x-powers,axp202-usb-power-supply
+           - x-powers,axp221-usb-power-supply
+           - x-powers,axp223-usb-power-supply
 -- 
 2.35.1
 
