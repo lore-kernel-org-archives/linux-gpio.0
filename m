@@ -2,82 +2,91 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B3FCCA481
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Jun 2022 14:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 786B5C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Jun 2022 15:25:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239963AbiFFOg0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 6 Jun 2022 10:36:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38624 "EHLO
+        id S240556AbiFFPZv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 6 Jun 2022 11:25:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239936AbiFFOgX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jun 2022 10:36:23 -0400
+        with ESMTP id S240507AbiFFPZu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jun 2022 11:25:50 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68876138B79;
-        Mon,  6 Jun 2022 07:36:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D68201C592C;
+        Mon,  6 Jun 2022 08:25:49 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F1B1B6146A;
-        Mon,  6 Jun 2022 14:36:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E025C385A9;
-        Mon,  6 Jun 2022 14:36:14 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7BEA46150D;
+        Mon,  6 Jun 2022 15:25:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFE67C3411F;
+        Mon,  6 Jun 2022 15:25:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654526178;
-        bh=gGiL7UP+UCHE8qudjPfXRRQzkXMWAY+JPxcumutHd/k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SbSnjyVUUzuwWifw9o8ka/MKbGIdxYFvyQxfrdMK2pzJU6WSWASMwRxTdFMWVa0vc
-         c2DezpK2eQTbKxHxLIlDEKXWy4SIKNCFrb4jQU4hPc/MNQJ5T+I4+8ai/+SR/kcD1O
-         E42GmUf/jqDNAmdBtjVsLAi/ycNL7tr3P/0Bl56pDzUrM8mwpRKUi9JVfkzyCa1XkL
-         CfQ06wnNM/T4kcBMHpsh8DzQAaW5aTy76upnfgZRUISqLHdMQWOPrIDBPpnnHgMEhD
-         DsGB0keK5imzKKylWzBR6ZCWVJ/zHBiauSGs421VaI0myOupU5cxhBmi2SMIjht+L+
-         0NoZ4I4VBUeuw==
-Date:   Mon, 6 Jun 2022 15:36:10 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-Cc:     linus.walleij@linaro.org, brgl@bgdev.pl, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, wens@csie.org, jic23@kernel.org,
-        lee.jones@linaro.org, sre@kernel.org, gregkh@linuxfoundation.org,
-        lgirdwood@gmail.com, lars@metafoo.de, rafael@kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/10] regulator: axp20x: Add support for AXP192
-Message-ID: <Yp4Q2mNVjMfgzMv0@sirena.org.uk>
-References: <20220603135714.12007-1-aidanmacdonald.0x0@gmail.com>
- <20220603135714.12007-8-aidanmacdonald.0x0@gmail.com>
+        s=k20201202; t=1654529148;
+        bh=x0uXsLwTwFEBoP5Y4DzIg5PaJ2+JUPnZLKqBkqVTUMo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Vke6M47fqUm7VYR6UmDGcA+tvqYqLIYqhnvzzkaF+a/m0SLTwO13NeNjOLytmswri
+         AdBRm0/svrkxEm9j/9stuQ4YdtwynSd94CIga8MsoLUpFQg7T26FWPitDyo6i5/mNK
+         uBUE+I8Djq13ahPSj5wAX5pXjhPcrfYxMBU/BgBFkCrsXMzTt2z+hyBTnB/4x2exLR
+         sNvAm8kpuQC4e7qnLqpyJ64TSKI42MYsd4c0AFn6RxKi6RXhNk6AcbmlW6Gg1RSfQK
+         S1ZlvDuxBPSYe0Umaix+oOhKO/CqQoWH68gKPEakFqZQQNz/+yYzxGeWp3NyL8LOVm
+         Ap8/FyyuLp2LQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.95)
+        (envelope-from <mchehab@kernel.org>)
+        id 1nyEby-0012P2-4L;
+        Mon, 06 Jun 2022 16:25:46 +0100
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+        Chris Morgan <macromorgan@hotmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 05/23] dt-bindings: mfd: rk808: update rockchip,rk808.yaml reference
+Date:   Mon,  6 Jun 2022 16:25:27 +0100
+Message-Id: <417281c270e098eefed763859480014bec75c883.1654529011.git.mchehab@kernel.org>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <cover.1654529011.git.mchehab@kernel.org>
+References: <cover.1654529011.git.mchehab@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Uk4ld2o6r5VJ06+j"
-Content-Disposition: inline
-In-Reply-To: <20220603135714.12007-8-aidanmacdonald.0x0@gmail.com>
-X-Cookie: Bedfellows make strange politicians.
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Changeset 6c38ca03406e ("dt-bindings: mfd: rk808: Convert bindings to yaml")
+renamed: Documentation/devicetree/bindings/mfd/rk808.txt
+to: Documentation/devicetree/bindings/mfd/rockchip,rk808.yaml.
 
---Uk4ld2o6r5VJ06+j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Update its cross-reference accordingly.
 
-On Fri, Jun 03, 2022 at 02:57:11PM +0100, Aidan MacDonald wrote:
-> Add support for the AXP192 PMIC.
+Fixes: 6c38ca03406e ("dt-bindings: mfd: rk808: Convert bindings to yaml")
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+---
 
-Acked-by: Mark Brown <broonie@kernel.org>
+To avoid mailbombing on a large number of people, only mailing lists were C/C on the cover.
+See [PATCH 00/23] at: https://lore.kernel.org/all/cover.1654529011.git.mchehab@kernel.org/
 
---Uk4ld2o6r5VJ06+j
-Content-Type: application/pgp-signature; name="signature.asc"
+ Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
+index cbcbd31e3ce8..939cb5b6ffea 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
+@@ -27,7 +27,7 @@ Required properties:
+ - pins: List of pins. Valid values of pins properties are: gpio0, gpio1.
+ 
+ First 2 properties must be added in the RK805 PMIC node, documented in
+-Documentation/devicetree/bindings/mfd/rk808.txt
++Documentation/devicetree/bindings/mfd/rockchip,rk808.yaml
+ 
+ Optional properties:
+ -------------------
+-- 
+2.36.1
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmKeENoACgkQJNaLcl1U
-h9BRxwf/b0P1wPzce+1thOKF1W1DrQfBWbTjDTd82nga68AyMAsQD5RuRHN+CD3S
-MU0+osmy2aXsijrMiEVW2Ibm/5QkbfgSpof9qMvnkH4TFVBcRraCYfgo03YLNHCo
-9Z90Kz1iYijvLMhhOdQ+VfxjbsPv7A2tIp8MeTNfKTNqKwWO0g3fHRnrLrUFJk1S
-b4fyQZLP3lCOTTfrFiCdm7c1uzem0lkivDO03iIoEbZUwgrhX9iJ/emSWdhSIqff
-XC7YkvnQ7kCTunE5FQKI3VfpxkgoKzqq+HliMFim/MAxQhD8RS3/i5RE0DLcPj52
-gLiDgoA+I5xLJKMf5muHXY7OwKCcHQ==
-=wwxP
------END PGP SIGNATURE-----
-
---Uk4ld2o6r5VJ06+j--
