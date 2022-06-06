@@ -2,58 +2,58 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 093AEC43334
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Jun 2022 14:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 395F3C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Jun 2022 14:36:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239943AbiFFOgX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S239809AbiFFOgX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 6 Jun 2022 10:36:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38392 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239837AbiFFOgV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jun 2022 10:36:21 -0400
-Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00E0A1339FB
-        for <linux-gpio@vger.kernel.org>; Mon,  6 Jun 2022 07:36:14 -0700 (PDT)
-Received: by mail-ot1-x32e.google.com with SMTP id 61-20020a9d0bc3000000b0060b9bfcfe76so10874145oth.9
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Jun 2022 07:36:14 -0700 (PDT)
+        with ESMTP id S239901AbiFFOgT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jun 2022 10:36:19 -0400
+Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5529131F02
+        for <linux-gpio@vger.kernel.org>; Mon,  6 Jun 2022 07:36:12 -0700 (PDT)
+Received: by mail-ot1-x334.google.com with SMTP id e11-20020a9d6e0b000000b0060afcbafa80so10882650otr.3
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Jun 2022 07:36:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/Y0M6xu1GLZK7ZGrwULwxb7+/2I3xvkk3luUj/TCV1w=;
-        b=vKVh+3cn1sqO6NjItSr8bIrjy5N6mODxNhLm7BkT42S6ggxLyfV4rUVJbuCJKgG6ux
-         10LO6VLEaEyKtgxi4xtzXcYwK/TtyzOYjPna7rCVZwSHpnRmIJXAenU0NYYGXMMENo5s
-         Dy7oZb/r04kcnJuX9AlHFIeIMnuRi91XjS0uKmGSVrjsMo0HlwDJ37i5QoeowbHiSlT+
-         i+Z3uHg4F/HnPfW8SaxX8Hrwy+yc3GQ4oZxHIni8HcDOfj+0FFzUJC0RabmTs/c8o47j
-         ztZ/6l/4cpQILHRsNnMhtPtz36xuCuODcZKwaVhohY0c88cfj9/yuGhtxcDNtqo89k1n
-         TzQQ==
+        bh=Q2777MlCrWf6jryTiFZsDg5chGgCdhRgryHt5py+rzE=;
+        b=diH8ZiHRZY9FdSSg+r7mCyQm4v39feHVxKCXY+sivbww1p9dhsxV3I0Baqr7+TeVyB
+         irIbsOItz9rYAOnVKfXbV9utUyGnuxnVizZR8EYJYJKpaYfFug+W9+jXT6n1MjZPuWhh
+         Q25u1XZj1vz6lp9Lc/N4vtrlskijlOh0rfAFtBrZrZpadx9i+3/L+TWzz418/sDJ4b1z
+         knOFBRlOXeeavEYZY5KnvUIot+IuZOcyoNOzuahk8qVoca5uUPQrATdA0ha/2S/V5I0M
+         QDov0776gS41vaqKgHOdkMP0q0S1cLW6nQXIBfshsiZcu67HACYKn+oJpywAxFg/TCGC
+         F0bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/Y0M6xu1GLZK7ZGrwULwxb7+/2I3xvkk3luUj/TCV1w=;
-        b=dbUyBc9j28deSqYdPPKq+BXPnqmxY/UPrhUohOUzTDo7d2jqL/Esrnrs/DrW7O/dvH
-         g8rlTfTJ3mqSX/OtUWa8oQ1rTli5UUWhrWat/a8OPJiDiooB6GTz5a6A2IQwxu/RCsU6
-         CnmfZ5xr/D7EcOHiE/o2UJ/LpNUXLROE5LY/78xTOm7TDDf/YmBE8BUIb6Q/z3Qt2+m+
-         yehwKtvCZm/eJKmyqqqkCyXSSnQ5nB82C/tjUHTOak6fHJbfzUr3lA6Cxaxd+5VwFEha
-         UFPZ/skr+5H702opYcGJRPwlseQIf05DE3+6gFxdVUX2J/5OPMED9LB/tNy+r64vmN/O
-         u7jw==
-X-Gm-Message-State: AOAM530WdQw4Rd2EO14iiFGCsUfggXdaeu1seORBsi60J+SyHU44NpBx
-        shEOaYM53UM7SOyh3Rhu11LE5g==
-X-Google-Smtp-Source: ABdhPJw0Bv8CWzQuDCGPXI/7xIJd7fqqhe0U+v5fXafIjzmN+St0QQYWG4P8olpSVj+0p6AtjoHxKw==
-X-Received: by 2002:a05:6830:54d:b0:606:a7d6:f809 with SMTP id l13-20020a056830054d00b00606a7d6f809mr10494401otb.139.1654526174292;
-        Mon, 06 Jun 2022 07:36:14 -0700 (PDT)
+        bh=Q2777MlCrWf6jryTiFZsDg5chGgCdhRgryHt5py+rzE=;
+        b=p7eZK6ACJGbrYpL9TSWTUqTfPzerYCrpoD8aUlpHw84izhPGsTfyoYvPTHXtJxgpfL
+         76hdnQneUnvzJDkkp6V86yLX4aLBAiaUO5g0Y3n0excokJl4tvg98Bx8Bj4CuHHLr/Zm
+         hC6aMO/lZsxmRARLs8Pk2ug18qeKm0MmXJqYMcrOegUL1dugVsJvPEi3gy+m+17V6VL4
+         46KxlXRAV31oofFpyW2mWx0ReXfDq4hHzwIKGvdIA1P8zvy2ZGIiYAYIM1sLHus3sYKS
+         auJy1BCE6Lmv9obcSMSGdn6S5YmCIKF9nie1Mvv6hk/IOPa3EKQnGOp0OtrGFq/wK9Bm
+         Vk+g==
+X-Gm-Message-State: AOAM532uv3cem8dRn/eb50wTu20DV8p/R54r+PDZFfF2AUAHTfbjLcFW
+        QnaOxTsQd5/aLd0Jj7f3eK2uOA==
+X-Google-Smtp-Source: ABdhPJwK6LANYJEn1qcfJ4u+9iQE0OOYcHswotmAQeDnQnoBMVzE/2VQEMs7e4dwb0BqvjEG9Ip3VA==
+X-Received: by 2002:a9d:6250:0:b0:60b:e6cf:4942 with SMTP id i16-20020a9d6250000000b0060be6cf4942mr5669186otk.278.1654526171894;
+        Mon, 06 Jun 2022 07:36:11 -0700 (PDT)
 Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id u13-20020a056871008d00b000f5d4e5b9a0sm6942791oaa.2.2022.06.06.07.36.13
+        by smtp.gmail.com with ESMTPSA id u13-20020a056871008d00b000f5d4e5b9a0sm6942791oaa.2.2022.06.06.07.36.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jun 2022 07:36:13 -0700 (PDT)
+        Mon, 06 Jun 2022 07:36:11 -0700 (PDT)
 From:   William Breathitt Gray <william.gray@linaro.org>
 To:     linus.walleij@linaro.org, brgl@bgdev.pl
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         William Breathitt Gray <william.gray@linaro.org>
-Subject: [PATCH 5/5] gpio: ws16c48: Implement and utilize register structures
-Date:   Mon,  6 Jun 2022 10:33:20 -0400
-Message-Id: <2991a4f1db1f12be499124e0059be23535894dad.1654525394.git.william.gray@linaro.org>
+Subject: [PATCH 3/5] gpio: 104-idio-16: Implement and utilize register structures
+Date:   Mon,  6 Jun 2022 10:33:18 -0400
+Message-Id: <a3c220528a1f29455aaf126b5c4435c610b74dce.1654525394.git.william.gray@linaro.org>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <cover.1654525394.git.william.gray@linaro.org>
 References: <cover.1654525394.git.william.gray@linaro.org>
@@ -68,302 +68,163 @@ utilizing named register data structures.
 
 Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
 ---
- drivers/gpio/gpio-ws16c48.c | 119 +++++++++++++++++++++++++-----------
- 1 file changed, 84 insertions(+), 35 deletions(-)
+ drivers/gpio/gpio-104-idio-16.c | 58 +++++++++++++++++++++++----------
+ 1 file changed, 41 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
-index 5078631d8014..663d4491b90f 100644
---- a/drivers/gpio/gpio-ws16c48.c
-+++ b/drivers/gpio/gpio-ws16c48.c
-@@ -17,8 +17,9 @@
+diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+index 45f7ad8573e1..2f8e295f5541 100644
+--- a/drivers/gpio/gpio-104-idio-16.c
++++ b/drivers/gpio/gpio-104-idio-16.c
+@@ -19,6 +19,7 @@
  #include <linux/module.h>
  #include <linux/moduleparam.h>
  #include <linux/spinlock.h>
 +#include <linux/types.h>
  
--#define WS16C48_EXTENT 16
-+#define WS16C48_EXTENT 10
- #define MAX_NUM_WS16C48 max_num_isa_dev(WS16C48_EXTENT)
- 
- static unsigned int base[MAX_NUM_WS16C48];
-@@ -30,6 +31,20 @@ static unsigned int irq[MAX_NUM_WS16C48];
+ #define IDIO_16_EXTENT 8
+ #define MAX_NUM_IDIO_16 max_num_isa_dev(IDIO_16_EXTENT)
+@@ -32,19 +33,42 @@ static unsigned int irq[MAX_NUM_IDIO_16];
  module_param_hw_array(irq, uint, irq, NULL, 0);
- MODULE_PARM_DESC(irq, "WinSystems WS16C48 interrupt line numbers");
+ MODULE_PARM_DESC(irq, "ACCES 104-IDIO-16 interrupt line numbers");
  
 +/**
-+ * struct ws16c48_reg - device register structure
-+ * @port:		Port 0 through 5 I/O
-+ * @int_pending:	Interrupt Pending
-+ * @page_lock:		Register page (Bits 7-6) and I/O port lock (Bits 5-0)
-+ * @pol_enab_int_id:	Interrupt polarity, enable, and ID
++ * struct idio_16_reg - device registers structure
++ * @out0_7:	Read: N/A
++ *		Write: FET Drive Outputs 0-7
++ * @in0_7:	Read: Isolated Inputs 0-7
++ *		Write: Clear Interrupt
++ * @irq_ctl:	Read: Enable IRQ
++ *		Write: Disable IRQ
++ * @unused:	N/A
++ * @out8_15:	Read: N/A
++ *		Write: FET Drive Outputs 8-15
++ * @in8_15:	Read: Isolated Inputs 8-15
++ *		Write: N/A
 + */
-+struct ws16c48_reg {
-+	u8 port[6];
-+	u8 int_pending;
-+	u8 page_lock;
-+	u8 pol_enab_int_id[3];
++struct idio_16_reg {
++	u8 out0_7;
++	u8 in0_7;
++	u8 irq_ctl;
++	u8 unused;
++	u8 out8_15;
++	u8 in8_15;
 +};
 +
  /**
-  * struct ws16c48_gpio - GPIO device private data structure
+  * struct idio_16_gpio - GPIO device private data structure
   * @chip:	instance of the gpio_chip
-@@ -38,7 +53,7 @@ MODULE_PARM_DESC(irq, "WinSystems WS16C48 interrupt line numbers");
   * @lock:	synchronization lock to prevent I/O race conditions
   * @irq_mask:	I/O bits affected by interrupts
-  * @flow_mask:	IRQ flow type mask for the respective I/O bits
 - * @base:	base port address of the GPIO device
 + * @reg:	I/O address offset for the device registers
+  * @out_state:	output bits state
   */
- struct ws16c48_gpio {
+ struct idio_16_gpio {
  	struct gpio_chip chip;
-@@ -47,7 +62,7 @@ struct ws16c48_gpio {
  	raw_spinlock_t lock;
  	unsigned long irq_mask;
- 	unsigned long flow_mask;
 -	void __iomem *base;
-+	struct ws16c48_reg __iomem *reg;
++	struct idio_16_reg __iomem *reg;
+ 	unsigned int out_state;
  };
  
- static int ws16c48_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-@@ -73,7 +88,7 @@ static int ws16c48_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- 
- 	ws16c48gpio->io_state[port] |= mask;
- 	ws16c48gpio->out_state[port] &= ~mask;
--	iowrite8(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-+	iowrite8(ws16c48gpio->out_state[port], ws16c48gpio->reg->port + port);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- 
-@@ -95,7 +110,7 @@ static int ws16c48_gpio_direction_output(struct gpio_chip *chip,
- 		ws16c48gpio->out_state[port] |= mask;
- 	else
- 		ws16c48gpio->out_state[port] &= ~mask;
--	iowrite8(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-+	iowrite8(ws16c48gpio->out_state[port], ws16c48gpio->reg->port + port);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- 
-@@ -118,7 +133,7 @@ static int ws16c48_gpio_get(struct gpio_chip *chip, unsigned offset)
+@@ -79,9 +103,9 @@ static int idio_16_gpio_get(struct gpio_chip *chip, unsigned int offset)
  		return -EINVAL;
- 	}
  
--	port_state = ioread8(ws16c48gpio->base + port);
-+	port_state = ioread8(ws16c48gpio->reg->port + port);
+ 	if (offset < 24)
+-		return !!(ioread8(idio16gpio->base + 1) & mask);
++		return !!(ioread8(&idio16gpio->reg->in0_7) & mask);
  
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- 
-@@ -131,14 +146,16 @@ static int ws16c48_gpio_get_multiple(struct gpio_chip *chip,
- 	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
- 	unsigned long offset;
- 	unsigned long gpio_mask;
--	void __iomem *port_addr;
-+	size_t index;
-+	u8 __iomem *port_addr;
- 	unsigned long port_state;
- 
- 	/* clear bits array to a clean slate */
- 	bitmap_zero(bits, chip->ngpio);
- 
- 	for_each_set_clump8(offset, gpio_mask, mask, chip->ngpio) {
--		port_addr = ws16c48gpio->base + offset / 8;
-+		index = offset / 8;
-+		port_addr = ws16c48gpio->reg->port + index;
- 		port_state = ioread8(port_addr) & gpio_mask;
- 
- 		bitmap_set_value8(bits, port_state, offset);
-@@ -166,7 +183,7 @@ static void ws16c48_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 		ws16c48gpio->out_state[port] |= mask;
- 	else
- 		ws16c48gpio->out_state[port] &= ~mask;
--	iowrite8(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-+	iowrite8(ws16c48gpio->out_state[port], ws16c48gpio->reg->port + port);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
+-	return !!(ioread8(idio16gpio->base + 5) & (mask>>8));
++	return !!(ioread8(&idio16gpio->reg->in8_15) & (mask>>8));
  }
-@@ -178,13 +195,13 @@ static void ws16c48_gpio_set_multiple(struct gpio_chip *chip,
- 	unsigned long offset;
- 	unsigned long gpio_mask;
- 	size_t index;
--	void __iomem *port_addr;
-+	u8 __iomem *port_addr;
- 	unsigned long bitmask;
- 	unsigned long flags;
  
- 	for_each_set_clump8(offset, gpio_mask, mask, chip->ngpio) {
- 		index = offset / 8;
--		port_addr = ws16c48gpio->base + index;
-+		port_addr = ws16c48gpio->reg->port + index;
+ static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
+@@ -91,9 +115,9 @@ static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
  
- 		/* mask out GPIO configured for input */
- 		gpio_mask &= ~ws16c48gpio->io_state[index];
-@@ -219,10 +236,15 @@ static void ws16c48_irq_ack(struct irq_data *data)
- 
- 	port_state = ws16c48gpio->irq_mask >> (8*port);
- 
--	iowrite8(0x80, ws16c48gpio->base + 7);
--	iowrite8(port_state & ~mask, ws16c48gpio->base + 8 + port);
--	iowrite8(port_state | mask, ws16c48gpio->base + 8 + port);
--	iowrite8(0xC0, ws16c48gpio->base + 7);
-+	/* Select Register Page 2; Unlock all I/O ports */
-+	iowrite8(0x80, &ws16c48gpio->reg->page_lock);
-+
-+	/* Clear pending interrupt */
-+	iowrite8(port_state & ~mask, ws16c48gpio->reg->pol_enab_int_id + port);
-+	iowrite8(port_state | mask, ws16c48gpio->reg->pol_enab_int_id + port);
-+
-+	/* Select Register Page 3; Unlock all I/O ports */
-+	iowrite8(0xC0, &ws16c48gpio->reg->page_lock);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- }
-@@ -235,6 +257,7 @@ static void ws16c48_irq_mask(struct irq_data *data)
- 	const unsigned long mask = BIT(offset);
- 	const unsigned port = offset / 8;
- 	unsigned long flags;
-+	unsigned long port_state;
- 
- 	/* only the first 3 ports support interrupts */
- 	if (port > 2)
-@@ -243,10 +266,16 @@ static void ws16c48_irq_mask(struct irq_data *data)
- 	raw_spin_lock_irqsave(&ws16c48gpio->lock, flags);
- 
- 	ws16c48gpio->irq_mask &= ~mask;
-+	port_state = ws16c48gpio->irq_mask >> (8 * port);
-+
-+	/* Select Register Page 2; Unlock all I/O ports */
-+	iowrite8(0x80, &ws16c48gpio->reg->page_lock);
- 
--	iowrite8(0x80, ws16c48gpio->base + 7);
--	iowrite8(ws16c48gpio->irq_mask >> (8*port), ws16c48gpio->base + 8 + port);
--	iowrite8(0xC0, ws16c48gpio->base + 7);
-+	/* Disable interrupt */
-+	iowrite8(port_state, ws16c48gpio->reg->pol_enab_int_id + port);
-+
-+	/* Select Register Page 3; Unlock all I/O ports */
-+	iowrite8(0xC0, &ws16c48gpio->reg->page_lock);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- }
-@@ -259,6 +288,7 @@ static void ws16c48_irq_unmask(struct irq_data *data)
- 	const unsigned long mask = BIT(offset);
- 	const unsigned port = offset / 8;
- 	unsigned long flags;
-+	unsigned long port_state;
- 
- 	/* only the first 3 ports support interrupts */
- 	if (port > 2)
-@@ -267,10 +297,16 @@ static void ws16c48_irq_unmask(struct irq_data *data)
- 	raw_spin_lock_irqsave(&ws16c48gpio->lock, flags);
- 
- 	ws16c48gpio->irq_mask |= mask;
-+	port_state = ws16c48gpio->irq_mask >> (8 * port);
-+
-+	/* Select Register Page 2; Unlock all I/O ports */
-+	iowrite8(0x80, &ws16c48gpio->reg->page_lock);
- 
--	iowrite8(0x80, ws16c48gpio->base + 7);
--	iowrite8(ws16c48gpio->irq_mask >> (8*port), ws16c48gpio->base + 8 + port);
--	iowrite8(0xC0, ws16c48gpio->base + 7);
-+	/* Enable interrupt */
-+	iowrite8(port_state, ws16c48gpio->reg->pol_enab_int_id + port);
-+
-+	/* Select Register Page 3; Unlock all I/O ports */
-+	iowrite8(0xC0, &ws16c48gpio->reg->page_lock);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- }
-@@ -283,6 +319,7 @@ static int ws16c48_irq_set_type(struct irq_data *data, unsigned flow_type)
- 	const unsigned long mask = BIT(offset);
- 	const unsigned port = offset / 8;
- 	unsigned long flags;
-+	unsigned long port_state;
- 
- 	/* only the first 3 ports support interrupts */
- 	if (port > 2)
-@@ -304,9 +341,16 @@ static int ws16c48_irq_set_type(struct irq_data *data, unsigned flow_type)
- 		return -EINVAL;
- 	}
- 
--	iowrite8(0x40, ws16c48gpio->base + 7);
--	iowrite8(ws16c48gpio->flow_mask >> (8*port), ws16c48gpio->base + 8 + port);
--	iowrite8(0xC0, ws16c48gpio->base + 7);
-+	port_state = ws16c48gpio->flow_mask >> (8 * port);
-+
-+	/* Select Register Page 1; Unlock all I/O ports */
-+	iowrite8(0x40, &ws16c48gpio->reg->page_lock);
-+
-+	/* Set interrupt polarity */
-+	iowrite8(port_state, ws16c48gpio->reg->pol_enab_int_id + port);
-+
-+	/* Select Register Page 3; Unlock all I/O ports */
-+	iowrite8(0xC0, &ws16c48gpio->reg->page_lock);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- 
-@@ -325,25 +369,26 @@ static irqreturn_t ws16c48_irq_handler(int irq, void *dev_id)
- {
- 	struct ws16c48_gpio *const ws16c48gpio = dev_id;
- 	struct gpio_chip *const chip = &ws16c48gpio->chip;
-+	struct ws16c48_reg __iomem *const reg = ws16c48gpio->reg;
- 	unsigned long int_pending;
- 	unsigned long port;
- 	unsigned long int_id;
- 	unsigned long gpio;
- 
--	int_pending = ioread8(ws16c48gpio->base + 6) & 0x7;
-+	int_pending = ioread8(&reg->int_pending) & 0x7;
- 	if (!int_pending)
- 		return IRQ_NONE;
- 
- 	/* loop until all pending interrupts are handled */
- 	do {
- 		for_each_set_bit(port, &int_pending, 3) {
--			int_id = ioread8(ws16c48gpio->base + 8 + port);
-+			int_id = ioread8(reg->pol_enab_int_id + port);
- 			for_each_set_bit(gpio, &int_id, 8)
- 				generic_handle_domain_irq(chip->irq.domain,
- 							  gpio + 8*port);
- 		}
- 
--		int_pending = ioread8(ws16c48gpio->base + 6) & 0x7;
-+		int_pending = ioread8(&reg->int_pending) & 0x7;
- 	} while (int_pending);
- 
- 	return IRQ_HANDLED;
-@@ -369,12 +414,16 @@ static int ws16c48_irq_init_hw(struct gpio_chip *gc)
- {
- 	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(gc);
- 
--	/* Disable IRQ by default */
--	iowrite8(0x80, ws16c48gpio->base + 7);
--	iowrite8(0, ws16c48gpio->base + 8);
--	iowrite8(0, ws16c48gpio->base + 9);
--	iowrite8(0, ws16c48gpio->base + 10);
--	iowrite8(0xC0, ws16c48gpio->base + 7);
-+	/* Select Register Page 2; Unlock all I/O ports */
-+	iowrite8(0x80, &ws16c48gpio->reg->page_lock);
-+
-+	/* Disable interrupts for all lines */
-+	iowrite8(0, &ws16c48gpio->reg->pol_enab_int_id[0]);
-+	iowrite8(0, &ws16c48gpio->reg->pol_enab_int_id[1]);
-+	iowrite8(0, &ws16c48gpio->reg->pol_enab_int_id[2]);
-+
-+	/* Select Register Page 3; Unlock all I/O ports */
-+	iowrite8(0xC0, &ws16c48gpio->reg->page_lock);
+ 	*bits = 0;
+ 	if (*mask & GENMASK(23, 16))
+-		*bits |= (unsigned long)ioread8(idio16gpio->base + 1) << 16;
++		*bits |= (unsigned long)ioread8(&idio16gpio->reg->in0_7) << 16;
+ 	if (*mask & GENMASK(31, 24))
+-		*bits |= (unsigned long)ioread8(idio16gpio->base + 5) << 24;
++		*bits |= (unsigned long)ioread8(&idio16gpio->reg->in8_15) << 24;
  
  	return 0;
  }
-@@ -396,8 +445,8 @@ static int ws16c48_probe(struct device *dev, unsigned int id)
+@@ -116,9 +140,9 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 		idio16gpio->out_state &= ~mask;
+ 
+ 	if (offset > 7)
+-		iowrite8(idio16gpio->out_state >> 8, idio16gpio->base + 4);
++		iowrite8(idio16gpio->out_state >> 8, &idio16gpio->reg->out8_15);
+ 	else
+-		iowrite8(idio16gpio->out_state, idio16gpio->base);
++		iowrite8(idio16gpio->out_state, &idio16gpio->reg->out0_7);
+ 
+ 	raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+ }
+@@ -135,9 +159,9 @@ static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
+ 	idio16gpio->out_state |= *mask & *bits;
+ 
+ 	if (*mask & 0xFF)
+-		iowrite8(idio16gpio->out_state, idio16gpio->base);
++		iowrite8(idio16gpio->out_state, &idio16gpio->reg->out0_7);
+ 	if ((*mask >> 8) & 0xFF)
+-		iowrite8(idio16gpio->out_state >> 8, idio16gpio->base + 4);
++		iowrite8(idio16gpio->out_state >> 8, &idio16gpio->reg->out8_15);
+ 
+ 	raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+ }
+@@ -158,7 +182,7 @@ static void idio_16_irq_mask(struct irq_data *data)
+ 	if (!idio16gpio->irq_mask) {
+ 		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
+ 
+-		iowrite8(0, idio16gpio->base + 2);
++		iowrite8(0, &idio16gpio->reg->irq_ctl);
+ 
+ 		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+ 	}
+@@ -177,7 +201,7 @@ static void idio_16_irq_unmask(struct irq_data *data)
+ 	if (!prev_irq_mask) {
+ 		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
+ 
+-		ioread8(idio16gpio->base + 2);
++		ioread8(&idio16gpio->reg->irq_ctl);
+ 
+ 		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+ 	}
+@@ -212,7 +236,7 @@ static irqreturn_t idio_16_irq_handler(int irq, void *dev_id)
+ 
+ 	raw_spin_lock(&idio16gpio->lock);
+ 
+-	iowrite8(0, idio16gpio->base + 1);
++	iowrite8(0, &idio16gpio->reg->in0_7);
+ 
+ 	raw_spin_unlock(&idio16gpio->lock);
+ 
+@@ -232,8 +256,8 @@ static int idio_16_irq_init_hw(struct gpio_chip *gc)
+ 	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(gc);
+ 
+ 	/* Disable IRQ by default */
+-	iowrite8(0, idio16gpio->base + 2);
+-	iowrite8(0, idio16gpio->base + 1);
++	iowrite8(0, &idio16gpio->reg->irq_ctl);
++	iowrite8(0, &idio16gpio->reg->in0_7);
+ 
+ 	return 0;
+ }
+@@ -255,8 +279,8 @@ static int idio_16_probe(struct device *dev, unsigned int id)
  		return -EBUSY;
  	}
  
--	ws16c48gpio->base = devm_ioport_map(dev, base[id], WS16C48_EXTENT);
--	if (!ws16c48gpio->base)
-+	ws16c48gpio->reg = devm_ioport_map(dev, base[id], WS16C48_EXTENT);
-+	if (!ws16c48gpio->reg)
+-	idio16gpio->base = devm_ioport_map(dev, base[id], IDIO_16_EXTENT);
+-	if (!idio16gpio->base)
++	idio16gpio->reg = devm_ioport_map(dev, base[id], IDIO_16_EXTENT);
++	if (!idio16gpio->reg)
  		return -ENOMEM;
  
- 	ws16c48gpio->chip.label = name;
+ 	idio16gpio->chip.label = name;
 -- 
 2.36.1
 
