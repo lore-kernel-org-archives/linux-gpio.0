@@ -2,149 +2,153 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6ACC43334
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Jun 2022 15:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE09C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Jun 2022 16:41:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240683AbiFFP0K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 6 Jun 2022 11:26:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46068 "EHLO
+        id S231137AbiFFQl4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 6 Jun 2022 12:41:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240584AbiFFPZw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jun 2022 11:25:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BADE1CD350;
-        Mon,  6 Jun 2022 08:25:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 97A6761532;
-        Mon,  6 Jun 2022 15:25:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F9A7C341DE;
-        Mon,  6 Jun 2022 15:25:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654529149;
-        bh=JJt0IO+HD16nKaMzBkekejjxzH6zJTBr5QCuFRGczGE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FQvjxVAjYkRkMlnXeUbGK/ffXS9EGiIGJB6czmy41m7BUi+gGlw+X1Vu+xVWhr8kL
-         VZmd7RutDKDJkQ6+PNC2k4EBuWcMiwehnWLeUgcaztEFymFfTpyADom9iKEZ2r0U6R
-         8QTKxcO8tqR2nN17KQ7uaYrNw3fG0aG82GOK9/YW0npuVqsyv4lNhNtBEPuUTmVVIT
-         XOE4wPosVqLjYqBNBMuGPxA5PXF0QCAYswfnxGdyJu5zTk6VkYY/y8ZNnVzT895FLj
-         P6YX/uUQeJAT8yJ01In++Ksk7XfTNpL0aA6OZ6qjgQfLIhLB4De2E2AivHQOnNJprR
-         rbUcjc+xUJibQ==
-Received: from mchehab by mail.kernel.org with local (Exim 4.95)
-        (envelope-from <mchehab@kernel.org>)
-        id 1nyEby-0012On-0x;
-        Mon, 06 Jun 2022 16:25:46 +0100
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        with ESMTP id S230514AbiFFQl4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jun 2022 12:41:56 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E76DF8B;
+        Mon,  6 Jun 2022 09:41:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654533714; x=1686069714;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=RI6UqOh9xYxAqMF8vYRnoqK0g1vUqPho6h1TZ3tsMs0=;
+  b=bKyKxpFTr8JCaLEaBiVouN7EWZFr0Us16prKB3fJBifWg8wFJR6IXnDl
+   lIycI/p1K/l5r062zHjleG0TPR+Mi8sQyzpVGM9xvU525ZR8NPhWZyAx9
+   RCiGVubp0nV5JvoY8rv7/iD5B4yppw0Ps+3RUV0Nq15lWjuWeB+Z6LbjW
+   rqKt90BGoUU+9xacVwwCCcOMqL6ozKBAGtqoMytyg6Cw82tQoPc6fBwCl
+   Gridm6KbiseW3mlYt8WEBnK9iRn9ZbsEE6OZYHsugfH4/Yeyrtt6cRDdv
+   +JMvT39SgGJ7rcG48sZct/kkiFxLEeCH72B425UjKuDXVq2X3ch1pfP4S
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="275446378"
+X-IronPort-AV: E=Sophos;i="5.91,280,1647327600"; 
+   d="scan'208";a="275446378"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2022 09:41:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,280,1647327600"; 
+   d="scan'208";a="906623914"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 06 Jun 2022 09:41:47 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 7CE85A97; Mon,  6 Jun 2022 19:41:50 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Tony Luck <tony.luck@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Wolfram Sang <wsa@kernel.org>, Jean Delvare <jdelvare@suse.de>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Henning Schild <henning.schild@siemens.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Markus Mayer <mmayer@broadcom.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        keyrings@vger.kernel.org, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-cachefs@redhat.com,
-        linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mmc@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
-        x86@kernel.org
-Subject: [PATCH 00/23] Update Documentation/ cross-references
-Date:   Mon,  6 Jun 2022 16:25:22 +0100
-Message-Id: <cover.1654529011.git.mchehab@kernel.org>
-X-Mailer: git-send-email 2.36.1
+        Jonathan Yong <jonathan.yong@intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rric@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Tyser <ptyser@xes-inc.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Mark Gross <markgross@kernel.org>
+Subject: [PATCH v6 03/12] mfd: lpc_ich: Factor out lpc_ich_enable_spi_write()
+Date:   Mon,  6 Jun 2022 19:41:29 +0300
+Message-Id: <20220606164138.66535-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220606164138.66535-1-andriy.shevchenko@linux.intel.com>
+References: <20220606164138.66535-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi John,
+Factor out duplicate code to lpc_ich_enable_spi_write() helper function.
 
-There were a number of DT binding conversions and other docs change that
-were not updated. Address them, in order to keep the cross-references on
-a sane state.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Henning Schild <henning.schild@siemens.com>
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/mfd/lpc_ich.c | 31 ++++++++++++++-----------------
+ 1 file changed, 14 insertions(+), 17 deletions(-)
 
-Patch series is against v5.19-rc1 (and applies cleanly on the top of
-today's -next).
-
-Mauro Carvalho Chehab (23):
-  dt-bindings: mfd: bd9571mwv: update rohm,bd9571mwv.yaml reference
-  dt-bindings: interrupt-controller: update brcm,l2-intc.yaml reference
-  dt-bindings: arm: update vexpress-config.yaml references
-  dt-bindings: reset: update st,stih407-powerdown.yaml references
-  dt-bindings: mfd: rk808: update rockchip,rk808.yaml reference
-  dt-bindings: mmc: exynos-dw-mshc: update samsung,pinctrl.yaml
-    reference
-  docs: netdev: update maintainer-netdev.rst reference
-  docs: filesystems: update netfs-api.rst reference
-  Documentation: update watch_queue.rst references
-  Documentation: KVM: update s390-pv.rst reference
-  Documentation: KVM: update amd-memory-encryption.rst references
-  Documentation: KVM: update msr.rst reference
-  Documentation: KVM: update s390-diag.rst reference
-  MAINTAINERS: update arm,hdlcd.yaml reference
-  MAINTAINERS: update arm,komeda.yaml reference
-  MAINTAINERS: update arm,malidp.yaml reference
-  MAINTAINERS: update cortina,gemini-ethernet.yaml reference
-  MAINTAINERS: update dongwoon,dw9807-vcm.yaml reference
-  MAINTAINERS: update maxim,max77693.yaml reference
-  MAINTAINERS: update snps,axs10x-reset.yaml reference
-  objtool: update objtool.txt references
-  ASoC: wm8731: update wlf,wm8731.yaml reference
-  arch: m68k: q40: README: drop references to IDE driver
-
- .../ABI/testing/sysfs-driver-bd9571mwv-regulator   |  2 +-
- Documentation/admin-guide/kernel-parameters.txt    |  2 +-
- .../bindings/cpufreq/brcm,stb-avs-cpu-freq.txt     |  2 +-
- .../devicetree/bindings/hwmon/vexpress.txt         |  2 +-
- .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |  2 +-
- .../devicetree/bindings/phy/phy-stih407-usb.txt    |  2 +-
- .../devicetree/bindings/pinctrl/pinctrl-rk805.txt  |  2 +-
- .../devicetree/bindings/regulator/vexpress.txt     |  2 +-
- .../bindings/sound/atmel-sam9x5-wm8731-audio.txt   |  2 +-
- Documentation/devicetree/bindings/usb/dwc3-st.txt  |  2 +-
- Documentation/devicetree/bindings/usb/ehci-st.txt  |  2 +-
- Documentation/devicetree/bindings/usb/ohci-st.txt  |  2 +-
- Documentation/security/keys/core.rst               |  2 +-
- Documentation/security/secrets/coco.rst            |  2 +-
- .../translations/it_IT/networking/netdev-FAQ.rst   |  2 +-
- Documentation/virt/kvm/api.rst                     |  4 ++--
- Documentation/virt/kvm/s390/s390-pv-boot.rst       |  2 +-
- Documentation/virt/kvm/x86/hypercalls.rst          |  2 +-
- Documentation/x86/orc-unwinder.rst                 |  2 +-
- MAINTAINERS                                        | 14 +++++++-------
- arch/m68k/q40/README                               |  4 +---
- include/linux/fscache.h                            |  2 +-
- include/linux/objtool.h                            |  2 +-
- include/linux/watch_queue.h                        |  2 +-
- init/Kconfig                                       |  2 +-
- kernel/watch_queue.c                               |  2 +-
- lib/Kconfig.debug                                  |  2 +-
- tools/include/linux/objtool.h                      |  2 +-
- tools/objtool/check.c                              |  2 +-
- 29 files changed, 36 insertions(+), 38 deletions(-)
-
+diff --git a/drivers/mfd/lpc_ich.c b/drivers/mfd/lpc_ich.c
+index 9ffab9aafd81..d9175cb8a2d5 100644
+--- a/drivers/mfd/lpc_ich.c
++++ b/drivers/mfd/lpc_ich.c
+@@ -1100,35 +1100,32 @@ static bool lpc_ich_byt_set_writeable(void __iomem *base, void *data)
+ 	return val & BYT_BCR_WPD;
+ }
+ 
+-static bool lpc_ich_lpt_set_writeable(void __iomem *base, void *data)
++static bool lpc_ich_set_writeable(struct pci_bus *bus, unsigned int devfn)
+ {
+-	struct pci_dev *pdev = data;
+ 	u32 bcr;
+ 
+-	pci_read_config_dword(pdev, BCR, &bcr);
++	pci_bus_read_config_dword(bus, devfn, BCR, &bcr);
+ 	if (!(bcr & BCR_WPD)) {
+ 		bcr |= BCR_WPD;
+-		pci_write_config_dword(pdev, BCR, bcr);
+-		pci_read_config_dword(pdev, BCR, &bcr);
++		pci_bus_write_config_dword(bus, devfn, BCR, bcr);
++		pci_bus_read_config_dword(bus, devfn, BCR, &bcr);
+ 	}
+ 
+ 	return bcr & BCR_WPD;
+ }
+ 
+-static bool lpc_ich_bxt_set_writeable(void __iomem *base, void *data)
++static bool lpc_ich_lpt_set_writeable(void __iomem *base, void *data)
+ {
+-	unsigned int spi = PCI_DEVFN(13, 2);
+-	struct pci_bus *bus = data;
+-	u32 bcr;
++	struct pci_dev *pdev = data;
+ 
+-	pci_bus_read_config_dword(bus, spi, BCR, &bcr);
+-	if (!(bcr & BCR_WPD)) {
+-		bcr |= BCR_WPD;
+-		pci_bus_write_config_dword(bus, spi, BCR, bcr);
+-		pci_bus_read_config_dword(bus, spi, BCR, &bcr);
+-	}
++	return lpc_ich_set_writeable(pdev->bus, pdev->devfn);
++}
+ 
+-	return bcr & BCR_WPD;
++static bool lpc_ich_bxt_set_writeable(void __iomem *base, void *data)
++{
++	struct pci_dev *pdev = data;
++
++	return lpc_ich_set_writeable(pdev->bus, PCI_DEVFN(13, 2));
+ }
+ 
+ static int lpc_ich_init_spi(struct pci_dev *dev)
+@@ -1185,7 +1182,7 @@ static int lpc_ich_init_spi(struct pci_dev *dev)
+ 			res->end = res->start + SPIBASE_APL_SZ - 1;
+ 
+ 			info->set_writeable = lpc_ich_bxt_set_writeable;
+-			info->data = bus;
++			info->data = dev;
+ 		}
+ 
+ 		pci_bus_write_config_byte(bus, p2sb, 0xe1, 0x1);
 -- 
-2.36.1
-
+2.35.1
 
