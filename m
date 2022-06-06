@@ -2,152 +2,120 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D48C43334
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Jun 2022 17:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C450C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Jun 2022 17:19:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229586AbiFFROG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 6 Jun 2022 13:14:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56320 "EHLO
+        id S229910AbiFFRTT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 6 Jun 2022 13:19:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229831AbiFFRNs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jun 2022 13:13:48 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67B793878A;
-        Mon,  6 Jun 2022 10:04:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654535076; x=1686071076;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=8B3oBa5J+/nZtfBbVHEcmqTofXo8TT8r9m6GWKF4qqA=;
-  b=VOXLQdbqEmDOjfQLktWJcGsVLYc1dwvVlie7eG5SUvbUDdvn9gyVgaPj
-   NVIJWWV9F6GN8AS54gAf9qZGQdzBEONDo4/LHw125sVOwcugo/sOnV7YD
-   XzwHpbBeKGqMGcVCxRdgN8cED4XCGmPpiiL6OjZKwqgoUqVCGtZmJyF8e
-   n2bE7jOAo3vR9rmJnSsgUqwO+b5tDL9pZjo3wp+BiiZbLwJrYo974aUST
-   0FsnKdTaaVDmmYCtSqFaLd+bpplGAwVxAuJki9f/rK3taaSyfjlLHcEto
-   NAU/lLHBW7DZqQIHply7dTwWsUownZin9C8saFPr/hfOW8LdeBvPEs6ok
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="277055858"
-X-IronPort-AV: E=Sophos;i="5.91,280,1647327600"; 
-   d="scan'208";a="277055858"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2022 09:42:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,280,1647327600"; 
-   d="scan'208";a="709122657"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jun 2022 09:41:55 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E430A11FA; Mon,  6 Jun 2022 19:41:50 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Tony Luck <tony.luck@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Wolfram Sang <wsa@kernel.org>, Jean Delvare <jdelvare@suse.de>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Henning Schild <henning.schild@siemens.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Yong <jonathan.yong@intel.com>,
+        with ESMTP id S229737AbiFFRSy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jun 2022 13:18:54 -0400
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9672A5130C;
+        Mon,  6 Jun 2022 10:17:53 -0700 (PDT)
+Received: by mail-il1-f172.google.com with SMTP id d6so1584259ilm.4;
+        Mon, 06 Jun 2022 10:17:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=HOgnxEn2ntmtyghL8kOb8yKeTcYGElnyCDEZZ25iRQw=;
+        b=4Rh+2Oy1eY+bYftHCMJntZLu8WUck5porKU754FT8zR6Zrc1ge8btPSGostMVvL3OV
+         SnatfcmfJPoHw7VIetGqvBuSKTKPotPkorQG4RXog3r5KyneQybFCNA9fqODyOKRq3cu
+         JkaTE/OFn4WPIjCWenuUfzjbasK2sDP1uqtUW/40cuMglBuofp7f/Oia3KkhOuYBhBs1
+         zDb4DZfYV+MsuQ3edePHr3aP1Esoi6MOLB2QkKXTxM7QsCyoF5MMBvITQaP0EV0aXodl
+         RetlcCfUZYhfHhYAog1vp4KXM6Gzb+sf29gK7B1QzTvRWwHn+wWbjU7x264uiR/Kwrn1
+         9X9A==
+X-Gm-Message-State: AOAM530qDiQ4MgwcvCqSG0y8EZVSl3dzi7fzsuYTm8MTuU14l6VTbLCZ
+        6jqA5yTXnzCXGGmZPA2C0A==
+X-Google-Smtp-Source: ABdhPJxXRz8rpxHVMQETrBoM9cb8XJJozkw5PJACTm4qK/vhBn8tviwY3PyY58j2eoaPB/u3qpK33w==
+X-Received: by 2002:a05:6e02:184f:b0:2d3:d0c2:d56a with SMTP id b15-20020a056e02184f00b002d3d0c2d56amr13953839ilv.174.1654535872910;
+        Mon, 06 Jun 2022 10:17:52 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id t17-20020a92c0d1000000b002d3da8e4af5sm6121750ilf.23.2022.06.06.10.17.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jun 2022 10:17:52 -0700 (PDT)
+Received: (nullmailer pid 911134 invoked by uid 1000);
+        Mon, 06 Jun 2022 17:17:47 -0000
+Date:   Mon, 6 Jun 2022 12:17:47 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Tyser <ptyser@xes-inc.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Mark Gross <markgross@kernel.org>
-Subject: [PATCH v6 11/12] platform/x86: simatic-ipc: drop custom P2SB bar code
-Date:   Mon,  6 Jun 2022 19:41:37 +0300
-Message-Id: <20220606164138.66535-12-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220606164138.66535-1-andriy.shevchenko@linux.intel.com>
-References: <20220606164138.66535-1-andriy.shevchenko@linux.intel.com>
+        Ingo Molnar <mingo@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        keyrings@vger.kernel.org, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-cachefs@redhat.com,
+        linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mmc@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [PATCH 00/23] Update Documentation/ cross-references
+Message-ID: <20220606171747.GB899329-robh@kernel.org>
+References: <cover.1654529011.git.mchehab@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1654529011.git.mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Henning Schild <henning.schild@siemens.com>
+On Mon, Jun 06, 2022 at 04:25:22PM +0100, Mauro Carvalho Chehab wrote:
+> Hi John,
+> 
+> There were a number of DT binding conversions and other docs change that
+> were not updated. Address them, in order to keep the cross-references on
+> a sane state.
+> 
+> Patch series is against v5.19-rc1 (and applies cleanly on the top of
+> today's -next).
+> 
+> Mauro Carvalho Chehab (23):
+>   dt-bindings: mfd: bd9571mwv: update rohm,bd9571mwv.yaml reference
+>   dt-bindings: interrupt-controller: update brcm,l2-intc.yaml reference
+>   dt-bindings: arm: update vexpress-config.yaml references
+>   dt-bindings: reset: update st,stih407-powerdown.yaml references
+>   dt-bindings: mfd: rk808: update rockchip,rk808.yaml reference
+>   dt-bindings: mmc: exynos-dw-mshc: update samsung,pinctrl.yaml
+>     reference
+>   docs: netdev: update maintainer-netdev.rst reference
+>   docs: filesystems: update netfs-api.rst reference
+>   Documentation: update watch_queue.rst references
+>   Documentation: KVM: update s390-pv.rst reference
+>   Documentation: KVM: update amd-memory-encryption.rst references
+>   Documentation: KVM: update msr.rst reference
+>   Documentation: KVM: update s390-diag.rst reference
+>   MAINTAINERS: update arm,hdlcd.yaml reference
+>   MAINTAINERS: update arm,komeda.yaml reference
+>   MAINTAINERS: update arm,malidp.yaml reference
+>   MAINTAINERS: update cortina,gemini-ethernet.yaml reference
+>   MAINTAINERS: update dongwoon,dw9807-vcm.yaml reference
+>   MAINTAINERS: update maxim,max77693.yaml reference
+>   MAINTAINERS: update snps,axs10x-reset.yaml reference
+>   objtool: update objtool.txt references
+>   ASoC: wm8731: update wlf,wm8731.yaml reference
+>   arch: m68k: q40: README: drop references to IDE driver
 
-The two drivers that used to use this have been switched over to the
-common P2SB accessor, so this code is not needed any longer.
-
-Signed-off-by: Henning Schild <henning.schild@siemens.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/platform/x86/simatic-ipc.c            | 38 -------------------
- .../platform_data/x86/simatic-ipc-base.h      |  2 -
- 2 files changed, 40 deletions(-)
-
-diff --git a/drivers/platform/x86/simatic-ipc.c b/drivers/platform/x86/simatic-ipc.c
-index b599cda5ba3c..26c35e1660cb 100644
---- a/drivers/platform/x86/simatic-ipc.c
-+++ b/drivers/platform/x86/simatic-ipc.c
-@@ -101,44 +101,6 @@ static int register_platform_devices(u32 station_id)
- 	return 0;
- }
- 
--/* FIXME: this should eventually be done with generic P2SB discovery code
-- * the individual drivers for watchdogs and LEDs access memory that implements
-- * GPIO, but pinctrl will not come up because of missing ACPI entries
-- *
-- * While there is no conflict a cleaner solution would be to somehow bring up
-- * pinctrl even with these ACPI entries missing, and base the drivers on pinctrl.
-- * After which the following function could be dropped, together with the code
-- * poking the memory.
-- */
--/*
-- * Get membase address from PCI, used in leds and wdt module. Here we read
-- * the bar0. The final address calculation is done in the appropriate modules
-- */
--u32 simatic_ipc_get_membase0(unsigned int p2sb)
--{
--	struct pci_bus *bus;
--	u32 bar0 = 0;
--	/*
--	 * The GPIO memory is in bar0 of the hidden P2SB device.
--	 * Unhide the device to have a quick look at it, before we hide it
--	 * again.
--	 * Also grab the pci rescan lock so that device does not get discovered
--	 * and remapped while it is visible.
--	 * This code is inspired by drivers/mfd/lpc_ich.c
--	 */
--	bus = pci_find_bus(0, 0);
--	pci_lock_rescan_remove();
--	pci_bus_write_config_byte(bus, p2sb, 0xE1, 0x0);
--	pci_bus_read_config_dword(bus, p2sb, PCI_BASE_ADDRESS_0, &bar0);
--
--	bar0 &= ~0xf;
--	pci_bus_write_config_byte(bus, p2sb, 0xE1, 0x1);
--	pci_unlock_rescan_remove();
--
--	return bar0;
--}
--EXPORT_SYMBOL(simatic_ipc_get_membase0);
--
- static int __init simatic_ipc_init_module(void)
- {
- 	const struct dmi_system_id *match;
-diff --git a/include/linux/platform_data/x86/simatic-ipc-base.h b/include/linux/platform_data/x86/simatic-ipc-base.h
-index 62d2bc774067..39fefd48cf4d 100644
---- a/include/linux/platform_data/x86/simatic-ipc-base.h
-+++ b/include/linux/platform_data/x86/simatic-ipc-base.h
-@@ -24,6 +24,4 @@ struct simatic_ipc_platform {
- 	u8	devmode;
- };
- 
--u32 simatic_ipc_get_membase0(unsigned int p2sb);
--
- #endif /* __PLATFORM_DATA_X86_SIMATIC_IPC_BASE_H */
--- 
-2.35.1
-
+Applied patches 1-5,17,18,20
