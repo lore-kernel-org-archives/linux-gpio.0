@@ -2,123 +2,111 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4207C43334
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jun 2022 10:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D11A3C43334
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jun 2022 10:44:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239223AbiFGKdh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Jun 2022 06:33:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33260 "EHLO
+        id S238639AbiFGKob (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Jun 2022 06:44:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238083AbiFGKdh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jun 2022 06:33:37 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 995EA36153
-        for <linux-gpio@vger.kernel.org>; Tue,  7 Jun 2022 03:33:30 -0700 (PDT)
-Received: from localhost.localdomain ([37.4.249.155]) by
- mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1N1xZX-1nnPaB1OdV-012GtX; Tue, 07 Jun 2022 12:33:10 +0200
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Phil Elwell <phil@raspberrypi.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH RFC] pinctrl: bcm2835: Make the irqchip immutable
-Date:   Tue,  7 Jun 2022 12:33:02 +0200
-Message-Id: <20220607103302.37558-1-stefan.wahren@i2se.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S241396AbiFGKoT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jun 2022 06:44:19 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE31F2983D
+        for <linux-gpio@vger.kernel.org>; Tue,  7 Jun 2022 03:44:10 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id n10so34358664ejk.5
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Jun 2022 03:44:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3byxb1CzUTj5QU1x3INzOXGHXvRaMAU3vicCeu44cJ0=;
+        b=F+lcqmhYEPUW5P4s8xBV283NYgFCNYcPoCR2yP9gyh/tZHJ210Qk7nbepEwKhgr1IU
+         BR4EMHV0UfMv8OSj9gwGS6HNtviEe9YbNLuAyRZL2UVfgT31LV2qnciHntZ2U3irCfN3
+         KXPYLg0Ah4UH7p8V/lTprSITzxn2vgcXYSZQBxaB0KXn8lm1Urcr9Am+5lL6nhOJ6+qj
+         VTSVZDnH+zOEoh2guBNh6tKBQ80+MIGATULn6uWHvtPgRqIYKkxj87tGIpjQUr8wqMgD
+         aXRi8kCBb2Iv5OYw2ufNEQKwBy5C3DCxDcH82k1zXuTe6yNb+i3hhEtHge2e9y+G3Aic
+         F65w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3byxb1CzUTj5QU1x3INzOXGHXvRaMAU3vicCeu44cJ0=;
+        b=2dr9nZBdgI7bHoPR5n59Z2beucPj8CYtB6WBrIAi39u+4UZv+N4wPJDayONnsGtsp4
+         wm7vwmuFqDs+8VNcQ2jmxCN59Z6S1ddgeZlMM2sYTk+i/zydTe4eCdK94liOaVe09LAz
+         bxygnVxZn+ZjpAFuff60qhhlZz8LVXBUwO26bHjtux9QVOxD7dFtT+dR+Yf2Wb3x7Oc9
+         enPxRnBt5gNP+l5PxzYfHNx37G07ziG21/QhUkUAycwdMyeWyUkIPXM2wB9keAAfGmSF
+         EIsIlpGafRt+R+uRaw26NEynoh667JgYyibwP454O8dsU1ajAS3XeHWUX63euoajytYH
+         CvYg==
+X-Gm-Message-State: AOAM532F9CpKklu3tuzU8pluM99XBitDpNjVaOV5iU0KEiMZwrCQmjSz
+        FlgUeGRrUVM9h7Fx66zV0MIU2FU5FjLoSCZXXX4=
+X-Google-Smtp-Source: ABdhPJzm3Ivvt7Y3HN7cHMba/gN8+nFp91hMPr7OF6R7SfmR68fdljP+UOmPygJIHmKeDJ5qhzdUlLkJxRygPsio0yc=
+X-Received: by 2002:a17:906:1193:b0:70d:cf39:a4db with SMTP id
+ n19-20020a170906119300b0070dcf39a4dbmr20495940eja.44.1654598649167; Tue, 07
+ Jun 2022 03:44:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:wc2Paej9uS/fFX4ddH7GuB6OXiMnchWUjsPHePnuASwdDMvG21E
- /ZUO3vQTyb56rVze+MbldfisZrEyzFA/dCbeiZkZwDvc28sU0x38Wx6hPOjvcmSACLe+kIi
- btK8MnG3KDfaoqnOGN83zO+jlNEB86DauMF8D/mNUWl9zTRY8fliTBoUQWkov+Z9pWLmJG+
- FuXv6HfXCiv76OJnmN5Lg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:1bkrg0gViak=:j2gyLm/krd9nKD91j8zKDP
- MACvqL7+p5SS40WQNKUcwSe/+0vkT9PuRzYLaK404yMykQs2p7yIiqEXliFl6cHWo8ms32MkG
- 3027CLkWhq/gK+r+05fPpLG/sxQHLSn46Z/vXU5aQL267wYNSAUGK/bj4Ga7NLkXV7hNfmZrO
- FKIgygphoDEKoU213EbZ42t98S+nCSyEFNT1TJpoUDhaAeF+ebqOjQdAC/fJ+QXrWtg+Zcg55
- 136CHoukWvaFbQ5HJRZMLtOjAsswLMiuFMSzq+WhsOTGR0BbNNeR2LO/FDY8i/GFT2r4KnjTr
- FqnMEic5AcGlBnCPXpKgHgypHcQd02gFmxHxXnasnsE5SWWAlTMkxj3XXZOt7I0l3NDr5eGZ3
- qnMVMv+exMdlS5pkiui6XVeGauyZ0JArpAVfomoRsp8EA9Tpz1057C+aPlf/rAe8YIagH+4/y
- +yPp/hKmzMD40gylHUfKRYy/yxcWnDEiBqbhsuF6jCUe8roqKk3tz0caBByzwbk56KL1ihXmR
- uXsDOPwDBYfTVdiRygLv3H5OgidxTm00cWwHZy9jWKpNBP5foW0vdgR1tS3NaCxndMJvz1MNT
- VVnqo8e59RGGb7jwa8nLyfcSKWSQExp8MdWvjr3M3ISGOrIpkDYs53tLh07i2ngp5ZE272uLR
- vK6KVGxamC1kewmeVjNm+6GsEvTdGyBvjjCdpB22jcu9odqo3ooIAs6Dq9tTeioQe95OosOS9
- sSHLDI/AHCNNkvEzKJmUOgV7EYPaeCDbL3JVWLxc5x3Q62qBthaCnRcH3KY=
+References: <20220525140704.94983-1-brgl@bgdev.pl> <20220525140704.94983-4-brgl@bgdev.pl>
+ <20220603124600.GA35695@sol> <20220604024131.GB13574@sol> <Yp3TmNg2uBlC0XzI@smile.fi.intel.com>
+ <20220607015220.GA9430@sol>
+In-Reply-To: <20220607015220.GA9430@sol>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 7 Jun 2022 12:43:32 +0200
+Message-ID: <CAHp75VduYPzVzpiGpVHrwuRm2nVasJs6QyUTf=CbFcWDTeKJ7g@mail.gmail.com>
+Subject: Re: [libgpiod v2][PATCH 3/5] bindings: python: add examples for v2 API
+To:     Kent Gibson <warthog618@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Darrien <darrien@freenet.de>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Jiri Benc <jbenc@upir.cz>, Joel Savitz <joelsavitz@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Commit 6c846d026d49 ("gpio: Don't fiddle with irqchips marked as
-immutable") added a warning to indicate if the gpiolib is altering the
-internals of irqchips. The bcm2835 pinctrl is also affected by this
-warning.
+On Tue, Jun 7, 2022 at 5:11 AM Kent Gibson <warthog618@gmail.com> wrote:
+> On Mon, Jun 06, 2022 at 01:14:48PM +0300, Andy Shevchenko wrote:
+> > On Sat, Jun 04, 2022 at 10:41:31AM +0800, Kent Gibson wrote:
 
-Fix this by making the irqchip in the bcm2835 pinctrl driver immutable.
+...
 
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
----
+> > From Python programmer perspective it's a good idea, but from GPIO (ABI)
+> > perspective, it may be confusing. Line name is not unique (globally) and
+> > basically not a part of ABI.
+>
+> "basically not a part of the ABI"???
+> Damn - we should've removed it from the line info for uAPI v2 ;-).
 
-Hi, not sure about this change because irq_mask/unmask also uses the
-enable/disable callbacks.
+Yep, names are just aliases for the line numbers, but _not_ unique in
+the system. You may have many lines with the same name alias, but
+number. I remember that we made it stricter in the kernel, but as far
+as I understand there is nothing prevents some drivers to behave
+badly.
 
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+https://elixir.bootlin.com/linux/v5.19-rc1/source/drivers/gpio/gpiolib.c#L331
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index dad453054776..f754f7ed9eb9 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -516,6 +516,8 @@ static void bcm2835_gpio_irq_enable(struct irq_data *data)
- 	unsigned bank = GPIO_REG_OFFSET(gpio);
- 	unsigned long flags;
- 
-+	gpiochip_enable_irq(chip, gpio);
-+
- 	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 	set_bit(offset, &pc->enabled_irq_map[bank]);
- 	bcm2835_gpio_irq_config(pc, gpio, true);
-@@ -537,6 +539,8 @@ static void bcm2835_gpio_irq_disable(struct irq_data *data)
- 	bcm2835_gpio_set_bit(pc, GPEDS0, gpio);
- 	clear_bit(offset, &pc->enabled_irq_map[bank]);
- 	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+
-+	gpiochip_disable_irq(chip, gpio);
- }
- 
- static int __bcm2835_gpio_irq_set_type_disabled(struct bcm2835_pinctrl *pc,
-@@ -693,7 +697,7 @@ static int bcm2835_gpio_irq_set_wake(struct irq_data *data, unsigned int on)
- 	return ret;
- }
- 
--static struct irq_chip bcm2835_gpio_irq_chip = {
-+static const struct irq_chip bcm2835_gpio_irq_chip = {
- 	.name = MODULE_NAME,
- 	.irq_enable = bcm2835_gpio_irq_enable,
- 	.irq_disable = bcm2835_gpio_irq_disable,
-@@ -702,7 +706,7 @@ static struct irq_chip bcm2835_gpio_irq_chip = {
- 	.irq_mask = bcm2835_gpio_irq_disable,
- 	.irq_unmask = bcm2835_gpio_irq_enable,
- 	.irq_set_wake = bcm2835_gpio_irq_set_wake,
--	.flags = IRQCHIP_MASK_ON_SUSPEND,
-+	.flags = (IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_IMMUTABLE),
- };
- 
- static int bcm2835_pctl_get_groups_count(struct pinctrl_dev *pctldev)
-@@ -1280,7 +1284,7 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
- 	pinctrl_add_gpio_range(pc->pctl_dev, &pc->gpio_range);
- 
- 	girq = &pc->gpio_chip.irq;
--	girq->chip = &bcm2835_gpio_irq_chip;
-+	gpio_irq_chip_set_chip(girq, &bcm2835_gpio_irq_chip);
- 	girq->parent_handler = bcm2835_gpio_irq_handler;
- 	girq->num_parents = BCM2835_NUM_IRQS;
- 	girq->parents = devm_kcalloc(dev, BCM2835_NUM_IRQS,
+Also note, we don't validate names given by properties. Any DT may
+contain same names for several lines on the same chip.
+
+...
+
+> Line names should be unique in well configured systems, even if the
+> kernel itself does not guarantee it.
+
+It's not about kernel, but like you said "well configured systems". If
+we push the strict rules, we might be punished by users who want
+actually to have ambiguous names.
+
+...
+
+> But if the purpose of the Python binding is purely to minimally wrap the
+> C ABI, warts and all, then my suggestion should most certainly be ignored.
+
+As i said, it's very good suggestion, but pity we don't strict line
+naming in the kernel.
+
 -- 
-2.25.1
-
+With Best Regards,
+Andy Shevchenko
