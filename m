@@ -2,160 +2,151 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A295CCCA481
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jun 2022 15:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D83C43334
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Jun 2022 16:27:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344564AbiFGPxb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Jun 2022 11:53:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50236 "EHLO
+        id S236923AbiFGQ1M (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Jun 2022 12:27:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344543AbiFGPxH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jun 2022 11:53:07 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1600724F16;
-        Tue,  7 Jun 2022 08:52:54 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id me5so35547277ejb.2;
-        Tue, 07 Jun 2022 08:52:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=sfO6Sx6ARHHT4F4vWizG3z7rq9SAuQ0dqpmQH5iYmfk=;
-        b=ZXIucOCpLDog7eaVEeLBZZfs8ZRcpYc4UcUgMmAUC4I7b9IZK1KAU09g+e5xBQYmoV
-         dX9bE/VVKG4eiyDTG+Yc/QdKfnxyc8rtIsc+SUJJA3Twq3IVT7MvEPL4icNsl1ekvyYw
-         K0tJlBVdvmHc8Pv7naj6AVty0XV4TbIB6H2hvwG3Cdf62w8M8TPnnFFXi5qsqggavgWZ
-         5aHbNVGVB6FbCLOY0RVafwPf3ARKy94pPLTqa8qNylvAJbPOSOeE/NcwOF8jvbO4LP1k
-         D5KC94iKckJ4hlmEyoUkjWMSqMWm2ziH0fzg6JeMqJUZW/sT4NUouhnl9diAAM9V0QHi
-         +51g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=sfO6Sx6ARHHT4F4vWizG3z7rq9SAuQ0dqpmQH5iYmfk=;
-        b=SkVh/DIBCGzyqgAqpUOjnYLJVP5kMh4m9Z6mNvmJoNVUxhA5bR7kRIdJHkktrHgMM8
-         yRJXZKXj8fbE1114iXkyoRchHo9qQ0I8DOFqNGYyJIXdg3NyZe5nUr2w/zTz1Jq7k+5H
-         2uSSq9nhQ+t/ncC0fC1MwKWflTBHGYkZOMXNk+MmUA5MM2zdm/Jd2XKhaH3kmjPVRaEi
-         l6iXLMj+SIO79VQj71u7XvbxCMGFXRFtThwVjPoPgccClNjrMxk6UEmuC88JysDzklUU
-         ScZut1AyBV341chKuLweKz1Z3zlqYcT5weBqqRlCkhmnA8smp7fVv1I09N/MxsymrNUx
-         HuPQ==
-X-Gm-Message-State: AOAM530AkVN7sJyh8hLF04s5M+ePNf5koXuaE6RcY/bPIthpaiDZqoQT
-        VRQL/9ldHu+P3BEEXvghrSk=
-X-Google-Smtp-Source: ABdhPJzS3Eqzx6iXBXaosSFh4oZhOQ7A6RRAlAhs7gjxfyp9TKEV2uv5wJAc76sVs4S+D5oq4dR3Xg==
-X-Received: by 2002:a17:906:94c9:b0:711:e7c8:ba15 with SMTP id d9-20020a17090694c900b00711e7c8ba15mr2194615ejy.414.1654617172464;
-        Tue, 07 Jun 2022 08:52:52 -0700 (PDT)
-Received: from localhost (92.40.203.36.threembb.co.uk. [92.40.203.36])
-        by smtp.gmail.com with ESMTPSA id a14-20020a170906368e00b006fec5cef701sm7820402ejc.197.2022.06.07.08.52.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jun 2022 08:52:51 -0700 (PDT)
-From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-To:     linus.walleij@linaro.org, brgl@bgdev.pl, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, wens@csie.org, jic23@kernel.org,
-        lee.jones@linaro.org, sre@kernel.org, broonie@kernel.org,
-        gregkh@linuxfoundation.org, lgirdwood@gmail.com
-Cc:     lars@metafoo.de, rafael@kernel.org, quic_gurus@quicinc.com,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v2 16/17] power: axp20x_battery: Support battery status without fuel gauge
-Date:   Tue,  7 Jun 2022 16:53:23 +0100
-Message-Id: <20220607155324.118102-17-aidanmacdonald.0x0@gmail.com>
-In-Reply-To: <20220607155324.118102-1-aidanmacdonald.0x0@gmail.com>
-References: <20220607155324.118102-1-aidanmacdonald.0x0@gmail.com>
+        with ESMTP id S235612AbiFGQ1L (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jun 2022 12:27:11 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8111AD;
+        Tue,  7 Jun 2022 09:27:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1654619226; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=HQKTT3DBsyAu7n209v9YKnHJBKH0K7d7v+HEytHeZ1M=;
+        b=mu9UqRZvZAVAHxHN+JE2ruAE3VuYSiSAXtTGLe9aayCyBxSQWNeTtUsDMepw5WZV7ikKE8
+        4/5cYeaUk2owu/LmB03XD5gzqBdWmEFAVdJMy4VoecWU/VTPbIJ4JyhL5Mm1uLyxMxJ3Vm
+        R7RakfMGRs+AlJi05VmICImyElY8aZo=
+Date:   Tue, 07 Jun 2022 17:26:53 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH] pinctrl: ingenic: Convert to immutable irq chip
+To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+Cc:     linus.walleij@linaro.org, linux-mips@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <TC84DR.BXHQAW8NSA8H@crapouillou.net>
+In-Reply-To: <20220607110525.36922-1-aidanmacdonald.0x0@gmail.com>
+References: <20220607110525.36922-1-aidanmacdonald.0x0@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a "has_fg" flag to indicate that the chip has a fuel gauge.
-Report battery full status on chips with no fuel gauge using the
-battery voltage.
+Hi Aidan,
 
-Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
----
- drivers/power/supply/axp20x_battery.c | 34 ++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
+Le mar., juin 7 2022 at 12:05:25 +0100, Aidan MacDonald=20
+<aidanmacdonald.0x0@gmail.com> a =E9crit :
+> Update the driver to use an immutable IRQ chip to fix this warning:
+>=20
+>     "not an immutable chip, please consider fixing it!"
+>=20
+> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+> ---
+>  drivers/pinctrl/pinctrl-ingenic.c | 33=20
+> ++++++++++++++++++-------------
+>  1 file changed, 19 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/pinctrl-ingenic.c=20
+> b/drivers/pinctrl/pinctrl-ingenic.c
+> index 1ca11616db74..37258fb05be3 100644
+> --- a/drivers/pinctrl/pinctrl-ingenic.c
+> +++ b/drivers/pinctrl/pinctrl-ingenic.c
+> @@ -135,7 +135,6 @@ struct ingenic_pinctrl {
+>  struct ingenic_gpio_chip {
+>  	struct ingenic_pinctrl *jzpc;
+>  	struct gpio_chip gc;
+> -	struct irq_chip irq_chip;
+>  	unsigned int irq, reg_base;
+>  };
+>=20
+> @@ -3419,6 +3418,8 @@ static void ingenic_gpio_irq_enable(struct=20
+> irq_data *irqd)
+>  	struct ingenic_gpio_chip *jzgc =3D gpiochip_get_data(gc);
+>  	int irq =3D irqd->hwirq;
+>=20
+> +	gpiochip_enable_irq(gc, irq);
+> +
+>  	if (is_soc_or_above(jzgc->jzpc, ID_JZ4770))
+>  		ingenic_gpio_set_bit(jzgc, JZ4770_GPIO_INT, irq, true);
+>  	else if (is_soc_or_above(jzgc->jzpc, ID_JZ4740))
+> @@ -3443,6 +3444,8 @@ static void ingenic_gpio_irq_disable(struct=20
+> irq_data *irqd)
+>  		ingenic_gpio_set_bit(jzgc, JZ4740_GPIO_SELECT, irq, false);
+>  	else
+>  		ingenic_gpio_set_bit(jzgc, JZ4730_GPIO_GPIER, irq, false);
+> +
+> +	gpiochip_disable_irq(gc, irq);
+>  }
+>=20
+>  static void ingenic_gpio_irq_ack(struct irq_data *irqd)
+> @@ -3684,6 +3687,20 @@ static void ingenic_gpio_irq_release(struct=20
+> irq_data *data)
+>  	return gpiochip_relres_irq(gpio_chip, data->hwirq);
+>  }
+>=20
+> +static const struct irq_chip ingenic_gpio_irqchip =3D {
+> +	.name			=3D "gpio",
+> +	.irq_enable		=3D ingenic_gpio_irq_enable,
+> +	.irq_disable		=3D ingenic_gpio_irq_disable,
+> +	.irq_unmask		=3D ingenic_gpio_irq_unmask,
+> +	.irq_mask		=3D ingenic_gpio_irq_mask,
+> +	.irq_ack		=3D ingenic_gpio_irq_ack,
+> +	.irq_set_type		=3D ingenic_gpio_irq_set_type,
+> +	.irq_set_wake		=3D ingenic_gpio_irq_set_wake,
+> +	.irq_request_resources	=3D ingenic_gpio_irq_request,
+> +	.irq_release_resources	=3D ingenic_gpio_irq_release,
+> +	.flags			=3D IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_IMMUTABLE,
+> +};
+> +
+>  static int ingenic_pinmux_set_pin_fn(struct ingenic_pinctrl *jzpc,
+>  		int pin, int func)
+>  {
+> @@ -4172,20 +4189,8 @@ static int __init ingenic_gpio_probe(struct=20
+> ingenic_pinctrl *jzpc,
+>  	if (!jzgc->irq)
+>  		return -EINVAL;
+>=20
+> -	jzgc->irq_chip.name =3D jzgc->gc.label;
+> -	jzgc->irq_chip.irq_enable =3D ingenic_gpio_irq_enable;
+> -	jzgc->irq_chip.irq_disable =3D ingenic_gpio_irq_disable;
+> -	jzgc->irq_chip.irq_unmask =3D ingenic_gpio_irq_unmask;
+> -	jzgc->irq_chip.irq_mask =3D ingenic_gpio_irq_mask;
+> -	jzgc->irq_chip.irq_ack =3D ingenic_gpio_irq_ack;
+> -	jzgc->irq_chip.irq_set_type =3D ingenic_gpio_irq_set_type;
+> -	jzgc->irq_chip.irq_set_wake =3D ingenic_gpio_irq_set_wake;
+> -	jzgc->irq_chip.irq_request_resources =3D ingenic_gpio_irq_request;
+> -	jzgc->irq_chip.irq_release_resources =3D ingenic_gpio_irq_release;
+> -	jzgc->irq_chip.flags =3D IRQCHIP_MASK_ON_SUSPEND;
+> -
+>  	girq =3D &jzgc->gc.irq;
+> -	girq->chip =3D &jzgc->irq_chip;
+> +	gpio_irq_chip_set_chip(girq, &ingenic_gpio_irqchip);
 
-diff --git a/drivers/power/supply/axp20x_battery.c b/drivers/power/supply/axp20x_battery.c
-index 87fb958f2224..e9547e2d7c48 100644
---- a/drivers/power/supply/axp20x_battery.c
-+++ b/drivers/power/supply/axp20x_battery.c
-@@ -62,6 +62,7 @@ struct axp_data {
- 	int	ccc_scale;
- 	int	ccc_offset;
- 	const int *ccc_table;
-+	bool	has_fg;
- 	bool	has_fg_valid;
- 	int	(*get_max_voltage)(struct axp20x_batt_ps *batt, int *val);
- 	int	(*set_max_voltage)(struct axp20x_batt_ps *batt, int val);
-@@ -190,7 +191,7 @@ static int axp20x_battery_get_prop(struct power_supply *psy,
- 				   union power_supply_propval *val)
- {
- 	struct axp20x_batt_ps *axp20x_batt = power_supply_get_drvdata(psy);
--	int ret = 0, reg, val1;
-+	int ret = 0, reg, val1, val2;
- 
- 	switch (psp) {
- 	case POWER_SUPPLY_PROP_PRESENT:
-@@ -224,6 +225,34 @@ static int axp20x_battery_get_prop(struct power_supply *psy,
- 			return 0;
- 		}
- 
-+		/*
-+		 * If the chip does not have a fuel gauge, we check battery full status
-+		 * using voltage instead.
-+		 */
-+		if (!axp20x_batt->data->has_fg) {
-+			ret = axp20x_batt->data->get_max_voltage(axp20x_batt, &val1);
-+			if (ret)
-+				return ret;
-+
-+			ret = iio_read_channel_processed(axp20x_batt->batt_v, &val2);
-+			if (ret)
-+				return ret;
-+
-+			/* IIO subsystem reports voltage in mV but we need uV */
-+			val2 *= 1000;
-+
-+			/*
-+			 * According to the AXP192 datasheet, charging will restart if
-+			 * the battery voltage drops below V_rch = V_tgt - 0.1 V, so we
-+			 * report the battery is full if its voltage is at least V_rch.
-+			 */
-+			if (val2 >= val1 - 100000)
-+				val->intval = POWER_SUPPLY_STATUS_FULL;
-+			else
-+				val->intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
-+			break;
-+		}
-+
- 		ret = regmap_read(axp20x_batt->regmap, AXP20X_FG_RES, &val1);
- 		if (ret)
- 			return ret;
-@@ -546,6 +575,7 @@ static const struct power_supply_desc axp20x_batt_ps_desc = {
- static const struct axp_data axp209_data = {
- 	.ccc_scale = 100000,
- 	.ccc_offset = 300000,
-+	.has_fg = true,
- 	.get_max_voltage = axp20x_battery_get_max_voltage,
- 	.set_max_voltage = axp20x_battery_set_max_voltage,
- };
-@@ -553,6 +583,7 @@ static const struct axp_data axp209_data = {
- static const struct axp_data axp221_data = {
- 	.ccc_scale = 150000,
- 	.ccc_offset = 300000,
-+	.has_fg = true,
- 	.has_fg_valid = true,
- 	.get_max_voltage = axp22x_battery_get_max_voltage,
- 	.set_max_voltage = axp22x_battery_set_max_voltage,
-@@ -561,6 +592,7 @@ static const struct axp_data axp221_data = {
- static const struct axp_data axp813_data = {
- 	.ccc_scale = 200000,
- 	.ccc_offset = 200000,
-+	.has_fg = true,
- 	.has_fg_valid = true,
- 	.get_max_voltage = axp813_battery_get_max_voltage,
- 	.set_max_voltage = axp20x_battery_set_max_voltage,
--- 
-2.35.1
+This will change each irq_chip's name to "gpio", do we want that?
+
+You didn't remove jzgc->irq_chip, so maybe what you could do is
+jzgc->irq_chip =3D ingenic_gpio_irqchip;
+jzgc->irq_chip.name =3D jzgc->gc.label;
+gpio_irq_chip_set_chip(girq, &jzgc->irq_chip);
+
+Thoughts?
+
+Cheers,
+-Paul
+
+>  	girq->parent_handler =3D ingenic_gpio_irq_handler;
+>  	girq->num_parents =3D 1;
+>  	girq->parents =3D devm_kcalloc(dev, 1, sizeof(*girq->parents),
+> --
+> 2.35.1
+>=20
+
 
