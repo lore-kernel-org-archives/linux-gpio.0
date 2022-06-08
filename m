@@ -2,175 +2,387 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5728CCA47F
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jun 2022 08:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8749AC433EF
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Jun 2022 09:11:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232296AbiFHIvp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 8 Jun 2022 04:51:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55268 "EHLO
+        id S234608AbiFHJLB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Jun 2022 05:11:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231288AbiFHIvI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2022 04:51:08 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B32491AFAD4;
-        Wed,  8 Jun 2022 01:08:22 -0700 (PDT)
-X-UUID: 3c3a4f0d82bf45c38212bc910e100c7c-20220608
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:8d42f104-f239-479f-95c7-ff76915e1037,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
-        ON:release,TS:0
-X-CID-META: VersionHash:2a19b09,CLOUDID:79af13e5-2ba2-4dc1-b6c5-11feb6c769e0,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:-5,EDM:-3,IP:nil,URL:1,File:ni
-        l,QS:0,BEC:nil
-X-UUID: 3c3a4f0d82bf45c38212bc910e100c7c-20220608
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
-        (envelope-from <guodong.liu@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 2025737687; Wed, 08 Jun 2022 16:08:15 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Wed, 8 Jun 2022 16:08:14 +0800
-Received: from mhfsdcap04 (10.17.3.154) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 8 Jun 2022 16:08:13 +0800
-Message-ID: <1332454e2733d48fdf2396bcaed37bc3e33616b5.camel@mediatek.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: mt8192: Switch
- drive-strength-adv for -microamp
-From:   Guodong Liu <guodong.liu@mediatek.com>
-To:     "=?ISO-8859-1?Q?N=EDcolas?= F. R. A. Prado" <nfraprado@collabora.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, <kernel@collabora.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Wed, 8 Jun 2022 16:08:13 +0800
-In-Reply-To: <20220531221954.160036-2-nfraprado@collabora.com>
-References: <20220531221954.160036-1-nfraprado@collabora.com>
-         <20220531221954.160036-2-nfraprado@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        with ESMTP id S234347AbiFHJKW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2022 05:10:22 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B69733A3B;
+        Wed,  8 Jun 2022 01:31:43 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id u12so39979671eja.8;
+        Wed, 08 Jun 2022 01:31:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=05Ze3w1gBUGg1JCmvF8rRzp+ctrPAl3NkBFWLSeQ24U=;
+        b=baATDqfpfOzA5hCGslKv0amuCE4OEixmu00pLYI0MXoefT4arqenwxxjf/F3p8h77j
+         IFsHzj+wT82Jl3/LFj7nqj9MqhvTbONf02ixYJcuyA1SS6C0j855eEyU8M4xprUkpTum
+         uGY05NhvlZpx9Bmz260u1+50NUVFtvioOydpxYlRoHQXbBRk0vFFdewNtnMXlTDDE0j1
+         KTzDKDWg83iaoMbHSpT8DJJtcBDqEy6yrAVnMSMBYZynEpXq0QkY4O3jM+e01ahkPuSC
+         fLx0WRl2VQu/v078EAQfMyfHsWX77fYFMzLYWXlfP11cbmWDVSVj4UOk4snGMWaW9/Pl
+         vVRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=05Ze3w1gBUGg1JCmvF8rRzp+ctrPAl3NkBFWLSeQ24U=;
+        b=gD6f8o/vNi8HB7EKf0ds4PFil0b+Oxlc1tuvB5oAIs4EgcvS2vXUDhn7ReZf6JdkwB
+         yuonzy8A7jk58WMyTvNr+qJ2MkmTZztLyAVJ9pp4R3bHpmZYwwTooS10GidUsw9FHzia
+         20JSj616Qe07o2tdUBKpuQDb/UaJ+2MiCCnToKIXg3/ZEDNKOYR6JCYhQzFLQRh28jsa
+         xH90si5unDBqsWbwCfxPYe2goaUSWziy4M3edoSvr+eU+HqjutNlQV5s9nxYL3hzJ4PN
+         WHkFaezvDbxeDo8BG0HwGwB30lyC8m16uANSpz00m+9tybLB3lzf7fV3zPkYZe7koz7Y
+         zmeg==
+X-Gm-Message-State: AOAM533Fb4Pojjq9OsYB9UpslaVwHyZVu2INYN0ypHkUwrhh/c3TJk/H
+        7uH93+LX1nelryyK0bQZw0A=
+X-Google-Smtp-Source: ABdhPJysrBVnztJ6h0FMq3PJy3ta7yFoNeenpRKOUyjER30umtjmp1zfqrsPea7D/ZIKw2XFO2YRUA==
+X-Received: by 2002:a17:906:2cc8:b0:6fd:d8d8:b8f3 with SMTP id r8-20020a1709062cc800b006fdd8d8b8f3mr30721334ejr.384.1654677102016;
+        Wed, 08 Jun 2022 01:31:42 -0700 (PDT)
+Received: from [192.168.0.182] ([188.24.112.100])
+        by smtp.gmail.com with ESMTPSA id i2-20020a056402054200b004315050d7dfsm5756616edx.81.2022.06.08.01.31.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jun 2022 01:31:41 -0700 (PDT)
+Message-ID: <67390b8c-c7d3-15d0-afcd-3b3356058624@gmail.com>
+Date:   Wed, 8 Jun 2022 11:31:40 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: adc: add AD4130
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-iio@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Cosmin Tanislav <cosmin.tanislav@analog.com>
+References: <20220419150828.191933-1-cosmin.tanislav@analog.com>
+ <20220419150828.191933-2-cosmin.tanislav@analog.com>
+ <Ymc+urR3N8eLLKxl@robh.at.kernel.org>
+From:   Cosmin Tanislav <demonsingur@gmail.com>
+In-Reply-To: <Ymc+urR3N8eLLKxl@robh.at.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-MTK:  N
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
------Original Message-----
-From: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com
->, kernel@collabora.com, Nícolas F. R. A. Prado <
-nfraprado@collabora.com>, Krzysztof Kozlowski <
-krzysztof.kozlowski+dt@linaro.org>, Matthias Brugger <
-matthias.bgg@gmail.com>, Rob Herring <robh+dt@kernel.org>, Sean Wang <
-sean.wang@mediatek.com>, devicetree@vger.kernel.org, 
-linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
-linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 1/2] dt-bindings: pinctrl: mt8192: Switch drive-
-strength-adv for -microamp
-Date: Tue, 31 May 2022 18:19:53 -0400
 
-Commit e5fabbe43f3f ("pinctrl: mediatek: paris: Support generic
-PIN_CONFIG_DRIVE_STRENGTH_UA") added support for using
-drive-strength-microamp instead of mediatek,drive-strength-adv.
 
-Since there aren't any users of mediatek,drive-strength-adv on mt8192
-yet, remove this property and add drive-strength-microamp in its place,
-which has a clearer meaning.
+On 4/26/22 03:37, Rob Herring wrote:
+> On Tue, Apr 19, 2022 at 06:08:27PM +0300, Cosmin Tanislav wrote:
+>> AD4130-8 is an ultra-low power, high precision, measurement solution for
+>> low bandwidth battery operated applications.
+>>
+>> The fully integrated AFE (Analog Front-End) includes a multiplexer for up
+>> to 16 single-ended or 8 differential inputs, PGA (Programmable Gain
+>> Amplifier), 24-bit Sigma-Delta ADC, on-chip reference and oscillator,
+>> selectable filter options, smart sequencer, sensor biasing and excitation
+>> options, diagnostics, and a FIFO buffer.
+>>
+>> Signed-off-by: Cosmin Tanislav <cosmin.tanislav@analog.com>
+>> ---
+>>   .../bindings/iio/adc/adi,ad4130.yaml          | 264 ++++++++++++++++++
+>>   1 file changed, 264 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad4130.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4130.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4130.yaml
+>> new file mode 100644
+>> index 000000000000..32996b62cd20
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4130.yaml
+>> @@ -0,0 +1,264 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +# Copyright 2022 Analog Devices Inc.
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/iio/adc/adi,ad4130.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Analog Devices AD4130 ADC device driver
+>> +
+>> +maintainers:
+>> +  - Cosmin Tanislav <cosmin.tanislav@analog.com>
+>> +
+>> +description: |
+>> +  Bindings for the Analog Devices AD4130 ADC. Datasheet can be found here:
+>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/AD4130-8.pdf
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - adi,ad4130-8-16-lfcsp
+>> +      - adi,ad4130-8-16-wlcsp
+>> +      - adi,ad4130-8-24-lfcsp
+>> +      - adi,ad4130-8-24-wlcsp
+> 
+> What is lfcsp? wlcsp seems to be the package type which generally
+> shouldn't be part of the compatible.
+> 
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +    description: phandle to the master clock (mclk)
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: mclk
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  interrupt-names:
+>> +    description: |
+> 
+> Don't need '|' if there is no formatting to preserve.
+> 
+>> +      Specify which interrupt pin should be configured as Data Ready / FIFO
+>> +      interrupt.
+>> +      Default if not supplied is dout-int.
+> 
+>         default: dout-int
+> 
 
-While at it, add a new 'if' block to validate that drive-strength and
-drive-strength-microamp aren't used together, since they're mutually
-exclusive.
+By the way. interrupt-names cannot have a default value.
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: AngeloGioacchino Del Regno <
-angelogiocchino.delregno@collabora.com>
----
+Documentation/devicetree/bindings/iio/adc/adi,ad4130.yaml:
+properties:interrupt-names: Additional properties are not allowed
+('default' was unexpected)
+from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
 
-Changes in v2:
-- Added 'if' block to make drive-strength and drive-strength-microamp
-  mutually exclusive
-- Changed commit title to be more precise
-- Dropped Fixes tag
-
- .../bindings/pinctrl/pinctrl-mt8192.yaml      | 35 ++++++-------------
- 1 file changed, 10 insertions(+), 25 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-
-mt8192.yaml b/Documentation/devicetree/bindings/pinctrl/pinctrl-
-mt8192.yaml
-index c90a132fbc79..c8092b218f2f 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8192.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8192.yaml
-@@ -80,31 +80,8 @@ patternProperties:
-               dt-bindings/pinctrl/mt65xx.h. It can only support
-2/4/6/8/10/12/14/16mA in mt8192.
-             enum: [2, 4, 6, 8, 10, 12, 14, 16]
- 
--          mediatek,drive-strength-adv:
--            description: |
--              Describe the specific driving setup property.
--              For I2C pins, the existing generic driving setup can
-only support
--              2/4/6/8/10/12/14/16mA driving. But in specific driving
-setup, they
--              can support 0.125/0.25/0.5/1mA adjustment. If we enable
-specific
--              driving setup, the existing generic setup will be
-disabled.
--              The specific driving setup is controlled by E1E0EN.
--              When E1=0/E0=0, the strength is 0.125mA.
--              When E1=0/E0=1, the strength is 0.25mA.
--              When E1=1/E0=0, the strength is 0.5mA.
--              When E1=1/E0=1, the strength is 1mA.
--              EN is used to enable or disable the specific driving
-setup.
--              Valid arguments are described as below:
--              0: (E1, E0, EN) = (0, 0, 0)
--              1: (E1, E0, EN) = (0, 0, 1)
--              2: (E1, E0, EN) = (0, 1, 0)
--              3: (E1, E0, EN) = (0, 1, 1)
--              4: (E1, E0, EN) = (1, 0, 0)
--              5: (E1, E0, EN) = (1, 0, 1)
--              6: (E1, E0, EN) = (1, 1, 0)
--              7: (E1, E0, EN) = (1, 1, 1)
--              So the valid arguments are from 0 to 7.
--            $ref: /schemas/types.yaml#/definitions/uint32
--            enum: [0, 1, 2, 3, 4, 5, 6, 7]
-
-Can't remove mediatek,drive-strength-adv property, I2C pins will ofter
-use this property
-
-+          drive-strength-microamp:
-+            enum: [125, 250, 500, 1000]
- 
-           mediatek,pull-up-adv:
-             description: |
-@@ -138,6 +115,14 @@ patternProperties:
-         required:
-           - pinmux
- 
-+        allOf:
-+          - if:
-+              required:
-+                - drive-strength-microamp
-+            then:
-+              properties:
-+                drive-strength: false
-+
-         additionalProperties: false
- 
-Property drive-strength-microamp and drive-strength aren't exclusive,
-just i2c pins support drive-strength-microamp property .
-
- allOf:
-
+>> +    enum:
+>> +      - dout-int
+>> +      - clk
+>> +      - p2
+>> +      - dout
+>> +
+>> +  '#address-cells':
+>> +    const: 1
+>> +
+>> +  '#size-cells':
+>> +    const: 0
+>> +
+>> +  refin1-supply:
+>> +    description: refin1 supply. Can be used as reference for conversion.
+>> +
+>> +  refin2-supply:
+>> +    description: refin2 supply. Can be used as reference for conversion.
+>> +
+>> +  avdd-supply:
+>> +    description: AVDD voltage supply. Can be used as reference for conversion.
+>> +
+>> +  iovdd-supply:
+>> +    description: IOVDD voltage supply. Used for the chip interface.
+>> +
+>> +  spi-max-frequency:
+>> +    maximum: 5000000
+>> +
+>> +  adi,int-clk-out:
+>> +    description: Specify if the internal clock should be exposed on the CLK pin.
+>> +    type: boolean
+>> +
+>> +  adi,ext-clk-freq:
+>> +    description: Specify the frequency of the external clock.
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    enum: [76800, 153600]
+>> +    default: 76800
+>> +
+>> +  adi,bipolar:
+>> +    description: Specify if the device should be used in bipolar mode.
+>> +    type: boolean
+>> +
+>> +  adi,vbias-pins:
+>> +    description: Analog inputs to apply a voltage bias of (AVDD − AVSS) / 2 to.
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +    maxItems: 16
+>> +    items:
+>> +      minimum: 0
+>> +      maximum: 15
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +
+>> +patternProperties:
+>> +  "^channel@([0-9]|1[0-5])$":
+>> +    type: object
+>> +    $ref: adc.yaml
+> 
+>         unevaluatedProperties: false
+> 
+>> +
+>> +    properties:
+>> +      reg:
+>> +        description: |
+>> +          The channel number.
+>> +        items:
+>> +          minimum: 0
+>> +          maximum: 15
+>> +
+>> +      diff-channels:
+>> +        description: |
+>> +          Besides the analog inputs available, internal inputs can be used.
+>> +          16: Internal temperature sensor.
+>> +          17: AVSS
+>> +          18: Internal reference
+>> +          19: DGND
+>> +          20: (AVDD − AVSS)/6+
+>> +          21: (AVDD − AVSS)/6-
+>> +          22: (IOVDD − DGND)/6+
+>> +          23: (IOVDD − DGND)/6-
+>> +          24: (ALDO − AVSS)/6+
+>> +          25: (ALDO − AVSS)/6-
+>> +          26: (DLDO − DGND)/6+
+>> +          27: (DLDO − DGND)/6-
+>> +          28: V_MV_P
+>> +          29: V_MV_M
+>> +        items:
+>> +          minimum: 0
+>> +          maximum: 29
+>> +
+>> +      adi,reference-select:
+>> +        description: |
+>> +          Select the reference source to use when converting on the
+>> +          specific channel. Valid values are:
+>> +          0: REFIN1(+)/REFIN1(−)
+>> +          1: REFIN2(+)/REFIN2(−)
+>> +          2: REFOUT/AVSS (Internal reference)
+>> +          3: AVDD/AVSS
+>> +          If not specified, REFIN1 is used.
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +        enum: [0, 1, 2, 3]
+>> +        default: 0
+>> +
+>> +      adi,excitation-pin-0:
+>> +        description: |
+>> +          Analog input to apply excitation current to while the channel
+>> +          is active.
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +        minimum: 0
+>> +        maximum: 15
+>> +        default: 0
+>> +
+>> +      adi,excitation-pin-1:
+>> +        description: |
+>> +          Analog input to apply excitation current to while this channel
+>> +          is active.
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +        minimum: 0
+>> +        maximum: 15
+>> +        default: 0
+>> +
+>> +      adi,excitation-current-0-nanoamps:
+>> +        description: |
+>> +          Excitation current in nanoamps to be applied to pin specified in
+>> +          adi,excitation-pin-0 while this channel is active.
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +        enum: [0, 100, 10000, 20000, 50000, 100000, 150000, 200000]
+>> +        default: 0
+>> +
+>> +      adi,excitation-current-1-nanoamps:
+>> +        description: |
+>> +          Excitation current in nanoamps to be applied to pin specified in
+>> +          adi,excitation-pin-1 while this channel is active.
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +        enum: [0, 100, 10000, 20000, 50000, 100000, 150000, 200000]
+>> +        default: 0
+>> +
+>> +      adi,burnout-current-nanoamps:
+>> +        description: |
+>> +          Burnout current in nanoamps to be applied for this channel.
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +        enum: [0, 500, 2000, 4000]
+>> +        default: 0
+>> +
+>> +      adi,buffered-positive:
+>> +        description: Enable buffered mode for positive input.
+>> +        type: boolean
+>> +
+>> +      adi,buffered-negative:
+>> +        description: Enable buffered mode for negative input.
+>> +        type: boolean
+>> +
+>> +    required:
+>> +      - reg
+>> +      - diff-channels
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +
+>> +    spi {
+>> +      #address-cells = <1>;
+>> +      #size-cells = <0>;
+>> +
+>> +      adc@0 {
+>> +        compatible = "adi,ad4130-8-24-wlcsp";
+>> +        reg = <0>;
+>> +
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        spi-max-frequency = <5000000>;
+>> +        interrupts = <27 IRQ_TYPE_EDGE_FALLING>;
+>> +        interrupt-parent = <&gpio>;
+>> +
+>> +        channel@0 {
+>> +          reg = <0>;
+>> +
+>> +          adi,reference-select = <2>;
+>> +
+>> +          /* AIN8, AIN9 */
+>> +          diff-channels = <8 9>;
+>> +        };
+>> +
+>> +        channel@1 {
+>> +          reg = <1>;
+>> +
+>> +          adi,reference-select = <2>;
+>> +
+>> +          /* AIN10, AIN11 */
+>> +          diff-channels = <10 11>;
+>> +        };
+>> +
+>> +        channel@2 {
+>> +          reg = <2>;
+>> +
+>> +          adi,reference-select = <2>;
+>> +
+>> +          /* Temperature Sensor, DGND */
+>> +          diff-channels = <16 19>;
+>> +        };
+>> +
+>> +        channel@3 {
+>> +          reg = <3>;
+>> +
+>> +          adi,reference-select = <2>;
+>> +
+>> +          /* Internal reference, DGND */
+>> +          diff-channels = <18 19>;
+>> +        };
+>> +
+>> +        channel@4 {
+>> +          reg = <4>;
+>> +
+>> +          adi,reference-select = <2>;
+>> +
+>> +          /* DGND, DGND */
+>> +          diff-channels = <19 19>;
+>> +        };
+>> +      };
+>> +    };
+>> -- 
+>> 2.35.3
+>>
+>>
