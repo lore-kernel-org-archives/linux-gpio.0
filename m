@@ -2,108 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A32DC43334
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jun 2022 15:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CD3C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jun 2022 16:06:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240115AbiFIPb7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Jun 2022 11:31:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56464 "EHLO
+        id S231679AbiFIQGZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Jun 2022 12:06:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243423AbiFIPb6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Jun 2022 11:31:58 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DDEE12768
-        for <linux-gpio@vger.kernel.org>; Thu,  9 Jun 2022 08:31:56 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id v19so31698184edd.4
-        for <linux-gpio@vger.kernel.org>; Thu, 09 Jun 2022 08:31:55 -0700 (PDT)
+        with ESMTP id S234159AbiFIQGX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Jun 2022 12:06:23 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E22FC1B1CC4
+        for <linux-gpio@vger.kernel.org>; Thu,  9 Jun 2022 09:06:22 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id v25so31839966eda.6
+        for <linux-gpio@vger.kernel.org>; Thu, 09 Jun 2022 09:06:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=PeAB4WdUupDaLbzIqQrrnRA29amPQ8PYJd3E0QmEGsE=;
-        b=EakJTslO6FLE81sHxNC1bk/UhJdyWwE3LaolAbYnM/XwG1uFz5Ko+NX7UNNu3tbcoN
-         K4rcFigA5wVJgxMnlO7NLPQdS3C/ggA1Vn8OzBb8vvyKZFT1e8iQCHxDYA2eB8gQtft+
-         7HzbxwQvQgZY6ae+bwehfzc7RnStB3PIBUZf7baw2dZU6u3EZKK9c5vh03InUK7PI/Xs
-         PjArKEXUAAVAQfrkTYYW6QeCkqxbR+gH5Pemmw+ozW5iwl6YhpAMgD9p9LlKl6lrcgHH
-         VT+W3GXIoaXr5Nc/REr/+pECZOjR0CqcLiiXkWlDSxBfAIMKAiL7Nj6L+FzleyxE5OcS
-         rrfQ==
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bbuoibGqpUzgIv8kzMZ72alXsr0IfG8c0YGuJCyKV1k=;
+        b=eM8BuGOB92Lhe5957W7wSWvgi/TvSREPfm4noIASBPJL5W/RUfHCLxbbEcGhdDOgSC
+         oBAym6VV4tO+GTg4KI/6BWMuTD+I+coDyTmJ90FOBAxV8JBWsiVjon2vAKnXcd4cQ/QN
+         OOMDFwWk2oUJl05U4iutfTbWecNZhxJaKPZkz1wFxtUh3sJQwXM+4nFjV0Z2+nlXidB5
+         yq6rquhl+B9LSyg3LwsyNyMije0/MA5E1Dviw8bQjBRuRGTQsQmDJ2QR38f7MQAEdh0H
+         jDPibi5UFT/grIQu4YHxUPeUpwyIMknohU6gaFti910IM2nUtgNjaXKagqslGJTKsHQa
+         gG8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=PeAB4WdUupDaLbzIqQrrnRA29amPQ8PYJd3E0QmEGsE=;
-        b=wIQsq4l7QpRL+iOfM+IsMk43D/E9+u41BjSzaUUIS9w861U64h90A4eVwat0kVeW/K
-         2Hj6nx7n61qWWvhoVlGeIYykQiwEN7Q8cGs4jEEnRplW/8gmkisEfIE4DkFaeS7oTZ3t
-         DAEFPXCWrasBO39HUWGod6MaksbvxnLEGqqHtorejbabynNXHKeij1fJmKhtMXM5Hh/E
-         2pV3n++4wFMRqNcztg6rAZArM6xHri0sPZ14zgoco2ACgXWvtpVuzLykYxP18ZgIy6D/
-         KPg3xsK4a0zmEu4IdVDjv0/liqDDthPa92dUSvb4H6gJFjCtIt+OdRG94rYc4V8ddf3u
-         30VA==
-X-Gm-Message-State: AOAM532sp9vWBpwc6y0IR/Q7oeZH/T+yHBAG+12p3YPQXtXV/vZCpMFL
-        c/obHFZZTeeTvEz3tQ/BxfVgUw==
-X-Google-Smtp-Source: ABdhPJwOIiJjZlxWJ8Qllh5BIHfUY6pWFLHsCbCBYUYtWh67b6d6/Fy01aSRrec+f5WJFGHljJB2KQ==
-X-Received: by 2002:a05:6402:2788:b0:431:3f86:1d4e with SMTP id b8-20020a056402278800b004313f861d4emr29911904ede.238.1654788714499;
-        Thu, 09 Jun 2022 08:31:54 -0700 (PDT)
-Received: from [192.168.0.199] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id f27-20020a17090624db00b006f3ef214dcdsm10940096ejb.51.2022.06.09.08.31.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jun 2022 08:31:53 -0700 (PDT)
-Message-ID: <6d460a14-5da3-19f8-c614-307c2e737c17@linaro.org>
-Date:   Thu, 9 Jun 2022 17:31:52 +0200
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bbuoibGqpUzgIv8kzMZ72alXsr0IfG8c0YGuJCyKV1k=;
+        b=NBDp3UkARirt5iDTnjKEF0JIh2NDyUJchY6m9PfpTnuQ18IdhjFUciVqvYIOvasdgn
+         HASVraIpmDONUElkREsFT2iJJck3dGHW+RsAh0ECB1eaVZnMYFGFpAGv3rWJpVmTghM3
+         aq2KApz784qOcf+xHQpulIEYV0ChbnmNgiE8pQPou9C69duN/pQg8Q+AyS/bciXitqVi
+         fqD3IH2pTuA5cT2eQXIsAQ51cSML9NjPsQS9GgET3lESJL2xsSs9U/nOpE4AKKAUofEV
+         Z+dJCxeZ8w7LAn3C0uzjgBazsnEft6WG1D6aRIZZ4RFv5fbiqAi5OYZ+MnUjXCpCD47X
+         Tvfg==
+X-Gm-Message-State: AOAM532zCRP/3hCHmYxicWz8jHgXWfUVZ9WqBlbG3SQZWMzqq6sZRzXC
+        hD8HQjAkbaEQ4h0eYFr4KBB1HTAW4kWtXYmZZDK8nw==
+X-Google-Smtp-Source: ABdhPJzLH4aepDnkdX7I7UIFuLMYgl5PqXFBNuGJgE2hITzP8NVKmO4Nk9XnJuhTRgLl3zqGcsyS32K0r+n7HnbVopY=
+X-Received: by 2002:a05:6402:5008:b0:42d:c421:48c8 with SMTP id
+ p8-20020a056402500800b0042dc42148c8mr46482161eda.422.1654790775393; Thu, 09
+ Jun 2022 09:06:15 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2 04/48] dt-bindings: pinctrl: nuvoton,wpcm450-pinctrl:
- align key node name
-Content-Language: en-US
-To:     =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        arm@kernel.org, soc@kernel.org,
+References: <20220525140704.94983-1-brgl@bgdev.pl> <20220525140704.94983-4-brgl@bgdev.pl>
+ <20220603124600.GA35695@sol> <20220604024131.GB13574@sol> <Yp3TmNg2uBlC0XzI@smile.fi.intel.com>
+ <20220607015220.GA9430@sol> <CAMRc=MdwgGefC0AgRCvgMfAZmq_+1GnXH6XMezjyBEKs37QuAQ@mail.gmail.com>
+ <20220609044922.GA11301@sol> <CAMRc=Md_7WO69hKqToSoAAyDQWxfqgg-PisrBF5AzrsKMM8FQA@mail.gmail.com>
+ <20220609152112.12fc6db4@griffin>
+In-Reply-To: <20220609152112.12fc6db4@griffin>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 9 Jun 2022 18:06:04 +0200
+Message-ID: <CAMRc=Mfgov0S-dZ7Ut2oj4A8=xE7d-4iX=8Q+Kv4Tb==JviMjw@mail.gmail.com>
+Subject: Re: [libgpiod v2][PATCH 3/5] bindings: python: add examples for v2 API
+To:     Jiri Benc <jbenc@upir.cz>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220609113721.379932-1-krzysztof.kozlowski@linaro.org>
- <20220609113911.380368-3-krzysztof.kozlowski@linaro.org>
- <YqIP1vYuLztSQR+n@latitude>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <YqIP1vYuLztSQR+n@latitude>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Darrien <darrien@freenet.de>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Joel Savitz <joelsavitz@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 09/06/2022 17:20, Jonathan Neuschäfer wrote:
-> On Thu, Jun 09, 2022 at 01:39:06PM +0200, Krzysztof Kozlowski wrote:
->> gpio-keys schema requires keys to have more generic name.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>  .../devicetree/bindings/pinctrl/nuvoton,wpcm450-pinctrl.yaml    | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pinctrl.yaml
->> index 47a56b83a610..4c7691c38b10 100644
->> --- a/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pinctrl.yaml
->> +++ b/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pinctrl.yaml
->> @@ -152,7 +152,7 @@ examples:
->>        pinctrl-names = "default";
->>        pinctrl-0 = <&pinctrl_uid>, <&pinmux_uid>;
->>  
->> -      uid {
->> +      switch-uid {
-> 
-> In this example, and more importantly the original copy in
-> nuvoton-wpcm450-supermicro-x9sci-ln4f.dts, I think button-uid fits
-> slightly better, because it's a momentary push button. (Still arguably a
-> switch, but not one that would stay in both the on and off position.)
+On Thu, Jun 9, 2022 at 3:21 PM Jiri Benc <jbenc@upir.cz> wrote:
+>
+> On Thu, 9 Jun 2022 10:42:44 +0200, Bartosz Golaszewski wrote:
+> > On Thu, Jun 9, 2022 at 6:49 AM Kent Gibson <warthog618@gmail.com> wrote:
+> > > Agree that it would be easier to write a pythonic wrapper around the C
+> > > API in Python, so no problem with that.
+> > > However, the pythonic wrapper should the one named gpiod, as it is
+> > > intended to be the primary interface for Python.  Rename your existing
+> > > to gpiod_c or gpiod_core or something.
+> >
+> > I don't agree. The module that wraps the C library should still be
+> > called gpiod and be the primary interface. The pythonic module would
+> > just offer helpers that would still use the gpiod data types for most
+> > part.
+>
+> As a Python user, I'd much rather see the high level API being the
+> primary interface and being named 'gpiod'. The easier to use and more
+> Pythonic, the better. The low level library bindings and low level data
+> types are just an implementation detail for me when coding in Python.
+> If I wanted low level, I'd code everything directly in C.
+>
 
-Sure, I'll change it to button-uid.
+But Kent is not talking about a whole new "pythonic" layer on top of
+the code that is the subject of this series. The bindings are already
+quite pythonic in that you can get most stuff done with a "logical"
+one-liner. The gpiod module doesn't map C API 1:1, it already
+simplifies a bunch of interfaces. Kent's idea IIUC is about providing
+a set of helpers that would produce the gpiod objects in shorter code
+by hiding the details of intermediate objects being created.
 
-Thanks!
+Re the event buffer: yeah, I think in python (unlike C++ or future
+Rust bindings) it makes sense to hide it within the request as we
+can't profit from implicitly not copying the event objects.
 
+If anyone wants to create an even simpler, complete interface for
+gpiod, then it's a task for a whole new project. Think: pydbus built
+on top of GLib dbus bindings in python, built on top of glib's dbus
+implementation.
 
-Best regards,
-Krzysztof
+Bart
