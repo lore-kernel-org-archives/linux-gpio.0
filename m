@@ -2,206 +2,176 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BC9CCA473
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jun 2022 14:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0E5CCA482
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Jun 2022 14:35:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344080AbiFIOfc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Jun 2022 10:35:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59846 "EHLO
+        id S245533AbiFIOfe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Jun 2022 10:35:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344016AbiFIOf2 (ORCPT
+        with ESMTP id S1344012AbiFIOf2 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Jun 2022 10:35:28 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EF8E3223B6
-        for <linux-gpio@vger.kernel.org>; Thu,  9 Jun 2022 07:35:26 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id h19so31516834edj.0
-        for <linux-gpio@vger.kernel.org>; Thu, 09 Jun 2022 07:35:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XP67le0HD8P/bxG7RrUurcaPiTA4btoBvQ2u/IlhO2I=;
-        b=NDLvw77dyA9fYTorRsnUaIl50QcwPD/Xom/X1eAfvpjhIwjn7dmk/m7PJD591MxKJC
-         IZZF03sZxrRoU7BkvWBwkeBzTXps0LC4ZQmej1Han8neCLZFl7X2qh7TC4emfjmCQno4
-         U634GqOuTZNPVPsZ7EkGJVbkJ+mns2Vm+aU4dTXN82TjJYxap7AAnktlzwh9TZkDQWlY
-         5PJNWXvwt8X14Sp+B+kwDrddulJv9WSzeOof2jWWG4/5wGzHmGye08KMyP5WchW7cBAy
-         kjJvtzrGRxEF+DFyes+lqAn/y+fH7zkXQLQqt5GHUvbBYk7Ac9Nc0yv5jPHcRo6XD2j5
-         yv0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XP67le0HD8P/bxG7RrUurcaPiTA4btoBvQ2u/IlhO2I=;
-        b=Gib5qzIXx03NblWd4Zrlfw6ASIItvY8SGF1UFL6ofwcND7/YFn+sg6pfzA2bZdG45y
-         +3Lc7x9eVIaMyJ376X7TOZCeliM1FiuBRdhsv4Sp1pes36/3qmWEjVzIQDVtinRIXjWm
-         QXyBQXHOqE+wSScGcjOyZkWan9cOMyh5ZCjF1bW117XYNpkejHRD/B7zrWeInMNqmg2e
-         hnC8YTZL5juOVXI4l4Cmayv2CpRXYubdu5UrKyfPcAX30K2gzNxtpPNimqfc1TgGpNUk
-         knV484sHQpxNOuPaelMO42gb6SGIxUW/Vku856SffsYKYQWXVwIUEltpSiygGk4lgDza
-         GyaQ==
-X-Gm-Message-State: AOAM5338XPKInnhpGkZvPAg1EpONfS1zXrsMqsiFyBftdmBNH2pFe9dL
-        VBG+NglHRftQsPao3bBpGkcPqel1Kjg6dvNzen86tA==
-X-Google-Smtp-Source: ABdhPJxbcdomQ5yEZnb6XwJ7kNy5LX2O/blxVp7XClC3O/qXsyvsjLPb5gDx9WmD6FJLcg26ONvgQSGf3PxkWVKamjk=
-X-Received: by 2002:a05:6402:e0c:b0:42d:7f16:ac2c with SMTP id
- h12-20020a0564020e0c00b0042d7f16ac2cmr45213143edh.328.1654785325012; Thu, 09
- Jun 2022 07:35:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220607060851.10838-1-a-govindraju@ti.com>
-In-Reply-To: <20220607060851.10838-1-a-govindraju@ti.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 9 Jun 2022 16:35:14 +0200
-Message-ID: <CAMRc=Mdcqu5__eZPQSP3egEpw=axeeAFgGjgKdChj6tN5v1Asg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: davinci: Add support for system suspend/resume PM
-To:     Aswath Govindraju <a-govindraju@ti.com>
-Cc:     Devarsh Thakkar <devarsht@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Keerthy <j-keerthy@ti.com>,
+Received: from EUR01-VE1-obe.outbound.protection.outlook.com (mail-eopbgr140079.outbound.protection.outlook.com [40.107.14.79])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5EC032163B;
+        Thu,  9 Jun 2022 07:35:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EKW8FgG5tttJCvH6sLLS7mIIKOC2thFmw8V5EUH06rtUEU1mWDqiYHa1aOtX7fTD/Fxm4zLbIZn/XBwziCQ107oMxww/UEh22+FHVTLzP8JWhKAY5ReTyt/UD+9grb6NFJ0WT8HaGbBkElDJ8kkJJSWxuKf1jA14vXG60pz3XpqpMzlMy8xBz0akhwwqViAvxKHjKBMih45LFcexOkCkt7KroA9xOYGCBGQgI914sEgBD5ODc2sKf8AJundBNzdv6IIst+V5jDLlAcdqw6xlvEU7YRTUjXIuOOhFqkiF+jJcIBAHDW7B8R1Y2zAB+3xIdo60CeDNvt4Y01ra7KB/PA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7uW57PMaLvRqfh03PPnQdRIsNlnrD9YMR+TCrIKw/2c=;
+ b=EVufpN4ZrdN5jGOOg+/iMgV7b1KYUgWlJmXL4galAiwEHyJd0F+kTE808TqCEVElOewO5F/MTnckyJjrGT/jcflvkhFgwH02MoshbPzlh+n99jB5kRcrRD6e5hOkK2RITfMdhqxzL3R1LCcC1GPU+9DbcFbusknwMQAU7wzWhGVXTx9pkT2FoQzY8IlQjqTnxSN6amshrx4/rdMyht0z15Bjc5jPtb+jRzJ/RYts880G4BO0DhYibYZGPCwgvUz7FJhS2uUWY05/+wTnu/VFamMHO4QSTf/XUmo6MZR4j3tRehZA2yGAWywA7qy7Mh/cLtR/KeS/VB2yDIaIvR7uyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7uW57PMaLvRqfh03PPnQdRIsNlnrD9YMR+TCrIKw/2c=;
+ b=OVnPX/qe/4vPdj9CD6FHgnmKPPM89Wpv0P9F008fkFyS8BHXkFBgXR1CgIHNR3vOidAGyDNA3FOKUfPQxn8XDhsT/bS/C2L2QNDtxnvJrrlN24ID/563+GkQvZxyJdTq1M8KdqmtG5nHoPW9tX2rFDA2awuJEBulq69+qGsBZSQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
+ by VI1PR04MB5885.eurprd04.prod.outlook.com (2603:10a6:803:e1::33) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.12; Thu, 9 Jun
+ 2022 14:35:15 +0000
+Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
+ ([fe80::a541:25cd:666f:11b1]) by VI1PR04MB4688.eurprd04.prod.outlook.com
+ ([fe80::a541:25cd:666f:11b1%5]) with mapi id 15.20.5332.013; Thu, 9 Jun 2022
+ 14:35:15 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Stefan Agner <stefan@agner.ch>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [PATCH v3 04/10] dt-bindings: input: Add fsl,scu-key yaml file
+Date:   Thu,  9 Jun 2022 17:34:17 +0300
+Message-Id: <20220609143423.2839186-5-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.34.3
+In-Reply-To: <20220609143423.2839186-1-abel.vesa@nxp.com>
+References: <20220609143423.2839186-1-abel.vesa@nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS9PR07CA0042.eurprd07.prod.outlook.com
+ (2603:10a6:20b:46b::29) To VI1PR04MB4688.eurprd04.prod.outlook.com
+ (2603:10a6:803:6a::30)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d9111211-4627-4185-3738-08da4a2538a7
+X-MS-TrafficTypeDiagnostic: VI1PR04MB5885:EE_
+X-Microsoft-Antispam-PRVS: <VI1PR04MB5885476520883976903F81E0F6A79@VI1PR04MB5885.eurprd04.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: OBSjNMKnIYc7xq3BP6XgFYUs8yAC4ksEPfaV6Jb/TEsKj30j9KWgfTU1Nv/Lc2qJJYJmxohmJwak2pJBBhh5OqHelXKkXSgy+MnC+VRRTltbosMrwvA75kgwPOM1pQayKAXWBlSAQoRR0crhF7TPr/hOwmA2FI9RQbhW0bjWyM2QZ+Tm5zjqQh1xVzNWnhnFzOk6CwcTShmAsfvOtWBZQrL544rG9KitfQln7PSoilpxczyLJD0seMSasEsIUAJTWsfgOcVF9LBaDTjsrdK2ROinRUC6V081IWXZo51KDzJERqTXtEeoMquirbJQy28JY84xUSxlEvp77vkUsxWwJ09CDpRvuXlMwVPGFAUBvp3PT9KGn1MIAZyb+UeHPtsMrjoRZAvOLlata73PI4v/pKB+khMkOv0OOb6DstwH/yLA8ORTce80LlHM0Z72T0Nn6PHOY8/+KQI0zlkh1nP6VQP6WP2vYidguoOFTUET+50uUirNpKvWLgA9Kd9uFVz+N9gOb8F+zU6m6VMe5oK7Yyr9Dhq0R7exZT8R9jbKMPM9d8EB+18UPAJYzsYDNsgwM5RA/qLNh77ZAZ5jrbrXPiOIfgoblXrAXofqstNxbCEFqMIBDWWtsgfSuRyUgi9W5J08yTrdB0dMkTqluvJQ4ElXJCvU/ovAkykCM8W5ehSawOjPoZ5acknUU6UAPUwfV+2vOg5O5vHjSPfJVMLggxcqgh00oaGVKf39X7N1RB9NPDv3sfV0hsXd/moQ8G6wW7QWckSJSDL9+EOab0N90TLo1QNV+VS1lYCZrtPAaimEi/Psd7v6lg0oNs3jKHMMBFyLP8x/1p+sVHeTBNfgppzFTMT4TDnvK7CW5mWPv2U=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(4326008)(316002)(36756003)(54906003)(110136005)(6506007)(6486002)(508600001)(2906002)(966005)(7416002)(38100700002)(5660300002)(86362001)(44832011)(8936002)(8676002)(83380400001)(2616005)(186003)(52116002)(38350700002)(921005)(1076003)(66556008)(26005)(6512007)(66476007)(66946007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?/h88/kZKIY4wzRHb32ojZLy2UTVJKq964ukN5ndaBlPmzsid12W0jA0ckL8h?=
+ =?us-ascii?Q?jloUEPaEd8XcHJzeyiC0EjBr/Dh9wAB0Kr1gscML47JV4jOPPpUzI9saNkeI?=
+ =?us-ascii?Q?D53wuhoA1wmIxRI83NJ+d7CRHCzQPBLzAw7dHatGDBx2QYdggXvtt3KPzW8A?=
+ =?us-ascii?Q?VaYKJ52XZUqWg3sOYPX3+T/UJ6bB2d9x7bPiOzpUyl06B0f7lnF7Q4YQ9TtB?=
+ =?us-ascii?Q?tTUyRmgPt5WYJxwOJRIHb/LYeIN5cxooawDhoh4OnZkny82nG8pDljk8HSn1?=
+ =?us-ascii?Q?dXwbxGAAp2nk+f9Z5rTtamZtPbwpxpOQeVbpb1COrvQBAnM+TiI4kRxaCpoL?=
+ =?us-ascii?Q?LwdEeoijZF1ng0+76gSBWowqVRhDmFuxm0Ngw53V8yN3m2o6Ldzj9gS+su4/?=
+ =?us-ascii?Q?+Gik97W37X1nox+Nb00/lRduQG7vAbiEqilBNXEj2/GZk2CcQ5tkAoYmTjvf?=
+ =?us-ascii?Q?axBplBjfQeEgG8Ho4G5bDyDCGVpvI1cKWtWh0UsAIWg5etBSwLgm7JaUQNy+?=
+ =?us-ascii?Q?DeHnoNg/XpXopfuTiIlwOTFlKPES3yAcLbV+mzyjkP/ipgCZIWg2xL/6iPC5?=
+ =?us-ascii?Q?lota4G5czL1EXxq2T3/bA8wemqkYuVVVg/nTeMAQO2Lg9OKa3McX+Dh0KkWd?=
+ =?us-ascii?Q?XeedGcEqc4hbBm509QHKdQvDGsYNxinkx7pfpVLtgNF1DI/07Km/Md+YJEvE?=
+ =?us-ascii?Q?aVPn7/Egvf3CfV99oP+fawb5C0QL8dacWFnwmNltBTUvc2Z6DLK97ZQbkNuY?=
+ =?us-ascii?Q?WRd+iPXhMGOCtkGPDoYus/Dv7x5wy8aickTPMS1xPQ8YTtPy/1y08eupuQq0?=
+ =?us-ascii?Q?MEGBcyjkgAzzwqvUyI8NcdNMdU0RzOQlBsnw2W6oODqCXVflYkrYxvwAF7mQ?=
+ =?us-ascii?Q?+fPwgRWXAuq4CNJe10DhM5OZ5UNSY2BykoxEGB9rCZ3u4jr+aJ68sGTtPTKZ?=
+ =?us-ascii?Q?KFBhdsiWJwnAMtX/FHYpMAgaDPm3Tfjl2gMYUQL+HDBdmaihz3ni2AXxx2MW?=
+ =?us-ascii?Q?nNiovvXpcMu8aFQrAmOrHQmLlv17WiiPvInf2fMJqS6FLTE2m2RUdkGVdCEg?=
+ =?us-ascii?Q?tKmM2btiyQsXcp/ULxVPurVI8NvIWeYJYaQ42aSxG2Uv8quDn+Fmbf5O4uIy?=
+ =?us-ascii?Q?5HoodLLjwQ2FpXEjhNgLH64emQpKW4GguPDeRhRKg04nVsBDT5b5PBDBP63f?=
+ =?us-ascii?Q?09edO9HWYp39HPjsf7XX5iv1Zec45vo/M3x0v3zrRIA1NGftVwitEokeKlNR?=
+ =?us-ascii?Q?YPJVp6TEbt8tQaWmS49GcfrgjHEaA+vz3U9hh+tdurkRqHIU1rRef3nOhm41?=
+ =?us-ascii?Q?0XG0Qe08gD7L9oBPOHSuA6oysA5a6PCyg/h7s93vt8FGFs1m8gnsZCIgNiAJ?=
+ =?us-ascii?Q?M2Rwv1AuugMHIos6Hk9QNxXhKEYoaZA+xlvvDNict1QO5F3P4lyNMlf5YHRp?=
+ =?us-ascii?Q?klgztJQ3CttzdlaAINU80OoV4HopjS/hyeq5OJ3NyaIBB6iA73BkxoqV0sxU?=
+ =?us-ascii?Q?QBbBtK+85SqGXEfHSuepX2looEYQrSAsmk8KyYPkVj5HekrwqjAnWmP498ap?=
+ =?us-ascii?Q?ucn3Me+uNayf5l8Hi8zC5i/Xu6WrjtzJ15L4XTGKWNlTWDdZsgrLaMTDu/95?=
+ =?us-ascii?Q?KV/4/Z2SLRH2bk5rP+9rXlRKZMXVlTwAMSU8emslZ2ZjZI5K2mckQmEQuOpT?=
+ =?us-ascii?Q?u9LATSTjrXUja9L9DViWHZg+EicJvLrXBa2OKoIy7vBc/lvFiWpTjQIWZAkr?=
+ =?us-ascii?Q?lEYkTbMSaw=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9111211-4627-4185-3738-08da4a2538a7
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2022 14:34:55.4199
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: v6FaI02G/3r8eCcYLEEcIOafSANv2b9EnvsZM2EcRkZezjzfsT2ozvZPmvE2XmFfO+VYDtJJRzTZqJ1lHQBokg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5885
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jun 7, 2022 at 8:08 AM Aswath Govindraju <a-govindraju@ti.com> wrote:
->
-> From: Devarsh Thakkar <devarsht@ti.com>
->
-> Add support for system suspend/resume PM hooks, save the
-> register context of all the required gpio registers on suspend
-> and restore the context on resume.
->
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> Signed-off-by: Aswath Govindraju <a-govindraju@ti.com>
-> ---
->  drivers/gpio/gpio-davinci.c | 84 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 84 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index f960587f86a3..aca352337c46 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -23,6 +23,7 @@
->  #include <linux/irqchip/chained_irq.h>
->  #include <linux/spinlock.h>
->
-> +#include <linux/pm_runtime.h>
+In order to replace the fsl,scu txt file from bindings/arm/freescale,
+we need to split it between the right subsystems. This patch documents
+separately the 'keys' child node of the SCU main node.
 
-The below can stay here but please move the pm_runtime include
-together with the other linux includes.
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ .../bindings/input/fsl,scu-key.yaml           | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/fsl,scu-key.yaml
 
->  #include <asm-generic/gpio.h>
->
->  #define MAX_REGS_BANKS 5
-> @@ -62,6 +63,8 @@ struct davinci_gpio_controller {
->         void __iomem            *regs[MAX_REGS_BANKS];
->         int                     gpio_unbanked;
->         int                     irqs[MAX_INT_PER_BANK];
-> +       struct davinci_gpio_regs context[MAX_REGS_BANKS];
-> +       u32                     binten_context;
->  };
->
->  static inline u32 __gpio_mask(unsigned gpio)
-> @@ -622,6 +625,86 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
->         return 0;
->  }
->
-> +static void davinci_gpio_save_context(struct davinci_gpio_controller *chips,
-> +                                     u32 nbank)
-> +{
-> +       struct davinci_gpio_regs __iomem *g = NULL;
-> +       struct davinci_gpio_regs *context = NULL;
-> +       u32 bank = 0;
-> +       void __iomem *base = NULL;
+diff --git a/Documentation/devicetree/bindings/input/fsl,scu-key.yaml b/Documentation/devicetree/bindings/input/fsl,scu-key.yaml
+new file mode 100644
+index 000000000000..e89b4b998076
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/fsl,scu-key.yaml
+@@ -0,0 +1,30 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/input/fsl,scu-key.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: i.MX SCU Client Device Node - SCU key bindings based on SCU Message Protocol
++
++maintainers:
++  - Dong Aisheng <aisheng.dong@nxp.com>
++
++description: i.MX SCU Client Device Node
++  Client nodes are maintained as children of the relevant IMX-SCU device node.
++
++allOf:
++  - $ref: /schemas/input/input.yaml#
++
++properties:
++  compatible:
++    items:
++      - const: fsl,imx8qxp-sc-key
++      - const: fsl,imx-sc-key
++
++  linux,keycodes: true
++
++required:
++  - compatible
++  - linux,keycodes
++
++additionalProperties: false
+-- 
+2.34.3
 
-Only initialize variables that need it, please.
-
-> +
-> +       base = chips->regs[0] - offset_array[0];
-> +       chips->binten_context = readl_relaxed(base + BINTEN);
-> +
-> +       for (bank = 0; bank < nbank; bank++) {
-> +               g = chips->regs[bank];
-> +               context = &chips->context[bank];
-> +               context->dir = readl_relaxed(&g->dir);
-> +               context->set_data = readl_relaxed(&g->set_data);
-> +               context->set_rising = readl_relaxed(&g->set_rising);
-> +               context->set_falling = readl_relaxed(&g->set_falling);
-> +       }
-> +
-> +       /* Clear Bank interrupt enable bit */
-> +       writel_relaxed(0, base + BINTEN);
-> +
-> +       /* Clear all interrupt status registers */
-> +       writel_relaxed(0xFFFFFFFF, &g->intstat);
-> +}
-> +
-> +static void davinci_gpio_restore_context(struct davinci_gpio_controller *chips,
-> +                                        u32 nbank)
-> +{
-> +       struct davinci_gpio_regs __iomem *g = NULL;
-> +       struct davinci_gpio_regs *context = NULL;
-> +       u32 bank = 0;
-> +       void __iomem *base = NULL;
-> +
-> +       base = chips->regs[0] - offset_array[0];
-> +
-> +       if (readl_relaxed(base + BINTEN) != chips->binten_context)
-> +               writel_relaxed(chips->binten_context, base + BINTEN);
-> +
-> +       for (bank = 0; bank < nbank; bank++) {
-> +               g = chips->regs[bank];
-> +               context = &chips->context[bank];
-> +               if (readl_relaxed(&g->dir) != context->dir)
-> +                       writel_relaxed(context->dir, &g->dir);
-> +               if (readl_relaxed(&g->set_data) != context->set_data)
-> +                       writel_relaxed(context->set_data, &g->set_data);
-> +               if (readl_relaxed(&g->set_rising) != context->set_rising)
-> +                       writel_relaxed(context->set_rising, &g->set_rising);
-> +               if (readl_relaxed(&g->set_falling) != context->set_falling)
-> +                       writel_relaxed(context->set_falling, &g->set_falling);
-> +       }
-> +}
-> +
-> +static int __maybe_unused davinci_gpio_suspend(struct device *dev)
-> +{
-> +       struct davinci_gpio_controller *chips = dev_get_drvdata(dev);
-> +       struct davinci_gpio_platform_data *pdata = dev_get_platdata(dev);
-> +       u32 nbank = DIV_ROUND_UP(pdata->ngpio, 32);
-> +
-> +       davinci_gpio_save_context(chips, nbank);
-> +
-> +       return 0;
-> +}
-> +
-> +static int __maybe_unused davinci_gpio_resume(struct device *dev)
-> +{
-> +       struct davinci_gpio_controller *chips = dev_get_drvdata(dev);
-> +       struct davinci_gpio_platform_data *pdata = dev_get_platdata(dev);
-> +       u32 nbank = DIV_ROUND_UP(pdata->ngpio, 32);
-> +
-> +       davinci_gpio_restore_context(chips, nbank);
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct dev_pm_ops davinci_gpio_dev_pm_ops = {
-> +       SET_SYSTEM_SLEEP_PM_OPS(davinci_gpio_suspend, davinci_gpio_resume)
-> +};
-> +
->  static const struct of_device_id davinci_gpio_ids[] = {
->         { .compatible = "ti,keystone-gpio", keystone_gpio_get_irq_chip},
->         { .compatible = "ti,am654-gpio", keystone_gpio_get_irq_chip},
-> @@ -634,6 +717,7 @@ static struct platform_driver davinci_gpio_driver = {
->         .probe          = davinci_gpio_probe,
->         .driver         = {
->                 .name           = "davinci_gpio",
-> +               .pm = &davinci_gpio_dev_pm_ops,
->                 .of_match_table = of_match_ptr(davinci_gpio_ids),
->         },
->  };
-> --
-> 2.17.1
->
-
-Bart
