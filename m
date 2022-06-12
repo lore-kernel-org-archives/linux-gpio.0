@@ -2,33 +2,32 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225BECCA47C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C51BCCA47E
 	for <linux-gpio@archiver.kernel.org>; Sun, 12 Jun 2022 15:10:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237535AbiFLPKj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 12 Jun 2022 11:10:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58392 "EHLO
+        id S230238AbiFLPKk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 12 Jun 2022 11:10:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230238AbiFLPKg (ORCPT
+        with ESMTP id S233470AbiFLPKg (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Sun, 12 Jun 2022 11:10:36 -0400
-X-Greylist: delayed 616 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 12 Jun 2022 08:10:34 PDT
 Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8962B5EDDA;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898195EDDF;
         Sun, 12 Jun 2022 08:10:34 -0700 (PDT)
 Received: from authenticated-user (box.trvn.ru [194.87.146.52])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by box.trvn.ru (Postfix) with ESMTPSA id A090E4B00F;
-        Sun, 12 Jun 2022 20:00:17 +0500 (+05)
+        by box.trvn.ru (Postfix) with ESMTPSA id 077A041B15;
+        Sun, 12 Jun 2022 20:00:13 +0500 (+05)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-        t=1655046018; bh=jp2x8yViozN+IlCDICU84cGBy/PA8CqFPQjOLcNghP4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0vV3m+5K8dSKvmJj7/SUdo6ffKiYXkTXdUrysE7DsUPQtw1doZEwx3DXzAceZjSbv
-         Yn5/pATx4Wy9h2DJV+9xv5YbFqJClpyiggKQCOn9NWuz6fyLTlkahiQXtP+/b1HI16
-         Ror6F0itvSyCAmMXuXH1MoqSrrA4gQszRZRg3V1iWa2iTC8gnY1pwDuYESpPoPHVLl
-         9Ssm8YpDMUwWu0sr2BbiFcPIgh8QClI+639yhrC4ooPbBFeb8YavbLjObNYo+pKKTB
-         xsi1x4dtvjQ8ECEmkTewlB6/+y7qXK+ptd1YXiuEB1DJr5R+3NTzC1/siWHDAhI27t
-         2hj5Z05qy8T+Q==
+        t=1655046015; bh=w9CeVCi+C6BJG8uInBNRrAT0+x3UqfgtsSmbk8rXYyI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VPXZgUMf6URdbfWbGQGXDt9/+jo62ilVeSUKuUaIPF+qZDJns7/4GF5BuSCC24QfD
+         XCyj5kfFVcpA/XZrGfikjqeK/3JO93x8SOHQ9/SWObRDVy/ZN/FI1VbNfa7qSMqUJw
+         ooXoiW5F86OTu9N2v46jJrq4duafrX/tK/je9jloHVTIL+zO35Xi+lalg8DaDaKAl6
+         H63R5vVV8UJB35mZtiDhJJHcz93ulmKEjlH1WR6SZMy9Cbxcj0bgS+Z4qo2C+97/xw
+         rBziGdNBQ7i6tJ9eh/oWcjMFcQI4HsLGLfZbOpSWE2lc4rNQV1pxwd9phE84147vN/
+         hn3K/sig7ZzUQ==
 From:   Nikita Travkin <nikita@trvn.ru>
 To:     mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org
 Cc:     bjorn.andersson@linaro.org, agross@kernel.org, tdas@codeaurora.org,
@@ -37,44 +36,43 @@ Cc:     bjorn.andersson@linaro.org, agross@kernel.org, tdas@codeaurora.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht,
         Nikita Travkin <nikita@trvn.ru>
-Subject: [PATCH v2 3/4] pinctrl: qcom: msm8916: Allow CAMSS GP clocks to be muxed
-Date:   Sun, 12 Jun 2022 19:59:54 +0500
-Message-Id: <20220612145955.385787-4-nikita@trvn.ru>
-In-Reply-To: <20220612145955.385787-1-nikita@trvn.ru>
-References: <20220612145955.385787-1-nikita@trvn.ru>
+Subject: [PATCH v2 0/4] Prepare general purpose clocks on msm8916
+Date:   Sun, 12 Jun 2022 19:59:51 +0500
+Message-Id: <20220612145955.385787-1-nikita@trvn.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-GPIO 31, 32 can be muxed to GCC_CAMSS_GP(1,2)_CLK respectively but the
-function was never assigned to the pingroup (even though the function
-exists already).
+Some devices make use of general purpose clocks as PWM outputs by
+controlling their duty cycle.
 
-Add this mode to the related pins.
+Notably, many devices (e.g. Samsung A3/A5, LG G Watch R and probably
+many others) use clock based PWM to control the haptic feedback,
+some other can control backlight or flash/torch LED brightness.
 
-Fixes: 5373a2c5abb6 ("pinctrl: qcom: Add msm8916 pinctrl driver")
-Signed-off-by: Nikita Travkin <nikita@trvn.ru>
----
- drivers/pinctrl/qcom/pinctrl-msm8916.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+As a follow-up to a proposed clock based PWM output driver [1],
+this series contains various fixes to make it useful on msm8916
+based devices.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm8916.c b/drivers/pinctrl/qcom/pinctrl-msm8916.c
-index 396db12ae904..bf68913ba821 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm8916.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm8916.c
-@@ -844,8 +844,8 @@ static const struct msm_pingroup msm8916_groups[] = {
- 	PINGROUP(28, pwr_modem_enabled_a, NA, NA, NA, NA, NA, qdss_tracedata_b, NA, atest_combodac),
- 	PINGROUP(29, cci_i2c, NA, NA, NA, NA, NA, qdss_tracedata_b, NA, atest_combodac),
- 	PINGROUP(30, cci_i2c, NA, NA, NA, NA, NA, NA, NA, qdss_tracedata_b),
--	PINGROUP(31, cci_timer0, NA, NA, NA, NA, NA, NA, NA, NA),
--	PINGROUP(32, cci_timer1, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(31, cci_timer0, flash_strobe, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(32, cci_timer1, flash_strobe, NA, NA, NA, NA, NA, NA, NA),
- 	PINGROUP(33, cci_async, NA, NA, NA, NA, NA, NA, NA, qdss_tracedata_b),
- 	PINGROUP(34, pwr_nav_enabled_a, NA, NA, NA, NA, NA, NA, NA, qdss_tracedata_b),
- 	PINGROUP(35, pwr_crypto_enabled_a, NA, NA, NA, NA, NA, NA, NA, qdss_tracedata_b),
+[1] - https://lore.kernel.org/lkml/20220612132203.290726-1-nikita@trvn.ru/T/#t
+
+Changes since v1:
+ - Use clamp() instead of two boundary checks
+
+Nikita Travkin (4):
+  clk: qcom: clk-rcg2: Fail Duty-Cycle configuration if MND divider is
+    not enabled.
+  clk: qcom: clk-rcg2: Make sure to not write d=0 to the NMD register
+  pinctrl: qcom: msm8916: Allow CAMSS GP clocks to be muxed
+  clk: qcom: gcc-msm8916: Add rates to the GP clocks
+
+ drivers/clk/qcom/clk-rcg2.c            | 16 +++++++++---
+ drivers/clk/qcom/gcc-msm8916.c         | 35 ++++++++++++++++++++++++++
+ drivers/pinctrl/qcom/pinctrl-msm8916.c |  4 +--
+ 3 files changed, 49 insertions(+), 6 deletions(-)
+
 -- 
 2.35.3
 
