@@ -2,33 +2,32 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9987BC433EF
-	for <linux-gpio@archiver.kernel.org>; Sun, 12 Jun 2022 15:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF77DCCA487
+	for <linux-gpio@archiver.kernel.org>; Sun, 12 Jun 2022 15:10:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237550AbiFLPKl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 12 Jun 2022 11:10:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58412 "EHLO
+        id S234370AbiFLPKm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 12 Jun 2022 11:10:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234285AbiFLPKh (ORCPT
+        with ESMTP id S237475AbiFLPKh (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Sun, 12 Jun 2022 11:10:37 -0400
-X-Greylist: delayed 616 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 12 Jun 2022 08:10:34 PDT
 Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 894C55EDD9;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D2BA5EDE1;
         Sun, 12 Jun 2022 08:10:34 -0700 (PDT)
 Received: from authenticated-user (box.trvn.ru [194.87.146.52])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by box.trvn.ru (Postfix) with ESMTPSA id 0B3404B00E;
-        Sun, 12 Jun 2022 20:00:17 +0500 (+05)
+        by box.trvn.ru (Postfix) with ESMTPSA id 42F564B010;
+        Sun, 12 Jun 2022 20:00:18 +0500 (+05)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-        t=1655046017; bh=YkgwOu6ZXEnQVwZ7+RjB1T33+mj+xdkO/PzEYrrkkhs=;
+        t=1655046018; bh=d75aH6lgsop7H0tTJMNEsXUOXMX4zeKLj6KVJaiEtl4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lZGBZ1zr8BtDwIPN4VBtMaKu6BZa42YkiUepAHQTlLIODBEt/wBgd5ZNXfa4Co65O
-         t6k4rL0b+gzMAKuS+MjdVZWqLUjxTKH7Q94HydHeoDrNBaU1DhxLdbLTJPwf80Qy5K
-         jyADX/M23R+QaKbqEToZ6oQFhJSkz7rtqSyihL4AFAuY9v2D8U/YkiZVjefSRK1bhz
-         ThgKEAEgmY7FhKhSEfLekPGor+4mzdr35qApJa44thwbmvXequlzpHgS6ogtIpeHtU
-         iGsWu0YgndvYV7s6jMD4KVIevxEh/QmCWnEbzcKj/MdTFFGRBeUfDqWeQNWh6d1wr9
-         d1dLGDTSPVdaw==
+        b=EaGNG4X9LzC4R+SBFyBhIoZYMfcgbDfpjypiC3F+s1ziY2oFYp4ZxR1c7NGzgKnXT
+         R5FPPlTa5+0WGxD2r3iYW5Edq1GrlBGkl6qHcBeY8Oi2rTfOdH/lBWt/2OFntqtE5n
+         Muc7aBr1Gd/NyrlN9Rid1o9+t8behBxbQ8q1ADSbX0IoN1xpLyOgmpa8hK9UvHj+44
+         RvHMh+N8eEB1DbfkGbrSN7/INyeQOcxBwWs/BSO6ybjdPie226PtZluC3UEF1bq4S9
+         SDiprayGYE5Q3fhIOvC7RIwBQ9zmojnLDoi4473YR/2Mb4wKajIIBuKfcUB4QWt/e8
+         RmeYtdHVNOckQ==
 From:   Nikita Travkin <nikita@trvn.ru>
 To:     mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org
 Cc:     bjorn.andersson@linaro.org, agross@kernel.org, tdas@codeaurora.org,
@@ -37,9 +36,9 @@ Cc:     bjorn.andersson@linaro.org, agross@kernel.org, tdas@codeaurora.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht,
         Nikita Travkin <nikita@trvn.ru>
-Subject: [PATCH v2 2/4] clk: qcom: clk-rcg2: Make sure to not write d=0 to the NMD register
-Date:   Sun, 12 Jun 2022 19:59:53 +0500
-Message-Id: <20220612145955.385787-3-nikita@trvn.ru>
+Subject: [PATCH v2 4/4] clk: qcom: gcc-msm8916: Add rates to the GP clocks
+Date:   Sun, 12 Jun 2022 19:59:55 +0500
+Message-Id: <20220612145955.385787-5-nikita@trvn.ru>
 In-Reply-To: <20220612145955.385787-1-nikita@trvn.ru>
 References: <20220612145955.385787-1-nikita@trvn.ru>
 MIME-Version: 1.0
@@ -48,51 +47,79 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Sometimes calculation of d value may result in 0 because of the
-rounding after integer division. This causes the following error:
+msm8916 has (at least) 6 "General Purpose" clocks that can be muxed to
+SoC pins. These clocks are:
 
-[  113.969689] camss_gp1_clk_src: rcg didn't update its configuration.
-[  113.969754] WARNING: CPU: 3 PID: 35 at drivers/clk/qcom/clk-rcg2.c:122 update_config+0xc8/0xdc
+GP_CLK{0, 1} : GPIO_{31, 32} (Belongs to CAMSS according to Linux)
+GP_CLK_{1-3}{A, B} : GPIO_{49-51, 97, 12, 13} (Belongs to GCC itself)
+GP_MN : GPIO_110 (Doesn't seem to be described in gcc,
+    ignored in this patch)
 
-Make sure that D value is never zero.
+Those clocks may be used as e.g. PWM sources for external peripherals.
+Add more frequencies to the table for those clocks so it's possible
+for arbitrary peripherals to make use of them.
 
-Fixes: 7f891faf596e ("clk: qcom: clk-rcg2: Add support for duty-cycle for RCG")
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Nikita Travkin <nikita@trvn.ru>
-
 ---
-v2:
- - Use clamp()
----
- drivers/clk/qcom/clk-rcg2.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/gcc-msm8916.c | 35 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 2375e8122012..28019edd2a50 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -13,6 +13,7 @@
- #include <linux/rational.h>
- #include <linux/regmap.h>
- #include <linux/math64.h>
-+#include <linux/minmax.h>
- #include <linux/slab.h>
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index 17e4a5a2a9fd..9a46794f6eb8 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -765,7 +765,20 @@ static struct clk_rcg2 cci_clk_src = {
+ 	},
+ };
  
- #include <asm/div64.h>
-@@ -461,9 +462,11 @@ static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
- 	/* Calculate 2d value */
- 	d = DIV_ROUND_CLOSEST(n * duty_per * 2, 100);
++/*
++ * This is a frequency table for "General Purpose" clocks.
++ * These clocks can be muxed to the SoC pins and may be used by
++ * external devices. They're often used as PWM source.
++ *
++ * See comment at ftbl_gcc_gp1_3_clk.
++ */
+ static const struct freq_tbl ftbl_gcc_camss_gp0_1_clk[] = {
++	F(10000,   P_XO,    16,  1, 120),
++	F(100000,  P_XO,    16,  1,  12),
++	F(500000,  P_GPLL0, 16,  1, 100),
++	F(1000000, P_GPLL0, 16,  1,  50),
++	F(2500000, P_GPLL0, 16,  1,  20),
++	F(5000000, P_GPLL0, 16,  1,  10),
+ 	F(100000000, P_GPLL0, 8, 0, 0),
+ 	F(200000000, P_GPLL0, 4, 0, 0),
+ 	{ }
+@@ -927,7 +940,29 @@ static struct clk_rcg2 crypto_clk_src = {
+ 	},
+ };
  
--	 /* Check bit widths of 2d. If D is too big reduce duty cycle. */
--	if (d > mask)
--		d = mask;
-+	/*
-+	 * Check bit widths of 2d. If D is too big reduce duty cycle.
-+	 * Also make sure it is never zero.
-+	 */
-+	d = clamp_val(d, 1, mask);
- 
- 	if ((d / 2) > (n - m))
- 		d = (n - m) * 2;
++/*
++ * This is a frequency table for "General Purpose" clocks.
++ * These clocks can be muxed to the SoC pins and may be used by
++ * external devices. They're often used as PWM source.
++ *
++ * Please note that MND divider must be enabled for duty-cycle
++ * control to be possible. (M != N) Also since D register is configured
++ * with a value multiplied by 2, and duty cycle is calculated as
++ *                             (2 * D) % 2^W
++ *                DutyCycle = ----------------
++ *                              2 * (N % 2^W)
++ * (where W = .mnd_width)
++ * N must be half or less than maximum value for the register.
++ * Otherwise duty-cycle control would be limited.
++ * (e.g. for 8-bit NMD N should be less than 128)
++ */
+ static const struct freq_tbl ftbl_gcc_gp1_3_clk[] = {
++	F(10000,   P_XO,    16,  1, 120),
++	F(100000,  P_XO,    16,  1,  12),
++	F(500000,  P_GPLL0, 16,  1, 100),
++	F(1000000, P_GPLL0, 16,  1,  50),
++	F(2500000, P_GPLL0, 16,  1,  20),
++	F(5000000, P_GPLL0, 16,  1,  10),
+ 	F(19200000, P_XO, 1, 0,	0),
+ 	{ }
+ };
 -- 
 2.35.3
 
