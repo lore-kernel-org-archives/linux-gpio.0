@@ -2,110 +2,79 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BC1C43334
-	for <linux-gpio@archiver.kernel.org>; Sun, 12 Jun 2022 11:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 225BECCA47C
+	for <linux-gpio@archiver.kernel.org>; Sun, 12 Jun 2022 15:10:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234722AbiFLLYC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 12 Jun 2022 07:24:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49838 "EHLO
+        id S237535AbiFLPKj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 12 Jun 2022 11:10:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233234AbiFLLYB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 12 Jun 2022 07:24:01 -0400
-Received: from polaris.svanheule.net (polaris.svanheule.net [IPv6:2a00:c98:2060:a004:1::200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B7494FC5A
-        for <linux-gpio@vger.kernel.org>; Sun, 12 Jun 2022 04:24:00 -0700 (PDT)
-Received: from terra.. (unknown [IPv6:2a02:a03f:eaf9:8401:aa9f:5d01:1b2a:e3cd])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        with ESMTP id S230238AbiFLPKg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 12 Jun 2022 11:10:36 -0400
+X-Greylist: delayed 616 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 12 Jun 2022 08:10:34 PDT
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8962B5EDDA;
+        Sun, 12 Jun 2022 08:10:34 -0700 (PDT)
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id 51C9A2E6B8B;
-        Sun, 12 Jun 2022 13:23:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1655033036;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=eSUapk17NBllvNrC69eum4Deeo6pZ/m671Rq1flgQIw=;
-        b=7azhbMoTOZNzsauEzNEz0+mIQpTo9TY7k+Q51CV5lSJWpXbqlTTLxCoU52BhZ3CUAm5fWK
-        XjFV/2w/Wof+cZRphrsHQVCkeqAqjHW3SdvWjmFqW4vvG1wV8EZOh5et/8kQyKhYPWnocU
-        j2fPtAPml4gwt6KojBBpfL0JcxFSNva5higr7fOrVOQJcMAUp3UcDjBkxcrOZGFREXGJSH
-        c+Q2AXn4Yx8//YvSO6km0dH8pFMc8UH0HIsmLKXmNdxGHYrcsKfBjKwHr+InaD1A7v0p1H
-        D+m4si2LnmdWNHxZpv0ATqUE50sRU+K+t+65aG9uUuBTxej6Vl/Jt9ppjgdyCA==
-From:   Sander Vanheule <sander@svanheule.net>
-To:     linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Sander Vanheule <sander@svanheule.net>
-Subject: [PATCH v1] gpio: realtek-otto: Make the irqchip immutable
-Date:   Sun, 12 Jun 2022 13:23:09 +0200
-Message-Id: <20220612112308.320447-1-sander@svanheule.net>
-X-Mailer: git-send-email 2.36.1
+        by box.trvn.ru (Postfix) with ESMTPSA id A090E4B00F;
+        Sun, 12 Jun 2022 20:00:17 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+        t=1655046018; bh=jp2x8yViozN+IlCDICU84cGBy/PA8CqFPQjOLcNghP4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=0vV3m+5K8dSKvmJj7/SUdo6ffKiYXkTXdUrysE7DsUPQtw1doZEwx3DXzAceZjSbv
+         Yn5/pATx4Wy9h2DJV+9xv5YbFqJClpyiggKQCOn9NWuz6fyLTlkahiQXtP+/b1HI16
+         Ror6F0itvSyCAmMXuXH1MoqSrrA4gQszRZRg3V1iWa2iTC8gnY1pwDuYESpPoPHVLl
+         9Ssm8YpDMUwWu0sr2BbiFcPIgh8QClI+639yhrC4ooPbBFeb8YavbLjObNYo+pKKTB
+         xsi1x4dtvjQ8ECEmkTewlB6/+y7qXK+ptd1YXiuEB1DJr5R+3NTzC1/siWHDAhI27t
+         2hj5Z05qy8T+Q==
+From:   Nikita Travkin <nikita@trvn.ru>
+To:     mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org
+Cc:     bjorn.andersson@linaro.org, agross@kernel.org, tdas@codeaurora.org,
+        joonwoop@codeaurora.org, svarbanov@mm-sol.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Nikita Travkin <nikita@trvn.ru>
+Subject: [PATCH v2 3/4] pinctrl: qcom: msm8916: Allow CAMSS GP clocks to be muxed
+Date:   Sun, 12 Jun 2022 19:59:54 +0500
+Message-Id: <20220612145955.385787-4-nikita@trvn.ru>
+In-Reply-To: <20220612145955.385787-1-nikita@trvn.ru>
+References: <20220612145955.385787-1-nikita@trvn.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Since commit 6c846d026d49 ("gpio: Don't fiddle with irqchips marked as
-immutable") a warning is issued for the realtek-otto driver:
+GPIO 31, 32 can be muxed to GCC_CAMSS_GP(1,2)_CLK respectively but the
+function was never assigned to the pingroup (even though the function
+exists already).
 
-    gpio gpiochip0: (18003500.gpio): not an immutable chip, please consider fixing it!
+Add this mode to the related pins.
 
-Make the driver's irqchip immutable to fix this.
-
-Signed-off-by: Sander Vanheule <sander@svanheule.net>
+Fixes: 5373a2c5abb6 ("pinctrl: qcom: Add msm8916 pinctrl driver")
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
 ---
- drivers/gpio/gpio-realtek-otto.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-msm8916.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-realtek-otto.c b/drivers/gpio/gpio-realtek-otto.c
-index 127799b2e2f6..b33558c29fd7 100644
---- a/drivers/gpio/gpio-realtek-otto.c
-+++ b/drivers/gpio/gpio-realtek-otto.c
-@@ -172,6 +172,8 @@ static void realtek_gpio_irq_unmask(struct irq_data *data)
- 	unsigned long flags;
- 	u16 m;
- 
-+	gpiochip_enable_irq(&ctrl->gc, line);
-+
- 	raw_spin_lock_irqsave(&ctrl->lock, flags);
- 	m = ctrl->intr_mask[port];
- 	m |= realtek_gpio_imr_bits(port_pin, REALTEK_GPIO_IMR_LINE_MASK);
-@@ -195,6 +197,8 @@ static void realtek_gpio_irq_mask(struct irq_data *data)
- 	ctrl->intr_mask[port] = m;
- 	realtek_gpio_write_imr(ctrl, port, ctrl->intr_type[port], m);
- 	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
-+
-+	gpiochip_disable_irq(&ctrl->gc, line);
- }
- 
- static int realtek_gpio_irq_set_type(struct irq_data *data, unsigned int flow_type)
-@@ -316,13 +320,15 @@ static int realtek_gpio_irq_init(struct gpio_chip *gc)
- 	return 0;
- }
- 
--static struct irq_chip realtek_gpio_irq_chip = {
-+static const struct irq_chip realtek_gpio_irq_chip = {
- 	.name = "realtek-otto-gpio",
- 	.irq_ack = realtek_gpio_irq_ack,
- 	.irq_mask = realtek_gpio_irq_mask,
- 	.irq_unmask = realtek_gpio_irq_unmask,
- 	.irq_set_type = realtek_gpio_irq_set_type,
- 	.irq_set_affinity = realtek_gpio_irq_set_affinity,
-+	.flags = IRQCHIP_IMMUTABLE,
-+	GPIOCHIP_IRQ_RESOURCE_HELPERS,
- };
- 
- static const struct of_device_id realtek_gpio_of_match[] = {
-@@ -405,7 +411,7 @@ static int realtek_gpio_probe(struct platform_device *pdev)
- 	irq = platform_get_irq_optional(pdev, 0);
- 	if (!(dev_flags & GPIO_INTERRUPTS_DISABLED) && irq > 0) {
- 		girq = &ctrl->gc.irq;
--		girq->chip = &realtek_gpio_irq_chip;
-+		gpio_irq_chip_set_chip(girq, &realtek_gpio_irq_chip);
- 		girq->default_type = IRQ_TYPE_NONE;
- 		girq->handler = handle_bad_irq;
- 		girq->parent_handler = realtek_gpio_irq_handler;
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm8916.c b/drivers/pinctrl/qcom/pinctrl-msm8916.c
+index 396db12ae904..bf68913ba821 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm8916.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm8916.c
+@@ -844,8 +844,8 @@ static const struct msm_pingroup msm8916_groups[] = {
+ 	PINGROUP(28, pwr_modem_enabled_a, NA, NA, NA, NA, NA, qdss_tracedata_b, NA, atest_combodac),
+ 	PINGROUP(29, cci_i2c, NA, NA, NA, NA, NA, qdss_tracedata_b, NA, atest_combodac),
+ 	PINGROUP(30, cci_i2c, NA, NA, NA, NA, NA, NA, NA, qdss_tracedata_b),
+-	PINGROUP(31, cci_timer0, NA, NA, NA, NA, NA, NA, NA, NA),
+-	PINGROUP(32, cci_timer1, NA, NA, NA, NA, NA, NA, NA, NA),
++	PINGROUP(31, cci_timer0, flash_strobe, NA, NA, NA, NA, NA, NA, NA),
++	PINGROUP(32, cci_timer1, flash_strobe, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(33, cci_async, NA, NA, NA, NA, NA, NA, NA, qdss_tracedata_b),
+ 	PINGROUP(34, pwr_nav_enabled_a, NA, NA, NA, NA, NA, NA, NA, qdss_tracedata_b),
+ 	PINGROUP(35, pwr_crypto_enabled_a, NA, NA, NA, NA, NA, NA, NA, qdss_tracedata_b),
 -- 
-2.36.1
+2.35.3
 
