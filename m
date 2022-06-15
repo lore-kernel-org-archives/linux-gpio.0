@@ -2,95 +2,82 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 082D8C43334
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jun 2022 17:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 626FCC433EF
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Jun 2022 18:07:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349765AbiFORIp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Jun 2022 13:08:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45368 "EHLO
+        id S1350269AbiFOSHD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Jun 2022 14:07:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349750AbiFORIo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jun 2022 13:08:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 684EE31DFD;
-        Wed, 15 Jun 2022 10:08:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S1346928AbiFOSHC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jun 2022 14:07:02 -0400
+Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC30D50B25;
+        Wed, 15 Jun 2022 11:07:00 -0700 (PDT)
+Received: from [127.0.0.1] (nyx.walle.cc [158.255.213.36])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E757061A5A;
-        Wed, 15 Jun 2022 17:08:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47EC1C3411C;
-        Wed, 15 Jun 2022 17:08:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655312922;
-        bh=DPZwDt3Nv5YY6FK0uIajES+SPNgbum9OCK2ZeVuuc3E=;
-        h=From:To:In-Reply-To:References:Subject:Date:From;
-        b=m+2gl1eG0rkpPNEDof9eCnIJUG7ua6jSTK4EbkN8S8jLdsFCOguYthoEcxAQYDOuC
-         2k4UfGx6ahOGA72MmCFb0pGSLXdQ6qjjqV4vK7Bfrc/smT3x17Yd5td8+2uXgeFM1B
-         2I5TcodJlJuxYwYeKN4SL5SDZpwzklE5SBAoNuJyd2Cd5EnOkR9j99JDHPlmT9JNyh
-         asH4YF9U9KhFEQu2xy/CIqoC/In8uS3323aH/hEa6o1CIH7kudjaMnzCZhEElvB70T
-         ZGslPtmBk7H00zKctc/RfQaTf00tlr/vlrymbUQ8xN9KUIZdWCcP1vAUVd+CJmJLRW
-         NfLQaBZLC1kLg==
-From:   Mark Brown <broonie@kernel.org>
-To:     linux-arm-kernel@lists.infradead.org, tiwai@suse.com,
-        linus.walleij@linaro.org, lgirdwood@gmail.com, perex@perex.cz,
-        linux-kernel@vger.kernel.org, samuel@sholland.org, wens@csie.org,
-        linux-gpio@vger.kernel.org, rafael@kernel.org,
-        linux-sunxi@lists.linux.dev, patrice.chotard@foss.st.com,
-        jernej.skrabec@gmail.com, p.zabel@pengutronix.de,
-        lchen.firstlove@zohomail.com, gregkh@linuxfoundation.org
-In-Reply-To: <180eef39205.122d47c8260721.2430302798386025245@zohomail.com>
-References: <180e702a15f.e737e37e45859.3135149506136486394@zohomail.com> <180eef39205.122d47c8260721.2430302798386025245@zohomail.com>
-Subject: Re: (subset) [PATCH v3 0/4] Add regmap_field helpers for simple bit operations
-Message-Id: <165531291902.3574042.11922477626271961172.b4-ty@kernel.org>
-Date:   Wed, 15 Jun 2022 18:08:39 +0100
+        by ssl.serverraum.org (Postfix) with ESMTPSA id B221F221D4;
+        Wed, 15 Jun 2022 20:06:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1655316417;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=X31Y0rQlpQau1yeSY1ewrfTTggu40SW7YZpoP18Nyc4=;
+        b=OYz6MguMMV3tV9zA8VtMkNpupo/XoNdrSezibyu9AwYYzlewf9Hez4YMuVDHDz4Cds2khU
+        plTm2VquklTTvnLjD4bam0yzvWGufT3IaxfwAJRrzVOCljFuIYwhYLGBkrw5337vST1zxN
+        IRtqmDNFGhS9FxsTaSwFM2BTvxXYEBo=
+Date:   Wed, 15 Jun 2022 20:06:49 +0200
+From:   Michael Walle <michael@walle.cc>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+CC:     brgl@bgdev.pl, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, wens@csie.org, jic23@kernel.org,
+        lee.jones@linaro.org, sre@kernel.org, broonie@kernel.org,
+        gregkh@linuxfoundation.org, lgirdwood@gmail.com, lars@metafoo.de,
+        rafael@kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/10] pinctrl: Add AXP192 pin control driver
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CACRpkdbObQ5WrzVC_xYobJPSBVSMyaz0HHXesLP+g1HCzCGJtQ@mail.gmail.com>
+References: <20220603135714.12007-1-aidanmacdonald.0x0@gmail.com> <20220603135714.12007-11-aidanmacdonald.0x0@gmail.com> <CACRpkdbObQ5WrzVC_xYobJPSBVSMyaz0HHXesLP+g1HCzCGJtQ@mail.gmail.com>
+Message-ID: <A3444B9B-FDCD-4292-9DE4-D7DBC9DFA597@walle.cc>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, 22 May 2022 20:26:21 -0700, Li Chen wrote:
-> From: Li Chen <lchen@ambarella.com>
-> 
-> This series proposes to add simple bit operations for setting, clearing
-> and testing specific bits with regmap_field.
-> 
-> Li Chen (4):
->   regmap: provide regmap_field helpers for simple bit operations
->   ASoC: sunxi: Use {regmap/regmap_field}_{set/clear}_bits helpers
->   pinctrl: bcm: Use regmap_field_{set/clear}_bits helpers
->   pinctrl: st: Switch to use regmap_field_test_bits
-> 
-> [...]
+Am 15=2E Juni 2022 15:44:04 OEZ schrieb Linus Walleij <linus=2Ewalleij@lina=
+ro=2Eorg>:
+>On Fri, Jun 3, 2022 at 3:56 PM Aidan MacDonald
+><aidanmacdonald=2E0x0@gmail=2Ecom> wrote:
+>
+>> The AXP192 PMIC's GPIO registers are much different from the GPIO
+>> registers of the AXP20x and AXP813 PMICs supported by the existing
+>> pinctrl-axp209 driver=2E It makes more sense to add a new driver for
+>> the AXP192, rather than add support in the existing axp20x driver=2E
+>>
+>> The pinctrl-axp192 driver is considerably more flexible in terms of
+>> register layout and should be able to support other X-Powers PMICs=2E
+>> Interrupts and pull down resistor configuration are supported too=2E
+>>
+>> Signed-off-by: Aidan MacDonald <aidanmacdonald=2E0x0@gmail=2Ecom>
+>
+>Looks good to me (TM) but I'd like Michael Walle to take a look
+>to check if this is one of those drivers that could make use of
+>gpio-regmap=2Ec CONFIG_GPIO_REGMAP to make it even
+>simpler=2E
+>
+>Yours,
+>Linus Walleij
 
-Applied to
+FWIW, I can look at it at the end of next week=2E I'm on vacation=2E
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/4] regmap: provide regmap_field helpers for simple bit operations
-      commit: f67be8b7ee90c292948c3ec6395673963cccaee6
-[2/4] ASoC: sunxi: Use {regmap/regmap_field}_{set/clear}_bits helpers
-      commit: b23662406b1b225847b964e4549a5718c45f20d6
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-michael 
