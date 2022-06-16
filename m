@@ -2,64 +2,65 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F19E9C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jun 2022 06:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1A4CCA47A
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jun 2022 06:09:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358990AbiFPGJZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Jun 2022 02:09:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58148 "EHLO
+        id S1359019AbiFPGJc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Jun 2022 02:09:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358986AbiFPGJW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jun 2022 02:09:22 -0400
+        with ESMTP id S1359012AbiFPGJa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jun 2022 02:09:30 -0400
 Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF84A24940;
-        Wed, 15 Jun 2022 23:09:21 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id DED3A3200A57;
-        Thu, 16 Jun 2022 02:09:17 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24CE22AE31;
+        Wed, 15 Jun 2022 23:09:27 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id C96123200B89;
+        Thu, 16 Jun 2022 02:09:25 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 16 Jun 2022 02:09:18 -0400
+  by compute2.internal (MEProxy); Thu, 16 Jun 2022 02:09:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :message-id:mime-version:reply-to:sender:subject:subject:to:to;
-         s=fm3; t=1655359757; x=1655446157; bh=4cAGhT7P98OlSBNNXfednYGJs
-        u5Tq4H2hRPhtxLXeTU=; b=UP0Wynl0Z5MpaJpingUQYshe2Gj6uP/VlSzDKUQZG
-        Ia861CwPIhrASvqSGSarnhW6u43UNq6c5AghP8KSNP+MnYO0bNa4zzt24rS2Jhe6
-        Ea6iKbqUAYVmqNUoqL9y0IE3o7jpipdXI15o5UK42StVjKxzjNEvA4Cd7Z5w7hef
-        b+TbkRmMIrYO6GWnOq3ErK/KUFAcGmPNiSPT6KRf3WHDb7VPIvX3cOcrz+K66t9t
-        B1U4UP69Nwq825bH7T2udRK8xWevjwobo7DAfq9wuYVCNPYmOUrUD8pUjfmES2MB
-        TLv4qV832dlrft+Kg90UB0fV1wWruLo0vjC3fV8XD8bSQ==
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1655359765; x=1655446165; bh=Wp
+        QPo7pmmXPFcZpqgi6pg7aulqg71qCMS9O5OKvOTSk=; b=hS+NI950tjavec7au1
+        N80n1ca/2Df1cwURXnMmf7XrhK4fj6OOCfjbQGonlc1TwJcvlLc6yrN7hoJoOTDj
+        Brd7cyhTjN/W6Lf/MdcsoyZ4Y8736RSu3NKwSivwT+xrecdpIlCLZEh0CEzF+gEv
+        iiIeDdwSLZPj1KzQuayba54kIlYRhe9GkpkwT5LhEH6IuzGk3XzguIqtOvW6EMT3
+        F7JN9MsiuIGFiC4A7EHk/5YLGRt6/uF6bNr5Aq/xQDzvacW0hif7VbZwljfe46cj
+        0ecAlkptb1caxVOk11NMbclSiYggVjKJU+njJXfM+X5Y2AU6yy3Ho+Q3VgCUvnIO
+        jUew==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:message-id
-        :mime-version:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1655359757; x=1655446157; bh=4cAGhT7P98OlSBNNXfednYGJsu5Tq4H2hRP
-        htxLXeTU=; b=N6sXgHMPEE6EWESxM+7VVwiOKQ1xvT+KcHo+2Tv6h7ajK5Jiw7X
-        /Ejmhx5rMzyBlJnxKQHRW+YTaDtLM4cK5buBaVkwWREBJubgQmqjcDvWpB7adTxP
-        XXuYNTa/L2RJFxXseNgBD9aEbwfyUtDy5U0YF8oaGVD0Xd06LgY0BSNbikhwpvzb
-        4o7LN3kHRCsaO9LrJa66wg8bM2vNifglyqiQ1R4Yb9q9r65ELCMjaoN7cxYG2rV3
-        ieZ6wrDMrt8KORdDT8vY3G1/0niRLd52mJ+92rYATMP5r2O2hoER32ojBzmq+F1g
-        sGAmaQXAzPIqWa2Vl9zfOzIlDs6QT5+inXg==
-X-ME-Sender: <xms:DMmqYgXydrGSH0EDlMNnRzdy9YC5vioaUJS89XnXUZ7d0akmilzmJA>
-    <xme:DMmqYkmmpyfiJwgraA0MbnzaS4G7ZdEh3XhvRkA8EAdeCnOHSfUmpDh2V7z7E0NP4
-    7p_COa2L1vc94Cjgw>
-X-ME-Received: <xmr:DMmqYka7cxIzyVfbLJFrFP01MwZ2hqDpl4CkfAzszP70wYTK4nW0Oi43Y0oOng_4o9v6_gQY86M2eAZOoxL6yb2gkPr1aBB_NwXIz5Co9cP6zN1XyVdL5z4XMWbny3XEL9U4yg>
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1655359765; x=1655446165; bh=WpQPo7pmmXPFc
+        Zpqgi6pg7aulqg71qCMS9O5OKvOTSk=; b=PMBetWNY7VysMfnpxryA7xrX9WfsB
+        I/NTr2kARcBi0Z3yzmI1P2K8cTy4/iP/W7OwafshuDsug/j004N+++53SZ1zL5Ue
+        0UEjLXmm3UfqrGeHHr7U67ME8Njt902hAOXjv5EJkvpHxYUREcaLnw1CS9llGR5b
+        jT9ho3d6QzNYFtY+jUyYlP+xGJ4AUsDq9XJStYbeECeKTG8knmSrNjE+rgVPxw6t
+        IRVrW8c6yflUl7/CbkM+iVewcCfUu6OBGjP3/bFqEwOlQST8/2XSEgy1Kc7gFpcD
+        HFRy91KmzovxsHmeKzN8YzbxjxhfisoVYIrBWnK1ugFgd98cMLm/ekzHw==
+X-ME-Sender: <xms:FcmqYpoBHtQPo0bZEmd3tFPLHEDNcApBFxxOilkh14qT6akpi5rDeA>
+    <xme:FcmqYromJZRr9J2KW9Ga_l-V4xeT8z-FSmVENk3SY3iFNViyTdBNMq8R5FdHt21xy
+    B5DQ2pP5XdyqgLzxQ>
+X-ME-Received: <xmr:FcmqYmPxdGu-4BCgnOLD08S6PMszxm5GYiGCp0UKaHs1wKIoI2JFDa_BVYRwSuCO98N2ZsOX5d6YB0h0LXshklr5Sv8IGFVY8cJHLcRg3ART-4_GeWClR1j9UfXRePkV89T0kQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedruddvvddguddtfecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtf
-    frrghtthgvrhhnpeekveelhfejueelleetvdejvdeffeetgeelheeujeffhefgffefkeeh
-    hffhkeekgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:DcmqYvUM83I9oWo9CCyzFE5lCvIrpBTUR01UpKtdDfn83R4pepw6Ug>
-    <xmx:DcmqYqlmQPOEDcD1rCHnZ4m7L_IBRbe9tf3luiw-M5g5yzsvYZLwZg>
-    <xmx:DcmqYkcoWiHuIGbSO_RXzEOnlqYs4dL-VSUW0CU0XxBK2SUoaeESXA>
-    <xmx:DcmqYk4BQOoW16Ot4t4hOPmwTeVVD2Fjewy5kzCUz4cQNLHq1ARRZQ>
+    enucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghm
+    uhgvlhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenuc
+    ggtffrrghtthgvrhhnpedukeetueduhedtleetvefguddvvdejhfefudelgfduveeggeeh
+    gfdufeeitdevteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:FcmqYk4l0XcO7PrDQ3toTSAw2z8pX_X7rr1_K-t6li6O-dSl6fhyCQ>
+    <xmx:FcmqYo66vC86p4IdN-dz2SL9RmqFOMISCUVpHulin5gDwuMDKvt0iw>
+    <xmx:FcmqYsiexYKtZkD17ZprJAiht7zw8-ytjUBaQ20jyk-bTiSm7yFKXA>
+    <xmx:FcmqYqv4HutdvmeQ0CSD_DRK6DLlmQ7ID1V6CFS9dGmFZi7xlQhHyw>
 Feedback-ID: i0ad843c9:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 16 Jun 2022 02:09:16 -0400 (EDT)
+ 16 Jun 2022 02:09:24 -0400 (EDT)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee.jones@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -69,34 +70,68 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Samuel Holland <samuel@sholland.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] AXP221/AXP223/AXP809 GPIO support
-Date:   Thu, 16 Jun 2022 01:09:11 -0500
-Message-Id: <20220616060915.48325-1-samuel@sholland.org>
+Subject: [PATCH 3/4] pinctrl: axp209: Support the AXP221/AXP223/AXP809 variant
+Date:   Thu, 16 Jun 2022 01:09:14 -0500
+Message-Id: <20220616060915.48325-4-samuel@sholland.org>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220616060915.48325-1-samuel@sholland.org>
+References: <20220616060915.48325-1-samuel@sholland.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series hooks up the GPIO controller found in some older X-Powers
-PMICs. The main motivation is converting the U-Boot driver over to use
-devicetree, but Linux might as well gain support for the hardware too.
+These PMICs each have 2 GPIOs with the same register layout as AXP813,
+but without an ADC function. They all fall back to the AXP221 compatible
+string, so only that one needs to be listed in the driver.
 
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+---
 
-Samuel Holland (4):
-  dt-bindings: gpio: Add AXP221/AXP223/AXP809 compatibles
-  mfd: axp20x: Add AXP221/AXP223/AXP809 GPIO cells
-  pinctrl: axp209: Support the AXP221/AXP223/AXP809 variant
-  ARM: dts: axp22x/axp809: Add GPIO controller nodes
+ drivers/pinctrl/pinctrl-axp209.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
- .../bindings/gpio/x-powers,axp209-gpio.yaml   |  7 +++++++
- arch/arm/boot/dts/axp22x.dtsi                 | 18 ++++++++++++++++++
- arch/arm/boot/dts/axp809.dtsi                 | 19 +++++++++++++++++++
- drivers/mfd/axp20x.c                          |  9 +++++++++
- drivers/pinctrl/pinctrl-axp209.c              | 14 +++++++++++---
- 5 files changed, 64 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-axp209.c b/drivers/pinctrl/pinctrl-axp209.c
+index 207cbae3a7bf..7ab20ac15391 100644
+--- a/drivers/pinctrl/pinctrl-axp209.c
++++ b/drivers/pinctrl/pinctrl-axp209.c
+@@ -73,7 +73,7 @@ static const struct pinctrl_pin_desc axp209_pins[] = {
+ 	PINCTRL_PIN(2, "GPIO2"),
+ };
+ 
+-static const struct pinctrl_pin_desc axp813_pins[] = {
++static const struct pinctrl_pin_desc axp22x_pins[] = {
+ 	PINCTRL_PIN(0, "GPIO0"),
+ 	PINCTRL_PIN(1, "GPIO1"),
+ };
+@@ -87,9 +87,16 @@ static const struct axp20x_pctrl_desc axp20x_data = {
+ 	.adc_mux = AXP20X_MUX_ADC,
+ };
+ 
++static const struct axp20x_pctrl_desc axp22x_data = {
++	.pins	= axp22x_pins,
++	.npins	= ARRAY_SIZE(axp22x_pins),
++	.ldo_mask = BIT(0) | BIT(1),
++	.gpio_status_offset = 0,
++};
++
+ static const struct axp20x_pctrl_desc axp813_data = {
+-	.pins	= axp813_pins,
+-	.npins	= ARRAY_SIZE(axp813_pins),
++	.pins	= axp22x_pins,
++	.npins	= ARRAY_SIZE(axp22x_pins),
+ 	.ldo_mask = BIT(0) | BIT(1),
+ 	.adc_mask = BIT(0),
+ 	.gpio_status_offset = 0,
+@@ -388,6 +395,7 @@ static int axp20x_build_funcs_groups(struct platform_device *pdev)
+ 
+ static const struct of_device_id axp20x_pctl_match[] = {
+ 	{ .compatible = "x-powers,axp209-gpio", .data = &axp20x_data, },
++	{ .compatible = "x-powers,axp221-gpio", .data = &axp22x_data, },
+ 	{ .compatible = "x-powers,axp813-gpio", .data = &axp813_data, },
+ 	{ }
+ };
 -- 
 2.35.1
 
