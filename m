@@ -2,96 +2,114 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4265FC433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jun 2022 05:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA479C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Jun 2022 06:09:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229742AbiFPFJq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Jun 2022 01:09:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37918 "EHLO
+        id S1358952AbiFPGJZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Jun 2022 02:09:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229694AbiFPFJp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jun 2022 01:09:45 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8385E56B35;
-        Wed, 15 Jun 2022 22:09:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-        :In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
-        Reply-To:Cc:Content-ID:Content-Description;
-        bh=8mZ1bXeHffFC/kHmIXWI5Muej2f+NxPZdpt2fFJLCPg=; b=pwLr72dcqADpqWELJCQtWR6StY
-        fuboEy9QOQJ/IPzSuw2Mjmq9P95HaWH/L+Gl7M+ZJ43parY5YaQQMmS2FWsxQfso5RDLoLVsujWFt
-        HZIkOnTrJ76lQxPhS1gs/J95YzxEXr8Vbdv+w8YyfVM+ffGs7qWvpI04jcuME70RoQBgMGKnun4J8
-        IIZ41IPOjTu7Yb8uWhimoxa9ICjR3sU3X7TcSFf2YzcMpEM4gurASEm5mDBBU2m8g61Hse2WfLC52
-        C3xW4LM3pX8Q8LQlWftdVdqykqCTZ8D5mui0YOoIL64wYNycVGcJIHkLx8Y5Lzft2nc0v4ben4wkv
-        qFH6n6Fw==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o1hlC-008KMC-CQ; Thu, 16 Jun 2022 05:09:39 +0000
-Message-ID: <e04450b6-822e-ca66-484b-a48856e94a9e@infradead.org>
-Date:   Wed, 15 Jun 2022 22:09:31 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v6 3/4] i2c: ch341: add I2C MFD cell driver for the CH341
-Content-Language: en-US
-To:     frank zago <frank@zago.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Wolfram Sang <wsa@kernel.org>, Johan Hovold <johan@kernel.org>,
-        linux-usb@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        with ESMTP id S1358981AbiFPGJW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jun 2022 02:09:22 -0400
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4AAE252BF;
+        Wed, 15 Jun 2022 23:09:21 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id 86B2F32009BE;
+        Thu, 16 Jun 2022 02:09:20 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Thu, 16 Jun 2022 02:09:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1655359760; x=1655446160; bh=Oa
+        skLM2rsVB8WYN8miwGXG1amlwpVFT97kyPItB/L34=; b=B2s02t8eovzTmtzEqK
+        e1CUB84rCa3V8SbFRXBvzXRzBF3rxVchBq1XlQKmy6aUKdiv04K/dLvZd0gSf6J1
+        7T8G19GhCtCkIam++7ecyRmX/ztSBPnWJZd6PX+nIuI3sPr7DTgcoC9TTe6lMEfw
+        s1YxpFH+4lGtvkE+8XS+BCCcFr2PDqRG2EbwsUKigIDW6KiFfQj0bqYhIr6nQ05I
+        /M+dlKBIO090yHa0a2I3lQSw64T9cco2oES4C76ZCJlw89X8ACANPUiMlVgwWrVm
+        S1pVW3IQyfJxLVr30NA9ENMgGmJ+Eqf4SCU7ISMYkIvdpUFGAR0eRmHT0vd08fXq
+        Khcw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1655359760; x=1655446160; bh=OaskLM2rsVB8W
+        YN8miwGXG1amlwpVFT97kyPItB/L34=; b=UJMXvnWhqJU3aJ8/DxPUuGl/7V7nb
+        njcG2ncKOTXDBSGACSexVndcrMBDtPZ45nRsfJkYwaNfG99GXqfOVZo3R7oo17i3
+        FJQvv/5kFsutACkLIW+FwyKr97sl0duH6kJDcpdM/znera7AY9nxaYwpacDWq8wB
+        CZhFes/2EJV3iEW1lmHTrv9GK+Eento/UiM9GgOlFGM3BuOcMjTNf4xRKRc6B5Xe
+        O1uxW+8o8mMG9GorBuBy3hfikEmaaVOjDxMMepFj227NuZgsgg9jCUi22nA+Ak8a
+        JGcm7ODL8FvUyLmzlM4jV40mOgmSBzoYlmQ+q+EyhBa51uopwE5jMgGmw==
+X-ME-Sender: <xms:D8mqYqaPSdVch5UFsHb2gYryyHZW_2aPbXjTb4BCI0DzHqNnn90XVA>
+    <xme:D8mqYtZpX5An3iMEGL8WQ7ae2NYpmamxxvxUX8XVSMGTqI5PyxSBllU5dqxmPFNmQ
+    n0trFw2Q9YasFQrvA>
+X-ME-Received: <xmr:D8mqYk-sXk7FXd4lqrcSOZ_m0iWoaH99nELu1fjZlutwL0NRNEOJxKAkCrE6G3zdiebtkuQDRr8zRBvW40GfjGFwIqL3zMIOLdA8Mz5mTJ6trFnVlHs2C0KLLpANFV8YqdwecQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedruddvvddguddtfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghm
+    uhgvlhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenuc
+    ggtffrrghtthgvrhhnpedukeetueduhedtleetvefguddvvdejhfefudelgfduveeggeeh
+    gfdufeeitdevteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:D8mqYsrD1QxEapIjJbe9e13q3AxN8HkdLDgYDaeLTOX06ktIWp5jIw>
+    <xmx:D8mqYlqdZ2uWZA0KpraKqCK9FRKw7YYih0SUlzlxOVZ4uwGMVKvoQQ>
+    <xmx:D8mqYqR3W279AN8sjbJWVOsOjoQhxsRWmB4NiVa3hntzGKTujfKg9A>
+    <xmx:EMmqYpdG3Y7y6kXKv8qs4aF3Iqn3WF3Cv3KdOC5q4jsKqi9ITpjGEg>
+Feedback-ID: i0ad843c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 16 Jun 2022 02:09:19 -0400 (EDT)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee.jones@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20220616013747.126051-1-frank@zago.net>
- <20220616013747.126051-4-frank@zago.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20220616013747.126051-4-frank@zago.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-gpio@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] dt-bindings: gpio: Add AXP221/AXP223/AXP809 compatibles
+Date:   Thu, 16 Jun 2022 01:09:12 -0500
+Message-Id: <20220616060915.48325-2-samuel@sholland.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220616060915.48325-1-samuel@sholland.org>
+References: <20220616060915.48325-1-samuel@sholland.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi--
+These PMICs each have 2 GPIOs with the same register layout as AXP813,
+but without an ADC function.
 
-On 6/15/22 18:37, frank zago wrote:
-> The I2C interface can run at 4 different speeds. This driver currently
-> only offer 100kHz. Tested with a variety of I2C sensors, and the IIO
-> subsystem.
-> 
-> Signed-off-by: frank zago <frank@zago.net>
-> ---
->  MAINTAINERS                    |   1 +
->  drivers/i2c/busses/Kconfig     |  10 +
->  drivers/i2c/busses/Makefile    |   1 +
->  drivers/i2c/busses/i2c-ch341.c | 377 +++++++++++++++++++++++++++++++++
->  4 files changed, 389 insertions(+)
->  create mode 100644 drivers/i2c/busses/i2c-ch341.c
-> 
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+---
 
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index a1bae59208e3..db9797345ad5 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -1199,6 +1199,16 @@ config I2C_RCAR
->  
->  comment "External I2C/SMBus adapter drivers"
->  
-> +config I2C_CH341
-> +	tristate "CH341 USB to I2C support"
-> +	select MFD_CH341
-> +	help
-> +	  If you say yes to this option, I2C support will be included for the
-> +	  WCH CH341, a USB to I2C/SPI/GPIO interface.
-> +
-> +	  This driver can also be built as a module.  If so, the module
-> +	  will be called i2c-ch341.
+ .../devicetree/bindings/gpio/x-powers,axp209-gpio.yaml     | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-I haven't tested it, but just from reading, it looks like
-this one needs a "depends on USB" since it selects MFD_CH341, which
-depends on USB, and since 'select' ignores dependency chains.
-
-The GPIO driver (patch 2/4) already depends on USB.
-
+diff --git a/Documentation/devicetree/bindings/gpio/x-powers,axp209-gpio.yaml b/Documentation/devicetree/bindings/gpio/x-powers,axp209-gpio.yaml
+index 0f628b088cec..6faa3ef28960 100644
+--- a/Documentation/devicetree/bindings/gpio/x-powers,axp209-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/x-powers,axp209-gpio.yaml
+@@ -19,7 +19,14 @@ properties:
+     oneOf:
+       - enum:
+           - x-powers,axp209-gpio
++          - x-powers,axp221-gpio
+           - x-powers,axp813-gpio
++      - items:
++          - const: x-powers,axp223-gpio
++          - const: x-powers,axp221-gpio
++      - items:
++          - const: x-powers,axp809-gpio
++          - const: x-powers,axp221-gpio
+       - items:
+           - const: x-powers,axp803-gpio
+           - const: x-powers,axp813-gpio
 -- 
-~Randy
+2.35.1
+
