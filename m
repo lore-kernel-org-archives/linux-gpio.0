@@ -2,25 +2,25 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5C4CCA479
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jun 2022 10:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8065ECCA47C
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jun 2022 10:48:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382169AbiFQKsM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Jun 2022 06:48:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45176 "EHLO
+        id S1382166AbiFQKsh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Jun 2022 06:48:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382168AbiFQKsK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jun 2022 06:48:10 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2058.outbound.protection.outlook.com [40.107.237.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A97D33880;
-        Fri, 17 Jun 2022 03:48:09 -0700 (PDT)
+        with ESMTP id S1380514AbiFQKsQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jun 2022 06:48:16 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2052.outbound.protection.outlook.com [40.107.94.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94772192B2;
+        Fri, 17 Jun 2022 03:48:14 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hGp7NNJruP+vxEd5nopeNuXMbNRFMTrxUPJ/VaOat0w05PlbZ/6a4yWxo8iSCfZArtquOH6FMKXEnJXAZD/OwjF2KMvUICyQUQKvikptai8wPnphbfGmV+2hFZKZOXd0xzp3eFw1k1SbRuZJFZx8e3M5coqAvQuM20WQbXk9nmKicq5D62WHPqGMe0Vb+Z5RdB9F3pP4sZoKSuiHgqbSixud3yfYzqRbZOT78TcXERVWyfsZ3cXHUKLpypX1ojEc2s1+VRV+QMaWQRML3hBpI1jHGnTxPogCoP7EYqa0rsc9c6/p07mtZaVbMc53l2RdrLdSLfZdfM1JpfkGyegxLw==
+ b=eJG2AcXJiC+k5mWXP5FozdI35EMXw2Tfo46eoIB18tdGolNy142gbe699kYKDpReor4SzCmPAKx1L2GLVr8O3imkEYIsFhKzfoIsrKXGg+bbvElqbKEhr9EXBiOFHcfpXRXsW+qbOgqyEXw8nHfW0VCeiyv9yCFkmJ2H8abW6pFfmQe/LawyRi/lIZnmFTzJl5mfNpvTCMezU4QASqRIT19oNG0bYLIJPS17/ptqBaaYXS5DGqTkBCUBRAQSWqkn48lhoXZv1C/VzGsFT2rgIt9A4xkT+id8Xo4KNvDnXhVpvf0xoXXVjesmsx30sidqzAEfoXdGXMXIlKIKEKRGJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u3leZdyH2CWEiL6goxTy7JcaId0/DW7Ts5Og7sylZv4=;
- b=ld7bo3qppLZqWrTY1eUteTYQFrlmMivdVCzL1ecPRy51Y5SX+RahrHctLsdlbzLZJRYpfvKakl4tlBZx3ZHFG1oQ/hiHhNLI7j3b0GE9fuWmaqlcMOs5aIZhb4/Q/dbS7Ark/x4QASOsIPXItJYl5Q9yOcDMEIhB2GeOqgVj0tw3ezaQNbP26RAs4HBgL5YnD6wOmYaemcMVrkMfghsBENeYuUqDp+QlLAxScpW+WacQhFNZAfKJOEpK4XbxKjO3/eUFeT7oK2lSjregYv/5xmP2CSoLhtglNIvQiYUMZ3sNtD1/4feMsuAnbkdMqpfTI5xhUrZTup93jCMv32o8SA==
+ bh=SQzEp2+660WAMs2N0VB+RP4Eg5ZmuxHB8GEqAhaakkM=;
+ b=iXYkghlTYZvG4dYxtGBso7+MvmJ6auxBPwErUNZYQFp/Yjxb280srzlu3osfCR/+xdyVRj7j5CeuP9op32fkjFX2iRdYAWFvAjoobD+OyPCCdZkrhLua2cCnGAcGJnaqnHOzmA2xC7xhLK3hhU6FYAg6nUXT145BxILI5Kn7i773N8Qm2T/gW5yKKfIYsMOs0VjigJlVCDCdZpzSoEJnM166NL7NliXa+6O8xewynMv108PkD/Gae1fsD5wtuZcyrXMb4zxQuF/H9hy9moxx+3xg2sSIxoU3Xr+xgxIwPPC7Hh1dwtI29Gaaz893/vKYzBtD8uk6ovTg7mpJYJL11A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  149.199.62.198) smtp.rcpttodomain=gmail.com smtp.mailfrom=xilinx.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
@@ -28,35 +28,35 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u3leZdyH2CWEiL6goxTy7JcaId0/DW7Ts5Og7sylZv4=;
- b=WNDmysrJuPlscAlIcwhBjsuka3Dnbo7hVRGPSedAuQ3NcDneWNgoVrT83++Zwgj77hfwEyZj5by4u0WZWJ6nWn1pH78DdzoEOsOMaqyWRu1nqqjuumPY0Jsn1OBawv1HjfCuPyAhrWSPcPuEP8q8Y4EJ+6nxw2lvT0XsMRkdM3s=
-Received: from DM6PR03CA0036.namprd03.prod.outlook.com (2603:10b6:5:40::49) by
- BN0PR02MB8061.namprd02.prod.outlook.com (2603:10b6:408:16e::24) with
+ bh=SQzEp2+660WAMs2N0VB+RP4Eg5ZmuxHB8GEqAhaakkM=;
+ b=kI/UXC1xdaD6rtf/O3qdMs09cGwCvdeJx8c8Z1n3n/JTc1Skwbws9uAbxgIZcL4yYNRz27PiufUklI/PrcDQn4FEJmQKWIzQjVww5UPXQO2Sn6qzVkyAaXxH8fkw8mWSs91Lf7JmySd4+r3noLnkxtNchQ556jjpzF84pOU/tTQ=
+Received: from DM5PR04CA0043.namprd04.prod.outlook.com (2603:10b6:3:12b::29)
+ by MN2PR02MB6159.namprd02.prod.outlook.com (2603:10b6:208:184::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.15; Fri, 17 Jun
- 2022 10:48:07 +0000
-Received: from DM3NAM02FT023.eop-nam02.prod.protection.outlook.com
- (2603:10b6:5:40:cafe::6a) by DM6PR03CA0036.outlook.office365.com
- (2603:10b6:5:40::49) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.19 via Frontend
- Transport; Fri, 17 Jun 2022 10:48:07 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.16; Fri, 17 Jun
+ 2022 10:48:12 +0000
+Received: from DM3NAM02FT020.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:3:12b:cafe::fa) by DM5PR04CA0043.outlook.office365.com
+ (2603:10b6:3:12b::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.14 via Frontend
+ Transport; Fri, 17 Jun 2022 10:48:12 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
  smtp.mailfrom=xilinx.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com; pr=C
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- DM3NAM02FT023.mail.protection.outlook.com (10.13.5.127) with Microsoft SMTP
+ client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com; pr=C
+Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
+ DM3NAM02FT020.mail.protection.outlook.com (10.13.4.146) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5353.14 via Frontend Transport; Fri, 17 Jun 2022 10:48:07 +0000
+ 15.20.5353.14 via Frontend Transport; Fri, 17 Jun 2022 10:48:12 +0000
 Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
+ xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Fri, 17 Jun 2022 03:47:41 -0700
-Received: from smtp.xilinx.com (172.19.127.96) by
+ 15.1.2176.14; Fri, 17 Jun 2022 03:48:08 -0700
+Received: from smtp.xilinx.com (172.19.127.95) by
  xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Fri, 17 Jun 2022 03:47:41 -0700
+ 15.1.2176.14 via Frontend Transport; Fri, 17 Jun 2022 03:48:08 -0700
 Envelope-to: git@xilinx.com,
  saikrishna12468@gmail.com,
  robh+dt@kernel.org,
@@ -66,12 +66,12 @@ Envelope-to: git@xilinx.com,
  devicetree@vger.kernel.org,
  linux-gpio@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Received: from [172.23.64.1] (port=60018 helo=xhdvnc101.xilinx.com)
+Received: from [172.23.64.1] (port=60020 helo=xhdvnc101.xilinx.com)
         by smtp.xilinx.com with esmtp (Exim 4.90)
         (envelope-from <lakshmi.sai.krishna.potthuri@xilinx.com>)
-        id 1o29Vt-000Azk-1E; Fri, 17 Jun 2022 03:47:41 -0700
+        id 1o29WJ-0001R2-Gr; Fri, 17 Jun 2022 03:48:07 -0700
 Received: by xhdvnc101.xilinx.com (Postfix, from userid 14964)
-        id B371021632; Fri, 17 Jun 2022 16:17:08 +0530 (IST)
+        id BFD3021640; Fri, 17 Jun 2022 16:17:08 +0530 (IST)
 From:   Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -82,9 +82,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-gpio@vger.kernel.org>, <git@xilinx.com>,
         <saikrishna12468@gmail.com>,
         Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.com>
-Subject: [PATCH 2/4] dt-bindings: pinctrl-zynqmp: Add output-enable configuration
-Date:   Fri, 17 Jun 2022 16:16:57 +0530
-Message-ID: <1655462819-28801-3-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
+Subject: [PATCH 4/4] pinctrl: pinctrl-zynqmp: Fix kernel-doc warning
+Date:   Fri, 17 Jun 2022 16:16:59 +0530
+Message-ID: <1655462819-28801-5-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
 X-Mailer: git-send-email 2.1.1
 In-Reply-To: <1655462819-28801-1-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
 References: <1655462819-28801-1-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
@@ -92,51 +92,52 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b5cc2bcc-e5a3-45b0-1e57-08da504edcff
-X-MS-TrafficTypeDiagnostic: BN0PR02MB8061:EE_
-X-Microsoft-Antispam-PRVS: <BN0PR02MB806198D64581F652875AB948BDAF9@BN0PR02MB8061.namprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: f6b9e3ab-e4b8-4244-5207-08da504ee01e
+X-MS-TrafficTypeDiagnostic: MN2PR02MB6159:EE_
+X-Microsoft-Antispam-PRVS: <MN2PR02MB61596F2B949F37213BF23557BDAF9@MN2PR02MB6159.namprd02.prod.outlook.com>
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: mEO1Vsu7GnjgAkcBrHyWpag+ReUE3YJpxwH6igWQYczUwgZ8b+ldNwjGBhxDQKa/b80Ekj48doqwY4WbYMz7AXXkiCV1zgxnpuaKeg2n7YH8FFvsuceT6pe37xMPspsT7P3jBodCgvkQhmgPC0bVBljjXHUgX70UcXSu7iGRoxKWXOch5tK+hJlJae50DY7K2px1EpWtZIeg+erl36+WeBzbp0tc3FSuYHfPVwbosNTAsl9AjStiyWcsf3/l74KhaQFeMQb40fSGofpOh51BqrbDjQWFkjkrdi5t2Bmw9IiGByyVACHto8G7eWXl4R+SCPspaRwb1+PyJr44Kml+ObhwpjyjbCNHJxD26aTwLhSyORkNCMqo1t70Y23q9eV7hhotmGfED+7WWKzJKskAv6MI3Jv5UYwHVirJbeYACQHMxdKXAUyit7XVBqR1Vxr49ey8TxihZyjF5xfT4xvjwy8M7l2f5YSqX8C9LvJIHbaFmrV34RbAwoGjyFNRYJVQBsAiNecG1jbrj6y5+hDcQ4H1UDQeczxC94brdnnAspvJFYW1f4rmD9CrEpt0ZpL2vFUE8cVCGi5OIdzRKrZkFnst8xjYFPGugwGiLX3jSEduHyFbZYPkE39r3XEtQz4TyZwmimnyDkvqfCSTzS/MHqo1/5vn6KnO1loVUe+qxyJaejsV+s9eqBEmiPnrZlMbzQhcSdlK+dCZQtJaZVy8vA==
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230016)(4636009)(36840700001)(46966006)(40470700004)(54906003)(336012)(107886003)(110136005)(82310400005)(6266002)(42186006)(26005)(47076005)(70206006)(2616005)(4744005)(426003)(186003)(5660300002)(316002)(498600001)(40460700003)(36756003)(4326008)(8676002)(356005)(6666004)(2906002)(7636003)(70586007)(8936002)(36860700001)(102446001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: D5IZP56vt/UERjRaBqj3XhPX1hz1Tx5wm34fQO8swzD1dHQLnIxgA3WetrdOZHYdf1GbtTmod2KGO9AUUkJSQs9GQbeCUecryMaI1sun++M4Pw3BfKUO2tQWm3j9LXj/tr709PBXtkwJbYDdO0rPIsSYDXoj+aBy7F5knhf/N4j1bO8P7HavimA6Q5Y2rhcjiFL9ixtpBiFuE/eA/krNnRRCoyPOzSQGA/7kzie2KWLh7WH+y9feTTA/1FOZ8vaT5LVTHQfzGgZG7UWIm9xBkMjab49fANS2Cc9xcBp31lCvi+D+lZFCxZcrNKur7eyNWnhJ7TTZhUSJ6GUA8Ax6R/Uow22McnfblXWHOcISoZSFJvTfmcfWLk8eRNGpF4o2wYUhCVD+IEY9Ob5+aQ7gjWbOEAzNg5dxkuiXEv5mTg7CIe2KYENNF5Cj5RXfte4uthZ7ED1TVy+omlOMv26I+3RepYNPECnd0G2KY8aHCqKLju9Tsf4jPHWs53e/p+zpDdg/I/6KQ0XG3y/0nOgeo4ZcO69Fp+alhTPBAUe+WshiqjVoKfVDMuQy5Zws/cZ+WUGuOM1xpda6XcUwBidC/ZPodckNVLopaxJKvV4EsGmm8lV2JiEcJ6U6Y8QI+dGkxigtrZNKAVDq25vodBb8DH0HPpejZfRIxSexeGhLUXcNQKqrhBY6Kbub55psy2DKVEmC9AMHMug4ItAmrqSQ2A==
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230016)(4636009)(40470700004)(46966006)(36840700001)(83380400001)(82310400005)(8936002)(107886003)(42186006)(70206006)(2616005)(36756003)(110136005)(316002)(54906003)(8676002)(2906002)(498600001)(70586007)(7636003)(40460700003)(5660300002)(6666004)(356005)(4326008)(36860700001)(186003)(336012)(426003)(6266002)(26005)(47076005)(4744005)(102446001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2022 10:48:07.0787
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2022 10:48:12.3319
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5cc2bcc-e5a3-45b0-1e57-08da504edcff
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6b9e3ab-e4b8-4244-5207-08da504ee01e
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT023.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT020.eop-nam02.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR02MB8061
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR02MB6159
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add 'output-enable' configuration parameter to the properties list.
+Fix the below kernel-doc warning by adding the description for return
+value.
+"warning: No description found for return value of
+'zynqmp_pmux_get_function_groups'".
 
 Signed-off-by: Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.com>
 ---
- .../devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml      | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/pinctrl/pinctrl-zynqmp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
-index 2722dc7bb03d..1e2b9b627b12 100644
---- a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
-@@ -274,6 +274,10 @@ patternProperties:
-           slew-rate:
-             enum: [0, 1]
- 
-+          output-enable:
-+            description:
-+              This will internally disable the tri-state for MIO pins.
-+
-           drive-strength:
-             description:
-               Selects the drive strength for MIO pins, in mA.
+diff --git a/drivers/pinctrl/pinctrl-zynqmp.c b/drivers/pinctrl/pinctrl-zynqmp.c
+index b25e9e76fbf8..7d2fbf8a02cd 100644
+--- a/drivers/pinctrl/pinctrl-zynqmp.c
++++ b/drivers/pinctrl/pinctrl-zynqmp.c
+@@ -163,6 +163,8 @@ static const char *zynqmp_pmux_get_function_name(struct pinctrl_dev *pctldev,
+  * @num_groups:	Number of function groups.
+  *
+  * Get function's group count and group names.
++ *
++ * Return: 0
+  */
+ static int zynqmp_pmux_get_function_groups(struct pinctrl_dev *pctldev,
+ 					   unsigned int selector,
 -- 
 2.17.1
 
