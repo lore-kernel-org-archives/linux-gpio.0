@@ -2,142 +2,302 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8065ECCA47C
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jun 2022 10:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C407C433EF
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Jun 2022 12:14:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382166AbiFQKsh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Jun 2022 06:48:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45422 "EHLO
+        id S1381247AbiFQMO1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Jun 2022 08:14:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380514AbiFQKsQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jun 2022 06:48:16 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2052.outbound.protection.outlook.com [40.107.94.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94772192B2;
-        Fri, 17 Jun 2022 03:48:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eJG2AcXJiC+k5mWXP5FozdI35EMXw2Tfo46eoIB18tdGolNy142gbe699kYKDpReor4SzCmPAKx1L2GLVr8O3imkEYIsFhKzfoIsrKXGg+bbvElqbKEhr9EXBiOFHcfpXRXsW+qbOgqyEXw8nHfW0VCeiyv9yCFkmJ2H8abW6pFfmQe/LawyRi/lIZnmFTzJl5mfNpvTCMezU4QASqRIT19oNG0bYLIJPS17/ptqBaaYXS5DGqTkBCUBRAQSWqkn48lhoXZv1C/VzGsFT2rgIt9A4xkT+id8Xo4KNvDnXhVpvf0xoXXVjesmsx30sidqzAEfoXdGXMXIlKIKEKRGJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SQzEp2+660WAMs2N0VB+RP4Eg5ZmuxHB8GEqAhaakkM=;
- b=iXYkghlTYZvG4dYxtGBso7+MvmJ6auxBPwErUNZYQFp/Yjxb280srzlu3osfCR/+xdyVRj7j5CeuP9op32fkjFX2iRdYAWFvAjoobD+OyPCCdZkrhLua2cCnGAcGJnaqnHOzmA2xC7xhLK3hhU6FYAg6nUXT145BxILI5Kn7i773N8Qm2T/gW5yKKfIYsMOs0VjigJlVCDCdZpzSoEJnM166NL7NliXa+6O8xewynMv108PkD/Gae1fsD5wtuZcyrXMb4zxQuF/H9hy9moxx+3xg2sSIxoU3Xr+xgxIwPPC7Hh1dwtI29Gaaz893/vKYzBtD8uk6ovTg7mpJYJL11A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=gmail.com smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
+        with ESMTP id S234826AbiFQMO0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jun 2022 08:14:26 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7ABA28E23;
+        Fri, 17 Jun 2022 05:14:24 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id b8so5913082edj.11;
+        Fri, 17 Jun 2022 05:14:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SQzEp2+660WAMs2N0VB+RP4Eg5ZmuxHB8GEqAhaakkM=;
- b=kI/UXC1xdaD6rtf/O3qdMs09cGwCvdeJx8c8Z1n3n/JTc1Skwbws9uAbxgIZcL4yYNRz27PiufUklI/PrcDQn4FEJmQKWIzQjVww5UPXQO2Sn6qzVkyAaXxH8fkw8mWSs91Lf7JmySd4+r3noLnkxtNchQ556jjpzF84pOU/tTQ=
-Received: from DM5PR04CA0043.namprd04.prod.outlook.com (2603:10b6:3:12b::29)
- by MN2PR02MB6159.namprd02.prod.outlook.com (2603:10b6:208:184::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.16; Fri, 17 Jun
- 2022 10:48:12 +0000
-Received: from DM3NAM02FT020.eop-nam02.prod.protection.outlook.com
- (2603:10b6:3:12b:cafe::fa) by DM5PR04CA0043.outlook.office365.com
- (2603:10b6:3:12b::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.14 via Frontend
- Transport; Fri, 17 Jun 2022 10:48:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com; pr=C
-Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
- DM3NAM02FT020.mail.protection.outlook.com (10.13.4.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5353.14 via Frontend Transport; Fri, 17 Jun 2022 10:48:12 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Fri, 17 Jun 2022 03:48:08 -0700
-Received: from smtp.xilinx.com (172.19.127.95) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Fri, 17 Jun 2022 03:48:08 -0700
-Envelope-to: git@xilinx.com,
- saikrishna12468@gmail.com,
- robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org,
- linus.walleij@linaro.org,
- linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Received: from [172.23.64.1] (port=60020 helo=xhdvnc101.xilinx.com)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <lakshmi.sai.krishna.potthuri@xilinx.com>)
-        id 1o29WJ-0001R2-Gr; Fri, 17 Jun 2022 03:48:07 -0700
-Received: by xhdvnc101.xilinx.com (Postfix, from userid 14964)
-        id BFD3021640; Fri, 17 Jun 2022 16:17:08 +0530 (IST)
-From:   Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+        d=gmail.com; s=20210112;
+        h=references:from:to:cc:subject:in-reply-to:date:message-id
+         :mime-version;
+        bh=ydFyEbnVaWWSrDTVNo9E/s79ZYsYTDWr/e2n3lOC/CQ=;
+        b=CBAzuT/3SNdBEYzyFXSlQr27NNAViGTYuipk4+FS3fWsXgGbatvUpbQWI7B2uU/FZ3
+         z0Lj7w2RWnZGD1Wk3jWo2ct6G5Tx9Bz+0m8Z5F17USH43jBuNCZQAxYRQE/t3FDlsRhp
+         6F7vYabAdTYAoSF2CT2UvOYPovWeuzoml9lTYyHUGIB9iQfDrxJp8yYGHg7UxyjVq0AQ
+         yzBcUJjFnNe+10OKXj8S8hB72RJkxLzLhrU27t9Uc+S2a3pgxQXjiMF0sU0vcoLiq+VN
+         sNe4Mvif8FR4ZLHw1q+kF8wCLbCQlBA4sVI0PCWHuFWZ1+SObFtK87fv0S4su0kDCgoT
+         d3eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:references:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=ydFyEbnVaWWSrDTVNo9E/s79ZYsYTDWr/e2n3lOC/CQ=;
+        b=RStAg3zkBP/kgSxWgtIAfk0/HKhJJDvSd+BAA1bWPsfWcc+cSX9p2ol9a/sN9EBf5/
+         pSFiGuuTv2P4Co/L6yVFnOWhH+aofsbKA8V48NKPCT/jbQ/pCIIMV13vgB5OZQcogeqs
+         pm3efMX3GI1oGvSp8FBcB01yx1BZkS/c5W59xkAQ1nUholxtnHx2jhrOlp6SnRvO1s/n
+         FFOklnpq3A04LUX9QZN+AdGUUEdKrK04krjjvgXyvBbTH3Pxq7I3If+3lb5Yx4rPLXdB
+         WutSHeOcVeeOEg7Jp0Pq5biEHgxrTWKzxKo21HiIwRe31iHOTZMSgPI8nCd5u9hdYHUJ
+         JJAA==
+X-Gm-Message-State: AJIora+D7pcbWgpLLXtbq7VD9YHLxHRgg8AN5s49UhSUptrPugXrxT4X
+        prDuldoSzKMnh+1Wp5RdJtw=
+X-Google-Smtp-Source: AGRyM1s4OQqcTAHNZzk78E61Oh2A73AGQnN8S5QSHmcK82apV7c2oIsmFff70+2MNyJGzq/V6gYeeQ==
+X-Received: by 2002:a05:6402:5114:b0:42f:b5f3:1f96 with SMTP id m20-20020a056402511400b0042fb5f31f96mr12217153edd.260.1655468063324;
+        Fri, 17 Jun 2022 05:14:23 -0700 (PDT)
+Received: from localhost (92.40.168.190.threembb.co.uk. [92.40.168.190])
+        by smtp.gmail.com with ESMTPSA id 2-20020a170906318200b006fe98fb9523sm2132015ejy.129.2022.06.17.05.14.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jun 2022 05:14:22 -0700 (PDT)
+References: <20220603135714.12007-1-aidanmacdonald.0x0@gmail.com>
+ <20220603135714.12007-11-aidanmacdonald.0x0@gmail.com>
+ <CAHp75VevetU0p+BTcQ6HcAn=2xgVGAL34ZuAi53rK3SDt=O-cw@mail.gmail.com>
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
         Rob Herring <robh+dt@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <git@xilinx.com>,
-        <saikrishna12468@gmail.com>,
-        Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.com>
-Subject: [PATCH 4/4] pinctrl: pinctrl-zynqmp: Fix kernel-doc warning
-Date:   Fri, 17 Jun 2022 16:16:59 +0530
-Message-ID: <1655462819-28801-5-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
-X-Mailer: git-send-email 2.1.1
-In-Reply-To: <1655462819-28801-1-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
-References: <1655462819-28801-1-git-send-email-lakshmi.sai.krishna.potthuri@xilinx.com>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 10/10] pinctrl: Add AXP192 pin control driver
+In-reply-to: <CAHp75VevetU0p+BTcQ6HcAn=2xgVGAL34ZuAi53rK3SDt=O-cw@mail.gmail.com>
+Date:   Fri, 17 Jun 2022 13:15:27 +0100
+Message-ID: <VGkmH1cTj8QZxZXUjbuky58yY3X5QWSY@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f6b9e3ab-e4b8-4244-5207-08da504ee01e
-X-MS-TrafficTypeDiagnostic: MN2PR02MB6159:EE_
-X-Microsoft-Antispam-PRVS: <MN2PR02MB61596F2B949F37213BF23557BDAF9@MN2PR02MB6159.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: D5IZP56vt/UERjRaBqj3XhPX1hz1Tx5wm34fQO8swzD1dHQLnIxgA3WetrdOZHYdf1GbtTmod2KGO9AUUkJSQs9GQbeCUecryMaI1sun++M4Pw3BfKUO2tQWm3j9LXj/tr709PBXtkwJbYDdO0rPIsSYDXoj+aBy7F5knhf/N4j1bO8P7HavimA6Q5Y2rhcjiFL9ixtpBiFuE/eA/krNnRRCoyPOzSQGA/7kzie2KWLh7WH+y9feTTA/1FOZ8vaT5LVTHQfzGgZG7UWIm9xBkMjab49fANS2Cc9xcBp31lCvi+D+lZFCxZcrNKur7eyNWnhJ7TTZhUSJ6GUA8Ax6R/Uow22McnfblXWHOcISoZSFJvTfmcfWLk8eRNGpF4o2wYUhCVD+IEY9Ob5+aQ7gjWbOEAzNg5dxkuiXEv5mTg7CIe2KYENNF5Cj5RXfte4uthZ7ED1TVy+omlOMv26I+3RepYNPECnd0G2KY8aHCqKLju9Tsf4jPHWs53e/p+zpDdg/I/6KQ0XG3y/0nOgeo4ZcO69Fp+alhTPBAUe+WshiqjVoKfVDMuQy5Zws/cZ+WUGuOM1xpda6XcUwBidC/ZPodckNVLopaxJKvV4EsGmm8lV2JiEcJ6U6Y8QI+dGkxigtrZNKAVDq25vodBb8DH0HPpejZfRIxSexeGhLUXcNQKqrhBY6Kbub55psy2DKVEmC9AMHMug4ItAmrqSQ2A==
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230016)(4636009)(40470700004)(46966006)(36840700001)(83380400001)(82310400005)(8936002)(107886003)(42186006)(70206006)(2616005)(36756003)(110136005)(316002)(54906003)(8676002)(2906002)(498600001)(70586007)(7636003)(40460700003)(5660300002)(6666004)(356005)(4326008)(36860700001)(186003)(336012)(426003)(6266002)(26005)(47076005)(4744005)(102446001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2022 10:48:12.3319
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6b9e3ab-e4b8-4244-5207-08da504ee01e
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT020.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR02MB6159
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fix the below kernel-doc warning by adding the description for return
-value.
-"warning: No description found for return value of
-'zynqmp_pmux_get_function_groups'".
 
-Signed-off-by: Sai Krishna Potthuri <lakshmi.sai.krishna.potthuri@xilinx.com>
----
- drivers/pinctrl/pinctrl-zynqmp.c | 2 ++
- 1 file changed, 2 insertions(+)
+Andy Shevchenko <andy.shevchenko@gmail.com> writes:
 
-diff --git a/drivers/pinctrl/pinctrl-zynqmp.c b/drivers/pinctrl/pinctrl-zynqmp.c
-index b25e9e76fbf8..7d2fbf8a02cd 100644
---- a/drivers/pinctrl/pinctrl-zynqmp.c
-+++ b/drivers/pinctrl/pinctrl-zynqmp.c
-@@ -163,6 +163,8 @@ static const char *zynqmp_pmux_get_function_name(struct pinctrl_dev *pctldev,
-  * @num_groups:	Number of function groups.
-  *
-  * Get function's group count and group names.
-+ *
-+ * Return: 0
-  */
- static int zynqmp_pmux_get_function_groups(struct pinctrl_dev *pctldev,
- 					   unsigned int selector,
--- 
-2.17.1
+> On Fri, Jun 3, 2022 at 6:29 PM Aidan MacDonald
+> <aidanmacdonald.0x0@gmail.com> wrote:
+>>
+>> The AXP192 PMIC's GPIO registers are much different from the GPIO
+>> registers of the AXP20x and AXP813 PMICs supported by the existing
+>> pinctrl-axp209 driver. It makes more sense to add a new driver for
+>> the AXP192, rather than add support in the existing axp20x driver.
+>>
+>> The pinctrl-axp192 driver is considerably more flexible in terms of
+>> register layout and should be able to support other X-Powers PMICs.
+>> Interrupts and pull down resistor configuration are supported too.
+>
+> Thank you for contribution, overall looks good, below some not very
+> critical comments.
+>
+> ...
+>
 
+Thanks very much for the review. I'll fix up the issues you spotted
+in v3. (v2 doesn't make any changes to the pinctrl driver.)
+
+>> +static const struct axp192_pctl_reg_info axp192_pin_ctrl_regs[] = {
+>> +       { .reg = AXP192_GPIO0_CTRL,   .mask = 0x07 },
+>> +       { .reg = AXP192_GPIO1_CTRL,   .mask = 0x07 },
+>> +       { .reg = AXP192_GPIO2_CTRL,   .mask = 0x07 },
+>> +       { .reg = AXP192_GPIO4_3_CTRL, .mask = 0x03 },
+>> +       { .reg = AXP192_GPIO4_3_CTRL, .mask = 0x0c },
+>> +       { .reg = AXP192_N_RSTO_CTRL,  .mask = 0xc0 },
+>> +};
+>
+> GENMASK()
+>
+> ...
+>
+>> +       if ((val & reginfo->mask) == (input_muxvals[offset] << (ffs(reginfo->mask) - 1)))
+>> +               return GPIO_LINE_DIRECTION_IN;
+>
+>> +       else
+>
+> Redundant.
+> Also applies for the other similar cases in your code. Note, this is
+> also redundant for 'continue' and 'break' in case of loops.
+>
+
+Sorry, I'm not sure what you're referring to here. The "else"?
+I'm missing the generalization.
+
+>> +               return GPIO_LINE_DIRECTION_OUT;
+>
+> ...
+>
+>> +       if (!reginfo->mask)
+>> +               return -EOPNOTSUPP;
+>
+> Please, double check that this is used by the pin control subsystem
+> and not ENOTSUP in your case here.
+
+Whoops. You're right, it should be ENOTSUPP.
+
+>
+> ...
+>
+>> +       default:
+>> +               return -EOPNOTSUPP;
+>
+> Ditto.
+>
+> ...
+>
+>> +               default:
+>> +                       return -EOPNOTSUPP;
+>
+> Ditto.
+>
+> ...
+>
+>> +               default:
+>> +                       /* unreachable */
+>> +                       break;
+>
+> return 0?! Perhaps you need to return an error?
+>
+
+Yeah, that sounds like a good idea for maintainability. I think
+there's no need to check that the requested configs are supported
+beforehand since the caller must deal with errors in the middle of
+the sequence anyway, so I'll drop that check and add ENOTSUPP here.
+
+>> +               }
+>> +       }
+>> +
+>> +       return 0;
+>
+> ...
+>
+>> +       if (muxvals[group] == (u8)-1)
+>
+> limits.h and U8_MAX? Or GENMASK()? Choose one which suits you.
+>
+>> +               return -EINVAL;
+>
+> ...
+>
+>> +       if (!of_device_is_available(pdev->dev.of_node))
+>> +               return -ENODEV;
+>
+> Dead code.
+>
+
+OK. Did some digging, and this is useless because the parent mfd
+device is checking availability.
+
+>> +       if (!axp20x) {
+>> +               dev_err(&pdev->dev, "Parent drvdata not set\n");
+>> +               return -EINVAL;
+>> +       }
+>
+> Another useless piece of code.
+>
+> ...
+>
+>> +       pctl->desc = of_device_get_match_data(&pdev->dev);
+>
+> device_get_match_data()
+>
+> ...
+>
+>> +       pctl->chip.to_irq               = axp192_gpio_to_irq;
+>
+> Why a custom method?
+>
+> ...
+>
+
+The irq chip is part of the mfd device, not the gpio chip. There does
+not seem to be any default implementation for this case so I have to
+provide one. A similar example is gpio-wm8994.
+
+I did notice I'm doing something wrong by calling regmap_irq_get_virq()
+in the probe function, which creates an irq mapping; I think I should be
+doing that in the to_irq() callback like the other drivers do.
+
+>> +       pctl->pctl_dev = devm_pinctrl_register(&pdev->dev, pctrl_desc, pctl);
+>> +       if (IS_ERR(pctl->pctl_dev)) {
+>> +               dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
+>> +               return PTR_ERR(pctl->pctl_dev);
+>
+> Here and everywhere else in ->probe() and Co, use
+>
+>   return dev_err_probe(...);
+>
+> pattern.
+>
+>> +       }
+>
+> ...
+>
+>> +       ret = gpiochip_add_pin_range(&pctl->chip, dev_name(&pdev->dev),
+>> +                                    pctl->desc->pins->number,
+>> +                                    pctl->desc->pins->number,
+>> +                                    pctl->desc->npins);
+>> +       if (ret) {
+>> +               dev_err(&pdev->dev, "failed to add pin range\n");
+>> +               return ret;
+>> +       }
+>
+> We have a specific callback where you may put this, otherwise on some
+> systems it may not work as expected.
+>
+> ...
+>
+
+Ah, sorry, I see that function is deprecated. The documentation points
+to doing this in the device tree instead. So if I understand correctly
+I should follow the example of pinctrl-thunderbay and add gpio-ranges:
+
+    pinctrl0: gpio@0 {
+        compatible = "x-powers,axp192-gpio";
+        gpio-controller;
+        #gpio-cells = <2>;
+        gpio-ranges = <&pinctrl0 0 0 6>;
+    };
+
+which means I'll have to update the gpio DT bindings. I'm guessing the
+callback you mentioned is add_pin_ranges() or of_gpio_ranges_fallback()
+but neither of those seem appropriate in this case. The DT node should
+be good enough.
+
+>> +       dev_info(&pdev->dev, "AXP192 pinctrl and GPIO driver loaded\n");
+>
+> Useless.
+>
+> ...
+>
+>> +static struct platform_driver axp192_pctl_driver = {
+>> +       .probe          = axp192_pctl_probe,
+>> +       .driver = {
+>> +               .name           = "axp192-gpio",
+>> +               .of_match_table = axp192_pctl_match,
+>> +       },
+>> +};
+>
+>> +
+>
+> Redundant blank line.
+>
+>> +module_platform_driver(axp192_pctl_driver);
+>
+> ...
+>
+> Globally two comments:
+> 1) I also believe that you may utilize gpio-regmap API;
+> 2) try to get rid of OFisms, make it property provider agnostic.
+
+I wasn't aware of gpio-regmap, will check it out.
+
+Regards,
+Aidan
