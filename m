@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1403FCCA480
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC33CCA482
 	for <linux-gpio@archiver.kernel.org>; Mon, 20 Jun 2022 20:09:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343774AbiFTUJX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 20 Jun 2022 16:09:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38284 "EHLO
+        id S1343973AbiFTUJZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 20 Jun 2022 16:09:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344273AbiFTUIG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jun 2022 16:08:06 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 144E11D0F7;
-        Mon, 20 Jun 2022 13:07:02 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id z17so6380192wmi.1;
-        Mon, 20 Jun 2022 13:07:02 -0700 (PDT)
+        with ESMTP id S244837AbiFTUHQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jun 2022 16:07:16 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5138F201BB;
+        Mon, 20 Jun 2022 13:06:57 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id c21so16101137wrb.1;
+        Mon, 20 Jun 2022 13:06:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oqx3v8Sb2M8GmsYA5Ky+XV9uouybbnIvgB5+4WCQaEA=;
-        b=I9SWwmkbAS0twwPt8IX4E7bPDCP7aUbF2QrdWQqioO/YT8vPWDbo5jafFWHLiMIjc6
-         1mw/0Uimpyz3cUcNIuL1gNMxnkzOwuSG3edxomlaxXv/3L99G0JTdAg4POHGrEyB2REH
-         3lIDZKKJ3rfCVWbTQEoaG7JmB0gDKFGBeqb20JXEMuxvSMR5CHUbycRO4F8LKhZqPuhZ
-         YEBHTx15YFCjU5hxF8mncOccOzTdEdvUtBMGeSXsVkIqDI9MxnDbvI8sGUw4c4kcM2YR
-         yU4ZYgDnXaav8BMzDiccmgOUBiOIkEhH4tyXriDpDiHGnyleHXKRGyMCZfOTYeUkSsCw
-         fC3w==
+        bh=aFyu5esk/Zb2lNQzmvPRJ9QuwxnaeJqoP/Ih9wxKaVE=;
+        b=Hx66dBMoypw3HFQ6ZlYKo/eR568ezNz8W5y6iElQBkDHOOhjdkd2OOUeXyuM4IJATJ
+         nOWdw0iuhlEmOX8vNXfnAWlMC147l0U4mfE3S2gNMusmdyP2zWZJyHYTvmwCppX/Iskv
+         vwfm6snjUXGKxpT/jRbYfj6RIQgagfupLw7jvBu/UAvy5tQBhPO9eQAGfcl+0IEp9k+M
+         wAT+eo4bwJp8EjwTVNo5vMEs/MgiikrzJ6fDgsNBPx0jramgLds5jhx1zxPNI3c4MG3Q
+         IGQX9FrRR/YfkFCB3wF6UfpCKRFn8rTPevafX0DQ9EPElddTBsBLn3qw+l3BZXYk9GKI
+         5nXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oqx3v8Sb2M8GmsYA5Ky+XV9uouybbnIvgB5+4WCQaEA=;
-        b=6W1Zg7dSszVMt2Xf0Ew94307ABMRJEKd72RIYk3msRjJVOslMU0Y1dfbjXOgYzXwAX
-         OnbOop6mFkDcyTa28mGcvt7IXQ0Hkbv+Y3lWNRFCgxcJ548waH4YJ4ElidONXxz55cma
-         HuTWD4+6c75RjWmoQPXSnPC5TY4YX/M8cFcaXMMkun+FFhed9chgHhEgkuWk4cqe11Mg
-         O43Pp7FrSO6UeHrb85UKK0sH+EzLEHA7VyUKIl12YYkct5rAsfWRKtwz78Xfr7rVsgmp
-         K7PXzehVeVpdvEt1IvYAE26klxT6b4WaMqWR2zr7jak0HuOu9yUcG04fPbuCeM9vrS8n
-         h0yw==
-X-Gm-Message-State: AJIora8y3WV4OwbU84c5igyYaundRYZY3CdfcVtVsho8XxcfrwwSyDA2
-        AcI1N9x647g+l8nh+1kDaMY=
-X-Google-Smtp-Source: AGRyM1swymX/u49DBHMJPPyC7OgnYJ7zcAJGoTucjUXlwJwy4Cy1b+UW+TJYIq67rmm7OR5jau1T3g==
-X-Received: by 2002:a05:600c:5112:b0:397:53f5:e15b with SMTP id o18-20020a05600c511200b0039753f5e15bmr26726456wms.93.1655755622524;
-        Mon, 20 Jun 2022 13:07:02 -0700 (PDT)
+        bh=aFyu5esk/Zb2lNQzmvPRJ9QuwxnaeJqoP/Ih9wxKaVE=;
+        b=lPH4BUV7yDD2elo5qJ1dTeVjPZVDTYv+IdLqSK1NmK1aXdT+8OqWqTQHiwQwQ5hCPn
+         s/3FdVIv5GNxcbMMflwLZIWI7L9bfuXJdFBsO53yG3Js/tK4iLcexXMfxBblKt3gkVC9
+         YYRDQ+tcPXTCA6L5+0OSwwGpUnLf5zYlOFXgCMGk17APWujxTWan6EaQAT7iXY6reBhF
+         cin552d+3yYO6TssGC45bnH+rBP6eIaOH1e23BdE0gUfzkjN9NFOGEUy348vpmA6k8b1
+         ycs+AjFPjm0bDoom4+H5zfMtzfcvwIBpWb1OfITUBfW16Ll5jvIOYaFFl/LoMGh48ph/
+         umhA==
+X-Gm-Message-State: AJIora+caxppXCZVXOgWxKx1vZJD6m0yFYSZa8NSqvH4u2UhepFXDJRD
+        JjVtTKkGNR6olKBB7NXXkZk=
+X-Google-Smtp-Source: AGRyM1tHw8LdpOYQ4ocdkg/wb7xbdY+ptC8YBcgzkEw+K1EEKq9i385MNLM8p7QV0MNlJKBoINhp9g==
+X-Received: by 2002:a5d:5847:0:b0:218:5319:f4e3 with SMTP id i7-20020a5d5847000000b002185319f4e3mr25586723wrf.500.1655755615568;
+        Mon, 20 Jun 2022 13:06:55 -0700 (PDT)
 Received: from localhost (92.40.169.63.threembb.co.uk. [92.40.169.63])
-        by smtp.gmail.com with ESMTPSA id a17-20020adffad1000000b0021b8749728dsm8178971wrs.73.2022.06.20.13.07.01
+        by smtp.gmail.com with ESMTPSA id w5-20020a7bc105000000b003976fbfbf00sm15528084wmi.30.2022.06.20.13.06.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jun 2022 13:07:01 -0700 (PDT)
+        Mon, 20 Jun 2022 13:06:54 -0700 (PDT)
 From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
 To:     broonie@kernel.org
 Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
@@ -66,9 +66,9 @@ Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
         linux-arm-msm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
         alsa-devel@alsa-project.org
-Subject: [PATCH 30/49] mfd: 88pm800: replace irqchip mask_invert with unmask_base
-Date:   Mon, 20 Jun 2022 21:06:25 +0100
-Message-Id: <20220620200644.1961936-31-aidanmacdonald.0x0@gmail.com>
+Subject: [PATCH 26/49] mfd: rn5t618: replace irqchip mask_invert with unmask_base
+Date:   Mon, 20 Jun 2022 21:06:21 +0100
+Message-Id: <20220620200644.1961936-27-aidanmacdonald.0x0@gmail.com>
 In-Reply-To: <20220620200644.1961936-1-aidanmacdonald.0x0@gmail.com>
 References: <20220620200644.1961936-1-aidanmacdonald.0x0@gmail.com>
 MIME-Version: 1.0
@@ -82,24 +82,23 @@ as an unmask register.
 
 Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
 ---
- drivers/mfd/88pm800.c | 3 +--
+ drivers/mfd/rn5t618.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
-index eaf9845633b4..6d1192db13c1 100644
---- a/drivers/mfd/88pm800.c
-+++ b/drivers/mfd/88pm800.c
-@@ -398,9 +398,8 @@ static struct regmap_irq_chip pm800_irq_chip = {
- 
- 	.num_regs = 4,
- 	.status_base = PM800_INT_STATUS1,
--	.mask_base = PM800_INT_ENA_1,
-+	.unmask_base = PM800_INT_ENA_1,
- 	.ack_base = PM800_INT_STATUS1,
--	.mask_invert = 1,
+diff --git a/drivers/mfd/rn5t618.c b/drivers/mfd/rn5t618.c
+index 384acb459427..7ed002d090bd 100644
+--- a/drivers/mfd/rn5t618.c
++++ b/drivers/mfd/rn5t618.c
+@@ -80,8 +80,7 @@ static const struct regmap_irq_chip rc5t619_irq_chip = {
+ 	.num_irqs = ARRAY_SIZE(rc5t619_irqs),
+ 	.num_regs = 1,
+ 	.status_base = RN5T618_INTMON,
+-	.mask_base = RN5T618_INTEN,
+-	.mask_invert = true,
++	.unmask_base = RN5T618_INTEN,
  };
  
- static int pm800_pages_init(struct pm80x_chip *chip)
+ static struct i2c_client *rn5t618_pm_power_off;
 -- 
 2.35.1
 
