@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC33CCA482
-	for <linux-gpio@archiver.kernel.org>; Mon, 20 Jun 2022 20:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00045C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 20 Jun 2022 20:09:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343973AbiFTUJZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 20 Jun 2022 16:09:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39256 "EHLO
+        id S1344629AbiFTUJa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 20 Jun 2022 16:09:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244837AbiFTUHQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jun 2022 16:07:16 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5138F201BB;
-        Mon, 20 Jun 2022 13:06:57 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id c21so16101137wrb.1;
-        Mon, 20 Jun 2022 13:06:57 -0700 (PDT)
+        with ESMTP id S1344727AbiFTUIl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jun 2022 16:08:41 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 189931F624;
+        Mon, 20 Jun 2022 13:07:29 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id l2-20020a05600c4f0200b0039c55c50482so8297241wmq.0;
+        Mon, 20 Jun 2022 13:07:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=aFyu5esk/Zb2lNQzmvPRJ9QuwxnaeJqoP/Ih9wxKaVE=;
-        b=Hx66dBMoypw3HFQ6ZlYKo/eR568ezNz8W5y6iElQBkDHOOhjdkd2OOUeXyuM4IJATJ
-         nOWdw0iuhlEmOX8vNXfnAWlMC147l0U4mfE3S2gNMusmdyP2zWZJyHYTvmwCppX/Iskv
-         vwfm6snjUXGKxpT/jRbYfj6RIQgagfupLw7jvBu/UAvy5tQBhPO9eQAGfcl+0IEp9k+M
-         wAT+eo4bwJp8EjwTVNo5vMEs/MgiikrzJ6fDgsNBPx0jramgLds5jhx1zxPNI3c4MG3Q
-         IGQX9FrRR/YfkFCB3wF6UfpCKRFn8rTPevafX0DQ9EPElddTBsBLn3qw+l3BZXYk9GKI
-         5nXg==
+        bh=jlVXT9wSLhbjTPX5ZR3Wmtb87jq29nLk3aAphr92sAg=;
+        b=ebmJPjTeif3YqVHvTJpEhOnpA1LETt7fyC+dYjLX7rLJosvOzs1UQNRtfP7VlocI/M
+         SwIjzmreM6vhiA8WP0nFyAlnvkcR1cph6p9w9CAsCH9xBR/BnJhAC1VOP2xg7dIrjnee
+         +zaNjC6ZldbBdoFD98cx82VUpbinKwzYspMqw+aPPgXpt8M4kAHnWjx5TOKgR6frrIsg
+         bXuvPeqxYG3zzsjOeJPJz1FR22BVk15SC32yeUV3YEF8h3u7ZygHhwDQwSNzGNcaPpgo
+         N13v2bUVREQpLfKZ8qO6chIOpZWPy3oOCIUIt5sPYXlDIPpr/V0HH+XrX7eAvdFaGSwv
+         Ar1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=aFyu5esk/Zb2lNQzmvPRJ9QuwxnaeJqoP/Ih9wxKaVE=;
-        b=lPH4BUV7yDD2elo5qJ1dTeVjPZVDTYv+IdLqSK1NmK1aXdT+8OqWqTQHiwQwQ5hCPn
-         s/3FdVIv5GNxcbMMflwLZIWI7L9bfuXJdFBsO53yG3Js/tK4iLcexXMfxBblKt3gkVC9
-         YYRDQ+tcPXTCA6L5+0OSwwGpUnLf5zYlOFXgCMGk17APWujxTWan6EaQAT7iXY6reBhF
-         cin552d+3yYO6TssGC45bnH+rBP6eIaOH1e23BdE0gUfzkjN9NFOGEUy348vpmA6k8b1
-         ycs+AjFPjm0bDoom4+H5zfMtzfcvwIBpWb1OfITUBfW16Ll5jvIOYaFFl/LoMGh48ph/
-         umhA==
-X-Gm-Message-State: AJIora+caxppXCZVXOgWxKx1vZJD6m0yFYSZa8NSqvH4u2UhepFXDJRD
-        JjVtTKkGNR6olKBB7NXXkZk=
-X-Google-Smtp-Source: AGRyM1tHw8LdpOYQ4ocdkg/wb7xbdY+ptC8YBcgzkEw+K1EEKq9i385MNLM8p7QV0MNlJKBoINhp9g==
-X-Received: by 2002:a5d:5847:0:b0:218:5319:f4e3 with SMTP id i7-20020a5d5847000000b002185319f4e3mr25586723wrf.500.1655755615568;
-        Mon, 20 Jun 2022 13:06:55 -0700 (PDT)
+        bh=jlVXT9wSLhbjTPX5ZR3Wmtb87jq29nLk3aAphr92sAg=;
+        b=Ssr1fkikqt8P/sTZviaafUJqLAvr2aUVnmMtZdyViHdUZKW/E3qQj1Qs7hgJcOYCb4
+         A2H3RU7UxmbUSEIJg1Jv5fRrmlLJpbN/eFxrdlZR7YU0YFNz+trUO9pjTHOxhvTnLD1H
+         twtX0WQD5wOrnRGw/0/iXUX/C1PHJizJ7p6AbJJfw3pOS4au6m9adSKNmsojczCQjyBO
+         JwcheXW2jhBInx/eLdt9kAF8G7EIQk3aiFjr28oDmk/jLrVNnDBQeI6w+yYrT+RRMNGR
+         n9By6XrNVh1Qn8APnGBcGTMtuzv9InLoJINQp9QuWmQO1IwcdZjIp0pPkqMgu0Z19d/R
+         MD8g==
+X-Gm-Message-State: AJIora9xioU6gL4ou0VdxW2yMEnpfuXmCwop28it2rgVUuDXQTnqK/7d
+        MjUH+tJaWn+UHOMqbk1UfZ4=
+X-Google-Smtp-Source: AGRyM1sc/mkNVW+Wf51Vzi8+T/JAUXCnQCm+ky6mXOwMd5kGL1382a4p9m8dOR+VJbmTp4xRJYVpMw==
+X-Received: by 2002:a05:600c:19c9:b0:39c:72fc:9530 with SMTP id u9-20020a05600c19c900b0039c72fc9530mr25836673wmq.88.1655755641072;
+        Mon, 20 Jun 2022 13:07:21 -0700 (PDT)
 Received: from localhost (92.40.169.63.threembb.co.uk. [92.40.169.63])
-        by smtp.gmail.com with ESMTPSA id w5-20020a7bc105000000b003976fbfbf00sm15528084wmi.30.2022.06.20.13.06.54
+        by smtp.gmail.com with ESMTPSA id b9-20020adfe309000000b0020d0c9c95d3sm14556677wrj.77.2022.06.20.13.07.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jun 2022 13:06:54 -0700 (PDT)
+        Mon, 20 Jun 2022 13:07:20 -0700 (PDT)
 From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
 To:     broonie@kernel.org
 Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
@@ -66,9 +66,9 @@ Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
         linux-arm-msm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
         alsa-devel@alsa-project.org
-Subject: [PATCH 26/49] mfd: rn5t618: replace irqchip mask_invert with unmask_base
-Date:   Mon, 20 Jun 2022 21:06:21 +0100
-Message-Id: <20220620200644.1961936-27-aidanmacdonald.0x0@gmail.com>
+Subject: [PATCH 41/49] mfd: stpmic1: Enable mask_writeonly flag for irq chip
+Date:   Mon, 20 Jun 2022 21:06:36 +0100
+Message-Id: <20220620200644.1961936-42-aidanmacdonald.0x0@gmail.com>
 In-Reply-To: <20220620200644.1961936-1-aidanmacdonald.0x0@gmail.com>
 References: <20220620200644.1961936-1-aidanmacdonald.0x0@gmail.com>
 MIME-Version: 1.0
@@ -77,28 +77,40 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-An inverted mask register can be described more directly
-as an unmask register.
+The STPMIC1 has separate set and clear registers for controlling
+its interrupt masks. These are volatile registers; writing a '1'
+will set or clear the corresponding mask bit, and they read as 0.
+
+Marking the registers volatile and using the mask_writeonly flag
+should reduce bus traffic by avoiding a read-modify-write on the
+mask set/clear registers.
 
 Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
 ---
- drivers/mfd/rn5t618.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/mfd/stpmic1.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/mfd/rn5t618.c b/drivers/mfd/rn5t618.c
-index 384acb459427..7ed002d090bd 100644
---- a/drivers/mfd/rn5t618.c
-+++ b/drivers/mfd/rn5t618.c
-@@ -80,8 +80,7 @@ static const struct regmap_irq_chip rc5t619_irq_chip = {
- 	.num_irqs = ARRAY_SIZE(rc5t619_irqs),
- 	.num_regs = 1,
- 	.status_base = RN5T618_INTMON,
--	.mask_base = RN5T618_INTEN,
--	.mask_invert = true,
-+	.unmask_base = RN5T618_INTEN,
+diff --git a/drivers/mfd/stpmic1.c b/drivers/mfd/stpmic1.c
+index 11f3d92acbc0..a99f7b45df57 100644
+--- a/drivers/mfd/stpmic1.c
++++ b/drivers/mfd/stpmic1.c
+@@ -42,6 +42,8 @@ static const struct regmap_range stpmic1_volatile_ranges[] = {
+ 	regmap_reg_range(WCHDG_CR, WCHDG_CR),
+ 	regmap_reg_range(INT_PENDING_R1, INT_PENDING_R4),
+ 	regmap_reg_range(INT_SRC_R1, INT_SRC_R4),
++	regmap_reg_range(INT_SET_MASK_R1, INT_SET_MASK_R4),
++	regmap_reg_range(INT_CLEAR_MASK_R1, INT_CLEAR_MASK_R4),
  };
  
- static struct i2c_client *rn5t618_pm_power_off;
+ static const struct regmap_access_table stpmic1_readable_table = {
+@@ -110,6 +112,7 @@ static const struct regmap_irq_chip stpmic1_regmap_irq_chip = {
+ 	.status_base = INT_PENDING_R1,
+ 	.mask_base = INT_SET_MASK_R1,
+ 	.unmask_base = INT_CLEAR_MASK_R1,
++	.mask_writeonly = true,
+ 	.ack_base = INT_CLEAR_R1,
+ 	.num_regs = STPMIC1_PMIC_NUM_IRQ_REGS,
+ 	.irqs = stpmic1_irqs,
 -- 
 2.35.1
 
