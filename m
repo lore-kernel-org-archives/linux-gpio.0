@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DD0C433EF
-	for <linux-gpio@archiver.kernel.org>; Mon, 20 Jun 2022 20:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68309CCA483
+	for <linux-gpio@archiver.kernel.org>; Mon, 20 Jun 2022 20:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343600AbiFTUGf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 20 Jun 2022 16:06:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38290 "EHLO
+        id S245324AbiFTUGg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 20 Jun 2022 16:06:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245078AbiFTUG3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jun 2022 16:06:29 -0400
+        with ESMTP id S245505AbiFTUGa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jun 2022 16:06:30 -0400
 Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3C781CFE9;
-        Mon, 20 Jun 2022 13:06:24 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id g4so16059750wrh.11;
-        Mon, 20 Jun 2022 13:06:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 342AD1DA42;
+        Mon, 20 Jun 2022 13:06:26 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id n1so15841978wrg.12;
+        Mon, 20 Jun 2022 13:06:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+RKr+XEaRdRjV4wQDDo6dA3o5NhQRFg9bdRqt89GYJ0=;
-        b=MFe3Q+6q+h4xcL+TmQJO+X66B7qIj60KwU1bFNqVSVGdb6rLV0HBSOV2kqB2IjbUOu
-         EeUFb2zxP73mwWK5HebDmiVlcTN8/lZAhuLs1PYprMOgS3IJsFXo991qtdEe757TgDt9
-         PNPQFGJRS+9ee64SFv8BTOpI+yUy8iMY6XDOthlwL791AZzHrgjOrzL2Z+WNMe4Q5oWF
-         qoB1e1HBzkv5OpvL4CfZkeKUFNVwqSHVXe+sPPHD6FW/G5Yf9GVjSClhAKk8/5129GdY
-         Md+190DcO8iXrY/zsP1mYBAaO/sM8k8KeCFB2bYWTrEW6jR8+hXYDV/1ognbiuUqqzMD
-         dr9A==
+        bh=rwq1xrraD4RZAx2kCX1gT4beeMnmuxO1mM9UwNM/j94=;
+        b=QNECaX952+TTlSLlpOVs/6XitpxYvWRdZb+grPlyuTrwlpraID/DEO7pF7pRWsRnhg
+         hjsEeZ5QkVN79568dtxIQ2IXGLbC5nR7sF+MgWAVMh5hkBWMw0P53fMMGZkmjvLcFNNa
+         dhUutUl0wGwONV7Kom3uv28INHcBCYzOkQGuNSDENRNw1sxJZQ0/eMfiA/Qgxb87L4I8
+         /Ptke0D3H96sRWpppziAeYZU/tnFck/UsfeMN/LXYqm2I78lehUvPTyO3hQ8x4y7ScUk
+         uchno9kgBiWN8XY4/R7yf92muZ6rRsjh0pZSVJsyikq3CxlSVWLF/qU3eR8EP1K+XGbx
+         gjvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+RKr+XEaRdRjV4wQDDo6dA3o5NhQRFg9bdRqt89GYJ0=;
-        b=2Mu1u3QsFS+VHDyubNuraQmf+2ck1Xd8ppLpLdJGoCmfzhvlNbfGCIVTA/iru/LNUv
-         Ix8r366Qk7c/KYfc52aGfpbmhqfPglthJ8JdwZi+QC/33qhCKgFXKHLVHv8gMWsohvuy
-         aL+Q1GBq5GBPfivYRYopKMVNV8DUL5xc94boTrYMpcShmTQaEOamK+aNCHyJSkud9xQW
-         r4jGZiv77O0S7cV2lS34adORHFuI6pqH5wGS/T9naz6Zl+Hti31k1nyfgm3BRWXDTOVP
-         vfdk5YFM7fZCpaamqSr87p6YLhvrEAe+ZBeookf/aBS/fIurUv6cikf/UzAk6Mc5DB4y
-         UXQA==
-X-Gm-Message-State: AJIora9CgNVj41q40z4cfH+F1huZBsqmertO2mPAogjGR6xsT+Z3cgJi
-        yj2EJNlY8jdEwaMDA3m4PlY=
-X-Google-Smtp-Source: AGRyM1s4brtjxXAe+5dbgtT8AX6IW9qXMEOUfwY6ndJ5c4LaV2MOHLy/q9oiZpUl7AFgXk1xm6zPXA==
-X-Received: by 2002:a5d:6d8f:0:b0:218:45ef:30c2 with SMTP id l15-20020a5d6d8f000000b0021845ef30c2mr23978566wrs.411.1655755582833;
-        Mon, 20 Jun 2022 13:06:22 -0700 (PDT)
+        bh=rwq1xrraD4RZAx2kCX1gT4beeMnmuxO1mM9UwNM/j94=;
+        b=LmFCvrh6VeLGZ6jK7/A5n2FaSznmyoL8UVdXP1K+RezCRHoiwT+rv3Ya7xKbksuDC0
+         TIL1wijWv7BB3WEa4d+dOqr2Y8UbpFz8sdElLf9BfdZ8fZFnZ9kS3NeNolpQ+Q1onzg6
+         6D9fD/VJ2VzElTHdD73f3rkmKL04oVKtcvIHgkzwbEbg0fyGWI03jPqNxdn/QHsGgwe/
+         Jyj6ST513m3Zgvw0UiFzsk167X+2ivBE1CZqMosAmvP3AmX7SO2Z33kIlacP7UNPk5di
+         g67Kt2bdaK/7+2dFfVccW11/KEZA1cIExM38n45LnZjSCERotRG1i10a4XZxMb0ky4WT
+         ZZJw==
+X-Gm-Message-State: AJIora/MBS6rSENsJc5aPZpV2O5XizhisFrkdACBQL1xXL2Wu+DOqRPJ
+        t4zHgvjpbARAPEGu96h25rU=
+X-Google-Smtp-Source: AGRyM1tP2UDTugiqATrashu5vRyEcZXwb3725FZvBb5Omwk2LFohTTxHAY3xss+vpJU1LZ+f8ik2aw==
+X-Received: by 2002:adf:ef42:0:b0:21b:8e58:f24b with SMTP id c2-20020adfef42000000b0021b8e58f24bmr7537796wrp.257.1655755585865;
+        Mon, 20 Jun 2022 13:06:25 -0700 (PDT)
 Received: from localhost (92.40.169.68.threembb.co.uk. [92.40.169.68])
-        by smtp.gmail.com with ESMTPSA id x13-20020adfdd8d000000b0021b81855c1csm12567311wrl.27.2022.06.20.13.06.22
+        by smtp.gmail.com with ESMTPSA id u3-20020adfeb43000000b0021a34023ca3sm13936104wrn.62.2022.06.20.13.06.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jun 2022 13:06:22 -0700 (PDT)
+        Mon, 20 Jun 2022 13:06:25 -0700 (PDT)
 From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
 To:     broonie@kernel.org
 Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
@@ -66,9 +66,9 @@ Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
         linux-arm-msm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
         alsa-devel@alsa-project.org
-Subject: [PATCH 05/49] mfd: qcom-pm8008: Convert irq chip to config regs
-Date:   Mon, 20 Jun 2022 21:06:00 +0100
-Message-Id: <20220620200644.1961936-6-aidanmacdonald.0x0@gmail.com>
+Subject: [PATCH 07/49] sound: soc: codecs: wcd9335: Convert irq chip to config regs
+Date:   Mon, 20 Jun 2022 21:06:02 +0100
+Message-Id: <20220620200644.1961936-8-aidanmacdonald.0x0@gmail.com>
 In-Reply-To: <20220620200644.1961936-1-aidanmacdonald.0x0@gmail.com>
 References: <20220620200644.1961936-1-aidanmacdonald.0x0@gmail.com>
 MIME-Version: 1.0
@@ -77,170 +77,43 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use config registers to simplify the driver, putting all of the
-code for irq type configuration in one place instead of splitting
-it up arbitrarily between type and virtual registers.
-
-Remove the initial register setting in pm8008_init(). The comment
-indicates this is a hack to work around quirks in regmap-irq, but
-this is not necessary if using config registers.
+Switch the driver to config registers. This will allow the old
+type register code in regmap-irq to be removed.
 
 Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
 ---
- drivers/mfd/qcom-pm8008.c | 76 +++++++++++----------------------------
- 1 file changed, 21 insertions(+), 55 deletions(-)
+ sound/soc/codecs/wcd9335.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/qcom-pm8008.c b/drivers/mfd/qcom-pm8008.c
-index c472d7f8103c..da16566f7883 100644
---- a/drivers/mfd/qcom-pm8008.c
-+++ b/drivers/mfd/qcom-pm8008.c
-@@ -73,15 +73,16 @@ static struct regmap_irq_sub_irq_map pm8008_sub_reg_offsets[] = {
- 	REGMAP_IRQ_MAIN_REG_OFFSET(p3_offs),
+diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
+index 617a36a89dfe..727d4436142a 100644
+--- a/sound/soc/codecs/wcd9335.c
++++ b/sound/soc/codecs/wcd9335.c
+@@ -5020,16 +5020,22 @@ static const struct regmap_irq wcd9335_codec_irqs[] = {
+ 	},
  };
  
--static unsigned int pm8008_virt_regs[] = {
-+static unsigned int pm8008_config_regs[] = {
-+	PM8008_TYPE_BASE,
- 	PM8008_POLARITY_HI_BASE,
- 	PM8008_POLARITY_LO_BASE,
- };
- 
- enum {
-+	SET_TYPE_INDEX,
- 	POLARITY_HI_INDEX,
- 	POLARITY_LO_INDEX,
--	PM8008_NUM_VIRT_REGS,
- };
- 
- static struct regmap_irq pm8008_irqs[] = {
-@@ -95,32 +96,36 @@ static struct regmap_irq pm8008_irqs[] = {
- 	REGMAP_IRQ_REG(PM8008_IRQ_GPIO2,	PM8008_GPIO2,	BIT(0)),
- };
- 
--static int pm8008_set_type_virt(unsigned int **virt_buf,
--				      unsigned int type, unsigned long hwirq,
--				      int reg)
-+static int pm8008_set_type_config(unsigned int **buf, unsigned int type,
-+				  const struct regmap_irq *irq_data, int idx)
- {
- 	switch (type) {
- 	case IRQ_TYPE_EDGE_FALLING:
- 	case IRQ_TYPE_LEVEL_LOW:
--		virt_buf[POLARITY_HI_INDEX][reg] &= ~pm8008_irqs[hwirq].mask;
--		virt_buf[POLARITY_LO_INDEX][reg] |= pm8008_irqs[hwirq].mask;
-+		buf[POLARITY_HI_INDEX][idx] &= ~irq_data->mask;
-+		buf[POLARITY_LO_INDEX][idx] |= irq_data->mask;
- 		break;
- 
- 	case IRQ_TYPE_EDGE_RISING:
- 	case IRQ_TYPE_LEVEL_HIGH:
--		virt_buf[POLARITY_HI_INDEX][reg] |= pm8008_irqs[hwirq].mask;
--		virt_buf[POLARITY_LO_INDEX][reg] &= ~pm8008_irqs[hwirq].mask;
-+		buf[POLARITY_HI_INDEX][idx] |= irq_data->mask;
-+		buf[POLARITY_LO_INDEX][idx] &= ~irq_data->mask;
- 		break;
- 
- 	case IRQ_TYPE_EDGE_BOTH:
--		virt_buf[POLARITY_HI_INDEX][reg] |= pm8008_irqs[hwirq].mask;
--		virt_buf[POLARITY_LO_INDEX][reg] |= pm8008_irqs[hwirq].mask;
-+		buf[POLARITY_HI_INDEX][idx] |= irq_data->mask;
-+		buf[POLARITY_LO_INDEX][idx] |= irq_data->mask;
- 		break;
- 
- 	default:
- 		return -EINVAL;
- 	}
- 
-+	if (type & IRQ_TYPE_EDGE_BOTH)
-+		buf[SET_TYPE_INDEX][idx] |= irq_data->mask;
-+	else
-+		buf[SET_TYPE_INDEX][idx] &= ~irq_data->mask;
++static const unsigned int wcd9335_config_regs[] = {
++	WCD9335_INTR_LEVEL0,
++};
 +
- 	return 0;
- }
- 
-@@ -128,20 +133,19 @@ static struct regmap_irq_chip pm8008_irq_chip = {
- 	.name			= "pm8008_irq",
- 	.main_status		= I2C_INTR_STATUS_BASE,
- 	.num_main_regs		= 1,
--	.num_virt_regs		= PM8008_NUM_VIRT_REGS,
- 	.irqs			= pm8008_irqs,
- 	.num_irqs		= ARRAY_SIZE(pm8008_irqs),
- 	.num_regs		= PM8008_NUM_PERIPHS,
- 	.not_fixed_stride	= true,
- 	.sub_reg_offsets	= pm8008_sub_reg_offsets,
--	.set_type_virt		= pm8008_set_type_virt,
- 	.status_base		= PM8008_STATUS_BASE,
- 	.mask_base		= PM8008_MASK_BASE,
- 	.unmask_base		= PM8008_UNMASK_BASE,
--	.type_base		= PM8008_TYPE_BASE,
- 	.ack_base		= PM8008_ACK_BASE,
--	.virt_reg_base		= pm8008_virt_regs,
--	.num_type_reg		= PM8008_NUM_PERIPHS,
-+	.config_base		= pm8008_config_regs,
-+	.num_config_bases	= ARRAY_SIZE(pm8008_config_regs),
-+	.num_config_regs	= PM8008_NUM_PERIPHS,
-+	.set_type_config	= pm8008_set_type_config,
+ static const struct regmap_irq_chip wcd9335_regmap_irq1_chip = {
+ 	.name = "wcd9335_pin1_irq",
+ 	.status_base = WCD9335_INTR_PIN1_STATUS0,
+ 	.mask_base = WCD9335_INTR_PIN1_MASK0,
+ 	.ack_base = WCD9335_INTR_PIN1_CLEAR0,
+-	.type_base = WCD9335_INTR_LEVEL0,
+-	.num_type_reg = 4,
+ 	.num_regs = 4,
+ 	.irqs = wcd9335_codec_irqs,
+ 	.num_irqs = ARRAY_SIZE(wcd9335_codec_irqs),
++	.config_base = wcd9335_config_regs,
++	.num_config_bases = ARRAY_SIZE(wcd9335_config_regs),
++	.num_config_regs = 4,
++	.set_type_config = regmap_irq_set_type_config_simple,
  };
  
- static struct regmap_config qcom_mfd_regmap_cfg = {
-@@ -150,34 +154,6 @@ static struct regmap_config qcom_mfd_regmap_cfg = {
- 	.max_register	= 0xFFFF,
- };
- 
--static int pm8008_init(struct pm8008_data *chip)
--{
--	int rc;
--
--	/*
--	 * Set TEMP_ALARM peripheral's TYPE so that the regmap-irq framework
--	 * reads this as the default value instead of zero, the HW default.
--	 * This is required to enable the writing of TYPE registers in
--	 * regmap_irq_sync_unlock().
--	 */
--	rc = regmap_write(chip->regmap,
--			 (PM8008_TEMP_ALARM_ADDR | INT_SET_TYPE_OFFSET),
--			 BIT(0));
--	if (rc)
--		return rc;
--
--	/* Do the same for GPIO1 and GPIO2 peripherals */
--	rc = regmap_write(chip->regmap,
--			 (PM8008_GPIO1_ADDR | INT_SET_TYPE_OFFSET), BIT(0));
--	if (rc)
--		return rc;
--
--	rc = regmap_write(chip->regmap,
--			 (PM8008_GPIO2_ADDR | INT_SET_TYPE_OFFSET), BIT(0));
--
--	return rc;
--}
--
- static int pm8008_probe_irq_peripherals(struct pm8008_data *chip,
- 					int client_irq)
- {
-@@ -185,20 +161,10 @@ static int pm8008_probe_irq_peripherals(struct pm8008_data *chip,
- 	struct regmap_irq_type *type;
- 	struct regmap_irq_chip_data *irq_data;
- 
--	rc = pm8008_init(chip);
--	if (rc) {
--		dev_err(chip->dev, "Init failed: %d\n", rc);
--		return rc;
--	}
--
- 	for (i = 0; i < ARRAY_SIZE(pm8008_irqs); i++) {
- 		type = &pm8008_irqs[i].type;
- 
--		type->type_reg_offset	  = pm8008_irqs[i].reg_offset;
--		type->type_rising_val	  = pm8008_irqs[i].mask;
--		type->type_falling_val	  = pm8008_irqs[i].mask;
--		type->type_level_high_val = 0;
--		type->type_level_low_val  = 0;
-+		type->type_reg_offset = pm8008_irqs[i].reg_offset;
- 
- 		if (type->type_reg_offset == PM8008_MISC)
- 			type->types_supported = IRQ_TYPE_EDGE_RISING;
+ static int wcd9335_parse_dt(struct wcd9335_codec *wcd)
 -- 
 2.35.1
 
