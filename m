@@ -2,81 +2,169 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1544CCA479
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jun 2022 18:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D75FCCA47E
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Jun 2022 18:49:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376884AbiFVStT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 22 Jun 2022 14:49:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36910 "EHLO
+        id S1376899AbiFVStU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 22 Jun 2022 14:49:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376899AbiFVStP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Jun 2022 14:49:15 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8696A31925;
-        Wed, 22 Jun 2022 11:49:12 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id i10so20923749wrc.0;
-        Wed, 22 Jun 2022 11:49:12 -0700 (PDT)
+        with ESMTP id S1376918AbiFVStR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Jun 2022 14:49:17 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E60BC31917;
+        Wed, 22 Jun 2022 11:49:15 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id o8so24706309wro.3;
+        Wed, 22 Jun 2022 11:49:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PRt21XGDrOQmvCWAO1/+rp6bkBghl2OkkGlvxy40ZeQ=;
-        b=MaylSmk4Ls7iH07YR1di4/Vxb2bhaasS6XPolJn8RtYFIUfzOW86+rFC5Q/ImrNLjK
-         PjsBNJDIQXAze6d71FYEIOTgDmSHzUxBdHSgvZvjl6I+3jtUdW85qGA7h7fHKGN2Oj2R
-         v7wa794oTyARQKIITO/B2/rZLUJwvQesKSnAnRPblUBadPnK3v0lFRRBK6lFd+lKpy2g
-         gCxNiIAq3qWw71jdO+yhLj0FhgIuIaU7GPNZpTH4sOMwSP0foB0sTCa+8rw+/xBL6OfD
-         WmWA7DVwxmVBsInIkUVk6HoaDGmOIsiO4qcRndCdmCxl1Nq0koo4rlraCPODW1DQd5ZG
-         cHbQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=DqFQG0CU8wtdroHFAZ6bAEVb5kwNC8YHs7EBfsOyGTE=;
+        b=dkGTYPc1bdYnSwGmeGjAEVF250w9M54Jr41s7xjjWmr1xoijLuaMIuTcb2t/eM35w6
+         HtlesbcBnA1t7vg6OptOG9oQ9X4j0pt5K+2k9/tDM5usGv1h4s3ErM+um0RuMdRY/Spm
+         R6IP2blAreFB1gSVp8T9iNdzucCIhcCY7C06RtESae+iE3xAAKiEDn9DNF1nUXxv9QHK
+         8RX2/hID9p695bZgAWgCTKegqssjF0dgGyQ8ycnC4CLFoQ2mSWFidn3Zcj+Zs4Bwu0Hu
+         e/ZSr50H183t5LPZ4SeCbHj5A4vOYppCgx4tiqrCfrin06OtWwV8tP9aOCojjtkoFx3O
+         w9Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PRt21XGDrOQmvCWAO1/+rp6bkBghl2OkkGlvxy40ZeQ=;
-        b=QhXAc9qz7BluyhB9A3MIfUpLoCf6BpoK1a/fsxpQc6Bfv4XLu7KkLndsJNm3EFHmOG
-         x3dvSwUs3ouTB9BW3SKbhX+oEuHtj8c5f2wFURwQk1uweCHwasR2YuLum8/Ucu6o8ra5
-         Gl+IUdSQPCL0Ey475E0E/y1BAg/zBEufvan22xmiQ4n1x/qP/bfu4QAA3xPnitMgwKO/
-         PMYBM4ZN8ocYxDZy/4kz0RV/wkiKP0LSttsPg5388UXllYhX/Pxs4AJFo8Qu4lR1pB00
-         AgTn5nAPcAMfPAlbDv1PZecuGJLiPZwEG+NkzTaOl6wF7+iIEtfxwH+XcSOEG4adnkgy
-         kHWQ==
-X-Gm-Message-State: AJIora9zCCKlYYtXis3HqT+gSdM0J//6jZQMpjogIGKLCmWuZTDIYsjl
-        2r1eJN9gU975vWHyhATXroA=
-X-Google-Smtp-Source: AGRyM1sQYdQ36ov+1FAxWsDg8Y70mC3Dx1oAb0UW7Wz+GFn6MeWwpltQVD4ByWu87R5OShMulhiA9Q==
-X-Received: by 2002:adf:fb43:0:b0:21a:22eb:da43 with SMTP id c3-20020adffb43000000b0021a22ebda43mr4591639wrs.347.1655923751050;
-        Wed, 22 Jun 2022 11:49:11 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DqFQG0CU8wtdroHFAZ6bAEVb5kwNC8YHs7EBfsOyGTE=;
+        b=FXZ1IbxE6DOPrywf0GNR7jnil8mSg/wnkq4zq6L+2WTgnMvJrOij4Fog7pPDEqBIfM
+         iVMPhjwmT0dkvO5IDabl+hdInZECbYcsqWuzcj8BEOg/n2T4OtBfA0/SmpjFjXYG5E/B
+         4dJB23WgVnMXvIrZ4Nj/MLmxav9ryRymqJ00BZxXLydJbCOR7mSLFvZ6kZQbHUsn6BKd
+         HSpz91yj1N4qL3LMNPYUhATNmWSQH9uLwHzhsM+s8LDrREg8hFXNE8HUuDDAGLdiQBCx
+         EjdnNLhGWuo1C8xXRZuJEmLrWAVRpL7Ub2pqOVkebBst4sJq/hhn2+mow+37Sexu1qWN
+         kHBg==
+X-Gm-Message-State: AJIora+hfNx3nXc8abSxnV/6jejxFv2mUJQ+MqCrchCv72xwCNjfjw4O
+        l6TosR9vHe2mQy69FArYyok=
+X-Google-Smtp-Source: AGRyM1vkB15KESXtruheH66NvVNQPfrMR+Ebv7PozqjW0fgpTFmRvOOMoCed61LAjw+FsF1ZtIW/XA==
+X-Received: by 2002:a5d:4e83:0:b0:21b:9dee:d109 with SMTP id e3-20020a5d4e83000000b0021b9deed109mr4859661wru.430.1655923754540;
+        Wed, 22 Jun 2022 11:49:14 -0700 (PDT)
 Received: from localhost (92.40.170.233.threembb.co.uk. [92.40.170.233])
-        by smtp.gmail.com with ESMTPSA id m19-20020a05600c461300b0039db7f1a3f5sm188332wmo.45.2022.06.22.11.49.09
+        by smtp.gmail.com with ESMTPSA id 1-20020a05600c248100b0039c5ab7167dsm177431wms.48.2022.06.22.11.49.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jun 2022 11:49:10 -0700 (PDT)
+        Wed, 22 Jun 2022 11:49:13 -0700 (PDT)
 From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
 To:     linus.walleij@linaro.org
 Cc:     paul@crapouillou.net, maz@kernel.org, andy.shevchenko@gmail.com,
         linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/2] pinctrl: ingenic: Convert to immutable irq chip
-Date:   Wed, 22 Jun 2022 19:50:08 +0100
-Message-Id: <20220622185010.2022515-1-aidanmacdonald.0x0@gmail.com>
+Subject: [PATCH v3 2/2] pinctrl: ingenic: Convert to immutable irq chip
+Date:   Wed, 22 Jun 2022 19:50:10 +0100
+Message-Id: <20220622185010.2022515-3-aidanmacdonald.0x0@gmail.com>
+In-Reply-To: <20220622185010.2022515-1-aidanmacdonald.0x0@gmail.com>
+References: <20220622185010.2022515-1-aidanmacdonald.0x0@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Two cleanup patches for pinctrl-ingenic.
+Update the driver to use an immutable IRQ chip to fix this warning:
 
-v3:
-* Put includes into alphabetical order.
+    "not an immutable chip, please consider fixing it!"
 
-v2:
-* Add print_chip callback to avoid changing /proc/interrupts output
-* Add patch to use irqd_to_hwirq()
+Preserve per-chip labels by adding an ->irq_print_chip() callback.
 
-Aidan MacDonald (2):
-  pinctrl: ingenic: Use irqd_to_hwirq()
-  pinctrl: ingenic: Convert to immutable irq chip
+Acked-by: Marc Zyngier <maz@kernel.org>
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+---
+ drivers/pinctrl/pinctrl-ingenic.c | 41 ++++++++++++++++++++-----------
+ 1 file changed, 27 insertions(+), 14 deletions(-)
 
- drivers/pinctrl/pinctrl-ingenic.c | 64 +++++++++++++++++++------------
- 1 file changed, 40 insertions(+), 24 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index 69e0d88665d3..3a9ee9c8af11 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -21,6 +21,7 @@
+ #include <linux/pinctrl/pinconf-generic.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/seq_file.h>
+ #include <linux/slab.h>
+ 
+ #include "core.h"
+@@ -135,7 +136,6 @@ struct ingenic_pinctrl {
+ struct ingenic_gpio_chip {
+ 	struct ingenic_pinctrl *jzpc;
+ 	struct gpio_chip gc;
+-	struct irq_chip irq_chip;
+ 	unsigned int irq, reg_base;
+ };
+ 
+@@ -3419,6 +3419,8 @@ static void ingenic_gpio_irq_enable(struct irq_data *irqd)
+ 	struct ingenic_gpio_chip *jzgc = gpiochip_get_data(gc);
+ 	irq_hw_number_t irq = irqd_to_hwirq(irqd);
+ 
++	gpiochip_enable_irq(gc, irq);
++
+ 	if (is_soc_or_above(jzgc->jzpc, ID_JZ4770))
+ 		ingenic_gpio_set_bit(jzgc, JZ4770_GPIO_INT, irq, true);
+ 	else if (is_soc_or_above(jzgc->jzpc, ID_JZ4740))
+@@ -3443,6 +3445,8 @@ static void ingenic_gpio_irq_disable(struct irq_data *irqd)
+ 		ingenic_gpio_set_bit(jzgc, JZ4740_GPIO_SELECT, irq, false);
+ 	else
+ 		ingenic_gpio_set_bit(jzgc, JZ4730_GPIO_GPIER, irq, false);
++
++	gpiochip_disable_irq(gc, irq);
+ }
+ 
+ static void ingenic_gpio_irq_ack(struct irq_data *irqd)
+@@ -3687,6 +3691,27 @@ static void ingenic_gpio_irq_release(struct irq_data *data)
+ 	return gpiochip_relres_irq(gpio_chip, irq);
+ }
+ 
++static void ingenic_gpio_irq_print_chip(struct irq_data *data, struct seq_file *p)
++{
++	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(data);
++
++	seq_printf(p, "%s", gpio_chip->label);
++}
++
++static const struct irq_chip ingenic_gpio_irqchip = {
++	.irq_enable		= ingenic_gpio_irq_enable,
++	.irq_disable		= ingenic_gpio_irq_disable,
++	.irq_unmask		= ingenic_gpio_irq_unmask,
++	.irq_mask		= ingenic_gpio_irq_mask,
++	.irq_ack		= ingenic_gpio_irq_ack,
++	.irq_set_type		= ingenic_gpio_irq_set_type,
++	.irq_set_wake		= ingenic_gpio_irq_set_wake,
++	.irq_request_resources	= ingenic_gpio_irq_request,
++	.irq_release_resources	= ingenic_gpio_irq_release,
++	.irq_print_chip		= ingenic_gpio_irq_print_chip,
++	.flags			= IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_IMMUTABLE,
++};
++
+ static int ingenic_pinmux_set_pin_fn(struct ingenic_pinctrl *jzpc,
+ 		int pin, int func)
+ {
+@@ -4175,20 +4200,8 @@ static int __init ingenic_gpio_probe(struct ingenic_pinctrl *jzpc,
+ 	if (!jzgc->irq)
+ 		return -EINVAL;
+ 
+-	jzgc->irq_chip.name = jzgc->gc.label;
+-	jzgc->irq_chip.irq_enable = ingenic_gpio_irq_enable;
+-	jzgc->irq_chip.irq_disable = ingenic_gpio_irq_disable;
+-	jzgc->irq_chip.irq_unmask = ingenic_gpio_irq_unmask;
+-	jzgc->irq_chip.irq_mask = ingenic_gpio_irq_mask;
+-	jzgc->irq_chip.irq_ack = ingenic_gpio_irq_ack;
+-	jzgc->irq_chip.irq_set_type = ingenic_gpio_irq_set_type;
+-	jzgc->irq_chip.irq_set_wake = ingenic_gpio_irq_set_wake;
+-	jzgc->irq_chip.irq_request_resources = ingenic_gpio_irq_request;
+-	jzgc->irq_chip.irq_release_resources = ingenic_gpio_irq_release;
+-	jzgc->irq_chip.flags = IRQCHIP_MASK_ON_SUSPEND;
+-
+ 	girq = &jzgc->gc.irq;
+-	girq->chip = &jzgc->irq_chip;
++	gpio_irq_chip_set_chip(girq, &ingenic_gpio_irqchip);
+ 	girq->parent_handler = ingenic_gpio_irq_handler;
+ 	girq->num_parents = 1;
+ 	girq->parents = devm_kcalloc(dev, 1, sizeof(*girq->parents),
 -- 
 2.35.1
 
