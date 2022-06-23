@@ -2,60 +2,127 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56125C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Jun 2022 07:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F13ECCA480
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Jun 2022 08:04:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230410AbiFWHqE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Jun 2022 03:46:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59254 "EHLO
+        id S230527AbiFWIE4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Jun 2022 04:04:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbiFWHqE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2022 03:46:04 -0400
-Received: from mail.onlinesuccesses.pl (mail.onlinesuccesses.pl [198.244.150.235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CFDC46B23
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2022 00:46:03 -0700 (PDT)
-Received: by mail.onlinesuccesses.pl (Postfix, from userid 1002)
-        id ED7FEAFAE4; Thu, 23 Jun 2022 07:42:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onlinesuccesses.pl;
-        s=mail; t=1655970188;
-        bh=nE8HqilgMh4dy7+Z8ksfg7Bc9rmPeQtYFq3/3YR2ODU=;
-        h=Date:From:To:Subject:From;
-        b=FhRXJXk3L1uDFWugWym4H+wD+anR0DxCk+wkHls0Mrz5kJ72wawpYBJrOyB51H3Xw
-         GlJNVMk7+GTQW4JiNrbLxsJHb6Ff0WkP8p71D6QwjsWU1XS3UhPQQI6/iVoi9XaYJE
-         PggwqzHDJA8Lcy1SWgt29V6AHHEGY/9eLY+KfWUGgxcEE5abDiJVp/T1uHafyxG6+Y
-         MSwSzVQdnwyaJANy0dW4ufh0ieKbsz5Tz17IZHh1B6FUOz5mJ8V9zglhyCvilbkg2S
-         i16XS+BkXHTbTkJD+0XXtPG9GaDyVz9JlaMuz3rMl+toWJfsJquDkXLyI3qzMtO3E0
-         EnjC6Hb5ku5Cw==
-Received: by mail.onlinesuccesses.pl for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2022 07:41:20 GMT
-Message-ID: <20220623064501-0.1.51.1mqza.0.g6b9inp8jm@onlinesuccesses.pl>
-Date:   Thu, 23 Jun 2022 07:41:20 GMT
-From:   "Wiktor Zielonko" <wiktor.zielonko@onlinesuccesses.pl>
-To:     <linux-gpio@vger.kernel.org>
-Subject: Ruch z pierwszej pozycji w Google
-X-Mailer: mail.onlinesuccesses.pl
+        with ESMTP id S230456AbiFWIEy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2022 04:04:54 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABB5F47079
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2022 01:04:52 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id w6so34474029ybl.4
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2022 01:04:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aJdGY8if0kKaADIOnNz/K5T0O1hT/jUoomceGsgv8qg=;
+        b=VTQtFvKLR234TeEsJG9hJ1cv/fTlg/g75r8DUnXK6ZHcXDiNZlsJYB9CHo/M+MtXXm
+         kHxKIuNF0rtlBZTftpqriI4HPVkNAF8Kgf2nEavzZoQhhOEgRbl56Yidg8QEwndgSNmo
+         guDcAYV+JbY07aCqXNXOm0MAQ374EyPk3ywDSm8OW4cMFCwWkHtQXObbRqfIV1Au2qL/
+         2xJX/OVUmoI0Ru+JwXOHrC9gjW8I3BqdmxJTIj+bkS/ZKg4cBj3SDMQZSf2iggQyehVV
+         s0m81yWPr2B/Nu8wqEz2Z07cBjk9Ng0bbJAp4gpara4efxy5PPr9RgZdjjBJiDIEtWTH
+         KYew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aJdGY8if0kKaADIOnNz/K5T0O1hT/jUoomceGsgv8qg=;
+        b=rW0D4AY0vIg46Wy3qzP2Le0LBFHcmvqiyPjoizV2anzzKyroH/4ZVV0/tvwQS3ZyaC
+         wCkXYOAkt+YDOUl31jk77nF7+ssEwIsC51afq5894lpWxgMs/0g3D6cyJ+1F/2XWvLAW
+         V2BR/pVa1NXYXGmNQuPcVbHKFhXrwNfqvfT1SUFHTuzPCzv7v0Mdyq3VxPkBOBGlRGwc
+         SyaTYSRyKB5Y1IhKxRSC44FQCgK44QHkAy5qYKYdsafLZaWD6oAgXEVWcIeBPoINi5R0
+         n3JGXzU4TbMc0PO69Lzo2L/e1GQwJsMfDCnqs3dp8A7M5qw9Q49MkTjdmrnpvaMyAjVm
+         iBYA==
+X-Gm-Message-State: AJIora8pASSTzh9gNg8bAamYRzmmH2prIcvL4vR5FbB/mBK1RiarRddN
+        n7T4oQCiGIEC0QJ/NwrzthsCVTW88rLE6HcVgli4Xg==
+X-Google-Smtp-Source: AGRyM1vSa06Bo2VNf1pFNqSEQ2ygrs7ov2BN88IdRJyYwpujxiov2K55jHdtpFFoYamFYqbsbeU9U6O7j7pmqWeF7uU=
+X-Received: by 2002:a25:d8c8:0:b0:669:5f5b:7d75 with SMTP id
+ p191-20020a25d8c8000000b006695f5b7d75mr8205442ybg.80.1655971491674; Thu, 23
+ Jun 2022 01:04:51 -0700 (PDT)
 MIME-Version: 1.0
+References: <20220622215912.550419-1-saravanak@google.com> <20220622215912.550419-2-saravanak@google.com>
+ <20220623065031.GX1615@pengutronix.de>
+In-Reply-To: <20220623065031.GX1615@pengutronix.de>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Thu, 23 Jun 2022 01:04:14 -0700
+Message-ID: <CAGETcx_TaR+_Z9bf-Gsx3pXC9QwSUT85TTwALj5KjaOY1oNK8g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] driver core: fw_devlink: Allow firmware to mark
+ devices as best effort
+To:     Sascha Hauer <sha@pengutronix.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Scally <djrscally@gmail.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Len Brown <lenb@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Dzie=C5=84 dobry,=20
+On Wed, Jun 22, 2022 at 11:50 PM Sascha Hauer <sha@pengutronix.de> wrote:
+>
+> On Wed, Jun 22, 2022 at 02:59:10PM -0700, Saravana Kannan wrote:
+> > When firmware sets the FWNODE_FLAG_BEST_EFFORT flag for a fwnode,
+> > fw_devlink will do a best effort ordering for that device where it'll
+> > only enforce the probe/suspend/resume ordering of that device with
+> > suppliers that have drivers. The driver of that device can then decide
+> > if it wants to defer probe or probe without the suppliers.
+> >
+> > This will be useful for avoid probe delays of the console device that
+> > were caused by commit 71066545b48e ("driver core: Set
+> > fw_devlink.strict=1 by default").
+> >
+> > Fixes: 71066545b48e ("driver core: Set fw_devlink.strict=1 by default")
+> > Reported-by: Sascha Hauer <sha@pengutronix.de>
+> > Reported-by: Peng Fan <peng.fan@nxp.com>
+> > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > ---
+> >  drivers/base/core.c    | 3 ++-
+> >  include/linux/fwnode.h | 4 ++++
+> >  2 files changed, 6 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > index 839f64485a55..61edd18b7bf3 100644
+> > --- a/drivers/base/core.c
+> > +++ b/drivers/base/core.c
+> > @@ -968,7 +968,8 @@ static void device_links_missing_supplier(struct device *dev)
+> >
+> >  static bool dev_is_best_effort(struct device *dev)
+> >  {
+> > -     return fw_devlink_best_effort && dev->can_match;
+> > +     return (fw_devlink_best_effort && dev->can_match) ||
+> > +             dev->fwnode->flags & FWNODE_FLAG_BEST_EFFORT;
+>
+> Check for dev->fwnode first. I am running in a NULL pointer exception
+> here for a device that doesn't have a fwnode.
 
-jaki=C5=9B czas temu zg=C5=82osi=C5=82a si=C4=99 do nas firma, kt=C3=B3re=
-j strona internetowa nie pozycjonowa=C5=82a si=C4=99 wysoko w wyszukiwarc=
-e Google.=20
+Oops. Fixed and sent out a v2.
 
-Na podstawie wykonanego przez nas audytu SEO zoptymalizowali=C5=9Bmy tre=C5=
-=9Bci na stronie pod k=C4=85tem wcze=C5=9Bniej opracowanych s=C5=82=C3=B3=
-w kluczowych. Nasz wewn=C4=99trzny system codziennie analizuje prawid=C5=82=
-owe dzia=C5=82anie witryny.  Dzi=C4=99ki indywidualnej strategii, firma z=
-dobywa coraz wi=C4=99cej Klient=C3=B3w. =20
-
-Czy chcieliby Pa=C5=84stwo zwi=C4=99kszy=C4=87 liczb=C4=99 os=C3=B3b odwi=
-edzaj=C4=85cych stron=C4=99 internetow=C4=85 firmy? M=C3=B3g=C5=82bym prz=
-edstawi=C4=87 ofert=C4=99?=20
-
-
-Pozdrawiam serdecznie,
-Wiktor Zielonko
+-Saravana
