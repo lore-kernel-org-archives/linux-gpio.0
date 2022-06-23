@@ -2,124 +2,207 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D982CCA483
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Jun 2022 08:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAFAC43334
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Jun 2022 08:22:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229925AbiFWII0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Jun 2022 04:08:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51850 "EHLO
+        id S229672AbiFWIWY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Jun 2022 04:22:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230315AbiFWIIV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2022 04:08:21 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD2B327158
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2022 01:08:13 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id h82-20020a25d055000000b00668b6a4ee32so14587110ybg.3
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2022 01:08:13 -0700 (PDT)
+        with ESMTP id S229576AbiFWIWX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2022 04:22:23 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D85DB48330
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2022 01:22:21 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id l11so34497692ybu.13
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2022 01:22:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=s9ND+o/2c+yLLqaQvSasSfGJRux3sdgC6yXqcCSmvC4=;
-        b=ZChn5ahWF9VYjMaZyt75gRGdRRm9LYwWwkstPyFagKQEAyvitoOq9K9PtewRoCDhSM
-         tAkvp8C+6vLvaAyusyWYI21A6zVjKa5/J8gAEms2VIQwhv3yjw+3NCR2DEx9uxGeN2QJ
-         rS/zNPMzlbhn4YaJRa/lxLtaxH9A7m6NK3ZdXGOgoyyBfWLvx+PDntcmTJFeXZvqRilJ
-         IYZVG4M+dhM5VQEV4SPScrfViR40Ehpl3D5iBw+7OCCiUX0dCoDDiuZRzruyfOzLI4Ou
-         MQ3GXEQicXFecGuaW/OqF2wd1VI2EawxBbtZm4yAP8J1jKc/GtvpSLqNqDM4p5NK5zZS
-         759w==
+        bh=9PjNiNhLCuh9WhzT1AaONPfu5Pj4HpLdf/1QRxDQ9sQ=;
+        b=pzqGfXQLba3va5/8Sml5dTqasBd22VtMC6LsIY9XM86NydlS9zpVJnL7w7xX6iuDe8
+         X7CBtL21Xt/roY99vHIUugx0rcpAIZr/MRxvyoGKpsUZLiqAk//S2jlQpBwrNnHk7wGm
+         RQTEw34L8DZMyPfA1AsauTTsxDs05tA56d4f5svcOAWjw1Odk+3DTByfTvJrYBNr/zRF
+         iPbOdMh47ENO95zTpdz/17l4CgcdpExtT5e0NypAQFBQc/j/g67fTa8i40rOqRH7rdeC
+         +qNvOlp6pV5Z2uaLHf2Y3ZncmyJaUhr6W/xXlsYAJCLg8Ts5Y0LhOT8aCUZsWexiZHkk
+         67Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=s9ND+o/2c+yLLqaQvSasSfGJRux3sdgC6yXqcCSmvC4=;
-        b=0CDKEt+ijto/ZLHXHlQfBdCOU/tlXZNf9Miyb+yzd8n4+vlHDUp3B7yTabcEeYlVF5
-         Xlt1mtKRzy5z2EdI9ntaA5SNOHWeqt4AJ5z7l1GC5zyv5cwrLGYjsBGo3Kl63Vej5xKL
-         MHzkSzJUJUY0Jlm2CEDtBn3hcSvB0MnvaQg11exQnAmhKRFcigBgy+FN0rx2s2cL5xlL
-         c4Gm+xcLKoGjzDs+Wb4VosqRYxTW1vlHCVrzvG7euilmQeu/kqCG9SrwaGH5ELLZUhOe
-         +VWDRfMxgHEtOssUZjYEIvZXMiTw+WQjUJHUg1F0fHFf+sS2T4zZVqWzJvS3GIg6JLQz
-         tHZg==
-X-Gm-Message-State: AJIora+n4LXl71IRwveMvncWhBC1npCI5a6pEHHmlpkS/O3hCcjM9hzN
-        7AO5FUsORPeL5dOA2iChU0Aap2lhWjsiaz4=
-X-Google-Smtp-Source: AGRyM1sE5BByBONr09uTGuYvikqMrbKKy57XSWWEHEYrg9GZbQPbgu/DImBH3QXHzvbDpX1ROMvYGcf5ilhwWN4=
-X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:8b2d:9894:73a4:8e1f])
- (user=saravanak job=sendgmr) by 2002:a81:7007:0:b0:317:912a:32a3 with SMTP id
- l7-20020a817007000000b00317912a32a3mr9395945ywc.194.1655971692862; Thu, 23
- Jun 2022 01:08:12 -0700 (PDT)
-Date:   Thu, 23 Jun 2022 01:03:43 -0700
-In-Reply-To: <20220623080344.783549-1-saravanak@google.com>
-Message-Id: <20220623080344.783549-3-saravanak@google.com>
-Mime-Version: 1.0
-References: <20220623080344.783549-1-saravanak@google.com>
-X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
-Subject: [PATCH v2 2/2] of: base: Avoid console probe delay when fw_devlink.strict=1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9PjNiNhLCuh9WhzT1AaONPfu5Pj4HpLdf/1QRxDQ9sQ=;
+        b=iGANGoqf9H5AxGQ/hpOO1nKbAaICjjHIin6sfFxs38dyp9hJZx5kSD7DX5YMz6fDAu
+         l39UoGqg2btl+oT8thVgiG89oFSWy/3gsHiSsIfqrmVBX9lgQDtGZQ6sPtqV6LjUyq9E
+         kBvApxabX+QVd4GBIJZdjfa4zUqfM/ucLzLBau9OjydtnIdOZyEh7Jsb/cU2e7sNYFPW
+         oIantFFipcljBe53YFybhz5HQD+RvER+25f6ueL5biRfGvIzOwQDB8h+pG2U347mOxTn
+         iIQNtyGxwamhArkFQEi+PorDdYRI4Q0LaceRyCDnWRADBkfqu/R/dG6uYAHJe9visgqn
+         hQsQ==
+X-Gm-Message-State: AJIora/8JpGA6er1w7XRn66Re2ewF1dZNn2LOBfjhovbTH9qBWtn5MYW
+        +dOaZ4k5FSa87NwlC3fJGW0cerBNfYQbJnlMy5PRXQ==
+X-Google-Smtp-Source: AGRyM1vxaAj9yCr/MgE5OXOPyoZP2NZubFdKuQ3kk1yDt2x8rBApcAn2+N11GLiK2OWn/arC4N2rlY0DEOynYw1Ms08=
+X-Received: by 2002:a25:9e82:0:b0:669:b38d:e93e with SMTP id
+ p2-20020a259e82000000b00669b38de93emr775933ybq.242.1655972540895; Thu, 23 Jun
+ 2022 01:22:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220601070707.3946847-1-saravanak@google.com>
+ <20220601070707.3946847-2-saravanak@google.com> <YrFzK6EiVvXmzVG6@atomide.com>
+ <CAGETcx_1USPRbFKV5j00qkQ-QXJkp7=FAfnFcfiNnM4J5KF1cQ@mail.gmail.com>
+ <YrKhkmj3jCQA39X/@atomide.com> <CAGETcx_11wO-HkZ2QsBF8o1+L9L3Xe1QBQ_GzegwozxAx1i0jg@mail.gmail.com>
+ <YrQP3OZbe8aCQxKU@atomide.com>
+In-Reply-To: <YrQP3OZbe8aCQxKU@atomide.com>
 From:   Saravana Kannan <saravanak@google.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Date:   Thu, 23 Jun 2022 01:21:43 -0700
+Message-ID: <CAGETcx9aFBzMcuOiTAEy5SJyWw3UfajZ8DVQfW2DGmzzDabZVg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/9] PM: domains: Delete usage of driver_deferred_probe_check_state()
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Saravana Kannan <saravanak@google.com>
-Cc:     sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
-        kevin hilman <khilman@kernel.org>,
-        ulf hansson <ulf.hansson@linaro.org>,
-        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
-        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
-        andrew lunn <andrew@lunn.ch>,
-        heiner kallweit <hkallweit1@gmail.com>,
-        russell king <linux@armlinux.org.uk>,
-        "david s. miller" <davem@davemloft.net>,
-        eric dumazet <edumazet@google.com>,
-        jakub kicinski <kuba@kernel.org>,
-        paolo abeni <pabeni@redhat.com>,
-        linus walleij <linus.walleij@linaro.org>,
-        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
-        david ahern <dsahern@kernel.org>, kernel-team@android.com,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>, kernel-team@android.com,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org
+        linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Commit 71066545b48e ("driver core: Set fw_devlink.strict=1 by default")
-enabled iommus and dmas dependency enforcement by default. On some
-systems, this caused the console device's probe to get delayed until the
-deferred_probe_timeout expires.
+On Thu, Jun 23, 2022 at 12:01 AM Tony Lindgren <tony@atomide.com> wrote:
+>
+> * Saravana Kannan <saravanak@google.com> [220622 19:05]:
+> > On Tue, Jun 21, 2022 at 9:59 PM Tony Lindgren <tony@atomide.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > * Saravana Kannan <saravanak@google.com> [220621 19:29]:
+> > > > On Tue, Jun 21, 2022 at 12:28 AM Tony Lindgren <tony@atomide.com> wrote:
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > * Saravana Kannan <saravanak@google.com> [700101 02:00]:
+> > > > > > Now that fw_devlink=on by default and fw_devlink supports
+> > > > > > "power-domains" property, the execution will never get to the point
+> > > > > > where driver_deferred_probe_check_state() is called before the supplier
+> > > > > > has probed successfully or before deferred probe timeout has expired.
+> > > > > >
+> > > > > > So, delete the call and replace it with -ENODEV.
+> > > > >
+> > > > > Looks like this causes omaps to not boot in Linux next.
+> > > >
+> > > > Can you please point me to an example DTS I could use for debugging
+> > > > this? I'm assuming you are leaving fw_devlink=on and not turning it
+> > > > off or putting it in permissive mode.
+> > >
+> > > Sure, this seems to happen at least with simple-pm-bus as the top
+> > > level interconnect with a configured power-domains property:
+> > >
+> > > $ git grep -A10 "ocp {" arch/arm/boot/dts/*.dtsi | grep -B3 -A4 simple-pm-bus
+> >
+> > Thanks for the example. I generally start looking from dts (not dtsi)
+> > files in case there are some DT property override/additions after the
+> > dtsi files are included in the dts file. But I'll assume for now
+> > that's not the case. If there's a specific dts file for a board I can
+> > look from that'd be helpful to rule out those kinds of issues.
+> >
+> > For now, I looked at arch/arm/boot/dts/omap4.dtsi.
+>
+> OK it should be very similar for all the affected SoCs.
+>
+> > > This issue is no directly related fw_devlink. It is a side effect of
+> > > removing driver_deferred_probe_check_state(). We no longer return
+> > > -EPROBE_DEFER at the end of driver_deferred_probe_check_state().
+> >
+> > Yes, I understand the issue. But driver_deferred_probe_check_state()
+> > was deleted because fw_devlink=on should have short circuited the
+> > probe attempt with an  -EPROBE_DEFER before reaching the bus/driver
+> > probe function and hitting this -ENOENT failure. That's why I was
+> > asking the other questions.
+>
+> OK. So where is the -EPROBE_DEFER supposed to happen without
+> driver_deferred_probe_check_state() then?
 
-We need consoles to work as soon as possible, so mark the console device
-node with FWNODE_FLAG_BEST_EFFORT so that fw_delink knows not to delay
-the probe of the console device for suppliers without drivers. The
-driver can then make the decision on where it can probe without those
-suppliers or defer its probe.
+device_links_check_suppliers() call inside really_probe() would short
+circuit and return an -EPROBE_DEFER if the device links are created as
+expected.
 
-Fixes: 71066545b48e ("driver core: Set fw_devlink.strict=1 by default")
-Reported-by: Sascha Hauer <sha@pengutronix.de>
-Reported-by: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Saravana Kannan <saravanak@google.com>
-Tested-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/of/base.c | 2 ++
- 1 file changed, 2 insertions(+)
+>
+> > > > > On platform_probe() genpd_get_from_provider() returns
+> > > > > -ENOENT.
+> > > >
+> > > > This error is with the series I assume?
+> > >
+> > > On the first probe genpd_get_from_provider() will return -ENOENT in
+> > > both cases. The list is empty on the first probe and there are no
+> > > genpd providers at this point.
+> > >
+> > > Earlier with driver_deferred_probe_check_state(), the initial -ENOENT
+> > > ends up getting changed to -EPROBE_DEFER at the end of
+> > > driver_deferred_probe_check_state(), we are now missing that.
+> >
+> > Right, I was aware -ENOENT would be returned if we got this far. But
+> > the point of this series is that you shouldn't have gotten that far
+> > before your pm domain device is ready. Hence my questions from the
+> > earlier reply.
+>
+> OK
+>
+> > Can I get answers to rest of my questions in the first reply please?
+> > That should help us figure out why fw_devlink let us get this far.
+> > Summarize them here to make it easy:
+> > * Are you running with fw_devlink=on?
+>
+> Yes with the default with no specific kernel params so looks like
+> FW_DEVLINK_FLAGS_ON.
+>
+> > * Is the"ti,omap4-prm-inst"/"ti,omap-prm-inst" built-in in this case?
+>
+> Yes
+>
+> > * If it's not built-in, can you please try deferred_probe_timeout=0
+> > and deferred_probe_timeout=30 and see if either one of them help?
+>
+> It's built in so I did not try these.
+>
+> > * Can I get the output of "ls -d supplier:*" and "cat
+> > supplier:*/status" output from the sysfs dir for the ocp device
+> > without this series where it boots properly.
+>
+> Hmm so I'm not seeing any supplier for the top level ocp device in
+> the booting case without your patches. I see the suppliers for the
+> ocp child device instances only.
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index d4f98c8469ed..a19cd0c73644 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1919,6 +1919,8 @@ void of_alias_scan(void * (*dt_alloc)(u64 size, u64 align))
- 			of_property_read_string(of_aliases, "stdout", &name);
- 		if (name)
- 			of_stdout = of_find_node_opts_by_path(name, &of_stdout_options);
-+		if (of_stdout)
-+			of_stdout->fwnode.flags |= FWNODE_FLAG_BEST_EFFORT;
- 	}
- 
- 	if (!of_aliases)
--- 
-2.37.0.rc0.161.g10f37bed90-goog
+Hmmm... this is strange (that the device link isn't there), but this
+is what I suspected.
 
+Now we need to figure out why it's missing. There are only a few
+things that could cause this and I don't see any of those. I already
+checked to make sure the power domain in this instance had a proper
+driver with a probe() function -- if it didn't, then that's one thing
+that'd could have caused the missing device link. The device does seem
+to have a proper driver, so looks like I can rule that out.
+
+Can you point me to the dts file that corresponds to the specific
+board you are testing this one? I probably won't find anything, but I
+want to rule out some of the possibilities.
+
+All the device link creation logic is inside drivers/base/core.c. So
+if you can look at the existing messages or add other stuff to figure
+out why the device link isn't getting created, that'd be handy. In
+either case, I'll continue staring at the DT and code to see what
+might be happening here.
+
+-Saravana
