@@ -2,37 +2,37 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1746FCCA481
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA91CCA482
 	for <linux-gpio@archiver.kernel.org>; Thu, 23 Jun 2022 16:08:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232195AbiFWQIa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 23 Jun 2022 12:08:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42806 "EHLO
+        id S232224AbiFWQIb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 23 Jun 2022 12:08:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232210AbiFWQIT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2022 12:08:19 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D32B5FCD;
+        with ESMTP id S232149AbiFWQIV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2022 12:08:21 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6870F240A8;
         Thu, 23 Jun 2022 09:08:07 -0700 (PDT)
 Received: from jupiter.universe (unknown [95.33.159.255])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id DE89E66017E6;
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id F3DC166017E5;
         Thu, 23 Jun 2022 17:08:05 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1656000485;
-        bh=3PoFyOi2PuVN5eAkHhfUKGlEfV4vRXqknVKhZCnAjEw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=QPA4ELcpdYYx23MTDi2g6vAWdqpF8SHoQ8U9hYwtymzt3F1+9y2O/V5CNRJaAydd9
-         U/HycEVJK79Xi9PqqkkRlDmDfUsmCDZkqVC+mk9ZRN/adqtsqUNDyIeLxURGSu0s+n
-         zgnPPVmRc0fldbgAq+yjPy4m5sIOFvfGxPpRcyLgQYGX3AbQKtihPPvtQPRAiMp3aA
-         /ks74AETRVPKPsXYvhDPhz0tCYEFTi8rLTeNM4Q5nHvl6gyiq82uSOb8doJ3wXRuJL
-         C1TKh4v3lxLRZzrl/8tf3uMF3Ft82PXyKhDWvdz2hTpXP/HR1OkB6JPqt8/MitHb+q
-         VyaeJSKxR61lQ==
+        s=mail; t=1656000486;
+        bh=w0CRHYNz9iSBQk/+ZmhinMEi7N+ofG9zMh6LCsa2h/Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GgZqJNr0RkGxv+a+WG1xxHLCKnWgSRZb+NUCkJnJqjl1fE2TOZxa4wGdug6BqOtIS
+         6XRyVMG6SbA3FBygJeWidqqEXerGsrSRQpZBLh9udZXwtcj4G0Xn10KwUNWyNtph3P
+         f8z1uxkhdRYtc57J+CsbQu6EYQSaZkdyAiSyqAk0EFZ5szb3YjySKc9ybHvQSwprq9
+         hWAmRhk0gb3P8EFxnjv9CQK0zMIBuHkD4j55l5+nI2HVbjLiGDaZUWkUF1l+O60Vh2
+         JaqEONWHzX8ea2UR2XM4i1LZ3e9mHg5RMB2DSPGA9X4GRGxhlJEzOen3LaMYDgVKVq
+         ZxYJVjcpt2wEA==
 Received: by jupiter.universe (Postfix, from userid 1000)
-        id 9D2C1480122; Thu, 23 Jun 2022 18:08:03 +0200 (CEST)
+        id A1499480126; Thu, 23 Jun 2022 18:08:03 +0200 (CEST)
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Heiko Stuebner <heiko@sntech.de>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -40,40 +40,54 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        devicetree@vger.kernel.org,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        kernel@collabora.com
-Subject: [PATCH 0/2] RK3588 GPIO Support
-Date:   Thu, 23 Jun 2022 18:07:59 +0200
-Message-Id: <20220623160801.240779-1-sebastian.reichel@collabora.com>
+        devicetree@vger.kernel.org, Jianqun Xu <jay.xu@rock-chips.com>,
+        kernel@collabora.com,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH 2/2] gpio: rockchip: add support for rk3588
+Date:   Thu, 23 Jun 2022 18:08:01 +0200
+Message-Id: <20220623160801.240779-3-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220623160801.240779-1-sebastian.reichel@collabora.com>
+References: <20220623160801.240779-1-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This has been part of a bigger patchset adding basic rk3588 support.
-Since that gets more and more out of hand, I'm now sending patches
-for each subsystem as individual patchset. Previou patchet:
+From: Jianqun Xu <jay.xu@rock-chips.com>
 
-https://lore.kernel.org/all/20220504213251.264819-1-sebastian.reichel@collabora.com/
+Add V2.1 rockchip gpio controller type, which is part of the
+RK3588 SoC.
 
-Changes:
- * None (except for collecting Acks)
+Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+ drivers/gpio/gpio-rockchip.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
--- Sebastian
-
-Jianqun Xu (1):
-  gpio: rockchip: add support for rk3588
-
-Sebastian Reichel (1):
-  dt-bindings: gpio: rockchip: add gpio-ranges
-
- Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml | 2 ++
- drivers/gpio/gpio-rockchip.c                                   | 3 ++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index e342a6dc4c6c..f91e876fd969 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -27,6 +27,7 @@
+ 
+ #define GPIO_TYPE_V1		(0)           /* GPIO Version ID reserved */
+ #define GPIO_TYPE_V2		(0x01000C2B)  /* GPIO Version ID 0x01000C2B */
++#define GPIO_TYPE_V2_1		(0x0101157C)  /* GPIO Version ID 0x0101157C */
+ 
+ static const struct rockchip_gpio_regs gpio_regs_v1 = {
+ 	.port_dr = 0x00,
+@@ -664,7 +665,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+ 	id = readl(bank->reg_base + gpio_regs_v2.version_id);
+ 
+ 	/* If not gpio v2, that is default to v1. */
+-	if (id == GPIO_TYPE_V2) {
++	if (id == GPIO_TYPE_V2 || id == GPIO_TYPE_V2_1) {
+ 		bank->gpio_regs = &gpio_regs_v2;
+ 		bank->gpio_type = GPIO_TYPE_V2;
+ 		bank->db_clk = of_clk_get(bank->of_node, 1);
 -- 
 2.35.1
 
