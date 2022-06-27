@@ -2,113 +2,72 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBA0C43334
-	for <linux-gpio@archiver.kernel.org>; Sun, 26 Jun 2022 23:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A499FC43334
+	for <linux-gpio@archiver.kernel.org>; Mon, 27 Jun 2022 00:03:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbiFZX7w (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 26 Jun 2022 19:59:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58196 "EHLO
+        id S229626AbiF0ADj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 26 Jun 2022 20:03:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbiFZX7w (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Jun 2022 19:59:52 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C557B2AFC
-        for <linux-gpio@vger.kernel.org>; Sun, 26 Jun 2022 16:59:49 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id a39so7948484ljq.11
-        for <linux-gpio@vger.kernel.org>; Sun, 26 Jun 2022 16:59:49 -0700 (PDT)
+        with ESMTP id S229463AbiF0ADh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Jun 2022 20:03:37 -0400
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82CF72BC4
+        for <linux-gpio@vger.kernel.org>; Sun, 26 Jun 2022 17:03:36 -0700 (PDT)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-3177f4ce3e2so70624897b3.5
+        for <linux-gpio@vger.kernel.org>; Sun, 26 Jun 2022 17:03:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=G/rsSvjEVx9HxUqXuN5EYDZnuHtx7IRYN8I0QYKvnmE=;
-        b=srl3ZbmUKUMgcReSKBJ25Qt6Sku6rI7lXWu3wvhulM6+DSOZbj5qjPtZ6N6++8oqiw
-         PmXIDAXrBqRDf8algNvwJHSa7zzThspUnxwK1OLq6ItWSIcVD1sDCiFarNCfRcWCi8/G
-         /dVaE7+mMV1TKazQ1TZpyfPa5M1cHR0nwBHSl2cZovJKC4RH6wCFVesn08HJ0OisLV+r
-         U4XR+W7mCekojKf+0fxYW4KbZKnovSWxTzz/XDY3/8DNT/xk6axFpP5vT2peiXnUeu5O
-         u6dy9/NW2KpmW1OGzxLNWVeEVsfUlf+XgBBwlkkBF5Lffe6gv+P+woEQxGCvpoG6VZLZ
-         /s6g==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tV+5hEqlzeK4MVMUcyGrO+zWHO85wDG71TwH0FeAL48=;
+        b=HZIsijKbkoPXss058615i66Dsx2x/uaFSU58tDBBNU/Kc9sJw1B9n7yb4t1CKlnCYg
+         b8TCEfa5SdiUOO1IRFlnR4krDJAAB1RyFd05x8+Juv02VfAU4417tGiJHa2lVPI08gJM
+         k9ANc5hrFHga7vBzEmYdr/1KpI/rsCU9N848M1DlAlf7/XG3FJrIQHIufcqgLkFcedNY
+         vX5jp/NH290bQQp7xcxeqC++w1j1xyDVxOx3WexMRxrSTOZLywfj5E5B3d+tWRTKNoV0
+         Gzh6HQtmLIrDAMtcuFW7nMbcio5vtjnc5L35Q72vvPwAaOXLidjI2bWbSNxetp0IyTQR
+         juUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=G/rsSvjEVx9HxUqXuN5EYDZnuHtx7IRYN8I0QYKvnmE=;
-        b=EKPaGbT4sSwtv1LFBySD8Qlh/yoYSpdbBiP5QpuvgcYKeojcM9p0wVe1tjXwzze4LY
-         wZwyQFMwcEjAeQFjoewOmb9NnbKlppeCz6oi+Ybs45DHJm7fyRwxL03lgq6QmwRfWrzH
-         Rz3GvZxAmcoIOz0V0h9H0hgmFn1LDiLIypF/yNDt+D9TV2VRyeNl1gdJRFWllcSqhKkE
-         Os+d/4vep4gY1Gk2zvStaXZIsl4L6NPlgd94bIhsM9PdO549UzxfLx/Zkztgc/WDNZ4U
-         YxxEeiKMP2t2RafKzE7mdCltyWUtxmpZp8PFwL8qwBmmYJaR1+JXbABUjSf+4U10xmuD
-         qDbA==
-X-Gm-Message-State: AJIora+3S0gPFKAh90U3Ovx1yX3UgigQ5qZP/QGRpcUuRNmhbFK4nWHB
-        tMeOsHWCPk6C/oENzKU2n99xlMMEi/LskQ==
-X-Google-Smtp-Source: AGRyM1sx+Q0GCDMwftBo4jZ8VcV3LFn7MtEcY4TEqcEHPHcr066ziW6XZ1OCAn2kRCzoIO0qZCf4BQ==
-X-Received: by 2002:a2e:a783:0:b0:25b:c52f:10ef with SMTP id c3-20020a2ea783000000b0025bc52f10efmr641671ljf.137.1656287987952;
-        Sun, 26 Jun 2022 16:59:47 -0700 (PDT)
-Received: from localhost.localdomain (c-fdcc225c.014-348-6c756e10.bbcust.telenor.se. [92.34.204.253])
-        by smtp.gmail.com with ESMTPSA id g6-20020a056512118600b0047f987cc158sm1546051lfr.45.2022.06.26.16.59.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Jun 2022 16:59:47 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     linux-gpio@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Guodong Liu <guodong.liu@mediatek.com>,
-        =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= 
-        <nfraprado@collabora.com>
-Subject: [PATCH] pinctrl: mediatek: mt8192: Fix compile warnings
-Date:   Mon, 27 Jun 2022 01:57:43 +0200
-Message-Id: <20220626235743.87821-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.36.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tV+5hEqlzeK4MVMUcyGrO+zWHO85wDG71TwH0FeAL48=;
+        b=YSfaj6m3aT11Yw6j0xqRkxldOlfsoZhrF1sStV7WynpMrjy2aiTwjg9RRxQLVtpmuX
+         jN4VNBNzTcgkF4dHCx1DWd/5GNwsoQFCC07q2kvAMWueNLw1iTN1j2Ww1zlCPq8YDxCX
+         ea6NVQPUlu00E3mI+EO+PvQFLh78zE+prCl6xOCL/JtMneVL+snFW2eZdY2SjgPbGC0C
+         GXkKoGnBOGQvXX334ZFou+cavmnPOzUyzLSSayFb+SMpFcMp2l0gW9r5unttgKlbR8DG
+         zn1qQnxb5qYqcccXIyH0V3jPclrWFd7KsxdSpoWliwJhKFi8HcWJcc1DP+o4GwZ71Eql
+         78VQ==
+X-Gm-Message-State: AJIora8Lai3W86RlIeGX/+m0SRS75WeHJjlcfjXJwEB6YV+3mEdAkXVj
+        L913PSomMl440eSjr0f9UYKDv9jK9z6utDfn/sqWBuEmAPY=
+X-Google-Smtp-Source: AGRyM1t6F6k8xfGB/lriGMi/dUPI8ruSvMEKeLbClV/EBMxDsiKazBH6BpLMX24F1pYBJe51/9DUhoQuqK4geEYq4+I=
+X-Received: by 2002:a0d:eace:0:b0:317:87ac:b3a8 with SMTP id
+ t197-20020a0deace000000b0031787acb3a8mr12322750ywe.126.1656288215795; Sun, 26
+ Jun 2022 17:03:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <202206260954.NjQGnygt-lkp@intel.com> <37cb3f3239c9be1dd18e576e4823f364679bb44a.camel@mediatek.com>
+In-Reply-To: <37cb3f3239c9be1dd18e576e4823f364679bb44a.camel@mediatek.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 27 Jun 2022 02:03:24 +0200
+Message-ID: <CACRpkdYxaZqw60Wui-8=mziPvfkvuS_nQE=03y3VCbzBdc61vQ@mail.gmail.com>
+Subject: Re: [linusw-pinctrl:devel 17/19] drivers/pinctrl/mediatek/pinctrl-mt8192.c:1362:56:
+ warning: "/*" within comment
+To:     Guodong Liu <guodong.liu@mediatek.com>
+Cc:     kernel test robot <lkp@intel.com>, kbuild-all@lists.01.org,
+        linux-gpio@vger.kernel.org,
+        =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
+        <nfraprado@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-After applying patches I get these warnings:
+On Sun, Jun 26, 2022 at 6:48 AM Guodong Liu <guodong.liu@mediatek.com> wrote:
 
-  drivers/pinctrl/mediatek/pinctrl-mt8192.c:1302:56:
-  warning: "/*" within comment [-Wcomment]
-  drivers/pinctrl/mediatek/pinctrl-mt8192.c:1362:56:
-  warning: "/*" within comment [-Wcomment]
+> Fixed in Next patch, thanks!
 
-Something is wrong with the missing end-slashes. Add them.
+I don't know which patch you mean, I just wrote a patch to fix it
+so my tree builds cleanly, thanks!
 
-Cc: Guodong Liu <guodong.liu@mediatek.com>
-Cc: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/mediatek/pinctrl-mt8192.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8192.c b/drivers/pinctrl/mediatek/pinctrl-mt8192.c
-index a66394c6f443..78c02b7c81f0 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8192.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8192.c
-@@ -1299,15 +1299,15 @@ static const unsigned int mt8192_pull_type[] = {
- 	MTK_PULL_PU_PD_TYPE,/*94*/ MTK_PULL_PU_PD_TYPE,/*95*/
- 	MTK_PULL_PU_PD_TYPE,/*96*/ MTK_PULL_PU_PD_TYPE,/*97*/
- 	MTK_PULL_PU_PD_TYPE,/*98*/ MTK_PULL_PU_PD_TYPE,/*99*/
--	MTK_PULL_PU_PD_TYPE,/*100* MTK_PULL_PU_PD_TYPE,/*101*/
--	MTK_PULL_PU_PD_TYPE,/*102* MTK_PULL_PU_PD_TYPE,/*103*/
--	MTK_PULL_PU_PD_TYPE,/*104* MTK_PULL_PU_PD_TYPE,/*105*/
--	MTK_PULL_PU_PD_TYPE,/*106* MTK_PULL_PU_PD_TYPE,/*107*/
--	MTK_PULL_PU_PD_TYPE,/*108* MTK_PULL_PU_PD_TYPE,/*109*/
--	MTK_PULL_PU_PD_TYPE,/*110* MTK_PULL_PU_PD_TYPE,/*111*/
--	MTK_PULL_PU_PD_TYPE,/*112* MTK_PULL_PU_PD_TYPE,/*113*/
--	MTK_PULL_PU_PD_TYPE,/*114* MTK_PULL_PU_PD_TYPE,/*115*/
--	MTK_PULL_PU_PD_TYPE,/*116* MTK_PULL_PU_PD_TYPE,/*117*/
-+	MTK_PULL_PU_PD_TYPE,/*100*/ MTK_PULL_PU_PD_TYPE,/*101*/
-+	MTK_PULL_PU_PD_TYPE,/*102*/ MTK_PULL_PU_PD_TYPE,/*103*/
-+	MTK_PULL_PU_PD_TYPE,/*104*/ MTK_PULL_PU_PD_TYPE,/*105*/
-+	MTK_PULL_PU_PD_TYPE,/*106*/ MTK_PULL_PU_PD_TYPE,/*107*/
-+	MTK_PULL_PU_PD_TYPE,/*108*/ MTK_PULL_PU_PD_TYPE,/*109*/
-+	MTK_PULL_PU_PD_TYPE,/*110*/ MTK_PULL_PU_PD_TYPE,/*111*/
-+	MTK_PULL_PU_PD_TYPE,/*112*/ MTK_PULL_PU_PD_TYPE,/*113*/
-+	MTK_PULL_PU_PD_TYPE,/*114*/ MTK_PULL_PU_PD_TYPE,/*115*/
-+	MTK_PULL_PU_PD_TYPE,/*116*/ MTK_PULL_PU_PD_TYPE,/*117*/
- 	MTK_PULL_PU_PD_RSEL_TYPE,/*118*/ MTK_PULL_PU_PD_RSEL_TYPE,/*119*/
- 	MTK_PULL_PU_PD_RSEL_TYPE,/*120*/ MTK_PULL_PU_PD_RSEL_TYPE,/*121*/
- 	MTK_PULL_PU_PD_RSEL_TYPE,/*122*/ MTK_PULL_PU_PD_RSEL_TYPE,/*123*/
--- 
-2.36.1
-
+Yours,
+Linus Walleij
