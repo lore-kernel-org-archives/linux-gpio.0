@@ -2,66 +2,103 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D779C433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 13:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5548C43334
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 13:15:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346074AbiF1NON (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Jun 2022 09:14:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38406 "EHLO
+        id S1346061AbiF1NPa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Jun 2022 09:15:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344658AbiF1NOK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 09:14:10 -0400
-X-Greylist: delayed 342 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 28 Jun 2022 06:14:06 PDT
-Received: from router.aksignal.cz (router.aksignal.cz [62.44.4.214])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F079C31353
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Jun 2022 06:14:06 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by router.aksignal.cz (Postfix) with ESMTP id 752A94BA90;
-        Tue, 28 Jun 2022 15:08:21 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at router.aksignal.cz
-Received: from router.aksignal.cz ([127.0.0.1])
-        by localhost (router.aksignal.cz [127.0.0.1]) (amavisd-new, port 10026)
-        with LMTP id mpiB74IatdLW; Tue, 28 Jun 2022 15:08:21 +0200 (CEST)
-Received: from [172.25.161.48] (unknown [83.240.30.185])
-        (Authenticated sender: jiri.prchal@aksignal.cz)
-        by router.aksignal.cz (Postfix) with ESMTPSA id E8AFA4BA8E;
-        Tue, 28 Jun 2022 15:08:20 +0200 (CEST)
-Message-ID: <757ac53e-07bb-1ffa-2734-08c1c321ff0e@aksignal.cz>
-Date:   Tue, 28 Jun 2022 15:08:20 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-From:   =?UTF-8?B?SmnFmcOtIFByY2hhbA==?= <jiri.prchal@aksignal.cz>
-Subject: [libgpiod] feature request: output state read and sustain
-Cc:     bartekgola@gmail.com
-References: <62b30818-92fa-e44c-c9dd-fd8cc49a6e6a@aksignal.cz>
- <20220325145742.GA46960@sol>
- <48129be0-f29d-96ae-cec3-2b4a2ee10aa8@aksignal.cz>
- <20220325160146.GA49114@sol>
- <1d43c967-e3c9-21a8-3040-2db54ba85bdf@aksignal.cz>
- <20220328080841.GA14353@sol>
-Content-Language: en-US
-To:     linux-gpio@vger.kernel.org
-In-Reply-To: <20220328080841.GA14353@sol>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S1345595AbiF1NP1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 09:15:27 -0400
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3D822CDD1;
+        Tue, 28 Jun 2022 06:15:26 -0700 (PDT)
+Received: by mail-il1-f175.google.com with SMTP id o4so8111188ilm.9;
+        Tue, 28 Jun 2022 06:15:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=seJbEPSZZ1oPKMlcZ7LVvOigbkxOOLRfiPmd+7jzfLU=;
+        b=yustL8ueACXOIGxt1g6Okbp+1/aQZ4RhgkH/GP7ZKiaj4umFEphSDPMkhmccbBjA9W
+         ZNbVqHwVvos5zKbEPA9U7YpvbkhLmZHh0JFKp4kL9fkQT2C4LiaVkpvB9S71HbnwBk4F
+         xvTz0RNv+ubO0uYjYHbViq7IV4FUo++7deGKEzNz1FPMsZsfCevoGI+nr7kaCrxXw0Hp
+         kmA635gyUt5k8eawpPmBZAOgMn3VUvoX5XAe3s+sb7n81XjMplbowkEfFkOqr+R4sWPi
+         XlUsOxKvpKhSmlNNMAC0a7F/Ud2F3JtCo5H4iKY/GTfrV++t/RByjEfSvk0qc4LS0Wg0
+         cOLw==
+X-Gm-Message-State: AJIora/hJxjVmgDW4YwuVRNIbZO8aocQ0szoiQT4R1yjdvnAQiIgtsBB
+        +6gKs6BmhvOrtBQh43jFTg==
+X-Google-Smtp-Source: AGRyM1shbhhTUzPKXR6WRP7M3rKcxslLqTEYSXzXTb7Y4hsk6MgLaTL2jrtWoe2oVp+PvwnkU2STTQ==
+X-Received: by 2002:a05:6e02:1aaa:b0:2da:8e4b:65a5 with SMTP id l10-20020a056e021aaa00b002da8e4b65a5mr7110050ilv.71.1656422126156;
+        Tue, 28 Jun 2022 06:15:26 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id x21-20020a026f15000000b00339e452c0d2sm5899953jab.82.2022.06.28.06.15.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jun 2022 06:15:25 -0700 (PDT)
+Received: (nullmailer pid 313745 invoked by uid 1000);
+        Tue, 28 Jun 2022 13:15:23 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Colin Foster <colin.foster@in-advantage.com>
+Cc:     Terry Bowman <terry.bowman@amd.com>, UNGLinuxDriver@microchip.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Jakub Kicinski <kuba@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Wolfram Sang <wsa@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        devicetree@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>
+In-Reply-To: <20220628081709.829811-9-colin.foster@in-advantage.com>
+References: <20220628081709.829811-1-colin.foster@in-advantage.com> <20220628081709.829811-9-colin.foster@in-advantage.com>
+Subject: Re: [PATCH v11 net-next 8/9] dt-bindings: mfd: ocelot: add bindings for VSC7512
+Date:   Tue, 28 Jun 2022 07:15:23 -0600
+Message-Id: <1656422123.508891.313744.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
-using new libgpiod / chardev driver, is there any way to get state of 
-output? I mean one process sets it for example to 1 and another process 
-reads this output state for example to show that on web page.
-I have to say that old sysfs interface was more user friendly...
+On Tue, 28 Jun 2022 01:17:08 -0700, Colin Foster wrote:
+> Add devicetree bindings for SPI-controlled Ocelot chips, specifically the
+> VSC7512.
+> 
+> Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
+> ---
+>  .../devicetree/bindings/mfd/mscc,ocelot.yaml  | 160 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  2 files changed, 161 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/mscc,ocelot.yaml
+> 
 
-And at second: it would be better to NOT "the state of a GPIO line 
-controlled over the character device reverts to default when the last 
-process referencing the file descriptor representing the device file 
-exits." "Set and forget" behavior is more natural to what some gpios are 
-used. For example resetting external modems, need set 1 for short time, 
-then to 0 and leave it for long long time until next reset is needed. 
-It's non sense to keep running some process only to keep output at 0.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Thanks
-Jiri
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/mfd/mscc,ocelot.example.dtb:0:0: /example-0/spi/switch@0: failed to match any schema with compatible: ['mscc,vsc7512']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
