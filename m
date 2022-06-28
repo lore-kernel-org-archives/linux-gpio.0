@@ -2,92 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B58B7C43334
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 19:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0337BCCA479
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 19:45:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230099AbiF1Tps (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Jun 2022 15:45:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37278 "EHLO
+        id S232026AbiF1Tpt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Jun 2022 15:45:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231396AbiF1Tp3 (ORCPT
+        with ESMTP id S231454AbiF1Tp3 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 15:45:29 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 829D6393C8;
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAA003BF8E;
         Tue, 28 Jun 2022 12:39:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1656445144; x=1687981144;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=+1EpxwGS9Cq1c0vv29dIM1+KCfkLYVP7Y5EIdg4E8Uo=;
-  b=IEnBJc3qECYCzWlsJcpWZeWYFy1ceTP2KFtw2BD1cRaP4GFzds+UC0Li
-   Ik7ubh9R7cGyNhG8htLKLbfrVzP6Ny+pSmwYIP/Ps9ANkKGmRAq6YBC65
-   9+Nm4WB0xj8NwYir1XGju51iw894T2kzQLaDp///WSsYNc2TYe9Mtqibr
-   Ail/zA3QrEsyrUA+PGsS80rsE/ea2XKUz0m7l3HVrqVPMjbzZ35UvLr3F
-   waQ/spYWG2kPyq7TimCQ0ZdrtjlWDo5i+mDZmnsx0SQTOQsOZSsdTk6a2
-   +Ko0Cad7QXfu8AutYU+xmrlkW29iOASgLwHiyNZTBYm5OVoWPGj5DXDiF
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=WFRvrLrs78r9lnnA1EVYp7hsPys2q5PlSUAARxpTtuQ=;
+  b=QDIZ0azXgtPNSaFEzJiZnzabbHkVymkcQjtcwMR8lJRE5+SHi51WkqYU
+   v2DLRRMYEwQ8OrZ0fimOLCmH7Di8omel6gavWYDbdrXCXnVL3Zf/sfOLe
+   lroNofva8glxIwG5lW2WVocbW17p9sPlw7TyhqdApHzyh8cs17/RtjZzC
+   RvUyJEDyA/NdvgZATVqcHP5xokINscbXA10RiTgo3+OcXuVi6z+ufEczx
+   K6/F/qbYqQp16wfofWYZmiZWvUkOqG9/2IbLQtJre9H9Ybhvd3YdPferz
+   rre5Mxg1cxiXGAfSP231DIZxEBQEFrBgG3piGEOsL0XMktfOkUJELjaTb
    w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10392"; a="368145176"
+X-IronPort-AV: E=McAfee;i="6400,9594,10392"; a="262241171"
 X-IronPort-AV: E=Sophos;i="5.92,229,1650956400"; 
-   d="scan'208";a="368145176"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 12:39:04 -0700
+   d="scan'208";a="262241171"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 12:39:04 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.92,229,1650956400"; 
-   d="scan'208";a="767286192"
+   d="scan'208";a="540596666"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 28 Jun 2022 12:39:02 -0700
+  by orsmga003.jf.intel.com with ESMTP; 28 Jun 2022 12:39:02 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 4BF8314F; Tue, 28 Jun 2022 22:39:08 +0300 (EEST)
+        id 37383F1; Tue, 28 Jun 2022 22:39:08 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Michael Hennerich <michael.hennerich@analog.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v1 3/3] gpio: adp5588: sort header inclusion alphabetically
-Date:   Tue, 28 Jun 2022 22:39:05 +0300
-Message-Id: <20220628193906.36350-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/3] gpio: adp5588: Switch from of headers to mod_devicetable.h
+Date:   Tue, 28 Jun 2022 22:39:03 +0300
+Message-Id: <20220628193906.36350-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220628193906.36350-1-andriy.shevchenko@linux.intel.com>
-References: <20220628193906.36350-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Sort header inclusion alphabetically.
+There is nothing directly using of specific interfaces in this driver,
+so lets not include the headers.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-adp5588.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-adp5588.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpio/gpio-adp5588.c b/drivers/gpio/gpio-adp5588.c
-index d6a229a67044..d49f12560cde 100644
+index e388e75103f4..51ed23ba4645 100644
 --- a/drivers/gpio/gpio-adp5588.c
 +++ b/drivers/gpio/gpio-adp5588.c
-@@ -6,15 +6,15 @@
+@@ -6,7 +6,6 @@
   * Copyright 2009-2010 Analog Devices Inc.
   */
  
--#include <linux/kernel.h>
--#include <linux/slab.h>
--#include <linux/init.h>
--#include <linux/i2c.h>
+-#include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/slab.h>
+ #include <linux/init.h>
+@@ -14,7 +13,8 @@
  #include <linux/gpio/driver.h>
-+#include <linux/i2c.h>
-+#include <linux/init.h>
  #include <linux/interrupt.h>
  #include <linux/irq.h>
-+#include <linux/kernel.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
-+#include <linux/slab.h>
+-#include <linux/of_device.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
  
  #include <linux/platform_data/adp5588.h>
  
+@@ -427,18 +427,16 @@ static const struct i2c_device_id adp5588_gpio_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, adp5588_gpio_id);
+ 
+-#ifdef CONFIG_OF
+ static const struct of_device_id adp5588_gpio_of_id[] = {
+ 	{ .compatible = "adi," DRV_NAME, },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, adp5588_gpio_of_id);
+-#endif
+ 
+ static struct i2c_driver adp5588_gpio_driver = {
+ 	.driver = {
+ 		.name = DRV_NAME,
+-		.of_match_table = of_match_ptr(adp5588_gpio_of_id),
++		.of_match_table = adp5588_gpio_of_id,
+ 	},
+ 	.probe_new = adp5588_gpio_probe,
+ 	.remove = adp5588_gpio_remove,
 -- 
 2.35.1
 
