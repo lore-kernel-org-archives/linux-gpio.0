@@ -2,90 +2,101 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5942C433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 20:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89889C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 20:14:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231361AbiF1UIi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Jun 2022 16:08:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47872 "EHLO
+        id S231826AbiF1UOV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Jun 2022 16:14:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232568AbiF1UII (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 16:08:08 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55DF0427CD;
-        Tue, 28 Jun 2022 12:59:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1656446379; x=1687982379;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=MWOE/QpEiWYaLBtx6/XzU26LpmFkbAIZHsQaXwOr60Q=;
-  b=lsQiFrsV8TFUtY9cDXDJiaAxv+HV9/2rSWua1NYnZ2+g+jSVf/TttgG+
-   OzQK6tnPwx8kR4QHCGLPdr48mBvMSohbMJhETXYJmKaOGWoU+fooIu7ES
-   0lArxp2Jgq1+moy2HOU4YIbsAuykJ1EEH47KQDxj8qHusKYSYEPWTG65f
-   x8/FMai9RciCgzho+oOnvn63ux5E9x3taXBi+Wpyj88o2cUTDhrVjS2So
-   FtUVVni9QQaWSzjUlHTV3DKJo41vbxhxL+iPoRM6+9rHOZWh7Vecm2EhK
-   0RnlJLv3vl8U+mCTpl4jlhDtjGixLzhapCVAJx5LmBey5otsFO35DpUhe
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10392"; a="261637371"
-X-IronPort-AV: E=Sophos;i="5.92,229,1650956400"; 
-   d="scan'208";a="261637371"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 12:59:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,229,1650956400"; 
-   d="scan'208";a="658259992"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 28 Jun 2022 12:59:10 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 9C124CE; Tue, 28 Jun 2022 22:59:16 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v1 1/2] gpio: adnp: use simple i2c probe function
-Date:   Tue, 28 Jun 2022 22:59:12 +0300
-Message-Id: <20220628195913.36940-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S231828AbiF1UNu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 16:13:50 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE7F813D64;
+        Tue, 28 Jun 2022 13:07:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=a6AnJ5JUpgsz1KJ9YhexUeYWOp5iHJCwBQ9saqPDdtA=; b=VnaHISVICqlvsTwkAW4MliAcH+
+        B5kOQBGYkOHR9O/YlEzHCKMUa5OBO76qUrCigMoSp+tNLqYtegiT3LTn6YRmj9cRVlVN83kVdJjaO
+        JKmYquyVSTibvxqOm0Va5VzPlZgaxgf2PzPoEVI1OrzsW1FO2zr+vNTYskV2OGp5lzwDnXmDyjXNj
+        GCf41sQpWwvJwVO+tKlAQYl6Kc3vPBkVCEI3oGkQyHzmudUODto0RUIzFiivhsch/Uf9b+NvNJsCi
+        rSmhPEIGEdA4Ol3SHO6d8+Ie7srm2JixdDNX9emZd7yZ/hICP1AxizvXriC7npaHtK2z5gju0N9F1
+        Elus4IGA==;
+Received: from c-73-157-219-8.hsd1.or.comcast.net ([73.157.219.8] helo=[10.0.0.153])
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1o6HV3-007yNs-7R; Tue, 28 Jun 2022 20:07:53 +0000
+Message-ID: <ddb01b36-1369-f0e3-49ab-3c0a571fe708@infradead.org>
+Date:   Tue, 28 Jun 2022 13:07:51 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v11 net-next 9/9] mfd: ocelot: add support for the vsc7512
+ chip via spi
+Content-Language: en-US
+To:     Colin Foster <colin.foster@in-advantage.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org
+Cc:     Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        UNGLinuxDriver@microchip.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa@kernel.org>,
+        Terry Bowman <terry.bowman@amd.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20220628081709.829811-1-colin.foster@in-advantage.com>
+ <20220628081709.829811-10-colin.foster@in-advantage.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20220628081709.829811-10-colin.foster@in-advantage.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The i2c probe functions here don't use the id information provided in
-their second argument, so the single-parameter i2c probe function
-("probe_new") can be used instead.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-adnp.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
-index cc349d4e4973..075782831044 100644
---- a/drivers/gpio/gpio-adnp.c
-+++ b/drivers/gpio/gpio-adnp.c
-@@ -485,8 +485,7 @@ static int adnp_gpio_setup(struct adnp *adnp, unsigned int num_gpios,
- 	return 0;
- }
- 
--static int adnp_i2c_probe(struct i2c_client *client,
--				    const struct i2c_device_id *id)
-+static int adnp_i2c_probe(struct i2c_client *client)
- {
- 	struct device_node *np = client->dev.of_node;
- 	struct adnp *adnp;
-@@ -535,7 +534,7 @@ static struct i2c_driver adnp_i2c_driver = {
- 		.name = "gpio-adnp",
- 		.of_match_table = adnp_of_match,
- 	},
--	.probe = adnp_i2c_probe,
-+	.probe_new = adnp_i2c_probe,
- 	.id_table = adnp_i2c_id,
- };
- module_i2c_driver(adnp_i2c_driver);
+On 6/28/22 01:17, Colin Foster wrote:
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -962,6 +962,24 @@ config MFD_MENF21BMC
+>  	  This driver can also be built as a module. If so the module
+>  	  will be called menf21bmc.
+>  
+> +config MFD_OCELOT
+> +	bool "Microsemi Ocelot External Control Support"
+> +	depends on SPI_MASTER
+> +	select MFD_CORE
+> +	select REGMAP_SPI
+> +	help
+> +	  Ocelot is a family of networking chips that support multiple ethernet
+> +	  and fibre interfaces. In addition to networking, they contain several
+> +	  other functions, including pictrl, MDIO, and communication with
+
+	Is that                      pinctrl,
+?
+
+> +	  external chips. While some chips have an internal processor capable of
+> +	  running an OS, others don't. All chips can be controlled externally
+> +	  through different interfaces, including SPI, I2C, and PCIe.
+> +
+> +	  Say yes here to add support for Ocelot chips (VSC7511, VSC7512,
+> +	  VSC7513, VSC7514) controlled externally.
+> +
+> +	  If unsure, say N.
+
 -- 
-2.35.1
-
+~Randy
