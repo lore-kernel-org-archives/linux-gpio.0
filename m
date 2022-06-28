@@ -2,77 +2,92 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA0EC43334
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 19:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B58B7C43334
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 19:45:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230434AbiF1TfL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Jun 2022 15:35:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49786 "EHLO
+        id S230099AbiF1Tps (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Jun 2022 15:45:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiF1Tb6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 15:31:58 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFA493A733
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Jun 2022 12:27:17 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id p136so17724744ybg.4
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Jun 2022 12:27:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=walg9+X25Qf0Q2kOl7EPuRRmD7l8R+TPYwiRkuq/taA=;
-        b=r5dhjikOjoOSTxH7twYmSKEfHqErqjhxkSM9McqWoCouOgLOQB7kvkMdEEzxx/BDX6
-         TQrjLVB6hMIfuOa9g8Jq2JmzE97r9+o77os7tKeNZgQG+gQR3fBWEr5T9i+X01s9wRKF
-         poqPtQCKU93338RDg9n0sUG/ZEqcMMUZPZnDwkORaC63HcYlFTRnittAcohjRCM8pOOF
-         g/UPD7ABIbEWrLq01pVgh4ii12ETWhUPrCA8/9LHWHuLKXXESxjWthvXPWzyjMNL6Oot
-         Hlc8iuNIiurItn418+oTScTJhM5C5ncPhx/nMRn5oHIDm7HNscLwCkwchgANUMMiViBr
-         lmvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=walg9+X25Qf0Q2kOl7EPuRRmD7l8R+TPYwiRkuq/taA=;
-        b=xC18bqkIyJ6LpQhL9rmnqJ4B8lP3I9IdO0UYe7D4CM4QQkNAs5Bqv42j0N/GPp8c1j
-         14fYgiYKzxPCkqj1+yrZKJoiT/CnYfzQ8C0CskylAB+63QzVM6DSMn7JbdWcchxnx/2k
-         BOUs10s4dKUkIe0PFidprYnpev2m7HkPFijy1cHmOLS60DqLCkBVApcNyrb8O0suDxpD
-         k2IZA9jB1rONY2tPKdRKlR86N20+MHzW0jmOpbEs7I5Q4TdU4Peo6v1wmlg0PuJU6rvF
-         WeDwN0/JXWn8Ipq/u319+xJqH46CMp+QIgNMEJnXem6bzRtAKk/+Y+enlHi4jez1ZpwD
-         YigQ==
-X-Gm-Message-State: AJIora9JrngLVSf5Iv73x+l6uu21+z2YBNvgUvMoVmDHLm9br2edQADY
-        yoVVz2mmwIqzmfITXOARKW0g6UB/uMWDW7Jt2bWZayv0jDU=
-X-Google-Smtp-Source: AGRyM1tix/MDbYpAocLhXqNa2cuD1sSvJJYVbcVLzqD1nAvkTSC00uKkSWSEB65C4UY4pgJ8yatan7ZYC8uyX2aYtAw=
-X-Received: by 2002:a25:e7d4:0:b0:66c:899b:49c6 with SMTP id
- e203-20020a25e7d4000000b0066c899b49c6mr21915704ybh.291.1656444414438; Tue, 28
- Jun 2022 12:26:54 -0700 (PDT)
+        with ESMTP id S231396AbiF1Tp3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 15:45:29 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 829D6393C8;
+        Tue, 28 Jun 2022 12:39:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1656445144; x=1687981144;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=+1EpxwGS9Cq1c0vv29dIM1+KCfkLYVP7Y5EIdg4E8Uo=;
+  b=IEnBJc3qECYCzWlsJcpWZeWYFy1ceTP2KFtw2BD1cRaP4GFzds+UC0Li
+   Ik7ubh9R7cGyNhG8htLKLbfrVzP6Ny+pSmwYIP/Ps9ANkKGmRAq6YBC65
+   9+Nm4WB0xj8NwYir1XGju51iw894T2kzQLaDp///WSsYNc2TYe9Mtqibr
+   Ail/zA3QrEsyrUA+PGsS80rsE/ea2XKUz0m7l3HVrqVPMjbzZ35UvLr3F
+   waQ/spYWG2kPyq7TimCQ0ZdrtjlWDo5i+mDZmnsx0SQTOQsOZSsdTk6a2
+   +Ko0Cad7QXfu8AutYU+xmrlkW29iOASgLwHiyNZTBYm5OVoWPGj5DXDiF
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10392"; a="368145176"
+X-IronPort-AV: E=Sophos;i="5.92,229,1650956400"; 
+   d="scan'208";a="368145176"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 12:39:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,229,1650956400"; 
+   d="scan'208";a="767286192"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga005.jf.intel.com with ESMTP; 28 Jun 2022 12:39:02 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 4BF8314F; Tue, 28 Jun 2022 22:39:08 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Michael Hennerich <michael.hennerich@analog.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v1 3/3] gpio: adp5588: sort header inclusion alphabetically
+Date:   Tue, 28 Jun 2022 22:39:05 +0300
+Message-Id: <20220628193906.36350-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220628193906.36350-1-andriy.shevchenko@linux.intel.com>
+References: <20220628193906.36350-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20220616005224.18391-1-krzysztof.kozlowski@linaro.org> <20220616005333.18491-4-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220616005333.18491-4-krzysztof.kozlowski@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 28 Jun 2022 21:26:43 +0200
-Message-ID: <CACRpkdawFWN_3EYV0p2AAgu54Lu1s0YgqiSiV3136wOSfSGhrg@mail.gmail.com>
-Subject: Re: [PATCH v3 04/40] dt-bindings: pinctrl: nuvoton,wpcm450-pinctrl:
- align key node name
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     arm@kernel.org, soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jun 16, 2022 at 2:54 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+Sort header inclusion alphabetically.
 
-> gpio-keys schema requires keys to have more generic name.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-adp5588.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Patch applied!
+diff --git a/drivers/gpio/gpio-adp5588.c b/drivers/gpio/gpio-adp5588.c
+index d6a229a67044..d49f12560cde 100644
+--- a/drivers/gpio/gpio-adp5588.c
++++ b/drivers/gpio/gpio-adp5588.c
+@@ -6,15 +6,15 @@
+  * Copyright 2009-2010 Analog Devices Inc.
+  */
+ 
+-#include <linux/kernel.h>
+-#include <linux/slab.h>
+-#include <linux/init.h>
+-#include <linux/i2c.h>
+ #include <linux/gpio/driver.h>
++#include <linux/i2c.h>
++#include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
++#include <linux/kernel.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/module.h>
++#include <linux/slab.h>
+ 
+ #include <linux/platform_data/adp5588.h>
+ 
+-- 
+2.35.1
 
-Yours,
-Linus Walleij
