@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0984EC433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 08:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 653CBCCA479
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 08:19:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242793AbiF1ITl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Jun 2022 04:19:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43610 "EHLO
+        id S244803AbiF1ITk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Jun 2022 04:19:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243937AbiF1IS5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 04:18:57 -0400
+        with ESMTP id S240979AbiF1IS7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 04:18:59 -0400
 Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam07on2136.outbound.protection.outlook.com [40.107.212.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3331D2CCAB;
-        Tue, 28 Jun 2022 01:17:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B27E2DA9C;
+        Tue, 28 Jun 2022 01:17:35 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=H/Js5FMuVNw6Jx0H3pN7mh1o79TmjVy5+aLED6lZjZLJ0SfaT1PSzW99xhMB2Rw896ppXYMXyDM8qEoWAbU5R52SCtVY1Fq3pvXiSuR5LYOOUTRRrGdTMbow+7Yb0hqcHwjVLYr4t+abeV3cfxUetz+bF5MPvAstiCszRN2oG6YcniwhbAsDVUsXrDFB2ZHZGtKuN/GpuBxwsAhRjTmbuKpUvHEkY1kiVA1LwwKHzD0h3FmJIopyMdh+eCaO1dPbmDpF9pZKDWgWEyUR3ipxxt1zeMcwa03dkdSJEk4e1WqfJ6TVyHog3Rh/Pm7nLhQHJ7XrXcJcwzuYwU6/9NYqEA==
+ b=noJ7c6d+hRDLdvRg53Jwzzwo0B7JAYl7AH7uqEMYLApfomDtOXGD7bcSJJDsauQdbmjicl8rykvuxWpYgqoxHuxrctR/S0rkrR6mfG+gYyQaz+nglzlkGFBBsGUQsfZBq+xOecqG5sTuJr5FgI8HZtvr6IaeztlxdjJPbHIgUwNME3uTC+6/LyqXbCekVyeEwjp1obeEhH+Cv5UcIOzEbpaZwzCBnk4g8Vj5PAauVSUUjr4e8aoI5q3az15wVEg4lbMxrHF6JyJIVeXEVWWW/knAI9uZ7rIS/lCk7YJiMqws5D/xpwroIh4W+j4CD3FaXokyQk9zy8r2kiQGrP09WQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GumwKd6cvFXEsUfU0e6+fBYBfBZuUMuro89Vly2/lKY=;
- b=Z9hCClTqvxDrVpIk9qltXUkPsnsDFF+TLkO3+uZ5k4ePq0d4MOTDygSLW0A9y8W2fA4+cl4T8rLTZB7xfhzrdN+AX+1IX8ql5E009Ih+lrcCeOaEOdRy1pUCiuLgVmtGAqZDorG7OM2c35Gw3y/i9+S1lx28e8PbMHlJJRreZeb4yYkxHpTP4x1EZRO4ysW96tHs0sVk1bUF33FTcslI0fhclbraShTlb9Ru42JsLr54K4ES0dLy/vlXYP3LM1MmjNNNvkIFJhgdzdfcmWWQlI2byqyUJg1kGpYwOxfU0LDeA1+yfsQT7QoJhDFEiGJfVpPej/8sjjNS0+oT7ZgcQw==
+ bh=jEVYLOC2NeV5OT8middd/D4Z47EAVf6LngpdyfXIvvA=;
+ b=X4YR2CQRdK5qNDfBQlsbQQ1PeXzZ61hGtdcVVfqyPC1X113P9BBnUILFahDHvr/rK1QKg/6fAkOSvSKLzJ+NnDNJjWeGF6iXQ1kNddH9emZeUcadeF2USEZXDbqcWTauAp/y/eGrzbpzokUy3nbAH8+eG/I4XOXxg52StpUsDNv6OLCVyaAyOFrhiRVaJF1jRxEdaksrbCe4VqBtL8Q2dzraVeCiBhL2yWJTeHt8oNkX6onVb+3LRbcpZIYdEavaMdvZqIykPJVtaOLgKYz0Qntsu8EIng8aWtZUEC+oUm7GPHVNTQxvHQfmlEOQWQ9zTn9Ih5aO6RepACjqnVoSWQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=in-advantage.com; dmarc=pass action=none
  header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GumwKd6cvFXEsUfU0e6+fBYBfBZuUMuro89Vly2/lKY=;
- b=F/mZCaPd71y88cD+w2fI3RTm/qpjdVN9lb81wQRZyp3YFECJilSRX5Lb/j7sro2noGhI4fFfCSpCYWEV8t/NOc2OHHRLi8Ficud10uTI5/AgHj0IHIuQZ4xj4HWEqGoiMVC/cVip7tyO4sprgB5zcEIkDNmBsNFudxolKMCjKKE=
+ bh=jEVYLOC2NeV5OT8middd/D4Z47EAVf6LngpdyfXIvvA=;
+ b=WPbTxHAZ83quIKV0aOq1R+bgPPAGNQt79G3B5cpvbH+GoFHjzVFK5MGoPOHDwvTLfBPQ8ooSyJv4M7TgMYfGjr2/08p7L9wwBM+ayyDKAfDT0bkNVMa3azfJVhJRkm2ZOwLBFuqQOfUW7Nzww6uSq9g0Xvag1Bb9JHJ0S2+OUVk=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=in-advantage.com;
 Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
  (2603:10b6:301:35::37) by SJ0PR10MB5891.namprd10.prod.outlook.com
  (2603:10b6:a03:425::16) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.17; Tue, 28 Jun
- 2022 08:17:25 +0000
+ 2022 08:17:31 +0000
 Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
  ([fe80::712f:6916:3431:e74e]) by MWHPR1001MB2351.namprd10.prod.outlook.com
  ([fe80::712f:6916:3431:e74e%6]) with mapi id 15.20.5373.018; Tue, 28 Jun 2022
- 08:17:25 +0000
+ 08:17:31 +0000
 From:   Colin Foster <colin.foster@in-advantage.com>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -62,10 +62,12 @@ Cc:     Vladimir Oltean <vladimir.oltean@nxp.com>,
         Wolfram Sang <wsa@kernel.org>,
         Terry Bowman <terry.bowman@amd.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v11 net-next 0/9] add support for VSC7512 control over SPI
-Date:   Tue, 28 Jun 2022 01:17:00 -0700
-Message-Id: <20220628081709.829811-1-colin.foster@in-advantage.com>
+Subject: [PATCH v11 net-next 9/9] mfd: ocelot: add support for the vsc7512 chip via spi
+Date:   Tue, 28 Jun 2022 01:17:09 -0700
+Message-Id: <20220628081709.829811-10-colin.foster@in-advantage.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220628081709.829811-1-colin.foster@in-advantage.com>
+References: <20220628081709.829811-1-colin.foster@in-advantage.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ClientProxiedBy: MW4PR04CA0259.namprd04.prod.outlook.com
@@ -73,240 +75,696 @@ X-ClientProxiedBy: MW4PR04CA0259.namprd04.prod.outlook.com
  (2603:10b6:301:35::37)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 220d694a-8d49-4af9-7c64-08da58dea207
+X-MS-Office365-Filtering-Correlation-Id: cdb5c727-4a10-4fdf-ce7a-08da58dea574
 X-MS-TrafficTypeDiagnostic: SJ0PR10MB5891:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: MyUl8RyYWVyTFlSPbXnSfTObXNBpqJtyeJC1XUwzSTmkcQzrVNkbbU018eEubFUZtjXxYOg9xshdIwaMWMSZ1YDoL7PRvu2IoYLcMi8bRfDTdsYdCAwvLT4wo6HkfsuUGyEmf7nDtghPEn0oBUFUop+msHr31TA19BddXAcet3jgJqm2RU3tDhvaOLnBF4U8YbK+5/uW7xz5r9G1DQ57lyg4uHxOJg3NBurtVEmyAT/pw734kfFzzftqEzgyAA4ge8FAMQJJ+0UsQRqvagHxtLX9sS5xKFnc9ivqy3ZYie4rFguWzmChHK0kug4f5+wE/HlaGdnhCdk7OpKKUyIwLdCPfwMPNVbycmyjfcrkKiHmViewEaDfIypBe2cvZDPmKYekUQ0yLczhTXiM2sm8387uAlnmwJiieX3sS4VS1fgmNakX3+9ew3kAviqpZsHzIazFVYfyfI+S59DUYRY05+QQUd+jyTEKuk0pqQ7e10/AmTG4v+7jMpoD4VxR/qHlbv2AL4vXv14Gx37lCcwNuyS5PkU95kAdU0n7TA3cMgt8o736tROBBr4qnMxRMC2cwwoLPWc880YWoyXs4AaGm2TLou6VD/Nd7NlNbPDRkFoefDUBHxVDi9ChLubpiUPwvFf/16qMy1e3n3BDBWmGx2w5vofagtUpDnSSeTRS0R4+DAKt022APVj/cbkm8X97HRcmbX3YRocsRN7JozqQlSpmInQm0j13WEgKv1N+uSFSG1HUXZBt6tM7c1O6tK0G93k9Xg0LPh5imed9FRpKywjNPzbKy3Gjrm1FeciQl3k=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(346002)(366004)(396003)(39840400004)(376002)(136003)(36756003)(38100700002)(6512007)(6666004)(41300700001)(38350700002)(44832011)(478600001)(8676002)(4326008)(2616005)(66946007)(66556008)(66476007)(6506007)(2906002)(54906003)(86362001)(1076003)(6486002)(8936002)(186003)(5660300002)(7416002)(316002)(83380400001)(26005)(52116002);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: hyIkFs8M/KK0O1rwPJG2p0gRwdXzeG1OJFEgHMforh+LllGtVTehHxnaJ+xIanaqGXqj5W/KAKPXNXy3Y6wXPmOOAg37ksciOYhcWdAYWDlUQK33JqOJqcVp7uq8WdpK5Fb7fs3g2iyvzK71j/alDiw7hMgnzgyDSl39JMtRxJTjZBS68Z2K5pirAwGAaP6LrquczPxd9y8iTlq1pMkRCIWjB42lBF3Q3EWcod70xX1cxfmlxhg00gi0ny91RF+g3ZMB3E8ji4mABlhp02Jap0Gvt92sWzS9VBkXB0QK4jdyrJrDs4OOt+Y30FmG5+YAYjPnN/whGp1jjj6JezWtUcrCGDA0Qqb6cvzFuhVZBgGa/qQ08UBjmHjrb7d+uxuH2CBywhryaDO7gVHvTicaNcU4NiRCZiXNByB+1zRWwNYLA1V1Z1UaJ1Dl/6JdsE1WCFullJIr9XaS7Lkyzt2jYA9x5Kp2LOpGMRZeIuJmWIkqyzt96cVNTDzl7ICMcLV4qjuFPFiRNCFQbTxxSBcQdWUGnFYAWOOKJjxwV15iZ9/6hjs9BgYFf3/3SxygEoX/wHDu53GFU/ATOm7MgIdg7o5wL527LBoOAp2GMKjQBmUziWQZtTrQE0uk2Ye1o4PCSJyyVIVSd/RSZKyH9W9jq/pat4TdiP1jWz0Nj3QWdjhR+K6BLHeqjOK3E/nB1I0ArgadSiEvp657rTB0PJpux1thbTT4kNbtfYns/8Dnm3i1NwjhnMq4wpasXePORFcmi6UEWJMuee5/PlsUmzfpMrrQQ821FOEw8nxOEfI34AE=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(346002)(366004)(396003)(39840400004)(376002)(136003)(36756003)(38100700002)(6512007)(6666004)(41300700001)(38350700002)(44832011)(478600001)(8676002)(4326008)(2616005)(30864003)(66946007)(66556008)(66476007)(6506007)(2906002)(54906003)(86362001)(1076003)(6486002)(8936002)(186003)(5660300002)(7416002)(316002)(83380400001)(26005)(52116002);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?9ArvtjuaXEqt6CGEJjjkuLt6bfDISdvd8o7jVRkIGvb5zVcdDrzEWIyEUkGv?=
- =?us-ascii?Q?GpCZ7MIbv5ZrFSMUp8BY1Ye3+VTDTIkJikPtXS744X69GrjxNf2xvu3dWSur?=
- =?us-ascii?Q?yKPcsJCU3Woyv1Ckg+3k2aMG5TI2javCh7+cpSuVDroGz/7hsUnQuVwWzR69?=
- =?us-ascii?Q?5bII96r8Mph1ZYnNViSVKZgyEMLeIoL0Czu5CeanXQqkYSIdDFaHfK/9Bfiz?=
- =?us-ascii?Q?w+PeXW2aYl9dm9qafeeBmwj21/n0I523tln5pBfA8IH0hCPtRBpERVpifDur?=
- =?us-ascii?Q?qvJBOGND9FmVp0An6wHQSTpdUyLmvymLMW/tBhpjo5LP2+RAkbfEjOLqU9sm?=
- =?us-ascii?Q?WmmYfutNy7bMy2J3XENP8KS3QR8LbVH4MKtN6zBAo62I1/hlFMxieYHqdHWH?=
- =?us-ascii?Q?5DTpH60Uu0vubEp0+TLGF0Ly5zHAWeVO6GGQxuu7/w/LfX+6/q21Z3z0Y9TN?=
- =?us-ascii?Q?qjzLAuN6bsxB9RhUjKs+M9n1zI8on96hRUdr9/dlXKuyQI5v+t6Pr0Whgg1N?=
- =?us-ascii?Q?xd+P0CUiDJHYWNYHxsrp9OX0HeQqQVWbX+Ddg9Fl6lZ3u4WniBmOORQ+nBz9?=
- =?us-ascii?Q?erwEtZs6KGUlK71DIWOX8pSEbRWuFBcY9PxHtGyhnWk+5GmUpMklpP5MsY1w?=
- =?us-ascii?Q?IiYoUCeL7wb5MCRSFrFLCx18KvBo+Qlm5q0tGXs/bTohsSolW7+8smkaTvZg?=
- =?us-ascii?Q?+55uXHN3f8qaPimF1ZPrsgOVbERVqD4m5UVlTGnO/bQK/9IC4ypDy0Nfa1zY?=
- =?us-ascii?Q?Ya50a9/t+dnPU/861HMxrlWLvQU6Gn7/1OishQ6wMw9r7ty2MhC0a0vBQxvX?=
- =?us-ascii?Q?5J1qLoXEr9Bu6qXx1xEQbRwKj2dWbDOuWBYR93MhXK+5jruciGcqSP3U9vmw?=
- =?us-ascii?Q?xkTgnn06pFw24HNU2HGJdPoTDZyjq2NDDYvIjGMbmTtNrRyrZOGUcKV6cqXH?=
- =?us-ascii?Q?XqCX6PtKIJWr0fwkFRE5AobduumeOwOHc/NPSGNSNRzmAvm3c9h/+pFGuvDd?=
- =?us-ascii?Q?/pggf8vmX6WRtyCU8TvFSnA8aVPCHL3/VCgHGK6zS6l0RWpSyJ33t3bkmkjW?=
- =?us-ascii?Q?64ppdgB+FXvw1InOLBZZuSLQA49yjAoXZh55Tuox5UyZY/lzzdsp/de+sO9c?=
- =?us-ascii?Q?tkIvIooDe7p/LisC96vd70puon2EnFeGRyMY99lIoPHWldMT3W4WbjKg/Qeu?=
- =?us-ascii?Q?iE9AjDPT8TZ5qwrGBX6i6HPVWzg/7E/wTScC+HAj+vTjTF3SkqhPi3QJ49G4?=
- =?us-ascii?Q?t+wPOn3M8ijbjr2H2++Po0U3TpdAL/OOwDpQaF52QidnhRRR2LlUwK9+Dt7G?=
- =?us-ascii?Q?iouJKmdG+INTJE6aiaGtRvyxOP40YUgKfflNGKbhYcs29aqDyLJ5cyEgItW/?=
- =?us-ascii?Q?agv4sL0gIpHMEfndxsxKdzthSlfWAUDnKyZSloxyjLZuU3ZuSrgSvCBxgI6R?=
- =?us-ascii?Q?6d3zyqAWtqQ8fFnH+EH36tEkdJSd/mw3cynYYb6FhQzLuOaS7lPDpmpHR7pB?=
- =?us-ascii?Q?SY/VGvYToKjN1A7OFlRJ4qDi3fIZGTr58ae8M+LUr1Yi2obgfUf5GXtukS4m?=
- =?us-ascii?Q?AKKW/d3XXwLnXqFsgJ3xGt0/9w63QM1kb4oY2sUZIEQ1eq3KFurWygb7HP2X?=
- =?us-ascii?Q?V4gJriaEd1NwrS5J63Iph8Y=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?idGpuo53g8jhc64IpQRUUZ0gJ+mbf27cmhhyoMyYL18imbAjml0ecmwQD1YC?=
+ =?us-ascii?Q?hqZzEqzmnHomXT9nM0q4bItMChcrUBtPaN+MsNM2T/yhiP5hG1rOYrArDaAT?=
+ =?us-ascii?Q?t5jb89HlEyTYQyN764+jvtHTqMc/8gcw4EBgVLhsv1NYxMyyMyeZ66s4xX3T?=
+ =?us-ascii?Q?wQh/AF71su5OA/OdxKnU4MUjw3T5J3LeXI6lkqnX5awvhrB3BUkjXpRSkHdd?=
+ =?us-ascii?Q?a91FM3OjQZEEtOrhSCMl+xOHO0bYPWciqRDZ8sKPPq5eJnzx1jkquIEPlK3u?=
+ =?us-ascii?Q?HeJVFZ2gowrbqCp7sfMsPTEn6r4tlactsO+vbqzcuZ+2c/oG3Av6JgqGBznQ?=
+ =?us-ascii?Q?Edm6BmSL8ePhD8Xb7xGL50hgOQEiQbY6NVds8wMHs4voty9KhI8icwBbK2of?=
+ =?us-ascii?Q?1sqWp+ugQO+B4AGV9RFM9P8G7MGyqwXmp8yTwAi6UAEgv0fgprffMgF5HVED?=
+ =?us-ascii?Q?wPizKpEwmv1PAwxHcUtZALvi4Rq06e1hV7REZ7KNM1lic7ovL4bJlsWRdfOj?=
+ =?us-ascii?Q?nzJVIYGcMfQ5aWl6RwKO8HyP4dIsLYLCpvD6feUt7mjHyiAd5sm8DxJCij9o?=
+ =?us-ascii?Q?fcyQ7FcE0DEbLzUKRQM5IqJppXw5cGJPCOiLGbO9AL42s3+gimLenm8EfIpL?=
+ =?us-ascii?Q?QKiUxyk5BXinJ/TF8Le9xWSBm6MODXQuNVk5nEDZXaqedoQJpGa2GaG9CJEe?=
+ =?us-ascii?Q?jgcSeQErE1RrITZYim0n2dI3x3/TkHPk8VEWeTdYWpV/d3PavIhGuTfHAydM?=
+ =?us-ascii?Q?7aBdBwA7NyBQ5G/ifKDk8hbuJ9DMF4yDHzkjwtfdbKyjiXalYOleOjMU6O/F?=
+ =?us-ascii?Q?1zQx7Dpbt2g3i35YjoMJBJUUxnZvLqXE6Px6IGPDsQ3K6vhbsVyQTOBZOD9e?=
+ =?us-ascii?Q?8jGyCJc18q/crGxb7IBaTPKVJTzE9E/nbGlAaQe8XSBRJZmGLDB0e59b58dG?=
+ =?us-ascii?Q?HVazPy+N3WbsLi0cgN8FfsdLENd+YAQkAmEiGLXgtb8erPZuJJHZ9ToTRm/N?=
+ =?us-ascii?Q?4hi1YqvRtTP9mH2Jc+uYNdVuyNHNz7GSuHQDkxCi8tJScxP3u/jaB5PZZqlY?=
+ =?us-ascii?Q?J+/eK9mms3WQqdwCwt/cz9oZ3gKpGec6Si41mL/hAzDenr1Aw1hMq0nbzEZ2?=
+ =?us-ascii?Q?TSyvo+0W9hLLPf2o7IUMk/kyYVhSnLc5vlaVnaVLpgD1aTr22FnmugCBOYLm?=
+ =?us-ascii?Q?0eLHUs3mTab8S6kppAyFXTQZUE2jmWVPeJO8FTFMsvcF3e0yf23gtaBE8fud?=
+ =?us-ascii?Q?oiW7zdBtQdZN5OLN2uefb4w8+er3ker65hZoxQZCeCPbGzzxhvIykQMKpAiO?=
+ =?us-ascii?Q?Fgj6ZmzIVdv4lO74iL+KY6ndHz7Ck/b0EWvavR9tJChe+OZ62ridyTtzPTbw?=
+ =?us-ascii?Q?AalKxBUPpsx3SCI7U0vyOhqZ07mz743iPt0CsEy5zza+SxppY8ZLMZ+k9ILM?=
+ =?us-ascii?Q?20UQMFcQWWp/8urWT68XrxdzWybcFQ4tKGuVcFVU8l9nr/eSL6gdB+BxYBzb?=
+ =?us-ascii?Q?hklfkQy4SDkdbkChn0KXvYZg8hIVxWqptXKk7EvBcxFHogVIDAIRSzsqlTrp?=
+ =?us-ascii?Q?CP2hsSKKzkw03708faf8zdeN2w1OBTFdAoBrQOEWscCR3E+IvPwioNeihkO/?=
+ =?us-ascii?Q?n0MoIvOI2kBVB3cmzk2b3s4=3D?=
 X-OriginatorOrg: in-advantage.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 220d694a-8d49-4af9-7c64-08da58dea207
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdb5c727-4a10-4fdf-ce7a-08da58dea574
 X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2022 08:17:25.4011
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2022 08:17:31.0257
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Uh5a89z1Bw4UahvGNc6dmZjH2cH+hKuNwOGlUqRBE2cozClWIKerAI6/o07Ef76+YngRjfA7Uf+SuFXyCRYMU5E0LZNAn8vd0D850BpbGa0=
+X-MS-Exchange-CrossTenant-UserPrincipalName: VmPYc1E266lCv5bmS7IdX/5PMQ4qZjvNTzcR0dzy45jManZZ9UjUWq2EFqtEXNMFC139RWEIH1hNfe2Zk25GZXL84mA0sgr5LQO7xC69DiQ=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5891
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The patch set in general is to add support for the VSC7512, and
-eventually the VSC7511, VSC7513 and VSC7514 devices controlled over
-SPI. Specifically this patch set enables pinctrl, serial gpio expander
-access, and control of an internal and an external MDIO bus.
+The VSC7512 is a networking chip that contains several peripherals. Many of
+these peripherals are currently supported by the VSC7513 and VSC7514 chips,
+but those run on an internal CPU. The VSC7512 lacks this CPU, and must be
+controlled externally.
 
-I have mentioned previously:
-The hardware setup I'm using for development is a beaglebone black, with
-jumpers from SPI0 to the microchip VSC7512 dev board. The microchip dev
-board has been modified to not boot from flash, but wait for SPI. An
-ethernet cable is connected from the beaglebone ethernet to port 0 of
-the dev board. Network functionality will be included in a future patch set.
+Utilize the existing drivers by referencing the chip as an MFD. Add support
+for the two MDIO buses, the internal phys, pinctrl, and serial GPIO.
 
-The device tree I'm using is included in the documentation, so I'll not
-include that in this cover letter. I have exported the serial GPIOs to the
-LEDs, and verified functionality via
-"echo heartbeat > sys/class/leds/port0led/trigger"
-
-/ {
-	vscleds {
-		compatible = "gpio-leds";
-		vscled@0 {
-			label = "port0led";
-			gpios = <&sgpio_out1 0 0 GPIO_ACTIVE_LOW>;
-			default-state = "off";
-		};
-		vscled@1 {
-			label = "port0led1";
-			gpios = <&sgpio_out1 0 1 GPIO_ACTIVE_LOW>;
-			default-state = "off";
-		};
-[ ... ]
-	};
-};
-
-And I'll include the relevant dmesg prints - I don't love the "invalid
-resource" prints, as they seem to be misleading. They're a byproduct of
-looking for IO resources before falling back to REG, which succeeds.
-
-Booting Linux on physical CPU 0x0
-Linux version 5.19.0-rc3-00662-gb661f062e865
-...
-[    1.930121] pinctrl-ocelot ocelot-pinctrl.0.auto: DMA mask not set
-[    1.930287] pinctrl-ocelot ocelot-pinctrl.0.auto: invalid resource
-[    1.930861] gpiochip_find_base: found new base at 2026
-[    1.930912] gpio gpiochip4: (ocelot-gpio): created GPIO range 0->21 ==> ocelot-pinctrl.0.auto PIN 0->21
-[    1.933211] gpio gpiochip4: (ocelot-gpio): added GPIO chardev (254:4)
-[    1.933358] gpio gpiochip4: registered GPIOs 2026 to 2047 on ocelot-gpio
-[    1.933378] pinctrl-ocelot ocelot-pinctrl.0.auto: driver registered
-[    1.951876] pinctrl-microchip-sgpio ocelot-sgpio.1.auto: DMA mask not set
-[    1.952100] pinctrl-microchip-sgpio ocelot-sgpio.1.auto: invalid resource
-[    1.952971] gpiochip_find_base: found new base at 1962
-[    1.953710] gpio_stub_drv gpiochip5: (ocelot-sgpio.1.auto-input): added GPIO chardev (254:5)
-[    1.953822] gpio_stub_drv gpiochip5: registered GPIOs 1962 to 2025 on ocelot-sgpio.1.auto-input
-[    1.954612] gpiochip_find_base: found new base at 1898
-[    1.955513] gpio_stub_drv gpiochip6: (ocelot-sgpio.1.auto-output): added GPIO chardev (254:6)
-[    1.955611] gpio_stub_drv gpiochip6: registered GPIOs 1898 to 1961 on ocelot-sgpio.1.auto-output
-[    1.963280] mscc-miim ocelot-miim0.2.auto: DMA mask not set
-[    1.963432] mscc-miim ocelot-miim0.2.auto: invalid resource
-[    1.963585] mscc-miim ocelot-miim0.2.auto: invalid resource
-[    1.964633] mdio_bus ocelot-miim0.2.auto-mii: GPIO lookup for consumer reset
-[    1.964651] mdio_bus ocelot-miim0.2.auto-mii: using device tree for GPIO lookup
-[    1.964676] of_get_named_gpiod_flags: can't parse 'reset-gpios' property of node '/ocp/interconnect@48000000/segment@0/target-module@30000/spi@0/switch@0/mdio@7107009c[0]'
-[    1.964767] of_get_named_gpiod_flags: can't parse 'reset-gpio' property of node '/ocp/interconnect@48000000/segment@0/target-module@30000/spi@0/switch@0/mdio@7107009c[0]'
-[    1.964857] mdio_bus ocelot-miim0.2.auto-mii: using lookup tables for GPIO lookup
-[    1.964868] mdio_bus ocelot-miim0.2.auto-mii: No GPIO consumer reset found
-
-
-I only have hardware to test the last patch, so any testers are welcome.
-I've been extra cautious about the
-ocelot_platform_init_regmap_from_resource helper function, both before
-and after the last patch. I accidentally broke it in the past and would
-like to avoid doing so again.
-
-
-RFC history:
-v1 (accidentally named vN)
-	* Initial architecture. Not functional
-	* General concepts laid out
-
-v2
-	* Near functional. No CPU port communication, but control over all
-	external ports
-	* Cleaned up regmap implementation from v1
-
-v3
-	* Functional
-	* Shared MDIO transactions routed through mdio-mscc-miim
-	* CPU / NPI port enabled by way of vsc7512_enable_npi_port /
-	felix->info->enable_npi_port
-	* NPI port tagging functional - Requires a CPU port driver that supports
-	frames of 1520 bytes. Verified with a patch to the cpsw driver
-
-v4
-    * Functional
-    * Device tree fixes
-    * Add hooks for pinctrl-ocelot - some functionality by way of sysfs
-    * Add hooks for pinctrl-microsemi-sgpio - not yet fully functional
-    * Remove lynx_pcs interface for a generic phylink_pcs. The goal here
-    is to have an ocelot_pcs that will work for each configuration of
-    every port.
-
-v5
-    * Restructured to MFD
-    * Several commits were split out, submitted, and accepted
-    * pinctrl-ocelot believed to be fully functional (requires commits
-    from the linux-pinctrl tree)
-    * External MDIO bus believed to be fully functional
-
-v6
-    * Applied several suggestions from the last RFC from Lee Jones. I
-      hope I didn't miss anything.
-    * Clean up MFD core - SPI interaction. They no longer use callbacks.
-    * regmaps get registered to the child device, and don't attempt to
-      get shared. It seems if a regmap is to be shared, that should be
-      solved with syscon, not dev or mfd.
-
-v7
-    * Applied as much as I could from Lee and Vladimir's suggestions. As
-      always, the feedback is greatly appreciated!
-    * Remove "ocelot_spi" container complication
-    * Move internal MDIO bus from ocelot_ext to MFD, with a devicetree
-      change to match
-    * Add initial HSIO support
-    * Switch to IORESOURCE_REG for resource definitions
-
-v8
-    * Applied another round of suggestions from Lee and Vladimir
-    * Utilize regmap bus reads, which speeds bulk transfers up by an
-      order of magnitude
-    * Add two additional patches to utilize phylink_generic_validate
-    * Changed GPL V2 to GPL in licenses where applicable (checkpatch)
-    * Remove initial hsio/serdes changes from the RFC
-
-v9
-    * Submitting as a PATCH instead of an RFC
-    * Remove switch functionality - will be a separate patch set
-    * Remove Kconfig tristate module options
-    * Another round of suggestions from Lee, Vladimir, and Andy. Many
-      thanks!
-    * Add documentation
-    * Update maintainers
-
-v10
-    * Fix warming by removing unused function
-
-v11
-    * Suggestions from Rob and Andy. Thanks!
-    * Add pinctrl module functionality back and fixing those features
-    * Fix aarch64 compiler error
-
-Colin Foster (9):
-  mfd: ocelot: add helper to get regmap from a resource
-  net: mdio: mscc-miim: add ability to be used in a non-mmio
-    configuration
-  pinctrl: ocelot: allow pinctrl-ocelot to be loaded as a module
-  pinctrl: ocelot: add ability to be used in a non-mmio configuration
-  pinctrl: microchip-sgpio: allow sgpio driver to be used as a module
-  pinctrl: microchip-sgpio: add ability to be used in a non-mmio
-    configuration
-  resource: add define macro for register address resources
-  dt-bindings: mfd: ocelot: add bindings for VSC7512
-  mfd: ocelot: add support for the vsc7512 chip via spi
-
- .../devicetree/bindings/mfd/mscc,ocelot.yaml  | 160 +++++++++
- MAINTAINERS                                   |   7 +
- drivers/mfd/Kconfig                           |  18 +
- drivers/mfd/Makefile                          |   2 +
- drivers/mfd/ocelot-core.c                     | 175 ++++++++++
- drivers/mfd/ocelot-spi.c                      | 313 ++++++++++++++++++
- drivers/mfd/ocelot.h                          |  28 ++
- drivers/net/mdio/mdio-mscc-miim.c             |  35 +-
- drivers/pinctrl/Kconfig                       |   4 +-
- drivers/pinctrl/pinctrl-microchip-sgpio.c     |  14 +-
- drivers/pinctrl/pinctrl-ocelot.c              |  15 +-
- include/linux/ioport.h                        |   5 +
- include/linux/mfd/ocelot.h                    |  35 ++
- 13 files changed, 773 insertions(+), 38 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/mscc,ocelot.yaml
+Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
+---
+ MAINTAINERS                |   1 +
+ drivers/mfd/Kconfig        |  18 +++
+ drivers/mfd/Makefile       |   2 +
+ drivers/mfd/ocelot-core.c  | 175 +++++++++++++++++++++
+ drivers/mfd/ocelot-spi.c   | 313 +++++++++++++++++++++++++++++++++++++
+ drivers/mfd/ocelot.h       |  28 ++++
+ include/linux/mfd/ocelot.h |   8 +
+ 7 files changed, 545 insertions(+)
  create mode 100644 drivers/mfd/ocelot-core.c
  create mode 100644 drivers/mfd/ocelot-spi.c
  create mode 100644 drivers/mfd/ocelot.h
- create mode 100644 include/linux/mfd/ocelot.h
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 03eba7fd2141..9f2df8906ab6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14417,6 +14417,7 @@ OCELOT EXTERNAL SWITCH CONTROL
+ M:	Colin Foster <colin.foster@in-advantage.com>
+ S:	Supported
+ F:	Documentation/devicetree/bindings/mfd/mscc,ocelot.yaml
++F:	drivers/mfd/ocelot*
+ F:	include/linux/mfd/ocelot.h
+ 
+ OCXL (Open Coherent Accelerator Processor Interface OpenCAPI) DRIVER
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 3b59456f5545..6887b513b3fb 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -962,6 +962,24 @@ config MFD_MENF21BMC
+ 	  This driver can also be built as a module. If so the module
+ 	  will be called menf21bmc.
+ 
++config MFD_OCELOT
++	bool "Microsemi Ocelot External Control Support"
++	depends on SPI_MASTER
++	select MFD_CORE
++	select REGMAP_SPI
++	help
++	  Ocelot is a family of networking chips that support multiple ethernet
++	  and fibre interfaces. In addition to networking, they contain several
++	  other functions, including pictrl, MDIO, and communication with
++	  external chips. While some chips have an internal processor capable of
++	  running an OS, others don't. All chips can be controlled externally
++	  through different interfaces, including SPI, I2C, and PCIe.
++
++	  Say yes here to add support for Ocelot chips (VSC7511, VSC7512,
++	  VSC7513, VSC7514) controlled externally.
++
++	  If unsure, say N.
++
+ config EZX_PCAP
+ 	bool "Motorola EZXPCAP Support"
+ 	depends on SPI_MASTER
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 858cacf659d6..bc517632ba5f 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -120,6 +120,8 @@ obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
+ 
+ obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
+ 
++obj-$(CONFIG_MFD_OCELOT)	+= ocelot-core.o ocelot-spi.o
++
+ obj-$(CONFIG_EZX_PCAP)		+= ezx-pcap.o
+ obj-$(CONFIG_MFD_CPCAP)		+= motorola-cpcap.o
+ 
+diff --git a/drivers/mfd/ocelot-core.c b/drivers/mfd/ocelot-core.c
+new file mode 100644
+index 000000000000..18cbe5b8a4ef
+--- /dev/null
++++ b/drivers/mfd/ocelot-core.c
+@@ -0,0 +1,175 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Core driver for the Ocelot chip family.
++ *
++ * The VSC7511, 7512, 7513, and 7514 can be controlled internally via an
++ * on-chip MIPS processor, or externally via SPI, I2C, PCIe. This core driver is
++ * intended to be the bus-agnostic glue between, for example, the SPI bus and
++ * the child devices.
++ *
++ * Copyright 2021, 2022 Innovative Advantage Inc.
++ *
++ * Author: Colin Foster <colin.foster@in-advantage.com>
++ */
++
++#include <linux/mfd/core.h>
++#include <linux/mfd/ocelot.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++#include <soc/mscc/ocelot.h>
++
++#include "ocelot.h"
++
++#define GCB_SOFT_RST			0x0008
++
++#define SOFT_CHIP_RST			0x1
++
++#define VSC7512_MIIM0_RES_START		0x7107009c
++#define VSC7512_MIIM0_RES_SIZE		0x24
++
++#define VSC7512_MIIM1_RES_START		0x710700c0
++#define VSC7512_MIIM1_RES_SIZE		0x24
++
++#define VSC7512_PHY_RES_START		0x710700f0
++#define VSC7512_PHY_RES_SIZE		0x4
++
++#define VSC7512_GPIO_RES_START		0x71070034
++#define VSC7512_GPIO_RES_SIZE		0x6c
++
++#define VSC7512_SIO_CTRL_RES_START	0x710700f8
++#define VSC7512_SIO_CTRL_RES_SIZE	0x100
++
++#define VSC7512_GCB_RST_SLEEP		100
++#define VSC7512_GCB_RST_TIMEOUT		100000
++
++static int ocelot_gcb_chip_rst_status(struct ocelot_ddata *ddata)
++{
++	int val, err;
++
++	err = regmap_read(ddata->gcb_regmap, GCB_SOFT_RST, &val);
++	if (err)
++		val = -1;
++
++	return val;
++}
++
++int ocelot_chip_reset(struct device *dev)
++{
++	struct ocelot_ddata *ddata = dev_get_drvdata(dev);
++	int ret, val;
++
++	/*
++	 * Reset the entire chip here to put it into a completely known state.
++	 * Other drivers may want to reset their own subsystems. The register
++	 * self-clears, so one write is all that is needed and wait for it to
++	 * clear.
++	 */
++	ret = regmap_write(ddata->gcb_regmap, GCB_SOFT_RST, SOFT_CHIP_RST);
++	if (ret)
++		return ret;
++
++	ret = readx_poll_timeout(ocelot_gcb_chip_rst_status, ddata, val, !val,
++				 VSC7512_GCB_RST_SLEEP,
++				 VSC7512_GCB_RST_TIMEOUT);
++	if (ret)
++		return dev_err_probe(ddata->dev, ret, "timeout: chip reset\n");
++
++	return 0;
++}
++EXPORT_SYMBOL_NS(ocelot_chip_reset, MFD_OCELOT);
++
++static const struct resource vsc7512_miim0_resources[] = {
++	DEFINE_RES_REG_NAMED(VSC7512_MIIM0_RES_START, VSC7512_MIIM0_RES_SIZE,
++			     "gcb_miim0"),
++	DEFINE_RES_REG_NAMED(VSC7512_PHY_RES_START, VSC7512_PHY_RES_SIZE,
++			     "gcb_phy"),
++};
++
++static const struct resource vsc7512_miim1_resources[] = {
++	DEFINE_RES_REG_NAMED(VSC7512_MIIM1_RES_START, VSC7512_MIIM1_RES_SIZE,
++			     "gcb_miim1"),
++};
++
++static const struct resource vsc7512_pinctrl_resources[] = {
++	DEFINE_RES_REG_NAMED(VSC7512_GPIO_RES_START, VSC7512_GPIO_RES_SIZE,
++			     "gcb_gpio"),
++};
++
++static const struct resource vsc7512_sgpio_resources[] = {
++	DEFINE_RES_REG_NAMED(VSC7512_SIO_CTRL_RES_START,
++			     VSC7512_SIO_CTRL_RES_SIZE,
++			     "gcb_sio"),
++};
++
++static const struct mfd_cell vsc7512_devs[] = {
++	{
++		.name = "ocelot-pinctrl",
++		.of_compatible = "mscc,ocelot-pinctrl",
++		.num_resources = ARRAY_SIZE(vsc7512_pinctrl_resources),
++		.resources = vsc7512_pinctrl_resources,
++	}, {
++		.name = "ocelot-sgpio",
++		.of_compatible = "mscc,ocelot-sgpio",
++		.num_resources = ARRAY_SIZE(vsc7512_sgpio_resources),
++		.resources = vsc7512_sgpio_resources,
++	}, {
++		.name = "ocelot-miim0",
++		.of_compatible = "mscc,ocelot-miim",
++		.of_reg = VSC7512_MIIM0_RES_START,
++		.use_of_reg = true,
++		.num_resources = ARRAY_SIZE(vsc7512_miim0_resources),
++		.resources = vsc7512_miim0_resources,
++	}, {
++		.name = "ocelot-miim1",
++		.of_compatible = "mscc,ocelot-miim",
++		.of_reg = VSC7512_MIIM1_RES_START,
++		.use_of_reg = true,
++		.num_resources = ARRAY_SIZE(vsc7512_miim1_resources),
++		.resources = vsc7512_miim1_resources,
++	},
++};
++
++struct regmap *
++ocelot_platform_init_regmap_from_resource(struct platform_device *pdev,
++					  unsigned int index,
++					  const struct regmap_config *config)
++{
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	struct regmap *map;
++	u32 __iomem *regs;
++
++	map = ERR_PTR(-ENOENT);
++
++	regs = devm_platform_get_and_ioremap_resource(pdev, index, NULL);
++	if (IS_ERR(regs)) {
++		/*
++		 * Fall back to using IORESOURCE_REG, which is possible in an
++		 * MFD configuration
++		 */
++		res = platform_get_resource(pdev, IORESOURCE_REG, index);
++		if (!res) {
++			dev_err_probe(dev, PTR_ERR(res),
++				      "Failed to get resource\n");
++			return map;
++		}
++
++		map = ocelot_spi_init_regmap(dev->parent, dev, res);
++	} else {
++		map = devm_regmap_init_mmio(dev, regs, config);
++	}
++
++	return map;
++}
++EXPORT_SYMBOL_NS(ocelot_platform_init_regmap_from_resource, MFD_OCELOT);
++
++int ocelot_core_init(struct device *dev)
++{
++	return devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO, vsc7512_devs,
++				    ARRAY_SIZE(vsc7512_devs), NULL, 0, NULL);
++}
++EXPORT_SYMBOL_NS(ocelot_core_init, MFD_OCELOT);
++
++MODULE_DESCRIPTION("Externally Controlled Ocelot Chip Driver");
++MODULE_AUTHOR("Colin Foster <colin.foster@in-advantage.com>");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/mfd/ocelot-spi.c b/drivers/mfd/ocelot-spi.c
+new file mode 100644
+index 000000000000..9b08d2f6a855
+--- /dev/null
++++ b/drivers/mfd/ocelot-spi.c
+@@ -0,0 +1,313 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * SPI core driver for the Ocelot chip family.
++ *
++ * This driver will handle everything necessary to allow for communication over
++ * SPI to the VSC7511, VSC7512, VSC7513 and VSC7514 chips. The main functions
++ * are to prepare the chip's SPI interface for a specific bus speed, and a host
++ * processor's endianness. This will create and distribute regmaps for any
++ * children.
++ *
++ * Copyright 2021, 2022 Innovative Advantage Inc.
++ *
++ * Author: Colin Foster <colin.foster@in-advantage.com>
++ */
++
++#include <linux/iopoll.h>
++#include <linux/kconfig.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++#include <linux/spi/spi.h>
++
++#include <asm/byteorder.h>
++
++#include "ocelot.h"
++
++#define DEV_CPUORG_IF_CTRL		0x0000
++#define DEV_CPUORG_IF_CFGSTAT		0x0004
++
++#define CFGSTAT_IF_NUM_VCORE		(0 << 24)
++#define CFGSTAT_IF_NUM_VRAP		(1 << 24)
++#define CFGSTAT_IF_NUM_SI		(2 << 24)
++#define CFGSTAT_IF_NUM_MIIM		(3 << 24)
++
++#define VSC7512_DEVCPU_ORG_RES_START	0x71000000
++#define VSC7512_DEVCPU_ORG_RES_SIZE	0x38
++
++#define VSC7512_CHIP_REGS_RES_START	0x71070000
++#define VSC7512_CHIP_REGS_RES_SIZE	0x14
++
++static const struct resource vsc7512_dev_cpuorg_resource =
++	DEFINE_RES_REG_NAMED(VSC7512_DEVCPU_ORG_RES_START,
++			     VSC7512_DEVCPU_ORG_RES_SIZE,
++			     "devcpu_org");
++
++static const struct resource vsc7512_gcb_resource =
++	DEFINE_RES_REG_NAMED(VSC7512_CHIP_REGS_RES_START,
++			     VSC7512_CHIP_REGS_RES_SIZE,
++			     "devcpu_gcb_chip_regs");
++
++static int ocelot_spi_initialize(struct device *dev)
++{
++	struct ocelot_ddata *ddata = dev_get_drvdata(dev);
++	u32 val, check;
++	int err;
++
++	val = OCELOT_SPI_BYTE_ORDER;
++
++	/*
++	 * The SPI address must be big-endian, but we want the payload to match
++	 * our CPU. These are two bits (0 and 1) but they're repeated such that
++	 * the write from any configuration will be valid. The four
++	 * configurations are:
++	 *
++	 * 0b00: little-endian, MSB first
++	 * |            111111   | 22221111 | 33222222 |
++	 * | 76543210 | 54321098 | 32109876 | 10987654 |
++	 *
++	 * 0b01: big-endian, MSB first
++	 * | 33222222 | 22221111 | 111111   |          |
++	 * | 10987654 | 32109876 | 54321098 | 76543210 |
++	 *
++	 * 0b10: little-endian, LSB first
++	 * |              111111 | 11112222 | 22222233 |
++	 * | 01234567 | 89012345 | 67890123 | 45678901 |
++	 *
++	 * 0b11: big-endian, LSB first
++	 * | 22222233 | 11112222 |   111111 |          |
++	 * | 45678901 | 67890123 | 89012345 | 01234567 |
++	 */
++	err = regmap_write(ddata->cpuorg_regmap, DEV_CPUORG_IF_CTRL, val);
++	if (err)
++		return err;
++
++	/*
++	 * Apply the number of padding bytes between a read request and the data
++	 * payload. Some registers have access times of up to 1us, so if the
++	 * first payload bit is shifted out too quickly, the read will fail.
++	 */
++	val = ddata->spi_padding_bytes;
++	err = regmap_write(ddata->cpuorg_regmap, DEV_CPUORG_IF_CFGSTAT, val);
++	if (err)
++		return err;
++
++	/*
++	 * After we write the interface configuration, read it back here. This
++	 * will verify several different things. The first is that the number of
++	 * padding bytes actually got written correctly. These are found in bits
++	 * 0:3.
++	 *
++	 * The second is that bit 16 is cleared. Bit 16 is IF_CFGSTAT:IF_STAT,
++	 * and will be set if the register access is too fast. This would be in
++	 * the condition that the number of padding bytes is insufficient for
++	 * the SPI bus frequency.
++	 *
++	 * The last check is for bits 31:24, which define the interface by which
++	 * the registers are being accessed. Since we're accessing them via the
++	 * serial interface, it must return IF_NUM_SI.
++	 */
++	check = val | CFGSTAT_IF_NUM_SI;
++
++	err = regmap_read(ddata->cpuorg_regmap, DEV_CPUORG_IF_CFGSTAT, &val);
++	if (err)
++		return err;
++
++	if (check != val)
++		return -ENODEV;
++
++	return 0;
++}
++
++static const struct regmap_config ocelot_spi_regmap_config = {
++	.reg_bits = 24,
++	.reg_stride = 4,
++	.reg_downshift = 2,
++	.val_bits = 32,
++
++	.write_flag_mask = 0x80,
++
++	.use_single_write = true,
++	.can_multi_write = false,
++
++	.reg_format_endian = REGMAP_ENDIAN_BIG,
++	.val_format_endian = REGMAP_ENDIAN_NATIVE,
++};
++
++static int ocelot_spi_regmap_bus_read(void *context,
++				      const void *reg, size_t reg_size,
++				      void *val, size_t val_size)
++{
++	struct ocelot_ddata *ddata = context;
++	static const u8 dummy_buf[16] = {0};
++	struct spi_transfer tx, padding, rx;
++	struct spi_device *spi = ddata->spi;
++	struct spi_message msg;
++
++	spi = ddata->spi;
++
++	spi_message_init(&msg);
++
++	memset(&tx, 0, sizeof(tx));
++
++	tx.tx_buf = reg;
++	tx.len = reg_size;
++
++	spi_message_add_tail(&tx, &msg);
++
++	if (ddata->spi_padding_bytes) {
++		memset(&padding, 0, sizeof(padding));
++
++		padding.len = ddata->spi_padding_bytes;
++		padding.tx_buf = dummy_buf;
++		padding.dummy_data = 1;
++
++		spi_message_add_tail(&padding, &msg);
++	}
++
++	memset(&rx, 0, sizeof(rx));
++	rx.rx_buf = val;
++	rx.len = val_size;
++
++	spi_message_add_tail(&rx, &msg);
++
++	return spi_sync(spi, &msg);
++}
++
++static int ocelot_spi_regmap_bus_write(void *context, const void *data,
++				       size_t count)
++{
++	struct ocelot_ddata *ddata = context;
++	struct spi_device *spi = ddata->spi;
++
++	return spi_write(spi, data, count);
++}
++
++static const struct regmap_bus ocelot_spi_regmap_bus = {
++	.write = ocelot_spi_regmap_bus_write,
++	.read = ocelot_spi_regmap_bus_read,
++};
++
++struct regmap *
++ocelot_spi_init_regmap(struct device *dev, struct device *child,
++		       const struct resource *res)
++{
++	struct ocelot_ddata *ddata = dev_get_drvdata(dev);
++	struct regmap_config regmap_config;
++
++	memcpy(&regmap_config, &ocelot_spi_regmap_config,
++	       sizeof(regmap_config));
++
++	regmap_config.name = res->name;
++	regmap_config.max_register = res->end - res->start;
++	regmap_config.reg_base = res->start;
++
++	return devm_regmap_init(child, &ocelot_spi_regmap_bus, ddata,
++				&regmap_config);
++}
++
++static int ocelot_spi_probe(struct spi_device *spi)
++{
++	struct device *dev = &spi->dev;
++	struct ocelot_ddata *ddata;
++	struct regmap *r;
++	int err;
++
++	ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
++	if (!ddata)
++		return -ENOMEM;
++
++	ddata->dev = dev;
++	dev_set_drvdata(dev, ddata);
++
++	if (spi->max_speed_hz <= 500000) {
++		ddata->spi_padding_bytes = 0;
++	} else {
++		/*
++		 * Calculation taken from the manual for IF_CFGSTAT:IF_CFG.
++		 * Register access time is 1us, so we need to configure and send
++		 * out enough padding bytes between the read request and data
++		 * transmission that lasts at least 1 microsecond.
++		 */
++		ddata->spi_padding_bytes = 1 +
++			(spi->max_speed_hz / 1000000 + 2) / 8;
++	}
++
++	ddata->spi = spi;
++
++	spi->bits_per_word = 8;
++
++	err = spi_setup(spi);
++	if (err < 0) {
++		return dev_err_probe(&spi->dev, err,
++				     "Error performing SPI setup\n");
++	}
++
++	r = ocelot_spi_init_regmap(dev, dev, &vsc7512_dev_cpuorg_resource);
++	if (IS_ERR(r))
++		return PTR_ERR(r);
++
++	ddata->cpuorg_regmap = r;
++
++	r = ocelot_spi_init_regmap(dev, dev, &vsc7512_gcb_resource);
++	if (IS_ERR(r))
++		return PTR_ERR(r);
++
++	ddata->gcb_regmap = r;
++
++	/*
++	 * The chip must be set up for SPI before it gets initialized and reset.
++	 * This must be done before calling init, and after a chip reset is
++	 * performed.
++	 */
++	err = ocelot_spi_initialize(dev);
++	if (err)
++		return dev_err_probe(dev, err, "Error initializing SPI bus\n");
++
++	err = ocelot_chip_reset(dev);
++	if (err)
++		return dev_err_probe(dev, err, "Error resetting device\n");
++
++	/*
++	 * A chip reset will clear the SPI configuration, so it needs to be done
++	 * again before we can access any registers
++	 */
++	err = ocelot_spi_initialize(dev);
++	if (err) {
++		return dev_err_probe(dev, err,
++				     "Error initializing SPI bus after reset\n");
++	}
++
++	err = ocelot_core_init(dev);
++	if (err < 0) {
++		return dev_err_probe(dev, err,
++				     "Error initializing Ocelot core\n");
++		return err;
++	}
++
++	return 0;
++}
++
++static const struct spi_device_id ocelot_spi_ids[] = {
++	{ "vsc7512", 0 },
++	{ }
++};
++
++static const struct of_device_id ocelot_spi_of_match[] = {
++	{ .compatible = "mscc,vsc7512" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, ocelot_spi_of_match);
++
++static struct spi_driver ocelot_spi_driver = {
++	.driver = {
++		.name = "ocelot_spi",
++		.of_match_table = ocelot_spi_of_match,
++	},
++	.id_table = ocelot_spi_ids,
++	.probe = ocelot_spi_probe,
++};
++module_spi_driver(ocelot_spi_driver);
++
++MODULE_DESCRIPTION("SPI Controlled Ocelot Chip Driver");
++MODULE_AUTHOR("Colin Foster <colin.foster@in-advantage.com>");
++MODULE_LICENSE("Dual MIT/GPL");
+diff --git a/drivers/mfd/ocelot.h b/drivers/mfd/ocelot.h
+new file mode 100644
+index 000000000000..cf33c3ab89c2
+--- /dev/null
++++ b/drivers/mfd/ocelot.h
+@@ -0,0 +1,28 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
++/* Copyright 2021, 2022 Innovative Advantage Inc. */
++
++#include <asm/byteorder.h>
++
++struct ocelot_ddata {
++	struct device *dev;
++	struct regmap *gcb_regmap;
++	struct regmap *cpuorg_regmap;
++	int spi_padding_bytes;
++	struct spi_device *spi;
++};
++
++int ocelot_chip_reset(struct device *dev);
++int ocelot_core_init(struct device *dev);
++
++/* SPI-specific routines that won't be necessary for other interfaces */
++struct regmap *ocelot_spi_init_regmap(struct device *dev, struct device *child,
++				      const struct resource *res);
++
++#define OCELOT_SPI_BYTE_ORDER_LE 0x00000000
++#define OCELOT_SPI_BYTE_ORDER_BE 0x81818181
++
++#ifdef __LITTLE_ENDIAN
++#define OCELOT_SPI_BYTE_ORDER OCELOT_SPI_BYTE_ORDER_LE
++#else
++#define OCELOT_SPI_BYTE_ORDER OCELOT_SPI_BYTE_ORDER_BE
++#endif
+diff --git a/include/linux/mfd/ocelot.h b/include/linux/mfd/ocelot.h
+index 5c95e4ee38a6..86c7ae57d0cb 100644
+--- a/include/linux/mfd/ocelot.h
++++ b/include/linux/mfd/ocelot.h
+@@ -2,12 +2,19 @@
+ /* Copyright 2022 Innovative Advantage Inc. */
+ 
+ #include <linux/err.h>
++#include <linux/kconfig.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/types.h>
+ 
+ struct resource;
+ 
++#if IS_ENABLED(CONFIG_MFD_OCELOT)
++struct regmap *
++ocelot_platform_init_regmap_from_resource(struct platform_device *pdev,
++					  unsigned int index,
++					  const struct regmap_config *config);
++#else
+ static inline struct regmap *
+ ocelot_platform_init_regmap_from_resource(struct platform_device *pdev,
+ 					  unsigned int index,
+@@ -25,3 +32,4 @@ ocelot_platform_init_regmap_from_resource(struct platform_device *pdev,
+ 	else
+ 		return devm_regmap_init_mmio(&pdev->dev, regs, config);
+ }
++#endif
 -- 
 2.25.1
 
