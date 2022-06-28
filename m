@@ -2,279 +2,177 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E162CCA481
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 07:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 313C4CCA479
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 08:19:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242646AbiF1Hko (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Jun 2022 03:40:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39630 "EHLO
+        id S242721AbiF1ITR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Jun 2022 04:19:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242781AbiF1Hkn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 03:40:43 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 587652A731
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Jun 2022 00:40:41 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id ay16so23943899ejb.6
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Jun 2022 00:40:40 -0700 (PDT)
+        with ESMTP id S243910AbiF1IS5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 04:18:57 -0400
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam07on2136.outbound.protection.outlook.com [40.107.212.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3D582BB0B;
+        Tue, 28 Jun 2022 01:17:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HjeQmyHRwxQ7QIgJ0Zh0WnNOKesjIycwfvX/Ad8Lh4hDN0IuXX4ckpPP9AZUi+K/mlQwkC0VctBRW0Ao47Dvi02mLOON+1DEszXCZh3nJLpI+y8n2QTz+SpRuq2Vce9ts5QcoV8VB5Gwgq7/ZlDL08jxa+bZu3gLof3Ao47Y1Kl04TiVpN9IEKgGJe7OY2ATBnA4KbF1qTqgM3+a5h4ojNx9sgnlZxkGidUGRRnxw1tOgGjktqpiU3snZobW03gqU+acm1tsu2Yf29K82wbq+bR1IROuj0z4yOiNFy48XEBHKQlFLg2a4zyY2+pXFOJzyxQcFOEZr+D7z/3Hy3TUjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8G088u5+cp8kN7ctmVBiVFtcatjgF7vsa+tb9IZ9h/Y=;
+ b=f1gJe+g044xam4FnyxZ9mdo2r92zmdoPUp4GAgktyKftxDtwYijbf3sH4pR+AWGSd161JwIpsu5HzljADzdb7G9P0BR5+a7kcf+0fn6LAijTRLCYzF8Aq0UN3HiwTg6vQ0XCIf/9nlBJsXW6Gr5J1GbMgmtj/HkF1jVqOBjygMKU5wUiS85FROWs+Z/a3JqLU7faBYUzHXmiY0CkXbLnmojgan9VhXK2DA5m5uVvBUmVIBFQuwcX59jmKjR5DDSXpV7fsr0dt/BnyLPeck+fJ1A0YnVgm03PQna2gJvvt3BhmQXKPYfjdYxtx9Fur4+zQ2u52a+dCG8CDN16ySTFGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=in-advantage.com; dmarc=pass action=none
+ header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=v4aAjKeEqKxV1NZCwNURdwE5iyyJ3850e9bBA4IL6TE=;
-        b=fZUVuR8MAnFt80lyGhLyLIoKAZ8EbaWnwlr6Dhqgnaz4qf8HDNGHcRaKlb+ffefFJF
-         +cK56e2+AQUxXYRmZkJPs9Gqn4upLMX4hOm36+ieqy54hngUL7kVsqXI62DzUFXdXpTu
-         bFIwTrnhyv1W1PB9ROoaFlzYiPc33SZesTzb87wFbCI41WzQZW124LjmMA+ilICi8hZ5
-         W1VgALipzx2vfLrhDkgYkIxOAsWCOu7Ki3ZCe44lF8apBfbyuJDn2mIyZxXW9XiQgrkO
-         3mxbj2T9gyOiNJeiKNwA5txvaY24VIS8tesvFf/gvUHlwo+G8y1RmTyqceXXzcOQcaIa
-         aEMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=v4aAjKeEqKxV1NZCwNURdwE5iyyJ3850e9bBA4IL6TE=;
-        b=jSwgPGmuunuL2K5JpvXqK/Eh8+AjvJTmVD70ByGDKVciALZHIAIiuZdCa/eqO9Bc4M
-         4iq19WoGiSG5Ma7Qdwph9Rkqb5Y/74r4nYGcblG+JCAQ7pU3mTHS730QP/yOFko9BrwF
-         KdgB9Y4+Lf3jYao2LPAhjQOIYBitxLcjURV/BqdLeb2C6VWNajXKURoH0NIn6F1qzlr/
-         pW4ZaphgzuYdfufVOpxZRqmmwTzDIN5OWuvWiERlJ3nYAJ/E2HRF6QJ9ouMh2P4irRPR
-         UhiY3GolT5zwrwrmw5A/njYlPlhtg36T6yvm7bB82XQuQzNOxNjWRTHYqWN49WVqIJIM
-         voYQ==
-X-Gm-Message-State: AJIora+yE65uxVG9+9hiarBAQCuS9DxQtA/qyKnjTBO1KYsQ+8OhEf26
-        7T+pQyrDH8pBtQJjdH0z+zRb7w==
-X-Google-Smtp-Source: AGRyM1sJNF5OFItLhacBVarsuGoAnjScolptSzxQIcldwkpTgGDiPvm/BOZVSzA2WJLkg3Pl6IF0Cw==
-X-Received: by 2002:a17:906:7394:b0:722:e9c5:8e82 with SMTP id f20-20020a170906739400b00722e9c58e82mr16543887ejl.239.1656402039481;
-        Tue, 28 Jun 2022 00:40:39 -0700 (PDT)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id cb25-20020a0564020b7900b004359dafe822sm9069835edb.29.2022.06.28.00.40.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jun 2022 00:40:38 -0700 (PDT)
-Date:   Tue, 28 Jun 2022 10:40:36 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
-        stefan@agner.ch, linus.walleij@linaro.org,
-        daniel.lezcano@linaro.org, tglx@linutronix.de, olof@lixom.net,
-        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
-        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
-        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
-        cniedermaier@dh-electronics.com, clin@suse.com,
-        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 08/13] clk: imx: Update pllv3 to support i.MXRT1170
-Message-ID: <YrqwdCsLgxJYPfOw@linaro.org>
-References: <20220626064523.3683775-1-Mr.Bossman075@gmail.com>
- <20220626064523.3683775-9-Mr.Bossman075@gmail.com>
- <YrmxdaSqHnEg28uG@linaro.org>
- <c8f13238-c927-4aab-e54d-3a1a5c031877@gmail.com>
+ d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8G088u5+cp8kN7ctmVBiVFtcatjgF7vsa+tb9IZ9h/Y=;
+ b=oNDPYYoZZvOXbPahTdVlJLXOV2H9+CE4zqpUulIt6b5sqNK6SJE8Bb450MAPjKnKHfAUQYrRd4iVACjx2XN2xrMcfYyzflbJI6PgTJxuVFHlt1iDTqRNw6vnTjuztPLmfjgDPPxDxMYqGYVNYvBwO58bJc2Vd8iYHMtg1x8Ad00=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=in-advantage.com;
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37) by SJ0PR10MB5891.namprd10.prod.outlook.com
+ (2603:10b6:a03:425::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.17; Tue, 28 Jun
+ 2022 08:17:27 +0000
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::712f:6916:3431:e74e]) by MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::712f:6916:3431:e74e%6]) with mapi id 15.20.5373.018; Tue, 28 Jun 2022
+ 08:17:27 +0000
+From:   Colin Foster <colin.foster@in-advantage.com>
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org
+Cc:     Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        UNGLinuxDriver@microchip.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa@kernel.org>,
+        Terry Bowman <terry.bowman@amd.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH v11 net-next 3/9] pinctrl: ocelot: allow pinctrl-ocelot to be loaded as a module
+Date:   Tue, 28 Jun 2022 01:17:03 -0700
+Message-Id: <20220628081709.829811-4-colin.foster@in-advantage.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220628081709.829811-1-colin.foster@in-advantage.com>
+References: <20220628081709.829811-1-colin.foster@in-advantage.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR04CA0259.namprd04.prod.outlook.com
+ (2603:10b6:303:88::24) To MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c8f13238-c927-4aab-e54d-3a1a5c031877@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ec780eab-7c18-4620-8fa3-08da58dea344
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5891:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: DO2lU4bv8iBQJEeaeks8dReJOqdyqYQu9s7rLBnVWn982D9N8ajVYB82WbwQUS90tuWangwm6wxQaHoU0RUVx9tzcJurzefJ4Ur+Q0iG2kg7tWRndjLOsu8xh3VclPYxlCZypbr91AcGijphe0/CJj2Xfakd2dVH7abRY1n13pVOJwFNwZqS8vb5/fLQZLOTTyE7G9Sd/s0P2UVtPFBxoKN9AZ3RDSsJnXjFuS2OdhOiC2iCTyBftzbTG78IPIgywqkeOp8kGBgaT+CAvYf0GDSgSsRWW9R9lDf3uJ1QGlAUPfalryqMCsw/sKuZIsdTI0/oe7+OJr3kvB+mpHxioc/VhLiz5NsMMYQ0zRkF/dY7SlxKbSJC63vYIOTWoz6L8n1PBPXNfAniGH7F5R2Uf14Mk4qBMk+hYQzIQnZefWuvugQK/b7AQ+D1odRHmNf8Syxs7qoXxkpPylxX9Pjxu8Nto81qkm93g/CBrDONnnnzYNT3lmPmY1ua9u/Cc+igwFcrUaIgYHB+XWnXb3jgzyqWy1HgEsOA2QeNQRqViP+IAQx0PRcFk5t2M92kBna0o3u1Xd3We4m3S+snKbsEtlQ4U0yKxYj5hVC+aw/QE+co2g7k7gRdGbtVoz0uW9pnvrnBmABo7b1Ze3cwi+Q+N5tsfWVnaCKk/8afQlS6WeUSel3v92Od0C4FfX9iRrTPYIeOAbT6qsfQ5lZ5HDF5K3PQdI3i2vny0ZqOLBzKOOozDG5dCR0+1P7C1dDl0oaPC+uunNpzN8v/2+yqjFH0shdbC8hhxzB3Q5qytQUfHsc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(346002)(366004)(396003)(39840400004)(376002)(136003)(36756003)(38100700002)(6512007)(6666004)(41300700001)(38350700002)(44832011)(478600001)(8676002)(4326008)(2616005)(66946007)(66556008)(66476007)(6506007)(2906002)(54906003)(86362001)(1076003)(6486002)(8936002)(186003)(5660300002)(7416002)(316002)(83380400001)(26005)(52116002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?YBenDUTiHjDqa4HdcaMFalebkuNGODVBJcd3vQ9nYa0g8O9R8lXNQEWrKzaf?=
+ =?us-ascii?Q?9NLlAi83E8ve4ahtwW68Jpa0bb4a/ibyeG6Qh1FOkYfUDbBhRRqH5DrJOfIG?=
+ =?us-ascii?Q?g1UUkmF6wVLbUyaDmgfr+cykOQ6CQpn/hOyLIL9aH67F/hQxmJbrae9prBae?=
+ =?us-ascii?Q?ABNsRBNX+HKpDEtzwSogMpNrssusdth55xNaKOiSoL89h8JpvzO1+jaqqCUr?=
+ =?us-ascii?Q?QLjcWS8okSPn2fGsAmcDw/8FnTrqyHPCyVGXtDaEMixkgsjbU6HucNKF71+o?=
+ =?us-ascii?Q?hPEzZVtMJiZv1HKzmWXyN1eQgE92myVAHSs6eOeSXz/gGzxoIDC4sPf2zCPf?=
+ =?us-ascii?Q?qyqzlj0nZIWkPgxUIO0LhfEiofUT32y4OZ6Wmvq1xa13uAgup/gU8B80QDNl?=
+ =?us-ascii?Q?rH0ihzjhP1ufgZnKbLqGRPRMS1WRq+wzI56tmdjd/GicFAlsgkita/uB3uCG?=
+ =?us-ascii?Q?ntQ4TgkrVCJ9+zT8TttVUuSCyp9ZxQuVmCFBoXc2qzhNDB9GiRNJLPyTRPVZ?=
+ =?us-ascii?Q?RzFR2gDYbZcA9QizzPviNFnYlhZhHoZJ2ddsgEAg0nOvKO7P3kB+fmlZEeX6?=
+ =?us-ascii?Q?IQGh7mg+HWlK/va8o0RkGHtVinotkcRpfSYLeiOhaPLE4s09DtM7Ld3wQ4Ac?=
+ =?us-ascii?Q?M/ol6tXy20G2aj+8bwbuKCKsQ4ocGXj9OpcRpUjiwkGIUQYE18CWzFcN3EUO?=
+ =?us-ascii?Q?5FR0IaI6fGNqhIwhNsyknhNOqo5XpNbWSG1N8pnTzUhQYoqETxRrLgQ3SJc1?=
+ =?us-ascii?Q?3u2W375KTRSIjy1nRwFt7Yp/I1gTHtWNmvvYdqMF1UCfXWGwRoTXSoHV7nux?=
+ =?us-ascii?Q?r09OGCuRxWW6MaojhVGUxtv+gxciDp1IwfS9q7JKTIrqsgRPqEKSJm1/23Z3?=
+ =?us-ascii?Q?OVYlcxYxCKxejEXKa8MM/UyvMsh+7TIPbjUZx9sOk8lSROLfZYICjYkTFRd/?=
+ =?us-ascii?Q?Zet21l+J6DGZXnuA95GG9110LpUX57FjhbbcVGhZYlRiyjqpwT5LBsdQj0zQ?=
+ =?us-ascii?Q?4YZA3ib5oeJqxZseGQqSAXvi0EaTDCw+p/vlkdeowKvUF9FcnwkpGgVEuYce?=
+ =?us-ascii?Q?fFouPBY1ip7gZNYc6I43xp1wwuUsSElvusMWwXYrRsKkEzSRTtb7GJZGg6ce?=
+ =?us-ascii?Q?Sl8lh+DEIDaW0dOM38BfZBIOxh5z+RAXPleMCROXjVgmezq423kRm6585sjK?=
+ =?us-ascii?Q?dHkFcd/WKzXuEW9b8jKUcxEgwpaqByhqrhI4atwUTiHLuPduPkkTo9scNDZ4?=
+ =?us-ascii?Q?0TIg8Ji4JXtJh2nG7yC3DcswkDadF3YPflSeIHxmCbzZCvDS2FX7ToI72SHs?=
+ =?us-ascii?Q?QMn5uOeNTGr2siV21RVX+yIITVy5cWuUWYLT0l7Pks1omPtR6w3OFSdDFZXQ?=
+ =?us-ascii?Q?ZPGNLLp6Oc2i9dyMF1QgHol210ybw3T5NbeGHlLl00GMFcCEh0yrGzAWz2wh?=
+ =?us-ascii?Q?x5fcO/zErb1/cF0dSIuDqfAh5jF/Z7z7Vy3qLhyTwPKHmRqI8c6kBeH7B+Mf?=
+ =?us-ascii?Q?f4FSB1aXmTgfiYiuVqLz08ihOXyXnO/cNmIqIxy3i6SnC5Earg9IChGQOP2i?=
+ =?us-ascii?Q?ZtL2hlxeGlb23U/1gWWvMCFnPzz75kMZF4QIrJymuq13Ybnh22x0iOBffavx?=
+ =?us-ascii?Q?cw=3D=3D?=
+X-OriginatorOrg: in-advantage.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec780eab-7c18-4620-8fa3-08da58dea344
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2022 08:17:27.3384
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: w/IileGREFi//JGX6+l9K34a+NrLZPCt1QOuFwxTbtgBBubVtTBJhJ+w1MbeFBBN5W/69N3rV9wcceZpuZ7IM4oOlVXgZ1gs2AlEmQL2VLI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5891
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 22-06-27 12:11:31, Jesse Taube wrote:
->
->
-> On 6/27/22 09:32, Abel Vesa wrote:
-> > On 22-06-26 02:45:18, Jesse Taube wrote:
-> > > The i.MXRT1170 has a pll that has the multiplier bits inverted and
-> > > cannot be changed add IMX_PLLV3_GENERICV2.
-> > >
-> > > The i.MXRT1170 also has the lock bit moved as well as the
-> > > power bit inverted the power bit also is in different locations on each
-> > > pll control register.
-> > >
-> > > Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> > > ---
-> > > V1 -> V2:
-> > >   - Nothing done
-> > > V2 -> V3:
-> > >   - Nothing done
-> > > V3 -> V4:
-> > >   - Nothing done
-> > > ---
-> > >   drivers/clk/imx/clk-pllv3.c | 57 +++++++++++++++++++++++++++++++++++--
-> > >   drivers/clk/imx/clk.h       |  4 +++
-> > >   2 files changed, 59 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-> > > index eea32f87c60a..740412ea2f7e 100644
-> > > --- a/drivers/clk/imx/clk-pllv3.c
-> > > +++ b/drivers/clk/imx/clk-pllv3.c
-> > > @@ -23,6 +23,7 @@
-> > >
-> > >   #define BM_PLL_POWER		(0x1 << 12)
-> > >   #define BM_PLL_LOCK		(0x1 << 31)
-> > > +#define BM_PLL_LOCK_V2		(0x1 << 29)
-> > >   #define IMX7_ENET_PLL_POWER	(0x1 << 5)
-> > >   #define IMX7_DDR_PLL_POWER	(0x1 << 20)
-> > >
-> > > @@ -34,6 +35,7 @@
-> > >    * @base:	 base address of PLL registers
-> > >    * @power_bit:	 pll power bit mask
-> > >    * @powerup_set: set power_bit to power up the PLL
-> > > + * @lock_bit:	 pll lock bit mask
-> > >    * @div_mask:	 mask of divider bits
-> > >    * @div_shift:	 shift of divider bits
-> > >    * @ref_clock:	reference clock rate
-> > > @@ -48,6 +50,7 @@ struct clk_pllv3 {
-> > >   	void __iomem	*base;
-> > >   	u32		power_bit;
-> > >   	bool		powerup_set;
-> > > +	u32		lock_bit;
-> > >   	u32		div_mask;
-> > >   	u32		div_shift;
-> > >   	unsigned long	ref_clock;
-> > > @@ -65,7 +68,7 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
-> > >   	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
-> > >   		return 0;
-> > >
-> > > -	return readl_relaxed_poll_timeout(pll->base, val, val & BM_PLL_LOCK,
-> > > +	return readl_relaxed_poll_timeout(pll->base, val, val & pll->lock_bit,
-> > >   					  500, PLL_LOCK_TIMEOUT);
-> > >   }
-> > >
-> > > @@ -101,7 +104,7 @@ static int clk_pllv3_is_prepared(struct clk_hw *hw)
-> > >   {
-> > >   	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-> > >
-> > > -	if (readl_relaxed(pll->base) & BM_PLL_LOCK)
-> > > +	if (readl_relaxed(pll->base) & pll->lock_bit)
-> > >   		return 1;
-> > >
-> > >   	return 0;
-> > > @@ -155,6 +158,39 @@ static const struct clk_ops clk_pllv3_ops = {
-> > >   	.set_rate	= clk_pllv3_set_rate,
-> > >   };
-> > >
-> > > +static int clk_pllv3_genericv2_set_rate(struct clk_hw *hw, unsigned long rate,
-> > > +		unsigned long parent_rate)
-> > > +{
-> > > +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-> > > +	u32 val, div;
-> > > +
-> > > +	div = (readl_relaxed(pll->base) >> pll->div_shift) & pll->div_mask;
-> > > +	val = (div == 0) ? parent_rate * 22 : parent_rate * 20;
-> > > +
-> > > +	if (rate == val)
-> > > +		return 0;
-> > > +
-> > > +	return -EINVAL;
-> > > +}
-> > > +
-> > > +static unsigned long clk_pllv3_genericv2_recalc_rate(struct clk_hw *hw,
-> > > +					   unsigned long parent_rate)
-> > > +{
-> > > +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-> > > +	u32 div = (readl_relaxed(pll->base) >> pll->div_shift)  & pll->div_mask;
-> > > +
-> > > +	return (div == 0) ? parent_rate * 22 : parent_rate * 20;
-> > > +}
-> > > +
-> > > +static const struct clk_ops clk_pllv3_genericv2_ops = {
-> > > +	.prepare	= clk_pllv3_prepare,
-> > > +	.unprepare	= clk_pllv3_unprepare,
-> > > +	.is_prepared	= clk_pllv3_is_prepared,
-> > > +	.recalc_rate	= clk_pllv3_genericv2_recalc_rate,
-> > > +	.round_rate	= clk_pllv3_round_rate,
-> > > +	.set_rate	= clk_pllv3_genericv2_set_rate,
-> > > +};
-> > > +
-> > >   static unsigned long clk_pllv3_sys_recalc_rate(struct clk_hw *hw,
-> > >   					       unsigned long parent_rate)
-> > >   {
-> > > @@ -407,6 +443,13 @@ static const struct clk_ops clk_pllv3_enet_ops = {
-> > >   	.recalc_rate	= clk_pllv3_enet_recalc_rate,
-> > >   };
-> > >
-> > > +void imx_clk_hw_pll3_powerbit(struct clk_hw *hw, u8 shift)
-> > > +{
-> > > +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-> > > +
-> > > +	pll->power_bit = shift;
-> > > +}
-> > > +
-> >
-> > I can see why you need this, but I think the approach is not quite
-> > right.
->
-> I wasn't sure if modifying the function like that was appropriate for this,
-> but sense it is I will do like you said.
->
-> > I suggest we rename the imx_clk_hw_pllv3 to __imx_clk_hw_pllv3 and add
-> > the power_bit parameter to it (and set it accordingly inside).
-> >
-> > Then we should do the following in imx/clk.h:
-> >
-> > #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,	\
-> > 				bypass1, bypass2, base, flags)		\
-> > 	__imx_clk_hw_pllv3(name, parent_names, num_parents, parent,	\
-> > 				bypass1, bypass2, base, flags, BM_PLL_POWER)
->
-> One problem BM_PLL_POWER will have to be in imx/clk.h, but then it will be
-> the only macro like it in the file, is line 9 ok for it.
-> I could also make a function instead of a macro.
->
+Work is being done to allow external control of Ocelot chips. When pinctrl
+drivers are used internally, it wouldn't make much sense to allow them to
+be loaded as modules. In the case where the Ocelot chip is controlled
+externally, this scenario becomes practical.
 
-Line 9 is OK. #define will do.
+Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+---
+ drivers/pinctrl/Kconfig          | 2 +-
+ drivers/pinctrl/pinctrl-ocelot.c | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-There are macros like that for the composite clocks too.
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index f52960d2dfbe..257b06752747 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -311,7 +311,7 @@ config PINCTRL_MICROCHIP_SGPIO
+ 	  LED controller.
+ 
+ config PINCTRL_OCELOT
+-	bool "Pinctrl driver for the Microsemi Ocelot and Jaguar2 SoCs"
++	tristate "Pinctrl driver for the Microsemi Ocelot and Jaguar2 SoCs"
+ 	depends on OF
+ 	depends on HAS_IOMEM
+ 	select GPIOLIB
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index 5f4a8c5c6650..5554c3014448 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -1889,6 +1889,7 @@ static const struct of_device_id ocelot_pinctrl_of_match[] = {
+ 	{ .compatible = "microchip,lan966x-pinctrl", .data = &lan966x_desc },
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, ocelot_pinctrl_of_match);
+ 
+ static struct regmap *ocelot_pinctrl_create_pincfg(struct platform_device *pdev)
+ {
+@@ -1985,3 +1986,6 @@ static struct platform_driver ocelot_pinctrl_driver = {
+ 	.probe = ocelot_pinctrl_probe,
+ };
+ builtin_platform_driver(ocelot_pinctrl_driver);
++
++MODULE_DESCRIPTION("Ocelot Chip Pinctrl Driver");
++MODULE_LICENSE("Dual MIT/GPL");
+-- 
+2.25.1
 
-> thanks,
-> Jesse Taube
-> > And then, the i.MXRT1170 can use the __imx_clk_hw_pllv3 and pass the
-> > right power_bit shift.
-> >
-> > >   struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
-> > >   			  const char *parent_name, void __iomem *base,
-> > >   			  u32 div_mask)
-> > > @@ -422,10 +465,20 @@ struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
-> > >   		return ERR_PTR(-ENOMEM);
-> > >
-> > >   	pll->power_bit = BM_PLL_POWER;
-> > > +	pll->lock_bit = BM_PLL_LOCK;
-> > >   	pll->num_offset = PLL_NUM_OFFSET;
-> > >   	pll->denom_offset = PLL_DENOM_OFFSET;
-> > >
-> > >   	switch (type) {
-> > > +	case IMX_PLLV3_GENERICV2:
-> > > +		pll->lock_bit = BM_PLL_LOCK_V2;
-> > > +		pll->powerup_set = true;
-> > > +		ops = &clk_pllv3_genericv2_ops;
-> > > +		break;
-> > > +	case IMX_PLLV3_SYSV2:
-> > > +		pll->lock_bit = BM_PLL_LOCK_V2;
-> > > +		pll->powerup_set = true;
-> > > +		fallthrough;
-> > >   	case IMX_PLLV3_SYS:
-> > >   		ops = &clk_pllv3_sys_ops;
-> > >   		break;
-> > > diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> > > index 5061a06468df..31e017248602 100644
-> > > --- a/drivers/clk/imx/clk.h
-> > > +++ b/drivers/clk/imx/clk.h
-> > > @@ -242,6 +242,8 @@ struct clk_hw *imx_clk_hw_sscg_pll(const char *name,
-> > >
-> > >   enum imx_pllv3_type {
-> > >   	IMX_PLLV3_GENERIC,
-> > > +	IMX_PLLV3_GENERICV2,
-> > > +	IMX_PLLV3_SYSV2,
-> > >   	IMX_PLLV3_SYS,
-> > >   	IMX_PLLV3_USB,
-> > >   	IMX_PLLV3_USB_VF610,
-> > > @@ -253,6 +255,8 @@ enum imx_pllv3_type {
-> > >   	IMX_PLLV3_AV_IMX7,
-> > >   };
-> > >
-> > > +void imx_clk_hw_pll3_powerbit(struct clk_hw *hw, u8 shift);
-> > > +
-> > >   struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
-> > >   		const char *parent_name, void __iomem *base, u32 div_mask);
-> > >
-> > > --
-> > > 2.36.1
-> > >
