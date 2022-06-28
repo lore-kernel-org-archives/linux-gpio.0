@@ -2,147 +2,87 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBDCCCA479
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 14:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2D4C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 14:10:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346533AbiF1OI7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Jun 2022 10:08:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48652 "EHLO
+        id S240696AbiF1OKB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Jun 2022 10:10:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230216AbiF1OI5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 10:08:57 -0400
-X-Greylist: delayed 502 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 28 Jun 2022 07:08:55 PDT
-Received: from sym2.noone.org (sym.noone.org [IPv6:2a01:4f8:120:4161::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E852934BB9;
-        Tue, 28 Jun 2022 07:08:55 -0700 (PDT)
-Received: by sym2.noone.org (Postfix, from userid 1002)
-        id 4LXR7Z2Gb9zvjfm; Tue, 28 Jun 2022 16:00:26 +0200 (CEST)
-Date:   Tue, 28 Jun 2022 16:00:26 +0200
-From:   Tobias Klauser <tklauser@distanz.ch>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Al Cooper <alcooperx@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Vineet Gupta <vgupta@kernel.org>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Gabriel Somlo <gsomlo@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Pali Rohar <pali@kernel.org>,
-        Andreas Farber <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Hammer Hsieh <hammerh0314@gmail.com>,
-        Peter Korsgaard <jacmet@sunsite.dk>,
-        Timur Tabi <timur@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rob Herring <robh@kernel.org>,
-        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
-        kevin hilman <khilman@kernel.org>,
-        ulf hansson <ulf.hansson@linaro.org>,
-        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
-        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
-        andrew lunn <andrew@lunn.ch>,
-        heiner kallweit <hkallweit1@gmail.com>,
-        eric dumazet <edumazet@google.com>,
-        jakub kicinski <kuba@kernel.org>,
-        paolo abeni <pabeni@redhat.com>,
-        linus walleij <linus.walleij@linaro.org>,
-        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
-        david ahern <dsahern@kernel.org>, kernel-team@android.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-actions@lists.infradead.org,
-        linux-unisoc@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        sparclinux@vger.kernel.org, Ahmad Fatoum <a.fatoum@pengutronix.de>
-Subject: Re: [PATCH v1 2/2] serial: Set probe_no_timeout for all DT based
- drivers
-Message-ID: <20220628140025.qpom64ptru4ub6fu@distanz.ch>
-References: <20220628020110.1601693-1-saravanak@google.com>
- <20220628020110.1601693-3-saravanak@google.com>
+        with ESMTP id S231435AbiF1OKB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 10:10:01 -0400
+Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65D533587C
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Jun 2022 07:10:00 -0700 (PDT)
+Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-317741c86fdso118395897b3.2
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Jun 2022 07:10:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BU/IDUxXLTGFY20zp82vJFbU25b/Q168KB0wOqs4ZkQ=;
+        b=TXxFjrNvO9VchIPwytsio/j+Qp7P80EWO3VpEWfjOcMuRrZO3TOeSZdOYut6fVXkP9
+         Br2TvVTIO82S5VbGrWL1TcQXVL9FytLbeB8XDsn+faTWBLG0sFP7E3redrO7g8GU/asu
+         FA03xfpp3YGGcbeC8/iHmzpCujF/74fR8ZE9Djfv/WXAVTGqFXlLmALr0joTjsvF+6gq
+         jL9rYFfwz1QSjHUCfj3sJjmYiIgJtENY4knais5Anp9g3jwrRJ9wx5NW8eM8BhNWY+nC
+         zizxmhlcUnYZ0m1akP9A2MQDW0TbtLWL946RMoL1oGXjNMnRlGHnT4TWxXKpWAkgOmV2
+         tZlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BU/IDUxXLTGFY20zp82vJFbU25b/Q168KB0wOqs4ZkQ=;
+        b=025vv6Lcih1AnmV5g0sTEZ8rq2sotjmwSg3dgfHhDwhzLt/YS1bO3QJQFK0p3/IPBh
+         CltKIyo5uCUcCOo2uuoFRNIcnZ4+18Uzk0VI2JdbQPGy/QiGoMgUrijRld13EC39Kpr4
+         8I6ZtBYYFRTKRLEiETQvedWlyo1YjYJ5ltaTkZL9biI6AZMgyI4uKR9jgQC6P7ysoa4T
+         r/scaHUUvw6ias9xOuP/nef1TXaVoW2vSQhbuR1Oolu0LlK6a8qT1T47OE1f0TEc4sZ/
+         tyjzqQr5ks3LrdAnIX/tzccQm0pPZjbx8KjVsNEkPrBDrVDn0ra2uB/kvfH3TnLeFNTU
+         Prmg==
+X-Gm-Message-State: AJIora/EO67ILp+RBnyejUyuf1YHOIfdm6nZwiNF84fvBkhvBYYub7YC
+        zMY4J4QHEeBEzRBgrTOuOFDO7lwFX9vKp0g7h2OQvgOE8qs=
+X-Google-Smtp-Source: AGRyM1v/XBqba54NNrJu6tK0BY1yIm0LIoGofnP8HbwwTZ8vAsy+I/hF6qk5BvHUbCF0ZbE8uihWemMKyVj8qs96oSA=
+X-Received: by 2002:a81:6587:0:b0:318:38c2:2fb1 with SMTP id
+ z129-20020a816587000000b0031838c22fb1mr21833224ywb.118.1656425399521; Tue, 28
+ Jun 2022 07:09:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220628020110.1601693-3-saravanak@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20220627092425.98730-1-linus.walleij@linaro.org> <fda47a80-605e-ee39-d7a0-d48d40fc8840@quicinc.com>
+In-Reply-To: <fda47a80-605e-ee39-d7a0-d48d40fc8840@quicinc.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 28 Jun 2022 16:09:48 +0200
+Message-ID: <CACRpkdYwc33k1U9RpFpy4L+9fAqkCb=uOWG8gyBTC-m865wYBQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: sc7280: Fix compile bug
+To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Cc:     linux-gpio@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2022-06-28 at 04:01:03 +0200, Saravana Kannan <saravanak@google.com> wrote:
-> diff --git a/drivers/tty/serial/8250/8250_acorn.c b/drivers/tty/serial/8250/8250_acorn.c
-> index 758c4aa203ab..5a6f2f67de4f 100644
-> --- a/drivers/tty/serial/8250/8250_acorn.c
-> +++ b/drivers/tty/serial/8250/8250_acorn.c
-> @@ -114,7 +114,6 @@ static const struct ecard_id serial_cids[] = {
->  static struct ecard_driver serial_card_driver = {
->  	.probe		= serial_card_probe,
->  	.remove		= serial_card_remove,
-> -	.id_table	= serial_cids,
+On Mon, Jun 27, 2022 at 11:30 AM Srinivasa Rao Mandadapu
+<quic_srivasam@quicinc.com> wrote:
+> On 6/27/2022 2:54 PM, Linus Walleij wrote:
+> Thanks for Your Support Linus.
 
-Is this change intentional? All other drivers are only changed to set
-.probe_no_time and I don't see anything mentioned in the commit message
-re. this driver's change.
+> > The idea was right but the code was breaking in next.
+> > I assume some unstaged commit was involed. Fix it up.
+> >
+> > Cc: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+> > Cc: Stephen Boyd <swboyd@chromium.org>
+> > Fixes: 36fe26843d6d ("pinctrl: qcom: sc7280: Add clock optional check for ADSP bypass targets")
+> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+(...)
+
+> There is another problem with this patch.  As lpi_pinctrl_variant_data
+> is const type,  unable to update this variable.
+
+Ooops
+
+> So I have posted the fix patch series v5. Please check and let me me if
+> anything to be done.
+
+I have already pulled other changes on top so I would have to revert
+the patches, can you inspect what is on my "devel" branch and
+just send a fixup patch on top?
+
+Yours,
+Linus Walleij
