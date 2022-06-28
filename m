@@ -2,186 +2,170 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2100EC433EF
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 08:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D03C43334
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 11:15:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238572AbiF1Iro (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Jun 2022 04:47:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43932 "EHLO
+        id S1343883AbiF1LPV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Jun 2022 07:15:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243055AbiF1Irn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 04:47:43 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1CD92E9C6
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Jun 2022 01:47:42 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id g26so24264552ejb.5
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Jun 2022 01:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OfSJauzY4Qsf9NGgrzwL7bM0CuJF/fuTqwiw9O5wis4=;
-        b=g+EYjp2ZGt4uyT4eDCNYSefmknuwl+TY9PLU2sNshggZ7Po3+XMKog32K2FjCvNaL9
-         CYWW9PXFmRQ8DDQPgsTHP+iWEsyEbWjaNLxlDAQiCrl2L+SKtM8awWz3O3+ZLb4HIhnK
-         Mct7GomjbKTtSVHaIWyb1bR6rOnx5I0C7uBK/6bnUM+AAEe3v14SOvFTuaN9lS7OBS8l
-         TCHvnooSQ/Jly1TWyvnj4WaIxl11UUY2Rj24odfExokiE9Ewl+Q8elJUZ7C94eKKeO0F
-         3QPaU8BtfCkN7VOu2ePsGgyej2aTTVqTQvaVWlIsr9MgExJ8auNCCr9Hw3tuZNKwdOQb
-         0xZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OfSJauzY4Qsf9NGgrzwL7bM0CuJF/fuTqwiw9O5wis4=;
-        b=f5JlNN526CzIwV539IKW+YHOIqw7og+TO4EEqVhDbV2PGLhCKXtTJ4t+Sxz96Oq9NC
-         ivIw6IhzVV7v5DXM/iZOgOsbeqLtNaZEY9IY8jSfjdBvO+ocfF/pNPz58fwO6/zoaT7O
-         mta6Honez+Wonk/tido7rWM9c6ml58EGzWdmlbfe9E3y2i9/kAEhMO8WlXlRpHCh/FHO
-         UB/kU9Nmmfn4O5HVD/afGvDTIjQsczHqjQ5xSI2YM6icea1VCxIBLABFcUeCwKld29Pa
-         otv5z8T86JeK++krbkdr6Yp8VuQegi8xcTabO/IOhu+/EUyn5JDTC2lWiG1h5p/Rqm6T
-         7k1w==
-X-Gm-Message-State: AJIora9SOcRIM+njcvpCEv7JVoWnC7kI0j9a9aTRw3TYNOTAfNSG8/hj
-        S8/nbEWIZUwIS5dr4PIc2IX34EOD0Y776kY4AXKwUQ==
-X-Google-Smtp-Source: AGRyM1vbQODJxKVpvDyw8A9xeMfTpU8jMfDHpncJ1AgtBXczGaBzm2ogMT76QEyPBkYk1HMf6KO6BIjUmXAzyXP9Vbc=
-X-Received: by 2002:a17:906:434f:b0:711:eb76:c320 with SMTP id
- z15-20020a170906434f00b00711eb76c320mr17103044ejm.636.1656406061261; Tue, 28
- Jun 2022 01:47:41 -0700 (PDT)
+        with ESMTP id S230489AbiF1LPU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 07:15:20 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 631AC2CE07;
+        Tue, 28 Jun 2022 04:15:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1656414919; x=1687950919;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VAm8GqMxSVbXa5l11MJLdH5RISvLfde2v1QEXHVyiio=;
+  b=mZq8HQm1gvx+ndU7H/4UXDpllHvZVhrQ1XAiisz3B81fZx3onExWwa6O
+   HVQxDRJDl50jvnbmrxEchDmq6UY8/i+ttGS+eDncCPGtynlXDroamI9ti
+   Uq51RMcF+qY6EIE39PfvMcnXDxErEvuU2MDeFHDV+KJ2SAyoSQ3S2hSqI
+   dLdVcrslX3VZW+FTuv6drbFpkgP25VRuSTGtqxOLLsDysNrBVHYiSkTT6
+   Ea8A9VKdMgtpUdr7diMyFGcq3zGsVKsEyAHor2tTs2WoAdvklRfh8+/gy
+   205fk4PmBhGiS2cOmHsS+LF9r8uF1CXZqm9uam08rIymaHIDGHF6iO5Pp
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10391"; a="281749895"
+X-IronPort-AV: E=Sophos;i="5.92,227,1650956400"; 
+   d="scan'208";a="281749895"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 04:15:19 -0700
+X-IronPort-AV: E=Sophos;i="5.92,227,1650956400"; 
+   d="scan'208";a="693067914"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 04:15:16 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1o69BV-000wl7-8C;
+        Tue, 28 Jun 2022 14:15:09 +0300
+Date:   Tue, 28 Jun 2022 14:15:09 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Al Cooper <alcooperx@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tobias Klauser <tklauser@distanz.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Vineet Gupta <vgupta@kernel.org>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pali Rohar <pali@kernel.org>,
+        Andreas Farber <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Peter Korsgaard <jacmet@sunsite.dk>,
+        Timur Tabi <timur@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rob Herring <robh@kernel.org>,
+        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
+        kevin hilman <khilman@kernel.org>,
+        ulf hansson <ulf.hansson@linaro.org>,
+        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
+        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
+        andrew lunn <andrew@lunn.ch>,
+        heiner kallweit <hkallweit1@gmail.com>,
+        eric dumazet <edumazet@google.com>,
+        jakub kicinski <kuba@kernel.org>,
+        paolo abeni <pabeni@redhat.com>,
+        linus walleij <linus.walleij@linaro.org>,
+        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
+        david ahern <dsahern@kernel.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-actions@lists.infradead.org,
+        linux-unisoc@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        sparclinux@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] Fix console probe delay when stdout-path isn't set
+Message-ID: <Yrrivbk2NSK3loBW@smile.fi.intel.com>
+References: <20220628020110.1601693-1-saravanak@google.com>
 MIME-Version: 1.0
-References: <20220628084226.472035-1-brgl@bgdev.pl>
-In-Reply-To: <20220628084226.472035-1-brgl@bgdev.pl>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 28 Jun 2022 10:47:30 +0200
-Message-ID: <CAMRc=Me9a0rgCRoxr1JviPdqHZA6Lf2_S98j3RuRy-z81YmP6A@mail.gmail.com>
-Subject: Re: [libgpiod v2][PATCH v2 0/5] bindings: implement python bindings
- for libgpiod v2
-To:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darrien <darrien@freenet.de>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Jiri Benc <jbenc@upir.cz>, Joel Savitz <joelsavitz@gmail.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220628020110.1601693-1-saravanak@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 10:42 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> This series adds python bindings for libgpiod v2. The series is split
-> into several patches for easier review.
->
-> In general the python bindings follow what we did for C++ in terms of class
-> layout except that we leverage python's flexibility to reduce the number of
-> method variants by allowing different types of arguments.
->
-> Because python doesn't have RAII, unlike C++, we provide a module-level
-> request_lines() helper as gpiod.Chip(path).request_lines(...) one-liner
-> could lead to the chip left dangling even after the last reference is
-> dropped.
->
-> Because python forces us to dynamically allocate objects all the time even
-> for fundamental types (which are also immutable) there's no point in trying
-> to make the EdgeEventBuffer avoid copying the events like we did in C++
-> for better performance. Python simply isn't designed around speed.
->
-> v1 -> v2:
-> - all methods now accept keyword arguments even for mandatory positional ones
-> - added a global request_lines() function that enables easy one-liner liner
->   requests
-> - improve and unify the pydoc format
-> - many smaller tweaks and fixes
+On Mon, Jun 27, 2022 at 07:01:01PM -0700, Saravana Kannan wrote:
+> Since the series that fixes console probe delay based on stdout-path[1] got
+> pulled into driver-core-next, I made these patches on top of them.
+> 
+> Even if stdout-path isn't set in DT, this patch should take console
+> probe times back to how they were before the deferred_probe_timeout
+> clean up series[2].
 
-One more thing I forgot: one can now read edge-events without the need
-to instantiate the buffer first - it will be created automatically and
-returned from gpiod.LineRequest.read_edge_event().
+Are you sure it's only limited to the serial drivers?
+(just asking, I don't know myself the answer)
 
-That allows users to do:
+-- 
+With Best Regards,
+Andy Shevchenko
 
-for event in req.read_edge_event():
-  do_something(event)
 
-Bart
-
->
-> Bartosz Golaszewski (5):
->   bindings: python: remove old version
->   bindings: python: enum: add a piece of common code for using python's
->     enums from C
->   bindings: python: add examples for v2 API
->   bindings: python: add tests for v2 API
->   bindings: python: add the implementation for v2 API
->
->  bindings/python/.gitignore                    |    1 +
->  bindings/python/Makefile.am                   |   19 +-
->  bindings/python/chip-info.c                   |  126 +
->  bindings/python/chip.c                        |  606 ++++
->  bindings/python/edge-event-buffer.c           |  330 ++
->  bindings/python/edge-event.c                  |  191 ++
->  bindings/python/enum/Makefile.am              |    9 +
->  bindings/python/enum/enum.c                   |  208 ++
->  bindings/python/enum/enum.h                   |   24 +
->  bindings/python/examples/gpiodetect.py        |   13 +-
->  bindings/python/examples/gpiofind.py          |   12 +-
->  bindings/python/examples/gpioget.py           |   28 +-
->  bindings/python/examples/gpioinfo.py          |   39 +-
->  bindings/python/examples/gpiomon.py           |   53 +-
->  bindings/python/examples/gpioset.py           |   36 +-
->  bindings/python/exception.c                   |  182 ++
->  bindings/python/gpiodmodule.c                 | 2662 -----------------
->  bindings/python/info-event.c                  |  175 ++
->  bindings/python/line-config.c                 | 1373 +++++++++
->  bindings/python/line-info.c                   |  286 ++
->  bindings/python/line-request.c                |  803 +++++
->  bindings/python/line.c                        |  239 ++
->  bindings/python/module.c                      |  557 ++++
->  bindings/python/module.h                      |   58 +
->  bindings/python/request-config.c              |  320 ++
->  bindings/python/tests/Makefile.am             |   15 +-
->  bindings/python/tests/cases/__init__.py       |   12 +
->  bindings/python/tests/cases/tests_chip.py     |  157 +
->  .../python/tests/cases/tests_chip_info.py     |   59 +
->  .../python/tests/cases/tests_edge_event.py    |  279 ++
->  .../python/tests/cases/tests_info_event.py    |  135 +
->  .../python/tests/cases/tests_line_config.py   |  254 ++
->  .../python/tests/cases/tests_line_info.py     |   90 +
->  .../python/tests/cases/tests_line_request.py  |  345 +++
->  bindings/python/tests/cases/tests_misc.py     |   53 +
->  .../tests/cases/tests_request_config.py       |   77 +
->  bindings/python/tests/gpiod_py_test.py        |  827 +----
->  bindings/python/tests/gpiomockupmodule.c      |  309 --
->  bindings/python/tests/gpiosimmodule.c         |  434 +++
->  configure.ac                                  |    3 +-
->  40 files changed, 7517 insertions(+), 3882 deletions(-)
->  create mode 100644 bindings/python/.gitignore
->  create mode 100644 bindings/python/chip-info.c
->  create mode 100644 bindings/python/chip.c
->  create mode 100644 bindings/python/edge-event-buffer.c
->  create mode 100644 bindings/python/edge-event.c
->  create mode 100644 bindings/python/enum/Makefile.am
->  create mode 100644 bindings/python/enum/enum.c
->  create mode 100644 bindings/python/enum/enum.h
->  create mode 100644 bindings/python/exception.c
->  delete mode 100644 bindings/python/gpiodmodule.c
->  create mode 100644 bindings/python/info-event.c
->  create mode 100644 bindings/python/line-config.c
->  create mode 100644 bindings/python/line-info.c
->  create mode 100644 bindings/python/line-request.c
->  create mode 100644 bindings/python/line.c
->  create mode 100644 bindings/python/module.c
->  create mode 100644 bindings/python/module.h
->  create mode 100644 bindings/python/request-config.c
->  create mode 100644 bindings/python/tests/cases/__init__.py
->  create mode 100644 bindings/python/tests/cases/tests_chip.py
->  create mode 100644 bindings/python/tests/cases/tests_chip_info.py
->  create mode 100644 bindings/python/tests/cases/tests_edge_event.py
->  create mode 100644 bindings/python/tests/cases/tests_info_event.py
->  create mode 100644 bindings/python/tests/cases/tests_line_config.py
->  create mode 100644 bindings/python/tests/cases/tests_line_info.py
->  create mode 100644 bindings/python/tests/cases/tests_line_request.py
->  create mode 100644 bindings/python/tests/cases/tests_misc.py
->  create mode 100644 bindings/python/tests/cases/tests_request_config.py
->  delete mode 100644 bindings/python/tests/gpiomockupmodule.c
->  create mode 100644 bindings/python/tests/gpiosimmodule.c
->
-> --
-> 2.34.1
->
