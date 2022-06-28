@@ -2,125 +2,221 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69E82C43334
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 05:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 194E4C43334
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Jun 2022 06:48:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230442AbiF1F0l (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Jun 2022 01:26:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41248 "EHLO
+        id S1343636AbiF1Gs0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Jun 2022 02:48:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243952AbiF1F0j (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 01:26:39 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FB74B0C
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Jun 2022 22:26:38 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id 136so5883576pfy.10
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Jun 2022 22:26:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=f36qJNmf/YXVruFhCWFi4u3ZGzXr0MxbayqxKD7RREo=;
-        b=I5RMPNcXKgUZ4mKbO+NpJiv1PF5+Q1llp1CvN2oAWr6EDhgv5h6XL1mbgME5Z6+AxU
-         LKC3qJu9QG8M+easQ8TKld4RREXmVsmi7Zx6rtnayO9eJ8sWtWR12U9OH/WPGyR7HNxs
-         Ytv/iaTMbTgCO/0LUSzoCpiBs8IN2XxINGqXDsomEh5gvxRlB6wYtH+h0AlksyAol5tA
-         UnJqadyXOoTDZASVSMi5Q22UtaW/OSJMmw3MTgtYVt9+Rb7jJ0fSvnm9Vg0dM3JaKl/c
-         8CDpwiCXKGeb1G5gz09FECUaHD+WSlIKBKRYGblcZj0yUmJxFNeAD1VEkywsupCpL8By
-         6gOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=f36qJNmf/YXVruFhCWFi4u3ZGzXr0MxbayqxKD7RREo=;
-        b=8Iyh9RpU4um0EgqRZ/WfUrtakDTscrON6aVvJRDXIdtGqfNrP7T68zDz9DqDLcFIcL
-         WxweRQEuxWzlFt6p49RAqVlDNsJVznUQIEioJnESi6oXk13M5JQRPEMNTMImWYl7KFfW
-         w14Nu+2b2rPMoNlM1Q30SWYRkvLgWTa7iaVHOyLf+u1r1CzTrhdr0zuZvUnP8QESnS67
-         ZgcHZ8Hb35NMKAn8Wgr6MguFlClC33zRBVo50Ds5fitRrjklNVPfSFp34RNQEk5wC9XT
-         hG8M2UGj89elFDpACYbJsk5vbYMjiYhWAJixxYg668xgIoK7mpx9KA9WUIKO5veWnSWb
-         /9Ug==
-X-Gm-Message-State: AJIora9+Py8VK/viy0J1F/Zu9e9N+GixA0KtOfHxA2Io2uXx1D0GVe6k
-        x13DPskwqLrEWLF2bcOK2wursGpKlFY=
-X-Google-Smtp-Source: AGRyM1uN88zEz8/51lfhAEa1ND1Xfg+eIIFN6RIKSHZpwkRi9mldI/LdaE86Ih8gra/asa6sIufLnA==
-X-Received: by 2002:a05:6a00:2444:b0:4fd:db81:cbdd with SMTP id d4-20020a056a00244400b004fddb81cbddmr2914648pfj.32.1656393997486;
-        Mon, 27 Jun 2022 22:26:37 -0700 (PDT)
-Received: from sol (110-174-58-111.static.tpgi.com.au. [110.174.58.111])
-        by smtp.gmail.com with ESMTPSA id y16-20020a17090264d000b0016a12fab6c2sm8084927pli.307.2022.06.27.22.26.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jun 2022 22:26:36 -0700 (PDT)
-Date:   Tue, 28 Jun 2022 13:26:32 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     linux-gpio@vger.kernel.org, brgl@bgdev.pl
-Subject: Re: [libgpiod v2][PATCH 0/4] tools: line name focussed rework
-Message-ID: <20220628052632.GA24253@sol>
-References: <20220627134447.81927-1-warthog618@gmail.com>
+        with ESMTP id S243998AbiF1GsZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jun 2022 02:48:25 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05AFC11A06
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Jun 2022 23:48:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1656398905; x=1687934905;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=kdT2e/XtM3s112/JiCqkGYfCOiGDh4jTaaROz/CknQU=;
+  b=UVSKkHz+H9ZwzDI0O6oYViHvvHpWMSelXHtCz/sW+0c2H6qJuhYTT+KR
+   brx1UXM8zlxVuc9FbK+K8tgDP4injb6A1cEOL+KnYkpWmrFLQZ6zpqDkH
+   3RnkRBeosAj4m0Yy4uss35gtCAvd7gSGv1lYgomgYSG7etXLs2Ksai3Gq
+   yZyfSWpKbyeXkrYFz4gZ1mPWHjw2WZ2saPx+yR0OPnV0kWBkyKNfJX3yc
+   N34kIrxRPhjsnY0j0Spphl0COuLCKbLUA786PdlDwCtQu2lJPNySkLPeq
+   OwF3DHKvZj1G1IIL0veEwXZcuUmJVT3JWVPUkOrjP61qvg2A4adUUUIje
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10391"; a="281690477"
+X-IronPort-AV: E=Sophos;i="5.92,227,1650956400"; 
+   d="scan'208";a="281690477"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2022 23:48:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,227,1650956400"; 
+   d="scan'208";a="836548478"
+Received: from lkp-server01.sh.intel.com (HELO 68b931ab7ac1) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 27 Jun 2022 23:48:11 -0700
+Received: from kbuild by 68b931ab7ac1 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1o6518-0009eG-Ta;
+        Tue, 28 Jun 2022 06:48:10 +0000
+Date:   Tue, 28 Jun 2022 14:47:23 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
+ 7885256e5adc5b6d7cc846261711d2091484498a
+Message-ID: <62baa3fb.8H9jdFlZQSNn3PMo%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220627134447.81927-1-warthog618@gmail.com>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jun 27, 2022 at 09:44:43PM +0800, Kent Gibson wrote:
-> This patch series is an optimistic reimagining of the tools intended to
-> simplify usage for well configured systems, i.e. for systems where lines
-> can be uniquely identified by name.  In such systems the chip and offset
-> location of the line is no longer of relevance to the user, so the tools
-> should be able to operate without mentioning them.
-> e.g.
->   gpioget GPIO17
-> 
->   gpioset GPIO17=active
-> 
->   gpiomon --localtime GPIO17 GPIO18 
-> 
-> It is accepted that the kernel does not guarantee line name uniqueness
-> within the system, or even within a chip, and not all systems are well
-> configured, so the tools retain the option to identify lines by chip
-> and offset.  The hope and expectation is that over time systems will
-> become more well configured, not less, and identification of GPIO lines
-> by name will become the norm.
-> 
-> The core of the series is patch 1 which is a reworking of the tools to
-> support identifying lines by name, and to operate across multiple GPIO
-> chips if named lines are located on different chips.
-> The gpioset tool is extended to support toggling lines and interactive
-> control of line values, so some common use cases can be trivially
-> implemented from the command line.
-> e.g.
->   gpioset --toggle 500ms LED=on
-> 
-> will blink the LED line at 1Hz, indefinitely.
-> More complex outputs can be generated by adding more entries to the
-> toggle sequence:
->   gpioset --toggle 1s,2s,1s,300ms LED=on
-> 
-> Even more complex outputs can be generated by driving gpioset in
-> interactive mode from another script.
-> 
-> Those are the major changes.  A more complete list of the changes can be
-> found in the patch description.
-> 
-> Patch 2 updates and extends the tool tests to cover the reworked tools,
-> including demonstrating gpioset being driven interactively via a script.
-> 
-> The final two patches add a gpiowatch tool that monitors changes to 
-> the state line information, similar to the gpio-watch tool in the kernel,
-> and extend the test suite to cover it.
-> 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
+branch HEAD: 7885256e5adc5b6d7cc846261711d2091484498a  Merge branch 'devel' into for-next
 
-I forgot to mention that gpiofind is effectively redundant now its
-functionality has been absorbed into the other tools.
-I kept it in the patch for completeness but would be happy to remove
-it.
+elapsed time: 1778m
 
-I am also reconsidering gpioset's interactive get command.
-The get currently returns the requested set values - it does not
-query the kernel.  It may be useful to be able to do both for open-drain
-outputs.
-How about the get does a GET_VALUES, while a bare set displays the
-requested set values?
-Or would a flag on the get be clearer?
+configs tested: 146
+configs skipped: 2
 
-Cheers,
-Kent.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm64                            allyesconfig
+arm                                 defconfig
+arm                              allyesconfig
+i386                 randconfig-c001-20220627
+m68k                       m5208evb_defconfig
+sh                        sh7763rdp_defconfig
+ia64                             alldefconfig
+s390                          debug_defconfig
+arm                          gemini_defconfig
+sparc64                             defconfig
+sparc64                          alldefconfig
+mips                           xway_defconfig
+sh                        sh7785lcr_defconfig
+arm                        spear6xx_defconfig
+xtensa                    smp_lx200_defconfig
+powerpc                       holly_defconfig
+arm                          pxa910_defconfig
+mips                      maltasmvp_defconfig
+arc                        nsim_700_defconfig
+arc                           tb10x_defconfig
+sh                   sh7770_generic_defconfig
+arm                          iop32x_defconfig
+sh                           sh2007_defconfig
+arm                        multi_v7_defconfig
+powerpc                     tqm8541_defconfig
+sh                        dreamcast_defconfig
+arm                        shmobile_defconfig
+powerpc                     mpc83xx_defconfig
+sh                           se7750_defconfig
+sh                         ap325rxa_defconfig
+openrisc                 simple_smp_defconfig
+sh                          rsk7201_defconfig
+sh                          sdk7780_defconfig
+arm                            lart_defconfig
+sh                     magicpanelr2_defconfig
+mips                             allmodconfig
+sh                         ecovec24_defconfig
+arm                         cm_x300_defconfig
+riscv                    nommu_k210_defconfig
+arm                           sama5_defconfig
+arc                      axs103_smp_defconfig
+arm                       omap2plus_defconfig
+powerpc                         ps3_defconfig
+arm                        realview_defconfig
+m68k                          sun3x_defconfig
+powerpc                      bamboo_defconfig
+arc                     haps_hs_smp_defconfig
+xtensa                    xip_kc705_defconfig
+parisc                           allyesconfig
+sparc                               defconfig
+xtensa                           allyesconfig
+csky                                defconfig
+sparc                            allyesconfig
+x86_64                                  kexec
+s390                                defconfig
+s390                             allmodconfig
+arc                                 defconfig
+alpha                               defconfig
+s390                             allyesconfig
+nios2                            allyesconfig
+nios2                               defconfig
+parisc                              defconfig
+parisc64                            defconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+riscv                             allnoconfig
+i386                   debian-10.3-kselftests
+i386                              debian-10.3
+x86_64               randconfig-c001-20220627
+arm                  randconfig-c002-20220627
+ia64                             allmodconfig
+x86_64               randconfig-k001-20220627
+m68k                             allyesconfig
+m68k                             allmodconfig
+arc                              allyesconfig
+alpha                            allyesconfig
+powerpc                           allnoconfig
+mips                             allyesconfig
+powerpc                          allmodconfig
+sh                               allmodconfig
+i386                             allyesconfig
+i386                                defconfig
+x86_64               randconfig-a013-20220627
+x86_64               randconfig-a012-20220627
+x86_64               randconfig-a016-20220627
+x86_64               randconfig-a015-20220627
+x86_64               randconfig-a011-20220627
+x86_64               randconfig-a014-20220627
+i386                 randconfig-a014-20220627
+i386                 randconfig-a011-20220627
+i386                 randconfig-a012-20220627
+i386                 randconfig-a015-20220627
+i386                 randconfig-a016-20220627
+i386                 randconfig-a013-20220627
+x86_64                        randconfig-a004
+x86_64                        randconfig-a006
+s390                 randconfig-r044-20220627
+arc                  randconfig-r043-20220626
+arc                  randconfig-r043-20220627
+riscv                randconfig-r042-20220627
+x86_64                    rhel-8.3-kselftests
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                           allyesconfig
+x86_64                          rhel-8.3-func
+x86_64                           rhel-8.3-syz
+x86_64                         rhel-8.3-kunit
+
+clang tested configs:
+arm                        multi_v5_defconfig
+powerpc                     skiroot_defconfig
+powerpc                     ppa8548_defconfig
+mips                           rs90_defconfig
+arm                           spitz_defconfig
+arm                       mainstone_defconfig
+mips                       lemote2f_defconfig
+powerpc                     akebono_defconfig
+powerpc                    socrates_defconfig
+powerpc                     tqm5200_defconfig
+mips                        bcm63xx_defconfig
+arm                     am200epdkit_defconfig
+powerpc                      acadia_defconfig
+mips                           ip27_defconfig
+arm                        neponset_defconfig
+powerpc                     ksi8560_defconfig
+x86_64               randconfig-a004-20220627
+x86_64               randconfig-a006-20220627
+x86_64               randconfig-a001-20220627
+x86_64               randconfig-a005-20220627
+x86_64               randconfig-a002-20220627
+x86_64               randconfig-a003-20220627
+i386                 randconfig-a005-20220627
+i386                 randconfig-a001-20220627
+i386                 randconfig-a006-20220627
+i386                 randconfig-a004-20220627
+i386                 randconfig-a003-20220627
+i386                 randconfig-a002-20220627
+x86_64                        randconfig-a001
+x86_64                        randconfig-a003
+x86_64                        randconfig-a005
+hexagon              randconfig-r045-20220626
+hexagon              randconfig-r041-20220627
+riscv                randconfig-r042-20220626
+hexagon              randconfig-r041-20220626
+hexagon              randconfig-r045-20220627
+s390                 randconfig-r044-20220626
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
