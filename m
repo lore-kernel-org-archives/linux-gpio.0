@@ -2,83 +2,120 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C71F8C43334
-	for <linux-gpio@archiver.kernel.org>; Wed, 29 Jun 2022 07:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83CD7C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed, 29 Jun 2022 07:24:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231878AbiF2HWn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 29 Jun 2022 03:22:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38034 "EHLO
+        id S231143AbiF2HYA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 29 Jun 2022 03:24:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231135AbiF2HWm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2022 03:22:42 -0400
-Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A79E533EA1
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2022 00:22:41 -0700 (PDT)
-Received: by mail-oi1-x22e.google.com with SMTP id be10so20488810oib.7
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2022 00:22:41 -0700 (PDT)
+        with ESMTP id S230514AbiF2HYA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2022 03:24:00 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5EEA18E3A
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2022 00:23:58 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id l2so13674794pjf.1
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2022 00:23:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
-         :subject:to;
-        bh=TvfrSXu4f0TU8sJk8nHVngOGB75STSEGTvK6rVGCRBo=;
-        b=KSYNVPp/M+aBIfHacFqj11Sm5k23Er/fz5hD79lvLg2qAdMiNwn7Ieu7YNV90mA70F
-         daalhEZkwB6Apo4Ai71cvL4evznxFuW7QZ/jnNWgrXANheLoBxRLyN5sSUQiVHgCv9HR
-         97v9IV3l+QYGVehGdIPIXHssVTk8Z6wn9878g=
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Nu3kqt4370AoHuaqSJe/6PAdmFsUkAh7HcmIbGv94U8=;
+        b=oDWxFec0vwJXks2VpXSxL2oyrvKSpqFC/UUtdnddEWT3ulSoeSEDSsnCmYH/84nDPY
+         XudkHvERvpfi3AV5KP2CZwDTsXHX/Q3AZaQbaZYM8UP9lz3EIAxphnC7Uzl9cKYxIMbv
+         L+t+eKOFkhNKADV/VkcF51IVx0JlK24BoA7Jopa4ssHUb+d79V92XUz0hbmmA58vzNjo
+         BabKRcqDFoeDQOkH7vGxFfyKqr6BqhkZsqMc3ptIraJwO2CePnNM+LT73LEdR2CDVGKZ
+         /VdTmHpm12iccAkhO+pi/IolHIh5VFJlbw1GlEtY6rRvubVfsItgYm6riX5pGlOXpDFN
+         255g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from
-         :user-agent:date:message-id:subject:to;
-        bh=TvfrSXu4f0TU8sJk8nHVngOGB75STSEGTvK6rVGCRBo=;
-        b=6vbWp2W8LlY8lDDVUxH7qt1cliOzwTNgpq4y67d5bpPJSRSkxN2Z4s5Rr3OwtiAQoZ
-         2KcrBYKNmqwkXV8sxu+ydHNEnt60Xuc2t2hGdzgyOrzCgVvtrZiA+hVMGW/pbBBoAUN2
-         EbWozIf0qOP4CNVBwYVNchITKDAGMudntnXA4bsvn/Hen77ouRAVw+4gx0TNp/cQJ0lu
-         61cbgJ43StNvGjRf+EOjIvo42NLIDBpn1KPAAFtSCsd5+GyuEL9KdmAPZOvUYxkgaPPa
-         iA9TIzJC8X0jcDDKne2cayLJMDxO/LXJGp1Hsni/GWcVKq09LdOCNE0/Bkc5NTWrgdmQ
-         nWZg==
-X-Gm-Message-State: AJIora/DohHNz9JI5GzZdz7Z+jLJUK5iLpxT0Stwbvt//93XVc4g7Tqh
-        m0Szn9LNKAHqWLZ6o95GUY+N+gQ5MUZFnHDSXYIQzw==
-X-Google-Smtp-Source: AGRyM1v4WSDbVO+K2+4kAKFrYZQtpAn74YXqFxA1mnEY/IT8bcyyhmbIZcF9WfGx+sYO6Yz4yLIx2Fc2KzL9daEEeyw=
-X-Received: by 2002:a05:6808:171c:b0:334:9342:63ef with SMTP id
- bc28-20020a056808171c00b00334934263efmr1192888oib.63.1656487360982; Wed, 29
- Jun 2022 00:22:40 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 29 Jun 2022 02:22:40 -0500
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Nu3kqt4370AoHuaqSJe/6PAdmFsUkAh7HcmIbGv94U8=;
+        b=f9pFGfIAyXUuMJD7Mceq0hJzyROM0CFiHf3Qr1lInq7vmKZCL5pik5HkxoZm9HnRov
+         VTWtrxCeYXLRihuWphpdMFeExAjN+m9k/11UBGH8IBF9RrvROoABfAuff2IxF6nxD87/
+         DMTotSrqfXqfFdo/nQ+8U921cqgurMAYhI63yCR729783DAUJGRe0apax89oMIz/jSrR
+         sbCHUrIMWyb9EAg17n+ELDNcXbAT2WNSg0LEY+iq0IJU14lu69Ws+YnGqui8moQ7FfJL
+         89RKvZnSbZaBCRH6eLO6yV/iyOhutoq/9uqH7hCJMD/1zoLxRK+fTac4MNK7b6ftkLKf
+         1BYg==
+X-Gm-Message-State: AJIora+B8Q8c7+qM2Tl6k+wws37esUCb1zgCxWiHCW4Q7I9TvVekCvXA
+        ZXfXMd2E3/ZrHRBUXnMFD/WLOgzQglY=
+X-Google-Smtp-Source: AGRyM1sBM0W0okjl/mw2/rlDh9MuCFNz3dZFUmMDjF07sotlXxQJvTeSKgNruAtDcpt6HrXZmJc9Eg==
+X-Received: by 2002:a17:90b:3d86:b0:1ee:ec85:ec07 with SMTP id pq6-20020a17090b3d8600b001eeec85ec07mr4272047pjb.81.1656487438074;
+        Wed, 29 Jun 2022 00:23:58 -0700 (PDT)
+Received: from sol (110-174-58-111.static.tpgi.com.au. [110.174.58.111])
+        by smtp.gmail.com with ESMTPSA id f1-20020a654001000000b0040d22243295sm10707804pgp.79.2022.06.29.00.23.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jun 2022 00:23:57 -0700 (PDT)
+Date:   Wed, 29 Jun 2022 15:23:53 +0800
+From:   Kent Gibson <warthog618@gmail.com>
+To:     =?utf-8?B?SmnFmcOt?= Prchal <jiri.prchal@aksignal.cz>
+Cc:     linux-gpio@vger.kernel.org, brgl@bgdev.pl
+Subject: Re: [libgpiod] feature request: output state read and sustain
+Message-ID: <20220629072353.GA18684@sol>
+References: <62b30818-92fa-e44c-c9dd-fd8cc49a6e6a@aksignal.cz>
+ <20220325145742.GA46960@sol>
+ <48129be0-f29d-96ae-cec3-2b4a2ee10aa8@aksignal.cz>
+ <20220325160146.GA49114@sol>
+ <1d43c967-e3c9-21a8-3040-2db54ba85bdf@aksignal.cz>
+ <20220328080841.GA14353@sol>
+ <757ac53e-07bb-1ffa-2734-08c1c321ff0e@aksignal.cz>
 MIME-Version: 1.0
-In-Reply-To: <1656484485-23350-1-git-send-email-quic_srivasam@quicinc.com>
-References: <1656484485-23350-1-git-send-email-quic_srivasam@quicinc.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date:   Wed, 29 Jun 2022 02:22:40 -0500
-Message-ID: <CAE-0n50XpUfe9LQ0UByRXeWVcHjzXTmSb+Lf5m87pJmhjA0wVg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: sc7280: Fix compile bug
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        agross@kernel.org, alsa-devel@alsa-project.org,
-        bgoswami@quicinc.com, bjorn.andersson@linaro.org,
-        broonie@kernel.org, devicetree@vger.kernel.org,
-        judyhsiao@chromium.org, lgirdwood@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, perex@perex.cz,
-        quic_plai@quicinc.com, quic_rohkumar@quicinc.com,
-        robh+dt@kernel.org, srinivas.kandagatla@linaro.org, tiwai@suse.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <757ac53e-07bb-1ffa-2734-08c1c321ff0e@aksignal.cz>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Quoting Srinivasa Rao Mandadapu (2022-06-28 23:34:45)
-> Fix the compilation error, caused by updtating constant variable.
+On Tue, Jun 28, 2022 at 03:08:20PM +0200, Jiří Prchal wrote:
+> Hi,
+> using new libgpiod / chardev driver, is there any way to get state of
+> output? I mean one process sets it for example to 1 and another process
+> reads this output state for example to show that on web page.
+> I have to say that old sysfs interface was more user friendly...
+> 
 
-s/updtating/updating/
+"new" being anything since Linux 4.8 ;-)?
+And strictly speaking it isn't a driver - libgpiod and the GPIO subsystem
+provide an interface to the chip driver.  More on that later.
 
-> Hence remove redundant constant variable, which is no more useful
-> as per new design.
->
-> The issue is due to some unstaged changes. Fix it up.
->
-> Fixes: 36fe26843d6d ("pinctrl: qcom: sc7280: Add clock optional check for ADSP bypass targets")
->
-> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-> ---
+Only the process holding the line has access to the current value.
+If you need that value elsewhere then it has to be published by that
+process - it is not available through the GPIO API itself.
+There is nothing preventing that process publishing the value
+in whatever way is appropriate to your application.
+e.g. write it to a file that can be read by your webapp, just as it
+would from sysfs.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Less restrictive access models are frequently "more user friendly", but
+have other issues. e.g. some misbehaving process just reset your
+modem for you.
+
+And sysfs has other great features like being slow and being complete
+rubbish for events on input lines.
+
+> And at second: it would be better to NOT "the state of a GPIO line
+> controlled over the character device reverts to default when the last
+> process referencing the file descriptor representing the device file exits."
+> "Set and forget" behavior is more natural to what some gpios are used. For
+> example resetting external modems, need set 1 for short time, then to 0 and
+> leave it for long long time until next reset is needed. It's non sense to
+> keep running some process only to keep output at 0.
+
+Agreed, that might be more natural, but that behaviour is not by choice,
+it is a consequence of the kernel internals.  In short, if the GPIO
+subsystem does not hold the chip then the driver is free to do what it
+likes to it.
+So when you release a line all bets are off.
+It may stay where you left it, but it may not - it may even switch to an
+input - it depends on the driver.
+If it works for you that's great, but without major kernel changes
+libgpiod has no better option than to provide the caveat as the "set and
+forget" behaviour is something that it cannot guarantee.
+
+Cheers,
+Kent.
+
