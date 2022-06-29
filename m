@@ -2,154 +2,357 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B266C433EF
-	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jul 2022 13:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04746CCA47F
+	for <linux-gpio@archiver.kernel.org>; Wed, 29 Jun 2022 07:41:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234104AbiGDNOy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 4 Jul 2022 09:14:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54004 "EHLO
+        id S232208AbiF2Hlx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 29 Jun 2022 03:41:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234810AbiGDNOj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Jul 2022 09:14:39 -0400
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on0630.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe0d::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FAC1DF2A;
-        Mon,  4 Jul 2022 06:14:38 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kDOAHgpbp9uYVzi19FXHWJ2W8PNxgJujx5SP39fIeDqmPcBYR7hnoA3cHnNSfCVr1Mm7tEDI9NALxRWssX52UVSaHLl8TN+YMGhn7uQAoz/c2GDdqGNXI12c+MwMVl9vUkxKo3VymBSzR8YcOgAiiUWpDvitv+wO/UyOz7l8AD3aYsukQNwfF/nVtFxzdH3akTQLQz9X6h0SYIE2LFvqKB2MlGyRZQ+D7RulDVtN2faVJk9DObWvpz1D34jzirEgdEU9KdPDy3IiqDeNh+4HDjJxWBMN5tyDOHljRlTUCswGhSn8P+poDDB8AOc5e4SiUh0Q+1A9UIE6UPgvx/Xhfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7DOz78T7C7U15Y4t+BHaIgU1b4exagMO2bFf9maHovs=;
- b=VKYWU1GoS0FKhTYe0V8DgCpB8pCSdheLtwj58yZObZDhTaCkh+19QdmOAodzRDSd49iZPWKiMmevsW0txiDdNHtncIhce7ca8j2jD4biZPLTjLDTr0V2fbhJTrPuqbSLKankX3Q1Igxl/EJOKhh68fQi5uqzrP4WqV3H+1iGwpbxYsNC4K9v/iBY3KklPQJf+oduF4Aj85yEwtN++GouLOTx9+vyRiiDXx6UDr0QKIH5QGIM9MnjCyroo7VGmZA2bLPxMjaoJ5JFummQR2CiJGAfdeiiWqBYzqsKRRrcU2tSQWHb57dbJ+uVz/uyzC0IOH/mck19Fc5Q9tPywRHz2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7DOz78T7C7U15Y4t+BHaIgU1b4exagMO2bFf9maHovs=;
- b=uR01kKMf6/hzaubObnO3yCKwhRCJjC4lI70fPTb2UNb4dZufpB960TSMguPM/K5CWx2G8O7vXiJBFOUEEQFGEaFpYaGM9kMDTDLD8CW0cuWcewBZM9uWwc+Tzd/6oFOGqy9l473xUmH4gZHKEjxPDMJxLL3AjA3B5TIQpIyolukBI05rKlwbWaQSGpPABYwJKPq2SZ+3YoAv6ELA0i0V90guB4xWHW3fpmHePT8ErnQHNesiWPoeYCTQ83dz7gZtuuHfJR9HYAo1Hny2fa9U8JQOL0nOjsbUmTxcwB2JkQEvIXIvgdNICrbEeRhDJwpmbTo5e0JlGlVJ+e/rpvHeMA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from PA4PR10MB5780.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:269::8)
- by AM6PR10MB3384.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:e2::31) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.14; Mon, 4 Jul
- 2022 13:14:33 +0000
-Received: from PA4PR10MB5780.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b925:3d3d:8f5f:c4d9]) by PA4PR10MB5780.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b925:3d3d:8f5f:c4d9%9]) with mapi id 15.20.5395.020; Mon, 4 Jul 2022
- 13:14:33 +0000
-Date:   Mon, 4 Jul 2022 15:14:31 +0200
-From:   Henning Schild <henning.schild@siemens.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        "Bartosz Golaszewski" <brgl@bgdev.pl>,
+        with ESMTP id S229820AbiF2Hlv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2022 03:41:51 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31F1236B42;
+        Wed, 29 Jun 2022 00:41:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1656488510; x=1688024510;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=hRLWAheTUgpMqJ+CTyhb8q72eqCf5jXCD+qdlPmQdX8=;
+  b=V7EsYYr9EIij1ip70+OQMY/gzrh5wyGiKcYp8AWCHb25bOJrQa8ldVVA
+   WjfiGM9RSi7+O2v6aTzjnGFtciC06e+wwz660J8d1fRqDhDUuFa+GCisT
+   rKUaoFvcqeLu972MEnNCCaodyFq5KFw65hrEObpxXK1USTMOqGTNjghk1
+   M6eAb7r6RhwTd49jKSf+itMDaZ5Gu/jHoVMqNBN++BYhLvCzxTurIoN9M
+   /3H0k+pz3CbrRrMwvdgEhSQ7BUW5H6fpDqV6CtG6BHjQGM7QYyLOK833q
+   sD1PkwJUKQH1n3D/+a5t4ubmQSAULxHZs8gKZv4cjGcBr80q05Z6ghIMA
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10392"; a="307444900"
+X-IronPort-AV: E=Sophos;i="5.92,230,1650956400"; 
+   d="scan'208";a="307444900"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2022 00:41:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,230,1650956400"; 
+   d="scan'208";a="733074160"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmsmga001.fm.intel.com with SMTP; 29 Jun 2022 00:40:24 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 29 Jun 2022 10:40:23 +0300
+Date:   Wed, 29 Jun 2022 10:40:23 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Wolfram Sang <wsa@kernel.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Russell King <linux@armlinux.org.uk>,
+        Scott Wood <oss@buserror.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Robin van der Gracht <robin@protonic.nl>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Corey Minyard <minyard@acm.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Hennerich <michael.hennerich@analog.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Tasanakorn Phaipool <tasanakorn@gmail.com>
-Cc:     Sheng-Yuan Huang <syhuang3@nuvoton.com>,
-        Kuan-Wei Ho <cwho@nuvoton.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2 0/1] add device driver for Nuvoton SIO gpio function
-Message-ID: <20220704151431.31d2cbbb@md1za8fc.ad001.siemens.net>
-In-Reply-To: <20220704130602.12307-1-henning.schild@siemens.com>
-References: <20220704130602.12307-1-henning.schild@siemens.com>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0069.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:4b::16) To PA4PR10MB5780.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:102:269::8)
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Phong LE <ple@baylibre.com>,
+        Adrien Grassein <adrien.grassein@gmail.com>,
+        Peter Senna Tschudin <peter.senna@gmail.com>,
+        Martin Donnelly <martin.donnelly@ge.com>,
+        Martyn Welch <martyn.welch@collabora.co.uk>,
+        Douglas Anderson <dianders@chromium.org>,
+        Stefan Mavrodiev <stefan@olimex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Florian Fainelli <f.fainelli@gmail.com>, Broad@vger.kernel.org
+Subject: Re: [PATCH 6/6] i2c: Make remove callback return void
+Message-ID: <YrwB5xPKZmHlXzrC@kuha.fi.intel.com>
+References: <20220628140313.74984-1-u.kleine-koenig@pengutronix.de>
+ <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ecbeabf1-94d9-4409-a3bb-08da5dbf2339
-X-MS-TrafficTypeDiagnostic: AM6PR10MB3384:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: p6RiJhvxIYscWHMdKNRMndwkqRE2Oy/vO7GZLy1t3HSvXgzLHywEytgrct95ZReg9741tJiNg3VBgMKgXg8mdgfNXxecmQ2NRBbY7FGjaAoEhaaEZhXoM3p0+XEhBSLF2RD0GEU9tqsLOEnTX2hKXZ6vC2CDktFs2h3FPF5DhjS+Bvvsi4BUR8RH/kwi9k7dqOPEzEDOTqrbl3vw4feap6hI5DvZblmPvpTkLXO58rq75jfZeAwT7XDDralyxU/1eN0cM9Pt+8HzXwYAxwZZXeIQ2A/sFGJ1EbM+UG/LJFG4mZOwp1gpFp8V1XZAgpNT1nA6Xofgxj4odzHpNaiyOdpa2k3OPneDBvHOHrmBFMRYX+dAPwWmcjnlcW5sjTWG3b/j+nZyzJ3hB+LO6VRtvt/mlY4aUWX0d7aulmvuyB/ksv9SHhecGpRztClBQbJ8D8R1kQ65wrv9J04ug4xzkuoLvoVoNAqRSuevZ1zYz94enOiM19hr+yFt9tpVKCNlM0kYzfcqNFSDmjm27LDzCzjPGWBSGe2ib0mxEf1o+9hrEwuFO4i8anOVLdi9G20uLzflKaG9yOMCP49o1IrtpqSoKbk0W09V82KlDdRB01MXNvmJGPhiu7Ce5C/LSc9cWh902wRYL+C/Bk4zNv4pNfdKXmn4EwW9ru9uKzq3CLsSI+6QLwTdaYgCTYbUkFiQrVhSzcHCeys2QH9lMoyxAH7O5Tc6jpc8KB4WPBgiGYid2pOXU5loIwQsAWxgEsuslBtmFhCIVEiPlUmYr5PwGw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5780.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230016)(4636009)(136003)(396003)(366004)(39860400002)(376002)(346002)(2906002)(9686003)(6512007)(26005)(6506007)(82960400001)(41300700001)(1076003)(186003)(38100700002)(8936002)(86362001)(83380400001)(110136005)(5660300002)(44832011)(316002)(4326008)(66476007)(478600001)(66556008)(66946007)(6486002)(8676002)(54906003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?EFFY/hifngb8riQsweO2gvrpqn9dROkawa1E+hzxWhIniEhOlRvLuTIgTxDe?=
- =?us-ascii?Q?SizsDyva8MFv6BtTzmaQSDw/+BOTsutr7zOt9pg+EG1UtdogNjD40H0Ox8OR?=
- =?us-ascii?Q?M02c8Uyc3MKl3aaM7fNEGCaWAajy/aG1g8S4W2Qm7LbfcxrK7+JIVAHj3Xid?=
- =?us-ascii?Q?xV9j742X9SnmpM/hJyDeK30WlartPulUKAbWh0cRgqZXlNspsAl49UKFQMsa?=
- =?us-ascii?Q?EFz7Q022IAe2GgE26cEhVSutkbYAkTW4pvn6CVGGaAE328cX59TvGBpZv/Lm?=
- =?us-ascii?Q?uzjTyv//e3kQmk+SHSsS7HS9WXTd1EXRluFcVlysj9/TjhX6cAiiSULGPjha?=
- =?us-ascii?Q?dQ3uBIrX01kssTLKM3xQdBEfcZrc7V4MeWMInBYAjj+9k0XzINGyzeUQTSn/?=
- =?us-ascii?Q?Zkoz+LK4vzdwNlxmUvFPq42SfpM3Py3vLYE+j4HEW5TjJcOsvYLUw10I6TOw?=
- =?us-ascii?Q?un8PPDvsFHNsHWWCm4DgpjGmjmBUYdXp5ZePSB4y9U9Bd07lJuFHegPU1iwF?=
- =?us-ascii?Q?k7HVUh6HpcvPEVsl+ZF00foXSd+cIdYvRxlrUC+Xp2V6PvWUzCuLRFmizxHE?=
- =?us-ascii?Q?UvxwEz71Wj4FXhEI10yPQs2xon81kiWm5uu8swH5kaG0LDhLQZzN4/afvhoP?=
- =?us-ascii?Q?vn9/LfDI9P4RKGRBKBrk91eJkE6xbprpyMq6p5wpMo+lKd3wxFFBVTC6N4TY?=
- =?us-ascii?Q?eTP5qWgEnbgD9y7Im6yDbXebUQ8aAL8pAdYzt8vDB2wC/lb24JvaOUkMgmRs?=
- =?us-ascii?Q?po+BbGUxAAVQxH5Mlpur9VhTAsvGar/OOhotFLxeGooi70xCtt+ruXZmEb/e?=
- =?us-ascii?Q?/ZWFwCkNC077Rhbs3Ma06dtIywmmfmns+qbd//J/v5gopEDpjrjbZS1eIp9P?=
- =?us-ascii?Q?anEp8NMX5TDb4qTqVFI2ilDpHOS0QcslET9ZxC/Ah8cdWhOTUMpueUK6w0iw?=
- =?us-ascii?Q?eiN9gJZuQYPHWQg3TwFKIlkrz4dbckKlq2n4cleRw6dSOAxkTIOnDkjAEyRu?=
- =?us-ascii?Q?cjp45XrupbeXGi3MOnPsaYMNmObUnoBWHnr1un4o984YiZoNDwFIL4CF/zXd?=
- =?us-ascii?Q?CQYmTO6msGCf8y4w7kAGI0PsmuxKMp5XRORAcaXApuPNwxisxcG3dt0SA/Be?=
- =?us-ascii?Q?Bzo3dVvg28u5ZoHZqhNgcloVDes7XoQkB3LN8jFrBCI6y/TKgUBc3jLZHMuh?=
- =?us-ascii?Q?zI1ogDBJcHW8oC6Y2NmtSsdnCx4VlemB71zdyqn7jvnvVL8bfiwAzXCeMuTb?=
- =?us-ascii?Q?Fjkz2dLMpXtRQWid5ONRRUZtEMQvGXOBpnoT0gjfZmPt0VWr2fh943sFSWDB?=
- =?us-ascii?Q?Ad6ogB4CXTYJGWqjESoZcYlbYDKfeW/5zEqi5jibZqmoYTLzo9WsHG/DKLpB?=
- =?us-ascii?Q?X4Hs9kcJi1Ze2Ftue/Q50GEp85AKrv6IpRO9dTbibxqUekxtpSIfr3irz2BZ?=
- =?us-ascii?Q?HDpFLXd02OhzaLyQCmlV4xNb7oNbMEr5v0pSVM2va4ofUGipr0Yrqv/2gq0F?=
- =?us-ascii?Q?f6qTebiUxF+H/WKA3Bf4arbG4VtTJQuB+jE7wZa595/qxWqrislvXZILtpfh?=
- =?us-ascii?Q?V0uuRC8ozB+sdgLQci2XNCcBVLbQiM35MIKilfuHuXxl+0d0sQFw4Jk8vvHz?=
- =?us-ascii?Q?Aw=3D=3D?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ecbeabf1-94d9-4409-a3bb-08da5dbf2339
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5780.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2022 13:14:33.8712
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BNJsp+EujTxM01xJ45w+5KRTzfGP8t06GZ7aXh6GNEfr+hJJ6/nvZ3Dr8Tsspmk7+WQUkNcHr9RR74Iwhi/61Sr20xkAAryNf+DdJSQsjas=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR10MB3384
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Am Mon, 4 Jul 2022 15:06:01 +0200
-schrieb Henning Schild <henning.schild@siemens.com>:
+On Tue, Jun 28, 2022 at 04:03:12PM +0200, Uwe Kleine-König wrote:
+> diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
+> index cd47c3597e19..2a58185fb14c 100644
+> --- a/drivers/usb/typec/hd3ss3220.c
+> +++ b/drivers/usb/typec/hd3ss3220.c
+> @@ -245,14 +245,12 @@ static int hd3ss3220_probe(struct i2c_client *client,
+>  	return ret;
+>  }
+>  
+> -static int hd3ss3220_remove(struct i2c_client *client)
+> +static void hd3ss3220_remove(struct i2c_client *client)
+>  {
+>  	struct hd3ss3220 *hd3ss3220 = i2c_get_clientdata(client);
+>  
+>  	typec_unregister_port(hd3ss3220->port);
+>  	usb_role_switch_put(hd3ss3220->role_sw);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct of_device_id dev_ids[] = {
+> diff --git a/drivers/usb/typec/mux/fsa4480.c b/drivers/usb/typec/mux/fsa4480.c
+> index 6184f5367190..d6495e533e58 100644
+> --- a/drivers/usb/typec/mux/fsa4480.c
+> +++ b/drivers/usb/typec/mux/fsa4480.c
+> @@ -181,14 +181,12 @@ static int fsa4480_probe(struct i2c_client *client)
+>  	return 0;
+>  }
+>  
+> -static int fsa4480_remove(struct i2c_client *client)
+> +static void fsa4480_remove(struct i2c_client *client)
+>  {
+>  	struct fsa4480 *fsa = i2c_get_clientdata(client);
+>  
+>  	typec_mux_unregister(fsa->mux);
+>  	typec_switch_unregister(fsa->sw);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct i2c_device_id fsa4480_table[] = {
+> diff --git a/drivers/usb/typec/mux/pi3usb30532.c b/drivers/usb/typec/mux/pi3usb30532.c
+> index 6ce9f282594e..1cd388b55c30 100644
+> --- a/drivers/usb/typec/mux/pi3usb30532.c
+> +++ b/drivers/usb/typec/mux/pi3usb30532.c
+> @@ -160,13 +160,12 @@ static int pi3usb30532_probe(struct i2c_client *client)
+>  	return 0;
+>  }
+>  
+> -static int pi3usb30532_remove(struct i2c_client *client)
+> +static void pi3usb30532_remove(struct i2c_client *client)
+>  {
+>  	struct pi3usb30532 *pi = i2c_get_clientdata(client);
+>  
+>  	typec_mux_unregister(pi->mux);
+>  	typec_switch_unregister(pi->sw);
+> -	return 0;
+>  }
+>  
+>  static const struct i2c_device_id pi3usb30532_table[] = {
+> diff --git a/drivers/usb/typec/rt1719.c b/drivers/usb/typec/rt1719.c
+> index f1b698edd7eb..ea8b700b0ceb 100644
+> --- a/drivers/usb/typec/rt1719.c
+> +++ b/drivers/usb/typec/rt1719.c
+> @@ -930,14 +930,12 @@ static int rt1719_probe(struct i2c_client *i2c)
+>  	return ret;
+>  }
+>  
+> -static int rt1719_remove(struct i2c_client *i2c)
+> +static void rt1719_remove(struct i2c_client *i2c)
+>  {
+>  	struct rt1719_data *data = i2c_get_clientdata(i2c);
+>  
+>  	typec_unregister_port(data->port);
+>  	usb_role_switch_put(data->role_sw);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct of_device_id __maybe_unused rt1719_device_table[] = {
+> diff --git a/drivers/usb/typec/stusb160x.c b/drivers/usb/typec/stusb160x.c
+> index e7745d1c2a5c..8638f1d39896 100644
+> --- a/drivers/usb/typec/stusb160x.c
+> +++ b/drivers/usb/typec/stusb160x.c
+> @@ -801,7 +801,7 @@ static int stusb160x_probe(struct i2c_client *client)
+>  	return ret;
+>  }
+>  
+> -static int stusb160x_remove(struct i2c_client *client)
+> +static void stusb160x_remove(struct i2c_client *client)
+>  {
+>  	struct stusb160x *chip = i2c_get_clientdata(client);
+>  
+> @@ -823,8 +823,6 @@ static int stusb160x_remove(struct i2c_client *client)
+>  
+>  	if (chip->main_supply)
+>  		regulator_disable(chip->main_supply);
+> -
+> -	return 0;
+>  }
+>  
+>  static int __maybe_unused stusb160x_suspend(struct device *dev)
+> diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
+> index 96c55eaf3f80..5e9348f28d50 100644
+> --- a/drivers/usb/typec/tcpm/fusb302.c
+> +++ b/drivers/usb/typec/tcpm/fusb302.c
+> @@ -1771,7 +1771,7 @@ static int fusb302_probe(struct i2c_client *client,
+>  	return ret;
+>  }
+>  
+> -static int fusb302_remove(struct i2c_client *client)
+> +static void fusb302_remove(struct i2c_client *client)
+>  {
+>  	struct fusb302_chip *chip = i2c_get_clientdata(client);
+>  
+> @@ -1783,8 +1783,6 @@ static int fusb302_remove(struct i2c_client *client)
+>  	fwnode_handle_put(chip->tcpc_dev.fwnode);
+>  	destroy_workqueue(chip->wq);
+>  	fusb302_debugfs_exit(chip);
+> -
+> -	return 0;
+>  }
+>  
+>  static int fusb302_pm_suspend(struct device *dev)
+> diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
+> index f33e08eb7670..c48fca60bb06 100644
+> --- a/drivers/usb/typec/tcpm/tcpci.c
+> +++ b/drivers/usb/typec/tcpm/tcpci.c
+> @@ -869,7 +869,7 @@ static int tcpci_probe(struct i2c_client *client,
+>  	return 0;
+>  }
+>  
+> -static int tcpci_remove(struct i2c_client *client)
+> +static void tcpci_remove(struct i2c_client *client)
+>  {
+>  	struct tcpci_chip *chip = i2c_get_clientdata(client);
+>  	int err;
+> @@ -880,8 +880,6 @@ static int tcpci_remove(struct i2c_client *client)
+>  		dev_warn(&client->dev, "Failed to disable irqs (%pe)\n", ERR_PTR(err));
+>  
+>  	tcpci_unregister_port(chip->tcpci);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct i2c_device_id tcpci_id[] = {
+> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim.c b/drivers/usb/typec/tcpm/tcpci_maxim.c
+> index df2505570f07..a11be5754128 100644
+> --- a/drivers/usb/typec/tcpm/tcpci_maxim.c
+> +++ b/drivers/usb/typec/tcpm/tcpci_maxim.c
+> @@ -493,14 +493,12 @@ static int max_tcpci_probe(struct i2c_client *client, const struct i2c_device_id
+>  	return ret;
+>  }
+>  
+> -static int max_tcpci_remove(struct i2c_client *client)
+> +static void max_tcpci_remove(struct i2c_client *client)
+>  {
+>  	struct max_tcpci_chip *chip = i2c_get_clientdata(client);
+>  
+>  	if (!IS_ERR_OR_NULL(chip->tcpci))
+>  		tcpci_unregister_port(chip->tcpci);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct i2c_device_id max_tcpci_id[] = {
+> diff --git a/drivers/usb/typec/tcpm/tcpci_rt1711h.c b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
+> index b56a0880a044..9ad4924b4ba7 100644
+> --- a/drivers/usb/typec/tcpm/tcpci_rt1711h.c
+> +++ b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
+> @@ -263,12 +263,11 @@ static int rt1711h_probe(struct i2c_client *client,
+>  	return 0;
+>  }
+>  
+> -static int rt1711h_remove(struct i2c_client *client)
+> +static void rt1711h_remove(struct i2c_client *client)
+>  {
+>  	struct rt1711h_chip *chip = i2c_get_clientdata(client);
+>  
+>  	tcpci_unregister_port(chip->tcpci);
+> -	return 0;
+>  }
+>  
+>  static const struct i2c_device_id rt1711h_id[] = {
+> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+> index dfbba5ae9487..b637e8b378b3 100644
+> --- a/drivers/usb/typec/tipd/core.c
+> +++ b/drivers/usb/typec/tipd/core.c
+> @@ -857,15 +857,13 @@ static int tps6598x_probe(struct i2c_client *client)
+>  	return ret;
+>  }
+>  
+> -static int tps6598x_remove(struct i2c_client *client)
+> +static void tps6598x_remove(struct i2c_client *client)
+>  {
+>  	struct tps6598x *tps = i2c_get_clientdata(client);
+>  
+>  	tps6598x_disconnect(tps, 0);
+>  	typec_unregister_port(tps->port);
+>  	usb_role_switch_put(tps->role_sw);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct of_device_id tps6598x_of_match[] = {
+> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> index 6db7c8ddd51c..920b7e743f56 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> @@ -1398,7 +1398,7 @@ static int ucsi_ccg_probe(struct i2c_client *client,
+>  	return status;
+>  }
+>  
+> -static int ucsi_ccg_remove(struct i2c_client *client)
+> +static void ucsi_ccg_remove(struct i2c_client *client)
+>  {
+>  	struct ucsi_ccg *uc = i2c_get_clientdata(client);
+>  
+> @@ -1408,8 +1408,6 @@ static int ucsi_ccg_remove(struct i2c_client *client)
+>  	ucsi_unregister(uc->ucsi);
+>  	ucsi_destroy(uc->ucsi);
+>  	free_irq(uc->irq, uc);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct i2c_device_id ucsi_ccg_device_id[] = {
+> diff --git a/drivers/usb/typec/wusb3801.c b/drivers/usb/typec/wusb3801.c
+> index e63509f8b01e..3cc7a15ecbd3 100644
+> --- a/drivers/usb/typec/wusb3801.c
+> +++ b/drivers/usb/typec/wusb3801.c
+> @@ -399,7 +399,7 @@ static int wusb3801_probe(struct i2c_client *client)
+>  	return ret;
+>  }
+>  
+> -static int wusb3801_remove(struct i2c_client *client)
+> +static void wusb3801_remove(struct i2c_client *client)
+>  {
+>  	struct wusb3801 *wusb3801 = i2c_get_clientdata(client);
+>  
+> @@ -411,8 +411,6 @@ static int wusb3801_remove(struct i2c_client *client)
+>  
+>  	if (wusb3801->vbus_on)
+>  		regulator_disable(wusb3801->vbus_supply);
+> -
+> -	return 0;
+>  }
 
-> changes since v1:
->  - implement get_direction function
->  - style changes requested in review
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-I guess in terms of style there is more that could be done. Thanks Andy
-for the suggestions so far. But i would also like to hear from the
-subsystem maintainers what they think in general. Polishing this one to
-look much different than similar drivers might in the end do more harm
-than use.
-
-regards,
-Henning
-
-> 
-> This adds gpio support for several Super IO chips from Nuvoton. The
-> driver was originally developed by Nuvoton and i am just contributing
-> it on behalf, because other patches i will send later will require
-> access to the gpios. The driver is valid on its own.
-> 
-> The driver supports several chips, of which i only managed to test one
-> but did not want to drop the others.
-> 
-> I hope the original authors will help with the testing and addressing
-> review feedback. The changes i did so far mainly are inspired by
-> similar drivers and some just concern coding style. If more has to be
-> done and the original authors do not jump in, we might start off with
-> just that one chip i can test and add the others later on.
-> 
-> Henning Schild (1):
->   gpio: nct6116d: add new driver for several Nuvoton super io chips
-> 
->  drivers/gpio/Kconfig         |   9 +
->  drivers/gpio/Makefile        |   1 +
->  drivers/gpio/gpio-nct6116d.c | 412
-> +++++++++++++++++++++++++++++++++++ 3 files changed, 422 insertions(+)
->  create mode 100644 drivers/gpio/gpio-nct6116d.c
-> 
-
+-- 
+heikki
