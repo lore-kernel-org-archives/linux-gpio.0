@@ -2,43 +2,43 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7732DC433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 29 Jun 2022 11:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 639DFC43334
+	for <linux-gpio@archiver.kernel.org>; Wed, 29 Jun 2022 11:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230071AbiF2Lik (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 29 Jun 2022 07:38:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44236 "EHLO
+        id S232754AbiF2LmQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 29 Jun 2022 07:42:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230383AbiF2Lij (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2022 07:38:39 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B2B332076;
-        Wed, 29 Jun 2022 04:38:38 -0700 (PDT)
+        with ESMTP id S230383AbiF2LmP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2022 07:42:15 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77EE13F331;
+        Wed, 29 Jun 2022 04:42:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1656502718; x=1688038718;
+  t=1656502934; x=1688038934;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=jvQQGBLtP2lMYjK15fTYrTMQlaw8xtvzDZjwyhz2efQ=;
-  b=csmzP7C/q9as80NazEbKJsSOl5rL4eYUlBADXbYRA+7tbi0sKRjTKEWr
-   3tlul+aMWJCIsGhcfYsDhwxVuGqOZIGp+4xxSWd2RqEpgr41ykIYee31u
-   8anMHa2WCg6sAVL98SQXjtsi45ZrFRlJrUExwVWQ3EPlLuISjTvCCmPTj
-   2iy9OkzryugCZdxXfN8+ag88ltSziAr7viBrlCSSRaWzrCk/0GjnT69c6
-   nmfzOawgUfVT/dDfCPm/OezWLspac9/Cho+diXqe3p7e28g9lSA1zbbCV
-   Y9f8FUoK06/wBOZTwFBwU3pVXVUuDHO2fX5lBqKIwKQFzdrbNBiTkiuVP
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10392"; a="283103045"
+  bh=PLZy6FdtWTJaBvqj0/Wf7kuuinfelYGkxatNVzCgqcU=;
+  b=lqUhrVno6mhftZZcVGHTkA3xpaA50B5UgmbOJ2SqgVeYFLD9O85sJNzE
+   6E6kuC9FSNSkd7K8IPaKLaQIS71BlthIje1iyowFAYCAsDwie+Z+JeOBi
+   4/RmDAFz5R1gIodN7Ru8TlPqdpUCiu0Vxz3RMYb9FWQUkPWwH4uHj3nlg
+   Izbki0BgXFS9tO+QVrWFkUddFV2ofAiKikM6Z+o6eP6noZznGRd1nZMQO
+   oLnoPJrb9y7z0GlOP1P7Qjd71IfJ9OiIUwGxEuOfn8R1CgWG+7ieo0RRK
+   bFKzeMTsxoBvVYYizZHtvqiF4Ki8kiHvGe9N+qLic44t/1kIxSRyhj2/4
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10392"; a="307502280"
 X-IronPort-AV: E=Sophos;i="5.92,231,1650956400"; 
-   d="scan'208";a="283103045"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2022 04:38:38 -0700
+   d="scan'208";a="307502280"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2022 04:42:00 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.92,231,1650956400"; 
-   d="scan'208";a="623279570"
+   d="scan'208";a="595206522"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 29 Jun 2022 04:38:35 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 29 Jun 2022 04:41:53 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 88935F1; Wed, 29 Jun 2022 14:38:41 +0300 (EEST)
+        id 50F0F109; Wed, 29 Jun 2022 14:41:59 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Rob Herring <robh@kernel.org>,
         Frank Rowand <frank.rowand@sony.com>,
@@ -49,9 +49,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] of: unittest: Switch to use fwnode instead of of_node
-Date:   Wed, 29 Jun 2022 14:38:39 +0300
-Message-Id: <20220629113839.4604-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/1] of: unittest: Switch to use fwnode instead of of_node
+Date:   Wed, 29 Jun 2022 14:41:56 +0300
+Message-Id: <20220629114156.6001-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -64,11 +64,12 @@ switch the module to use it.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/of/unittest.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: fixed parameter in debug message as well
+ drivers/of/unittest.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 7f6bba18c515..03052ffb16e2 100644
+index 7f6bba18c515..5a842dfc27e8 100644
 --- a/drivers/of/unittest.c
 +++ b/drivers/of/unittest.c
 @@ -1602,7 +1602,7 @@ static int unittest_gpio_probe(struct platform_device *pdev)
@@ -80,6 +81,15 @@ index 7f6bba18c515..03052ffb16e2 100644
  	devptr->chip.label = "of-unittest-gpio";
  	devptr->chip.base = -1; /* dynamic allocation */
  	devptr->chip.ngpio = 5;
+@@ -1611,7 +1611,7 @@ static int unittest_gpio_probe(struct platform_device *pdev)
+ 	ret = gpiochip_add_data(&devptr->chip, NULL);
+ 
+ 	unittest(!ret,
+-		 "gpiochip_add_data() for node @%pOF failed, ret = %d\n", devptr->chip.of_node, ret);
++		 "gpiochip_add_data() for node @%pfw failed, ret = %d\n", devptr->chip.fwnode, ret);
+ 
+ 	if (!ret)
+ 		unittest_gpio_probe_pass_count++;
 -- 
 2.35.1
 
