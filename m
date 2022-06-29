@@ -2,138 +2,154 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9678C433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 29 Jun 2022 07:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D4CC43334
+	for <linux-gpio@archiver.kernel.org>; Wed, 29 Jun 2022 07:51:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232078AbiF2HhS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 29 Jun 2022 03:37:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51934 "EHLO
+        id S230079AbiF2HvK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 29 Jun 2022 03:51:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232100AbiF2HhQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2022 03:37:16 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4600135DFA
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2022 00:37:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656488234;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1h0smKgkaQYyMckjg1gEO+92UXCJgyf7f6YfzsCAFg4=;
-        b=LqaQQ4rMNNaHAgwNqe1aoCTG75kn7/oNsqAIKCxO5hJyIk+F/Yw45XvOyYaLbryYdHBzdJ
-        7bhG0i7WnNZRvAnFxgrRWBJIR3H02XwQGwDE9mvpMwd1ztR1wRLQMBek1iG7s251Msv7kc
-        IxwAvqSKWZ18XPybTGnZsn34pvCYHnQ=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-414-zca6PtrWPYmo_specJQKYA-1; Wed, 29 Jun 2022 03:37:12 -0400
-X-MC-Unique: zca6PtrWPYmo_specJQKYA-1
-Received: by mail-wr1-f71.google.com with SMTP id w12-20020adf8bcc000000b0021d20a5b24fso729732wra.22
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2022 00:37:12 -0700 (PDT)
+        with ESMTP id S229573AbiF2HvJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2022 03:51:09 -0400
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EAC1255B1
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2022 00:51:06 -0700 (PDT)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-3176b6ed923so139766197b3.11
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2022 00:51:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=D/7xvTk7Tns6xC4zH7M0fNCtWsqsLEW32cihU2vl9VU=;
+        b=MFBYYziA/dF87SJ3JV0ibKv4ZjauVMwkX9cHxWGFVYbDyjsKRktWcRWucQZe1gXBzN
+         z58LGaETLnArmKYqRQ7eibhUVuwu2On5g0xK+07XmjnX8ttptFQU3G+2xoXVamni9ZFz
+         JnIM4I7wykMqw7Sx9PmrP/MrpFPL9hioWfXxMoXPbPx656/xbMQ9LANiFPCI5vqj4ztI
+         9OASfW9d/i3yLAlse6tkfe2L7tvFILD3UnisOKetuF9Wv5H9wZNA86Tk3bZWDCuQGnbx
+         eaIJGeBC0nCXcf7Pxz5KG65CcuDNC+LxeVTOaXV1NIM/db1pw8PVJxmxt2DYQmWxaX/H
+         VKpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=1h0smKgkaQYyMckjg1gEO+92UXCJgyf7f6YfzsCAFg4=;
-        b=UJiClC6H/SYeXtcGoZrAKJtBiMpdoKQRVgSEcWDzZToblw+WX7MfxRzuBshdAOFuLt
-         LLaLsEsuByQrC+iMcP08Zqc0O2LpviU30OVYwGSSGXfz5mdp+pxY4bmo6ih6XtQFboX8
-         dk15C+HFLMmbx1IDJ5WqskBNiu0GdajaWrnyqbNZa/t/XADfedm+k5Bu5/K3ZN9nzmrd
-         3pIUFuuas78fvYuvoiospoySsKLlY1FqPfqZSmAD4hSASzCm+yfjgpgZ5dTolUDRryqx
-         lZd6FYY2FqL5F7nPov/rkMm416l1mie8336bIu8vrfC+3bJj2qd0ZVqp5ejVmoijMbtX
-         M73A==
-X-Gm-Message-State: AJIora8xC2AnkosQ/Mf/vEyKnqTGAIpQBlrxC1tQlNoW0cpnuc2Vjlyt
-        ZEwX94c2UQCw3dpurwF9SBeSkwxV1lX6NdK5foRaln6SyYfTnMg576R4f/7zhB1S/pu+kiGDe93
-        r6PO/gWft12le5M5CcO4WPg==
-X-Received: by 2002:a05:6000:1448:b0:21b:b7db:c40b with SMTP id v8-20020a056000144800b0021bb7dbc40bmr1650271wrx.279.1656488230999;
-        Wed, 29 Jun 2022 00:37:10 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1vfq7mqFRSJqFJPQOP6rs25Ch1nA7fBeueZwuaRaLaWENw0ay54yTOP4QHXmGLo1NEA4L9c5g==
-X-Received: by 2002:a05:6000:1448:b0:21b:b7db:c40b with SMTP id v8-20020a056000144800b0021bb7dbc40bmr1650238wrx.279.1656488230741;
-        Wed, 29 Jun 2022 00:37:10 -0700 (PDT)
-Received: from [192.168.1.129] (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id j10-20020a5d448a000000b0021b8c99860asm15832366wrq.115.2022.06.29.00.37.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jun 2022 00:37:10 -0700 (PDT)
-Message-ID: <7654a74e-a410-a8a5-c228-d006dbbc200f@redhat.com>
-Date:   Wed, 29 Jun 2022 09:37:08 +0200
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D/7xvTk7Tns6xC4zH7M0fNCtWsqsLEW32cihU2vl9VU=;
+        b=HzCFmKzA7wox4J5p4P2D8LcD62+0Z+csRe42fLgCQHmEn7fXKWFDD7Z3yE/JLhW9N1
+         WefvLqKNbMx+fMjfdP0zw4I/Sae0pMCL6EWw1cUnRM2+P3IONn2BLudKvBEJMYPV4+Wq
+         HlMX+T2DyG3lurNjMH4eNUnTHmmnZBYGNEO4ePSzz6RXHcSfjsc9QS8O+RoWJV+s3ZRd
+         aat8CLIxvFDhac5k90fRgDWrHwk39T3i1HoZXXCClvO2InAD9zQoZsatHFfixN6uvXto
+         /g9qvQu9lFkRIOoMgOGVHS0c9C5KJR4NqRYpoByLfYx+Rzb/9AWcPdxFyRx17FYzBx1H
+         jkHA==
+X-Gm-Message-State: AJIora+mPKqfrXg0qJ2SimtQ6JPuaavmIRtE4lEIbZFcxuznQ1A8Cf/i
+        r1XJR0bSyGumtID0NyAnCMQYXtL6dajIfaMRlqWiZqfAgJ4mEQ==
+X-Google-Smtp-Source: AGRyM1uDMXQ4JMI0fucrOehvL1ktmOyVdsJz7N1dq8r33of+urvLNmFymeSun53utrQzxuInxjNzEYllD+GD8YzdQdc=
+X-Received: by 2002:a05:690c:102:b0:2ef:48d8:24c3 with SMTP id
+ bd2-20020a05690c010200b002ef48d824c3mr2382689ywb.153.1656489065640; Wed, 29
+ Jun 2022 00:51:05 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 6/6] i2c: Make remove callback return void
-Content-Language: en-US
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Jeremy Kerr <jk@codeconstruct.com.au>
-Cc:     linux-fbdev@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        platform-driver-x86@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-i2c@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-rtc@vger.kernel.org, chrome-platform@lists.linux.dev,
-        linux-staging@lists.linux.dev, kasan-dev@googlegroups.com,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linux-serial@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org,
-        acpi4asus-user@lists.sourceforge.net, linux-gpio@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
-        Support Opensource <support.opensource@diasemi.com>,
-        netdev@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        patches@opensource.cirrus.com, linux-integrity@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <20220628140313.74984-1-u.kleine-koenig@pengutronix.de>
- <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
- <60cc6796236f23c028a9ae76dbe00d1917df82a5.camel@codeconstruct.com.au>
- <20220629072304.qazmloqdi5h5kdre@pengutronix.de>
-From:   Javier Martinez Canillas <javierm@redhat.com>
-In-Reply-To: <20220629072304.qazmloqdi5h5kdre@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CAGm1_kvsAir70H41RJ5vzAGeBLBAFByHyR3fWfFeq3RW5O7cBA@mail.gmail.com>
+ <20220622102632.GA37027@sol> <CAGm1_kvf1RC7fHBy65PkRcS=a5eUgpVYyHM+6NmOvWv6YusTEA@mail.gmail.com>
+ <20220628045253.GA18105@sol> <20220629021446.GB8799@sol>
+In-Reply-To: <20220629021446.GB8799@sol>
+From:   Yegor Yefremov <yegorslists@googlemail.com>
+Date:   Wed, 29 Jun 2022 09:50:54 +0200
+Message-ID: <CAGm1_kubUyw1oSn2wFYVReCB5KcUnQ4KrGP_jEHuQ0fPLYEvXg@mail.gmail.com>
+Subject: Re: Reading current output value
+To:     Kent Gibson <warthog618@gmail.com>
+Cc:     Linux GPIO List <linux-gpio@vger.kernel.org>, brgl@bgdev.pl,
+        andy.shevchenko@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 6/29/22 09:23, Uwe Kleine-König wrote:
-> Hello,
-> 
-> [I dropped nearly all individuals from the Cc: list because various
-> bounces reported to be unhappy about the long (logical) line.]
+Hi Kent,
+
+On Wed, Jun 29, 2022 at 4:14 AM Kent Gibson <warthog618@gmail.com> wrote:
 >
+> On Tue, Jun 28, 2022 at 12:52:53PM +0800, Kent Gibson wrote:
+> > On Mon, Jun 27, 2022 at 12:37:46PM +0200, Yegor Yefremov wrote:
+> > > Hi Kent,
+> > >
+> > > On Wed, Jun 22, 2022 at 12:26 PM Kent Gibson <warthog618@gmail.com> wrote:
+> > > >
+> > > > On Wed, Jun 22, 2022 at 09:54:41AM +0200, Yegor Yefremov wrote:
+> > > > > On a am335x based board I have a GPIO pin that enables/disables power
+> > > > > of an external device (the bootloader sets this pin to output and 1,
+> > > > > and the kernel is instructed to not change it). Using kernel
+> > > > > 5.19.0-rc2 and sysfs interface, I can read the current status as
+> > > > > follows:
+> > > > >
+> > > > > echo 68 > /sys/class/gpio/export
+> > > > > cat /sys/class/gpio/gpio68/value
+> > > > >
+> > > > > As a result, I read 1.
+> > > > >
+> > > > > Using gpioget (libgpiod) v1.6.3, the line will be configured to
+> > > > > "input" and the value is set to 0:
+> > > > >
+> > > > > # gpioget 2 4
+> > > > > 0
+> > > > >
+> > > > > So, how can I read the state without changing it? I am mostly
+> > > > > interested in using the kernel userspace API directly.
+> > > > >
+> > > >
+> > > > The API itself supports it, but it isn't exposed in gpioget v1.6.3.
+> > > > The gpioget in libgpiod master has a --dir-as-is option for exactly
+> > > > this case, but that hasn't made its way into a libgpiod release yet.
+> > > > (commit 3a912fbc1e2 tools: gpioget: add new --dir-as-is option for GPO read-back)
+> > > > Can you try master?
+> > >
+> > > # gpioget -v
+> > > gpioget (libgpiod) v2.0-devel
+> > > Copyright (C) 2017-2018 Bartosz Golaszewski
+> > > License: LGPLv2.1
+> > > This is free software: you are free to change and redistribute it.
+> > > There is NO WARRANTY, to the extent permitted by law.
+> > >
+> > > Now, I get my "1", but as soon as gpioget exits, the pin goes at "0".
+> > >
+> >
+> > Is that line the only line used (i.e. exported) on that chip?
+> > If that is the case, can you request another unused line first (e.g.
+> > using gpiomon in the background, or, and only since you've already
+> > mentioned sysfs, exporting using sysfs), then try the gpioget?
+> >
+>
+> Just to expand on that a little, when the GPIO subsystem is finished
+> with a chip, so it no longer has any lines requested, it calls free on
+> the device driver.  What happens then depends on the device driver.
+> In this case the device driver (I'm assuming gpio-omap.c is the driver
+> for your am335x) reverts all the GPIO lines to inputs.
+>
+> Any libgpiod tool will request the chip and then on exit, as no lines are
+> requested, the chip will be freed - resulting in what you are seeing.
+> Btw, the same would occur in you exported and unexported a line via sysfs.
+>
+> Hence the suggestion to request/export a line to prevent the chip being
+> freed.  Or to switch to an approach where you hold the line and don't
+> release it.
+>
+> Neither libgpiod nor the kernel gpio subsystem are explicitly requesting
+> a change to the line - it is an unfortunate quirk of the GPIO chip
+> driver interface.
+>
+> I hope that helps.
 
-Yes, it also bounced for me when I tried to reply earlier today.
+Thanks for your thorough explanations. I see your point and the
+similarity with sysfs export/unexport semantics.
 
-> diff --git a/drivers/gpu/drm/solomon/ssd130x-i2c.c b/drivers/gpu/drm/solomon/ssd130x-i2c.c
-> index 1e0fcec7be47..ddfa0bb5d9c9 100644
-> --- a/drivers/gpu/drm/solomon/ssd130x-i2c.c
-> +++ b/drivers/gpu/drm/solomon/ssd130x-i2c.c
-> @@ -39,13 +39,11 @@ static int ssd130x_i2c_probe(struct i2c_client *client)
->  	return 0;
->  }
->  
-> -static int ssd130x_i2c_remove(struct i2c_client *client)
-> +static void ssd130x_i2c_remove(struct i2c_client *client)
->  {
->  	struct ssd130x_device *ssd130x = i2c_get_clientdata(client);
->  
->  	ssd130x_remove(ssd130x);
-> -
-> -	return 0;
->  }
->  
->  static void ssd130x_i2c_shutdown(struct i2c_client *client)
+So inputs are no problem and some real physical GPIOs can be handled
+this way as well.
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com> 
--- 
-Best regards,
+The only thing that I'd like to handle differently would be our mPCIe
+VCC enable pin. It has a function of a regulator. AFAIK, the best way
+is to use a userspace-consumer driver [1] like described here [2]. As
+there is still no support for such a regulator in Device Tree, one
+needs a dummy device as a consumer. So far, I couldn't find a suitable
+example describing the whole setup. Do you have an idea how to
+implement this function?
 
-Javier Martinez Canillas
-Linux Engineering
-Red Hat
+[1] https://www.kernel.org/doc/html/latest/power/regulator/consumer.html
+[2] https://community.nxp.com/t5/i-MX-Processors-Knowledge-Base/regulator-userspace-consumer/ta-p/1389948
 
+Yegor
