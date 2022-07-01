@@ -2,70 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E11C43334
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 Jul 2022 19:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9482C433EF
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Jul 2022 19:26:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231393AbiGATN4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 1 Jul 2022 15:13:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58184 "EHLO
+        id S230475AbiGAT0l (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 1 Jul 2022 15:26:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbiGATNz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Jul 2022 15:13:55 -0400
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F612AE3D
-        for <linux-gpio@vger.kernel.org>; Fri,  1 Jul 2022 12:13:53 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id r3so5629641ybr.6
-        for <linux-gpio@vger.kernel.org>; Fri, 01 Jul 2022 12:13:53 -0700 (PDT)
+        with ESMTP id S232336AbiGAT03 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Jul 2022 15:26:29 -0400
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2120.outbound.protection.outlook.com [40.107.100.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 244A53E0E7;
+        Fri,  1 Jul 2022 12:26:22 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z4YrrszoDT3tRSFOWo30E17kV8/b/iIroM2VSHN/+lFA3E4xj3YJpiwK/bqGx3/G544nWfKhdKhJdsRj8WNQ4EbmabRg307D7cT37ldujAeRTzsok5UIT5d7GofUrExwGbAfzAoxhvpA6VtM33Kz74trPp32phhAT3xo7gpEm8jDCHuBr7lvKUH0pbgx+Zdus2X12DZSz3dxGqsMCwTnDf5CvlP7Di3gGYun6LVsvhgEW3lShFWaQJCm8Vtf8ohXHja2RUKJd3hkD4Cfbky/dpUYzmzKicjhKxit6Cdc36LHL3IpMnszxslOmbsxK6Y/EH6q0+jRqXlQpbxBJ4qcxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fu5BLJ4wyxD8/R+wc7kPGgRPGpkGra+PziMdc6sLFIo=;
+ b=mgVYGKPX0n5bHwaQVOLoPYJDMahKUTm3pDT8u+2XO95XbKYDDNFYi0bfmdNooF7xM8e6zM0H2/l4a7Nzu0FoTAeZo+XnxrfvnNS5/k5/nPGY2jfXstIYIdGL3kD1zwTI6qb5NNCatiGX9UtX1CqNUHhBEbzg/sa/JBGD/5XOlzc9tb2SrF1anLUTaHTCsqaZ23Jl1RyJGNPKlw48QtDRmLgDqmIvGW9FtYLMoEIrjCo4HG5EWlnCz2E29m6rUahxsF9z9OYvsr65uBsiigD460cc5IGs0SFIbbpxvf5eQPxUEPKGHA8J/XH+xO29P2Mci8WKhEtRl9pmaQyTf700UQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=in-advantage.com; dmarc=pass action=none
+ header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0QS+dcPV5O8kLzr2+REcEkzxVnC/iy1E7v+r8knheu0=;
-        b=YxJMJqn/vOk+95wW9H3XyxhU7b6ot8wJfR5j/hJXXANi9ACWI8OWpYLc7idqKtR70V
-         I3f03mBuDThOJwgTtewRvSXUMPEEQyG2ilkW3LrxcIy7/7G+z/lvGEKEHqAw36hYhA+D
-         6ECYWOChAVa+UxOkE+iS+daPXf69U0SflOW9HtDhl9SR2FAyXKxcYvKm3CgyTVMStMHC
-         d3loWbDJUvP5cApZmY9sk39gsPipm7VWUwXpJ6tYDGtPK2MW5LBo5X+RScgoYXv7fbLo
-         O9phoX29OCjJ0I+QGlNLfK3+Itz44Me8/dSf5Psw1rGo4PvdspD0oJiqYd3r+D2c9F2x
-         uSLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0QS+dcPV5O8kLzr2+REcEkzxVnC/iy1E7v+r8knheu0=;
-        b=GLaq3mFhXO2IOMknZx8nMBSszF5rztZSUjskIyGG4YIvp2oIOXHRR1NUg2ULiyTWA0
-         JdaujmTrN+C36LWvP5NmIgVknO9pfdt/++nR9m95XRm+naFZ03q8jx1bi2EFx1yz1HPU
-         q796HstAM014Qjdpb+N9NtQfVSUZgzAu2Pz1FP+A+S0frdOa4hUFZDwI4R91z+The4Ax
-         g0i4onJVgcIOcSpOyxP5KYsK/3xDzggvfi77BPZJqtEV1WJnmQyTojofTUQlMYs02GKb
-         uywBXeA64+OnDKEajPKw7S4UHp9MYFr5iRGv/AkRLkJ4ndK3ScVlRNCV9YEbP03D4qE+
-         +rjQ==
-X-Gm-Message-State: AJIora+HNcuZuavW4siKvBmARXhM3xQ+eaqFHdSCJZ2bXwkYovmpjl5n
-        q4paSfZssCRLn+Zv8M54vJeFTjg5kEi4Yvs1e9tMjg==
-X-Google-Smtp-Source: AGRyM1tQv6CCDFx3u07LEvOjaGIhnXAU5l72oCC5MmwYKS+JqS6dGPS426l3v4HvKqgb/fUO3PdDTLb3hZ+49n67IRs=
-X-Received: by 2002:a25:5bc3:0:b0:669:b722:beb8 with SMTP id
- p186-20020a255bc3000000b00669b722beb8mr16783331ybb.447.1656702832727; Fri, 01
- Jul 2022 12:13:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <YrQP3OZbe8aCQxKU@atomide.com> <CAGETcx9aFBzMcuOiTAEy5SJyWw3UfajZ8DVQfW2DGmzzDabZVg@mail.gmail.com>
- <Yrlz/P6Un2fACG98@atomide.com> <CAGETcx8c+P0r6ARmhv+ERaz9zAGBOVJQu3bSDXELBycEGfkYQw@mail.gmail.com>
- <CAL_JsqJd3J6k6pRar7CkHVaaPbY7jqvzAePd8rVDisRV-dLLtg@mail.gmail.com>
- <CAGETcx9ZmeTyP1sJCFZ9pBbMyXeifQFohFvWN3aBPx0sSOJ2VA@mail.gmail.com>
- <Yr6HQOtS4ctUYm9m@atomide.com> <Yr6QUzdoFWv/eAI6@atomide.com>
- <CAGETcx-0bStPx8sF3BtcJFiu74NwiB0btTQ+xx_B=8B37TEb8w@mail.gmail.com>
- <CAGETcx-Yp2JKgCNfaGD0SzZg9F2Xnu8A3zXmV5=WX1hY7uR=0g@mail.gmail.com> <20220701150848.75eeprptmb5beip7@bogus>
-In-Reply-To: <20220701150848.75eeprptmb5beip7@bogus>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Fri, 1 Jul 2022 12:13:16 -0700
-Message-ID: <CAGETcx_Y-9WBeRwf22v3NSuY8PGpPrTxtx_uBqe_Q7rD6mEQMQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/9] PM: domains: Delete usage of driver_deferred_probe_check_state()
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fu5BLJ4wyxD8/R+wc7kPGgRPGpkGra+PziMdc6sLFIo=;
+ b=fTB77PrRiseyH/qr6xxksJof4IbsAtmrKyd2lCDhH6WMZ944yE134AT04T3tTWwZg0sOXjf2dzvA6ahDPr8WfJVv+243GmR+CVbbO4mVDHcq7v5KdW4pxqAHC43U9sWyb4DdlAVBeqISeJXTZFNJp/XURtztykbKwt4NQQektxA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=in-advantage.com;
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37) by CY4PR1001MB2230.namprd10.prod.outlook.com
+ (2603:10b6:910:46::36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.17; Fri, 1 Jul
+ 2022 19:26:20 +0000
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::712f:6916:3431:e74e]) by MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::712f:6916:3431:e74e%6]) with mapi id 15.20.5373.018; Fri, 1 Jul 2022
+ 19:26:20 +0000
+From:   Colin Foster <colin.foster@in-advantage.com>
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org
+Cc:     Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Andrew Lunn <andrew@lunn.ch>,
         Heiner Kallweit <hkallweit1@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
@@ -73,110 +55,170 @@ Cc:     Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        UNGLinuxDriver@microchip.com,
         Linus Walleij <linus.walleij@linaro.org>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Ahern <dsahern@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wolfram Sang <wsa@kernel.org>,
+        Terry Bowman <terry.bowman@amd.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        katie.morris@in-advantage.com
+Subject: [PATCH v12 net-next 1/9] mfd: ocelot: add helper to get regmap from a resource
+Date:   Fri,  1 Jul 2022 12:26:01 -0700
+Message-Id: <20220701192609.3970317-2-colin.foster@in-advantage.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220701192609.3970317-1-colin.foster@in-advantage.com>
+References: <20220701192609.3970317-1-colin.foster@in-advantage.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MWHPR1601CA0006.namprd16.prod.outlook.com
+ (2603:10b6:300:da::16) To MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ee98224e-1202-4b30-9653-08da5b979335
+X-MS-TrafficTypeDiagnostic: CY4PR1001MB2230:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: giJ+jjKGBGP/I5APyudV+PHFfvcsOYJuOLPf5FTWLrGn5l5hhk26e/ia5IMPdZy/wLGJgzoc/IdKhRE9L4uGYV/v6Xd8cTqk9Y6d2H/OBjBVMrTeqFRjmmhE2llaFpk4OBD7xuNf70RuVTGca2PiMbW19gh/0Yuz9yNVQfGw6pcxgoRavIoSN2LvajriqPX4ET+gpGu+1k+9YFKJPXPfcCJ05MDNDpPRz0tEGFAAgjwj03+U2YoWCYGnT2tDaBccuZ97cknJByVLiMqBhAwUT6NgTE6VZGwXuOjZMLZ7I+Uq4EvI+75EQm+ylQTWSOBt+JfwOY4qTCfZ9ln9Z58py/EhtfGibrUslUYlN9gbRcFD05bKotr0f2IiMS2kgcwQAv11Gbit+GTPhLsEcQRVFJ/2/HnBmF9pisiTQo8zwMzwtkYHIVB4Xb2MJXEVtzaFO02T7iCJ1GTA7gwCiAHpkyFKlDeoaFcH+0LX83Wld483AsJlP6I10ExSD0UgyNQ74WlnsEcq73UPQlaMjOniRbIvvVqV3XSn648GYtxCtIyOkU+zDqQ658AZZ0/tIQoGyWKU1K5rAtatihr8NyZNFnX82EkYkFXRHVgpc46WMwGFOjN4RZGKYsKtxkt5jnTNKHVfs6+lREq8PJoPSuWi9imZw/uKFI931A+UpSEwsY4Z2YF0qUjtJY+E9gh0tMaepjUKiWGhorxLaeoovqM+L7Nk1/soVau+QRuIyJp4XdrPmkVyfeYp4jtM6zIk1kUzR9Yx7tIphHYctKZHGvQ2f9ggKmbsemdvLAr47QW0Sw57xGVMC/ULEmdDtohqAYez
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(366004)(346002)(39830400003)(376002)(136003)(396003)(66476007)(38350700002)(186003)(8676002)(8936002)(4326008)(86362001)(66946007)(1076003)(5660300002)(6666004)(38100700002)(107886003)(83380400001)(66556008)(7416002)(41300700001)(478600001)(316002)(36756003)(52116002)(44832011)(2906002)(6512007)(2616005)(6506007)(6486002)(26005)(54906003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cHyHsSlNfwmnT+pvkqGNBg4bvnCkeFSAtu+Jx17DfEDPc9qsZov7GB8KYmbl?=
+ =?us-ascii?Q?eJXpKMD9OQ04FCCJ0U/Na/4i1DunJTVh7oyopks4jSHaoNV+UFUbkK6rT/J0?=
+ =?us-ascii?Q?Db/kyuh08wmFZxu3sQ8PRO2029Nga3tnjus+tyYfF7jS8Xroqhhu2WTWTJ28?=
+ =?us-ascii?Q?vnpB4b0VOkH74V2UNkaevusNNiZ9LPuBxNnw60CKAGY9hiZ4a36g+vI2Jg5e?=
+ =?us-ascii?Q?EX/UeFcPAKgRekZ4PjS0cC7/AJ+WUbZKS3b+cq2QwMfGX6K6E3RtoX6SUI2x?=
+ =?us-ascii?Q?bZZB+FNe0fdPTgEyYtvq9dc+WQxCAMjfGDrEOugPTTWFHCegOSHINrnWPBB1?=
+ =?us-ascii?Q?8CzDdfhbrf8rtSBl3Zu8LnE5LQZGF2N0e8hUf0E1NXYO9sH8Q1tXe9kQysNR?=
+ =?us-ascii?Q?9kFma180CJ1JplNmOC578y/uIyz0Y5Sij8PIkaZsLACz4CDKh4lrI9IKvm2v?=
+ =?us-ascii?Q?Ntr3/pUvT+w1IbCvrXmo3S/fdj0O7CLFY0JZgrLR9jGqeKAUPkW4PdlMmpEp?=
+ =?us-ascii?Q?1KuDr5otO3z6rSTXPFjqcL4QZhuPLmrSIeX6JJSDm7IwNnUWyDrSfkLHk+uw?=
+ =?us-ascii?Q?ztQLvfxeen2TCkdbcaTmIcCBepuhqs9qGUEjHAARUzlPJfLe8wIRCsNKbJyh?=
+ =?us-ascii?Q?TsqNSN5XX3T1mIWbmdVrlBevbjszCp/7hnCrfgQG3P3O9kGrrO9tkABJbkEG?=
+ =?us-ascii?Q?mZ+aRdT1tl2BG6xbOPON6kFgA9zRez5lqBJsbqft1OGFDy4oivvLzXmyf/Gf?=
+ =?us-ascii?Q?sXIbmVe/GEHA3wFAEO+XS3BDsiTinmmV/eRSSULYqkyuD8UOnzszCNip1k2A?=
+ =?us-ascii?Q?Glxjw/oFRavfiTxojLofUJsRpIZqkWuM7rL+58s5K3J0lZWIlM7O/qGMFgx1?=
+ =?us-ascii?Q?GLZLtSh7j0TD3Zik5KmJFquN7TDr4lyTf/qOAFS/aXro3YWv9VAD4ciSB37V?=
+ =?us-ascii?Q?eKRPirg1k2YFj93HxfagcW9iZIGf5RieKdcfEFABFWrnxzVM+1zpb5KqPoPc?=
+ =?us-ascii?Q?jTIV02dZ1k+WU6qbyj9QWc54A5xTg/gxiKjx126N3DM1lZVBcKuSp0QQOE6/?=
+ =?us-ascii?Q?hNRU3XICujY190VNvIl7Uy2ODY84CYymrGUc67biNNQWhl/TeBAV07lT7hWw?=
+ =?us-ascii?Q?7+gR/1EOiWOUVE/I38MroG501e0W7bivAGM7QI9HMuEQqGHTgfueFtngCrY8?=
+ =?us-ascii?Q?ChuqfXjQuRR0wYP4jqO3OLaN2mKcVAW6oPIJ+YpK0n/xOsyaK50PHcuJ8Wxo?=
+ =?us-ascii?Q?OhgF0N52SnMe5rsZEGsqnSaEB+z9kcsibqCIirRL4Pn3ub0U6b0TdjqxG9n/?=
+ =?us-ascii?Q?+kvRCmPQl1uhuYKCsefAkYroRG4QxUmeKYz2Gx02YECiNa3e1hQWPa2GMjej?=
+ =?us-ascii?Q?mT2qFuNxKwdOwzijwSmBJ6kZN8JFK97XnLgBlNuJf9hxLye346fV0m0IhuZ1?=
+ =?us-ascii?Q?KkkjW0abM3/Xdcudks4QN12+Gsn/Up+SYFu3ur0eekzXGq6QnFVRA0jKJAKb?=
+ =?us-ascii?Q?eogg7UxlHam/3yHnU3bkU16OZ6Ul43P0C2J/CY4Nw61ERrRYTxoX9b2XMk/I?=
+ =?us-ascii?Q?vr07GWZpInjw5KaUCUFKhc7PLSKzkQ1eJT/aJZp5wEO9YS1y+tpCNQMLqIc3?=
+ =?us-ascii?Q?ag=3D=3D?=
+X-OriginatorOrg: in-advantage.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee98224e-1202-4b30-9653-08da5b979335
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2022 19:26:19.6485
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XDBtop+uGIc8H1GR4NLm6qOI6xglcV4bS2aWdbDfjZ5C1t5nyGsI/8F6XlcvPOs+1WGknIQzAlQcnlCFR63a7MY4v9LrMjOIrSNUR1m3j2o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1001MB2230
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jul 1, 2022 at 8:08 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
->
-> Hi, Saravana,
->
-> On Fri, Jul 01, 2022 at 01:26:12AM -0700, Saravana Kannan wrote:
->
-> [...]
->
-> > Can you check if this hack helps? If so, then I can think about
-> > whether we can pick it up without breaking everything else. Copy-paste
-> > tab mess up warning.
->
-> Sorry for jumping in late and not even sure if this is right thread.
-> I have not bisected anything yet, but I am seeing issues on my Juno R2
-> with SCMI enabled power domains and Coresight AMBA devices.
->
-> OF: amba_device_add() failed (-19) for /etf@20010000
-> OF: amba_device_add() failed (-19) for /tpiu@20030000
-> OF: amba_device_add() failed (-19) for /funnel@20040000
-> OF: amba_device_add() failed (-19) for /etr@20070000
-> OF: amba_device_add() failed (-19) for /stm@20100000
-> OF: amba_device_add() failed (-19) for /replicator@20120000
-> OF: amba_device_add() failed (-19) for /cpu-debug@22010000
-> OF: amba_device_add() failed (-19) for /etm@22040000
-> OF: amba_device_add() failed (-19) for /cti@22020000
-> OF: amba_device_add() failed (-19) for /funnel@220c0000
-> OF: amba_device_add() failed (-19) for /cpu-debug@22110000
-> OF: amba_device_add() failed (-19) for /etm@22140000
-> OF: amba_device_add() failed (-19) for /cti@22120000
-> OF: amba_device_add() failed (-19) for /cpu-debug@23010000
-> OF: amba_device_add() failed (-19) for /etm@23040000
-> OF: amba_device_add() failed (-19) for /cti@23020000
-> OF: amba_device_add() failed (-19) for /funnel@230c0000
-> OF: amba_device_add() failed (-19) for /cpu-debug@23110000
-> OF: amba_device_add() failed (-19) for /etm@23140000
-> OF: amba_device_add() failed (-19) for /cti@23120000
-> OF: amba_device_add() failed (-19) for /cpu-debug@23210000
-> OF: amba_device_add() failed (-19) for /etm@23240000
-> OF: amba_device_add() failed (-19) for /cti@23220000
-> OF: amba_device_add() failed (-19) for /cpu-debug@23310000
-> OF: amba_device_add() failed (-19) for /etm@23340000
-> OF: amba_device_add() failed (-19) for /cti@23320000
-> OF: amba_device_add() failed (-19) for /cti@20020000
-> OF: amba_device_add() failed (-19) for /cti@20110000
-> OF: amba_device_add() failed (-19) for /funnel@20130000
-> OF: amba_device_add() failed (-19) for /etf@20140000
-> OF: amba_device_add() failed (-19) for /funnel@20150000
-> OF: amba_device_add() failed (-19) for /cti@20160000
->
-> These are working fine with deferred probe in the mainline.
-> I tried the hack you have suggested here(rather Tony's version),
+Several ocelot-related modules are designed for MMIO / regmaps. As such,
+they often use a combination of devm_platform_get_and_ioremap_resource and
+devm_regmap_init_mmio.
 
-Thanks for trying that.
+Operating in an MFD might be different, in that it could be memory mapped,
+or it could be SPI, I2C... In these cases a fallback to use IORESOURCE_REG
+instead of IORESOURCE_MEM becomes necessary.
 
-> also
-> tried with fw_devlink=0 and fw_devlink=1
+When this happens, there's redundant logic that needs to be implemented in
+every driver. In order to avoid this redundancy, utilize a single function
+that, if the MFD scenario is enabled, will perform this fallback logic.
 
-0 and 1 aren't valid input to fw_devlink. But yeah, I don't expect
-disabling it to make anything better.
+Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
+---
+ MAINTAINERS                |  5 ++++
+ include/linux/mfd/ocelot.h | 51 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 56 insertions(+)
+ create mode 100644 include/linux/mfd/ocelot.h
 
-> && fw_devlink.strict=0
-> No change in the behaviour.
->
-> The DTS are in arch/arm64/boot/dts/arm/juno-*-scmi.dts and there
-> coresight devices are mostly in juno-cs-r1r2.dtsi
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7c029ab73265..c2f61ed1b730 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14413,6 +14413,11 @@ F:	net/dsa/tag_ocelot.c
+ F:	net/dsa/tag_ocelot_8021q.c
+ F:	tools/testing/selftests/drivers/net/ocelot/*
+ 
++OCELOT EXTERNAL SWITCH CONTROL
++M:	Colin Foster <colin.foster@in-advantage.com>
++S:	Supported
++F:	include/linux/mfd/ocelot.h
++
+ OCXL (Open Coherent Accelerator Processor Interface OpenCAPI) DRIVER
+ M:	Frederic Barrat <fbarrat@linux.ibm.com>
+ M:	Andrew Donnellan <ajd@linux.ibm.com>
+diff --git a/include/linux/mfd/ocelot.h b/include/linux/mfd/ocelot.h
+new file mode 100644
+index 000000000000..7e64870b75ca
+--- /dev/null
++++ b/include/linux/mfd/ocelot.h
+@@ -0,0 +1,51 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
++/* Copyright 2022 Innovative Advantage Inc. */
++
++#include <linux/err.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/types.h>
++
++struct resource;
++
++static inline struct regmap *
++ocelot_regmap_from_resource_optional(struct platform_device *pdev,
++				     unsigned int index,
++				     const struct regmap_config *config)
++{
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	u32 __iomem *regs;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
++	if (res) {
++		regs = devm_ioremap_resource(dev, res);
++		if (IS_ERR(regs))
++			return ERR_CAST(regs);
++		return devm_regmap_init_mmio(dev, regs, config);
++	}
++
++	/*
++	 * Fall back to using REG and getting the resource from the parent
++	 * device, which is possible in an MFD configuration
++	 */
++	if (dev->parent) {
++		res = platform_get_resource(pdev, IORESOURCE_REG, index);
++		if (!res)
++			return NULL;
++
++		return dev_get_regmap(dev->parent, res->name);
++	}
++
++	return NULL;
++}
++
++static inline struct regmap *
++ocelot_regmap_from_resource(struct platform_device *pdev, unsigned int index,
++			    const struct regmap_config *config)
++{
++	struct regmap *map;
++
++	map = ocelot_regmap_from_resource_optional(pdev, index, config);
++	return (map) ? map : ERR_PTR(-ENOENT);
++}
+-- 
+2.25.1
 
-Thanks
-
-> Let me know if there is anything obvious or you want me to bisect which
-> means I need more time. I can do that next week.
-
-I'll let you know once I poke at the DTS. We need to figure out why
-fw_devlink wasn't blocking these from getting to the error (same as in
-Tony's case). But since these are amba devices, I think I have some
-guesses.
-
-This is an old series that had some issues in some cases and I haven't
-gotten around to looking at it. You can give that a shot if you can
-apply it to a recent tree.
-https://lore.kernel.org/lkml/20210304195101.3843496-1-saravanak@google.com/
-
-After looking at that old patch again, I think I know what's going on.
-For normal devices, the pm domain attach happens AFTER the device is
-added and fw_devlink has had a chance to set up device links. And if
-the suppliers aren't ready, really_probe() won't get as far as
-dev_pm_domain_attach(). But for amba, the clock and pm domain
-suppliers are "grabbed" before adding the device.
-
-So with that old patch + always returning -EPROBE_DEFER in
-amba_device_add() if amba_read_periphid() fails should fix your issue.
-
--Saravana
