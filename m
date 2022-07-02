@@ -2,86 +2,87 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4534C43334
-	for <linux-gpio@archiver.kernel.org>; Sat,  2 Jul 2022 15:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F914C433EF
+	for <linux-gpio@archiver.kernel.org>; Sat,  2 Jul 2022 15:43:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230429AbiGBPUq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 2 Jul 2022 11:20:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34168 "EHLO
+        id S232019AbiGBPnM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 2 Jul 2022 11:43:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230079AbiGBPUq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 2 Jul 2022 11:20:46 -0400
-Received: from new1-smtp.messagingengine.com (new1-smtp.messagingengine.com [66.111.4.221])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 281F4F589;
-        Sat,  2 Jul 2022 08:20:45 -0700 (PDT)
+        with ESMTP id S230429AbiGBPnL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 2 Jul 2022 11:43:11 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53891E0B6;
+        Sat,  2 Jul 2022 08:43:10 -0700 (PDT)
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id B36DE5809B1;
-        Sat,  2 Jul 2022 11:11:46 -0400 (EDT)
+        by mailout.nyi.internal (Postfix) with ESMTP id 09C005C01AF;
+        Sat,  2 Jul 2022 11:43:08 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Sat, 02 Jul 2022 11:11:46 -0400
+  by compute2.internal (MEProxy); Sat, 02 Jul 2022 11:43:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         cc:cc:content-transfer-encoding:content-type:date:date:from:from
         :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; t=1656774706; x=
-        1656781906; bh=WlUJqIGfR/wOzO2AjWyOS/FzqIjWHFuWNbbZcRFvDrk=; b=K
-        uUk1tXL0awd7O4RX4mxQiHaH4nYvLAKwRwULMTTAbSqhlfGcAT1nXzE4pp10Vjvb
-        LddmXJ3xKoqWaY0QG2P68U7MMANQ6CmgZdclJu8w74hcM40uZDAMdSurevqz2gLJ
-        FHae/PFSg6B6iiaTBx+6txL9LqVhAePXdocaBIF21Vuc4F1/O7AZY8JbWwQok8iQ
-        RdCLb4obPZ2X3N9+uTRg3fmomR8t+UHsomyc07ALDYZi2f9ADte3MMGIRs0wQX59
-        bSyjgFbkqrEpeM8ud4BtGa5wST2Wz0GWpxjeP0DOZqirgMztt54SgFRU7bUQRF3Q
-        BbkaNZGZ5eP6qYfBP6F6g==
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1656776588; x=
+        1656862988; bh=N+om0oGp4TwoRP9IDT3vxivTBNdKJRwkhS1z0hTFeZ0=; b=R
+        rjMk40z0rxtaL3HnEQMLgPVBeUZun/NCgtyzOhgxX6sulBoEBoVaufmphlUz1bjy
+        N1B16qH0qUsvrfTodQdT6qeO3jvZLbyvUAsdpycrg/7VDOHNlz3IB5XVeWIJXUla
+        tB+nqPgKUDo8xqTyBT75HnTUla36+D15GvmK/XSBLALD5/K4aKR74cGJ1sdEki5e
+        yEktFuUImIKEuKl7hZgxTGM446CrSd9J5rYQON1DtiZ0DPOUoMgypsugFcCUc9oS
+        IY3Qnn+VFT5+QWXk3+i8KK8zzEwbUsd17EIASvPd/oHMcRVQfy1nVsFmBumxTO87
+        GXF9iojTLBaDYNt2u6t/Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding
         :content-type:date:date:feedback-id:feedback-id:from:from
         :in-reply-to:in-reply-to:message-id:mime-version:references
         :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1656774706; x=
-        1656781906; bh=WlUJqIGfR/wOzO2AjWyOS/FzqIjWHFuWNbbZcRFvDrk=; b=v
-        tFMYBKHBbj+Av+9i5dxazQxSpnv6mEi+7/FCLR+bUStrTfuQjcGpAnSHljUvKzVI
-        InugYh02ZH5XYXvHDg0K8+iNGBsczRWsyNRXxZS5LPyC4OVAeU3C4CU2IGUsPLvG
-        wewRZ7SYlPyFoaMej0YGQ4t9p2r8/CdbhUTYmn7JWc8EpLbbQ/blwZpZndzTaXw9
-        oJsR8rDxmub0jTsB3FSnjo3FPIomRBKDME4k9HoGuz81beJ/V4doCRAu+vMnbA2J
-        pTw/oGwHdwFNJPZnUYApSo2FG06pWe5kuA+83vFj/T6ISXcpYEXon+K7Di24kjXn
-        jPez0gjJ1xRWMKwqJQcNw==
-X-ME-Sender: <xms:MWDAYi3p_aBz3zgjTNv1vCObzI4-tPrPJgOlxD-XNeRb8_Xl2n_x9g>
-    <xme:MWDAYlHSDO8LK0svQpe5xr0L4Ta3VxMZCwuPTnuLUFo7ZEujIinP5O85-oelMN0yo
-    WhiwHz_3wDN6SCUvQ>
-X-ME-Received: <xmr:MWDAYq6qdmVXJ8Q6naw0I8upnUH0adRpYBfGaiX1hQdCb_96Mu5wa0kRen9K9T8EJZHQEEw0yZSEYYuK8PJJXh_eSVlECqYr0DLzxUb2kyIBJow5jI9gjVyBzA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudehhedgkeegucetufdoteggodetrfdotf
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1656776588; x=
+        1656862988; bh=N+om0oGp4TwoRP9IDT3vxivTBNdKJRwkhS1z0hTFeZ0=; b=c
+        3nO4kGz7GSPnwcRWtPe67gFcYOtRz2t/xMKfwlXPjxYim9WyJjuwoo4LzO47C228
+        JoTNAhDs5VuYFOJkEiTNm3RTZNFaC/PAX2RkEJUH7i+SSMwQKjalr6rQj7PvX7Zk
+        SkRApFx5cghSqk1C3UlJ2UN9puvh2Rreew/ogQYMGP2FFurAiViGuvQDd6yOaoIV
+        9Gv+QEAvmclNVDihqFRpy0/3DI1u06hjRY/kMtuwdA5mCksFLvsanLGT0KVN0psc
+        0GZSasv+mTO7uGb23ciL8I/n1ENM4qM4Ii+sH2G/gkwHvSrSy6Nzj0kCoAR1DA++
+        EHbPrdFIQgGbJtO7JsqgA==
+X-ME-Sender: <xms:i2fAYn6PrPnBnlm7pA5MSveomsa5EQvI8aqINvGFQyXOMgWhWz0rHw>
+    <xme:i2fAYs5ogiuCKx-9w7qsHTxoBG-XGNV7X0_hUOsBHu4T0gxYUcUHkid_6uvRQRjTx
+    sAZOLew7iZmsQryUg>
+X-ME-Received: <xmr:i2fAYucL-Okwyzy_Sv4e5Jluk8YB5rYYr22L3AE0gT70iMZrmSawgfa0Ze16gLw1p-A016cku8VbltezqbxNGsuzPy-wuvZb18VpfkvPhe7T8SSP9MBDNYbmgA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudehhedgleduucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefuvfevfhfhkffffgggjggtgfesth
-    ejredttdefjeenucfhrhhomhepufgrmhhuvghlucfjohhllhgrnhguuceoshgrmhhuvghl
-    sehshhholhhlrghnugdrohhrgheqnecuggftrfgrthhtvghrnhepkeelgefhffduffduie
-    dvteeukefgiedtleehjedvkedtveelkefhvddugfetheevnecuffhomhgrihhnpehlihhn
-    uhigqdhsuhhngihirdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
-X-ME-Proxy: <xmx:MWDAYj1sKlLRU8GpVJTtk_zI-PpbXR6YT80Zu_3Tktn3lcKKxjmj1A>
-    <xmx:MWDAYlGozgMs8g6x4s7VQZw8Y3nAyhs75IVeqShTrAvfnZp2_g4WZA>
-    <xmx:MWDAYs8MyTPnNJs2kYi0jTHFQ4cLmW6Sf0eSLIINwGMew8VITi2Pzg>
-    <xmx:MmDAYglx4HmAyiFAmKvhsKzqHVYtG3EZLLfo7-HlRVbRB0gs5rdzRg>
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepuffvvehfhffkffgfgggjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghm
+    uhgvlhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenuc
+    ggtffrrghtthgvrhhnpefftdevkedvgeekueeutefgteffieelvedukeeuhfehledvhfei
+    tdehudfhudehhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:i2fAYoIHJgmz2ioOQnYMBvEpMndsbv0UFtiZb8A96k9R91k5UWy2qA>
+    <xmx:i2fAYrLCC_QMK73p6umlkaVRF3y4DlZo5P0S_Oq8u-bgzJfixfKDEQ>
+    <xmx:i2fAYhxu7NIj6G2sP3IYl12HV4Po-1v6mfY98t6X1yTKxQHlZjPc2Q>
+    <xmx:jGfAYlBc99jLvkPLamf5mdoB5gbSmFxoNmuK-ll21omNilszBiokmw>
 Feedback-ID: i0ad843c9:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 2 Jul 2022 11:11:44 -0400 (EDT)
-Subject: Re: [PATCH v4 12/15] pinctrl: Add AXP192 pin control driver
-To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>, wens@csie.org
-Cc:     linus.walleij@linaro.org, brgl@bgdev.pl, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, jic23@kernel.org,
-        sre@kernel.org, lee.jones@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, lars@metafoo.de, quic_gurus@quicinc.com,
-        sebastian.reichel@collabora.com, andy.shevchenko@gmail.com,
-        michael@walle.cc, rdunlap@infradead.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20220629143046.213584-1-aidanmacdonald.0x0@gmail.com>
- <20220629143046.213584-13-aidanmacdonald.0x0@gmail.com>
+ 2 Jul 2022 11:43:06 -0400 (EDT)
+Subject: Re: [PATCH 6/6] pinctrl: sunxi: Add driver for Allwinner D1/D1s
+To:     Andre Przywara <andre.przywara@arm.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Maxime Ripard <mripard@kernel.org>, Ondrej Jirman <x@xff.cz>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        Heiko Stuebner <heiko@sntech.de>
+References: <20220626021148.56740-1-samuel@sholland.org>
+ <20220626021148.56740-7-samuel@sholland.org>
+ <20220702154647.53c6755a@slackpad.lan>
 From:   Samuel Holland <samuel@sholland.org>
-Message-ID: <37d40cf2-4512-754f-2e44-ee1449bc2e9f@sholland.org>
-Date:   Sat, 2 Jul 2022 10:11:43 -0500
+Message-ID: <ef4454cb-a387-7dda-67e3-7493a89be8e7@sholland.org>
+Date:   Sat, 2 Jul 2022 10:43:05 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20220629143046.213584-13-aidanmacdonald.0x0@gmail.com>
+In-Reply-To: <20220702154647.53c6755a@slackpad.lan>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -89,152 +90,140 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 6/29/22 9:30 AM, Aidan MacDonald wrote:
-> The AXP192 PMIC's GPIO registers are much different from the GPIO
-> registers of the AXP20x and AXP813 PMICs supported by the existing
-> pinctrl-axp209 driver. It makes more sense to add a new driver for
-> the AXP192, rather than add support in the existing axp20x driver.
+On 7/2/22 9:47 AM, Andre Przywara wrote:
+> On Sat, 25 Jun 2022 21:11:47 -0500
+> Samuel Holland <samuel@sholland.org> wrote:
 > 
-> The pinctrl-axp192 driver is considerably more flexible in terms of
-> register layout and should be able to support other X-Powers PMICs.
-> Interrupts and pull down resistor configuration are supported too.
+> Hi Samuel,
+> 
+>> These SoCs contain a pinctrl with a new register layout. Use the variant
+>> parameter to set the right register offsets. This pinctrl also increases
+>> the number of functions per pin from 8 to 16, taking advantage of all 4
+>> bits in the mux config field (so far, only functions 0-8 and 14-15 are
+>> used). This increases the maximum possible number of functions.
+>>
+>> D1s is a low pin count version of the D1 SoC, with some pins omitted.
+>> The remaining pins have the same function assignments as D1.
+> 
+> So do we actually need this extra variant, if there are no conflicts?
+> The D1s seems to be a simple subset of the D1. I think we followed the
+> same approach for the H616 already, where there are more pins in the
+> pinctrl driver than the manual describes, and which are used in other
+> package variants, like the T507.
+> In case of the H616, those pins are there, you can program them (which
+> is not the case for not implemented pins otherwise), they are just not
+> connected to the package.
+> I would expect a DT to never reference them, and even if, it doesn't do
+> any harm other than just not working.
 
-I am planning to implement gpio/pinctrl support for AXP152[1], which is
-somewhere between AXP20x and AXP192 in terms of GPIO capability.
+I am following the example of V3/V3s here, so it seems we are inconsistent on
+this point. I needed to supply one variant for the register layout anyway, so I
+though I might as well be "accurate".
 
-Which driver should I add it to? How much work would it be to convert AXP20x
-variants to the new driver? And if supporting other X-Powers PMICs is the plan,
-would it make sense to convert the existing driver in-place to avoid dealing
-with Kconfig migrations?
+But with Allwinner releasing lots of packages per die, it is probably overkill
+to have a separate compatible per packge. As you note, there is no harm in
+configuring pins that do not map to any pad.
 
-[1]: https://linux-sunxi.org/AXP152
+Some notes for completeness:
+ - D1 documents all three JTAG functions (ARM, RISC-V, and DSP), although the
+ARM JTAG does not work.
+ - D1s/F133 only documents the RISC-V JTAG function.
+ - T113 only documents the ARM and DSP JTAG functions.
+ - T113 adds a CAN function on mux 8 of PB2-PB5. The CAN controller accidentally
+made it in to one version of the D1 datasheet, so it may unofficially exist there.
 
-> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-> ---
->  drivers/pinctrl/Kconfig          |  13 +
->  drivers/pinctrl/Makefile         |   1 +
->  drivers/pinctrl/pinctrl-axp192.c | 598 +++++++++++++++++++++++++++++++
->  3 files changed, 612 insertions(+)
->  create mode 100644 drivers/pinctrl/pinctrl-axp192.c
-> [...]
-> +static int axp192_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin, unsigned long *config)
-> +{
-> +	enum pin_config_param param = pinconf_to_config_param(*config);
-> +	unsigned int arg = 1;
-> +	bool pull_down;
-> +	int ret;
-> +
-> +	switch (param) {
-> +	case PIN_CONFIG_BIAS_DISABLE:
-> +		ret = axp192_pinconf_get_pull_down(pctldev, pin, &pull_down);
-> +		if (ret)
-> +			return ret;
-> +		if (pull_down)
-> +			return -EINVAL;
-> +		break;
-> +
-> +	case PIN_CONFIG_BIAS_PULL_DOWN:
-> +		ret = axp192_pinconf_get_pull_down(pctldev, pin, &pull_down);
-> +		if (ret)
-> +			return ret;
-> +		if (!pull_down)
-> +			return -EINVAL;
-> +		break;
-> +
-> +	default:
-> +		return -ENOTSUPP;
-> +	}
-> +
-> +	*config = pinconf_to_config_packed(param, arg);
-> +	return 0;
-> +}
-> +
-> +static int axp192_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
-> +			      unsigned long *configs, unsigned int num_configs)
-> +{
-> +	int ret;
-> +	unsigned int cfg;
-> +
-> +	for (cfg = 0; cfg < num_configs; cfg++) {
-> +		switch (pinconf_to_config_param(configs[cfg])) {
-> +		case PIN_CONFIG_BIAS_DISABLE:
-> +			ret = axp192_pinconf_set_pull_down(pctldev, pin, 0);
-> +			if (ret)
-> +				return ret;
-> +			break;
-> +
-> +		case PIN_CONFIG_BIAS_PULL_DOWN:
-> +			ret = axp192_pinconf_set_pull_down(pctldev, pin, 1);
-> +			if (ret)
-> +				return ret;
-> +			break;
-> +
-> +		default:
-> +			return -ENOTSUPP;
+None of these variations are conflicting.
 
-The GPIO outputs are always open-drain. It looks like this needs to handle
-PIN_CONFIG_DRIVE_OPEN_DRAIN, or gpiolib will try to emulate it.
+> For the table below: I checked every pin against the D1 manual (yes,
+> that took an hour), and found only one small issue and some nits in
+> PortE, see inline.
+> 
+>> Signed-off-by: Samuel Holland <samuel@sholland.org>
+>> ---
+>>
+>>  drivers/pinctrl/sunxi/Kconfig             |   5 +
+>>  drivers/pinctrl/sunxi/Makefile            |   1 +
+>>  drivers/pinctrl/sunxi/pinctrl-sun20i-d1.c | 860 ++++++++++++++++++++++
+>>  drivers/pinctrl/sunxi/pinctrl-sunxi.c     |  16 +-
+>>  drivers/pinctrl/sunxi/pinctrl-sunxi.h     |   7 +
+>>  5 files changed, 884 insertions(+), 5 deletions(-)
+>>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun20i-d1.c
+>>
+>> diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
+>> index 33751a6a0757..a6ac1c1f2585 100644
+>> --- a/drivers/pinctrl/sunxi/Kconfig
+>> +++ b/drivers/pinctrl/sunxi/Kconfig
+>> @@ -84,6 +84,11 @@ config PINCTRL_SUN9I_A80_R
+>>  	depends on RESET_CONTROLLER
+>>  	select PINCTRL_SUNXI
+>>  
+>> +config PINCTRL_SUN20I_D1
+>> +	bool "Support for the Allwinner D1 PIO"
+>> +	default RISCV && ARCH_SUNXI
+>> +	select PINCTRL_SUNXI
+>> +
+>>  config PINCTRL_SUN50I_A64
+>>  	bool "Support for the Allwinner A64 PIO"
+>>  	default ARM64 && ARCH_SUNXI
+>> diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
+>> index d3440c42b9d6..2ff5a55927ad 100644
+>> --- a/drivers/pinctrl/sunxi/Makefile
+>> +++ b/drivers/pinctrl/sunxi/Makefile
+>> @@ -20,6 +20,7 @@ obj-$(CONFIG_PINCTRL_SUN8I_A83T_R)	+= pinctrl-sun8i-a83t-r.o
+>>  obj-$(CONFIG_PINCTRL_SUN8I_H3)		+= pinctrl-sun8i-h3.o
+>>  obj-$(CONFIG_PINCTRL_SUN8I_H3_R)	+= pinctrl-sun8i-h3-r.o
+>>  obj-$(CONFIG_PINCTRL_SUN8I_V3S)		+= pinctrl-sun8i-v3s.o
+>> +obj-$(CONFIG_PINCTRL_SUN20I_D1)		+= pinctrl-sun20i-d1.o
+>>  obj-$(CONFIG_PINCTRL_SUN50I_H5)		+= pinctrl-sun50i-h5.o
+>>  obj-$(CONFIG_PINCTRL_SUN50I_H6)		+= pinctrl-sun50i-h6.o
+>>  obj-$(CONFIG_PINCTRL_SUN50I_H6_R)	+= pinctrl-sun50i-h6-r.o
+>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun20i-d1.c b/drivers/pinctrl/sunxi/pinctrl-sun20i-d1.c
+>> new file mode 100644
+>> index 000000000000..7247c1f1d92c
+>> --- /dev/null
+>> +++ b/drivers/pinctrl/sunxi/pinctrl-sun20i-d1.c
+>> @@ -0,0 +1,860 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Allwinner D1 SoC pinctrl driver.
+>> + *
+>> + * Copyright (c) 2020 wuyan@allwinnertech.com
+>> + * Copyright (c) 2021-2022 Samuel Holland <samuel@sholland.org>
+>> + */
+>> +
+>> +#include <linux/module.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/pinctrl/pinctrl.h>
+>> +
+>> +#include "pinctrl-sunxi.h"
+>> +
+>> +static const struct sunxi_desc_pin d1_pins[] = {
+>> +	/* PB */
+>> +	SUNXI_PIN_VARIANT(SUNXI_PINCTRL_PIN(B, 0),
+>> +		PINCTRL_SUN20I_D1,
+>> +		SUNXI_FUNCTION(0x0, "gpio_in"),
+>> +		SUNXI_FUNCTION(0x1, "gpio_out"),
+>> +		SUNXI_FUNCTION(0x2, "pwm"),
+> 
+> The manual mentions the PWM channel number in the pin name, and it
+> seems like in other pinctrl drivers we use the number either in the
+> function name, or at least in the comment.
+> Shall we do one of them here as well?
 
-And I would suggest returning -EINVAL for PIN_CONFIG_DRIVE_PUSH_PULL, but
-gpiolib does not check the return value when setting that.
+I originally had the numbers in the function name, but then I realized that no
+pin has multiple PWM muxes, so I removed them. As you mention, other drivers
+have them, so I will add them back.
 
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> [...]
-> +
-> +static int axp192_pctl_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct axp20x_dev *axp20x = dev_get_drvdata(dev->parent);
-> +	struct axp192_pctl *pctl;
-> +	struct pinctrl_desc *pctrl_desc;
-> +	int ret, i;
-> +
-> +	pctl = devm_kzalloc(dev, sizeof(*pctl), GFP_KERNEL);
-> +	if (!pctl)
-> +		return -ENOMEM;
-> +
-> +	pctl->desc = device_get_match_data(dev);
-> +	pctl->regmap = axp20x->regmap;
-> +	pctl->regmap_irqc = axp20x->regmap_irqc;
-> +	pctl->dev = dev;
-> +
-> +	pctl->chip.base			= -1;
-> +	pctl->chip.can_sleep		= true;
-> +	pctl->chip.request		= gpiochip_generic_request;
-> +	pctl->chip.free			= gpiochip_generic_free;
-> +	pctl->chip.parent		= dev;
-> +	pctl->chip.label		= dev_name(dev);
-> +	pctl->chip.owner		= THIS_MODULE;
-> +	pctl->chip.get			= axp192_gpio_get;
-> +	pctl->chip.get_direction	= axp192_gpio_get_direction;
-> +	pctl->chip.set			= axp192_gpio_set;
-> +	pctl->chip.direction_input	= axp192_gpio_direction_input;
-> +	pctl->chip.direction_output	= axp192_gpio_direction_output;
-> +	pctl->chip.to_irq		= axp192_gpio_to_irq;
-> +	pctl->chip.ngpio		= pctl->desc->npins;
-> +
-> +	pctl->irqs = devm_kcalloc(dev, pctl->desc->npins, sizeof(int), GFP_KERNEL);
-> +	if (!pctl->irqs)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < pctl->desc->npins; i++) {
-> +		ret = platform_get_irq_byname_optional(pdev, pctl->desc->pins[i].name);
-> +		if (ret > 0)
-> +			pctl->irqs[i] = ret;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, pctl);
-> +
-> +	pctrl_desc = devm_kzalloc(dev, sizeof(*pctrl_desc), GFP_KERNEL);
-> +	if (!pctrl_desc)
-> +		return -ENOMEM;
+> And the mux numbers for pwm are all over the place, so lets hope we
+> never need pwm in U-Boot ;-)
 
-This can go inside struct axp192_pctl. It does not need a separate allocation.
+PWM is used for the CPU voltage regulator on at least one board (Nezha), but I
+think we can get away without U-Boot support for that. And including the PWM
+number in the function name will improve things somewhat.
+
+I will fix the typos you noted below.
 
 Regards,
 Samuel
