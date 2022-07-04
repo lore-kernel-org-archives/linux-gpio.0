@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FAD9C433EF
-	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jul 2022 15:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA204CCA481
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jul 2022 15:44:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234528AbiGDPox (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S233796AbiGDPox (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 4 Jul 2022 11:44:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60346 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233796AbiGDPol (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Jul 2022 11:44:41 -0400
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CA1011A3A;
-        Mon,  4 Jul 2022 08:43:56 -0700 (PDT)
-Received: by mail-qt1-f175.google.com with SMTP id q16so10322876qtn.5;
-        Mon, 04 Jul 2022 08:43:56 -0700 (PDT)
+        with ESMTP id S234194AbiGDPom (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Jul 2022 11:44:42 -0400
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB2711C3A;
+        Mon,  4 Jul 2022 08:44:07 -0700 (PDT)
+Received: by mail-qk1-f170.google.com with SMTP id z7so7006200qko.8;
+        Mon, 04 Jul 2022 08:44:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8umnx1YRxt24zlwt2ZTujxLs9cAmAkjsvKGoM9RrW3s=;
-        b=HG3IOy+X2fb9VVLXpELrZ65QMhYKuKtLTdIrRqcFyf0wr6P4ew5+BjlsuKHzEG9Btw
-         vYAiaYdb90/0x8NK8tvw/4/gopURZiQVHwGU8eDaYo4xL39WAEw7ATTFOsnyKKZBUBnx
-         msc571hpLS6imdEtz9+BxmZG+AgFhKAxpiJfkIkKD7MtZILGsbrnw0fC8TNhmatJvehp
-         9K6Pu+WWY344WBIP5ISSwsLkdMmsGjsFW417e31L9kzlZdi44v/s/O9nY9PbUGIZOcPi
-         CeaKyqlO3455S8Mbo9ozNkmLZ3ssI7aiqXxaZbbwvEKogyVkQyeXiFzpqdSSaZv0EQ8Q
-         Uadg==
-X-Gm-Message-State: AJIora/XEXD/qwHMO77fHMheSOM034ZXeaFc/cEiovvOGk2skq/nZDlR
-        c57LVjxwT3tkRP4EwJjwSJmemgXiB1S760zu
-X-Google-Smtp-Source: AGRyM1shL7cBoo3fBQ1V/II4DV2jb8cxDoG14OG6l66i0QO0MsK7/L+IWhQnCrPilX4n1J93hL8nxQ==
-X-Received: by 2002:a05:622a:512:b0:31d:3a0a:7e27 with SMTP id l18-20020a05622a051200b0031d3a0a7e27mr13778400qtx.243.1656949435002;
-        Mon, 04 Jul 2022 08:43:55 -0700 (PDT)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id u12-20020ac8050c000000b003051ea4e7f6sm19881025qtg.48.2022.07.04.08.43.54
+        bh=XaZcEiGZU6yoW00uNxVd8pdu0Yz4LF06EmZhqbZeyjU=;
+        b=R08l1lK3H/9t0R/sy4wAKYezq+YZ8JfdE1WiLAwiPwyZtztmb+pBx5xXA0Pgj9io0+
+         0gYpnzN9t0ccqon/oYtrEPlgkB7OAeB68fgcDEKcnPzkfgrpUZnzqraxWY5vF+kP8O5a
+         nFucZtal8wlpeZgybGBPLA3BcPoP52vbrPovL/pBKr1dp/2GEDLH3OBFVGVHq9JDwWhe
+         0SiN/x5bLhkO5Z0oW4dfwFONYZgtnb/a7wlOwiYUYUJqmoDql2fZdwtUClPoj1i+lb1G
+         AEhPU+uLmY7Hvx3y13qCbcojp9MCPCGe9tBgwciJalQ4rkf9ssPnTG1/AOuP3y8VIVhC
+         /ahg==
+X-Gm-Message-State: AJIora/78hUfBFAyJOO79BBzozhSml3K84m8CdRH575GRY3KddFTt4Fu
+        IZR6jG2BWbNST/Nr/ZYFTI2OOcdJJXjoNm+I
+X-Google-Smtp-Source: AGRyM1t8txepYcgkK5Snu7uRT/22x9pl56X/9TKAhS4bTQnZXh6aIrOkDIRuhoj/YY53gVPOEIyt2Q==
+X-Received: by 2002:a05:620a:cce:b0:6af:59b:17bb with SMTP id b14-20020a05620a0cce00b006af059b17bbmr20257582qkj.423.1656949446150;
+        Mon, 04 Jul 2022 08:44:06 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id y9-20020a05620a25c900b006a370031c3esm25944587qko.106.2022.07.04.08.44.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Jul 2022 08:43:54 -0700 (PDT)
-Received: by mail-yb1-f178.google.com with SMTP id 76so1912973ybd.0;
-        Mon, 04 Jul 2022 08:43:54 -0700 (PDT)
-X-Received: by 2002:a05:6902:a:b0:65c:b38e:6d9f with SMTP id
- l10-20020a056902000a00b0065cb38e6d9fmr33813567ybh.36.1656949434293; Mon, 04
- Jul 2022 08:43:54 -0700 (PDT)
+        Mon, 04 Jul 2022 08:44:05 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-31c89653790so34625857b3.13;
+        Mon, 04 Jul 2022 08:44:05 -0700 (PDT)
+X-Received: by 2002:a0d:c787:0:b0:31b:a963:e1de with SMTP id
+ j129-20020a0dc787000000b0031ba963e1demr33845058ywd.283.1656949445694; Mon, 04
+ Jul 2022 08:44:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <87h741ty20.wl-kuninori.morimoto.gx@renesas.com> <87zghtsjb4.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87zghtsjb4.wl-kuninori.morimoto.gx@renesas.com>
+References: <87h741ty20.wl-kuninori.morimoto.gx@renesas.com> <87wncxsjah.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87wncxsjah.wl-kuninori.morimoto.gx@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 4 Jul 2022 17:43:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU-g+ZaSmFDfiYjkWvm8i2DuOAtnnYzyjn6vb3ETHcdQQ@mail.gmail.com>
-Message-ID: <CAMuHMdU-g+ZaSmFDfiYjkWvm8i2DuOAtnnYzyjn6vb3ETHcdQQ@mail.gmail.com>
-Subject: Re: [PATCH v4 12/23] pinctrl: renesas: r8a779g0: add missing IRQx_A/IRQx_B
+Date:   Mon, 4 Jul 2022 17:43:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWGHRDnFW-Ej5u8gwJieQJE15=CS+xyHaAc8n2hcQVUug@mail.gmail.com>
+Message-ID: <CAMuHMdWGHRDnFW-Ej5u8gwJieQJE15=CS+xyHaAc8n2hcQVUug@mail.gmail.com>
+Subject: Re: [PATCH v4 14/23] pinctrl: renesas: r8a779g0: add missing HSCIF1_X
 To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -58,16 +58,55 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Hi Morimoto-san,
+
 On Fri, Jul 1, 2022 at 3:39 AM Kuninori Morimoto
 <kuninori.morimoto.gx@renesas.com> wrote:
 > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 >
-> This patch adds missing IRQx_A/IRQx_B, and tidyup existing IRQs.
+> This patch adds missing HSCIF1.
+> Because Document (Rev.0.51) has 2xHSCIF1 with no suffix (_A, _B),
+> this patch name it as _X.
 >
 > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks, will queue in renesas-pinctrl-for-v5.20.
+Thanks for your patch!
+
+> --- a/drivers/pinctrl/renesas/pfc-r8a779g0.c
+> +++ b/drivers/pinctrl/renesas/pfc-r8a779g0.c
+> @@ -2346,9 +2376,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+>         SH_PFC_PIN_GROUP(hscif0_data),
+>         SH_PFC_PIN_GROUP(hscif0_clk),
+>         SH_PFC_PIN_GROUP(hscif0_ctrl),
+> -       SH_PFC_PIN_GROUP(hscif1_data),
+> -       SH_PFC_PIN_GROUP(hscif1_clk),
+> -       SH_PFC_PIN_GROUP(hscif1_ctrl),
+> +       SH_PFC_PIN_GROUP(hscif1_data),          /* suffix might be updated */
+> +       SH_PFC_PIN_GROUP(hscif1_data_x),        /* suffix might be updated */
+> +       SH_PFC_PIN_GROUP(hscif1_clk),           /* suffix might be updated */
+> +       SH_PFC_PIN_GROUP(hscif1_clk_x),         /* suffix might be updated */
+> +       SH_PFC_PIN_GROUP(hscif1_ctrl),          /* suffix might be updated */
+> +       SH_PFC_PIN_GROUP(hscif1_ctrl_x),        /* suffix might be updated */
+>         SH_PFC_PIN_GROUP(hscif2_data),
+>         SH_PFC_PIN_GROUP(hscif2_clk),
+>         SH_PFC_PIN_GROUP(hscif2_ctrl),
+> @@ -2545,9 +2578,13 @@ static const char * const hscif0_groups[] = {
+>  };
+>
+>  static const char * const hscif1_groups[] = {
+> +       /* suffix might be updated */
+>         "hscif1_data",
+> +       "hscif1_data_x",
+>         "hscif1_clk",
+> +       "hscif1_clk_x",
+>         "hscif1_ctrl",
+> +       "hscif1_ctrl_x",
+>  };
+
+I'll sort the above (all *_x last) while applying.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl-for-v5.20.
 
 Gr{oetje,eeting}s,
 
