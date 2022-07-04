@@ -2,98 +2,96 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8678DC43334
-	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jul 2022 10:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC360CCA479
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jul 2022 11:36:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233949AbiGDKKl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 4 Jul 2022 06:10:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32884 "EHLO
+        id S234338AbiGDLgM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 4 Jul 2022 07:36:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231948AbiGDKKk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Jul 2022 06:10:40 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEB37CE23;
-        Mon,  4 Jul 2022 03:10:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1656929438; x=1688465438;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=pw9Nrp0Vv9RZax0caTah0wHYemQm/jouii9axMgSRvA=;
-  b=znSwudlUaVZuSn789I6Gl6WsfCjb3pORnJh4ds7ZK34YAsFUP6a+8p6L
-   HpZUQvd/N5EDUkOynjAgUmBMa6IQ9rTbH0g8AmqEH5ZZc85286fwO9r+D
-   CJ5Of0cKyHyf55qNnzxJ15hn1zmLI09LCBvxHvQSEjGx9jnwT+XWlJcnb
-   ZF+LNn2ptLlJ3j/st1+W8PkFE5OgU3yM8EZ/nyVkKCGGIGk0r22SrU+Fs
-   XGAJ1TZdGr5Kx4VenFtSZVMOgTNHVEZ9KExjPCNJBMrLzTszLy+5FnQYN
-   7wdhYKN7kv9j5GfrdxY73A/sWGcdpPpvRqGUuFsxb9mFDqBCIwPdYosyV
-   g==;
-X-IronPort-AV: E=Sophos;i="5.92,243,1650956400"; 
-   d="scan'208";a="170941199"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 04 Jul 2022 03:10:38 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Mon, 4 Jul 2022 03:10:35 -0700
-Received: from localhost.localdomain (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2375.17 via Frontend Transport; Mon, 4 Jul 2022 03:10:33 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <ludovic.desroches@microchip.com>, <linus.walleij@linaro.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 1/2] pinctrl: at91-pio4: remove #ifdef CONFIG_PM_SLEEP
-Date:   Mon, 4 Jul 2022 13:12:52 +0300
-Message-ID: <20220704101253.808519-1-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.33.0
+        with ESMTP id S233401AbiGDLgH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Jul 2022 07:36:07 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2906AFD29;
+        Mon,  4 Jul 2022 04:36:01 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id lw20so16255499ejb.4;
+        Mon, 04 Jul 2022 04:36:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0aIGlqcgCn/YTg5HHzWZ8DwAqY9DnpV3nvPZa0+ECR8=;
+        b=jg/tik05NVZMTks/DSZe6tsevVMUxmFiVoIruozLWe2xuR1DzLM0w6wZSe6dTFefDm
+         QQdGb1Q0adnkGKtXgIOOxXYuGIEKQB5DOT588r1A8yd6zy+AtihpV7hWAuhLfnKKBrJL
+         bOh6cVlixBy/8yNwTUx9nHIvhyviRc8rPdl7NEigfk3ODnmIsrVSZu8PJcNtoTWP8ejU
+         ZDnWh8cP9liIFHAU08KkCw1WFv/UT8qPvBWZVcG15YvugvSVvNDjEETJY/dSnbHbm1wO
+         Dgel1Wjd219PzTlaePNQU/Z/wPHkr5GCTg6xsldWWpenFDMXKq89jMJycziiXsO1WxfM
+         Ubcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0aIGlqcgCn/YTg5HHzWZ8DwAqY9DnpV3nvPZa0+ECR8=;
+        b=IWjpLtgdmY7Qo7LCTfGBvyhakJui+Qdvs9hNgqBhGvjZyrKlT18l9orGLyf+7p22dA
+         RM8IleQtADmiUMkSxS8yy/nwKHdZJahK5I8p/plMXTzo4JQoTglibmTtlUi+Zy/Px0Rg
+         2rAJDjrA89eqvBZ3mOSM6Ai6+GsQ3NFZH0nFnTFh9j36Fij0VDxsk+uKDD5O7peYvnJP
+         VOUzNkm1HxH3irWmK3C+3SXM7bXw3z0yyURb7/H85DK8FR2pEbgiYVEiewnXEVux9uqU
+         x42ZMi9TtClSKu3adt8J/aQ+yHCz6IwvYN+52LKKosfGQA0ZU466njCBOsomID5W2PlZ
+         otzg==
+X-Gm-Message-State: AJIora9wBTfXAGqhzKwY20wTXd+WuvvsB7HTRvcA8KCL0/vwrgHsOsvX
+        HWiuVmDzxypc/WTfWy+nLre+d7XZbbIVwwIxPqM=
+X-Google-Smtp-Source: AGRyM1tl31k3c5SOlRTZWyreyxtcgBnhBMYbIvLrxaq0UnwsbYCEy4jAc6rcR42c2kvcYDzPa0qi6SDI9riI4+wygUs=
+X-Received: by 2002:a17:906:4985:b0:727:c6ac:5b31 with SMTP id
+ p5-20020a170906498500b00727c6ac5b31mr27940905eju.501.1656934559712; Mon, 04
+ Jul 2022 04:35:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20220703194020.78701-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220703194020.78701-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWDQYp+ub+GW8mBb=fFz9KJH5ZwxKe28cDj_0O6E0FN+w@mail.gmail.com>
+In-Reply-To: <CAMuHMdWDQYp+ub+GW8mBb=fFz9KJH5ZwxKe28cDj_0O6E0FN+w@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Mon, 4 Jul 2022 12:35:32 +0100
+Message-ID: <CA+V-a8sa1Y8OnnauAB9E_F6SnG42TThd9=e=RmGwQoSq03Sd3g@mail.gmail.com>
+Subject: Re: [PATCH v7 1/5] dt-bindings: interrupt-controller: Add Renesas
+ RZ/G2L Interrupt Controller
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Remove #ifdef CONFIG_PM_SLEEP and use pm_sleep_ptr() macro instead.
+Hi Geert,
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/pinctrl/pinctrl-at91-pio4.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+On Mon, Jul 4, 2022 at 9:44 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Sun, Jul 3, 2022 at 9:41 PM Lad Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> > Add DT bindings for the Renesas RZ/G2L Interrupt Controller.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> checkpatch.pl:
+> WARNING: From:/Signed-off-by: email address mismatch: 'From: Lad
+> Prabhakar <prabhakar.csengg@gmail.com>' != 'Signed-off-by: Lad
+> Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>'
+>
+Ouch my bad, not sure why send-email didn't pick up the --from option.
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 517f2a6330ad..82b921fd630d 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -237,8 +237,6 @@ static void atmel_gpio_irq_unmask(struct irq_data *d)
- 			 BIT(pin->line));
- }
- 
--#ifdef CONFIG_PM_SLEEP
--
- static int atmel_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
- {
- 	struct atmel_pioctrl *atmel_pioctrl = irq_data_get_irq_chip_data(d);
-@@ -255,9 +253,6 @@ static int atmel_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
- 
- 	return 0;
- }
--#else
--#define atmel_gpio_irq_set_wake NULL
--#endif /* CONFIG_PM_SLEEP */
- 
- static struct irq_chip atmel_gpio_irq_chip = {
- 	.name		= "GPIO",
-@@ -265,7 +260,7 @@ static struct irq_chip atmel_gpio_irq_chip = {
- 	.irq_mask	= atmel_gpio_irq_mask,
- 	.irq_unmask	= atmel_gpio_irq_unmask,
- 	.irq_set_type	= atmel_gpio_irq_set_type,
--	.irq_set_wake	= atmel_gpio_irq_set_wake,
-+	.irq_set_wake	= pm_sleep_ptr(atmel_gpio_irq_set_wake),
- };
- 
- static int atmel_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
--- 
-2.34.1
-
+Cheers,
+Prabhakar
