@@ -2,95 +2,97 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A66CDCCA47F
-	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jul 2022 08:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 154E7C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 Jul 2022 09:20:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231491AbiGDIoy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 4 Jul 2022 04:44:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47512 "EHLO
+        id S233669AbiGDJUK convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 4 Jul 2022 05:20:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233020AbiGDIow (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Jul 2022 04:44:52 -0400
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5208EB87C;
-        Mon,  4 Jul 2022 01:44:51 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id j21so14629223lfe.1;
-        Mon, 04 Jul 2022 01:44:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1wvvDrPdMiWD2bKHNoXzQT9rzvWbrQJdRittsndPYoM=;
-        b=xcWyEnjRX4la4FJyp6L3L1HKjN/zzxvfDc88zuDX1vWws3bAEMKEKpYV/gT/idNgzy
-         oT9t0fnyYLClVHG5c+sDDYfzUlgARvAKxq3d9Qv5p9u2H9KvDKBU/sCiTfqCv/lCyem1
-         2ut5yI7+Alc1geF26vKj6+/VEGLxXOVLndPWlO67FG62WX3AOZwFawHGJI+8tlVkCUfl
-         CRI8vrFy+MaJJMRVA5LcDOe8snBmjGPcPkYAhe2WTDVvm3Q4czAwuMIhHD8/Yc/fD43V
-         RQ7PwejH5y1RfOD3wFHY7oe41/lmdAck4Bm0hoSIFfWXovOFmjPbfwLKxFs5bkqztqRk
-         x57g==
-X-Gm-Message-State: AJIora9EuRVxWcluZYOFrV1Ey0i1k9+khd9RYyMBZgo6UsLvwT46+0GB
-        6quM0IcaUcyLydNYcimiC+jEr92xqkbzxf1Y
-X-Google-Smtp-Source: AGRyM1tIAD2gDbVwR0taNgi/mVkd3JFXcD4fx4aHkSlpTAnl3gJJeuLCPJhXGnmq7euqgdViuEDv3w==
-X-Received: by 2002:a05:6512:1691:b0:47f:ae89:906f with SMTP id bu17-20020a056512169100b0047fae89906fmr17885871lfb.229.1656924288889;
-        Mon, 04 Jul 2022 01:44:48 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id x2-20020a0565123f8200b0047f8132d10bsm5018352lfa.281.2022.07.04.01.44.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Jul 2022 01:44:47 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id v9so10187121ljk.10;
-        Mon, 04 Jul 2022 01:44:46 -0700 (PDT)
-X-Received: by 2002:a2e:9203:0:b0:25c:785:8c7c with SMTP id
- k3-20020a2e9203000000b0025c07858c7cmr8066041ljg.383.1656924286419; Mon, 04
- Jul 2022 01:44:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220703194020.78701-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20220703194020.78701-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20220703194020.78701-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 4 Jul 2022 10:44:31 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWDQYp+ub+GW8mBb=fFz9KJH5ZwxKe28cDj_0O6E0FN+w@mail.gmail.com>
-Message-ID: <CAMuHMdWDQYp+ub+GW8mBb=fFz9KJH5ZwxKe28cDj_0O6E0FN+w@mail.gmail.com>
-Subject: Re: [PATCH v7 1/5] dt-bindings: interrupt-controller: Add Renesas
- RZ/G2L Interrupt Controller
-To:     Lad Prabhakar <prabhakar.csengg@gmail.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
+        with ESMTP id S233527AbiGDJUJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Jul 2022 05:20:09 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08A271A8
+        for <linux-gpio@vger.kernel.org>; Mon,  4 Jul 2022 02:20:09 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1o8IFJ-0006pD-Is; Mon, 04 Jul 2022 11:19:57 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1o8IFD-004LI3-0I; Mon, 04 Jul 2022 11:19:54 +0200
+Received: from pza by lupine with local (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1o8IFF-0004PA-Pd; Mon, 04 Jul 2022 11:19:53 +0200
+Message-ID: <36ebb15c321f33176ed8c064b4a58a739acb8727.camel@pengutronix.de>
+Subject: Re: [PATCH v7 2/5] irqchip: Add RZ/G2L IA55 Interrupt Controller
+ driver
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Lad Prabhakar <prabhakar.csengg@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
         Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Rob Herring <robh@kernel.org>
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date:   Mon, 04 Jul 2022 11:19:53 +0200
+In-Reply-To: <20220703194020.78701-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20220703194020.78701-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+         <20220703194020.78701-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.38.3-1 
+MIME-Version: 1.0
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 Hi Prabhakar,
 
-On Sun, Jul 3, 2022 at 9:41 PM Lad Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> Add DT bindings for the Renesas RZ/G2L Interrupt Controller.
->
+On So, 2022-07-03 at 20:40 +0100, Lad Prabhakar wrote:
+> Add a driver for the Renesas RZ/G2L Interrupt Controller.
+> 
+> This supports external pins being used as interrupts. It supports
+> one line for NMI, 8 external pins and 32 GPIO pins (out of 123)
+> to be used as IRQ lines.
+> 
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  drivers/irqchip/Kconfig             |   8 +
+>  drivers/irqchip/Makefile            |   1 +
+>  drivers/irqchip/irq-renesas-rzg2l.c | 393 ++++++++++++++++++++++++++++
+>  3 files changed, 402 insertions(+)
+>  create mode 100644 drivers/irqchip/irq-renesas-rzg2l.c
+> 
+> diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
+> new file mode 100644
+> index 000000000000..4e977fa04bbe
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-renesas-rzg2l.c
+> @@ -0,0 +1,393 @@
+[...]
+> +static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
+> +{
+[...]
+> +	resetn = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+> +	if (IS_ERR(resetn))
+> +		return IS_ERR(resetn);
 
-checkpatch.pl:
-WARNING: From:/Signed-off-by: email address mismatch: 'From: Lad
-Prabhakar <prabhakar.csengg@gmail.com>' != 'Signed-off-by: Lad
-Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>'
+		return PTR_ERR(resetn);
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+regards
+Philipp
