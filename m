@@ -2,155 +2,214 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53549CCA47B
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Jul 2022 18:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2047C43334
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Jul 2022 20:24:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230143AbiGESeO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Jul 2022 14:34:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40498 "EHLO
+        id S230260AbiGEUY2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Jul 2022 16:24:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbiGESeN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jul 2022 14:34:13 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AAC71ADB5;
-        Tue,  5 Jul 2022 11:34:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 05C0FB818C2;
-        Tue,  5 Jul 2022 18:34:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7F60C341D1;
-        Tue,  5 Jul 2022 18:34:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657046049;
-        bh=kIyot3zMyMDO8B1YVidHQ7qgbvG3Xa6UO0gOQL2C6Jg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=JsU79BmfynIReY3T89cOgEH/6tFNiBBDFqKBs8oXNQm6/+g5IkfnSz6lnxKwnFqNS
-         1j47RNad0YhesCc/SIiouNRpyt21tXxp+7UujB4zP8xtmbwRtNJauDkGspmgUyDhgl
-         fn9thf0FJV9aayLYjrKzsPTW4fWtqpM+dZ3RveMpUH7WbnRHfbzb18F0miRMtdvQQg
-         STNIB53IAwMygQuY6izE+2HL9mzZsy2/DnNlSXpayAhlmHiEb92zuAdqA/GH/jWeIU
-         Jv7618fva2U+QU/c6uDzeyF1fZYZvuxpgXK3qTZ+hcZqIl+t9mRe/sRlTrt7BFed4l
-         OpSgj1Sj26zAw==
-Received: by mail-vs1-f49.google.com with SMTP id h7so12788288vsr.11;
-        Tue, 05 Jul 2022 11:34:09 -0700 (PDT)
-X-Gm-Message-State: AJIora9OmprPX2zAR5He1YiIY879nxCd15nKzisOw36K+FdtQEVDd53T
-        u2U/rkYqhJcRMauGSRv2NZ54vf6RdkWSuCmyBQ==
-X-Google-Smtp-Source: AGRyM1uIXQO86wcgJn/AvE4+AWlqrvIba5lSJyE0SPqE7mHdOeHYb1wL3dEnTAICHhhvz3Q4xUajqxFIJ9dC4e0p4xY=
-X-Received: by 2002:a67:d194:0:b0:357:8ea:5554 with SMTP id
- w20-20020a67d194000000b0035708ea5554mr562557vsi.0.1657046048517; Tue, 05 Jul
- 2022 11:34:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220629164414.301813-1-viorel.suman@oss.nxp.com>
- <20220629164414.301813-3-viorel.suman@oss.nxp.com> <f0634bf0-77e9-939e-693f-31d50af4768c@linaro.org>
- <20220630123754.esbuac4pfktlseh2@fsr-ub1664-116> <78faf75d-80b7-7a0e-e306-6351dbe5133c@linaro.org>
-In-Reply-To: <78faf75d-80b7-7a0e-e306-6351dbe5133c@linaro.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 5 Jul 2022 12:33:57 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+0GJBTVkS12XTvUKphMH4XuQ5AS1-QHMw6ULgpWbZBQQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+0GJBTVkS12XTvUKphMH4XuQ5AS1-QHMw6ULgpWbZBQQ@mail.gmail.com>
-Subject: Re: [PATCH v6 02/14] dt-bindings: pinctrl: imx: Add fsl,scu-iomux
- yaml file
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>,
+        with ESMTP id S230199AbiGEUY1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jul 2022 16:24:27 -0400
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E623183B7;
+        Tue,  5 Jul 2022 13:24:26 -0700 (PDT)
+Received: by mail-io1-f47.google.com with SMTP id m13so12284915ioj.0;
+        Tue, 05 Jul 2022 13:24:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kK1t7Hsd/FWgXecyEjcQLgVat5DGCZVjcpXVyINHGBo=;
+        b=366Acw/9VOC/KcFqzL0HGYEvOkIKBunQKbBnrqjG9azai8mF+iWmziSBdHxow+8kvW
+         cmHn607XEb31mS1ifDbH5MCnw0RP5od+9a0rARlrvJHL+5/occCJ0Kc3SlHeAMjYe49L
+         2Q32MxroptPOZZN7KnXh2C5XExgfy51Ez2nrR52buayGYOZDu6tP7QoneNifl5lZI26y
+         R3HxsN7aLYHKHOptCG8M+juJ9mFnQ6n76Bcy3+WyPfE1yK4uY1Vr9f9lcJq28NPcWfad
+         FUgEa21csqBHUCtpVTbRn8N73QgULme3rbLRuCmUMCdgPEe3AbrpHXL6GRGEY49G7+gj
+         N9pQ==
+X-Gm-Message-State: AJIora8j+32yYuoN0yNMYZmaQd4I+ziupIpezkGK1IaWORcigzANaB+w
+        eURP1pS7BiTahYOJgj6bUA==
+X-Google-Smtp-Source: AGRyM1uOd2VwN/NQZ6fbCzM4AMMTvkP+YCGyiaB2dEnQSdz8YKrXriD1uBiy6KqPbSVj0mdL/0Sl/g==
+X-Received: by 2002:a05:6638:1507:b0:33d:7bd:9479 with SMTP id b7-20020a056638150700b0033d07bd9479mr20173096jat.34.1657052665674;
+        Tue, 05 Jul 2022 13:24:25 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id q23-20020a05663810d700b003322a709c7esm15126088jad.30.2022.07.05.13.24.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Jul 2022 13:24:25 -0700 (PDT)
+Received: (nullmailer pid 2564283 invoked by uid 1000);
+        Tue, 05 Jul 2022 20:24:22 -0000
+Date:   Tue, 5 Jul 2022 14:24:22 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Colin Foster <colin.foster@in-advantage.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        UNGLinuxDriver@microchip.com,
         Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Liu Ying <victor.liu@nxp.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Ming Qian <ming.qian@nxp.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wolfram Sang <wsa@kernel.org>,
+        Terry Bowman <terry.bowman@amd.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        katie.morris@in-advantage.com
+Subject: Re: [PATCH v12 net-next 0/9] add support for VSC7512 control over SPI
+Message-ID: <20220705202422.GA2546662-robh@kernel.org>
+References: <20220701192609.3970317-1-colin.foster@in-advantage.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220701192609.3970317-1-colin.foster@in-advantage.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jun 30, 2022 at 12:33 PM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 30/06/2022 14:37, Viorel Suman (OSS) wrote:
-> > On 22-06-29 19:53:51, Krzysztof Kozlowski wrote:
-> >> On 29/06/2022 18:44, Viorel Suman (OSS) wrote:
-> >>> From: Abel Vesa <abel.vesa@nxp.com>
-> >>>
-> >>> In order to replace the fsl,scu txt file from bindings/arm/freescale,
-> >>> we need to split it between the right subsystems. This patch documents
-> >>> separately the 'iomux/pinctrl' child node of the SCU main node.
-> >>>
-> >>> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> >>> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-> >>> ---
-> >>>  .../bindings/pinctrl/fsl,scu-pinctrl.yaml     | 68 +++++++++++++++++++
-> >>>  1 file changed, 68 insertions(+)
-> >>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
-> >>> new file mode 100644
-> >>> index 000000000000..76a2e7b28172
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
-> > [...]
-> >>> +      fsl,pins:
-> >>> +        description:
-> >>> +          each entry consists of 3 integers and represents the pin ID, the mux value
-> >>> +          and config setting for the pin. The first 2 integers - pin_id and mux_val - are
-> >>> +          specified using a PIN_FUNC_ID macro, which can be found in
-> >>> +          <include/dt-bindings/pinctrl/pads-imx8qxp.h>. The last integer CONFIG is
-> >>> +          the pad setting value like pull-up on this pin. Please refer to the
-> >>> +          appropriate i.MX8 Reference Manual for detailed CONFIG settings.
-> >>> +        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> >>
-> >> Look at fsl,imx8mq-pinctrl.yaml. Each item is described (items under items).
-> >
-> > Added them initially, but later dropped because of some logs like
-> > "pinctrl@xxxxxxx: usdhc1grp:fsl,pins:0: [...] is too long" shown by
-> > "make dt_binding_check dtbs_check DT_SCHEMA_FILES=[...]/fsl,scu-pinctrl.yaml"
-> >
-> > Same logs are shown for "fsl,imx8mq-pinctrl.yaml". Will add the items description in the next
-> > version.
-> >
->
-> The fsl,imx8mq-pinctrl.yaml should be correct and I don't see the reason
-> why dtschema complains in some of the entries. It's like one define was
-> not correct... I'll take a look at this later, but anyway keep the same
-> as fsl,imx8mq-pinctrl.yaml even if it complains.
+On Fri, Jul 01, 2022 at 12:26:00PM -0700, Colin Foster wrote:
+> The patch set in general is to add support for the VSC7512, and
+> eventually the VSC7511, VSC7513 and VSC7514 devices controlled over
+> SPI. Specifically this patch set enables pinctrl, serial gpio expander
+> access, and control of an internal and an external MDIO bus.
+> 
+> I have mentioned previously:
+> The hardware setup I'm using for development is a beaglebone black, with
+> jumpers from SPI0 to the microchip VSC7512 dev board. The microchip dev
+> board has been modified to not boot from flash, but wait for SPI. An
+> ethernet cable is connected from the beaglebone ethernet to port 0 of
+> the dev board. Network functionality will be included in a future patch set.
+> 
+> The device tree I'm using is included in the documentation, so I'll not
+> include that in this cover letter. I have exported the serial GPIOs to the
+> LEDs, and verified functionality via
+> "echo heartbeat > sys/class/leds/port0led/trigger"
+> 
+> / {
+> 	vscleds {
+> 		compatible = "gpio-leds";
+> 		vscled@0 {
+> 			label = "port0led";
+> 			gpios = <&sgpio_out1 0 0 GPIO_ACTIVE_LOW>;
+> 			default-state = "off";
+> 		};
+> 		vscled@1 {
+> 			label = "port0led1";
+> 			gpios = <&sgpio_out1 0 1 GPIO_ACTIVE_LOW>;
+> 			default-state = "off";
+> 		};
+> [ ... ]
+> 	};
+> };
+> 
+> [    0.000000] Booting Linux on physical CPU 0x0
+> [    0.000000] Linux version 5.19.0-rc3-00745-g30c05ffbecdc (arm-linux-gnueabi-gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0, GNU ld (GNU Binutils for Ubuntu) 2.34) #826 SMP PREEMPT Fri Jul 1 11:26:44 PDT 2022
+> ...
+> [    1.952616] pinctrl-ocelot ocelot-pinctrl.0.auto: DMA mask not set
+> [    1.956522] pinctrl-ocelot ocelot-pinctrl.0.auto: driver registered
+> [    1.967188] pinctrl-microchip-sgpio ocelot-sgpio.1.auto: DMA mask not set
+> [    1.983763] mscc-miim ocelot-miim0.2.auto: DMA mask not set
+> [    3.020687] mscc-miim ocelot-miim1.3.auto: DMA mask not set
+> 
+> 
+> I only have hardware to test the last patch, so any testers are welcome.
+> I've been extra cautious about the ocelot_regmap_from_resource helper
+> function, both before and after the last patch. I accidentally broke it
+> in the past and would like to avoid doing so again.
+> 
+> 
+> RFC history:
+> v1 (accidentally named vN)
+> 	* Initial architecture. Not functional
+> 	* General concepts laid out
+> 
+> v2
+> 	* Near functional. No CPU port communication, but control over all
+> 	external ports
+> 	* Cleaned up regmap implementation from v1
+> 
+> v3
+> 	* Functional
+> 	* Shared MDIO transactions routed through mdio-mscc-miim
+> 	* CPU / NPI port enabled by way of vsc7512_enable_npi_port /
+> 	felix->info->enable_npi_port
+> 	* NPI port tagging functional - Requires a CPU port driver that supports
+> 	frames of 1520 bytes. Verified with a patch to the cpsw driver
+> 
+> v4
+>     * Functional
+>     * Device tree fixes
+>     * Add hooks for pinctrl-ocelot - some functionality by way of sysfs
+>     * Add hooks for pinctrl-microsemi-sgpio - not yet fully functional
+>     * Remove lynx_pcs interface for a generic phylink_pcs. The goal here
+>     is to have an ocelot_pcs that will work for each configuration of
+>     every port.
+> 
+> v5
+>     * Restructured to MFD
+>     * Several commits were split out, submitted, and accepted
+>     * pinctrl-ocelot believed to be fully functional (requires commits
+>     from the linux-pinctrl tree)
+>     * External MDIO bus believed to be fully functional
+> 
+> v6
+>     * Applied several suggestions from the last RFC from Lee Jones. I
+>       hope I didn't miss anything.
+>     * Clean up MFD core - SPI interaction. They no longer use callbacks.
+>     * regmaps get registered to the child device, and don't attempt to
+>       get shared. It seems if a regmap is to be shared, that should be
+>       solved with syscon, not dev or mfd.
+> 
+> v7
+>     * Applied as much as I could from Lee and Vladimir's suggestions. As
+>       always, the feedback is greatly appreciated!
+>     * Remove "ocelot_spi" container complication
+>     * Move internal MDIO bus from ocelot_ext to MFD, with a devicetree
+>       change to match
+>     * Add initial HSIO support
+>     * Switch to IORESOURCE_REG for resource definitions
+> 
+> v8
+>     * Applied another round of suggestions from Lee and Vladimir
+>     * Utilize regmap bus reads, which speeds bulk transfers up by an
+>       order of magnitude
+>     * Add two additional patches to utilize phylink_generic_validate
+>     * Changed GPL V2 to GPL in licenses where applicable (checkpatch)
+>     * Remove initial hsio/serdes changes from the RFC
+> 
+> v9
+>     * Submitting as a PATCH instead of an RFC
+>     * Remove switch functionality - will be a separate patch set
+>     * Remove Kconfig tristate module options
+>     * Another round of suggestions from Lee, Vladimir, and Andy. Many
+>       thanks!
+>     * Add documentation
+>     * Update maintainers
+> 
+> v10
+>     * Fix warming by removing unused function
+> 
+> v11
+>     * Suggestions from Rob and Andy. Thanks!
+>     * Add pinctrl module functionality back and fixing those features
+>     * Fix aarch64 compiler error
+> 
+> v12
+>     * Suggestions from Vladimir, Andy, Randy, and Rob. Thanks as always!
 
-The issue is that 'fsl,pins' is problematic for the new dtb decoding
-because it has a variable definition in terms of matrix bounds as each
-i.MX platform has its own length (typ 5 or 6). The tools try to work
-around it by figuring out which size fits. That works until there are
-multiple answers which seems to be what's happening here.
+Not all that useful as a changelog. I have no idea what I told you as 
+that was probably 100s of reviews ago. When writing changelogs for patch 
+revisions, you need to describe what changed. And it's best to put that 
+into the relevant patch. IOW, I want to know what I said to change so I 
+know what I need to look at again in particular.
 
-The easiest solution I think is to just strip the constraints in
-occurances of this property. I'll look into that.
+And now that I've found v11, 'suggestions from Rob' isn't really 
+accurate as you fixed errors reported by running the tools.
 
 Rob
