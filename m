@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B1DCCA481
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Jul 2022 20:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35094C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Jul 2022 20:48:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232238AbiGEUsw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Jul 2022 16:48:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53974 "EHLO
+        id S232249AbiGEUsz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Jul 2022 16:48:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231898AbiGEUsS (ORCPT
+        with ESMTP id S231952AbiGEUsS (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jul 2022 16:48:18 -0400
 Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2094.outbound.protection.outlook.com [40.107.95.94])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D735711142;
-        Tue,  5 Jul 2022 13:48:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFE2413CC6;
+        Tue,  5 Jul 2022 13:48:17 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ls7ICjpjtInlTfCEcKKiQnwt6Abyx2EijSE6i79B7boNRqjHvsatZHRdOe1DLtFj1bQbhTfz4b2k5H1OhW7qBdL/WIvq40Yfg0rHgGvXlh+/YyzHMs2/9I+Uspj/5TgDB87AS2yLFoLozkTHjXClOPlaItSl7GIMkbgEP3m4mb2Jgbu7twRfzVTeffQQr95ILvDCZOeWnQKUkXVp4lQ1vLGwzJpfDUtvc7GBG1ATvEH0KRBU3ZNQ5C0W55lUhGjSNjfKC6Wt84ArNTqdTTT27hRXz8p0Dp2rcu1ZN9NgsUicK130Rj7Fm0drJJ/owm6LrdNJShPOT44YEi4aZDXlqg==
+ b=lCQoO5mol2NcfkkHGAEevzKtAo2afnR1HOKrvif7/Lb4v3f2i+JZpooUlgVoPGhx71Sekug48e0uV6tedm77SZzWMIFn0zyj+TI2feJm7cQvn4ia9zzLmNLqyTJ/Kh+5YQbTUQL0OKap8DVFsQ1MxFh696GyRQgP5VYMG5jj8pk7SMkDtQ3RxefJ7P5AeLFN+tZ4HNzaID5AD7VcmhTV963Ab39KFbRtwwp2NqVXDKcCzh8BG4z+5Qtj0+3s6dJD325tP6wDEMTyukOekMsgx8uJFov60NsYCdYSTQqg3AChvZayYZaaLfTPE66s/wWMRc1EyhdJKkfPUe2LkBpsTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CDtdjPOljDaYnS77m34kA1EJPU4pciTzcmeMhp0u6n8=;
- b=I+nkPTLIwVOE+xAuVOixdUsyHLdZJahddzCWZU3EGIQTEJwSFu4lSPS50+yMx43H+X03qsZA448i3PB3RbEdOfeMVsGGtjspB5KAqldzd7w5gdCEvm8p2jLP/iDai1yZk/pawq+GUwsIl50yGD0A2s9+GkiKtRcdoy++Ni4b1DpYSWPLj8h9hieT353ZfJwO02SY9ZEztBCMi+drVZPlZdeVdN7orzLzL7Fp1zBfKBJsNMNfueAbgp5DORWA8IOJukRzIBNvcP9yTrPWl+aU3Vmueuq1+J2I0vPeSFIEG2KeEAJRbRpBckm+3YxVENRlIPQcmrrtYOqsz8jqMCugSg==
+ bh=mdpu+ko3VfPuNkeVreHLdBfmtcqZDB3EUVhdCP9JkOI=;
+ b=VYeFrR85gZNeUxo51+pjJKv+ZRckMpFVRSqSjC+mX7hYOif3G1j45Ae1d/Art9Mdpigugf/afJBMk/MwqMuKcldcUbM1cAUsZDp0Wh7ol870NaFmXAiCrkseLbrdKD0rlfeK51L9zjDZE8VUjCwwuBKZAWuWsUYkvl6tPaev/UTqGYLHBgKXjb5DHNscKPacFndoAp3r1YCPau/8QAy1XlG6gNPHHKQuWiZrd1wD0z2vbNOxStC/ybF6fLddKN3xzpMVyzfWZvy4TuuhNCYcGSNLabgur4MxLcnu66VJlNhdI8ntqd/iCAgT/skQ8nSbDBm4kR6eVAgWM4qRINlgnQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=in-advantage.com; dmarc=pass action=none
  header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CDtdjPOljDaYnS77m34kA1EJPU4pciTzcmeMhp0u6n8=;
- b=ZkN9jQLEUcgWGWC7HMDPZXm+FZbjcO9mGfaHbjMTXJI7tSd9roladLtZgZCS3DhrykODGHX/Pu98ryyVi0P4fFvCohOVG9cNivOom7FgtkuWB1cTeCUnAhCKtVeaVDNe3uc0pDg3BH+ul31mZqKmbpmi7cjd4wzE5424zko6wKk=
+ bh=mdpu+ko3VfPuNkeVreHLdBfmtcqZDB3EUVhdCP9JkOI=;
+ b=nXJF6XbmB8eiv564bU07R7OCPOXvuPCfz2F6DT4UC6P900ETMN3ECV6aai4MMu/Fjg7gMRXPd6InvtCOV/tD14Y9js/V9V0gsTR0K0ecWQVxFHQvj0663p0/cXyUy5vrdfiggWdxU/tDKECscDV7i6av3VZFVdwi4B3AX+IuDmE=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=in-advantage.com;
 Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
  (2603:10b6:301:35::37) by MWHPR10MB1934.namprd10.prod.outlook.com
  (2603:10b6:300:113::22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.15; Tue, 5 Jul
- 2022 20:48:13 +0000
+ 2022 20:48:14 +0000
 Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
  ([fe80::712f:6916:3431:e74e]) by MWHPR1001MB2351.namprd10.prod.outlook.com
  ([fe80::712f:6916:3431:e74e%6]) with mapi id 15.20.5395.020; Tue, 5 Jul 2022
- 20:48:13 +0000
+ 20:48:14 +0000
 From:   Colin Foster <colin.foster@in-advantage.com>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -62,11 +62,10 @@ Cc:     Vladimir Oltean <vladimir.oltean@nxp.com>,
         Wolfram Sang <wsa@kernel.org>,
         Terry Bowman <terry.bowman@amd.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
-        katie.morris@in-advantage.com,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH v13 net-next 5/9] pinctrl: microchip-sgpio: allow sgpio driver to be used as a module
-Date:   Tue,  5 Jul 2022 13:47:39 -0700
-Message-Id: <20220705204743.3224692-6-colin.foster@in-advantage.com>
+        katie.morris@in-advantage.com
+Subject: [PATCH v13 net-next 7/9] resource: add define macro for register address resources
+Date:   Tue,  5 Jul 2022 13:47:41 -0700
+Message-Id: <20220705204743.3224692-8-colin.foster@in-advantage.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220705204743.3224692-1-colin.foster@in-advantage.com>
 References: <20220705204743.3224692-1-colin.foster@in-advantage.com>
@@ -77,115 +76,82 @@ X-ClientProxiedBy: MW2PR2101CA0001.namprd21.prod.outlook.com
  (2603:10b6:301:35::37)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 69ee0b59-b305-4639-7ecc-08da5ec7adab
+X-MS-Office365-Filtering-Correlation-Id: f2f33a5b-60e0-4eb2-ac48-08da5ec7ae7f
 X-MS-TrafficTypeDiagnostic: MWHPR10MB1934:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: IwguaRtskkT8sHO2JMpGiBi/qz/asgnsuDrOSiAqy9HcIxjqy5aeCv71GGKNezoGNMIoGjHtVb88rPjzQdTw0S/XkypadVB/9wq9UxlLoDVThQQkOzhAggihzqWPTQE5PfMVKi0cNGew2UvzHEYT02cw67x3m6IstauDQN5ITquU35vTZulsHI5kcrYG13i67v3UrOHlB1L6g2HX2TKw73lNleL101MOzPKEhurU3vYjtdhU8b+W693K7Z7VJdfe3nvIf/8v0UgzH8n4f8R3/cwFlQ7EFOdLc8BbUmqL1Oc0NyP8D9QUrkSauHXDUWo6TUMrMQZuLnHQ11zWOCJxpOzmNEJkPmutCBcEMCs4jwKMzplPEzLZSum8pLZ2RChfI/PWvKKdm+dZtpitGCBUP3xb8Ukx6uHgDpbNDaTO4muihsrEQsW/IXceoHpOM6AOXaPO4bETsSfZqweIebdsda2KeCH7rDAaaIKbFKe/IO41LMMZtwng5X7Xlrs5OtyVsTPX4gl8DOkaKLANRAep94M4raSMlZwTi37+G5mKck2Y79o6mDgRcKG3rvkncG9qTEOHIDTne+XcVM1bxs4U02ToDVXoU4WCKXGMzhFPwKkbORPyLbQ+14s+uKLpz4rKi8c4OtJogQFfreVThlebyl3jCHasQDRxQC//DajQIECRTrXwzDtFfofBDhlM/70ptFTXaoZGvMPGIslgMxs70h9YMheLCnFuDGuIJEJPkC9pejePyV/XdOUCWvEFLAhQjQlTsREJKEtP+Xwh0QZnx7ws4DbbZkdTlzeNwdrdOKg=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(346002)(376002)(396003)(136003)(39830400003)(366004)(7416002)(44832011)(478600001)(5660300002)(8936002)(6486002)(52116002)(6506007)(86362001)(26005)(6512007)(41300700001)(2906002)(6666004)(38100700002)(38350700002)(2616005)(186003)(1076003)(83380400001)(66946007)(66556008)(66476007)(54906003)(36756003)(316002)(4326008)(8676002);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: i/jVkTgXBkELhD9Ok/tjil7zdJi5lpUjSdN047pr7ssVXRjtqgo8BNeu/luufN8SJ1gyZU9zsGK8tEMDmxziJkctn+AamoH4BB2WyWKNfVKMKazHysGOHXiVaf3unN+MwznQoVHF4IwVSnqIFxGl2QT5alEBeK7c58m9erj44PH4siSr4o1CHZfrfUBJwnksz2p99aH7sskegBzwAtmKC64CXytFsrwXd6VDF/Me+4l8gIvMxYmjuz6K3amTdIeMMlLQqQPj8BuvsO1u3tJNZ0zrmA0PmNByDZ3GuVDG4Yfrl/taeornXZgF+Jn/vkMTyYqp68ia+XfwarUSaSp8w1+SAoV90wAw1wxckFWc7oa0Acj8fy4FnCJfMH8LAbDOrq+9Z3bRaYs6z6Dtk4xhAMcU9DfKPHGdBLTnyWwah0FOaqYSiAyfl+MrgEov36d0ZnbAzDMM8RvbesMQf8uG2GP+b2AaaLQVK6rHDmhMaVfyGsvyw0pBasplbDYRwvrtYSunh7eiJaVoTGUkPqOa7CcbBpRylwjGLuns6Cf9yRAHunrtimJod3mveWoVp1VUxnE9HOsghIMAh+8ph9nHUjukACXJWucZQzb7p/9UoQAUEQyPMGca9bZvOZm4K8th7mDEmfs0KmiPXpQw85biY7Wwnzqv91SswWDHVJjfVtohunwrY4Ft+7+tJ/unhlwfxSNkdybzaqbKwaiTmfD1Lxs53ay84B5H/7yzaQC3yFIWHNkWBnaGH75idJB437kZsbhxQ0WFlWvtkk5qmtyDr4td+u2vEkpd84NN0KNjA0jVs3AAT0vG/5ngL5CUsNFb
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(346002)(376002)(396003)(136003)(39830400003)(366004)(7416002)(4744005)(44832011)(478600001)(5660300002)(8936002)(6486002)(52116002)(6506007)(86362001)(26005)(6512007)(41300700001)(2906002)(6666004)(38100700002)(38350700002)(2616005)(107886003)(186003)(1076003)(66946007)(66556008)(66476007)(54906003)(36756003)(316002)(4326008)(8676002);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1UWvWVEbRpzeB3rZdsL12wntZVIGiuyU7ucDqqeptAtq6+RhykTn/0f/N7wh?=
- =?us-ascii?Q?caXMN4t6kYm3v4lkLWIRhthC1YVj3niIWSAQkKV1NUnCjnvunYSL4V0/FCeZ?=
- =?us-ascii?Q?JTgIeddL4tj59Fe/5Ow/WR2xBKzZaZ7TOyRdxqsURMky5+OZFLBcIozzPqdr?=
- =?us-ascii?Q?gpfO9y8FGEWUKCAoAq5OktGbgwTZ2wyA6ElqJV4FTxy91K1WzRHstWChAHrS?=
- =?us-ascii?Q?91wfVyZ9YkfRVtE8i5iV8IMMFOI1sISNZrMR1SI8RySphn3hTEiXN0KPgYWW?=
- =?us-ascii?Q?R3rbQL+YS/g5vn6zTrrVBMTWYHCb6v+t2lO4v1RS+JkQRoGpiXm48rvpGETE?=
- =?us-ascii?Q?Mi6rLtUUqXgWCpzyKFguf8K5XiaRgvhPE6TQMHpnjv75RS15G6uhy6soebKZ?=
- =?us-ascii?Q?LhMi7wiWb7+ryLZCb7jif5kTARo8sP1RZUpZgtu/WMkeg9ATBw7P6FpJtVb4?=
- =?us-ascii?Q?m6sAeDp+V4YKQLOCw1vJM9livn63s9g5LDoeSbALPgBFnwe+hywh/OxEi32T?=
- =?us-ascii?Q?SVlprlUQLfbueVc4b3wiLzAMyx1N5IXpbD1fv6Alq89FZosrTykzg5NE3C3F?=
- =?us-ascii?Q?wkAOtNEQKIVPMeCsvNRbSpeN1DOpiPDXp3FYhS7rJsd/dQVhoUXGmX+GcgxA?=
- =?us-ascii?Q?VBDO+FNNYASFvTnSl/QVJYtzbzNXwVaF3cx4SZvKxw81jJTzfw69Ka/RIdAK?=
- =?us-ascii?Q?DI+xNaeoZXwYjQmtJ+uB1I570q7kXq8dDA3mkmQm4j8+q2yuazViixkWCGID?=
- =?us-ascii?Q?asbnAD9pqWK7hXXMs8y9LUPSrGi5Z7gJaMmBjmH4bFFtw1x7ulw+/vLKzZWC?=
- =?us-ascii?Q?F2Vg1AKtGC3l1Pqlp3plyA9I/KlpTGSd3pLxsXhTdf7pzRntHkZXgMDmyrGK?=
- =?us-ascii?Q?AU/eVWTD9vteg7xd6VX7cvi6n4TFxLaOhN4wF9HnJaaHy3tmAE9Keg0oMHMA?=
- =?us-ascii?Q?2EidYT0+qWIwor5VKOnOXv8ky0TYf9Usaz7MZsgrpzpkYAuDSjuX5bD2IpA2?=
- =?us-ascii?Q?NvwOCIJl9IABH+eelss0opI6GhEEw64GZaKzYNsRw2cyqF2EgYo7j/aOkoox?=
- =?us-ascii?Q?ZRmuByshTpJ7GLnvODH/6vkeBHk9kyCwYqNBEQdZdPB3UOGOatJRvcTYPBK7?=
- =?us-ascii?Q?WFId4hX3HjOU9rdSmClvQl5uapeLjE/Y55yRG/XsZPeLlV8Rbeys8cqQalTe?=
- =?us-ascii?Q?+zi9bjU73cazoOAHucfg6nyaX38/o3Gk0R6hP8K4bxEUpxR0CWMiJHrywLal?=
- =?us-ascii?Q?QOvEoqMNYQPuYLDSYnnaYeF/OYHcJOsxMTXAXyatark5/lPa4QKf8h79h1Ky?=
- =?us-ascii?Q?EHg+Awd3bdr1JC2CAoTKRn+CEWgmazaNdadlaYXRNHgwF7hx+r4WWnUbUyGL?=
- =?us-ascii?Q?fxXi0VbUL+8LP96KR5qsbHFoE2gVAM5JPYxdV3tCJl5Txpfzp/N14gbu6ndY?=
- =?us-ascii?Q?JfMVh6R7aYOcP1D74wQiJkuPiHMWN0UHTcVoYCHvGyxFazRzLag9z8m6G2TE?=
- =?us-ascii?Q?H4rqb/RxrJAGE/mHA0X64m5mJjaytmK7MhwvQ17dKDCqMka8wDJA8yfyAA3U?=
- =?us-ascii?Q?DTpT9XMwZLp9Lx/MUFvZpVQvvXsp+TMuBigZ1GYt+WRmEDXEgToYFeRbl3o0?=
- =?us-ascii?Q?qw=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0/kIXeZIkst3yjAm3SSU7OH2iPjxbira71iDHCknw4eWR1zwS9/h76XvD/2K?=
+ =?us-ascii?Q?hSQMUvl2hIty90OTnRWww1O2nKBW0jvDYDhUaORacDn+i716Ssfmv6mG0yaV?=
+ =?us-ascii?Q?Mor3tuZVuZJ4i2nf2avXEsTemsaVr5//yd1SUDrrFctQ2HDQPuVrjbp82UON?=
+ =?us-ascii?Q?Otr51hHzYFqZHzPWfMtEzgvFAmztakGcfI0PMXvf38kKo0KpX7hldWhGqRSd?=
+ =?us-ascii?Q?3CgymJzQZCSbVrSCq3cOkdTI3BiqEWCyP7ZaVo3NvYOuYaKKxsFPhyxyBcWk?=
+ =?us-ascii?Q?I4vzBmfKKhkBPXnV8YHxb8sJA/wL3WjsMiQNZQo9kgit5hCSxtrn1OkvxeTE?=
+ =?us-ascii?Q?CCqqr1vpKIMVicSUb45JzPpDdkYmy+Tp6z1M9uLoqPJivHpsL5Z5xYWIFCEQ?=
+ =?us-ascii?Q?cHSlVlgC1dUJiLcgPoYhZ/Y7FsA/oobjWVbI3CTK9trhiUsw8ZX1jhunO7++?=
+ =?us-ascii?Q?g8REIoxmu7C4jhIQZyuRxA+IoW5Ju5dmGEw9XC6zSgquvugRinPVyfEKLXfJ?=
+ =?us-ascii?Q?egowDicm0f3BbImc9Z72lVAxVm0eDafsoMzZZp3yKBbex5jPyjadgNi7KpQh?=
+ =?us-ascii?Q?nmkFfR3htzY8oXkvUItccRp7lBik8JS82+rsuG9L52WWQsfUIB4mTZKaolYk?=
+ =?us-ascii?Q?XOIeTNCwumM8JAiqalc2XApbtyv2RRqbhvveGPuMVfQXtyBoXpVXvWfNjWfx?=
+ =?us-ascii?Q?+tAoVQN81QZ/7czgcFsK02WhvruQr1XK0wfqhFbd7q9T4LWVd29e+mrH32I7?=
+ =?us-ascii?Q?GQCO3nQZBQOj28ZpQzz9LSW5LDylXF8yQOb+u65KJYB3CupvoK5PsUpe7Uu8?=
+ =?us-ascii?Q?wz/PYu0KvGpdVtkDglLqcM9SzzhRil0N7r7ZjPAbXG9Xg8cwg2vYxlpQz2Xd?=
+ =?us-ascii?Q?OuZivvWqyH4zU4GjeN44WiOfMkkfZ/uAp3EXiSuPKFzN4S66TFFbMR67Lmig?=
+ =?us-ascii?Q?ZZAxzNDSYX5psMlZuRTjeUA6W4rmGNhMd8qStb7DonwUoxq1FvgCKd+ACpnx?=
+ =?us-ascii?Q?Dzhe6LFHv43fxyabg1TxkJYTz42TELn8roQJYCvr6r3fbCRJ2Rw0bPvZ6F8I?=
+ =?us-ascii?Q?8xRZ5Ig9nT3zRAItjczZ2+cXPf56udYEGz9QS4WZa55+IQIsUP+RBsKRKCIE?=
+ =?us-ascii?Q?xiO3xe9Zt+2GMY8ZYmh17Uu1gpxAdksWuYIKZBLsYpURKrnoVS4UM70Cgp30?=
+ =?us-ascii?Q?2eW3+qtH5tVrMhHtmICPF/9s1FYrqhZ/xqhUTBVLEdLybN+essfT4dPYgisQ?=
+ =?us-ascii?Q?x5Btl0VSwStKqD5UNnR5EjMCitGp4aXlaSt71pkmkbD0akb/UJmJBf5wjPzJ?=
+ =?us-ascii?Q?1qrjoO3dnZMX4Iv492jWcFI6w0/lEs5596y2SIwUm6b7XyeIcg2bMydfSL6l?=
+ =?us-ascii?Q?lVna6VsB/gY6vN3fSGI3vhJ+TVYztATFdriwSzKx7h2SbR2dPq2It0n3wpW2?=
+ =?us-ascii?Q?M6+mVINUnWqU8Ip5NHhfIj81drO7b9Ia/kNoj5NHvOA5f0IwJ6zAp1bA5yv/?=
+ =?us-ascii?Q?G+ir2eU7iUCkebrFUVHZkPjf4AH3omlaWMTOuKM7GAUJohMw9fH9xE7gH/YC?=
+ =?us-ascii?Q?aTDp9P+4dhajbt08rtOhNAdnaleLwFRr9qWqb8yepGcxw4FKETlfLSQKGVd7?=
+ =?us-ascii?Q?/g=3D=3D?=
 X-OriginatorOrg: in-advantage.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69ee0b59-b305-4639-7ecc-08da5ec7adab
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2f33a5b-60e0-4eb2-ac48-08da5ec7ae7f
 X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2022 20:48:13.3577
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2022 20:48:14.7326
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fZYaoK+J8KqIako23iHHmEGtC2pM+tfyijG1I85DKKouLaxH1yqXLixYnZQ5T1iADlAWY20foOJ6dsHpaelcg2Xagxv3ei7N/a5ZgxM9Kmc=
+X-MS-Exchange-CrossTenant-UserPrincipalName: SgWCXH63mJIM1x0SOF/r6vh0+22yWdHu26DRF48tMsAy60gTBAZ+2elYknv6WdjLI/OIDTEyNWckYx43fPaOSjzuSiyIRGT50GEl4eqBeTw=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1934
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-As the commit message suggests, this simply adds the ability to select
-SGPIO pinctrl as a module. This becomes more practical when the SGPIO
-hardware exists on an external chip, controlled indirectly by I2C or SPI.
-This commit enables that level of control.
+DEFINE_RES_ macros have been created for the commonly used resource types,
+but not IORESOURCE_REG. Add the macro so it can be used in a similar manner
+to all other resource types.
 
 Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 ---
- drivers/pinctrl/Kconfig                   | 5 ++++-
- drivers/pinctrl/pinctrl-microchip-sgpio.c | 6 +++++-
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ include/linux/ioport.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index ba48ff8be6e2..4e8d0ae6c81e 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -292,7 +292,7 @@ config PINCTRL_MCP23S08
- 	  corresponding interrupt-controller.
+diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+index ec5f71f7135b..b0d09b6f2ecf 100644
+--- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@ -171,6 +171,11 @@ enum {
+ #define DEFINE_RES_MEM(_start, _size)					\
+ 	DEFINE_RES_MEM_NAMED((_start), (_size), NULL)
  
- config PINCTRL_MICROCHIP_SGPIO
--	bool "Pinctrl driver for Microsemi/Microchip Serial GPIO"
-+	tristate "Pinctrl driver for Microsemi/Microchip Serial GPIO"
- 	depends on OF
- 	depends on HAS_IOMEM
- 	select GPIOLIB
-@@ -310,6 +310,9 @@ config PINCTRL_MICROCHIP_SGPIO
- 	  connect control signals from SFP modules and to act as an
- 	  LED controller.
- 
-+	  If compiled as a module, the module name will be
-+	  pinctrl-microchip-sgpio.
++#define DEFINE_RES_REG_NAMED(_start, _size, _name)			\
++	DEFINE_RES_NAMED((_start), (_size), (_name), IORESOURCE_REG)
++#define DEFINE_RES_REG(_start, _size)					\
++	DEFINE_RES_REG_NAMED((_start), (_size), NULL)
 +
- config PINCTRL_OCELOT
- 	tristate "Pinctrl driver for the Microsemi Ocelot and Jaguar2 SoCs"
- 	depends on OF
-diff --git a/drivers/pinctrl/pinctrl-microchip-sgpio.c b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-index 6f55bf7d5e05..e56074b7e659 100644
---- a/drivers/pinctrl/pinctrl-microchip-sgpio.c
-+++ b/drivers/pinctrl/pinctrl-microchip-sgpio.c
-@@ -999,6 +999,7 @@ static const struct of_device_id microchip_sgpio_gpio_of_match[] = {
- 		/* sentinel */
- 	}
- };
-+MODULE_DEVICE_TABLE(of, microchip_sgpio_gpio_of_match);
- 
- static struct platform_driver microchip_sgpio_pinctrl_driver = {
- 	.driver = {
-@@ -1008,4 +1009,7 @@ static struct platform_driver microchip_sgpio_pinctrl_driver = {
- 	},
- 	.probe = microchip_sgpio_probe,
- };
--builtin_platform_driver(microchip_sgpio_pinctrl_driver);
-+module_platform_driver(microchip_sgpio_pinctrl_driver);
-+
-+MODULE_DESCRIPTION("Microchip SGPIO Pinctrl Driver");
-+MODULE_LICENSE("GPL");
+ #define DEFINE_RES_IRQ_NAMED(_irq, _name)				\
+ 	DEFINE_RES_NAMED((_irq), 1, (_name), IORESOURCE_IRQ)
+ #define DEFINE_RES_IRQ(_irq)						\
 -- 
 2.25.1
 
