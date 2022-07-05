@@ -2,71 +2,108 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A74CCA47B
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Jul 2022 14:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBB4C433EF
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Jul 2022 14:09:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229997AbiGEODB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Jul 2022 10:03:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52988 "EHLO
+        id S229925AbiGEOJv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Jul 2022 10:09:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233054AbiGEOCg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jul 2022 10:02:36 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B25E321E1A
-        for <linux-gpio@vger.kernel.org>; Tue,  5 Jul 2022 06:49:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1657028958; x=1688564958;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Zpwn3EoTc9k3nqn9MzHBE55S0Zot3Sjy+qJz3HwwGL8=;
-  b=Ch3YF8jdcZklM75M5wve31uV3ORj90pvT22lqYcNqklh59hC783Yrdo0
-   9bvW3mOHmEJ1Vr8WhX19L2qm7hPvWPcGSpqpmh83z7q/SPSON6rSvRzNL
-   umau5LB/WJGLGxxLwCkoozw2VoT5llD/SSPXJGNBCSOVZbZV3m+y04Akf
-   aQn07sHeefCbipiscAM3zuKvC7q7fM+qEqeSNJqDOotPYi6llpKRCyzaW
-   +PIQKHdgIwXlMIX8hBfXFKrcYf4yfokS41oEzbyFg559HxJMP66RtplDr
-   mW2XR6lmTBBeBFSVIZnHwDqsW9ZvT6WxGEDCVvG8TnV232ASY2Lew3ebL
-   g==;
-X-IronPort-AV: E=Sophos;i="5.92,247,1650956400"; 
-   d="scan'208";a="170824115"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 05 Jul 2022 06:49:18 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Tue, 5 Jul 2022 06:49:18 -0700
-Received: from dev-powerhorse.microchip.com (10.10.115.15) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2375.17 via Frontend Transport; Tue, 5 Jul 2022 06:49:16 -0700
-From:   <lewis.hanly@microchip.com>
-To:     <linux-gpio@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <palmer@dabbelt.com>, <maz@kernel.org>
-CC:     <paul.walmsley@sifive.com>, <conor.dooley@microchip.com>,
-        <daire.mcnamara@microchip.com>, <lewis.hanly@microchip.com>
-Subject: [PATCH 0/1] Add Polarfire SoC GPIO support
-Date:   Tue, 5 Jul 2022 14:49:11 +0100
-Message-ID: <20220705134912.2740421-1-lewis.hanly@microchip.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S232944AbiGEOJc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jul 2022 10:09:32 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76AC11EAEF
+        for <linux-gpio@vger.kernel.org>; Tue,  5 Jul 2022 06:59:56 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id y4so2047519edc.4
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Jul 2022 06:59:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=+hBzbUaagKi4IwScllUI6gmB3FQjSahzqgi96CMOIek=;
+        b=j/EphDMCYX2MQJnPgqUrnQxuDgFfB8cRx7owvJhz046ppaKsnqwB9fNoOA6HGnk6+2
+         4q8rqxGiopcar/ulRiEKlhxn3EL51p9Dof+XHYsu2ZnUkp9yXqRpDAi9RJcxuPZKdk7F
+         OiGLRn7jg2nyju7aK4C7JgbkP64Aemo4RVRqAPSf9Lq7KiiN+4vAzTFq0XXsliV5nGl3
+         OQKNbHfDDIzAMf0VncW5iPsS0QGkLoD9I/S0vW7gGviTaQf+sfHgpZfK6eVoG2B3vsQQ
+         Zjw96B9TnQbc9WmoDUoeCcNEj2nO+wtfPWvX4nb5U6IP+vN6cwxMSYzPnMgnjoHy/4cG
+         OPnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+hBzbUaagKi4IwScllUI6gmB3FQjSahzqgi96CMOIek=;
+        b=4lmvEP1FniCnppNL/pgZY2cPzySAIiLpMGNu//jLt3qx1hbmWvBA3umd5iVvjESF7g
+         0Lnht5VG4EfoRdVgL+sYLBKOFOuQKrGzLEIDWiwonDEo76u0Oan5Ie2XBywnnxynOSu4
+         UR2G3qAF9kLlJe6ggJhu0ff0LUWdg0KWJEqSyt9VHMvT34nN1uXwqkqGCSKovcNlbUXu
+         RRx9vHJp/m7z/xJvcMsr63ceBc8Z21A19XTZ1aDzV8rRdCnKFMgGBAmySmCPVNjG8Pi5
+         e6mXV62pW+fssKxR0KDmivZB001nwfIzbdqE0VLUS490KZ4mBdMpxjJYEteUjPIWTVqU
+         P+lQ==
+X-Gm-Message-State: AJIora+y/09rm91BHVG4hh/nvowmuT7sv9Pa1XAdcc1kEXKY2n2mFRsI
+        Pofi5n+CziimCVTBVrWzrABebNE+zyqGHc8OSrKlqA==
+X-Google-Smtp-Source: AGRyM1uP74HPMZ7iQRZkKpT6GH8P6cQmrT0QOkOM7fw+P6hs/fHEVE9co05RY8/SY8ZW3jsskO8m1TZowJHmM0+X5nE=
+X-Received: by 2002:a05:6402:18:b0:435:9a79:9a40 with SMTP id
+ d24-20020a056402001800b004359a799a40mr45611436edu.328.1657029595047; Tue, 05
+ Jul 2022 06:59:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20220705102114.2067-1-tariqt@nvidia.com>
+In-Reply-To: <20220705102114.2067-1-tariqt@nvidia.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 5 Jul 2022 15:59:44 +0200
+Message-ID: <CAMRc=MeM4oryk7-hFeQJdXY28MF13mwpaO8dY5ddQeQroiZe1Q@mail.gmail.com>
+Subject: Re: [PATCH gpio] gpio: vf610: fix compilation error
+To:     Tariq Toukan <tariqt@nvidia.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Ran Rozenstein <ranro@nvidia.com>, gal@nvidia.com,
+        Leon Romanovsky <leonro@nvidia.com>,
+        Saeed Mahameed <saeedm@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Lewis Hanly <lewis.hanly@microchip.com>
+On Tue, Jul 5, 2022 at 12:21 PM Tariq Toukan <tariqt@nvidia.com> wrote:
+>
+> From: Leon Romanovsky <leonro@nvidia.com>
+>
+> Fix compilation error by explicitly adding the missing include.
+>
+> drivers/gpio/gpio-vf610.c: In function =E2=80=98vf610_gpio_direction_inpu=
+t=E2=80=99:
+> drivers/gpio/gpio-vf610.c:120:9: error: implicit declaration of function =
+=E2=80=98pinctrl_gpio_direction_input=E2=80=99; did you mean =E2=80=98vf610=
+_gpio_direction_input=E2=80=99? [-Werror=3Dimplicit-function-declaration]
+>   120 |  return pinctrl_gpio_direction_input(chip->base + gpio);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>       |         vf610_gpio_direction_input
+>
+> Fixes: 30a35c07d9e9 ("gpio: vf610: drop the SOC_VF610 dependency for GPIO=
+_VF610")
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> ---
+>  drivers/gpio/gpio-vf610.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+> index 23cddb265a0d..9db42f6a2043 100644
+> --- a/drivers/gpio/gpio-vf610.c
+> +++ b/drivers/gpio/gpio-vf610.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+>  #include <linux/of_irq.h>
+> +#include <linux/pinctrl/consumer.h>
+>
+>  #define VF610_GPIO_PER_PORT            32
+>
+> --
+> 2.21.0
+>
 
-Add a driver to support the Polarfire SoC gpio controller.
+Applied, thanks!
 
-Lewis Hanly (1):
-  gpio: mpfs - add polarfire soc gpio support
-
- drivers/gpio/Kconfig     |   7 +
- drivers/gpio/Makefile    |   1 +
- drivers/gpio/gpio-mpfs.c | 358 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 366 insertions(+)
- create mode 100644 drivers/gpio/gpio-mpfs.c
-
--- 
-2.25.1
-
+Bart
