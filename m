@@ -2,272 +2,114 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38397CCA47F
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Jul 2022 15:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB00C433EF
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Jul 2022 15:16:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233568AbiGFPIi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Jul 2022 11:08:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53532 "EHLO
+        id S233168AbiGFPQK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Jul 2022 11:16:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233689AbiGFPI2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2022 11:08:28 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4E3AE86;
-        Wed,  6 Jul 2022 08:08:26 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id b24so11240871qkn.4;
-        Wed, 06 Jul 2022 08:08:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fiRRxOZJQca+onQTxG6YxZ3iz34eD7bdAqBIrSyxbbo=;
-        b=nRMefuEZIe7rKiC26E9KAQY5dk54cixodhUcsRFlTn7152lyM8Ul0ZbLRheho6olsi
-         WDUR77vknEaqO7YXjY6paP/51tjrZelOJcoOfbHDl0d8PHcTMos1/uFTyEuHzVE8q/jJ
-         j4dXIxWZ3OvaBEidl33AuWiSnBoJ2v8Vbg4re1pSlAgHcIyFPJq6i1UupZLbGE/oha1d
-         +k0C1DeNionerAV0HPTGyX6B/HNxRs/F5NgjuP8yAGVm12StSTHyhrF3NS1jTTO5Du/0
-         CB/nxxGfVA7F3ErHYtFoC5Rhotb6lBnmKOusDeyZsUS3vbdH1GUKpJbWWHHMdW5UlYTg
-         YHOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fiRRxOZJQca+onQTxG6YxZ3iz34eD7bdAqBIrSyxbbo=;
-        b=W98802Qrg/JfIflxNk2T0GmJallr8vSjpug0fx/WEGfPBrwKcKwFzpLL7w048xfrxe
-         jpmbZcNSDgwLWRsyMdPd/kOC+a9ncQ/zd3cipSD8V3pT6+jIVOcruoB3olLT5Vgvdm/a
-         Nm4WI6sLEjKniS73okDS3WooCwzTcYCWNsEQXU5nR+NvLpYGaGdg05GZoGBym1vpVhpq
-         XnrborVl0VM6JjPJ9UrGhMCf9cQELp9TXo6D+3+2Fxd97FkH0HEEI0pMUqBEz7APC6kK
-         WrqO4o2J/+JcwHEW327IUsFZ22o9Q72NOjjkS6Iv5lX5eteIqeoEU+fvSLjxdp6Wlqoa
-         03jQ==
-X-Gm-Message-State: AJIora8UYDe1J4cR5JqMwj/upu6LPgm4xd6YotGCeW60/lZhkZ+CTK9N
-        MfQTcAnf0MLXncGVHxoYVKA+cNWsYyj6xnc3mzQfvsJJnYg=
-X-Google-Smtp-Source: AGRyM1tkv0qbWgPV08FG3lb7/F99cqnEdUrvpBxyh5xvwLVLNUT89sYVHwh8RpcfsNTbQqhiaZWWQhbTytzmLyGs6uE=
-X-Received: by 2002:a05:620a:4547:b0:6b1:4f80:d5a8 with SMTP id
- u7-20020a05620a454700b006b14f80d5a8mr26514496qkp.87.1657120105698; Wed, 06
- Jul 2022 08:08:25 -0700 (PDT)
+        with ESMTP id S232761AbiGFPQJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2022 11:16:09 -0400
+Received: from ssl.serverraum.org (ssl.serverraum.org [176.9.125.105])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A906237EF;
+        Wed,  6 Jul 2022 08:16:08 -0700 (PDT)
+Received: from mwalle01.kontron.local. (unknown [213.135.10.150])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 6B97622248;
+        Wed,  6 Jul 2022 17:16:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1657120566;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=u1fHJMZl7JVZVxeg5jiWFWDAPjazuTqXidgDNR+l1Uo=;
+        b=qUclemBVdHEmkD5WOlJeHrjDeWl26LsOZpTtHl6Oer9NZMsIUybGx/uckf3ddAAJVd+58j
+        jvBAR3biT7aKoYBP9ju5hN6pJ1j9S4crhcum3voJ3A8y81aFjp+KOMzCnuz+zLgX7ywyY7
+        qFf77ixPqHdD4DE0Hc8XJmB83GigeC0=
+From:   Michael Walle <michael@walle.cc>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH 2/2] pinctrl: ocelot: make irq_chip immutable
+Date:   Wed,  6 Jul 2022 17:15:53 +0200
+Message-Id: <20220706151553.1580790-2-michael@walle.cc>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220706151553.1580790-1-michael@walle.cc>
+References: <20220706151553.1580790-1-michael@walle.cc>
 MIME-Version: 1.0
-References: <20220704212402.1715182-1-robimarko@gmail.com> <20220704212402.1715182-11-robimarko@gmail.com>
- <a443cd40-a1d5-6e17-1c49-d592a590f1f8@somainline.org>
-In-Reply-To: <a443cd40-a1d5-6e17-1c49-d592a590f1f8@somainline.org>
-From:   Robert Marko <robimarko@gmail.com>
-Date:   Wed, 6 Jul 2022 17:08:14 +0200
-Message-ID: <CAOX2RU55pAZNiYRT4NOw9W+XZe17vBi+9Wrm5zz99Mctd8g1aA@mail.gmail.com>
-Subject: Re: [PATCH v6 11/12] arm64: dts: qcom: add PMP8074 DTSI
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        lee.jones@linaro.org, Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        Linus Walleij <linus.walleij@linaro.org>, lgirdwood@gmail.com,
-        Mark Brown <broonie@kernel.org>, jic23@kernel.org,
-        lars@metafoo.de, linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 6 Jul 2022 at 14:27, Konrad Dybcio <konrad.dybcio@somainline.org> wrote:
->
->
->
-> On 4.07.2022 23:24, Robert Marko wrote:
-> > PMP8074 is a companion PMIC to the Qualcomm IPQ8074 series that is
-> > controlled via SPMI.
-> >
-> > Add DTSI for it providing GPIO, regulator and RTC support.
-> >
-> > RTC is disabled by default as there is no built-in battery so it will
-> > loose time unless board vendor added a battery, so make it optional.
-> >
-> > Signed-off-by: Robert Marko <robimarko@gmail.com>
-> > ---
-> > Changes in v6:
-> > * Add RTC and GPIO nodes
-> >
-> > Changes in v5:
-> > * Remove #address-cells and #size-cells as they are not required for
-> > regulator subnodes
-> > ---
-> >  arch/arm64/boot/dts/qcom/pmp8074.dtsi | 125 ++++++++++++++++++++++++++
-> >  1 file changed, 125 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/qcom/pmp8074.dtsi
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/pmp8074.dtsi b/arch/arm64/boot/dts/qcom/pmp8074.dtsi
-> > new file mode 100644
-> > index 000000000000..a3b395e4d78f
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/qcom/pmp8074.dtsi
-> > @@ -0,0 +1,125 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> Hi,
->
-> Please consider BSD3, or at least dual-licensing with some permissive
-> license (so that for example BSDs can re-use these DTs).
+Since recently, the kernel is nagging about mutable irq_chips:
 
-Hi Konrad,
+[    2.593426] gpio gpiochip0: (ocelot-gpio): not an immutable chip, please consider fixing it!
 
-I will dual-license with BSD-3-Clause, it's not an issue.
+Make it const, flag it as IRQCHIP_IMMUTABLE, add the new helper
+functions and call the appropriate gpiolib functions.
 
-> > +
-> > +#include <dt-bindings/spmi/spmi.h>
-> > +#include <dt-bindings/iio/qcom,spmi-vadc.h>
-> > +
-> > +&spmi_bus {
-> > +     pmic@0 {
-> > +             compatible = "qcom,pmp8074", "qcom,spmi-pmic";
-> > +             reg = <0x0 SPMI_USID>;
-> > +             #address-cells = <1>;
-> > +             #size-cells = <0>;
-> > +
-> > +             pmp8074_adc: adc@3100 {
-> > +                     compatible = "qcom,spmi-adc-rev2";
-> > +                     reg = <0x3100>;
-> > +                     interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
-> > +                     #address-cells = <1>;
-> > +                     #size-cells = <0>;
-> > +                     #io-channel-cells = <1>;
-> > +
-> > +                     ref_gnd@0 {
-> No underscores in node names, please change this to ref-gnd (and consequently
-> for all other nodes). Note that this only concerns node names and not labels.
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+ drivers/pinctrl/pinctrl-ocelot.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Will fixup in v7.
->
-> > +                             reg = <ADC5_REF_GND>;
-> > +                             qcom,pre-scaling = <1 1>;
-> > +                     };
-> > +
-> > +                     vref_1p25@1 {
-> > +                             reg = <ADC5_1P25VREF>;
-> > +                             qcom,pre-scaling = <1 1>;
-> > +                     };
-> > +
-> > +                     vref_vadc@2 {
-> > +                             reg = <ADC5_VREF_VADC>;
-> > +                             qcom,pre-scaling = <1 1>;
-> > +                     };
-> > +
-> > +                     pmic_die: die_temp@6 {
-> > +                             reg = <ADC5_DIE_TEMP>;
-> > +                             qcom,pre-scaling = <1 1>;
-> > +                     };
-> > +
-> > +                     xo_therm: xo_temp@76 {
-> > +                             reg = <ADC5_XO_THERM_100K_PU>;
-> > +                             qcom,ratiometric;
-> > +                             qcom,hw-settle-time = <200>;
-> > +                             qcom,pre-scaling = <1 1>;
-> > +                     };
-> > +
-> > +                     pa_therm1: thermistor1@77 {
-> > +                             reg = <ADC5_AMUX_THM1_100K_PU>;
-> > +                             qcom,ratiometric;
-> > +                             qcom,hw-settle-time = <200>;
-> > +                             qcom,pre-scaling = <1 1>;
-> > +                     };
-> > +
-> > +                     pa_therm2: thermistor2@78 {
-> > +                             reg = <ADC5_AMUX_THM2_100K_PU>;
-> > +                             qcom,ratiometric;
-> > +                             qcom,hw-settle-time = <200>;
-> > +                             qcom,pre-scaling = <1 1>;
-> > +                     };
-> > +
-> > +                     pa_therm3: thermistor3@79 {
-> > +                             reg = <ADC5_AMUX_THM3_100K_PU>;
-> > +                             qcom,ratiometric;
-> > +                             qcom,hw-settle-time = <200>;
-> > +                             qcom,pre-scaling = <1 1>;
-> > +                     };
-> > +
-> > +                     vph_pwr@131 {
-> > +                             reg = <ADC5_VPH_PWR>;
-> > +                             qcom,pre-scaling = <1 3>;
-> > +                     };
-> > +             };
-> > +
-> > +             pmp8074_rtc: rtc@6000 {
-> > +                     compatible = "qcom,pm8941-rtc";
-> > +                     reg = <0x6000>;
-> > +                     reg-names = "rtc", "alarm";
-> > +                     interrupts = <0x0 0x61 0x1 IRQ_TYPE_NONE>;
-> > +                     allow-set-time;
-> > +                     status = "disabled";
-> Isn't this PMIC-internal, aka accessible on all devices using PMP8074?
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index 349e063a04fa..5902a77be5ef 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -1761,6 +1761,7 @@ static void ocelot_irq_mask(struct irq_data *data)
+ 
+ 	regmap_update_bits(info->map, REG(OCELOT_GPIO_INTR_ENA, info, gpio),
+ 			   BIT(gpio % 32), 0);
++	gpiochip_disable_irq(chip, gpio);
+ }
+ 
+ static void ocelot_irq_unmask(struct irq_data *data)
+@@ -1769,6 +1770,7 @@ static void ocelot_irq_unmask(struct irq_data *data)
+ 	struct ocelot_pinctrl *info = gpiochip_get_data(chip);
+ 	unsigned int gpio = irqd_to_hwirq(data);
+ 
++	gpiochip_enable_irq(chip, gpio);
+ 	regmap_update_bits(info->map, REG(OCELOT_GPIO_INTR_ENA, info, gpio),
+ 			   BIT(gpio % 32), BIT(gpio % 32));
+ }
+@@ -1790,8 +1792,10 @@ static struct irq_chip ocelot_eoi_irqchip = {
+ 	.irq_mask	= ocelot_irq_mask,
+ 	.irq_eoi	= ocelot_irq_ack,
+ 	.irq_unmask	= ocelot_irq_unmask,
+-	.flags          = IRQCHIP_EOI_THREADED | IRQCHIP_EOI_IF_HANDLED,
++	.flags          = IRQCHIP_EOI_THREADED | IRQCHIP_EOI_IF_HANDLED |
++			  IRQCHIP_IMMUTABLE,
+ 	.irq_set_type	= ocelot_irq_set_type,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS
+ };
+ 
+ static struct irq_chip ocelot_irqchip = {
+@@ -1800,6 +1804,8 @@ static struct irq_chip ocelot_irqchip = {
+ 	.irq_ack	= ocelot_irq_ack,
+ 	.irq_unmask	= ocelot_irq_unmask,
+ 	.irq_set_type	= ocelot_irq_set_type,
++	.flags          = IRQCHIP_IMMUTABLE,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS
+ };
+ 
+ static int ocelot_irq_set_type(struct irq_data *data, unsigned int type)
+@@ -1863,7 +1869,7 @@ static int ocelot_gpiochip_register(struct platform_device *pdev,
+ 	irq = platform_get_irq_optional(pdev, 0);
+ 	if (irq > 0) {
+ 		girq = &gc->irq;
+-		girq->chip = &ocelot_irqchip;
++		gpio_irq_chip_set_chip(girq, &ocelot_irqchip);
+ 		girq->parent_handler = ocelot_irq_handler;
+ 		girq->num_parents = 1;
+ 		girq->parents = devm_kcalloc(&pdev->dev, 1,
+-- 
+2.30.2
 
-Yes, however as I have written in the commit description there is no battery
-backup present until the board vendor puts one and so your RTC will loose
-time as soon as power is lost and you are back to 1970.
-
->
-> > +             };
-> > +
-> > +             pmp8074_gpios: gpio@c000 {
-> > +                     compatible = "qcom,pmp8074-gpio", "qcom,spmi-gpio";
-> > +                     reg = <0xc000>;
-> > +                     gpio-controller;
-> > +                     #gpio-cells = <2>;
-> > +                     gpio-ranges = <&pmp8074_gpios 0 0 12>;
-> > +                     interrupt-controller;
-> > +                     #interrupt-cells = <2>;
-> > +             };
-> > +     };
-> > +
-> > +     pmic@1 {
-> > +             compatible = "qcom,pmp8074", "qcom,spmi-pmic";
-> > +             reg = <0x1 SPMI_USID>;
-> > +
-> > +             regulators {
-> > +                     compatible = "qcom,pmp8074-regulators";
-> > +
-> > +                     s3: s3 {
-> > +                             regulator-name = "vdd_s3";
-> > +                             regulator-min-microvolt = <592000>;
-> > +                             regulator-max-microvolt = <1064000>;
->
-> Are you sure no other configurations are supported with this PMIC?
-> Otherwise you may accidentally burn somebody's board by setting up
-> regulators in a place that's not usually expected to have them..
-
-These values are read directly from the PMIC spec sheet as I thankfully have
-the spec sheet.
-
-Since PMP8074 is exclusively an IPQ8074 companion part then
-S3 will always be the CPU cluster regulator, S4 is the NPU cores regulator,
-L11 is the SDIO I/O regulator.
-
-There is plenty of other regulators inside, and support for them is
-included in the
-patches for the SPMI driver, however, they dont really have a kernel consumer
-currently, so I decided not to include them in the DTSI.
-QFPROM is fed by one of the LDO-s as well, will add that later once QFPROM
-support is being worked on, no ETA as I am doing this in my free time.
-All regulators have a default value set by the PMIC and then by the boot FW
-anyway.
-
-Regards,
-Robert
->
-> Konrad
-> > +                             regulator-always-on;
-> > +                             regulator-boot-on;
-> > +                     };
-> > +
-> > +                     s4: s4 {
-> > +                             regulator-name = "vdd_s4";
-> > +                             regulator-min-microvolt = <712000>;
-> > +                             regulator-max-microvolt = <992000>;
-> > +                             regulator-always-on;
-> > +                             regulator-boot-on;
-> > +                     };
-> > +
-> > +                     l11: l11 {
-> > +                             regulator-name = "l11";
-> > +                             regulator-min-microvolt = <1800000>;
-> > +                             regulator-max-microvolt = <3300000>;
-> > +                     };
-> > +             };
-> > +     };
-> > +};
