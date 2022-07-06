@@ -2,155 +2,133 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7FBC433EF
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Jul 2022 14:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E300CCA483
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Jul 2022 14:29:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232623AbiGFOVR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Jul 2022 10:21:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46232 "EHLO
+        id S233465AbiGFO3U (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Jul 2022 10:29:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232280AbiGFOVQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2022 10:21:16 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6348C1FCDA;
-        Wed,  6 Jul 2022 07:21:14 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id k30so11363902edk.8;
-        Wed, 06 Jul 2022 07:21:14 -0700 (PDT)
+        with ESMTP id S233394AbiGFO3S (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2022 10:29:18 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D11431EC63
+        for <linux-gpio@vger.kernel.org>; Wed,  6 Jul 2022 07:29:16 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id n15so18666781ljg.8
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Jul 2022 07:29:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=references:from:to:cc:subject:date:in-reply-to:message-id
-         :mime-version;
-        bh=3Wb+2NYdNYlT/r55W5Q9BfPi7qfSp7lu+o+6L0rJtv8=;
-        b=gWJipTj+zP9LdoXW9ZZmPEOCzTlBkuyB0ff9epBmgDE/i75a/0ROab93UWiX68yi+7
-         Yt1iVTbV0mmGIUPRsu7Iv5ZcPakBrVTGgNn3QbSAbJtpD1ll+9ETR4NC2zrYuD2Fnhr0
-         3uqRa9NzLc3SPWQvYGtU92MRw784mM0wllnyz59w08XWzjpZjczcPBBFzQBfGl7lqBnO
-         kAPfQ328Di9nQotQ680IHOoOE5XpcYZIGGB+pFBD4V5yok26buCnhT3XtXyauzJsZOcl
-         ODNecWdJmbQGMgGDmfrBQHUim98ctmI2881WkJtNSMeuMS9vVtFx62bUPJeJme6xPEAJ
-         6VZA==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=A5XEhFEI1sgOxZaIiNl90M23If361wx8ONPLgT7XGzI=;
+        b=TehnPfWsuMVsRwFU81r/h8zYcxQIpoObN9ie5xXroVxDcqpcJP061im2t2iUz+aIzy
+         TS4HZlmzQlGwdEim9PjrvSEA+yLT9OV4ePWfHLPHQpxbTJpcrFtk0jh5A1pShX7uo56v
+         MK9tmTwENiCQPlvHV6IiyWBI8tvVRp0XaMhmij/Xj/dii68gyW+3UWm49v3RuTPK00vs
+         ylAY1jIF6txWpDHiD3+FdU0+S1VJnFu/d5h0VqTDpPqKAeYB2Z5ExyiBmMSnwjk2K269
+         GMhg1BZr0QNa60yDX63rq58ZFGibbuM+JbTDRuZtATgw4eIse49PfDj/aDcwPZZiz3DD
+         2hsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:references:from:to:cc:subject:date:in-reply-to
-         :message-id:mime-version;
-        bh=3Wb+2NYdNYlT/r55W5Q9BfPi7qfSp7lu+o+6L0rJtv8=;
-        b=MHGARK1MfbjPjTMfgUdD/6o2VGqgirUU9ipTgpm7GN4fDtporzacIFB304Vg+/Ccd1
-         H2gdAQkFYSfmXfAP8eJQshsEwpyaxcm7WVOhLb8GDT4ViLjFIoPPym9KDN+gjMiWd4vj
-         OxNzleQc7hx2pU5j4itClotuPl3vzs+VnCfnYvU8z074G8WwecHRqP4P6geJavmHGg6I
-         qv5rkVnev5BaNix64wVJS5es2+++XLgHz+QzATADI788Gsw/M1xzRGPIi1wSmHDvCnFK
-         savL0E/iJy3MKGek+2Xm8r0vLELaIrU5PpxvftwsgzJlUrkQz/ThI9Vb/EXA0iTlcAii
-         Fr4g==
-X-Gm-Message-State: AJIora89nVyHkJMpDQs8S0r3TM9+uo18Pl4CdqmcR8j2t0ope/Gkzm7s
-        lUlJ+cUdHX4sjSw3DAa0HPG4f3vTOoE=
-X-Google-Smtp-Source: AGRyM1tT9stuoFyBcHRx0dfy4qvcPGQyu83eyJWdXOLAslwHbMig41DsfUkSzMnQ7gjy24d4uY2z1Q==
-X-Received: by 2002:a05:6402:2985:b0:439:651b:c1f4 with SMTP id eq5-20020a056402298500b00439651bc1f4mr43380871edb.276.1657117272992;
-        Wed, 06 Jul 2022 07:21:12 -0700 (PDT)
-Received: from localhost (92.40.202.41.threembb.co.uk. [92.40.202.41])
-        by smtp.gmail.com with ESMTPSA id au8-20020a170907092800b00722e19fec6dsm17325213ejc.156.2022.07.06.07.21.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 07:21:12 -0700 (PDT)
-References: <20220703111057.23246-1-aidanmacdonald.0x0@gmail.com>
- <20220703111057.23246-4-aidanmacdonald.0x0@gmail.com>
- <CACRpkdamknwRPGEeGGQGQPtKw=dPXa79GAJy+E6y+03NakN=cA@mail.gmail.com>
- <GrX3yDSwNOGIBcWmKqusaJ3dDqNGLr3Y@localhost>
- <CACRpkdbHg-vTj6CnkF=oMxtpy+FxEPdn2_qKzgtsT0TYU6Nv-g@mail.gmail.com>
-From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     michael@walle.cc, brgl@bgdev.pl, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] gpio: regmap: Support a custom ->to_irq() hook
-Date:   Wed, 06 Jul 2022 14:50:49 +0100
-In-reply-to: <CACRpkdbHg-vTj6CnkF=oMxtpy+FxEPdn2_qKzgtsT0TYU6Nv-g@mail.gmail.com>
-Message-ID: <ZTG1etjWj47jkqTxIRgriV6pQhW9dasf@localhost>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=A5XEhFEI1sgOxZaIiNl90M23If361wx8ONPLgT7XGzI=;
+        b=ISf0B4ClmUFYNdKKZ0y0mm3pc15ebc39ePdcG1t+63PrFYM9BV3f7ebCECjLAmnfjw
+         A1xbBCfs+9XeHMt/WjM0jh6FRPpwNLMmvN1OnNSp3NYze+ngOgbX86xcgumm7McboC9I
+         qn5J32MeoZlMtnqGR/Qulxu8/CbMPUBbuID1bq7U6E6miXi3fIQEbH19BFbU8jkNF04B
+         /729lYnCMfmgsGyJkXSi/oDEMBlHtrD03zLFJXY6sN8Qy6N5tbBXQBn/ZrOePGKvkIPa
+         XWvs19Z6jGx+8tqzPMfs+HQa7WeU/a5OtQ+r6ccgSrWZo7efgnW2+0oWW9TpWZIhn1fU
+         pBWQ==
+X-Gm-Message-State: AJIora+uO3vgfAWOIZuzp5vIAr4c332IB1eG54mvKIS1PGOg8rBSLy7y
+        SfM2DtwmTZRvFfRI+aSjLLShnQ==
+X-Google-Smtp-Source: AGRyM1sIkGqNfg4WOnb75LEjMGlLNjDJs3f3DtG0GuRhGMvhVYHisNiN2pWPdwfuUokq2/yMVyEnkg==
+X-Received: by 2002:a2e:6e14:0:b0:25a:8ca0:7efd with SMTP id j20-20020a2e6e14000000b0025a8ca07efdmr22921772ljc.56.1657117755139;
+        Wed, 06 Jul 2022 07:29:15 -0700 (PDT)
+Received: from [192.168.1.52] ([84.20.121.239])
+        by smtp.gmail.com with ESMTPSA id 68-20020a2e0947000000b0025d375e8665sm971537ljj.99.2022.07.06.07.29.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Jul 2022 07:29:14 -0700 (PDT)
+Message-ID: <8c395ba8-45f6-01ae-2fcf-24344cc89141@linaro.org>
+Date:   Wed, 6 Jul 2022 16:29:12 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v6 02/14] dt-bindings: pinctrl: imx: Add fsl,scu-iomux
+ yaml file
+Content-Language: en-US
+To:     Rob Herring <robh+dt@kernel.org>,
+        "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        Liu Ying <victor.liu@nxp.com>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Ming Qian <ming.qian@nxp.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Input <linux-input@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20220629164414.301813-1-viorel.suman@oss.nxp.com>
+ <20220629164414.301813-3-viorel.suman@oss.nxp.com>
+ <f0634bf0-77e9-939e-693f-31d50af4768c@linaro.org>
+ <20220630123754.esbuac4pfktlseh2@fsr-ub1664-116>
+ <78faf75d-80b7-7a0e-e306-6351dbe5133c@linaro.org>
+ <CAL_Jsq+0GJBTVkS12XTvUKphMH4XuQ5AS1-QHMw6ULgpWbZBQQ@mail.gmail.com>
+ <CAL_Jsq++FqUn3u56boHcoZhskx-6uUiduhJbUyWXbOH6dzExJg@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CAL_Jsq++FqUn3u56boHcoZhskx-6uUiduhJbUyWXbOH6dzExJg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-
-Linus Walleij <linus.walleij@linaro.org> writes:
-
-> On Tue, Jul 5, 2022 at 1:08 PM Aidan MacDonald
-> <aidanmacdonald.0x0@gmail.com> wrote:
->> Linus Walleij <linus.walleij@linaro.org> writes:
->
->> I'm not trying to argue that hierarchical IRQ domains are always a bad
->> thing -- I'm just pointing out they're not always useful or necessary.
->> All your points make sense when the GPIO controller is a large distinct
->> block with potentially many GPIOs. When we're dealing with an MFD device
->> with just a few GPIOs, maybe even just one, having a separate IRQ domain
->> makes less sense; the added structure is generally not useful.
->
-> Do you mean your driver does this:
->
-> MFD main device
-> MFD irqchip
->  |
->  +->  MFD gpiochip
->          No irqchip here, so .to_irq() just refers ^ to that one up there
->
-> IIUC you mean that if I want to use the irqchip directly then
-> I have to refer to the MFD irqchip, I just cannot refer to the
-> gpiochip subnode because that one does not have an irqchip.
-
-Yep, that's right.
-
-> // Getting GPIO from gpiochip and irq from MFD device
-> // for the same GPIO line
-> gpios = <&gpio 3 GPIO_ACTIVE_LOW>;
-> irqs = <&mfd 114 IRQ_EDGE_RISING>;
->
-> Then for a Linux driver this can be papered over by using the
-> .to_irq() callback and just defining gpios.
->
-> This isn't very good, if you created a separate gpiochip then you
-> should have a separate (hierarchical) irqchip associated with that
-> gpiochip as well.
->
-> // Getting GPIO and irq from the same gpiochip node
-> gpios = <&gpio 3 GPIO_ACTIVE_LOW>;
-> irqs = <&gpio 3 IRQ_EDGE_RISING>;
->
-> I made this mistake with the ab8500 driver and
-> I would not do it like this today. I would use hierarchical gpio
-> irqchip. And I should go and fix it. (Is on my TODO.)
->
-
-If moving to hierarchical IRQ chips is the plan, could we add a note
-to say .to_irq() is discouraged and shouldn't be used in new code?
-Based on what you're saying (which I agree makes sense) it sounds
-like there's really no reason to ever use .to_irq().
-
->> Looking at other GPIO drivers using a hierarchical IRQ domain, they
->> include their own IRQ chips with specialized ops. In my case I don't
->> need any of that (and it'd be the same with other MFD devices) so it
->> looks like using an IRQ domain would mean I'd have to create a fake
->> IRQ chip and domain just to translate between two number spaces.
+On 06/07/2022 16:11, Rob Herring wrote:
+>>> The fsl,imx8mq-pinctrl.yaml should be correct and I don't see the reason
+>>> why dtschema complains in some of the entries. It's like one define was
+>>> not correct... I'll take a look at this later, but anyway keep the same
+>>> as fsl,imx8mq-pinctrl.yaml even if it complains.
 >>
->> Is that really better than simply using ->to_irq()?
->
-> To be honest most irqchips are "fake", what they mostly do is figure
-> out which of a few internal sources that fired the irq, so it models the
-> different things connected to a single IRQ line.
->
-> So yeah, I think the hierarchical irqchip is worth it, especially if that
-> means the offset of the irqs and gpios become the same.
->
-> Maybe we can add more helpers in the core to make it dirt simple
-> though? It would help others with the same problem.
->
-> Yours,
-> Linus Walleij
+>> The issue is that 'fsl,pins' is problematic for the new dtb decoding
+>> because it has a variable definition in terms of matrix bounds as each
+>> i.MX platform has its own length (typ 5 or 6). The tools try to work
+>> around it by figuring out which size fits. That works until there are
+>> multiple answers which seems to be what's happening here.
+>>
+>> The easiest solution I think is to just strip the constraints in
+>> occurances of this property. I'll look into that.
+> 
+> This is now fixed in the dt-schema main branch.
 
-Okay, that sounds like a good plan. I'll look more carefully at the
-existing drivers and see if I can use existing gpiolib helpers.
+Great, thanks!
 
-One potential issue (from reading the code) is that hierarchical IRQ
-domains seemingly can't have a non-hierarchical domain as the parent:
-irq_domain_alloc_irqs_parent() calls irq_domain_alloc_irqs_hierarchy()
-and the latter fails with -ENOSYS for a non-hierarchical domain.
 
-In my case I'm using a regmap IRQ chip, which is non-hierarchical,
-so perhaps that will need to be expanded? 
-
-Regards,
-Aidan
+Best regards,
+Krzysztof
