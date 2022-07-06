@@ -2,160 +2,155 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F192DCCA473
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Jul 2022 14:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7FBC433EF
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Jul 2022 14:21:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233331AbiGFOMQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Jul 2022 10:12:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40198 "EHLO
+        id S232623AbiGFOVR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Jul 2022 10:21:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233395AbiGFOMO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2022 10:12:14 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36FD1EADE;
-        Wed,  6 Jul 2022 07:12:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6C689B81CF5;
-        Wed,  6 Jul 2022 14:12:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B556C341D7;
-        Wed,  6 Jul 2022 14:12:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657116730;
-        bh=RHN2bWFwgmerCCoeAvGKz0u+MaE/4SRrO+eiHhO2djg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Xh1v7g2+gyzwxF80Ws8Y+37Olx2A+p2HCNlUkanKraSVqF7fZ247SFEXqGjMbnoEA
-         W5jsicurP7E634gMHzCf4Fx19uHJe5JwCnxFUuYNFfhRmkmkMeF6E3bbYUytgq7Pfx
-         23rdkYtJr7jDxQuehVQj5ny1/Tw9GMgijmVosvIF+9tdlKgnPVvjK3icj62nw310/R
-         U7xIjKopbMYUq45nqjKZDFyaVFm6kp1UUeFRho8iRuR5wctpmGd/B7kID3w8a9gKu/
-         R2sCVVDhtv6hxFEXJGTneHyoO7iEiuYWEfN34+HsceWaof/93eeUABzTebZNRFiwFo
-         ipGYZ5e+9buGA==
-Received: by mail-vs1-f48.google.com with SMTP id i186so15177205vsc.9;
-        Wed, 06 Jul 2022 07:12:10 -0700 (PDT)
-X-Gm-Message-State: AJIora/QVmFEoF+T0JaXmmr6AqcmPtjgV8p72Xaj4/PpaGzluZ9BHNkR
-        B5xZL4JpfAV3inbzvDkq5nhAcgmCSDhKA0VgRw==
-X-Google-Smtp-Source: AGRyM1u1HWVn2082EJ5+ru4frCQnJcreiwhKLFDJAiH/WoWedcEtjm0QcNQR7mO+T3bYj9xAqY3u/BVr3918Yjxpxno=
-X-Received: by 2002:a67:d194:0:b0:357:8ea:5554 with SMTP id
- w20-20020a67d194000000b0035708ea5554mr2766153vsi.0.1657116728785; Wed, 06 Jul
- 2022 07:12:08 -0700 (PDT)
+        with ESMTP id S232280AbiGFOVQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2022 10:21:16 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6348C1FCDA;
+        Wed,  6 Jul 2022 07:21:14 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id k30so11363902edk.8;
+        Wed, 06 Jul 2022 07:21:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=references:from:to:cc:subject:date:in-reply-to:message-id
+         :mime-version;
+        bh=3Wb+2NYdNYlT/r55W5Q9BfPi7qfSp7lu+o+6L0rJtv8=;
+        b=gWJipTj+zP9LdoXW9ZZmPEOCzTlBkuyB0ff9epBmgDE/i75a/0ROab93UWiX68yi+7
+         Yt1iVTbV0mmGIUPRsu7Iv5ZcPakBrVTGgNn3QbSAbJtpD1ll+9ETR4NC2zrYuD2Fnhr0
+         3uqRa9NzLc3SPWQvYGtU92MRw784mM0wllnyz59w08XWzjpZjczcPBBFzQBfGl7lqBnO
+         kAPfQ328Di9nQotQ680IHOoOE5XpcYZIGGB+pFBD4V5yok26buCnhT3XtXyauzJsZOcl
+         ODNecWdJmbQGMgGDmfrBQHUim98ctmI2881WkJtNSMeuMS9vVtFx62bUPJeJme6xPEAJ
+         6VZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:references:from:to:cc:subject:date:in-reply-to
+         :message-id:mime-version;
+        bh=3Wb+2NYdNYlT/r55W5Q9BfPi7qfSp7lu+o+6L0rJtv8=;
+        b=MHGARK1MfbjPjTMfgUdD/6o2VGqgirUU9ipTgpm7GN4fDtporzacIFB304Vg+/Ccd1
+         H2gdAQkFYSfmXfAP8eJQshsEwpyaxcm7WVOhLb8GDT4ViLjFIoPPym9KDN+gjMiWd4vj
+         OxNzleQc7hx2pU5j4itClotuPl3vzs+VnCfnYvU8z074G8WwecHRqP4P6geJavmHGg6I
+         qv5rkVnev5BaNix64wVJS5es2+++XLgHz+QzATADI788Gsw/M1xzRGPIi1wSmHDvCnFK
+         savL0E/iJy3MKGek+2Xm8r0vLELaIrU5PpxvftwsgzJlUrkQz/ThI9Vb/EXA0iTlcAii
+         Fr4g==
+X-Gm-Message-State: AJIora89nVyHkJMpDQs8S0r3TM9+uo18Pl4CdqmcR8j2t0ope/Gkzm7s
+        lUlJ+cUdHX4sjSw3DAa0HPG4f3vTOoE=
+X-Google-Smtp-Source: AGRyM1tT9stuoFyBcHRx0dfy4qvcPGQyu83eyJWdXOLAslwHbMig41DsfUkSzMnQ7gjy24d4uY2z1Q==
+X-Received: by 2002:a05:6402:2985:b0:439:651b:c1f4 with SMTP id eq5-20020a056402298500b00439651bc1f4mr43380871edb.276.1657117272992;
+        Wed, 06 Jul 2022 07:21:12 -0700 (PDT)
+Received: from localhost (92.40.202.41.threembb.co.uk. [92.40.202.41])
+        by smtp.gmail.com with ESMTPSA id au8-20020a170907092800b00722e19fec6dsm17325213ejc.156.2022.07.06.07.21.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Jul 2022 07:21:12 -0700 (PDT)
+References: <20220703111057.23246-1-aidanmacdonald.0x0@gmail.com>
+ <20220703111057.23246-4-aidanmacdonald.0x0@gmail.com>
+ <CACRpkdamknwRPGEeGGQGQPtKw=dPXa79GAJy+E6y+03NakN=cA@mail.gmail.com>
+ <GrX3yDSwNOGIBcWmKqusaJ3dDqNGLr3Y@localhost>
+ <CACRpkdbHg-vTj6CnkF=oMxtpy+FxEPdn2_qKzgtsT0TYU6Nv-g@mail.gmail.com>
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     michael@walle.cc, brgl@bgdev.pl, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] gpio: regmap: Support a custom ->to_irq() hook
+Date:   Wed, 06 Jul 2022 14:50:49 +0100
+In-reply-to: <CACRpkdbHg-vTj6CnkF=oMxtpy+FxEPdn2_qKzgtsT0TYU6Nv-g@mail.gmail.com>
+Message-ID: <ZTG1etjWj47jkqTxIRgriV6pQhW9dasf@localhost>
 MIME-Version: 1.0
-References: <20220629164414.301813-1-viorel.suman@oss.nxp.com>
- <20220629164414.301813-3-viorel.suman@oss.nxp.com> <f0634bf0-77e9-939e-693f-31d50af4768c@linaro.org>
- <20220630123754.esbuac4pfktlseh2@fsr-ub1664-116> <78faf75d-80b7-7a0e-e306-6351dbe5133c@linaro.org>
- <CAL_Jsq+0GJBTVkS12XTvUKphMH4XuQ5AS1-QHMw6ULgpWbZBQQ@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+0GJBTVkS12XTvUKphMH4XuQ5AS1-QHMw6ULgpWbZBQQ@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 6 Jul 2022 08:11:57 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq++FqUn3u56boHcoZhskx-6uUiduhJbUyWXbOH6dzExJg@mail.gmail.com>
-Message-ID: <CAL_Jsq++FqUn3u56boHcoZhskx-6uUiduhJbUyWXbOH6dzExJg@mail.gmail.com>
-Subject: Re: [PATCH v6 02/14] dt-bindings: pinctrl: imx: Add fsl,scu-iomux
- yaml file
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Liu Ying <victor.liu@nxp.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Ming Qian <ming.qian@nxp.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jul 5, 2022 at 12:33 PM Rob Herring <robh+dt@kernel.org> wrote:
->
-> On Thu, Jun 30, 2022 at 12:33 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
-> >
-> > On 30/06/2022 14:37, Viorel Suman (OSS) wrote:
-> > > On 22-06-29 19:53:51, Krzysztof Kozlowski wrote:
-> > >> On 29/06/2022 18:44, Viorel Suman (OSS) wrote:
-> > >>> From: Abel Vesa <abel.vesa@nxp.com>
-> > >>>
-> > >>> In order to replace the fsl,scu txt file from bindings/arm/freescale,
-> > >>> we need to split it between the right subsystems. This patch documents
-> > >>> separately the 'iomux/pinctrl' child node of the SCU main node.
-> > >>>
-> > >>> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > >>> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-> > >>> ---
-> > >>>  .../bindings/pinctrl/fsl,scu-pinctrl.yaml     | 68 +++++++++++++++++++
-> > >>>  1 file changed, 68 insertions(+)
-> > >>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
-> > >>>
-> > >>> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
-> > >>> new file mode 100644
-> > >>> index 000000000000..76a2e7b28172
-> > >>> --- /dev/null
-> > >>> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
-> > > [...]
-> > >>> +      fsl,pins:
-> > >>> +        description:
-> > >>> +          each entry consists of 3 integers and represents the pin ID, the mux value
-> > >>> +          and config setting for the pin. The first 2 integers - pin_id and mux_val - are
-> > >>> +          specified using a PIN_FUNC_ID macro, which can be found in
-> > >>> +          <include/dt-bindings/pinctrl/pads-imx8qxp.h>. The last integer CONFIG is
-> > >>> +          the pad setting value like pull-up on this pin. Please refer to the
-> > >>> +          appropriate i.MX8 Reference Manual for detailed CONFIG settings.
-> > >>> +        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> > >>
-> > >> Look at fsl,imx8mq-pinctrl.yaml. Each item is described (items under items).
-> > >
-> > > Added them initially, but later dropped because of some logs like
-> > > "pinctrl@xxxxxxx: usdhc1grp:fsl,pins:0: [...] is too long" shown by
-> > > "make dt_binding_check dtbs_check DT_SCHEMA_FILES=[...]/fsl,scu-pinctrl.yaml"
-> > >
-> > > Same logs are shown for "fsl,imx8mq-pinctrl.yaml". Will add the items description in the next
-> > > version.
-> > >
-> >
-> > The fsl,imx8mq-pinctrl.yaml should be correct and I don't see the reason
-> > why dtschema complains in some of the entries. It's like one define was
-> > not correct... I'll take a look at this later, but anyway keep the same
-> > as fsl,imx8mq-pinctrl.yaml even if it complains.
->
-> The issue is that 'fsl,pins' is problematic for the new dtb decoding
-> because it has a variable definition in terms of matrix bounds as each
-> i.MX platform has its own length (typ 5 or 6). The tools try to work
-> around it by figuring out which size fits. That works until there are
-> multiple answers which seems to be what's happening here.
->
-> The easiest solution I think is to just strip the constraints in
-> occurances of this property. I'll look into that.
 
-This is now fixed in the dt-schema main branch.
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-Rob
+> On Tue, Jul 5, 2022 at 1:08 PM Aidan MacDonald
+> <aidanmacdonald.0x0@gmail.com> wrote:
+>> Linus Walleij <linus.walleij@linaro.org> writes:
+>
+>> I'm not trying to argue that hierarchical IRQ domains are always a bad
+>> thing -- I'm just pointing out they're not always useful or necessary.
+>> All your points make sense when the GPIO controller is a large distinct
+>> block with potentially many GPIOs. When we're dealing with an MFD device
+>> with just a few GPIOs, maybe even just one, having a separate IRQ domain
+>> makes less sense; the added structure is generally not useful.
+>
+> Do you mean your driver does this:
+>
+> MFD main device
+> MFD irqchip
+>  |
+>  +->  MFD gpiochip
+>          No irqchip here, so .to_irq() just refers ^ to that one up there
+>
+> IIUC you mean that if I want to use the irqchip directly then
+> I have to refer to the MFD irqchip, I just cannot refer to the
+> gpiochip subnode because that one does not have an irqchip.
+
+Yep, that's right.
+
+> // Getting GPIO from gpiochip and irq from MFD device
+> // for the same GPIO line
+> gpios = <&gpio 3 GPIO_ACTIVE_LOW>;
+> irqs = <&mfd 114 IRQ_EDGE_RISING>;
+>
+> Then for a Linux driver this can be papered over by using the
+> .to_irq() callback and just defining gpios.
+>
+> This isn't very good, if you created a separate gpiochip then you
+> should have a separate (hierarchical) irqchip associated with that
+> gpiochip as well.
+>
+> // Getting GPIO and irq from the same gpiochip node
+> gpios = <&gpio 3 GPIO_ACTIVE_LOW>;
+> irqs = <&gpio 3 IRQ_EDGE_RISING>;
+>
+> I made this mistake with the ab8500 driver and
+> I would not do it like this today. I would use hierarchical gpio
+> irqchip. And I should go and fix it. (Is on my TODO.)
+>
+
+If moving to hierarchical IRQ chips is the plan, could we add a note
+to say .to_irq() is discouraged and shouldn't be used in new code?
+Based on what you're saying (which I agree makes sense) it sounds
+like there's really no reason to ever use .to_irq().
+
+>> Looking at other GPIO drivers using a hierarchical IRQ domain, they
+>> include their own IRQ chips with specialized ops. In my case I don't
+>> need any of that (and it'd be the same with other MFD devices) so it
+>> looks like using an IRQ domain would mean I'd have to create a fake
+>> IRQ chip and domain just to translate between two number spaces.
+>>
+>> Is that really better than simply using ->to_irq()?
+>
+> To be honest most irqchips are "fake", what they mostly do is figure
+> out which of a few internal sources that fired the irq, so it models the
+> different things connected to a single IRQ line.
+>
+> So yeah, I think the hierarchical irqchip is worth it, especially if that
+> means the offset of the irqs and gpios become the same.
+>
+> Maybe we can add more helpers in the core to make it dirt simple
+> though? It would help others with the same problem.
+>
+> Yours,
+> Linus Walleij
+
+Okay, that sounds like a good plan. I'll look more carefully at the
+existing drivers and see if I can use existing gpiolib helpers.
+
+One potential issue (from reading the code) is that hierarchical IRQ
+domains seemingly can't have a non-hierarchical domain as the parent:
+irq_domain_alloc_irqs_parent() calls irq_domain_alloc_irqs_hierarchy()
+and the latter fails with -ENOSYS for a non-hierarchical domain.
+
+In my case I'm using a regmap IRQ chip, which is non-hierarchical,
+so perhaps that will need to be expanded? 
+
+Regards,
+Aidan
