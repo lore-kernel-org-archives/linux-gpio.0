@@ -2,68 +2,90 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8F7C43334
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Jul 2022 17:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D67CC43334
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Jul 2022 17:45:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236268AbiGGRoi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Jul 2022 13:44:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51274 "EHLO
+        id S236266AbiGGRpS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Jul 2022 13:45:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235552AbiGGRof (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Jul 2022 13:44:35 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2107564F9;
-        Thu,  7 Jul 2022 10:44:33 -0700 (PDT)
+        with ESMTP id S235320AbiGGRpR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Jul 2022 13:45:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E27275C95A;
+        Thu,  7 Jul 2022 10:45:16 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 86269B80522;
-        Thu,  7 Jul 2022 17:44:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2CA52C3411E;
-        Thu,  7 Jul 2022 17:44:31 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7D6AE62091;
+        Thu,  7 Jul 2022 17:45:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC55FC3411E;
+        Thu,  7 Jul 2022 17:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657215871;
-        bh=yipsckzcPtD2I1U8bB0T6DXG2jxNDWbUWeVDZOK9WvE=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=QLb35Bi/KPX0BUF2xOPLVzVSNcEcwBkuhpgDVZiITuZUkOOICTzpH9F+ROpu0R10J
-         SmEWxQuYCOU+W62h21eMG31tJhuhF4XZLL2DudGfJn6LansUL7hLT86D0hELVYEmSM
-         6Dlm/QlL6lHRQUa7kMYb+0ZrLRoevXJlENG56B6zI3PreUaX+vAXoiIUHeRDjN9RRw
-         J9xDyrqiaLtdcLXhRCefNrN1xUSGHu6KDpFaxKWmIVGbFE/YwAZeZwefsr9ZkoWewz
-         gppTMe5BjNprkgnItFudo02n9pN2WYy62WCJeA8EkD73ZMFWEJ89dqHMJDabrS7V/w
-         xz83Q46c5vy1g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1B354E45BD9;
-        Thu,  7 Jul 2022 17:44:31 +0000 (UTC)
-Subject: Re: [GIT PULL] pin control fixes for v5.19
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdYD-mnt-vypLAXP9J2pgzXOOYhS7fNeEKLK7T2q-45USg@mail.gmail.com>
-References: <CACRpkdYD-mnt-vypLAXP9J2pgzXOOYhS7fNeEKLK7T2q-45USg@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdYD-mnt-vypLAXP9J2pgzXOOYhS7fNeEKLK7T2q-45USg@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.19-2
-X-PR-Tracked-Commit-Id: a1d4ef1adf8bbd302067534ead671a94759687ed
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 651a8536572ae0dcce608b3e6720ae844155a787
-Message-Id: <165721587110.16533.6121533424382096395.pr-tracker-bot@kernel.org>
-Date:   Thu, 07 Jul 2022 17:44:31 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        s=k20201202; t=1657215915;
+        bh=6utmIEBNmJdH+aR9y6LOhDYh2NSUvaIjv2jcybsXQCc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cAyhptaXy+sXh7tJLLUO+9hfDyjRzLENSJ+HBy9X2F4/HeOhUBO8Meizj2dsj48tz
+         2+VupD/n2oX7oFzpv16iq8VNsclGafp+yIWNsiOIFOX2W8H4xvQ3Q6HCgALmEozHL6
+         XTOxP9EBdkL8eUZvR6Bk/6juwd4q+iXJXVPOHNNA8TPzcIhRm2vMZ461Nw/sRDZf88
+         m/b4+3DIOKRlWJ5jWfCQILcqGxpewHxdxLsAKdMD29xuKKWJReWU+qmJkVrMFyzE0q
+         azNUDuTJIrNHopCJpU0ZKAgvGCeREEI34ir7vMV89SbCvKbfA+lN86hFzyoQpRuPFm
+         UY+TA4fWyt11Q==
+Date:   Thu, 7 Jul 2022 18:54:56 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Robert Marko <robimarko@gmail.com>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        konrad.dybcio@somainline.org, lee.jones@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linus.walleij@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+        lars@metafoo.de, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v6 10/12] iio: adc: qcom-spmi-adc5: add ADC5_VREF_VADC
+ to rev2 ADC5
+Message-ID: <20220707185456.45ff3958@jic23-huawei>
+In-Reply-To: <20220704212402.1715182-10-robimarko@gmail.com>
+References: <20220704212402.1715182-1-robimarko@gmail.com>
+        <20220704212402.1715182-10-robimarko@gmail.com>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Thu, 7 Jul 2022 11:05:44 +0200:
+On Mon,  4 Jul 2022 23:24:00 +0200
+Robert Marko <robimarko@gmail.com> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.19-2
+> Add support for ADC5_VREF_VADC channel to rev2 ADC5 channel list.
+> This channel measures the VADC reference LDO output.
+> 
+> Signed-off-by: Robert Marko <robimarko@gmail.com>
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/651a8536572ae0dcce608b3e6720ae844155a787
+I'm assuming this will go in via MFD. Shout if I should pick it up
+directly.
 
-Thank you!
+Thanks,
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jonathan
+
+> ---
+>  drivers/iio/adc/qcom-spmi-adc5.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/qcom-spmi-adc5.c b/drivers/iio/adc/qcom-spmi-adc5.c
+> index 87438d1e5c0b..7bd3745884f0 100644
+> --- a/drivers/iio/adc/qcom-spmi-adc5.c
+> +++ b/drivers/iio/adc/qcom-spmi-adc5.c
+> @@ -589,6 +589,8 @@ static const struct adc5_channels adc5_chans_rev2[ADC5_MAX_CHANNEL] = {
+>  					SCALE_HW_CALIB_DEFAULT)
+>  	[ADC5_1P25VREF]		= ADC5_CHAN_VOLT("vref_1p25", 0,
+>  					SCALE_HW_CALIB_DEFAULT)
+> +	[ADC5_VREF_VADC]	= ADC5_CHAN_VOLT("vref_vadc", 0,
+> +					SCALE_HW_CALIB_DEFAULT)
+>  	[ADC5_VPH_PWR]		= ADC5_CHAN_VOLT("vph_pwr", 1,
+>  					SCALE_HW_CALIB_DEFAULT)
+>  	[ADC5_VBAT_SNS]		= ADC5_CHAN_VOLT("vbat_sns", 1,
+
