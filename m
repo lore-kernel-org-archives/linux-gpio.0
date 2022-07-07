@@ -2,187 +2,119 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6CF4C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Jul 2022 23:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED792C433EF
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Jul 2022 23:16:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236174AbiGGXKN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Jul 2022 19:10:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54290 "EHLO
+        id S236216AbiGGXQR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Jul 2022 19:16:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230076AbiGGXKM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Jul 2022 19:10:12 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAC4F17E07
-        for <linux-gpio@vger.kernel.org>; Thu,  7 Jul 2022 16:10:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657235411; x=1688771411;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=XUv1c6d4SbonqMn8kh/HZFd3OBymVJMTM69VnLuLsQs=;
-  b=hSJ34kg1FdrQC2+XUVafHTrLY9mviUbPzPjllxq9j/QmpbYZq8QSS3LE
-   PkCoO7jzForZBT/RXwNZv1/jWNNfvYV1t9TxqQU36nHRhoXSQQ1RFRLHj
-   dbiKcU9XpcFzzWAkoXBkfEqxhO1WyDwwoMA3y4FtVuGfPIMFAyXOXpYA+
-   TIICpAy/yZSiVj/y+ew9vkKZrOmYvTtsLviaD7A1lyh4sDpgh2wo9QdXL
-   EKnQYKqAJIAuJIVNtkHwaDxj5zDghP/Jbe+q8vtYUknWqXuZ8D3IFpq0x
-   KiJZUFFg3ZWDT6Tb2SZbHzjBcJmD9aOPro2Ucb6QZGE8eY6bYX+B5fZGp
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10401"; a="272937473"
-X-IronPort-AV: E=Sophos;i="5.92,253,1650956400"; 
-   d="scan'208";a="272937473"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2022 16:10:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,253,1650956400"; 
-   d="scan'208";a="591373067"
-Received: from lkp-server01.sh.intel.com (HELO 68b931ab7ac1) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 07 Jul 2022 16:10:10 -0700
-Received: from kbuild by 68b931ab7ac1 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1o9adN-000MaW-NY;
-        Thu, 07 Jul 2022 23:10:09 +0000
-Date:   Fri, 08 Jul 2022 07:10:04 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [brgl:gpio/for-current] BUILD SUCCESS
- c8e27a4a5136e7230f9e4ffcf132705bf56864cc
-Message-ID: <62c767cc.Q0bN/RlVmA3oyEHi%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S236128AbiGGXQQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Jul 2022 19:16:16 -0400
+Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92D60675B6
+        for <linux-gpio@vger.kernel.org>; Thu,  7 Jul 2022 16:16:15 -0700 (PDT)
+Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-101b4f9e825so27274943fac.5
+        for <linux-gpio@vger.kernel.org>; Thu, 07 Jul 2022 16:16:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K3GtFLT5VlHIMmMMlLDEGSWPueKfPOd59FonXvTzyyE=;
+        b=HaK0sV1wqReBsLI5fYuywyIsK7IX8zq2V0C3U4KAcNkLTQILSU0CP1lyPlfvHr/WjE
+         ml4+0viUos4z0FKMiUTBEsAoq8Ap4hrnsoMbZ0HSP7e2jfzz3EkamK/Xh1IpCL4rNM4N
+         Dg4wb7cLNpQ1RoXtxw3Jy84B5I77DPJiLZGzZe/bafVfYgYzcth9XVL9Xd0SX/n6CQGL
+         4PR+uqHrcTllvDEvJnumD1+mSOyMkCyyh3Oci8R5OBrliZA49RzOfx249nS99Cyeq5rN
+         GDrP6FHYvFgDoQBvMJ6iZ4gXG0MdSnSQIJc2886+NJr+7Ivvx1X90mqi595it9vWKc4+
+         MnHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K3GtFLT5VlHIMmMMlLDEGSWPueKfPOd59FonXvTzyyE=;
+        b=vTBxle+HVnMC1bbzs3XZfCfz1EuSufVpxF1OVlA2IwYnLVcaoyQBdrwPKGTUUcMICa
+         4O6RuqdzQJ88xwcpSnJZ7TAlb8i1zr3s7ztLOj6MjMOjnxOD/yb/2JkqQ2c1hICsQ6mz
+         xrKVsxEEfGiEqCOLXA9I9SuZ37PZ2+ds1tn3Pn51HJQndmlfnzRIqL8l5Vp+fjK7gnWd
+         AK7a/AGNcPMcKP9qEJUvu8HVhAGd+e/0SL97PSpCzLVJDk6b4ZF7T8gnmEGbPDcbzzSE
+         NNVUf3hXXHlN9JfmFJ+4LD5qlSg6TxFDashte6xzE5CtrmUpVBxWtt0U2NBe6UJFdVD4
+         fNfQ==
+X-Gm-Message-State: AJIora8VJ9QLZKZmV6jjs/IInZ7W4RNJP1VjaSN1iGp9BYZj2DZI1caE
+        sdIHGaHMhYyig6eJZkj/cb7Zyw==
+X-Google-Smtp-Source: AGRyM1uog+T7XWwPK+NaACTq1k/xU9UmzU4HnRc/BXdZwD6n3ZAmkFK6NlgZF1pL5XX4Au8NK3SRUg==
+X-Received: by 2002:a05:6870:a70c:b0:10c:3bb7:ea15 with SMTP id g12-20020a056870a70c00b0010c3bb7ea15mr3640528oam.69.1657235774716;
+        Thu, 07 Jul 2022 16:16:14 -0700 (PDT)
+Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id cg10-20020a056830630a00b006190efaf118sm2177606otb.66.2022.07.07.16.16.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Jul 2022 16:16:14 -0700 (PDT)
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     linus.walleij@linaro.org, brgl@bgdev.pl
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        William Breathitt Gray <william.gray@linaro.org>,
+        John Hentges <jhentges@accesio.com>,
+        Jay Dolan <jay.dolan@accesio.com>,
+        Fred Eckert <Frede@cmslaser.com>,
+        Paul Demetrotion <pdemetrotion@winsystems.com>,
+        techsupport@winsystems.com
+Subject: [PATCH v2 0/6] gpio: Implement and utilize register structures for ISA drivers
+Date:   Thu,  7 Jul 2022 14:10:02 -0400
+Message-Id: <cover.1657216200.git.william.gray@linaro.org>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
-branch HEAD: c8e27a4a5136e7230f9e4ffcf132705bf56864cc  gpiolib: cdev: fix null pointer dereference in linereq_free()
+Changes in v2:
+ - Implement support for the Intel 8255 interface as a new gpio-i8255
+   module; common code among gpio-104-dio-48e, gpio-104-idi-48, and
+   gpio-gpio-mm are consolidated in the gpio-i8255 module
+ - Refactor the gpio-104-dio-48e, gpio-104-idi-48, and gpio-gpio-mm to
+   utilize the new gpio-i8255 functions; this greatly simplifies the
+   changes for these drivers
 
-elapsed time: 723m
+The PC104/ISA drivers were updated to use I/O memory accessor calls such
+as ioread8()/iowrite8() in a previous patch series [1]. This
+patchset is a continuation of the effort to improve the code readability
+and reduce magic numbers by implementing and utilizing named register
+data structures.
 
-configs tested: 112
-configs skipped: 3
+One of the benefits is that we can now observe more easily similarities
+in devices that share similar interfaces; such as the i8255 interfaces
+used by the 104-DIO-48E, 104-IDI-48, and GPIO-MM drivers -- as well as
+the similar interface used by the 104-IDIO-16 and PCI-IDIO-16 drivers.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+A new module supporting the Intel 8255 interface is introduced to
+consolidate the common code found among the 104-DIO-48E, 104-IDI-48, and
+GPIO-MM drivers.
 
-gcc tested configs:
-arm64                            allyesconfig
-arm                                 defconfig
-arm                              allyesconfig
-i386                          randconfig-c001
-sh                                  defconfig
-sh                          rsk7269_defconfig
-alpha                            alldefconfig
-openrisc                            defconfig
-arm                          badge4_defconfig
-powerpc                  storcenter_defconfig
-arc                         haps_hs_defconfig
-mips                             allmodconfig
-powerpc                      mgcoge_defconfig
-sh                             shx3_defconfig
-mips                           xway_defconfig
-powerpc                 mpc8540_ads_defconfig
-nios2                            allyesconfig
-sh                           se7705_defconfig
-powerpc                     tqm8548_defconfig
-m68k                       m5249evb_defconfig
-arc                        nsimosci_defconfig
-powerpc                mpc7448_hpc2_defconfig
-arm                           stm32_defconfig
-sh                   sh7770_generic_defconfig
-mips                         tb0226_defconfig
-arm                        mvebu_v7_defconfig
-sh                         ap325rxa_defconfig
-arm                        spear6xx_defconfig
-sh                      rts7751r2d1_defconfig
-riscv                               defconfig
-sh                           se7722_defconfig
-xtensa                              defconfig
-powerpc                     tqm8555_defconfig
-powerpc                    adder875_defconfig
-sh                              ul2_defconfig
-arm                        keystone_defconfig
-sh                   secureedge5410_defconfig
-arm                           u8500_defconfig
-arc                     nsimosci_hs_defconfig
-mips                 decstation_r4k_defconfig
-sh                           se7712_defconfig
-sh                        edosk7705_defconfig
-m68k                            q40_defconfig
-powerpc                      ppc6xx_defconfig
-arm                      jornada720_defconfig
-powerpc                     ep8248e_defconfig
-m68k                           sun3_defconfig
-sh                          r7780mp_defconfig
-x86_64                           alldefconfig
-xtensa                generic_kc705_defconfig
-arc                      axs103_smp_defconfig
-sh                           sh2007_defconfig
-sh                         ecovec24_defconfig
-riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
-riscv                             allnoconfig
-i386                   debian-10.3-kselftests
-i386                              debian-10.3
-ia64                             allmodconfig
-m68k                             allyesconfig
-m68k                             allmodconfig
-arc                              allyesconfig
-alpha                            allyesconfig
-powerpc                           allnoconfig
-mips                             allyesconfig
-powerpc                          allmodconfig
-sh                               allmodconfig
-i386                             allyesconfig
-i386                                defconfig
-x86_64                        randconfig-a004
-x86_64                        randconfig-a002
-x86_64                        randconfig-a006
-i386                          randconfig-a001
-i386                          randconfig-a003
-i386                          randconfig-a005
-x86_64                        randconfig-a013
-x86_64                        randconfig-a011
-x86_64                        randconfig-a015
-i386                          randconfig-a012
-i386                          randconfig-a014
-i386                          randconfig-a016
-riscv                randconfig-r042-20220707
-arc                  randconfig-r043-20220707
-s390                 randconfig-r044-20220707
-x86_64                    rhel-8.3-kselftests
-um                             i386_defconfig
-um                           x86_64_defconfig
-x86_64                              defconfig
-x86_64                           allyesconfig
-x86_64                               rhel-8.3
-x86_64                          rhel-8.3-func
-x86_64                           rhel-8.3-syz
-x86_64                         rhel-8.3-kunit
+[1] https://lore.kernel.org/all/cover.1652201921.git.william.gray@linaro.org/
 
-clang tested configs:
-mips                         tb0287_defconfig
-powerpc                 xes_mpc85xx_defconfig
-arm                        multi_v5_defconfig
-powerpc                 mpc8315_rdb_defconfig
-x86_64                        randconfig-k001
-x86_64                        randconfig-a005
-x86_64                        randconfig-a001
-x86_64                        randconfig-a003
-i386                          randconfig-a002
-i386                          randconfig-a006
-i386                          randconfig-a004
-x86_64                        randconfig-a012
-x86_64                        randconfig-a014
-x86_64                        randconfig-a016
-i386                          randconfig-a013
-i386                          randconfig-a011
-i386                          randconfig-a015
-hexagon              randconfig-r045-20220707
-hexagon              randconfig-r041-20220707
+William Breathitt Gray (6):
+  gpio: i8255: Introduce the i8255 module
+  gpio: 104-dio-48e: Implement and utilize register structures
+  gpio: 104-idi-48: Implement and utilize register structures
+  gpio: gpio-mm: Implement and utilize register structures
+  gpio: 104-idio-16: Implement and utilize register structures
+  gpio: ws16c48: Implement and utilize register structures
 
+ MAINTAINERS                     |   6 +
+ drivers/gpio/Kconfig            |   6 +
+ drivers/gpio/Makefile           |   1 +
+ drivers/gpio/gpio-104-dio-48e.c | 224 +++++++++-------------------
+ drivers/gpio/gpio-104-idi-48.c  | 123 +++++++---------
+ drivers/gpio/gpio-104-idio-16.c |  58 +++++---
+ drivers/gpio/gpio-gpio-mm.c     | 177 +++++------------------
+ drivers/gpio/gpio-i8255.c       | 249 ++++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-ws16c48.c     | 119 ++++++++++-----
+ include/linux/gpio/i8255.h      |  34 +++++
+ 10 files changed, 575 insertions(+), 422 deletions(-)
+ create mode 100644 drivers/gpio/gpio-i8255.c
+ create mode 100644 include/linux/gpio/i8255.h
+
+
+base-commit: f2906aa863381afb0015a9eb7fefad885d4e5a56
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.36.1
+
