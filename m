@@ -2,52 +2,54 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2894BC43334
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77486CCA47B
 	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jul 2022 19:52:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239973AbiGHTwj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S239976AbiGHTwj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 8 Jul 2022 15:52:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57578 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238753AbiGHTw1 (ORCPT
+        with ESMTP id S238813AbiGHTw1 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jul 2022 15:52:27 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE78E8736D;
-        Fri,  8 Jul 2022 12:52:24 -0700 (PDT)
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9812D88F0A;
+        Fri,  8 Jul 2022 12:52:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1657309944; x=1688845944;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vJM5XO6vf+R4PpfJbYDPCYOewQOmfAzMGpJ+4oCDX50=;
-  b=P8EC6Gmk8bHat7prB4Y2vs6eMEK0rDiJGQfMsSxNdHf3h0N8Vp8Yr7qc
-   vRYSEcIjmiKBZAy2OGUPJxTpg3wGNGCmPgqYRk8R50FPvMg6AGRWZKnRh
-   jnZgVphDLfRNvmWa5J2e5iH1HIQG3KmsopOxqQsIaZOnYjaNc58Y/T2il
-   Uo8UGbKWX1Zj0B3ZhRYjFv+oB+f/7AFz7E4okfSYxJ5ZPDm5q55yzKDC4
-   T7j3Ybq/EZtENX0OnsOjrbgkidLd5dY4F5JdpCdfpvJfyKK8dk25TBRed
-   9eVyEYrxMyWfSaqEDEAOLvyT0maTOK7+qCjk4NYLMu272oAd51J8Z/F4N
+  t=1657309946; x=1688845946;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=LG5eCJnhq7CNdWQfFoA7Fx4XHtKqkdJMjEPMFM/NCzQ=;
+  b=X+QwyiME2dQneD45RdQDE6mFwOMqTfq+YVsNIQwcrwkpP9+jpDR/+JkG
+   SKNb9bLngbqP4eU+zNAoqqpbEV/9UlRA7NKZTQzcVBuA3b7bAdIHswbSK
+   tkxbOe8h6zmlqpuX2kTux284J1CnhjrS+qbgiCpugfUe9pCh4jSGGhDpe
+   vnBZARfIvBiS3NS9XzHTaBRNYfKU84jPVXC++oEz/XbMKgLq4HK2ZFCRz
+   tv6FsewQz2ipRvcKeT5Oz+pikVhTd14Tizaxx2D39PmTYnF0fUEzeHL1q
+   KdT1HkxKdf6paIRg8xpjPi/IgBWGwqjNOrnHOED0uwJXV/KW/DIOEFgkO
    g==;
 X-IronPort-AV: E=Sophos;i="5.92,256,1650956400"; 
-   d="scan'208";a="103703677"
+   d="scan'208";a="171654032"
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Jul 2022 12:52:22 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Jul 2022 12:52:26 -0700
 Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Fri, 8 Jul 2022 12:52:20 -0700
+ 15.1.2375.17; Fri, 8 Jul 2022 12:52:25 -0700
 Received: from soft-dev3-1.microsemi.net (10.10.115.15) by
  chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2375.17 via Frontend Transport; Fri, 8 Jul 2022 12:52:18 -0700
+ 15.1.2375.17 via Frontend Transport; Fri, 8 Jul 2022 12:52:23 -0700
 From:   Horatiu Vultur <horatiu.vultur@microchip.com>
 To:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC:     <linus.walleij@linaro.org>, <kavyasree.kotagiri@microchip.com>,
         <alexandre.belloni@bootlin.com>, <colin.foster@in-advantage.com>,
         <UNGLinuxDriver@microchip.com>, <maxime.chevallier@bootlin.com>,
         <michael@walle.cc>, Horatiu Vultur <horatiu.vultur@microchip.com>
-Subject: [PATCH v2 0/2] pinctrl: ocelot: Add fixes for ocelot driver
-Date:   Fri, 8 Jul 2022 21:55:08 +0200
-Message-ID: <20220708195510.2951661-1-horatiu.vultur@microchip.com>
+Subject: [PATCH v2 2/2] pinctrl: ocelot: Fix pincfg
+Date:   Fri, 8 Jul 2022 21:55:10 +0200
+Message-ID: <20220708195510.2951661-3-horatiu.vultur@microchip.com>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20220708195510.2951661-1-horatiu.vultur@microchip.com>
+References: <20220708195510.2951661-1-horatiu.vultur@microchip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -55,22 +57,62 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The patch series fixes 2 issues with pincfg.
-- first issue is that on lan966x uses different offsets than sparx5
-  so it can't use directly the ocelot_confops
-- second issue is pincfg stop working when regmap support was addded.
+The blamed commit changed to use regmaps instead of __iomem. But it
+didn't update the register offsets to be at word offset, so it uses byte
+offset.
+Another issue with the same commit is that it a limit of 32 registers
+which is incorrect. The sparx5 has 64 while lan966x has 77.
 
-v1->v2:
-- use regmap_get_reg_stride instead of making regmap_config global
-- update how ocelot_match_data structs are initialized
+Fixes: 076d9e71bcf8 ("pinctrl: ocelot: convert pinctrl to regmap")
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+---
+ drivers/pinctrl/pinctrl-ocelot.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-Horatiu Vultur (2):
-  pinctrl: ocelot: Fix pincfg for lan966x
-  pinctrl: ocelot: Fix pincfg
-
- drivers/pinctrl/pinctrl-ocelot.c | 207 ++++++++++++++++++++-----------
- 1 file changed, 132 insertions(+), 75 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index 10787056c5c7..d88d6af71e46 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -1334,7 +1334,9 @@ static int ocelot_hw_get_value(struct ocelot_pinctrl *info,
+ 	if (info->pincfg) {
+ 		u32 regcfg;
+ 
+-		ret = regmap_read(info->pincfg, pin, &regcfg);
++		ret = regmap_read(info->pincfg,
++				  pin * regmap_get_reg_stride(info->pincfg),
++				  &regcfg);
+ 		if (ret)
+ 			return ret;
+ 
+@@ -1368,14 +1370,18 @@ static int ocelot_pincfg_clrsetbits(struct ocelot_pinctrl *info, u32 regaddr,
+ 	u32 val;
+ 	int ret;
+ 
+-	ret = regmap_read(info->pincfg, regaddr, &val);
++	ret = regmap_read(info->pincfg,
++			  regaddr * regmap_get_reg_stride(info->pincfg),
++			  &val);
+ 	if (ret)
+ 		return ret;
+ 
+ 	val &= ~clrbits;
+ 	val |= setbits;
+ 
+-	ret = regmap_write(info->pincfg, regaddr, val);
++	ret = regmap_write(info->pincfg,
++			   regaddr * regmap_get_reg_stride(info->pincfg),
++			   val);
+ 
+ 	return ret;
+ }
+@@ -1944,7 +1950,6 @@ static struct regmap *ocelot_pinctrl_create_pincfg(struct platform_device *pdev)
+ 		.reg_bits = 32,
+ 		.val_bits = 32,
+ 		.reg_stride = 4,
+-		.max_register = 32,
+ 		.name = "pincfg",
+ 	};
+ 
 -- 
 2.33.0
 
