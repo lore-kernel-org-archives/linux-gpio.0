@@ -2,371 +2,209 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA997C433EF
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Jul 2022 23:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2DDC433EF
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jul 2022 00:31:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236354AbiGGXQg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Jul 2022 19:16:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58330 "EHLO
+        id S236958AbiGHAbl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Jul 2022 20:31:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236899AbiGGXQW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Jul 2022 19:16:22 -0400
-Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74A90675B7
-        for <linux-gpio@vger.kernel.org>; Thu,  7 Jul 2022 16:16:21 -0700 (PDT)
-Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-fe023ab520so27237015fac.10
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Jul 2022 16:16:21 -0700 (PDT)
+        with ESMTP id S236742AbiGHAbk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Jul 2022 20:31:40 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2115.outbound.protection.outlook.com [40.107.220.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 864562AE09;
+        Thu,  7 Jul 2022 17:31:39 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=i+MNe2QgO9leIgH5h/YF5uF2YzUTuQBe3hchZRQwO2Cusel2K6mKH79n4WVfwHponwcLBkOkFQx3T0wqCUr4t1AlvLjdYTPv0EF/QEz56PAraFe87jZvT3UPD0u3RcjAe7Ot8kVybYFNFqFPSE4v1AJlmrEPT2BSOBeCkbxVSwpgtkMGCUIYJkGncS4g5VIJ+q+57URSTwoj4/bJgzNcSLWxU9J30cOfnFZFcVQgduj+a6NRmiu15YT+JG+cG2iSy1IWDkC2oTcgDK5tsBLMBB0964LYCcEk+2p8Djc6+hFAasziPJgKXNSVeRaIas3xsbR5dCsRBGbnJqBIEMax2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Cp0GHg4QnMrI9yeBQDbF8KD3NSHsdhwDuCt+OCwdPdg=;
+ b=DNP2ViwxsvNi3IX8EQ8Fwq1tCypZvRSLdcUvOrn5tJNGTGarkRLUgo3E38i5CMxGrGhGI53T/QvIbZdUsIhlNH2rKm6dtnIjAU/d+s+XkJBxSMSFW7Fhn1W0SvfxINq8y2SmRQp7Qjv4rte80z4adeVdFStUV/K67AwmH8G6MmYfCqDMgNU52/W6nFYSI50WzB2OHeHEvzKRq2WN5EBwxnAx0JKtdx7kRvbAPBoVYwmYYmoZ6+lUiVtGWkynDwq70l3NZAWOk184uMlmeK8Js7P/H0sMG2dtqPAXJSOFkFZnKrviswDZXXCmy7c2yxvqIb5izlY1sL2YPJnyj0ZpVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=in-advantage.com; dmarc=pass action=none
+ header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=XpnakdCCOjDxEeliMe2U41zkyBdJcHLmJvfSH3h8a+c=;
-        b=eisAi3hpEbcwCMasIMlhFwH7QV7wRq4VFv8UJytMpHk4TtKNLLm0q2viwIn99xPGuM
-         R3D8aIz0hLgCiQFvv2YF2DBfeDPoRom5qkHYIn3/ij2uKZZqxJfErKLH0FE1kFiinuJc
-         bocF6jLyBoh4pZGqkkxzuHQdQ5QwrPnafMirW2GPSgceM24D+gc/Pn18xzHsz37Ksoq0
-         z6MXkR1fdI7Dw1siob3LpAzvjKgYYWYKOR1GfF8dQ9gN1PimAimdnGFyGnQZk3WanGFW
-         8urZ2zDJK0GSmeDRQg/mX+K8GQ6e8hil9ErdAXRxNeTagGV71Nk6WZPY769y/ER56vju
-         1h7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XpnakdCCOjDxEeliMe2U41zkyBdJcHLmJvfSH3h8a+c=;
-        b=UeBR3BOC2kKizfLqUPwdd235YlqBOlwNCLCItIC4+uvSZS3wKquSHNJ9A+l3wlSCN/
-         eS6xRJ6mxfmYqJe6EdywmYY4FqOirzuUHfPahOyKBbJOzikkZlQ6lUAH95zWGOsGXWPH
-         MIu42CJBn9r4jgZ+o270Frs5uuq02z2Fdhz6H60E/reVC9I3guOE4F6QR0wQxfxoQsTZ
-         pfHsiQRSOTKJHXvUFW4Msi5uExZ5JVTfgfBDkeJMzURrqxOYSHSYFONuZi31Y33fS3KW
-         Urmu8yOSDO8joosG/+6nOpwn6bME0YVFZXf8fu76+pff4XCsccATS6Jm8u1Fxc9BA/Pn
-         Ihlw==
-X-Gm-Message-State: AJIora9+PCxcT91Ir8vcLZ369P2NZJE2roBsH4ueGaIlppbVI0c045AA
-        nWmeWa7gd3ZI5YtP2DXLC0UtVA==
-X-Google-Smtp-Source: AGRyM1uCTmmwxCqu/MjYv15jBwkbfz9gBTuh3nuLle5SKYQh/KQf8wzXj+0hPnQ95VKVmUvSkHwZ5Q==
-X-Received: by 2002:a05:6871:14a:b0:10c:5005:a6b1 with SMTP id z10-20020a056871014a00b0010c5005a6b1mr219231oab.191.1657235780815;
-        Thu, 07 Jul 2022 16:16:20 -0700 (PDT)
-Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id cg10-20020a056830630a00b006190efaf118sm2177606otb.66.2022.07.07.16.16.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 16:16:20 -0700 (PDT)
-From:   William Breathitt Gray <william.gray@linaro.org>
-To:     linus.walleij@linaro.org, brgl@bgdev.pl
+ d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Cp0GHg4QnMrI9yeBQDbF8KD3NSHsdhwDuCt+OCwdPdg=;
+ b=R9EwP3hjUeBMZXTwYAs523buR4b5Xc4XdGWhmbMBOt91oaVnnu6FMyysYQu0lfleXtr8n1mpc7sOayn1aFfFVBtBMrmhq7ocumMP+e7YRRejoSIKBOb1zVcZXm2QjxGMzwH3cdJHLesZiKd04GN57HLilUkSHvr+tewBhfVZnXE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=in-advantage.com;
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37) by SA2PR10MB4618.namprd10.prod.outlook.com
+ (2603:10b6:806:11f::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.16; Fri, 8 Jul
+ 2022 00:31:36 +0000
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::712f:6916:3431:e74e]) by MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::712f:6916:3431:e74e%6]) with mapi id 15.20.5395.020; Fri, 8 Jul 2022
+ 00:31:36 +0000
+Date:   Thu, 7 Jul 2022 17:31:28 -0700
+From:   Colin Foster <colin.foster@in-advantage.com>
+To:     Horatiu Vultur <horatiu.vultur@microchip.com>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        William Breathitt Gray <william.gray@linaro.org>,
-        techsupport@winsystems.com,
-        Paul Demetrotion <pdemetrotion@winsystems.com>
-Subject: [PATCH v2 6/6] gpio: ws16c48: Implement and utilize register structures
-Date:   Thu,  7 Jul 2022 14:10:08 -0400
-Message-Id: <8d05cfc343479b7085a64e0188ae9b7d97c8614b.1657216200.git.william.gray@linaro.org>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <cover.1657216200.git.william.gray@linaro.org>
-References: <cover.1657216200.git.william.gray@linaro.org>
+        linus.walleij@linaro.org, kavyasree.kotagiri@microchip.com,
+        alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
+        maxime.chevallier@bootlin.com
+Subject: Re: [PATCH 2/2] pinctrl: ocelot: Fix pincfg
+Message-ID: <Ysd64LTu7CtBjV4R@COLIN-DESKTOP1.localdomain>
+References: <20220707185342.2697569-1-horatiu.vultur@microchip.com>
+ <20220707185342.2697569-3-horatiu.vultur@microchip.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220707185342.2697569-3-horatiu.vultur@microchip.com>
+X-ClientProxiedBy: MWHPR11CA0039.namprd11.prod.outlook.com
+ (2603:10b6:300:115::25) To MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8ae04061-7243-45c4-5f73-08da607936e4
+X-MS-TrafficTypeDiagnostic: SA2PR10MB4618:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: jfd9DRTqTUpVhAEgULahA3/CnBFjLijsnYK0zyFHYmK7XqKoE8ZONbZY9k6Vslihb2TYmK5TiF5aEHBjhkLQWK3vwUu3jS5uOOQwWB1dVDYIGhigF2olxcKHk42fvb9JHVB70X4bXfnObZKgM4E2nW86ElAnyg91Jy+yAZ8M+0Ej4ctM5W/7Lg8CFFR1j0zy/fdolECzPDS6fv5foqMtq3gpmGU399FNgkBgx1o2qB7Rs7LpnVRHfQ5XbAMp/wYYh6J1d4MlAoY62jKl6zFvhh33z5oYGnmzFOlePw5Hxh9Da55GfsmlyKb4ttTrp8vj7ylm+FgjohsEEgJtk4XzUit340q1E8fRZBlUUZPaPXWiM7WHjRdVDgMmuYi5ewZU2ojRanlZJ5ZmyrE7baP9Bm6lA0FpPA1Bri3y790bYwzeKiWrf9VRORZ8O2CI5E+fnysk8/gzFzSWCs/Cltq66WFfJY3Y7klal6vsfMmtepBF+6geYkV0zEU67uTzBE7qUD97jNFycTA11KzCfGVKswt4fZPA35AcXm7Ui+MEG4kkg7mqWnlTLsq6Kt4jGFiFQsH7sV+bGJDFPDKigtZ0Cg2o51erAcwcjQxO5XKNd14XUXfCsWK9PFbMkjo73fuKqtZuXIwjZNF7YIlfj1N/OVTZRw1PO01e8PQ5cPOLNRl9rdyYff6uCBh/kLeCUArPSDT8XUMFoA3/kKAcfFxfQwCM46bqYlo+f8IfLbIfppOTXKf2BwTYQyB+EK4vlqNecehL1Dw0pvu3e+XHya3M0A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(346002)(39830400003)(366004)(396003)(136003)(376002)(38100700002)(83380400001)(186003)(66556008)(4326008)(66946007)(66476007)(8676002)(6512007)(6916009)(316002)(5660300002)(478600001)(6486002)(966005)(2906002)(86362001)(41300700001)(6666004)(6506007)(26005)(9686003)(8936002)(44832011);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?om1qugLIiMEX/YF46FnqTtz8Q5HT+bNe+JyM2Gaa/Fp9oe4nkiP/z3XqIaNc?=
+ =?us-ascii?Q?vVH+tdNelvKSH0M7+6xDLqPHTCrDJEHcIp2RyX9ED5oyUVtKharsGQd35/dc?=
+ =?us-ascii?Q?sVMvGIuoJFj0Mzso+ns8D69jDXV35OystEg3zLpohzqvhXiD+du/G99nIW56?=
+ =?us-ascii?Q?ADclRZtiEHHEFKGiQ2oJ3BSJR50tGol48SK8woG9V/C971vYp7bu0qbEVVLg?=
+ =?us-ascii?Q?8zlMVX9+/7Gw5FuLAKoQr0YkcvjFUQ5ad6BgE4MqoX9wVP3zj6O91hbLtoVl?=
+ =?us-ascii?Q?QK4LU2vk6Wjm9f7RrvuNXYgcinVh/+G50rOA+cYFYMALeq8Y/fx3zGDlt4aC?=
+ =?us-ascii?Q?qHdYxjlQH3ebJLwds2jqPYmm7I6m1PoSPZvfGCILrEte0wymn700gJLqzdz4?=
+ =?us-ascii?Q?ttzX1wAODnsyoVCe1h2D9H2tovn+4yDyN7CNFHaWtgzdR6k9TUCl5Y/zXP8Q?=
+ =?us-ascii?Q?0wIrJCX0ZT4voMomE+iGJN7mSUSmcPUKIVb0+t8ibFcStnxUfVuhAa7rsqeu?=
+ =?us-ascii?Q?kuf2HtOQEGBLAnPdTY9uTe8mL13mAs1hB9q010/sTO5stzl924n9KFrnOVBF?=
+ =?us-ascii?Q?noottGcbcujJtOZ67MWGR+MLBt6Y3qWo3S9p19zS5bvg/FDM5dtIQ7iA64/B?=
+ =?us-ascii?Q?+dJQSYzZwp0zD8THCMQ5SOpanUa4flZYOCnuRu8mp8HBI4NVIJgn85LIrr8d?=
+ =?us-ascii?Q?cDxAWli1OFSms1LBQYeaqALHX2WUdCq6sXqRikwngIoxozu06Fjtm0UxTJcS?=
+ =?us-ascii?Q?OpX9o07FfA2ZI7jvj6cfsyRDXznJnsAz91nlG+0Z1JgASiiVE20cvBHfmiq5?=
+ =?us-ascii?Q?WvoKtuopDga+VycOoimDMh1GFbvz+Op0iNoSd1h/FgbR05kapY1KlZZB/mx/?=
+ =?us-ascii?Q?ni2HUkjjKjqoeXFVbMB3Gll/+GpHKwm/PM13E6Dzj4xoAWIEWpibTWzwwDqJ?=
+ =?us-ascii?Q?AX6LTPboAGWUSrgzHMBf5iXqYKC8MuiQTc/0+UTZzOe7MysUrjv4b2jrSzP3?=
+ =?us-ascii?Q?1zVYAN2CnxjtpdZPalsqQCi+sNM5m6UiAZiv2jhF/g/yrnSQg9QkYkUlqt7m?=
+ =?us-ascii?Q?jXBnIAcfYVLJkfsksfFw4TU4N4NmFt3RSODb4xfatDiL2I4ySNHHAg3YCcCw?=
+ =?us-ascii?Q?HfjPo1IhSKfnGYTXfsOJy7DPfj5ecXNWTQo6Q5iVRlnkmWlU7hY8B+pMJiSl?=
+ =?us-ascii?Q?wYn0xRQyL5eZ8H1t6JNo8dUC6iM02iP4G5zxN4B3zxhnKL0bjf8yIhWFlgLO?=
+ =?us-ascii?Q?HpOSnFUd3mZzu3bCdzKwGk0d7wfC4Zy3J6EjDrYkGkzOefCwVk79cRFIUe/j?=
+ =?us-ascii?Q?G0Oex2BxA7SW4NFRwasEpYC2vrJETwaYc02ixc20+W31DjugKkmLv6BTTpMh?=
+ =?us-ascii?Q?CGvb0QwwoAQkKTNKAg3BFhUCAnf7s3y0Lx3Xj3tqkVx3Bg6QZA4TcYdPcyDC?=
+ =?us-ascii?Q?+LlAqej8lUVksCIKhDhwANhWsGgeq2D7SQdymXPhHp0o0LOVXNXgzwbrNhfm?=
+ =?us-ascii?Q?8gPadHaItroN7FdyJHTjhrYQBVNcbXqtmAURiUhsdnSRymJzoHO20mWkpglB?=
+ =?us-ascii?Q?C14pcolcPjmkML+0VoFmIegD8bO6fYYBlh1uRcTeXQJD4dTOihUfW4rNpMR/?=
+ =?us-ascii?Q?Dw=3D=3D?=
+X-OriginatorOrg: in-advantage.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ae04061-7243-45c4-5f73-08da607936e4
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2022 00:31:35.9279
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: X4cGKJH8hDwFAT1ialAxkyO/rO9keaU7jB5ce3tofffTSfor/lNfvVLmfkGLqTiYPRdI1f7uVeRn3wQ9Bp3LdST5Myma/EgSrfU0eq8sWoA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4618
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Reduce magic numbers and improve code readability by implementing and
-utilizing named register data structures.
+Hi Horatiu,
 
-Cc: Paul Demetrotion <pdemetrotion@winsystems.com>
-Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
----
- drivers/gpio/gpio-ws16c48.c | 119 +++++++++++++++++++++++++-----------
- 1 file changed, 84 insertions(+), 35 deletions(-)
+On Thu, Jul 07, 2022 at 08:53:42PM +0200, Horatiu Vultur wrote:
+> The blamed commit changed to use regmaps instead of __iomem. But it
+> didn't update the register offsets to be at word offset, so it uses byte
+> offset.
+> 
+> Fixes: 076d9e71bcf8 ("pinctrl: ocelot: convert pinctrl to regmap")
+> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 
-diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
-index 5078631d8014..663d4491b90f 100644
---- a/drivers/gpio/gpio-ws16c48.c
-+++ b/drivers/gpio/gpio-ws16c48.c
-@@ -17,8 +17,9 @@
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/spinlock.h>
-+#include <linux/types.h>
- 
--#define WS16C48_EXTENT 16
-+#define WS16C48_EXTENT 10
- #define MAX_NUM_WS16C48 max_num_isa_dev(WS16C48_EXTENT)
- 
- static unsigned int base[MAX_NUM_WS16C48];
-@@ -30,6 +31,20 @@ static unsigned int irq[MAX_NUM_WS16C48];
- module_param_hw_array(irq, uint, irq, NULL, 0);
- MODULE_PARM_DESC(irq, "WinSystems WS16C48 interrupt line numbers");
- 
-+/**
-+ * struct ws16c48_reg - device register structure
-+ * @port:		Port 0 through 5 I/O
-+ * @int_pending:	Interrupt Pending
-+ * @page_lock:		Register page (Bits 7-6) and I/O port lock (Bits 5-0)
-+ * @pol_enab_int_id:	Interrupt polarity, enable, and ID
-+ */
-+struct ws16c48_reg {
-+	u8 port[6];
-+	u8 int_pending;
-+	u8 page_lock;
-+	u8 pol_enab_int_id[3];
-+};
-+
- /**
-  * struct ws16c48_gpio - GPIO device private data structure
-  * @chip:	instance of the gpio_chip
-@@ -38,7 +53,7 @@ MODULE_PARM_DESC(irq, "WinSystems WS16C48 interrupt line numbers");
-  * @lock:	synchronization lock to prevent I/O race conditions
-  * @irq_mask:	I/O bits affected by interrupts
-  * @flow_mask:	IRQ flow type mask for the respective I/O bits
-- * @base:	base port address of the GPIO device
-+ * @reg:	I/O address offset for the device registers
-  */
- struct ws16c48_gpio {
- 	struct gpio_chip chip;
-@@ -47,7 +62,7 @@ struct ws16c48_gpio {
- 	raw_spinlock_t lock;
- 	unsigned long irq_mask;
- 	unsigned long flow_mask;
--	void __iomem *base;
-+	struct ws16c48_reg __iomem *reg;
- };
- 
- static int ws16c48_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-@@ -73,7 +88,7 @@ static int ws16c48_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- 
- 	ws16c48gpio->io_state[port] |= mask;
- 	ws16c48gpio->out_state[port] &= ~mask;
--	iowrite8(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-+	iowrite8(ws16c48gpio->out_state[port], ws16c48gpio->reg->port + port);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- 
-@@ -95,7 +110,7 @@ static int ws16c48_gpio_direction_output(struct gpio_chip *chip,
- 		ws16c48gpio->out_state[port] |= mask;
- 	else
- 		ws16c48gpio->out_state[port] &= ~mask;
--	iowrite8(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-+	iowrite8(ws16c48gpio->out_state[port], ws16c48gpio->reg->port + port);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- 
-@@ -118,7 +133,7 @@ static int ws16c48_gpio_get(struct gpio_chip *chip, unsigned offset)
- 		return -EINVAL;
- 	}
- 
--	port_state = ioread8(ws16c48gpio->base + port);
-+	port_state = ioread8(ws16c48gpio->reg->port + port);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- 
-@@ -131,14 +146,16 @@ static int ws16c48_gpio_get_multiple(struct gpio_chip *chip,
- 	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
- 	unsigned long offset;
- 	unsigned long gpio_mask;
--	void __iomem *port_addr;
-+	size_t index;
-+	u8 __iomem *port_addr;
- 	unsigned long port_state;
- 
- 	/* clear bits array to a clean slate */
- 	bitmap_zero(bits, chip->ngpio);
- 
- 	for_each_set_clump8(offset, gpio_mask, mask, chip->ngpio) {
--		port_addr = ws16c48gpio->base + offset / 8;
-+		index = offset / 8;
-+		port_addr = ws16c48gpio->reg->port + index;
- 		port_state = ioread8(port_addr) & gpio_mask;
- 
- 		bitmap_set_value8(bits, port_state, offset);
-@@ -166,7 +183,7 @@ static void ws16c48_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 		ws16c48gpio->out_state[port] |= mask;
- 	else
- 		ws16c48gpio->out_state[port] &= ~mask;
--	iowrite8(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-+	iowrite8(ws16c48gpio->out_state[port], ws16c48gpio->reg->port + port);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- }
-@@ -178,13 +195,13 @@ static void ws16c48_gpio_set_multiple(struct gpio_chip *chip,
- 	unsigned long offset;
- 	unsigned long gpio_mask;
- 	size_t index;
--	void __iomem *port_addr;
-+	u8 __iomem *port_addr;
- 	unsigned long bitmask;
- 	unsigned long flags;
- 
- 	for_each_set_clump8(offset, gpio_mask, mask, chip->ngpio) {
- 		index = offset / 8;
--		port_addr = ws16c48gpio->base + index;
-+		port_addr = ws16c48gpio->reg->port + index;
- 
- 		/* mask out GPIO configured for input */
- 		gpio_mask &= ~ws16c48gpio->io_state[index];
-@@ -219,10 +236,15 @@ static void ws16c48_irq_ack(struct irq_data *data)
- 
- 	port_state = ws16c48gpio->irq_mask >> (8*port);
- 
--	iowrite8(0x80, ws16c48gpio->base + 7);
--	iowrite8(port_state & ~mask, ws16c48gpio->base + 8 + port);
--	iowrite8(port_state | mask, ws16c48gpio->base + 8 + port);
--	iowrite8(0xC0, ws16c48gpio->base + 7);
-+	/* Select Register Page 2; Unlock all I/O ports */
-+	iowrite8(0x80, &ws16c48gpio->reg->page_lock);
-+
-+	/* Clear pending interrupt */
-+	iowrite8(port_state & ~mask, ws16c48gpio->reg->pol_enab_int_id + port);
-+	iowrite8(port_state | mask, ws16c48gpio->reg->pol_enab_int_id + port);
-+
-+	/* Select Register Page 3; Unlock all I/O ports */
-+	iowrite8(0xC0, &ws16c48gpio->reg->page_lock);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- }
-@@ -235,6 +257,7 @@ static void ws16c48_irq_mask(struct irq_data *data)
- 	const unsigned long mask = BIT(offset);
- 	const unsigned port = offset / 8;
- 	unsigned long flags;
-+	unsigned long port_state;
- 
- 	/* only the first 3 ports support interrupts */
- 	if (port > 2)
-@@ -243,10 +266,16 @@ static void ws16c48_irq_mask(struct irq_data *data)
- 	raw_spin_lock_irqsave(&ws16c48gpio->lock, flags);
- 
- 	ws16c48gpio->irq_mask &= ~mask;
-+	port_state = ws16c48gpio->irq_mask >> (8 * port);
-+
-+	/* Select Register Page 2; Unlock all I/O ports */
-+	iowrite8(0x80, &ws16c48gpio->reg->page_lock);
- 
--	iowrite8(0x80, ws16c48gpio->base + 7);
--	iowrite8(ws16c48gpio->irq_mask >> (8*port), ws16c48gpio->base + 8 + port);
--	iowrite8(0xC0, ws16c48gpio->base + 7);
-+	/* Disable interrupt */
-+	iowrite8(port_state, ws16c48gpio->reg->pol_enab_int_id + port);
-+
-+	/* Select Register Page 3; Unlock all I/O ports */
-+	iowrite8(0xC0, &ws16c48gpio->reg->page_lock);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- }
-@@ -259,6 +288,7 @@ static void ws16c48_irq_unmask(struct irq_data *data)
- 	const unsigned long mask = BIT(offset);
- 	const unsigned port = offset / 8;
- 	unsigned long flags;
-+	unsigned long port_state;
- 
- 	/* only the first 3 ports support interrupts */
- 	if (port > 2)
-@@ -267,10 +297,16 @@ static void ws16c48_irq_unmask(struct irq_data *data)
- 	raw_spin_lock_irqsave(&ws16c48gpio->lock, flags);
- 
- 	ws16c48gpio->irq_mask |= mask;
-+	port_state = ws16c48gpio->irq_mask >> (8 * port);
-+
-+	/* Select Register Page 2; Unlock all I/O ports */
-+	iowrite8(0x80, &ws16c48gpio->reg->page_lock);
- 
--	iowrite8(0x80, ws16c48gpio->base + 7);
--	iowrite8(ws16c48gpio->irq_mask >> (8*port), ws16c48gpio->base + 8 + port);
--	iowrite8(0xC0, ws16c48gpio->base + 7);
-+	/* Enable interrupt */
-+	iowrite8(port_state, ws16c48gpio->reg->pol_enab_int_id + port);
-+
-+	/* Select Register Page 3; Unlock all I/O ports */
-+	iowrite8(0xC0, &ws16c48gpio->reg->page_lock);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- }
-@@ -283,6 +319,7 @@ static int ws16c48_irq_set_type(struct irq_data *data, unsigned flow_type)
- 	const unsigned long mask = BIT(offset);
- 	const unsigned port = offset / 8;
- 	unsigned long flags;
-+	unsigned long port_state;
- 
- 	/* only the first 3 ports support interrupts */
- 	if (port > 2)
-@@ -304,9 +341,16 @@ static int ws16c48_irq_set_type(struct irq_data *data, unsigned flow_type)
- 		return -EINVAL;
- 	}
- 
--	iowrite8(0x40, ws16c48gpio->base + 7);
--	iowrite8(ws16c48gpio->flow_mask >> (8*port), ws16c48gpio->base + 8 + port);
--	iowrite8(0xC0, ws16c48gpio->base + 7);
-+	port_state = ws16c48gpio->flow_mask >> (8 * port);
-+
-+	/* Select Register Page 1; Unlock all I/O ports */
-+	iowrite8(0x40, &ws16c48gpio->reg->page_lock);
-+
-+	/* Set interrupt polarity */
-+	iowrite8(port_state, ws16c48gpio->reg->pol_enab_int_id + port);
-+
-+	/* Select Register Page 3; Unlock all I/O ports */
-+	iowrite8(0xC0, &ws16c48gpio->reg->page_lock);
- 
- 	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
- 
-@@ -325,25 +369,26 @@ static irqreturn_t ws16c48_irq_handler(int irq, void *dev_id)
- {
- 	struct ws16c48_gpio *const ws16c48gpio = dev_id;
- 	struct gpio_chip *const chip = &ws16c48gpio->chip;
-+	struct ws16c48_reg __iomem *const reg = ws16c48gpio->reg;
- 	unsigned long int_pending;
- 	unsigned long port;
- 	unsigned long int_id;
- 	unsigned long gpio;
- 
--	int_pending = ioread8(ws16c48gpio->base + 6) & 0x7;
-+	int_pending = ioread8(&reg->int_pending) & 0x7;
- 	if (!int_pending)
- 		return IRQ_NONE;
- 
- 	/* loop until all pending interrupts are handled */
- 	do {
- 		for_each_set_bit(port, &int_pending, 3) {
--			int_id = ioread8(ws16c48gpio->base + 8 + port);
-+			int_id = ioread8(reg->pol_enab_int_id + port);
- 			for_each_set_bit(gpio, &int_id, 8)
- 				generic_handle_domain_irq(chip->irq.domain,
- 							  gpio + 8*port);
- 		}
- 
--		int_pending = ioread8(ws16c48gpio->base + 6) & 0x7;
-+		int_pending = ioread8(&reg->int_pending) & 0x7;
- 	} while (int_pending);
- 
- 	return IRQ_HANDLED;
-@@ -369,12 +414,16 @@ static int ws16c48_irq_init_hw(struct gpio_chip *gc)
- {
- 	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(gc);
- 
--	/* Disable IRQ by default */
--	iowrite8(0x80, ws16c48gpio->base + 7);
--	iowrite8(0, ws16c48gpio->base + 8);
--	iowrite8(0, ws16c48gpio->base + 9);
--	iowrite8(0, ws16c48gpio->base + 10);
--	iowrite8(0xC0, ws16c48gpio->base + 7);
-+	/* Select Register Page 2; Unlock all I/O ports */
-+	iowrite8(0x80, &ws16c48gpio->reg->page_lock);
-+
-+	/* Disable interrupts for all lines */
-+	iowrite8(0, &ws16c48gpio->reg->pol_enab_int_id[0]);
-+	iowrite8(0, &ws16c48gpio->reg->pol_enab_int_id[1]);
-+	iowrite8(0, &ws16c48gpio->reg->pol_enab_int_id[2]);
-+
-+	/* Select Register Page 3; Unlock all I/O ports */
-+	iowrite8(0xC0, &ws16c48gpio->reg->page_lock);
- 
- 	return 0;
- }
-@@ -396,8 +445,8 @@ static int ws16c48_probe(struct device *dev, unsigned int id)
- 		return -EBUSY;
- 	}
- 
--	ws16c48gpio->base = devm_ioport_map(dev, base[id], WS16C48_EXTENT);
--	if (!ws16c48gpio->base)
-+	ws16c48gpio->reg = devm_ioport_map(dev, base[id], WS16C48_EXTENT);
-+	if (!ws16c48gpio->reg)
- 		return -ENOMEM;
- 
- 	ws16c48gpio->chip.label = name;
--- 
-2.36.1
+Sorry about this one. It sounded familiar though:
+https://patchwork.ozlabs.org/project/linux-gpio/patch/20220125161245.418882-1-horatiu.vultur@microchip.com/
 
+The only takeaway from that was the use of regmap_get_reg_stride, which
+was done in
+commit baf927a833ca ("microchip-sgpio: Fix support for regmap")
+
+And I see it is only for pincfg - which I don't have any hardware to
+test that. Apologies again!
+
+> ---
+>  drivers/pinctrl/pinctrl-ocelot.c | 28 +++++++++++++++-------------
+>  1 file changed, 15 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+> index 6212abe2b66f..e84f2f82901f 100644
+> --- a/drivers/pinctrl/pinctrl-ocelot.c
+> +++ b/drivers/pinctrl/pinctrl-ocelot.c
+> @@ -303,6 +303,13 @@ static const char *const ocelot_function_names[] = {
+>  	[FUNC_RCVRD_CLK]	= "rcvrd_clk",
+>  };
+>  
+> +const struct regmap_config regmap_pincfg = {
+> +		.reg_bits = 32,
+> +		.val_bits = 32,
+> +		.reg_stride = 4,
+> +		.name = "pincfg",
+> +};
+> +
+>  struct ocelot_pmx_func {
+>  	const char **groups;
+>  	unsigned int ngroups;
+> @@ -1334,7 +1341,8 @@ static int ocelot_hw_get_value(struct ocelot_pinctrl *info,
+>  	if (info->pincfg) {
+>  		u32 regcfg;
+>  
+> -		ret = regmap_read(info->pincfg, pin, &regcfg);
+> +		ret = regmap_read(info->pincfg, pin * regmap_pincfg.reg_stride,
+> +				  &regcfg);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -1368,14 +1376,16 @@ static int ocelot_pincfg_clrsetbits(struct ocelot_pinctrl *info, u32 regaddr,
+>  	u32 val;
+>  	int ret;
+>  
+> -	ret = regmap_read(info->pincfg, regaddr, &val);
+> +	ret = regmap_read(info->pincfg, regaddr * regmap_pincfg.reg_stride,
+> +			  &val);
+>  	if (ret)
+>  		return ret;
+>  
+>  	val &= ~clrbits;
+>  	val |= setbits;
+>  
+> -	ret = regmap_write(info->pincfg, regaddr, val);
+> +	ret = regmap_write(info->pincfg, regaddr * regmap_pincfg.reg_stride,
+> +			   val);
+>  
+>  	return ret;
+>  }
+> @@ -1940,21 +1950,13 @@ static struct regmap *ocelot_pinctrl_create_pincfg(struct platform_device *pdev)
+>  {
+>  	void __iomem *base;
+>  
+> -	const struct regmap_config regmap_config = {
+> -		.reg_bits = 32,
+> -		.val_bits = 32,
+> -		.reg_stride = 4,
+> -		.max_register = 32,
+> -		.name = "pincfg",
+> -	};
+> -
+> -	base = devm_platform_ioremap_resource(pdev, 1);
+> +		base = devm_platform_ioremap_resource(pdev, 1);
+>  	if (IS_ERR(base)) {
+>  		dev_dbg(&pdev->dev, "Failed to ioremap config registers (no extended pinconf)\n");
+>  		return NULL;
+>  	}
+>  
+> -	return devm_regmap_init_mmio(&pdev->dev, base, &regmap_config);
+> +	return devm_regmap_init_mmio(&pdev->dev, base, &regmap_pincfg);
+>  }
+>  
+>  static int ocelot_pinctrl_probe(struct platform_device *pdev)
+> -- 
+> 2.33.0
+> 
