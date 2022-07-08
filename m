@@ -2,97 +2,76 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4432CCCA482
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jul 2022 19:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE624C43334
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jul 2022 19:48:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239889AbiGHTnr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 8 Jul 2022 15:43:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51828 "EHLO
+        id S236500AbiGHTsf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 8 Jul 2022 15:48:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239896AbiGHTnq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jul 2022 15:43:46 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A79617E;
-        Fri,  8 Jul 2022 12:43:44 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id e12so37949289lfr.6;
-        Fri, 08 Jul 2022 12:43:44 -0700 (PDT)
+        with ESMTP id S238387AbiGHTsd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jul 2022 15:48:33 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1329C1128;
+        Fri,  8 Jul 2022 12:48:30 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id 89-20020a17090a09e200b001ef7638e536so2941975pjo.3;
+        Fri, 08 Jul 2022 12:48:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=BHFGKFejsr5X03hcfdP6B3GzZdhUa/GbrDRD409NVG0=;
-        b=RPymnQZpGvFyqmFQ+7I7f6bbjZTxw5dJDK183PAqgcVfOipGvS9nyMwovUZmo8TA13
-         uJWSV8itByJIvkZTOz+f5sPAhz+m01YiwUqmz574+8LlwujjK1FC8wQQCSSETgN6VbT4
-         DIwWPzul5uiujNBpcehgntKrwoYCwOmRTFzgEoooSV/35K84ZWM4nihpdQclcwTmDIHF
-         kLFFXyuxUFFIdUtEsePpgnPJ1R/qqt9ZkbZfuIL7iNsqDQQ8lxs0GT6VIAiXIPlhNROH
-         TR5RBs0lzIsQXqofk2agGMI8TUI5PlgdM0/2PaoEfhwT0a/5b2eLgAEDv8WQRDK4PQID
-         NgGA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rBeV/OEgLqBxkQbXvrr4ONvUzsJQ4WYLxaMOQiThl/s=;
+        b=jDqt9G4/34S4KPrCz3lhJU4XGUo6/qs8bw63wesqlk5h2wEvQwvZdwTglnG6zSnTew
+         5bPqCrADnep4xYq/9lSC9SCuT9T7hxAVT0apy7LEpQelXl6CC5+Oac+IN1Xt/k3V6CHJ
+         hCR664kwCscXuzRYC2mZkIaD49bG5BOb9wJ0KKdMGpPHfSF5GBQWbkNEJelol04oCNS4
+         ZbRvOXtjumR5y62qHIM5KGycBjw2A7BNSizwDmu9ccdlLawGTSFYVydfeoBTPjDPD1rK
+         H6mouPl5aAxiWDgm+xlv9tHIY+jcG0bCBnXBetOAAksF1E2ChGnZOA0pMh3KidM6HZM1
+         NPOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=BHFGKFejsr5X03hcfdP6B3GzZdhUa/GbrDRD409NVG0=;
-        b=YJygxxV0MK61dntAJFwwykyOyO0mAfwKBKbT70p6o1LksmdyZN/cFoRzgLc8x5Uj5K
-         h5sA7bg/UjhFgh4uuCJB/smpNFa9EoHrq4a2I9pojvgcOcfem4wEN5uKc4knrzLcTQV5
-         RjWJ1dbvhV5Ld+e7DnbeCatX1qbkkwUkLyE1sRZN6CzRlQ3jMdga8Jpd+wKu0391+1Ac
-         +BFF/dg9hOHwBlyafpdieUqpnIiyh4hVJEvzTFLy5LItzkn09eenmcnH5GsDnP+Qcd/d
-         K9hopbPJrtPTxRuRJKU5kVCkj4RwICXDOdvdohBW/snvj4cdm7/wZT4Krt2t4Z7ESCC2
-         KR+w==
-X-Gm-Message-State: AJIora8eE4EiM6jp1STOXTdJVAn9SLwK0qxk6FzRMf4LMK1Ytuo2c8Ww
-        kvul/bp9Szp9sHHiOQusi5U=
-X-Google-Smtp-Source: AGRyM1sjwX3r5gjS5tg353B+hub3z95RPDfQo0yr1WwutP31zSJbDOR2bF+pknGYdiCO+CP0hwQpyg==
-X-Received: by 2002:a05:6512:1195:b0:481:1675:f358 with SMTP id g21-20020a056512119500b004811675f358mr3615071lfr.235.1657309423217;
-        Fri, 08 Jul 2022 12:43:43 -0700 (PDT)
-Received: from [192.168.0.251] (dsl-hkibng42-5673c7-93.dhcp.inet.fi. [86.115.199.93])
-        by smtp.gmail.com with ESMTPSA id v20-20020a05651203b400b0047255d210e4sm7592506lfp.19.2022.07.08.12.43.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Jul 2022 12:43:42 -0700 (PDT)
-Message-ID: <9a925f87-a78b-0164-bdaf-99e14dc943cd@gmail.com>
-Date:   Fri, 8 Jul 2022 22:43:41 +0300
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rBeV/OEgLqBxkQbXvrr4ONvUzsJQ4WYLxaMOQiThl/s=;
+        b=zPIcdIYkBoowH2qgJw15HS5VpjNUGNaDKZQpJpmGrmtTvszinaP6dcs+heARYPNPhd
+         eVe8tp+fDt50/OmgOwS8Js7vUK1ugK/E5XNAF1qEjvhcDix2cm/wcBVowR4YGIG2t8pf
+         GGw18O/lTuErmnN54rCwqcOgITVm6vwWDnqQmfTGueYt9drb3VHSa/1oYN/9KTLIF96F
+         n4CXhIMY8snJWWxWrJogdbwQXEya9hE9TrpeQeEbNyGlQXHTcvDJWWW0y+3eVjVWnUF9
+         OnS5nQuow1AW8/Uq+379S0xszdS8uu2NUZwiwakZ+I7iTM8HBRAmJ1XVSFTLhrZ3i8ye
+         vkgw==
+X-Gm-Message-State: AJIora8f8JDCwFbiV3rFsW4kdjI7xCFibxMrgBuIUngv8MLOSfUrydW1
+        ye5jiOaVcri1189tL869re22TepxRM0tMP3SXRpXMy4IzYc=
+X-Google-Smtp-Source: AGRyM1vB/zeygFk5gaI/7h0y3iXb7EBHt12/zeW7dw9ssHDe4uPTSxddLEAjVzBkeY039sMTxaXRdPsAeMCc0rppxb8=
+X-Received: by 2002:a17:90b:4c8c:b0:1ef:9d26:3087 with SMTP id
+ my12-20020a17090b4c8c00b001ef9d263087mr1621043pjb.195.1657309709593; Fri, 08
+ Jul 2022 12:48:29 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v2,1/5] pinctrl: qcom: spmi-gpio: Add pm8226 compatibility
-Content-Language: en-US
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Dominik Kobinski <dominikkobinski314@gmail.com>
-Cc:     bjorn.andersson@linaro.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-References: <20211125213451.62010-1-dominikkobinski314@gmail.com>
- <20211125215310.62371-1-dominikkobinski314@gmail.com>
- <CACRpkdau+wHpoWa1JrLt35dnCHJejs8HZkkzZCrrcnRCx3SinQ@mail.gmail.com>
-From:   =?UTF-8?Q?Matti_Lehtim=c3=a4ki?= <matti.lehtimaki@gmail.com>
-In-Reply-To: <CACRpkdau+wHpoWa1JrLt35dnCHJejs8HZkkzZCrrcnRCx3SinQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20220708100952.1998673-1-ping.bai@nxp.com>
+In-Reply-To: <20220708100952.1998673-1-ping.bai@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 8 Jul 2022 16:48:18 -0300
+Message-ID: <CAOMZO5BVrcodf+1wvdifsUWy_j4Md4Lz1kBhrvCJa_4JPtqAzQ@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Update freescale pin controllers maintainer
+To:     Jacky Bai <ping.bai@nxp.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 26.11.2021 2.49, Linus Walleij wrote:
-> On Thu, Nov 25, 2021 at 10:53 PM Dominik Kobinski
-> <dominikkobinski314@gmail.com> wrote:
-> 
->> Add support for pm8226 SPMI GPIOs. The PMIC features
->> 8 GPIOs, with no holes inbetween.
->>
->> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->> Suggested-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->> Signed-off-by: Dominik Kobinski <dominikkobinski314@gmail.com>
-> 
-> I applied this to the pinctrl tree.
-> 
-> Is there anything else I should be applying?
-> 
-> Yours,
-> Linus Walleij
+Hi Jacky,
 
-I noticed that this patch was never applied into kernel while the other 
-patches such as the device tree documentation were applied. Maybe it was 
-missed accidentally? I checked also the pinctrl tree and didn't find the 
-commit there either in the branches for the upcoming releases.
+On Fri, Jul 8, 2022 at 7:08 AM Jacky Bai <ping.bai@nxp.com> wrote:
+>
+> Add myself as co-maintainer of freescale pin controllers driver.
+>
+> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
 
--Matti
+Thanks for offering help here:
+
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
