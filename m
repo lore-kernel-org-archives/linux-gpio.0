@@ -2,108 +2,233 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBAD0C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jul 2022 11:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54079C433EF
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Jul 2022 11:35:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237946AbiGHL23 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 8 Jul 2022 07:28:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54766 "EHLO
+        id S237622AbiGHLfL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 8 Jul 2022 07:35:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237928AbiGHL22 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jul 2022 07:28:28 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 328BB2DB
-        for <linux-gpio@vger.kernel.org>; Fri,  8 Jul 2022 04:28:27 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id h23so37143482ejj.12
-        for <linux-gpio@vger.kernel.org>; Fri, 08 Jul 2022 04:28:27 -0700 (PDT)
+        with ESMTP id S237345AbiGHLfJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jul 2022 07:35:09 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E07D88F26
+        for <linux-gpio@vger.kernel.org>; Fri,  8 Jul 2022 04:35:08 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id 73so6720867pgb.10
+        for <linux-gpio@vger.kernel.org>; Fri, 08 Jul 2022 04:35:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=XruMh8IfXThcYIkdijBsGMsL80sRdIUfK0W/u+c06Uo=;
-        b=QDq+6hcPSCatsmFq7T6+ltMnbqeuHSPTxj4N91rBNp0yD4/x+X3c/SpdTUs4gO5zOf
-         zC1tWNZCYmtInAa12X0toNceprn1BQb9lkGRLNWWRD7PxWh8UnZ/xtQ8K80wySVFuTyZ
-         GMpE5cpaE5uHM9CWtLiAe8uIco6iODgPCLEJ/Ttid3b69PE8R7c9tES+u6SCYx+PIhXX
-         2nR8C5eUinhC5fOIRMESHfYxCRwn19v/FWSqMTQ9KLRZJoDALFWSUlaMmDkFKiVjXxxB
-         bUPVpRVW3jCR9IZuS3e0aC+WRkhDB8hzzDzscDUNxTR//09GacpyWV8GFMA67pCsYYra
-         GxIA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=rbSHZnDrI1cUI+LHg8aFjHKSoTAP5G9hjPbqfKkCd3M=;
+        b=wklQlmjMzzjJMzHov8N+18Wm7CHsTBgcpmBF6L2Y4IRr96ii/FKaVURT9oFIsSluMR
+         fc0BZRm0X1+1my/P91M0SlYIqkzYGM1ZXyf/ywK9N09aKfbmTuU0ElxFoooWpIWXzCjs
+         BPr8k2plqfbMxYFTBF4xerG3XLCb+kr7MsnaXX1pQpjcctWQJYKNKBzJKmkrJxCIB8Wp
+         6PifjT54DtlJHtz2rJWKBG3x60xyf00ZBztjgeq5nbDeQNFCvpiVXb48Czx8pXkHtpKZ
+         KSCPv58mxG6uhG6rglvLXR4MMnnKCqpYlBi6+jH87bYgEaUVhtCBlLMff/LcIs3KJz3u
+         CvEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=XruMh8IfXThcYIkdijBsGMsL80sRdIUfK0W/u+c06Uo=;
-        b=bZyE5kXVlSLsbSPB9SXybGhQKpmmCr2Z3IVwjLX06WlnUp3RXnBNEWVA6G3m00sFPB
-         OsbWa6z+2Kzx02wngPS3NwR3EnYQPu4849/uTazBK756iwFRi3Ye3tU2RWEdKdF8lmEs
-         KHwkvZxqonU3lhYUL8+ZlTELyVuNm8m2FEhuxpSO9Gcjk8ohtS3dVoI7cQZgffsru187
-         NqCsLAWgBLT6pYoAqaeMqxUaCyEdfn+nw+mv9AKCKZtN6LFeI4AqYSCk+crJODzQQJBP
-         R0BqHUD/OvdLVUtl9mPLAr9xMhQYqwZtlOUrGeEy+lIIHd+4VmeaZgLpObKrVYuust06
-         Dxzw==
-X-Gm-Message-State: AJIora8i0kF5ZHdHraSzev+rjeei4KkD2mZVaD5rAzE+5UEax33x5fBb
-        RttZid0aK+sAzmQdDZKJeVuFQjVHA7JTgx6WTGyKGQ==
-X-Google-Smtp-Source: AGRyM1uMLvytrFeEz4uI7rw5A/IGBcBcBHmXFx/vEUjph8SOLH3psmE6A5UaI4pdPsJTITjgyygDFipnphflIYwTBQY=
-X-Received: by 2002:a17:907:2c61:b0:72b:172d:6413 with SMTP id
- ib1-20020a1709072c6100b0072b172d6413mr2992183ejc.492.1657279705635; Fri, 08
- Jul 2022 04:28:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rbSHZnDrI1cUI+LHg8aFjHKSoTAP5G9hjPbqfKkCd3M=;
+        b=54wM5f/3IbL3qS78vGL+Yf7r1HndNuhPNoNRaNJCzMyCgK0PHJ6HrJgmoNEfTpEIXn
+         nA1o5QvLyDNsyk4lcEZ3sYgNzfn7yb/qYm9QDVxy6+l7jMb3fwtIh6pUollU4hSULh0z
+         vb+5BobWqpSCFA9yTTbaUK3fDsGBcqHEIz4S/BsYdjSF9PwkbZ9AI2tcochl8+u4wHfQ
+         ebcTlNidvuiEMyv/DrHwuDbs3Wd0phQVLe7M1UH9DIuP3mNft3Ql+fUM0W9HpljjjXJt
+         nsk3l3lxrCBs4xvcFpkT0kxTT4odPPNTlmzG1eDSzXAnpO8/IiLVUPF4VvfoOulLDqRg
+         e0og==
+X-Gm-Message-State: AJIora/ud4fgIlBr7AQ4onoSZVudXh2a9w5/I0lyY/UxQhdSvdYEUbIs
+        Efdjf0ZkjrhzPYXj33TpUoOdkA==
+X-Google-Smtp-Source: AGRyM1u5H+8Br87bG7zA2/eyQtN25IehkwfmJa7IGFRfEVtgCY/Ya+aT8tsVel023AWadQ+NORaPLA==
+X-Received: by 2002:a63:4c57:0:b0:40d:d28e:bfb1 with SMTP id m23-20020a634c57000000b0040dd28ebfb1mr3087209pgl.77.1657280108011;
+        Fri, 08 Jul 2022 04:35:08 -0700 (PDT)
+Received: from localhost ([122.171.18.80])
+        by smtp.gmail.com with ESMTPSA id y144-20020a626496000000b0052aaf7fe731sm1461830pfb.45.2022.07.08.04.35.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Jul 2022 04:35:07 -0700 (PDT)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-gpio@vger.kernel.org, Kent Gibson <warthog618@gmail.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@google.com>,
+        =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
+        stratos-dev@op-lists.linaro.org,
+        Gerard Ryan <g.m0n3y.2503@gmail.com>
+Subject: [PATCH V4 1/8] libgpiod: Add libgpiod-sys rust crate
+Date:   Fri,  8 Jul 2022 17:04:54 +0530
+Message-Id: <44ee8c36d58049de2f653494e16cba04b198fb35.1657279685.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+In-Reply-To: <cover.1657279685.git.viresh.kumar@linaro.org>
+References: <cover.1657279685.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-References: <20220628084226.472035-1-brgl@bgdev.pl> <20220628084226.472035-6-brgl@bgdev.pl>
- <20220705020937.GB6652@sol> <CAMRc=Mec4C2RUvZjxc=6G6Nv0-Us91X-j-3jnNNGzE8MjrbCag@mail.gmail.com>
- <20220707130955.GB66970@sol> <CAMRc=MfuzzjkApJ4LBARG0OpfvfBeMqVMTRnKJuj7zV4Gvez1Q@mail.gmail.com>
- <20220708013834.GA6484@sol> <CAMRc=MfGT_FZ=LToa4DPqc3UqjAbt+9dpT2NtKOmMqhcFKWLZQ@mail.gmail.com>
- <20220708105634.GA84979@sol>
-In-Reply-To: <20220708105634.GA84979@sol>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 8 Jul 2022 13:28:14 +0200
-Message-ID: <CAMRc=McSN5MEOXW0husOaX62EQq+xZyahX1SuvmimuZHOT1RTw@mail.gmail.com>
-Subject: Re: [libgpiod v2][PATCH v2 5/5] bindings: python: add the
- implementation for v2 API
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darrien <darrien@freenet.de>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Jiri Benc <jbenc@upir.cz>, Joel Savitz <joelsavitz@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jul 8, 2022 at 12:56 PM Kent Gibson <warthog618@gmail.com> wrote:
->
+This adds libgpiod-sys rust crate, which provides FFI (foreign function
+interface) bindings for libgpiod APIs.
 
-[snip]
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ .gitignore                            |  5 ++
+ bindings/rust/libgpiod-sys/Cargo.toml | 15 ++++++
+ bindings/rust/libgpiod-sys/build.rs   | 69 +++++++++++++++++++++++++++
+ bindings/rust/libgpiod-sys/src/lib.rs | 20 ++++++++
+ bindings/rust/libgpiod-sys/wrapper.h  |  2 +
+ 5 files changed, 111 insertions(+)
+ create mode 100644 bindings/rust/libgpiod-sys/Cargo.toml
+ create mode 100644 bindings/rust/libgpiod-sys/build.rs
+ create mode 100644 bindings/rust/libgpiod-sys/src/lib.rs
+ create mode 100644 bindings/rust/libgpiod-sys/wrapper.h
 
-> >
-> > The limitation of the uAPI is what keeps us from making it true in
-> > user-space (that each line can have its own config). As it is, only up
-> > to 9-10 lines can have distinct configs and making the API look and
-> > behave as if it wasn't the case is more confusing (E2BIG errors) than
-> > simply admitting we have the concept of defaults and overrides (to
-> > which the interface is greatly simplified in the high-level
-> > libraries). The idea about making the most common config attributes
-> > become the defaults is simply bad. It would require the user to
-> > anticipate how the library will behave for every attribute and lead to
->
-> It requires nothing from the user.  They are not even aware of the
-> concept of "defaults" or "overrides".  They just set config on lines.
-> If that is too complicated, which is quite unlikely, then they get
-> E2BIG and they need to repartition their lines into multiple requests.
->
-> Anyway, that horse is dead.
->
+diff --git a/.gitignore b/.gitignore
+index 58e1c5fc7e00..9541482d5efb 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -33,3 +33,8 @@ stamp-h1
+ # profiling
+ *.gcda
+ *.gcno
++
++# Added by cargo
++
++target
++Cargo.lock
+diff --git a/bindings/rust/libgpiod-sys/Cargo.toml b/bindings/rust/libgpiod-sys/Cargo.toml
+new file mode 100644
+index 000000000000..77f82719d269
+--- /dev/null
++++ b/bindings/rust/libgpiod-sys/Cargo.toml
+@@ -0,0 +1,15 @@
++[package]
++name = "libgpiod-sys"
++version = "0.1.0"
++edition = "2018"
++
++# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
++
++[dependencies]
++
++[features]
++generate = [ "bindgen" ]
++
++[build-dependencies]
++bindgen = { version = "0.59.1", optional = true }
++cc = "1.0.46"
+diff --git a/bindings/rust/libgpiod-sys/build.rs b/bindings/rust/libgpiod-sys/build.rs
+new file mode 100644
+index 000000000000..bbcd30f79d23
+--- /dev/null
++++ b/bindings/rust/libgpiod-sys/build.rs
+@@ -0,0 +1,69 @@
++#[cfg(feature = "generate")]
++extern crate bindgen;
++#[cfg(feature = "generate")]
++use std::env;
++#[cfg(feature = "generate")]
++use std::path::PathBuf;
++
++#[cfg(feature = "generate")]
++fn generate_bindings(files: &Vec<&str>) {
++    // Tell cargo to invalidate the built crate whenever following files change
++    println!("cargo:rerun-if-changed=wrapper.h");
++
++    for file in files {
++        println!("cargo:rerun-if-changed={}", file);
++    }
++
++    // The bindgen::Builder is the main entry point
++    // to bindgen, and lets you build up options for
++    // the resulting bindings.
++    let bindings = bindgen::Builder::default()
++        // The input header we would like to generate
++        // bindings for.
++        .header("wrapper.h")
++        // Tell cargo to invalidate the built crate whenever any of the
++        // included header files changed.
++        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
++        // Finish the builder and generate the bindings.
++        .generate()
++        // Unwrap the Result and panic on failure.
++        .expect("Unable to generate bindings");
++
++    // Write the bindings to the $OUT_DIR/bindings.rs file.
++    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
++    bindings
++        .write_to_file(out_path.join("bindings.rs"))
++        .expect("Couldn't write bindings!");
++}
++
++fn build_gpiod(files: Vec<&str>) {
++    // Tell Cargo that if the given file changes, to rerun this build script.
++    println!("cargo:rerun-if-changed=../../../lib/");
++
++    // Use the `cc` crate to build a C file and statically link it.
++    cc::Build::new()
++        .files(files)
++        .define("_GNU_SOURCE", None)
++        .define("GPIOD_VERSION_STR", "\"libgpio-sys\"")
++        .include("../../../include")
++        .compile("gpiod");
++}
++
++fn main() {
++    let files = vec![
++        "../../../lib/chip.c",
++        "../../../lib/chip-info.c",
++        "../../../lib/edge-event.c",
++        "../../../lib/info-event.c",
++        "../../../lib/internal.c",
++        "../../../lib/line-config.c",
++        "../../../lib/line-info.c",
++        "../../../lib/line-request.c",
++        "../../../lib/misc.c",
++        "../../../lib/request-config.c",
++    ];
++
++    #[cfg(feature = "generate")]
++    generate_bindings(&files);
++    build_gpiod(files);
++}
+diff --git a/bindings/rust/libgpiod-sys/src/lib.rs b/bindings/rust/libgpiod-sys/src/lib.rs
+new file mode 100644
+index 000000000000..3384863a567c
+--- /dev/null
++++ b/bindings/rust/libgpiod-sys/src/lib.rs
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#[allow(
++    clippy::all,
++    deref_nullptr,
++    dead_code,
++    non_camel_case_types,
++    non_upper_case_globals,
++    non_snake_case,
++    improper_ctypes
++)]
++
++mod bindings_raw {
++    #[cfg(feature = "generate")]
++    include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
++
++    #[cfg(not(feature = "generate"))]
++    include!("bindings.rs");
++}
++pub use bindings_raw::*;
+diff --git a/bindings/rust/libgpiod-sys/wrapper.h b/bindings/rust/libgpiod-sys/wrapper.h
+new file mode 100644
+index 000000000000..7bc1158b7d90
+--- /dev/null
++++ b/bindings/rust/libgpiod-sys/wrapper.h
+@@ -0,0 +1,2 @@
++#include <string.h>
++#include "../../../include/gpiod.h"
+-- 
+2.31.1.272.g89b43f80a514
 
-For a python user, this:
-
-lc =3D gpiod.LineConfig()
-lc.set_props(offsets=3D[2, 3], direction=3DDirection.OUTPUT)
-req =3D gpiod.request_lines("/dev/gpiochip0", line_cfg=3Dlc)
-
-is pretty much as simple as it gets. They still don't need to be aware
-of the underlying split into defaults and overrides. I believe it's
-GoodEnough=E2=84=A2.
-
-I imagine in Rust bindings we'll be able to chain set_props() as is
-customary and we'll get a one-liner out of that.
-
-Bart
