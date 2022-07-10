@@ -2,100 +2,108 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE21ACCA47C
-	for <linux-gpio@archiver.kernel.org>; Sat,  9 Jul 2022 23:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2361FC433EF
+	for <linux-gpio@archiver.kernel.org>; Sun, 10 Jul 2022 08:35:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229462AbiGIXYl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 9 Jul 2022 19:24:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53708 "EHLO
+        id S229536AbiGJIfL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 10 Jul 2022 04:35:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiGIXYk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Jul 2022 19:24:40 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97EC5FD37
-        for <linux-gpio@vger.kernel.org>; Sat,  9 Jul 2022 16:24:38 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id f73so3287906yba.10
-        for <linux-gpio@vger.kernel.org>; Sat, 09 Jul 2022 16:24:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HSavKHqOMxyq6s3ViEHF246lp9Yq/M+fNZQ8wkoHIes=;
-        b=jC6jxKldqqxB+NjGJ1nA2NuBBQ4aLHPhkjLLN4N8jjNFpQv/r+553oJFJZj3/Elgew
-         c8Lr8g+kCbRUVGTZn9z/inkjRUTQC4AZw2kwdlZvDX06DfnwissE1owr0XIdf3kbhysW
-         4ufR76bgE6lAGxEVqKLDsYK7J2Y8a/aZKVGmPfBIoCFziGABsYPjCn0Ch8JRXA9HsIO4
-         X87vyZEA/2rZEV5Hf7r5ktgosj6XFFkaR4AlWa391lse1znYnno5Nk2YAI5Wr+UkDuqK
-         fdUvLgWhWBiiKVDQY8NReitXXNrH3bDnzOUSGYyjzzvKpXwLzPtcLU+YXHRHclkdCMKb
-         ba7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HSavKHqOMxyq6s3ViEHF246lp9Yq/M+fNZQ8wkoHIes=;
-        b=Zn4EheIlzol+ni9PaCsKFeFZuBbX1a/r+7VI8oP6p/Xwrrso7pSngmz6odVwttTvrJ
-         RZmv6Rr0GUV0xy/PK70mOa5RkLMe95P5HspGfljC2pFMGcawGvfommTJy6EzYDU1srl2
-         m6Qiovi9Ajq423x7oURgdKo+aKYTQ7myd2TU+DbjMhvURWrQJbJly63Ys5BN0gcppBgi
-         B1sUE33vsV1eR+36+juFo/x+h6FkXXKeXE2B43i+tWF34B00C7S06Fbn1ERc+N6KKKM+
-         J4zE/tW1pBeBZ816nLqpuXMwNC3Vv9j2jaU6dLHoAUhpooNKJClEDdjK6ny0efS7VgSq
-         EWSQ==
-X-Gm-Message-State: AJIora/G5wdOOnfzWCyjHsTiSDTxlppBemy4Ky3qQ7z6SdbYgxcPqHOp
-        dfepzXIYMCyp/K2h1SSvLlwtlbB+aRUtTWgVQJmKdg==
-X-Google-Smtp-Source: AGRyM1sLqlHqUox1gWV+9ez0TjEG7+Iv3ml/L5445P6HtAIqo7pbNQ5xd2pA4ZEdPCkIEs/seb56VoCgalPMMix6PCo=
-X-Received: by 2002:a25:1f57:0:b0:669:b6fa:167e with SMTP id
- f84-20020a251f57000000b00669b6fa167emr11544285ybf.295.1657409077892; Sat, 09
- Jul 2022 16:24:37 -0700 (PDT)
+        with ESMTP id S229514AbiGJIet (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 10 Jul 2022 04:34:49 -0400
+Received: from sender4-op-o18.zoho.com (sender4-op-o18.zoho.com [136.143.188.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4393C13F1F
+        for <linux-gpio@vger.kernel.org>; Sun, 10 Jul 2022 01:34:39 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1657441158; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=PkzC3ejKaCxJqH/GwdRZh/U2JzhwTODT/YasOITe2H6ilXB9YTV6nITcgXQv7haL2wYg8IPuTHZb61aEcH4NyeHxKmyHUl/u+jVGyUDXNQ+a6t+vasSHC/17zVKnIZCqeUjxNqRGKLwsEF3Z2K62YnVokkIRSdcyB4dV3s7JRyk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1657441158; h=Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=vkBk3XuBdXHwhI4SZSoY4y1nxjiX6Q+W8YSL2cmzykg=; 
+        b=anniRx2ifFXfBuhIoWK3MTyAPAbl2kcG/OEhUiOt/iXt59la2t6b5y9iJNPQThtna2C08LMkJPiZUFoOypaQgiRNbhmxXFwYw6pXVnHXwEEf+nRris+xDXXo1Rp1QXidlzi8LLG8g+aDALNPuC6B7LSXZU6LFSbWro22OXLbJLE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=icenowy.me;
+        spf=pass  smtp.mailfrom=uwu@icenowy.me;
+        dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1657441158;
+        s=zmail; d=icenowy.me; i=uwu@icenowy.me;
+        h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
+        bh=vkBk3XuBdXHwhI4SZSoY4y1nxjiX6Q+W8YSL2cmzykg=;
+        b=LCjX9Xfd4H17sgf0pqn1XS49bzwvR8UlXUP4JWoCAP8BQIrgYuZJS7xZmr3JJYPf
+        8CsZODPnUfsHezfq3S90pqk1NrTzvJxCEgf7pLrdzzeZP6XiZPIZh4LCDgT0ZooUusZ
+        DjnI483bd0kxpVfrXzGCpn4rZDtR3NNScBvTCewc=
+Received: from edelgard.icenowy.me (59.41.163.237 [59.41.163.237]) by mx.zohomail.com
+        with SMTPS id 1657441157248771.0074016983624; Sun, 10 Jul 2022 01:19:17 -0700 (PDT)
+From:   Icenowy Zheng <uwu@icenowy.me>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <mripard@kernel.org>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, Icenowy Zheng <uwu@icenowy.me>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v2 1/3] dt-bindings: pinctrl: document Allwinner R329 PIO and R-PIO
+Date:   Sun, 10 Jul 2022 16:18:51 +0800
+Message-Id: <20220710081853.1699028-2-uwu@icenowy.me>
+X-Mailer: git-send-email 2.36.0
+In-Reply-To: <20220710081853.1699028-1-uwu@icenowy.me>
+References: <20220710081853.1699028-1-uwu@icenowy.me>
 MIME-Version: 1.0
-References: <20220704165802.129717-1-thierry.reding@gmail.com>
-In-Reply-To: <20220704165802.129717-1-thierry.reding@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 10 Jul 2022 01:24:26 +0200
-Message-ID: <CACRpkdZtqGqhJniehVHEgKGvG8KuiDhyj+mrj2o=n698f83-mg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] pinctrl: tegra: Separate Tegra194 instances
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Vidya Sagar <vidyas@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jul 4, 2022 at 6:58 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+Allwinner R329 have two pin controllers similar to previous Allwinner
+SoCs, PIO and R-PIO.
 
-> From: Thierry Reding <treding@nvidia.com>
->
-> This patch series changes the pin controller DT description on Tegra194
-> in order to properly describe how the hardware works. Currently a
-> simplified description is used that merges two pin controller instances
-> (called AON and main) into a single DT node. This has some disadvantages
-> such as creating a complicated mapping between the pins in those pin
-> controllers and the corresponding GPIO controllers (which are already
-> separated).
->
-> As a prerequisite, the first patch in this series converts the device
-> tree bindings to json-schema. A second patch then adds an additional
-> compatible string for the AON instance (along with more details about
-> each controller's pins) and finally patch 3 converts the driver to
-> cope with these changes. A fourth patch makes the corresponding
-> changes in the Tegra194 DTS file.
->
-> Note that while this changes the DT node in an incompatible way, this
-> doesn't have any practical implications for backwards-compatibility. The
-> reason for this is that device trees have only reconfigured a very
-> narrow subset of pins of the main controller, so the new driver will
-> remain backwards-compatible with old device trees.
+Add compatible strings for them.
 
-Works for me, this is much closer to the hardware and therefore
-better (fixing a bug in the old bindings essentially).
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+Acked-by: Maxime Ripard <maxime@cerno.tech>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Samuel Holland <samuel@sholland.org>
+Acked-by: Samuel Holland <samuel@sholland.org>
+---
+Changes in v2:
+- Collect tags.
 
-The whole set:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+ .../bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml         | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-I can merge patches 1-3 whenever we have Rob's ACK.
-I assume you will take patch 4 thru the SoC tree?
+diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
+index fa0c2df04675..d6f4bdf0c0ff 100644
+--- a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
+@@ -55,6 +55,8 @@ properties:
+       - allwinner,sun50i-h6-r-pinctrl
+       - allwinner,sun50i-h616-pinctrl
+       - allwinner,sun50i-h616-r-pinctrl
++      - allwinner,sun50i-r329-pinctrl
++      - allwinner,sun50i-r329-r-pinctrl
+       - allwinner,suniv-f1c100s-pinctrl
+       - nextthing,gr8-pinctrl
+ 
+@@ -187,6 +189,7 @@ allOf:
+             - allwinner,sun6i-a31-pinctrl
+             - allwinner,sun6i-a31s-pinctrl
+             - allwinner,sun50i-h6-pinctrl
++            - allwinner,sun50i-r329-pinctrl
+ 
+     then:
+       properties:
+@@ -202,6 +205,7 @@ allOf:
+             - allwinner,sun8i-a83t-pinctrl
+             - allwinner,sun50i-a64-pinctrl
+             - allwinner,sun50i-h5-pinctrl
++            - allwinner,sun50i-r329-r-pinctrl
+             - allwinner,suniv-f1c100s-pinctrl
+ 
+     then:
+-- 
+2.36.0
 
-Yours,
-Linus Walleij
