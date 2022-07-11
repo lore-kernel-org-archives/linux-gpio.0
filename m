@@ -2,90 +2,89 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C8CC433EF
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Jul 2022 19:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D2AC433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Jul 2022 20:11:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbiGKTwA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Jul 2022 15:52:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52238 "EHLO
+        id S229862AbiGKULT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Jul 2022 16:11:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbiGKTv7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jul 2022 15:51:59 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72AC63F32B;
-        Mon, 11 Jul 2022 12:51:58 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-31c9b70c382so60250907b3.6;
-        Mon, 11 Jul 2022 12:51:58 -0700 (PDT)
+        with ESMTP id S229618AbiGKULS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jul 2022 16:11:18 -0400
+Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F05132A72E;
+        Mon, 11 Jul 2022 13:11:17 -0700 (PDT)
+Received: by mail-qv1-xf33.google.com with SMTP id l11so1168182qvu.13;
+        Mon, 11 Jul 2022 13:11:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0bcHAJ8pPu9Z1dzwWU277Taf7IekpIK9rBLhRh5jWmg=;
-        b=DvGAa0zK7HF46aB4MyzxMuUILtwCScFPzDzgP0it6UdyIbOGLVY1S2FdA0PbJoxiSh
-         ze6DBRZBRKGCq2YdUjM3FasdOPTNoVygliP/fQlVRM+HUZWWAcXF9whSngETrgb+JsZX
-         smYRS+jbDrcjrtcY2KenTHhKqZ/l4hWD1SCpANjcyh/jxQRXcxFeFKqPegE/lowVciTW
-         atcfvW5Z7NyTJZIMNue0bOYSJxQV0xSzJ1SdgIgy8qD1qwHuTJGLbiJs/H7dj44+KQXc
-         abg0OjJ/DfKuArHGSQ6KotSx3y6b6RQ4b5LpczBpdy0igiE+bEAfai2vdd4Z5hKJrMSr
-         vy/g==
+        bh=y7SHA/z8BOa8wh+UPK+wnNg27Xa7/eY8+Vpvp2gYlkk=;
+        b=XjhGErLQpeUic9yY27h96GD0jf40eQ8ShJnFm1QdMvY+d69KFUrkoNCJic0i/T3uO8
+         lfRPX6akik2lQGF+nhy2QSS+SD+NQ+W3x3qnUXgoOqP/zDNTVVqNJam2K7mHqXwexMet
+         LCBvR6zrambhoEuABXGe6XFxlnfC5tL1PpckYPim499odDVcwrbz8FxLkf5n9SdUeqBB
+         Ohg5dt7v1RQ5PQVi6vK0hvd0wYyP4EsL/t7l6OFqI1vr90UUyvMS1BkdWPgEO/RXTm9Y
+         KxFrg49JUEhEWUdnsgXCFsEGEv+7AwRrfdjYBiCrjWZhM4fvFVRn8WLZoHQXTZ+DrBey
+         q1fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0bcHAJ8pPu9Z1dzwWU277Taf7IekpIK9rBLhRh5jWmg=;
-        b=xmDQBB/w7hzr8lOLC8uG4zKg40MomKkr60nDiS9Ni+Lb76O92D5yJ+WJ6qgudbYnka
-         pft0l1nU9FsWntVIjfCL9HFJHxsJy6kbm93YT7JO2UOuWdRbAEg0+7DpeVDyQSvdLY3m
-         QaftgkIGoR/2eSoOgCFI43+ghxlF4TuV4ajQh2agSlqdiiQ4M4vnBB6MNOW6Og7dlPQX
-         lZpOtXZbh3zWPclVu8daRJYBPdAaoMhnjwsbDoBWZBpsyXd7TPgA4satxNCskCIC1CHi
-         S7XiXoBjWa7pQtIh9eS+TmrZ7J9XodenVnh4eMryUTM1qZQ7OfKyx1kZo8PRpsbVRccE
-         vZQw==
-X-Gm-Message-State: AJIora+NIbyyP3AKCPT1h+SKLYefScclGyZpdQsgv+QVg6hEVENL55BZ
-        HZfvTpfzG9ighKCTTv9cQoj/Voh/pKJu6zjiCMs=
-X-Google-Smtp-Source: AGRyM1s0GzjIdZ6IxH9DtjsXq8yr4icmAJGSU8Bb25HOYqSIg36WSyORcHFgw/kXzLiERs5OY7g032OZCQBohYrVvnM=
-X-Received: by 2002:a81:8397:0:b0:31c:8a02:3f6d with SMTP id
- t145-20020a818397000000b0031c8a023f6dmr21537093ywf.486.1657569117610; Mon, 11
- Jul 2022 12:51:57 -0700 (PDT)
+        bh=y7SHA/z8BOa8wh+UPK+wnNg27Xa7/eY8+Vpvp2gYlkk=;
+        b=YRh1eWc+ngS8i5uoCVojCOSo1lGOE8t3BGcFTJoJAbHFQ+gyY/KmsXMY+1nlpr6nzM
+         cf3oSqTijvTs0XBQMsj8psgy1ctxtn73X2m6oLdb1DfI+LZWPgeGD4KNxx62Q2zwbhCf
+         OQqXOaK7KSx16bEGEORb/lZuCM24O3+woD2so1orNYhG1fawYYNkwIjTkDHvdGm2EtCh
+         PqJ/fXlf8sxgsU7DT08ZLgTPhuUdNcQ8yRYKDW7Jy8EmAKIsDGY4NgPpu3mrbn5iJ1ZR
+         DmAEAEh7s+cJm5+zJCf0M1+K9duz9lrdvhlROj58ORd45TOLlOXAboE5UWVOzzQZzU8b
+         Pm4g==
+X-Gm-Message-State: AJIora9z277aVLZyu8Fc7rCKFMPQwi53LS64c18wH1wcGymE0mIgg8ff
+        IOKeP0jve0OeTVtqXhLKawptKBV7wgqK7Fsldomm0gF4FGs=
+X-Google-Smtp-Source: AGRyM1uZtS85BzP3kwXmdYKyYAZ/KlQV8Yf28ztSF22Fz9gHtnceKubKIOXnsT90Qr4ubtZ6GmitYC2XvgNtmds0AGE=
+X-Received: by 2002:a0c:8c89:0:b0:470:9ab6:bb27 with SMTP id
+ p9-20020a0c8c89000000b004709ab6bb27mr15074994qvb.118.1657570277109; Mon, 11
+ Jul 2022 13:11:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220711192113.3522664-1-horatiu.vultur@microchip.com> <20220711192113.3522664-3-horatiu.vultur@microchip.com>
-In-Reply-To: <20220711192113.3522664-3-horatiu.vultur@microchip.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 11 Jul 2022 21:51:20 +0200
-Message-ID: <CAHp75VdeZSP62qoOdQf=g4b7AheFd4=jNxfjMh-_T7Q1Zi=LbA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] pinctrl: ocelot: Fix pincfg
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        kavyasree.kotagiri@microchip.com,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Colin Foster <colin.foster@in-advantage.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Michael Walle <michael@walle.cc>
+References: <20220704212402.1715182-1-robimarko@gmail.com> <20220704212402.1715182-9-robimarko@gmail.com>
+ <CACRpkdaAb14TGF0atvbB8NHygsRGNCKJCf_S2gOzvvTxxDEeRA@mail.gmail.com>
+In-Reply-To: <CACRpkdaAb14TGF0atvbB8NHygsRGNCKJCf_S2gOzvvTxxDEeRA@mail.gmail.com>
+From:   Robert Marko <robimarko@gmail.com>
+Date:   Mon, 11 Jul 2022 22:11:06 +0200
+Message-ID: <CAOX2RU6xNRipZT7mFa1oCdJkMY_=R73p__zhHFzVuf7APSLEtg@mail.gmail.com>
+Subject: Re: [PATCH v6 09/12] pinctrl: qcom-pmic-gpio: add support for PMP8074
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        lee.jones@linaro.org, Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org, lgirdwood@gmail.com,
+        Mark Brown <broonie@kernel.org>, jic23@kernel.org,
+        lars@metafoo.de, linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jul 11, 2022 at 9:17 PM Horatiu Vultur
-<horatiu.vultur@microchip.com> wrote:
+On Mon, 11 Jul 2022 at 13:56, Linus Walleij <linus.walleij@linaro.org> wrote:
 >
-> The blamed commit changed to use regmaps instead of __iomem. But it
-> didn't update the register offsets to be at word offset, so it uses byte
-> offset.
-> Another issue with the same commit is that it has a limit of 32 registers
-> which is incorrect. The sparx5 has 64 while lan966x has 77.
+> On Mon, Jul 4, 2022 at 11:24 PM Robert Marko <robimarko@gmail.com> wrote:
+>
+> > PMP8074 has 12 GPIO-s with holes on GPIO1 and GPIO12.
+> >
+> > Signed-off-by: Robert Marko <robimarko@gmail.com>
+>
+> Since there are no compile-time dependencies I expect to pick
+> the pinctrl-related patches separately to the pinctrl tree on next
+> v7 iteration.
 
-...
+Great, I will send that out tonight as Mark picked the regulator
+changes.
 
-> -static struct regmap *ocelot_pinctrl_create_pincfg(struct platform_device *pdev)
-> +static struct regmap *ocelot_pinctrl_create_pincfg(struct ocelot_pinctrl *info,
-> +                                                  struct platform_device *pdev)
-
-const?
-
-And I would leave pdev to be the first parameter, if there are no
-other functions that have them like this.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Regards,
+Robert
+>
+> Yours,
+> Linus Walleij
