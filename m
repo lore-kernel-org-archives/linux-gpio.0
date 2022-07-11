@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2184CCCA47B
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Jul 2022 20:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1C0CCA485
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Jul 2022 20:34:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231463AbiGKUe0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Jul 2022 16:34:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58544 "EHLO
+        id S231723AbiGKUe1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Jul 2022 16:34:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232140AbiGKUeO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jul 2022 16:34:14 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77DB45247F;
-        Mon, 11 Jul 2022 13:34:13 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id os14so10787302ejb.4;
-        Mon, 11 Jul 2022 13:34:13 -0700 (PDT)
+        with ESMTP id S232170AbiGKUeQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jul 2022 16:34:16 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0967422F9;
+        Mon, 11 Jul 2022 13:34:15 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id l23so10776347ejr.5;
+        Mon, 11 Jul 2022 13:34:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ygfoxsCOcEZFDvZwwxHJZr7GgBlZqbqyOyuBkqlE4/k=;
-        b=FCVkMHINOi+2nayP8xiMeu+6NxUb1DpQe8dqbjAdVDiNqodttsFdNUyGFXI+oLNvd0
-         iECv+ebdL2J8jGqBB+PU/VsPUxc8WxkRFs6iwA061C9s3norGTb1t0DmDjEB7BgL2YJ2
-         8hVFkC/FavZPXtwF3ETGluwEExsTXP8PCNiuoCwSNXarpyLer5nveuP6L/qBKKgDrgdU
-         qHa6n7XpyZApbvu4PYQzziBxsQWIIXTr4L6GKhlDgjBwcOfEcLFV40C0pI/0UEwObCZj
-         GZmsY7bDG0QO/374g/WhV4dCtqDVkMRX3smkyCGBt8p+1SEB+xxUM28QTqPOO/P4vZBr
-         oHNw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=EOAFibCJe08MWChM4fURWU6yWlY0z6ldM4g46DVUVng=;
+        b=ALS9kcEKsPUmxukYHPUDXY2HTXKYuh4jMai1pGgMVmtGMQOoloYuYw4MrMsrhpoCFv
+         DgfSqydLV4nGwh+jgbNxnX86vx6IvL2ZrIvXAITBhQ0ynwxntUydvDy3yLcuy3EMoA2R
+         haS3UKaIWuVX4VmbDS/G6omOuNgHtXbujRzO3eXqaa5S7AqjIFQA9iGtel4JfWqMsADG
+         ykoRczJ0SBqXteh7vkCSlL6UHR7RYxUaFYVej2Q7+x9fcXXe/2up3Ja+2X9WgjOhLLJJ
+         hKAIl2p6NZ7/72kHaF/VSTUAmx0qKjGFBfs83SrdtZnBXh0RMq/zuSCMsRFQ4xAry5NY
+         JRFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ygfoxsCOcEZFDvZwwxHJZr7GgBlZqbqyOyuBkqlE4/k=;
-        b=ZQpOArmK0z9vfIPK5fh08yNqdaIM1a2jxG7i0s9EbjXNOllRyIUBIU8yyG72FFCHhK
-         LgSimP2OJV/ivSlsFzTn5iYSPQpN3+nFKHLjvAtkk1TBGgA69aaylUsnd38eFrzALhei
-         UO1pik/n754J23Pn0w9uFiLFxusKWL5JUkkyUhRpVPVvMd88YHgXTowRSLNG310UYwbV
-         AjSCzHT+XVT+ySLxburJkhUDXpxaEyCjXoWetHFWcKiE9XTYAsI9eUIM5Jr0PIudoiFW
-         lPAlfNuP5n9cvNKyiDwFUdJEPkz0BXMTJkflLpWMwqx9xcIJv7YHeCUkx1xAcJIXo5aO
-         8GXw==
-X-Gm-Message-State: AJIora+XkPxdvY0+5Ltvsx8LjT+gHvK3cXfT8SZgODKYFjjTQ60bFZw6
-        hCVIQou2fhqowcTgqN5injI=
-X-Google-Smtp-Source: AGRyM1tZwrEqdPTK36k8QOQt/Uhr1nRt5Zz9+7YdYR0j9LZM8H0iTxhFlm1Nh2VfhJCSZeit3NIDww==
-X-Received: by 2002:a17:907:2bd3:b0:72b:44ed:6d6b with SMTP id gv19-20020a1709072bd300b0072b44ed6d6bmr11741284ejc.632.1657571652006;
-        Mon, 11 Jul 2022 13:34:12 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=EOAFibCJe08MWChM4fURWU6yWlY0z6ldM4g46DVUVng=;
+        b=DCaBFBaTMJ3CnGOCTwZNTkJu0aaWdfZWeRKdZ2yoQKOO0XGzajn/LAR7R81DqxtHZG
+         QKhquuNP86oDmmT9hTlX9Je9N9lMpg4Lnwb7qFm5xTJg0+9Kb/fb43a264pbIQDquWo3
+         mwRLWk402gSbr96QgMKMoXm+g7CQXOS96suPaQ6Om8k1P/tyYa/I6VYj/H5ghCBnRtuk
+         FVcMPznaW46CPar+GDjUnwSPm5izSyxCTU1QIqoykIqdRw16AEdFnfVNJ5CxAwi63+ZA
+         cgvGO86K0C7F5XrbO+aYU4nQRpZmdpstBWaNpV7lTU/x7Qbe2dd11MksS4fsXD1YwMcm
+         v8Ww==
+X-Gm-Message-State: AJIora+oJhRZuL7vio2jb/nrDGpKeoV6BLuoKzKPufpLoX5QcGiCQJfL
+        vYRUVYV+pjhxxCzOWrDqICg=
+X-Google-Smtp-Source: AGRyM1tv5/bCh5YZueC8NLmycryR65b3kWd9cEavJoRy/mmQ6qC14ZypSTEsJCOH2nUaazmQG9iyew==
+X-Received: by 2002:a17:906:5d04:b0:722:f46c:b891 with SMTP id g4-20020a1709065d0400b00722f46cb891mr20318245ejt.4.1657571654513;
+        Mon, 11 Jul 2022 13:34:14 -0700 (PDT)
 Received: from fedora.robimarko.hr (cpe-94-253-165-104.zg.cable.xnet.hr. [94.253.165.104])
-        by smtp.googlemail.com with ESMTPSA id l11-20020a056402124b00b0043a422801f8sm4936264edw.87.2022.07.11.13.34.09
+        by smtp.googlemail.com with ESMTPSA id l11-20020a056402124b00b0043a422801f8sm4936264edw.87.2022.07.11.13.34.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jul 2022 13:34:10 -0700 (PDT)
+        Mon, 11 Jul 2022 13:34:14 -0700 (PDT)
 From:   Robert Marko <robimarko@gmail.com>
 To:     agross@kernel.org, bjorn.andersson@linaro.org,
         konrad.dybcio@somainline.org, lee.jones@linaro.org,
@@ -57,46 +57,55 @@ To:     agross@kernel.org, bjorn.andersson@linaro.org,
         linux-iio@vger.kernel.org
 Cc:     Robert Marko <robimarko@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v7 1/7] dt-bindings: mfd: qcom-spmi-pmic: add support for PMP8074
-Date:   Mon, 11 Jul 2022 22:34:02 +0200
-Message-Id: <20220711203408.2949888-1-robimarko@gmail.com>
+Subject: [PATCH v7 3/7] dt-bindings: pinctrl: qcom,pmic-gpio: add PMP8074
+Date:   Mon, 11 Jul 2022 22:34:04 +0200
+Message-Id: <20220711203408.2949888-3-robimarko@gmail.com>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220711203408.2949888-1-robimarko@gmail.com>
+References: <20220711203408.2949888-1-robimarko@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Document compatible for the PMP8074 PMIC.
+Document the compatible for PMP8074 which has 12 GPIO-s with holes at
+GPIO1 and GPIO12.
 
 Signed-off-by: Robert Marko <robimarko@gmail.com>
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Changes in v7:
-* Fixup commit description
+ Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I planned to convert the bindings to dtschema, but there is already a
-patch to do so [1].
-I will make a patch to add the compatible to dtschema once it gets
-accepted.
-
-[1] https://lore.kernel.org/linux-arm-msm/20220626191630.176835-1-david@ixit.cz/
----
- Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt
-index eb78e3ae7703..c46d17609f3a 100644
---- a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt
-+++ b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.txt
-@@ -46,6 +46,7 @@ Required properties:
-                    "qcom,pmi8998",
-                    "qcom,pmk8002",
-                    "qcom,pmk8350",
-+                   "qcom,pmp8074",
-                    "qcom,pmr735a",
-                    "qcom,smb2351",
-                    or generalized "qcom,spmi-pmic".
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+index 6f2efc3772cb..6bc84779b092 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+@@ -52,6 +52,7 @@ properties:
+           - qcom,pmi8998-gpio
+           - qcom,pmk8350-gpio
+           - qcom,pmm8155au-gpio
++          - qcom,pmp8074-gpio
+           - qcom,pmr735a-gpio
+           - qcom,pmr735b-gpio
+           - qcom,pms405-gpio
+@@ -233,6 +234,7 @@ allOf:
+               - qcom,pm8150b-gpio
+               - qcom,pm8150l-gpio
+               - qcom,pmc8180c-gpio
++              - qcom,pmp8074-gpio
+               - qcom,pms405-gpio
+     then:
+       properties:
+@@ -415,6 +417,7 @@ $defs:
+                  - gpio1-gpio10 for pmi8994
+                  - gpio1-gpio4 for pmk8350
+                  - gpio1-gpio10 for pmm8155au
++                 - gpio1-gpio12 for pmp8074 (holes on gpio1 and gpio12)
+                  - gpio1-gpio4 for pmr735a
+                  - gpio1-gpio4 for pmr735b
+                  - gpio1-gpio12 for pms405 (holes on gpio1, gpio9
 -- 
 2.36.1
 
