@@ -2,25 +2,25 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B9CC43334
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Jul 2022 11:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51075C43334
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Jul 2022 11:02:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232757AbiGLLCs convert rfc822-to-8bit (ORCPT
+        id S232801AbiGLLCu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Jul 2022 07:02:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48164 "EHLO
+        Tue, 12 Jul 2022 07:02:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232785AbiGLLCn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Jul 2022 07:02:43 -0400
+        with ESMTP id S232833AbiGLLCq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Jul 2022 07:02:46 -0400
 Received: from de-smtp-delivery-113.mimecast.com (de-smtp-delivery-113.mimecast.com [194.104.109.113])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 81896AEF7A
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Jul 2022 04:02:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4394EAF74B
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Jul 2022 04:02:42 -0700 (PDT)
 Received: from CHE01-GV0-obe.outbound.protection.outlook.com
  (mail-gv0che01lp2048.outbound.protection.outlook.com [104.47.22.48]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- de-mta-13-8egSj0wXM66e4YchLHW4iw-3; Tue, 12 Jul 2022 13:02:37 +0200
-X-MC-Unique: 8egSj0wXM66e4YchLHW4iw-3
+ de-mta-13-3X3glB--ONuAuMx54EhdAw-4; Tue, 12 Jul 2022 13:02:39 +0200
+X-MC-Unique: 3X3glB--ONuAuMx54EhdAw-4
 Received: from ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:2e::8) by
  ZRAP278MB0317.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:28::8) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -31,76 +31,74 @@ Received: from ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM
  11:02:35 +0000
 From:   Francesco Dolcini <francesco.dolcini@toradex.com>
 To:     Lee Jones <lee.jones@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 CC:     Francesco Dolcini <francesco.dolcini@toradex.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-input@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-iio@vger.kernel.org
-Subject: [PATCH v1 0/4] mfd: stmpe: Probe sub-function by compatible
-Date:   Tue, 12 Jul 2022 13:02:28 +0200
-Message-ID: <20220712110232.329164-1-francesco.dolcini@toradex.com>
+Subject: [PATCH v1 4/4] dt-bindings: input: touchscreen: stmpe: Remove node name requirement
+Date:   Tue, 12 Jul 2022 13:02:32 +0200
+Message-ID: <20220712110232.329164-5-francesco.dolcini@toradex.com>
 X-Mailer: git-send-email 2.25.1
-X-ClientProxiedBy: MR2P264CA0155.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:501:1::18) To ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM
+In-Reply-To: <20220712110232.329164-1-francesco.dolcini@toradex.com>
+References: <20220712110232.329164-1-francesco.dolcini@toradex.com>
+X-ClientProxiedBy: MR1P264CA0142.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:501:51::11) To ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM
  (2603:10a6:910:2e::8)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 98b4f078-4d66-45f1-0544-08da63f6063d
+X-MS-Office365-Filtering-Correlation-Id: fbc5a66c-a8c5-45c8-3af5-08da63f606ad
 X-MS-TrafficTypeDiagnostic: ZRAP278MB0317:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0
-X-Microsoft-Antispam-Message-Info: 7TlWnweyNgBozulw0oJRj3XllAaJA22S/jUKNZVzFtxzFkdiC5hikR/w7qq4KVeJVdbL4gfJItbC97A3MzTZ/yVhjiycDlS19n0Lc/VLVE87/Oep5q+e6qJERSgLZofAWpdKYnz1FMeu2GQHQ017WrONagvmB2/yoK5xPk0u+QHBrl9tmTf+j5Gua3fZBH87Ae256bh1r9XCamAJit979O2xTdUKcImWV+qhDlhVMpK37LMuswBbxMnucTzIeOb5yE7KmUPcuiCcvxbeUz8QKWXeVl5tCygASMLS9Szbj1nZ9CgCdONNtJD2NSreMQONBIDbZMYo96qcPnuJ0pGD/iTJetZ4ABjkCW7BrOOjqRkw8S1RBegs+WApoMudabQ8fPAba+ud9EecuaPndUt7oBydYfCQl/XLNRS3FdwogYxQq+7duzCA5EaCh272P3qCn0DJ/UhD3IXDNGhsW9TGFga6Jz/XOF0d4RGHvXOfEoA56BNSp2D0p0eWaZEw6ZrWRU9kd2nkOWeca3bGnorg4efWinNbGYT4IaiIrY20xWsXmX8Tw0vfBIcMLN6K2rJ18WUrssaYEHYCurdPpYJlnIsgshFYjsf0mRyfXR2FmBTGsE/0XCL4BIBf82IkaC9YGcMxJP6pmHvYF3sIqnUExb7PjD4pB9IScd/kr5uJ6Sk4JKqv1nE4cFI+nU92J41W5hSnfyP8kESAKJRjbXN+MRb+J065veIMSQ0yhh1Q+okYhrETdfGfEKu4aqzvt2ah0hvBHF8bHMHh+nNiB6g/O3u0TXGSB9r7u+bW4snWcanEkjbK9E9ApgUNR/oD9nS+4e8eVJmfFCSyr5SjHFLKF8iCneGxBFlBCJ/3V+69SqA=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230016)(4636009)(346002)(366004)(376002)(39850400004)(396003)(136003)(66476007)(38350700002)(1076003)(52116002)(41300700001)(38100700002)(2906002)(54906003)(186003)(6506007)(6666004)(44832011)(36756003)(7416002)(66946007)(316002)(110136005)(8936002)(478600001)(5660300002)(26005)(86362001)(83380400001)(66556008)(8676002)(2616005)(6486002)(6512007)(966005)(4326008);DIR:OUT;SFP:1102
+X-Microsoft-Antispam-Message-Info: Meup2MobrVbfQ3dEJscTVNRTEu5bXRry9LQ2Jg8SKr5g0dku1ozcIuiwSTe8CAgJriUHR/0OqbXd80H9himCe2CkeLevGqYukBdEffTXJP7sDW/eqfdjyu73cVnYVTXtuWYjtQ5JmjcSjqQ6L8iDEMqHvli7ehM8z7C82e5w9aZC1i+zaR9lAg66hES9JjfAxY5DIaT0QlpxSt5OjhQ3ObpR3ZWmPX2T87ASkDu1QrMUi08V7vM7IqLykmJONSUcKeSO3rvsy96LIKV+6sb5xqdfG9X5qasc606WDiytWWhvbYiU7ZpN9INHdPgCsXTm/HvDqaLysqJYqfYjN7AccKeleG4DyvNfQJSh22qPpJMc5jQyiToSOSIJVhTfnGy+y0fV6mI/GGug9yP3yb76XdFvK4VRFVKSJ4lF31/vbv30yqIkKMg12UlS5IITE5qOUhIhd6G1ZDLgLbXoHKSyFbnSGqliQqRbic3zgCwecQZqxUUoQ7FYmnWGdbMRZqGC671sYACOjU8NAa5wgpDbQOcZgFuSvgSj/yGj/LiXW2BneDGp9uMX+hYqyxl8sqaMZ1gUGljBfZv/sr5Kh06hFxjDoJSOD6UnK0tEVdqWQEsmmy/T4EVDPazGwZbMqYDiTtUM5fmKumnVdkex0qLKJsC4XT7S/VRWrC929N1nN5Yyv60p3mG6fAZMjxy5Q3DeEktxHBFsYK3JWINn9nfV6ZDb7Sl6AFUuLCTAFEaTSDAgwiGNrNc4otSK4ZGeVP3RD8ih2rGiSSCTkVHOQrOEOtk/um+qpn3L/w86bNPkkSEX7zp7vpcNeHo/BY1BrQrM
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230016)(4636009)(346002)(366004)(376002)(39850400004)(396003)(136003)(66476007)(38350700002)(1076003)(52116002)(41300700001)(38100700002)(2906002)(186003)(6506007)(6666004)(44832011)(36756003)(7416002)(66946007)(316002)(110136005)(8936002)(478600001)(5660300002)(26005)(86362001)(83380400001)(66556008)(8676002)(2616005)(6486002)(6512007)(4326008);DIR:OUT;SFP:1102
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?6u4bJOghPj68epIr1gEzdkYM6s0guGnmOAVKOXHxceNFrlhxT8rate3j9jSr?=
- =?us-ascii?Q?+4AEq9zLAvKTqXXcjOFlPOxF5c/lv4HVxnBfGcJ1xJ2O090qKTV95AWPCw23?=
- =?us-ascii?Q?AmHPEel/SravNh7ZmHld8gbk6SSt+QNfZA6rvHKeRptVcKqbGgebNBKDDYux?=
- =?us-ascii?Q?aUq6PmqL+vn2jxsrpKoXV+Pg2vNUn645TaGEZ7OzcA4pOzKbOxGA2brt+Nq5?=
- =?us-ascii?Q?9JnUu7oKnW1q8f4DbWjq3/A6nE9FdjhBYxLo963cXH7PErxajiRjSacIFPag?=
- =?us-ascii?Q?SRFDrjeRt+Ca5qwJKY0skG0wKsBZXO2i72u36MQPN51EvwhRAESOdVT5zuVV?=
- =?us-ascii?Q?Gty+NnbGS/Ml738TQrZg766k5r2xGMPfOmhWqAnECdItjtGJ0Q9C88tadksM?=
- =?us-ascii?Q?pZjHD41304lERB9BHXQawP9nQDnq3uhb0dMvI+OwdWnod4h4Z4QySCVpAp5P?=
- =?us-ascii?Q?alql2iDAwccvhjjFY0/CpSjVD2XaHwwpvXpvyaJ4QMBRFoXwVk4EkTxvmVKI?=
- =?us-ascii?Q?pIg5+GbLeMCbNDC8BxYOL+UtIk2gGCfZBLBYiO41xVqcu2TvXSqIzScTRaTT?=
- =?us-ascii?Q?+HaZRyIzMrgNuoq17f8glbXTJ08KEXg10hvrnJpl/uJwLuyB8yopcGR7DCL1?=
- =?us-ascii?Q?E+WhDurlJU1B0tg+iMaBqVktNNOQ3yT6IxBEogjL5QlSh4NpRlPbSB7+MuM1?=
- =?us-ascii?Q?n5h3dlaOE83Bhi1akXPcK/0lsCF3zTd8T9yGBz8veOJBjmSyFdIWfcCwcQH+?=
- =?us-ascii?Q?jsMJ7I49cxEMhl56IFs/F7EMOpygXSUZvKAZ5gJ/Bmi9SWFVya43JUbb/kBn?=
- =?us-ascii?Q?UOFCfRt/Z64hd+XhyfQvopHuLdLW1fZ6C4WjiohPtlDaFNsdfWcW5umrhYV0?=
- =?us-ascii?Q?PTTpAIZH4MU9ftYAGNJPTZhenj/idevnZtDrKk5nBopKaXvUGf7LouUgTMDD?=
- =?us-ascii?Q?PsxlBiK6LV5feZdeL2inZeQTHW3AanRMGD/0Y+L67VzQeY8WSFRFf1rAZ7w5?=
- =?us-ascii?Q?NHyJdJXJ78yln5P3pJRmcxAG04rXP0GQKXpoUgKQFzlaywIzz8Mgx2xLk4aY?=
- =?us-ascii?Q?IZRaqs3b+Ip+tkjq6NTF/b3l3arUEcOiis5Og8kKt5SQaooluTcLoqg+x5Q+?=
- =?us-ascii?Q?QHHWu9rsCIaZ2ad8ib8rkD9EzM9+VWxz672vzL764Mq+BLbAoERn+Eyhr38k?=
- =?us-ascii?Q?OoUj4vVd+rxlwTh8ddVHRkxwQ/cweUOv260zW2VbcKSnmCzGVpVzgZ3o5YeO?=
- =?us-ascii?Q?ucxVF8JxcYwLsFMxldjzORVHtpaHjVlpCwbAsnW1bhzvKK50C5uXsofWGYbw?=
- =?us-ascii?Q?gyF/xJG65WvFfCcJOdz4bWbD49aPCAndZJrZPQzaorfOOBWEJfa+5dES2YJQ?=
- =?us-ascii?Q?Tw8bP/sinWe0X7RJQeMpuOCB+3daqSk80PC5vLoX/wlReZC7hf2qMr1lZGHW?=
- =?us-ascii?Q?wXwxTdyrs3bqm7qyrDHRkxHgS1g2W9H3bZK0VHqDER5Bp274mf23zpsE84kt?=
- =?us-ascii?Q?NusVKbafO7uOkfA5WLiONATG7h1F/V6OoWNaFRZOPNQS1OLmhzGHxVdo1ZGG?=
- =?us-ascii?Q?xleSA2pf/TQNKRjIGfSTVkQxhJGlhdgzuqdGZ8ItkZSO0l9OTKDbVCiCQ88f?=
- =?us-ascii?Q?Bw=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ud9MKl50gj/9XeL+A/pmBK3IDePNudQK3WG6SG4XR+NoSH64BCngxZahCfZk?=
+ =?us-ascii?Q?8C/R3nIRwLZK5rfa8RGnWYBMeU85lFm3UZaAFmdh8dpNf01NIoZDu7oJCfsA?=
+ =?us-ascii?Q?Q1XRIuCDmocl0Z5d7JhCS/s5CFs8ttmvTvS0eJdLw6e3WENIEA46pz96CA4N?=
+ =?us-ascii?Q?hTbfJnHfxxqeMvmv7ZsS9KZ5+qtIcA7W9fvB9PP4y4A/i5a7tk87CoJnaQiU?=
+ =?us-ascii?Q?EdUwvwSgYB1KHWqjGRF0qutqA5cTeivGWf+0uEUxj36X87t01Xg6aO7tZIJd?=
+ =?us-ascii?Q?+2UsdoHZSIOqWkByrCQIv/ejid2zyvuuyAvNtd2Tyq4ncmYTnIAR30erbKSm?=
+ =?us-ascii?Q?b3TY2Mhy3pS29omiR5g6Ss+pTe3+1n1yMZklRNKSplNECLLlMbYhiKaYthqe?=
+ =?us-ascii?Q?Imd4fdL9l+73NevhqrV0bM3Y3VViyHgxoS+HkZcvdPzhBrfV+76ASVnqdYDt?=
+ =?us-ascii?Q?u8Pp8rIPUn7eFIp0shUFZHfCrd+zYbOgijcJw3aIcC7Am4XaTLGqjdqpk5Fs?=
+ =?us-ascii?Q?RmhKQcq0NQfqfBPs0D085wZl9Sb2xMVC1FJZeBt0pE3pj2m9ZBc+sF3dg21C?=
+ =?us-ascii?Q?1vv24xlWPUVgD4YSev7vtY6qqkVGD5eW1w3OVLFZ12O23qNHbhLiWzPpU9W9?=
+ =?us-ascii?Q?Ch6NF4yGYdmdzV0nWiWCrrkKInpHzRSVPVNUHA2MV1S20oWFbsAcC/HCNDhk?=
+ =?us-ascii?Q?ko9UyoUT1sMW/J8HM8sUgaB1wGfoUqFLcesiH1bvlLFTqe3kNNZRH3bmiCmd?=
+ =?us-ascii?Q?Afhy9m8JR5ggU/ZY49ZXmL0uD16u5YVKv0SIXrOYS+gc1G39RFxUVKEB+KBb?=
+ =?us-ascii?Q?FAYT3cVojuk3jOcMGxvKM9tO8UXYc51qFJT4Kwr5KtTOou764bLB7ndfDcOn?=
+ =?us-ascii?Q?2E0F3bvWufDKhj47pE7ozjDaJpMXSspdHjEd9pVfVB/6LLD/FnG+Zgfj1hDB?=
+ =?us-ascii?Q?fMUF8SvJtm/PaBD6rAk+qSJQ6uUwP6ZCSI4R0a2R2kCUokCU1G3MDKO9h7Lo?=
+ =?us-ascii?Q?E45lwpXvcOzvY7o8/oUKQtCHpF/53/vp6g+vOGSB7UWN0GePgoEdzMUOvEkl?=
+ =?us-ascii?Q?Sym5BsD5Cs1qZ2aptkkpSKMU3WGNtaJAifQB7g7jTicuYw20yxpFbKkSufVz?=
+ =?us-ascii?Q?moJalIx+vztVR1/JFW3wzE7nR1egqkt1PgA0kmjzS+zEXO0dsvbOqSOXNsly?=
+ =?us-ascii?Q?7TlEvxqLPcLAeGDjr9lsxUz1aSe/C/5O+eqynCq9qFAtp0AjsfrjUeCxfMpZ?=
+ =?us-ascii?Q?UuDT8cwLVtrwgTPNMXOLi86wuKrT68NzVTEEL5giGAT33gxABR127tSz93Sy?=
+ =?us-ascii?Q?5pvyWa2TX83VBdjAwWWb5TzKrMSt1UyeZgdnqDwS8O1UzJTuKMqRjQdsQcsH?=
+ =?us-ascii?Q?peESZ9YoZgv3Wa+tP/JXihE6zfoYUXofZn8BffhIXKmWmL9vfZ29gKSc5osA?=
+ =?us-ascii?Q?2ETkFD1mTLPfC6ehrXQibbHQ66TzdoAyNQfHvIKd/YH5G/XOm83Qc8Xd2SFv?=
+ =?us-ascii?Q?dUJg/V21h9TF+/ZzNWwMETtMgGmXic9MAzG6kwRnfYw150BElwmy4vg0H5ol?=
+ =?us-ascii?Q?xUQAbxkjpLet6GP7ivWlWlsXstT2K33SObVKL1fSUN1PC/ybU6ikowbg/P/s?=
+ =?us-ascii?Q?6Q=3D=3D?=
 X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98b4f078-4d66-45f1-0544-08da63f6063d
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbc5a66c-a8c5-45c8-3af5-08da63f606ad
 X-MS-Exchange-CrossTenant-AuthSource: ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2022 11:02:34.5051
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2022 11:02:35.2092
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: d9995866-0d9b-4251-8315-093f062abab4
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BdTwzhkTSKyZSKkn2eGA9TTDGz8aIydtnh7ltMkmsozG7APWGiNq12JUejio1kkqpDYOt3NcBbP1m4Eu9KuaSvr7skzg7Tydg6d0oZnBmUU=
+X-MS-Exchange-CrossTenant-UserPrincipalName: NTz4EGCqEMzwLMRKrPnjLQ82qGUngByD64V4HnCQQbErsDXCJp+x2/jZbUyS1I72xIC5BhnxyKRVOc97bG8iOkO/mYUjkK6vUx2RgaPoVLE=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZRAP278MB0317
 Authentication-Results: relay.mimecast.com;
         auth=pass smtp.auth=CDE13A77 smtp.mailfrom=francesco.dolcini@toradex.com
@@ -112,31 +110,28 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi all,
-This series update the STMPE MFD driver to use of_compatible to probe for
-sub-functions instead of using hardcoded names.  Matching by name does not seems
-in general a good idea, in this specific case it is even worst since the node
-name are not compliant to the current naming convention (they are not generic
-and they do include underscores), and because of that recently
-we had a regression introduced [1].
+STMPE driver does not require a specific node name anymore, only the
+compatible is checked, update binding according to this.
 
-This change was suggested by Ahmad Fatoum [2].
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+---
+ Documentation/devicetree/bindings/input/touchscreen/stmpe.txt | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-[1] commit 56086b5e ("ARM: dts: imx6qdl-apalis: Avoid underscore in node name")
-[2] https://lore.kernel.org/all/86815346-209e-304e-3565-b4160afa48e8@pengutronix.de/
-
-Francesco Dolcini (4):
-  mfd: stmpe: Probe sub-function by compatible
-  dt-bindings: gpio: stmpe: Remove node name requirement
-  dt-bindings: iio: adc: stmpe: Remove node name requirement
-  dt-bindings: input: touchscreen: stmpe: Remove node name requirement
-
- .../devicetree/bindings/gpio/gpio-stmpe.txt   |  3 +-
- .../bindings/iio/adc/st,stmpe-adc.yaml        |  3 +-
- .../bindings/input/touchscreen/stmpe.txt      |  3 +-
- drivers/mfd/stmpe.c                           | 31 ++++++++++---------
- 4 files changed, 20 insertions(+), 20 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/stmpe.txt b/Documentation/devicetree/bindings/input/touchscreen/stmpe.txt
+index c549924603d2..238b51555c04 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/stmpe.txt
++++ b/Documentation/devicetree/bindings/input/touchscreen/stmpe.txt
+@@ -54,8 +54,7 @@ Optional properties common with MFD (deprecated):
+ 				1 -> 3.25 MHz
+ 				2 || 3 -> 6.5 MHz
+ 
+-Node name must be stmpe_touchscreen and should be child node of stmpe node to
+-which it belongs.
++Node should be child node of stmpe node to which it belongs.
+ 
+ Note that common ADC settings of stmpe_touchscreen (child) will take precedence
+ over the settings done in MFD.
 -- 
 2.25.1
 
