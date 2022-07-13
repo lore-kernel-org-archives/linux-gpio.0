@@ -2,177 +2,87 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B56CCA47C
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Jul 2022 16:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BA8C43334
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Jul 2022 17:37:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231612AbiGMQve (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Jul 2022 12:51:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57696 "EHLO
+        id S234036AbiGMRhs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Jul 2022 13:37:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229807AbiGMQvd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jul 2022 12:51:33 -0400
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D94C328732;
-        Wed, 13 Jul 2022 09:51:32 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id i206so3196785ybc.5;
-        Wed, 13 Jul 2022 09:51:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MdioiXZT/1OLnUpB9pBiNBnK7JQURhyFx0+jkgyKxdU=;
-        b=7kU/e5HedCwvp0CJpUsMat+/D8j3HNgqhmwhK48/i7CP26syszLHLl8lxPHF5eEgpf
-         tKSEM2nOyUK2VQl/n9Y3E8QqtVGcsY+jKwa7Z/wfo2b27qMGGrDZVT33vAHzmz4+1wnk
-         AtzPb6tkIpzeVfyeUmv0FZ+RswIJxqtY61MmyLkaGHYvSMp9q4ZN4Qguyi4ZKyYZYB/5
-         b7re3j+U1AIPqwE0Lv3EZ3vtWpRPO0L8ml7eEqVTkC/mFjdkFQXBvSiU+sAsY70szxyV
-         egEPcdSaNGcgZR51VvzVqt0v4nw+wGyh5zcCTZQgDQnLY7bbZ1kHIrTzNRUlcqmRsggz
-         ToRg==
-X-Gm-Message-State: AJIora+yovNd5Hh2/lO+McDmnon3uulI97nBP/W1mtERi10jUwpMJcS5
-        q2fD7ab9itNCgzPzswE4b3uWng08wJvUm+Alil8=
-X-Google-Smtp-Source: AGRyM1sJueCSFRWB/dmbyoEVbV54g4Smn3B8XwROXomGUfytxsBCHCBnHTGndijV3tmn86lXslhwloFgivU9XNq0Tnw=
-X-Received: by 2002:a25:a2ca:0:b0:66e:719e:279 with SMTP id
- c10-20020a25a2ca000000b0066e719e0279mr4399098ybn.622.1657731092034; Wed, 13
- Jul 2022 09:51:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220606164138.66535-1-andriy.shevchenko@linux.intel.com>
- <YqBS8I62YBPFC9iS@google.com> <CAHp75Ve9Lju8AEQd5huz1aYGg4sOu-ae7tTdyDWCXPCBR=wXbQ@mail.gmail.com>
- <YrGyWCaY+swYAYzH@smile.fi.intel.com> <YryAXlZqcr/liN7n@smile.fi.intel.com>
- <20220629191406.35965d5b@md1za8fc.ad001.siemens.net> <Ys71dyMdozGUAto0@smile.fi.intel.com>
-In-Reply-To: <Ys71dyMdozGUAto0@smile.fi.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 13 Jul 2022 18:51:20 +0200
-Message-ID: <CAJZ5v0iokWSwVqD2MX0FPup+kyZ2sG2pJZhy46HzpOdqusZEqA@mail.gmail.com>
-Subject: Re: [PATCH v6 00/12] platform/x86: introduce p2sb_bar() helper
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Henning Schild <henning.schild@siemens.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Wolfram Sang <wsa@kernel.org>,
-        Jean Delvare <jdelvare@suse.de>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
+        with ESMTP id S229654AbiGMRhs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jul 2022 13:37:48 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A24BA2CCBA;
+        Wed, 13 Jul 2022 10:37:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1657733867; x=1689269867;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=jkI+8p3nzS5uhRs0bvgZsKIkyptdyJilhkJ4VnAOZB8=;
+  b=nzW0QCVonDb0+aaSm1DsX6WCaoJ9VVj9wgH/r+h8U0Yr6Kn1U8pHDKVW
+   c5mARU3sT4n0fwrilAqt1GLzQiQn+2O/qB9DZ33d+s3nmVGJiFO9/6wmV
+   MKocvowpCoLTucPGyVwacSAFtP64VAe0F58UIMwsYMkrvjcyzgUgsxtuh
+   38rQqXhapmqTkVW5g7FogOqkH6EFMl3k9ToKEBKAFEcg19yHRUXmVYE4c
+   O+FY/7wXZ1FCBGX2EHAasAJMv4x2Ur3kDwxBzz+f+y8YuG9Y0H3KdrfBc
+   J+FuBCVbLsQL/gnLYwvYUWiCBy4/F2CXVbtBHiQZ8PCFJEA56ufNvaJ/N
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10407"; a="371609382"
+X-IronPort-AV: E=Sophos;i="5.92,267,1650956400"; 
+   d="scan'208";a="371609382"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2022 10:36:45 -0700
+X-IronPort-AV: E=Sophos;i="5.92,267,1650956400"; 
+   d="scan'208";a="737966971"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2022 10:36:42 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1oBgHv-001CZF-0z;
+        Wed, 13 Jul 2022 20:36:39 +0300
+Date:   Wed, 13 Jul 2022 20:36:38 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>
+Cc:     linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Frank Rowand <frowand.list@gmail.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Yong <jonathan.yong@intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:EDAC-CORE" <linux-edac@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Tyser <ptyser@xes-inc.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Mark Gross <markgross@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/4] gpiolib: add support for bias pull disable
+Message-ID: <Ys8CpqYhWp7zVNC8@smile.fi.intel.com>
+References: <20220713131421.1527179-1-nuno.sa@analog.com>
+ <20220713131421.1527179-2-nuno.sa@analog.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220713131421.1527179-2-nuno.sa@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jul 13, 2022 at 6:40 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Wed, Jun 29, 2022 at 07:14:06PM +0200, Henning Schild wrote:
-> > Am Wed, 29 Jun 2022 19:39:58 +0300
-> > schrieb Andy Shevchenko <andriy.shevchenko@linux.intel.com>:
-> >
-> > > +Cc: Rafael
-> > >
-> > > On Tue, Jun 21, 2022 at 02:58:16PM +0300, Andy Shevchenko wrote:
-> > > > On Wed, Jun 08, 2022 at 12:50:44PM +0200, Andy Shevchenko wrote:
-> > > > > On Wed, Jun 8, 2022 at 9:42 AM Lee Jones <lee.jones@linaro.org>
-> > > > > wrote:
-> > > > > > On Mon, 06 Jun 2022, Andy Shevchenko wrote:
-> > > > > >
-> > > > > > > There are a few users that would like to utilize P2SB
-> > > > > > > mechanism of hiding and unhiding a device from the PCI
-> > > > > > > configuration space.
-> > > > > > >
-> > > > > > > Here is the series to consolidate p2sb handling code for
-> > > > > > > existing users and to provide a generic way for new comer(s).
-> > > > > > >
-> > > > > > > It also includes a patch to enable GPIO controllers on Apollo
-> > > > > > > Lake when it's used with ABL bootloader w/o ACPI support.
-> > > > > > >
-> > > > > > > The patch that brings the helper ("platform/x86/intel: Add
-> > > > > > > Primary to Sideband (P2SB) bridge support") has a commit
-> > > > > > > message that sheds a light on what the P2SB is and why this
-> > > > > > > is needed.
-> > > > > > >
-> > > > > > > I have tested this on Apollo Lake platform (I'm able to see
-> > > > > > > SPI NOR and since we have an ACPI device for GPIO I do not
-> > > > > > > see any attempts to recreate one).
-> > > > > > >
-> > > > > > > The series is ready to be merged via MFD tree, but see below.
-> > > > > > >
-> > > > > > > The series also includes updates for Simatic IPC drivers that
-> > > > > > > partially tagged by respective maintainers (the main question
-> > > > > > > is if Pavel is okay with the last three patches, since I
-> > > > > > > believe Hans is okay with removing some code under PDx86).
-> > > > > > > Hence the first 8 patches can be merged right away and the
-> > > > > > > rest when Pavel does his review.
-> > > > > >
-> > > > > > Can we just wait for Pavel's review, then merge them all at
-> > > > > > once?
-> > > > >
-> > > > > Sure, it would be the best course of action.
-> > > >
-> > > > Pavel, do you have a chance to review the patches (last three) that
-> > > > touch LED drivers? What would be your verdict?
-> > >
-> > > Lee, Rafael,
-> > >
-> > > It seems quite hard to get Pavel's attention to this series [1]. It's
-> > > already passed more than 3 weeks for any sign of review of three top
-> > > patches of the series that touched LED subsystem. The entire series
-> > > has all necessary tags, but for LED changes.
-> > >
-> > > Note, that the top of this series is not done by me and was sent for
-> > > preliminary review much earlier [2], altogether it makes months of no
-> > > response from the maintainer.
-> > >
-> > > The nature of patches is pretty simple and doesn't touch any of other
-> > > than Simatic LED drivers nor LED core. Moreover, it was written by
-> > > Siemens, who produces the H/W in question and very well tested as a
-> > > separate change and as part of the series.
-> >
-> > The code has been reviewed and is in fact pretty simple. The only
-> > questionable but pragmatic change that might catch the attention of a
-> > pedantic reviewer is that i did put the gpio implementation of the
-> > driver under the same/existing kernel config switch.
-> >
-> > > I think to move forward we may ask Rafael to review it on behalf of
-> > > good maintainer and with his approval apply entire series.
-> > >
-> > > Thoughts?
-> >
-> > Thanks for pushing this Andy. I was wondering how and when that story
-> > would continue. Technically these changes should really go in one badge
-> > or we need to find a way to separate them somehow. I would try to go
-> > that extra mile to get out of your way. But i am kind of afraid such an
-> > effort might also end up touching the same files and block us at the
-> > same maintainer.
-> >
-> > Did anyone check whether Pavel was active at all in those last months
-> > and maybe other patches waiting for review? Hope he is fine and active
-> > and just somehow forgot/overlooked/ignored this one.
->
-> I have send a private mail to Pavel and have got no response.
-> Can we move this forward, let's say, by applying first 8 patches?
+On Wed, Jul 13, 2022 at 03:14:18PM +0200, Nuno Sá wrote:
+> This change prepares the gpio core to look at firmware flags and set
+> 'FLAG_BIAS_DISABLE' if necessary. It works in similar way to
+> 'GPIO_PULL_DOWN' and 'GPIO_PULL_UP'.
 
-IMV, everything up to and including patc [11/12] in the series should
-be good to go.  There are ACKs from the relevant maintainers on that
-material and I'm not sure what Pavel can add to that TBH.
+...
 
-> > > [1]:
-> > > https://lore.kernel.org/all/20220606164138.66535-1-andriy.shevchenko@linux.intel.com/
-> > > [2]:
-> > > https://lore.kernel.org/linux-leds/20220513083652.974-1-henning.schild@siemens.com/
-> >
+>  	GPIO_PULL_UP			= (1 << 4),
+>  	GPIO_PULL_DOWN			= (1 << 5),
+> +	GPIO_PULL_DISABLE		= (1 << 6),
+
+To me it seems superfluous. You have already two flags:
+PUp
+PDown
+When none is set --> Pdisable
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
