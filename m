@@ -2,116 +2,124 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0F5C433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Jul 2022 00:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11098C43334
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Jul 2022 01:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232683AbiGMAuX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Jul 2022 20:50:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38736 "EHLO
+        id S233538AbiGMBfs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Jul 2022 21:35:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232270AbiGMAuT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Jul 2022 20:50:19 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72FB1BD6BE
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Jul 2022 17:50:18 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id n74so16823866yba.3
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Jul 2022 17:50:18 -0700 (PDT)
+        with ESMTP id S229775AbiGMBfr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Jul 2022 21:35:47 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2120.outbound.protection.outlook.com [40.107.92.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E69A5CB448;
+        Tue, 12 Jul 2022 18:35:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hVDieQz88IsVnoFAwccPx9UKB0bWebYn1dhTvDFQRx6P9nEWvn/xwfmQ0NFi7oOjQ8PCVFjOeRM+9D3gxzPeLSkIJZIU/deqxPxI/6GTo8aMc1YIVmW9XHGHftroW2DRW51aeGfOHlowEuqCwYeHfhFQrxOUQuWgqEU3SP0SrSIHxdoXIC0zeKZ17GiEDTdFipmODaWtBxVHfg1Xk85eVtTdz60F4IyYtEKsX69YBcP7BGaXTy/1IlI2DYpF/M1izQs+AGZLyknBImYqSXisdSeqohOEEUiGdUpucF26bs1EbuNnk0Cr2KJnwDVIjBZeYqH3jUyCS4UygV0YptTzuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ddo/S8RK8zfpj2dyMNU8a7uWnD8XMriQO6FxXXYVM8E=;
+ b=Tr6Ef0kXDoQ3/QZ4oECcWSxkW6LVP/gziVO+ePKU4ck6assQXYwKi+FKt8LbdZE8SkmLwmfjaItecACa1SqF+mC/kYv4Os9axovDEzNWY0iBDl81ufK7l05Ewcr3Ff6FRfaYMP8JWLxYdgxp91TdxMcPu5h6iN9fDVC88IZyDlQxmwYrc1CdbkQcBw4xPo92AwtaPhTsfifkVR5wvL70BSXdx1C1VJMwSz30EqUJVihkcWwQRR/LJVuX6qg94UED/O8dXijIo/4ezw2DwHyB80tg8/mTfKa691Ur7t3vpAOIsS4D3TaY3HK2F3+aJwLGe89nTMQL2mTvdt3FpbKFyg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=in-advantage.com; dmarc=pass action=none
+ header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eVIBXNYPXflbhDmPqNeN1vaRHXCTr9TZKw/Aud6ynFk=;
-        b=Nu3pXsQlpr+nHQz8QjjrfuPjjPgEQqhb8j1ylQsPAXC6P8SvTDsCeuasC2zzotvpBc
-         Xe0UikySBB08ir1wMpHcEMIWWvUq3ha/ChC5IVOZjIWe7MUZxnp1RL6fVd070TXj6WRj
-         yP+3DG+zkKtk4aiDmfo1TXbN1T7wY8aU8waLlNo4ksz5F0vQSczmeTXt0aQK519fECUI
-         HB1+d1QQ3ZY+Jv+x4Vfrx/wZ87sna0vI5yskR0cno2XD6bRijQ1pC9IOSuWmVds2J3ZV
-         bF89sWT/Mdik1KR3fT+VI0E0iHZnqAS3JxalCLCRRmZVQevNvNNnSm7jtXbpWfev6rac
-         f98Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eVIBXNYPXflbhDmPqNeN1vaRHXCTr9TZKw/Aud6ynFk=;
-        b=hUWeGpkGQ5Ww//ZAQvOk78NWo4+dUtfiPvNqbwQhrn4cx72+w3UGcyk12drErX9/dY
-         cJxBXWlFGSsvvYaC5joThNd9Ji2BoQIv5qjilRJFiqRYH878OPAC5uxgGbkS5HrzT1i/
-         FDvKjiiroq3rbqg5QPfzhBR/G9oVZuW11jobCGGFid2oioTgDSe/AbfpJ049tB+MRF6D
-         wh24/ZnER6T6kPEZqf7PPW987o8j0QH9/OUgH0rgryZkXxhdfA0rh16sUKY5znognOQ7
-         BhwJQJUvuYBm3N5nulf0G0XyLIuS9x0qGLCFFObB8uVwJ/gOA8/bzIDgcUG1G7cPlGZP
-         ABIw==
-X-Gm-Message-State: AJIora+m6MxikFn7dhgKpoO4OBRV+C/Ry3H8FVgPnLd8VUPmrbVngK5P
-        jRzPz8gerENAV/0L5bg0IHymWTgUuEy8lqz2Ru2qqg==
-X-Google-Smtp-Source: AGRyM1sXEWzOoeg1U8/u/4j1RYqldWG9lxWSBF6cTvrLkXZVlMxc4bTQnunavx6CE6WqvYGm7jSY/6dJZSFqgBtr2fU=
-X-Received: by 2002:a25:9947:0:b0:663:ec43:61eb with SMTP id
- n7-20020a259947000000b00663ec4361ebmr1164051ybo.115.1657673417598; Tue, 12
- Jul 2022 17:50:17 -0700 (PDT)
+ d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ddo/S8RK8zfpj2dyMNU8a7uWnD8XMriQO6FxXXYVM8E=;
+ b=CqnNj9XHIcrD8u1MJJxW+AVA25sjlApk0cwdYQ3G+ukctqI42D4O4Kjj7McO99dMtmRiDS8ShQzPcmQl50sOgAsbtB0NviQH8RfjDRKocQruXfaHZfrU3u7yqMMJq1ndGWPlm0hJzxiYc+mnNaH5tjjuKv7ZbCuMDNhDQ4DM23M=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=in-advantage.com;
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37) by BLAPR10MB4931.namprd10.prod.outlook.com
+ (2603:10b6:208:331::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.15; Wed, 13 Jul
+ 2022 01:35:40 +0000
+Received: from MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::712f:6916:3431:e74e]) by MWHPR1001MB2351.namprd10.prod.outlook.com
+ ([fe80::712f:6916:3431:e74e%6]) with mapi id 15.20.5395.020; Wed, 13 Jul 2022
+ 01:35:40 +0000
+Date:   Wed, 13 Jul 2022 01:35:37 -0700
+From:   Colin Foster <colin.foster@in-advantage.com>
+To:     Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linus.walleij@linaro.org, alexandre.belloni@bootlin.com,
+        kavyasree.kotagiri@microchip.com, UNGLinuxDriver@microchip.com,
+        maxime.chevallier@bootlin.com, michael@walle.cc,
+        andy.shevchenko@gmail.com
+Subject: Re: [PATCH v4 2/2] pinctrl: ocelot: Fix pincfg
+Message-ID: <Ys6D2adSuRmoSD3s@COLIN-DESKTOP1.localdomain>
+References: <20220712195043.3842081-1-horatiu.vultur@microchip.com>
+ <20220712195043.3842081-3-horatiu.vultur@microchip.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220712195043.3842081-3-horatiu.vultur@microchip.com>
+X-ClientProxiedBy: SJ0PR03CA0055.namprd03.prod.outlook.com
+ (2603:10b6:a03:33e::30) To MWHPR1001MB2351.namprd10.prod.outlook.com
+ (2603:10b6:301:35::37)
 MIME-Version: 1.0
-References: <CAGETcx9aFBzMcuOiTAEy5SJyWw3UfajZ8DVQfW2DGmzzDabZVg@mail.gmail.com>
- <Yrlz/P6Un2fACG98@atomide.com> <CAGETcx8c+P0r6ARmhv+ERaz9zAGBOVJQu3bSDXELBycEGfkYQw@mail.gmail.com>
- <CAL_JsqJd3J6k6pRar7CkHVaaPbY7jqvzAePd8rVDisRV-dLLtg@mail.gmail.com>
- <CAGETcx9ZmeTyP1sJCFZ9pBbMyXeifQFohFvWN3aBPx0sSOJ2VA@mail.gmail.com>
- <Yr6HQOtS4ctUYm9m@atomide.com> <Yr6QUzdoFWv/eAI6@atomide.com>
- <CAGETcx-0bStPx8sF3BtcJFiu74NwiB0btTQ+xx_B=8B37TEb8w@mail.gmail.com>
- <CAGETcx-Yp2JKgCNfaGD0SzZg9F2Xnu8A3zXmV5=WX1hY7uR=0g@mail.gmail.com>
- <Yr7wA8d4J7xtjwsH@atomide.com> <Ys0ewNYFB25RWNju@atomide.com>
-In-Reply-To: <Ys0ewNYFB25RWNju@atomide.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 12 Jul 2022 17:49:41 -0700
-Message-ID: <CAGETcx8H9je6Yg-fciU5-dh22xB0_h6XzAfH5UsCSeET97wrpA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/9] PM: domains: Delete usage of driver_deferred_probe_check_state()
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Ahern <dsahern@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 770587ab-51bd-4b74-e28d-08da646ffe82
+X-MS-TrafficTypeDiagnostic: BLAPR10MB4931:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: aQ0RsYgNmnKk6PfLdktylZ2taootKFXVkhKvtzelCuGAXKBaczhQv2CiEnbPJ/ghwoOvq2YhO0DFX1jiRFvzoCHBgAl37fiP0+S6khdz5S3QJgnSS3UaWUbC+BgqDKj3fIWB9E5T7lBRdrpJNMMeTznYurvpTDORn7+TTvmPeSkTSnGG3FTTyJiMMZVhBR2RG/Q/zIfgZkqE6aZKJ9aemSHg49/V6OF54AMpVI76n99iIWgi2cuZJhKrDMuJoOYfPu/V3qcw8WsMFvjm5h3FZppa2mprrOgJ4br9N7rC6oFkenQphKu4I3KI3OaGUG/2xf5gHwba+sqdQsObGjKJVE+gbMZnz6IA6RhKlUo0wflQUrJns0PB4qDOQvpl1RukaBbYVZebt/FhUlRPP7qYmh16e6fn/mT6sZWkPY1Lom3U5JIhv3rVLNgbmHthT7u4l2UpRwV811WeYe6J3u+I55dUd0R9jIhUHmpMQLdJdUO8XBI/6FYAOWQrgHL4XUNIZ+3Jkwwhq8F+1H7ls00MykPB4n8adKRoe/baJpsIqAk2ljxgN2fp/aZKcNxJOPo2B8nHgV/1yKepEk9xJqqWZdOLT1lmFe3sVG6IH34YoZbgejMaVITqAEeZHJTYqay4waZTk6NEo5Gika9xWRpTUxfYUOKb83UYF4f2ySZoC7uYl5/fSTeY8eLfWod5nNLxzbYT0oyFGDll+CixR1kchDoFNQ0R7i59Myf96OrqWMWQ6Fe8v5whu7J/EvMWtA27
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2351.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(376002)(346002)(39830400003)(136003)(366004)(396003)(478600001)(44832011)(4744005)(6666004)(83380400001)(8936002)(6486002)(6916009)(41300700001)(7416002)(5660300002)(316002)(66946007)(26005)(8676002)(66556008)(6512007)(186003)(4326008)(2906002)(66476007)(6506007)(9686003)(86362001)(38100700002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?5+AAGnYfYoeO6PWv9bbvdhcyqyyseZjGCuZcFUbqNKvFw/HprHUUoauyJHnP?=
+ =?us-ascii?Q?fzgx5bBtDg10QHnAJ221gD/98k5JZyK3rvzmm8Axtf/20VChC5L8ETAbwjHd?=
+ =?us-ascii?Q?TBa/xR7cgDPdnkvRKmroFOmOk11YPLEPVoLxTB0hXTrzxBmkUad661qgrokV?=
+ =?us-ascii?Q?SFUXGz+fGw0abbgO5NGkdH4MS49786KWNX+aF+UcURpVB3I9uXWzvC7b41XR?=
+ =?us-ascii?Q?2BlR8DUYOymAek8xzzCLK77yf5DPH/6qS8JDRU4uMwOgBo5zR3sugZ61FK31?=
+ =?us-ascii?Q?WuNZq93Eto8FxckW+lbk5SeKd4t9MZAGFj6vBLiK3pJzNmkIpd//IDugLeP9?=
+ =?us-ascii?Q?XLGXdU4ifpcecqnBDUi2ZRc6JpsXQ8cNtFcI8cP4C2G0SDylvVPnchqAVToO?=
+ =?us-ascii?Q?dnzHy1E87xxxebdPTunWe7fIBaf3ndK2aDaFAzuEN9dtAxbcDubB5A6vPSHd?=
+ =?us-ascii?Q?bm2vAjotb46h8aLomkC5ip9aQvHc4cn7NBPInR5dH99MV6oi9ISu5TH1BhNg?=
+ =?us-ascii?Q?aptkUSBAjxEjJO39/woDg2eGdCf/EXyoRumnLpek0mpySSebN6OBHbLHyRJ8?=
+ =?us-ascii?Q?RQ5sT2wprS7TV35b6AbIqFavGCDgoJF7rbDt2zt6lyh+QLrsLJQX1jSY3T/f?=
+ =?us-ascii?Q?9Sdqks4/gW2R5t0v61cU0/cJladOO9vbcrFPfl3wo7f9v7W+BAdyfoX/U4f/?=
+ =?us-ascii?Q?jQbFaZSh7P49TeWIbbIfMzNBVEZH45qqTuBFePSgyxEMMfoe8MH5VZeDEvpt?=
+ =?us-ascii?Q?a5ahfIJhtXumsbvgtDe4sAGOVoJrP/IT5Twsw/oEnjW/uDiul8MQudD3rH3h?=
+ =?us-ascii?Q?0zUbGAGEo/DGSCcWR39RxE2jo2QmKeQjnSnw/qARpALrlRyQ8kxklo/lsQzX?=
+ =?us-ascii?Q?O0xayj12fxmeGsj8ebpqb42VphEOvFWQUk9lZI+EM4R7GQOYQOhugyN3XAfN?=
+ =?us-ascii?Q?xV8CEyykRi8Ao7IftWunbC9xL6dU1VZMlsBpcLKO0k0HfzCU2iQigsff1Usm?=
+ =?us-ascii?Q?9ZUEHxNevzch6Z5SMPvOIx0aNNtFs2Y81VHOdLO+fOgh5+ou8wbhD/g1U/a7?=
+ =?us-ascii?Q?seWpNTVi8d9HDj/n4ION/mvqp/N1KUaZxJyuIKwcaPT7S9Bs0AVsRpaBVtet?=
+ =?us-ascii?Q?cLKzUl1TEE+zTnMSKGt/460lY3xC8XPJMcnGY/x+BDeO5hUvWYYPvGv+vt2n?=
+ =?us-ascii?Q?yrrnjXH0LKcoqgt7632bU+IkV+TiGqOLdpAxks5QP2QSk2wfV0W5ON0muMX9?=
+ =?us-ascii?Q?458E1nEgIW7KIUKTv4Hv9vtn5B2g2C9mT+QFx3ahv+nxiqg6MWO9ErPieVfy?=
+ =?us-ascii?Q?URzcl4WZPsPQnEmxBavr6GzbgYNDT20dc8ZZk9dcpn96HJg3id7nBiH4JllG?=
+ =?us-ascii?Q?wlMASSofql0UTO04DQ3GyK0N5xrPtq+WgdSEgYiSuZJUEpJRoJGUdGc8clT5?=
+ =?us-ascii?Q?iag3SYmf/TJpSbl94aPAMMRbIfzcx7etOPmZoMcEhfkZPYy2av8NfEhbCOsM?=
+ =?us-ascii?Q?eR/n02Rxt5JznCIM8VNwgisNHUg+R1i9is+/357Bw7DEDb9pnM+XUWMu9bpm?=
+ =?us-ascii?Q?INHDMLm7lvSEIhdYigSK7zlkWNy7qabG4KYJ4CnpVhzLalRCVxdpfrJLfNwV?=
+ =?us-ascii?Q?4A=3D=3D?=
+X-OriginatorOrg: in-advantage.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 770587ab-51bd-4b74-e28d-08da646ffe82
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2351.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2022 01:35:40.2515
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Zx1ozCkafBtslADpuZdWzNZdH81ubRhgD2LDdM9h8bn1Zbx8F0lmSzKrTO8R9CZWF8lGjTnvlFPvN89VW87TQrtIP8NWz650A8hP3rj4gYY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4931
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jul 12, 2022 at 12:12 AM Tony Lindgren <tony@atomide.com> wrote:
->
-> * Tony Lindgren <tony@atomide.com> [220701 16:00]:
-> > Also, looks like both with the initcall change for prm, and the patch
-> > below, there seems to be also another problem where my test devices no
-> > longer properly idle somehow compared to reverting the your two patches
-> > in next.
->
-> Sorry looks like was a wrong conclusion. While trying to track down this
-> issue, I cannot reproduce it. So I don't see issues idling with either
-> the initcall change or your test patch.
->
-> Not sure what caused my earlier tests to fail though. Maybe a config
-> change to enable more debugging, or possibly some kind of warm reset vs
-> cold reset type issue.
+On Tue, Jul 12, 2022 at 09:50:43PM +0200, Horatiu Vultur wrote:
+> The blamed commit changed to use regmaps instead of __iomem. But it
+> didn't update the register offsets to be at word offset, so it uses byte
+> offset.
+> Another issue with the same commit is that it has a limit of 32 registers
+> which is incorrect. The sparx5 has 64 while lan966x has 77.
+> 
+> Fixes: 076d9e71bcf8 ("pinctrl: ocelot: convert pinctrl to regmap")
+> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 
-Thanks for getting back to me about the false alarm.
+Acked-by: Colin Foster <colin.foster@in-advantage.com>
 
-OK, so it looks like my patch to drivers/of/property.c fixed the issue
-for you. In that case, let me test that a bit more thoroughly on my
-end to make sure it's not breaking any existing functionality. And if
-it's not breaking, I'll land that in the kernel eventually. Might be a
-bit too late for 5.19. I'm considering temporarily reverting my series
-depending on how the rest of the issues from my series go.
-
--Saravana
