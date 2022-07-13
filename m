@@ -2,177 +2,135 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D2DC43334
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Jul 2022 01:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3010C43334
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Jul 2022 02:52:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233784AbiGMBkr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Jul 2022 21:40:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44350 "EHLO
+        id S231149AbiGMCwq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Jul 2022 22:52:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233613AbiGMBkr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Jul 2022 21:40:47 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8211326DE
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Jul 2022 18:40:45 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-31cac89d8d6so99062347b3.2
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Jul 2022 18:40:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YZ6q4ZoU0Ir2Jz6gl3O36uWJiXB5Oh91BCPws+bH2j8=;
-        b=ji+wVu3QJM0EhDDfnd4KC9wcoUan+Y4cWT0Znkq7+Z2sCd7H2Mtlv/BU0ZX80Fo+Sl
-         n4eUmPnHjmuxgCyGAZJMEk2JlYP3g70GQ2456nRDKRzrHMK6ar5r2qs6UUbeIZmuwEyK
-         nwoo/EieD/MOWvL4dMjOFNdfvM6SlJ1T0LKwl0z9S4ZWP8LZFZAZTSXLmAU3LEuHla15
-         ui1zjdNwntrt1omjmMv2BbEWB9N8hi5MSJ/y9b9ltlGcaJehwox9JKSmLwNsxR5XjDHn
-         uTm3v+ral7SUpl85AD9hw413MEHq9ki2x7Hv1pXI3N6IXRcm40n1TubBkpT1GaMU/UVx
-         qwEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YZ6q4ZoU0Ir2Jz6gl3O36uWJiXB5Oh91BCPws+bH2j8=;
-        b=5gwzcubA3qvw5zkkExhtBpArIu9DCxaC/9GiViVPmQp/Leb0ptLU7U6ecW/IJQBU2Z
-         INYjCMAthwmNHPHe1niRqsmScJ0aT+sBXOJjB38NJKha2loZ8qfYVubrRPk5Y6GfecCU
-         OJr6yxYtOzOk5p9uytWoRrDM/OQzV7P1Bq4dzZCDMmthraq24P5fezJUnvyuW4s+MEQ7
-         T2T00F7mZ4b83qshs5y7cPW6za0SXO2pkY2QjKmdhcgV4p2cukuKaBnbIqkNmvNDEJYP
-         vIv/IXmw7u739aewFQu3XKMQAAJkL/PvxUDGC3yLpOGq9EsmJH/dyWAG7ADeLyauxu0f
-         bQxA==
-X-Gm-Message-State: AJIora81vzaXEfgXyRnTgEtlaBug21/ge0VTevwlKOKBt8BHrQqeIB3Q
-        s+ts2p8E5TzN4fllKTiHkQyLJvlvGYtnrzA0M5j0NA==
-X-Google-Smtp-Source: AGRyM1vMvB5ytWB//zuy1WgkUbEH2A/pfANLOdqXAYxeYQCkgIpwtGZK6oswsKsqIzWkcI3ZmSNdp0rUWokDDKCmQSA=
-X-Received: by 2002:a81:9e50:0:b0:31c:840e:33a8 with SMTP id
- n16-20020a819e50000000b0031c840e33a8mr1517792ywj.218.1657676444867; Tue, 12
- Jul 2022 18:40:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220601070707.3946847-1-saravanak@google.com>
- <20220601070707.3946847-4-saravanak@google.com> <CAMuHMdWo_wRwV-i_iyTxVnEsf3Th9GBAG+wxUQMQGnw1t2ijTg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWo_wRwV-i_iyTxVnEsf3Th9GBAG+wxUQMQGnw1t2ijTg@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 12 Jul 2022 18:40:08 -0700
-Message-ID: <CAGETcx-jU5+Tc0Qkt1e4QY0YprYSp-4A+MoaSRjpdPp_8tZm5g@mail.gmail.com>
-Subject: Re: [PATCH v2 3/9] net: mdio: Delete usage of driver_deferred_probe_check_state()
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
+        with ESMTP id S230267AbiGMCwq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Jul 2022 22:52:46 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDF1AD216F;
+        Tue, 12 Jul 2022 19:52:38 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id B75E35C00CF;
+        Tue, 12 Jul 2022 22:52:37 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Tue, 12 Jul 2022 22:52:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1657680757; x=1657767157; bh=ys
+        LfvLvAELxN6JcUHANO7Xwphx6NIfvezWS0yoWb7IA=; b=HB6EjCOvzg6HB7IMAR
+        3tfNXJT/YgSRKhRoKCVvxoU0DCL35T+w3pBhJ0zkgbxWbFdQDq/Hs0UVWGEWFTfO
+        uVXpC6rHtK0TplgkG67DkS4xFYR3C70uT2WtkeIdPpLg20Tkhv+C1WkS8cEljwkc
+        jzKiKTZW3fDdX2PR2MH7/kp8DcNbnCL9Fz3ekc6EYivRWDYDSQx/MHGrqkMura3q
+        nUJ9pggAiVztyyhnARbkN3R6eo7zGBsc9XRfPGi2UmxEcQ2oIzLoxLcSJj8UzGCb
+        pubXr5exFLptArSHxJpzlNwWJLFMDsNRzmP1OTTxo/Oqi6GG5Nk3vknljhJRaRlt
+        fiKg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1657680757; x=1657767157; bh=ysLfvLvAELxN6
+        JcUHANO7Xwphx6NIfvezWS0yoWb7IA=; b=wW32wwSjxTEaOxh3JvyyIOHv5YV0E
+        1tBLTIPJS2c0SXwadO4NqPo1NycSZWT1Wkz69ix0P53XMu2AYZ4k/e4zR+8BqfD7
+        nIcrWXtFbu69xqeuE7xLsi1JAtemcUmc0LgzaMjt0vyLZpJWtv1s8BB6GoCgJ7HE
+        c90YRVZkUDeyWtyQl6NBN1v1c87XrNVcIkZsD2r0I5zjs0hD1i/8dmXgx1PZEMSr
+        q9ZQZd4RY4Ec/NUxHWfZ2QRvICmNRkt2kEwM+UrV5PHzLc1c0Emfm23Bw9gwLRIl
+        mkfKdTdXCg3ECQML21+6LuEXkJbJ0e1eUtGmOGWpue7JIhcv/6M3vcTIw==
+X-ME-Sender: <xms:dTPOYry8XNvfETFxmmiaUrtEyM1agvjG2f5hBByKhJU6fIiospISpw>
+    <xme:dTPOYjRgUwUyrjpVEWvaDsoG-AR_GolSU26-pABG7RRslTkVt3PN4_CI3MuOXoM1i
+    b9rAPz0u3fKeQN2bw>
+X-ME-Received: <xmr:dTPOYlUGP-wY5U2Xbk-pSiX9m54WTslC0LjOKMgfDOBWy0aIEbSmsAm2bNi9TTjAaBehLEA8D7HRap6oF_Na1KtieKPw-ed83a37_dfjo7xVUZ9dRtaDS1GYmLv6dXQoVj1iSQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejiedgieeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhu
+    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
+    ftrfgrthhtvghrnhepudekteeuudehtdelteevgfduvddvjefhfedulefgudevgeeghefg
+    udefiedtveetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
+X-ME-Proxy: <xmx:dTPOYlh8xQdrbTbwF8r0P6tc-3OQKsYjCaPEguiEhwx_HKmYNYiGpg>
+    <xmx:dTPOYtDFMOp49n8MVaW6LXjlDXyiPT6HUVbTKkY8NY4H575jC_oCJg>
+    <xmx:dTPOYuK1I8UYeSsIjffVEX7Vlr5Rtya0JVT5MOtJ1ukNuPaGKIxu9A>
+    <xmx:dTPOYlxPedFg1ivR03Vv8rnf11lTJGPypnuirnUZeouQNUEjUd5S7Q>
+Feedback-ID: i0ad843c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 12 Jul 2022 22:52:36 -0400 (EDT)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Ahern <dsahern@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andre Przywara <andre.przywara@arm.com>
+Cc:     Samuel Holland <samuel@sholland.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 1/6] dt-bindings: pinctrl: Add compatible for Allwinner D1
+Date:   Tue, 12 Jul 2022 21:52:28 -0500
+Message-Id: <20220713025233.27248-2-samuel@sholland.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220713025233.27248-1-samuel@sholland.org>
+References: <20220713025233.27248-1-samuel@sholland.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jul 5, 2022 at 2:11 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Saravana,
->
-> On Wed, Jun 1, 2022 at 2:44 PM Saravana Kannan <saravanak@google.com> wrote:
-> > Now that fw_devlink=on by default and fw_devlink supports interrupt
-> > properties, the execution will never get to the point where
-> > driver_deferred_probe_check_state() is called before the supplier has
-> > probed successfully or before deferred probe timeout has expired.
-> >
-> > So, delete the call and replace it with -ENODEV.
-> >
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
->
-> Thanks for your patch, which is now commit f8217275b57aa48d ("net:
-> mdio: Delete usage of driver_deferred_probe_check_state()") in
-> driver-core/driver-core-next.
->
-> Seems like I missed something when providing my T-b for this series,
-> sorry for that.
+D1 contains a pin controller similar to previous SoCs, but with some
+register layout changes. It includes 6 interrupt-capable pin banks.
 
-No worries. Appreciate any testing help.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+---
 
->
-> arch/arm/boot/dts/r8a7791-koelsch.dts has:
->
->     &ether {
->             pinctrl-0 = <&ether_pins>, <&phy1_pins>;
->             pinctrl-names = "default";
->
->             phy-handle = <&phy1>;
->             renesas,ether-link-active-low;
->             status = "okay";
->
->             phy1: ethernet-phy@1 {
->                     compatible = "ethernet-phy-id0022.1537",
->                                  "ethernet-phy-ieee802.3-c22";
->                     reg = <1>;
->                     interrupt-parent = <&irqc0>;
->                     interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
->                     micrel,led-mode = <1>;
->                     reset-gpios = <&gpio5 22 GPIO_ACTIVE_LOW>;
->             };
->     };
->
-> Despite the interrupts property, &ether is now probed before irqc0
-> (interrupt-controller@e61c0000 in arch/arm/boot/dts/r8a7791.dtsi),
-> causing the PHY not finding its interrupt, and resorting to polling:
+Changes in v2:
+ - Drop D1s compatible for now, due to ongoing discussion
 
-I'd still expect the device link to have been created properly for
-this phy device. Could you enable the logging in device_link_add() to
-check the link is created between the phy and the IRQ?
+ .../pinctrl/allwinner,sun4i-a10-pinctrl.yaml        | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-My guess is that this probably has something to do with phys being
-attached to drivers differently.
+diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
+index 6bfa46073791..d19d65c870aa 100644
+--- a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
+@@ -46,6 +46,7 @@ properties:
+       - allwinner,sun8i-v3s-pinctrl
+       - allwinner,sun9i-a80-pinctrl
+       - allwinner,sun9i-a80-r-pinctrl
++      - allwinner,sun20i-d1-pinctrl
+       - allwinner,sun50i-a64-pinctrl
+       - allwinner,sun50i-a64-r-pinctrl
+       - allwinner,sun50i-a100-pinctrl
+@@ -178,6 +179,18 @@ allOf:
+           minItems: 7
+           maxItems: 7
+ 
++  - if:
++      properties:
++        compatible:
++          enum:
++            - allwinner,sun20i-d1-pinctrl
++
++    then:
++      properties:
++        interrupts:
++          minItems: 6
++          maxItems: 6
++
+   - if:
+       properties:
+         compatible:
+-- 
+2.35.1
 
->
->     -Micrel KSZ8041RNLI ee700000.ethernet-ffffffff:01: attached PHY
-> driver (mii_bus:phy_addr=ee700000.ethernet-ffffffff:01, irq=185)
->     +Micrel KSZ8041RNLI ee700000.ethernet-ffffffff:01: attached PHY
-> driver (mii_bus:phy_addr=ee700000.ethernet-ffffffff:01, irq=POLL)
-
-Can you drop a WARN() where this is printed to get the stack trace to
-check my hypothesis?
-
--Saravana
-
->
-> Reverting this commit, and commit 9cbffc7a59561be9 ("driver core:
-> Delete driver_deferred_probe_check_state()") fixes that.
->
-> > --- a/drivers/net/mdio/fwnode_mdio.c
-> > +++ b/drivers/net/mdio/fwnode_mdio.c
-> > @@ -47,9 +47,7 @@ int fwnode_mdiobus_phy_device_register(struct mii_bus *mdio,
-> >          * just fall back to poll mode
-> >          */
-> >         if (rc == -EPROBE_DEFER)
-> > -               rc = driver_deferred_probe_check_state(&phy->mdio.dev);
-> > -       if (rc == -EPROBE_DEFER)
-> > -               return rc;
-> > +               rc = -ENODEV;
-> >
-> >         if (rc > 0) {
-> >                 phy->irq = rc;
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
