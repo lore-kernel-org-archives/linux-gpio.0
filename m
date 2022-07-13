@@ -2,100 +2,117 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 320FDC433EF
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Jul 2022 13:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEFC5C43334
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Jul 2022 13:35:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236194AbiGMNPK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Jul 2022 09:15:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37704 "EHLO
+        id S232055AbiGMNfD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Jul 2022 09:35:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236162AbiGMNPB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jul 2022 09:15:01 -0400
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FB7D1277E;
-        Wed, 13 Jul 2022 06:14:58 -0700 (PDT)
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26DBI9aM011643;
-        Wed, 13 Jul 2022 09:13:40 -0400
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3h73h6vajc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Jul 2022 09:13:39 -0400
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 26DDDc03053480
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Jul 2022 09:13:38 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Wed, 13 Jul 2022 09:13:38 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Wed, 13 Jul 2022 09:13:37 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Wed, 13 Jul 2022 09:13:37 -0400
-Received: from nsa.ad.analog.com ([10.44.3.56])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 26DDDI1W004951;
-        Wed, 13 Jul 2022 09:13:34 -0400
-From:   =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>
-To:     <linux-acpi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>
-CC:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Linus Walleij" <linus.walleij@linaro.org>
-Subject: [PATCH 3/4] gpiolib: acpi: support bias pull disable
-Date:   Wed, 13 Jul 2022 15:14:20 +0200
-Message-ID: <20220713131421.1527179-4-nuno.sa@analog.com>
-X-Mailer: git-send-email 2.37.0
-In-Reply-To: <20220713131421.1527179-1-nuno.sa@analog.com>
-References: <20220713131421.1527179-1-nuno.sa@analog.com>
+        with ESMTP id S233976AbiGMNfA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jul 2022 09:35:00 -0400
+Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DF75DF35;
+        Wed, 13 Jul 2022 06:34:58 -0700 (PDT)
+Received: by mail-qk1-x72c.google.com with SMTP id o26so8577774qkl.6;
+        Wed, 13 Jul 2022 06:34:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0zNovvnxCNltl7nyjpskv1bB6kdfvO0KEYNKQKCXFpg=;
+        b=BRJedK9Dm0ysBh2ysd8qA02jK/r4tE7oohouS0ATC1cZ54BWUlj7IbOtdUBSyUKhRZ
+         ZP3a0P3VMwNVCkuRG+sSNo012rQndOMPw79APKXM+aKY9XEOs3tdwis3lB8p9gELuC2N
+         J90a51xczKganDu0vuoADeholu7dvtPR9VxvRqQEcuDQLu58WyS1sGvb4DBRn25xJDmp
+         GU+/jBq5/F7bJVhTZa6oPew3PaK2mfX7Lmx5EUYI1jVFjh4PwPFMnUHO3ptKLpC/Kwve
+         gNxGOZLMROO4iHGx1117HIvj53pycNxnXy/wm3rR2T95kcYKhf7hq468QoGFeZL8eZ+k
+         eCXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0zNovvnxCNltl7nyjpskv1bB6kdfvO0KEYNKQKCXFpg=;
+        b=wqgICEEyH2iROvmWUhVlLCynPucFPrqlP46v2T7mbZ/OFaGUghTSW04FH/0puZOIbL
+         Ew7VJ2YZZFRRI6oFhSrnZ+HNu79AjYqC9Qb2dJ5Kqw9yXHd8Kb93lAFH9uWzwEUl5+O8
+         UFanr/1W8IdIdB7HnsGUUArSo1C40AzBJRQVrjCzMxWAInGaVj+12U0jKgf3aox/6Jgn
+         Ll/DWzSyJWJ7i4aXZdMwZXb8nDtDrcveoLa+gs6r0j9vDYarz+A3uf9MFBfxZxuWBwCt
+         7UdTKDXHU+gp6T7aWONjHEZ/PUAZ/39VRBL4a6qs2AVpgpsRAT5BwgsjsEFx001vih6a
+         j+Rg==
+X-Gm-Message-State: AJIora9aP7Ggy3lyH8F3jdDvuIIE7BgM9g4XusblzO2zIqMYgD06PL2d
+        0e4doLqrkUEChOdPm6L7NljVWDAvNgU2T/5eHoZAkxAvfQ2zwA==
+X-Google-Smtp-Source: AGRyM1v4o77MegwM8Z9AGbWOV3bLqRh6kQdITYwW4l4rpbhrZdNBHCS2h7p+Jxbq3BicOS5iwaZfxDSTxZNHQIBTcy0=
+X-Received: by 2002:a05:620a:1a2a:b0:6b5:93bd:b662 with SMTP id
+ bk42-20020a05620a1a2a00b006b593bdb662mr2364604qkb.522.1657719297138; Wed, 13
+ Jul 2022 06:34:57 -0700 (PDT)
 MIME-Version: 1.0
+References: <20220624195112.894916-1-robimarko@gmail.com> <87edyq1ujr.wl-maz@kernel.org>
+ <20220712124445.GC21746@workstation> <87czea1i2f.wl-maz@kernel.org>
+ <CAOX2RU5RX+H=omuKGye2fBy9dOFmfC9HC_3pekeGMxDJuReCUw@mail.gmail.com>
+ <d8912a0d811b5eb924b8c4136b099f72@kernel.org> <CAOX2RU4MpyEQ0RtcrZ07VXRbB+SWWU=1zWfYUXhQFtvh=MCiDw@mail.gmail.com>
+ <874jzl17lc.wl-maz@kernel.org>
+In-Reply-To: <874jzl17lc.wl-maz@kernel.org>
+From:   Robert Marko <robimarko@gmail.com>
+Date:   Wed, 13 Jul 2022 15:34:46 +0200
+Message-ID: <CAOX2RU5k0UJiJ7o3ULjLVLUO=cchT_Azdvzs5FKdjXLX1_muOQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: spmi-gpio: make the irqchip immutable
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: sFTe8ZsVX8j3FsT5MKPH7JMF5djxcTIJ
-X-Proofpoint-ORIG-GUID: sFTe8ZsVX8j3FsT5MKPH7JMF5djxcTIJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-13_02,2022-07-13_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- mlxlogscore=853 lowpriorityscore=0 phishscore=0 mlxscore=0 suspectscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 clxscore=1015 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
- definitions=main-2207130054
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On top of looking at PULL_UP and PULL_DOWN flags, also look at
-PULL_DISABLE and set the appropriate GPIO flag. The GPIO core will then
-pass down this to controllers that support it.
+On Wed, 13 Jul 2022 at 15:10, Marc Zyngier <maz@kernel.org> wrote:
+>
+> On Wed, 13 Jul 2022 13:33:32 +0100,
+> Robert Marko <robimarko@gmail.com> wrote:
+> >
+> > On Wed, 13 Jul 2022 at 13:47, Marc Zyngier <maz@kernel.org> wrote:
+> > >
+> > > On 2022-07-13 12:08, Robert Marko wrote:
+> > > > I will look at IRQ GPIO docs, but in this case, then we have more
+> > > > conversions that
+> > > > are not correct.
+> > >
+> > > Then please point them out.
+> >
+> > Oh, now I get the issue, I was misunderstanding it completely.
+> > gpiochip_enable_irq and gpiochip_disable_irq are not being called
+> > at all.
+> >
+> > However, I dont see them being called before the conversion as well.
+> > I am not really familiar with the PMIC IRQ-s, looked like an easy conversion
+> > to get rid of the warning.
+>
+> They definitely were. Look at how gpiochip_add_data() eventually ends
+> up calling gpiochip_set_irq_hooks((), which hijacks the irq_chip
+> function pointers to insert the calls to these helpers.
 
-Signed-off-by: Nuno Sá <nuno.sa@analog.com>
----
- drivers/gpio/gpiolib-acpi.c | 3 +++
- 1 file changed, 3 insertions(+)
+Well, that is the thing, since irqchip->irq_enable and
+irqchip->irq_disable were never
+populated in the SPMI GPIO driver, gpiochip_set_irq_hooks then does
+not insert them.
+During runtime, gpiochip_irq_enable and gpiochip_irq_disable are never
+used even before
+the conversion, that is what I am trying to convey.
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index c2523ac26fac..9be1376f9a62 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -687,6 +687,9 @@ int acpi_gpio_update_gpiod_lookup_flags(unsigned long *lookupflags,
- 	case ACPI_PIN_CONFIG_PULLDOWN:
- 		*lookupflags |= GPIO_PULL_DOWN;
- 		break;
-+	case ACPI_PIN_CONFIG_NOPULL:
-+		*lookupflags |= GPIO_PULL_DISABLE;
-+		break;
- 	default:
- 		break;
- 	}
--- 
-2.37.0
+>
+> This is what this conversion process is all about, and you absolutely
+> need to understand that code before blindly changing drivers to squash
+> a run-time warning.
 
+Yeah, I agree, hopefully, I am not annoying.
+
+Regards,
+Robert
+>
+>         M.
+>
+> --
+> Without deviation from the norm, progress is not possible.
