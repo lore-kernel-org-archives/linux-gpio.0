@@ -2,162 +2,95 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 417D2C43334
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 21:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB9EC43334
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 22:02:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235106AbiGRVcr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jul 2022 17:32:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54244 "EHLO
+        id S236416AbiGRWCt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jul 2022 18:02:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235352AbiGRVcZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 17:32:25 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A74431DE3;
-        Mon, 18 Jul 2022 14:32:22 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id m8so3661718edd.9;
-        Mon, 18 Jul 2022 14:32:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cZkDfDNbFMdK5ahboEdA9lOTIKE9tZIP2dVStYZIlZk=;
-        b=IReFK6sSfSt/KnqfJOvKAq9nwFRsAtyRlfh7HSB4zsSFUtv4+lGKnGhm3ahufxTGr1
-         bHw73MThrzP59sXlr/MeZqT5wnE/OkeKb9CuJXKMo/U04xutLWSArz1CAIG5w+/SQocJ
-         PCjs1+5T0J6seKUIkD3gxgMTmrZDIRSQG4Fg7+TFApptGpAlZTjWsBRO+1cZ/f3B7C3/
-         7zpNcWNGr8ly5+8ahx9Wy6AnZVIAK0CaEBqt6TIAJ7Ttc5A3UogdziimGgjLUpP78kQs
-         sbrN1DJrHiPStug+p3UCmPkoyoBwcad9vTvs5feKTMJhEgYpVMEHAeU2yInpEzm//VIQ
-         VT4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cZkDfDNbFMdK5ahboEdA9lOTIKE9tZIP2dVStYZIlZk=;
-        b=yQ6IFTMp5mOBv7MrDCmtykuXnQ+ggocvArXzqaEdvPVx1BUpVq525DvX04RG+FFPHG
-         rzlhNMDp+Zw+9VCUdVmL4YSJce5B5knRKfGt3SN7nRQse8L6qXOK45nVqya+G2xFsYF4
-         2Ho59JwEbtzq7ZJC0MICIMQxu3AXAMxprBB0KEKsCF1jNAC3ssD6ksDI2qfswUpIGPKI
-         t5+T6o+wNEGnz0CvcJX/nB2PqaveXZb6wnWODWCTj0Nm/Pb6MY7lb4zfAU4gZXzDYNrX
-         9rtOQnpZa53FTqfqq9x3Gnh9VDCZl0rnQUQHtsP9HGXnMrVc2e1ciLbdptStQSoDDnpU
-         DgOA==
-X-Gm-Message-State: AJIora9DHX/RPXEYB5i5EsEpCjh+uvKeYoDNasSrgQ7coST0cqO+nRIV
-        vK2zKpUXvcSmrt3YJfeJXccfqxkiQ97TEolmtA6ZU9EdCD/hYA==
-X-Google-Smtp-Source: AGRyM1vZb2rDb+9iuNv2MQVOYd355haW+MpGrVtge67yoRFR8/7nimITKfX+LvrOp+C/e92ONLA+XMKARktsEO6wv1w=
-X-Received: by 2002:a05:6402:1658:b0:43a:91cd:2ffb with SMTP id
- s24-20020a056402165800b0043a91cd2ffbmr38458308edx.277.1658179940991; Mon, 18
- Jul 2022 14:32:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1657907849.git.william.gray@linaro.org> <e0f9ff79a4229cf0ccce4844745453dae633a1aa.1657907849.git.william.gray@linaro.org>
-In-Reply-To: <e0f9ff79a4229cf0ccce4844745453dae633a1aa.1657907849.git.william.gray@linaro.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 18 Jul 2022 23:31:44 +0200
-Message-ID: <CAHp75VeQkpr9Ww-C+1w13BiLSuCY=FMMtjjAdVCq0a5z1bkSVA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/6] gpio: i8255: Introduce the Intel 8255 interface
- library module
-To:     William Breathitt Gray <william.gray@linaro.org>
+        with ESMTP id S233142AbiGRWCs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 18:02:48 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D2D230578;
+        Mon, 18 Jul 2022 15:02:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1658181768; x=1689717768;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Tk3QUUUCzjad0MTjVI5kmvuwI7cTiP26RLaWwNKMiwc=;
+  b=hc8m6l8bnSSaqSFNbQEuUXHM0gv8kCOdYrbMzMgoJPHpKDeXsEMesDxS
+   A5gYfgBqoyzAq5pHmtzzSYgNy0PDBK0sFS4pPb/+T987Z3MfMUpRg3GjR
+   kEEfZmDiCw3ut3JF4LNswlCEuLgLxL5krHEPDG3yzJjp3dOnVbjQWltu2
+   tbhz9ElilGmPIQQQRw85sGNXs9gF++DCLx7G9BIcxmGiT+FU0hOtzMU3r
+   Er26ejogvv2SGf7KynuqlqHNZn72jNQNfg7LOEemHiolJRklI0xl/d7n3
+   WBM3hhX9tZJn3e1sfDx6zJz32yeZ84+tRhpAOyD4AMBzDYgc9OBOk57Bu
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10412"; a="372636798"
+X-IronPort-AV: E=Sophos;i="5.92,282,1650956400"; 
+   d="scan'208";a="372636798"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2022 15:02:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,282,1650956400"; 
+   d="scan'208";a="665174930"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga004.fm.intel.com with ESMTP; 18 Jul 2022 15:02:46 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 1549E10E; Tue, 19 Jul 2022 01:02:54 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fred Eckert <Frede@cmslaser.com>,
-        John Hentges <jhentges@accesio.com>,
-        Jay Dolan <jay.dolan@accesio.com>
-Content-Type: text/plain; charset="UTF-8"
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v1 1/3] gpio: 74xx-mmio: Make use of device properties
+Date:   Tue, 19 Jul 2022 01:02:50 +0300
+Message-Id: <20220718220252.16923-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jul 18, 2022 at 10:56 PM William Breathitt Gray
-<william.gray@linaro.org> wrote:
->
-> Exposes consumer library functions providing support for interfaces
-> compatible with the venerable Intel 8255 Programmable Peripheral
-> Interface (PPI).
->
-> The Intel 8255 PPI first appeared in the early 1970s, initially for the
-> Intel 8080 and later appearing in the original IBM-PC. The popularity of
-> the original Intel 8255 chip led to many subsequent variants and clones
-> of the interface in various chips and integrated circuits. Although
-> still popular, interfaces compatible with the Intel 8255 PPI are
-> nowdays typically found embedded in larger VLSI processing chips and
-> FPGA components rather than as discrete ICs.
->
-> A CONFIG_GPIO_I8255 Kconfig option is introduced by this patch. Modules
-> wanting access to these i8255 library functions should select this
-> Kconfig option, and import the I8255 symbol namespace.
+Convert the module to be property provider agnostic and allow
+it to be used on non-OF platforms.
 
-Thanks for an update, my comments below.
+Add mod_devicetable.h include.
 
-...
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-74xx-mmio.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> +config GPIO_I8255
-> +       tristate
-> +       help
-> +         Enables support for the i8255 interface library functions. The i8255
-> +         interface library provides functions to facilitate communication with
-> +         interfaces compatible with the venerable Intel 8255 Programmable
-> +         Peripheral Interface (PPI). The Intel 8255 PPI chip was first released
-> +         in the early 1970s but compatible interfaces are nowadays typically
-> +         found embedded in larger VLSI processing chips and FPGA components.
-
-+ "If built as a module its name will be ..." or similar sentence
-would be good to add.
-
-...
-
-> +       case I8255_PORTC:
-> +               /* Port C can be configured by nibble */
-> +               if (port_offset > 3)
-
-More naturally looks >= 4 to show the beginning offset number for the UPPER.
-
-> +                       return I8255_CONTROL_PORTC_UPPER_DIRECTION;
-> +               return I8255_CONTROL_PORTC_LOWER_DIRECTION;
-
-...
-
-> +       out_state = ioread8(&ppi[group].port[ppi_port]);
-> +       out_state &= ~io_mask;
-> +       out_state |= bit_mask;
-
-Usual pattern is
-
-  out_state = (out_state & ~mask) | (bits & mask);
-
-(and we call them mask and value or bits)
-
-> +
-
-No need for this blank line.
-
-> +       iowrite8(out_state, &ppi[group].port[ppi_port]);
-
-...
-
-> +               bit_mask = bitmap_get_value8(bits, offset) & gpio_mask;
-> +               io_port = offset / 8;
-
-Exactly why I recommended reconsidering the above pattern, you won't
-need to do ' & mask' in the caller(s).
-
-> +               i8255_set_port(ppi, state, io_port, gpio_mask, bit_mask);
-
-...
-
-> + * Initializes the @state of each Intel 8255 Programmable Peripheral Interface
-> + * group for use in i8255 library functions.
-
-I'm not sure about terminology. What's 'group'? We have a very well
-established term 'bank' isn't it what you meant here by 'group'?
-
-...
-
-> +int i8255_get(const struct i8255 __iomem *ppi, unsigned long offset);
-
-I'm not sure what const with __iomem gives us? The purpose of that is?.
-And if it's about the content of the register, then const is a lie.
-
-Ditto for the rest of the similar cases.
-
-
+diff --git a/drivers/gpio/gpio-74xx-mmio.c b/drivers/gpio/gpio-74xx-mmio.c
+index 173e06758e6c..5e3c948ddb73 100644
+--- a/drivers/gpio/gpio-74xx-mmio.c
++++ b/drivers/gpio/gpio-74xx-mmio.c
+@@ -6,10 +6,11 @@
+  */
+ 
+ #include <linux/err.h>
+-#include <linux/module.h>
+-#include <linux/of_device.h>
+ #include <linux/gpio/driver.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/property.h>
+ 
+ #define MMIO_74XX_DIR_IN	(0 << 8)
+ #define MMIO_74XX_DIR_OUT	(1 << 8)
+@@ -112,7 +113,7 @@ static int mmio_74xx_gpio_probe(struct platform_device *pdev)
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+-	priv->flags = (uintptr_t)of_device_get_match_data(&pdev->dev);
++	priv->flags = (uintptr_t)device_get_match_data(&pdev->dev);
+ 
+ 	dat = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(dat))
 -- 
-With Best Regards,
-Andy Shevchenko
+2.35.1
+
