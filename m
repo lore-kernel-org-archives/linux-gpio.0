@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B05CCA479
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 22:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8A0C43334
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 22:02:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235551AbiGRWCu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jul 2022 18:02:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49190 "EHLO
+        id S234531AbiGRWC6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jul 2022 18:02:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234877AbiGRWCt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 18:02:49 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3CAE30F41;
-        Mon, 18 Jul 2022 15:02:48 -0700 (PDT)
+        with ESMTP id S233533AbiGRWC5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 18:02:57 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 691A83123A;
+        Mon, 18 Jul 2022 15:02:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658181768; x=1689717768;
+  t=1658181777; x=1689717777;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=4f4sqt41mbrBJQ5YZ8lAHwW92PK8OUBMApM+zNy2HDY=;
-  b=hM9Z/qy6RaT5oicalFdsPZGqVQhvImEtYBBFzdc8KyjoqQnU97+H9NPW
-   aKEDHahNrNc4es5hylJQnt/YKFECmQjgkq9KO6O3bDEsJan/QHsU+yHPO
-   W+NguDic4qsk3d8c4V80gXaJ9U85TpxlzZ42sIQYVOTEQHzP5Wsw1U2eQ
-   xQjaG4G3VKw2QywvIrSi8INW9l2HvnyG+sBwUFrDs8ShNfovndZzK9Pgw
-   u6bQQfmxTBE5KRUnObJihXaztia9GlixP02IUZiV1nrRX+1AFb9p85EMF
-   wBIAEtzivdnTKC4OSKHDBniXWIHJ+Q6t/BqVwzaxwDhfpKLAenmQOu8Gu
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10412"; a="273161745"
+  bh=YzoNkDQpsCe1jaKRzKqoEsfnVBE89io/l2jisd5Aa9Q=;
+  b=P8w5hRM8Q9MoTs/tNN9AdmJEjSQ87CBinQWUGe2JQN7wQ0AEr+mvRt1C
+   KxnA9TsU6Hgz+t/jFIQ2mprwyevnRF03wl/8f2p7tTZ0foJhsCRf6p+4+
+   4e+Fxmk2n7ZNl03XbM7xRjEQFE7yqIn+a9QRJ+YvCSUqHHcaYMB50Wswd
+   /6oYPaHKA9E4c1HtQ2Dbxsyd5vZvvG4KXKJ1Lr2DafPkSZM4wCAV266Ja
+   0P2yUy37yBcynGSVe8mdShniuWWbbOcXTmY3igZFKaXMDXsn0DdZp5gtY
+   8qONBw7Dhs+8P1pnNzHekU2qmbAA/F6kTfkeNzQSveyU/cgdIt2J2yVi4
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10412"; a="285087798"
 X-IronPort-AV: E=Sophos;i="5.92,282,1650956400"; 
-   d="scan'208";a="273161745"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2022 15:02:48 -0700
+   d="scan'208";a="285087798"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2022 15:02:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.92,282,1650956400"; 
-   d="scan'208";a="601361127"
+   d="scan'208";a="597413626"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 18 Jul 2022 15:02:46 -0700
+  by orsmga002.jf.intel.com with ESMTP; 18 Jul 2022 15:02:46 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 28FC0195; Tue, 19 Jul 2022 01:02:55 +0300 (EEST)
+        id 24118F1; Tue, 19 Jul 2022 01:02:55 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v1 3/3] gpio: 74xx-mmio: use bits.h macros for all masks
-Date:   Tue, 19 Jul 2022 01:02:52 +0300
-Message-Id: <20220718220252.16923-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/3] gpio: 74xx-mmio: Check MMIO_74XX_DIR_IN flag in mmio_74xx_dir_in()
+Date:   Tue, 19 Jul 2022 01:02:51 +0300
+Message-Id: <20220718220252.16923-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220718220252.16923-1-andriy.shevchenko@linux.intel.com>
 References: <20220718220252.16923-1-andriy.shevchenko@linux.intel.com>
@@ -56,34 +56,33 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Make use of the GENMASK() (far less error-prone, far more concise).
+It's logically better to check the IN in ->direction_input() and
+_OUT in ->direction_output().
+
+While at it, replace ternary with plain if-conditional for the sake
+of consistency with mmio_74xx_dir_out().
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-74xx-mmio.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-74xx-mmio.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-74xx-mmio.c b/drivers/gpio/gpio-74xx-mmio.c
-index b2cc8a55c257..cd399898ed12 100644
+index 5e3c948ddb73..b2cc8a55c257 100644
 --- a/drivers/gpio/gpio-74xx-mmio.c
 +++ b/drivers/gpio/gpio-74xx-mmio.c
-@@ -5,6 +5,7 @@
-  *  Copyright (C) 2014 Alexander Shiyan <shc_work@mail.ru>
-  */
+@@ -88,7 +88,10 @@ static int mmio_74xx_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	struct mmio_74xx_gpio_priv *priv = gpiochip_get_data(gc);
  
-+#include <linux/bits.h>
- #include <linux/err.h>
- #include <linux/gpio/driver.h>
- #include <linux/mod_devicetable.h>
-@@ -14,7 +15,7 @@
+-	return (priv->flags & MMIO_74XX_DIR_OUT) ? -ENOTSUPP : 0;
++	if (priv->flags & MMIO_74XX_DIR_IN)
++		return 0;
++
++	return -ENOTSUPP;
+ }
  
- #define MMIO_74XX_DIR_IN	(0 << 8)
- #define MMIO_74XX_DIR_OUT	(1 << 8)
--#define MMIO_74XX_BIT_CNT(x)	((x) & 0xff)
-+#define MMIO_74XX_BIT_CNT(x)	((x) & GENMASK(7, 0))
- 
- struct mmio_74xx_gpio_priv {
- 	struct gpio_chip	gc;
+ static int mmio_74xx_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
 -- 
 2.35.1
 
