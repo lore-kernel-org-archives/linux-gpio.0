@@ -2,87 +2,133 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8A0C43334
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 22:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C12C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 22:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234531AbiGRWC6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jul 2022 18:02:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49358 "EHLO
+        id S230317AbiGRWGg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jul 2022 18:06:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233533AbiGRWC5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 18:02:57 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 691A83123A;
-        Mon, 18 Jul 2022 15:02:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658181777; x=1689717777;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=YzoNkDQpsCe1jaKRzKqoEsfnVBE89io/l2jisd5Aa9Q=;
-  b=P8w5hRM8Q9MoTs/tNN9AdmJEjSQ87CBinQWUGe2JQN7wQ0AEr+mvRt1C
-   KxnA9TsU6Hgz+t/jFIQ2mprwyevnRF03wl/8f2p7tTZ0foJhsCRf6p+4+
-   4e+Fxmk2n7ZNl03XbM7xRjEQFE7yqIn+a9QRJ+YvCSUqHHcaYMB50Wswd
-   /6oYPaHKA9E4c1HtQ2Dbxsyd5vZvvG4KXKJ1Lr2DafPkSZM4wCAV266Ja
-   0P2yUy37yBcynGSVe8mdShniuWWbbOcXTmY3igZFKaXMDXsn0DdZp5gtY
-   8qONBw7Dhs+8P1pnNzHekU2qmbAA/F6kTfkeNzQSveyU/cgdIt2J2yVi4
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10412"; a="285087798"
-X-IronPort-AV: E=Sophos;i="5.92,282,1650956400"; 
-   d="scan'208";a="285087798"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2022 15:02:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,282,1650956400"; 
-   d="scan'208";a="597413626"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 18 Jul 2022 15:02:46 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 24118F1; Tue, 19 Jul 2022 01:02:55 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v1 2/3] gpio: 74xx-mmio: Check MMIO_74XX_DIR_IN flag in mmio_74xx_dir_in()
-Date:   Tue, 19 Jul 2022 01:02:51 +0300
-Message-Id: <20220718220252.16923-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220718220252.16923-1-andriy.shevchenko@linux.intel.com>
-References: <20220718220252.16923-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S235717AbiGRWGg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 18:06:36 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B12E4313B4
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Jul 2022 15:06:33 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id tk8so12477552ejc.7
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Jul 2022 15:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=s8XpAnbXEflWvni+yl25gWJnxrEC+HWpP/MJWFr8nI4=;
+        b=ivfnkdfH7ppiKCWvoBqw6RjjXX2zvpTM0RYL/CeZXPRLIMHL96M+DQCaqjvUA6O2nx
+         Lwh6dOGo3lYIcbFm43wy9G5oSmop5/xYwdUswW2s2gAJg5b0tRCHv+pO68RrUFWWeeJi
+         Mvl4X0B8CPurk6WHtk9GXtJm5zhP2P83sjEigY5x2v9b2A8CCr8K8goBa49Hh4/6VWjx
+         0msJ4JQrWDQEnOFBjeLCYUT1JFPXSv3K7499h6Pzg959J9LFHEgn1awrSKd9WBj0al2U
+         A8Qm0DPCk9xkU6i+t1gtPIyz18DKS6xjO85WM6BzARIJZEsKrO4EbZtwe4jMhRlI6vJi
+         YFPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=s8XpAnbXEflWvni+yl25gWJnxrEC+HWpP/MJWFr8nI4=;
+        b=Q7BXM61GnslX+ufqOtfQi9J5GV0NOcbuMB0vz+drwcqKwLrrsC4kn2Hr3zHscru48c
+         GnCtdYH/DdIXASxtkTa3tl8hhN0pe2khmD7cJcyRjdFeL1BakxJh17KqSZ96BNUprxCG
+         e68ntpCcbi3/b6EyJvMM8Dt423QmE3bikq5txF1rPNyaNaJDB5CuFyBkpGrdHB6kR0m8
+         7Xg0FzcQcZJ6IeplHCZBdArCaUHi6lyuFE0/kzTnMZ8TjOzBCCL2XJN9gWJ4nI/wmqz/
+         Iek8veLicEc/Yy4Fmdjaz+qpAf+v0AgilNh0E9p+TWNfFyDIFC3PsYOKccCH9HqWbmCP
+         2RbQ==
+X-Gm-Message-State: AJIora8k6hP7dgYFaiZUAnRjkoLbad3NzhXNJozYga2kcJaikF5N1uUF
+        5FWmdqDKD6xYEf1PIhZJy6UauWgq/FSrwcELxdTuB7Qx9Mkb1P9r
+X-Google-Smtp-Source: AGRyM1vagiqZ2KpSXNK48oL6P8RLg8VwUNHY/RONt7Yn3PQGXDxRkm+cnvTTSYdgpQmAucrNe2QWv1LvwilivN5si+M=
+X-Received: by 2002:a17:907:75da:b0:72b:3ce0:2524 with SMTP id
+ jl26-20020a17090775da00b0072b3ce02524mr27749758ejc.394.1658181992217; Mon, 18
+ Jul 2022 15:06:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220718202205.ssf3k2dqkuvc6bgm@pengutronix.de>
+In-Reply-To: <20220718202205.ssf3k2dqkuvc6bgm@pengutronix.de>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 19 Jul 2022 00:05:55 +0200
+Message-ID: <CAHp75VeRfguxwjf3y3qWSQCwQF=cOFvt7iP0KVJMnGwdyPvUnA@mail.gmail.com>
+Subject: Re: Is a multiplexer using latches a gpio controller?
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-It's logically better to check the IN in ->direction_input() and
-_OUT in ->direction_output().
+On Mon, Jul 18, 2022 at 10:27 PM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> Hello,
+>
+> we have a customer board here that uses two 8 port latches to drive
+> LEDs. The setup looks as follows:
+>
+> CLK0 ----------------------.        ,--------.
+> CLK1 -------------------.  `--------|>    #0 |
+>                         |           |        |
+> IN0 -----------------+--|-----------|D0    Q0|-----|=E2=97=81
+> IN1 ---------------+-|--|-----------|D1    Q1|-----|=E2=97=81
+> IN2 -------------+-|-|--|-----------|D2    Q2|-----|=E2=97=81
+> IN3 -----------+-|-|-|--|-----------|D3    Q3|-----|=E2=97=81
+> IN4 ---------+-|-|-|-|--|-----------|D4    Q4|-----|=E2=97=81
+> IN5 -------+-|-|-|-|-|--|-----------|D5    Q5|-----|=E2=97=81
+> IN6 -----+-|-|-|-|-|-|--|-----------|D6    Q6|-----|=E2=97=81
+> IN7 ---+-|-|-|-|-|-|-|--|-----------|D7    Q7|-----|=E2=97=81
+>        | | | | | | | |  |           `--------'
+>        | | | | | | | |  |
+>        | | | | | | | |  |           ,--------.
+>        | | | | | | | |  `-----------|>    #1 |
+>        | | | | | | | |              |        |
+>        | | | | | | | `--------------|D0    Q0|-----|=E2=97=81
+>        | | | | | | `----------------|D1    Q1|-----|=E2=97=81
+>        | | | | | `------------------|D2    Q2|-----|=E2=97=81
+>        | | | | `--------------------|D3    Q3|-----|=E2=97=81
+>        | | | `----------------------|D4    Q4|-----|=E2=97=81
+>        | | `------------------------|D5    Q5|-----|=E2=97=81
+>        | `--------------------------|D6    Q6|-----|=E2=97=81
+>        `----------------------------|D7    Q7|-----|=E2=97=81
+>                                     `--------'
+>
+>
+> So to change output 2 of latch #1 you have to apply the changed level on
+> IN2, apply the previous level on the other inputs (to keep the other
+> outputs constant) and toggle CLK1 once.
+>
+> This way you can drive 16 LEDs (or in general outputs) using only 10
+> GPIOs. (And with a higher number of latches the proportion becomes a bit
+> more useful.)
+>
+> Actually this construct is a general GPO (no input :-) controller, and I
+> wonder if you would accept a driver that models it as a gpio controller.
+>
+> The dt binding could look as follows:
+>
+> latch-gpo {
+>         compatible =3D "latch-gpo";
+>         pinctrl-0 =3D <...>;
+>         pinctrl-names =3D <...>;
+>
+>         clk-gpios =3D /* CLK0 */ <...>, /* CLK1 */ <...>;
+>         data-gpios =3D /* IN0 */ <...>, /* IN1 */ <...>, ...;
+> };
+>
+> What do you think?
 
-While at it, replace ternary with plain if-conditional for the sake
-of consistency with mmio_74xx_dir_out().
+Bart, what happened to the [1]? Is it abandoned, forgotten?
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-74xx-mmio.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Uwe, isn't it what you need?
 
-diff --git a/drivers/gpio/gpio-74xx-mmio.c b/drivers/gpio/gpio-74xx-mmio.c
-index 5e3c948ddb73..b2cc8a55c257 100644
---- a/drivers/gpio/gpio-74xx-mmio.c
-+++ b/drivers/gpio/gpio-74xx-mmio.c
-@@ -88,7 +88,10 @@ static int mmio_74xx_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
- 	struct mmio_74xx_gpio_priv *priv = gpiochip_get_data(gc);
- 
--	return (priv->flags & MMIO_74XX_DIR_OUT) ? -ENOTSUPP : 0;
-+	if (priv->flags & MMIO_74XX_DIR_IN)
-+		return 0;
-+
-+	return -ENOTSUPP;
- }
- 
- static int mmio_74xx_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
--- 
-2.35.1
+[1]: https://lore.kernel.org/linux-gpio/20220205215918.8924-1-maukka@ext.ka=
+psi.fi/
 
+--=20
+With Best Regards,
+Andy Shevchenko
