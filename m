@@ -2,60 +2,56 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EF7C43334
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 14:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C85CCC43334
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 14:52:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233758AbiGRO1Q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jul 2022 10:27:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53096 "EHLO
+        id S230179AbiGROwA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jul 2022 10:52:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234848AbiGRO1P (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 10:27:15 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B757A1146F
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Jul 2022 07:27:13 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id o7so19602241lfq.9
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Jul 2022 07:27:13 -0700 (PDT)
+        with ESMTP id S234156AbiGROvz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 10:51:55 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 129581EAEE;
+        Mon, 18 Jul 2022 07:51:52 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id a5so17389907wrx.12;
+        Mon, 18 Jul 2022 07:51:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=7szMKoB+1l8P6x4W0Thx1sjinfdDfG1LQ+fBDOtwjms=;
-        b=mCttHvZm0t/pgbDFqurRyuFNRUwoJoZoJB1WaKvCpA3hIIEvo4ibJjmd5OR+0ex7PU
-         L9BfGChdNbv5m6Q6nAwI2MYp0rHF937G0iZO03zO0uTzjWpWmvzXbOz1X6ZvvQxgkmDQ
-         ty0CkEi+4eRojY6oqk/O+mvkxTAXfcutQFF0TE1N/YJSkuA8Nf8NXy8RYYlJs4MfS3e3
-         z0C8segewYgr/T6+dfWgacXyUpVvnUB7mx5ssYSIhNylvmDKyoLzMC1vvcMRqxw9M3pp
-         BZwHP/9GJzVRpP4KY6/9sGqUMURVVnYwNDbLsJCx1OfncvGLhAY4sTj39IQn1l5nPRsn
-         GGPg==
+        d=gmail.com; s=20210112;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :content-transfer-encoding:user-agent:mime-version;
+        bh=Zwyzja49jTBt5v01ZmoYlLErXPaXS1ddpKN1QWHfErY=;
+        b=X8R5n11Ajs6cnyczw/D9MhsD5ziNbwIMfJESuWMeEpjGpWqW7E/TbA5uhDDbTZ3cZp
+         AZIOoC8IFjkkqvi7UzKzjim4Qc215+EmMOLe8J/JcBER3Zzbnp1G5rQeR8sHXI3rVtFH
+         pt+UJAd4ve5MXGi6579fLgs8a7WOfGHvFCr/Jf8eqx5fKvzbrn8xSWivKY+sP23LV+Zj
+         mh97p4XoaJGZ2lUS5Dm57RjOgkjOgpkgd9QruFWOm6ySADzbIb8m4JiMbEuTPo3zLPL7
+         EMKkJF5HlLlMkZ6ZJy4uBQhx6mBCJFl3gbGdgp3Kh4H0SgRZkIqdu1JKKbYPP/lPRE3d
+         H2ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=7szMKoB+1l8P6x4W0Thx1sjinfdDfG1LQ+fBDOtwjms=;
-        b=HvTzJQp1lQhYTyV6iqIqejff7aaw9IzDpHnBH888zeTk08/HraYMLh5cslXbcu37dA
-         4tshB/Zm1Xp5X60lV9OUs3j8V0f6gH3+gaXjAkAtvJON9dEF7ITNYb8+f+NPFarMBdt0
-         96KSUlhfw3/6D5tbidPdw5Atwf81YOhK3lzjgLFgp5RkiAQP7mEWbwk/ve5D7EBukz5D
-         MXmBcMrPdiOZfUTLq+CEqLGg4n8qVfsXN3fVsXnU6JYokpX9PWfPfyrHmKnwNTn9w1Ib
-         yT7COl4Qxrktuq2xtmuPKR/UKtVAsxrXKs2ZC22QT+1goOsXSBjVqhgG362m0BLm2EPO
-         gyrA==
-X-Gm-Message-State: AJIora94DAE0rC+lVQuPE+meZ5qaDDb+ECiXgg6Ob01Xe+KfMVSAz9YL
-        jWstHbifs0u4iNkTSc1kAtEOVg==
-X-Google-Smtp-Source: AGRyM1vlnLN6Wi63Bi3QU8Ld+M+Ob+/YIrcu+eYaAmqRKohzIsuVp4yYeCgJ6hVbu3COrCdX4CTEVg==
-X-Received: by 2002:a05:6512:304a:b0:489:d7eb:82c7 with SMTP id b10-20020a056512304a00b00489d7eb82c7mr15625955lfb.314.1658154432074;
-        Mon, 18 Jul 2022 07:27:12 -0700 (PDT)
-Received: from [192.168.115.193] (89-162-31-138.fiber.signal.no. [89.162.31.138])
-        by smtp.gmail.com with ESMTPSA id z8-20020a0565120c0800b0047e789b9700sm2612607lfu.118.2022.07.18.07.27.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Jul 2022 07:27:11 -0700 (PDT)
-Message-ID: <1c73fe9e-81f8-3ecd-edd1-60e6ddd548f3@linaro.org>
-Date:   Mon, 18 Jul 2022 16:27:10 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:content-transfer-encoding:user-agent:mime-version;
+        bh=Zwyzja49jTBt5v01ZmoYlLErXPaXS1ddpKN1QWHfErY=;
+        b=o0RjKevkWXXTZLpRDRK7LZIijbf4USHA1tK5vuBRSAhiFxIKesT1/OR4UILJCv/sSl
+         tOvUlm/QGA+34NKERDlNkIwqc4cgUSKHu1R8CL4yUtAJkygFsFDzrOcYGP5lq20v6ZQg
+         g8C8sP1dqU9U7gxyLfIKsfpvO0XnATifK4bbDBuTdqsFKqi08JWqjqa1W5Dgt13B15bd
+         22oR++2+2G05FzdC4gWaePg9Xr3dNL9Et5OtaTtRNwZ3QF40H0sqAvCL0YPB8mOPdwnB
+         HLeKy3KH55+W33Ug7i2ZtaVAYpBhupd2lntm83tEJKkudL6+hAR2q5ltZKl7qWxpiGAL
+         H7eQ==
+X-Gm-Message-State: AJIora8D6+JAvTkSCmPc3IpuZ82Pqzg8O6uiugCxIO31rgQp3GrFiRVo
+        5RfOTcWo1YaI31t84PAPIXI=
+X-Google-Smtp-Source: AGRyM1v2WLaMnndYP3Zu5sgujhWallh4uHB0Gzu00kx1NdmLvZa4E7QpVt5I8lfA9wZU6Lt+YDfYBA==
+X-Received: by 2002:a5d:64ad:0:b0:21d:adb6:c266 with SMTP id m13-20020a5d64ad000000b0021dadb6c266mr24483156wrp.638.1658155910486;
+        Mon, 18 Jul 2022 07:51:50 -0700 (PDT)
+Received: from p200300f6ef036f005de6a4d0d791ed01.dip0.t-ipconnect.de (p200300f6ef036f005de6a4d0d791ed01.dip0.t-ipconnect.de. [2003:f6:ef03:6f00:5de6:a4d0:d791:ed01])
+        by smtp.gmail.com with ESMTPSA id r8-20020a5d52c8000000b0021d65e9d449sm11578377wrv.73.2022.07.18.07.51.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Jul 2022 07:51:50 -0700 (PDT)
+Message-ID: <82ed44d4cb90a79109755e1e0b6b2de267462cc7.camel@gmail.com>
 Subject: Re: [PATCH v2 05/10] dt-bindings: input: adp5588-keys: add bindings
-Content-Language: en-US
-To:     =?UTF-8?Q?Nuno_S=c3=a1?= <nuno.sa@analog.com>,
+From:   Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
         linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
         devicetree@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -65,139 +61,192 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Michael Hennerich <michael.hennerich@analog.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Date:   Mon, 18 Jul 2022 16:52:54 +0200
+In-Reply-To: <1c73fe9e-81f8-3ecd-edd1-60e6ddd548f3@linaro.org>
 References: <20220715125138.378632-1-nuno.sa@analog.com>
- <20220715125138.378632-6-nuno.sa@analog.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220715125138.378632-6-nuno.sa@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+         <20220715125138.378632-6-nuno.sa@analog.com>
+         <1c73fe9e-81f8-3ecd-edd1-60e6ddd548f3@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.3 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 15/07/2022 14:51, Nuno Sá wrote:
-> Add device tree bindings for the adp5588-keys driver.
-> 
-> Signed-off-by: Nuno Sá <nuno.sa@analog.com>
-> ---
->  .../bindings/input/adi,adp5588-keys.yaml      | 110 ++++++++++++++++++
->  MAINTAINERS                                   |   1 +
->  2 files changed, 111 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/adi,adp5588-keys.yaml
+On Mon, 2022-07-18 at 16:27 +0200, Krzysztof Kozlowski wrote:
+> On 15/07/2022 14:51, Nuno S=C3=A1 wrote:
+> > Add device tree bindings for the adp5588-keys driver.
+> >=20
+> > Signed-off-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+> > ---
+> > =C2=A0.../bindings/input/adi,adp5588-keys.yaml=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 110
+> > ++++++++++++++++++
+> > =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ |=C2=A0=C2=A0 1 +
+> > =C2=A02 files changed, 111 insertions(+)
+> > =C2=A0create mode 100644
+> > Documentation/devicetree/bindings/input/adi,adp5588-keys.yaml
+>=20
+> Thank you for your patch. There is something to discuss/improve.
+>=20
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/input/adi,adp5588-
+> > keys.yaml b/Documentation/devicetree/bindings/input/adi,adp5588-
+> > keys.yaml
+> > new file mode 100644
+> > index 000000000000..0d262b42150a
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/input/adi,adp5588-keys.yaml
+> > @@ -0,0 +1,110 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/input/adi,adp5588-keys.yaml#
+>=20
+> Is ADP5588 a multi-function device? If not, I propose to drop the
+> "keys"
+> suffix.
+>=20
 
-Thank you for your patch. There is something to discuss/improve.
+I can do that. I just kept the same naming of the c file...
 
-> 
-> diff --git a/Documentation/devicetree/bindings/input/adi,adp5588-keys.yaml b/Documentation/devicetree/bindings/input/adi,adp5588-keys.yaml
-> new file mode 100644
-> index 000000000000..0d262b42150a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/adi,adp5588-keys.yaml
-> @@ -0,0 +1,110 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/input/adi,adp5588-keys.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Analog Devices ADP5588 Keypad Controller
+> > +
+> > +maintainers:
+> > +=C2=A0 - Nuno S=C3=A1 <nuno.sa@analog.com>
+> > +
+> > +description: |
+> > +=C2=A0 Analog Devices Mobile I/O Expander and QWERTY Keypad Controller
+> > +=C2=A0
+> > https://www.analog.com/media/en/technical-documentation/data-sheets/ADP=
+5588.pdf
+> > +
+> > +allOf:
+> > +=C2=A0 - $ref: matrix-keymap.yaml#
+> > +=C2=A0 - $ref: input.yaml#
+> > +
+> > +properties:
+> > +=C2=A0 compatible:
+> > +=C2=A0=C2=A0=C2=A0 enum:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - adi,adp5588
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - adi,adp5587
+>=20
+> Bring some order, like alphabetical.
+>=20
 
-Is ADP5588 a multi-function device? If not, I propose to drop the "keys"
-suffix.
+ack...
 
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices ADP5588 Keypad Controller
-> +
-> +maintainers:
-> +  - Nuno Sá <nuno.sa@analog.com>
-> +
-> +description: |
-> +  Analog Devices Mobile I/O Expander and QWERTY Keypad Controller
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ADP5588.pdf
-> +
-> +allOf:
-> +  - $ref: matrix-keymap.yaml#
-> +  - $ref: input.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,adp5588
-> +      - adi,adp5587
+> > +
+> > +=C2=A0 reg:
+> > +=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > +
+> > +=C2=A0 vcc-supply:
+> > +=C2=A0=C2=A0=C2=A0 description: Supply Voltage Input
+> > +
+> > +=C2=A0 reset-gpios:
+> > +=C2=A0=C2=A0=C2=A0 description:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 If specified, it will be asserted durin=
+g driver probe. As
+> > the line is
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 active low, it should be marked GPIO_AC=
+TIVE_LOW.
+> > +=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > +
+> > +=C2=A0 interrupts:
+> > +=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > +
+> > +=C2=A0 gpio-controller:
+> > +=C2=A0=C2=A0=C2=A0 description:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This property applies if either keypad,=
+num-rows lower than 8
+> > or
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 keypad,num-columns lower than 10.
+> > +
+> > +=C2=A0 '#gpio-cells':
+> > +=C2=A0=C2=A0=C2=A0 const: 2
+> > +
+> > +=C2=A0 interrupt-controller:
+> > +=C2=A0=C2=A0=C2=A0 description:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This property applies if either keypad,=
+num-rows lower than 8
+> > or
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 keypad,num-columns lower than 10.
+> > +
+> > +=C2=A0 '#interrupt-cells':
+> > +=C2=A0=C2=A0=C2=A0 const: 2
+> > +
+> > +=C2=A0 adi,unlock-keys:
+> > +=C2=A0=C2=A0=C2=A0 description:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Specifies a maximum of 2 keys that can =
+be used to unlock the
+> > keypad.
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 If this property is set, the keyboard w=
+ill be locked and
+> > only unlocked
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 after these keys are pressed. If only o=
+ne key is set, a
+> > double click is
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 needed to unlock the keypad.
+> > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32-array
+> > +=C2=A0=C2=A0=C2=A0 minItems: 1
+> > +=C2=A0=C2=A0=C2=A0 maxItems: 2
+>=20
+> What are the values/units? keycodes? If so, maybe "adi,unlock-
+> keycodes"
+> and add limit on values (like linux,keycodes).
+>=20
 
-Bring some order, like alphabetical.
+They are just key numbers on the matrix. In the driver there's actually
+a check so that the value cannot be >=3D keypad,num-rows * keypad,num-
+columns. Not sure if there's a way to express this but I can surely
+improve the description.
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vcc-supply:
-> +    description: Supply Voltage Input
-> +
-> +  reset-gpios:
-> +    description:
-> +      If specified, it will be asserted during driver probe. As the line is
-> +      active low, it should be marked GPIO_ACTIVE_LOW.
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  gpio-controller:
-> +    description:
-> +      This property applies if either keypad,num-rows lower than 8 or
-> +      keypad,num-columns lower than 10.
-> +
-> +  '#gpio-cells':
-> +    const: 2
-> +
-> +  interrupt-controller:
-> +    description:
-> +      This property applies if either keypad,num-rows lower than 8 or
-> +      keypad,num-columns lower than 10.
-> +
-> +  '#interrupt-cells':
-> +    const: 2
-> +
-> +  adi,unlock-keys:
-> +    description:
-> +      Specifies a maximum of 2 keys that can be used to unlock the keypad.
-> +      If this property is set, the keyboard will be locked and only unlocked
-> +      after these keys are pressed. If only one key is set, a double click is
-> +      needed to unlock the keypad.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 1
-> +    maxItems: 2
+(There's also a comment on the driver regarding why I'm doing this
+check).
 
-What are the values/units? keycodes? If so, maybe "adi,unlock-keycodes"
-and add limit on values (like linux,keycodes).
+> > +
+> > +required:
+> > +=C2=A0 - compatible
+> > +=C2=A0 - reg
+> > +=C2=A0 - interrupts
+> > +=C2=A0 - keypad,num-rows
+> > +=C2=A0 - keypad,num-columns
+> > +=C2=A0 - linux,keymap
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +=C2=A0 - |
+> > +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/interrupt-controller/irq.h>
+> > +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/input/input.h>
+> > +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/gpio/gpio.h>
+> > +=C2=A0=C2=A0=C2=A0 i2c {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =
+=3D <1>;
+>=20
+> Wrong indentation. 4 spaces for DTS example.
+>=20
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - keypad,num-rows
-> +  - keypad,num-columns
-> +  - linux,keymap
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/input/input.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    i2c {
-> +          #address-cells = <1>;
+ack
 
-Wrong indentation. 4 spaces for DTS example.
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D=
+ <0>;
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 adp5588@34 {
+>=20
+> Node names should be generic.
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-device=
+tree-basics.html#generic-names-recommendation
+>=20
+>=20
 
-> +          #size-cells = <0>;
-> +
-> +          adp5588@34 {
+ack
 
-Node names should be generic.
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+- Nuno S=C3=A1
 
-
-Best regards,
-Krzysztof
