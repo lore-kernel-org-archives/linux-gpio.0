@@ -2,113 +2,79 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F149CCA479
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 08:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D82B2C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 09:25:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233314AbiGRIrg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jul 2022 04:47:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52110 "EHLO
+        id S233865AbiGRJYl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jul 2022 05:24:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233571AbiGRIrg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 04:47:36 -0400
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68809B1C0
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Jul 2022 01:47:35 -0700 (PDT)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 201EF201D60;
-        Mon, 18 Jul 2022 10:47:34 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CD157201D5B;
-        Mon, 18 Jul 2022 10:47:33 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 56F121820F5D;
-        Mon, 18 Jul 2022 16:47:31 +0800 (+08)
-From:   haibo.chen@nxp.com
-To:     linus.walleij@linaro.org, brgl@bgdev.pl, marek.vasut@gmail.com
-Cc:     linux-gpio@vger.kernel.org, haibo.chen@nxp.com, linux-imx@nxp.com
-Subject: [PATCH 2/3] gpio: pca953x: use the correct range when do regmap sync
-Date:   Mon, 18 Jul 2022 16:31:42 +0800
-Message-Id: <1658133103-23394-2-git-send-email-haibo.chen@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1658133103-23394-1-git-send-email-haibo.chen@nxp.com>
-References: <1658133103-23394-1-git-send-email-haibo.chen@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        with ESMTP id S233098AbiGRJYL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 05:24:11 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A5DB6384
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Jul 2022 02:24:10 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id y8so14419137eda.3
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Jul 2022 02:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lvoARXVtfF7A5hOwKpACX9CK0G3DRgFceztlwnuv75Y=;
+        b=D7TbIEoBJuoHo8mOmNp5BfPAFmNuD/IA6LOkcBELV8S0s2YGwYPiXRTHhru4YIhVtL
+         0Ptji1nAVqkAX445vCixQ0D5IBfS16QxRLWcRbsGw5oiRaL81ScXuyuw6rDkawMB4lVB
+         oeFb/Jikr7c6/Klg//pe/s+0NuRhxboe+bRVEIDtCXKqu+6SsTF7Pqlz8rg2PF1uwmgV
+         XBCUhS929YuahCq00kTcUzlQkFQtHL0pVcsVYgHmTWi/IpKzb5MrpQp93dGp1Dc16yjr
+         F2QMGTBuRqP493T7XHqF0trt+E8Wm5Se24gubR02YIjGxwGm8TVIZJDmyHU+NOKi7QEe
+         b3/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lvoARXVtfF7A5hOwKpACX9CK0G3DRgFceztlwnuv75Y=;
+        b=JlPYp2iiWynpREPr5H0UA8nhsBKexKw2ssimdGsvtXUwuBH5KtLSw7J7ieKut/LjMZ
+         zsHol8jLPr72Ombx62FQi2rQed0dUp3UmU3yX2tPbgQerMqTaWHKqofg8H9PYSpE15RO
+         56+b1aHkO3nfuAH++xx/N9TNfYllnM4+hsDmy1OjGwmDuqAMvYDuhq4UKIJAFkaNlcIL
+         YhQjYsH9r3tlAcl6dUXctNoghkju3ae81B9I18r/IXr7AkQveV1MkFl771ZUWKlgL+mj
+         aIPJpBxmeD8kjciDd0jS3frhznbZOsf45MJ1MAEgKefoc6MsEMOEaPvew5pG53tgU6Zu
+         AlFQ==
+X-Gm-Message-State: AJIora/btTqnMZM5ZnUpE/Hqgp0+05Cj4oq9p62hbdOlbPcpQ8lVCECw
+        k571FpVIzQNxyrlv942LdVXgoQ48wnkFLvgkIIfiKQ==
+X-Google-Smtp-Source: AGRyM1uGi4Q4mleJl5vMkSM6KeV5yMhwkBxtFvSuW3ZnAAtQm5CDgDrdoOT1oRywfbzc5hXMSLaj3EQytWfkXAXLSUo=
+X-Received: by 2002:aa7:c0c4:0:b0:43a:20cf:3c68 with SMTP id
+ j4-20020aa7c0c4000000b0043a20cf3c68mr36090978edp.172.1658136249130; Mon, 18
+ Jul 2022 02:24:09 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220713193750.4079621-1-horatiu.vultur@microchip.com>
+In-Reply-To: <20220713193750.4079621-1-horatiu.vultur@microchip.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 18 Jul 2022 11:23:57 +0200
+Message-ID: <CACRpkdawTmo2HW6kkkg=+rdCxM4EhghhgTahX+ZLKGdj8cYdmQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] pinctrl: ocelot: Add fixes for ocelot driver
+To:     Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alexandre.belloni@bootlin.com, kavyasree.kotagiri@microchip.com,
+        colin.foster@in-advantage.com, UNGLinuxDriver@microchip.com,
+        maxime.chevallier@bootlin.com, michael@walle.cc,
+        andy.shevchenko@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Haibo Chen <haibo.chen@nxp.com>
+On Wed, Jul 13, 2022 at 9:33 PM Horatiu Vultur
+<horatiu.vultur@microchip.com> wrote:
 
-regmap will sync a range of registers, here use the correct range
-to make sure the sync do not touch other unexpected registers.
+> The patch series fixes 2 issues with pincfg.
+> - first issue is that on lan966x uses different offsets than sparx5
+>   so it can't use directly the ocelot_confops
+> - second issue is pincfg stop working when regmap support was added.
 
-Find on pca9557pw on imx8qxp/dxl evk board, this device support
-8 pin, so only need one register(8 bits) to cover all the 8 pins's
-property setting. But when sync the output, we find it actually
-update two registers, output register and the following register.
+v5 applied for fixes!
 
-Fixes: b76574300504 ("gpio: pca953x: Restore registers after suspend/resume cycle")
-Fixes: ec82d1eba346 ("gpio: pca953x: Zap ad-hoc reg_output cache")
-Fixes: 0f25fda840a9 ("gpio: pca953x: Zap ad-hoc reg_direction cache")
-Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
----
- drivers/gpio/gpio-pca953x.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Thanks for fixing this Horatiu!
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 7209f69a8e8d..18888ec24d04 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -912,12 +912,12 @@ static int device_pca95xx_init(struct pca953x_chip *chip, u32 invert)
- 	int ret;
- 
- 	ret = regcache_sync_region(chip->regmap, chip->regs->output,
--				   chip->regs->output + NBANK(chip));
-+				   chip->regs->output + NBANK(chip) - 1);
- 	if (ret)
- 		goto out;
- 
- 	ret = regcache_sync_region(chip->regmap, chip->regs->direction,
--				   chip->regs->direction + NBANK(chip));
-+				   chip->regs->direction + NBANK(chip) - 1);
- 	if (ret)
- 		goto out;
- 
-@@ -1130,14 +1130,14 @@ static int pca953x_regcache_sync(struct device *dev)
- 	 * sync these registers first and only then sync the rest.
- 	 */
- 	regaddr = pca953x_recalc_addr(chip, chip->regs->direction, 0);
--	ret = regcache_sync_region(chip->regmap, regaddr, regaddr + NBANK(chip));
-+	ret = regcache_sync_region(chip->regmap, regaddr, regaddr + NBANK(chip) - 1);
- 	if (ret) {
- 		dev_err(dev, "Failed to sync GPIO dir registers: %d\n", ret);
- 		return ret;
- 	}
- 
- 	regaddr = pca953x_recalc_addr(chip, chip->regs->output, 0);
--	ret = regcache_sync_region(chip->regmap, regaddr, regaddr + NBANK(chip));
-+	ret = regcache_sync_region(chip->regmap, regaddr, regaddr + NBANK(chip) - 1);
- 	if (ret) {
- 		dev_err(dev, "Failed to sync GPIO out registers: %d\n", ret);
- 		return ret;
-@@ -1147,7 +1147,7 @@ static int pca953x_regcache_sync(struct device *dev)
- 	if (chip->driver_data & PCA_PCAL) {
- 		regaddr = pca953x_recalc_addr(chip, PCAL953X_IN_LATCH, 0);
- 		ret = regcache_sync_region(chip->regmap, regaddr,
--					   regaddr + NBANK(chip));
-+					   regaddr + NBANK(chip) - 1);
- 		if (ret) {
- 			dev_err(dev, "Failed to sync INT latch registers: %d\n",
- 				ret);
-@@ -1156,7 +1156,7 @@ static int pca953x_regcache_sync(struct device *dev)
- 
- 		regaddr = pca953x_recalc_addr(chip, PCAL953X_INT_MASK, 0);
- 		ret = regcache_sync_region(chip->regmap, regaddr,
--					   regaddr + NBANK(chip));
-+					   regaddr + NBANK(chip) - 1);
- 		if (ret) {
- 			dev_err(dev, "Failed to sync INT mask registers: %d\n",
- 				ret);
--- 
-2.25.1
+Thanks to Andy for the usual first-class review as well.
 
+Yours,
+Linus Walleij
