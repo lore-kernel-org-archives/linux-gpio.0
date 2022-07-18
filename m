@@ -2,413 +2,286 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCFCC433EF
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 20:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF2DC433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 21:10:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236182AbiGRU5Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jul 2022 16:57:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55700 "EHLO
+        id S233461AbiGRVKv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jul 2022 17:10:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236069AbiGRU5D (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 16:57:03 -0400
-Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F0A326F1
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Jul 2022 13:57:00 -0700 (PDT)
-Received: by mail-ot1-x32b.google.com with SMTP id o16-20020a9d4110000000b0061cac66bd6dso1766535ote.11
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Jul 2022 13:57:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MaL6nUZp1qnzFg5lPX4aXiHwyJgQQ7FQ0456bzIqrd4=;
-        b=FjumPJRgFY5eeB5lGRtrx/X4WGR/RNXvsyxCmxHJGjWmWxjxX43Oy0h9WpbVs/G9Or
-         ++LnnUzMDM8N8WiAPGWENuyv5Ge8ng3s0C9MIWQJBIwePOUDvymCk63MTBmkp4IAkg/j
-         hF+eXYwEDIKVMRvbLEPtf3Cn1mQJhUImeG0A/Cacpl5VwDjJKp0cDJw+hX+5yIcoFNw9
-         DfGEGZ3qecfcqrN2NDwhv1m0FYtpyNlvIMRajW0azcLEgmC/dqMQFkyOByA2Z0UsnNi2
-         X7NY6L9CjaaV2eaWXNI7uXUX57pTXfHIfJ1+F560d5GcQzkUlB5F1+uYxnkzbcG9kMIV
-         u4Ng==
+        with ESMTP id S233499AbiGRVKu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 17:10:50 -0400
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 924D93138E;
+        Mon, 18 Jul 2022 14:10:49 -0700 (PDT)
+Received: by mail-io1-f44.google.com with SMTP id u20so10350109iob.8;
+        Mon, 18 Jul 2022 14:10:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MaL6nUZp1qnzFg5lPX4aXiHwyJgQQ7FQ0456bzIqrd4=;
-        b=S2TV9tLdirgFl9X4ejoJfCfIZWpOcFN5nwdqHa7RURovblSFNilQTnG42cbHs9qqjv
-         8Dp5oHwQceGvzjFkPf7cixkkTqkNNfFEqaoXF3Btsq2DeyBG2fJOyoBNONOuwC65W72K
-         wEUG+hjE6fFLhdDmt7FrKsBEDCxC6XiLGBhSKDg2g+9yxQ4erX1Xu4c3+y1pfuxFsEhn
-         /C1kkB1NMxwvlUSqk0UvjBW3EobOX2VQGWpiYdEn6WzwE9BRb2hJBUGAetg5va6l3i1f
-         sBGlD1khxY3sMVPvS/HcdgXfO8w3EGG1MNYCOG/KuuObHK3Wyh/UipDh9qYu8M71zROS
-         3s6A==
-X-Gm-Message-State: AJIora8bRY7hug7VnP7OdqB70MAuEHAzu9yefmWtlcdrrU/JIfnT23cq
-        eMat6YCWfX31vRwk2EOu7Ri0vQ==
-X-Google-Smtp-Source: AGRyM1v3ju4pWLaLyB7J9v+/Op4/p9RZ3pLizVgSCnsZE/a78N8riyvlWvFOIZs2qlRWVbAqriefDg==
-X-Received: by 2002:a9d:5a05:0:b0:61c:32a3:f402 with SMTP id v5-20020a9d5a05000000b0061c32a3f402mr11582713oth.107.1658177820213;
-        Mon, 18 Jul 2022 13:57:00 -0700 (PDT)
-Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id l8-20020a4ab2c8000000b0035eb4e5a6cbsm5252065ooo.33.2022.07.18.13.56.59
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CpUuLsV/NZEoKVzCvz3mdd+f2fFBiw12CBsoruMcI+s=;
+        b=zuWOqF5YI04M9e82xaM3LnHQ6Mg7TmFV436LJblDOsa2BSVAmKbHqb7t7GEoDuxYL/
+         c6kytOTTC0rXiuufdJlNZmM9wc1x1uoJAcqw3m8mQMT4MIBWelTAvGUzrKQVyxRNdfhJ
+         GvvjkeIBX708hHcdPRsZPJJlTvhavUewdpNCy0ViilCo2iiN8jV/6Eo3UYqQzhQ9z7Xo
+         6FV3nKieZyC7oAmbuTX9Ka0tIJ6EcIs6Z9TwoD6SxYqITMEFtZWPnTLizfWoDE9xd6r1
+         S21cc8ea6NW3xiFGzXIEbT98tjj4Ha2HZgygKeSoH7FdH2SnwcGQ923kTXCSdatbzQX/
+         Vq/g==
+X-Gm-Message-State: AJIora82V6g5WeaO5Z/uLRNcp+1kBCLPWyKXf+j3lr8AE/0D5gTsRnJU
+        HBBGdqQHzWxLjyNmGGNx0A==
+X-Google-Smtp-Source: AGRyM1ugFb7o8ZwabLbYyAtq1Lvc2rxKJ6evG3Y+xSJ4naWExaHPxTQSqPzdHSM3pptip9e4d4SFrQ==
+X-Received: by 2002:a05:6638:2613:b0:33f:eb09:8e08 with SMTP id m19-20020a056638261300b0033feb098e08mr13788459jat.269.1658178648767;
+        Mon, 18 Jul 2022 14:10:48 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id bw7-20020a056638460700b00331c58086d8sm5958736jab.147.2022.07.18.14.10.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jul 2022 13:57:00 -0700 (PDT)
-From:   William Breathitt Gray <william.gray@linaro.org>
-To:     linus.walleij@linaro.org, brgl@bgdev.pl
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        William Breathitt Gray <william.gray@linaro.org>,
-        Fred Eckert <Frede@cmslaser.com>
-Subject: [PATCH v3 6/6] gpio: gpio-mm: Implement and utilize register structures
-Date:   Fri, 15 Jul 2022 14:52:28 -0400
-Message-Id: <124fb6518c06db7ac5c6032c8d4fe429611ac3ed.1657907849.git.william.gray@linaro.org>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <cover.1657907849.git.william.gray@linaro.org>
-References: <cover.1657907849.git.william.gray@linaro.org>
+        Mon, 18 Jul 2022 14:10:48 -0700 (PDT)
+Received: (nullmailer pid 3562214 invoked by uid 1000);
+        Mon, 18 Jul 2022 21:10:46 -0000
+Date:   Mon, 18 Jul 2022 15:10:46 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Cc:     avifishman70@gmail.com, tali.perry1@gmail.com, joel@jms.id.au,
+        venture@google.com, yuenn@google.com, benjaminfair@google.com,
+        linus.walleij@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+        j.neuschaefer@gmx.net, zhengbin13@huawei.com,
+        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-binding: pinctrl: Add NPCM8XX pinctrl and GPIO
+ documentation
+Message-ID: <20220718211046.GA3547663-robh@kernel.org>
+References: <20220714122322.63663-1-tmaimon77@gmail.com>
+ <20220714122322.63663-2-tmaimon77@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220714122322.63663-2-tmaimon77@gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Reduce magic numbers and improve code readability by implementing and
-utilizing named register data structures. The GPIO-MM device features an
-Intel 8255 compatible GPIO interface, so the i8255 GPIO module is
-selected and utilized as well.
+On Thu, Jul 14, 2022 at 03:23:21PM +0300, Tomer Maimon wrote:
+> Added device tree binding documentation for Nuvoton Arbel BMC NPCM8XX
+> pinmux and GPIO controller.
+> 
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> ---
+>  .../pinctrl/nuvoton,npcm845-pinctrl.yaml      | 213 ++++++++++++++++++
+>  1 file changed, 213 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..104766f7acc5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml
+> @@ -0,0 +1,213 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/nuvoton,npcm845-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nuvoton NPCM845 Pin Controller and GPIO
+> +
+> +maintainers:
+> +  - Tomer Maimon <tmaimon77@gmail.com>
+> +
+> +description:
+> +  The Nuvoton BMC NPCM8XX Pin Controller multi-function routed through
+> +  the multiplexing block, Each pin supports GPIO functionality (GPIOx)
+> +  and multiple functions that directly connect the pin to different
+> +  hardware blocks.
+> +
+> +properties:
+> +  compatible:
+> +    const: nuvoton,npcm845-pinctrl
+> +
+> +  ranges:
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 1
+> +
+> +  nuvoton,sysgcr:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: a phandle to access GCR registers.
+> +
+> +patternProperties:
+> +  "^gpio@":
+> +    type: object
+> +
+> +    description:
+> +      Eight GPIO banks that each contain between 32 GPIOs.
 
-Tested-by: Fred Eckert <Frede@cmslaser.com>
-Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
----
-Changes in v3:
- - Include "gpio-i8255.h" instead of <linux/gpio/i8255.h>
- - Import I8255 symbol namespace
- - Define GPIOMM_NUM_PPI as the number of PPI (2)
- - Utilize i8255_state struct; replaces 'control_state' and 'lock' with
-   'ppi_state'
- - Call i8255_state_init() to initialize 'ppi_state'
+'each contain between 32'?
 
- drivers/gpio/Kconfig        |   1 +
- drivers/gpio/gpio-gpio-mm.c | 202 +++++++-----------------------------
- 2 files changed, 41 insertions(+), 162 deletions(-)
+> +
+> +    properties:
+> +      gpio-controller: true
+> +
+> +      '#gpio-cells':
+> +        const: 2
+> +
+> +      reg:
+> +        maxItems: 1
+> +
+> +      interrupts:
+> +        maxItems: 1
+> +
+> +      gpio-ranges:
+> +        maxItems: 1
+> +
+> +    required:
+> +      - gpio-controller
+> +      - '#gpio-cells'
+> +      - reg
+> +      - interrupts
+> +      - gpio-ranges
+> +
+> +  "-mux":
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 253a03ee3fa4..5202e3b6f2c6 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -889,6 +889,7 @@ config GPIO_GPIO_MM
- 	tristate "Diamond Systems GPIO-MM GPIO support"
- 	depends on PC104
- 	select ISA_BUS_API
-+	select GPIO_I8255
- 	help
- 	  Enables GPIO support for the Diamond Systems GPIO-MM and GPIO-MM-12.
- 
-diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
-index 097a06463d01..75b3ceeddbaf 100644
---- a/drivers/gpio/gpio-gpio-mm.c
-+++ b/drivers/gpio/gpio-gpio-mm.c
-@@ -6,7 +6,7 @@
-  * This driver supports the following Diamond Systems devices: GPIO-MM and
-  * GPIO-MM-12.
-  */
--#include <linux/bitmap.h>
-+#include <linux/bits.h>
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/errno.h>
-@@ -17,7 +17,10 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
--#include <linux/spinlock.h>
-+
-+#include "gpio-i8255.h"
-+
-+MODULE_IMPORT_NS(I8255);
- 
- #define GPIOMM_EXTENT 8
- #define MAX_NUM_GPIOMM max_num_isa_dev(GPIOMM_EXTENT)
-@@ -27,32 +30,26 @@ static unsigned int num_gpiomm;
- module_param_hw_array(base, uint, ioport, &num_gpiomm, 0);
- MODULE_PARM_DESC(base, "Diamond Systems GPIO-MM base addresses");
- 
-+#define GPIOMM_NUM_PPI 2
-+
- /**
-  * struct gpiomm_gpio - GPIO device private data structure
-- * @chip:	instance of the gpio_chip
-- * @io_state:	bit I/O state (whether bit is set to input or output)
-- * @out_state:	output bits state
-- * @control:	Control registers state
-- * @lock:	synchronization lock to prevent I/O race conditions
-- * @base:	base port address of the GPIO device
-+ * @chip:		instance of the gpio_chip
-+ * @ppi_state:		Programmable Peripheral Interface group states
-+ * @ppi:		Programmable Peripheral Interface groups
-  */
- struct gpiomm_gpio {
- 	struct gpio_chip chip;
--	unsigned char io_state[6];
--	unsigned char out_state[6];
--	unsigned char control[2];
--	spinlock_t lock;
--	void __iomem *base;
-+	struct i8255_state ppi_state[GPIOMM_NUM_PPI];
-+	struct i8255 __iomem *ppi;
- };
- 
- static int gpiomm_gpio_get_direction(struct gpio_chip *chip,
- 	unsigned int offset)
- {
- 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
--	const unsigned int port = offset / 8;
--	const unsigned int mask = BIT(offset % 8);
- 
--	if (gpiommgpio->io_state[port] & mask)
-+	if (i8255_get_direction(gpiommgpio->ppi_state, offset))
- 		return GPIO_LINE_DIRECTION_IN;
- 
- 	return GPIO_LINE_DIRECTION_OUT;
-@@ -62,35 +59,8 @@ static int gpiomm_gpio_direction_input(struct gpio_chip *chip,
- 	unsigned int offset)
- {
- 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
--	const unsigned int io_port = offset / 8;
--	const unsigned int control_port = io_port / 3;
--	unsigned long flags;
--	unsigned int control;
--
--	spin_lock_irqsave(&gpiommgpio->lock, flags);
--
--	/* Check if configuring Port C */
--	if (io_port == 2 || io_port == 5) {
--		/* Port C can be configured by nibble */
--		if (offset % 8 > 3) {
--			gpiommgpio->io_state[io_port] |= 0xF0;
--			gpiommgpio->control[control_port] |= BIT(3);
--		} else {
--			gpiommgpio->io_state[io_port] |= 0x0F;
--			gpiommgpio->control[control_port] |= BIT(0);
--		}
--	} else {
--		gpiommgpio->io_state[io_port] |= 0xFF;
--		if (io_port == 0 || io_port == 3)
--			gpiommgpio->control[control_port] |= BIT(4);
--		else
--			gpiommgpio->control[control_port] |= BIT(1);
--	}
- 
--	control = BIT(7) | gpiommgpio->control[control_port];
--	iowrite8(control, gpiommgpio->base + 3 + control_port*4);
--
--	spin_unlock_irqrestore(&gpiommgpio->lock, flags);
-+	i8255_direction_input(gpiommgpio->ppi, gpiommgpio->ppi_state, offset);
- 
- 	return 0;
- }
-@@ -99,44 +69,9 @@ static int gpiomm_gpio_direction_output(struct gpio_chip *chip,
- 	unsigned int offset, int value)
- {
- 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
--	const unsigned int io_port = offset / 8;
--	const unsigned int control_port = io_port / 3;
--	const unsigned int mask = BIT(offset % 8);
--	const unsigned int out_port = (io_port > 2) ? io_port + 1 : io_port;
--	unsigned long flags;
--	unsigned int control;
--
--	spin_lock_irqsave(&gpiommgpio->lock, flags);
--
--	/* Check if configuring Port C */
--	if (io_port == 2 || io_port == 5) {
--		/* Port C can be configured by nibble */
--		if (offset % 8 > 3) {
--			gpiommgpio->io_state[io_port] &= 0x0F;
--			gpiommgpio->control[control_port] &= ~BIT(3);
--		} else {
--			gpiommgpio->io_state[io_port] &= 0xF0;
--			gpiommgpio->control[control_port] &= ~BIT(0);
--		}
--	} else {
--		gpiommgpio->io_state[io_port] &= 0x00;
--		if (io_port == 0 || io_port == 3)
--			gpiommgpio->control[control_port] &= ~BIT(4);
--		else
--			gpiommgpio->control[control_port] &= ~BIT(1);
--	}
--
--	if (value)
--		gpiommgpio->out_state[io_port] |= mask;
--	else
--		gpiommgpio->out_state[io_port] &= ~mask;
--
--	control = BIT(7) | gpiommgpio->control[control_port];
--	iowrite8(control, gpiommgpio->base + 3 + control_port*4);
- 
--	iowrite8(gpiommgpio->out_state[io_port], gpiommgpio->base + out_port);
--
--	spin_unlock_irqrestore(&gpiommgpio->lock, flags);
-+	i8255_direction_output(gpiommgpio->ppi, gpiommgpio->ppi_state, offset,
-+			       value);
- 
- 	return 0;
- }
-@@ -144,47 +79,16 @@ static int gpiomm_gpio_direction_output(struct gpio_chip *chip,
- static int gpiomm_gpio_get(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
--	const unsigned int port = offset / 8;
--	const unsigned int mask = BIT(offset % 8);
--	const unsigned int in_port = (port > 2) ? port + 1 : port;
--	unsigned long flags;
--	unsigned int port_state;
--
--	spin_lock_irqsave(&gpiommgpio->lock, flags);
--
--	/* ensure that GPIO is set for input */
--	if (!(gpiommgpio->io_state[port] & mask)) {
--		spin_unlock_irqrestore(&gpiommgpio->lock, flags);
--		return -EINVAL;
--	}
--
--	port_state = ioread8(gpiommgpio->base + in_port);
--
--	spin_unlock_irqrestore(&gpiommgpio->lock, flags);
- 
--	return !!(port_state & mask);
-+	return i8255_get(gpiommgpio->ppi, offset);
- }
- 
--static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
--
- static int gpiomm_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
- 	unsigned long *bits)
- {
- 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
--	unsigned long offset;
--	unsigned long gpio_mask;
--	void __iomem *port_addr;
--	unsigned long port_state;
--
--	/* clear bits array to a clean slate */
--	bitmap_zero(bits, chip->ngpio);
- 
--	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
--		port_addr = gpiommgpio->base + ports[offset / 8];
--		port_state = ioread8(port_addr) & gpio_mask;
--
--		bitmap_set_value8(bits, port_state, offset);
--	}
-+	i8255_get_multiple(gpiommgpio->ppi, mask, bits, chip->ngpio);
- 
- 	return 0;
- }
-@@ -193,49 +97,17 @@ static void gpiomm_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 	int value)
- {
- 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
--	const unsigned int port = offset / 8;
--	const unsigned int mask = BIT(offset % 8);
--	const unsigned int out_port = (port > 2) ? port + 1 : port;
--	unsigned long flags;
--
--	spin_lock_irqsave(&gpiommgpio->lock, flags);
--
--	if (value)
--		gpiommgpio->out_state[port] |= mask;
--	else
--		gpiommgpio->out_state[port] &= ~mask;
--
--	iowrite8(gpiommgpio->out_state[port], gpiommgpio->base + out_port);
- 
--	spin_unlock_irqrestore(&gpiommgpio->lock, flags);
-+	i8255_set(gpiommgpio->ppi, gpiommgpio->ppi_state, offset, value);
- }
- 
- static void gpiomm_gpio_set_multiple(struct gpio_chip *chip,
- 	unsigned long *mask, unsigned long *bits)
- {
- 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
--	unsigned long offset;
--	unsigned long gpio_mask;
--	size_t index;
--	void __iomem *port_addr;
--	unsigned long bitmask;
--	unsigned long flags;
--
--	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
--		index = offset / 8;
--		port_addr = gpiommgpio->base + ports[index];
--
--		bitmask = bitmap_get_value8(bits, offset) & gpio_mask;
--
--		spin_lock_irqsave(&gpiommgpio->lock, flags);
- 
--		/* update output state data and set device gpio register */
--		gpiommgpio->out_state[index] &= ~gpio_mask;
--		gpiommgpio->out_state[index] |= bitmask;
--		iowrite8(gpiommgpio->out_state[index], port_addr);
--
--		spin_unlock_irqrestore(&gpiommgpio->lock, flags);
--	}
-+	i8255_set_multiple(gpiommgpio->ppi, gpiommgpio->ppi_state, mask, bits,
-+			   chip->ngpio);
- }
- 
- #define GPIOMM_NGPIO 48
-@@ -250,6 +122,21 @@ static const char *gpiomm_names[GPIOMM_NGPIO] = {
- 	"Port 2C2", "Port 2C3", "Port 2C4", "Port 2C5", "Port 2C6", "Port 2C7",
- };
- 
-+static void gpiomm_init_dio(struct i8255 __iomem *const ppi,
-+			    struct i8255_state *const ppi_state)
-+{
-+	const unsigned long ngpio = 24;
-+	const unsigned long mask = GENMASK(ngpio - 1, 0);
-+	const unsigned long bits = 0;
-+	unsigned long i;
-+
-+	/* Initialize all GPIO to output 0 */
-+	for (i = 0; i < GPIOMM_NUM_PPI; i++) {
-+		i8255_mode0_output(&ppi[i]);
-+		i8255_set_multiple(&ppi[i], &ppi_state[i], &mask, &bits, ngpio);
-+	}
-+}
-+
- static int gpiomm_probe(struct device *dev, unsigned int id)
- {
- 	struct gpiomm_gpio *gpiommgpio;
-@@ -266,8 +153,8 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
- 		return -EBUSY;
- 	}
- 
--	gpiommgpio->base = devm_ioport_map(dev, base[id], GPIOMM_EXTENT);
--	if (!gpiommgpio->base)
-+	gpiommgpio->ppi = devm_ioport_map(dev, base[id], GPIOMM_EXTENT);
-+	if (!gpiommgpio->ppi)
- 		return -ENOMEM;
- 
- 	gpiommgpio->chip.label = name;
-@@ -284,7 +171,8 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
- 	gpiommgpio->chip.set = gpiomm_gpio_set;
- 	gpiommgpio->chip.set_multiple = gpiomm_gpio_set_multiple;
- 
--	spin_lock_init(&gpiommgpio->lock);
-+	i8255_state_init(gpiommgpio->ppi_state, GPIOMM_NUM_PPI);
-+	gpiomm_init_dio(gpiommgpio->ppi, gpiommgpio->ppi_state);
- 
- 	err = devm_gpiochip_add_data(dev, &gpiommgpio->chip, gpiommgpio);
- 	if (err) {
-@@ -292,16 +180,6 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
- 		return err;
- 	}
- 
--	/* initialize all GPIO as output */
--	iowrite8(0x80, gpiommgpio->base + 3);
--	iowrite8(0x00, gpiommgpio->base);
--	iowrite8(0x00, gpiommgpio->base + 1);
--	iowrite8(0x00, gpiommgpio->base + 2);
--	iowrite8(0x80, gpiommgpio->base + 7);
--	iowrite8(0x00, gpiommgpio->base + 4);
--	iowrite8(0x00, gpiommgpio->base + 5);
--	iowrite8(0x00, gpiommgpio->base + 6);
--
- 	return 0;
- }
- 
--- 
-2.36.1
+'-mux$'? Something like 'foo-muxbar' is needed?
 
+> +    $ref: pinmux-node.yaml#
+> +
+> +    properties:
+> +      groups:
+> +        description:
+> +          One or more groups of pins to mux to a certain function
+> +        items:
+> +          enum: [ iox1, iox2, smb1d, smb2d, lkgpo1, lkgpo2, ioxh, gspi,
+> +                  smb5b, smb5c, lkgpo0, pspi2, jm1, jm2, smb4den, smb4b,
+> +                  smb4c, smb15, smb16, smb17, smb18, smb19, smb20, smb21,
+> +                  smb22, smb23, smb4d, smb14, smb5, smb4, smb3, spi0cs1,
+> +                  spi0cs2, spi0cs3, smb3c, smb3b, bmcuart0a, uart1, jtag2,
+> +                  bmcuart1, uart2, bmcuart0b, r1err, r1md, r1oen, r2oen,
+> +                  rmii3, r3oen, smb3d, fanin0, fanin1, fanin2, fanin3, fanin4,
+> +                  fanin5, fanin6, fanin7, fanin8, fanin9, fanin10, fanin11,
+> +                  fanin12, fanin13, fanin14, fanin15, pwm0, pwm1, pwm2, pwm3,
+> +                  r2, r2err, r2md, r3rxer, ga20kbc, smb5d, lpc, espi, rg1,
+> +                  rg1mdio, rg2, ddr, i3c0, i3c1, i3c2, i3c3, i3c4, i3c5,
+> +                  smb0, smb1, smb2, smb2c, smb2b, smb1c, smb1b, smb8, smb9,
+> +                  smb10, smb11, sd1, sd1pwr, pwm4, pwm5, pwm6, pwm7, pwm8,
+> +                  pwm9, pwm10, pwm11, mmc8, mmc, mmcwp, mmccd, mmcrst, clkout,
+> +                  serirq, lpcclk, scipme, sci, smb6, smb7, spi1, faninx, r1,
+> +                  spi3, spi3cs1, spi3quad, spi3cs2, spi3cs3, nprd_smi, smb0b,
+> +                  smb0c, smb0den, smb0d, ddc, rg2mdio, wdog1, wdog2, smb12,
+> +                  smb13, spix, spixcs1, clkreq, hgpio0, hgpio1, hgpio2, hgpio3,
+> +                  hgpio4, hgpio5, hgpio6, hgpio7 ]
+> +
+> +      function:
+> +        description:
+> +          The function that a group of pins is muxed to
+> +        enum: [ iox1, iox2, smb1d, smb2d, lkgpo1, lkgpo2, ioxh, gspi,
+> +                smb5b, smb5c, lkgpo0, pspi2, jm1, jm2, smb4den, smb4b,
+> +                smb4c, smb15, smb16, smb17, smb18, smb19, smb20, smb21,
+> +                smb22, smb23, smb4d, smb14, smb5, smb4, smb3, spi0cs1,
+> +                spi0cs2, spi0cs3, smb3c, smb3b, bmcuart0a, uart1, jtag2,
+> +                bmcuart1, uart2, bmcuart0b, r1err, r1md, r1oen, r2oen,
+> +                rmii3, r3oen, smb3d, fanin0, fanin1, fanin2, fanin3, fanin4,
+> +                fanin5, fanin6, fanin7, fanin8, fanin9, fanin10, fanin11,
+> +                fanin12, fanin13, fanin14, fanin15, pwm0, pwm1, pwm2, pwm3,
+> +                r2, r2err, r2md, r3rxer, ga20kbc, smb5d, lpc, espi, rg1,
+> +                rg1mdio, rg2, ddr, i3c0, i3c1, i3c2, i3c3, i3c4, i3c5,
+> +                smb0, smb1, smb2, smb2c, smb2b, smb1c, smb1b, smb8, smb9,
+> +                smb10, smb11, sd1, sd1pwr, pwm4, pwm5, pwm6, pwm7, pwm8,
+> +                pwm9, pwm10, pwm11, mmc8, mmc, mmcwp, mmccd, mmcrst, clkout,
+> +                serirq, lpcclk, scipme, sci, smb6, smb7, spi1, faninx, r1,
+> +                spi3, spi3cs1, spi3quad, spi3cs2, spi3cs3, nprd_smi, smb0b,
+> +                smb0c, smb0den, smb0d, ddc, rg2mdio, wdog1, wdog2, smb12,
+> +                smb13, spix, spixcs1, clkreq, hgpio0, hgpio1, hgpio2, hgpio3,
+> +                hgpio4, hgpio5, hgpio6, hgpio7 ]
+> +
+> +    dependencies:
+> +      groups: [ function ]
+> +      function: [ groups ]
+> +
+> +    additionalProperties: false
+> +
+> +  "^pin":
+> +    $ref: pincfg-node.yaml#
+> +
+> +    properties:
+> +      pins:
+> +        description:
+> +          A list of pins to configure in certain ways, such as enabling
+> +          debouncing
+> +
+> +      bias-disable: true
+> +
+> +      bias-pull-up: true
+> +
+> +      bias-pull-down: true
+> +
+> +      input-enable: true
+> +
+> +      output-low: true
+> +
+> +      output-high: true
+> +
+> +      drive-push-pull: true
+> +
+> +      drive-open-drain: true
+> +
+> +      input-debounce:
+> +        description:
+> +          Debouncing periods in microseconds, one period per interrupt
+> +          bank found in the controller
+> +        $ref: /schemas/types.yaml#/definitions/uint32-array
+> +        minItems: 1
+> +        maxItems: 4
+> +
+> +      slew-rate:
+> +        description: |
+> +          0: Low rate
+> +          1: High rate
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [0, 1]
+> +
+> +      drive-strength:
+> +        enum: [ 0, 1, 2, 4, 8, 12 ]
+> +
+> +    additionalProperties: false
+> +
+> +allOf:
+> +  - $ref: "pinctrl.yaml#"
+> +
+> +required:
+> +  - compatible
+> +  - ranges
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +  - nuvoton,sysgcr
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    soc {
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      pinctrl: pinctrl@f0800000 {
+> +        compatible = "nuvoton,npcm845-pinctrl";
+> +        ranges = <0x0 0x0 0xf0010000 0x8000>;
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        nuvoton,sysgcr = <&gcr>;
+> +
+> +        gpio0: gpio@f0010000 {
+
+gpio@0
+
+Is this really a child block of the pinctrl? Doesn't really look like it 
+based on addressess. Where are the pinctrl registers? In the sysgcr? If 
+so, then pinctrl should be a child of it. But that doesn't really work 
+too well with gpio child nodes...
+
+Rob
