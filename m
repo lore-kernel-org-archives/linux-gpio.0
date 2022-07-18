@@ -2,81 +2,132 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77049C43334
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 18:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48812C433EF
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Jul 2022 20:22:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235967AbiGRSZx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Jul 2022 14:25:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33734 "EHLO
+        id S233765AbiGRUWO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Jul 2022 16:22:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235969AbiGRSZw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 14:25:52 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90DD22D1D7;
-        Mon, 18 Jul 2022 11:25:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658168751; x=1689704751;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ZrDvrrA11F1AztQy2Nks0U7/bE0KiSaoQtsQja6PhiM=;
-  b=dVYdTtmEVHq75hzPDuYagPMXRPyx6LNdkSvhmHdM6VtxpT8eJ+K7oTvv
-   MjoPyNnkpa80riLxUS69F5kKyAtMi3dOwPYSnsjU+ccrOFx00ccxYeOdg
-   1tXKdEf9SW244GnrUz9cv2xo0XRQGuA5Xwz+Hsg3Z7NfyfAsZW9/V+q9s
-   fPn4som5uh/Yr3hJ4GXOixnx5uU0lSDBa1ZyJvdq5ASD57LrIx/YQWIZy
-   En8zK2UgpjsfbM8CirzWWBuQtmYuetMXZvDrV7Wlu9IJDrqbIV1OcdZ02
-   muBNFZo2MLrn5QlFl92/3W93T82iGRclG0c0XkOuYFB7G5EzN7jgzCqe3
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10412"; a="311976686"
-X-IronPort-AV: E=Sophos;i="5.92,281,1650956400"; 
-   d="scan'208";a="311976686"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2022 11:25:43 -0700
-X-IronPort-AV: E=Sophos;i="5.92,281,1650956400"; 
-   d="scan'208";a="547601715"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2022 11:25:40 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1oDVR3-001OO1-1n;
-        Mon, 18 Jul 2022 21:25:37 +0300
-Date:   Mon, 18 Jul 2022 21:25:37 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>
-Cc:     linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/4] gpiolib: acpi: support bias pull disable
-Message-ID: <YtWloTTNtdAPl8Y4@smile.fi.intel.com>
-References: <20220713131421.1527179-1-nuno.sa@analog.com>
- <20220713131421.1527179-4-nuno.sa@analog.com>
+        with ESMTP id S231248AbiGRUWN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jul 2022 16:22:13 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 087FE31223
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Jul 2022 13:22:11 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oDXFo-0005Bj-HP; Mon, 18 Jul 2022 22:22:08 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oDXFn-001mUe-K8; Mon, 18 Jul 2022 22:22:07 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1oDXFm-00623G-Qw; Mon, 18 Jul 2022 22:22:06 +0200
+Date:   Mon, 18 Jul 2022 22:22:05 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     linux-gpio@vger.kernel.org, kernel@pengutronix.de
+Subject: Is a multiplexer using latches a gpio controller?
+Message-ID: <20220718202205.ssf3k2dqkuvc6bgm@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="uv7c5tth75dupikf"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220713131421.1527179-4-nuno.sa@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jul 13, 2022 at 03:14:20PM +0200, Nuno Sá wrote:
-> On top of looking at PULL_UP and PULL_DOWN flags, also look at
-> PULL_DISABLE and set the appropriate GPIO flag. The GPIO core will then
-> pass down this to controllers that support it.
 
-In case this patch will be in v2,
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+--uv7c5tth75dupikf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-P.S. I will be on vacation till mid-August.
+Hello,
 
--- 
-With Best Regards,
-Andy Shevchenko
+we have a customer board here that uses two 8 port latches to drive
+LEDs. The setup looks as follows:
+
+CLK0 ----------------------.        ,--------.
+CLK1 -------------------.  `--------|>    #0 |
+                        |           |        |
+IN0 -----------------+--|-----------|D0    Q0|-----|=E2=97=81
+IN1 ---------------+-|--|-----------|D1    Q1|-----|=E2=97=81
+IN2 -------------+-|-|--|-----------|D2    Q2|-----|=E2=97=81
+IN3 -----------+-|-|-|--|-----------|D3    Q3|-----|=E2=97=81
+IN4 ---------+-|-|-|-|--|-----------|D4    Q4|-----|=E2=97=81
+IN5 -------+-|-|-|-|-|--|-----------|D5    Q5|-----|=E2=97=81
+IN6 -----+-|-|-|-|-|-|--|-----------|D6    Q6|-----|=E2=97=81
+IN7 ---+-|-|-|-|-|-|-|--|-----------|D7    Q7|-----|=E2=97=81
+       | | | | | | | |  |           `--------'
+       | | | | | | | |  |
+       | | | | | | | |  |           ,--------.
+       | | | | | | | |  `-----------|>    #1 |
+       | | | | | | | |              |        |
+       | | | | | | | `--------------|D0    Q0|-----|=E2=97=81
+       | | | | | | `----------------|D1    Q1|-----|=E2=97=81
+       | | | | | `------------------|D2    Q2|-----|=E2=97=81
+       | | | | `--------------------|D3    Q3|-----|=E2=97=81
+       | | | `----------------------|D4    Q4|-----|=E2=97=81
+       | | `------------------------|D5    Q5|-----|=E2=97=81
+       | `--------------------------|D6    Q6|-----|=E2=97=81
+       `----------------------------|D7    Q7|-----|=E2=97=81
+                                    `--------'
 
 
+So to change output 2 of latch #1 you have to apply the changed level on
+IN2, apply the previous level on the other inputs (to keep the other
+outputs constant) and toggle CLK1 once.
+
+This way you can drive 16 LEDs (or in general outputs) using only 10
+GPIOs. (And with a higher number of latches the proportion becomes a bit
+more useful.)
+
+Actually this construct is a general GPO (no input :-) controller, and I
+wonder if you would accept a driver that models it as a gpio controller.
+
+The dt binding could look as follows:
+
+latch-gpo {
+	compatible =3D "latch-gpo";
+	pinctrl-0 =3D <...>;
+	pinctrl-names =3D <...>;
+
+	clk-gpios =3D /* CLK0 */ <...>, /* CLK1 */ <...>;
+	data-gpios =3D /* IN0 */ <...>, /* IN1 */ <...>, ...;
+};
+
+What do you think?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
+   |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--uv7c5tth75dupikf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmLVwOkACgkQwfwUeK3K
+7AmImwgAmg1Ia5zpArkYOMurJrtXAkdVuV5IfZIzHFdnflFqgdJSEz/w9vbmhk9c
+DGDXujw7HHxdfPsF9WBH//mwAflak22LhaUePpEFPC/Twa+9n20YzDn96aJLMLKo
+CIYoqAywhlh7i3zl1+Zr1t+yHchdgcVaAEIXy35gYeRv6gpU8AgEyNwPPHE/bq9Z
+kIqMVfAeWCOnw1irqvWLwkgPLLLInUr1Qwd+/9durn3wyVRj6tgThuECvh5PRWYN
+PPN3BBpMidnG2LhkmRzPxSWA65ZQ8K5F85FYfzRXKZX4PqbBAQbqMgC5R6xSW14j
+/yxM0AV0dmYGP2xpG0nDk0M62Xovgg==
+=wWjt
+-----END PGP SIGNATURE-----
+
+--uv7c5tth75dupikf--
