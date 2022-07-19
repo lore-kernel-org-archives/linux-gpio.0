@@ -2,139 +2,122 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3B6CCA486
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jul 2022 14:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84FB4C43334
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Jul 2022 15:14:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234616AbiGSOdb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Jul 2022 10:33:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52274 "EHLO
+        id S238314AbiGSPOf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Jul 2022 11:14:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238327AbiGSOdS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jul 2022 10:33:18 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2043.outbound.protection.outlook.com [40.107.237.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B70AAB4BE;
-        Tue, 19 Jul 2022 07:22:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CzPoOYoWL5ghOa0s3d/TL8huVh5OYquhrsK389I8T4AA1zh9og3UnOu2XCwiMeOrIq2wJ4srnolrhIyawwXUKsX/T5Rh+3TD5H3FNEMQPSdeW+493PATLBYmXMpI/jSfnQBGHLGMS6oXhFteb4s8m48QDTr/vYYjjG3kXp083zx+NZw4VR9qfhPrJLPDrIH9mm9Xrqz/1YLrJlrEbbZkc0lc30frO3BsSayg+ivpqCkMS9AytTrnObrQTA7HCHnBVNk/1jYlwGyuiaF0i/FDaI/JVozxicsIeu/iXU8fJBPruxx135zvfppQ6kqehA4Fhe0cOcdppqMLbQl7D6aRvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CdakZyoYh21ndREI5FBRJMGorWfr8L99FCp0hiSSn/Y=;
- b=XgAR/9UNMGUlszV8uMp5GY99L5lnBZYt4CArh1TDWvUZZNnZA6Mnt4RYchwuk6jz70373YiSojkEmO6qJK8BtYGukLtwL+o1RHeaeFzEo2jXEKjdsLrQK2Michkc1HKXQDLmkaiBV9Q3BrMEqkNw5bCWQHntKHStCkr5Hur1q4+rUnt2kN4brR5Y2G0JkIsWauWYw6/Yjk9XkBbRNZpOjO/gGfQ/PouLdEjtWQEksWPFBNHX+IwoDw353xJIBpJl6Df19YZEgqcFv0kRYiT3bYYdOoIvKK8Wd9KSiqjkdeJnLHXP2Kc5u+j9hXaS1z3JNFVZbDzGQGcfPEA3OR0sDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CdakZyoYh21ndREI5FBRJMGorWfr8L99FCp0hiSSn/Y=;
- b=FbdDG0DwlIUtaEduOa11D4M+sS0+8wuONvZqS4JH8H3WRHBhQIf0CqWZAAx6pWwJpUiQhf07mv3182mhDS9xCLsIjPh+UCAWxnvaZWZg5wZe69XlnqS72U6Q2O3WVWXRNcOpxKx50HTblD3DWaCvrS7jUSCrH3qSZyBEIPpo8AQ=
-Received: from BN9PR03CA0954.namprd03.prod.outlook.com (2603:10b6:408:108::29)
- by BL1PR12MB5032.namprd12.prod.outlook.com (2603:10b6:208:30a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.14; Tue, 19 Jul
- 2022 14:22:18 +0000
-Received: from BN8NAM11FT038.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:108:cafe::4d) by BN9PR03CA0954.outlook.office365.com
- (2603:10b6:408:108::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.23 via Frontend
- Transport; Tue, 19 Jul 2022 14:22:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN8NAM11FT038.mail.protection.outlook.com (10.13.176.246) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5438.12 via Frontend Transport; Tue, 19 Jul 2022 14:22:17 +0000
-Received: from AUS-LX-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Tue, 19 Jul
- 2022 09:22:17 -0500
-From:   Mario Limonciello <mario.limonciello@amd.com>
-To:     <mario.limonciello@amd.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC:     Pavel Krc <reg.krn@pkrc.net>, <linux-gpio@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] gpiolib: acpi: Add a quirk for Asus UM325UAZ
-Date:   Tue, 19 Jul 2022 09:21:42 -0500
-Message-ID: <20220719142142.247-2-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220719142142.247-1-mario.limonciello@amd.com>
-References: <20220719142142.247-1-mario.limonciello@amd.com>
+        with ESMTP id S238271AbiGSPOf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jul 2022 11:14:35 -0400
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 768E8545D6
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Jul 2022 08:14:34 -0700 (PDT)
+Received: by mail-ot1-x332.google.com with SMTP id a14-20020a0568300b8e00b0061c4e3eb52aso11913589otv.3
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Jul 2022 08:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Zoha9mTIMakggfiI68R52rbC0zksIGENsxIUmVWIeyQ=;
+        b=QYaiG5cPRORhb6h8qWgSUFIAvMesaeBIC2zWt6+wdG/SN0MGKl2AEEeRTOK2Qxz98i
+         R7e+8H1Ijc27lGYissVA/wewvTQW8T0ia+u76ESiyvqYhZkqSxkioPT2MNw0j8jtGdoD
+         l5FTFAKxnxfyLIhkj7vBKIg/igZ+aOW2bi8SMQKazqFJdxJ+RbeLBQBbUQzff26Nv/ic
+         g5ITMxNjUto+f2ttRI457gRs+vl01iyC0s5nG71VJc0G1+ykVrSERvJOs2A4t4pJd36W
+         70ZV35SQUd+wYVJU31A900kBhUscNCmfMesxOVrFutLWrGua7g0LOJ67rrqVGDPazPDm
+         br7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Zoha9mTIMakggfiI68R52rbC0zksIGENsxIUmVWIeyQ=;
+        b=QaZmzvMQJFxJ5/LYVTc4hXC13iS//dkCgPI/ct9W0hlaXIct4CsgGfk6yEFaoLkO5R
+         GRnoEXR4QzqPnKWFa4IQS7Q/th2HbeyZNdzVN8trkHtXOeEN/Tli9kmyAg0ZT89VAfWg
+         v3yyLKkAE8CibfsBqIy6g8hebnznIfMhAmm+upxKz5RKm9umovm1Toog1AjFINMDA7Pv
+         GXHflzSS5r/n6Tnipv/irASpNLQ5R/4H0eJ0+hCEvJ96OEPK026JVu1HZzn00IDLpWdr
+         UJLPlg5Q09oTygHDLrRGEZjTTuVoJguLVF4hlQ5IyAgbzaDk/yAgJbPQZNwHOES9zSiG
+         wLWg==
+X-Gm-Message-State: AJIora9CK6AytppzgO+ORS0DZmshm8ml8IRorRdNnW7GkIE5RaUMvEWI
+        eFT+PHuWpzfNAP1en/FL/uasaQ==
+X-Google-Smtp-Source: AGRyM1viF0SYVbifqUuBU0el23Wf0gyXRIq6IypE3bPydxzkIXca4bSKIuv4Kd2vseAQ0+i8Zhs32w==
+X-Received: by 2002:a9d:4d89:0:b0:61c:a0cf:7426 with SMTP id u9-20020a9d4d89000000b0061ca0cf7426mr4723769otk.248.1658243673809;
+        Tue, 19 Jul 2022 08:14:33 -0700 (PDT)
+Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id l24-20020a056830155800b0061c8bca21d8sm2334308otp.2.2022.07.19.08.14.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Jul 2022 08:14:33 -0700 (PDT)
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     linus.walleij@linaro.org, brgl@bgdev.pl
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        William Breathitt Gray <william.gray@linaro.org>,
+        John Hentges <jhentges@accesio.com>,
+        Jay Dolan <jay.dolan@accesio.com>,
+        Fred Eckert <Frede@cmslaser.com>,
+        Paul Demetrotion <pdemetrotion@winsystems.com>,
+        techsupport@winsystems.com,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v4 0/6] gpio: Implement and utilize register structures for ISA drivers
+Date:   Tue, 19 Jul 2022 09:47:02 -0400
+Message-Id: <cover.1658236876.git.william.gray@linaro.org>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 149414e0-72fc-46a4-560d-08da699215dd
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5032:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: RLn6HnK4MdRxSP9qB9NwEDxGlq9xPb1K+g8s5CYPywK6TSGX6jeojGXnjVAJGDf5OEpUzfL0DKu2eFAvEUOBqa9xLqk3UT4rmCGQeI32LouXQXLdEjlWU/hUd6PgXL6Qw3uP+sAYNY/t3cWuioX533BeukeE6ls7vCZiXBcQVzqAFI4c+YzoQ+vJhEHCYCVmUgA1BbBTlZTvHMG/MitO5fsRgaiAoIiicIh4vw24C5fIpmlOSVSE0bslptedklzfNJdzH1302rG9uY1ij7ySe6aXtbO+kzbQ1x7UY3jFs5J310pjzXQ8R88AoTu88ocX+mv9SG15nbyw7MAgx/R0e10WonGTmSa91+kb83sfzilpi44JvYpyvTXOKbmqa+yErbzShxdB4NPBOSIJVYmpVH41ZtztcLU2KqpjGmJwsp2fuZGcgBJXrPtSPF/6614JHEoWuSkYLcdufxd8uhEwlNfcGt3lxxOy4BD3wnErht1c4AlQQOFJyue3CrIL/olYFVcLIPcC7OAucnp+OG4VzFkHodzAxIyW+vyUqDGk0ZffH2lwGw0FC8UlyA4t+llun+DJ/9UmPoH9NQXTidgzpMIXBosk4Xw/zROtyCdSZ0BY8uGtNI7v6GGNOwxajPWDNAlMh4hNtGcp6St3SZBAYJGJQcKNyx04QAYoTkyOx0r8qUU+bUAQJ88pKzROu1k3oUX7akeBb8fV3JN5pkUMkkEND4YNLe4V9dW1OOmhJJ9fh6zIP49TFbGyTyOB4lhX3rFkhtx/i4CRbPiwslbejDteIs7lnoWT3UEScbksUBEIj+I2iatIGV2AeH5XUBKapiFlii6cakqK5fqHb27MIbtShGvor9DWAa5t6n0xPcpFPm9IXqLojFoLO2KORHOb
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(376002)(346002)(39860400002)(396003)(136003)(40470700004)(46966006)(36840700001)(26005)(83380400001)(186003)(2906002)(44832011)(41300700001)(6666004)(336012)(2616005)(8936002)(478600001)(40460700003)(7696005)(86362001)(36860700001)(47076005)(5660300002)(426003)(1076003)(966005)(81166007)(82740400003)(40480700001)(82310400005)(356005)(4326008)(8676002)(16526019)(316002)(54906003)(110136005)(70586007)(70206006)(36756003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2022 14:22:17.8534
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 149414e0-72fc-46a4-560d-08da699215dd
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT038.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5032
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Asus UM325UAZ has GPIO 18 programmed as both an interrupt and a wake
-source, but confirmed with internal team on this design this pin is
-floating and shouldn't have been programmed. This causes lots of
-spurious IRQs on the system and horrendous battery life.
+Changes in v4:
+ - Cleanup superfluous header includes from drivers
+ - Add note to CONFIG_GPIO_I8255 Kconfig that if built as a module the
+   name will be 'gpio-i8255'
+ - Remove 'const' from '__iomem' pointers
+ - Replace ambiguous 'group' terminology with more understandable 'bank'
+ - Use more natural '>= 4' expression to represent upper nibble
+ - Refactor i8255_set_port() to take more common pattern of mask and
+   bits
 
-Add a quirk to ignore attempts to program this pin on this system.
+The PC104/ISA drivers were updated to use I/O memory accessor calls such
+as ioread8()/iowrite8() in a previous patch series [0]. This
+patchset is a continuation of the effort to improve the code readability
+and reduce magic numbers by implementing and utilizing named register
+data structures.
 
-Reported-and-tested-by: Pavel Krc <reg.krn@pkrc.net>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=216208
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/gpio/gpiolib-acpi.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+One of the benefits is that we can now observe more easily similarities
+in devices that share similar interfaces; such as the i8255 interfaces
+used by the 104-DIO-48E, 104-IDI-48, and GPIO-MM drivers -- as well as
+the similar interface used by the 104-IDIO-16 and PCI-IDIO-16 drivers.
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 375942d92d6f..2149713ea8f1 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1586,6 +1586,20 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
- 			.ignore_wake = "INT33FF:01@0",
- 		},
- 	},
-+	{
-+		/*
-+		 * Interrupt storm caused from edge triggered floating pin
-+		 * Found in BIOS UX325UAZ.300
-+		 * https://bugzilla.kernel.org/show_bug.cgi?id=216208
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "ZenBook UX325UAZ_UM325UAZ"),
-+		},
-+		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
-+			.ignore_interrupt = "AMDI0030:00@18",
-+		},
-+	},
- 	{} /* Terminating entry */
- };
- 
+A new module supporting the Intel 8255 interface is introduced to
+consolidate the common code found among the 104-DIO-48E, 104-IDI-48, and
+GPIO-MM drivers.
+
+[0] https://lore.kernel.org/all/cover.1652201921.git.william.gray@linaro.org/
+
+William Breathitt Gray (6):
+  gpio: ws16c48: Implement and utilize register structures
+  gpio: 104-idio-16: Implement and utilize register structures
+  gpio: i8255: Introduce the Intel 8255 interface library module
+  gpio: 104-dio-48e: Implement and utilize register structures
+  gpio: 104-idi-48: Implement and utilize register structures
+  gpio: gpio-mm: Implement and utilize register structures
+
+ MAINTAINERS                     |   6 +
+ drivers/gpio/Kconfig            |  15 ++
+ drivers/gpio/Makefile           |   1 +
+ drivers/gpio/gpio-104-dio-48e.c | 249 ++++++++-------------------
+ drivers/gpio/gpio-104-idi-48.c  | 143 +++++++---------
+ drivers/gpio/gpio-104-idio-16.c |  60 +++++--
+ drivers/gpio/gpio-gpio-mm.c     | 202 +++++-----------------
+ drivers/gpio/gpio-i8255.c       | 287 ++++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-i8255.h       |  46 +++++
+ drivers/gpio/gpio-ws16c48.c     | 120 +++++++++----
+ 10 files changed, 654 insertions(+), 475 deletions(-)
+ create mode 100644 drivers/gpio/gpio-i8255.c
+ create mode 100644 drivers/gpio/gpio-i8255.h
+
+
+base-commit: f2906aa863381afb0015a9eb7fefad885d4e5a56
 -- 
-2.34.1
+2.36.1
 
