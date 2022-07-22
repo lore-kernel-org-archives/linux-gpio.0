@@ -2,63 +2,81 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC36C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jul 2022 08:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D47CCA47F
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jul 2022 08:19:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234806AbiGVITb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Jul 2022 04:19:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44476 "EHLO
+        id S234909AbiGVITc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Jul 2022 04:19:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233544AbiGVIT3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2022 04:19:29 -0400
+        with ESMTP id S234872AbiGVITa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2022 04:19:30 -0400
 Received: from polaris.svanheule.net (polaris.svanheule.net [IPv6:2a00:c98:2060:a004:1::200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42E369E296
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Jul 2022 01:19:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DBC89DEF4
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jul 2022 01:19:29 -0700 (PDT)
 Received: from terra.. (unknown [IPv6:2a02:a03f:eaf9:8401:aa9f:5d01:1b2a:e3cd])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: sander@svanheule.net)
-        by polaris.svanheule.net (Postfix) with ESMTPSA id 0F8272FEE7F;
-        Fri, 22 Jul 2022 10:19:22 +0200 (CEST)
+        by polaris.svanheule.net (Postfix) with ESMTPSA id 5FBCC2FEE81;
+        Fri, 22 Jul 2022 10:19:25 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-        s=mail1707; t=1658477963;
+        s=mail1707; t=1658477965;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=1g5OIGIUtsg99dkkiWJOZEKAQyFblxgUZPyM/3d27nU=;
-        b=YsGfgAUTG3YRnkR8VrREGZ2ZRW3aLuCmYdQWfKjBaiMRzjFX6abqXg3/lsudR41+XPyn9z
-        VRGQ+kl94SWJe7smrx1O442nTdiSRIt0H675ViRfg74mcR6x7e6t9UEATQyktZZ5zQXZye
-        1kGcDbAu2QGVdFMHoDpfn4nr7BlL1xvmbtqQNb1ygstO4nRJ4GtrJLR9ugeDdmVNWwvVWR
-        SoNKpLpduWjkp8AYp4CRBXcqAIYJKHLS6RAKJbV7rr6KkIlai1/4tWynSC71CCjPr7le34
-        0xGetD7PYsL+lWm2Tn8+9y3sNiK5envuyteJTbXIuSEZ/iX/k3wCeaKQbQhIHA==
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=cci7jBXhFRtk5ihk6QaoRMJ+OENLYFwI05tf7c5cNPc=;
+        b=7t6VG7QCrBIAh1uskrzbCbgEodirJ3W2nKObvOlTTL+NxolV9LAVkfZy3aTK9XaQRJN1Dz
+        s9DSxvpbXobHjCSU5T2JkZJZ68/qVWFwrMTnbbGU8Xz6zh+xavDVYJM0KotVz2m5C3Fcf/
+        EM04XVt6dUOgnkZfbKRGARrn2O7gNQDJbF9b+71AlUF8UqNFr9y8P0jQE3AMgmJwC+9C8q
+        D2dy+UnflVHzZJRfzSavEQPWQJLcUFYaeworrYe4HkJ+MgK1C2/GMvFileC1csxXFxmmyP
+        03lfQ6dKjVpvOHJpPYJRM08Nj1yqIeHbGC0bohniD+/MDrrvzOrzUx+tVwVjBA==
 From:   Sander Vanheule <sander@svanheule.net>
 To:     linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         linux-kernel@vger.kernel.org, Bert Vermeulen <bert@biot.com>,
         Sander Vanheule <sander@svanheule.net>
-Subject: [PATCH v1 0/2] gpio: update Realtek Otto documenentation
-Date:   Fri, 22 Jul 2022 10:19:15 +0200
-Message-Id: <cover.1658477809.git.sander@svanheule.net>
+Subject: [PATCH v1 2/2] MAINTAINERS: add info for Realtek Otto GPIO
+Date:   Fri, 22 Jul 2022 10:19:17 +0200
+Message-Id: <d162ec319ff67b77e375c2f2aa24eb297325d7c2.1658477809.git.sander@svanheule.net>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <cover.1658477809.git.sander@svanheule.net>
+References: <cover.1658477809.git.sander@svanheule.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Amend some driver documentation that was missing from recent changes,
-and add myself as maintainer for the driver, since that's pretty much
-the de facto situation.
+Add an entry with the files for the Realtek Otto GPIO driver with myself
+as maintainer. I am already listed as maintainer in the device tree
+binding itself, but the driver had no explicit maintainer info yet.
 
-Sander Vanheule (2):
-  gpio: realtek-otto: amend ctrl struct docs
-  MAINTAINERS: add info for Realtek Otto GPIO
+Signed-off-by: Sander Vanheule <sander@svanheule.net>
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
- MAINTAINERS                      |  7 +++++++
- drivers/gpio/gpio-realtek-otto.c | 10 ++++++++++
- 2 files changed, 17 insertions(+)
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 651616ed8ae2..b173f9e3ee3c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17009,6 +17009,13 @@ S:	Maintained
+ F:	include/sound/rt*.h
+ F:	sound/soc/codecs/rt*
+ 
++REALTEK OTTO GPIO
++M:	Sander Vanheule <sander@svanheule.net>
++L:	linux-gpio@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
++F:	drivers/gpio/gpio-realtek-otto.c
++
+ REALTEK OTTO WATCHDOG
+ M:	Sander Vanheule <sander@svanheule.net>
+ L:	linux-watchdog@vger.kernel.org
 -- 
 2.36.1
 
