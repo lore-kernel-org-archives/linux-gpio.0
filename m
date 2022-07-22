@@ -2,127 +2,68 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10555C433EF
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jul 2022 19:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C87CC433EF
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jul 2022 20:08:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231630AbiGVTij (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Jul 2022 15:38:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39970 "EHLO
+        id S236729AbiGVUIE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Jul 2022 16:08:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236500AbiGVTih (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2022 15:38:37 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B57C558E4
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Jul 2022 12:38:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658518717; x=1690054717;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=mgHLAH8Be0h/glLuGbGjsfLgzQ6rOlQ4q+p23UTe0sE=;
-  b=UFs7NkcaSqAlw+jtFd3qo1tVQeG1BNr2UXqyVD2ypsPVu08tCJXrVCxw
-   nAI5mPsyECw5R7zJoRid0jEMSna7qNVXfN6zqNSCQ9l4Z8GXezlSGzcIf
-   P23YAgz8F1wfdoK50jQowwOJqiyzElu7eiSZYYfJIanRLXIIeyq44GvL7
-   n/uAzTFctvSMCMhnrjjHvVzhf29udLiieRDSdKaDrej0mXhiCj7qzi8Aq
-   rJETXBL9Zlzb9OKqL0gIvK4r7h35aCAqVi3FIVZg++V98xBUYkwIOys6z
-   4AKhbtaFLNWWOWLnAoqQipv87xnU/Ij+Sfi4Fy4LTllZSrK3WF9ZG89zC
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10416"; a="267165797"
-X-IronPort-AV: E=Sophos;i="5.93,186,1654585200"; 
-   d="scan'208";a="267165797"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2022 12:38:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,186,1654585200"; 
-   d="scan'208";a="775335933"
-Received: from lkp-server01.sh.intel.com (HELO e0eace57cfef) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 22 Jul 2022 12:38:35 -0700
-Received: from kbuild by e0eace57cfef with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oEyTr-0001lF-0S;
-        Fri, 22 Jul 2022 19:38:35 +0000
-Date:   Sat, 23 Jul 2022 03:37:38 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [brgl:gpio/for-current] BUILD SUCCESS
- 32c094a09d5829ad9b02cdf667569aefa8de0ea6
-Message-ID: <62dafc82.VVh8TCVFoU73XLrN%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S236524AbiGVUIB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2022 16:08:01 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59DF88D5E8;
+        Fri, 22 Jul 2022 13:07:59 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C17D261FB3;
+        Fri, 22 Jul 2022 20:07:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2E27AC36AF4;
+        Fri, 22 Jul 2022 20:07:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658520478;
+        bh=fqVa7RSfwPh1h6geZ3vlLSxox2ISb3tdaKqZ6VSqQqY=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=BZ6tbGP3Gx6RFxPfsC1wyb+fewQRReVWR7xOW3YFwtXyEXv7STLAOmt7ruKrVCQAW
+         +RKk8FHZiSbI2q2jx9Q2/LKjcNqB/Rk1/oinsQjwXPi74jurD6aoNXdFv3jILvDQw/
+         7wwJ010J0Orx+4iEAas6/3Sabh220P11PEI6BLVriDMrXjgKbKULFxESrWW+mcFeN9
+         lco5VLqn4ywYiPv9funbPoyc+E7WFksH2haeRcHUoETTE6MsSDbzRgXJBhnZn45bmo
+         cA2Kt4ugdICYiFPVnsvp45qR1RXmyUfr4DK5ultWW0Ew6avLKtEPvnpcE4Qvdo/lO0
+         9zQGSi+nRjHag==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 169FCE451BB;
+        Fri, 22 Jul 2022 20:07:58 +0000 (UTC)
+Subject: Re: [GIT PULL] pin control fixes for v5.19
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CACRpkdYD6anQsCdZcC=RbRUVRraWm2hOauYB314bE0rxJ9PN=A@mail.gmail.com>
+References: <CACRpkdYD6anQsCdZcC=RbRUVRraWm2hOauYB314bE0rxJ9PN=A@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdYD6anQsCdZcC=RbRUVRraWm2hOauYB314bE0rxJ9PN=A@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.19-3
+X-PR-Tracked-Commit-Id: 4546760619cfa9b718fe2059ceb07101cf9ff61e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 614719111265a7a76d0ae54758f23d8614966b82
+Message-Id: <165852047808.15752.14220270706093235366.pr-tracker-bot@kernel.org>
+Date:   Fri, 22 Jul 2022 20:07:58 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
-branch HEAD: 32c094a09d5829ad9b02cdf667569aefa8de0ea6  gpio: gpio-xilinx: Fix integer overflow
+The pull request you sent on Fri, 22 Jul 2022 14:24:27 +0200:
 
-elapsed time: 724m
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.19-3
 
-configs tested: 52
-configs skipped: 2
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/614719111265a7a76d0ae54758f23d8614966b82
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm                                 defconfig
-arm                              allyesconfig
-arm64                            allyesconfig
-ia64                             allmodconfig
-m68k                             allmodconfig
-arc                              allyesconfig
-alpha                            allyesconfig
-m68k                             allyesconfig
-powerpc                           allnoconfig
-powerpc                          allmodconfig
-mips                             allyesconfig
-sh                               allmodconfig
-i386                                defconfig
-i386                             allyesconfig
-x86_64                        randconfig-a004
-x86_64                        randconfig-a002
-x86_64                        randconfig-a006
-i386                          randconfig-a001
-i386                          randconfig-a003
-i386                          randconfig-a005
-x86_64                        randconfig-a015
-x86_64                        randconfig-a013
-x86_64                        randconfig-a011
-i386                          randconfig-a014
-i386                          randconfig-a012
-i386                          randconfig-a016
-arc                  randconfig-r043-20220721
-um                             i386_defconfig
-um                           x86_64_defconfig
-x86_64                          rhel-8.3-func
-x86_64                         rhel-8.3-kunit
-x86_64                    rhel-8.3-kselftests
-x86_64                           rhel-8.3-syz
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                           allyesconfig
-
-clang tested configs:
-x86_64                        randconfig-a005
-x86_64                        randconfig-a001
-x86_64                        randconfig-a003
-i386                          randconfig-a002
-i386                          randconfig-a004
-i386                          randconfig-a006
-x86_64                        randconfig-a014
-x86_64                        randconfig-a012
-x86_64                        randconfig-a016
-i386                          randconfig-a013
-i386                          randconfig-a011
-i386                          randconfig-a015
-hexagon              randconfig-r041-20220721
-hexagon              randconfig-r045-20220721
-riscv                randconfig-r042-20220721
-s390                 randconfig-r044-20220721
+Thank you!
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
