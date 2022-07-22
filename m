@@ -2,92 +2,88 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 869D0C43334
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jul 2022 07:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C103C43334
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Jul 2022 08:19:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234007AbiGVHUE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Jul 2022 03:20:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46110 "EHLO
+        id S234884AbiGVITa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Jul 2022 04:19:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233417AbiGVHUD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2022 03:20:03 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9914B62
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Jul 2022 00:20:02 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id ez10so6988487ejc.13
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Jul 2022 00:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ouSSdITZq0FsaMVncH1X0sX6Yphj9Cjyf72zkTGekO0=;
-        b=bPYF3z0YzAGpQX9WgEBtgnp6WiDyVCcYK9pFLbm2x9uoNu4SrZJg153jrQrjKNwBLK
-         KnCjXGj4hxLR86UZDs8B1FF+a37Wd9Y2DWSooabAQgmz+Js2vAgLrdd1t06GTBAdFSyu
-         +9fhHvL8lPlBs/BcBn2LJv8Y8dlJwkoOYnx3w2lvOHCzhvc5/MOhcX6GHAFh22gcTlsJ
-         K/tS/fdrmn28u5U2xuNwNH9KjUs+9/zhA+jDHVEiLhiqG8ZgvHzf7onb+IGq0wn1xX9A
-         fFqlCw29sIdFMT1OHKBHN8ZorrcwqFBD9KaT74K/zqx6fIJaaG0J6dUO4IcU+cWP5UqN
-         PEnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ouSSdITZq0FsaMVncH1X0sX6Yphj9Cjyf72zkTGekO0=;
-        b=NA8SOMdQHBfKqXpJ45aX8jBkcSprlOmZDDGli98ER/hdo1fxbj7zvlfrt42trwnhJF
-         XYVV7mdAKT77liZMBn7ZYbJvgGAcpW4wo+MCHCsVbLm/fp4p8ed/Tv0sTpXigeZtqOjd
-         lbhDqGDCMDo9LUBtT7HxoFS7NQ3WFbcmTYjJY0WH3vB68zvViri1Xoe/ZbrHf4spCw2W
-         gBjqnOwwoxnAQwLx0xc+C4s0kLVkqJNPSYC7GEgMiwr43IROZ1LSVBbVaDoGjYQqEIJz
-         DNJfjH72OAfn5b/EJaYSXE3mWbp5mgq5xJPheCg2hQ1JgKAPJMP0nPCZKJpU3Zg9EsWa
-         SDbQ==
-X-Gm-Message-State: AJIora/kcZEB4k19z8MH3iD6/4pVH9tIbh3UYACWVfxUza4mv7NUCJvm
-        bCyqzrtWtfqFWbgAA1z365KVGz5LvwHPEp+qDhwN5A==
-X-Google-Smtp-Source: AGRyM1vaaCFD7cdmMQ6HjkruGEujivTRBWp8780hsCXuLcgaXUNWfcvbAmpbQv+nwnM7DI/pHZJH5TtPuyiXiEigPak=
-X-Received: by 2002:a17:907:1c0a:b0:72b:378f:2fa1 with SMTP id
- nc10-20020a1709071c0a00b0072b378f2fa1mr1969373ejc.492.1658474401450; Fri, 22
- Jul 2022 00:20:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220721152508.3661-1-william.gray@linaro.org>
-In-Reply-To: <20220721152508.3661-1-william.gray@linaro.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 22 Jul 2022 09:19:50 +0200
-Message-ID: <CAMRc=MfmykYAnBzhFO-XQd0j646gDHNqdUZyAivQbgFtwY5Dig@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Update Intel 8255 GPIO driver file list
-To:     William Breathitt Gray <william.gray@linaro.org>
+        with ESMTP id S234841AbiGVIT3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2022 04:19:29 -0400
+Received: from polaris.svanheule.net (polaris.svanheule.net [IPv6:2a00:c98:2060:a004:1::200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA4219E294
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jul 2022 01:19:26 -0700 (PDT)
+Received: from terra.. (unknown [IPv6:2a02:a03f:eaf9:8401:aa9f:5d01:1b2a:e3cd])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sander@svanheule.net)
+        by polaris.svanheule.net (Postfix) with ESMTPSA id 09EDA2FEE80;
+        Fri, 22 Jul 2022 10:19:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+        s=mail1707; t=1658477965;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=HZNAS0xeih0cr4UAkW0Tqvo67hsDsJQX4e9Q7//3Eh8=;
+        b=YPDiNBnZ9plyhDM6iqwDnehR946qXSyDbffR1i3umBy+sMJMHLYHVBK2CtCdiwRo/tZCpC
+        OG7Vh7ehiGh9McvgUu9OVA8+qBDJLqIY1xq7+e/5Ce6wMLspldHPpjfqt0lyZiNJK3g9aa
+        q9kYoXDBu09Vdsx0f+F/MnF4HH9jFvcTr5zpp3fvcJX3mARZ7PJos/p0wxCrA9usDo/tlf
+        C91YnsvkPVuyPnOrbMigVXh8mTYaarMPrRtvRUUUhknznuFWK8qNxTgfJr5u2MlpoH9WNW
+        SHWcLARje5fgey1gPdWvI/5nNqchBH9I29GhhIMVIHmGU8eGJWZzBXvsKZlDnQ==
+From:   Sander Vanheule <sander@svanheule.net>
+To:     linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org, Bert Vermeulen <bert@biot.com>,
+        Sander Vanheule <sander@svanheule.net>
+Subject: [PATCH v1 1/2] gpio: realtek-otto: amend ctrl struct docs
+Date:   Fri, 22 Jul 2022 10:19:16 +0200
+Message-Id: <778b5c9f05c42c0963a5eca1c1c7e58b588a4bc7.1658477809.git.sander@svanheule.net>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <cover.1658477809.git.sander@svanheule.net>
+References: <cover.1658477809.git.sander@svanheule.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jul 21, 2022 at 9:15 PM William Breathitt Gray
-<william.gray@linaro.org> wrote:
->
-> The drivers/gpio/gpio-i8255.h header file is also maintained.
->
-> Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 960abc07304e..2bd82ce171ca 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9907,6 +9907,7 @@ M:        William Breathitt Gray <william.gray@linaro.org>
->  L:     linux-gpio@vger.kernel.org
->  S:     Maintained
->  F:     drivers/gpio/gpio-i8255.c
-> +F:     drivers/gpio/gpio-i8255.h
->
->  INTEL ASoC DRIVERS
->  M:     Cezary Rojewski <cezary.rojewski@intel.com>
->
-> base-commit: 949506dc608f9820e0cee51b106c35fd3503bbb2
-> --
-> 2.36.1
->
+Commit 512c5be35223 ("gpio: realtek-otto: Support reversed port
+layouts") and commit 95fa6dbe58f2 ("gpio: realtek-otto: Support per-cpu
+interrupts") updated the realtek_gpio_ctrl struct with new fields, but
+the associated kernel-doc comment was not updated accordingly.
 
-Applied, thanks!
+Signed-off-by: Sander Vanheule <sander@svanheule.net>
+---
+ drivers/gpio/gpio-realtek-otto.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Bart
+diff --git a/drivers/gpio/gpio-realtek-otto.c b/drivers/gpio/gpio-realtek-otto.c
+index 63dcf42f7c20..a352fbfc3c28 100644
+--- a/drivers/gpio/gpio-realtek-otto.c
++++ b/drivers/gpio/gpio-realtek-otto.c
+@@ -43,9 +43,19 @@
+  *
+  * @gc: Associated gpio_chip instance
+  * @base: Base address of the register block for a GPIO bank
++ * @cpumask_base: Base address of the interrupt routing registers
++ * @cpu_irq_maskable: Mask of CPUs that can be individually masked for IRQs
+  * @lock: Lock for accessing the IRQ registers and values
+  * @intr_mask: Mask for interrupts lines
+  * @intr_type: Interrupt type selection
++ * @port_offset_u8: Get offset of an 8b port value
++ * @port_offset_u16: Get offset of a 16b port value
++ *
++ * The DIR, DATA, and ISR registers consist of four u8 port values, packed into
++ * a single 32b register. Use @port_offset_u8 to get the correct offset inside
++ * that register. The IMR register consists of four u16 port values, packed
++ * into two 32b registers. Use @port_offset_u16 to get the correct offset for
++ * the u16 value, starting from the first register.
+  *
+  * Because the interrupt mask register (IMR) combines the function of IRQ type
+  * selection and masking, two extra values are stored. @intr_mask is used to
+-- 
+2.36.1
+
