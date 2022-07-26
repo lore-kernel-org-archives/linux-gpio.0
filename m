@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05009C00144
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jul 2022 17:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4948C00140
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jul 2022 17:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233910AbiGZRID (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Jul 2022 13:08:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40630 "EHLO
+        id S232363AbiGZRIF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Jul 2022 13:08:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230208AbiGZRIC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jul 2022 13:08:02 -0400
+        with ESMTP id S233364AbiGZRID (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jul 2022 13:08:03 -0400
 Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 524B61A38D
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jul 2022 10:07:58 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id l15so16985523wro.11
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jul 2022 10:07:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C3831EEE7
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jul 2022 10:08:01 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id g2so12981677wru.3
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jul 2022 10:08:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=conchuod.ie; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DqEbmzhKx0NMjg0VvinCoPEfypWpQp7BkQaC0Xs8ciA=;
-        b=NhvjhaDnJnixTK5JKS13CF/cGWT95PlYz5ESq87WVqMG6WDROqjbUK6xqAdGJULCpz
-         mZAEIbbjJbwrPzrktT3T+hs2SojuMjASB5/5RaZoK38FRiqIXI9nm4IqEXTYfpBUQxtF
-         OPtgT59X4RnD04NW5HDTK6tYnDxxB2LsL5xk2MnnjXPyXCal1tupwafaj+/mzZ6Fj9W/
-         JfPOIe+myCgsz1tzJGLmJmP3pdNNjuat7gTHpEFrvR0In+IQ2op4pUbfhe/IF2sD+2gR
-         IfxFyDXvhZ3ePvPndTkPjf9k+OU+nebEjUnlZWBsRDd2q5POSB7gmnFOjIdy0UhQpO3n
-         T4Lw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Jzo7E3iuffF68CMucGWsT/yGzhnjiXcilx74DK/3MzI=;
+        b=PJwcnD/GOZLAyqo5HYBp+ugAHaWK3jD+s39TePD+rKuCuI6iI14Xay2w+UOL0js0v6
+         LSBHiEPB44Ii2OaSGoDqNOVSO6rNg69fZ7u0WIM6Le6oRMF2IRUbOBE0P+5dIMhS9yGa
+         QC+F0XyZryu1sFqAVoIRgh46Ge6GRHy1WkUhbRG8gjFB5aNyx26K2hN41i4YG7PvuOCR
+         qf2apmc2qvQe6Azfk9JX5P9HelPwx7VJwIQamSA2IvtkS0pvhPy9Hm+mGBmhrdG9C2hq
+         YvnISfSwHYV42XaarrfP6SM31clvkoOOFn/3MvggwSxR06Rcuh2QbKN3LYeFiRPBr0y1
+         VnUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DqEbmzhKx0NMjg0VvinCoPEfypWpQp7BkQaC0Xs8ciA=;
-        b=CK3FSO59gpU82AMG/zuziY8ODVxs/XJYBkkTlmJR/KEHtrBI5R+SP2plooaP/StN0c
-         9kafYpe7O4fNfMrmVu3BFLjwDfslGc3U+vEjSPgVw6iQbzWmlrNhnsGVnTA/0/X5le1J
-         MmNLwt3UjCxfdjHoV+zWkTJUlRBYQ0Sj3tXrafhn8EfCR/zZdjL5WVjQ4CaMwhW1cfXt
-         81SAOwW590ELBw6FbyAj6KARyO5cYlWTXvAbViMuOciOYop/fML9FhHFtaDk+/pXGngd
-         9gNf3WEJXQ4I0/Xdj2LRwQNo7lNZ2n103I5vs7WtytT4wFYt2F/mstgEPknkq8eR+aqa
-         WC9w==
-X-Gm-Message-State: AJIora/Y0vnwyJWFHcRSgqt/I0hulAuKsbtkKogzixaXb+aLfxKNWMOS
-        UdDtefh4JeixSp8UDntYl12dIg==
-X-Google-Smtp-Source: AGRyM1ujJrahHNmwiwz/mBnF/zHJW0mN4KLDNf4jcWEuw6EW0rtMpqQBl3Uq7RHHGJqWG90H0YU3xw==
-X-Received: by 2002:adf:e193:0:b0:21e:626c:d082 with SMTP id az19-20020adfe193000000b0021e626cd082mr11227518wrb.159.1658855276724;
-        Tue, 26 Jul 2022 10:07:56 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Jzo7E3iuffF68CMucGWsT/yGzhnjiXcilx74DK/3MzI=;
+        b=p9dr/wdUE5yAjcMrjTf7+2tn5qxUvhM5k362pc/VtBAuEVeBY5kx47rxad1KRVwZ9k
+         TcdNN0jTe+YJwebVgNUJ9UF4UFXyZbBaz5zGtvJ+DL4JILNWTNF4TrNwqH2shsv2FDfb
+         +IjcQnv6IxXyMf5dNaaZMLaz5qvP8P1y5S89r3mPn8e7Nk2gqIL0w65lju/DA1aq/mt7
+         VGaD3zuc19aX08fyavT0qMX9ms97bjoBfjdGLbr/dC666Y7u2RS6sAOUgqU156JDL6Gg
+         PTec1CvlqWQw48IDkhd0v2OKbrcjF4fKW71PT08765k/Vlk/yKzNgyplTMTxqpz71RRS
+         B8Fg==
+X-Gm-Message-State: AJIora9/bI8ER9Ya9TZiT8AmkK70/bMVo8zg8d8bnZ5yJogihBv42OLa
+        2QUXJdWaVB05Sqe8HFVpseTJ/A==
+X-Google-Smtp-Source: AGRyM1tirn6tXbKRAXaMvkLrwVqgAF4lGynuVfCpdqZGZCoxCIG6G3hqB0PYq/iIx1kid07GWxSsVg==
+X-Received: by 2002:adf:eec2:0:b0:21e:61cd:64c7 with SMTP id a2-20020adfeec2000000b0021e61cd64c7mr11543092wrp.324.1658855279436;
+        Tue, 26 Jul 2022 10:07:59 -0700 (PDT)
 Received: from henark71.. ([109.76.124.168])
-        by smtp.gmail.com with ESMTPSA id r17-20020a5d52d1000000b0021d68a504cbsm14859618wrv.94.2022.07.26.10.07.55
+        by smtp.gmail.com with ESMTPSA id r17-20020a5d52d1000000b0021d68a504cbsm14859618wrv.94.2022.07.26.10.07.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jul 2022 10:07:55 -0700 (PDT)
+        Tue, 26 Jul 2022 10:07:58 -0700 (PDT)
 From:   Conor Dooley <mail@conchuod.ie>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
@@ -60,60 +60,48 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Sagar Kadam <sagar.kadam@sifive.com>
 Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/2] Fix SiFive dt-schema errors
-Date:   Tue, 26 Jul 2022 18:07:24 +0100
-Message-Id: <20220726170725.3245278-1-mail@conchuod.ie>
+Subject: [PATCH v3 2/2] dt-bindings: sifive: add gpio-line-names
+Date:   Tue, 26 Jul 2022 18:07:26 +0100
+Message-Id: <20220726170725.3245278-3-mail@conchuod.ie>
 X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20220726170725.3245278-1-mail@conchuod.ie>
+References: <20220726170725.3245278-1-mail@conchuod.ie>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Conor Dooley <conor.dooley@microchip.com>
+From: Atul Khare <atulkhare@rivosinc.com>
 
-Hi all,
-As these are the last remaining dtbs_check warnings for the default
-riscv defconfig I am reviving the series. Atul has been hit by some
-hardware issues so has not had a chance to send an applicable version
-of these patches. All I have done here is rebase on linux-next, so by
-the time the merge window reopens it will hopefully apply..
+Fix device tree schema validation messages like 'gpio-line-names'
+does not match any of the regexes: 'pinctrl-[0-9]+' From schema: ...
+sifive,gpio.yaml'.
 
-On Atul's V2, Rob had a comment about changing the cache-sets in the
-patch 1/2:
-There is not any way to express power of 2, so you have to list values.
-Rather than just adding 1 more value, I would add at least a few more so
-we're not adding these one by one. This is for a specific cache
-implementation, so it can't really be *any* power of 2. Designs have
-some limits or physics does. /endquote
+The bindings were missing the gpio-line-names element, which was
+causing the dt-schema checker to trip-up.
 
-I don't think that there's value in speculatively adding values to this
-enum especially as (I think at least) the scala for this cache IP has
-been released publicly:
-https://github.com/sifive/block-inclusivecache-sifive/blob/master/design/craft/inclusivecache/src/Parameters.scala#L32
+Signed-off-by: Atul Khare <atulkhare@rivosinc.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/gpio/sifive,gpio.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-The two compatibles in the file match only against two specific cache
-implemenations: the fu540's & the fu740's. I would seem to me that, it
-would be better to lock this to a single value per compatible since the
-1024 applies to the fu540 & the new value of 2048 applies only to the
-fu740.
-
-I have not made that change, I simply wanted to repackage this series
-in a way that could be more easily applied & restart the discussion.
-
-Thanks,
-Conor.
-
-Atul Khare (2):
-  dt-bindings: sifive: add cache-set value of 2048
-  dt-bindings: sifive: add gpio-line-names
-
- Documentation/devicetree/bindings/gpio/sifive,gpio.yaml      | 4 ++++
- Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-
-base-commit: 058affafc65a74cf54499fb578b66ad0b18f939b
+diff --git a/Documentation/devicetree/bindings/gpio/sifive,gpio.yaml b/Documentation/devicetree/bindings/gpio/sifive,gpio.yaml
+index 939e31c48081..fc095646adea 100644
+--- a/Documentation/devicetree/bindings/gpio/sifive,gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/sifive,gpio.yaml
+@@ -46,6 +46,10 @@ properties:
+     maximum: 32
+     default: 16
+ 
++  gpio-line-names:
++    minItems: 1
++    maxItems: 32
++
+   gpio-controller: true
+ 
+ required:
 -- 
 2.37.1
 
