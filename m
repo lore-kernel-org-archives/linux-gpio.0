@@ -2,117 +2,106 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA95C00140
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jul 2022 15:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52FE9C3F6B0
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Jul 2022 17:08:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233513AbiGZPNa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Jul 2022 11:13:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47202 "EHLO
+        id S230406AbiGZRIE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Jul 2022 13:08:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232071AbiGZPN3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jul 2022 11:13:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1320A2F3A7
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jul 2022 08:13:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A65756069D
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jul 2022 15:13:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73754C433C1;
-        Tue, 26 Jul 2022 15:13:25 +0000 (UTC)
-Message-ID: <524f89f6-2136-c45c-cf39-a045bb92e396@xs4all.nl>
-Date:   Tue, 26 Jul 2022 17:13:23 +0200
+        with ESMTP id S231896AbiGZRID (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jul 2022 13:08:03 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D59811D0D8
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jul 2022 10:07:59 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id d8so20940750wrp.6
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jul 2022 10:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=conchuod.ie; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=bYJZAGYDWBMT6g6cijNnHNizMWzKxFhdHEezep+ZyM8=;
+        b=JFg1dFPc3aCGDcZqQP/YmQ+ORnEAFxNTUqKD4xP2JSkkRiCAG7wPPGNJAY9a7T0Bi5
+         lbT/nHrUl9oxPbeYHYpArtD2weheB51Uynj4CrewODHCh4i/2Fn9ytSZ23BEYUXqy6qn
+         eg0vfOgO/RE5D7Usial/oeuuleip50PkC49Ec6N0l9dz2uDVhG/aVF4Qfz18lKfssm2v
+         A2VLmR9zMqkYfvbi0YSM9GkRvjtywJXAMiKfL+GlhwZJ4qbs7Op8Vhk7m/gZNPpSoOaa
+         F3XPF71x+fEpaw/A9zR/1beKiAGNW5WzymfAnnemm878U3duUOjbYW1EGVmaefthEAes
+         diiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=bYJZAGYDWBMT6g6cijNnHNizMWzKxFhdHEezep+ZyM8=;
+        b=LLh796GFBY9jWUab8HpwMYhPb3Yc2UPyn+pBhZHHusj8LHv5oEyEm2e17PVGAPXWzh
+         xsLM+TZDQF5ZGETFY7RLHGFqzBa+oskptwnB672Wp5l3pZu57QaG4COD0LlwegYJ27vu
+         hgvq2302//tlYuJ7rpC/lq6tNs6iZ1y2DLz1bUsi/f4+QvRjVkHICaon+gsZoKo4kbdV
+         u9Uv3kEF9+QyKsrorIjvfkIi0UDzd6+irKlrKAFZCxz97d90IjXuHsLMWYV/Px7MZfFI
+         tRBy30VHBK5hPm3N+XZq/pMY2raQdidjLDemIptomxmzAXMxTj6Jh9p6sKOX1PC6VypE
+         V2yw==
+X-Gm-Message-State: AJIora/NZpRKIXxRJQ19fojOjUygnJXO6jxM7MZYq2MkhXTKWxL2FV+a
+        BZlKxnCCOLGfWyqN2rxrAtuB/Q==
+X-Google-Smtp-Source: AGRyM1s6BYK8WW9ORA/vI2Ql3Ij0kc9HdxUUm/7aljKXohKq8ulI7JwqqnPKXbr0u5sk9KEbkVlC7A==
+X-Received: by 2002:a5d:5986:0:b0:21e:811c:f688 with SMTP id n6-20020a5d5986000000b0021e811cf688mr8824688wri.8.1658855278124;
+        Tue, 26 Jul 2022 10:07:58 -0700 (PDT)
+Received: from henark71.. ([109.76.124.168])
+        by smtp.gmail.com with ESMTPSA id r17-20020a5d52d1000000b0021d68a504cbsm14859618wrv.94.2022.07.26.10.07.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Jul 2022 10:07:57 -0700 (PDT)
+From:   Conor Dooley <mail@conchuod.ie>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Atul Khare <atulkhare@rivosinc.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] dt-bindings: sifive: add cache-set value of 2048
+Date:   Tue, 26 Jul 2022 18:07:25 +0100
+Message-Id: <20220726170725.3245278-2-mail@conchuod.ie>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20220726170725.3245278-1-mail@conchuod.ie>
+References: <20220726170725.3245278-1-mail@conchuod.ie>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v4 2/2] gpio: mxc: Always set GPIOs used as interrupt
- source to INPUT mode
-Content-Language: en-US
-To:     Marek Vasut <marex@denx.de>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Marc Zyngier <maz@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-References: <20220724224943.294057-1-marex@denx.de>
- <20220724224943.294057-2-marex@denx.de>
- <CACRpkdbUbnOeH7p7ycmvY1YP=K_s7Oj0gt=g-m2s1P2CAqLGMQ@mail.gmail.com>
- <15dbcfc4-79a0-eaad-c513-4b4e16ccfb8f@denx.de>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-In-Reply-To: <15dbcfc4-79a0-eaad-c513-4b4e16ccfb8f@denx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+From: Atul Khare <atulkhare@rivosinc.com>
 
+Fixes Running device tree schema validation error messages like
+'... cache-sets:0:0: 1024 was expected'.
 
-On 7/26/22 16:42, Marek Vasut wrote:
-> On 7/26/22 10:15, Linus Walleij wrote:
->> On Mon, Jul 25, 2022 at 12:50 AM Marek Vasut <marex@denx.de> wrote:
->>
->>> Always configure GPIO pins which are used as interrupt source as INPUTs.
->>> In case the default pin configuration is OUTPUT, or the prior stage does
->>> configure the pins as OUTPUT, then Linux will not reconfigure the pin as
->>> INPUT and no interrupts are received.
->>>
->>> Always configure interrupt source GPIO pin as input to fix the above case.
->>>
->>> Fixes: 07bd1a6cc7cbb ("MXC arch: Add gpio support for the whole platform")
->>> Signed-off-by: Marek Vasut <marex@denx.de>
->>> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>> Cc: Loic Poulain <loic.poulain@linaro.org>
->>> Cc: Marc Zyngier <maz@kernel.org>
->>> Cc: NXP Linux Team <linux-imx@nxp.com>
->>> Cc: Peng Fan <peng.fan@nxp.com>
->>> Cc: Shawn Guo <shawnguo@kernel.org>
->>> ---
->>> V2: Actually update and clear bits in GDIR register
->>> V3: Rebase on top of new patch 1/2, expand CC list, add Fixes tag
->>> V4: No change
->>
->> I understand what you are trying to achieve, and it makes sense.
->>
->> There's is just this one generic GPIO-based driver that makes me
->> a little bit nervous here.
->>
->> Consider:
->> drivers/media/cec/platform/cec-gpio/cec-gpio.c
->> Look what the driver is doing with the gpiod_* operations on it's
->> cec->cec_gpio.
->>
->> A certain GPIO pin is switched back and forth between input and
->> output and in input mode, it is used to generate interrupts as well.
->>
->> Will this still work fine with the MXC driver after this change?
->> At least it will be set to input mode twice, but I suppose that is
->> fine, it's not your fault that the frameworks are orthogonal.
-> 
-> Ugh. I don't see why it shouldn't work, esp. if the CEC driver controls the direction and the default is input, but I wonder what other corner cases there are.
+The existing bindings had a single enumerated value of 1024, which
+trips up the dt-schema checks. The ISA permits any arbitrary power
+of two for the cache-sets value, but we decided to add the single
+additional value of 2048 because we couldn't spot an obvious way
+to express the constraint in the schema.
 
-FYI: you can easily test cec-gpio by adding something along these lines to the dts:
+Signed-off-by: Atul Khare <atulkhare@rivosinc.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	cec-gpio {
-		compatible = "cec-gpio";
-		cec-gpios = <&gpio 6 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
-	};
+diff --git a/Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml b/Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml
+index e2d330bd4608..ab6043d9cdbe 100644
+--- a/Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml
++++ b/Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml
+@@ -46,7 +46,7 @@ properties:
+     const: 2
+ 
+   cache-sets:
+-    const: 1024
++    enum: [1024, 2048]
+ 
+   cache-size:
+     const: 2097152
+-- 
+2.37.1
 
-(this is from a Raspberry Pi). As long as the cec-gpios pin can be configured as a
-pull up, then you're OK. It doesn't have to be connected to anything.
-
-If the cec-gpio driver is enabled as well, then you should see a /dev/cec0 device.
-
-If you can run 'cec-ctl --playback -p 1.0.0.0', then it works.
-
-Another driver that switches direction is drivers/gpu/drm/i2c/tda998x_drv.c
-where the irq line has to be configured as an output during calibration.
-See tda998x_cec_calibration().
-
-Regards,
-
-	Hans
