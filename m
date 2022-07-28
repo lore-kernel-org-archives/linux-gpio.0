@@ -2,25 +2,25 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F39ADC19F2B
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Jul 2022 15:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D02C04A68
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Jul 2022 15:57:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231448AbiG1P5N (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Jul 2022 11:57:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41356 "EHLO
+        id S232514AbiG1P5a (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Jul 2022 11:57:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232011AbiG1P5L (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jul 2022 11:57:11 -0400
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2075.outbound.protection.outlook.com [40.107.22.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 463B261D48;
-        Thu, 28 Jul 2022 08:57:05 -0700 (PDT)
+        with ESMTP id S232339AbiG1P5S (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jul 2022 11:57:18 -0400
+Received: from EUR01-DB5-obe.outbound.protection.outlook.com (mail-eopbgr150043.outbound.protection.outlook.com [40.107.15.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FF162A45;
+        Thu, 28 Jul 2022 08:57:17 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ROTBifVeY+U8cEGDCsGgyB6ObdWeC3HIcl4a/EQ/QIXRE7W32/5nJmnBgXegSxFjSrUqknsSaQGK3ePvHMLH4leTM0h3T+MkdcgqMc0vg79GnNT4970rm7VfqBYzLXv+VHbu3kHQpXgCwRPY10OjnJS7l78rclPp03bvl0UWYYaqg8EN1bKsq0JRMJddkV07tfQ8c/+tJK9MAmNkSOjoubFG4VS9Nf6/gKIPcnCqYHYvk3Mbeyza/EUCjnx7UgtWjgUJrksNwejiUQP4Ihcrq/vwhQgY44LDNcZ7a/AFSyRbiQtj4yBniDevjbP+qxldlHyEIdkUosL9G5hOptB9vg==
+ b=PUGtCpKCjEhTv5vRCNK8bf0uM37qL3gpQq/lrAZT6QlkhFwBLPxK0Ajt4wLETPKC/Dq9pqVQY1ORlWx/MA7MOYsscXToUFL+3K4FUBXhyP8IXBo/L4WNRIzIuO1vwmFVb6KQzW21i6JMB+J4sauCPs5FiL27S6i65P6PMV68KKSqjmhz6kkmxZb91VDHWXZ0aj3C92evhJlbvrViAwH4OAkZigVYG+mtmkPBFUxmcU1pHQoffI/vSfsw5KcgJ6zcoUMZGW163z2j5DnzZCTV6GWF32M4zSrfjw3NFPz8PfWDdc8E5lR16Xsi4snVg52bYcINr8E2pMDm+fbEoboDtQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=la1KRgcGK4dZq7v/VZiuS81LKrzy74zjsGQ5ifXobQg=;
- b=nuI+O45bJWsGLo5lkv2bglgauj0n/OZEJxZi+l6eUv9lhtn3iQUOAO4fTzBO6BFCsNMQkf9YgzKINLxlKggIiQoPkCcsf/I30hVpOLJ74NDzpm34uibhN9in9IRfHzreQdtnykw2vfIXI9w4PauIFqEIfrM34WwkNm//kCpTb2tj12SjK1hH4jYOZgwXaCHG8byj0bto7Xirv5MiNVmZJInsTVR54G3alWu+QTGyONAOUboIEk9r8D8c298FUNHXyWz1PJ2KZiXNnRg4+19s9MeSlX33mHKPDZ9kGHXd5jT5VHhOKNHYiGheJ4i8338fV+uZ5eTdn2yc6YcVce44Zg==
+ bh=Q/SIkLdlwCfAKaSHnpyBQjoFHswi4PZziFDzWcXh9Yo=;
+ b=kbyZ66tDVkyEmor7bB41uDaCD4BIy2+ZSpb06FZEmdbuiHbHZgIzWZp6xyXxRhOp9cDPImXDpEkIGRA7bx+ZbXzn4TrXqwOtvZgRp2k4sYdIMlqmF/yiz8HuYjNGCrk2B8i/k0eoj/T8XlvOUU14PCSGs/2uwrlDg7YmcESa7LAhtvFM+D9XQn7sRQw9AIMxU2RHav7rNOHZQNKZGAeDwf36RJnCd9XvMOYdGMf1Af/sPgl3tweU8kAzaNzO8m82T32D1/8SsDuHrewkjxHRZeYPs40yd1m3FS+ZmZ7IYw0APVBKcR3ar9WHgvNpDY8OG1oiaPZKW6uboB39DUCLrA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  194.138.21.71) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=siemens.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
@@ -28,18 +28,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=la1KRgcGK4dZq7v/VZiuS81LKrzy74zjsGQ5ifXobQg=;
- b=H00lp0IWvROSHDHtCr6sC2whNgTtgf+kdm/EVrMYXPXBqRcHbZS2j16ppaPdQZpBkovIEsamC6Hv/FOruVYL7MykoJqnFCGULKf1e27GzH8e5jympgak4zfCzmmfEs/2flzu1AxV+Y+XuDCMLAxueTUxGOhTbaHuscXYGu/i2DxMZSDXrT3NOp/DZTXltmkYJAmxROxqoCUP7tPSEBf3BgHxK935sXC5nWtF+HVP7nP5mGWjDU8bXFnUTuWy2ALG7kPh4+BPf+xJuhO7AMI0u2u8vG/s58nEcHzCdC9+NTY5me7Q74Niejpr/iPNaOkEhG51qbQuyMaxtiyNV5R6cg==
-Received: from DU2PR04CA0304.eurprd04.prod.outlook.com (2603:10a6:10:2b5::9)
- by AM7PR10MB3686.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:13f::10) with
+ bh=Q/SIkLdlwCfAKaSHnpyBQjoFHswi4PZziFDzWcXh9Yo=;
+ b=rrW4cPb065HkfK1Ibb40IdxLyOtMwUdy7lJvOeqVoXnTvVEanwfkoa1ygLt9VBSLgTAN/htZ1V+dvW17NQgQhJomf1ZOCniufOFzki4bzxhFLBsrcUiWR12HPIyxkmc4+ACHTWrqZTT2h5c1RnX2n04W0ToAzlWzTH5hhN+CJvb8B5ieEc5jz42a04FI/YdjSvyrNTEZJ9mEj6pF5ZO1NUtEPB0VrEkSgvc/t4bGG2XPwOCgsVuWhmbhTnnh7ISBnaShIGpDhSowsixVIE60csj4hhLtE1727T//3m5wmTL06GasM9pLyvAUIqfD7F5VwuZIGsTbp5fqjawb8WmQ3g==
+Received: from DB8P191CA0025.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:130::35)
+ by DB7PR10MB2139.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:45::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5458.19; Thu, 28 Jul
- 2022 15:57:03 +0000
-Received: from DB5EUR01FT089.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:10:2b5:cafe::e4) by DU2PR04CA0304.outlook.office365.com
- (2603:10a6:10:2b5::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5482.11 via Frontend
- Transport; Thu, 28 Jul 2022 15:57:03 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.22; Thu, 28 Jul
+ 2022 15:57:15 +0000
+Received: from DB5EUR01FT030.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:10:130:cafe::5f) by DB8P191CA0025.outlook.office365.com
+ (2603:10a6:10:130::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5482.10 via Frontend
+ Transport; Thu, 28 Jul 2022 15:57:15 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.71)
  smtp.mailfrom=siemens.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=siemens.com;
@@ -47,17 +47,17 @@ Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
  194.138.21.71 as permitted sender) receiver=protection.outlook.com;
  client-ip=194.138.21.71; helo=hybrid.siemens.com; pr=C
 Received: from hybrid.siemens.com (194.138.21.71) by
- DB5EUR01FT089.mail.protection.outlook.com (10.152.5.156) with Microsoft SMTP
+ DB5EUR01FT030.mail.protection.outlook.com (10.152.4.254) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5482.10 via Frontend Transport; Thu, 28 Jul 2022 15:57:03 +0000
-Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
+ 15.20.5482.10 via Frontend Transport; Thu, 28 Jul 2022 15:57:15 +0000
+Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
  DEMCHDC9SKA.ad011.siemens.net (194.138.21.71) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.9; Thu, 28 Jul 2022 17:57:02 +0200
+ 15.1.2507.9; Thu, 28 Jul 2022 17:57:14 +0200
 Received: from md1za8fc.ad001.siemens.net (139.25.69.242) by
- DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) with Microsoft SMTP Server
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.9; Thu, 28 Jul 2022 17:57:02 +0200
+ 15.1.2507.9; Thu, 28 Jul 2022 17:57:13 +0200
 From:   Henning Schild <henning.schild@siemens.com>
 To:     <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
         "Bartosz Golaszewski" <brgl@bgdev.pl>,
@@ -67,9 +67,9 @@ CC:     Sheng-Yuan Huang <syhuang3@nuvoton.com>,
         Kuan-Wei Ho <cwho@nuvoton.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         Henning Schild <henning.schild@siemens.com>
-Subject: [PATCH 2/4] gpio-f7188x: use unique labels for banks/chips
-Date:   Thu, 28 Jul 2022 17:56:50 +0200
-Message-ID: <20220728155652.29516-3-henning.schild@siemens.com>
+Subject: [PATCH 4/4] platform/x86: simatic-ipc: enable watchdog for 227G
+Date:   Thu, 28 Jul 2022 17:56:52 +0200
+Message-ID: <20220728155652.29516-5-henning.schild@siemens.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220728155652.29516-1-henning.schild@siemens.com>
 References: <20220728155652.29516-1-henning.schild@siemens.com>
@@ -77,222 +77,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-Originating-IP: [139.25.69.242]
-X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
- DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
+X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-AS-Result: No-10--11.447500-8.000000
+X-TMASE-MatchedRID: L90KqhDWgfOUYAP3WXIsZ3Cm15xQGrnE2mwVXKpQ3BdHg88w74mNDktc
+        8DbogbSE31GU/N5W5BDT/pFzauZLmXEK4P8QtiVHs3gZaLIY9no/aaS8hrB/2J4CIKY/Hg3AaZG
+        o0EeYG97Gr09tQ7Cw/1BIVsvVu9ABIAcCikR3vq9vibMxAqYXjWHFPUyW8t4AX3DcTx0UaPNCEh
+        brM/bogi6eQ3HQcWnw
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--11.447500-8.000000
+X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-SNTS-SMTP: A15FED269835BF8CF7C1A137653E6D19B4BCC571B4C79D2B4C34F32CAAC23B342000:8
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a1a985a1-1e1f-41a3-029d-08da70b1d037
-X-MS-TrafficTypeDiagnostic: AM7PR10MB3686:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc4a0a34-4daf-4f0d-0db4-08da70b1d76a
+X-MS-TrafficTypeDiagnostic: DB7PR10MB2139:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: G8ibihkolTxmpgDUmsqLwoNm5sNfTINfrpOADj8F5A34nBzF39XFph7lEcCCPyg/RwGgkzyUmEonCCQi4hcJ6K0IFVmYWLNo0CTIhn4QDOMOTNh/152dVjsU5ZWQhLZq9zlkQNOQXq2usdsksBbNu21U/8N++5bag2/C4pkCeeONn2qIYOqxr6E8J6+dsdT+dSeTOyT/ExwtwCF0XQlQMHMjIts0lY1hyCG5YqVvBbO3rKT7I2rWXUBhD8hiCvGHVurUhoxUtwZsZkBUyeB6LKpfL6jyemlxC/D+UOrkTtDYLc1mPkB326BEPlIvshUGWUxiJ9KFEp7CjUCIVZYBlqOf0mGfQjp43dvQoyviWsl71qDSqdZnVxABk+JPbHKcYt2wEtuAHjdlvwt6yC7Nlb/uf6lc9XPvrbrreKvA9bF1tAgtXl4bZqbdHslUxXLivnKWtxA7syGqB91A60MoHtjkGZiSqEFcPMozzNpkNROe0sW5cQvp/PC9hwSriDPtK16N+Q+DKSAXwuHTMzrKGCxXJbA6sfOCLF1eWxgVAi6xD2LQgbD7zuprtrEMVO3R8LiBwAPRhFCWlEfTsu9WI2X+p1RIUZWq6t4WBQhwwFnQkPuvkZi/c8LPbDbPtXZSwUhKZJqc3tUOvMOGaiJsKMNDZMadHazKTN1rMjcGmkDzvIj0l0T35M4rbP6hIFoAcQiXJ4WoMVZdpaAX7PfpQxetnliJKktSP++z9EX/AHEEnriYdIMGUexrymY1YuMO4nY31uObU6lemLbug6AF2oo+o+eXOG8hL9wz8YUW+htI26eNoBbTnNY2Nta0GNICK+ibxuEbHOws+ueg4gluUg==
-X-Forefront-Antispam-Report: CIP:194.138.21.71;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(136003)(346002)(376002)(396003)(39860400002)(36840700001)(46966006)(40470700004)(8676002)(82740400003)(4326008)(36860700001)(47076005)(5660300002)(40480700001)(82960400001)(2616005)(70586007)(356005)(44832011)(8936002)(2906002)(956004)(70206006)(81166007)(1076003)(186003)(316002)(6666004)(41300700001)(86362001)(36756003)(478600001)(110136005)(107886003)(54906003)(26005)(336012)(83380400001)(40460700003)(16526019)(82310400005)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: Vs2I7TvauCllnICd7bydGgqEk0wJVt9bnm0kJrHxXc2jaTT+cJZtxUoGs0wVut3Kwp1T6ikTinQhtdEMNE7gDGduktX39JDS2OD4V1j0T19berWsLDFgWpPmNFHFfpC2nHMHU0x7TA11aOoOgf/Iirku3TQP2Io5DL03MOPbZ/Q9LUHTUR1UgIXb7RZnt55aqL0tPbsME0iHLjJsZb68P4QLpwtdFIBJ4spLpJK1PqAL+3JpVqRTxbuY2No/mUPy8i9Zg2QvFJexHThyF1PD128FW8xtRQ0wHrpT7b+u16bBV8lXZJe+B6FeDAwpEjAL2l3Kwke/83A8zXo4CISf6Cs/6hDzmIGUJR7FrN+Ib3ew+OYq9cs95uikFlwhD5LXkfiGvoLg/Lavnv5+wFPXP1Dpfdbhw60kP+abhxgNXABvwFzqFotrUA3BqBd1JcrmuYOdhDgRX8SJ7zaDd6wAUn5L0GbvJ9FrQmNyc8eHCc/xanRQq8/uE3i1hNKIFYezTtEdSXbF2t3O0IEQQIA1u6hw9CYfIo1p9u1VAbiW1ekbNQAfj3yVNz5bMnyJxE993X3TjT6RaTLCfPyprpsRU20qeQudyMgKtCr7/Nq73sk8d+cgCI1lFETxz5/QU7kdKvMwPigXU52PcZA+ekUy7ezpraKBD9y+Md1jncjynZXs4jZQR1ZZlCDpaTiXPD86H/cht/5Pj1+M/VMot4x0z+yQDkN7kagrCIaJ8rsnXdIosIwARUl7tsGyVtpnnj0BnFx7tmQG1QnXbOyUf4BYpynkUDFv7xMf1VM0GjthcvrcfMROzLTRLhp77UlTSXFUPM/qh81iyLTLIQ+JFS58xg==
+X-Forefront-Antispam-Report: CIP:194.138.21.71;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(396003)(136003)(376002)(39860400002)(346002)(36840700001)(40470700004)(46966006)(336012)(1076003)(36860700001)(82310400005)(2906002)(107886003)(478600001)(47076005)(26005)(41300700001)(2616005)(40480700001)(16526019)(83380400001)(316002)(4744005)(44832011)(186003)(5660300002)(86362001)(4326008)(6666004)(81166007)(54906003)(8676002)(70586007)(8936002)(356005)(82740400003)(110136005)(956004)(36756003)(70206006)(82960400001)(40460700003)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2022 15:57:03.0353
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2022 15:57:15.1139
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1a985a1-1e1f-41a3-029d-08da70b1d037
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc4a0a34-4daf-4f0d-0db4-08da70b1d76a
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.71];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: DB5EUR01FT089.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DB5EUR01FT030.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3686
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR10MB2139
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-So that drivers building on top can find those pins with GPIO_LOOKUP
-helpers.
+Just load the watchdog module, after having identified that machine.
+That watchdog module does not have any autoloading support.
 
 Signed-off-by: Henning Schild <henning.schild@siemens.com>
 ---
- drivers/gpio/gpio-f7188x.c | 138 ++++++++++++++++++-------------------
- 1 file changed, 69 insertions(+), 69 deletions(-)
+ drivers/platform/x86/simatic-ipc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
-index 431ce2cda1d8..5f2f3c01231d 100644
---- a/drivers/gpio/gpio-f7188x.c
-+++ b/drivers/gpio/gpio-f7188x.c
-@@ -151,10 +151,10 @@ static void f7188x_gpio_set(struct gpio_chip *chip, unsigned offset, int value);
- static int f7188x_gpio_set_config(struct gpio_chip *chip, unsigned offset,
- 				  unsigned long config);
+diff --git a/drivers/platform/x86/simatic-ipc.c b/drivers/platform/x86/simatic-ipc.c
+index 1825ef21a86d..8dd686d1c9f1 100644
+--- a/drivers/platform/x86/simatic-ipc.c
++++ b/drivers/platform/x86/simatic-ipc.c
+@@ -96,6 +96,9 @@ static int register_platform_devices(u32 station_id)
+ 			 ipc_wdt_platform_device->name);
+ 	}
  
--#define F7188X_GPIO_BANK(_base, _ngpio, _regbase)			\
-+#define F7188X_GPIO_BANK(_base, _ngpio, _regbase, _label)			\
- 	{								\
- 		.chip = {						\
--			.label            = DRVNAME,			\
-+			.label            = _label,			\
- 			.owner            = THIS_MODULE,		\
- 			.get_direction    = f7188x_gpio_get_direction,	\
- 			.direction_input  = f7188x_gpio_direction_in,	\
-@@ -176,98 +176,98 @@ static int f7188x_gpio_set_config(struct gpio_chip *chip, unsigned offset,
- #define gpio_out_mode(base) (base + 3)
- 
- static struct f7188x_gpio_bank f71869_gpio_bank[] = {
--	F7188X_GPIO_BANK(0, 6, 0xF0),
--	F7188X_GPIO_BANK(10, 8, 0xE0),
--	F7188X_GPIO_BANK(20, 8, 0xD0),
--	F7188X_GPIO_BANK(30, 8, 0xC0),
--	F7188X_GPIO_BANK(40, 8, 0xB0),
--	F7188X_GPIO_BANK(50, 5, 0xA0),
--	F7188X_GPIO_BANK(60, 6, 0x90),
-+	F7188X_GPIO_BANK(0, 6, 0xF0, DRVNAME "-0"),
-+	F7188X_GPIO_BANK(10, 8, 0xE0, DRVNAME "-1"),
-+	F7188X_GPIO_BANK(20, 8, 0xD0, DRVNAME "-2"),
-+	F7188X_GPIO_BANK(30, 8, 0xC0, DRVNAME "-3"),
-+	F7188X_GPIO_BANK(40, 8, 0xB0, DRVNAME "-4"),
-+	F7188X_GPIO_BANK(50, 5, 0xA0, DRVNAME "-5"),
-+	F7188X_GPIO_BANK(60, 6, 0x90, DRVNAME "-6"),
- };
- 
- static struct f7188x_gpio_bank f71869a_gpio_bank[] = {
--	F7188X_GPIO_BANK(0, 6, 0xF0),
--	F7188X_GPIO_BANK(10, 8, 0xE0),
--	F7188X_GPIO_BANK(20, 8, 0xD0),
--	F7188X_GPIO_BANK(30, 8, 0xC0),
--	F7188X_GPIO_BANK(40, 8, 0xB0),
--	F7188X_GPIO_BANK(50, 5, 0xA0),
--	F7188X_GPIO_BANK(60, 8, 0x90),
--	F7188X_GPIO_BANK(70, 8, 0x80),
-+	F7188X_GPIO_BANK(0, 6, 0xF0, DRVNAME "-0"),
-+	F7188X_GPIO_BANK(10, 8, 0xE0, DRVNAME "-1"),
-+	F7188X_GPIO_BANK(20, 8, 0xD0, DRVNAME "-2"),
-+	F7188X_GPIO_BANK(30, 8, 0xC0, DRVNAME "-3"),
-+	F7188X_GPIO_BANK(40, 8, 0xB0, DRVNAME "-4"),
-+	F7188X_GPIO_BANK(50, 5, 0xA0, DRVNAME "-5"),
-+	F7188X_GPIO_BANK(60, 8, 0x90, DRVNAME "-6"),
-+	F7188X_GPIO_BANK(70, 8, 0x80, DRVNAME "-7"),
- };
- 
- static struct f7188x_gpio_bank f71882_gpio_bank[] = {
--	F7188X_GPIO_BANK(0, 8, 0xF0),
--	F7188X_GPIO_BANK(10, 8, 0xE0),
--	F7188X_GPIO_BANK(20, 8, 0xD0),
--	F7188X_GPIO_BANK(30, 4, 0xC0),
--	F7188X_GPIO_BANK(40, 4, 0xB0),
-+	F7188X_GPIO_BANK(0, 8, 0xF0, DRVNAME "-0"),
-+	F7188X_GPIO_BANK(10, 8, 0xE0, DRVNAME "-1"),
-+	F7188X_GPIO_BANK(20, 8, 0xD0, DRVNAME "-2"),
-+	F7188X_GPIO_BANK(30, 4, 0xC0, DRVNAME "-3"),
-+	F7188X_GPIO_BANK(40, 4, 0xB0, DRVNAME "-4"),
- };
- 
- static struct f7188x_gpio_bank f71889a_gpio_bank[] = {
--	F7188X_GPIO_BANK(0, 7, 0xF0),
--	F7188X_GPIO_BANK(10, 7, 0xE0),
--	F7188X_GPIO_BANK(20, 8, 0xD0),
--	F7188X_GPIO_BANK(30, 8, 0xC0),
--	F7188X_GPIO_BANK(40, 8, 0xB0),
--	F7188X_GPIO_BANK(50, 5, 0xA0),
--	F7188X_GPIO_BANK(60, 8, 0x90),
--	F7188X_GPIO_BANK(70, 8, 0x80),
-+	F7188X_GPIO_BANK(0, 7, 0xF0, DRVNAME "-0"),
-+	F7188X_GPIO_BANK(10, 7, 0xE0, DRVNAME "-1"),
-+	F7188X_GPIO_BANK(20, 8, 0xD0, DRVNAME "-2"),
-+	F7188X_GPIO_BANK(30, 8, 0xC0, DRVNAME "-3"),
-+	F7188X_GPIO_BANK(40, 8, 0xB0, DRVNAME "-4"),
-+	F7188X_GPIO_BANK(50, 5, 0xA0, DRVNAME "-5"),
-+	F7188X_GPIO_BANK(60, 8, 0x90, DRVNAME "-6"),
-+	F7188X_GPIO_BANK(70, 8, 0x80, DRVNAME "-7"),
- };
- 
- static struct f7188x_gpio_bank f71889_gpio_bank[] = {
--	F7188X_GPIO_BANK(0, 7, 0xF0),
--	F7188X_GPIO_BANK(10, 7, 0xE0),
--	F7188X_GPIO_BANK(20, 8, 0xD0),
--	F7188X_GPIO_BANK(30, 8, 0xC0),
--	F7188X_GPIO_BANK(40, 8, 0xB0),
--	F7188X_GPIO_BANK(50, 5, 0xA0),
--	F7188X_GPIO_BANK(60, 8, 0x90),
--	F7188X_GPIO_BANK(70, 8, 0x80),
-+	F7188X_GPIO_BANK(0, 7, 0xF0, DRVNAME "-0"),
-+	F7188X_GPIO_BANK(10, 7, 0xE0, DRVNAME "-1"),
-+	F7188X_GPIO_BANK(20, 8, 0xD0, DRVNAME "-2"),
-+	F7188X_GPIO_BANK(30, 8, 0xC0, DRVNAME "-3"),
-+	F7188X_GPIO_BANK(40, 8, 0xB0, DRVNAME "-4"),
-+	F7188X_GPIO_BANK(50, 5, 0xA0, DRVNAME "-5"),
-+	F7188X_GPIO_BANK(60, 8, 0x90, DRVNAME "-6"),
-+	F7188X_GPIO_BANK(70, 8, 0x80, DRVNAME "-7"),
- };
- 
- static struct f7188x_gpio_bank f81866_gpio_bank[] = {
--	F7188X_GPIO_BANK(0, 8, 0xF0),
--	F7188X_GPIO_BANK(10, 8, 0xE0),
--	F7188X_GPIO_BANK(20, 8, 0xD0),
--	F7188X_GPIO_BANK(30, 8, 0xC0),
--	F7188X_GPIO_BANK(40, 8, 0xB0),
--	F7188X_GPIO_BANK(50, 8, 0xA0),
--	F7188X_GPIO_BANK(60, 8, 0x90),
--	F7188X_GPIO_BANK(70, 8, 0x80),
--	F7188X_GPIO_BANK(80, 8, 0x88),
-+	F7188X_GPIO_BANK(0, 8, 0xF0, DRVNAME "-0"),
-+	F7188X_GPIO_BANK(10, 8, 0xE0, DRVNAME "-1"),
-+	F7188X_GPIO_BANK(20, 8, 0xD0, DRVNAME "-2"),
-+	F7188X_GPIO_BANK(30, 8, 0xC0, DRVNAME "-3"),
-+	F7188X_GPIO_BANK(40, 8, 0xB0, DRVNAME "-4"),
-+	F7188X_GPIO_BANK(50, 8, 0xA0, DRVNAME "-5"),
-+	F7188X_GPIO_BANK(60, 8, 0x90, DRVNAME "-6"),
-+	F7188X_GPIO_BANK(70, 8, 0x80, DRVNAME "-7"),
-+	F7188X_GPIO_BANK(80, 8, 0x88, DRVNAME "-8"),
- };
- 
- 
- static struct f7188x_gpio_bank f81804_gpio_bank[] = {
--	F7188X_GPIO_BANK(0, 8, 0xF0),
--	F7188X_GPIO_BANK(10, 8, 0xE0),
--	F7188X_GPIO_BANK(20, 8, 0xD0),
--	F7188X_GPIO_BANK(50, 8, 0xA0),
--	F7188X_GPIO_BANK(60, 8, 0x90),
--	F7188X_GPIO_BANK(70, 8, 0x80),
--	F7188X_GPIO_BANK(90, 8, 0x98),
-+	F7188X_GPIO_BANK(0, 8, 0xF0, DRVNAME "-0"),
-+	F7188X_GPIO_BANK(10, 8, 0xE0, DRVNAME "-1"),
-+	F7188X_GPIO_BANK(20, 8, 0xD0, DRVNAME "-2"),
-+	F7188X_GPIO_BANK(50, 8, 0xA0, DRVNAME "-3"),
-+	F7188X_GPIO_BANK(60, 8, 0x90, DRVNAME "-4"),
-+	F7188X_GPIO_BANK(70, 8, 0x80, DRVNAME "-5"),
-+	F7188X_GPIO_BANK(90, 8, 0x98, DRVNAME "-6"),
- };
- 
- static struct f7188x_gpio_bank f81865_gpio_bank[] = {
--	F7188X_GPIO_BANK(0, 8, 0xF0),
--	F7188X_GPIO_BANK(10, 8, 0xE0),
--	F7188X_GPIO_BANK(20, 8, 0xD0),
--	F7188X_GPIO_BANK(30, 8, 0xC0),
--	F7188X_GPIO_BANK(40, 8, 0xB0),
--	F7188X_GPIO_BANK(50, 8, 0xA0),
--	F7188X_GPIO_BANK(60, 5, 0x90),
-+	F7188X_GPIO_BANK(0, 8, 0xF0, DRVNAME "-0"),
-+	F7188X_GPIO_BANK(10, 8, 0xE0, DRVNAME "-1"),
-+	F7188X_GPIO_BANK(20, 8, 0xD0, DRVNAME "-2"),
-+	F7188X_GPIO_BANK(30, 8, 0xC0, DRVNAME "-3"),
-+	F7188X_GPIO_BANK(40, 8, 0xB0, DRVNAME "-4"),
-+	F7188X_GPIO_BANK(50, 8, 0xA0, DRVNAME "-5"),
-+	F7188X_GPIO_BANK(60, 5, 0x90, DRVNAME "-6"),
- };
- 
- static struct f7188x_gpio_bank nct6116d_gpio_bank[] = {
--	F7188X_GPIO_BANK(0, 8, 0xE0),
--	F7188X_GPIO_BANK(10, 8, 0xE4),
--	F7188X_GPIO_BANK(20, 8, 0xE8),
--	F7188X_GPIO_BANK(30, 8, 0xEC),
--	F7188X_GPIO_BANK(40, 8, 0xF0),
--	F7188X_GPIO_BANK(50, 8, 0xF4),
--	F7188X_GPIO_BANK(60, 8, 0xF8),
--	F7188X_GPIO_BANK(70, 1, 0xFC),
-+	F7188X_GPIO_BANK(0, 8, 0xE0, DRVNAME "-0"),
-+	F7188X_GPIO_BANK(10, 8, 0xE4, DRVNAME "-1"),
-+	F7188X_GPIO_BANK(20, 8, 0xE8, DRVNAME "-2"),
-+	F7188X_GPIO_BANK(30, 8, 0xEC, DRVNAME "-3"),
-+	F7188X_GPIO_BANK(40, 8, 0xF0, DRVNAME "-4"),
-+	F7188X_GPIO_BANK(50, 8, 0xF4, DRVNAME "-5"),
-+	F7188X_GPIO_BANK(60, 8, 0xF8, DRVNAME "-6"),
-+	F7188X_GPIO_BANK(70, 1, 0xFC, DRVNAME "-7"),
- };
- 
- static int f7188x_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
++	if (station_id == SIMATIC_IPC_IPC227G)
++		request_module("w83627hf_wdt");
++
+ 	if (ledmode == SIMATIC_IPC_DEVICE_NONE &&
+ 	    wdtmode == SIMATIC_IPC_DEVICE_NONE) {
+ 		pr_warn("unsupported IPC detected, station id=%08x\n",
 -- 
 2.35.1
 
