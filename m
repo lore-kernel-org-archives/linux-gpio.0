@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D8C5C19F2C
-	for <linux-gpio@archiver.kernel.org>; Tue,  2 Aug 2022 12:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7EECC00140
+	for <linux-gpio@archiver.kernel.org>; Tue,  2 Aug 2022 12:18:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236872AbiHBMS0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 2 Aug 2022 08:18:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38738 "EHLO
+        id S236920AbiHBMSf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 2 Aug 2022 08:18:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234024AbiHBMS0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Aug 2022 08:18:26 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E91594F18E
-        for <linux-gpio@vger.kernel.org>; Tue,  2 Aug 2022 05:18:21 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id h132so12187539pgc.10
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Aug 2022 05:18:21 -0700 (PDT)
+        with ESMTP id S236865AbiHBMSe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Aug 2022 08:18:34 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBF8B4F641
+        for <linux-gpio@vger.kernel.org>; Tue,  2 Aug 2022 05:18:31 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id o3so13283159ple.5
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Aug 2022 05:18:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TwhuAp3W7cu4b7rXJywkLPtcj3qj9jo5db4QI6rcIPg=;
-        b=Vi+G8Z1LulR85fUuoO9Tov7kUe2wT+RhlbBhFf4JvlbDDzNyKfKZDIIHwwMrVRxFpN
-         r18UDfBnB6quabp7Jykcd92Mm7jcKl49ZZjLm+p32cXDsW1iboDNDo93zWyAD8U9mNpY
-         +d0jtmE9dGcYcc8WKhejQBRt8Xri3AQa9w8DYvSm4DT5ocN+Z6qe+31aMyQE3fbnvUVy
-         KzqB4mqlXEhfQXXORvue4HuAG5qx2neckHzYLs/G3LwlEmZnTiakb9Y3wud8XRmu+QlP
-         sqW/GdEunfwCBorWPetDrs1PfIa9rayHEnUoiJSZU41fk6TNHWXp8qN2LY98ZenrinYb
-         +EMw==
+        bh=ZMGqBqIV0nC0OVfIDdIBImvZfRBkK8294g/iBwADKuM=;
+        b=RvZx1L20Q6u5f9/n7aJCbNVnKzgCS9wU/X/h6giQHat6ScL2VxdAasWR+BWZ8vrdXg
+         9NQJHQgZe5lXQhAueOZBlVr19jfeKfhLrtaQSfL7LcLDqLW3Gzi2tTsg0Nkx+uN12Z+s
+         mX3wfdww7M1JVPz4TO3crppN0m6MxzrN4IlmaYgHu50h0Dg2ysQ5AFuWESJnsPE4OZyJ
+         lxRI4jVGZRqwExLgHShzlXAR0Mby81k2598hzjvplOQBAp6PoxP8bh0PgISXeALlEbw9
+         7Kru4w/MlJ9R08aGB+AnjTT5k/VdOr0E8RRHrLQE2PurIrcTKu6jUk4DpqvitjofK8an
+         MhUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TwhuAp3W7cu4b7rXJywkLPtcj3qj9jo5db4QI6rcIPg=;
-        b=470SACoBzlO4rm3rqMPS2i6cKTou/76NctXKH0bqA93VkVKHqHgXIFmKasLbPwP0QG
-         Ru1wDmx4tpiaHicjBqTbg/dAoVJyEhyx9WGmEE8L0kgBor2vrHx6RwL36u+KdUIK9bMM
-         +0dUqqczCYsw2kxMRjWweDDfqvPMHnRrdDdbyioI5LJS1ojlJpzGqs0PA8AURa+ltdU3
-         O+o8IDvAP3p7YNw1Z5fctAN+msFP8b7Cd+RIg55KoGhRIURQiT86vTk6Gp6kNEdQQIKY
-         8wVG7WazlvFO2eh/44x1em1sEPnw2QtvH6BsRvmTMtsZgN86WBwKDsgT+G03EBsFd1f4
-         Rh0w==
-X-Gm-Message-State: ACgBeo2SNGIcUjBHjl75OfaEK1qQI67Yva1RJCX/LKT8CFjiyqM+CtAd
-        2Bpsa9JSz9SdDR3m57HSzZzzkg==
-X-Google-Smtp-Source: AA6agR7CL4fHgojVnwug471JQITk02JMGCviWCRFVHdRbWFs3JHmeQ6LSV5v0ysoNd6iSyDHrraE4A==
-X-Received: by 2002:a05:6a00:2288:b0:52d:dbdf:318e with SMTP id f8-20020a056a00228800b0052ddbdf318emr2853737pfe.62.1659442701354;
-        Tue, 02 Aug 2022 05:18:21 -0700 (PDT)
+        bh=ZMGqBqIV0nC0OVfIDdIBImvZfRBkK8294g/iBwADKuM=;
+        b=22CQfc/Z/Ldgmgl78PNczFncm/C3UjNWa5dfQM6CsrAQIa03IhWW8y9UG8+M9IWPin
+         WsSbyRxPdLYMMez0YJ7Qz8MsDxjqqHiTWqVLB62iEkhhRLV5NXf4ytphngldIib26Zvj
+         Tu7eoAqEM94TnUlyVIPSg6BYGLwYCGGxiVHnAZNlKjg9IzPGTn4SJHU2kBw3tFD0cQrB
+         nnBrdoI7cM+B2W57m1csD7uw5rYB+ZDc8q/EACi+EKuma5Wv62P/eyNxfjCVZS1adunc
+         b/1JErzIFUllycQxUhPldMRVVSUAJY8hxcmx6GkGYRkN6EKWD9Ot8sUTYFXTAYbYtKMx
+         uAzQ==
+X-Gm-Message-State: ACgBeo3WJsF1bnqkBxeEB382AytZVuo0+olcJKSCMVn7cztRv/8HA29h
+        jfrGFRHg6dwCNOfY84R9IVhLuw==
+X-Google-Smtp-Source: AA6agR5wddc439RnEXfavpil3To6aTqEtVD+SfFPrA3NxBMO2Yg+KIEqaytb7JKIWsjv/SxOs9b6rw==
+X-Received: by 2002:a17:90a:e616:b0:1f5:35a6:6008 with SMTP id j22-20020a17090ae61600b001f535a66008mr1025378pjy.134.1659442710333;
+        Tue, 02 Aug 2022 05:18:30 -0700 (PDT)
 Received: from localhost ([122.171.18.80])
-        by smtp.gmail.com with ESMTPSA id h6-20020a17090a130600b001f4d711e165sm7084667pja.11.2022.08.02.05.18.20
+        by smtp.gmail.com with ESMTPSA id u6-20020a170903124600b0016f04c098ddsm1692419plh.226.2022.08.02.05.18.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Aug 2022 05:18:21 -0700 (PDT)
+        Tue, 02 Aug 2022 05:18:30 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
@@ -59,9 +59,9 @@ Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
         stratos-dev@op-lists.linaro.org,
         Gerard Ryan <g.m0n3y.2503@gmail.com>
-Subject: [PATCH V5 1/8] libgpiod: Add libgpiod-sys rust crate
-Date:   Tue,  2 Aug 2022 17:48:05 +0530
-Message-Id: <5319a3efc633e15993ba339972d139d6ec376cc6.1659442066.git.viresh.kumar@linaro.org>
+Subject: [PATCH V5 4/8] libgpiod: Add rust examples
+Date:   Tue,  2 Aug 2022 17:48:08 +0530
+Message-Id: <d23a8bbe863c85c628bd30b3168d98ea1997a263.1659442066.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 In-Reply-To: <cover.1659442066.git.viresh.kumar@linaro.org>
 References: <cover.1659442066.git.viresh.kumar@linaro.org>
@@ -71,133 +71,462 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This adds libgpiod-sys rust crate, which provides FFI (foreign function
-interface) bindings for libgpiod APIs.
+Add examples for the usage of the rust bindings, quite similar to the
+ones in cxx bindings.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- .gitignore                            |  5 ++++
- bindings/rust/Cargo.toml              |  5 ++++
- bindings/rust/libgpiod-sys/Cargo.toml | 15 ++++++++++
- bindings/rust/libgpiod-sys/build.rs   | 41 +++++++++++++++++++++++++++
- bindings/rust/libgpiod-sys/src/lib.rs | 13 +++++++++
- 5 files changed, 79 insertions(+)
- create mode 100644 bindings/rust/Cargo.toml
- create mode 100644 bindings/rust/libgpiod-sys/Cargo.toml
- create mode 100644 bindings/rust/libgpiod-sys/build.rs
- create mode 100644 bindings/rust/libgpiod-sys/src/lib.rs
+ bindings/rust/libgpiod/examples/gpiodetect.rs | 30 ++++++
+ bindings/rust/libgpiod/examples/gpiofind.rs   | 35 +++++++
+ bindings/rust/libgpiod/examples/gpioget.rs    | 44 +++++++++
+ bindings/rust/libgpiod/examples/gpioinfo.rs   | 95 +++++++++++++++++++
+ bindings/rust/libgpiod/examples/gpiomon.rs    | 71 ++++++++++++++
+ bindings/rust/libgpiod/examples/gpioset.rs    | 64 +++++++++++++
+ bindings/rust/libgpiod/examples/gpiowatch.rs  | 54 +++++++++++
+ 7 files changed, 393 insertions(+)
+ create mode 100644 bindings/rust/libgpiod/examples/gpiodetect.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpiofind.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpioget.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpioinfo.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpiomon.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpioset.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpiowatch.rs
 
-diff --git a/.gitignore b/.gitignore
-index 58e1c5fc7e00..9541482d5efb 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -33,3 +33,8 @@ stamp-h1
- # profiling
- *.gcda
- *.gcno
-+
-+# Added by cargo
-+
-+target
-+Cargo.lock
-diff --git a/bindings/rust/Cargo.toml b/bindings/rust/Cargo.toml
+diff --git a/bindings/rust/libgpiod/examples/gpiodetect.rs b/bindings/rust/libgpiod/examples/gpiodetect.rs
 new file mode 100644
-index 000000000000..d0b3a3c88ff1
+index 000000000000..f24ac72e2d48
 --- /dev/null
-+++ b/bindings/rust/Cargo.toml
-@@ -0,0 +1,5 @@
-+[workspace]
++++ b/bindings/rust/libgpiod/examples/gpiodetect.rs
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
++//
++// Copyright 2022 Linaro Ltd. All Rights Reserved.
++//     Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of gpiodetect tool.
 +
-+members = [
-+    "libgpiod-sys",
-+]
-diff --git a/bindings/rust/libgpiod-sys/Cargo.toml b/bindings/rust/libgpiod-sys/Cargo.toml
-new file mode 100644
-index 000000000000..77f82719d269
---- /dev/null
-+++ b/bindings/rust/libgpiod-sys/Cargo.toml
-@@ -0,0 +1,15 @@
-+[package]
-+name = "libgpiod-sys"
-+version = "0.1.0"
-+edition = "2018"
-+
-+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-+
-+[dependencies]
-+
-+[features]
-+generate = [ "bindgen" ]
-+
-+[build-dependencies]
-+bindgen = { version = "0.59.1", optional = true }
-+cc = "1.0.46"
-diff --git a/bindings/rust/libgpiod-sys/build.rs b/bindings/rust/libgpiod-sys/build.rs
-new file mode 100644
-index 000000000000..98863686c7af
---- /dev/null
-+++ b/bindings/rust/libgpiod-sys/build.rs
-@@ -0,0 +1,41 @@
-+#[cfg(feature = "generate")]
-+extern crate bindgen;
-+#[cfg(feature = "generate")]
 +use std::env;
-+#[cfg(feature = "generate")]
-+use std::path::PathBuf;
++use std::path::Path;
 +
-+#[cfg(feature = "generate")]
-+fn generate_bindings() {
-+    // Tell cargo to invalidate the built crate whenever following files change
-+    println!("cargo:rerun-if-changed=../../../include/gpiod.h");
++use libgpiod::{gpiochip_devices, Error, Result};
 +
-+    // The bindgen::Builder is the main entry point
-+    // to bindgen, and lets you build up options for
-+    // the resulting bindings.
-+    let bindings = bindgen::Builder::default()
-+        // The input header we would like to generate
-+        // bindings for.
-+        .header("../../../include/gpiod.h")
-+        // Tell cargo to invalidate the built crate whenever any of the
-+        // included header files changed.
-+        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
-+        // Finish the builder and generate the bindings.
-+        .generate()
-+        // Unwrap the Result and panic on failure.
-+        .expect("Unable to generate bindings");
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() > 1 {
++        println!("Usage: {}", args[0]);
++        return Err(Error::InvalidArguments);
++    }
 +
-+    // Write the bindings to the $OUT_DIR/bindings.rs file.
-+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-+    bindings
-+        .write_to_file(out_path.join("bindings.rs"))
-+        .expect("Couldn't write bindings!");
++    for chip in gpiochip_devices(&Path::new("/dev"))? {
++        println!(
++            "{} [{}] ({})",
++            chip.name()?,
++            chip.label()?,
++            chip.num_lines(),
++        );
++    }
++
++    Ok(())
 +}
-+
-+fn main() {
-+    #[cfg(feature = "generate")]
-+    generate_bindings();
-+
-+    println!("cargo:rustc-link-search=./../../lib/.libs/");
-+    println!("cargo:rustc-link-lib=static=gpiod");
-+}
-diff --git a/bindings/rust/libgpiod-sys/src/lib.rs b/bindings/rust/libgpiod-sys/src/lib.rs
+diff --git a/bindings/rust/libgpiod/examples/gpiofind.rs b/bindings/rust/libgpiod/examples/gpiofind.rs
 new file mode 100644
-index 000000000000..1ca355b5f5ac
+index 000000000000..07e886bc3896
 --- /dev/null
-+++ b/bindings/rust/libgpiod-sys/src/lib.rs
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/bindings/rust/libgpiod/examples/gpiofind.rs
+@@ -0,0 +1,35 @@
++// SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
++//
++// Copyright 2022 Linaro Ltd. All Rights Reserved.
++//     Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of gpiofind tool.
 +
-+#[allow(non_camel_case_types, non_upper_case_globals)]
-+#[cfg_attr(test, allow(deref_nullptr, non_snake_case))]
++use std::env;
++use std::path::Path;
 +
-+mod bindings_raw {
-+    #[cfg(feature = "generate")]
-+    include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
++use libgpiod::{gpiochip_devices, Error, Result};
 +
-+    #[cfg(not(feature = "generate"))]
-+    include!("bindings.rs");
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() != 2 {
++        println!("Usage: {} <line-name>", args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    for chip in gpiochip_devices(&Path::new("/dev"))? {
++        let offset = chip.line_offset_from_name(&args[1]);
++        if offset.is_ok() {
++            println!(
++                "Line {} found: Chip: {}, offset: {}",
++                args[1],
++                chip.name()?,
++                offset?
++            );
++            return Ok(());
++        }
++    }
++
++    println!("Failed to find line: {}", args[1]);
++    Ok(())
 +}
-+pub use bindings_raw::*;
+diff --git a/bindings/rust/libgpiod/examples/gpioget.rs b/bindings/rust/libgpiod/examples/gpioget.rs
+new file mode 100644
+index 000000000000..7dccde3debed
+--- /dev/null
++++ b/bindings/rust/libgpiod/examples/gpioget.rs
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
++//
++// Copyright 2022 Linaro Ltd. All Rights Reserved.
++//     Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of gpioget tool.
++
++use std::env;
++
++use libgpiod::{chip::Chip, line, request, Direction, Error, Offset, Result, Setting, SettingMap};
++
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() < 3 {
++        println!("Usage: {} <chip> <line_offset0> ...", args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    let mut config = line::Config::new()?;
++    let mut offsets = Vec::<Offset>::new();
++    let mut map = SettingMap::new();
++
++    for arg in &args[2..] {
++        let offset = arg.parse::<Offset>().map_err(|_| Error::InvalidArguments)?;
++
++        offsets.push(offset);
++        map.insert(offset.into(), Setting::Direction(Direction::Input));
++    }
++
++    config.set_prop_override(map);
++
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let chip = Chip::open(&path)?;
++
++    let rconfig = request::Config::new()?;
++    rconfig.set_consumer(&args[0]);
++    rconfig.set_offsets(&offsets);
++
++    let request = chip.request_lines(&rconfig, &config)?;
++    let map = request.values()?;
++
++    println!("{:?}", map);
++    Ok(())
++}
+diff --git a/bindings/rust/libgpiod/examples/gpioinfo.rs b/bindings/rust/libgpiod/examples/gpioinfo.rs
+new file mode 100644
+index 000000000000..8b9fcb000f63
+--- /dev/null
++++ b/bindings/rust/libgpiod/examples/gpioinfo.rs
+@@ -0,0 +1,95 @@
++// SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
++//
++// Copyright 2022 Linaro Ltd. All Rights Reserved.
++//     Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of gpioinfo tool.
++
++use std::env;
++use std::path::Path;
++
++use libgpiod::{
++    chip::Chip, gpiochip_devices, is_gpiochip_device, Direction, Error, Offset, Result,
++};
++
++fn line_info(chip: &Chip, offset: Offset) -> Result<()> {
++    let info = chip.line_info(offset)?;
++    let off = info.offset();
++
++    let name = match info.name() {
++        Ok(name) => name,
++        _ => "unused",
++    };
++
++    let consumer = match info.consumer() {
++        Ok(name) => name,
++        _ => "unnamed",
++    };
++
++    let low = if info.is_active_low() {
++        "active-low"
++    } else {
++        "active-high"
++    };
++
++    let dir = match info.direction()? {
++        Direction::AsIs => "None",
++        Direction::Input => "Input",
++        Direction::Output => "Output",
++    };
++
++    println!(
++        "\tline {:>3}\
++              \t{:>10}\
++              \t{:>10}\
++              \t{:>6}\
++              \t{:>14}",
++        off, name, consumer, dir, low
++    );
++
++    Ok(())
++}
++
++fn chip_info(chip: &Chip) -> Result<()> {
++    let ngpio = chip.num_lines();
++
++    println!("GPIO Chip name: {}", chip.name()?);
++    println!("\tlabel: {}", chip.label()?);
++    println!("\tpath: {}", chip.path()?);
++    println!("\tngpio: {}\n", ngpio);
++
++    println!("\tLine information:");
++
++    for offset in 0..ngpio {
++        line_info(chip, offset as Offset)?;
++    }
++    println!("\n");
++
++    Ok(())
++}
++
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() > 2 {
++        println!("Usage: {}", args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    if args.len() == 1 {
++        for chip in gpiochip_devices(&Path::new("/dev"))? {
++            chip_info(&chip)?;
++        }
++    } else {
++        let index = args[1]
++            .parse::<u32>()
++            .map_err(|_| Error::InvalidArguments)?;
++        let path = format!("/dev/gpiochip{}", index);
++        if is_gpiochip_device(&path) {
++            let chip = Chip::open(&path)?;
++
++            chip_info(&chip)?;
++        }
++    }
++
++    Ok(())
++}
+diff --git a/bindings/rust/libgpiod/examples/gpiomon.rs b/bindings/rust/libgpiod/examples/gpiomon.rs
+new file mode 100644
+index 000000000000..f2a52663b8ea
+--- /dev/null
++++ b/bindings/rust/libgpiod/examples/gpiomon.rs
+@@ -0,0 +1,71 @@
++// SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
++//
++// Copyright 2022 Linaro Ltd. All Rights Reserved.
++//     Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of the gpiomon tool.
++
++use std::env;
++
++use libgpiod::{chip::Chip, edge, line, request, Edge, EdgeKind, Error, Offset, Result, Setting};
++
++fn usage(name: &str) {
++    println!("Usage: {} <chip> <offset0> ...", name);
++}
++
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() < 3 {
++        usage(&args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    let mut config = line::Config::new()?;
++    let mut offsets = Vec::<Offset>::new();
++
++    for arg in &args[2..] {
++        let offset = arg.parse::<Offset>().map_err(|_| Error::InvalidArguments)?;
++
++        offsets.push(offset);
++    }
++
++    config.set_prop_default(&[Setting::EdgeDetection(Some(Edge::Both))]);
++
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let chip = Chip::open(&path)?;
++
++    let rconfig = request::Config::new()?;
++    rconfig.set_offsets(&offsets);
++
++    let buffer = edge::event::Buffer::new(1)?;
++    let request = chip.request_lines(&rconfig, &config)?;
++
++    loop {
++        match request.wait_edge_event(None) {
++            Err(x) => {
++                println!("{:?}", x);
++                return Err(Error::InvalidArguments);
++            }
++
++            Ok(false) => {
++                // This shouldn't happen as the call is blocking.
++                panic!();
++            }
++            Ok(true) => (),
++        }
++
++        let count = request.read_edge_events(&buffer)?;
++        if count == 1 {
++            let event = buffer.event(0)?;
++            println!(
++                "line: {} type: {}, time: {:?}",
++                event.line_offset(),
++                match event.event_type()? {
++                    EdgeKind::Rising => "Rising",
++                    EdgeKind::Falling => "Falling",
++                },
++                event.timestamp()
++            );
++        }
++    }
++}
+diff --git a/bindings/rust/libgpiod/examples/gpioset.rs b/bindings/rust/libgpiod/examples/gpioset.rs
+new file mode 100644
+index 000000000000..b92d8bcd39c5
+--- /dev/null
++++ b/bindings/rust/libgpiod/examples/gpioset.rs
+@@ -0,0 +1,64 @@
++// SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
++//
++// Copyright 2022 Linaro Ltd. All Rights Reserved.
++//     Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of the gpioset tool.
++
++use std::env;
++use std::io::{stdin, Read};
++
++use libgpiod::{
++    chip::Chip, line, request, Direction, Error, Offset, Result, Setting, Value, ValueMap,
++};
++
++fn usage(name: &str) {
++    println!("Usage: {} <chip> <line_offset0>=<value0> ...", name);
++}
++
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() < 3 {
++        usage(&args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    let mut config = line::Config::new()?;
++    let mut offsets = Vec::<Offset>::new();
++    let mut map = ValueMap::new();
++
++    for arg in &args[2..] {
++        let pair: Vec<&str> = arg.split('=').collect();
++        if pair.len() != 2 {
++            usage(&args[0]);
++            return Err(Error::InvalidArguments);
++        }
++
++        let offset = pair[0]
++            .parse::<Offset>()
++            .map_err(|_| Error::InvalidArguments)?;
++        let value = pair[1]
++            .parse::<i32>()
++            .map_err(|_| Error::InvalidArguments)?;
++
++        offsets.push(offset);
++        map.insert(offset.into(), Value::new(value)?);
++    }
++
++    config.set_prop_default(&[Setting::Direction(Direction::Output)]);
++    config.set_output_values(map)?;
++
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let chip = Chip::open(&path)?;
++
++    let rconfig = request::Config::new()?;
++    rconfig.set_consumer(&args[0]);
++    rconfig.set_offsets(&offsets);
++
++    chip.request_lines(&rconfig, &config)?;
++
++    // Wait for keypress, let user verify line status.
++    stdin().read_exact(&mut [0u8]).unwrap();
++
++    Ok(())
++}
+diff --git a/bindings/rust/libgpiod/examples/gpiowatch.rs b/bindings/rust/libgpiod/examples/gpiowatch.rs
+new file mode 100644
+index 000000000000..030168ba9788
+--- /dev/null
++++ b/bindings/rust/libgpiod/examples/gpiowatch.rs
+@@ -0,0 +1,54 @@
++// SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
++//
++// Copyright 2022 Linaro Ltd. All Rights Reserved.
++//     Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of the gpiowatch tool.
++
++use std::env;
++
++use libgpiod::{chip::Chip, Error, Offset, Result};
++
++fn usage(name: &str) {
++    println!("Usage: {} <chip> <offset0> ...", name);
++}
++
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() < 2 {
++        usage(&args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let offset = args[2]
++        .parse::<Offset>()
++        .map_err(|_| Error::InvalidArguments)?;
++
++    let chip = Chip::open(&path)?;
++    let _info = chip.watch_line_info(offset)?;
++
++    match chip.wait_info_event(None) {
++        Err(x) => {
++            println!("{:?}", x);
++            return Err(Error::InvalidArguments);
++        }
++
++        Ok(false) => {
++            // This shouldn't happen as the call is blocking.
++            panic!();
++        }
++        Ok(true) => (),
++    }
++
++    let event = chip.read_info_event()?;
++    println!(
++        "line: {} type: {:?}, time: {:?}",
++        offset,
++        event.event_type()?,
++        event.timestamp()
++    );
++
++    chip.unwatch(offset);
++    Ok(())
++}
 -- 
 2.31.1.272.g89b43f80a514
 
