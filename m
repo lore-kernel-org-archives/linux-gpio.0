@@ -2,56 +2,56 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC8EC3276E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B83C32773
 	for <linux-gpio@archiver.kernel.org>; Wed, 10 Aug 2022 06:02:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231209AbiHJGBc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 10 Aug 2022 02:01:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60198 "EHLO
+        id S231273AbiHJGBe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 10 Aug 2022 02:01:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231211AbiHJGBJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Aug 2022 02:01:09 -0400
-Received: from mail-pj1-x104a.google.com (mail-pj1-x104a.google.com [IPv6:2607:f8b0:4864:20::104a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07D4015FE8
-        for <linux-gpio@vger.kernel.org>; Tue,  9 Aug 2022 23:01:09 -0700 (PDT)
-Received: by mail-pj1-x104a.google.com with SMTP id s4-20020a17090a760400b001f3120342daso6913434pjk.4
-        for <linux-gpio@vger.kernel.org>; Tue, 09 Aug 2022 23:01:09 -0700 (PDT)
+        with ESMTP id S231224AbiHJGBP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Aug 2022 02:01:15 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF2C9326C1
+        for <linux-gpio@vger.kernel.org>; Tue,  9 Aug 2022 23:01:14 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id bu13-20020a056902090d00b00671743601f1so11336066ybb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 09 Aug 2022 23:01:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
          :date:from:to:cc;
-        bh=QlBa19npdjPgpjrCBQ6hdELMXhm8tkXE401pFqPbnb0=;
-        b=eJmKIYCYCN91qGdXy7dqkM9QOmKtLlEdwFwNdU/NZG0JQuX+kMk9l2lpLVW26gS0xn
-         kb1NHLqMsTBWLP5U6mLKXexB0rk/CifLn9hnGa/mjgeoY2ccfLaW07tOhrvM7hR626sI
-         o1Wxf6k53d9enK4htKjLblZQkmtY2thm+sSPKA/YnztNkYjyLQiiHu7pgjBV9ndsMjEh
-         pFs5qTn8XZdMyRnnPBN3fI5zloYW1GMq0HQyY5dSump5PVfdqEkRTmTSGIOB+3+Rzouw
-         Vb8tYX2Edlrw8s9/NhIqxxJacQe8dgGAqtp30kKKkHE8RdXPPnT1cGXkSUpwpWq378Kp
-         ahng==
+        bh=vx+dUbGYOv+iuawfVE7Ay+tk/KEU0DVIy9gKSjJSbfM=;
+        b=DHsiPm8AGi/hRuAdwy5HbH6s2r/Oy5+6hpbTVaZ+kokvPnDRVEbJgOyfLDYxmu38/4
+         6c/USgm4pyf2vbNHq2+wO1DqxDN5IleK1JLrmt4AmI8cQZgYb+f2P8+NrSaqXDmNELCn
+         CG/sox7zZCWs8YPB3eduZ7lrqv9LIN7coqgFfSQDtS+H7/JcQsLLKRN2VBjD4MmQ7DpP
+         V+5QayoprOrleKbfgiC/nxCDcHAwk4cSCm1cUXlQqVrZJZ//d/l82UMam/ZZEF7Q/FKj
+         9IuQ3rPDGmmZL1xAEzGgeod2tuD2Rqc7w2LAiEWL8rfN2QjYE28QmkM4/wTaMPoRbas6
+         UhAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
          :date:x-gm-message-state:from:to:cc;
-        bh=QlBa19npdjPgpjrCBQ6hdELMXhm8tkXE401pFqPbnb0=;
-        b=qnX4gogHh5U1KW/m5G7S0N/b3EWCECag3IMTkzrU0hD2MvD8hkn8Xxs58bUeXF2F6g
-         FyVhuWmSqeOR+JUjZgTYYCgdhvWB4/quM+K0WdGtOSmGtDQwhaW49KgceMf4WhxjYBEs
-         T8lQW9wdGuKNrg1Mu7QZyA2Y1pxqU6N6T+ohp1zLygWEFX6wejCvwHMHEMxiPh1PgsPd
-         EH/Qnt4dhtZ8375+X14E1XuYpkGu2hj17REs7X5tc0TiylpMUmoo3wmP6lgCn58RlYRj
-         4SsasSVlgwzwOY1wiqIJ9KPDUttq3L7LTfwuHR9bTEk4ByFOt/oIULIpZ1ly/J4bdxed
-         djpQ==
-X-Gm-Message-State: ACgBeo2JaUyGsBwTIIUO3KsOClvRV0KsvHVxDm96ybU1hAx3MvxK6ZI9
-        vtfxMt8a26P0Og4jY3JMXPujlNpDGVtF2GQ=
-X-Google-Smtp-Source: AA6agR79A9bVNKcbOAqy5O1SaUATcI7RM0MJmEL+q94u6z+rhD9R5vGMbVZ3HSjFjJYMpl/fyYQLNX6k6hpJ4xs=
+        bh=vx+dUbGYOv+iuawfVE7Ay+tk/KEU0DVIy9gKSjJSbfM=;
+        b=SkP9IWUH+ig5z3PmQSgb39mXtlvVHidz0pq8uP1RSah8egk9Zhhr2h1LKNivcqe1b0
+         xn2Cu7W8n1N3furlXYilLuw9VvRNKUMgB59zCA1cVtrJaQLAiOrY+rOZLicXU5VWIwDD
+         BRps4u//hMMaKizP84ZXii1SYfLOMGgjTBfOsX/p7cMti1kGUv/O7gvN5Bcd4RYSftul
+         Kp4UfzlXDynLFIzf8VAw33ZntRmGTajzb1aP/ab9fe1oKbamLJL8iuGqO0EgvnJpCZL7
+         XTNGUSzIe9Sbq5g/dPufcETBOb+Dm/H18rlRRJntGiGRU0RfDt0+E/FzLueonRnrSiqH
+         W1XQ==
+X-Gm-Message-State: ACgBeo0J4i+J5sbvrlommb8O95kp3xPqAkM8m0/vvVaKB7P3RK7CPmCg
+        e5daF2DAZ88eQGIiLMW5CY+Oup5X2TS0Ej8=
+X-Google-Smtp-Source: AA6agR4Khze5AtD+WD0fh1ffw9yPithpzLXIHHaEEIY0YlMjElr9n+/FhIjncVMO9+wvqV/HHySsaIt/gn01T+Q=
 X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:f21:76ca:766f:e0ab])
- (user=saravanak job=sendgmr) by 2002:a63:6884:0:b0:415:b761:efa4 with SMTP id
- d126-20020a636884000000b00415b761efa4mr22285314pgc.274.1660111268410; Tue, 09
- Aug 2022 23:01:08 -0700 (PDT)
-Date:   Tue,  9 Aug 2022 23:00:36 -0700
+ (user=saravanak job=sendgmr) by 2002:a5b:b8e:0:b0:67c:237b:760b with SMTP id
+ l14-20020a5b0b8e000000b0067c237b760bmr5624436ybq.627.1660111274504; Tue, 09
+ Aug 2022 23:01:14 -0700 (PDT)
+Date:   Tue,  9 Aug 2022 23:00:38 -0700
 In-Reply-To: <20220810060040.321697-1-saravanak@google.com>
-Message-Id: <20220810060040.321697-8-saravanak@google.com>
+Message-Id: <20220810060040.321697-10-saravanak@google.com>
 Mime-Version: 1.0
 References: <20220810060040.321697-1-saravanak@google.com>
 X-Mailer: git-send-email 2.37.1.559.g78731f0fdb-goog
-Subject: [PATCH v1 7/9] driver core: fw_devlink: Consolidate device link flag computation
+Subject: [PATCH v1 9/9] of: property: Simplify of_link_to_phandle()
 From:   Saravana Kannan <saravanak@google.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
@@ -83,117 +83,134 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Consolidate the code that computes the flags to be used when creating a
-device link from a fwnode link.
+The driver core now:
+- Has the parent device of a supplier pick up the consumers if the
+  supplier never has a device created for it.
+- Ignores a supplier if the supplier has no parent device and will never
+  be probed by a driver
+
+And already prevents creating a device link with the consumer as a
+supplier of a parent.
+
+So, we no longer need to find the "compatible" node of the supplier or
+do any other checks in of_link_to_phandle(). We simply need to make sure
+that the supplier is available in DT.
 
 Signed-off-by: Saravana Kannan <saravanak@google.com>
 ---
- drivers/base/core.c    | 28 +++++++++++++++-------------
- include/linux/fwnode.h |  1 -
- 2 files changed, 15 insertions(+), 14 deletions(-)
+ drivers/of/property.c | 84 +++++++------------------------------------
+ 1 file changed, 13 insertions(+), 71 deletions(-)
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 0ec2c4d5ffaa..296cfb714fe1 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -1725,8 +1725,11 @@ static int __init fw_devlink_strict_setup(char *arg)
- }
- early_param("fw_devlink.strict", fw_devlink_strict_setup);
- 
--u32 fw_devlink_get_flags(void)
-+static inline u32 fw_devlink_get_flags(u8 fwlink_flags)
- {
-+	if (fwlink_flags & FWLINK_FLAG_CYCLE)
-+		return FW_DEVLINK_FLAGS_PERMISSIVE | DL_FLAG_CYCLE;
-+
- 	return fw_devlink_flags;
+diff --git a/drivers/of/property.c b/drivers/of/property.c
+index 967f79b59016..98ca0399a354 100644
+--- a/drivers/of/property.c
++++ b/drivers/of/property.c
+@@ -1060,20 +1060,6 @@ of_fwnode_device_get_match_data(const struct fwnode_handle *fwnode,
+ 	return of_device_get_match_data(dev);
  }
  
-@@ -1936,7 +1939,7 @@ static bool fwnode_ancestor_init_without_drv(struct fwnode_handle *fwnode)
-  * fw_devlink_create_devlink - Create a device link from a consumer to fwnode
-  * @con: consumer device for the device link
-  * @sup_handle: fwnode handle of supplier
-- * @flags: devlink flags
-+ * @link: fwnode link that's being converted to a device link
-  *
-  * This function will try to create a device link between the consumer device
-  * @con and the supplier device represented by @sup_handle.
-@@ -1953,10 +1956,17 @@ static bool fwnode_ancestor_init_without_drv(struct fwnode_handle *fwnode)
-  *  possible to do that in the future
-  */
- static int fw_devlink_create_devlink(struct device *con,
--				     struct fwnode_handle *sup_handle, u32 flags)
-+				     struct fwnode_handle *sup_handle,
-+				     struct fwnode_link *link)
- {
- 	struct device *sup_dev;
- 	int ret = 0;
-+	u32 flags;
-+
-+	if (con->fwnode == link->consumer)
-+		flags = fw_devlink_get_flags(link->flags);
-+	else
-+		flags = FW_DEVLINK_FLAGS_PERMISSIVE;
- 
- 	/*
- 	 * In some cases, a device P might also be a supplier to its child node
-@@ -2085,7 +2095,6 @@ static void __fw_devlink_link_to_consumers(struct device *dev)
- 	struct fwnode_link *link, *tmp;
- 
- 	list_for_each_entry_safe(link, tmp, &fwnode->consumers, s_hook) {
--		u32 dl_flags = fw_devlink_get_flags();
- 		struct device *con_dev;
- 		bool own_link = true;
- 		int ret;
-@@ -2115,14 +2124,13 @@ static void __fw_devlink_link_to_consumers(struct device *dev)
- 				con_dev = NULL;
- 			} else {
- 				own_link = false;
--				dl_flags = FW_DEVLINK_FLAGS_PERMISSIVE;
- 			}
- 		}
- 
- 		if (!con_dev)
- 			continue;
- 
--		ret = fw_devlink_create_devlink(con_dev, fwnode, dl_flags);
-+		ret = fw_devlink_create_devlink(con_dev, fwnode, link);
- 		put_device(con_dev);
- 		if (!own_link || ret == -EAGAIN)
- 			continue;
-@@ -2163,19 +2171,13 @@ static void __fw_devlink_link_to_suppliers(struct device *dev,
- 	bool own_link = (dev->fwnode == fwnode);
- 	struct fwnode_link *link, *tmp;
- 	struct fwnode_handle *child = NULL;
--	u32 dl_flags;
+-static bool of_is_ancestor_of(struct device_node *test_ancestor,
+-			      struct device_node *child)
+-{
+-	of_node_get(child);
+-	while (child) {
+-		if (child == test_ancestor) {
+-			of_node_put(child);
+-			return true;
+-		}
+-		child = of_get_next_parent(child);
+-	}
+-	return false;
+-}
 -
--	if (own_link)
--		dl_flags = fw_devlink_get_flags();
--	else
--		dl_flags = FW_DEVLINK_FLAGS_PERMISSIVE;
- 
- 	list_for_each_entry_safe(link, tmp, &fwnode->suppliers, c_hook) {
- 		int ret;
- 		struct device *sup_dev;
- 		struct fwnode_handle *sup = link->supplier;
- 
--		ret = fw_devlink_create_devlink(dev, sup, dl_flags);
-+		ret = fw_devlink_create_devlink(dev, sup, link);
- 		if (!own_link || ret == -EAGAIN)
- 			continue;
- 
-diff --git a/include/linux/fwnode.h b/include/linux/fwnode.h
-index fdf2ee0285b7..5700451b300f 100644
---- a/include/linux/fwnode.h
-+++ b/include/linux/fwnode.h
-@@ -207,7 +207,6 @@ static inline void fwnode_dev_initialized(struct fwnode_handle *fwnode,
- 		fwnode->flags &= ~FWNODE_FLAG_INITIALIZED;
+ static struct device_node *of_get_compat_node(struct device_node *np)
+ {
+ 	of_node_get(np);
+@@ -1104,71 +1090,27 @@ static struct device_node *of_get_compat_node_parent(struct device_node *np)
+ 	return node;
  }
  
--extern u32 fw_devlink_get_flags(void);
- extern bool fw_devlink_is_strict(void);
- int fwnode_link_add(struct fwnode_handle *con, struct fwnode_handle *sup);
- void fwnode_links_purge(struct fwnode_handle *fwnode);
+-/**
+- * of_link_to_phandle - Add fwnode link to supplier from supplier phandle
+- * @con_np: consumer device tree node
+- * @sup_np: supplier device tree node
+- *
+- * Given a phandle to a supplier device tree node (@sup_np), this function
+- * finds the device that owns the supplier device tree node and creates a
+- * device link from @dev consumer device to the supplier device. This function
+- * doesn't create device links for invalid scenarios such as trying to create a
+- * link with a parent device as the consumer of its child device. In such
+- * cases, it returns an error.
+- *
+- * Returns:
+- * - 0 if fwnode link successfully created to supplier
+- * - -EINVAL if the supplier link is invalid and should not be created
+- * - -ENODEV if struct device will never be create for supplier
+- */
+-static int of_link_to_phandle(struct device_node *con_np,
++static void of_link_to_phandle(struct device_node *con_np,
+ 			      struct device_node *sup_np)
+ {
+-	struct device *sup_dev;
+-	struct device_node *tmp_np = sup_np;
++	struct device_node *tmp_np = of_node_get(sup_np);
+ 
+-	/*
+-	 * Find the device node that contains the supplier phandle.  It may be
+-	 * @sup_np or it may be an ancestor of @sup_np.
+-	 */
+-	sup_np = of_get_compat_node(sup_np);
+-	if (!sup_np) {
+-		pr_debug("Not linking %pOFP to %pOFP - No device\n",
+-			 con_np, tmp_np);
+-		return -ENODEV;
+-	}
++	/* Check that sup_np and its ancestors are available. */
++	while (tmp_np) {
++		if (of_fwnode_handle(tmp_np)->dev) {
++			of_node_put(tmp_np);
++			break;
++		}
+ 
+-	/*
+-	 * Don't allow linking a device node as a consumer of one of its
+-	 * descendant nodes. By definition, a child node can't be a functional
+-	 * dependency for the parent node.
+-	 */
+-	if (of_is_ancestor_of(con_np, sup_np)) {
+-		pr_debug("Not linking %pOFP to %pOFP - is descendant\n",
+-			 con_np, sup_np);
+-		of_node_put(sup_np);
+-		return -EINVAL;
+-	}
++		if (!of_device_is_available(tmp_np)) {
++			of_node_put(tmp_np);
++			return;
++		}
+ 
+-	/*
+-	 * Don't create links to "early devices" that won't have struct devices
+-	 * created for them.
+-	 */
+-	sup_dev = get_dev_from_fwnode(&sup_np->fwnode);
+-	if (!sup_dev &&
+-	    (of_node_check_flag(sup_np, OF_POPULATED) ||
+-	     sup_np->fwnode.flags & FWNODE_FLAG_NOT_DEVICE)) {
+-		pr_debug("Not linking %pOFP to %pOFP - No struct device\n",
+-			 con_np, sup_np);
+-		of_node_put(sup_np);
+-		return -ENODEV;
++		tmp_np = of_get_next_parent(tmp_np);
+ 	}
+-	put_device(sup_dev);
+ 
+ 	fwnode_link_add(of_fwnode_handle(con_np), of_fwnode_handle(sup_np));
+-	of_node_put(sup_np);
+-
+-	return 0;
+ }
+ 
+ /**
 -- 
 2.37.1.559.g78731f0fdb-goog
 
