@@ -2,198 +2,117 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9653C25B06
-	for <linux-gpio@archiver.kernel.org>; Sun, 14 Aug 2022 05:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE12CC28B2B
+	for <linux-gpio@archiver.kernel.org>; Sun, 14 Aug 2022 15:31:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233965AbiHNF7q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 14 Aug 2022 01:59:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35302 "EHLO
+        id S240476AbiHNPbq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 14 Aug 2022 11:31:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229862AbiHNF7p (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Aug 2022 01:59:45 -0400
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A9611F2E3
-        for <linux-gpio@vger.kernel.org>; Sat, 13 Aug 2022 22:59:40 -0700 (PDT)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-3246910dac3so42567927b3.12
-        for <linux-gpio@vger.kernel.org>; Sat, 13 Aug 2022 22:59:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=5oLColQvmc38EgwYlwNaR7xBXm39Ucdba1pf+UlgEWM=;
-        b=q558+3KYcrL9bSgXbqgz+VMfCDEAs5hVJ5ccWO//m+mAokgegGdQBnpL3jxS+nIvOY
-         qEoMF5tpHG433ffy1Vr6SFeg8zDPLv/qwEbO7l1qL2HpplmRX8NDRJmzhkVJ9CbwwyZx
-         aJe6qOinM4F+sPLgPpwG5yh4iE7oE4HU+JmaENM/Dj05J+lWvcw5FESz2GzQ4s75YlFW
-         uWaueRVofMCpZUXjaI3zV1hB8/xifg2KyHvaLraJug1K1R0X17Ao7qB3vftV83DEutHS
-         8z5i2In2F71MzT2IvXtLy18B7lggPdaxaEm3cQoL2E978jXxBens3Xc9ct8HV1xQsM6U
-         bzsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=5oLColQvmc38EgwYlwNaR7xBXm39Ucdba1pf+UlgEWM=;
-        b=boc9/8b2eETC/N6kxZXY5k01GJFVo08XOR08+l2SC+TIDRXwnf/JMUakOhbmRP9GMi
-         QraWmRRMp5ZJmms7DTNrkthm3bG9zF78EPlzIqWN7Ii6WTl+kpyQuHfzLKHXj/R5e8ce
-         gl9AS8yw0OuqO/k1qYHtZzANMJv1GgCVJhzdltC1wW5e2/BX1HCcvOENtzECura3QWJm
-         nXUePTLLc0ESHCIxAIgz1ZapT1rIj5P3R/IMcoqzWTi7Fum3jzV3lC3+Du6JXGdDvHkO
-         uJaRdt5eudsU0zBTri5BG98NeYkRpqba4aLrTtekYOGSpx16/NuUvzB9noTIslmCtUuO
-         oYFg==
-X-Gm-Message-State: ACgBeo0o6py9pB3oI1gmkypSl8hWc73Pb4hH+puYcfwjfUCaSQY+IdUg
-        MWDblkwsrj7vQLc6r7FrmWSjpn9vltdsOqYK3Jp7Uw==
-X-Google-Smtp-Source: AA6agR4ruZp6kLLHNNcriPdt5yfdexRiAWfgjuySPdNmZUSR6mw/ugLvr7aOQkMBoJG00d4Yxeu6h7IlNmfH6rYiWRo=
-X-Received: by 2002:a0d:fd05:0:b0:329:3836:53ac with SMTP id
- n5-20020a0dfd05000000b00329383653acmr9498030ywf.455.1660456779360; Sat, 13
- Aug 2022 22:59:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220810060040.321697-1-saravanak@google.com>
-In-Reply-To: <20220810060040.321697-1-saravanak@google.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Sat, 13 Aug 2022 22:59:04 -0700
-Message-ID: <CAGETcx_nVXbHzZ3+_aR4SZtSnSBU=Rfp8Qm2jOs7zGZRaH_88A@mail.gmail.com>
-Subject: Re: [PATCH v1 0/9] fw_devlink improvements
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
+        with ESMTP id S240472AbiHNPbS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Aug 2022 11:31:18 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0367B1AD85;
+        Sun, 14 Aug 2022 08:29:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 40FE4B80B4D;
+        Sun, 14 Aug 2022 15:29:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E261CC43470;
+        Sun, 14 Aug 2022 15:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660490973;
+        bh=xXQAFQ/1p0AoaeHh21LVzZFWzJxzwfUL99cZqTHOlzM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nxns9gPim73McSAJyAZMsHtmZIF3pE+ulCqPPG+bOMAKJt7wMf7AUr/X7MLfk/d5h
+         +YdSaqr+APf+vxE053Q6kcyAzZkDXCd+GeuBDoLFtNqOVeV8prMhRShSKPTGZC4lep
+         Q34zgUHsHdx3iqxWNOBfRIVWAO4NwuQnl1ayHSZWCx6pMG4UdR4DQiJfTjU5wv036H
+         LhJcIlgNL3nqoZfHTaE7pDJVvjNiD8xWwR2GvR9WSYdP+mqySNyT0W7jecuQD30IRW
+         N8KAnRf8cPZ2jZkZSDMh/ZEZJ1WpCndVTgpULLV/VNmLIAqBCLVBsepRutzwtypSzA
+         2YwBYDG1a5yeA==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Henning Schild <henning.schild@siemens.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Len Brown <lenb@kernel.org>
-Cc:     Abel Vesa <abel.vesa@linaro.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        John Stultz <jstultz@google.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>, kernel-team@android.com,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-acpi@vger.kernel.org,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Lee Jones <lee@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        andy@kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.19 39/64] pinctrl: intel: Check against matching data instead of ACPI companion
+Date:   Sun, 14 Aug 2022 11:24:12 -0400
+Message-Id: <20220814152437.2374207-39-sashal@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220814152437.2374207-1-sashal@kernel.org>
+References: <20220814152437.2374207-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-+Naresh Kamboju
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Tue, Aug 9, 2022 at 11:00 PM Saravana Kannan <saravanak@google.com> wrote:
->
-> This patch series improves fw_devlink in the following ways:
->
-> 1. It no longer cares about a fwnode having a "compatible" property. It
->    figures this our more dynamically. The only expectation is that
->    fwnode that are converted to devices actually get probed by a driver
->    for the dependencies to be enforced correctly.
->
-> 2. Finer grained dependency tracking. fw_devlink will now create device
->    links from the consumer to the actual resource's device (if it has one,
->    Eg: gpio_device) instead of the parent supplier device. This improves
->    things like async suspend/resume ordering, potentially remove the need
->    for frameworks to create device links, more parallelized async probing,
->    and better sync_state() tracking.
->
-> 3. Handle hardware/software quirks where a child firmware node gets
->    populated as a device before its parent firmware node AND actually
->    supplies a non-optional resource to the parent firmware node's
->    device.
->
-> 4. Way more robust at cycle handling (see patch for the insane cases).
->
-> 5. Stops depending on OF_POPULATED to figure out some corner cases.
->
-> 6. Simplifies the work that needs to be done by the firmware specific
->    code.
->
-> This took way too long to get done due to typo bugs I had in my rewrite or
-> corner cases I had to find and handle. But it's fairly well tested at this
-> point and I expect this to work properly.
->
-> Abel & Doug,
->
-> This should fix your cyclic dependency issues with your display. Can you
-> give it a shot please?
->
-> Alexander,
->
-> This should fix your issue where the power domain device not having a
-> compatible property. Can you give it a shot please?
->
-> Tony,
->
-> This should handle the odd case of the child being the supplier of the
-> parent. Can you please give this a shot? I want to make sure the cycle
-> detection code handles this properly and treats it like it's NOT a cycle.
->
-> Geert,
->
-> Can you test the renesas stuff I changed please? They should continue
-> working like before. Any other sanity test on other hardware would be
-> great too.
->
-> Sudeep,
->
-> I don't think there are any unfixed issues you had reported in my other
-> patches that this series might fix, but it'll be nice if you could give
-> this a sanity test.
->
-> Guenter,
->
-> I don't think this will fix the issue you reported in the amba patch, but
-> it's worth a shot because it improves a bunch of corner case handling. So
-> it might be better at handling whatever corner cases you might have in the
-> qemu platforms.
+[ Upstream commit c551bd81d198bf1dcd4398d5454acdc0309dbe77 ]
 
-Hi Naresh,
+In some cases we may get a platform device that has ACPI companion
+which is different to the pin control described in the ACPI tables.
+This is primarily happens when device is instantiated by board file.
 
-Thanks for testing these patches in the other thread. Mind giving your
-tested-by here? I know you tested these patches in X15, but were there
-also other boards these patches were tested on as part of the run?
+In order to allow this device being enumerated, refactor
+intel_pinctrl_get_soc_data() to check the matching data instead of
+ACPI companion.
 
-Thanks,
-Saravana
+Reported-by: Henning Schild <henning.schild@siemens.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Henning Schild <henning.schild@siemens.com>
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Lee Jones <lee@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index ffc045f7bf00..fd093e36c3a8 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1641,16 +1641,14 @@ EXPORT_SYMBOL_GPL(intel_pinctrl_probe_by_uid);
+ 
+ const struct intel_pinctrl_soc_data *intel_pinctrl_get_soc_data(struct platform_device *pdev)
+ {
++	const struct intel_pinctrl_soc_data * const *table;
+ 	const struct intel_pinctrl_soc_data *data = NULL;
+-	const struct intel_pinctrl_soc_data **table;
+-	struct acpi_device *adev;
+-	unsigned int i;
+ 
+-	adev = ACPI_COMPANION(&pdev->dev);
+-	if (adev) {
+-		const void *match = device_get_match_data(&pdev->dev);
++	table = device_get_match_data(&pdev->dev);
++	if (table) {
++		struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
++		unsigned int i;
+ 
+-		table = (const struct intel_pinctrl_soc_data **)match;
+ 		for (i = 0; table[i]; i++) {
+ 			if (!strcmp(adev->pnp.unique_id, table[i]->uid)) {
+ 				data = table[i];
+@@ -1664,7 +1662,7 @@ const struct intel_pinctrl_soc_data *intel_pinctrl_get_soc_data(struct platform_
+ 		if (!id)
+ 			return ERR_PTR(-ENODEV);
+ 
+-		table = (const struct intel_pinctrl_soc_data **)id->driver_data;
++		table = (const struct intel_pinctrl_soc_data * const *)id->driver_data;
+ 		data = table[pdev->id];
+ 	}
+ 
+-- 
+2.35.1
 
->
-> Thanks,
-> Saravana
->
-> Cc: Abel Vesa <abel.vesa@linaro.org>
-> Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: John Stultz <jstultz@google.com>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Cc: Guenter Roeck <linux@roeck-us.net>
->
-> Saravana Kannan (9):
->   driver core: fw_devlink: Don't purge child fwnode's consumer links
->   driver core: fw_devlink: Improve check for fwnode with no
->     device/driver
->   soc: renesas: Move away from using OF_POPULATED for fw_devlink
->   gpiolib: Clear the gpio_device's fwnode initialized flag before adding
->   driver core: fw_devlink: Add DL_FLAG_CYCLE support to device links
->   driver core: fw_devlink: Allow marking a fwnode link as being part of
->     a cycle
->   driver core: fw_devlink: Consolidate device link flag computation
->   driver core: fw_devlink: Make cycle detection more robust
->   of: property: Simplify of_link_to_phandle()
->
->  drivers/base/core.c             | 437 +++++++++++++++++++++-----------
->  drivers/gpio/gpiolib.c          |   6 +
->  drivers/of/property.c           |  84 +-----
->  drivers/soc/renesas/rcar-sysc.c |   2 +-
->  include/linux/device.h          |   1 +
->  include/linux/fwnode.h          |  12 +-
->  6 files changed, 323 insertions(+), 219 deletions(-)
->
-> --
-> 2.37.1.559.g78731f0fdb-goog
->
