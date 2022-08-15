@@ -2,84 +2,146 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4475C25B0D
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 Aug 2022 07:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7447CC00140
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 Aug 2022 08:39:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241311AbiHOHiR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 Aug 2022 03:38:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40268 "EHLO
+        id S231821AbiHOIjF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 Aug 2022 04:39:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232365AbiHOHiR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Aug 2022 03:38:17 -0400
-Received: from smtp.smtpout.orange.fr (smtp09.smtpout.orange.fr [80.12.242.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63E2963A7
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Aug 2022 00:38:15 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id NUfsoyReCtUbyNUfsoBx0o; Mon, 15 Aug 2022 09:38:13 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 15 Aug 2022 09:38:13 +0200
-X-ME-IP: 90.11.190.129
-Message-ID: <271c00a5-fb5d-ff9e-3c4d-ec2732b991ba@wanadoo.fr>
-Date:   Mon, 15 Aug 2022 09:38:11 +0200
+        with ESMTP id S233314AbiHOIjE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Aug 2022 04:39:04 -0400
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D63B5201BA;
+        Mon, 15 Aug 2022 01:39:01 -0700 (PDT)
+Received: by mail-qk1-f177.google.com with SMTP id g21so1397525qka.5;
+        Mon, 15 Aug 2022 01:39:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=JtDCKm0cVxqAL7Pu8sRszUiFCITK99XhKJIX5xTH4x0=;
+        b=3BB7Wj5T6mz4vS17/lP3TNxbEKXpueP/U3C8QyBb1FS/Eu3B8PXeDUpD7O5B2tWmYo
+         e631E5FMoH/PS1Sssg6N9lRq4TNsFk/UVHoIyzJUoA0lLnZhaxJCqwRSzqfl+h7borgW
+         14uLnnnMOmqRzp3X5UzvkiMqjkmMgB8m7R9e+i1F4Q+ZBJ4HJAw9rSHisa2v5sU9yWZR
+         3VCrqTesfI/pk2XS1nBXdz1pUKnuSX4ml32Wm3defOknoa7dFaXv2mdUWdj4YlQMu4SS
+         VF6sxKRpynmHkCVmFjzTeqRaDokk9lwSpCCD2+zbb9/eQa7aTZGBanv1NFypryEGGQwW
+         9Ipw==
+X-Gm-Message-State: ACgBeo1Fs70PWQHacVhkoPb0WPfV9DJVixwOC8HGJt2crzJIsgPwKL/5
+        A4DYDVtUdWgK3YYt8IETi8Oujd9Ubbu1hkad
+X-Google-Smtp-Source: AA6agR5upkmc5Dx24BWnn3EskKFRinEPCDYjXf0T4LusHMjh/JWLPSCLJcFeHX7+waaB4dXKIYnMpw==
+X-Received: by 2002:a05:620a:458b:b0:6b6:aa5:1d59 with SMTP id bp11-20020a05620a458b00b006b60aa51d59mr10670876qkb.525.1660552740759;
+        Mon, 15 Aug 2022 01:39:00 -0700 (PDT)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id z3-20020a05622a124300b003437a694049sm6559964qtx.96.2022.08.15.01.38.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Aug 2022 01:38:59 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-31f443e276fso60835197b3.1;
+        Mon, 15 Aug 2022 01:38:58 -0700 (PDT)
+X-Received: by 2002:a81:502:0:b0:32f:dcc4:146e with SMTP id
+ 2-20020a810502000000b0032fdcc4146emr5686051ywf.316.1660552738763; Mon, 15 Aug
+ 2022 01:38:58 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v5 1/1] gpio: mpfs: add polarfire soc gpio support
-Content-Language: fr
-To:     lewis.hanly@microchip.com, linux-gpio@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linus.walleij@linaro.org,
-        brgl@bgdev.pl, linux-kernel@vger.kernel.org, palmer@dabbelt.com,
-        maz@kernel.org
-Cc:     conor.dooley@microchip.com, daire.mcnamara@microchip.com
-References: <20220815070606.1298421-1-lewis.hanly@microchip.com>
- <20220815070606.1298421-2-lewis.hanly@microchip.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20220815070606.1298421-2-lewis.hanly@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20220601070707.3946847-1-saravanak@google.com>
+ <20220601070707.3946847-4-saravanak@google.com> <CAMuHMdWo_wRwV-i_iyTxVnEsf3Th9GBAG+wxUQMQGnw1t2ijTg@mail.gmail.com>
+In-Reply-To: <CAMuHMdWo_wRwV-i_iyTxVnEsf3Th9GBAG+wxUQMQGnw1t2ijTg@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 15 Aug 2022 10:38:47 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV0buz9JOHGs7_vMtV4GbLb+gmdpPihDu5B4ypqUDfAXQ@mail.gmail.com>
+Message-ID: <CAMuHMdV0buz9JOHGs7_vMtV4GbLb+gmdpPihDu5B4ypqUDfAXQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/9] net: mdio: Delete usage of driver_deferred_probe_check_state()
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        netdev <netdev@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Le 15/08/2022 à 09:06, lewis.hanly@microchip.com a écrit :
-> From: Lewis Hanly <lewis.hanly@microchip.com>
-> 
-> Add a driver to support the Polarfire SoC gpio controller
-> 
-> Signed-off-by: Lewis Hanly <lewis.hanly@microchip.com>
-> ---
->   drivers/gpio/Kconfig     |   7 +
->   drivers/gpio/Makefile    |   1 +
->   drivers/gpio/gpio-mpfs.c | 318 +++++++++++++++++++++++++++++++++++++++
->   3 files changed, 326 insertions(+)
->   create mode 100644 drivers/gpio/gpio-mpfs.c
-> 
+Hi Saravana,
 
-> +static int mpfs_gpio_probe(struct platform_device *pdev)
-> +{
-> +	struct clk *clk;
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = pdev->dev.of_node;
-> +	struct mpfs_gpio_chip *mpfs_gpio;
-> +	struct gpio_irq_chip *girq;
-> +	int i, ret, ngpios, nirqs;
-> +
-> +	mpfs_gpio = devm_kzalloc(dev, sizeof(*mpfs_gpio), GFP_KERNEL);
-> +	if (!mpfs_gpio)
-> +		return -ENOMEM;
-> +
-> +	mpfs_gpio->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(mpfs_gpio->base))
-> +		return dev_err_probe(dev, PTR_ERR(mpfs_gpio->clk), "input clock not found.\n");
+On Tue, Jul 5, 2022 at 11:11 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Wed, Jun 1, 2022 at 2:44 PM Saravana Kannan <saravanak@google.com> wrote:
+> > Now that fw_devlink=on by default and fw_devlink supports interrupt
+> > properties, the execution will never get to the point where
+> > driver_deferred_probe_check_state() is called before the supplier has
+> > probed successfully or before deferred probe timeout has expired.
+> >
+> > So, delete the call and replace it with -ENODEV.
+> >
+> > Signed-off-by: Saravana Kannan <saravanak@google.com>
+>
+> Thanks for your patch, which is now commit f8217275b57aa48d ("net:
+> mdio: Delete usage of driver_deferred_probe_check_state()") in
+> driver-core/driver-core-next.
+>
+> Seems like I missed something when providing my T-b for this series,
+> sorry for that.
+>
+> arch/arm/boot/dts/r8a7791-koelsch.dts has:
+>
+>     &ether {
+>             pinctrl-0 = <&ether_pins>, <&phy1_pins>;
+>             pinctrl-names = "default";
+>
+>             phy-handle = <&phy1>;
+>             renesas,ether-link-active-low;
+>             status = "okay";
+>
+>             phy1: ethernet-phy@1 {
+>                     compatible = "ethernet-phy-id0022.1537",
+>                                  "ethernet-phy-ieee802.3-c22";
+>                     reg = <1>;
+>                     interrupt-parent = <&irqc0>;
+>                     interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+>                     micrel,led-mode = <1>;
+>                     reset-gpios = <&gpio5 22 GPIO_ACTIVE_LOW>;
+>             };
+>     };
+>
+> Despite the interrupts property, &ether is now probed before irqc0
+> (interrupt-controller@e61c0000 in arch/arm/boot/dts/r8a7791.dtsi),
+> causing the PHY not finding its interrupt, and resorting to polling:
+>
+>     -Micrel KSZ8041RNLI ee700000.ethernet-ffffffff:01: attached PHY
+> driver (mii_bus:phy_addr=ee700000.ethernet-ffffffff:01, irq=185)
+>     +Micrel KSZ8041RNLI ee700000.ethernet-ffffffff:01: attached PHY
+> driver (mii_bus:phy_addr=ee700000.ethernet-ffffffff:01, irq=POLL)
+>
+> Reverting this commit, and commit 9cbffc7a59561be9 ("driver core:
+> Delete driver_deferred_probe_check_state()") fixes that.
 
-PTR_ERR(mpfs_gpio->base)?
-"input clock not found" also looks odd after a 
-devm_platform_ioremap_resource() call.
+FTR, this issue is now present in v6.0-rc1.
+I haven't tried your newest series yet.
 
-> +
-> +	clk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(clk))
-> +		return dev_err_probe(dev, PTR_ERR(clk), "devm_clk_get failed\n");
-> +
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
