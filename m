@@ -2,74 +2,90 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C03C25B0E
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 Aug 2022 21:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3E2C32771
+	for <linux-gpio@archiver.kernel.org>; Wed, 17 Aug 2022 01:37:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233835AbiHPVIY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 Aug 2022 17:08:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41912 "EHLO
+        id S238361AbiHQBhk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 Aug 2022 21:37:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233462AbiHPVIW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Aug 2022 17:08:22 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BFD711A1A
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Aug 2022 14:08:20 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a7so21226261ejp.2
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Aug 2022 14:08:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=gQVd09TKBoK8myxx9+Kk6j7arplddUDBcJdpPSvQ9N0=;
-        b=crCJwXLmEvPMSm86Sva0Xcmf7BIt21WtW9u2OR1PDBYvlSd51fDec13ktq12ylm07b
-         V0p3KlPOXf0y0uvfPWHzB5Fi5UGStHw84wFGZ0/34v9Jsko1jcibPEgCTQbs0r+dPtqy
-         ywy2yuLbLNxvViCfjVJ3CnvYRmZdM9BpyL69w7bpxMZxM16gfr4EoGrv6fkNZkRokDMz
-         rucbT153NSZdeUtCGXQEegLHjsMLOsBeGxEKyzcArzDELv+MrxYoIOgsyM4Co3luz2DB
-         2WO9yapIUjoqORrmUgWUiqNwehZ55xN6IcmPwOqxUV/sVXFYqrQ0BEA0CnSIdf63s+wD
-         HPvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=gQVd09TKBoK8myxx9+Kk6j7arplddUDBcJdpPSvQ9N0=;
-        b=tefQNe441C8mwfxuHVbN4BgyDVxrEpuoYT5daMvxpLNsH5YR76TbVwqqLegGoXrAhc
-         294E/2UOqfyHV/dvVh+pVJGDIWhbpdt1EnAQ9UxGgqG1I22UUYG2IoRN13RVb2Lg4ku9
-         jDO9PysxrlIOre+/sN6SMpSt8Ma0LPoF6opwdBjT3y2YM8HwENs8PvuZuZwiXVlo2CDJ
-         z0PpwG9PVPm0DAFBdQMjCfDY8OtQwWhq92LpbDbwO91XBBFAADwRrPxrLW5zPRqe4Kea
-         dQC+SvVmTQqLPHxnTpf9Wh5sSySKqjxg0VnOwVnjxa0uzg1uCjNxakkmJ+IVLGI7JLoE
-         Yv5w==
-X-Gm-Message-State: ACgBeo3DNvg7KwZviBFaHg/9NNRAe9//ZwJh/rxdfKa4xHtbfTI4TZPd
-        z9+pETZ3X++DIyg9HLyFNqEWgiH2dTcY9xJkyoFh0A==
-X-Google-Smtp-Source: AA6agR4o/fiLkA00xTrIced/qX5cVBySwCdN1B+z2JKrH3HJvjuglFXBj3jY/Fz+dAIXobKjAJien9JfTQEDL9KOmc8=
-X-Received: by 2002:a17:907:9628:b0:731:1e3:b168 with SMTP id
- gb40-20020a170907962800b0073101e3b168mr15114815ejc.526.1660684098677; Tue, 16
- Aug 2022 14:08:18 -0700 (PDT)
+        with ESMTP id S238243AbiHQBhj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Aug 2022 21:37:39 -0400
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B111295696;
+        Tue, 16 Aug 2022 18:37:37 -0700 (PDT)
+Received: from [192.168.100.8] (unknown [112.20.110.237])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8Bx5OFaRvxiggADAA--.16150S3;
+        Wed, 17 Aug 2022 09:37:31 +0800 (CST)
+Message-ID: <78472e8f-b7e8-3e72-d50b-b754cece819a@loongson.cn>
+Date:   Wed, 17 Aug 2022 09:37:30 +0800
 MIME-Version: 1.0
-References: <20220815091929.130547-1-brgl@bgdev.pl>
-In-Reply-To: <20220815091929.130547-1-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 16 Aug 2022 23:08:07 +0200
-Message-ID: <CACRpkdb3pwZMoL=G0QiRLyLdVA8m0=PwFyZ3-EE7r649PTz10Q@mail.gmail.com>
-Subject: Re: [PATCH] gpio: pxa: use devres for the clock struct
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>, Yuan Can <yuancan@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH v2] docs/zh_CN: Update the translation of gpio to 6.0-rc1
+To:     Wu XiangCheng <wu.xiangcheng@linux.dev>
+Cc:     linus.walleij@linaro.org, brgl@bgdev.pl, tekkamanninja@gmail.com,
+        corbet@lwn.net, alexs@kernel.org, linux-gpio@vger.kernel.org,
+        linux-doc@vger.kernel.org
+References: <20220816114025.4180328-1-siyanteng@loongson.cn>
+ <YvuXyKeF8MUf6vKh@bobwxc.mipc>
+From:   YanTeng Si <siyanteng@loongson.cn>
+In-Reply-To: <YvuXyKeF8MUf6vKh@bobwxc.mipc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8Bx5OFaRvxiggADAA--.16150S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrZr48uFyxXFWDArWUJry8Grg_yoWDtrgEva
+        45KFWjyFn8G3W8Xw1Dua4kGa1kJr1rWr4vqr4xA3y7KFnIqF18trnIk390qa45Xr1UCrW3
+        uFZ7Way7WF4aqjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbxAYjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
+        cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4
+        A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l
+        c2xSY4AK67AK6w4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+        6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+        kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+        xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07
+        j1g4fUUUUU=
+X-CM-SenderInfo: pvl1t0pwhqwqxorr0wxvrqhubq/
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Aug 15, 2022 at 11:19 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> The clock is never released after probe(). Use devres to not leak
-> resources.
+在 2022/8/16 21:12, Wu XiangCheng 写道:
+> 话说 Yanteng Si 于 2022-08-16 (二) 19:40:25 +0800 曰过：
 >
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Reported-by: Yuan Can <yuancan@huawei.com>
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+>> @@ -444,15 +476,16 @@ GPIO 实现者的框架 (可选)
+>>   
+>>   
+>>   控制器驱动: gpio_chip
+>> --------------------
+>> +---------------------
+>> +
+>>   在框架中每个 GPIO 控制器都包装为一个 "struct gpio_chip"，他包含了
+>>   该类型的每个控制器的常用信息:
+>>   
+>> - - 设置 GPIO 方向的方法
+>> - - 用于访问 GPIO 值的方法
+>> - - 告知调用其方法是否可能休眠的标志
+>> - - 可选的 debugfs 信息导出方法 (显示类似上拉配置一样的额外状态)
+>> - - 诊断标签
+>> +	设置 GPIO 方向的方法
+>> +	用于访问 GPIO 值的方法
+>> +	告知调用其方法是否可能休眠的标志
+>> +	可选的 debugfs 信息导出方法 (显示类似上拉配置一样的额外状态)
+>> +	诊断标签
+> List style problem, please use '-' or '*', or all items will be put into
+> one <p></p>.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I see, I will fix it in v3.
 
-Yours,
-Linus Walleij
+
+Thanks,
+
+Yanteng
+
