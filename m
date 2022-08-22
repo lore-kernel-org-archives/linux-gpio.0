@@ -2,79 +2,121 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A19FC00140
-	for <linux-gpio@archiver.kernel.org>; Sun, 21 Aug 2022 11:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F456C28D13
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Aug 2022 03:39:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229436AbiHUL2u (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 21 Aug 2022 07:28:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52092 "EHLO
+        id S231851AbiHVDjg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 21 Aug 2022 23:39:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230169AbiHUL2s (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Aug 2022 07:28:48 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FAD912AC0;
-        Sun, 21 Aug 2022 04:28:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661081326; x=1692617326;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=u8NGtjuuiEpZJ6bFCLHHCXdVK31RObZeJr8v00tDkAg=;
-  b=X5mjjY75HuCP5z2k7B6RQkp/zJfH55Zey5At/PcmKRSYEvDg+uYQxhan
-   IdVavHFm4sy3YcEzVexxYPqFMArxooYKfz8OWVvqvxvxkeod7TzBYRwdP
-   HLO7H/V4FaGEobQOrCmrKRteUF30CbQa9nlFvu0G3qzJ9LBXP2lyzajDg
-   EdAlXpVurOeV6FHyT1wJHDOBYWBUdI8mB8IMg0E1LI9v3NmVdS/gMgPww
-   DOa/REJv/LLQgQXNCklIdvC3Bgv+DZI3igzSHMAzorNdDIgO8biReKbZy
-   GRPKoZpfExWHLop+7ukMXXPoiNhyYwSMIOXsjroPgMfxsffMt5ZWH3fFq
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10445"; a="273002755"
-X-IronPort-AV: E=Sophos;i="5.93,252,1654585200"; 
-   d="scan'208";a="273002755"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2022 04:28:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,252,1654585200"; 
-   d="scan'208";a="936703556"
-Received: from lkp-server01.sh.intel.com (HELO 44b6dac04a33) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 21 Aug 2022 04:28:44 -0700
-Received: from kbuild by 44b6dac04a33 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oPj8G-00040P-0B;
-        Sun, 21 Aug 2022 11:28:44 +0000
-Date:   Sun, 21 Aug 2022 19:28:17 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     kbuild-all@lists.01.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>, linux-doc@vger.kernel.org
-Subject: [brgl:gpio/for-current 1/2] htmldocs: Warning: MAINTAINERS
- references a file that doesn't exist:
- Documentation/devicetree/bindings/gpio/xlnx,gpio-xilinx.yaml
-Message-ID: <202208211933.F50Nni98-lkp@intel.com>
+        with ESMTP id S231994AbiHVDjc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Aug 2022 23:39:32 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4AE1248C3;
+        Sun, 21 Aug 2022 20:39:31 -0700 (PDT)
+Received: from canpemm500009.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4M9yj51spzznTbv;
+        Mon, 22 Aug 2022 11:37:13 +0800 (CST)
+Received: from [10.174.178.165] (10.174.178.165) by
+ canpemm500009.china.huawei.com (7.192.105.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 22 Aug 2022 11:39:29 +0800
+Subject: Re: [PATCH -next] gpio: mockup: remove gpio debugfs when remove
+ device
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+CC:     Bamvor Jian Zhang <bamv2005@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20220816145225.84283-1-weiyongjun1@huawei.com>
+ <CAMRc=McG5Pf4b5HymV1iaFAGqMMEtyYSQi23z9LmjvzmbF4rYg@mail.gmail.com>
+From:   "weiyongjun (A)" <weiyongjun1@huawei.com>
+Message-ID: <fe049f3e-6924-342b-a5ba-f460ddce436c@huawei.com>
+Date:   Mon, 22 Aug 2022 11:39:29 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <CAMRc=McG5Pf4b5HymV1iaFAGqMMEtyYSQi23z9LmjvzmbF4rYg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.178.165]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ canpemm500009.china.huawei.com (7.192.105.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
-head:   3f4e432fb9c6357b4b9bce1def67d61a215029eb
-commit: 636c3982d296a560aabcc5e462c3a6408389ffd2 [1/2] MAINTAINERS: rectify entry for XILINX GPIO DRIVER
-reproduce:
-        # https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git/commit/?id=636c3982d296a560aabcc5e462c3a6408389ffd2
-        git remote add brgl https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
-        git fetch --no-tags brgl gpio/for-current
-        git checkout 636c3982d296a560aabcc5e462c3a6408389ffd2
-        make menuconfig
-        # enable CONFIG_COMPILE_TEST, CONFIG_WARN_MISSING_DOCUMENTS, CONFIG_WARN_ABI_ERRORS
-        make htmldocs
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+On 2022/8/19 20:49, Bartosz Golaszewski wrote:
+> On Tue, Aug 16, 2022 at 4:34 PM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+>> GPIO mockup debugfs is created in gpio_mockup_probe() but
+>> forgot to remove when remove device. This patch add a devm
+>> managed callback for removing them.
+>>
+> The tag -next is for patches that address issues that are in next but
+> not yet in master.
 
-All warnings (new ones prefixed by >>):
 
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/gpio/xlnx,gpio-xilinx.yaml
+Got it. Thanks.
 
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+
+>
+>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+>> ---
+>>   drivers/gpio/gpio-mockup.c | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+>> index 8943cea92764..1fdc444b093b 100644
+>> --- a/drivers/gpio/gpio-mockup.c
+>> +++ b/drivers/gpio/gpio-mockup.c
+>> @@ -373,6 +373,13 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
+>>          }
+>>   }
+>>
+>> +static void gpio_mockup_debugfs_cleanup(void *data)
+>> +{
+>> +       struct gpio_mockup_chip *chip = data;
+>> +
+>> +       debugfs_remove_recursive(chip->dbg_dir);
+>> +}
+>> +
+>>   static void gpio_mockup_dispose_mappings(void *data)
+>>   {
+>>          struct gpio_mockup_chip *chip = data;
+>> @@ -455,6 +462,10 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+>>
+>>          gpio_mockup_debugfs_setup(dev, chip);
+>>
+>> +       rv = devm_add_action_or_reset(dev, gpio_mockup_debugfs_cleanup, chip);
+>> +       if (rv)
+>> +               return rv;
+>> +
+> Please return that function directly.
+
+
+Will fix it.
+
+
+>
+>>          return 0;
+>>   }
+>>
+>> --
+>> 2.34.1
+>>
+> This isn't very relevant as the module needs to be unloaded anyway in
+> order to reconfigure the simulated device but I'll apply it as it's
+> technically correct. Did you see we have a new one - gpio-sim - that
+> uses configfs?
+>
+
+gpio-mockup is used for testing other drivers with overlay dts, and 
+triggered
+
+this issue. I though gpio-sim not work with dts, but it should works well.
+
+I will have a try to using the new gpio-sim module.
+
+
