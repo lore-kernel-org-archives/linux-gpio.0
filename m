@@ -2,84 +2,77 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A91C28D13
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 Aug 2022 03:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1310C28D13
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 Aug 2022 07:17:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230119AbiHVDwb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 21 Aug 2022 23:52:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60408 "EHLO
+        id S232986AbiHVHRT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 Aug 2022 03:17:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232391AbiHVDwa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Aug 2022 23:52:30 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4860520F70;
-        Sun, 21 Aug 2022 20:52:29 -0700 (PDT)
-Received: from canpemm500009.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4M9yyh20Q2zkWVZ;
-        Mon, 22 Aug 2022 11:49:00 +0800 (CST)
-Received: from CHINA (10.175.102.38) by canpemm500009.china.huawei.com
- (7.192.105.203) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Mon, 22 Aug
- 2022 11:52:26 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     Bamvor Jian Zhang <bamv2005@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC:     Wei Yongjun <weiyongjun1@huawei.com>, <linux-gpio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] gpio: mockup: remove gpio debugfs when remove device
-Date:   Mon, 22 Aug 2022 04:10:25 +0000
-Message-ID: <20220822041025.3221406-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S230289AbiHVHRR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Aug 2022 03:17:17 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71CD12983E
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Aug 2022 00:17:16 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id gb36so19319641ejc.10
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Aug 2022 00:17:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=Gaa0lwSjZPTc4bVJ2hqicvvuLqdOW4udzcfR7NaiRHI=;
+        b=M/UaYnsUtCt6mPqwP1lVf++v8xMIOrW9C6Kg9bDmxQ0QnAiExFRmK4h/k9NuIOFkVA
+         VwjxItHNrcI70bQjQ2wBv/D3Sfd317muov+aHX9nsJt5Rh2MDEuE9Pso7KRnc0XvhUMf
+         zpodMoTpFV7Oz5KtvFXNTlXeZe6s+8e/q0cIddnSiGzQZJcUL3PsGYe0UoX8VuLNyxYz
+         w4D0wLZWnGzJ3fVonuENjQXosJzT1+jWKvXkSGfTbVM60qtBenZ3yt6RM3/AL6wpf+Bq
+         I+eQIXX1C4NfmEIbfiOUW3etgh0y6wWrwSof/2XQ7moq2qZ7uNrtfDm0s9nkC+aT1H5K
+         4zlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=Gaa0lwSjZPTc4bVJ2hqicvvuLqdOW4udzcfR7NaiRHI=;
+        b=GKoY8c4+lUTdG8BiBCHKPn+/MGIFv5QOzB7YlhyGosTqnEq7AIzuCyhuAvt7v+OP+2
+         oEedpgjbocUSM9KVKB5VFaKbBogcjDo4AM/ntlQm8OHrACnmhkRaIdlSR49BgrsP1vEL
+         yRnV5Ykx/ZbCALRYdilVBotMtrhJZGRSpDuIzElbdeMpFJePtk4YcP3xwR/V1dHO+7aQ
+         RkvUXcgp7u+i/SOZOvwiFdYMlKEACEhhn8HRxXyxDle9LWHZodBWJ5c5RHLLxvWhkikV
+         PIp0EpetJJ+mLvrXXMRwBQoq+E0x3kZNtdwnvY0rj3w4plxgAEGqUu+rFJ5rzguPP/LG
+         1Rcw==
+X-Gm-Message-State: ACgBeo3kftQXnYGMY2uW8k7A0aHEwI4DMibAr6g8hW+YL8Ia801mmNYJ
+        5WF+rVOasHWvV4HsEqRKebVAoNyirbaMHND3a1Bflw==
+X-Google-Smtp-Source: AA6agR73uKO2M1GT0YRuKM53bMH2gd8jc1RJ7ufpRpKcAUtHxCYB8PQsgSIiqJd83qj16XYbBfYnbtBrJcQViywhxlg=
+X-Received: by 2002:a17:906:58c8:b0:6fe:91d5:18d2 with SMTP id
+ e8-20020a17090658c800b006fe91d518d2mr12284228ejs.190.1661152634983; Mon, 22
+ Aug 2022 00:17:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- canpemm500009.china.huawei.com (7.192.105.203)
-X-CFilter-Loop: Reflected
+References: <20220728155652.29516-1-henning.schild@siemens.com> <20220728155652.29516-3-henning.schild@siemens.com>
+In-Reply-To: <20220728155652.29516-3-henning.schild@siemens.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 22 Aug 2022 09:17:04 +0200
+Message-ID: <CACRpkda-OBwgAW1V8DOnw8z4-DLr=TpTAokm2jg_b31du-BRvg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] gpio-f7188x: use unique labels for banks/chips
+To:     Henning Schild <henning.schild@siemens.com>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Tasanakorn Phaipool <tasanakorn@gmail.com>,
+        Sheng-Yuan Huang <syhuang3@nuvoton.com>,
+        Kuan-Wei Ho <cwho@nuvoton.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-GPIO mockup debugfs is created in gpio_mockup_probe() but
-forgot to remove when remove device. This patch add a devm
-managed callback for removing them.
+On Thu, Jul 28, 2022 at 5:57 PM Henning Schild
+<henning.schild@siemens.com> wrote:
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
-v1 -> v2: return from devm_add_xx directly as Bartosz's suggestion
----
- drivers/gpio/gpio-mockup.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+> So that drivers building on top can find those pins with GPIO_LOOKUP
+> helpers.
+>
+> Signed-off-by: Henning Schild <henning.schild@siemens.com>
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 8943cea92764..a2e505a7545c 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -373,6 +373,13 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 	}
- }
- 
-+static void gpio_mockup_debugfs_cleanup(void *data)
-+{
-+	struct gpio_mockup_chip *chip = data;
-+
-+	debugfs_remove_recursive(chip->dbg_dir);
-+}
-+
- static void gpio_mockup_dispose_mappings(void *data)
- {
- 	struct gpio_mockup_chip *chip = data;
-@@ -455,7 +462,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
- 
- 	gpio_mockup_debugfs_setup(dev, chip);
- 
--	return 0;
-+	return devm_add_action_or_reset(dev, gpio_mockup_debugfs_cleanup, chip);
- }
- 
- static const struct of_device_id gpio_mockup_of_match[] = {
--- 
-2.34.1
+That's nice.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+Yours,
+Linus Walleij
