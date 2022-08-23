@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB8FC28D13
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Aug 2022 00:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D907C32774
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Aug 2022 00:39:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238446AbiHWAjU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 22 Aug 2022 20:39:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41536 "EHLO
+        id S238558AbiHWAjV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 Aug 2022 20:39:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238558AbiHWAjT (ORCPT
+        with ESMTP id S238614AbiHWAjT (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Aug 2022 20:39:19 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBEA74BA56
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Aug 2022 17:39:18 -0700 (PDT)
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 280FD4BA5D
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Aug 2022 17:39:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661215158; x=1692751158;
+  t=1661215159; x=1692751159;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=sUmGV3lm1xyjIER7SVye0gc3ISd5q8qHLl85FL5fPX0=;
-  b=H6iI3CZGE8P/aXUClsQGhvaJENXiXx2smqbvTQVLaUMycOKHjFNizPnN
-   8U/eUcz1XZ7yFF1dugoVLfP9trIA13Dt3tdYC5BnLIY0agJ64Tw11bdCf
-   VE4V20/tQ6anuID6rudJ0gYXFdZYBlZb2ezrUCw+cuEQIfqts6bRISr8c
-   kgh9hU4fuVfnW3ZNmfnztrEH9JdWiHvh/2t0ckOp9LRuJ0K+hVzTmH/Vl
-   L/cF6Xh4pe5Yk8ri+ikjQ3GQvythbweytjBE+qGMF6IV0IfrrNQu1rnRw
-   Mmyrdy+B1lQeAJksHhzRFDxgLVWGhJC2+tndFTChnmlgpuowrzaSXXleG
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10447"; a="291112646"
+  bh=ZlU8T99LROfcR/HpvGcM7zLCg16ksF0hj2WCltfQoJk=;
+  b=HBrqL4fEJ5W3yUx070vtF2zfqzHMNJqVzHcRmgHl0p3CbHGIzUSj+UA+
+   49GwkDxLM9uddHK7ELrmSPz9aq43rMTeO5fWP/+3aFZQqt1eavnafrKOv
+   VbE5Ba1HmdFywm/yOO1mSjY0sv4JHpx3bvA+Sj+BouHyOcgsqFses1OXd
+   VGJvZJKkMz4HPMpNSs3YR2DUpDfiaJdegjoHd8puyogmZG5Kym4wMQ5fx
+   VzPjnDvErRqswTdUr6lzL+lU+74pKt46/AXPL1zSMEs78eLn+DdHJLDeY
+   GHv8mM8L6J92WFFPT/MfBHQFqQlnL3SWItDI5NBafJFD2njcEtqdnDKMd
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10447"; a="294840088"
 X-IronPort-AV: E=Sophos;i="5.93,255,1654585200"; 
-   d="scan'208";a="291112646"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2022 17:39:18 -0700
+   d="scan'208";a="294840088"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2022 17:39:18 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.93,255,1654585200"; 
-   d="scan'208";a="854671980"
+   d="scan'208";a="609155942"
 Received: from lkp-server01.sh.intel.com (HELO dd9b29378baa) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 22 Aug 2022 17:39:17 -0700
+  by orsmga002.jf.intel.com with ESMTP; 22 Aug 2022 17:39:17 -0700
 Received: from kbuild by dd9b29378baa with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1oQHwq-0000uS-33;
+        id 1oQHwq-0000uQ-2w;
         Tue, 23 Aug 2022 00:39:16 +0000
-Date:   Tue, 23 Aug 2022 08:38:49 +0800
+Date:   Tue, 23 Aug 2022 08:38:55 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
- 2648ede07315728963347e7eea148f53a646bb19
-Message-ID: <63042199.hT8gWQPEsdp/HXEV%lkp@intel.com>
+Subject: [linusw-pinctrl:devel] BUILD SUCCESS
+ 27586b851bae62296b77687a58a8c92ab84d5274
+Message-ID: <6304219f.oiXSmcAyeFIMQNjx%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -56,8 +56,8 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
-branch HEAD: 2648ede07315728963347e7eea148f53a646bb19  pinctrl: rockchip: Enhance support for IRQ_TYPE_EDGE_BOTH
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+branch HEAD: 27586b851bae62296b77687a58a8c92ab84d5274  dt-bindings: pinctrl: aspeed: Add missing properties to examples
 
 elapsed time: 724m
 
@@ -68,16 +68,16 @@ The following configs have been built successfully.
 More configs may be tested in the coming days.
 
 gcc tested configs:
-um                           x86_64_defconfig
+powerpc                          allmodconfig
+mips                             allyesconfig
+powerpc                           allnoconfig
 um                             i386_defconfig
+um                           x86_64_defconfig
+sh                               allmodconfig
 csky                              allnoconfig
 alpha                             allnoconfig
 arc                               allnoconfig
 riscv                             allnoconfig
-powerpc                           allnoconfig
-mips                             allyesconfig
-powerpc                          allmodconfig
-sh                               allmodconfig
 i386                             allyesconfig
 i386                                defconfig
 sh                          rsk7201_defconfig
