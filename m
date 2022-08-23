@@ -2,90 +2,153 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F538C32772
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Aug 2022 15:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 096E4C32774
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Aug 2022 15:37:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242442AbiHWPgD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 Aug 2022 11:36:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59908 "EHLO
+        id S241956AbiHWPhI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 Aug 2022 11:37:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242672AbiHWPfq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Aug 2022 11:35:46 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3F1C2618CB;
-        Tue, 23 Aug 2022 04:23:27 -0700 (PDT)
+        with ESMTP id S241442AbiHWPgk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Aug 2022 11:36:40 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22108BFE9E;
+        Tue, 23 Aug 2022 04:26:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BC907611AF;
-        Tue, 23 Aug 2022 11:22:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABD80C433C1;
-        Tue, 23 Aug 2022 11:22:54 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id ECC83B81CE9;
+        Tue, 23 Aug 2022 11:25:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA8A2C433C1;
+        Tue, 23 Aug 2022 11:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1661253775;
-        bh=yXjNO8BangCgzGfaP7LghR/B+0ut5KnX0KE1NB1SYrc=;
+        s=korg; t=1661253932;
+        bh=RHJfmfbErHaYXPty7Vle5Iu9cuS5MQAgVtFca0ryUqk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hk2JIGVfyixbpc27gniWTxaVS04S+4oO3450gkQ/ghRfSP0bbsUCuUKKva5+y6tHO
-         KUsX+g//7SRxeAKX6qfxPRf/7Y23b4K46pxRxmhVC9R3wnq/Dp1teZ4VgNkgyCIA/p
-         QY5L5WsJns0vkVtsR8hV1aYZClK7xAN6VG0x2AuU=
-Date:   Tue, 23 Aug 2022 13:22:52 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        UNGLinuxDriver@microchip.com, arnd@arndb.de,
-        dragan.cvetic@xilinx.com, derek.kiernan@xilinx.com
-Subject: Re: [PATCH RFC char-misc-next 1/5] misc: microchip: pci1xxxx: load
- auxiliary bus driver for the PIO function in the multi-function endpoint of
- pci1xxxx device.
-Message-ID: <YwS4jBd5uVvMaTSz@kroah.com>
-References: <20220804163219.921640-1-kumaravel.thiagarajan@microchip.com>
- <20220804163219.921640-2-kumaravel.thiagarajan@microchip.com>
+        b=eJYYTySjiuQgiWdmHsEUf3gaqYRsV1W/Z9PLIP8bbagZnqtvifScrNxoueFvwcm3T
+         Yk1364u/0oUQTr/Hkj+z2Aw8PNbHS1Jg8lcSrwW47OgtNGbdVbQrShTlaHi6QTbXbk
+         EoqAhS4GC2KAhNC5E53bP4fCo7p4uCcB1QQ/uwdU=
+Date:   Tue, 23 Aug 2022 13:25:27 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tobias Klauser <tklauser@distanz.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Vineet Gupta <vgupta@kernel.org>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pali Rohar <pali@kernel.org>,
+        Andreas Farber <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Peter Korsgaard <jacmet@sunsite.dk>,
+        Timur Tabi <timur@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rob Herring <robh@kernel.org>,
+        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
+        kevin hilman <khilman@kernel.org>,
+        ulf hansson <ulf.hansson@linaro.org>,
+        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
+        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
+        andrew lunn <andrew@lunn.ch>,
+        heiner kallweit <hkallweit1@gmail.com>,
+        eric dumazet <edumazet@google.com>,
+        jakub kicinski <kuba@kernel.org>,
+        paolo abeni <pabeni@redhat.com>,
+        linus walleij <linus.walleij@linaro.org>,
+        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
+        david ahern <dsahern@kernel.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-actions@lists.infradead.org,
+        linux-unisoc@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        sparclinux@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Fix console probe delay when stdout-path isn't set
+Message-ID: <YwS5J3effuHQJRZ5@kroah.com>
+References: <20220701012647.2007122-1-saravanak@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220804163219.921640-2-kumaravel.thiagarajan@microchip.com>
+In-Reply-To: <20220701012647.2007122-1-saravanak@google.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Aug 04, 2022 at 10:02:15PM +0530, Kumaravel Thiagarajan wrote:
-> pci1xxxx is a PCIe switch with a multi-function endpoint on one of its
-> downstream ports. PIO function is one of the functions in the
-> multi-function endpoint. PIO function combines a GPIO controller and also
-> an interface to program pci1xxxx's OTP & EEPROM. This auxiliary bus driver
-> is loaded for the PIO function and separate child devices are enumerated
-> for GPIO controller and OTP/EEPROM interface.
+On Thu, Jun 30, 2022 at 06:26:38PM -0700, Saravana Kannan wrote:
+> These patches are on top of driver-core-next.
 > 
-> Signed-off-by: Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>
-> ---
->  MAINTAINERS                                   |   8 +
->  drivers/misc/Kconfig                          |   1 +
->  drivers/misc/Makefile                         |   3 +-
->  drivers/misc/mchp_pci1xxxx/Kconfig            |  10 ++
->  drivers/misc/mchp_pci1xxxx/Makefile           |   1 +
->  drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.c | 167 ++++++++++++++++++
->  drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.h |  28 +++
->  7 files changed, 217 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/misc/mchp_pci1xxxx/Kconfig
->  create mode 100644 drivers/misc/mchp_pci1xxxx/Makefile
->  create mode 100644 drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.c
->  create mode 100644 drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 285ffe0df5cf..ba491e4fc35f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13244,6 +13244,14 @@ S:	Supported
->  F:	Documentation/devicetree/bindings/mtd/atmel-nand.txt
->  F:	drivers/mtd/nand/raw/atmel/*
->  
-> +MICROCHIP PCI1XXXX GP DRIVER
-> +M:	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>
-> +M:	UNGLinuxDriver@microchip.com
+> Even if stdout-path isn't set in DT, this patch should take console
+> probe times back to how they were before the deferred_probe_timeout
+> clean up series[1].
 
-Please do not add random email aliases to the MAINTAINERS file, use
-people's names and email addresses, otherwise there is no sense of
-ownership.
+Now dropped from my queue due to lack of a response to other reviewer's
+questions.
 
 thanks,
 
