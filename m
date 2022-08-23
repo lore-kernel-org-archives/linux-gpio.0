@@ -2,106 +2,85 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6BEC32789
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 Aug 2022 16:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83FD7C38142
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 Aug 2022 17:01:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245531AbiHWQs4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 Aug 2022 12:48:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40878 "EHLO
+        id S1343697AbiHWRBz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 Aug 2022 13:01:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244524AbiHWQsc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Aug 2022 12:48:32 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 507FDFCA1C
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Aug 2022 07:21:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 015D9B81E07
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Aug 2022 14:21:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCF1CC433D6;
-        Tue, 23 Aug 2022 14:20:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661264459;
-        bh=ZIeN9tRV9MS5G+VTlpRplJ4Guun7YGJrDn4Zt1TTxVQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VlekC84KUXAbOlZYvGzrQM4a08qkjeUpaHKxdzCADnYbiCjUqZMLgwKkZpmY0ybrv
-         UB92PNt9DMEwa2RkXrQQ8OlmGSpmq+mAdMXWAuNl0S2bWYEhjABG8HqDL2tqQlPVgM
-         xf5CxbOWuoFQR+aJxvKa3OBVOoimquNWJsj3DbYemf4V9ibeX/ncIhvTeKhfSO9zSN
-         j2hALlumPiAWQndF7Q+akGU6I9Sy/cUCjWOUQcfpwDcVSFmVYCfPCUVBoaxXoeQpCS
-         UxejdiYCSfM8vmuaJ/P2uTehsCc4pY2yY+TyTOs/Rgylg8a/FNVLddPpPBOQ4PEh3T
-         gk2Gg1z3Pwp9w==
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.95)
-        (envelope-from <maz@kernel.org>)
-        id 1oQUm1-005D36-Aq;
-        Tue, 23 Aug 2022 15:20:57 +0100
+        with ESMTP id S1344373AbiHWRBQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Aug 2022 13:01:16 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B926F14E28B;
+        Tue, 23 Aug 2022 06:32:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1661261540; x=1692797540;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=1aOsMh80PzrLjsTarZiUZuyjeuDjpjzALcnTmx6xWUY=;
+  b=BjdHkLywf+7BUoBr+1n2o0goTRFna2l8wGUavK1bLmgO13FL9qHYQ/W2
+   aO8iTdt/9LPngGVzsljY13ogmVSzUfJeSa3GzlluMRQX4Dm982jI6MU6d
+   Lcq45g6mGuhotMzC2vOD99ZFaVx6D5K0uFi+CA9ircc9e+S4O0KglZS7M
+   gOJtcPOyx3AjVW1h16+/ZYWZHv2azvL9IKFtC5Rf4oEWuePmI6/LRqSob
+   ybljlmczHQA8LhG+zDwzlXkj9uSXUsonP8JRojevP2DEUj6mKw7gsuz7U
+   LAcHQdUY54zUaMuGzIhtuAAeF2+N/7DFE6kACZ87+cJ5Kn1OWzWdFDbLR
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10448"; a="291247735"
+X-IronPort-AV: E=Sophos;i="5.93,257,1654585200"; 
+   d="scan'208";a="291247735"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2022 06:32:20 -0700
+X-IronPort-AV: E=Sophos;i="5.93,257,1654585200"; 
+   d="scan'208";a="585975010"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2022 06:32:17 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1oQU0s-002SBu-2U;
+        Tue, 23 Aug 2022 16:32:14 +0300
+Date:   Tue, 23 Aug 2022 16:32:14 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     =?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH v1 1/1] pinctrl: bcm: Convert drivers to use struct
+ pingroup and PINCTRL_PINGROUP()
+Message-ID: <YwTW3g4WkJlRbBnO@smile.fi.intel.com>
+References: <20220620165053.74170-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdZrCd9vAMg+MOTduAhmZ+uRq9q89Ts6o6RagdTkrrpogA@mail.gmail.com>
 MIME-Version: 1.0
-Date:   Tue, 23 Aug 2022 15:20:56 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Marek Vasut <marex@denx.de>
-Cc:     linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v5 0/2] gpio: mxc: Locking and direction input fix
-In-Reply-To: <8487c9a1-a14f-eb5d-7069-7e9527d146a6@denx.de>
-References: <20220725103445.88674-1-marex@denx.de>
- <87bktdxkc6.wl-maz@kernel.org>
- <8487c9a1-a14f-eb5d-7069-7e9527d146a6@denx.de>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <dfcf4297bdef79584095b87482de910b@kernel.org>
-X-Sender: maz@kernel.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: marex@denx.de, linux-gpio@vger.kernel.org, bgolaszewski@baylibre.com, linus.walleij@linaro.org, loic.poulain@linaro.org, linux-imx@nxp.com, peng.fan@nxp.com, shawnguo@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdZrCd9vAMg+MOTduAhmZ+uRq9q89Ts6o6RagdTkrrpogA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2022-08-23 11:41, Marek Vasut wrote:
-> On 7/25/22 17:50, Marc Zyngier wrote:
->> On Mon, 25 Jul 2022 11:34:43 +0100,
->> Marek Vasut <marex@denx.de> wrote:
->>> 
->>> The irqchip callbacks in gpio-mxc perform register read-modify-write 
->>> operations
->>> without locking, which may lead to a race condition. Add the missing 
->>> locking.
->>> 
->>> In case the GPIO is used as IRQ, make sure it is configured as input.
->>> 
->>> Marek Vasut (2):
->>>    gpio: mxc: Protect GPIO irqchip RMW with bgpio spinlock
->>>    gpio: mxc: Always set GPIOs used as interrupt source to INPUT mode
->>> 
->>>   drivers/gpio/gpio-mxc.c | 17 ++++++++++++++++-
->>>   1 file changed, 16 insertions(+), 1 deletion(-)
->>> 
->>> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>> Cc: Loic Poulain <loic.poulain@linaro.org>
->>> Cc: Marc Zyngier <maz@kernel.org>
->>> Cc: NXP Linux Team <linux-imx@nxp.com>
->>> Cc: Peng Fan <peng.fan@nxp.com>
->>> Cc: Shawn Guo <shawnguo@kernel.org>
->> 
->> Reviewed-by: Marc Zyngier <maz@kernel.org>
+On Tue, Jun 28, 2022 at 02:39:00PM +0200, Linus Walleij wrote:
+> On Mon, Jun 20, 2022 at 6:50 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
 > 
-> Can these two now be applied or is there something more to do ?
+> > The pin control header provides struct pingroup and PINCTRL_PINGROUP() macro.
+> > Utilize them instead of open coded variants in the driver.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> This looks very tasty. Can we get a test or ACK from one of the BCM
+> people? (Álvaro/Jonas)
 
-That'd be question for Linus and Bartosz, I guess. From my
-own PoV, this is good to go.
+Any news?
 
-Thanks,
-
-      M.
 -- 
-Jazz is not dead. It just smells funny...
+With Best Regards,
+Andy Shevchenko
+
+
