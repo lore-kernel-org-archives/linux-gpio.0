@@ -2,75 +2,80 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BD0C04AA5
-	for <linux-gpio@archiver.kernel.org>; Thu, 25 Aug 2022 12:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16BA0C28D13
+	for <linux-gpio@archiver.kernel.org>; Thu, 25 Aug 2022 12:55:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241653AbiHYMmB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 25 Aug 2022 08:42:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32820 "EHLO
+        id S242033AbiHYMzA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 25 Aug 2022 08:55:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241941AbiHYMmA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Aug 2022 08:42:00 -0400
-Received: from bg5.exmail.qq.com (bg4.exmail.qq.com [43.155.67.158])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 156C84DF00;
-        Thu, 25 Aug 2022 05:41:58 -0700 (PDT)
-X-QQ-mid: bizesmtp70t1661431303tun531a5
-Received: from localhost.localdomain ( [182.148.14.124])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Thu, 25 Aug 2022 20:41:41 +0800 (CST)
-X-QQ-SSF: 01000000002000C0E000B00A0000000
-X-QQ-FEAT: zT6n3Y95oi325WtJj3R+SBXlydZNdWUy0p7FgGbcskg2dnkGMzsGYmwG7L/st
-        Ks9uO2pGqM/aDIMLA8yM6Mqjsj+PCVLbesg6+nKFBRm3JeMyN6mw4Zig5C9GSw83NdwZu6E
-        MJtfRTNqF8OJuG/1lvMqv6vTG3796B+rXImur3swG911Yl7ah70h6WaCTdLDfFU3PK+ouTH
-        /DTGsE//cA9cgiiRVugOxpRVNTjf4syPV+mF2IGleeUPdjCjNB3H+1ywlGHopjWOkxBO7ig
-        Jw4HMDPLji53V7iWnRhLbjx1VQWhnHyL5qLpQcgbwk979y5jQjziiC+Dw0oGkUorrNFGTCR
-        HYjBPraHnV9wsqmLui+Yh+iIMfsjKWXjpGfgKlLrWHw97tGFwSr+mBQVdqvevf75B0WvTfu
-X-QQ-GoodBg: 0
-From:   Jilin Yuan <yuanjilin@cdjrlc.com>
-To:     linus.walleij@linaro.org, avifishman70@gmail.com,
-        tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
-        yuenn@google.com, benjaminfair@google.com
-Cc:     openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jilin Yuan <yuanjilin@cdjrlc.com>
-Subject: [PATCH] pinctrl/nuvoton: Use 'unsigned int' instead of just 'unsigned'.
-Date:   Thu, 25 Aug 2022 20:41:34 +0800
-Message-Id: <20220825124134.30242-1-yuanjilin@cdjrlc.com>
-X-Mailer: git-send-email 2.36.1
+        with ESMTP id S242084AbiHYMyx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Aug 2022 08:54:53 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE6663BA
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Aug 2022 05:54:44 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id t5so25953184edc.11
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Aug 2022 05:54:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=eTyJ5ysyBJphDxI681uzkkLxuflLaDMmY8laThwgM3s=;
+        b=ZZjLAnzUFfkR+G4v+IgfNQyxujKrroHVtRt6sLDmiBVTQl1pPP39LVWYfE+C14b7jy
+         drFFGtc6MLy9HT+qhNoOGpDmgp9Nboo9hsk8n/VBZknHf0aWOQQyO3nzK40UoyCG0HzW
+         fXNWZFVaOMNNvtkDmAdm9sA4YcRvMnM9SQnlAFfOo7DkBCBOSHh9X5DDisnwDiJP5v1w
+         3G2pmpLNsi239BmZHC5GmDihLNEHiBKMXvDnQlNHcRwVVh7BQdClm3jrRWHJhv5h6f0e
+         2nDWc2tbxe/8Dv5Tl/zjy2f33JnCJOxHzk2QC53ZDPcp/U36ngjXCxslQJEmi8JYCPPI
+         ow9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=eTyJ5ysyBJphDxI681uzkkLxuflLaDMmY8laThwgM3s=;
+        b=syvn4Vi2yI82+ZhwgytZm16JTLIHI/GF3la71LmiA96l5pZ7Bk+7Ocq5vfzE3HXmKQ
+         mEnTlAAoA1i2rK9sOLZn1+sE4jGG7UhDg0TRThdAi1Vmkt/vTaBDcY7V3FzBGUiPcWJp
+         +fFhbcNXsm42doXiLCXeOtNQhNt1Nrn14Cna+4QBuTP0EO2UeucuQ5aIVH6ytZOuJSxh
+         1Y2PcbOWBXTrLkFc5SleLVLReszZXfNa3XYp/cjJ0N9NY4uNSmdoY34v/tDXvIfsLMnT
+         RC2LVjsWFSrO9JrdEcfm/QcxvLJwX80XtCIEyS3ocTxeMwa8LfoDNSAgPxPVAplBaxhq
+         MXGQ==
+X-Gm-Message-State: ACgBeo0Q1InyVU8edoax0ECgL45XfOEPYkyOnnVVML+rbSMnt2YQBi2M
+        wUJbnDpHEox138Vo7ZsK0y8hHWwH5Gx6FSD8RA2Hmw==
+X-Google-Smtp-Source: AA6agR5gBoA+DyRoVe1dyTC0LYezrrsqDvXPMxIYYWdtzgEXrzgLMkOxOeINwsG5S/OWaW8sXg9+wvi2winSXMVBq2c=
+X-Received: by 2002:a05:6402:1f8c:b0:43e:8fab:76c with SMTP id
+ c12-20020a0564021f8c00b0043e8fab076cmr3117148edc.126.1661432083303; Thu, 25
+ Aug 2022 05:54:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:cdjrlc.com:qybglogicsvr:qybglogicsvr4
+References: <20220818075012.20880-1-hui.liu@mediatek.com>
+In-Reply-To: <20220818075012.20880-1-hui.liu@mediatek.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 25 Aug 2022 14:54:32 +0200
+Message-ID: <CACRpkdbGjbd9Q9Chcnnc=3nD3XALsCdk7dz9mT3BfJdZs62xjA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/2] MediaTek pinctrl patch on mt8188
+To:     Hui Liu <hui.liu@mediatek.com>,
+        =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
+        <nfraprado@collabora.com>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+        wenst@google.com,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        jianguo.zhang@mediatek.com, zhiyong.tao@mediatek.com,
+        sean.wang@mediatek.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-'unsigned int' should be clearer than 'unsigned'.
+On Thu, Aug 18, 2022 at 9:50 AM Hui Liu <hui.liu@mediatek.com> wrote:
 
-Signed-off-by: Jilin Yuan <yuanjilin@cdjrlc.com>
----
- drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> Changes in patch v6:
+> 1.Update driver file's coding style.
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-index 64d8a568b3db..1c4e89b046de 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-@@ -81,11 +81,11 @@ struct npcm7xx_gpio {
- 	int			irq;
- 	struct irq_chip		irq_chip;
- 	u32			pinctrl_id;
--	int (*direction_input)(struct gpio_chip *chip, unsigned offset);
--	int (*direction_output)(struct gpio_chip *chip, unsigned offset,
-+	int (*direction_input)(struct gpio_chip *chip, unsigned int offset);
-+	int (*direction_output)(struct gpio_chip *chip, unsigned int offset,
- 				int value);
--	int (*request)(struct gpio_chip *chip, unsigned offset);
--	void (*free)(struct gpio_chip *chip, unsigned offset);
-+	int (*request)(struct gpio_chip *chip, unsigned int offset);
-+	void (*free)(struct gpio_chip *chip, unsigned int offset);
- };
- 
- struct npcm7xx_pinctrl {
--- 
-2.36.1
+No further comments on this version so patch applied. If Sean
+has further comments they can be addressed in-tree.
 
+Nicolas: thanks for helping out with review!
+
+Yours,
+Linus Walleij
