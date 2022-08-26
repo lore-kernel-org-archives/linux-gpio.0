@@ -2,75 +2,87 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13873ECAAD5
-	for <linux-gpio@archiver.kernel.org>; Fri, 26 Aug 2022 15:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A1D3ECAAD6
+	for <linux-gpio@archiver.kernel.org>; Fri, 26 Aug 2022 17:32:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232072AbiHZPUL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 26 Aug 2022 11:20:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50716 "EHLO
+        id S1344487AbiHZRcQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 26 Aug 2022 13:32:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344527AbiHZPTx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Aug 2022 11:19:53 -0400
-X-Greylist: delayed 517 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 26 Aug 2022 08:13:37 PDT
-Received: from srvmx2.cyfronet.pl (srvmx2.cyfronet.pl [149.156.2.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D22E3983
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Aug 2022 08:13:37 -0700 (PDT)
-Received: from srvmx2.cyfronet.pl (localhost [127.0.0.1])
-        by srvmx2.cyfronet.pl (Postfix) with ESMTP id 933EE18030017
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Aug 2022 17:04:58 +0200 (CEST)
-X-Virus-Scanner: This message was checked by ESET Mail Security
-        for Linux/BSD. For more information on ESET Mail Security,
-        please, visit our website: http://www.eset.com/.
-Received: by srvmx2.cyfronet.pl (Postfix, from userid 99)
-        id 923E718030019; Fri, 26 Aug 2022 17:04:58 +0200 (CEST)
-Received: from kinga.cyf-kr.edu.pl (kinga.cyf-kr.edu.pl [149.156.2.32])
-        by srvmx2.cyfronet.pl (Postfix) with ESMTP id 6E05918030017
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Aug 2022 17:04:58 +0200 (CEST)
-Received: from AdamZ (gw-ur.cyf-kr.edu.pl [149.156.6.26])
-        by kinga.cyf-kr.edu.pl (Postfix) with ESMTPSA id 5E0B64106E
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Aug 2022 17:04:58 +0200 (CEST)
-From:   "Adam Tofilski" <rotofils@cyf-kr.edu.pl>
-To:     <linux-gpio@vger.kernel.org>
-Subject: libgpiod - bufor problem
-Date:   Fri, 26 Aug 2022 17:04:58 +0200
-Message-ID: <001901d8b95d$359a2060$a0ce6120$@edu.pl>
+        with ESMTP id S1344442AbiHZRcO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Aug 2022 13:32:14 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B26CDB076;
+        Fri, 26 Aug 2022 10:32:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1661535133; x=1693071133;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TmFRXEOP3iU5sday/xLTvELB3voTZqr4jmnhnq3J/Aw=;
+  b=XclIE7fhwZa2oc4DePXzYjODbZyMZVmnI9Rf3waWKY4RMswPOxp8HoW2
+   /q9npcakQbiyeERSXRstl0m6X46qDL+zlZOlJ23juv4wWfKkaU/4uqJp9
+   ZvzcjKg53id555py0IPhQp02i7R5RjYy28mn1Vbj/JRjqLoRg3q9l4LAh
+   +xnf+eGJYbfmVA2Y7L/TCD0AJrzdfH2qpSv7VPQYdv+hfhvhUg4RWzsLi
+   Qza1J0w6jUNMeziNjjTx4kuUXyAUstxSjBinOc4cIKnmhRm6+B/zuBhad
+   o6y/2sk4LPWbvhUzm6GAbK3V9gpjYt9oKUj6lQMMiOMtOnoEzJJMvKC6A
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10451"; a="380861414"
+X-IronPort-AV: E=Sophos;i="5.93,265,1654585200"; 
+   d="scan'208";a="380861414"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2022 10:31:41 -0700
+X-IronPort-AV: E=Sophos;i="5.93,265,1654585200"; 
+   d="scan'208";a="643740701"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2022 10:31:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1oRdB9-003zbz-2p;
+        Fri, 26 Aug 2022 20:31:35 +0300
+Date:   Fri, 26 Aug 2022 20:31:35 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Mario Limonciello <mario.limonciello@amd.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] gpiolib: acpi: Add support to ignore programming
+ an interrupt
+Message-ID: <YwkDd+mAhyoSwVeq@smile.fi.intel.com>
+References: <20220803042501.515-1-mario.limonciello@amd.com>
+ <efb83a0c-7617-894e-a34d-37280238d5aa@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Thread-Index: Adi5XTVsOOktbCYIS8yCFCIwWOsXGg==
-Content-Language: pl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <efb83a0c-7617-894e-a34d-37280238d5aa@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Dear Bartosz
-First of all thank you for gpiomon software.
+On Wed, Aug 03, 2022 at 05:07:15PM +0200, Hans de Goede wrote:
+> On 8/3/22 06:24, Mario Limonciello wrote:
+> > gpiolib-acpi already had support for ignoring a pin for wakeup, but
+> > if an OEM configures a floating pin as an interrupt source then
+> > stopping it from being a wakeup won't do much good to stop the
+> > interrupt storm.
+> > 
+> > Add support for a module parameter and quirk infrastructure to
+> > ignore interrupts as well.
+> > 
+> > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> 
+> Thanks, patch looks good to me:
+> 
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-I try to use if for data acquisition from an optical sensor. It works fine
-from command line but when I try to run it as QProcess in QT (GUI) there is
-a problem with buffering. The output is transferred occasionally in large
-pieces. What I need is to get output immediately after each line. I plan to
-distribute my software as open source.
+Pushed to my review and testing queue, thanks!
 
-As I understand this problem can be solved by adding to your code 
-setbuf(stdout, NULL);
-or 
-fflush(stdout) 
-after each line.
-
-I hope you will be able to help me with this.
-Best wishes
-Adam
-
-Adam Tofilski
-Department of Zoology and Animal Welfare
-Agricultural University
-29 Listopada 56
-31-425 Krakow
-Poland
-rotofils@cyf-kr.edu.pl
-tel: +48 12 6625069
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
