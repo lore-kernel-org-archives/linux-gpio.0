@@ -2,115 +2,152 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB0AECAAD5
-	for <linux-gpio@archiver.kernel.org>; Sat, 27 Aug 2022 01:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CC1ECAAD4
+	for <linux-gpio@archiver.kernel.org>; Sat, 27 Aug 2022 02:43:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345120AbiH0Bhy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 26 Aug 2022 21:37:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50668 "EHLO
+        id S232298AbiH0Cng (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 26 Aug 2022 22:43:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345100AbiH0Bhx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Aug 2022 21:37:53 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A53FE9A85
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Aug 2022 18:37:52 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id 12so2882806pga.1
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Aug 2022 18:37:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=HqzUEj0LEBcBlPXHCCwIuOc4LAuOTz1cVAzefiU6oA0=;
-        b=lT13bpUX0I1EqB2Yce8drmbnqHqoiWfhucPifv7xvJpQPDfDg9kO+ELo134APXzSe3
-         V9iG6LKPSHU7scq/SetzWYICfr6ka8Z636jJKAryRYgJGNe7JzQ0GFpibxooofm1YPwB
-         xz0LFAQAPtKs3FE+hQYfLts3O/pxZMGa7g3VDUXGmPB9m0Vl2NBdx5VFXSoRwrBKwvvX
-         0rtnsb6S/3w2/hPRb+9cBNq6GV+flC0wGORpCoTuCCNAMsjHOqVmOauUo4WJqYKJlDEl
-         YjiD41GiXdBI8Mv71rpuQJreVSp+pqMjYnhjlqK5LHk/eZXmyqA6hEI2/MzoQFB3/lbM
-         I9Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=HqzUEj0LEBcBlPXHCCwIuOc4LAuOTz1cVAzefiU6oA0=;
-        b=xemApBFKB6Ypl2eAhrlSU8Niu359si1Q9yk0BnzS7XPa3mXe4B6U8jspKuorv1eW+2
-         qCNq51ZjLvlTdSZfy/4Qs6R8QWwQ8XL0rE/V3o4YrM1lMFq7K6qWzRJgbdfYOLNPlOnt
-         Y4u2BVGwe/sarQrHLTuUKns0XYgByGzQCcU9S78jNLcEWM6KZKscBK4oCJYsW3rl5BIB
-         rwqaBfhBmDeNRUD/u1LWF2QwAiWWkiIgO4G3XXrRd1xfDkhMABeNjNEqhMUlkT6sVoEt
-         qRPt9d9TXFgBgt3SxxhVhDOUcgRtdscUM6s3DsOe5aCzCaSE92yyW7PKBowgzhF0Lb1L
-         TRrw==
-X-Gm-Message-State: ACgBeo02Is4mMG6CagwGeUJLCnWtfFVN70zdbcPkHjapjRfzlhXUKKZU
-        6A4x4F8OAWF6zAszlhgQ4T0=
-X-Google-Smtp-Source: AA6agR6dsPmnET613AMlqjn0/LTBvphOj21TDLFcHyvSERgPhnXYi2HstmNYkd002dElQVyNrdRn7w==
-X-Received: by 2002:a63:3204:0:b0:42b:40b9:bfc4 with SMTP id y4-20020a633204000000b0042b40b9bfc4mr5369736pgy.357.1661564271993;
-        Fri, 26 Aug 2022 18:37:51 -0700 (PDT)
-Received: from sol (110-174-58-111.static.tpgi.com.au. [110.174.58.111])
-        by smtp.gmail.com with ESMTPSA id 145-20020a621597000000b005375a574846sm2405625pfv.125.2022.08.26.18.37.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Aug 2022 18:37:51 -0700 (PDT)
-Date:   Sat, 27 Aug 2022 09:37:47 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     linux-gpio@vger.kernel.org, Adam Tofilski <rotofils@cyf-kr.edu.pl>
-Subject: Re: libgpiod - bufor problem
-Message-ID: <Ywl1aw447YBhB9Oc@sol>
-References: <001901d8b95d$359a2060$a0ce6120$@edu.pl>
+        with ESMTP id S232279AbiH0Cng (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Aug 2022 22:43:36 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD72BE3991
+        for <linux-gpio@vger.kernel.org>; Fri, 26 Aug 2022 19:43:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1661568215; x=1693104215;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=i1/GyxPtGkuU+ez86aaNnKowfoClby6pRQd+lvrFTlQ=;
+  b=HQkIQtmlf0rtoIS6HI4TaE7rgeYTm7oDDTOCjqv3ivabo/fv4kTtiZ+8
+   owLE9OiYKLNB8dGRhkNq8HKJr+PNaYjNS3Fd8A7bhYDCSJcBDU8vawlFo
+   XWXJLgwo5K84qXOc0y/W78koV1SiW9S3JvBeLiVm+42w/Ro7xvXKyDZ2e
+   AKmvyTBnmXtr3PlYm4nCJRjHKceTuzGFl9EIWAZEF9wEcy9IcwvV65QQo
+   yOdbl1k83lZC0PO3Tw8Sj784muRwkAzScLocwN8kEX57vBdB6xQ8cak+Z
+   D2LKe2jIQbDxFES8LOd1T7tbEwWNvFFxCUPletZMCOPZNUsrvZMvsEtEJ
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10451"; a="274380411"
+X-IronPort-AV: E=Sophos;i="5.93,267,1654585200"; 
+   d="scan'208";a="274380411"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2022 19:43:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,267,1654585200"; 
+   d="scan'208";a="753071980"
+Received: from lkp-server01.sh.intel.com (HELO 71b0d3b5b1bc) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 26 Aug 2022 19:43:34 -0700
+Received: from kbuild by 71b0d3b5b1bc with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1oRlnK-0000tY-04;
+        Sat, 27 Aug 2022 02:43:34 +0000
+Date:   Sat, 27 Aug 2022 10:43:30 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [linusw-pinctrl:devel] BUILD SUCCESS
+ 1ebfe7e36182a658819e4ded44d38d4033c8bbfb
+Message-ID: <630984d2.x1xqOPqDP0dVjRaU%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <001901d8b95d$359a2060$a0ce6120$@edu.pl>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Aug 26, 2022 at 05:04:58PM +0200, Adam Tofilski wrote:
-> Dear Bartosz
-> First of all thank you for gpiomon software.
-> 
-> I try to use if for data acquisition from an optical sensor. It works fine
-> from command line but when I try to run it as QProcess in QT (GUI) there is
-> a problem with buffering. The output is transferred occasionally in large
-> pieces. What I need is to get output immediately after each line. I plan to
-> distribute my software as open source.
-> 
-> As I understand this problem can be solved by adding to your code 
-> setbuf(stdout, NULL);
-> or 
-> fflush(stdout) 
-> after each line.
-> 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+branch HEAD: 1ebfe7e36182a658819e4ded44d38d4033c8bbfb  pinctrl: nuvoton: Use 'unsigned int' instead of just 'unsigned'.
 
-My proposed tool changes for libgpiod v2[1] include the fflush after
-each line for the same reason.  I had issues with the setbuf approach,
-though I don't recall the specifics, so went with the fflush.
+elapsed time: 722m
 
-Maybe do the same for v1?
+configs tested: 77
+configs skipped: 3
 
-Though I note that the target audience for that is cheap and cheerful
-scripts, not apps.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Adam, the appropriate solution for you would be to use libgpiod directly
-rather than wrapping gpiomon.  The tools like gpiomon are just that -
-tools. The output of gpiomon is not part of the stable ABI, so
-getting the events directly from libgpiod is the way to go.
-Apps should use the C library directly, or the C++ or Python bindings
-as appropriate.
+gcc tested configs:
+um                             i386_defconfig
+um                           x86_64_defconfig
+loongarch                         allnoconfig
+x86_64                              defconfig
+arc                                 defconfig
+loongarch                           defconfig
+x86_64                           allyesconfig
+alpha                               defconfig
+s390                                defconfig
+powerpc                           allnoconfig
+m68k                             allmodconfig
+s390                             allmodconfig
+x86_64                               rhel-8.3
+arm                                 defconfig
+s390                             allyesconfig
+i386                                defconfig
+i386                          randconfig-a001
+i386                          randconfig-a003
+arc                  randconfig-r043-20220823
+i386                          randconfig-a005
+sh                               allmodconfig
+x86_64                        randconfig-a015
+mips                             allyesconfig
+alpha                            allyesconfig
+i386                          randconfig-a014
+arc                  randconfig-r043-20220825
+x86_64                          rhel-8.3-func
+powerpc                          allmodconfig
+x86_64                        randconfig-a013
+x86_64                         rhel-8.3-kunit
+i386                          randconfig-a012
+x86_64                        randconfig-a011
+m68k                             allyesconfig
+x86_64                           rhel-8.3-kvm
+i386                          randconfig-a016
+arc                              allyesconfig
+x86_64                    rhel-8.3-kselftests
+x86_64                           rhel-8.3-syz
+i386                             allyesconfig
+x86_64                        randconfig-a006
+x86_64                        randconfig-a004
+x86_64                        randconfig-a002
+arm64                            allyesconfig
+arm                              allyesconfig
+nios2                               defconfig
+nios2                            allyesconfig
+parisc                              defconfig
+parisc64                            defconfig
+parisc                           allyesconfig
+powerpc                          allyesconfig
+riscv                               defconfig
+riscv                            allmodconfig
+riscv                            allyesconfig
+ia64                             allmodconfig
 
-Cheers,
-Kent.
+clang tested configs:
+hexagon              randconfig-r041-20220825
+i386                          randconfig-a013
+hexagon              randconfig-r041-20220823
+i386                          randconfig-a002
+hexagon              randconfig-r045-20220825
+i386                          randconfig-a015
+i386                          randconfig-a006
+s390                 randconfig-r044-20220823
+riscv                randconfig-r042-20220825
+i386                          randconfig-a004
+s390                 randconfig-r044-20220825
+riscv                randconfig-r042-20220823
+x86_64                        randconfig-a014
+i386                          randconfig-a011
+hexagon              randconfig-r045-20220823
+x86_64                        randconfig-a016
+x86_64                        randconfig-a012
+hexagon              randconfig-r045-20220827
+riscv                randconfig-r042-20220827
+hexagon              randconfig-r041-20220827
+s390                 randconfig-r044-20220827
+x86_64                        randconfig-a003
+x86_64                        randconfig-a001
 
-[1] https://lore.kernel.org/linux-gpio/20220708120626.89844-1-warthog618@gmail.com/
-
-> I hope you will be able to help me with this.
-> Best wishes
-> Adam
-> 
-> Adam Tofilski
-> Department of Zoology and Animal Welfare
-> Agricultural University
-> 29 Listopada 56
-> 31-425 Krakow
-> Poland
-> rotofils@cyf-kr.edu.pl
-> tel: +48 12 6625069
-> 
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
