@@ -2,763 +2,211 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33599C3DA6B
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Aug 2022 08:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3774BC0502C
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Aug 2022 12:27:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229992AbiH2IWr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 29 Aug 2022 04:22:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49052 "EHLO
+        id S229886AbiH2M1P (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 29 Aug 2022 08:27:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229995AbiH2IWl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2022 04:22:41 -0400
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FC9B564D9;
-        Mon, 29 Aug 2022 01:22:38 -0700 (PDT)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 27T8MLPC031532;
-        Mon, 29 Aug 2022 03:22:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1661761341;
-        bh=NkjECwXgdLtQc0y6OYA4oFQOGO5+u6jddR9DRSjd5Xo=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=pTr1xzAROlq4Y1ANgw9DQgNG0MTMR0u5EgvuxlyltAfxrJPJKTabySkFY7wankWns
-         7ho1/yxETTDP579IjZjLfoIi6FK28nDFTIKkLcsJcnsbzxXVwq7741mszFVYSJ9XRc
-         QjGE17ijpHSElI+jf/+7LaRw6D80cvm8s4Z5oN4E=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 27T8ML5j021466
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 29 Aug 2022 03:22:21 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Mon, 29
- Aug 2022 03:22:21 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
- Frontend Transport; Mon, 29 Aug 2022 03:22:21 -0500
-Received: from uda0132425.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 27T8M7Yc059309;
-        Mon, 29 Aug 2022 03:22:18 -0500
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-To:     Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
+        with ESMTP id S229986AbiH2M0t (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2022 08:26:49 -0400
+Received: from mx0b-00128a01.pphosted.com (mx0b-00128a01.pphosted.com [148.163.139.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0443174DC7;
+        Mon, 29 Aug 2022 05:10:37 -0700 (PDT)
+Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27T9jjo1032005;
+        Mon, 29 Aug 2022 07:21:57 -0400
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2172.outbound.protection.outlook.com [104.47.55.172])
+        by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3j7d1ba46t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 29 Aug 2022 07:21:57 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CmfdrnFBQIB7JlyQR7WWOGnZ63qpWWuW+zrdBfPr/NOjNBwGc9AYMhVHo4ZlMNSxzw+zB4iakYPyyMUeBgOWbVb+S9aiibFrbaSzb0nWuLBKOb/Gmbj1GT6TQuPPi/o3DzX6UiOL0WS4q1Xl8GZaAo2rXLKmGpbl1u1zMjFFszSB6ndrcdWo6tg9X3PGpJf/eUH2ckrysSyFH2YEVTt710vCqqNQfLDf8EvZOnAbcQ1oKoL1w/5Zn3hNzVu+MwrtPJTccBlJM/J/fwKNIxSNhuDrxD/COp8NLi5LuravjkkkovR4NUjoAk761aO9c9GBiPp/cpmPomfv5hiF8oSd0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wxTRbdnQINsI5tSRIi66BdcS+QEljivR2NA4kXEjF6c=;
+ b=HHvCkr0jGuwm0VB4HKYLNeTlXVuHp4DW6ziLsNx18qRBpxfxmeJuHKaQ7gnKrEk3Zq3g+Z9C+E4MlU67pMJ0BD1+jHvDuzjmxaoJANicyjr3mGNRn3ZIxKg6c31pVFGAap/89xBklxzRaIt5KgqyhlNIgeL1y1TIO8P771BQy3HjLEp8yDnUGKxT4khfov8Kv/fvUnzZhXPaI1tmp4/Rm9YEtTyHaxIWVZ8EMNbm48JbZ4OhGUQ6Nt+a/a+a/gGvjEeQWbiNPHf5ofopdUBmMcYKQfGO+drSVLFAOPHapcM2MP9xgsA9h/Mw/ohtXUiIl5h17HXDImTfYtLpFerqnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wxTRbdnQINsI5tSRIi66BdcS+QEljivR2NA4kXEjF6c=;
+ b=KoI10uBQEPmLL/mdiOkpOriW988b/Zxe7oLYKCbvlNh2XrNzDxAk36Z+Y021B7c1hLW+e3SoELmWupSnqKNDOTH34Fs1xe9wchNcC09cE2Bb87y9TVehdBVUJ1VmtARPY79tuadgsLdmv+v1ghmeBSw6OOPnsd43AsU3vjg+YOM=
+Received: from SJ0PR03MB6778.namprd03.prod.outlook.com (2603:10b6:a03:40d::22)
+ by MW4PR03MB6569.namprd03.prod.outlook.com (2603:10b6:303:128::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5546.21; Mon, 29 Aug
+ 2022 11:21:55 +0000
+Received: from SJ0PR03MB6778.namprd03.prod.outlook.com
+ ([fe80::edf1:c82a:ab73:1ffe]) by SJ0PR03MB6778.namprd03.prod.outlook.com
+ ([fe80::edf1:c82a:ab73:1ffe%8]) with mapi id 15.20.5504.025; Mon, 29 Aug 2022
+ 11:21:55 +0000
+From:   "Sa, Nuno" <Nuno.Sa@analog.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        kernel test robot <lkp@intel.com>
+CC:     linux-input <linux-input@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+        "kbuild-all@lists.01.org" <kbuild-all@lists.01.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, Bryan Brattlof <bb@ti.com>
-Subject: [PATCH 3/4] arm64: dts: ti: Introduce AM62A7 family of SoCs
-Date:   Mon, 29 Aug 2022 13:51:59 +0530
-Message-ID: <20220829082200.241653-4-vigneshr@ti.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220829082200.241653-1-vigneshr@ti.com>
-References: <20220829082200.241653-1-vigneshr@ti.com>
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: RE: [PATCH v3 01/10] input: keyboard: adp5588-keys: support gpi key
+ events as 'gpio keys'
+Thread-Topic: [PATCH v3 01/10] input: keyboard: adp5588-keys: support gpi key
+ events as 'gpio keys'
+Thread-Index: AQHYnlCrKmIz6dqcpUCDGXTJdkZ0aq2PjogAgDZnnmA=
+Date:   Mon, 29 Aug 2022 11:21:55 +0000
+Message-ID: <SJ0PR03MB677816E5B0D9A86F7D80512C99769@SJ0PR03MB6778.namprd03.prod.outlook.com>
+References: <20220721080423.156151-2-nuno.sa@analog.com>
+ <202207231228.n8l077iB-lkp@intel.com>
+ <CAHp75VdY6qikNgvh4K5Ga4D5MHf7sEfm0kbNzN-xNanwj4yQgg@mail.gmail.com>
+In-Reply-To: <CAHp75VdY6qikNgvh4K5Ga4D5MHf7sEfm0kbNzN-xNanwj4yQgg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
+ =?utf-8?B?bk5jYm5OaFhHRndjR1JoZEdGY2NtOWhiV2x1WjF3d09XUTRORGxpTmkwek1t?=
+ =?utf-8?B?UXpMVFJoTkRBdE9EVmxaUzAyWWpnMFltRXlPV1V6TldKY2JYTm5jMXh0YzJj?=
+ =?utf-8?B?dFl6Z3haVGs0WVRjdE1qYzRZeTB4TVdWa0xUaGlaamt0WlRSaU9UZGhOMk5q?=
+ =?utf-8?B?TnpFd1hHRnRaUzEwWlhOMFhHTTRNV1U1T0dFNUxUSTNPR010TVRGbFpDMDRZ?=
+ =?utf-8?B?bVk1TFdVMFlqazNZVGRqWXpjeE1HSnZaSGt1ZEhoMElpQnplajBpTVRjNE1D?=
+ =?utf-8?B?SWdkRDBpTVRNek1EWXlORFUzTVRNMU1ERTVNRFEySWlCb1BTSjZRbVpJTlRG?=
+ =?utf-8?B?T1NWcHJlbXBhVjBKTGRXbEVOVlZ2YUdFeFRFazlJaUJwWkQwaUlpQmliRDBp?=
+ =?utf-8?B?TUNJZ1ltODlJakVpSUdOcFBTSmpRVUZCUVVWU1NGVXhVbE5TVlVaT1EyZFZR?=
+ =?utf-8?B?VUZGYjBOQlFVRnRUa2h0UzIxaWRsbEJVa1JYVVZnd1ltOVZLelJGVGxwQ1ps?=
+ =?utf-8?B?SjFhRlEzWjBSQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCU0VG?=
+ =?utf-8?B?QlFVRkVZVUZSUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJSVUZC?=
+ =?utf-8?B?VVVGQ1FVRkJRVXB5YWtwSlVVRkJRVUZCUVVGQlFVRkJRVUZCUVVvMFFVRkJR?=
+ =?utf-8?B?bWhCUjFGQllWRkNaa0ZJVFVGYVVVSnFRVWhWUVdOblFteEJSamhCWTBGQ2VV?=
+ =?utf-8?B?RkhPRUZoWjBKc1FVZE5RV1JCUW5wQlJqaEJXbWRDYUVGSGQwRmpkMEpzUVVZ?=
+ =?utf-8?B?NFFWcG5RblpCU0UxQllWRkNNRUZIYTBGa1owSnNRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkZRVUZCUVVGQlFVRkJRV2RCUVVG?=
+ =?utf-8?B?QlFVRnVaMEZCUVVkRlFWcEJRbkJCUmpoQlkzZENiRUZIVFVGa1VVSjVRVWRW?=
+ =?utf-8?B?UVZoM1FuZEJTRWxCWW5kQ2NVRkhWVUZaZDBJd1FVaE5RVmgzUWpCQlIydEJX?=
+ =?utf-8?B?bEZDZVVGRVJVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCVVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVOQlFVRkJRVUZEWlVGQlFVRlpVVUpyUVVkclFWaDNRbnBCUjFWQldY?=
+ =?utf-8?B?ZENNVUZJU1VGYVVVSm1RVWhCUVdOblFuWkJSMjlCV2xGQ2FrRklVVUZqZDBK?=
+ =?utf-8?B?bVFVaFJRV0ZSUW14QlNFbEJUV2RCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFrRkJRVUZCUVVGQlFVRkpRVUZCUVVGQlFUMDlJaTgrUEM5dFpYUmhQZz09?=
+x-dg-rorf: true
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c777bc25-65c0-4c1f-fa27-08da89b0ae01
+x-ms-traffictypediagnostic: MW4PR03MB6569:EE_
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Z4FM8gI/qexqOUn8si0H2e3fg0LX3oXUy9CAFaxDK7NYt7mVe06cpeD06glJMPTamis4/vjX4oDzkR7YBbAyfIUclq2huOgwh6xcX8i0uZaMZW0T08+PRcxw9s8t2F23yCc92Esyf2+PedtVYcVYvenlchY/snoMHSTS2ujAOF+CzCTMa6nz7jo6cmqm7BBjJGhQefRZQ6iw+ERH88bPx/JmDA5GyEB/V8v2TvTmymC65nMD/mpcPKeok6ls36rBeZZeLyGKRSn836HGyk8pD3JmzEgUZkBYwNQir2KTmiOYbzEMglr2W2dBYwW8stnDf8vx2EvVhQz6jKKj9cBQwembt/nT4n4RsS8Pe72YqpQHDOTAVdvkiBF5fVSJVkYRdG4dJSJY6SBi6X2522P1NYcom9xR+hQiWE0VUCFPwoC9PvPqJfuFcVKm3A9RVaCxoSgcH3d140ybFh6D6rDU/qAy5QN37hucG4w4XGxKgxtew66FHgbRGbDV3HA9SaAhVfg966S449dJMcRQ6t07c0/K6vhyPaEjdHEDACVUK2nitQdcaTHr0H4ZZUnj0GDVIzjje2Rzg7aUctGazyvelbXZizdWKs2sDOlg4WrJmilVQyKZCAWBPqSdASA+i3gfG0rWb3hq9j7zM6drkiB38AEj5rDW7wm8IyhYjV72WP7sVnBxj977xc4jLU8rakGNYgMONsjCVZ34DY36yb7xEaY9NkTl3DXCZLpfA+DCC8XjotmmfLWye20zGNz4HRE+pyEIXjj7oevcNqnBQiJiKA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR03MB6778.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(136003)(346002)(366004)(396003)(39860400002)(376002)(41300700001)(66556008)(64756008)(66946007)(76116006)(38100700002)(4326008)(66476007)(5660300002)(55016003)(8676002)(7416002)(122000001)(8936002)(7696005)(66446008)(86362001)(52536014)(53546011)(38070700005)(110136005)(54906003)(478600001)(71200400001)(6506007)(33656002)(9686003)(316002)(26005)(186003)(83380400001)(2906002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?N1FORjllRmxQV2JnMlVBa21lVXp5ZEppUVZsbUo4d3BnclAwdXVMVzlkZUFx?=
+ =?utf-8?B?MDIraHZock5UK2NGTUN6QVQzcWtkelArcjQ0SWZUWFJlZlBLVlQrM2IxUDYz?=
+ =?utf-8?B?NnE0ZEtETDlxV2dzUldiNkpJNUxHRi96Y25UUGZnM0NYTTZKS2l0Y1poc0JY?=
+ =?utf-8?B?TlpKaTBINVNWdlJHSkh0SkMyd01EYXcxKzFHNlhKTHY2a1hkaHdWanJ5cmVK?=
+ =?utf-8?B?d0VMVnV3Mnd2OC9kSnRWdkEyNEVISHBiWHpwWGtwYjZBbVBMUzJyN3Y1TWRH?=
+ =?utf-8?B?UENNd1lYTjVtNWx4ZnRDb2tXUXN2QThzQVE4cTNhdmNYU1FOWGdpcndiZEtw?=
+ =?utf-8?B?eXI5Vk56VG5EbTh5R0xzWVlxZUdSNC9UY0t3ZWtFWmVxRmpVU1FuYWN3TDdF?=
+ =?utf-8?B?c3RmZUwzczhwRGIvOWxqZ1RYVmh5YmxXUGQxY3JRMmtmZml4bm0wRXpDeFQ1?=
+ =?utf-8?B?d2ljekRaMUFSc0lvcytKQ243V1RNWG1JcXZETHFKL29BL2xBaDJEQTdYRDdi?=
+ =?utf-8?B?QXB5UWU3K1FCemc1cVNsdmhVZFRzZkxXZk9udHFsSUlmQjU1ZzZySXFNY0li?=
+ =?utf-8?B?dFhzWlNVb0VFNmFybXFFajRGWG81U3piaXQ1ZTJOaUthanYzb0RLSVI4YmIz?=
+ =?utf-8?B?a2NXRDhqQkNTcDFmUHRVaW55RDJWRnFGa2tLbG8zOTdieEU4azlXMUM3MlJ4?=
+ =?utf-8?B?ZXZuZnRiY2JrNTZzRjA5aXZhaXZQNzQ4VnlOb0piN01SRFd6Q3d2OWRyc0cw?=
+ =?utf-8?B?K2FKcHMzNTZVeWlTVGMxN2p2MUxGUFI5cm5kUHNWL3pjV1FScUwwOU5tR0l1?=
+ =?utf-8?B?Z0UzR3BUTVFSZVp0aVEzUmxwVTVNTGRjTlZOSHNuckdERmRNWkwrdDZCVDJL?=
+ =?utf-8?B?UDNUVXBNald3UVg3S2cvU0pDSVNWWFVqajZLdE56MVhocGhHZDNycHE0UEh2?=
+ =?utf-8?B?Ty9JM2RqU1ErOTZoVHB1Ym9YTTVpSVppWWZrZkF6TUhrQm0zUzlQb3BJSms1?=
+ =?utf-8?B?dXdDRDY0dEM0cFpwbUh3dmk0WmM0bmpCS1p5VlY1cUJGeTFQaS9mbGczQ09y?=
+ =?utf-8?B?UXRMbGRmbk5xWU1oOFZaWUlDTnJNQUtKRzA3KzNEUURxb2N5QnNOdnVVRWpz?=
+ =?utf-8?B?SEdMZUpGenpjeXRFNnNlTENqazFTY3ltcHp2Q1FMUWtxdzlqT3NFT3JScXlJ?=
+ =?utf-8?B?Z3VZcVUybm5VWkZPb3FxSVVZL3ZWdnhDMHhVcGFRRUt4T1hCV3NyUmxnTWpV?=
+ =?utf-8?B?N2Zsb2NXcG9oaU52QWJEVVQ4T2VwSEl3QXdkUjJxOEpjNGlnVHQzMm15WDJR?=
+ =?utf-8?B?V2pOR0o2Y0xkbDNoV1VEZkJRN2pQMnArQUpWbnRXZ29BMHBUNmR3NFQrZW0z?=
+ =?utf-8?B?QitTcVpYQ1lXdXRQZVVMZVhqVXU3MmZMTFhMRHVXRytQVVZXY0R0cFdVY2l2?=
+ =?utf-8?B?eW4remhsOGlHTVNJbFRPV2RoOWFkTzJ0K0RxL0ZDQUpxbDhubVZudTVYMk5W?=
+ =?utf-8?B?VGR1YTYwNDRmV3IxcXYvbWI1cWlDVkxuT1NSUGdMTjNjM3J5ZThpazZtYWNw?=
+ =?utf-8?B?QSs0QndOcjlWTHFvekFEMTJVSTN0SzhpT0FudjQ2Smh3ZHp1KzZsYmhmenE1?=
+ =?utf-8?B?eDkwQTlsbExpYUxmc3V0aXN2bzRzcVBoREJKR1R4QlIxYjNWY3ZCaG9QU29S?=
+ =?utf-8?B?WmNsbVdxZTJ5WFkxNjN1UHlOM3p6a2hmK1ArR2gwNmFvOEFGSEI0VDRPVGRs?=
+ =?utf-8?B?ODB6TVBNOXZOWjlzNExoWXFtb3FHM2IxMXhUYysySmduVlJHUXQrNm5MZFBT?=
+ =?utf-8?B?UWNjUG1vb1BHcUFmakhQZHlNK2lMaXF1Z2ZIQkRrY3AySyt1WFNLeGIvZzFK?=
+ =?utf-8?B?OWo5NVRVZ1JNeVFjN3lYd3EvZEdkM2dBa3ozeFdEVDZqbDZHOWVHdUFUa0Zo?=
+ =?utf-8?B?MHl5WjB3cmtxTHlBV2I4UXd3R2w2b0o4WUppNUR1aGhQT2pWZVMwQ2NpTTcx?=
+ =?utf-8?B?OCthUXVWMmxlbTZMaHV3eENRaVNXV3R2aU0xT2prYzlIZ29PVzVIZW93dWxl?=
+ =?utf-8?B?U0R5dXk0ZU8zNS9qeFpZSnBKTjZJZ2N6Qklyek9zOHI5V1diYW8yempMY1VO?=
+ =?utf-8?Q?smFTfS132PNirnnImdI7xXGh/?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR03MB6778.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c777bc25-65c0-4c1f-fa27-08da89b0ae01
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2022 11:21:55.2336
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IZBxkb2fOOUii4FpnKoZHvCNzNfg6PSFaB2a0PV5G5f8V8EEgqPIEngc3FmYp13x65pVFfD4qdhuf2+Rzi4AZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR03MB6569
+X-Proofpoint-GUID: SBrBXqubHXOW7EKQViqeAKH9o1BezheM
+X-Proofpoint-ORIG-GUID: SBrBXqubHXOW7EKQViqeAKH9o1BezheM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-29_05,2022-08-25_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ spamscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0 mlxlogscore=999
+ impostorscore=0 suspectscore=0 phishscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2207270000 definitions=main-2208290054
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The AM62A SoC belongs to the K3 Multicore SoC architecture platform that
-can run edge AI applications with Video/Vision processing. This provides
-advanced system integration with high security support to enable a broad
-set of applications in industrial/automotive markets such as, driver
-monitoring, machine vision, smart camera, eMirror, front camera,
-robotics, and building automation.
-
-Some highlights of AM62A SoC are:
-* Quad-Cortex-A53s (running up to 1.4GHz) in a single cluster. Dual/Single
-  core variants are provided in the same package to allow HW compatible
-  designs.
-* One Device manager Cortex-R5F for system power and resource management, and
-  one Cortex-R5F for Functional Safety or general-purpose usage.
-* One AI accelerator (up to 2 TOPS), using one C7x256V DSP w/Matrix Multiplier
-  accelerator (MMA) for Deep Learning usage.
-* VPAC3L(Vision Pre-processing Accelerator), providing 12-bit ISP up to
-  315MPixel/s RGB+IR support, and Noise Filter for improved integrated imaging
-  and vision image processing.
-* H.264/H.265 Video Encode/Decode. + Motion JPEG encode
-* Display support, providing 24-bit RBG parallel interface up to 200MHz pixel
-  clock support for 2K display resolution.
-* Integrated Giga-bit Ethernet switch supporting up to a total of two external
-  ports (TSN capable).
-* 9xUARTs, 5xSPI, 6xI2C, 2xUSB2, 3xCAN-FD, 3x eMMC and SD, GPMC for NAND/FPGA
-  connection, OSPI memory controller, 3x McASP for audio, 1x CSI-RX-4L for
-  Camera, eCAP/eQEP, ePWM, among other peripherals.
-* Dedicated Centralized Hardware Security Module with support for secure boot,
-  debug security and crypto acceleration and trusted execution environment
-* One 32 bit DDR Subsystem that supports LPDDR4, DDR4 memory types.
-* Multiple low power modes support, ex: Deep sleep, Standby, MCU-only, enabling
-  battery powered system design.
-
-More details about the SoCs can be found in the Technical Reference Manual:
-https://www.ti.com/lit/zip/spruj16
-
-Co-developed-by: Bryan Brattlof <bb@ti.com>
-Signed-off-by: Bryan Brattlof <bb@ti.com>
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62a-main.dtsi   | 298 ++++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi    |  39 +++
- arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi |  54 ++++
- arch/arm64/boot/dts/ti/k3-am62a.dtsi        | 122 ++++++++
- arch/arm64/boot/dts/ti/k3-am62a7.dtsi       | 103 +++++++
- 5 files changed, 616 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
- create mode 100644 arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
- create mode 100644 arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
- create mode 100644 arch/arm64/boot/dts/ti/k3-am62a.dtsi
- create mode 100644 arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
-new file mode 100644
-index 000000000000..8e45a56ba466
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
-@@ -0,0 +1,298 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for AM62A SoC Family Main Domain peripherals
-+ *
-+ * Copyright (C) 2022 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+&cbass_main {
-+	oc_sram: sram@70000000 {
-+		compatible = "mmio-sram";
-+		reg = <0x00 0x70000000 0x00 0x10000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x00 0x70000000 0x10000>;
-+	};
-+
-+	gic500: interrupt-controller@1800000 {
-+		compatible = "arm,gic-v3";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+		#interrupt-cells = <3>;
-+		interrupt-controller;
-+		reg = <0x00 0x01800000 0x00 0x10000>,	/* GICD */
-+		      <0x00 0x01880000 0x00 0xc0000>,	/* GICR */
-+		      <0x00 0x01880000 0x00 0xc0000>,   /* GICR */
-+		      <0x01 0x00000000 0x00 0x2000>,    /* GICC */
-+		      <0x01 0x00010000 0x00 0x1000>,    /* GICH */
-+		      <0x01 0x00020000 0x00 0x2000>;    /* GICV */
-+		/*
-+		 * vcpumntirq:
-+		 * virtual CPU interface maintenance interrupt
-+		 */
-+		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		gic_its: msi-controller@1820000 {
-+			compatible = "arm,gic-v3-its";
-+			reg = <0x00 0x01820000 0x00 0x10000>;
-+			socionext,synquacer-pre-its = <0x1000000 0x400000>;
-+			msi-controller;
-+			#msi-cells = <1>;
-+		};
-+	};
-+
-+	main_conf: syscon@100000 {
-+		compatible = "syscon", "simple-mfd";
-+		reg = <0x00 0x00100000 0x00 0x20000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x00 0x00 0x00100000 0x20000>;
-+	};
-+
-+	dmss: bus@48000000 {
-+		compatible = "simple-mfd";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		dma-ranges;
-+		ranges = <0x00 0x48000000 0x00 0x48000000 0x00 0x06000000>;
-+
-+		ti,sci-dev-id = <25>;
-+
-+		secure_proxy_main: mailbox@4d000000 {
-+			compatible = "ti,am654-secure-proxy";
-+			#mbox-cells = <1>;
-+			reg-names = "target_data", "rt", "scfg";
-+			reg = <0x00 0x4d000000 0x00 0x80000>,
-+			      <0x00 0x4a600000 0x00 0x80000>,
-+			      <0x00 0x4a400000 0x00 0x80000>;
-+			interrupt-names = "rx_012";
-+			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+	};
-+
-+	dmsc: system-controller@44043000 {
-+		compatible = "ti,k2g-sci";
-+		ti,host-id = <12>;
-+		mbox-names = "rx", "tx";
-+		mboxes= <&secure_proxy_main 12>,
-+			<&secure_proxy_main 13>;
-+		reg-names = "debug_messages";
-+		reg = <0x00 0x44043000 0x00 0xfe0>;
-+
-+		k3_pds: power-controller {
-+			compatible = "ti,sci-pm-domain";
-+			#power-domain-cells = <2>;
-+		};
-+
-+		k3_clks: clock-controller {
-+			compatible = "ti,k2g-sci-clk";
-+			#clock-cells = <2>;
-+		};
-+
-+		k3_reset: reset-controller {
-+			compatible = "ti,sci-reset";
-+			#reset-cells = <2>;
-+		};
-+	};
-+
-+	main_pmx0: pinctrl@f4000 {
-+		compatible = "pinctrl-single";
-+		reg = <0x00 0xf4000 0x00 0x2ac>;
-+		#pinctrl-cells = <1>;
-+		pinctrl-single,register-width = <32>;
-+		pinctrl-single,function-mask = <0xffffffff>;
-+	};
-+
-+	main_uart0: serial@2800000 {
-+		compatible = "ti,am64-uart", "ti,am654-uart";
-+		reg = <0x00 0x02800000 0x00 0x100>;
-+		interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 146 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 146 0>;
-+		clock-names = "fclk";
-+		status = "disabled";
-+	};
-+
-+	main_uart1: serial@2810000 {
-+		compatible = "ti,am64-uart", "ti,am654-uart";
-+		reg = <0x00 0x02810000 0x00 0x100>;
-+		interrupts = <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 152 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 152 0>;
-+		clock-names = "fclk";
-+		status = "disabled";
-+	};
-+
-+	main_uart2: serial@2820000 {
-+		compatible = "ti,am64-uart", "ti,am654-uart";
-+		reg = <0x00 0x02820000 0x00 0x100>;
-+		interrupts = <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 153 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 153 0>;
-+		clock-names = "fclk";
-+		status = "disabled";
-+	};
-+
-+	main_uart3: serial@2830000 {
-+		compatible = "ti,am64-uart", "ti,am654-uart";
-+		reg = <0x00 0x02830000 0x00 0x100>;
-+		interrupts = <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 154 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 154 0>;
-+		clock-names = "fclk";
-+		status = "disabled";
-+	};
-+
-+	main_uart4: serial@2840000 {
-+		compatible = "ti,am64-uart", "ti,am654-uart";
-+		reg = <0x00 0x02840000 0x00 0x100>;
-+		interrupts = <GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 155 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 155 0>;
-+		clock-names = "fclk";
-+		status = "disabled";
-+	};
-+
-+	main_uart5: serial@2850000 {
-+		compatible = "ti,am64-uart", "ti,am654-uart";
-+		reg = <0x00 0x02850000 0x00 0x100>;
-+		interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 156 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 156 0>;
-+		clock-names = "fclk";
-+		status = "disabled";
-+	};
-+
-+	main_uart6: serial@2860000 {
-+		compatible = "ti,am64-uart", "ti,am654-uart";
-+		reg = <0x00 0x02860000 0x00 0x100>;
-+		interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 158 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 158 0>;
-+		clock-names = "fclk";
-+		status = "disabled";
-+	};
-+
-+	main_i2c0: i2c@20000000 {
-+		compatible = "ti,am64-i2c", "ti,omap4-i2c";
-+		reg = <0x00 0x20000000 0x00 0x100>;
-+		interrupts = <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		power-domains = <&k3_pds 102 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 102 2>;
-+		clock-names = "fck";
-+		status = "disabled";
-+	};
-+
-+	main_i2c1: i2c@20010000 {
-+		compatible = "ti,am64-i2c", "ti,omap4-i2c";
-+		reg = <0x00 0x20010000 0x00 0x100>;
-+		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		power-domains = <&k3_pds 103 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 103 2>;
-+		clock-names = "fck";
-+		status = "disabled";
-+	};
-+
-+	main_i2c2: i2c@20020000 {
-+		compatible = "ti,am64-i2c", "ti,omap4-i2c";
-+		reg = <0x00 0x20020000 0x00 0x100>;
-+		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		power-domains = <&k3_pds 104 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 104 2>;
-+		clock-names = "fck";
-+		status = "disabled";
-+	};
-+
-+	main_i2c3: i2c@20030000 {
-+		compatible = "ti,am64-i2c", "ti,omap4-i2c";
-+		reg = <0x00 0x20030000 0x00 0x100>;
-+		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		power-domains = <&k3_pds 105 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 105 2>;
-+		clock-names = "fck";
-+		status = "disabled";
-+	};
-+
-+	main_gpio_intr: interrupt-controller@a00000 {
-+		compatible = "ti,sci-intr";
-+		reg = <0x00 0x00a00000 0x00 0x800>;
-+		ti,intr-trigger-type = <1>;
-+		interrupt-controller;
-+		interrupt-parent = <&gic500>;
-+		#interrupt-cells = <1>;
-+		ti,sci = <&dmsc>;
-+		ti,sci-dev-id = <3>;
-+		ti,interrupt-ranges = <0 32 16>;
-+		status = "disabled";
-+	};
-+
-+	main_gpio0: gpio@600000 {
-+		compatible = "ti,am64-gpio", "ti,keystone-gpio";
-+		reg = <0x00 0x00600000 0x0 0x100>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-parent = <&main_gpio_intr>;
-+		interrupts = <190>, <191>, <192>,
-+			     <193>, <194>, <195>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		ti,ngpio = <87>;
-+		ti,davinci-gpio-unbanked = <0>;
-+		power-domains = <&k3_pds 77 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 77 0>;
-+		clock-names = "gpio";
-+		status = "disabled";
-+	};
-+
-+	main_gpio1: gpio@601000 {
-+		compatible = "ti,am64-gpio", "ti,keystone-gpio";
-+		reg = <0x00 0x00601000 0x0 0x100>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-parent = <&main_gpio_intr>;
-+		interrupts = <180>, <181>, <182>,
-+			     <183>, <184>, <185>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		ti,ngpio = <88>;
-+		ti,davinci-gpio-unbanked = <0>;
-+		power-domains = <&k3_pds 78 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 78 0>;
-+		clock-names = "gpio";
-+		status = "disabled";
-+	};
-+
-+	sdhci1: mmc@fa00000 {
-+		compatible = "ti,am62-sdhci";
-+		reg = <0x00 0xfa00000 0x00 0x260>, <0x00 0xfa08000 0x00 0x134>;
-+		interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 58 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 58 5>, <&k3_clks 58 6>;
-+		clock-names = "clk_ahb", "clk_xin";
-+		ti,trm-icp = <0x2>;
-+		ti,otap-del-sel-legacy = <0x0>;
-+		ti,otap-del-sel-sd-hs = <0x0>;
-+		ti,otap-del-sel-sdr12 = <0xf>;
-+		ti,otap-del-sel-sdr25 = <0xf>;
-+		ti,otap-del-sel-sdr50 = <0xc>;
-+		ti,otap-del-sel-sdr104 = <0x6>;
-+		ti,otap-del-sel-ddr50 = <0x9>;
-+		ti,itap-del-sel-legacy = <0x0>;
-+		ti,itap-del-sel-sd-hs = <0x0>;
-+		ti,itap-del-sel-sdr12 = <0x0>;
-+		ti,itap-del-sel-sdr25 = <0x0>;
-+		ti,clkbuf-sel = <0x7>;
-+		bus-width = <4>;
-+		no-1-8-v;
-+		status = "disabled";
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
-new file mode 100644
-index 000000000000..6d1e501b94ab
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
-@@ -0,0 +1,39 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for AM625 SoC Family MCU Domain peripherals
-+ *
-+ * Copyright (C) 2020-2022 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+&cbass_mcu {
-+	mcu_pmx0: pinctrl@4084000 {
-+		compatible = "pinctrl-single";
-+		reg = <0x00 0x04084000 0x00 0x88>;
-+		#pinctrl-cells = <1>;
-+		pinctrl-single,register-width = <32>;
-+		pinctrl-single,function-mask = <0xffffffff>;
-+		status = "disabled";
-+	};
-+
-+	mcu_uart0: serial@4a00000 {
-+		compatible = "ti,am64-uart", "ti,am654-uart";
-+		reg = <0x00 0x04a00000 0x00 0x100>;
-+		interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 149 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 149 0>;
-+		clock-names = "fclk";
-+		status = "disabled";
-+	};
-+
-+	mcu_i2c0: i2c@4900000 {
-+		compatible = "ti,am64-i2c", "ti,omap4-i2c";
-+		reg = <0x00 0x04900000 0x00 0x100>;
-+		interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		power-domains = <&k3_pds 106 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 106 2>;
-+		clock-names = "fck";
-+		status = "disabled";
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-new file mode 100644
-index 000000000000..fe6d682a0f33
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for AM62A SoC Family Wakeup Domain peripherals
-+ *
-+ * Copyright (C) 2022 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+&cbass_wakeup {
-+	wkup_conf: syscon@43000000 {
-+		compatible = "syscon", "simple-mfd";
-+		reg = <0x00 0x43000000 0x00 0x20000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x00 0x00 0x43000000 0x20000>;
-+
-+		chipid: chipid@14 {
-+			compatible = "ti,am654-chipid";
-+			reg = <0x14 0x4>;
-+		};
-+	};
-+
-+	wkup_uart0: serial@2b300000 {
-+		compatible = "ti,am64-uart", "ti,am654-uart";
-+		reg = <0x00 0x2b300000 0x00 0x100>;
-+		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 114 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 114 0>;
-+		clock-names = "fclk";
-+		status = "disabled";
-+	};
-+
-+	wkup_i2c0: i2c@2b200000 {
-+		compatible = "ti,am64-i2c", "ti,omap4-i2c";
-+		reg = <0x00 0x02b200000 0x00 0x100>;
-+		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		power-domains = <&k3_pds 107 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 107 4>;
-+		clock-names = "fck";
-+		status = "disabled";
-+	};
-+
-+	wkup_rtc0: rtc@2b1f0000 {
-+		compatible = "ti,am62-rtc";
-+		reg = <0x00 0x2b1f0000 0x00 0x100>;
-+		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&k3_clks 117 6> , <&k3_clks 117 0>;
-+		clock-names = "vbus", "osc32k";
-+		power-domains = <&k3_pds 117 TI_SCI_PD_EXCLUSIVE>;
-+		wakeup-source;
-+		status = "disabled";
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a.dtsi b/arch/arm64/boot/dts/ti/k3-am62a.dtsi
-new file mode 100644
-index 000000000000..6eb87c3f9f3c
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am62a.dtsi
-@@ -0,0 +1,122 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for AM62A SoC Family
-+ *
-+ * Copyright (C) 2022 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/pinctrl/k3.h>
-+#include <dt-bindings/soc/ti,sci_pm_domain.h>
-+
-+/ {
-+	model = "Texas Instruments K3 AM62A SoC";
-+	compatible = "ti,am62a7";
-+	interrupt-parent = <&gic500>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	chosen { };
-+
-+	firmware {
-+		optee {
-+			compatible = "linaro,optee-tz";
-+			method = "smc";
-+		};
-+
-+		psci: psci {
-+			compatible = "arm,psci-1.0";
-+			method = "smc";
-+		};
-+	};
-+
-+	a53_timer0: timer-cl0-cpu0 {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>, /* cntpsirq */
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>, /* cntpnsirq */
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>, /* cntvirq */
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>; /* cnthpirq */
-+	};
-+
-+	pmu: pmu {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	cbass_main: bus@f0000 {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+
-+		ranges = <0x00 0x000f0000 0x00 0x000f0000 0x00 0x00030000>, /* Main MMRs */
-+			 <0x00 0x00420000 0x00 0x00420000 0x00 0x00001000>, /* ESM0 */
-+			 <0x00 0x00600000 0x00 0x00600000 0x00 0x00001100>, /* GPIO */
-+			 <0x00 0x00703000 0x00 0x00703000 0x00 0x00000200>, /* USB0 debug trace */
-+			 <0x00 0x0070c000 0x00 0x0070c000 0x00 0x00000200>, /* USB1 debug trace */
-+			 <0x00 0x00a40000 0x00 0x00a40000 0x00 0x00000800>, /* Timesync router */
-+			 <0x00 0x01000000 0x00 0x01000000 0x00 0x01b28400>, /* First peripheral window */
-+			 <0x00 0x08000000 0x00 0x08000000 0x00 0x00200000>, /* Main CPSW */
-+			 <0x00 0x0e000000 0x00 0x0e000000 0x00 0x01d20000>, /* Second peripheral window */
-+			 <0x00 0x0fd00000 0x00 0x0fd00000 0x00 0x00020000>, /* GPU */
-+			 <0x00 0x20000000 0x00 0x20000000 0x00 0x0a008000>, /* Third peripheral window */
-+			 <0x00 0x30040000 0x00 0x30040000 0x00 0x00080000>, /* PRUSS-M */
-+			 <0x00 0x30101000 0x00 0x30101000 0x00 0x00010100>, /* CSI window */
-+			 <0x00 0x30200000 0x00 0x30200000 0x00 0x00010000>, /* DSS */
-+			 <0x00 0x30210000 0x00 0x30210000 0x00 0x00010000>, /* VPU */
-+			 <0x00 0x31000000 0x00 0x31000000 0x00 0x00050000>, /* USB0 DWC3 Core window */
-+			 <0x00 0x31100000 0x00 0x31100000 0x00 0x00050000>, /* USB1 DWC3 Core window */
-+			 <0x00 0x40900000 0x00 0x40900000 0x00 0x00030000>, /* SA3UL */
-+			 <0x00 0x43600000 0x00 0x43600000 0x00 0x00010000>, /* SA3 sproxy data */
-+			 <0x00 0x44043000 0x00 0x44043000 0x00 0x00000fe0>, /* TI SCI DEBUG */
-+			 <0x00 0x44860000 0x00 0x44860000 0x00 0x00040000>, /* SA3 sproxy config */
-+			 <0x00 0x48000000 0x00 0x48000000 0x00 0x06400000>, /* DMSS */
-+			 <0x00 0x60000000 0x00 0x60000000 0x00 0x08000000>, /* FSS0 DAT1 */
-+			 <0x00 0x70000000 0x00 0x70000000 0x00 0x00010000>, /* OCSRAM */
-+			 <0x00 0x7e000000 0x00 0x7e000000 0x00 0x00100000>, /* C7x_0 */
-+			 <0x01 0x00000000 0x01 0x00000000 0x00 0x00310000>, /* A53 PERIPHBASE */
-+			 <0x05 0x00000000 0x05 0x00000000 0x01 0x00000000>, /* FSS0 DAT3 */
-+
-+			 /* MCU Domain Range */
-+			 <0x00 0x04000000 0x00 0x04000000 0x00 0x01ff1400>,
-+			 <0x00 0x79000000 0x00 0x79000000 0x00 0x00008000>, /* MCU R5 ATCM */
-+			 <0x00 0x79020000 0x00 0x79020000 0x00 0x00008000>, /* MCU R5 BTCM */
-+			 <0x00 0x79100000 0x00 0x79100000 0x00 0x00040000>, /* MCU R5 IRAM0 */
-+			 <0x00 0x79140000 0x00 0x79140000 0x00 0x00040000>, /* MCU R5 IRAM1 */
-+
-+			 /* Wakeup Domain Range */
-+			 <0x00 0x00b00000 0x00 0x00b00000 0x00 0x00002400>,
-+			 <0x00 0x2b000000 0x00 0x2b000000 0x00 0x00300400>,
-+			 <0x00 0x43000000 0x00 0x43000000 0x00 0x00020000>,
-+			 <0x00 0x78000000 0x00 0x78000000 0x00 0x00008000>, /* DM R5 ATCM */
-+			 <0x00 0x78100000 0x00 0x78100000 0x00 0x00008000>; /* DM R5 BTCM */
-+
-+		cbass_mcu: bus@4000000 {
-+			compatible = "simple-bus";
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x00 0x04000000 0x00 0x04000000 0x00 0x01ff1400>, /* Peripheral window */
-+				 <0x00 0x79000000 0x00 0x79000000 0x00 0x00008000>, /* MCU R5 ATCM */
-+				 <0x00 0x79020000 0x00 0x79020000 0x00 0x00008000>, /* MCU R5 BTCM */
-+				 <0x00 0x79100000 0x00 0x79100000 0x00 0x00040000>, /* MCU IRAM0 */
-+				 <0x00 0x79140000 0x00 0x79140000 0x00 0x00040000>; /* MCU IRAM1 */
-+		};
-+
-+		cbass_wakeup: bus@b00000 {
-+			compatible = "simple-bus";
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x00 0x00b00000 0x00 0x00b00000 0x00 0x00002400>, /* VTM */
-+				 <0x00 0x2b000000 0x00 0x2b000000 0x00 0x00300400>, /* Peripheral Window */
-+				 <0x00 0x43000000 0x00 0x43000000 0x00 0x00020000>, /* WKUP CTRL MMR */
-+				 <0x00 0x78000000 0x00 0x78000000 0x00 0x00008000>, /* DM R5 ATCM*/
-+				 <0x00 0x78100000 0x00 0x78100000 0x00 0x00008000>; /* DM R5 BTCM*/
-+		};
-+	};
-+};
-+
-+/* Now include the peripherals for each bus segments */
-+#include "k3-am62a-main.dtsi"
-+#include "k3-am62a-mcu.dtsi"
-+#include "k3-am62a-wakeup.dtsi"
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7.dtsi b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-new file mode 100644
-index 000000000000..331d89fda29d
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-@@ -0,0 +1,103 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for AM62A7 SoC family in Quad core configuration
-+ *
-+ * TRM: https://www.ti.com/lit/zip/spruj16
-+ *
-+ * Copyright (C) 2020-2022 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+/dts-v1/;
-+
-+#include "k3-am62a.dtsi"
-+
-+/ {
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu-map {
-+			cluster0: cluster0 {
-+				core0 {
-+					cpu = <&cpu0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cpu1>;
-+				};
-+
-+				core2 {
-+					cpu = <&cpu2>;
-+				};
-+
-+				core3 {
-+					cpu = <&cpu3>;
-+				};
-+			};
-+		};
-+
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a53";
-+			reg = <0x000>;
-+			device_type = "cpu";
-+			enable-method = "psci";
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			compatible = "arm,cortex-a53";
-+			reg = <0x001>;
-+			device_type = "cpu";
-+			enable-method = "psci";
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		cpu2: cpu@2 {
-+			compatible = "arm,cortex-a53";
-+			reg = <0x002>;
-+			device_type = "cpu";
-+			enable-method = "psci";
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		cpu3: cpu@3 {
-+			compatible = "arm,cortex-a53";
-+			reg = <0x003>;
-+			device_type = "cpu";
-+			enable-method = "psci";
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			next-level-cache = <&L2_0>;
-+		};
-+	};
-+
-+	L2_0: l2-cache0 {
-+		compatible = "cache";
-+		cache-level = <2>;
-+		cache-size = <0x40000>;
-+		cache-line-size = <64>;
-+		cache-sets = <512>;
-+	};
-+};
--- 
-2.25.1
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5keSBTaGV2Y2hlbmtv
+IDxhbmR5LnNoZXZjaGVua29AZ21haWwuY29tPg0KPiBTZW50OiBNb25kYXksIEp1bHkgMjUsIDIw
+MjIgMTA6MzIgUE0NCj4gVG86IGtlcm5lbCB0ZXN0IHJvYm90IDxsa3BAaW50ZWwuY29tPg0KPiBD
+YzogU2EsIE51bm8gPE51bm8uU2FAYW5hbG9nLmNvbT47IGxpbnV4LWlucHV0IDxsaW51eC0NCj4g
+aW5wdXRAdmdlci5rZXJuZWwub3JnPjsgb3BlbiBsaXN0OkdQSU8gU1VCU1lTVEVNIDxsaW51eC0N
+Cj4gZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc+OyBkZXZpY2V0cmVlIDxkZXZpY2V0cmVlQHZnZXIua2Vy
+bmVsLm9yZz47DQo+IGxsdm1AbGlzdHMubGludXguZGV2OyBrYnVpbGQtYWxsQGxpc3RzLjAxLm9y
+ZzsgTGludXMgV2FsbGVpag0KPiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPjsgS3J6eXN6dG9m
+IEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPjsNCj4gSGVubmVyaWNoLCBNaWNoYWVsIDxNaWNo
+YWVsLkhlbm5lcmljaEBhbmFsb2cuY29tPjsgQmFydG9zeg0KPiBHb2xhc3pld3NraSA8YnJnbEBi
+Z2Rldi5wbD47IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+Ow0KPiBEbWl0cnkgVG9y
+b2tob3YgPGRtaXRyeS50b3Jva2hvdkBnbWFpbC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0gg
+djMgMDEvMTBdIGlucHV0OiBrZXlib2FyZDogYWRwNTU4OC1rZXlzOiBzdXBwb3J0DQo+IGdwaSBr
+ZXkgZXZlbnRzIGFzICdncGlvIGtleXMnDQo+IA0KPiBbRXh0ZXJuYWxdDQo+IA0KPiBPbiBTYXQs
+IEp1bCAyMywgMjAyMiBhdCA2OjU3IEFNIGtlcm5lbCB0ZXN0IHJvYm90IDxsa3BAaW50ZWwuY29t
+Pg0KPiB3cm90ZToNCj4gDQo+IA0KPiAuLi4NCj4gDQo+ID4gQWxsIHdhcm5pbmdzIChuZXcgb25l
+cyBwcmVmaXhlZCBieSA+Pik6DQo+ID4NCj4gPiA+PiBkcml2ZXJzL2lucHV0L2tleWJvYXJkL2Fk
+cDU1ODgta2V5cy5jOjMzNjo5OiB3YXJuaW5nOiBpbXBsaWNpdA0KPiBjb252ZXJzaW9uIGZyb20g
+J3Vuc2lnbmVkIGxvbmcnIHRvICdpbnQnIGNoYW5nZXMgdmFsdWUgZnJvbQ0KPiAxODQ0Njc0NDA3
+MzcwOTU1MTYxNSB0byAtMSBbLVdjb25zdGFudC1jb252ZXJzaW9uXQ0KPiA+ICAgICAgICAgICAg
+cmV0dXJuIElOVkFMSURfSFdJUlE7DQo+ID4gICAgICAgICAgICB+fn5+fn4gXn5+fn5+fn5+fn5+
+fg0KPiA+ICAgIGluY2x1ZGUvbGludXgvaXJxLmg6MTI0NToyNDogbm90ZTogZXhwYW5kZWQgZnJv
+bSBtYWNybw0KPiAnSU5WQUxJRF9IV0lSUScNCj4gPiAgICAjZGVmaW5lIElOVkFMSURfSFdJUlEg
+ICAofjBVTCkNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXn5+fg0KPiANCj4gSXQg
+cmVxdWlyZXMgaXJxLmgsIGJ1dCBob2xkIG9uLiBNYXJjIHNhaWQgdGhhdCBoZSB3YW50cyB0byBy
+YXRoZXIga2lsbA0KPiB0aGF0IGRlZmluaXRpb24gdGhhbiBoYXZpbmcgaXQgc3ByZWFkIG92ZXIg
+dGhlIGtlcm5lbC4gU28sIHBsZWFzZSB1c2UNCj4geW91ciBvd24gY3VzdG9tIG1hY3JvIHdpdGgg
+YW4gYXBwcm9wcmlhdGUgdHlwZS4NCj4gDQoNCkkgc2VlLCBJJ2xsIHByb2JhYmx5IGp1c3QgcmVw
+bGljYXRlIHRoZSBtYWNybyB3aXRoIGFuICJBRFA1NTg4IiBwcmVmaXguLi4NCg0KVGh4LA0KLSBO
+dW5vIFPDoQ0K
