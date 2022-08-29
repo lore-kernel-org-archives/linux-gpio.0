@@ -2,240 +2,100 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EC9ECAAD2
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Aug 2022 13:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03723C0502C
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Aug 2022 14:06:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230211AbiH2Njn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 29 Aug 2022 09:39:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34092 "EHLO
+        id S230144AbiH2OGx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 29 Aug 2022 10:06:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230194AbiH2Njl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2022 09:39:41 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11D9B91D02;
-        Mon, 29 Aug 2022 06:39:38 -0700 (PDT)
-Received: from pan.home (unknown [IPv6:2a00:23c6:c311:3401:c9c8:35ca:a27e:68d0])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: martyn)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1ECC56601D96;
-        Mon, 29 Aug 2022 14:39:37 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1661780377;
-        bh=tqK6VyVv7nQ6cJ2oC9czqWTr/HZRWOMBA23Gw1mUxZA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mAE3AOYC+gswFsAlwxgQqkMa7Lu5QAHgau0zckD6S5UGl55KH8KJSEcD5SpbssP4M
-         IkP6bqXULyUnIlOuZsRMef7Jlql32uyM3YsVrKws4rirXCs/3kgOGyQPQASP31FmtN
-         HK2hnn63rNgkEc7bP/1XluHqJ4FrtUpO8al2JC29OyxlcUBQ99njxhVCga7UkUZ2S9
-         PMORd5qLhLxtrf4smDspvEpWT9n1U58ZfVGoNniqDuTwz4SO8tFEx+29qc7SXGzK82
-         hrKRlIGM0D6Ps2KQWAMNRPbuaUoxRp/nEHt8saKjFKZILZ5MnC9aYoU8Ox5AQGCSbB
-         EMNtb8wxQbcWA==
-From:   Martyn Welch <martyn.welch@collabora.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     kernel@collabora.com, Martyn Welch <martyn.welch@collabora.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] gpio: pca953x: Add support for PCAL6534 and compatible
-Date:   Mon, 29 Aug 2022 14:39:22 +0100
-Message-Id: <20220829133923.1114555-5-martyn.welch@collabora.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220829133923.1114555-1-martyn.welch@collabora.com>
-References: <20220829133923.1114555-1-martyn.welch@collabora.com>
+        with ESMTP id S230110AbiH2OGx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2022 10:06:53 -0400
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A4BB7E303;
+        Mon, 29 Aug 2022 07:06:52 -0700 (PDT)
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27TBH5qS015062;
+        Mon, 29 Aug 2022 09:15:10 -0400
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3j7d4843a3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 29 Aug 2022 09:15:10 -0400
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 27TDF9RR019116
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 29 Aug 2022 09:15:09 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 29 Aug
+ 2022 09:15:08 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 29 Aug 2022 09:15:08 -0400
+Received: from nsa.ad.analog.com ([10.44.3.68])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 27TDEeiQ026449;
+        Mon, 29 Aug 2022 09:15:01 -0400
+From:   =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>
+To:     <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        <linux-input@vger.kernel.org>,
+        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>
+CC:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Hennerich <michael.hennerich@analog.com>
+Subject: [PATCH v4 06/10] input: keyboard: adp5588-keys: do not check for irq presence
+Date:   Mon, 29 Aug 2022 15:15:49 +0200
+Message-ID: <20220829131553.690063-7-nuno.sa@analog.com>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20220829131553.690063-1-nuno.sa@analog.com>
+References: <20220829131553.690063-1-nuno.sa@analog.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: GBjOUMR5HmnNAH9JWEE9i1T_DhgpSvaS
+X-Proofpoint-ORIG-GUID: GBjOUMR5HmnNAH9JWEE9i1T_DhgpSvaS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-29_07,2022-08-25_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ impostorscore=0 priorityscore=1501 bulkscore=0 clxscore=1015
+ malwarescore=0 lowpriorityscore=0 mlxlogscore=945 mlxscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2207270000 definitions=main-2208290061
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for the NXP PCAL6534 and Diodes Inc. PI4IOE5V6534Q. These
-devices, which have identical register layouts and features, are broadly a
-34-bit version of the PCAL6524.
+There's no need for an extra check for 'client-irq'. Just let it fail when
+calling 'request_irq()'.
 
-However, whilst the registers are broadly what you'd expect for a 34-bit
-version of the PCAL6524, the spacing of the registers has been
-compacted. This has the unfortunate effect of breaking the bit shift
-based mechanism that is employed to work out register locations used by
-the other chips supported by this driver, resulting in special handling
-needing to be introduced in pca953x_recalc_addr() and
-pca953x_check_register().
-
-Datasheet: https://www.nxp.com/docs/en/data-sheet/PCAL6534.pdf
-Datasheet: https://www.diodes.com/assets/Datasheets/PI4IOE5V6534Q.pdf
-Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/gpio/gpio-pca953x.c | 101 +++++++++++++++++++++++++++++++-----
- 1 file changed, 89 insertions(+), 12 deletions(-)
+ drivers/input/keyboard/adp5588-keys.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 19a8eb94a629..ef1f0a603007 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -66,8 +66,10 @@
- #define PCA_LATCH_INT		(PCA_PCAL | PCA_INT)
- #define PCA953X_TYPE		BIT(12)
- #define PCA957X_TYPE		BIT(13)
-+#define PCAL653X_TYPE		BIT(14)
- #define PCA_TYPE_MASK		GENMASK(15, 12)
- 
-+
- #define PCA_CHIP_TYPE(x)	((x) & PCA_TYPE_MASK)
- 
- static const struct i2c_device_id pca953x_id[] = {
-@@ -91,6 +93,7 @@ static const struct i2c_device_id pca953x_id[] = {
- 
- 	{ "pcal6416", 16 | PCA953X_TYPE | PCA_LATCH_INT, },
- 	{ "pcal6524", 24 | PCA953X_TYPE | PCA_LATCH_INT, },
-+	{ "pcal6534", 34 | PCAL653X_TYPE | PCA_LATCH_INT, },
- 	{ "pcal9535", 16 | PCA953X_TYPE | PCA_LATCH_INT, },
- 	{ "pcal9554b", 8  | PCA953X_TYPE | PCA_LATCH_INT, },
- 	{ "pcal9555a", 16 | PCA953X_TYPE | PCA_LATCH_INT, },
-@@ -107,6 +110,8 @@ static const struct i2c_device_id pca953x_id[] = {
- 	{ "tca9539", 16 | PCA953X_TYPE | PCA_INT, },
- 	{ "tca9554", 8  | PCA953X_TYPE | PCA_INT, },
- 	{ "xra1202", 8  | PCA953X_TYPE },
-+
-+	{ "pi4ioe5v6534q", 34 | PCAL653X_TYPE | PCA_LATCH_INT, },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, pca953x_id);
-@@ -261,20 +266,56 @@ static int pca953x_bank_shift(struct pca953x_chip *chip)
-  * - Registers with bit 0x80 set, the AI bit
-  *   The bit is cleared and the registers fall into one of the
-  *   categories above.
-+ *
-+ *   Unfortunately, whilst the PCAL6534 chip (and compatibles) broadly follow
-+ *   the same register layout as the PCAL6524, the spacing of the registers has
-+ *   been fundamentally altered by compacting them and thus does not obey the
-+ *   same rules, including being able to use bit shifting to determine bank.
-+ *   These chips hence need special handling here.
-  */
- 
- static bool pca953x_check_register(struct pca953x_chip *chip, unsigned int reg,
- 				   u32 checkbank)
- {
--	int bank_shift = pca953x_bank_shift(chip);
--	int bank = (reg & REG_ADDR_MASK) >> bank_shift;
--	int offset = reg & (BIT(bank_shift) - 1);
-+	int bank;
-+	int offset;
-+
-+	if (PCA_CHIP_TYPE(chip->driver_data) == PCAL653X_TYPE) {
-+		if (reg > 0x2f) {
-+			/*
-+			 * Reserved block between 14h and 2Fh does not align on
-+			 * expected bank boundaries like other devices.
-+			 */
-+			int temp = reg - 0x30;
-+
-+			bank = temp / NBANK(chip);
-+			offset = temp - (bank * NBANK(chip));
-+			bank += 8;
-+		} else if (reg > 0x53) {
-+			/* Handle lack of reserved registers after output port
-+			 * configuration register to form a bank.
-+			 */
-+			int temp = reg - 0x54;
-+
-+			bank = temp / NBANK(chip);
-+			offset = temp - (bank * NBANK(chip));
-+			bank += 16;
-+		} else {
-+			bank = reg / NBANK(chip);
-+			offset = reg - (bank * NBANK(chip));
-+		}
-+	} else {
-+		int bank_shift = pca953x_bank_shift(chip);
- 
--	/* Special PCAL extended register check. */
--	if (reg & REG_ADDR_EXT) {
--		if (!(chip->driver_data & PCA_PCAL))
--			return false;
--		bank += 8;
-+		bank = (reg & REG_ADDR_MASK) >> bank_shift;
-+		offset = reg & (BIT(bank_shift) - 1);
-+
-+		/* Special PCAL extended register check. */
-+		if (reg & REG_ADDR_EXT) {
-+			if (!(chip->driver_data & PCA_PCAL))
-+				return false;
-+			bank += 8;
-+		}
+diff --git a/drivers/input/keyboard/adp5588-keys.c b/drivers/input/keyboard/adp5588-keys.c
+index 2b00bc0f174c..e716efbb2105 100644
+--- a/drivers/input/keyboard/adp5588-keys.c
++++ b/drivers/input/keyboard/adp5588-keys.c
+@@ -727,11 +727,6 @@ static int adp5588_probe(struct i2c_client *client,
+ 		return -EIO;
  	}
  
- 	/* Register is not in the matching bank. */
-@@ -381,10 +422,42 @@ static const struct regmap_config pca953x_ai_i2c_regmap = {
- 
- static u8 pca953x_recalc_addr(struct pca953x_chip *chip, int reg, int off)
- {
--	int bank_shift = pca953x_bank_shift(chip);
--	int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
--	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
--	u8 regaddr = pinctrl | addr | (off / BANK_SZ);
-+	int addr;
-+	int pinctrl;
-+	u8 regaddr;
-+
-+	if (PCA_CHIP_TYPE(chip->driver_data) == PCAL653X_TYPE) {
-+		/* The PCAL6534 and compatible chips have altered bank alignment that doesn't
-+		 * fit within the bit shifting scheme used for other devices.
-+		 */
-+		addr = (reg & PCAL_GPIO_MASK) * NBANK(chip);
-+
-+		switch (reg) {
-+		case PCAL953X_OUT_STRENGTH:
-+		case PCAL953X_IN_LATCH:
-+		case PCAL953X_PULL_EN:
-+		case PCAL953X_PULL_SEL:
-+		case PCAL953X_INT_MASK:
-+		case PCAL953X_INT_STAT:
-+		case PCAL953X_OUT_CONF:
-+			pinctrl = ((reg & PCAL_PINCTRL_MASK) >> 1) + 0x20;
-+			break;
-+		case PCAL6524_INT_EDGE:
-+		case PCAL6524_INT_CLR:
-+		case PCAL6524_IN_STATUS:
-+		case PCAL6524_OUT_INDCONF:
-+		case PCAL6524_DEBOUNCE:
-+			pinctrl = ((reg & PCAL_PINCTRL_MASK) >> 1) + 0x1c;
-+			break;
-+		}
-+		regaddr = pinctrl + addr + (off / BANK_SZ);
-+	} else {
-+		int bank_shift = pca953x_bank_shift(chip);
-+
-+		addr = (reg & PCAL_GPIO_MASK) << bank_shift;
-+		pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
-+		regaddr = pinctrl | addr | (off / BANK_SZ);
-+	}
- 
- 	return regaddr;
- }
-@@ -1215,6 +1288,7 @@ static int pca953x_resume(struct device *dev)
- #endif
- 
- /* convenience to stop overlong match-table lines */
-+#define OF_653X(__nrgpio, __int) ((void *)(__nrgpio | PCAL653X_TYPE | __int))
- #define OF_953X(__nrgpio, __int) (void *)(__nrgpio | PCA953X_TYPE | __int)
- #define OF_957X(__nrgpio, __int) (void *)(__nrgpio | PCA957X_TYPE | __int)
- 
-@@ -1239,6 +1313,7 @@ static const struct of_device_id pca953x_dt_ids[] = {
- 
- 	{ .compatible = "nxp,pcal6416", .data = OF_953X(16, PCA_LATCH_INT), },
- 	{ .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_LATCH_INT), },
-+	{ .compatible = "nxp,pcal6534", .data = OF_653X(34, PCA_LATCH_INT), },
- 	{ .compatible = "nxp,pcal9535", .data = OF_953X(16, PCA_LATCH_INT), },
- 	{ .compatible = "nxp,pcal9554b", .data = OF_953X( 8, PCA_LATCH_INT), },
- 	{ .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_LATCH_INT), },
-@@ -1261,6 +1336,8 @@ static const struct of_device_id pca953x_dt_ids[] = {
- 	{ .compatible = "onnn,pca9655", .data = OF_953X(16, PCA_INT), },
- 
- 	{ .compatible = "exar,xra1202", .data = OF_953X( 8, 0), },
-+
-+	{ .compatible = "diodes,pi4ioe5v6534q", .data = OF_653X(34, PCA_LATCH_INT), },
- 	{ }
- };
- 
+-	if (!client->irq) {
+-		dev_err(&client->dev, "no IRQ?\n");
+-		return -EINVAL;
+-	}
+-
+ 	kpad = devm_kzalloc(&client->dev, sizeof(*kpad), GFP_KERNEL);
+ 	if (!kpad)
+ 		return -ENOMEM;
 -- 
-2.35.1
+2.37.2
 
