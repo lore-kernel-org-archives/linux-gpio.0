@@ -2,91 +2,177 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27590ECAAD2
-	for <linux-gpio@archiver.kernel.org>; Mon, 29 Aug 2022 14:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE753C0502E
+	for <linux-gpio@archiver.kernel.org>; Mon, 29 Aug 2022 15:13:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229484AbiH2Okg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 29 Aug 2022 10:40:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44656 "EHLO
+        id S229975AbiH2PNV convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 29 Aug 2022 11:13:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbiH2Okf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2022 10:40:35 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B8DD2981B
-        for <linux-gpio@vger.kernel.org>; Mon, 29 Aug 2022 07:40:34 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1oSfwH-0002Oz-9v; Mon, 29 Aug 2022 16:40:33 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1oSfwG-0006fd-R4; Mon, 29 Aug 2022 16:40:32 +0200
-Date:   Mon, 29 Aug 2022 16:40:32 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>, kernel@pengutronix.de
-Subject: Re: [PATCH 2/2] dt-bindings: gpio: Add gpio-latch binding document
-Message-ID: <20220829144032.GC24324@pengutronix.de>
-References: <20220825094132.1268174-1-s.hauer@pengutronix.de>
- <20220825094132.1268174-3-s.hauer@pengutronix.de>
- <CACRpkdYL24cJgo9F1nWYzP=8+XywdUXhSedJRQFJ16MUAx7-dQ@mail.gmail.com>
+        with ESMTP id S229796AbiH2PNR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2022 11:13:17 -0400
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F28083043;
+        Mon, 29 Aug 2022 08:13:15 -0700 (PDT)
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27T9r0ej025958;
+        Mon, 29 Aug 2022 09:14:59 -0400
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3j7g673ccy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 29 Aug 2022 09:14:59 -0400
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 27TDEwRl019048
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 29 Aug 2022 09:14:58 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Mon, 29 Aug 2022 09:14:57 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Mon, 29 Aug 2022 09:14:57 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 29 Aug 2022 09:14:57 -0400
+Received: from nsa.ad.analog.com ([10.44.3.68])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 27TDEeiK026449;
+        Mon, 29 Aug 2022 09:14:46 -0400
+From:   =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>
+To:     <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        <linux-input@vger.kernel.org>,
+        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>
+CC:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Hennerich <michael.hennerich@analog.com>
+Subject: [PATCH v4 00/10] adp5588-keys refactor and fw properties support
+Date:   Mon, 29 Aug 2022 15:15:43 +0200
+Message-ID: <20220829131553.690063-1-nuno.sa@analog.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYL24cJgo9F1nWYzP=8+XywdUXhSedJRQFJ16MUAx7-dQ@mail.gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: WujjXVidr1md9DrKswsKPmDWH8LJOC-x
+X-Proofpoint-GUID: WujjXVidr1md9DrKswsKPmDWH8LJOC-x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-29_07,2022-08-25_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 spamscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
+ impostorscore=0 mlxscore=0 adultscore=0 bulkscore=0 suspectscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2207270000 definitions=main-2208290061
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+The main goal of this patchset is to remove platform data and replace it by
+firmware properties. Original discussion in [1].
 
-On Fri, Aug 26, 2022 at 03:37:40PM +0200, Linus Walleij wrote:
-> On Thu, Aug 25, 2022 at 11:41 AM Sascha Hauer <s.hauer@pengutronix.de> wrote:
-> 
-> > This adds a binding for a GPIO multiplexer driver based on latches
-> > connected to other GPIOs.
-> >
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> 
-> Nice overall!
-> 
-> > +++ b/Documentation/devicetree/bindings/gpio/gpio-latch.yaml
-> > @@ -0,0 +1,83 @@
-> > +%YAML 1.2
-> 
-> No license?
+While in here, some refactor was done to the driver. The most noticeable one
+is to replace the GPIs events handling by irqchip support so that this gpi
+keys can be "consumed" by the gpio-keys driver (also as suggested in [1]).
+With this, the gpio-adp5588 can be removed. This change comes first so that
+we can already remove some platform data variables making it easier to
+completly replace it by firmware properties further down in the series.
 
-Will add in v2.
+As there's no users of the platform data, I just replace it in a single
+patch as there's no point in having support for both (even though it might
+be harder to review the patch as-is).
 
-> 
-> > +  data-gpios:
-> > +    description: Array of GPIOs to be used as data GPIOs
-> 
-> Hm I wanted to just call these "gpios" but that is maybe confusing.
-> What about "latch-gpios"?
+Special note to the gpio-adp5588 driver removal. I'm aware of some changes
+to the driver in [2]. These changes are in the gpio tree and this patchset
+is naturally based on the input tree which means that patch 2 will
+not apply. So, I'm not really sure how to handle this. I guess in this
+case the conflict is easy to handle :) but just let me know on how to
+proceed in here if there's anything for me to do.
 
-Hm, the clk input is used to latch the current state of the inputs to
-the outputs, so "latch-gpios" might even be confused with the GPIO
-routed to the clk unput of the latch.  Overall, the whole thing is a
-latch, so "latch-gpios" doesn't sound like a good name to distinguish
-the different types of inputs of a latch.  I still like data-gpios best
-as these lines are described as "Data inputs" in my 74273 data sheet.
+[1]: https://lore.kernel.org/linux-input/20220504084617.36844-1-u.kleine-koenig@pengutronix.de/
+[2]: https://lore.kernel.org/linux-gpio/20220628193906.36350-3-andriy.shevchenko@linux.intel.com/
 
-Sascha
+v2 changes:
+
+[1/10]
+ * Turn hwirq signed so we can compare < 0;
+ * Replace WARN_ON with dev_warn();
+ * Do not set of_node on gpiochip;
+ * Moved to use a const irqchip within the gpiochip;
+ * Set default handler to 'handle_bad_irq()' and change it
+in irq_set_type;
+
+[4/10]
+ * Dropped "-keys" from compatible and added vendor prefix;
+ * Fix -Wformat complains;
+ * Don't use abbrev in comments (fw -> Firmware).
+
+[5/10]
+ * Be consistent on $refs;
+ * Drop "-keys" from compatible.
+
+[7/10]
+ * Include bits.h;
+ * Use GENMASK();
+ * Use BIT() in KP_SEL();
+ * Reflect code changes in the commit message.
+
+[9/10]
+ * One line for regulator_disable action.
+
+v3 changes:
+
+[1/10]
+ * Use 'irqd_to_hwirq()' helper;
+ * Use INVALID_HWIRQ to signal hwirq not found;
+ * Just compare irq against 0 in 'irq_find_mapping()';
+ * Renamed irq_data *desc to *irqd to avoid confusion.
+
+[5/10]
+ * Dropped the -keys suffix on the filename;
+ * Compatible enum in alphabetical order;
+ * Improved 'adi,unlock-keys' description;
+ * 4 spaces indentation for dts example;
+ * Renamed device node to a generic name and fixed the
+compatible property in the example.
+
+v4 changes:
+
+[1/10]
+ * Use local 'INVALID_HWIRQ' macro;
+ * Explicitly define a local variable to hold 'irqd_to_hwirq()'
+
+Nuno Sá (10):
+  input: keyboard: adp5588-keys: support gpi key events as 'gpio keys'
+  gpio: gpio-adp5588: drop the driver
+  input: keyboard: adp5588-keys: bail out on returned error
+  input: keyboard: adp5588-keys: add support for fw properties
+  dt-bindings: input: adp5588: add bindings
+  input: keyboard: adp5588-keys: do not check for irq presence
+  input: keyboard: adp5588-keys: fix coding style warnings
+  input: keyboard: adp5588-keys: add optional reset gpio
+  input: keyboard: adp5588-keys: add regulator support
+  input: keyboard: adp5588-keys: Use new PM macros
+
+ .../bindings/input/adi,adp5588.yaml           | 111 +++
+ MAINTAINERS                                   |   2 +-
+ drivers/gpio/Kconfig                          |  14 -
+ drivers/gpio/Makefile                         |   1 -
+ drivers/gpio/gpio-adp5588.c                   | 446 -----------
+ drivers/input/keyboard/Kconfig                |   3 +
+ drivers/input/keyboard/adp5588-keys.c         | 724 ++++++++++++------
+ include/linux/platform_data/adp5588.h         | 171 -----
+ 8 files changed, 594 insertions(+), 878 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/adi,adp5588.yaml
+ delete mode 100644 drivers/gpio/gpio-adp5588.c
+ delete mode 100644 include/linux/platform_data/adp5588.h
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.37.2
+
