@@ -2,118 +2,123 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB93C0502A
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Aug 2022 09:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9576FECAAD4
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Aug 2022 09:20:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231501AbiH3JSE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 Aug 2022 05:18:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48954 "EHLO
+        id S231754AbiH3JU6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 Aug 2022 05:20:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231387AbiH3JRz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Aug 2022 05:17:55 -0400
-X-Greylist: delayed 1804 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 30 Aug 2022 02:17:53 PDT
-Received: from mail.gnudd.com (mail.gnudd.com [93.91.132.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AFD9D2E95;
-        Tue, 30 Aug 2022 02:17:53 -0700 (PDT)
-Received: from dciminaghi by mail.gnudd.com with local (Exim 4.94.2)
-        (envelope-from <dciminaghi@arcana.gnudd.com>)
-        id 1oSw8m-0002Aa-Tn; Tue, 30 Aug 2022 09:58:32 +0200
-Date:   Tue, 30 Aug 2022 09:58:32 +0200
-From:   Davide Ciminaghi <ciminaghi@gnudd.com>
-Sender: ciminaghi@gnudd.com
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        Alexandre Courbot <acourbot@nvidia.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
-        <linux-arch@vger.kernel.org>, Alessandro Rubini <rubini@gnudd.com>
-Subject: Re: [PATCH] gpio: Allow user to customise maximum number of GPIOs
-Message-ID: <Yw3DKCuDoPkCaqxE@arcana.i.gnudd.com>
-References: <CAK8P3a0j-54_OkXC7x3NSNaHhwJ+9umNgbpsrPxUB4dwewK63A@mail.gmail.com>
- <CACRpkda0+iy8H0YmyowSDn8RbYgnVbC1k+o5F67inXg4Qb934Q@mail.gmail.com>
- <CAK8P3a0uuJ_z8wmNmQTW_qPNqzz7XoxZdHgqbzmK+ydtjraeHg@mail.gmail.com>
- <CACRpkdb5ow4hD3td6agCuKWvuxptm5AV4rsCrcxNStNdXnBzrA@mail.gmail.com>
- <87f2ff4c-3426-201c-df86-2d06d3587a20@csgroup.eu>
- <CACRpkdYizQhiJXzXNHg7TXUVHzhkwXHFN5+e58kH4udGm1ziEA@mail.gmail.com>
- <f76dbc49-526f-6dc7-2ef1-558baea5848b@csgroup.eu>
- <CACRpkdZpwdP+1VitohznqRfhFGcLT2f+sQnmsRWwMBB3bobwAw@mail.gmail.com>
- <515364a9-33a1-fafa-fdce-dc7dbd5bb7fb@csgroup.eu>
- <CAK8P3a36qbRW8hd+1Uhi88kh+-KTjDMT-Zr8Jq9h_G3zQLfzgw@mail.gmail.com>
+        with ESMTP id S231767AbiH3JUW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Aug 2022 05:20:22 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C01E2AE1F
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Aug 2022 02:20:02 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id l3so10510384plb.10
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Aug 2022 02:20:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc;
+        bh=1stEK7orHgTbYEfwbeXC8fEwW/r5cq766TAqvkrU7s8=;
+        b=nmk9fHCkrfrblpy/7kg08OX3ped77vmORbwkjjnbEVvUoXKOEKmX0Y1VGcflg+qh+d
+         X5tuUyECrJp6R8RxGK62QsdF+fQbRQzNyCiGISzE5m5StPKqzt0BZ7Glg//ELPo5oSVG
+         etz+NTjXyBz9fyw10DCx3yIeBzqheARABobLgWEFIgvMnpni+6W7Y8HuUMHy2YNYqJHY
+         m9emxannnhCC1uNXxj8tgTkk/x5/54Y8WlBugCyPUt6MTgXTeO99BmfTb1wvKi4O0XP4
+         9fnghGoemu9Z13rG/mPuPrqOM5DJ8YuChJLBsl3tIg+uxjn5TpFRQH9ubuzE0FRZUxDL
+         RPnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc;
+        bh=1stEK7orHgTbYEfwbeXC8fEwW/r5cq766TAqvkrU7s8=;
+        b=ZD/lIIX4VKEkuJEk6Og+ZXNx1PhkohZBDw80AGKnrmtcTenbWc91GGGj+Xv35gJd14
+         LVAqOyhzI8+1OhgPL0TxagqnbF3eO4H36e272Nr+Y9IkttYx8qR96/nXr+Jr+NQ9l6FH
+         Z8TkBwl5AOKRWsUkTOWW0mC+J8MVDtee5Nzclb5B4v0KwDzs+5fIl/SqyiUFLZvMu4Xd
+         BCh6HZNMYdMgNi1LNLjW6Qu+5ucLZxshRBBbCp5sMe5T17nh5YW29BEs7dNUKvNotRe1
+         bb91Jfn6v3MpkdURoeDS5lwC2eNiMQiqK8uglWBpINTY27NAYt/6Bo2q5c8i83dtO4Ic
+         OCzw==
+X-Gm-Message-State: ACgBeo1ANDcTVUCNxEujBlcft8lZoucRBpe/eSYvP/UMheeh3cgbRUxH
+        InM8RoXrp8KlW4Cun72kPTNs
+X-Google-Smtp-Source: AA6agR71f7NK6QRTQvMbVYh6yrfXsyqBOXunCOCPdx/lBWuvieJpGZ4JeK25bmov9unRjiB3MYANpA==
+X-Received: by 2002:a17:902:f64a:b0:172:7576:2124 with SMTP id m10-20020a170902f64a00b0017275762124mr19856760plg.155.1661851200915;
+        Tue, 30 Aug 2022 02:20:00 -0700 (PDT)
+Received: from thinkpad ([117.193.209.245])
+        by smtp.gmail.com with ESMTPSA id q10-20020a170902eb8a00b001749e8eee4fsm5100555plg.226.2022.08.30.02.19.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Aug 2022 02:20:00 -0700 (PDT)
+Date:   Tue, 30 Aug 2022 14:49:53 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     linus.walleij@linaro.org, bjorn.andersson@linaro.org,
+        robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        johan+linaro@kernel.org, steev@kali.org
+Subject: Re: [PATCH v2] pinctrl: qcom: spmi-gpio: Make IRQCHIP immutable
+Message-ID: <20220830091953.GC135982@thinkpad>
+References: <20220830081212.164709-1-manivannan.sadhasivam@linaro.org>
+ <e20dabe02d88f28fc933b596dee8b69d@kernel.org>
+ <20220830084441.GB135982@thinkpad>
+ <61371efca85fbbd360b3ede9a258ee69@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a36qbRW8hd+1Uhi88kh+-KTjDMT-Zr8Jq9h_G3zQLfzgw@mail.gmail.com>
-X-Face: #Q;A)@_4.#>0+_%y]7aBr:c"ndLp&#+2?]J;lkse\^)FP^Lr5@O0{)J;'nny4%74.fM'n)M
- >ISCj.KmsL/HTxz!:Ju'pnj'Gz&.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <61371efca85fbbd360b3ede9a258ee69@kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-
-tl;dr: sta2x11 support can be removed.
-
-On Sun, Aug 28, 2022 at 12:04:29PM +0200, Arnd Bergmann wrote:
-> On Sun, Aug 28, 2022 at 11:06 AM Christophe Leroy
-> <christophe.leroy@csgroup.eu> wrote:
-> > Le 26/08/2022 ?? 23:54, Linus Walleij a ??crit :
-
-....
-
->
-> I think that just means the code that one would have to modify
-> is in vendor kernels of devices using this chip, but there is no
-> way to fix those if they are not in mainline. The last meaningful
-> patches on this SoC support were in 2012 by  Davide Ciminaghi
-> and Alessandro Rubini, though they still Acked patches after that.
+On Tue, Aug 30, 2022 at 09:48:28AM +0100, Marc Zyngier wrote:
+> On 2022-08-30 09:44, Manivannan Sadhasivam wrote:
+> > On Tue, Aug 30, 2022 at 09:26:51AM +0100, Marc Zyngier wrote:
+> > > On 2022-08-30 09:12, Manivannan Sadhasivam wrote:
+> > > > The IRQCHIP implementation used inside the gpiochips are not supposed to
+> > > 
+> > > lower case
+> > > 
+> > > > be changed during runtime. So let's make the one inside the spmi-gpio
+> > > > gpiochip immutable.
+> > > >
+> > > > This fixes the below warning during boot:
+> > > > gpio gpiochip0: (c440000.spmi:pmic@0:gpio@c000): not an immutable
+> > > > chip, please consider fixing it!
+> > > >
+> > > > Separate callbacks need to be provided for irq_{mask/unmask} pointers
+> > > > since
+> > > > the callbacks are supposed to mask/unmask the corresponding parent IRQ
+> > > > in
+> > > > addition to changing the gpio_desc flags.
+> > > 
+> > > This is all part of the existing documentation, so I don't think
+> > > this is really needed.
+> > > 
+> > 
+> > Yes it is documented, but developers usually refer the commits doing the
+> > similar
+> > thing while doing these kind of conversions. For them, this text serves
+> > as a
+> > quick documentation.
 > 
-> I wonder if I was missing the interesting bit about it, if the driver
-> is just obsolete and can be removed, or if there is something
-> that is still worth fixing here.
->
-Hi,
+> If they can't be bothered to read the documentation, why would they
+> consider reading unrelated commits?
+> 
+> > 
+> > So I prefer to keep it in the commit message.
+> 
+> I still think this is pointless.
+> 
 
-the sta2x11 was a chip containing AMBA peripherals and a PCIe to AMBA bridge
-(it is still in production as far as I know, but deprecated for new designs).
-It would typically be installed on x86 machines, so you needed to build and
-run AMBA drivers in an x86 environment. The original drivers we started from
-had platform data, but then we were told to switch to DTS.
+Okay. I'll remove it in v3.
 
-Device trees, though, were not very common under x86 at the time and,
-perhaps most important, we had a bunch of amba peripherals "behind" a
-pci bus, which is a dynamic thing. Our idea was to build a device
-tree at runtime (in user space) and then booting a second kernel via
-kexec with the correct DTB, but this was not a complete solution.
-For instance we needed to patch the device tree at runtime to
-take dynamically assigned IRQ numbers into account.
-Also the clocks tree had to be dynamically instantiated, once for each sta2x11
-chip. Finally, there were some problems allocating dma buffers because
-the AMBA side of the bridge could only reach some ranges of physical
-addresses.
+Thanks,
+Mani
 
-We had a more or less working prototype, and you may want to have a look
-at some of our work:
+>         M.
+> -- 
+> Jazz is not dead. It just smells funny...
 
-https://lore.kernel.org/lkml/5202C655.6050609@zytor.com/t/
-
-Nevertheless the upstreaming effort was eventually too big for Alessandro
-and myself.
-So the sta2x11 drivers upstreaming project has been abandoned (even though
-I like to think of it as one of the funniest failures of my life).
-Sta2x11 related drivers can of course be removed.
-
-
-Thanks and regards
-Davide
+-- 
+மணிவண்ணன் சதாசிவம்
