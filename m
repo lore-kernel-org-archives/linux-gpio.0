@@ -2,95 +2,115 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A63AECAAA1
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 Aug 2022 08:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D44ECAAD4
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 Aug 2022 08:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231470AbiH3I04 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 Aug 2022 04:26:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53592 "EHLO
+        id S230382AbiH3Iox (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 Aug 2022 04:44:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231469AbiH3I0z (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Aug 2022 04:26:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C992372FE7;
-        Tue, 30 Aug 2022 01:26:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 511FC6153F;
-        Tue, 30 Aug 2022 08:26:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6FBEC433C1;
-        Tue, 30 Aug 2022 08:26:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661848013;
-        bh=0Kcd47M1Gp8kFRDeRQ4RQQHp2Sfbb0yfmxJLbNXXTAI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=tfufUU/A3QjZ3m+QLaSb6e4HmqCItYxnDxEURQDGy7MtmDrUAl7zsgv5pZqZgk8zJ
-         N9gmw0rwi4N4GwX3DYnBDrjgzZGzKqvrVHDz0e34HIH/jj65bLQM3Wh95gV9DhfhVq
-         mx5LMTMkGP1xU0GuZea2HCRHlTLBc8pU3Fpq7ObE9tCrDzbkPQeLYODSl1P8JgALrB
-         /9M7b+U9/mOugZxB/DAFINjVxsmpo234dauIHV37w855hCVQ9krxtRthjRE6y7zDxQ
-         aUzBjWYsAX+FBg03eRkNyB/gASlTXheuWRXkGkgeE0nlMyWOjP+I/ApYK1EYbWGIQf
-         8XpT1AHJnEBOg==
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.95)
-        (envelope-from <maz@kernel.org>)
-        id 1oSwaB-006fye-EW;
-        Tue, 30 Aug 2022 09:26:51 +0100
-MIME-Version: 1.0
-Date:   Tue, 30 Aug 2022 09:26:51 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+        with ESMTP id S229543AbiH3Iow (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Aug 2022 04:44:52 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D34495FB8
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Aug 2022 01:44:49 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id h11-20020a17090a470b00b001fbc5ba5224so11154214pjg.2
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Aug 2022 01:44:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc;
+        bh=JbzIXp14whwZiEWpePza0tJks7qqH7QXTLeRE8LUEwk=;
+        b=Kaq+VCJSXSeBjOwz4uj10z70wAAkT0EHwpaSfz3KhVomZTfcoywdK0FcqjpLCyLdn/
+         JrAoy10e42ty2BQ8VoYEdBUwzcRXXOAPxf6w6A0nk9tBExYbPeir+ETDlY+NIXYQXQ8y
+         N18bQMMvTCiarry9ljqF9Sbloi9mB5JjqgqyJxkaWCHDwJggrW5gpUm/3c5MU3Zadqb5
+         5c9h4LGhzZB3UHAUisb5ATkRh4Y/xG69nT8hJYfJZljGM9mKwqbYa8rb36QXleTNda9B
+         oxWg8YDhKIt19xljiT63DUp4oahJwdMtuO2h/GElwMdDHFDHDqQlOEUXu+4QhJ4O0zTn
+         6Grw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc;
+        bh=JbzIXp14whwZiEWpePza0tJks7qqH7QXTLeRE8LUEwk=;
+        b=Mw+gZpPCmpuXZeC4fqDj3dgKLNsyfDbKFN+kp9PJeIagfa3at+2ZS6/QY/aDWIir7l
+         IUMyx2WbMKNUgLTeHnnuj1WTosB0/KrWynSn+ykJTgVcl3AoIGPuclbiEXpfHxj2x9Z6
+         DD/onyVtw2epRs0lzmx/pnSfIsY+xC6FZMcasbCOs6dFEjK2DLi4AksXBYu9JG1ImNED
+         rrf+4VaY6k8iCiWDp5qB8SDjxPj2oumn6e0RNrvvRdhIoirpgKrlyJV6jYfnMag5XyuI
+         8xBKoHQH7ThrQdeGlPNmnbKGir5mCsDaJCqtZ/pfSfp2el7wnHJ5M2IjIcb/TwLzKj69
+         i7nQ==
+X-Gm-Message-State: ACgBeo0vFXqOxZBbOPO6fKvsGvwfaGmTvKKzCz2c9JpVnqJSrKdYnzsW
+        7UnffTJFn9uw0vCxA2VhGd1J
+X-Google-Smtp-Source: AA6agR7OLrfi21l1qp1fuRodigI5L4GFAZFbEKo1JeImXZ+WTHuDDpQCPNW8b9WT1eQHB0qto6zzMA==
+X-Received: by 2002:a17:90b:1a88:b0:1fd:6a42:3eb9 with SMTP id ng8-20020a17090b1a8800b001fd6a423eb9mr20749411pjb.154.1661849089311;
+        Tue, 30 Aug 2022 01:44:49 -0700 (PDT)
+Received: from thinkpad ([117.193.209.245])
+        by smtp.gmail.com with ESMTPSA id h17-20020a170902f7d100b00174a4bcefc7sm4918735plw.217.2022.08.30.01.44.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Aug 2022 01:44:48 -0700 (PDT)
+Date:   Tue, 30 Aug 2022 14:14:41 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Marc Zyngier <maz@kernel.org>
 Cc:     linus.walleij@linaro.org, bjorn.andersson@linaro.org,
         robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         johan+linaro@kernel.org, steev@kali.org
 Subject: Re: [PATCH v2] pinctrl: qcom: spmi-gpio: Make IRQCHIP immutable
-In-Reply-To: <20220830081212.164709-1-manivannan.sadhasivam@linaro.org>
+Message-ID: <20220830084441.GB135982@thinkpad>
 References: <20220830081212.164709-1-manivannan.sadhasivam@linaro.org>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <e20dabe02d88f28fc933b596dee8b69d@kernel.org>
-X-Sender: maz@kernel.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: manivannan.sadhasivam@linaro.org, linus.walleij@linaro.org, bjorn.andersson@linaro.org, robimarko@gmail.com, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, johan+linaro@kernel.org, steev@kali.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+ <e20dabe02d88f28fc933b596dee8b69d@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e20dabe02d88f28fc933b596dee8b69d@kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2022-08-30 09:12, Manivannan Sadhasivam wrote:
-> The IRQCHIP implementation used inside the gpiochips are not supposed 
-> to
-
-lower case
-
-> be changed during runtime. So let's make the one inside the spmi-gpio
-> gpiochip immutable.
+On Tue, Aug 30, 2022 at 09:26:51AM +0100, Marc Zyngier wrote:
+> On 2022-08-30 09:12, Manivannan Sadhasivam wrote:
+> > The IRQCHIP implementation used inside the gpiochips are not supposed to
 > 
-> This fixes the below warning during boot:
-> gpio gpiochip0: (c440000.spmi:pmic@0:gpio@c000): not an immutable
-> chip, please consider fixing it!
+> lower case
 > 
-> Separate callbacks need to be provided for irq_{mask/unmask} pointers 
-> since
-> the callbacks are supposed to mask/unmask the corresponding parent IRQ 
-> in
-> addition to changing the gpio_desc flags.
-
-This is all part of the existing documentation, so I don't think
-this is really needed.
-
+> > be changed during runtime. So let's make the one inside the spmi-gpio
+> > gpiochip immutable.
+> > 
+> > This fixes the below warning during boot:
+> > gpio gpiochip0: (c440000.spmi:pmic@0:gpio@c000): not an immutable
+> > chip, please consider fixing it!
+> > 
+> > Separate callbacks need to be provided for irq_{mask/unmask} pointers
+> > since
+> > the callbacks are supposed to mask/unmask the corresponding parent IRQ
+> > in
+> > addition to changing the gpio_desc flags.
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> This is all part of the existing documentation, so I don't think
+> this is really needed.
+> 
 
-With the above fixed:
+Yes it is documented, but developers usually refer the commits doing the similar
+thing while doing these kind of conversions. For them, this text serves as a
+quick documentation.
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+So I prefer to keep it in the commit message.
 
-         M.
+Thanks,
+Mani
+
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> With the above fixed:
+> 
+> Acked-by: Marc Zyngier <maz@kernel.org>
+> 
+>         M.
+> -- 
+> Jazz is not dead. It just smells funny...
+
 -- 
-Jazz is not dead. It just smells funny...
+மணிவண்ணன் சதாசிவம்
