@@ -2,83 +2,79 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDBAECAAD5
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 475E3ECAAA1
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 21:05:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229914AbiIBSmj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 14:42:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48904 "EHLO
+        id S229750AbiIBVF1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 17:05:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbiIBSmi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:42:38 -0400
-Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 745F211089E;
-        Fri,  2 Sep 2022 11:42:37 -0700 (PDT)
-Received: by mail-qt1-x833.google.com with SMTP id a22so2138944qtw.10;
-        Fri, 02 Sep 2022 11:42:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=wYLRyL/SNNg94Z8T2JQ26m0zpILN4OZadqlcAOj3GBo=;
-        b=fBTokpob7MflAOrnNuVxYTQPvj1PUlrf1+LVUlfpmjjnM+Q87UuGsf8nPxsPNZ9uKm
-         vDrEjdPas31JZ5ir7MdAFwSpHq2PyF8H7lzDvWL9Q0HwmwLU5HfZ29nSdhN23i39An2g
-         tFc4pQg9fm/mx/rVkK+5FdpuODwaqSA7rgf/lsAz2kYgy7RF+IDMFenQyyUPDs1bmv4d
-         1Mk/mmypZFtBQ2g5D5m/8sMSvqh2MygJS2oa5Ema6IBSwlKdcj3yZH1+UtGbWgRSH9/n
-         rAjuHNKiczQntM1dDVhUtal00YZg0xqmAs1TVgR+0h8mOou9xMZqBBBAeOWwtIAPF8wu
-         zqrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=wYLRyL/SNNg94Z8T2JQ26m0zpILN4OZadqlcAOj3GBo=;
-        b=y3W2ZTmCwCvjTjQiF4x/Ns0xvugBR1LcObtj7HP7hfJCvVyG54KgnierUfhIk/Nuq/
-         fLoYz/t8gXdAOoZRvjOHVKbWgdsTMEsawm6+X6uMtixxoDCxgibaT3qPVx17C57Kpb55
-         bF/cNHf8/87MbVcjPnyoNVym0ePl/E0X049ZSiX4FS1JdEOVuAoJbEQ+VWUqcAL5CPg6
-         j8ELw+lHAs7iGpx47cs1mG3fxJ30Yaym2EAYTYEPht79L+fA1YosANxv71mu99cAyXTk
-         HjggLPRBw1vwHaTpEkhx1iHZKGY8kLDXs9FUVKoIGlwXeYmRjtYOu+C+mENqs6+OzynS
-         5SGw==
-X-Gm-Message-State: ACgBeo3Qv4hYdWxGspvo+zKXc2J3JSm2CTOHaKqBvrZwKA2BWiVsAXOp
-        BWY+pRlWAmZk2anUzSHwCK6DmrVr8JFAKbof5I4=
-X-Google-Smtp-Source: AA6agR7qAPjRX76TELv2RiJGd3RC77aUYgZlYAKEqS9SyED7pHj/A1+wsN0yTaVG/jOP2RKEaIInlg498k4SaTBL9FU=
-X-Received: by 2002:ac8:7dd0:0:b0:344:afc1:b11d with SMTP id
- c16-20020ac87dd0000000b00344afc1b11dmr28794432qte.195.1662144156546; Fri, 02
- Sep 2022 11:42:36 -0700 (PDT)
+        with ESMTP id S229507AbiIBVF0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 17:05:26 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5127A4D14C;
+        Fri,  2 Sep 2022 14:05:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B79DBB82D99;
+        Fri,  2 Sep 2022 21:05:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 767AAC43470;
+        Fri,  2 Sep 2022 21:05:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662152722;
+        bh=qsStvP91ihR00dZ3kRmIXS3gp2oRIvI8e0UNRUUK9iU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vAJhH9VGjiTcp8aOmKgoX2qbddBxsvkgr2d6lCX/VRYDIE/oguVxxJOd/jijB7cQF
+         oR1O8LNuncj7abV5/XBJTKfieox1lMWGsI4VgTwLCk61T6RyTHGKFSAdlyRe+NmM5Q
+         8y/plzRcnodjc6wckvFYL7q7uVdcxp8a6rgoK1CkjIcc28UYmtWjhstYbQV0ITlAEJ
+         cCZgrPPU+uhjhtmmVTBSr9inXHgSEuyjT1LGrWcQbsHgKrK9GHqUcKmvPYbyT1M2CX
+         0FYRj4AdT3XVfPT28xY31lCgROOpPV+b135QkLsI7nvUmrqeMJyR9kQzdyeoEtytFy
+         SXLZzXUUZOPNw==
+Received: by mail-vk1-f175.google.com with SMTP id w129so1530060vkg.10;
+        Fri, 02 Sep 2022 14:05:22 -0700 (PDT)
+X-Gm-Message-State: ACgBeo2BotIQAl79rXzuSu+ZcKAyVCd8qVaP66kPtQX6err0JlbJ2gH2
+        prJnySBekYggTuOS+tgwzNDnctPNWi2ce89DYQ==
+X-Google-Smtp-Source: AA6agR79pK/SefjTsDIGybHBwpAL12OW8gkE42VozV7uuODUesaBGzPfzSjt1j5VQri5uu5iiMGzNCMQcvSX6NfVS3U=
+X-Received: by 2002:a1f:d241:0:b0:398:3e25:d2dd with SMTP id
+ j62-20020a1fd241000000b003983e25d2ddmr359225vkg.15.1662152721285; Fri, 02 Sep
+ 2022 14:05:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com> <20220902182650.83098-3-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20220902182650.83098-3-andriy.shevchenko@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 2 Sep 2022 21:42:00 +0300
-Message-ID: <CAHp75VcNGEVRnkWeVThaq4zNYoiZGSY-+KfbV5_9zG_5XoriMg@mail.gmail.com>
-Subject: Re: [PATCH v1 03/17] pinctrl: cy8c95x0: Allow most of the registers
- to be cached
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <20220902060426.2980951-1-jay.xu@rock-chips.com> <20220902060426.2980951-2-jay.xu@rock-chips.com>
+In-Reply-To: <20220902060426.2980951-2-jay.xu@rock-chips.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 2 Sep 2022 16:05:10 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ4vXG5b5m5631Jb0ESbjn5z0u2sgKOrXf1BR-qOgeV_w@mail.gmail.com>
+Message-ID: <CAL_JsqJ4vXG5b5m5631Jb0ESbjn5z0u2sgKOrXf1BR-qOgeV_w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: gpio: rockchip: add clock-names
+To:     Jianqun Xu <jay.xu@rock-chips.com>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Patrick Rudolph <patrick.rudolph@9elements.com>,
+        "heiko@sntech.de" <heiko@sntech.de>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 2, 2022 at 9:36 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Fri, Sep 2, 2022 at 1:04 AM Jianqun Xu <jay.xu@rock-chips.com> wrote:
 >
-> It's unclear why many of static registers were marked as volatile.
+> Add 'clock-names' to the gpio dt node. so the driver could get clocks by
+> a const char id, this patch names the clock-names as
+>   - 'bus': the apb clock for cpu to access the gpio controller
+>   - 'db': the debounce clock for cpu to set debounce clock rate
+>
+> Since the old dt nodes may have no clock-names, this patch not make them
+> as part of 'required properties'.
+>
+> Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+> ---
+>  .../devicetree/bindings/gpio/rockchip,gpio-bank.yaml        | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-the static (yeah, forgot it)
+Can Rockchip please address DT binding header licensing:
 
-> They are pretty much bidirectional and static in a sense that
-> written value is kept there until a new write or chip reset.
-> Drop those registers from the list to allow them to be cached.
-
-This patch is not correct due to indexing access. It's sneaked since I
-forgot I added it into my main repo. The proper approach should be to
-create virtual registers and decode them before use. This allows to
-cache all ports and as a benefit to debug print all port actual
-statuses.
-
--- 
-With Best Regards,
-Andy Shevchenko
+https://lore.kernel.org/all/20220630220409.GA3396626-robh@kernel.org/
+https://lore.kernel.org/all/20220902210141.GA403234-robh@kernel.org/
