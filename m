@@ -2,80 +2,83 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1E0ECAAD5
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDBAECAAD5
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:42:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229919AbiIBSl4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 14:41:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48346 "EHLO
+        id S229914AbiIBSmj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 14:42:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229914AbiIBSlz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:41:55 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 025871037F8;
-        Fri,  2 Sep 2022 11:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662144112; x=1693680112;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=/on5oCP1KwPaqtBjm1JAAFKloDtpOWIhGehylfeYbQU=;
-  b=h4ExZRTYzIFsHdymt5Gyc9xTkhJ2KKLSq+FhyxTGbjltAwOjUBVrRK1H
-   lNwCLVC00M+5KUxVuM5CCBQ5wjanR5Q6vIlUZ6xZq041/TQykdn0Mr/Sa
-   blTvppmXOu/9vks20ZDVnqRZ7vN7DmqtctEEWAAUyz88zgHY+kkWkVRK5
-   IuekfJ1LT5yfs7wBM4E5mkcgCCHficBY49mq1Cn4VyvrH0pMqyBOhx6eH
-   BtK6CQ0YLgDiJ4FBVEwkJEsMwMUydzcbFyKvII+6pSbaPGY2Mj8GmxEqM
-   S+PKOGaO6yNLiR/Ps4PK2B1NiqsBWaR1vcCJpo8g6mfiDE8QNTHMuLTt7
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="275796130"
-X-IronPort-AV: E=Sophos;i="5.93,285,1654585200"; 
-   d="scan'208";a="275796130"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="788745380"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 02 Sep 2022 11:26:44 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id DF6CF41; Fri,  2 Sep 2022 21:26:59 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Patrick Rudolph <patrick.rudolph@9elements.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 02/17] pinctrl: cy8c95x0: Allow IRQ chip core to handle numbering
-Date:   Fri,  2 Sep 2022 21:26:35 +0300
-Message-Id: <20220902182650.83098-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
-References: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S229508AbiIBSmi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:42:38 -0400
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 745F211089E;
+        Fri,  2 Sep 2022 11:42:37 -0700 (PDT)
+Received: by mail-qt1-x833.google.com with SMTP id a22so2138944qtw.10;
+        Fri, 02 Sep 2022 11:42:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=wYLRyL/SNNg94Z8T2JQ26m0zpILN4OZadqlcAOj3GBo=;
+        b=fBTokpob7MflAOrnNuVxYTQPvj1PUlrf1+LVUlfpmjjnM+Q87UuGsf8nPxsPNZ9uKm
+         vDrEjdPas31JZ5ir7MdAFwSpHq2PyF8H7lzDvWL9Q0HwmwLU5HfZ29nSdhN23i39An2g
+         tFc4pQg9fm/mx/rVkK+5FdpuODwaqSA7rgf/lsAz2kYgy7RF+IDMFenQyyUPDs1bmv4d
+         1Mk/mmypZFtBQ2g5D5m/8sMSvqh2MygJS2oa5Ema6IBSwlKdcj3yZH1+UtGbWgRSH9/n
+         rAjuHNKiczQntM1dDVhUtal00YZg0xqmAs1TVgR+0h8mOou9xMZqBBBAeOWwtIAPF8wu
+         zqrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=wYLRyL/SNNg94Z8T2JQ26m0zpILN4OZadqlcAOj3GBo=;
+        b=y3W2ZTmCwCvjTjQiF4x/Ns0xvugBR1LcObtj7HP7hfJCvVyG54KgnierUfhIk/Nuq/
+         fLoYz/t8gXdAOoZRvjOHVKbWgdsTMEsawm6+X6uMtixxoDCxgibaT3qPVx17C57Kpb55
+         bF/cNHf8/87MbVcjPnyoNVym0ePl/E0X049ZSiX4FS1JdEOVuAoJbEQ+VWUqcAL5CPg6
+         j8ELw+lHAs7iGpx47cs1mG3fxJ30Yaym2EAYTYEPht79L+fA1YosANxv71mu99cAyXTk
+         HjggLPRBw1vwHaTpEkhx1iHZKGY8kLDXs9FUVKoIGlwXeYmRjtYOu+C+mENqs6+OzynS
+         5SGw==
+X-Gm-Message-State: ACgBeo3Qv4hYdWxGspvo+zKXc2J3JSm2CTOHaKqBvrZwKA2BWiVsAXOp
+        BWY+pRlWAmZk2anUzSHwCK6DmrVr8JFAKbof5I4=
+X-Google-Smtp-Source: AA6agR7qAPjRX76TELv2RiJGd3RC77aUYgZlYAKEqS9SyED7pHj/A1+wsN0yTaVG/jOP2RKEaIInlg498k4SaTBL9FU=
+X-Received: by 2002:ac8:7dd0:0:b0:344:afc1:b11d with SMTP id
+ c16-20020ac87dd0000000b00344afc1b11dmr28794432qte.195.1662144156546; Fri, 02
+ Sep 2022 11:42:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com> <20220902182650.83098-3-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20220902182650.83098-3-andriy.shevchenko@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 2 Sep 2022 21:42:00 +0300
+Message-ID: <CAHp75VcNGEVRnkWeVThaq4zNYoiZGSY-+KfbV5_9zG_5XoriMg@mail.gmail.com>
+Subject: Re: [PATCH v1 03/17] pinctrl: cy8c95x0: Allow most of the registers
+ to be cached
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Patrick Rudolph <patrick.rudolph@9elements.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-No need to assign first line number for IRQ chip.
-Let IRQ core to decide.
+On Fri, Sep 2, 2022 at 9:36 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> It's unclear why many of static registers were marked as volatile.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/pinctrl-cy8c95x0.c | 1 -
- 1 file changed, 1 deletion(-)
+the static (yeah, forgot it)
 
-diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 8bb01f852c54..521acfdeef38 100644
---- a/drivers/pinctrl/pinctrl-cy8c95x0.c
-+++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -1177,7 +1177,6 @@ static int cy8c95x0_irq_setup(struct cy8c95x0_pinctrl *chip, int irq)
- 	girq->default_type = IRQ_TYPE_NONE;
- 	girq->handler = handle_simple_irq;
- 	girq->threaded = true;
--	girq->first = 0;
- 
- 	ret = devm_request_threaded_irq(chip->dev, irq,
- 					NULL, cy8c95x0_irq_handler,
+> They are pretty much bidirectional and static in a sense that
+> written value is kept there until a new write or chip reset.
+> Drop those registers from the list to allow them to be cached.
+
+This patch is not correct due to indexing access. It's sneaked since I
+forgot I added it into my main repo. The proper approach should be to
+create virtual registers and decode them before use. This allows to
+cache all ports and as a benefit to debug print all port actual
+statuses.
+
 -- 
-2.35.1
-
+With Best Regards,
+Andy Shevchenko
