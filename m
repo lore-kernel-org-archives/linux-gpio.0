@@ -2,233 +2,301 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D68D6C54EE9
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 13:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72241ECAAD5
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 13:47:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237964AbiIBNpw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 09:45:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44878 "EHLO
+        id S237367AbiIBNrt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 09:47:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236986AbiIBNpS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 09:45:18 -0400
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 566C612D515;
-        Fri,  2 Sep 2022 06:21:19 -0700 (PDT)
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-        by localhost (Postfix) with ESMTP id 4MJyHb0wlzz9slp;
-        Fri,  2 Sep 2022 14:42:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-        by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id t6fBFsb4UbyX; Fri,  2 Sep 2022 14:42:51 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase2.c-s.fr (Postfix) with ESMTP id 4MJyHS0zPBz9sls;
-        Fri,  2 Sep 2022 14:42:44 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0C99A8B78C;
-        Fri,  2 Sep 2022 14:42:44 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id TIqipSHIuhEZ; Fri,  2 Sep 2022 14:42:43 +0200 (CEST)
-Received: from PO20335.IDSI0.si.c-s.fr (unknown [192.168.232.39])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id CDF5D8B78D;
-        Fri,  2 Sep 2022 14:42:42 +0200 (CEST)
-Received: from PO20335.IDSI0.si.c-s.fr (localhost [127.0.0.1])
-        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.16.1) with ESMTPS id 282CgYdb2141515
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Fri, 2 Sep 2022 14:42:34 +0200
-Received: (from chleroy@localhost)
-        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.17.1/Submit) id 282CgY0K2141514;
-        Fri, 2 Sep 2022 14:42:34 +0200
-X-Authentication-Warning: PO20335.IDSI0.si.c-s.fr: chleroy set sender to christophe.leroy@csgroup.eu using -f
-From:   Christophe Leroy <christophe.leroy@csgroup.eu>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Keerthy <j-keerthy@ti.com>, Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Davide Ciminaghi <ciminaghi@gnudd.com>
-Cc:     Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-        linux-doc@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v2 5/9] gpiolib: Get rid of ARCH_NR_GPIOS
-Date:   Fri,  2 Sep 2022 14:42:05 +0200
-Message-Id: <97011204619556ecb3d8c9aaff2b58c28790fe8a.1662116601.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <cover.1662116601.git.christophe.leroy@csgroup.eu>
-References: <cover.1662116601.git.christophe.leroy@csgroup.eu>
+        with ESMTP id S237341AbiIBNrR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 09:47:17 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8844261DBB
+        for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 06:22:34 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id cu2so3953031ejb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Sep 2022 06:22:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=9kjykBLX/2XOZBPDkYx1NLn0xeEFvOvh/J7JeDhgExk=;
+        b=QtEycjEFT3kKXeccaCJV0EQelglBaWCaK0Agc13Ll/Mwm3/7GgXSrcqm7BV4Bts38z
+         YLYnfSB3UWwe6Ns3pce0JmGSgJ/zPbpAd2jea45sk/KwZn/BGEWYyFBZlsRmWetnlIuh
+         DpU2xAn+3okijON0TKQs1IzQV/22ODfAxFQAB6t9aoLpBh+5aqKEVM8pBXFNOsJLsl8L
+         8Pm9XMNd5C5CxYjq6GPvhE6cp8PQ31gLI5aozoc09Z0xJ1RjymHF8E29Y3Hq6Bd2CJdJ
+         CWATn/aGANinKbqle2HktZq4wwX2eU10/zyHFb7uhJ0IlQ7aWQ/8ukTHU+mEOqk3x+G6
+         +I4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=9kjykBLX/2XOZBPDkYx1NLn0xeEFvOvh/J7JeDhgExk=;
+        b=0TlykWu2ah3mRUzDa2T6G/W3tPwNGQ5rDBniNPs2gOUQ8aHYk61mpHeq3J4wgbgcpy
+         NP/23Juv6QKaNZ5DzzMKiAWwITCn7QOII8a09U9rwBeP1me6OgpNxdGHfn+kI7l6oQ1B
+         5gvftRfvE0d+/fgI6lilIdxn97JEEh0oYc+XGdABbRQd7ApxHeVUl3QKDvhfyNvvI6ey
+         SnorFXxMjo3KbUZj7behT5G/4HiXOYXOhhs84pHBw7i0xgfh32YwFq+NQ/fsLwT6Xuqt
+         uuTYkteNfWpyS8H3luXDLD+dV/GGfgmme8I+3sXCqrIUV9jFD5Z/+PNnGKNDUqzMoXNI
+         pfpQ==
+X-Gm-Message-State: ACgBeo1s3XwmDnHvIzUL5jd7jMVZiBP7FWdIRTX8S/d3fF9kV+1qxawN
+        KcyRmZoG2+XoxEj46gD2pGKGbr5Jl0buSoP/1Xeyvg==
+X-Google-Smtp-Source: AA6agR4r/6CP+Iq7CHiLZ9hhf/V6Z3w5iDTDeeWViqSHhU+3njvpPWP1PCbfjr1cC7FuHD8BEjYEh9+YQJaNJZW84iA=
+X-Received: by 2002:a17:907:1c89:b0:741:4453:75be with SMTP id
+ nb9-20020a1709071c8900b00741445375bemr21492292ejc.208.1662124903916; Fri, 02
+ Sep 2022 06:21:43 -0700 (PDT)
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1662122527; l=5608; s=20211009; h=from:subject:message-id; bh=627tvaA946/n4BKkAs3Ap6n2Spr0bzlnkVDrEw1Weh4=; b=oK8L6x4YO0/Tfv1rrveqxWyPzUigpLkkcs3kpG/V0GCD1hH9rQwWg26uIXH5pm4hEOPy17HUWSCs RlrtLGZNAGwtNu+GH+gFces0cecHaH5Rk0+Fg/FbRiFpz6clOxDG
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+References: <YxC5eZjGgd8xguDr@shell.armlinux.org.uk> <E1oTkeg-003t9k-Mc@rmk-PC.armlinux.org.uk>
+In-Reply-To: <E1oTkeg-003t9k-Mc@rmk-PC.armlinux.org.uk>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 2 Sep 2022 15:21:31 +0200
+Message-ID: <CACRpkdaR9rBdPC_OBKx5e+=EtbR-Jn3GzrvGRYHMJmXwRxPhyg@mail.gmail.com>
+Subject: Re: [PATCH 6/6] gpio: macsmc: Add IRQ support
+To:     Russell King <rmk+kernel@armlinux.org.uk>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        asahi@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Hector Martin <marcan@marcan.st>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        Sven Peter <sven@svenpeter.dev>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Since commit 14e85c0e69d5 ("gpio: remove gpio_descs global array")
-there is no limitation on the number of GPIOs that can be allocated
-in the system since the allocation is fully dynamic.
+On Thu, Sep 1, 2022 at 3:54 PM Russell King <rmk+kernel@armlinux.org.uk> wrote:
 
-ARCH_NR_GPIOS is today only used in order to provide downwards
-gpiobase allocation from that value, while static allocation is
-performed upwards from 0. However that has the disadvantage of
-limiting the number of GPIOs that can be registered in the system.
+> From: Hector Martin <marcan@marcan.st>
+>
+> Add IRQ support to the macsmc driver. This patch has updates from Joey
+> Gouly and Russell King.
+>
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-To overcome this limitation without requiring each and every
-platform to provide its 'best-guess' maximum number, rework the
-allocation to allocate upwards, allowing approx 2 millions of
-GPIOs.
+Overall looks very good, again some detailed remarks from Andy
+should be addressed, apart from that you need to add:
 
-In order to still allow static allocation for legacy drivers, define
-GPIO_DYNAMIC_BASE with the value 512 as the start for dynamic
-allocation. The 512 value is chosen because it is the end of
-the current default range so all current static allocations are
-expected to be below that value. Of course that's just a rough
-estimate based on the default value, but assuming static
-allocations come first, even if there are more static allocations
-it should fit under the 512 value.
+select GPIOLIB_IRQCHIP
 
-In the future, it is expected that all static allocations go away
-and then dynamic allocation will be patched to start at 0.
+to the Kconfig entry for the driver, or else the compile robots are
+going to hit some configuration that doesn't compile.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
-v2: Enhanced commit description and change from 256 to 512.
----
- arch/arm/include/asm/gpio.h |  1 -
- drivers/gpio/gpiolib.c      | 10 +++----
- include/asm-generic/gpio.h  | 55 ++++++++++++++-----------------------
- 3 files changed, 26 insertions(+), 40 deletions(-)
+> +       struct mutex irq_mutex;
+> +       DECLARE_BITMAP(irq_supported, MAX_GPIO);
 
-diff --git a/arch/arm/include/asm/gpio.h b/arch/arm/include/asm/gpio.h
-index f3bb8a2bf788..4ebbb58f06ea 100644
---- a/arch/arm/include/asm/gpio.h
-+++ b/arch/arm/include/asm/gpio.h
-@@ -2,7 +2,6 @@
- #ifndef _ARCH_ARM_GPIO_H
- #define _ARCH_ARM_GPIO_H
- 
--/* Note: this may rely upon the value of ARCH_NR_GPIOS set in mach/gpio.h */
- #include <asm-generic/gpio.h>
- 
- /* The trivial gpiolib dispatchers */
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 4e2fcb7b0a01..1846f24971e3 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -183,14 +183,14 @@ EXPORT_SYMBOL_GPL(gpiod_to_chip);
- static int gpiochip_find_base(int ngpio)
- {
- 	struct gpio_device *gdev;
--	int base = ARCH_NR_GPIOS - ngpio;
-+	int base = GPIO_DYNAMIC_BASE;
- 
--	list_for_each_entry_reverse(gdev, &gpio_devices, list) {
-+	list_for_each_entry(gdev, &gpio_devices, list) {
- 		/* found a free space? */
--		if (gdev->base + gdev->ngpio <= base)
-+		if (gdev->base >= base + ngpio)
- 			break;
--		/* nope, check the space right before the chip */
--		base = gdev->base - ngpio;
-+		/* nope, check the space right after the chip */
-+		base = gdev->base + gdev->ngpio;
- 	}
- 
- 	if (gpio_is_valid(base)) {
-diff --git a/include/asm-generic/gpio.h b/include/asm-generic/gpio.h
-index aea9aee1f3e9..a7752cf152ce 100644
---- a/include/asm-generic/gpio.h
-+++ b/include/asm-generic/gpio.h
-@@ -11,40 +11,18 @@
- #include <linux/gpio/driver.h>
- #include <linux/gpio/consumer.h>
- 
--/* Platforms may implement their GPIO interface with library code,
-+/*
-+ * Platforms may implement their GPIO interface with library code,
-  * at a small performance cost for non-inlined operations and some
-  * extra memory (for code and for per-GPIO table entries).
-- *
-- * While the GPIO programming interface defines valid GPIO numbers
-- * to be in the range 0..MAX_INT, this library restricts them to the
-- * smaller range 0..ARCH_NR_GPIOS-1.
-- *
-- * ARCH_NR_GPIOS is somewhat arbitrary; it usually reflects the sum of
-- * builtin/SoC GPIOs plus a number of GPIOs on expanders; the latter is
-- * actually an estimate of a board-specific value.
-  */
- 
--#ifndef ARCH_NR_GPIOS
--#if defined(CONFIG_ARCH_NR_GPIO) && CONFIG_ARCH_NR_GPIO > 0
--#define ARCH_NR_GPIOS CONFIG_ARCH_NR_GPIO
--#else
--#define ARCH_NR_GPIOS		512
--#endif
--#endif
--
- /*
-- * "valid" GPIO numbers are nonnegative and may be passed to
-- * setup routines like gpio_request().  only some valid numbers
-- * can successfully be requested and used.
-- *
-- * Invalid GPIO numbers are useful for indicating no-such-GPIO in
-- * platform data and other tables.
-+ * At the end we want all GPIOs to be dynamically allocated from 0.
-+ * However, some legacy drivers still perform fixed allocation.
-+ * Until they are all fixed, leave 0-512 space for them.
-  */
--
--static inline bool gpio_is_valid(int number)
--{
--	return number >= 0 && number < ARCH_NR_GPIOS;
--}
-+#define GPIO_DYNAMIC_BASE	512
- 
- struct device;
- struct gpio;
-@@ -140,12 +118,6 @@ static inline void gpio_unexport(unsigned gpio)
- 
- #include <linux/kernel.h>
- 
--static inline bool gpio_is_valid(int number)
--{
--	/* only non-negative numbers are valid */
--	return number >= 0;
--}
--
- /* platforms that don't directly support access to GPIOs through I2C, SPI,
-  * or other blocking infrastructure can use these wrappers.
-  */
-@@ -169,4 +141,19 @@ static inline void gpio_set_value_cansleep(unsigned gpio, int value)
- 
- #endif /* !CONFIG_GPIOLIB */
- 
-+/*
-+ * "valid" GPIO numbers are nonnegative and may be passed to
-+ * setup routines like gpio_request().  only some valid numbers
-+ * can successfully be requested and used.
-+ *
-+ * Invalid GPIO numbers are useful for indicating no-such-GPIO in
-+ * platform data and other tables.
-+ */
-+
-+static inline bool gpio_is_valid(int number)
-+{
-+	/* only non-negative numbers are valid */
-+	return number >= 0;
-+}
-+
- #endif /* _ASM_GENERIC_GPIO_H */
--- 
-2.37.1
+If you can use the .init_valid_mask from struct gpio_irq_chip
+instead, it will allocate this mask dynamically for the irqchip.
+(Further comment below.)
 
+> +       DECLARE_BITMAP(irq_enable_shadow, MAX_GPIO);
+
+Please rename irq_unmasked_shadow as it is tracking
+this and not what the irqchip core calls enabled/disabled.
+
+> +       DECLARE_BITMAP(irq_enable, MAX_GPIO);
+
+I think this state should be possible to set/get from the irqchip
+core. !irqd_irq_masked(d) on the descriptor, correct me if I'm wrong.
+
+> +       u32 irq_mode_shadow[MAX_GPIO];
+> +       u32 irq_mode[MAX_GPIO];
+>
+>         int first_index;
+>  };
+> @@ -161,6 +172,7 @@ static int macsmc_gpio_init_valid_mask(struct gpio_chip *gc,
+>         for (i = 0; i < count; i++) {
+>                 smc_key key;
+>                 int gpio_nr;
+> +               u32 val;
+>                 int ret = apple_smc_get_key_by_index(smcgp->smc, smcgp->first_index + i, &key);
+>
+>                 if (ret < 0)
+> @@ -176,11 +188,143 @@ static int macsmc_gpio_init_valid_mask(struct gpio_chip *gc,
+>                 }
+>
+>                 set_bit(gpio_nr, valid_mask);
+> +
+> +               /* Check for IRQ support */
+> +               ret = apple_smc_rw_u32(smcgp->smc, key, CMD_IRQ_MODE, &val);
+> +               if (!ret)
+> +                       set_bit(gpio_nr, smcgp->irq_supported);
+> +       }
+> +
+> +       return 0;
+> +}
+
+This  gets initialized from the struct gpio_chip .init_valid_mask, but
+struct gpio_irq_chip has its own callback with the same name, which
+is preferred to be used for this, check if you can use that instead, it
+makes the use more obvious.
+
+> +static int macsmc_gpio_event(struct notifier_block *nb, unsigned long event, void *data)
+> +{
+> +       struct macsmc_gpio *smcgp = container_of(nb, struct macsmc_gpio, nb);
+> +       u16 type = event >> 16;
+> +       u8 offset = (event >> 8) & 0xff;
+> +       smc_key key = macsmc_gpio_key(offset);
+> +       unsigned long flags;
+> +        int ret;
+> +
+> +       if (type != SMC_EV_GPIO)
+> +               return NOTIFY_DONE;
+> +
+> +       if (offset > MAX_GPIO) {
+> +               dev_err(smcgp->dev, "GPIO event index %d out of range\n", offset);
+> +               return NOTIFY_BAD;
+> +       }
+> +
+> +       local_irq_save(flags);
+> +       ret = generic_handle_domain_irq(smcgp->gc.irq.domain, offset);
+> +       local_irq_restore(flags);
+
+Isn't irq_bus_lock/unlock protecting us here already?
+(I might be getting it wrong...)
+
+Since this is coming from a notifier and not an IRQ or threaded
+IRQ I actually am a bit puzzled on how to handle it... you probably
+know it better than me, maybe ask Marc Z if anything is
+unclear.
+
+> +       if (apple_smc_write_u32(smcgp->smc, key, CMD_IRQ_ACK | 1) < 0)
+> +               dev_err(smcgp->dev, "GPIO IRQ ack failed for %p4ch\n", &key);
+
+isn't this one of those cases where we should implement the
+irqchip callback .irq_ack() specifically for this?
+
+That callback will only be used by edge triggered IRQs but
+I guess that would realistically be all we support anyway?
+(See comment below on .set_type)
+
+> +static void macsmc_gpio_irq_enable(struct irq_data *d)
+> +{
+> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> +       struct macsmc_gpio *smcgp = gpiochip_get_data(gc);
+> +
+> +       gpiochip_enable_irq(gc, irqd_to_hwirq(d));
+> +       set_bit(irqd_to_hwirq(d), smcgp->irq_enable_shadow);
+> +}
+> +
+> +static void macsmc_gpio_irq_disable(struct irq_data *d)
+> +{
+> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> +       struct macsmc_gpio *smcgp = gpiochip_get_data(gc);
+> +
+> +       clear_bit(irqd_to_hwirq(d), smcgp->irq_enable_shadow);
+> +       gpiochip_disable_irq(gc, irqd_to_hwirq(d));
+> +}
+
+I would rename these unmask/mask to match the callback
+hooks they are implementing, since there are irqchips
+callbacks with these names I get a but confused.
+
+> +static int macsmc_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+> +{
+> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> +       struct macsmc_gpio *smcgp = gpiochip_get_data(gc);
+> +       int offset = irqd_to_hwirq(d);
+> +       u32 mode;
+> +
+> +       if (!test_bit(offset, smcgp->irq_supported))
+> +               return -EINVAL;
+> +
+> +       switch (type & IRQ_TYPE_SENSE_MASK) {
+> +       case IRQ_TYPE_LEVEL_HIGH:
+> +               mode = IRQ_MODE_HIGH;
+> +               break;
+> +       case IRQ_TYPE_LEVEL_LOW:
+> +               mode = IRQ_MODE_LOW;
+> +               break;
+> +       case IRQ_TYPE_EDGE_RISING:
+> +               mode = IRQ_MODE_RISING;
+> +               break;
+> +       case IRQ_TYPE_EDGE_FALLING:
+> +               mode = IRQ_MODE_FALLING;
+> +               break;
+> +       case IRQ_TYPE_EDGE_BOTH:
+> +               mode = IRQ_MODE_BOTH;
+> +               break;
+> +       default:
+> +               return -EINVAL;
+
+I don't know how level IRQs would work on this essentially
+message-passing process context interrupt. Maybe I am getting
+it all wrong, but for level the line should be held low/high until
+the IRQ is serviced, it would be possible to test if this actually
+works by *not* servicing an IRQ and see if the SMC then sends
+another message notifier for the same IRQ.
+
+I strongly suspect that actually only edges are supported, but
+there might be semantics I don't understand here.
+
+>         }
+>
+> +       smcgp->irq_mode_shadow[offset] = mode;
+
+Hm yeah I guess this shadow mode is necessary for the sync
+to work.
+
+>         return 0;
+>  }
+>
+> +static void macsmc_gpio_irq_bus_lock(struct irq_data *d)
+> +{
+> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> +       struct macsmc_gpio *smcgp = gpiochip_get_data(gc);
+> +
+> +       mutex_lock(&smcgp->irq_mutex);
+> +}
+> +
+> +static void macsmc_gpio_irq_bus_sync_unlock(struct irq_data *d)
+> +{
+> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> +       struct macsmc_gpio *smcgp = gpiochip_get_data(gc);
+> +       smc_key key = macsmc_gpio_key(irqd_to_hwirq(d));
+> +       int offset = irqd_to_hwirq(d);
+> +       bool val;
+> +
+> +       if (smcgp->irq_mode_shadow[offset] != smcgp->irq_mode[offset]) {
+> +               u32 cmd = CMD_IRQ_MODE | smcgp->irq_mode_shadow[offset];
+> +               if (apple_smc_write_u32(smcgp->smc, key, cmd) < 0)
+> +                       dev_err(smcgp->dev, "GPIO IRQ config failed for %p4ch = 0x%x\n", &key, cmd);
+> +               else
+> +                       smcgp->irq_mode_shadow[offset] = smcgp->irq_mode[offset];
+> +       }
+> +
+> +       val = test_bit(offset, smcgp->irq_enable_shadow);
+> +       if (test_bit(offset, smcgp->irq_enable) != val) {
+
+So what you want to know for each line is (correct me if I'm wrong):
+- Is it enabled (unmasked) or not?
+- Did it get changed enabled->disabled, disabled->enabled since
+  macsmc_gpio_irq_bus_lock()?
+
+Doesn't the irqchip core track the first part of this for you?
+irqd_irq_masked(d) should tell you the same thing as
+irq_enable, just inverted.
+
+irq_enable_shadow is a bit tricker, I guess you might need that since
+the irqchip doesn't track state changes.
+
+>  static int macsmc_gpio_probe(struct platform_device *pdev)
+>  {
+>         struct macsmc_gpio *smcgp;
+> @@ -221,6 +365,18 @@ static int macsmc_gpio_probe(struct platform_device *pdev)
+>         smcgp->gc.base = -1;
+>         smcgp->gc.parent = &pdev->dev;
+>
+> +       gpio_irq_chip_set_chip(&smcgp->gc.irq, &macsmc_gpio_irqchip);
+> +       smcgp->gc.irq.parent_handler = NULL;
+> +       smcgp->gc.irq.num_parents = 0;
+> +       smcgp->gc.irq.parents = NULL;
+> +       smcgp->gc.irq.default_type = IRQ_TYPE_NONE;
+> +       smcgp->gc.irq.handler = handle_simple_irq;
+
+I would consider setting this to handle_edge_irq() and implement
+.irq_ack(). I might be wrong.
+
+But overall since this IRQ is driven by a notifier I feel a bit lost.
+
+Yours,
+Linus Walleij
