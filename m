@@ -2,132 +2,157 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37185ECAAD5
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EE4C6FA83
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:35:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229791AbiIBSfc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 14:35:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55270 "EHLO
+        id S229508AbiIBSfd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 14:35:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229869AbiIBSe2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:34:28 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DABFF110DA9;
-        Fri,  2 Sep 2022 11:26:50 -0700 (PDT)
+        with ESMTP id S229849AbiIBSe1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:34:27 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFA95110D8B;
+        Fri,  2 Sep 2022 11:26:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662143210; x=1693679210;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=LnuYAt94YWSAPrjoHbzV8WP/hTfRRBDfaaIMJkQKpyg=;
-  b=nJARMmgLEGmdtKRJILrRTx82k8ID2zj+Q6zWaz8QY4ocwE0wlgOIZaxm
-   qX2K2py7JYChbU9227G2qdzSzEXIvoSVnW2k9j8u6x9glP1xT+M+SrP5Q
-   wGgqq3u7L6EvGTwaj2nd91dHgdvSymxg99b+J1FNPSuDy/HohPJ0Apauv
-   4r99YmPf4MG2iMY7RjPfTO4WbifNUIEnAZh1vfiv8nrWjBlAd0q72s+OL
-   ekahOGjXAk8DxxqKTKKejJ+T9aJWCiE3d4I2MVH6nCjBSKlgaps+Ggs4C
-   yRCFJJRv47F2aHSqUfctiRljmgacV1OLuQMO67wkHQbn/I1QyPwaSz5ws
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="283034558"
+  t=1662143206; x=1693679206;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=0rZByPU8jLloX7VT/25CU9V/snC5Hc8cjMfHRRhdw9s=;
+  b=dnfJWUC6tXwRfPnkL0U39rA3BEP4z/TQ3u22UsNHK4kC5jFbQIsbke7W
+   ktxcAjYV43RgJ8oBmKWeGdr+KRSDxm6aB+0pcSfmNNdUPjgIQtdKmqwC+
+   MAxaMTOXCASMz6l7NHASVKrlPBjhrH5WMwZUfTC4jCefS/1jLmfEfpOE/
+   jgshlh9sBTcQz1lkT3WCOjKBYdk/LsmRnNuno5FW4d3JIDhRVNid8u/up
+   cjjLK1TlOHHwr/ZZjdVRzLVP9X16EoqVwlCehFqxCE6b/3IcLANioPcJ8
+   Tf2M5l0OKSGpS0w+03slwgKwAkNRM+0VsJei5wtV3/eyeD2w3kcI6bCeh
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="296832712"
 X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="283034558"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:49 -0700
+   d="scan'208";a="296832712"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:46 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="681373079"
+   d="scan'208";a="615791647"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 02 Sep 2022 11:26:47 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 02 Sep 2022 11:26:44 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 512D0713; Fri,  2 Sep 2022 21:27:00 +0300 (EEST)
+        id D027745; Fri,  2 Sep 2022 21:26:59 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Patrick Rudolph <patrick.rudolph@9elements.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 13/17] pinctrl: cy8c95x0: Make use of device properties
-Date:   Fri,  2 Sep 2022 21:26:46 +0300
-Message-Id: <20220902182650.83098-13-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 01/17] pinctrl: cy8c95x0: make irq_chip immutable
+Date:   Fri,  2 Sep 2022 21:26:34 +0300
+Message-Id: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
-References: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Convert the module to be property provider agnostic and allow
-it to be used on non-OF platforms.
+Since recently, the kernel is nagging about mutable irq_chips:
 
-Add mod_devicetable.h include.
+   "not an immutable chip, please consider fixing it!"
+
+Drop the unneeded copy, flag it as IRQCHIP_IMMUTABLE, add the new
+helper functions and call the appropriate gpiolib functions.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/Kconfig            |  2 +-
- drivers/pinctrl/pinctrl-cy8c95x0.c | 16 +++++++++-------
- 2 files changed, 10 insertions(+), 8 deletions(-)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 32 ++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index fc0e529e633f..c09562fbb1b7 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -137,7 +137,7 @@ config PINCTRL_BM1880
- 
- config PINCTRL_CY8C95X0
- 	tristate "Cypress CY8C95X0 I2C pinctrl and GPIO driver"
--	depends on I2C && OF
-+	depends on I2C
- 	select GPIOLIB
- 	select GPIOLIB_IRQCHIP
- 	select PINMUX
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index ea81b5ae27a6..699da63d9c39 100644
+index a29df0920f4f..8bb01f852c54 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -13,15 +13,16 @@
- #include <linux/i2c.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
--#include <linux/of.h>
--#include <linux/of_platform.h>
-+#include <linux/property.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
+@@ -90,7 +90,6 @@ MODULE_DEVICE_TABLE(of, cy8c95x0_dt_ids);
+  * @irq_trig_high:  I/O bits affected by a high voltage level
+  * @push_pull:      I/O bits configured as push pull driver
+  * @shiftmask:      Mask used to compensate for Gport2 width
+- * @irq_chip:       IRQ chip configuration
+  * @nport:          Number of Gports in this chip
+  * @gpio_chip:      gpiolib chip
+  * @driver_data:    private driver data
+@@ -112,7 +111,6 @@ struct cy8c95x0_pinctrl {
+ 	DECLARE_BITMAP(irq_trig_high, MAX_LINE);
+ 	DECLARE_BITMAP(push_pull, MAX_LINE);
+ 	DECLARE_BITMAP(shiftmask, MAX_LINE);
+-	struct irq_chip irq_chip;
+ 	int nport;
+ 	struct gpio_chip gpio_chip;
+ 	unsigned long driver_data;
+@@ -844,16 +842,20 @@ static void cy8c95x0_irq_mask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct cy8c95x0_pinctrl *chip = gpiochip_get_data(gc);
++	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+ 
+-	set_bit(irqd_to_hwirq(d), chip->irq_mask);
++	set_bit(hwirq, chip->irq_mask);
++	gpiochip_disable_irq(gc, hwirq);
+ }
+ 
+ static void cy8c95x0_irq_unmask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct cy8c95x0_pinctrl *chip = gpiochip_get_data(gc);
++	irq_hw_number_t hwirq = irqd_to_hwirq(d);
+ 
+-	clear_bit(irqd_to_hwirq(d), chip->irq_mask);
++	gpiochip_enable_irq(gc, hwirq);
++	clear_bit(hwirq, chip->irq_mask);
+ }
+ 
+ static void cy8c95x0_irq_bus_lock(struct irq_data *d)
+@@ -931,6 +933,18 @@ static void cy8c95x0_irq_shutdown(struct irq_data *d)
+ 	clear_bit(hwirq, chip->irq_trig_high);
+ }
+ 
++static const struct irq_chip cy8c95x0_irqchip = {
++	.name = "cy8c95x0-irq",
++	.irq_mask = cy8c95x0_irq_mask,
++	.irq_unmask = cy8c95x0_irq_unmask,
++	.irq_bus_lock = cy8c95x0_irq_bus_lock,
++	.irq_bus_sync_unlock = cy8c95x0_irq_bus_sync_unlock,
++	.irq_set_type = cy8c95x0_irq_set_type,
++	.irq_shutdown = cy8c95x0_irq_shutdown,
++	.flags = IRQCHIP_IMMUTABLE,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS,
++};
 +
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinconf-generic.h>
- #include <linux/pinctrl/pinmux.h>
--#include <linux/regmap.h>
--#include <linux/regulator/consumer.h>
+ static bool cy8c95x0_irq_pending(struct cy8c95x0_pinctrl *chip, unsigned long *pending)
+ {
+ 	DECLARE_BITMAP(ones, MAX_LINE);
+@@ -1136,7 +1150,6 @@ static const struct pinconf_ops cy8c95x0_pinconf_ops = {
  
- /* Fast access registers */
- #define CY8C95X0_INPUT		0x00
-@@ -1040,8 +1041,10 @@ static const struct pinctrl_ops cy8c95x0_pinctrl_ops = {
- 	.get_groups_count = cy8c95x0_pinctrl_get_groups_count,
- 	.get_group_name = cy8c95x0_pinctrl_get_group_name,
- 	.get_group_pins = cy8c95x0_pinctrl_get_group_pins,
-+#ifdef CONFIG_OF
- 	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
- 	.dt_free_map = pinconf_generic_dt_free_map,
-+#endif
- 	.pin_dbg_show = cy8c95x0_pin_dbg_show,
- };
+ static int cy8c95x0_irq_setup(struct cy8c95x0_pinctrl *chip, int irq)
+ {
+-	struct irq_chip *irq_chip = &chip->irq_chip;
+ 	struct gpio_irq_chip *girq = &chip->gpio_chip.irq;
+ 	DECLARE_BITMAP(pending_irqs, MAX_LINE);
+ 	int ret;
+@@ -1155,15 +1168,8 @@ static int cy8c95x0_irq_setup(struct cy8c95x0_pinctrl *chip, int irq)
+ 	/* Mask all interrupts */
+ 	bitmap_fill(chip->irq_mask, MAX_LINE);
  
-@@ -1245,9 +1248,8 @@ static int cy8c95x0_probe(struct i2c_client *client)
- 	chip->dev = &client->dev;
+-	irq_chip->name = devm_kasprintf(chip->dev, GFP_KERNEL, "%s-irq", chip->name);
+-	irq_chip->irq_mask = cy8c95x0_irq_mask;
+-	irq_chip->irq_unmask = cy8c95x0_irq_unmask;
+-	irq_chip->irq_bus_lock = cy8c95x0_irq_bus_lock;
+-	irq_chip->irq_bus_sync_unlock = cy8c95x0_irq_bus_sync_unlock;
+-	irq_chip->irq_set_type = cy8c95x0_irq_set_type;
+-	irq_chip->irq_shutdown = cy8c95x0_irq_shutdown;
++	gpio_irq_chip_set_chip(girq, &cy8c95x0_irqchip);
  
- 	/* Set the device type */
--	if (client->dev.of_node)
--		chip->driver_data = (unsigned long)of_device_get_match_data(&client->dev);
--	else
-+	chip->driver_data = (unsigned long)device_get_match_data(&client->dev);
-+	if (!chip->driver_data)
- 		chip->driver_data = i2c_match_id(cy8c95x0_id, client)->driver_data;
- 
- 	if (!chip->driver_data)
+-	girq->chip = irq_chip;
+ 	/* This will let us handle the parent IRQ in the driver */
+ 	girq->parent_handler = NULL;
+ 	girq->num_parents = 0;
 -- 
 2.35.1
 
