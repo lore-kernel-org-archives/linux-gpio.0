@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 266B7C6FA82
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 744E8ECAAD5
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:34:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229932AbiIBSbR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 14:31:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47618 "EHLO
+        id S229646AbiIBSeD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 14:34:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229796AbiIBSa6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:30:58 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1B7C70E4F;
-        Fri,  2 Sep 2022 11:30:56 -0700 (PDT)
+        with ESMTP id S229729AbiIBSeC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:34:02 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B038A105B74;
+        Fri,  2 Sep 2022 11:34:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662143456; x=1693679456;
+  t=1662143640; x=1693679640;
   h=from:to:subject:date:message-id:in-reply-to:references:
    mime-version:content-transfer-encoding;
-  bh=DniUnueTY3Xs7L6hV7C4s2m6UQ2FC9TCsvhg8kdaFrQ=;
-  b=IgT1fpbSUT4sSxNNv0R2P3dtJwlkyMMc33x2DcAwPHH1c9GLytkdgdJM
-   0o7XTKrqocaC1cW09CfroksE1d5lD9qRHlootSpxSnUxMnn3wK8srjTk8
-   x51Z/KOIg175JcIpNoED5RUFm3oHpdF4IKucM/Y7vW++XkCIwgLA8HYMm
-   ILAmzUQ+Ebr1io+KOEvzDkwaLdetYKSt6HemVGqRfS/N64uujlKnkshcE
-   w8j5LCzYTG8UOLQbLkd10i3NeZ9PnsGLBE6sS6a+rUCbwp3KN2BdrnNHJ
-   ZGlp0TpfzA863+91Ki5rTiQiYpn6GoI94JkMPVGySy07p2EZY/J19eCdU
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="294790980"
+  bh=xkJ6xoIywugi4fMwTGaUIozhuU7T/pgcEKpJ47n1K48=;
+  b=E2uImZQi6CBtCSs6E7pxiTd+ZpF5TEmybzsM5RBvD41ccuwNw+3lZavZ
+   Jz6cqsb0ubfCU3qnsSXm9hRlaU5F94FKulhOfkwBPCGp+gs6OlMSB3j8P
+   pRokXr26ll+2MT6pDanhP9qiT02tBjlOL5HXsh2TRq9xjPr7DNTloB6q5
+   BkUUghisndwp9P2ApfiCX+5GAbLjCawqvoF6XyBKepSJ/w268V9WteaT3
+   k0OdbYxSbbP1C5VtiZii/96YghlV2ej/kJksZIaowaseHHHPbPvGpljLC
+   GLOcf5eurMjDo91MAr/9ZT0ReQ3dTsA/gbR7W7ri2o62W+iGIgtCUhAyZ
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="293635826"
 X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="294790980"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:46 -0700
+   d="scan'208";a="293635826"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="613125405"
+   d="scan'208";a="646203180"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 02 Sep 2022 11:26:44 -0700
+  by orsmga001.jf.intel.com with ESMTP; 02 Sep 2022 11:26:47 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 043FC1C3; Fri,  2 Sep 2022 21:26:59 +0300 (EEST)
+        id 330DC63F; Fri,  2 Sep 2022 21:27:00 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Patrick Rudolph <patrick.rudolph@9elements.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 04/17] pinctrl: cy8c95x0: Fix return value in cy8c95x0_detect()
-Date:   Fri,  2 Sep 2022 21:26:37 +0300
-Message-Id: <20220902182650.83098-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 10/17] pinctrl: cy8c95x0: Remove custom ->set_config()
+Date:   Fri,  2 Sep 2022 21:26:43 +0300
+Message-Id: <20220902182650.83098-10-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
 References: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
@@ -56,27 +56,59 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-It's an obvious typo in never tested piece of code that
-successful detection shouldn't fail. Fix that.
+Since we have pin configuration getter and setter provided,
+there is no need to duplicate that in the custom ->set_config().
+Instead, switch to gpiochip_generic_config().
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 26 +-------------------------
+ 1 file changed, 1 insertion(+), 25 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 5ef772d29a36..f016c283af57 100644
+index 97da22016cce..55bd48c9d020 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -1255,7 +1255,7 @@ static int cy8c95x0_detect(struct i2c_client *client,
- 	dev_info(&client->dev, "Found a %s chip at 0x%02x.\n", name, client->addr);
- 	strscpy(info->type, name, I2C_NAME_SIZE);
- 
--	return -ENODEV;
-+	return 0;
+@@ -761,30 +761,6 @@ static int cy8c95x0_gpio_set_pincfg(struct cy8c95x0_pinctrl *chip,
+ 	return ret;
  }
  
- static int cy8c95x0_probe(struct i2c_client *client)
+-static int cy8c95x0_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+-				    unsigned long config)
+-{
+-	struct cy8c95x0_pinctrl *chip = gpiochip_get_data(gc);
+-	unsigned long arg = pinconf_to_config_argument(config);
+-
+-	switch (pinconf_to_config_param(config)) {
+-	case PIN_CONFIG_INPUT_ENABLE:
+-		return cy8c95x0_gpio_direction_input(gc, offset);
+-	case PIN_CONFIG_OUTPUT:
+-		return cy8c95x0_gpio_direction_output(gc, offset, arg);
+-	case PIN_CONFIG_MODE_PWM:
+-	case PIN_CONFIG_BIAS_PULL_UP:
+-	case PIN_CONFIG_BIAS_PULL_DOWN:
+-	case PIN_CONFIG_BIAS_DISABLE:
+-	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+-	case PIN_CONFIG_DRIVE_OPEN_SOURCE:
+-	case PIN_CONFIG_DRIVE_PUSH_PULL:
+-		return cy8c95x0_gpio_set_pincfg(chip, offset, config);
+-	default:
+-		return -ENOTSUPP;
+-	}
+-}
+-
+ static int cy8c95x0_gpio_get_multiple(struct gpio_chip *gc,
+ 				      unsigned long *mask, unsigned long *bits)
+ {
+@@ -825,7 +801,7 @@ static int cy8c95x0_setup_gpiochip(struct cy8c95x0_pinctrl *chip)
+ 	gc->get_direction = cy8c95x0_gpio_get_direction;
+ 	gc->get_multiple = cy8c95x0_gpio_get_multiple;
+ 	gc->set_multiple = cy8c95x0_gpio_set_multiple;
+-	gc->set_config = cy8c95x0_gpio_set_config;
++	gc->set_config = gpiochip_generic_config,
+ 	gc->can_sleep = true;
+ 	gc->add_pin_ranges = cy8c95x0_add_pin_ranges;
+ 
 -- 
 2.35.1
 
