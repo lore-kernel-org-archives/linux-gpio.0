@@ -2,55 +2,92 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24AA3C6FA81
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 08:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2EF7ECAAD5
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 09:42:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235779AbiIBIOC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 04:14:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59006 "EHLO
+        id S233481AbiIBJmX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 05:42:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235778AbiIBINk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 04:13:40 -0400
-Received: from mail.connexion24.pl (mail.connexion24.pl [141.94.21.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2669C0E48
-        for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 01:12:55 -0700 (PDT)
-Received: by mail.connexion24.pl (Postfix, from userid 1002)
-        id B0074ACD51; Fri,  2 Sep 2022 07:55:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=connexion24.pl;
-        s=mail; t=1662105384;
-        bh=ChRcLNpIfKnVgp03/tSyWuRw1tWSTk/OEiEnuZMWs58=;
-        h=Date:From:To:Subject:From;
-        b=ShYzw/kk2dxFEUxK+Ax/g6KCgD0NxiPcelP1mk7FedgOKI/FNJhmLM7UHdmtx+o23
-         6iGNmiCu8VzIOVHmYwStG51LyqedPvroyHB8wL1QhAukuFShjLE8+bnQTyGJqMtw1F
-         3NZic85U8t40okFGoyJvmKV97QdHth1zO8lIC17EG01TvTyHm9MM4WEqwqUQyR6NLn
-         EuKwojDyIObc7YQUjcwm4t5/4HbIHa02R3D4qLTr4PNIxHd2vQQS9e0UqWOcs4pjt6
-         PUtmOwDm0q+yyA+lfysj2M5J7WzXs5evEB2wMlBHzxBCS1hJ0esmc0DMO0HTcsDCOJ
-         HQRLw35JPImhA==
-Received: by mail.connexion24.pl for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 07:55:42 GMT
-Message-ID: <20220902064500-0.1.5l.ytdw.0.d97kuocg17@connexion24.pl>
-Date:   Fri,  2 Sep 2022 07:55:42 GMT
-From:   "Norbert Karecki" <norbert.karecki@connexion24.pl>
-To:     <linux-gpio@vger.kernel.org>
-Subject: Wycena paneli fotowoltaicznych
-X-Mailer: mail.connexion24.pl
+        with ESMTP id S235758AbiIBJmU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 05:42:20 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87EF6C0B7D
+        for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 02:42:19 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id fy31so2729922ejc.6
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Sep 2022 02:42:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=7RVxKy/7NAGOaBeicY+wPpYYEBXyRyq/rxV9WkxurLc=;
+        b=t5MAHakXGCxi9EzKBEp8YrERVHmy6pFRk58+CBrN5EjND9wsClk17Q0nsbbYkvAhS2
+         ZTMfzJ5dRLrvlYkoGBwqOlTvaOFKdPP84LgYesx7KfqWMhctqEXExFWdl21Az0XQS8tg
+         uxK7evYVqfY+74N5Hqq5BciG6CPBfdKeazeAD2G+/5+gvt6xOjZw0sZeO0kXehvh1h7+
+         gm9BEI7E/sQ+7LDikGIjcMX2Hl752X9at4k3GlTDzO+rOkHAFwxjhH5nUl01yoeh5I06
+         K1U5VSA2gtsiIPiCgzGpzyJW3EBbnfsR2iQFb01OD6sUpNTNIJArMEBiaa9flKclDr5C
+         RlWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=7RVxKy/7NAGOaBeicY+wPpYYEBXyRyq/rxV9WkxurLc=;
+        b=LiKmy1xhVsov1B/qfwoMDStSF607qC36v48eWEOOcv5Fk903EiKjteL+MJ5pRa6smz
+         AHC9ywmciV7oQ8t14UPPKEhVmJszjtowSDBAhs5ATSSfkr3vDGgUfEMU41PB0q5nOklL
+         qtj8e6sJ27Q1MgLiy0ClSCBpcu4wrApef2+Htio0Dosm5Ros8QkikuAzL1ZwTgZfkcXx
+         cH1fIyjvTFpuWvfyVTbTcrxseuU8zWLFZZKr/hj0cg85S55qRrA60DGWHwBfEvDlbM0t
+         /TWllbOZqx+gbE9f6R3ID44ASCtWFRz6Ffoplf9w5vQMtGZB98CNiSHKGxG2CcroR17U
+         /6Jg==
+X-Gm-Message-State: ACgBeo1k+s7vJ/G1M82P7ELm9urt0PjS+rEo1z4YvrontfwZjStccJa0
+        L7aZq1sKtDLMcCVaG0Q+hEG9HFOAbuNN3vsnEtuzwA==
+X-Google-Smtp-Source: AA6agR5FNn2SdvXJheXgW++QRRzppsx1/2cO8qkL7nCfiz48tHzXXaKQNTosX51dACVMFHkUCLXidwkeIGtP5BM4lG4=
+X-Received: by 2002:a17:907:6293:b0:73d:b27b:e594 with SMTP id
+ nd19-20020a170907629300b0073db27be594mr27254666ejc.526.1662111737397; Fri, 02
+ Sep 2022 02:42:17 -0700 (PDT)
 MIME-Version: 1.0
+References: <YxC5eZjGgd8xguDr@shell.armlinux.org.uk> <E1oTkeb-003t9e-Iy@rmk-PC.armlinux.org.uk>
+In-Reply-To: <E1oTkeb-003t9e-Iy@rmk-PC.armlinux.org.uk>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 2 Sep 2022 11:42:05 +0200
+Message-ID: <CACRpkdZDWn=Pw=QnO5=TP=KfT4Q8Eot3yCp7NVLmDTwWg39Zvw@mail.gmail.com>
+Subject: Re: [PATCH 5/6] gpio: Add new gpio-macsmc driver for Apple Macs
+To:     Russell King <rmk+kernel@armlinux.org.uk>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        asahi@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Hector Martin <marcan@marcan.st>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        Sven Peter <sven@svenpeter.dev>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Thu, Sep 1, 2022 at 3:54 PM Russell King <rmk+kernel@armlinux.org.uk> wrote:
 
-dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
-irm=C4=85.
+> From: Hector Martin <marcan@marcan.st>
+>
+> This driver implements the GPIO service on top of the SMC framework
+> on Apple Mac machines. In particular, these are the GPIOs present in the
+> PMU IC which are used to control power to certain on-board devices.
+>
+> Although the underlying hardware supports various pin config settings
+> (input/output, open drain, etc.), this driver does not implement that
+> functionality and leaves it up to the firmware to configure things
+> properly. We also don't yet support interrupts/events. This is
+> sufficient for device power control, which is the only thing we need to
+> support at this point. More features will be implemented when needed.
+>
+> To our knowledge, only Apple Silicon Macs implement this SMC feature.
+>
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
-ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
+Overall this looks very good provided the SMC API is fine
+with the platform/MFD maintainers, I like the usage of .init_valid_mask
+which is used just as intended. Andy's detailed review points
+should be addressed reasonably after that it's:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
-ropozycji?
-
-
-Pozdrawiam,
-Norbert Karecki
+Yours,
+Linus Walleij
