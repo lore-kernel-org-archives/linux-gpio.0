@@ -2,100 +2,91 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC329C54EE9
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 07:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08399C6FA81
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 08:06:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231260AbiIBHUr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 03:20:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44644 "EHLO
+        id S235547AbiIBIG5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 04:06:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230295AbiIBHUr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 03:20:47 -0400
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C92894DF00;
-        Fri,  2 Sep 2022 00:20:45 -0700 (PDT)
-Received: by mail-qt1-x836.google.com with SMTP id x5so842999qtv.9;
-        Fri, 02 Sep 2022 00:20:45 -0700 (PDT)
+        with ESMTP id S235621AbiIBIGy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 04:06:54 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DDD2BB693
+        for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 01:06:52 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id se27so2256974ejb.8
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Sep 2022 01:06:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=0ztFA8rsuY2vloiv1HdRcTr25R2NxgCLNPLghGc91Mc=;
-        b=ItdHuTR9MapOms5sjGNpCkLjWOb+4vrB+PijQJWFD22X+KE4TdlFV7IhXu6ZNfqMv+
-         DJHbv3oATrDqCJZZ2Yg7IJOBk2/KKByM67vW09IoR4lumCwo0uTWEFJzVE2lhqaBEoIY
-         rbxH//7bPev65d0IFM+vJmhYPM+YXfUGniRBaR/0FfKtNZ7TLewwo41JAHgTKZBzXbJ2
-         0EHv3zMxTwxCm4AfGkWAZ6XbboM/4yn8mCDJgK4dn0eVD9QSkEJnyWGcLZZqk5eU640V
-         E5fr1bdwhlmHJ67XVbOstsYNteZphRUFcntHDMvpjEacSphh18dPitnwP75C21Qz8DNG
-         wUyg==
+        bh=/CPr7XRW/l7oJ5TwQnKLmZtSswvlFBKkXS84mHDGoF0=;
+        b=ov9NKalAZFyh2hTY2dbXszqArzlqn9GnZwUCyustVqEGsjRHlE2B+lEHUci2QWsq5O
+         VvRpapuuUtNowNTe1SZ4hx+1GXq2MsAAyusyFMW9cEccUaf19D+PYWzInE+depRigNqo
+         RyD/qbrxA4hF7KA0juayqdEYvFYUG6nTLg320DRnMC6jzYnBpi517gmkeDtm6g5RAhOd
+         eGTFZ3np6jsUxmDuGP0G7W15ecBq5ntTGoO7p4zWgAdrckvsw4OtNVud1rPCvJe6GJVt
+         WV0u3j98H9paeuHfEXZNjdT5hgUrIaWaGHpWeuOgdW3/V1mvGNCzHyTbhcIOrI2OajEu
+         Lkcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=0ztFA8rsuY2vloiv1HdRcTr25R2NxgCLNPLghGc91Mc=;
-        b=gzSKs8cNMaOq4KOwYR44CTGu5EkbJWPjP4GQCBYtY2YxtrFh7SqIb0UlmcgLqy6sf6
-         fqOlimnEC13NvzUGzmScb5SUXskHRUwaHfTtpbs7sY5Gdulbh+yYxnh8gFQeL9MO+UTh
-         BaH3IQIybjXCsmtSeqoxz7gxUZhcqJGkH3c1venJwKyXn6bKUJJrvBzbK++VZXwJwS7k
-         oqlYBMIjIzmxbBBKXW+soRb/a0Gc8J1YwJaEZDCbaR/7WnO5ODEmPDkNKBNsfghcmOxX
-         xpvX5mtfafl0giay53AplBzv4sBL8vGOTysqnODRZSSikmh2IwVsvTtqDBfhgAuIAMsR
-         Jc0Q==
-X-Gm-Message-State: ACgBeo3+5BmMIwvy350I8szapmXLlkz84RZ9J/DEwTcDyUloOZYBTots
-        3ABaXmb5rneBiRVNlET3YsaOLcs6MurZXRlF0xY=
-X-Google-Smtp-Source: AA6agR4mVHw0REbRDals331L5SGq4UqqF6ji289fQzeaZkZ17hBU/O0z3ZAWFjnXzie2LBfMTWQqCAAE0IYEXONvJUY=
-X-Received: by 2002:ac8:5786:0:b0:343:3051:170d with SMTP id
- v6-20020ac85786000000b003433051170dmr26872765qta.429.1662103244912; Fri, 02
- Sep 2022 00:20:44 -0700 (PDT)
+        bh=/CPr7XRW/l7oJ5TwQnKLmZtSswvlFBKkXS84mHDGoF0=;
+        b=Si9EFh0sslQWh0HuQdCLKiSS0g+4Oy7DHe4B0q/D2eyvzpVhsdvlSAckDD84xEcwX1
+         qhm3Bz7TTn0vz3I5+8YcFn+dvg26kIs7YAkr0kH/8w8pIw8bQedEDqCmp7FGiqSLnNY7
+         2SQzITcslgTtZ5vUhDlVlW76IFpnjl0cG5LkHCiDiNvJvRElfJexPII2VFLAUBlPs/Bl
+         ZzHe+HpiUlvR9CzrJgYjbPORar7BT4jRbdo6b5iFEgPXJKIwRS0Nrb5A4e3xifqjL/Dv
+         +qxvp7FASYBJ5nUtAUZd7k3ObZr2SHbACYmMHQULwCN5dPDnUPMNo+HzBhi4gcU+9Q+a
+         DmxA==
+X-Gm-Message-State: ACgBeo1kA1qq++ovxXumU7pBnVAqtY/8Ub13+uBETIzgvN8Y1XI+mKZd
+        +YEapb9FunP/HWIwtJ2n0aZJ7TO3Q5TueEmCnIgDUg==
+X-Google-Smtp-Source: AA6agR4LDNciPZtaUjUX6+2rGeSXUZhhZ0jz4kn1NPhxmpYPCdK4njNDmYFI/PgmcfJA4C22nLg5rswmxoKXLO8pMgM=
+X-Received: by 2002:a17:906:9b86:b0:73d:72cf:72af with SMTP id
+ dd6-20020a1709069b8600b0073d72cf72afmr26775363ejc.440.1662106010529; Fri, 02
+ Sep 2022 01:06:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220831055811.1936613-1-s.hauer@pengutronix.de>
- <20220831055811.1936613-2-s.hauer@pengutronix.de> <CAHp75VfbNespbCZ81xcvA7zsr3K8nbb3LBrpXOjH04R-hEFumw@mail.gmail.com>
- <20220902071601.GU24324@pengutronix.de>
-In-Reply-To: <20220902071601.GU24324@pengutronix.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 2 Sep 2022 10:20:08 +0300
-Message-ID: <CAHp75VchGZV-cPzZnDRBmd_+jEiRap7oA2oFz6w8dBw=7LNtbQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] gpio: Add gpio latch driver
-To:     Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Sascha Hauer <kernel@pengutronix.de>
+References: <20220901183343.3188903-1-Mr.Bossman075@gmail.com>
+In-Reply-To: <20220901183343.3188903-1-Mr.Bossman075@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 2 Sep 2022 10:06:39 +0200
+Message-ID: <CACRpkdb25ikL4F499NDCrv1kf2FGvJxqDW2wk9GNQCqrbX9kKQ@mail.gmail.com>
+Subject: Re: [PATCH v6 00/10] Add support for i.MXRT1170-evk
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
+        stefan@agner.ch, daniel.lezcano@linaro.org, tglx@linutronix.de,
+        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
+        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
+        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
+        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
+        cniedermaier@dh-electronics.com, clin@suse.com,
+        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 2, 2022 at 10:16 AM Sascha Hauer <s.hauer@pengutronix.de> wrote:
-> On Fri, Sep 02, 2022 at 09:42:21AM +0300, Andy Shevchenko wrote:
-> > On Wed, Aug 31, 2022 at 9:02 AM Sascha Hauer <s.hauer@pengutronix.de> wrote:
-> > >
-> > > This driver implements a GPIO multiplexer based on latches connected to
-> > > other GPIOs. A set of data GPIOs is connected to the data input of
-> > > multiple latches. The clock input of each latch is driven by another
-> > > set of GPIOs. With two 8-bit latches 10 GPIOs can be multiplexed into
-> > > 16 GPIOs. GPOs might be a better term as in fact the multiplexed pins
-> > > are output only.
-> >
-> > So, this is for only one type of latches, now I'm wondering why
-> > gpio-74xx-mmio can't cover this case (with probably small
-> > modifications to the code)?
->
-> gpio-74xx-mmio is about latches connected to a parallel bus. You can
-> access the GPIOs by doing readl/writel operations. The latches are
-> driven by the bus logic and likely an additional address decoder.
->
-> What I have here instead is a latch fully driven by GPIOs.
+On Thu, Sep 1, 2022 at 8:33 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
 
-But this reminds me of some kind of gpio-aggregator with a specific
-layer on top. To me it really feels that we are (semi-)reinventing a
-wheel between the lines...
+> This patch contains:
+> - Update to imxrt_defconfig
+> - Devicetree
+> - Clock driver
+> - Pinctrl driver
 
-> Yes, with enough force you could implement it in the gpio-74xx-mmio
-> driver, but that wouldn't be mmio at all and likely completely different
-> code pathes.
+No it does not, I already merged that.
 
-Got it, thanks for elaboration.
+I think you should probably split up your series per-subsystem so the
+clock bindings and changes can be merged separately etc.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Then the DTS files can be added to the ARM SoC tree as a final step.
+
+When you send everything in one bundle like this subsystem maintainers
+don't know if they can merge e.g. just the clock patches separately
+and be done with their part (like what I did with pinctrl).
+
+Yours.
+Linus Walleij
