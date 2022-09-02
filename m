@@ -2,149 +2,252 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E96C54EE9
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 14:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42246C6FA82
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 14:22:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238907AbiIBONf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 10:13:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44934 "EHLO
+        id S237443AbiIBOWH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 10:22:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237290AbiIBONK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 10:13:10 -0400
-Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D46FAE1165
-        for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 06:40:56 -0700 (PDT)
-Received: by mail-qt1-x833.google.com with SMTP id a22so1432404qtw.10
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Sep 2022 06:40:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=6ejWKhNX3z+mJeAp0vohms4StWQ+ex5tKICo/SaWryk=;
-        b=kSwA17VpbhWllmbIwG2SF+JSBHQYUlWfVjNTHklJsfTr1zc5UxpkXYm+cD5XZnKNIC
-         lGbVayXtBZHyWNkR8Ajomc7c1IbD8webInQZ04rnoTXGTw0xdb7c/ig8tfJTYAMLt0cx
-         ibe87KpvnyAygSi67QiRVgTjSUuQAw7vqIWifIbfQZ6vJaUNkksZCvCy5q1fy7q+Ys00
-         27OA47Og+NdQrYjv8IYLofMBeRpKjy84y8Mr4oexJra2O3HMdoNE9pJrcpxEC3PxGGC7
-         EAcfLmOp5MXfd+wFCQBW3BFS2VK6lyY9gQOA57teZloD+pWWh+iQbUgWe6na+zhuZKoV
-         7cJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=6ejWKhNX3z+mJeAp0vohms4StWQ+ex5tKICo/SaWryk=;
-        b=EMdRE7EB99EtPmpLX8XuLGNhRBikWdj9O1GnTHtXU6nN+SJSncDSY1B5qN8gCted6H
-         Qm+tdP7GC1pvbw4xL4BtA0AEcTqt2Ttd+9h8jU6vzIxCoKK7/i7+kyOVw58cffwBTkcx
-         xKcd3oU9SwUb6t3dYLfgMsRFUl/vTC3UWmtUUu5VTzqemilbJ2Nmjev7Il1e8iPjzitj
-         ACIMLxaL3g54v5+NdCUoYROafrWbk1/4CuM2F7is+WDvJ5Dymj0XkNewFf97ORPB4qes
-         8zLxaG7CfjCkxuSSOW3ZH9Jc+5ViRt1lb7rGsa3wANXmOSw2XDBvLSTlJqJKVFvBDaB2
-         b2Ng==
-X-Gm-Message-State: ACgBeo0x2pSKfDoiI0d4KYAP6/6Ji4JdWcG5m012UxKIo3JEw/hFPAeu
-        xwvVsSgHfL3ImMu1DfbGarYxgJ/UHXN6OpS3XTM=
-X-Google-Smtp-Source: AA6agR4UMfgaIkG2vGC2aly7nyNTuJKjT8PVOEv/c5wpoMmCkLfZKnsuheo1q1QgXeiZatP0AjQUB2zVifFAsos8OTE=
-X-Received: by 2002:a05:622a:40a:b0:343:77ba:727f with SMTP id
- n10-20020a05622a040a00b0034377ba727fmr28567765qtx.481.1662125992956; Fri, 02
- Sep 2022 06:39:52 -0700 (PDT)
+        with ESMTP id S236470AbiIBOVg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 10:21:36 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA451131DEE;
+        Fri,  2 Sep 2022 06:47:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1662126455; x=1693662455;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=jEoEzGR/2pqAx8fVHLpN9lwBLnTKIJh5Zhp/P7sSGGg=;
+  b=2hAeYQrOJkamDYOp65XMt9IbJNnZsdXQ2fPFNGd2FZSn0xnunKVRsk3C
+   RIWRjbbrdUnyScdDv+14rjMLaOg7cN20ivQ1O2D523jO/BurezMZt/f8H
+   07lxN4jsWbgtgl6kJrkaBmqe/xCpA5HRhOv8IgL9S1JNX4xLkk3zNYEFC
+   +q8SnHgsSarEeu4msZdTJGevxjVrUmeKg4AVY3Ca8E7R+5AF3laoTY/Oh
+   Z5SPb7oX/f/G3ZW1kexTPG9SBKrhK5A5TP9Qs6r3JagTe4Z75lvVZelGn
+   ouitc5ipM/4qT+cMz4vtStuD6y3tj432nEQ3liNXqsCdIAbJbkzw0bRwI
+   g==;
+X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
+   d="scan'208";a="172132011"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Sep 2022 05:40:23 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Fri, 2 Sep 2022 05:40:22 -0700
+Received: from soft-dev3-1.microsemi.net (10.10.115.15) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.12 via Frontend Transport; Fri, 2 Sep 2022 05:40:21 -0700
+From:   Horatiu Vultur <horatiu.vultur@microchip.com>
+To:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <UNGLinuxDriver@microchip.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>
+Subject: [PATCH] pinctrl: ocelot: Fix interrupt controller
+Date:   Fri, 2 Sep 2022 14:43:54 +0200
+Message-ID: <20220902124354.630826-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-References: <YxC5eZjGgd8xguDr@shell.armlinux.org.uk> <E1oTkeb-003t9e-Iy@rmk-PC.armlinux.org.uk>
- <CAHp75VcG5E+yTH2hG2CbnArsm+ZJ-sWRMmM-wLks0xUJkwSgcg@mail.gmail.com>
- <YxHVdjYPlIINZ/Wc@shell.armlinux.org.uk> <CAHp75VeO3gxypRTUc9Subvh+NZ7X4_RR=eFUZpPNwBeWk+_ipg@mail.gmail.com>
- <YxHp6CNhlQ5Hx1m8@shell.armlinux.org.uk>
-In-Reply-To: <YxHp6CNhlQ5Hx1m8@shell.armlinux.org.uk>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 2 Sep 2022 16:39:16 +0300
-Message-ID: <CAHp75Vd-hT3Z-TUCG3y872_Y7sPAW2QBGC28S7aimOf3WQHg6A@mail.gmail.com>
-Subject: Re: [PATCH 5/6] gpio: Add new gpio-macsmc driver for Apple Macs
-To:     "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        asahi@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Hector Martin <marcan@marcan.st>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sven Peter <sven@svenpeter.dev>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 2, 2022 at 2:33 PM Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
-> On Fri, Sep 02, 2022 at 01:37:14PM +0300, Andy Shevchenko wrote:
-> > On Fri, Sep 2, 2022 at 1:05 PM Russell King (Oracle)
-> > <linux@armlinux.org.uk> wrote:
-> > > On Thu, Sep 01, 2022 at 09:55:23PM +0300, Andy Shevchenko wrote:
-> > > > > +static int macsmc_gpio_nr(smc_key key)
-> > > > > +{
-> > > > > +       int low = hex_to_bin(key & 0xff);
-> > > > > +       int high = hex_to_bin((key >> 8) & 0xff);
-> > > > > +
-> > > > > +       if (low < 0 || high < 0)
-> > > > > +               return -1;
-> > > > > +
-> > > > > +       return low | (high << 4);
-> > > > > +}
-> > > >
-> > > > NIH hex2bin().
-> > >
-> > > Is using hex2bin really better?
-> >
-> > Yes.
-> >
-> > > static int macsmc_gpio_nr(smc_key key)
-> > > {
-> > >         char k[2];
-> > >         u8 result;
-> > >         int ret;
-> > >
-> > >         k[0] = key;
-> > >         k[1] = key >> 8;
-> > >
-> > >         ret = hex2bin(&result, k, 2);
-> > >         if (ret < 0)
-> > >                 return ret;
-> > >
-> > >         return result;
-> > > }
-> > >
-> > > This looks to me like it consumes more CPU cycles - because we have to
-> > > write each "character" to the stack, then call a function, only to then
-> > > call the hex_to_bin() function. One can't just pass "key" into hex2bin
-> > > because that will bring with it endian issues.
-> >
-> > With one detail missed, why do you need all that if you can use
-> > byteorder helpers()? What's the stack? Just replace this entire
-> > function with the respectful calls to hex2bin().
->
-> Sorry, I don't understand what you're suggesting, because it doesn't
-> make sense to me. The byteorder helpers do not give a char array, which
-> is what hex2bin() wants, so we end up with something like:
->
->         __le16 foo = cpu_to_le16(key);
->         u8 result;
->
->         ret = hex2bin(&result, (char *)&foo, 1);
->         if (ret < 0)
->                 return ret;
->
->         return result;
->
-> This to me looks like yucky code, It still results in "foo" having to
-> be on the stack, because the out-of-line hex2bin() requires a pointer
-> to be passed as the second argument.
->
-> Maybe you could provide an example of what you're thinking of, because
-> I'm at a loss to understand what you're thinking this should look like.
+When an external device generated a level based interrupt then the
+interrupt controller could miss the interrupt. The reason is that the
+interrupt controller can detect only link changes.
 
-So, let's look into the real callers to see, oh wait, it's a single caller!
-Why can't you simply do
+In the following example, if there is a PHY that generates an interrupt
+then the following would be happen. The GPIO detected that the interrupt
+line changed, and then the 'ocelot_irq_handler' will be called. Here it
+detects which GPIO line seen the change and for that will call the
+following:
+1. irq_mask
+2. phy interrupt routine
+3. irq_eoi
+4. irq_unmask
 
-         ret = hex2bin(&result, (char *)&cpu_to_le16(key), 1);
-         if (ret < 0)
-                 return ret;
+And this works fine for simple cases, but if the PHY generates many
+interrupts, for example when doing PTP timestamping, then the following
+could happen. Again the function 'ocelot_irq_handler' will be called
+and then from here the following could happen:
+1. irq_mask
+2. phy interrupt routine
+3. irq_eoi
+4. irq_unmask
 
-in-place there?
+Right before step 3(irq_eoi), the PHY will generate another interrupt.
+Now the interrupt controller will acknowledge the change in the
+interrupt line. So we miss the interrupt.
 
+A solution will be to use 'handle_level_irq' instead of
+'handle_fasteoi_irq', because for this will change routine order of
+handling the interrupt.
+1. irq_mask
+2. irq_ack
+3. phy interrupt routine
+4. irq_unmask
+
+And now if the PHY will generate a new interrupt before irq_unmask, the
+interrupt controller will detect this because it already acknowledge the
+change in interrupt line at step 2(irq_ack).
+
+But this is not the full solution because there is another issue. In
+case there are 2 PHYs that shared the interrupt line. For example phy1
+generates an interruot, then the following can happen:
+1.irq_mask
+2.irq_ack
+3.phy0 interrupt routine
+4.phy1 interrupt routine
+5.irq_unmask
+
+In case phy0 will generate an interrupt while clearing the interrupt
+source in phy1, then the interrupt line will be kept down by phy0. So
+the interrupt controller will not see any changes in the interrupt line.
+The solution here is to update 'irq_unmask' such that it can detect if
+the interrupt line is still active or not. And if it is active then call
+again the procedure to clear the interrupts. But we don't want to do it
+every time, only if we know that the interrupt controller have not seen
+already that the interrupt line has changed.
+
+While at this, add support also for IRQ_TYPE_LEVEL_LOW.
+
+Fixes: be36abb71d878f ("pinctrl: ocelot: add support for interrupt controller")
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+---
+ drivers/pinctrl/pinctrl-ocelot.c | 93 ++++++++++++++++++++++++++++----
+ 1 file changed, 84 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index c5fd154990c8..ae734345c606 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -338,6 +338,11 @@ struct ocelot_match_data {
+ 	struct ocelot_pincfg_data pincfg_data;
+ };
+ 
++struct ocelot_irq_work {
++	struct work_struct irq_work;
++	struct irq_desc *irq_desc;
++};
++
+ #define LUTON_P(p, f0, f1)						\
+ static struct ocelot_pin_caps luton_pin_##p = {				\
+ 	.pin = p,							\
+@@ -1813,6 +1818,77 @@ static void ocelot_irq_mask(struct irq_data *data)
+ 	gpiochip_disable_irq(chip, gpio);
+ }
+ 
++static void ocelot_irq_work(struct work_struct *work)
++{
++	struct ocelot_irq_work *w = container_of(work, struct ocelot_irq_work, irq_work);
++	struct irq_chip *parent_chip = irq_desc_get_chip(w->irq_desc);
++	struct gpio_chip *chip = irq_desc_get_chip_data(w->irq_desc);
++	struct irq_data *data = irq_desc_get_irq_data(w->irq_desc);
++	unsigned int gpio = irqd_to_hwirq(data);
++
++	local_irq_disable();
++	chained_irq_enter(parent_chip, w->irq_desc);
++	generic_handle_domain_irq(chip->irq.domain, gpio);
++	chained_irq_exit(parent_chip, w->irq_desc);
++	local_irq_enable();
++
++	kfree(w);
++}
++
++static void ocelot_irq_unmask_level(struct irq_data *data)
++{
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
++	struct ocelot_pinctrl *info = gpiochip_get_data(chip);
++	struct irq_desc *desc = irq_data_to_desc(data);
++	unsigned int gpio = irqd_to_hwirq(data);
++	bool ack = false, active = false;
++	u8 trigger_level = IRQ_TYPE_NONE;
++	int val;
++
++	/*
++	 * It is enough to read only one action because the trigger level is the
++	 * same for all of them.
++	 */
++	if (desc->action)
++		trigger_level = desc->action->flags & IRQ_TYPE_SENSE_MASK;
++
++	/* Check if the interrupt line is still active */
++	regmap_read(info->map, REG(OCELOT_GPIO_IN, info, gpio), &val);
++	if ((!(val & BIT(gpio % 32)) && trigger_level == IRQ_TYPE_LEVEL_LOW) ||
++	      (val & BIT(gpio % 32) && trigger_level == IRQ_TYPE_LEVEL_HIGH))
++		active = true;
++
++	/*
++	 * Check if the interrupt controller has seen any changes in the
++	 * interrupt line
++	 */
++	regmap_read(info->map, REG(OCELOT_GPIO_INTR, info, gpio), &val);
++	if (val & BIT(gpio % 32))
++		ack = true;
++
++	/* Enable the interrupt now */
++	gpiochip_enable_irq(chip, gpio);
++	regmap_update_bits(info->map, REG(OCELOT_GPIO_INTR_ENA, info, gpio),
++			   BIT(gpio % 32), BIT(gpio % 32));
++
++	/*
++	 * In case the interrupt line is still active and the interrupt
++	 * controller has not seen any changes in the interrupt line, then it
++	 * means that there happen another interrupt while the line was active.
++	 * So we missed that one, so we need to kick again the interrupt handler
++	 */
++	if (active && !ack) {
++		struct ocelot_irq_work *work = kmalloc(sizeof(*work), GFP_ATOMIC);
++
++		if (!work)
++			return;
++
++		work->irq_desc = desc;
++		INIT_WORK(&work->irq_work, ocelot_irq_work);
++		queue_work(system_wq, &work->irq_work);
++	}
++}
++
+ static void ocelot_irq_unmask(struct irq_data *data)
+ {
+ 	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
+@@ -1836,13 +1912,12 @@ static void ocelot_irq_ack(struct irq_data *data)
+ 
+ static int ocelot_irq_set_type(struct irq_data *data, unsigned int type);
+ 
+-static struct irq_chip ocelot_eoi_irqchip = {
++static struct irq_chip ocelot_level_irqchip = {
+ 	.name		= "gpio",
+ 	.irq_mask	= ocelot_irq_mask,
+-	.irq_eoi	= ocelot_irq_ack,
+-	.irq_unmask	= ocelot_irq_unmask,
+-	.flags          = IRQCHIP_EOI_THREADED | IRQCHIP_EOI_IF_HANDLED |
+-			  IRQCHIP_IMMUTABLE,
++	.irq_ack	= ocelot_irq_ack,
++	.irq_unmask	= ocelot_irq_unmask_level,
++	.flags		= IRQCHIP_IMMUTABLE,
+ 	.irq_set_type	= ocelot_irq_set_type,
+ 	GPIOCHIP_IRQ_RESOURCE_HELPERS
+ };
+@@ -1861,12 +1936,12 @@ static int ocelot_irq_set_type(struct irq_data *data, unsigned int type)
+ {
+ 	type &= IRQ_TYPE_SENSE_MASK;
+ 
+-	if (!(type & (IRQ_TYPE_EDGE_BOTH | IRQ_TYPE_LEVEL_HIGH)))
++	if (type == IRQ_TYPE_NONE)
+ 		return -EINVAL;
+ 
+-	if (type & IRQ_TYPE_LEVEL_HIGH)
+-		irq_set_chip_handler_name_locked(data, &ocelot_eoi_irqchip,
+-						 handle_fasteoi_irq, NULL);
++	if (type & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW))
++		irq_set_chip_handler_name_locked(data, &ocelot_level_irqchip,
++						 handle_level_irq, NULL);
+ 	if (type & IRQ_TYPE_EDGE_BOTH)
+ 		irq_set_chip_handler_name_locked(data, &ocelot_irqchip,
+ 						 handle_edge_irq, NULL);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.33.0
+
