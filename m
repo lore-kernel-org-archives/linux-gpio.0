@@ -2,157 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D39BC38145
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 12:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D2CECAAD5
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 13:23:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235485AbiIBMA5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 08:00:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39872 "EHLO
+        id S236772AbiIBNXN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 09:23:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235614AbiIBMAw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 08:00:52 -0400
-Received: from new4-smtp.messagingengine.com (new4-smtp.messagingengine.com [66.111.4.230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CBF932EE9;
-        Fri,  2 Sep 2022 05:00:48 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 05520580E63;
-        Fri,  2 Sep 2022 08:00:45 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute3.internal (MEProxy); Fri, 02 Sep 2022 08:00:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm1; t=1662120045; x=1662123645; bh=ZOo52ojNLD
-        +QQW1owuGlJGIJHO9inLm8ClF8VUiGMYc=; b=Q5LypI9JctwwOK78feEceNVi9z
-        mxfNcLR/Jr4MB9NTHeYJiHLefznX6HqRh6CiZvo1s/eRDzJ670NSZN2e2i+Fc7t/
-        ZdFzJtd0Ct06j6/lCrkdTQuc7BEdm0b726E16z+A38p/+rOnXKPeMSAnC7pozGyS
-        6LHwx11Ik1NmqfJlvPhWnbaw5ebEDvsbNdMkZN8g4WOrGEsqQWCRtu6Nc+KKLiho
-        MkqZpq7U0aQ2IjWx4UFJNZkc169bO+S4kLlj7u9QlxTpC3Q48s5HY7A4wJHVAWsN
-        uviiLlU190bmFHfBqdbNuWPA9Bl/oorH0qcnJRzDoDZTEOzV99ax1d6g+CXQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        i56a14606.fm1; t=1662120045; x=1662123645; bh=ZOo52ojNLD+QQW1owu
-        GlJGIJHO9inLm8ClF8VUiGMYc=; b=RiVPKGcUZp5HCdJHIyJkhIwH94i5ibwBiY
-        oIFBEtvkT5pEFqhCw8suvvo7zv+tFQylSuIgMGfzqvRjfMsr09J8LJ25TAG4A1Og
-        ZvgL5Yawofqm5gp1rqdKtCSfr5Y6feD3oZ+Xcs2wJcvV9YKY7FblBQlDZYdj18F+
-        ieBUJRAGKot6vy/iMUWaAxvCiXfr7dD2j3nweX3d+fo89N6tfjQufBXjRjzYiNr0
-        0swaOd8oblHwLSMK5LzNxEFrmHggOx0jKAYA/QZ0/nnsRPklrgz1CDkNYwUqhZ6h
-        D8bKPP++xX+JoFHh4uBKaHJJsbmr46Yeuoj//lmBLDDq0srXLCQQ==
-X-ME-Sender: <xms:avARY_2heRUfPqzyIL4IWlfH7Os1mu-7k3xmipOo1apEBOFrm-xOow>
-    <xme:avARY-FihW90435Acqlsl7wZZKrtjU8wiT0q7xaxcnUAkZrAyt6HpLLPkSJC6ooLC
-    mqW6FTXNKxnVPxQyG4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdeltddggeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:avARY_6XbY9hs3wScqe1qqj7Xf1BthXQwtKpnCrpx_-P-A-QUs9BXA>
-    <xmx:avARY01XQy-i_4phqIgYyyKTukNtLkEINc--1WuLQR9mcTJtQQDpKA>
-    <xmx:avARYyEeWx3R73AJIrsgUSWMqyoneyLQ7lQOaM1kr4Pu7SL78CqP4g>
-    <xmx:bPARYyKt9OEaSeHAoGO_VplbOvjcsP71GId8kxYOMELNnqTZReQByw>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 83F4AB60083; Fri,  2 Sep 2022 08:00:42 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-841-g7899e99a45-fm-20220811.002-g7899e99a
-Mime-Version: 1.0
-Message-Id: <254b7b9d-72b7-4b3a-821a-51a2745ebac5@www.fastmail.com>
-In-Reply-To: <CAHp75VfF78rWpC6+i2Hu6-PMULFeFMbqXhBVRkx5aFGFTU3U4A@mail.gmail.com>
-References: <cover.1661789204.git.christophe.leroy@csgroup.eu>
- <abb46a587b76d379ad32d53817d837d8a5fea8bd.1661789204.git.christophe.leroy@csgroup.eu>
- <CAHp75VcngRihpfUkeKs-g+TbPnpOsZ+-Q37zDVoWp8p_2GbSvQ@mail.gmail.com>
- <18cda49e-84f0-a806-566a-6e77705e98b3@csgroup.eu>
- <1d548a19-feec-42b9-944d-890d6dde2fb8@www.fastmail.com>
- <CAHp75VfF78rWpC6+i2Hu6-PMULFeFMbqXhBVRkx5aFGFTU3U4A@mail.gmail.com>
-Date:   Fri, 02 Sep 2022 14:00:21 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Andy Shevchenko" <andy.shevchenko@gmail.com>,
-        =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Cc:     "Christophe Leroy" <christophe.leroy@csgroup.eu>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        "Bartosz Golaszewski" <brgl@bgdev.pl>,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>,
-        Keerthy <j-keerthy@ti.com>,
-        "Russell King" <linux@armlinux.org.uk>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        "Dave Hansen" <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Will Deacon" <will@kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-arm Mailing List" <linux-arm-kernel@lists.infradead.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        "Linux Documentation List" <linux-doc@vger.kernel.org>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
-Subject: Re: [PATCH v1 4/8] gpiolib: Get rid of ARCH_NR_GPIOS
-Content-Type: text/plain
+        with ESMTP id S236485AbiIBNW5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 09:22:57 -0400
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5539474E2;
+        Fri,  2 Sep 2022 06:00:18 -0700 (PDT)
+Received: by mail-qt1-x830.google.com with SMTP id x5so1339216qtv.9;
+        Fri, 02 Sep 2022 06:00:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=GaKGM+dpPVOcKQB0I709BWsCafKACGVR73YUNmM0p9M=;
+        b=MzOF0SUMu+LWHqJesHluUKrd/Yms+3BJ4yiX8IZ4kldKwlXIPY6KoRbCzBQ0E9owFd
+         FOSw0LJFW7lY6uNW/5x4vetN/h3aNtuJDktsTt3UxTRjcBEIBqnLW+Hkq5QV7OJWSV4K
+         0ON6XAsbrJLtCVL/5ZilEYsRB7NT3LyKzCjY1RGXUS9kzZmlwR0ZgGBXWCDeyojdnOVs
+         1KUiQMtmLsMbWJ9IE3sCwx6L5p0vlRMSAKSg/Ev1evlOODPx6m+94MdrNxZ8u0qblaQN
+         I/lErX1UA2O/VGKoZLA3AYLgVIFYbMTFI72OWZSTAgWWoJGo07vEfaKmwoGTGCDAGXD0
+         7oUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=GaKGM+dpPVOcKQB0I709BWsCafKACGVR73YUNmM0p9M=;
+        b=z9ld2/Sfz/fn+kvw07RxRqpVlGGTHfpK/s1XNAA3oYybZ5TRflFnMCh43qwa5biHwV
+         QL/6poAGbe9ASOWCKilSFFSnVXiLLmactlI9bM/7CNWNthVNLTKDcvBtK2kcxKcAwueL
+         4VZd9uEDA/yuHDaWm6O8QM9Sy+b8ZbRBjHnW8psyhAXdx+89E1qbC7KT1iroedPp83wR
+         sEXMgMMT7frJTunMh78X2aJPOjeQBfKm+TEN28H3OPrry8TyJnIGGmyuhDZOxfmH8fQu
+         J9kLg1t3dFYgpvzvEn0WyHGfEpG1PPjK2vBFWUrVGFj+nMS/wmiGNdsbCca6I9UuGlvS
+         IL2w==
+X-Gm-Message-State: ACgBeo1hC13jLychm0VHIhMolreLNXNewH2CZIq595+C4KbTRhReI1Za
+        rN1BbK943HSh9X6dUegKjcbrRxWyL0k=
+X-Google-Smtp-Source: AA6agR6ukfEivBRMBVS78MYzMPw2RtR4O1lu1dnKDXXluEBnn1qLr4Sdq/b8RyCi0wQaMU5oUvbymw==
+X-Received: by 2002:ac8:5995:0:b0:343:77a0:7c39 with SMTP id e21-20020ac85995000000b0034377a07c39mr28186140qte.663.1662123450255;
+        Fri, 02 Sep 2022 05:57:30 -0700 (PDT)
+Received: from [10.4.10.38] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
+        by smtp.gmail.com with ESMTPSA id eb2-20020a05620a480200b006b629f86244sm1209868qkb.50.2022.09.02.05.57.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Sep 2022 05:57:28 -0700 (PDT)
+Message-ID: <bb4804c0-04d2-6e0c-b9db-1243828ca515@gmail.com>
+Date:   Fri, 2 Sep 2022 08:56:53 -0400
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.0.2
+Subject: Re: [PATCH v6 00/10] Add support for i.MXRT1170-evk
+Content-Language: en-US
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
+        stefan@agner.ch, daniel.lezcano@linaro.org, tglx@linutronix.de,
+        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
+        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
+        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
+        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
+        cniedermaier@dh-electronics.com, clin@suse.com,
+        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+References: <20220901183343.3188903-1-Mr.Bossman075@gmail.com>
+ <CACRpkdb25ikL4F499NDCrv1kf2FGvJxqDW2wk9GNQCqrbX9kKQ@mail.gmail.com>
+From:   Jesse Taube <mr.bossman075@gmail.com>
+In-Reply-To: <CACRpkdb25ikL4F499NDCrv1kf2FGvJxqDW2wk9GNQCqrbX9kKQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 2, 2022, at 12:52 PM, Andy Shevchenko wrote:
-> On Wed, Aug 31, 2022 at 11:55 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> ...
->
->> drivers/gpio/gpio-adp5520.c:    gc->base = pdata->gpio_start; // unused
->> drivers/gpio/gpio-adp5588.c:            gc->base = pdata->gpio_start; // unused
->> drivers/input/keyboard/adp5588-keys.c:  kpad->gc.base = gpio_data->gpio_start; // unused
->> drivers/input/keyboard/adp5589-keys.c:  kpad->gc.base = gpio_data->gpio_start; // unused
->
-> I believe we should convert them to -1.
 
-This is probably something we should do separately, but a lot of the
-drivers currently don't have support for probing from DT or any other
-firmware interface but rely on platform_data definitions from a
-board file that was never part of the upstream kernel.
 
-We are going to remove a lot more board files early next year,
-and I was hoping to follow up with a treewide cleanup of such
-drivers and remove a lot of them entirely.
+On 9/2/22 04:06, Linus Walleij wrote:
+> On Thu, Sep 1, 2022 at 8:33 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
+> 
+>> This patch contains:
+>> - Update to imxrt_defconfig
+>> - Devicetree
+>> - Clock driver
+>> - Pinctrl driver
+> 
+> No it does not, I already merged that.
+> 
+> I think you should probably split up your series per-subsystem so the
+> clock bindings and changes can be merged separately etc.
+> 
+> Then the DTS files can be added to the ARM SoC tree as a final step.
+> 
+> When you send everything in one bundle like this subsystem maintainers
+> don't know if they can merge e.g. just the clock patches separately
+> and be done with their part (like what I did with pinctrl).
+Do you think its possible to add Docs for Device tree compatibles that 
+aren't added yet?
 
->> drivers/gpio/gpio-dwapb.c:      port->gc.base = pp->gpio_base; // from DT, deprecated
->
-> From board files, since some platforms expect a fixed number for it.
-
->> drivers/gpio/gpio-pca953x.c:    gc->base = chip->gpio_start; // ???? used a lot
->
-> To answer this one needs to go via all board files (most of them ARM
-> 32-bit based) and look, but it means almost the same case as per Intel
-> above: 512-ngpios.
-
-Right, I went through all the board files the other drivers,
-this one just happens to be used more than the others:
-
-arch/arm/mach-davinci/board-da850-evm.c:#include <linux/platform_data/pca953x.h>
-arch/arm/mach-ep93xx/vision_ep9307.c:#include <linux/platform_data/pca953x.h>
-arch/arm/mach-mmp/ttc_dkb.c:#include <linux/platform_data/pca953x.h>
-arch/arm/mach-pxa/cm-x300.c:#include <linux/platform_data/pca953x.h>
-arch/arm/mach-pxa/spitz.c:#include <linux/platform_data/pca953x.h>
-arch/arm/mach-pxa/zeus.c:#include <linux/platform_data/pca953x.h>
-arch/arm/mach-pxa/zylonite_pxa300.c:#include <linux/platform_data/pca953x.h>
-arch/arm/mach-s3c/mach-crag6410.c:#include <linux/platform_data/pca953x.h>
-
-The only ones that have known users though are crag6410
-and vision_ep9307, the other ones will be removed.
-
-Vision-ep9307 has 128 GPIOs total, crag6410 is complicated because it
-many different GPIO controllers in various combinations.
-
->> drivers/pinctrl/renesas/gpio.c: gc->base = pfc->nr_gpio_pins; // ??? don't understand
->
-> I think, w/o looking into the code, that this just guarantees the
-> continuous numbering for all banks (chips) on the platform.
-
-Yes, that seems to be the idea most of the pinctrl drivers.
-
-      Arnd
+Thanks,
+Jesse Taube
+> 
+> Yours.
+> Linus Walleij
