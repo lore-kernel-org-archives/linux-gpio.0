@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D886ECAAD5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DDFDC6FA83
 	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:34:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229837AbiIBSee (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 14:34:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55110 "EHLO
+        id S229594AbiIBSef (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 14:34:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229729AbiIBSeZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:34:25 -0400
+        with ESMTP id S229794AbiIBSe1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:34:27 -0400
 Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B237110D96;
-        Fri,  2 Sep 2022 11:26:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA1B4110D9A;
+        Fri,  2 Sep 2022 11:26:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662143207; x=1693679207;
+  t=1662143208; x=1693679208;
   h=from:to:subject:date:message-id:in-reply-to:references:
    mime-version:content-transfer-encoding;
-  bh=MQdtzzlnd/8Z1I5x7bO0gzZYHKdwVRA8kRquAQW3UtM=;
-  b=BSfLl4RcyGTr0kkX4BRp+oRcjl2v/n3Q2AFMFfgJTSmj6GzFgwJrofpU
-   nbEdDEiDU7p6vd/VDKxT3ojXdev9w7F274hU+k82Hk5QP05YMfokFd8Oc
-   X+JAj3RrowSjwIv6CLyD78ca1Y04ZCQq4dyLz7wMn+NEBGOzvgLpeM0Hv
-   pRc9F/BerFYkT3X/G8j7VrSsSdfNtvI60DtMvVxKOjGB0CFRSYXgkuggQ
-   m8FpnfeI7IrgN4/feTo+WjCSZqG4E5hECx50HLmivB4AmYO+IvEKJrvEH
-   6zKPn9UnzEHuQWQGpdQ26gFQDTk3gDftyCSP2NelW7jjAnpgjow2f4SgA
+  bh=BDT5EmdqjuMJqMI5cl7RV/oDMZZp4jG1VH1Y9bjPvBA=;
+  b=MB6bGupnzcyWew3eYr/XVpYj9RRbYdjIeDZkOnkDw0/lcFbhzXkKq7iI
+   dCW8Lk8q+r4R2+LRf+6/nEpaT+R+gtkSUfz0Gpsl859ym+sBwmGex9Rp2
+   obP5RcHFLy66xqaH4gaNnHu8Bcbcf19/X7FapmzbICcHetE0ztF6Af8DA
+   2fswu0oIiMIJGveoXoNJtFygbKut9XkgLaf0YRnm4vynb8Ujox/VN58zy
+   1tq8Uftl9B+/LUVmw6QiTtJawA3hKLElyufysd4qsSqZg/8NLlIVmN427
+   CViWjDUafHTsScA7F0hFOxAy36DaX1oDBk6qQ6bDuxlpEtGZgMELXsPMy
    w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="296832714"
+X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="296832723"
 X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="296832714"
+   d="scan'208";a="296832723"
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:46 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="615791648"
+   d="scan'208";a="615791657"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 02 Sep 2022 11:26:44 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 02 Sep 2022 11:26:47 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E9A65101; Fri,  2 Sep 2022 21:26:59 +0300 (EEST)
+        id 1F48449F; Fri,  2 Sep 2022 21:27:00 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Patrick Rudolph <patrick.rudolph@9elements.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 03/17] pinctrl: cy8c95x0: Allow most of the registers to be cached
-Date:   Fri,  2 Sep 2022 21:26:36 +0300
-Message-Id: <20220902182650.83098-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 07/17] pinctrl: cy8c95x0: Enable GPIO range
+Date:   Fri,  2 Sep 2022 21:26:40 +0300
+Message-Id: <20220902182650.83098-7-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
 References: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
@@ -56,37 +56,66 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-It's unclear why many of static registers were marked as volatile.
-They are pretty much bidirectional and static in a sense that
-written value is kept there until a new write or chip reset.
-Drop those registers from the list to allow them to be cached.
+Since it's a pin control, GPIO counterpart needs to know the mapping
+between pin numbering and GPIO numbering. Enable this by calling
+gpiochip_add_pin_range() at the chip addition time.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 11 -----------
- 1 file changed, 11 deletions(-)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 521acfdeef38..5ef772d29a36 100644
+index eac8b073e19f..f09311d2d3fa 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -303,17 +303,6 @@ static bool cy8c95x0_volatile_register(struct device *dev, unsigned int reg)
- 	switch (reg) {
- 	case CY8C95X0_INPUT_(0) ... CY8C95X0_INPUT_(7):
- 	case CY8C95X0_INTSTATUS_(0) ... CY8C95X0_INTSTATUS_(7):
--	case CY8C95X0_INTMASK:
--	case CY8C95X0_INVERT:
--	case CY8C95X0_PWMSEL:
--	case CY8C95X0_DIRECTION:
--	case CY8C95X0_DRV_PU:
--	case CY8C95X0_DRV_PD:
--	case CY8C95X0_DRV_ODH:
--	case CY8C95X0_DRV_ODL:
--	case CY8C95X0_DRV_PP_FAST:
--	case CY8C95X0_DRV_PP_SLOW:
--	case CY8C95X0_DRV_HIZ:
- 		return true;
+@@ -801,7 +801,20 @@ static void cy8c95x0_gpio_set_multiple(struct gpio_chip *gc,
+ 	cy8c95x0_write_regs_mask(chip, CY8C95X0_OUTPUT, bits, mask);
+ }
+ 
+-static int cy8c95x0_setup_gpiochip(struct cy8c95x0_pinctrl *chip, int ngpio)
++static int cy8c95x0_add_pin_ranges(struct gpio_chip *gc)
++{
++	struct cy8c95x0_pinctrl *chip = gpiochip_get_data(gc);
++	struct device *dev = chip->dev;
++	int ret;
++
++	ret = gpiochip_add_pin_range(gc, dev_name(dev), 0, 0, chip->tpin);
++	if (ret)
++		dev_err(dev, "failed to add GPIO pin range\n");
++
++	return ret;
++}
++
++static int cy8c95x0_setup_gpiochip(struct cy8c95x0_pinctrl *chip)
+ {
+ 	struct gpio_chip *gc = &chip->gpio_chip;
+ 
+@@ -814,9 +827,10 @@ static int cy8c95x0_setup_gpiochip(struct cy8c95x0_pinctrl *chip, int ngpio)
+ 	gc->set_multiple = cy8c95x0_gpio_set_multiple;
+ 	gc->set_config = cy8c95x0_gpio_set_config;
+ 	gc->can_sleep = true;
++	gc->add_pin_ranges = cy8c95x0_add_pin_ranges;
+ 
+ 	gc->base = -1;
+-	gc->ngpio = ngpio;
++	gc->ngpio = chip->tpin;
+ 
+ 	gc->parent = chip->dev;
+ 	gc->owner = THIS_MODULE;
+@@ -1328,11 +1342,11 @@ static int cy8c95x0_probe(struct i2c_client *client)
+ 			goto err_exit;
  	}
+ 
+-	ret = cy8c95x0_setup_gpiochip(chip, chip->tpin);
++	ret = cy8c95x0_setup_pinctrl(chip);
+ 	if (ret)
+ 		goto err_exit;
+ 
+-	ret = cy8c95x0_setup_pinctrl(chip);
++	ret = cy8c95x0_setup_gpiochip(chip);
+ 	if (ret)
+ 		goto err_exit;
  
 -- 
 2.35.1
