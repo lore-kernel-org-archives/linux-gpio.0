@@ -2,20 +2,20 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D293C6FA81
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A1BC6FA83
 	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 06:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235357AbiIBGEg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 02:04:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36678 "EHLO
+        id S235362AbiIBGEh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 02:04:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234641AbiIBGEf (ORCPT
+        with ESMTP id S235351AbiIBGEf (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 02:04:35 -0400
 Received: from mail-m11873.qiye.163.com (mail-m11873.qiye.163.com [115.236.118.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04C35ACA39;
-        Thu,  1 Sep 2022 23:04:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04AA0ACA04;
+        Thu,  1 Sep 2022 23:04:31 -0700 (PDT)
 Received: from localhost.localdomain (unknown [58.22.7.114])
-        by mail-m11873.qiye.163.com (Hmail) with ESMTPA id C37BA90034F;
+        by mail-m11873.qiye.163.com (Hmail) with ESMTPA id 21A90900489;
         Fri,  2 Sep 2022 14:04:28 +0800 (CST)
 From:   Jianqun Xu <jay.xu@rock-chips.com>
 To:     linus.walleij@linaro.org, heiko@sntech.de
@@ -23,55 +23,33 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org,
         Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH 1/2] dt-bindings: gpio: rockchip: add clock-names
-Date:   Fri,  2 Sep 2022 14:04:25 +0800
-Message-Id: <20220902060426.2980951-2-jay.xu@rock-chips.com>
+Subject: [PATCH 0/2] gpio clock-names
+Date:   Fri,  2 Sep 2022 14:04:24 +0800
+Message-Id: <20220902060426.2980951-1-jay.xu@rock-chips.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220902060426.2980951-1-jay.xu@rock-chips.com>
-References: <20220902060426.2980951-1-jay.xu@rock-chips.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJSktLSjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCGRhJVhhPTx1PH0JNSkwaQ1UTARMWGhIXJB
+        tZV1koWUFJSktLSjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCTkMYVklPSh0dSEMdSE1PGVUTARMWGhIXJB
         QOD1lXWRgSC1lBWU5DVUlJVUxVSkpPWVdZFhoPEhUdFFlBWU9LSFVKSktPSEhVSktLWQY+
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ME06FDo4Mz02SkJRFhoVGUoe
-        TlEaFA9VSlVKTU1JS0JDTU1CT0JCVTMWGhIXVREaAlUDDjsJFBgQVhgTEgsIVRgUFkVZV1kSC1lB
-        WU5DVUlJVUxVSkpPWVdZCAFZQUlPS003Bg++
-X-HM-Tid: 0a82fcccfdd52eafkusnc37ba90034f
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pi46KTo4Hz0xHUIrLCE4GQwe
+        USIKFApVSlVKTU1JS0JDTU1DTEhCVTMWGhIXVREaAlUDDjsJFBgQVhgTEgsIVRgUFkVZV1kSC1lB
+        WU5DVUlJVUxVSkpPWVdZCAFZQUpISEM3Bg++
+X-HM-Tid: 0a82fcccfb432eafkusn21a90900489
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add 'clock-names' to the gpio dt node. so the driver could get clocks by
-a const char id, this patch names the clock-names as
-  - 'bus': the apb clock for cpu to access the gpio controller
-  - 'db': the debounce clock for cpu to set debounce clock rate
+Add 'clock-names' for gpio dt nodes.
 
-Since the old dt nodes may have no clock-names, this patch not make them
-as part of 'required properties'.
+Jianqun Xu (2):
+  dt-bindings: gpio: rockchip: add clock-names
+  arm64: dts: rockchip: rk356x add 'clock-names' for gpio nodes
 
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
----
  .../devicetree/bindings/gpio/rockchip,gpio-bank.yaml        | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk356x.dtsi                    | 5 +++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml b/Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml
-index affd823c881d..d43d4c71bebf 100644
---- a/Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml
-+++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml
-@@ -27,6 +27,12 @@ properties:
-       - description: APB interface clock source
-       - description: GPIO debounce reference clock source
- 
-+  clock-names:
-+    minItems: 1
-+    items:
-+      - const: bus
-+      - const: db
-+
-   gpio-ranges: true
- 
-   gpio-controller: true
 -- 
 2.25.1
 
