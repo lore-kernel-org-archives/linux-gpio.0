@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0836BC6FA89
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D886ECAAD5
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:34:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229779AbiIBSeZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 14:34:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54878 "EHLO
+        id S229837AbiIBSee (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 14:34:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229765AbiIBSeX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:34:23 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D3C3110DA8;
-        Fri,  2 Sep 2022 11:26:50 -0700 (PDT)
+        with ESMTP id S229729AbiIBSeZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:34:25 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B237110D96;
+        Fri,  2 Sep 2022 11:26:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662143210; x=1693679210;
+  t=1662143207; x=1693679207;
   h=from:to:subject:date:message-id:in-reply-to:references:
    mime-version:content-transfer-encoding;
-  bh=Q3WRq63GSFT0VKkdIUx6lAxO0G6NE0E/uC/WGB8UDaY=;
-  b=ghjbht9M2YaZbrD8rBmK7OcQrWf2oNn8Q0ECFw3yNPyzzMpjej6JA5MK
-   oUsEMRSTDe5ujNQD39+FqwLr5QI25WcHVAubuG/miq6VoT8Ugu/TihjfB
-   wrn/lnr6y08VsBW4BtEdNtBVU+ratItxvxQOpQQHsy/0QpGebpE6OBQxC
-   rcTMOkSy6b7BWbMLqRdjrnEztQ6BCrdE5R7ia4yBEy7EulQWHMCf1q6ri
-   ujMiloVjO5jzgSWkWxExNA7XUPzMJxDB3SEcKYEQc8sI8ihZE9NmJ00Ev
-   U4L272aA86jOIIsRfizCyaKHx8ixZxZcpABdKeOtH91fI97yahWq7Fs/B
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="283034556"
+  bh=MQdtzzlnd/8Z1I5x7bO0gzZYHKdwVRA8kRquAQW3UtM=;
+  b=BSfLl4RcyGTr0kkX4BRp+oRcjl2v/n3Q2AFMFfgJTSmj6GzFgwJrofpU
+   nbEdDEiDU7p6vd/VDKxT3ojXdev9w7F274hU+k82Hk5QP05YMfokFd8Oc
+   X+JAj3RrowSjwIv6CLyD78ca1Y04ZCQq4dyLz7wMn+NEBGOzvgLpeM0Hv
+   pRc9F/BerFYkT3X/G8j7VrSsSdfNtvI60DtMvVxKOjGB0CFRSYXgkuggQ
+   m8FpnfeI7IrgN4/feTo+WjCSZqG4E5hECx50HLmivB4AmYO+IvEKJrvEH
+   6zKPn9UnzEHuQWQGpdQ26gFQDTk3gDftyCSP2NelW7jjAnpgjow2f4SgA
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="296832714"
 X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="283034556"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:49 -0700
+   d="scan'208";a="296832714"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:46 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="681373078"
+   d="scan'208";a="615791648"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 02 Sep 2022 11:26:47 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 02 Sep 2022 11:26:44 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 25BC35E4; Fri,  2 Sep 2022 21:27:00 +0300 (EEST)
+        id E9A65101; Fri,  2 Sep 2022 21:26:59 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Patrick Rudolph <patrick.rudolph@9elements.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 08/17] pinctrl: cy8c95x0: Remove device initialization
-Date:   Fri,  2 Sep 2022 21:26:41 +0300
-Message-Id: <20220902182650.83098-8-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 03/17] pinctrl: cy8c95x0: Allow most of the registers to be cached
+Date:   Fri,  2 Sep 2022 21:26:36 +0300
+Message-Id: <20220902182650.83098-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
 References: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
@@ -56,62 +56,38 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Cypress CY8C95x0 chips have an internal EEPROM that defines
-initial configuration. It might be that bootloader or other
-entity wrote the platform related setup into it. Don't override
-it in the driver.
+It's unclear why many of static registers were marked as volatile.
+They are pretty much bidirectional and static in a sense that
+written value is kept there until a new write or chip reset.
+Drop those registers from the list to allow them to be cached.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 28 ----------------------------
- 1 file changed, 28 deletions(-)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index f09311d2d3fa..b09f9485e57d 100644
+index 521acfdeef38..5ef772d29a36 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -1213,30 +1213,6 @@ static int cy8c95x0_setup_pinctrl(struct cy8c95x0_pinctrl *chip)
- 	return 0;
- }
+@@ -303,17 +303,6 @@ static bool cy8c95x0_volatile_register(struct device *dev, unsigned int reg)
+ 	switch (reg) {
+ 	case CY8C95X0_INPUT_(0) ... CY8C95X0_INPUT_(7):
+ 	case CY8C95X0_INTSTATUS_(0) ... CY8C95X0_INTSTATUS_(7):
+-	case CY8C95X0_INTMASK:
+-	case CY8C95X0_INVERT:
+-	case CY8C95X0_PWMSEL:
+-	case CY8C95X0_DIRECTION:
+-	case CY8C95X0_DRV_PU:
+-	case CY8C95X0_DRV_PD:
+-	case CY8C95X0_DRV_ODH:
+-	case CY8C95X0_DRV_ODL:
+-	case CY8C95X0_DRV_PP_FAST:
+-	case CY8C95X0_DRV_PP_SLOW:
+-	case CY8C95X0_DRV_HIZ:
+ 		return true;
+ 	}
  
--static int device_cy8c95x0_init(struct cy8c95x0_pinctrl *chip)
--{
--	DECLARE_BITMAP(ones, MAX_LINE);
--	DECLARE_BITMAP(zeros, MAX_LINE);
--	int ret;
--
--	/* Set all pins to input. This is the POR default. */
--	bitmap_fill(ones, MAX_LINE);
--	ret = cy8c95x0_write_regs_mask(chip, CY8C95X0_DIRECTION, ones, ones);
--	if (ret) {
--		dev_err(chip->dev, "Failed to set pins to input\n");
--		return ret;
--	}
--
--	bitmap_zero(zeros, MAX_LINE);
--	ret = cy8c95x0_write_regs_mask(chip, CY8C95X0_INVERT, zeros, ones);
--	if (ret) {
--		dev_err(chip->dev, "Failed to set polarity inversion\n");
--		return ret;
--	}
--
--	return 0;
--}
--
- static int cy8c95x0_detect(struct i2c_client *client,
- 			   struct i2c_board_info *info)
- {
-@@ -1332,10 +1308,6 @@ static int cy8c95x0_probe(struct i2c_client *client)
- 	bitmap_set(chip->shiftmask, 0, 20);
- 	mutex_init(&chip->i2c_lock);
- 
--	ret = device_cy8c95x0_init(chip);
--	if (ret)
--		goto err_exit;
--
- 	if (client->irq) {
- 		ret = cy8c95x0_irq_setup(chip, client->irq);
- 		if (ret)
 -- 
 2.35.1
 
