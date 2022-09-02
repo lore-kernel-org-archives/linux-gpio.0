@@ -2,148 +2,192 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C67AC38145
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 15:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18736ECAAD5
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 15:19:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235995AbiIBPO6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 11:14:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55316 "EHLO
+        id S236500AbiIBPTP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 11:19:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235685AbiIBPOa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 11:14:30 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC54712BF69
-        for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 07:46:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Vnhk6itStXchDrd7ur2XEWQrry6vGEvEtrt1TIk61yg=; b=tk089JTRyOa+oqUhdUXojRt8gL
-        xezhZ87R40zjZo14rwukT86vLHr252QU0M1feUp0sMU7Ew94ScXENb3VOdty/MeHgs3ESPr9Sid4l
-        chsG1n5fF4lMSIJ3NpzgPe40ERkoPnJTI5M637VwoL/tOD41sDH7hCuKZkdzNAb40ANk/Y8L2EckF
-        igCZewrZDpDyuGyxpW9v2rHlEsIWlKhAell29icgK704vPuKmUxI7uGgBO2468xobeIVjsbDYBaTu
-        XyUiyBqINQi6KZ3BK+IBoPoPPLp0CJRUlcj/R7vKXWRr3EVVdNHSNhlcYi7YyoKR2PfUvLf2/qR/M
-        KC5IpKSQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34068)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1oU7w6-0007c9-AF; Fri, 02 Sep 2022 15:46:22 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1oU7w5-0004Vw-Hy; Fri, 02 Sep 2022 15:46:21 +0100
-Date:   Fri, 2 Sep 2022 15:46:21 +0100
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        asahi@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Hector Martin <marcan@marcan.st>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sven Peter <sven@svenpeter.dev>
-Subject: Re: [PATCH 5/6] gpio: Add new gpio-macsmc driver for Apple Macs
-Message-ID: <YxIXPSZlEBcKYulW@shell.armlinux.org.uk>
-References: <YxC5eZjGgd8xguDr@shell.armlinux.org.uk>
- <E1oTkeb-003t9e-Iy@rmk-PC.armlinux.org.uk>
- <CAHp75VcG5E+yTH2hG2CbnArsm+ZJ-sWRMmM-wLks0xUJkwSgcg@mail.gmail.com>
- <YxHVdjYPlIINZ/Wc@shell.armlinux.org.uk>
- <CAHp75VeO3gxypRTUc9Subvh+NZ7X4_RR=eFUZpPNwBeWk+_ipg@mail.gmail.com>
- <YxHp6CNhlQ5Hx1m8@shell.armlinux.org.uk>
- <CAHp75Vd-hT3Z-TUCG3y872_Y7sPAW2QBGC28S7aimOf3WQHg6A@mail.gmail.com>
+        with ESMTP id S236943AbiIBPSt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 11:18:49 -0400
+Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8403147EB0;
+        Fri,  2 Sep 2022 07:51:52 -0700 (PDT)
+Received: by mail-qv1-xf32.google.com with SMTP id jy14so1559103qvb.12;
+        Fri, 02 Sep 2022 07:51:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=CtCUtbyEWpfB5jQ909qB3n/ir4ZwsxY4gByY85AERlg=;
+        b=gPEEKL/tgOHnlyna/FNpmm347tjxzmF1a1IeVz42B6gF2Ujmh40FnFgpR8lzbZowW9
+         phZ5nq5VsyIZ2/mNdOIcqoZSh/WMD7qCfadrBWinnlIjAKGb3meAVAf8jJhQ9IeeH1tI
+         BCyP4+jmuWPI0/AiE3Wk+8xyuzuY1i2fhmGMFevw3w1cVGxmgrucmBxg8lLlhLTxW05c
+         Cdtga+tU25YiC8g24iGNZ4Iv++3FrpmMxybtKtHrj+//3W1GedmPYACqJYmihpZI2cK7
+         +l4PWWotJuCCMZtdXzvT7cSJs7JuWDjAyinnoDgA4R0r2YV0Ez96OC6ey0lJhBDdGwIR
+         5yqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=CtCUtbyEWpfB5jQ909qB3n/ir4ZwsxY4gByY85AERlg=;
+        b=PGPmqRflLlaLsyXy2Y1kyiuglR/WHTN8ZTrWYi1UUlgIniciOeTwnX9mTw6F0LnJcg
+         xvpDCWME6+j0/eQcWTsGfYhDKhnLllxg6yDQiE4xAV89zGjIqTY+dZ35yCl3Z7MAaJ/m
+         vB7/xU8gmmVCCgQ4hWdoz3R112Wnmo68ckqpZqCoRvUZ8DNdrD3pewiQLtEKJRmn24I7
+         /UbLYlQMkKmoHKdLacc/lyThFLYIiHm/D6FUoEy7K4cIea+cJ3qT2XtnMlbMg8748lyC
+         Iyz84xjmy7xBXEHanbMjFrk5aQudnIIogJqP+Pw6VT7kpgannS7jSofWLj98PiJ03pAr
+         TBhw==
+X-Gm-Message-State: ACgBeo1WyICsXosJRhoHXptihLuUDo0EW54hE57NBb1VvaEfKsB23MbO
+        Mub1y5Em+q255+tcIsO6D9PbRfnxtQFkNyAW6EI=
+X-Google-Smtp-Source: AA6agR7nJZO8ZswNlfltRIaeZ+DlNe0yYud3zZb6aTqIBYFpFDbIHe3ZrOAOLBr+6LqOY4mMXWntX61heZvB8ZT1cbg=
+X-Received: by 2002:a05:6214:27ca:b0:499:95f:6379 with SMTP id
+ ge10-20020a05621427ca00b00499095f6379mr20131343qvb.82.1662130310778; Fri, 02
+ Sep 2022 07:51:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vd-hT3Z-TUCG3y872_Y7sPAW2QBGC28S7aimOf3WQHg6A@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20220902124354.630826-1-horatiu.vultur@microchip.com>
+In-Reply-To: <20220902124354.630826-1-horatiu.vultur@microchip.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 2 Sep 2022 17:51:14 +0300
+Message-ID: <CAHp75Ve7EkE3q3_nOvT_KLmpmnXzMw179nbOxYEYzUeLY0QRnw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: ocelot: Fix interrupt controller
+To:     Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 02, 2022 at 04:39:16PM +0300, Andy Shevchenko wrote:
-> On Fri, Sep 2, 2022 at 2:33 PM Russell King (Oracle)
-> <linux@armlinux.org.uk> wrote:
-> > On Fri, Sep 02, 2022 at 01:37:14PM +0300, Andy Shevchenko wrote:
-> > > On Fri, Sep 2, 2022 at 1:05 PM Russell King (Oracle)
-> > > <linux@armlinux.org.uk> wrote:
-> > > > On Thu, Sep 01, 2022 at 09:55:23PM +0300, Andy Shevchenko wrote:
-> > > > > > +static int macsmc_gpio_nr(smc_key key)
-> > > > > > +{
-> > > > > > +       int low = hex_to_bin(key & 0xff);
-> > > > > > +       int high = hex_to_bin((key >> 8) & 0xff);
-> > > > > > +
-> > > > > > +       if (low < 0 || high < 0)
-> > > > > > +               return -1;
-> > > > > > +
-> > > > > > +       return low | (high << 4);
-> > > > > > +}
-> > > > >
-> > > > > NIH hex2bin().
-> > > >
-> > > > Is using hex2bin really better?
-> > >
-> > > Yes.
-> > >
-> > > > static int macsmc_gpio_nr(smc_key key)
-> > > > {
-> > > >         char k[2];
-> > > >         u8 result;
-> > > >         int ret;
-> > > >
-> > > >         k[0] = key;
-> > > >         k[1] = key >> 8;
-> > > >
-> > > >         ret = hex2bin(&result, k, 2);
-> > > >         if (ret < 0)
-> > > >                 return ret;
-> > > >
-> > > >         return result;
-> > > > }
-> > > >
-> > > > This looks to me like it consumes more CPU cycles - because we have to
-> > > > write each "character" to the stack, then call a function, only to then
-> > > > call the hex_to_bin() function. One can't just pass "key" into hex2bin
-> > > > because that will bring with it endian issues.
-> > >
-> > > With one detail missed, why do you need all that if you can use
-> > > byteorder helpers()? What's the stack? Just replace this entire
-> > > function with the respectful calls to hex2bin().
-> >
-> > Sorry, I don't understand what you're suggesting, because it doesn't
-> > make sense to me. The byteorder helpers do not give a char array, which
-> > is what hex2bin() wants, so we end up with something like:
-> >
-> >         __le16 foo = cpu_to_le16(key);
-> >         u8 result;
-> >
-> >         ret = hex2bin(&result, (char *)&foo, 1);
-> >         if (ret < 0)
-> >                 return ret;
-> >
-> >         return result;
-> >
-> > This to me looks like yucky code, It still results in "foo" having to
-> > be on the stack, because the out-of-line hex2bin() requires a pointer
-> > to be passed as the second argument.
-> >
-> > Maybe you could provide an example of what you're thinking of, because
-> > I'm at a loss to understand what you're thinking this should look like.
-> 
-> So, let's look into the real callers to see, oh wait, it's a single caller!
-> Why can't you simply do
-> 
->          ret = hex2bin(&result, (char *)&cpu_to_le16(key), 1);
->          if (ret < 0)
->                  return ret;
-> 
-> in-place there?
+On Fri, Sep 2, 2022 at 3:40 PM Horatiu Vultur
+<horatiu.vultur@microchip.com> wrote:
+>
+> When an external device generated a level based interrupt then the
+> interrupt controller could miss the interrupt. The reason is that the
+> interrupt controller can detect only link changes.
+>
+> In the following example, if there is a PHY that generates an interrupt
+> then the following would be happen. The GPIO detected that the interrupt
 
-This is not legal C. Please can we back up this discussion, and start
-over with legal C suggestions. Thanks.
+would happen
+
+> line changed, and then the 'ocelot_irq_handler' will be called. Here it
+> detects which GPIO line seen the change and for that will call the
+> following:
+> 1. irq_mask
+> 2. phy interrupt routine
+> 3. irq_eoi
+> 4. irq_unmask
+>
+> And this works fine for simple cases, but if the PHY generates many
+> interrupts, for example when doing PTP timestamping, then the following
+> could happen. Again the function 'ocelot_irq_handler' will be called
+> and then from here the following could happen:
+> 1. irq_mask
+> 2. phy interrupt routine
+> 3. irq_eoi
+> 4. irq_unmask
+>
+> Right before step 3(irq_eoi), the PHY will generate another interrupt.
+> Now the interrupt controller will acknowledge the change in the
+> interrupt line. So we miss the interrupt.
+>
+> A solution will be to use 'handle_level_irq' instead of
+> 'handle_fasteoi_irq', because for this will change routine order of
+> handling the interrupt.
+> 1. irq_mask
+> 2. irq_ack
+> 3. phy interrupt routine
+> 4. irq_unmask
+>
+> And now if the PHY will generate a new interrupt before irq_unmask, the
+> interrupt controller will detect this because it already acknowledge the
+> change in interrupt line at step 2(irq_ack).
+>
+> But this is not the full solution because there is another issue. In
+> case there are 2 PHYs that shared the interrupt line. For example phy1
+
+share
+
+> generates an interruot, then the following can happen:
+
+interrupt
+
+> 1.irq_mask
+> 2.irq_ack
+> 3.phy0 interrupt routine
+> 4.phy1 interrupt routine
+> 5.irq_unmask
+>
+> In case phy0 will generate an interrupt while clearing the interrupt
+> source in phy1, then the interrupt line will be kept down by phy0. So
+> the interrupt controller will not see any changes in the interrupt line.
+> The solution here is to update 'irq_unmask' such that it can detect if
+> the interrupt line is still active or not. And if it is active then call
+> again the procedure to clear the interrupts. But we don't want to do it
+> every time, only if we know that the interrupt controller have not seen
+> already that the interrupt line has changed.
+>
+> While at this, add support also for IRQ_TYPE_LEVEL_LOW.
+
+...
+
+> +       /*
+> +        * It is enough to read only one action because the trigger level is the
+> +        * same for all of them.
+> +        */
+
+Hmm... this is interesting. How is the hardware supposed to work if
+the user asks for two contradictory levels for two different IRQs?
+
+...
+
+> +       /*
+> +        * Check if the interrupt controller has seen any changes in the
+> +        * interrupt line
+
+Missed period.
+
+> +        */
+
+...
+
+> +       /*
+> +        * In case the interrupt line is still active and the interrupt
+> +        * controller has not seen any changes in the interrupt line, then it
+> +        * means that there happen another interrupt while the line was active.
+> +        * So we missed that one, so we need to kick again the interrupt handler
+> +        */
+
+Ditto.
+
+...
+
+> +               struct ocelot_irq_work *work = kmalloc(sizeof(*work), GFP_ATOMIC);
+
+It's more visible what's going on if you split this to definition and
+assignment and move assignment closer to its first user.
+
+> +               if (!work)
+> +                       return;
+
+...
+
+>         type &= IRQ_TYPE_SENSE_MASK;
+
+This seems redundant, see below.
+
+
+> -       if (!(type & (IRQ_TYPE_EDGE_BOTH | IRQ_TYPE_LEVEL_HIGH)))
+> +       if (type == IRQ_TYPE_NONE)
+>                 return -EINVAL;
+
+Is it ever possible? IIRC the IRQ chip code, the set->type won't be
+called at all in such a case. Also type is already limited to the
+sense mask, no?
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+With Best Regards,
+Andy Shevchenko
