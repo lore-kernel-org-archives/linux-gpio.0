@@ -2,108 +2,145 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1BE8C38145
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 13:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A88E3C54EE9
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 14:06:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237909AbiIBNwl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 09:52:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46796 "EHLO
+        id S238784AbiIBOGh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 10:06:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237888AbiIBNwO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 09:52:14 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0F5912DA24
-        for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 06:26:34 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id fy31so3881260ejc.6
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Sep 2022 06:26:34 -0700 (PDT)
+        with ESMTP id S238786AbiIBOGR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 10:06:17 -0400
+Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 326F5135BAC
+        for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 06:34:14 -0700 (PDT)
+Received: by mail-qt1-x834.google.com with SMTP id g14so1416186qto.11
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Sep 2022 06:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=ZF/uMwTcnfyz2qEE7xRsLAhPm27QsIK3fVdRMITh1go=;
-        b=mtCXZWdp9QgmrYW++Cea2CEB1DgoyAJM1tlVGEe5YBBxfrhzbIOh++mMUvheALAnUJ
-         qglEpw7YAZAqrT0t19/ZFVIhClLwiJuoc+Gc2atWP13qPCL2scgmjjlzWm+XD5L5t84b
-         pDE519WHl1qfcZnXOQxXEsiQfqsGdayCi14KO0qLt1ZVPU7SLwI0KPFrWqryauaiJf19
-         BxwZTV44yNf/DLXwCaIiwcaftVf4ADpFA8ky6TvhyLS5z7cT3imLS15KDFLk04iJvh8i
-         hK8dmoA99XTyG2NO5reAVYM8gTNza6KFWvKuN3AKeOZjjUvJGrGduYP6puiDVkMG6CSe
-         MzCg==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date;
+        bh=Gkpmi9v/Zg1z+jYmfWZseXaPc8qDinSrvckWTlev+4o=;
+        b=IlnWAH9ba0fxoVhZaboZc38zbbHoqqdVnynDSmCY4zEL5kazQWT1bBY/B9tDawwACF
+         whpMF8OGNY9DED2tGDnAKQRooa00tzkmEhQe7MFlhtcj/U+I5goqgFcBTCzABlWuaA+L
+         qe2DPEsRy+uszsvR1RGMr9hTaK/hOajBBLsSqcoNYWFO8R1//e86h7J8+TVIDpb5izay
+         8Oi1BLNpytRbr6lRpGBY8RmpPIlqsMTLqd23Z5/3MbQnhkQgWpK7oUfgZbA9Zn7oF25B
+         AsKD2EM3D35eB/zYCjxNS3B7Pqgpuz1u/fmGM+OKmc5v/E4lsz2VX+JZLZju2cf4IG4B
+         svHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=ZF/uMwTcnfyz2qEE7xRsLAhPm27QsIK3fVdRMITh1go=;
-        b=pg7ivOAfMlloRnRHQB1m4kmdxGKJOWsISGw8valA9MiUO1NEtoyM9ohpJP5UbmthcU
-         9Hjw4N3X3SWyr3hUye23X6sILD9OOt5aUE3UKqmw3lQaROno/D6mYFdQf2hWy7bBo/yG
-         7FyeZYI9ypjeRfZikIDknUrayAhr7aTFzkgz1bmqxpFhn2O+LCZDQbyf+LMu9BPWYSbn
-         LDZpw571HUtIXkwavL8B99d+Ii3Nf0EWIrLiD9dyXrfLMjILn05ILxhVATRHi2UJYPvp
-         Vp28jyOWIqBCNzjzC5cZUj+RV1IlB+3svHD2w+pbHOlV8GJcpuJHcA2KsLEHw54beAhR
-         eaXg==
-X-Gm-Message-State: ACgBeo1eh721lD0TGMxybmX4ZrSqx1Dp1cnP8EbGRWmdiXDv3Z+dp6Kg
-        ZliL8Lwyvld/MY2RhNr7YnT1nfqbbO6YxTidKK+YWw==
-X-Google-Smtp-Source: AA6agR6uVeydIrFZMSXhTDDYS4+Yng+f3hQTQnzA1QcrBi8I6dCnkKtn5QHHr9QNmRCaKQoIFPtEWdFKnqttE3hhFYA=
-X-Received: by 2002:a17:907:1c89:b0:741:4453:75be with SMTP id
- nb9-20020a1709071c8900b00741445375bemr21506072ejc.208.1662125177323; Fri, 02
- Sep 2022 06:26:17 -0700 (PDT)
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=Gkpmi9v/Zg1z+jYmfWZseXaPc8qDinSrvckWTlev+4o=;
+        b=2IYXGKxpoCyvWj2k1W2yqIxpDe1fY2d9kBjZqdEKgwm8vHrocdaU7WlLHtqDoTQAWr
+         pUo2Y+fa5INIODMh20mjY5bQeVUo3Ptp3a3D6uUEylg+A/PlTamOOmfKL1vHn9Ju02tv
+         1uaM3tfq5+pYBUF0cQ6XIfBi0rtoWk/xs0MlPuStF5H/pDWE8d6E/c1N2oeT67HaAPDv
+         3zooRC4UwtQbJ/AZ515ImBNEsBQjohgtPa6/mIFKwP9G11B4xtm4q3SmOUy7dsIhdd3P
+         wb0ZHTK1nU5oTS7cb5tiuUaiFLzOXgWEYQEV60t3S/i4vEDfHGRqWgULG3BcdVJby3XQ
+         b5Jg==
+X-Gm-Message-State: ACgBeo1lE8mgdIF9s27ydjOJKkSmvrUYav2iSY1532CVieSVn0mJv1XV
+        OYZPvErrVSjugCbztmV0j9ELxcXpfIkr7DItwxc=
+X-Google-Smtp-Source: AA6agR70JafKl8vd6yqzpSoneLWMOadRHZ7KK1Dfyex2M1IYykk+PqGzJOo7e4Fu15BAshv/O2UboAIo6utt735Vdmk=
+X-Received: by 2002:ac8:5786:0:b0:343:3051:170d with SMTP id
+ v6-20020ac85786000000b003433051170dmr28009819qta.429.1662125651651; Fri, 02
+ Sep 2022 06:34:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220901183343.3188903-1-Mr.Bossman075@gmail.com>
- <CACRpkdb25ikL4F499NDCrv1kf2FGvJxqDW2wk9GNQCqrbX9kKQ@mail.gmail.com> <bb4804c0-04d2-6e0c-b9db-1243828ca515@gmail.com>
-In-Reply-To: <bb4804c0-04d2-6e0c-b9db-1243828ca515@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 2 Sep 2022 15:26:06 +0200
-Message-ID: <CACRpkdZwkhvM7JGeisdAyh4Bg2hx5E+dSG89Psb=13hD+wkjoQ@mail.gmail.com>
-Subject: Re: [PATCH v6 00/10] Add support for i.MXRT1170-evk
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
-        stefan@agner.ch, daniel.lezcano@linaro.org, tglx@linutronix.de,
-        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
-        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
-        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
-        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
-        cniedermaier@dh-electronics.com, clin@suse.com,
-        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+References: <YxC5eZjGgd8xguDr@shell.armlinux.org.uk> <E1oTkeb-003t9e-Iy@rmk-PC.armlinux.org.uk>
+ <CAHp75VcG5E+yTH2hG2CbnArsm+ZJ-sWRMmM-wLks0xUJkwSgcg@mail.gmail.com>
+ <FEE9F7AE-B324-4426-AB26-17BDF30CFC91@cutebit.org> <CAHp75Vd8-mOuJvr=PRKjVKbz0SM9hPe39rEcraOMJFYtrwHjng@mail.gmail.com>
+ <3B649A66-8116-432D-B88A-B5CE493EF930@cutebit.org> <CAHp75VeB3_sZ2vsSxMSsLeJSkyemDh9iOPHXJCN1mhodA13LNQ@mail.gmail.com>
+ <E753B391-D2CB-4213-AF82-678ADD5A7644@cutebit.org>
+In-Reply-To: <E753B391-D2CB-4213-AF82-678ADD5A7644@cutebit.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 2 Sep 2022 16:33:35 +0300
+Message-ID: <CAHp75VdstDxcZ96d3XD=k8_q2oP3UvoL+QV-27BxWFyALWJ_QQ@mail.gmail.com>
+Subject: Re: [PATCH 5/6] gpio: Add new gpio-macsmc driver for Apple Macs
+To:     =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik@cutebit.org>
+Cc:     Lee Jones <lee@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        asahi@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Hector Martin <marcan@marcan.st>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sven Peter <sven@svenpeter.dev>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 2, 2022 at 2:57 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
-> On 9/2/22 04:06, Linus Walleij wrote:
-> > On Thu, Sep 1, 2022 at 8:33 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
+On Fri, Sep 2, 2022 at 2:12 PM Martin Povi=C5=A1er <povik@cutebit.org> wrot=
+e:
+> > On 2. 9. 2022, at 12:23, Andy Shevchenko <andy.shevchenko@gmail.com> wr=
+ote:
+> > On Fri, Sep 2, 2022 at 12:47 PM Martin Povi=C5=A1er <povik@cutebit.org>=
+ wrote:
+> >>> On 2. 9. 2022, at 8:31, Andy Shevchenko <andy.shevchenko@gmail.com> w=
+rote:
+> >>> On Fri, Sep 2, 2022 at 12:52 AM Martin Povi=C5=A1er <povik@cutebit.or=
+g> wrote:
+
+...
+
+> >>> I don't see why we need that. The %.4s (0x%08x) is repeating that wit=
+h
+> >>> the existing codebase. (I do understand why v4l2/drm have it). Ideall=
+y
+> >>> the first should use %4pE, but it might not be suitable in some cases=
+.
+> >>
+> >> Just from a superficial understanding of things: %p4ch on little-endia=
+n
+> >> will print in a reversed order to %.4s. As I see it the handling of
+> >> endianness is the value proposition of the new specifiers.
 > >
-> >> This patch contains:
-> >> - Update to imxrt_defconfig
-> >> - Devicetree
-> >> - Clock driver
-> >> - Pinctrl driver
-> >
-> > No it does not, I already merged that.
-> >
-> > I think you should probably split up your series per-subsystem so the
-> > clock bindings and changes can be merged separately etc.
-> >
-> > Then the DTS files can be added to the ARM SoC tree as a final step.
-> >
-> > When you send everything in one bundle like this subsystem maintainers
-> > don't know if they can merge e.g. just the clock patches separately
-> > and be done with their part (like what I did with pinctrl).
+> > So, what prevents you from adding this to %pE?
+> > The preferred way is not adding a specifier for a single user with a
+> > particular case, esp. when it's covered by the existing ones.
 >
-> Do you think its possible to add Docs for Device tree compatibles that
-> aren't added yet?
+> Adding the endianness conversion into %pE as, ehm, an =E2=80=98escaping f=
+lag=E2=80=99?
+> If you think that would be accepted...
+>
+> I guess this was added on the assumption that keys like this will
+> be a common occurrence in interaction with Apple firmware. Though
+> greping the =E2=80=98asahi=E2=80=99 staging tree for =E2=80=98%p4ch=E2=80=
+=99 I only see it in the
+> SMC code (9 times):
+>
+> ./drivers/power/reset/macsmc-reboot.c
+> ./drivers/platform/apple/smc_core.c
+> ./drivers/gpio/gpio-macsmc.c
 
-Bindings and drivers are orthogonal, we only submit them together
-to provide context for reviewers.
+> >> %p4ch - interpret as an u32, print the character in most significant b=
+yte first
+> >
+> > %.4s + be32_to_cpu()
+>
+> Well, AIUI instead of
+>
+>   printk(=E2=80=9C%p4ch =3D ...\n=E2=80=9D, &key);
+>
+> you need to do
+>
+>   u32 key_be =3D cpu_to_be32(key);
+>   printk(=E2=80=9C%.4s =3D ...\n=E2=80=9D, &key_be);
+>
+> in at least 9 places now, the number of which will probably grow.
+> Just to make the case for *some* printk helper.
 
-It is also possible to submit device trees with compatibles and entire
-nodes without bindings because there essentially is no real police for
-this. Of course it is not recommended.
+Wouldn't this be one line
 
-If you are confident that bindings and device trees will come in the
-same merge window it is fine to merge them separately through different
-trees.
+  printk(=E2=80=9C%.4s =3D ...\n=E2=80=9D, &cpu_to_be32(key));
 
-Yours,
-Linus Walleij
+?
+
+So I don't see disadvantages right now. Later on we can consider a new
+specifier _separately_, otherwise this series would be dragging for no
+sense.
+
+--=20
+With Best Regards,
+Andy Shevchenko
