@@ -2,131 +2,86 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDFEECAAA1
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 21:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 687DEECAAA1
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 21:40:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230365AbiIBVKF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 17:10:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49510 "EHLO
+        id S231219AbiIBVk3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 17:40:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbiIBVKC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 17:10:02 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5024F50720
-        for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 14:09:57 -0700 (PDT)
-Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1oUDvE-0006Uo-0g; Fri, 02 Sep 2022 23:09:52 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Jianqun Xu <jay.xu@rock-chips.com>,
-        Peter Geis <pgwipeout@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-Subject: Re: [PATCH v1 1/3] gpio: rockchip: make gpio work without cru module
-Date:   Fri, 02 Sep 2022 23:09:51 +0200
-Message-ID: <4679451.ZaRXLXkqSa@diego>
-In-Reply-To: <CAMdYzYrJWnkYneEuJ+dA0EU1QiTkBOkGz1+zn=H5rA-qfS88+Q@mail.gmail.com>
-References: <20220901012944.2634398-1-jay.xu@rock-chips.com> <20220901012944.2634398-3-jay.xu@rock-chips.com> <CAMdYzYrJWnkYneEuJ+dA0EU1QiTkBOkGz1+zn=H5rA-qfS88+Q@mail.gmail.com>
+        with ESMTP id S229500AbiIBVk2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 17:40:28 -0400
+Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4000432067
+        for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 14:40:19 -0700 (PDT)
+Received: by mail-qk1-x72f.google.com with SMTP id a15so2758108qko.4
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Sep 2022 14:40:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=+8Ft1mVGdwq0RIV8cOnix7sgy5002RZB61A7qgepDD0=;
+        b=mn6P/pezyV0nyqwkgmNcfOjKB4yTZPoV/I8xuQYyZQxw5Q+xbj8Wlzc25aAbV7FGbK
+         Gx2gniQJ4aSGPujlhqbJrYo3FKsaUfayKjS4DNbASUEB3jX5lP5SydoI0rRVoPi3AoM6
+         aaq1Hc3PgzsRKh4o4JrARzKeFB4JCcQHlT2EZ91ZfzHzrEt1JngdwVtnYI2U1avwpLYA
+         YNj506+cGaphNqnqkgj0PLvVn9qVLuUu00eer0idNvRFRjusoOobTXc2QY7Gj+j/cBIt
+         uzq6fedSpSRGljs5stELZkcDl9XBn1bWAxoTvUmUzeh32fQwS0NC+6qtuUROtZqCplWs
+         wSew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=+8Ft1mVGdwq0RIV8cOnix7sgy5002RZB61A7qgepDD0=;
+        b=j4Ozn8ec7V/axHV6cQB+qhfFx0YPtJ8thUbyaDi6sUOUTRSocdibJLNnpv1FdQQwgB
+         /TwWQuD+2VfR68EX9qw/eNSiNjWToeHlp3cikLT0b3noyIYjdW2c/VptO7Vt8dL5VNY7
+         KIDaBPMkn3Cbi2AQHT293G5cDmDtfQVpuaFHAR89CEFIK4iFzgeGLIcETue9WiVKsW6S
+         UGqzXii7VJWiVTkqhzS8gS8irACE015rngxLGceef5XxR4gBoOq16l5N/gaGwQZu8krb
+         qc2tzmkXCBnvwAUCXuD+bGw8xUpghk6n2+A783Hnby80qLTjLf/ckgl6U17BA72BoX+V
+         WxHw==
+X-Gm-Message-State: ACgBeo2TMEpanKprM4dcbYNtA0vyXRwQwE/oMxQvoSey0V8wuDL0roup
+        p9BzUvThFnArgNiFow3rFz4oOa9krYiQ3g==
+X-Google-Smtp-Source: AA6agR4uJASxNPWEK/cs1v9m6Yj/4v+DmsqZAcam1NqmGYpkOusEcWnxWsFIW0eCeWTXt2L/3brnQg==
+X-Received: by 2002:a05:620a:4114:b0:6bb:33c2:45f9 with SMTP id j20-20020a05620a411400b006bb33c245f9mr24616586qko.374.1662154817936;
+        Fri, 02 Sep 2022 14:40:17 -0700 (PDT)
+Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id 15-20020ac84e8f000000b0031f0b43629dsm1819533qtp.23.2022.09.02.14.40.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Sep 2022 14:40:17 -0700 (PDT)
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     brgl@bgdev.pl, linus.walleij@linaro.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        William Breathitt Gray <william.gray@linaro.org>
+Subject: [PATCH 0/4] Make irq_chip immutable for ISA drivers
+Date:   Fri,  2 Sep 2022 13:45:22 -0400
+Message-Id: <cover.1662140119.git.william.gray@linaro.org>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Am Freitag, 2. September 2022, 20:38:27 CEST schrieb Peter Geis:
-> On Wed, Aug 31, 2022 at 9:30 PM Jianqun Xu <jay.xu@rock-chips.com> wrote:
-> >
-> > In some case the system may has no builtin cru module, the gpio driver
-> > will fail to get periph clock and debounce clock.
-> >
-> > On rockchip SoCs, the pclk and dbg clk are default to be enabled and
-> > ungated, the gpio possible to work without cru module.
-> >
-> > This patch makes gpio work fine without cru module.
-> 
-> What happens if the cru probes later and these clocks become available
-> but aren't claimed so clk_disable_unused shuts them down?
+Kernel warns about mutable irq_chips in ISA drivers:
 
-Also the clock controller for the soc is such a basic component, who
-in their right mind would build a kernel without it and expect anything
-to work.
+    "not an immutable chip, please consider fixing!"
 
-My guess is that is simply hacking around that Android thingy with their
-common kernel but vendors being allowed to move all the "special" code
-to modules. We had this untested cru-module in mainline for a while
-before people found out that the module part seemingly never was
-tested ;-) .
+Make the struct irq_chip const, flag it as IRQCHIP_IMMUTABLE, add the
+new helper functions, and call the appropriate gpiolib functions.
 
-The gpio driver is of course dependent on its clock supply, so hacking
-around that seems really like a very bad idea.
+William Breathitt Gray (4):
+  gpio: 104-dio-48e: Make irq_chip immutable
+  gpio: 104-idi-48: Make irq_chip immutable
+  gpio: 104-idio-16: Make irq_chip immutable
+  gpio: ws16c48: Make irq_chip immutable
+
+ drivers/gpio/gpio-104-dio-48e.c | 10 +++++++---
+ drivers/gpio/gpio-104-idi-48.c  | 10 +++++++---
+ drivers/gpio/gpio-104-idio-16.c | 18 +++++++++++-------
+ drivers/gpio/gpio-ws16c48.c     | 10 +++++++---
+ 4 files changed, 32 insertions(+), 16 deletions(-)
 
 
-Heiko
-
-
-
-> 
-> >
-> > Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
-> > ---
-> >  drivers/gpio/gpio-rockchip.c | 14 +++++++++-----
-> >  1 file changed, 9 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-> > index a4c4e4584f5b..1da0324445cc 100644
-> > --- a/drivers/gpio/gpio-rockchip.c
-> > +++ b/drivers/gpio/gpio-rockchip.c
-> > @@ -195,6 +195,9 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
-> >         unsigned int cur_div_reg;
-> >         u64 div;
-> >
-> > +       if (!bank->db_clk)
-> > +               return -ENOENT;
-> > +
-> >         if (bank->gpio_type == GPIO_TYPE_V2 && !IS_ERR(bank->db_clk)) {
-> >                 div_debounce_support = true;
-> >                 freq = clk_get_rate(bank->db_clk);
-> > @@ -654,8 +657,10 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
-> >                 return -EINVAL;
-> >
-> >         bank->clk = of_clk_get(bank->of_node, 0);
-> > -       if (IS_ERR(bank->clk))
-> > -               return PTR_ERR(bank->clk);
-> > +       if (IS_ERR(bank->clk)) {
-> > +               bank->clk = NULL;
-> > +               dev_warn(bank->dev, "works without clk pm\n");
-> > +       }
-> >
-> >         clk_prepare_enable(bank->clk);
-> >         id = readl(bank->reg_base + gpio_regs_v2.version_id);
-> > @@ -666,9 +671,8 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
-> >                 bank->gpio_type = GPIO_TYPE_V2;
-> >                 bank->db_clk = of_clk_get(bank->of_node, 1);
-> >                 if (IS_ERR(bank->db_clk)) {
-> > -                       dev_err(bank->dev, "cannot find debounce clk\n");
-> > -                       clk_disable_unprepare(bank->clk);
-> > -                       return -EINVAL;
-> > +                       bank->db_clk = NULL;
-> > +                       dev_warn(bank->dev, "works without debounce clk pm\n");
-> >                 }
-> >         } else {
-> >                 bank->gpio_regs = &gpio_regs_v1;
-> > --
-> > 2.25.1
-> >
-> >
-> > _______________________________________________
-> > Linux-rockchip mailing list
-> > Linux-rockchip@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-rockchip
-> 
-
-
-
+base-commit: 6ae8e1d0d5e5de922315830aea975c63e8c70b2f
+-- 
+2.37.2
 
