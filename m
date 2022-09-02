@@ -2,86 +2,108 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97956ECAAD5
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45702C6FA82
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:36:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229681AbiIBSgN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 14:36:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34512 "EHLO
+        id S229943AbiIBSgW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 14:36:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbiIBSgM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:36:12 -0400
+        with ESMTP id S229908AbiIBSgQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:36:16 -0400
 Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01DC386FF2;
-        Fri,  2 Sep 2022 11:36:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1626994EFB;
+        Fri,  2 Sep 2022 11:36:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662143770; x=1693679770;
+  t=1662143773; x=1693679773;
   h=from:to:subject:date:message-id:in-reply-to:references:
    mime-version:content-transfer-encoding;
-  bh=AEMYuFe/5gkoHwFFx3sE9BEZPNNMfh8MtP/d/z5X8tE=;
-  b=aKX386kdrPxBdENRK48yHFTDr2thBmVvRMHq3pMoSKn80SprO3/07B9I
-   nd9IfPL8kpTMoEzhDzi3rRAjQmXtc+W6oK0tj7k06XbpToPQ9xJeM7KBf
-   M+OSF2xG0KC0MSMAImOTWOD9ZCoc6nk5sW3CQgSwPJfii3JaQoPIm4eBH
-   zkeGRNFSA5z+EiprEyq9+Qgeln5x3jWOueuJ5Kqj+B6x1Ry37IeDN78aw
-   4vM7BfqbFuwnwm3mQtLwdL3qL9yt9oPgutCVwBiv2igOHDm+E1rmBdA2Q
-   aaA0xByNktbwkv+B9s2+at0VVjNYBuse9SWf5Fcd2PEx4gNO4R1WQ+JQX
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="382351229"
+  bh=PmaBa0A40FNoymQJbeinRG5loNg9jLUksJeBjTU6ICE=;
+  b=DwJBkDmhburHkSmVs09CWg2AKL6Mn6wxs/6+iAjyd1ax0pm/EsaZ2jof
+   miF8uN5l7q5kSWFMLXJKq8EHSSX1hzZ3QxlyPjRvlqoVsHG2TrHvUx6mn
+   jghL2uKErrUqWxFkYK2ekM6nHlpg/OIKWZ80GzYA1D9aQycRlwQlgypRI
+   bTmgH+ShwOh6FzNY7z08KsC2wR+j+S+lzoqzRHGgbGQRD9rwCBS6/bHJR
+   zc0FY2C+8h6pCAmsnV5PfqRQ7ipt9FxX7bMTWpZ2WsF4qp8+RDBsBqgks
+   GknVb2JaMNNt5tn9RybjAPVJQCIA0A4tJD7dJRclwMFBGSsBrDBg85jbn
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="382351238"
 X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="382351229"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:46 -0700
+   d="scan'208";a="382351238"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="674457514"
+   d="scan'208";a="716614439"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 02 Sep 2022 11:26:44 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 02 Sep 2022 11:26:47 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 0E05819D; Fri,  2 Sep 2022 21:27:00 +0300 (EEST)
+        id 2C8AB607; Fri,  2 Sep 2022 21:27:00 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Patrick Rudolph <patrick.rudolph@9elements.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 05/17] pinctrl: cy8c95x0: Fix pin control name to enable more than one
-Date:   Fri,  2 Sep 2022 21:26:38 +0300
-Message-Id: <20220902182650.83098-5-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 09/17] pinctrl: cy8c95x0: Remove useless conditionals
+Date:   Fri,  2 Sep 2022 21:26:42 +0300
+Message-Id: <20220902182650.83098-9-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
 References: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Cypress GPIO expander is an I²C discrete component. Hence
-the platform may contain more than one of a such. Currently
-this has limitations in the driver due to same name used for
-all chips of a type. Replace this with device instance specific
-name.
+The pin control framework checks pin boundaries before calling
+the respective driver's callbacks. Hence no need to check for
+pin boundaries, the respective conditionals won't be ever true.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index f016c283af57..a05fbf818bf2 100644
+index b09f9485e57d..97da22016cce 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -1188,8 +1188,7 @@ static int cy8c95x0_setup_pinctrl(struct cy8c95x0_pinctrl *chip)
- 	pd->confops = &cy8c95x0_pinconf_ops;
- 	pd->pmxops = &cy8c95x0_pmxops;
- 	pd->npins = chip->gpio_chip.ngpio;
--	pd->name = devm_kasprintf(chip->dev, GFP_KERNEL, "pinctrl-%s",
--				  chip->name);
-+	pd->name = dev_name(chip->dev);
- 	pd->pins = cy8c9560_pins;
- 	pd->npins = chip->tpin;
- 	pd->owner = THIS_MODULE;
+@@ -1029,14 +1029,6 @@ static int cy8c95x0_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
+ 					   const unsigned int **pins,
+ 					   unsigned int *num_pins)
+ {
+-	struct cy8c95x0_pinctrl *chip = pinctrl_dev_get_drvdata(pctldev);
+-
+-	if (group >= chip->tpin) {
+-		*pins = NULL;
+-		*num_pins = 0;
+-		return 0;
+-	}
+-
+ 	*pins = &cy8c9560_pins[group].number;
+ 	*num_pins = 1;
+ 	return 0;
+@@ -1104,9 +1096,6 @@ static int cy8c95x0_set_mux(struct pinctrl_dev *pctldev, unsigned int selector,
+ {
+ 	struct cy8c95x0_pinctrl *chip = pinctrl_dev_get_drvdata(pctldev);
+ 
+-	if (group >= chip->tpin)
+-		return -EINVAL;
+-
+ 	return cy8c95x0_pinmux_cfg(chip, selector, group);
+ }
+ 
+@@ -1133,9 +1122,6 @@ static int cy8c95x0_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	int ret = 0;
+ 	int i;
+ 
+-	if (WARN_ON(pin >= chip->tpin))
+-		return -EINVAL;
+-
+ 	for (i = 0; i < num_configs; i++) {
+ 		ret = cy8c95x0_gpio_set_pincfg(chip, pin, configs[i]);
+ 		if (ret)
 -- 
 2.35.1
 
