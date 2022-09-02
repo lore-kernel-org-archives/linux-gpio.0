@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D22AECAAD5
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:36:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0E9ECAAD5
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:36:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229948AbiIBSgW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 14:36:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34904 "EHLO
+        id S229907AbiIBSg3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 14:36:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229918AbiIBSgU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:36:20 -0400
+        with ESMTP id S229932AbiIBSgY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:36:24 -0400
 Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE7FED31DC;
-        Fri,  2 Sep 2022 11:36:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96599F54A5;
+        Fri,  2 Sep 2022 11:36:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662143772; x=1693679772;
+  t=1662143779; x=1693679779;
   h=from:to:subject:date:message-id:in-reply-to:references:
    mime-version:content-transfer-encoding;
-  bh=u/e/eIbdBJutq5AbGgNzaebhsZM9EByb+sMUL/rPFWU=;
-  b=jPo2tPZ2zbUGRaSjfTTSpypfnhcZm0/hT/eD5EbeRjEdRM42ma2tuhlV
-   hI2vFE1ZLiQiqAgXy/zc09rFSr//441PnC9QadN1TqZIhlcsLFPQIOuFR
-   16S0zhFRzXp93ENRPJxVDIn6DuOU8EL36ewds6AVTGCM1A/4yuX6yQPf9
-   h254oq4FNDkrGNaO2Y8onSrtqamwdy3Fhb88SnCK/kAwdhNTRHcLunerf
-   pDKxAur/ym33Yiqc2ws7ooRU8WuxL1GE85U3TAOIU6cJRavwwp7NgstzL
-   g0MtsBRjnPYOYAnjFsFcMMl0LVZuY2MBNcSx0lSBIqUvwx4vTJCXluI3k
+  bh=n3flIGifqT0/3LYVkgKHJ/DinDGHYI69R63FhYW3Scc=;
+  b=a999vR8qtA/IBWtlGN76jq56eAaiHvMP9quls+J+Kz0k+OjpOs7Gp/Dx
+   sVJBtnc1vSZO/hCiGjofwVa4IoVweoRi06UhfY0f1WFM0KqsxfqxIlnJx
+   NASwxMmpIE4v2lrbATHUrfCscVkkEISacj2q3bDqA4goJg4IXe7GfXWnw
+   EhgxNAC00hEPzXeavzdqP7SHhzraPhZszQUHl5lcPsL18pVSPL3vIjWoQ
+   fVQ3L0i/11nQnvK29pOvrL433SiWxWJrd/rI14WjoMMI2dgmSVnn4iAoi
+   4jax6Kcv9erWXiunKMDU3i7Tar8PKJ0Vs2tskqjxhr+G3XOqE75vatcJl
    A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="382351237"
+X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="382351249"
 X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="382351237"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:48 -0700
+   d="scan'208";a="382351249"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:50 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="674457530"
+   d="scan'208";a="615791668"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 02 Sep 2022 11:26:47 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 02 Sep 2022 11:26:49 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 18B3B2E7; Fri,  2 Sep 2022 21:27:00 +0300 (EEST)
+        id 65319238; Fri,  2 Sep 2022 21:27:00 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Patrick Rudolph <patrick.rudolph@9elements.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 06/17] pinctrl: cy8c95x0: Drop unneeded npins assignment
-Date:   Fri,  2 Sep 2022 21:26:39 +0300
-Message-Id: <20220902182650.83098-6-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 16/17] pinctrl: cy8c95x0: use bits.h macros for all masks
+Date:   Fri,  2 Sep 2022 21:26:49 +0300
+Message-Id: <20220902182650.83098-16-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
 References: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
@@ -56,25 +56,49 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The npins field is assigned twice. Remove the first occurrence.
+Make use of the GENMASK() (far less error-prone, far more concise).
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index a05fbf818bf2..eac8b073e19f 100644
+index f38e7dc794e9..57302cb0186f 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -1187,7 +1187,6 @@ static int cy8c95x0_setup_pinctrl(struct cy8c95x0_pinctrl *chip)
- 	pd->pctlops = &cy8c95x0_pinctrl_ops;
- 	pd->confops = &cy8c95x0_pinconf_ops;
- 	pd->pmxops = &cy8c95x0_pmxops;
--	pd->npins = chip->gpio_chip.ngpio;
- 	pd->name = dev_name(chip->dev);
- 	pd->pins = cy8c9560_pins;
- 	pd->npins = chip->tpin;
+@@ -363,14 +363,14 @@ static bool cy8c95x0_precious_register(struct device *dev, unsigned int reg)
+ }
+ 
+ static const struct reg_default cy8c95x0_reg_defaults[] = {
+-	{ CY8C95X0_OUTPUT_(0), 0xff },
+-	{ CY8C95X0_OUTPUT_(1), 0xff },
+-	{ CY8C95X0_OUTPUT_(2), 0xff },
+-	{ CY8C95X0_OUTPUT_(3), 0xff },
+-	{ CY8C95X0_OUTPUT_(4), 0xff },
+-	{ CY8C95X0_OUTPUT_(5), 0xff },
+-	{ CY8C95X0_OUTPUT_(6), 0xff },
+-	{ CY8C95X0_OUTPUT_(7), 0xff },
++	{ CY8C95X0_OUTPUT_(0), GENMASK(7, 0) },
++	{ CY8C95X0_OUTPUT_(1), GENMASK(7, 0) },
++	{ CY8C95X0_OUTPUT_(2), GENMASK(7, 0) },
++	{ CY8C95X0_OUTPUT_(3), GENMASK(7, 0) },
++	{ CY8C95X0_OUTPUT_(4), GENMASK(7, 0) },
++	{ CY8C95X0_OUTPUT_(5), GENMASK(7, 0) },
++	{ CY8C95X0_OUTPUT_(6), GENMASK(7, 0) },
++	{ CY8C95X0_OUTPUT_(7), GENMASK(7, 0) },
+ 	{ CY8C95X0_PORTSEL, 0 },
+ 	{ CY8C95X0_PWMSEL, 0 },
+ };
+@@ -1257,7 +1257,7 @@ static int cy8c95x0_detect(struct i2c_client *client,
+ 	ret = i2c_smbus_read_byte_data(client, CY8C95X0_DEVID);
+ 	if (ret < 0)
+ 		return ret;
+-	switch (ret & 0xf0) {
++	switch (ret & GENMASK(7, 4)) {
+ 	case 0x20:
+ 		name = cy8c95x0_id[0].name;
+ 		break;
 -- 
 2.35.1
 
