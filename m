@@ -2,110 +2,104 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4235AC6FA89
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 14:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F31FECAAD5
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 15:12:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236952AbiIBO4r (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 10:56:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50966 "EHLO
+        id S236212AbiIBPMW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 11:12:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236592AbiIBOzk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 10:55:40 -0400
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 054B765658;
-        Fri,  2 Sep 2022 07:20:45 -0700 (PDT)
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-        by localhost (Postfix) with ESMTP id 4MJyHW0l8Cz9slX;
-        Fri,  2 Sep 2022 14:42:47 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-        by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id fcDlgJNWUSKR; Fri,  2 Sep 2022 14:42:47 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase2.c-s.fr (Postfix) with ESMTP id 4MJyHS0804z9sl9;
-        Fri,  2 Sep 2022 14:42:44 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E21D18B798;
-        Fri,  2 Sep 2022 14:42:43 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id DUTLC8JVCdNe; Fri,  2 Sep 2022 14:42:43 +0200 (CEST)
-Received: from PO20335.IDSI0.si.c-s.fr (unknown [192.168.232.39])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D777D8B792;
-        Fri,  2 Sep 2022 14:42:42 +0200 (CEST)
-Received: from PO20335.IDSI0.si.c-s.fr (localhost [127.0.0.1])
-        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.16.1) with ESMTPS id 282CgYaJ2141519
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Fri, 2 Sep 2022 14:42:34 +0200
-Received: (from chleroy@localhost)
-        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.17.1/Submit) id 282CgYrG2141518;
-        Fri, 2 Sep 2022 14:42:34 +0200
-X-Authentication-Warning: PO20335.IDSI0.si.c-s.fr: chleroy set sender to christophe.leroy@csgroup.eu using -f
-From:   Christophe Leroy <christophe.leroy@csgroup.eu>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Keerthy <j-keerthy@ti.com>, Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Davide Ciminaghi <ciminaghi@gnudd.com>
-Cc:     Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-        linux-doc@vger.kernel.org, x86@kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v2 6/9] Documentation: gpio: Remove text about ARCH_NR_GPIOS
-Date:   Fri,  2 Sep 2022 14:42:06 +0200
-Message-Id: <3a1f82b079a57ea07351ad6e71d7964162a03070.1662116601.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <cover.1662116601.git.christophe.leroy@csgroup.eu>
-References: <cover.1662116601.git.christophe.leroy@csgroup.eu>
+        with ESMTP id S236211AbiIBPMB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 11:12:01 -0400
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CD6E16EEE7
+        for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 07:41:55 -0700 (PDT)
+Received: by mail-qk1-x735.google.com with SMTP id b2so1824171qkh.12
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Sep 2022 07:41:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date;
+        bh=0ac1i9buWoWncajk6SXq/V2mUp/aPapb/moPxFtHBro=;
+        b=mmaBi/9RC6JzJIPiGTLURB2g4mTUjg0f6HHHHeLisvJFyzFg3cllpWRBvU60UwISVN
+         jy6mjv6UYv9oxlK69um/FYVDRIKQTkHR209BH6UvQM8oa6Wymarxp65qjBc+Bs1IdfOI
+         1/rFKL14OWkpUnVbTqlF1u64YZuGaSotce3ZlBI1bKT7BD0UT5G9MXNmfYq9ZkOFflNg
+         U2J1zR0fSA1f7n+jPsfAvrmCQjxRc4/SPJGL/1SoQVfqzWCLVMt/eaGrimYKpQGRmZEE
+         J4jNztbsdP3fgPZ14Fvf8S7p0Zz4c1rtX8mqOvOhDTbKdkfgCXk6qgsfI9IDrsIe9yTq
+         8NJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=0ac1i9buWoWncajk6SXq/V2mUp/aPapb/moPxFtHBro=;
+        b=74IMCjy0O0aGrkUYFfFStPdeVb1xVKEkvO6ImRn5GJSZyrN7NE/RYqbmsygEN8HZE6
+         G7l79OQfhHxLgGpr4dn5EpiJGOjSzxM3ahIJk0Jxp+zDp1DN4JMPa1KSm32YwyCdYplZ
+         +xuZpl9e1s7tBcoBktnvYFicxjlJwKBuYwzuyaMAnvsmy/FYW9HreKHjMiz8GOiyKZId
+         tniCKCpGNDzurj7AgQOf87AEI+SACgP1mrYfdaGwLMT6o04v3VbmbDiiikxdHGKZ/AKd
+         A1mDX64dsuwuLr5NJvxSY5uHH5kS91FyfrTuC9Z1qgwT071l4WZmKeoViiaMfomogBJC
+         Hhvg==
+X-Gm-Message-State: ACgBeo3rrBG/iVnZMnMs6sufrXjWNWKEC2tEEhB7BWh+AlhOKqwD3Y4B
+        cZBAnNXcaUHUEf4mH9lpqThd6S04KEbcu17tkIU=
+X-Google-Smtp-Source: AA6agR56MurRTLIs4bBYExs7jDRPEMyhQr5Mhf/O8ly8l0LxrCoTs+3wDiuMvxTNR4W5Nf7u3JlY9+f75gF3CAk/OfE=
+X-Received: by 2002:a05:620a:288a:b0:6b8:fcfe:db02 with SMTP id
+ j10-20020a05620a288a00b006b8fcfedb02mr24165177qkp.504.1662129714040; Fri, 02
+ Sep 2022 07:41:54 -0700 (PDT)
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1662122527; l=1475; s=20211009; h=from:subject:message-id; bh=nMrWytdB4dtfJH5pitzlz2TRZRbRFDARsAY3M0xeb40=; b=nrOIc10OdOffIFYCwasvWrqQXePmi36vpW/sWCioLuTrxLCyE0m+9EX4aRa4jyQtGJNvmHhSerTx 4DtEXnYMAAR4fa3TG6FlIYSKwgENjTxNPdGncE6w6sOXlj+cvO30
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+References: <YxC5eZjGgd8xguDr@shell.armlinux.org.uk> <E1oTkeb-003t9e-Iy@rmk-PC.armlinux.org.uk>
+ <CAHp75VcG5E+yTH2hG2CbnArsm+ZJ-sWRMmM-wLks0xUJkwSgcg@mail.gmail.com>
+ <FEE9F7AE-B324-4426-AB26-17BDF30CFC91@cutebit.org> <CAHp75Vd8-mOuJvr=PRKjVKbz0SM9hPe39rEcraOMJFYtrwHjng@mail.gmail.com>
+ <3B649A66-8116-432D-B88A-B5CE493EF930@cutebit.org> <CAHp75VeB3_sZ2vsSxMSsLeJSkyemDh9iOPHXJCN1mhodA13LNQ@mail.gmail.com>
+ <E753B391-D2CB-4213-AF82-678ADD5A7644@cutebit.org> <CAHp75VdstDxcZ96d3XD=k8_q2oP3UvoL+QV-27BxWFyALWJ_QQ@mail.gmail.com>
+ <85AE2F3E-6A1D-4AA0-9205-3E3DE5C6D79F@cutebit.org>
+In-Reply-To: <85AE2F3E-6A1D-4AA0-9205-3E3DE5C6D79F@cutebit.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 2 Sep 2022 17:41:16 +0300
+Message-ID: <CAHp75Vdfo87xT2S-MEO+z3o0eHZYtHHEzJBswSMNaWTSVhcXPA@mail.gmail.com>
+Subject: Re: [PATCH 5/6] gpio: Add new gpio-macsmc driver for Apple Macs
+To:     =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik@cutebit.org>
+Cc:     Lee Jones <lee@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        asahi@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Hector Martin <marcan@marcan.st>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sven Peter <sven@svenpeter.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-ARCH_NR_GPIOS have been removed, clean up the documentation.
+On Fri, Sep 2, 2022 at 4:37 PM Martin Povi=C5=A1er <povik@cutebit.org> wrot=
+e:
+> > On 2. 9. 2022, at 15:33, Andy Shevchenko <andy.shevchenko@gmail.com> wr=
+ote:
+> > On Fri, Sep 2, 2022 at 2:12 PM Martin Povi=C5=A1er <povik@cutebit.org> =
+wrote:
 
-After this patch, the only place when ARCH_NR_GPIOS remains is in
-translations/zh_CN/gpio.txt and translations/zh_TW/gpio.txt.
-I don't have the skills to update that, anyway those two files are
-already out of sync as they are still mentionning ARCH_REQUIRE_GPIOLIB
-which was removed by commit 65053e1a7743 ("gpio: delete
-ARCH_[WANTS_OPTIONAL|REQUIRE]_GPIOLIB")
+...
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
- Documentation/driver-api/gpio/legacy.rst | 5 -----
- 1 file changed, 5 deletions(-)
+> >> you need to do
+> >>
+> >>  u32 key_be =3D cpu_to_be32(key);
+> >>  printk(=E2=80=9C%.4s =3D ...\n=E2=80=9D, &key_be);
+> >>
+> >> in at least 9 places now, the number of which will probably grow.
+> >> Just to make the case for *some* printk helper.
+> >
+> > Wouldn't this be one line
+> >
+> >  printk(=E2=80=9C%.4s =3D ...\n=E2=80=9D, &cpu_to_be32(key));
+> >
+> > ?
+>
+> That would compile? I thought that=E2=80=99s not valid C, taking an
+> address of function=E2=80=99s return value.
 
-diff --git a/Documentation/driver-api/gpio/legacy.rst b/Documentation/driver-api/gpio/legacy.rst
-index 9b12eeb89170..e17910cc3271 100644
---- a/Documentation/driver-api/gpio/legacy.rst
-+++ b/Documentation/driver-api/gpio/legacy.rst
-@@ -558,11 +558,6 @@ Platform Support
- To force-enable this framework, a platform's Kconfig will "select" GPIOLIB,
- else it is up to the user to configure support for GPIO.
- 
--It may also provide a custom value for ARCH_NR_GPIOS, so that it better
--reflects the number of GPIOs in actual use on that platform, without
--wasting static table space.  (It should count both built-in/SoC GPIOs and
--also ones on GPIO expanders.
--
- If neither of these options are selected, the platform does not support
- GPIOs through GPIO-lib and the code cannot be enabled by the user.
- 
--- 
-2.37.1
+Ah, you are right. My bad.
 
+--=20
+With Best Regards,
+Andy Shevchenko
