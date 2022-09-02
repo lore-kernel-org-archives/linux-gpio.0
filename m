@@ -2,77 +2,99 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B60FAECAAA1
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 05:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FE7ECAAA1
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 06:04:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232782AbiIBFPp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 01:15:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48384 "EHLO
+        id S235353AbiIBGEg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 02:04:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233577AbiIBFPl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 01:15:41 -0400
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0206B2A704;
-        Thu,  1 Sep 2022 22:15:37 -0700 (PDT)
-Received: by mail-qt1-x82f.google.com with SMTP id r6so711222qtx.6;
-        Thu, 01 Sep 2022 22:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=/FPvSu5Og6r5KCFvrM/XvD5oQdCoQmFQqyC6B9qZN9g=;
-        b=G8131IqrlpHP4CzYjGkQNjXm8IyVVFqG/ye8pGjHbGhU/MTuIOhAPeoo7MY99Hr8mm
-         OFjUw3own/fILPs6zy/j2KpcWeFxqr40z1l8+j4IrBF0+FuyochX0BiCTsW1g+l2wlgq
-         /X81qajoFnzetFnGIGXdncgxCa0ljNcCQjNvBxT1budI2f8A1WHeyHUQRlLQn0D+fq8P
-         8A+lV9k5Qk4MnBK2dsUw3SanpvnTwyGBFT/PX3PQJPhsiPjfIWmLoiwLqQx8EQThWeCN
-         kH5m+DXKqvlGRztfDrUgvbsJ8MKJn/hUETbrUyoYvL60S+3+MtalO83nNZNbAp7I0pif
-         XHhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=/FPvSu5Og6r5KCFvrM/XvD5oQdCoQmFQqyC6B9qZN9g=;
-        b=oQeyPguVuNhSowmcvpLLGE3tUfBrR3e7fQOXhoBxIhDpqC3vonOENnATVtnXBJf65b
-         /Bqryz7VF0s6KPPLHOHR67N5A4TaFeh4x4/aWj8sm9JxoRWZlVsNaZo+XxnuZQcVSiNk
-         /q7bLg0jqvkI1ZI/EGgPa0nqAif6pqjwtp0GAGaXB6RtP7rR80Yy3slIwkQFLJg+HbLa
-         HzR1E4Im57Hv2Ts9TxObXbJEEXczOFpiLbzLiVpnmzBC8yBWzLV91AEHrvRN94wccuKT
-         Xj0wQboloj2l92HywW5XO/NnPVkq0P6p8LIE/oTMDirrHt0qtehf4HBA1AHLUgWjO0jO
-         b+fA==
-X-Gm-Message-State: ACgBeo3OMSyIzRxLRqrMJnEApMQDvWSPi52pPwO9MN86rOtC28ZE/SGC
-        nKJrO1zJDIWPHAbGU1arNbdX+C2PyfkgAxDn/Xw=
-X-Google-Smtp-Source: AA6agR5TMJCTdI8lPLurDZddFyotVb//UahRpflITQxKq1hFILTM/GvJbwYD4fqsz88B+3lNqPo9zW2PBILCTcxGngw=
-X-Received: by 2002:a05:622a:40a:b0:343:77ba:727f with SMTP id
- n10-20020a05622a040a00b0034377ba727fmr27107617qtx.481.1662095736071; Thu, 01
- Sep 2022 22:15:36 -0700 (PDT)
+        with ESMTP id S235349AbiIBGEf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 02:04:35 -0400
+Received: from mail-m11873.qiye.163.com (mail-m11873.qiye.163.com [115.236.118.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2944AAE87B;
+        Thu,  1 Sep 2022 23:04:31 -0700 (PDT)
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by mail-m11873.qiye.163.com (Hmail) with ESMTPA id 8678890021A;
+        Fri,  2 Sep 2022 14:04:29 +0800 (CST)
+From:   Jianqun Xu <jay.xu@rock-chips.com>
+To:     linus.walleij@linaro.org, heiko@sntech.de
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Jianqun Xu <jay.xu@rock-chips.com>
+Subject: [PATCH 2/2] arm64: dts: rockchip: rk356x add 'clock-names' for gpio nodes
+Date:   Fri,  2 Sep 2022 14:04:26 +0800
+Message-Id: <20220902060426.2980951-3-jay.xu@rock-chips.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220902060426.2980951-1-jay.xu@rock-chips.com>
+References: <20220902060426.2980951-1-jay.xu@rock-chips.com>
 MIME-Version: 1.0
-References: <20220901235003.20520-1-qingtao.cao@digi.com>
-In-Reply-To: <20220901235003.20520-1-qingtao.cao@digi.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 2 Sep 2022 08:15:01 +0300
-Message-ID: <CAHp75Vdgj9bFMs17ydpoJWvtJkX_9goG7LtQFhko=E4_6CV7aQ@mail.gmail.com>
-Subject: Re: [v2 PATCH 1/1] gpio: exar: access MPIO registers on slave chips
-To:     Qingtao Cao <qingtao.cao.au@gmail.com>
-Cc:     nathan@nathanrossi.com, Qingtao Cao <qingtao.cao@digi.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJSktLSjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDGkNNVhhOGEkYSUMfTU1PQlUTARMWGhIXJB
+        QOD1lXWRgSC1lBWU5DVUlJVUxVSkpPWVdZFhoPEhUdFFlBWU9LSFVKSUtDTk1VSktLWQY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MBQ6KAw4KD05K0IcPCE*GU8V
+        OjYwFBdVSlVKTU1JS0JDTUxLSktNVTMWGhIXVREaAlUDDjsJFBgQVhgTEgsIVRgUFkVZV1kSC1lB
+        WU5DVUlJVUxVSkpPWVdZCAFZQUhPS0s3Bg++
+X-HM-Tid: 0a82fccd00bf2eafkusn8678890021a
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 2, 2022 at 2:50 AM Qingtao Cao <qingtao.cao.au@gmail.com> wrote:
->
-> When EXAR xr17v35x chips are cascaded in order to access the MPIO registers
-> (part of the Device Configuration Registers) of the slave chips, an offset
-> needs to be applied based on the number of master chip's UART channels.
+Add 'clock-names' for gpio nodes on rk356x SoCs, after this patch, the
+gpio driver can get the clocks by a const char id, 'bus' for apb clock
+and 'db' for the debounce clock.
 
-Looks good to me, but here is one important thing. Is documentation
-really refers to this setup as "master-slave"? If no, can we replace
-to something like promary/secondary or other suitable variants?
-(Replace in the comments and variable names, etc)
+Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+---
+ arch/arm64/boot/dts/rockchip/rk356x.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+index 319981c3e9f7..66d038720e65 100644
+--- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+@@ -1650,6 +1650,7 @@ gpio0: gpio@fdd60000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x0 0xfdd60000 0x0 0x100>;
+ 			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus", "db";
+ 			clocks = <&pmucru PCLK_GPIO0>, <&pmucru DBCLK_GPIO0>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+@@ -1661,6 +1662,7 @@ gpio1: gpio@fe740000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x0 0xfe740000 0x0 0x100>;
+ 			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus", "db";
+ 			clocks = <&cru PCLK_GPIO1>, <&cru DBCLK_GPIO1>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+@@ -1672,6 +1674,7 @@ gpio2: gpio@fe750000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x0 0xfe750000 0x0 0x100>;
+ 			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus", "db";
+ 			clocks = <&cru PCLK_GPIO2>, <&cru DBCLK_GPIO2>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+@@ -1683,6 +1686,7 @@ gpio3: gpio@fe760000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x0 0xfe760000 0x0 0x100>;
+ 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus", "db";
+ 			clocks = <&cru PCLK_GPIO3>, <&cru DBCLK_GPIO3>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+@@ -1694,6 +1698,7 @@ gpio4: gpio@fe770000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x0 0xfe770000 0x0 0x100>;
+ 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus", "db";
+ 			clocks = <&cru PCLK_GPIO4>, <&cru DBCLK_GPIO4>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.25.1
+
