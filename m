@@ -2,137 +2,130 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 457D4C6FA82
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEBAC6FA82
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 18:38:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229939AbiIBSga (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 14:36:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35052 "EHLO
+        id S229508AbiIBSio (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 14:38:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229919AbiIBSg0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:36:26 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99176105B74;
-        Fri,  2 Sep 2022 11:36:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662143779; x=1693679779;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=CEs9JIj75JOFSDMR+9UBVZY6R0aGuxZKEnPwlAb3kDc=;
-  b=an/qbitKhKzowjm14DugILxzLkXXUxpMKkjVkTs+x6pC+dtBKhhgibKJ
-   eGdj55oEx1iik06QIxd0r3a9UBuZTHVPiImUh/n+d9EjDAYBZF72ir7UB
-   6ovupHalURZk/uL9Gs7PCJFPZgWOtbD9udV1M4L9RXZehkopGyvROcWlq
-   toJ7TA0OXO1eZsgBAW3+2E4/g4DWzUn3538WKut/LWgJ2SS9x5WUpqUKa
-   FgqIObXo0afAPxjJmbFpYrPSXwkIqdd/KVHjrqD4+sEORWXbrRCSI30g5
-   OldTTnwOY/rJNu2ybvgbIrCk2jxuspCB8i5dp+TUZHNIpahBAMjIiCnJw
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="382351242"
-X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="382351242"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2022 11:26:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,283,1654585200"; 
-   d="scan'208";a="674457533"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 02 Sep 2022 11:26:47 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 4957A702; Fri,  2 Sep 2022 21:27:00 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Patrick Rudolph <patrick.rudolph@9elements.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 12/17] pinctrl: cy8c95x0: Implement ->pin_dbg_show()
-Date:   Fri,  2 Sep 2022 21:26:45 +0300
-Message-Id: <20220902182650.83098-12-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
-References: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S229512AbiIBSin (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 14:38:43 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DC6AC4836
+        for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 11:38:40 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id ay12so1720070wmb.1
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Sep 2022 11:38:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=KRBpWIIOAMoQv9wtE6dulvyX3AYtHX5SB44uGSNhJyI=;
+        b=Px7jAILUCAFlfGuvs+hykUNWhfQLqfQSUuOdzD7e+bG+6NdMsVnUUGC+bpXDi4zUR6
+         /ruHz+ECkBoOkZLWE0OkV6vhABX15JzKlivqXKsjk4BQgAkfc5lqPAOIIBeKUnrbbDn9
+         rBlT53UdDv0gsGf369G1oPYwFAdyypi53SeD0dB50CVHA7xbQlYzDhU/IPHcbHeetKNB
+         VmsL4aI2MSxg8LV+3V98dKA/dWbmU7H8hjO8Q3Pmpc21fQ+TcrCZQYTeo7XzRmYKrOzn
+         ed01x8iMxcxiNJ+vkzPX813B6m7RgeKzGRQDpyk9aR8DGtmBgUN+vlnfLLjmlmYCH7Ki
+         x/BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=KRBpWIIOAMoQv9wtE6dulvyX3AYtHX5SB44uGSNhJyI=;
+        b=PSwjEEhMVR/U8B4VU7LffzCFaDH8AbpDCc3u57oH4S1RYcc5+mzRTRiiXxRFjxnRTT
+         5SBLFr6TB44m0YndNdg+arkrB1vD4uVhchxdk0dCkIz0vX5/u5VI4hOu4/fTkQYmaijv
+         mgMke9kGzAUqTclUKGvSB7mbtZeIdcDN/ffIgx1mHF6WtKJ0ZS9mC5IP8Zbhah6Yohwe
+         soKkLh0k6PYOrXZDR0MndZ13T3yKXrgGZNdvPVDRY/FUanR3FX8IfAGZoOCSn7iAYyxk
+         9cTsxkEV+muw3/sVJ2sZ/daXgvfa84oNnOFx9TfDg75SaPOrxyNuni3hRu0xl8UPbDWf
+         2QWg==
+X-Gm-Message-State: ACgBeo0avvjxyqf2fxQOTL80eJRd0hXaSXU8Oh20byJnPQ+o9yTngk/v
+        EGl4WNdMfSnnWeCyCvE4a5hzUuHcyRw7wCVx6jlBPRPckD6Bjw==
+X-Google-Smtp-Source: AA6agR5ibS0Npyh4KJH1Y192QaepP43nEKu0nHfQZ7E5Gxxc4EZESN2CfSoGKIHcfXf5k5ctWD/qpukL26mROVqx188=
+X-Received: by 2002:a05:600c:5114:b0:3a5:cb1f:6bf3 with SMTP id
+ o20-20020a05600c511400b003a5cb1f6bf3mr3824753wms.65.1662143918730; Fri, 02
+ Sep 2022 11:38:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220901012944.2634398-1-jay.xu@rock-chips.com> <20220901012944.2634398-3-jay.xu@rock-chips.com>
+In-Reply-To: <20220901012944.2634398-3-jay.xu@rock-chips.com>
+From:   Peter Geis <pgwipeout@gmail.com>
+Date:   Fri, 2 Sep 2022 14:38:27 -0400
+Message-ID: <CAMdYzYrJWnkYneEuJ+dA0EU1QiTkBOkGz1+zn=H5rA-qfS88+Q@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] gpio: rockchip: make gpio work without cru module
+To:     Jianqun Xu <jay.xu@rock-chips.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The introduced callback ->pin_dbg_show() is useful for debugging.
+On Wed, Aug 31, 2022 at 9:30 PM Jianqun Xu <jay.xu@rock-chips.com> wrote:
+>
+> In some case the system may has no builtin cru module, the gpio driver
+> will fail to get periph clock and debounce clock.
+>
+> On rockchip SoCs, the pclk and dbg clk are default to be enabled and
+> ungated, the gpio possible to work without cru module.
+>
+> This patch makes gpio work fine without cru module.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/pinctrl-cy8c95x0.c | 40 ++++++++++++++++++++++++------
- 1 file changed, 32 insertions(+), 8 deletions(-)
+What happens if the cru probes later and these clocks become available
+but aren't claimed so clk_disable_unused shuts them down?
 
-diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 6fe442b44cab..ea81b5ae27a6 100644
---- a/drivers/pinctrl/pinctrl-cy8c95x0.c
-+++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -1010,25 +1010,49 @@ static int cy8c95x0_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
-+static const char *cy8c95x0_get_fname(unsigned int selector)
-+{
-+	if (selector == 0)
-+		return "gpio";
-+	else
-+		return "pwm";
-+}
-+
-+static void cy8c95x0_pin_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
-+				  unsigned int pin)
-+{
-+	struct cy8c95x0_pinctrl *chip = pinctrl_dev_get_drvdata(pctldev);
-+	DECLARE_BITMAP(mask, MAX_LINE);
-+	DECLARE_BITMAP(pwm, MAX_LINE);
-+
-+	bitmap_zero(mask, MAX_LINE);
-+	__set_bit(pin, mask);
-+
-+	if (cy8c95x0_read_regs_mask(chip, CY8C95X0_PWMSEL, pwm, mask)) {
-+		seq_puts(s, "not available");
-+		return;
-+	}
-+
-+	seq_printf(s, "MODE:%s", cy8c95x0_get_fname(test_bit(pin, pwm)));
-+}
-+
- static const struct pinctrl_ops cy8c95x0_pinctrl_ops = {
- 	.get_groups_count = cy8c95x0_pinctrl_get_groups_count,
- 	.get_group_name = cy8c95x0_pinctrl_get_group_name,
- 	.get_group_pins = cy8c95x0_pinctrl_get_group_pins,
- 	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
- 	.dt_free_map = pinconf_generic_dt_free_map,
-+	.pin_dbg_show = cy8c95x0_pin_dbg_show,
- };
- 
--static int cy8c95x0_get_functions_count(struct pinctrl_dev *pctldev)
-+static const char *cy8c95x0_get_functions_name(struct pinctrl_dev *pctldev, unsigned int selector)
- {
--	return 2;
-+	return cy8c95x0_get_fname(selector);
- }
- 
--static const char *cy8c95x0_get_fname(struct pinctrl_dev *pctldev, unsigned int selector)
-+static int cy8c95x0_get_functions_count(struct pinctrl_dev *pctldev)
- {
--	if (selector == 0)
--		return "gpio";
--	else
--		return "pwm";
-+	return 2;
- }
- 
- static int cy8c95x0_get_groups(struct pinctrl_dev *pctldev, unsigned int selector,
-@@ -1077,7 +1101,7 @@ static int cy8c95x0_set_mux(struct pinctrl_dev *pctldev, unsigned int selector,
- 
- static const struct pinmux_ops cy8c95x0_pmxops = {
- 	.get_functions_count = cy8c95x0_get_functions_count,
--	.get_function_name = cy8c95x0_get_fname,
-+	.get_function_name = cy8c95x0_get_functions_name,
- 	.get_function_groups = cy8c95x0_get_groups,
- 	.set_mux = cy8c95x0_set_mux,
- 	.strict = true,
--- 
-2.35.1
-
+>
+> Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+> ---
+>  drivers/gpio/gpio-rockchip.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+> index a4c4e4584f5b..1da0324445cc 100644
+> --- a/drivers/gpio/gpio-rockchip.c
+> +++ b/drivers/gpio/gpio-rockchip.c
+> @@ -195,6 +195,9 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
+>         unsigned int cur_div_reg;
+>         u64 div;
+>
+> +       if (!bank->db_clk)
+> +               return -ENOENT;
+> +
+>         if (bank->gpio_type == GPIO_TYPE_V2 && !IS_ERR(bank->db_clk)) {
+>                 div_debounce_support = true;
+>                 freq = clk_get_rate(bank->db_clk);
+> @@ -654,8 +657,10 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+>                 return -EINVAL;
+>
+>         bank->clk = of_clk_get(bank->of_node, 0);
+> -       if (IS_ERR(bank->clk))
+> -               return PTR_ERR(bank->clk);
+> +       if (IS_ERR(bank->clk)) {
+> +               bank->clk = NULL;
+> +               dev_warn(bank->dev, "works without clk pm\n");
+> +       }
+>
+>         clk_prepare_enable(bank->clk);
+>         id = readl(bank->reg_base + gpio_regs_v2.version_id);
+> @@ -666,9 +671,8 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+>                 bank->gpio_type = GPIO_TYPE_V2;
+>                 bank->db_clk = of_clk_get(bank->of_node, 1);
+>                 if (IS_ERR(bank->db_clk)) {
+> -                       dev_err(bank->dev, "cannot find debounce clk\n");
+> -                       clk_disable_unprepare(bank->clk);
+> -                       return -EINVAL;
+> +                       bank->db_clk = NULL;
+> +                       dev_warn(bank->dev, "works without debounce clk pm\n");
+>                 }
+>         } else {
+>                 bank->gpio_regs = &gpio_regs_v1;
+> --
+> 2.25.1
+>
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
