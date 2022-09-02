@@ -2,164 +2,199 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 743E6ECAAD5
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 15:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75740C001B5
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Sep 2022 15:23:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236312AbiIBPVb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Sep 2022 11:21:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48102 "EHLO
+        id S236221AbiIBPXf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Sep 2022 11:23:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236357AbiIBPVM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 11:21:12 -0400
-Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C167A17AB7
-        for <linux-gpio@vger.kernel.org>; Fri,  2 Sep 2022 07:54:02 -0700 (PDT)
-Received: by mail-qv1-xf30.google.com with SMTP id l5so1558893qvs.13
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Sep 2022 07:54:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=Z1FoDByrTZWQf8xOYstthBmZfghp9AbTB8bp4TVFvqE=;
-        b=djvHEyvX0810i2C3OIadD3Ac8GkGncpPI4h8WBwIdY4Vb03BTtsCtckMvnaaBaKW9n
-         XDejN62TR44iwMD4cKwRX29G07/UMNhFgdkinB7ol9dX0D/2N5Z/xORtTQ1lgua9rsz0
-         7TFP1scrofVPDw70Uj+3pQ1/g+aIsXunmk3uIYMz1IZTRJA7mIjNiQ2Zbi6MmhcK4fAL
-         Es/TKW2U/eiv35DLHz7nHPZMgx1GTy3+0tHSPK7VvsvmN/DuuZ/JlorO5EXhS0jLLCiY
-         I4mTk3Ss86rJML9us41OPdmcTN30isCF2PnoxU4QXzAHMcWPTu/hnHTSd6hkap83WWGh
-         AWWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=Z1FoDByrTZWQf8xOYstthBmZfghp9AbTB8bp4TVFvqE=;
-        b=aWglRGO071O8oTcbCCr2G1E/aBSzga1M7mCNFqJGFQSa0u+5T9lj6qC99uqh9JNd4o
-         PbIipYiC6DCkYVPoUAD7uiJmEYzu4kXSR3u+gobGWgWuIiDO5r2ioAMAK6qevcqXxE9F
-         QNwS1I2CmA7dtT2xPkWBNJFW5Z7qjCZrFXiSoEW/VcRnJQ5vm02RFfBCiaQ+Ywtt9LDz
-         a/9s+wYO/ukPGb9LmpKiCeQGC3M9qDyrcKB1ssOP9GTyc5iKRSNqTsHaCPQjdT+bFKIv
-         coFqMzVjdh6VFmrKeuo3Zke+dkw81/wSAlXZNIp5F5q5GcjJzTkqbz3JsvdLNse3ZrBn
-         bQLA==
-X-Gm-Message-State: ACgBeo036VAbt6z2xSboVnINybZ93v98F9tuCxY/1hjb+B1ppT5u3HBX
-        Wyj8790B09eOQqieCzlp3r0HOazEG0hiYM9rSOA=
-X-Google-Smtp-Source: AA6agR7Wuy9szq8bHjZpsQQxogigYXgKA8UiUmgZN03dfUBr82HV3q1iyIocqv5H4Nb0EiZuwrSHjR6MCBxDmDydC1k=
-X-Received: by 2002:a05:6214:c8f:b0:499:21eb:ba3b with SMTP id
- r15-20020a0562140c8f00b0049921ebba3bmr10744195qvr.97.1662130441457; Fri, 02
- Sep 2022 07:54:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <YxC5eZjGgd8xguDr@shell.armlinux.org.uk> <E1oTkeb-003t9e-Iy@rmk-PC.armlinux.org.uk>
- <CAHp75VcG5E+yTH2hG2CbnArsm+ZJ-sWRMmM-wLks0xUJkwSgcg@mail.gmail.com>
- <YxHVdjYPlIINZ/Wc@shell.armlinux.org.uk> <CAHp75VeO3gxypRTUc9Subvh+NZ7X4_RR=eFUZpPNwBeWk+_ipg@mail.gmail.com>
- <YxHp6CNhlQ5Hx1m8@shell.armlinux.org.uk> <CAHp75Vd-hT3Z-TUCG3y872_Y7sPAW2QBGC28S7aimOf3WQHg6A@mail.gmail.com>
- <YxIXPSZlEBcKYulW@shell.armlinux.org.uk>
-In-Reply-To: <YxIXPSZlEBcKYulW@shell.armlinux.org.uk>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 2 Sep 2022 17:53:25 +0300
-Message-ID: <CAHp75VeTYSn+ODtoH27OB2U+XYVEphonm+QR3Z+NVs-nJ90w9w@mail.gmail.com>
-Subject: Re: [PATCH 5/6] gpio: Add new gpio-macsmc driver for Apple Macs
-To:     "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        asahi@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Hector Martin <marcan@marcan.st>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sven Peter <sven@svenpeter.dev>
-Content-Type: text/plain; charset="UTF-8"
+        with ESMTP id S236401AbiIBPXG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2022 11:23:06 -0400
+X-Greylist: delayed 396 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 02 Sep 2022 07:56:21 PDT
+Received: from sibelius.xs4all.nl (80-61-163-207.fixed.kpn.net [80.61.163.207])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 134C412E4E8;
+        Fri,  2 Sep 2022 07:56:20 -0700 (PDT)
+Received: from localhost (bloch.sibelius.xs4all.nl [local])
+        by bloch.sibelius.xs4all.nl (OpenSMTPD) with ESMTPA id 69f11a6b;
+        Fri, 2 Sep 2022 16:49:37 +0200 (CEST)
+Date:   Fri, 2 Sep 2022 16:49:37 +0200 (CEST)
+From:   Mark Kettenis <mark.kettenis@xs4all.nl>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     linux@armlinux.org.uk, krzysztof.kozlowski@linaro.org,
+        arnd@arndb.de, lee@kernel.org, linus.walleij@linaro.org,
+        alyssa@rosenzweig.io, asahi@lists.linux.dev, brgl@bgdev.pl,
+        marcan@marcan.st, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, sven@svenpeter.dev,
+        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org
+In-Reply-To: <CAL_JsqLXNVdEj3ZCA_Wnirv-7maCZATKmjS8fJYR0uLQ9OTQZQ@mail.gmail.com>
+        (message from Rob Herring on Thu, 1 Sep 2022 17:26:18 -0500)
+Subject: Re: [PATCH 1/6] dt-bindings: mfd: add binding for Apple Mac System
+ Management Controller
+References: <YxC5eZjGgd8xguDr@shell.armlinux.org.uk> <E1oTkeH-003t9A-3K@rmk-PC.armlinux.org.uk>
+ <426469c1-13cc-178b-4904-09439d7788e8@linaro.org> <YxDL+cAx9kkZRL8K@shell.armlinux.org.uk>
+ <928ddeff-efac-920c-7bbf-dda35a942b93@linaro.org> <YxDOpCq0vIlt4VNa@shell.armlinux.org.uk>
+ <2fedff34-6a20-f1ce-a756-2bd8671fcd52@linaro.org> <YxDWG5dmzErhKIXw@shell.armlinux.org.uk> <CAL_JsqLXNVdEj3ZCA_Wnirv-7maCZATKmjS8fJYR0uLQ9OTQZQ@mail.gmail.com>
+Message-ID: <d3cec35e749f958d@bloch.sibelius.xs4all.nl>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 2, 2022 at 5:46 PM Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
-> On Fri, Sep 02, 2022 at 04:39:16PM +0300, Andy Shevchenko wrote:
-> > On Fri, Sep 2, 2022 at 2:33 PM Russell King (Oracle)
-> > <linux@armlinux.org.uk> wrote:
-> > > On Fri, Sep 02, 2022 at 01:37:14PM +0300, Andy Shevchenko wrote:
-> > > > On Fri, Sep 2, 2022 at 1:05 PM Russell King (Oracle)
-> > > > <linux@armlinux.org.uk> wrote:
-> > > > > On Thu, Sep 01, 2022 at 09:55:23PM +0300, Andy Shevchenko wrote:
-> > > > > > > +static int macsmc_gpio_nr(smc_key key)
-> > > > > > > +{
-> > > > > > > +       int low = hex_to_bin(key & 0xff);
-> > > > > > > +       int high = hex_to_bin((key >> 8) & 0xff);
-> > > > > > > +
-> > > > > > > +       if (low < 0 || high < 0)
-> > > > > > > +               return -1;
-> > > > > > > +
-> > > > > > > +       return low | (high << 4);
-> > > > > > > +}
-> > > > > >
-> > > > > > NIH hex2bin().
-> > > > >
-> > > > > Is using hex2bin really better?
-> > > >
-> > > > Yes.
-> > > >
-> > > > > static int macsmc_gpio_nr(smc_key key)
-> > > > > {
-> > > > >         char k[2];
-> > > > >         u8 result;
-> > > > >         int ret;
-> > > > >
-> > > > >         k[0] = key;
-> > > > >         k[1] = key >> 8;
-> > > > >
-> > > > >         ret = hex2bin(&result, k, 2);
-> > > > >         if (ret < 0)
-> > > > >                 return ret;
-> > > > >
-> > > > >         return result;
-> > > > > }
-> > > > >
-> > > > > This looks to me like it consumes more CPU cycles - because we have to
-> > > > > write each "character" to the stack, then call a function, only to then
-> > > > > call the hex_to_bin() function. One can't just pass "key" into hex2bin
-> > > > > because that will bring with it endian issues.
-> > > >
-> > > > With one detail missed, why do you need all that if you can use
-> > > > byteorder helpers()? What's the stack? Just replace this entire
-> > > > function with the respectful calls to hex2bin().
-> > >
-> > > Sorry, I don't understand what you're suggesting, because it doesn't
-> > > make sense to me. The byteorder helpers do not give a char array, which
-> > > is what hex2bin() wants, so we end up with something like:
-> > >
-> > >         __le16 foo = cpu_to_le16(key);
-> > >         u8 result;
-> > >
-> > >         ret = hex2bin(&result, (char *)&foo, 1);
-> > >         if (ret < 0)
-> > >                 return ret;
-> > >
-> > >         return result;
-> > >
-> > > This to me looks like yucky code, It still results in "foo" having to
-> > > be on the stack, because the out-of-line hex2bin() requires a pointer
-> > > to be passed as the second argument.
-> > >
-> > > Maybe you could provide an example of what you're thinking of, because
-> > > I'm at a loss to understand what you're thinking this should look like.
+> From: Rob Herring <robh+dt@kernel.org>
+> Date: Thu, 1 Sep 2022 17:26:18 -0500
+> 
+> On Thu, Sep 1, 2022 at 10:56 AM Russell King (Oracle)
+> <linux@armlinux.org.uk> wrote:
 > >
-> > So, let's look into the real callers to see, oh wait, it's a single caller!
-> > Why can't you simply do
+> > On Thu, Sep 01, 2022 at 06:45:52PM +0300, Krzysztof Kozlowski wrote:
+> > > On 01/09/2022 18:24, Russell King (Oracle) wrote:
+> > > > On Thu, Sep 01, 2022 at 06:15:46PM +0300, Krzysztof Kozlowski wrote:
+> > > >> On 01/09/2022 18:12, Russell King (Oracle) wrote:
+> > > >>>>> +  compatible:
+> > > >>>>> +    items:
+> > > >>>>> +      - enum:
+> > > >>>>> +        - apple,t8103-smc
+> > > >>>>
+> > > >>>> You miss two spaces of indentation on this level.
+> > > >>>
+> > > >>> Should that be picked up by the dt checker?
+> 
+> I have a problem that Krzysztof is quicker. ;) Maybe I should stop
+> screening the emails (for the times I break things mostly).
+> 
+> > > >>
+> > > >> I think yamllint complains about it. It is not a hard-dependency, so
+> > > >> maybe you don't have it installed.
+> > > >>
+> > > >>>
+> > > >>>>> +        - apple,t8112-smc
+> > > >>>>> +        - apple,t6000-smc
+> > > >>>>
+> > > >>>> Bring some order here - either alphabetical or by date of release (as in
+> > > >>>> other Apple schemas). I think t6000 was before t8112, so it's none of
+> > > >>>> that orders.
+> > > >>>
+> > > >>> Ok.
+> > > >>>
+> > > >>>>> +      - const: apple,smc
+> > > >>>>> +
+> > > >>>>> +  reg:
+> > > >>>>> +    description: Two regions, one for the SMC area and one for the SRAM area.
+> > > >>>>
+> > > >>>> You need constraints for size/order, so in this context list with
+> > > >>>> described items.
+> > > >>>
+> > > >>> How do I do that? I tried maxItems/minItems set to 2, but the dt checker
+> > > >>> objected to it.
+> > > >>
+> > > >> One way:
+> > > >> reg:
+> > > >>   items:
+> > > >>     - description: SMC area
+> > > >>     - description: SRAM area
+> > > >>
+> > > >> but actually this is very similar what you wrote for reg-names - kind of
+> > > >> obvious, so easier way:
+> > > >>
+> > > >> reg:
+> > > >>   maxItems: 2
+> > > >
+> > > > Doesn't work. With maxItems: 2, the example fails, yet it correctly lists
+> > > > two regs which are 64-bit address and 64-bit size - so in total 8 32-bit
+> > > > ints.
+> > > >
+> > > > Documentation/devicetree/bindings/mfd/apple,smc.example.dtb: smc@23e400000: reg: [[2, 1044381696], [0, 16384], [2, 1071644672], [0, 1048576]] is too long
+> > > >         From schema: /home/rmk/git/linux-rmk/Documentation/devicetree/bindings/mfd/apple,smc.yaml
+> > > >
+> > > > Hence, I originally had maxItems: 2, and ended up deleting it because of
+> > > > the dt checker.
+> > > >
+> > > > With the two descriptions, it's the same failure.
+> > >
+> > > Yeah, they should create same result.
+> > >
+> > > >
+> > > > I think the problem is that the checker has no knowledge in the example
+> > > > of how big each address and size element of the reg property is. So,
+> > > > it's interpreting it as four entries of 32-bit address,size pairs
+> > > > instead of two entries of 64-bit address,size pairs. Yep, that's it,
+> > > > if I increase the number of "- description" entries to four then it's
+> > > > happy.
+> > > >
+> > > > So, what's the solution?
+> > > >
+> > >
+> > > If you open generated DTS examples (in your
+> > > kbuild-output/Documentation/devicetree/bindings/mfd/) you will see which
+> > > address/size cells are expected. By default it is I think address/size
+> > > cells=1, so you need a bus node setting it to 2.
 > >
-> >          ret = hex2bin(&result, (char *)&cpu_to_le16(key), 1);
-> >          if (ret < 0)
-> >                  return ret;
+> > Thanks, that works. The patch with all those points addressed now looks
+> > like:
 > >
-> > in-place there?
->
-> This is not legal C.
+> > 8<===
+> > From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+> > Subject: [PATCH] dt-bindings: mfd: add binding for Apple Mac System Management
+> >  Controller
+> >
+> > Add a DT binding for the Apple Mac System Management Controller.
+> >
+> > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> > ---
+> >  .../devicetree/bindings/mfd/apple,smc.yaml    | 61 +++++++++++++++++++
+> >  1 file changed, 61 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/mfd/apple,smc.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/mfd/apple,smc.yaml b/Documentation/devicetree/bindings/mfd/apple,smc.yaml
+> > new file mode 100644
+> > index 000000000000..168f237c2962
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mfd/apple,smc.yaml
+> > @@ -0,0 +1,61 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/mfd/apple,smc.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Apple Mac System Management Controller
+> > +
+> > +maintainers:
+> > +  - Hector Martin <marcan@marcan.st>
+> > +
+> > +description:
+> > +  Apple Mac System Management Controller implements various functions
+> > +  such as GPIO, RTC, power, reboot.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - apple,t6000-smc
+> > +          - apple,t8103-smc
+> > +          - apple,t8112-smc
+> > +      - const: apple,smc
+> > +
+> > +  reg:
+> > +    items:
+> > +      - description: SMC area
+> > +      - description: SRAM area
+> 
+> Based on the disjoint addresses, is this really one device? Perhaps
+> the SRAM area should use mmio-sram binding? That already supports
+> sub-dividing the sram for different uses. I'll comment more on the
+> full example.
 
-I acknowledged this, sorry.
+To me it does look as if the SRAM is part of the SMC coprocessor
+block.  It is probably part of a larger SRAM on the side of the SMC
+coprocessor.  There is a gap, but the addresses are close.  The only
+thing in between is the SMC mailbox, which is represented by a
+separate node.
 
-> Please can we back up this discussion, and start
-> over with legal C suggestions. Thanks.
-
-Suggestion was given as well, let's create a helper used by apple
-stuff and later on we will consider the separate submission for the
-(new) specifier. Would it work for you?
-
--- 
-With Best Regards,
-Andy Shevchenko
+The address of the SRAM can be discovered by sending SMC commands.  I
+believe Hector added it in order to verify the address that the SMC
+firmware provides.  My OpenBSD driver doesn't use it, so in that sense
+changing the binding to use a separate node with a "mmio-sram"
+compatible (and presumably an "apple,sram" property to reference that
+node using a phandle) would work fine.  The extra level of indirection
+obviously would mean more code in the Linux SMC driver though.
