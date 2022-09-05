@@ -2,108 +2,112 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBAAC6FA83
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Sep 2022 13:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF6E1ECAAD5
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Sep 2022 13:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237988AbiIENiN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 5 Sep 2022 09:38:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38832 "EHLO
+        id S238142AbiIENxm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 5 Sep 2022 09:53:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238133AbiIENiF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2022 09:38:05 -0400
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEC904D811;
-        Mon,  5 Sep 2022 06:37:55 -0700 (PDT)
-Received: by mail-qk1-x72e.google.com with SMTP id i9so358287qka.0;
-        Mon, 05 Sep 2022 06:37:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=Y+KBK6xhZs559H3MgneEVbpSntlTH5gyHXvs8az7EvI=;
-        b=I+FYPiMu0YegkQdnnyoV9RHVpH5IFzPD8tdowmtGi6qcwtGpOJc9BAHZMbWFb0LE/p
-         mEhQZWj6ITZBPDnLYJMfv4ouclOrF1OhwhWvUr9YxvXsB4CMpPhPxM5muqGTkdePbjeL
-         6gzTB4ZE6xLdK+DpXtGYM+08x6WeGMdc2H5ivtbPZFvcOaNIQ/q+TSgBgyujEbhI7Omy
-         SBzagyWkvKfrieBF5m1gBncPrDQcBSwBVUVnMLijiIf4PdKn3wVWuYFWSUvJtJhkPjE1
-         y4NUaDr5FggZ/Z93kPZ8D+LrsIO75QcGpbWBqMgFHkuGBoVpq4PXY5cWsWP6kvSL7XId
-         siJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=Y+KBK6xhZs559H3MgneEVbpSntlTH5gyHXvs8az7EvI=;
-        b=YB+K9dEZQwX+HOiKbf9biNvFo8g6Yl3jWeHWSVgtePmXzBeQu3FhVQesoJuo9V8USr
-         RVw664ocsBh1Zsr0o+elRIBKy7exvZsqmpFbxyuB0C9z/prRsUe/IdWC/HqFhQl9YBLl
-         wKYtldz2wcxuB9IU7xIBDqt6woQOLktnx5tN0B5TkrqDGcm6SwsRRlv8HYMfzFeD95Q8
-         oJoMS7/E1jHkNp9Mse836lIVWOn4J7n/6cDROFBqhgYheGanhYHExO5NQ5SIVZAHKS2i
-         3A8MFzsPUdQvYDa4/zeBcAmidAOGp7OrOuQltfsf37KizsrN/7MilPmX5oreN6JRkjjn
-         mmaw==
-X-Gm-Message-State: ACgBeo1d1JBijYnV8mcTBb6V32PtESwlvgUiqO7TFDzdBEEg0ApXf9vh
-        GkstTNG6d9fBwFNep4InfYDFmCyM1lCXtHWn0RJ92A/eShw=
-X-Google-Smtp-Source: AA6agR6q36mc5BlhueksftcZiElaRMf1LqXvGugwSjBcFVdztilDasrj9TjqrJ0/D323fTBWLhNZZXiESljkQyZM9VM=
-X-Received: by 2002:a05:620a:288a:b0:6b8:fcfe:db02 with SMTP id
- j10-20020a05620a288a00b006b8fcfedb02mr33278028qkp.504.1662385073762; Mon, 05
- Sep 2022 06:37:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com>
- <20220902182650.83098-3-andriy.shevchenko@linux.intel.com>
- <CAHp75VcNGEVRnkWeVThaq4zNYoiZGSY-+KfbV5_9zG_5XoriMg@mail.gmail.com>
- <YxXyTCSKzL42PF1D@smile.fi.intel.com> <CACRpkdY4nJuXAxM7tYviWSPeqmCc6o4D--Vq0CZRPNjWNj+E_A@mail.gmail.com>
-In-Reply-To: <CACRpkdY4nJuXAxM7tYviWSPeqmCc6o4D--Vq0CZRPNjWNj+E_A@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 5 Sep 2022 16:37:17 +0300
-Message-ID: <CAHp75VcbucZ_3+bvJCsLk78D6egwckN=rMAdttmVwt8H9MfCSw@mail.gmail.com>
-Subject: Re: [PATCH v1 03/17] pinctrl: cy8c95x0: Allow most of the registers
- to be cached
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Patrick Rudolph <patrick.rudolph@9elements.com>,
+        with ESMTP id S231582AbiIENx1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2022 09:53:27 -0400
+Received: from new4-smtp.messagingengine.com (new4-smtp.messagingengine.com [66.111.4.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E68850049
+        for <linux-gpio@vger.kernel.org>; Mon,  5 Sep 2022 06:53:26 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 7FCEB58025B;
+        Mon,  5 Sep 2022 09:53:25 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute3.internal (MEProxy); Mon, 05 Sep 2022 09:53:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm1; t=1662386005; x=1662389605; bh=DAwij7Um0i
+        kNBEF3YIhOjtbhSpBMWl517NbMhPX1fsA=; b=UUVFdroYt527pFBL+iQI1DSE2g
+        vi89Hr3L4cX+r6iyj8v2PY3m/dvdpS0DSrlW2jqsIUOAu+t5xOk+Eo21Sb9Fluli
+        uw5+oyhvnRKT2rjya6j0Nps3pUoWcK+rk6GmWqla5bxNCoU0VwBXK1O1aD05tuNN
+        pXho7fRVp4tCRWAXNTG3p9spWNVJdqQQbhwZNg/qIPS1MmCe7Jr1LX94dTkT/goB
+        B/VG3Ztdt4tfhXg2JgM/u9/bmOE71C1UB6vh3rlVoJdBfMUBlNkLcML9UmF/GiwF
+        Fb2DtoyYB2EtQSOdfbZktXj1GRkjPJg6laJY/gGLQ/7RZEMRxX7Wj+bQ5ZcA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1662386005; x=1662389605; bh=DAwij7Um0ikNBEF3YIhOjtbhSpBM
+        Wl517NbMhPX1fsA=; b=R6u2k8JeLqJVd4QNtrys56Ptc9jBZ8E7WQ/M2GFQOJd0
+        rlZ0fw3g9kOhh8U30f+ZEZNph1F/3RLrokYsrASqTLsQPTr7A5+i+8m/pB9HPAmA
+        kOaY5H8rIi8lUT41roc/l2zddMJAun34qmxFpF4rLCow90luGzIQTD2QvjjpDWZW
+        0VH89qCFtoYrQTBF2gZkP0gy/W6vty+q4L2M/+uJv6dxM9VZj/OInk2QNIFPdllf
+        tG5VuW0sGOX+js7Fa8xBWnkmDmrrkGcbQULrVJ8MFwPGMBnSRVPV9wU8fZaioMDl
+        iSjQRawkKBBNXXz5dDYKEVnV9gptNCbPGwYipK7tWg==
+X-ME-Sender: <xms:VP8VY97tkQVJltSw6k4LmSjIGH5Up9yhjidatrgAXD4EZt0gvk4dfA>
+    <xme:VP8VY67XdY-Fy8NIEGZ0xFHi6JcVHAQhpLibrbJkofaJXt3zCROtAaJgHa41Mvbsx
+    DE2RhiAEy2vmFi8N9M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdeliedgjeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:VP8VY0eBu6STio3Kfq4MW_9Ms_wnPLBXK9RJsw2bQxKFcpUQu8zV3w>
+    <xmx:VP8VY2JBU54-ODLEbS_tpChnekxPiKu1dGjay6NQiC10Z240ncJdEw>
+    <xmx:VP8VYxKnzLTeed1W5ULls7HbNAi3Ff_Ar3nnQL1ZjZ0aXbtMYNNRxA>
+    <xmx:Vf8VY-Hdd4gdBL7S4CrK_OnsUwobHvHAnl1jfgWGf3RncP5rRnN79A>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id B256DB60083; Mon,  5 Sep 2022 09:53:24 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-927-gf4c98c8499-fm-20220826.002-gf4c98c84
+Mime-Version: 1.0
+Message-Id: <9be88d9b-8531-46f4-8cca-c276b4a741e1@www.fastmail.com>
+In-Reply-To: <CACRpkdYKQt8fJ5FaTQgoNgGH73xnC877pQhek5Df1zdSE_c3=w@mail.gmail.com>
+References: <202209050605.fezJUgFH-lkp@intel.com>
+ <CACRpkdbfHG3r1wtN3Gne-XX0Zg2qyFSgH4yR3ctauABY4u-XJw@mail.gmail.com>
+ <20220905133040.GB6496@francesco-nb.int.toradex.com>
+ <CACRpkdYKQt8fJ5FaTQgoNgGH73xnC877pQhek5Df1zdSE_c3=w@mail.gmail.com>
+Date:   Mon, 05 Sep 2022 15:53:03 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Linus Walleij" <linus.walleij@linaro.org>,
+        "Francesco Dolcini" <francesco.dolcini@toradex.com>
+Cc:     "kernel test robot" <lkp@intel.com>, llvm@lists.linux.dev,
+        kbuild-all@lists.01.org,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Fabio Estevam" <festevam@gmail.com>
+Subject: Re: [linusw-pinctrl:devel 26/32]
+ drivers/pinctrl/freescale/pinctrl-imx.c:260:9: error: call to undeclared
+ function 'pinmux_generic_get_function'; ISO C99 and later do not support
+ implicit function declarations
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Sep 5, 2022 at 4:34 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Sep 5, 2022 at 2:57 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Fri, Sep 02, 2022 at 09:42:00PM +0300, Andy Shevchenko wrote:
-> > > On Fri, Sep 2, 2022 at 9:36 PM Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > >
-> > > > It's unclear why many of static registers were marked as volatile.
-> > >
-> > > the static (yeah, forgot it)
-> > >
-> > > > They are pretty much bidirectional and static in a sense that
-> > > > written value is kept there until a new write or chip reset.
-> > > > Drop those registers from the list to allow them to be cached.
-> > >
-> > > This patch is not correct due to indexing access. It's sneaked since I
-> > > forgot I added it into my main repo. The proper approach should be to
-> > > create virtual registers and decode them before use. This allows to
-> > > cache all ports and as a benefit to debug print all port actual
-> > > statuses.
-> >
-> > To be clear: With this one removed from the bunch the rest can be applied w.o.
-> > any change.
->
-> I'll give Patrick a day or two to test/review and then I'll just apply
-> them all except this one, they are all pretty self-evident
+On Mon, Sep 5, 2022, at 3:37 PM, Linus Walleij wrote:
+> On Mon, Sep 5, 2022 at 3:30 PM Francesco Dolcini <francesco.dolcini@toradex.com> >
+> What annoys me is that the core pinmux/pinctrl part should not
+> depend on HAS_IOMEM... :(
 
-Sure!
+Does it actually still depend on it? s390 now has
 
-> except ACPI
-> things which have obviously been tested on hardware
+config HAS_IOMEM
+        def_bool PCI
 
-Yes, I have a Galileo Gen 1 board which has been used for testing.
+and compile-test has:
 
->  so from my
-> point of view it's good to merge.
+config COMPILE_TEST
+        bool "Compile also drivers which will not load"
+        depends on HAS_IOMEM
 
-Thanks!
+so s390 should work both with and without IOMEM here, as long
+as drivers do the usual 'depends on ARCH_MXC || COMPILE_TEST'
+dance.
 
--- 
-With Best Regards,
-Andy Shevchenko
+The only problem I see is a missing 'select GENERIC_PINMUX_FUNCTIONS'.
+There may be other drivers that have the same issue. Would it
+make sense to just always build these into the pinctrl
+subsystem?
+
+     Arnd
