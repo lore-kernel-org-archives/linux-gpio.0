@@ -2,153 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E9DECAAD3
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Sep 2022 10:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9787EECAAD3
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Sep 2022 10:41:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237214AbiIEKdI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 5 Sep 2022 06:33:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59110 "EHLO
+        id S236215AbiIEKlK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 5 Sep 2022 06:41:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237521AbiIEKdH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2022 06:33:07 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C07D3AE69
-        for <linux-gpio@vger.kernel.org>; Mon,  5 Sep 2022 03:33:06 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id cb8so5893160qtb.0
-        for <linux-gpio@vger.kernel.org>; Mon, 05 Sep 2022 03:33:06 -0700 (PDT)
+        with ESMTP id S235960AbiIEKlJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2022 06:41:09 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A27841A81B
+        for <linux-gpio@vger.kernel.org>; Mon,  5 Sep 2022 03:41:07 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id kk26so16172241ejc.11
+        for <linux-gpio@vger.kernel.org>; Mon, 05 Sep 2022 03:41:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=1qDAhY9gtu7if1byi4qyoH5HE+QBW+rQwg+8jfZuHM4=;
-        b=HbLUJRdVs3kRvFtbJd2/gROjHbI1BIW0ZEzU1/nCO32KfmnZtBXp9uTc8/0MSne3lx
-         +2CP7Xpnl71ZcIowISUMLZlrVykE4VbQkF26rAwO69nbtc0IrolL6GBRxlovRPay9RP4
-         ZG4DxvN+NuQelmi6RjzwMlemPUItK4fZbVzau8D3HLcQCMCFsDLO0VK9kkCeDpDJ0pB9
-         3znITDbH6o9As1ZN8DSSUpsHj761q0EypH4JWEmNtMEdtiHNCY7+Hn/Mi+zqCPtvFE4I
-         lr8Dl8OHUScs6YCjGDzAi+cYOzvI0qxW/SUuP1L1H208pY0AMy6vE6Mmq0CQ/dcEPLK0
-         0mqQ==
+        bh=9xdYuu62zn6DTVuFLIdNqNTZMNwzsKHXEqC14OZNWNU=;
+        b=FtboF37GSOE63UVBPDmVZNlKbNYdyQQTJ+s3UhSQJVLQL/lfTP9LWjRJrI2IirL10P
+         RMbzluYFwNJzfe1PcgqLCwlKFYldMq9paXhxYn0sYX271CaSDJZHidZ5q96JxBOSW2zn
+         lOaTLbWVAi26m6UIISjWArsPGILqnhZGi9fcT8kQksgDAK0cglTE62X2uT7bK8xfV6Jn
+         69jfdmKiWiZCu5sVLeXkE7kdKvJZrfswHvHuNhGjcoCD973h5vcRXPGP0giAbPSsgah9
+         jm2PSTYF7H/HxnDS4XHxekgDOaHjJVatxbEhAECSvMHM/cKDnbe76RrHLb0Ztl/YmXn8
+         00eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=1qDAhY9gtu7if1byi4qyoH5HE+QBW+rQwg+8jfZuHM4=;
-        b=TInWzQyqUHqCzlgjYA4UwKYXR2ED8Pwb2LLIme26yMdSeLW2THAF8iH12q3xHEB1fz
-         cDf0bp29Uqu2Z4XSED99W0kHLwj1kUfp2PMXm1UIelm3cVi2aU+vOGLKVHidtDeqf1AN
-         eud3jdLgo4zUe9bXkeeysFy9CEDdGDRKUtuToA9FXJVQ6Zgvoa+/DnyuhALRdqNtPypN
-         uvYfBXP+qazdma5sNzeJA8EIY3LwHRIDuLDffCsixRkyetqWzZ6eOd+8UhF6j5PoRtIV
-         pLZNDquA+2o6ilUEFPPTQ9eE2QiNBhd4aj/IzNGKt3BV8LUc6CWw77cSB8HMIj5uCLoz
-         VpEw==
-X-Gm-Message-State: ACgBeo3Pb1tvv+rlbvyMhZNE/8sx7Hgqn+EQF8Y7xcs9fKB8gbwwrUzb
-        3H7vOLpKn2Wvt7bKryyGYMWgM2MSqQzEvKF3whA=
-X-Google-Smtp-Source: AA6agR62JwdcSmIkYS6PaavsmhTwv0VPiTDFO5bIPZ9hE2wF7e/Lqq7JR9n49cpGYbN6ZEtIe6ijljGQfBlq+GWwZf8=
-X-Received: by 2002:ac8:7dd0:0:b0:344:afc1:b11d with SMTP id
- c16-20020ac87dd0000000b00344afc1b11dmr37920340qte.195.1662373985157; Mon, 05
- Sep 2022 03:33:05 -0700 (PDT)
+        bh=9xdYuu62zn6DTVuFLIdNqNTZMNwzsKHXEqC14OZNWNU=;
+        b=xfoiKurF2b9obFFdBZ/XdJ42UsZ7lbqoTAh/9vRNTxiVqEhcowpE7Ix0E5djU7+QeK
+         OcmecOO9POcPZ9tnLVUmwH9UQazRWePdqhJNbNeKQxpnpEXJrUEsDmfZpyxzR6LPc5RD
+         iswWYwOtw4ofbEgDFvuG32JjuU8JULYUtvgEYJ1P8i97ZzSCeRNhdu1vAZnxA4QzKHsA
+         BvKKjNN0Tf1sHM3FOEAU6UAfs3XFgzZMpJMbJrGX8ToHQhmeO9iYFk9nRItwhKgQ712J
+         9OxCLTUmtGcSYyUceHi3EknWeJLJjbT55TJ1V9F2UynJQrOVTZ2cQ3y9K1NNzPTATI9s
+         NMlQ==
+X-Gm-Message-State: ACgBeo1xw/arbvDtm8+TJeDOtHTTBQjpFfT2M/FhZXNyEcGTwGLrSMua
+        Npbbxgjwj/GchBRGkArW+j5ekp2oFZYYjwtfibBG1A==
+X-Google-Smtp-Source: AA6agR5WFwFd/TQ7W2jnfHYcXDAkiN6tuxUzvxuNvMwW96MkN6StF/cPpx6O6HJW2jg3g8odW82qLRa+WoEMj2LUhdw=
+X-Received: by 2002:a17:906:58c8:b0:6fe:91d5:18d2 with SMTP id
+ e8-20020a17090658c800b006fe91d518d2mr35853646ejs.190.1662374466240; Mon, 05
+ Sep 2022 03:41:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <E1oTkeb-003t9e-Iy@rmk-PC.armlinux.org.uk> <CAHp75VcG5E+yTH2hG2CbnArsm+ZJ-sWRMmM-wLks0xUJkwSgcg@mail.gmail.com>
- <YxHVdjYPlIINZ/Wc@shell.armlinux.org.uk> <CAHp75VeO3gxypRTUc9Subvh+NZ7X4_RR=eFUZpPNwBeWk+_ipg@mail.gmail.com>
- <YxHp6CNhlQ5Hx1m8@shell.armlinux.org.uk> <CAHp75Vd-hT3Z-TUCG3y872_Y7sPAW2QBGC28S7aimOf3WQHg6A@mail.gmail.com>
- <YxIXPSZlEBcKYulW@shell.armlinux.org.uk> <CAHp75VeTYSn+ODtoH27OB2U+XYVEphonm+QR3Z+NVs-nJ90w9w@mail.gmail.com>
- <YxIifddpeJRCuImc@shell.armlinux.org.uk> <CAHp75VddN-cEY3AN=PWO5pR4D6YaDTRQgjbZLS=C5dLBTSVGwA@mail.gmail.com>
- <YxXNZzeBRiiS6FNk@shell.armlinux.org.uk>
-In-Reply-To: <YxXNZzeBRiiS6FNk@shell.armlinux.org.uk>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 5 Sep 2022 13:32:29 +0300
-Message-ID: <CAHp75Vcq4LVRmgELvLJ8fNk3xdSfGikyLDL_7LGvKg4a4L4J=A@mail.gmail.com>
-Subject: Re: [PATCH 5/6] gpio: Add new gpio-macsmc driver for Apple Macs
-To:     "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+References: <20220903-gpiod_get_from_of_node-remove-v1-0-b29adfb27a6c@gmail.com>
+ <20220903-gpiod_get_from_of_node-remove-v1-11-b29adfb27a6c@gmail.com>
+In-Reply-To: <20220903-gpiod_get_from_of_node-remove-v1-11-b29adfb27a6c@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 5 Sep 2022 12:40:55 +0200
+Message-ID: <CACRpkdbYc3vbgq26cXz4FYdzgDp-ro3fq=JGmuj9=cq+Zu13PQ@mail.gmail.com>
+Subject: Re: [PATCH v1 11/11] gpiolib: of: remove [devm_]gpiod_get_from_of_node()
+ APIs
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Airlie <airlied@linux.ie>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
         Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        asahi@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Hector Martin <marcan@marcan.st>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sven Peter <sven@svenpeter.dev>
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+        linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Sep 5, 2022 at 1:20 PM Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
-> On Fri, Sep 02, 2022 at 06:43:36PM +0300, Andy Shevchenko wrote:
-> > On Fri, Sep 2, 2022 at 6:34 PM Russell King (Oracle)
-> > <linux@armlinux.org.uk> wrote:
-> > > On Fri, Sep 02, 2022 at 05:53:25PM +0300, Andy Shevchenko wrote:
+On Mon, Sep 5, 2022 at 8:31 AM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-...
+> Now that everyone is using [devm_]fwnode_gpiod_get[_index]() APIs, we no
+> longer need to expose OF-specific [devm_]gpiod_get_from_of_node().
+>
+> Note that we are keeping gpiod_get_from_of_node() but only as a private
+> to gpiolib function.
+>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-> > > static int macsmc_gpio_nr(smc_key key)
-> > > {
-> > >          __le16 foo = cpu_to_le16(key);
-> > >          u8 result;
-> > >          int ret;
-> > >
-> > >          ret = hex2bin(&result, (char *)&foo, 1);
-> > >          if (ret < 0)
-> > >                  return ret;
-> > >
-> > >          return result;
-> > > }
-> > >
-> > > which you also didn't like,
-> >
-> > ...based on the wrong suggestion below. That said, the above is fine to me.
->
-> To be honest, using the endian conversion macro there doesn't feel
-> right and is more prone to programming errors. I can't tell just by
-> looking at it that either cpu_to_le16() or cpu_to_le32() would be the
-> right thing here - and if it's not obvious then it's a bug waiting to
-> happen.
->
-> As if to prove the point, the above suggestions turn out to *all* be
-> buggy.
->
-> The initial suggestion gets the k[0] and k[1] assignment round the
-> wrong way. The second, le16() is definitely not the right conversion.
-> If we start using the endian conversion macros, then this is going to
-> screw up if someone runs a BE kernel against the SMC (since the
-> _SMC_KEY() macro will still be doing its conversion.)
->
-> This seems utterly counter-productive, and I've spent quite a long
-> time trying to work out what would be correct.
->
-> At this point, I'm not sure that changing what has already been
-> established in the Asahi Linux tree for something entirely different
-> in mainline is going to be practical - it's a recipe for repeated
-> mistakes converting keys from the Asahi kernel to the mainline
-> kernel.
->
-> It's not _just_ the GPIO driver. There are multiple other drivers
-> that will be impacted by changing the scheme here.
->
-> Any change to the scheme for these SMC keys  needs to happen in the
-> Asahi kernel tree by the Asahi Linux maintainers, not by someone
-> pushing the code upstream - doing so would be a recipe for repeated
-> trainwrecks.
->
-> So, I'm going with my first suggestion for the hex2bin() conversion
-> above, and adding a comment thusly:
->
->         /*
->          * The most significant nibble comes from k[0] and key bits 15..8
->          * The least significant nibble comes from k[1] and key bits 7..0
->          */
->         k[0] = key >> 8;
->         k[1] = key;
->
-> because I needed the comment to prove to myself that I wasn't breaking
-> this code. Maybe it's obvious to you, but it isn't obvious to everyone.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-And how is it different to the key being __be16 and all operations
-against it be correct with the endianness helpers? Adding redundant
-comments when the bitwise type exists seems just like being afraid of
-the unknown. Ah, I see that in one of your long letters the proposal
-somehow switched from (implicit) be16 to (explicit) le16... Still to
-me it's not enough justification for the comment, but since it has no
-effect on the code generation, add it if you think it would be better.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
