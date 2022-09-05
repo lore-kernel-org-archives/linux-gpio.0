@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7639FC6FA86
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Sep 2022 06:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8659DECAAD5
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Sep 2022 06:31:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236734AbiIEGbW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 5 Sep 2022 02:31:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41398 "EHLO
+        id S236791AbiIEGbl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 5 Sep 2022 02:31:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236651AbiIEGbS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2022 02:31:18 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 393F318B36;
-        Sun,  4 Sep 2022 23:31:17 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id x19so7758650pfr.1;
-        Sun, 04 Sep 2022 23:31:17 -0700 (PDT)
+        with ESMTP id S236370AbiIEGbX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2022 02:31:23 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48390326C7;
+        Sun,  4 Sep 2022 23:31:22 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id y29so7787796pfq.0;
+        Sun, 04 Sep 2022 23:31:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=JcNarHX5vDGjVT4u3bJlQD1+cgrqWKhTPjcJ8WgPV+Y=;
-        b=DxvplDrIsh+KijXXFdPyzxvt874fwO8Mrl8/8AeOKCJE+XbHxvUZFRKCE2GWxXKh/D
-         umFYRihOe+jne0ztML2y6mc0jbRPpGBhC1g0NvUfpp6EeLk7jk01cUaRoaJOQGKx5afd
-         lMrQqjCzBLO0lmmWRuQTMiLdS80KFr2EMlRBbDQ43Cvwei0LgWRjAJ8gs1Hh7H+I8nL+
-         T7StbBazi7jgrWFhxeXo3Gac0AKQAJdX41kNsF1jErc6zj3GvAoSXS8rPqIvQoiy9CfD
-         STWwhnuDN61n/ngUeJ4+XMum2eLhXHNuROQUxZWikj/bqGNqJIg0uK7dakXt3T7vhKRj
-         +Zvg==
+        bh=f1PZzsaMnOlN09CVwbSU1GebwD1POC8hMtOU/HbCocM=;
+        b=pdli+4eCvdWbxLZpx0O/e5Ud3wuQ5WWZPs7wxvLZ8aWyeshw5o3oRO/WG8ev2Aaq1m
+         BX/Fr0/H0104qGs68GxhCwuFDG+PdZ2DrBRO+OPQVwRTpp7rdrBwbaXxSj0nC7vBM+b5
+         GXjvKR+R9YSnP5K560kQKQaswuG1HWEF9p6rBSHyfMHnnKCObj/NMkW/0nwlLU7coaJN
+         lMlGTVarp6ddLZqLDpTSWdUVPPyTlQJyHZXKdGvmnZujDf4OJXr1QpZ4olhMYA2SJhx8
+         m53y0aRnHgIB7peKEuEd6JQIyv+D3WxGZ668VhcUTC58GT5LurfYxI/+Of47FfV3GuNG
+         TzYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=JcNarHX5vDGjVT4u3bJlQD1+cgrqWKhTPjcJ8WgPV+Y=;
-        b=pu2clfpNGZ9WCKsJshAhVnGjCJzT2QAL9lV2z7KJfmmDIvwICbCk/+Ftzhs+pLBzD5
-         odPT9jJEPNBQX7A4a8CB83bdJzOjY02OPSUOWJCCQBkhpVOfHkEpnod9k57whjoYaz4J
-         f27SD0nF0wKPHCUX7ySRociAs9bxSYefEACccXO1G+jP2M/p1OtQJ6phHSrzpygO2fDA
-         q5RxIPe5HE2Z07gC+cx9yCSfPiMZb8VEKu0mSTqKLQHbi28y4nSdSPU+oannmwApCfzr
-         MVC0+RGpceR7PRxIak8OaYf9NsYsToES6w7erbQl3lsambqFjJvl+kv7kcGQul/+fVmf
-         JHiw==
-X-Gm-Message-State: ACgBeo1s5/SwNvKxnBsII7vJMaj2+X0V5VYTwmzv7xVFPI4ZGaC5cGaT
-        6BT3m9FhnfUrA1TWoZrI8Mw=
-X-Google-Smtp-Source: AA6agR7ElJwXFJbXTWS13gywL0+xg7ynmUWpG94uiTchE1mDeAqtJvkeWg4KKm6lqy6WE6s/yuBdHA==
-X-Received: by 2002:a63:fc11:0:b0:430:41b4:acf5 with SMTP id j17-20020a63fc11000000b0043041b4acf5mr19872386pgi.408.1662359476546;
-        Sun, 04 Sep 2022 23:31:16 -0700 (PDT)
+        bh=f1PZzsaMnOlN09CVwbSU1GebwD1POC8hMtOU/HbCocM=;
+        b=XnsaJkNm0Luife6pDSeeE6Cb5qfp5+5gsLEPjA/1N0/LbPCflKz8WWvguE/x3NyShJ
+         jj9+63B3sUUgAh4PTn+z0MKs5j4P1X0Te3+rXwVNRMsBlymK5svglI4gw29w6UpdDvMx
+         rBCvK1bIgnWVFmKmPJykdk6ru86DmYrgbQWFvu2a4r0GY6Fro3ZLPorZhrWEc/qLYRO0
+         cYTpDTbkUvy65EdMSrb1seIIwWcCnzLy7Bd+i7aeUOhm8L3IXMazWDfrP+p2w1kZm+s3
+         Buh0nWGTzDFyeeF63IaMnGeSeYFRSwnr2vqe+MZEffuJCxfmvgm5Mu4ZBFCpfeezOkZo
+         QuwA==
+X-Gm-Message-State: ACgBeo379u/1EFaMUi7ahc2itN3FSYVS+CpgwFugZpBZpSE1q3y9XoaO
+        m0CiCVuAt/5cblY/P+rl18U=
+X-Google-Smtp-Source: AA6agR5cvvg/UZg1XV6YqtMeu4gBydqn31I2YyYPcH2GdlFOcXWs2FB6+oFFKzKdNcI+NqL1V/14Sg==
+X-Received: by 2002:aa7:978c:0:b0:537:d68e:3a27 with SMTP id o12-20020aa7978c000000b00537d68e3a27mr28251047pfp.71.1662359481595;
+        Sun, 04 Sep 2022 23:31:21 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:7332:f188:2984:5930])
-        by smtp.gmail.com with ESMTPSA id d197-20020a6336ce000000b0042254fce5e7sm5710653pga.50.2022.09.04.23.31.14
+        by smtp.gmail.com with ESMTPSA id d197-20020a6336ce000000b0042254fce5e7sm5710653pga.50.2022.09.04.23.31.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Sep 2022 23:31:16 -0700 (PDT)
+        Sun, 04 Sep 2022 23:31:21 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -84,9 +84,9 @@ Cc:     linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v1 03/11] mtd: rawnand: stm32_fmc2: switch to using devm_fwnode_gpiod_get()
-Date:   Sun,  4 Sep 2022 23:30:55 -0700
-Message-Id: <20220903-gpiod_get_from_of_node-remove-v1-3-b29adfb27a6c@gmail.com>
+Subject: [PATCH v1 05/11] usb: gadget: udc: at91: switch to using fwnode_gpiod_get_index()
+Date:   Sun,  4 Sep 2022 23:30:57 -0700
+Message-Id: <20220903-gpiod_get_from_of_node-remove-v1-5-b29adfb27a6c@gmail.com>
 X-Mailer: git-send-email 2.37.2.789.g6183377224-goog
 In-Reply-To: <20220903-gpiod_get_from_of_node-remove-v1-0-b29adfb27a6c@gmail.com>
 References: <20220903-gpiod_get_from_of_node-remove-v1-0-b29adfb27a6c@gmail.com>
@@ -98,28 +98,34 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-I would like to stop exporting OF-specific devm_gpiod_get_from_of_node()
+I would like to stop exporting OF-specific gpiod_get_from_of_node()
 so that gpiolib can be cleaned a bit, so let's switch to the generic
 fwnode property API.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-diff --git a/drivers/mtd/nand/raw/stm32_fmc2_nand.c b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-index 87c1c7dd97eb..7e466b840368 100644
---- a/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-+++ b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-@@ -1799,9 +1799,8 @@ static int stm32_fmc2_nfc_parse_child(struct stm32_fmc2_nfc *nfc,
- 		nand->cs_used[i] = cs;
- 	}
+diff --git a/drivers/usb/gadget/udc/at91_udc.c b/drivers/usb/gadget/udc/at91_udc.c
+index 728987280373..1db1dbbab79a 100644
+--- a/drivers/usb/gadget/udc/at91_udc.c
++++ b/drivers/usb/gadget/udc/at91_udc.c
+@@ -1779,12 +1779,14 @@ static void at91udc_of_init(struct at91_udc *udc, struct device_node *np)
+ 	if (of_property_read_u32(np, "atmel,vbus-polled", &val) == 0)
+ 		board->vbus_polled = 1;
  
--	nand->wp_gpio = devm_gpiod_get_from_of_node(nfc->dev, dn,
--						    "wp-gpios", 0,
--						    GPIOD_OUT_HIGH, "wp");
-+	nand->wp_gpio = devm_fwnode_gpiod_get(nfc->dev, of_fwnode_handle(dn),
-+					      "wp", GPIOD_OUT_HIGH, "wp");
- 	if (IS_ERR(nand->wp_gpio)) {
- 		ret = PTR_ERR(nand->wp_gpio);
- 		if (ret != -ENOENT)
+-	board->vbus_pin = gpiod_get_from_of_node(np, "atmel,vbus-gpio", 0,
+-						 GPIOD_IN, "udc_vbus");
++	board->vbus_pin = fwnode_gpiod_get_index(of_fwnode_handle(np),
++						 "atmel,vbus", 0, GPIOD_IN,
++						 "udc_vbus");
+ 	if (IS_ERR(board->vbus_pin))
+ 		board->vbus_pin = NULL;
+ 
+-	board->pullup_pin = gpiod_get_from_of_node(np, "atmel,pullup-gpio", 0,
++	board->pullup_pin = fwnode_gpiod_get_index(of_fwnode_handle(np),
++						   "atmel,pullup", 0,
+ 						   GPIOD_ASIS, "udc_pullup");
+ 	if (IS_ERR(board->pullup_pin))
+ 		board->pullup_pin = NULL;
 
 -- 
 b4 0.10.0-dev-fc921
