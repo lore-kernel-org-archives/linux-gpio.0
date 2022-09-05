@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0424CECAAD5
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Sep 2022 06:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D91C6FA8D
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Sep 2022 06:31:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236637AbiIEGbR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 5 Sep 2022 02:31:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41378 "EHLO
+        id S236653AbiIEGbY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 5 Sep 2022 02:31:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235843AbiIEGbP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2022 02:31:15 -0400
+        with ESMTP id S236114AbiIEGbV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2022 02:31:21 -0400
 Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E70A18B36;
-        Sun,  4 Sep 2022 23:31:14 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id s206so7309344pgs.3;
-        Sun, 04 Sep 2022 23:31:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A7C30F49;
+        Sun,  4 Sep 2022 23:31:19 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id s206so7309512pgs.3;
+        Sun, 04 Sep 2022 23:31:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=U194c+dv3L8PGxjQRUqmKsyVJlhonDrX8vTPY/i9hXs=;
-        b=Fkbc/qOj6ZS7IqaqFcyPDPM8EDvYCU7OGChWB/9DpWkiWqS2dcKh9l1ojNoGhPTnaD
-         njtjyQXo+Rn/WKjPbWSgQwcSRXqdDOgJDGXNJQq5SFjXCfctlSjW18o5uDca1l2zvr9s
-         qI1PzrfdfgBUibYLHx0f78UFpIn7lM4srMFlpQG6GGUAs+9ir4zw3UO2CcA6EiK7Fjf1
-         bf4cjTs1g6ppz8vMIVX34VakImJ62Z/3L44MxW6WWlAwFP7SjkuSosBV+uw4t/dQJPMK
-         jdTwvre314VlwpC1eofIVn09IiP/lYmwjM75pESkwXfDC4BXtIhlz1s+2S/HOBFZhOcr
-         KREw==
+        bh=nEbjUfr7fwqueSmjAsD0W8GSCJGEGPrp4ULUwjjyEJA=;
+        b=BwhSxhJHuNZubY5udVF0benef1V78QThc+I+5pdGaAhS9f7czmXQ0+lX6fLemCXOdl
+         3fHYh5mFxmh6vXpEgGgoJfSt54Hg8m+uS1Wxx8zGEMMd3IMEilC7XzLCelQyUpIGADDa
+         eHrlp4RIUpSke6IDMjI2wRpqP3Xcu9nVikuwws6JGbz1bpaNy+xlA1aWhyGXSVM8Bgez
+         rR7uraO+M+9xWjLBH/xW3NfDDpH5H4xC8AhL1rqmFoqQ1YQUTwU9vSojevfdF4bc76Qh
+         TW0gqThzNTQaw7vPqkwkLSNXzYRvK/UJpAMinaSHE472WQuIkYWNlxKNX/l2rblcn6fr
+         t2lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=U194c+dv3L8PGxjQRUqmKsyVJlhonDrX8vTPY/i9hXs=;
-        b=FH7N3z98qZ9bBOunPxiUaxnmkLk+taVR8AdZUnjUmjuJHcf1V3ou+NcMO7oZeBH1C7
-         7CN2Ddng4Oz1UJwrCLVnUGEn2ccL3CAHqKUEfAIaQLMUFI4QhIDkQy2gnIMggSJmTzxL
-         dbXItbb8pj4TVALamecgqn2q0s62seASemTthw3qIm+vX1+kuxo6dH91huPZ05XhwwWy
-         9xUTrYKrAIjhQgptVThfdzDhELT+Fn5GSwr57By/jdx/TFJhMuC1jV0fwarI9Z3og3Ew
-         uGfDly53OfuqNkFpSeaSo47FYQizu8sldNhipj1vx8kjN2Agon1P1fmXaPhVsAsbru7t
-         kJOg==
-X-Gm-Message-State: ACgBeo2Tl+wdjOdtViVsqsXGMzwsy8MaBxy8FWNKNHF04/R8tdW+ySNa
-        JJ3oYebTg/xsWst2mBFsjgg=
-X-Google-Smtp-Source: AA6agR5AcoEUClPAM45JZ1w1Bqqw5txpdGe6Mc9rimWxG6gO38z3tQNrUedFo00QOImtqhFwVKAqJg==
-X-Received: by 2002:a63:914c:0:b0:42b:a8fa:eb4a with SMTP id l73-20020a63914c000000b0042ba8faeb4amr34343614pge.481.1662359473959;
-        Sun, 04 Sep 2022 23:31:13 -0700 (PDT)
+        bh=nEbjUfr7fwqueSmjAsD0W8GSCJGEGPrp4ULUwjjyEJA=;
+        b=yJSdm/l4GjWeG0vrBX0GybvU0acNKoaYp4dMUtfPhCG4pvzqjlRdTGjbx6JmFpw9mZ
+         KvYyfTJauh9A26IzUOB541TePVsLkgSc3jeH37daQIPyQr7aeSt4hKRwWqQBPm4gu6JB
+         +BTVYo+HIkbRsO+Um4vSPXmK4LKqEOm64aJi5qKPUpv3qPz9sdxmedSl3lUyNLVecxIv
+         CGNCcGXt11FKmvRNZUhX438/c3RTisGymb39989yfEycKeXEA2hfi70ykD4tWOaNKKL2
+         QJFA1qtYHbtFiZ1v4hE6ZbEYtOpqUmQLG4AXZoart1ZPr2AD8tC+MbLPtiiLwaO/tJ6r
+         u95Q==
+X-Gm-Message-State: ACgBeo1SRrdaupz2mg/6UePF0drna3xm7LoMsfCmhjUt2EuB6xyPGN8q
+        wgt3+PD7jLHGVqEi7MXycmg=
+X-Google-Smtp-Source: AA6agR7O3xsaJm3PXWVEz8pTAeV7SFmhqqPNXXBFz2iOIaqf7IbZO/oITkU5Ekfa+HSas+vh7tCo8A==
+X-Received: by 2002:a05:6a00:2293:b0:53b:93ec:1dc1 with SMTP id f19-20020a056a00229300b0053b93ec1dc1mr8858576pfe.62.1662359479124;
+        Sun, 04 Sep 2022 23:31:19 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:7332:f188:2984:5930])
-        by smtp.gmail.com with ESMTPSA id d197-20020a6336ce000000b0042254fce5e7sm5710653pga.50.2022.09.04.23.31.11
+        by smtp.gmail.com with ESMTPSA id d197-20020a6336ce000000b0042254fce5e7sm5710653pga.50.2022.09.04.23.31.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Sep 2022 23:31:13 -0700 (PDT)
+        Sun, 04 Sep 2022 23:31:18 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -84,9 +84,9 @@ Cc:     linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v1 02/11] drm/tegra: switch to using devm_fwnode_gpiod_get
-Date:   Sun,  4 Sep 2022 23:30:54 -0700
-Message-Id: <20220903-gpiod_get_from_of_node-remove-v1-2-b29adfb27a6c@gmail.com>
+Subject: [PATCH v1 04/11] usb: phy: tegra: switch to using devm_gpiod_get()
+Date:   Sun,  4 Sep 2022 23:30:56 -0700
+Message-Id: <20220903-gpiod_get_from_of_node-remove-v1-4-b29adfb27a6c@gmail.com>
 X-Mailer: git-send-email 2.37.2.789.g6183377224-goog
 In-Reply-To: <20220903-gpiod_get_from_of_node-remove-v1-0-b29adfb27a6c@gmail.com>
 References: <20220903-gpiod_get_from_of_node-remove-v1-0-b29adfb27a6c@gmail.com>
@@ -98,35 +98,48 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-I would like to limit (or maybe even remove) use of
-[devm_]gpiod_get_from_of_node in drivers so that gpiolib can be cleaned
-a bit, so let's switch to the generic device property API. It may even
-help with handling secondary fwnodes when gpiolib is taught to handle
-gpios described by swnodes.
+I would like to stop exporting OF-specific devm_gpiod_get_from_of_node()
+so that gpiolib can be cleaned a bit, so let's switch to the generic
+device property API.
+
+I believe that the only reason the driver, instead of the standard
+devm_gpiod_get(), used devm_gpiod_get_from_of_node() is because it
+wanted to set up a pretty consumer name for the GPIO, and we now have
+a special API for that.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index 47d26b5d9945..a8925dcd7edd 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -133,11 +133,11 @@ int tegra_output_probe(struct tegra_output *output)
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index 68cd4b68e3a2..f0240107edb1 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -1440,16 +1440,22 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 			return err;
  		}
- 	}
  
--	output->hpd_gpio = devm_gpiod_get_from_of_node(output->dev,
--						       output->of_node,
--						       "nvidia,hpd-gpio", 0,
--						       GPIOD_IN,
--						       "HDMI hotplug detect");
-+	output->hpd_gpio = devm_fwnode_gpiod_get(output->dev,
-+					of_fwnode_handle(output->of_node),
-+					"nvidia,hpd",
-+					GPIOD_IN,
-+					"HDMI hotplug detect");
- 	if (IS_ERR(output->hpd_gpio)) {
- 		if (PTR_ERR(output->hpd_gpio) != -ENOENT)
- 			return PTR_ERR(output->hpd_gpio);
+-		gpiod = devm_gpiod_get_from_of_node(&pdev->dev, np,
+-						    "nvidia,phy-reset-gpio",
+-						    0, GPIOD_OUT_HIGH,
+-						    "ulpi_phy_reset_b");
++		gpiod = devm_gpiod_get(&pdev->dev, "nvidia,phy-reset",
++				       GPIOD_OUT_HIGH);
+ 		err = PTR_ERR_OR_ZERO(gpiod);
+ 		if (err) {
+ 			dev_err(&pdev->dev,
+ 				"Request failed for reset GPIO: %d\n", err);
+ 			return err;
+ 		}
++
++		err = gpiod_set_consumer_name(gpiod, "ulpi_phy_reset_b");
++		if (err) {
++			dev_err(&pdev->dev,
++				"Failed to set up reset GPIO name: %d\n", err);
++			return err;
++		}
++
+ 		tegra_phy->reset_gpio = gpiod;
+ 
+ 		phy = devm_otg_ulpi_create(&pdev->dev,
 
 -- 
 b4 0.10.0-dev-fc921
