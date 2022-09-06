@@ -2,127 +2,160 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C33C6FA83
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Sep 2022 14:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71934C6FA83
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Sep 2022 14:30:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241292AbiIFOO3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Sep 2022 10:14:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50368 "EHLO
+        id S232502AbiIFO3z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Sep 2022 10:29:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241523AbiIFONd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2022 10:13:33 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60E0188DDF
-        for <linux-gpio@vger.kernel.org>; Tue,  6 Sep 2022 06:48:07 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id bj12so23328457ejb.13
-        for <linux-gpio@vger.kernel.org>; Tue, 06 Sep 2022 06:48:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=vES/lt0MXBWqXZjxjspNA4S3RuvGiNZSCJKY5IddJHM=;
-        b=C5pTfv6sM7dHl/ZnXWKdbzOFx9dYouAyAn964q9bxDazB+7rxfx//WubrSOaVpJmAn
-         I6a5/NcMdG4+i+MU/Eo05NNOSC4/+lF3v1MzdCyAYNfIrvGWqYiSozA+j2MWL5pK9bKX
-         vo9kCHdhqAdN8c7Fr3rJdBrJuV3IXT1CO/b/00U9Vc61zhMpZR8qqVlDqRn3/8moCJ+H
-         cFOiQ52fsA1q+Qn7QWNWBVPoj5xgnGtYKXxs4BmtX9t78iApa61XgsftkvnxpcKq22cQ
-         Cr+9GqHyfJ5Hgfw/OLBW+gKMJWnNsxLK0jLEvl/us2x/uvG/fzDv2S5lQUx3ZJMRH4ag
-         IhrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=vES/lt0MXBWqXZjxjspNA4S3RuvGiNZSCJKY5IddJHM=;
-        b=dHYPu0wVlS3JZyT65G0HSfn4iw25Rq8N0ipXH9pyMTIAQLGOOZl1P+P60O7NHVbtj5
-         iu1toP6vmesXGuYNW+ctKq1rmpMUpIIE5VObhAapQjMZsMytO+RftJ3tbT49pvvKar9I
-         k8SbuXrDRL1RXBXg2smTnduMiEf4AY0ccbM73UWdL4i+i4kFIKCfbMrgXOaRrbPtktP3
-         TdTyOFAer+Vvi0+qxKsxr4NoqQFnO46ONq3sYEF/wvcb+JstM0Hde+J/xB3YMaOpXJHs
-         qlDU8cO3zubFVkHfDw22P/lMTrgCKMAY61RNDy/KTv5nRlw8TtonOdIpPZl6+GmTaij1
-         LCjw==
-X-Gm-Message-State: ACgBeo1J394TNcJY2zlbDAzN/DkkQX8XQnnlIP7OtlV7ImEVUaHlOHPW
-        PQMbVFsNsyJoy01AJtaG3SU78/htb+yLH/o1rgKVfA==
-X-Google-Smtp-Source: AA6agR5PA0CgGPmgOwDTBTALSmyX+y6DwXy04Ax5g0iL8EPRemFjppQ8iC8xEmVJmovk2uEs5CvbEyl93SGawzLhgRs=
-X-Received: by 2002:a17:906:58c8:b0:6fe:91d5:18d2 with SMTP id
- e8-20020a17090658c800b006fe91d518d2mr40054447ejs.190.1662472017364; Tue, 06
- Sep 2022 06:46:57 -0700 (PDT)
+        with ESMTP id S233834AbiIFO2T (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2022 10:28:19 -0400
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 273C542AFD;
+        Tue,  6 Sep 2022 06:54:54 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: marcan@marcan.st)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id D0F264195A;
+        Tue,  6 Sep 2022 13:53:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
+        t=1662472433; bh=7eZyFfHV2eGca4y6uhLlwtiH1hdF6B1YQ3kNqVZg7Nc=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To;
+        b=qV0iUdBp+W3mMFbFHXpAoz5nmwIc8F9BZFqBHKOUJIrcv+6FhbE4R3TnCiJu4Jb2Z
+         RPK7vDkNUdM8cWMFFOABmwCB9BD78BChO4RHY58gLuTavD3cLjsPwTepvcV7mDK81m
+         fZMM7B4grPEoMdoDUri4UxHe03TNjlW6NBh0Rt8B3Az51MOpuAC7S+PS0+XK5OgCWb
+         mNJfI7ri3M86n/wue5RqVTuV1Y0SNsUBW4o64zCxQed72+Try5vzsMUQIC9Wf8+kDB
+         MpU9hbfmF2bDWgGpaaoIml0WafYz6vILPGSATlkv8iB+4mxs4ge5NBgPE8w7J8Py3D
+         hQm90ht8+W6YQ==
+Message-ID: <f5bef359-3abe-311c-3521-136eb5b54c4b@marcan.st>
+Date:   Tue, 6 Sep 2022 22:53:47 +0900
 MIME-Version: 1.0
-References: <YxDL+cAx9kkZRL8K@shell.armlinux.org.uk> <928ddeff-efac-920c-7bbf-dda35a942b93@linaro.org>
- <YxDOpCq0vIlt4VNa@shell.armlinux.org.uk> <2fedff34-6a20-f1ce-a756-2bd8671fcd52@linaro.org>
- <YxDWG5dmzErhKIXw@shell.armlinux.org.uk> <ef6c7248-1efa-5366-6bcd-900c5f10ccb2@linaro.org>
- <YxDiBFIn6artUOZm@shell.armlinux.org.uk> <CAL_Jsq+GCKisAVA0AfE=yWJYy18mAGQ7rY1sKGYraXv-berNSg@mail.gmail.com>
- <d3cec3d22e464fa8@bloch.sibelius.xs4all.nl> <20220902172808.GB52527-robh@kernel.org>
- <YxcNLU+KGEolrdfT@shell.armlinux.org.uk> <d3cecee5edd24f67@bloch.sibelius.xs4all.nl>
- <CACRpkdaSRcczEF8QZ4aO+-HDVS+n-8MXvn6ysnjJfUEabwUJ=w@mail.gmail.com>
- <909bb4e7-5bd2-2903-5bba-87ae37f3448a@marcan.st> <CACRpkdajhjpMzjMooDduu0jxrp0uDNJ90VfBPpHx+P14cFfskA@mail.gmail.com>
- <5b75dc7e-5337-73eb-450f-b72f479793c4@marcan.st>
-In-Reply-To: <5b75dc7e-5337-73eb-450f-b72f479793c4@marcan.st>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 6 Sep 2022 15:46:45 +0200
-Message-ID: <CACRpkdYkL36Zbm6BWM7N_y=xwgkWA54q7uiFn7ZOGrfM-4KY9w@mail.gmail.com>
-Subject: Re: [PATCH 1/6] dt-bindings: mfd: add binding for Apple Mac System
- Management Controller
-To:     Hector Martin <marcan@marcan.st>
-Cc:     Mark Kettenis <mark.kettenis@xs4all.nl>,
-        "Russell King (Oracle)" <linux@armlinux.org.uk>, robh@kernel.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Content-Language: es-ES
+To:     "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>, robh@kernel.org,
         krzysztof.kozlowski@linaro.org, arnd@arndb.de, lee@kernel.org,
         alyssa@rosenzweig.io, asahi@lists.linux.dev, brgl@bgdev.pl,
         linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         sven@svenpeter.dev, krzysztof.kozlowski+dt@linaro.org,
         devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+References: <YxDiBFIn6artUOZm@shell.armlinux.org.uk>
+ <CAL_Jsq+GCKisAVA0AfE=yWJYy18mAGQ7rY1sKGYraXv-berNSg@mail.gmail.com>
+ <d3cec3d22e464fa8@bloch.sibelius.xs4all.nl>
+ <20220902172808.GB52527-robh@kernel.org>
+ <YxcNLU+KGEolrdfT@shell.armlinux.org.uk>
+ <d3cecee5edd24f67@bloch.sibelius.xs4all.nl>
+ <CACRpkdaSRcczEF8QZ4aO+-HDVS+n-8MXvn6ysnjJfUEabwUJ=w@mail.gmail.com>
+ <909bb4e7-5bd2-2903-5bba-87ae37f3448a@marcan.st>
+ <CACRpkdajhjpMzjMooDduu0jxrp0uDNJ90VfBPpHx+P14cFfskA@mail.gmail.com>
+ <5b75dc7e-5337-73eb-450f-b72f479793c4@marcan.st>
+ <YxdOafCWnDUNourH@shell.armlinux.org.uk>
+From:   Hector Martin <marcan@marcan.st>
+Subject: Re: [PATCH 1/6] dt-bindings: mfd: add binding for Apple Mac System
+ Management Controller
+In-Reply-To: <YxdOafCWnDUNourH@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 6, 2022 at 3:28 PM Hector Martin <marcan@marcan.st> wrote:
-> On 06/09/2022 20.57, Linus Walleij wrote:
-> > On Tue, Sep 6, 2022 at 1:36 PM Hector Martin <marcan@marcan.st> wrote:
+On 06/09/2022 22.43, Russell King (Oracle) wrote:
+> On Tue, Sep 06, 2022 at 10:28:25PM +0900, Hector Martin wrote:
+>> Ultimately, we're working with a reverse engineered platform here, and
+>> DTs will inevitaby be incremental. But in this particular case, of
+>> hardware that has no known useful purpose to an OS, I don't see the
+>> point in gratuitously describing it. And besides, the way we set things
+>> up, forward-compatible DT upgrades are trivial, and no actual user on
+>> this platform is going to be stuck with an old DT and newer software (if
+>> their software supports the platform properly, and that takes more than
+>> the relatively trivial DT upgrade stuff anyway). I'm a lot more
+>> interested in getting bindings upstreamed ASAP (so we can start
+>> guaranteeing no backwards-compat breaks, which is important to avoid
+>> outright breakage) than I am in trying to be exhaustive up front with
+>> device instances. It's perfectly fine to say that users have to upgrade
+>> both their DTs and kernels to get newer hardware support, on these
+>> platforms.
+> 
+> It's also a very common process for SoCs - almost no one writes the
+> DT first and then writes the drivers. You always see on the mailing
+> list series of patches that add a driver for some bit of hardware,
+> along with patches adding the DT binding and the DT description.
+> 
+> I don't think you're doing anything different here to what is common
+> practice within the mainline kernel community with this approach.
+> 
+> The exception to that is when adding a driver for feature X in a SoC,
+> it's common to add all instances of X to the dtsi with ``status =
+> "disabled"'' and only enable the appropriate blocks on platforms that
+> need it.
+> 
+> So, for example, if a SoC has three network interfaces, all of them
+> identical, when adding a network driver and the bindings for the
+> network hardware, one would add all three to the SoC description
+> whether or not the platform one was working with makes use of them.
 
-> > This comes from the FDT background in OpenFirmware, and there is
-> > definitely a timeline perspective (also called "waterfall model") in that
-> > line of thinking: a DT is written that describes the hardware and flashed
-> > into the BIOS and never changed, then the operating system is
-> > implemented at a later point. This is how e.g. the PC ACPI BIOS tables
-> > are also thinking about themselves.
->
-> Yes, but again, that only makes sense from the point of view of
-> describing hardware that exists, is useful, and could be used by the OS.
->
-> For any given platform X, if platform X does not use the secondary GPIO
-> controller for any service describable in the DT, then there is no point
-> in describing that GPIO controller. Same way ACPI tables do not describe
-> every single physical GPIO available on a platform, just whatever is
-> used by the AML.
+Right, and that makes sense for SoCs that third parties can incorporate
+into any arbitrary platform, and which have documentation listing those
+instances, because then board-level DTs can just enable the ones they need.
 
-Good point. I don't know what ambition DT should have here.
-If there is a discrete component on I2C for example, we tend to
-describe it fully, this kind of stuff with misc "dark silicon" didn't
-exist when DT was first conceived.
+But here we're working with SoCs where the only reference for what
+hardware exists *is* Apple's DT, and it only lists hardware that is in
+use on existing platforms. So there is no sane way for us to know what
+hardware exists, except what we can infer from reading the tea leaves
+(e.g. you can tell how many UARTs there are from the power domains and
+leaked schematics, but this doesn't extend to everything else). For
+example, we also know that these SoCs have a second Neural Engine that
+Apple have disabled on all shipping platforms, that the t600x series has
+an unused USB3 controller, etc... but there's no way we can safely
+describe these things in the DT if we can't test that they work and we
+don't have documentation even telling us how they're supposed to work :)
 
-> If some day we find a use for those GPIOs, that would require a DT
-> change *anyway*, to describe that usage, and the controller could be
-> described then (we did something like that, using a GPIO that Apple
-> doesn't, for the interim display-backlight power control support, though
-> that is a temporary hack that will go away). Heck, we don't even know
-> what these GPIOs are connected to right now!
->
-> Ultimately, we're working with a reverse engineered platform here, and
-> DTs will inevitaby be incremental.
-(...)
+> In the case of gpio-macsmc, how would we later add support for the
+> slave PMU GPIOs, given that these use keys "gpXX" rather than "gPxx"?
+> How do we tell the gpio-macsmc code to use a different set of keys?
+> Should DT describe the key "prefix" (in other words "gp" vs "gP"),
+> or should it describe it some other way. What if Apple decides to
+> instantiate another GPIO controller in a later platform with a
+> different prefix, could that be accomodated without breaking any
+> solution we come up today?
+> 
+> Maybe the solution to this would be to describe the key prefix in DT
+> as that's effectively its "reg". Or maybe we use "reg" to describe
+> it somehow (which is value of the key, which seems to have an
+> "address" like quality to it?)
+> 
+> We don't have to implement code for this now, we just need to get a
+> reasonably correct DT binding for the gpio controller.
 
-That's OK, I think the patch series is good enough as it is and should
-be merged, so I have added my Reviewed-by. I think the world
-is a better place with support for Apple silicon being developed
-in-tree.
+I agree that this is something to think about (I was about to reply on
+the subject).
 
-> I'm a lot more
-> interested in getting bindings upstreamed ASAP (so we can start
-> guaranteeing no backwards-compat breaks, which is important to avoid
-> outright breakage) than I am in trying to be exhaustive up front with
-> device instances. It's perfectly fine to say that users have to upgrade
-> both their DTs and kernels to get newer hardware support, on these
-> platforms.
+I can think of two ways: using `reg` for the key name, but that feels
+icky since it's ASCII and not *really* a register number/address, or
+something like this:
 
-I agree.
+gpio@0 {
+	apple,smc-key-base = "gP00";
+	...
+}
 
-Yours,
-Linus Walleij
+gpio@1 {
+	apple,smc-key-base = "gp00";
+	...
+}
+
+But this ties back to the device enumeration too, since right now the DT
+does not drive that (we'd have to add the subdevice to the mfd subdevice
+list somehow anyway, if we don't switch to compatibles).
+
+I'd love to hear Rob's opinion on this one, and also whether the
+existing Linux and OpenBSD code would currently find gpio@0 {} instead
+of gpio {} for backwards compat.
+
+- Hector
