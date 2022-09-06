@@ -2,87 +2,90 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B90ECAAA1
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Sep 2022 15:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BD4ECAAA1
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Sep 2022 15:17:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233193AbiIFPLo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Sep 2022 11:11:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50424 "EHLO
+        id S232944AbiIFPRd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Sep 2022 11:17:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232688AbiIFPLX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2022 11:11:23 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CC948E0C9;
-        Tue,  6 Sep 2022 07:25:05 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id b5so15726468wrr.5;
-        Tue, 06 Sep 2022 07:25:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date;
-        bh=SgtOK7Fn4Mn363pk9vnglySkFAC3yWrEKhbc32lNaz8=;
-        b=YlVnWF4LgR3y6Snjsvnp04yzajW/gwUKlwo2+XX/q0Ea7VAIevZwQ8sFDh4ZHiwvUc
-         kHvEagoYzB36/BpNKOLar8DqVaw3THj8NmY0MaxFnnR7FTiZKpy/8NCMPwWuQ6cnXHi8
-         xa7I7l9fS8K/S8NvDmRTsndMZpp2SI0IUJgYRzsqgBbOz6mi/j4TGt/0FixOeuQ8NaBk
-         OvUxJ/J1lNJMdjCsfpWRvxvwrx+uH7WpSerL41we3LUv09QAZKx5X9sm9Y55XCxgUWet
-         hz5mAbIdp3j/varJBXAR/OVSRBVVcBZ7ckAgLAG+Ad+VGW9zaw/iU5HzriZhOdU8m/ER
-         wqLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=SgtOK7Fn4Mn363pk9vnglySkFAC3yWrEKhbc32lNaz8=;
-        b=v6taoyKq9fKoypYtrH9Eax7smQU59ARcJVaYef+04++0A30Ypl4oof/MsmzopiLJdN
-         +f5Dox/LGEyNo3Rtl1/YELKnWA30m+q0Pam2wc3IDVBln4foXTSUT6igNsfbjONqQWnr
-         yHH4ssIEANyyJzp2sosHMocTn8NUZl3dtqsnJginxpsT9fjnJPYb1+Kbbd7J4f+XYMdP
-         OYTHin3Yq08ODSMpW5nsIqzZW/qfQ5KmT83rKnm0Zhfd9cPrpZdL0ryxcMgo5tq1OmsT
-         HRGNqMVdXXT6Q8U8FSBTnSjqdf8XxIxQC5HQolhydZ76h275+ZMg6j940SwXbmzhupDZ
-         KwSw==
-X-Gm-Message-State: ACgBeo2lQZgvCvVRDkonWkZZLWiJTNjVeOECwpaupjLuS5o9VZSMUQ+Q
-        lVrp829LcnVfJAFR+B3o8rA=
-X-Google-Smtp-Source: AA6agR7gHjucsKxwTur3SuarsEltaanUAYG1Nve9kz4+jV7e28o9DzXbkUmxKJcJWkQtvBwr7hMTpA==
-X-Received: by 2002:a5d:6484:0:b0:226:dd0e:b09c with SMTP id o4-20020a5d6484000000b00226dd0eb09cmr23452887wri.388.1662474204810;
-        Tue, 06 Sep 2022 07:23:24 -0700 (PDT)
-Received: from debian (host-78-150-37-98.as13285.net. [78.150.37.98])
-        by smtp.gmail.com with ESMTPSA id l27-20020a05600c2cdb00b003a5c7a942edsm22880578wmc.28.2022.09.06.07.23.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Sep 2022 07:23:24 -0700 (PDT)
-Date:   Tue, 6 Sep 2022 15:23:22 +0100
-From:   "Sudip Mukherjee (Codethink)" <sudipm.mukherjee@gmail.com>
-To:     Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: build failure of next-20220906 due to 4ec7ac90ff39 ("misc:
- microchip: pci1xxxx: Add power management functions - suspend & resume
- handlers.")
-Message-ID: <YxdX2l88PSFGe1r4@debian>
+        with ESMTP id S232640AbiIFPRQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2022 11:17:16 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DA8C91D25;
+        Tue,  6 Sep 2022 07:30:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1662474607; x=1694010607;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=qYqPp+SqKYB0kW1r5YRu9Qox/5WN1GPuqBVB5ntM/wE=;
+  b=dKeVmEtpwaffUB+WogSSGgHeSd+Uo7lK/3LUnJkCbVeBr+JebU4FB2p6
+   q2O33FN1G8aSygHiT2HV7/tTxe0xRtUSSaRQI+iK4VzHehN1Fs+cIOZS+
+   FcyXiVp9tlDWFA/0CF+EWNNN/kRldVZKY6555cGJt+gNQsSsaywtK32GY
+   xtHzg5Xvi3KDNtKA67dmJvSDeC/EEVtohBJXnFSMmTBi4Qy1hKXyDdpxq
+   K3j0VDpFf3gZGYogI3lAQkAk1AV3edshat7XRHBgQqqaJyvwXyVT4Gd23
+   ko9pmz+3GOv27Ze+0vLNJVu1o1fBctGKbzPncJovQk4uj0h/yaozQzprJ
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10462"; a="360554915"
+X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
+   d="scan'208";a="360554915"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 07:28:41 -0700
+X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
+   d="scan'208";a="565113463"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 07:28:40 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1oVZZ7-0099gK-1n;
+        Tue, 06 Sep 2022 17:28:37 +0300
+Date:   Tue, 6 Sep 2022 17:28:37 +0300
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Martyn Welch <martyn.welch@collabora.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] gpio: pca953x: Add support for PCAL6534
+Message-ID: <YxdZFRyv5E0qvXgS@smile.fi.intel.com>
+References: <20220906082820.4030401-1-martyn.welch@collabora.co.uk>
+ <20220906082820.4030401-5-martyn.welch@collabora.co.uk>
+ <Yxc8GgUnHOuMIn4p@smile.fi.intel.com>
+ <a71dec127a2e188b1eb7df1e385f71410051acca.camel@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a71dec127a2e188b1eb7df1e385f71410051acca.camel@collabora.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi All,
+On Tue, Sep 06, 2022 at 03:01:51PM +0100, Martyn Welch wrote:
+> On Tue, 2022-09-06 at 15:24 +0300, Andy Shevchenko wrote:
+> > On Tue, Sep 06, 2022 at 09:28:19AM +0100, Martyn Welch wrote:
 
-The builds of riscv, s390, csky, alpha and loongarch allmodconfig have
-failed to build next-20220906 with the error:
+...
 
+> > > +       u8 (*recalc_addr)(struct pca953x_chip *chip, int reg , int
+> > > off);
+> > > +       bool (*check_reg)(struct pca953x_chip *chip, unsigned int
+> > > reg,
+> > > +                         u32 checkbank);
+> > 
+> > I would think of splitting this change. Like in a separate patch you
+> > simply
+> > create this interface and only add what you need in the next one.
+> 
+> Can do, though I didn't feel you were particularly fussed about me
+> having split that out...
 
-drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c:311:12: error: 'pci1xxxx_gpio_resume' defined but not used [-Werror=unused-function]
-  311 | static int pci1xxxx_gpio_resume(struct device *dev)
-      |            ^~~~~~~~~~~~~~~~~~~~
-drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c:295:12: error: 'pci1xxxx_gpio_suspend' defined but not used [-Werror=unused-function]
-  295 | static int pci1xxxx_gpio_suspend(struct device *dev)
-      |            ^~~~~~~~~~~~~~~~~~~~~
-
-
-git bisect pointed to 4ec7ac90ff39 ("misc: microchip: pci1xxxx: Add power management functions - suspend & resume handlers.").
-
-I will be happy to test any patch or provide any extra log if needed.
-
+Oh, it just would be cleaner to see what you have done for a new chip support.
+Up to you and maintainers.
 
 -- 
-Regards
-Sudip
+With Best Regards,
+Andy Shevchenko
+
+
