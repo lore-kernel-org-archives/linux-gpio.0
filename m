@@ -2,114 +2,127 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DE2CECAAA1
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Sep 2022 13:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D21D1ECAAA1
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Sep 2022 14:03:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240718AbiIFN6O (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Sep 2022 09:58:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60508 "EHLO
+        id S240373AbiIFODQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Sep 2022 10:03:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239839AbiIFN4N (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2022 09:56:13 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CD6082769;
-        Tue,  6 Sep 2022 06:42:06 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id AC4CF5C00E9;
-        Tue,  6 Sep 2022 09:40:59 -0400 (EDT)
-Received: from imap47 ([10.202.2.97])
-  by compute2.internal (MEProxy); Tue, 06 Sep 2022 09:40:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-         h=cc:cc:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1662471659; x=1662558059; bh=hm
-        ETg07QBgLYqlBFCF6cd3D9OyAgefzmdWPH2ymqdXY=; b=lV8m4FUPjwTcqUKp3U
-        l4KWUYHpKC6ES/Oq0YirqpysOvejJZfD3Wz6DxDIUOKxPiwEDhP7a+pXVlmawgsT
-        J860vB57TaSym/SyTxU7BGLieTzgT0pELqeIXR0VWPnSmYHOKfhmznAlmgnRNpd/
-        Buitv9ZOp8kBwnKJNmNqO04QS8aEEm/nZ8+4akq03Rvg4w4GPmx9RsxGUQjDptEc
-        8x/gEUJHYNQGEt+7EkAQFt7DB6XrGSb1QGheBUVd0R67O7BrulvTIVdssF6k4I9O
-        i+6sp1vHLoVWoLg2CDeFzrSWOiuRy/YSsVSSt2x4miXhFOfCoQHGYZscuy2dl2O7
-        3Eyg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1662471659; x=1662558059; bh=hmETg07QBgLYqlBFCF6cd3D9OyAg
-        efzmdWPH2ymqdXY=; b=AP/PvmR3Hdlpkt/At17981fk8jOoa6E73FsspiH7v6vo
-        4qkBw4lsatebD/D0axYsVgysWva+U351FElef+B+0lvZ9zw65HIYdOr3lBYqe84s
-        Cmk5ShwkBoTCyQsxcqgNzg5FFdCuzKqoz355xUGvURYHC+RfA5cQ+vuLg5tJzG8w
-        oq66yEVNgXeHLKKKAGnCAs4pXYYukWW5+0N6yB2uD8R8ePfc9shLlOHXF/sFS9nk
-        MPgu8wSxlFiATBfvKMU/Vd3EARiHJiNpDrNkFgY4pXJITOgVfOWABUBDoQuenJo0
-        59qds2cS9HnqF3Kicm62f+8wZqhDO94SrXF7kodOkQ==
-X-ME-Sender: <xms:600XY5-2t4VhvHbbK-jL20auEqw4s-9BztI79RxZ4Mb94iGGhU4zNQ>
-    <xme:600XY9u31YFVNHkOvvFh_07MWWDVVmSaZrSCB55JMamV8q-InFfK_dyeJppwk2hIZ
-    Nch5KgjG8q5jubfjKc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdelkedgieekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedfufhv
-    vghnucfrvghtvghrfdcuoehsvhgvnhesshhvvghnphgvthgvrhdruggvvheqnecuggftrf
-    grthhtvghrnhepleevgfegffehvedtieevhfekheeftedtjeetudevieehveevieelgffh
-    ieevieeunecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomh
-    epshhvvghnsehsvhgvnhhpvghtvghrrdguvghv
-X-ME-Proxy: <xmx:600XY3BicqoeZyVc9qTSYqAGeF_PziCDHlOw2iS7hBBxkTzDckTxBw>
-    <xmx:600XY9f1R3tvPMaV6cAIE4W-0z5tAMmUr3NI8-91VEuo1-_kDFi-pw>
-    <xmx:600XY-Oa-nQtFytXvomr4NCsU2QDWL8_n1bOtKl7z52zg2zShgzJWA>
-    <xmx:600XYzzHSxkVE1hzNCd5y4jppskJFR8oXv2KyvyGMkeX9YYvJjUWIg>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 70B06A6007C; Tue,  6 Sep 2022 09:40:59 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-927-gf4c98c8499-fm-20220826.002-gf4c98c84
-Mime-Version: 1.0
-Message-Id: <a6e62126-46cb-4c83-8a50-5c57e67b49eb@www.fastmail.com>
-In-Reply-To: <E1oVYUc-005Cme-SM@rmk-PC.armlinux.org.uk>
-References: <YxdInl2qzQWM+3bs@shell.armlinux.org.uk>
- <E1oVYUc-005Cme-SM@rmk-PC.armlinux.org.uk>
-Date:   Tue, 06 Sep 2022 15:40:38 +0200
-From:   "Sven Peter" <sven@svenpeter.dev>
-To:     "Russell King" <rmk+kernel@armlinux.org.uk>,
-        "Arnd Bergmann" <arnd@arndb.de>, "Lee Jones" <lee@kernel.org>,
-        "Linus Walleij" <linus.walleij@linaro.org>
-Cc:     "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-        asahi@lists.linux.dev, "Bartosz Golaszewski" <brgl@bgdev.pl>,
-        devicetree@vger.kernel.org, "Hector Martin" <marcan@marcan.st>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "Petr Mladek" <pmladek@suse.com>,
-        "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Sergey Senozhatsky" <senozhatsky@chromium.org>,
-        "Steven Rostedt" <rostedt@goodmis.org>
-Subject: Re: [PATCH 6/7] gpio: Add new gpio-macsmc driver for Apple Macs
-Content-Type: text/plain
+        with ESMTP id S240963AbiIFOBg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2022 10:01:36 -0400
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F803BD3;
+        Tue,  6 Sep 2022 06:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=McYIwfZBgzxgmWc7SJ1PwQ2CQF+LE/MZfa5qx6kR+VM=; b=IRwNSVo7beJEwiaueneipvg8OW
+        sc0pBQ+v4aJUiYMQuzwldNkAcqfIMZOR0F7acW2Y/i6mWl/TXDM5FCFhpOJFnxORqUMbmVS1JKf4U
+        jWq3gDA9sg9jWlrGKeIfgQazckRZw08jXrgfxBFLSAyUPfDUHZEarii9XzNha1u2pNgRLbzOqa7Ye
+        WLU6WHq4ePhcmkC2WtMjOSk85yKetdMvvM4W8xeFBwDoCGNtofv6UTn+CbmW6D55izeI5+ZswDQ2v
+        UySB0zn8nrdvT2s364JHK9eJJk9j8X2M78VrA4oBgzuJhCwDcSHyon86+F6YadO24urPuhhN4pUpD
+        Pg0KFlMQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34148)
+        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1oVYr4-0003vl-1Z; Tue, 06 Sep 2022 14:43:06 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1oVYr3-0008JM-2I; Tue, 06 Sep 2022 14:43:05 +0100
+Date:   Tue, 6 Sep 2022 14:43:05 +0100
+From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
+To:     Hector Martin <marcan@marcan.st>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>, robh@kernel.org,
+        krzysztof.kozlowski@linaro.org, arnd@arndb.de, lee@kernel.org,
+        alyssa@rosenzweig.io, asahi@lists.linux.dev, brgl@bgdev.pl,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        sven@svenpeter.dev, krzysztof.kozlowski+dt@linaro.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: mfd: add binding for Apple Mac System
+ Management Controller
+Message-ID: <YxdOafCWnDUNourH@shell.armlinux.org.uk>
+References: <YxDiBFIn6artUOZm@shell.armlinux.org.uk>
+ <CAL_Jsq+GCKisAVA0AfE=yWJYy18mAGQ7rY1sKGYraXv-berNSg@mail.gmail.com>
+ <d3cec3d22e464fa8@bloch.sibelius.xs4all.nl>
+ <20220902172808.GB52527-robh@kernel.org>
+ <YxcNLU+KGEolrdfT@shell.armlinux.org.uk>
+ <d3cecee5edd24f67@bloch.sibelius.xs4all.nl>
+ <CACRpkdaSRcczEF8QZ4aO+-HDVS+n-8MXvn6ysnjJfUEabwUJ=w@mail.gmail.com>
+ <909bb4e7-5bd2-2903-5bba-87ae37f3448a@marcan.st>
+ <CACRpkdajhjpMzjMooDduu0jxrp0uDNJ90VfBPpHx+P14cFfskA@mail.gmail.com>
+ <5b75dc7e-5337-73eb-450f-b72f479793c4@marcan.st>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b75dc7e-5337-73eb-450f-b72f479793c4@marcan.st>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Tue, Sep 06, 2022 at 10:28:25PM +0900, Hector Martin wrote:
+> Ultimately, we're working with a reverse engineered platform here, and
+> DTs will inevitaby be incremental. But in this particular case, of
+> hardware that has no known useful purpose to an OS, I don't see the
+> point in gratuitously describing it. And besides, the way we set things
+> up, forward-compatible DT upgrades are trivial, and no actual user on
+> this platform is going to be stuck with an old DT and newer software (if
+> their software supports the platform properly, and that takes more than
+> the relatively trivial DT upgrade stuff anyway). I'm a lot more
+> interested in getting bindings upstreamed ASAP (so we can start
+> guaranteeing no backwards-compat breaks, which is important to avoid
+> outright breakage) than I am in trying to be exhaustive up front with
+> device instances. It's perfectly fine to say that users have to upgrade
+> both their DTs and kernels to get newer hardware support, on these
+> platforms.
 
+It's also a very common process for SoCs - almost no one writes the
+DT first and then writes the drivers. You always see on the mailing
+list series of patches that add a driver for some bit of hardware,
+along with patches adding the DT binding and the DT description.
 
-On Tue, Sep 6, 2022, at 15:19, Russell King wrote:
-> From: Hector Martin <marcan@marcan.st>
->
-> This driver implements the GPIO service on top of the SMC framework
-> on Apple Mac machines. In particular, these are the GPIOs present in the
-> PMU IC which are used to control power to certain on-board devices.
->
-> Although the underlying hardware supports various pin config settings
-> (input/output, open drain, etc.), this driver does not implement that
-> functionality and leaves it up to the firmware to configure things
-> properly. We also don't yet support interrupts/events. This is
-> sufficient for device power control, which is the only thing we need to
-> support at this point. More features will be implemented when needed.
->
-> To our knowledge, only Apple Silicon Macs implement this SMC feature.
->
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+I don't think you're doing anything different here to what is common
+practice within the mainline kernel community with this approach.
 
-Reviewed-by: Sven Peter <sven@svenpeter.dev>
+The exception to that is when adding a driver for feature X in a SoC,
+it's common to add all instances of X to the dtsi with ``status =
+"disabled"'' and only enable the appropriate blocks on platforms that
+need it.
+
+So, for example, if a SoC has three network interfaces, all of them
+identical, when adding a network driver and the bindings for the
+network hardware, one would add all three to the SoC description
+whether or not the platform one was working with makes use of them.
+
+It means that one has to think about how to support all instances
+of the hardware on the platform and design the binding to allow
+that flexibility, rather than having to augment the binding later.
+
+In the case of gpio-macsmc, how would we later add support for the
+slave PMU GPIOs, given that these use keys "gpXX" rather than "gPxx"?
+How do we tell the gpio-macsmc code to use a different set of keys?
+Should DT describe the key "prefix" (in other words "gp" vs "gP"),
+or should it describe it some other way. What if Apple decides to
+instantiate another GPIO controller in a later platform with a
+different prefix, could that be accomodated without breaking any
+solution we come up today?
+
+Maybe the solution to this would be to describe the key prefix in DT
+as that's effectively its "reg". Or maybe we use "reg" to describe
+it somehow (which is value of the key, which seems to have an
+"address" like quality to it?)
+
+We don't have to implement code for this now, we just need to get a
+reasonably correct DT binding for the gpio controller.
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
