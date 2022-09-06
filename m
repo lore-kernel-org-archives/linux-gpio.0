@@ -2,151 +2,127 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31785C6FA86
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Sep 2022 14:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C33C6FA83
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Sep 2022 14:14:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239480AbiIFOGS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Sep 2022 10:06:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59958 "EHLO
+        id S241292AbiIFOO3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Sep 2022 10:14:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241627AbiIFOFD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2022 10:05:03 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C02D844C1;
-        Tue,  6 Sep 2022 06:45:18 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 035155C012B;
-        Tue,  6 Sep 2022 09:43:16 -0400 (EDT)
-Received: from imap47 ([10.202.2.97])
-  by compute2.internal (MEProxy); Tue, 06 Sep 2022 09:43:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-         h=cc:cc:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1662471795; x=1662558195; bh=77
-        5C0tvEJHto5QjpXnW0h0+sCP1phI8skW6l0uy8ijE=; b=1RasTfLFA8jsQaZAo0
-        7wHn7aRXszDUU4x9QbcJY9nauAiJ9VpPKNS+3dd2u7K8Sr77oD/ZGV47uR+mlEku
-        rZEJ0q6NWxaqeUlPM6CWp3TqjHnvySr5HztZZGATVeC98QKnohWz9rYllC6nCOG3
-        1HPn8w4r7JsBG1SqqOTZrf2yH0wBKe6mtVXjD5oQUm8dDzCSQ0AvQl9G0TFB9wW8
-        lcbir0IK4cJzR5LSerdGN2cT6pqeotOt5kr+Mhy5q+y2DM4sJ778wvZpOSZkNEN4
-        mqapKDCzcmBMoj7KvKk526ObJ+2ZvGlBQq18KPanDUumiI6brERAJbdop8x96owN
-        hT0g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1662471795; x=1662558195; bh=775C0tvEJHto5QjpXnW0h0+sCP1p
-        hI8skW6l0uy8ijE=; b=WpvTjDS/fCP3NS/RRBGHtOS2Gt38vXUS9AqShHRIcZio
-        JYvDXMDvBfP956imD/5fDg2/EohH2uV/MUNHXbZsozC1jBE6vhX8mM0hEPnZND5q
-        igDu6atYIPlpyDbBJEo4lvGfgPrspDmxAvIigjuiLoIruyEObxLNOIAR4qyA8fsu
-        YJp1Qp9IBOK79VBYHkGnLdSDKaVWdF1SbH1L+zs8f29AOxhJ08u4E4Day1UUvypV
-        D18bD06kcj+lEup5Qje/boSsZvHvMUGTOjW6q7cjqs6IrsaSFbkXHLYw4S4MiZPq
-        3ko9Pg2OkpWNWg6W+XPGQdoZjQ9NXKECzdFdxmM/yQ==
-X-ME-Sender: <xms:c04XY5pRlaKJ5R0-Lo1m8r1KarvO7nm3qJ6OB8m201Hd_1_LV1zQfQ>
-    <xme:c04XY7o20m6-o6unPCGaqMfNReTzJt2G7pSfH4GOab0jdN9lOZ7a_C1fS0sspZH-G
-    MyunyavNm3oyJbrUTQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdelkedgieekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedfufhv
-    vghnucfrvghtvghrfdcuoehsvhgvnhesshhvvghnphgvthgvrhdruggvvheqnecuggftrf
-    grthhtvghrnhepleevgfegffehvedtieevhfekheeftedtjeetudevieehveevieelgffh
-    ieevieeunecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomh
-    epshhvvghnsehsvhgvnhhpvghtvghrrdguvghv
-X-ME-Proxy: <xmx:c04XY2PBhMOjeEiZekKrHSbhpOwtjrwMHEY9HmRMrXBPQk42pD8bfw>
-    <xmx:c04XY061bOu8AeuTyIO8NNPrcfh2P5z40zczHtvXX0qD4q1CLUIdrw>
-    <xmx:c04XY44KWezZD-mHFdys3K6wRR4_jwNZ-E3vKqu0eg3NlHGK3BEQ7g>
-    <xmx:c04XY1PiZhV0TFhxvajAv0_BYchuqTSXmRqaOBuhSbZW_GHA5xfgWA>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id A6F3BA6007C; Tue,  6 Sep 2022 09:43:15 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-927-gf4c98c8499-fm-20220826.002-gf4c98c84
-Mime-Version: 1.0
-Message-Id: <8a94f2e6-f537-4e29-8375-e79b84524582@www.fastmail.com>
-In-Reply-To: <E1oVYUi-005Cmk-0R@rmk-PC.armlinux.org.uk>
-References: <YxdInl2qzQWM+3bs@shell.armlinux.org.uk>
- <E1oVYUi-005Cmk-0R@rmk-PC.armlinux.org.uk>
-Date:   Tue, 06 Sep 2022 15:42:47 +0200
-From:   "Sven Peter" <sven@svenpeter.dev>
-To:     "Russell King" <rmk+kernel@armlinux.org.uk>,
-        "Arnd Bergmann" <arnd@arndb.de>, "Lee Jones" <lee@kernel.org>,
-        "Linus Walleij" <linus.walleij@linaro.org>
-Cc:     "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-        asahi@lists.linux.dev, "Bartosz Golaszewski" <brgl@bgdev.pl>,
-        devicetree@vger.kernel.org, "Hector Martin" <marcan@marcan.st>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "Petr Mladek" <pmladek@suse.com>,
-        "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Sergey Senozhatsky" <senozhatsky@chromium.org>,
-        "Steven Rostedt" <rostedt@goodmis.org>
-Subject: Re: [PATCH 7/7] arm64: dts: apple: Add SMC node to t8103/t6001 devicetrees
-Content-Type: text/plain
+        with ESMTP id S241523AbiIFONd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2022 10:13:33 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60E0188DDF
+        for <linux-gpio@vger.kernel.org>; Tue,  6 Sep 2022 06:48:07 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id bj12so23328457ejb.13
+        for <linux-gpio@vger.kernel.org>; Tue, 06 Sep 2022 06:48:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=vES/lt0MXBWqXZjxjspNA4S3RuvGiNZSCJKY5IddJHM=;
+        b=C5pTfv6sM7dHl/ZnXWKdbzOFx9dYouAyAn964q9bxDazB+7rxfx//WubrSOaVpJmAn
+         I6a5/NcMdG4+i+MU/Eo05NNOSC4/+lF3v1MzdCyAYNfIrvGWqYiSozA+j2MWL5pK9bKX
+         vo9kCHdhqAdN8c7Fr3rJdBrJuV3IXT1CO/b/00U9Vc61zhMpZR8qqVlDqRn3/8moCJ+H
+         cFOiQ52fsA1q+Qn7QWNWBVPoj5xgnGtYKXxs4BmtX9t78iApa61XgsftkvnxpcKq22cQ
+         Cr+9GqHyfJ5Hgfw/OLBW+gKMJWnNsxLK0jLEvl/us2x/uvG/fzDv2S5lQUx3ZJMRH4ag
+         IhrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=vES/lt0MXBWqXZjxjspNA4S3RuvGiNZSCJKY5IddJHM=;
+        b=dHYPu0wVlS3JZyT65G0HSfn4iw25Rq8N0ipXH9pyMTIAQLGOOZl1P+P60O7NHVbtj5
+         iu1toP6vmesXGuYNW+ctKq1rmpMUpIIE5VObhAapQjMZsMytO+RftJ3tbT49pvvKar9I
+         k8SbuXrDRL1RXBXg2smTnduMiEf4AY0ccbM73UWdL4i+i4kFIKCfbMrgXOaRrbPtktP3
+         TdTyOFAer+Vvi0+qxKsxr4NoqQFnO46ONq3sYEF/wvcb+JstM0Hde+J/xB3YMaOpXJHs
+         qlDU8cO3zubFVkHfDw22P/lMTrgCKMAY61RNDy/KTv5nRlw8TtonOdIpPZl6+GmTaij1
+         LCjw==
+X-Gm-Message-State: ACgBeo1J394TNcJY2zlbDAzN/DkkQX8XQnnlIP7OtlV7ImEVUaHlOHPW
+        PQMbVFsNsyJoy01AJtaG3SU78/htb+yLH/o1rgKVfA==
+X-Google-Smtp-Source: AA6agR5PA0CgGPmgOwDTBTALSmyX+y6DwXy04Ax5g0iL8EPRemFjppQ8iC8xEmVJmovk2uEs5CvbEyl93SGawzLhgRs=
+X-Received: by 2002:a17:906:58c8:b0:6fe:91d5:18d2 with SMTP id
+ e8-20020a17090658c800b006fe91d518d2mr40054447ejs.190.1662472017364; Tue, 06
+ Sep 2022 06:46:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <YxDL+cAx9kkZRL8K@shell.armlinux.org.uk> <928ddeff-efac-920c-7bbf-dda35a942b93@linaro.org>
+ <YxDOpCq0vIlt4VNa@shell.armlinux.org.uk> <2fedff34-6a20-f1ce-a756-2bd8671fcd52@linaro.org>
+ <YxDWG5dmzErhKIXw@shell.armlinux.org.uk> <ef6c7248-1efa-5366-6bcd-900c5f10ccb2@linaro.org>
+ <YxDiBFIn6artUOZm@shell.armlinux.org.uk> <CAL_Jsq+GCKisAVA0AfE=yWJYy18mAGQ7rY1sKGYraXv-berNSg@mail.gmail.com>
+ <d3cec3d22e464fa8@bloch.sibelius.xs4all.nl> <20220902172808.GB52527-robh@kernel.org>
+ <YxcNLU+KGEolrdfT@shell.armlinux.org.uk> <d3cecee5edd24f67@bloch.sibelius.xs4all.nl>
+ <CACRpkdaSRcczEF8QZ4aO+-HDVS+n-8MXvn6ysnjJfUEabwUJ=w@mail.gmail.com>
+ <909bb4e7-5bd2-2903-5bba-87ae37f3448a@marcan.st> <CACRpkdajhjpMzjMooDduu0jxrp0uDNJ90VfBPpHx+P14cFfskA@mail.gmail.com>
+ <5b75dc7e-5337-73eb-450f-b72f479793c4@marcan.st>
+In-Reply-To: <5b75dc7e-5337-73eb-450f-b72f479793c4@marcan.st>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 6 Sep 2022 15:46:45 +0200
+Message-ID: <CACRpkdYkL36Zbm6BWM7N_y=xwgkWA54q7uiFn7ZOGrfM-4KY9w@mail.gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: mfd: add binding for Apple Mac System
+ Management Controller
+To:     Hector Martin <marcan@marcan.st>
+Cc:     Mark Kettenis <mark.kettenis@xs4all.nl>,
+        "Russell King (Oracle)" <linux@armlinux.org.uk>, robh@kernel.org,
+        krzysztof.kozlowski@linaro.org, arnd@arndb.de, lee@kernel.org,
+        alyssa@rosenzweig.io, asahi@lists.linux.dev, brgl@bgdev.pl,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        sven@svenpeter.dev, krzysztof.kozlowski+dt@linaro.org,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Tue, Sep 6, 2022 at 3:28 PM Hector Martin <marcan@marcan.st> wrote:
+> On 06/09/2022 20.57, Linus Walleij wrote:
+> > On Tue, Sep 6, 2022 at 1:36 PM Hector Martin <marcan@marcan.st> wrote:
 
-
-On Tue, Sep 6, 2022, at 15:20, Russell King wrote:
-> From: Hector Martin <marcan@marcan.st>
+> > This comes from the FDT background in OpenFirmware, and there is
+> > definitely a timeline perspective (also called "waterfall model") in that
+> > line of thinking: a DT is written that describes the hardware and flashed
+> > into the BIOS and never changed, then the operating system is
+> > implemented at a later point. This is how e.g. the PC ACPI BIOS tables
+> > are also thinking about themselves.
 >
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> ---
->  arch/arm64/boot/dts/apple/t8103.dtsi | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
+> Yes, but again, that only makes sense from the point of view of
+> describing hardware that exists, is useful, and could be used by the OS.
 >
-> diff --git a/arch/arm64/boot/dts/apple/t8103.dtsi 
-> b/arch/arm64/boot/dts/apple/t8103.dtsi
-> index 51a63b29d404..15c6023cf612 100644
-> --- a/arch/arm64/boot/dts/apple/t8103.dtsi
-> +++ b/arch/arm64/boot/dts/apple/t8103.dtsi
-> @@ -336,6 +336,32 @@ wdt: watchdog@23d2b0000 {
->  			interrupts = <AIC_IRQ 338 IRQ_TYPE_LEVEL_HIGH>;
->  		};
-> 
-> +		smc_mbox: mbox@23e408000 {
-> +			compatible = "apple,t8103-asc-mailbox", "apple,asc-mailbox-v4";
-> +			reg = <0x2 0x3e408000 0x0 0x4000>;
-> +			interrupt-parent = <&aic>;
-> +			interrupts = <AIC_IRQ 400 IRQ_TYPE_LEVEL_HIGH>,
-> +				<AIC_IRQ 401 IRQ_TYPE_LEVEL_HIGH>,
-> +				<AIC_IRQ 402 IRQ_TYPE_LEVEL_HIGH>,
-> +				<AIC_IRQ 403 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "send-empty", "send-not-empty",
-> +				"recv-empty", "recv-not-empty";
-> +			#mbox-cells = <0>;
-> +		};
-> +
-> +		smc: smc@23e400000 {
+> For any given platform X, if platform X does not use the secondary GPIO
+> controller for any service describable in the DT, then there is no point
+> in describing that GPIO controller. Same way ACPI tables do not describe
+> every single physical GPIO available on a platform, just whatever is
+> used by the AML.
 
-Usually we sort these nodes by their address to prevent merge conflicts.
-I guess it doesn't really matter here though since nothing will be between
-these two nodes.
-Either way,
+Good point. I don't know what ambition DT should have here.
+If there is a discrete component on I2C for example, we tend to
+describe it fully, this kind of stuff with misc "dark silicon" didn't
+exist when DT was first conceived.
 
-Reviewed-by: Sven Peter <sven@svenpeter.dev>
+> If some day we find a use for those GPIOs, that would require a DT
+> change *anyway*, to describe that usage, and the controller could be
+> described then (we did something like that, using a GPIO that Apple
+> doesn't, for the interim display-backlight power control support, though
+> that is a temporary hack that will go away). Heck, we don't even know
+> what these GPIOs are connected to right now!
+>
+> Ultimately, we're working with a reverse engineered platform here, and
+> DTs will inevitaby be incremental.
+(...)
 
-> +			compatible = "apple,t8103-smc", "apple,smc";
-> +			reg = <0x2 0x3e400000 0x0 0x4000>,
-> +				<0x2 0x3fe00000 0x0 0x100000>;
-> +			reg-names = "smc", "sram";
-> +			mboxes = <&smc_mbox>;
-> +
-> +			smc_gpio: gpio {
-> +				gpio-controller;
-> +				#gpio-cells = <2>;
-> +			};
-> +		};
-> +
->  		pinctrl_smc: pinctrl@23e820000 {
->  			compatible = "apple,t8103-pinctrl", "apple,pinctrl";
->  			reg = <0x2 0x3e820000 0x0 0x4000>;
-> -- 
-> 2.30.2
+That's OK, I think the patch series is good enough as it is and should
+be merged, so I have added my Reviewed-by. I think the world
+is a better place with support for Apple silicon being developed
+in-tree.
+
+> I'm a lot more
+> interested in getting bindings upstreamed ASAP (so we can start
+> guaranteeing no backwards-compat breaks, which is important to avoid
+> outright breakage) than I am in trying to be exhaustive up front with
+> device instances. It's perfectly fine to say that users have to upgrade
+> both their DTs and kernels to get newer hardware support, on these
+> platforms.
+
+I agree.
+
+Yours,
+Linus Walleij
