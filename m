@@ -2,137 +2,148 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1062DECAAA1
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Sep 2022 14:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E96EECAAA1
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Sep 2022 14:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241635AbiIFOa7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Sep 2022 10:30:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47146 "EHLO
+        id S233760AbiIFOnT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Sep 2022 10:43:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241340AbiIFOaA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2022 10:30:00 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA53F93526;
-        Tue,  6 Sep 2022 06:56:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662472569; x=1694008569;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=d9B85ofz+viBJy76Mzjwvk1LEpgb+PU3N1e8G7iPrHs=;
-  b=Ogwf/dwYyeYl4KHhAoHk0PLkGLUP+h4cgfb9gBojvSGIcY6ZXGTXywtv
-   qID1qKe8fGVbFxi2QCW09jz8xKaSrBlX9FZSvdXwU/baiw4E3fYziQWNF
-   GEa4sU6SGHYWHnywf+3hTs8L9ar48AV0nL2a0a1UUWlN4hUVAFTsTIu01
-   YhvyP8YiLcegN/bNbFji9yyKoC3qAVRNoYCJaXNdglx8JolzTHdNIgdzh
-   eA2fpv9bCHW9iV04ZagHptmZF8d9yyGejX/NuEYyqj+M8JruqDJgEs2f2
-   uLN9WN7nqT8tkLWfGjZbAVQgs01LRJadilGOHXHyNV/wUtFysjfP0YYxn
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10462"; a="276335082"
-X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
-   d="scan'208";a="276335082"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 06:53:09 -0700
-X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
-   d="scan'208";a="647235077"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 06:53:06 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1oVZ0h-0098vZ-2g;
-        Tue, 06 Sep 2022 16:53:03 +0300
-Date:   Tue, 6 Sep 2022 16:53:03 +0300
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Martyn Welch <martyn.welch@collabora.co.uk>,
+        with ESMTP id S242159AbiIFOmy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2022 10:42:54 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1FFF9D8CA;
+        Tue,  6 Sep 2022 07:03:06 -0700 (PDT)
+Received: from [IPv6:2a00:23c6:c311:3401:414f:4149:b474:40e4] (unknown [IPv6:2a00:23c6:c311:3401:414f:4149:b474:40e4])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: martyn)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 43E7D6601F20;
+        Tue,  6 Sep 2022 15:01:53 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1662472913;
+        bh=Qrr7PGGV0pTVU6MwAhf7oXMb3V+hHN/UlRCB828kcVo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=EYYlPk1QT0nPfxYgSuzYUjIraY8aePwXtC9amid/uXZklyMnPC1VrX+O5j+5OOVQ6
+         PSrkMuwIW4dLmBJb93K29evStyYQmZEVhZNsTkIoaOrDCvH2zu+xSiUw6oCoHMOsDn
+         j4yJYIZKXQRWsmHWtx15aVxgFBv3GzNbFd7eUGPYgTqYPbWPC20Y2oB8VHGmWyvbqw
+         TNa4D3cU9RLqe0hbaWqiwyWbVR6i7yzaK06aMwO6VV6TYKfHR8yOZFS1wD76ZZC5Ay
+         HD62FS4UvhcRwjYflKg5kGxtGZzvSW4K+sUFjGrDW7c4tSzTS72RFRlDFxpwYtEYit
+         BhqwDinCy9zXg==
+Message-ID: <a71dec127a2e188b1eb7df1e385f71410051acca.camel@collabora.com>
+Subject: Re: [PATCH v2 5/5] gpio: pca953x: Add support for PCAL6534
+From:   Martyn Welch <martyn.welch@collabora.com>
+To:     Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] dt-bindings: gpio: pca95xx: add entry for
- pcal6534 and PI4IOE5V6534Q
-Message-ID: <YxdQv99FoFNx+11c@smile.fi.intel.com>
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 06 Sep 2022 15:01:51 +0100
+In-Reply-To: <Yxc8GgUnHOuMIn4p@smile.fi.intel.com>
 References: <20220906082820.4030401-1-martyn.welch@collabora.co.uk>
- <20220906082820.4030401-2-martyn.welch@collabora.co.uk>
- <Yxc6zptiJEf2TzP5@smile.fi.intel.com>
- <CACRpkdZHKEW+WJAdCCf2DN7gN+ZM7pFpeSXfccB508N4=-LkoQ@mail.gmail.com>
- <YxdI/TLBrzJP3RKi@smile.fi.intel.com>
- <CACRpkdaQ+0wbreyCEaoBnjKT0rtgPEnotZQw_Eh=y4xktwrwHQ@mail.gmail.com>
+         <20220906082820.4030401-5-martyn.welch@collabora.co.uk>
+         <Yxc8GgUnHOuMIn4p@smile.fi.intel.com>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4-1+b1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaQ+0wbreyCEaoBnjKT0rtgPEnotZQw_Eh=y4xktwrwHQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 06, 2022 at 03:33:34PM +0200, Linus Walleij wrote:
-> On Tue, Sep 6, 2022 at 3:20 PM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> > On Tue, Sep 06, 2022 at 03:08:00PM +0200, Linus Walleij wrote:
-> > > On Tue, Sep 6, 2022 at 2:19 PM Andy Shevchenko
-> > > <andriy.shevchenko@intel.com> wrote:
-> > > > On Tue, Sep 06, 2022 at 09:28:16AM +0100, Martyn Welch wrote:
-
-...
-
-> > > > > +    oneOf:
-> > > > > +      - items:
-> > > > > +        - const: diodes,pi4ioe5v6534q
-> > > > > +        - const: nxp,pcal6534
-> > > >
-> > > > ^^^
-> > > >
-> > > > > +      - items:
-> > > > > +        - enum:
-> > > >
-> > > > > +          - nxp,pcal6534
-> > > >
-> > > > ^^^
-> > > >
-> > > > Not sure why is this dup?
-> > >
-> > > No that is how DT compatibles work. One version of the component,
-> > > bought from NXP will look like this:
-> > >
-> > > compatible = "nxp,pcal6534";
-> > >
-> > > Another version bought from diodes will look like this:
-> > >
-> > > compatible = "diodes,pi4ioe5v6534q", "nxp,pcal6534";
-> > >
-> > > Then the drivers are probed matching from left to right,
-> > > with the "most compatible" matching first.
-> > >
-> > > This also answers your question on the implementation.
-> >
-> > Then I don't understand why the const list above is only for new chips
-> > and not for the old one where the same can be applied.
-> 
-> That's YAML. It's because the const list is the most compact way
-> to express two precise items following after each other, and the enum
-> list is an implicit list of single-item const:s, as you cannot enum
-> tuples.
-
-This makes a lot of sense, thank you for explaining this. Indeed, now I
-understand the absence of Diodes in the code.
-
-> > Mysterious ways of DT...
-> 
-> It's not DT, it's YAML that is mysterious. DT itself is a pretty
-> straight-forward
-> grammar, while YAML is a meta-grammar describing the DT grammar
-> (ML stands for Meta Language).
-> 
-> All meta languages are mysterious.
-
-Yeah :-)
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+T24gVHVlLCAyMDIyLTA5LTA2IGF0IDE1OjI0ICswMzAwLCBBbmR5IFNoZXZjaGVua28gd3JvdGU6
+Cj4gT24gVHVlLCBTZXAgMDYsIDIwMjIgYXQgMDk6Mjg6MTlBTSArMDEwMCwgTWFydHluIFdlbGNo
+IHdyb3RlOgo+ID4gRnJvbTogTWFydHluIFdlbGNoIDxtYXJ0eW4ud2VsY2hAY29sbGFib3JhLmNv
+bT4KPiA+IAo+ID4gQWRkIHN1cHBvcnQgZm9yIHRoZSBOWFAgUENBTDY1MzQuIFRoaXMgZGV2aWNl
+IGlzIGJyb2FkbHkgYSAzNC1iaXQKPiA+IHZlcnNpb24KPiA+IG9mIHRoZSBQQ0FMNjUyNC4gSG93
+ZXZlciwgd2hpbHN0IHRoZSByZWdpc3RlcnMgYXJlIGJyb2FkbHkgd2hhdAo+ID4geW91J2QKPiA+
+IGV4cGVjdCBmb3IgYSAzNC1iaXQgdmVyc2lvbiBvZiB0aGUgUENBTDY1MjQsIHRoZSBzcGFjaW5n
+IG9mIHRoZQo+ID4gcmVnaXN0ZXJzCj4gPiBoYXMgYmVlbiBjb21wYWN0ZWQuIFRoaXMgaGFzIHRo
+ZSB1bmZvcnR1bmF0ZSBlZmZlY3Qgb2YgYnJlYWtpbmcgdGhlCj4gPiBiaXQKPiA+IHNoaWZ0IGJh
+c2VkIG1lY2hhbmlzbSB0aGF0IGlzIGVtcGxveWVkIHRvIHdvcmsgb3V0IHJlZ2lzdGVyCj4gPiBs
+b2NhdGlvbnMgdXNlZAo+ID4gYnkgdGhlIG90aGVyIGNoaXBzIHN1cHBvcnRlZCBieSB0aGlzIGRy
+aXZlci4gVG8gYWNjb21tb2RhdGUgdGhzLAo+ID4gY2FsbGJhY2sKPiA+IGZ1bmN0aW9ucyBoYXZl
+IGJlZW4gYWRkZWQgdG8gYWxsb3cgYWx0ZXJhdGUgaW1wbGVtZW50YXRpb25zIG9mCj4gPiBwY2E5
+NTN4X3JlY2FsY19hZGRyKCkgYW5kIHBjYTk1M3hfY2hlY2tfcmVnaXN0ZXIoKSBmb3IgdGhlCj4g
+PiBQQ0FMNjUzNC4KPiAKPiAKPiBUaGlzIGxvb2tzIG11Y2ggY2xlYW5lciEKPiAKPiAuLi4KPiAK
+PiA+IEBAIC0xMDcsNiArMTA5LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBpMmNfZGV2aWNlX2lk
+IHBjYTk1M3hfaWRbXQo+ID4gPSB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgeyAidGNhOTUzOSIsIDE2
+IHwgUENBOTUzWF9UWVBFIHwgUENBX0lOVCwgfSwKPiA+IMKgwqDCoMKgwqDCoMKgwqB7ICJ0Y2E5
+NTU0IiwgOMKgIHwgUENBOTUzWF9UWVBFIHwgUENBX0lOVCwgfSwKPiA+IMKgwqDCoMKgwqDCoMKg
+wqB7ICJ4cmExMjAyIiwgOMKgIHwgUENBOTUzWF9UWVBFIH0sCj4gPiArCj4gPiDCoMKgwqDCoMKg
+wqDCoMKgeyB9Cj4gCj4gTWlzc2VkIERpb2Rlcz8KPiAKCkRyb3BwZWQgYXMgaXQgaXMgZXhwZWN0
+ZWQgZm9yIHRoZSBEVEJzIG9mIGRldmljZXMgd2l0aCBhIHBpNGlvZTV2NjUzNHEKYWxzbyBoYXZl
+IGEgY29tcGF0aWJsZSBmb3IgcGNhbDY1MzQuIGhlbmNlIGl0J3Mgbm90IG5lZWRlZCBpbiB0aGUK
+ZHJpdmVyIChhdCBsZWFzdCB1bnRpbCBzb21lb25lIGZpbmRzIGEgZGlmZmVyZW5jZSB3aGljaCBu
+ZWVkcyB0byBiZQpleHBsaWNpdGx5IGhhbmRsZWQgZm9yIG9uZSBhbmQgbm90IHRoZSBvdGhlciku
+Cgo+ID4gwqB9Owo+ID4gwqBNT0RVTEVfREVWSUNFX1RBQkxFKGkyYywgcGNhOTUzeF9pZCk7Cj4g
+Cj4gLi4uCj4gCj4gPiArwqDCoMKgwqDCoMKgwqB1OCAoKnJlY2FsY19hZGRyKShzdHJ1Y3QgcGNh
+OTUzeF9jaGlwICpjaGlwLCBpbnQgcmVnICwgaW50Cj4gPiBvZmYpOwo+ID4gK8KgwqDCoMKgwqDC
+oMKgYm9vbCAoKmNoZWNrX3JlZykoc3RydWN0IHBjYTk1M3hfY2hpcCAqY2hpcCwgdW5zaWduZWQg
+aW50Cj4gPiByZWcsCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIHUzMiBjaGVja2JhbmspOwo+IAo+IEkgd291bGQgdGhpbmsgb2Ygc3BsaXR0aW5n
+IHRoaXMgY2hhbmdlLiBMaWtlIGluIGEgc2VwYXJhdGUgcGF0Y2ggeW91Cj4gc2ltcGx5Cj4gY3Jl
+YXRlIHRoaXMgaW50ZXJmYWNlIGFuZCBvbmx5IGFkZCB3aGF0IHlvdSBuZWVkIGluIHRoZSBuZXh0
+IG9uZS4KPiAKCkNhbiBkbywgdGhvdWdoIEkgZGlkbid0IGZlZWwgeW91IHdlcmUgcGFydGljdWxh
+cmx5IGZ1c3NlZCBhYm91dCBtZQpoYXZpbmcgc3BsaXQgdGhhdCBvdXQuLi4KCj4gLi4uCj4gCj4g
+PiArc3RhdGljIGJvb2wgcGNhbDY1MzRfY2hlY2tfcmVnaXN0ZXIoc3RydWN0IHBjYTk1M3hfY2hp
+cCAqY2hpcCwKPiA+IHVuc2lnbmVkIGludCByZWcsCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdTMyIGNoZWNr
+YmFuaykKPiA+ICt7Cj4gPiArwqDCoMKgwqDCoMKgwqBpbnQgYmFuazsKPiA+ICvCoMKgwqDCoMKg
+wqDCoGludCBvZmZzZXQ7Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqBpZiAocmVnID4gMHgyZikg
+ewo+IAo+IEkgZ3Vlc3MgY29kZSByZWFkIGFuZCBnZW5lcmF0aW9uIHdpc2UgdGhlCj4gCj4gwqDC
+oMKgwqDCoMKgwqDCoGlmIChyZWcgPj0gMHgzMCkgewo+IAo+IGlzIHNsaWdodGx5IGJldHRlci4K
+Ck9LLgoKPiAKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKgo+ID4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqIFJlc2VydmVkIGJsb2NrIGJldHdlZW4gMTRoIGFu
+ZCAyRmggZG9lcyBub3QKPiA+IGFsaWduIG9uCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgICogZXhwZWN0ZWQgYmFuayBib3VuZGFyaWVzIGxpa2Ugb3RoZXIgZGV2aWNlcy4KPiA+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKi8KPiA+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqBpbnQgdGVtcCA9IHJlZyAtIDB4MzA7Cj4gPiArCj4gPiArwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgYmFuayA9IHRlbXAgLyBOQkFOSyhjaGlwKTsKPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBvZmZzZXQgPSB0ZW1wIC0gKGJhbmsgKiBOQkFOSyhj
+aGlwKSk7Cj4gCj4gUGFyZW50aGVzZXMgYXJlIG5vdCBuZWVkZWQgZnVyIG11bHRpcGxpY2F0aW9u
+LCBidXQgaWYgeW91IGluc2lzdC4uLgo+IAoKCgo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoGJhbmsgKz0gODsKPiAKPiA+ICvCoMKgwqDCoMKgwqDCoH0gZWxzZSBpZiAocmVnID4g
+MHg1Mykgewo+IAo+IEluIHRoZSBzaW1pbGFyIHdheS4uLgo+IAo+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoC8qIEhhbmRsZSBsYWNrIG9mIHJlc2VydmVkIHJlZ2lzdGVycyBhZnRl
+ciBvdXRwdXQKPiA+IHBvcnQKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBj
+b25maWd1cmF0aW9uIHJlZ2lzdGVyIHRvIGZvcm0gYSBiYW5rLgo+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCAqLwo+IAo+IENvbW1lbnQgc3R5bGUKPiAKPiAvKgo+IMKgKiBIYW5k
+bGUuLi4KPiDCoCovCj4gCgphY2sKCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+aW50IHRlbXAgPSByZWcgLSAweDU0Owo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoGJhbmsgPSB0ZW1wIC8gTkJBTksoY2hpcCk7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgb2Zmc2V0ID0gdGVtcCAtIChiYW5rICogTkJBTksoY2hpcCkpOwo+ID4gK8Kg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGJhbmsgKz0gMTY7Cj4gPiArwqDCoMKgwqDCoMKg
+wqB9IGVsc2Ugewo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGJhbmsgPSByZWcg
+LyBOQkFOSyhjaGlwKTsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBvZmZzZXQg
+PSByZWcgLSAoYmFuayAqIE5CQU5LKGNoaXApKTsKPiA+ICvCoMKgwqDCoMKgwqDCoH0KPiA+ICsK
+PiA+ICvCoMKgwqDCoMKgwqDCoC8qIFJlZ2lzdGVyIGlzIG5vdCBpbiB0aGUgbWF0Y2hpbmcgYmFu
+ay4gKi8KPiA+ICvCoMKgwqDCoMKgwqDCoGlmICghKEJJVChiYW5rKSAmIGNoZWNrYmFuaykpCj4g
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIGZhbHNlOwo+ID4gKwo+ID4g
+K8KgwqDCoMKgwqDCoMKgLyogUmVnaXN0ZXIgaXMgbm90IHdpdGhpbiBhbGxvd2VkIHJhbmdlIG9m
+IGJhbmsuICovCj4gPiArwqDCoMKgwqDCoMKgwqBpZiAob2Zmc2V0ID49IE5CQU5LKGNoaXApKQo+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiBmYWxzZTsKPiA+ICsKPiA+
+ICvCoMKgwqDCoMKgwqDCoHJldHVybiB0cnVlOwo+ID4gK30KPiAKPiAuLi4KPiAKPiA+IC3CoMKg
+wqDCoMKgwqDCoHU4IHJlZ2FkZHIgPSBwaW5jdHJsIHwgYWRkciB8IChvZmYgLyBCQU5LX1NaKTsK
+PiA+IMKgCj4gPiAtwqDCoMKgwqDCoMKgwqByZXR1cm4gcmVnYWRkcjsKPiA+ICvCoMKgwqDCoMKg
+wqDCoHJldHVybiBwaW5jdHJsIHwgYWRkciB8IChvZmYgLyBCQU5LX1NaKTsKPiAKPiBTdHJheSBj
+aGFuZ2UsIG9yIGFueXRoaW5nIEkgaGF2ZSBtaXNzZWQ/Cj4gCgpZZWFoLCBjYW4gcmVtb3ZlIHRo
+YXQgY2hhbmdlLi4uCgo+IC4uLgo+IAo+ID4gKy8qIFRoZSBQQ0FMNjUzNCBhbmQgY29tcGF0aWJs
+ZSBjaGlwcyBoYXZlIGFsdGVyZWQgYmFuayBhbGlnbm1lbnQKPiA+IHRoYXQgZG9lc24ndAo+ID4g
+KyAqIGZpdCB3aXRoaW4gdGhlIGJpdCBzaGlmdGluZyBzY2hlbWUgdXNlZCBmb3Igb3RoZXIgZGV2
+aWNlcy4KPiA+ICsgKi8KPiAKPiBDb21tZW50IHN0eWxlLgo+IAo+IC4uLgo+IAo+ID4gQEAgLTEy
+NDAsNiArMTMzNSw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkCj4gPiBwY2E5
+NTN4X2R0X2lkc1tdID0gewo+ID4gwqAKPiA+IMKgwqDCoMKgwqDCoMKgwqB7IC5jb21wYXRpYmxl
+ID0gIm54cCxwY2FsNjQxNiIsIC5kYXRhID0gT0ZfOTUzWCgxNiwKPiA+IFBDQV9MQVRDSF9JTlQp
+LCB9LAo+ID4gwqDCoMKgwqDCoMKgwqDCoHsgLmNvbXBhdGlibGUgPSAibnhwLHBjYWw2NTI0Iiwg
+LmRhdGEgPSBPRl85NTNYKDI0LAo+ID4gUENBX0xBVENIX0lOVCksIH0sCj4gPiArwqDCoMKgwqDC
+oMKgwqB7IC5jb21wYXRpYmxlID0gIm54cCxwY2FsNjUzNCIsIC5kYXRhID0gT0ZfNjUzWCgzNCwK
+PiA+IFBDQV9MQVRDSF9JTlQpLCB9LAo+ID4gwqDCoMKgwqDCoMKgwqDCoHsgLmNvbXBhdGlibGUg
+PSAibnhwLHBjYWw5NTM1IiwgLmRhdGEgPSBPRl85NTNYKDE2LAo+ID4gUENBX0xBVENIX0lOVCks
+IH0sCj4gPiDCoMKgwqDCoMKgwqDCoMKgeyAuY29tcGF0aWJsZSA9ICJueHAscGNhbDk1NTRiIiwg
+LmRhdGEgPSBPRl85NTNYKCA4LAo+ID4gUENBX0xBVENIX0lOVCksIH0sCj4gPiDCoMKgwqDCoMKg
+wqDCoMKgeyAuY29tcGF0aWJsZSA9ICJueHAscGNhbDk1NTVhIiwgLmRhdGEgPSBPRl85NTNYKDE2
+LAo+ID4gUENBX0xBVENIX0lOVCksIH0sCj4gCj4gRG8geW91IGRlY2lkZSB0byBkcm9wIERpb2Rl
+cyBjb21wYXRpYmxlIGZyb20gdGhlIGNvZGU/Cj4gCgo=
 
