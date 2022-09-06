@@ -2,113 +2,99 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE3FC6FA89
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Sep 2022 13:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2B9C6FA8D
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Sep 2022 13:57:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238804AbiIFNuq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Sep 2022 09:50:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42992 "EHLO
+        id S239227AbiIFN5e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Sep 2022 09:57:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239707AbiIFNtv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2022 09:49:51 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74276B7E6;
-        Tue,  6 Sep 2022 06:40:01 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1C1F85C015A;
-        Tue,  6 Sep 2022 09:39:32 -0400 (EDT)
-Received: from imap47 ([10.202.2.97])
-  by compute2.internal (MEProxy); Tue, 06 Sep 2022 09:39:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-         h=cc:cc:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1662471572; x=1662557972; bh=d3
-        HdEUqOxRr2NiqMbqhCIYCoCrUQqQyaV7J3bTAdtKQ=; b=srbEmYpKatpJZaqV+u
-        EFOsbgo7m2H/U8VWxATh+56Yut4FnULRHAAxEWYKjbWvkDwI9/PkdFPV7sImol/v
-        SiF0APg8HpeutY6HX0NEL40SUOZTpDU01fFWNDZunzpyQOD030nV4sjtziblw0B9
-        tlA+Q+OegM1YuaZisrMnjn6gqj930t/XB7KzVC4VFKGjnZFSqMmgkEZHdyjY6VBS
-        3gd4d95nxsTRwY+u2lqcQHDeFD3pIEz5kvlZGg4jMb8OQQNcmaFy5Swi5VyfzIi5
-        EBgGRHlhYPWGOECzQYngj7kkpY7MxKG9Z83Kr7lhE83isBKJErxsV3scJEU21Y7E
-        duag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1662471572; x=1662557972; bh=d3HdEUqOxRr2NiqMbqhCIYCoCrUQ
-        qQyaV7J3bTAdtKQ=; b=AVeNnzBS2wOwJ8jOObc8OzW9MrE6rIpFOOEZudovSkIg
-        gXyp523yoJlctVcPCuC0jxNGyUGKyKskj0SxVZtGvgn8YK9BwI6aXuLEIi97echU
-        4LxN5ih9IdSgsxigVApgk+EIu1mdXh0oph+ID7ptdJnbwz2szKsvXpeb1BlVZwGL
-        pQvHBPSaSM6i8MTsYHPfsHwlRUc8c2xT4kQokfkWNSCq6M8sUfUMqqmPBzCSafvZ
-        z4g9Wlr+/d1JSYxSpkf7B4nFV9ptPWU/s07PzJ5ET/jzSeixSv3coKRAzpWtoiJu
-        YhKoJAIYsh+z+uG+WsbIxJPjiy7RKLbMAas+RN6XeQ==
-X-ME-Sender: <xms:kk0XY4LOzPgtMTvlKqACchgNEFQm91YkDoudwpR8hIjSAmTsI40zcQ>
-    <xme:kk0XY4LVilRS99ISsh7NlSJZJU_p5xxzATkJXoe5GgZD7FpbZLLkN5sy0N2zixqoV
-    R291fItZnNtTHnf7T8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdelkedgieekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedfufhv
-    vghnucfrvghtvghrfdcuoehsvhgvnhesshhvvghnphgvthgvrhdruggvvheqnecuggftrf
-    grthhtvghrnhepleevgfegffehvedtieevhfekheeftedtjeetudevieehveevieelgffh
-    ieevieeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epshhvvghnsehsvhgvnhhpvghtvghrrdguvghv
-X-ME-Proxy: <xmx:kk0XY4sMKELIgCnJnG6KJOAoy6toy0qrwrq8X04HJu7EbtfuMaqctQ>
-    <xmx:kk0XY1alWYXnwYjshCKzrURRYMwjj2vwRWhmghVrRLGELGBPWvK5Yw>
-    <xmx:kk0XY_ZtQo18xKyhXM_sZMHg1hBD9E308rf5u03m0l9kzA5eTsiMlg>
-    <xmx:lE0XY1sdm1gr4cGAzqgYFHeHCNGWprrLbE-xfAuiQhAEliTDT7Z76A>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id CAC2BA6007C; Tue,  6 Sep 2022 09:39:30 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-927-gf4c98c8499-fm-20220826.002-gf4c98c84
-Mime-Version: 1.0
-Message-Id: <99fb8d30-a75d-4709-a4e7-47d2f700ffb8@www.fastmail.com>
-In-Reply-To: <E1oVYUX-005CmY-Mr@rmk-PC.armlinux.org.uk>
-References: <YxdInl2qzQWM+3bs@shell.armlinux.org.uk>
- <E1oVYUX-005CmY-Mr@rmk-PC.armlinux.org.uk>
-Date:   Tue, 06 Sep 2022 15:39:10 +0200
-From:   "Sven Peter" <sven@svenpeter.dev>
-To:     "Russell King" <rmk+kernel@armlinux.org.uk>,
-        "Arnd Bergmann" <arnd@arndb.de>, "Lee Jones" <lee@kernel.org>,
-        "Linus Walleij" <linus.walleij@linaro.org>
-Cc:     "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-        asahi@lists.linux.dev, "Bartosz Golaszewski" <brgl@bgdev.pl>,
-        devicetree@vger.kernel.org, "Hector Martin" <marcan@marcan.st>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "Petr Mladek" <pmladek@suse.com>,
-        "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Sergey Senozhatsky" <senozhatsky@chromium.org>,
-        "Steven Rostedt" <rostedt@goodmis.org>
-Subject: Re: [PATCH 5/7] platform/apple: Add new Apple Mac SMC driver
-Content-Type: text/plain
+        with ESMTP id S240421AbiIFNyo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2022 09:54:44 -0400
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B59A980F53;
+        Tue,  6 Sep 2022 06:41:33 -0700 (PDT)
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-127a0d798bdso7735548fac.4;
+        Tue, 06 Sep 2022 06:41:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:references:in-reply-to:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=U7KMCwyPUAeyOkS8LvXUFPy4Xy4KgDM/4fM2ZNJCPo4=;
+        b=bfki+yWcXz98D9qBYIwI1d8sJlDKhefVdfDQcuXhOwEYm0xuBoxYoVIp1S1kuCEn//
+         5V5bGvQ82RMexka8VMwwF3hObbdwU3Dps5FNyZWQJ8oP+OPdlTibi8jfBm8PXYfeGc6Q
+         +E64dHA62bADt4sZ7nxdlxYmt1kxckDrIsZQi8nZE8gkm0lTTmXGcqL5RHjCKVYcy7bm
+         tuiiwNHKNJPgJzBfHFnZkIPZZi/VyxBddp9CIoBbsLqcbvvXzoZupy0WS2vPW9SZxWxO
+         UrEQ7bxlYEVDA2TUKr+3ixqBq9PabTqfHpRE56v0jYBoL22ta1V3JKxopXNqGsxeaxQU
+         trrg==
+X-Gm-Message-State: ACgBeo16+Ep15vr9UPjCELRdAgoNVQk57oDEcmCrbGb9u5I9m3lsHel8
+        uWLtW7GUmhXFsz+eDVhdHw==
+X-Google-Smtp-Source: AA6agR4VFYt4Q6uqaviz/cWYZjZnXg/9Uo8qUBasuYk+y+0PkxJ2esvoAyfunvvkKBZRtHtdKfWDnQ==
+X-Received: by 2002:a05:6870:831d:b0:10d:a96f:8bc with SMTP id p29-20020a056870831d00b0010da96f08bcmr11029950oae.143.1662471647776;
+        Tue, 06 Sep 2022 06:40:47 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id y2-20020a056808060200b003450abf4404sm5315654oih.21.2022.09.06.06.40.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Sep 2022 06:40:47 -0700 (PDT)
+Received: (nullmailer pid 360956 invoked by uid 1000);
+        Tue, 06 Sep 2022 13:40:45 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Martyn Welch <martyn.welch@collabora.co.uk>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+In-Reply-To: <20220906082820.4030401-2-martyn.welch@collabora.co.uk>
+References: <20220906082820.4030401-1-martyn.welch@collabora.co.uk> <20220906082820.4030401-2-martyn.welch@collabora.co.uk>
+Subject: Re: [PATCH v2 2/5] dt-bindings: gpio: pca95xx: add entry for pcal6534 and PI4IOE5V6534Q
+Date:   Tue, 06 Sep 2022 08:40:45 -0500
+Message-Id: <1662471645.313702.360955.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 6, 2022, at 15:19, Russell King wrote:
-> From: Hector Martin <marcan@marcan.st>
->
-> This driver implements support for the SMC (System Management
-> Controller) in Apple Macs. In contrast to the existing applesmc driver,
-> it uses pluggable backends that allow it to support different SMC
-> implementations, and uses the MFD subsystem to expose the core SMC
-> functionality so that specific features (gpio, hwmon, battery, etc.) can
-> be implemented by separate drivers in their respective downstream
-> subsystems.
->
-> The initial RTKit backend adds support for Apple Silicon Macs (M1 et
-> al). We hope a backend for T2 Macs will be written in the future
-> (since those are not supported by applesmc), and eventually an x86
-> backend would allow us to fully deprecate applesmc in favor of this
-> driver.
->
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+On Tue, 06 Sep 2022 09:28:16 +0100, Martyn Welch wrote:
+> From: Martyn Welch <martyn.welch@collabora.com>
+> 
+> The NXP PCAL6534 is a 34-bit I2C I/O expander similar to the PCAL6524. The
+> Diodes PI4IOE5V6534Q is a functionally identical chip provided by Diodes
+> Inc.
+> 
+> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+> ---
+> 
+> Changes in v2:
+>  - Enumerate pi4ioe5v6534q as requiring pcal6534 fallback
+> 
+>  .../bindings/gpio/gpio-pca95xx.yaml           | 98 ++++++++++---------
+>  1 file changed, 52 insertions(+), 46 deletions(-)
+> 
 
-Reviewed-by: Sven Peter <sven@svenpeter.dev>
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml:20:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml:23:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml:24:11: [warning] wrong indentation: expected 12 but found 10 (indentation)
+
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
