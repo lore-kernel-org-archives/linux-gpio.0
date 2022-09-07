@@ -2,256 +2,90 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB27C38145
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Sep 2022 07:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4CEAC54EE9
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Sep 2022 08:17:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230087AbiIGH7X (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 7 Sep 2022 03:59:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41684 "EHLO
+        id S230103AbiIGIRI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 7 Sep 2022 04:17:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbiIGH7X (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2022 03:59:23 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DD2BA927F;
-        Wed,  7 Sep 2022 00:59:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1662537559; x=1694073559;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ElCbft8MgkbPL9x7AuoOschyBkoLeKrrG0xc2X+djpY=;
-  b=dECBhZMvqQu+RAVBp3xKO075+csSnJnu26mu233+uBmdpbNBSKMyFk2+
-   x16ot8jGc8i3H7JvG03KJDEK7s9xUQak9yV3X9pnQ2JMIwm4nwlnm1j2l
-   nv9wK6CHMuoXQZ5qj4CtMn+dKo11WE3jInTPq00XIlmPnXFBuFW1l4xuL
-   layuNTlMs3yk5WBKmhzWBKokSnTCJEoLjG7/ydN3G6UyV7BiHaLPYsxdB
-   62zvUn7zgA1LSw5pFdi8RkJ1hxz0jNM3fxN/C0W7QqnaTgxyfb/gawEnr
-   RDEbAOLQoB5+cof2J6Hb+IM/smfG8p3H484NZf3QvEYmf4Hnc9xp1jXHv
-   w==;
-X-IronPort-AV: E=Sophos;i="5.93,296,1654585200"; 
-   d="scan'208";a="175969835"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 07 Sep 2022 00:59:18 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.12; Wed, 7 Sep 2022 00:59:15 -0700
-Received: from soft-dev3-1.microsemi.net (10.10.115.15) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.12 via Frontend Transport; Wed, 7 Sep 2022 00:59:14 -0700
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
-To:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <UNGLinuxDriver@microchip.com>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>
-Subject: [PATCH v2] pinctrl: ocelot: Fix interrupt controller
-Date:   Wed, 7 Sep 2022 10:02:51 +0200
-Message-ID: <20220907080251.3391659-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.33.0
+        with ESMTP id S229685AbiIGIRE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2022 04:17:04 -0400
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 760E9AB403;
+        Wed,  7 Sep 2022 01:17:03 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4MMw6V4rKQz6S35b;
+        Wed,  7 Sep 2022 16:15:14 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.102.38])
+        by APP2 (Coremail) with SMTP id Syh0CgDHGXN7UxhjYTD4AQ--.32342S4;
+        Wed, 07 Sep 2022 16:17:00 +0800 (CST)
+From:   Wei Yongjun <weiyongjun@huaweicloud.com>
+To:     Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH -next 1/5] misc: microchip: pci1xxxx: fix error handling in gp_aux_bus_probe()
+Date:   Wed,  7 Sep 2022 08:34:31 +0000
+Message-Id: <20220907083435.1745393-1-weiyongjun@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-CM-TRANSID: Syh0CgDHGXN7UxhjYTD4AQ--.32342S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw4DXFy3Xw4UWF18JF4Utwb_yoWktrcE9a
+        y7AF13XF4DtFZ5GrW2gw15ZrW2grs2vryrW3Zxtryay342yas7Jws5X3W5Jr48u34DAFyD
+        Grn7ur1Ikr1FyjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbokYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_JrI_JrWl1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+        0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
+        z7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
+        AF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
+        IxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s
+        0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsG
+        vfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: 5zhl50pqjm3046kxt4xhlfz01xgou0bp/
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-When an external device generated a level based interrupt then the
-interrupt controller could miss the interrupt. The reason is that the
-interrupt controller can detect only link changes.
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-In the following example, if there is a PHY that generates an interrupt
-then the following would happen. The GPIO detected that the interrupt
-line changed, and then the 'ocelot_irq_handler' will be called. Here it
-detects which GPIO line seen the change and for that will call the
-following:
-1. irq_mask
-2. phy interrupt routine
-3. irq_eoi
-4. irq_unmask
+In some error handling path, resoures alloced may not released.
+This patch fix them.
 
-And this works fine for simple cases, but if the PHY generates many
-interrupts, for example when doing PTP timestamping, then the following
-could happen. Again the function 'ocelot_irq_handler' will be called
-and then from here the following could happen:
-1. irq_mask
-2. phy interrupt routine
-3. irq_eoi
-4. irq_unmask
-
-Right before step 3(irq_eoi), the PHY will generate another interrupt.
-Now the interrupt controller will acknowledge the change in the
-interrupt line. So we miss the interrupt.
-
-A solution will be to use 'handle_level_irq' instead of
-'handle_fasteoi_irq', because for this will change routine order of
-handling the interrupt.
-1. irq_mask
-2. irq_ack
-3. phy interrupt routine
-4. irq_unmask
-
-And now if the PHY will generate a new interrupt before irq_unmask, the
-interrupt controller will detect this because it already acknowledge the
-change in interrupt line at step 2(irq_ack).
-
-But this is not the full solution because there is another issue. In
-case there are 2 PHYs that share the interrupt line. For example phy1
-generates an interrupt, then the following can happen:
-1.irq_mask
-2.irq_ack
-3.phy0 interrupt routine
-4.phy1 interrupt routine
-5.irq_unmask
-
-In case phy0 will generate an interrupt while clearing the interrupt
-source in phy1, then the interrupt line will be kept down by phy0. So
-the interrupt controller will not see any changes in the interrupt line.
-The solution here is to update 'irq_unmask' such that it can detect if
-the interrupt line is still active or not. And if it is active then call
-again the procedure to clear the interrupts. But we don't want to do it
-every time, only if we know that the interrupt controller have not seen
-already that the interrupt line has changed.
-
-While at this, add support also for IRQ_TYPE_LEVEL_LOW.
-
-Fixes: be36abb71d878f ("pinctrl: ocelot: add support for interrupt controller")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
-v1->v2:
-- fix grammer mistakes
-- remove redundant checks for type in ocelot_irq_set_type
-- split assignment and declaration of work variable
-- use irqd_get_trigger_type instead of getting trigger from action
----
- drivers/pinctrl/pinctrl-ocelot.c | 93 +++++++++++++++++++++++++++-----
- 1 file changed, 80 insertions(+), 13 deletions(-)
+ drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index c5fd154990c8..29887d55c93b 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -338,6 +338,11 @@ struct ocelot_match_data {
- 	struct ocelot_pincfg_data pincfg_data;
- };
+diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.c
+index bfc03028b34d..11f79f239006 100644
+--- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.c
++++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.c
+@@ -87,12 +87,13 @@ static int gp_aux_bus_probe(struct pci_dev *pdev, const struct pci_device_id *id
+ 	retval = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_ALL_TYPES);
  
-+struct ocelot_irq_work {
-+	struct work_struct irq_work;
-+	struct irq_desc *irq_desc;
-+};
-+
- #define LUTON_P(p, f0, f1)						\
- static struct ocelot_pin_caps luton_pin_##p = {				\
- 	.pin = p,							\
-@@ -1813,6 +1818,74 @@ static void ocelot_irq_mask(struct irq_data *data)
- 	gpiochip_disable_irq(chip, gpio);
- }
+ 	if (retval < 0)
+-		return retval;
++		goto err_ida_alloc_1;
  
-+static void ocelot_irq_work(struct work_struct *work)
-+{
-+	struct ocelot_irq_work *w = container_of(work, struct ocelot_irq_work, irq_work);
-+	struct irq_chip *parent_chip = irq_desc_get_chip(w->irq_desc);
-+	struct gpio_chip *chip = irq_desc_get_chip_data(w->irq_desc);
-+	struct irq_data *data = irq_desc_get_irq_data(w->irq_desc);
-+	unsigned int gpio = irqd_to_hwirq(data);
-+
-+	local_irq_disable();
-+	chained_irq_enter(parent_chip, w->irq_desc);
-+	generic_handle_domain_irq(chip->irq.domain, gpio);
-+	chained_irq_exit(parent_chip, w->irq_desc);
-+	local_irq_enable();
-+
-+	kfree(w);
-+}
-+
-+static void ocelot_irq_unmask_level(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct ocelot_pinctrl *info = gpiochip_get_data(chip);
-+	struct irq_desc *desc = irq_data_to_desc(data);
-+	unsigned int gpio = irqd_to_hwirq(data);
-+	bool ack = false, active = false;
-+	u8 trigger_level;
-+	int val;
-+
-+	trigger_level = irqd_get_trigger_type(data);
-+
-+	/* Check if the interrupt line is still active. */
-+	regmap_read(info->map, REG(OCELOT_GPIO_IN, info, gpio), &val);
-+	if ((!(val & BIT(gpio % 32)) && trigger_level == IRQ_TYPE_LEVEL_LOW) ||
-+	      (val & BIT(gpio % 32) && trigger_level == IRQ_TYPE_LEVEL_HIGH))
-+		active = true;
-+
-+	/*
-+	 * Check if the interrupt controller has seen any changes in the
-+	 * interrupt line.
-+	 */
-+	regmap_read(info->map, REG(OCELOT_GPIO_INTR, info, gpio), &val);
-+	if (val & BIT(gpio % 32))
-+		ack = true;
-+
-+	/* Enable the interrupt now */
-+	gpiochip_enable_irq(chip, gpio);
-+	regmap_update_bits(info->map, REG(OCELOT_GPIO_INTR_ENA, info, gpio),
-+			   BIT(gpio % 32), BIT(gpio % 32));
-+
-+	/*
-+	 * In case the interrupt line is still active and the interrupt
-+	 * controller has not seen any changes in the interrupt line, then it
-+	 * means that there happen another interrupt while the line was active.
-+	 * So we missed that one, so we need to kick again the interrupt
-+	 * handler.
-+	 */
-+	if (active && !ack) {
-+		struct ocelot_irq_work *work;
-+
-+		work = kmalloc(sizeof(*work), GFP_ATOMIC);
-+		if (!work)
-+			return;
-+
-+		work->irq_desc = desc;
-+		INIT_WORK(&work->irq_work, ocelot_irq_work);
-+		queue_work(system_wq, &work->irq_work);
-+	}
-+}
-+
- static void ocelot_irq_unmask(struct irq_data *data)
- {
- 	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-@@ -1836,13 +1909,12 @@ static void ocelot_irq_ack(struct irq_data *data)
+-	pdev->irq = pci_irq_vector(pdev, 0);
+-	if (pdev->irq < 0)
+-		return retval;
++	retval = pci_irq_vector(pdev, 0);
++	if (retval < 0)
++		goto err_aux_dev_init_1;
  
- static int ocelot_irq_set_type(struct irq_data *data, unsigned int type);
++	pdev->irq = retval;
+ 	aux_bus->aux_device_wrapper[1]->gp_aux_data.irq_num = pdev->irq;
  
--static struct irq_chip ocelot_eoi_irqchip = {
-+static struct irq_chip ocelot_level_irqchip = {
- 	.name		= "gpio",
- 	.irq_mask	= ocelot_irq_mask,
--	.irq_eoi	= ocelot_irq_ack,
--	.irq_unmask	= ocelot_irq_unmask,
--	.flags          = IRQCHIP_EOI_THREADED | IRQCHIP_EOI_IF_HANDLED |
--			  IRQCHIP_IMMUTABLE,
-+	.irq_ack	= ocelot_irq_ack,
-+	.irq_unmask	= ocelot_irq_unmask_level,
-+	.flags		= IRQCHIP_IMMUTABLE,
- 	.irq_set_type	= ocelot_irq_set_type,
- 	GPIOCHIP_IRQ_RESOURCE_HELPERS
- };
-@@ -1859,14 +1931,9 @@ static struct irq_chip ocelot_irqchip = {
- 
- static int ocelot_irq_set_type(struct irq_data *data, unsigned int type)
- {
--	type &= IRQ_TYPE_SENSE_MASK;
--
--	if (!(type & (IRQ_TYPE_EDGE_BOTH | IRQ_TYPE_LEVEL_HIGH)))
--		return -EINVAL;
--
--	if (type & IRQ_TYPE_LEVEL_HIGH)
--		irq_set_chip_handler_name_locked(data, &ocelot_eoi_irqchip,
--						 handle_fasteoi_irq, NULL);
-+	if (type & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW))
-+		irq_set_chip_handler_name_locked(data, &ocelot_level_irqchip,
-+						 handle_level_irq, NULL);
- 	if (type & IRQ_TYPE_EDGE_BOTH)
- 		irq_set_chip_handler_name_locked(data, &ocelot_irqchip,
- 						 handle_edge_irq, NULL);
+ 	retval = auxiliary_device_init(&aux_bus->aux_device_wrapper[1]->aux_dev);
 -- 
-2.33.0
+2.34.1
 
