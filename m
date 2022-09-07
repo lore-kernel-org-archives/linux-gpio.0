@@ -2,92 +2,77 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81AFEC6FA90
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Sep 2022 14:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A03C54EE9
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Sep 2022 14:47:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229696AbiIGOlI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 7 Sep 2022 10:41:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35630 "EHLO
+        id S229807AbiIGOr1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 7 Sep 2022 10:47:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229717AbiIGOkj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2022 10:40:39 -0400
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5044172B6D;
-        Wed,  7 Sep 2022 07:40:38 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.143])
-        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4MN4dM5FnHzl98j;
-        Wed,  7 Sep 2022 22:39:03 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.102.38])
-        by APP2 (Coremail) with SMTP id Syh0CgBH53BgrRhjhP0EAg--.26935S6;
-        Wed, 07 Sep 2022 22:40:35 +0800 (CST)
-From:   Wei Yongjun <weiyongjun@huaweicloud.com>
-To:     Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: [PATCH -next v2 3/5] misc: microchip: pci1xxxx: Make symbol 'pci1xxxx_gpio_auxiliary_id_table' static
-Date:   Wed,  7 Sep 2022 14:58:06 +0000
-Message-Id: <20220907145808.1789249-3-weiyongjun@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220907145808.1789249-1-weiyongjun@huaweicloud.com>
-References: <20220907145808.1789249-1-weiyongjun@huaweicloud.com>
+        with ESMTP id S229901AbiIGOrV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2022 10:47:21 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F88095E5E;
+        Wed,  7 Sep 2022 07:47:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 36C0AB81D49;
+        Wed,  7 Sep 2022 14:47:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC5EC433D6;
+        Wed,  7 Sep 2022 14:47:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1662562036;
+        bh=A1icupglvvbyviBH2dgY8WkUbKh2uyGA/ljIqwGckm0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tYZftEDok/LtgdCcVrBFySECzcMsD+ckMFlf3GvPJeTjJmBqEvcDsE4lYswLRyBQC
+         qSE00OA3atvcbH5nAua48VH5m2U5Te1wvW1IgDCEeXh4jMtnFsVsWAk0ru0+4qiUYi
+         kEUW6Vj/z0JoJFPX9SSe/Y9vAgQLrA1FwA4ipGfU=
+Date:   Wed, 7 Sep 2022 16:47:14 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Kumaravel.Thiagarajan@microchip.com
+Cc:     weiyongjun@huaweicloud.com, arnd@arndb.de, weiyongjun1@huawei.com,
+        linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next 5/5] misc: microchip: pci1xxxx: use
+ module_auxiliary_driver
+Message-ID: <Yxiu8m+mJg32KdVS@kroah.com>
+References: <20220907083435.1745393-1-weiyongjun@huaweicloud.com>
+ <20220907083435.1745393-5-weiyongjun@huaweicloud.com>
+ <BN8PR11MB3668C4354AB9D0D1D608F0C6E9419@BN8PR11MB3668.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Syh0CgBH53BgrRhjhP0EAg--.26935S6
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr48tr4fKrWxtr48Zr18Krg_yoW8Xr4DpF
-        9xZryUZ34Fva13KF18A3WjyFyrGws2ka43KFZFk345t3Z8X3W2vFWFgFyDWr15WFWUJF1a
-        qr1jkFWUGan8ZrUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvlb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6r106r1rM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-        A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-        w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-        WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-        GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx
-        0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWU
-        JVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-        W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-        1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-        IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
-        x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
-        DU0xZFpf9x07jeWlkUUUUU=
-X-CM-SenderInfo: 5zhl50pqjm3046kxt4xhlfz01xgou0bp/
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN8PR11MB3668C4354AB9D0D1D608F0C6E9419@BN8PR11MB3668.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+On Wed, Sep 07, 2022 at 02:35:14PM +0000, Kumaravel.Thiagarajan@microchip.com wrote:
+> > -----Original Message-----
+> > From: Wei Yongjun <weiyongjun@huaweicloud.com>
+> > Sent: Wednesday, September 7, 2022 2:05 PM
+> > To: Kumaravel Thiagarajan - I21417
+> > <Kumaravel.Thiagarajan@microchip.com>; Arnd Bergmann
+> > <arnd@arndb.de>; Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Wei Yongjun <weiyongjun1@huawei.com>; linux-gpio@vger.kernel.org;
+> > kernel-janitors@vger.kernel.org
+> > Subject: [PATCH -next 5/5] misc: microchip: pci1xxxx: use
+> > module_auxiliary_driver
+> > 
+> > 
+> > Use the module_auxiliary_driver() macro to make the code simpler by
+> > eliminating module_init and module_exit calls.
+> I needed this during the experimentation stage. But now these functions only
+> do register and unregister. Hence, can be replaced with module_auxiliary_driver.
+> Thanks for your patch.
+> > 
+> Add this tag -> Fixes: 7d3e4d807df2 ("misc: microchip: pci1xxxx: load gpio driver for the gpio controller auxiliary device enumerated by the auxiliary bus driver.")?
 
-The sparse tool complains as follows:
+As you are the maintainer of this driver, you can add these markings to
+the patches and sign off on them when you forward them on to me.  No
+need to force the original developer to do this if you are already going
+to do it as well.
 
-drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c:409:34: warning:
- symbol 'pci1xxxx_gpio_auxiliary_id_table' was not declared. Should it be static?
+thanks,
 
-This symbol is not used outside of mchp_pci1xxxx_gpio.c, so marks it static.
-
-Fixes: 7d3e4d807df2 ("misc: microchip: pci1xxxx: load gpio driver for the gpio controller auxiliary device enumerated by the auxiliary bus driver.")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
-v1 -> v2: add fixes tag and reported-by
----
- drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
-index 47e6e87938ae..4f26871994ee 100644
---- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
-+++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
-@@ -407,7 +407,7 @@ static int pci1xxxx_gpio_probe(struct auxiliary_device *aux_dev,
- 
- static SIMPLE_DEV_PM_OPS(pci1xxxx_gpio_pm_ops, pci1xxxx_gpio_suspend, pci1xxxx_gpio_resume);
- 
--const struct auxiliary_device_id pci1xxxx_gpio_auxiliary_id_table[] = {
-+static const struct auxiliary_device_id pci1xxxx_gpio_auxiliary_id_table[] = {
- 	{.name = "mchp_pci1xxxx_gp.gp_gpio"},
- 	{}
- };
--- 
-2.34.1
-
+greg k-h
