@@ -2,55 +2,55 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA844C54EE9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ADE8C6FA83
 	for <linux-gpio@archiver.kernel.org>; Wed,  7 Sep 2022 08:17:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230046AbiIGIRN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 7 Sep 2022 04:17:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53086 "EHLO
+        id S230292AbiIGIRM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 7 Sep 2022 04:17:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230055AbiIGIRI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2022 04:17:08 -0400
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31A69AB1A4;
-        Wed,  7 Sep 2022 01:17:04 -0700 (PDT)
+        with ESMTP id S229939AbiIGIRF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2022 04:17:05 -0400
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 029FCAB1B7;
+        Wed,  7 Sep 2022 01:17:03 -0700 (PDT)
 Received: from mail02.huawei.com (unknown [172.30.67.143])
-        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4MMw6W17cnzKHvN;
+        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4MMw6W0FCrz6S37Q;
         Wed,  7 Sep 2022 16:15:15 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.102.38])
-        by APP2 (Coremail) with SMTP id Syh0CgDHGXN7UxhjYTD4AQ--.32342S8;
-        Wed, 07 Sep 2022 16:17:02 +0800 (CST)
+        by APP2 (Coremail) with SMTP id Syh0CgDHGXN7UxhjYTD4AQ--.32342S5;
+        Wed, 07 Sep 2022 16:17:01 +0800 (CST)
 From:   Wei Yongjun <weiyongjun@huaweicloud.com>
 To:     Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
         Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH -next 5/5] misc: microchip: pci1xxxx: use module_auxiliary_driver
-Date:   Wed,  7 Sep 2022 08:34:35 +0000
-Message-Id: <20220907083435.1745393-5-weiyongjun@huaweicloud.com>
+Subject: [PATCH -next 2/5] misc: microchip: pci1xxxx: Fix missing spin_lock_init()
+Date:   Wed,  7 Sep 2022 08:34:32 +0000
+Message-Id: <20220907083435.1745393-2-weiyongjun@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220907083435.1745393-1-weiyongjun@huaweicloud.com>
 References: <20220907083435.1745393-1-weiyongjun@huaweicloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Syh0CgDHGXN7UxhjYTD4AQ--.32342S8
-X-Coremail-Antispam: 1UD129KBjvJXoWxJrWftw13tr1kXF4kJw45Awb_yoW8GFWrpF
-        ZxZryUZ34FvanxKF48A3WUZFyrGa1Ik3W2gF9Fy34FqF1DZ3WI9F4jgF98Zr1YqFWUJF1S
-        qr10yFWDGan8JrUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvEb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6r106r1rM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-        AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
-        14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-        xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-        z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-        v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-        1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-        AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-        42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-        evJa73UjIFyTuYvjxUFgAwUUUUU
+X-CM-TRANSID: Syh0CgDHGXN7UxhjYTD4AQ--.32342S5
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw4DuF4DGrW5WFWkur45Jrb_yoWfCrbE9a
+        45Jr13Xrs8K3WkGr42ywnxZr1rK392vrykW3ZIqry5A342vFn7Grs7Jwn8Jrn3urnrAF9r
+        Ar1xur10yr13JjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbV8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_JrI_JrWl1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r18M2
+        8IrcIa0xkI8VCY1x0267AKxVWUCVW8JwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK
+        021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r
+        4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+        GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx
+        0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWU
+        JVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+        W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+        1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+        IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+        x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+        DU0xZFpf9x07U_pnPUUUUU=
 X-CM-SenderInfo: 5zhl50pqjm3046kxt4xhlfz01xgou0bp/
 X-CFilter-Loop: Reflected
 Precedence: bulk
@@ -59,39 +59,26 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Wei Yongjun <weiyongjun1@huawei.com>
 
-Use the module_auxiliary_driver() macro to make the code simpler
-by eliminating module_init and module_exit calls.
+The driver allocates the spinlock but not initialize it.
+Use spin_lock_init() on it to initialize it correctly.
 
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
-index fa80a7788596..9cc771c604ed 100644
+index 230503cca2ff..47e6e87938ae 100644
 --- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
 +++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
-@@ -421,19 +421,7 @@ static struct auxiliary_driver pci1xxxx_gpio_driver = {
- 	.probe = pci1xxxx_gpio_probe,
- 	.id_table = pci1xxxx_gpio_auxiliary_id_table
- };
--
--static int __init pci1xxxx_gpio_driver_init(void)
--{
--	return auxiliary_driver_register(&pci1xxxx_gpio_driver);
--}
--
--static void __exit pci1xxxx_gpio_driver_exit(void)
--{
--	auxiliary_driver_unregister(&pci1xxxx_gpio_driver);
--}
--
--module_init(pci1xxxx_gpio_driver_init);
--module_exit(pci1xxxx_gpio_driver_exit);
-+module_auxiliary_driver(pci1xxxx_gpio_driver);
+@@ -383,6 +383,7 @@ static int pci1xxxx_gpio_probe(struct auxiliary_device *aux_dev,
+ 	if (!priv)
+ 		return -ENOMEM;
  
- MODULE_DESCRIPTION("Microchip Technology Inc. PCI1xxxx GPIO controller");
- MODULE_AUTHOR("Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>");
++	spin_lock_init(&priv->lock);
+ 	priv->aux_dev = aux_dev;
+ 
+ 	if (!devm_request_mem_region(&aux_dev->dev, pdata->region_start, 0x800, aux_dev->name))
 -- 
 2.34.1
 
