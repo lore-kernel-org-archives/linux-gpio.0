@@ -2,256 +2,176 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3535C38145
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Sep 2022 08:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1BEECAAD3
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Sep 2022 08:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230090AbiIGI21 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 7 Sep 2022 04:28:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42110 "EHLO
+        id S229780AbiIGIiL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 7 Sep 2022 04:38:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230332AbiIGI2J (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2022 04:28:09 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 440B9ABF16
-        for <linux-gpio@vger.kernel.org>; Wed,  7 Sep 2022 01:28:05 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id fs14so8997190pjb.5
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2022 01:28:05 -0700 (PDT)
+        with ESMTP id S229673AbiIGIiK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2022 04:38:10 -0400
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACD63AE87D;
+        Wed,  7 Sep 2022 01:37:35 -0700 (PDT)
+Received: by mail-qt1-x82d.google.com with SMTP id l5so9870860qtv.4;
+        Wed, 07 Sep 2022 01:37:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google;
+        d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=JLj5qPow7L7HoGVSS5zlo0VUJ7cBbQb/GuusAMgXIEs=;
-        b=e4Gp0KLnDSH+bzcUn423RMcUgLUSK6Ir9qzf5Pkrycx8s/fasN04i9krEHx25uZy/W
-         x7fFHmZZFPHzZq0GoCI9JWHfWEI/YMFTrZ3qo5EpvDm05AJwwyBn/Wk1ihbmMNadIBo0
-         FWKrx45l1nXitmF3DSDH5X9ee2rF4Ij68/h4eE5KZKsmWIH+qug9is4O9pRg7mWu/cuv
-         Fe3ah/sBFoTPCHh37Q3RGDwxlUqhvTpq6urL8RdrIlEfL9egKkE7Elu6VXcnoLOvyqaC
-         IBt/uyLAEw2A3Kglryra31hPKN47gDnhvL6XYRhpBTaCsKg7cudqXxYEBDuro6NJ8FNU
-         4kNQ==
+        bh=NEWIwwUk2NSaBA+z9rQHvgwX/oZVvP/K2rLEZAPGJC4=;
+        b=kHSqQQifER8vqeU6eF7kWC4cLxZ9oF8kZrtRAZvp/7pQ5JiGlUBMgTtV9LykTLyR4W
+         eCGZbRJzHpRkdABCMrtP9IhcD/cK8jMg2SFD3Wwo7FJiFQ+WKkmTEux7T2Qu2B5x88Kd
+         x+baYiiN3gEHqt62NJlxYlTLsqAhDKTKSJIhUPhPkJnkjcxUAfdakxJFc6JbS/DbVst4
+         J+04MKU9W3XuUtCa3tWoxHnlOLTArqs9Avjw4bhY9mOkHxQXPYnC5RZPbIN29uRIYvFh
+         VhJJ8yYLyt4jDESNwgzxrHiJuluILwjeuKAw9QFvehieqVVakqszRpkbBzYRQku5ZFoL
+         1Jvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=JLj5qPow7L7HoGVSS5zlo0VUJ7cBbQb/GuusAMgXIEs=;
-        b=qEt+8KerLe3dVp976kveLxDB/orsLWo2+5MIRrqgLtr2nVw/WNZfFZ+KK46ET8+Tn9
-         m2j3Dr6ajnGVHXnOx5q9Lcxbkew0cyJXA5itxrGkN1yKeyPkbg52bWk/eRXPIeR0zzGp
-         fkAfVnU8IZ/VbKpMFmLnbKGaheOW53zJa/nW+Evo2ldabpMKelSAuRNJrDtqJjV0VeBj
-         cTHa8opx6fXE8HtHfGpIjz10ZVw2U0AKh11SHZmG0wkUDJw8B0lkXm6Dbtg8WkAQo/fy
-         GoMhC9j6udjNHpVHqDGDwV2Vv7qPTbYD2GqHbI7TNjdFEWub+v3L5qEHkFHTBdYBMVlM
-         My/w==
-X-Gm-Message-State: ACgBeo3POel+rTXjxWj2SBIySue/O/lSafXcTweEze+EPYIoD3mSh9Sb
-        /cND6267FbH4GWo/wUot5xY5ws6FsZG5Z1W6v+XjKw==
-X-Google-Smtp-Source: AA6agR7+TQhCi2k8Zhm9X9oOX+jk1PUF0aoqoutTX0VxYaWLBjx7vlii9JNM8wDkjorXXed7WBeHSs/FatxZBOLjxHU=
-X-Received: by 2002:a17:90a:9907:b0:1f5:2318:ea6d with SMTP id
- b7-20020a17090a990700b001f52318ea6dmr2777865pjp.163.1662539284906; Wed, 07
- Sep 2022 01:28:04 -0700 (PDT)
+        bh=NEWIwwUk2NSaBA+z9rQHvgwX/oZVvP/K2rLEZAPGJC4=;
+        b=kkC7XncocM1gKtQ4B/n/lz010JNe1NRvdxtPwGNEjqctEHK8QanXVF+Oofx7Y/xWkM
+         Jqh0PxDXZHNfTur/UUEVCaGl5EP9CLhpzqYSGeeOMDL0GIubH3/vEuBQqYezHqJDtxYw
+         YVkye6CE4XzKhrJRtkrroIFjD07GKByfwSNwKeFYOcJRqpGTCFQYkp6XVwZQbffpKUOI
+         383sYftBz49QIY65Owxd0mZ0CcE1feYoV562Qe2FWTrbSgV3EXglETsBRv/NToYL8ViN
+         WccS4woJANW2Eg0nSitCzJi5sY3uaZ4IswrqO6NrY87nFTnK6IG2OPH+/qq6rfdgJEFN
+         9p9Q==
+X-Gm-Message-State: ACgBeo0DiwC+XnfDs/WicqlYVBGJbVTXyOOgcZPG7ZD6YpjwCy4whpaQ
+        LdLO5E5ItUKj0ygR7R3/wi1Qi8lbDx2ZDSGV7pcLFfUOD4Q=
+X-Google-Smtp-Source: AA6agR585tXK8+3jXAmBRSk4xQZYDawOEG6+L58wghQEu/0tUKAUwfc8KWo+1jRzcbarw+DKD5t8iusPb+pgFMh02C8=
+X-Received: by 2002:ac8:5786:0:b0:343:3051:170d with SMTP id
+ v6-20020ac85786000000b003433051170dmr2193079qta.429.1662539853505; Wed, 07
+ Sep 2022 01:37:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220902182650.83098-1-andriy.shevchenko@linux.intel.com> <20220902182650.83098-17-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20220902182650.83098-17-andriy.shevchenko@linux.intel.com>
-From:   Patrick Rudolph <patrick.rudolph@9elements.com>
-Date:   Wed, 7 Sep 2022 10:27:53 +0200
-Message-ID: <CALNFmy1XOm=Csyatcj3zbL2J9roj1oH5GryXs1dda=QwXWygxQ@mail.gmail.com>
-Subject: Re: [PATCH v1 17/17] pinctrl: cy8c95x0: Correct comment style
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220907080251.3391659-1-horatiu.vultur@microchip.com>
+In-Reply-To: <20220907080251.3391659-1-horatiu.vultur@microchip.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 7 Sep 2022 11:36:57 +0300
+Message-ID: <CAHp75VecfNvj3Ji1ivZk3cpwbpr8F4FX0xR5H+=CjAO_o-uuxw@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: ocelot: Fix interrupt controller
+To:     Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Patch series is
+On Wed, Sep 7, 2022 at 10:59 AM Horatiu Vultur
+<horatiu.vultur@microchip.com> wrote:
+>
+> When an external device generated a level based interrupt then the
+> interrupt controller could miss the interrupt. The reason is that the
+> interrupt controller can detect only link changes.
+>
+> In the following example, if there is a PHY that generates an interrupt
+> then the following would happen. The GPIO detected that the interrupt
+> line changed, and then the 'ocelot_irq_handler' will be called. Here it
 
-Tested-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+was called
 
-On Fri, Sep 2, 2022 at 8:32 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+> detects which GPIO line seen the change and for that will call the
+
+saw
+
+> following:
+> 1. irq_mask
+> 2. phy interrupt routine
+> 3. irq_eoi
+> 4. irq_unmask
 >
-> In a few comments the style is not aligned with the rest.
-> Correct them.
+> And this works fine for simple cases, but if the PHY generates many
+> interrupts, for example when doing PTP timestamping, then the following
+> could happen. Again the function 'ocelot_irq_handler' will be called
+> and then from here the following could happen:
+> 1. irq_mask
+> 2. phy interrupt routine
+> 3. irq_eoi
+> 4. irq_unmask
 >
-> While at it, drop unneeded blank lines and deduplicate 'Author'.
+> Right before step 3(irq_eoi), the PHY will generate another interrupt.
+> Now the interrupt controller will acknowledge the change in the
+> interrupt line. So we miss the interrupt.
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/pinctrl/pinctrl-cy8c95x0.c | 40 +++++++++++++++---------------
->  1 file changed, 20 insertions(+), 20 deletions(-)
+> A solution will be to use 'handle_level_irq' instead of
+> 'handle_fasteoi_irq', because for this will change routine order of
+> handling the interrupt.
+> 1. irq_mask
+> 2. irq_ack
+> 3. phy interrupt routine
+> 4. irq_unmask
 >
-> diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-> index 57302cb0186f..fc2c54164669 100644
-> --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
-> +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-> @@ -3,8 +3,8 @@
->   * CY8C95X0 20/40/60 pin I2C GPIO port expander with interrupt support
->   *
->   * Copyright (C) 2022 9elements GmbH
-> - * Author: Patrick Rudolph <patrick.rudolph@9elements.com>
-> - * Author: Naresh Solanki <Naresh.Solanki@9elements.com>
-> + * Authors: Patrick Rudolph <patrick.rudolph@9elements.com>
-> + *         Naresh Solanki <Naresh.Solanki@9elements.com>
->   */
+> And now if the PHY will generate a new interrupt before irq_unmask, the
+> interrupt controller will detect this because it already acknowledge the
+> change in interrupt line at step 2(irq_ack).
 >
->  #include <linux/acpi.h>
-> @@ -37,7 +37,7 @@
+> But this is not the full solution because there is another issue. In
+> case there are 2 PHYs that share the interrupt line. For example phy1
+> generates an interrupt, then the following can happen:
+> 1.irq_mask
+> 2.irq_ack
+> 3.phy0 interrupt routine
+> 4.phy1 interrupt routine
+> 5.irq_unmask
 >
->  /* Port Select configures the port */
->  #define CY8C95X0_PORTSEL       0x18
-> -/* port settings, write PORTSEL first */
-> +/* Port settings, write PORTSEL first */
->  #define CY8C95X0_INTMASK       0x19
->  #define CY8C95X0_PWMSEL                0x1A
->  #define CY8C95X0_INVERT                0x1B
-> @@ -72,7 +72,6 @@ static const struct of_device_id cy8c95x0_dt_ids[] = {
->         { .compatible = "cypress,cy8c9560", .data = OF_CY8C95X(60), },
->         { }
->  };
-> -
->  MODULE_DEVICE_TABLE(of, cy8c95x0_dt_ids);
+> In case phy0 will generate an interrupt while clearing the interrupt
+> source in phy1, then the interrupt line will be kept down by phy0. So
+> the interrupt controller will not see any changes in the interrupt line.
+> The solution here is to update 'irq_unmask' such that it can detect if
+> the interrupt line is still active or not. And if it is active then call
+> again the procedure to clear the interrupts. But we don't want to do it
+> every time, only if we know that the interrupt controller have not seen
+
+has not seen
+
+> already that the interrupt line has changed.
 >
->  static const struct acpi_gpio_params cy8c95x0_irq_gpios = { 0, 0, true };
-> @@ -418,7 +417,7 @@ static int cy8c95x0_write_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
->                         continue;
->
->                 switch (reg) {
-> -               /* muxed registers */
-> +               /* Muxed registers */
->                 case CY8C95X0_INTMASK:
->                 case CY8C95X0_PWMSEL:
->                 case CY8C95X0_INVERT:
-> @@ -435,7 +434,7 @@ static int cy8c95x0_write_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
->                                 goto out;
->                         off = reg;
->                         break;
-> -               /* direct access registers */
-> +               /* Direct access registers */
->                 case CY8C95X0_INPUT:
->                 case CY8C95X0_OUTPUT:
->                 case CY8C95X0_INTSTATUS:
-> @@ -489,7 +488,7 @@ static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
->                         continue;
->
->                 switch (reg) {
-> -               /* muxed registers */
-> +               /* Muxed registers */
->                 case CY8C95X0_INTMASK:
->                 case CY8C95X0_PWMSEL:
->                 case CY8C95X0_INVERT:
-> @@ -506,7 +505,7 @@ static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
->                                 goto out;
->                         off = reg;
->                         break;
-> -               /* direct access registers */
-> +               /* Direct access registers */
->                 case CY8C95X0_INPUT:
->                 case CY8C95X0_OUTPUT:
->                 case CY8C95X0_INTSTATUS:
-> @@ -581,18 +580,18 @@ static int cy8c95x0_gpio_direction_output(struct gpio_chip *gc,
->         u8 bit = cypress_get_pin_mask(chip, off);
->         int ret;
->
-> -       /* set output level */
-> +       /* Set output level */
->         ret = regmap_write_bits(chip->regmap, outreg, bit, val ? bit : 0);
->         if (ret)
->                 return ret;
->
->         mutex_lock(&chip->i2c_lock);
-> -       /* select port */
-> +       /* Select port... */
->         ret = regmap_write(chip->regmap, CY8C95X0_PORTSEL, port);
->         if (ret)
->                 goto out;
->
-> -       /* then direction */
-> +       /* ...then direction */
->         ret = regmap_write_bits(chip->regmap, CY8C95X0_DIRECTION, bit, 0);
->
->  out:
-> @@ -613,7 +612,7 @@ static int cy8c95x0_gpio_get_value(struct gpio_chip *gc, unsigned int off)
->         if (ret < 0) {
->                 /*
->                  * NOTE:
-> -                * diagnostic already emitted; that's all we should
-> +                * Diagnostic already emitted; that's all we should
->                  * do unless gpio_*_value_cansleep() calls become different
->                  * from their nonsleeping siblings (and report faults).
->                  */
-> @@ -676,7 +675,7 @@ static int cy8c95x0_gpio_get_pincfg(struct cy8c95x0_pinctrl *chip,
->
->         mutex_lock(&chip->i2c_lock);
->
-> -       /* select port */
-> +       /* Select port */
->         ret = regmap_write(chip->regmap, CY8C95X0_PORTSEL, port);
->         if (ret < 0)
->                 goto out;
-> @@ -731,7 +730,8 @@ static int cy8c95x0_gpio_get_pincfg(struct cy8c95x0_pinctrl *chip,
->                 ret = -ENOTSUPP;
->                 goto out;
->         }
-> -       /* Writing 1 to one of the drive mode registers will automatically
+> While at this, add support also for IRQ_TYPE_LEVEL_LOW.
+
+...
+
+> +       regmap_read(info->map, REG(OCELOT_GPIO_IN, info, gpio), &val);
+> +       if ((!(val & BIT(gpio % 32)) && trigger_level == IRQ_TYPE_LEVEL_LOW) ||
+> +             (val & BIT(gpio % 32) && trigger_level == IRQ_TYPE_LEVEL_HIGH))
+> +               active = true;
+
+You can use temporary variable for the bit, like
+
+  unsigned int bit = BIT(gpio % 32);
+
+...
+
 > +       /*
-> +        * Writing 1 to one of the drive mode registers will automatically
->          * clear conflicting set bits in the other drive mode registers.
->          */
->         ret = regmap_read(chip->regmap, reg, &reg_val);
-> @@ -757,7 +757,7 @@ static int cy8c95x0_gpio_set_pincfg(struct cy8c95x0_pinctrl *chip,
->
->         mutex_lock(&chip->i2c_lock);
->
-> -       /* select port */
-> +       /* Select port */
->         ret = regmap_write(chip->regmap, CY8C95X0_PORTSEL, port);
->         if (ret < 0)
->                 goto out;
-> @@ -794,7 +794,8 @@ static int cy8c95x0_gpio_set_pincfg(struct cy8c95x0_pinctrl *chip,
->                 ret = -ENOTSUPP;
->                 goto out;
->         }
-> -       /* Writing 1 to one of the drive mode registers will automatically
-> +       /*
-> +        * Writing 1 to one of the drive mode registers will automatically
->          * clear conflicting set bits in the other drive mode registers.
->          */
->         ret = regmap_write_bits(chip->regmap, reg, bit, bit);
-> @@ -1119,7 +1120,7 @@ static int cy8c95x0_pinmux_cfg(struct cy8c95x0_pinctrl *chip,
->         u8 bit = cypress_get_pin_mask(chip, off);
->         int ret;
->
-> -       /* select port */
-> +       /* Select port */
->         ret = regmap_write(chip->regmap, CY8C95X0_PORTSEL, port);
->         if (ret < 0)
->                 return ret;
-> @@ -1236,11 +1237,12 @@ static int cy8c95x0_setup_pinctrl(struct cy8c95x0_pinctrl *chip)
->         pd->pins = cy8c9560_pins;
->         pd->npins = chip->tpin;
->         pd->owner = THIS_MODULE;
-> -       chip->pctldev = devm_pinctrl_register(chip->dev, pd, chip);
->
-> +       chip->pctldev = devm_pinctrl_register(chip->dev, pd, chip);
->         if (IS_ERR(chip->pctldev))
->                 return dev_err_probe(chip->dev, PTR_ERR(chip->pctldev),
->                         "can't register controller\n");
+> +        * In case the interrupt line is still active and the interrupt
+> +        * controller has not seen any changes in the interrupt line, then it
+> +        * means that there happen another interrupt while the line was active.
+> +        * So we missed that one, so we need to kick again the interrupt
+
+the interrupt again
+
+> +        * handler.
+> +        */
+> +       if (active && !ack) {
+> +               struct ocelot_irq_work *work;
 > +
->         return 0;
->  }
->
-> @@ -1293,7 +1295,6 @@ static int cy8c95x0_probe(struct i2c_client *client)
->         chip->driver_data = (unsigned long)device_get_match_data(&client->dev);
->         if (!chip->driver_data)
->                 chip->driver_data = i2c_match_id(cy8c95x0_id, client)->driver_data;
-> -
->         if (!chip->driver_data)
->                 return -ENODEV;
->
-> @@ -1395,7 +1396,6 @@ static struct i2c_driver cy8c95x0_driver = {
->         .id_table       = cy8c95x0_id,
->         .detect         = cy8c95x0_detect,
->  };
-> -
->  module_i2c_driver(cy8c95x0_driver);
->
->  MODULE_AUTHOR("Patrick Rudolph <patrick.rudolph@9elements.com>");
-> --
-> 2.35.1
->
+> +               work = kmalloc(sizeof(*work), GFP_ATOMIC);
+> +               if (!work)
+> +                       return;
+> +
+> +               work->irq_desc = desc;
+> +               INIT_WORK(&work->irq_work, ocelot_irq_work);
+> +               queue_work(system_wq, &work->irq_work);
+> +       }
+
+Here I see potential issues with the object lifetime. 1) The memory is
+allocated here and what does guarantee its freeing? 2) What does
+guarantee that work will be not scheduled if the driver or its parts
+are gone?
+
+-- 
+With Best Regards,
+Andy Shevchenko
