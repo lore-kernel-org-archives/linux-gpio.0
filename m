@@ -2,201 +2,96 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CFCC54EE9
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Sep 2022 14:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 094BCC38145
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Sep 2022 14:41:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229637AbiIGOj6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 7 Sep 2022 10:39:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33080 "EHLO
+        id S229476AbiIGOlB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 7 Sep 2022 10:41:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbiIGOj5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2022 10:39:57 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76DF6240BF
-        for <linux-gpio@vger.kernel.org>; Wed,  7 Sep 2022 07:39:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662561596; x=1694097596;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pCBoguZ2cZf9r95igyqtoCKywCPfDO+dd+pmxVMQZ4k=;
-  b=Hmzw2aL6yW966fterdE6SlTb9Hc7cxiLL9J9CPilziLfBapGNxrkluLD
-   QoZlhDWxFWX6gA91fXcynGUG9n3ARZs9TUv9qL55nJfFo436Tep3pZjlr
-   538gOZYHhq+yeUzi0eiVPstEjy+ZYaU5j32pmq4b9I/GQ90qlYg+iJtcF
-   rSEQtleFWJf8NccBF8xlvAvCI3p8xnxm/cgLhjE22CurjrR4F2QXobJoO
-   HyPbsg7kJya7D4DHaT0tIRKZMlij3kbxLSkHWZS263FyQqe1FONlxeu2V
-   WOgS6oFUDwVBB93DrQ0HTr7Bse1T2Qimca4F9+bJfqWFiTfq/1TtbqfRn
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10462"; a="323078283"
-X-IronPort-AV: E=Sophos;i="5.93,297,1654585200"; 
-   d="scan'208";a="323078283"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2022 07:39:56 -0700
-X-IronPort-AV: E=Sophos;i="5.93,297,1654585200"; 
-   d="scan'208";a="591727716"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2022 07:39:54 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1oVwDX-009gbI-0u;
-        Wed, 07 Sep 2022 17:39:51 +0300
-Date:   Wed, 7 Sep 2022 17:39:50 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Jianqun Xu <jay.xu@rock-chips.com>
-Cc:     heiko@sntech.de, linus.walleij@linaro.org, brgl@bgdev.pl,
-        linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 RESEND] gpio: rockchip: support acpi
-Message-ID: <YxitNjAcb5RsKUWT@smile.fi.intel.com>
-References: <20220907092722.3333752-1-jay.xu@rock-chips.com>
+        with ESMTP id S229715AbiIGOkj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2022 10:40:39 -0400
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F02B26D9FB;
+        Wed,  7 Sep 2022 07:40:37 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4MN4d52JXFz6S2Y6;
+        Wed,  7 Sep 2022 22:38:49 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.102.38])
+        by APP2 (Coremail) with SMTP id Syh0CgBH53BgrRhjhP0EAg--.26935S8;
+        Wed, 07 Sep 2022 22:40:35 +0800 (CST)
+From:   Wei Yongjun <weiyongjun@huaweicloud.com>
+To:     Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH -next v2 5/5] misc: microchip: pci1xxxx: use module_auxiliary_driver
+Date:   Wed,  7 Sep 2022 14:58:08 +0000
+Message-Id: <20220907145808.1789249-5-weiyongjun@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220907145808.1789249-1-weiyongjun@huaweicloud.com>
+References: <20220907145808.1789249-1-weiyongjun@huaweicloud.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220907092722.3333752-1-jay.xu@rock-chips.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: Syh0CgBH53BgrRhjhP0EAg--.26935S8
+X-Coremail-Antispam: 1UD129KBjvJXoWxJrWftw13tr1kXF4kJw45Awb_yoW8GFWrpF
+        ZxZryUZ34FvanxKF48A3WUZFyrGa1Ik3W2gF9Fy34FqF1DZ3WI9F4jgF98Zr1YqFWUJF1S
+        qr10yFWDGan8JrUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvKb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6r106r1rM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
+        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
+        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
+        AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
+        wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
+        WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
+        bVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+        WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+        67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+        IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+        0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+        VjvjDU0xZFpf9x07UZo7tUUUUU=
+X-CM-SenderInfo: 5zhl50pqjm3046kxt4xhlfz01xgou0bp/
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Sep 07, 2022 at 05:27:22PM +0800, Jianqun Xu wrote:
-> This patch fix driver to support acpi by following changes:
->  * support get gpio bank number from uid of acpi
->  * try to get clocks for dt nodes but for acpi
->  * try to get clocks by a char id first, if a dt patch applied
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-...
+Use the module_auxiliary_driver() macro to make the code simpler
+by eliminating module_init and module_exit calls.
 
-> -	ret = irq_alloc_domain_generic_chips(bank->domain, 32, 1,
-> +	ret = irq_alloc_domain_generic_chips(bank->domain, GPIO_MAX_PINS , 1,
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-Extra space.
-
->  					     "rockchip_gpio_irq",
->  					     handle_level_irq,
->  					     clr, 0, 0);
-
-...
-
-> +	if (!gc->label) {
-> +		gc->label = kasprintf(GFP_KERNEL, "gpio%d", bank->bank_num);
-
-In the below code will be a memory leak. Also at ->remove().
-
-> +		if (!gc->label)
-> +			return -ENOMEM;
-> +	}
-
-...
-
-> +static int rockchip_gpio_of_get_bank_id(struct device *dev)
-> +{
-> +	static int gpio;
-> +	int bank_id = -1;
-
-> +	if (is_of_node(dev->of_node)) {
-
-	struct fwnode_handle *fwnode = dev_fwnode(...);
-
-> +		bank_id = of_alias_get_id(dev->of_node, "gpio");
-
-to_of_node(fwnode)
-
-> +		if (bank_id < 0)
-> +			bank_id = gpio++;
-> +	}
-> +
-> +	return bank_id;
-> +}
-
-...
-
-> +	bank_id = rockchip_gpio_acpi_get_bank_id(dev);
-> +	if (bank_id < 0) {
-> +		bank_id = rockchip_gpio_of_get_bank_id(dev);
-> +		if (bank_id < 0)
-> +			return bank_id;
-> +	}
-
-Easier to read:
-
-	bank_id = rockchip_gpio_acpi_get_bank_id(dev);
-	if (bank_id < 0)
-		bank_id = rockchip_gpio_of_get_bank_id(dev);
-	if (bank_id < 0)
-		return bank_id;
-
-...
-
-> +	if (!is_acpi_node(dev_fwnode(dev)) {
-> +		struct device_node *pctlnp = of_get_parent(dev->of_node);
->  
-> +		pctldev = of_pinctrl_get(pctlnp);
-> +		if (!pctldev)
-> +			return -EPROBE_DEFER;
->  
-> +		bank = rockchip_gpio_find_bank(pctldev, bank_id);
-> +		if (!bank)
-> +			return -ENODEV;
-
-> +	}
-> +	if (!bank) {
-
-Simply '} else {' ?
-
-> +		bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
-> +		if (!bank)
-> +			return -ENOMEM;
-> +	}
-
-...
-
-> +	if (is_of_node(dev_fwnode(dev)) {
-> +		bank->clk = devm_clk_get(dev, "bus");
-> +		if (IS_ERR(bank->clk)) {
-> +			bank->clk = of_clk_get(dev->of_node, 0);
-> +			if (IS_ERR(bank->clk)) {
-> +				dev_err(dev, "fail to get apb clock\n");
-> +				return PTR_ERR(bank->clk);
-> +			}
-> +		}
-> +
-> +		bank->db_clk = devm_clk_get(dev, "db");
-> +		if (IS_ERR(bank->db_clk)) {
-> +			bank->db_clk = of_clk_get(dev->of_node, 1);
-> +			if (IS_ERR(bank->db_clk))
-> +				bank->db_clk = NULL;
-> +		}
-> +	}
-
-This can be split to a separate
-
-	int rockchip_gpio_get_clocks(...)
-
-...
-
-> +	clk_prepare_enable(bank->clk);
-> +	clk_prepare_enable(bank->db_clk);
-
-Either of them may fail.
-
-...
-
-> +	if (!device_property_read_bool(bank->dev, "gpio-ranges") && pctldev) {
-
-Same question as before, why the GPIO library code is not okay for this?
-
-> +		struct gpio_chip *gc = &bank->gpio_chip;
-> +
-> +		ret = gpiochip_add_pin_range(gc, dev_name(pctldev->dev), 0,
-> +					     gc->base, gc->ngpio);
-> +		if (ret) {
-> +			dev_err(bank->dev, "Failed to add pin range\n");
-> +			goto err_unlock;
-> +		}
->  	}
-
-
+diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
+index fa80a7788596..9cc771c604ed 100644
+--- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
++++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gpio.c
+@@ -421,19 +421,7 @@ static struct auxiliary_driver pci1xxxx_gpio_driver = {
+ 	.probe = pci1xxxx_gpio_probe,
+ 	.id_table = pci1xxxx_gpio_auxiliary_id_table
+ };
+-
+-static int __init pci1xxxx_gpio_driver_init(void)
+-{
+-	return auxiliary_driver_register(&pci1xxxx_gpio_driver);
+-}
+-
+-static void __exit pci1xxxx_gpio_driver_exit(void)
+-{
+-	auxiliary_driver_unregister(&pci1xxxx_gpio_driver);
+-}
+-
+-module_init(pci1xxxx_gpio_driver_init);
+-module_exit(pci1xxxx_gpio_driver_exit);
++module_auxiliary_driver(pci1xxxx_gpio_driver);
+ 
+ MODULE_DESCRIPTION("Microchip Technology Inc. PCI1xxxx GPIO controller");
+ MODULE_AUTHOR("Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>");
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
