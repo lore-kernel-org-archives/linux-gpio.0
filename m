@@ -2,229 +2,180 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F66FC38145
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Sep 2022 05:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C68ECAAD5
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Sep 2022 05:40:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229731AbiIHFj6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 8 Sep 2022 01:39:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57368 "EHLO
+        id S229954AbiIHFkb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 8 Sep 2022 01:40:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229669AbiIHFj5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Sep 2022 01:39:57 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B11432C139;
-        Wed,  7 Sep 2022 22:39:55 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id i15-20020a17090a4b8f00b0020073b4ac27so1247450pjh.3;
-        Wed, 07 Sep 2022 22:39:55 -0700 (PDT)
+        with ESMTP id S230143AbiIHFk0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Sep 2022 01:40:26 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55B6765834;
+        Wed,  7 Sep 2022 22:40:23 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id t3so11688553ply.2;
+        Wed, 07 Sep 2022 22:40:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=4ndLwzHd7G2+BP/PmRdBNLw7Z+LWVL1ULwxfQOZD3Zg=;
-        b=VvZH1Nan9mNPl6toHs4zLiNvyjqFGWWD/OkX99q9ssGh3p9ikPUw4bv/ocCgzYiOr8
-         ziUl9/REJovv27KQCo1oEvM4X5wVmd2NeaKam+vx/AsOgwJ/OtnEXbqLD8L8de87f5z/
-         /XLDweAhqs0hqhMPD979QTI6qNcKoHXsdurT5Z59gZX+RjJNR5vejbWV24bk6c8tQ+Rz
-         Fz6Zs74TNMGuKwRksG53cZC99D8toVwmSP22eReCj0dkcoON+FHvKIpEw+1IJ6vW/c2U
-         f0GqgYElDOffSagrqv5HnqWYkC+U3Fl+6XaJJrRiEom+ks3tgv9iEejzvGfYNQUbaamQ
-         lwZA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=QlMbk8e/zVNzu6UyNqDpiCSRzKyYMJFXh85E1yOMis8=;
+        b=L1oYb4LwB4FgUBLn2yYOimsTSa67Iizy6gQuVNFZgIaZKWboQWuRGJfHrumz2Qqfi8
+         nKIUqxXy3db3ifLuJgBo5rl3BFcxIs8GXTugMglRbQglRLMbBu135PUetF27FjVY5HJq
+         v5/LdZ7r5r0F88vybRPVqAQzbuNkD5z69Bu/XOHqi/roByj0EkaDhxC+QOl5NL9xeCcj
+         360K8loeK2MxqlrAtyftApB2J+tm5mA2VRKQg2L5SQEPnvAqNTIwx4pHQdOiDcw2Jo1z
+         GwYCKIjeFmjMgEKZt3GxZt5rJqs9DA55uSIf/g65WeowMBsT6talChHDge6dPleW3G4r
+         Lptw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=4ndLwzHd7G2+BP/PmRdBNLw7Z+LWVL1ULwxfQOZD3Zg=;
-        b=fpFkWOTviuhrYr3MjJ0PXaYhQXUJbrXI9Ind+RU+jBLz5m+Cfk4IX5H6IRy2WF7pn8
-         16bXaSL1gx0pXDnPzNNC5FibiQnxQNYiSq07y2jomyDPaIVoN7Wu+WnoWBd25uw7g3ln
-         IyL4ZPI6v5a0oMu6K0Bxk4XUwCtZiq12MzrUmYjRM9XqalxWFXhgqXvhMOgoBIL4ds/q
-         JiR38DxfpeanmvNriyGs/tCd1Fxp5ZCcTgcQIuIRnIjfuwhR2DRre8QE82M3VTYkr+Ii
-         QZ7uYHm8rJsryIxH3u0LP+SVYywQG3SuY+M+5TIO6k3SuLEWNqZAL9Dj4JkCiQAoMomK
-         S9cA==
-X-Gm-Message-State: ACgBeo1czM6DCsXEgM0gM9aklQgdmzJp2Rka1zK+p90U2i5o1rW9ZzTO
-        di99EURepVYZBIfKqKfwlY5lVzB/IXM=
-X-Google-Smtp-Source: AA6agR5ILdtlYAXG0kdz5Vzm6Y0RMHh3SRXlaSwqewLw41FMSHjMuDhFrxHEox/BuJjv7+79XUS+Lg==
-X-Received: by 2002:a17:90a:8581:b0:1fd:62e0:67cc with SMTP id m1-20020a17090a858100b001fd62e067ccmr2360732pjn.144.1662615594810;
-        Wed, 07 Sep 2022 22:39:54 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=QlMbk8e/zVNzu6UyNqDpiCSRzKyYMJFXh85E1yOMis8=;
+        b=3LS3fx2LBS+d9pz0koHUovIjx4HGBuBx8OEzUr5fjSQiAH7JcsTvdWZEpo45Azrdmz
+         TuxIImVWyfxR0fxS737O9FQRg7qZX4E33O2RjG8AiCYaWSjjqlUc0pmQbxtsbpXaskIB
+         Ou4vld2tcbSQ1nhqETAP01NvhT5qcZj9pYvlE3vYJv9H8yVYlbNgFufJ9TtHan8UtGqH
+         lXpxF0CBngDZ14Y/Bop8NTKAhLHaufnCv608gk0kZesg0hdPvVw06kpA5s9jjXpmffTO
+         ZgfGZHNOCpRueDkm2vyX0/p9bYygB7+1Ewq0597Qb7r4cmH/o13gCHznAUwgMmWcFiDW
+         ddCg==
+X-Gm-Message-State: ACgBeo1ldloQNPLP6j5EvL/Ic6JvqBN7UPChw8ivT19fHYKjj6lYEXbU
+        9rj9POqAMJX1MOhNsqYT7mwB/rDxnFg=
+X-Google-Smtp-Source: AA6agR7QZVNONsNsKbmiTxdKd5Jfir6zjA0AMwNAgSnuDCanNwyY8c5fmGDScL+j29eHH3jPwSlO9Q==
+X-Received: by 2002:a17:90b:4a10:b0:1fb:2e77:a33 with SMTP id kk16-20020a17090b4a1000b001fb2e770a33mr2331729pjb.67.1662615592827;
+        Wed, 07 Sep 2022 22:39:52 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:7af1:2c0d:fbfa:b9d7])
-        by smtp.gmail.com with ESMTPSA id i67-20020a626d46000000b0053e7d3b8d6dsm2685183pfc.1.2022.09.07.22.39.53
+        by smtp.gmail.com with ESMTPSA id i67-20020a626d46000000b0053e7d3b8d6dsm2685183pfc.1.2022.09.07.22.39.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Sep 2022 22:39:54 -0700 (PDT)
+        Wed, 07 Sep 2022 22:39:52 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] gpiolib: rework quirk handling in of_find_gpio()
-Date:   Wed,  7 Sep 2022 22:39:48 -0700
-Message-Id: <20220908053949.3564796-3-dmitry.torokhov@gmail.com>
+Subject: [PATCH 1/4] gpiolib: of: do not ignore requested index when applying quirks
+Date:   Wed,  7 Sep 2022 22:39:46 -0700
+Message-Id: <20220908053949.3564796-1-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.37.2.789.g6183377224-goog
-In-Reply-To: <20220908053949.3564796-1-dmitry.torokhov@gmail.com>
-References: <20220908053949.3564796-1-dmitry.torokhov@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Instead of having a string of "if" statements let's put all quirks into
-an array and iterate over them.
+We should not ignore index passed into of_find_gpio() when handling
+quirks. While in practice this change will not have any effect, it
+will allow consolidate quirk handling.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/gpio/gpiolib-of.c | 62 ++++++++++++++++-----------------------
- 1 file changed, 26 insertions(+), 36 deletions(-)
+ drivers/gpio/gpiolib-of.c | 32 +++++++++++++++++++-------------
+ 1 file changed, 19 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 30b89b694530..097e948c1d49 100644
+index a037b50bef33..c08564948bf9 100644
 --- a/drivers/gpio/gpiolib-of.c
 +++ b/drivers/gpio/gpiolib-of.c
-@@ -372,14 +372,12 @@ EXPORT_SYMBOL_GPL(gpiod_get_from_of_node);
+@@ -372,7 +372,9 @@ EXPORT_SYMBOL_GPL(gpiod_get_from_of_node);
   * properties should be named "foo-gpios" so we have this special kludge for
   * them.
   */
--static struct gpio_desc *of_find_spi_gpio(struct device *dev,
-+static struct gpio_desc *of_find_spi_gpio(struct device_node *np,
- 					  const char *con_id,
- 					  unsigned int idx,
+-static struct gpio_desc *of_find_spi_gpio(struct device *dev, const char *con_id,
++static struct gpio_desc *of_find_spi_gpio(struct device *dev,
++					  const char *con_id,
++					  unsigned int idx,
  					  enum of_gpio_flags *of_flags)
  {
  	char prop_name[32]; /* 32 is max size of property name */
--	const struct device_node *np = dev->of_node;
--	struct gpio_desc *desc;
- 
- 	/*
- 	 * Hopefully the compiler stubs the rest of the function if this
-@@ -395,8 +393,7 @@ static struct gpio_desc *of_find_spi_gpio(struct device *dev,
+@@ -393,7 +395,7 @@ static struct gpio_desc *of_find_spi_gpio(struct device *dev, const char *con_id
  	/* Will be "gpio-sck", "gpio-mosi" or "gpio-miso" */
  	snprintf(prop_name, sizeof(prop_name), "%s-%s", "gpio", con_id);
  
--	desc = of_get_named_gpiod_flags(np, prop_name, idx, of_flags);
--	return desc;
-+	return of_get_named_gpiod_flags(np, prop_name, idx, of_flags);
+-	desc = of_get_named_gpiod_flags(np, prop_name, 0, of_flags);
++	desc = of_get_named_gpiod_flags(np, prop_name, idx, of_flags);
+ 	return desc;
  }
  
- /*
-@@ -404,13 +401,11 @@ static struct gpio_desc *of_find_spi_gpio(struct device *dev,
-  * lines rather than "cs-gpios" like all other SPI hardware. Account for this
-  * with a special quirk.
-  */
--static struct gpio_desc *of_find_spi_cs_gpio(struct device *dev,
-+static struct gpio_desc *of_find_spi_cs_gpio(struct device_node *np,
- 					     const char *con_id,
- 					     unsigned int idx,
- 					     enum of_gpio_flags *of_flags)
- {
--	const struct device_node *np = dev->of_node;
--
- 	if (!IS_ENABLED(CONFIG_SPI_MASTER))
- 		return ERR_PTR(-ENOENT);
- 
-@@ -428,7 +423,7 @@ static struct gpio_desc *of_find_spi_cs_gpio(struct device *dev,
- 	 * uses just "gpios" so translate to that when "cs-gpios" is
- 	 * requested.
- 	 */
--	return of_get_named_gpiod_flags(dev->of_node, "gpios", idx, of_flags);
-+	return of_get_named_gpiod_flags(np, "gpios", idx, of_flags);
- }
- 
- /*
-@@ -436,7 +431,7 @@ static struct gpio_desc *of_find_spi_cs_gpio(struct device *dev,
+@@ -434,7 +436,9 @@ static struct gpio_desc *of_find_spi_cs_gpio(struct device *dev,
   * properties should be named "foo-gpios" so we have this special kludge for
   * them.
   */
--static struct gpio_desc *of_find_regulator_gpio(struct device *dev,
-+static struct gpio_desc *of_find_regulator_gpio(struct device_node *np,
- 						const char *con_id,
- 						unsigned int idx,
+-static struct gpio_desc *of_find_regulator_gpio(struct device *dev, const char *con_id,
++static struct gpio_desc *of_find_regulator_gpio(struct device *dev,
++						const char *con_id,
++						unsigned int idx,
  						enum of_gpio_flags *of_flags)
-@@ -447,8 +442,6 @@ static struct gpio_desc *of_find_regulator_gpio(struct device *dev,
- 		"wlf,ldo1ena", /* WM8994 */
- 		"wlf,ldo2ena", /* WM8994 */
- 	};
--	const struct device_node *np = dev->of_node;
--	struct gpio_desc *desc;
- 	int i;
- 
- 	if (!IS_ENABLED(CONFIG_REGULATOR))
-@@ -461,11 +454,10 @@ static struct gpio_desc *of_find_regulator_gpio(struct device *dev,
+ {
+ 	/* These are the connection IDs we accept as legacy GPIO phandles */
+@@ -457,12 +461,13 @@ static struct gpio_desc *of_find_regulator_gpio(struct device *dev, const char *
  	if (i < 0)
  		return ERR_PTR(-ENOENT);
  
--	desc = of_get_named_gpiod_flags(np, con_id, idx, of_flags);
--	return desc;
-+	return of_get_named_gpiod_flags(np, con_id, idx, of_flags);
+-	desc = of_get_named_gpiod_flags(np, con_id, 0, of_flags);
++	desc = of_get_named_gpiod_flags(np, con_id, idx, of_flags);
+ 	return desc;
  }
  
--static struct gpio_desc *of_find_arizona_gpio(struct device *dev,
-+static struct gpio_desc *of_find_arizona_gpio(struct device_node *np,
+ static struct gpio_desc *of_find_arizona_gpio(struct device *dev,
  					      const char *con_id,
- 					      unsigned int idx,
++					      unsigned int idx,
  					      enum of_gpio_flags *of_flags)
-@@ -476,10 +468,10 @@ static struct gpio_desc *of_find_arizona_gpio(struct device *dev,
+ {
+ 	if (!IS_ENABLED(CONFIG_MFD_ARIZONA))
+@@ -471,17 +476,18 @@ static struct gpio_desc *of_find_arizona_gpio(struct device *dev,
  	if (!con_id || strcmp(con_id, "wlf,reset"))
  		return ERR_PTR(-ENOENT);
  
--	return of_get_named_gpiod_flags(dev->of_node, con_id, idx, of_flags);
-+	return of_get_named_gpiod_flags(np, con_id, idx, of_flags);
+-	return of_get_named_gpiod_flags(dev->of_node, con_id, 0, of_flags);
++	return of_get_named_gpiod_flags(dev->of_node, con_id, idx, of_flags);
  }
  
--static struct gpio_desc *of_find_usb_gpio(struct device *dev,
-+static struct gpio_desc *of_find_usb_gpio(struct device_node *np,
+ static struct gpio_desc *of_find_usb_gpio(struct device *dev,
  					  const char *con_id,
- 					  unsigned int idx,
++					  unsigned int idx,
  					  enum of_gpio_flags *of_flags)
-@@ -495,14 +487,27 @@ static struct gpio_desc *of_find_usb_gpio(struct device *dev,
+ {
+ 	/*
+-	 * Currently this USB quirk is only for the Fairchild FUSB302 host which is using
+-	 * an undocumented DT GPIO line named "fcs,int_n" without the compulsory "-gpios"
+-	 * suffix.
++	 * Currently this USB quirk is only for the Fairchild FUSB302 host
++	 * which is using an undocumented DT GPIO line named "fcs,int_n"
++	 * without the compulsory "-gpios" suffix.
+ 	 */
+ 	if (!IS_ENABLED(CONFIG_TYPEC_FUSB302))
+ 		return ERR_PTR(-ENOENT);
+@@ -489,7 +495,7 @@ static struct gpio_desc *of_find_usb_gpio(struct device *dev,
  	if (!con_id || strcmp(con_id, "fcs,int_n"))
  		return ERR_PTR(-ENOENT);
  
--	return of_get_named_gpiod_flags(dev->of_node, con_id, idx, of_flags);
-+	return of_get_named_gpiod_flags(np, con_id, idx, of_flags);
+-	return of_get_named_gpiod_flags(dev->of_node, con_id, 0, of_flags);
++	return of_get_named_gpiod_flags(dev->of_node, con_id, idx, of_flags);
  }
  
-+typedef struct gpio_desc *(*of_find_gpio_quirk)(struct device_node *np,
-+						const char *con_id,
-+						unsigned int idx,
-+						enum of_gpio_flags *of_flags);
-+static const of_find_gpio_quirk of_find_gpio_quirks[] = {
-+	of_find_spi_gpio,
-+	of_find_spi_cs_gpio,
-+	of_find_regulator_gpio,
-+	of_find_arizona_gpio,
-+	of_find_usb_gpio,
-+};
-+
  struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
- 			       unsigned int idx, unsigned long *flags)
- {
- 	char prop_name[32]; /* 32 is max size of property name */
- 	enum of_gpio_flags of_flags;
-+	const of_find_gpio_quirk *q;
- 	struct gpio_desc *desc;
- 	unsigned int i;
+@@ -518,7 +524,7 @@ struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
  
-@@ -522,24 +527,9 @@ struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
- 			break;
+ 	if (gpiod_not_found(desc)) {
+ 		/* Special handling for SPI GPIOs if used */
+-		desc = of_find_spi_gpio(dev, con_id, &of_flags);
++		desc = of_find_spi_gpio(dev, con_id, idx, &of_flags);
  	}
  
--	if (gpiod_not_found(desc)) {
--		/* Special handling for SPI GPIOs if used */
--		desc = of_find_spi_gpio(dev, con_id, idx, &of_flags);
--	}
--
--	if (gpiod_not_found(desc))
--		desc = of_find_spi_cs_gpio(dev, con_id, idx, &of_flags);
--
--	if (gpiod_not_found(desc)) {
--		/* Special handling for regulator GPIOs if used */
--		desc = of_find_regulator_gpio(dev, con_id, idx, &of_flags);
--	}
--
--	if (gpiod_not_found(desc))
--		desc = of_find_arizona_gpio(dev, con_id, idx, &of_flags);
--
--	if (gpiod_not_found(desc))
--		desc = of_find_usb_gpio(dev, con_id, idx, &of_flags);
-+	/* Properly named GPIO was not found, try workarounds */
-+	for (q = of_find_gpio_quirks; gpiod_not_found(desc) && *q; q++)
-+		desc = (*q)(dev->of_node, con_id, idx, &of_flags);
+ 	if (gpiod_not_found(desc)) {
+@@ -530,14 +536,14 @@ struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
+ 
+ 	if (gpiod_not_found(desc)) {
+ 		/* Special handling for regulator GPIOs if used */
+-		desc = of_find_regulator_gpio(dev, con_id, &of_flags);
++		desc = of_find_regulator_gpio(dev, con_id, idx, &of_flags);
+ 	}
+ 
+ 	if (gpiod_not_found(desc))
+-		desc = of_find_arizona_gpio(dev, con_id, &of_flags);
++		desc = of_find_arizona_gpio(dev, con_id, idx, &of_flags);
+ 
+ 	if (gpiod_not_found(desc))
+-		desc = of_find_usb_gpio(dev, con_id, &of_flags);
++		desc = of_find_usb_gpio(dev, con_id, idx, &of_flags);
  
  	if (IS_ERR(desc))
  		return desc;
