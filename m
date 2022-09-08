@@ -2,213 +2,117 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE957C38145
-	for <linux-gpio@archiver.kernel.org>; Thu,  8 Sep 2022 05:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC54ECAAD5
+	for <linux-gpio@archiver.kernel.org>; Thu,  8 Sep 2022 05:39:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbiIHFO5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 8 Sep 2022 01:14:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53564 "EHLO
+        id S229505AbiIHFj4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 8 Sep 2022 01:39:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229778AbiIHFO4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Sep 2022 01:14:56 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E74E5C9CD
-        for <linux-gpio@vger.kernel.org>; Wed,  7 Sep 2022 22:14:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662614094; x=1694150094;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=1/20hzyJgkCvyrFbiT5BfuH/y2rm2cgRDxr0fIAIPxk=;
-  b=ghBELVdPisvlSpjejdEKXO0IGhD4gKV8RkcXq9TESAuGms9fxDjUS3wA
-   YLUGYgHGnozKURl7kKqSEFpzAEiIEW11gR59iA1tskxwyjGfnT744Ut+J
-   uv5z/SA+IoRstfUgC0RO/r4mVzGIdpTQKKE2EUgR+u8VwDqxQnQtrNQ4u
-   nzFzu4C21BT5pnOpARruyfKdfACc1w2p4BtubxCjwBhcrL29Xe8yhDoEk
-   7snqRT8ElWfSpCzWOYKK2tK1kYkJSCbxnBaHhtfdI5HzvTPPjPIOgwEVK
-   FWPckreB9ApREzagrpAoHB95WBB8h8TpIcZAaYgCcOAgzVjDv7idGxkiS
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10463"; a="297071319"
-X-IronPort-AV: E=Sophos;i="5.93,299,1654585200"; 
-   d="scan'208";a="297071319"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2022 22:14:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,299,1654585200"; 
-   d="scan'208";a="592009755"
-Received: from lkp-server02.sh.intel.com (HELO 95dfd251caa2) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 07 Sep 2022 22:14:52 -0700
-Received: from kbuild by 95dfd251caa2 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oW9sJ-0007OP-2w;
-        Thu, 08 Sep 2022 05:14:51 +0000
-Date:   Thu, 08 Sep 2022 13:14:19 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [brgl:gpio/for-current] BUILD SUCCESS
- 279c12df8d2efb28def9d037f288cbfb97c30fe2
-Message-ID: <63197a2b.NKGPjWCBIbPMOKKl%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S229472AbiIHFjz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Sep 2022 01:39:55 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CC6E2B264;
+        Wed,  7 Sep 2022 22:39:54 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id a5-20020a17090aa50500b002008eeb040eso2521492pjq.1;
+        Wed, 07 Sep 2022 22:39:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=4es0Z+5XwTpsNYHTc+clw4irSNbZDC2d3QGKCURiR3c=;
+        b=K+g/ZnfkIdznKBgAkVIk2cMZDRKq/vmF4Az7bUbPPpL/jZAiA11F3rEQALLW8OquQM
+         utWlMgbIQamRgYDMae0eVE4chV2/lrK0iwRzRyeIop5UXSENXz/oLcYmftavwUSdy/qx
+         IMMVJSB8bS5Q2/FOMkeR2OaxSabNafdnmcEwKSxtdL7LzrPVtjHX8GJOv7FQTbS3tNl/
+         wTOOdDUNPj3DWCtU45CwAKOTsxmWgfx7ia/f58l/kROSt9DF/27OpthSlTGp1vFzz2Tw
+         JVrLIilPjAImxj+vKturX7LRuue5IEVqTkSJDl8VuvLyUUQ1cffZNdjC1P1eleptLv+H
+         WAYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=4es0Z+5XwTpsNYHTc+clw4irSNbZDC2d3QGKCURiR3c=;
+        b=HrpiIJPkx5blJY02wkqnzxF5XBlY118K41af8pWlgXapp4UD73Qv+nN/PgXYI1TAhD
+         b0dT35zMwGQgeGNz3Nz3wwZL5H4RiSR3gL0CLIx6IVVc9NkgjQ6YwM7XziXVZnM/54sj
+         V289k/mdyFcfPe6quUzrCnMN3tWg9dgCNcA1JI6u73BlqBevWX5DpJFgHv7LAJJJbehy
+         hUQKRX+REAUUIp8BKljf59oiYCVHdp2e3CNm22b6DDavb+cHomw96rArUzjuxSkO68Xp
+         YKF2K2P2vd2/uDtcvy18axi+/klU3gm4JzbbxZkjT8LsZFikjMfL9HyP+Hok1uyE/fHM
+         N/rw==
+X-Gm-Message-State: ACgBeo1p1gNNximud2YRRllTdyz7UG1BD3E8L0WkM8HV7E0lXAyOjgyV
+        tv8FSfbUpPI0oj7wkIIwCUc=
+X-Google-Smtp-Source: AA6agR6foFAFZ/aOfcTBBVpjBlrc9Gvn2PHJHzbT7OVwXcw8bxSb0899ZJwJh8Xg8mAVx/FZe4fNBg==
+X-Received: by 2002:a17:90b:4c08:b0:200:512e:de26 with SMTP id na8-20020a17090b4c0800b00200512ede26mr2290018pjb.227.1662615593681;
+        Wed, 07 Sep 2022 22:39:53 -0700 (PDT)
+Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:7af1:2c0d:fbfa:b9d7])
+        by smtp.gmail.com with ESMTPSA id i67-20020a626d46000000b0053e7d3b8d6dsm2685183pfc.1.2022.09.07.22.39.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Sep 2022 22:39:53 -0700 (PDT)
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/4] gpiolib: of: make Freescale SPI quirk similar to all others
+Date:   Wed,  7 Sep 2022 22:39:47 -0700
+Message-Id: <20220908053949.3564796-2-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.37.2.789.g6183377224-goog
+In-Reply-To: <20220908053949.3564796-1-dmitry.torokhov@gmail.com>
+References: <20220908053949.3564796-1-dmitry.torokhov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
-branch HEAD: 279c12df8d2efb28def9d037f288cbfb97c30fe2  gpio: mpc8xxx: Fix support for IRQ_TYPE_LEVEL_LOW flow_type in mpc85xx
+There is no need for of_find_spi_cs_gpio() to be different from other
+quirks: the only variant of property actually used in DTS is "gpios"
+(plural) so we can use of_get_named_gpiod_flags() instead of recursing
+into of_find_gpio() again.
 
-elapsed time: 1046m
+This will allow us consolidate quirk handling down the road.
 
-configs tested: 138
-configs skipped: 3
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/gpio/gpiolib-of.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-um                             i386_defconfig
-um                           x86_64_defconfig
-x86_64                              defconfig
-arc                  randconfig-r043-20220907
-x86_64                               rhel-8.3
-x86_64                           allyesconfig
-i386                                defconfig
-powerpc                           allnoconfig
-mips                             allyesconfig
-powerpc                          allmodconfig
-x86_64                        randconfig-a002
-i386                             allyesconfig
-csky                              allnoconfig
-alpha                             allnoconfig
-arc                               allnoconfig
-riscv                             allnoconfig
-x86_64                           rhel-8.3-syz
-i386                          randconfig-a016
-x86_64                           rhel-8.3-kvm
-x86_64                          rhel-8.3-func
-x86_64                    rhel-8.3-kselftests
-x86_64                         rhel-8.3-kunit
-i386                          randconfig-a012
-i386                          randconfig-a014
-m68k                             allyesconfig
-m68k                             allmodconfig
-arc                              allyesconfig
-alpha                            allyesconfig
-sh                               allmodconfig
-x86_64                        randconfig-a015
-powerpc                    sam440ep_defconfig
-m68k                          amiga_defconfig
-powerpc                      tqm8xx_defconfig
-m68k                        stmark2_defconfig
-arm64                            allyesconfig
-arm                                 defconfig
-arm                              allyesconfig
-xtensa                         virt_defconfig
-ia64                         bigsur_defconfig
-arm                        keystone_defconfig
-sh                  sh7785lcr_32bit_defconfig
-m68k                          multi_defconfig
-sh                                  defconfig
-m68k                                defconfig
-mips                     loongson1b_defconfig
-loongarch                           defconfig
-loongarch                         allnoconfig
-arm                             pxa_defconfig
-arc                          axs103_defconfig
-mips                           gcw0_defconfig
-parisc64                         alldefconfig
-i386                          randconfig-c001
-sparc                               defconfig
-sh                     sh7710voipgw_defconfig
-riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
-riscv                    nommu_k210_defconfig
-i386                   debian-10.3-kselftests
-i386                              debian-10.3
-i386                             alldefconfig
-powerpc                     ep8248e_defconfig
-m68k                          hp300_defconfig
-m68k                        m5272c3_defconfig
-arm                          exynos_defconfig
-sparc                             allnoconfig
-arm                        cerfcube_defconfig
-powerpc                      arches_defconfig
-openrisc                 simple_smp_defconfig
-powerpc                     asp8347_defconfig
-x86_64                        randconfig-a006
-x86_64                        randconfig-a004
-sparc                            alldefconfig
-arm                          pxa3xx_defconfig
-arm                         s3c6400_defconfig
-powerpc                     stx_gp3_defconfig
-arm64                            alldefconfig
-sh                           se7722_defconfig
-sh                             sh03_defconfig
-sh                           se7750_defconfig
-s390                             allmodconfig
-xtensa                       common_defconfig
-sh                          r7785rp_defconfig
-arm                          iop32x_defconfig
-powerpc                     mpc83xx_defconfig
-xtensa                generic_kc705_defconfig
-csky                                defconfig
-um                                  defconfig
-sh                            titan_defconfig
-arm                            mps2_defconfig
-i386                          debian-10.3-kvm
-i386                        debian-10.3-kunit
-i386                         debian-10.3-func
-sh                          r7780mp_defconfig
-arm                            qcom_defconfig
-ia64                          tiger_defconfig
-arc                              alldefconfig
-x86_64                        randconfig-a011
-x86_64                        randconfig-a013
-xtensa                           allyesconfig
-sparc                            allyesconfig
-x86_64                                  kexec
-arm                        clps711x_defconfig
-arc                           tb10x_defconfig
-powerpc                       eiger_defconfig
-s390                                defconfig
-arc                                 defconfig
-alpha                               defconfig
-s390                             allyesconfig
-nios2                            allyesconfig
-nios2                               defconfig
-parisc                              defconfig
-parisc64                            defconfig
-parisc                           allyesconfig
-ia64                             allmodconfig
-
-clang tested configs:
-hexagon              randconfig-r041-20220907
-hexagon              randconfig-r045-20220907
-s390                 randconfig-r044-20220907
-riscv                randconfig-r042-20220907
-i386                          randconfig-a006
-i386                          randconfig-a015
-x86_64                        randconfig-a005
-x86_64                        randconfig-a003
-x86_64                        randconfig-a001
-x86_64                        randconfig-a012
-x86_64                        randconfig-a014
-x86_64                        randconfig-a016
-i386                          randconfig-a002
-i386                          randconfig-a004
-x86_64                        randconfig-k001
-powerpc                     tqm8540_defconfig
-arm                           spitz_defconfig
-powerpc                 mpc8315_rdb_defconfig
-mips                           ip22_defconfig
-i386                          randconfig-a011
-i386                          randconfig-a013
-powerpc                     akebono_defconfig
-mips                      malta_kvm_defconfig
-arm                    vt8500_v6_v7_defconfig
-
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index c08564948bf9..30b89b694530 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -407,7 +407,7 @@ static struct gpio_desc *of_find_spi_gpio(struct device *dev,
+ static struct gpio_desc *of_find_spi_cs_gpio(struct device *dev,
+ 					     const char *con_id,
+ 					     unsigned int idx,
+-					     unsigned long *flags)
++					     enum of_gpio_flags *of_flags)
+ {
+ 	const struct device_node *np = dev->of_node;
+ 
+@@ -428,7 +428,7 @@ static struct gpio_desc *of_find_spi_cs_gpio(struct device *dev,
+ 	 * uses just "gpios" so translate to that when "cs-gpios" is
+ 	 * requested.
+ 	 */
+-	return of_find_gpio(dev, NULL, idx, flags);
++	return of_get_named_gpiod_flags(dev->of_node, "gpios", idx, of_flags);
+ }
+ 
+ /*
+@@ -527,12 +527,8 @@ struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
+ 		desc = of_find_spi_gpio(dev, con_id, idx, &of_flags);
+ 	}
+ 
+-	if (gpiod_not_found(desc)) {
+-		/* This quirk looks up flags and all */
+-		desc = of_find_spi_cs_gpio(dev, con_id, idx, flags);
+-		if (!IS_ERR(desc))
+-			return desc;
+-	}
++	if (gpiod_not_found(desc))
++		desc = of_find_spi_cs_gpio(dev, con_id, idx, &of_flags);
+ 
+ 	if (gpiod_not_found(desc)) {
+ 		/* Special handling for regulator GPIOs if used */
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.37.2.789.g6183377224-goog
+
