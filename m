@@ -2,127 +2,93 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BF0ECAAD3
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Sep 2022 12:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B92C6FA86
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Sep 2022 13:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231716AbiIIMR7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Sep 2022 08:17:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43048 "EHLO
+        id S230115AbiIINK4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Sep 2022 09:10:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231470AbiIIMRb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Sep 2022 08:17:31 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E6995E548
-        for <linux-gpio@vger.kernel.org>; Fri,  9 Sep 2022 05:14:45 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id bj14so2367603wrb.12
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Sep 2022 05:14:44 -0700 (PDT)
+        with ESMTP id S230100AbiIINKz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Sep 2022 09:10:55 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25A78844EA
+        for <linux-gpio@vger.kernel.org>; Fri,  9 Sep 2022 06:10:49 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id e17so2440921edc.5
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Sep 2022 06:10:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=bU+AQcsXemk1KKgCjaU3gvykVFjEj4Zm9kHKe+L3+Kw=;
-        b=iQvtBX5HeVBZTuTdnbFs4s01K5RT+yZYm6ePr4u4EJ+AkSd5bnDWuyTEcnduTKl/Cc
-         QqI4HK/OP7ub73phvUth6wA8baupqBKEN13e1dGepyahVa09iWbeKHrwoJ5TV2Jyh6Bg
-         KTipzfmLLk6wLSvqeEb0DPAi8xWyOSKwVLlM1AvumslzQJ0DLXw4kAWnNojrms050jcq
-         RyhogLD29Rc5Scrjca1VXI4C2Sp6oHtEYRNAQVw+6ahdysLqTKe3nHqm+EmK99FT1ZaB
-         pstlvCeTu0ieogclGb6Oaylmnz6mVlNsbUXe5lF+yA5xfz4SKl1zRnShwXtp5eUQSx46
-         B9Qg==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=bsMm0nu+g7i1NmtcNEyPla/T7DHXogikmWezyYUdeVI=;
+        b=FiGmnfg3S7AUDv0OIYfaTQy6w0Q7WCv9N8nh/rLbH5hgJbl7qBEJh5N6E/DVggPzAe
+         ioqFKl6gBXxg3+E5ZHJVVhyA6HGAL9k9Ga/PbE8SUFBWDk7fj+PWXEHPF07dwVaTlsJZ
+         RWM3PoSL+25CQO1duTdOXdi55dQeUrBuhBA+ed0gnz4frq/0A+iCtYgH8F9ohVggXWwe
+         KwEkfB83U23h5m3unO71YqZfHKmXY4rlX3LVvhsJrXz6cV+KSqeTazniGqJDtkDfY2Xv
+         mvxyonYHPbr4a/mw0bOTfv1ewbtl3EY4R/iGiM8yo4CjDtjVx3niAHCfsqQ8Ocrc1J1a
+         3dKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=bU+AQcsXemk1KKgCjaU3gvykVFjEj4Zm9kHKe+L3+Kw=;
-        b=IjRYFfwRBQIH8DDBRWehuaf7ywvRHl9sFrlCyGAQ85OmmoFA3uN0MtJS+bWQwKRBVl
-         OJIEyXw/yZ9x5GUS+pcuuYmk7WAmjD+cXyWSro43Ufg3XctKTjHwvDk5H0Nn5D1fdWmI
-         zpDizkNu8LHPuaTZfyZA23AR9S9/VhHAYEJMmsMzW2bDezofzHyFRL5j6CG9LOBJ6Rxw
-         Jpt1iofxMogoxh1kpqxSaytXwREGOtPSCYpwN7RZm6lS0mKxSBODr4TVz59JmrQFCuN4
-         HVKRcVhAclxZyt1awvUAK5Nz6fOPcXQAUoCBg+TMeb4VFHA8jtaDbK2JnMpz9/4ajo5m
-         xkBQ==
-X-Gm-Message-State: ACgBeo0pNoGShBRDpZQouBqL7Sv8hysafIw5vwpcDe0EJ6qNJ1bhALnH
-        /MsdvdD+dEsMgqiieh4WboboLw==
-X-Google-Smtp-Source: AA6agR5ob+DApxRqNiEDoa+ZxnDvTCPp4w6FFXtlz8ogbbKZ7zdj1OifeBdTWLRBEHye6hGCV6yTQQ==
-X-Received: by 2002:a05:6000:11d0:b0:228:8d5d:f2e9 with SMTP id i16-20020a05600011d000b002288d5df2e9mr7863995wrx.207.1662725615413;
-        Fri, 09 Sep 2022 05:13:35 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:a421:c10c:c626:3f52])
-        by smtp.gmail.com with ESMTPSA id l10-20020adfe58a000000b0022863395912sm379005wrm.53.2022.09.09.05.13.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Sep 2022 05:13:35 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 1/2] gpiolib: un-inline gpiod_request_user()
-Date:   Fri,  9 Sep 2022 14:13:28 +0200
-Message-Id: <20220909121329.42004-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220909121329.42004-1-brgl@bgdev.pl>
-References: <20220909121329.42004-1-brgl@bgdev.pl>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=bsMm0nu+g7i1NmtcNEyPla/T7DHXogikmWezyYUdeVI=;
+        b=TnE+p78Nl0ljtN+K9Agg41+GYM8AbB3LA1wH7FzcdFW79wfmHvETqk9alN0MGO8zvr
+         jtfa9s+INZKEhhQIeZA+MTc1RBWYk2s8Jed9Amz99rvBqVEgUZnI5COZZb0xE2jwcfbK
+         uUI6NTVMbTTReheOpOagzvGHAejN0iVx+byYG/Bhd5gnfK1/hDReQ4zHamb/5F5TKpFL
+         oTLIlQshOlsOsJ16uEWeCoicekl2YKlvbaoYCWJaFBMUEKsInSlSBSLLW85+4uTQ1lvm
+         LbH26/XYGF0S+Yy/cBtga5y2vLiqIDl3yAzyOO7jX9niUVJ2MqWnVzZKonJTFLxddmob
+         HBNg==
+X-Gm-Message-State: ACgBeo2FeZhvb19XbxnRmHatyjJBWKM5cQi1LMfQhv82DstkZcYW4h96
+        UxPrpL7YbNWo2t2FpxzDkFgEb+omrviYgSFE/JIHHA==
+X-Google-Smtp-Source: AA6agR4rLLw+2Mto2FpA5ylVcQgfsw/VaaN2Qj6skwfPvRFieasT15e8jBuvji+aQt2J7BgeABU3RO/b1tEnhAymIVY=
+X-Received: by 2002:a05:6402:1d8c:b0:44e:dec5:512b with SMTP id
+ dk12-20020a0564021d8c00b0044edec5512bmr11273909edb.408.1662729047659; Fri, 09
+ Sep 2022 06:10:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <649e875962b486e0bf849aba8f386eb6290a433a.1662714555.git.geert+renesas@glider.be>
+In-Reply-To: <649e875962b486e0bf849aba8f386eb6290a433a.1662714555.git.geert+renesas@glider.be>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 9 Sep 2022 15:10:36 +0200
+Message-ID: <CAMRc=MdCLu3415xvr6vVmNCvD5_k49L3XS3K6ue-fPmiiW2n8w@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: gpio: renesas,rcar-gpio: Add r8a779g0 support
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Pull this bit of code into gpiolib.c as we're soon be calling certain
-symbols static in this compilation unit.
+On Fri, Sep 9, 2022 at 11:09 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> Document support for the GPIO controller blocks in the Renesas R-Car
+> V4H (R8A779G0) SoC.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> index 75e5da6a7cc04bbd..aa424e2b95f87a51 100644
+> --- a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> @@ -52,6 +52,7 @@ properties:
+>            - enum:
+>                - renesas,gpio-r8a779a0     # R-Car V3U
+>                - renesas,gpio-r8a779f0     # R-Car S4-8
+> +              - renesas,gpio-r8a779g0     # R-Car V4H
+>            - const: renesas,rcar-gen4-gpio # R-Car Gen4
+>
+>    reg:
+> --
+> 2.25.1
+>
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- drivers/gpio/gpiolib.c | 11 +++++++++++
- drivers/gpio/gpiolib.h | 12 +-----------
- 2 files changed, 12 insertions(+), 11 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index cc9c0a12259e..6768734b9e15 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2009,6 +2009,17 @@ int gpiod_request(struct gpio_desc *desc, const char *label)
- 	return ret;
- }
- 
-+int gpiod_request_user(struct gpio_desc *desc, const char *label)
-+{
-+	int ret;
-+
-+	ret = gpiod_request(desc, label);
-+	if (ret == -EPROBE_DEFER)
-+		ret = -ENODEV;
-+
-+	return ret;
-+}
-+
- static bool gpiod_free_commit(struct gpio_desc *desc)
- {
- 	bool			ret = false;
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index d900ecdbac46..b35deb08a7f5 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -179,19 +179,9 @@ struct gpio_desc {
- #define gpiod_not_found(desc)		(IS_ERR(desc) && PTR_ERR(desc) == -ENOENT)
- 
- int gpiod_request(struct gpio_desc *desc, const char *label);
-+int gpiod_request_user(struct gpio_desc *desc, const char *label);
- void gpiod_free(struct gpio_desc *desc);
- 
--static inline int gpiod_request_user(struct gpio_desc *desc, const char *label)
--{
--	int ret;
--
--	ret = gpiod_request(desc, label);
--	if (ret == -EPROBE_DEFER)
--		ret = -ENODEV;
--
--	return ret;
--}
--
- int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
- 		unsigned long lflags, enum gpiod_flags dflags);
- int gpio_set_debounce_timeout(struct gpio_desc *desc, unsigned int debounce);
--- 
-2.34.1
-
+Bart
