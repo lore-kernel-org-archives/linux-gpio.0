@@ -2,94 +2,209 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E229ECAAD3
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Sep 2022 09:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47EBEECAAA1
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Sep 2022 09:06:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231815AbiIIJGs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S229774AbiIIJGs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 9 Sep 2022 05:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34350 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbiIIJGK (ORCPT
+        with ESMTP id S231753AbiIIJGK (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Sep 2022 05:06:10 -0400
 Received: from mail-m11883.qiye.163.com (mail-m11883.qiye.163.com [115.236.118.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C199B52DED
-        for <linux-gpio@vger.kernel.org>; Fri,  9 Sep 2022 02:06:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46CEE6BCD7
+        for <linux-gpio@vger.kernel.org>; Fri,  9 Sep 2022 02:06:02 -0700 (PDT)
 Received: from localhost.localdomain (unknown [58.22.7.114])
-        by mail-m11883.qiye.163.com (Hmail) with ESMTPA id A036684039F;
-        Fri,  9 Sep 2022 17:05:59 +0800 (CST)
+        by mail-m11883.qiye.163.com (Hmail) with ESMTPA id C19A5840668;
+        Fri,  9 Sep 2022 17:06:00 +0800 (CST)
 From:   Jianqun Xu <jay.xu@rock-chips.com>
 To:     heiko@sntech.de, linus.walleij@linaro.org,
         andriy.shevchenko@linux.intel.com
 Cc:     brgl@bgdev.pl, linux-gpio@vger.kernel.org,
         linux-rockchip@lists.infradead.org,
         Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH v5 0/6] gpio: rockchip: support acpi
-Date:   Fri,  9 Sep 2022 17:05:52 +0800
-Message-Id: <20220909090558.3609190-1-jay.xu@rock-chips.com>
+Subject: [PATCH 2/6] ARM: dts: rockchip: add 'clock-names' for gpio dt nodes
+Date:   Fri,  9 Sep 2022 17:05:54 +0800
+Message-Id: <20220909090558.3609190-3-jay.xu@rock-chips.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220909090558.3609190-1-jay.xu@rock-chips.com>
+References: <20220909090558.3609190-1-jay.xu@rock-chips.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJSktLSjdXWS1ZQUlXWQ8JGhUIEh9ZQVkZShkfVkgaHh5DQk8aT0sZSVUTARMWGhIXJB
+        tZV1koWUFJSktLSjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTktLVh8aSUpNGUJLTElOGlUTARMWGhIXJB
         QOD1lXWRgSC1lBWU5DVUlJVUxVSkpPWVdZFhoPEhUdFFlBWU9LSFVKSktITkhVSktLWQY+
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6K0k6PQw6Mz0aOjYNNEwdTA9O
-        SgkaCk5VSlVKTU1JTEpPSE1LSk1NVTMWGhIXVREaAlUDDjsJFBgQVhgTEgsIVRgUFkVZV1kSC1lB
-        WU5DVUlJVUxVSkpPWVdZCAFZQUlMQ0o3Bg++
-X-HM-Tid: 0a83217fb00d2eb8kusna036684039f
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Kxw6FDo*CT0eOjZKHk0KTE8i
+        KzwaFBlVSlVKTU1JTEpPSE1KSE9JVTMWGhIXVREaAlUDDjsJFBgQVhgTEgsIVRgUFkVZV1kSC1lB
+        WU5DVUlJVUxVSkpPWVdZCAFZQU1OQkg3Bg++
+X-HM-Tid: 0a83217fb47d2eb8kusnc19a5840668
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch fix driver to support acpi.
+Add 'clock-names' property for gpio dt nodes, which is used by the gpio
+driver to identified as the index for the gpio controller.
 
-Andy Shevchenko (1):
-  ACPI: utils: Add acpi_dev_uid_to_integer() helper to get _UID as
-    integer
+Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+---
+ arch/arm/boot/dts/rk3036.dtsi  | 3 +++
+ arch/arm/boot/dts/rk3066a.dtsi | 6 ++++++
+ arch/arm/boot/dts/rk3188.dtsi  | 4 ++++
+ arch/arm/boot/dts/rk322x.dtsi  | 4 ++++
+ 4 files changed, 17 insertions(+)
 
-Jianqun Xu (5):
-  ARM: dts: rockchip: add gpio alias for gpio dt nodes
-  ARM: dts: rockchip: add 'clock-names' for gpio dt nodes
-  arm64: dts: rockchip: add gpio alias for gpio dt nodes
-  arm64: dts: rockchip: add 'clock-names' for gpio dt nodes
-  gpio: rockchip: support acpi
-
- arch/arm/boot/dts/rk3036.dtsi            |   6 +
- arch/arm/boot/dts/rk3066a.dtsi           |  12 ++
- arch/arm/boot/dts/rk3188.dtsi            |   4 +
- arch/arm/boot/dts/rk322x.dtsi            |   8 +
- arch/arm/boot/dts/rk3288.dtsi            |   9 ++
- arch/arm/boot/dts/rk3xxx.dtsi            |   4 +
- arch/arm64/boot/dts/rockchip/rk3308.dtsi |  10 ++
- arch/arm64/boot/dts/rockchip/rk3328.dtsi |   8 +
- arch/arm64/boot/dts/rockchip/rk3368.dtsi |   8 +
- arch/arm64/boot/dts/rockchip/rk3399.dtsi |  10 ++
- arch/arm64/boot/dts/rockchip/rk356x.dtsi |   5 +
- drivers/acpi/utils.c                     |  24 +++
- drivers/gpio/gpio-rockchip.c             | 197 ++++++++++++++---------
- include/acpi/acpi_bus.h                  |   1 +
- include/linux/acpi.h                     |   5 +
- 15 files changed, 236 insertions(+), 75 deletions(-)
-
+diff --git a/arch/arm/boot/dts/rk3036.dtsi b/arch/arm/boot/dts/rk3036.dtsi
+index 912c21667dd4..0ae701f40b83 100644
+--- a/arch/arm/boot/dts/rk3036.dtsi
++++ b/arch/arm/boot/dts/rk3036.dtsi
+@@ -584,6 +584,7 @@ gpio0: gpio@2007c000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x2007c000 0x100>;
+ 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO0>;
+ 
+ 			gpio-controller;
+@@ -597,6 +598,7 @@ gpio1: gpio@20080000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x20080000 0x100>;
+ 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO1>;
+ 
+ 			gpio-controller;
+@@ -610,6 +612,7 @@ gpio2: gpio@20084000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x20084000 0x100>;
+ 			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO2>;
+ 
+ 			gpio-controller;
+diff --git a/arch/arm/boot/dts/rk3066a.dtsi b/arch/arm/boot/dts/rk3066a.dtsi
+index fe565440d6ad..343b44238269 100644
+--- a/arch/arm/boot/dts/rk3066a.dtsi
++++ b/arch/arm/boot/dts/rk3066a.dtsi
+@@ -283,6 +283,7 @@ gpio0: gpio@20034000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x20034000 0x100>;
+ 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO0>;
+ 
+ 			gpio-controller;
+@@ -296,6 +297,7 @@ gpio1: gpio@2003c000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x2003c000 0x100>;
+ 			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO1>;
+ 
+ 			gpio-controller;
+@@ -309,6 +311,7 @@ gpio2: gpio@2003e000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x2003e000 0x100>;
+ 			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO2>;
+ 
+ 			gpio-controller;
+@@ -322,6 +325,7 @@ gpio3: gpio@20080000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x20080000 0x100>;
+ 			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO3>;
+ 
+ 			gpio-controller;
+@@ -335,6 +339,7 @@ gpio4: gpio@20084000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x20084000 0x100>;
+ 			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO4>;
+ 
+ 			gpio-controller;
+@@ -348,6 +353,7 @@ gpio6: gpio@2000a000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x2000a000 0x100>;
+ 			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO6>;
+ 
+ 			gpio-controller;
+diff --git a/arch/arm/boot/dts/rk3188.dtsi b/arch/arm/boot/dts/rk3188.dtsi
+index cdd4a0bd5133..bc6f53c87c08 100644
+--- a/arch/arm/boot/dts/rk3188.dtsi
++++ b/arch/arm/boot/dts/rk3188.dtsi
+@@ -228,6 +228,7 @@ gpio0: gpio@2000a000 {
+ 			compatible = "rockchip,rk3188-gpio-bank0";
+ 			reg = <0x2000a000 0x100>;
+ 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO0>;
+ 
+ 			gpio-controller;
+@@ -241,6 +242,7 @@ gpio1: gpio@2003c000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x2003c000 0x100>;
+ 			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO1>;
+ 
+ 			gpio-controller;
+@@ -254,6 +256,7 @@ gpio2: gpio@2003e000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x2003e000 0x100>;
+ 			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO2>;
+ 
+ 			gpio-controller;
+@@ -267,6 +270,7 @@ gpio3: gpio@20080000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x20080000 0x100>;
+ 			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO3>;
+ 
+ 			gpio-controller;
+diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
+index a814e813a5da..4ce2b3f00d48 100644
+--- a/arch/arm/boot/dts/rk322x.dtsi
++++ b/arch/arm/boot/dts/rk322x.dtsi
+@@ -956,6 +956,7 @@ gpio0: gpio@11110000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x11110000 0x100>;
+ 			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO0>;
+ 
+ 			gpio-controller;
+@@ -969,6 +970,7 @@ gpio1: gpio@11120000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x11120000 0x100>;
+ 			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO1>;
+ 
+ 			gpio-controller;
+@@ -982,6 +984,7 @@ gpio2: gpio@11130000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x11130000 0x100>;
+ 			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO2>;
+ 
+ 			gpio-controller;
+@@ -995,6 +998,7 @@ gpio3: gpio@11140000 {
+ 			compatible = "rockchip,gpio-bank";
+ 			reg = <0x11140000 0x100>;
+ 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "bus";
+ 			clocks = <&cru PCLK_GPIO3>;
+ 
+ 			gpio-controller;
 -- 
-v5:
- - add patches to add gpio alias and clock-names
- - get clock by devm_clk_get()
- - restore gpio range add comment
- - other codingstyle
-
-v4: suggested by Andy Shevchenko
- - use dev_fwnode and to_of_node(fwnode) to replace dev->of_node
- - split to a separate rockchip_gpio_get_clocks
- - handle fail for clk_prepare_enable
- - other codingstyle
-
-v3: suggested by Andy Shevchenko
- - fix irq size (32) to GPIO_MAX_PINS
- - fix to use is_of_node or is_acpi_node
- - use standard pattern for error handle
- - remove redundant assignment
-
-v2:
- - fix rockchip_pin_output_deferred to rockchip_pin_deferred
 2.25.1
 
