@@ -2,93 +2,129 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B92C6FA86
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Sep 2022 13:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F78ECAAA1
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Sep 2022 13:46:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230115AbiIINK4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Sep 2022 09:10:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59274 "EHLO
+        id S231790AbiIINqz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Sep 2022 09:46:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230100AbiIINKz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Sep 2022 09:10:55 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25A78844EA
-        for <linux-gpio@vger.kernel.org>; Fri,  9 Sep 2022 06:10:49 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id e17so2440921edc.5
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Sep 2022 06:10:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=bsMm0nu+g7i1NmtcNEyPla/T7DHXogikmWezyYUdeVI=;
-        b=FiGmnfg3S7AUDv0OIYfaTQy6w0Q7WCv9N8nh/rLbH5hgJbl7qBEJh5N6E/DVggPzAe
-         ioqFKl6gBXxg3+E5ZHJVVhyA6HGAL9k9Ga/PbE8SUFBWDk7fj+PWXEHPF07dwVaTlsJZ
-         RWM3PoSL+25CQO1duTdOXdi55dQeUrBuhBA+ed0gnz4frq/0A+iCtYgH8F9ohVggXWwe
-         KwEkfB83U23h5m3unO71YqZfHKmXY4rlX3LVvhsJrXz6cV+KSqeTazniGqJDtkDfY2Xv
-         mvxyonYHPbr4a/mw0bOTfv1ewbtl3EY4R/iGiM8yo4CjDtjVx3niAHCfsqQ8Ocrc1J1a
-         3dKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=bsMm0nu+g7i1NmtcNEyPla/T7DHXogikmWezyYUdeVI=;
-        b=TnE+p78Nl0ljtN+K9Agg41+GYM8AbB3LA1wH7FzcdFW79wfmHvETqk9alN0MGO8zvr
-         jtfa9s+INZKEhhQIeZA+MTc1RBWYk2s8Jed9Amz99rvBqVEgUZnI5COZZb0xE2jwcfbK
-         uUI6NTVMbTTReheOpOagzvGHAejN0iVx+byYG/Bhd5gnfK1/hDReQ4zHamb/5F5TKpFL
-         oTLIlQshOlsOsJ16uEWeCoicekl2YKlvbaoYCWJaFBMUEKsInSlSBSLLW85+4uTQ1lvm
-         LbH26/XYGF0S+Yy/cBtga5y2vLiqIDl3yAzyOO7jX9niUVJ2MqWnVzZKonJTFLxddmob
-         HBNg==
-X-Gm-Message-State: ACgBeo2FeZhvb19XbxnRmHatyjJBWKM5cQi1LMfQhv82DstkZcYW4h96
-        UxPrpL7YbNWo2t2FpxzDkFgEb+omrviYgSFE/JIHHA==
-X-Google-Smtp-Source: AA6agR4rLLw+2Mto2FpA5ylVcQgfsw/VaaN2Qj6skwfPvRFieasT15e8jBuvji+aQt2J7BgeABU3RO/b1tEnhAymIVY=
-X-Received: by 2002:a05:6402:1d8c:b0:44e:dec5:512b with SMTP id
- dk12-20020a0564021d8c00b0044edec5512bmr11273909edb.408.1662729047659; Fri, 09
- Sep 2022 06:10:47 -0700 (PDT)
+        with ESMTP id S231584AbiIINqp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Sep 2022 09:46:45 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B849912E1AF;
+        Fri,  9 Sep 2022 06:46:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1662731194; x=1694267194;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tV01OCiZqy6nXlyR7eAfCljasS50nB/vF+IgCufZZUE=;
+  b=maIfq4KDFkhkLOgbNbQ20ZzVuqE/nJllh6ru6GJ5a2LTFLErxWJpDIyy
+   6BxShoSvqnIc3g/PkSbEXVkDfLaFRxGAL4pMDSYsPZ4+z1f3PmyK42p7a
+   mK8hqzDNKeGGpPI0sBx5pfbOoA9z5vNT98orN2zlK3YWKWFgjCHS4puSn
+   3vMo71QRQxMU18YJlP757iZXRTDquCFCgawbC7ZHnQm/2pNUtQH7uG8LI
+   wXgeFmbUIra9Y8J79vrObfOJW9WIhAtNCbF5Kx9NKK9DIzgX4OpTxVmHx
+   8cQYQoP5L48JO1Ka4BtNzKfMWYdHM2u91PrO8Giv+jTVqraXRVTJC5LCj
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10464"; a="383769238"
+X-IronPort-AV: E=Sophos;i="5.93,303,1654585200"; 
+   d="scan'208";a="383769238"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2022 06:45:43 -0700
+X-IronPort-AV: E=Sophos;i="5.93,303,1654585200"; 
+   d="scan'208";a="566371087"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2022 06:45:41 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1oWeKA-00Aa6F-0b;
+        Fri, 09 Sep 2022 16:45:38 +0300
+Date:   Fri, 9 Sep 2022 16:45:37 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] gpiolib: un-inline gpiod_request_user()
+Message-ID: <YxtDgUbdJnP3RHf7@smile.fi.intel.com>
+References: <20220909121329.42004-1-brgl@bgdev.pl>
+ <20220909121329.42004-2-brgl@bgdev.pl>
 MIME-Version: 1.0
-References: <649e875962b486e0bf849aba8f386eb6290a433a.1662714555.git.geert+renesas@glider.be>
-In-Reply-To: <649e875962b486e0bf849aba8f386eb6290a433a.1662714555.git.geert+renesas@glider.be>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 9 Sep 2022 15:10:36 +0200
-Message-ID: <CAMRc=MdCLu3415xvr6vVmNCvD5_k49L3XS3K6ue-fPmiiW2n8w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: gpio: renesas,rcar-gpio: Add r8a779g0 support
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220909121329.42004-2-brgl@bgdev.pl>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 9, 2022 at 11:09 AM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> Document support for the GPIO controller blocks in the Renesas R-Car
-> V4H (R8A779G0) SoC.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Fri, Sep 09, 2022 at 02:13:28PM +0200, Bartosz Golaszewski wrote:
+> Pull this bit of code into gpiolib.c as we're soon be calling certain
+> symbols static in this compilation unit.
+
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 > ---
->  Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-> index 75e5da6a7cc04bbd..aa424e2b95f87a51 100644
-> --- a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-> @@ -52,6 +52,7 @@ properties:
->            - enum:
->                - renesas,gpio-r8a779a0     # R-Car V3U
->                - renesas,gpio-r8a779f0     # R-Car S4-8
-> +              - renesas,gpio-r8a779g0     # R-Car V4H
->            - const: renesas,rcar-gen4-gpio # R-Car Gen4
->
->    reg:
-> --
-> 2.25.1
->
+>  drivers/gpio/gpiolib.c | 11 +++++++++++
+>  drivers/gpio/gpiolib.h | 12 +-----------
+>  2 files changed, 12 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index cc9c0a12259e..6768734b9e15 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2009,6 +2009,17 @@ int gpiod_request(struct gpio_desc *desc, const char *label)
+>  	return ret;
+>  }
+>  
+> +int gpiod_request_user(struct gpio_desc *desc, const char *label)
+> +{
+> +	int ret;
+> +
+> +	ret = gpiod_request(desc, label);
+> +	if (ret == -EPROBE_DEFER)
+> +		ret = -ENODEV;
+> +
+> +	return ret;
+> +}
+> +
+>  static bool gpiod_free_commit(struct gpio_desc *desc)
+>  {
+>  	bool			ret = false;
+> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+> index d900ecdbac46..b35deb08a7f5 100644
+> --- a/drivers/gpio/gpiolib.h
+> +++ b/drivers/gpio/gpiolib.h
+> @@ -179,19 +179,9 @@ struct gpio_desc {
+>  #define gpiod_not_found(desc)		(IS_ERR(desc) && PTR_ERR(desc) == -ENOENT)
+>  
+>  int gpiod_request(struct gpio_desc *desc, const char *label);
+> +int gpiod_request_user(struct gpio_desc *desc, const char *label);
+>  void gpiod_free(struct gpio_desc *desc);
+>  
+> -static inline int gpiod_request_user(struct gpio_desc *desc, const char *label)
+> -{
+> -	int ret;
+> -
+> -	ret = gpiod_request(desc, label);
+> -	if (ret == -EPROBE_DEFER)
+> -		ret = -ENODEV;
+> -
+> -	return ret;
+> -}
+> -
+>  int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+>  		unsigned long lflags, enum gpiod_flags dflags);
+>  int gpio_set_debounce_timeout(struct gpio_desc *desc, unsigned int debounce);
+> -- 
+> 2.34.1
+> 
 
-Applied, thanks!
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Bart
+
