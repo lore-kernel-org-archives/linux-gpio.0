@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F395FECAAA1
-	for <linux-gpio@archiver.kernel.org>; Sun, 11 Sep 2022 11:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7031EC6FA83
+	for <linux-gpio@archiver.kernel.org>; Sun, 11 Sep 2022 11:14:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231296AbiIKLOn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 11 Sep 2022 07:14:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35816 "EHLO
+        id S231312AbiIKLOu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 11 Sep 2022 07:14:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230271AbiIKLNo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Sep 2022 07:13:44 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 882EF3C158
+        with ESMTP id S230468AbiIKLOD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Sep 2022 07:14:03 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87DFB3CBDB
         for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 04:12:43 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id x10so7398686ljq.4
+Received: by mail-lj1-x231.google.com with SMTP id by6so7373169ljb.11
         for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 04:12:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=qxAFFeV9Jghea1krVGY5BQK+UR1GkKeREC8WB6H5B2c=;
-        b=vjDiFJjLjvVI78IsYrKcOiG51LrE9dKnNKMIGWEpkis5uGIWdl4xLXgYFt1lZVWh3G
-         ehSGvB4AUACWBv+SnQ1vIvsHIRoJWndg9K9qu0EWroN7X08gd4uBqsIkfNLIPAcBFbDx
-         wm7sZVt0Kzbr3mM7FQ0vzvBf9qu/y5JNF0vPOJtjM/k9UGY4RBqx5FZtB1mILwacSDEG
-         CErzrlLMVABD2WtJYl0AbAOc6vvxFOqlUcrqk4EasADkyrXzW7q/o4BYQo3q1S0cTO86
-         q7NLV3osWIx1v4TFZK7HsN4tIXeL3gn0EdJtZhl8IOlelgXeVloyjLgJx5D0CZ4ypibr
-         neJA==
+        bh=nXdmZRWySMH2y4BHslWMyDvfmlDcWpCDzcQgKmezSiA=;
+        b=UlAZv0nKRhX0fZ+HjxVuvwBdtMlpVeVd2Yi/2YXQvSZsjL0fTglhvwEeKCmDs1I0Fd
+         91bvvkZcyAnrEyTlUF9qT4WdyFP+uuIPiZa+xh8YuzoBfU+ZTSWH97ZwmP4ORq/dSB8x
+         Gl90lDAZXu92HgwgaROu/29xE70zaxvUDL6ooCPb9EL+m+xZ5hxuZDAktxEI0XoHiUCT
+         JBo0TJE718Y5oZlXEP4RykdUoy6W/XFNxGlsR6R8ZsB/yzmPV81EmytddUar1Q4u3zjx
+         NOnt1dGvqjLTQ1eRwSxhnZJkmRqJ4WyqvSmeNYIonsGypHPElXvNV57u1PT13f7Tx/O0
+         YAMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=qxAFFeV9Jghea1krVGY5BQK+UR1GkKeREC8WB6H5B2c=;
-        b=cm6pjRV7BPkoyg0NXPpkrJcG7QCbyuEqy/313hwkSdZPX4cFLZ9Ib+/QDzcFA2DIrG
-         YdAsxmZNfq3B/Mqu84+W5RN/YLtYDYgFy2+tOPvJGNhJTzAQQ6iqGu3e2QkVaF9CjPbV
-         fZMZ6PEymGh3mMt1eLfhKzbDIXqgjDN+MwBzdA8CdL5qLfAUEujQk57HLdX8ZT9juO+w
-         rtLJiU3KBiwZkjXizI7GQW0rjIdXXf42MKMBOyITBGVnzdQ+TcIAT3FIWH6zTSuNiqgW
-         P1UmnXujiiq3q14U2u2uYO68IDn3ADbKcNZlt693yCruN1P7GuIgjVPf6paJyqc3Zgmi
-         4FJQ==
-X-Gm-Message-State: ACgBeo3Q2hfEYOeVh/aeMoOVhDIaV6ipuzCcAuPkzP4MMC/jQUCx2mVw
-        eKa1WZfCTTXj7vTlq+9Lycw/d/bjJQUv0g==
-X-Google-Smtp-Source: AA6agR446cy+OdRmEkwDeI+yVptxip8u3RlG0YbI8CjPb6fQZmEJOF+4at5PXvMi1L8IqnkPHn7Efg==
-X-Received: by 2002:a2e:2d09:0:b0:25a:816a:2e62 with SMTP id t9-20020a2e2d09000000b0025a816a2e62mr6039682ljt.147.1662894743551;
-        Sun, 11 Sep 2022 04:12:23 -0700 (PDT)
+        bh=nXdmZRWySMH2y4BHslWMyDvfmlDcWpCDzcQgKmezSiA=;
+        b=QgN6ix0h5I4OyQvD58GTz1zzf2BT1mCs4ut3VkXZnPhiu2tLc7dZCqaG16zRG28JpE
+         /0TBtCyZlQE6jZxNFJZKJIlJ2vTznhbbHA94MWK34NUbc5sOkP4EPAbZ9LBr89SPOtOo
+         AUcG4H2C8gIXkpxNyxT6Z3LPeJgF7xIImlWN0GFb8mhfhG8KKEPGegYhQahVoiL0zzE+
+         HfiCYwZiEeFiuoYpyptVlJRu35UFxsOdltioxj/wkhWcTDnYfIjGrEItmBWLBj8hVx/D
+         NvAM4MXgh5nRFdX8sFXZ0PNksZEufI8kkEZNSDtP5pK4AjB02FKGLgYVTPdepGLimpAJ
+         cMwA==
+X-Gm-Message-State: ACgBeo00zjAwXIlpLLlzm5JqfiZy0boWGwl0FUCf3hF8gJ9jrEqIl14Q
+        rfYj4StE8wJpe1IckPwgLQHDkg==
+X-Google-Smtp-Source: AA6agR5I/tGMgMOjbRLS0g2D7/H7nug+yH6MMWQA8TT4KGFTnqcJFWtdQduFm8lM0QIvCSSDsAXAdw==
+X-Received: by 2002:a2e:bc11:0:b0:26c:565:12f6 with SMTP id b17-20020a2ebc11000000b0026c056512f6mr300214ljf.91.1662894763042;
+        Sun, 11 Sep 2022 04:12:43 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id 11-20020a05651c128b00b0025dfd8c9287sm607365ljc.69.2022.09.11.04.12.22
+        by smtp.gmail.com with ESMTPSA id 11-20020a05651c128b00b0025dfd8c9287sm607365ljc.69.2022.09.11.04.12.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Sep 2022 04:12:23 -0700 (PDT)
+        Sun, 11 Sep 2022 04:12:42 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -62,9 +62,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 15/40] dt-bindings: pinctrl: qcom,sm8250-pinctrl: fix indentation in example
-Date:   Sun, 11 Sep 2022 13:11:35 +0200
-Message-Id: <20220911111200.199182-16-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 30/40] dt-bindings: pinctrl: qcom,sc8180x-pinctrl: fix indentation in example
+Date:   Sun, 11 Sep 2022 13:11:50 +0200
+Message-Id: <20220911111200.199182-31-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220911111200.199182-1-krzysztof.kozlowski@linaro.org>
 References: <20220911111200.199182-1-krzysztof.kozlowski@linaro.org>
@@ -78,47 +78,83 @@ Bindings example should be indented with 4-spaces.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/pinctrl/qcom,sm8250-pinctrl.yaml | 30 +++++++++----------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ .../pinctrl/qcom,sc8180x-pinctrl.yaml         | 64 +++++++++----------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
-index bccc83f22aae..c44d02d28bc9 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
-@@ -141,18 +141,18 @@ additionalProperties: false
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml
+index 4afe20bac87c..b98eeba2c530 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml
+@@ -126,37 +126,37 @@ patternProperties:
  
  examples:
    - |
 -        #include <dt-bindings/interrupt-controller/arm-gic.h>
--        pinctrl@1f00000 {
--                compatible = "qcom,sm8250-pinctrl";
--                reg = <0x0f100000 0x300000>,
--                      <0x0f500000 0x300000>,
--                      <0x0f900000 0x300000>;
--                reg-names = "west", "south", "north";
+-        pinctrl@3100000 {
+-                compatible = "qcom,sc8180x-tlmm";
+-                reg = <0x03100000 0x300000>,
+-                      <0x03500000 0x700000>,
+-                      <0x03d00000 0x300000>;
+-                reg-names = "west", "east", "south";
 -                interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
 -                gpio-controller;
 -                #gpio-cells = <2>;
 -                interrupt-controller;
 -                #interrupt-cells = <2>;
--                gpio-ranges = <&tlmm 0 0 180>;
--                wakeup-parent = <&pdc>;
--        };
+-                gpio-ranges = <&tlmm 0 0 190>;
+-
+-                gpio-wo-subnode-state {
+-                        pins = "gpio1";
+-                        function = "gpio";
+-                };
+-
+-                uart-w-subnodes-state {
+-                        rx-pins {
+-                                pins = "gpio4";
+-                                function = "qup6";
+-                                bias-pull-up;
+-                        };
+-
+-                        tx-pins {
+-                                pins = "gpio5";
+-                                function = "qup6";
+-                                bias-disable;
+-                        };
+-                };
 +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    pinctrl@1f00000 {
-+            compatible = "qcom,sm8250-pinctrl";
-+            reg = <0x0f100000 0x300000>,
-+                  <0x0f500000 0x300000>,
-+                  <0x0f900000 0x300000>;
-+            reg-names = "west", "south", "north";
-+            interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+            interrupt-controller;
-+            #interrupt-cells = <2>;
-+            gpio-ranges = <&tlmm 0 0 180>;
-+            wakeup-parent = <&pdc>;
++    pinctrl@3100000 {
++        compatible = "qcom,sc8180x-tlmm";
++        reg = <0x03100000 0x300000>,
++              <0x03500000 0x700000>,
++              <0x03d00000 0x300000>;
++        reg-names = "west", "east", "south";
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        gpio-ranges = <&tlmm 0 0 190>;
++
++        gpio-wo-subnode-state {
++            pins = "gpio1";
++            function = "gpio";
+         };
++
++        uart-w-subnodes-state {
++            rx-pins {
++                pins = "gpio4";
++                function = "qup6";
++                bias-pull-up;
++            };
++
++            tx-pins {
++                pins = "gpio5";
++                function = "qup6";
++                bias-disable;
++            };
++        };
 +    };
+ ...
 -- 
 2.34.1
 
