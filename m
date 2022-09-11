@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C187C6FA83
-	for <linux-gpio@archiver.kernel.org>; Sun, 11 Sep 2022 11:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B17D0ECAAA1
+	for <linux-gpio@archiver.kernel.org>; Sun, 11 Sep 2022 11:15:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231355AbiIKLPN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 11 Sep 2022 07:15:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33982 "EHLO
+        id S231133AbiIKLPt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 11 Sep 2022 07:15:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230491AbiIKLOU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Sep 2022 07:14:20 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E47CF3DBD0
-        for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 04:13:00 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id w8so10343836lft.12
-        for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 04:13:00 -0700 (PDT)
+        with ESMTP id S231281AbiIKLOk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Sep 2022 07:14:40 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B39A33A38
+        for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 04:13:05 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id 9so6488999ljr.2
+        for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 04:13:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=BZ9D0FRQE2grk03g+mdXjEXzyihdHpyqrjbkROOcsv4=;
-        b=Uq+Waa+MOIP9pYf+FiYpnLRgnmgR/SfA/kJzGTRDaGZVDZUjhCBA94ITxnluyrTt4U
-         JjIZGF2eBuwfGJeS3BeYTXDcio+S75AmvGwQjxEiTrfvflvygITINWCBp7lNp3a5Llla
-         TbfgQvMRX63u6qitw8QQZWT5fr/73f9YCKD5kTUgKdHK4AULMLrG8B6XKwWo3ii7m+yx
-         QhOV7EDmjfAPBbXwB58zr8YEWUzTvHSOf5MsA1X6m1Ij90yuNCF4BaPkC7LmIuUxiplm
-         dakJKP1fbaM/U1G7k90vJfm4GviIMO1HxvacqSKc1gn0mJycv3PvMXVAWBEjPZr87+zw
-         CP8g==
+        bh=Ahz8RWfiLMT3ul4AnyZJntS/GGhk6GDdZTcm/1GzutM=;
+        b=X6S0AXvZ0GFb67PsY8UTn1E7CLRrGB7f9EO8RnF4G36cG4M0UC4NOMBuSrQXmASFEj
+         tovjfH7GpwCXlChlLmg1z2ZNUw3SehaWDStuL3L7EeLYShLfSz4TlEqUll6s2OMua+Mu
+         CP0wbhHKuvpefbxJYx1u2yfTOBE1RhV5A5jkOsQdluh9QvRiLsqiJag+u+nZqpiWCGBY
+         lfYi218xBFNTklNfniNPD7KhOrdN+F7h6F9T0O5Jv8kJP+MDbL5tK/K3Aa+M1qOPFKXv
+         TY5DH0mSJAff015iB4Hje3xKqdenlWaHyiPW4Yl292uMJgueyWn8nL3s8cVtvr5fXb8T
+         HgtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=BZ9D0FRQE2grk03g+mdXjEXzyihdHpyqrjbkROOcsv4=;
-        b=Uq0wrRII7V8Ae1BXg7z1cNOndOHqMK732Ral0uMSsoJg0/G6dRAK5eB0xKrMzJkdPu
-         25TtHsOkQcffPdH727dAoXbsYLImfW+t7SYiqDNCD2T2LG7eWuwqsYTSlUdrHGzeT9JM
-         iG1ru3chKfQd2D/5loORBdWCbw5OxAmEUrF6S8tjja/sDvv6Kt0e8lX0WXFj6IC68++Z
-         jSjyR6leTFg5ICf4H8TL8SEfmgbx4ZuKdKy9u/PIPL8NXjMwpgG/6nS16+eyauZjwSKw
-         3hPxw4kB92deyAFOJGuitjscy1GXmw6BJKD3lkCgyQD8zewE2sXunYUkWSQ9u1yeouYD
-         zstw==
-X-Gm-Message-State: ACgBeo36sLwx+XWXrTTgtInul8LcIgGE8Le3qXtD9KFkfNNN8fvjDOgH
-        Z5AJvDpDDVdfUCAbi/Pt4eg9Og==
-X-Google-Smtp-Source: AA6agR75xSzW2FO1RR+w4Xef54cJTvNyPsu/Jhldn59qzhVCOmobsJSeB//MjmmWzRRGlhCxkA1O3Q==
-X-Received: by 2002:a05:6512:31c4:b0:49a:a463:51ab with SMTP id j4-20020a05651231c400b0049aa46351abmr394253lfe.12.1662894747400;
-        Sun, 11 Sep 2022 04:12:27 -0700 (PDT)
+        bh=Ahz8RWfiLMT3ul4AnyZJntS/GGhk6GDdZTcm/1GzutM=;
+        b=4eSfJS6RJ9DNv7EaU5YWORBI6P+uUKcUAqgUYhq8hOnB3imy3k+39Dgk53m+awtzq5
+         Emre++FPV/j74YAWTGR0ntcuqB+JsbtgR8V2RnRqBlPyYnf57A+oBAKs+drneZP6qqNp
+         i7ikyz9tkWtlRxqDJq5O0JN8R+G23IKB8u68snNc/HqEDIW/+rxoDc3H017sMehW26ac
+         ZYwxSMp4V9t0zGRg3lI3decHCcOqPoUFGGKV875xf/BmglsOr94xFZ+U8bILGv+Q8lkT
+         lUUXxARK24MXQcDCo71sxJzELFqi/rTIZGEfmCQcSLm+jMZHJedk7hWWqKYVer/XjUGn
+         DELw==
+X-Gm-Message-State: ACgBeo39gBrQUUNASKCKq8rs2SvUN2BZ/RPoMJvOdjA/YpsDxta66DzF
+        uq2YgDU28bDU3VjEI4DRl2KaZA==
+X-Google-Smtp-Source: AA6agR64bxwtgvwgbQMkFzqZVQ3tvDucah3rX04eMkfwm2nmiPYdiaRY3kUrzgzEmMPDrE8lb1ZKEQ==
+X-Received: by 2002:a2e:84d6:0:b0:26b:dce5:2fe5 with SMTP id q22-20020a2e84d6000000b0026bdce52fe5mr4205708ljh.12.1662894750790;
+        Sun, 11 Sep 2022 04:12:30 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id 11-20020a05651c128b00b0025dfd8c9287sm607365ljc.69.2022.09.11.04.12.26
+        by smtp.gmail.com with ESMTPSA id 11-20020a05651c128b00b0025dfd8c9287sm607365ljc.69.2022.09.11.04.12.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Sep 2022 04:12:26 -0700 (PDT)
+        Sun, 11 Sep 2022 04:12:30 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -62,9 +62,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 18/40] dt-bindings: pinctrl: qcom,sm8350-pinctrl: do not require function on non-GPIOs
-Date:   Sun, 11 Sep 2022 13:11:38 +0200
-Message-Id: <20220911111200.199182-19-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 21/40] dt-bindings: pinctrl: qcom,sm8450-pinctrl: do not require function on non-GPIOs
+Date:   Sun, 11 Sep 2022 13:11:41 +0200
+Message-Id: <20220911111200.199182-22-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220911111200.199182-1-krzysztof.kozlowski@linaro.org>
 References: <20220911111200.199182-1-krzysztof.kozlowski@linaro.org>
@@ -86,14 +86,14 @@ Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Another question is whether 'function' should be disallowed for such
 pins?
 ---
- .../bindings/pinctrl/qcom,sm8350-pinctrl.yaml        | 12 ++++++++++--
+ .../bindings/pinctrl/qcom,sm8450-pinctrl.yaml        | 12 ++++++++++--
  1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
-index f3106d25adcf..6ae5571f60da 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
-@@ -54,7 +54,6 @@ $defs:
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-pinctrl.yaml
+index 87347e9c5f1c..296f503c1d97 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-pinctrl.yaml
+@@ -53,7 +53,6 @@ $defs:
      description:
        Pinctrl node's client devices use subnodes for desired pin configuration.
        Client device subnodes use below standard properties.
@@ -101,7 +101,7 @@ index f3106d25adcf..6ae5571f60da 100644
  
      properties:
        pins:
-@@ -108,7 +107,16 @@ $defs:
+@@ -105,7 +104,16 @@ $defs:
  
      required:
        - pins
@@ -112,7 +112,7 @@ index f3106d25adcf..6ae5571f60da 100644
 +      - if:
 +          properties:
 +            pins:
-+              pattern: "^gpio([0-9]|[1-9][0-9]|1[0-9][0-9]|20[0-3])$"
++              pattern: "^gpio([0-9]|[1-9][0-9]|1[0-9][0-9]|20[0-9])$"
 +        then:
 +          required:
 +            - function
