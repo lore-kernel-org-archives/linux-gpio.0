@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7031EC6FA83
-	for <linux-gpio@archiver.kernel.org>; Sun, 11 Sep 2022 11:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E2AC6FA89
+	for <linux-gpio@archiver.kernel.org>; Sun, 11 Sep 2022 11:14:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231312AbiIKLOu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 11 Sep 2022 07:14:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35866 "EHLO
+        id S231317AbiIKLOv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 11 Sep 2022 07:14:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230468AbiIKLOD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Sep 2022 07:14:03 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87DFB3CBDB
-        for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 04:12:43 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id by6so7373169ljb.11
-        for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 04:12:43 -0700 (PDT)
+        with ESMTP id S230295AbiIKLOE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Sep 2022 07:14:04 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3289532D9E
+        for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 04:12:53 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id bn9so7400163ljb.6
+        for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 04:12:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=nXdmZRWySMH2y4BHslWMyDvfmlDcWpCDzcQgKmezSiA=;
-        b=UlAZv0nKRhX0fZ+HjxVuvwBdtMlpVeVd2Yi/2YXQvSZsjL0fTglhvwEeKCmDs1I0Fd
-         91bvvkZcyAnrEyTlUF9qT4WdyFP+uuIPiZa+xh8YuzoBfU+ZTSWH97ZwmP4ORq/dSB8x
-         Gl90lDAZXu92HgwgaROu/29xE70zaxvUDL6ooCPb9EL+m+xZ5hxuZDAktxEI0XoHiUCT
-         JBo0TJE718Y5oZlXEP4RykdUoy6W/XFNxGlsR6R8ZsB/yzmPV81EmytddUar1Q4u3zjx
-         NOnt1dGvqjLTQ1eRwSxhnZJkmRqJ4WyqvSmeNYIonsGypHPElXvNV57u1PT13f7Tx/O0
-         YAMA==
+        bh=CL2/j/JItz+3oLrNQS5aOSC401S6zfG+DX5xNbB/udc=;
+        b=p1o0qlHK47licEeXcSEOxvdC4w42n+HpYsRejgOMH6KBJaR6EGFBYltiadanLkADDJ
+         fOyHDuYa2rzgAju0CJJJnUiu0N1OOMfGfTqyuXoTNBhKjGUQ5Rk+X5u376iV1lq3f1yK
+         po3VtgrOvazLMGEWoiVUujZUVnKlA+M/FzKjFtEUODnAROEvCwR763TNEh8BGkxgbRT1
+         CJSwwm2u6nnjaYbVl2jMTWrn0S5xTI26mH2kSk+njz49t/e5YNBzUBcNNCKgE/jbOoRB
+         PuqvbBEMHG//ITtop2fV/EnHSJOhmNiAst62LOWmkEzZ0SNHX+i8di9ooYiBnLpRKzie
+         L7sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=nXdmZRWySMH2y4BHslWMyDvfmlDcWpCDzcQgKmezSiA=;
-        b=QgN6ix0h5I4OyQvD58GTz1zzf2BT1mCs4ut3VkXZnPhiu2tLc7dZCqaG16zRG28JpE
-         /0TBtCyZlQE6jZxNFJZKJIlJ2vTznhbbHA94MWK34NUbc5sOkP4EPAbZ9LBr89SPOtOo
-         AUcG4H2C8gIXkpxNyxT6Z3LPeJgF7xIImlWN0GFb8mhfhG8KKEPGegYhQahVoiL0zzE+
-         HfiCYwZiEeFiuoYpyptVlJRu35UFxsOdltioxj/wkhWcTDnYfIjGrEItmBWLBj8hVx/D
-         NvAM4MXgh5nRFdX8sFXZ0PNksZEufI8kkEZNSDtP5pK4AjB02FKGLgYVTPdepGLimpAJ
-         cMwA==
-X-Gm-Message-State: ACgBeo00zjAwXIlpLLlzm5JqfiZy0boWGwl0FUCf3hF8gJ9jrEqIl14Q
-        rfYj4StE8wJpe1IckPwgLQHDkg==
-X-Google-Smtp-Source: AA6agR5I/tGMgMOjbRLS0g2D7/H7nug+yH6MMWQA8TT4KGFTnqcJFWtdQduFm8lM0QIvCSSDsAXAdw==
-X-Received: by 2002:a2e:bc11:0:b0:26c:565:12f6 with SMTP id b17-20020a2ebc11000000b0026c056512f6mr300214ljf.91.1662894763042;
-        Sun, 11 Sep 2022 04:12:43 -0700 (PDT)
+        bh=CL2/j/JItz+3oLrNQS5aOSC401S6zfG+DX5xNbB/udc=;
+        b=k/wtAR2awbdRIMTRfqBlm1WZMlGM0mEWS6wJxZx59mEEqaD/FDafY+Jg6ZmfkiJpb4
+         LBYHNdGPvm7u0mnAQLLRuAtv1BHj+FpiyqR2FbsK8SgY17xaXLCpfQTryS5apAprYhY4
+         l1u15T1AVFyEE8bAeDOfQBqg9ZiIFagmzdycZftG9EbVrtn68Fg4gfIDYHA8irmEPAIb
+         PDeGE+s/8mJjIH0NO1q3GMrYrpxSzcPRkjEZUjrIXVCVc7wpq6KcpWYyE3p3/F42WM/E
+         XVepKmcyfNBkVYIKQqpaNfJKUCsCtOjeNogxixVuuyRVlU2B0iQ1gu2erfxXpXi+g1hb
+         ihYw==
+X-Gm-Message-State: ACgBeo25OUl00Kf6bU/Owd/UPEqAgZ6BPi8LyjRSLTJ09d0GVplAEYvS
+        /F2rJg7fbj1yaTgfCeuCGoa5yg==
+X-Google-Smtp-Source: AA6agR5kGSIUGOJg3pllHovdg/FAi8EeRBdF9haQMJlycsyu9wEzNRl6O0W6185/GX7SL5j9g9zBlQ==
+X-Received: by 2002:a05:651c:1a14:b0:26a:c8ca:7ed8 with SMTP id by20-20020a05651c1a1400b0026ac8ca7ed8mr6219435ljb.415.1662894772539;
+        Sun, 11 Sep 2022 04:12:52 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id 11-20020a05651c128b00b0025dfd8c9287sm607365ljc.69.2022.09.11.04.12.41
+        by smtp.gmail.com with ESMTPSA id 11-20020a05651c128b00b0025dfd8c9287sm607365ljc.69.2022.09.11.04.12.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Sep 2022 04:12:42 -0700 (PDT)
+        Sun, 11 Sep 2022 04:12:51 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -62,9 +62,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 30/40] dt-bindings: pinctrl: qcom,sc8180x-pinctrl: fix indentation in example
-Date:   Sun, 11 Sep 2022 13:11:50 +0200
-Message-Id: <20220911111200.199182-31-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 37/40] arm64: dts: qcom: sm8350: align TLMM pin configuration with DT schema
+Date:   Sun, 11 Sep 2022 13:11:57 +0200
+Message-Id: <20220911111200.199182-38-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220911111200.199182-1-krzysztof.kozlowski@linaro.org>
 References: <20220911111200.199182-1-krzysztof.kozlowski@linaro.org>
@@ -74,87 +74,205 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Bindings example should be indented with 4-spaces.
+DT schema expects TLMM pin configuration nodes to be named with '-state'
+suffix and their optional children with '-pins' suffix.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../pinctrl/qcom,sc8180x-pinctrl.yaml         | 64 +++++++++----------
- 1 file changed, 32 insertions(+), 32 deletions(-)
+ .../dts/qcom/sm8350-sony-xperia-sagami.dtsi   |  2 +-
+ arch/arm64/boot/dts/qcom/sm8350.dtsi          | 44 +++++++++----------
+ 2 files changed, 23 insertions(+), 23 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml
-index 4afe20bac87c..b98eeba2c530 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sc8180x-pinctrl.yaml
-@@ -126,37 +126,37 @@ patternProperties:
+diff --git a/arch/arm64/boot/dts/qcom/sm8350-sony-xperia-sagami.dtsi b/arch/arm64/boot/dts/qcom/sm8350-sony-xperia-sagami.dtsi
+index b702ab1605bb..b3c9952ac173 100644
+--- a/arch/arm64/boot/dts/qcom/sm8350-sony-xperia-sagami.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8350-sony-xperia-sagami.dtsi
+@@ -222,7 +222,7 @@ &spi14 {
+ &tlmm {
+ 	gpio-reserved-ranges = <44 4>;
  
- examples:
-   - |
--        #include <dt-bindings/interrupt-controller/arm-gic.h>
--        pinctrl@3100000 {
--                compatible = "qcom,sc8180x-tlmm";
--                reg = <0x03100000 0x300000>,
--                      <0x03500000 0x700000>,
--                      <0x03d00000 0x300000>;
--                reg-names = "west", "east", "south";
--                interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
--                gpio-controller;
--                #gpio-cells = <2>;
--                interrupt-controller;
--                #interrupt-cells = <2>;
--                gpio-ranges = <&tlmm 0 0 190>;
--
--                gpio-wo-subnode-state {
--                        pins = "gpio1";
--                        function = "gpio";
--                };
--
--                uart-w-subnodes-state {
--                        rx-pins {
--                                pins = "gpio4";
--                                function = "qup6";
--                                bias-pull-up;
--                        };
--
--                        tx-pins {
--                                pins = "gpio5";
--                                function = "qup6";
--                                bias-disable;
--                        };
--                };
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    pinctrl@3100000 {
-+        compatible = "qcom,sc8180x-tlmm";
-+        reg = <0x03100000 0x300000>,
-+              <0x03500000 0x700000>,
-+              <0x03d00000 0x300000>;
-+        reg-names = "west", "east", "south";
-+        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        interrupt-controller;
-+        #interrupt-cells = <2>;
-+        gpio-ranges = <&tlmm 0 0 190>;
-+
-+        gpio-wo-subnode-state {
-+            pins = "gpio1";
-+            function = "gpio";
-         };
-+
-+        uart-w-subnodes-state {
-+            rx-pins {
-+                pins = "gpio4";
-+                function = "qup6";
-+                bias-pull-up;
-+            };
-+
-+            tx-pins {
-+                pins = "gpio5";
-+                function = "qup6";
-+                bias-disable;
-+            };
-+        };
-+    };
- ...
+-	ts_int_default: ts-int-default {
++	ts_int_default: ts-int-default-state {
+ 		pins = "gpio23";
+ 		function = "gpio";
+ 		drive-strength = <2>;
+diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/dts/qcom/sm8350.dtsi
+index e72a04411888..cd5503642a23 100644
+--- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
+@@ -1762,150 +1762,150 @@ tlmm: pinctrl@f100000 {
+ 			wakeup-parent = <&pdc>;
+ 
+ 			qup_uart3_default_state: qup-uart3-default-state {
+-				rx {
++				rx-pins {
+ 					pins = "gpio18";
+ 					function = "qup3";
+ 				};
+-				tx {
++				tx-pins {
+ 					pins = "gpio19";
+ 					function = "qup3";
+ 				};
+ 			};
+ 
+-			qup_uart6_default: qup-uart6-default {
++			qup_uart6_default: qup-uart6-default-state {
+ 				pins = "gpio30", "gpio31";
+ 				function = "qup6";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			qup_uart18_default: qup-uart18-default {
++			qup_uart18_default: qup-uart18-default-state {
+ 				pins = "gpio58", "gpio59";
+ 				function = "qup18";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			qup_i2c0_default: qup-i2c0-default {
++			qup_i2c0_default: qup-i2c0-default-state {
+ 				pins = "gpio4", "gpio5";
+ 				function = "qup0";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			qup_i2c1_default: qup-i2c1-default {
++			qup_i2c1_default: qup-i2c1-default-state {
+ 				pins = "gpio8", "gpio9";
+ 				function = "qup1";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			qup_i2c2_default: qup-i2c2-default {
++			qup_i2c2_default: qup-i2c2-default-state {
+ 				pins = "gpio12", "gpio13";
+ 				function = "qup2";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			qup_i2c4_default: qup-i2c4-default {
++			qup_i2c4_default: qup-i2c4-default-state {
+ 				pins = "gpio20", "gpio21";
+ 				function = "qup4";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			qup_i2c5_default: qup-i2c5-default {
++			qup_i2c5_default: qup-i2c5-default-state {
+ 				pins = "gpio24", "gpio25";
+ 				function = "qup5";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			qup_i2c6_default: qup-i2c6-default {
++			qup_i2c6_default: qup-i2c6-default-state {
+ 				pins = "gpio28", "gpio29";
+ 				function = "qup6";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			qup_i2c7_default: qup-i2c7-default {
++			qup_i2c7_default: qup-i2c7-default-state {
+ 				pins = "gpio32", "gpio33";
+ 				function = "qup7";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			qup_i2c8_default: qup-i2c8-default {
++			qup_i2c8_default: qup-i2c8-default-state {
+ 				pins = "gpio36", "gpio37";
+ 				function = "qup8";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			qup_i2c9_default: qup-i2c9-default {
++			qup_i2c9_default: qup-i2c9-default-state {
+ 				pins = "gpio40", "gpio41";
+ 				function = "qup9";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			qup_i2c10_default: qup-i2c10-default {
++			qup_i2c10_default: qup-i2c10-default-state {
+ 				pins = "gpio44", "gpio45";
+ 				function = "qup10";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			qup_i2c11_default: qup-i2c11-default {
++			qup_i2c11_default: qup-i2c11-default-state {
+ 				pins = "gpio48", "gpio49";
+ 				function = "qup11";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			qup_i2c12_default: qup-i2c12-default {
++			qup_i2c12_default: qup-i2c12-default-state {
+ 				pins = "gpio52", "gpio53";
+ 				function = "qup12";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			qup_i2c13_default: qup-i2c13-default {
++			qup_i2c13_default: qup-i2c13-default-state {
+ 				pins = "gpio0", "gpio1";
+ 				function = "qup13";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			qup_i2c14_default: qup-i2c14-default {
++			qup_i2c14_default: qup-i2c14-default-state {
+ 				pins = "gpio56", "gpio57";
+ 				function = "qup14";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			qup_i2c15_default: qup-i2c15-default {
++			qup_i2c15_default: qup-i2c15-default-state {
+ 				pins = "gpio60", "gpio61";
+ 				function = "qup15";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			qup_i2c16_default: qup-i2c16-default {
++			qup_i2c16_default: qup-i2c16-default-state {
+ 				pins = "gpio64", "gpio65";
+ 				function = "qup16";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			qup_i2c17_default: qup-i2c17-default {
++			qup_i2c17_default: qup-i2c17-default-state {
+ 				pins = "gpio72", "gpio73";
+ 				function = "qup17";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			qup_i2c19_default: qup-i2c19-default {
++			qup_i2c19_default: qup-i2c19-default-state {
+ 				pins = "gpio76", "gpio77";
+ 				function = "qup19";
+ 				drive-strength = <2>;
 -- 
 2.34.1
 
