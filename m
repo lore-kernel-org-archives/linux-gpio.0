@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B459EECAAD5
-	for <linux-gpio@archiver.kernel.org>; Mon, 12 Sep 2022 06:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9DFCC6FA82
+	for <linux-gpio@archiver.kernel.org>; Mon, 12 Sep 2022 06:20:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229880AbiILGUV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 12 Sep 2022 02:20:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50438 "EHLO
+        id S230062AbiILGUg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 12 Sep 2022 02:20:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230008AbiILGT0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Sep 2022 02:19:26 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D21A62B192
-        for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 23:18:40 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id x10so9326534ljq.4
-        for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 23:18:40 -0700 (PDT)
+        with ESMTP id S230054AbiILGTk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Sep 2022 02:19:40 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E11A2A257
+        for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 23:18:45 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id a8so13100283lff.13
+        for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2022 23:18:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=691KvJvip9wejzXr7qpWGsmceASveD6n9KP/WuDonD8=;
-        b=d1DHQPk8TiATnt/m6mMQt61SUjKvZhpDvPIkhUG2xBhT2q7YegT1qS0K2WLyXviV7p
-         MBPpZfjbJprK7gQU4RQU3ULzM+eRPx6UwyTgDDq35YgH/1oV3YmB3C+0f+h4LcvWS+yl
-         kGCmB4XV1ADWqH//Z2TdMauEX01fJNC50nqadf+mOZL75OPAj1UrvrXM7jYPWJ6Q+xhK
-         vqvQOg0iOoCRIsamcHzrXhT7qTVd1bvLT8fK7Mk5jPgqqfGvvyn76SgT3jBs7kGFBOVz
-         tElvW2mJBXv0H98qeRcgkgvgKJWOwjRFFJSQxA1eRfOZoaqKJNYxoB0fTS1R/DmMzGoA
-         ESpw==
+        bh=zWIyjK4dxfH9A9tyS53A/sJlwsqf8yeDaeYqVdTxLgc=;
+        b=hpCVVDO6lm/ERZUqGXJ74SnKDvWrhTMHmEv5Fam/9wconDWlH0JRvADTQgdAPsUJJ9
+         IGTP8/gqha1csTIxGRflb8WaBi8mi+jJpu53V8O2LKO4tA6kcjh0a2Z3TKW2ZfywNaIS
+         xh483O0miukpvmb+SSWep5RbHM8GSqzAuizfdCbMfT25qX6iLaahoI0qvC6Xi9vg5LAf
+         o3IT4r2b8Y74FTGwOWSSJNKjIj2z4g6XAP05NbWYzO5tI9/VFqz0eIVYc/SKzwbEKWUQ
+         Uvveo6ZruqyRw7m3J3Zb2IplLch2HrTmjNuXRKF5MGtWSzjTbFjaT7ldeH2QQDyEWlBG
+         KZuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=691KvJvip9wejzXr7qpWGsmceASveD6n9KP/WuDonD8=;
-        b=ExHCS3NTT0AW/bTBvFjQp20i4fIoN00De+W2xM3+/P+SDITXFoFEmXT9mQ2BzlGFwM
-         BRBzxdEvHSRRIafzj9033/GxQR6y0hhntCAWlUa8b5xn3xWmku/EgMY05xq8RxamDA9W
-         FkN+C1Zg4eoDV3VVFGADzgmRoULpS9FKy1aBOvFjk/y4sHRmYSoZ2vKzkXMdWlqGb9EI
-         Ql9qK3gMUpEfzIdabm3Anwdha81PUPi+bIBMc90cUnZjBDdc5J0HTqu8q6EzIPSn8GGC
-         0qW4MA1W0XT8NYSObCt6gd5XGB7gncJ+nfhLnEAzXTS/m7oCCRroL0nyn90hjqrJV4I+
-         2K8g==
-X-Gm-Message-State: ACgBeo0MnbNYHzW5SX9pVnBa1b6nHrW1FWhdSsEcrhwdsVeKDSzxd3Uj
-        MNtcwAV7GKd/RhP3XzxNmW8xCA==
-X-Google-Smtp-Source: AA6agR74Ig3J9SSX0nqCYqvR7QrLh5RKvXE1wOuQ5kJ/yx4ASKopm0Acvfok/VWCHRj9SPWW23EXhw==
-X-Received: by 2002:a2e:9cf:0:b0:26b:e127:df1 with SMTP id 198-20020a2e09cf000000b0026be1270df1mr4921166ljj.325.1662963520191;
-        Sun, 11 Sep 2022 23:18:40 -0700 (PDT)
+        bh=zWIyjK4dxfH9A9tyS53A/sJlwsqf8yeDaeYqVdTxLgc=;
+        b=eCVzPQf5mJnp1cKK/iCwSTWHjA7KqYdwh+s+P7C54NIoOsfoZawDaYQR0m3e9HiJuw
+         9jPDFoL4ouvTJ2VCCB7u7YtO7MiE9Hv7NIElBfzmHE3DYo6u49aISgUIg5+CGe1c+qIZ
+         EapQHpU1X+MFKxFpfvJ+50KSa+WeXTRwcudNJPdv5dgDJQF/4V10UhK5Wfukz0rJRHpD
+         dKu48IuVRCDtULShn89Yp6bF0+Bbec7N7T9oStRZV9AVzRqvzloA851i1UmZ10ZgzFgO
+         FSA0sVFAxhcRrb04mXhgAajhEIKnNnPtmiypa/x7An6s9jiZlO/ynw2/hzevai39K6et
+         KMfA==
+X-Gm-Message-State: ACgBeo0oEVnbxKVz/+KiOXg3mMlI+sE63HrdxHGWPd3wgU3JBopTcc5Q
+        YN7ejlkSdqT21iAGg/3CgoyIF/yE28nWbg==
+X-Google-Smtp-Source: AA6agR5r3zi0vLyk+9FSxThtVD8PFl2WWjBbHuTJ/T97nO1HfcFmdyhBehkF/qXfvwHnllEZGutEMw==
+X-Received: by 2002:a19:5e5e:0:b0:497:a26d:89ef with SMTP id z30-20020a195e5e000000b00497a26d89efmr9255418lfi.555.1662963502031;
+        Sun, 11 Sep 2022 23:18:22 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id t19-20020ac24c13000000b004996fbfd75esm876805lfq.71.2022.09.11.23.18.39
+        by smtp.gmail.com with ESMTPSA id t19-20020ac24c13000000b004996fbfd75esm876805lfq.71.2022.09.11.23.18.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Sep 2022 23:18:39 -0700 (PDT)
+        Sun, 11 Sep 2022 23:18:21 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -61,9 +61,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 33/40] dt-bindings: pinctrl: qcom,sc8280xp-pinctrl: fix indentation in example
-Date:   Mon, 12 Sep 2022 08:17:39 +0200
-Message-Id: <20220912061746.6311-34-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 22/40] dt-bindings: pinctrl: qcom,sm8450-pinctrl: add gpio-line-names
+Date:   Mon, 12 Sep 2022 08:17:28 +0200
+Message-Id: <20220912061746.6311-23-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220912061746.6311-1-krzysztof.kozlowski@linaro.org>
 References: <20220912061746.6311-1-krzysztof.kozlowski@linaro.org>
@@ -73,81 +73,34 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Bindings example should be indented with 4-spaces.
+Add common gpio-line-names property and restrict gpio-reserved-ranges to
+fixed size.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../pinctrl/qcom,sc8280xp-pinctrl.yaml        | 58 +++++++++----------
- 1 file changed, 29 insertions(+), 29 deletions(-)
+ .../devicetree/bindings/pinctrl/qcom,sm8450-pinctrl.yaml | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc8280xp-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sc8280xp-pinctrl.yaml
-index 8610f2701388..b9ab130cd558 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sc8280xp-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sc8280xp-pinctrl.yaml
-@@ -127,34 +127,34 @@ patternProperties:
- 
- examples:
-   - |
--        #include <dt-bindings/interrupt-controller/arm-gic.h>
--        pinctrl@f100000 {
--                compatible = "qcom,sc8280xp-tlmm";
--                reg = <0x0f100000 0x300000>;
--                interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
--                gpio-controller;
--                #gpio-cells = <2>;
--                interrupt-controller;
--                #interrupt-cells = <2>;
--                gpio-ranges = <&tlmm 0 0 230>;
--
--                gpio-wo-subnode-state {
--                        pins = "gpio1";
--                        function = "gpio";
--                };
--
--                uart-w-subnodes-state {
--                        rx-pins {
--                                pins = "gpio4";
--                                function = "qup14";
--                                bias-pull-up;
--                        };
--
--                        tx-pins {
--                                pins = "gpio5";
--                                function = "qup14";
--                                bias-disable;
--                        };
--                };
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    pinctrl@f100000 {
-+        compatible = "qcom,sc8280xp-tlmm";
-+        reg = <0x0f100000 0x300000>;
-+        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        interrupt-controller;
-+        #interrupt-cells = <2>;
-+        gpio-ranges = <&tlmm 0 0 230>;
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-pinctrl.yaml
+index 296f503c1d97..9cd97a467648 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-pinctrl.yaml
+@@ -27,7 +27,14 @@ properties:
+   interrupt-controller: true
+   '#interrupt-cells': true
+   gpio-controller: true
+-  gpio-reserved-ranges: true
 +
-+        gpio-wo-subnode-state {
-+                pins = "gpio1";
-+                function = "gpio";
-         };
++  gpio-reserved-ranges:
++    minItems: 1
++    maxItems: 105
 +
-+        uart-w-subnodes-state {
-+            rx-pins {
-+                pins = "gpio4";
-+                function = "qup14";
-+                bias-pull-up;
-+            };
++  gpio-line-names:
++    maxItems: 209
 +
-+            tx-pins {
-+                pins = "gpio5";
-+                function = "qup14";
-+                bias-disable;
-+            };
-+        };
-+    };
- ...
+   '#gpio-cells': true
+   gpio-ranges: true
+   wakeup-parent: true
 -- 
 2.34.1
 
