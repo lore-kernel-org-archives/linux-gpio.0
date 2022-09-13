@@ -2,187 +2,148 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD76EC54EE9
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Sep 2022 17:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37BF5ECAAD8
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Sep 2022 17:10:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231872AbiIMRKa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Sep 2022 13:10:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50902 "EHLO
+        id S232507AbiIMRKw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Sep 2022 13:10:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231265AbiIMRKK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2022 13:10:10 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5920CC6FD1
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2022 08:58:54 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id v16so28555756ejr.10
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2022 08:58:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=iZxym95KdGg+6iEgSjAWKJXLnUiQuXDvKPE1FGjFnQQ=;
-        b=Txrd4gbQ64FspzIne5wVD+p5116iAFqIXH0MCu+LVKesSzlo8cmp2G0adGp27pIY9p
-         05ehWrX5U2KPV1ZB8P58tM2zC7Qd0ekwNaboWuUnZ6BCRLLVZevvc5sd3D8KpwbPzaWn
-         f0y0mAYlRmoVRF4IwQ5N9dL0yDqqiwSHwduJRG20GhGvegJ/QufXdHR1CfGR18G+OsZA
-         Row2hODVjR/fS7Ze6ULWN9wKsTmGvLuMUSrCfAxx+MbyxGdf9puiMBIMzqwNhRvU/5rh
-         a3SPrCJhoRmuVOEMqw449F2oUYkdyejWdnOhAg94Lnzv8kTDAp8XSSDZdA6s+juQBv6D
-         H28A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=iZxym95KdGg+6iEgSjAWKJXLnUiQuXDvKPE1FGjFnQQ=;
-        b=748WSE2nKh5WgbGTWggYbRcUzt1JetIt1KB+RRY4DcMJoc/zN5k1LDUh/lQ5lU0Xc+
-         umfrnwU77NyA96bHlhHgb565N/PhyMVVoUsENXhq5YWn++wJC49/dOrM9GDIIZFqquCp
-         CNW3KfKR4r7oxy8upZ3zM3MArOB3degHuy9DCp+Xu7YcPl029Sjsc4H5Gssq0VR92CDh
-         AqeQSgFFJo64FOg6qPLNeGZcgHREwPa/Pic4/wsraZKGynNWlszx9YUqDYsqA94SjwXu
-         /14pEAxlZONv1nnDDYgCCEQdRATS2glgfCd4t0EMKp2zlKBAzziMwhLvTls3Xp/FWpzD
-         nGHg==
-X-Gm-Message-State: ACgBeo0GhvVCvF4t75VeCtpa+d0C37VkpMQyVe3wiu1tnmtsQvfL0nfe
-        nhrfhPbHqGUxdkfkpo7w02RZEtaztasSSDruWVhBMw==
-X-Google-Smtp-Source: AA6agR5sTFC44yl7xVfN3YGCtspiOuVU7OS/pJGABmPeMSUqaaRrmVQCpNEn1Iu5Q96MQiqmYRcYPVm3/sxonMaD7t0=
-X-Received: by 2002:a17:907:1c87:b0:741:8199:a59d with SMTP id
- nb7-20020a1709071c8700b007418199a59dmr22298125ejc.736.1663084722934; Tue, 13
- Sep 2022 08:58:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220909121329.42004-1-brgl@bgdev.pl> <20220909121329.42004-3-brgl@bgdev.pl>
- <YxykorLetCjAls/Z@sol> <CAMRc=Me46b+Fjz_AAbZZVbaELjY6NGVfNE6mwueiKRTpYe98rA@mail.gmail.com>
- <Yx8Bj0+4STpklMc2@sol> <CAMRc=Me=QxXRgZKyirj23r4hEN9bzcPSM6N4z=0yGgAZheh=Qg@mail.gmail.com>
- <Yx/nG5YsyCa+VXoj@sol> <CAMRc=MfoZQV-aHKSkAw6d_jPPbjn==oR0LA=irjuWLGzQiRP-w@mail.gmail.com>
- <YyCTmZocN/CY4Pg6@sol> <CAMRc=MdBRGW0skXOgPbZy=w4EiWcyKmKwKSZuAj+k4EtbPmvdg@mail.gmail.com>
- <YyCZ7TN8fyVyuWXY@sol>
-In-Reply-To: <YyCZ7TN8fyVyuWXY@sol>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 13 Sep 2022 17:58:32 +0200
-Message-ID: <CAMRc=MfyD5iyfB5f5hx_Kq4p7NZv+0o8HVOysiy6DaKANpGNKQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpiolib: cdev: export the consumer's PID
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+        with ESMTP id S231834AbiIMRK2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2022 13:10:28 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F01093513;
+        Tue, 13 Sep 2022 08:59:22 -0700 (PDT)
+Received: from pan.home (unknown [IPv6:2a00:23c6:c311:3401:dd1a:56ef:ffd9:f71c])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: martyn)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id E7FFB6601FFD;
+        Tue, 13 Sep 2022 16:54:03 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.co.uk;
+        s=mail; t=1663084444;
+        bh=Cf57MQ0s0WfHM3ZV++Oefg0CZSnt/NVUvG5R/Wbna0U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Khgx52dmLTLTmBSuJP8BK4IMJHpR0RFyJ/0pKj40ATrJjKXh2Wm25cCq6x8DfA1bn
+         8Objuoy2QbVAhRwO8E8dk0FUrlpTnBDLW6zOFOEZyNi6reneyldLd4yUkm6h1ZJyJp
+         J+fj0CcOXKWGeqyxmg+0Ubjxot0LgBpvGZYsaNcjrIbaLPhqxyyquqb/+5T2YIg+o5
+         AE8NW/sQnd4EgNoE081PZxlEwpnC6lVoyVwnB8WFxpfIA7VUtg40uSbJy+I+tmyaqY
+         0X6ZgqpNJKo8NqtQNYtOWi44SHU7befW6apWQ93smHh70JxTvAUKm6V56DhAFn+/3/
+         eRCTGmHwmxS/A==
+From:   Martyn Welch <martyn.welch@collabora.co.uk>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Martyn Welch <martyn.welch@collabora.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v4 4/5] gpio: pca953x: Swap if statements to save later complexity
+Date:   Tue, 13 Sep 2022 16:53:47 +0100
+Message-Id: <20220913155348.38716-4-martyn.welch@collabora.co.uk>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220913155348.38716-1-martyn.welch@collabora.co.uk>
+References: <20220913155348.38716-1-martyn.welch@collabora.co.uk>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 13, 2022 at 4:55 PM Kent Gibson <warthog618@gmail.com> wrote:
->
-> On Tue, Sep 13, 2022 at 04:35:08PM +0200, Bartosz Golaszewski wrote:
-> > On Tue, Sep 13, 2022 at 4:28 PM Kent Gibson <warthog618@gmail.com> wrote:
-> > >
-> > > On Tue, Sep 13, 2022 at 10:54:26AM +0200, Bartosz Golaszewski wrote:
-> > > > On Tue, Sep 13, 2022 at 4:12 AM Kent Gibson <warthog618@gmail.com> wrote:
-> > > > >
-> > > > > On Mon, Sep 12, 2022 at 11:56:17AM +0200, Bartosz Golaszewski wrote:
-> > > > > > On Mon, Sep 12, 2022 at 11:53 AM Kent Gibson <warthog618@gmail.com> wrote:
-> > > > > > >
-> > > > > >
-> > > > > > [snip]
-> > > > > >
-> > > > > > > >
-> > > > > > > > Using -1 sounds good but I've just realized there's a different
-> > > > > > > > problem. A process holding a file descriptor may fork and both the
-> > > > > > > > parent and the child will keep the same file descriptors open. Now
-> > > > > > > > we'll have two processes (with different PIDs) holding the same GPIO
-> > > > > > > > lines (specifically holding a file descriptor to the same anonymous
-> > > > > > > > inode).
-> > > > > > > >
-> > > > > > > > This already poses a problem for this patch as we'd need to return an
-> > > > > > > > array of PIDs which we don't have the space for but also is a
-> > > > > > > > situation which we haven't discussed previously IIRC - two processes
-> > > > > > > > keeping the same GPIO lines requested.
-> > > > > > > >
-> > > > > > > > I don't have any good idea on how to address this yet. One thing off
-> > > > > > > > the top of my head is: close the parent's file descriptor from kernel
-> > > > > > > > space (is it even possible?) on fork() (kind of like the close() on
-> > > > > > > > exec flag).
-> > > > > > > >
-> > > > > > > > I need to think about it more.
-> > > > > > > >
-> > > > > > >
-> > > > > > > I thought the O_CLOEXEC was set on the request fds exactly to prevent this
-> > > > > > > case - only one process can hold the request fd.
-> > > > > > >
-> > > > > >
-> > > > > > O_CLOEXEC means "close on exec" not "close on fork". When you fork,
-> > > > > > you inherit all file descriptors from your parent. Only once you call
-> > > > > > execve() are the fds with this flag closed *in the child*.
-> > > > > >
-> > > > >
-> > > > > Ah, ok.
-> > > > > You want to pass request fd ownership from parent to child??
-> > > > > Why not lock ownership to the parent, so O_CLOFORK, were that
-> > > > > available?
-> > > > >
-> > > >
-> > > > Because what if we want to request a line and then daemonize i.e. fork
-> > > > and exit in parent? It makes much more sense to keep the lines
-> > > > requested in the child IMO.
-> > > >
-> > >
-> > > Then you are doing it backwards - daemonize first ;-).
-> > >
-> > > Generally speaking, doesn't transfer of resource ownership to the forked
-> > > child create havoc in multi-threaded apps? i.e. one thread requests a
-> > > resource, another forks.  The parent thread unknowingly loses ownership,
-> > > and the forked child process only starts with a replica of the forking
-> > > thread.
-> > >
-> >
-> > Yeah, sounds like a bad idea.
-> >
-> > > > During the BoF at Linux Plumbers it was suggested to use
-> > > > /proc/$PID/fdinfo to expose the information about which lines are
-> > > > requested but I can't figure out a way to do it elegantly.
-> > > >
-> > >
-> > > Yeah, missed that :-(.
-> > >
-> > > Makes sense.
-> > >
-> > > As each request fd can contain multiple lines on a particular chip,
-> > > you would need to identify the gpiochip and the offsets for that request.
-> > > So two fields - the gpiochip path, and the list of offsets.
-> > >
-> > > Is that already too clunky or am I missing something?
-> > >
-> >
-> > It's worse than that - we don't know the character device's filesystem
-> > path in gpiolib. Nor should we, as we can be in a different fs
-> > namespace when checking it than in which we were when we opened the
-> > device (which is also another concern for storing the path to the
-> > character device in struct gpiod_chip - unless we specify explicitly
-> > that it's the path that was used to open it). Since we don't know it -
-> > we can only get it from the file descriptor that the requesting
-> > process got after calling open() on the GPIO device. But this fd may
-> > have been closed in the meantime. I think I opened a can of worms with
-> > this one. :)
-> >
->
-> Forgot that we don't have the path readily available in the kernel -
-> would device name suffice?
+From: Martyn Welch <martyn.welch@collabora.com>
 
-Maybe. I'm looking at what fdinfo shows in my vm and see things like:
+A later patch in the series adds support for a further chip type that
+shares some similarity with the PCA953X_TYPE. In order to keep the logic
+simple, swap over the if and else portions where checks are made against
+PCA953X_TYPE and instead check for PCA957X_TYPE.
 
-$ cat /proc/2353/fdinfo/10
-pos: 0
-flags: 02004000
-mnt_id: 15
-ino: 1052
-inotify wd:1 ino:1 sdev:3c mask:fce ignored_mask:0 fhandle-bytes:c
-fhandle-type:1 f_handle:7f0dd9400100000000000000
+Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
 
-I don't see any tools/libs readily available for parsing these. In
-libgpiod, if the user wanted to read the PID of the owner of the line,
-we'd need to manually go through the list of all fdinfo entries we
-have permissions to access and compare those against the line w'ere
-checking.
+Changes in v2:
+ - None
 
-We'd need of course first expose that info like:
+Changes in v3:
+ - None
 
-gpio chip:gpiochip2 lines:0,3,4,7
+Changes in v4:
+ - None
 
-Does that make sense?
+ drivers/gpio/gpio-pca953x.c | 31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
-Bart
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 62367c9d6e99..1e8f038734e0 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -293,13 +293,13 @@ static bool pca953x_readable_register(struct device *dev, unsigned int reg)
+ 	struct pca953x_chip *chip = dev_get_drvdata(dev);
+ 	u32 bank;
+ 
+-	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE) {
+-		bank = PCA953x_BANK_INPUT | PCA953x_BANK_OUTPUT |
+-		       PCA953x_BANK_POLARITY | PCA953x_BANK_CONFIG;
+-	} else {
++	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) {
+ 		bank = PCA957x_BANK_INPUT | PCA957x_BANK_OUTPUT |
+ 		       PCA957x_BANK_POLARITY | PCA957x_BANK_CONFIG |
+ 		       PCA957x_BANK_BUSHOLD;
++	} else {
++		bank = PCA953x_BANK_INPUT | PCA953x_BANK_OUTPUT |
++		       PCA953x_BANK_POLARITY | PCA953x_BANK_CONFIG;
+ 	}
+ 
+ 	if (chip->driver_data & PCA_PCAL) {
+@@ -316,12 +316,12 @@ static bool pca953x_writeable_register(struct device *dev, unsigned int reg)
+ 	struct pca953x_chip *chip = dev_get_drvdata(dev);
+ 	u32 bank;
+ 
+-	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE) {
+-		bank = PCA953x_BANK_OUTPUT | PCA953x_BANK_POLARITY |
+-			PCA953x_BANK_CONFIG;
+-	} else {
++	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) {
+ 		bank = PCA957x_BANK_OUTPUT | PCA957x_BANK_POLARITY |
+ 			PCA957x_BANK_CONFIG | PCA957x_BANK_BUSHOLD;
++	} else {
++		bank = PCA953x_BANK_OUTPUT | PCA953x_BANK_POLARITY |
++			PCA953x_BANK_CONFIG;
+ 	}
+ 
+ 	if (chip->driver_data & PCA_PCAL)
+@@ -336,10 +336,10 @@ static bool pca953x_volatile_register(struct device *dev, unsigned int reg)
+ 	struct pca953x_chip *chip = dev_get_drvdata(dev);
+ 	u32 bank;
+ 
+-	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE)
+-		bank = PCA953x_BANK_INPUT;
+-	else
++	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE)
+ 		bank = PCA957x_BANK_INPUT;
++	else
++		bank = PCA953x_BANK_INPUT;
+ 
+ 	if (chip->driver_data & PCA_PCAL)
+ 		bank |= PCAL9xxx_BANK_IRQ_STAT;
+@@ -1070,13 +1070,12 @@ static int pca953x_probe(struct i2c_client *client,
+ 	/* initialize cached registers from their original values.
+ 	 * we can't share this chip with another i2c master.
+ 	 */
+-
+-	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE) {
+-		chip->regs = &pca953x_regs;
+-		ret = device_pca95xx_init(chip, invert);
+-	} else {
++	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) {
+ 		chip->regs = &pca957x_regs;
+ 		ret = device_pca957x_init(chip, invert);
++	} else {
++		chip->regs = &pca953x_regs;
++		ret = device_pca95xx_init(chip, invert);
+ 	}
+ 	if (ret)
+ 		goto err_exit;
+-- 
+2.35.1
+
