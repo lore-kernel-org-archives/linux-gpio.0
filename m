@@ -2,79 +2,118 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC30C54EE9
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Sep 2022 16:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39382C6FA8A
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Sep 2022 17:04:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231518AbiIMQx0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Sep 2022 12:53:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46044 "EHLO
+        id S232356AbiIMRES (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Sep 2022 13:04:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231648AbiIMQxD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2022 12:53:03 -0400
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BFA7C00CD;
-        Tue, 13 Sep 2022 08:46:19 -0700 (PDT)
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-1225219ee46so33222271fac.2;
-        Tue, 13 Sep 2022 08:46:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=jvR+5cYBN/jmH4LHizAk50e3xiA5DYoi3s75z6jiRMY=;
-        b=XhmX0fzckttRJfJqO6YPAeblaJtyNw1d23vfcNCoG2DgZDF+wE9qW4GZJ0c2viEoKj
-         s8OBXRxR1AqqHyBcPxDxcGJb+uf+PtDjcstZeDaHskl6H3Hmoh2p83G7cINHBWp3XpqV
-         8Q2o7m2T3BbTdJtjC9USlCO0zDOic0z0CSOcC5PfHfpyLUxpqwoXpy3PlocuTlMQJR5s
-         Flwf09pQDCdKrYbwHwSYR9XHWcN4KxjxdyZ9kBIcXo9G5LS65y4Mk6R9cJ5el6Js69Ch
-         YqfIw6s0VDcBglbKExww5tcSthHSiER7jlOqALYxXRVNuN3kHBTFkfv2EJBesghyA4Jh
-         oT/g==
-X-Gm-Message-State: ACgBeo2MzH06Xb8c8345bYka1KtMa0S2OkF6gXZUpfl5K2rzG3MszL0l
-        K/Vc0NzmAZtvuu/yOi9ZeQ==
-X-Google-Smtp-Source: AA6agR4JV7aKGKcSsm/3hcxmvaWfyHewMBq/2OdrrF0X9TNee1VdFTzf2OpU9JWPH89OowjsDjeoJA==
-X-Received: by 2002:a05:6808:1441:b0:333:3929:d079 with SMTP id x1-20020a056808144100b003333929d079mr1859152oiv.21.1663083908038;
-        Tue, 13 Sep 2022 08:45:08 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id r196-20020acaa8cd000000b0034fd36e95bfsm1733767oie.31.2022.09.13.08.45.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Sep 2022 08:45:07 -0700 (PDT)
-Received: (nullmailer pid 3793676 invoked by uid 1000);
-        Tue, 13 Sep 2022 15:45:06 -0000
-Date:   Tue, 13 Sep 2022 10:45:06 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Peter Chiu <chui-hao.chiu@mediatek.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Evelyn Tsai <evelyn.tsai@mediatek.com>,
-        Sam Shih <sam.shih@mediatek.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ryder Lee <ryder.Lee@mediatek.com>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Sean Wang <sean.wang@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2] dt-bindings: pinctrl: update bindings for MT7986 SoC
-Message-ID: <20220913154506.GA3793619-robh@kernel.org>
-References: <20220912092440.21011-1-chui-hao.chiu@mediatek.com>
+        with ESMTP id S232447AbiIMRDq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2022 13:03:46 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0E2126AD2;
+        Tue, 13 Sep 2022 08:54:09 -0700 (PDT)
+Received: from pan.home (unknown [IPv6:2a00:23c6:c311:3401:dd1a:56ef:ffd9:f71c])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: martyn)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 23E5D6601FF3;
+        Tue, 13 Sep 2022 16:54:03 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.co.uk;
+        s=mail; t=1663084443;
+        bh=3e6b22rHkUzjWLLTQerWtZ77OLwILLbLSRqG/UmLEDE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=a72dT8sDgdfudkZslg1wJixax9/PZ6cFlqAK5Zheo92WSIUwoZkkvv7n85ECDq3bI
+         bR6l8JBGBneBwE/K8774izYclexqeZxwC7gt4q+nxoAOuSXpUMIL92Z74SMYUJmltj
+         nHp9wauNAK/nsjOW7hmAPMdDcLgW8YozE9ROnWza8zlLTU1hnQ6t1eo5Rw7Bb7DzHe
+         OqRX20e/8Xwp4/BICHFRZaEI80DlouvJwcuFa8ylK48qrRBAuruGWHdbw70mievOxF
+         EgB8Z0zftEXkH6Sp/5Sq36qXCiKVDZkc35VLjBg4a8d3CBnz2NVdVn6dE/xdU+5GEl
+         o9jlQmKkUEDZQ==
+From:   Martyn Welch <martyn.welch@collabora.co.uk>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Martyn Welch <martyn.welch@collabora.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 3/5] gpio: pca953x: Fix pca953x_gpio_set_pull_up_down()
+Date:   Tue, 13 Sep 2022 16:53:46 +0100
+Message-Id: <20220913155348.38716-3-martyn.welch@collabora.co.uk>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220913155348.38716-1-martyn.welch@collabora.co.uk>
+References: <20220913155348.38716-1-martyn.welch@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220912092440.21011-1-chui-hao.chiu@mediatek.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 12 Sep 2022 17:24:40 +0800, Peter Chiu wrote:
-> Add wifi pins in the description and set 'maxItems' for groups and pins.
-> 
-> Reviewed-by: Sam Shih <sam.shih@mediatek.com>
-> Signed-off-by: Peter Chiu <chui-hao.chiu@mediatek.com>
-> ---
-> v2:
-> - Set 'maxItems' for groups and pins.
-> - Update commit message.
-> - Remove '$ref: /schemas/types.yaml#/definitions/string-array'.
-> ---
->  .../pinctrl/mediatek,mt7986-pinctrl.yaml      | 48 +++++++++++--------
->  1 file changed, 28 insertions(+), 20 deletions(-)
-> 
+From: Martyn Welch <martyn.welch@collabora.com>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+A previous fix, commit dc87f6dd058a ("gpio: pca953x: Fix
+pca953x_gpio_set_config"), identified that pinconf_to_config_param() needed
+to be used to isolate the config_param from the pinconf in
+pca953x_gpio_set_config(). This fix however did not consider that this
+would also be needed in pca953x_gpio_set_pull_up_down() to which it passes
+this config.
+
+Perform a similar call in pca953x_gpio_set_pull_up_down() to isolate the
+configuration parameter there as well, rather than passing it from
+pca953x_gpio_set_config() as the configuration argument may also be needed
+in pca953x_gpio_set_pull_up_down() at a later date.
+
+Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+
+Changes in v2:
+ - Re-order enum before u8
+
+Changes in v3:
+ - None
+
+Changes in v4:
+ - None
+
+ drivers/gpio/gpio-pca953x.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index ecd7d169470b..62367c9d6e99 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -548,6 +548,8 @@ static int pca953x_gpio_set_pull_up_down(struct pca953x_chip *chip,
+ 					 unsigned int offset,
+ 					 unsigned long config)
+ {
++	enum pin_config_param param = pinconf_to_config_param(config);
++
+ 	u8 pull_en_reg = pca953x_recalc_addr(chip, PCAL953X_PULL_EN, offset);
+ 	u8 pull_sel_reg = pca953x_recalc_addr(chip, PCAL953X_PULL_SEL, offset);
+ 	u8 bit = BIT(offset % BANK_SZ);
+@@ -563,9 +565,9 @@ static int pca953x_gpio_set_pull_up_down(struct pca953x_chip *chip,
+ 	mutex_lock(&chip->i2c_lock);
+ 
+ 	/* Configure pull-up/pull-down */
+-	if (config == PIN_CONFIG_BIAS_PULL_UP)
++	if (param == PIN_CONFIG_BIAS_PULL_UP)
+ 		ret = regmap_write_bits(chip->regmap, pull_sel_reg, bit, bit);
+-	else if (config == PIN_CONFIG_BIAS_PULL_DOWN)
++	else if (param == PIN_CONFIG_BIAS_PULL_DOWN)
+ 		ret = regmap_write_bits(chip->regmap, pull_sel_reg, bit, 0);
+ 	else
+ 		ret = 0;
+@@ -573,7 +575,7 @@ static int pca953x_gpio_set_pull_up_down(struct pca953x_chip *chip,
+ 		goto exit;
+ 
+ 	/* Disable/Enable pull-up/pull-down */
+-	if (config == PIN_CONFIG_BIAS_DISABLE)
++	if (param == PIN_CONFIG_BIAS_DISABLE)
+ 		ret = regmap_write_bits(chip->regmap, pull_en_reg, bit, 0);
+ 	else
+ 		ret = regmap_write_bits(chip->regmap, pull_en_reg, bit, bit);
+-- 
+2.35.1
+
