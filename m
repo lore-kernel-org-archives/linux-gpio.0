@@ -2,92 +2,150 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A6AC6FA82
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Sep 2022 15:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A7C3C6FA82
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Sep 2022 16:00:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231946AbiIMPtU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Sep 2022 11:49:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53030 "EHLO
+        id S234771AbiIMQAp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Sep 2022 12:00:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236497AbiIMPsY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2022 11:48:24 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59D9D86FDB
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2022 07:50:35 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id t7so21143415wrm.10
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2022 07:50:35 -0700 (PDT)
+        with ESMTP id S234395AbiIMP7p (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2022 11:59:45 -0400
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A222295681
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2022 07:58:17 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-346cd4c3d7aso143251997b3.8
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2022 07:58:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=uuUAUlYESfHNDi+YejfXdKYw5fjz5eIR1Jp8rUlK19c=;
-        b=7cHS8TMvfuKzbGm40Tb3+VrP9f7Ar6nDXuKiFbRac2N9EgqeHDVhDiidwGww+WcreG
-         gLMpW9BQLTN5UKyfsuPg7uNGyu9uUzldNFxWsdf7Uiei3xexG3BOOZYf2csxmyZZaMPG
-         k0D+n231T7uc4N2wfptEAOrDV78/XWJNCDyilJttB3yxs/dkpH5/gfZqXaqYRTEK+2Rq
-         eq4fuLlgjc3g8OntzKwPbwkl++Bc/2c1yEwPYbdFB0WD8a19WFnCHCtbTj6A42HQpO8t
-         PVnP3G3Gjvg8movdXdz+j275mpHNx4CtyqM+i1/7MJIB3VZV1FqtVfl09xpDTeHH6pq/
-         5Qlg==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date;
+        bh=XMXLsnSWPK2mcDb0zEAX0OOnVB7hMDHTLXTgeJCHe3g=;
+        b=cjXmT2+943hbSBR2sJayByv29xqLa4BVZOyPrrUS/p7QRpZxyZ6HzETWOcp3ph8EAf
+         PXDUsdXpNZ27Ru2sUYi85zYqlHKUFcpDSDEl+ugDBWsieHLSBEB5BGqQbbfvKnAPH7OW
+         unQc5QO2qHFE9p+SMNWsEO0HrgYvefdbtGGJwHF2fAZsaAdBuqUvBnmBizr+O7ijTT/A
+         B7B5qzG8O6Z+J1FOv8o+sWaiTQW9kasQfRmjDSp96e4Rhoy94/URFWTW7TDOIR7k5lNY
+         uD69cDsC5fhQ53jNm0whSEJlCV5NvGZ51aW876KsIQUnRW11g1KDlE9uij1M1tYx6596
+         8pQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=uuUAUlYESfHNDi+YejfXdKYw5fjz5eIR1Jp8rUlK19c=;
-        b=yLqBTTKU34PjsvMGxtJ1m1j47PqsRcRwroR31C5JHCQE7eUtFtWvOiTJzIOTxaef1g
-         iVNkC8HhrZ6qow+b2V9Z2VzUhlbEHwuZH1iFXbvKffLky9nov+6bjZ/80vpTVZlh6Hmk
-         zKKHNIW+sBhLDdlj0FqVGlyvs5+P2YIc90qO0Nc+i39NlFeDg1pG0NZG2BTUDNtJYe5o
-         2Lrc3sgQbmaGVomcBxCFb5111PgAws9yBvMdeQw6j5lZyti55ipVv7NEvs2yb2etEEe3
-         WECyQwdNUi8OQ5cVKLnaatiexYGa/OEuaN48jV7/0W+GRyCxfyWLxH/cm8PD2tIgVLMx
-         dASg==
-X-Gm-Message-State: ACgBeo1+a5X/XLV7mywzaJhbm2MA5yWTbXmpORRAPrmAKdS+eea0dPlX
-        i6YOJsJft2G6IX5ihjE8qZlXlnCNFdSygK3qR0rJ54pePrQ=
-X-Google-Smtp-Source: AA6agR6QIGrp2fAdnkwFjFQk/HswZRvMxVXZ0JkwXjwGIC0UzX658mD2J7R45Mae0DXy8vKUiThb3nPXp2Jt9SuFGyU=
-X-Received: by 2002:a05:6402:42c5:b0:44e:b640:16fb with SMTP id
- i5-20020a05640242c500b0044eb64016fbmr26672124edc.29.1663078386576; Tue, 13
- Sep 2022 07:13:06 -0700 (PDT)
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=XMXLsnSWPK2mcDb0zEAX0OOnVB7hMDHTLXTgeJCHe3g=;
+        b=ozYs9qNZoZNr2vThUP6fk/ueRodpYSKM5XcxTOCvK7oUhF1w0ZXAbNiH0O7jo53sBd
+         rpy06HscJMr+mjsitU6S2hy9bTi9XuoypQNW+fQJllicrsadyE3ISeasj22ebXvuLmXf
+         pjiOoB2y7+et5/1HwwiBXAV4ddipqS7dfeWJOyFUChGSoQdcexK/5709vGMcVLzI8m59
+         7ILdJXyjXZjIe9D5TVcLkUw9EuBWMr1TC1/hKyuJh35V+1Ally1WTUoj4flZEus7V69Z
+         4l383rqpTWZwWw76bkcdBLW0i09CbRr7x5sLmr1ip36X8jCcRaJ+e+67HZMJLCSUWNq8
+         YGnQ==
+X-Gm-Message-State: ACgBeo1czbVFQFLipfsjoekaEoBl9fTMguu4/OfsOKFRq3JZ8HGOCZZ4
+        Y4rWj5MRZaVVkABbs38mZ4R8+QlaLMVZTe0/o0oxzsPuLYI=
+X-Google-Smtp-Source: AA6agR4VjpCb4x7KELs8ugMh/b69BuitVneISWfbf/GBvEfBbTOBCEu+lNPg0SV14JHJSQ96vTsvnxXqtArhQbX5XXw=
+X-Received: by 2002:a9d:7550:0:b0:655:bcdc:f546 with SMTP id
+ b16-20020a9d7550000000b00655bcdcf546mr7279184otl.304.1663080435678; Tue, 13
+ Sep 2022 07:47:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220908112151.13912-1-f.fangjian@huawei.com>
-In-Reply-To: <20220908112151.13912-1-f.fangjian@huawei.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 13 Sep 2022 16:12:55 +0200
-Message-ID: <CAMRc=MftDHFhPQzaJgf4WUjTqNpGsEWi4mHWRVPWWtWx_Z-hbg@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Update HiSilicon GPIO Driver maintainer
-To:     Jay Fang <f.fangjian@huawei.com>
-Cc:     linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-        jonathan.cameron@huawei.com, jiaxingluo@autox.ai,
-        prime.zeng@hisilicon.com
+References: <20220909095632.2056143-1-sergio.paracuellos@gmail.com> <CAMRc=MdG6bLmdLuZhyPRwDv88C92870Q1x4u0gVyrasxbu=65A@mail.gmail.com>
+In-Reply-To: <CAMRc=MdG6bLmdLuZhyPRwDv88C92870Q1x4u0gVyrasxbu=65A@mail.gmail.com>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Tue, 13 Sep 2022 16:47:04 +0200
+Message-ID: <CAMhs-H8LcqdVLZ+-3WqF2oE1eQ+4Ew0U7nCs4nvnH_ZMm1tLfw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: mt7621: Switch to use fwnode instead of of_node
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Sep 8, 2022 at 1:24 PM Jay Fang <f.fangjian@huawei.com> wrote:
->
-> Add Jay Fang as the maintainer of the HiSilicon GPIO Driver, replacing
-> Luo Jiaxing.
->
-> Cc: Luo Jiaxing <jiaxingluo@autox.ai>
-> Signed-off-by: Jay Fang <f.fangjian@huawei.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f1390b8270b2..907451fb013a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9122,7 +9122,7 @@ S:        Maintained
->  F:     drivers/dma/hisi_dma.c
->
->  HISILICON GPIO DRIVER
-> -M:     Luo Jiaxing <luojiaxing@huawei.com>
-> +M:     Jay Fang <f.fangjian@huawei.com>
->  L:     linux-gpio@vger.kernel.org
->  S:     Maintained
->  F:     drivers/gpio/gpio-hisi.c
-> --
-> 2.33.0
->
+Hi Bart,
 
-Queued, thanks!
+On Tue, Sep 13, 2022 at 4:41 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> On Fri, Sep 9, 2022 at 11:56 AM Sergio Paracuellos
+> <sergio.paracuellos@gmail.com> wrote:
+> >
+> > GPIO library now accepts fwnode as a firmware node, so
+> > switch the driver to use it.
+> >
+> > Tested-by: Ar=C4=B1n=C3=A7 =C3=9CNAL <arinc.unal@arinc9.com>
+> > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> > ---
+> >  drivers/gpio/gpio-mt7621.c | 11 ++++++-----
+> >  1 file changed, 6 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+> > index d8a26e503ca5..05891dd3f96e 100644
+> > --- a/drivers/gpio/gpio-mt7621.c
+> > +++ b/drivers/gpio/gpio-mt7621.c
+> > @@ -9,7 +9,6 @@
+> >  #include <linux/interrupt.h>
+> >  #include <linux/io.h>
+> >  #include <linux/module.h>
+> > -#include <linux/of_irq.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/spinlock.h>
+> >
+> > @@ -205,7 +204,8 @@ mediatek_gpio_xlate(struct gpio_chip *chip,
+> >  }
+> >
+> >  static int
+> > -mediatek_gpio_bank_probe(struct device *dev, int bank)
+> > +mediatek_gpio_bank_probe(struct device *dev,
+> > +                        struct fwnode_handle *fwnode, int bank)
+> >  {
+> >         struct mtk *mtk =3D dev_get_drvdata(dev);
+> >         struct mtk_gc *rg;
+> > @@ -216,6 +216,7 @@ mediatek_gpio_bank_probe(struct device *dev, int ba=
+nk)
+> >         memset(rg, 0, sizeof(*rg));
+> >
+> >         spin_lock_init(&rg->lock);
+> > +       rg->chip.fwnode =3D fwnode;
+> >         rg->bank =3D bank;
+> >
+> >         dat =3D mtk->base + GPIO_REG_DATA + (rg->bank * GPIO_BANK_STRID=
+E);
+> > @@ -290,7 +291,7 @@ static int
+> >  mediatek_gpio_probe(struct platform_device *pdev)
+> >  {
+> >         struct device *dev =3D &pdev->dev;
+> > -       struct device_node *np =3D dev->of_node;
+> > +       struct fwnode_handle *fwnode =3D dev_fwnode(dev);
+> >         struct mtk *mtk;
+> >         int i;
+> >         int ret;
+> > @@ -303,12 +304,12 @@ mediatek_gpio_probe(struct platform_device *pdev)
+> >         if (IS_ERR(mtk->base))
+> >                 return PTR_ERR(mtk->base);
+> >
+> > -       mtk->gpio_irq =3D irq_of_parse_and_map(np, 0);
+> > +       mtk->gpio_irq =3D fwnode_irq_get(fwnode, 0);
+>
+> You can do even better and just use platform_get_irq().
 
-Bart
+Will change this and send v2 of this patch alone for the next cycle.
+
+Thanks,
+    Sergio Paracuellos
+
+>
+> Bart
+>
+> >         mtk->dev =3D dev;
+> >         platform_set_drvdata(pdev, mtk);
+> >
+> >         for (i =3D 0; i < MTK_BANK_CNT; i++) {
+> > -               ret =3D mediatek_gpio_bank_probe(dev, i);
+> > +               ret =3D mediatek_gpio_bank_probe(dev, fwnode, i);
+> >                 if (ret)
+> >                         return ret;
+> >         }
+> > --
+> > 2.25.1
+> >
