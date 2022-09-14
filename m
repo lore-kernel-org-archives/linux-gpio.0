@@ -2,48 +2,44 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B428C6FA8B
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Sep 2022 15:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B38C6FA8D
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Sep 2022 15:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230200AbiINPQM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 14 Sep 2022 11:16:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47952 "EHLO
+        id S230208AbiINPQN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 14 Sep 2022 11:16:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230030AbiINPQK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2022 11:16:10 -0400
+        with ESMTP id S230131AbiINPQL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2022 11:16:11 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A4867C1FC;
-        Wed, 14 Sep 2022 08:16:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93F537D1D1;
+        Wed, 14 Sep 2022 08:16:10 -0700 (PDT)
 Received: from pan.home (unknown [IPv6:2a00:23c6:c311:3401:435d:1590:4ce7:da62])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: martyn)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 9F1246601D89;
-        Wed, 14 Sep 2022 16:16:07 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 41F426601F88;
+        Wed, 14 Sep 2022 16:16:09 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.co.uk;
-        s=mail; t=1663168567;
-        bh=HKrrv+p/aBfMJilOdkjludigqWGJAiSp1GKCXdGJmuw=;
+        s=mail; t=1663168569;
+        bh=0quf9av7IJe/WYfnv44p7AeJsmd86GwbyXpXrmXnQD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B1h9G04J57W4F4eI8NdQ5daVig2LJ1exDqG4CxpRGvZeJ+hlj8LlEqNuBud98q28V
-         1MclOA3TMk5URX+fhBUMWVzfpG41XbWxl/2VIUWd8zCpGvqTtT83gAmVJDod3DhdVu
-         dC34W8h6dcMxhHpNERK8u3cgNaOlKpD+z8kYuvZx6bS95SACEj1MT7T7RQgqUdxSm/
-         Bxg3XHIdIVa3UsJoYAs+jvS/XrCzUOBGX1l1fN7/Sm/I0e9d3c/5XY7KdVNH7uRTwN
-         yzxbRdHb638vjG03XpL0mFFS5xT2zlJb1I5lavdZnRqlDDQnQj6fkVei7sMg4ZQwGH
-         fRIGkU63KdE9A==
+        b=iUWPFaOafekZRRUTIUT4+gx4h3QDBhlNA4BuYYhK6ojvZfghIkrXDQeG1vSTh8WnP
+         ySt2LCcWsAlHIobLSFo7D7ZiY1rpEtxW6NSAodEUf+AWFYoeFzWsnq67hZfCRcIhpY
+         lL9t7sGn5gLQp/nP6yDMEGr7nr7RwN7WDs5QLEzkVV35AFvIsazoWG7APT+Hn9546P
+         7UPgZpf80LdPXPg/803dGL43M6YOTUVGYBVV/QWyt9ehwEEmRlIyNPR6YFYAYSc8A0
+         +SzJhIIRK9T4osRgymF6CpeUSaXvNB8Ehwx9TVGT6SZl8dL6yKG4FTkYNMwsqmXBbQ
+         udIa9KrHpQ/8w==
 From:   Martyn Welch <martyn.welch@collabora.co.uk>
 To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+        Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Martyn Welch <martyn.welch@collabora.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/5] dt-bindings: gpio: pca95xx: add entry for pcal6534 and PI4IOE5V6534Q
-Date:   Wed, 14 Sep 2022 16:15:54 +0100
-Message-Id: <20220914151558.536226-2-martyn.welch@collabora.co.uk>
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 4/5] gpio: pca953x: Swap if statements to save later complexity
+Date:   Wed, 14 Sep 2022 16:15:56 +0100
+Message-Id: <20220914151558.536226-4-martyn.welch@collabora.co.uk>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220914151558.536226-1-martyn.welch@collabora.co.uk>
 References: <20220914151558.536226-1-martyn.welch@collabora.co.uk>
@@ -55,141 +51,102 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Martyn Welch <martyn.welch@collabora.com>
 
-The NXP PCAL6534 is a 34-bit I2C I/O expander similar to the PCAL6524. The
-Diodes PI4IOE5V6534Q is a functionally identical chip provided by Diodes
-Inc.
+A later patch in the series adds support for a further chip type that
+shares some similarity with the PCA953X_TYPE. In order to keep the logic
+simple, swap over the if and else portions where checks are made against
+PCA953X_TYPE and instead check for PCA957X_TYPE.
 
 Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
 
 Changes in v2:
- - Enumerate pi4ioe5v6534q as requiring pcal6534 fallback
+ - None
 
 Changes in v3:
- - Corrected indentation
+ - None
 
 Changes in v4:
- - Further indentation corrections
+ - None
 
 Changes in v5:
- - Rebased on Bart's `for-next` branch
+ - None
 
- .../bindings/gpio/gpio-pca95xx.yaml           | 100 ++++++++++--------
- 1 file changed, 53 insertions(+), 47 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-index 05a9fa92283f..1b70e9f308f3 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-@@ -15,53 +15,59 @@ description: |+
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index a6081d93d4fa..c27b83bbbfe1 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -294,13 +294,13 @@ static bool pca953x_readable_register(struct device *dev, unsigned int reg)
+ 	struct pca953x_chip *chip = dev_get_drvdata(dev);
+ 	u32 bank;
  
- properties:
-   compatible:
--    enum:
--      - exar,xra1202
--      - maxim,max7310
--      - maxim,max7312
--      - maxim,max7313
--      - maxim,max7315
--      - maxim,max7319
--      - maxim,max7320
--      - maxim,max7321
--      - maxim,max7322
--      - maxim,max7323
--      - maxim,max7324
--      - maxim,max7325
--      - maxim,max7326
--      - maxim,max7327
--      - nxp,pca6408
--      - nxp,pca6416
--      - nxp,pca9505
--      - nxp,pca9506
--      - nxp,pca9534
--      - nxp,pca9535
--      - nxp,pca9536
--      - nxp,pca9537
--      - nxp,pca9538
--      - nxp,pca9539
--      - nxp,pca9554
--      - nxp,pca9555
--      - nxp,pca9556
--      - nxp,pca9557
--      - nxp,pca9574
--      - nxp,pca9575
--      - nxp,pca9698
--      - nxp,pcal6408
--      - nxp,pcal6416
--      - nxp,pcal6524
--      - nxp,pcal9535
--      - nxp,pcal9554b
--      - nxp,pcal9555a
--      - onnn,cat9554
--      - onnn,pca9654
--      - ti,pca6107
--      - ti,pca9536
--      - ti,tca6408
--      - ti,tca6416
--      - ti,tca6424
--      - ti,tca9539
--      - ti,tca9554
-+    oneOf:
-+      - items:
-+          - const: diodes,pi4ioe5v6534q
-+          - const: nxp,pcal6534
-+      - items:
-+          - enum:
-+              - exar,xra1202
-+              - maxim,max7310
-+              - maxim,max7312
-+              - maxim,max7313
-+              - maxim,max7315
-+              - maxim,max7319
-+              - maxim,max7320
-+              - maxim,max7321
-+              - maxim,max7322
-+              - maxim,max7323
-+              - maxim,max7324
-+              - maxim,max7325
-+              - maxim,max7326
-+              - maxim,max7327
-+              - nxp,pca6408
-+              - nxp,pca6416
-+              - nxp,pca9505
-+              - nxp,pca9506
-+              - nxp,pca9534
-+              - nxp,pca9535
-+              - nxp,pca9536
-+              - nxp,pca9537
-+              - nxp,pca9538
-+              - nxp,pca9539
-+              - nxp,pca9554
-+              - nxp,pca9555
-+              - nxp,pca9556
-+              - nxp,pca9557
-+              - nxp,pca9574
-+              - nxp,pca9575
-+              - nxp,pca9698
-+              - nxp,pcal6408
-+              - nxp,pcal6416
-+              - nxp,pcal6524
-+              - nxp,pcal6534
-+              - nxp,pcal9535
-+              - nxp,pcal9554b
-+              - nxp,pcal9555a
-+              - onnn,cat9554
-+              - onnn,pca9654
-+              - ti,pca6107
-+              - ti,pca9536
-+              - ti,tca6408
-+              - ti,tca6416
-+              - ti,tca6424
-+              - ti,tca9539
-+              - ti,tca9554
+-	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE) {
+-		bank = PCA953x_BANK_INPUT | PCA953x_BANK_OUTPUT |
+-		       PCA953x_BANK_POLARITY | PCA953x_BANK_CONFIG;
+-	} else {
++	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) {
+ 		bank = PCA957x_BANK_INPUT | PCA957x_BANK_OUTPUT |
+ 		       PCA957x_BANK_POLARITY | PCA957x_BANK_CONFIG |
+ 		       PCA957x_BANK_BUSHOLD;
++	} else {
++		bank = PCA953x_BANK_INPUT | PCA953x_BANK_OUTPUT |
++		       PCA953x_BANK_POLARITY | PCA953x_BANK_CONFIG;
+ 	}
  
-   reg:
-     maxItems: 1
+ 	if (chip->driver_data & PCA_PCAL) {
+@@ -317,12 +317,12 @@ static bool pca953x_writeable_register(struct device *dev, unsigned int reg)
+ 	struct pca953x_chip *chip = dev_get_drvdata(dev);
+ 	u32 bank;
+ 
+-	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE) {
+-		bank = PCA953x_BANK_OUTPUT | PCA953x_BANK_POLARITY |
+-			PCA953x_BANK_CONFIG;
+-	} else {
++	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) {
+ 		bank = PCA957x_BANK_OUTPUT | PCA957x_BANK_POLARITY |
+ 			PCA957x_BANK_CONFIG | PCA957x_BANK_BUSHOLD;
++	} else {
++		bank = PCA953x_BANK_OUTPUT | PCA953x_BANK_POLARITY |
++			PCA953x_BANK_CONFIG;
+ 	}
+ 
+ 	if (chip->driver_data & PCA_PCAL)
+@@ -337,10 +337,10 @@ static bool pca953x_volatile_register(struct device *dev, unsigned int reg)
+ 	struct pca953x_chip *chip = dev_get_drvdata(dev);
+ 	u32 bank;
+ 
+-	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE)
+-		bank = PCA953x_BANK_INPUT;
+-	else
++	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE)
+ 		bank = PCA957x_BANK_INPUT;
++	else
++		bank = PCA953x_BANK_INPUT;
+ 
+ 	if (chip->driver_data & PCA_PCAL)
+ 		bank |= PCAL9xxx_BANK_IRQ_STAT;
+@@ -1071,13 +1071,12 @@ static int pca953x_probe(struct i2c_client *client,
+ 	/* initialize cached registers from their original values.
+ 	 * we can't share this chip with another i2c master.
+ 	 */
+-
+-	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE) {
+-		chip->regs = &pca953x_regs;
+-		ret = device_pca95xx_init(chip, invert);
+-	} else {
++	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) {
+ 		chip->regs = &pca957x_regs;
+ 		ret = device_pca957x_init(chip, invert);
++	} else {
++		chip->regs = &pca953x_regs;
++		ret = device_pca95xx_init(chip, invert);
+ 	}
+ 	if (ret)
+ 		goto err_exit;
 -- 
 2.35.1
 
