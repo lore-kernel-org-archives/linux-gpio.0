@@ -2,108 +2,121 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 402BAC6FA82
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Sep 2022 15:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC580ECAAD3
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Sep 2022 15:16:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229682AbiINPMI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 14 Sep 2022 11:12:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39712 "EHLO
+        id S230141AbiINPQL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 14 Sep 2022 11:16:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229692AbiINPMF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2022 11:12:05 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CFC179EEF
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Sep 2022 08:11:53 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id az24-20020a05600c601800b003a842e4983cso11790031wmb.0
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Sep 2022 08:11:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=FDqshHngJe4QAJMkSfGxP7nqWYe+6Ouvyb1oeASj3+A=;
-        b=QkFnBx+i96ZfmpkSO/5wXZ8RQ0Ypwl33j1ceEc+0l8HBCXloWYm3nH/wCya6WJ+dZe
-         WNep9Abuk+TjW5Fz5L59l/Wtelshxxs2hbCuzzjWfx+zNGl42xIlOEnzb9ZW6lbX/HHK
-         tZSV9/M6vGIE6h7fdQYjzgYttkqPOX6pUqHDVR5V9OpfCOGkbf8GVi8jWM49m3okPTwL
-         dCTB/0COTN8P9rejIB9IcFyEduC6yeep33ENYBSfFYh5oWpJptyGZT9iNC1WvMuSfP06
-         xx5HHdquc9q78oxzMKvgDVTny3jWe488IPZnokjRc6tEGNI7Xl0OP9tdNO+C/mMzx6/5
-         +dgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=FDqshHngJe4QAJMkSfGxP7nqWYe+6Ouvyb1oeASj3+A=;
-        b=rDKAev39urihwSrSkdS6Y/5PpgqlaNPesHjy0nAmkx7S4jaDUtw5+XWSWMGEft9O3r
-         LMVUDtY4ZgouuUoJ+cySMBqG6s2bdZj4OQiCYXlt9qqngwfgIgmWPmHjxIVigvfHwaVc
-         COkpapvkK3tECHJRdTQxsvW2H4PgCFTtwdFnPDdzZhLRRUizQ4SfTuAF3tOrn0lCJ77O
-         0WPTsU+6qAfSqgDs5JDaWtK+NEuO4tcP/npR3TpWeOqQKSQ3o3Lgf2L+7tmTlsabIRkK
-         t2KN8Cy+pK/G6wTuiDiYCzx3u2C95iN2tyP5B9yXXCbtBXLNNK+c8+oFoZYmqmBU0c1O
-         +pPA==
-X-Gm-Message-State: ACgBeo37UexvVEsQ/07iv9ylPptAOhLTQIypAT53LQEmtQczq63BCdwc
-        BsAjngAG2xbR7lfTP8lrCqlZ7w==
-X-Google-Smtp-Source: AA6agR7UT8Bi3IG8SZxhaWrxDN5WYVN21s7j01/HZd7wV0hHTFaNQwJzsiimN6as7moe9HCEDANLHQ==
-X-Received: by 2002:a7b:cc85:0:b0:3b4:9fc7:cd4d with SMTP id p5-20020a7bcc85000000b003b49fc7cd4dmr2759413wma.68.1663168311739;
-        Wed, 14 Sep 2022 08:11:51 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:e580:6bb0:74a0:252b])
-        by smtp.gmail.com with ESMTPSA id b11-20020a05600c4e0b00b003b492753826sm8818481wmq.43.2022.09.14.08.11.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Sep 2022 08:11:51 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Drew Fustini <dfustini@baylibre.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        with ESMTP id S230045AbiINPQK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2022 11:16:10 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C41E97DF42;
+        Wed, 14 Sep 2022 08:16:09 -0700 (PDT)
+Received: from pan.home (unknown [IPv6:2a00:23c6:c311:3401:435d:1590:4ce7:da62])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: martyn)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 739B56601D9B;
+        Wed, 14 Sep 2022 16:16:08 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.co.uk;
+        s=mail; t=1663168568;
+        bh=QLczZZOdgDTYC+sSLfVrHhjnLyvPZ/9+jxZH61C2WxQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=h9PcN2G/7Mi6wcXDZQk1j8uatR6m9UiDhtjDMfCPGfcFSMweFsITEbbtZGiPDtiqV
+         +pIz5kMZbGV08Eb42b4DVCRaD9htyr3vt+l/wMob76YbQfJbejbPLGHbtgRSRtRmuF
+         I2UupIj/eBdKv3VC7H/wVf+tBfJl0Yh0xQFBRZeksMqKZ9XuZI1TRzkJUf+zeSzLKx
+         FSG2JZoY9dvQElxQBG/ucDPD7FPiRtjC486Uv5Ubrmnm1mFvRGPsFyLkw+RTuL8ACT
+         VC+OAI+5BPq0ACOkfYZnP2csGz1XvTEx9XevqIKloy1QBeX5bygi2TX3Km+Jvoy5oj
+         hbWyaiiELNMLQ==
+From:   Martyn Welch <martyn.welch@collabora.co.uk>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH] gpiolib: TODO: add an item about GPIO safe-state
-Date:   Wed, 14 Sep 2022 17:11:45 +0200
-Message-Id: <20220914151145.73253-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.34.1
+Cc:     Martyn Welch <martyn.welch@collabora.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 3/5] gpio: pca953x: Fix pca953x_gpio_set_pull_up_down()
+Date:   Wed, 14 Sep 2022 16:15:55 +0100
+Message-Id: <20220914151558.536226-3-martyn.welch@collabora.co.uk>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220914151558.536226-1-martyn.welch@collabora.co.uk>
+References: <20220914151558.536226-1-martyn.welch@collabora.co.uk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This adds a new TODO item for gpiolib and can also be used to start
-a discussion about the need for it and implementation details.
+From: Martyn Welch <martyn.welch@collabora.com>
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+A previous fix, commit dc87f6dd058a ("gpio: pca953x: Fix
+pca953x_gpio_set_config"), identified that pinconf_to_config_param() needed
+to be used to isolate the config_param from the pinconf in
+pca953x_gpio_set_config(). This fix however did not consider that this
+would also be needed in pca953x_gpio_set_pull_up_down() to which it passes
+this config.
+
+Perform a similar call in pca953x_gpio_set_pull_up_down() to isolate the
+configuration parameter there as well, rather than passing it from
+pca953x_gpio_set_config() as the configuration argument may also be needed
+in pca953x_gpio_set_pull_up_down() at a later date.
+
+Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/gpio/TODO | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/gpio/TODO b/drivers/gpio/TODO
-index f87ff3fa8a53..6ab39c5cec9d 100644
---- a/drivers/gpio/TODO
-+++ b/drivers/gpio/TODO
-@@ -197,3 +197,25 @@ A small number of drivers have been converted (pl061, tegra186, msm,
- amd, apple), and can be used as examples of how to proceed with this
- conversion. Note that drivers using the generic irqchip framework
- cannot be converted yet, but watch this space!
+Changes in v2:
+ - Re-order enum before u8
+
+Changes in v3:
+ - None
+
+Changes in v4:
+ - None
+
+Changes in v5:
+ - None
+
+ drivers/gpio/gpio-pca953x.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 00c1e2f105ad..a6081d93d4fa 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -549,6 +549,8 @@ static int pca953x_gpio_set_pull_up_down(struct pca953x_chip *chip,
+ 					 unsigned int offset,
+ 					 unsigned long config)
+ {
++	enum pin_config_param param = pinconf_to_config_param(config);
 +
-+Safe-state of GPIOs
-+
-+During 2022 Linux Plumbers Conference's GPIO & pinctrl BOF it's been discussed
-+that we don't have any middle ground between hogging GPIO lines and letting the
-+user (either in-kernel or user-space) control them. Either the lines are forever
-+reserved as hogs or their state is undefined unless requested.
-+
-+Currently the behavior of GPIOs that were not requested or were released is
-+largely driver dependent (the provider driver decides whether the line's state
-+is reverted to some predefined value or left as-is). This can be problematic
-+as the output state of a line can damage physical hardware.
-+
-+This item is about proposing a solution, most likely in the form of a new device
-+property called "safe-state" that would define the safe states of specific lines
-+(e.g. output-high) but not block the line from being requested by users who 
-+could then modify that default state. Once released the GPIO core would then
-+put the line back into the "safe-state".
-+
-+While this could potentially be seen as defining policy in the device-tree, it's
-+not anymore a policy than properties such as "regulator-always-on" or gpio-hogs
-+themselves are.
+ 	u8 pull_en_reg = pca953x_recalc_addr(chip, PCAL953X_PULL_EN, offset);
+ 	u8 pull_sel_reg = pca953x_recalc_addr(chip, PCAL953X_PULL_SEL, offset);
+ 	u8 bit = BIT(offset % BANK_SZ);
+@@ -564,9 +566,9 @@ static int pca953x_gpio_set_pull_up_down(struct pca953x_chip *chip,
+ 	mutex_lock(&chip->i2c_lock);
+ 
+ 	/* Configure pull-up/pull-down */
+-	if (config == PIN_CONFIG_BIAS_PULL_UP)
++	if (param == PIN_CONFIG_BIAS_PULL_UP)
+ 		ret = regmap_write_bits(chip->regmap, pull_sel_reg, bit, bit);
+-	else if (config == PIN_CONFIG_BIAS_PULL_DOWN)
++	else if (param == PIN_CONFIG_BIAS_PULL_DOWN)
+ 		ret = regmap_write_bits(chip->regmap, pull_sel_reg, bit, 0);
+ 	else
+ 		ret = 0;
+@@ -574,7 +576,7 @@ static int pca953x_gpio_set_pull_up_down(struct pca953x_chip *chip,
+ 		goto exit;
+ 
+ 	/* Disable/Enable pull-up/pull-down */
+-	if (config == PIN_CONFIG_BIAS_DISABLE)
++	if (param == PIN_CONFIG_BIAS_DISABLE)
+ 		ret = regmap_write_bits(chip->regmap, pull_en_reg, bit, 0);
+ 	else
+ 		ret = regmap_write_bits(chip->regmap, pull_en_reg, bit, bit);
 -- 
-2.34.1
+2.35.1
 
