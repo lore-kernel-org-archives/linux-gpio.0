@@ -2,114 +2,112 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D968CC6FA82
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Sep 2022 11:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83260C6FA8A
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Sep 2022 12:39:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230288AbiIOLzJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Sep 2022 07:55:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43908 "EHLO
+        id S230061AbiIOMjL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Sep 2022 08:39:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230316AbiIOLys (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Sep 2022 07:54:48 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on20612.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eab::612])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDEAC86054;
-        Thu, 15 Sep 2022 04:49:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QE/WdFUFA7G9ig3H4Sx0rTLirSN8qqVCuQqBNVaZ1iLkzMvc2krPT2Q6HBz/1voE8R2+uowclz3aJnbWH1IajAlFXyA92D52zsm02AZLv+sJiQ8JfkQ0lGom8m8QGArkWuvPPGhgp91MgLY5guH4NWD0Bg/EuyMuiewP04UCxtoUxTXYcwiVcssTWhzVCVihJySaCJkRQc45rU7N1mF8pdv6oez5vlLapzKuJAzZ+RUhtZUTRwGVMKi/OP4GVRDfdsSvR9LvhXbvs+e6WAv9Lgh2sCAJvLuInP8Gi7cnuDIzZ6IRarmuxDCMUNyGzNFNwwpNt7kNQ3yXfb5ekKu+PA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o8LU+kwpcHlcCQe3KaIx7D1+qU042kQqZTBwxLOXmfw=;
- b=CQtuNYhJHjla/RfHscRseYni1gNvH5uwcOC3+MtfKfilx8LAqSwvC3PPFCejM0yYv5Zmgb9RUfi9Tpl6SX/rvja5nufI0XvxQL68eGU9CmCBgLs4q6CSD63bhWSJz2jS9Da/L9/XNPU17em61//JUnOi8VVr1wUq64kKJR/GRwO88wVApBi4BhBaywZqQZwZns6KNEs9GtJ7Mb20s9AqRRoxg9ZfOF3fw3Y0PNLyKxiwh3V4YdwG39UsccNsBjA9ZwtDyzUjLtlifK/1HP+Q9F5WBhk82ItnMNxV+WuGggiybvwk8kfc8lTkVgdGLSoJN57Q57I1OOm5LZjmpVYcoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o8LU+kwpcHlcCQe3KaIx7D1+qU042kQqZTBwxLOXmfw=;
- b=Z/JTYsdETqsbTJ4In572EyP/brnwlPS9In51e7K0kzaGoPYa5uoJIEQbpWKCqNg2LVDp2+LwaTfDlIlAVeMYEImhq83lhLz8A5RVlq1PwT0ZRNsPy9xbHCVu76dxlTsGyXK4vhI2pZZ+TppjZACltp8L6630fY0H80nPr9JQYdw=
-Received: from MW4PR03CA0129.namprd03.prod.outlook.com (2603:10b6:303:8c::14)
- by DM6PR12MB4140.namprd12.prod.outlook.com (2603:10b6:5:221::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.19; Thu, 15 Sep
- 2022 11:48:08 +0000
-Received: from CO1NAM11FT010.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:8c:cafe::77) by MW4PR03CA0129.outlook.office365.com
- (2603:10b6:303:8c::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.15 via Frontend
- Transport; Thu, 15 Sep 2022 11:48:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CO1NAM11FT010.mail.protection.outlook.com (10.13.175.88) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5632.12 via Frontend Transport; Thu, 15 Sep 2022 11:48:08 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 15 Sep
- 2022 06:48:07 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 15 Sep
- 2022 06:48:06 -0500
-Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
- Transport; Thu, 15 Sep 2022 06:48:04 -0500
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-To:     <linux-gpio@vger.kernel.org>
-CC:     <git@amd.com>, <devicetree@vger.kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <robh+dt@kernel.org>,
-        <brgl@bgdev.pl>, <linus.walleij@linaro.org>
-Subject: [PATCH v2 0/2] gpio: pca9570: add slg7xl45106 support
-Date:   Thu, 15 Sep 2022 17:18:01 +0530
-Message-ID: <20220915114803.26185-1-shubhrajyoti.datta@amd.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S229986AbiIOMjH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Sep 2022 08:39:07 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67049844CB;
+        Thu, 15 Sep 2022 05:39:02 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id e18so7626791wmq.3;
+        Thu, 15 Sep 2022 05:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=JowbcqaoSeHYfBdTSmK7yPgn5pXXbUiwgqBzQ++Q3hY=;
+        b=Zds6NGqWZZ8qjwOAkmr3ltzpBLskhG8fdSr3MDcQ2Y9bwqVzgQcnifi7N3M1lTlk5V
+         PxmB/A8BKT3rs4TZogzc8BG8tw76D3WstQAobiHRlCJ5HhxKRnJxaemiTP6jT8+Zxcfs
+         BtTsNSKXvFryyTsvhw8Q7uBJLlsXZPRF5A4Bc/cCR/xcQtny7OqCcgPfzPFZihXLi73F
+         SCKiP1FiM0dpH4LH2yyWNrxZNkI9D0M5tJrFx7sEmDLWUHWy6ul6cO3y7ys24eGdPU0F
+         2XWgSxU57fF7M/eZBmj3dYfKXIaB+rPXIwof6BTYBm/D+wEWRb52UqAAkqSRL4vSV3NS
+         wHCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=JowbcqaoSeHYfBdTSmK7yPgn5pXXbUiwgqBzQ++Q3hY=;
+        b=ldB3dYE9AbgLbF8Wet9EtYjPl7ZWaC8L9ahav+SBgipvI3c9TrBs3ioQKacIm+Xgy0
+         /NqbkhW+I1+PcnGvw2UBziBhb/euUWJGXcvSMPZzBkKEs4WoaLa/1/3YN3nvOyOFM/A8
+         MvPIR4W4bWY309VIxh0/1CwxJR0e9ORSrsCyuLhzFxRY/WASn9eyqtnH83WlRPMN4Cit
+         HFeZwjxJ9KRe2ylxJFBj/RuX/HdnmK1cB69dzhXoDX6kjMRU+UjsMjFz7mWVwnabsROD
+         Lcu8CHnRUhoUpZj6jE20zRr0r1rO8+QrspJttkkZ9z+AVB77A3+ea0qUX5Rn9gcb52E8
+         wNAw==
+X-Gm-Message-State: ACgBeo3f/ljQwvrrs6WFRy6mF7lANmHn6GsadWNWphsSiiDxjPfE0yXJ
+        SbzG6dtYeslvWsGK4NGkeBg=
+X-Google-Smtp-Source: AA6agR6p+cQR2KXMA9mKPBtsRgWmraQ/EvHReKZd5/k0gahtz19cEOPpIXYgYOGYaCCdfCyrrcA5ag==
+X-Received: by 2002:a1c:7315:0:b0:3a5:ff61:4080 with SMTP id d21-20020a1c7315000000b003a5ff614080mr6482824wmb.196.1663245541937;
+        Thu, 15 Sep 2022 05:39:01 -0700 (PDT)
+Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id fc8-20020a05600c524800b003b48dac344esm3199521wmb.43.2022.09.15.05.38.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Sep 2022 05:38:57 -0700 (PDT)
+Date:   Thu, 15 Sep 2022 14:38:56 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Prathamesh Shete <pshete@nvidia.com>
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
+        smangipudi@nvidia.com, Manish Bhardwaj <mbhardwaj@nvidia.com>
+Subject: Re: [PATCH v2] gpio: tegra186: add Tegra234 PMC compatible in GPIO
+ driver
+Message-ID: <YyMc4OkYLLXjiHmL@orome>
+References: <Yhe0pCpfeCpyfPWg@orome>
+ <20220816102725.14708-1-pshete@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT010:EE_|DM6PR12MB4140:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8637f12c-5467-40a6-d7ce-08da971028d1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: CEH8sFWgSi2PhX3yvUPMM215PqZTVMa1wUgVFoNybUshu4WyCLw5GFOwCBYwK3ocWuJ9PB4hWZb/dBy/UMlgQ94vEeNF+SwuU71tbFBKgGtY3zWhv7Ml3qah8KPR96Si1RIPDjFXCtzPueGrx1ZNa8FPZK+vImTdj0EqZ1Rtd2o+658jmBre7pjfClM6byMJ7eRlLZmjpuLQHvdxs8JWqkvOWxKDz88N0of8F8A84mqFgTUKOZMCx+KAxGyiRKxqN16WApM9VpnYadnnA1Ue20nVl/gKIPdGIdEkxBh3MqAj/ru6hEmDGe0xbPwLmGRfAyV2F7Z0dzrTDDGj/Koho4HJ3UZPy6fbtIONVF9nHYzZjuQxlI/D20lVHrizIFgmbz44msFzTM61mR1H3oDsqck8+DMOMxqXpJmzwqghSjXJsQd5nwrJtxH8AZpSXXb9c4QO0wb6WcCzAtvNxC/dTL9JSsJytk3EszuG1do5G1vr//F/q/pCdkFuD/6/j5OESunk4x7RbPLvZPHWlGvgDrpvEfUtZG9ktxYk5D7jZJ9Lt0P1yEdJmQfkKJLudoLflHsBEisYHPBQIkRGPnFdnQq07BpikszHX70RqphFWPFyF5r2Ce8jeePdL4btxAFIPUY5nfy8y697lZqaa/vym9BjivZd6C5e9vXQ1SHrVhvTVhb36/0mRk31sXvwUp2Gp4pDIG6KYfTQXxHeo4UlFBq+KGPmQvtpWtEcN2Ff+plFUo49n1R0iYyq5qHVWGm6p6RPBU+3m7jrWbfuQVdhNuzjZ02Qzif4hnjfRl6aTK/QftSQZQL5awbVOHxKjP+o
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(376002)(396003)(136003)(346002)(451199015)(46966006)(40470700004)(36840700001)(8936002)(186003)(47076005)(4744005)(81166007)(40480700001)(356005)(1076003)(41300700001)(86362001)(316002)(478600001)(82740400003)(426003)(54906003)(4326008)(83380400001)(6916009)(2616005)(6666004)(40460700003)(70206006)(70586007)(336012)(36756003)(36860700001)(5660300002)(44832011)(26005)(8676002)(82310400005)(2906002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2022 11:48:08.4583
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8637f12c-5467-40a6-d7ce-08da971028d1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT010.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4140
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ObJgmcXHiByHBDO8"
+Content-Disposition: inline
+In-Reply-To: <20220816102725.14708-1-pshete@nvidia.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add SLG7XL45106 GPO expander
- 
-v2:
-Use the platform data check instead of compatible
-arrange alphabetically
-rebase to the latest kernel
 
+--ObJgmcXHiByHBDO8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Shubhrajyoti Datta (2):
-  dt-bindings: gpio: pca9570: Add compatible for slg7xl45106
-  gpio: pca9570: add slg7xl45106 support
+On Tue, Aug 16, 2022 at 03:57:25PM +0530, Prathamesh Shete wrote:
+> Using this patch we are adding PMC compatible string for
+> Tegra234 in GPIO driver so the IRQ hierarchy can be set.
+>=20
+> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+>  drivers/gpio/gpio-tegra186.c | 1 +
+>  1 file changed, 1 insertion(+)
 
- .../bindings/gpio/gpio-pca9570.yaml           |  1 +
- drivers/gpio/gpio-pca9570.c                   | 39 +++++++++++++++++--
- 2 files changed, 36 insertions(+), 4 deletions(-)
+I already acked this on v1, but here goes again, for patchwork:
 
--- 
-2.17.1
+Acked-by: Thierry Reding <treding@nvidia.com>
 
+--ObJgmcXHiByHBDO8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmMjHOAACgkQ3SOs138+
+s6Hy/Q//dhxKqkvTQwx5kDgrAsB3vWecsum9vMvaN3wqNcheDRlhaNuVY2Q+j2nF
+qNZGvIDjJofnu7TNuCgZE/Kzmtla36JZxLwP1z8u4a5S8F7urkb4jHIJSIwROKfi
+mFFx0Dhf0h1/48xmI1S0M3gf/cX78gLMoMRsZ2tRb8oaMxIrvrBI8Q/6kcQXHi5s
+Ru3U918eU4sVeM3s6WhQHd14ynzkDTuALOOGWP0n1ouSnU0yClSxv8oxfnhdBqDr
+FtNh1DaKDRGVRp0w/jbNFUJaPKBOuEHw2f8wRYAo4TqSFHqVfSfMlHwcbRyNR3JC
+WjBo4ieXw6TPLHVHmeV0ol9+1oPUxevafOpxQk1IlZKXfzah2twdeR+HVhsV+3+B
+0o6v6O43SomBnz1pzRTmBy73p4LdWGLd/Vx+42+1Bipl53vriWmjaAiapScJt+fK
+wvGfeerLeZoUiEicL3y7PYQrhRF5ExAtvgICo2ndGhjDl0enPWUl+kYRchv4yDXE
+oCJTONfKvoJDn7ttMGcM1Ar15p8E32GRhrHxIrYfkYGE6oklZFzQDWeTxvms+8YJ
+bGZsj3kNSC7x1E2PxoRR+6ckGSB+fm5fuJiWl9mTfU/zocWYsINM3kGl1SzCV+ZZ
+S+IbJWLrBm2blnEZhXAVCL0DOzUkl7hwqF8yc3+BKTxvKM9026M=
+=wZRJ
+-----END PGP SIGNATURE-----
+
+--ObJgmcXHiByHBDO8--
