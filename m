@@ -2,106 +2,71 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13745ECAAD3
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Sep 2022 12:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62DCBC6FA89
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Sep 2022 15:14:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229914AbiIOMlJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Sep 2022 08:41:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56592 "EHLO
+        id S231522AbiIOPOR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Sep 2022 11:14:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229923AbiIOMky (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Sep 2022 08:40:54 -0400
-X-Greylist: delayed 600 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 15 Sep 2022 05:40:28 PDT
-Received: from sirokuusama2.dnainternet.net (sirokuusama2.dnainternet.net [83.102.40.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F101834E;
-        Thu, 15 Sep 2022 05:40:28 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by sirokuusama2.dnainternet.net (Postfix) with ESMTP id 6A15313F40;
-        Thu, 15 Sep 2022 15:24:16 +0300 (EEST)
-X-Virus-Scanned: DNA Internet at dnainternet.net
-Received: from sirokuusama2.dnainternet.net ([83.102.40.153])
-        by localhost (sirokuusama2.dnainternet.net [127.0.0.1]) (DNA Internet, port 10041)
-        with ESMTP id JJQ4Ub41JQ2D; Thu, 15 Sep 2022 15:24:16 +0300 (EEST)
-Received: from omenapuu2.dnainternet.net (omenapuu2.dnainternet.net [83.102.40.54])
-        by sirokuusama2.dnainternet.net (Postfix) with ESMTP id 4E600137B5;
-        Thu, 15 Sep 2022 15:24:12 +0300 (EEST)
-Received: from localhost (87-95-101-152.bb.dnainternet.fi [87.95.101.152])
-        by omenapuu2.dnainternet.net (Postfix) with ESMTP id 8CBEB1E5;
-        Thu, 15 Sep 2022 15:24:03 +0300 (EEST)
-From:   andy.shevchenko@gmail.com
-Date:   Thu, 15 Sep 2022 15:24:02 +0300
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-Cc:     linux-gpio@vger.kernel.org, git@amd.com,
-        devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        robh+dt@kernel.org, brgl@bgdev.pl, linus.walleij@linaro.org
-Subject: Re: [PATCH v2 2/2] gpio: pca9570: add slg7xl45106 support
-Message-ID: <YyMZYjWTN7yw93n5@surfacebook>
-References: <20220915114803.26185-1-shubhrajyoti.datta@amd.com>
- <20220915114803.26185-3-shubhrajyoti.datta@amd.com>
+        with ESMTP id S231332AbiIOPNq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Sep 2022 11:13:46 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE159E0F7;
+        Thu, 15 Sep 2022 08:07:39 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.55])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MT0nz3p9QzlVpV;
+        Thu, 15 Sep 2022 23:03:35 +0800 (CST)
+Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 15 Sep 2022 23:07:35 +0800
+Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
+ (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 15 Sep
+ 2022 23:07:34 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <linus.walleij@linaro.org>, <p.zabel@pengutronix.de>,
+        <horatiu.vultur@microchip.com>
+Subject: [PATCH -next 2/2] pinctrl: ocelot: Use devm_platform_get_and_ioremap_resource()
+Date:   Thu, 15 Sep 2022 23:14:38 +0800
+Message-ID: <20220915151438.699763-2-yangyingliang@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220915151438.699763-1-yangyingliang@huawei.com>
+References: <20220915151438.699763-1-yangyingliang@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220915114803.26185-3-shubhrajyoti.datta@amd.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.103.91]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500007.china.huawei.com (7.185.36.183)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Thu, Sep 15, 2022 at 05:18:03PM +0530, Shubhrajyoti Datta kirjoitti:
-> slg7xl45106 is a I2C GPO expander.
-> Add a compatible string for the same. Also update the
-> driver to write and read from it.
+Switch to use devm_platform_get_and_ioremap_resource() to simplify code.
 
-It's better, but something to improve.
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+---
+ drivers/pinctrl/pinctrl-ocelot.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-...
-
->  /**
->   * struct pca9570 - GPIO driver data
->   * @chip: GPIO controller chip
-> @@ -25,6 +27,12 @@ struct pca9570 {
->  	struct gpio_chip chip;
->  	struct mutex lock;
->  	u8 out;
-> +	const struct pca9570_platform_data *p_data;
-
-I would put it after 'chip' member, so it will save 4 bytes on 64-bit machines
-of some architectures. Also, don't you need to add a kernel doc for a new
-member?
-
-> +};
-
-> +struct pca9570_platform_data {
-> +	u16 ngpio;
-> +	u32 command;
->  };
-
-Strictly speaking this should be defined before struct pca9570, otherwise you
-need to have a forward declaration.
-
-> @@ -122,13 +138,28 @@ static int pca9570_probe(struct i2c_client *client)
->  static const struct i2c_device_id pca9570_id_table[] = {
->  	{ "pca9570", 4 },
->  	{ "pca9571", 8 },
-> +	{ "slg7xl45106", 8 },
->  	{ /* sentinel */ }
-
-This table should also use your new structure:
-
-	{ "slg7xl45106", (kernel_ulong_t)&slg7xl45106_gpio },
-
-(In the similar way for the existing entries)
-
-Taking the last into consideration I would suggest to split this to two
-changes:
-1) introducing a new data structure with conversion of the existing members;
-2) adding support for a new chip.
-
->  };
-
-Othewise looks good.
-
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index 83703a3d291c..25698972030c 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -2079,8 +2079,7 @@ static int ocelot_pinctrl_probe(struct platform_device *pdev)
+ 	}
+ 	reset_control_reset(reset);
+ 
+-	base = devm_ioremap_resource(dev,
+-			platform_get_resource(pdev, IORESOURCE_MEM, 0));
++	base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+ 	if (IS_ERR(base)) {
+ 		ret = PTR_ERR(base);
+ 		goto err_out;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.25.1
 
