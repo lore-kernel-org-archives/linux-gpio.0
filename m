@@ -2,185 +2,308 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D82ECAAA1
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Sep 2022 20:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB293C6FA90
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Sep 2022 02:01:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229706AbiIOUus (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Sep 2022 16:50:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44432 "EHLO
+        id S229894AbiIPCBl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Sep 2022 22:01:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbiIOUur (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Sep 2022 16:50:47 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3742481E8
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Sep 2022 13:50:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663275046; x=1694811046;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=cEgtD3kCI534wDcoN77XOOa59BTexETKLMSoJ5N849Y=;
-  b=IA4I3gDtZfpQFQY/m5Dbe8s8U7ETwrlNuMmJg/+bjKp45koU/3Yj3eTL
-   LCuX48Rs8HYXPfmQaOsbyfyrDqH5FllOYu5EKqXTh+uistZXLa/M+px7G
-   MX4V5/Hz1Xdy2ifllzp9PdpIBSRImkVKCTfGzZs9zbRguSdd8aEXnUxy7
-   nqW7JQ0TlsdNV2YPjp1kSDHbb/4SEU0Zq6gpuu+5wHC/FfrUiXILROHBt
-   cbWujEbMfQx5DdDbYHNPS3ynu3cIhw/nPaDLQ+bxdPTPSGKaS5uFEXASn
-   kQ6c/CWiWm2QTt3fAks7CmBYdtYPHIm/qHXct5B2fa4fIs53vW1QfZH1P
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10471"; a="278563797"
-X-IronPort-AV: E=Sophos;i="5.93,319,1654585200"; 
-   d="scan'208";a="278563797"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2022 13:50:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,319,1654585200"; 
-   d="scan'208";a="706509000"
-Received: from lkp-server02.sh.intel.com (HELO 41300c7200ea) ([10.239.97.151])
-  by FMSMGA003.fm.intel.com with ESMTP; 15 Sep 2022 13:50:45 -0700
-Received: from kbuild by 41300c7200ea with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oYvoq-0000zj-2O;
-        Thu, 15 Sep 2022 20:50:44 +0000
-Date:   Fri, 16 Sep 2022 04:49:57 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [brgl:gpio/for-next] BUILD SUCCESS
- d9e7f0e320516c660d6f33e6c16a3d99970eb14e
-Message-ID: <63238ff5.I0ZXfrnyV2pdgrrk%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S229959AbiIPCBb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Sep 2022 22:01:31 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E70E386FE5;
+        Thu, 15 Sep 2022 19:01:23 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id h194so14588891iof.4;
+        Thu, 15 Sep 2022 19:01:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=vUOZTBGoBv99MDEQndk9eXZRqRCGzryyELAstPK3MfY=;
+        b=GwuL35qvgBHdK8reXlxhq9kUhkxy22VNoi7FENABZhBHXm1ErcmRPEwQoNe4KXX1nf
+         pFcPJxhpAkzmYJ0hTVe2bEWWZmT5nKE0HzUwkVKV+7Ef19swp5AXl7VpM9+siW2yADTT
+         Us/ZcayNlJXAl1Fg3pk8xIjelVz3Ip9EXtLIA+bO1jtOEjRChoA2/sgvpv47YQevOhAO
+         yspl7n3ocg1LIZGxpYB1V/H859ZxLQbUDdIJrTJ4oxauJSUDO6vaToDErYHC9hc/v9cj
+         OsJY7phQKC2ovUFbZfyLTX0DA8bFToeCZ+mkvtlsEPxrBDGFxQzfqk0MwFHstNEMU5Y4
+         PVUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=vUOZTBGoBv99MDEQndk9eXZRqRCGzryyELAstPK3MfY=;
+        b=WJl5EAO+ulHrUZrDycWIxre51qoDjlcu0IwELsNXz0vcaDtBVqN25rPM8Rg7slALa6
+         Qreo7rIYqRVEeu5laaTmh1UrWEU5EHyBR9Def2W0CecXHzNb2s/M3zBzbrQI2K/LFBlV
+         7I+/C0J7o3vmvvP+u8fEJkoqFccCybZb5F3EK7nQBmr1Un7MHMXbHJkzGXaJs76h2Okf
+         Un926t+5axO5m81QLoT7zN6qZYyvvwT34tuaFzsIlHL0sbiI1xFLDDnJX5PJ0Dv7QmZG
+         PoJpP0QI2/45NQUR/H4TK3IelB2GUrOlG2m8RIYB3eKbMR62FFVrU4bxZ11KLEnXINyU
+         +CHQ==
+X-Gm-Message-State: ACrzQf2FogidwNuiXJRibnBSKqJ3MGTcLiEjXm3FSBbVIYoKied22EmR
+        twE2j0/qof+jVT8FlO5lXi4=
+X-Google-Smtp-Source: AMsMyM4XoQt4fRUDgMoNCX19tFY6eJqLtNQViE+ucF/8vsrlU/ea8IfcT5fHBeQjpsxmpJdi/Pvc+A==
+X-Received: by 2002:a02:85a1:0:b0:349:2e9f:794 with SMTP id d30-20020a0285a1000000b003492e9f0794mr1400822jai.113.1663293682109;
+        Thu, 15 Sep 2022 19:01:22 -0700 (PDT)
+Received: from localhost ([2607:fea8:a2e2:2d00::af41])
+        by smtp.gmail.com with UTF8SMTPSA id i2-20020a056e02152200b002eb255d81b0sm8502497ilu.65.2022.09.15.19.01.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Sep 2022 19:01:21 -0700 (PDT)
+From:   Richard Acayan <mailingradian@gmail.com>
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Richard Acayan <mailingradian@gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: qcom: add sdm670 pinctrl
+Date:   Thu, 15 Sep 2022 22:01:17 -0400
+Message-Id: <20220916020117.227480-1-mailingradian@gmail.com>
+X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20220914023900.z64wugbq7p2gfb32@builder.lan>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-branch HEAD: d9e7f0e320516c660d6f33e6c16a3d99970eb14e  gpiolib: of: factor out conversion from OF flags
-
-elapsed time: 724m
-
-configs tested: 110
-configs skipped: 3
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-um                           x86_64_defconfig
-um                             i386_defconfig
-x86_64                              defconfig
-x86_64                           allyesconfig
-x86_64                               rhel-8.3
-m68k                             allyesconfig
-m68k                             allmodconfig
-arc                              allyesconfig
-alpha                            allyesconfig
-i386                             allyesconfig
-i386                                defconfig
-i386                          randconfig-a012
-i386                          randconfig-a014
-i386                          randconfig-a016
-powerpc                           allnoconfig
-mips                             allyesconfig
-powerpc                          allmodconfig
-sh                               allmodconfig
-s390                                defconfig
-s390                             allmodconfig
-arc                                 defconfig
-alpha                               defconfig
-s390                             allyesconfig
-x86_64                           rhel-8.3-kvm
-x86_64                          rhel-8.3-func
-x86_64                           rhel-8.3-syz
-x86_64                    rhel-8.3-kselftests
-x86_64                         rhel-8.3-kunit
-arm64                            allyesconfig
-arm                                 defconfig
-arm                              allyesconfig
-ia64                             allmodconfig
-s390                 randconfig-r044-20220915
-arc                  randconfig-r043-20220915
-riscv                randconfig-r042-20220915
-arc                           tb10x_defconfig
-sh                          kfr2r09_defconfig
-xtensa                    xip_kc705_defconfig
-powerpc                    klondike_defconfig
-csky                              allnoconfig
-alpha                             allnoconfig
-arc                               allnoconfig
-riscv                             allnoconfig
-sparc                               defconfig
-xtensa                           allyesconfig
-csky                                defconfig
-sparc                            allyesconfig
-x86_64                                  kexec
-powerpc                          allyesconfig
-riscv                               defconfig
-riscv                            allmodconfig
-riscv                            allyesconfig
-mips                     decstation_defconfig
-m68k                        m5272c3_defconfig
-m68k                       m5275evb_defconfig
-powerpc                     asp8347_defconfig
-i386                          randconfig-c001
-arm64                               defconfig
-ia64                             allyesconfig
-arm                              allmodconfig
-m68k                                defconfig
-ia64                                defconfig
-mips                             allmodconfig
-i386                          debian-10.3-kvm
-i386                        debian-10.3-kunit
-i386                         debian-10.3-func
-powerpc                        warp_defconfig
-xtensa                           alldefconfig
-powerpc                      mgcoge_defconfig
-m68k                        m5307c3_defconfig
-arm                           viper_defconfig
-sh                         ap325rxa_defconfig
-arc                          axs103_defconfig
-mips                            gpr_defconfig
-sh                             sh03_defconfig
-powerpc                         wii_defconfig
-openrisc                       virt_defconfig
-powerpc                      ep88xc_defconfig
-sparc                       sparc32_defconfig
-powerpc                      arches_defconfig
-sh                          rsk7203_defconfig
-arm                         vf610m4_defconfig
-powerpc                        cell_defconfig
-nios2                               defconfig
-x86_64                        randconfig-a011
-x86_64                        randconfig-a013
-x86_64                        randconfig-a015
-loongarch                           defconfig
-loongarch                         allnoconfig
-
-clang tested configs:
-s390                 randconfig-r044-20220914
-hexagon              randconfig-r045-20220914
-riscv                randconfig-r042-20220914
-hexagon              randconfig-r041-20220914
-x86_64                        randconfig-a005
-x86_64                        randconfig-a003
-x86_64                        randconfig-a001
-i386                          randconfig-a002
-i386                          randconfig-a006
-i386                          randconfig-a004
-x86_64                        randconfig-a012
-x86_64                        randconfig-a014
-x86_64                        randconfig-a016
-hexagon              randconfig-r045-20220915
-hexagon              randconfig-r041-20220915
-i386                          randconfig-a011
-i386                          randconfig-a013
-i386                          randconfig-a015
-powerpc                      acadia_defconfig
-x86_64                        randconfig-k001
-powerpc                     kmeter1_defconfig
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+> > diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfi=
+g=0D
+> > index 2961b5eb8e10..7aba4188110c 100644=0D
+> > --- a/drivers/pinctrl/qcom/Kconfig=0D
+> > +++ b/drivers/pinctrl/qcom/Kconfig=0D
+> > @@ -283,6 +283,15 @@ config PINCTRL_SDM660=0D
+> >  	 Qualcomm Technologies Inc TLMM block found on the Qualcomm=0D
+> >  	 Technologies Inc SDM660 platform.=0D
+> >  =0D
+> > +config PINCTRL_SDM670=0D
+> > +	tristate "Qualcomm Technologies Inc SDM670 pin controller driver"=0D
+> > +	depends on (OF || ACPI)=0D
+> =0D
+> I believe you can drop ACPI from this?=0D
+=0D
+Yes, I adapted this driver from the SDM845 driver and removed the ACPI=0D
+features but forgot to remove the config dependency.=0D
+=0D
+> > +	depends on PINCTRL_MSM=0D
+> > +	help=0D
+> > +	 This is the pinctrl, pinmux, pinconf and gpiolib driver for the=0D
+> > +	 Qualcomm Technologies Inc TLMM block found on the Qualcomm=0D
+> > +	 Technologies Inc SDM670 platform.=0D
+> > +=0D
+> >  config PINCTRL_SDM845=0D
+> >  	tristate "Qualcomm Technologies Inc SDM845 pin controller driver"=0D
+> >  	depends on (OF || ACPI)=0D
+=0D
+> > +/* Every pin is maintained as a single group, and missing or non-exist=
+ing pin=0D
+> > + * would be maintained as dummy group to synchronize pin group index w=
+ith=0D
+> > + * pin descriptor registered with pinctrl core.=0D
+> > + * Clients would not be able to request these dummy pin groups.=0D
+> =0D
+> The client wouldn't be able to define pinmux/pinconf, but I'm not able=0D
+> to spot anything that would prevent a client from referencing the gpio?=0D
+> =0D
+> Perhaps I'm missing something?=0D
+=0D
+No, you're not. I kept this comment because I saw it in other pinctrl=0D
+drivers and thought it was standard:=0D
+=0D
+    ~/linux $ grep dummy -RC1 drivers/pinctrl/qcom/=0D
+    drivers/pinctrl/qcom/pinctrl-qcs404.c-/* Every pin is maintained as a s=
+ingle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-qcs404.c: * would be maintained as dummy g=
+roup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-qcs404.c- * pin descriptor registered with=
+ pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-qcs404.c: * Clients would not be able to r=
+equest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-qcs404.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sc7180.c-/* Every pin is maintained as a s=
+ingle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sc7180.c: * would be maintained as dummy g=
+roup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sc7180.c- * pin descriptor registered with=
+ pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sc7180.c: * Clients would not be able to r=
+equest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sc7180.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sc7280.c-/* Every pin is maintained as a s=
+ingle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sc7280.c: * would be maintained as dummy g=
+roup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sc7280.c- * pin descriptor registered with=
+ pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sc7280.c: * Clients would not be able to r=
+equest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sc7280.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sdx55.c-/* Every pin is maintained as a si=
+ngle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sdx55.c: * would be maintained as dummy gr=
+oup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sdx55.c- * pin descriptor registered with =
+pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sdx55.c: * Clients would not be able to re=
+quest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sdx55.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sdx65.c-/* Every pin is maintained as a si=
+ngle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sdx65.c: * would be maintained as dummy gr=
+oup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sdx65.c- * pin descriptor registered with =
+pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sdx65.c: * Clients would not be able to re=
+quest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sdx65.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sm6115.c-/* Every pin is maintained as a s=
+ingle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sm6115.c: * would be maintained as dummy g=
+roup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sm6115.c- * pin descriptor registered with=
+ pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sm6115.c: * Clients would not be able to r=
+equest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sm6115.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sm8350.c-/* Every pin is maintained as a s=
+ingle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sm8350.c: * would be maintained as dummy g=
+roup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sm8350.c- * pin descriptor registered with=
+ pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sm8350.c: * Clients would not be able to r=
+equest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sm8350.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-qcm2290.c-/* Every pin is maintained as a =
+single group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-qcm2290.c: * would be maintained as dummy =
+group to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-qcm2290.c- * pin descriptor registered wit=
+h pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-qcm2290.c: * Clients would not be able to =
+request these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-qcm2290.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sm6125.c- * Every pin is maintained as a s=
+ingle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sm6125.c: * would be maintained as dummy g=
+roup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sm6125.c- * pin descriptor registered with=
+ pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sm6125.c: * Clients would not be able to r=
+equest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sm6125.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sm6350.c- * Every pin is maintained as a s=
+ingle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sm6350.c: * would be maintained as dummy g=
+roup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sm6350.c- * pin descriptor registered with=
+ pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sm6350.c: * Clients would not be able to r=
+equest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sm6350.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sm8150.c- * Every pin is maintained as a s=
+ingle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sm8150.c: * would be maintained as dummy g=
+roup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sm8150.c- * pin descriptor registered with=
+ pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sm8150.c: * Clients would not be able to r=
+equest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sm8150.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sm8450.c-/* Every pin is maintained as a s=
+ingle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sm8450.c: * would be maintained as dummy g=
+roup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sm8450.c- * pin descriptor registered with=
+ pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sm8450.c: * Clients would not be able to r=
+equest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sm8450.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sdm845.c-/* Every pin is maintained as a s=
+ingle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sdm845.c: * would be maintained as dummy g=
+roup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sdm845.c- * pin descriptor registered with=
+ pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sdm845.c: * Clients would not be able to r=
+equest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sdm845.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sm6375.c- * Every pin is maintained as a s=
+ingle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sm6375.c: * would be maintained as dummy g=
+roup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sm6375.c- * pin descriptor registered with=
+ pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sm6375.c: * Clients would not be able to r=
+equest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sm6375.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sm8250.c-/* Every pin is maintained as a s=
+ingle group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sm8250.c: * would be maintained as dummy g=
+roup to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sm8250.c- * pin descriptor registered with=
+ pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sm8250.c: * Clients would not be able to r=
+equest these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sm8250.c- */=0D
+    --=0D
+    drivers/pinctrl/qcom/pinctrl-sc8180x.c-/* Every pin is maintained as a =
+single group, and missing or non-existing pin=0D
+    drivers/pinctrl/qcom/pinctrl-sc8180x.c: * would be maintained as dummy =
+group to synchronize pin group index with=0D
+    drivers/pinctrl/qcom/pinctrl-sc8180x.c- * pin descriptor registered wit=
+h pinctrl core.=0D
+    drivers/pinctrl/qcom/pinctrl-sc8180x.c: * Clients would not be able to =
+request these dummy pin groups.=0D
+    drivers/pinctrl/qcom/pinctrl-sc8180x.c- */=0D
+=0D
+Since this driver has dummy pingroups, it is a bit confusing to see this=0D
+inaccurate information because it is relevant. I'll rewrite the comment so=
+=0D
+that it makes sense.=0D
+=0D
+> Otherwise, I think you should be able to specify reserved_gpios in=0D
+> sdm670_pinctrl and list the dummy items. This would ensure that the gpio=
+=0D
+> code as well treat them as absent.=0D
+=0D
+Yes, as long as I can reserve pins 0, 1, 2, 3, 81, 82, 83, and 84 for the=0D
+Pixel 3a. However, I think reserved_gpios overrides the DT schema where it=
+=0D
+would be sensible to add it:=0D
+=0D
+drivers/pinctrl/qcom/pinctrl-msm.c:690:=0D
+=0D
+	/* Driver provided reserved list overrides DT and ACPI */=0D
+=0D
+Perhaps I should omit the dummy pingroups from the driver and try to handle=
+=0D
+the gpio numbers discrepency on the DT side, like:=0D
+=0D
+    gpio-ranges =3D <&tlmm 0 0 58>, <&tlmm 65 59 4>, ...=0D
+=0D
+I don't see this being done anywhere else but it should clear up the=0D
+debugfs problems I was having.=0D
+=0D
+> > + */=0D
+> > +static const struct msm_pingroup sdm670_groups[] =3D {=0D
+> > +	PINGROUP(0, SOUTH, qup0, _, _, _, _, _, _, _, _),=0D
+> > +	PINGROUP(1, SOUTH, qup0, _, _, _, _, _, _, _, _),=0D
