@@ -2,78 +2,63 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8125FC54EE9
-	for <linux-gpio@archiver.kernel.org>; Sat, 17 Sep 2022 08:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFBFECAAD3
+	for <linux-gpio@archiver.kernel.org>; Sat, 17 Sep 2022 09:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229517AbiIQI7k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 17 Sep 2022 04:59:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41888 "EHLO
+        id S229675AbiIQJBo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 17 Sep 2022 05:01:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbiIQI7j (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 17 Sep 2022 04:59:39 -0400
-X-Greylist: delayed 276 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 17 Sep 2022 01:59:35 PDT
+        with ESMTP id S229657AbiIQJBm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 17 Sep 2022 05:01:42 -0400
 Received: from tulikuusama2.dnainternet.net (tulikuusama2.dnainternet.net [83.102.40.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D13AABC1;
-        Sat, 17 Sep 2022 01:59:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 461692BB2F;
+        Sat, 17 Sep 2022 02:01:41 -0700 (PDT)
 Received: from localhost (localhost [127.0.0.1])
-        by tulikuusama2.dnainternet.net (Postfix) with ESMTP id 7C5D2286EB;
-        Sat, 17 Sep 2022 11:59:30 +0300 (EEST)
+        by tulikuusama2.dnainternet.net (Postfix) with ESMTP id ABA4F28904;
+        Sat, 17 Sep 2022 11:54:51 +0300 (EEST)
 X-Virus-Scanned: DNA Internet at dnainternet.net
 Received: from tulikuusama2.dnainternet.net ([83.102.40.151])
         by localhost (tulikuusama2.dnainternet.net [127.0.0.1]) (DNA Internet, port 10041)
-        with ESMTP id Auole-u3B_-5; Sat, 17 Sep 2022 11:59:30 +0300 (EEST)
-Received: from omenapuu2.dnainternet.net (omenapuu2.dnainternet.net [83.102.40.54])
-        by tulikuusama2.dnainternet.net (Postfix) with ESMTP id 5390E25E71;
-        Sat, 17 Sep 2022 11:59:30 +0300 (EEST)
+        with ESMTP id opv80w7qov8h; Sat, 17 Sep 2022 11:54:51 +0300 (EEST)
+Received: from kirsikkapuu2.dnainternet.net (kirsikkapuu2.dnainternet.net [83.102.40.52])
+        by tulikuusama2.dnainternet.net (Postfix) with ESMTP id 846D220B65;
+        Sat, 17 Sep 2022 11:54:51 +0300 (EEST)
 Received: from localhost (87-95-96-237.bb.dnainternet.fi [87.95.96.237])
-        by omenapuu2.dnainternet.net (Postfix) with ESMTP id 923AF1BF;
-        Sat, 17 Sep 2022 11:59:23 +0300 (EEST)
+        by kirsikkapuu2.dnainternet.net (Postfix) with ESMTP id 07FC67B;
+        Sat, 17 Sep 2022 11:54:44 +0300 (EEST)
 From:   andy.shevchenko@gmail.com
-Date:   Sat, 17 Sep 2022 11:59:22 +0300
-To:     William Breathitt Gray <william.gray@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@intel.com>, brgl@bgdev.pl,
-        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 1/3] gpio: idio-16: Introduce the ACCES IDIO-16 GPIO
- library module
-Message-ID: <YyWMai1UZPaBbsOx@surfacebook>
-References: <cover.1662927941.git.william.gray@linaro.org>
- <6b28fb497c35def57c1920362c82402bed4bd23f.1662927941.git.william.gray@linaro.org>
- <YyCs1/HgOG31MX1N@smile.fi.intel.com>
- <YyNIxWS0sneUKas0@fedora>
+Date:   Sat, 17 Sep 2022 11:54:44 +0300
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linus.walleij@linaro.org, p.zabel@pengutronix.de,
+        horatiu.vultur@microchip.com
+Subject: Re: [PATCH -next v2 1/2] pinctrl: ocelot: add missing
+ destroy_workqueue() in error path in ocelot_pinctrl_probe()
+Message-ID: <YyWLVF6OAyerJKvR@surfacebook>
+References: <20220917024634.1021861-1-yangyingliang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YyNIxWS0sneUKas0@fedora>
+In-Reply-To: <20220917024634.1021861-1-yangyingliang@huawei.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Thu, Sep 15, 2022 at 11:46:13AM -0400, William Breathitt Gray kirjoitti:
-> On Tue, Sep 13, 2022 at 07:16:23PM +0300, Andy Shevchenko wrote:
-> > On Sun, Sep 11, 2022 at 04:34:38PM -0400, William Breathitt Gray wrote:
-
-...
-
-> > > +	if (value)
-> > > +		set_bit(offset, state->out_state);
-> > > +	else
-> > > +		clear_bit(offset, state->out_state);
-> > 
-> > assign_bit()
-> > 
-> > But I'm wondering why do you need the atomic bitops under the lock?
+Sat, Sep 17, 2022 at 10:46:33AM +0800, Yang Yingliang kirjoitti:
+> Add the missing destroy_workqueue() before return from ocelot_pinctrl_probe()
+> in error path.
 > 
-> I don't think atomic bitops are necessary in this case because of the
-> lock as you pointedly out, but I felt using these made the intention of
-> the code clearer. Is there a non-atomic version of assign_bit(), or do
-> you recommend I use bitwise operations directly here instead?
+> Fixes: c297561bc98a ("pinctrl: ocelot: Fix interrupt controller")
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> ---
+> v2:
+>   move alloc_ordered_workqueue() after ocelot_pinctrl_register().
 
-__assign_bit()
+Why? What will happen if user space start using pins before workqueue is allocated?
 
-Hint: All __ prefixed bitops (for a single bit operation!) are considered
-non-atomic. There are exceptions when no __-variant of op is present, but
-it not the case here AFAICS. 
+If you really want to have it correct, you need either drop all devm_ calls
+after allocating workqueue, or wrap destroying into devm.
 
 -- 
 With Best Regards,
