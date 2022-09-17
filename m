@@ -2,164 +2,81 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FBA7C6FA8B
-	for <linux-gpio@archiver.kernel.org>; Sat, 17 Sep 2022 06:09:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54411ECAAD3
+	for <linux-gpio@archiver.kernel.org>; Sat, 17 Sep 2022 08:55:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229498AbiIQGJh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 17 Sep 2022 02:09:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58920 "EHLO
+        id S229557AbiIQIz2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 17 Sep 2022 04:55:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbiIQGJf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 17 Sep 2022 02:09:35 -0400
-Received: from mail-m11873.qiye.163.com (mail-m11873.qiye.163.com [115.236.118.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43DBED92
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Sep 2022 23:09:33 -0700 (PDT)
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by mail-m11873.qiye.163.com (Hmail) with ESMTPA id 33B4C900346;
-        Sat, 17 Sep 2022 14:09:31 +0800 (CST)
-From:   Jianqun Xu <jay.xu@rock-chips.com>
-To:     jbx6244@gmail.com, heiko@sntech.de, linus.walleij@linaro.org,
-        andriy.shevchenko@linux.intel.com
-Cc:     brgl@bgdev.pl, linux-gpio@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH v2 1/2] pinctrl: rockchip: find gpiochip by name from gpio module
-Date:   Sat, 17 Sep 2022 14:09:28 +0800
-Message-Id: <20220917060929.657778-2-jay.xu@rock-chips.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220917060929.657778-1-jay.xu@rock-chips.com>
-References: <20220917060929.657778-1-jay.xu@rock-chips.com>
+        with ESMTP id S229483AbiIQIz1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 17 Sep 2022 04:55:27 -0400
+Received: from sypressi2.dnainternet.net (sypressi2.dnainternet.net [83.102.40.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA55913DF6
+        for <linux-gpio@vger.kernel.org>; Sat, 17 Sep 2022 01:55:25 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by sypressi2.dnainternet.net (Postfix) with ESMTP id 2141D120E9;
+        Sat, 17 Sep 2022 11:55:24 +0300 (EEST)
+X-Virus-Scanned: DNA Internet at dnainternet.net
+Received: from sypressi2.dnainternet.net ([83.102.40.154])
+        by localhost (sypressi2.dnainternet.net [127.0.0.1]) (DNA Internet, port 10041)
+        with ESMTP id u9GGZTBquAQY; Sat, 17 Sep 2022 11:55:23 +0300 (EEST)
+Received: from kirsikkapuu2.dnainternet.net (kirsikkapuu2.dnainternet.net [83.102.40.52])
+        by sypressi2.dnainternet.net (Postfix) with ESMTP id ECA6B1AAA;
+        Sat, 17 Sep 2022 11:55:23 +0300 (EEST)
+Received: from localhost (87-95-96-237.bb.dnainternet.fi [87.95.96.237])
+        by kirsikkapuu2.dnainternet.net (Postfix) with ESMTP id 70E5F3BAF;
+        Sat, 17 Sep 2022 11:55:16 +0300 (EEST)
+From:   andy.shevchenko@gmail.com
+Date:   Sat, 17 Sep 2022 11:55:16 +0300
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linus.walleij@linaro.org, p.zabel@pengutronix.de,
+        horatiu.vultur@microchip.com
+Subject: Re: [PATCH -next v2 2/2] pinctrl: ocelot: Use
+ devm_platform_get_and_ioremap_resource()
+Message-ID: <YyWLdHE2Eou3ySW8@surfacebook>
+References: <20220917024634.1021861-1-yangyingliang@huawei.com>
+ <20220917024634.1021861-2-yangyingliang@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJSktLSjdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTxhPVkoeTk1DGE5PSEsYHlUTARMWGhIXJB
-        QOD1lXWRgSC1lBWU5DVUlJVUxVSkpPWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVSktLVUtZBg++
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Njo6Fhw*FT0jCBpJCQlCET4a
-        OB0wCzVVSlVKTU1ISEJPQkxKTE5CVTMWGhIXVREaAlUDDjsJFBgQVhgTEgsIVRgUFkVZV1kSC1lB
-        WU5DVUlJVUxVSkpPWVdZCAFZQU5ITU83Bg++
-X-HM-Tid: 0a834a10fefe2eafkusn33b4c900346
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220917024634.1021861-2-yangyingliang@huawei.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Currently the pinctrl device acts as parent for the gpio devices for
-rockchip platform, the pinctrl driver probes first and then populate the
-gpio platform lastly.
+Sat, Sep 17, 2022 at 10:46:34AM +0800, Yang Yingliang kirjoitti:
+> Switch to use devm_platform_get_and_ioremap_resource() to simplify code.
 
-This patch makes the pinctrl to populate gpio platform firstly and then
-do probe after gpio probed successfully. And get gpiochips througth a
-find function by the gpio label.
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
----
-v2 RESEND:
-- first version RESEND
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> ---
+>  drivers/pinctrl/pinctrl-ocelot.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+> index c672bc2a4df5..d2c144611d4b 100644
+> --- a/drivers/pinctrl/pinctrl-ocelot.c
+> +++ b/drivers/pinctrl/pinctrl-ocelot.c
+> @@ -2073,8 +2073,7 @@ static int ocelot_pinctrl_probe(struct platform_device *pdev)
+>  				     "Failed to get reset\n");
+>  	reset_control_reset(reset);
+>  
+> -	base = devm_ioremap_resource(dev,
+> -			platform_get_resource(pdev, IORESOURCE_MEM, 0));
+> +	base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+>  	if (IS_ERR(base))
+>  		return PTR_ERR(base);
+>  
+> -- 
+> 2.25.1
+> 
+> 
 
- drivers/pinctrl/pinctrl-rockchip.c | 48 +++++++++++++++++++++++-------
- drivers/pinctrl/pinctrl-rockchip.h |  2 +-
- 2 files changed, 38 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index a91061f9c2ac..5b828798bfa5 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -2726,7 +2726,7 @@ static int rockchip_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- {
- 	struct rockchip_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
- 	struct rockchip_pin_bank *bank = pin_to_bank(info, pin);
--	struct gpio_chip *gpio = &bank->gpio_chip;
-+	struct gpio_chip *gpio = bank->gpio_chip;
- 	enum pin_config_param param;
- 	u32 arg;
- 	int i;
-@@ -2832,7 +2832,7 @@ static int rockchip_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
- {
- 	struct rockchip_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
- 	struct rockchip_pin_bank *bank = pin_to_bank(info, pin);
--	struct gpio_chip *gpio = &bank->gpio_chip;
-+	struct gpio_chip *gpio = bank->gpio_chip;
- 	enum pin_config_param param = pinconf_to_config_param(*config);
- 	u16 arg;
- 	int rc;
-@@ -3289,18 +3289,29 @@ static int __maybe_unused rockchip_pinctrl_resume(struct device *dev)
- static SIMPLE_DEV_PM_OPS(rockchip_pinctrl_dev_pm_ops, rockchip_pinctrl_suspend,
- 			 rockchip_pinctrl_resume);
- 
-+static int gpiochip_match_name(struct gpio_chip *gc, void *data)
-+{
-+	const char *name = data;
-+
-+	return !strcmp(gc->label, name);
-+}
-+
- static int rockchip_pinctrl_probe(struct platform_device *pdev)
- {
--	struct rockchip_pinctrl *info;
- 	struct device *dev = &pdev->dev;
--	struct device_node *np = dev->of_node, *node;
-+	struct fwnode_handle *fwnode = dev_fwnode(dev);
-+	struct rockchip_pinctrl *info;
- 	struct rockchip_pin_ctrl *ctrl;
-+	struct device_node *np, *node;
- 	struct resource *res;
- 	void __iomem *base;
--	int ret;
-+	int ret, i;
- 
--	if (!dev->of_node)
--		return dev_err_probe(dev, -ENODEV, "device tree node not found\n");
-+	if (is_of_node(fwnode)) {
-+		ret = of_platform_populate(np, NULL, NULL, NULL);
-+		if (ret)
-+			return dev_err_probe(dev, ret, "failed to register gpio device\n");
-+	}
- 
- 	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
- 	if (!info)
-@@ -3358,11 +3369,26 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	platform_set_drvdata(pdev, info);
-+	for (i = 0; i < ctrl->nr_banks; i++) {
-+		struct gpio_chip *gc;
-+		struct rockchip_pin_bank *bank = &ctrl->pin_banks[i];
- 
--	ret = of_platform_populate(np, NULL, NULL, &pdev->dev);
--	if (ret)
--		return dev_err_probe(dev, ret, "failed to register gpio device\n");
-+		gc = gpiochip_find((void *)ctrl->pin_banks[i].name, gpiochip_match_name);
-+		if (!gc) {
-+			dev_err(dev, "fail to find gpiochip\n");
-+			return ret;
-+		}
-+
-+		ret = gpiochip_add_pin_range(gc, dev_name(dev), 0, gc->base, gc->ngpio);
-+		if (ret) {
-+			dev_err(dev, "fail to add pin range\n");
-+			return ret;
-+		}
-+		bank->gpio_chip = gc;
-+	}
-+
-+	platform_set_drvdata(pdev, info);
-+	dev_info(dev, "probed %pfw\n", fwnode);
- 
- 	return 0;
- }
-diff --git a/drivers/pinctrl/pinctrl-rockchip.h b/drivers/pinctrl/pinctrl-rockchip.h
-index 4759f336941e..2be12e76b2c4 100644
---- a/drivers/pinctrl/pinctrl-rockchip.h
-+++ b/drivers/pinctrl/pinctrl-rockchip.h
-@@ -330,7 +330,7 @@ struct rockchip_pin_bank {
- 	struct device_node		*of_node;
- 	struct rockchip_pinctrl		*drvdata;
- 	struct irq_domain		*domain;
--	struct gpio_chip		gpio_chip;
-+	struct gpio_chip		*gpio_chip;
- 	struct pinctrl_gpio_range	grange;
- 	raw_spinlock_t			slock;
- 	const struct rockchip_gpio_regs	*gpio_regs;
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
