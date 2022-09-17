@@ -2,105 +2,134 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A99ECAAA1
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Sep 2022 20:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4BCECAAA1
+	for <linux-gpio@archiver.kernel.org>; Sat, 17 Sep 2022 02:28:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230160AbiIPUy4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 16 Sep 2022 16:54:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40464 "EHLO
+        id S229683AbiIQC2Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 16 Sep 2022 22:28:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230344AbiIPUyx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Sep 2022 16:54:53 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3999E3CBC8;
-        Fri, 16 Sep 2022 13:54:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1663361692; x=1694897692;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=+VzWhmgyYCXNILKaundHDtRro3YKIfd1SdoSLC4IIgk=;
-  b=GI3LgrwN7Oiyb3sEKpEQg09IVTKFQOmYr9cDXgDZz6O8IXrLVGsCX0HL
-   xLcEc4TxsKtwuJmWvIVgQlhxT1iwXfvdR2uDzy8D2j2YkOuYrxgPhYOMf
-   QCnHNhHh2g9cZSHfUcKNcBl1tP9r64QHi2RsMQx/m4PColMgZewVpFNRJ
-   l0pL5iPkN8e+4a5bFDpc0PRDKr5korj+Y/T6LBlon46BcSxrT2q9lX0Wd
-   YZ8mzcXzVS08MxmB+eoSMHKstcaLaTVxzxpNTd8vmMWQKfmopLmoxDMiC
-   baaXBVLog/adiVxz0z3jOzeDnjjdHV6+DSbv3yOMZmU+jaWUq+30zbEBK
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10472"; a="297803155"
-X-IronPort-AV: E=Sophos;i="5.93,321,1654585200"; 
-   d="scan'208";a="297803155"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2022 13:54:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,321,1654585200"; 
-   d="scan'208";a="862860544"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Sep 2022 13:54:40 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 4051A238; Fri, 16 Sep 2022 23:54:57 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Patrick Rudolph <patrick.rudolph@9elements.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] pinctrl: cy8c95x0: Align function names in cy8c95x0_pmxops
-Date:   Fri, 16 Sep 2022 23:54:50 +0300
-Message-Id: <20220916205450.86278-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220916205450.86278-1-andriy.shevchenko@linux.intel.com>
-References: <20220916205450.86278-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S229596AbiIQC2Z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Sep 2022 22:28:25 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3E4BBBA5B;
+        Fri, 16 Sep 2022 19:28:22 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MTvrG73dZzNm74;
+        Sat, 17 Sep 2022 10:23:42 +0800 (CST)
+Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Sat, 17 Sep 2022 10:28:20 +0800
+Received: from [10.174.178.174] (10.174.178.174) by
+ dggpemm500007.china.huawei.com (7.185.36.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Sat, 17 Sep 2022 10:28:20 +0800
+Subject: Re: [PATCH -next 1/2] pinctrl: ocelot: add missing
+ destroy_workqueue() in error path in ocelot_pinctrl_probe()
+To:     Horatiu Vultur <horatiu.vultur@microchip.com>
+CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linus.walleij@linaro.org>, <p.zabel@pengutronix.de>
+References: <20220915151438.699763-1-yangyingliang@huawei.com>
+ <20220916190114.nnzc54nvv76jbd7k@soft-dev3-1.localhost>
+From:   Yang Yingliang <yangyingliang@huawei.com>
+Message-ID: <af4a818f-a182-79ee-d030-ee70ac181c05@huawei.com>
+Date:   Sat, 17 Sep 2022 10:28:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220916190114.nnzc54nvv76jbd7k@soft-dev3-1.localhost>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.174.178.174]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500007.china.huawei.com (7.185.36.183)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Align the function names in the cy8c95x0_pmxops() to follow
-the struct pinmux_ops members naming schema.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/pinctrl-cy8c95x0.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+On 2022/9/17 3:01, Horatiu Vultur wrote:
+> The 09/15/2022 23:14, Yang Yingliang wrote:
+>
+> Hi Yang,
+>
+>> Add the missing destroy_workqueue() before return from ocelot_pinctrl_probe()
+>> in error path.
+>>
+>> Fixes: c297561bc98a ("pinctrl: ocelot: Fix interrupt controller")
+>> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+>> ---
+>>   drivers/pinctrl/pinctrl-ocelot.c | 25 +++++++++++++++++--------
+>>   1 file changed, 17 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+>> index d9c0184c077f..83703a3d291c 100644
+>> --- a/drivers/pinctrl/pinctrl-ocelot.c
+>> +++ b/drivers/pinctrl/pinctrl-ocelot.c
+>> @@ -2072,15 +2072,19 @@ static int ocelot_pinctrl_probe(struct platform_device *pdev)
+>>          info->pincfg_data = &data->pincfg_data;
+>>
+>>          reset = devm_reset_control_get_optional_shared(dev, "switch");
+>> -       if (IS_ERR(reset))
+>> -               return dev_err_probe(dev, PTR_ERR(reset),
+>> -                                    "Failed to get reset\n");
+>> +       if (IS_ERR(reset)) {
+>> +               ret = dev_err_probe(dev, PTR_ERR(reset),
+>> +                                   "Failed to get reset\n");
+>> +               goto err_out;
+>> +       }
+>>          reset_control_reset(reset);
+>>
+>>          base = devm_ioremap_resource(dev,
+>>                          platform_get_resource(pdev, IORESOURCE_MEM, 0));
+>> -       if (IS_ERR(base))
+>> -               return PTR_ERR(base);
+>> +       if (IS_ERR(base)) {
+>> +               ret = PTR_ERR(base);
+>> +               goto err_out;
+>> +       }
+>>
+>>          info->stride = 1 + (info->desc->npins - 1) / 32;
+>>
+>> @@ -2089,7 +2093,8 @@ static int ocelot_pinctrl_probe(struct platform_device *pdev)
+>>          info->map = devm_regmap_init_mmio(dev, base, &regmap_config);
+>>          if (IS_ERR(info->map)) {
+>>                  dev_err(dev, "Failed to create regmap\n");
+>> -               return PTR_ERR(info->map);
+>> +               ret = PTR_ERR(info->map);
+>> +               goto err_out;
+>>          }
+>>          dev_set_drvdata(dev, info);
+>>          info->dev = dev;
+>> @@ -2105,15 +2110,19 @@ static int ocelot_pinctrl_probe(struct platform_device *pdev)
+>>
+>>          ret = ocelot_pinctrl_register(pdev, info);
+>>          if (ret)
+>> -               return ret;
+>> +               goto err_out;
+> Wouldn't be better actually to add the allocation of the workqueue here?
+> In this way, you will not need all the previous changes.
+Yes, thanks.
 
-diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 367a9386dfb7..68509a2301b8 100644
---- a/drivers/pinctrl/pinctrl-cy8c95x0.c
-+++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -1103,7 +1103,7 @@ static const struct pinctrl_ops cy8c95x0_pinctrl_ops = {
- 	.pin_dbg_show = cy8c95x0_pin_dbg_show,
- };
- 
--static const char *cy8c95x0_get_functions_name(struct pinctrl_dev *pctldev, unsigned int selector)
-+static const char *cy8c95x0_get_function_name(struct pinctrl_dev *pctldev, unsigned int selector)
- {
- 	return cy8c95x0_get_fname(selector);
- }
-@@ -1113,9 +1113,9 @@ static int cy8c95x0_get_functions_count(struct pinctrl_dev *pctldev)
- 	return 2;
- }
- 
--static int cy8c95x0_get_groups(struct pinctrl_dev *pctldev, unsigned int selector,
--			       const char * const **groups,
--			       unsigned int * const num_groups)
-+static int cy8c95x0_get_function_groups(struct pinctrl_dev *pctldev, unsigned int selector,
-+					const char * const **groups,
-+					unsigned int * const num_groups)
- {
- 	struct cy8c95x0_pinctrl *chip = pinctrl_dev_get_drvdata(pctldev);
- 
-@@ -1164,8 +1164,8 @@ static int cy8c95x0_set_mux(struct pinctrl_dev *pctldev, unsigned int selector,
- 
- static const struct pinmux_ops cy8c95x0_pmxops = {
- 	.get_functions_count = cy8c95x0_get_functions_count,
--	.get_function_name = cy8c95x0_get_functions_name,
--	.get_function_groups = cy8c95x0_get_groups,
-+	.get_function_name = cy8c95x0_get_function_name,
-+	.get_function_groups = cy8c95x0_get_function_groups,
- 	.set_mux = cy8c95x0_set_mux,
- 	.strict = true,
- };
--- 
-2.35.1
-
+Yang
+>>          ret = ocelot_gpiochip_register(pdev, info);
+>>          if (ret)
+>> -               return ret;
+>> +               goto err_out;
+>>
+>>          dev_info(dev, "driver registered\n");
+>>
+>>          return 0;
+>> +
+>> +err_out:
+>> +       destroy_workqueue(info->wq);
+>> +       return ret;
+>>   }
+>>
+>>   static int ocelot_pinctrl_remove(struct platform_device *pdev)
+>> --
+>> 2.25.1
+>>
