@@ -2,92 +2,60 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D588ECAAD8
-	for <linux-gpio@archiver.kernel.org>; Sat, 17 Sep 2022 02:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CD8C6FA82
+	for <linux-gpio@archiver.kernel.org>; Sat, 17 Sep 2022 03:32:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbiIQCjd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 16 Sep 2022 22:39:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48978 "EHLO
+        id S229591AbiIQDco (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 16 Sep 2022 23:32:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbiIQCjc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Sep 2022 22:39:32 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5C625B;
-        Fri, 16 Sep 2022 19:39:27 -0700 (PDT)
-Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MTw5z6yt1zmVGd;
-        Sat, 17 Sep 2022 10:35:35 +0800 (CST)
-Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Sat, 17 Sep 2022 10:39:25 +0800
-Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
- (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Sat, 17 Sep
- 2022 10:39:24 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <linus.walleij@linaro.org>, <p.zabel@pengutronix.de>,
-        <horatiu.vultur@microchip.com>
-Subject: [PATCH -next v2 1/2] pinctrl: ocelot: add missing destroy_workqueue() in error path in ocelot_pinctrl_probe()
-Date:   Sat, 17 Sep 2022 10:46:33 +0800
-Message-ID: <20220917024634.1021861-1-yangyingliang@huawei.com>
+        with ESMTP id S229379AbiIQDcn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Sep 2022 23:32:43 -0400
+Received: from mail-m11873.qiye.163.com (mail-m11873.qiye.163.com [115.236.118.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAA677B2A7
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Sep 2022 20:32:41 -0700 (PDT)
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by mail-m11873.qiye.163.com (Hmail) with ESMTPA id C4A829003B1;
+        Sat, 17 Sep 2022 11:32:39 +0800 (CST)
+From:   Jianqun Xu <jay.xu@rock-chips.com>
+To:     jbx6244@gmail.com, heiko@sntech.de, linus.walleij@linaro.org,
+        andriy.shevchenko@linux.intel.com
+Cc:     brgl@bgdev.pl, linux-gpio@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Jianqun Xu <jay.xu@rock-chips.com>
+Subject: [PATCH v2 0/2] rockchip pinctrl for acpi
+Date:   Sat, 17 Sep 2022 11:32:37 +0800
+Message-Id: <20220917033239.626597-1-jay.xu@rock-chips.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJSktLSjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaHRofVhkZHUxNQ0JNS01PTlUTARMWGhIXJB
+        QOD1lXWRgSC1lBWU5DVUlJVUxVSkpPWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVSktLVUtZBg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OU06TRw*LT0YDBoQSChWKTM2
+        KSMaCglVSlVKTU1ISENOTk1LSExLVTMWGhIXVREaAlUDDjsJFBgQVhgTEgsIVRgUFkVZV1kSC1lB
+        WU5DVUlJVUxVSkpPWVdZCAFZQUpPT0M3Bg++
+X-HM-Tid: 0a83498163b32eafkusnc4a829003b1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add the missing destroy_workqueue() before return from ocelot_pinctrl_probe()
-in error path.
+These patch fixes to support acpi by:
+1. populate gpio platform before pinctrl to probe
+2. get gpiochip by finding from gpiochip list
+3. get match data by device api
 
-Fixes: c297561bc98a ("pinctrl: ocelot: Fix interrupt controller")
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
-v2:
-  move alloc_ordered_workqueue() after ocelot_pinctrl_register().
----
- drivers/pinctrl/pinctrl-ocelot.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+Jianqun Xu (2):
+  pinctrl: rockchip: find gpiochip by name from gpio module
+  pinctrl: rockchip: get match data by device_get_match_data
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index d9c0184c077f..c672bc2a4df5 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -2065,10 +2065,6 @@ static int ocelot_pinctrl_probe(struct platform_device *pdev)
- 	if (!info->desc)
- 		return -ENOMEM;
- 
--	info->wq = alloc_ordered_workqueue("ocelot_ordered", 0);
--	if (!info->wq)
--		return -ENOMEM;
--
- 	info->pincfg_data = &data->pincfg_data;
- 
- 	reset = devm_reset_control_get_optional_shared(dev, "switch");
-@@ -2107,9 +2103,15 @@ static int ocelot_pinctrl_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	info->wq = alloc_ordered_workqueue("ocelot_ordered", 0);
-+	if (!info->wq)
-+		return -ENOMEM;
-+
- 	ret = ocelot_gpiochip_register(pdev, info);
--	if (ret)
-+	if (ret) {
-+		destroy_workqueue(info->wq);
- 		return ret;
-+	}
- 
- 	dev_info(dev, "driver registered\n");
- 
+ drivers/pinctrl/pinctrl-rockchip.c | 62 +++++++++++++++++++++---------
+ drivers/pinctrl/pinctrl-rockchip.h |  2 +-
+ 2 files changed, 45 insertions(+), 19 deletions(-)
+
 -- 
+v2:
+ - add a second patch to support acpi
+
 2.25.1
 
