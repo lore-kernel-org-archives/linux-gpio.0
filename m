@@ -2,75 +2,117 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC0CC32771
-	for <linux-gpio@archiver.kernel.org>; Sun, 18 Sep 2022 18:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C94ECAAD8
+	for <linux-gpio@archiver.kernel.org>; Sun, 18 Sep 2022 19:54:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbiIRSzh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 18 Sep 2022 14:55:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46206 "EHLO
+        id S229626AbiIRTyN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 18 Sep 2022 15:54:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbiIRSzd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 18 Sep 2022 14:55:33 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0660A1180A
-        for <linux-gpio@vger.kernel.org>; Sun, 18 Sep 2022 11:55:32 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id r18so59901992eja.11
-        for <linux-gpio@vger.kernel.org>; Sun, 18 Sep 2022 11:55:31 -0700 (PDT)
+        with ESMTP id S229529AbiIRTyM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 18 Sep 2022 15:54:12 -0400
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F0B0A8
+        for <linux-gpio@vger.kernel.org>; Sun, 18 Sep 2022 12:54:11 -0700 (PDT)
+Received: by mail-qv1-xf2c.google.com with SMTP id w4so20531532qvp.2
+        for <linux-gpio@vger.kernel.org>; Sun, 18 Sep 2022 12:54:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=SfoXTVxC4EenSCtmX5pFzmMrp9jLghlQkoL0i7o7jcM=;
-        b=lOsz6GX2zXk+Gho0sHZjUC+lGDv+NZdLxlI1PTl0ZvljmUtcb0PlWLz1v8wp7Sshdm
-         HaFiKLCzqLdOEhrIra7TuA6/3zbgcrqk/sehwHta40jUdlwshXZ8xylPzAi1ZLvnP/s1
-         0T6GTnuRgfhSJQwSdivlk/Odsh9Yw8oLh4QL2bYI/U+3yKSe6Xz18UQO4WLXHSui8a8I
-         IJMxYVHbBlHtdfxkb5+iEs0ZBzwBVQvTmPqpOutSh13Lipo6ypG7Gvv9A1x8jkN43vHQ
-         gNi185k2ptqcWJv7D8vM44ImVFk40Qo3ys8ZCXGoqnXwfyZDGdFpaXhwwyd2M8uBWxRo
-         2a1Q==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=NzrSgldK85xE6QmwEDPD5LgTrIFuIlHV7KhW9RAuNP0=;
+        b=MDq97wGJRmYOuNIqd9hUGnm9om4ibEJ7TbpBvTnT4oDk/M7FpZC7uoCjTaLVXCYME7
+         wFYyENE01cgfhL2bi/pgJ9WnYAvH48dlQmmJ6nj6vT4FeW0hLnrsZf5tYUW0S2925CBd
+         jw3ccqFq9c2a63Q3kxORnje+PlhflhbIACp5muifFbc7D/qe5NdRexHDiRwsnMnQgM2b
+         TtfdfqiuJyUEVgFkiuMmKZ1e+BY/trPZxhakjdZNkVcZLAtOH8Dx7MGBH0qtIsvKfkC+
+         qPh0S5DsE+Y6Ph8qXiCthXJBLeTuKfvcWqcL/nD9vwcPjOTCV+efvzz03l1ZcqbfD5YY
+         8Fzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=SfoXTVxC4EenSCtmX5pFzmMrp9jLghlQkoL0i7o7jcM=;
-        b=A/t/nE17hchq96EaOKmQwpzzAhoso7Wu4xxGikAozKqN/zUxGknEZ+wHs0Sa/LxLgr
-         nMnIsQeyu4hNer+Q7SB3KGsylnA1/tPYFCbTu9eogctHeyPft9aDG203K2eIfGOPIvBB
-         taJFZShx9FIDzR4/5Vy0oqksOzFaebrQC6yugpVC5WDqDhxC8resyjsGiX69eARAN82l
-         yMcNqwDns75PPr/rtRBOFPkQ3tkmlgPUjmVWbKwbFMDpbOmms389o/k5rU3dOaK6jTON
-         ef1yQqahx2U27TaZMT5imjqOboRgfqz50h5irwHX4J8hAhVJGjd72/0z53f2/yoRgLq+
-         ItHQ==
-X-Gm-Message-State: ACrzQf0OnHDsn1JTvf0pp4wyVAfNZYs021gn1buQhb1wx1HUQNPCaOto
-        imW/IoynMFlVzmlR1Bci1Zo3t3qAP9uRP4kG7u7TgQ==
-X-Google-Smtp-Source: AMsMyM4SrZG8tMpvowE8J1LWuUAJI6HsKBJo/gru9NLIE4s9M67T2rIR0KXP3f27waT/zo3HFB7DquTQyo5s9XiTFjY=
-X-Received: by 2002:a17:907:7e94:b0:77a:c48b:c80 with SMTP id
- qb20-20020a1709077e9400b0077ac48b0c80mr9866127ejc.690.1663527330494; Sun, 18
- Sep 2022 11:55:30 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=NzrSgldK85xE6QmwEDPD5LgTrIFuIlHV7KhW9RAuNP0=;
+        b=uqywyQSsON6Q8G+lbEQXxvMuK1vl63qtXBTtfmvs8cHsxUloNfn8lCUMxD6Gybl6EF
+         Jvw/J20Rwpqa4K4B4N4qXwzZCzag8MLmJvW7DPZBaOWM6C5XQz//9nvUJvYLdU6cR/9V
+         cs4mjHl79yORaqTfABxY16+jyMEbdpylqFfNSnl8W8g8nqrXhxkKvSGRc0i+Q4IMX44W
+         qY925jCv0AowYPjRkqFWsraZkcd3MVeRmdRR5Fvk9n/YNKWKaI2B3WMVci6jiSmzCtml
+         7C5slJQ5zC5KtOyt7nwuubsXD0mYovgziDpmj/5IRKAFac864xvfiNRLSM/LHOoeKU+o
+         qbjg==
+X-Gm-Message-State: ACrzQf0d4vb5lKmIaJFVMgJkt2sEqY/fYUJF2HcIjJfd3BYjleJlhSle
+        VC52QXyQU8SK+WK1zLX6ofGpJw==
+X-Google-Smtp-Source: AMsMyM4FmaRrd0cAifUoQHD59YrvW0qJmOHuRGOQ3sgmpvHoFLiJnzuiy1qUnhfsEDQ2Cs96HLYsKg==
+X-Received: by 2002:ad4:5f47:0:b0:4ac:b8de:1484 with SMTP id p7-20020ad45f47000000b004acb8de1484mr12103624qvg.77.1663530850400;
+        Sun, 18 Sep 2022 12:54:10 -0700 (PDT)
+Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id i67-20020a37b846000000b006ce7d9dea7asm10753310qkf.13.2022.09.18.12.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Sep 2022 12:54:09 -0700 (PDT)
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     brgl@bgdev.pl, linus.walleij@linaro.org
+Cc:     linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
+        linux-gpio@vger.kernel.org,
+        William Breathitt Gray <william.gray@linaro.org>
+Subject: [PATCH v2 0/3] Introduce the ACCES IDIO-16 GPIO library module
+Date:   Sun, 18 Sep 2022 12:50:42 -0400
+Message-Id: <cover.1663519546.git.william.gray@linaro.org>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-References: <20220909145942.844102-1-horatiu.vultur@microchip.com>
- <CACRpkdYWP4ASoO4wWSEgdCPbNLsx8fuHn_-oqnD+ff1TU84ieQ@mail.gmail.com> <20220915112247.fin7bb45plnr7cme@soft-dev3-1.localhost>
-In-Reply-To: <20220915112247.fin7bb45plnr7cme@soft-dev3-1.localhost>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 18 Sep 2022 20:55:18 +0200
-Message-ID: <CACRpkdasNECTqew4=5mNK8SRd8SiLFw=BwMKBGoNhu=8A7jJZQ@mail.gmail.com>
-Subject: Re: [PATCH v3] pinctrl: ocelot: Fix interrupt controller
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andy.shevchenko@gmail.com, UNGLinuxDriver@microchip.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Sep 15, 2022 at 1:18 PM Horatiu Vultur
-<horatiu.vultur@microchip.com> wrote:
+Changes in v2:
+ - Added offset check for last byte of inputs in idio_16_get() for
+   robustness
+ - Replaced hardcoded '16' with IDIO_16_NOUT constant in idio_16_get*()
+ - Renamed IDIO_16 namespace to GPIO_IDIO_16; adjusted 104-idio-16 and
+   pci-idio-16 drivers accordingly
+ - Utilized DEFAULT_SYMBOL_NAMESPACE to simplify namespace exports
+ - Refactored callbacks to utilize cached output states; idio_16_get()
+   callback now requires struct idio_16_state state; adjusted
+   104-idio-16 and pci-idio-16 drivers accordingly
+ - Moved bitmap_fill() to after idio_16_state_init() in idio_16_probe()
+   to prevent clobbering out_state if the implementation of
+   idio_16_state_init changes in the future
+ - Adjusted offset checks in idio_16_set() and idio_16_get_direction()
+   to ">= IDIO_16_NOUT" for consistency
+ - Utilized __assign_bit() in idio_16_set()
+ - Refactored idio_16_*_multiple() callbacks to utilize bitmap_replace()
 
-> It would be great to go also in stable. I have tried to apply it on
-> 5.19, 5.15, 5.10, 5.4, 4.19 but it failed on all of them because of
-> merge conflicts.
-> Should I send separate patch for each stable tree?
+In a similar vein as the Intel 8255 interface library module [0], the
+ACCES IDIO-16 GPIO library module is introduced to consolidate much of
+the shared code between the existing 104-IDIO-16 and PCI-IDIO-16 GPIO
+drivers.
 
-You should indicate to the stable maintainers that it should go into
-stable (option 2), then prepare backports IIUC. See:
-https://www.kernel.org/doc/html/v6.0-rc5/process/stable-kernel-rules.html
+The idio-16 module exposes consumer library functions to facilitate
+communication with devices within the ACCES IDIO-16 family such as the
+104-IDIO-16 and the PCI-IDIO-16.
 
-Yours,
-Linus Walleij
+A CONFIG_GPIO_IDIO_16 Kconfig option is introduced by this patch.
+Modules wanting access to these idio-16 library functions should select
+this Kconfig option and import the GPIO_IDIO_16 symbol namespace.
+
+[0] https://lore.kernel.org/all/d1a24895f2ea67f689c24c34a20ddb43cd7246af.1658324498.git.william.gray@linaro.org/
+
+William Breathitt Gray (3):
+  gpio: idio-16: Introduce the ACCES IDIO-16 GPIO library module
+  gpio: 104-idio-16: Utilize the idio-16 GPIO library
+  gpio: pci-idio-16: Utilize the idio-16 GPIO library
+
+ MAINTAINERS                     |   7 ++
+ drivers/gpio/Kconfig            |  11 +++
+ drivers/gpio/Makefile           |   1 +
+ drivers/gpio/gpio-104-idio-16.c |  88 ++++---------------
+ drivers/gpio/gpio-idio-16.c     | 146 ++++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-idio-16.h     |  71 ++++++++++++++++
+ drivers/gpio/gpio-pci-idio-16.c | 119 +++-----------------------
+ 7 files changed, 265 insertions(+), 178 deletions(-)
+ create mode 100644 drivers/gpio/gpio-idio-16.c
+ create mode 100644 drivers/gpio/gpio-idio-16.h
+
+
+base-commit: d9e7f0e320516c660d6f33e6c16a3d99970eb14e
+-- 
+2.37.3
+
