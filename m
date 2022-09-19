@@ -2,51 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B7DECAAD3
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Sep 2022 17:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A21F9ECAAD3
+	for <linux-gpio@archiver.kernel.org>; Mon, 19 Sep 2022 17:05:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230478AbiISRE6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 19 Sep 2022 13:04:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44510 "EHLO
+        id S230347AbiISRFP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 19 Sep 2022 13:05:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230490AbiISREg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Sep 2022 13:04:36 -0400
+        with ESMTP id S230345AbiISREn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Sep 2022 13:04:43 -0400
 Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58EE040E23;
-        Mon, 19 Sep 2022 10:03:48 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id ay7-20020a05600c1e0700b003b49861bf48so4150706wmb.0;
-        Mon, 19 Sep 2022 10:03:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6A4C3E76D;
+        Mon, 19 Sep 2022 10:03:51 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id o5so17262040wms.1;
+        Mon, 19 Sep 2022 10:03:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=gqdfX/1lhtDbmfJeIadecs7tBJ8OWa8eyinT/PgvpPY=;
-        b=ZfZ3F+T1rO9Xo20L5ZV5e36zfIvSTZwRqaV7ygVZzaSQ75HuDe4xA/hc51RpZqn5MM
-         iST2P9W7JgM8TgtkvbIfkSbCJGmeKPfiKsQOBJ+7cRoVFK60lcqYLSdHc106YtDtTwTs
-         zgXplemn4zZOHF0lsAvJPMr87eMjq4BQAz7V2xOEXrU6zeucfTAYKc8bvfgXLiZy4ntg
-         THeiSiZH27eIjQCsjcoPRl8Bo6wIn9iHcDycodSpvC71vivtqksYXFnei2q7MRE0o37d
-         JV8E1kRa3Cp7AusVUjCpc1QFzRUU4+m55nEc5dpe2+QGIumSTLpxGFF5/Zy0/G5lSk+9
-         Jbfg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=m5hdKCMrXjDt6ZA2ndwEUQquAl5ne5bCVuc8YArZ/7c=;
+        b=m+MfKc90fGD4L/oI2AaaFE9RlOk6vl1s7sMOECgcWLiDQnumbnNtTgXlTyp+5UpKhA
+         vtzOMMIKiMbsThE7sLxsl0IE3uGrvY8gwkt7fMNamS3uZRAjgaPu4Pazt8wx6Bmq9V4U
+         glu5jvmGoUfMYmL2PNGp2izMTnUvNqG5KlXqk5pMzNeGYlWQ6wA/czfJH3/EmUc+COMU
+         V1HZDYz9Q8ZbieHB6qiUaeWx0TPUEyYvtv3kHvnTMhMSW6FpPCSu2Ekaf5LSR69NKSBa
+         DGa8JRh3icazAaID4FMH2hnzOwljeX2nYZM8+t6U4IWT5G5HGOyJfHVHyt+6Z+IknEPZ
+         TpEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=gqdfX/1lhtDbmfJeIadecs7tBJ8OWa8eyinT/PgvpPY=;
-        b=4qRzmNSzMp5HvYCyuoyU3yKcC511d+5N/usgCO29XgjwhaQG3Orr3+hJC7FOVoAX0m
-         XUzmZ9RhDWsKpDGklE/OPjSHJIaG/tAnPzV9eRoeA+N0m/pIAKJyYFnSvPCOkO4xfOkM
-         4qv7aB9P8pHdmk3xRXKm9mYRxrubWDBI015f1V4Ifoq3JXuIyHPiGl0nojqBwpBMXSEi
-         BJx8gqTx6P1o8vqVR2Dq4nOZMp2YdmviKhkaUmJDWRzaziN/LLdNWg4EioAlDJaLv7WF
-         hNGjLhwn4MyIvnVDq4uvSYRWQKKXApXCA4k66Id5hREgnIEJYyB/h/iAbrWnVNx0TOV6
-         WvXg==
-X-Gm-Message-State: ACrzQf0RS9+vclMhcCIFtn8MNqp8ZLDphrr2Yiy8y7nKOnt98JEZhN2+
-        +9nUHPSTs88NLAu6P1hz2LE=
-X-Google-Smtp-Source: AMsMyM53aRgt7aTtewkEJRuCo4upKB8GdNM1JJ6NEcbMTicVcQPz3s47Zg2Ya84IFAwXiMMXV79GRA==
-X-Received: by 2002:a05:600c:26d2:b0:3b4:7572:4317 with SMTP id 18-20020a05600c26d200b003b475724317mr13194152wmv.134.1663607009937;
-        Mon, 19 Sep 2022 10:03:29 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=m5hdKCMrXjDt6ZA2ndwEUQquAl5ne5bCVuc8YArZ/7c=;
+        b=7wT/xm+6aR9vXJyGv4MheS52EQv6J6GvYyMEw1slNPmcu0TC8J8E5SHzdLXqkkPuTe
+         yomJABtCQpFev7nbQcdTCiV3of+NmFgvwODuESCblcxjKaOBfqGruerg/bJ2Esu3UkLX
+         cT9HfzAkjjIKQJaBs/SZc1wyxxpBmKyUIyTbRk5FAuQstiFud03w7PQ1KFjNh3zT7XFt
+         DcgYbnH0N1k4RMxOjXexFilXevOAdcPILWMR4mH30ETpUv+hZ+MSfOP8MmcgluS/YBnF
+         WhTusAvN8+Hjcna8mdreivBVmxTP6ozp+REfudMcpGNpddyeWBtwPzhovaLCF10dbGOM
+         iqSQ==
+X-Gm-Message-State: ACrzQf2kpzRzAyUNSTzpjmIIqNslRObyjPcPq4Pf9dzy3QSsOn9SyqWK
+        y7VYc9qSQxmsDrajglqKZXg=
+X-Google-Smtp-Source: AMsMyM6Eyf/xv2UKj5yaHzqoan8SSawWq4SBia09Cw+BlUx4cWw5euSoYAXYtcVY+EnOtqmEG20M9Q==
+X-Received: by 2002:a1c:440b:0:b0:3b3:330d:88d8 with SMTP id r11-20020a1c440b000000b003b3330d88d8mr13286916wma.31.1663607030190;
+        Mon, 19 Sep 2022 10:03:50 -0700 (PDT)
 Received: from localhost.localdomain ([95.183.227.98])
-        by smtp.gmail.com with ESMTPSA id ci10-20020a5d5d8a000000b0021e6c52c921sm17562487wrb.54.2022.09.19.10.03.27
+        by smtp.gmail.com with ESMTPSA id ci10-20020a5d5d8a000000b0021e6c52c921sm17562487wrb.54.2022.09.19.10.03.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Sep 2022 10:03:29 -0700 (PDT)
+        Mon, 19 Sep 2022 10:03:49 -0700 (PDT)
 From:   Yassine Oudjana <yassine.oudjana@gmail.com>
 X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
@@ -62,10 +63,12 @@ Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
         linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] MediaTek MT6735 pinctrl support and DT binding changes
-Date:   Mon, 19 Sep 2022 20:01:11 +0300
-Message-Id: <20220919170115.94873-1-y.oudjana@protonmail.com>
+Subject: [PATCH 2/4] arm64: dts: mediatek: mt6797: Make pin configuration nodes follow DT bindings
+Date:   Mon, 19 Sep 2022 20:01:13 +0300
+Message-Id: <20220919170115.94873-3-y.oudjana@protonmail.com>
 X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20220919170115.94873-1-y.oudjana@protonmail.com>
+References: <20220919170115.94873-1-y.oudjana@protonmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -74,38 +77,99 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-This series adds a driver for the pin controller found on the MediaTek MT6735
-and MT6735M SoCs. The two differ in the last 6 physical pins, which are used
-for MSDC2 on MT6735 but don't exist on MT6735M (since MSDC2 doesn't exist on it
-to begin with). In preparation to document DT bindings for this pin controller,
-the existing documents for MT67xx SoCs are combined into one in order to
-eliminate duplicate property definitions and standardize pin configuration node
-names.
+Add -pins suffix to pin configuration nodes to follow DT bindings
+and pass dtbs_check.
 
-Yassine Oudjana (4):
-  dt-bindings: pinctrl: Combine MediaTek MT67xx pinctrl binding docs
-  arm64: dts: mediatek: mt6797: Make pin configuration nodes follow DT
-    bindings
-  dt-bindings: pinctrl: mediatek,mt67xx-pinctrl: Document MT6735 pin
-    controller bindings
-  pinctrl: mediatek: Add MT6735 pinctrl driver
+Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+---
+ arch/arm64/boot/dts/mediatek/mt6797.dtsi | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
- .../pinctrl/mediatek,mt6779-pinctrl.yaml      |  207 -
- .../pinctrl/mediatek,mt6797-pinctrl.yaml      |  176 -
- ...6795.yaml => mediatek,mt67xx-pinctrl.yaml} |  222 +-
- MAINTAINERS                                   |   10 +-
- arch/arm64/boot/dts/mediatek/mt6797.dtsi      |   20 +-
- drivers/pinctrl/mediatek/Kconfig              |    6 +
- drivers/pinctrl/mediatek/Makefile             |    1 +
- drivers/pinctrl/mediatek/pinctrl-mt6735.c     |  584 +++
- drivers/pinctrl/mediatek/pinctrl-mtk-mt6735.h | 3993 +++++++++++++++++
- 9 files changed, 4778 insertions(+), 441 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt6797-pinctrl.yaml
- rename Documentation/devicetree/bindings/pinctrl/{mediatek,pinctrl-mt6795.yaml => mediatek,mt67xx-pinctrl.yaml} (58%)
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6735.c
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6735.h
-
+diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+index 15616231022a..0c2b477184ae 100644
+--- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+@@ -135,70 +135,70 @@ pio: pinctrl@10005000 {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+-		uart0_pins_a: uart0 {
++		uart0_pins_a: uart0-pins {
+ 			pins0 {
+ 				pinmux = <MT6797_GPIO234__FUNC_UTXD0>,
+ 					 <MT6797_GPIO235__FUNC_URXD0>;
+ 			};
+ 		};
+ 
+-		uart1_pins_a: uart1 {
++		uart1_pins_a: uart1-pins {
+ 			pins1 {
+ 				pinmux = <MT6797_GPIO232__FUNC_URXD1>,
+ 					 <MT6797_GPIO233__FUNC_UTXD1>;
+ 			};
+ 		};
+ 
+-		i2c0_pins_a: i2c0 {
++		i2c0_pins_a: i2c0-pins {
+ 			pins0 {
+ 				pinmux = <MT6797_GPIO37__FUNC_SCL0_0>,
+ 					 <MT6797_GPIO38__FUNC_SDA0_0>;
+ 			};
+ 		};
+ 
+-		i2c1_pins_a: i2c1 {
++		i2c1_pins_a: i2c1-pins {
+ 			pins1 {
+ 				pinmux = <MT6797_GPIO55__FUNC_SCL1_0>,
+ 					 <MT6797_GPIO56__FUNC_SDA1_0>;
+ 			};
+ 		};
+ 
+-		i2c2_pins_a: i2c2 {
++		i2c2_pins_a: i2c2-pins {
+ 			pins2 {
+ 				pinmux = <MT6797_GPIO96__FUNC_SCL2_0>,
+ 					 <MT6797_GPIO95__FUNC_SDA2_0>;
+ 			};
+ 		};
+ 
+-		i2c3_pins_a: i2c3 {
++		i2c3_pins_a: i2c3-pins {
+ 			pins3 {
+ 				pinmux = <MT6797_GPIO75__FUNC_SDA3_0>,
+ 					 <MT6797_GPIO74__FUNC_SCL3_0>;
+ 			};
+ 		};
+ 
+-		i2c4_pins_a: i2c4 {
++		i2c4_pins_a: i2c4-pins {
+ 			pins4 {
+ 				pinmux = <MT6797_GPIO238__FUNC_SDA4_0>,
+ 					 <MT6797_GPIO239__FUNC_SCL4_0>;
+ 			};
+ 		};
+ 
+-		i2c5_pins_a: i2c5 {
++		i2c5_pins_a: i2c5-pins {
+ 			pins5 {
+ 				pinmux = <MT6797_GPIO240__FUNC_SDA5_0>,
+ 					 <MT6797_GPIO241__FUNC_SCL5_0>;
+ 			};
+ 		};
+ 
+-		i2c6_pins_a: i2c6 {
++		i2c6_pins_a: i2c6-pins {
+ 			pins6 {
+ 				pinmux = <MT6797_GPIO152__FUNC_SDA6_0>,
+ 					 <MT6797_GPIO151__FUNC_SCL6_0>;
+ 			};
+ 		};
+ 
+-		i2c7_pins_a: i2c7 {
++		i2c7_pins_a: i2c7-pins {
+ 			pins7 {
+ 				pinmux = <MT6797_GPIO154__FUNC_SDA7_0>,
+ 					 <MT6797_GPIO153__FUNC_SCL7_0>;
 -- 
 2.37.3
 
