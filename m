@@ -2,116 +2,125 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FB8C6FA82
-	for <linux-gpio@archiver.kernel.org>; Tue, 20 Sep 2022 01:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E17C6FA82
+	for <linux-gpio@archiver.kernel.org>; Tue, 20 Sep 2022 02:01:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229771AbiITBRy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 19 Sep 2022 21:17:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56370 "EHLO
+        id S230060AbiITCBp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 19 Sep 2022 22:01:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbiITBRw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Sep 2022 21:17:52 -0400
+        with ESMTP id S230089AbiITCBo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Sep 2022 22:01:44 -0400
 Received: from mail-m11879.qiye.163.com (mail-m11879.qiye.163.com [115.236.118.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF95C422F1;
-        Mon, 19 Sep 2022 18:17:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E2F57210
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Sep 2022 19:01:42 -0700 (PDT)
 Received: from localhost.localdomain (unknown [58.22.7.114])
-        by mail-m11879.qiye.163.com (Hmail) with ESMTPA id 163F9680383;
-        Tue, 20 Sep 2022 09:17:49 +0800 (CST)
+        by mail-m11879.qiye.163.com (Hmail) with ESMTPA id 4BC276805D2;
+        Tue, 20 Sep 2022 10:01:40 +0800 (CST)
 From:   Jianqun Xu <jay.xu@rock-chips.com>
-To:     linus.walleij@linaro.org, brgl@bgdev.pl
-Cc:     andriy.shevchenko@linux.intel.com, linux-gpio@vger.kernel.or,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH RESEND] gpiolib: make gpiochip_find_by_name to be common function
-Date:   Tue, 20 Sep 2022 09:17:47 +0800
-Message-Id: <20220920011747.824280-1-jay.xu@rock-chips.com>
+To:     jbx6244@gmail.com, heiko@sntech.de, linus.walleij@linaro.org,
+        andriy.shevchenko@linux.intel.com
+Cc:     brgl@bgdev.pl, linux-gpio@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH v8 1/3] ACPI: utils: Add acpi_dev_uid_to_integer() helper to get _UID as integer
+Date:   Tue, 20 Sep 2022 10:01:36 +0800
+Message-Id: <20220920020138.861083-2-jay.xu@rock-chips.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220920020138.861083-1-jay.xu@rock-chips.com>
+References: <20220920020138.861083-1-jay.xu@rock-chips.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJSktLSjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHkhIVklKS01DQxlMHk5MQlUTARMWGhIXJB
-        QOD1lXWRgSC1lBWU5DVUlJVUxVSkpPWVdZFhoPEhUdFFlBWU9LSFVKSktITUpVSktLVUtZBg++
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Okk6Kzo5Lj0eTR4DDzE2NRgZ
-        AQEaCShVSlVKTU1ITUhNTU1CTU5NVTMWGhIXVREaAlUDDjsJFBgQVhgTEgsIVRgUFkVZV1kSC1lB
-        WU5DVUlJVUxVSkpPWVdZCAFZQUhITEs3Bg++
-X-HM-Tid: 0a83587903442eb5kusn163f9680383
+        tZV1koWUFJSktLSjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDHksaVhkYHksaSUNCTEtMHlUTARMWGhIXJB
+        QOD1lXWRgSC1lBWU5DVUlJVUxVSkpPWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVSktLVUtZBg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nzo6DQw*Tz0eCB5RKykfTUo#
+        Eh1PFBJVSlVKTU1ITUhCSEtLQkpIVTMWGhIXVREaAlUDDjsJFBgQVhgTEgsIVRgUFkVZV1kSC1lB
+        WU5DVUlJVUxVSkpPWVdZCAFZQUhDS0k3Bg++
+X-HM-Tid: 0a8358a129942eb5kusn4bc276805d2
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Move find_chip_by_name from gpiolib to the gpio/driver.h, also rename to
-gpiochip_find_by_name, make it to be a common function.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+Some users interpret _UID only as integer and for them it's easier to
+have an integer representation of _UID. Add respective helper for that.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/gpio/gpiolib.c      | 16 ++--------------
- include/linux/gpio/driver.h | 12 ++++++++++++
- 2 files changed, 14 insertions(+), 14 deletions(-)
+v8:
+ - none
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index cc9c0a12259e..c06334772c47 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -935,18 +935,6 @@ struct gpio_chip *gpiochip_find(void *data,
+ drivers/acpi/utils.c    | 24 ++++++++++++++++++++++++
+ include/acpi/acpi_bus.h |  1 +
+ include/linux/acpi.h    |  5 +++++
+ 3 files changed, 30 insertions(+)
+
+diff --git a/drivers/acpi/utils.c b/drivers/acpi/utils.c
+index 5a7b8065e77f..febf9b8da3a0 100644
+--- a/drivers/acpi/utils.c
++++ b/drivers/acpi/utils.c
+@@ -793,6 +793,30 @@ bool acpi_dev_hid_uid_match(struct acpi_device *adev,
  }
- EXPORT_SYMBOL_GPL(gpiochip_find);
+ EXPORT_SYMBOL(acpi_dev_hid_uid_match);
  
--static int gpiochip_match_name(struct gpio_chip *gc, void *data)
--{
--	const char *name = data;
--
--	return !strcmp(gc->label, name);
--}
--
--static struct gpio_chip *find_chip_by_name(const char *name)
--{
--	return gpiochip_find((void *)name, gpiochip_match_name);
--}
--
- #ifdef CONFIG_GPIOLIB_IRQCHIP
- 
- /*
-@@ -3660,7 +3648,7 @@ void gpiod_add_hogs(struct gpiod_hog *hogs)
- 		 * The chip may have been registered earlier, so check if it
- 		 * exists and, if so, try to hog the line now.
- 		 */
--		gc = find_chip_by_name(hog->chip_label);
-+		gc = gpiochip_find_by_name(hog->chip_label);
- 		if (gc)
- 			gpiochip_machine_hog(gc, hog);
- 	}
-@@ -3745,7 +3733,7 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
- 			return ERR_PTR(-EPROBE_DEFER);
- 		}
- 
--		gc = find_chip_by_name(p->key);
-+		gc = gpiochip_find_by_name(p->key);
- 
- 		if (!gc) {
- 			/*
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 6aeea1071b1b..4ed26a7d98ff 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -618,6 +618,18 @@ extern int devm_gpiochip_add_data_with_key(struct device *dev, struct gpio_chip
- extern struct gpio_chip *gpiochip_find(void *data,
- 			      int (*match)(struct gpio_chip *gc, void *data));
- 
-+static int gpiochip_match_name(struct gpio_chip *gc, void *data)
++/**
++ * acpi_dev_uid_to_integer - treat ACPI device _UID as integer
++ * @adev: ACPI device to get _UID from
++ * @integer: output buffer for integer
++ *
++ * Considers _UID as integer and converts it to @integer.
++ *
++ * Returns 0 on success, or negative error code otherwise.
++ */
++int acpi_dev_uid_to_integer(struct acpi_device *adev, u64 *integer)
 +{
-+	const char *name = data;
++	const char *uid;
 +
-+	return !strcmp(gc->label, name);
++	if (!adev)
++		return -ENODEV;
++
++	uid = acpi_device_uid(adev);
++	if (!uid)
++		return -ENODATA;
++
++	return kstrtou64(uid, 0, integer);
++}
++EXPORT_SYMBOL(acpi_dev_uid_to_integer);
++
+ /**
+  * acpi_dev_found - Detect presence of a given ACPI device in the namespace.
+  * @hid: Hardware ID of the device.
+diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+index e7d27373ff71..bd0db916f330 100644
+--- a/include/acpi/acpi_bus.h
++++ b/include/acpi/acpi_bus.h
+@@ -733,6 +733,7 @@ static inline bool acpi_device_can_poweroff(struct acpi_device *adev)
+ }
+ 
+ bool acpi_dev_hid_uid_match(struct acpi_device *adev, const char *hid2, const char *uid2);
++int acpi_dev_uid_to_integer(struct acpi_device *adev, u64 *integer);
+ 
+ void acpi_dev_clear_dependencies(struct acpi_device *supplier);
+ bool acpi_dev_ready_for_enumeration(const struct acpi_device *device);
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 6f64b2f3dc54..9434db02cb60 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -798,6 +798,11 @@ acpi_dev_hid_uid_match(struct acpi_device *adev, const char *hid2, const char *u
+ 	return false;
+ }
+ 
++static inline int acpi_dev_uid_to_integer(struct acpi_device *adev, u64 *integer)
++{
++	return -ENODEV;
 +}
 +
-+static inline struct gpio_chip *gpiochip_find_by_name(const char *name)
-+{
-+	return gpiochip_find((void *)name, gpiochip_match_name);
-+}
-+
- bool gpiochip_line_is_irq(struct gpio_chip *gc, unsigned int offset);
- int gpiochip_reqres_irq(struct gpio_chip *gc, unsigned int offset);
- void gpiochip_relres_irq(struct gpio_chip *gc, unsigned int offset);
+ static inline struct acpi_device *
+ acpi_dev_get_first_match_dev(const char *hid, const char *uid, s64 hrv)
+ {
 -- 
 2.25.1
 
