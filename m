@@ -2,520 +2,101 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C65C6FA91
-	for <linux-gpio@archiver.kernel.org>; Tue, 20 Sep 2022 02:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24919C54EE9
+	for <linux-gpio@archiver.kernel.org>; Tue, 20 Sep 2022 02:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230085AbiITCBq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 19 Sep 2022 22:01:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57020 "EHLO
+        id S229802AbiITCQp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 19 Sep 2022 22:16:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230089AbiITCBp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Sep 2022 22:01:45 -0400
-Received: from mail-m11879.qiye.163.com (mail-m11879.qiye.163.com [115.236.118.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F6EE53D3F
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Sep 2022 19:01:43 -0700 (PDT)
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by mail-m11879.qiye.163.com (Hmail) with ESMTPA id 05A9B6806D8;
-        Tue, 20 Sep 2022 10:01:40 +0800 (CST)
-From:   Jianqun Xu <jay.xu@rock-chips.com>
-To:     jbx6244@gmail.com, heiko@sntech.de, linus.walleij@linaro.org,
-        andriy.shevchenko@linux.intel.com
-Cc:     brgl@bgdev.pl, linux-gpio@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH v8 2/3] gpio: rockchip: support acpi
-Date:   Tue, 20 Sep 2022 10:01:37 +0800
-Message-Id: <20220920020138.861083-3-jay.xu@rock-chips.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220920020138.861083-1-jay.xu@rock-chips.com>
-References: <20220920020138.861083-1-jay.xu@rock-chips.com>
+        with ESMTP id S229596AbiITCQo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Sep 2022 22:16:44 -0400
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93AF036DC1;
+        Mon, 19 Sep 2022 19:16:42 -0700 (PDT)
+Received: by mail-il1-x133.google.com with SMTP id a14so696435ild.0;
+        Mon, 19 Sep 2022 19:16:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=uhElhL1iGj7D7c7p5uNqiCIgPSuLaW+aX2botzGI+o8=;
+        b=qSl4iV/SedCK1cwzqsQNrcyK8zslOHREIr/BTbO0Sz+kFmmyTNjHEkBLX5et8IMnot
+         o0oqJGOgLTewou5Wwf92oR3jq2Vjd/9mwEL/UUI7XJpmR81ttjqe3K6qXPNqpf9/co8X
+         Qz+VSYw+Z7vpAkdXgQzmjcQaC/oJWtqx6inQetLYKH+gYFZMsl2srf6ejT+jtd12IsrB
+         hoIuIVEBYaYf6e/s6WDcBIAVi5SSa1okcpxCY0yZULHbpsF6sLbiKEZ5D6OdbjlNKe0i
+         meIGzRRp8WTvo/mEmB++NngoLF3tE9Pu08yQ/fMbuBYvKQ+yfwTtAtwWWAg/ZzdFm1t9
+         jOqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=uhElhL1iGj7D7c7p5uNqiCIgPSuLaW+aX2botzGI+o8=;
+        b=mr21tiOUGd6DX2WjzpU9WFXHdXUP7/hJ5DqsZKucGwE/XrI79PD04AshV1qX8hwrW+
+         ro9HoHoj+IAHdJkGTm58FHph68PXlAOUf371ae8xkVi5dAosAjPsnQzUK9PhOfRvrp+G
+         k+r6ZLdMLcwxQGySCVrlOQfbxhCUmi6c7UdHokfV3Y5FszLtYwklpBzu2PRmA+rOE9jO
+         Q5XenALwiansa4Grier7md4VLReenHxdkIPsCTy6mZkK6gW5ZJ/1Jx1zrzlHkcOKHuvM
+         SVcWL8ccUp5d2CkbMqiisEWS5Ib4Sy3BS1kLHYLD8NGMpkL7Qy2roereYMMQUb+JuQYV
+         vIOA==
+X-Gm-Message-State: ACrzQf1NZnKkuRchjYuGjMPGo8Xgrn1FT/FGERiUFwLUfV13STuOhukB
+        oSQo5Yk83SixkHa1MaZB/IlXLu+rnfg=
+X-Google-Smtp-Source: AMsMyM5Srq6rEgrYm95RYIywOZiVe+PuBXT6IJMOcybpBatQjWV+Uni0nYNdj/+0HISlbHEsSzc6iQ==
+X-Received: by 2002:a05:6e02:b4c:b0:2f1:e54d:9870 with SMTP id f12-20020a056e020b4c00b002f1e54d9870mr8544867ilu.214.1663640201733;
+        Mon, 19 Sep 2022 19:16:41 -0700 (PDT)
+Received: from localhost ([2607:fea8:a2e2:2d00::58d4])
+        by smtp.gmail.com with UTF8SMTPSA id j184-20020a0263c1000000b00346a98b0a76sm141422jac.77.2022.09.19.19.16.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Sep 2022 19:16:41 -0700 (PDT)
+From:   Richard Acayan <mailingradian@gmail.com>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Richard Acayan <mailingradian@gmail.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: [PATCH v3 0/3] SDM670 Pin Control Driver
+Date:   Mon, 19 Sep 2022 22:16:33 -0400
+Message-Id: <20220920021636.1634-1-mailingradian@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJSktLSjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDT0tDVkJITUNPQkNMHRlKTFUTARMWGhIXJB
-        QOD1lXWRgSC1lBWU5DVUlJVUxVSkpPWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVSktLVUtZBg++
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NVE6Czo4Qj0jEB4TKykMTU4t
-        MTcwCQFVSlVKTU1ITUhCSEtKQ0hOVTMWGhIXVREaAlUDDjsJFBgQVhgTEgsIVRgUFkVZV1kSC1lB
-        WU5DVUlJVUxVSkpPWVdZCAFZQUpOT0xPNwY+
-X-HM-Tid: 0a8358a12c9e2eb5kusn05a9b6806d8
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The GPIO driver for Rockchip GPIO controller is seperated from rockchip
-pinctrl driver, at the first version, it keeps things original to make
-the patch easy to be reviewed, such as the GPIO driver must work with
-the pinctrl dt node to be its parent node.
+Changes since v2:
+ - remove quotes from pinctrl.yaml# in dt-bindings
+ - constrain gpio-reserved-ranges to 1-76 items (includes ufs_reset)
+ - indentation in dt-bindings example
+ - cite downstream kernel source
+ - remove MODULE_AUTHOR (most imported pinctrl drivers don't have this)
 
-This patch wants to fix the driver to support ACPI since GPIO controller
-should work well during ACPI is enabled. Changes including:
- - only get clocks when is_of_node since ACPI case not need.
- - get io resource and irq by platform common apis.
- - use fwnode instead of of_node from device structure.
- - drop pinctrl related codes, pinctrl self should to find the gpiochip.
+Changes since v1:
+ - add a field in msm_pinctrl_soc_data to accomodate the needs of the
+   driver and device dts
+ - apply changes made to existing tlmm dt documentation
+ - add reserved gpios array
+ - rename device tree compat string to qcom,sdm670-tlmm
+ - remove dependency on ACPI
+ - move MODULE_DEVICE_TABLE macro call up
+ - add missing pins (fixes most of the debugfs problems)
+ - move qup0_pins down
+ - add whitespace between UFS_RESET macro and pins array
 
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
----
-v8:
- - move gpio_chip as the first member of bank structure
- - fix typper 'trriger' to 'trigger'
- - add pull and drive-strength set for rockchip_gpio_set_config
- - fix clock error path
+This patch series adds the driver for the Qualcomm Snapdragon 670 TLMM
+(Top-Level Mode Multiplexer) and introduces a new field so that SDM670-
+related device trees can reserve their own gpios.
 
- drivers/gpio/gpio-rockchip.c | 326 +++++++++++++++++++----------------
- 1 file changed, 182 insertions(+), 144 deletions(-)
+ .../bindings/pinctrl/qcom,sdm670-tlmm.yaml         |  138 ++
+ drivers/pinctrl/qcom/Kconfig                       |    9 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-msm.c                 |    3 +-
+ drivers/pinctrl/qcom/pinctrl-msm.h                 |    4 +
+ drivers/pinctrl/qcom/pinctrl-sdm670.c              | 1373 ++++++++++++++++++++
+ 6 files changed, 1527 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index ebb50c25a461..967d6dc8aa65 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -6,9 +6,9 @@
-  * Copyright (c) 2021 Rockchip Electronics Co. Ltd.
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/bitops.h>
- #include <linux/clk.h>
--#include <linux/device.h>
- #include <linux/err.h>
- #include <linux/gpio/driver.h>
- #include <linux/init.h>
-@@ -16,19 +16,90 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/of_device.h>
--#include <linux/of_irq.h>
--#include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- 
--#include "../pinctrl/core.h"
--#include "../pinctrl/pinctrl-rockchip.h"
--
- #define GPIO_TYPE_V1		(0)           /* GPIO Version ID reserved */
- #define GPIO_TYPE_V2		(0x01000C2B)  /* GPIO Version ID 0x01000C2B */
- #define GPIO_TYPE_V2_1		(0x0101157C)  /* GPIO Version ID 0x0101157C */
- 
-+#define GPIO_MAX_PINS	(32)
-+
-+/**
-+ * struct rockchip_gpio_regs
-+ * @port_dr: data register
-+ * @port_ddr: data direction register
-+ * @int_en: interrupt enable
-+ * @int_mask: interrupt mask
-+ * @int_type: interrupt trigger type, such as high, low, edge trigger type.
-+ * @int_polarity: interrupt polarity enable register
-+ * @int_bothedge: interrupt bothedge enable register
-+ * @int_status: interrupt status register
-+ * @int_rawstatus: int_status = int_rawstatus & int_mask
-+ * @debounce: enable debounce for interrupt signal
-+ * @dbclk_div_en: enable divider for debounce clock
-+ * @dbclk_div_con: setting for divider of debounce clock
-+ * @port_eoi: end of interrupt of the port
-+ * @ext_port: port data from external
-+ * @version_id: controller version register
-+ */
-+struct rockchip_gpio_regs {
-+	u32 port_dr;
-+	u32 port_ddr;
-+	u32 int_en;
-+	u32 int_mask;
-+	u32 int_type;
-+	u32 int_polarity;
-+	u32 int_bothedge;
-+	u32 int_status;
-+	u32 int_rawstatus;
-+	u32 debounce;
-+	u32 dbclk_div_en;
-+	u32 dbclk_div_con;
-+	u32 port_eoi;
-+	u32 ext_port;
-+	u32 version_id;
-+};
-+
-+/**
-+ * struct rockchip_pin_bank
-+ * @dev: the pinctrl device bind to the bank
-+ * @reg_base: register base of the gpio bank
-+ * @clk: clock of the gpio bank
-+ * @db_clk: clock of the gpio debounce
-+ * @irq: interrupt of the gpio bank
-+ * @saved_masks: Saved content of GPIO_INTEN at suspend time.
-+ * @pin_base: first pin number
-+ * @nr_pins: number of pins in this bank
-+ * @name: name of the bank
-+ * @bank_num: number of the bank, to account for holes
-+ * @domain: irqdomain of the gpio bank
-+ * @gpio_chip: gpiolib chip
-+ * @grange: gpio range
-+ * @slock: spinlock for the gpio bank
-+ * @toggle_edge_mode: bit mask to toggle (falling/rising) edge mode
-+ */
-+struct rockchip_pin_bank {
-+	struct gpio_chip		gpio_chip;
-+	struct device			*dev;
-+	void __iomem			*reg_base;
-+	struct clk			*clk;
-+	struct clk			*db_clk;
-+	int				irq;
-+	u32				saved_masks;
-+	u32				pin_base;
-+	u8				nr_pins;
-+	char				*name;
-+	u8				bank_num;
-+	struct device_node		*of_node;
-+	struct irq_domain		*domain;
-+	raw_spinlock_t			slock;
-+	const struct rockchip_gpio_regs	*gpio_regs;
-+	u32				gpio_type;
-+	u32				toggle_edge_mode;
-+};
-+
- static const struct rockchip_gpio_regs gpio_regs_v1 = {
- 	.port_dr = 0x00,
- 	.port_ddr = 0x04,
-@@ -200,6 +271,9 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
- 	if (bank->gpio_type == GPIO_TYPE_V2 && !IS_ERR(bank->db_clk)) {
- 		div_debounce_support = true;
- 		freq = clk_get_rate(bank->db_clk);
-+		if (!freq)
-+			return -EINVAL;
-+
- 		max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
- 		if (debounce > max_debounce)
- 			return -EINVAL;
-@@ -286,6 +360,11 @@ static int rockchip_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- 		 * of gpiod_set_debounce won't change its behaviour.
- 		 */
- 		return -ENOTSUPP;
-+	case PIN_CONFIG_BIAS_DISABLE:
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+	case PIN_CONFIG_DRIVE_STRENGTH:
-+		return pinctrl_gpio_set_config(offset, config);
- 	default:
- 		return -ENOTSUPP;
- 	}
-@@ -507,21 +586,20 @@ static int rockchip_interrupts_register(struct rockchip_pin_bank *bank)
- 	struct irq_chip_generic *gc;
- 	int ret;
- 
--	bank->domain = irq_domain_add_linear(bank->of_node, 32,
--					&irq_generic_chip_ops, NULL);
-+	bank->domain = irq_domain_create_linear(dev_fwnode(bank->dev),
-+						GPIO_MAX_PINS,
-+						&irq_generic_chip_ops, NULL);
- 	if (!bank->domain) {
--		dev_warn(bank->dev, "could not init irq domain for bank %s\n",
--			 bank->name);
-+		dev_warn(bank->dev, "could not init irq domain\n");
- 		return -EINVAL;
- 	}
- 
--	ret = irq_alloc_domain_generic_chips(bank->domain, 32, 1,
-+	ret = irq_alloc_domain_generic_chips(bank->domain, GPIO_MAX_PINS, 1,
- 					     "rockchip_gpio_irq",
- 					     handle_level_irq,
- 					     clr, 0, 0);
- 	if (ret) {
--		dev_err(bank->dev, "could not alloc generic chips for bank %s\n",
--			bank->name);
-+		dev_err(bank->dev, "could not alloc generic chips\n");
- 		irq_domain_remove(bank->domain);
- 		return -EINVAL;
- 	}
-@@ -575,8 +653,13 @@ static int rockchip_gpiolib_register(struct rockchip_pin_bank *bank)
- 	gc = &bank->gpio_chip;
- 	gc->base = bank->pin_base;
- 	gc->ngpio = bank->nr_pins;
--	gc->label = bank->name;
- 	gc->parent = bank->dev;
-+	gc->label = devm_kasprintf(bank->dev, GFP_KERNEL, "gpio%d", bank->bank_num);
-+	if (!gc->label)
-+		return -ENOMEM;
-+#ifdef CONFIG_OF_GPIO
-+	gc->of_node = of_node_get(bank->dev->of_node);
-+#endif
- 
- 	ret = gpiochip_add_data(gc, bank);
- 	if (ret) {
-@@ -585,35 +668,6 @@ static int rockchip_gpiolib_register(struct rockchip_pin_bank *bank)
- 		return ret;
- 	}
- 
--	/*
--	 * For DeviceTree-supported systems, the gpio core checks the
--	 * pinctrl's device node for the "gpio-ranges" property.
--	 * If it is present, it takes care of adding the pin ranges
--	 * for the driver. In this case the driver can skip ahead.
--	 *
--	 * In order to remain compatible with older, existing DeviceTree
--	 * files which don't set the "gpio-ranges" property or systems that
--	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
--	 */
--	if (!of_property_read_bool(bank->of_node, "gpio-ranges")) {
--		struct device_node *pctlnp = of_get_parent(bank->of_node);
--		struct pinctrl_dev *pctldev = NULL;
--
--		if (!pctlnp)
--			return -ENODATA;
--
--		pctldev = of_pinctrl_get(pctlnp);
--		if (!pctldev)
--			return -ENODEV;
--
--		ret = gpiochip_add_pin_range(gc, dev_name(pctldev->dev), 0,
--					     gc->base, gc->ngpio);
--		if (ret) {
--			dev_err(bank->dev, "Failed to add pin range\n");
--			goto fail;
--		}
--	}
--
- 	ret = rockchip_interrupts_register(bank);
- 	if (ret) {
- 		dev_err(bank->dev, "failed to register interrupt, %d\n", ret);
-@@ -628,153 +682,137 @@ static int rockchip_gpiolib_register(struct rockchip_pin_bank *bank)
- 	return ret;
- }
- 
--static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
-+static int rockchip_gpio_set_regs(struct rockchip_pin_bank *bank)
- {
--	struct resource res;
--	int id = 0;
--
--	if (of_address_to_resource(bank->of_node, 0, &res)) {
--		dev_err(bank->dev, "cannot find IO resource for bank\n");
--		return -ENOENT;
--	}
--
--	bank->reg_base = devm_ioremap_resource(bank->dev, &res);
--	if (IS_ERR(bank->reg_base))
--		return PTR_ERR(bank->reg_base);
--
--	bank->irq = irq_of_parse_and_map(bank->of_node, 0);
--	if (!bank->irq)
--		return -EINVAL;
-+	struct device *dev = bank->dev;
-+	struct fwnode_handle *fwnode = dev_fwnode(dev);
-+	int version_id;
-+	int ret;
- 
--	bank->clk = of_clk_get(bank->of_node, 0);
--	if (IS_ERR(bank->clk))
--		return PTR_ERR(bank->clk);
-+	if (is_of_node(fwnode)) {
-+		bank->clk = of_clk_get(to_of_node(fwnode), 0);
-+		if (IS_ERR(bank->clk))
-+			return PTR_ERR(bank->clk);
- 
--	clk_prepare_enable(bank->clk);
--	id = readl(bank->reg_base + gpio_regs_v2.version_id);
-+		ret = clk_prepare_enable(bank->clk);
-+		if (ret < 0)
-+			goto put_clk;
-+	}
- 
--	/* If not gpio v2, that is default to v1. */
--	if (id == GPIO_TYPE_V2 || id == GPIO_TYPE_V2_1) {
-+	version_id = readl(bank->reg_base + gpio_regs_v2.version_id);
-+	if (version_id == GPIO_TYPE_V2 || version_id == GPIO_TYPE_V2_1) {
- 		bank->gpio_regs = &gpio_regs_v2;
- 		bank->gpio_type = GPIO_TYPE_V2;
--		bank->db_clk = of_clk_get(bank->of_node, 1);
--		if (IS_ERR(bank->db_clk)) {
--			dev_err(bank->dev, "cannot find debounce clk\n");
--			clk_disable_unprepare(bank->clk);
--			return -EINVAL;
--		}
- 	} else {
- 		bank->gpio_regs = &gpio_regs_v1;
- 		bank->gpio_type = GPIO_TYPE_V1;
- 	}
- 
-+	if (bank->gpio_type == GPIO_TYPE_V2 && is_of_node(fwnode)) {
-+		bank->db_clk = of_clk_get(to_of_node(fwnode), 1);
-+		if (IS_ERR(bank->db_clk)) {
-+			ret = PTR_ERR(bank->db_clk);
-+			goto unprepare_clk;
-+		}
-+
-+		ret = clk_prepare_enable(bank->db_clk);
-+		if (ret < 0) {
-+			clk_put(bank->db_clk);
-+			goto unprepare_clk;
-+		}
-+	}
-+
- 	return 0;
-+unprepare_clk:
-+	clk_disable_unprepare(bank->clk);
-+put_clk:
-+	clk_put(bank->clk);
-+
-+	return ret;
- }
- 
--static struct rockchip_pin_bank *
--rockchip_gpio_find_bank(struct pinctrl_dev *pctldev, int id)
-+static int rockchip_gpio_get_bank_id(struct device *dev)
- {
--	struct rockchip_pinctrl *info;
--	struct rockchip_pin_bank *bank;
--	int i, found = 0;
-+	struct fwnode_handle *fwnode = dev_fwnode(dev);
-+	int bank_id = -EINVAL;
-+	u64 uid;
-+	int ret;
-+	static int gpio;
- 
--	info = pinctrl_dev_get_drvdata(pctldev);
--	bank = info->ctrl->pin_banks;
--	for (i = 0; i < info->ctrl->nr_banks; i++, bank++) {
--		if (bank->bank_num == id) {
--			found = 1;
--			break;
--		}
-+	if (is_acpi_node(fwnode)) {
-+		ret = acpi_dev_uid_to_integer(ACPI_COMPANION(dev), &uid);
-+		if (ret < 0)
-+			return ret;
-+
-+		bank_id = uid;
-+	} else {
-+		bank_id = of_alias_get_id(to_of_node(fwnode), "gpio");
-+		if (bank_id < 0)
-+			bank_id = gpio++;
- 	}
- 
--	return found ? bank : NULL;
-+	return bank_id;
- }
- 
- static int rockchip_gpio_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct device_node *np = dev->of_node;
--	struct device_node *pctlnp = of_get_parent(np);
--	struct pinctrl_dev *pctldev = NULL;
--	struct rockchip_pin_bank *bank = NULL;
--	struct rockchip_pin_deferred *cfg;
--	static int gpio;
--	int id, ret;
-+	struct rockchip_pin_bank *bank;
-+	int ret;
- 
--	if (!np || !pctlnp)
--		return -ENODEV;
-+	bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
-+	if (!bank)
-+		return -ENOMEM;
- 
--	pctldev = of_pinctrl_get(pctlnp);
--	if (!pctldev)
--		return -EPROBE_DEFER;
-+	bank->reg_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(bank->reg_base))
-+		return PTR_ERR(bank->reg_base);
- 
--	id = of_alias_get_id(np, "gpio");
--	if (id < 0)
--		id = gpio++;
-+	bank->irq = platform_get_irq(pdev, 0);
-+	if (bank->irq < 0)
-+		return bank->irq;
- 
--	bank = rockchip_gpio_find_bank(pctldev, id);
--	if (!bank)
--		return -EINVAL;
-+	bank->bank_num = rockchip_gpio_get_bank_id(dev);
-+	if (bank->bank_num < 0)
-+		return bank->bank_num;
- 
- 	bank->dev = dev;
--	bank->of_node = np;
-+	bank->pin_base = GPIO_MAX_PINS * bank->bank_num;
-+	bank->nr_pins = GPIO_MAX_PINS;
- 
--	raw_spin_lock_init(&bank->slock);
--
--	ret = rockchip_get_bank_data(bank);
-+	ret = rockchip_gpio_set_regs(bank);
- 	if (ret)
- 		return ret;
- 
--	/*
--	 * Prevent clashes with a deferred output setting
--	 * being added right at this moment.
--	 */
--	mutex_lock(&bank->deferred_lock);
-+	raw_spin_lock_init(&bank->slock);
- 
- 	ret = rockchip_gpiolib_register(bank);
- 	if (ret) {
--		clk_disable_unprepare(bank->clk);
--		mutex_unlock(&bank->deferred_lock);
--		return ret;
--	}
--
--	while (!list_empty(&bank->deferred_pins)) {
--		cfg = list_first_entry(&bank->deferred_pins,
--				       struct rockchip_pin_deferred, head);
--		list_del(&cfg->head);
--
--		switch (cfg->param) {
--		case PIN_CONFIG_OUTPUT:
--			ret = rockchip_gpio_direction_output(&bank->gpio_chip, cfg->pin, cfg->arg);
--			if (ret)
--				dev_warn(dev, "setting output pin %u to %u failed\n", cfg->pin,
--					 cfg->arg);
--			break;
--		case PIN_CONFIG_INPUT_ENABLE:
--			ret = rockchip_gpio_direction_input(&bank->gpio_chip, cfg->pin);
--			if (ret)
--				dev_warn(dev, "setting input pin %u failed\n", cfg->pin);
--			break;
--		default:
--			dev_warn(dev, "unknown deferred config param %d\n", cfg->param);
--			break;
--		}
--		kfree(cfg);
-+		dev_err(bank->dev, "Failed to register gpio %d\n", ret);
-+		goto err;
- 	}
- 
--	mutex_unlock(&bank->deferred_lock);
--
- 	platform_set_drvdata(pdev, bank);
--	dev_info(dev, "probed %pOF\n", np);
-+	dev_info(dev, "probed %pfw\n", dev_fwnode(dev));
- 
- 	return 0;
-+err:
-+	clk_put(bank->clk);
-+	clk_put(bank->db_clk);
-+	clk_disable_unprepare(bank->clk);
-+	clk_disable_unprepare(bank->db_clk);
-+
-+	return ret;
- }
- 
- static int rockchip_gpio_remove(struct platform_device *pdev)
- {
- 	struct rockchip_pin_bank *bank = platform_get_drvdata(pdev);
- 
-+	clk_put(bank->clk);
-+	clk_put(bank->db_clk);
- 	clk_disable_unprepare(bank->clk);
-+	clk_disable_unprepare(bank->db_clk);
- 	gpiochip_remove(&bank->gpio_chip);
- 
- 	return 0;
--- 
-2.25.1
 
