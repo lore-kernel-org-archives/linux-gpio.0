@@ -2,51 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FD9C6FA92
-	for <linux-gpio@archiver.kernel.org>; Tue, 20 Sep 2022 22:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D91C6FA97
+	for <linux-gpio@archiver.kernel.org>; Tue, 20 Sep 2022 22:29:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230431AbiITW3y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 20 Sep 2022 18:29:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40640 "EHLO
+        id S230236AbiITW3z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 20 Sep 2022 18:29:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229902AbiITW3w (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Sep 2022 18:29:52 -0400
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BF6A12607;
-        Tue, 20 Sep 2022 15:29:48 -0700 (PDT)
-Received: by mail-il1-x134.google.com with SMTP id m16so2189954iln.9;
-        Tue, 20 Sep 2022 15:29:48 -0700 (PDT)
+        with ESMTP id S230323AbiITW3y (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Sep 2022 18:29:54 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E19D6193D0;
+        Tue, 20 Sep 2022 15:29:52 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id v1so97476ilq.1;
+        Tue, 20 Sep 2022 15:29:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=3KBhCVJZhPS9T7QXRGs8a+mFqMOdqTGYPO/862BSLAc=;
-        b=JalUw4sV3x2a7Nwd9oo9RlSV3WW5gL7ph7eMg9OtIDqp1KS8YDolTIIw3ovbdDqu3G
-         A5/s+YRkHpLeBQ0b6dh3CNGPeAZjGgAV1OiEfSPwWpXQVPk/Hs+tX7DWBzsAjUa3aPN/
-         q7HAD5DWw2F7Rc/NBBP4kbG7JhW7Y7OGFYtu/0SI20a/2K6vl9jBHIzj0K8blJT84eV4
-         ihS6Fbm9Jfqz9hsmbFmq513t5d+nrVn/a+pHe7XmuYh4j+OqA5Dk7NZJBLerXZA42Ryk
-         /AEsWSTtI+kf/1POp5+IVPpF+Qf1oIRnl6qY688wG8QjiEjXfThkDCoyqd0pVhM+7GsT
-         AiWQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=IsAY5Uo5fDObS9RzecYH3SXOEEVbvv/Ubv7Rcm4k0lo=;
+        b=kF6yUboWGeZiaD+NaLksG94RjMC7NqAQ5zhGBBf/N7P1VOc/EoxTR4VZ8mvIHTG7B7
+         XB31W2QF5sSEaf/p6W2Z9W1KmqpU3d4OVsV7YlYG0KaBkEPPdgNA4CNOZ+He2USVfJ7l
+         jvIUTT7M0BwlYXjJWuc0YL81XK9BvQWorML1jShuuT8XQkfNGsN/fK24QuHJpy3+U3HA
+         UY7BoIp/V5Mqhd8Y1Xfb/vLCnswbxBA0ovCEmbHd9YVBCdO3n80tYiVyaB7HLCkb3cZw
+         5vHx8VOPg9OYkWkdlw6jHml4CEGhVXZWJINPpygjDHkHwUKHN1dbthHJ07jxMdFWan96
+         +VqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=3KBhCVJZhPS9T7QXRGs8a+mFqMOdqTGYPO/862BSLAc=;
-        b=UCdx4vSOQHY+XXf14VYtp6ymhZi+OUSiOvkAVwMhT2LF9kOW+8/g+K/WyNZdL9CyDs
-         9yqCnOka2ytBbWYwfEx9EkWqq1gCBsVoYLFkW89FUAm2YZMGPNU2DXiW9wAWqIB8L3aT
-         cbIqdJjm0z6KMInu4WfPMHEMsiqxRKjrJKbXO2XMyy0vJm1ck8xPWbA3svyoIB25Kik/
-         nuTXneTT16POBnDe3/HRxtrgnBnMaQbbefRr/77h6KmlRQVJGi7Wmo9ZtBGDNBcy7w5e
-         +PjqkDtuj1KmrKoVT863GN2ji3XyzJpb6b0S/SfjkQvpvZHhanwrXCDb9Es7ZT4qzBCX
-         hBAw==
-X-Gm-Message-State: ACrzQf2/seIp34lWRYIH0SjFCAnOqgdTmWJ7rWf0EUVbzfo18Ik7q8Xw
-        eix5+SuQcAzDQ7Q///dX5sooLWsMLgw=
-X-Google-Smtp-Source: AMsMyM5f6qNZj7M+d/nsdeu9XBVMXdBlxtG+C+iT34Vboy20KC4JoQ7/z2WAsKKJDC7ZBQk+jXlZtw==
-X-Received: by 2002:a05:6e02:12e2:b0:2f1:c14a:8a9c with SMTP id l2-20020a056e0212e200b002f1c14a8a9cmr11091582iln.267.1663712987143;
-        Tue, 20 Sep 2022 15:29:47 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=IsAY5Uo5fDObS9RzecYH3SXOEEVbvv/Ubv7Rcm4k0lo=;
+        b=pBimZp1pr51rr4cNp7GWAL+wMmF8omIcZBCUxpWzs9zUMlqivS9jDNLOCnKAfjNTld
+         Of4CiU4pPpFd2A81Sj8r4DsclRdZnDMtzMfDfBoWBSnsg4G9evfSFrtX/Zsoc7O7bcdq
+         XdNaEVzp0PHxjQPoUNuvOoalOWLGm+hUQKab4pljbd0pr8a7KdZmjxklusHuAK0Qr6dW
+         RfkeFGV9D2ZRy7gMvYRZxffSyTZyUFVO4QTGVkHuU8lsZuayGMjJhllrL+gtjNVN/7ha
+         uotpDcE/qi/O2u8GjQZ3vWjvNlvJaO9Qz5sqrdg0edu1bIdDJCF7ksOr8pRxCIyzugTN
+         Nntg==
+X-Gm-Message-State: ACrzQf13lUO4sCPkzJwGhVGOpIKiOechQfaywOBZKGlrtDcm3CwAzADp
+        sIUecqZSm2xVGED/WrIeMeuyLzJeORs=
+X-Google-Smtp-Source: AMsMyM48oeG0rQgjmTE+qios6zV3XacotpQ0dH5oGHh9yjzuOouFUVRx1gAg1TdnXwJhjecRjh97yQ==
+X-Received: by 2002:a92:da4b:0:b0:2f1:525a:90e7 with SMTP id p11-20020a92da4b000000b002f1525a90e7mr10817197ilq.307.1663712992078;
+        Tue, 20 Sep 2022 15:29:52 -0700 (PDT)
 Received: from localhost ([2607:fea8:a2e2:2d00::a533])
-        by smtp.gmail.com with UTF8SMTPSA id m10-20020a02a14a000000b00346a98b0a76sm378450jah.77.2022.09.20.15.29.45
+        by smtp.gmail.com with UTF8SMTPSA id r8-20020a02c6c8000000b0034286300316sm361448jan.166.2022.09.20.15.29.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Sep 2022 15:29:46 -0700 (PDT)
+        Tue, 20 Sep 2022 15:29:51 -0700 (PDT)
 From:   Richard Acayan <mailingradian@gmail.com>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     Andy Gross <agross@kernel.org>,
@@ -58,44 +59,70 @@ Cc:     Andy Gross <agross@kernel.org>,
         Richard Acayan <mailingradian@gmail.com>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: [PATCH v4 0/2] SDM670 Pin Control Driver
-Date:   Tue, 20 Sep 2022 18:29:36 -0400
-Message-Id: <20220920222939.150330-1-mailingradian@gmail.com>
+Subject: [PATCH v4 2/3] pinctrl: qcom: add support for complementary reserved gpios
+Date:   Tue, 20 Sep 2022 18:29:38 -0400
+Message-Id: <20220920222939.150330-3-mailingradian@gmail.com>
 X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20220920222939.150330-1-mailingradian@gmail.com>
+References: <20220920222939.150330-1-mailingradian@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Changes since v3:
- - constrain gpio-reserved-ranges to 1-75 items
- - proper indentation in dt-bindings example (actually tagged this time
-   instead of an outdated commit)
- - remove unnecessary commit reference
- - rename complement_fw_reserved_gpios -> complement_fw_gpio_ranges
+The driver-provided list of reserved gpios normally overrides any valid
+ranges provided by the firmware (device tree and ACPI). When the driver
+defines dummy pingroups by itself, it should mark these as invalid but
+should not prevent the firmware from specifying more reserved gpios. Let
+pinctrl drivers indicate that the reserved gpios list complements instead
+of overrides other lists from firmware.
 
-Changes since v2:
- - remove quotes from pinctrl.yaml# in dt-bindings
- - constrain gpio-reserved-ranges to 1-76 items (includes ufs_reset)
- - indentation in dt-bindings example
- - cite downstream kernel source
- - remove MODULE_AUTHOR (most imported pinctrl drivers don't have this)
+Signed-off-by: Richard Acayan <mailingradian@gmail.com>
+---
+ drivers/pinctrl/qcom/pinctrl-msm.c | 5 +++--
+ drivers/pinctrl/qcom/pinctrl-msm.h | 4 ++++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-Changes since v1:
- - add a field in msm_pinctrl_soc_data to accomodate the needs of the
-   driver and device dts
- - apply changes made to existing tlmm dt documentation
- - add reserved gpios array
- - rename device tree compat string to qcom,sdm670-tlmm
- - remove dependency on ACPI
- - move MODULE_DEVICE_TABLE macro call up
- - add missing pins (fixes most of the debugfs problems)
- - move qup0_pins down
- - add whitespace between UFS_RESET macro and pins array
-
-This patch series adds the driver for the Qualcomm Snapdragon 670 TLMM
-(Top-Level Mode Multiplexer) and introduces a new field so that SDM670-
-related device trees can reserve their own gpios.
-
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index a2abfe987ab1..cea1d2af8c88 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -687,9 +687,10 @@ static int msm_gpio_init_valid_mask(struct gpio_chip *gc,
+ 	const int *reserved = pctrl->soc->reserved_gpios;
+ 	u16 *tmp;
+ 
+-	/* Driver provided reserved list overrides DT and ACPI */
++	/* Driver provided reserved list overrides DT and ACPI by default */
+ 	if (reserved) {
+-		bitmap_fill(valid_mask, ngpios);
++		if (!pctrl->soc->complement_fw_gpio_ranges)
++			bitmap_fill(valid_mask, ngpios);
+ 		for (i = 0; reserved[i] >= 0; i++) {
+ 			if (i >= ngpios || reserved[i] >= ngpios) {
+ 				dev_err(pctrl->dev, "invalid list of reserved GPIOs\n");
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
+index dd0d949f7a9e..734fe7b2a472 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.h
++++ b/drivers/pinctrl/qcom/pinctrl-msm.h
+@@ -128,6 +128,9 @@ struct msm_gpio_wakeirq_map {
+  *              function number for eGPIO and any time we see that function
+  *              number used we'll treat it as a request to mux away from
+  *              our TLMM towards another owner.
++ * @complement_fw_gpio_ranges: If true, the reserved gpios list from the
++ *                             driver will not override the reserved gpios
++ *                             list from the firmware.
+  */
+ struct msm_pinctrl_soc_data {
+ 	const struct pinctrl_pin_desc *pins;
+@@ -146,6 +149,7 @@ struct msm_pinctrl_soc_data {
+ 	bool wakeirq_dual_edge_errata;
+ 	unsigned int gpio_func;
+ 	unsigned int egpio_func;
++	bool complement_fw_gpio_ranges;
+ };
+ 
+ extern const struct dev_pm_ops msm_pinctrl_dev_pm_ops;
+-- 
+2.37.3
 
