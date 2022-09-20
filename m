@@ -2,145 +2,230 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1F7C54EE9
-	for <linux-gpio@archiver.kernel.org>; Tue, 20 Sep 2022 20:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF86C6FA8E
+	for <linux-gpio@archiver.kernel.org>; Tue, 20 Sep 2022 22:29:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230237AbiITUfm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 20 Sep 2022 16:35:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36224 "EHLO
+        id S229954AbiITW3x (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 20 Sep 2022 18:29:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229917AbiITUfk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Sep 2022 16:35:40 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBF9B659D4
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Sep 2022 13:35:37 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id l14so9018030eja.7
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Sep 2022 13:35:37 -0700 (PDT)
+        with ESMTP id S229811AbiITW3w (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Sep 2022 18:29:52 -0400
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9707D1A07B;
+        Tue, 20 Sep 2022 15:29:50 -0700 (PDT)
+Received: by mail-il1-x12c.google.com with SMTP id g12so2202502ilj.5;
+        Tue, 20 Sep 2022 15:29:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=J9lbuK48CM0U22ONm8+mMUg5MXgFbTGkJOUHVMVcm0I=;
-        b=NPlmyLXKeNiB2lCTVIdM8AD2kNsuCxF8SMksBsO8emZJQi0LGKAuo4iVGv9o2H7+TI
-         5hzYkFtQfkiHz0cAbu11sfYaLw8cSeETuy7M+Z3807yRG9FvPdycgxE43wehzxYczh79
-         n5QnxD0HHtZdSGraRtcsdsXMl3nCoj4b8BN6E8G2FlKWbG4Ui+qLOBA3tsetmOVmIFQl
-         la6nThuQwPkwtjZrvBBUcM4YYNJ5T4UU9v/rqk2QMq0eWA7w42rm7ZHLrYbt+uAbEyDo
-         uj3bGm4YKmU5Ncz2MNaIeZeFB0PYzmGUAVlDNBPr1n32Kgf0c/uHpdkdo7P8rh8k6jkK
-         8G8Q==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=CrF/H4Z4VJ7wpgY1+1q5vF43kFfiITcd2BFuPo3bmnQ=;
+        b=URZ2kIrtFZFH/+RmWh5s5k44Hxw43CFV+M3IhhnAdBR3lIOrXHMTjK0grliBLCTOFT
+         uSQIuN2IsGprw6q/ygmgveVJpmBNNbZGZVAit2W9ravw2PDFxqnP10v8wkSRxo6+xVdO
+         I22YKiOZzjatLVsF5tNyRThpL3sYvD/6Ttbq/PntiuU8jFE2lcKz292pfJ7bcqEd3z8o
+         IIj7FI8ZpALsVaycv9Pip4cQCEjVl02FxvYMFv1Xg0JoXXsusIuRneQG/1k/8+ml8tzf
+         P9A8bDHKBB2LvmD+MxO6zW7GkJwsMnWDuDl4CQaJUErgk6s+FSxCsvmlKtxlaoDOiMRd
+         C5dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=J9lbuK48CM0U22ONm8+mMUg5MXgFbTGkJOUHVMVcm0I=;
-        b=iboHXUNLaXjCKjeAfWXR8xXhtp4cC9OmlirxCmKrBeVg48PHwz0hPhXFwh/JJGttyv
-         i5u00Y845e6uxbhmhaMoNdUfEt8lxU+kyAf1+QQNk1pmgGEiCjou9AmQZi9wzss+6Ztn
-         eWrEibcLmzcWzAqps9nUpjgka2SrV7TgMSB8jykXEHkpdJLcsRCcYYjIzvzMpowGkj+1
-         kpAA+datGItkqnnZcjXwagOZzJv7h7SlZuc6rcoxUs/SlCOE2D0qq6eOjc5JfxI+kAjj
-         ZOubv/vdMwF6rEB9MBKchvNwHSR2TPGC08AGoqLfWvFraf3Y4aBuhSbv6+K5B3bM/tRI
-         DsKA==
-X-Gm-Message-State: ACrzQf3aHNUzMkYoa7j+Zw/T1S81F1HYZBloXobSVICnVuJTfab9HmTJ
-        n3pXGspmixdcP88lAhLigQlbi6Fz8/UHDSmM/qiPSQ==
-X-Google-Smtp-Source: AMsMyM4LTcXhfqv4YpELfvM7P1zqmzKYwstY0dcMtJSDjOMH2wxw7ephEqC5cMomlnVxJSyIh+Nx6ALwhkP1+NzmLCA=
-X-Received: by 2002:a17:907:3da9:b0:77b:9672:3f7f with SMTP id
- he41-20020a1709073da900b0077b96723f7fmr18389020ejc.636.1663706136414; Tue, 20
- Sep 2022 13:35:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220920135435.15593-1-brgl@bgdev.pl> <Yyn2HEBPPWlJ3E0W@smile.fi.intel.com>
-In-Reply-To: <Yyn2HEBPPWlJ3E0W@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 20 Sep 2022 22:35:25 +0200
-Message-ID: <CAMRc=McjOhUBa0QQbZYh0f_2rN=ESxAtPROAzXEt+KNDJKqWiQ@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: cdev: add fdinfo output for line request file descriptors
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Kent Gibson <warthog618@gmail.com>,
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=CrF/H4Z4VJ7wpgY1+1q5vF43kFfiITcd2BFuPo3bmnQ=;
+        b=mXIJ15mY5KrcCon1MTCw/J99eQVZ7ZTrYuGBdwPkXdRqA2UrMOTSZIutWJtyIYpk+B
+         j0ocO1bDYLMqf9/JI9h1Lnna4ixbA8zzBSKmiGgAL6pG4gKkIq+GKYT10hyNoSBgBvQ3
+         vaSliHOy147KZ4TPXYg3SsNM3jCvkZjVdB5Wwh0lfXEbPEhtoqB6LyZW9VrB0gpTzU3Z
+         gjP8FEESl+DtXtHVdTIhGjuO9kMTJhCCHxH9OkZL19gwzXzPtVCr+0M9/Zt2qFRPGvx4
+         5dwAx+ZVFgnIPmzhcDL77Jizb8m5mfxDEV1rycNWM1tfVJyblt9/4gWupwBnGanbSH4H
+         hs3g==
+X-Gm-Message-State: ACrzQf1UW4sGgoXE5fKpBHZR/jedP8EpCLSgtGlYdDJHy50wGDcpaNJs
+        G6EHtCL+jknTJ5/H/TMpuhHAyERLs68=
+X-Google-Smtp-Source: AMsMyM5UF51SuboRGcpl65tBDpcArAd4Lfblcq5EKmtCFl2nmA7Lb69NtQHEYjNNhnpbJava6CRvLg==
+X-Received: by 2002:a05:6e02:1bc6:b0:2f5:5143:98aa with SMTP id x6-20020a056e021bc600b002f5514398aamr7388785ilv.103.1663712989661;
+        Tue, 20 Sep 2022 15:29:49 -0700 (PDT)
+Received: from localhost ([2607:fea8:a2e2:2d00::a533])
+        by smtp.gmail.com with UTF8SMTPSA id n1-20020a056602340100b006a275eee421sm447835ioz.2.2022.09.20.15.29.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Sep 2022 15:29:49 -0700 (PDT)
+From:   Richard Acayan <mailingradian@gmail.com>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Richard Acayan <mailingradian@gmail.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: [PATCH v4 1/3] dt-bindings: pinctrl: qcom: add sdm670 pinctrl
+Date:   Tue, 20 Sep 2022 18:29:37 -0400
+Message-Id: <20220920222939.150330-2-mailingradian@gmail.com>
+X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20220920222939.150330-1-mailingradian@gmail.com>
+References: <20220920222939.150330-1-mailingradian@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 20, 2022 at 7:19 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Tue, Sep 20, 2022 at 03:54:35PM +0200, Bartosz Golaszewski wrote:
-> > Add fdinfo output for file descriptors created for user-space line
-> > requests in GPIO uAPI v2. The fdinfo file now contains the name of the
-> > GPIO device that is the "parent" of the request as well as offsets of
-> > the lines requested. This allows user-space to parse the /proc/$PID/fdinfo
-> > entries and deduct the PID of the process that requested a specific line.
->
-> In principle I'm fine, but see below.
->
-> > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> > ---
-> >  drivers/gpio/gpiolib-cdev.c | 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> >
-> > diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> > index f8041d4898d1..0f7b5562c410 100644
-> > --- a/drivers/gpio/gpiolib-cdev.c
-> > +++ b/drivers/gpio/gpiolib-cdev.c
-> > @@ -1497,6 +1497,21 @@ static int linereq_release(struct inode *inode, struct file *file)
-> >       return 0;
-> >  }
-> >
-> > +#ifdef CONFIG_PROC_FS
-> > +static void linereq_show_fdinfo(struct seq_file *out, struct file *file)
-> > +{
-> > +     struct linereq *lr = file->private_data;
-> > +     struct device *dev = &lr->gdev->dev;
-> > +     u16 i;
-> > +
-> > +     seq_printf(out, "gpio-device:\t%s\n", dev_name(dev));
-> > +
-> > +     for (i = 0; i < lr->num_lines; i++)
-> > +             seq_printf(out, "gpio-line:\t%d\n",
-> > +                        gpio_chip_hwgpio(lr->lines[i].desc));
->
-> Hmm... Not sure which variant is better (as for machine parsing and for human),
-> but I was thinking of
->
+There is a new driver for the Snapdragon 670 TLMM (Top-Level Mode
+Multiplexer). Document it.
 
-IMO it's pretty clear that the variant in this patch is easier for
-machine parsing - one less tokenization.
+Adapted from qcom,sm6350-pinctrl.yaml.
 
->         gpio-lines: 1,4,6, ...
->
-> Also don't forget that sizes over PAGE_SIZE in sysfs sometimes problematic and
-> racy.(the commit 888be6067b97 ("ACPI: sysfs: Fix a buffer overrun problem with
-> description_show()") for the reference).
->
+Signed-off-by: Richard Acayan <mailingradian@gmail.com>
+---
+ .../bindings/pinctrl/qcom,sdm670-tlmm.yaml    | 138 ++++++++++++++++++
+ 1 file changed, 138 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdm670-tlmm.yaml
 
-In most systems PAGE_SIZE will be at least 4096 bytes. With this patch
-a single "gpio-line:\t65535\n" is at most 17 bytes long x max 64 lines
-= 1088 bytes. We're still way below the size where it would be
-problematic.
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdm670-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sdm670-tlmm.yaml
+new file mode 100644
+index 000000000000..1d8e76db57c6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdm670-tlmm.yaml
+@@ -0,0 +1,138 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,sdm670-tlmm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Technologies, Inc. SDM670 TLMM block
++
++maintainers:
++  - Richard Acayan <mailingradian@gmail.com>
++
++description: |
++  This binding describes the Top Level Mode Multiplexer (TLMM) block found
++  in the SDM670 platform.
++
++allOf:
++  - $ref: pinctrl.yaml#
++  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
++
++properties:
++  compatible:
++    const: qcom,sdm670-tlmm
++
++  reg:
++    maxItems: 1
++
++  interrupts: true
++  interrupt-controller: true
++  '#interrupt-cells': true
++  gpio-controller: true
++  gpio-reserved-ranges:
++    minItems: 1
++    maxItems: 75
++
++  '#gpio-cells': true
++  gpio-ranges: true
++  wakeup-parent: true
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++patternProperties:
++  '-state$':
++    oneOf:
++      - $ref: "#/$defs/qcom-sdm670-tlmm-state"
++      - patternProperties:
++          "-pins$":
++            $ref: "#/$defs/qcom-sdm670-tlmm-state"
++        additionalProperties: false
++
++$defs:
++  qcom-sdm670-tlmm-state:
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          oneOf:
++            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-4][0-9])$"
++            - enum: [ ufs_reset, sdc1_rclk, sdc1_clk, sdc1_cmd, sdc1_data,
++                      sdc2_clk, sdc2_cmd, sdc2_data ]
++        minItems: 1
++        maxItems: 36
++
++      function:
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++
++        enum: [ adsp_ext, agera_pll, atest_char, atest_tsens, atest_tsens2, atest_usb1, atest_usb10,
++                atest_usb11, atest_usb12, atest_usb13, atest_usb2, atest_usb20, atest_usb21,
++                atest_usb22, atest_usb23, cam_mclk, cci_async, cci_i2c, cci_timer0, cci_timer1,
++                cci_timer2, cci_timer3, cci_timer4, copy_gp, copy_phase, dbg_out, ddr_bist,
++                ddr_pxi0, ddr_pxi1, ddr_pxi2, ddr_pxi3, edp_hot, edp_lcd, gcc_gp1, gcc_gp2, gcc_gp3,
++                gp_pdm0, gp_pdm1, gp_pdm2, gpio, gps_tx, jitter_bist, ldo_en, ldo_update,
++                lpass_slimbus, m_voc, mdp_vsync, mdp_vsync0, mdp_vsync1, mdp_vsync2, mdp_vsync3,
++                mss_lte, nav_pps, pa_indicator, pci_e0, pci_e1, phase_flag, pll_bist, pll_bypassnl,
++                pll_reset, pri_mi2s, pri_mi2s_ws, prng_rosc, qdss_cti, qdss, qlink_enable,
++                qlink_request, qua_mi2s, qup0, qup1, qup10, qup11, qup12, qup13, qup14, qup15, qup2,
++                qup3, qup4, qup5, qup6, qup7, qup8, qup9, qup_l4, qup_l5, qup_l6, sdc4_clk,
++                sdc4_cmd, sdc4_data, sd_write, sec_mi2s, ter_mi2s, tgu_ch0, tgu_ch1, tgu_ch2,
++                tgu_ch3, tsif1_clk, tsif1_data, tsif1_en, tsif1_error, tsif1_sync, tsif2_clk,
++                tsif2_data, tsif2_en, tsif2_error, tsif2_sync, uim1_clk, uim1_data, uim1_present,
++                uim1_reset, uim2_clk, uim2_data, uim2_present, uim2_reset, uim_batt, usb_phy, vfr_1,
++                vsense_trigger, wlan1_adc0, wlan1_adc1, wlan2_adc0, wlan2_adc1, wsa_clk, wsa_data, ]
++
++
++      bias-disable: true
++      bias-pull-down: true
++      bias-pull-up: true
++      drive-strength: true
++      input-enable: true
++      output-high: true
++      output-low: true
++
++    required:
++      - pins
++
++    allOf:
++      - $ref: "qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state"
++      - if:
++          properties:
++            pins:
++              pattern: "^gpio([0-9]|[1-9][0-9]|1[0-4][0-9])$"
++        then:
++          required:
++            - function
++
++    additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    pinctrl@3400000 {
++        compatible = "qcom,sdm670-tlmm";
++        reg = <0x03400000 0x300000>;
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        gpio-ranges = <&tlmm 0 0 151>;
++
++        qup-i2c9-state {
++            pins = "gpio6", "gpio7";
++            function = "qup9";
++        };
++    };
++...
+-- 
+2.37.3
 
-Bart
-
-> > +}
-> > +#endif
-> > +
-> >  static const struct file_operations line_fileops = {
-> >       .release = linereq_release,
-> >       .read = linereq_read,
-> > @@ -1507,6 +1522,9 @@ static const struct file_operations line_fileops = {
-> >  #ifdef CONFIG_COMPAT
-> >       .compat_ioctl = linereq_ioctl_compat,
-> >  #endif
-> > +#ifdef CONFIG_PROC_FS
-> > +     .show_fdinfo = linereq_show_fdinfo,
-> > +#endif
-> >  };
-> >
-> >  static int linereq_create(struct gpio_device *gdev, void __user *ip)
-> > --
-> > 2.34.1
-> >
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
