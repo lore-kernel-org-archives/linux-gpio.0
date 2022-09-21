@@ -2,129 +2,148 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD179C6FA82
-	for <linux-gpio@archiver.kernel.org>; Wed, 21 Sep 2022 03:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E072C32771
+	for <linux-gpio@archiver.kernel.org>; Wed, 21 Sep 2022 06:12:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229716AbiIUDwj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 20 Sep 2022 23:52:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36102 "EHLO
+        id S229635AbiIUGMK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 21 Sep 2022 02:12:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230012AbiIUDwi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Sep 2022 23:52:38 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D99211831;
-        Tue, 20 Sep 2022 20:52:37 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id w10so3518993pll.11;
-        Tue, 20 Sep 2022 20:52:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=FYKWLF91wqHBSNDwklandVe9xWbG7lTxuRtXEgU2cDU=;
-        b=OBHMYwgOPsEJor10qwN9qEnWeiIslJgFlhiKEz468aZwmBAwBB0xgF3AihVFij6CPL
-         1rNIfE6rt27sJ7BNNMUMPB3xtiALfxZEBlC3ig2d1rPUGJ/TOynBX1SH9HmKDLHh6S9F
-         jesBnw1UFDBju+OxZrIystsgRoW6FPh8vKtgQlShJpzC7v0z7DQb1wTEMIGKrRP9mt7k
-         7g8Io6FqgrAIRNEb5m2X27c8QvUfomVhsi+EQvKHiu9s0WUhk8eOnZWLHd3/q0Sk5cUS
-         /X+hwFZpDG0BY3q/XijkvOtuHaxa3GdFDhcmHQurNfTcJpdVWAwfUArz6ALDCg+3MANe
-         YE8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=FYKWLF91wqHBSNDwklandVe9xWbG7lTxuRtXEgU2cDU=;
-        b=QGRQZOEVf4/J6VwbMWpyUs4vz+lSnj6H95QT55tI5PAWatz9/78htVoyBloPJ+3WL+
-         q1hGVSGbhbJi1nwW47u/Jhbq55tu4Vwa3PFH9UgnOFWStlyUkhsV+Hvikehz8bPM2V32
-         tFb+8yPlzxe9dxJnrq3xPnvup86BLHXvqLVZJaHATuvqbfbtX7SZuQhV9hhjHv3lUY7X
-         iuBTnYoley3WMplPjd6hWWxhfPAvSLwnjQYR9aGA4kb06yBz422QVlWMDk1mMyLu8uFl
-         ayUzoVyJzZjisWBiwl21CBe5hKt7WApgS4DaFkVECxRVEXgmhReSXgMJwMZjHx/cJd0i
-         yTcQ==
-X-Gm-Message-State: ACrzQf1fxzz/osIZtC8nfj/kWwob3uBJd48PtObDIH5QMzI77rXVkYSh
-        0Qr1FFD1C1xKZreQ7d3k30xpPsudeSI=
-X-Google-Smtp-Source: AMsMyM5MjLaUDFRaLdEJPoa0Bvidig/FWrKczchthEHb8tgNJ9zLEOZzdPsIJSMAUU3ebQV2yZ5TTw==
-X-Received: by 2002:a17:902:bd8e:b0:178:25ab:56cc with SMTP id q14-20020a170902bd8e00b0017825ab56ccmr2784637pls.86.1663732356738;
-        Tue, 20 Sep 2022 20:52:36 -0700 (PDT)
-Received: from sol (110-174-58-111.static.tpgi.com.au. [110.174.58.111])
-        by smtp.gmail.com with ESMTPSA id v10-20020a17090a0c8a00b002002fb120d7sm755724pja.8.2022.09.20.20.52.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Sep 2022 20:52:36 -0700 (PDT)
-Date:   Wed, 21 Sep 2022 11:52:31 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Meng Li <Meng.Li@windriver.com>
-Cc:     linus.walleij@linaro.org, brgl@bgdev.pl,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: cdev: Set lineevent_state::irq after IRQ
- register successfully
-Message-ID: <YyqKfxpAjdSU9r+2@sol>
-References: <20220921032020.25398-1-Meng.Li@windriver.com>
+        with ESMTP id S229612AbiIUGMJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Sep 2022 02:12:09 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A2117F0B9
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Sep 2022 23:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1663740728; x=1695276728;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=yM1mtnTm+JKN+tcXNcPMtltVlKO0jk9jhnxWTzF+VIo=;
+  b=cqcKgXWuAmWtBZjBCTZpxgEkAEIb6oBaHyp61HE+RGWfATDv+vOlvHBE
+   JI2+bmw5QQ14PChBz7Y3xVj8Y0cucKiaEfCY/IDhSn1dcRthxK+t8PK/y
+   CoWWn9xeNLyVj6NWBSXPfDNyvvPDBILH0mTUbdRVA8vw1ixqYmVo6qO/I
+   UswhY7Ii1YOFC/c+vlLLAOXY8xiCg0FGYbtgOonmYjtiuzg03ZLl/RGDc
+   OzoxOoik9VkZeRfMak+H8F4DTeHnFb5PCqDmUuX3K2X9Zsg39oUpLYkGf
+   Qkco60v9y3wRoJCNO90cbl8xOc+fgy/hBjeyC+A3+VM/QZLvmIFOjaIin
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10476"; a="386196528"
+X-IronPort-AV: E=Sophos;i="5.93,332,1654585200"; 
+   d="scan'208";a="386196528"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2022 23:12:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,332,1654585200"; 
+   d="scan'208";a="948003249"
+Received: from lkp-server01.sh.intel.com (HELO c0a60f19fe7e) ([10.239.97.150])
+  by fmsmga005.fm.intel.com with ESMTP; 20 Sep 2022 23:12:07 -0700
+Received: from kbuild by c0a60f19fe7e with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1oasxq-0003J9-0o;
+        Wed, 21 Sep 2022 06:12:06 +0000
+Date:   Wed, 21 Sep 2022 14:11:54 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [brgl:gpio/for-current] BUILD SUCCESS
+ ab637d48363d7b8ee67ae089808a8bc6051d53c4
+Message-ID: <632aab2a.ukvReE9jWG1EseNT%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220921032020.25398-1-Meng.Li@windriver.com>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Sep 21, 2022 at 11:20:20AM +0800, Meng Li wrote:
-> When running gpio test on nxp-ls1028 platform with below command
-> gpiomon --num-events=3 --rising-edge gpiochip1 25
-> There will be a warning trace as below:
-> Call trace:
-> free_irq+0x204/0x360
-> lineevent_free+0x64/0x70
-> gpio_ioctl+0x598/0x6a0
-> __arm64_sys_ioctl+0xb4/0x100
-> invoke_syscall+0x5c/0x130
-> ......
-> el0t_64_sync+0x1a0/0x1a4
-> The reason of this issue is that calling request_threaded_irq()
-> function failed, and then lineevent_free() is invoked to release
-> the resource. Since the lineevent_state::irq was already set, so
-> the subsequent invocation of free_irq() would trigger the above
-> warning call trace. To fix this issue, set the lineevent_state::irq
-> after the IRQ register successfully.
-> 
-> Fixes: 468242724143 ("gpiolib: cdev: refactor lineevent cleanup into lineevent_free")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Meng Li <Meng.Li@windriver.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
+branch HEAD: ab637d48363d7b8ee67ae089808a8bc6051d53c4  gpio: ftgpio010: Make irqchip immutable
 
-Good pick up - the IRQ shouldn't be freed if it hasn't been successfully requested.
+elapsed time: 723m
 
-Signed-off-by: Kent Gibson <warthog618@gmail.com>
+configs tested: 73
+configs skipped: 2
 
-> ---
->  drivers/gpio/gpiolib-cdev.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> index ffa0256cad5a..937e7a8dd8a9 100644
-> --- a/drivers/gpio/gpiolib-cdev.c
-> +++ b/drivers/gpio/gpiolib-cdev.c
-> @@ -1784,7 +1784,6 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
->  		ret = -ENODEV;
->  		goto out_free_le;
->  	}
-> -	le->irq = irq;
->  
->  	if (eflags & GPIOEVENT_REQUEST_RISING_EDGE)
->  		irqflags |= test_bit(FLAG_ACTIVE_LOW, &desc->flags) ?
-> @@ -1798,7 +1797,7 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
->  	init_waitqueue_head(&le->wait);
->  
->  	/* Request a thread to read the events */
-> -	ret = request_threaded_irq(le->irq,
-> +	ret = request_threaded_irq(irq,
->  				   lineevent_irq_handler,
->  				   lineevent_irq_thread,
->  				   irqflags,
-> @@ -1807,6 +1806,8 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
->  	if (ret)
->  		goto out_free_le;
->  
-> +	le->irq = irq;
-> +
->  	fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
->  	if (fd < 0) {
->  		ret = fd;
-> -- 
-> 2.36.1
-> 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+powerpc                          allmodconfig
+mips                             allyesconfig
+um                           x86_64_defconfig
+powerpc                           allnoconfig
+um                             i386_defconfig
+sh                               allmodconfig
+arc                                 defconfig
+s390                             allmodconfig
+alpha                               defconfig
+s390                                defconfig
+m68k                             allmodconfig
+arc                              allyesconfig
+alpha                            allyesconfig
+s390                             allyesconfig
+m68k                             allyesconfig
+i386                                defconfig
+arc                  randconfig-r043-20220921
+riscv                randconfig-r042-20220921
+s390                 randconfig-r044-20220921
+i386                             allyesconfig
+ia64                        generic_defconfig
+sh                   rts7751r2dplus_defconfig
+sh                          rsk7203_defconfig
+nios2                         3c120_defconfig
+i386                          randconfig-a012
+i386                          randconfig-a014
+i386                          randconfig-a016
+x86_64                           rhel-8.3-kvm
+x86_64                          rhel-8.3-func
+x86_64                           rhel-8.3-syz
+x86_64                    rhel-8.3-kselftests
+x86_64                         rhel-8.3-kunit
+csky                              allnoconfig
+alpha                             allnoconfig
+arc                               allnoconfig
+riscv                             allnoconfig
+arm                          simpad_defconfig
+powerpc                    sam440ep_defconfig
+sh                             espt_defconfig
+arm                            xcep_defconfig
+arm64                            allyesconfig
+arm                                 defconfig
+arm                              allyesconfig
+x86_64                              defconfig
+ia64                          tiger_defconfig
+powerpc                  iss476-smp_defconfig
+x86_64                           allyesconfig
+x86_64                               rhel-8.3
+m68k                            q40_defconfig
+sparc                       sparc64_defconfig
+openrisc                         alldefconfig
+ia64                             allmodconfig
+i386                          randconfig-a003
+i386                          randconfig-a001
+i386                          randconfig-a005
+i386                          debian-10.3-kvm
+i386                        debian-10.3-kunit
+i386                         debian-10.3-func
+
+clang tested configs:
+hexagon              randconfig-r041-20220921
+hexagon              randconfig-r045-20220921
+i386                          randconfig-a002
+i386                          randconfig-a006
+i386                          randconfig-a004
+x86_64                        randconfig-a012
+x86_64                        randconfig-a014
+x86_64                        randconfig-a016
+x86_64                        randconfig-k001
+x86_64                        randconfig-a005
+x86_64                        randconfig-a003
+x86_64                        randconfig-a001
+i386                          randconfig-a011
+i386                          randconfig-a013
+i386                          randconfig-a015
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
