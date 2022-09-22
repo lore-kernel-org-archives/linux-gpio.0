@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F76C6FA91
-	for <linux-gpio@archiver.kernel.org>; Thu, 22 Sep 2022 04:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B875ECAAD8
+	for <linux-gpio@archiver.kernel.org>; Thu, 22 Sep 2022 04:02:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230188AbiIVECZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 22 Sep 2022 00:02:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44280 "EHLO
+        id S230289AbiIVECr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 22 Sep 2022 00:02:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230030AbiIVECT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Sep 2022 00:02:19 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2093.outbound.protection.outlook.com [40.107.94.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4DD8ABF1B;
-        Wed, 21 Sep 2022 21:01:29 -0700 (PDT)
+        with ESMTP id S230115AbiIVECX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Sep 2022 00:02:23 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2106.outbound.protection.outlook.com [40.107.223.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7A1CAD984;
+        Wed, 21 Sep 2022 21:01:40 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DEom0gi1xsxgWQoHCmAwZclEO51Ni9zU2aOort7prwM1ivXY/Zx9jPPHDuKIzJaxC3l7pjx0zuHJHfRjLBsKB5llP0DqmtoUKzcjdxtxJo6TwH5e/eoPdB1L4y5nloqJIJYOQc8JS7w0C4W54sHoovqWBHbVQ72KDj03XpQJvi5XOqGbpnGa3a2hJ/PZpVVaJ/+OEqsgoN8Op8cfIPVuDIVU6vE9qWlj0Y4XuECXveWOex8AMdUVBwruDeTP6W9OE85C9ZVtI8sElWdRMP4LsxP7QeE2DKQrViWoGaHffHPYCHSXxXpjyW9T4ea7e1oHBu7R2epkz/0QK8jb4cJnDg==
+ b=ldqxsPMmq5hnWDZ5OfLpO8HZA08YeVfr2wKmTtoXnepTRBox6ac8We+iVejo3ZOEDanzt+ryNQbg70AeIvvD1NewG9YAxsOdE8tzMkkubajg6CUnz3HmG/x/XcXIRjEnjXshD6G2Y9ZfB+psZZ2QYtaR8kt91SvfGTYPdp9KWwgwvIY+ho/XhTl9P3IQqUdXr5sCwqevGwVQYueQvyR5BWeFmF2r7lks0BaQMmEc+QPmFDV6Ei6LitXqWBLykrotzR90XQHSDJ75EyhImXOXlCfqI6CEkcrfAXdlULyWVFR1pu2bQeXl5352Uui6czyfi+D9zqLfeuGiSJePjZYKfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ONGQW62+yNyoZT3WnR5IAKDU5JdjQ2yDFLrDWUVUYLQ=;
- b=DPd8f519570vtrqHe2phjf8MAv53csPpoz9Sz9kP4b52Wa9ILe7r5m1ZwoRtBW5pTxnpWA2NagPxVoIfPHw9btFczO0DscaVH3sMAaSEsPaSytayYFd0MTrwuNDfpAiWgSPpEHyyqQPpiWvM0917CC3wYtvKTJWUq/dXrdvMFidO2ulWCG3VVe0WdsSaoZz6Q62GQYEpmJl+jeXl2HtpGXmbzUMEgz1kbBjKjGKuea0dSPmZ/saLPdtblKeTdhw+PnHxZmaG33tPsyqjGZ/nNNwjDoL/nTv6NCj7XpeguVYYMBhzOkd4BGuFYVg6uw23nCmRztsau2ihaAqk9x5uOQ==
+ bh=RBxdHaMV1L2lRGI6mAzHE9MKi2hjTWKBF/SkZEFqzH4=;
+ b=M/l//kIVGEZj9zEql+rM2hjFcLSTauJdbUkP2EwAHhAoyxOs1c/zz3jVUxQmeIwZPVS5ovvuFX0gPjz/JTh7ZunxYDZaOC8j/nLtJbwcRsIC6bR88xAvBBosqw0sUFIkGLhmTOxj4y4agDYLo4lv+Ty46V7Wh5YixgFOdzsEr2UyjRfdK0CeV3YvwUd5dcxnRt3Xjo/eyEP5h9mCw5kNGCxmBrqNc8TfJsOeOIA0GktipmLGrTsJcwGN0sRU+JeD3wy2XSAhTInSOQZGk6FZGRmHv8kQTMmtRnphxd7mphhTx9x2jSsTJ9OVaN4o0gRmoFuAqdyOMYO4pEcgGBDJeA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=in-advantage.com; dmarc=pass action=none
  header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ONGQW62+yNyoZT3WnR5IAKDU5JdjQ2yDFLrDWUVUYLQ=;
- b=VoUp0Vy/qVR/s0GHCj7c6ts9G8xnPs2S65gr8t0pQKAiXZBtRNAu4WNYZXYvWkFxvo6umOAG57PDYxvDbKVMvnBvPfU542Q4okTB1CU0hvszSuJR+eRjI5c9AImODxoDvY1TmSkpbSaazNQTEPKlqokcAjS/mB4R2DPqW3yATNM=
+ bh=RBxdHaMV1L2lRGI6mAzHE9MKi2hjTWKBF/SkZEFqzH4=;
+ b=B7N2t4j1lH7K55/0RnDLGU+OuDCE+JzzoVRB5rDUodPoRkM+Ylh4UaOqVljVingZaT1zvCeZnc0GElH82hBxzcMqFWDeuqo5wCvGkSOILYTfw5riGv3AhW+J20r9v8ceV2lP/RS2DAmfcmFKE8SiMAz1jSLYdwrojFagC5PeBUA=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=in-advantage.com;
 Received: from DM5PR1001MB2345.namprd10.prod.outlook.com (2603:10b6:4:2d::31)
- by BN0PR10MB5158.namprd10.prod.outlook.com (2603:10b6:408:120::18) with
+ by SA2PR10MB4412.namprd10.prod.outlook.com (2603:10b6:806:117::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.17; Thu, 22 Sep
- 2022 04:01:27 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.16; Thu, 22 Sep
+ 2022 04:01:35 +0000
 Received: from DM5PR1001MB2345.namprd10.prod.outlook.com
  ([fe80::b594:405e:50f0:468e]) by DM5PR1001MB2345.namprd10.prod.outlook.com
  ([fe80::b594:405e:50f0:468e%5]) with mapi id 15.20.5654.014; Thu, 22 Sep 2022
- 04:01:27 +0000
+ 04:01:34 +0000
 From:   Colin Foster <colin.foster@in-advantage.com>
 To:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, netdev@vger.kernel.org
@@ -58,11 +58,10 @@ Cc:     Russell King <linux@armlinux.org.uk>,
         Vladimir Oltean <olteanv@gmail.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: [PATCH v2 net-next 06/14] net: dsa: felix: add configurable device quirks
-Date:   Wed, 21 Sep 2022 21:00:54 -0700
-Message-Id: <20220922040102.1554459-7-colin.foster@in-advantage.com>
+        Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH v2 net-next 10/14] mfd: ocelot: prepend resource size macros to be 32-bit
+Date:   Wed, 21 Sep 2022 21:00:58 -0700
+Message-Id: <20220922040102.1554459-11-colin.foster@in-advantage.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220922040102.1554459-1-colin.foster@in-advantage.com>
 References: <20220922040102.1554459-1-colin.foster@in-advantage.com>
@@ -73,141 +72,98 @@ X-ClientProxiedBy: BYAPR05CA0009.namprd05.prod.outlook.com
  (2603:10b6:4:2d::31)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM5PR1001MB2345:EE_|BN0PR10MB5158:EE_
-X-MS-Office365-Filtering-Correlation-Id: 15fd9cb1-acc8-44ea-191c-08da9c4f1f58
+X-MS-TrafficTypeDiagnostic: DM5PR1001MB2345:EE_|SA2PR10MB4412:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7f4163b7-4e9e-4a3e-32b2-08da9c4f23d5
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: JVq4meG3R4XwgL8ZmRW3H7kdhUYyK9p+FLuuM9IBE5SFII2MiIP6VNvUq7qMAN5FgiJI3ySvAhIYuswMHJEK4TgS3bKc91EyZi9utKKw1mDnZVVIwR3fV930vfPxpujymSqkAppf1w0LEZSlJHmJVZKHiHf7sVjcdspx4Qp09m77sWuxavrpA3lGrMcLJAtuuKH4ZTfvjbpzkCfPWX3oDjNuttQPn8/3RmTXtkBnMOMliX2EKyxRbP67tTVRVjIIvOCvWf8+N7DKeeW6lWnBmNIG51FW0+kUYcrOZZUJXA+i+FhD2tw+VbcEhVx8IKzOhcj84LuIL3vGdYG6ORAubxUc0v1HoEock1MKU5qdrEkCTGj8fkYrJaHbFhxP24lsyCpADvUjj63AYH3fgk0qu3Hs5LgLD8U7kaY9uW/O4sREeK8OIaF9azGv6fl8sqwaV/6jG65RptTTan2C+WaOakg4Onx7C61bEvC3W2ANg3Q8u/ya6eyHQX3w+LDaN/+9kRrOakNF8iWDWYHS+O2Mp28yGvKD9RyuO3fvixqjhveSapGXUm3rvkziYhhA7eOZtagxbHS7wv/Ye5hBmIv4W0GI2WTxCuQ4vZ6d+/Tq078ku0zY7n7X0F7evia0nwBh3xCwp+UPjGxSHfrIkZkVWwj3Ek/9C3eg4KFZNAX+qbz/Y5690b4PD0vdUmyvdpNSCLZOLEH0OZXXcTj4ixlccN9UjaTQqod9iiV7CeyeAqXxDBSN8D6RUl+UCm/AAf21
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR1001MB2345.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(396003)(39840400004)(366004)(136003)(346002)(451199015)(6666004)(36756003)(41300700001)(8936002)(44832011)(26005)(6512007)(7416002)(6506007)(5660300002)(316002)(478600001)(54906003)(6486002)(38100700002)(8676002)(66476007)(66556008)(38350700002)(4326008)(66946007)(83380400001)(52116002)(1076003)(186003)(2616005)(86362001)(2906002);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: wOWvm2b8NYDS8ZkISb8j8f+pAB+XulpzUCT+QMkeaHeRR+4yuOcjqBiSPzhNlZTYo+0pjIh1UW8GONTyYkSq9W2ARcuVHBrEyhQIr8MF4gibybNSEMsNDJ/wTg0jVs4hVdPt1Gq0ObimR5KgtAa8R/NmR402fFxOaerpehcroy7/B1C5XiMBvyCgLbw05JRSSgxEpI2yIF6cueHRRUKcprhVlf5wv0amMMUtbzhWKyTMp3GSA+IDgSo+gz4X1Vepvn/4zJKyc9yZaZlcug8cXIIlj2g0J4lcoxa/+4qp/z/6X5wf3NbT6E1s/rt9ptNst8e497ThjCGPkRED99YL90Z8X9oWu+f1vD9oPuimny+AGgHnH11JvF2wsNMDZcvEbVc5c6t/RTTHrWXaOLQIjvIGxPWyVzMGaffqXJHHQGJfUMfQBREcMc2wa6A3cW69EIDvgGID3F4eSMBnUP7S+llybRq7gBm/FMprWXYZi7eUAuLr7auBzxiSrWhzH9PUteyjy/Ud8tWW5/t9mLCHlAVLZLA4ne1BnmH1lPOiqWQEDWioK8IsQ1Bc0Mig23C1H4M+sO2kO05lpT0XP9QkUPeTBTwz5tfC4dLBT9ooIfp/hp3En4qgSksCwQxyn8TBSX2nPJWm8+ZOmCdz/kdw2SOPFT+G1cDVu+ykE/vg2yo77w+M57LrzEllTKZvhK6/1Vjfp0KOpi8TPnYpibIeIba6Yh/+E9Z+rJxErnBhNOTXS6oZHvP4blHokoz6UaZ5h+XnReBBgyplKLwh/hTDWA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR1001MB2345.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(366004)(376002)(396003)(346002)(136003)(39830400003)(451199015)(36756003)(6506007)(6666004)(52116002)(6512007)(26005)(86362001)(66476007)(66556008)(54906003)(4326008)(66946007)(41300700001)(8676002)(6486002)(38350700002)(38100700002)(83380400001)(2616005)(186003)(478600001)(1076003)(2906002)(316002)(5660300002)(7416002)(44832011)(8936002);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Mgh2e1qTvAujyAiu2Gcbmhm3id5UTeeo3FFCFQ3Xp9gFvEx5SyyUb6t/GV5l?=
- =?us-ascii?Q?j524Au4nAUJyp1Mq+xPaLk1a2vcxsb5GkMzm4awH22cMBGxxOVQ1EQzrqNiv?=
- =?us-ascii?Q?mUdJCnryz8vKveSS8acsOKcRL72cNHMrvueBojIkuj1UXs0ETLOI/zTeyIXy?=
- =?us-ascii?Q?CtBNl77/kEgET0erckmGkerZEtvifu9pQ850IR1PmFT//cduzc/rCHMp4B3Q?=
- =?us-ascii?Q?gauLlWhq0R6/jyBEO4K3hRf95nwyhtwqsoFGXndPzpd2HCtR5tkFdgJddiVP?=
- =?us-ascii?Q?m+9HSAj/asacCcSewVpvUGQT0CHJScBorqMj0EH/kT6mGs+UsA7e/9WQ3+BU?=
- =?us-ascii?Q?PhMT9ODwMU1ybDQ3rbpFEXfdvFCGfhQLvnU9C+hqCsMnGX/R9NcE747PtnIk?=
- =?us-ascii?Q?DBTHkhVleWPLh2R+vmCX4fMk3AahKUkJY9iGq6t8lkDoALG/XZJSxZUfJ5x+?=
- =?us-ascii?Q?EUBy3TQKhSdEMdgi2xt/yPOPizZi/0i2dfflGjGakUvbV+hPqdhVf6iCzVOt?=
- =?us-ascii?Q?HsAUdoQpeMtbG5Llhnv5Vsx3qUmxPE4hjfBTscxUHuqHQqGPaRD9iJ55uiSz?=
- =?us-ascii?Q?TVFV4fKzN1FuqnhYCEtZH5H2YKTwBwGwuUCvgX3A0jfo2gvw6C86rwWmnR0p?=
- =?us-ascii?Q?OFX3USieZgaLoqBVuyaACsXFTbC2PsK2mu553iat873qcB5pYVd1QLpJvjEA?=
- =?us-ascii?Q?1VLxHX/t0zC0hbFKFWhuyz7jwL8eJQI96J3jCB3K79FtJyyKWgb7OrPy00oB?=
- =?us-ascii?Q?nNv7T4hs0L/+6EBk7hJFJpHD5VRmTTMK1pYwDigu8BSUE2gO2shdkgKGMLOr?=
- =?us-ascii?Q?hrZFjHuaKEIHmIGyyjEQap0eIcR9quDMdneidQPQxAwVOAKrjW69pPwZ82Cb?=
- =?us-ascii?Q?DwhAMV1J1x9oW6HPNxJF98VGC11CLXngtOELMz9MFlnegjpBwtWIBIY36zlN?=
- =?us-ascii?Q?yK03TAbjLEH/M4ADk4dd5raFxAWsAZ8BIFN/lQVcJeuVVa6n1nDcbSXe8Qzc?=
- =?us-ascii?Q?WflXW+cMcphDz65sQPEV5xTgSfsY22h2UT9tdaiWG9RPRXwXXHQRde3eHVgE?=
- =?us-ascii?Q?YCmJJSrwEulBKRZNk2izBWNQYq60imgX48806U1CRxS1UjGmGHaNEVYLUkch?=
- =?us-ascii?Q?sLSUiUkyym37ckal4IceZX+GHD4htnMheZTOYPNFWp6SaNY1qlOIaM1XyTQL?=
- =?us-ascii?Q?J1VgsSrx45flNr4Lz05UoxNBmr/R/lCA6qBmOtSDh5CIQkVTFLBbUOtSFdAY?=
- =?us-ascii?Q?8S76eF4mcJyvtfkRNXUEn/nb8SffSXyFUQhl5iENbXUd5PsvpI2YV8/OauJe?=
- =?us-ascii?Q?bWQ3oGTEBhznATUtOmr/2RKrgObipz4SpZ3vJiB52NzX8BX6cVdl9lSaHSdt?=
- =?us-ascii?Q?WC2mPDun6/QujqEeGv5VR6MzsuKMeSYTdyecnwXMgG7ZBZii/t3h0DByBKCV?=
- =?us-ascii?Q?jrBD3t730B6zLBEN204XUHqTCetjt6AD9fFw9EByyZpuIQJrJrjjuiScGxWV?=
- =?us-ascii?Q?x7ujKp5Ku8s7Q5Zmj6BArxIbSmwvtwgua5h3GETNMRQ6UCU9JJW9bTavHlTI?=
- =?us-ascii?Q?vhCFFU66HO2czjR0sVav9IYQjKG68jFg3MaMptSOtI8EVLrb2Hl80/nAJGcx?=
- =?us-ascii?Q?tQ=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ScR2F9SE4pFi6UYafZfVOwvsAMUxeXzlV88fTh/KUF/ds5JM0sAerMnuuFb3?=
+ =?us-ascii?Q?UTAgVorOIoBM6wcyHHV/TDbaV75Nm2c8LM5SfB7k+22woDXCj4NoPgRTsRDf?=
+ =?us-ascii?Q?L2MjM/x7yVNTVnHIy6RDlfzaPGHECK44YVev9zCvx8ifW9bdjY8sWSpbiNB5?=
+ =?us-ascii?Q?HWj/CFdyej3HQwOlSUSkTzRihpJhg4+BNXSEfG7ZXpTNwg5bV3Ds3uGHmQPD?=
+ =?us-ascii?Q?O5yDZM7lyfLN6jG0VAfIkyewDCdppqGlsedS7RbLvF7JgUdqMZsn5hW1bCck?=
+ =?us-ascii?Q?VDSSQlhR+tAqhGKu0SkwLalBiAT6yoab5XWbSExCSMsugiCGnZpobT758Xxw?=
+ =?us-ascii?Q?KMYCdIC9wKGOjbcwU+twdDg9IelERh6vXxCmdUvotJJf5W3uqZBP/StXjSxr?=
+ =?us-ascii?Q?JB6ZwcMJ1J+a05s0UquopABI5ivUqMgsLQIAMA51awUCbQ/BQmAc2Z5kT8UF?=
+ =?us-ascii?Q?Cf0RGTi6Huw8DQF+4sJ0IdNNkV62IXcSW/9wKnXxHtYH2Ze6aQ/56AWxf0NR?=
+ =?us-ascii?Q?kzl43jqpf8t0wu+LkeyXskMaCeE0JR9J0NFhM8Q/FK3DZEl4OkAoBoRslz+J?=
+ =?us-ascii?Q?5G9/igfTF3o/BhmdbJXeNDCkt7faBzeuyQHfLEiJnDTXsahHC3k1x7ZOK5Sf?=
+ =?us-ascii?Q?C8SQaC6brMXiHfptHiqcJgwMLgNeLmmnwGoSAWnoSJFv5xosfyVIdi6oei2x?=
+ =?us-ascii?Q?h685rjvIrnV+uyxnBw12wf5/lMsdaMRKBBvAHRwn/EsuWtNjdc5pY2xEsmiw?=
+ =?us-ascii?Q?wh0xXdHshdgOpRktKTq2iFtG92jgKM/9+aIZ1uf63n3+7AvCe/M6ZbieLjVg?=
+ =?us-ascii?Q?P5R9FNJBfxCG4drPY2d/5DUxyB8ySQLthwMDJFXwl0anvv3NqmrlZU3T4qKb?=
+ =?us-ascii?Q?qDBdEeiNsEFwsC+IgVaaYmPnmp6RvzeP64oPlBoWLZPMLATlDq0AZT1yFiPZ?=
+ =?us-ascii?Q?avyjJtwzcRksp1676cXG/lrDouLproNw7oIhSkXjvHgcZt8WELkHjJBuxq9I?=
+ =?us-ascii?Q?eSuxBI6qy2mRdBsS8vs0Aw/yp73EFP2NscvRxuNMXLLSOOrxJqSJ7ddeMkFa?=
+ =?us-ascii?Q?4P0OfxQFO83xwuA8FU7noHeQS3fDbGPQXaYMvM/3GdLbXnMo+X3ApQQwxEhx?=
+ =?us-ascii?Q?mNX1Kcq6jWItYREUNWPCQTRASg34fl/Q/TTvXrIOkx7FCJA8qwIeUO31hnyn?=
+ =?us-ascii?Q?zgMeT9LAnwE9TcMvLZ/LzY1Ag6Txx7gR5+sxrhxt69V3A/HkfbvwCbOpQAPZ?=
+ =?us-ascii?Q?Y63dyiXOQP0E1fNJWCplfu3WyKYHHmLuXzZxcFWYiFokmvncPZEYJuhaM4TI?=
+ =?us-ascii?Q?kEUdZUrdi0YDwXOrJWCAABC6u3NizbkoPHjsJ+kiUfZCfuKTLh3hGvgPh3k4?=
+ =?us-ascii?Q?R4mOgBGIBSZDO1nFQTt0yay6oraWnKvuFvMznZdIyu3skXqLLFqrDpAChgrL?=
+ =?us-ascii?Q?F60+RlygtFURSxAGYkMeB+oMB3VHEWJ3Ft2QZiSR7eyRk/HVeoeaS/RDFH8m?=
+ =?us-ascii?Q?IwtO8DRtI9E4b9M6aTu1IgqNkVT79xcMrzYgXIFoI71zi68eXw6md1GSj4qb?=
+ =?us-ascii?Q?jEeS5Szi2YIFJq7WTMGo/qgHsk5uDcv5X8A4kaBYZEl652OKfn10r756C45H?=
+ =?us-ascii?Q?aG0WRQxpqyVplx1H320deYA=3D?=
 X-OriginatorOrg: in-advantage.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15fd9cb1-acc8-44ea-191c-08da9c4f1f58
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f4163b7-4e9e-4a3e-32b2-08da9c4f23d5
 X-MS-Exchange-CrossTenant-AuthSource: DM5PR1001MB2345.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2022 04:01:27.2781
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2022 04:01:34.5901
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iN9x2nxNAcEuMdbdXc6RO1juCg4OsgDkiksJqXIRyPsE5aypIVi8piioINZB6TJ36tv3hV1g7S8JCasXeQpNAFGt4x7qLay0TaAz3WG76dk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB5158
+X-MS-Exchange-CrossTenant-UserPrincipalName: UwODeQeTGGvoN6T1DncxkqQeRviD1VqJ+MmDBwgWyz/HPMJXxKq6X8xlQVaWJUBKwAepFxTX/NYA7DaDcxQ/pgecD1mrR2H0XqCaMuJ2l7E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4412
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The define FELIX_MAC_QUIRKS was used directly in the felix.c shared driver.
-Other devices (VSC7512 for example) don't require the same quirks, so they
-need to be configured on a per-device basis.
+The *_RES_SIZE macros are initally <= 0x100. Future resource sizes will be
+upwards of 0x200000 in size.
+
+To keep things clean, fully align the RES_SIZE macros to 32-bit to do
+nothing more than make the code more consistent.
 
 Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
-Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 ---
 
 v2
-    * No changes
-
-v1 from previous RFC:
-    * No changes
+    * New patch - broken out from a different one
 
 ---
- drivers/net/dsa/ocelot/felix.c           | 7 +++++--
- drivers/net/dsa/ocelot/felix.h           | 1 +
- drivers/net/dsa/ocelot/felix_vsc9959.c   | 1 +
- drivers/net/dsa/ocelot/seville_vsc9953.c | 1 +
- 4 files changed, 8 insertions(+), 2 deletions(-)
+ drivers/mfd/ocelot-core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/dsa/ocelot/felix.c b/drivers/net/dsa/ocelot/felix.c
-index d2a9d292160c..07c2f1b6913d 100644
---- a/drivers/net/dsa/ocelot/felix.c
-+++ b/drivers/net/dsa/ocelot/felix.c
-@@ -1082,9 +1082,12 @@ static void felix_phylink_mac_link_down(struct dsa_switch *ds, int port,
- 					phy_interface_t interface)
- {
- 	struct ocelot *ocelot = ds->priv;
-+	struct felix *felix;
-+
-+	felix = ocelot_to_felix(ocelot);
+diff --git a/drivers/mfd/ocelot-core.c b/drivers/mfd/ocelot-core.c
+index 1816d52c65c5..013e83173062 100644
+--- a/drivers/mfd/ocelot-core.c
++++ b/drivers/mfd/ocelot-core.c
+@@ -34,16 +34,16 @@
  
- 	ocelot_phylink_mac_link_down(ocelot, port, link_an_mode, interface,
--				     FELIX_MAC_QUIRKS);
-+				     felix->info->quirks);
- }
+ #define VSC7512_MIIM0_RES_START		0x7107009c
+ #define VSC7512_MIIM1_RES_START		0x710700c0
+-#define VSC7512_MIIM_RES_SIZE		0x024
++#define VSC7512_MIIM_RES_SIZE		0x00000024
  
- static void felix_phylink_mac_link_up(struct dsa_switch *ds, int port,
-@@ -1099,7 +1102,7 @@ static void felix_phylink_mac_link_up(struct dsa_switch *ds, int port,
+ #define VSC7512_PHY_RES_START		0x710700f0
+-#define VSC7512_PHY_RES_SIZE		0x004
++#define VSC7512_PHY_RES_SIZE		0x00000004
  
- 	ocelot_phylink_mac_link_up(ocelot, port, phydev, link_an_mode,
- 				   interface, speed, duplex, tx_pause, rx_pause,
--				   FELIX_MAC_QUIRKS);
-+				   felix->info->quirks);
+ #define VSC7512_GPIO_RES_START		0x71070034
+-#define VSC7512_GPIO_RES_SIZE		0x06c
++#define VSC7512_GPIO_RES_SIZE		0x0000006c
  
- 	if (felix->info->port_sched_speed_set)
- 		felix->info->port_sched_speed_set(ocelot, port, speed);
-diff --git a/drivers/net/dsa/ocelot/felix.h b/drivers/net/dsa/ocelot/felix.h
-index e4fd5eef57a0..f94a445c2542 100644
---- a/drivers/net/dsa/ocelot/felix.h
-+++ b/drivers/net/dsa/ocelot/felix.h
-@@ -33,6 +33,7 @@ struct felix_info {
- 	u16				vcap_pol_base2;
- 	u16				vcap_pol_max2;
- 	const struct ptp_clock_info	*ptp_caps;
-+	unsigned long			quirks;
+ #define VSC7512_SIO_CTRL_RES_START	0x710700f8
+-#define VSC7512_SIO_CTRL_RES_SIZE	0x100
++#define VSC7512_SIO_CTRL_RES_SIZE	0x00000100
  
- 	/* Some Ocelot switches are integrated into the SoC without the
- 	 * extraction IRQ line connected to the ARM GIC. By enabling this
-diff --git a/drivers/net/dsa/ocelot/felix_vsc9959.c b/drivers/net/dsa/ocelot/felix_vsc9959.c
-index 459288d6222c..4adb109c2e77 100644
---- a/drivers/net/dsa/ocelot/felix_vsc9959.c
-+++ b/drivers/net/dsa/ocelot/felix_vsc9959.c
-@@ -2605,6 +2605,7 @@ static const struct felix_info felix_info_vsc9959 = {
- 	.num_mact_rows		= 2048,
- 	.num_ports		= VSC9959_NUM_PORTS,
- 	.num_tx_queues		= OCELOT_NUM_TC,
-+	.quirks			= FELIX_MAC_QUIRKS,
- 	.quirk_no_xtr_irq	= true,
- 	.ptp_caps		= &vsc9959_ptp_caps,
- 	.mdio_bus_alloc		= vsc9959_mdio_bus_alloc,
-diff --git a/drivers/net/dsa/ocelot/seville_vsc9953.c b/drivers/net/dsa/ocelot/seville_vsc9953.c
-index 3ce1cd1a8d4a..ba71e5fa5921 100644
---- a/drivers/net/dsa/ocelot/seville_vsc9953.c
-+++ b/drivers/net/dsa/ocelot/seville_vsc9953.c
-@@ -1071,6 +1071,7 @@ static const struct felix_info seville_info_vsc9953 = {
- 	.vcap_pol_max		= VSC9953_VCAP_POLICER_MAX,
- 	.vcap_pol_base2		= VSC9953_VCAP_POLICER_BASE2,
- 	.vcap_pol_max2		= VSC9953_VCAP_POLICER_MAX2,
-+	.quirks			= FELIX_MAC_QUIRKS,
- 	.num_mact_rows		= 2048,
- 	.num_ports		= VSC9953_NUM_PORTS,
- 	.num_tx_queues		= OCELOT_NUM_TC,
+ #define VSC7512_GCB_RST_SLEEP_US	100
+ #define VSC7512_GCB_RST_TIMEOUT_US	100000
 -- 
 2.25.1
 
