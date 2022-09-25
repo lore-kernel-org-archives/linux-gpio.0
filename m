@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4A4C6FA82
-	for <linux-gpio@archiver.kernel.org>; Sun, 25 Sep 2022 11:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E24FC6FA82
+	for <linux-gpio@archiver.kernel.org>; Sun, 25 Sep 2022 11:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232732AbiIYLHI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 25 Sep 2022 07:07:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60146 "EHLO
+        id S232781AbiIYLHQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 25 Sep 2022 07:07:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232743AbiIYLGq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 25 Sep 2022 07:06:46 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E47B326D1
-        for <linux-gpio@vger.kernel.org>; Sun, 25 Sep 2022 04:06:26 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id z25so6798400lfr.2
-        for <linux-gpio@vger.kernel.org>; Sun, 25 Sep 2022 04:06:26 -0700 (PDT)
+        with ESMTP id S231994AbiIYLG4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 25 Sep 2022 07:06:56 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D25232A94
+        for <linux-gpio@vger.kernel.org>; Sun, 25 Sep 2022 04:06:29 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id i26so6730684lfp.11
+        for <linux-gpio@vger.kernel.org>; Sun, 25 Sep 2022 04:06:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=aNLcQQxhPdFOgwRsvgsgtamBjwIOHo82jCWuV4BIKpM=;
-        b=jhrnCb/Fnu5wUNoCrnU7J6oEwA36I+carel3+GeIXo3O64+NhfX1igqSU+OMZcJoIl
-         FO5V4Uj2NKbTH2jRVxTmMU2q4DJEoQPqGgOAllwV2vnRiO+vsipU8JnyDm3kFc17zyLI
-         atdtsSHSpaTBjd1saeK72U1nPuerTAy4+O0pqW4d8A1uihYB35LnCbGDiY69gSjdUguA
-         FdaHFsjX0KE1Efwl92ljN1U1xOkStbp8KtKWCAG7clw50OPOecxh7ke51SvmWLq2eLdX
-         4FduUBYWk8wXv8LwPGGTev5mSbPpXCmqvecwR7r4eX0jgp/kbCe/wSnix7jc8sAHfZMr
-         NKRg==
+        bh=riHAYzYkIc2g3zYGSZW+9OdMXMpN6SWKiUDVtnd2p8Y=;
+        b=FAjG2hl/kiAqhLDcVs30vg9KGRJeyDjbX+BLWPM6AD3GAiEXRESAPtNZtRCNWiOHIR
+         uCOQnrBon4O+kcR2vBQKqEc7Po4hwyA6SskwoIbY+wUWTqjSUc4iSIiwrA41eyFQb2AO
+         gGExYOcYhmEbNNsoS6+yeLVNc2D8+YKUKBvogyofIkzH7kSkYV+KJXPMdBsw6e1b1vfu
+         kUSlfrG998nV8pfJkdVx9RL1dw1rjCvEFJRanm7YhlbUNwrjJBh/3qZ8WT+TORhkreR+
+         nbhbwPbEDNurnYC3iNM0GFQd2m4D5PFzH8xusbTC71V510fMJV1Yfoop+js5Nf4PMpCV
+         +5+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=aNLcQQxhPdFOgwRsvgsgtamBjwIOHo82jCWuV4BIKpM=;
-        b=t3zD7FazTUAE7+kT/u1pYeJLH81nCZpTZ0O+3Fk6JLpMShegUkRfSsE4qOPY6LP3Fs
-         eUaSPDwq4PafDW6G9sHmJEAPIjbuaweEzTc/XYwRpXJPuPdI7cOS0A4E7taFQEG58Fhp
-         k57R1iem3rCQSwsfPUgr+OKGXlHcYMt/QYwYxZnNKUkHGIrm3+Ql80Oenm46V+bIww6P
-         VYLU3LQtJBblkZKpWM0LNInswY8SWGxTn8w9EE+siNSz7L8TPvta05a40BlcZwdoQrxT
-         uDNfOHMrZekUvzpiY9bFJ1R/pjmq/oneAzwI5Wjf+QvydUtWDsfjF0MK5J1klm8VM6up
-         nJqg==
-X-Gm-Message-State: ACrzQf325HxsG883ZVHuUe/di6ON1KI5Ip1ftM3zlDWzBsIdoANpQXZH
-        ZcpyFHUvYKBazDjKNcueUDXcoQ==
-X-Google-Smtp-Source: AMsMyM56CWbj1FJw/0qknzbYyh2y3pGIMvVHX90IMH40I9yAU3a7RcLmecGWI5czIsSEJGRZO/amMA==
-X-Received: by 2002:a05:6512:3b8e:b0:49a:d2f4:6b7d with SMTP id g14-20020a0565123b8e00b0049ad2f46b7dmr6324123lfv.627.1664103985707;
-        Sun, 25 Sep 2022 04:06:25 -0700 (PDT)
+        bh=riHAYzYkIc2g3zYGSZW+9OdMXMpN6SWKiUDVtnd2p8Y=;
+        b=8B5k1jcMPNMaIpgi239GE8/NIxL2bT8Uucf6mRUyQLjgLv686uJFXYtYQ14XqbA7y2
+         zirhI8kQn5F/ItpF3y8jJZIOwRff/sgYOc/oH15XO2NhigMKmvURf/nQMpkAo5peiIQP
+         /TnZgfr4/35Gw9d6GAQlXXh14eJNr1CJqsmaeqHYhWeTGgVDevBjsrlLD1OxJZPY2yYv
+         IjZYSK/bGc9qbM6a5AkT86g+MPlS1o6JRAj2T7cGr5287qU+i51X8oeBqnqCzfYgUwrv
+         2onC0BY4x2JI+BtIA9ynri378MGunCasYL+xyjIVQVXumxT1iXHkm0KGPwdnt+L2YgNi
+         J9NA==
+X-Gm-Message-State: ACrzQf15M3dezlr/xf0zG0rZqfmlOS0PSSm/UR0Eki0mBpzTvLWeqcJb
+        ABdJOWsFHiGuLi2Um3E3DkpcHA==
+X-Google-Smtp-Source: AMsMyM414UUOHEtN1KUwC+R69AWTqGrcOBpp9pJXFkZ8hSRwp3sFSvca/3y5uUcNxA3Kbu/o4Ga3Vw==
+X-Received: by 2002:a19:5f4b:0:b0:49f:a4b7:3f1c with SMTP id a11-20020a195f4b000000b0049fa4b73f1cmr6366363lfj.333.1664103987689;
+        Sun, 25 Sep 2022 04:06:27 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id u19-20020ac258d3000000b00492dadd8143sm2177265lfo.168.2022.09.25.04.06.24
+        by smtp.gmail.com with ESMTPSA id u19-20020ac258d3000000b00492dadd8143sm2177265lfo.168.2022.09.25.04.06.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Sep 2022 04:06:25 -0700 (PDT)
+        Sun, 25 Sep 2022 04:06:27 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -58,9 +58,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 11/15] dt-bindings: pinctrl: qcom,sm8250: add gpio-reserved-ranges and gpio-line-names
-Date:   Sun, 25 Sep 2022 13:06:04 +0200
-Message-Id: <20220925110608.145728-12-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 13/15] dt-bindings: pinctrl: qcom,sm8250: add input-enable
+Date:   Sun, 25 Sep 2022 13:06:06 +0200
+Message-Id: <20220925110608.145728-14-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220925110608.145728-1-krzysztof.kozlowski@linaro.org>
 References: <20220925110608.145728-1-krzysztof.kozlowski@linaro.org>
@@ -70,32 +70,26 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Document common GPIO properties (gpio-reserved-ranges and
-gpio-line-names), already used on qrb5165-rb5 board.
+The SM8250 pinctrl driver supports input-enable and DTS already use it
+(sm8250-sony-xperia-edo-pdx203).
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml   | 7 +++++++
- 1 file changed, 7 insertions(+)
+ .../devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml         | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
-index c44d02d28bc9..d7d8e5d3b659 100644
+index da708c748a36..94f26a5ae3b5 100644
 --- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
 +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
-@@ -49,6 +49,13 @@ properties:
-   gpio-ranges:
-     maxItems: 1
+@@ -117,6 +117,7 @@ $defs:
+       bias-pull-down: true
+       bias-pull-up: true
+       bias-disable: true
++      input-enable: true
+       output-high: true
+       output-low: true
  
-+  gpio-reserved-ranges:
-+    minItems: 1
-+    maxItems: 90
-+
-+  gpio-line-names:
-+    maxItems: 180
-+
-   wakeup-parent: true
- 
- #PIN CONFIGURATION NODES
 -- 
 2.34.1
 
