@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EEFC6FA83
-	for <linux-gpio@archiver.kernel.org>; Sun, 25 Sep 2022 11:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4A4C6FA82
+	for <linux-gpio@archiver.kernel.org>; Sun, 25 Sep 2022 11:07:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232526AbiIYLHF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 25 Sep 2022 07:07:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60662 "EHLO
+        id S232732AbiIYLHI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 25 Sep 2022 07:07:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232732AbiIYLGq (ORCPT
+        with ESMTP id S232743AbiIYLGq (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Sun, 25 Sep 2022 07:06:46 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D3432A88
-        for <linux-gpio@vger.kernel.org>; Sun, 25 Sep 2022 04:06:29 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id bu25so4877173lfb.3
-        for <linux-gpio@vger.kernel.org>; Sun, 25 Sep 2022 04:06:29 -0700 (PDT)
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E47B326D1
+        for <linux-gpio@vger.kernel.org>; Sun, 25 Sep 2022 04:06:26 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id z25so6798400lfr.2
+        for <linux-gpio@vger.kernel.org>; Sun, 25 Sep 2022 04:06:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=rNmuq6Pz/aQimtSFRDztgTKbC2bR/H3agu5f7rLSCzg=;
-        b=lhJfbmpDRntGIA0lyGbpPFdxSL7LkkbDcSHLKx5kr2eyNINm46ButiPOlF2FISPfxE
-         80sUZGn3W3k4q/PI+P8VdfSPssC1XVeXgAvb/GQteMnLUT3kj9127EDDjrI1ReAhYxgj
-         zIAxzKcCEr4A4LPRIWYkqwjiHm4rpeq2i3ky14spG9fOtEc8l0gVq90KwTddK04nxh/7
-         +o1XViC/Xrb0pcIOpH3AlHdMFvrdcKct+NIBfV3+1cXPWrmqnsOLQrzCe/LAOLRSymeY
-         66vrUoj43MefTQXEOW2D3Hja7+yJbAalEFRsXY9Yb0MLNifujuB8ukeyTcHDUkuOIAJi
-         /v9g==
+        bh=aNLcQQxhPdFOgwRsvgsgtamBjwIOHo82jCWuV4BIKpM=;
+        b=jhrnCb/Fnu5wUNoCrnU7J6oEwA36I+carel3+GeIXo3O64+NhfX1igqSU+OMZcJoIl
+         FO5V4Uj2NKbTH2jRVxTmMU2q4DJEoQPqGgOAllwV2vnRiO+vsipU8JnyDm3kFc17zyLI
+         atdtsSHSpaTBjd1saeK72U1nPuerTAy4+O0pqW4d8A1uihYB35LnCbGDiY69gSjdUguA
+         FdaHFsjX0KE1Efwl92ljN1U1xOkStbp8KtKWCAG7clw50OPOecxh7ke51SvmWLq2eLdX
+         4FduUBYWk8wXv8LwPGGTev5mSbPpXCmqvecwR7r4eX0jgp/kbCe/wSnix7jc8sAHfZMr
+         NKRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=rNmuq6Pz/aQimtSFRDztgTKbC2bR/H3agu5f7rLSCzg=;
-        b=oTFa05RbkDvCWgMB+bV9OS4wSN5DES9BYUWh9K9eTFtV9rGbBlS+0tORGgRCVgo0f9
-         duGQNb8uio66uH6x/t9YRjROJZwE6KvBh9JObPmXtNBCeP7DCXvLXyO8XWtqYC7Uy9FM
-         49Ewq8m5/BWYIQyLjdobcUeAXJ9YrGO7F9976J4cQPlPneP7PiC1W9Dfuox9VkpNgznD
-         OhPtfgsSMIqbs/lhlKXvFUTUcrGf+xa+KER2YZxCxCNBd8nj2ZVjMcSIUpwURQtPjWcE
-         jS+qdWqIEYTHOAuGwsCV9+HgrXYKadgMOOWTlnNqmTtRJS4ga6kBVHIcQUK89dh1q/En
-         Cu9Q==
-X-Gm-Message-State: ACrzQf081GzdBKrMu1oqEn574LueNAU3KPFwVUllkdPTqtJsF/wXFLaV
-        QFkRQCA5LCHGb4RgzHIj40sk7A==
-X-Google-Smtp-Source: AMsMyM4txj2HUIrIkQAQSjBq6E0F7asYTAwikStWbcb62DKC9PGIn9NKOhN8u2/lAgEiptWnmHq0BQ==
-X-Received: by 2002:a05:6512:31ce:b0:49a:d42f:f4a3 with SMTP id j14-20020a05651231ce00b0049ad42ff4a3mr6681567lfe.171.1664103988770;
-        Sun, 25 Sep 2022 04:06:28 -0700 (PDT)
+        bh=aNLcQQxhPdFOgwRsvgsgtamBjwIOHo82jCWuV4BIKpM=;
+        b=t3zD7FazTUAE7+kT/u1pYeJLH81nCZpTZ0O+3Fk6JLpMShegUkRfSsE4qOPY6LP3Fs
+         eUaSPDwq4PafDW6G9sHmJEAPIjbuaweEzTc/XYwRpXJPuPdI7cOS0A4E7taFQEG58Fhp
+         k57R1iem3rCQSwsfPUgr+OKGXlHcYMt/QYwYxZnNKUkHGIrm3+Ql80Oenm46V+bIww6P
+         VYLU3LQtJBblkZKpWM0LNInswY8SWGxTn8w9EE+siNSz7L8TPvta05a40BlcZwdoQrxT
+         uDNfOHMrZekUvzpiY9bFJ1R/pjmq/oneAzwI5Wjf+QvydUtWDsfjF0MK5J1klm8VM6up
+         nJqg==
+X-Gm-Message-State: ACrzQf325HxsG883ZVHuUe/di6ON1KI5Ip1ftM3zlDWzBsIdoANpQXZH
+        ZcpyFHUvYKBazDjKNcueUDXcoQ==
+X-Google-Smtp-Source: AMsMyM56CWbj1FJw/0qknzbYyh2y3pGIMvVHX90IMH40I9yAU3a7RcLmecGWI5czIsSEJGRZO/amMA==
+X-Received: by 2002:a05:6512:3b8e:b0:49a:d2f4:6b7d with SMTP id g14-20020a0565123b8e00b0049ad2f46b7dmr6324123lfv.627.1664103985707;
+        Sun, 25 Sep 2022 04:06:25 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id u19-20020ac258d3000000b00492dadd8143sm2177265lfo.168.2022.09.25.04.06.27
+        by smtp.gmail.com with ESMTPSA id u19-20020ac258d3000000b00492dadd8143sm2177265lfo.168.2022.09.25.04.06.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Sep 2022 04:06:28 -0700 (PDT)
+        Sun, 25 Sep 2022 04:06:25 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -58,9 +58,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 14/15] dt-bindings: pinctrl: qcom,sc7280: add bias-bus-hold and input-enable
-Date:   Sun, 25 Sep 2022 13:06:07 +0200
-Message-Id: <20220925110608.145728-15-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 11/15] dt-bindings: pinctrl: qcom,sm8250: add gpio-reserved-ranges and gpio-line-names
+Date:   Sun, 25 Sep 2022 13:06:04 +0200
+Message-Id: <20220925110608.145728-12-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220925110608.145728-1-krzysztof.kozlowski@linaro.org>
 References: <20220925110608.145728-1-krzysztof.kozlowski@linaro.org>
@@ -70,34 +70,32 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The SC7280 pinctrl driver supports bias-bus-hold and input-enable, and
-DTS already use it (sc7280-idp).
+Document common GPIO properties (gpio-reserved-ranges and
+gpio-line-names), already used on qrb5165-rb5 board.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml    | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml   | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
-index 4606ca980dc4..1db05c43d58c 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
-@@ -117,13 +117,11 @@ $defs:
-           Selects the drive strength for the specified pins, in mA.
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
+index c44d02d28bc9..d7d8e5d3b659 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
+@@ -49,6 +49,13 @@ properties:
+   gpio-ranges:
+     maxItems: 1
  
-       bias-pull-down: true
--
-       bias-pull-up: true
--
-+      bias-bus-hold: true
-       bias-disable: true
--
-+      input-enable: true
-       output-high: true
--
-       output-low: true
++  gpio-reserved-ranges:
++    minItems: 1
++    maxItems: 90
++
++  gpio-line-names:
++    maxItems: 180
++
+   wakeup-parent: true
  
-     required:
+ #PIN CONFIGURATION NODES
 -- 
 2.34.1
 
