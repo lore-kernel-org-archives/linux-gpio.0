@@ -2,118 +2,126 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3B9C32771
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Sep 2022 06:12:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BD0C32771
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Sep 2022 06:13:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233445AbiIZGMG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 26 Sep 2022 02:12:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54820 "EHLO
+        id S233189AbiIZGN3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 26 Sep 2022 02:13:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233055AbiIZGME (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Sep 2022 02:12:04 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2059.outbound.protection.outlook.com [40.107.237.59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D46627B1F;
-        Sun, 25 Sep 2022 23:12:02 -0700 (PDT)
+        with ESMTP id S229526AbiIZGN2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Sep 2022 02:13:28 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2048.outbound.protection.outlook.com [40.107.94.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BF6131235;
+        Sun, 25 Sep 2022 23:13:25 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WWGtO3W4VXJ1GkzZFKR2Ukvazlc2SGjszHpPSR24MrKYp7z6qyo3dCjwGRQW1OLYlBLt0+J/YH13Og+/5qvoWmRuqg2q8SifveY12mTYLRHqgKSbbd4BuxN9RFQAvjnbk+EKrWTipp3HGSmmu/WBvxoiRRwThuNqnrr7GWiRPBKjeuaY5/QT4ilr7GF5RRJO9YcO4/lw9MaT04FbscWj+NzkguCcQmRU+aSNGEkkRFMAYcUW55N3R+9ifaQFN1UWgiOpGj4Ievs89Kc6d2H15QT/2f6fuwqcsdtkO+F1e1K7q5ZFq2uvhNPtiD7Zl/6x7gNzrI1e3rT0ZgR00Kk48Q==
+ b=Y0vvwiYUbkwDGIEkrJ3UvIrt//ZV+kNBRhBpzGjQdcAMONGVdTwipN7UisToYEiSFXYbECRtdBzXVzeI3t4B6mbHlhxbmrOp+EN5DWxOGJsaTDLubhVDAvOq0xd2fisS8iLVdPJQW9kZ90njPKd0Fvr83PZh85jMua1d11dU8Ch0V5ynOsBB3GV8zfCCgf0BDRldfM7k9ZgyBUUQW/vzdli9gKe3gqr/C50vDnB6MZ3rs9fq/suC7lfTqdaO75RxttEsztlruvQ0hX1QOEOYXthBX8FbnF5UOELdCdDNQU02fYcibqRAojFebHltF2IjE07U03gE4p9QnKJHBaUlCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v9BBzoJOFSKuwBAOKgEhxQBZ4rkPF2OSeX64urUKvSs=;
- b=cpfR5uFOIlKSKeWBXmB++P7gyKqAJZr+3n21Culf4ROGSfKYVzQYsoVw8XJPeLAqGpBYGscGdGxyKuX1GwmkWI1p0zpr0BGA8lajA7PX+NyZ/aZXeblI+0rCo0hGtNARsvWrsToGYceHIAXU3OL/uibkqQILjaEMzwZoU2AXlKQvSRBnFp1x+7g1Zozzd19HQgbqs7C0urmjN0XgR6kHG9Bwfij5p6Y3v8B4XMLFIn6bB+PVI4/s4bYlccGKS8Kck4D0lU+9jbHYAbwTp1ApLVvp3TxWT/fyk8ki9BmtLwhtAL72FnPMcL7D47mDuJ8OFhzv0rPSvL5sMgmfZN8p5g==
+ bh=/Pm9o5hKkDBRVM+hrAFWEV41OAURgOqftXtTjXoveQw=;
+ b=ciMdQAnuw4BTH5NQzbBOsKTs5rOuT7MuaxfKydb84Pe/dcK5DiDeSGWOOTUDqxUCRXoljzTnZgwIA+l/2SFvnX/JrQrlZJRsWd1RSRB0yLBMuPeGq2+tnWy7I5rBwc5YUUjB3ULBr3023pTSc1FaX80vg7fHpZbM1lpWmDciXg+NzO6Oh4HpRuG+HuUcDj35SUYMO48c+OIc7zX6X5YlvOYvSJGZbOIZMeGky6NSZ2WMAqZCAlJ1cm9wW+yLkEyWpCY4DXIsLM1fc8uyjxroCSGgZ2uOVrbTjDDERyhrv/2psaTiFZk1Ndqc9Y6CvGq9JZ9icGss/X0vzp18I68EEQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v9BBzoJOFSKuwBAOKgEhxQBZ4rkPF2OSeX64urUKvSs=;
- b=ivI8YCpYYDr5dG1U0iAWRNVrTFYpv0NUOR2oWEW01v8LtQVe5YrC8gG4TJwvDKGTBlILIrAD3ahSwn+1RM6ydzewFVbMs+I0SAOfhbP+mxPEeY0qVhTiPbeXaKjjG/E6rw808kpz1ksww9ynRbrPBHZVgXD/lfSnvSRSVq2dqGk=
-Received: from MW2PR16CA0034.namprd16.prod.outlook.com (2603:10b6:907::47) by
- MN0PR12MB6293.namprd12.prod.outlook.com (2603:10b6:208:3c2::22) with
+ bh=/Pm9o5hKkDBRVM+hrAFWEV41OAURgOqftXtTjXoveQw=;
+ b=0qHJrfRUtytquHa1DccQSbp4CJFvAzJfTw3+gPuY4ip9LKo88qAWhaPNYtelpKNwLdT3hNTvqzFC2cBF0Atk78Op2AqG0fxys8kY5a4ERuLc5azBfkhZOsC04C4iB2URqT36VcNVv2NocPOyuUJp0ZIFlrVqRne5OZo+AqdUlfU=
+Received: from BN9PR03CA0267.namprd03.prod.outlook.com (2603:10b6:408:ff::32)
+ by BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.24; Mon, 26 Sep
- 2022 06:12:00 +0000
-Received: from CO1NAM11FT043.eop-nam11.prod.protection.outlook.com
- (2603:10b6:907:0:cafe::95) by MW2PR16CA0034.outlook.office365.com
- (2603:10b6:907::47) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.24 via Frontend
- Transport; Mon, 26 Sep 2022 06:11:59 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.25; Mon, 26 Sep
+ 2022 06:13:23 +0000
+Received: from BN8NAM11FT008.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:ff:cafe::47) by BN9PR03CA0267.outlook.office365.com
+ (2603:10b6:408:ff::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.25 via Frontend
+ Transport; Mon, 26 Sep 2022 06:13:23 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1NAM11FT043.mail.protection.outlook.com (10.13.174.193) with Microsoft SMTP
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BN8NAM11FT008.mail.protection.outlook.com (10.13.177.95) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5654.14 via Frontend Transport; Mon, 26 Sep 2022 06:11:59 +0000
-Received: from SATLEXMB07.amd.com (10.181.41.45) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.5654.14 via Frontend Transport; Mon, 26 Sep 2022 06:13:23 +0000
+Received: from SATLEXMB08.amd.com (10.181.40.132) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Mon, 26 Sep
- 2022 01:11:54 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB07.amd.com
- (10.181.41.45) with Microsoft SMTP Server (version=TLS1_2,
+ 2022 01:13:22 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB08.amd.com
+ (10.181.40.132) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Sun, 25 Sep
- 2022 23:11:26 -0700
+ 2022 23:13:22 -0700
 Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
- Transport; Mon, 26 Sep 2022 01:11:23 -0500
+ Transport; Mon, 26 Sep 2022 01:13:19 -0500
 From:   Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
 To:     <linux-gpio@vger.kernel.org>
 CC:     <git@amd.com>, <devicetree@vger.kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <robh+dt@kernel.org>,
         <brgl@bgdev.pl>, <linus.walleij@linaro.org>
-Subject: [PATCH v3 0/2] gpio: pca9570: add slg7xl45106 support
-Date:   Mon, 26 Sep 2022 11:41:19 +0530
-Message-ID: <20220926061122.13426-1-shubhrajyoti.datta@amd.com>
+Subject: [PATCH v3 1/3] dt-bindings: gpio: pca9570: Add compatible for slg7xl45106
+Date:   Mon, 26 Sep 2022 11:42:57 +0530
+Message-ID: <20220926061259.13491-2-shubhrajyoti.datta@amd.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220926061259.13491-1-shubhrajyoti.datta@amd.com>
+References: <20220926061259.13491-1-shubhrajyoti.datta@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT043:EE_|MN0PR12MB6293:EE_
-X-MS-Office365-Filtering-Correlation-Id: a093504a-c46e-41b0-af5c-08da9f8605c6
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT008:EE_|BY5PR12MB4130:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9ff5ac8e-817c-4554-da05-08da9f863782
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: kxy150LRko1Jkv+5+6RDX7qTtXHlwMDFIcYPLg4l6IiugoJE8HnHhSFvp0bskhsKi/zoH/549i/dRePBCH0mJgmKCpstppJkBzAFagZ9j3aiZUe03SsEjnxuhGxvhP0skZhpZcaQDfyBVej+peD/tHQCLVMHEKKVKn09gJ0FBWcEseq1dAxur/XKEy+r94kGMtSRchSplr+TV+ebEAYIfLEpJktbEkmuWZYQl/vkuCUd0AkwtzrxcMKikfjyzCaBpVXgb6fJIs9NTceQgoxHyfeFaK/Gap6iCO4aUs0nDHo3NtGz0dZ6x2MlKphtjE9NFlp4c9i5e8wypZigjF5kX+M6z8k/Q+Lv+Bj5VUCUcMYjaRSw+OQMBMWlyI9JZNVtbyvPmfEWvSDP4zOUJ4SaLzuScgXhuavEc524uCruqsQdh1u4DM9DT2w2aU+DoWRLgN02GxbNOEZzi17L1ZZWzoL9iC+icuO4bdfb+5EsneBGhv6TgdzGFwNLqne+NElmW+2VvmO1ZnlA9lxF/oB9e91F6qWKvZD4NAywygF93nvB0gOe+kEGwF/zFxb4F+hPPffh7o93JagESHpaQAa3vgy/mLixk6Esg8KM9YOYRwfBMZy3Lq8IGIHX54HKKP8l+0WxiOco3awpIk8c1wuUHswTPYS2+vvNtgM65spGwS8PyT5RGnSrbwxOvuE03I06xsA/HypOjkC0qPJYKXD9mI3G2qUj2rGmAi14FNbM3BTe+I7pYdFH5oY5mrWN/uALpNU9Vt7a+wy0nlGUyRZaB8XPQjakhP/0tUSPkw/PANFY9FWj2JG+W6JVu98piNO8
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(396003)(136003)(346002)(376002)(39860400002)(451199015)(46966006)(36840700001)(40470700004)(6666004)(40460700003)(41300700001)(82740400003)(2906002)(478600001)(36860700001)(36756003)(2616005)(5660300002)(26005)(336012)(8936002)(4744005)(186003)(44832011)(1076003)(47076005)(8676002)(316002)(356005)(426003)(86362001)(81166007)(70206006)(82310400005)(70586007)(6916009)(4326008)(54906003)(40480700001)(83380400001)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: kuwTD83vCBiHMtmR2rYvr7wrbRijI6Ab9f17T+hkqxf4Y4LXY5qBtIb6WeV1cN7yNIfzTyvig/BUT9kJDCh3Lm2wzNMAobgGUflFLseAcblxHyI2fVRNKYX55Kx8tQsd+SpBh5nUNbBGU5vSRj5edAaAMkme3DrSbfa4FkWPtLwkDU0k2HTPGk3pgE+xj6nC/rVfKvzm/fFQQILuIkVgYqzU/6OE1tqOfhkDHBdtCnycr8F4htQJO1fJ9ycFuDgkNhYxpZv0D7mkNgroGJOSfyI0yhgjybQpZlHEzUBDmO2sgTRLFz+q+5U/qadK+YR0CSj7q962PMOrNTVQz8dtnvRpDXqEgWnt+Bf7A0afCzVS/elQa+iU8er5Iy5AHDZj8KGxfXEef9B5V77kWmeB1VJ7bLYj1+kpHy5aj+qsTzbluL+OZDzF1KYuE4iW+vM4Z6eVCX+YSIP/M9XuduFY+25YTwjc4dBDqVNieFK1Gc3QsnQmooXQ1ulVjqJ/myMOzQb1E5zhumN70+O939ji9Fgw80TavGz0TXUmfZlW2g9COuwLGIF/ymgKgha9eJf9ecJIREc6hO0kCPyP+8PDRCVvCrujbSDUtwV8JJ4h1EezeU6f2kWmp4q82tIzUJis88N6ZbOf3Cc0qj3i5bwlFqg+8c1nP7F8X0n357ghcaBCIscu2Dulbk5+8I+Hjz8mIV6Bzx17SL0hDHOxaJ7qNw7NWvXOwUWE6R52gMaAvbcCAfsCsqThpDkU+TldTYPnWx/vG6nSvDzc/uxmXVDmOld7K4pZbLmRorZi7MfAe92WOxxjtV8vutAJvcnD1Qdp
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(39850400004)(136003)(346002)(396003)(376002)(451199015)(36840700001)(46966006)(40470700004)(8936002)(2906002)(5660300002)(44832011)(26005)(36756003)(70586007)(6666004)(41300700001)(70206006)(4744005)(4326008)(8676002)(40480700001)(36860700001)(82740400003)(2616005)(356005)(40460700003)(336012)(1076003)(82310400005)(186003)(86362001)(81166007)(47076005)(426003)(54906003)(6916009)(316002)(478600001)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2022 06:11:59.5812
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2022 06:13:23.1321
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a093504a-c46e-41b0-af5c-08da9f8605c6
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ff5ac8e-817c-4554-da05-08da9f863782
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT043.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT008.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6293
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4130
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add SLG7XL45106 GPO expander
- 
+This patch adds compatible string for the SLG7XL45106,
+I2C GPO expander.
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+---
 v2:
-Use the platform data check instead of compatible
-arrange alphabetically
-rebase to the latest kernel
-
+add alphabetically
 v3:
-Reorder the p_data struct
-Add ack 
+Add ack
 
-Shubhrajyoti Datta (3):
-  dt-bindings: gpio: pca9570: Add compatible for slg7xl45106
-  gpio: pca9570: add a platform data structure
-  gpio: pca9570: add slg7xl45106 support
+ Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/gpio/gpio-pca9570.yaml           |  1 +
- drivers/gpio/gpio-pca9570.c                   | 49 ++++++++++++++++---
- 2 files changed, 44 insertions(+), 6 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml
+index 1acaa0a3d35a..48bf414aa50e 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml
++++ b/Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml
+@@ -12,6 +12,7 @@ maintainers:
+ properties:
+   compatible:
+     enum:
++      - dlg,slg7xl45106
+       - nxp,pca9570
+       - nxp,pca9571
+ 
 -- 
 2.17.1
 
