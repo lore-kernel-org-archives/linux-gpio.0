@@ -2,55 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD7AC6FA8E
-	for <linux-gpio@archiver.kernel.org>; Mon, 26 Sep 2022 08:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A38B7C32771
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Sep 2022 08:27:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234186AbiIZI1b (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 26 Sep 2022 04:27:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59312 "EHLO
+        id S234242AbiIZI1d (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 26 Sep 2022 04:27:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234103AbiIZI12 (ORCPT
+        with ESMTP id S234187AbiIZI12 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Sep 2022 04:27:28 -0400
 Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F50536DCA;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F65636DEA;
         Mon, 26 Sep 2022 01:27:24 -0700 (PDT)
 Received: from mail02.huawei.com (unknown [172.30.67.153])
-        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4MbbRM6b5zz6R5HH;
+        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4MbbRM1qnWz6R5Gc;
         Mon, 26 Sep 2022 16:25:19 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.102.38])
-        by APP4 (Coremail) with SMTP id gCh0CgAHf45oYjFjX1aNBQ--.36343S6;
-        Mon, 26 Sep 2022 16:27:22 +0800 (CST)
+        by APP4 (Coremail) with SMTP id gCh0CgAHf45oYjFjX1aNBQ--.36343S4;
+        Mon, 26 Sep 2022 16:27:21 +0800 (CST)
 From:   Wei Yongjun <weiyongjun@huaweicloud.com>
 To:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Thomas Gleixner <tglx@linutronix.de>,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] gpio: sim: make gpio simulator can be used as interrupt controller
-Date:   Mon, 26 Sep 2022 08:44:27 +0000
-Message-Id: <20220926084428.1792815-3-weiyongjun@huaweicloud.com>
+Subject: [PATCH v2 0/3] allow gpio simulator be used as interrupt controller
+Date:   Mon, 26 Sep 2022 08:44:25 +0000
+Message-Id: <20220926084428.1792815-1-weiyongjun@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220926084428.1792815-1-weiyongjun@huaweicloud.com>
-References: <20220926084428.1792815-1-weiyongjun@huaweicloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: gCh0CgAHf45oYjFjX1aNBQ--.36343S6
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gw4ftr1Dur1fXryUAFy7ZFb_yoWfurc_ur
-        y8trsrJw1UKFyFqasI9FW2vF9Fy34kur1kCanavFWrtFyDX3sa9wnrZr95JrnrWrW5JF9r
-        Wa1Sqr4FywsxGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbV8YFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
-        Y4v20xvaj40_JFC_Wr1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r15M2
-        8IrcIa0xkI8VCY1x0267AKxVW8JVW5JwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK
-        021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r
-        4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-        GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx
-        0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWU
-        JVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-        W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-        1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-        IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
-        x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
-        DU0xZFpf9x07jeWlkUUUUU=
+X-CM-TRANSID: gCh0CgAHf45oYjFjX1aNBQ--.36343S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZFWDCr17Cw4Utw47AF4ruFg_yoW8AryfpF
+        W3Cr4fJr1vqF13Ar9xtFy8Cr9Ivrn8Jrn8Gwn2kF48Gr1xCFyUXrW7tryrXryUJrW7Xw4U
+        ZrWFyF18Gryqyr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUgKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+        0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCj
+        c4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
+        CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
+        MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJV
+        Cq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBI
+        daVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
 X-CM-SenderInfo: 5zhl50pqjm3046kxt4xhlfz01xgou0bp/
 X-CFilter-Loop: Reflected
 Precedence: bulk
@@ -59,28 +56,78 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Wei Yongjun <weiyongjun1@huawei.com>
 
-Some devices using GPIO as interrupt controller, such as mcp2515 CAN
-device. To mockup those devices, gpio simulator should extend to be
-used as interrupt controller form device tree.
+This series allow gpio simulator be used as interrupt controller, the use
+case is mockup some device which using GPIO as interrupt controller, such
+as mcp2515 CAN device. With the dts [1], we can mockup a mcp2515 device,
+and trigger irq by following commands:
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/gpio/gpio-sim.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ $ echo pull-down > /sys/bus/gpio/devices/gpiochip0/sim_gpio0/pull
+ $ echo pull-up > /sys/bus/gpio/devices/gpiochip0/sim_gpio0/pull
 
-diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
-index 1020c2feb249..f3cf6cec6207 100644
---- a/drivers/gpio/gpio-sim.c
-+++ b/drivers/gpio/gpio-sim.c
-@@ -398,7 +398,7 @@ static int gpio_sim_add_bank(struct fwnode_handle *swnode, struct device *dev)
- 	if (!chip->pull_map)
- 		return -ENOMEM;
- 
--	chip->irq_sim = devm_irq_domain_create_sim(dev, NULL, num_lines);
-+	chip->irq_sim = devm_irq_domain_create_sim(dev, swnode, num_lines);
- 	if (IS_ERR(chip->irq_sim))
- 		return PTR_ERR(chip->irq_sim);
- 
+v1 -> v2:
+ - add use case to gpio-sim.rst
+
+--[1]---------------------------------------------------------
+/dts-v1/;
+
+#include <dt-bindings/interrupt-controller/irq.h>
+
+/ {
+	clk24m: clk24m {
+		compatible = "fixed-clock";
+		clock-output-names = "clk24m";
+		clock-frequency = <24000000>;
+		#clock-cells = <0>;
+	};
+
+	gpio-sim {
+		compatible = "gpio-simulator";
+
+		bank0: bank0 {
+			gpio-controller;
+			#gpio-cells = <2>;
+			ngpios = <16>;
+
+			interrupt-controller;
+			#interrupt-cells = <2>;
+
+			line_b-hog {
+				gpio-hog;
+				gpios = <0 1>;
+				input;
+				line-name = "irq-sim";
+			};
+		};
+	};
+
+	spi: spi {
+		compatible = "spi-mockup";
+
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		can0: can@1 {
+			compatible = "microchip,mcp2515";
+			reg = <1>;
+			clocks = <&clk24m>;
+			interrupt-parent = <&bank0>;
+			interrupts = <0 IRQ_TYPE_EDGE_BOTH>;
+		};
+
+	};
+};
+------------------------------><-----------------------------
+
+Wei Yongjun (3):
+  genirq/irq_sim: Allow both one and two cell bindings
+  gpio: sim: make gpio simulator can be used as interrupt controller
+  gpio: sim: document use case for interrupt controller
+
+ Documentation/admin-guide/gpio/gpio-sim.rst | 44 +++++++++++++++++++++
+ drivers/gpio/gpio-sim.c                     |  2 +-
+ kernel/irq/irq_sim.c                        |  1 +
+ 3 files changed, 46 insertions(+), 1 deletion(-)
+
 -- 
 2.34.1
 
