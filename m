@@ -2,31 +2,31 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5966CC07E9D
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Sep 2022 12:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE4FC07E9D
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Sep 2022 12:42:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231937AbiI0Mlv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 27 Sep 2022 08:41:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43002 "EHLO
+        id S229691AbiI0Mm0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 27 Sep 2022 08:42:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231843AbiI0Mlf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Sep 2022 08:41:35 -0400
+        with ESMTP id S231309AbiI0MmW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Sep 2022 08:42:22 -0400
 Received: from relay07.th.seeweb.it (relay07.th.seeweb.it [IPv6:2001:4b7a:2000:18::168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99B79D4320
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Sep 2022 05:41:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60D3DDB977
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Sep 2022 05:42:20 -0700 (PDT)
 Received: from [192.168.1.101] (95.49.29.188.neoplus.adsl.tpnet.pl [95.49.29.188])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 821E33F5A3;
-        Tue, 27 Sep 2022 14:41:10 +0200 (CEST)
-Message-ID: <149af8eb-cfa9-c2f1-1aa6-6057df3aa03d@somainline.org>
-Date:   Tue, 27 Sep 2022 14:41:10 +0200
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 244A13F296;
+        Tue, 27 Sep 2022 14:33:57 +0200 (CEST)
+Message-ID: <302011f7-232a-3c87-cda5-e58a3cd30821@somainline.org>
+Date:   Tue, 27 Sep 2022 14:33:56 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.0
-Subject: Re: [PATCH 11/15] dt-bindings: pinctrl: qcom,sm8250: add
- gpio-reserved-ranges and gpio-line-names
+Subject: Re: [PATCH 02/15] arm64: dts: qcom: sm8250-sony-xperia-edo: fix
+ touchscreen bias-disable
 Content-Language: en-US
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -37,9 +37,9 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20220925110608.145728-1-krzysztof.kozlowski@linaro.org>
- <20220925110608.145728-12-krzysztof.kozlowski@linaro.org>
+ <20220925110608.145728-3-krzysztof.kozlowski@linaro.org>
 From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <20220925110608.145728-12-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220925110608.145728-3-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -48,35 +48,28 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 
 
-On 25.09.2022 13:06, Krzysztof Kozlowski wrote:
-> Document common GPIO properties (gpio-reserved-ranges and
-> gpio-line-names), already used on qrb5165-rb5 board.
+On 25.09.2022 13:05, Krzysztof Kozlowski wrote:
+> The property to disable bias is "bias-disable".
 > 
+> Fixes: e76c7e1f15fe ("arm64: dts: qcom: sm8250-edo: Add Samsung touchscreen")
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  .../devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml   | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
-> index c44d02d28bc9..d7d8e5d3b659 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8250-pinctrl.yaml
-> @@ -49,6 +49,13 @@ properties:
->    gpio-ranges:
->      maxItems: 1
->  
-> +  gpio-reserved-ranges:
-> +    minItems: 1
-Not sure about this.. However, this will apply to 99.9% of boards, so:
-
 Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 
 Konrad
-> +    maxItems: 90
-> +
-> +  gpio-line-names:
-> +    maxItems: 180
-> +
->    wakeup-parent: true
+>  arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi b/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi
+> index 72162852fae7..601a21c381f8 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi
+> @@ -613,7 +613,7 @@ ts_int_default: ts-int-default-state {
+>  		pins = "gpio39";
+>  		function = "gpio";
+>  		drive-strength = <2>;
+> -		bias-disabled;
+> +		bias-disable;
+>  		input-enable;
+>  	};
 >  
->  #PIN CONFIGURATION NODES
