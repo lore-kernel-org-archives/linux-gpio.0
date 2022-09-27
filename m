@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BAB0C07E9D
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Sep 2022 17:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 826E5C6FA83
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Sep 2022 17:40:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233310AbiI0Rkp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 27 Sep 2022 13:40:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49754 "EHLO
+        id S233353AbiI0Rkv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 27 Sep 2022 13:40:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233314AbiI0Rjk (ORCPT
+        with ESMTP id S233318AbiI0Rjk (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Sep 2022 13:39:40 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C850E1D35B9
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Sep 2022 10:38:46 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id s10so11731097ljp.5
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Sep 2022 10:38:46 -0700 (PDT)
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 608101E76A7
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Sep 2022 10:38:50 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id l12so11711063ljg.9
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Sep 2022 10:38:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=9+tXTwnubeAkN3SzieQvhrB6VbDPmkXBs62KmjOv75A=;
-        b=CFEunxakkd3tmBC+XsoxcOKyQvxfDlNpQnmi5vkKMgAMsjODZgCL5uceD+g2XqQbjm
-         4MealeUeLYI9EHXxbMDPrYH62dTjJzSyoVOndJwJRwkF2Mc2rU7mogr17xEbYfi2ilFb
-         GPm00W+Qr2NSn/95FYqengWDjEzv+BiSd7Untp2TzvbHy83ji67xCvuPwONWsWrm1WPh
-         kOyUuykmnBotkYU6/XgQIL7h2zof6oxLM7c/t7RAR+/kbygfIJfBakzbTxkmwSrfEKBs
-         ljc9iyiht5A9RLaC5+wHhqPu3mkjddLyHeTrFGTS1JGAn8Cyw2AjQgEr4OcS3P5fLQGQ
-         wFJw==
+        bh=V882ZXRWt861rkG9mSWqjy+/gID1mfuqr2SQxJhNRpo=;
+        b=RXEfRIG3/d8oJHs6dyEWKkZHiD7YyOXuQA9gv7634oFUdJT8G5iRJgnHBWkTkmaNEZ
+         p6q4VnhHqxXVBMbki+ROYtBEiZ+kbiMmhPgdhfm6xuAXLYlvemooBAJABEUOzl8JpXFk
+         5tjgDis3EUAu3+/DFJ8dnfPFgdYQB4GocvBnJCqO5vjCfEAtmUyJt7lUFrFYMhhIYeZ4
+         xAqkdeeOEL4x6RfC5e+6CvdeztppQ0R0lrI21mDybYKwB+HA+cMJZcbtq15qItQa/GSZ
+         HLGVaXzms3LIipbHSxDfkH+6+HI1xtE1+j4NJB+5dh3aQ+OIWFOJHbbEa522LXd2wzSM
+         HIVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=9+tXTwnubeAkN3SzieQvhrB6VbDPmkXBs62KmjOv75A=;
-        b=iXjLoRrgoG/q7ldYgWIOuzfU18kHOTiTASerPlXGqtQXl1G+gpZ/iBQEqtY7loKG8D
-         ECRnYPqX3GjbPeIRFpp+63g3IHU75/AHoVrFDJ1V/ik4DIr1tH5Yyldw/O/juc6VNs2W
-         /OjtBTKQw0WM6ShXedHbRm3xgrO272OZH6IFnF0XWuSnH9HuyRGW9aR1wwqCH2YVT54n
-         q8fWCNMQljn1ziBrB1KeBauKRqJN73uwD1rimLKNf4SxdtXQEZ8UO6UdBJM614NIFqqs
-         R4t9qjVD2ndI5bsWoh5ApXpPX2at2iKrNErFGbQ/Qw58YJQS1GcbqBsQlSokevcDH8jn
-         PzYA==
-X-Gm-Message-State: ACrzQf19wl5Dp2xO3HDMfLEvQ+gCy1rBeuGePa3268DmM2igy9N8ePxR
-        oh+puSVwojeEV8A+WTjMm+wnMA==
-X-Google-Smtp-Source: AMsMyM5na8T4oCKS672ibKsOpKYw+CQA3ThZkfAtxzhQv1pRSeFmWJE8RI1z8UMgP160EjCdzCWEmg==
-X-Received: by 2002:a05:651c:555:b0:26c:6a30:770 with SMTP id q21-20020a05651c055500b0026c6a300770mr10551692ljp.376.1664300323235;
-        Tue, 27 Sep 2022 10:38:43 -0700 (PDT)
+        bh=V882ZXRWt861rkG9mSWqjy+/gID1mfuqr2SQxJhNRpo=;
+        b=7gF0n52REN+qMCGDAoQlSRk+n1d/qwuYyzrhbbPdKjXAuUvz8BiyF7YvqZkZOZAxTD
+         4dxTy6bKFYG9W/hzR0hosnnPU0Rtyz2iRYq8FS56glqXHHucpvdEaKL1LSymcWETHl05
+         Gia1kLFm2Fob+5jUyq0LLkvK4joAhsVwL7Jirs9zoYmhOrdLMJrteEY4Lug33wthF3wZ
+         oBrppuISAOY9gNQ7nfFFhGa/KrgACyXrC2fSe0Tt0F9Zx6sBvrYbxvpITr3CgCPtDEMy
+         WOvtjoYR5DF6zO3+eKvtvBhuzIPWTQFwoPREPLIbfWSse1cK9FdXFW1V23DGcpxJdbtE
+         UMgg==
+X-Gm-Message-State: ACrzQf0qCAuicGUQMEltbBmLJ3nDnEuoySeia6h4zMokcgUK1lfDXOyS
+        Iv7GTd++rKDG3P5j3IpexVhK3A==
+X-Google-Smtp-Source: AMsMyM45ofWxYiGMVPOcglyvDn9RTSIMn+Tvv0Lv5W24qlKkcskQbihAxvB/gxsMYPuFEDxas0kVag==
+X-Received: by 2002:a05:651c:897:b0:26a:c213:f0cf with SMTP id d23-20020a05651c089700b0026ac213f0cfmr10470266ljq.216.1664300329689;
+        Tue, 27 Sep 2022 10:38:49 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id q12-20020ac246ec000000b00498f570aef2sm218879lfo.209.2022.09.27.10.38.40
+        by smtp.gmail.com with ESMTPSA id q12-20020ac246ec000000b00498f570aef2sm218879lfo.209.2022.09.27.10.38.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Sep 2022 10:38:41 -0700 (PDT)
+        Tue, 27 Sep 2022 10:38:48 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -63,9 +63,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 20/34] dt-bindings: pinctrl: qcom,msm8909-tlmm: fix indentation in example
-Date:   Tue, 27 Sep 2022 19:36:48 +0200
-Message-Id: <20220927173702.5200-21-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 23/34] dt-bindings: pinctrl: qcom,msm8953: fix indentation in example
+Date:   Tue, 27 Sep 2022 19:36:51 +0200
+Message-Id: <20220927173702.5200-24-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220927173702.5200-1-krzysztof.kozlowski@linaro.org>
 References: <20220927173702.5200-1-krzysztof.kozlowski@linaro.org>
@@ -80,79 +80,52 @@ Bindings example should be indented with 4-spaces.
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 ---
- .../bindings/pinctrl/qcom,msm8909-tlmm.yaml   | 60 +++++++++----------
- 1 file changed, 30 insertions(+), 30 deletions(-)
+ .../pinctrl/qcom,msm8953-pinctrl.yaml         | 34 +++++++++----------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml
-index 08e2dd5cbebe..9c647e24fa9a 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml
-@@ -118,35 +118,35 @@ $defs:
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml
+index 1bf29b82f486..6d97ea421633 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml
+@@ -159,21 +159,21 @@ additionalProperties: false
  
  examples:
    - |
 -        #include <dt-bindings/interrupt-controller/arm-gic.h>
+-        tlmm: pinctrl@1000000 {
+-              compatible = "qcom,msm8953-pinctrl";
+-              reg = <0x01000000 0x300000>;
+-              interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+-              interrupt-controller;
+-              #interrupt-cells = <2>;
+-              gpio-controller;
+-              #gpio-cells = <2>;
+-              gpio-ranges = <&tlmm 0 0 142>;
 -
--        pinctrl@1000000 {
--                compatible = "qcom,msm8909-tlmm";
--                reg = <0x1000000 0x300000>;
--                interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
--                gpio-controller;
--                #gpio-cells = <2>;
--                gpio-ranges = <&tlmm 0 0 117>;
--                interrupt-controller;
--                #interrupt-cells = <2>;
--
--                gpio-wo-subnode-state {
--                        pins = "gpio1";
--                        function = "gpio";
--                };
--
--                uart-w-subnodes-state {
--                        rx-pins {
--                                pins = "gpio4";
--                                function = "blsp_uart1";
--                                bias-pull-up;
--                        };
--
--                        tx-pins {
--                                pins = "gpio5";
--                                function = "blsp_uart1";
--                                bias-disable;
--                        };
--                };
+-              serial_default: serial-state {
+-                    pins = "gpio4", "gpio5";
+-                    function = "blsp_uart2";
+-                    drive-strength = <2>;
+-                    bias-disable;
+-              };
 +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    pinctrl@1000000 {
-+        compatible = "qcom,msm8909-tlmm";
-+        reg = <0x1000000 0x300000>;
++    tlmm: pinctrl@1000000 {
++        compatible = "qcom,msm8953-pinctrl";
++        reg = <0x01000000 0x300000>;
 +        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        gpio-ranges = <&tlmm 0 0 117>;
 +        interrupt-controller;
 +        #interrupt-cells = <2>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        gpio-ranges = <&tlmm 0 0 142>;
 +
-+        gpio-wo-subnode-state {
-+            pins = "gpio1";
-+            function = "gpio";
++        serial_default: serial-state {
++            pins = "gpio4", "gpio5";
++            function = "blsp_uart2";
++            drive-strength = <2>;
++            bias-disable;
          };
-+
-+        uart-w-subnodes-state {
-+            rx-pins {
-+                pins = "gpio4";
-+                function = "blsp_uart1";
-+                bias-pull-up;
-+            };
-+
-+            tx-pins {
-+                pins = "gpio5";
-+                function = "blsp_uart1";
-+                bias-disable;
-+            };
-+        };
 +    };
- ...
 -- 
 2.34.1
 
