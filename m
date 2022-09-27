@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA53C07E9D
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Sep 2022 17:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92042C54EE9
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Sep 2022 17:40:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233332AbiI0RkB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 27 Sep 2022 13:40:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45004 "EHLO
+        id S233251AbiI0RkU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 27 Sep 2022 13:40:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232989AbiI0RjH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Sep 2022 13:39:07 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09D071E276D
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Sep 2022 10:38:35 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id u18so16753367lfo.8
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Sep 2022 10:38:35 -0700 (PDT)
+        with ESMTP id S233270AbiI0RjQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Sep 2022 13:39:16 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0909F1E05C9
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Sep 2022 10:38:40 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id w8so16759271lft.12
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Sep 2022 10:38:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=3YnWEuMUPvAuCowPmcYb0nhKTEJ0n3SzHEzCPy2SNUM=;
-        b=j/ARjmq/LYpbQnK4OtkLEsFECJhDbD+kWanOUOeGHxR60JvfhrJJftFhL3EQ/XRPgc
-         Y63AyGWRsqCV++GLUVQ4Jz0Wd13WSixNByH8mHFE4dQNGw52dcxMuatnuJdULGRMEWt7
-         rSfXNz77AO+SluvmmdO2BJVjYZZ66QZQF/083/JU29SnABSzITtMnb3ufyZ7rgJCuEkn
-         nHxmdg5I1z3p8ajjTTKkL1y2Oyj/cA7Zzcpn5VTUd6xxJtnvPvG1twmrwnS+JbVh3tdS
-         bhKBGHLq6j+hZGL4zkm/VuaeEai8dVDFPgwjMWa4bVUnoxDhDxbC1UtbbdNWf1q+SgTr
-         +Fug==
+        bh=lCmscB9HoSOsvxfbLHIo1vqOoKuqSEqO2nxtzExDOCQ=;
+        b=K0hqnmWjl41grgVpa430TOvKb6GTLsdsm+uQ1XY4Yt5uW2m/zzHePP5nNZBnk05qun
+         AN5T7Vpl7fHpe7FiJmvrOmW1msRAojGsamvbgrBYSz99IldzjQE8s6Y+va+ziN4LVT33
+         QQMQc4rkWgNhPuHYNzvxla6El+tzkU74lXU31T1rFl5OnOUoTHjVshyxIqedz8QEAY5c
+         n/EHJpz7ANelgNYwcq+rcxAS42sI+Eb7AbfEct7+DqEa9C0Ls7jWrL5xNQHPb2SfBncV
+         CT93xoNnwPVLKsJ/VPTY+Rs6iMgagC3LftMOGzCcJAB1HsCtxyjBIIfV3XPq0/q2qBho
+         75TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=3YnWEuMUPvAuCowPmcYb0nhKTEJ0n3SzHEzCPy2SNUM=;
-        b=Atpw0rv/IQRbV8NjaVF1ianE05jACnONH+qqyUzyhR/J+DOpwl5Q4VjRkjq1COti0b
-         HapSV6KzeqvspC0xD8yuD357TWen9+ln7v26iU0MdKgeQsAy9nj9SJI5A+juCdNboaer
-         TU6Nu3IVXT2mAmiJlcGeAPY0HPcD1EESavDWP6+JappZGlKPHrbTZ8aTtBLRrunExH9v
-         FL+TdfFGvANoxg/YfLx0AABAAzUtAo0KjCo7nT/balJRIvQZofPZrLW+/svIxQtMCyyv
-         tB0ibq/t2Fv9XrViLig0f+9H7cQwLnJ17mPIsDDR8MqaMt//jRJossKYNL9YjUB0vDNl
-         yrFw==
-X-Gm-Message-State: ACrzQf10+Up5OdJZ9HGMUOoOxbehzWZ7iYrVZwgp4iBsUK6hG5ahunbh
-        C9jzcqSu3QluV60AjPt9Bbno9Q==
-X-Google-Smtp-Source: AMsMyM74SfcxFyAYkTALHgnhAOCUH5Tlq2QeczDacfoODPxp6erWyQgb76ixtli7UhnLttW5SKgEUg==
-X-Received: by 2002:a05:6512:2987:b0:496:ae22:9147 with SMTP id du7-20020a056512298700b00496ae229147mr11237203lfb.97.1664300314203;
-        Tue, 27 Sep 2022 10:38:34 -0700 (PDT)
+        bh=lCmscB9HoSOsvxfbLHIo1vqOoKuqSEqO2nxtzExDOCQ=;
+        b=m9pKmA8Q9W9imd8stzZXy4Ve8eS0gcSxGP+irpiwWS7ffrfFmthzfrwfSWalX7Q2CP
+         EEpR4jQFb8TxKTHBfuXVPYm/TMlsuki0kiqkxjgV+ftwdp8eSgCjPAW+NsUwdfJBjKsR
+         J/4wx6U+gAKvRo17caOPlYs6/PiV1AT0J2xKNIl5jzWl/cOFqzZxQQcaHJ8YQoxeVWgT
+         kt8DosRyjuVDomlrHOoXoSJfpKGbOLLijtHHjNPecG9iFoNLgQPK12EZVpbhpCaTWaMf
+         2B/AwqHjGwGrNEZaPkRkujpq9GCrEkRZbpu/m2gUCRg+TTQb/ZkGGuUIaU4j8tm0XEKU
+         TbWw==
+X-Gm-Message-State: ACrzQf0MOg9GlbwW7ONhOR8g9ynpCeFwiydNiTwSJUQ3F/m1GtmehrgA
+        CGQbysWDpMjZJdtQf5m+ebL0sg==
+X-Google-Smtp-Source: AMsMyM6sWIpERQcf2T2x8b9tHQ1BMjCZbsjr1jGaxCa2V3bOoirO6srVqHm+wwhlhewWXD/82Sl/3g==
+X-Received: by 2002:a05:6512:a85:b0:49a:c6f2:7aa4 with SMTP id m5-20020a0565120a8500b0049ac6f27aa4mr11543372lfu.59.1664300320288;
+        Tue, 27 Sep 2022 10:38:40 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id q12-20020ac246ec000000b00498f570aef2sm218879lfo.209.2022.09.27.10.38.30
+        by smtp.gmail.com with ESMTPSA id q12-20020ac246ec000000b00498f570aef2sm218879lfo.209.2022.09.27.10.38.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Sep 2022 10:38:32 -0700 (PDT)
+        Tue, 27 Sep 2022 10:38:39 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -63,9 +63,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 17/34] dt-bindings: pinctrl: qcom,msm8226: fix indentation in example
-Date:   Tue, 27 Sep 2022 19:36:45 +0200
-Message-Id: <20220927173702.5200-18-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 19/34] dt-bindings: pinctrl: qcom,msm8909-tlmm: do not require function on non-GPIOs
+Date:   Tue, 27 Sep 2022 19:36:47 +0200
+Message-Id: <20220927173702.5200-20-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220927173702.5200-1-krzysztof.kozlowski@linaro.org>
 References: <20220927173702.5200-1-krzysztof.kozlowski@linaro.org>
@@ -75,59 +75,32 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Bindings example should be indented with 4-spaces.
+Certain pins, like SDcard related, do not have functions and such should
+not be required.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Bjorn Andersson <andersson@kernel.org>
----
- .../pinctrl/qcom,msm8226-pinctrl.yaml         | 36 +++++++++----------
- 1 file changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml
-index 9c2dbc1e31fe..ecee354715f2 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml
-@@ -119,22 +119,22 @@ additionalProperties: false
+---
+
+v1 was reviewed by Rob, but patch was changed since that time, so not
+adding Rob's tag.
+---
+ Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml
+index b1735918fa90..08e2dd5cbebe 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml
+@@ -113,7 +113,6 @@ $defs:
  
- examples:
-   - |
--        #include <dt-bindings/interrupt-controller/arm-gic.h>
--        msmgpio: pinctrl@fd510000 {
--                compatible = "qcom,msm8226-pinctrl";
--                reg = <0xfd510000 0x4000>;
--
--                gpio-controller;
--                #gpio-cells = <2>;
--                gpio-ranges = <&msmgpio 0 0 117>;
--                interrupt-controller;
--                #interrupt-cells = <2>;
--                interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
--
--                serial-state {
--                        pins = "gpio8", "gpio9";
--                        function = "blsp_uart3";
--                        drive-strength = <8>;
--                        bias-disable;
--                };
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    msmgpio: pinctrl@fd510000 {
-+        compatible = "qcom,msm8226-pinctrl";
-+        reg = <0xfd510000 0x4000>;
-+
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        gpio-ranges = <&msmgpio 0 0 117>;
-+        interrupt-controller;
-+        #interrupt-cells = <2>;
-+        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+
-+        serial-state {
-+            pins = "gpio8", "gpio9";
-+            function = "blsp_uart3";
-+            drive-strength = <8>;
-+            bias-disable;
-         };
-+    };
+     required:
+       - pins
+-      - function
+ 
+     additionalProperties: false
+ 
 -- 
 2.34.1
 
