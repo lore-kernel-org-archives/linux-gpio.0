@@ -2,41 +2,40 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF3FC04A95
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Sep 2022 18:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF7E2C6FA82
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Sep 2022 18:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231919AbiI1SJy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Sep 2022 14:09:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58238 "EHLO
+        id S234124AbiI1SK5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Sep 2022 14:10:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233137AbiI1SJx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Sep 2022 14:09:53 -0400
-X-Greylist: delayed 115 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 28 Sep 2022 11:09:50 PDT
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DB1F3640C;
-        Wed, 28 Sep 2022 11:09:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1664388585;
+        with ESMTP id S233244AbiI1SK4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Sep 2022 14:10:56 -0400
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8BB186731;
+        Wed, 28 Sep 2022 11:10:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1664388472;
     s=strato-dkim-0002; d=gerhold.net;
     h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
     From:Subject:Sender;
-    bh=CUA1rKZXJjH54FeXOtkdOiT6Q4YsuptFxBFMyFhbLR0=;
-    b=a7Wt+nCBJ5q2lfYoM/Rq6xPcAC/iYv+pjlRZ2vQnzMexLoEe1W2YEQLHjeNiuWTFpG
-    1jM6hSGi6+MyWbp7Wsy0hjzaXyzn0FxBgVXPZV1TaVsXDLBDs29pU9upz4rDIpiynH0e
-    xbXOEYUYSz3f4ZaUdXPzlxkpfBCjGcPBDmZmP5I0cb/PcWlAiFyM0v2NZJmJCvY0NTXG
-    40pqzWyQKJiWIYVvL0Y1CeeQv0tEBV9z8o26HoJ8hlfOooEec/qKAPxABXFRw0Uh4lDD
-    IYYNhhoZH+oApLR3TVkXgFx9Qzz4vsCZRURJuuyFgzuyArW9ovE66NDnSzLMYw5WmSd1
-    kdIA==
+    bh=VTSVj2/MnOzJogQVqPNRuV3EWW6q3oME4cKoVN1IPfA=;
+    b=HIE0nrnl86PcacEc+gjvo/s+CmKFJ2DK60CZI9HqR74aX5VXWA/6gfj5IE/HRcLGOt
+    GbSjkT359x0MuY8AcAe5QETxWkV35dpn7/34UfK/t8kZq2I2PKwgkTU9LDYMVEsceSBa
+    f652Bmv8FjrEP/EmPkQwmGfJfcSU6iLLVtUnmFqiGf5LxEb1QpZZJ1rbuAaEN8NDgwvy
+    BvkiLJh+tCIDeW7SEF3+Wa1c+8txl1eoUyFHlglQIWPXB+wvxB5YPGF17kmUmRJPugLa
+    f/lK8E5g2SxLTDcRw0pdBJrGvZ9olxQkZGjaURFqN/H7rxkdyxR7ZRCSJCIqqdvSMCCh
+    sPiA==
 Authentication-Results: strato.com;
     dkim=none
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLVrK88/6Y="
 X-RZG-CLASS-ID: mo00
 Received: from gerhold.net
     by smtp.strato.de (RZmta 48.1.3 AUTH)
-    with ESMTPSA id 06b848y8SI9j0kC
+    with ESMTPSA id 06b848y8SI7p0jv
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-    Wed, 28 Sep 2022 20:09:45 +0200 (CEST)
-Date:   Wed, 28 Sep 2022 20:09:44 +0200
+    Wed, 28 Sep 2022 20:07:51 +0200 (CEST)
+Date:   Wed, 28 Sep 2022 20:07:50 +0200
 From:   Stephan Gerhold <stephan@gerhold.net>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
@@ -50,21 +49,24 @@ Cc:     Andy Gross <agross@kernel.org>,
         krishna Lanka <quic_vamslank@quicinc.com>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 20/34] dt-bindings: pinctrl: qcom,msm8909-tlmm: fix
- indentation in example
-Message-ID: <YzSN6KsMZiq5gEza@gerhold.net>
+Subject: Re: [PATCH v3 18/34] dt-bindings: pinctrl: qcom,msm8909-tlmm: fix
+ matching pin config
+Message-ID: <YzSNdpvVkWEDSdu1@gerhold.net>
 References: <20220927173702.5200-1-krzysztof.kozlowski@linaro.org>
- <20220927173702.5200-21-krzysztof.kozlowski@linaro.org>
+ <20220927173702.5200-19-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220927173702.5200-21-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220927173702.5200-19-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 27, 2022 at 07:36:48PM +0200, Krzysztof Kozlowski wrote:
-> Bindings example should be indented with 4-spaces.
+On Tue, Sep 27, 2022 at 07:36:46PM +0200, Krzysztof Kozlowski wrote:
+> The TLMM pin controller follows generic pin-controller bindings, so
+> should have subnodes with '-state' and '-pins'.  Otherwise the subnodes
+> (level one and two) are not properly matched.  This method also unifies
+> the bindings with other Qualcomm TLMM and LPASS pinctrl bindings.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > Reviewed-by: Bjorn Andersson <andersson@kernel.org>
@@ -72,79 +74,40 @@ On Tue, Sep 27, 2022 at 07:36:48PM +0200, Krzysztof Kozlowski wrote:
 Reviewed-by: Stephan Gerhold <stephan@gerhold.net>
 
 > ---
->  .../bindings/pinctrl/qcom,msm8909-tlmm.yaml   | 60 +++++++++----------
->  1 file changed, 30 insertions(+), 30 deletions(-)
+>  .../devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml     | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
 > diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml
-> index 08e2dd5cbebe..9c647e24fa9a 100644
+> index e03530091478..b1735918fa90 100644
 > --- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml
 > +++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml
-> @@ -118,35 +118,35 @@ $defs:
+> @@ -43,8 +43,9 @@ patternProperties:
+>      oneOf:
+>        - $ref: "#/$defs/qcom-msm8909-tlmm-state"
+>        - patternProperties:
+> -          ".*":
+> +          "-pins$":
+>              $ref: "#/$defs/qcom-msm8909-tlmm-state"
+> +        additionalProperties: false
 >  
->  examples:
->    - |
-> -        #include <dt-bindings/interrupt-controller/arm-gic.h>
-> -
-> -        pinctrl@1000000 {
-> -                compatible = "qcom,msm8909-tlmm";
-> -                reg = <0x1000000 0x300000>;
-> -                interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-> -                gpio-controller;
-> -                #gpio-cells = <2>;
-> -                gpio-ranges = <&tlmm 0 0 117>;
-> -                interrupt-controller;
-> -                #interrupt-cells = <2>;
-> -
-> -                gpio-wo-subnode-state {
-> -                        pins = "gpio1";
-> -                        function = "gpio";
-> -                };
-> -
-> -                uart-w-subnodes-state {
-> -                        rx-pins {
-> -                                pins = "gpio4";
-> -                                function = "blsp_uart1";
-> -                                bias-pull-up;
-> -                        };
-> -
-> -                        tx-pins {
-> -                                pins = "gpio5";
-> -                                function = "blsp_uart1";
-> -                                bias-disable;
-> -                        };
-> -                };
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    pinctrl@1000000 {
-> +        compatible = "qcom,msm8909-tlmm";
-> +        reg = <0x1000000 0x300000>;
-> +        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-> +        gpio-controller;
-> +        #gpio-cells = <2>;
-> +        gpio-ranges = <&tlmm 0 0 117>;
-> +        interrupt-controller;
-> +        #interrupt-cells = <2>;
-> +
-> +        gpio-wo-subnode-state {
-> +            pins = "gpio1";
-> +            function = "gpio";
->          };
-> +
-> +        uart-w-subnodes-state {
-> +            rx-pins {
-> +                pins = "gpio4";
-> +                function = "blsp_uart1";
-> +                bias-pull-up;
-> +            };
-> +
-> +            tx-pins {
-> +                pins = "gpio5";
-> +                function = "blsp_uart1";
-> +                bias-disable;
-> +            };
-> +        };
-> +    };
->  ...
+>  $defs:
+>    qcom-msm8909-tlmm-state:
+> @@ -136,13 +137,13 @@ examples:
+>                  };
+>  
+>                  uart-w-subnodes-state {
+> -                        rx {
+> +                        rx-pins {
+>                                  pins = "gpio4";
+>                                  function = "blsp_uart1";
+>                                  bias-pull-up;
+>                          };
+>  
+> -                        tx {
+> +                        tx-pins {
+>                                  pins = "gpio5";
+>                                  function = "blsp_uart1";
+>                                  bias-disable;
 > -- 
 > 2.34.1
 > 
