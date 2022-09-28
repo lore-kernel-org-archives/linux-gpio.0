@@ -2,86 +2,80 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E406AC54EE9
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Sep 2022 00:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0762C54EE9
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Sep 2022 00:23:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230071AbiI1AXj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 27 Sep 2022 20:23:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43282 "EHLO
+        id S232725AbiI1AXq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 27 Sep 2022 20:23:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230190AbiI1AXK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Sep 2022 20:23:10 -0400
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 982EA106F4E;
-        Tue, 27 Sep 2022 17:22:52 -0700 (PDT)
-Received: by mail-ot1-f42.google.com with SMTP id w22-20020a056830061600b006546deda3f9so7312332oti.4;
-        Tue, 27 Sep 2022 17:22:52 -0700 (PDT)
+        with ESMTP id S232691AbiI1AXX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Sep 2022 20:23:23 -0400
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D8D1110B12;
+        Tue, 27 Sep 2022 17:23:14 -0700 (PDT)
+Received: by mail-oo1-f46.google.com with SMTP id m11-20020a4aab8b000000b00476743c0743so1047741oon.10;
+        Tue, 27 Sep 2022 17:23:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=4iEPMzc1B9dXKvZgVnbrYMfxfYXq8gYEUDW9nQWJMXU=;
-        b=RdNBjWEFa01h867dp4y3orw4wNxkDNz7/HtzHmU62EtWTQTrLF14Wy5xWx0lanlMTJ
-         HNVz+f+LSnvWJYK1LbML+c4IbJGcWoUcMOmHjk0MVHndbpqr0F8HTqS+LAZVY6GyuzES
-         lP0Nul0LIkRZGlewt4W3xv3YzFCqI5RDED+Y0nQKkXdsb5sFiNaFJa4BKAIi6a3iykZH
-         ouRWbe6DLpKlYDnU2hv2VhGDr18Zl09B/IIgE4IyDB6QPQuwnFyliOOUXqoXcVbxdXzc
-         rN6bfZiu6a9Kyxo2Eu9M/MkvXGEmBZdTtCoJcfHX4tXGtrFrcrEfYuLlv+jbQyrXW8eX
-         c7OA==
-X-Gm-Message-State: ACrzQf0fVv8gUgNwrKBHHUZav4TuggEI1z4x2nbdhPmE2BjTMavLzTwd
-        oR4tW3QFra9/dwK4CDcxeg==
-X-Google-Smtp-Source: AMsMyM6HOF59u5vESnhdxP3krLLnmlx/Bw/2sYSvIvVGgUi6TwxM4+9Ba6X95fM18lks/64JsBxlPQ==
-X-Received: by 2002:a9d:471a:0:b0:657:6a92:b5d2 with SMTP id a26-20020a9d471a000000b006576a92b5d2mr13447341otf.236.1664324571916;
-        Tue, 27 Sep 2022 17:22:51 -0700 (PDT)
+        bh=p9c+t+v2wMcsnSDU2Mm+zMU9uCqz2qHCyjklNxUR/og=;
+        b=BblLbSPIG0USL7QczNhzdZEhIBR1VjyNDK8UdsE4Z86slMWVJQicUsXalbD++NMZV6
+         eXI5YDbxEDqFRc5Kbw7GJnXx3/3YSm/QrN/IBf3o9T/8eEW7sl79qpVW90gAar1/Bo7c
+         Y0oesGoWTZy3g79tpbKbgyuErb3WGsT060eiX9aYLDfPWdlxNQU2mQO/3a+0ttA/YhQg
+         Vuj3DEFdhgLg39hRNTiM7b4D74tSUTk7nt8NbDjTItH8bZYMpFOVAYiSnKLDCWwUNiYF
+         nkuc4+KSEXto8Rg+2qSAtJAtuB3++Z0TLpdM4PF9OHd4O4EpKfCyhlrp9SzvQ67uUYsa
+         0asA==
+X-Gm-Message-State: ACrzQf04QzP02z3OYC7tMaDiCsKc2Ygoi6ClJ/FS4qX/Acyki46WcXwt
+        XySSHIiccFwdjRYgAd8tSBCcv8aOOQ==
+X-Google-Smtp-Source: AMsMyM7DE00GnmEqzPu2IHOn+X10Xu6DhptXmXdged9pEzepocDXpgSkwEDv4HIPzYVyaMuSrIAhOg==
+X-Received: by 2002:a4a:8e81:0:b0:475:811f:3f9e with SMTP id p1-20020a4a8e81000000b00475811f3f9emr11801093ook.35.1664324593283;
+        Tue, 27 Sep 2022 17:23:13 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id s21-20020a056830125500b0063725d33561sm1379279otp.73.2022.09.27.17.22.51
+        by smtp.gmail.com with ESMTPSA id w4-20020a9d70c4000000b00659f659a5acsm1425431otj.27.2022.09.27.17.23.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Sep 2022 17:22:51 -0700 (PDT)
-Received: (nullmailer pid 2699956 invoked by uid 1000);
-        Wed, 28 Sep 2022 00:22:50 -0000
-Date:   Tue, 27 Sep 2022 19:22:50 -0500
+        Tue, 27 Sep 2022 17:23:12 -0700 (PDT)
+Received: (nullmailer pid 2702033 invoked by uid 1000);
+        Wed, 28 Sep 2022 00:23:12 -0000
+Date:   Tue, 27 Sep 2022 19:23:12 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        krishna Lanka <quic_vamslank@quicinc.com>,
+Cc:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        linux-arm-msm@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
         Sivaprakash Murugesan <sivaprak@codeaurora.org>,
-        linux-gpio@vger.kernel.org, Andy Gross <agross@kernel.org>
-Subject: Re: [PATCH v3 29/34] dt-bindings: pinctrl: qcom,sdx55: use common
- TLMM schema
-Message-ID: <20220928002250.GA2699826-robh@kernel.org>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        krishna Lanka <quic_vamslank@quicinc.com>
+Subject: Re: [PATCH v3 31/34] dt-bindings: pinctrl: qcom,sdx65: fix matching
+ pin config
+Message-ID: <20220928002312.GA2701950-robh@kernel.org>
 References: <20220927173702.5200-1-krzysztof.kozlowski@linaro.org>
- <20220927173702.5200-30-krzysztof.kozlowski@linaro.org>
+ <20220927173702.5200-32-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220927173702.5200-30-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220927173702.5200-32-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 27 Sep 2022 19:36:57 +0200, Krzysztof Kozlowski wrote:
-> Reference common Qualcomm TLMM pin controller schema, to bring other
-> regular schemas and additional checks, like function required only for
-> GPIOs.
+On Tue, 27 Sep 2022 19:36:59 +0200, Krzysztof Kozlowski wrote:
+> The TLMM pin controller follows generic pin-controller bindings, so
+> should have subnodes with '-state' and '-pins'.  Otherwise the subnodes
+> (level one and two) are not properly matched.  This method also unifies
+> the bindings with other Qualcomm TLMM and LPASS pinctrl bindings.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > Reviewed-by: Bjorn Andersson <andersson@kernel.org>
-> 
 > ---
-> 
-> v1 was reviewed by Rob, but patch was changed since that time, so not
-> adding Rob's tag.
-> ---
->  .../devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml      | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+>  .../devicetree/bindings/pinctrl/qcom,sdx65-pinctrl.yaml   | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
