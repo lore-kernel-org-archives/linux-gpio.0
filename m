@@ -2,96 +2,154 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 935D4C04A95
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Sep 2022 18:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D8F6C04A95
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Sep 2022 20:21:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232494AbiI1SMO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Sep 2022 14:12:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38628 "EHLO
+        id S234704AbiI1UU7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Sep 2022 16:20:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229940AbiI1SMM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Sep 2022 14:12:12 -0400
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.82])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFD9CAA357;
-        Wed, 28 Sep 2022 11:12:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1664388544;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=8PFHodLdI+5CuiO+IF4sYScJU9iqzyIH8LdOSStBFvs=;
-    b=Iix7SxllXMK+x1NajdiX5/91aGetjwjWJc4A1i/xyEeA7wmIpJr1T/SGPGzl//VaFT
-    YVhJsRGpOTxc+EVAM96L+7PMy65q9Lto0vvAqXU0J6wNM+i8pkzdssbPIcAukNeIk2Pn
-    1659rlhrBZ6oPyJetRDIL2Tx+UT2Lwkk4XMY9pVeC9Sy0ZVtRlP327CLh6OBWS9q1Dhz
-    8bFM2DXgaoLEmzlLzOg2FRZCcpIEnUUkcG4bwDntt0uXn6ViP8ic/hxdSxL8EEvkj8Sm
-    PCX/58BfalrHfd3oi1cXc5aHB3vxQNIfVUSFiXfQ6fJyI2471wBsdTA4Un5AUFyrcaOz
-    1yhw==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLVrK88/6Y="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 48.1.3 AUTH)
-    with ESMTPSA id 06b848y8SI930k9
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Wed, 28 Sep 2022 20:09:03 +0200 (CEST)
-Date:   Wed, 28 Sep 2022 20:09:02 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        krishna Lanka <quic_vamslank@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 19/34] dt-bindings: pinctrl: qcom,msm8909-tlmm: do not
- require function on non-GPIOs
-Message-ID: <YzSNkqiChU49h/bM@gerhold.net>
-References: <20220927173702.5200-1-krzysztof.kozlowski@linaro.org>
- <20220927173702.5200-20-krzysztof.kozlowski@linaro.org>
+        with ESMTP id S234582AbiI1UUZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Sep 2022 16:20:25 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCDE2BEB;
+        Wed, 28 Sep 2022 13:20:22 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id v1so12653546plo.9;
+        Wed, 28 Sep 2022 13:20:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date;
+        bh=MXeDMHLUELvAe5XHkVOHWbbRpG/jdLEqo2Af5kPyfsY=;
+        b=lmuWvWSR3NxhmCJZK82ALeaL/obSiEchFl+ZNxDMEfaFmAnf1RzfYEEZfLlfukLf8p
+         31UphFnM01eC4l3vOvPGFceusnYeijgz4vMha4kA241PPDeSNTY6ucAUQCdF1JzJxAyC
+         75NPrQgKfIw74AgguDxZRbSnP27DJDbEf8Co3prInoui3a87eDPdTjOQxR5Y6MPAy7Zh
+         SN2LM6fRxQvKyS12FEH+R0w/I0gDYtReBafcfbjxDUU01moQh/W/0kc1V35Mrk1Pvtro
+         JscL6eaH4lWdJQ0bg15EfOIUAkRhwPMCvzmLRdO9ZSZ+q5WkkcqyDLb3McMgOCFV54xS
+         1e6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=MXeDMHLUELvAe5XHkVOHWbbRpG/jdLEqo2Af5kPyfsY=;
+        b=TXw8wlBmx1FOMjutxhXdfCJQpJT1Q41DOYextcbR/N3X3t/rzWeENynmro8MfarZs9
+         3tCjyt136OR62f3CBmVXSQFffwqKc/lBvuGbbmudxir6U+istiaA1w1SGV/7MRwjw4DH
+         BmHymhH/SoBw3Cb0XePYL3cyqoBgViKzmNc/zPUZyKgMofNl8+bGalD9p1SdFYyXgmSH
+         rQ8BKylBwf4k8NsE88LrAVnwlOaqAqx9gVEmwrFt7AllJCqwlARlBOI5W3X8mw/0/CdW
+         xy0crE5us26i1RQ5e+pDjezEi72zPkAOh8trCJTo8sCvx3BSJmrdhaNC6y4wOwk7XnpH
+         u3Ow==
+X-Gm-Message-State: ACrzQf3dRyFFIXxKLYzqo5tCSiUTlYShVmYmdyOboze/GYni6kUivnwO
+        02+YZ/TZJ9Xwo+Zc2IrVDeGoScW/ynI=
+X-Google-Smtp-Source: AMsMyM6ZCPhOlFf9kNCBJe5F8CGDMSRmVni7H4heKCaETLCjc0CJ92R4sIOebBq1IJQXNnmbx2bFcw==
+X-Received: by 2002:a17:90b:1bc7:b0:202:52ce:a1d with SMTP id oa7-20020a17090b1bc700b0020252ce0a1dmr12538209pjb.110.1664396422061;
+        Wed, 28 Sep 2022 13:20:22 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1a91:59b8:faf:7b4f])
+        by smtp.gmail.com with ESMTPSA id y8-20020a17090322c800b00179c99eb815sm4197815plg.33.2022.09.28.13.20.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Sep 2022 13:20:21 -0700 (PDT)
+Date:   Wed, 28 Sep 2022 13:20:18 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Patrice Chotard <patrice.chotard@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: st: stop abusing of_get_named_gpio()
+Message-ID: <YzSsgoVoJn4+mSpv@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220927173702.5200-20-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 27, 2022 at 07:36:47PM +0200, Krzysztof Kozlowski wrote:
-> Certain pins, like SDcard related, do not have functions and such should
-> not be required.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
-> 
+Pin descriptions for this chip only look like standard GPIO device tree
+descriptions, while in fact they contain additional data (in excess of
+number of cells specified in description of gpio controllers). They also
+refer to only pins/gpios belonging to the driver and not to arbitrary
+gpio in the system.
 
-Reviewed-by: Stephan Gerhold <stephan@gerhold.net>
+Because we want to stop exporting OF-specific handlers from gpiolib-of,
+let's parse the pin reference ourself instead of trying to call
+of_get_named_gpio().
 
-> ---
-> 
-> v1 was reviewed by Rob, but patch was changed since that time, so not
-> adding Rob's tag.
-> ---
->  Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml
-> index b1735918fa90..08e2dd5cbebe 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8909-tlmm.yaml
-> @@ -113,7 +113,6 @@ $defs:
->  
->      required:
->        - pins
-> -      - function
->  
->      additionalProperties: false
->  
-> -- 
-> 2.34.1
-> 
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+
+Just compiled, not tested on real hardware.
+
+ drivers/pinctrl/pinctrl-st.c | 34 ++++++++++++++++++++++++++++++----
+ 1 file changed, 30 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
+index 0fea71fd9a00..cf7f9cbe6044 100644
+--- a/drivers/pinctrl/pinctrl-st.c
++++ b/drivers/pinctrl/pinctrl-st.c
+@@ -12,7 +12,6 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_irq.h>
+-#include <linux/of_gpio.h> /* of_get_named_gpio() */
+ #include <linux/of_address.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/regmap.h>
+@@ -1162,6 +1161,31 @@ static void st_parse_syscfgs(struct st_pinctrl *info, int bank,
+ 	return;
+ }
+ 
++static int st_pctl_dt_calculate_pin(struct st_pinctrl *info,
++				    phandle bank, unsigned int offset)
++{
++	struct device_node *np;
++	struct gpio_chip *chip;
++	int retval = -EINVAL;
++	int i;
++
++	np = of_find_node_by_phandle(bank);
++	if (!np)
++		return -EINVAL;
++
++	for (i = 0; i < info->nbanks; i++) {
++		chip = &info->banks[i].gpio_chip;
++		if (chip->of_node == np) {
++			if (offset < chip->ngpio)
++				retval = chip->base + offset;
++			break;
++		}
++	}
++
++	of_node_put(np);
++	return retval;
++}
++
+ /*
+  * Each pin is represented in of the below forms.
+  * <bank offset mux direction rt_type rt_delay rt_clk>
+@@ -1175,6 +1199,8 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
+ 	struct device *dev = info->dev;
+ 	struct st_pinconf *conf;
+ 	struct device_node *pins;
++	phandle bank;
++	unsigned int offset;
+ 	int i = 0, npins = 0, nr_props, ret = 0;
+ 
+ 	pins = of_get_child_by_name(np, "st,pins");
+@@ -1214,9 +1240,9 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
+ 		conf = &grp->pin_conf[i];
+ 
+ 		/* bank & offset */
+-		be32_to_cpup(list++);
+-		be32_to_cpup(list++);
+-		conf->pin = of_get_named_gpio(pins, pp->name, 0);
++		bank = be32_to_cpup(list++);
++		offset = be32_to_cpup(list++);
++		conf->pin = st_pctl_dt_calculate_pin(info, bank, offset);
+ 		conf->name = pp->name;
+ 		grp->pins[i] = conf->pin;
+ 		/* mux */
+-- 
+2.38.0.rc1.362.ged0d419d3c-goog
+
+
+-- 
+Dmitry
