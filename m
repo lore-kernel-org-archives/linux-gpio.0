@@ -2,84 +2,79 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B96BC07E9D
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Sep 2022 00:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B51BFC6FA92
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Sep 2022 00:23:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232879AbiI1AXV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 27 Sep 2022 20:23:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38120 "EHLO
+        id S232444AbiI1AXk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 27 Sep 2022 20:23:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232891AbiI1AWx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Sep 2022 20:22:53 -0400
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C46431138F4;
-        Tue, 27 Sep 2022 17:22:40 -0700 (PDT)
-Received: by mail-ot1-f41.google.com with SMTP id r34-20020a05683044a200b0065a12392fd7so7293808otv.3;
-        Tue, 27 Sep 2022 17:22:40 -0700 (PDT)
+        with ESMTP id S232507AbiI1AXS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Sep 2022 20:23:18 -0400
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 745AE1B85FA;
+        Tue, 27 Sep 2022 17:23:02 -0700 (PDT)
+Received: by mail-ot1-f47.google.com with SMTP id z18-20020a9d65d2000000b0065c3705f7beso3082448oth.9;
+        Tue, 27 Sep 2022 17:23:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=gvRG5H3Rr2ZAW+b0TY5LqPbHj17gicjEw19d0hyAp08=;
-        b=aWFolNuEhnuBoKnbhRdp3qJklnSUwW3zWP4To9M0rjacuL9CKZyzrFJzSauk90p4Jh
-         h4phUGwKymXBKWlp3WZr8dvA0hTgaa4KSYDNn/6Urjg7Zv6cegM0iCEcrLwbbD7KIDmG
-         yYuTu2KVWK0BZQI4LXmGHGmXL2wtRMGgEOvTTnlF+CgTRtJz5YcuIHIz9vUdjeDCjQkA
-         Ul6O3/i0JIo+pv+XV1qSqP8JRReWwq7lq6L7o6GcIYyxtmhiqVfJvfO20XRRwFIxzCqX
-         h8lou+alp8SR7FtJL+yXWXWPVpYBKt6TKX5b+YGnLvu5r8QqR/XPEZXj8wv0nqN9Jtnt
-         hvtQ==
-X-Gm-Message-State: ACrzQf2ASKXnM6HQZynGSfHrc4yhA1pYLZdnrACUlfOLWWwHiD7xJOm7
-        LuH/6nvHR7EUj72A8Vg9kA==
-X-Google-Smtp-Source: AMsMyM6OGgcWFJ9+wHq/TCOJ/WtKSfTyJxkMWJaqdsk+IfdqZImDSSki0osWrk1inejuXJPcujErbw==
-X-Received: by 2002:a9d:5e8e:0:b0:65a:275c:7979 with SMTP id f14-20020a9d5e8e000000b0065a275c7979mr14037089otl.3.1664324559515;
-        Tue, 27 Sep 2022 17:22:39 -0700 (PDT)
+        bh=zFCpb2WJrpA5yRX+qQa9aTdLwVqkhCPZMDJOgHlUGQc=;
+        b=af48PEbEYTVvBrTWbD/V4ATwuiWd2QXxN04cGmbxZIcjcDia2+4TCmjyxFVWg/Gs59
+         2zMM0T8bez2r1i6fnI3zSLm/CKs9XQvuW0PFGq/982ZQau3R/VX00TI4U3g3GTpyGFMS
+         ZeXBbT92zJcQI6vUX6qe5n2uDT20PsCfhsdPHwJB3uSeqr5DYHsqA2xHFkt5rm8zxmjt
+         FAU+wtrdiB+SCdQFrBWSpYJfe3n7VZcwBQiVXUJaBXUtEP7jT2vpn0d/olkhoTa/kHZz
+         2nbHlucCrZXwfXjcE3for+5Kwc8NC4TMPe1kOQC6B47VOxpwMNofWzz+4GjFByKrJZEr
+         X1nw==
+X-Gm-Message-State: ACrzQf005REgVLiIcbqcLYqEP+i3Qa4pgBCimlwBsZX2tFc/+GJeZkxR
+        w0ws+tPd4ynYkCBbQTdnchfLy9xiOA==
+X-Google-Smtp-Source: AMsMyM4uNlpJ7+WbcD2uux1DH1rHiM9rBOA6wQ/8Cu+Q7bYvhuj1i3cCPTthV+zhygUn941MhxHXEw==
+X-Received: by 2002:a9d:7450:0:b0:655:f664:93ee with SMTP id p16-20020a9d7450000000b00655f66493eemr13295860otk.231.1664324581672;
+        Tue, 27 Sep 2022 17:23:01 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id z20-20020a05687041d400b00127ebb410a4sm1735594oac.11.2022.09.27.17.22.38
+        by smtp.gmail.com with ESMTPSA id k187-20020aca3dc4000000b003504805a618sm1208876oia.45.2022.09.27.17.23.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Sep 2022 17:22:39 -0700 (PDT)
-Received: (nullmailer pid 2698492 invoked by uid 1000);
-        Wed, 28 Sep 2022 00:22:38 -0000
-Date:   Tue, 27 Sep 2022 19:22:38 -0500
+        Tue, 27 Sep 2022 17:23:01 -0700 (PDT)
+Received: (nullmailer pid 2700961 invoked by uid 1000);
+        Wed, 28 Sep 2022 00:23:00 -0000
+Date:   Tue, 27 Sep 2022 19:23:00 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Stephan Gerhold <stephan@gerhold.net>,
-        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-        Sivaprakash Murugesan <sivaprak@codeaurora.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+Cc:     devicetree@vger.kernel.org,
         krishna Lanka <quic_vamslank@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH v3 28/34] dt-bindings: pinctrl: qcom,sdx55: fix matching
- pin config
-Message-ID: <20220928002238.GA2698415-robh@kernel.org>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Sivaprakash Murugesan <sivaprak@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v3 30/34] dt-bindings: pinctrl: qcom,sdx55: fix
+ indentation in example
+Message-ID: <20220928002300.GA2700886-robh@kernel.org>
 References: <20220927173702.5200-1-krzysztof.kozlowski@linaro.org>
- <20220927173702.5200-29-krzysztof.kozlowski@linaro.org>
+ <20220927173702.5200-31-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220927173702.5200-29-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220927173702.5200-31-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 27 Sep 2022 19:36:56 +0200, Krzysztof Kozlowski wrote:
-> The TLMM pin controller follows generic pin-controller bindings, so
-> should have subnodes with '-state' and '-pins'.  Otherwise the subnodes
-> (level one and two) are not properly matched.
-> 
->   qcom-sdx55-telit-fn980-tlb.dtb: pinctrl@f100000: 'pcie_ep_clkreq_default', 'pcie_ep_perst_default', 'pcie_ep_wake_default' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-> 
-> This method also unifies the bindings with other Qualcomm TLMM and LPASS
-> pinctrl bindings.
+On Tue, 27 Sep 2022 19:36:58 +0200, Krzysztof Kozlowski wrote:
+> Bindings example should be indented with 4-spaces.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 > ---
->  .../bindings/pinctrl/qcom,sdx55-pinctrl.yaml       | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
+>  .../bindings/pinctrl/qcom,sdx55-pinctrl.yaml  | 34 +++++++++----------
+>  1 file changed, 17 insertions(+), 17 deletions(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
