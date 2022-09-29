@@ -2,33 +2,62 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD3CC43217
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Sep 2022 14:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A73DC433F5
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Sep 2022 14:34:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235686AbiI2OdK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Sep 2022 10:33:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44476 "EHLO
+        id S235659AbiI2Oe3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Sep 2022 10:34:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235656AbiI2OdF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Sep 2022 10:33:05 -0400
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAA1E1BBEF2;
-        Thu, 29 Sep 2022 07:33:02 -0700 (PDT)
-X-QQ-mid: bizesmtp84t1664461963tizqyjas
-Received: from localhost.localdomain ( [113.72.145.157])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Thu, 29 Sep 2022 22:32:42 +0800 (CST)
-X-QQ-SSF: 01000000002000201000B00A0000000
-X-QQ-FEAT: +e7paLVVZUnbG35v+gPFnODE0sLRRis8MBeSEghj/OHzSpUygmlF89K3tDL82
-        9OW+vkt0iRIRPYWFbHdTx+nD8RFoO4CbzIjWaLRaCuNlPJakkUKzMoeOQW4hBfGIuXScvGw
-        w0Iz7di3FY67/4F/zaqgILgZMYdLQ9q00xXvkrqWgbUGrgyiQ4biufWDHRxuSrHVMVB9h5B
-        QnhrGhnVgEU9BmZ+m9pSdzcYzxHHAKN+ZzGJ4FKCOOd+UfT4LewSstFeO0mNai8ZZ9sikLd
-        wXK9ddtR8fyQZoUAUPJhT5jQqlKq9nFAa20FEtKc2ESdAzlBtSEGRTPHNpT90ymOAX5winP
-        NYEyoIoJhGk/vnJiMcSSIGgfY3DcGegMLst8k3dW9i11a5CSUqFzBAilWiFjZav0ETpqyv8
-        GmX6km3DSp+um7XgiZTAQw==
-X-QQ-GoodBg: 0
-From:   Hal Feng <hal.feng@linux.starfivetech.com>
-To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        with ESMTP id S235165AbiI2Oe2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Sep 2022 10:34:28 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81E811BEA55
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Sep 2022 07:34:25 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id bs18so168977ljb.1
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Sep 2022 07:34:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=xqO7boSGntSno3tBpht/Rqvzj2qvhSRjOWUVkdWFtBQ=;
+        b=iH8BCt8voVsR0DnJ5f3TdhbiQ7B8m+riiYjqCQ5iXuWI00SIyrE/nPJP6e5UZHHgiD
+         qyn9zwnx4xWCNEXkkGqNfVreJU4vfOl6MSBJfStcqVwYngUY/JuWVDnA532tBX/8XJhN
+         SSZg/cOzMluTNkVPzwWkrhq7Xnxp1bHBNtivIW3F1Rwb1SSYtu9vgEnwj4skaNmomst5
+         QWv6zYbXQJnVaEajlHZdoKV3UGR8SlIUJM8AdhrL4FZ/BntmeKNsRtggifuPNJc0isnF
+         7eEUUFc5pUHf7BsZRWJKoS17X68rIWIa1+W3hxity1H7Vg7LsB8k50wSs3fcZqkf4VIV
+         LPhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=xqO7boSGntSno3tBpht/Rqvzj2qvhSRjOWUVkdWFtBQ=;
+        b=Rv984nD2x6ODyYGrxywFw4Zk3GrgCA5oWxH8xlurqGY9CHDcV7F7mTbhmxVhj2iKXY
+         Mwd28FhUEF7PUE6DB3CAT6DpLIeOwgK8uAvxERreAxXvNnPs8rMFvg7BgkmucYuM4imJ
+         A7BFnI647DX3/8jlj6hJJO1GsrpgHpCdUDntdYYlZlnpBYCgZw0Lsx5Re85RcFkYbrlV
+         x2YDYYpHo/l5LP+s4U5IP4/ijheeVpvDAw4a4gN1pJ/fCozuNkxPIUZ9xWoOohEHht5g
+         OPAfdhch3z4X1LdmZdil9akVy8RRtdo7FJ0+jqXFm7U0TXz+Xkx+SyinFICpDgd2QbPu
+         zd5A==
+X-Gm-Message-State: ACrzQf2vQGq9H8ACcPCZWeTIDlHPVihhp94ghqOYrkhedqRTAP/9XOph
+        rlGnQ5YfQpcz/He+s4zyDZffjQ==
+X-Google-Smtp-Source: AMsMyM7Z/LaoxosbVcWiuMFaeyweVvrU8N+LBV3Off9sKT066Le2b1TIDHKPXaqvM4w9Rai6ijyMDw==
+X-Received: by 2002:a2e:1f01:0:b0:25f:ea3a:4ef0 with SMTP id f1-20020a2e1f01000000b0025fea3a4ef0mr1283681ljf.330.1664462063936;
+        Thu, 29 Sep 2022 07:34:23 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id 8-20020ac25f08000000b00497aae401edsm798124lfq.109.2022.09.29.07.34.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Sep 2022 07:34:23 -0700 (PDT)
+Message-ID: <5cd77839-d75b-9290-5d34-90d6464938d6@linaro.org>
+Date:   Thu, 29 Sep 2022 16:34:22 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [PATCH v1 01/30] dt-bindings: riscv: Add StarFive JH7110 bindings
+Content-Language: en-US
+To:     Hal Feng <hal.feng@linux.starfivetech.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -43,42 +72,50 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Emil Renner Berthing <kernel@esmil.dk>,
-        Hal Feng <hal.feng@linux.starfivetech.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 03/30] dt-bindings: interrupt-controller: Add StarFive JH7110 plic
-Date:   Thu, 29 Sep 2022 22:31:58 +0800
-Message-Id: <20220929143225.17907-4-hal.feng@linux.starfivetech.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
 References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+ <20220929143225.17907-2-hal.feng@linux.starfivetech.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220929143225.17907-2-hal.feng@linux.starfivetech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Emil Renner Berthing <kernel@esmil.dk>
+On 29/09/2022 16:31, Hal Feng wrote:
+> From: Emil Renner Berthing <kernel@esmil.dk>
 
-Add compatible string for StarFive JH7110 plic.
+Drop last "bindings" from subject, it's redundant.
 
-Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
----
- .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml         | 1 +
- 1 file changed, 1 insertion(+)
+> 
+> Add device tree bindings for the StarFive JH7110 RISC-V SoC and the
+> VisionFive2 board for it.
+> 
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
+> ---
+>  Documentation/devicetree/bindings/riscv/starfive.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/riscv/starfive.yaml b/Documentation/devicetree/bindings/riscv/starfive.yaml
+> index 5b36243fd674..543be573921d 100644
+> --- a/Documentation/devicetree/bindings/riscv/starfive.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/starfive.yaml
+> @@ -21,6 +21,9 @@ properties:
+>        - items:
+>            - const: beagle,beaglev-starlight-jh7100-r0
+>            - const: starfive,jh7100
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-index 92e0f8c3eff2..cef0451c3a47 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-@@ -60,6 +60,7 @@ properties:
-           - enum:
-               - sifive,fu540-c000-plic
-               - starfive,jh7100-plic
-+              - starfive,jh7110-plic
-               - canaan,k210-plic
-           - const: sifive,plic-1.0.0
-       - items:
--- 
-2.17.1
+Blank line.
+
+> +      - items:
+> +          - const: starfive,visionfive-v2
+> +          - const: starfive,jh7110
+>  
+>  additionalProperties: true
+>  
+
+Best regards,
+Krzysztof
 
