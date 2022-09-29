@@ -2,63 +2,34 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B9CC4332F
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Sep 2022 14:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A75B6C43217
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Sep 2022 14:38:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235584AbiI2Ogu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Sep 2022 10:36:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58100 "EHLO
+        id S235656AbiI2OiG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Sep 2022 10:38:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235638AbiI2Ogo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Sep 2022 10:36:44 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFAB01B053E
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Sep 2022 07:36:42 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id g1so2530730lfu.12
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Sep 2022 07:36:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=s4k7ZRcK6Gp/A9rk+5L7WMB7pBPWsHR6E4YWZnsnsFY=;
-        b=BzRL6P9E+x0ljQ/GjnXz24cJualfsUfAOT7lR2uqdBiMzfkKXgCVVawJACjTtHPUGR
-         9WcpW/3Pm4zV8GdU7+7joDXlMbqqlYok0leythazyg2oZYltwuw3mB4sirM1XBmwiq+K
-         nRsKuCHiPwP7ICkJnJS+B59VCuBWJwcn+h2ikqyCT0HhXS190BfM3lCJFPDqg7OTnevq
-         vmcOXaBXK9gq/umqRWFM5oHKyshhZJnIcck0JyYSwNE96YKUyn+R7v+BD8ZY84rl25WM
-         QXoPk3W0umkr1TzsJ5zSDAFKrB9ssprULlmYf/TU3juxQB9DeezLR01HbC1SG11TjO+A
-         FNyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=s4k7ZRcK6Gp/A9rk+5L7WMB7pBPWsHR6E4YWZnsnsFY=;
-        b=AfUNFtOycEpQsZDyIf3p1+zgh++EXA95rNOCx5y4FICBQEp3svOHBvY8thStgGuufU
-         LSZHnDgntRN/BbJgAFeJDhnBPq51DZ1P+7UNtTjiwoTc5ZEG/v5O+Oznloiu/4VAlrBe
-         pr2/ncuHO2okm+j65IE5nkmxah4Z/GloeMEO6SLelP/BmTpe0cF5UQkOBDXFHAu0oYuI
-         BhZE5kr41pdCYoNp8fGJhz5zmy5iLJaiKEb8Rubvji60YQcDJV0uOOggmz1TNVqY0oul
-         Xl2V1GTqPMAC6BjjoE2ZHn7teJGARrV9WPYkX08OLn77MW9BWYHJsvp9zG8sElTy1n4f
-         dTDQ==
-X-Gm-Message-State: ACrzQf2fW6rSg+2D8AvJvwRVbXzKDD9U18ELrGBOwpdgImR9/2OLEjnA
-        3xDlsWuJlII/fiinzfzsZ3fXNg==
-X-Google-Smtp-Source: AMsMyM454F9rJIE+M/q8VrZHdlpougBUdq2HV6F93yGSzajinuWq67hQyweHcERSBN9bF3l3CE3MBw==
-X-Received: by 2002:a05:6512:308e:b0:4a2:e1f:f08d with SMTP id z14-20020a056512308e00b004a20e1ff08dmr411971lfd.615.1664462199812;
-        Thu, 29 Sep 2022 07:36:39 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id n10-20020a2e82ca000000b0026bf0d71b1esm728584ljh.93.2022.09.29.07.36.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Sep 2022 07:36:39 -0700 (PDT)
-Message-ID: <998432d0-7e67-0112-b130-bbf9eb1b8a27@linaro.org>
-Date:   Thu, 29 Sep 2022 16:36:38 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [PATCH v1 04/30] dt-bindings: sifive-l2-cache: Support StarFive
- JH71x0 SoCs
-Content-Language: en-US
-To:     Hal Feng <hal.feng@linux.starfivetech.com>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        with ESMTP id S235556AbiI2OiF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Sep 2022 10:38:05 -0400
+X-Greylist: delayed 295 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 29 Sep 2022 07:38:02 PDT
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 876391BF0C1;
+        Thu, 29 Sep 2022 07:38:01 -0700 (PDT)
+X-QQ-mid: bizesmtp84t1664461971t2352kc1
+Received: from localhost.localdomain ( [113.72.145.157])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Thu, 29 Sep 2022 22:32:49 +0800 (CST)
+X-QQ-SSF: 01000000002000201000B00A0000000
+X-QQ-FEAT: SFhf6fKhx/8oAqA+xXX7FIVEvIELHkN73OBy0+rHEEM2lFkxEFVw5OIBn4NmG
+        2zDsWQpDLqeK++KqYzu5fbIviEMo2hnt3AAY5wVHQHp1Ezfci+CFIB8IDyJWeb8lGNJ9YSF
+        D1UEr6wFRaF0VxgMrprepY9D14HFi92e8vcfjNOdEYqSQqF4yriv5Y6PEzn+zYi81LAu2D/
+        zmdbOxlZRFTddhT4YHMmWL2qg/IL6x9MwR5eHKO4dxr1VrOO9r/nlzkfQnbfw//xfjs0Bao
+        sfgCDyELD2lB7rZyYQkD6BxklUKOsR2zGf9SznLGPfzgidGCV5U7Pax+rBuWV1smgq6JvRH
+        Gmns7JGqiXyZydixwie0nY3I/u3MnKdYSAi1tcl+lkx4mpPogqxHbJGJwrfu5NubOu0PXrU
+        ouW/Js4BAA+Ew/vQDQNfr3AihJ8ZUEUG
+X-QQ-GoodBg: 0
+From:   Hal Feng <hal.feng@linux.starfivetech.com>
+To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -73,26 +44,143 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Emil Renner Berthing <kernel@esmil.dk>,
+        Hal Feng <hal.feng@linux.starfivetech.com>,
         linux-kernel@vger.kernel.org
+Subject: [PATCH v1 05/30] soc: sifive: l2 cache: Convert to platform driver
+Date:   Thu, 29 Sep 2022 22:32:00 +0800
+Message-Id: <20220929143225.17907-6-hal.feng@linux.starfivetech.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
 References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220929143225.17907-5-hal.feng@linux.starfivetech.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220929143225.17907-5-hal.feng@linux.starfivetech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 29/09/2022 16:31, Hal Feng wrote:
-> From: Emil Renner Berthing <kernel@esmil.dk>
-> 
-> This cache controller is also used on the StarFive JH7100 and JH7110
-> SoCs.
+From: Emil Renner Berthing <kernel@esmil.dk>
 
+This converts the driver to use the builtin_platform_driver_probe macro
+to initialize the driver. This macro ends up calling device_initcall as
+was used previously, but also allocates a platform device which gives us
+access to much nicer APIs such as platform_ioremap_resource,
+platform_get_irq and dev_err_probe.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
+---
+ drivers/soc/sifive/sifive_l2_cache.c | 79 ++++++++++++++--------------
+ 1 file changed, 40 insertions(+), 39 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/soc/sifive/sifive_l2_cache.c b/drivers/soc/sifive/sifive_l2_cache.c
+index 59640a1d0b28..010d612f7420 100644
+--- a/drivers/soc/sifive/sifive_l2_cache.c
++++ b/drivers/soc/sifive/sifive_l2_cache.c
+@@ -7,9 +7,9 @@
+  */
+ #include <linux/debugfs.h>
+ #include <linux/interrupt.h>
+-#include <linux/of_irq.h>
+-#include <linux/of_address.h>
+-#include <linux/device.h>
++#include <linux/io.h>
++#include <linux/mod_devicetable.h>
++#include <linux/platform_device.h>
+ #include <asm/cacheinfo.h>
+ #include <soc/sifive/sifive_l2_cache.h>
+ 
+@@ -96,12 +96,6 @@ static void l2_config_read(void)
+ 	pr_info("L2CACHE: Index of the largest way enabled: %d\n", regval);
+ }
+ 
+-static const struct of_device_id sifive_l2_ids[] = {
+-	{ .compatible = "sifive,fu540-c000-ccache" },
+-	{ .compatible = "sifive,fu740-c000-ccache" },
+-	{ /* end of table */ },
+-};
+-
+ static ATOMIC_NOTIFIER_HEAD(l2_err_chain);
+ 
+ int register_sifive_l2_error_notifier(struct notifier_block *nb)
+@@ -192,36 +186,29 @@ static irqreturn_t l2_int_handler(int irq, void *device)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static int __init sifive_l2_init(void)
++static int __init sifive_l2_probe(struct platform_device *pdev)
+ {
+-	struct device_node *np;
+-	struct resource res;
+-	int i, rc, intr_num;
+-
+-	np = of_find_matching_node(NULL, sifive_l2_ids);
+-	if (!np)
+-		return -ENODEV;
+-
+-	if (of_address_to_resource(np, 0, &res))
+-		return -ENODEV;
+-
+-	l2_base = ioremap(res.start, resource_size(&res));
+-	if (!l2_base)
+-		return -ENOMEM;
+-
+-	intr_num = of_property_count_u32_elems(np, "interrupts");
+-	if (!intr_num) {
+-		pr_err("L2CACHE: no interrupts property\n");
+-		return -ENODEV;
+-	}
+-
+-	for (i = 0; i < intr_num; i++) {
+-		g_irq[i] = irq_of_parse_and_map(np, i);
+-		rc = request_irq(g_irq[i], l2_int_handler, 0, "l2_ecc", NULL);
+-		if (rc) {
+-			pr_err("L2CACHE: Could not request IRQ %d\n", g_irq[i]);
+-			return rc;
+-		}
++	struct device *dev = &pdev->dev;
++	int nirqs;
++	int ret;
++	int i;
++
++	l2_base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(l2_base))
++		return PTR_ERR(l2_base);
++
++	nirqs = platform_irq_count(pdev);
++	if (nirqs <= 0)
++		return dev_err_probe(dev, -ENODEV, "no interrupts\n");
++
++	for (i = 0; i < nirqs; i++) {
++		g_irq[i] = platform_get_irq(pdev, i);
++		if (g_irq[i] < 0)
++			return g_irq[i];
++
++		ret = devm_request_irq(dev, g_irq[i], l2_int_handler, 0, pdev->name, NULL);
++		if (ret)
++			return dev_err_probe(dev, ret, "Could not request IRQ %d\n", g_irq[i]);
+ 	}
+ 
+ 	l2_config_read();
+@@ -234,4 +221,18 @@ static int __init sifive_l2_init(void)
+ #endif
+ 	return 0;
+ }
+-device_initcall(sifive_l2_init);
++
++static const struct of_device_id sifive_l2_match[] = {
++	{ .compatible = "sifive,fu540-c000-ccache" },
++	{ .compatible = "sifive,fu740-c000-ccache" },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver sifive_l2_driver = {
++	.driver = {
++		.name = "sifive_l2_cache",
++		.of_match_table = sifive_l2_match,
++		.suppress_bind_attrs = true,
++	},
++};
++builtin_platform_driver_probe(sifive_l2_driver, sifive_l2_probe);
+-- 
+2.17.1
 
