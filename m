@@ -2,41 +2,28 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5054AC4321E
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Sep 2022 15:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7565BC433F5
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Sep 2022 15:51:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236011AbiI2Pfi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Sep 2022 11:35:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45876 "EHLO
+        id S235507AbiI2Pvg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Sep 2022 11:51:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234535AbiI2PeS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Sep 2022 11:34:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F25F01C00DD;
-        Thu, 29 Sep 2022 08:33:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 90A7C61227;
-        Thu, 29 Sep 2022 15:33:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 665A5C433C1;
-        Thu, 29 Sep 2022 15:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664465623;
-        bh=+81bAoJyqC0ALTsR9tloD4BNLwube6I1s0Bczot21Xk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hq1NG+ARl0FcweRYLLtiF+pfBV56zxl92+e8Jox7KnYupArV9QTRLdTUAEo6Biyp2
-         Dsd0cqplyrzh72f33CMTb8897MZ3CI2BaHj3lStC8CQEZQh10IOrCMHjLfLGuhj+ZR
-         UhxQbnRj3matK9cJbNK93AB7UgQjPOi6+lVfGsJhpHl+jKFAUFSI0vD7MS0vlH70O6
-         tUZ5cbTv990KaRXWXYrYcc6WHaH+pVw6T8ZmYFUykcSlot6bwKYiJuhrW8YKf0YLVG
-         qsaSIMXcDY6vJTGqGQl/cdNG9pZPn8oxDv+K71DJqQlxdh3peuH4TbSXUJYbKHgsP/
-         jIZTsKGUKPU0w==
-Date:   Thu, 29 Sep 2022 16:33:36 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Hal Feng <hal.feng@linux.starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S234352AbiI2Pvf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Sep 2022 11:51:35 -0400
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548B94E846;
+        Thu, 29 Sep 2022 08:51:32 -0700 (PDT)
+X-QQ-Spam: true
+X-QQ-mid: bizesmtp84t1664461974tg6jmmmc
+Received: from localhost.localdomain ( [113.72.145.157])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Thu, 29 Sep 2022 22:32:53 +0800 (CST)
+X-QQ-SSF: 01000000002000201000B00A0000000
+From:   Hal Feng <hal.feng@linux.starfivetech.com>
+To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
@@ -49,68 +36,113 @@ Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Emil Renner Berthing <kernel@esmil.dk>,
+        Hal Feng <hal.feng@linux.starfivetech.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 04/30] dt-bindings: sifive-l2-cache: Support StarFive
- JH71x0 SoCs
-Message-ID: <YzW60PDwnJ7GeLYK@spud>
+Subject: [PATCH v1 06/30] soc: sifive: l2 cache: Add StarFive JH71x0 support
+Date:   Thu, 29 Sep 2022 22:32:01 +0800
+Message-Id: <20220929143225.17907-7-hal.feng@linux.starfivetech.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
 References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220929143225.17907-5-hal.feng@linux.starfivetech.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220929143225.17907-5-hal.feng@linux.starfivetech.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 10:31:59PM +0800, Hal Feng wrote:
-> From: Emil Renner Berthing <kernel@esmil.dk>
-> 
-> This cache controller is also used on the StarFive JH7100 and JH7110
-> SoCs.
+From: Emil Renner Berthing <kernel@esmil.dk>
 
-Ditto this patch, hopefully [0] will have landed as 6.1 material
-before you get around to an actual v2.
+This adds support for the StarFive JH7100 and JH7110 SoCs which also
+feature this SiFive cache controller.
 
-Thanks,
-Conor
+Unfortunately the interrupt for uncorrected data is broken on the JH7100
+and fires continuously, so add a quirk to not register a handler for it.
 
-0 - https://lore.kernel.org/linux-riscv/20220913061817.22564-1-zong.li@sifive.com/
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
+---
+ arch/riscv/Kconfig.socs              | 1 +
+ drivers/soc/Makefile                 | 2 +-
+ drivers/soc/sifive/Kconfig           | 2 +-
+ drivers/soc/sifive/sifive_l2_cache.c | 7 +++++++
+ 4 files changed, 10 insertions(+), 2 deletions(-)
 
-> 
-> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
-> ---
->  Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml b/Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml
-> index ca3b9be58058..ba29ecfd3a92 100644
-> --- a/Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml
-> +++ b/Documentation/devicetree/bindings/riscv/sifive-l2-cache.yaml
-> @@ -24,6 +24,8 @@ select:
->          enum:
->            - sifive,fu540-c000-ccache
->            - sifive,fu740-c000-ccache
-> +          - starfive,jh7100-ccache
-> +          - starfive,jh7110-ccache
->  
->    required:
->      - compatible
-> @@ -35,6 +37,8 @@ properties:
->            - enum:
->                - sifive,fu540-c000-ccache
->                - sifive,fu740-c000-ccache
-> +              - starfive,jh7100-ccache
-> +              - starfive,jh7110-ccache
->            - const: cache
->        - items:
->            - const: microchip,mpfs-ccache
-> -- 
-> 2.17.1
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index 69774bb362d6..10f68a4359f9 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -22,6 +22,7 @@ config SOC_STARFIVE
+ 	bool "StarFive SoCs"
+ 	select PINCTRL
+ 	select RESET_CONTROLLER
++	select SIFIVE_L2
+ 	select SIFIVE_PLIC
+ 	help
+ 	  This enables support for StarFive SoC platform hardware.
+diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+index 69ba6508cf2c..534669840858 100644
+--- a/drivers/soc/Makefile
++++ b/drivers/soc/Makefile
+@@ -26,7 +26,7 @@ obj-y				+= qcom/
+ obj-y				+= renesas/
+ obj-y				+= rockchip/
+ obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
+-obj-$(CONFIG_SOC_SIFIVE)	+= sifive/
++obj-y				+= sifive/
+ obj-y				+= sunxi/
+ obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
+ obj-y				+= ti/
+diff --git a/drivers/soc/sifive/Kconfig b/drivers/soc/sifive/Kconfig
+index 58cf8c40d08d..776b30723c04 100644
+--- a/drivers/soc/sifive/Kconfig
++++ b/drivers/soc/sifive/Kconfig
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+-if SOC_SIFIVE
++if SOC_SIFIVE || SOC_STARFIVE
+ 
+ config SIFIVE_L2
+ 	bool "Sifive L2 Cache controller"
+diff --git a/drivers/soc/sifive/sifive_l2_cache.c b/drivers/soc/sifive/sifive_l2_cache.c
+index 010d612f7420..d6637254977f 100644
+--- a/drivers/soc/sifive/sifive_l2_cache.c
++++ b/drivers/soc/sifive/sifive_l2_cache.c
+@@ -10,6 +10,7 @@
+ #include <linux/io.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
++#include <linux/property.h>
+ #include <asm/cacheinfo.h>
+ #include <soc/sifive/sifive_l2_cache.h>
+ 
+@@ -189,6 +190,7 @@ static irqreturn_t l2_int_handler(int irq, void *device)
+ static int __init sifive_l2_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
++	unsigned long quirks = (uintptr_t)device_get_match_data(dev);
+ 	int nirqs;
+ 	int ret;
+ 	int i;
+@@ -206,6 +208,9 @@ static int __init sifive_l2_probe(struct platform_device *pdev)
+ 		if (g_irq[i] < 0)
+ 			return g_irq[i];
+ 
++		if (quirks & BIT(i))
++			continue;
++
+ 		ret = devm_request_irq(dev, g_irq[i], l2_int_handler, 0, pdev->name, NULL);
+ 		if (ret)
+ 			return dev_err_probe(dev, ret, "Could not request IRQ %d\n", g_irq[i]);
+@@ -225,6 +230,8 @@ static int __init sifive_l2_probe(struct platform_device *pdev)
+ static const struct of_device_id sifive_l2_match[] = {
+ 	{ .compatible = "sifive,fu540-c000-ccache" },
+ 	{ .compatible = "sifive,fu740-c000-ccache" },
++	{ .compatible = "starfive,jh7100-ccache", .data = (void *)BIT(DATA_UNCORR) },
++	{ .compatible = "starfive,jh7110-ccache" },
+ 	{ /* sentinel */ }
+ };
+ 
+-- 
+2.17.1
+
