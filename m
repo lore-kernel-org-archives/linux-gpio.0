@@ -2,68 +2,68 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C74C433FE
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Sep 2022 10:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C77BDC433F5
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Sep 2022 10:52:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232606AbiI3KqR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Sep 2022 06:46:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48198 "EHLO
+        id S232589AbiI3KwJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Sep 2022 06:52:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232589AbiI3Kp2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Sep 2022 06:45:28 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2062e.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e89::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB121156F8B;
-        Fri, 30 Sep 2022 03:30:57 -0700 (PDT)
+        with ESMTP id S232628AbiI3KvS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Sep 2022 06:51:18 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on20601.outbound.protection.outlook.com [IPv6:2a01:111:f400:7eae::601])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA2631A40B6;
+        Fri, 30 Sep 2022 03:33:00 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oaS7Vnv1fjN+L+/0gAkGzN3Zi/36R8pGBVeT472ATAAd5HQvYG39UDxo6bMHpk5Nitvx5aEuS1TwnjCz/RSxStwaueR8zVqWSjs3wZuybmwYfWPMJ0v6wwAngeGwWTPmaNk+jzjZ0761DazeJu9MMR4jCDwo3uu6MLkBKvETq5fFM6v4eshxS2+5ClyWbVceL4rGCQVKs/DNRZ75AC6pgWxGb8sB5ak+JBQk6LowCAet6KZNhi1IJYHXhIa31gF5kah0Gyh34VdnfHWdLOW/D19DDQs3AKwilnO2+6Chkn6c2meE/Lc6xkO5AcEo1LFB6wBNhW9W1gPdTn6GUdGpOg==
+ b=MJYUv1uKndmj2zH6yvzr9VTp/Imr5UHJN7z+3qpQPlO0XIOfC9gHqzPMZkqdNOI0SngypQfFfjoElGdZ2SXljixv/PJmkS5C8srONVUwtbpzZhaYjWaksdb+R/oM6x1WQKi4bMGRJk9RsAkqoFF5Pik1jvXtsTfHrRCjIoJKIBAnTShvvB5/SJ/rjHf3anFYhy2JxKbF1BrqYyc+twZuKNFjIduMHP7loppH2+F/Gaau67T3gA40ocuKotR/L78HlKiRrQksXQndik0KLgzDWl5jcD1JuIcFVYKJkwjwxhhs50pXZTkjOrmfiPE/M9F+JW0MekF+PxnVzagFyJ0Grw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m/tKrPMZUL+VOUAgRPaNNrvSSlWjg+N+oBudjim7Yzs=;
- b=OU5vSiOpJNgf3sx3XG9GKBUkDAZ+Tf9XOyqnvEbnUkmVPL3OdZyzzn5VJ+Jsk2GWw/Ye8D+NI+yUiG2/VMwn2ok4pdbdSteEjL89mpTFkZA/97yqd+3hVDJiHfU7Q5iO2RI2FyB+sXED/rY0/45FQOBJedTf3dHFUMt4GbvYIb7Ha/Gf/K9PeeoBzSXSMOnk2UVg7hV3C761JLQFkC+qaXfhpaatJO3F+RuusZ4bPHf55+wteZHmHM3IxcHnDqsO5FtRFFZhom38w1QGfcVafCIBkC0P8nh6TICd/W3qTDAcGY2jGwOUaQngvSoLbIKPh23vjmN4s52JJEVfxVpObA==
+ bh=ZlJjuLkHZI/2rlxGECuB9WDDNXR4UiuQKw/hXE7slPY=;
+ b=UpatFggUEjBHPK8BN7fSkCIABVqwSYgiDvifx6LkFvCJm/HSXntepp0mG5chS7OlBR+3lskEL7DkiT4+Y8Z86nu+n2Y1CQ1OKjnA5H3l6xPh8VITiQ6+JdfYXsrYgOtPaT1y5BACeHggIEuJVsSDUevaYdXkysZUQMyCIZbs2kteGsw03+PpPTJ5JG2KHt0W63bVfTgM5xzLfVnz0WjjZ3JvUQWxX7m6b+cBLpUIwOT57Aq1iU7zfvaSuFo3oUBRYlwwczIFgM3xFH8MQPg5miUDeIMpPNhFNtF8FQU4bgS2xR7a52/ab3cjDNigiYcvNmc9eAembFIFKaERMWVEMA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m/tKrPMZUL+VOUAgRPaNNrvSSlWjg+N+oBudjim7Yzs=;
- b=Z/WSuleS0mQ9pZBMsvwRJ3sFe+nA+MF1hyW8+kMHV/NPg6By1Ogi1h0YzQNFhP8jExiT+0pBdwfFf57FcBYoGVOmg3RfdLL+0N4GOojpGvZTA/p8eqa16aHwG8bhNwUvGHvsrWwyQz0p0JA4RlH9Qj6RkfOXTYgoJF3PODceCZQ=
-Received: from BN7PR02CA0029.namprd02.prod.outlook.com (2603:10b6:408:20::42)
- by MN0PR12MB6001.namprd12.prod.outlook.com (2603:10b6:208:37d::6) with
+ bh=ZlJjuLkHZI/2rlxGECuB9WDDNXR4UiuQKw/hXE7slPY=;
+ b=mCORaWEaesO14O7DeuKLWj41daF4D7BsNbA7PQyyJ4+bE4tVQBN8aafOYi0qPaA4JUW7rj1esHYKwgo0ppk5bjJlepOvV16v7hBipnKuTLR/04CHKogP2pyFtceNTyPWMlqh4+i/ZqiQGAzvE92+2TMjY7VKAwiQgjGmSIsolmk=
+Received: from DS7PR07CA0009.namprd07.prod.outlook.com (2603:10b6:5:3af::9) by
+ MN0PR12MB5956.namprd12.prod.outlook.com (2603:10b6:208:37f::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.19; Fri, 30 Sep
- 2022 10:23:06 +0000
-Received: from BN8NAM11FT093.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:20:cafe::9c) by BN7PR02CA0029.outlook.office365.com
- (2603:10b6:408:20::42) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.20 via Frontend
- Transport; Fri, 30 Sep 2022 10:23:06 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.20; Fri, 30 Sep
+ 2022 10:23:12 +0000
+Received: from DM6NAM11FT018.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3af:cafe::2d) by DS7PR07CA0009.outlook.office365.com
+ (2603:10b6:5:3af::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.23 via Frontend
+ Transport; Fri, 30 Sep 2022 10:23:12 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN8NAM11FT093.mail.protection.outlook.com (10.13.177.22) with Microsoft SMTP
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DM6NAM11FT018.mail.protection.outlook.com (10.13.172.110) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5676.17 via Frontend Transport; Fri, 30 Sep 2022 10:23:06 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.5676.17 via Frontend Transport; Fri, 30 Sep 2022 10:23:12 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Fri, 30 Sep
- 2022 05:23:05 -0500
+ 2022 05:23:11 -0500
 Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
- Transport; Fri, 30 Sep 2022 05:23:03 -0500
+ Transport; Fri, 30 Sep 2022 05:23:09 -0500
 From:   Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
 To:     <linux-gpio@vger.kernel.org>
 CC:     <git@amd.com>, <devicetree@vger.kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <robh+dt@kernel.org>,
         <brgl@bgdev.pl>, <linus.walleij@linaro.org>
-Subject: [PATCH v5 1/3] dt-bindings: gpio: pca9570: Add compatible for slg7xl45106
-Date:   Fri, 30 Sep 2022 15:52:57 +0530
-Message-ID: <20220930102259.21918-2-shubhrajyoti.datta@amd.com>
+Subject: [PATCH v5 3/3] gpio: pca9570: add slg7xl45106 support
+Date:   Fri, 30 Sep 2022 15:52:59 +0530
+Message-ID: <20220930102259.21918-4-shubhrajyoti.datta@amd.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220930102259.21918-1-shubhrajyoti.datta@amd.com>
 References: <20220930102259.21918-1-shubhrajyoti.datta@amd.com>
@@ -71,57 +71,126 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT093:EE_|MN0PR12MB6001:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4815fd68-b4b0-4628-180e-08daa2cdc3eb
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT018:EE_|MN0PR12MB5956:EE_
+X-MS-Office365-Filtering-Correlation-Id: 301a5f15-9198-4ec7-6009-08daa2cdc77b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ISyXtNj3xozTNR5p3IlHbet3I/xETp+NWJxnqgiJHFZMtopWwU7Gkwm0t7TSqLRsU9vR8bvp+q+icSGpjQ+ElVqgTyBqJeSEQGnt7jUQRC8ezpfrSytquAII8tzMLzfT+mHBpOIZ7NN7T7VK7+QFWELR1EG90RTzUD/7z9fpTTAHAwTpmyPxmbviYeev+xoKFi2B9I4FHjVyhEdvzwBB17W8gaMUBTq5NE5a+IEyLMeLuAQtdpcOA0JKIK3i6d6DRJdy4NUEI1mLw4pmwRaCG8yDme+oJPgls+g0DlQufji+zJPIMDz9xMFP470YCh5SQJLLNK82xm7KQluJyRqYUEwu+DlDWG1oRWSm2A+W5c8SOqCH0aX6TsPtehYbXC+i+dTeYvQc9PQfsn0u9aM4ubD93uf1sHUJ3BWMtz75s4x7gfQz3LYT+L0iN1DMwC8/kh+swF3tUSaKILQQZ18zrwP3NlCX1znUQQnPgQQ+HfluEAutrnzXzr13dqdHls0sU4RUNCOqR5YCcOWrwwj6QrPcYyqFvJHfvbTVLE2IgB2zGz4tXRKbfkdS8Gz82yuY//Oo9yzw0HCIRnw5wF0rzOSFbMrzS04hxdUOH7wDq161o9aJJONOp+X7FTf0cAkGHmMoSk9CMFoKlkUZW9eFbfwvk+z4IVMmYE/7QUjlb96mBz9AgCe4pQOgMTPoPbbzbmaItQd8YkU8D6kZOCq/2jDDX5F47eSv3qAl9cqAXSBT1mRbwa/Z6u5YDnPRehmmeBuI3efKLEf1LavImVx5CLtb50SvNl79IOR6h/C0yk1/ev7xumu7S9MSKx0rTq41
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(396003)(136003)(346002)(39860400002)(376002)(451199015)(36840700001)(40470700004)(46966006)(6666004)(26005)(47076005)(1076003)(8936002)(426003)(478600001)(2906002)(186003)(336012)(40480700001)(2616005)(4744005)(40460700003)(6916009)(82310400005)(4326008)(44832011)(8676002)(5660300002)(54906003)(70586007)(41300700001)(70206006)(316002)(356005)(82740400003)(81166007)(36756003)(86362001)(36860700001)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: /+l1rx+6D1Jpyv+sQfi8c5xcVi4KXUSZm2bfKwbKwGOAzikrqbMjFE+O/ewq4+gODRnkZrqg0rbThMFb7lpNIAHD45wsNVRBwWLZ4oBQjlILPb6dEF1d+v4qbPIOqADQR1hLGCeXqqAyOaHWzZY/2N7zSNdoylgGZQ1L4FiRZkBtJcOWE1nRk1zffWA11nIUx7F1mQLkENwf4+bdfpVfx/3cSXrNtmG0gGnVtDdef2yhUJjH8rKTghvYsQo29BX+ysuxbDHo8cCahayjyb7PAM7w++slAH1vnk4eXRjT1BsC1PqvhlY8rFcLmHzRa0tYECnmFBS0v+ZPqwF1QcnR2r4eYyUa/6s6gHAO1qX0PTHqtwnWa9Qz1kgJaqUFt69prRO6Lh7b70oJALK4XbYqZPRBaID6Hh5blevRGBc7r2aex6rFEjY3z2H2ghQL/I60kzt6GftGzxIo6OllRuLybmw8CWEGatV7rC1AW++JzAlz+aaFy/NK+QNJeZeyNuE3SrhMjBP1YK+9iunAWr7YX5iSvKfiKPbt/sFG3T8+VmwadL/9evxxuvgrdURQIR1rxAqoZrhGCQm5wAyilP36lFdoIrCOUf/2J/NZbFlzsWtipUxKTdTUnfKpqXROCfpW3YRqRjudjuKf/M285L4BZtzVOccbQAqb836lycRZQU9AQjic0puR1/xej8pJxBcqDjo4QDlcudBiKUu1h3qyGgZyTwO8IwtgAdHQ0Ja+adF8jfsvL2K9V6GysSqW6oaPPSajnNfJ7Mge0GwCr7lpLdvu4JbK7EoN82I1wm++0IY=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(136003)(39860400002)(376002)(396003)(346002)(451199015)(46966006)(36840700001)(40470700004)(1076003)(426003)(83380400001)(2906002)(36756003)(6916009)(4326008)(8936002)(70586007)(70206006)(26005)(44832011)(6666004)(40460700003)(186003)(8676002)(54906003)(316002)(5660300002)(336012)(86362001)(2616005)(40480700001)(41300700001)(82740400003)(36860700001)(478600001)(82310400005)(47076005)(356005)(81166007)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2022 10:23:06.4681
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2022 10:23:12.3999
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4815fd68-b4b0-4628-180e-08daa2cdc3eb
+X-MS-Exchange-CrossTenant-Network-Message-Id: 301a5f15-9198-4ec7-6009-08daa2cdc77b
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT093.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT018.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6001
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5956
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch adds compatible string for the SLG7XL45106,
-I2C GPO expander.
+Dialog semiconductors SLG7XL45106 is an 8-bit I2C GPO expander.
+The output port is controlled by a data byte with register
+address. Add a compatible string for the same. Also update
+the driver to write and read from it.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
 ---
 
 (no changes since v3)
 
 Changes in v3:
-Add ack
+split the new patch
+Suggested by Andy Shevchenko
 
-Changes in v2:
-add alphabetically
+ drivers/gpio/gpio-pca9570.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
- Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml
-index 1acaa0a3d35a..48bf414aa50e 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml
-@@ -12,6 +12,7 @@ maintainers:
- properties:
-   compatible:
-     enum:
-+      - dlg,slg7xl45106
-       - nxp,pca9570
-       - nxp,pca9571
+diff --git a/drivers/gpio/gpio-pca9570.c b/drivers/gpio/gpio-pca9570.c
+index d49e088e6b43..6c07a8811a7a 100644
+--- a/drivers/gpio/gpio-pca9570.c
++++ b/drivers/gpio/gpio-pca9570.c
+@@ -15,6 +15,8 @@
+ #include <linux/mutex.h>
+ #include <linux/property.h>
  
++#define SLG7XL45106_GPO_REG	0xDB
++
+ /**
+  * struct pca9570_platform_data - GPIO platformdata
+  * @ngpio: no of gpios
+@@ -28,11 +30,13 @@ struct pca9570_platform_data {
+ /**
+  * struct pca9570 - GPIO driver data
+  * @chip: GPIO controller chip
++ * @p_data: GPIO controller platform data
+  * @lock: Protects write sequences
+  * @out: Buffer for device register
+  */
+ struct pca9570 {
+ 	struct gpio_chip chip;
++	const struct pca9570_platform_data *p_data;
+ 	struct mutex lock;
+ 	u8 out;
+ };
+@@ -42,7 +46,11 @@ static int pca9570_read(struct pca9570 *gpio, u8 *value)
+ 	struct i2c_client *client = to_i2c_client(gpio->chip.parent);
+ 	int ret;
+ 
+-	ret = i2c_smbus_read_byte(client);
++	if (gpio->p_data->command != 0)
++		ret = i2c_smbus_read_byte_data(client, gpio->p_data->command);
++	else
++		ret = i2c_smbus_read_byte(client);
++
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -54,6 +62,9 @@ static int pca9570_write(struct pca9570 *gpio, u8 value)
+ {
+ 	struct i2c_client *client = to_i2c_client(gpio->chip.parent);
+ 
++	if (gpio->p_data->command != 0)
++		return i2c_smbus_write_byte_data(client, gpio->p_data->command, value);
++
+ 	return i2c_smbus_write_byte(client, value);
+ }
+ 
+@@ -116,7 +127,8 @@ static int pca9570_probe(struct i2c_client *client)
+ 	gpio->chip.get = pca9570_get;
+ 	gpio->chip.set = pca9570_set;
+ 	gpio->chip.base = -1;
+-	gpio->chip.ngpio = (uintptr_t)device_get_match_data(&client->dev);
++	gpio->p_data = device_get_match_data(&client->dev);
++	gpio->chip.ngpio = gpio->p_data->ngpio;
+ 	gpio->chip.can_sleep = true;
+ 
+ 	mutex_init(&gpio->lock);
+@@ -137,14 +149,21 @@ static const struct pca9570_platform_data pca9571_gpio = {
+ 	.ngpio = 8,
+ };
+ 
++static const struct pca9570_platform_data slg7xl45106_gpio = {
++	.ngpio = 8,
++	.command = SLG7XL45106_GPO_REG,
++};
++
+ static const struct i2c_device_id pca9570_id_table[] = {
+ 	{ "pca9570", (kernel_ulong_t)&pca9570_gpio},
+ 	{ "pca9571", (kernel_ulong_t)&pca9571_gpio },
++	{ "slg7xl45106", (kernel_ulong_t)&slg7xl45106_gpio },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(i2c, pca9570_id_table);
+ 
+ static const struct of_device_id pca9570_of_match_table[] = {
++	{ .compatible = "dlg,slg7xl45106", .data = &slg7xl45106_gpio},
+ 	{ .compatible = "nxp,pca9570", .data = &pca9570_gpio },
+ 	{ .compatible = "nxp,pca9571", .data = &pca9571_gpio },
+ 	{ /* sentinel */ }
 -- 
 2.17.1
 
