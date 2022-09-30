@@ -2,52 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6DE0C433F5
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Sep 2022 19:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DC3C4332F
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Sep 2022 20:05:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231937AbiI3Tbd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Sep 2022 15:31:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43756 "EHLO
+        id S231298AbiI3UFx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Sep 2022 16:05:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231853AbiI3Ta0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Sep 2022 15:30:26 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98EB85072E
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Sep 2022 12:30:14 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id a2so8338226lfb.6
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Sep 2022 12:30:14 -0700 (PDT)
+        with ESMTP id S232229AbiI3UFu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Sep 2022 16:05:50 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BECA113EEB0
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Sep 2022 13:05:43 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id u18so8451883lfo.8
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Sep 2022 13:05:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=GJ8jipC4Qtr73OxvWkLL0z7JLAO3XeJVdGRbttk7Bns=;
-        b=G4BUUDRW+DSCw6H3Wn4oPeCUI0IBwg2gOwF4G3pf7fa7wWlajEXipyqEfB9FDzrkQO
-         jlOQUZcFTeyY2cp9FX8ecxsTVv9/VBcDy58YVi8xfULWls+tEau3jUGxm1FmoZg7y/fN
-         The6u3iJKU+89Vdeo1UusPT2Lz87Vv1C0CktDVm/xXRmiYOIaNW2vW1VOcszM+NcnZTF
-         eT6P8qxUd4MJAFDwy9vKRbBPxAnwuuHiaYhZmFu9TnvyP/359YxEEmKbv0RbIESIqRio
-         JXmZqSAEP7UAJEY99D8ANlvVQI2JNc+ff3U8GSjNivFnsjYkBX/5eAsuvN78zrz7l86/
-         36EQ==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=g/s25fFcFRGt0la+CChBB+sBdX3rR06NtZ97e/TRl5g=;
+        b=me/zb+fTWwauv6a8wKXk9yOUdj4EAtMg04lETTXuDKjgI/eZDWpd++d6SmtVz3ucXc
+         guFq17zdb/KB3klhaWvzujGg/3kTdh6Wc/q9NyIu7t1qR4OqsUjZvxdqIQ0CJrPuYFWx
+         1zE6UYdas78gySILgPwOocpOE/R2xDb/Nag81tMpJVCP4VOZhaI9abp4EK7IaA+jldy7
+         G3oQTMKmdaZSqlPVrYoMW/ws5ZARU6gn/sb8DD24/PnLlUx8nDcBkQxEcwJWZ0HT4DlX
+         axZCh9bpDTZK39OUtYCHXRokhWZ4MDFTQz4U16FLWTFDccX/jPT8C2VGNXBJ2EhVIEyE
+         JufA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=GJ8jipC4Qtr73OxvWkLL0z7JLAO3XeJVdGRbttk7Bns=;
-        b=8QB+fxHcum/XMtg56LLSiuxeK4erRBOlsL97w4IYqAtYjAU7xw2FJxTFsNYkWKq8Yw
-         xJ92AUfdp/ooFAe+UA9wLV1M4X4K8gytQYUiPxnZyiAdx9DXWhWDCYhuQU74iycrqSXh
-         1c3QWtLx5RnXcqYc3O2h6HVAjCJduDY9SlSVHXtT+G1aiqF3UIUZcvw0p3a8b4bPT2Ng
-         PUOzpBe70r1lxbXa25x3GPCZ88euvXYdYgYE9vx9CKX4/rLHvRwLx57zOXYPsLOnlslI
-         z2QOitshhSrKScFwuCSWtKmbotBChfGuZCFmZ5NJVbE24aNH1p59RCEsvrS5gVd6fmAb
-         bFgg==
-X-Gm-Message-State: ACrzQf0NdT4rPK6rdVqY9UJvmo0PrCMSvIH13gdrk0NuzK1zYSKrSRq3
-        /MxPZS7ACZxwGrfS6o3Pj4LI7Q==
-X-Google-Smtp-Source: AMsMyM4R7zOCDF9Xyc9OFoEtSBu4ycGu636OKlKczAfxwUVAxT3xW89MZCOiTtzc9DgYRkhv6eaC4w==
-X-Received: by 2002:a05:6512:3d94:b0:49d:144c:9667 with SMTP id k20-20020a0565123d9400b0049d144c9667mr3839392lfv.50.1664566212429;
-        Fri, 30 Sep 2022 12:30:12 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=g/s25fFcFRGt0la+CChBB+sBdX3rR06NtZ97e/TRl5g=;
+        b=p5lTibTZlcSXux+m/H1TmXxsRFeKVXqkCdUSX8hD0NtlbSkEBhb4EfePrSsGQWfeQS
+         ksb+YCkJk6gHHz+ZONGQ/feRp4rWAGwmqngfE2dOB38EnDKn28Jc3mxRxy/W8gJUk2X9
+         kW3kdgGNRJLb7urx+C9D7dcukoUxmQq5Jg/PF9X3smUETU5qj/7kn3vYYT1m0wGoo+nt
+         obCo7By/bmJO4+tca4ju3vuRWQ5VjuDKjGOxzm4JrkUOZw1ZH0nWIWMxqSILb1uivXUD
+         eGPR6l4ZT6WVNAluOg6cDdw83HHrd2WlGU6nQUP9nuNLPLPK4e2bzAXcZU44RLVkDHHt
+         izHg==
+X-Gm-Message-State: ACrzQf0xgYXuMP5NvXOBr42Fw6zWch44ls5fFoVlJ+DxIhW58PP9joVO
+        ra0AE/taizM1JZ+vBrF/ZC3lQGPVhhK9AA==
+X-Google-Smtp-Source: AMsMyM6pk4TIFeOeSsegG9bum/68726TptgPM44O7vmL/VW6rcp/ziYMJNNvGEwM+T+2wd5OKKvdxQ==
+X-Received: by 2002:a05:6512:3502:b0:496:8e:9307 with SMTP id h2-20020a056512350200b00496008e9307mr3648621lfs.504.1664568342138;
+        Fri, 30 Sep 2022 13:05:42 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id br32-20020a056512402000b0049f9799d349sm393603lfb.187.2022.09.30.12.30.11
+        by smtp.gmail.com with ESMTPSA id d10-20020ac2544a000000b00492f45cbbfcsm398876lfn.302.2022.09.30.13.05.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 12:30:12 -0700 (PDT)
+        Fri, 30 Sep 2022 13:05:41 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -57,49 +56,58 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 15/16] dt-bindings: pinctrl: qcom,sc7280: add bias-bus-hold and input-enable
-Date:   Fri, 30 Sep 2022 21:29:53 +0200
-Message-Id: <20220930192954.242546-16-krzysztof.kozlowski@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/2] pinctrl/arm64: qcom: convert sdm845 bindings to DT schema
+Date:   Fri, 30 Sep 2022 22:05:27 +0200
+Message-Id: <20220930200529.331223-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220930192954.242546-1-krzysztof.kozlowski@linaro.org>
-References: <20220930192954.242546-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The SC7280 pinctrl driver supports bias-bus-hold and input-enable, and
-DTS already use it (sc7280-idp).
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml    | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Overview
+========
+This is independent patchset of my recent Qualcomm pinctrl fixes.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
-index 4606ca980dc4..1db05c43d58c 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
-@@ -117,13 +117,11 @@ $defs:
-           Selects the drive strength for the specified pins, in mA.
- 
-       bias-pull-down: true
--
-       bias-pull-up: true
--
-+      bias-bus-hold: true
-       bias-disable: true
--
-+      input-enable: true
-       output-high: true
--
-       output-low: true
- 
-     required:
+If the total amount of patches from me around Qualcomm pinctrl is a bit
+overwhelming, well, yeah, expect more to come. One way to solve it is to
+merge/apply faster than I can create new patches. :-)
+
+Dependencies
+============
+1. No dependencies.
+2. dt-bindings are independent of DTS patches.
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (2):
+  arm64: dts: qcom: sdm845: align TLMM pin configuration with DT schema
+  dt-bindings: pinctrl: qcom,sdm845: convert to dtschema
+
+ .../bindings/pinctrl/qcom,sdm845-pinctrl.txt  | 176 ---------
+ .../bindings/pinctrl/qcom,sdm845-pinctrl.yaml | 158 ++++++++
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi    | 344 +++++++-----------
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts    |  76 ++--
+ .../arm64/boot/dts/qcom/sdm845-lg-common.dtsi |  60 ++-
+ arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts |   2 +-
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts       |  60 ++-
+ .../boot/dts/qcom/sdm845-oneplus-common.dtsi  |  88 ++---
+ .../boot/dts/qcom/sdm845-shift-axolotl.dts    | 138 +++----
+ .../dts/qcom/sdm845-sony-xperia-tama.dtsi     |   6 +-
+ .../boot/dts/qcom/sdm845-xiaomi-beryllium.dts |  26 +-
+ .../boot/dts/qcom/sdm845-xiaomi-polaris.dts   |  30 +-
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          | 305 +++++++---------
+ .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts |  33 +-
+ .../boot/dts/qcom/sdm850-samsung-w737.dts     |  96 ++---
+ 15 files changed, 671 insertions(+), 927 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.yaml
+
 -- 
 2.34.1
 
