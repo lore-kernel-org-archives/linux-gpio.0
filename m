@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD5DC4321E
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Sep 2022 19:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FBDC43219
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Sep 2022 19:30:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231641AbiI3Taa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Sep 2022 15:30:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41778 "EHLO
+        id S231804AbiI3Tad (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Sep 2022 15:30:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231574AbiI3TaV (ORCPT
+        with ESMTP id S232026AbiI3TaV (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Sep 2022 15:30:21 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61C872ED48
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Sep 2022 12:30:06 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id s10so5806298ljp.5
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Sep 2022 12:30:06 -0700 (PDT)
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BE0A31DCB
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Sep 2022 12:30:08 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id g20so5809726ljg.7
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Sep 2022 12:30:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=1+tNRNTlMKDtrm8kNyG1z3UONnnvb9QDoC8vEjCWfXA=;
-        b=ziX2cDg/+56emJPn3ne2OaAE7ELJINd7gRNkn7Bsp94M4+uBAiYpAygQhy2d6XRIqR
-         kFxihyuAHCi6++EqobihsEPe87AdgcvCelXEVq80gOvKkf4jiL5uuxLXiTb+5QEvsHQo
-         6JQTorQF9j0PFLVrCuCJlPOe0rk85L2LeUvXYdjMXWsh2IZuww3qG16iSJM+aE41G0Rc
-         JkeX17qsYqWlckDpQtkAInwc3nRARCIiLntk1lGgPHqCc9+o9Cb4QImQqLOnQhOoqsyl
-         gdh1kgWL6RDxzJyluqyhEvdRGB5+yh1E+UnSUlJkb48a4MT+h5wbEs3Mvrpw6iI2o80X
-         TuYA==
+        bh=rQBh9mrZMQXa4Wxb/syFmouoGZGa2l4WN/58xgtqFuw=;
+        b=tdxerNTbi/LoJQJG41IsuEg9ghPRZMjzMrKeqnpnPcy8Th9n0bwZekC1cAsVPgVYnr
+         F2eGILN/Ldn+EaCsK+c0xbgdiIu+53TgSbxeJwCn3pphw+yyuxzC68/++nfFM3s+hqre
+         9zHhNNjKpJTJ/VqzQ0uE1wsDZc0XbuTO2o9g6MItoWdGyPF766aTXVqUHNr4tguBcymL
+         2U+OEGTk/bjPcEebKKiypFxlgUOmW7GLMUlTVUJ0m5IU19BRhv9OmxV+K1Hd5j+F63Qn
+         ICD64TlgDZdFwmscXQZevlgjL8PSQrL+gaMHEF56S/Sf8HybNlcnsJTL9pydbXWrXD9h
+         UKRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=1+tNRNTlMKDtrm8kNyG1z3UONnnvb9QDoC8vEjCWfXA=;
-        b=f51GNYAfFF6DbR2njxmLvEUf3oudAh4/N5BUla05uu1tBDyRUyUyGv0zGXWvbxU7OA
-         BGA3SsHihSD0SEWMsB6oVa8yHvzf+18Qs2RyQI2W8qBE1rIueKft0CNhO+y7Jz5Iavxn
-         ZFV6Eg1pqtcg8XRZRElORlB6kMJxdBGO+yWkvTP/x9lCosLHAiU6x0U4wGDdp7iikKMo
-         xGeHgXMo91IF52OF2H7FOjmcL3XFHyObo72mP3lIZJwVHROgPNwk0ovST76A9XJEcZ8h
-         GYHnjWXk85u0uMq3IFKoVfPLlbJLCEfUWxe98KLa2mOsV6Uumi37tJ/QYcf2gbcvlDDx
-         Y59Q==
-X-Gm-Message-State: ACrzQf2MwpThxTaQaX3cbRM2NoDNhvkS8ntMt0MoGoUgifyCHWZNETN2
-        830zF/nBwGcfgFaphaRMqFcY+807cJLS5A==
-X-Google-Smtp-Source: AMsMyM5NKxJXIb8pfG8S+e30eY19GJLzCXfrqdI8ooMq/SCtmtqeLvPi4c6Hd5F4DWxwcMmmBzcN/Q==
-X-Received: by 2002:a05:651c:a08:b0:26c:539d:440a with SMTP id k8-20020a05651c0a0800b0026c539d440amr3144603ljq.264.1664566204648;
-        Fri, 30 Sep 2022 12:30:04 -0700 (PDT)
+        bh=rQBh9mrZMQXa4Wxb/syFmouoGZGa2l4WN/58xgtqFuw=;
+        b=0hFzvDzeKPTBSujIQpaydU1WxwhzfAuJXRJVa8nGqUWZIDYCItyPxfihu+Lo2wZG0u
+         jydTPJb0YjQmYaHDBFmO6MumDu5e7lGLw0x5ouZeMfQABOKdVNWSArD85kF39XblLIXc
+         w70BeE5G/cxuGCGKvjyB4znZQNPJHK0DjRhVqqShT2mY/JcwSf8E9jyrOp3ZeUKwuHPB
+         wL+pH5spEUw5S2yR3p54ZNfQK/04pBP8zadpy3OOODBRAzcPfmEjkE/jug+wzbAZ5kRT
+         D2aaoqJV1bd4zFyIsltB6KaJ61ziWLDwDsSeynOFsB189fUO2d3KEzPbd1GUyHSAbHFW
+         7MFg==
+X-Gm-Message-State: ACrzQf0FFyHsgFrU5M54Yu1LAvBkwbYW4UGwAmAfrbuPJNI+9jwAvRJ/
+        5VLCpq6o2sK75Xs82LRxam6Zcw==
+X-Google-Smtp-Source: AMsMyM4ZxoXwchKyNuf0WX40+oHXmtG03nDufsx5D/QesjCFD+EFYs/PaoiXZFlKCaHSRlDCF9kQ/A==
+X-Received: by 2002:a2e:9d88:0:b0:26a:95c1:218f with SMTP id c8-20020a2e9d88000000b0026a95c1218fmr3266021ljj.223.1664566206637;
+        Fri, 30 Sep 2022 12:30:06 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id br32-20020a056512402000b0049f9799d349sm393603lfb.187.2022.09.30.12.30.03
+        by smtp.gmail.com with ESMTPSA id br32-20020a056512402000b0049f9799d349sm393603lfb.187.2022.09.30.12.30.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 12:30:04 -0700 (PDT)
+        Fri, 30 Sep 2022 12:30:06 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -58,9 +58,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 07/16] arm64: dts: qcom: msm8953: align TLMM pin configuration with DT schema
-Date:   Fri, 30 Sep 2022 21:29:45 +0200
-Message-Id: <20220930192954.242546-8-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 09/16] arm64: dts: qcom: sm6125-sony-xperia: add missing SD CD GPIO functions
+Date:   Fri, 30 Sep 2022 21:29:47 +0200
+Message-Id: <20220930192954.242546-10-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220930192954.242546-1-krzysztof.kozlowski@linaro.org>
 References: <20220930192954.242546-1-krzysztof.kozlowski@linaro.org>
@@ -70,287 +70,40 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-DT schema expects TLMM pin configuration nodes to be named with
-'-state' suffix and their optional children with '-pins' suffix.
+Add default GPIO function to SD card detect pins on SM6125 Sony Xperia,
+as required by bindings:
 
-  qcom/sdm632-fairphone-fp3.dtb: pinctrl@1000000: 'cd-off-pins', 'cd-on-pins', 'gpio-key-default-pins', ....
-    do not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
+  qcom/sm6125-sony-xperia-seine-pdx201.dtb: pinctrl@500000: sdc2-off-state: 'oneOf' conditional failed, one must be fixed:
+    'pins' is a required property
+    'function' is a required property
+    'clk-pins', 'cmd-pins', 'data-pins', 'sd-cd-pins' do not match any of the regexes: 'pinctrl-[0-9]+'
 
 Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8953.dtsi | 70 +++++++++++++--------------
- 1 file changed, 35 insertions(+), 35 deletions(-)
+ arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8953.dtsi b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-index 6b992a6d56c1..db94e6fd18f5 100644
---- a/arch/arm64/boot/dts/qcom/msm8953.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-@@ -460,229 +460,229 @@ tlmm: pinctrl@1000000 {
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 
--			uart_console_active: uart-console-active-pins {
-+			uart_console_active: uart-console-active-state {
- 				pins = "gpio4", "gpio5";
- 				function = "blsp_uart2";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			uart_console_sleep: uart-console-sleep-pins {
-+			uart_console_sleep: uart-console-sleep-state {
- 				pins = "gpio4", "gpio5";
- 				function = "blsp_uart2";
- 				drive-strength = <2>;
- 				bias-pull-down;
- 			};
- 
--			sdc1_clk_on: sdc1-clk-on-pins {
-+			sdc1_clk_on: sdc1-clk-on-state {
- 				pins = "sdc1_clk";
- 				bias-disable;
- 				drive-strength = <16>;
- 			};
- 
--			sdc1_clk_off: sdc1-clk-off-pins {
-+			sdc1_clk_off: sdc1-clk-off-state {
- 				pins = "sdc1_clk";
- 				bias-disable;
- 				drive-strength = <2>;
- 			};
- 
--			sdc1_cmd_on: sdc1-cmd-on-pins {
-+			sdc1_cmd_on: sdc1-cmd-on-state {
- 				pins = "sdc1_cmd";
- 				bias-disable;
- 				drive-strength = <10>;
- 			};
- 
--			sdc1_cmd_off: sdc1-cmd-off-pins {
-+			sdc1_cmd_off: sdc1-cmd-off-state {
- 				pins = "sdc1_cmd";
- 				bias-disable;
- 				drive-strength = <2>;
- 			};
- 
--			sdc1_data_on: sdc1-data-on-pins {
-+			sdc1_data_on: sdc1-data-on-state {
- 				pins = "sdc1_data";
- 				bias-pull-up;
- 				drive-strength = <10>;
- 			};
- 
--			sdc1_data_off: sdc1-data-off-pins {
-+			sdc1_data_off: sdc1-data-off-state {
- 				pins = "sdc1_data";
- 				bias-pull-up;
- 				drive-strength = <2>;
- 			};
- 
--			sdc1_rclk_on: sdc1-rclk-on-pins {
-+			sdc1_rclk_on: sdc1-rclk-on-state {
- 				pins = "sdc1_rclk";
- 				bias-pull-down;
- 			};
- 
--			sdc1_rclk_off: sdc1-rclk-off-pins {
-+			sdc1_rclk_off: sdc1-rclk-off-state {
- 				pins = "sdc1_rclk";
- 				bias-pull-down;
- 			};
- 
--			sdc2_clk_on: sdc2-clk-on-pins {
-+			sdc2_clk_on: sdc2-clk-on-state {
- 				pins = "sdc2_clk";
- 				drive-strength = <16>;
- 				bias-disable;
- 			};
- 
--			sdc2_clk_off: sdc2-clk-off-pins {
-+			sdc2_clk_off: sdc2-clk-off-state {
- 				pins = "sdc2_clk";
- 				bias-disable;
- 				drive-strength = <2>;
- 			};
- 
--			sdc2_cmd_on: sdc2-cmd-on-pins {
-+			sdc2_cmd_on: sdc2-cmd-on-state {
- 				pins = "sdc2_cmd";
- 				bias-pull-up;
- 				drive-strength = <10>;
- 			};
- 
--			sdc2_cmd_off: sdc2-cmd-off-pins {
-+			sdc2_cmd_off: sdc2-cmd-off-state {
- 				pins = "sdc2_cmd";
- 				bias-pull-up;
- 				drive-strength = <2>;
- 			};
- 
--			sdc2_data_on: sdc2-data-on-pins {
-+			sdc2_data_on: sdc2-data-on-state {
- 				pins = "sdc2_data";
- 				bias-pull-up;
- 				drive-strength = <10>;
- 			};
- 
--			sdc2_data_off: sdc2-data-off-pins {
-+			sdc2_data_off: sdc2-data-off-state {
- 				pins = "sdc2_data";
- 				bias-pull-up;
- 				drive-strength = <2>;
- 			};
- 
--			sdc2_cd_on: cd-on-pins {
-+			sdc2_cd_on: cd-on-state {
- 				pins = "gpio133";
- 				function = "gpio";
- 				drive-strength = <2>;
- 				bias-pull-up;
- 			};
- 
--			sdc2_cd_off: cd-off-pins {
-+			sdc2_cd_off: cd-off-state {
- 				pins = "gpio133";
- 				function = "gpio";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			gpio_key_default: gpio-key-default-pins {
-+			gpio_key_default: gpio-key-default-state {
- 				pins = "gpio85";
- 				function = "gpio";
- 				drive-strength = <2>;
- 				bias-pull-up;
- 			};
- 
--			i2c_1_default: i2c-1-default-pins {
-+			i2c_1_default: i2c-1-default-state {
- 				pins = "gpio2", "gpio3";
- 				function = "blsp_i2c1";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_1_sleep: i2c-1-sleep-pins {
-+			i2c_1_sleep: i2c-1-sleep-state {
- 				pins = "gpio2", "gpio3";
- 				function = "gpio";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_2_default: i2c-2-default-pins {
-+			i2c_2_default: i2c-2-default-state {
- 				pins = "gpio6", "gpio7";
- 				function = "blsp_i2c2";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_2_sleep: i2c-2-sleep-pins {
-+			i2c_2_sleep: i2c-2-sleep-state {
- 				pins = "gpio6", "gpio7";
- 				function = "gpio";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_3_default: i2c-3-default-pins {
-+			i2c_3_default: i2c-3-default-state {
- 				pins = "gpio10", "gpio11";
- 				function = "blsp_i2c3";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_3_sleep: i2c-3-sleep-pins {
-+			i2c_3_sleep: i2c-3-sleep-state {
- 				pins = "gpio10", "gpio11";
- 				function = "gpio";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_4_default: i2c-4-default-pins {
-+			i2c_4_default: i2c-4-default-state {
- 				pins = "gpio14", "gpio15";
- 				function = "blsp_i2c4";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_4_sleep: i2c-4-sleep-pins {
-+			i2c_4_sleep: i2c-4-sleep-state {
- 				pins = "gpio14", "gpio15";
- 				function = "gpio";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_5_default: i2c-5-default-pins {
-+			i2c_5_default: i2c-5-default-state {
- 				pins = "gpio18", "gpio19";
- 				function = "blsp_i2c5";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_5_sleep: i2c-5-sleep-pins {
-+			i2c_5_sleep: i2c-5-sleep-state {
- 				pins = "gpio18", "gpio19";
- 				function = "gpio";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_6_default: i2c-6-default-pins {
-+			i2c_6_default: i2c-6-default-state {
- 				pins = "gpio22", "gpio23";
- 				function = "blsp_i2c6";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_6_sleep: i2c-6-sleep-pins {
-+			i2c_6_sleep: i2c-6-sleep-state {
- 				pins = "gpio22", "gpio23";
- 				function = "gpio";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_7_default: i2c-7-default-pins {
-+			i2c_7_default: i2c-7-default-state {
- 				pins = "gpio135", "gpio136";
- 				function = "blsp_i2c7";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_7_sleep: i2c-7-sleep-pins {
-+			i2c_7_sleep: i2c-7-sleep-state {
- 				pins = "gpio135", "gpio136";
- 				function = "gpio";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_8_default: i2c-8-default-pins {
-+			i2c_8_default: i2c-8-default-state {
- 				pins = "gpio98", "gpio99";
- 				function = "blsp_i2c8";
- 				drive-strength = <2>;
- 				bias-disable;
- 			};
- 
--			i2c_8_sleep: i2c-8-sleep-pins {
-+			i2c_8_sleep: i2c-8-sleep-state {
- 				pins = "gpio98", "gpio99";
- 				function = "gpio";
- 				drive-strength = <2>;
+diff --git a/arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dts b/arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dts
+index 6a8b88cc4385..9af4b76fa6d7 100644
+--- a/arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dts
++++ b/arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dts
+@@ -89,6 +89,7 @@ &hsusb_phy1 {
+ &sdc2_off_state {
+ 	sd-cd-pins {
+ 		pins = "gpio98";
++		function = "gpio";
+ 		drive-strength = <2>;
+ 		bias-disable;
+ 	};
+@@ -97,6 +98,7 @@ sd-cd-pins {
+ &sdc2_on_state {
+ 	sd-cd-pins {
+ 		pins = "gpio98";
++		function = "gpio";
+ 		drive-strength = <2>;
+ 		bias-pull-up;
+ 	};
 -- 
 2.34.1
 
