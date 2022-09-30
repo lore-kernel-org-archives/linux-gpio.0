@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D497C4167E
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Sep 2022 19:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD5DC4321E
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Sep 2022 19:30:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231251AbiI3Tab (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Sep 2022 15:30:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41770 "EHLO
+        id S231641AbiI3Taa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Sep 2022 15:30:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231758AbiI3TaS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Sep 2022 15:30:18 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4DE92CE27
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Sep 2022 12:30:04 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id j5so1223580lja.4
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Sep 2022 12:30:04 -0700 (PDT)
+        with ESMTP id S231574AbiI3TaV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Sep 2022 15:30:21 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61C872ED48
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Sep 2022 12:30:06 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id s10so5806298ljp.5
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Sep 2022 12:30:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=IP8p9vKToYJMy7wcnsAiwE01U8L1mn26stcaAumSsjA=;
-        b=ZRGeXwx9H8hloVBNuC5lW4Pb6w5plXq0fP/sKDp0i6Nnu11GIZR2aq0K2WkYPpdCu+
-         0yBTI1oK4TsTtTbrGINqytVdf3RrDbE2Pl5BDrPMF9nH5I6v6mNydOWUHa5Rabh/fDEG
-         JqZ76njUUCcWEG5kEjPiiJm5nsbVgBwxf2DhN69orh0Lt0Lzk9kW7Ie57kFVOrKGcdQZ
-         bt7K8RuTp1ISOIqQWTBUpYJUpHUkIEUMe2okkZD3JlaxTRuuqVF0Kgo0jxx84cTwK6a9
-         zqzRZ2JYtMs8tFy0nS9I+L1JalHH0bkaTAyGhoDalwQxhzInmAl7/njceOoqlOz3VbVU
-         rHPg==
+        bh=1+tNRNTlMKDtrm8kNyG1z3UONnnvb9QDoC8vEjCWfXA=;
+        b=ziX2cDg/+56emJPn3ne2OaAE7ELJINd7gRNkn7Bsp94M4+uBAiYpAygQhy2d6XRIqR
+         kFxihyuAHCi6++EqobihsEPe87AdgcvCelXEVq80gOvKkf4jiL5uuxLXiTb+5QEvsHQo
+         6JQTorQF9j0PFLVrCuCJlPOe0rk85L2LeUvXYdjMXWsh2IZuww3qG16iSJM+aE41G0Rc
+         JkeX17qsYqWlckDpQtkAInwc3nRARCIiLntk1lGgPHqCc9+o9Cb4QImQqLOnQhOoqsyl
+         gdh1kgWL6RDxzJyluqyhEvdRGB5+yh1E+UnSUlJkb48a4MT+h5wbEs3Mvrpw6iI2o80X
+         TuYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=IP8p9vKToYJMy7wcnsAiwE01U8L1mn26stcaAumSsjA=;
-        b=RkcmyxspqH0zkx/XTgOvucvrSCfO3xSbnIdUq5VGAw1pVDOCSrxjeI4fDe3R71mH9g
-         qk2ORY1B8sjoy1K5hf+n+qzfHXB2jcDTDFKdM3zini0A10Zmm3KOSgN8XygPCYbxfuCh
-         cxZdyspBe14rgEPrazjQMuc4zn49lvFAuxPMNXzrivTJWi1tMnkoVTXXNVBH/ntXyA04
-         wx9SlTU3jIgZn14Bla6tpUGkbNOO1i/ZAy0YMlAajh1PTt9pcZ8BufX8tSli4vmLMpe3
-         bM54Y9Lh15GMxXFHgCmfaJ3N/od2N5MrD/l6tD8LXCqtGRsJGZAnKnYvzMTTz4dknUnk
-         JJIw==
-X-Gm-Message-State: ACrzQf263/WI9cMf34kHa+6L0gF5Z0CgdXA7qz1A7jp+TzzSdn4LZK73
-        OjFwnQ3KAhmvS9KkuG8kZesp5g==
-X-Google-Smtp-Source: AMsMyM7Oys9jjR7mG/RUKXJm3ZLD6M1oAcZ6jP3vUEvULauUPZwZEsC7wuKN1B8dXmaGoxfRotThYg==
-X-Received: by 2002:a2e:bcc3:0:b0:26c:4c59:75ed with SMTP id z3-20020a2ebcc3000000b0026c4c5975edmr3171811ljp.505.1664566202614;
-        Fri, 30 Sep 2022 12:30:02 -0700 (PDT)
+        bh=1+tNRNTlMKDtrm8kNyG1z3UONnnvb9QDoC8vEjCWfXA=;
+        b=f51GNYAfFF6DbR2njxmLvEUf3oudAh4/N5BUla05uu1tBDyRUyUyGv0zGXWvbxU7OA
+         BGA3SsHihSD0SEWMsB6oVa8yHvzf+18Qs2RyQI2W8qBE1rIueKft0CNhO+y7Jz5Iavxn
+         ZFV6Eg1pqtcg8XRZRElORlB6kMJxdBGO+yWkvTP/x9lCosLHAiU6x0U4wGDdp7iikKMo
+         xGeHgXMo91IF52OF2H7FOjmcL3XFHyObo72mP3lIZJwVHROgPNwk0ovST76A9XJEcZ8h
+         GYHnjWXk85u0uMq3IFKoVfPLlbJLCEfUWxe98KLa2mOsV6Uumi37tJ/QYcf2gbcvlDDx
+         Y59Q==
+X-Gm-Message-State: ACrzQf2MwpThxTaQaX3cbRM2NoDNhvkS8ntMt0MoGoUgifyCHWZNETN2
+        830zF/nBwGcfgFaphaRMqFcY+807cJLS5A==
+X-Google-Smtp-Source: AMsMyM5NKxJXIb8pfG8S+e30eY19GJLzCXfrqdI8ooMq/SCtmtqeLvPi4c6Hd5F4DWxwcMmmBzcN/Q==
+X-Received: by 2002:a05:651c:a08:b0:26c:539d:440a with SMTP id k8-20020a05651c0a0800b0026c539d440amr3144603ljq.264.1664566204648;
+        Fri, 30 Sep 2022 12:30:04 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id br32-20020a056512402000b0049f9799d349sm393603lfb.187.2022.09.30.12.30.01
+        by smtp.gmail.com with ESMTPSA id br32-20020a056512402000b0049f9799d349sm393603lfb.187.2022.09.30.12.30.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 12:30:02 -0700 (PDT)
+        Fri, 30 Sep 2022 12:30:04 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -58,9 +58,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 05/16] arm64: dts: qcom: sc7280-herobrine: correct number of gpio-line-names
-Date:   Fri, 30 Sep 2022 21:29:43 +0200
-Message-Id: <20220930192954.242546-6-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 07/16] arm64: dts: qcom: msm8953: align TLMM pin configuration with DT schema
+Date:   Fri, 30 Sep 2022 21:29:45 +0200
+Message-Id: <20220930192954.242546-8-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220930192954.242546-1-krzysztof.kozlowski@linaro.org>
 References: <20220930192954.242546-1-krzysztof.kozlowski@linaro.org>
@@ -70,61 +70,287 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There are 175 GPIOs (gpio0-174).
+DT schema expects TLMM pin configuration nodes to be named with
+'-state' suffix and their optional children with '-pins' suffix.
+
+  qcom/sdm632-fairphone-fp3.dtb: pinctrl@1000000: 'cd-off-pins', 'cd-on-pins', 'gpio-key-default-pins', ....
+    do not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
 
 Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sc7280-herobrine-crd.dts          | 1 +
- arch/arm64/boot/dts/qcom/sc7280-herobrine-evoker-r0.dts    | 1 -
- arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dts | 1 -
- arch/arm64/boot/dts/qcom/sc7280-herobrine-villager.dtsi    | 1 -
- 4 files changed, 1 insertion(+), 3 deletions(-)
+ arch/arm64/boot/dts/qcom/msm8953.dtsi | 70 +++++++++++++--------------
+ 1 file changed, 35 insertions(+), 35 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine-crd.dts b/arch/arm64/boot/dts/qcom/sc7280-herobrine-crd.dts
-index f0f26af1e421..4e0b013e25f4 100644
---- a/arch/arm64/boot/dts/qcom/sc7280-herobrine-crd.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine-crd.dts
-@@ -372,5 +372,6 @@ &tlmm {
- 			  "",				/* 170 */
- 			  "MOS_BLE_UART_TX",
- 			  "MOS_BLE_UART_RX",
-+			  "",
- 			  "";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine-evoker-r0.dts b/arch/arm64/boot/dts/qcom/sc7280-herobrine-evoker-r0.dts
-index ccbe50b6249a..739e81bd6d68 100644
---- a/arch/arm64/boot/dts/qcom/sc7280-herobrine-evoker-r0.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine-evoker-r0.dts
-@@ -328,6 +328,5 @@ &tlmm {
- 			  "MOS_BLE_UART_TX",
- 			  "MOS_BLE_UART_RX",
- 			  "",
--			  "",
- 			  "";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dts b/arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dts
-index c1a671968725..c8ff13db30b9 100644
---- a/arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dts
-@@ -358,6 +358,5 @@ &tlmm {
- 			  "MOS_BLE_UART_TX",
- 			  "MOS_BLE_UART_RX",
- 			  "",
--			  "",
- 			  "";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine-villager.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine-villager.dtsi
-index 4566722bf4dd..3dff610fb946 100644
---- a/arch/arm64/boot/dts/qcom/sc7280-herobrine-villager.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine-villager.dtsi
-@@ -321,6 +321,5 @@ &tlmm {
- 			  "MOS_BLE_UART_TX",
- 			  "MOS_BLE_UART_RX",
- 			  "",
--			  "",
- 			  "";
- };
+diff --git a/arch/arm64/boot/dts/qcom/msm8953.dtsi b/arch/arm64/boot/dts/qcom/msm8953.dtsi
+index 6b992a6d56c1..db94e6fd18f5 100644
+--- a/arch/arm64/boot/dts/qcom/msm8953.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8953.dtsi
+@@ -460,229 +460,229 @@ tlmm: pinctrl@1000000 {
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 
+-			uart_console_active: uart-console-active-pins {
++			uart_console_active: uart-console-active-state {
+ 				pins = "gpio4", "gpio5";
+ 				function = "blsp_uart2";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			uart_console_sleep: uart-console-sleep-pins {
++			uart_console_sleep: uart-console-sleep-state {
+ 				pins = "gpio4", "gpio5";
+ 				function = "blsp_uart2";
+ 				drive-strength = <2>;
+ 				bias-pull-down;
+ 			};
+ 
+-			sdc1_clk_on: sdc1-clk-on-pins {
++			sdc1_clk_on: sdc1-clk-on-state {
+ 				pins = "sdc1_clk";
+ 				bias-disable;
+ 				drive-strength = <16>;
+ 			};
+ 
+-			sdc1_clk_off: sdc1-clk-off-pins {
++			sdc1_clk_off: sdc1-clk-off-state {
+ 				pins = "sdc1_clk";
+ 				bias-disable;
+ 				drive-strength = <2>;
+ 			};
+ 
+-			sdc1_cmd_on: sdc1-cmd-on-pins {
++			sdc1_cmd_on: sdc1-cmd-on-state {
+ 				pins = "sdc1_cmd";
+ 				bias-disable;
+ 				drive-strength = <10>;
+ 			};
+ 
+-			sdc1_cmd_off: sdc1-cmd-off-pins {
++			sdc1_cmd_off: sdc1-cmd-off-state {
+ 				pins = "sdc1_cmd";
+ 				bias-disable;
+ 				drive-strength = <2>;
+ 			};
+ 
+-			sdc1_data_on: sdc1-data-on-pins {
++			sdc1_data_on: sdc1-data-on-state {
+ 				pins = "sdc1_data";
+ 				bias-pull-up;
+ 				drive-strength = <10>;
+ 			};
+ 
+-			sdc1_data_off: sdc1-data-off-pins {
++			sdc1_data_off: sdc1-data-off-state {
+ 				pins = "sdc1_data";
+ 				bias-pull-up;
+ 				drive-strength = <2>;
+ 			};
+ 
+-			sdc1_rclk_on: sdc1-rclk-on-pins {
++			sdc1_rclk_on: sdc1-rclk-on-state {
+ 				pins = "sdc1_rclk";
+ 				bias-pull-down;
+ 			};
+ 
+-			sdc1_rclk_off: sdc1-rclk-off-pins {
++			sdc1_rclk_off: sdc1-rclk-off-state {
+ 				pins = "sdc1_rclk";
+ 				bias-pull-down;
+ 			};
+ 
+-			sdc2_clk_on: sdc2-clk-on-pins {
++			sdc2_clk_on: sdc2-clk-on-state {
+ 				pins = "sdc2_clk";
+ 				drive-strength = <16>;
+ 				bias-disable;
+ 			};
+ 
+-			sdc2_clk_off: sdc2-clk-off-pins {
++			sdc2_clk_off: sdc2-clk-off-state {
+ 				pins = "sdc2_clk";
+ 				bias-disable;
+ 				drive-strength = <2>;
+ 			};
+ 
+-			sdc2_cmd_on: sdc2-cmd-on-pins {
++			sdc2_cmd_on: sdc2-cmd-on-state {
+ 				pins = "sdc2_cmd";
+ 				bias-pull-up;
+ 				drive-strength = <10>;
+ 			};
+ 
+-			sdc2_cmd_off: sdc2-cmd-off-pins {
++			sdc2_cmd_off: sdc2-cmd-off-state {
+ 				pins = "sdc2_cmd";
+ 				bias-pull-up;
+ 				drive-strength = <2>;
+ 			};
+ 
+-			sdc2_data_on: sdc2-data-on-pins {
++			sdc2_data_on: sdc2-data-on-state {
+ 				pins = "sdc2_data";
+ 				bias-pull-up;
+ 				drive-strength = <10>;
+ 			};
+ 
+-			sdc2_data_off: sdc2-data-off-pins {
++			sdc2_data_off: sdc2-data-off-state {
+ 				pins = "sdc2_data";
+ 				bias-pull-up;
+ 				drive-strength = <2>;
+ 			};
+ 
+-			sdc2_cd_on: cd-on-pins {
++			sdc2_cd_on: cd-on-state {
+ 				pins = "gpio133";
+ 				function = "gpio";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			sdc2_cd_off: cd-off-pins {
++			sdc2_cd_off: cd-off-state {
+ 				pins = "gpio133";
+ 				function = "gpio";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			gpio_key_default: gpio-key-default-pins {
++			gpio_key_default: gpio-key-default-state {
+ 				pins = "gpio85";
+ 				function = "gpio";
+ 				drive-strength = <2>;
+ 				bias-pull-up;
+ 			};
+ 
+-			i2c_1_default: i2c-1-default-pins {
++			i2c_1_default: i2c-1-default-state {
+ 				pins = "gpio2", "gpio3";
+ 				function = "blsp_i2c1";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_1_sleep: i2c-1-sleep-pins {
++			i2c_1_sleep: i2c-1-sleep-state {
+ 				pins = "gpio2", "gpio3";
+ 				function = "gpio";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_2_default: i2c-2-default-pins {
++			i2c_2_default: i2c-2-default-state {
+ 				pins = "gpio6", "gpio7";
+ 				function = "blsp_i2c2";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_2_sleep: i2c-2-sleep-pins {
++			i2c_2_sleep: i2c-2-sleep-state {
+ 				pins = "gpio6", "gpio7";
+ 				function = "gpio";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_3_default: i2c-3-default-pins {
++			i2c_3_default: i2c-3-default-state {
+ 				pins = "gpio10", "gpio11";
+ 				function = "blsp_i2c3";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_3_sleep: i2c-3-sleep-pins {
++			i2c_3_sleep: i2c-3-sleep-state {
+ 				pins = "gpio10", "gpio11";
+ 				function = "gpio";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_4_default: i2c-4-default-pins {
++			i2c_4_default: i2c-4-default-state {
+ 				pins = "gpio14", "gpio15";
+ 				function = "blsp_i2c4";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_4_sleep: i2c-4-sleep-pins {
++			i2c_4_sleep: i2c-4-sleep-state {
+ 				pins = "gpio14", "gpio15";
+ 				function = "gpio";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_5_default: i2c-5-default-pins {
++			i2c_5_default: i2c-5-default-state {
+ 				pins = "gpio18", "gpio19";
+ 				function = "blsp_i2c5";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_5_sleep: i2c-5-sleep-pins {
++			i2c_5_sleep: i2c-5-sleep-state {
+ 				pins = "gpio18", "gpio19";
+ 				function = "gpio";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_6_default: i2c-6-default-pins {
++			i2c_6_default: i2c-6-default-state {
+ 				pins = "gpio22", "gpio23";
+ 				function = "blsp_i2c6";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_6_sleep: i2c-6-sleep-pins {
++			i2c_6_sleep: i2c-6-sleep-state {
+ 				pins = "gpio22", "gpio23";
+ 				function = "gpio";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_7_default: i2c-7-default-pins {
++			i2c_7_default: i2c-7-default-state {
+ 				pins = "gpio135", "gpio136";
+ 				function = "blsp_i2c7";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_7_sleep: i2c-7-sleep-pins {
++			i2c_7_sleep: i2c-7-sleep-state {
+ 				pins = "gpio135", "gpio136";
+ 				function = "gpio";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_8_default: i2c-8-default-pins {
++			i2c_8_default: i2c-8-default-state {
+ 				pins = "gpio98", "gpio99";
+ 				function = "blsp_i2c8";
+ 				drive-strength = <2>;
+ 				bias-disable;
+ 			};
+ 
+-			i2c_8_sleep: i2c-8-sleep-pins {
++			i2c_8_sleep: i2c-8-sleep-state {
+ 				pins = "gpio98", "gpio99";
+ 				function = "gpio";
+ 				drive-strength = <2>;
 -- 
 2.34.1
 
