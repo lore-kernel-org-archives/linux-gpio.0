@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51EADC433F5
-	for <linux-gpio@archiver.kernel.org>; Wed,  5 Oct 2022 17:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23471C43219
+	for <linux-gpio@archiver.kernel.org>; Wed,  5 Oct 2022 17:44:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230458AbiJERoe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 5 Oct 2022 13:44:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34148 "EHLO
+        id S230422AbiJERof (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 5 Oct 2022 13:44:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230447AbiJERo2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Oct 2022 13:44:28 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C39287F10C;
-        Wed,  5 Oct 2022 10:44:24 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id ay36so11252201wmb.0;
-        Wed, 05 Oct 2022 10:44:24 -0700 (PDT)
+        with ESMTP id S230403AbiJERoc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Oct 2022 13:44:32 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8AD67F129;
+        Wed,  5 Oct 2022 10:44:29 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id o20-20020a05600c4fd400b003b4a516c479so1449068wmq.1;
+        Wed, 05 Oct 2022 10:44:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=vXh3BxCd3UR1/+WjnZXctSKss7l1jK9ZVA3CPpEkeRU=;
-        b=pQU0bVQHqs3y8H5Gc8qcusH69fCC7CJC8gFA/XWJsVSLmx15qzHkgLOem0Z3/DFOxJ
-         GmS/0dzjvbMtHHHV9LJpW8HIvwEFDlolqPee4YAygr26A3pS4HPqWWqFB/wT7Uv8HJxT
-         rysFqkHvsxjKFd3am2tfYxddB+4eNMIgWDQSgBP9S7CZ7rQwzKX4teyHBmcmcyK7KuyU
-         oZSoC20kyMw3/Zs3nF/c+zlksnbZf0l735xkSGutgPNtTLQMlDhMpmgn8OJg8/z9A09H
-         hG7l/dwdtc4zClnBU/CGaf9FJSw+dx5dleZ9eCDktGaNI+5a+yvSvAj5aQXgZNT13v5l
-         LsmQ==
+        bh=PVLrACcSKUPhaj5dkzpeft8dc3na+SzUoUyCH0CxQdc=;
+        b=Tk4NjlU+VOxHKIsEw2EUSin/HX3FoWKLmZDv+lcKUEwSnubc6aCGjIstUP7FTRKgVb
+         e8NlpqANvLc9Ca9bOuoszGrTmUDZt+YBTNZvt0XmTMrTcdRfwisuQFqlXLU5q4oWOcuR
+         G6tbtgu+mXDWEs/+SH1rY+WHzr1fUlYhEcNiMwzqpFipDjENrHwchoTkq8Ti0E7Oa3Pw
+         6m4NsWxD/AP57pE4hFKmh2aqGTvLH9MoZUJ/itR8u0F1i06mlGX/huBDFhjIUtssD8a5
+         R/5GCsiuYRtpZflMuyLafy9rBFuJoO7CRSyhw9Ttpz8v3g0W1TRhv4eGI2uCn+tn5G1F
+         2UBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=vXh3BxCd3UR1/+WjnZXctSKss7l1jK9ZVA3CPpEkeRU=;
-        b=BOtScPF7RsnHeTOCNTRqW6XSpG3z+nankCVkVZTvcXW1J/MmxomnDcPaUspyF4NMPf
-         D3b6x73YVUdbUA5y2fj7j7ES2rA+qW4HG+CYGIozuHcEhq1yu3Pz4l93I0o7mkLExM3L
-         qTGdnqkqPBcgC4VJS2lbW3zTyWXpxcC7llNDTR+ltaT/5n6k9YHEthYJ5c2DTn85tCiZ
-         BJkM3ZfsLBVNm6eIKqlgHwe9kmzn2N2i29KUYEbOyvn7h1JjGvAPPtjHw3TJs4X0VI9h
-         V7Xr2qKFgf2+qSkRqTUOUBA6/YyosE1kJZlReRUOUJiIQMq5U3YHu2Czc+pOeGuOFJuH
-         XW4A==
-X-Gm-Message-State: ACrzQf1R7WzKSdFLRVqQN3H5Sm7WARj2jODrRgi+A+FuKEh85cz6JwNN
-        N8hkpbE/oPxSoaEU3x0hG4w=
-X-Google-Smtp-Source: AMsMyM7SGMHRmQPQNPDZTLXjXHJw2JOTQjWqlYWILhe1UsBmIUdBty7xdVg2s6m1Fm3NF8/JPQ8u2Q==
-X-Received: by 2002:a05:600c:1f06:b0:3b4:86e8:bd21 with SMTP id bd6-20020a05600c1f0600b003b486e8bd21mr468229wmb.7.1664991864127;
-        Wed, 05 Oct 2022 10:44:24 -0700 (PDT)
+        bh=PVLrACcSKUPhaj5dkzpeft8dc3na+SzUoUyCH0CxQdc=;
+        b=u/PwAN9IEKreTNELQ14LhKn1QQXp21rWO7Etn7OPr7bgn2NdGbQ5bronhdX8UgCHr1
+         yNmishZIGyqLhvb/DdJJ8Rv6DU4KPWBZmRjJkVRGS28bCSvVYhfmuttMswT1u0i5v3ca
+         qk4VaB6BSh3GZPbk5O76MHeXkQcmczntS8shjnPnH3JBd2se+FkAyr0ujbGk4Gi6iqWJ
+         HldQRAy3PzdBqj2NqDRZNAHzdcGzBJrFk/uJbQYEKLmR7bl2jmETsEqHep33Zd8y5st1
+         GPNVYfr9JORoVpesiW0J+HTE4RlVGisBH8gJiJLu9Qy696zk1AWm2/Z1y8G6a3Fc+a9t
+         ffWA==
+X-Gm-Message-State: ACrzQf20stEz+NjSDRxq5UTig/thMkiOLztgoiY1pLshUzxx/uoY5NdY
+        KMuYM0oOyxXr3a4IGGO/n+U=
+X-Google-Smtp-Source: AMsMyM4gY77KwLcvBY22FBZ6f45NZC/vKIzozOpZ3dpyCHDyD7Xdmj00U0N53CsRSoou0ilOyTDH5g==
+X-Received: by 2002:a05:600c:348e:b0:3b4:a9f1:c240 with SMTP id a14-20020a05600c348e00b003b4a9f1c240mr4126831wmq.192.1664991867935;
+        Wed, 05 Oct 2022 10:44:27 -0700 (PDT)
 Received: from localhost.localdomain ([95.183.227.98])
-        by smtp.gmail.com with ESMTPSA id c6-20020a5d4146000000b0022a403954c3sm16075491wrq.42.2022.10.05.10.44.22
+        by smtp.gmail.com with ESMTPSA id c6-20020a5d4146000000b0022a403954c3sm16075491wrq.42.2022.10.05.10.44.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Oct 2022 10:44:23 -0700 (PDT)
+        Wed, 05 Oct 2022 10:44:27 -0700 (PDT)
 From:   Yassine Oudjana <yassine.oudjana@gmail.com>
 X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
@@ -63,9 +63,9 @@ Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
         linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 05/10] dt-bindings: pinctrl: mediatek,pinctrl-mt6795: Fix interrupt count
-Date:   Wed,  5 Oct 2022 20:43:38 +0300
-Message-Id: <20221005174343.24240-6-y.oudjana@protonmail.com>
+Subject: [PATCH v2 07/10] arm64: dts: mediatek: mt6797: Make pin configuration nodes follow DT bindings
+Date:   Wed,  5 Oct 2022 20:43:40 +0300
+Message-Id: <20221005174343.24240-8-y.oudjana@protonmail.com>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <20221005174343.24240-1-y.oudjana@protonmail.com>
 References: <20221005174343.24240-1-y.oudjana@protonmail.com>
@@ -77,29 +77,99 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-The document currently states a maximum of 1 interrupt, but the DT
-has 2 specified causing a dtbs_check error. Change the limit to 2
-to pass the check and add a minimum limit.
+Add -pins suffix to pin configuration nodes to follow DT bindings
+and pass dtbs_check.
 
 Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 ---
- .../devicetree/bindings/pinctrl/mediatek,pinctrl-mt6795.yaml   | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/mediatek/mt6797.dtsi | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,pinctrl-mt6795.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,pinctrl-mt6795.yaml
-index 73ae6e11410b..483fcdc60487 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,pinctrl-mt6795.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,pinctrl-mt6795.yaml
-@@ -47,7 +47,8 @@ properties:
+diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+index 15616231022a..0c2b477184ae 100644
+--- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+@@ -135,70 +135,70 @@ pio: pinctrl@10005000 {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
  
-   interrupts:
-     description: The interrupt outputs to sysirq.
--    maxItems: 1
-+    minItems: 2
-+    maxItems: 2
+-		uart0_pins_a: uart0 {
++		uart0_pins_a: uart0-pins {
+ 			pins0 {
+ 				pinmux = <MT6797_GPIO234__FUNC_UTXD0>,
+ 					 <MT6797_GPIO235__FUNC_URXD0>;
+ 			};
+ 		};
  
- # PIN CONFIGURATION NODES
- patternProperties:
+-		uart1_pins_a: uart1 {
++		uart1_pins_a: uart1-pins {
+ 			pins1 {
+ 				pinmux = <MT6797_GPIO232__FUNC_URXD1>,
+ 					 <MT6797_GPIO233__FUNC_UTXD1>;
+ 			};
+ 		};
+ 
+-		i2c0_pins_a: i2c0 {
++		i2c0_pins_a: i2c0-pins {
+ 			pins0 {
+ 				pinmux = <MT6797_GPIO37__FUNC_SCL0_0>,
+ 					 <MT6797_GPIO38__FUNC_SDA0_0>;
+ 			};
+ 		};
+ 
+-		i2c1_pins_a: i2c1 {
++		i2c1_pins_a: i2c1-pins {
+ 			pins1 {
+ 				pinmux = <MT6797_GPIO55__FUNC_SCL1_0>,
+ 					 <MT6797_GPIO56__FUNC_SDA1_0>;
+ 			};
+ 		};
+ 
+-		i2c2_pins_a: i2c2 {
++		i2c2_pins_a: i2c2-pins {
+ 			pins2 {
+ 				pinmux = <MT6797_GPIO96__FUNC_SCL2_0>,
+ 					 <MT6797_GPIO95__FUNC_SDA2_0>;
+ 			};
+ 		};
+ 
+-		i2c3_pins_a: i2c3 {
++		i2c3_pins_a: i2c3-pins {
+ 			pins3 {
+ 				pinmux = <MT6797_GPIO75__FUNC_SDA3_0>,
+ 					 <MT6797_GPIO74__FUNC_SCL3_0>;
+ 			};
+ 		};
+ 
+-		i2c4_pins_a: i2c4 {
++		i2c4_pins_a: i2c4-pins {
+ 			pins4 {
+ 				pinmux = <MT6797_GPIO238__FUNC_SDA4_0>,
+ 					 <MT6797_GPIO239__FUNC_SCL4_0>;
+ 			};
+ 		};
+ 
+-		i2c5_pins_a: i2c5 {
++		i2c5_pins_a: i2c5-pins {
+ 			pins5 {
+ 				pinmux = <MT6797_GPIO240__FUNC_SDA5_0>,
+ 					 <MT6797_GPIO241__FUNC_SCL5_0>;
+ 			};
+ 		};
+ 
+-		i2c6_pins_a: i2c6 {
++		i2c6_pins_a: i2c6-pins {
+ 			pins6 {
+ 				pinmux = <MT6797_GPIO152__FUNC_SDA6_0>,
+ 					 <MT6797_GPIO151__FUNC_SCL6_0>;
+ 			};
+ 		};
+ 
+-		i2c7_pins_a: i2c7 {
++		i2c7_pins_a: i2c7-pins {
+ 			pins7 {
+ 				pinmux = <MT6797_GPIO154__FUNC_SDA7_0>,
+ 					 <MT6797_GPIO153__FUNC_SCL7_0>;
 -- 
 2.38.0
 
