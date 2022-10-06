@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12651C43219
-	for <linux-gpio@archiver.kernel.org>; Thu,  6 Oct 2022 14:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E8FC4167B
+	for <linux-gpio@archiver.kernel.org>; Thu,  6 Oct 2022 14:08:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231237AbiJFOIr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 6 Oct 2022 10:08:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55430 "EHLO
+        id S231623AbiJFOIs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 6 Oct 2022 10:08:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231783AbiJFOHj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Oct 2022 10:07:39 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A993AA34B
-        for <linux-gpio@vger.kernel.org>; Thu,  6 Oct 2022 07:07:16 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id bn8so2371047ljb.6
-        for <linux-gpio@vger.kernel.org>; Thu, 06 Oct 2022 07:07:16 -0700 (PDT)
+        with ESMTP id S231682AbiJFOIL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Oct 2022 10:08:11 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08ADCAE236
+        for <linux-gpio@vger.kernel.org>; Thu,  6 Oct 2022 07:07:19 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id d6so2850889lfs.10
+        for <linux-gpio@vger.kernel.org>; Thu, 06 Oct 2022 07:07:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=9Kad1IH+jLbZ8P6+0lUUf+Nr8Cb0qZGATZUa0YVUa0g=;
-        b=OPVfAGrtikSRluPwpEC6Y8cP2PszFXhnzejofQ1jf5DvS8u2M8kkIbU+LhKuH1pv9n
-         6aJJ7+fcplsgYaTguMT+hRFubox4QI+pHCIulS+MOz9FJWXH+WP0FMdkTTA6Yza8gCwp
-         GWMOpG3H2BcBgdE/JtNK2uP44LUy0feLjaFEshCc7Axp7aayct9Y/zROImYd4kCmSyz/
-         btL7axOIe3VoJ3Zaj6kgouWl0LClYpWvqCAuwPWhAFd7rJU7y9Nq7ooBt6LYMwPFZpfv
-         T8gU5sJob6enY/aBhOBWCR/wuOfbSkYaT+LzrFJW9kN1EADzhN6hgvLL9n1zMD0yEF/9
-         es7Q==
+        bh=Qvhx7Yl1ZKU9mdZJ2zEHIWK6jJd4WPtCysK/pIgCqgc=;
+        b=TUNPt45jDZ6GPoikBzW6gEDPfWCVSs4UcCWZuph97qZcTufZyNH1C6gI80x0I2/G/q
+         BPykP5LJk/7NYKnHrks1yCx0EPI1zvYNU+a5Zk7W9ZfkVgGtUfL+PsZ0UbEOGQPIFkJY
+         H9c6MxN6JjEMRkejfgTukOTIJYCZxQj16IPT667woL7rzs9Lcp+sxC3vBkTyP3diAP0h
+         uAzI7krX+krBekPD9nPwJoFfWLHmGSYbAu+xVvek3TyZUU3cdYeDrsbj82aLx5NYPPjz
+         XYTOba8qKMbsBPs72xUn+u90WWLt5roDunlMER749bTJ6Xvc1z0bkJZX7q3onUPqjRRR
+         N7ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=9Kad1IH+jLbZ8P6+0lUUf+Nr8Cb0qZGATZUa0YVUa0g=;
-        b=MUnRnJxtb9zQtyXL1++WexliS7Ot0EcBKWtl0HAHZJjdm6CRAca2gT6Px9mAdfCIsx
-         4PnGcGpI0kh5Uam0hkz379E+M++VC7TyCh+fVlm6YvNLoz1kkswEvPKEkwN+RDRShopr
-         BnzCag4wlSqm+U8SOY51YUkZI85tMAZ6gFn2FbfNHV0/OEZzWMVH1rW85Lv/J3gJl1cE
-         WglA6UXYbIwulteJYeHCFeShRearQeHV1f7Zbb+tEZXkeKXEN/ZRPWzIT5hiwaVusb6q
-         Sr5zU7eyBLI1b65nkDs094IXgevBK24WD57asOKub+1KJDVBdiRMFtlQu43/zdBPt5zG
-         Lneg==
-X-Gm-Message-State: ACrzQf02bzAMCPiJXO3xnjrrSjcCNIGgURdJ7Oh/O4y56Fh1n7S/5GaP
-        QkEBo0o7Vlsf9WczpeyjVWbk1A==
-X-Google-Smtp-Source: AMsMyM7B2fjrv8YQca3FwaG7+CRxiiXuJd3a8Xj56a3ZOXlhEKWGRSxRJK3mhkbTU21fdu2rlHaxXw==
-X-Received: by 2002:a05:651c:2395:b0:26d:9549:b42d with SMTP id bk21-20020a05651c239500b0026d9549b42dmr1911643ljb.483.1665065229251;
-        Thu, 06 Oct 2022 07:07:09 -0700 (PDT)
+        bh=Qvhx7Yl1ZKU9mdZJ2zEHIWK6jJd4WPtCysK/pIgCqgc=;
+        b=OhFpvW8wBuREChrf4Xh1GdW1NozGUATi0MlUe4M6xyi4Xb90zu68rVVqh/ZTCUUXSk
+         lh+xsMeUeAVUgPc7qj3smA3+u0AqImMR8a+wm2sn/Lc/1UqlS2I9+uHle0qCVuErbUtT
+         ec0wVjrkAvhVLPFtxksRt35jKBxEpVTY85yXI4zE3DSoyI6XOwbVkRvZH/0bIf59iQ1J
+         70LO0usluC9LkZPgb0oXFjyd0vcdFj0QOxRQ1rRIR3Dk4nFYkEU00QRW6YyHCHgnSuoc
+         B7cSMamo/ai1aOompfYDcAbBoo7lkPZGGclo2ufV/Pd42W7wcKMaqpPYAb5xvBdZ8k+S
+         6P4Q==
+X-Gm-Message-State: ACrzQf3P2VaM9Sd106O5YOPOIc9Fl57BkXNCPdIiCaWyqoG2B24k8OVL
+        YmdTqVm8EM1AcMMeGlmgTfBQ4Q==
+X-Google-Smtp-Source: AMsMyM7SdI5cEn7r5VaRl6cfvR0imm14K3MgNw+BnRH44LmrTMS8q+8SB3A0xhaRMwGHO/Th3V+h1Q==
+X-Received: by 2002:ac2:5108:0:b0:4a2:3d2f:7bb9 with SMTP id q8-20020ac25108000000b004a23d2f7bb9mr47097lfb.49.1665065239253;
+        Thu, 06 Oct 2022 07:07:19 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id z3-20020a056512370300b004a2386b8ce8sm1833929lfr.211.2022.10.06.07.07.08
+        by smtp.gmail.com with ESMTPSA id z3-20020a056512370300b004a2386b8ce8sm1833929lfr.211.2022.10.06.07.07.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Oct 2022 07:07:08 -0700 (PDT)
+        Thu, 06 Oct 2022 07:07:18 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -65,9 +65,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 20/34] dt-bindings: pinctrl: qcom,sdx65: minor style cleanups
-Date:   Thu,  6 Oct 2022 16:06:23 +0200
-Message-Id: <20221006140637.246665-21-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 28/34] dt-bindings: pinctrl: qcom,sm8350: minor style cleanups
+Date:   Thu,  6 Oct 2022 16:06:31 +0200
+Message-Id: <20221006140637.246665-29-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221006140637.246665-1-krzysztof.kozlowski@linaro.org>
 References: <20221006140637.246665-1-krzysztof.kozlowski@linaro.org>
@@ -83,50 +83,47 @@ quotes.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/pinctrl/qcom,sdx65-pinctrl.yaml           | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ .../bindings/pinctrl/qcom,sm8350-pinctrl.yaml         | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdx65-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sdx65-pinctrl.yaml
-index ad1a2446a8af..c0f349b88002 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sdx65-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdx65-pinctrl.yaml
-@@ -10,8 +10,7 @@ maintainers:
-   - Vamsi krishna Lanka <quic_vamslank@quicinc.com>
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
+index cae726b5fc79..2a7be4522aea 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
+@@ -9,9 +9,8 @@ title: Qualcomm Technologies, Inc. SM8350 TLMM block
+ maintainers:
+   - Vinod Koul <vkoul@kernel.org>
  
- description:
--  This binding describes the Top Level Mode Multiplexer block found in the
--  SDX65 platform.
-+  Top Level Mode Multiplexer pin controller in Qualcomm SDX65 SoC.
+-description: |
+-  This binding describes the Top Level Mode Multiplexer (TLMM) block found
+-  in the SM8350 platform.
++description:
++  Top Level Mode Multiplexer pin controller in Qualcomm SM8350 SoC.
  
- properties:
-   compatible:
-@@ -30,9 +29,8 @@ properties:
-   gpio-reserved-ranges:
-     maxItems: 1
+ allOf:
+   - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
+@@ -25,10 +24,10 @@ properties:
  
--#PIN CONFIGURATION NODES
+   interrupts: true
+   interrupt-controller: true
+-  '#interrupt-cells': true
++  "#interrupt-cells": true
+   gpio-controller: true
+   gpio-reserved-ranges: true
+-  '#gpio-cells': true
++  "#gpio-cells": true
+   gpio-ranges: true
+   wakeup-parent: true
+ 
+@@ -39,7 +38,7 @@ required:
+ additionalProperties: false
+ 
  patternProperties:
 -  '-state$':
 +  "-state$":
      oneOf:
-       - $ref: "#/$defs/qcom-sdx65-tlmm-state"
+       - $ref: "#/$defs/qcom-sm8350-tlmm-state"
        - patternProperties:
-@@ -40,13 +38,13 @@ patternProperties:
-             $ref: "#/$defs/qcom-sdx65-tlmm-state"
-         additionalProperties: false
- 
--'$defs':
-+$defs:
-   qcom-sdx65-tlmm-state:
-     type: object
-     description:
-       Pinctrl node's client devices use subnodes for desired pin configuration.
-       Client device subnodes use below standard properties.
--    $ref: "qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state"
-+    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
- 
-     properties:
-       pins:
 -- 
 2.34.1
 
