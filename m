@@ -2,71 +2,73 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80213C433F5
-	for <linux-gpio@archiver.kernel.org>; Thu,  6 Oct 2022 12:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E349C43219
+	for <linux-gpio@archiver.kernel.org>; Thu,  6 Oct 2022 12:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229525AbiJFM2I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 6 Oct 2022 08:28:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52758 "EHLO
+        id S231283AbiJFM2M (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 6 Oct 2022 08:28:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229734AbiJFM2C (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Oct 2022 08:28:02 -0400
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8679B85E;
-        Thu,  6 Oct 2022 05:28:01 -0700 (PDT)
-Received: by mail-oo1-f42.google.com with SMTP id u19-20020a4a9e93000000b004757198549cso1317824ook.0;
-        Thu, 06 Oct 2022 05:28:01 -0700 (PDT)
+        with ESMTP id S230435AbiJFM2J (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Oct 2022 08:28:09 -0400
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0110A9F77C;
+        Thu,  6 Oct 2022 05:28:06 -0700 (PDT)
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-132b8f6f1b2so1944045fac.11;
+        Thu, 06 Oct 2022 05:28:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=date:subject:message-id:references:in-reply-to:cc:to:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LD+/bVMKWMVi1TdoFb/7Rk7QFNHmQh7iMpdXxnsmZnM=;
-        b=BbWQuCJvv4WEhStyPG8W5AL4pv6qujtjfc88fW8X0KoCethazL9IstDRWgJKkZaPFa
-         WVZoVg8EkcDVBrt64+4oCcEz4IK9ThwFOtmxiR/9rn1H7OSV2DlJ8C53FFDCNIJb5Fl5
-         VFmhBbXgL0a7bpaazIKR9IkcBPXfHcwA7NcI+v5qsp9+LZN1nwLPC0QHKdKsvm1frfXl
-         uKGUfn2J2lhebiKE9MOUHVY5eA0fJFfSfVZCeCdZvHjhXoVteGW9eHblbxCVLJCo5mry
-         JP3t22MZfjL6hrZ3SbJTaFcoYYDlvTcS/2oS+CYnVgZhb44RRQasKkGke3GRk3CzG/Jd
-         nAfA==
-X-Gm-Message-State: ACrzQf3W5BpkJ8fRJlg99xkHKLcbDLN5r6HlFbhaO4Wpho5VfSrtpEA2
-        21gkjrq7yuz9XMLf1MJCQxLlrS02aw==
-X-Google-Smtp-Source: AMsMyM6vEm0NpFozxeOWrt/cdZf0yoOiGMfTBbW4yKmcM3Yv5D2tCZ+gIN1JXJoyWpdYFDibLQL2yg==
-X-Received: by 2002:a05:6830:650a:b0:655:e38b:dcd4 with SMTP id cm10-20020a056830650a00b00655e38bdcd4mr1730591otb.189.1665059280885;
-        Thu, 06 Oct 2022 05:28:00 -0700 (PDT)
+        bh=YeL65/1U1Hoy7jWDjnXqoxK2kF0UFfaCh7UYp4Dp3Jw=;
+        b=MCQyBSNDPwfe9vUn5cZe3b2R9toow5xR+OmGLZzhYFD7ORU4ZYq8MDJtMV1CKcVtV/
+         FQ+pIix13QgpR/w42+QBpwQQbhoui1aLKGiQDxXY2qoBBJxvqpQnEGvr6sune9FL/1mM
+         AGrmDqakpIZqHCh6148FJaVDpkHMR8FDCzgQVXe/S+HHGB5NaQEbVOrRUw4GgNo2art4
+         7NrRmt6Oe/zn+TKo2y3w4VKAtRFvmcmtN0YTV6VFeRnDLfxvK9XQGlrqe4v0ZgutDTOf
+         /TLk3+NErFgNMzpPgoEdj+8E14Aa8WGbQIzBSVC8JsnRON3qu5qhJCMJUQkxUNqG1poE
+         oG6w==
+X-Gm-Message-State: ACrzQf3Tg6EUDq2Mj3kQhfZDbYhEjcciibbc9pnO+yFO5VQIn4PrHicQ
+        jVv1zxcN3ROHIijXyphrb+dvO9sitQ==
+X-Google-Smtp-Source: AMsMyM421KNMgt8ANf2A8dt0mXutgzLVqwXNndxnN0wF7DyhRhAJBbWhiyC15nLv4JoNw2feAeaiDw==
+X-Received: by 2002:a05:6870:3415:b0:133:197:3ca3 with SMTP id g21-20020a056870341500b0013301973ca3mr2093291oah.115.1665059286233;
+        Thu, 06 Oct 2022 05:28:06 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id o64-20020aca4143000000b00342ded07a75sm5652474oia.18.2022.10.06.05.27.59
+        by smtp.gmail.com with ESMTPSA id cy21-20020a056830699500b00660ef042e17sm1575995otb.12.2022.10.06.05.28.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Oct 2022 05:27:59 -0700 (PDT)
-Received: (nullmailer pid 1613451 invoked by uid 1000);
+        Thu, 06 Oct 2022 05:28:01 -0700 (PDT)
+Received: (nullmailer pid 1613457 invoked by uid 1000);
         Thu, 06 Oct 2022 12:27:55 -0000
 From:   Rob Herring <robh@kernel.org>
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Lee Jones <lee@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        linux-gpio@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-In-Reply-To: <20221005-mdm9615-pinctrl-yaml-v1-1-0cbc006e2a30@linaro.org>
-References: <20221005-mdm9615-pinctrl-yaml-v1-0-0cbc006e2a30@linaro.org> <20221005-mdm9615-pinctrl-yaml-v1-1-0cbc006e2a30@linaro.org>
-Message-Id: <166505882828.1602503.18185089088624527425.robh@kernel.org>
-Subject: Re: [PATCH 1/6] dt-bindings: pinctrl: convert qcom,mdm9615-pinctrl.txt to dt-schema
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>
+In-Reply-To: <20221006104104.171368-4-krzysztof.kozlowski@linaro.org>
+References: <20221006104104.171368-1-krzysztof.kozlowski@linaro.org> <20221006104104.171368-4-krzysztof.kozlowski@linaro.org>
+Message-Id: <166505883313.1602848.6191967643505476092.robh@kernel.org>
+Subject: Re: [PATCH 4/4] dt-bindings: pinctrl: qcom,sdm630: convert to dtschema
 Date:   Thu, 06 Oct 2022 07:27:55 -0500
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 06 Oct 2022 09:57:58 +0000, Neil Armstrong wrote:
-> Convert the MDM9515 pinctrl bindings to dt-schema.
+On Thu, 06 Oct 2022 12:41:04 +0200, Krzysztof Kozlowski wrote:
+> Convert Qualcomm SDM630 and SDM660 pin controller bindings to DT schema.
+> Keep the parsing of pin configuration subnodes consistent with other
+> Qualcomm schemas (children named with '-state' suffix, their children
+> with '-pins').
 > 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  .../bindings/pinctrl/qcom,mdm9615-pinctrl.txt      | 161 ---------------------
->  .../bindings/pinctrl/qcom,mdm9615-pinctrl.yaml     | 101 +++++++++++++
->  2 files changed, 101 insertions(+), 161 deletions(-)
+>  .../bindings/pinctrl/qcom,sdm630-pinctrl.yaml | 189 +++++++++++++++++
+>  .../bindings/pinctrl/qcom,sdm660-pinctrl.txt  | 191 ------------------
+>  2 files changed, 189 insertions(+), 191 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdm630-pinctrl.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt
 > 
 
 Running 'make dtbs_check' with the schema in this patch gives the
@@ -79,6 +81,14 @@ This will change in the future.
 Full log is available here: https://patchwork.ozlabs.org/patch/
 
 
-pinctrl@800000: 'gpioext1_pins', 'gsbi3_pins', 'gsbi4_pins', 'gsbi5_i2c_pins', 'gsbi5_uart_pins', 'reset_out_pins', 'sdc_cd_pins' do not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
-	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dtb
+pinctrl@3100000: 'blsp1-uart1-default', 'blsp1-uart1-sleep', 'blsp1-uart2-default', 'blsp2-uart1-active', 'blsp2-uart1-sleep', 'cam-vdig-default', 'cci0_default', 'cci1_default', 'i2c1-default', 'i2c1-sleep', 'i2c2-default', 'i2c2-sleep', 'i2c3-default', 'i2c3-sleep', 'i2c4-default', 'i2c4-sleep', 'i2c5-default', 'i2c5-sleep', 'i2c6-default', 'i2c6-sleep', 'i2c7-default', 'i2c7-sleep', 'i2c8-default', 'i2c8-sleep', 'imx219-vana-default', 'imx300-vana-default', 'sdc1-off', 'sdc1-on', 'sdc2-off', 'sdc2-on', 'ts-int-active', 'ts-lcd-id-active' do not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
+	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-ganges-kirin.dtb
+	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-discovery.dtb
+	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-pioneer.dtb
+	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-voyager.dtb
+	arch/arm64/boot/dts/qcom/sdm636-sony-xperia-ganges-mermaid.dtb
+
+pinctrl@3100000: 'blsp1-uart1-default', 'blsp1-uart1-sleep', 'blsp1-uart2-default', 'blsp2-uart1-active', 'blsp2-uart1-sleep', 'cci0_default', 'cci1_default', 'i2c1-default', 'i2c1-sleep', 'i2c2-default', 'i2c2-sleep', 'i2c3-default', 'i2c3-sleep', 'i2c4-default', 'i2c4-sleep', 'i2c5-default', 'i2c5-sleep', 'i2c6-default', 'i2c6-sleep', 'i2c7-default', 'i2c7-sleep', 'i2c8-default', 'i2c8-sleep', 'sdc1-off', 'sdc1-on', 'sdc2-off', 'sdc2-on' do not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
+	arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb
+	arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dtb
 
