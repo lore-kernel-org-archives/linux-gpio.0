@@ -2,52 +2,52 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C3D5C4332F
-	for <linux-gpio@archiver.kernel.org>; Thu,  6 Oct 2022 12:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21338C43219
+	for <linux-gpio@archiver.kernel.org>; Thu,  6 Oct 2022 12:47:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231330AbiJFMrq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 6 Oct 2022 08:47:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60974 "EHLO
+        id S230325AbiJFMrs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 6 Oct 2022 08:47:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231307AbiJFMrc (ORCPT
+        with ESMTP id S231281AbiJFMrc (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Oct 2022 08:47:32 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E27D9A2871
-        for <linux-gpio@vger.kernel.org>; Thu,  6 Oct 2022 05:47:12 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id f37so2517352lfv.8
-        for <linux-gpio@vger.kernel.org>; Thu, 06 Oct 2022 05:47:12 -0700 (PDT)
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A986915D9
+        for <linux-gpio@vger.kernel.org>; Thu,  6 Oct 2022 05:47:17 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id x40so2078976ljq.9
+        for <linux-gpio@vger.kernel.org>; Thu, 06 Oct 2022 05:47:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=s5gqgC6F8H12j/3mwOFaxBkWJqMnqVFVlaFtZkq3pf0=;
-        b=Lwpe0mq0h/arV/xbQkB3ZRK3XmTt1o6/eZ4hBjZLx348P58TebbXDewigdSIyPhuD9
-         MN154PnAVyjOIYjnmhSefMTd8RkRULMKCsIwXUQdYm9Nj/TodMaUr1bSSjX0CncfoYe+
-         J2xkTCyXjPECHf2QGiR3bCi+1CfWndPN/bGjKc2+6tf+0cHGnh4OFCkgxDHUy84PbyUb
-         ZvHcmJ0jKzQI9KAeU8fSt07/P5Gi4IKH6OvIlayyI1Kj8+DkBgfUIwEA0pdGM4AtKG9C
-         qT4Qyogy8PP6DOlHY1nDey9FWjD94A1+4CwVt2ApOLFPuQhAg4195lPuj/AhTleu3ACv
-         2v/g==
+        bh=KNYjRDFykFY6KGKtDFBELnGyRp5gYvZi8ob4FbY66+8=;
+        b=NcKlQiQlMVmrVsmGogb8VBJatjXdqOBovxkSPalMkCIXlGO/FNgYF3GN4vuP+E5624
+         5g76DtVH80D6rhQc1bMlQ3e4Jg+mMkpGKj1vraUjAMca+ri22UdWtwj6/Rsq2IfCQ7PK
+         gXQt9fIWmcB3ugD4Oqz6Z311RfWHuImIQ5Fpa8Wq6WjHc5zialntBZaN5gCavtxz119T
+         toLzQSx+lasrKGnXcExgfnsSv/s4jNKwzRCpN7+ycnvf5oU83xkwtED6LldGMZau0ec6
+         NSYYpH1DraoLVIG/u6LdJS/dEAbOZ+5Y28oEiM3kyi+bXszTVq6+P503uICQn1jBFOyv
+         1W7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=s5gqgC6F8H12j/3mwOFaxBkWJqMnqVFVlaFtZkq3pf0=;
-        b=HrDwkY+ejBOZrwr0wmaA3CEpKQPNXD1LG+n/Oi+EZZmGXFA3yItQAIuPmy0r6fb8Gc
-         WSl4lGOyfElk7mrLEspVtBU9d9Qya6+wqKNnjnJzlh8wfHOAFvKABY9/qjmv+Q4r57HK
-         qW4CLhL40vZHYAornNZXdZJ+NzhKJpRuyY6hWEcnFWOxvc1cx8hG9ql6Kf2Ao+LTxHg4
-         i5pF7hlw+fmTryehy+DU1gHzvwUvFTMSx0IxGMHAOfkhHtvVdNTQMuA4jjT0N3I9hHEf
-         zpOjmod4Fhb6jm79W4UaEWR0UewhZa4zzUclef0MIVaTcXyFaDNzg8M5Hvp8yNrW2QTO
-         XTWQ==
-X-Gm-Message-State: ACrzQf0bWfJuFTxmRKLSdz+woenYjwQ3zo8Oto83o32GTEPzJRhHokyp
-        2PWQa+CpPH3klRbhKeK4uMq5aQ==
-X-Google-Smtp-Source: AMsMyM4YEjNrnR7YCnLMuTw/uAtiFNA/YNA65F0PON8RftEs68BdD043RPvwZB3GH+ZEVOa1raUm1Q==
-X-Received: by 2002:a05:6512:32c7:b0:4a2:4544:120d with SMTP id f7-20020a05651232c700b004a24544120dmr1968542lfg.598.1665060432279;
-        Thu, 06 Oct 2022 05:47:12 -0700 (PDT)
+        bh=KNYjRDFykFY6KGKtDFBELnGyRp5gYvZi8ob4FbY66+8=;
+        b=hB1BFCGV1w7agrNvlixKf1PoRei5hWnED2LqS6+F69TqB0BbqKCv2bJEKvmYiwLLgY
+         xqc1DaEBe/v6YZpLauQSx6/AO31406yfu7RwrPLAyAJZeAywLsWIi58Iz7Ce3RzhwbKb
+         u5DxrVqUXbyqbpLTogEatf5Q3RfBUWB8ta2rwqN8IVfpmNpMrJz+I+v2NK9u4w3VCNvI
+         otly0gxiCr/5rONGmIYb+lraOEAfRP+rdQ7LVwOGyPGwmL/7/gQYzPB41rZAy1DC7bK+
+         iR9SKt7zm/khehAR6H3e1G7mNJxVv11jdO3ebHju4QK52oWoeVjk1oCqLUHXYYnIYJnA
+         kFrQ==
+X-Gm-Message-State: ACrzQf07F74FHZla8xAR0VtvcWRNeHZXtucillQrWNLqkpvK4FJDjjji
+        fP9LUlXuxkw5/no0E7+x7+rpMA==
+X-Google-Smtp-Source: AMsMyM5W/XjCgvQTXo3QeGSmnN+J2j+aV7DL2eW5K13L0Zlrzjy6Q6/USHiz0kB96+EifARuu2eqsw==
+X-Received: by 2002:a2e:808a:0:b0:26d:cced:beb1 with SMTP id i10-20020a2e808a000000b0026dccedbeb1mr1786142ljg.299.1665060436719;
+        Thu, 06 Oct 2022 05:47:16 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id br32-20020a056512402000b00497a3e2a191sm2687659lfb.112.2022.10.06.05.47.11
+        by smtp.gmail.com with ESMTPSA id br32-20020a056512402000b00497a3e2a191sm2687659lfb.112.2022.10.06.05.47.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Oct 2022 05:47:12 -0700 (PDT)
+        Thu, 06 Oct 2022 05:47:16 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -64,9 +64,9 @@ To:     Andy Gross <agross@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 09/34] dt-bindings: pinctrl: qcom,ipq6018: correct BLSP6->BLSP0 functions
-Date:   Thu,  6 Oct 2022 14:46:34 +0200
-Message-Id: <20221006124659.217540-10-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4 13/34] dt-bindings: pinctrl: qcom,ipq6018: fix indentation in example
+Date:   Thu,  6 Oct 2022 14:46:38 +0200
+Message-Id: <20221006124659.217540-14-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221006124659.217540-1-krzysztof.kozlowski@linaro.org>
 References: <20221006124659.217540-1-krzysztof.kozlowski@linaro.org>
@@ -76,42 +76,58 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pin controller driver has BLSP functions from 0 to 5, not 1 to 6.
-Add missing blsp0_i2c, blsp0_spi (already used in ipq6018-cp01-c1) and
-blsp0_uart.  Drop blsp6_i2c and blsp6_spi.
-
-This fixes dtbs_check warning:
-
-  ipq6018-cp01-c1.dtb: pinctrl@1000000: spi-0-state: 'oneOf' conditional failed, one must be fixed:
-    'bias-pull-down', 'drive-strength', 'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-    'blsp0_spi' is not one of ['adsp_ext', 'alsp_int', .....
+Bindings example should be indented with 4-spaces.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml   | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../pinctrl/qcom,ipq6018-pinctrl.yaml         | 34 +++++++++----------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
-index 0bd1aded132d..76698cd97e8c 100644
+index e02bc15e0ad5..bf84649593ef 100644
 --- a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
 +++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
-@@ -72,12 +72,12 @@ patternProperties:
-         enum: [ adsp_ext, alsp_int, atest_bbrx0, atest_bbrx1, atest_char,
-                 atest_char0, atest_char1, atest_char2, atest_char3, atest_combodac,
-                 atest_gpsadc0, atest_gpsadc1, atest_tsens, atest_wlan0,
--                atest_wlan1, backlight_en, bimc_dte0, bimc_dte1, blsp1_i2c,
--                blsp2_i2c, blsp3_i2c, blsp4_i2c, blsp5_i2c, blsp6_i2c, blsp1_spi,
-+                atest_wlan1, backlight_en, bimc_dte0, bimc_dte1, blsp0_i2c, blsp1_i2c,
-+                blsp2_i2c, blsp3_i2c, blsp4_i2c, blsp5_i2c, blsp0_spi, blsp1_spi,
-                 blsp1_spi_cs1, blsp1_spi_cs2, blsp1_spi_cs3, blsp2_spi,
-                 blsp2_spi_cs1, blsp2_spi_cs2, blsp2_spi_cs3, blsp3_spi,
-                 blsp3_spi_cs1, blsp3_spi_cs2, blsp3_spi_cs3, blsp4_spi, blsp5_spi,
--                blsp6_spi, blsp1_uart, blsp2_uart, blsp1_uim, blsp2_uim, cam1_rst,
-+                blsp0_uart, blsp1_uart, blsp2_uart, blsp1_uim, blsp2_uim, cam1_rst,
-                 cam1_standby, cam_mclk0, cam_mclk1, cci_async, cci_i2c, cci_timer0,
-                 cci_timer1, cci_timer2, cdc_pdm0, codec_mad, dbg_out, display_5v,
-                 dmic0_clk, dmic0_data, dsi_rst, ebi0_wrcdc, euro_us, ext_lpass,
+@@ -120,21 +120,21 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-        #include <dt-bindings/interrupt-controller/arm-gic.h>
+-        tlmm: pinctrl@1000000 {
+-              compatible = "qcom,ipq6018-pinctrl";
+-              reg = <0x01000000 0x300000>;
+-              interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+-              interrupt-controller;
+-              #interrupt-cells = <2>;
+-              gpio-controller;
+-              #gpio-cells = <2>;
+-              gpio-ranges = <&tlmm 0 0 80>;
+-
+-              serial3-state {
+-                      pins = "gpio44", "gpio45";
+-                      function = "blsp2_uart";
+-                      drive-strength = <8>;
+-                      bias-pull-down;
+-              };
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    tlmm: pinctrl@1000000 {
++        compatible = "qcom,ipq6018-pinctrl";
++        reg = <0x01000000 0x300000>;
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        gpio-ranges = <&tlmm 0 0 80>;
++
++        serial3-state {
++            pins = "gpio44", "gpio45";
++            function = "blsp2_uart";
++            drive-strength = <8>;
++            bias-pull-down;
+         };
++    };
 -- 
 2.34.1
 
