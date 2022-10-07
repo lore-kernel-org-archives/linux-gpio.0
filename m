@@ -2,312 +2,187 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBB3C433F5
-	for <linux-gpio@archiver.kernel.org>; Fri,  7 Oct 2022 14:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F614C4332F
+	for <linux-gpio@archiver.kernel.org>; Fri,  7 Oct 2022 14:55:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229875AbiJGOzi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 7 Oct 2022 10:55:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59760 "EHLO
+        id S229886AbiJGOzk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 7 Oct 2022 10:55:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229880AbiJGOzg (ORCPT
+        with ESMTP id S229883AbiJGOzg (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Oct 2022 10:55:36 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2418189837
-        for <linux-gpio@vger.kernel.org>; Fri,  7 Oct 2022 07:55:29 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id o5so3051639wms.1
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Oct 2022 07:55:29 -0700 (PDT)
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 604008D0E2
+        for <linux-gpio@vger.kernel.org>; Fri,  7 Oct 2022 07:55:27 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id fn7-20020a05600c688700b003b4fb113b86so2764308wmb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Oct 2022 07:55:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+0s015QV2cXfHm7a9+FPAMlFzAOHko/hG+yRidT642s=;
-        b=cAHH15kmLRlLVa3MCH+udqwrMAf1g2gycFWUjeiC8FE+31YVjyb5gYzx7EHacpHZst
-         HNAHmyAcLP2gmY0k5vqaLch311XlQxPWUE16p31aZLp0tLT+IDy+Bc6TX5nGNU/NylVA
-         DtAcWFiXepQQhYXZZDvFSXOsGv6b3VvvwYSAqAhteMq2Mk3YMJV+qeIxjuAT7HnsL4R3
-         1Aio8spnYx5OifvSrPUSN5tTuTKnqmbbluLjH+ZvIIyd113loxTlzjVDhu2z52QBq/Oq
-         4zFk3zXa4wRpt260qA23ergG/LaACEHOxmp73v0NK79nMTaxXtFq+ZDCRjGuIeHPkPzN
-         D1+Q==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tk5q01wByhmGfx3y9W8hkeUtKKL431A8mMZaov4wr6I=;
+        b=Hh5HRHghsrpWBWKKAa4VgSUU2oxmPVgYHgt27EKeX6mjD5lt4m9sF78FaReEaZsBHo
+         6GX0S3E8BYAWpPK8x2iTa/mxIWREdbgkD+/RLVz+e+BD/akbyqW61ef6fRFsutStYKlQ
+         LrUe8p4jhh7diVIFxLp0XKe/D+9yFzj6DgkUKeY75JAhfSu5DleNxXyd5i3ebDJNqiBs
+         hXeyQMW9xmT+FyC7ONC6mlPUli3+lpzGmSgT9jnIfwoLw0pvZVBlSaDxX9tJvUASptj8
+         thKz29odoe5GhzjARvgGodEAisFrPP9YvVweXNbyVCmk/uiCM66FrH04X/M7XbcnmCMm
+         TmfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+0s015QV2cXfHm7a9+FPAMlFzAOHko/hG+yRidT642s=;
-        b=pEzdG32CLpgbANmzxhyKVzoI+ypj8961eOYu4y4aKvYeFBbRAgMoKkqCWLpoj6pmAA
-         PV2D5EM7HyQ2kQKkvf0BUD6o92dVtR4VKlcu2XTtC/E7+jzt2SeEoGzwA2wcn1vXJzmp
-         1n4SI6poW9cY/0E1oqyUGytX7Wuavo6vtiaC+8hF6A59fJ7+Mfx5g+Jjox63e2OBPnRF
-         SyU4B4ms+UN56SY4sFxD+yerESZ9lBS2q19PTDmJPCAR35YLHbZIgW4+eHZz61aR7DOO
-         8zbMYoJtk4sr9hRuVtn3+KBgZDUT5enc/orQWCabdO3i6HzMBfhOnCk5Nt+571dcCuIP
-         eglA==
-X-Gm-Message-State: ACrzQf0a4R1oz/aEpLNoJ2rZT7tJXLj4yIpvcAocjZL9VbQS7H4e28Qj
-        EALqDeyMiaMZZu7ikQL7TOKBLQ==
-X-Google-Smtp-Source: AMsMyM6eWKakqAxVK04EeMSahcdiiFWRWQtgd+adAMfOlRgqQYKkJ9FCQHGSnF/QPeSxBD8Wewvocw==
-X-Received: by 2002:a05:600c:5490:b0:3b4:8db0:5547 with SMTP id iv16-20020a05600c549000b003b48db05547mr3492618wmb.77.1665154528010;
-        Fri, 07 Oct 2022 07:55:28 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tk5q01wByhmGfx3y9W8hkeUtKKL431A8mMZaov4wr6I=;
+        b=WqaqEoaOko/WJNXjg4dI/3REz5z3htEBqRPtIPJ5dd43ckHAAzEzs6lGFIb3yb5Ne4
+         vKkHrnmKmALiC/P7Mw4aLvf1mwjkxO15FdGMt4K6c0QUZfTYH+Po0wVtchv8HLHAZb4A
+         gTy4X1o90nHgx0OByjjUyxpzUOK1ZhRWT3C+jZ0WwbRwd9WwkM+XKCZ+jhEN/VQaz1lC
+         BbbAgOG900yfpFZYfHeorHgIDEXrTogmyfFCAoi1kK3S3nZOO0Tp8cdNVsq1YUu7DJaD
+         L07P7qnHkiiWF9ABaClDhH6XJnFgfJWcnAk9d6siLEKcjLwLthqyT/Qp3JPibkL0uiJA
+         RogA==
+X-Gm-Message-State: ACrzQf3OF4x4LyEloKg8GnpBayCIiqOO5U+YxQnqS/G/2MqN+hyNanQ2
+        v05uOJr1N/tU5s+YEWOfiNU19A==
+X-Google-Smtp-Source: AMsMyM794FKVPiG5doST1Ny4T3hzwQp+EydqJ7XOsQlSZo7ltguttyQl3AdE7EE14OlYKKoj26vUCQ==
+X-Received: by 2002:a05:600c:474a:b0:3b4:cb93:7d57 with SMTP id w10-20020a05600c474a00b003b4cb937d57mr10844949wmo.41.1665154525658;
+        Fri, 07 Oct 2022 07:55:25 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:5a9e:bab6:45e8:abe8])
-        by smtp.gmail.com with ESMTPSA id f8-20020a5d50c8000000b0022e36c1113fsm2294707wrt.13.2022.10.07.07.55.26
+        by smtp.gmail.com with ESMTPSA id f8-20020a5d50c8000000b0022e36c1113fsm2294707wrt.13.2022.10.07.07.55.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Oct 2022 07:55:27 -0700 (PDT)
+        Fri, 07 Oct 2022 07:55:24 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [libgpiod v2][PATCH v3 2/4] bindings: python: add examples
-Date:   Fri,  7 Oct 2022 16:55:19 +0200
-Message-Id: <20221007145521.329614-3-brgl@bgdev.pl>
+Subject: [libgpiod v2][PATCH v3 0/4] bindings: implement python bindings for libgpiod v2
+Date:   Fri,  7 Oct 2022 16:55:17 +0200
+Message-Id: <20221007145521.329614-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221007145521.329614-1-brgl@bgdev.pl>
-References: <20221007145521.329614-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This adds the regular set of example programs implemented using libgpiod
-python bindings.
+This is the third iteration of python bindings for libgpiod but it really has
+very little in common with the previous version.
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- bindings/python/examples/Makefile.am   | 10 +++++++
- bindings/python/examples/gpiodetect.py | 17 ++++++++++++
- bindings/python/examples/gpiofind.py   | 20 ++++++++++++++
- bindings/python/examples/gpioget.py    | 31 +++++++++++++++++++++
- bindings/python/examples/gpioinfo.py   | 35 ++++++++++++++++++++++++
- bindings/python/examples/gpiomon.py    | 28 +++++++++++++++++++
- bindings/python/examples/gpioset.py    | 37 ++++++++++++++++++++++++++
- 7 files changed, 178 insertions(+)
- create mode 100644 bindings/python/examples/Makefile.am
- create mode 100755 bindings/python/examples/gpiodetect.py
- create mode 100755 bindings/python/examples/gpiofind.py
- create mode 100755 bindings/python/examples/gpioget.py
- create mode 100755 bindings/python/examples/gpioinfo.py
- create mode 100755 bindings/python/examples/gpiomon.py
- create mode 100755 bindings/python/examples/gpioset.py
+This time the code has been split into high-level python and low-level
+C layers with the latter only doing the bare minimum.
 
-diff --git a/bindings/python/examples/Makefile.am b/bindings/python/examples/Makefile.am
-new file mode 100644
-index 0000000..f42b80e
---- /dev/null
-+++ b/bindings/python/examples/Makefile.am
-@@ -0,0 +1,10 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+EXTRA_DIST = \
-+	gpiodetect.py \
-+	gpiofind.py \
-+	gpioget.py \
-+	gpioinfo.py \
-+	gpiomon.py \
-+	gpioset.py
-diff --git a/bindings/python/examples/gpiodetect.py b/bindings/python/examples/gpiodetect.py
-new file mode 100755
-index 0000000..c32014f
---- /dev/null
-+++ b/bindings/python/examples/gpiodetect.py
-@@ -0,0 +1,17 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+"""Reimplementation of the gpiodetect tool in Python."""
-+
-+import gpiod
-+import os
-+
-+if __name__ == "__main__":
-+    for entry in os.scandir("/dev/"):
-+        if gpiod.is_gpiochip_device(entry.path):
-+            with gpiod.Chip(entry.path) as chip:
-+                info = chip.get_info()
-+                print(
-+                    "{} [{}] ({} lines)".format(info.name, info.label, info.num_lines)
-+                )
-diff --git a/bindings/python/examples/gpiofind.py b/bindings/python/examples/gpiofind.py
-new file mode 100755
-index 0000000..2f30445
---- /dev/null
-+++ b/bindings/python/examples/gpiofind.py
-@@ -0,0 +1,20 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+"""Reimplementation of the gpiofind tool in Python."""
-+
-+import gpiod
-+import os
-+import sys
-+
-+if __name__ == "__main__":
-+    for entry in os.scandir("/dev/"):
-+        if gpiod.is_gpiochip_device(entry.path):
-+            with gpiod.Chip(entry.path) as chip:
-+                offset = chip.map_line(sys.argv[1])
-+                if offset is not None:
-+                    print("{} {}".format(chip.get_info().name, offset))
-+                    sys.exit(0)
-+
-+    sys.exit(1)
-diff --git a/bindings/python/examples/gpioget.py b/bindings/python/examples/gpioget.py
-new file mode 100755
-index 0000000..d441535
---- /dev/null
-+++ b/bindings/python/examples/gpioget.py
-@@ -0,0 +1,31 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+"""Simplified reimplementation of the gpioget tool in Python."""
-+
-+import gpiod
-+import sys
-+
-+from gpiod.line import Direction
-+
-+if __name__ == "__main__":
-+    if len(sys.argv) < 3:
-+        raise TypeError("usage: gpioget.py <gpiochip> <offset1> <offset2> ...")
-+
-+    path = sys.argv[1]
-+    lines = []
-+    for line in sys.argv[2:]:
-+        lines.append(int(line) if line.isdigit() else line)
-+
-+    request = gpiod.request_lines(
-+        path,
-+        consumer="gpioget.py",
-+        config={tuple(lines): gpiod.LineSettings(direction=Direction.INPUT)},
-+    )
-+
-+    vals = request.get_values()
-+
-+    for val in vals:
-+        print("{} ".format(val.value), end="")
-+    print()
-diff --git a/bindings/python/examples/gpioinfo.py b/bindings/python/examples/gpioinfo.py
-new file mode 100755
-index 0000000..e8c7d46
---- /dev/null
-+++ b/bindings/python/examples/gpioinfo.py
-@@ -0,0 +1,35 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+"""Simplified reimplementation of the gpioinfo tool in Python."""
-+
-+import gpiod
-+import os
-+
-+if __name__ == "__main__":
-+    for entry in os.scandir("/dev/"):
-+        if gpiod.is_gpiochip_device(entry.path):
-+            with gpiod.Chip(entry.path) as chip:
-+                cinfo = chip.get_info()
-+                print("{} - {} lines:".format(cinfo.name, cinfo.num_lines))
-+
-+                for offset in range(0, cinfo.num_lines):
-+                    linfo = chip.get_line_info(offset)
-+                    offset = linfo.offset
-+                    name = linfo.name
-+                    consumer = linfo.consumer
-+                    direction = linfo.direction
-+                    active_low = linfo.active_low
-+
-+                    print(
-+                        "\tline {:>3}: {:>18} {:>12} {:>8} {:>10}".format(
-+                            offset,
-+                            "unnamed" if name is None else name,
-+                            "unused" if consumer is None else consumer,
-+                            "input"
-+                            if direction == gpiod.line.Direction.INPUT
-+                            else "output",
-+                            "active-low" if active_low else "active-high",
-+                        )
-+                    )
-diff --git a/bindings/python/examples/gpiomon.py b/bindings/python/examples/gpiomon.py
-new file mode 100755
-index 0000000..e0db16f
---- /dev/null
-+++ b/bindings/python/examples/gpiomon.py
-@@ -0,0 +1,28 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+"""Simplified reimplementation of the gpiomon tool in Python."""
-+
-+import gpiod
-+import sys
-+
-+from gpiod.line import Edge
-+
-+if __name__ == "__main__":
-+    if len(sys.argv) < 3:
-+        raise TypeError("usage: gpiomon.py <gpiochip> <offset1> <offset2> ...")
-+
-+    path = sys.argv[1]
-+    lines = []
-+    for line in sys.argv[2:]:
-+        lines.append(int(line) if line.isdigit() else line)
-+
-+    with gpiod.request_lines(
-+        path,
-+        consumer="gpiomon.py",
-+        config={tuple(lines): gpiod.LineSettings(edge_detection=Edge.BOTH)},
-+    ) as request:
-+        while True:
-+            for event in request.read_edge_event():
-+                print(event)
-diff --git a/bindings/python/examples/gpioset.py b/bindings/python/examples/gpioset.py
-new file mode 100755
-index 0000000..f0b0681
---- /dev/null
-+++ b/bindings/python/examples/gpioset.py
-@@ -0,0 +1,37 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+"""Simplified reimplementation of the gpioset tool in Python."""
-+
-+import gpiod
-+import sys
-+
-+from gpiod.line import Direction, Value
-+
-+if __name__ == "__main__":
-+    if len(sys.argv) < 3:
-+        raise TypeError(
-+            "usage: gpioset.py <gpiochip> <offset1>=<value1> <offset2>=<value2> ..."
-+        )
-+
-+    path = sys.argv[1]
-+    values = dict()
-+    lines = []
-+    for arg in sys.argv[2:]:
-+        arg = arg.split("=")
-+        key = int(arg[0]) if arg[0].isdigit() else arg[0]
-+        val = int(arg[1])
-+
-+        lines.append(key)
-+        values[key] = Value(val)
-+
-+    request = gpiod.request_lines(
-+        path,
-+        consumer="gpioset.py",
-+        config={tuple(lines): gpiod.LineSettings(direction=Direction.OUTPUT)},
-+    )
-+
-+    vals = request.set_values(values)
-+
-+    input()
+The data model is mostly based on the C++ one with the main difference
+being utilizing dynamic typing and keyword arguments in place of the
+builder pattern. That allows us to reduce the number of methods and
+objects.
+
+Because python doesn't have RAII, unlike C++, we provide a module-level
+request_lines() helper as gpiod.Chip(path).request_lines(...) one-liner
+could lead to the chip left dangling even after the last reference is
+dropped.
+
+Because python forces us to dynamically allocate objects all the time even
+for fundamental types (which are also immutable) there's no point in trying
+to replicate the edge-event buffer. Instead LineRequest.read_edge_event()
+just returns a list of events.
+
+Bartosz Golaszewski (4):
+  bindings: python: remove old version
+  bindings: python: add examples
+  bindings: python: add tests
+  bindings: python: implement python bindings for libgpiod v2
+
+ bindings/python/.gitignore                   |    8 +
+ bindings/python/Makefile.am                  |   26 +-
+ bindings/python/examples/Makefile.am         |   16 +-
+ bindings/python/examples/gpiodetect.py       |   15 +-
+ bindings/python/examples/gpiofind.py         |   14 +-
+ bindings/python/examples/gpioget.py          |   34 +-
+ bindings/python/examples/gpioinfo.py         |   41 +-
+ bindings/python/examples/gpiomon.py          |   52 +-
+ bindings/python/examples/gpioset.py          |   46 +-
+ bindings/python/gpiod/Makefile.am            |   17 +
+ bindings/python/gpiod/__init__.py            |   53 +
+ bindings/python/gpiod/chip.py                |  308 ++
+ bindings/python/gpiod/chip_info.py           |   21 +
+ bindings/python/gpiod/edge_event.py          |   46 +
+ bindings/python/gpiod/exception.py           |   20 +
+ bindings/python/gpiod/ext/Makefile.am        |   11 +
+ bindings/python/gpiod/ext/chip.c             |  335 +++
+ bindings/python/gpiod/ext/common.c           |   92 +
+ bindings/python/gpiod/ext/internal.h         |   20 +
+ bindings/python/gpiod/ext/line-config.c      |  133 +
+ bindings/python/gpiod/ext/line-settings.c    |  130 +
+ bindings/python/gpiod/ext/module.c           |  193 ++
+ bindings/python/gpiod/ext/request.c          |  402 +++
+ bindings/python/gpiod/info_event.py          |   33 +
+ bindings/python/gpiod/internal.py            |   19 +
+ bindings/python/gpiod/line.py                |   56 +
+ bindings/python/gpiod/line_info.py           |   73 +
+ bindings/python/gpiod/line_request.py        |  258 ++
+ bindings/python/gpiod/line_settings.py       |   62 +
+ bindings/python/gpiodmodule.c                | 2662 ------------------
+ bindings/python/setup.py                     |   47 +
+ bindings/python/tests/Makefile.am            |   26 +-
+ bindings/python/tests/__init__.py            |   17 +
+ bindings/python/tests/__main__.py            |   16 +
+ bindings/python/tests/gpiod_py_test.py       |  832 ------
+ bindings/python/tests/gpiomockupmodule.c     |  309 --
+ bindings/python/tests/gpiosim/Makefile.am    |    7 +
+ bindings/python/tests/gpiosim/__init__.py    |    4 +
+ bindings/python/tests/gpiosim/chip.py        |   66 +
+ bindings/python/tests/gpiosim/ext.c          |  345 +++
+ bindings/python/tests/helpers.py             |   16 +
+ bindings/python/tests/tests_chip.py          |  231 ++
+ bindings/python/tests/tests_chip_info.py     |   52 +
+ bindings/python/tests/tests_edge_event.py    |  219 ++
+ bindings/python/tests/tests_info_event.py    |  189 ++
+ bindings/python/tests/tests_line_info.py     |  101 +
+ bindings/python/tests/tests_line_request.py  |  449 +++
+ bindings/python/tests/tests_line_settings.py |   79 +
+ bindings/python/tests/tests_module.py        |   59 +
+ configure.ac                                 |    3 +
+ 50 files changed, 4338 insertions(+), 3925 deletions(-)
+ create mode 100644 bindings/python/.gitignore
+ create mode 100644 bindings/python/gpiod/Makefile.am
+ create mode 100644 bindings/python/gpiod/__init__.py
+ create mode 100644 bindings/python/gpiod/chip.py
+ create mode 100644 bindings/python/gpiod/chip_info.py
+ create mode 100644 bindings/python/gpiod/edge_event.py
+ create mode 100644 bindings/python/gpiod/exception.py
+ create mode 100644 bindings/python/gpiod/ext/Makefile.am
+ create mode 100644 bindings/python/gpiod/ext/chip.c
+ create mode 100644 bindings/python/gpiod/ext/common.c
+ create mode 100644 bindings/python/gpiod/ext/internal.h
+ create mode 100644 bindings/python/gpiod/ext/line-config.c
+ create mode 100644 bindings/python/gpiod/ext/line-settings.c
+ create mode 100644 bindings/python/gpiod/ext/module.c
+ create mode 100644 bindings/python/gpiod/ext/request.c
+ create mode 100644 bindings/python/gpiod/info_event.py
+ create mode 100644 bindings/python/gpiod/internal.py
+ create mode 100644 bindings/python/gpiod/line.py
+ create mode 100644 bindings/python/gpiod/line_info.py
+ create mode 100644 bindings/python/gpiod/line_request.py
+ create mode 100644 bindings/python/gpiod/line_settings.py
+ delete mode 100644 bindings/python/gpiodmodule.c
+ create mode 100644 bindings/python/setup.py
+ create mode 100644 bindings/python/tests/__init__.py
+ create mode 100644 bindings/python/tests/__main__.py
+ delete mode 100755 bindings/python/tests/gpiod_py_test.py
+ delete mode 100644 bindings/python/tests/gpiomockupmodule.c
+ create mode 100644 bindings/python/tests/gpiosim/Makefile.am
+ create mode 100644 bindings/python/tests/gpiosim/__init__.py
+ create mode 100644 bindings/python/tests/gpiosim/chip.py
+ create mode 100644 bindings/python/tests/gpiosim/ext.c
+ create mode 100644 bindings/python/tests/helpers.py
+ create mode 100644 bindings/python/tests/tests_chip.py
+ create mode 100644 bindings/python/tests/tests_chip_info.py
+ create mode 100644 bindings/python/tests/tests_edge_event.py
+ create mode 100644 bindings/python/tests/tests_info_event.py
+ create mode 100644 bindings/python/tests/tests_line_info.py
+ create mode 100644 bindings/python/tests/tests_line_request.py
+ create mode 100644 bindings/python/tests/tests_line_settings.py
+ create mode 100644 bindings/python/tests/tests_module.py
+
 -- 
 2.34.1
 
