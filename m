@@ -2,382 +2,172 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AA2C433F5
-	for <linux-gpio@archiver.kernel.org>; Fri,  7 Oct 2022 10:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23476C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri,  7 Oct 2022 11:47:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229481AbiJGKcH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 7 Oct 2022 06:32:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57642 "EHLO
+        id S229711AbiJGLrB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 7 Oct 2022 07:47:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiJGKcG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Oct 2022 06:32:06 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A4F04621D;
-        Fri,  7 Oct 2022 03:32:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1665138725; x=1696674725;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Ac6AHsOE6dZL3l/DfS7Ts/FIiLLL6h51dgJUs7a8FPo=;
-  b=Z/1K4UT0WYnL32pgI3bwNlpN+HeUPHsROg8W3/ugXkcyQ7nc09NkENrA
-   yvNgkwjj6+aOZgl5g6nIs6tMu1Mtefe6KcNkEZdBdr9Uo63IoN6XyPzM5
-   k86vq3V1Z3u7k93qOhqGQcFZ2h3dEntqdcI45qUc/2ZmlktV45hdDa+So
-   VHfP5MxfbZE6/vibhtnwnfHpp42DllpPoccza5fWorqCkLU9l0FUEftp4
-   N1sxLC5tAxAIU3NFxVZIxdzUMiPoTdtLNIJOxE4e3PHStp+Ppi+WlEYcA
-   eUeoADFunWDqOVN4RyS4RJGWllWL5jD+BvTiIV9IwvPjPSa+LVLkNfN6O
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10492"; a="303684514"
-X-IronPort-AV: E=Sophos;i="5.95,166,1661842800"; 
-   d="scan'208";a="303684514"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2022 03:32:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10492"; a="954025062"
-X-IronPort-AV: E=Sophos;i="5.95,166,1661842800"; 
-   d="scan'208";a="954025062"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 07 Oct 2022 03:32:03 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 7002A199; Fri,  7 Oct 2022 13:32:23 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>
-Subject: [rft, PATCH v1 1/1] pinctrl: Clean up headers
-Date:   Fri,  7 Oct 2022 13:32:21 +0300
-Message-Id: <20221007103221.57733-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S229551AbiJGLrA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Oct 2022 07:47:00 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F619E0DF
+        for <linux-gpio@vger.kernel.org>; Fri,  7 Oct 2022 04:46:59 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1oglof-0001AS-BC; Fri, 07 Oct 2022 13:46:57 +0200
+Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <sha@pengutronix.de>)
+        id 1ogloe-0005lQ-2k; Fri, 07 Oct 2022 13:46:56 +0200
+Received: from sha by dude02.red.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <sha@pengutronix.de>)
+        id 1oglod-00BXDN-98; Fri, 07 Oct 2022 13:46:55 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     linux-gpio@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, kernel@pengutronix.de,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 2/2] dt-bindings: gpio: Add gpio-latch binding document
+Date:   Fri,  7 Oct 2022 13:46:47 +0200
+Message-Id: <20221007114647.2723457-3-s.hauer@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20221007114647.2723457-1-s.hauer@pengutronix.de>
+References: <20221007114647.2723457-1-s.hauer@pengutronix.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There is a few things done:
-- include only the headers we are direct user of
-- when pointer is in use, provide a forward declaration
-- add missed headers
-- group generic headers and subsystem headers
-- sort each group alphabetically
+This adds a binding for a GPIO multiplexer driver based on latches
+connected to other GPIOs.
 
-While at it, fix some awkward indentations.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 
-Very well expected to fail broadly due to missed headers in tons of the pin
-control drivers.
+Notes:
+    Changes since v3:
+    - Introduce delays between GPIO toggles as suggested by Serge Semin
+    
+    Changes since v1:
+    - Add license to binding file
 
-Comments are welcome anyway!
+ .../devicetree/bindings/gpio/gpio-latch.yaml  | 94 +++++++++++++++++++
+ 1 file changed, 94 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-latch.yaml
 
- drivers/pinctrl/core.c                  | 19 ++++++++-------
- include/linux/pinctrl/consumer.h        | 31 +++++++++++--------------
- include/linux/pinctrl/devinfo.h         |  6 +++--
- include/linux/pinctrl/machine.h         |  8 ++++---
- include/linux/pinctrl/pinconf-generic.h | 23 ++++++++++--------
- include/linux/pinctrl/pinctrl.h         | 16 ++++++-------
- include/linux/pinctrl/pinmux.h          |  5 ++--
- 7 files changed, 56 insertions(+), 52 deletions(-)
-
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 9e57f4c62e60..655f9502e73f 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -12,19 +12,21 @@
-  */
- #define pr_fmt(fmt) "pinctrl core: " fmt
- 
--#include <linux/kernel.h>
--#include <linux/kref.h>
--#include <linux/export.h>
--#include <linux/init.h>
-+#include <linux/debugfs.h>
- #include <linux/device.h>
--#include <linux/slab.h>
- #include <linux/err.h>
-+#include <linux/export.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/kref.h>
- #include <linux/list.h>
--#include <linux/debugfs.h>
- #include <linux/seq_file.h>
-+#include <linux/slab.h>
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-latch.yaml b/Documentation/devicetree/bindings/gpio/gpio-latch.yaml
+new file mode 100644
+index 0000000000000..1ed82a2cebdaa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-latch.yaml
+@@ -0,0 +1,94 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/gpio-latch.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- #include <linux/pinctrl/consumer.h>
--#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/devinfo.h>
- #include <linux/pinctrl/machine.h>
-+#include <linux/pinctrl/pinctrl.h>
- 
- #ifdef CONFIG_GPIOLIB
- #include "../gpio/gpiolib.h"
-@@ -33,9 +35,8 @@
- 
- #include "core.h"
- #include "devicetree.h"
--#include "pinmux.h"
- #include "pinconf.h"
--
-+#include "pinmux.h"
- 
- static bool pinctrl_dummy_state;
- 
-diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consumer.h
-index 019fecd75d0c..4729d54e8995 100644
---- a/include/linux/pinctrl/consumer.h
-+++ b/include/linux/pinctrl/consumer.h
-@@ -12,14 +12,15 @@
- #define __LINUX_PINCTRL_CONSUMER_H
- 
- #include <linux/err.h>
--#include <linux/list.h>
--#include <linux/seq_file.h>
-+#include <linux/types.h>
++title: GPIO latch controller
 +
- #include <linux/pinctrl/pinctrl-state.h>
- 
-+struct device;
++maintainers:
++  - Sascha Hauer <s.hauer@pengutronix.de>
 +
- /* This struct is private to the core and should be regarded as a cookie */
- struct pinctrl;
- struct pinctrl_state;
--struct device;
- 
- #ifdef CONFIG_PINCTRL
- 
-@@ -33,9 +34,8 @@ extern int pinctrl_gpio_set_config(unsigned gpio, unsigned long config);
- 
- extern struct pinctrl * __must_check pinctrl_get(struct device *dev);
- extern void pinctrl_put(struct pinctrl *p);
--extern struct pinctrl_state * __must_check pinctrl_lookup_state(
--							struct pinctrl *p,
--							const char *name);
-+extern struct pinctrl_state * __must_check pinctrl_lookup_state(struct pinctrl *p,
-+								const char *name);
- extern int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *s);
- 
- extern struct pinctrl * __must_check devm_pinctrl_get(struct device *dev);
-@@ -101,9 +101,8 @@ static inline void pinctrl_put(struct pinctrl *p)
- {
- }
- 
--static inline struct pinctrl_state * __must_check pinctrl_lookup_state(
--							struct pinctrl *p,
--							const char *name)
-+static inline struct pinctrl_state * __must_check pinctrl_lookup_state(struct pinctrl *p,
-+								       const char *name)
- {
- 	return NULL;
- }
-@@ -145,8 +144,8 @@ static inline int pinctrl_pm_select_idle_state(struct device *dev)
- 
- #endif /* CONFIG_PINCTRL */
- 
--static inline struct pinctrl * __must_check pinctrl_get_select(
--					struct device *dev, const char *name)
-+static inline struct pinctrl * __must_check pinctrl_get_select(struct device *dev,
-+							       const char *name)
- {
- 	struct pinctrl *p;
- 	struct pinctrl_state *s;
-@@ -171,14 +170,13 @@ static inline struct pinctrl * __must_check pinctrl_get_select(
- 	return p;
- }
- 
--static inline struct pinctrl * __must_check pinctrl_get_select_default(
--					struct device *dev)
-+static inline struct pinctrl * __must_check pinctrl_get_select_default(struct device *dev)
- {
- 	return pinctrl_get_select(dev, PINCTRL_STATE_DEFAULT);
- }
- 
--static inline struct pinctrl * __must_check devm_pinctrl_get_select(
--					struct device *dev, const char *name)
-+static inline struct pinctrl * __must_check devm_pinctrl_get_select(struct device *dev,
-+								    const char *name)
- {
- 	struct pinctrl *p;
- 	struct pinctrl_state *s;
-@@ -203,8 +201,7 @@ static inline struct pinctrl * __must_check devm_pinctrl_get_select(
- 	return p;
- }
- 
--static inline struct pinctrl * __must_check devm_pinctrl_get_select_default(
--					struct device *dev)
-+static inline struct pinctrl * __must_check devm_pinctrl_get_select_default(struct device *dev)
- {
- 	return devm_pinctrl_get_select(dev, PINCTRL_STATE_DEFAULT);
- }
-diff --git a/include/linux/pinctrl/devinfo.h b/include/linux/pinctrl/devinfo.h
-index a48ff69acddd..9e8b559e1253 100644
---- a/include/linux/pinctrl/devinfo.h
-+++ b/include/linux/pinctrl/devinfo.h
-@@ -14,11 +14,15 @@
- #ifndef PINCTRL_DEVINFO_H
- #define PINCTRL_DEVINFO_H
- 
-+struct device;
++description: |
++  This binding describes a GPIO multiplexer based on latches connected to
++  other GPIOs, like this:
 +
- #ifdef CONFIG_PINCTRL
- 
- /* The device core acts as a consumer toward pinctrl */
- #include <linux/pinctrl/consumer.h>
- 
-+struct pinctrl;
++  CLK0 ----------------------.        ,--------.
++  CLK1 -------------------.  `--------|>    #0 |
++                          |           |        |
++  OUT0 ----------------+--|-----------|D0    Q0|-----|<
++  OUT1 --------------+-|--|-----------|D1    Q1|-----|<
++  OUT2 ------------+-|-|--|-----------|D2    Q2|-----|<
++  OUT3 ----------+-|-|-|--|-----------|D3    Q3|-----|<
++  OUT4 --------+-|-|-|-|--|-----------|D4    Q4|-----|<
++  OUT5 ------+-|-|-|-|-|--|-----------|D5    Q5|-----|<
++  OUT6 ----+-|-|-|-|-|-|--|-----------|D6    Q6|-----|<
++  OUT7 --+-|-|-|-|-|-|-|--|-----------|D7    Q7|-----|<
++         | | | | | | | |  |           `--------'
++         | | | | | | | |  |
++         | | | | | | | |  |           ,--------.
++         | | | | | | | |  `-----------|>    #1 |
++         | | | | | | | |              |        |
++         | | | | | | | `--------------|D0    Q0|-----|<
++         | | | | | | `----------------|D1    Q1|-----|<
++         | | | | | `------------------|D2    Q2|-----|<
++         | | | | `--------------------|D3    Q3|-----|<
++         | | | `----------------------|D4    Q4|-----|<
++         | | `------------------------|D5    Q5|-----|<
++         | `--------------------------|D6    Q6|-----|<
++         `----------------------------|D7    Q7|-----|<
++                                      `--------'
 +
- /**
-  * struct dev_pin_info - pin state container for devices
-  * @p: pinctrl handle for the containing device
-@@ -42,8 +46,6 @@ extern int pinctrl_init_done(struct device *dev);
- 
- #else
- 
--struct device;
--
- /* Stubs if we're not using pinctrl */
- 
- static inline int pinctrl_bind_pins(struct device *dev)
-diff --git a/include/linux/pinctrl/machine.h b/include/linux/pinctrl/machine.h
-index e987dc9fd2af..0639b36f43c5 100644
---- a/include/linux/pinctrl/machine.h
-+++ b/include/linux/pinctrl/machine.h
-@@ -11,7 +11,7 @@
- #ifndef __LINUX_PINCTRL_MACHINE_H
- #define __LINUX_PINCTRL_MACHINE_H
- 
--#include <linux/bug.h>
-+#include <linux/kernel.h>	/* ARRAY_SIZE() */
- 
- #include <linux/pinctrl/pinctrl-state.h>
- 
-@@ -149,16 +149,18 @@ struct pinctrl_map {
- #define PIN_MAP_CONFIGS_GROUP_HOG_DEFAULT(dev, grp, cfgs)		\
- 	PIN_MAP_CONFIGS_GROUP(dev, PINCTRL_STATE_DEFAULT, dev, grp, cfgs)
- 
-+struct pinctrl_map;
++  The number of clk-gpios and latched-gpios is not fixed. The actual number
++  of number of latches and the number of inputs per latch is derived from
++  the number of GPIOs given in the corresponding device tree properties.
 +
- #ifdef CONFIG_PINCTRL
- 
- extern int pinctrl_register_mappings(const struct pinctrl_map *map,
--				unsigned num_maps);
-+				     unsigned num_maps);
- extern void pinctrl_unregister_mappings(const struct pinctrl_map *map);
- extern void pinctrl_provide_dummies(void);
- #else
- 
- static inline int pinctrl_register_mappings(const struct pinctrl_map *map,
--					   unsigned num_maps)
-+					    unsigned num_maps)
- {
- 	return 0;
- }
-diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
-index 2422211d6a5a..940fc4e9e17c 100644
---- a/include/linux/pinctrl/pinconf-generic.h
-+++ b/include/linux/pinctrl/pinconf-generic.h
-@@ -11,9 +11,12 @@
- #ifndef __LINUX_PINCTRL_PINCONF_GENERIC_H
- #define __LINUX_PINCTRL_PINCONF_GENERIC_H
- 
--#include <linux/device.h>
-+#include <linux/types.h>
++properties:
++  compatible:
++    const: gpio-latch
++  "#gpio-cells":
++    const: 2
 +
- #include <linux/pinctrl/machine.h>
- 
-+struct device_node;
++  clk-gpios:
++    description: Array of GPIOs to be used to clock a latch
 +
- struct pinctrl_dev;
- struct pinctrl_map;
- 
-@@ -196,25 +199,25 @@ int pinconf_generic_dt_node_to_map(struct pinctrl_dev *pctldev,
- void pinconf_generic_dt_free_map(struct pinctrl_dev *pctldev,
- 		struct pinctrl_map *map, unsigned num_maps);
- 
--static inline int pinconf_generic_dt_node_to_map_group(
--		struct pinctrl_dev *pctldev, struct device_node *np_config,
--		struct pinctrl_map **map, unsigned *num_maps)
-+static inline int pinconf_generic_dt_node_to_map_group(struct pinctrl_dev *pctldev,
-+		struct device_node *np_config, struct pinctrl_map **map,
-+		unsigned *num_maps)
- {
- 	return pinconf_generic_dt_node_to_map(pctldev, np_config, map, num_maps,
- 			PIN_MAP_TYPE_CONFIGS_GROUP);
- }
- 
--static inline int pinconf_generic_dt_node_to_map_pin(
--		struct pinctrl_dev *pctldev, struct device_node *np_config,
--		struct pinctrl_map **map, unsigned *num_maps)
-+static inline int pinconf_generic_dt_node_to_map_pin(struct pinctrl_dev *pctldev,
-+		struct device_node *np_config, struct pinctrl_map **map,
-+		unsigned *num_maps)
- {
- 	return pinconf_generic_dt_node_to_map(pctldev, np_config, map, num_maps,
- 			PIN_MAP_TYPE_CONFIGS_PIN);
- }
- 
--static inline int pinconf_generic_dt_node_to_map_all(
--		struct pinctrl_dev *pctldev, struct device_node *np_config,
--		struct pinctrl_map **map, unsigned *num_maps)
-+static inline int pinconf_generic_dt_node_to_map_all(struct pinctrl_dev *pctldev,
-+		struct device_node *np_config, struct pinctrl_map **map,
-+		unsigned *num_maps)
- {
- 	/*
- 	 * passing the type as PIN_MAP_TYPE_INVALID causes the underlying parser
-diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
-index 487117ccb1bc..01ac6ff5bec4 100644
---- a/include/linux/pinctrl/pinctrl.h
-+++ b/include/linux/pinctrl/pinctrl.h
-@@ -11,20 +11,20 @@
- #ifndef __LINUX_PINCTRL_PINCTRL_H
- #define __LINUX_PINCTRL_PINCTRL_H
- 
--#include <linux/radix-tree.h>
- #include <linux/list.h>
--#include <linux/seq_file.h>
--#include <linux/pinctrl/pinctrl-state.h>
--#include <linux/pinctrl/devinfo.h>
-+#include <linux/types.h>
- 
- struct device;
-+struct device_node;
-+struct gpio_chip;
-+struct module;
++  latched-gpios:
++    description: Array of GPIOs to be used as inputs per latch
 +
-+struct pin_config_item;
-+struct pinconf_generic_params;
-+struct pinconf_ops;
- struct pinctrl_dev;
- struct pinctrl_map;
- struct pinmux_ops;
--struct pinconf_ops;
--struct pin_config_item;
--struct gpio_chip;
--struct device_node;
- 
- /**
-  * struct pingroup - provides information on pingroup
-diff --git a/include/linux/pinctrl/pinmux.h b/include/linux/pinctrl/pinmux.h
-index 9a647fa5c8f1..a7e370965c53 100644
---- a/include/linux/pinctrl/pinmux.h
-+++ b/include/linux/pinctrl/pinmux.h
-@@ -11,11 +11,10 @@
- #ifndef __LINUX_PINCTRL_PINMUX_H
- #define __LINUX_PINCTRL_PINMUX_H
- 
--#include <linux/list.h>
--#include <linux/seq_file.h>
--#include <linux/pinctrl/pinctrl.h>
-+#include <linux/types.h>
- 
- struct pinctrl_dev;
-+struct pinctrl_gpio_range;
- 
- /**
-  * struct pinmux_ops - pinmux operations, to be implemented by pin controller
++  setup-duration-ns:
++    description: Delay in nanoseconds to wait after the latch inputs have been
++      set up
++
++  clock-duration-ns:
++    description: Delay in nanoseconds to wait between clock output changes
++
++  gpio-controller: true
++
++  gpio-line-names: true
++
++required:
++  - compatible
++  - "#gpio-cells"
++  - gpio-controller
++  - clk-gpios
++  - latched-gpios
++
++additionalProperties: false
++
++examples:
++  - |
++    gpio-latch {
++        #gpio-cells = <2>;
++        pinctrl-names = "default";
++        pinctrl-0 = <&pinctrl_di_do_leds>;
++        compatible = "gpio-latch";
++        gpio-controller;
++        setup-duration-ns = <100>;
++        clock-duration-ns = <100>;
++
++        clk-gpios = <&gpio3 7 0>, <&gpio3 8 0>;
++        latched-gpios = <&gpio3 21 0>, <&gpio3 22 0>,
++                       <&gpio3 23 0>, <&gpio3 24 0>,
++                       <&gpio3 25 0>, <&gpio3 26 0>,
++                       <&gpio3 27 0>, <&gpio3 28 0>;
++    };
 -- 
-2.35.1
+2.30.2
 
