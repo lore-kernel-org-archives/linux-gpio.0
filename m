@@ -2,62 +2,62 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 390FEC43217
-	for <linux-gpio@archiver.kernel.org>; Fri,  7 Oct 2022 14:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9737C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri,  7 Oct 2022 14:55:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229879AbiJGOzl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 7 Oct 2022 10:55:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59804 "EHLO
+        id S229884AbiJGOzj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 7 Oct 2022 10:55:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229880AbiJGOzj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Oct 2022 10:55:39 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE11372FCD
-        for <linux-gpio@vger.kernel.org>; Fri,  7 Oct 2022 07:55:32 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id bv10so4105489wrb.4
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Oct 2022 07:55:32 -0700 (PDT)
+        with ESMTP id S229506AbiJGOzg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Oct 2022 10:55:36 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26B96915E0
+        for <linux-gpio@vger.kernel.org>; Fri,  7 Oct 2022 07:55:29 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id a10so7644808wrm.12
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Oct 2022 07:55:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EZHOCh49tSWcbSrqJSmKjjm+v/BrYvy77iFDZU56+Rc=;
-        b=klLOf+0DtvVfqnk+kHrpPU/aZf56EDr/Eaw+KUB0aWWhyv2vRiNN9tJ5POW1f8QeNh
-         xuMoAcFkEm1EaCbAh64SImXOxBGtablNrp5c5Pu0mrTk5sCmnub0db5kEb7f8I0SIgBc
-         CAmAy6vs6CGi6ntGkMD+hA7Z0cbZdakpEJn2hCO2LLDv1rR21XTnRoBaAAc8gfYBqrco
-         tmnvo0TwDVgw01fclqMh/0X49CVNVyz+bWDNag0uhNRRVgnL2u7XgSMEt2lstUKV6z8R
-         y2NZZR+jrxrEv98n+OPJzNommWzFUL/W93JukXAGcJXF8uGLIDTDYfY2o/N1JM3P7ifQ
-         8Nkg==
+        bh=rQgie6kChYe33P/uRUBnatQ+ZyXymvzYkW6lfQyTplI=;
+        b=bsZRviDVb5Yrlv6zby3imAL5EdQp1GktKeRhz1hES7NWpmCLLJHs/oL6mb2VfSktx1
+         oA2b+1LypLwgKmhx4q7T3mIMvGIy5Axyzw2Ddh9BZCUekeK0qo1laFEUjYBvlkhFND+s
+         AwNex3J36q9sNrymgyrzzHktf+x6q6CQVC5uFp5Q7ZEQRp56800HXG+EUoEDHqKVcFiB
+         XM2JjJpmC1RAS8YgKPKVYmUD7c2C8cf0S+tUk487rJOiAfV3Ia1V/MTZ02CZR9Ixdo+0
+         Y++hnvpCfIa8njhC8ILVivbKV/2OBt64xiq3my4GTx1KNONtTPxNEJuzMDq7bxXdR1jT
+         VpGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EZHOCh49tSWcbSrqJSmKjjm+v/BrYvy77iFDZU56+Rc=;
-        b=o6AnL0LSBAXe1/+CQVko7aP9voeIJ/F0PvbiYuKL5s9WywPcGg0upYGV7IEwFezzWa
-         JEShmfkF43Bgn+KsVo7r8yv1CwLZYJLLanRQLup7dgmiSAujjMb36ZpcN3ANDiOPjvkq
-         fRI/TgURB0Tsxou8dPnuDfyBFvLlWG2XHOLxGZTVbukd+1Dd232+0t+M8wMu9/NAsqV/
-         CBLOm/sOz7k7Bossu6xDMn6JbkIJxnWv+DY/hx35Dd+Jrp9WySFZDUJWRXcStwQyQEpe
-         WtS4DdJJeZtQOmitBwaW+Sf4KMIudIEw36kHsfqgq1um/5MXld739TeS74J7foiUSvVv
-         5zlA==
-X-Gm-Message-State: ACrzQf0TrMoQcBajPmdooa0CML+mRygOmCOFQTrf6ohvq9AqrGCLbYsg
-        lhPSRf6qcespQo1oc/HusxHGZg==
-X-Google-Smtp-Source: AMsMyM624uqYZCsnVgamzKzD3OBypObJh9SLeYahhiWqyCN0RnbqPN9cb/+2nV/XI8LPAzAKPx+eXA==
-X-Received: by 2002:a5d:48c4:0:b0:22e:3908:9783 with SMTP id p4-20020a5d48c4000000b0022e39089783mr3364872wrs.284.1665154530762;
-        Fri, 07 Oct 2022 07:55:30 -0700 (PDT)
+        bh=rQgie6kChYe33P/uRUBnatQ+ZyXymvzYkW6lfQyTplI=;
+        b=CQW/7Rz7xJUAIRnTOsyzz8+ufTDNlLjqAFlk2inNgiU5b45uvytM0KLXqNxN4Wc8mt
+         P0Ww/8ua6hxtoZGeLq2e/G37Xa9DxDUqcYQi2U7Ekc2UqxGiVPAp5RBVJLRvUtxbO6uP
+         H3SZW4P+xUU7noEUJyr5QsMbChcTVFDugwKci1Wg4hM52ypzELy8Sh8BYw9R4abgo/IN
+         rsZdts2NfL3AZ5cRIqQpkLHdcmt3RSC/uAULp67c3MTtsNdfAMzPjKS6uwNJLNrJMj5X
+         KJidf/eqZz2VEBVWjJI+eXBwwh1xnWFgfvk0AGpiR9PS2KMuQHt8yAS1xKeBCfB8oWnb
+         A02A==
+X-Gm-Message-State: ACrzQf14znjwi4x7QjyVStqgi3cpOOAwf5PLR6Vlu+N3kPCnYv8fDqU3
+        JTqnPSy/36m5LrdUtw7094a56A==
+X-Google-Smtp-Source: AMsMyM6SBM3lWNPg5SDLueJ4jY1fRhSkw1IFwOzY2pz4DEASr252oebeF93E3Dbaqfb3QGcgG+lojA==
+X-Received: by 2002:a5d:64a1:0:b0:228:dab0:301d with SMTP id m1-20020a5d64a1000000b00228dab0301dmr3433052wrp.409.1665154526835;
+        Fri, 07 Oct 2022 07:55:26 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:5a9e:bab6:45e8:abe8])
-        by smtp.gmail.com with ESMTPSA id f8-20020a5d50c8000000b0022e36c1113fsm2294707wrt.13.2022.10.07.07.55.29
+        by smtp.gmail.com with ESMTPSA id f8-20020a5d50c8000000b0022e36c1113fsm2294707wrt.13.2022.10.07.07.55.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Oct 2022 07:55:30 -0700 (PDT)
+        Fri, 07 Oct 2022 07:55:26 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [libgpiod v2][PATCH v3 4/4] bindings: python: implement python bindings for libgpiod v2
-Date:   Fri,  7 Oct 2022 16:55:21 +0200
-Message-Id: <20221007145521.329614-5-brgl@bgdev.pl>
+Subject: [libgpiod v2][PATCH v3 1/4] bindings: python: remove old version
+Date:   Fri,  7 Oct 2022 16:55:18 +0200
+Message-Id: <20221007145521.329614-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221007145521.329614-1-brgl@bgdev.pl>
 References: <20221007145521.329614-1-brgl@bgdev.pl>
@@ -67,2590 +67,4115 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This adds python bindings for libgpiod v2. As opposed to v1, they are
-mostly written in python with just low-level elements written in C and
-interfacing with libgpiod.so.
-
-We've also added setup.py which will allow to use pip for managing the
-bindings and split them into a separate meta-openembedded recipe.
+This removes v1 python bindings for easier review of v2.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- bindings/python/.gitignore                |   8 +
- bindings/python/Makefile.am               |  35 ++
- bindings/python/gpiod/Makefile.am         |  17 +
- bindings/python/gpiod/__init__.py         |  53 +++
- bindings/python/gpiod/chip.py             | 308 +++++++++++++++++
- bindings/python/gpiod/chip_info.py        |  21 ++
- bindings/python/gpiod/edge_event.py       |  46 +++
- bindings/python/gpiod/exception.py        |  20 ++
- bindings/python/gpiod/ext/Makefile.am     |  11 +
- bindings/python/gpiod/ext/chip.c          | 335 ++++++++++++++++++
- bindings/python/gpiod/ext/common.c        |  92 +++++
- bindings/python/gpiod/ext/internal.h      |  20 ++
- bindings/python/gpiod/ext/line-config.c   | 133 +++++++
- bindings/python/gpiod/ext/line-settings.c | 130 +++++++
- bindings/python/gpiod/ext/module.c        | 193 +++++++++++
- bindings/python/gpiod/ext/request.c       | 402 ++++++++++++++++++++++
- bindings/python/gpiod/info_event.py       |  33 ++
- bindings/python/gpiod/internal.py         |  19 +
- bindings/python/gpiod/line.py             |  56 +++
- bindings/python/gpiod/line_info.py        |  73 ++++
- bindings/python/gpiod/line_request.py     | 258 ++++++++++++++
- bindings/python/gpiod/line_settings.py    |  62 ++++
- bindings/python/setup.py                  |  47 +++
- configure.ac                              |   3 +
- 24 files changed, 2375 insertions(+)
- create mode 100644 bindings/python/.gitignore
- create mode 100644 bindings/python/Makefile.am
- create mode 100644 bindings/python/gpiod/Makefile.am
- create mode 100644 bindings/python/gpiod/__init__.py
- create mode 100644 bindings/python/gpiod/chip.py
- create mode 100644 bindings/python/gpiod/chip_info.py
- create mode 100644 bindings/python/gpiod/edge_event.py
- create mode 100644 bindings/python/gpiod/exception.py
- create mode 100644 bindings/python/gpiod/ext/Makefile.am
- create mode 100644 bindings/python/gpiod/ext/chip.c
- create mode 100644 bindings/python/gpiod/ext/common.c
- create mode 100644 bindings/python/gpiod/ext/internal.h
- create mode 100644 bindings/python/gpiod/ext/line-config.c
- create mode 100644 bindings/python/gpiod/ext/line-settings.c
- create mode 100644 bindings/python/gpiod/ext/module.c
- create mode 100644 bindings/python/gpiod/ext/request.c
- create mode 100644 bindings/python/gpiod/info_event.py
- create mode 100644 bindings/python/gpiod/internal.py
- create mode 100644 bindings/python/gpiod/line.py
- create mode 100644 bindings/python/gpiod/line_info.py
- create mode 100644 bindings/python/gpiod/line_request.py
- create mode 100644 bindings/python/gpiod/line_settings.py
- create mode 100644 bindings/python/setup.py
+ bindings/python/Makefile.am              |   25 -
+ bindings/python/examples/Makefile.am     |   10 -
+ bindings/python/examples/gpiodetect.py   |   16 -
+ bindings/python/examples/gpiofind.py     |   20 -
+ bindings/python/examples/gpioget.py      |   25 -
+ bindings/python/examples/gpioinfo.py     |   28 -
+ bindings/python/examples/gpiomon.py      |   42 -
+ bindings/python/examples/gpioset.py      |   25 -
+ bindings/python/gpiodmodule.c            | 2662 ----------------------
+ bindings/python/tests/Makefile.am        |   13 -
+ bindings/python/tests/gpiod_py_test.py   |  832 -------
+ bindings/python/tests/gpiomockupmodule.c |  309 ---
+ 12 files changed, 4007 deletions(-)
+ delete mode 100644 bindings/python/Makefile.am
+ delete mode 100644 bindings/python/examples/Makefile.am
+ delete mode 100755 bindings/python/examples/gpiodetect.py
+ delete mode 100755 bindings/python/examples/gpiofind.py
+ delete mode 100755 bindings/python/examples/gpioget.py
+ delete mode 100755 bindings/python/examples/gpioinfo.py
+ delete mode 100755 bindings/python/examples/gpiomon.py
+ delete mode 100755 bindings/python/examples/gpioset.py
+ delete mode 100644 bindings/python/gpiodmodule.c
+ delete mode 100644 bindings/python/tests/Makefile.am
+ delete mode 100755 bindings/python/tests/gpiod_py_test.py
+ delete mode 100644 bindings/python/tests/gpiomockupmodule.c
 
-diff --git a/bindings/python/.gitignore b/bindings/python/.gitignore
-new file mode 100644
-index 0000000..b603068
---- /dev/null
-+++ b/bindings/python/.gitignore
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2017-2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+build/
-+__pycache__/
-+dist/
-+gpiod.egg-info/
-+*.so
 diff --git a/bindings/python/Makefile.am b/bindings/python/Makefile.am
-new file mode 100644
-index 0000000..3212a8f
---- /dev/null
-+++ b/bindings/python/Makefile.am
-@@ -0,0 +1,35 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+EXTRA_DIST = setup.py
-+
-+if WITH_TESTS
-+
-+BUILD_TESTS = 1
-+
-+endif
-+
-+all-local:
-+	GPIOD_VERSION_STRING=$(VERSION_STR) \
-+	GPIOD_WITH_TESTS=$(BUILD_TESTS) \
-+	$(PYTHON) setup.py build_ext --inplace \
-+		--include-dirs=$(top_srcdir)/include/:$(top_srcdir)/tests/gpiosim/ \
-+		--library-dirs=$(top_builddir)/lib/.libs/:$(top_srcdir)/tests/gpiosim/.libs/
-+
-+install-exec-local:
-+	GPIOD_WITH_TESTS= \
-+	$(PYTHON) setup.py install --prefix=$(prefix)
-+
-+SUBDIRS = gpiod
-+
-+if WITH_TESTS
-+
-+SUBDIRS += tests
-+
-+endif
-+
-+if WITH_EXAMPLES
-+
-+SUBDIRS += examples
-+
-+endif
-diff --git a/bindings/python/gpiod/Makefile.am b/bindings/python/gpiod/Makefile.am
-new file mode 100644
-index 0000000..b0f4126
---- /dev/null
-+++ b/bindings/python/gpiod/Makefile.am
-@@ -0,0 +1,17 @@
-+# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+SUBDIRS = ext
-+
-+EXTRA_DIST = \
-+	chip_info.py \
-+	chip.py \
-+	edge_event.py \
-+	exception.py \
-+	info_event.py \
-+	__init__.py \
-+	internal.py \
-+	line_info.py \
-+	line.py \
-+	line_request.py \
-+	line_settings.py 
-diff --git a/bindings/python/gpiod/__init__.py b/bindings/python/gpiod/__init__.py
-new file mode 100644
-index 0000000..7854cfd
---- /dev/null
-+++ b/bindings/python/gpiod/__init__.py
-@@ -0,0 +1,53 @@
-+# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+"""
-+Python bindings for libgpiod.
-+
-+This module wraps the native C API of libgpiod in a set of python classes.
-+"""
-+
-+from . import _ext
-+from . import line
-+from .chip import Chip
-+from .chip_info import ChipInfo
-+from .edge_event import EdgeEvent
-+from .exception import ChipClosedError, RequestReleasedError
-+from .info_event import InfoEvent
-+from .line_request import LineRequest
-+from .line_settings import LineSettings
-+
-+__version__ = _ext.__version__
-+
-+
-+def is_gpiochip_device(path: str) -> bool:
-+    """
-+    Check if the file pointed to by path is a GPIO chip character device.
-+
-+    Args:
-+      path
-+        Path to the file that should be checked.
-+
-+    Returns:
-+      Returns true if so, False otherwise.
-+    """
-+    return _ext.is_gpiochip_device(path)
-+
-+
-+def request_lines(path: str, *args, **kwargs) -> LineRequest:
-+    """
-+    Open a GPIO chip pointed to by 'path', request lines according to the
-+    configuration arguments, close the chip and return the request object.
-+
-+    Args:
-+      path
-+        Path to the GPIO character device file.
-+      *args
-+      **kwargs
-+        See Chip.request_lines() for configuration arguments.
-+
-+    Returns:
-+      Returns a new LineRequest object.
-+    """
-+    with Chip(path) as chip:
-+        return chip.request_lines(*args, **kwargs)
-diff --git a/bindings/python/gpiod/chip.py b/bindings/python/gpiod/chip.py
-new file mode 100644
-index 0000000..7896958
---- /dev/null
-+++ b/bindings/python/gpiod/chip.py
-@@ -0,0 +1,308 @@
-+# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+from . import _ext
-+from .chip_info import ChipInfo
-+from .exception import ChipClosedError
-+from .info_event import InfoEvent
-+from .internal import poll_fd
-+from .line_info import LineInfo
-+from .line_settings import LineSettings, _line_settings_to_ext_line_settings
-+from .line_request import LineRequest
-+from datetime import timedelta
-+from errno import ENOENT
-+from select import select
-+from typing import Union, Optional
-+
-+
-+class Chip:
-+    """
-+    Represents a GPIO chip.
-+
-+    Chip object manages all resources associated with the GPIO chip it represents.
-+
-+    The gpiochip device file is opened during the object's construction. The Chip
-+    object's constructor takes the path to the GPIO chip device file
-+    as the only argument.
-+
-+    Callers must close the chip by calling the close() method when it's no longer
-+    used.
-+
-+    Example:
-+
-+        chip = gpiod.Chip(\"/dev/gpiochip0\")
-+        do_something(chip)
-+        chip.close()
-+
-+    The gpiod.Chip class also supports controlled execution ('with' statement).
-+
-+    Example:
-+
-+        with gpiod.Chip(path="/dev/gpiochip0") as chip:
-+            do_something(chip)
-+    """
-+
-+    def __init__(self, path: str):
-+        """
-+        Open a GPIO device.
-+
-+        Args:
-+          path:
-+            Path to the GPIO character device file.
-+        """
-+        self._chip = _ext.Chip(path)
-+
-+    def __bool__(self) -> bool:
-+        """
-+        Boolean conversion for GPIO chips.
-+
-+        Returns:
-+          True if the chip is open and False if it's closed.
-+        """
-+        return True if self._chip else False
-+
-+    def __enter__(self):
-+        """
-+        Controlled execution enter callback.
-+        """
-+        self._check_closed()
-+        return self
-+
-+    def __exit__(self, exc_type, exc_value, traceback) -> None:
-+        """
-+        Controlled execution exit callback.
-+        """
-+        self.close()
-+
-+    def _check_closed(self) -> None:
-+        if not self._chip:
-+            raise ChipClosedError()
-+
-+    def close(self) -> None:
-+        """
-+        Close the associated GPIO chip descriptor. The chip object must no
-+        longer be used after this method is called.
-+        """
-+        self._check_closed()
-+        self._chip.close()
-+        self._chip = None
-+
-+    def get_info(self) -> ChipInfo:
-+        """
-+        Get the information about the chip.
-+
-+        Returns:
-+          New gpiod.ChipInfo object.
-+        """
-+        self._check_closed()
-+        return self._chip.get_info()
-+
-+    def map_line(self, id: Union[str, int]) -> int:
-+        """
-+        Map a line's identifier to its offset within the chip.
-+
-+        Args:
-+          id:
-+            Name of the GPIO line, its offset as a string or its offset as an
-+            integer.
-+
-+        Returns:
-+          If id is an integer - it's returned as is (unless it's out of range
-+          for this chip). If it's a string, the method tries to interpret it as
-+          the name of the line first and tries too perform a name lookup within
-+          the chip. If it fails, it tries to convert the string to an integer
-+          and check if it represents a valid offset within the chip and if
-+          so - returns it.
-+        """
-+        self._check_closed()
-+
-+        if not isinstance(id, int):
-+            try:
-+                return self._chip.map_line(id)
-+            except OSError as ex:
-+                if ex.errno == ENOENT:
-+                    try:
-+                        offset = int(id)
-+                    except ValueError:
-+                        raise ex
-+                else:
-+                    raise ex
-+        else:
-+            offset = id
-+
-+        if offset >= self.get_info().num_lines:
-+            raise ValueError("line offset of out range")
-+
-+        return offset
-+
-+    def _get_line_info(self, line: Union[int, str], watch: bool) -> LineInfo:
-+        self._check_closed()
-+        return self._chip.get_line_info(self.map_line(line), watch)
-+
-+    def get_line_info(self, line: Union[int, str]) -> LineInfo:
-+        """
-+        Get the snapshot of information about the line at given offset.
-+
-+        Args:
-+          line:
-+            Offset or name of the GPIO line to get information for.
-+
-+        Returns:
-+          New LineInfo object.
-+        """
-+        return self._get_line_info(line, watch=False)
-+
-+    def watch_line_info(self, line: Union[int, str]) -> LineInfo:
-+        """
-+        Get the snapshot of information about the line at given offset and
-+        start watching it for future changes.
-+
-+        Args:
-+          line:
-+            Offset or name of the GPIO line to get information for.
-+
-+        Returns:
-+          New gpiod.LineInfo object.
-+        """
-+        return self._get_line_info(line, watch=True)
-+
-+    def unwatch_line_info(self, line: Union[int, str]) -> None:
-+        """
-+        Stop watching a line for status changes.
-+
-+        Args:
-+          line:
-+            Offset or name of the line to stop watching.
-+        """
-+        self._check_closed()
-+        return self._chip.unwatch_line_info(self.map_line(line))
-+
-+    def wait_info_event(
-+        self, timeout: Optional[Union[timedelta, float]] = None
-+    ) -> bool:
-+        """
-+        Wait for line status change events on any of the watched lines on the
-+        chip.
-+
-+        Args:
-+          timeout:
-+            Wait time limit represented as either a datetime.timedelta object
-+            or the number of seconds stored in a float.
-+
-+        Returns:
-+          True if an info event is ready to be read from the chip, False if the
-+          wait timed out without any events.
-+        """
-+        self._check_closed()
-+
-+        return poll_fd(self.fd, timeout)
-+
-+    def read_info_event(self) -> InfoEvent:
-+        """
-+        Read a single line status change event from the chip.
-+
-+        Returns:
-+          New gpiod.InfoEvent object.
-+
-+        Note:
-+          This function may block if there are no available events in the queue.
-+        """
-+        self._check_closed()
-+        return self._chip.read_info_event()
-+
-+    def request_lines(
-+        self,
-+        config: dict[tuple[Union[int, str]], Optional[LineSettings]],
-+        consumer: Optional[str] = None,
-+        event_buffer_size: Optional[int] = None,
-+    ) -> LineRequest:
-+        """
-+        Request a set of lines for exclusive usage.
-+
-+        Args:
-+          config:
-+            Dictionary mapping offsets or names (or tuples thereof) to
-+            LineSettings. If None is passed as the value of the mapping,
-+            default settings are used.
-+          consumer:
-+            Consumer string to use for this request.
-+          event_buffer_size:
-+            Size of the kernel edge event buffer to configure for this request.
-+
-+        Returns:
-+          New LineRequest object.
-+        """
-+        self._check_closed()
-+
-+        line_cfg = _ext.LineConfig()
-+
-+        for lines, settings in config.items():
-+            offsets = list()
-+            name_map = dict()
-+            offset_map = dict()
-+
-+            if isinstance(lines, int) or isinstance(lines, str):
-+                lines = (lines,)
-+
-+            for line in lines:
-+                offset = self.map_line(line)
-+                offsets.append(offset)
-+                if isinstance(line, str):
-+                    name_map[line] = offset
-+                    offset_map[offset] = line
-+
-+            if settings is None:
-+                settings = LineSettings()
-+
-+            line_cfg.add_line_settings(
-+                offsets, _line_settings_to_ext_line_settings(settings)
-+            )
-+
-+        req_internal = self._chip.request_lines(line_cfg, consumer, event_buffer_size)
-+        request = LineRequest(req_internal)
-+
-+        request._offsets = req_internal.offsets
-+        request._name_map = name_map
-+        request._offset_map = offset_map
-+
-+        request._lines = list()
-+        for off in request.offsets:
-+            request._lines.append(offset_map[off] if off in offset_map else off)
-+
-+        return request
-+
-+    def __repr__(self) -> str:
-+        """
-+        Return a string that can be used to re-create this chip object.
-+        """
-+        if not self._chip:
-+            return "<Chip CLOSED>"
-+
-+        return 'Chip("{}")'.format(self.path)
-+
-+    def __str__(self) -> str:
-+        """
-+        Return a user-friendly, human-readable description of this chip.
-+        """
-+        if not self._chip:
-+            return "<Chip CLOSED>"
-+
-+        return '<Chip path="{}" fd={} info={}>'.format(
-+            self.path, self.fd, self.get_info()
-+        )
-+
-+    @property
-+    def path(self) -> str:
-+        """
-+        Filesystem path used to open this chip.
-+        """
-+        self._check_closed()
-+        return self._chip.path
-+
-+    @property
-+    def fd(self) -> int:
-+        """
-+        File descriptor associated with this chip.
-+        """
-+        self._check_closed()
-+        return self._chip.fd
-diff --git a/bindings/python/gpiod/chip_info.py b/bindings/python/gpiod/chip_info.py
-new file mode 100644
-index 0000000..a506b55
---- /dev/null
-+++ b/bindings/python/gpiod/chip_info.py
-@@ -0,0 +1,21 @@
-+# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+
-+from dataclasses import dataclass
-+
-+
-+@dataclass(frozen=True, repr=False)
-+class ChipInfo:
-+    """
-+    Snapshot of a chip's status.
-+    """
-+
-+    name: str
-+    label: str
-+    num_lines: int
-+
-+    def __str__(self):
-+        return '<ChipInfo name="{}" label="{}" num_lines={}>'.format(
-+            self.name, self.label, self.num_lines
-+        )
-diff --git a/bindings/python/gpiod/edge_event.py b/bindings/python/gpiod/edge_event.py
-new file mode 100644
-index 0000000..88f8e9b
---- /dev/null
-+++ b/bindings/python/gpiod/edge_event.py
-@@ -0,0 +1,46 @@
-+# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+from . import _ext
-+from dataclasses import dataclass
-+from enum import Enum
-+
-+
-+@dataclass(frozen=True, init=False, repr=False)
-+class EdgeEvent:
-+    """
-+    Immutable object containing data about a single edge event.
-+    """
-+
-+    class Type(Enum):
-+        RISING_EDGE = _ext.EDGE_EVENT_TYPE_RISING
-+        FALLING_EDGE = _ext.EDGE_EVENT_TYPE_FALLING
-+
-+    event_type: Type
-+    timestamp_ns: int
-+    line_offset: int
-+    global_seqno: int
-+    line_seqno: int
-+
-+    def __init__(
-+        self,
-+        event_type: int,
-+        timestamp_ns: int,
-+        line_offset: int,
-+        global_seqno: int,
-+        line_seqno: int,
-+    ):
-+        object.__setattr__(self, "event_type", EdgeEvent.Type(event_type))
-+        object.__setattr__(self, "timestamp_ns", timestamp_ns)
-+        object.__setattr__(self, "line_offset", line_offset)
-+        object.__setattr__(self, "global_seqno", global_seqno)
-+        object.__setattr__(self, "line_seqno", line_seqno)
-+
-+    def __str__(self):
-+        return "<EdgeEvent type={} timestamp_ns={} line_offset={} global_seqno={} line_seqno={}>".format(
-+            self.event_type,
-+            self.timestamp_ns,
-+            self.line_offset,
-+            self.global_seqno,
-+            self.line_seqno,
-+        )
-diff --git a/bindings/python/gpiod/exception.py b/bindings/python/gpiod/exception.py
-new file mode 100644
-index 0000000..07ffaa6
---- /dev/null
-+++ b/bindings/python/gpiod/exception.py
-@@ -0,0 +1,20 @@
-+# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+
-+class ChipClosedError(Exception):
-+    """
-+    Error raised when an already closed chip is used.
-+    """
-+
-+    def __init__(self):
-+        super().__init__("I/O operation on closed chip")
-+
-+
-+class RequestReleasedError(Exception):
-+    """
-+    Error raised when a released request is used.
-+    """
-+
-+    def __init__(self):
-+        super().__init__("GPIO lines have been released")
-diff --git a/bindings/python/gpiod/ext/Makefile.am b/bindings/python/gpiod/ext/Makefile.am
-new file mode 100644
-index 0000000..9c81b17
---- /dev/null
-+++ b/bindings/python/gpiod/ext/Makefile.am
-@@ -0,0 +1,11 @@
-+# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+EXTRA_DIST = \
-+	chip.c \
-+	common.c \
-+	internal.h \
-+	line-config.c \
-+	line-settings.c \
-+	module.c \
-+	request.c
-diff --git a/bindings/python/gpiod/ext/chip.c b/bindings/python/gpiod/ext/chip.c
-new file mode 100644
-index 0000000..47d5455
---- /dev/null
-+++ b/bindings/python/gpiod/ext/chip.c
-@@ -0,0 +1,335 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+#include "internal.h"
-+
-+typedef struct {
-+	PyObject_HEAD;
-+	struct gpiod_chip *chip;
-+} chip_object;
-+
-+static int
-+chip_init(chip_object *self, PyObject *args, PyObject *Py_UNUSED(ignored))
-+{
-+	char *path;
-+	int ret;
-+
-+	ret = PyArg_ParseTuple(args, "s", &path);
-+	if (!ret)
-+		return -1;
-+
-+	Py_BEGIN_ALLOW_THREADS;
-+	self->chip = gpiod_chip_open(path);
-+	Py_END_ALLOW_THREADS;
-+	if (!self->chip) {
-+		Py_gpiod_SetErrFromErrno();
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static void chip_finalize(chip_object *self)
-+{
-+	if (self->chip)
-+		PyObject_CallMethod((PyObject *)self, "close", "");
-+}
-+
-+static PyObject *chip_path(chip_object *self, void *Py_UNUSED(ignored))
-+{
-+	return PyUnicode_FromString(gpiod_chip_get_path(self->chip));
-+}
-+
-+static PyObject *chip_fd(chip_object *self, void *Py_UNUSED(ignored))
-+{
-+	return PyLong_FromLong(gpiod_chip_get_fd(self->chip));
-+}
-+
-+static PyGetSetDef chip_getset[] = {
-+	{
-+		.name = "path",
-+		.get = (getter)chip_path,
-+	},
-+	{
-+		.name = "fd",
-+		.get = (getter)chip_fd,
-+	},
-+	{ }
-+};
-+
-+static PyObject *chip_close(chip_object *self, PyObject *Py_UNUSED(ignored))
-+{
-+	Py_BEGIN_ALLOW_THREADS;
-+	gpiod_chip_close(self->chip);
-+	Py_END_ALLOW_THREADS;
-+	self->chip = NULL;
-+
-+	Py_RETURN_NONE;
-+}
-+
-+static PyObject *chip_get_info(chip_object *self, PyObject *Py_UNUSED(ignored))
-+{
-+	struct gpiod_chip_info *info;
-+	PyObject *type, *ret;
-+
-+	type = Py_gpiod_GetGlobalType("ChipInfo");
-+	if (!type)
-+		return NULL;
-+
-+	info = gpiod_chip_get_info(self->chip);
-+	if (!info)
-+		return PyErr_SetFromErrno(PyExc_OSError);
-+
-+	 ret = PyObject_CallFunction(type, "ssI",
-+				     gpiod_chip_info_get_name(info),
-+				     gpiod_chip_info_get_label(info),
-+				     gpiod_chip_info_get_num_lines(info));
-+	 gpiod_chip_info_free(info);
-+	 return ret;
-+}
-+
-+static PyObject *make_line_info(struct gpiod_line_info *info)
-+{
-+	PyObject *type;
-+
-+	type = Py_gpiod_GetGlobalType("LineInfo");
-+	if (!type)
-+		return NULL;
-+
-+	return PyObject_CallFunction(type, "IsOsiOiiiiOi",
-+				gpiod_line_info_get_offset(info),
-+				gpiod_line_info_get_name(info),
-+				gpiod_line_info_is_used(info) ?
-+							Py_True : Py_False,
-+				gpiod_line_info_get_consumer(info),
-+				gpiod_line_info_get_direction(info),
-+				gpiod_line_info_is_active_low(info) ?
-+							Py_True : Py_False,
-+				gpiod_line_info_get_bias(info),
-+				gpiod_line_info_get_drive(info),
-+				gpiod_line_info_get_edge_detection(info),
-+				gpiod_line_info_get_event_clock(info),
-+				gpiod_line_info_is_debounced(info) ?
-+							Py_True : Py_False,
-+				gpiod_line_info_get_debounce_period_us(info));
-+}
-+
-+static PyObject *chip_get_line_info(chip_object *self, PyObject *args)
-+{
-+	struct gpiod_line_info *info;
-+	unsigned int offset;
-+	PyObject *info_obj;
-+	int ret, watch;
-+
-+	ret = PyArg_ParseTuple(args, "Ip", &offset, &watch);
-+	if (!ret)
-+		return NULL;
-+
-+	Py_BEGIN_ALLOW_THREADS;
-+	if (watch)
-+		info = gpiod_chip_watch_line_info(self->chip, offset);
-+	else
-+		info = gpiod_chip_get_line_info(self->chip, offset);
-+	Py_END_ALLOW_THREADS;
-+	if (!info)
-+		return Py_gpiod_SetErrFromErrno();
-+
-+	info_obj = make_line_info(info);
-+	gpiod_line_info_free(info);
-+	return info_obj;
-+}
-+
-+static PyObject *
-+chip_unwatch_line_info(chip_object *self, PyObject *args)
-+{
-+	unsigned int offset;
-+	int ret;
-+
-+	ret = PyArg_ParseTuple(args, "I", &offset);
-+	if (!ret)
-+		return NULL;
-+
-+	Py_BEGIN_ALLOW_THREADS;
-+	ret = gpiod_chip_unwatch_line_info(self->chip, offset);
-+	Py_END_ALLOW_THREADS;
-+	if (ret)
-+		return Py_gpiod_SetErrFromErrno();
-+
-+	Py_RETURN_NONE;
-+}
-+
-+static PyObject *
-+chip_read_info_event(chip_object *self, PyObject *Py_UNUSED(ignored))
-+{
-+	PyObject *type, *info_obj, *event_obj;
-+	struct gpiod_info_event *event;
-+	struct gpiod_line_info *info;
-+
-+	type = Py_gpiod_GetGlobalType("InfoEvent");
-+	if (!type)
-+		return NULL;
-+
-+	Py_BEGIN_ALLOW_THREADS;
-+	event = gpiod_chip_read_info_event(self->chip);
-+	Py_END_ALLOW_THREADS;
-+	if (!event)
-+		return Py_gpiod_SetErrFromErrno();
-+
-+	info = gpiod_info_event_get_line_info(event);
-+
-+	info_obj = make_line_info(info);
-+	if (!info_obj) {
-+		gpiod_info_event_free(event);
-+		return NULL;
-+	}
-+
-+	event_obj = PyObject_CallFunction(type, "iKO",
-+				gpiod_info_event_get_event_type(event),
-+				gpiod_info_event_get_timestamp_ns(event),
-+				info_obj);
-+	Py_DECREF(info_obj);
-+	gpiod_info_event_free(event);
-+	return event_obj;
-+}
-+
-+static PyObject *chip_map_line(chip_object *self, PyObject *args)
-+{
-+	int ret, offset;
-+	char *name;
-+
-+	ret = PyArg_ParseTuple(args, "s", &name);
-+	if (!ret)
-+		return NULL;
-+
-+	Py_BEGIN_ALLOW_THREADS;
-+	offset = gpiod_chip_get_line_offset_from_name(self->chip, name);
-+	Py_END_ALLOW_THREADS;
-+	if (offset < 0)
-+		return Py_gpiod_SetErrFromErrno();
-+
-+	return PyLong_FromLong(offset);
-+}
-+
-+static struct gpiod_request_config *
-+make_request_config(PyObject *consumer_obj, PyObject *event_buffer_size_obj)
-+{
-+	struct gpiod_request_config *req_cfg;
-+	size_t event_buffer_size;
-+	const char *consumer;
-+
-+	req_cfg = gpiod_request_config_new();
-+	if (!req_cfg) {
-+		Py_gpiod_SetErrFromErrno();
-+		return NULL;
-+	}
-+
-+	if (consumer_obj != Py_None) {
-+		consumer = PyUnicode_AsUTF8(consumer_obj);
-+		if (!consumer) {
-+			gpiod_request_config_free(req_cfg);
-+			return NULL;
-+		}
-+
-+		gpiod_request_config_set_consumer(req_cfg, consumer);
-+	}
-+
-+	if (event_buffer_size_obj != Py_None) {
-+		event_buffer_size = PyLong_AsSize_t(event_buffer_size_obj);
-+		if (PyErr_Occurred()) {
-+			gpiod_request_config_free(req_cfg);
-+			return NULL;
-+		}
-+
-+		gpiod_request_config_set_event_buffer_size(req_cfg,
-+							   event_buffer_size);
-+	}
-+
-+	return req_cfg;
-+}
-+
-+static PyObject *chip_request_lines(chip_object *self, PyObject *args)
-+{
-+	PyObject *line_config, *consumer, *event_buffer_size, *req_obj;
-+	struct gpiod_request_config *req_cfg;
-+	struct gpiod_line_config *line_cfg;
-+	struct gpiod_line_request *request;
-+	int ret;
-+
-+	ret = PyArg_ParseTuple(args, "OOO",
-+			       &line_config, &consumer, &event_buffer_size);
-+	if (!ret)
-+		return NULL;
-+
-+	line_cfg = Py_gpiod_LineConfigGetData(line_config);
-+	if (!line_cfg)
-+		return NULL;
-+
-+	req_cfg = make_request_config(consumer, event_buffer_size);
-+	if (!req_cfg)
-+		return NULL;
-+
-+	Py_BEGIN_ALLOW_THREADS;
-+	request = gpiod_chip_request_lines(self->chip, req_cfg, line_cfg);
-+	Py_END_ALLOW_THREADS;
-+	gpiod_request_config_free(req_cfg);
-+	if (!request)
-+		return Py_gpiod_SetErrFromErrno();
-+
-+	req_obj = Py_gpiod_MakeRequestObject(request);
-+	if (!req_obj)
-+		gpiod_line_request_release(request);
-+
-+	return req_obj;
-+}
-+
-+static PyMethodDef chip_methods[] = {
-+	{
-+		.ml_name = "close",
-+		.ml_meth = (PyCFunction)chip_close,
-+		.ml_flags = METH_NOARGS,
-+	},
-+	{
-+		.ml_name = "get_info",
-+		.ml_meth = (PyCFunction)chip_get_info,
-+		.ml_flags = METH_NOARGS,
-+	},
-+	{
-+		.ml_name = "get_line_info",
-+		.ml_meth = (PyCFunction)chip_get_line_info,
-+		.ml_flags = METH_VARARGS,
-+	},
-+	{
-+		.ml_name = "unwatch_line_info",
-+		.ml_meth = (PyCFunction)chip_unwatch_line_info,
-+		.ml_flags = METH_VARARGS,
-+	},
-+	{
-+		.ml_name = "read_info_event",
-+		.ml_meth = (PyCFunction)chip_read_info_event,
-+		.ml_flags = METH_NOARGS,
-+	},
-+	{
-+		.ml_name = "map_line",
-+		.ml_meth = (PyCFunction)chip_map_line,
-+		.ml_flags = METH_VARARGS,
-+	},
-+	{
-+		.ml_name = "request_lines",
-+		.ml_meth = (PyCFunction)chip_request_lines,
-+		.ml_flags = METH_VARARGS,
-+	},
-+	{ }
-+};
-+
-+PyTypeObject chip_type = {
-+	PyVarObject_HEAD_INIT(NULL, 0)
-+	.tp_name = "gpiod._ext.Chip",
-+	.tp_basicsize = sizeof(chip_object),
-+	.tp_flags = Py_TPFLAGS_DEFAULT,
-+	.tp_new = PyType_GenericNew,
-+	.tp_init = (initproc)chip_init,
-+	.tp_finalize = (destructor)chip_finalize,
-+	.tp_dealloc = (destructor)Py_gpiod_dealloc,
-+	.tp_getset = chip_getset,
-+	.tp_methods = chip_methods,
-+};
-diff --git a/bindings/python/gpiod/ext/common.c b/bindings/python/gpiod/ext/common.c
-new file mode 100644
-index 0000000..7e53c02
---- /dev/null
-+++ b/bindings/python/gpiod/ext/common.c
-@@ -0,0 +1,92 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+#include "internal.h"
-+
-+/* Generic dealloc callback for all gpiod objects. */
-+void Py_gpiod_dealloc(PyObject *self)
-+{
-+	int ret;
-+
-+	ret = PyObject_CallFinalizerFromDealloc(self);
-+	if (ret < 0)
-+		return;
-+
-+	PyObject_Del(self);
-+}
-+
-+PyObject *_Py_gpiod_SetErrFromErrno(const char *filename)
-+{
-+	PyObject *exc;
-+
-+	if (errno == ENOMEM)
-+		return PyErr_NoMemory();
-+
-+	switch (errno) {
-+	case EINVAL:
-+		exc = PyExc_ValueError;
-+		break;
-+	case EOPNOTSUPP:
-+		exc = PyExc_NotImplementedError;
-+		break;
-+	case EPIPE:
-+		exc = PyExc_BrokenPipeError;
-+		break;
-+	case ECHILD:
-+		exc = PyExc_ChildProcessError;
-+		break;
-+	case EINTR:
-+		exc = PyExc_InterruptedError;
-+		break;
-+	case EEXIST:
-+		exc = PyExc_FileExistsError;
-+		break;
-+	case ENOENT:
-+		exc = PyExc_FileNotFoundError;
-+		break;
-+	case EISDIR:
-+		exc = PyExc_IsADirectoryError;
-+		break;
-+	case ENOTDIR:
-+		exc = PyExc_NotADirectoryError;
-+		break;
-+	case EPERM:
-+		exc = PyExc_PermissionError;
-+		break;
-+	case ETIMEDOUT:
-+		exc = PyExc_TimeoutError;
-+		break;
-+	default:
-+		exc = PyExc_OSError;
-+		break;
-+	}
-+
-+	return PyErr_SetFromErrnoWithFilename(exc, filename);
-+}
-+
-+PyObject *Py_gpiod_GetGlobalType(const char *type_name)
-+{
-+	PyObject *globals;
-+
-+	globals = PyEval_GetGlobals();
-+	if (!globals)
-+		return NULL;
-+
-+	return PyDict_GetItemString(globals, type_name);
-+}
-+
-+unsigned int Py_gpiod_PyLongAsUnsignedInt(PyObject *pylong)
-+{
-+	unsigned long tmp;
-+
-+	tmp = PyLong_AsUnsignedLong(pylong);
-+	if (PyErr_Occurred())
-+		return 0;
-+
-+	if (tmp > UINT_MAX) {
-+		PyErr_SetString(PyExc_ValueError, "value exceeding UINT_MAX");
-+		return 0;
-+	}
-+
-+	return tmp;
-+}
-diff --git a/bindings/python/gpiod/ext/internal.h b/bindings/python/gpiod/ext/internal.h
-new file mode 100644
-index 0000000..ed80034
---- /dev/null
-+++ b/bindings/python/gpiod/ext/internal.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: LGPL-2.1-or-later */
-+/* SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl> */
-+
-+#ifndef __LIBGPIOD_PYTHON_MODULE_H__
-+#define __LIBGPIOD_PYTHON_MODULE_H__
-+
-+#include <gpiod.h>
-+#include <Python.h>
-+
-+PyObject *_Py_gpiod_SetErrFromErrno(const char *filename);
-+#define Py_gpiod_SetErrFromErrno() _Py_gpiod_SetErrFromErrno(__FILE__)
-+
-+PyObject *Py_gpiod_GetGlobalType(const char *type_name);
-+unsigned int Py_gpiod_PyLongAsUnsignedInt(PyObject *pylong);
-+void Py_gpiod_dealloc(PyObject *self);
-+PyObject *Py_gpiod_MakeRequestObject(struct gpiod_line_request *request);
-+struct gpiod_line_config *Py_gpiod_LineConfigGetData(PyObject *obj);
-+struct gpiod_line_settings *Py_gpiod_LineSettingsGetData(PyObject *obj);
-+
-+#endif /* __LIBGPIOD_PYTHON_MODULE_H__ */
-diff --git a/bindings/python/gpiod/ext/line-config.c b/bindings/python/gpiod/ext/line-config.c
-new file mode 100644
-index 0000000..173ca6b
---- /dev/null
-+++ b/bindings/python/gpiod/ext/line-config.c
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+#include "internal.h"
-+
-+typedef struct {
-+	PyObject_HEAD;
-+	struct gpiod_line_config *cfg;
-+} line_config_object;
-+
-+static int line_config_init(line_config_object *self,
-+		       PyObject *Py_UNUSED(args), PyObject *Py_UNUSED(ignored))
-+{
-+	self->cfg = gpiod_line_config_new();
-+	if (!self->cfg) {
-+		Py_gpiod_SetErrFromErrno();
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static void line_config_finalize(line_config_object *self)
-+{
-+	if (self->cfg)
-+		gpiod_line_config_free(self->cfg);
-+}
-+
-+static unsigned int *make_offsets(PyObject *obj, Py_ssize_t len)
-+{
-+	unsigned int *offsets;
-+	PyObject *offset;
-+	Py_ssize_t i;
-+
-+	offsets = PyMem_Calloc(len, sizeof(unsigned int));
-+	if (!offsets)
-+		return (unsigned int *)PyErr_NoMemory();
-+
-+	for (i = 0; i < len; i++) {
-+		offset = PyList_GetItem(obj, i);
-+		if (!offset) {
-+			PyMem_Free(offsets);
-+			return NULL;
-+		}
-+
-+		offsets[i] = Py_gpiod_PyLongAsUnsignedInt(offset);
-+		if (PyErr_Occurred()) {
-+			PyMem_Free(offsets);
-+			return NULL;
-+		}
-+	}
-+
-+	return offsets;
-+}
-+
-+static PyObject *
-+line_config_add_line_settings(line_config_object *self, PyObject *args)
-+{
-+	PyObject *offsets_obj, *settings_obj;
-+	struct gpiod_line_settings *settings;
-+	unsigned int *offsets;
-+	Py_ssize_t num_offsets;
-+	int ret;
-+
-+	ret = PyArg_ParseTuple(args, "OO", &offsets_obj, &settings_obj);
-+	if (!ret)
-+		return NULL;
-+
-+	num_offsets = PyObject_Size(offsets_obj);
-+	if (num_offsets < 0)
-+		return NULL;
-+
-+	offsets = make_offsets(offsets_obj, num_offsets);
-+	if (!offsets)
-+		return NULL;
-+
-+	settings = Py_gpiod_LineSettingsGetData(settings_obj);
-+	if (!settings) {
-+		PyMem_Free(offsets);
-+		return NULL;
-+	}
-+
-+	ret = gpiod_line_config_add_line_settings(self->cfg, offsets,
-+						  num_offsets, settings);
-+	PyMem_Free(offsets);
-+	if (ret)
-+		return Py_gpiod_SetErrFromErrno();
-+
-+	Py_RETURN_NONE;
-+}
-+
-+static PyMethodDef line_config_methods[] = {
-+	{
-+		.ml_name = "add_line_settings",
-+		.ml_meth = (PyCFunction)line_config_add_line_settings,
-+		.ml_flags = METH_VARARGS,
-+	},
-+	{ }
-+};
-+
-+PyTypeObject line_config_type = {
-+	PyVarObject_HEAD_INIT(NULL, 0)
-+	.tp_name = "gpiod._ext.LineConfig",
-+	.tp_basicsize = sizeof(line_config_object),
-+	.tp_flags = Py_TPFLAGS_DEFAULT,
-+	.tp_new = PyType_GenericNew,
-+	.tp_init = (initproc)line_config_init,
-+	.tp_finalize = (destructor)line_config_finalize,
-+	.tp_dealloc = (destructor)Py_gpiod_dealloc,
-+	.tp_methods = line_config_methods,
-+};
-+
-+struct gpiod_line_config *Py_gpiod_LineConfigGetData(PyObject *obj)
-+{
-+	line_config_object *line_cfg;
-+	PyObject *type;
-+
-+	type = PyObject_Type(obj);
-+	if (!type)
-+		return NULL;
-+
-+	if ((PyTypeObject *)type != &line_config_type) {
-+		PyErr_SetString(PyExc_TypeError,
-+				"not a gpiod._ext.LineConfig object");
-+		Py_DECREF(type);
-+		return NULL;
-+	}
-+	Py_DECREF(type);
-+
-+	line_cfg = (line_config_object *)obj;
-+
-+	return line_cfg->cfg;
-+}
-diff --git a/bindings/python/gpiod/ext/line-settings.c b/bindings/python/gpiod/ext/line-settings.c
-new file mode 100644
-index 0000000..bd2a66a
---- /dev/null
-+++ b/bindings/python/gpiod/ext/line-settings.c
-@@ -0,0 +1,130 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+#include "internal.h"
-+
-+typedef struct {
-+	PyObject_HEAD;
-+	struct gpiod_line_settings *settings;
-+} line_settings_object;
-+
-+static int set_int_prop(struct gpiod_line_settings *settings, int val,
-+			int (*func)(struct gpiod_line_settings *, int))
-+{
-+	int ret;
-+
-+	ret = func(settings, val);
-+	if (ret) {
-+		Py_gpiod_SetErrFromErrno();
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+line_settings_init(line_settings_object *self, PyObject *args, PyObject *kwargs)
-+{
-+	static char *kwlist[] = {
-+		"direction",
-+		"edge_detection",
-+		"bias",
-+		"drive",
-+		"active_low",
-+		"debounce_period",
-+		"event_clock",
-+		"output_value",
-+		NULL
-+	};
-+
-+	int direction, edge, bias, drive, active_low, event_clock, output_value,
-+	    ret;
-+	unsigned long debounce_period;
-+
-+	ret = PyArg_ParseTupleAndKeywords(args, kwargs, "IIIIpdII", kwlist,
-+			&direction, &edge, &bias, &drive, &active_low,
-+			&debounce_period, &event_clock, &output_value);
-+	if (!ret)
-+		return -1;
-+
-+	self->settings = gpiod_line_settings_new();
-+	if (!self->settings) {
-+		Py_gpiod_SetErrFromErrno();
-+		return -1;
-+	}
-+
-+	ret = set_int_prop(self->settings, direction,
-+			   gpiod_line_settings_set_direction);
-+	if (ret)
-+		return -1;
-+
-+	ret = set_int_prop(self->settings, edge,
-+			   gpiod_line_settings_set_edge_detection);
-+	if (ret)
-+		return -1;
-+
-+	ret = set_int_prop(self->settings, bias,
-+			   gpiod_line_settings_set_bias);
-+	if (ret)
-+		return -1;
-+
-+	ret = set_int_prop(self->settings, drive,
-+			   gpiod_line_settings_set_drive);
-+	if (ret)
-+		return -1;
-+
-+	gpiod_line_settings_set_active_low(self->settings, active_low);
-+	gpiod_line_settings_set_debounce_period_us(self->settings,
-+						   debounce_period);
-+
-+	ret = set_int_prop(self->settings, edge,
-+			   gpiod_line_settings_set_edge_detection);
-+	if (ret)
-+		return -1;
-+
-+	ret = set_int_prop(self->settings, output_value,
-+			   gpiod_line_settings_set_output_value);
-+	if (ret)
-+		return -1;
-+
-+	return 0;
-+}
-+
-+static void line_settings_finalize(line_settings_object *self)
-+{
-+	if (self->settings)
-+		gpiod_line_settings_free(self->settings);
-+}
-+
-+PyTypeObject line_settings_type = {
-+	PyVarObject_HEAD_INIT(NULL, 0)
-+	.tp_name = "gpiod._ext.LineSettings",
-+	.tp_basicsize = sizeof(line_settings_object),
-+	.tp_flags = Py_TPFLAGS_DEFAULT,
-+	.tp_new = PyType_GenericNew,
-+	.tp_init = (initproc)line_settings_init,
-+	.tp_finalize = (destructor)line_settings_finalize,
-+	.tp_dealloc = (destructor)Py_gpiod_dealloc,
-+};
-+
-+struct gpiod_line_settings *Py_gpiod_LineSettingsGetData(PyObject *obj)
-+{
-+	line_settings_object *settings;
-+	PyObject *type;
-+
-+	type = PyObject_Type(obj);
-+	if (!type)
-+		return NULL;
-+
-+	if ((PyTypeObject *)type != &line_settings_type) {
-+		PyErr_SetString(PyExc_TypeError,
-+				"not a gpiod._ext.LineSettings object");
-+		Py_DECREF(type);
-+		return NULL;
-+	}
-+	Py_DECREF(type);
-+
-+	settings = (line_settings_object *)obj;
-+
-+	return settings->settings;
-+}
-diff --git a/bindings/python/gpiod/ext/module.c b/bindings/python/gpiod/ext/module.c
-new file mode 100644
-index 0000000..8725ef2
---- /dev/null
-+++ b/bindings/python/gpiod/ext/module.c
-@@ -0,0 +1,193 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+#include <gpiod.h>
-+#include <Python.h>
-+
-+struct module_const {
-+	const char *name;
-+	long val;
-+};
-+
-+static const struct module_const module_constants[] = {
-+	{
-+		.name = "VALUE_INACTIVE",
-+		.val = GPIOD_LINE_VALUE_INACTIVE,
-+	},
-+	{
-+		.name = "VALUE_ACTIVE",
-+		.val = GPIOD_LINE_VALUE_ACTIVE,
-+	},
-+	{
-+		.name = "DIRECTION_AS_IS",
-+		.val = GPIOD_LINE_DIRECTION_AS_IS,
-+	},
-+	{
-+		.name = "DIRECTION_INPUT",
-+		.val = GPIOD_LINE_DIRECTION_INPUT,
-+	},
-+	{
-+		.name = "DIRECTION_OUTPUT",
-+		.val = GPIOD_LINE_DIRECTION_OUTPUT,
-+	},
-+	{
-+		.name = "BIAS_AS_IS",
-+		.val = GPIOD_LINE_BIAS_AS_IS,
-+	},
-+	{
-+		.name = "BIAS_UNKNOWN",
-+		.val = GPIOD_LINE_BIAS_UNKNOWN,
-+	},
-+	{
-+		.name = "BIAS_DISABLED",
-+		.val = GPIOD_LINE_BIAS_DISABLED,
-+	},
-+	{
-+		.name = "BIAS_PULL_UP",
-+		.val = GPIOD_LINE_BIAS_PULL_UP,
-+	},
-+	{
-+		.name = "BIAS_PULL_DOWN",
-+		.val = GPIOD_LINE_BIAS_PULL_DOWN,
-+	},
-+	{
-+		.name = "DRIVE_PUSH_PULL",
-+		.val = GPIOD_LINE_DRIVE_PUSH_PULL,
-+	},
-+	{
-+		.name = "DRIVE_OPEN_DRAIN",
-+		.val = GPIOD_LINE_DRIVE_OPEN_DRAIN,
-+	},
-+	{
-+		.name = "DRIVE_OPEN_SOURCE",
-+		.val = GPIOD_LINE_DRIVE_OPEN_SOURCE,
-+	},
-+	{
-+		.name = "EDGE_NONE",
-+		.val = GPIOD_LINE_EDGE_NONE,
-+	},
-+	{
-+		.name = "EDGE_FALLING",
-+		.val = GPIOD_LINE_EDGE_FALLING,
-+	},
-+	{
-+		.name = "EDGE_RISING",
-+		.val = GPIOD_LINE_EDGE_RISING,
-+	},
-+	{
-+		.name = "EDGE_BOTH",
-+		.val = GPIOD_LINE_EDGE_BOTH,
-+	},
-+	{
-+		.name = "CLOCK_MONOTONIC",
-+		.val = GPIOD_LINE_EVENT_CLOCK_MONOTONIC,
-+	},
-+	{
-+		.name = "CLOCK_REALTIME",
-+		.val = GPIOD_LINE_EVENT_CLOCK_REALTIME,
-+	},
-+	{
-+		.name = "CLOCK_HTE",
-+		.val = GPIOD_LINE_EVENT_CLOCK_HTE,
-+	},
-+	{
-+		.name = "EDGE_EVENT_TYPE_RISING",
-+		.val = GPIOD_EDGE_EVENT_RISING_EDGE,
-+	},
-+	{
-+		.name = "EDGE_EVENT_TYPE_FALLING",
-+		.val = GPIOD_EDGE_EVENT_FALLING_EDGE,
-+	},
-+	{
-+		.name = "INFO_EVENT_TYPE_LINE_REQUESTED",
-+		.val = GPIOD_INFO_EVENT_LINE_REQUESTED,
-+	},
-+	{
-+		.name = "INFO_EVENT_TYPE_LINE_RELEASED",
-+		.val = GPIOD_INFO_EVENT_LINE_RELEASED,
-+	},
-+	{
-+		.name = "INFO_EVENT_TYPE_LINE_CONFIG_CHANGED",
-+		.val = GPIOD_INFO_EVENT_LINE_CONFIG_CHANGED,
-+	},
-+	{ }
-+};
-+
-+static PyObject *
-+module_is_gpiochip_device(PyObject *Py_UNUSED(self), PyObject *args)
-+{
-+	const char *path;
-+	int ret;
-+
-+	ret =  PyArg_ParseTuple(args, "s", &path);
-+	if (!ret)
-+		return NULL;
-+
-+	return PyBool_FromLong(gpiod_is_gpiochip_device(path));
-+}
-+
-+static PyMethodDef module_methods[] = {
-+	{
-+		.ml_name = "is_gpiochip_device",
-+		.ml_meth = (PyCFunction)module_is_gpiochip_device,
-+		.ml_flags = METH_VARARGS,
-+	},
-+	{ }
-+};
-+
-+static PyModuleDef module_def = {
-+	PyModuleDef_HEAD_INIT,
-+	.m_name = "gpiod._ext",
-+	.m_methods = module_methods,
-+};
-+
-+extern PyTypeObject chip_type;
-+extern PyTypeObject line_config_type;
-+extern PyTypeObject line_settings_type;
-+extern PyTypeObject request_type;
-+
-+static PyTypeObject *types[] = {
-+	&chip_type,
-+	&line_config_type,
-+	&line_settings_type,
-+	&request_type,
-+	NULL,
-+};
-+
-+PyMODINIT_FUNC PyInit__ext(void)
-+{
-+	const struct module_const *modconst;
-+	PyTypeObject **type;
-+	PyObject *module;
-+	int ret;
-+
-+	module = PyModule_Create(&module_def);
-+	if (!module)
-+		return NULL;
-+
-+	ret = PyModule_AddStringConstant(module, "__version__",
-+					 gpiod_version_string());
-+	if (ret) {
-+		Py_DECREF(module);
-+		return NULL;
-+	}
-+
-+	for (type = types; *type; type++) {
-+		ret = PyModule_AddType(module, *type);
-+		if (ret) {
-+			Py_DECREF(module);
-+			return NULL;
-+		}
-+	}
-+
-+	for (modconst = module_constants; modconst->name; modconst++) {
-+		ret = PyModule_AddIntConstant(module,
-+					      modconst->name, modconst->val);
-+		if (ret) {
-+			Py_DECREF(module);
-+			return NULL;
-+		}
-+	}
-+
-+	return module;
-+}
-diff --git a/bindings/python/gpiod/ext/request.c b/bindings/python/gpiod/ext/request.c
-new file mode 100644
-index 0000000..36b5b48
---- /dev/null
-+++ b/bindings/python/gpiod/ext/request.c
-@@ -0,0 +1,402 @@
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+// SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+#include "internal.h"
-+
-+typedef struct {
-+	PyObject_HEAD;
-+	struct gpiod_line_request *request;
-+	unsigned int *offsets;
-+	int *values;
-+	size_t num_lines;
-+} request_object;
-+
-+static int request_init(PyObject *Py_UNUSED(ignored0),
-+			PyObject *Py_UNUSED(ignored1),
-+			PyObject *Py_UNUSED(ignored2))
-+{
-+	PyErr_SetString(PyExc_NotImplementedError,
-+			"_ext.LineRequest cannot be instantiated");
-+
-+	return -1;
-+}
-+
-+static void request_finalize(request_object *self)
-+{
-+	if (self->request)
-+		PyObject_CallMethod((PyObject *)self, "release", "");
-+
-+	if (self->offsets)
-+		PyMem_Free(self->offsets);
-+
-+	if (self->values)
-+		PyMem_Free(self->values);
-+}
-+
-+static PyObject *
-+request_num_lines(request_object *self, void *Py_UNUSED(ignored))
-+{
-+	return PyLong_FromUnsignedLong(
-+			gpiod_line_request_get_num_lines(self->request));
-+}
-+
-+static PyObject *request_offsets(request_object *self, void *Py_UNUSED(ignored))
-+{
-+	PyObject *lines, *line;
-+	unsigned int *offsets;
-+	size_t num_lines, i;
-+	int ret;
-+
-+	num_lines = gpiod_line_request_get_num_lines(self->request);
-+
-+	offsets = PyMem_Calloc(num_lines, sizeof(unsigned int));
-+	if (!offsets)
-+		return PyErr_NoMemory();
-+
-+	gpiod_line_request_get_offsets(self->request, offsets);
-+
-+	lines = PyList_New(num_lines);
-+	if (!lines) {
-+		PyMem_Free(offsets);
-+		return NULL;
-+	}
-+
-+	for (i = 0; i < num_lines; i++) {
-+		line = PyLong_FromUnsignedLong(offsets[i]);
-+		if (!lines) {
-+			Py_DECREF(lines);
-+			PyMem_Free(offsets);
-+			return NULL;
-+		}
-+
-+		ret = PyList_SetItem(lines, i, line);
-+		if (ret) {
-+			Py_DECREF(line);
-+			Py_DECREF(lines);
-+			PyMem_Free(offsets);
-+			return NULL;
-+		}
-+	}
-+
-+	PyMem_Free(offsets);
-+	return lines;
-+}
-+
-+static PyObject *request_fd(request_object *self, void *Py_UNUSED(ignored))
-+{
-+	return PyLong_FromLong(gpiod_line_request_get_fd(self->request));
-+}
-+
-+static PyGetSetDef request_getset[] = {
-+	{
-+		.name = "num_lines",
-+		.get = (getter)request_num_lines,
-+	},
-+	{
-+		.name = "offsets",
-+		.get = (getter)request_offsets,
-+	},
-+	{
-+		.name = "fd",
-+		.get = (getter)request_fd,
-+	},
-+	{ }
-+};
-+
-+static PyObject *
-+request_release(request_object *self, PyObject *Py_UNUSED(ignored))
-+{
-+	Py_BEGIN_ALLOW_THREADS;
-+	gpiod_line_request_release(self->request);
-+	Py_END_ALLOW_THREADS;
-+	self->request = NULL;
-+
-+	Py_RETURN_NONE;
-+}
-+
-+static void clear_buffers(request_object *self)
-+{
-+	memset(self->offsets, 0, self->num_lines * sizeof(unsigned int));
-+	memset(self->values, 0, self->num_lines * sizeof(int));
-+}
-+
-+static PyObject *request_get_values(request_object *self, PyObject *args)
-+{
-+	PyObject *offsets, *values, *val, *type, *iter, *next;
-+	Py_ssize_t num_offsets;
-+	unsigned int pos;
-+	int ret;
-+
-+	ret = PyArg_ParseTuple(args, "OO", &offsets, &values);
-+	if (!ret)
-+		return NULL;
-+
-+	num_offsets = PyObject_Size(offsets);
-+	if (num_offsets < 0)
-+		return NULL;
-+
-+	type = Py_gpiod_GetGlobalType("Value");
-+	if (!type)
-+		return NULL;
-+
-+	iter = PyObject_GetIter(offsets);
-+	if (!iter)
-+		return NULL;
-+
-+	clear_buffers(self);
-+
-+	for (pos = 0;; pos++) {
-+		next = PyIter_Next(iter);
-+		if (!next) {
-+			Py_DECREF(iter);
-+			break;
-+		}
-+
-+		self->offsets[pos] = Py_gpiod_PyLongAsUnsignedInt(next);
-+		Py_DECREF(next);
-+		if (PyErr_Occurred()) {
-+			Py_DECREF(iter);
-+			return NULL;
-+		}
-+	}
-+
-+	Py_BEGIN_ALLOW_THREADS;
-+	ret = gpiod_line_request_get_values_subset(self->request,
-+						   self->num_lines,
-+						   self->offsets,
-+						   self->values);
-+	Py_END_ALLOW_THREADS;
-+	if (ret)
-+		return Py_gpiod_SetErrFromErrno();
-+
-+	for (pos = 0; pos < num_offsets; pos++) {
-+		val = PyObject_CallFunction(type, "i", self->values[pos]);
-+		if (!val)
-+			return NULL;
-+
-+		ret = PyList_SetItem(values, pos, val);
-+		if (ret) {
-+			Py_DECREF(val);
-+			return NULL;
-+		}
-+	}
-+
-+	Py_RETURN_NONE;
-+}
-+
-+static PyObject *request_set_values(request_object *self, PyObject *args)
-+{
-+	PyObject *values, *key, *val, *val_stripped;
-+	Py_ssize_t pos = 0;
-+	int ret;
-+
-+	ret = PyArg_ParseTuple(args, "O", &values);
-+	if (!ret)
-+		return NULL;
-+
-+	clear_buffers(self);
-+
-+	while (PyDict_Next(values, &pos, &key, &val)) {
-+		self->offsets[pos] = Py_gpiod_PyLongAsUnsignedInt(key);
-+		if (PyErr_Occurred())
-+			return NULL;
-+
-+		val_stripped = PyObject_GetAttrString(val, "value");
-+		if (!val_stripped)
-+			return NULL;
-+
-+		self->values[pos] = PyLong_AsLong(val_stripped);
-+		Py_DECREF(val_stripped);
-+		if (PyErr_Occurred())
-+			return NULL;
-+	}
-+
-+	Py_BEGIN_ALLOW_THREADS;
-+	ret = gpiod_line_request_set_values_subset(self->request,
-+						   self->num_lines,
-+						   self->offsets,
-+						   self->values);
-+	Py_END_ALLOW_THREADS;
-+	if (ret)
-+		return Py_gpiod_SetErrFromErrno();
-+
-+	Py_RETURN_NONE;
-+}
-+
-+static PyObject *request_reconfigure_lines(request_object *self, PyObject *args)
-+{
-+	struct gpiod_line_config *line_cfg;
-+	PyObject *line_cfg_obj;
-+	int ret;
-+
-+	ret = PyArg_ParseTuple(args, "O", &line_cfg_obj);
-+	if (!ret)
-+		return NULL;
-+
-+	line_cfg = Py_gpiod_LineConfigGetData(line_cfg_obj);
-+	if (!line_cfg)
-+		return NULL;
-+
-+	Py_BEGIN_ALLOW_THREADS;
-+	ret = gpiod_line_request_reconfigure_lines(self->request, line_cfg);
-+	Py_END_ALLOW_THREADS;
-+	if (ret)
-+		return Py_gpiod_SetErrFromErrno();
-+
-+	Py_RETURN_NONE;
-+}
-+
-+static PyObject *request_read_edge_event(request_object *self, PyObject *args)
-+{
-+	PyObject *max_events_obj, *event_obj, *events, *type;
-+	struct gpiod_edge_event_buffer *buffer;
-+	size_t max_events, num_events, i;
-+	struct gpiod_edge_event *event;
-+	int ret;
-+
-+	ret = PyArg_ParseTuple(args, "O", &max_events_obj);
-+	if (!ret)
-+		return NULL;
-+
-+	if (max_events_obj != Py_None) {
-+		max_events = PyLong_AsSize_t(max_events_obj);
-+		if (PyErr_Occurred())
-+			return NULL;
-+	} else {
-+		max_events = 64;
-+	}
-+
-+	type = Py_gpiod_GetGlobalType("EdgeEvent");
-+	if (!type)
-+		return NULL;
-+
-+	buffer = gpiod_edge_event_buffer_new(max_events);
-+	if (!buffer)
-+		return Py_gpiod_SetErrFromErrno();
-+
-+	Py_BEGIN_ALLOW_THREADS;
-+	ret = gpiod_line_request_read_edge_event(self->request,
-+						 buffer, max_events);
-+	Py_END_ALLOW_THREADS;
-+	if (ret < 0) {
-+		gpiod_edge_event_buffer_free(buffer);
-+		return NULL;
-+	}
-+
-+	num_events = ret;
-+
-+	events = PyList_New(num_events);
-+	if (!events) {
-+		gpiod_edge_event_buffer_free(buffer);
-+		return NULL;
-+	}
-+
-+	for (i = 0; i < num_events; i++) {
-+		event = gpiod_edge_event_buffer_get_event(buffer, i);
-+		if (!event) {
-+			gpiod_edge_event_buffer_free(buffer);
-+			Py_DECREF(events);
-+			return NULL;
-+		}
-+
-+		event_obj = PyObject_CallFunction(type, "iKiii",
-+				gpiod_edge_event_get_event_type(event),
-+				gpiod_edge_event_get_timestamp_ns(event),
-+				gpiod_edge_event_get_line_offset(event),
-+				gpiod_edge_event_get_global_seqno(event),
-+				gpiod_edge_event_get_line_seqno(event));
-+		if (!event_obj) {
-+			gpiod_edge_event_buffer_free(buffer);
-+			Py_DECREF(events);
-+			return NULL;
-+		}
-+
-+		ret = PyList_SetItem(events, i, event_obj);
-+		if (ret) {
-+			gpiod_edge_event_buffer_free(buffer);
-+			Py_DECREF(event_obj);
-+			Py_DECREF(events);
-+			return NULL;
-+		}
-+	}
-+
-+	gpiod_edge_event_buffer_free(buffer);
-+
-+	return events;
-+}
-+
-+static PyMethodDef request_methods[] = {
-+	{
-+		.ml_name = "release",
-+		.ml_meth = (PyCFunction)request_release,
-+		.ml_flags = METH_NOARGS,
-+	},
-+	{
-+		.ml_name = "get_values",
-+		.ml_meth = (PyCFunction)request_get_values,
-+		.ml_flags = METH_VARARGS,
-+	},
-+	{
-+		.ml_name = "set_values",
-+		.ml_meth = (PyCFunction)request_set_values,
-+		.ml_flags = METH_VARARGS,
-+	},
-+	{
-+		.ml_name = "reconfigure_lines",
-+		.ml_meth = (PyCFunction)request_reconfigure_lines,
-+		.ml_flags = METH_VARARGS,
-+	},
-+	{
-+		.ml_name = "read_edge_event",
-+		.ml_meth = (PyCFunction)request_read_edge_event,
-+		.ml_flags = METH_VARARGS,
-+	},
-+	{ }
-+};
-+
-+PyTypeObject request_type = {
-+	PyVarObject_HEAD_INIT(NULL, 0)
-+	.tp_name = "gpiod._ext.Request",
-+	.tp_basicsize = sizeof(request_object),
-+	.tp_flags = Py_TPFLAGS_DEFAULT,
-+	.tp_new = PyType_GenericNew,
-+	.tp_init = (initproc)request_init,
-+	.tp_finalize = (destructor)request_finalize,
-+	.tp_dealloc = (destructor)Py_gpiod_dealloc,
-+	.tp_getset = request_getset,
-+	.tp_methods = request_methods,
-+};
-+
-+PyObject *Py_gpiod_MakeRequestObject(struct gpiod_line_request *request)
-+{
-+	request_object *req_obj;
-+	unsigned int *offsets;
-+	size_t num_lines;
-+	int *values;
-+
-+	num_lines = gpiod_line_request_get_num_lines(request);
-+
-+	req_obj = PyObject_New(request_object, &request_type);
-+	if (!req_obj)
-+		return NULL;
-+
-+	offsets = PyMem_Calloc(num_lines, sizeof(unsigned int));
-+	if (!offsets) {
-+		Py_DECREF(req_obj);
-+		return NULL;
-+	}
-+
-+	values = PyMem_Calloc(num_lines, sizeof(int));
-+	if (!values) {
-+		PyMem_Free(offsets);
-+		Py_DECREF(req_obj);
-+		return NULL;
-+	}
-+
-+	req_obj->request = request;
-+	req_obj->offsets = offsets;
-+	req_obj->values = values;
-+	req_obj->num_lines = num_lines;
-+
-+	return (PyObject *)req_obj;
-+}
-diff --git a/bindings/python/gpiod/info_event.py b/bindings/python/gpiod/info_event.py
-new file mode 100644
-index 0000000..78b1459
---- /dev/null
-+++ b/bindings/python/gpiod/info_event.py
-@@ -0,0 +1,33 @@
-+# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+from . import _ext
-+from .line_info import LineInfo
-+from dataclasses import dataclass
-+from enum import Enum
-+
-+
-+@dataclass(frozen=True, init=False, repr=False)
-+class InfoEvent:
-+    """
-+    Immutable object containing data about a single line info event.
-+    """
-+
-+    class Type(Enum):
-+        LINE_REQUESTED = _ext.INFO_EVENT_TYPE_LINE_REQUESTED
-+        LINE_RELEASED = _ext.INFO_EVENT_TYPE_LINE_RELEASED
-+        LINE_CONFIG_CHANGED = _ext.INFO_EVENT_TYPE_LINE_CONFIG_CHANGED
-+
-+    event_type: Type
-+    timestamp_ns: int
-+    line_info: LineInfo
-+
-+    def __init__(self, event_type: int, timestamp_ns: int, line_info: LineInfo):
-+        object.__setattr__(self, "event_type", InfoEvent.Type(event_type))
-+        object.__setattr__(self, "timestamp_ns", timestamp_ns)
-+        object.__setattr__(self, "line_info", line_info)
-+
-+    def __str__(self):
-+        return "<InfoEvent type={} timestamp_ns={} line_info={}>".format(
-+            self.event_type, self.timestamp_ns, self.line_info
-+        )
-diff --git a/bindings/python/gpiod/internal.py b/bindings/python/gpiod/internal.py
-new file mode 100644
-index 0000000..37e8b62
---- /dev/null
-+++ b/bindings/python/gpiod/internal.py
-@@ -0,0 +1,19 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+from datetime import timedelta
-+from select import select
-+from typing import Optional, Union
-+
-+
-+def poll_fd(fd: int, timeout: Optional[Union[timedelta, float]] = None) -> bool:
-+    if timeout is None:
-+        timeout = 0.0
-+
-+    if isinstance(timeout, timedelta):
-+        sec = timeout.total_seconds()
-+    else:
-+        sec = timeout
-+
-+    readable, _, _ = select([fd], [], [], sec)
-+    return True if fd in readable else False
-diff --git a/bindings/python/gpiod/line.py b/bindings/python/gpiod/line.py
-new file mode 100644
-index 0000000..c5d5ddf
---- /dev/null
-+++ b/bindings/python/gpiod/line.py
-@@ -0,0 +1,56 @@
-+# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+
-+from . import _ext
-+from enum import Enum
-+
-+
-+class Value(Enum):
-+    """Logical line states."""
-+
-+    INACTIVE = _ext.VALUE_INACTIVE
-+    ACTIVE = _ext.VALUE_ACTIVE
-+
-+
-+class Direction(Enum):
-+    """Direction settings."""
-+
-+    AS_IS = _ext.DIRECTION_AS_IS
-+    INPUT = _ext.DIRECTION_INPUT
-+    OUTPUT = _ext.DIRECTION_OUTPUT
-+
-+
-+class Bias(Enum):
-+    """Internal bias settings."""
-+
-+    AS_IS = _ext.BIAS_AS_IS
-+    UNKNOWN = _ext.BIAS_UNKNOWN
-+    DISABLED = _ext.BIAS_DISABLED
-+    PULL_UP = _ext.BIAS_PULL_UP
-+    PULL_DOWN = _ext.BIAS_PULL_DOWN
-+
-+
-+class Drive(Enum):
-+    """Drive settings."""
-+
-+    PUSH_PULL = _ext.DRIVE_PUSH_PULL
-+    OPEN_DRAIN = _ext.DRIVE_OPEN_DRAIN
-+    OPEN_SOURCE = _ext.DRIVE_OPEN_SOURCE
-+
-+
-+class Edge(Enum):
-+    """Edge detection settings."""
-+
-+    NONE = _ext.EDGE_NONE
-+    RISING = _ext.EDGE_RISING
-+    FALLING = _ext.EDGE_FALLING
-+    BOTH = _ext.EDGE_BOTH
-+
-+
-+class Clock(Enum):
-+    """Event clock settings."""
-+
-+    MONOTONIC = _ext.CLOCK_MONOTONIC
-+    REALTIME = _ext.CLOCK_REALTIME
-+    HTE = _ext.CLOCK_HTE
-diff --git a/bindings/python/gpiod/line_info.py b/bindings/python/gpiod/line_info.py
-new file mode 100644
-index 0000000..9a6c9bf
---- /dev/null
-+++ b/bindings/python/gpiod/line_info.py
-@@ -0,0 +1,73 @@
-+# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+from . import _ext
-+from dataclasses import dataclass
-+from datetime import timedelta
-+from gpiod.line import Direction, Bias, Drive, Edge, Clock
-+
-+
-+@dataclass(frozen=True, init=False, repr=False)
-+class LineInfo:
-+    """
-+    Snapshot of a line's status.
-+    """
-+
-+    offset: int
-+    name: str
-+    used: bool
-+    consumer: str
-+    direction: Direction
-+    active_low: bool
-+    bias: Bias
-+    drive: Drive
-+    edge_detection: Edge
-+    event_clock: Clock
-+    debounced: bool
-+    debounce_period: timedelta
-+
-+    def __init__(
-+        self,
-+        offset: int,
-+        name: str,
-+        used: bool,
-+        consumer: str,
-+        direction: int,
-+        active_low: bool,
-+        bias: int,
-+        drive: int,
-+        edge_detection: int,
-+        event_clock: int,
-+        debounced: bool,
-+        debounce_period_us: int,
-+    ):
-+        object.__setattr__(self, "offset", offset)
-+        object.__setattr__(self, "name", name)
-+        object.__setattr__(self, "used", used)
-+        object.__setattr__(self, "consumer", consumer)
-+        object.__setattr__(self, "direction", Direction(direction))
-+        object.__setattr__(self, "active_low", active_low)
-+        object.__setattr__(self, "bias", Bias(bias))
-+        object.__setattr__(self, "drive", Drive(drive))
-+        object.__setattr__(self, "edge_detection", Edge(edge_detection))
-+        object.__setattr__(self, "event_clock", Clock(event_clock))
-+        object.__setattr__(self, "debounced", debounced)
-+        object.__setattr__(
-+            self, "debounce_period", timedelta(microseconds=debounce_period_us)
-+        )
-+
-+    def __str__(self):
-+        return '<LineInfo offset={} name="{}" used={} consumer="{}" direction={} active_low={} bias={} drive={} edge_detection={} event_clock={} debounced={} debounce_period={}>'.format(
-+            self.offset,
-+            self.name,
-+            self.used,
-+            self.consumer,
-+            self.direction,
-+            self.active_low,
-+            self.bias,
-+            self.drive,
-+            self.edge_detection,
-+            self.event_clock,
-+            self.debounced,
-+            self.debounce_period,
-+        )
-diff --git a/bindings/python/gpiod/line_request.py b/bindings/python/gpiod/line_request.py
-new file mode 100644
-index 0000000..a3ee392
---- /dev/null
-+++ b/bindings/python/gpiod/line_request.py
-@@ -0,0 +1,258 @@
-+# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+from . import _ext
-+from .edge_event import EdgeEvent
-+from .exception import RequestReleasedError
-+from .internal import poll_fd
-+from .line import Value
-+from .line_settings import LineSettings, _line_settings_to_ext_line_settings
-+from collections.abc import Iterable
-+from datetime import timedelta
-+from typing import Optional, Union
-+
-+
-+class LineRequest:
-+    """
-+    Stores the context of a set of requested GPIO lines.
-+    """
-+
-+    def __init__(self, req: _ext.Request):
-+        """
-+        DON'T USE
-+
-+        LineRequest objects can only be instantiated by a Chip parent. This is
-+        not part of stable API.
-+        """
-+        self._req = req
-+
-+    def __bool__(self) -> bool:
-+        """
-+        Boolean conversion for GPIO line requests.
-+
-+        Returns:
-+          True if the request is live and False if it's been released.
-+        """
-+        return True if self._req else False
-+
-+    def __enter__(self):
-+        """
-+        Controlled execution enter callback.
-+        """
-+        self._check_released()
-+        return self
-+
-+    def __exit__(self, exc_type, exc_value, traceback):
-+        """
-+        Controlled execution exit callback.
-+        """
-+        self.release()
-+
-+    def _check_released(self) -> None:
-+        if not self._req:
-+            raise RequestReleasedError()
-+
-+    def release(self) -> None:
-+        """
-+        Release this request and free all associated resources. The object must
-+        not be used after a call to this method.
-+        """
-+        self._check_released()
-+        self._req.release()
-+        self._req = None
-+
-+    def get_value(self, line: Union[int, str]) -> Value:
-+        """
-+        Get a single GPIO line value.
-+
-+        Args:
-+          line:
-+            Offset or name of the line to get value for.
-+
-+        Returns:
-+          Logical value of the line.
-+        """
-+        return self.get_values([line])[0]
-+
-+    def get_values(
-+        self, lines: Optional[Iterable[Union[int, str]]] = None
-+    ) -> list[Value]:
-+        """
-+        Get values of a set of GPIO lines.
-+
-+        Args:
-+          lines:
-+            List of names or offsets of GPIO lines to get values for. Can be
-+            None in which case all requested lines will be read.
-+
-+        Returns:
-+          List of logical line values.
-+        """
-+        self._check_released()
-+
-+        if lines is None:
-+            lines = self._lines
-+
-+        offsets = [None] * len(lines)
-+
-+        for i, line in enumerate(lines):
-+            if isinstance(line, str):
-+                if line not in self._name_map:
-+                    raise ValueError("unknown line name: {}".format(line))
-+
-+                offsets[i] = self._name_map[line]
-+            else:
-+                offsets[i] = line
-+
-+        buf = [None] * len(lines)
-+
-+        self._req.get_values(offsets, buf)
-+        return buf
-+
-+    def set_value(self, line: Union[int, str], value: Value) -> None:
-+        """
-+        Set the value of a single GPIO line.
-+
-+        Args:
-+          line:
-+            Offset or name of the line to set.
-+          value:
-+            New value.
-+        """
-+        self.set_values({line: value})
-+
-+    def set_values(self, values: dict[Union[int, str], Value]) -> None:
-+        """
-+        Set the values of a subset of GPIO lines.
-+
-+        Args:
-+          values:
-+            Dictionary mapping line offsets or names to desired values.
-+        """
-+        self._check_released()
-+
-+        mapped = dict()
-+        for i, line in enumerate(values):
-+            if isinstance(line, str):
-+                if line not in self._name_map:
-+                    raise ValueError("unknown line name: {}".format(line))
-+
-+                mapped[self._name_map[line]] = values[line]
-+            else:
-+                mapped[line] = values[line]
-+
-+        self._req.set_values(mapped)
-+
-+    def reconfigure_lines(
-+        self, config: dict[tuple[Union[int, str]], LineSettings]
-+    ) -> None:
-+        """
-+        Reconfigure requested lines.
-+
-+        Args:
-+          config
-+            Dictionary mapping offsets or names (or tuples thereof) to
-+            LineSettings. If None is passed as the value of the mapping,
-+            default settings are used.
-+        """
-+        self._check_released()
-+
-+        line_cfg = _ext.LineConfig()
-+
-+        for lines, settings in config.items():
-+            if isinstance(lines, int) or isinstance(lines, str):
-+                lines = [lines]
-+
-+            offsets = [None] * len(lines)
-+
-+            for i, line in enumerate(lines):
-+                if isinstance(line, str):
-+                    if line not in self._name_map:
-+                        raise ValueError("unknown line name: {}".format(line))
-+
-+                    offsets[i] = self._name_map[line]
-+                else:
-+                    offsets[i] = line
-+
-+            line_cfg.add_line_settings(
-+                offsets, _line_settings_to_ext_line_settings(settings)
-+            )
-+
-+        self._req.reconfigure_lines(line_cfg)
-+
-+    def wait_edge_event(
-+        self, timeout: Optional[Union[timedelta, float]] = None
-+    ) -> bool:
-+        """
-+        Wait for edge events on any of the requested lines.
-+
-+        Args:
-+          timeout:
-+            Wait time limit expressed as either a datetime.timedelta object
-+            or the number of seconds stored in a float.
-+
-+        Returns:
-+          True if events are ready to be read. False on timeout.
-+        """
-+        self._check_released()
-+
-+        return poll_fd(self.fd, timeout)
-+
-+    def read_edge_event(self, max_events: Optional[int] = None) -> list[EdgeEvent]:
-+        """
-+        Read a number of edge events from a line request.
-+
-+        Args:
-+          max_events:
-+            Maximum number of events to read.
-+
-+        Returns:
-+          List of read EdgeEvent objects.
-+        """
-+        self._check_released()
-+
-+        return self._req.read_edge_event(max_events)
-+
-+    def __str__(self):
-+        """
-+        Return a user-friendly, human-readable description of this request.
-+        """
-+        if not self._req:
-+            return "<LineRequest RELEASED>"
-+
-+        return "<LineRequest num_lines={} offsets={} fd={}>".format(
-+            self.num_lines, self.offsets, self.fd
-+        )
-+
-+    @property
-+    def num_lines(self) -> int:
-+        """
-+        Number of requested lines.
-+        """
-+        self._check_released()
-+        return len(self._offsets)
-+
-+    @property
-+    def offsets(self) -> list[int]:
-+        """
-+        List of requested offsets. Lines requested by name are mapped to their
-+        offsets.
-+        """
-+        self._check_released()
-+        return self._offsets
-+
-+    @property
-+    def lines(self) -> list[Union[int, str]]:
-+        """
-+        List of requested lines. Lines requested by name are listed as such.
-+        """
-+        self._check_released()
-+        return self._lines
-+
-+    @property
-+    def fd(self) -> int:
-+        """
-+        File descriptor associated with this request.
-+        """
-+        self._check_released()
-+        return self._req.fd
-diff --git a/bindings/python/gpiod/line_settings.py b/bindings/python/gpiod/line_settings.py
-new file mode 100644
-index 0000000..1315b0c
---- /dev/null
-+++ b/bindings/python/gpiod/line_settings.py
-@@ -0,0 +1,62 @@
-+# SPDX-License-Identifier: LGPL-2.1-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+from . import _ext
-+from dataclasses import dataclass
-+from datetime import timedelta
-+from gpiod.line import Direction, Bias, Drive, Edge, Clock, Value
-+
-+
-+@dataclass(repr=False)
-+class LineSettings:
-+    """
-+    Stores a set of line properties.
-+    """
-+
-+    direction: Direction = Direction.AS_IS
-+    edge_detection: Edge = Edge.NONE
-+    bias: Bias = Bias.AS_IS
-+    drive: Drive = Drive.PUSH_PULL
-+    active_low: bool = False
-+    debounce_period: timedelta = timedelta()
-+    event_clock: Clock = Clock.MONOTONIC
-+    output_value: Value = Value.INACTIVE
-+
-+    # __repr__ generated by @dataclass uses repr for enum members resulting in
-+    # an unusable representation as those are of the form: <NAME: $value>
-+    def __repr__(self):
-+        return "LineSettings(direction={}, edge_detection={} bias={} drive={} active_low={} debounce_period={} event_clock={} output_value={})".format(
-+            str(self.direction),
-+            str(self.edge_detection),
-+            str(self.bias),
-+            str(self.drive),
-+            self.active_low,
-+            repr(self.debounce_period),
-+            str(self.event_clock),
-+            str(self.output_value),
-+        )
-+
-+    def __str__(self):
-+        return "<LineSettings direction={} edge_detection={} bias={} drive={} active_low={} debounce_period={} event_clock={} output_value={}>".format(
-+            self.direction,
-+            self.edge_detection,
-+            self.bias,
-+            self.drive,
-+            self.active_low,
-+            self.debounce_period,
-+            self.event_clock,
-+            self.output_value,
-+        )
-+
-+
-+def _line_settings_to_ext_line_settings(settings: LineSettings) -> _ext.LineSettings:
-+    return _ext.LineSettings(
-+        direction=settings.direction.value,
-+        edge_detection=settings.edge_detection.value,
-+        bias=settings.bias.value,
-+        drive=settings.drive.value,
-+        active_low=settings.active_low,
-+        debounce_period=int(settings.debounce_period.total_seconds() * 1000000),
-+        event_clock=settings.event_clock.value,
-+        output_value=settings.output_value.value,
-+    )
-diff --git a/bindings/python/setup.py b/bindings/python/setup.py
-new file mode 100644
-index 0000000..ec8f99d
---- /dev/null
-+++ b/bindings/python/setup.py
-@@ -0,0 +1,47 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
-+
-+from os import environ
-+from setuptools import setup, Extension, find_packages
-+
-+gpiod_ext = Extension(
-+    "gpiod._ext",
-+    sources=[
-+        "gpiod/ext/chip.c",
-+        "gpiod/ext/common.c",
-+        "gpiod/ext/line-config.c",
-+        "gpiod/ext/line-settings.c",
-+        "gpiod/ext/module.c",
-+        "gpiod/ext/request.c",
-+    ],
-+    define_macros=[("_GNU_SOURCE", "1")],
-+    libraries=["gpiod"],
-+    extra_compile_args=["-Wall", "-Wextra"],
-+)
-+
-+gpiosim_ext = Extension(
-+    "tests.gpiosim._ext",
-+    sources=["tests/gpiosim/ext.c"],
-+    define_macros=[("_GNU_SOURCE", "1")],
-+    libraries=["gpiosim"],
-+    extra_compile_args=["-Wall", "-Wextra"],
-+)
-+
-+extensions = [gpiod_ext]
-+with_tests = bool(environ["GPIOD_WITH_TESTS"])
-+if with_tests:
-+    extensions.append(gpiosim_ext)
-+
-+# FIXME Find a better way to get the version
-+version = None
-+try:
-+    version = environ["GPIOD_VERSION_STR"]
-+except KeyError:
-+    pass
-+
-+setup(
-+    name="gpiod",
-+    packages=find_packages(include=["gpiod"]),
-+    ext_modules=extensions,
-+    version=version,
-+)
-diff --git a/configure.ac b/configure.ac
-index 6ac1d8e..048b2ac 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -244,8 +244,11 @@ AC_CONFIG_FILES([Makefile
- 		 bindings/cxx/examples/Makefile
- 		 bindings/cxx/tests/Makefile
- 		 bindings/python/Makefile
-+		 bindings/python/gpiod/Makefile
-+		 bindings/python/gpiod/ext/Makefile
- 		 bindings/python/examples/Makefile
- 		 bindings/python/tests/Makefile
-+		 bindings/python/tests/gpiosim/Makefile
- 		 man/Makefile])
- 
- AC_OUTPUT
+deleted file mode 100644
+index 4405d8f..0000000
+--- a/bindings/python/Makefile.am
++++ /dev/null
+@@ -1,25 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0-or-later
+-# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
+-
+-pyexec_LTLIBRARIES = gpiod.la
+-
+-gpiod_la_SOURCES = gpiodmodule.c
+-
+-gpiod_la_CFLAGS = -I$(top_srcdir)/include/
+-gpiod_la_CFLAGS += -Wall -Wextra -g -std=gnu89 $(PYTHON_CPPFLAGS)
+-gpiod_la_LDFLAGS = -module -avoid-version
+-gpiod_la_LIBADD = $(top_builddir)/lib/libgpiod.la $(PYTHON_LIBS)
+-
+-SUBDIRS = .
+-
+-if WITH_TESTS
+-
+-SUBDIRS += tests
+-
+-endif
+-
+-if WITH_EXAMPLES
+-
+-SUBDIRS += examples
+-
+-endif
+diff --git a/bindings/python/examples/Makefile.am b/bindings/python/examples/Makefile.am
+deleted file mode 100644
+index 4169469..0000000
+--- a/bindings/python/examples/Makefile.am
++++ /dev/null
+@@ -1,10 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0-or-later
+-# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
+-
+-EXTRA_DIST =				\
+-		gpiodetect.py		\
+-		gpiofind.py		\
+-		gpioget.py		\
+-		gpioinfo.py		\
+-		gpiomon.py		\
+-		gpioset.py
+diff --git a/bindings/python/examples/gpiodetect.py b/bindings/python/examples/gpiodetect.py
+deleted file mode 100755
+index da6ee9a..0000000
+--- a/bindings/python/examples/gpiodetect.py
++++ /dev/null
+@@ -1,16 +0,0 @@
+-#!/usr/bin/env python3
+-# SPDX-License-Identifier: GPL-2.0-or-later
+-# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
+-
+-'''Reimplementation of the gpiodetect tool in Python.'''
+-
+-import gpiod
+-import os
+-
+-if __name__ == '__main__':
+-    for entry in os.scandir('/dev/'):
+-        if gpiod.is_gpiochip_device(entry.path):
+-            with gpiod.Chip(entry.path) as chip:
+-                print('{} [{}] ({} lines)'.format(chip.name(),
+-                                                  chip.label(),
+-                                                  chip.num_lines()))
+diff --git a/bindings/python/examples/gpiofind.py b/bindings/python/examples/gpiofind.py
+deleted file mode 100755
+index a9ec734..0000000
+--- a/bindings/python/examples/gpiofind.py
++++ /dev/null
+@@ -1,20 +0,0 @@
+-#!/usr/bin/env python3
+-# SPDX-License-Identifier: GPL-2.0-or-later
+-# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
+-
+-'''Reimplementation of the gpiofind tool in Python.'''
+-
+-import gpiod
+-import os
+-import sys
+-
+-if __name__ == '__main__':
+-    for entry in os.scandir('/dev/'):
+-        if gpiod.is_gpiochip_device(entry.path):
+-            with gpiod.Chip(entry.path) as chip:
+-                offset = chip.find_line(sys.argv[1], unique=True)
+-                if offset is not None:
+-                     print('{} {}'.format(line.owner().name(), offset))
+-                     sys.exit(0)
+-
+-    sys.exit(1)
+diff --git a/bindings/python/examples/gpioget.py b/bindings/python/examples/gpioget.py
+deleted file mode 100755
+index 26a2ced..0000000
+--- a/bindings/python/examples/gpioget.py
++++ /dev/null
+@@ -1,25 +0,0 @@
+-#!/usr/bin/env python3
+-# SPDX-License-Identifier: GPL-2.0-or-later
+-# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
+-
+-'''Simplified reimplementation of the gpioget tool in Python.'''
+-
+-import gpiod
+-import sys
+-
+-if __name__ == '__main__':
+-    if len(sys.argv) < 3:
+-        raise TypeError('usage: gpioget.py <gpiochip> <offset1> <offset2> ...')
+-
+-    with gpiod.Chip(sys.argv[1]) as chip:
+-        offsets = []
+-        for off in sys.argv[2:]:
+-            offsets.append(int(off))
+-
+-        lines = chip.get_lines(offsets)
+-        lines.request(consumer=sys.argv[0], type=gpiod.LINE_REQ_DIR_IN)
+-        vals = lines.get_values()
+-
+-        for val in vals:
+-            print(val, end=' ')
+-        print()
+diff --git a/bindings/python/examples/gpioinfo.py b/bindings/python/examples/gpioinfo.py
+deleted file mode 100755
+index 84188f1..0000000
+--- a/bindings/python/examples/gpioinfo.py
++++ /dev/null
+@@ -1,28 +0,0 @@
+-#!/usr/bin/env python3
+-# SPDX-License-Identifier: GPL-2.0-or-later
+-# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
+-
+-'''Simplified reimplementation of the gpioinfo tool in Python.'''
+-
+-import gpiod
+-import os
+-
+-if __name__ == '__main__':
+-    for entry in os.scandir('/dev/'):
+-        if gpiod.is_gpiochip_device(entry.path):
+-            with gpiod.Chip(entry.path) as chip:
+-                print('{} - {} lines:'.format(chip.name(), chip.num_lines()))
+-
+-                for line in gpiod.LineIter(chip):
+-                    offset = line.offset()
+-                    name = line.name()
+-                    consumer = line.consumer()
+-                    direction = line.direction()
+-                    active_low = line.is_active_low()
+-
+-                    print('\tline {:>3}: {:>18} {:>12} {:>8} {:>10}'.format(
+-                          offset,
+-                          'unnamed' if name is None else name,
+-                          'unused' if consumer is None else consumer,
+-                          'input' if direction == gpiod.Line.DIRECTION_INPUT else 'output',
+-                          'active-low' if active_low else 'active-high'))
+diff --git a/bindings/python/examples/gpiomon.py b/bindings/python/examples/gpiomon.py
+deleted file mode 100755
+index b29f3ce..0000000
+--- a/bindings/python/examples/gpiomon.py
++++ /dev/null
+@@ -1,42 +0,0 @@
+-#!/usr/bin/env python3
+-# SPDX-License-Identifier: GPL-2.0-or-later
+-# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
+-
+-'''Simplified reimplementation of the gpiomon tool in Python.'''
+-
+-import gpiod
+-import sys
+-
+-if __name__ == '__main__':
+-    def print_event(event):
+-        if event.type == gpiod.LineEvent.RISING_EDGE:
+-            evstr = ' RISING EDGE'
+-        elif event.type == gpiod.LineEvent.FALLING_EDGE:
+-            evstr = 'FALLING EDGE'
+-        else:
+-            raise TypeError('Invalid event type')
+-
+-        print('event: {} offset: {} timestamp: [{}.{}]'.format(evstr,
+-                                                               event.source.offset(),
+-                                                               event.sec, event.nsec))
+-
+-    if len(sys.argv) < 3:
+-        raise TypeError('usage: gpiomon.py <gpiochip> <offset1> <offset2> ...')
+-
+-    with gpiod.Chip(sys.argv[1]) as chip:
+-        offsets = []
+-        for off in sys.argv[2:]:
+-            offsets.append(int(off))
+-
+-        lines = chip.get_lines(offsets)
+-        lines.request(consumer=sys.argv[0], type=gpiod.LINE_REQ_EV_BOTH_EDGES)
+-
+-        try:
+-            while True:
+-                ev_lines = lines.event_wait(sec=1)
+-                if ev_lines:
+-                    for line in ev_lines:
+-                        event = line.event_read()
+-                        print_event(event)
+-        except KeyboardInterrupt:
+-            sys.exit(130)
+diff --git a/bindings/python/examples/gpioset.py b/bindings/python/examples/gpioset.py
+deleted file mode 100755
+index 63e08dc..0000000
+--- a/bindings/python/examples/gpioset.py
++++ /dev/null
+@@ -1,25 +0,0 @@
+-#!/usr/bin/env python3
+-# SPDX-License-Identifier: GPL-2.0-or-later
+-# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
+-
+-'''Simplified reimplementation of the gpioset tool in Python.'''
+-
+-import gpiod
+-import sys
+-
+-if __name__ == '__main__':
+-    if len(sys.argv) < 3:
+-        raise TypeError('usage: gpioset.py <gpiochip> <offset1>=<value1> ...')
+-
+-    with gpiod.Chip(sys.argv[1]) as chip:
+-        offsets = []
+-        values = []
+-        for arg in sys.argv[2:]:
+-            arg = arg.split('=')
+-            offsets.append(int(arg[0]))
+-            values.append(int(arg[1]))
+-
+-        lines = chip.get_lines(offsets)
+-        lines.request(consumer=sys.argv[0], type=gpiod.LINE_REQ_DIR_OUT)
+-        lines.set_values(values)
+-        input()
+diff --git a/bindings/python/gpiodmodule.c b/bindings/python/gpiodmodule.c
+deleted file mode 100644
+index ed039e4..0000000
+--- a/bindings/python/gpiodmodule.c
++++ /dev/null
+@@ -1,2662 +0,0 @@
+-// SPDX-License-Identifier: LGPL-2.1-or-later
+-// SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
+-
+-#include <Python.h>
+-#include <gpiod.h>
+-
+-#define LINE_REQUEST_MAX_LINES 64
+-
+-typedef struct {
+-	PyObject_HEAD;
+-	struct gpiod_chip *chip;
+-} gpiod_ChipObject;
+-
+-typedef struct {
+-	PyObject_HEAD;
+-	struct gpiod_line *line;
+-	gpiod_ChipObject *owner;
+-} gpiod_LineObject;
+-
+-typedef struct {
+-	PyObject_HEAD;
+-	struct gpiod_line_event event;
+-	gpiod_LineObject *source;
+-} gpiod_LineEventObject;
+-
+-typedef struct {
+-	PyObject_HEAD;
+-	PyObject **lines;
+-	Py_ssize_t num_lines;
+-	Py_ssize_t iter_idx;
+-} gpiod_LineBulkObject;
+-
+-typedef struct {
+-	PyObject_HEAD;
+-	unsigned int offset;
+-	gpiod_ChipObject *owner;
+-} gpiod_LineIterObject;
+-
+-static gpiod_LineBulkObject *gpiod_LineToLineBulk(gpiod_LineObject *line);
+-static gpiod_LineObject *gpiod_MakeLineObject(gpiod_ChipObject *owner,
+-					      struct gpiod_line *line);
+-
+-enum {
+-	gpiod_LINE_REQ_DIR_AS_IS = 1,
+-	gpiod_LINE_REQ_DIR_IN,
+-	gpiod_LINE_REQ_DIR_OUT,
+-	gpiod_LINE_REQ_EV_FALLING_EDGE,
+-	gpiod_LINE_REQ_EV_RISING_EDGE,
+-	gpiod_LINE_REQ_EV_BOTH_EDGES,
+-};
+-
+-enum {
+-	gpiod_LINE_REQ_FLAG_OPEN_DRAIN		= GPIOD_BIT(0),
+-	gpiod_LINE_REQ_FLAG_OPEN_SOURCE		= GPIOD_BIT(1),
+-	gpiod_LINE_REQ_FLAG_ACTIVE_LOW		= GPIOD_BIT(2),
+-	gpiod_LINE_REQ_FLAG_BIAS_DISABLED	= GPIOD_BIT(3),
+-	gpiod_LINE_REQ_FLAG_BIAS_PULL_DOWN	= GPIOD_BIT(4),
+-	gpiod_LINE_REQ_FLAG_BIAS_PULL_UP	= GPIOD_BIT(5),
+-};
+-
+-enum {
+-	gpiod_DIRECTION_INPUT = 1,
+-	gpiod_DIRECTION_OUTPUT,
+-};
+-
+-enum {
+-	gpiod_DRIVE_PUSH_PULL,
+-	gpiod_DRIVE_OPEN_DRAIN,
+-	gpiod_DRIVE_OPEN_SOURCE,
+-};
+-
+-enum {
+-	gpiod_BIAS_UNKNOWN = 1,
+-	gpiod_BIAS_DISABLED,
+-	gpiod_BIAS_PULL_UP,
+-	gpiod_BIAS_PULL_DOWN,
+-};
+-
+-enum {
+-	gpiod_RISING_EDGE = 1,
+-	gpiod_FALLING_EDGE,
+-};
+-
+-static bool gpiod_ChipIsClosed(gpiod_ChipObject *chip)
+-{
+-	if (!chip->chip) {
+-		PyErr_SetString(PyExc_ValueError,
+-				"I/O operation on closed file");
+-		return true;
+-	}
+-
+-	return false;
+-}
+-
+-static PyObject *gpiod_CallMethodPyArgs(PyObject *obj, const char *method,
+-					PyObject *args, PyObject *kwds)
+-{
+-	PyObject *callable, *ret;
+-
+-	callable = PyObject_GetAttrString((PyObject *)obj, method);
+-	if (!callable)
+-		return NULL;
+-
+-	ret = PyObject_Call(callable, args, kwds);
+-	Py_DECREF(callable);
+-
+-	return ret;
+-}
+-
+-static int gpiod_LineEvent_init(PyObject *Py_UNUSED(ignored0),
+-				PyObject *Py_UNUSED(ignored1),
+-				PyObject *Py_UNUSED(ignored2))
+-{
+-	PyErr_SetString(PyExc_NotImplementedError,
+-			"Only gpiod.Line can create new LineEvent objects.");
+-	return -1;
+-}
+-
+-static void gpiod_LineEvent_dealloc(gpiod_LineEventObject *self)
+-{
+-	if (self->source)
+-		Py_DECREF(self->source);
+-
+-	PyObject_Del(self);
+-}
+-
+-PyDoc_STRVAR(gpiod_LineEvent_get_type_doc,
+-"Event type of this line event (integer).");
+-
+-PyObject *gpiod_LineEvent_get_type(gpiod_LineEventObject *self,
+-				   PyObject *Py_UNUSED(ignored))
+-{
+-	int rv;
+-
+-	if (self->event.event_type == GPIOD_LINE_EVENT_RISING_EDGE)
+-		rv = gpiod_RISING_EDGE;
+-	else
+-		rv = gpiod_FALLING_EDGE;
+-
+-	return Py_BuildValue("I", rv);
+-}
+-
+-PyDoc_STRVAR(gpiod_LineEvent_get_sec_doc,
+-"Seconds value of the line event timestamp (integer).");
+-
+-PyObject *gpiod_LineEvent_get_sec(gpiod_LineEventObject *self,
+-				  PyObject *Py_UNUSED(ignored))
+-{
+-	return Py_BuildValue("I", self->event.ts.tv_sec);
+-}
+-
+-PyDoc_STRVAR(gpiod_LineEvent_get_nsec_doc,
+-"Nanoseconds value of the line event timestamp (integer).");
+-
+-PyObject *gpiod_LineEvent_get_nsec(gpiod_LineEventObject *self,
+-				   PyObject *Py_UNUSED(ignored))
+-{
+-	return Py_BuildValue("I", self->event.ts.tv_nsec);
+-}
+-
+-PyDoc_STRVAR(gpiod_LineEvent_get_source_doc,
+-"Line object representing the GPIO line on which this event\n"
+-"occurred (gpiod.Line object).");
+-
+-gpiod_LineObject *gpiod_LineEvent_get_source(gpiod_LineEventObject *self,
+-					     PyObject *Py_UNUSED(ignored))
+-{
+-	Py_INCREF(self->source);
+-	return self->source;
+-}
+-
+-static PyGetSetDef gpiod_LineEvent_getset[] = {
+-	{
+-		.name = "type",
+-		.get = (getter)gpiod_LineEvent_get_type,
+-		.doc = gpiod_LineEvent_get_type_doc,
+-	},
+-	{
+-		.name = "sec",
+-		.get = (getter)gpiod_LineEvent_get_sec,
+-		.doc = gpiod_LineEvent_get_sec_doc,
+-	},
+-	{
+-		.name = "nsec",
+-		.get = (getter)gpiod_LineEvent_get_nsec,
+-		.doc = gpiod_LineEvent_get_nsec_doc,
+-	},
+-	{
+-		.name = "source",
+-		.get = (getter)gpiod_LineEvent_get_source,
+-		.doc = gpiod_LineEvent_get_source_doc,
+-	},
+-	{ }
+-};
+-
+-static PyObject *gpiod_LineEvent_repr(gpiod_LineEventObject *self)
+-{
+-	PyObject *line_repr, *ret;
+-	const char *edge;
+-
+-	if (self->event.event_type == GPIOD_LINE_EVENT_RISING_EDGE)
+-		edge = "RISING EDGE";
+-	else
+-		edge = "FALLING EDGE";
+-
+-	line_repr = PyObject_CallMethod((PyObject *)self->source,
+-					"__repr__", "");
+-
+-	ret = PyUnicode_FromFormat("'%s (%ld.%ld) source(%S)'",
+-				   edge, self->event.ts.tv_sec,
+-				   self->event.ts.tv_nsec, line_repr);
+-	Py_DECREF(line_repr);
+-
+-	return ret;
+-}
+-
+-PyDoc_STRVAR(gpiod_LineEventType_doc,
+-"Represents a single GPIO line event. This object is immutable and can only\n"
+-"be created by an instance of gpiod.Line.");
+-
+-static PyTypeObject gpiod_LineEventType = {
+-	PyVarObject_HEAD_INIT(NULL, 0)
+-	.tp_name = "gpiod.LineEvent",
+-	.tp_basicsize = sizeof(gpiod_LineEventObject),
+-	.tp_flags = Py_TPFLAGS_DEFAULT,
+-	.tp_doc = gpiod_LineEventType_doc,
+-	.tp_new = PyType_GenericNew,
+-	.tp_init = (initproc)gpiod_LineEvent_init,
+-	.tp_dealloc = (destructor)gpiod_LineEvent_dealloc,
+-	.tp_getset = gpiod_LineEvent_getset,
+-	.tp_repr = (reprfunc)gpiod_LineEvent_repr,
+-};
+-
+-static int gpiod_Line_init(PyObject *Py_UNUSED(ignored0),
+-			   PyObject *Py_UNUSED(ignored1),
+-			   PyObject *Py_UNUSED(ignored2))
+-{
+-	PyErr_SetString(PyExc_NotImplementedError,
+-			"Only gpiod.Chip can create new Line objects.");
+-	return -1;
+-}
+-
+-static void gpiod_Line_dealloc(gpiod_LineObject *self)
+-{
+-	if (self->owner)
+-		Py_DECREF(self->owner);
+-
+-	PyObject_Del(self);
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_owner_doc,
+-"owner() -> Chip object owning the line\n"
+-"\n"
+-"Get the GPIO chip owning this line.");
+-
+-static PyObject *gpiod_Line_owner(gpiod_LineObject *self,
+-				  PyObject *Py_UNUSED(ignored))
+-{
+-	Py_INCREF(self->owner);
+-	return (PyObject *)self->owner;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_offset_doc,
+-"offset() -> integer\n"
+-"\n"
+-"Get the offset of the GPIO line.");
+-
+-static PyObject *gpiod_Line_offset(gpiod_LineObject *self,
+-				   PyObject *Py_UNUSED(ignored))
+-{
+-	if (gpiod_ChipIsClosed(self->owner))
+-		return NULL;
+-
+-	return Py_BuildValue("I", gpiod_line_offset(self->line));
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_name_doc,
+-"name() -> string\n"
+-"\n"
+-"Get the name of the GPIO line.");
+-
+-static PyObject *gpiod_Line_name(gpiod_LineObject *self,
+-				 PyObject *Py_UNUSED(ignored))
+-{
+-	const char *name;
+-
+-	if (gpiod_ChipIsClosed(self->owner))
+-		return NULL;
+-
+-	name = gpiod_line_name(self->line);
+-	if (name)
+-		return PyUnicode_FromFormat("%s", name);
+-
+-	Py_RETURN_NONE;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_consumer_doc,
+-"consumer() -> string\n"
+-"\n"
+-"Get the consumer string of the GPIO line.");
+-
+-static PyObject *gpiod_Line_consumer(gpiod_LineObject *self,
+-				     PyObject *Py_UNUSED(ignored))
+-{
+-	const char *consumer;
+-
+-	if (gpiod_ChipIsClosed(self->owner))
+-		return NULL;
+-
+-	consumer = gpiod_line_consumer(self->line);
+-	if (consumer)
+-		return PyUnicode_FromFormat("%s", consumer);
+-
+-	Py_RETURN_NONE;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_direction_doc,
+-"direction() -> integer\n"
+-"\n"
+-"Get the direction setting of this GPIO line.");
+-
+-static PyObject *gpiod_Line_direction(gpiod_LineObject *self,
+-				      PyObject *Py_UNUSED(ignored))
+-{
+-	PyObject *ret;
+-	int dir;
+-
+-	if (gpiod_ChipIsClosed(self->owner))
+-		return NULL;
+-
+-	dir = gpiod_line_direction(self->line);
+-
+-	if (dir == GPIOD_LINE_DIRECTION_INPUT)
+-		ret = Py_BuildValue("I", gpiod_DIRECTION_INPUT);
+-	else
+-		ret = Py_BuildValue("I", gpiod_DIRECTION_OUTPUT);
+-
+-	return ret;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_is_active_low_doc,
+-"is_active_low() -> boolean\n"
+-"\n"
+-"Check if this line's signal is inverted");
+-
+-static PyObject *gpiod_Line_is_active_low(gpiod_LineObject *self,
+-					  PyObject *Py_UNUSED(ignored))
+-{
+-	if (gpiod_ChipIsClosed(self->owner))
+-		return NULL;
+-
+-	if (gpiod_line_is_active_low(self->line))
+-		Py_RETURN_TRUE;
+-	Py_RETURN_FALSE;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_bias_doc,
+-"bias() -> integer\n"
+-"\n"
+-"Get the bias setting of this GPIO line.");
+-
+-static PyObject *gpiod_Line_bias(gpiod_LineObject *self,
+-				 PyObject *Py_UNUSED(ignored))
+-{
+-	int bias;
+-
+-	if (gpiod_ChipIsClosed(self->owner))
+-		return NULL;
+-
+-	bias = gpiod_line_bias(self->line);
+-
+-	switch (bias) {
+-	case GPIOD_LINE_BIAS_PULL_UP:
+-		return Py_BuildValue("I", gpiod_BIAS_PULL_UP);
+-	case GPIOD_LINE_BIAS_PULL_DOWN:
+-		return Py_BuildValue("I", gpiod_BIAS_PULL_DOWN);
+-	case GPIOD_LINE_BIAS_DISABLED:
+-		return Py_BuildValue("I", gpiod_BIAS_DISABLED);
+-	case GPIOD_LINE_BIAS_UNKNOWN:
+-	default:
+-		return Py_BuildValue("I", gpiod_BIAS_UNKNOWN);
+-	}
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_is_used_doc,
+-"is_used() -> boolean\n"
+-"\n"
+-"Check if this line is used by the kernel or other user space process.");
+-
+-static PyObject *gpiod_Line_is_used(gpiod_LineObject *self,
+-				    PyObject *Py_UNUSED(ignored))
+-{
+-	if (gpiod_ChipIsClosed(self->owner))
+-		return NULL;
+-
+-	if (gpiod_line_is_used(self->line))
+-		Py_RETURN_TRUE;
+-
+-	Py_RETURN_FALSE;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_drive_doc,
+-"drive() -> integer\n"
+-"\n"
+-"Get the current drive setting of this GPIO line.");
+-
+-static PyObject *gpiod_Line_drive(gpiod_LineObject *self,
+-				  PyObject *Py_UNUSED(ignored))
+-{
+-	int drive;
+-
+-	if (gpiod_ChipIsClosed(self->owner))
+-		return NULL;
+-
+-	drive = gpiod_line_drive(self->line);
+-
+-	switch (drive) {
+-	case GPIOD_LINE_DRIVE_OPEN_DRAIN:
+-		return Py_BuildValue("I", gpiod_DRIVE_OPEN_DRAIN);
+-	case GPIOD_LINE_DRIVE_OPEN_SOURCE:
+-		return Py_BuildValue("I", gpiod_DRIVE_OPEN_SOURCE);
+-	case GPIOD_LINE_DRIVE_PUSH_PULL:
+-	default:
+-		return Py_BuildValue("I", gpiod_DRIVE_PUSH_PULL);
+-	}
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_request_doc,
+-"request(consumer[, type[, flags[, default_val]]]) -> None\n"
+-"\n"
+-"Request this GPIO line.\n"
+-"\n"
+-"  consumer\n"
+-"    Name of the consumer.\n"
+-"  type\n"
+-"    Type of the request.\n"
+-"  flags\n"
+-"    Other configuration flags.\n"
+-"  default_val\n"
+-"    Default value of this line."
+-"\n"
+-"Note: default_vals argument (sequence of default values passed down to\n"
+-"LineBulk.request()) is still supported for backward compatibility but is\n"
+-"now deprecated when requesting single lines.");
+-
+-static PyObject *gpiod_Line_request(gpiod_LineObject *self,
+-				    PyObject *args, PyObject *kwds)
+-{
+-	PyObject *ret, *def_val, *def_vals;
+-	gpiod_LineBulkObject *bulk_obj;
+-	int rv;
+-
+-	if (kwds && PyDict_Size(kwds) > 0) {
+-		def_val = PyDict_GetItemString(kwds, "default_val");
+-		def_vals = PyDict_GetItemString(kwds, "default_vals");
+-	} else {
+-		def_val = def_vals = NULL;
+-	}
+-
+-	if (def_val && def_vals) {
+-		PyErr_SetString(PyExc_TypeError,
+-				"Cannot pass both default_val and default_vals arguments at the same time");
+-		return NULL;
+-	}
+-
+-	if (def_val) {
+-		/*
+-		 * If default_val was passed as a single value, we wrap it
+-		 * in a tuple and add it to the kwds dictionary to be passed
+-		 * down to LineBulk.request(). We also remove the 'default_val'
+-		 * entry from kwds.
+-		 *
+-		 * I'm not sure if it's allowed to modify the kwds dictionary
+-		 * but it doesn't seem to cause any problems. If it does then
+-		 * we can simply copy the dictionary before calling
+-		 * LineBulk.request().
+-		 */
+-		rv = PyDict_DelItemString(kwds, "default_val");
+-		if (rv)
+-			return NULL;
+-
+-		def_vals = Py_BuildValue("(O)", def_val);
+-		if (!def_vals)
+-			return NULL;
+-
+-		rv = PyDict_SetItemString(kwds, "default_vals", def_vals);
+-		if (rv) {
+-			Py_DECREF(def_vals);
+-			return NULL;
+-		}
+-	}
+-
+-	bulk_obj = gpiod_LineToLineBulk(self);
+-	if (!bulk_obj)
+-		return NULL;
+-
+-	ret = gpiod_CallMethodPyArgs((PyObject *)bulk_obj,
+-				     "request", args, kwds);
+-	Py_DECREF(bulk_obj);
+-
+-	return ret;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_get_value_doc,
+-"get_value() -> integer\n"
+-"\n"
+-"Read the current value of this GPIO line.");
+-
+-static PyObject *gpiod_Line_get_value(gpiod_LineObject *self,
+-				      PyObject *Py_UNUSED(ignored))
+-{
+-	gpiod_LineBulkObject *bulk_obj;
+-	PyObject *vals, *ret;
+-
+-	bulk_obj = gpiod_LineToLineBulk(self);
+-	if (!bulk_obj)
+-		return NULL;
+-
+-	vals = PyObject_CallMethod((PyObject *)bulk_obj, "get_values", "");
+-	Py_DECREF(bulk_obj);
+-	if (!vals)
+-		return NULL;
+-
+-	ret = PyList_GetItem(vals, 0);
+-	Py_INCREF(ret);
+-	Py_DECREF(vals);
+-
+-	return ret;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_set_value_doc,
+-"set_value(value) -> None\n"
+-"\n"
+-"Set the value of this GPIO line.\n"
+-"\n"
+-"  value\n"
+-"    New value (integer)");
+-
+-static PyObject *gpiod_Line_set_value(gpiod_LineObject *self, PyObject *args)
+-{
+-	gpiod_LineBulkObject *bulk_obj;
+-	PyObject *val, *vals, *ret;
+-	int rv;
+-
+-	rv = PyArg_ParseTuple(args, "O", &val);
+-	if (!rv)
+-		return NULL;
+-
+-	bulk_obj = gpiod_LineToLineBulk(self);
+-	if (!bulk_obj)
+-		return NULL;
+-
+-	vals = Py_BuildValue("(O)", val);
+-	if (!vals) {
+-		Py_DECREF(bulk_obj);
+-		return NULL;
+-	}
+-
+-	ret = PyObject_CallMethod((PyObject *)bulk_obj,
+-				  "set_values", "(O)", vals);
+-	Py_DECREF(bulk_obj);
+-	Py_DECREF(vals);
+-
+-	return ret;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_set_config_doc,
+-"set_config(direction,flags,value) -> None\n"
+-"\n"
+-"Set the configuration of this GPIO line.\n"
+-"\n"
+-"  direction\n"
+-"    New direction (integer)\n"
+-"  flags\n"
+-"    New flags (integer)\n"
+-"  value\n"
+-"    New value (integer)");
+-
+-static PyObject *gpiod_Line_set_config(gpiod_LineObject *self, PyObject *args)
+-{
+-	gpiod_LineBulkObject *bulk_obj;
+-	PyObject *dirn, *flags, *val, *vals, *ret;
+-	int rv;
+-
+-	val = NULL;
+-	rv = PyArg_ParseTuple(args, "OO|O", &dirn, &flags, &val);
+-	if (!rv)
+-		return NULL;
+-
+-	bulk_obj = gpiod_LineToLineBulk(self);
+-	if (!bulk_obj)
+-		return NULL;
+-
+-	if (val) {
+-		vals = Py_BuildValue("(O)", val);
+-		if (!vals) {
+-			Py_DECREF(bulk_obj);
+-			return NULL;
+-		}
+-		ret = PyObject_CallMethod((PyObject *)bulk_obj,
+-				"set_config", "OO(O)", dirn, flags, vals);
+-		Py_DECREF(vals);
+-	} else {
+-		ret = PyObject_CallMethod((PyObject *)bulk_obj,
+-				"set_config", "OO", dirn, flags);
+-	}
+-
+-	Py_DECREF(bulk_obj);
+-
+-	return ret;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_set_flags_doc,
+-"set_flags(flags) -> None\n"
+-"\n"
+-"Set the flags of this GPIO line.\n"
+-"\n"
+-"  flags\n"
+-"    New flags (integer)");
+-
+-static PyObject *gpiod_Line_set_flags(gpiod_LineObject *self, PyObject *args)
+-{
+-	gpiod_LineBulkObject *bulk_obj;
+-	PyObject *ret;
+-
+-	bulk_obj = gpiod_LineToLineBulk(self);
+-	if (!bulk_obj)
+-		return NULL;
+-
+-	ret = PyObject_CallMethod((PyObject *)bulk_obj,
+-				  "set_flags", "O", args);
+-	Py_DECREF(bulk_obj);
+-
+-	return ret;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_set_direction_input_doc,
+-"set_direction_input() -> None\n"
+-"\n"
+-"Set the direction of this GPIO line to input.\n");
+-
+-static PyObject *gpiod_Line_set_direction_input(gpiod_LineObject *self,
+-						PyObject *Py_UNUSED(ignored))
+-{
+-	gpiod_LineBulkObject *bulk_obj;
+-	PyObject *ret;
+-
+-	bulk_obj = gpiod_LineToLineBulk(self);
+-	if (!bulk_obj)
+-		return NULL;
+-
+-	ret = PyObject_CallMethod((PyObject *)bulk_obj,
+-				  "set_direction_input", "");
+-	Py_DECREF(bulk_obj);
+-
+-	return ret;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_set_direction_output_doc,
+-"set_direction_output(value) -> None\n"
+-"\n"
+-"Set the direction of this GPIO line to output.\n"
+-"\n"
+-"  value\n"
+-"    New value (integer)");
+-
+-static PyObject *gpiod_Line_set_direction_output(gpiod_LineObject *self,
+-						 PyObject *args)
+-{
+-	gpiod_LineBulkObject *bulk_obj;
+-	PyObject *val, *vals, *ret;
+-	int rv;
+-	const char *fmt;
+-
+-	val = NULL;
+-	rv = PyArg_ParseTuple(args, "|O", &val);
+-	if (!rv)
+-		return NULL;
+-
+-	if (val) {
+-		fmt = "(O)";
+-		vals = Py_BuildValue(fmt, val);
+-	} else {
+-		vals = Py_BuildValue("()");
+-		fmt = "O"; /* pass empty args to bulk */
+-	}
+-	if (!vals)
+-		return NULL;
+-
+-	bulk_obj = gpiod_LineToLineBulk(self);
+-	if (!bulk_obj)
+-		return NULL;
+-
+-	ret = PyObject_CallMethod((PyObject *)bulk_obj,
+-				  "set_direction_output", fmt, vals);
+-
+-	Py_DECREF(bulk_obj);
+-	Py_DECREF(vals);
+-
+-	return ret;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_release_doc,
+-"release() -> None\n"
+-"\n"
+-"Release this GPIO line.");
+-
+-static PyObject *gpiod_Line_release(gpiod_LineObject *self,
+-				    PyObject *Py_UNUSED(ignored))
+-{
+-	gpiod_LineBulkObject *bulk_obj;
+-	PyObject *ret;
+-
+-	bulk_obj = gpiod_LineToLineBulk(self);
+-	if (!bulk_obj)
+-		return NULL;
+-
+-	ret = PyObject_CallMethod((PyObject *)bulk_obj, "release", "");
+-	Py_DECREF(bulk_obj);
+-
+-	return ret;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_event_wait_doc,
+-"event_wait([sec[ ,nsec]]) -> boolean\n"
+-"\n"
+-"Wait for a line event to occur on this GPIO line.\n"
+-"\n"
+-"  sec\n"
+-"    Number of seconds to wait before timeout.\n"
+-"  nsec\n"
+-"    Number of nanoseconds to wait before timeout.\n"
+-"\n"
+-"Returns True if an event occurred on this line before timeout. False\n"
+-"otherwise.");
+-
+-static PyObject *gpiod_Line_event_wait(gpiod_LineObject *self,
+-				       PyObject *args, PyObject *kwds)
+-{
+-	gpiod_LineBulkObject *bulk_obj;
+-	PyObject *events;
+-
+-	bulk_obj = gpiod_LineToLineBulk(self);
+-	if (!bulk_obj)
+-		return NULL;
+-
+-	events = gpiod_CallMethodPyArgs((PyObject *)bulk_obj,
+-					"event_wait", args, kwds);
+-	Py_DECREF(bulk_obj);
+-	if (!events)
+-		return NULL;
+-
+-	if (events == Py_None) {
+-		Py_DECREF(Py_None);
+-		Py_RETURN_FALSE;
+-	}
+-
+-	Py_DECREF(events);
+-	Py_RETURN_TRUE;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_event_read_doc,
+-"event_read() -> gpiod.LineEvent object\n"
+-"\n"
+-"Read a single line event from this GPIO line object.");
+-
+-static gpiod_LineEventObject *gpiod_Line_event_read(gpiod_LineObject *self,
+-						    PyObject *Py_UNUSED(ignored))
+-{
+-	gpiod_LineEventObject *ret;
+-	int rv;
+-
+-	if (gpiod_ChipIsClosed(self->owner))
+-		return NULL;
+-
+-	ret = PyObject_New(gpiod_LineEventObject, &gpiod_LineEventType);
+-	if (!ret)
+-		return NULL;
+-
+-	ret->source = NULL;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	rv = gpiod_line_event_read(self->line, &ret->event);
+-	Py_END_ALLOW_THREADS;
+-	if (rv) {
+-		Py_DECREF(ret);
+-		return (gpiod_LineEventObject *)PyErr_SetFromErrno(
+-							PyExc_OSError);
+-	}
+-
+-	Py_INCREF(self);
+-	ret->source = self;
+-
+-	return ret;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_event_read_multiple_doc,
+-"event_read_multiple() -> list of gpiod.LineEvent object\n"
+-"\n"
+-"Read multiple line events from this GPIO line object.");
+-
+-static PyObject *gpiod_Line_event_read_multiple(gpiod_LineObject *self,
+-						PyObject *Py_UNUSED(ignored))
+-{
+-	struct gpiod_line_event evbuf[16];
+-	gpiod_LineEventObject *event;
+-	int rv, num_events, i;
+-	PyObject *events;
+-
+-	if (gpiod_ChipIsClosed(self->owner))
+-		return NULL;
+-
+-	memset(evbuf, 0, sizeof(evbuf));
+-	Py_BEGIN_ALLOW_THREADS;
+-	num_events = gpiod_line_event_read_multiple(self->line, evbuf,
+-					sizeof(evbuf) / sizeof(*evbuf));
+-	Py_END_ALLOW_THREADS;
+-	if (num_events < 0)
+-		return PyErr_SetFromErrno(PyExc_OSError);
+-
+-	events = PyList_New(num_events);
+-	if (!events)
+-		return NULL;
+-
+-	for (i = 0; i < num_events; i++) {
+-		event = PyObject_New(gpiod_LineEventObject,
+-				     &gpiod_LineEventType);
+-		if (!event) {
+-			Py_DECREF(events);
+-			return NULL;
+-		}
+-
+-		memcpy(&event->event, &evbuf[i], sizeof(event->event));
+-		Py_INCREF(self);
+-		event->source = self;
+-
+-		rv = PyList_SetItem(events, i, (PyObject *)event);
+-		if (rv < 0) {
+-			Py_DECREF(events);
+-			Py_DECREF(event);
+-			return NULL;
+-		}
+-	}
+-
+-	return events;
+-}
+-
+-PyDoc_STRVAR(gpiod_Line_event_get_fd_doc,
+-"event_get_fd() -> integer\n"
+-"\n"
+-"Get the event file descriptor number associated with this line.");
+-
+-static PyObject *gpiod_Line_event_get_fd(gpiod_LineObject *self,
+-					 PyObject *Py_UNUSED(ignored))
+-{
+-	int fd;
+-
+-	if (gpiod_ChipIsClosed(self->owner))
+-		return NULL;
+-
+-	fd = gpiod_line_event_get_fd(self->line);
+-	if (fd < 0) {
+-		PyErr_SetFromErrno(PyExc_OSError);
+-		return NULL;
+-	}
+-
+-	return PyLong_FromLong(fd);
+-}
+-
+-static PyObject *gpiod_Line_repr(gpiod_LineObject *self)
+-{
+-	PyObject *chip_name, *ret;
+-	const char *line_name;
+-
+-	if (gpiod_ChipIsClosed(self->owner))
+-		return NULL;
+-
+-	chip_name = PyObject_CallMethod((PyObject *)self->owner, "name", "");
+-	if (!chip_name)
+-		return NULL;
+-
+-	line_name = gpiod_line_name(self->line);
+-
+-	ret = PyUnicode_FromFormat("'%S:%u /%s/'", chip_name,
+-				   gpiod_line_offset(self->line),
+-				   line_name ?: "unnamed");
+-	Py_DECREF(chip_name);
+-	return ret;
+-}
+-
+-static PyMethodDef gpiod_Line_methods[] = {
+-	{
+-		.ml_name = "owner",
+-		.ml_meth = (PyCFunction)gpiod_Line_owner,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_owner_doc,
+-	},
+-	{
+-		.ml_name = "offset",
+-		.ml_meth = (PyCFunction)gpiod_Line_offset,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_offset_doc,
+-	},
+-	{
+-		.ml_name = "name",
+-		.ml_meth = (PyCFunction)gpiod_Line_name,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_name_doc,
+-	},
+-	{
+-		.ml_name = "consumer",
+-		.ml_meth = (PyCFunction)gpiod_Line_consumer,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_consumer_doc,
+-	},
+-	{
+-		.ml_name = "direction",
+-		.ml_meth = (PyCFunction)gpiod_Line_direction,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_direction_doc,
+-	},
+-	{
+-		.ml_name = "is_active_low",
+-		.ml_meth = (PyCFunction)gpiod_Line_is_active_low,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_is_active_low_doc,
+-	},
+-	{
+-		.ml_name = "bias",
+-		.ml_meth = (PyCFunction)gpiod_Line_bias,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_bias_doc,
+-	},
+-	{
+-		.ml_name = "is_used",
+-		.ml_meth = (PyCFunction)gpiod_Line_is_used,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_is_used_doc,
+-	},
+-	{
+-		.ml_name = "drive",
+-		.ml_meth = (PyCFunction)gpiod_Line_drive,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_drive_doc,
+-	},
+-	{
+-		.ml_name = "request",
+-		.ml_meth = (PyCFunction)(void (*)(void))gpiod_Line_request,
+-		.ml_flags = METH_VARARGS | METH_KEYWORDS,
+-		.ml_doc = gpiod_Line_request_doc,
+-	},
+-	{
+-		.ml_name = "get_value",
+-		.ml_meth = (PyCFunction)gpiod_Line_get_value,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_get_value_doc,
+-	},
+-	{
+-		.ml_name = "set_value",
+-		.ml_meth = (PyCFunction)gpiod_Line_set_value,
+-		.ml_flags = METH_VARARGS,
+-		.ml_doc = gpiod_Line_set_value_doc,
+-	},
+-	{
+-		.ml_name = "set_config",
+-		.ml_meth = (PyCFunction)gpiod_Line_set_config,
+-		.ml_flags = METH_VARARGS,
+-		.ml_doc = gpiod_Line_set_config_doc,
+-	},
+-	{
+-		.ml_name = "set_flags",
+-		.ml_meth = (PyCFunction)gpiod_Line_set_flags,
+-		.ml_flags = METH_VARARGS,
+-		.ml_doc = gpiod_Line_set_flags_doc,
+-	},
+-	{
+-		.ml_name = "set_direction_input",
+-		.ml_meth = (PyCFunction)gpiod_Line_set_direction_input,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_set_direction_input_doc,
+-	},
+-	{
+-		.ml_name = "set_direction_output",
+-		.ml_meth = (PyCFunction)gpiod_Line_set_direction_output,
+-		.ml_flags = METH_VARARGS,
+-		.ml_doc = gpiod_Line_set_direction_output_doc,
+-	},
+-	{
+-		.ml_name = "release",
+-		.ml_meth = (PyCFunction)gpiod_Line_release,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_release_doc,
+-	},
+-	{
+-		.ml_name = "event_wait",
+-		.ml_meth = (PyCFunction)(void (*)(void))gpiod_Line_event_wait,
+-		.ml_flags = METH_VARARGS | METH_KEYWORDS,
+-		.ml_doc = gpiod_Line_event_wait_doc,
+-	},
+-	{
+-		.ml_name = "event_read",
+-		.ml_meth = (PyCFunction)gpiod_Line_event_read,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_event_read_doc,
+-	},
+-	{
+-		.ml_name = "event_read_multiple",
+-		.ml_meth = (PyCFunction)gpiod_Line_event_read_multiple,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_event_read_multiple_doc,
+-	},
+-	{
+-		.ml_name = "event_get_fd",
+-		.ml_meth = (PyCFunction)gpiod_Line_event_get_fd,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Line_event_get_fd_doc,
+-	},
+-	{ }
+-};
+-
+-PyDoc_STRVAR(gpiod_LineType_doc,
+-"Represents a GPIO line.\n"
+-"\n"
+-"The lifetime of this object is managed by the chip that owns it. Once\n"
+-"the corresponding gpiod.Chip is closed, a gpiod.Line object must not be\n"
+-"used.\n"
+-"\n"
+-"Line objects can only be created by the owning chip.");
+-
+-static PyTypeObject gpiod_LineType = {
+-	PyVarObject_HEAD_INIT(NULL, 0)
+-	.tp_name = "gpiod.Line",
+-	.tp_basicsize = sizeof(gpiod_LineObject),
+-	.tp_flags = Py_TPFLAGS_DEFAULT,
+-	.tp_doc = gpiod_LineType_doc,
+-	.tp_new = PyType_GenericNew,
+-	.tp_init = (initproc)gpiod_Line_init,
+-	.tp_dealloc = (destructor)gpiod_Line_dealloc,
+-	.tp_repr = (reprfunc)gpiod_Line_repr,
+-	.tp_methods = gpiod_Line_methods,
+-};
+-
+-static bool gpiod_LineBulkOwnerIsClosed(gpiod_LineBulkObject *self)
+-{
+-	gpiod_LineObject *line = (gpiod_LineObject *)self->lines[0];
+-
+-	return gpiod_ChipIsClosed(line->owner);
+-}
+-
+-static int gpiod_LineBulk_init(gpiod_LineBulkObject *self,
+-			       PyObject *args, PyObject *Py_UNUSED(ignored))
+-{
+-	PyObject *lines, *iter, *next;
+-	Py_ssize_t i;
+-	int rv;
+-
+-	rv = PyArg_ParseTuple(args, "O", &lines);
+-	if (!rv)
+-		return -1;
+-
+-	self->num_lines = PyObject_Size(lines);
+-	if (self->num_lines < 1) {
+-		PyErr_SetString(PyExc_TypeError,
+-				"Argument must be a non-empty sequence");
+-		return -1;
+-	}
+-	if (self->num_lines > LINE_REQUEST_MAX_LINES) {
+-		PyErr_SetString(PyExc_TypeError,
+-				"Too many objects in the sequence");
+-		return -1;
+-	}
+-
+-	self->lines = PyMem_Calloc(self->num_lines, sizeof(PyObject *));
+-	if (!self->lines) {
+-		PyErr_SetString(PyExc_MemoryError, "Out of memory");
+-		return -1;
+-	}
+-
+-	iter = PyObject_GetIter(lines);
+-	if (!iter) {
+-		PyMem_Free(self->lines);
+-		return -1;
+-	}
+-
+-	for (i = 0;;) {
+-		next = PyIter_Next(iter);
+-		if (!next) {
+-			Py_DECREF(iter);
+-			break;
+-		}
+-
+-		if (next->ob_type != &gpiod_LineType) {
+-			PyErr_SetString(PyExc_TypeError,
+-					"Argument must be a sequence of GPIO lines");
+-			Py_DECREF(next);
+-			Py_DECREF(iter);
+-			goto errout;
+-		}
+-
+-		self->lines[i++] = next;
+-	}
+-
+-	self->iter_idx = -1;
+-
+-	return 0;
+-
+-errout:
+-
+-	if (i > 0) {
+-		for (--i; i >= 0; i--)
+-			Py_DECREF(self->lines[i]);
+-	}
+-	PyMem_Free(self->lines);
+-	self->lines = NULL;
+-
+-	return -1;
+-}
+-
+-static void gpiod_LineBulk_dealloc(gpiod_LineBulkObject *self)
+-{
+-	Py_ssize_t i;
+-
+-	if (!self->lines)
+-		return;
+-
+-	for (i = 0; i < self->num_lines; i++)
+-		Py_DECREF(self->lines[i]);
+-
+-	PyMem_Free(self->lines);
+-	PyObject_Del(self);
+-}
+-
+-static PyObject *gpiod_LineBulk_iternext(gpiod_LineBulkObject *self)
+-{
+-	if (self->iter_idx < 0) {
+-		self->iter_idx = 0; /* First element */
+-	} else if (self->iter_idx >= self->num_lines) {
+-		self->iter_idx = -1;
+-		return NULL; /* Last element */
+-	}
+-
+-	Py_INCREF(self->lines[self->iter_idx]);
+-	return self->lines[self->iter_idx++];
+-}
+-
+-PyDoc_STRVAR(gpiod_LineBulk_to_list_doc,
+-"to_list() -> list of gpiod.Line objects\n"
+-"\n"
+-"Convert this LineBulk to a list");
+-
+-static PyObject *gpiod_LineBulk_to_list(gpiod_LineBulkObject *self,
+-					PyObject *Py_UNUSED(ignored))
+-{
+-	PyObject *list;
+-	Py_ssize_t i;
+-	int rv;
+-
+-	list = PyList_New(self->num_lines);
+-	if (!list)
+-		return NULL;
+-
+-	for (i = 0; i < self->num_lines; i++) {
+-		Py_INCREF(self->lines[i]);
+-		rv = PyList_SetItem(list, i, self->lines[i]);
+-		if (rv < 0) {
+-			Py_DECREF(list);
+-			return NULL;
+-		}
+-	}
+-
+-	return list;
+-}
+-
+-static struct gpiod_line_bulk *
+-gpiod_LineBulkObjToCLineBulk(gpiod_LineBulkObject *bulk_obj)
+-{
+-	struct gpiod_line_bulk *bulk;
+-	gpiod_LineObject *line_obj;
+-	Py_ssize_t i;
+-
+-	bulk = gpiod_line_bulk_new(bulk_obj->num_lines);
+-	if (!bulk) {
+-		PyErr_SetFromErrno(PyExc_OSError);
+-		return NULL;
+-	}
+-
+-	for (i = 0; i < bulk_obj->num_lines; i++) {
+-		line_obj = (gpiod_LineObject *)bulk_obj->lines[i];
+-		gpiod_line_bulk_add_line(bulk, line_obj->line);
+-	}
+-
+-	return bulk;
+-}
+-
+-static void gpiod_MakeRequestConfig(struct gpiod_line_request_config *conf,
+-				    const char *consumer,
+-				    int request_type, int flags)
+-{
+-	memset(conf, 0, sizeof(*conf));
+-
+-	conf->consumer = consumer;
+-
+-	switch (request_type) {
+-	case gpiod_LINE_REQ_DIR_IN:
+-		conf->request_type = GPIOD_LINE_REQUEST_DIRECTION_INPUT;
+-		break;
+-	case gpiod_LINE_REQ_DIR_OUT:
+-		conf->request_type = GPIOD_LINE_REQUEST_DIRECTION_OUTPUT;
+-		break;
+-	case gpiod_LINE_REQ_EV_FALLING_EDGE:
+-		conf->request_type = GPIOD_LINE_REQUEST_EVENT_FALLING_EDGE;
+-		break;
+-	case gpiod_LINE_REQ_EV_RISING_EDGE:
+-		conf->request_type = GPIOD_LINE_REQUEST_EVENT_RISING_EDGE;
+-		break;
+-	case gpiod_LINE_REQ_EV_BOTH_EDGES:
+-		conf->request_type = GPIOD_LINE_REQUEST_EVENT_BOTH_EDGES;
+-		break;
+-	case gpiod_LINE_REQ_DIR_AS_IS:
+-	default:
+-		conf->request_type = GPIOD_LINE_REQUEST_DIRECTION_AS_IS;
+-		break;
+-	}
+-
+-	if (flags & gpiod_LINE_REQ_FLAG_OPEN_DRAIN)
+-		conf->flags |= GPIOD_LINE_REQUEST_FLAG_OPEN_DRAIN;
+-	if (flags & gpiod_LINE_REQ_FLAG_OPEN_SOURCE)
+-		conf->flags |= GPIOD_LINE_REQUEST_FLAG_OPEN_SOURCE;
+-	if (flags & gpiod_LINE_REQ_FLAG_ACTIVE_LOW)
+-		conf->flags |= GPIOD_LINE_REQUEST_FLAG_ACTIVE_LOW;
+-	if (flags & gpiod_LINE_REQ_FLAG_BIAS_DISABLED)
+-		conf->flags |= GPIOD_LINE_REQUEST_FLAG_BIAS_DISABLED;
+-	if (flags & gpiod_LINE_REQ_FLAG_BIAS_PULL_DOWN)
+-		conf->flags |= GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN;
+-	if (flags & gpiod_LINE_REQ_FLAG_BIAS_PULL_UP)
+-		conf->flags |= GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP;
+-}
+-
+-PyDoc_STRVAR(gpiod_LineBulk_request_doc,
+-"request(consumer[, type[, flags[, default_vals]]]) -> None\n"
+-"\n"
+-"Request all lines held by this LineBulk object.\n"
+-"\n"
+-"  consumer\n"
+-"    Name of the consumer.\n"
+-"  type\n"
+-"    Type of the request.\n"
+-"  flags\n"
+-"    Other configuration flags.\n"
+-"  default_vals\n"
+-"    List of default values.\n");
+-
+-static PyObject *gpiod_LineBulk_request(gpiod_LineBulkObject *self,
+-					PyObject *args, PyObject *kwds)
+-{
+-	static char *kwlist[] = { "consumer",
+-				  "type",
+-				  "flags",
+-				  "default_vals",
+-				  NULL };
+-
+-	int rv, type = gpiod_LINE_REQ_DIR_AS_IS, flags = 0,
+-	    vals[LINE_REQUEST_MAX_LINES], val;
+-	PyObject *def_vals_obj = NULL, *iter, *next;
+-	struct gpiod_line_request_config conf;
+-	const int *default_vals = NULL;
+-	struct gpiod_line_bulk *bulk;
+-	Py_ssize_t num_def_vals;
+-	char *consumer = NULL;
+-	Py_ssize_t i;
+-
+-	if (gpiod_LineBulkOwnerIsClosed(self))
+-		return NULL;
+-
+-	rv = PyArg_ParseTupleAndKeywords(args, kwds, "s|iiO", kwlist,
+-					 &consumer, &type,
+-					 &flags, &def_vals_obj);
+-	if (!rv)
+-		return NULL;
+-
+-	bulk = gpiod_LineBulkObjToCLineBulk(self);
+-	if (!bulk)
+-		return NULL;
+-
+-	gpiod_MakeRequestConfig(&conf, consumer, type, flags);
+-
+-	if (def_vals_obj) {
+-		memset(vals, 0, sizeof(vals));
+-
+-		num_def_vals = PyObject_Size(def_vals_obj);
+-		if (num_def_vals != self->num_lines) {
+-			PyErr_SetString(PyExc_TypeError,
+-					"Number of default values is not the same as the number of lines");
+-			return NULL;
+-		}
+-
+-		iter = PyObject_GetIter(def_vals_obj);
+-		if (!iter)
+-			return NULL;
+-
+-		for (i = 0;; i++) {
+-			next = PyIter_Next(iter);
+-			if (!next) {
+-				Py_DECREF(iter);
+-				break;
+-			}
+-
+-			val = PyLong_AsUnsignedLong(next);
+-			Py_DECREF(next);
+-			if (PyErr_Occurred()) {
+-				Py_DECREF(iter);
+-				return NULL;
+-			}
+-
+-			vals[i] = !!val;
+-		}
+-		default_vals = vals;
+-	}
+-
+-	bulk = gpiod_LineBulkObjToCLineBulk(self);
+-	if (!bulk)
+-		return NULL;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	rv = gpiod_line_request_bulk(bulk, &conf, default_vals);
+-	gpiod_line_bulk_free(bulk);
+-	Py_END_ALLOW_THREADS;
+-	if (rv)
+-		return PyErr_SetFromErrno(PyExc_OSError);
+-
+-	Py_RETURN_NONE;
+-}
+-
+-PyDoc_STRVAR(gpiod_LineBulk_get_values_doc,
+-"get_values() -> list of integers\n"
+-"\n"
+-"Read the values of all the lines held by this LineBulk object. The index\n"
+-"of each value in the returned list corresponds to the index of the line\n"
+-"in this gpiod.LineBulk object.");
+-
+-static PyObject *gpiod_LineBulk_get_values(gpiod_LineBulkObject *self,
+-					   PyObject *Py_UNUSED(ignored))
+-{
+-	int rv, vals[LINE_REQUEST_MAX_LINES];
+-	struct gpiod_line_bulk *bulk;
+-	PyObject *val_list, *val;
+-	Py_ssize_t i;
+-
+-	if (gpiod_LineBulkOwnerIsClosed(self))
+-		return NULL;
+-
+-	bulk = gpiod_LineBulkObjToCLineBulk(self);
+-	if (!bulk)
+-		return NULL;
+-
+-	memset(vals, 0, sizeof(vals));
+-	Py_BEGIN_ALLOW_THREADS;
+-	rv = gpiod_line_get_value_bulk(bulk, vals);
+-	gpiod_line_bulk_free(bulk);
+-	Py_END_ALLOW_THREADS;
+-	if (rv)
+-		return PyErr_SetFromErrno(PyExc_OSError);
+-
+-	val_list = PyList_New(self->num_lines);
+-	if (!val_list)
+-		return NULL;
+-
+-	for (i = 0; i < self->num_lines; i++) {
+-		val = Py_BuildValue("i", vals[i]);
+-		if (!val) {
+-			Py_DECREF(val_list);
+-			return NULL;
+-		}
+-
+-		rv = PyList_SetItem(val_list, i, val);
+-		if (rv < 0) {
+-			Py_DECREF(val);
+-			Py_DECREF(val_list);
+-			return NULL;
+-		}
+-	}
+-
+-	return val_list;
+-}
+-
+-static int gpiod_TupleToIntArray(PyObject *src, int *dst, Py_ssize_t nv)
+-{
+-	Py_ssize_t num_vals, i;
+-	PyObject *iter, *next;
+-	int val;
+-
+-	num_vals = PyObject_Size(src);
+-	if (num_vals != nv) {
+-		PyErr_SetString(PyExc_TypeError,
+-				"Number of values must correspond to the number of lines");
+-		return -1;
+-	}
+-
+-	iter = PyObject_GetIter(src);
+-	if (!iter)
+-		return -1;
+-
+-	for (i = 0;; i++) {
+-		next = PyIter_Next(iter);
+-		if (!next) {
+-			Py_DECREF(iter);
+-			break;
+-		}
+-
+-		val = PyLong_AsLong(next);
+-		Py_DECREF(next);
+-		if (PyErr_Occurred()) {
+-			Py_DECREF(iter);
+-			return -1;
+-		}
+-		dst[i] = (int)val;
+-	}
+-
+-	return 0;
+-}
+-
+-PyDoc_STRVAR(gpiod_LineBulk_set_values_doc,
+-"set_values(values) -> None\n"
+-"\n"
+-"Set the values of all the lines held by this LineBulk object.\n"
+-"\n"
+-"  values\n"
+-"    List of values (integers) to set.\n"
+-"\n"
+-"The number of values in the list passed as argument must be the same as\n"
+-"the number of lines held by this gpiod.LineBulk object. The index of each\n"
+-"value corresponds to the index of each line in the object.\n");
+-
+-static PyObject *gpiod_LineBulk_set_values(gpiod_LineBulkObject *self,
+-					   PyObject *args)
+-{
+-	int rv, vals[LINE_REQUEST_MAX_LINES];
+-	struct gpiod_line_bulk *bulk;
+-	PyObject *val_list;
+-
+-	if (gpiod_LineBulkOwnerIsClosed(self))
+-		return NULL;
+-
+-	memset(vals, 0, sizeof(vals));
+-
+-	rv = PyArg_ParseTuple(args, "O", &val_list);
+-	if (!rv)
+-		return NULL;
+-
+-	rv = gpiod_TupleToIntArray(val_list, vals, self->num_lines);
+-	if (rv)
+-		return NULL;
+-
+-	bulk = gpiod_LineBulkObjToCLineBulk(self);
+-	if (!bulk)
+-		return NULL;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	rv = gpiod_line_set_value_bulk(bulk, vals);
+-	gpiod_line_bulk_free(bulk);
+-	Py_END_ALLOW_THREADS;
+-	if (rv)
+-		return PyErr_SetFromErrno(PyExc_OSError);
+-
+-	Py_RETURN_NONE;
+-}
+-
+-PyDoc_STRVAR(gpiod_LineBulk_set_config_doc,
+-"set_config(direction,flags,values) -> None\n"
+-"\n"
+-"Set the configuration of all the lines held by this LineBulk object.\n"
+-"\n"
+-"  direction\n"
+-"    New direction (integer)\n"
+-"  flags\n"
+-"    New flags (integer)\n"
+-"  values\n"
+-"    List of values (integers) to set when direction is output.\n"
+-"\n"
+-"The number of values in the list passed as argument must be the same as\n"
+-"the number of lines held by this gpiod.LineBulk object. The index of each\n"
+-"value corresponds to the index of each line in the object.\n");
+-
+-static PyObject *gpiod_LineBulk_set_config(gpiod_LineBulkObject *self,
+-					   PyObject *args)
+-{
+-	int rv, vals[LINE_REQUEST_MAX_LINES];
+-	struct gpiod_line_bulk *bulk;
+-	PyObject *val_list;
+-	const int *valp;
+-	int dirn, flags;
+-
+-	if (gpiod_LineBulkOwnerIsClosed(self))
+-		return NULL;
+-
+-	val_list = NULL;
+-	rv = PyArg_ParseTuple(args, "ii|(O)", &dirn, &flags, &val_list);
+-	if (!rv)
+-		return NULL;
+-
+-	if (val_list == NULL) {
+-		valp = NULL;
+-	} else {
+-		memset(vals, 0, sizeof(vals));
+-		rv = gpiod_TupleToIntArray(val_list, vals, self->num_lines);
+-		if (rv)
+-			return NULL;
+-		valp = vals;
+-	}
+-
+-	bulk = gpiod_LineBulkObjToCLineBulk(self);
+-	if (!bulk)
+-		return NULL;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	rv = gpiod_line_set_config_bulk(bulk, dirn, flags, valp);
+-	Py_END_ALLOW_THREADS;
+-	if (rv)
+-		return PyErr_SetFromErrno(PyExc_OSError);
+-
+-	Py_RETURN_NONE;
+-}
+-
+-PyDoc_STRVAR(gpiod_LineBulk_set_flags_doc,
+-"set_flags(flags) -> None\n"
+-"\n"
+-"Set the flags of all the lines held by this LineBulk object.\n"
+-"\n"
+-"  flags\n"
+-"    New flags (integer)");
+-
+-static PyObject *gpiod_LineBulk_set_flags(gpiod_LineBulkObject *self,
+-					  PyObject *args)
+-{
+-	struct gpiod_line_bulk *bulk;
+-	int rv, flags;
+-
+-	if (gpiod_LineBulkOwnerIsClosed(self))
+-		return NULL;
+-
+-	rv = PyArg_ParseTuple(args, "i", &flags);
+-	if (!rv)
+-		return NULL;
+-
+-	bulk = gpiod_LineBulkObjToCLineBulk(self);
+-	if (!bulk)
+-		return NULL;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	rv = gpiod_line_set_flags_bulk(bulk, flags);
+-	gpiod_line_bulk_free(bulk);
+-	Py_END_ALLOW_THREADS;
+-	if (rv)
+-		return PyErr_SetFromErrno(PyExc_OSError);
+-
+-	Py_RETURN_NONE;
+-}
+-
+-PyDoc_STRVAR(gpiod_LineBulk_set_direction_input_doc,
+-"set_direction_input() -> None\n"
+-"\n"
+-"Set the direction of all the lines held by this LineBulk object to input.\n");
+-
+-static PyObject *gpiod_LineBulk_set_direction_input(gpiod_LineBulkObject *self,
+-						PyObject *Py_UNUSED(ignored))
+-{
+-	struct gpiod_line_bulk *bulk;
+-	int rv;
+-
+-	if (gpiod_LineBulkOwnerIsClosed(self))
+-		return NULL;
+-
+-	bulk = gpiod_LineBulkObjToCLineBulk(self);
+-	if (!bulk)
+-		return NULL;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	rv = gpiod_line_set_direction_input_bulk(bulk);
+-	gpiod_line_bulk_free(bulk);
+-	Py_END_ALLOW_THREADS;
+-	if (rv)
+-		return PyErr_SetFromErrno(PyExc_OSError);
+-
+-	Py_RETURN_NONE;
+-}
+-
+-PyDoc_STRVAR(gpiod_LineBulk_set_direction_output_doc,
+-"set_direction_output(value) -> None\n"
+-"\n"
+-"Set the direction of all the lines held by this LineBulk object to output.\n"
+-"\n"
+-"  values\n"
+-"    List of values (integers) to set when direction is output.\n"
+-"\n"
+-"The number of values in the list passed as argument must be the same as\n"
+-"the number of lines held by this gpiod.LineBulk object. The index of each\n"
+-"value corresponds to the index of each line in the object.\n");
+-
+-static PyObject *gpiod_LineBulk_set_direction_output(
+-				gpiod_LineBulkObject *self,
+-				PyObject *args)
+-{
+-	int rv, vals[LINE_REQUEST_MAX_LINES];
+-	struct gpiod_line_bulk *bulk;
+-	PyObject *val_list;
+-	const int *valp;
+-
+-	if (gpiod_LineBulkOwnerIsClosed(self))
+-		return NULL;
+-
+-	val_list = NULL;
+-	rv = PyArg_ParseTuple(args, "|O", &val_list);
+-	if (!rv)
+-		return NULL;
+-
+-	if (val_list == NULL)
+-		valp = NULL;
+-	else {
+-		memset(vals, 0, sizeof(vals));
+-		rv = gpiod_TupleToIntArray(val_list, vals, self->num_lines);
+-		if (rv)
+-			return NULL;
+-		valp = vals;
+-	}
+-
+-	bulk = gpiod_LineBulkObjToCLineBulk(self);
+-	if (!bulk)
+-		return NULL;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	rv = gpiod_line_set_direction_output_bulk(bulk, valp);
+-	gpiod_line_bulk_free(bulk);
+-	Py_END_ALLOW_THREADS;
+-	if (rv)
+-		return PyErr_SetFromErrno(PyExc_OSError);
+-
+-	Py_RETURN_NONE;
+-}
+-
+-PyDoc_STRVAR(gpiod_LineBulk_release_doc,
+-"release() -> None\n"
+-"\n"
+-"Release all lines held by this LineBulk object.");
+-
+-static PyObject *gpiod_LineBulk_release(gpiod_LineBulkObject *self,
+-					PyObject *Py_UNUSED(ignored))
+-{
+-	struct gpiod_line_bulk *bulk;
+-
+-	if (gpiod_LineBulkOwnerIsClosed(self))
+-		return NULL;
+-
+-	bulk = gpiod_LineBulkObjToCLineBulk(self);
+-	if (!bulk)
+-		return NULL;
+-
+-	gpiod_line_release_bulk(bulk);
+-	gpiod_line_bulk_free(bulk);
+-
+-	Py_RETURN_NONE;
+-}
+-
+-PyDoc_STRVAR(gpiod_LineBulk_event_wait_doc,
+-"event_wait([sec[ ,nsec]]) -> gpiod.LineBulk object or None\n"
+-"\n"
+-"Poll the lines held by this LineBulk Object for line events.\n"
+-"\n"
+-"  sec\n"
+-"    Number of seconds to wait before timeout.\n"
+-"  nsec\n"
+-"    Number of nanoseconds to wait before timeout.\n"
+-"\n"
+-"Returns a gpiod.LineBulk object containing references to lines on which\n"
+-"events occurred or None if we reached the timeout without any event\n"
+-"occurring.");
+-
+-static PyObject *gpiod_LineBulk_event_wait(gpiod_LineBulkObject *self,
+-					   PyObject *args, PyObject *kwds)
+-{
+-	static char *kwlist[] = { "sec", "nsec", NULL };
+-
+-	struct gpiod_line_bulk *bulk, *ev_bulk;
+-	gpiod_LineObject *line_obj;
+-	gpiod_ChipObject *owner;
+-	long sec = 0, nsec = 0;
+-	struct timespec ts;
+-	PyObject *ret;
+-	unsigned int idx;
+-	int rv;
+-
+-	if (gpiod_LineBulkOwnerIsClosed(self))
+-		return NULL;
+-
+-	rv = PyArg_ParseTupleAndKeywords(args, kwds,
+-					 "|ll", kwlist, &sec, &nsec);
+-	if (!rv)
+-		return NULL;
+-
+-	ts.tv_sec = sec;
+-	ts.tv_nsec = nsec;
+-
+-	bulk = gpiod_LineBulkObjToCLineBulk(self);
+-	if (!bulk)
+-		return NULL;
+-
+-	ev_bulk = gpiod_line_bulk_new(self->num_lines);
+-	if (!ev_bulk) {
+-		gpiod_line_bulk_free(bulk);
+-		return NULL;
+-	}
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	rv = gpiod_line_event_wait_bulk(bulk, &ts, ev_bulk);
+-	gpiod_line_bulk_free(bulk);
+-	Py_END_ALLOW_THREADS;
+-	if (rv < 0) {
+-		gpiod_line_bulk_free(ev_bulk);
+-		return PyErr_SetFromErrno(PyExc_OSError);
+-	} else if (rv == 0) {
+-		gpiod_line_bulk_free(ev_bulk);
+-		Py_RETURN_NONE;
+-	}
+-
+-	ret = PyList_New(gpiod_line_bulk_num_lines(ev_bulk));
+-	if (!ret) {
+-		gpiod_line_bulk_free(ev_bulk);
+-		return NULL;
+-	}
+-
+-	owner = ((gpiod_LineObject *)(self->lines[0]))->owner;
+-
+-	for (idx = 0; idx < gpiod_line_bulk_num_lines(ev_bulk); idx++) {
+-		line_obj = gpiod_MakeLineObject(owner, gpiod_line_bulk_get_line(ev_bulk, idx));
+-		if (!line_obj) {
+-			gpiod_line_bulk_free(ev_bulk);
+-			Py_DECREF(ret);
+-			return NULL;
+-		}
+-
+-		rv = PyList_SetItem(ret, idx, (PyObject *)line_obj);
+-		if (rv < 0) {
+-			gpiod_line_bulk_free(ev_bulk);
+-			Py_DECREF(ret);
+-			return NULL;
+-		}
+-	}
+-
+-	gpiod_line_bulk_free(ev_bulk);
+-
+-	return ret;
+-}
+-
+-static PyObject *gpiod_LineBulk_repr(gpiod_LineBulkObject *self)
+-{
+-	PyObject *list, *list_repr, *chip_name, *ret;
+-	gpiod_LineObject *line;
+-
+-	if (gpiod_LineBulkOwnerIsClosed(self))
+-		return NULL;
+-
+-	list = gpiod_LineBulk_to_list(self, NULL);
+-	if (!list)
+-		return NULL;
+-
+-	list_repr = PyObject_Repr(list);
+-	Py_DECREF(list);
+-	if (!list_repr)
+-		return NULL;
+-
+-	line = (gpiod_LineObject *)self->lines[0];
+-	chip_name = PyObject_CallMethod((PyObject *)line->owner, "name", "");
+-	if (!chip_name) {
+-		Py_DECREF(list_repr);
+-		return NULL;
+-	}
+-
+-	ret = PyUnicode_FromFormat("%U%U", chip_name, list_repr);
+-	Py_DECREF(chip_name);
+-	Py_DECREF(list_repr);
+-	return ret;
+-}
+-
+-static PyMethodDef gpiod_LineBulk_methods[] = {
+-	{
+-		.ml_name = "to_list",
+-		.ml_meth = (PyCFunction)gpiod_LineBulk_to_list,
+-		.ml_doc = gpiod_LineBulk_to_list_doc,
+-		.ml_flags = METH_NOARGS,
+-	},
+-	{
+-		.ml_name = "request",
+-		.ml_meth = (PyCFunction)(void (*)(void))gpiod_LineBulk_request,
+-		.ml_doc = gpiod_LineBulk_request_doc,
+-		.ml_flags = METH_VARARGS | METH_KEYWORDS,
+-	},
+-	{
+-		.ml_name = "get_values",
+-		.ml_meth = (PyCFunction)gpiod_LineBulk_get_values,
+-		.ml_doc = gpiod_LineBulk_get_values_doc,
+-		.ml_flags = METH_NOARGS,
+-	},
+-	{
+-		.ml_name = "set_values",
+-		.ml_meth = (PyCFunction)gpiod_LineBulk_set_values,
+-		.ml_doc = gpiod_LineBulk_set_values_doc,
+-		.ml_flags = METH_VARARGS,
+-	},
+-	{
+-		.ml_name = "set_config",
+-		.ml_meth = (PyCFunction)gpiod_LineBulk_set_config,
+-		.ml_flags = METH_VARARGS,
+-		.ml_doc = gpiod_LineBulk_set_config_doc,
+-	},
+-	{
+-		.ml_name = "set_flags",
+-		.ml_meth = (PyCFunction)gpiod_LineBulk_set_flags,
+-		.ml_flags = METH_VARARGS,
+-		.ml_doc = gpiod_LineBulk_set_flags_doc,
+-	},
+-	{
+-		.ml_name = "set_direction_input",
+-		.ml_meth = (PyCFunction)gpiod_LineBulk_set_direction_input,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_LineBulk_set_direction_input_doc,
+-	},
+-	{
+-		.ml_name = "set_direction_output",
+-		.ml_meth = (PyCFunction)gpiod_LineBulk_set_direction_output,
+-		.ml_flags = METH_VARARGS,
+-		.ml_doc = gpiod_LineBulk_set_direction_output_doc,
+-	},
+-	{
+-		.ml_name = "release",
+-		.ml_meth = (PyCFunction)gpiod_LineBulk_release,
+-		.ml_doc = gpiod_LineBulk_release_doc,
+-		.ml_flags = METH_NOARGS,
+-	},
+-	{
+-		.ml_name = "event_wait",
+-		.ml_meth = (PyCFunction)(void (*)(void))gpiod_LineBulk_event_wait,
+-		.ml_doc = gpiod_LineBulk_event_wait_doc,
+-		.ml_flags = METH_VARARGS | METH_KEYWORDS,
+-	},
+-	{ }
+-};
+-
+-PyDoc_STRVAR(gpiod_LineBulkType_doc,
+-"Represents a set of GPIO lines.\n"
+-"\n"
+-"Objects of this type are immutable. The constructor takes as argument\n"
+-"a sequence of gpiod.Line objects. It doesn't accept objects of any other\n"
+-"type.");
+-
+-static PyTypeObject gpiod_LineBulkType = {
+-	PyVarObject_HEAD_INIT(NULL, 0)
+-	.tp_name = "gpiod.LineBulk",
+-	.tp_basicsize = sizeof(gpiod_LineBulkObject),
+-	.tp_flags = Py_TPFLAGS_DEFAULT,
+-	.tp_doc = gpiod_LineBulkType_doc,
+-	.tp_new = PyType_GenericNew,
+-	.tp_init = (initproc)gpiod_LineBulk_init,
+-	.tp_dealloc = (destructor)gpiod_LineBulk_dealloc,
+-	.tp_iter = PyObject_SelfIter,
+-	.tp_iternext = (iternextfunc)gpiod_LineBulk_iternext,
+-	.tp_repr = (reprfunc)gpiod_LineBulk_repr,
+-	.tp_methods = gpiod_LineBulk_methods,
+-};
+-
+-static gpiod_LineBulkObject *gpiod_LineToLineBulk(gpiod_LineObject *line)
+-{
+-	gpiod_LineBulkObject *ret;
+-	PyObject *args;
+-
+-	args = Py_BuildValue("((O))", line);
+-	if (!args)
+-		return NULL;
+-
+-	ret = (gpiod_LineBulkObject *)PyObject_CallObject(
+-					(PyObject *)&gpiod_LineBulkType,
+-					args);
+-	Py_DECREF(args);
+-
+-	return ret;
+-}
+-
+-static int gpiod_Chip_init(gpiod_ChipObject *self,
+-			   PyObject *args, PyObject *Py_UNUSED(ignored))
+-{
+-	char *path;
+-	int rv;
+-
+-	rv = PyArg_ParseTuple(args, "s", &path);
+-	if (!rv)
+-		return -1;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	self->chip = gpiod_chip_open(path);
+-	Py_END_ALLOW_THREADS;
+-	if (!self->chip) {
+-		PyErr_SetFromErrno(PyExc_OSError);
+-		return -1;
+-	}
+-
+-	return 0;
+-}
+-
+-static void gpiod_Chip_dealloc(gpiod_ChipObject *self)
+-{
+-	if (self->chip)
+-		gpiod_chip_unref(self->chip);
+-
+-	PyObject_Del(self);
+-}
+-
+-static PyObject *gpiod_Chip_repr(gpiod_ChipObject *self)
+-{
+-	if (gpiod_ChipIsClosed(self))
+-		return NULL;
+-
+-	return PyUnicode_FromFormat("'%s /%s/ %u lines'",
+-				    gpiod_chip_get_name(self->chip),
+-				    gpiod_chip_get_label(self->chip),
+-				    gpiod_chip_get_num_lines(self->chip));
+-}
+-
+-PyDoc_STRVAR(gpiod_Chip_close_doc,
+-"close() -> None\n"
+-"\n"
+-"Close the associated gpiochip descriptor. The chip object must no longer\n"
+-"be used after this method is called.\n");
+-
+-static PyObject *gpiod_Chip_close(gpiod_ChipObject *self,
+-				  PyObject *Py_UNUSED(ignored))
+-{
+-	if (gpiod_ChipIsClosed(self))
+-		return NULL;
+-
+-	gpiod_chip_unref(self->chip);
+-	self->chip = NULL;
+-
+-	Py_RETURN_NONE;
+-}
+-
+-PyDoc_STRVAR(gpiod_Chip_enter_doc,
+-"Controlled execution enter callback.");
+-
+-static PyObject *gpiod_Chip_enter(gpiod_ChipObject *chip,
+-				  PyObject *Py_UNUSED(ignored))
+-{
+-	Py_INCREF(chip);
+-	return (PyObject *)chip;
+-}
+-
+-PyDoc_STRVAR(gpiod_Chip_exit_doc,
+-"Controlled execution exit callback.");
+-
+-static PyObject *gpiod_Chip_exit(gpiod_ChipObject *chip,
+-				 PyObject *Py_UNUSED(ignored))
+-{
+-	return PyObject_CallMethod((PyObject *)chip, "close", "");
+-}
+-
+-PyDoc_STRVAR(gpiod_Chip_name_doc,
+-"name() -> string\n"
+-"\n"
+-"Get the name of the GPIO chip");
+-
+-static PyObject *gpiod_Chip_name(gpiod_ChipObject *self,
+-				 PyObject *Py_UNUSED(ignored))
+-{
+-	if (gpiod_ChipIsClosed(self))
+-		return NULL;
+-
+-	return PyUnicode_FromFormat("%s", gpiod_chip_get_name(self->chip));
+-}
+-
+-PyDoc_STRVAR(gpiod_Chip_label_doc,
+-"label() -> string\n"
+-"\n"
+-"Get the label of the GPIO chip");
+-
+-static PyObject *gpiod_Chip_label(gpiod_ChipObject *self,
+-				  PyObject *Py_UNUSED(ignored))
+-{
+-	if (gpiod_ChipIsClosed(self))
+-		return NULL;
+-
+-	return PyUnicode_FromFormat("%s", gpiod_chip_get_label(self->chip));
+-}
+-
+-PyDoc_STRVAR(gpiod_Chip_num_lines_doc,
+-"num_lines() -> integer\n"
+-"\n"
+-"Get the number of lines exposed by this GPIO chip.");
+-
+-static PyObject *gpiod_Chip_num_lines(gpiod_ChipObject *self,
+-				      PyObject *Py_UNUSED(ignored))
+-{
+-	if (gpiod_ChipIsClosed(self))
+-		return NULL;
+-
+-	return Py_BuildValue("I", gpiod_chip_get_num_lines(self->chip));
+-}
+-
+-static gpiod_LineObject *
+-gpiod_MakeLineObject(gpiod_ChipObject *owner, struct gpiod_line *line)
+-{
+-	gpiod_LineObject *obj;
+-
+-	obj = PyObject_New(gpiod_LineObject, &gpiod_LineType);
+-	if (!obj)
+-		return NULL;
+-
+-	obj->line = line;
+-	Py_INCREF(owner);
+-	obj->owner = owner;
+-
+-	return obj;
+-}
+-
+-PyDoc_STRVAR(gpiod_Chip_get_line_doc,
+-"get_line(offset) -> gpiod.Line object\n"
+-"\n"
+-"Get the GPIO line at given offset.\n"
+-"\n"
+-"  offset\n"
+-"    Line offset (integer)");
+-
+-static gpiod_LineObject *
+-gpiod_Chip_get_line(gpiod_ChipObject *self, PyObject *args)
+-{
+-	struct gpiod_line *line;
+-	unsigned int offset;
+-	int rv;
+-
+-	if (gpiod_ChipIsClosed(self))
+-		return NULL;
+-
+-	rv = PyArg_ParseTuple(args, "I", &offset);
+-	if (!rv)
+-		return NULL;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	line = gpiod_chip_get_line(self->chip, offset);
+-	Py_END_ALLOW_THREADS;
+-	if (!line)
+-		return (gpiod_LineObject *)PyErr_SetFromErrno(PyExc_OSError);
+-
+-	return gpiod_MakeLineObject(self, line);
+-}
+-
+-static gpiod_LineBulkObject *gpiod_ListToLineBulk(PyObject *lines)
+-{
+-	gpiod_LineBulkObject *bulk;
+-	PyObject *arg;
+-
+-	arg = PyTuple_Pack(1, lines);
+-	if (!arg)
+-		return NULL;
+-
+-	bulk = (gpiod_LineBulkObject *)PyObject_CallObject(
+-					(PyObject *)&gpiod_LineBulkType,
+-					arg);
+-	Py_DECREF(arg);
+-
+-	return bulk;
+-}
+-
+-static gpiod_LineBulkObject *
+-gpiod_LineBulkObjectFromBulk(gpiod_ChipObject *chip, struct gpiod_line_bulk *bulk)
+-{
+-	gpiod_LineBulkObject *bulk_obj;
+-	gpiod_LineObject *line_obj;
+-	struct gpiod_line *line;
+-	unsigned int idx;
+-	PyObject *list;
+-	int rv;
+-
+-	list = PyList_New(gpiod_line_bulk_num_lines(bulk));
+-	if (!list)
+-		return NULL;
+-
+-	for (idx = 0; idx < gpiod_line_bulk_num_lines(bulk); idx++) {
+-		line = gpiod_line_bulk_get_line(bulk, idx);
+-		line_obj = gpiod_MakeLineObject(chip, line);
+-		if (!line_obj) {
+-			Py_DECREF(list);
+-			return NULL;
+-		}
+-
+-		rv = PyList_SetItem(list, idx, (PyObject *)line_obj);
+-		if (rv < 0) {
+-			Py_DECREF(line_obj);
+-			Py_DECREF(list);
+-			return NULL;
+-		}
+-	}
+-
+-	bulk_obj = gpiod_ListToLineBulk(list);
+-	Py_DECREF(list);
+-	if (!bulk_obj)
+-		return NULL;
+-
+-	return bulk_obj;
+-}
+-
+-PyDoc_STRVAR(gpiod_Chip_find_line_doc,
+-"find_line(name) -> integer or None\n"
+-"\n"
+-"Find the offset of the line with given name among lines exposed by this\n"
+-"GPIO chip.\n"
+-"\n"
+-"  name\n"
+-"    Line name (string)\n"
+-"\n"
+-"Returns the offset of the line with given name or None if it is not\n"
+-"associated with this chip.");
+-
+-static PyObject *gpiod_Chip_find_line(gpiod_ChipObject *self, PyObject *args)
+-{
+-	const char *name;
+-	int rv, offset;
+-
+-	if (gpiod_ChipIsClosed(self))
+-		return NULL;
+-
+-	rv = PyArg_ParseTuple(args, "s", &name);
+-	if (!rv)
+-		return NULL;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	offset = gpiod_chip_find_line(self->chip, name);
+-	Py_END_ALLOW_THREADS;
+-	if (offset < 0) {
+-		if (errno == ENOENT)
+-			Py_RETURN_NONE;
+-
+-		return PyErr_SetFromErrno(PyExc_OSError);
+-	}
+-
+-	return Py_BuildValue("i", offset);
+-}
+-
+-PyDoc_STRVAR(gpiod_Chip_get_lines_doc,
+-"get_lines(offsets) -> gpiod.LineBulk object\n"
+-"\n"
+-"Get a set of GPIO lines by their offsets.\n"
+-"\n"
+-"  offsets\n"
+-"    List of lines offsets.");
+-
+-static gpiod_LineBulkObject *
+-gpiod_Chip_get_lines(gpiod_ChipObject *self, PyObject *args)
+-{
+-	PyObject *offsets, *iter, *next, *lines, *arg;
+-	gpiod_LineBulkObject *bulk;
+-	Py_ssize_t num_offsets, i;
+-	gpiod_LineObject *line;
+-	int rv;
+-
+-	rv = PyArg_ParseTuple(args, "O", &offsets);
+-	if (!rv)
+-		return NULL;
+-
+-	num_offsets = PyObject_Size(offsets);
+-	if (num_offsets < 1) {
+-		PyErr_SetString(PyExc_TypeError,
+-				"Argument must be a non-empty sequence of offsets");
+-		return NULL;
+-	}
+-
+-	lines = PyList_New(num_offsets);
+-	if (!lines)
+-		return NULL;
+-
+-	iter = PyObject_GetIter(offsets);
+-	if (!iter) {
+-		Py_DECREF(lines);
+-		return NULL;
+-	}
+-
+-	for (i = 0;;) {
+-		next = PyIter_Next(iter);
+-		if (!next) {
+-			Py_DECREF(iter);
+-			break;
+-		}
+-
+-		arg = PyTuple_Pack(1, next);
+-		Py_DECREF(next);
+-		if (!arg) {
+-			Py_DECREF(iter);
+-			Py_DECREF(lines);
+-			return NULL;
+-		}
+-
+-		line = gpiod_Chip_get_line(self, arg);
+-		Py_DECREF(arg);
+-		if (!line) {
+-			Py_DECREF(iter);
+-			Py_DECREF(lines);
+-			return NULL;
+-		}
+-
+-		rv = PyList_SetItem(lines, i++, (PyObject *)line);
+-		if (rv < 0) {
+-			Py_DECREF(line);
+-			Py_DECREF(iter);
+-			Py_DECREF(lines);
+-			return NULL;
+-		}
+-	}
+-
+-	bulk = gpiod_ListToLineBulk(lines);
+-	Py_DECREF(lines);
+-	if (!bulk)
+-		return NULL;
+-
+-	return bulk;
+-}
+-
+-PyDoc_STRVAR(gpiod_Chip_get_all_lines_doc,
+-"get_all_lines() -> gpiod.LineBulk object\n"
+-"\n"
+-"Get all lines exposed by this Chip.");
+-
+-static gpiod_LineBulkObject *
+-gpiod_Chip_get_all_lines(gpiod_ChipObject *self, PyObject *Py_UNUSED(ignored))
+-{
+-	gpiod_LineBulkObject *bulk_obj;
+-	struct gpiod_line_bulk *bulk;
+-
+-	if (gpiod_ChipIsClosed(self))
+-		return NULL;
+-
+-	bulk = gpiod_chip_get_all_lines(self->chip);
+-	if (!bulk)
+-		return (gpiod_LineBulkObject *)PyErr_SetFromErrno(
+-							PyExc_OSError);
+-
+-	bulk_obj = gpiod_LineBulkObjectFromBulk(self, bulk);
+-	gpiod_line_bulk_free(bulk);
+-	return bulk_obj;
+-}
+-
+-static PyMethodDef gpiod_Chip_methods[] = {
+-	{
+-		.ml_name = "close",
+-		.ml_meth = (PyCFunction)gpiod_Chip_close,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Chip_close_doc,
+-	},
+-	{
+-		.ml_name = "__enter__",
+-		.ml_meth = (PyCFunction)gpiod_Chip_enter,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Chip_enter_doc,
+-	},
+-	{
+-		.ml_name = "__exit__",
+-		.ml_meth = (PyCFunction)gpiod_Chip_exit,
+-		.ml_flags = METH_VARARGS,
+-		.ml_doc = gpiod_Chip_exit_doc,
+-	},
+-	{
+-		.ml_name = "name",
+-		.ml_meth = (PyCFunction)gpiod_Chip_name,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Chip_name_doc,
+-	},
+-	{
+-		.ml_name = "label",
+-		.ml_meth = (PyCFunction)gpiod_Chip_label,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Chip_label_doc,
+-	},
+-	{
+-		.ml_name = "num_lines",
+-		.ml_meth = (PyCFunction)gpiod_Chip_num_lines,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Chip_num_lines_doc,
+-	},
+-	{
+-		.ml_name = "get_line",
+-		.ml_meth = (PyCFunction)gpiod_Chip_get_line,
+-		.ml_flags = METH_VARARGS,
+-		.ml_doc = gpiod_Chip_get_line_doc,
+-	},
+-	{
+-		.ml_name = "find_line",
+-		.ml_meth = (PyCFunction)gpiod_Chip_find_line,
+-		.ml_flags = METH_VARARGS,
+-		.ml_doc = gpiod_Chip_find_line_doc,
+-	},
+-	{
+-		.ml_name = "get_lines",
+-		.ml_meth = (PyCFunction)gpiod_Chip_get_lines,
+-		.ml_flags = METH_VARARGS,
+-		.ml_doc = gpiod_Chip_get_lines_doc,
+-	},
+-	{
+-		.ml_name = "get_all_lines",
+-		.ml_meth = (PyCFunction)gpiod_Chip_get_all_lines,
+-		.ml_flags = METH_NOARGS,
+-		.ml_doc = gpiod_Chip_get_all_lines_doc,
+-	},
+-	{ }
+-};
+-
+-PyDoc_STRVAR(gpiod_ChipType_doc,
+-"Represents a GPIO chip.\n"
+-"\n"
+-"Chip object manages all resources associated with the GPIO chip\n"
+-"it represents.\n"
+-"\n"
+-"The gpiochip device file is opened during the object's construction.\n"
+-"The Chip object's constructor takes a description string as argument the\n"
+-"meaning of which depends on the second, optional parameter which defines\n"
+-"the way the description string should be interpreted. The available\n"
+-"options are: OPEN_BY_NAME, OPEN_BY_NUMBER, OPEN_BY_PATH and OPEN_LOOKUP.\n"
+-"The last option means that libgpiod should open the chip based on the best\n"
+-"guess what the path is. This is also the default if the second argument is\n"
+-"missing.\n"
+-"\n"
+-"Callers must close the chip by calling the close() method when it's no\n"
+-"longer used.\n"
+-"\n"
+-"Example:\n"
+-"\n"
+-"    chip = gpiod.Chip('gpiochip0', gpiod.Chip.OPEN_BY_NAME)\n"
+-"    do_something(chip)\n"
+-"    chip.close()\n"
+-"\n"
+-"The gpiod.Chip class also supports controlled execution ('with' statement).\n"
+-"\n"
+-"Example:\n"
+-"\n"
+-"    with gpiod.Chip('0', gpiod.Chip.OPEN_BY_NUMBER) as chip:\n"
+-"        do_something(chip)");
+-
+-static PyTypeObject gpiod_ChipType = {
+-	PyVarObject_HEAD_INIT(NULL, 0)
+-	.tp_name = "gpiod.Chip",
+-	.tp_basicsize = sizeof(gpiod_ChipObject),
+-	.tp_flags = Py_TPFLAGS_DEFAULT,
+-	.tp_doc = gpiod_ChipType_doc,
+-	.tp_new = PyType_GenericNew,
+-	.tp_init = (initproc)gpiod_Chip_init,
+-	.tp_dealloc = (destructor)gpiod_Chip_dealloc,
+-	.tp_repr = (reprfunc)gpiod_Chip_repr,
+-	.tp_methods = gpiod_Chip_methods,
+-};
+-
+-static int gpiod_LineIter_init(gpiod_LineIterObject *self,
+-			       PyObject *args, PyObject *Py_UNUSED(ignored))
+-{
+-	gpiod_ChipObject *chip_obj;
+-	int rv;
+-
+-	rv = PyArg_ParseTuple(args, "O!", &gpiod_ChipType,
+-			      (PyObject *)&chip_obj);
+-	if (!rv)
+-		return -1;
+-
+-	if (gpiod_ChipIsClosed(chip_obj))
+-		return -1;
+-
+-	self->offset = 0;
+-	self->owner = chip_obj;
+-	Py_INCREF(chip_obj);
+-
+-	return 0;
+-}
+-
+-static void gpiod_LineIter_dealloc(gpiod_LineIterObject *self)
+-{
+-	PyObject_Del(self);
+-}
+-
+-static gpiod_LineObject *gpiod_LineIter_next(gpiod_LineIterObject *self)
+-{
+-	struct gpiod_line *line;
+-
+-	if (self->offset == gpiod_chip_get_num_lines(self->owner->chip))
+-		return NULL; /* Last element. */
+-
+-	line = gpiod_chip_get_line(self->owner->chip, self->offset++);
+-	if (!line)
+-		return (gpiod_LineObject *)PyErr_SetFromErrno(PyExc_OSError);
+-
+-	return gpiod_MakeLineObject(self->owner, line);
+-}
+-
+-PyDoc_STRVAR(gpiod_LineIterType_doc,
+-"Allows to iterate over all lines exposed by a GPIO chip.\n"
+-"\n"
+-"New line iterator is created by passing a reference to an open gpiod.Chip\n"
+-"object to the constructor of gpiod.LineIter.\n"
+-"\n"
+-"Caller doesn't need to handle the resource management for lines as their\n"
+-"lifetime is managed by the owning chip.\n"
+-"\n"
+-"Example:\n"
+-"\n"
+-"    chip = gpiod.Chip('gpiochip0')\n"
+-"    for line in gpiod.LineIter(chip):\n"
+-"        do_stuff_with_line(line)");
+-
+-static PyTypeObject gpiod_LineIterType = {
+-	PyVarObject_HEAD_INIT(NULL, 0)
+-	.tp_name = "gpiod.LineIter",
+-	.tp_basicsize = sizeof(gpiod_LineIterObject),
+-	.tp_flags = Py_TPFLAGS_DEFAULT,
+-	.tp_doc = gpiod_LineIterType_doc,
+-	.tp_new = PyType_GenericNew,
+-	.tp_init = (initproc)gpiod_LineIter_init,
+-	.tp_dealloc = (destructor)gpiod_LineIter_dealloc,
+-	.tp_iter = PyObject_SelfIter,
+-	.tp_iternext = (iternextfunc)gpiod_LineIter_next,
+-};
+-
+-typedef struct {
+-	const char *name;
+-	PyTypeObject *typeobj;
+-} gpiod_PyType;
+-
+-static gpiod_PyType gpiod_PyType_list[] = {
+-	{ .name = "Chip",	.typeobj = &gpiod_ChipType,		},
+-	{ .name = "Line",	.typeobj = &gpiod_LineType,		},
+-	{ .name = "LineEvent",	.typeobj = &gpiod_LineEventType,	},
+-	{ .name = "LineBulk",	.typeobj = &gpiod_LineBulkType,		},
+-	{ .name = "LineIter",	.typeobj = &gpiod_LineIterType,		},
+-	{ }
+-};
+-
+-typedef struct {
+-	PyTypeObject *typeobj;
+-	const char *name;
+-	long int val;
+-} gpiod_ConstDescr;
+-
+-static gpiod_ConstDescr gpiod_ConstList[] = {
+-	{
+-		.typeobj = &gpiod_LineType,
+-		.name = "DIRECTION_INPUT",
+-		.val = gpiod_DIRECTION_INPUT,
+-	},
+-	{
+-		.typeobj = &gpiod_LineType,
+-		.name = "DIRECTION_OUTPUT",
+-		.val = gpiod_DIRECTION_OUTPUT,
+-	},
+-	{
+-		.typeobj = &gpiod_LineType,
+-		.name = "DRIVE_PUSH_PULL",
+-		.val = gpiod_DRIVE_PUSH_PULL,
+-	},
+-	{
+-		.typeobj = &gpiod_LineType,
+-		.name = "DRIVE_OPEN_DRAIN",
+-		.val = gpiod_DRIVE_OPEN_DRAIN,
+-	},
+-	{
+-		.typeobj = &gpiod_LineType,
+-		.name = "DRIVE_OPEN_SOURCE",
+-		.val = gpiod_DRIVE_OPEN_SOURCE,
+-	},
+-	{
+-		.typeobj = &gpiod_LineType,
+-		.name = "BIAS_UNKNOWN",
+-		.val = gpiod_BIAS_UNKNOWN,
+-	},
+-	{
+-		.typeobj = &gpiod_LineType,
+-		.name = "BIAS_DISABLED",
+-		.val = gpiod_BIAS_DISABLED,
+-	},
+-	{
+-		.typeobj = &gpiod_LineType,
+-		.name = "BIAS_PULL_UP",
+-		.val = gpiod_BIAS_PULL_UP,
+-	},
+-	{
+-		.typeobj = &gpiod_LineType,
+-		.name = "BIAS_PULL_DOWN",
+-		.val = gpiod_BIAS_PULL_DOWN,
+-	},
+-	{
+-		.typeobj = &gpiod_LineEventType,
+-		.name = "RISING_EDGE",
+-		.val = gpiod_RISING_EDGE,
+-	},
+-	{
+-		.typeobj = &gpiod_LineEventType,
+-		.name = "FALLING_EDGE",
+-		.val = gpiod_FALLING_EDGE,
+-	},
+-	{ }
+-};
+-
+-PyDoc_STRVAR(gpiod_Module_is_gpiochip_device_doc,
+-"is_gpiochip_device(path) -> boolean\n"
+-"\n"
+-"Check if the file pointed to by path is a GPIO chip character device.\n"
+-"Returns true if so, False otherwise.\n"
+-"\n"
+-"  path\n"
+-"    Path to the file that should be checked.\n");
+-
+-static PyObject *
+-gpiod_Module_is_gpiochip_device(PyObject *Py_UNUSED(self), PyObject *args)
+-{
+-	const char *path;
+-	int ret;
+-
+-	ret = PyArg_ParseTuple(args, "s", &path);
+-	if (!ret)
+-		return NULL;
+-
+-	if (gpiod_is_gpiochip_device(path))
+-		Py_RETURN_TRUE;
+-
+-	Py_RETURN_FALSE;
+-}
+-
+-static PyMethodDef gpiod_module_methods[] = {
+-	{
+-		.ml_name = "is_gpiochip_device",
+-		.ml_meth = (PyCFunction)gpiod_Module_is_gpiochip_device,
+-		.ml_flags = METH_VARARGS,
+-		.ml_doc = gpiod_Module_is_gpiochip_device_doc,
+-	},
+-	{ }
+-};
+-
+-PyDoc_STRVAR(gpiod_Module_doc,
+-"Python bindings for libgpiod.\n\
+-\n\
+-This module wraps the native C API of libgpiod in a set of python classes.");
+-
+-static PyModuleDef gpiod_Module = {
+-	PyModuleDef_HEAD_INIT,
+-	.m_name = "gpiod",
+-	.m_doc = gpiod_Module_doc,
+-	.m_size = -1,
+-	.m_methods = gpiod_module_methods,
+-};
+-
+-typedef struct {
+-	const char *name;
+-	long int value;
+-} gpiod_ModuleConst;
+-
+-static gpiod_ModuleConst gpiod_ModuleConsts[] = {
+-	{
+-		.name = "LINE_REQ_DIR_AS_IS",
+-		.value = gpiod_LINE_REQ_DIR_AS_IS,
+-	},
+-	{
+-		.name = "LINE_REQ_DIR_IN",
+-		.value = gpiod_LINE_REQ_DIR_IN,
+-	},
+-	{
+-		.name = "LINE_REQ_DIR_OUT",
+-		.value = gpiod_LINE_REQ_DIR_OUT,
+-	},
+-	{
+-		.name = "LINE_REQ_EV_FALLING_EDGE",
+-		.value = gpiod_LINE_REQ_EV_FALLING_EDGE,
+-	},
+-	{
+-		.name = "LINE_REQ_EV_RISING_EDGE",
+-		.value = gpiod_LINE_REQ_EV_RISING_EDGE,
+-	},
+-	{
+-		.name = "LINE_REQ_EV_BOTH_EDGES",
+-		.value = gpiod_LINE_REQ_EV_BOTH_EDGES,
+-	},
+-	{
+-		.name = "LINE_REQ_FLAG_OPEN_DRAIN",
+-		.value = gpiod_LINE_REQ_FLAG_OPEN_DRAIN,
+-	},
+-	{
+-		.name = "LINE_REQ_FLAG_OPEN_SOURCE",
+-		.value = gpiod_LINE_REQ_FLAG_OPEN_SOURCE,
+-	},
+-	{
+-		.name = "LINE_REQ_FLAG_ACTIVE_LOW",
+-		.value = gpiod_LINE_REQ_FLAG_ACTIVE_LOW,
+-	},
+-	{
+-		.name = "LINE_REQ_FLAG_BIAS_DISABLED",
+-		.value = gpiod_LINE_REQ_FLAG_BIAS_DISABLED,
+-	},
+-	{
+-		.name = "LINE_REQ_FLAG_BIAS_PULL_DOWN",
+-		.value = gpiod_LINE_REQ_FLAG_BIAS_PULL_DOWN,
+-	},
+-	{
+-		.name = "LINE_REQ_FLAG_BIAS_PULL_UP",
+-		.value = gpiod_LINE_REQ_FLAG_BIAS_PULL_UP,
+-	},
+-	{ }
+-};
+-
+-PyMODINIT_FUNC PyInit_gpiod(void)
+-{
+-	gpiod_ConstDescr *const_descr;
+-	gpiod_ModuleConst *mod_const;
+-	PyObject *module, *val;
+-	gpiod_PyType *type;
+-	unsigned int i;
+-	int rv;
+-
+-	module = PyModule_Create(&gpiod_Module);
+-	if (!module)
+-		return NULL;
+-
+-	for (i = 0; gpiod_PyType_list[i].typeobj; i++) {
+-		type = &gpiod_PyType_list[i];
+-
+-		rv = PyType_Ready(type->typeobj);
+-		if (rv)
+-			return NULL;
+-
+-		Py_INCREF(type->typeobj);
+-		rv = PyModule_AddObject(module, type->name,
+-					(PyObject *)type->typeobj);
+-		if (rv < 0)
+-			return NULL;
+-	}
+-
+-	for (i = 0; gpiod_ConstList[i].name; i++) {
+-		const_descr = &gpiod_ConstList[i];
+-
+-		val = PyLong_FromLong(const_descr->val);
+-		if (!val)
+-			return NULL;
+-
+-		rv = PyDict_SetItemString(const_descr->typeobj->tp_dict,
+-					  const_descr->name, val);
+-		Py_DECREF(val);
+-		if (rv)
+-			return NULL;
+-	}
+-
+-	for (i = 0; gpiod_ModuleConsts[i].name; i++) {
+-		mod_const = &gpiod_ModuleConsts[i];
+-
+-		rv = PyModule_AddIntConstant(module,
+-					     mod_const->name, mod_const->value);
+-		if (rv < 0)
+-			return NULL;
+-	}
+-
+-	rv = PyModule_AddStringConstant(module, "__version__",
+-					gpiod_version_string());
+-	if (rv < 0)
+-		return NULL;
+-
+-	return module;
+-}
+diff --git a/bindings/python/tests/Makefile.am b/bindings/python/tests/Makefile.am
+deleted file mode 100644
+index 972b669..0000000
+--- a/bindings/python/tests/Makefile.am
++++ /dev/null
+@@ -1,13 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0-or-later
+-# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
+-
+-dist_bin_SCRIPTS = gpiod_py_test.py
+-
+-pyexec_LTLIBRARIES = gpiomockup.la
+-
+-gpiomockup_la_SOURCES = gpiomockupmodule.c
+-gpiomockup_la_CFLAGS = -I$(top_srcdir)/tests/mockup/
+-gpiomockup_la_CFLAGS += -Wall -Wextra -g -std=gnu89 $(PYTHON_CPPFLAGS)
+-gpiomockup_la_LDFLAGS = -module -avoid-version
+-gpiomockup_la_LIBADD = $(top_builddir)/tests/mockup/libgpiomockup.la
+-gpiomockup_la_LIBADD += $(PYTHON_LIBS)
+diff --git a/bindings/python/tests/gpiod_py_test.py b/bindings/python/tests/gpiod_py_test.py
+deleted file mode 100755
+index f93c72c..0000000
+--- a/bindings/python/tests/gpiod_py_test.py
++++ /dev/null
+@@ -1,832 +0,0 @@
+-#!/usr/bin/env python3
+-# SPDX-License-Identifier: GPL-2.0-or-later
+-# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
+-
+-import errno
+-import gpiod
+-import gpiomockup
+-import os
+-import select
+-import time
+-import threading
+-import unittest
+-
+-from packaging import version
+-
+-mockup = None
+-default_consumer = 'gpiod-py-test'
+-
+-class MockupTestCase(unittest.TestCase):
+-
+-    chip_sizes = None
+-    flags = 0
+-
+-    def setUp(self):
+-        mockup.probe(self.chip_sizes, flags=self.flags)
+-
+-    def tearDown(self):
+-        mockup.remove()
+-
+-class EventThread(threading.Thread):
+-
+-    def __init__(self, chip_idx, line_offset, period_ms):
+-        threading.Thread.__init__(self)
+-        self.chip_idx = chip_idx
+-        self.line_offset = line_offset
+-        self.period_ms = period_ms
+-        self.lock = threading.Lock()
+-        self.cond = threading.Condition(self.lock)
+-        self.should_stop = False
+-
+-    def run(self):
+-        i = 0;
+-        while True:
+-            with self.lock:
+-                if self.should_stop:
+-                    break;
+-
+-                if not self.cond.wait(float(self.period_ms) / 1000):
+-                    mockup.chip_set_pull(self.chip_idx,
+-                                         self.line_offset, i % 2)
+-                    i += 1
+-
+-    def stop(self):
+-        with self.lock:
+-            self.should_stop = True
+-            self.cond.notify_all()
+-
+-    def __enter__(self):
+-        self.start()
+-        return self
+-
+-    def __exit__(self, exc_type, exc_value, traceback):
+-        self.stop()
+-        self.join()
+-
+-def check_kernel(major, minor, release):
+-    current = os.uname().release.split('-')[0]
+-    required = '{}.{}.{}'.format(major, minor, release)
+-    if version.parse(current) < version.parse(required):
+-        raise NotImplementedError(
+-                'linux kernel version must be at least {} - got {}'.format(required, current))
+-
+-#
+-# Chip test cases
+-#
+-
+-class IsGpioDevice(MockupTestCase):
+-
+-    chip_sizes = ( 8, )
+-
+-    def test_is_gpiochip_device_good(self):
+-        self.assertTrue(gpiod.is_gpiochip_device(mockup.chip_path(0)))
+-
+-    def test_is_gpiochip_device_bad(self):
+-        self.assertFalse(gpiod.is_gpiochip_device('/dev/null'))
+-
+-    def test_is_gpiochip_device_nonexistent(self):
+-        self.assertFalse(gpiod.is_gpiochip_device('/dev/nonexistent_device'))
+-
+-class ChipOpen(MockupTestCase):
+-
+-    chip_sizes = ( 8, 8, 8 )
+-
+-    def test_open_good(self):
+-        with gpiod.Chip(mockup.chip_path(1)) as chip:
+-            self.assertEqual(chip.name(), mockup.chip_name(1))
+-
+-    def test_nonexistent_chip(self):
+-        with self.assertRaises(FileNotFoundError):
+-            chip = gpiod.Chip('nonexistent-chip')
+-
+-    def test_open_chip_no_arguments(self):
+-        with self.assertRaises(TypeError):
+-            chip = gpiod.Chip()
+-
+-class ChipClose(MockupTestCase):
+-
+-    chip_sizes = ( 8, )
+-
+-    def test_use_chip_after_close(self):
+-        chip = gpiod.Chip(mockup.chip_path(0))
+-        self.assertEqual(chip.name(), mockup.chip_name(0))
+-        chip.close()
+-        with self.assertRaises(ValueError):
+-            chip.name()
+-
+-class ChipInfo(MockupTestCase):
+-
+-    chip_sizes = ( 16, )
+-
+-    def test_chip_get_info(self):
+-        chip = gpiod.Chip(mockup.chip_path(0))
+-        self.assertEqual(chip.name(), mockup.chip_name(0))
+-        self.assertEqual(chip.label(), 'gpio-mockup-A')
+-        self.assertEqual(chip.num_lines(), 16)
+-
+-class ChipGetLines(MockupTestCase):
+-
+-    chip_sizes = ( 8, 8, 4 )
+-    flags = gpiomockup.Mockup.FLAG_NAMED_LINES
+-
+-    def test_get_single_line_by_offset(self):
+-        with gpiod.Chip(mockup.chip_path(1)) as chip:
+-            line = chip.get_line(4)
+-            self.assertEqual(line.name(), 'gpio-mockup-B-4')
+-
+-    def test_find_single_line_by_name(self):
+-        with gpiod.Chip(mockup.chip_path(1)) as chip:
+-            offset = chip.find_line('gpio-mockup-B-4')
+-            self.assertIsNotNone(offset)
+-            self.assertEqual(offset, 4)
+-
+-    def test_get_single_line_invalid_offset(self):
+-        with gpiod.Chip(mockup.chip_path(1)) as chip:
+-            with self.assertRaises(OSError) as err_ctx:
+-                line = chip.get_line(11)
+-
+-            self.assertEqual(err_ctx.exception.errno, errno.EINVAL)
+-
+-    def test_find_single_line_nonexistent(self):
+-        with gpiod.Chip(mockup.chip_path(1)) as chip:
+-            offset = chip.find_line('nonexistent-line')
+-            self.assertIsNone(offset)
+-
+-    def test_get_multiple_lines_by_offsets_in_tuple(self):
+-        with gpiod.Chip(mockup.chip_path(1)) as chip:
+-            lines = chip.get_lines(( 1, 3, 6, 7 )).to_list()
+-            self.assertEqual(len(lines), 4)
+-            self.assertEqual(lines[0].name(), 'gpio-mockup-B-1')
+-            self.assertEqual(lines[1].name(), 'gpio-mockup-B-3')
+-            self.assertEqual(lines[2].name(), 'gpio-mockup-B-6')
+-            self.assertEqual(lines[3].name(), 'gpio-mockup-B-7')
+-
+-    def test_get_multiple_lines_by_offsets_in_list(self):
+-        with gpiod.Chip(mockup.chip_path(1)) as chip:
+-            lines = chip.get_lines([ 1, 3, 6, 7 ]).to_list()
+-            self.assertEqual(len(lines), 4)
+-            self.assertEqual(lines[0].name(), 'gpio-mockup-B-1')
+-            self.assertEqual(lines[1].name(), 'gpio-mockup-B-3')
+-            self.assertEqual(lines[2].name(), 'gpio-mockup-B-6')
+-            self.assertEqual(lines[3].name(), 'gpio-mockup-B-7')
+-
+-    def test_get_multiple_lines_invalid_offset(self):
+-        with gpiod.Chip(mockup.chip_path(1)) as chip:
+-            with self.assertRaises(OSError) as err_ctx:
+-                line = chip.get_lines(( 1, 3, 11, 7 ))
+-
+-            self.assertEqual(err_ctx.exception.errno, errno.EINVAL)
+-
+-    def test_get_all_lines(self):
+-        with gpiod.Chip(mockup.chip_path(2)) as chip:
+-            lines = chip.get_all_lines().to_list()
+-            self.assertEqual(len(lines), 4)
+-            self.assertEqual(lines[0].name(), 'gpio-mockup-C-0')
+-            self.assertEqual(lines[1].name(), 'gpio-mockup-C-1')
+-            self.assertEqual(lines[2].name(), 'gpio-mockup-C-2')
+-            self.assertEqual(lines[3].name(), 'gpio-mockup-C-3')
+-
+-#
+-# Line test cases
+-#
+-
+-class LineInfo(MockupTestCase):
+-
+-    chip_sizes = ( 8, )
+-    flags = gpiomockup.Mockup.FLAG_NAMED_LINES
+-
+-    def test_unexported_line(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(4)
+-            self.assertEqual(line.offset(), 4)
+-            self.assertEqual(line.name(), 'gpio-mockup-A-4')
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_INPUT)
+-            self.assertFalse(line.is_active_low())
+-            self.assertEqual(line.consumer(), None)
+-            self.assertFalse(line.is_used())
+-
+-    def test_exported_line(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(4)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT,
+-                         flags=gpiod.LINE_REQ_FLAG_ACTIVE_LOW)
+-            self.assertEqual(line.offset(), 4)
+-            self.assertEqual(line.name(), 'gpio-mockup-A-4')
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertTrue(line.is_active_low())
+-            self.assertEqual(line.consumer(), default_consumer)
+-            self.assertTrue(line.is_used())
+-
+-    def test_exported_line_with_flags(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(4)
+-            flags = (gpiod.LINE_REQ_FLAG_ACTIVE_LOW |
+-                     gpiod.LINE_REQ_FLAG_OPEN_DRAIN)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT,
+-                         flags=flags)
+-            self.assertEqual(line.offset(), 4)
+-            self.assertEqual(line.name(), 'gpio-mockup-A-4')
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertTrue(line.is_active_low())
+-            self.assertEqual(line.consumer(), default_consumer)
+-            self.assertTrue(line.is_used())
+-            self.assertEqual(line.drive(), gpiod.Line.DRIVE_OPEN_DRAIN)
+-            self.assertEqual(line.bias(), gpiod.Line.BIAS_UNKNOWN)
+-
+-    def test_exported_open_drain_line(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(4)
+-            flags = gpiod.LINE_REQ_FLAG_OPEN_DRAIN
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT,
+-                         flags=flags)
+-            self.assertEqual(line.offset(), 4)
+-            self.assertEqual(line.name(), 'gpio-mockup-A-4')
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertFalse(line.is_active_low())
+-            self.assertEqual(line.consumer(), default_consumer)
+-            self.assertTrue(line.is_used())
+-            self.assertEqual(line.drive(), gpiod.Line.DRIVE_OPEN_DRAIN)
+-            self.assertEqual(line.bias(), gpiod.Line.BIAS_UNKNOWN)
+-
+-    def test_exported_open_source_line(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(4)
+-            flags = gpiod.LINE_REQ_FLAG_OPEN_SOURCE
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT,
+-                         flags=flags)
+-            self.assertEqual(line.offset(), 4)
+-            self.assertEqual(line.name(), 'gpio-mockup-A-4')
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertFalse(line.is_active_low())
+-            self.assertEqual(line.consumer(), default_consumer)
+-            self.assertTrue(line.is_used())
+-            self.assertEqual(line.drive(), gpiod.Line.DRIVE_OPEN_SOURCE)
+-            self.assertEqual(line.bias(), gpiod.Line.BIAS_UNKNOWN)
+-
+-    def test_exported_bias_disable_line(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(4)
+-            flags = gpiod.LINE_REQ_FLAG_BIAS_DISABLED
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT,
+-                         flags=flags)
+-            self.assertEqual(line.offset(), 4)
+-            self.assertEqual(line.name(), 'gpio-mockup-A-4')
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertFalse(line.is_active_low())
+-            self.assertEqual(line.consumer(), default_consumer)
+-            self.assertTrue(line.is_used())
+-            self.assertEqual(line.drive(), gpiod.Line.DRIVE_PUSH_PULL)
+-            self.assertEqual(line.bias(), gpiod.Line.BIAS_DISABLED)
+-
+-    def test_exported_bias_pull_down_line(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(4)
+-            flags = gpiod.LINE_REQ_FLAG_BIAS_PULL_DOWN
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT,
+-                         flags=flags)
+-            self.assertEqual(line.offset(), 4)
+-            self.assertEqual(line.name(), 'gpio-mockup-A-4')
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertFalse(line.is_active_low())
+-            self.assertEqual(line.consumer(), default_consumer)
+-            self.assertTrue(line.is_used())
+-            self.assertEqual(line.drive(), gpiod.Line.DRIVE_PUSH_PULL)
+-            self.assertEqual(line.bias(), gpiod.Line.BIAS_PULL_DOWN)
+-
+-    def test_exported_bias_pull_up_line(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(4)
+-            flags = gpiod.LINE_REQ_FLAG_BIAS_PULL_UP
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT,
+-                         flags=flags)
+-            self.assertEqual(line.offset(), 4)
+-            self.assertEqual(line.name(), 'gpio-mockup-A-4')
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertFalse(line.is_active_low())
+-            self.assertEqual(line.consumer(), default_consumer)
+-            self.assertTrue(line.is_used())
+-            self.assertEqual(line.drive(), gpiod.Line.DRIVE_PUSH_PULL)
+-            self.assertEqual(line.bias(), gpiod.Line.BIAS_PULL_UP)
+-
+-class LineValues(MockupTestCase):
+-
+-    chip_sizes = ( 8, )
+-
+-    def test_get_value_single_line(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_IN)
+-            self.assertEqual(line.get_value(), 0)
+-            mockup.chip_set_pull(0, 3, 1)
+-            self.assertEqual(line.get_value(), 1)
+-
+-    def test_set_value_single_line(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT)
+-            line.set_value(1)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 1)
+-            line.set_value(0)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-
+-    def test_set_value_with_default_value_argument(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT,
+-                         default_val=1)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 1)
+-
+-    def test_get_value_multiple_lines(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            lines = chip.get_lines(( 0, 3, 4, 6 ))
+-            lines.request(consumer=default_consumer,
+-                          type=gpiod.LINE_REQ_DIR_IN)
+-            self.assertEqual(lines.get_values(), [ 0, 0, 0, 0 ])
+-            mockup.chip_set_pull(0, 0, 1)
+-            mockup.chip_set_pull(0, 4, 1)
+-            mockup.chip_set_pull(0, 6, 1)
+-            self.assertEqual(lines.get_values(), [ 1, 0, 1, 1 ])
+-
+-    def test_set_value_multiple_lines(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            lines = chip.get_lines(( 0, 3, 4, 6 ))
+-            lines.request(consumer=default_consumer,
+-                          type=gpiod.LINE_REQ_DIR_OUT)
+-            lines.set_values(( 1, 0, 1, 1 ))
+-            self.assertEqual(mockup.chip_get_value(0, 0), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 4), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 6), 1)
+-            lines.set_values(( 0, 0, 1, 0 ))
+-            self.assertEqual(mockup.chip_get_value(0, 0), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 4), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 6), 0)
+-
+-    def test_set_multiple_values_with_default_vals_argument(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            lines = chip.get_lines(( 0, 3, 4, 6 ))
+-            lines.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT,
+-                         default_vals=( 1, 0, 1, 1 ))
+-            self.assertEqual(mockup.chip_get_value(0, 0), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 4), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 6), 1)
+-
+-    def test_get_value_active_low(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_IN,
+-                         flags=gpiod.LINE_REQ_FLAG_ACTIVE_LOW)
+-            self.assertEqual(line.get_value(), 1)
+-            mockup.chip_set_pull(0, 3, 1)
+-            self.assertEqual(line.get_value(), 0)
+-
+-    def test_set_value_active_low(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT,
+-                         flags=gpiod.LINE_REQ_FLAG_ACTIVE_LOW)
+-            line.set_value(1)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-            line.set_value(0)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 1)
+-
+-class LineConfig(MockupTestCase):
+-
+-    chip_sizes = ( 8, )
+-
+-    def test_set_config_direction(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_IN)
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_INPUT)
+-            line.set_config(gpiod.LINE_REQ_DIR_IN, 0, 0)
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_INPUT)
+-            line.set_config(gpiod.LINE_REQ_DIR_OUT,0,0)
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
+-
+-    def test_set_config_flags(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT)
+-            line.set_config(gpiod.LINE_REQ_DIR_OUT,
+-                            gpiod.LINE_REQ_FLAG_ACTIVE_LOW, 0)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 1)
+-            line.set_config(gpiod.LINE_REQ_DIR_OUT, 0, 0)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-
+-    def test_set_config_output_value(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_IN)
+-            line.set_config(gpiod.LINE_REQ_DIR_OUT,0,1)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 1)
+-            line.set_config(gpiod.LINE_REQ_DIR_OUT,0,0)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-
+-    def test_set_config_output_no_value(self):
+-         with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT,
+-                         default_val=1)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 1)
+-            line.set_config(gpiod.LINE_REQ_DIR_OUT,0)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-
+-    def test_set_config_bulk_output_no_values(self):
+-         with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            lines = chip.get_lines(( 0, 3, 4, 6 ))
+-            lines.request(consumer=default_consumer,
+-                          type=gpiod.LINE_REQ_DIR_OUT,
+-                          default_vals=(1,1,1,1))
+-            self.assertEqual(mockup.chip_get_value(0, 0), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 4), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 6), 1)
+-            lines.set_config(gpiod.LINE_REQ_DIR_OUT,0)
+-            self.assertEqual(mockup.chip_get_value(0, 0), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 4), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 6), 0)
+-
+-class LineFlags(MockupTestCase):
+-
+-    chip_sizes = ( 8, )
+-
+-    def test_set_flags(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT,
+-                         default_val=1)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 1)
+-            line.set_flags(gpiod.LINE_REQ_FLAG_ACTIVE_LOW)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-            line.set_flags(0)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 1)
+-
+-    def test_set_flags_bulk(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            lines = chip.get_lines(( 0, 3, 4, 6 ))
+-            lines.request(consumer=default_consumer,
+-                          type=gpiod.LINE_REQ_DIR_OUT,
+-                          default_vals=(1,1,1,1))
+-            self.assertEqual(mockup.chip_get_value(0, 0), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 4), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 6), 1)
+-            lines.set_flags(gpiod.LINE_REQ_FLAG_ACTIVE_LOW)
+-            self.assertEqual(mockup.chip_get_value(0, 0), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 4), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 6), 0)
+-            lines.set_flags(0)
+-            self.assertEqual(mockup.chip_get_value(0, 0), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 4), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 6), 1)
+-
+-class LineDirection(MockupTestCase):
+-
+-    chip_sizes = ( 8, )
+-
+-    def test_set_direction(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_OUT)
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
+-            line.set_direction_input()
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_INPUT)
+-            line.set_direction_output(0)
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-            line.set_direction_output(1)
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 1)
+-            line.set_direction_output()
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-
+-    def test_set_direction_bulk(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            lines = chip.get_lines(( 0, 3, 4, 6 ))
+-            lines.request(consumer=default_consumer,
+-                          type=gpiod.LINE_REQ_DIR_OUT)
+-            self.assertEqual(lines.to_list()[0].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(lines.to_list()[1].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(lines.to_list()[2].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(lines.to_list()[3].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            lines.set_direction_input()
+-            self.assertEqual(lines.to_list()[0].direction(),
+-                             gpiod.Line.DIRECTION_INPUT)
+-            self.assertEqual(lines.to_list()[1].direction(),
+-                             gpiod.Line.DIRECTION_INPUT)
+-            self.assertEqual(lines.to_list()[2].direction(),
+-                             gpiod.Line.DIRECTION_INPUT)
+-            self.assertEqual(lines.to_list()[3].direction(),
+-                             gpiod.Line.DIRECTION_INPUT)
+-            lines.set_direction_output((0,0,1,0))
+-            self.assertEqual(lines.to_list()[0].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(lines.to_list()[1].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(lines.to_list()[2].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(lines.to_list()[3].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(mockup.chip_get_value(0, 0), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 4), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 6), 0)
+-            lines.set_direction_output((1,1,1,0))
+-            self.assertEqual(lines.to_list()[0].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(lines.to_list()[1].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(lines.to_list()[2].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(lines.to_list()[3].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(mockup.chip_get_value(0, 0), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 4), 1)
+-            self.assertEqual(mockup.chip_get_value(0, 6), 0)
+-            lines.set_direction_output()
+-            self.assertEqual(lines.to_list()[0].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(lines.to_list()[1].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(lines.to_list()[2].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(lines.to_list()[3].direction(),
+-                             gpiod.Line.DIRECTION_OUTPUT)
+-            self.assertEqual(mockup.chip_get_value(0, 0), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 3), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 4), 0)
+-            self.assertEqual(mockup.chip_get_value(0, 6), 0)
+-
+-class LineRequestBehavior(MockupTestCase):
+-
+-    chip_sizes = ( 8, )
+-
+-    def test_line_request_twice_two_calls(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_IN)
+-            with self.assertRaises(OSError) as err_ctx:
+-                line.request(consumer=default_consumer,
+-                             type=gpiod.LINE_REQ_DIR_IN)
+-
+-            self.assertEqual(err_ctx.exception.errno, errno.EBUSY)
+-
+-    def test_line_request_twice_in_bulk(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            lines = chip.get_lines(( 2, 3, 6, 6 ))
+-            with self.assertRaises(OSError) as err_ctx:
+-                lines.request(consumer=default_consumer,
+-                              type=gpiod.LINE_REQ_DIR_IN)
+-
+-            self.assertEqual(err_ctx.exception.errno, errno.EBUSY)
+-
+-    def test_use_value_unrequested(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            with self.assertRaises(OSError) as err_ctx:
+-                line.get_value()
+-
+-            self.assertEqual(err_ctx.exception.errno, errno.EPERM)
+-
+-    def test_request_with_no_kwds(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(2)
+-            line.request(default_consumer)
+-            self.assertEqual(line.direction(), gpiod.Line.DIRECTION_INPUT)
+-            line.release()
+-
+-#
+-# Iterator test cases
+-#
+-
+-class LineIterator(MockupTestCase):
+-
+-    chip_sizes = ( 4, )
+-
+-    def test_iterate_over_lines(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            count = 0
+-
+-            for line in gpiod.LineIter(chip):
+-                self.assertEqual(line.offset(), count)
+-                count += 1
+-
+-            self.assertEqual(count, chip.num_lines())
+-
+-#
+-# Event test cases
+-#
+-
+-class EventSingleLine(MockupTestCase):
+-
+-    chip_sizes = ( 8, )
+-
+-    def test_single_line_rising_edge_event(self):
+-        with EventThread(0, 4, 200):
+-            with gpiod.Chip(mockup.chip_path(0)) as chip:
+-                line = chip.get_line(4)
+-                line.request(consumer=default_consumer,
+-                             type=gpiod.LINE_REQ_EV_RISING_EDGE)
+-                self.assertTrue(line.event_wait(sec=1))
+-                event = line.event_read()
+-                self.assertEqual(event.type, gpiod.LineEvent.RISING_EDGE)
+-                self.assertEqual(event.source.offset(), 4)
+-
+-    def test_single_line_falling_edge_event(self):
+-        with EventThread(0, 4, 200):
+-            with gpiod.Chip(mockup.chip_path(0)) as chip:
+-                line = chip.get_line(4)
+-                line.request(consumer=default_consumer,
+-                             type=gpiod.LINE_REQ_EV_FALLING_EDGE)
+-                self.assertTrue(line.event_wait(sec=1))
+-                event = line.event_read()
+-                self.assertEqual(event.type, gpiod.LineEvent.FALLING_EDGE)
+-                self.assertEqual(event.source.offset(), 4)
+-
+-    def test_single_line_both_edges_events(self):
+-        with EventThread(0, 4, 200):
+-            with gpiod.Chip(mockup.chip_path(0)) as chip:
+-                line = chip.get_line(4)
+-                line.request(consumer=default_consumer,
+-                             type=gpiod.LINE_REQ_EV_BOTH_EDGES)
+-                self.assertTrue(line.event_wait(sec=1))
+-                event = line.event_read()
+-                self.assertEqual(event.type, gpiod.LineEvent.RISING_EDGE)
+-                self.assertEqual(event.source.offset(), 4)
+-                self.assertTrue(line.event_wait(sec=1))
+-                event = line.event_read()
+-                self.assertEqual(event.type, gpiod.LineEvent.FALLING_EDGE)
+-                self.assertEqual(event.source.offset(), 4)
+-
+-    def test_single_line_both_edges_events_active_low(self):
+-        with EventThread(0, 4, 200):
+-            with gpiod.Chip(mockup.chip_path(0)) as chip:
+-                line = chip.get_line(4)
+-                line.request(consumer=default_consumer,
+-                             type=gpiod.LINE_REQ_EV_BOTH_EDGES,
+-                             flags=gpiod.LINE_REQ_FLAG_ACTIVE_LOW)
+-                self.assertTrue(line.event_wait(sec=1))
+-                event = line.event_read()
+-                self.assertEqual(event.type, gpiod.LineEvent.FALLING_EDGE)
+-                self.assertEqual(event.source.offset(), 4)
+-                self.assertTrue(line.event_wait(sec=1))
+-                event = line.event_read()
+-                self.assertEqual(event.type, gpiod.LineEvent.RISING_EDGE)
+-                self.assertEqual(event.source.offset(), 4)
+-
+-    def test_single_line_read_multiple_events(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(4)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_EV_BOTH_EDGES)
+-            mockup.chip_set_pull(0, 4, 1)
+-            time.sleep(0.01)
+-            mockup.chip_set_pull(0, 4, 0)
+-            time.sleep(0.01)
+-            mockup.chip_set_pull(0, 4, 1)
+-            time.sleep(0.01)
+-            self.assertTrue(line.event_wait(sec=1))
+-            events = line.event_read_multiple()
+-            self.assertEqual(len(events), 3)
+-            self.assertEqual(events[0].type, gpiod.LineEvent.RISING_EDGE)
+-            self.assertEqual(events[1].type, gpiod.LineEvent.FALLING_EDGE)
+-            self.assertEqual(events[2].type, gpiod.LineEvent.RISING_EDGE)
+-            self.assertEqual(events[0].source.offset(), 4)
+-            self.assertEqual(events[1].source.offset(), 4)
+-            self.assertEqual(events[2].source.offset(), 4)
+-
+-class EventBulk(MockupTestCase):
+-
+-    chip_sizes = ( 8, )
+-
+-    def test_watch_multiple_lines_for_events(self):
+-        with EventThread(0, 2, 200):
+-            with gpiod.Chip(mockup.chip_path(0)) as chip:
+-                lines = chip.get_lines(( 0, 1, 2, 3, 4 ))
+-                lines.request(consumer=default_consumer,
+-                              type=gpiod.LINE_REQ_EV_BOTH_EDGES)
+-                event_lines = lines.event_wait(sec=1)
+-                self.assertEqual(len(event_lines), 1)
+-                line = event_lines[0]
+-                event = line.event_read()
+-                self.assertEqual(event.type, gpiod.LineEvent.RISING_EDGE)
+-                self.assertEqual(event.source.offset(), 2)
+-                event_lines = lines.event_wait(sec=1)
+-                self.assertEqual(len(event_lines), 1)
+-                line = event_lines[0]
+-                event = line.event_read()
+-                self.assertEqual(event.type, gpiod.LineEvent.FALLING_EDGE)
+-                self.assertEqual(event.source.offset(), 2)
+-
+-class EventValues(MockupTestCase):
+-
+-    chip_sizes = ( 8, )
+-
+-    def test_request_for_events_get_value(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_EV_BOTH_EDGES)
+-            self.assertEqual(line.get_value(), 0)
+-            mockup.chip_set_pull(0, 3, 1)
+-            self.assertEqual(line.get_value(), 1)
+-
+-    def test_request_for_events_get_value_active_low(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_EV_BOTH_EDGES,
+-                         flags=gpiod.LINE_REQ_FLAG_ACTIVE_LOW)
+-            self.assertEqual(line.get_value(), 1)
+-            mockup.chip_set_pull(0, 3, 1)
+-            self.assertEqual(line.get_value(), 0)
+-
+-class EventFileDescriptor(MockupTestCase):
+-
+-    chip_sizes = ( 8, )
+-
+-    def test_event_get_fd(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_EV_BOTH_EDGES)
+-            fd = line.event_get_fd();
+-            self.assertGreaterEqual(fd, 0)
+-
+-    def test_event_get_fd_not_requested(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            with self.assertRaises(OSError) as err_ctx:
+-                fd = line.event_get_fd();
+-
+-            self.assertEqual(err_ctx.exception.errno, errno.EPERM)
+-
+-    def test_event_get_fd_requested_for_values(self):
+-        with gpiod.Chip(mockup.chip_path(0)) as chip:
+-            line = chip.get_line(3)
+-            line.request(consumer=default_consumer,
+-                         type=gpiod.LINE_REQ_DIR_IN)
+-            with self.assertRaises(OSError) as err_ctx:
+-                fd = line.event_get_fd();
+-
+-            self.assertEqual(err_ctx.exception.errno, errno.EPERM)
+-
+-    def test_event_fd_polling(self):
+-        with EventThread(0, 2, 200):
+-            with gpiod.Chip(mockup.chip_path(0)) as chip:
+-                lines = chip.get_lines(( 0, 1, 2, 3, 4, 5, 6 ))
+-                lines.request(consumer=default_consumer,
+-                              type=gpiod.LINE_REQ_EV_BOTH_EDGES)
+-
+-                inputs = []
+-                for line in lines:
+-                    inputs.append(line.event_get_fd())
+-
+-                readable, writable, exceptional = select.select(inputs, [],
+-                                                                inputs, 1.0)
+-
+-                self.assertEqual(len(readable), 1)
+-                event = lines.to_list()[2].event_read()
+-                self.assertEqual(event.type, gpiod.LineEvent.RISING_EDGE)
+-                self.assertEqual(event.source.offset(), 2)
+-
+-#
+-# Main
+-#
+-
+-if __name__ == '__main__':
+-    check_kernel(5, 10, 0)
+-    mockup = gpiomockup.Mockup()
+-    unittest.main()
+diff --git a/bindings/python/tests/gpiomockupmodule.c b/bindings/python/tests/gpiomockupmodule.c
+deleted file mode 100644
+index 761d431..0000000
+--- a/bindings/python/tests/gpiomockupmodule.c
++++ /dev/null
+@@ -1,309 +0,0 @@
+-// SPDX-License-Identifier: LGPL-2.1-or-later
+-// SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
+-
+-#include <Python.h>
+-#include <gpio-mockup.h>
+-
+-typedef struct {
+-	PyObject_HEAD
+-	struct gpio_mockup *mockup;
+-} gpiomockup_MockupObject;
+-
+-enum {
+-	gpiomockup_FLAG_NAMED_LINES = 1,
+-};
+-
+-static int gpiomockup_Mockup_init(gpiomockup_MockupObject *self,
+-				  PyObject *Py_UNUSED(ignored0),
+-				  PyObject *Py_UNUSED(ignored1))
+-{
+-	Py_BEGIN_ALLOW_THREADS;
+-	self->mockup = gpio_mockup_new();
+-	Py_END_ALLOW_THREADS;
+-	if (!self->mockup) {
+-		PyErr_SetFromErrno(PyExc_OSError);
+-		return -1;
+-	}
+-
+-	return 0;
+-}
+-
+-static void gpiomockup_Mockup_dealloc(gpiomockup_MockupObject *self)
+-{
+-	if (self->mockup) {
+-		Py_BEGIN_ALLOW_THREADS;
+-		gpio_mockup_unref(self->mockup);
+-		Py_END_ALLOW_THREADS;
+-	}
+-
+-	PyObject_Del(self);
+-}
+-
+-static PyObject *gpiomockup_Mockup_probe(gpiomockup_MockupObject *self,
+-					 PyObject *args, PyObject *kwds)
+-{
+-	static char *kwlist[] = { "chip_sizes",
+-				  "flags",
+-				  NULL };
+-
+-	PyObject *chip_sizes_obj, *iter, *next;
+-	unsigned int *chip_sizes;
+-	int ret, flags = 0, i;
+-	Py_ssize_t num_chips;
+-
+-	ret = PyArg_ParseTupleAndKeywords(args, kwds, "O|i", kwlist,
+-					  &chip_sizes_obj, &flags);
+-	if (!ret)
+-		return NULL;
+-
+-	num_chips = PyObject_Size(chip_sizes_obj);
+-	if (num_chips < 0) {
+-		return NULL;
+-	} else if (num_chips == 0) {
+-		PyErr_SetString(PyExc_TypeError,
+-				"Number of chips must be greater thatn 0");
+-		return NULL;
+-	}
+-
+-	chip_sizes = PyMem_RawCalloc(num_chips, sizeof(unsigned int));
+-	if (!chip_sizes)
+-		return NULL;
+-
+-	iter = PyObject_GetIter(chip_sizes_obj);
+-	if (!iter) {
+-		PyMem_RawFree(chip_sizes);
+-		return NULL;
+-	}
+-
+-	for (i = 0;; i++) {
+-		next = PyIter_Next(iter);
+-		if (!next) {
+-			Py_DECREF(iter);
+-			break;
+-		}
+-
+-		chip_sizes[i] = PyLong_AsUnsignedLong(next);
+-		Py_DECREF(next);
+-		if (PyErr_Occurred()) {
+-			Py_DECREF(iter);
+-			PyMem_RawFree(chip_sizes);
+-			return NULL;
+-		}
+-	}
+-
+-	if (flags & gpiomockup_FLAG_NAMED_LINES)
+-		flags |= GPIO_MOCKUP_FLAG_NAMED_LINES;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	ret = gpio_mockup_probe(self->mockup, num_chips, chip_sizes, flags);
+-	Py_END_ALLOW_THREADS;
+-	PyMem_RawFree(chip_sizes);
+-	if (ret)
+-		return NULL;
+-
+-	Py_RETURN_NONE;
+-}
+-
+-static PyObject *gpiomockup_Mockup_remove(gpiomockup_MockupObject *self,
+-					  PyObject *Py_UNUSED(ignored))
+-{
+-	int ret;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	ret = gpio_mockup_remove(self->mockup);
+-	Py_END_ALLOW_THREADS;
+-	if (ret) {
+-		PyErr_SetFromErrno(PyExc_OSError);
+-		return NULL;
+-	}
+-
+-	Py_RETURN_NONE;
+-}
+-
+-static PyObject *gpiomockup_Mockup_chip_name(gpiomockup_MockupObject *self,
+-					     PyObject *args)
+-{
+-	unsigned int idx;
+-	const char *name;
+-	int ret;
+-
+-	ret = PyArg_ParseTuple(args, "I", &idx);
+-	if (!ret)
+-		return NULL;
+-
+-	name = gpio_mockup_chip_name(self->mockup, idx);
+-	if (!name) {
+-		PyErr_SetFromErrno(PyExc_OSError);
+-		return NULL;
+-	}
+-
+-	return PyUnicode_FromString(name);
+-}
+-
+-static PyObject *gpiomockup_Mockup_chip_path(gpiomockup_MockupObject *self,
+-					     PyObject *args)
+-{
+-	unsigned int idx;
+-	const char *path;
+-	int ret;
+-
+-	ret = PyArg_ParseTuple(args, "I", &idx);
+-	if (!ret)
+-		return NULL;
+-
+-	path = gpio_mockup_chip_path(self->mockup, idx);
+-	if (!path) {
+-		PyErr_SetFromErrno(PyExc_OSError);
+-		return NULL;
+-	}
+-
+-	return PyUnicode_FromString(path);
+-}
+-
+-static PyObject *gpiomockup_Mockup_chip_num(gpiomockup_MockupObject *self,
+-					     PyObject *args)
+-{
+-	unsigned int idx;
+-	int ret, num;
+-
+-	ret = PyArg_ParseTuple(args, "I", &idx);
+-	if (!ret)
+-		return NULL;
+-
+-	num = gpio_mockup_chip_num(self->mockup, idx);
+-	if (num < 0) {
+-		PyErr_SetFromErrno(PyExc_OSError);
+-		return NULL;
+-	}
+-
+-	return PyLong_FromLong(num);
+-}
+-
+-static PyObject *gpiomockup_Mockup_chip_get_value(gpiomockup_MockupObject *self,
+-						  PyObject *args)
+-{
+-	unsigned int chip_idx, line_offset;
+-	int ret, val;
+-
+-	ret = PyArg_ParseTuple(args, "II", &chip_idx, &line_offset);
+-	if (!ret)
+-		return NULL;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	val = gpio_mockup_get_value(self->mockup, chip_idx, line_offset);
+-	Py_END_ALLOW_THREADS;
+-	if (val < 0) {
+-		PyErr_SetFromErrno(PyExc_OSError);
+-		return NULL;
+-	}
+-
+-	return PyLong_FromUnsignedLong(val);
+-}
+-
+-static PyObject *gpiomockup_Mockup_chip_set_pull(gpiomockup_MockupObject *self,
+-						 PyObject *args)
+-{
+-	unsigned int chip_idx, line_offset;
+-	int ret, pull;
+-
+-	ret = PyArg_ParseTuple(args, "IIi", &chip_idx, &line_offset, &pull);
+-	if (!ret)
+-		return NULL;
+-
+-	Py_BEGIN_ALLOW_THREADS;
+-	ret = gpio_mockup_set_pull(self->mockup, chip_idx, line_offset, pull);
+-	Py_END_ALLOW_THREADS;
+-	if (ret) {
+-		PyErr_SetFromErrno(PyExc_OSError);
+-		return NULL;
+-	}
+-
+-	Py_RETURN_NONE;
+-}
+-
+-static PyMethodDef gpiomockup_Mockup_methods[] = {
+-	{
+-		.ml_name = "probe",
+-		.ml_meth = (PyCFunction)(void (*)(void))gpiomockup_Mockup_probe,
+-		.ml_flags = METH_VARARGS | METH_KEYWORDS,
+-	},
+-	{
+-		.ml_name = "remove",
+-		.ml_meth = (PyCFunction)gpiomockup_Mockup_remove,
+-		.ml_flags = METH_NOARGS,
+-	},
+-	{
+-		.ml_name = "chip_name",
+-		.ml_meth = (PyCFunction)gpiomockup_Mockup_chip_name,
+-		.ml_flags = METH_VARARGS,
+-	},
+-	{
+-		.ml_name = "chip_path",
+-		.ml_meth = (PyCFunction)gpiomockup_Mockup_chip_path,
+-		.ml_flags = METH_VARARGS,
+-	},
+-	{
+-		.ml_name = "chip_num",
+-		.ml_meth = (PyCFunction)gpiomockup_Mockup_chip_num,
+-		.ml_flags = METH_VARARGS,
+-	},
+-	{
+-		.ml_name = "chip_get_value",
+-		.ml_meth = (PyCFunction)gpiomockup_Mockup_chip_get_value,
+-		.ml_flags = METH_VARARGS,
+-	},
+-	{
+-		.ml_name = "chip_set_pull",
+-		.ml_meth = (PyCFunction)gpiomockup_Mockup_chip_set_pull,
+-		.ml_flags = METH_VARARGS,
+-	},
+-	{ }
+-};
+-
+-static PyTypeObject gpiomockup_MockupType = {
+-	PyVarObject_HEAD_INIT(NULL, 0)
+-	.tp_name = "gpiomockup.Mockup",
+-	.tp_basicsize = sizeof(gpiomockup_MockupObject),
+-	.tp_flags = Py_TPFLAGS_DEFAULT,
+-	.tp_new = PyType_GenericNew,
+-	.tp_init = (initproc)gpiomockup_Mockup_init,
+-	.tp_dealloc = (destructor)gpiomockup_Mockup_dealloc,
+-	.tp_methods = gpiomockup_Mockup_methods,
+-};
+-
+-static PyModuleDef gpiomockup_Module = {
+-	PyModuleDef_HEAD_INIT,
+-	.m_name = "gpiomockup",
+-	.m_size = -1,
+-};
+-
+-PyMODINIT_FUNC PyInit_gpiomockup(void)
+-{
+-	PyObject *module, *val;
+-	int ret;
+-
+-	module = PyModule_Create(&gpiomockup_Module);
+-	if (!module)
+-		return NULL;
+-
+-	ret = PyType_Ready(&gpiomockup_MockupType);
+-	if (ret)
+-		return NULL;
+-	Py_INCREF(&gpiomockup_MockupType);
+-
+-	ret = PyModule_AddObject(module, "Mockup",
+-				 (PyObject *)&gpiomockup_MockupType);
+-	if (ret)
+-		return NULL;
+-
+-	val = PyLong_FromLong(gpiomockup_FLAG_NAMED_LINES);
+-	if (!val)
+-		return NULL;
+-
+-	ret = PyDict_SetItemString(gpiomockup_MockupType.tp_dict,
+-				   "FLAG_NAMED_LINES", val);
+-	if (ret)
+-		return NULL;
+-
+-	return module;
+-}
 -- 
 2.34.1
 
