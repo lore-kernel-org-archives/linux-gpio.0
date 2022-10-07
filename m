@@ -2,455 +2,312 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0273BC43217
-	for <linux-gpio@archiver.kernel.org>; Fri,  7 Oct 2022 14:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBB3C433F5
+	for <linux-gpio@archiver.kernel.org>; Fri,  7 Oct 2022 14:55:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229813AbiJGOv3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 7 Oct 2022 10:51:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50276 "EHLO
+        id S229875AbiJGOzi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 7 Oct 2022 10:55:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229785AbiJGOv1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Oct 2022 10:51:27 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D4CED8EF2
-        for <linux-gpio@vger.kernel.org>; Fri,  7 Oct 2022 07:51:22 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id a12so5973016ljr.7
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Oct 2022 07:51:22 -0700 (PDT)
+        with ESMTP id S229880AbiJGOzg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Oct 2022 10:55:36 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2418189837
+        for <linux-gpio@vger.kernel.org>; Fri,  7 Oct 2022 07:55:29 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id o5so3051639wms.1
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Oct 2022 07:55:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Zd7yOaS0BmZTkZAmYmbWFYEnA2+ZcJB1UPx4SFJpXHA=;
-        b=LERRTzp/XcUl7pw/L0RvSSAkgh7f1YdRK7t0u27QTfs2X/yO8qwM+AhFLDU//R1IcO
-         ywO3mBlZ43I6GqUxbJlR/GR+TNWzesFLzx1Ns7shvQV+vordKxfmbLczmaeoB3zwClXu
-         95+nLwvXEawgnlLum/IweYBZBMi3LOlWUy50gumKQ/g73ZpbN6EMTuGG4jhLiDv73aJP
-         xz63QUVev4Bg6YH6mdgLj7ijHViBgtJDUHYrpr750nocHzUgwZ637i88hImBJNZ7ZygK
-         1TkXvq69B3/BP1BnOrxYey4ekSaeOJobbIS2Hv1VglO7k4lio/WtZm2LffYz7loHYtOJ
-         3lew==
+        bh=+0s015QV2cXfHm7a9+FPAMlFzAOHko/hG+yRidT642s=;
+        b=cAHH15kmLRlLVa3MCH+udqwrMAf1g2gycFWUjeiC8FE+31YVjyb5gYzx7EHacpHZst
+         HNAHmyAcLP2gmY0k5vqaLch311XlQxPWUE16p31aZLp0tLT+IDy+Bc6TX5nGNU/NylVA
+         DtAcWFiXepQQhYXZZDvFSXOsGv6b3VvvwYSAqAhteMq2Mk3YMJV+qeIxjuAT7HnsL4R3
+         1Aio8spnYx5OifvSrPUSN5tTuTKnqmbbluLjH+ZvIIyd113loxTlzjVDhu2z52QBq/Oq
+         4zFk3zXa4wRpt260qA23ergG/LaACEHOxmp73v0NK79nMTaxXtFq+ZDCRjGuIeHPkPzN
+         D1+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Zd7yOaS0BmZTkZAmYmbWFYEnA2+ZcJB1UPx4SFJpXHA=;
-        b=rmmJGP5/BtTU8DR+xptv8apsnQEhBN/29E7TzR1ur6ekk81a8n0tLuSixL+yqdlBg6
-         +rcc2ESI1YZqfle+WttnYDOUcGO53eJjrgxTzxQweS0x43BvIgpF3ESWdsXCnH3H+Bbu
-         UQkLQzyrWKuzqqN0BVyHUIdlypuQ8HT1q72HWx5DRuxmp6/g8tVO94Aj/YRVTG8TEjQs
-         6XjDijBGGjBCpb+BgCJudY09qpqV71Cj+JOJja0Pglaws0ptyBRooEcr75qWkgPpCERM
-         Bxe3bf+i1YQjKiByGUFZeyxj4AjkYhondPLPXT2RQApPr0Rk52Dz7DZEkHRqnKN3yRts
-         CLpA==
-X-Gm-Message-State: ACrzQf0ZHmQ/ZfkOhNRzAOmZfD7n5qu6cYj6/pFvIlj0AEXTPw52o6p5
-        7R8mV7+25HWr/BoVFD+OLyr6lw==
-X-Google-Smtp-Source: AMsMyM6fmB08UlaXdqXLuaJMvnpsHN1LDdKcQbrF7RMgfjOJPphLaVhG/GLqNngYbehoWNUzkriaDg==
-X-Received: by 2002:a05:651c:160c:b0:264:a5ae:7dd2 with SMTP id f12-20020a05651c160c00b00264a5ae7dd2mr1898244ljq.80.1665154280527;
-        Fri, 07 Oct 2022 07:51:20 -0700 (PDT)
-Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id v12-20020ac2592c000000b0049876c1bb24sm315624lfi.225.2022.10.07.07.51.19
+        bh=+0s015QV2cXfHm7a9+FPAMlFzAOHko/hG+yRidT642s=;
+        b=pEzdG32CLpgbANmzxhyKVzoI+ypj8961eOYu4y4aKvYeFBbRAgMoKkqCWLpoj6pmAA
+         PV2D5EM7HyQ2kQKkvf0BUD6o92dVtR4VKlcu2XTtC/E7+jzt2SeEoGzwA2wcn1vXJzmp
+         1n4SI6poW9cY/0E1oqyUGytX7Wuavo6vtiaC+8hF6A59fJ7+Mfx5g+Jjox63e2OBPnRF
+         SyU4B4ms+UN56SY4sFxD+yerESZ9lBS2q19PTDmJPCAR35YLHbZIgW4+eHZz61aR7DOO
+         8zbMYoJtk4sr9hRuVtn3+KBgZDUT5enc/orQWCabdO3i6HzMBfhOnCk5Nt+571dcCuIP
+         eglA==
+X-Gm-Message-State: ACrzQf0a4R1oz/aEpLNoJ2rZT7tJXLj4yIpvcAocjZL9VbQS7H4e28Qj
+        EALqDeyMiaMZZu7ikQL7TOKBLQ==
+X-Google-Smtp-Source: AMsMyM6eWKakqAxVK04EeMSahcdiiFWRWQtgd+adAMfOlRgqQYKkJ9FCQHGSnF/QPeSxBD8Wewvocw==
+X-Received: by 2002:a05:600c:5490:b0:3b4:8db0:5547 with SMTP id iv16-20020a05600c549000b003b48db05547mr3492618wmb.77.1665154528010;
+        Fri, 07 Oct 2022 07:55:28 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:5a9e:bab6:45e8:abe8])
+        by smtp.gmail.com with ESMTPSA id f8-20020a5d50c8000000b0022e36c1113fsm2294707wrt.13.2022.10.07.07.55.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Oct 2022 07:51:20 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Fri, 07 Oct 2022 07:55:27 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Doug Anderson <dianders@chromium.org>
-Subject: [PATCH 2/2] dt-bindings: pinctrl: qcom,sc7180: convert to dtschema
-Date:   Fri,  7 Oct 2022 16:51:16 +0200
-Message-Id: <20221007145116.46554-2-krzysztof.kozlowski@linaro.org>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [libgpiod v2][PATCH v3 2/4] bindings: python: add examples
+Date:   Fri,  7 Oct 2022 16:55:19 +0200
+Message-Id: <20221007145521.329614-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221007145116.46554-1-krzysztof.kozlowski@linaro.org>
-References: <20221007145116.46554-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221007145521.329614-1-brgl@bgdev.pl>
+References: <20221007145521.329614-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Convert Qualcomm SC7180 pin controller bindings to DT schema.  Keep the
-parsing of pin configuration subnodes consistent with other Qualcomm
-schemas (children named with '-state' suffix, their children with
-'-pins').
+This adds the regular set of example programs implemented using libgpiod
+python bindings.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
+ bindings/python/examples/Makefile.am   | 10 +++++++
+ bindings/python/examples/gpiodetect.py | 17 ++++++++++++
+ bindings/python/examples/gpiofind.py   | 20 ++++++++++++++
+ bindings/python/examples/gpioget.py    | 31 +++++++++++++++++++++
+ bindings/python/examples/gpioinfo.py   | 35 ++++++++++++++++++++++++
+ bindings/python/examples/gpiomon.py    | 28 +++++++++++++++++++
+ bindings/python/examples/gpioset.py    | 37 ++++++++++++++++++++++++++
+ 7 files changed, 178 insertions(+)
+ create mode 100644 bindings/python/examples/Makefile.am
+ create mode 100755 bindings/python/examples/gpiodetect.py
+ create mode 100755 bindings/python/examples/gpiofind.py
+ create mode 100755 bindings/python/examples/gpioget.py
+ create mode 100755 bindings/python/examples/gpioinfo.py
+ create mode 100755 bindings/python/examples/gpiomon.py
+ create mode 100755 bindings/python/examples/gpioset.py
 
-Cc: Doug Anderson <dianders@chromium.org>
----
- .../bindings/pinctrl/qcom,sc7180-pinctrl.txt  | 187 ------------------
- .../bindings/pinctrl/qcom,sc7180-pinctrl.yaml | 163 +++++++++++++++
- 2 files changed, 163 insertions(+), 187 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sc7180-pinctrl.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sc7180-pinctrl.yaml
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc7180-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,sc7180-pinctrl.txt
-deleted file mode 100644
-index 6ffeac9801df..000000000000
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sc7180-pinctrl.txt
-+++ /dev/null
-@@ -1,187 +0,0 @@
--Qualcomm Technologies, Inc. SC7180 TLMM block
--
--This binding describes the Top Level Mode Multiplexer block found in the
--SC7180 platform.
--
--- compatible:
--	Usage: required
--	Value type: <string>
--	Definition: must be "qcom,sc7180-pinctrl"
--
--- reg:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: the base address and size of the north, south and west
--		    TLMM tiles
--
--- reg-names:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: names for the cells of reg, must contain "north", "south"
--		    and "west".
--
--- interrupts:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: should specify the TLMM summary IRQ.
--
--- interrupt-controller:
--	Usage: required
--	Value type: <none>
--	Definition: identifies this node as an interrupt controller
--
--- #interrupt-cells:
--	Usage: required
--	Value type: <u32>
--	Definition: must be 2. Specifying the pin number and flags, as defined
--		    in <dt-bindings/interrupt-controller/irq.h>
--
--- gpio-controller:
--	Usage: required
--	Value type: <none>
--	Definition: identifies this node as a gpio controller
--
--- #gpio-cells:
--	Usage: required
--	Value type: <u32>
--	Definition: must be 2. Specifying the pin number and flags, as defined
--		    in <dt-bindings/gpio/gpio.h>
--
--- gpio-ranges:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition:  see ../gpio/gpio.txt
--
--- gpio-reserved-ranges:
--	Usage: optional
--	Value type: <prop-encoded-array>
--	Definition: see ../gpio/gpio.txt
--
--Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
--a general description of GPIO and interrupt bindings.
--
--Please refer to pinctrl-bindings.txt in this directory for details of the
--common pinctrl bindings used by client devices, including the meaning of the
--phrase "pin configuration node".
--
--The pin configuration nodes act as a container for an arbitrary number of
--subnodes. Each of these subnodes represents some desired configuration for a
--pin, a group, or a list of pins or groups. This configuration can include the
--mux function to select on those pin(s)/group(s), and various pin configuration
--parameters, such as pull-up, drive strength, etc.
--
--
--PIN CONFIGURATION NODES:
--
--The name of each subnode is not important; all subnodes should be enumerated
--and processed purely based on their content.
--
--Each subnode only affects those parameters that are explicitly listed. In
--other words, a subnode that lists a mux function but no pin configuration
--parameters implies no information about any pin configuration parameters.
--Similarly, a pin subnode that describes a pullup parameter implies no
--information about e.g. the mux function.
--
--
--The following generic properties as defined in pinctrl-bindings.txt are valid
--to specify in a pin configuration subnode:
--
--- pins:
--	Usage: required
--	Value type: <string-array>
--	Definition: List of gpio pins affected by the properties specified in
--		    this subnode.
--
--		    Valid pins are:
--		      gpio0-gpio118
--		        Supports mux, bias and drive-strength
--
--		      sdc1_clk, sdc1_cmd, sdc1_data sdc2_clk, sdc2_cmd,
--		      sdc2_data sdc1_rclk
--		        Supports bias and drive-strength
--
--		      ufs_reset
--			Supports bias and drive-strength
--
--- function:
--	Usage: required
--	Value type: <string>
--	Definition: Specify the alternative function to be configured for the
--		    specified pins. Functions are only valid for gpio pins.
--		    Valid values are:
--
--		    adsp_ext, agera_pll, aoss_cti, atest_char, atest_char0,
--		    atest_char1, atest_char2, atest_char3, atest_tsens,
--		    atest_tsens2, atest_usb1, atest_usb10, atest_usb11,
--		    atest_usb12, atest_usb13, atest_usb2, atest_usb20,
--		    atest_usb21, atest_usb22, atest_usb23, audio_ref,
--		    btfm_slimbus, cam_mclk, cci_async, cci_i2c, cci_timer0,
--		    cci_timer1, cci_timer2, cci_timer3, cci_timer4,
--		    cri_trng, dbg_out, ddr_bist, ddr_pxi0, ddr_pxi1,
--		    ddr_pxi2, ddr_pxi3, dp_hot, edp_lcd, gcc_gp1, gcc_gp2,
--		    gcc_gp3, gpio, gp_pdm0, gp_pdm1, gp_pdm2, gps_tx,
--		    jitter_bist, ldo_en, ldo_update, lpass_ext, mdp_vsync,
--		    mdp_vsync0, mdp_vsync1, mdp_vsync2, mdp_vsync3, mi2s_0,
--		    mi2s_1, mi2s_2, mss_lte, m_voc, pa_indicator, phase_flag,
--		    PLL_BIST, pll_bypassnl, pll_reset, prng_rosc, qdss,
--		    qdss_cti, qlink_enable, qlink_request, qspi_clk, qspi_cs,
--		    qspi_data, qup00, qup01, qup02_i2c, qup02_uart, qup03,
--		    qup04_i2c, qup04_uart, qup05, qup10, qup11_i2c, qup11_uart,
--		    qup12, qup13_i2c, qup13_uart, qup14, qup15, sdc1_tb,
--		    sdc2_tb, sd_write, sp_cmu, tgu_ch0, tgu_ch1, tgu_ch2,
--		    tgu_ch3, tsense_pwm1, tsense_pwm2, uim1, uim2, uim_batt,
--		    usb_phy, vfr_1, _V_GPIO, _V_PPS_IN, _V_PPS_OUT,
--		    vsense_trigger, wlan1_adc0, wlan1_adc1, wlan2_adc0,
--		    wlan2_adc1,
--
--- bias-disable:
--	Usage: optional
--	Value type: <none>
--	Definition: The specified pins should be configured as no pull.
--
--- bias-pull-down:
--	Usage: optional
--	Value type: <none>
--	Definition: The specified pins should be configured as pull down.
--
--- bias-pull-up:
--	Usage: optional
--	Value type: <none>
--	Definition: The specified pins should be configured as pull up.
--
--- output-high:
--	Usage: optional
--	Value type: <none>
--	Definition: The specified pins are configured in output mode, driven
--		    high.
--		    Not valid for sdc pins.
--
--- output-low:
--	Usage: optional
--	Value type: <none>
--	Definition: The specified pins are configured in output mode, driven
--		    low.
--		    Not valid for sdc pins.
--
--- drive-strength:
--	Usage: optional
--	Value type: <u32>
--	Definition: Selects the drive strength for the specified pins, in mA.
--		    Valid values are: 2, 4, 6, 8, 10, 12, 14 and 16
--
--Example:
--
--	tlmm: pinctrl@3500000 {
--		compatible = "qcom,sc7180-pinctrl";
--		reg = <0x3500000 0x300000>,
--		      <0x3900000 0x300000>,
--		      <0x3D00000 0x300000>;
--		reg-names = "west", "north", "south";
--		interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
--		gpio-controller;
--		#gpio-cells = <2>;
--		gpio-ranges = <&tlmm 0 0 119>;
--		gpio-reserved-ranges = <0 4>, <106 4>;
--		interrupt-controller;
--		#interrupt-cells = <2>;
--	};
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc7180-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sc7180-pinctrl.yaml
+diff --git a/bindings/python/examples/Makefile.am b/bindings/python/examples/Makefile.am
 new file mode 100644
-index 000000000000..68ac2230edb6
+index 0000000..f42b80e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sc7180-pinctrl.yaml
-@@ -0,0 +1,163 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/qcom,sc7180-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/bindings/python/examples/Makefile.am
+@@ -0,0 +1,10 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
 +
-+title: Qualcomm SC7180 TLMM pin controller
++EXTRA_DIST = \
++	gpiodetect.py \
++	gpiofind.py \
++	gpioget.py \
++	gpioinfo.py \
++	gpiomon.py \
++	gpioset.py
+diff --git a/bindings/python/examples/gpiodetect.py b/bindings/python/examples/gpiodetect.py
+new file mode 100755
+index 0000000..c32014f
+--- /dev/null
++++ b/bindings/python/examples/gpiodetect.py
+@@ -0,0 +1,17 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
 +
-+maintainers:
-+  - Bjorn Andersson <andersson@kernel.org>
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
++"""Reimplementation of the gpiodetect tool in Python."""
 +
-+description:
-+  Top Level Mode Multiplexer pin controller in Qualcomm SC7180 SoC.
++import gpiod
++import os
 +
-+properties:
-+  compatible:
-+    const: qcom,sc7180-pinctrl
++if __name__ == "__main__":
++    for entry in os.scandir("/dev/"):
++        if gpiod.is_gpiochip_device(entry.path):
++            with gpiod.Chip(entry.path) as chip:
++                info = chip.get_info()
++                print(
++                    "{} [{}] ({} lines)".format(info.name, info.label, info.num_lines)
++                )
+diff --git a/bindings/python/examples/gpiofind.py b/bindings/python/examples/gpiofind.py
+new file mode 100755
+index 0000000..2f30445
+--- /dev/null
++++ b/bindings/python/examples/gpiofind.py
+@@ -0,0 +1,20 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
 +
-+  reg:
-+    maxItems: 3
++"""Reimplementation of the gpiofind tool in Python."""
 +
-+  reg-names:
-+    items:
-+      - const: west
-+      - const: north
-+      - const: south
++import gpiod
++import os
++import sys
 +
-+  interrupts: true
-+  interrupt-controller: true
-+  "#interrupt-cells": true
-+  gpio-controller: true
-+  "#gpio-cells": true
-+  gpio-ranges: true
-+  wakeup-parent: true
++if __name__ == "__main__":
++    for entry in os.scandir("/dev/"):
++        if gpiod.is_gpiochip_device(entry.path):
++            with gpiod.Chip(entry.path) as chip:
++                offset = chip.map_line(sys.argv[1])
++                if offset is not None:
++                    print("{} {}".format(chip.get_info().name, offset))
++                    sys.exit(0)
 +
-+  gpio-reserved-ranges:
-+    minItems: 1
-+    maxItems: 60
++    sys.exit(1)
+diff --git a/bindings/python/examples/gpioget.py b/bindings/python/examples/gpioget.py
+new file mode 100755
+index 0000000..d441535
+--- /dev/null
++++ b/bindings/python/examples/gpioget.py
+@@ -0,0 +1,31 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
 +
-+  gpio-line-names:
-+    maxItems: 119
++"""Simplified reimplementation of the gpioget tool in Python."""
 +
-+patternProperties:
-+  "-state$":
-+    oneOf:
-+      - $ref: "#/$defs/qcom-sc7180-tlmm-state"
-+      - patternProperties:
-+          "-pins$":
-+            $ref: "#/$defs/qcom-sc7180-tlmm-state"
-+        additionalProperties: false
++import gpiod
++import sys
 +
-+$defs:
-+  qcom-sc7180-tlmm-state:
-+    type: object
-+    description:
-+      Pinctrl node's client devices use subnodes for desired pin configuration.
-+      Client device subnodes use below standard properties.
-+    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
++from gpiod.line import Direction
 +
-+    properties:
-+      pins:
-+        description:
-+          List of gpio pins affected by the properties specified in this
-+          subnode.
-+        items:
-+          oneOf:
-+            - pattern: "^gpio([0-9]|[1-9][0-9]|10[0-9]|11[0-8])$"
-+            - enum: [ sdc1_rclk, sdc1_clk, sdc1_cmd, sdc1_data, sdc2_clk,
-+                      sdc2_cmd, sdc2_data, ufs_reset ]
-+        minItems: 1
-+        maxItems: 36
++if __name__ == "__main__":
++    if len(sys.argv) < 3:
++        raise TypeError("usage: gpioget.py <gpiochip> <offset1> <offset2> ...")
 +
-+      function:
-+        description:
-+          Specify the alternative function to be configured for the specified
-+          pins.
++    path = sys.argv[1]
++    lines = []
++    for line in sys.argv[2:]:
++        lines.append(int(line) if line.isdigit() else line)
 +
-+        enum: [ adsp_ext, agera_pll, aoss_cti, atest_char, atest_char0,
-+                atest_char1, atest_char2, atest_char3, atest_tsens,
-+                atest_tsens2, atest_usb1, atest_usb10, atest_usb11,
-+                atest_usb12, atest_usb13, atest_usb2, atest_usb20, atest_usb21,
-+                atest_usb22, atest_usb23, audio_ref, btfm_slimbus, cam_mclk,
-+                cci_async, cci_i2c, cci_timer0, cci_timer1, cci_timer2,
-+                cci_timer3, cci_timer4, cri_trng, dbg_out, ddr_bist, ddr_pxi0,
-+                ddr_pxi1, ddr_pxi2, ddr_pxi3, dp_hot, edp_lcd, gcc_gp1,
-+                gcc_gp2, gcc_gp3, gpio, gp_pdm0, gp_pdm1, gp_pdm2, gps_tx,
-+                jitter_bist, ldo_en, ldo_update, lpass_ext, mdp_vsync,
-+                mdp_vsync0, mdp_vsync1, mdp_vsync2, mdp_vsync3, mi2s_0, mi2s_1,
-+                mi2s_2, mss_lte, m_voc, pa_indicator, phase_flag, PLL_BIST,
-+                pll_bypassnl, pll_reset, prng_rosc, qdss, qdss_cti,
-+                qlink_enable, qlink_request, qspi_clk, qspi_cs, qspi_data,
-+                qup00, qup01, qup02_i2c, qup02_uart, qup03, qup04_i2c,
-+                qup04_uart, qup05, qup10, qup11_i2c, qup11_uart, qup12,
-+                qup13_i2c, qup13_uart, qup14, qup15, sdc1_tb, sdc2_tb,
-+                sd_write, sp_cmu, tgu_ch0, tgu_ch1, tgu_ch2, tgu_ch3,
-+                tsense_pwm1, tsense_pwm2, uim1, uim2, uim_batt, usb_phy, vfr_1,
-+                _V_GPIO, _V_PPS_IN, _V_PPS_OUT, vsense_trigger, wlan1_adc0,
-+                wlan1_adc1, wlan2_adc0, wlan2_adc1 ]
++    request = gpiod.request_lines(
++        path,
++        consumer="gpioget.py",
++        config={tuple(lines): gpiod.LineSettings(direction=Direction.INPUT)},
++    )
 +
-+      drive-strength:
-+        enum: [2, 4, 6, 8, 10, 12, 14, 16]
-+        default: 2
-+        description:
-+          Selects the drive strength for the specified pins, in mA.
++    vals = request.get_values()
 +
-+      bias-pull-down: true
-+      bias-pull-up: true
-+      bias-disable: true
-+      input-enable: true
-+      output-high: true
-+      output-low: true
++    for val in vals:
++        print("{} ".format(val.value), end="")
++    print()
+diff --git a/bindings/python/examples/gpioinfo.py b/bindings/python/examples/gpioinfo.py
+new file mode 100755
+index 0000000..e8c7d46
+--- /dev/null
++++ b/bindings/python/examples/gpioinfo.py
+@@ -0,0 +1,35 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
 +
-+    required:
-+      - pins
++"""Simplified reimplementation of the gpioinfo tool in Python."""
 +
-+    additionalProperties: false
++import gpiod
++import os
 +
-+allOf:
-+  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
++if __name__ == "__main__":
++    for entry in os.scandir("/dev/"):
++        if gpiod.is_gpiochip_device(entry.path):
++            with gpiod.Chip(entry.path) as chip:
++                cinfo = chip.get_info()
++                print("{} - {} lines:".format(cinfo.name, cinfo.num_lines))
 +
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
++                for offset in range(0, cinfo.num_lines):
++                    linfo = chip.get_line_info(offset)
++                    offset = linfo.offset
++                    name = linfo.name
++                    consumer = linfo.consumer
++                    direction = linfo.direction
++                    active_low = linfo.active_low
 +
-+additionalProperties: false
++                    print(
++                        "\tline {:>3}: {:>18} {:>12} {:>8} {:>10}".format(
++                            offset,
++                            "unnamed" if name is None else name,
++                            "unused" if consumer is None else consumer,
++                            "input"
++                            if direction == gpiod.line.Direction.INPUT
++                            else "output",
++                            "active-low" if active_low else "active-high",
++                        )
++                    )
+diff --git a/bindings/python/examples/gpiomon.py b/bindings/python/examples/gpiomon.py
+new file mode 100755
+index 0000000..e0db16f
+--- /dev/null
++++ b/bindings/python/examples/gpiomon.py
+@@ -0,0 +1,28 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
 +
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
++"""Simplified reimplementation of the gpiomon tool in Python."""
 +
-+    tlmm: pinctrl@3500000 {
-+        compatible = "qcom,sc7180-pinctrl";
-+        reg = <0x03500000 0x300000>,
-+              <0x03900000 0x300000>,
-+              <0x03d00000 0x300000>;
-+        reg-names = "west", "north", "south";
-+        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        interrupt-controller;
-+        #interrupt-cells = <2>;
-+        gpio-ranges = <&tlmm 0 0 120>;
-+        wakeup-parent = <&pdc>;
++import gpiod
++import sys
 +
-+        dp_hot_plug_det: dp-hot-plug-det-state {
-+            pins = "gpio117";
-+            function = "dp_hot";
-+        };
++from gpiod.line import Edge
 +
-+        qup_spi11_cs_gpio: qup-spi11-cs-gpio-state {
-+            spi-pins {
-+                pins = "gpio53", "gpio54", "gpio55";
-+                function = "qup15";
-+            };
++if __name__ == "__main__":
++    if len(sys.argv) < 3:
++        raise TypeError("usage: gpiomon.py <gpiochip> <offset1> <offset2> ...")
 +
-+            cs-pins {
-+                pins = "gpio56";
-+                function = "gpio";
-+            };
-+        };
-+    };
++    path = sys.argv[1]
++    lines = []
++    for line in sys.argv[2:]:
++        lines.append(int(line) if line.isdigit() else line)
++
++    with gpiod.request_lines(
++        path,
++        consumer="gpiomon.py",
++        config={tuple(lines): gpiod.LineSettings(edge_detection=Edge.BOTH)},
++    ) as request:
++        while True:
++            for event in request.read_edge_event():
++                print(event)
+diff --git a/bindings/python/examples/gpioset.py b/bindings/python/examples/gpioset.py
+new file mode 100755
+index 0000000..f0b0681
+--- /dev/null
++++ b/bindings/python/examples/gpioset.py
+@@ -0,0 +1,37 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
++
++"""Simplified reimplementation of the gpioset tool in Python."""
++
++import gpiod
++import sys
++
++from gpiod.line import Direction, Value
++
++if __name__ == "__main__":
++    if len(sys.argv) < 3:
++        raise TypeError(
++            "usage: gpioset.py <gpiochip> <offset1>=<value1> <offset2>=<value2> ..."
++        )
++
++    path = sys.argv[1]
++    values = dict()
++    lines = []
++    for arg in sys.argv[2:]:
++        arg = arg.split("=")
++        key = int(arg[0]) if arg[0].isdigit() else arg[0]
++        val = int(arg[1])
++
++        lines.append(key)
++        values[key] = Value(val)
++
++    request = gpiod.request_lines(
++        path,
++        consumer="gpioset.py",
++        config={tuple(lines): gpiod.LineSettings(direction=Direction.OUTPUT)},
++    )
++
++    vals = request.set_values(values)
++
++    input()
 -- 
 2.34.1
 
