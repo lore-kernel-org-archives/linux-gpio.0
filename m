@@ -2,94 +2,75 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5D2C433FE
-	for <linux-gpio@archiver.kernel.org>; Mon, 10 Oct 2022 07:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00825C4332F
+	for <linux-gpio@archiver.kernel.org>; Mon, 10 Oct 2022 08:16:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231345AbiJJH4E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 10 Oct 2022 03:56:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59414 "EHLO
+        id S231208AbiJJIQU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 10 Oct 2022 04:16:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230486AbiJJH4D (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Oct 2022 03:56:03 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77FCC13EA1;
-        Mon, 10 Oct 2022 00:56:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1665388562; x=1696924562;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=HID0mHHHZgyVwH5oNtP1G2gM2V0I0iEupf35hgDLXWE=;
-  b=Ku7iFvkQshmi5NFsWXovCE9T8N3YrrftUm4omdB+JxYv7KiXdibHFZ6V
-   BqGWfE5HoUEgcVyK40nD0QrwbZRYdU6ET8N1Z4Q3+sbjhKmtxKN+eZG92
-   ckyv8fxXQeIHbBaA7uSmLjdc6Kra9iEuhfO1n90bXrlQ+eiKmX6K6fs8R
-   JqXHmzB19FlqA2F7MHTteT6TU68wI+cyp+tA811ko9QB4liGfca+0igQH
-   +zBX2AfINU2iuA2Ndgn+qc2jhzxMNdy/V96Pxb8zPFaLytepYD1Cuy0Zl
-   UGvJBXvC8hKiQieY/Nc7g/LgyPwCN7tT9q4IMJC0CcdbMQalZQgchgxBi
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10495"; a="305762231"
-X-IronPort-AV: E=Sophos;i="5.95,173,1661842800"; 
-   d="scan'208";a="305762231"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2022 00:56:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10495"; a="694539307"
-X-IronPort-AV: E=Sophos;i="5.95,173,1661842800"; 
-   d="scan'208";a="694539307"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 10 Oct 2022 00:55:59 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 614561E0; Mon, 10 Oct 2022 10:56:20 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Patrice Chotard <patrice.chotard@foss.st.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH v1 1/1] pinctrl: st: Switch to use fwnode instead of of_node
-Date:   Mon, 10 Oct 2022 10:56:15 +0300
-Message-Id: <20221010075615.43244-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S231521AbiJJIQT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Oct 2022 04:16:19 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C88458143;
+        Mon, 10 Oct 2022 01:16:17 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 79B6F66022A5;
+        Mon, 10 Oct 2022 09:16:15 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1665389776;
+        bh=d+LK7H8qb9z2A0aeSerxPVuUxq+r6RhCo8pFa2ITy2Y=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=KcPbtHNOHJvM7SFbE1ihhhC8tSvJ3bOVGhpuAzBBBYZh6y0hsItlg4ClnUdSQFeEo
+         1ElBoca5OV6BFeTfIiGKc4ZtDJ9lpXOERTCTBmvJWUP+YOoWPAJn+fXV7HSGAPu9Pn
+         j2ZwBKetWYmJeZOjvBUxmOpN6SLitq0pXsjwvna4g10YIYf0lVPdoWOyPAwXGwRfGF
+         aC9MtQwRgEZa03JJVzYX8e684dr8Fi7Y9BZDQKwKWCKTFWZtZ2u/GuHj7ObEUfeKpJ
+         QJZxJRJNTX37fM1XpTKF9rkN3EmRX3yehqaDopkPUfuvaUVgCrNJrhAWLF8z3ZsKum
+         mJyx5fAukgOMg==
+Message-ID: <fbfe429d-11ea-1b9c-197d-ac2fcabb8269@collabora.com>
+Date:   Mon, 10 Oct 2022 10:16:13 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v3 05/10] dt-bindings: pinctrl: mediatek,pinctrl-mt6795:
+ Fix interrupt count
+Content-Language: en-US
+To:     Yassine Oudjana <yassine.oudjana@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Andy Teng <andy.teng@mediatek.com>
+Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
+        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20221007125904.55371-1-y.oudjana@protonmail.com>
+ <20221007125904.55371-6-y.oudjana@protonmail.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221007125904.55371-6-y.oudjana@protonmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The OF node in the GPIO library is deprecated and soon
-will be removed.
+Il 07/10/22 14:58, Yassine Oudjana ha scritto:
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
+> 
+> The document currently states a maximum of 1 interrupt, but the DT
+> has 2 specified causing a dtbs_check error. Replace the maximum limit
+> with a minimum and add per-interrupt descriptions to pass the check.
+> 
+> Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 
-GPIO library now accepts fwnode as a firmware node, so
-switch the driver to use it.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/pinctrl-st.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-index cf7f9cbe6044..987878c83349 100644
---- a/drivers/pinctrl/pinctrl-st.c
-+++ b/drivers/pinctrl/pinctrl-st.c
-@@ -1175,7 +1175,7 @@ static int st_pctl_dt_calculate_pin(struct st_pinctrl *info,
- 
- 	for (i = 0; i < info->nbanks; i++) {
- 		chip = &info->banks[i].gpio_chip;
--		if (chip->of_node == np) {
-+		if (chip->fwnode == of_fwnode_handle(np)) {
- 			if (offset < chip->ngpio)
- 				retval = chip->base + offset;
- 			break;
-@@ -1518,7 +1518,7 @@ static int st_gpiolib_register_bank(struct st_pinctrl *info,
- 	bank->gpio_chip = st_gpio_template;
- 	bank->gpio_chip.base = bank_num * ST_GPIO_PINS_PER_BANK;
- 	bank->gpio_chip.ngpio = ST_GPIO_PINS_PER_BANK;
--	bank->gpio_chip.of_node = np;
-+	bank->gpio_chip.fwnode = of_fwnode_handle(np);
- 	bank->gpio_chip.parent = dev;
- 	spin_lock_init(&bank->lock);
- 
--- 
-2.35.1
 
