@@ -2,41 +2,42 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F09DC43217
-	for <linux-gpio@archiver.kernel.org>; Mon, 10 Oct 2022 08:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F58C43219
+	for <linux-gpio@archiver.kernel.org>; Mon, 10 Oct 2022 08:16:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231940AbiJJIQV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 10 Oct 2022 04:16:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40110 "EHLO
+        id S231673AbiJJIQX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 10 Oct 2022 04:16:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231759AbiJJIQT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Oct 2022 04:16:19 -0400
+        with ESMTP id S232008AbiJJIQW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Oct 2022 04:16:22 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3A20580BD;
-        Mon, 10 Oct 2022 01:16:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04446580B6;
+        Mon, 10 Oct 2022 01:16:21 -0700 (PDT)
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D3C726601F8A;
-        Mon, 10 Oct 2022 09:16:13 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 28F1366022BF;
+        Mon, 10 Oct 2022 09:16:19 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1665389774;
-        bh=F/bcGxKiauiDx1vMCcWjag85x/grkKbttemub2VO8Gk=;
+        s=mail; t=1665389779;
+        bh=Q9eAREEHziP8nHQElTxzJ8wlawGSUGr+M4Z+PjHuEcg=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ooOqjjbMKm12bFagBtZNjLwEY7FtVWk2ZXemH5waJVk1FHcIWpihO4+H3tQbKneuf
-         wbC12JPu01BNSANQQ9XBu5WY2MciiCDzTo23h+GqBb+EVhA3XXiYzSidplMDTB93LH
-         p67gnZIesjsNEn1Th5Y7geF5vV9lInxZH3t7dIeroqHA4cqP6m3GJ8VYMYofxn+d/M
-         tPtErbesrbc8ZNT4knsvJOav79/gvkoetuNZnatr4uP9fhlWCyt77azDFo5H4ezQNM
-         rFQwEIvr5X0lclMoOibU7JUIe3b3PgXv6UkeGGvdBgCxBPyrmRU2OfrUBfnFSRdDiF
-         nan0+fX3xQp8A==
-Message-ID: <2342cbad-48fd-88d2-81b7-f68a5978ddee@collabora.com>
-Date:   Mon, 10 Oct 2022 10:16:11 +0200
+        b=l6d7M/CqNsJ+afzGm150hXhd+/y9B+f98iadTxGubmrSRlEri38Ue3RzLcuqAFjU3
+         a8mGkeUqPucq8MRl+NPkvd7/irygiyVxmLe3np0ATdNhRB1AJIS5dutIQfmMSJTta4
+         i4X+AhQC89zmkRSB8uOBINRt0U7qrXs36YvTl4gsy+AvMeBqeZ+ClvacZDyWjFwXBG
+         fZD56zihuLAhQStbJ/9hX76TZ22iZS+lrNS51AvlAY/fbKmcJlQSnT5dHPZ7xiBT9C
+         SKaGnnzLJ2Ujk6urujJQFVd9+sQ5+A7zXjbjXgAe67vNLVoyHFjRhzTboGGKrjyzCS
+         Ji/kaX3enBg0A==
+Message-ID: <2ccaa072-a224-241a-ff2d-c38a5cd07dc8@collabora.com>
+Date:   Mon, 10 Oct 2022 10:16:16 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.0
-Subject: Re: [PATCH v3 10/10] pinctrl: mediatek: Add MT6735 pinctrl driver
+Subject: Re: [PATCH v3 04/10] dt-bindings: pinctrl: mediatek,mt6779-pinctrl:
+ Add MT6797
 Content-Language: en-US
 To:     Yassine Oudjana <yassine.oudjana@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -48,26 +49,33 @@ To:     Yassine Oudjana <yassine.oudjana@gmail.com>,
 Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
         linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
 References: <20221007125904.55371-1-y.oudjana@protonmail.com>
- <20221007125904.55371-11-y.oudjana@protonmail.com>
+ <20221007125904.55371-5-y.oudjana@protonmail.com>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20221007125904.55371-11-y.oudjana@protonmail.com>
+In-Reply-To: <20221007125904.55371-5-y.oudjana@protonmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Il 07/10/22 14:59, Yassine Oudjana ha scritto:
+Il 07/10/22 14:58, Yassine Oudjana ha scritto:
 > From: Yassine Oudjana <y.oudjana@protonmail.com>
 > 
-> Add a driver for the MediaTek MT6735 SoC pin controller. This driver
-> also supports the pin controller on MT6735M, which lacks 6 physical
-> pins (198-203) used for MSDC2 on MT6735.
+> Combine MT6797 pin controller document into MT6779 one. reg and
+> reg-names property constraints are set using conditionals.
+> A conditional is also used to make interrupt-related properties
+> required on the MT6779 pin controller only, since the MT6797
+> controller doesn't support interrupts (or not yet, at least).
+> drive-strength and slew-rate properties which weren't described
+> in the MT6779 document before are brought in from the MT6797 one.
+> Both pin controllers share a common driver core so they should
+> both support these properties.
 > 
 > Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
