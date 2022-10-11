@@ -2,92 +2,68 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0447C433F5
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Oct 2022 18:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7183AC433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Oct 2022 18:24:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229446AbiJKSBa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 Oct 2022 14:01:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47056 "EHLO
+        id S229703AbiJKSYG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 Oct 2022 14:24:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbiJKSB3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Oct 2022 14:01:29 -0400
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.155.67.158])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2DAC6B67F;
-        Tue, 11 Oct 2022 11:01:27 -0700 (PDT)
-X-QQ-mid: bizesmtp76t1665511278t5i75y1k
-Received: from [192.168.1.231] ( [113.72.146.141])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Wed, 12 Oct 2022 02:01:16 +0800 (CST)
-X-QQ-SSF: 0100000000200090B000B00A0000000
-X-QQ-FEAT: Xz3VOcA7Mr1IeMy5YkFr3EQysBY1c40hmsRb8FmCb9HYXwFMzxuV3pNPfW+Oo
-        Yy88ZEliVWGfuHpA9UsW0WR3SsrAgYJ/mLN08uP1rAii9nv3hF0/fAVMKfE3oSRBi5IuKh1
-        U6iVYMZ3Oc63DZX1BtdGiS6TE0gZ/iCK7uw8lKbdAavr8+ly9R+pW+ggB1N5PXseqyAuvtP
-        CQ5imFaDSqNGkNvpJomvgk7Yuz920GfcMiAaVEb9dS2p81f/c1PCl1SnWT6u2mFa2/jR0OI
-        ZLu6IQl++hK59OYWwKDqXiBU88HgVfhBH1w3vnz3X3JsZGmpxtML80nMfBf8/QW6eFJzT60
-        IDiKhi5WSKdJtJ5KxPm5ABHVKtfOqPAfUvAblZJzbb5ix17+Uo=
-X-QQ-GoodBg: 0
-Message-ID: <950768A5571BD396+4cf106df-5127-4646-5879-a516a002760c@linux.starfivetech.com>
-Date:   Wed, 12 Oct 2022 02:01:16 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v1 20/30] dt-bindings: clock: Add
- starfive,jh7110-clkgen-aon bindings
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-kernel@vger.kernel.org
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220930055632.5136-1-hal.feng@linux.starfivetech.com>
- <ff493398-7786-db0d-ae94-b52207e2a56c@linaro.org>
-From:   Hal Feng <hal.feng@linux.starfivetech.com>
-In-Reply-To: <ff493398-7786-db0d-ae94-b52207e2a56c@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+        with ESMTP id S230523AbiJKSWh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Oct 2022 14:22:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A22B378BDE;
+        Tue, 11 Oct 2022 11:22:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2653561267;
+        Tue, 11 Oct 2022 18:22:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8B266C43143;
+        Tue, 11 Oct 2022 18:22:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665512530;
+        bh=Pg7LsPeRm+DrParGzVWTDfUCb4Osp6UwQq6LYQn9Eww=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=cwp2hev6Cu1BQquMlWOhfF/uHt+R58+VAPN0KSgp4whYqocXk93wICWa3+8sgVG8g
+         xEtiQrYAeQYA5ppsxDizjRB/MevOq9+SRaA/BX4pm70+E1twWDPCKAmuvc8dzPSp3y
+         SlKK4DGp78C3yoEe7zsfdPn/6xXwYu6McqL9VHAeCq9RoIQkRo+m1zlEx6lNpwDrsi
+         rQ80y6V4X19bVH6fyKwE1GaXgkCMlN35JTpFZqsVVRteY8KV5Mkinnj5zL8UuyFRje
+         c4dl7Hs+K0Gm7ASFMhGh34cY/LeMxEqmD8Hru7SW5hVuXZVSQ3fdgNxWXxg2q9codw
+         EWenTMQEeV1xw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 794A0E29F36;
+        Tue, 11 Oct 2022 18:22:10 +0000 (UTC)
+Subject: Re: [GIT PULL] bulk pin control changes for v6.1
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CACRpkdY1Z1xZQ2PDDn7gvbY4C04wbX9GwkDqGM-gzQsN+QkxdA@mail.gmail.com>
+References: <CACRpkdY1Z1xZQ2PDDn7gvbY4C04wbX9GwkDqGM-gzQsN+QkxdA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdY1Z1xZQ2PDDn7gvbY4C04wbX9GwkDqGM-gzQsN+QkxdA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.1-1
+X-PR-Tracked-Commit-Id: 9d157c89c5569f0ef560b7a5b2d7bf59ae98499c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 979bb59016aed7c7c58baca2307d9d13890cc6ab
+Message-Id: <166551253049.20259.14807089664246189853.pr-tracker-bot@kernel.org>
+Date:   Tue, 11 Oct 2022 18:22:10 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, 30 Sep 2022 12:59:01 +0200, Krzysztof Kozlowski wrote:
-> On 30/09/2022 07:56, Hal Feng wrote:
-> > From: Emil Renner Berthing <kernel@esmil.dk>
-> > 
-> > Add bindings for the always-on clock generator on the JH7110
-> > RISC-V SoC by StarFive Technology Ltd.
-> > 
-> 
-> (...)
-> 
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/starfive-jh7110-sys.h>
-> > +
-> > +    aoncrg: clock-controller@17000000 {
-> 
-> Does not look like you tested the bindings. Please run `make
-> dt_binding_check` (see
-> Documentation/devicetree/bindings/writing-schema.rst for instructions).
-Will rewrite the bindings and test them. Thanks.
+The pull request you sent on Mon, 10 Oct 2022 23:03:34 +0200:
 
-Best regards,
-Hal
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.1-1
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/979bb59016aed7c7c58baca2307d9d13890cc6ab
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
