@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 280C4C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CA6C43217
 	for <linux-gpio@archiver.kernel.org>; Tue, 11 Oct 2022 17:30:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230321AbiJKRab (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 Oct 2022 13:30:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57426 "EHLO
+        id S230388AbiJKRac (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 Oct 2022 13:30:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230309AbiJKR3d (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Oct 2022 13:29:33 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A9495C941
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Oct 2022 10:27:16 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id 8so1472972qka.1
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Oct 2022 10:27:16 -0700 (PDT)
+        with ESMTP id S230326AbiJKR3k (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Oct 2022 13:29:40 -0400
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A80037969E
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Oct 2022 10:27:28 -0700 (PDT)
+Received: by mail-qk1-x72a.google.com with SMTP id a18so6035492qko.0
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Oct 2022 10:27:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=y0C1L6kOIdb7uBBS651widzpOjAhyGK+kNAfE8fg7HE=;
-        b=ROCTPZaGnMIq+6GuFd3xqVgHyJ8PYkuO4VPdGHFfBQH/v/kovNzp64XLEY4pQQ6MLZ
-         BzLgFxTuRO1kD8UeV/A5RP4KdsyHezhJFtZsMUz6rJCWhonoqV1IrUOuIBVONIMKkB2I
-         J51pY4YIAGXmHLwjeA0Y3zoch4jZQKJvHVgQjT4C2kFiMODxng1zcPiBMzOMM1xSXTru
-         7S0DLfX9EXe/vamSZvBePa29oeVDwkXgURYf4/5mH4eN0+T+5zR8Vpgo4Rw/ngVju6Tm
-         4hUGTnjS80OZcwKO2Qgu8f8pM0D46shRsemXvfKTHvvfXGvTPETXPzKIfbCoQnDaPoiS
-         yiDg==
+        bh=aj5+7eQfxMdL7duF8qh7nKoEEyO5I9qnu4u5ZaGPGxU=;
+        b=R9oEroNEWyia/YydBdZiS8/a81RLi5cqglbaphtZMKYq+QohWoqDdHNYKROw6haXaI
+         WO350SMhkvVQRCDnQnXNiuIBq+seHmN/NXZ2Oe+Uq09lqpcWVigVkLBIUw3cwKK63SA1
+         jB4fF3Wkg6/7vMGe/uul+yhj1cB+IQnd+N1snCpBxIm82gRHQLFkFRj/yZe3XOdCarFk
+         xmHdFKj7VzP0aSwhz3bx2knA/4Ga/B1ojAPsRs8DRIVkgbZDVSbneVrCKisbTqFRJyCP
+         ZLWDqK70k68RW4CB4w1ezWxo1HN/hd/EVvYVkTFsxSXmM/566S+cM4ynEyYdrN/8pdon
+         NSdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=y0C1L6kOIdb7uBBS651widzpOjAhyGK+kNAfE8fg7HE=;
-        b=cBB8wIVZDXT3Pjrt7p2BT+eRGKKqJV2YRbdoNOXc7EllcAdELJyUtr9QqBotYIu0dt
-         NotMAB9/rR1Q5sPz8g/UOfcY6DV0hARi5Qfmj+jCfv4Gbk3dQKblL4+k4HAwXMlFvCIk
-         3JCEgO7SrZE9/mmG8UzpeYr048PM43AWf28SE7g3mIpEnb05zEjIipqOmF8hTiDvtJ29
-         dSobk0R5vWIxK3W8eVPo3O+LCYe6qTWZsP62D2MSEf8yorRlF0vDNiGcmsohStokqudn
-         n60HhptVnhmS75Dc2zHDEEsPo5DOpJecgBorXZqbJtPfff0YSWDgOw7+jGdIbm3R/gKF
-         gQyg==
-X-Gm-Message-State: ACrzQf0n5N4mgU0k0Ca9kNGR9x33L32UtqkwYwgPixkUHG2k+GdJYQeO
-        LCcVLXtuCPnvd/Vk0YsaEQ2uhg==
-X-Google-Smtp-Source: AMsMyM6beKzoEuWQ27r1v9y6aj2Znu7qwhqwTZ/aJRjXH/dYvG1/nmMH58Wt/hhQ/BHXnp4N39IR+w==
-X-Received: by 2002:a05:620a:2a0f:b0:6cf:92d8:2aad with SMTP id o15-20020a05620a2a0f00b006cf92d82aadmr17397546qkp.237.1665509212944;
-        Tue, 11 Oct 2022 10:26:52 -0700 (PDT)
+        bh=aj5+7eQfxMdL7duF8qh7nKoEEyO5I9qnu4u5ZaGPGxU=;
+        b=GOBbmGxZGWn7Yp3XqXPZedpX6xSB+scWzlCXaNeQ0K0IA+omCNYtL3NRkyGATdL0Hc
+         7x6bQpgfWdfxUoTl/7Gnw5vjf4A2/J3xnBJwvw107sZxMf45OZmE/zFizVl1EDjkoxDT
+         KbHwLEfbiu2AqSwL4f0/nrWCmEbBAp6L+kNbrff358PNemqg8FvE72TkSbtdrZWVgEGu
+         Nov+UhlbCLQr8nOXyBDamezHPtgEV/cFFx0Z3DoAwYOksZDfwbUt1vjxaFlceMr6nZry
+         0H49RdLbSqReHZ1AT+/pqFUA72NI3Vw4StEHueKp0r+DIGpdHSkZvIU+umshkKABYNzp
+         qRYg==
+X-Gm-Message-State: ACrzQf0S76qu10xWvA5GXRXnWaK1ymPUAa+em3Dr7/pc4qgkEQq0oM7V
+        9f/6LhzT2LmmqLSRuz5mvU6OMw==
+X-Google-Smtp-Source: AMsMyM74zvZRNI5Hqq3NMqLfW9HMu043EYDHElwdX95toU9C04PBNim+eIXBRAQvnEiO70y9a0Mn3A==
+X-Received: by 2002:a05:620a:1391:b0:6e2:9d83:f2af with SMTP id k17-20020a05620a139100b006e29d83f2afmr16551273qki.537.1665509218678;
+        Tue, 11 Oct 2022 10:26:58 -0700 (PDT)
 Received: from krzk-bin.home (cpe-72-225-192-120.nyc.res.rr.com. [72.225.192.120])
-        by smtp.gmail.com with ESMTPSA id i14-20020a05620a248e00b006bba46e5eeasm14289087qkn.37.2022.10.11.10.26.51
+        by smtp.gmail.com with ESMTPSA id i14-20020a05620a248e00b006bba46e5eeasm14289087qkn.37.2022.10.11.10.26.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Oct 2022 10:26:52 -0700 (PDT)
+        Tue, 11 Oct 2022 10:26:58 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -67,9 +67,9 @@ To:     Andy Gross <agross@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 30/34] dt-bindings: pinctrl: qcom,sc7280-lpass-lpi: minor style cleanups
-Date:   Tue, 11 Oct 2022 13:23:54 -0400
-Message-Id: <20221011172358.69043-31-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 34/34] dt-bindings: pinctrl: qcom: adjust description
+Date:   Tue, 11 Oct 2022 13:23:58 -0400
+Message-Id: <20221011172358.69043-35-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221011172358.69043-1-krzysztof.kozlowski@linaro.org>
 References: <20221011172358.69043-1-krzysztof.kozlowski@linaro.org>
@@ -79,58 +79,99 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Drop "binding" from description (and align it with other Qualcomm
-pinctrl bindings), use double quotes consistently and drop redundant
-quotes.
+Drop "binding" from description, because the field should describe the
+hardware.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml      | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ .../devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml    | 5 ++---
+ .../devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml    | 5 ++---
+ .../devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml    | 5 ++---
+ .../devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml     | 5 ++---
+ .../devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml      | 5 ++---
+ 5 files changed, 10 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml
-index bd54c92287d6..8270debd4f25 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml
-@@ -4,15 +4,14 @@
- $id: http://devicetree.org/schemas/pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Qualcomm Technologies, Inc. Low Power Audio SubSystem (LPASS)
--  Low Power Island (LPI) TLMM block
-+title: Qualcomm SC7280 SoC LPASS LPI TLMM
- 
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
+index bf84649593ef..6f9b92afb621 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
+@@ -9,9 +9,8 @@ title: Qualcomm Technologies, Inc. IPQ6018 TLMM block
  maintainers:
-   - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+   - Bjorn Andersson <andersson@kernel.org>
  
 -description: |
 -  This binding describes the Top Level Mode Multiplexer block found in the
--  LPASS LPI IP on most Qualcomm SoCs
+-  IPQ6018 platform.
 +description:
-+  Top Level Mode Multiplexer pin controller in the Low Power Audio SubSystem
-+  (LPASS) Low Power Island (LPI) of Qualcomm SC7280 SoC.
++  Top Level Mode Multiplexer pin controller in Qualcomm IPQ6018 SoC.
  
  properties:
    compatible:
-@@ -29,7 +28,7 @@ properties:
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml
+index 23868cdf4e03..3874908ff7de 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml
+@@ -9,9 +9,8 @@ title: Qualcomm Technologies, Inc. MSM8226 TLMM block
+ maintainers:
+   - Bjorn Andersson <bjorn.andersson@linaro.org>
  
-   gpio-controller: true
+-description: |
+-  This binding describes the Top Level Mode Multiplexer block found in the
+-  MSM8226 platform.
++description:
++  Top Level Mode Multiplexer pin controller in Qualcomm MSM8226 SoC.
  
--  '#gpio-cells':
-+  "#gpio-cells":
-     description: Specifying the pin number and flags, as defined in
-       include/dt-bindings/gpio/gpio.h
-     const: 2
-@@ -107,7 +106,7 @@ required:
-   - compatible
-   - reg
-   - gpio-controller
--  - '#gpio-cells'
-+  - "#gpio-cells"
-   - gpio-ranges
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml
+index 19d16cc9d749..5c6a0d057787 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8953-pinctrl.yaml
+@@ -9,9 +9,8 @@ title: Qualcomm Technologies, Inc. MSM8953 TLMM block
+ maintainers:
+   - Bjorn Andersson <bjorn.andersson@linaro.org>
  
- additionalProperties: false
+-description: |
+-  This binding describes the Top Level Mode Multiplexer block found in the
+-  MSM8953 platform.
++description:
++  Top Level Mode Multiplexer pin controller in Qualcomm MSM8953 SoC.
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
+index bdb896e5682f..5f87f15dcd1a 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
+@@ -9,9 +9,8 @@ title: Qualcomm Technologies, Inc. SC7280 TLMM block
+ maintainers:
+   - Bjorn Andersson <andersson@kernel.org>
+ 
+-description: |
+-  This binding describes the Top Level Mode Multiplexer block found in the
+-  SC7280 platform.
++description:
++  Top Level Mode Multiplexer pin controller in Qualcomm SC7280 SoC.
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml
+index 2d7097edfb40..00116a045f6e 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdx55-pinctrl.yaml
+@@ -9,9 +9,8 @@ title: Qualcomm Technologies, Inc. SDX55 TLMM block
+ maintainers:
+   - Vinod Koul <vkoul@kernel.org>
+ 
+-description: |
+-  This binding describes the Top Level Mode Multiplexer block found in the
+-  SDX55 platform.
++description:
++  Top Level Mode Multiplexer pin controller in Qualcomm SDX55 SoC.
+ 
+ properties:
+   compatible:
 -- 
 2.34.1
 
