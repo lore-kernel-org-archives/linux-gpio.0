@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A11DFC4332F
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Oct 2022 17:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA7DC433F5
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Oct 2022 17:27:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230201AbiJKR1W (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 Oct 2022 13:27:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56748 "EHLO
+        id S230209AbiJKR1X (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 Oct 2022 13:27:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230199AbiJKR0m (ORCPT
+        with ESMTP id S230207AbiJKR0m (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Oct 2022 13:26:42 -0400
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EAC16745F
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Oct 2022 10:26:25 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id df9so9366854qvb.9
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Oct 2022 10:26:25 -0700 (PDT)
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8583696FD
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Oct 2022 10:26:28 -0700 (PDT)
+Received: by mail-qv1-xf2c.google.com with SMTP id g9so9359746qvo.12
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Oct 2022 10:26:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RJWvSUtO1t5Yo44+0PDNHOUmm01FetjF9ArFB5CjIeY=;
-        b=UG6ZF/60DpMDFHKiXUqnYVvGBt5jjFVc/VsSEb0aoveOLm395lm0/2rHfi6OtSE9KN
-         TIj/i+QuDt/ml1NbhIYaze9bgaRsGPCGCrjVFLfSnOHe2dd76uY9V+ZmygwNvqe6B6QR
-         1SfgkkZwMr4SK//lQw9aDXInrZtd8soWu7JIbEXF/Bf/lgmtkpLe2y2VUUvytyfIupJu
-         JLMUGkjdhnd8cBJAt8gtl7whS8+XsYRdakhY033dRmCWbuuZyYNCylS18qqUdyCnH0h2
-         l78znyM6uKM7xuZwHFjPa5q0yXh5lj25CtB/cBmj4Xh2mM/5Wb3gjCI+x6CZDVb3cNxW
-         truw==
+        bh=nVlpIeK3DosLFJYRvI8e5R35sYlWCbAuX/Ps8Xg/6Kc=;
+        b=vk4MaOFZy2wQLV/dKUG/OlkhxbugaCG2GYj0djINOC5b6L7UQMd331o1NIVGOsbXfu
+         hcAAF/tP0zZokSq4pSpHT1BYyNGKmcIdH7bvJjS4rRwFfVc66ELba8PJF3yloZOXkjtv
+         cH6Yz7oFIB/sHVA43zXTrtAHuhRyGL/X8l66AvhhBA7POfZXpQxyYUIb2MaA+5AOO313
+         fis+DL3vg9CwuewcLI/nJYcoN5p2p15LqB4nKz+XXLR77/MQF+gfQ0QUdo86Ef1OH4Br
+         nNBGh2Z/1b9J3FwsxTYVF6I5qO0/YIDlaUvpCUhpDOEGIDMQaRq1hr72s+YwO+1RB/Vw
+         jNsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RJWvSUtO1t5Yo44+0PDNHOUmm01FetjF9ArFB5CjIeY=;
-        b=sUBnBI9E/oW55qN5vgylMaFeugviPLXAMgtRTvu5yTGvs8TG5ifg2oRGjZY8gcVrUw
-         wkkvdXQku3oY/2SO74qpsSMTGLRWmircyOy6YNuy4+4J1u7rRrkzP7IJ0UH3pulti9Wa
-         cw5GJfS1PMDX4jic2Qu8PeD1glc6Uy53EnsHbtvlKOghvVmFBgemmQ8qAbn4/KHO1DCU
-         fRG6F2/MFLyAqqBR1JHWz8g8OnTzTzb3JlWCU3HsVOvD3M9UGm4J2c7B+FCxjRXD24Bu
-         tltJWb85MjT4feKvXKsqJ1It8BvwOwMS1sSY/K/3mbqiw1xIiRUqDeHI1bSPBiRtEngV
-         ZqZQ==
-X-Gm-Message-State: ACrzQf1Dsdl09Ykv85rmYtcJ4ApaJ98tYp/+IAMARAcIeK1l4S/soZef
-        1pKSk4DwHBO26odc7dlJjQuvKg==
-X-Google-Smtp-Source: AMsMyM6IkoDPiH1CkCrH+QG9B7FE05z/2J8gS8zz8ggm8E8+kOdn1TIEL13d2sdOzgE7ejg4NgUgyA==
-X-Received: by 2002:a05:6214:252e:b0:4b1:9859:b74a with SMTP id gg14-20020a056214252e00b004b19859b74amr20047433qvb.87.1665509183795;
-        Tue, 11 Oct 2022 10:26:23 -0700 (PDT)
+        bh=nVlpIeK3DosLFJYRvI8e5R35sYlWCbAuX/Ps8Xg/6Kc=;
+        b=sfLU3ODExQcJorSDlMMhUycxuJ+hWDnFmBjnA5nojlYfTbuZZU34tEvv9ukgFkZhQm
+         z9l0nte+MzSWyihn2rKIu2pILKBgJddZPDuUV2L1Odz7w123Kr/k43DPUEXuR3S2g9Kr
+         AjrvrT3i5czXoNlR6g+HCJnVTwIz7TythaDLRyrIh9S+K7cUIMmCaYmz7nLdfNK7IAJO
+         3Po9yO+BqgM9w4aubf9DgQYUjuILU5o69s++NBAa1X4p2st+yRC7UQ1J4TOgLqKQexPv
+         jGHg1HDmWdxli6ez5BBU5xg7tgi9rx0qzo6qFTtvEb54bqvOwp4HQXKwo5JXjiGXj3qu
+         6vBQ==
+X-Gm-Message-State: ACrzQf09OBclCSeDAQvuibtJdvfDVRQousQqXiR+BhDxxzJK4Fc1Lpp7
+        phwiKk3adSVnybcarRPUbxo7Sw==
+X-Google-Smtp-Source: AMsMyM5/ocYTJJQakPQ75u6EbK7nIqw54n5FQc87TIOOYCzAC3UiXiqr+1TwhWzPynnxH9fdd+uK9w==
+X-Received: by 2002:a0c:8b0a:0:b0:4b1:9500:4703 with SMTP id q10-20020a0c8b0a000000b004b195004703mr19714014qva.124.1665509188279;
+        Tue, 11 Oct 2022 10:26:28 -0700 (PDT)
 Received: from krzk-bin.home (cpe-72-225-192-120.nyc.res.rr.com. [72.225.192.120])
-        by smtp.gmail.com with ESMTPSA id i14-20020a05620a248e00b006bba46e5eeasm14289087qkn.37.2022.10.11.10.26.22
+        by smtp.gmail.com with ESMTPSA id i14-20020a05620a248e00b006bba46e5eeasm14289087qkn.37.2022.10.11.10.26.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Oct 2022 10:26:23 -0700 (PDT)
+        Tue, 11 Oct 2022 10:26:27 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -67,9 +67,9 @@ To:     Andy Gross <agross@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 12/34] dt-bindings: pinctrl: qcom,sm6375-tlmm: drop checks used in common TLMM
-Date:   Tue, 11 Oct 2022 13:23:36 -0400
-Message-Id: <20221011172358.69043-13-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 15/34] dt-bindings: pinctrl: qcom,sm8350: drop checks used in common TLMM
+Date:   Tue, 11 Oct 2022 13:23:39 -0400
+Message-Id: <20221011172358.69043-16-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221011172358.69043-1-krzysztof.kozlowski@linaro.org>
 References: <20221011172358.69043-1-krzysztof.kozlowski@linaro.org>
@@ -85,13 +85,13 @@ requirement of function for GPIO pins.
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/pinctrl/qcom,sm6375-tlmm.yaml | 11 +----------
+ .../bindings/pinctrl/qcom,sm8350-pinctrl.yaml         | 11 +----------
  1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm6375-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm6375-tlmm.yaml
-index 8320e5ff17b9..4482625b6b1f 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sm6375-tlmm.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm6375-tlmm.yaml
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
+index 1c0186050dcc..cae726b5fc79 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-pinctrl.yaml
 @@ -53,6 +53,7 @@ $defs:
      description:
        Pinctrl node's client devices use subnodes for desired pin configuration.
@@ -100,7 +100,7 @@ index 8320e5ff17b9..4482625b6b1f 100644
  
      properties:
        pins:
-@@ -119,16 +120,6 @@ $defs:
+@@ -107,16 +108,6 @@ $defs:
      required:
        - pins
  
@@ -109,7 +109,7 @@ index 8320e5ff17b9..4482625b6b1f 100644
 -      - if:
 -          properties:
 -            pins:
--              pattern: "^gpio([0-9]|[1-9][0-9]|1[0-4][0-9]|15[0-6])$"
+-              pattern: "^gpio([0-9]|[1-9][0-9]|1[0-9][0-9]|20[0-3])$"
 -        then:
 -          required:
 -            - function
