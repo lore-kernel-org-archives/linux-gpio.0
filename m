@@ -2,207 +2,321 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE7AC433FE
-	for <linux-gpio@archiver.kernel.org>; Wed, 12 Oct 2022 17:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF0DC43217
+	for <linux-gpio@archiver.kernel.org>; Wed, 12 Oct 2022 17:31:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbiJLRbC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 12 Oct 2022 13:31:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46778 "EHLO
+        id S229516AbiJLRb6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 12 Oct 2022 13:31:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbiJLRbA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Oct 2022 13:31:00 -0400
-X-Greylist: delayed 4199 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 12 Oct 2022 10:30:59 PDT
-Received: from 19.mo581.mail-out.ovh.net (19.mo581.mail-out.ovh.net [178.33.251.118])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C95F6684D
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Oct 2022 10:30:59 -0700 (PDT)
-Received: from player788.ha.ovh.net (unknown [10.109.143.246])
-        by mo581.mail-out.ovh.net (Postfix) with ESMTP id D5D5024FDC
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Oct 2022 14:25:43 +0000 (UTC)
-Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
-        (Authenticated sender: steve@sk2.org)
-        by player788.ha.ovh.net (Postfix) with ESMTPSA id 5AC742F9B390F;
-        Wed, 12 Oct 2022 14:25:39 +0000 (UTC)
-Authentication-Results: garm.ovh; auth=pass (GARM-102R0049184b12f-2b4e-4dcb-9236-01c8d45e0aad,
-                    75377E6B882747309559AE06BD3DFEEF97A89409) smtp.auth=steve@sk2.org
-X-OVh-ClientIp: 82.65.25.201
-From:   Stephen Kitt <steve@sk2.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Stephen Kitt <steve@sk2.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers/gpio: use simple i2c probe
-Date:   Wed, 12 Oct 2022 16:25:23 +0200
-Message-Id: <20221012142524.3920266-1-steve@sk2.org>
-X-Mailer: git-send-email 2.30.2
+        with ESMTP id S229595AbiJLRb6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Oct 2022 13:31:58 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 658147E038
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Oct 2022 10:31:56 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id w18so13043833ejq.11
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Oct 2022 10:31:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7g3dd5oDblHSvi18BkA/g8g+g7bbmFZJfYmI1TEETpo=;
+        b=NynZaqiW8iZBWr74bVjdNFWdXcRTfSd282NrBTXL3fuag703GobvYOkLPxqyhXQS48
+         7VZKSimGgc+CFlVqetGlUZZYWlECy91Xqw7ymAjZ0OdCsKsqKEqOOmqji6hO182aNtjB
+         47eFZ3fudM9qwmG2j9liKzxFKIPGKZquutDxs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7g3dd5oDblHSvi18BkA/g8g+g7bbmFZJfYmI1TEETpo=;
+        b=dHpjBCYl9c5rbQ/hZgQEqcbRfEui3UtCiopLZnAton1lXRrEi8dOIKZve6jou2XePo
+         1pY7Z5BoTMJmn5lx3O75gP4ZNjEYLxKXf75JlGOOTLqwShZO6NWMmUclqXLxCrtHyPxD
+         d8RMchluXoqPc5JM9NsJUiae3O/za3sTZUGJnMex3ot1qUwcx5znaK9FmKcZCxIVqvYU
+         Mnee8Ng4rIvgDpkVD2sAPJCED2/2CVxAnoz0SskmvfHufkS/Yi7WO0nUijNqkjz2uhH4
+         /R+4+is8D2SX13vGOEgIO1uFdilNYgTd4tQ8iyTU4LurpRD453TEFjfNkV+ztjvhEBwq
+         w4Tw==
+X-Gm-Message-State: ACrzQf2M/n9Ot5GnOkAOFRdt3bCAdeV3OX/XGP959cQb77fCRo8VDiyk
+        t84fy0JeA4lTYf+k88rBn0uWBXuHd9+lpsV0
+X-Google-Smtp-Source: AMsMyM7cL4+crBf6vWN6YWRw1KTd4qGq9ezCe5xAaVUc+rf6QED1kSnE5GpcLXXOFrCiutC5EAob9w==
+X-Received: by 2002:a17:907:7e83:b0:782:7c78:3828 with SMTP id qb3-20020a1709077e8300b007827c783828mr23555525ejc.7.1665595914648;
+        Wed, 12 Oct 2022 10:31:54 -0700 (PDT)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com. [209.85.221.45])
+        by smtp.gmail.com with ESMTPSA id x14-20020aa7d6ce000000b0045c72bba0bfsm4004998edr.4.2022.10.12.10.31.52
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Oct 2022 10:31:53 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id b4so27266054wrs.1
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Oct 2022 10:31:52 -0700 (PDT)
+X-Received: by 2002:adf:dfc1:0:b0:22f:edf7:b11b with SMTP id
+ q1-20020adfdfc1000000b0022fedf7b11bmr12498392wrn.583.1665595912117; Wed, 12
+ Oct 2022 10:31:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 14872856296705656539
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrfeejkedgjeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecuggftrfgrthhtvghrnhepleegteeujeffjeefjeevhfdtudefjefgteelgedtudekleeiledvvdetudevjedtnecukfhppeduvdejrddtrddtrddupdekvddrieehrddvhedrvddtudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepoehsthgvvhgvsehskhdvrdhorhhgqedpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheekuddpmhhouggvpehsmhhtphhouhht
+References: <20221007145116.46554-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221007145116.46554-1-krzysztof.kozlowski@linaro.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 12 Oct 2022 10:31:38 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UAcn=yeCZ_jum9kGgqsdKsPpya-FPumYUWO=iyp-kKYw@mail.gmail.com>
+Message-ID: <CAD=FV=UAcn=yeCZ_jum9kGgqsdKsPpya-FPumYUWO=iyp-kKYw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: sc7180: align TLMM pin
+ configuration with DT schema
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-All these drivers have an i2c probe function which doesn't use the
-"struct i2c_device_id *id" parameter, so they can trivially be
-converted to the "probe_new" style of probe with a single argument.
+Hi,
 
-This is part of an ongoing transition to single-argument i2c probe
-functions. Old-style probe functions involve a call to i2c_match_id:
-in drivers/i2c/i2c-core-base.c,
+On Fri, Oct 7, 2022 at 7:51 AM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> DT schema expects TLMM pin configuration nodes to be named with
+> '-state' suffix and their optional children with '-pins' suffix.
+>
+> Merge subnodes named 'pinconf' and 'pinmux' into one entry, add function
+> where missing (required by bindings for GPIOs) and reorganize overriding
+> pins by boards.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> ---
+>
+> Not tested on hardware.
 
-         /*
-          * When there are no more users of probe(),
-          * rename probe_new to probe.
-          */
-         if (driver->probe_new)
-                 status = driver->probe_new(client);
-         else if (driver->probe)
-                 status = driver->probe(client,
-                                        i2c_match_id(driver->id_table, client));
-         else
-                 status = -EINVAL;
+I applied these two patches to the top of mainline today and booted up
+a sc7180-trogdor-coachz. I didn't do any stress testing, but at least
+it boots up and basic smoke tests pass.
 
-Drivers which don't need the second parameter can be declared using
-probe_new instead, avoiding the call to i2c_match_id. Drivers which do
-can still be converted to probe_new-style, calling i2c_match_id
-themselves (as is done currently for of_match_id).
+> Doug,
+>
+> I think this implements our conclusion from SDM845 patches (alignment of
+> pinctrl with DT schema).
 
-This change was done using the following Coccinelle script, and fixed
-up for whitespace changes:
+Yeah, it looks really great! Hopefully others agree that this scheme
+looks great and it also validates nicely with your schema changes.
+Sorry for taking a few days to get back--your email coincided with a
+few vacation days for me.
 
-@ rule1 @
-identifier fn;
-identifier client, id;
-@@
+I have a few nits and there's at least one problem (the glitching of
+the SPI chip select at boot).
 
-- static int fn(struct i2c_client *client, const struct i2c_device_id *id)
-+ static int fn(struct i2c_client *client)
-{
-...when != id
-}
 
-@ rule2 depends on rule1 @
-identifier rule1.fn;
-identifier driver;
-@@
+> Cc: Doug Anderson <dianders@chromium.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7180-idp.dts       | 211 +++---
+>  .../boot/dts/qcom/sc7180-trogdor-coachz.dtsi  |  36 +-
+>  .../dts/qcom/sc7180-trogdor-homestar.dtsi     |  41 +-
+>  .../dts/qcom/sc7180-trogdor-kingoftown-r0.dts |  16 +-
+>  .../dts/qcom/sc7180-trogdor-kingoftown.dtsi   |   8 +-
+>  .../boot/dts/qcom/sc7180-trogdor-lazor.dtsi   |  16 +-
+>  .../dts/qcom/sc7180-trogdor-mrbland-rev0.dtsi |  25 +-
+>  .../boot/dts/qcom/sc7180-trogdor-mrbland.dtsi |  72 +-
+>  .../qcom/sc7180-trogdor-parade-ps8640.dtsi    |  32 +-
+>  .../boot/dts/qcom/sc7180-trogdor-pazquel.dtsi |   8 +-
+>  .../boot/dts/qcom/sc7180-trogdor-pompom.dtsi  |  14 +-
+>  .../qcom/sc7180-trogdor-quackingstick.dtsi    |  56 +-
+>  .../arm64/boot/dts/qcom/sc7180-trogdor-r1.dts |   8 +-
+>  .../dts/qcom/sc7180-trogdor-ti-sn65dsi86.dtsi |  16 +-
+>  .../qcom/sc7180-trogdor-wormdingler-rev0.dtsi |  25 +-
+>  .../dts/qcom/sc7180-trogdor-wormdingler.dtsi  |  72 +-
+>  arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  | 655 +++++++-----------
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi          | 410 +++++------
+>  18 files changed, 613 insertions(+), 1108 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> index 9dee131b1e24..3e93b13d275e 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
 
-struct i2c_driver driver = {
--       .probe
-+       .probe_new
-                =
-(
-                   fn
-|
--                  &fn
-+                  fn
-)
-                ,
-};
+[ ...cut... ]
 
-Signed-off-by: Stephen Kitt <steve@sk2.org>
----
- drivers/gpio/gpio-gw-pld.c   | 5 ++---
- drivers/gpio/gpio-max7300.c  | 5 ++---
- drivers/gpio/gpio-tpic2810.c | 5 ++---
- drivers/gpio/gpio-ts4900.c   | 5 ++---
- 4 files changed, 8 insertions(+), 12 deletions(-)
+> @@ -642,126 +596,131 @@ pinconf-rts {
+>                          * pulling RX low (by sending wakeup bytes).
+>                          */
+>                          pins = "gpio39";
+> +                       function = "gpio";
+>                          bias-pull-down;
 
-diff --git a/drivers/gpio/gpio-gw-pld.c b/drivers/gpio/gpio-gw-pld.c
-index 2109803ffb38..5057fa9ad610 100644
---- a/drivers/gpio/gpio-gw-pld.c
-+++ b/drivers/gpio/gpio-gw-pld.c
-@@ -67,8 +67,7 @@ static void gw_pld_set8(struct gpio_chip *gc, unsigned offset, int value)
- 	gw_pld_output8(gc, offset, value);
- }
- 
--static int gw_pld_probe(struct i2c_client *client,
--			const struct i2c_device_id *id)
-+static int gw_pld_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
- 	struct gw_pld *gw;
-@@ -126,7 +125,7 @@ static struct i2c_driver gw_pld_driver = {
- 		.name = "gw_pld",
- 		.of_match_table = gw_pld_dt_ids,
- 	},
--	.probe = gw_pld_probe,
-+	.probe_new = gw_pld_probe,
- 	.id_table = gw_pld_id,
- };
- module_i2c_driver(gw_pld_driver);
-diff --git a/drivers/gpio/gpio-max7300.c b/drivers/gpio/gpio-max7300.c
-index 43da381a4d7e..cf482f4f0098 100644
---- a/drivers/gpio/gpio-max7300.c
-+++ b/drivers/gpio/gpio-max7300.c
-@@ -28,8 +28,7 @@ static int max7300_i2c_read(struct device *dev, unsigned int reg)
- 	return i2c_smbus_read_byte_data(client, reg);
- }
- 
--static int max7300_probe(struct i2c_client *client,
--			 const struct i2c_device_id *id)
-+static int max7300_probe(struct i2c_client *client)
- {
- 	struct max7301 *ts;
- 
-@@ -63,7 +62,7 @@ static struct i2c_driver max7300_driver = {
- 	.driver = {
- 		.name = "max7300",
- 	},
--	.probe = max7300_probe,
-+	.probe_new = max7300_probe,
- 	.remove = max7300_remove,
- 	.id_table = max7300_id,
- };
-diff --git a/drivers/gpio/gpio-tpic2810.c b/drivers/gpio/gpio-tpic2810.c
-index d642c35cb97c..349c5fbd9b02 100644
---- a/drivers/gpio/gpio-tpic2810.c
-+++ b/drivers/gpio/gpio-tpic2810.c
-@@ -98,8 +98,7 @@ static const struct of_device_id tpic2810_of_match_table[] = {
- };
- MODULE_DEVICE_TABLE(of, tpic2810_of_match_table);
- 
--static int tpic2810_probe(struct i2c_client *client,
--			  const struct i2c_device_id *id)
-+static int tpic2810_probe(struct i2c_client *client)
- {
- 	struct tpic2810 *gpio;
- 	int ret;
-@@ -144,7 +143,7 @@ static struct i2c_driver tpic2810_driver = {
- 		.name = "tpic2810",
- 		.of_match_table = tpic2810_of_match_table,
- 	},
--	.probe = tpic2810_probe,
-+	.probe_new = tpic2810_probe,
- 	.remove = tpic2810_remove,
- 	.id_table = tpic2810_id_table,
- };
-diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
-index 416725c26e94..43e8b66e04f7 100644
---- a/drivers/gpio/gpio-ts4900.c
-+++ b/drivers/gpio/gpio-ts4900.c
-@@ -136,8 +136,7 @@ static const struct of_device_id ts4900_gpio_of_match_table[] = {
- };
- MODULE_DEVICE_TABLE(of, ts4900_gpio_of_match_table);
- 
--static int ts4900_gpio_probe(struct i2c_client *client,
--			const struct i2c_device_id *id)
-+static int ts4900_gpio_probe(struct i2c_client *client)
- {
- 	struct ts4900_gpio_priv *priv;
- 	u32 ngpio;
-@@ -186,7 +185,7 @@ static struct i2c_driver ts4900_gpio_driver = {
- 		.name = "ts4900-gpio",
- 		.of_match_table = ts4900_gpio_of_match_table,
- 	},
--	.probe = ts4900_gpio_probe,
-+	.probe_new = ts4900_gpio_probe,
- 	.id_table = ts4900_gpio_id_table,
- };
- module_i2c_driver(ts4900_gpio_driver);
+optional nit: your new addition makes it obvious that the indentation of the
+surrounding lines is wrong. Maybe fix it as part of this patch?
 
-base-commit: 833477fce7a14d43ae4c07f8ddc32fa5119471a2
--- 
-2.30.2
 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor-homestar.dtsi b/arch/arm64/boot/dts/qcom/sc7180-trogdor-homestar.dtsi
+> index 1bd6c7dcd9e9..c66568a882b3 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180-trogdor-homestar.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor-homestar.dtsi
+> @@ -180,30 +180,19 @@ &wifi {
+>  /* PINCTRL - modifications to sc7180-trogdor.dtsi */
+>
+>  &en_pp3300_dx_edp {
+> -       pinmux {
+> -               pins = "gpio67";
+> -       };
+> -
+> -       pinconf {
+> -               pins = "gpio67";
+> -       };
+> +       pins = "gpio67";
+>  };
+>
+>  &sec_mi2s_active{
+> -       pinmux {
+> -               pins = "gpio49", "gpio50", "gpio51", "gpio52";
+> -               function = "mi2s_1";
+> -       };
+> +       pins = "gpio49", "gpio50", "gpio51", "gpio52";
+
+Looks like the point of the homestar override is to add an extra pin
+(gpio52) but it forgot to update the list in the "pinconf" as well so
+gpio52 wasn't getting a drive strength and bias set. Your patch
+has the side effect of fixing this. That looks right to me (match
+GPIO51) given that the name of GPIO51 is AMP_DIN and GPIO52 AMP_DIN2.
+
+Assuming my analysis is correct, it's probably worth mentioning this
+behavior change in the commit message.
+
+
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi b/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi
+> index eae22e6e97c1..d923ddca8b8b 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi
+> @@ -880,17 +880,17 @@ &sdhc_2 {
+>  };
+>
+>  &spi0 {
+> -       pinctrl-0 = <&qup_spi0_cs_gpio_init_high>, <&qup_spi0_cs_gpio>;
+> +       pinctrl-0 = <&qup_spi0_cs_gpio>;
+
+I think this is going to cause a problem. This is pretty much a direct
+revert of commit e440e30e26dd ("arm64: dts: qcom: sc7180: Avoid glitching
+SPI CS at bootup on trogdor").
+
+I was never crazy about the solution in the patch, but I really couldn't
+find another great way to solve it. I think the problem is fairly well
+described in that commit message, at least, and I'm certainly open to
+alternate solutions. Until then, I think this prevents landing your
+patch.
+
+[ ... cut ... ]
+
+> @@ -1467,197 +1315,174 @@ pinconf-rts {
+>                          * pulling RX low (by sending wakeup bytes).
+>                          */
+>                          pins = "gpio39";
+> +                       function = "gpio";
+>                          bias-pull-down;
+
+optional nit: your new addition makes it obvious that the indentation of the
+surrounding lines is wrong. Maybe fix it as part of this patch?
+
+
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> index 58976a1ba06b..8f7845fa669c 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> @@ -1486,410 +1486,336 @@ tlmm: pinctrl@3500000 {
+
+[ ... cut ... ]
+
+> -                       qup_spi0_default: qup-spi0-default {
+> -                               pinmux {
+> -                                       pins = "gpio34", "gpio35",
+> -                                              "gpio36", "gpio37";
+> -                                       function = "qup00";
+> -                               };
+> +                       qup_spi0_default: qup-spi0-default-state {
+> +                               pins = "gpio34", "gpio35", "gpio36", "gpio37";
+> +                               function = "qup00";
+>                         };
+>
+> -                       qup_spi0_cs_gpio: qup-spi0-cs-gpio {
+> -                               pinmux {
+> +                       qup_spi0_cs_gpio: qup-spi0-cs-gpio-state {
+> +                               qup_spi0_spi: spi-pins {
+>                                         pins = "gpio34", "gpio35",
+>                                                "gpio36";
+>                                         function = "qup00";
+>                                 };
+>
+> -                               pinmux-cs {
+> +                               qup_spi0_cs: cs-pins {
+>                                         pins = "gpio37";
+>                                         function = "gpio";
+>                                 };
+>                         };
+
+The way that the cs_gpio ended up after your patch series threw me for
+a loop. It's counterintutive that we have labels "qup_spi0_spi" and
+"qup_spi0_cs" and they're _not_ under "qup_spi0_default".
+
+Here are two proposals and I'd be happy with either of them:
+
+a) Get rid of the gpio nodes. Instead in the dtsi file do:
+
+  qup_spi0_cs_gpio: qup-spi0-cs-gpio-state {
+    qup_spi0_spi: spi-pins {
+      pins = "gpio34", "gpio35", "gpio36";
+      function = "qup00";
+    };
+
+    qup_spi0_cs: cs-pins {
+      pins = "gpio37";
+      function = "qup00";
+    };
+  };
+
+In the board file just:
+
+  &qup_spi0_cs {
+    function = "gpio";
+  };
+
+b) Split the whole thing up. In the dtsi file pinctrl section:
+
+  qup_spi0_spi: qup-spi0-spi-state {
+    pins = "gpio34", "gpio35", "gpio36";
+    function = "qup00";
+  };
+
+  qup_spi0_cs: qup-spi0-cs-state {
+    pins = "gpio37";
+    function = "qup00";
+  };
+
+  qup_spi0_cs_gpio: qup-spi0-cs-gpio-state {
+    pins = "gpio37";
+    function = "gpio";
+  };
+
+...in the dtsi file SPI section:
+
+  pinctrl-0 = <&qup_spi0_spi> <&qup_spi0_cs>;
+
+...in the board SPI section:
+
+  pinctrl-0 = <&qup_spi0_spi> <&qup_spi0_cs_gpio>;
+
+[ ... cut ... ]
+> -                       qup_uart0_default: qup-uart0-default {
+> -                               pinmux {
+> -                                       pins = "gpio34", "gpio35",
+> -                                              "gpio36", "gpio37";
+> -                                       function = "qup00";
+> -                               };
+> +                       qup_uart0_default: qup-uart0-default-state {
+> +                               pins = "gpio34", "gpio35", "gpio36", "gpio37";
+> +                               function = "qup00";
+>                         };
+
+It feels like all of the UARTs should be split up like uart3/uart8 are
+If any board actually uses these they will likely want different pulls
+and configs for the different pins.
