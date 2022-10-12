@@ -2,55 +2,55 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 989E6C43219
-	for <linux-gpio@archiver.kernel.org>; Wed, 12 Oct 2022 15:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4021EC433FE
+	for <linux-gpio@archiver.kernel.org>; Wed, 12 Oct 2022 15:18:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229911AbiJLPQi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 12 Oct 2022 11:16:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40164 "EHLO
+        id S229928AbiJLPSA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 12 Oct 2022 11:18:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229893AbiJLPQb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Oct 2022 11:16:31 -0400
-Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC8DB165AF
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Oct 2022 08:16:30 -0700 (PDT)
-Received: by mail-qt1-x82e.google.com with SMTP id f22so6388639qto.3
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Oct 2022 08:16:30 -0700 (PDT)
+        with ESMTP id S229821AbiJLPRy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Oct 2022 11:17:54 -0400
+Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D02C4C8229
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Oct 2022 08:17:50 -0700 (PDT)
+Received: by mail-qt1-x82c.google.com with SMTP id g11so5717490qts.1
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Oct 2022 08:17:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=izSN7xRQqssnM767hbIgGLtwY0E8L+UfBxDaexTRlTs=;
-        b=M6wQigtVJrVPC9MwqwM9yRS8mMnzbDo6SepkFNF7b3AsYFewTcyUeL3vcV4h+D+WpM
-         pLguOZaXQsbK6Z3z1g4PoKakPvUekqRZW/Aed7X2BddyI3OnNFQC2C4jZTtrduwAxRL8
-         18lYklKksityuqtq3tayqZoN3deGG/Rs5lARuQ8wLNpqi1rKhqU+NFCYmj6xRSAhbGA7
-         JU1234EIygn3hHBiz1aZw69wp93zU3ad5rt4WsxUyDy7os+Arjh8HdsqSldJEJ5whTfJ
-         v08dZ1v2nL2WCJ99Ml6LTrOVVZqiZDUxkbQrcwidd79EGs+XjVJsioSDEP6tnmggJvqY
-         ZozQ==
+        bh=eaRKQx+Doc3jRznRAbzHwjMv60Gkzs2xOqcmaWaxKA0=;
+        b=qcS+qn97NOUGT4Ij1A7qTKqKkvOzgGvOfP8bmPZROjAi9T40p4xGsTvBOsXLdNUx+z
+         nm3DAdXElDEqJcTV+muqd2QLZU/CmCfuiqEI7khi/gHrPjrEH2WYvnYWA3dwHk+3uNEu
+         Vl/aeNRl03BlmmPAsqOjC1o5i5ih/WpWe4GBwOYq2RRfENVBuf1XbYsD7YE/l/IZ5c9H
+         pvlAO1gukFYi7SwKHw7jfzaJjHNPRFRMv6wQbYn8nZ/+blMD/F4Bym+YFOxRVjTnXscj
+         jXpGJVgFdvRxMjRCmtoSKgCh1OxmFLHF2dFiK2gZlsBEQOhaRjyq+TYl75eqKH9KAUOk
+         bQrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=izSN7xRQqssnM767hbIgGLtwY0E8L+UfBxDaexTRlTs=;
-        b=SwnY89hw+Vjz6aYgkepgvD0ubIj2rTlrPCMHVOOHEdn4Xfp3I0IOa+QZgMHEW3o7Am
-         h6W0P5FXU6kM7hZx612F13Kbx0m9r1tX0gQBIDA3Y/z38/+4T8HM+yoJLtxIemI4Fjbm
-         1Wbb901JyAwbdZTaLB4Vc7nq3fp0tq5VjS9GzT2zVhnrRuHE4LhYXAlxH5VeXHOAdhmC
-         yx+a8OXJmwx+/7zZJmQCsEEgo+laOc2QS4v7oDnpqh3rmPXF1y2doj9oMakaLtCFe7MS
-         2QoZUOcg4m0bsDCa2bW2w+VwNbQz62XIAZ4O19x7zdCb6YZgYnfxtX99k8RGgAprV4pW
-         yONA==
-X-Gm-Message-State: ACrzQf0LJOox4qp0tD7VJ6HRzmndbc3PlPjb8BDD3CefssdUHPAGv6yx
-        kfJa5JK+5E9p9Vbf8Pyaz02c/xZ2BIEuuA==
-X-Google-Smtp-Source: AMsMyM7jBS8OcjxwxEwcD4uNNieiG8sP6kVEP5POfNJ+BoROi19TVVYwpicNF8ld4KbkfuPlccRzOw==
-X-Received: by 2002:a05:622a:1788:b0:35c:bf57:caa7 with SMTP id s8-20020a05622a178800b0035cbf57caa7mr23920283qtk.470.1665587779925;
-        Wed, 12 Oct 2022 08:16:19 -0700 (PDT)
+        bh=eaRKQx+Doc3jRznRAbzHwjMv60Gkzs2xOqcmaWaxKA0=;
+        b=XrlVZl9aiHfvLFRCxB5haGSdvttWk6z3CwGwDYt04NOBpXnZoEirk3DGYmG6ikO+Yv
+         pDr/PO1jp2rRtzwSEWcZ0gRJqdIPCxsFZJ+NM3xhd/RqJDMAavMsN/Ce6Tjvvc2caZye
+         a95mLeeA1lsFu0L8BubK0ayR4GyWY1TMuRxBUuvE+EXNKshppFIeT4mAlAFiEyhOw86y
+         9u3KtHou3fGfhoDPeVASCYmoLURw76xu5Dp/AHR+xi7QQ6Onn3NFok0vnEHS4/Pjb2UI
+         /ehyGYbM6ikjXoSg0b8NUdA3r5EdHvAllfmTtZu1FNOEvjC/JaL8rN1nMLs4I0CSRQ6g
+         CMhg==
+X-Gm-Message-State: ACrzQf1p4jAVH6G+6rjBVrIC/iajPBRLGHqZTLBCP7zIMo0ds+LhE2Jz
+        gUfLhvehXkXGG09ENUoVK2fnz9j4khQA0g==
+X-Google-Smtp-Source: AMsMyM6lgaQm3WlfkETyHWAUgrqg3P/v+EhUF0cOTf9ATTF55y2RDgnrrmg1fv15rsb4fqKTLmZLwg==
+X-Received: by 2002:a05:622a:13ce:b0:39c:c82a:4584 with SMTP id p14-20020a05622a13ce00b0039cc82a4584mr1080419qtk.150.1665587870012;
+        Wed, 12 Oct 2022 08:17:50 -0700 (PDT)
 Received: from krzk-bin.home (cpe-72-225-192-120.nyc.res.rr.com. [72.225.192.120])
-        by smtp.gmail.com with ESMTPSA id u2-20020a05620a454200b006af0ce13499sm16671612qkp.115.2022.10.12.08.16.18
+        by smtp.gmail.com with ESMTPSA id x19-20020a05620a0b5300b006ee91ab3538sm2787671qkg.36.2022.10.12.08.17.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Oct 2022 08:16:19 -0700 (PDT)
+        Wed, 12 Oct 2022 08:17:49 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -58,9 +58,9 @@ To:     Bjorn Andersson <andersson@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 1/4] arm64: dts: qcom: msm8998: add gpio-ranges to TLMM
-Date:   Wed, 12 Oct 2022 11:14:13 -0400
-Message-Id: <20221012151416.38645-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/3] arm64: dts: qcom: msm8996-sony-xperia-tone: drop incorrect wlan pin input
+Date:   Wed, 12 Oct 2022 11:15:43 -0400
+Message-Id: <20221012151545.39061-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -68,25 +68,26 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Qualcomm pinctrl bindings and drivers expect gpio-ranges property.
+Pin configuration has no "input-high" property, so drop it from node
+described as Wifi host wake up pin.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index f05f16ac5cc1..2c4acf227253 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -1056,6 +1056,7 @@ tlmm: pinctrl@3400000 {
- 			compatible = "qcom,msm8998-pinctrl";
- 			reg = <0x03400000 0xc00000>;
- 			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-ranges = <&tlmm 0 0 150>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			interrupt-controller;
+diff --git a/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi b/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi
+index ca7c8d2e1d3d..93568fb4bc86 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone.dtsi
+@@ -912,7 +912,6 @@ wl_host_wake: wl-host-wake {
+ 		function = "gpio";
+ 		drive-strength = <2>;
+ 		bias-pull-down;
+-		input-high;
+ 	};
+ 
+ 	wl_reg_on: wl-reg-on {
 -- 
 2.34.1
 
