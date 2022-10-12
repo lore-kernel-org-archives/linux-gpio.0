@@ -2,170 +2,96 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BCCC43217
-	for <linux-gpio@archiver.kernel.org>; Wed, 12 Oct 2022 14:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D84F8C43219
+	for <linux-gpio@archiver.kernel.org>; Wed, 12 Oct 2022 15:16:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229726AbiJLOxf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 12 Oct 2022 10:53:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52788 "EHLO
+        id S229662AbiJLPQ0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 12 Oct 2022 11:16:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229541AbiJLOxd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Oct 2022 10:53:33 -0400
-Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AFDCDFB58;
-        Wed, 12 Oct 2022 07:53:28 -0700 (PDT)
-X-QQ-mid: bizesmtp71t1665586398tra1mkxv
-Received: from [192.168.1.231] ( [113.72.146.141])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Wed, 12 Oct 2022 22:53:16 +0800 (CST)
-X-QQ-SSF: 01000000002000B09000B00A0000000
-X-QQ-FEAT: Q5/H4pNog203Q26Mis4ciWl055ow0ajIHrfB0/XOCwC8VcIHMdhaaI4V2fyX5
-        38PXgbepu+GYSoJRIEnLYHasPwO576mbxLyyxYxDkIO3Qw9oRGRQdZuJ2loRlBNAlLYa4GC
-        Fe+8gZoqavoauj1vW0xHE78oo2iqq2+cw8NXHLUdXPwnZJHwjI3NCU9uTyyd9q8Syv/it57
-        YDbbiYP6xv4roDawpnlNaUae9FRYYd5YYPOVF0DdNLTzxh1E1Xu5Pe4Xc86a0ZsqFHpzRFq
-        zm5FoEZ/4ykbN4upH9ePaGwcaLB7QSWpTvLuzL7jdF4iI6D4JyI+hX7L+LsV15tDF8xW20K
-        JP4yr4EUXaQ0kGaX7P3G/xDArMOjMLvRBV0UxClxJyD8bd/Gx17YK1V0B2ZeWUXM8fTgJcS
-        9yyANqHDAGk=
-X-QQ-GoodBg: 0
-Message-ID: <14D22B831DDCFAED+14879d26-5d3a-3487-07ef-3b64e775e43f@linux.starfivetech.com>
-Date:   Wed, 12 Oct 2022 22:53:15 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v1 12/30] dt-bindings: reset: Add starfive,jh7110-reset
- bindings
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>, linux-riscv@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229844AbiJLPQY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Oct 2022 11:16:24 -0400
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 050FC1DA6D
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Oct 2022 08:16:22 -0700 (PDT)
+Received: by mail-qt1-x82d.google.com with SMTP id g11so5714163qts.1
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Oct 2022 08:16:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rdIShqHVM59tR3kcoJlO0eXiQv5w25Y9IMmRDVGACiI=;
+        b=MXN/ITfuhZI48MRoMSMpyF6pN4J8I1LRNprL3aQ6XWhwF4C2+fF5jBckhBrCvuO7C5
+         UpGbOl3zP+8Px2mvYRG8G+o+REfe7r3ZCCJ8Ti9agIy30on9bdBnKKIQk51Y1JIlB4kX
+         5TFVkNFQJAXokCJOxXjP0/XBGhwCTpI3bTNyy2GXXd2bshJyijbhH4R2dHTxrKWrV/tZ
+         4TYK1mSvBr71UFj70n/i0E8HZ2hNvaewh5kyPRRtydb5hkubJhaQUhF2Z+PjK/HKT8ZZ
+         uQGo4AuocSzHZdawllNvsa2yD0JNj3ybDthhMa0lD8ES0xkSmihSFZFp2XZFXYO7Ln7s
+         vteg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rdIShqHVM59tR3kcoJlO0eXiQv5w25Y9IMmRDVGACiI=;
+        b=uYkewzv+B4zoPoXd+4wnx9HX1mSiTVdcZfWyRC8Bdk4INvMFwHEMKz5DQPPSnmb2On
+         C8tGRzVrpkdcCmSTyVQHe0l8Vit7nnnsbvL4FFGkwO/KJEv2jLFYvSJq+PJRNlF83beB
+         OR1Trip1L4v2mKlGCWdqhuDXvEx5m5v64bJEnAeJhUWnEI8ssQtSzZHJzlhADitz9FfD
+         8GIOV+ufEUbpKXIKk9RBL2ou+6rHsI/zIay6htgWWtFgKcyhfwrIuPS918lfBqmrF5KL
+         0ib/kdwaaiPQVTMoHM8A6VX2fLUWRGK4nBNsEg5JY4ObRT7GmP2k1wuA7RDnu+prPx9O
+         q6aw==
+X-Gm-Message-State: ACrzQf0ADHrS0/cU1JYZQlHg4jr0whs0nWRof43ON59aMfKMBwiFV8tJ
+        1k/zKsaKs5aVirTY4ANOnOTHuA==
+X-Google-Smtp-Source: AMsMyM7NPGbZ/tt+nrOePBcxLM75ZtnMOsg6+zjBRz71LDtfx+PJD3YV3ZB+Vxku9QCEJu9iSqqGTw==
+X-Received: by 2002:ac8:5b44:0:b0:390:3f5:62d with SMTP id n4-20020ac85b44000000b0039003f5062dmr23896967qtw.8.1665587781155;
+        Wed, 12 Oct 2022 08:16:21 -0700 (PDT)
+Received: from krzk-bin.home (cpe-72-225-192-120.nyc.res.rr.com. [72.225.192.120])
+        by smtp.gmail.com with ESMTPSA id u2-20020a05620a454200b006af0ce13499sm16671612qkp.115.2022.10.12.08.16.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Oct 2022 08:16:20 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-kernel@vger.kernel.org
-References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
- <20220929175147.19749-1-hal.feng@linux.starfivetech.com>
- <20220929184349.GA2551443-robh@kernel.org>
- <8BEAFAD2C4CE6E4A+0a00376c-1e3e-f597-bcf6-106ff294859a@linux.starfivetech.com>
- <2f1d1afd-3c97-6ce0-8247-6e1c4a24e548@linaro.org>
- <4769BE3503398017+b1699221-ccc9-a0c1-0b11-141ce9644d74@linux.starfivetech.com>
- <9f04267d-2592-b303-9b79-9cef672c970a@linaro.org>
-From:   Hal Feng <hal.feng@linux.starfivetech.com>
-In-Reply-To: <9f04267d-2592-b303-9b79-9cef672c970a@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 2/4] arm64: dts: qcom: msm8998-oneplus-cheeseburger: fix backlight pin function
+Date:   Wed, 12 Oct 2022 11:14:14 -0400
+Message-Id: <20221012151416.38645-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221012151416.38645-1-krzysztof.kozlowski@linaro.org>
+References: <20221012151416.38645-1-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 12 Oct 2022 09:33:42 -0400, Krzysztof Kozlowski wrote:
-> On 12/10/2022 09:16, Hal Feng wrote:
->>>>>> +properties:
->>>>>> +  compatible:
->>>>>> +    enum:
->>>>>> +      - starfive,jh7110-reset
->>>>>
->>>>> 'reg' needed? Is this a sub-block of something else?
->>>>
->>>> Yes, the reset node is a child node of the syscon node, see patch 27 for detail.
->>>> You might not see the complete patches at that time due to technical issue of
->>>> our smtp email server. Again, I feel so sorry about that.
->>>>
->>>> 	syscrg: syscrg@13020000 {
->>>> 		compatible = "syscon", "simple-mfd";
->>>> 		reg = <0x0 0x13020000 0x0 0x10000>;
->>>>
->>>> 		syscrg_clk: clock-controller@13020000 {
->>>> 			compatible = "starfive,jh7110-clkgen-sys";
->>>> 			clocks = <&osc>, <&gmac1_rmii_refin>,
->>>> 				 <&gmac1_rgmii_rxin>,
->>>> 				 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
->>>> 				 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
->>>> 				 <&tdm_ext>, <&mclk_ext>;
->>>> 			clock-names = "osc", "gmac1_rmii_refin",
->>>> 				"gmac1_rgmii_rxin",
->>>> 				"i2stx_bclk_ext", "i2stx_lrck_ext",
->>>> 				"i2srx_bclk_ext", "i2srx_lrck_ext",
->>>> 				"tdm_ext", "mclk_ext";
->>>> 			#clock-cells = <1>;
->>>> 		};
->>>>
->>>> 		syscrg_rst: reset-controller@13020000 {
->>>> 			compatible = "starfive,jh7110-reset";
->>>> 			#reset-cells = <1>;
->>>
->>> So the answer to the "reg needed?" is what? You have unit address but no
->>> reg, so this is not correct.
->> 
->> Not needed in the reset-controller node, but needed in its parent node. 
-> 
-> We do not talk about parent node. Rob's question was in this bindings.
-> Is this document a binding for the parent node or for this node?
+There is no "normal" function, so use "gpio" for backlight button pin
+configuration.
 
-This node. So not needed.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/msm8998-oneplus-cheeseburger.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
->> I am sorry
->> for missing description to point it out in the bindings. I will rewrite all bindings
->> for the next version. Unit address here should be deleted.
->> 
->>>
->>>> 			starfive,assert-offset = <0x2F8>;
->>>> 			starfive,status-offset= <0x308>;
->>>> 			starfive,nr-resets = <JH7110_SYSRST_END>;
->>>> 		};
->>>> 	};
->>>>
->>>> In this case, we get the memory mapped space through the parent node with syscon
->>>> APIs. You can see patch 13 for detail.
->>>>
->>>> static int reset_starfive_register(struct platform_device *pdev, const u32 *asserted)
->>>> {
->>>
->>>
->>> (...)
->>>
->>>>
->>>>>
->>>>>> +
->>>>>> +  "#reset-cells":
->>>>>> +    const: 1
->>>>>> +
->>>>>> +  starfive,assert-offset:
->>>>>> +    description: Offset of the first ASSERT register
->>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>>> +
->>>>>> +  starfive,status-offset:
->>>>>> +    description: Offset of the first STATUS register
->>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>>
->>>>> These can't be implied from the compatible string?
->> 
->> Definitely can. We do this is for simplifying the reset driver.
-> 
-> The role of the bindings is not to simplify some specific driver in some
-> specific OS...
-> 
->> Otherwise, we may need to define more compatibles because there
->> are multiple reset blocks in JH7110. Another case can be found at
->> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/reset/altr,rst-mgr.yaml
-> 
-> And why is this a problem? You have different hardware, so should have
-> different compatibles. Otherwise we would have a compatible
-> "all,everything" and use it in all possible devices.
+diff --git a/arch/arm64/boot/dts/qcom/msm8998-oneplus-cheeseburger.dts b/arch/arm64/boot/dts/qcom/msm8998-oneplus-cheeseburger.dts
+index ef2a88a64d32..122f6c25220e 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998-oneplus-cheeseburger.dts
++++ b/arch/arm64/boot/dts/qcom/msm8998-oneplus-cheeseburger.dts
+@@ -35,7 +35,7 @@ &pmi8998_gpio {
+ 	button_backlight_default: button-backlight-state {
+ 		pinconf {
+ 			pins = "gpio5";
+-			function = "normal";
++			function = "gpio";
+ 			bias-pull-down;
+ 			qcom,drive-strength = <PMIC_GPIO_STRENGTH_NO>;
+ 		};
+-- 
+2.34.1
 
-Okay, I get it. Thanks a lot.
-
-Best regards,
-Hal
