@@ -2,103 +2,101 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94114C4332F
-	for <linux-gpio@archiver.kernel.org>; Fri, 14 Oct 2022 00:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36EC7C4332F
+	for <linux-gpio@archiver.kernel.org>; Fri, 14 Oct 2022 02:05:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229846AbiJNAUs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 13 Oct 2022 20:20:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56356 "EHLO
+        id S229717AbiJNCFi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 13 Oct 2022 22:05:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229850AbiJNAUO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Oct 2022 20:20:14 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7C404316D;
-        Thu, 13 Oct 2022 17:19:47 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id b79so2572774iof.5;
-        Thu, 13 Oct 2022 17:19:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D3AMzfQVn5/7lBdhsiiw7qcfMcMHO7OrRK+ejqLQydQ=;
-        b=p0+P2JJK82phqlb+rTmEe/hRjzYi+0c+j1w1ZXvpHR802l3HZxj8ZouxOthEYlg/0Y
-         FbRpmV0SIoQyCyXUffs0BZRRcNiMdMaqGbGbJJnLkk8MuuZUI4LTh5TWC8ki490tF9eG
-         /whR975ZYMBb/zEK/PE633bVwpMuIL2gfHxadz3HvUgpjWftZvRS2U5+5lNP6GKPNXVr
-         X8Dju2wjqTPDi1UAN0WIaJref0IpN6hj2RUWNsXMoAhMhnpmTw6Y2C053Gk3peT8m/GU
-         pjUC1Gxjbdm1gn0SBNSofQjml0tpY07T4k6QjpTU3FhH5Eg+H+uxUJ3RgRC1oFNTJnhN
-         526g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D3AMzfQVn5/7lBdhsiiw7qcfMcMHO7OrRK+ejqLQydQ=;
-        b=eBCuveCDsfouQEsXMxccqmxN1HGKo45D/pKp4SDis1dihL0YRXiTPKINDRCp4szV3t
-         D0Nm9rOG9MrlfImpJIKbd21mPZsHXRaIvqFAC+Z2cM70jycK30f1t3WMaQDxlUJlna0E
-         amhvlH8t4GyJxRJCXh9XU4qbscKGhv2FrCBXNUTpNyws+A/VhYphBbpzdfUZgOpdfVZ+
-         efxwH+YigupLWIQel/Xjdv64E2JV+07LHbGTFpbJGXYZS+JbjBwf4EJLXXQCEDJy30M3
-         xZ+wGYB56AZNlz54FGQJKxxhob0EOnBMUHPzA85tjQzL0H/GPGW7ww0qnwy/oObD6jAR
-         N1eA==
-X-Gm-Message-State: ACrzQf2Rw/4sK8ADJKCsjcYQIgrtEfU6xvyVibX/PxwW7mUnctFqTCKP
-        8a08odoiuz0GrgI4nVMXQbSXLRHazHuXxA==
-X-Google-Smtp-Source: AMsMyM73GvM98J4Hdv/Jnbgu6dTLnHKdNnAN7h7AxVhwOaYMF1kNIrlTokzutyqnfhU9p+BG6xT5oQ==
-X-Received: by 2002:a05:6602:164c:b0:684:a65f:c23 with SMTP id y12-20020a056602164c00b00684a65f0c23mr1119949iow.162.1665706785342;
-        Thu, 13 Oct 2022 17:19:45 -0700 (PDT)
-Received: from localhost ([2607:fea8:a2e2:2d00::3fc2])
-        by smtp.gmail.com with UTF8SMTPSA id g14-20020a05660226ce00b006a129b10229sm410936ioo.31.2022.10.13.17.19.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Oct 2022 17:19:44 -0700 (PDT)
-From:   Richard Acayan <mailingradian@gmail.com>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        with ESMTP id S229511AbiJNCFi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Oct 2022 22:05:38 -0400
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC78C14FD24;
+        Thu, 13 Oct 2022 19:05:35 -0700 (PDT)
+X-QQ-mid: bizesmtp66t1665713125t0dqa2lu
+Received: from [192.168.50.235] ( [113.72.147.11])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Fri, 14 Oct 2022 10:05:24 +0800 (CST)
+X-QQ-SSF: 01000000000000B09000000A0000000
+X-QQ-FEAT: 2w1wQVt6itRSuTllDZ9c9Ncos8L/9I0A7xLMcJaSF7QfOTy00g1XU9/te0E+F
+        u9+R5cNiUMb+3Gxnu/jD8XTWeJNgCEPTWzy+rsT//Kh6LYfRsZwdtcxaTcoD0ON+maBm+K2
+        oJV5WixWyamuOzzL1Vttws3ETFJ0i1LVuW3fv/J5BSJAOiKspFGGzhTskEWVCCMih9SPqjJ
+        Cg041J/HHc+Rb/6NmNobZiZLHwUctb/P4TEtSPN9we9Lz02rplMZB0uAxa6KfvdRad9xXK+
+        MZS/lyqLVCJxm9r6rhz06SHHwEN1wiNcU/0ln0vPr68YN+a9RZWaojCNkpj7E53WYUxMoqn
+        +EYoj3o1P4udrqrgjLeIDscuE7OORTnuaeIUPaeSLH+g2nn4/k=
+X-QQ-GoodBg: 0
+Message-ID: <9A0A65FD121C76C0+be2a3620-d30f-b6ac-3241-89b40191030b@linux.starfivetech.com>
+Date:   Fri, 14 Oct 2022 10:05:13 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v1 26/30] pinctrl: starfive: Add StarFive JH7110 driver
+Content-Language: en-US
+To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Richard Acayan <mailingradian@gmail.com>,
-        Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v10 2/3] pinctrl: qcom: do not reinitialize gpio valid mask
-Date:   Thu, 13 Oct 2022 20:19:33 -0400
-Message-Id: <20221014001934.4995-3-mailingradian@gmail.com>
-X-Mailer: git-send-email 2.38.0
-In-Reply-To: <20221014001934.4995-1-mailingradian@gmail.com>
-References: <20221014001934.4995-1-mailingradian@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+References: <20220929143225.17907-1-hal.feng@linux.starfivetech.com>
+ <20220930074341.6386-1-hal.feng@linux.starfivetech.com>
+ <CACRpkdYMQ98Q1iXr7-YdUkQrSK8aauZuSFeDp2f7ubNH_W7_HQ@mail.gmail.com>
+ <CAJM55Z91TL4eLOjZsRVZuxspcL40gG2MQRZf31h0L2yyaW--Cg@mail.gmail.com>
+From:   Hal Feng <hal.feng@linux.starfivetech.com>
+In-Reply-To: <CAJM55Z91TL4eLOjZsRVZuxspcL40gG2MQRZf31h0L2yyaW--Cg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:linux.starfivetech.com:qybglogicsvr:qybglogicsvr2
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-It may be necessary for some devices to specify reserved gpios in the
-device-specific DTS, in addition to the reserved gpios common to all
-devices with a given SoC. Remove this bitmap_fill() call so that the
-settings applied to the gpio valid mask by DTS are not overridden by
-the driver's reserved gpios.
+On Wed, 5 Oct 2022 15:31:59 +0200, Emil Renner Berthing wrote:
+> On Tue, 4 Oct 2022 at 10:57, Linus Walleij <linus.walleij@linaro.org> wrote:
+> >
+> > On Fri, Sep 30, 2022 at 9:45 AM Hal Feng
+> > <hal.feng@linux.starfivetech.com> wrote:
+> >
+> > > From: Jianlong Huang <jianlong.huang@starfivetech.com>
+> > >
+> > > Add pinctrl driver for StarFive JH7110 SoC.
+> > >
+> > > Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
+> > > Signed-off-by: Hal Feng <hal.feng@linux.starfivetech.com>
+> >
+> > Since Emil submitted the first driver I would really appreciate his review
+> > on this version.
+> 
+> I tried really hard to come up with a good way to share code between
+> the JH7100 and JH7110 drivers, but so many details different on the
+> JH7110 that it's probably best to just have a separate driver, so that
+> part is fine.
+> 
+> As mentioned elsewhere this driver certainly shouldn't be accepted
+> without following the generic pinctrl and pinmux bindings. You can see
+> the driver I wrote here:
+> https://github.com/esmil/linux/commit/c2633315385fef1a25aa3711facef07d915820e1
+> 
+> It is certainly not perfect and far from complete, but at least it
+> does follow the generic bindings. Feel free to copy all or parts of
+> that.
 
-Signed-off-by: Richard Acayan <mailingradian@gmail.com>
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thanks for your great contribution! We will rewrite the pinctrl driver
+and bindings so make them follow the generic pinctrl framework.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index a2abfe987ab1..c5c9e588fb13 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -687,9 +687,8 @@ static int msm_gpio_init_valid_mask(struct gpio_chip *gc,
- 	const int *reserved = pctrl->soc->reserved_gpios;
- 	u16 *tmp;
- 
--	/* Driver provided reserved list overrides DT and ACPI */
-+	/* Remove driver-provided reserved GPIOs from valid_mask */
- 	if (reserved) {
--		bitmap_fill(valid_mask, ngpios);
- 		for (i = 0; reserved[i] >= 0; i++) {
- 			if (i >= ngpios || reserved[i] >= ngpios) {
- 				dev_err(pctrl->dev, "invalid list of reserved GPIOs\n");
--- 
-2.38.0
+Best regards,
+Hal
 
