@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A37C433FE
-	for <linux-gpio@archiver.kernel.org>; Sun, 16 Oct 2022 17:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 387E7C43219
+	for <linux-gpio@archiver.kernel.org>; Sun, 16 Oct 2022 17:02:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229927AbiJPRC1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 16 Oct 2022 13:02:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51384 "EHLO
+        id S229804AbiJPRC3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 16 Oct 2022 13:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229981AbiJPRCG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 16 Oct 2022 13:02:06 -0400
-Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 342F138462
-        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:01:50 -0700 (PDT)
-Received: by mail-qt1-x82e.google.com with SMTP id f22so6526455qto.3
-        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:01:50 -0700 (PDT)
+        with ESMTP id S229885AbiJPRBt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 16 Oct 2022 13:01:49 -0400
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C2DD37FA3
+        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:01:38 -0700 (PDT)
+Received: by mail-qk1-x731.google.com with SMTP id m6so5435690qkm.4
+        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:01:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=s5gqgC6F8H12j/3mwOFaxBkWJqMnqVFVlaFtZkq3pf0=;
-        b=gsUmE+nULY6/Lzc5BbTVKPOZpdnYP+tOIEB4Q2VWfIoFnJpeE6CG+VkyfsamiBrWZL
-         n7w3JlX58KP6f0jNuL3e0QGQRnVpeWUBztNTiOoMEi/0jQlYnN9/5jRhubZMh9jZhxp0
-         Rh1XdqqJImC7850R7lcQBKxPpvOD1P/qDTyAdSvruW2v/7mAgn/kW95FI2IVuxrCgIFs
-         BvUy4WJ61jnoFR4bKFoICoAXtEaRFLQ6+UBAdyAC+TXYFL8SxHxAAssHk9O7YUbLKL2r
-         xhuY+vTuLqbuNmhtihQWxpH4LIgEKfF2o4KqPmpIsYYufyfn8KkTN9ilJ1WTeNFUIf9r
-         YSew==
+        bh=X0qog3y6/pjQRMdLgI2wTjHB+zwmYy9wpugBMuJA3qs=;
+        b=S2l1QZkwPPLd78+/YAMB53iEVSUZLee5wjy+1OGrOq/SMcUiBdeBstBh4hQ8ONivsc
+         XipJSvPgmtrVjg/+gE1NDXf3Jp61FPF6DH6Nb4834W9pcBodQ3eY7mhOgwcsXw9SaOVC
+         p3T3JOLivtNP6fWrkNSaP0bVlUnK9wONOOlTmQBc87eMKvM7riI1jatuyEofmKD9WtTW
+         h2liQgz8iCyhfwy0ccVujw2TdLVEuU3VfuKtxM3e3QN8tkQv1tWBaW1Hcn5ozgJB6++n
+         2ATbn7ZkdzooFyA7wN4TxdvWa0tXbfqIrQAjixS0I9hyuoV1mpmIJwibpVupQzJsxmOj
+         jiRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=s5gqgC6F8H12j/3mwOFaxBkWJqMnqVFVlaFtZkq3pf0=;
-        b=qDGZ5BFBZJZtiK0wOnt4kq74UjTCBaJK2BHhAHGY7L4/YWYFfGc9tsjwKYpf0azyRV
-         e1Z3TGC1vGx3AFsHREEuQPfMTD1J6OcHL8DD02DqdVc0Kv8k2QqbM8Yw34g/MTDeLzFm
-         fBrnweFevGsvnzVP7meAE3K/+32VCVVcJh4TxhEnjJlv8dHhqxPo8VAogIhJzNC/KgY6
-         +z23wHtVtWt6k9z/UvuIIw7o6+Cewys8knygHdPMBvufaZgGwR4ePeGRh82ufwFLE5C1
-         ZN/Z/0BNDszOI6ZV2i7V00RZvMw0lBErRW59UWiesRzD2CHBPNhzE0VTg9EiWUsoi1t7
-         ROOw==
-X-Gm-Message-State: ACrzQf2M3XAuD9E/l/6+JtNr7vZ75ggzqy/ReoptDuQCwsVnD5wQEyWZ
-        is527K5aWQduDeszRinW7yv/lg==
-X-Google-Smtp-Source: AMsMyM53OmRA4ObAYoOSIskKOETcbIAnLXc4ARQQx1Iih/kopd483oGiM2kai+VDftRGNHD4qzys4w==
-X-Received: by 2002:a05:622a:90:b0:39c:e637:912 with SMTP id o16-20020a05622a009000b0039ce6370912mr2690224qtw.109.1665939704981;
-        Sun, 16 Oct 2022 10:01:44 -0700 (PDT)
+        bh=X0qog3y6/pjQRMdLgI2wTjHB+zwmYy9wpugBMuJA3qs=;
+        b=EpnSRUBUhh5AsqJrvDwdCEj9MvAelWdmrgxuh36sfW/+/sXP6tEHPBwAwyetHg69Tk
+         LECtNwjQjQ57dFvFcraKg0N5f3g5s/MDCzRW7LSj55BwqvMDTrgymmHupq4tuUqZ78WR
+         /GrR+gBvJR30nsr/KL8zrTQ/6MIYf+M8l0/5LtrVCus7/HMZxn83ntCKzrf6+6zAMJR1
+         AjO/8UeMqZKH91BNMR2jJcFTCZR4rgeqa0uQ94YK4s4pYXMj/jmgHdr6Ha5nzOkER03J
+         u3feiYbUozX+G3pQkzpyHPGsPPuIKHNd3m/u0iafQayMOrNfc/j5XXFWSn1IbxBzaKuy
+         7aDA==
+X-Gm-Message-State: ACrzQf2E1m7m8V/2Ab5LbJxcbruC+aizsPUHrH7d6fKXiiCD2h2YFZJE
+        1ZQDWeq1OvZrhNQWUCN5R36gTg==
+X-Google-Smtp-Source: AMsMyM6MtCjQycs7nk7Y2Cj3Eozd1PZzqeVTiF3BMcX4ERUMeptvdy1JEhSONNP01z6Zu+TtfqBFcg==
+X-Received: by 2002:a05:620a:4107:b0:6ee:ce95:1d15 with SMTP id j7-20020a05620a410700b006eece951d15mr5102309qko.266.1665939698601;
+        Sun, 16 Oct 2022 10:01:38 -0700 (PDT)
 Received: from krzk-bin.hsd1.pa.comcast.net ([2601:42:0:3450:9b13:d679:7b5b:6921])
-        by smtp.gmail.com with ESMTPSA id q6-20020a05620a0d8600b006ce7bb8518bsm7539967qkl.5.2022.10.16.10.01.40
+        by smtp.gmail.com with ESMTPSA id q6-20020a05620a0d8600b006ce7bb8518bsm7539967qkl.5.2022.10.16.10.01.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Oct 2022 10:01:42 -0700 (PDT)
+        Sun, 16 Oct 2022 10:01:36 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -65,9 +65,9 @@ To:     Andy Gross <agross@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 09/34] dt-bindings: pinctrl: qcom,ipq6018: correct BLSP6->BLSP0 functions
-Date:   Sun, 16 Oct 2022 13:00:10 -0400
-Message-Id: <20221016170035.35014-10-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v5 07/34] dt-bindings: pinctrl: qcom,tlmm-common: add common check for function
+Date:   Sun, 16 Oct 2022 13:00:08 -0400
+Message-Id: <20221016170035.35014-8-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221016170035.35014-1-krzysztof.kozlowski@linaro.org>
 References: <20221016170035.35014-1-krzysztof.kozlowski@linaro.org>
@@ -77,42 +77,55 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pin controller driver has BLSP functions from 0 to 5, not 1 to 6.
-Add missing blsp0_i2c, blsp0_spi (already used in ipq6018-cp01-c1) and
-blsp0_uart.  Drop blsp6_i2c and blsp6_spi.
-
-This fixes dtbs_check warning:
-
-  ipq6018-cp01-c1.dtb: pinctrl@1000000: spi-0-state: 'oneOf' conditional failed, one must be fixed:
-    'bias-pull-down', 'drive-strength', 'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-    'blsp0_spi' is not one of ['adsp_ext', 'alsp_int', .....
+Certain pins, like SDcard related, do not have functions and such should
+not be required.  Add a check for this in common Qualcomm TLMM pin
+controller schema.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+Reviewed-by: Stephan Gerhold <stephan@gerhold.net>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml   | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../bindings/pinctrl/qcom,tlmm-common.yaml    | 20 +++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
-index 0bd1aded132d..76698cd97e8c 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
-@@ -72,12 +72,12 @@ patternProperties:
-         enum: [ adsp_ext, alsp_int, atest_bbrx0, atest_bbrx1, atest_char,
-                 atest_char0, atest_char1, atest_char2, atest_char3, atest_combodac,
-                 atest_gpsadc0, atest_gpsadc1, atest_tsens, atest_wlan0,
--                atest_wlan1, backlight_en, bimc_dte0, bimc_dte1, blsp1_i2c,
--                blsp2_i2c, blsp3_i2c, blsp4_i2c, blsp5_i2c, blsp6_i2c, blsp1_spi,
-+                atest_wlan1, backlight_en, bimc_dte0, bimc_dte1, blsp0_i2c, blsp1_i2c,
-+                blsp2_i2c, blsp3_i2c, blsp4_i2c, blsp5_i2c, blsp0_spi, blsp1_spi,
-                 blsp1_spi_cs1, blsp1_spi_cs2, blsp1_spi_cs3, blsp2_spi,
-                 blsp2_spi_cs1, blsp2_spi_cs2, blsp2_spi_cs3, blsp3_spi,
-                 blsp3_spi_cs1, blsp3_spi_cs2, blsp3_spi_cs3, blsp4_spi, blsp5_spi,
--                blsp6_spi, blsp1_uart, blsp2_uart, blsp1_uim, blsp2_uim, cam1_rst,
-+                blsp0_uart, blsp1_uart, blsp2_uart, blsp1_uim, blsp2_uim, cam1_rst,
-                 cam1_standby, cam_mclk0, cam_mclk1, cci_async, cci_i2c, cci_timer0,
-                 cci_timer1, cci_timer2, cdc_pdm0, codec_mad, dbg_out, display_5v,
-                 dmic0_clk, dmic0_data, dsi_rst, ebi0_wrcdc, euro_us, ext_lpass,
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml
+index c88c8dcb69d9..e1354f0c64f8 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,tlmm-common.yaml
+@@ -65,10 +65,6 @@ additionalProperties: true
+ 
+ $defs:
+   qcom-tlmm-state:
+-    allOf:
+-      - $ref: pincfg-node.yaml#
+-      - $ref: pinmux-node.yaml#
+-
+     properties:
+       drive-strength:
+         enum: [2, 4, 6, 8, 10, 12, 14, 16]
+@@ -82,5 +78,21 @@ $defs:
+       output-high: true
+       output-low: true
+ 
++    allOf:
++      - $ref: pincfg-node.yaml#
++      - $ref: pinmux-node.yaml#
++
++      - if:
++          properties:
++            pins:
++              items:
++                pattern: "^gpio"
++        then:
++          required:
++            - function
++        else:
++          properties:
++            function: false
++
+     additionalProperties: true
+ ...
 -- 
 2.34.1
 
