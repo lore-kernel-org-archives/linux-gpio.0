@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B430C43217
-	for <linux-gpio@archiver.kernel.org>; Sun, 16 Oct 2022 17:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E596C43219
+	for <linux-gpio@archiver.kernel.org>; Sun, 16 Oct 2022 17:02:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbiJPRCq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 16 Oct 2022 13:02:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52140 "EHLO
+        id S229999AbiJPRCr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 16 Oct 2022 13:02:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229998AbiJPRCL (ORCPT
+        with ESMTP id S229997AbiJPRCL (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Sun, 16 Oct 2022 13:02:11 -0400
-Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FD243912F
-        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:01:54 -0700 (PDT)
-Received: by mail-qv1-xf32.google.com with SMTP id o67so6231910qvo.13
-        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:01:54 -0700 (PDT)
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 367BA3C16C
+        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:01:57 -0700 (PDT)
+Received: by mail-qk1-x729.google.com with SMTP id s17so4250963qkj.12
+        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:01:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NG30mhHToHQxNxl2utL2ECwMv4QzlmyfMxHel7c8yiw=;
-        b=vAPmAlXIgEyd9+0xxPeCQ7wsNuC8+7ArHGCrpMQSr8uDn0KXM7eKfCZXmEU+dOXlvJ
-         sLqhdlMZ8T71s6bxE8BEKw6BvnBUrd+xjOk7OB/OaOVtxGAIF3NIMCdBbWEhjmoW+dHy
-         5LFc9pP/8jL/AHx11dhufwNRW8ybie9/Q3UMhAz9d5FdosjJNUi2wuPaDGkJpaRMFcOC
-         MP4fJys0B4Ks4skrZCflE0s9AiUY0jck7s0Idvq64yRimSEP0R6vifNI/1c8zuuDoPpd
-         S28luwXE5Brsza35TMifRu5PBqUn3cTRnr+MUsozXvnBmNDRWeSyKSi9hqkU0VeBIDUL
-         b65w==
+        bh=GtCTGlGKy966v/cPNs/91xDY9Oz5Cj3W8mgOw/S68pg=;
+        b=LVw9JvCXj+wz2HhRzOYcvEDwFi/P7oqgoTeRmpOS3B2ngWEdrAiO/a3UczEEPvConS
+         zKc5xNRQMYJUT1N6ddMoeo/x1IcngNARCuSSkx7I8nzCEEVqj0MvJIRIsa/zf/A0C56j
+         EAiuoy9z3OQQETDtIZvq9Txm5Y2ZscJHPD6NfQjY286slY1UjPnLL5gBkzzuoZFvPyoH
+         3QNSdY4arciDil4O6Ezw/gjorfJEJMwrUJM3unjSYt2zxR9JwMvuMEASqusIF4yBgsOH
+         NW7242T8eDQLBA1ZnDyFoMNnIDL+FXA7ZM3qxVCQ6VTSzHi4AZ3kx2ybOBMXTdbfODX5
+         +XRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NG30mhHToHQxNxl2utL2ECwMv4QzlmyfMxHel7c8yiw=;
-        b=HUvdd5OzQpNADnInW+k8nto6ck0RPzqSbjOfSQdRBtSqFEeiHqiBlJOxIIOgYh351F
-         ZehQBFPsO+rv1Xp3hWyy6TWbBrmpxA8jBG7WJLnQH3Icn3rNfwN7Fanb4evbvvVCYVQj
-         ztCAgTwMOd4FdSt4EAYB++9HHzHTs5l/VbyEdi7QyqRrlI5wSHDYiPvni4JmsuIGLWxc
-         j+YVVldB2/aSqcNPOunNLrXk/sv1Qh3yDAUX9bhcOd5jG9bIpgjJtbnbAzAbRW1nQ9YX
-         PMLpv1ZZtYm1ebMT+GpPymP3GxtfcKz4TrTMub/rUI6AwYdFuYjmdgh3tm6iu5zokiPE
-         gNEg==
-X-Gm-Message-State: ACrzQf0j0PdjQIuEsNL6dXuMPw7w7/yl6jWBl5NF/BWKfBJMnRRR+pmr
-        HiF6IcqItAUnz30SYTgeDnXsCQ==
-X-Google-Smtp-Source: AMsMyM4v2o6T/2KxeFbJ6ZYL48juWFumRoWVfxaL2JTAvryXNn3eCrNYNi7Gxsrd1Dinwbz4mmnbuQ==
-X-Received: by 2002:a05:6214:e8d:b0:4b1:acfe:511d with SMTP id hf13-20020a0562140e8d00b004b1acfe511dmr5609182qvb.67.1665939714549;
-        Sun, 16 Oct 2022 10:01:54 -0700 (PDT)
+        bh=GtCTGlGKy966v/cPNs/91xDY9Oz5Cj3W8mgOw/S68pg=;
+        b=IiCGbw/p289bu2dDVz2Rt7wkky7iDxcUPTR3bOcmcLoqYRVGOJ/mRuQVyr1XKcJnXw
+         9AzzhZyhpM6T8kP/thJiBO50Hoo2jtc1rvOXYq/dIgGLc1o4oXY1lyS15FDDqjD9xFWC
+         CT+Lv+D0t3KOnWhDP+xeACKkyLUVIXdmH8mve7UFZZP9gd6PcgoPymlbrpdb49LGUfEc
+         aXK6laN+eVoKAAt8lR7/B0OU24lKGkb+/+j+DGmqe+xvRM1jWCTQqzYPxKD9m2PHsWy5
+         v/tOtrd6LJUDysBUG225wx2fr6/XKiN+8YdEELC+j3GJhQE8LCzkb3NBDsBQmpublluH
+         oFhQ==
+X-Gm-Message-State: ACrzQf0jEPRQYCpwor5e/tNGECBFpjgx9zajCAD1+zBrT5ycZpwRefL0
+        LN0WiIxVpsXPCPNK6yl7saIAEQ==
+X-Google-Smtp-Source: AMsMyM4ARokuO0OgtfCmIY6SnRaCnysF05eRmr0YFqCOL0skSOgknDTvqfH6jdpP3hsanUIQKTWiog==
+X-Received: by 2002:a05:620a:2057:b0:6e6:f4d:980b with SMTP id d23-20020a05620a205700b006e60f4d980bmr5039747qka.544.1665939709008;
+        Sun, 16 Oct 2022 10:01:49 -0700 (PDT)
 Received: from krzk-bin.hsd1.pa.comcast.net ([2601:42:0:3450:9b13:d679:7b5b:6921])
-        by smtp.gmail.com with ESMTPSA id q6-20020a05620a0d8600b006ce7bb8518bsm7539967qkl.5.2022.10.16.10.01.52
+        by smtp.gmail.com with ESMTPSA id q6-20020a05620a0d8600b006ce7bb8518bsm7539967qkl.5.2022.10.16.10.01.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Oct 2022 10:01:53 -0700 (PDT)
+        Sun, 16 Oct 2022 10:01:47 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -65,9 +65,9 @@ To:     Andy Gross <agross@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 12/34] dt-bindings: pinctrl: qcom,ipq6018: use common TLMM schema
-Date:   Sun, 16 Oct 2022 13:00:13 -0400
-Message-Id: <20221016170035.35014-13-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v5 10/34] dt-bindings: pinctrl: qcom,ipq6018: increase number of pins in pinmux
+Date:   Sun, 16 Oct 2022 13:00:11 -0400
+Message-Id: <20221016170035.35014-11-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221016170035.35014-1-krzysztof.kozlowski@linaro.org>
 References: <20221016170035.35014-1-krzysztof.kozlowski@linaro.org>
@@ -77,114 +77,30 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Reference common Qualcomm TLMM pin controller schema, to bring common
-properties, other pinctrl schemas and additional checks, like function
-required only for GPIOs.
+One pinxmux node can have more than 4 pins to configure:
+
+  ['gpio1', 'gpio3', 'gpio4', 'gpio5', 'gpio6', 'gpio7', 'gpio8', 'gpio10', 'gpio11', 'gpio12', 'gpio13', 'gpio14', 'gpio15', 'gpio17'] is too long
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
-
 ---
-
-Changes since v4:
-1. Drop drive-strength (included by common TLMM node).
-
-Changes since v3:
-1. Drop properties and required items which are already provided by
-   common TLMM schema.
----
- .../pinctrl/qcom,ipq6018-pinctrl.yaml         | 45 +++----------------
- 1 file changed, 7 insertions(+), 38 deletions(-)
+ .../devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml       | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
-index 735a8786cb13..6c6b14d1efea 100644
+index 76698cd97e8c..7202e2af200b 100644
 --- a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
 +++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
-@@ -20,27 +20,12 @@ properties:
-   reg:
-     maxItems: 1
+@@ -63,7 +63,7 @@ patternProperties:
+                       sdc2_data, qdsd_cmd, qdsd_data0, qdsd_data1, qdsd_data2,
+                       qdsd_data3 ]
+         minItems: 1
+-        maxItems: 4
++        maxItems: 16
  
--  interrupts:
--    description: Specifies the TLMM summary IRQ
--    maxItems: 1
--
-+  interrupts: true
-   interrupt-controller: true
--
--  '#interrupt-cells':
--    description:
--      Specifies the PIN numbers and Flags, as defined in defined in
--      include/dt-bindings/interrupt-controller/irq.h
--    const: 2
--
-+  "#interrupt-cells": true
-   gpio-controller: true
--
--  '#gpio-cells':
--    description: Specifying the pin number and flags, as defined in
--      include/dt-bindings/gpio/gpio.h
--    const: 2
--
--  gpio-ranges:
--    maxItems: 1
-+  "#gpio-cells": true
-+  gpio-ranges: true
- 
- patternProperties:
-   "-state$":
-@@ -56,7 +41,7 @@ $defs:
-     description:
-       Pinctrl node's client devices use subnodes for desired pin configuration.
-       Client device subnodes use below standard properties.
--    $ref: "/schemas/pinctrl/pincfg-node.yaml"
-+    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
- 
-     properties:
-       pins:
-@@ -103,40 +88,24 @@ $defs:
-                 sd_write, sec_mi2s, smb_int, ssbi_wtr0, ssbi_wtr1, uim1, uim2,
-                 uim3, uim_batt, wcss_bt, wcss_fm, wcss_wlan, webcam1_rst ]
- 
--      drive-strength:
--        enum: [2, 4, 6, 8, 10, 12, 14, 16]
--        default: 2
--        description:
--          Selects the drive strength for the specified pins, in mA.
--
-       bias-pull-down: true
--
-       bias-pull-up: true
--
-       bias-disable: true
--
-+      drive-strength: true
-       output-high: true
--
-       output-low: true
- 
-     required:
-       - pins
--      - function
- 
-     additionalProperties: false
- 
- allOf:
--  - $ref: "pinctrl.yaml#"
-+  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
- 
- required:
-   - compatible
-   - reg
--  - interrupts
--  - interrupt-controller
--  - '#interrupt-cells'
--  - gpio-controller
--  - '#gpio-cells'
--  - gpio-ranges
- 
- additionalProperties: false
- 
+       function:
+         description:
 -- 
 2.34.1
 
