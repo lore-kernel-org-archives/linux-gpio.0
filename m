@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01921C43217
-	for <linux-gpio@archiver.kernel.org>; Sun, 16 Oct 2022 17:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A86C43219
+	for <linux-gpio@archiver.kernel.org>; Sun, 16 Oct 2022 17:22:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229865AbiJPRWj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 16 Oct 2022 13:22:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48006 "EHLO
+        id S230023AbiJPRWt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 16 Oct 2022 13:22:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229887AbiJPRWg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 16 Oct 2022 13:22:36 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B292930F74
-        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:22:32 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id z8so6547357qtv.5
-        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:22:32 -0700 (PDT)
+        with ESMTP id S229956AbiJPRWq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 16 Oct 2022 13:22:46 -0400
+Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21FB530F74
+        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:22:37 -0700 (PDT)
+Received: by mail-qv1-xf2f.google.com with SMTP id z18so6263622qvn.6
+        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:22:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JNDJJ9hQsj05js8AN30e2xU89fqRcxDiB8ewRytYETQ=;
-        b=NK8IQzN/NmcAd2K1X5zPe5+iT1kNxjiVk+FyGrWPj+S6z858EtjqlxH0Fhz9EhGZWo
-         HY0hUfzTqpiKwm11TH8ljQU4eKhOdVDBaaFWmjmVvqFkQx+AiQOLPGbkYrT/XZ4/c/4O
-         lvYRpFrkVHEu5Tx1sTNXTw18B4+m1YV1Ga+0Arle7B6QP+YuY/Gdeq7IWg7fpQNKvJEY
-         /pRobPKbhFKJ+M2vXT48rOClieF4OcEYTsc8Rh69Cv0MD+jSz7egfZcMbyFfuo5MUOwN
-         BFX24I3V4CkMvk0EogkgenScuI75vb/R66zQ4o/v+vrxytLjoTFYTPhYzoMXwMHClG68
-         HawA==
+        bh=vV/cYAYUSlG6HvRioJalDE5TWt4HpxOXyxYIAlVceYw=;
+        b=MvI8MALJfwc5YfDhJHsr1N1haoXoB3MM3Z1+1GCmaiMCeSdb9viiLfZH0lUXRPpE9x
+         3YGhoUCfta3DFwh5L+Aj7yRDsWkbxuif1tBK1lNDPMxkPdlet09uZ3a8IjJeJSAIxIha
+         PqqXQQfhuuxFn6uEPHt6HCuCzxBzjc6VhSFgebL2Q62la/reVlpAAOl2cMYDooESho0q
+         MDUkJtAEz+B5QiGno5x0filAe9hJLwS3OIRPsbSTQcmBj+yTeEtTJJJS08ZrCZ7Qhbpz
+         aa3/uCF7UTXoV38mH4H4VVtEXxlBU0qv9g4mEHGlsqdzcNPVGXA7tYXHKurW9Sxk9He7
+         MAPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JNDJJ9hQsj05js8AN30e2xU89fqRcxDiB8ewRytYETQ=;
-        b=3L8eNIjrrfjilcQI1/c6sw/z00GYLTDwrxpF6c+dPnWuYYW07Roy/BzFtGZQGyeoDQ
-         c6nc8pAlY5HM6l5FFwnXoX2C1+VXwfNqwLZTsvrCTJ4Y27mrMvIIY39oRdgvSBVrNxxT
-         CjQC80wKeRRgtUd0dfuo6bMdcoaBbqI6X/k+AWvfc9nvShjJb63QV+POiLB6v2I/jYSZ
-         X7K/Y6HMUa1ZWxhWXlBk+ck4aEvDhe/9gQiigeU2Qbudurh5E7mf9zlotKFVRTYbFesE
-         vGs1mwYCXiogES9ScIyNV24rlkIYKCt34Mrkh2lUTKOnRQ/cnIsbCUC7i2G9yjh/PRdQ
-         DI5w==
-X-Gm-Message-State: ACrzQf2bG+T3khn1P8ygFt8ePDlTilaUjioeoszqlTvCw+J3YKxau2RJ
-        9BprG46/kc7qSLlmvlep5m9Hvw==
-X-Google-Smtp-Source: AMsMyM5F7Z2XedPYLoj42o5X9CaXDbS/Rbsc9zRFo7cwBTEqv84fll0Mo5l5l+eOoJe+1Y8nm7+udw==
-X-Received: by 2002:ac8:7fd3:0:b0:39c:c89d:4953 with SMTP id b19-20020ac87fd3000000b0039cc89d4953mr5904512qtk.161.1665940951754;
-        Sun, 16 Oct 2022 10:22:31 -0700 (PDT)
+        bh=vV/cYAYUSlG6HvRioJalDE5TWt4HpxOXyxYIAlVceYw=;
+        b=JoJuIay2j1NG//Muzc+LMqHxjLtRSbyAgLUlgfqRfMiW7DdPRSKyvB6H7WYa0OqKlI
+         oVNyrRYD6/glipDou/lKgKWsPI62PsfMRHJcCKwaVwNydbNrpUhLfMizSSksDDpDouHF
+         FMHdD2O7thOZgt7tZ2O0pYI8itEH8hm/Pcowj08p0PE931VVSzmSmMibryindtGri8Db
+         ynYAWNadqKGizWmKmhHzkD822wYl3jUFufcNT/9gtzojfA5FYzW4qULRn7NISi09VFYW
+         TkLCJssES3sUxGlbNOyNNFcw03V2tKq0RJD+6nERBUlqgBWUKNPlgnV2POZMCc1I1Wb1
+         y0+Q==
+X-Gm-Message-State: ACrzQf1UxZTSsx7O6OWNoa8DxCNGe1NaaAEQGCfY6NPMGhZwpcVhTG9r
+        xNOvQYXo6JnG9a55EftXY9otyg==
+X-Google-Smtp-Source: AMsMyM4pVsKjcbSADW+x2XRSJNjjE8v6LByReV0KjuVR07mHvmTttpr7szDzwLQ3hbVieiD1VH6p9g==
+X-Received: by 2002:a0c:e554:0:b0:4b1:acc4:5e1a with SMTP id n20-20020a0ce554000000b004b1acc45e1amr5650457qvm.121.1665940956377;
+        Sun, 16 Oct 2022 10:22:36 -0700 (PDT)
 Received: from krzk-bin.hsd1.pa.comcast.net ([2601:42:0:3450:9b13:d679:7b5b:6921])
-        by smtp.gmail.com with ESMTPSA id r5-20020ac87945000000b003431446588fsm6051008qtt.5.2022.10.16.10.22.30
+        by smtp.gmail.com with ESMTPSA id r5-20020ac87945000000b003431446588fsm6051008qtt.5.2022.10.16.10.22.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Oct 2022 10:22:31 -0700 (PDT)
+        Sun, 16 Oct 2022 10:22:35 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -59,9 +59,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 01/17] arm64: dts: qcom: sm8250: align TLMM pin configuration with DT schema
-Date:   Sun, 16 Oct 2022 13:21:56 -0400
-Message-Id: <20221016172212.49105-2-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 04/17] arm64: dts: qcom: sc7280: align TLMM pin configuration with DT schema (really)
+Date:   Sun, 16 Oct 2022 13:21:59 -0400
+Message-Id: <20221016172212.49105-5-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221016172212.49105-1-krzysztof.kozlowski@linaro.org>
 References: <20221016172212.49105-1-krzysztof.kozlowski@linaro.org>
@@ -74,1217 +74,1416 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 DT schema expects TLMM pin configuration nodes to be named with
 '-state' suffix and their optional children with '-pins' suffix.
 
-Drop also unneeded split between mux and config.
+I already tried to do this in commit d801357a0573 ("arm64: dts: qcom:
+sc7280: align TLMM pin configuration with DT schema") and I missed the
+fact that these nodes were not part of "state" node.  Bindings did not
+catch these errors due to its own issues.
 
 Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/qrb5165-rb5.dts      |  12 +-
- arch/arm64/boot/dts/qcom/sm8250-mtp.dts       |  38 +-
- .../boot/dts/qcom/sm8250-sony-xperia-edo.dtsi |  16 +-
- arch/arm64/boot/dts/qcom/sm8250.dtsi          | 556 +++++++-----------
- 4 files changed, 239 insertions(+), 383 deletions(-)
+ arch/arm64/boot/dts/qcom/sc7280-crd-r3.dts    |   8 +-
+ .../arm64/boot/dts/qcom/sc7280-herobrine.dtsi |  44 +--
+ .../arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi |   8 +-
+ arch/arm64/boot/dts/qcom/sc7280-idp.dtsi      |  26 +-
+ arch/arm64/boot/dts/qcom/sc7280-qcard.dtsi    |  20 +-
+ arch/arm64/boot/dts/qcom/sc7280.dtsi          | 316 +++++++++---------
+ 6 files changed, 211 insertions(+), 211 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts b/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts
-index bf8077a1cf9a..62aa32f460ad 100644
---- a/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts
-+++ b/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts
-@@ -1210,33 +1210,33 @@ &tlmm {
- 		"HST_WLAN_UART_TX",
- 		"HST_WLAN_UART_RX";
+diff --git a/arch/arm64/boot/dts/qcom/sc7280-crd-r3.dts b/arch/arm64/boot/dts/qcom/sc7280-crd-r3.dts
+index dddb505e220b..1185141f348e 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280-crd-r3.dts
++++ b/arch/arm64/boot/dts/qcom/sc7280-crd-r3.dts
+@@ -118,25 +118,25 @@ &wcd9385 {
+ };
  
--	lt9611_irq_pin: lt9611-irq {
-+	lt9611_irq_pin: lt9611-irq-state {
+ &tlmm {
+-	tp_int_odl: tp-int-odl {
++	tp_int_odl: tp-int-odl-state {
+ 		pins = "gpio7";
+ 		function = "gpio";
+ 		bias-disable;
+ 	};
+ 
+-	ts_int_l: ts-int-l {
++	ts_int_l: ts-int-l-state {
+ 		pins = "gpio55";
+ 		function = "gpio";
+ 		bias-pull-up;
+ 	};
+ 
+-	ts_reset_l: ts-reset-l {
++	ts_reset_l: ts-reset-l-state {
+ 		pins = "gpio54";
+ 		function = "gpio";
+ 		bias-disable;
+ 	};
+ 
+-	us_euro_hs_sel: us-euro-hs-sel {
++	us_euro_hs_sel: us-euro-hs-sel-state {
+ 		pins = "gpio81";
+ 		function = "gpio";
+ 		bias-pull-down;
+diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+index c11e37160f34..6a9389c40159 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+@@ -744,27 +744,27 @@ &tlmm {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&bios_flash_wp_od>;
+ 
+-	amp_en: amp-en-pins {
++	amp_en: amp-en-state {
  		pins = "gpio63";
  		function = "gpio";
  		bias-disable;
+ 		drive-strength = <2>;
  	};
  
--	sdc2_default_state: sdc2-default {
--		clk {
-+	sdc2_default_state: sdc2-default-state {
-+		clk-pins {
- 			pins = "sdc2_clk";
- 			bias-disable;
- 			drive-strength = <16>;
- 		};
- 
--		cmd {
-+		cmd-pins {
- 			pins = "sdc2_cmd";
- 			bias-pull-up;
- 			drive-strength = <10>;
- 		};
- 
--		data {
-+		data-pins {
- 			pins = "sdc2_data";
- 			bias-pull-up;
- 			drive-strength = <10>;
- 		};
- 	};
- 
--	sdc2_card_det_n: sd-card-det-n {
-+	sdc2_card_det_n: sd-card-det-n-state {
- 		pins = "gpio77";
+-	ap_ec_int_l: ap-ec-int-l-pins {
++	ap_ec_int_l: ap-ec-int-l-state {
+ 		pins = "gpio18";
  		function = "gpio";
  		bias-pull-up;
-diff --git a/arch/arm64/boot/dts/qcom/sm8250-mtp.dts b/arch/arm64/boot/dts/qcom/sm8250-mtp.dts
-index a102aa5efa32..9db6136321b4 100644
---- a/arch/arm64/boot/dts/qcom/sm8250-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8250-mtp.dts
-@@ -799,31 +799,19 @@ wcd_tx: wcd9380-tx@0,3 {
- &tlmm {
- 	gpio-reserved-ranges = <28 4>, <40 4>;
- 
--	wcd938x_reset_default: wcd938x_reset_default {
--		mux {
--			pins = "gpio32";
--			function = "gpio";
--		};
--
--		config {
--			pins = "gpio32";
--			drive-strength = <16>;
--			output-high;
--		};
--	};
--
--	wcd938x_reset_sleep: wcd938x_reset_sleep {
--		mux {
--			pins = "gpio32";
--			function = "gpio";
--		};
--
--		config {
--			pins = "gpio32";
--			drive-strength = <16>;
--			bias-disable;
--			output-low;
--		};
-+	wcd938x_reset_default: wcd938x-reset-default-state {
-+		pins = "gpio32";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		output-high;
-+	};
-+
-+	wcd938x_reset_sleep: wcd938x-reset-sleep-state {
-+		pins = "gpio32";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
- 	};
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi b/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi
-index 549e0a2aa9fe..72162852fae7 100644
---- a/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi
-@@ -582,34 +582,34 @@ &slpi {
- &tlmm {
- 	gpio-reserved-ranges = <40 4>, <52 4>;
- 
--	sdc2_default_state: sdc2-default {
--		clk {
-+	sdc2_default_state: sdc2-default-state {
-+		clk-pins {
- 			pins = "sdc2_clk";
- 			drive-strength = <16>;
- 			bias-disable;
- 		};
- 
--		cmd {
-+		cmd-pins {
- 			pins = "sdc2_cmd";
- 			drive-strength = <16>;
- 			bias-pull-up;
- 		};
- 
--		data {
-+		data-pins {
- 			pins = "sdc2_data";
- 			drive-strength = <16>;
- 			bias-pull-up;
- 		};
  	};
  
--	mdm2ap_default: mdm2ap-default {
-+	mdm2ap_default: mdm2ap-default-state {
- 		pins = "gpio1", "gpio3";
+-	bios_flash_wp_od: bios-flash-wp-od-pins {
++	bios_flash_wp_od: bios-flash-wp-od-state {
+ 		pins = "gpio16";
  		function = "gpio";
- 		drive-strength = <8>;
+ 		/* Has external pull */
  		bias-disable;
  	};
  
--	ts_int_default: ts-int-default {
-+	ts_int_default: ts-int-default-state {
+-	en_fp_rails: en-fp-rails-pins {
++	en_fp_rails: en-fp-rails-state {
+ 		pins = "gpio77";
+ 		function = "gpio";
+ 		bias-disable;
+@@ -772,60 +772,60 @@ en_fp_rails: en-fp-rails-pins {
+ 		output-high;
+ 	};
+ 
+-	en_pp3300_codec: en-pp3300-codec-pins {
++	en_pp3300_codec: en-pp3300-codec-state {
+ 		pins = "gpio105";
+ 		function = "gpio";
+ 		bias-disable;
+ 		drive-strength = <2>;
+ 	};
+ 
+-	en_pp3300_dx_edp: en-pp3300-dx-edp-pins {
++	en_pp3300_dx_edp: en-pp3300-dx-edp-state {
+ 		pins = "gpio80";
+ 		function = "gpio";
+ 		bias-disable;
+ 		drive-strength = <2>;
+ 	};
+ 
+-	fp_rst_l: fp-rst-l-pins {
++	fp_rst_l: fp-rst-l-state {
+ 		pins = "gpio78";
+ 		function = "gpio";
+ 		bias-disable;
+ 		drive-strength = <2>;
+ 	};
+ 
+-	fp_to_ap_irq_l: fp-to-ap-irq-l-pins {
++	fp_to_ap_irq_l: fp-to-ap-irq-l-state {
+ 		pins = "gpio61";
+ 		function = "gpio";
+ 		/* Has external pullup */
+ 		bias-disable;
+ 	};
+ 
+-	fpmcu_boot0: fpmcu-boot0-pins {
++	fpmcu_boot0: fpmcu-boot0-state {
+ 		pins = "gpio68";
+ 		function = "gpio";
+ 		bias-disable;
+ 	};
+ 
+-	gsc_ap_int_odl: gsc-ap-int-odl-pins {
++	gsc_ap_int_odl: gsc-ap-int-odl-state {
+ 		pins = "gpio104";
+ 		function = "gpio";
+ 		bias-pull-up;
+ 	};
+ 
+-	hp_irq: hp-irq-pins {
++	hp_irq: hp-irq-state {
+ 		pins = "gpio101";
+ 		function = "gpio";
+ 		bias-pull-up;
+ 	};
+ 
+-	hub_en: hub-en-pins {
++	hub_en: hub-en-state {
+ 		pins = "gpio157";
+ 		function = "gpio";
+ 		bias-disable;
+ 		drive-strength = <2>;
+ 	};
+ 
+-	pe_wake_odl: pe-wake-odl-pins {
++	pe_wake_odl: pe-wake-odl-state {
+ 		pins = "gpio3";
+ 		function = "gpio";
+ 		/* Has external pull */
+@@ -834,45 +834,45 @@ pe_wake_odl: pe-wake-odl-pins {
+ 	};
+ 
+ 	/* For ap_spi_fp */
+-	qup_spi9_cs_gpio_init_high: qup-spi9-cs-gpio-init-high-pins {
++	qup_spi9_cs_gpio_init_high: qup-spi9-cs-gpio-init-high-state {
  		pins = "gpio39";
  		function = "gpio";
- 		drive-strength = <2>;
-@@ -617,14 +617,14 @@ ts_int_default: ts-int-default {
- 		input-enable;
+ 		output-high;
  	};
  
--	ap2mdm_default: ap2mdm-default {
-+	ap2mdm_default: ap2mdm-default-state {
- 		pins = "gpio56", "gpio57";
+ 	/* For ap_ec_spi */
+-	qup_spi10_cs_gpio_init_high: qup-spi10-cs-gpio-init-high-pins {
++	qup_spi10_cs_gpio_init_high: qup-spi10-cs-gpio-init-high-state {
+ 		pins = "gpio43";
  		function = "gpio";
- 		drive-strength = <16>;
+ 		output-high;
+ 	};
+ 
+-	sar0_irq_odl: sar0-irq-odl-pins {
++	sar0_irq_odl: sar0-irq-odl-state {
+ 		pins = "gpio141";
+ 		function = "gpio";
+ 		bias-pull-up;
+ 	};
+ 
+-	sar1_irq_odl: sar1-irq-odl-pins {
++	sar1_irq_odl: sar1-irq-odl-state {
+ 		pins = "gpio140";
+ 		function = "gpio";
+ 		bias-pull-up;
+ 	};
+ 
+-	sd_cd_odl: sd-cd-odl-pins {
++	sd_cd_odl: sd-cd-odl-state {
+ 		pins = "gpio91";
+ 		function = "gpio";
+ 		bias-pull-up;
+ 	};
+ 
+-	ssd_en: ssd-en-pins {
++	ssd_en: ssd-en-state {
+ 		pins = "gpio51";
+ 		function = "gpio";
+ 		bias-disable;
+ 		drive-strength = <2>;
+ 	};
+ 
+-	ssd_rst_l: ssd-rst-l-pins {
++	ssd_rst_l: ssd-rst-l-state {
+ 		pins = "gpio2";
+ 		function = "gpio";
+ 		bias-disable;
+@@ -880,14 +880,14 @@ ssd_rst_l: ssd-rst-l-pins {
+ 		output-low;
+ 	};
+ 
+-	tp_int_odl: tp-int-odl-pins {
++	tp_int_odl: tp-int-odl-state {
+ 		pins = "gpio7";
+ 		function = "gpio";
+ 		/* Has external pullup */
  		bias-disable;
  	};
  
--	sdc2_card_det_n: sd-card-det-n {
-+	sdc2_card_det_n: sd-card-det-n-state {
- 		pins = "gpio77";
+-	wf_cam_en: wf-cam-en-pins {
++	wf_cam_en: wf-cam-en-state {
+ 		pins = "gpio119";
+ 		function = "gpio";
+ 		/* Has external pulldown */
+diff --git a/arch/arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi b/arch/arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi
+index 7f5143e9bb80..b35f3738933c 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi
+@@ -79,26 +79,26 @@ cr50: tpm@0 {
+ };
+ 
+ &tlmm {
+-	ap_ec_int_l: ap-ec-int-l-pins {
++	ap_ec_int_l: ap-ec-int-l-state {
+ 		pins = "gpio18";
+ 		function = "gpio";
+ 		input-enable;
+ 		bias-pull-up;
+ 	};
+ 
+-	h1_ap_int_odl: h1-ap-int-odl-pins {
++	h1_ap_int_odl: h1-ap-int-odl-state {
+ 		pins = "gpio104";
+ 		function = "gpio";
+ 		input-enable;
+ 		bias-pull-up;
+ 	};
+ 
+-	qup_spi10_cs_gpio_init_high: qup-spi10-cs-gpio-init-high-pins {
++	qup_spi10_cs_gpio_init_high: qup-spi10-cs-gpio-init-high-state {
+ 		pins = "gpio43";
+ 		output-high;
+ 	};
+ 
+-	qup_spi14_cs_gpio_init_high: qup-spi14-cs-gpio-init-high-pins {
++	qup_spi14_cs_gpio_init_high: qup-spi14-cs-gpio-init-high-state {
+ 		pins = "gpio59";
+ 		output-high;
+ 	};
+diff --git a/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi b/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+index cd432a2856a7..11982c14b704 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280-idp.dtsi
+@@ -747,24 +747,24 @@ &sdc2_data {
+ };
+ 
+ &tlmm {
+-	amp_en: amp-en {
++	amp_en: amp-en-state {
+ 		pins = "gpio63";
+ 		bias-pull-down;
+ 		drive-strength = <2>;
+ 	};
+ 
+-	bt_en: bt-en-pins {
++	bt_en: bt-en-state {
+ 		pins = "gpio85";
+ 		function = "gpio";
+ 		output-low;
+ 		bias-disable;
+ 	};
+ 
+-	nvme_pwren: nvme-pwren-pins {
++	nvme_pwren: nvme-pwren-state {
+ 		function = "gpio";
+ 	};
+ 
+-	pcie1_reset_n: pcie1-reset-n-pins {
++	pcie1_reset_n: pcie1-reset-n-state {
+ 		pins = "gpio2";
+ 		function = "gpio";
+ 
+@@ -773,7 +773,7 @@ pcie1_reset_n: pcie1-reset-n-pins {
+ 		bias-disable;
+ 	};
+ 
+-	pcie1_wake_n: pcie1-wake-n-pins {
++	pcie1_wake_n: pcie1-wake-n-state {
+ 		pins = "gpio3";
+ 		function = "gpio";
+ 
+@@ -781,7 +781,7 @@ pcie1_wake_n: pcie1-wake-n-pins {
+ 		bias-pull-up;
+ 	};
+ 
+-	qup_uart7_sleep_cts: qup-uart7-sleep-cts-pins {
++	qup_uart7_sleep_cts: qup-uart7-sleep-cts-state {
+ 		pins = "gpio28";
+ 		function = "gpio";
+ 		/*
+@@ -794,7 +794,7 @@ qup_uart7_sleep_cts: qup-uart7-sleep-cts-pins {
+ 		bias-bus-hold;
+ 	};
+ 
+-	qup_uart7_sleep_rts: qup-uart7-sleep-rts-pins {
++	qup_uart7_sleep_rts: qup-uart7-sleep-rts-state {
+ 		pins = "gpio29";
+ 		function = "gpio";
+ 		/*
+@@ -806,7 +806,7 @@ qup_uart7_sleep_rts: qup-uart7-sleep-rts-pins {
+ 		bias-pull-down;
+ 	};
+ 
+-	qup_uart7_sleep_tx: qup-uart7-sleep-tx-pins {
++	qup_uart7_sleep_tx: qup-uart7-sleep-tx-state {
+ 		pins = "gpio30";
+ 		function = "gpio";
+ 		/*
+@@ -816,7 +816,7 @@ qup_uart7_sleep_tx: qup-uart7-sleep-tx-pins {
+ 		bias-pull-up;
+ 	};
+ 
+-	qup_uart7_sleep_rx: qup-uart7-sleep-rx-pins {
++	qup_uart7_sleep_rx: qup-uart7-sleep-rx-state {
+ 		pins = "gpio31";
+ 		function = "gpio";
+ 		/*
+@@ -827,25 +827,25 @@ qup_uart7_sleep_rx: qup-uart7-sleep-rx-pins {
+ 		bias-pull-up;
+ 	};
+ 
+-	sd_cd: sd-cd-pins {
++	sd_cd: sd-cd-state {
+ 		pins = "gpio91";
  		function = "gpio";
  		bias-pull-up;
-diff --git a/arch/arm64/boot/dts/qcom/sm8250.dtsi b/arch/arm64/boot/dts/qcom/sm8250.dtsi
-index e0416d611b66..7eac3ba90c63 100644
---- a/arch/arm64/boot/dts/qcom/sm8250.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8250.dtsi
-@@ -3798,8 +3798,8 @@ tlmm: pinctrl@f100000 {
- 			gpio-ranges = <&tlmm 0 0 181>;
+ 	};
+ 
+-	sw_ctrl: sw-ctrl-pins {
++	sw_ctrl: sw-ctrl-state {
+ 		pins = "gpio86";
+ 		function = "gpio";
+ 		bias-pull-down;
+ 	};
+ 
+-	wcd_reset_n: wcd-reset-n {
++	wcd_reset_n: wcd-reset-n-state {
+ 		pins = "gpio83";
+ 		function = "gpio";
+ 		drive-strength = <8>;
+ 	};
+ 
+-	wcd_reset_n_sleep: wcd-reset-n-sleep {
++	wcd_reset_n_sleep: wcd-reset-n-sleep-state {
+ 		pins = "gpio83";
+ 		function = "gpio";
+ 		drive-strength = <8>;
+diff --git a/arch/arm64/boot/dts/qcom/sc7280-qcard.dtsi b/arch/arm64/boot/dts/qcom/sc7280-qcard.dtsi
+index 4b8c676b0bb1..a42b5878a75f 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280-qcard.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280-qcard.dtsi
+@@ -595,7 +595,7 @@ pmic_edp_bl_pwm: pmic-edp-bl-pwm-state {
+ };
+ 
+ &tlmm {
+-	mos_bt_en: mos-bt-en-pins {
++	mos_bt_en: mos-bt-en-state {
+ 		pins = "gpio85";
+ 		function = "gpio";
+ 		drive-strength = <2>;
+@@ -603,7 +603,7 @@ mos_bt_en: mos-bt-en-pins {
+ 	};
+ 
+ 	/* For mos_bt_uart */
+-	qup_uart7_sleep_cts: qup-uart7-sleep-cts-pins {
++	qup_uart7_sleep_cts: qup-uart7-sleep-cts-state {
+ 		pins = "gpio28";
+ 		function = "gpio";
+ 		/*
+@@ -617,7 +617,7 @@ qup_uart7_sleep_cts: qup-uart7-sleep-cts-pins {
+ 	};
+ 
+ 	/* For mos_bt_uart */
+-	qup_uart7_sleep_rts: qup-uart7-sleep-rts-pins {
++	qup_uart7_sleep_rts: qup-uart7-sleep-rts-state {
+ 		pins = "gpio29";
+ 		function = "gpio";
+ 		/*
+@@ -630,7 +630,7 @@ qup_uart7_sleep_rts: qup-uart7-sleep-rts-pins {
+ 	};
+ 
+ 	/* For mos_bt_uart */
+-	qup_uart7_sleep_rx: qup-uart7-sleep-rx-pins {
++	qup_uart7_sleep_rx: qup-uart7-sleep-rx-state {
+ 		pins = "gpio31";
+ 		function = "gpio";
+ 		/*
+@@ -642,7 +642,7 @@ qup_uart7_sleep_rx: qup-uart7-sleep-rx-pins {
+ 	};
+ 
+ 	/* For mos_bt_uart */
+-	qup_uart7_sleep_tx: qup-uart7-sleep-tx-pins {
++	qup_uart7_sleep_tx: qup-uart7-sleep-tx-state {
+ 		pins = "gpio30";
+ 		function = "gpio";
+ 		/*
+@@ -652,32 +652,32 @@ qup_uart7_sleep_tx: qup-uart7-sleep-tx-pins {
+ 		bias-pull-up;
+ 	};
+ 
+-	ts_int_conn: ts-int-conn-pins {
++	ts_int_conn: ts-int-conn-state {
+ 		pins = "gpio55";
+ 		function = "gpio";
+ 		bias-pull-up;
+ 	};
+ 
+-	ts_rst_conn: ts-rst-conn-pins {
++	ts_rst_conn: ts-rst-conn-state {
+ 		pins = "gpio54";
+ 		function = "gpio";
+ 		drive-strength = <2>;
+ 	};
+ 
+-	us_euro_hs_sel: us-euro-hs-sel {
++	us_euro_hs_sel: us-euro-hs-sel-state {
+ 		pins = "gpio81";
+ 		function = "gpio";
+ 		bias-pull-down;
+ 		drive-strength = <2>;
+ 	};
+ 
+-	wcd_reset_n: wcd-reset-n {
++	wcd_reset_n: wcd-reset-n-state {
+ 		pins = "gpio83";
+ 		function = "gpio";
+ 		drive-strength = <8>;
+ 	};
+ 
+-	wcd_reset_n_sleep: wcd-reset-n-sleep {
++	wcd_reset_n_sleep: wcd-reset-n-sleep-state {
+ 		pins = "gpio83";
+ 		function = "gpio";
+ 		drive-strength = <8>;
+diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+index 28e3fb9992d9..1a603cf61d8b 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+@@ -4253,791 +4253,791 @@ tlmm: pinctrl@f100000 {
+ 			gpio-ranges = <&tlmm 0 0 175>;
  			wakeup-parent = <&pdc>;
  
--			cci0_default: cci0-default {
--				cci0_i2c0_default: cci0-i2c0-default {
-+			cci0_default: cci0-default-state {
-+				cci0_i2c0_default: cci0-i2c0-default-pins {
- 					/* SDA, SCL */
- 					pins = "gpio101", "gpio102";
- 					function = "cci_i2c";
-@@ -3808,7 +3808,7 @@ cci0_i2c0_default: cci0-i2c0-default {
- 					drive-strength = <2>; /* 2 mA */
- 				};
- 
--				cci0_i2c1_default: cci0-i2c1-default {
-+				cci0_i2c1_default: cci0-i2c1-default-pins {
- 					/* SDA, SCL */
- 					pins = "gpio103", "gpio104";
- 					function = "cci_i2c";
-@@ -3818,8 +3818,8 @@ cci0_i2c1_default: cci0-i2c1-default {
- 				};
+-			dp_hot_plug_det: dp-hot-plug-det-pins {
++			dp_hot_plug_det: dp-hot-plug-det-state {
+ 				pins = "gpio47";
+ 				function = "dp_hot";
  			};
  
--			cci0_sleep: cci0-sleep {
--				cci0_i2c0_sleep: cci0-i2c0-sleep {
-+			cci0_sleep: cci0-sleep-state {
-+				cci0_i2c0_sleep: cci0-i2c0-sleep-pins {
- 					/* SDA, SCL */
- 					pins = "gpio101", "gpio102";
- 					function = "cci_i2c";
-@@ -3828,7 +3828,7 @@ cci0_i2c0_sleep: cci0-i2c0-sleep {
- 					bias-pull-down;
- 				};
- 
--				cci0_i2c1_sleep: cci0-i2c1-sleep {
-+				cci0_i2c1_sleep: cci0-i2c1-sleep-pins {
- 					/* SDA, SCL */
- 					pins = "gpio103", "gpio104";
- 					function = "cci_i2c";
-@@ -3838,8 +3838,8 @@ cci0_i2c1_sleep: cci0-i2c1-sleep {
- 				};
+-			edp_hot_plug_det: edp-hot-plug-det-pins {
++			edp_hot_plug_det: edp-hot-plug-det-state {
+ 				pins = "gpio60";
+ 				function = "edp_hot";
  			};
  
--			cci1_default: cci1-default {
--				cci1_i2c0_default: cci1-i2c0-default {
-+			cci1_default: cci1-default-state {
-+				cci1_i2c0_default: cci1-i2c0-default-pins {
- 					/* SDA, SCL */
- 					pins = "gpio105","gpio106";
- 					function = "cci_i2c";
-@@ -3848,7 +3848,7 @@ cci1_i2c0_default: cci1-i2c0-default {
- 					drive-strength = <2>; /* 2 mA */
- 				};
- 
--				cci1_i2c1_default: cci1-i2c1-default {
-+				cci1_i2c1_default: cci1-i2c1-default-pins {
- 					/* SDA, SCL */
- 					pins = "gpio107","gpio108";
- 					function = "cci_i2c";
-@@ -3858,8 +3858,8 @@ cci1_i2c1_default: cci1-i2c1-default {
- 				};
+-			mi2s0_data0: mi2s0-data0-pins {
++			mi2s0_data0: mi2s0-data0-state {
+ 				pins = "gpio98";
+ 				function = "mi2s0_data0";
  			};
  
--			cci1_sleep: cci1-sleep {
--				cci1_i2c0_sleep: cci1-i2c0-sleep {
-+			cci1_sleep: cci1-sleep-state {
-+				cci1_i2c0_sleep: cci1-i2c0-sleep-pins {
- 					/* SDA, SCL */
- 					pins = "gpio105","gpio106";
- 					function = "cci_i2c";
-@@ -3868,7 +3868,7 @@ cci1_i2c0_sleep: cci1-i2c0-sleep {
- 					drive-strength = <2>; /* 2 mA */
- 				};
- 
--				cci1_i2c1_sleep: cci1-i2c1-sleep {
-+				cci1_i2c1_sleep: cci1-i2c1-sleep-pins {
- 					/* SDA, SCL */
- 					pins = "gpio107","gpio108";
- 					function = "cci_i2c";
-@@ -3878,22 +3878,22 @@ cci1_i2c1_sleep: cci1-i2c1-sleep {
- 				};
+-			mi2s0_data1: mi2s0-data1-pins {
++			mi2s0_data1: mi2s0-data1-state {
+ 				pins = "gpio99";
+ 				function = "mi2s0_data1";
  			};
  
--			pri_mi2s_active: pri-mi2s-active {
--				sclk {
-+			pri_mi2s_active: pri-mi2s-active-state {
-+				sclk-pins {
- 					pins = "gpio138";
- 					function = "mi2s0_sck";
- 					drive-strength = <8>;
- 					bias-disable;
- 				};
- 
--				ws {
-+				ws-pins {
- 					pins = "gpio141";
- 					function = "mi2s0_ws";
- 					drive-strength = <8>;
- 					output-high;
- 				};
- 
--				data0 {
-+				data0-pins {
- 					pins = "gpio139";
- 					function = "mi2s0_data0";
- 					drive-strength = <8>;
-@@ -3901,7 +3901,7 @@ data0 {
- 					output-high;
- 				};
- 
--				data1 {
-+				data1-pins {
- 					pins = "gpio140";
- 					function = "mi2s0_data1";
- 					drive-strength = <8>;
-@@ -3909,632 +3909,500 @@ data1 {
- 				};
+-			mi2s0_mclk: mi2s0-mclk-pins {
++			mi2s0_mclk: mi2s0-mclk-state {
+ 				pins = "gpio96";
+ 				function = "pri_mi2s";
  			};
  
--			qup_i2c0_default: qup-i2c0-default {
--				mux {
--					pins = "gpio28", "gpio29";
--					function = "qup0";
--				};
--
--				config {
--					pins = "gpio28", "gpio29";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c0_default: qup-i2c0-default-state {
-+				pins = "gpio28", "gpio29";
-+				function = "qup0";
-+				drive-strength = <2>;
-+				bias-disable;
+-			mi2s0_sclk: mi2s0-sclk-pins {
++			mi2s0_sclk: mi2s0-sclk-state {
+ 				pins = "gpio97";
+ 				function = "mi2s0_sck";
  			};
  
--			qup_i2c1_default: qup-i2c1-default {
--				pinmux {
--					pins = "gpio4", "gpio5";
--					function = "qup1";
--				};
--
--				config {
--					pins = "gpio4", "gpio5";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c1_default: qup-i2c1-default-state {
-+				pins = "gpio4", "gpio5";
-+				function = "qup1";
-+				drive-strength = <2>;
-+				bias-disable;
+-			mi2s0_ws: mi2s0-ws-pins {
++			mi2s0_ws: mi2s0-ws-state {
+ 				pins = "gpio100";
+ 				function = "mi2s0_ws";
  			};
  
--			qup_i2c2_default: qup-i2c2-default {
--				mux {
--					pins = "gpio115", "gpio116";
--					function = "qup2";
--				};
--
--				config {
--					pins = "gpio115", "gpio116";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c2_default: qup-i2c2-default-state {
-+				pins = "gpio115", "gpio116";
-+				function = "qup2";
-+				drive-strength = <2>;
-+				bias-disable;
+-			mi2s1_data0: mi2s1-data0-pins {
++			mi2s1_data0: mi2s1-data0-state {
+ 				pins = "gpio107";
+ 				function = "mi2s1_data0";
  			};
  
--			qup_i2c3_default: qup-i2c3-default {
--				mux {
--					pins = "gpio119", "gpio120";
--					function = "qup3";
--				};
--
--				config {
--					pins = "gpio119", "gpio120";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c3_default: qup-i2c3-default-state {
-+				pins = "gpio119", "gpio120";
-+				function = "qup3";
-+				drive-strength = <2>;
-+				bias-disable;
+-			mi2s1_sclk: mi2s1-sclk-pins {
++			mi2s1_sclk: mi2s1-sclk-state {
+ 				pins = "gpio106";
+ 				function = "mi2s1_sck";
  			};
  
--			qup_i2c4_default: qup-i2c4-default {
--				mux {
--					pins = "gpio8", "gpio9";
--					function = "qup4";
--				};
--
--				config {
--					pins = "gpio8", "gpio9";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c4_default: qup-i2c4-default-state {
-+				pins = "gpio8", "gpio9";
-+				function = "qup4";
-+				drive-strength = <2>;
-+				bias-disable;
+-			mi2s1_ws: mi2s1-ws-pins {
++			mi2s1_ws: mi2s1-ws-state {
+ 				pins = "gpio108";
+ 				function = "mi2s1_ws";
  			};
  
--			qup_i2c5_default: qup-i2c5-default {
--				mux {
--					pins = "gpio12", "gpio13";
--					function = "qup5";
--				};
--
--				config {
--					pins = "gpio12", "gpio13";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c5_default: qup-i2c5-default-state {
-+				pins = "gpio12", "gpio13";
-+				function = "qup5";
-+				drive-strength = <2>;
-+				bias-disable;
+-			pcie1_clkreq_n: pcie1-clkreq-n-pins {
++			pcie1_clkreq_n: pcie1-clkreq-n-state {
+ 				pins = "gpio79";
+ 				function = "pcie1_clkreqn";
  			};
  
--			qup_i2c6_default: qup-i2c6-default {
--				mux {
--					pins = "gpio16", "gpio17";
--					function = "qup6";
--				};
--
--				config {
--					pins = "gpio16", "gpio17";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c6_default: qup-i2c6-default-state {
-+				pins = "gpio16", "gpio17";
-+				function = "qup6";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qspi_clk: qspi-clk-pins {
++			qspi_clk: qspi-clk-state {
+ 				pins = "gpio14";
+ 				function = "qspi_clk";
  			};
  
--			qup_i2c7_default: qup-i2c7-default {
--				mux {
--					pins = "gpio20", "gpio21";
--					function = "qup7";
--				};
--
--				config {
--					pins = "gpio20", "gpio21";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c7_default: qup-i2c7-default-state {
-+				pins = "gpio20", "gpio21";
-+				function = "qup7";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qspi_cs0: qspi-cs0-pins {
++			qspi_cs0: qspi-cs0-state {
+ 				pins = "gpio15";
+ 				function = "qspi_cs";
  			};
  
--			qup_i2c8_default: qup-i2c8-default {
--				mux {
--					pins = "gpio24", "gpio25";
--					function = "qup8";
--				};
--
--				config {
--					pins = "gpio24", "gpio25";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c8_default: qup-i2c8-default-state {
-+				pins = "gpio24", "gpio25";
-+				function = "qup8";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qspi_cs1: qspi-cs1-pins {
++			qspi_cs1: qspi-cs1-state {
+ 				pins = "gpio19";
+ 				function = "qspi_cs";
  			};
  
--			qup_i2c9_default: qup-i2c9-default {
--				mux {
--					pins = "gpio125", "gpio126";
--					function = "qup9";
--				};
--
--				config {
--					pins = "gpio125", "gpio126";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c9_default: qup-i2c9-default-state {
-+				pins = "gpio125", "gpio126";
-+				function = "qup9";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qspi_data01: qspi-data01-pins {
++			qspi_data01: qspi-data01-state {
+ 				pins = "gpio12", "gpio13";
+ 				function = "qspi_data";
  			};
  
--			qup_i2c10_default: qup-i2c10-default {
--				mux {
--					pins = "gpio129", "gpio130";
--					function = "qup10";
--				};
--
--				config {
--					pins = "gpio129", "gpio130";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c10_default: qup-i2c10-default-state {
-+				pins = "gpio129", "gpio130";
-+				function = "qup10";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qspi_data12: qspi-data12-pins {
++			qspi_data12: qspi-data12-state {
+ 				pins = "gpio16", "gpio17";
+ 				function = "qspi_data";
  			};
  
--			qup_i2c11_default: qup-i2c11-default {
--				mux {
--					pins = "gpio60", "gpio61";
--					function = "qup11";
--				};
--
--				config {
--					pins = "gpio60", "gpio61";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c11_default: qup-i2c11-default-state {
-+				pins = "gpio60", "gpio61";
-+				function = "qup11";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qup_i2c0_data_clk: qup-i2c0-data-clk-pins {
++			qup_i2c0_data_clk: qup-i2c0-data-clk-state {
+ 				pins = "gpio0", "gpio1";
+ 				function = "qup00";
  			};
  
--			qup_i2c12_default: qup-i2c12-default {
--				mux {
--					pins = "gpio32", "gpio33";
--					function = "qup12";
--				};
--
--				config {
--					pins = "gpio32", "gpio33";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c12_default: qup-i2c12-default-state {
-+				pins = "gpio32", "gpio33";
-+				function = "qup12";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qup_i2c1_data_clk: qup-i2c1-data-clk-pins {
++			qup_i2c1_data_clk: qup-i2c1-data-clk-state {
+ 				pins = "gpio4", "gpio5";
+ 				function = "qup01";
  			};
  
--			qup_i2c13_default: qup-i2c13-default {
--				mux {
--					pins = "gpio36", "gpio37";
--					function = "qup13";
--				};
--
--				config {
--					pins = "gpio36", "gpio37";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c13_default: qup-i2c13-default-state {
-+				pins = "gpio36", "gpio37";
-+				function = "qup13";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qup_i2c2_data_clk: qup-i2c2-data-clk-pins {
++			qup_i2c2_data_clk: qup-i2c2-data-clk-state {
+ 				pins = "gpio8", "gpio9";
+ 				function = "qup02";
  			};
  
--			qup_i2c14_default: qup-i2c14-default {
--				mux {
--					pins = "gpio40", "gpio41";
--					function = "qup14";
--				};
--
--				config {
--					pins = "gpio40", "gpio41";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c14_default: qup-i2c14-default-state {
-+				pins = "gpio40", "gpio41";
-+				function = "qup14";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qup_i2c3_data_clk: qup-i2c3-data-clk-pins {
++			qup_i2c3_data_clk: qup-i2c3-data-clk-state {
+ 				pins = "gpio12", "gpio13";
+ 				function = "qup03";
  			};
  
--			qup_i2c15_default: qup-i2c15-default {
--				mux {
--					pins = "gpio44", "gpio45";
--					function = "qup15";
--				};
--
--				config {
--					pins = "gpio44", "gpio45";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c15_default: qup-i2c15-default-state {
-+				pins = "gpio44", "gpio45";
-+				function = "qup15";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qup_i2c4_data_clk: qup-i2c4-data-clk-pins {
++			qup_i2c4_data_clk: qup-i2c4-data-clk-state {
+ 				pins = "gpio16", "gpio17";
+ 				function = "qup04";
  			};
  
--			qup_i2c16_default: qup-i2c16-default {
--				mux {
--					pins = "gpio48", "gpio49";
--					function = "qup16";
--				};
--
--				config {
--					pins = "gpio48", "gpio49";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c16_default: qup-i2c16-default-state {
-+				pins = "gpio48", "gpio49";
-+				function = "qup16";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qup_i2c5_data_clk: qup-i2c5-data-clk-pins {
++			qup_i2c5_data_clk: qup-i2c5-data-clk-state {
+ 				pins = "gpio20", "gpio21";
+ 				function = "qup05";
  			};
  
--			qup_i2c17_default: qup-i2c17-default {
--				mux {
--					pins = "gpio52", "gpio53";
--					function = "qup17";
--				};
--
--				config {
--					pins = "gpio52", "gpio53";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c17_default: qup-i2c17-default-state {
-+				pins = "gpio52", "gpio53";
-+				function = "qup17";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qup_i2c6_data_clk: qup-i2c6-data-clk-pins {
++			qup_i2c6_data_clk: qup-i2c6-data-clk-state {
+ 				pins = "gpio24", "gpio25";
+ 				function = "qup06";
  			};
  
--			qup_i2c18_default: qup-i2c18-default {
--				mux {
--					pins = "gpio56", "gpio57";
--					function = "qup18";
--				};
--
--				config {
--					pins = "gpio56", "gpio57";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c18_default: qup-i2c18-default-state {
-+				pins = "gpio56", "gpio57";
-+				function = "qup18";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qup_i2c7_data_clk: qup-i2c7-data-clk-pins {
++			qup_i2c7_data_clk: qup-i2c7-data-clk-state {
+ 				pins = "gpio28", "gpio29";
+ 				function = "qup07";
  			};
  
--			qup_i2c19_default: qup-i2c19-default {
--				mux {
--					pins = "gpio0", "gpio1";
--					function = "qup19";
--				};
--
--				config {
--					pins = "gpio0", "gpio1";
--					drive-strength = <2>;
--					bias-disable;
--				};
-+			qup_i2c19_default: qup-i2c19-default-state {
-+				pins = "gpio0", "gpio1";
-+				function = "qup19";
-+				drive-strength = <2>;
-+				bias-disable;
+-			qup_i2c8_data_clk: qup-i2c8-data-clk-pins {
++			qup_i2c8_data_clk: qup-i2c8-data-clk-state {
+ 				pins = "gpio32", "gpio33";
+ 				function = "qup10";
  			};
  
--			qup_spi0_cs: qup-spi0-cs {
+-			qup_i2c9_data_clk: qup-i2c9-data-clk-pins {
++			qup_i2c9_data_clk: qup-i2c9-data-clk-state {
+ 				pins = "gpio36", "gpio37";
+ 				function = "qup11";
+ 			};
+ 
+-			qup_i2c10_data_clk: qup-i2c10-data-clk-pins {
++			qup_i2c10_data_clk: qup-i2c10-data-clk-state {
+ 				pins = "gpio40", "gpio41";
+ 				function = "qup12";
+ 			};
+ 
+-			qup_i2c11_data_clk: qup-i2c11-data-clk-pins {
++			qup_i2c11_data_clk: qup-i2c11-data-clk-state {
+ 				pins = "gpio44", "gpio45";
+ 				function = "qup13";
+ 			};
+ 
+-			qup_i2c12_data_clk: qup-i2c12-data-clk-pins {
++			qup_i2c12_data_clk: qup-i2c12-data-clk-state {
+ 				pins = "gpio48", "gpio49";
+ 				function = "qup14";
+ 			};
+ 
+-			qup_i2c13_data_clk: qup-i2c13-data-clk-pins {
++			qup_i2c13_data_clk: qup-i2c13-data-clk-state {
+ 				pins = "gpio52", "gpio53";
+ 				function = "qup15";
+ 			};
+ 
+-			qup_i2c14_data_clk: qup-i2c14-data-clk-pins {
++			qup_i2c14_data_clk: qup-i2c14-data-clk-state {
+ 				pins = "gpio56", "gpio57";
+ 				function = "qup16";
+ 			};
+ 
+-			qup_i2c15_data_clk: qup-i2c15-data-clk-pins {
++			qup_i2c15_data_clk: qup-i2c15-data-clk-state {
+ 				pins = "gpio60", "gpio61";
+ 				function = "qup17";
+ 			};
+ 
+-			qup_spi0_data_clk: qup-spi0-data-clk-pins {
++			qup_spi0_data_clk: qup-spi0-data-clk-state {
+ 				pins = "gpio0", "gpio1", "gpio2";
+ 				function = "qup00";
+ 			};
+ 
+-			qup_spi0_cs: qup-spi0-cs-pins {
 +			qup_spi0_cs: qup-spi0-cs-state {
- 				pins = "gpio31";
- 				function = "qup0";
+ 				pins = "gpio3";
+ 				function = "qup00";
  			};
  
--			qup_spi0_cs_gpio: qup-spi0-cs-gpio {
+-			qup_spi0_cs_gpio: qup-spi0-cs-gpio-pins {
 +			qup_spi0_cs_gpio: qup-spi0-cs-gpio-state {
- 				pins = "gpio31";
+ 				pins = "gpio3";
  				function = "gpio";
  			};
  
--			qup_spi0_data_clk: qup-spi0-data-clk {
-+			qup_spi0_data_clk: qup-spi0-data-clk-state {
- 				pins = "gpio28", "gpio29",
- 				       "gpio30";
- 				function = "qup0";
+-			qup_spi1_data_clk: qup-spi1-data-clk-pins {
++			qup_spi1_data_clk: qup-spi1-data-clk-state {
+ 				pins = "gpio4", "gpio5", "gpio6";
+ 				function = "qup01";
  			};
  
--			qup_spi1_cs: qup-spi1-cs {
+-			qup_spi1_cs: qup-spi1-cs-pins {
 +			qup_spi1_cs: qup-spi1-cs-state {
  				pins = "gpio7";
- 				function = "qup1";
+ 				function = "qup01";
  			};
  
--			qup_spi1_cs_gpio: qup-spi1-cs-gpio {
+-			qup_spi1_cs_gpio: qup-spi1-cs-gpio-pins {
 +			qup_spi1_cs_gpio: qup-spi1-cs-gpio-state {
  				pins = "gpio7";
  				function = "gpio";
  			};
  
--			qup_spi1_data_clk: qup-spi1-data-clk {
-+			qup_spi1_data_clk: qup-spi1-data-clk-state {
- 				pins = "gpio4", "gpio5",
- 				       "gpio6";
- 				function = "qup1";
- 			};
- 
--			qup_spi2_cs: qup-spi2-cs {
-+			qup_spi2_cs: qup-spi2-cs-state {
- 				pins = "gpio118";
- 				function = "qup2";
- 			};
- 
--			qup_spi2_cs_gpio: qup-spi2-cs-gpio {
-+			qup_spi2_cs_gpio: qup-spi2-cs-gpio-state {
- 				pins = "gpio118";
- 				function = "gpio";
- 			};
- 
--			qup_spi2_data_clk: qup-spi2-data-clk {
+-			qup_spi2_data_clk: qup-spi2-data-clk-pins {
 +			qup_spi2_data_clk: qup-spi2-data-clk-state {
- 				pins = "gpio115", "gpio116",
- 				       "gpio117";
- 				function = "qup2";
+ 				pins = "gpio8", "gpio9", "gpio10";
+ 				function = "qup02";
  			};
  
--			qup_spi3_cs: qup-spi3-cs {
-+			qup_spi3_cs: qup-spi3-cs-state {
- 				pins = "gpio122";
- 				function = "qup3";
+-			qup_spi2_cs: qup-spi2-cs-pins {
++			qup_spi2_cs: qup-spi2-cs-state {
+ 				pins = "gpio11";
+ 				function = "qup02";
  			};
  
--			qup_spi3_cs_gpio: qup-spi3-cs-gpio {
-+			qup_spi3_cs_gpio: qup-spi3-cs-gpio-state {
- 				pins = "gpio122";
+-			qup_spi2_cs_gpio: qup-spi2-cs-gpio-pins {
++			qup_spi2_cs_gpio: qup-spi2-cs-gpio-state {
+ 				pins = "gpio11";
  				function = "gpio";
  			};
  
--			qup_spi3_data_clk: qup-spi3-data-clk {
+-			qup_spi3_data_clk: qup-spi3-data-clk-pins {
 +			qup_spi3_data_clk: qup-spi3-data-clk-state {
- 				pins = "gpio119", "gpio120",
- 				       "gpio121";
- 				function = "qup3";
+ 				pins = "gpio12", "gpio13", "gpio14";
+ 				function = "qup03";
  			};
  
--			qup_spi4_cs: qup-spi4-cs {
-+			qup_spi4_cs: qup-spi4-cs-state {
- 				pins = "gpio11";
- 				function = "qup4";
+-			qup_spi3_cs: qup-spi3-cs-pins {
++			qup_spi3_cs: qup-spi3-cs-state {
+ 				pins = "gpio15";
+ 				function = "qup03";
  			};
  
--			qup_spi4_cs_gpio: qup-spi4-cs-gpio {
-+			qup_spi4_cs_gpio: qup-spi4-cs-gpio-state {
- 				pins = "gpio11";
+-			qup_spi3_cs_gpio: qup-spi3-cs-gpio-pins {
++			qup_spi3_cs_gpio: qup-spi3-cs-gpio-state {
+ 				pins = "gpio15";
  				function = "gpio";
  			};
  
--			qup_spi4_data_clk: qup-spi4-data-clk {
+-			qup_spi4_data_clk: qup-spi4-data-clk-pins {
 +			qup_spi4_data_clk: qup-spi4-data-clk-state {
- 				pins = "gpio8", "gpio9",
- 				       "gpio10";
- 				function = "qup4";
+ 				pins = "gpio16", "gpio17", "gpio18";
+ 				function = "qup04";
  			};
  
--			qup_spi5_cs: qup-spi5-cs {
-+			qup_spi5_cs: qup-spi5-cs-state {
- 				pins = "gpio15";
- 				function = "qup5";
+-			qup_spi4_cs: qup-spi4-cs-pins {
++			qup_spi4_cs: qup-spi4-cs-state {
+ 				pins = "gpio19";
+ 				function = "qup04";
  			};
  
--			qup_spi5_cs_gpio: qup-spi5-cs-gpio {
-+			qup_spi5_cs_gpio: qup-spi5-cs-gpio-state {
- 				pins = "gpio15";
+-			qup_spi4_cs_gpio: qup-spi4-cs-gpio-pins {
++			qup_spi4_cs_gpio: qup-spi4-cs-gpio-state {
+ 				pins = "gpio19";
  				function = "gpio";
  			};
  
--			qup_spi5_data_clk: qup-spi5-data-clk {
+-			qup_spi5_data_clk: qup-spi5-data-clk-pins {
 +			qup_spi5_data_clk: qup-spi5-data-clk-state {
- 				pins = "gpio12", "gpio13",
- 				       "gpio14";
- 				function = "qup5";
+ 				pins = "gpio20", "gpio21", "gpio22";
+ 				function = "qup05";
  			};
  
--			qup_spi6_cs: qup-spi6-cs {
-+			qup_spi6_cs: qup-spi6-cs-state {
- 				pins = "gpio19";
- 				function = "qup6";
+-			qup_spi5_cs: qup-spi5-cs-pins {
++			qup_spi5_cs: qup-spi5-cs-state {
+ 				pins = "gpio23";
+ 				function = "qup05";
  			};
  
--			qup_spi6_cs_gpio: qup-spi6-cs-gpio {
-+			qup_spi6_cs_gpio: qup-spi6-cs-gpio-state {
- 				pins = "gpio19";
+-			qup_spi5_cs_gpio: qup-spi5-cs-gpio-pins {
++			qup_spi5_cs_gpio: qup-spi5-cs-gpio-state {
+ 				pins = "gpio23";
  				function = "gpio";
  			};
  
--			qup_spi6_data_clk: qup-spi6-data-clk {
+-			qup_spi6_data_clk: qup-spi6-data-clk-pins {
 +			qup_spi6_data_clk: qup-spi6-data-clk-state {
- 				pins = "gpio16", "gpio17",
- 				       "gpio18";
- 				function = "qup6";
+ 				pins = "gpio24", "gpio25", "gpio26";
+ 				function = "qup06";
  			};
  
--			qup_spi7_cs: qup-spi7-cs {
-+			qup_spi7_cs: qup-spi7-cs-state {
- 				pins = "gpio23";
- 				function = "qup7";
+-			qup_spi6_cs: qup-spi6-cs-pins {
++			qup_spi6_cs: qup-spi6-cs-state {
+ 				pins = "gpio27";
+ 				function = "qup06";
  			};
  
--			qup_spi7_cs_gpio: qup-spi7-cs-gpio {
-+			qup_spi7_cs_gpio: qup-spi7-cs-gpio-state {
- 				pins = "gpio23";
+-			qup_spi6_cs_gpio: qup-spi6-cs-gpio-pins {
++			qup_spi6_cs_gpio: qup-spi6-cs-gpio-state {
+ 				pins = "gpio27";
  				function = "gpio";
  			};
  
--			qup_spi7_data_clk: qup-spi7-data-clk {
+-			qup_spi7_data_clk: qup-spi7-data-clk-pins {
 +			qup_spi7_data_clk: qup-spi7-data-clk-state {
- 				pins = "gpio20", "gpio21",
- 				       "gpio22";
- 				function = "qup7";
+ 				pins = "gpio28", "gpio29", "gpio30";
+ 				function = "qup07";
  			};
  
--			qup_spi8_cs: qup-spi8-cs {
-+			qup_spi8_cs: qup-spi8-cs-state {
- 				pins = "gpio27";
- 				function = "qup8";
+-			qup_spi7_cs: qup-spi7-cs-pins {
++			qup_spi7_cs: qup-spi7-cs-state {
+ 				pins = "gpio31";
+ 				function = "qup07";
  			};
  
--			qup_spi8_cs_gpio: qup-spi8-cs-gpio {
-+			qup_spi8_cs_gpio: qup-spi8-cs-gpio-state {
- 				pins = "gpio27";
+-			qup_spi7_cs_gpio: qup-spi7-cs-gpio-pins {
++			qup_spi7_cs_gpio: qup-spi7-cs-gpio-state {
+ 				pins = "gpio31";
  				function = "gpio";
  			};
  
--			qup_spi8_data_clk: qup-spi8-data-clk {
+-			qup_spi8_data_clk: qup-spi8-data-clk-pins {
 +			qup_spi8_data_clk: qup-spi8-data-clk-state {
- 				pins = "gpio24", "gpio25",
- 				       "gpio26";
- 				function = "qup8";
+ 				pins = "gpio32", "gpio33", "gpio34";
+ 				function = "qup10";
  			};
  
--			qup_spi9_cs: qup-spi9-cs {
-+			qup_spi9_cs: qup-spi9-cs-state {
- 				pins = "gpio128";
- 				function = "qup9";
+-			qup_spi8_cs: qup-spi8-cs-pins {
++			qup_spi8_cs: qup-spi8-cs-state {
+ 				pins = "gpio35";
+ 				function = "qup10";
  			};
  
--			qup_spi9_cs_gpio: qup-spi9-cs-gpio {
-+			qup_spi9_cs_gpio: qup-spi9-cs-gpio-state {
- 				pins = "gpio128";
+-			qup_spi8_cs_gpio: qup-spi8-cs-gpio-pins {
++			qup_spi8_cs_gpio: qup-spi8-cs-gpio-state {
+ 				pins = "gpio35";
  				function = "gpio";
  			};
  
--			qup_spi9_data_clk: qup-spi9-data-clk {
+-			qup_spi9_data_clk: qup-spi9-data-clk-pins {
 +			qup_spi9_data_clk: qup-spi9-data-clk-state {
- 				pins = "gpio125", "gpio126",
- 				       "gpio127";
- 				function = "qup9";
+ 				pins = "gpio36", "gpio37", "gpio38";
+ 				function = "qup11";
  			};
  
--			qup_spi10_cs: qup-spi10-cs {
-+			qup_spi10_cs: qup-spi10-cs-state {
- 				pins = "gpio132";
- 				function = "qup10";
+-			qup_spi9_cs: qup-spi9-cs-pins {
++			qup_spi9_cs: qup-spi9-cs-state {
+ 				pins = "gpio39";
+ 				function = "qup11";
  			};
  
--			qup_spi10_cs_gpio: qup-spi10-cs-gpio {
-+			qup_spi10_cs_gpio: qup-spi10-cs-gpio-state {
- 				pins = "gpio132";
+-			qup_spi9_cs_gpio: qup-spi9-cs-gpio-pins {
++			qup_spi9_cs_gpio: qup-spi9-cs-gpio-state {
+ 				pins = "gpio39";
  				function = "gpio";
  			};
  
--			qup_spi10_data_clk: qup-spi10-data-clk {
+-			qup_spi10_data_clk: qup-spi10-data-clk-pins {
 +			qup_spi10_data_clk: qup-spi10-data-clk-state {
- 				pins = "gpio129", "gpio130",
- 				       "gpio131";
+ 				pins = "gpio40", "gpio41", "gpio42";
+ 				function = "qup12";
+ 			};
+ 
+-			qup_spi10_cs: qup-spi10-cs-pins {
++			qup_spi10_cs: qup-spi10-cs-state {
+ 				pins = "gpio43";
+ 				function = "qup12";
+ 			};
+ 
+-			qup_spi10_cs_gpio: qup-spi10-cs-gpio-pins {
++			qup_spi10_cs_gpio: qup-spi10-cs-gpio-state {
+ 				pins = "gpio43";
+ 				function = "gpio";
+ 			};
+ 
+-			qup_spi11_data_clk: qup-spi11-data-clk-pins {
++			qup_spi11_data_clk: qup-spi11-data-clk-state {
+ 				pins = "gpio44", "gpio45", "gpio46";
+ 				function = "qup13";
+ 			};
+ 
+-			qup_spi11_cs: qup-spi11-cs-pins {
++			qup_spi11_cs: qup-spi11-cs-state {
+ 				pins = "gpio47";
+ 				function = "qup13";
+ 			};
+ 
+-			qup_spi11_cs_gpio: qup-spi11-cs-gpio-pins {
++			qup_spi11_cs_gpio: qup-spi11-cs-gpio-state {
+ 				pins = "gpio47";
+ 				function = "gpio";
+ 			};
+ 
+-			qup_spi12_data_clk: qup-spi12-data-clk-pins {
++			qup_spi12_data_clk: qup-spi12-data-clk-state {
+ 				pins = "gpio48", "gpio49", "gpio50";
+ 				function = "qup14";
+ 			};
+ 
+-			qup_spi12_cs: qup-spi12-cs-pins {
++			qup_spi12_cs: qup-spi12-cs-state {
+ 				pins = "gpio51";
+ 				function = "qup14";
+ 			};
+ 
+-			qup_spi12_cs_gpio: qup-spi12-cs-gpio-pins {
++			qup_spi12_cs_gpio: qup-spi12-cs-gpio-state {
+ 				pins = "gpio51";
+ 				function = "gpio";
+ 			};
+ 
+-			qup_spi13_data_clk: qup-spi13-data-clk-pins {
++			qup_spi13_data_clk: qup-spi13-data-clk-state {
+ 				pins = "gpio52", "gpio53", "gpio54";
+ 				function = "qup15";
+ 			};
+ 
+-			qup_spi13_cs: qup-spi13-cs-pins {
++			qup_spi13_cs: qup-spi13-cs-state {
+ 				pins = "gpio55";
+ 				function = "qup15";
+ 			};
+ 
+-			qup_spi13_cs_gpio: qup-spi13-cs-gpio-pins {
++			qup_spi13_cs_gpio: qup-spi13-cs-gpio-state {
+ 				pins = "gpio55";
+ 				function = "gpio";
+ 			};
+ 
+-			qup_spi14_data_clk: qup-spi14-data-clk-pins {
++			qup_spi14_data_clk: qup-spi14-data-clk-state {
+ 				pins = "gpio56", "gpio57", "gpio58";
+ 				function = "qup16";
+ 			};
+ 
+-			qup_spi14_cs: qup-spi14-cs-pins {
++			qup_spi14_cs: qup-spi14-cs-state {
+ 				pins = "gpio59";
+ 				function = "qup16";
+ 			};
+ 
+-			qup_spi14_cs_gpio: qup-spi14-cs-gpio-pins {
++			qup_spi14_cs_gpio: qup-spi14-cs-gpio-state {
+ 				pins = "gpio59";
+ 				function = "gpio";
+ 			};
+ 
+-			qup_spi15_data_clk: qup-spi15-data-clk-pins {
++			qup_spi15_data_clk: qup-spi15-data-clk-state {
+ 				pins = "gpio60", "gpio61", "gpio62";
+ 				function = "qup17";
+ 			};
+ 
+-			qup_spi15_cs: qup-spi15-cs-pins {
++			qup_spi15_cs: qup-spi15-cs-state {
+ 				pins = "gpio63";
+ 				function = "qup17";
+ 			};
+ 
+-			qup_spi15_cs_gpio: qup-spi15-cs-gpio-pins {
++			qup_spi15_cs_gpio: qup-spi15-cs-gpio-state {
+ 				pins = "gpio63";
+ 				function = "gpio";
+ 			};
+ 
+-			qup_uart0_cts: qup-uart0-cts-pins {
++			qup_uart0_cts: qup-uart0-cts-state {
+ 				pins = "gpio0";
+ 				function = "qup00";
+ 			};
+ 
+-			qup_uart0_rts: qup-uart0-rts-pins {
++			qup_uart0_rts: qup-uart0-rts-state {
+ 				pins = "gpio1";
+ 				function = "qup00";
+ 			};
+ 
+-			qup_uart0_tx: qup-uart0-tx-pins {
++			qup_uart0_tx: qup-uart0-tx-state {
+ 				pins = "gpio2";
+ 				function = "qup00";
+ 			};
+ 
+-			qup_uart0_rx: qup-uart0-rx-pins {
++			qup_uart0_rx: qup-uart0-rx-state {
+ 				pins = "gpio3";
+ 				function = "qup00";
+ 			};
+ 
+-			qup_uart1_cts: qup-uart1-cts-pins {
++			qup_uart1_cts: qup-uart1-cts-state {
+ 				pins = "gpio4";
+ 				function = "qup01";
+ 			};
+ 
+-			qup_uart1_rts: qup-uart1-rts-pins {
++			qup_uart1_rts: qup-uart1-rts-state {
+ 				pins = "gpio5";
+ 				function = "qup01";
+ 			};
+ 
+-			qup_uart1_tx: qup-uart1-tx-pins {
++			qup_uart1_tx: qup-uart1-tx-state {
+ 				pins = "gpio6";
+ 				function = "qup01";
+ 			};
+ 
+-			qup_uart1_rx: qup-uart1-rx-pins {
++			qup_uart1_rx: qup-uart1-rx-state {
+ 				pins = "gpio7";
+ 				function = "qup01";
+ 			};
+ 
+-			qup_uart2_cts: qup-uart2-cts-pins {
++			qup_uart2_cts: qup-uart2-cts-state {
+ 				pins = "gpio8";
+ 				function = "qup02";
+ 			};
+ 
+-			qup_uart2_rts: qup-uart2-rts-pins {
++			qup_uart2_rts: qup-uart2-rts-state {
+ 				pins = "gpio9";
+ 				function = "qup02";
+ 			};
+ 
+-			qup_uart2_tx: qup-uart2-tx-pins {
++			qup_uart2_tx: qup-uart2-tx-state {
+ 				pins = "gpio10";
+ 				function = "qup02";
+ 			};
+ 
+-			qup_uart2_rx: qup-uart2-rx-pins {
++			qup_uart2_rx: qup-uart2-rx-state {
+ 				pins = "gpio11";
+ 				function = "qup02";
+ 			};
+ 
+-			qup_uart3_cts: qup-uart3-cts-pins {
++			qup_uart3_cts: qup-uart3-cts-state {
+ 				pins = "gpio12";
+ 				function = "qup03";
+ 			};
+ 
+-			qup_uart3_rts: qup-uart3-rts-pins {
++			qup_uart3_rts: qup-uart3-rts-state {
+ 				pins = "gpio13";
+ 				function = "qup03";
+ 			};
+ 
+-			qup_uart3_tx: qup-uart3-tx-pins {
++			qup_uart3_tx: qup-uart3-tx-state {
+ 				pins = "gpio14";
+ 				function = "qup03";
+ 			};
+ 
+-			qup_uart3_rx: qup-uart3-rx-pins {
++			qup_uart3_rx: qup-uart3-rx-state {
+ 				pins = "gpio15";
+ 				function = "qup03";
+ 			};
+ 
+-			qup_uart4_cts: qup-uart4-cts-pins {
++			qup_uart4_cts: qup-uart4-cts-state {
+ 				pins = "gpio16";
+ 				function = "qup04";
+ 			};
+ 
+-			qup_uart4_rts: qup-uart4-rts-pins {
++			qup_uart4_rts: qup-uart4-rts-state {
+ 				pins = "gpio17";
+ 				function = "qup04";
+ 			};
+ 
+-			qup_uart4_tx: qup-uart4-tx-pins {
++			qup_uart4_tx: qup-uart4-tx-state {
+ 				pins = "gpio18";
+ 				function = "qup04";
+ 			};
+ 
+-			qup_uart4_rx: qup-uart4-rx-pins {
++			qup_uart4_rx: qup-uart4-rx-state {
+ 				pins = "gpio19";
+ 				function = "qup04";
+ 			};
+ 
+-			qup_uart5_cts: qup-uart5-cts-pins {
++			qup_uart5_cts: qup-uart5-cts-state {
+ 				pins = "gpio20";
+ 				function = "qup05";
+ 			};
+ 
+-			qup_uart5_rts: qup-uart5-rts-pins {
++			qup_uart5_rts: qup-uart5-rts-state {
+ 				pins = "gpio21";
+ 				function = "qup05";
+ 			};
+ 
+-			qup_uart5_tx: qup-uart5-tx-pins {
++			qup_uart5_tx: qup-uart5-tx-state {
+ 				pins = "gpio22";
+ 				function = "qup05";
+ 			};
+ 
+-			qup_uart5_rx: qup-uart5-rx-pins {
++			qup_uart5_rx: qup-uart5-rx-state {
+ 				pins = "gpio23";
+ 				function = "qup05";
+ 			};
+ 
+-			qup_uart6_cts: qup-uart6-cts-pins {
++			qup_uart6_cts: qup-uart6-cts-state {
+ 				pins = "gpio24";
+ 				function = "qup06";
+ 			};
+ 
+-			qup_uart6_rts: qup-uart6-rts-pins {
++			qup_uart6_rts: qup-uart6-rts-state {
+ 				pins = "gpio25";
+ 				function = "qup06";
+ 			};
+ 
+-			qup_uart6_tx: qup-uart6-tx-pins {
++			qup_uart6_tx: qup-uart6-tx-state {
+ 				pins = "gpio26";
+ 				function = "qup06";
+ 			};
+ 
+-			qup_uart6_rx: qup-uart6-rx-pins {
++			qup_uart6_rx: qup-uart6-rx-state {
+ 				pins = "gpio27";
+ 				function = "qup06";
+ 			};
+ 
+-			qup_uart7_cts: qup-uart7-cts-pins {
++			qup_uart7_cts: qup-uart7-cts-state {
+ 				pins = "gpio28";
+ 				function = "qup07";
+ 			};
+ 
+-			qup_uart7_rts: qup-uart7-rts-pins {
++			qup_uart7_rts: qup-uart7-rts-state {
+ 				pins = "gpio29";
+ 				function = "qup07";
+ 			};
+ 
+-			qup_uart7_tx: qup-uart7-tx-pins {
++			qup_uart7_tx: qup-uart7-tx-state {
+ 				pins = "gpio30";
+ 				function = "qup07";
+ 			};
+ 
+-			qup_uart7_rx: qup-uart7-rx-pins {
++			qup_uart7_rx: qup-uart7-rx-state {
+ 				pins = "gpio31";
+ 				function = "qup07";
+ 			};
+ 
+-			qup_uart8_cts: qup-uart8-cts-pins {
++			qup_uart8_cts: qup-uart8-cts-state {
+ 				pins = "gpio32";
  				function = "qup10";
  			};
  
--			qup_spi11_cs: qup-spi11-cs {
-+			qup_spi11_cs: qup-spi11-cs-state {
- 				pins = "gpio63";
+-			qup_uart8_rts: qup-uart8-rts-pins {
++			qup_uart8_rts: qup-uart8-rts-state {
+ 				pins = "gpio33";
+ 				function = "qup10";
+ 			};
+ 
+-			qup_uart8_tx: qup-uart8-tx-pins {
++			qup_uart8_tx: qup-uart8-tx-state {
+ 				pins = "gpio34";
+ 				function = "qup10";
+ 			};
+ 
+-			qup_uart8_rx: qup-uart8-rx-pins {
++			qup_uart8_rx: qup-uart8-rx-state {
+ 				pins = "gpio35";
+ 				function = "qup10";
+ 			};
+ 
+-			qup_uart9_cts: qup-uart9-cts-pins {
++			qup_uart9_cts: qup-uart9-cts-state {
+ 				pins = "gpio36";
  				function = "qup11";
  			};
  
--			qup_spi11_cs_gpio: qup-spi11-cs-gpio {
-+			qup_spi11_cs_gpio: qup-spi11-cs-gpio-state {
- 				pins = "gpio63";
- 				function = "gpio";
- 			};
- 
--			qup_spi11_data_clk: qup-spi11-data-clk {
-+			qup_spi11_data_clk: qup-spi11-data-clk-state {
- 				pins = "gpio60", "gpio61",
- 				       "gpio62";
+-			qup_uart9_rts: qup-uart9-rts-pins {
++			qup_uart9_rts: qup-uart9-rts-state {
+ 				pins = "gpio37";
  				function = "qup11";
  			};
  
--			qup_spi12_cs: qup-spi12-cs {
-+			qup_spi12_cs: qup-spi12-cs-state {
- 				pins = "gpio35";
+-			qup_uart9_tx: qup-uart9-tx-pins {
++			qup_uart9_tx: qup-uart9-tx-state {
+ 				pins = "gpio38";
+ 				function = "qup11";
+ 			};
+ 
+-			qup_uart9_rx: qup-uart9-rx-pins {
++			qup_uart9_rx: qup-uart9-rx-state {
+ 				pins = "gpio39";
+ 				function = "qup11";
+ 			};
+ 
+-			qup_uart10_cts: qup-uart10-cts-pins {
++			qup_uart10_cts: qup-uart10-cts-state {
+ 				pins = "gpio40";
  				function = "qup12";
  			};
  
--			qup_spi12_cs_gpio: qup-spi12-cs-gpio {
-+			qup_spi12_cs_gpio: qup-spi12-cs-gpio-state {
- 				pins = "gpio35";
- 				function = "gpio";
- 			};
- 
--			qup_spi12_data_clk: qup-spi12-data-clk {
-+			qup_spi12_data_clk: qup-spi12-data-clk-state {
- 				pins = "gpio32", "gpio33",
- 				       "gpio34";
+-			qup_uart10_rts: qup-uart10-rts-pins {
++			qup_uart10_rts: qup-uart10-rts-state {
+ 				pins = "gpio41";
  				function = "qup12";
  			};
  
--			qup_spi13_cs: qup-spi13-cs {
-+			qup_spi13_cs: qup-spi13-cs-state {
- 				pins = "gpio39";
+-			qup_uart10_tx: qup-uart10-tx-pins {
++			qup_uart10_tx: qup-uart10-tx-state {
+ 				pins = "gpio42";
+ 				function = "qup12";
+ 			};
+ 
+-			qup_uart10_rx: qup-uart10-rx-pins {
++			qup_uart10_rx: qup-uart10-rx-state {
+ 				pins = "gpio43";
+ 				function = "qup12";
+ 			};
+ 
+-			qup_uart11_cts: qup-uart11-cts-pins {
++			qup_uart11_cts: qup-uart11-cts-state {
+ 				pins = "gpio44";
  				function = "qup13";
  			};
  
--			qup_spi13_cs_gpio: qup-spi13-cs-gpio {
-+			qup_spi13_cs_gpio: qup-spi13-cs-gpio-state {
- 				pins = "gpio39";
- 				function = "gpio";
- 			};
- 
--			qup_spi13_data_clk: qup-spi13-data-clk {
-+			qup_spi13_data_clk: qup-spi13-data-clk-state {
- 				pins = "gpio36", "gpio37",
- 				       "gpio38";
+-			qup_uart11_rts: qup-uart11-rts-pins {
++			qup_uart11_rts: qup-uart11-rts-state {
+ 				pins = "gpio45";
  				function = "qup13";
  			};
  
--			qup_spi14_cs: qup-spi14-cs {
-+			qup_spi14_cs: qup-spi14-cs-state {
- 				pins = "gpio43";
+-			qup_uart11_tx: qup-uart11-tx-pins {
++			qup_uart11_tx: qup-uart11-tx-state {
+ 				pins = "gpio46";
+ 				function = "qup13";
+ 			};
+ 
+-			qup_uart11_rx: qup-uart11-rx-pins {
++			qup_uart11_rx: qup-uart11-rx-state {
+ 				pins = "gpio47";
+ 				function = "qup13";
+ 			};
+ 
+-			qup_uart12_cts: qup-uart12-cts-pins {
++			qup_uart12_cts: qup-uart12-cts-state {
+ 				pins = "gpio48";
  				function = "qup14";
  			};
  
--			qup_spi14_cs_gpio: qup-spi14-cs-gpio {
-+			qup_spi14_cs_gpio: qup-spi14-cs-gpio-state {
- 				pins = "gpio43";
- 				function = "gpio";
- 			};
- 
--			qup_spi14_data_clk: qup-spi14-data-clk {
-+			qup_spi14_data_clk: qup-spi14-data-clk-state {
- 				pins = "gpio40", "gpio41",
- 				       "gpio42";
+-			qup_uart12_rts: qup-uart12-rts-pins {
++			qup_uart12_rts: qup-uart12-rts-state {
+ 				pins = "gpio49";
  				function = "qup14";
  			};
  
--			qup_spi15_cs: qup-spi15-cs {
-+			qup_spi15_cs: qup-spi15-cs-state {
- 				pins = "gpio47";
+-			qup_uart12_tx: qup-uart12-tx-pins {
++			qup_uart12_tx: qup-uart12-tx-state {
+ 				pins = "gpio50";
+ 				function = "qup14";
+ 			};
+ 
+-			qup_uart12_rx: qup-uart12-rx-pins {
++			qup_uart12_rx: qup-uart12-rx-state {
+ 				pins = "gpio51";
+ 				function = "qup14";
+ 			};
+ 
+-			qup_uart13_cts: qup-uart13-cts-pins {
++			qup_uart13_cts: qup-uart13-cts-state {
+ 				pins = "gpio52";
  				function = "qup15";
  			};
  
--			qup_spi15_cs_gpio: qup-spi15-cs-gpio {
-+			qup_spi15_cs_gpio: qup-spi15-cs-gpio-state {
- 				pins = "gpio47";
- 				function = "gpio";
- 			};
- 
--			qup_spi15_data_clk: qup-spi15-data-clk {
-+			qup_spi15_data_clk: qup-spi15-data-clk-state {
- 				pins = "gpio44", "gpio45",
- 				       "gpio46";
+-			qup_uart13_rts: qup-uart13-rts-pins {
++			qup_uart13_rts: qup-uart13-rts-state {
+ 				pins = "gpio53";
  				function = "qup15";
  			};
  
--			qup_spi16_cs: qup-spi16-cs {
-+			qup_spi16_cs: qup-spi16-cs-state {
- 				pins = "gpio51";
+-			qup_uart13_tx: qup-uart13-tx-pins {
++			qup_uart13_tx: qup-uart13-tx-state {
+ 				pins = "gpio54";
+ 				function = "qup15";
+ 			};
+ 
+-			qup_uart13_rx: qup-uart13-rx-pins {
++			qup_uart13_rx: qup-uart13-rx-state {
+ 				pins = "gpio55";
+ 				function = "qup15";
+ 			};
+ 
+-			qup_uart14_cts: qup-uart14-cts-pins {
++			qup_uart14_cts: qup-uart14-cts-state {
+ 				pins = "gpio56";
  				function = "qup16";
  			};
  
--			qup_spi16_cs_gpio: qup-spi16-cs-gpio {
-+			qup_spi16_cs_gpio: qup-spi16-cs-gpio-state {
- 				pins = "gpio51";
- 				function = "gpio";
- 			};
- 
--			qup_spi16_data_clk: qup-spi16-data-clk {
-+			qup_spi16_data_clk: qup-spi16-data-clk-state {
- 				pins = "gpio48", "gpio49",
- 				       "gpio50";
+-			qup_uart14_rts: qup-uart14-rts-pins {
++			qup_uart14_rts: qup-uart14-rts-state {
+ 				pins = "gpio57";
  				function = "qup16";
  			};
  
--			qup_spi17_cs: qup-spi17-cs {
-+			qup_spi17_cs: qup-spi17-cs-state {
- 				pins = "gpio55";
+-			qup_uart14_tx: qup-uart14-tx-pins {
++			qup_uart14_tx: qup-uart14-tx-state {
+ 				pins = "gpio58";
+ 				function = "qup16";
+ 			};
+ 
+-			qup_uart14_rx: qup-uart14-rx-pins {
++			qup_uart14_rx: qup-uart14-rx-state {
+ 				pins = "gpio59";
+ 				function = "qup16";
+ 			};
+ 
+-			qup_uart15_cts: qup-uart15-cts-pins {
++			qup_uart15_cts: qup-uart15-cts-state {
+ 				pins = "gpio60";
  				function = "qup17";
  			};
  
--			qup_spi17_cs_gpio: qup-spi17-cs-gpio {
-+			qup_spi17_cs_gpio: qup-spi17-cs-gpio-state {
- 				pins = "gpio55";
- 				function = "gpio";
- 			};
- 
--			qup_spi17_data_clk: qup-spi17-data-clk {
-+			qup_spi17_data_clk: qup-spi17-data-clk-state {
- 				pins = "gpio52", "gpio53",
- 				       "gpio54";
+-			qup_uart15_rts: qup-uart15-rts-pins {
++			qup_uart15_rts: qup-uart15-rts-state {
+ 				pins = "gpio61";
  				function = "qup17";
  			};
  
--			qup_spi18_cs: qup-spi18-cs {
-+			qup_spi18_cs: qup-spi18-cs-state {
- 				pins = "gpio59";
- 				function = "qup18";
+-			qup_uart15_tx: qup-uart15-tx-pins {
++			qup_uart15_tx: qup-uart15-tx-state {
+ 				pins = "gpio62";
+ 				function = "qup17";
  			};
  
--			qup_spi18_cs_gpio: qup-spi18-cs-gpio {
-+			qup_spi18_cs_gpio: qup-spi18-cs-gpio-state {
- 				pins = "gpio59";
- 				function = "gpio";
+-			qup_uart15_rx: qup-uart15-rx-pins {
++			qup_uart15_rx: qup-uart15-rx-state {
+ 				pins = "gpio63";
+ 				function = "qup17";
  			};
  
--			qup_spi18_data_clk: qup-spi18-data-clk {
-+			qup_spi18_data_clk: qup-spi18-data-clk-state {
- 				pins = "gpio56", "gpio57",
- 				       "gpio58";
- 				function = "qup18";
+-			sdc1_clk: sdc1-clk-pins {
++			sdc1_clk: sdc1-clk-state {
+ 				pins = "sdc1_clk";
  			};
  
--			qup_spi19_cs: qup-spi19-cs {
-+			qup_spi19_cs: qup-spi19-cs-state {
- 				pins = "gpio3";
- 				function = "qup19";
+-			sdc1_cmd: sdc1-cmd-pins {
++			sdc1_cmd: sdc1-cmd-state {
+ 				pins = "sdc1_cmd";
  			};
  
--			qup_spi19_cs_gpio: qup-spi19-cs-gpio {
-+			qup_spi19_cs_gpio: qup-spi19-cs-gpio-state {
- 				pins = "gpio3";
- 				function = "gpio";
+-			sdc1_data: sdc1-data-pins {
++			sdc1_data: sdc1-data-state {
+ 				pins = "sdc1_data";
  			};
  
--			qup_spi19_data_clk: qup-spi19-data-clk {
-+			qup_spi19_data_clk: qup-spi19-data-clk-state {
- 				pins = "gpio0", "gpio1",
- 				       "gpio2";
- 				function = "qup19";
+-			sdc1_rclk: sdc1-rclk-pins {
++			sdc1_rclk: sdc1-rclk-state {
+ 				pins = "sdc1_rclk";
  			};
  
--			qup_uart2_default: qup-uart2-default {
--				mux {
--					pins = "gpio117", "gpio118";
--					function = "qup2";
--				};
-+			qup_uart2_default: qup-uart2-default-state {
-+				pins = "gpio117", "gpio118";
-+				function = "qup2";
+-			sdc1_clk_sleep: sdc1-clk-sleep-pins {
++			sdc1_clk_sleep: sdc1-clk-sleep-state {
+ 				pins = "sdc1_clk";
+ 				drive-strength = <2>;
+ 				bias-bus-hold;
  			};
  
--			qup_uart6_default: qup-uart6-default {
--				mux {
--					pins = "gpio16", "gpio17",
--						"gpio18", "gpio19";
--					function = "qup6";
--				};
-+			qup_uart6_default: qup-uart6-default-state {
-+				pins = "gpio16", "gpio17", "gpio18", "gpio19";
-+				function = "qup6";
+-			sdc1_cmd_sleep: sdc1-cmd-sleep-pins {
++			sdc1_cmd_sleep: sdc1-cmd-sleep-state {
+ 				pins = "sdc1_cmd";
+ 				drive-strength = <2>;
+ 				bias-bus-hold;
  			};
  
--			qup_uart12_default: qup-uart12-default {
--				mux {
--					pins = "gpio34", "gpio35";
--					function = "qup12";
--				};
-+			qup_uart12_default: qup-uart12-default-state {
-+				pins = "gpio34", "gpio35";
-+				function = "qup12";
+-			sdc1_data_sleep: sdc1-data-sleep-pins {
++			sdc1_data_sleep: sdc1-data-sleep-state {
+ 				pins = "sdc1_data";
+ 				drive-strength = <2>;
+ 				bias-bus-hold;
  			};
  
--			qup_uart17_default: qup-uart17-default {
--				mux {
--					pins = "gpio52", "gpio53",
--						"gpio54", "gpio55";
--					function = "qup17";
--				};
-+			qup_uart17_default: qup-uart17-default-state {
-+				pins = "gpio52", "gpio53", "gpio54", "gpio55";
-+				function = "qup17";
+-			sdc1_rclk_sleep: sdc1-rclk-sleep-pins {
++			sdc1_rclk_sleep: sdc1-rclk-sleep-state {
+ 				pins = "sdc1_rclk";
+ 				drive-strength = <2>;
+ 				bias-bus-hold;
  			};
  
--			qup_uart18_default: qup-uart18-default {
--				mux {
--					pins = "gpio58", "gpio59";
--					function = "qup18";
--				};
-+			qup_uart18_default: qup-uart18-default-state {
-+				pins = "gpio58", "gpio59";
-+				function = "qup18";
+-			sdc2_clk: sdc2-clk-pins {
++			sdc2_clk: sdc2-clk-state {
+ 				pins = "sdc2_clk";
  			};
  
--			tert_mi2s_active: tert-mi2s-active {
--				sck {
-+			tert_mi2s_active: tert-mi2s-active-state {
-+				sck-pins {
- 					pins = "gpio133";
- 					function = "mi2s2_sck";
- 					drive-strength = <8>;
- 					bias-disable;
- 				};
- 
--				data0 {
-+				data0-pins {
- 					pins = "gpio134";
- 					function = "mi2s2_data0";
- 					drive-strength = <8>;
-@@ -4542,7 +4410,7 @@ data0 {
- 					output-high;
- 				};
- 
--				ws {
-+				ws-pins {
- 					pins = "gpio135";
- 					function = "mi2s2_ws";
- 					drive-strength = <8>;
-@@ -4550,42 +4418,42 @@ ws {
- 				};
+-			sdc2_cmd: sdc2-cmd-pins {
++			sdc2_cmd: sdc2-cmd-state {
+ 				pins = "sdc2_cmd";
  			};
  
--			sdc2_sleep_state: sdc2-sleep {
--				clk {
-+			sdc2_sleep_state: sdc2-sleep-state {
-+				clk-pins {
- 					pins = "sdc2_clk";
- 					drive-strength = <2>;
- 					bias-disable;
- 				};
- 
--				cmd {
-+				cmd-pins {
- 					pins = "sdc2_cmd";
- 					drive-strength = <2>;
- 					bias-pull-up;
- 				};
- 
--				data {
-+				data-pins {
- 					pins = "sdc2_data";
- 					drive-strength = <2>;
- 					bias-pull-up;
- 				};
+-			sdc2_data: sdc2-data-pins {
++			sdc2_data: sdc2-data-state {
+ 				pins = "sdc2_data";
  			};
  
--			pcie0_default_state: pcie0-default {
--				perst {
-+			pcie0_default_state: pcie0-default-state {
-+				perst-pins {
- 					pins = "gpio79";
- 					function = "gpio";
- 					drive-strength = <2>;
- 					bias-pull-down;
- 				};
- 
--				clkreq {
-+				clkreq-pins {
- 					pins = "gpio80";
- 					function = "pci_e0";
- 					drive-strength = <2>;
- 					bias-pull-up;
- 				};
- 
--				wake {
-+				wake-pins {
- 					pins = "gpio81";
- 					function = "gpio";
- 					drive-strength = <2>;
-@@ -4593,22 +4461,22 @@ wake {
- 				};
+-			sdc2_clk_sleep: sdc2-clk-sleep-pins {
++			sdc2_clk_sleep: sdc2-clk-sleep-state {
+ 				pins = "sdc2_clk";
+ 				drive-strength = <2>;
+ 				bias-bus-hold;
  			};
  
--			pcie1_default_state: pcie1-default {
--				perst {
-+			pcie1_default_state: pcie1-default-state {
-+				perst-pins {
- 					pins = "gpio82";
- 					function = "gpio";
- 					drive-strength = <2>;
- 					bias-pull-down;
- 				};
- 
--				clkreq {
-+				clkreq-pins {
- 					pins = "gpio83";
- 					function = "pci_e1";
- 					drive-strength = <2>;
- 					bias-pull-up;
- 				};
- 
--				wake {
-+				wake-pins {
- 					pins = "gpio84";
- 					function = "gpio";
- 					drive-strength = <2>;
-@@ -4616,22 +4484,22 @@ wake {
- 				};
+-			sdc2_cmd_sleep: sdc2-cmd-sleep-pins {
++			sdc2_cmd_sleep: sdc2-cmd-sleep-state {
+ 				pins = "sdc2_cmd";
+ 				drive-strength = <2>;
+ 				bias-bus-hold;
  			};
  
--			pcie2_default_state: pcie2-default {
--				perst {
-+			pcie2_default_state: pcie2-default-state {
-+				perst-pins {
- 					pins = "gpio85";
- 					function = "gpio";
- 					drive-strength = <2>;
- 					bias-pull-down;
- 				};
- 
--				clkreq {
-+				clkreq-pins {
- 					pins = "gpio86";
- 					function = "pci_e2";
- 					drive-strength = <2>;
- 					bias-pull-up;
- 				};
- 
--				wake {
-+				wake-pins {
- 					pins = "gpio87";
- 					function = "gpio";
- 					drive-strength = <2>;
+-			sdc2_data_sleep: sdc2-data-sleep-pins {
++			sdc2_data_sleep: sdc2-data-sleep-state {
+ 				pins = "sdc2_data";
+ 				drive-strength = <2>;
+ 				bias-bus-hold;
 -- 
 2.34.1
 
