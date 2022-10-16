@@ -2,52 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C80FC4332F
-	for <linux-gpio@archiver.kernel.org>; Sun, 16 Oct 2022 17:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC4EC43217
+	for <linux-gpio@archiver.kernel.org>; Sun, 16 Oct 2022 17:22:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229802AbiJPRWd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 16 Oct 2022 13:22:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47936 "EHLO
+        id S229901AbiJPRWh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 16 Oct 2022 13:22:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229757AbiJPRWc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 16 Oct 2022 13:22:32 -0400
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC2302FC0C
-        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:22:30 -0700 (PDT)
-Received: by mail-qv1-xf2d.google.com with SMTP id f14so6279390qvo.3
-        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:22:30 -0700 (PDT)
+        with ESMTP id S229851AbiJPRWg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 16 Oct 2022 13:22:36 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DA312F676
+        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:22:34 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id y10so6256513qvo.11
+        for <linux-gpio@vger.kernel.org>; Sun, 16 Oct 2022 10:22:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5gbkkSbXqT43PmPto6mFBhamUZk4OeGT/iuTbMIcXNY=;
-        b=Z83lLugiejE4w80gq/rvtZZTGPNgW9Mjn55PiYiEbwnatskFW8B6NOBid+Di1mwy9L
-         3HPklr/j4Ztxg0xtIEB85fZlmQTzTSKC4cuUjGfdNjXssCnR7MVeCs+EAwXUlV5lzRx7
-         3gGYPTOd5Iciyi+BNUCoB5wIl52F0nz7SZP5ctPzR02Tte1F/KQf8JYtasFNEfIuHWNr
-         sGlTVnUnP1CJPDBcOZxOuw4VSYMNcoV7B5cLAmawdmGMlXXl7crIZA5TLuvzNV2PEN97
-         6qMvBe299BpA7MSJRV5Ekx1TCY4nd7qd+oGFSi9YPQNmV+7QHSiCitVxWF7vFfrP5YLP
-         gp+w==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gFj0tarFqSx3s6Y+E4chkx9Vjwt5TrnQF9RepFZJY9I=;
+        b=eOKtAx1eo49sNhycPR9zNN7BHHDIRhh6VhpnchbtriXkU7IgTi9YpCtWZZ9WYiWYit
+         ymgbAzv86AlInl83Eq1IraAOpW/B8vOGtp2zQDGNREsf8MBjc6JwAeoyzMuGz11Zl+bP
+         rBEcGGaqsPc644qhAMh1u85oSTKGksxAORJRAdOKNRkiuO1J+ObyhokD4P7AX7gCX8fD
+         dL5LYmdFktI4taMm4xBWCsiOKEHPchTPsRMRsffPkrgRi05VRiNGkrvmarRl6Ig9oj85
+         uqvz7Wtt9xluVA2ldHmQpYMNMuzt5fY6B72aHZ5FIqr9t8GqpeD4j+wr01lbV9fe+lT8
+         umAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5gbkkSbXqT43PmPto6mFBhamUZk4OeGT/iuTbMIcXNY=;
-        b=40v7JTsiP8m0UkBhDw+cW1dbyOi2polB1vKOWdH/JVtwH8No/nW/koJoPladeZrn9b
-         /28hSFb/w/a/5lnaaTdjIHOXc8TmXD7NLtHPCneh4LaDiEL5DXNRr9wqUtbRnT2fUz4w
-         q2uvdnxSTj01ge+o0wJS4pByv6+isIstlh5yFP2Ww0xtVW2IYYXH8y/e5a33D6toFWSg
-         JYAbwMuNcW3ZeWBnfTR56lV9aouMMXKuJBkfU8o/BpkUhuCJUmFe8oBit0XqIB8uIjAy
-         w0Ejav9o/YXzNcCmXcgVpAZ6oEtWm/coDuTEkX/+U9x/BjtVzaE+Sk+ipzIUQISdA3Jg
-         wQtQ==
-X-Gm-Message-State: ACrzQf2OiA3GLhsqsmCu4eLdmSRSfPKk5ve7Et9NDfwaoyv/36mo2mHK
-        i/ZH0Q6+NPP0HMtv4hLYVqsK3g==
-X-Google-Smtp-Source: AMsMyM5STrKtZsCS7HDu9wc1Ve/epP/Da6e6B/vg1bztG044hcO+Mo8667UbXkih9U9Uak0tjFKVqg==
-X-Received: by 2002:ad4:5d48:0:b0:4af:b6ef:eea9 with SMTP id jk8-20020ad45d48000000b004afb6efeea9mr5678320qvb.53.1665940949960;
-        Sun, 16 Oct 2022 10:22:29 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gFj0tarFqSx3s6Y+E4chkx9Vjwt5TrnQF9RepFZJY9I=;
+        b=1B/R6QKkVT7KBkVeB7nYZTeEeuhOC+jk8nf6RJswpc48e5gEenaCKlVD+UzqJudEuF
+         BSl2zuFJVCIylYx+Z4XGQkHe4XWzAXvJDXKHqdKi9p4QKlAd6KALUAb7aIHifK4+UDAG
+         K3LhRBXkmSjhpXXO8wHzpybWPBMa0NHKvOPOGyLPrdGByCYSoGqtM++gkAd9HJUxLd3S
+         t2LonaNR8wVBKEMXxls22qSBFCu2az9RIUvazF8afcznykqiexOyMbACD+8w57b5lY8N
+         Qq2/DAxUGkipfU4GkGV4vFnC2OPNRp8UqH1z0YnNpj33Dqc3a9ZSJNalXPEpkvzPNzMM
+         Hw0A==
+X-Gm-Message-State: ACrzQf33o8rkKTqJBhbF2I2DZvNXFZCti4UUevh1hV5JzbvidnghIyRA
+        U0GasO/KYf45OSAG2GzTGo29Lw==
+X-Google-Smtp-Source: AMsMyM55RgRGTHcoNYpgKLNB89jmGDKjXr98HpgYPRV3CsekYPfRXlb2yhq5phun7kgWhy6TZcoGUg==
+X-Received: by 2002:a0c:ab18:0:b0:4ac:d471:7b83 with SMTP id h24-20020a0cab18000000b004acd4717b83mr5800315qvb.102.1665940953373;
+        Sun, 16 Oct 2022 10:22:33 -0700 (PDT)
 Received: from krzk-bin.hsd1.pa.comcast.net ([2601:42:0:3450:9b13:d679:7b5b:6921])
-        by smtp.gmail.com with ESMTPSA id r5-20020ac87945000000b003431446588fsm6051008qtt.5.2022.10.16.10.22.28
+        by smtp.gmail.com with ESMTPSA id r5-20020ac87945000000b003431446588fsm6051008qtt.5.2022.10.16.10.22.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Oct 2022 10:22:29 -0700 (PDT)
+        Sun, 16 Oct 2022 10:22:32 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -58,107 +59,40 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 00/17] pinctrl/arm64: qcom: 4th set of Qualcomm TLMM pinctrl schema warnings
-Date:   Sun, 16 Oct 2022 13:21:55 -0400
-Message-Id: <20221016172212.49105-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 02/17] arm64: dts: qcom: sm8250-sony-xperia-edo: fix touchscreen bias-disable
+Date:   Sun, 16 Oct 2022 13:21:57 -0400
+Message-Id: <20221016172212.49105-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221016172212.49105-1-krzysztof.kozlowski@linaro.org>
+References: <20221016172212.49105-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+The property to disable bias is "bias-disable".
 
-Changes since v2
-================
-1. Drop drive-strength, reword commit msg of "qcom,sm8250: use common TLMM pin
-   schema" and "qcom,sc7280: use common TLMM pin schema".
-2. Move "dt-bindings: pinctrl: qcom,sc7280: use common TLMM pin schema" to this
-   patchset. Previously it was part of:
-   https://lore.kernel.org/linux-devicetree/20220930192954.242546-1-krzysztof.kozlowski@linaro.org/
-3. Add tags.
+Fixes: e76c7e1f15fe ("arm64: dts: qcom: sm8250-edo: Add Samsung touchscreen")
+Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes since v1
-================
-1. Check for function on non-GPIO pins was moved to common TLMM schema, thus
-   new patch #12: dt-bindings: pinctrl: qcom,sm8250: drop checks used in common
-   TLMM
-
-2. Above also makes minor context changes in patch #13 "dt-bindings: pinctrl:
-   qcom,sm8250: fix matching pin config"
-
-3. Add tags (I am using `b4 trailers` so they might appear in odd order).
-
-Overview
-========
-This is the *fourth* patchset around Qualcomm pinctrl in recent days:
-1. First round of TLMM fixes: merged
-2. LPASS fixes:
-   https://lore.kernel.org/linux-devicetree/20220927153429.55365-1-krzysztof.kozlowski@linaro.org/T/#t
-3. ARMv7 TLMM fixes:
-   https://lore.kernel.org/linux-arm-msm/20221016170035.35014-1-krzysztof.kozlowski@linaro.org/T/#t
-4. ARMv8 remaining TLMM fixes: *THIS PATCHSET*
-5. Fifth clean - styles and using common TLMM schema:
-   https://lore.kernel.org/linux-arm-msm/20221011172358.69043-1-krzysztof.kozlowski@linaro.org/T/#m277d25a5f3e9d10ca8221a7fba62ca468a67a60b
-
-Dependencies
-============
-1. Almost no dependencies - logically the bindings patch "dt-bindings: pinctrl:
-   qcom,sm8250: drop checks used in common TLMM" depends on patchset #3 above.
-   This is not a hard-dependency, everything will compile nicely, no warnings.
-
-2. dt-bindings are independent of DTS patches.
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (17):
-  arm64: dts: qcom: sm8250: align TLMM pin configuration with DT schema
-  arm64: dts: qcom: sm8250-sony-xperia-edo: fix touchscreen bias-disable
-  arm64: dts: qcom: sc8280xp: align TLMM pin configuration with DT
-    schema
-  arm64: dts: qcom: sc7280: align TLMM pin configuration with DT schema
-    (really)
-  arm64: dts: qcom: sc7280-herobrine: correct number of gpio-line-names
-  arm64: dts: qcom: sc7280-idp-ec-h1: add missing QUP GPIO functions
-  arm64: dts: qcom: msm8953: align TLMM pin configuration with DT schema
-  arm64: dts: qcom: sdm845: align TLMM pin configuration with DT schema
-  arm64: dts: qcom: sm6125-sony-xperia: add missing SD CD GPIO functions
-  arm64: dts: qcom: sm6125: align TLMM pin configuration with DT schema
-  dt-bindings: pinctrl: qcom,sm8250: add gpio-reserved-ranges and
-    gpio-line-names
-  dt-bindings: pinctrl: qcom,sm8250: use common TLMM pin schema
-  dt-bindings: pinctrl: qcom,sm8250: fix matching pin config
-  dt-bindings: pinctrl: qcom,sm8250: add input-enable
-  dt-bindings: pinctrl: qcom,sc7280: correct number of GPIOs
-  dt-bindings: pinctrl: qcom,sc7280: add bias-bus-hold and input-enable
-  dt-bindings: pinctrl: qcom,sc7280: use common TLMM pin schema
-
- .../bindings/pinctrl/qcom,sc7280-pinctrl.yaml |  28 +-
- .../bindings/pinctrl/qcom,sm8250-pinctrl.yaml | 140 ++---
- arch/arm64/boot/dts/qcom/msm8953.dtsi         |  70 +--
- arch/arm64/boot/dts/qcom/qrb5165-rb5.dts      |  12 +-
- arch/arm64/boot/dts/qcom/sc7280-crd-r3.dts    |   8 +-
- .../boot/dts/qcom/sc7280-herobrine-crd.dts    |   1 +
- .../dts/qcom/sc7280-herobrine-evoker-r0.dts   |   1 -
- .../qcom/sc7280-herobrine-herobrine-r1.dts    |   1 -
- .../dts/qcom/sc7280-herobrine-villager.dtsi   |   1 -
- .../arm64/boot/dts/qcom/sc7280-herobrine.dtsi |  44 +-
- .../arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi |  10 +-
- arch/arm64/boot/dts/qcom/sc7280-idp.dtsi      |  26 +-
- arch/arm64/boot/dts/qcom/sc7280-qcard.dtsi    |  20 +-
- arch/arm64/boot/dts/qcom/sc7280.dtsi          | 316 +++++-----
- arch/arm64/boot/dts/qcom/sc8280xp-crd.dts     |  12 +-
- .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    |  12 +-
- .../arm64/boot/dts/qcom/sdm845-lg-common.dtsi |   2 +-
- .../qcom/sm6125-sony-xperia-seine-pdx201.dts  |   2 +
- arch/arm64/boot/dts/qcom/sm6125.dtsi          |   4 +-
- arch/arm64/boot/dts/qcom/sm8250-mtp.dts       |  38 +-
- .../boot/dts/qcom/sm8250-sony-xperia-edo.dtsi |  18 +-
- arch/arm64/boot/dts/qcom/sm8250.dtsi          | 556 +++++++-----------
- 22 files changed, 582 insertions(+), 740 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi b/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi
+index 72162852fae7..601a21c381f8 100644
+--- a/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi
+@@ -613,7 +613,7 @@ ts_int_default: ts-int-default-state {
+ 		pins = "gpio39";
+ 		function = "gpio";
+ 		drive-strength = <2>;
+-		bias-disabled;
++		bias-disable;
+ 		input-enable;
+ 	};
+ 
 -- 
 2.34.1
 
