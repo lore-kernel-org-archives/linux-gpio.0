@@ -2,744 +2,366 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87721C433FE
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Oct 2022 11:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2AD7C43217
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Oct 2022 12:00:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230285AbiJQLsX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Oct 2022 07:48:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46646 "EHLO
+        id S229630AbiJQMA4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Oct 2022 08:00:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230230AbiJQLsT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2022 07:48:19 -0400
-Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [5.144.164.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EB1653D37;
-        Mon, 17 Oct 2022 04:48:09 -0700 (PDT)
-Received: from cp.tophost.it (vm1054.cs12.seeweb.it [217.64.195.253])
-        by m-r1.th.seeweb.it (Postfix) with ESMTPA id 3AB0F1F54F;
-        Mon, 17 Oct 2022 13:48:07 +0200 (CEST)
+        with ESMTP id S230002AbiJQMAn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2022 08:00:43 -0400
+Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 928F356006
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 05:00:27 -0700 (PDT)
+Received: by mail-vs1-xe2c.google.com with SMTP id x66so2509835vsb.3
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 05:00:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=km+V5E5aIzDS+IP1JvWDTAhGFYlrvl+I0V8b88NktU0=;
+        b=guwOOyKsOlA8KiNFTYhIEfCh2tmNd8tGgCf1Tmc5A5GA7re9GuJfbvsBW0iwTGqzyE
+         sgo4mVVkoyxWlFJj7MSJFFO+y7xgFyr49rqojchP5sBOiu+7zY4t0OiBsctl6RRvj5z9
+         mdIWvQuAbxrnDigOYZDQnTCFU6ixQnTpaCEprk9PZJrKwL8BI6xB1R71R34mJYAZ46Pu
+         nfM0Jyuar1+zD4sUgzG8DjuzHTls/Bf+YGY2fhm6d6JoRlqQIIGiFv/WPCVmhPL3ZROS
+         rpHiWSzaBBdBygmXzeUivqRyXLIbsRaWb1YSZmC16Wpokb6uUVOmqggYYrZC5sXIJa7m
+         4HGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=km+V5E5aIzDS+IP1JvWDTAhGFYlrvl+I0V8b88NktU0=;
+        b=QaGAoWvPq4GGgxUIyN9uk5/sBrZWhX6tlMsFg3+r4jmv2HudSdBPqqUQSf9McvA3Wq
+         h9O9yOCLZG0udp8/Z8TYUjLtS6aOE6UmkHIi+706tzSjaFm+yJMKIzDv98WWTz0mQCj8
+         JeuYYeCEoV8ITzDTAFeJk6BPByonmomP7w9Utu7N0A96E3kYBdE9/moXmXMvIIufl+ns
+         rs6UzHrozI0ekfR8EeBcswKnDMZBLJMspdAzXaESErPnnROkgnKd5RQAPPH+gEPCWUCK
+         LOG5PCw9uIm8c1bVgKn3vleBxpNIg55BaYdNoEhO8Q9nCq4YtAkaYos0vTqE4rkbhset
+         JcOA==
+X-Gm-Message-State: ACrzQf0L2tvFZbLD3Uade7wTwSXl3zJ5dVBvJJQuUMC6cEd7clpyxiWD
+        PF3l3GTRR6XyE7lDvQqcvYGbK/saQBhf4R8kxXz6sA==
+X-Google-Smtp-Source: AMsMyM4yvZNVB0M8le9FPMgsekoVSi8wpRbuYIGHdapHZ5b/p7wycmfv4hS9klAtIliLNBYgti3K31X9Onji6ieiGuo=
+X-Received: by 2002:a67:ab46:0:b0:3a7:d2b6:121b with SMTP id
+ k6-20020a67ab46000000b003a7d2b6121bmr3990461vsh.16.1666008026461; Mon, 17 Oct
+ 2022 05:00:26 -0700 (PDT)
 MIME-Version: 1.0
-Date:   Mon, 17 Oct 2022 13:33:38 +0200
-From:   konrad.dybcio@somainline.org
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: qcom: msm8974: align TLMM pin configuration
- with DT schema
-In-Reply-To: <20221017012225.8579-2-krzysztof.kozlowski@linaro.org>
-References: <20221017012225.8579-1-krzysztof.kozlowski@linaro.org>
- <20221017012225.8579-2-krzysztof.kozlowski@linaro.org>
-User-Agent: Roundcube Webmail/1.4.6
-Message-ID: <496385df3b2d3da7b16ca35d43d70ba3@somainline.org>
-X-Sender: konrad.dybcio@somainline.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20221007145521.329614-1-brgl@bgdev.pl> <20221007145521.329614-3-brgl@bgdev.pl>
+ <Y0eBbUkzryyJZKwq@sol>
+In-Reply-To: <Y0eBbUkzryyJZKwq@sol>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 17 Oct 2022 14:00:15 +0200
+Message-ID: <CAMRc=MfpGFUPntmBNKsyuheD7Enqxq=K+K2hsp24ru18mn0x2A@mail.gmail.com>
+Subject: Re: [libgpiod v2][PATCH v3 2/4] bindings: python: add examples
+To:     Kent Gibson <warthog618@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2022-10-17 03:22, Krzysztof Kozlowski wrote:
-> DT schema expects TLMM pin configuration nodes to be named with
-> '-state' suffix and their optional children with '-pins' suffix.  All
-> nodes for GPIOs must also define the function property.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+On Thu, Oct 13, 2022 at 5:09 AM Kent Gibson <warthog618@gmail.com> wrote:
+>
+> On Fri, Oct 07, 2022 at 04:55:19PM +0200, Bartosz Golaszewski wrote:
+> > This adds the regular set of example programs implemented using libgpiod
+> > python bindings.
+> >
+> > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> > ---
+> >  bindings/python/examples/Makefile.am   | 10 +++++++
+> >  bindings/python/examples/gpiodetect.py | 17 ++++++++++++
+> >  bindings/python/examples/gpiofind.py   | 20 ++++++++++++++
+> >  bindings/python/examples/gpioget.py    | 31 +++++++++++++++++++++
+> >  bindings/python/examples/gpioinfo.py   | 35 ++++++++++++++++++++++++
+> >  bindings/python/examples/gpiomon.py    | 28 +++++++++++++++++++
+> >  bindings/python/examples/gpioset.py    | 37 ++++++++++++++++++++++++++
+> >  7 files changed, 178 insertions(+)
+> >  create mode 100644 bindings/python/examples/Makefile.am
+> >  create mode 100755 bindings/python/examples/gpiodetect.py
+> >  create mode 100755 bindings/python/examples/gpiofind.py
+> >  create mode 100755 bindings/python/examples/gpioget.py
+> >  create mode 100755 bindings/python/examples/gpioinfo.py
+> >  create mode 100755 bindings/python/examples/gpiomon.py
+> >  create mode 100755 bindings/python/examples/gpioset.py
+> >
+> > diff --git a/bindings/python/examples/Makefile.am b/bindings/python/examples/Makefile.am
+> > new file mode 100644
+> > index 0000000..f42b80e
+> > --- /dev/null
+> > +++ b/bindings/python/examples/Makefile.am
+> > @@ -0,0 +1,10 @@
+> > +# SPDX-License-Identifier: GPL-2.0-or-later
+> > +# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
+> > +
+> > +EXTRA_DIST = \
+> > +     gpiodetect.py \
+> > +     gpiofind.py \
+> > +     gpioget.py \
+> > +     gpioinfo.py \
+> > +     gpiomon.py \
+> > +     gpioset.py
+> > diff --git a/bindings/python/examples/gpiodetect.py b/bindings/python/examples/gpiodetect.py
+> > new file mode 100755
+> > index 0000000..c32014f
+> > --- /dev/null
+> > +++ b/bindings/python/examples/gpiodetect.py
+> > @@ -0,0 +1,17 @@
+> > +#!/usr/bin/env python3
+> > +# SPDX-License-Identifier: GPL-2.0-or-later
+> > +# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
+> > +
+> > +"""Reimplementation of the gpiodetect tool in Python."""
+> > +
+> > +import gpiod
+> > +import os
+> > +
+> > +if __name__ == "__main__":
+> > +    for entry in os.scandir("/dev/"):
+> > +        if gpiod.is_gpiochip_device(entry.path):
+>
+> Add a helper generator function that returns the available chip paths?
+> And in order might be nice too.
+>
+> > +            with gpiod.Chip(entry.path) as chip:
+> > +                info = chip.get_info()
+> > +                print(
+> > +                    "{} [{}] ({} lines)".format(info.name, info.label, info.num_lines)
+> > +                )
+> > diff --git a/bindings/python/examples/gpiofind.py b/bindings/python/examples/gpiofind.py
+> > new file mode 100755
+> > index 0000000..2f30445
+> > --- /dev/null
+> > +++ b/bindings/python/examples/gpiofind.py
+> > @@ -0,0 +1,20 @@
+> > +#!/usr/bin/env python3
+> > +# SPDX-License-Identifier: GPL-2.0-or-later
+> > +# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
+> > +
+> > +"""Reimplementation of the gpiofind tool in Python."""
+> > +
+> > +import gpiod
+> > +import os
+> > +import sys
+> > +
+> > +if __name__ == "__main__":
+> > +    for entry in os.scandir("/dev/"):
+> > +        if gpiod.is_gpiochip_device(entry.path):
+> > +            with gpiod.Chip(entry.path) as chip:
+> > +                offset = chip.map_line(sys.argv[1])
+>
+>                             chip.offset_from_id(...
+>
+> > +                if offset is not None:
+> > +                    print("{} {}".format(chip.get_info().name, offset))
+> > +                    sys.exit(0)
+> > +
+> > +    sys.exit(1)
+> > diff --git a/bindings/python/examples/gpioget.py b/bindings/python/examples/gpioget.py
+> > new file mode 100755
+> > index 0000000..d441535
+> > --- /dev/null
+> > +++ b/bindings/python/examples/gpioget.py
+> > @@ -0,0 +1,31 @@
+> > +#!/usr/bin/env python3
+> > +# SPDX-License-Identifier: GPL-2.0-or-later
+> > +# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
+> > +
+> > +"""Simplified reimplementation of the gpioget tool in Python."""
+> > +
+> > +import gpiod
+> > +import sys
+> > +
+> > +from gpiod.line import Direction
+> > +
+> > +if __name__ == "__main__":
+> > +    if len(sys.argv) < 3:
+> > +        raise TypeError("usage: gpioget.py <gpiochip> <offset1> <offset2> ...")
+> > +
+> > +    path = sys.argv[1]
+> > +    lines = []
+> > +    for line in sys.argv[2:]:
+> > +        lines.append(int(line) if line.isdigit() else line)
+> > +
+>
+> Just leave the line ids as string?
+>
+> else use a list comprehension:
+>
+>     lines = [ int(id) if id.isdigit() else id for id in sys.argv[2:] ]
+>
+> Similarly elsewhere.
+>
+> > +    request = gpiod.request_lines(
+> > +        path,
+> > +        consumer="gpioget.py",
+> > +        config={tuple(lines): gpiod.LineSettings(direction=Direction.INPUT)},
+> > +    )
+> > +
+> > +    vals = request.get_values()
+> > +
+> > +    for val in vals:
+> > +        print("{} ".format(val.value), end="")
+> > +    print()
+> > diff --git a/bindings/python/examples/gpioinfo.py b/bindings/python/examples/gpioinfo.py
+> > new file mode 100755
+> > index 0000000..e8c7d46
+> > --- /dev/null
+> > +++ b/bindings/python/examples/gpioinfo.py
+> > @@ -0,0 +1,35 @@
+> > +#!/usr/bin/env python3
+> > +# SPDX-License-Identifier: GPL-2.0-or-later
+> > +# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
+> > +
+> > +"""Simplified reimplementation of the gpioinfo tool in Python."""
+> > +
+> > +import gpiod
+> > +import os
+> > +
+> > +if __name__ == "__main__":
+> > +    for entry in os.scandir("/dev/"):
+> > +        if gpiod.is_gpiochip_device(entry.path):
+> > +            with gpiod.Chip(entry.path) as chip:
+> > +                cinfo = chip.get_info()
+> > +                print("{} - {} lines:".format(cinfo.name, cinfo.num_lines))
+> > +
+> > +                for offset in range(0, cinfo.num_lines):
+> > +                    linfo = chip.get_line_info(offset)
+> > +                    offset = linfo.offset
+> > +                    name = linfo.name
+> > +                    consumer = linfo.consumer
+> > +                    direction = linfo.direction
+>
+>                     is_input = linfo.direction == gpiod.line.Direction.INPUT
+>
+> That is for space saving below.
+> Drop the others as they are only referenced once (if you follow the
+> suggestion below).
+>
+> > +                    active_low = linfo.active_low
+> > +
+> > +                    print(
+> > +                        "\tline {:>3}: {:>18} {:>12} {:>8} {:>10}".format(
+> > +                            offset,
+> > +                            "unnamed" if name is None else name,
+> > +                            "unused" if consumer is None else consumer,
+> > +                            "input"
+> > +                            if direction == gpiod.line.Direction.INPUT
+> > +                            else "output",
+> > +                            "active-low" if active_low else "active-high",
+>                         linfo.offset,
+>                         linfo.name or "unnamed",
+>                         linfo.consumer or "unused",
+>                         is_input and "input" or "output",
+>                         linfo.active_low and "active_low" or "active-high",
+>
+> > +                        )
+> > +                    )
+> > diff --git a/bindings/python/examples/gpiomon.py b/bindings/python/examples/gpiomon.py
+> > new file mode 100755
+> > index 0000000..e0db16f
+> > --- /dev/null
+> > +++ b/bindings/python/examples/gpiomon.py
+> > @@ -0,0 +1,28 @@
+> > +#!/usr/bin/env python3
+> > +# SPDX-License-Identifier: GPL-2.0-or-later
+> > +# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
+> > +
+> > +"""Simplified reimplementation of the gpiomon tool in Python."""
+> > +
+> > +import gpiod
+> > +import sys
+> > +
+> > +from gpiod.line import Edge
+> > +
+> > +if __name__ == "__main__":
+> > +    if len(sys.argv) < 3:
+> > +        raise TypeError("usage: gpiomon.py <gpiochip> <offset1> <offset2> ...")
+> > +
+> > +    path = sys.argv[1]
+> > +    lines = []
+> > +    for line in sys.argv[2:]:
+> > +        lines.append(int(line) if line.isdigit() else line)
+> > +
+> > +    with gpiod.request_lines(
+> > +        path,
+> > +        consumer="gpiomon.py",
+> > +        config={tuple(lines): gpiod.LineSettings(edge_detection=Edge.BOTH)},
+> > +    ) as request:
+> > +        while True:
+> > +            for event in request.read_edge_event():
+> > +                print(event)
+> > diff --git a/bindings/python/examples/gpioset.py b/bindings/python/examples/gpioset.py
+> > new file mode 100755
+> > index 0000000..f0b0681
+> > --- /dev/null
+> > +++ b/bindings/python/examples/gpioset.py
+> > @@ -0,0 +1,37 @@
+> > +#!/usr/bin/env python3
+> > +# SPDX-License-Identifier: GPL-2.0-or-later
+> > +# SPDX-FileCopyrightText: 2022 Bartosz Golaszewski <brgl@bgdev.pl>
+> > +
+> > +"""Simplified reimplementation of the gpioset tool in Python."""
+> > +
+> > +import gpiod
+> > +import sys
+> > +
+> > +from gpiod.line import Direction, Value
+> > +
+> > +if __name__ == "__main__":
+> > +    if len(sys.argv) < 3:
+> > +        raise TypeError(
+> > +            "usage: gpioset.py <gpiochip> <offset1>=<value1> <offset2>=<value2> ..."
+> > +        )
+> > +
+> > +    path = sys.argv[1]
+> > +    values = dict()
+> > +    lines = []
+> > +    for arg in sys.argv[2:]:
+> > +        arg = arg.split("=")
+> > +        key = int(arg[0]) if arg[0].isdigit() else arg[0]
+> > +        val = int(arg[1])
+> > +
+> > +        lines.append(key)
+> > +        values[key] = Value(val)
+> > +
+>
+>         lvs = [ arg.split('=') for arg in sys.argv[2:] ]
+>         lines = [ x[0] for x in lvs ]
+>         values = dict[lvs]
 
-Konrad
->  .../arm/boot/dts/qcom-apq8074-dragonboard.dts | 14 ++--
->  .../dts/qcom-msm8974-sony-xperia-rhine.dtsi   | 16 ++--
->  arch/arm/boot/dts/qcom-msm8974.dtsi           | 77 ++++++++++---------
->  .../dts/qcom-msm8974pro-fairphone-fp2.dts     | 20 ++---
->  .../boot/dts/qcom-msm8974pro-samsung-klte.dts | 36 ++++-----
->  ...-msm8974pro-sony-xperia-shinano-castor.dts | 31 ++++----
->  6 files changed, 98 insertions(+), 96 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/qcom-apq8074-dragonboard.dts
-> b/arch/arm/boot/dts/qcom-apq8074-dragonboard.dts
-> index 91716298ec5e..dc04f315026d 100644
-> --- a/arch/arm/boot/dts/qcom-apq8074-dragonboard.dts
-> +++ b/arch/arm/boot/dts/qcom-apq8074-dragonboard.dts
-> @@ -272,34 +272,34 @@ &sdhc_2 {
->  };
-> 
->  &tlmm {
-> -	sdc1_on: sdc1-on {
-> -		clk {
-> +	sdc1_on: sdc1-on-state {
-> +		clk-pins {
->  			pins = "sdc1_clk";
->  			drive-strength = <16>;
->  			bias-disable;
->  		};
-> 
-> -		cmd-data {
-> +		cmd-data-pins {
->  			pins = "sdc1_cmd", "sdc1_data";
->  			drive-strength = <10>;
->  			bias-pull-up;
->  		};
->  	};
-> 
-> -	sdc2_on: sdc2-on {
-> -		clk {
-> +	sdc2_on: sdc2-on-state {
-> +		clk-pins {
->  			pins = "sdc2_clk";
->  			drive-strength = <10>;
->  			bias-disable;
->  		};
-> 
-> -		cmd-data {
-> +		cmd-data-pins {
->  			pins = "sdc2_cmd", "sdc2_data";
->  			drive-strength = <6>;
->  			bias-pull-up;
->  		};
-> 
-> -		cd {
-> +		cd-pins {
->  			pins = "gpio62";
->  			function = "gpio";
->  			drive-strength = <2>;
-> diff --git a/arch/arm/boot/dts/qcom-msm8974-sony-xperia-rhine.dtsi
-> b/arch/arm/boot/dts/qcom-msm8974-sony-xperia-rhine.dtsi
-> index 5a70683d9103..221a11e1d17d 100644
-> --- a/arch/arm/boot/dts/qcom-msm8974-sony-xperia-rhine.dtsi
-> +++ b/arch/arm/boot/dts/qcom-msm8974-sony-xperia-rhine.dtsi
-> @@ -442,7 +442,7 @@ &smbb {
->  };
-> 
->  &tlmm {
-> -	ts_int_pin: touch-int {
-> +	ts_int_pin: touch-int-state {
->  		pins = "gpio61";
->  		function = "gpio";
->  		drive-strength = <2>;
-> @@ -450,34 +450,34 @@ ts_int_pin: touch-int {
->  		input-enable;
->  	};
-> 
-> -	sdc1_on: sdc1-on {
-> -		clk {
-> +	sdc1_on: sdc1-on-state {
-> +		clk-pins {
->  			pins = "sdc1_clk";
->  			drive-strength = <16>;
->  			bias-disable;
->  		};
-> 
-> -		cmd-data {
-> +		cmd-data-pins {
->  			pins = "sdc1_cmd", "sdc1_data";
->  			drive-strength = <10>;
->  			bias-pull-up;
->  		};
->  	};
-> 
-> -	sdc2_on: sdc-on {
-> -		clk {
-> +	sdc2_on: sdc-on-state {
-> +		clk-pins {
->  			pins = "sdc2_clk";
->  			drive-strength = <10>;
->  			bias-disable;
->  		};
-> 
-> -		cmd-data {
-> +		cmd-data-pins {
->  			pins = "sdc2_cmd", "sdc2_data";
->  			drive-strength = <6>;
->  			bias-pull-up;
->  		};
-> 
-> -		cd {
-> +		cd-pins {
->  			pins = "gpio62";
->  			function = "gpio";
->  			drive-strength = <2>;
-> diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi
-> b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> index 7a9be0acf3f5..3b0072f13a97 100644
-> --- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-> +++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> @@ -1253,61 +1253,62 @@ tlmm: pinctrl@fd510000 {
->  			#interrupt-cells = <2>;
->  			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-> 
-> -			sdc1_off: sdc1-off {
-> -				clk {
-> +			sdc1_off: sdc1-off-state {
-> +				clk-pins {
->  					pins = "sdc1_clk";
->  					bias-disable;
->  					drive-strength = <2>;
->  				};
-> 
-> -				cmd {
-> +				cmd-pins {
->  					pins = "sdc1_cmd";
->  					bias-pull-up;
->  					drive-strength = <2>;
->  				};
-> 
-> -				data {
-> +				data-pins {
->  					pins = "sdc1_data";
->  					bias-pull-up;
->  					drive-strength = <2>;
->  				};
->  			};
-> 
-> -			sdc2_off: sdc2-off {
-> -				clk {
-> +			sdc2_off: sdc2-off-state {
-> +				clk-pins {
->  					pins = "sdc2_clk";
->  					bias-disable;
->  					drive-strength = <2>;
->  				};
-> 
-> -				cmd {
-> +				cmd-pins {
->  					pins = "sdc2_cmd";
->  					bias-pull-up;
->  					drive-strength = <2>;
->  				};
-> 
-> -				data {
-> +				data-pins {
->  					pins = "sdc2_data";
->  					bias-pull-up;
->  					drive-strength = <2>;
->  				};
-> 
-> -				cd {
-> +				cd-pins {
->  					pins = "gpio54";
-> +					function = "gpio";
->  					bias-disable;
->  					drive-strength = <2>;
->  				};
->  			};
-> 
-> -			blsp1_uart2_default: blsp1-uart2-default {
-> -				rx {
-> +			blsp1_uart2_default: blsp1-uart2-default-state {
-> +				rx-pins {
->  					pins = "gpio5";
->  					function = "blsp_uart2";
->  					drive-strength = <2>;
->  					bias-pull-up;
->  				};
-> 
-> -				tx {
-> +				tx-pins {
->  					pins = "gpio4";
->  					function = "blsp_uart2";
->  					drive-strength = <4>;
-> @@ -1315,15 +1316,15 @@ tx {
->  				};
->  			};
-> 
-> -			blsp2_uart1_default: blsp2-uart1-default {
-> -				tx-rts {
-> +			blsp2_uart1_default: blsp2-uart1-default-state {
-> +				tx-rts-pins {
->  					pins = "gpio41", "gpio44";
->  					function = "blsp_uart7";
->  					drive-strength = <2>;
->  					bias-disable;
->  				};
-> 
-> -				rx-cts {
-> +				rx-cts-pins {
->  					pins = "gpio42", "gpio43";
->  					function = "blsp_uart7";
->  					drive-strength = <2>;
-> @@ -1331,22 +1332,22 @@ rx-cts {
->  				};
->  			};
-> 
-> -			blsp2_uart1_sleep: blsp2-uart1-sleep {
-> +			blsp2_uart1_sleep: blsp2-uart1-sleep-state {
->  				pins = "gpio41", "gpio42", "gpio43", "gpio44";
->  				function = "gpio";
->  				drive-strength = <2>;
->  				bias-pull-down;
->  			};
-> 
-> -			blsp2_uart4_default: blsp2-uart4-default {
-> -				tx-rts {
-> +			blsp2_uart4_default: blsp2-uart4-default-state {
-> +				tx-rts-pins {
->  					pins = "gpio53", "gpio56";
->  					function = "blsp_uart10";
->  					drive-strength = <2>;
->  					bias-disable;
->  				};
-> 
-> -				rx-cts {
-> +				rx-cts-pins {
->  					pins = "gpio54", "gpio55";
->  					function = "blsp_uart10";
->  					drive-strength = <2>;
-> @@ -1354,42 +1355,42 @@ rx-cts {
->  				};
->  			};
-> 
-> -			blsp1_i2c1_default: blsp1-i2c1-default {
-> +			blsp1_i2c1_default: blsp1-i2c1-default-state {
->  				pins = "gpio2", "gpio3";
->  				function = "blsp_i2c1";
->  				drive-strength = <2>;
->  				bias-disable;
->  			};
-> 
-> -			blsp1_i2c1_sleep: blsp1-i2c1-sleep {
-> +			blsp1_i2c1_sleep: blsp1-i2c1-sleep-state {
->  				pins = "gpio2", "gpio3";
->  				function = "blsp_i2c1";
->  				drive-strength = <2>;
->  				bias-pull-up;
->  			};
-> 
-> -			blsp1_i2c2_default: blsp1-i2c2-default {
-> +			blsp1_i2c2_default: blsp1-i2c2-default-state {
->  				pins = "gpio6", "gpio7";
->  				function = "blsp_i2c2";
->  				drive-strength = <2>;
->  				bias-disable;
->  			};
-> 
-> -			blsp1_i2c2_sleep: blsp1-i2c2-sleep {
-> +			blsp1_i2c2_sleep: blsp1-i2c2-sleep-state {
->  				pins = "gpio6", "gpio7";
->  				function = "blsp_i2c2";
->  				drive-strength = <2>;
->  				bias-pull-up;
->  			};
-> 
-> -			blsp1_i2c3_default: blsp1-i2c3-default {
-> +			blsp1_i2c3_default: blsp1-i2c3-default-state {
->  				pins = "gpio10", "gpio11";
->  				function = "blsp_i2c3";
->  				drive-strength = <2>;
->  				bias-disable;
->  			};
-> 
-> -			blsp1_i2c3_sleep: blsp1-i2c3-sleep {
-> +			blsp1_i2c3_sleep: blsp1-i2c3-sleep-state {
->  				pins = "gpio10", "gpio11";
->  				function = "blsp_i2c3";
->  				drive-strength = <2>;
-> @@ -1400,14 +1401,14 @@ blsp1_i2c3_sleep: blsp1-i2c3-sleep {
-> 
->  			/* BLSP1_I2C5 info is missing */
-> 
-> -			blsp1_i2c6_default: blsp1-i2c6-default {
-> +			blsp1_i2c6_default: blsp1-i2c6-default-state {
->  				pins = "gpio29", "gpio30";
->  				function = "blsp_i2c6";
->  				drive-strength = <2>;
->  				bias-disable;
->  			};
-> 
-> -			blsp1_i2c6_sleep: blsp1-i2c6-sleep {
-> +			blsp1_i2c6_sleep: blsp1-i2c6-sleep-state {
->  				pins = "gpio29", "gpio30";
->  				function = "blsp_i2c6";
->  				drive-strength = <2>;
-> @@ -1417,14 +1418,14 @@ blsp1_i2c6_sleep: blsp1-i2c6-sleep {
-> 
->  			/* BLSP2_I2C1 info is missing */
-> 
-> -			blsp2_i2c2_default: blsp2-i2c2-default {
-> +			blsp2_i2c2_default: blsp2-i2c2-default-state {
->  				pins = "gpio47", "gpio48";
->  				function = "blsp_i2c8";
->  				drive-strength = <2>;
->  				bias-disable;
->  			};
-> 
-> -			blsp2_i2c2_sleep: blsp2-i2c2-sleep {
-> +			blsp2_i2c2_sleep: blsp2-i2c2-sleep-state {
->  				pins = "gpio47", "gpio48";
->  				function = "blsp_i2c8";
->  				drive-strength = <2>;
-> @@ -1435,48 +1436,48 @@ blsp2_i2c2_sleep: blsp2-i2c2-sleep {
-> 
->  			/* BLSP2_I2C4 info is missing */
-> 
-> -			blsp2_i2c5_default: blsp2-i2c5-default {
-> +			blsp2_i2c5_default: blsp2-i2c5-default-state {
->  				pins = "gpio83", "gpio84";
->  				function = "blsp_i2c11";
->  				drive-strength = <2>;
->  				bias-disable;
->  			};
-> 
-> -			blsp2_i2c5_sleep: blsp2-i2c5-sleep {
-> +			blsp2_i2c5_sleep: blsp2-i2c5-sleep-state {
->  				pins = "gpio83", "gpio84";
->  				function = "blsp_i2c11";
->  				drive-strength = <2>;
->  				bias-pull-up;
->  			};
-> 
-> -			blsp2_i2c6_default: blsp2-i2c6-default {
-> +			blsp2_i2c6_default: blsp2-i2c6-default-state {
->  				pins = "gpio87", "gpio88";
->  				function = "blsp_i2c12";
->  				drive-strength = <2>;
->  				bias-disable;
->  			};
-> 
-> -			blsp2_i2c6_sleep: blsp2-i2c6-sleep {
-> +			blsp2_i2c6_sleep: blsp2-i2c6-sleep-state {
->  				pins = "gpio87", "gpio88";
->  				function = "blsp_i2c12";
->  				drive-strength = <2>;
->  				bias-pull-up;
->  			};
-> 
-> -			spi8_default: spi8_default {
-> -				mosi {
-> +			spi8_default: spi8_default-state {
-> +				mosi-pins {
->  					pins = "gpio45";
->  					function = "blsp_spi8";
->  				};
-> -				miso {
-> +				miso-pins {
->  					pins = "gpio46";
->  					function = "blsp_spi8";
->  				};
-> -				cs {
-> +				cs-pins {
->  					pins = "gpio47";
->  					function = "blsp_spi8";
->  				};
-> -				clk {
-> +				clk-pins {
->  					pins = "gpio48";
->  					function = "blsp_spi8";
->  				};
-> diff --git a/arch/arm/boot/dts/qcom-msm8974pro-fairphone-fp2.dts
-> b/arch/arm/boot/dts/qcom-msm8974pro-fairphone-fp2.dts
-> index ff6e0066768b..3e32685d8cf8 100644
-> --- a/arch/arm/boot/dts/qcom-msm8974pro-fairphone-fp2.dts
-> +++ b/arch/arm/boot/dts/qcom-msm8974pro-fairphone-fp2.dts
-> @@ -408,36 +408,36 @@ &smbb {
->  };
-> 
->  &tlmm {
-> -	sdc1_on: sdc1-on {
-> -		clk {
-> +	sdc1_on: sdc1-on-state {
-> +		clk-pins {
->  			pins = "sdc1_clk";
->  			drive-strength = <16>;
->  			bias-disable;
->  		};
-> 
-> -		cmd-data {
-> +		cmd-data-pins {
->  			pins = "sdc1_cmd", "sdc1_data";
->  			drive-strength = <10>;
->  			bias-pull-up;
->  		};
->  	};
-> 
-> -	sdc2_on: sdc2-on {
-> -		clk {
-> +	sdc2_on: sdc2-on-state {
-> +		clk-pins {
->  			pins = "sdc2_clk";
->  			drive-strength = <10>;
->  			bias-disable;
->  		};
-> 
-> -		cmd-data {
-> +		cmd-data-pins {
->  			pins = "sdc2_cmd", "sdc2_data";
->  			drive-strength = <6>;
->  			bias-pull-up;
->  		};
->  	};
-> 
-> -	wcnss_pin_a: wcnss-pin-active {
-> -		wlan {
-> +	wcnss_pin_a: wcnss-pin-active-state {
-> +		wlan-pins {
->  			pins =  "gpio36", "gpio37", "gpio38", "gpio39", "gpio40";
->  			function = "wlan";
-> 
-> @@ -445,7 +445,7 @@ wlan {
->  			bias-pull-down;
->  		};
-> 
-> -		bt {
-> +		bt-pins {
->  			pins = "gpio35", "gpio43", "gpio44";
->  			function = "bt";
-> 
-> @@ -453,7 +453,7 @@ bt {
->  			bias-pull-down;
->  		};
-> 
-> -		fm {
-> +		fm-pins {
->  			pins = "gpio41", "gpio42";
->  			function = "fm";
-> 
-> diff --git a/arch/arm/boot/dts/qcom-msm8974pro-samsung-klte.dts
-> b/arch/arm/boot/dts/qcom-msm8974pro-samsung-klte.dts
-> index 983e10c3d863..5bbdd5eb183b 100644
-> --- a/arch/arm/boot/dts/qcom-msm8974pro-samsung-klte.dts
-> +++ b/arch/arm/boot/dts/qcom-msm8974pro-samsung-klte.dts
-> @@ -706,57 +706,57 @@ &sdhc_3 {
-> 
->  &tlmm {
->  	/* This seems suspicious, but somebody with this device should look
-> into it. */
-> -	blsp2_uart2_pins_active: blsp2-uart2-pins-active {
-> +	blsp2_uart2_pins_active: blsp2-uart2-pins-active-state {
->  		pins = "gpio45", "gpio46", "gpio47", "gpio48";
->  		function = "blsp_uart8";
->  		drive-strength = <8>;
->  		bias-disable;
->  	};
-> 
-> -	blsp2_uart2_pins_sleep: blsp2-uart2-pins-sleep {
-> +	blsp2_uart2_pins_sleep: blsp2-uart2-pins-sleep-state {
->  		pins = "gpio45", "gpio46", "gpio47", "gpio48";
->  		function = "gpio";
->  		drive-strength = <2>;
->  		bias-pull-down;
->  	};
-> 
-> -	bt_pins: bt-pins {
-> -		hostwake {
-> +	bt_pins: bt-pins-state {
-> +		hostwake-pins {
->  			pins = "gpio75";
->  			function = "gpio";
->  			drive-strength = <16>;
->  			input-enable;
->  		};
-> 
-> -		devwake {
-> +		devwake-pins {
->  			pins = "gpio91";
->  			function = "gpio";
->  			drive-strength = <2>;
->  		};
->  	};
-> 
-> -	sdc1_on: sdhc1-on {
-> -		clk {
-> +	sdc1_on: sdhc1-on-state {
-> +		clk-pins {
->  			pins = "sdc1_clk";
->  			drive-strength = <4>;
->  			bias-disable;
->  		};
-> 
-> -		cmd-data {
-> +		cmd-data-pins {
->  			pins = "sdc1_cmd", "sdc1_data";
->  			drive-strength = <4>;
->  			bias-pull-up;
->  		};
->  	};
-> 
-> -	sdc3_on: sdc3-on {
-> +	sdc3_on: sdc3-on-state {
->  		pins = "gpio35", "gpio36", "gpio37", "gpio38", "gpio39", "gpio40";
->  		function = "sdc3";
->  		drive-strength = <8>;
->  		bias-disable;
->  	};
-> 
-> -	sdhc3_cd_pin: sdc3-cd-on {
-> +	sdhc3_cd_pin: sdc3-cd-on-state {
->  		pins = "gpio62";
->  		function = "gpio";
-> 
-> @@ -764,49 +764,49 @@ sdhc3_cd_pin: sdc3-cd-on {
->  		bias-disable;
->  	};
-> 
-> -	sdc2_on: sdhc2-on {
-> -		clk {
-> +	sdc2_on: sdhc2-on-state {
-> +		clk-pins {
->  			pins = "sdc2_clk";
->  			drive-strength = <6>;
->  			bias-disable;
->  		};
-> 
-> -		cmd-data {
-> +		cmd-data-pins {
->  			pins = "sdc2_cmd", "sdc2_data";
->  			drive-strength = <6>;
->  			bias-pull-up;
->  		};
->  	};
-> 
-> -	i2c_touchkey_pins: i2c-touchkey {
-> +	i2c_touchkey_pins: i2c-touchkey-state {
->  		pins = "gpio95", "gpio96";
->  		function = "gpio";
->  		input-enable;
->  		bias-pull-up;
->  	};
-> 
-> -	i2c_led_gpioex_pins: i2c-led-gpioex {
-> +	i2c_led_gpioex_pins: i2c-led-gpioex-state {
->  		pins = "gpio120", "gpio121";
->  		function = "gpio";
->  		input-enable;
->  		bias-pull-down;
->  	};
-> 
-> -	gpioex_pin: gpioex {
-> +	gpioex_pin: gpioex-state {
->  		pins = "gpio145";
->  		function = "gpio";
->  		bias-pull-up;
->  		drive-strength = <2>;
->  	};
-> 
-> -	wifi_pin: wifi {
-> +	wifi_pin: wifi-state {
->  		pins = "gpio92";
->  		function = "gpio";
->  		input-enable;
->  		bias-pull-down;
->  	};
-> 
-> -	panel_te_pin: panel {
-> +	panel_te_pin: panel-state {
->  		pins = "gpio12";
->  		function = "mdp_vsync";
->  		drive-strength = <2>;
-> diff --git
-> a/arch/arm/boot/dts/qcom-msm8974pro-sony-xperia-shinano-castor.dts
-> b/arch/arm/boot/dts/qcom-msm8974pro-sony-xperia-shinano-castor.dts
-> index 3f45f5c5d37b..d446ac1f75ea 100644
-> --- a/arch/arm/boot/dts/qcom-msm8974pro-sony-xperia-shinano-castor.dts
-> +++ b/arch/arm/boot/dts/qcom-msm8974pro-sony-xperia-shinano-castor.dts
-> @@ -548,41 +548,42 @@ &smbb {
->  };
-> 
->  &tlmm {
-> -	lcd_backlight_en_pin_a: lcd-backlight-vddio {
-> +	lcd_backlight_en_pin_a: lcd-backlight-vddio-state {
->  		pins = "gpio69";
-> +		function = "gpio";
->  		drive-strength = <10>;
->  		output-low;
->  		bias-disable;
->  	};
-> 
-> -	sdc1_on: sdc1-on {
-> -		clk {
-> +	sdc1_on: sdc1-on-state {
-> +		clk-pins {
->  			pins = "sdc1_clk";
->  			drive-strength = <16>;
->  			bias-disable;
->  		};
-> 
-> -		cmd-data {
-> +		cmd-data-pins {
->  			pins = "sdc1_cmd", "sdc1_data";
->  			drive-strength = <10>;
->  			bias-pull-up;
->  		};
->  	};
-> 
-> -	sdc2_on: sdc2-on {
-> -		clk {
-> +	sdc2_on: sdc2-on-state {
-> +		clk-pins {
->  			pins = "sdc2_clk";
->  			drive-strength = <6>;
->  			bias-disable;
->  		};
-> 
-> -		cmd-data {
-> +		cmd-data-pins {
->  			pins = "sdc2_cmd", "sdc2_data";
->  			drive-strength = <6>;
->  			bias-pull-up;
->  		};
-> 
-> -		cd {
-> +		cd-pins {
->  			pins = "gpio62";
->  			function = "gpio";
->  			drive-strength = <2>;
-> @@ -590,22 +591,22 @@ cd {
->  		};
->  	};
-> 
-> -	sdc3_on: sdc3-on {
-> -		clk {
-> +	sdc3_on: sdc3-on-state {
-> +		clk-pins {
->  			pins = "gpio40";
->  			function = "sdc3";
->  			drive-strength = <10>;
->  			bias-disable;
->  		};
-> 
-> -		cmd {
-> +		cmd-pins {
->  			pins = "gpio39";
->  			function = "sdc3";
->  			drive-strength = <10>;
->  			bias-pull-up;
->  		};
-> 
-> -		data {
-> +		data-pins {
->  			pins = "gpio35", "gpio36", "gpio37", "gpio38";
->  			function = "sdc3";
->  			drive-strength = <10>;
-> @@ -613,7 +614,7 @@ data {
->  		};
->  	};
-> 
-> -	ts_int_pin: ts-int-pin {
-> +	ts_int_pin: ts-int-pin-state {
->  		pins = "gpio86";
->  		function = "gpio";
->  		drive-strength = <2>;
-> @@ -621,7 +622,7 @@ ts_int_pin: ts-int-pin {
->  		input-enable;
->  	};
-> 
-> -	bt_host_wake_pin: bt-host-wake {
-> +	bt_host_wake_pin: bt-host-wake-state {
->  		pins = "gpio95";
->  		function = "gpio";
->  		drive-strength = <2>;
-> @@ -629,7 +630,7 @@ bt_host_wake_pin: bt-host-wake {
->  		output-low;
->  	};
-> 
-> -	bt_dev_wake_pin: bt-dev-wake {
-> +	bt_dev_wake_pin: bt-dev-wake-state {
->  		pins = "gpio96";
->  		function = "gpio";
->  		drive-strength = <2>;
+It must be dict(lvs) but even then values are still strings, not their
+enum integer representations, so we still need to convert them to ints
+before passing them to set_values(). I'd leave it as it is now.
+
+>
+> > +    request = gpiod.request_lines(
+> > +        path,
+> > +        consumer="gpioset.py",
+> > +        config={tuple(lines): gpiod.LineSettings(direction=Direction.OUTPUT)},
+> > +    )
+> > +
+> > +    vals = request.set_values(values)
+> > +
+> > +    input()
+> > --
+>
+> No gpiowatch?
+>
+
+There's no gpiowatch yet in the main set of tools, I'll add them once they land.
+
+> Add some examples for features the tools don't use, like requests with
+> both inputs and outputs, and reconfigure?
+>
+
+These are already covered in tests. I may add them in the future but
+don't want to add a lot of code that's not routinely run as part of
+tests.
+
+Bart
+
+> Cheers,
+> Kent.
