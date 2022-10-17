@@ -2,56 +2,56 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AC5C433FE
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Oct 2022 20:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A922C4332F
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Oct 2022 20:10:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230518AbiJQUKj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Oct 2022 16:10:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34496 "EHLO
+        id S230504AbiJQUKl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Oct 2022 16:10:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230520AbiJQUKI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2022 16:10:08 -0400
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FE1210F1
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 13:09:23 -0700 (PDT)
-Received: by mail-qk1-x72e.google.com with SMTP id z30so7378120qkz.13
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 13:09:23 -0700 (PDT)
+        with ESMTP id S230387AbiJQUKK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2022 16:10:10 -0400
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19AFD634E
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 13:09:33 -0700 (PDT)
+Received: by mail-qt1-x833.google.com with SMTP id r19so8465730qtx.6
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 13:09:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8FVNAJsBy5Xeh6Zx2ZwrnOcJ3oyCxrYa12VWNGDy4jM=;
-        b=Drsb00NlRo21B7O4IQl6ei7sw5FgqNB4BKyj/WYoSTCLVTRmHi2Yk9xg0PgT4KW3mx
-         VqSuazBgZUKvg55nRvy8pGnRgr7GnhgLZs+N3Dq3o7QYP17fPi182Mrjr2sG89vdzh+k
-         3++8R+LJcqAmXbfZVXELsOpAcA987b4FITk5Cc7kMM+eohU0odBtzku8gMcyGtmv/N9X
-         wFwUe5tZ3QOkdPG8nqWnyEPbBVVLuksWY9K1tMoWcR1u0bPNs+4bbNXckmft+lwpnfqu
-         PA31mMCtMzGmnhm4RtlHIvrDfNPA6SwtkTZ1wbB04xujzfZN+1fcQWDdEdIBN74NkXhg
-         RP9A==
+        bh=Uy2CqhbAs+lw5/HwT2HDKC/bvqHfWj6CLYVAmg5gg2w=;
+        b=RB3jVkumYiI0YxuvBZFxKvBld8pKOcnxY+kHN55fw5lSaKlsUbb17FBKZrAFXmvRlM
+         L7Af6QEZDGdtPZnuhIrMDm45DpaMV18z3X5C3GJKshXc2Ag74XZK4NeHAtwrkNVBnZzc
+         Rl+YYXGePobRHyyobS1ajNatNUyIRJ/BAB0nyc6Nnf1jOfQpiHUkPzol8//2i2D1F8b9
+         iBb5RwMui2fp1ufsB1XgTc6SgWs5i0NkntUa7vP+cgdub2mrHKReGK2VJK+5KLBl5h5s
+         O3knoEaqu+uRVS4TLNRVArqw7tbHfG/Ftr4PUsCqSmDYAB6bNp0yQESRJ1HdBd5p8e7t
+         oOUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8FVNAJsBy5Xeh6Zx2ZwrnOcJ3oyCxrYa12VWNGDy4jM=;
-        b=2h0Qb5K2m3Angtttp+FYz38G/688iD+fClTT/xmqteXRYne/GFS+ieTarS7KEUqTmB
-         WprxwigQRPcgFwQRbbV7bhwSNP1mojW6pat/fbSQxY6H8FwZ39T2664popwnQUqBm65z
-         5YsGkzc/bcOWB9E0sHe8qH8a511/Mo9AlYBUCna61/9L/DfEIEfaJQj0vbQNLgALbWEO
-         h6x3AH9aQAnWYFJm2JOtAMy9ajE+YhctunBocKHFOqZWkazGN9IACkZFaTWWKidGiE61
-         caKTWNeRg4C3yFTd7bBhdi2ENwNtCv60fuZO4m5NswKa+VEd0+vWgbQJgsQNIkxOezUt
-         9ecw==
-X-Gm-Message-State: ACrzQf0OuPjY39MWGjMspFguyNf52lqGUv1858Il1RsNYfpj2yKlTWZP
-        iR8/f4DhVHwT4oX5rx1SC0jp5g==
-X-Google-Smtp-Source: AMsMyM75Y0UjjeM2EUB5ctV+tOW9A3e9KzvK1eA9Djd5ZnUpsIHnjVMFzIMerTjWt8Q0dp8/sotrJw==
-X-Received: by 2002:a05:620a:1f3:b0:6e9:e33d:3bb6 with SMTP id x19-20020a05620a01f300b006e9e33d3bb6mr9173008qkn.115.1666037344822;
-        Mon, 17 Oct 2022 13:09:04 -0700 (PDT)
+        bh=Uy2CqhbAs+lw5/HwT2HDKC/bvqHfWj6CLYVAmg5gg2w=;
+        b=hcOrKp9qNuGoFG9LUN+FrQEu7MAF9Rw3mW/sCvGhorRzXtKsztgYM28dUIfOCMPhGN
+         UBBRB8Ozjdnp+ps5Nlz3irvKHSyFFBHbEKJUrtBW3R6p9q/3EswVqTwFnuVZBsg+dZ2G
+         fztV8bVxCcEdRtGST4RHyth/7Gmi4LiuMvojx2lOzOKdBpbs12T++J3ew/nJzs/HplP3
+         lzuM1u0DtiJZcg/eGha89wETEz6BGx2muym+pcPfXKjIc5FwDJBZezPJw5QpYN6KB5jp
+         p8ll7f7UgWPBQuy9aQ0cxixjs7M0Om6tYY62DS+wWt6BrbHSwTSmFcSqw1p89F0R1S4K
+         VpOw==
+X-Gm-Message-State: ACrzQf12xgSpXs+gbkIwxcpujjgai8+H+VvU5eA9O91l7kvwY1kC7Nkk
+        ks8stNHP5SXkdjLiTA/WDumrHQ==
+X-Google-Smtp-Source: AMsMyM5Ig0elKD4YWbaJXabso5ujjQjkVcHrqOJWLmltOn2/YjaSD4tApU754nRE12Xx6V4KDqk2HQ==
+X-Received: by 2002:a05:622a:18a:b0:39a:ffaf:6c9d with SMTP id s10-20020a05622a018a00b0039affaf6c9dmr10010578qtw.253.1666037373621;
+        Mon, 17 Oct 2022 13:09:33 -0700 (PDT)
 Received: from localhost.localdomain (pool-72-83-177-149.washdc.east.verizon.net. [72.83.177.149])
-        by smtp.gmail.com with ESMTPSA id m13-20020a05620a24cd00b006ce76811a07sm536793qkn.75.2022.10.17.13.09.03
+        by smtp.gmail.com with ESMTPSA id m13-20020a05620a24cd00b006ce76811a07sm536793qkn.75.2022.10.17.13.09.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Oct 2022 13:09:04 -0700 (PDT)
+        Mon, 17 Oct 2022 13:09:32 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawn.guo@linaro.org>, linux-gpio@vger.kernel.org,
+To:     Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawn.guo@linaro.org>,
+        Andy Gross <agross@kernel.org>, linux-gpio@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Sivaprakash Murugesan <sivaprak@codeaurora.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -63,12 +63,12 @@ To:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Rob Herring <robh@kernel.org>
-Subject: Re: (subset) [PATCH v5 18/34] dt-bindings: pinctrl: qcom,msm8909-tlmm: fix matching pin config
-Date:   Mon, 17 Oct 2022 16:07:59 -0400
-Message-Id: <166603728602.4991.3551400728577673146.b4-ty@linaro.org>
+Subject: Re: (subset) [PATCH v5 32/34] dt-bindings: pinctrl: qcom,sdx65: use common TLMM schema
+Date:   Mon, 17 Oct 2022 16:08:13 -0400
+Message-Id: <166603728603.4991.11238879558058682062.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221016170035.35014-19-krzysztof.kozlowski@linaro.org>
-References: <20221016170035.35014-1-krzysztof.kozlowski@linaro.org> <20221016170035.35014-19-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221016170035.35014-33-krzysztof.kozlowski@linaro.org>
+References: <20221016170035.35014-1-krzysztof.kozlowski@linaro.org> <20221016170035.35014-33-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -76,18 +76,17 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, 16 Oct 2022 13:00:19 -0400, Krzysztof Kozlowski wrote:
-> The TLMM pin controller follows generic pin-controller bindings, so
-> should have subnodes with '-state' and '-pins'.  Otherwise the subnodes
-> (level one and two) are not properly matched.  This method also unifies
-> the bindings with other Qualcomm TLMM and LPASS pinctrl bindings.
+On Sun, 16 Oct 2022 13:00:33 -0400, Krzysztof Kozlowski wrote:
+> Reference common Qualcomm TLMM pin controller schema, to bring common
+> properties, other pinctrl schemas and additional checks, like function
+> required only for GPIOs.
 > 
 > 
 
 Applied, thanks!
 
-[18/34] dt-bindings: pinctrl: qcom,msm8909-tlmm: fix matching pin config
-        https://git.kernel.org/krzk/linux-dt/c/07741416a0922197899696e1a109f0cc58d4944d
+[32/34] dt-bindings: pinctrl: qcom,sdx65: use common TLMM schema
+        https://git.kernel.org/krzk/linux-dt/c/7947f01598418c999be7a5cf0371221bdacd1721
 
 Best regards,
 -- 
