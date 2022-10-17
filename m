@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3B1C433FE
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Oct 2022 20:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CBF1C433FE
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Oct 2022 20:09:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230313AbiJQUIw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Oct 2022 16:08:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33612 "EHLO
+        id S230487AbiJQUJB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Oct 2022 16:09:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231299AbiJQUIq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2022 16:08:46 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A9477A771
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 13:08:37 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id a5so7390578qkl.6
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 13:08:37 -0700 (PDT)
+        with ESMTP id S230004AbiJQUIr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2022 16:08:47 -0400
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A288F7A773
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 13:08:41 -0700 (PDT)
+Received: by mail-qt1-x831.google.com with SMTP id h24so8125153qta.7
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 13:08:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b34m75C009iIZzJu3wQMuuBZWmzJ1WhgRJhOBshaRuQ=;
-        b=SbB14J2PwrjxdWC5ec+SxQSKApLFYnvWwABLOcd5+4LfM3rNYtZ8zEwtlY6tcohmjx
-         AoSUcJnABebHaKt4cIa8jeGm/nPz4V6hF9PN70Px9DpsH71+n2wglwNll2r97qPpoJHS
-         p9vHgdyTA7XElaGCB7x3JzIpJ0f/05V1PT7eK1+VFINmZ2XPyfs8Tz5z4ffbrk+2Hn69
-         SIgbH9bA2jMVV8O1LUeyNBKCHjQ72oqOqoOtu1BaU6VKBNWLJC+a2843+B/k7Nuu7j5I
-         vuRrMEaEWxg7DQk7Wt4PdAUsaXII8s5Zt+2221v8qtJbP8afgsTJe3pfOwWCMb2ueIYK
-         mPdw==
+        bh=Afbcq17HqDYBd4S3+PAL6CXrcBTfuo1giJr9BJq2zLE=;
+        b=sRpp+WYjwYGDe0thj3beH9ZTf6cm2gg1mUZ1WAIeM380K0ouW8qJ0PjSbkLfoTcZOZ
+         mUt88IURUr5L2RJb/DRnNn8Yv7i8mNTcOcC/iCtarBhyuxsHQU5OeZIr59piR8e0Epnc
+         bhZYtp1z8d0n7plPmc8ZguFjv1sgo9cjIe4qENlfT2BSbQfe2K0ovM/NwnCyWtejYP7y
+         pTPnu2J9WuhvZWrgfzWFqCMBptjGg160YIorKr6VeJHQsID4u8BktHTFmHZ8Qys67+x2
+         Iu2DZAcYSFEgpCP0qo+ViulqnkLM/HQloNEXEj/jKZg+7FdPO5qdHP5KKcfCCIDVx3nq
+         v/vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b34m75C009iIZzJu3wQMuuBZWmzJ1WhgRJhOBshaRuQ=;
-        b=y1p4HzPBM95u/AreVQIWM6enAYLjjA7MBN5jwxStXmTAyxvnnbwrmJyXP9URbX41K6
-         fRdWXUpkJ1TeYEcqrscdsAvt/61YlMBw+YQDCxb3Q/VfxZF0oYXz2HaFSL0uKydtwu2u
-         oxPmwPGzpMO2qodk0ywEG2nRuJ6RW3zrCTr3DHXVTEUp/gVurF8svyikX81RI6RXNBP2
-         A7/QvO3nA2rLwm23jJ9LKorurH2Ukbl9zgs+j4xlWADDDeVVVQDiEJdt6Ofdgr7yl3Bo
-         hUFzKWedQrlXvSBktiVZB+aRGeDR0jI6Ipr6bYFCo0StIa2shEHyzzFjA7ekW3bN3eMn
-         0D+A==
-X-Gm-Message-State: ACrzQf2HyHtLGp29pXHaRdDNLaVlY1X8ovSHZ1AjKfMtt/scvhSmTfTd
-        SmoORoXNFUHtQ4fv6Gd6Juosyw==
-X-Google-Smtp-Source: AMsMyM4AaZ0dl46d26zlNlfFW7sC/TYI9VC93ez/8+cq9OjlZ76KsVpR6QuzJGB1kdARvmp2nL8VpA==
-X-Received: by 2002:ae9:eb45:0:b0:6ee:94aa:7520 with SMTP id b66-20020ae9eb45000000b006ee94aa7520mr9097432qkg.516.1666037316999;
-        Mon, 17 Oct 2022 13:08:36 -0700 (PDT)
+        bh=Afbcq17HqDYBd4S3+PAL6CXrcBTfuo1giJr9BJq2zLE=;
+        b=2fRIPdcPM8KgpYXdrpGTcWi+jynSeiwzxDZpcgYJYMizYFe2GmRkyIA2jNu4uD7a3H
+         G4bnExUw0O/ihsgVw2h4AGJZvbGSjKgAcH1eaiHAwjHkIxGr/I1Jyi47LYucoM3ptGMt
+         wWt6aG0varGU+VmNtxXCb3sgcAxsA5L20BKG5/+5/93NwvEZiNtb+VuSGz17Gg4qNp3m
+         c96WnsmIRnBlYJum5GebKFP8JAbJUv672Qk6HMKZJID9z2vjR8/ju9gXNLWQmj1aILW+
+         3Y4avE1ya7/bEYGmXcD+ecRgLEnaq+i+uADOKZ1yUSIXo+2n9uK7uFEXDoqSKkLoTbC7
+         Vo/Q==
+X-Gm-Message-State: ACrzQf0qLRVsmyDWEVtVl2F9JBJY7l2ERXRlDei5P4xDtKnWEsq7TTmb
+        iVsJts+dTlSELVACzUJj3k4saQ==
+X-Google-Smtp-Source: AMsMyM5EgYPMdxgtFLrDt2sx/UnyVXwEciT0ZEnEBk7n4Z2lQm7ZJduvccERxZNwUHw/KihxWZeCHQ==
+X-Received: by 2002:ac8:7d01:0:b0:39c:ebdf:490c with SMTP id g1-20020ac87d01000000b0039cebdf490cmr4559849qtb.179.1666037320264;
+        Mon, 17 Oct 2022 13:08:40 -0700 (PDT)
 Received: from localhost.localdomain (pool-72-83-177-149.washdc.east.verizon.net. [72.83.177.149])
-        by smtp.gmail.com with ESMTPSA id m13-20020a05620a24cd00b006ce76811a07sm536793qkn.75.2022.10.17.13.08.35
+        by smtp.gmail.com with ESMTPSA id m13-20020a05620a24cd00b006ce76811a07sm536793qkn.75.2022.10.17.13.08.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Oct 2022 13:08:36 -0700 (PDT)
+        Mon, 17 Oct 2022 13:08:39 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawn.guo@linaro.org>,
         Andy Gross <agross@kernel.org>, linux-gpio@vger.kernel.org,
@@ -63,12 +63,12 @@ To:     Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawn.guo@linaro.org>,
         devicetree@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Rob Herring <robh@kernel.org>
-Subject: Re: (subset) [PATCH v5 09/34] dt-bindings: pinctrl: qcom,ipq6018: correct BLSP6->BLSP0 functions
-Date:   Mon, 17 Oct 2022 16:07:50 -0400
-Message-Id: <166603728601.4991.10204223048558957862.b4-ty@linaro.org>
+Subject: Re: (subset) [PATCH v5 11/34] dt-bindings: pinctrl: qcom,ipq6018: fix matching pin config
+Date:   Mon, 17 Oct 2022 16:07:52 -0400
+Message-Id: <166603728601.4991.34439532507416875.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221016170035.35014-10-krzysztof.kozlowski@linaro.org>
-References: <20221016170035.35014-1-krzysztof.kozlowski@linaro.org> <20221016170035.35014-10-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221016170035.35014-12-krzysztof.kozlowski@linaro.org>
+References: <20221016170035.35014-1-krzysztof.kozlowski@linaro.org> <20221016170035.35014-12-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -76,23 +76,18 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, 16 Oct 2022 13:00:10 -0400, Krzysztof Kozlowski wrote:
-> The pin controller driver has BLSP functions from 0 to 5, not 1 to 6.
-> Add missing blsp0_i2c, blsp0_spi (already used in ipq6018-cp01-c1) and
-> blsp0_uart.  Drop blsp6_i2c and blsp6_spi.
+On Sun, 16 Oct 2022 13:00:12 -0400, Krzysztof Kozlowski wrote:
+> The TLMM pin controller follows generic pin-controller bindings, so
+> should have subnodes with '-state' and '-pins'.  Otherwise the subnodes
+> (level one and two) are not properly matched.  This method also unifies
+> the bindings with other Qualcomm TLMM and LPASS pinctrl bindings.
 > 
-> This fixes dtbs_check warning:
 > 
->   ipq6018-cp01-c1.dtb: pinctrl@1000000: spi-0-state: 'oneOf' conditional failed, one must be fixed:
->     'bias-pull-down', 'drive-strength', 'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
->     'blsp0_spi' is not one of ['adsp_ext', 'alsp_int', .....
-> 
-> [...]
 
 Applied, thanks!
 
-[09/34] dt-bindings: pinctrl: qcom,ipq6018: correct BLSP6->BLSP0 functions
-        https://git.kernel.org/krzk/linux-dt/c/5d6f7ee5f7efc21724250f9c42f74aa8785e682b
+[11/34] dt-bindings: pinctrl: qcom,ipq6018: fix matching pin config
+        https://git.kernel.org/krzk/linux-dt/c/1379f6750e207b091f4425b53d7b81a902e9620d
 
 Best regards,
 -- 
