@@ -2,43 +2,43 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1384FC4167B
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Oct 2022 13:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B28C4167D
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Oct 2022 13:03:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231137AbiJQNDy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Oct 2022 09:03:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58410 "EHLO
+        id S231162AbiJQNDz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Oct 2022 09:03:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231174AbiJQNDc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2022 09:03:32 -0400
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2077.outbound.protection.outlook.com [40.107.100.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B25DF60C93;
-        Mon, 17 Oct 2022 06:03:19 -0700 (PDT)
+        with ESMTP id S231231AbiJQNDf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2022 09:03:35 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2054.outbound.protection.outlook.com [40.107.93.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0278A5FF69;
+        Mon, 17 Oct 2022 06:03:24 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cM3rkVB/RduLreSC3pvuEV51XDKUCbeR1mwk3UmKNs1wwwEj/aJ7Lv+Cy77RsuLe3G7Epga3uqx9ujkdgXzHHh+EDLCd2++IajqZqAVujhM7UAdpSusJ8lAe+5N7CaLOBtKCms4mXXbhUq9daa9rI5d3AK9dCQnhcyBBv0yGo+oZlf+TutK8NjexPeBCDy9G75zHb8hGwOe/JurQu/b7/Oip0kVnG00i8SjePIM4GTrsEfd8qw8/jW1L4TckS7Wvrdnxjy9TkRsAHlLVoXhZshKLuGFfLfHF9GM1F05vZVr+RP7M8u9pvVOtiDHuAXwYNchWjIq8Qm+CyWU8KUbUlQ==
+ b=BMQMyR3YLcdCNJlgVxW5F2BB3OC9XntI5DVo14ZMocR2OAE/GzOZiCX8DX9pu5gb5byJGMYVjEl/mUnLPLl3L+qZP8n4DpfU8upve2FQN7aVJzWojkYy/ej3LKKh3hWucDhfLW9E5aEd/J9rAtsFKhYVgnzbHezSKKttpiZxveRNCbgl6X88937OvAMx1IX04Rs7iMdKm6by+6fFB6/Sp99nJPOgfOxl2OIotoxqjQkDzXT4c/5BWFQINtYRLZA5csU53wl9G2g+XzVGDGf7QGcy3a0imxozqBox5mtR5CPtE0modzdWad85FwLRaUAZYPw1cl2YkhpB5HDDWtCy0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cwP30XUWAOZT98GWjg+FuivSVd4+VlNTLagEUqNyoU4=;
- b=eoLxf+vSsC3VMVGPapQSyIlC+jJa41FF1Er5DMxdIvQ0FJ9n6lk3Gj/YnCw3AN83qJqgER1PAUHmYE88RDT04vALmWtknoP1vsseCeG3XJrqZ8VB/HmrqgDrRP9VQPXp4PHWt0hKcpcFg64ZVUbole9+Lm1A4tASzdKJwY5dI5qmNXMh36adDhexsKPtQ9m5RoX3gVCwUdkP73axy88htt7nxOShJMlUYg1bCr+uTgO0Ocpr698TdKYrodl0Uj1hNMNCy8xhSEcZJL+dRp1R/QQ7g2trbS0LzkFpbJ/s+WZIdMjhfRo+cZaq7KQwiD5QtI3zMFD2PLS51yuAvfpwgA==
+ bh=BYuSInCvIAfCQ55JjQ6IWp5t2y7biL17oocUTqgL/3g=;
+ b=BWStdwJI0S+IB3pgBd99tD6wzmFO4FtrPHxHugUVvMQWDGHEpCEFC5X0gDEUQ9eLyS507F7w39JoL43aQOrBDedS04pG8ExPUBtIZaq9U0Eb4ehTP4BLTk7Q685N6R2oG/ALq6PJezyOopQs2zg23u6a/2ljVRtVcN8ewdjhfcqotIWJBGvjdrXchzBaZE8OA41CujEevw2+dm2OJ7KQJY8/2T9HSVZnV3Ai+wH4ihqBMpsmKIw4Hy/pV/cQ5Lo5bsqAA1Y2vdXQcn+rqmGyhdYVBE1V7uUdmjIltau6c++bZAI0+qv169VWnae0fXxtLH1WSDN5PhF8sjpFqP8AVQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cwP30XUWAOZT98GWjg+FuivSVd4+VlNTLagEUqNyoU4=;
- b=wcU+/zJy+Q3FKh+43vho/bwGGxoX/eQbaWe2lxM5yQPK/XQkAMbGlAzNOC+dJdul29O+aNEAZVnaHnlVrTbz+WTwsJxKZ4L449z5onBXfypHJY+hW3Ca2qomAn5F+GuQYS5LBtD/ZxazcWsYLAzCBt8NveO0dky3tWkZ/faLIIc=
-Received: from BN0PR02CA0045.namprd02.prod.outlook.com (2603:10b6:408:e5::20)
- by SA1PR12MB7038.namprd12.prod.outlook.com (2603:10b6:806:24d::10) with
+ bh=BYuSInCvIAfCQ55JjQ6IWp5t2y7biL17oocUTqgL/3g=;
+ b=YG/+C/DnvlIYagtqH3x9fY25nc4BJotaQ0jfoqg5fbKfEvvYy3KNR0exBN8rZf+0CuNU/Sku8RSca5Nv8Mvb+jc6lyOhSxr2G7nvTUOtIutI9UC42fuUbNGvvvnGhhhMGb40Bya8QSGdHS3uEy9g+NvK/vtaIGdvkgc1LXVPi2Q=
+Received: from BN9PR03CA0440.namprd03.prod.outlook.com (2603:10b6:408:113::25)
+ by SN7PR12MB7022.namprd12.prod.outlook.com (2603:10b6:806:261::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.29; Mon, 17 Oct
- 2022 13:03:16 +0000
-Received: from BN8NAM11FT041.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:e5:cafe::59) by BN0PR02CA0045.outlook.office365.com
- (2603:10b6:408:e5::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.31 via Frontend
- Transport; Mon, 17 Oct 2022 13:03:16 +0000
+ 2022 13:03:20 +0000
+Received: from BN8NAM11FT055.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:113:cafe::6c) by BN9PR03CA0440.outlook.office365.com
+ (2603:10b6:408:113::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.32 via Frontend
+ Transport; Mon, 17 Oct 2022 13:03:19 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -46,16 +46,20 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
 Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN8NAM11FT041.mail.protection.outlook.com (10.13.177.18) with Microsoft SMTP
+ BN8NAM11FT055.mail.protection.outlook.com (10.13.177.62) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5723.20 via Frontend Transport; Mon, 17 Oct 2022 13:03:15 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ 15.20.5723.20 via Frontend Transport; Mon, 17 Oct 2022 13:03:19 +0000
+Received: from SATLEXMB07.amd.com (10.181.41.45) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Mon, 17 Oct
- 2022 08:03:10 -0500
+ 2022 08:03:18 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB07.amd.com
+ (10.181.41.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Mon, 17 Oct
+ 2022 06:03:17 -0700
 Received: from xhdlakshmis40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.31 via Frontend
- Transport; Mon, 17 Oct 2022 08:03:08 -0500
+ Transport; Mon, 17 Oct 2022 08:03:15 -0500
 From:   Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Michal Simek <michal.simek@xilinx.com>,
@@ -65,54 +69,68 @@ CC:     <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <saikrishna12468@gmail.com>, <git@amd.com>,
-        Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
-Subject: [PATCH v2 0/2] pinctrl: pinctrl-zynqmp: Revert output-enable and bias-high-impedance support
-Date:   Mon, 17 Oct 2022 18:33:01 +0530
-Message-ID: <20221017130303.21746-1-sai.krishna.potthuri@amd.com>
+        Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH v2 2/2] Revert "dt-bindings: pinctrl-zynqmp: Add output-enable configuration"
+Date:   Mon, 17 Oct 2022 18:33:03 +0530
+Message-ID: <20221017130303.21746-3-sai.krishna.potthuri@amd.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20221017130303.21746-1-sai.krishna.potthuri@amd.com>
+References: <20221017130303.21746-1-sai.krishna.potthuri@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT041:EE_|SA1PR12MB7038:EE_
-X-MS-Office365-Filtering-Correlation-Id: 09b46b53-9963-46fe-f0c8-08dab03ff498
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT055:EE_|SN7PR12MB7022:EE_
+X-MS-Office365-Filtering-Correlation-Id: d51f0c87-5e3f-4c10-4fb4-08dab03ff6ce
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Rod8LzJqEE4PxOxTlV9435NuthVl+EOKTqRmrD3nXiIUxL4DHrImDpWVT+6DZ204VScNVKj9VETQVi2dleiT4a3lgFJ3OO9Kl1uPADb3ECMDPZxCSdbNuBUGdUDl6h0KB+SibTWOQ/ShY97k+6i1XSHWe1KHsSZCvfrofG5TnRkdSzEM0fS0TnNxKlDo0jNjeajWJuOxuOWQcyBWKG4e+7lAU1JP3xkdbYnM8Qva2GCaBWWmHsvL2jAsASbF5k/3Vt39Bn2YldFvcVEmRQRG2otA7EUJO4/KjvwSgCkeDqBy42zP8w9hvVeEE8kdM9m5qUwRD46sYO2CmN1gRR1KQ/WkpQTuC00tl7C/KIUkqISijPsyjhr05JstySL/Um+wHmAiWsIJnm6TKVsh8/gORiRLfDQ/wm1Ed+HQcHaTpqaICmEoxuz7kAZ4zITQy+E75qiSegchxSBmqyhvaxJBkV62rAliaxn+N9cYbeDaDCNyASaZLGjWnWvbj8Rc/CiMvIVh6UOKyTpgU43civQX0YyGQaahEvkPjWLSnAo09/1M8Her+WuNbu+LHYUqo8/JddZV3KfGEcjEICzgJ9AkD8rJed/acAS4trnmc4s6Jq7FL6//K0GCt2WxjBLzrMipRpbdypt3f3IU9g1FwBQ5gvFaFsZqD6pBBURSOhAy5ctaB8sFfexhrBwG1+us4b4gKZ9tj0O5RQVuAVRCzu0aK4Tg1+F+jHm2FcTjrZv9xsKbNw7Ke7I9eWnuyNC9jI/mtKfwGyo8hnOpTY/0s0PX3/SYzm93ZiSEwrBa+p7u78L0uhRVlbxdSVpWGVrwTugf
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(396003)(346002)(39860400002)(136003)(376002)(451199015)(36840700001)(46966006)(40470700004)(47076005)(426003)(82310400005)(82740400003)(81166007)(356005)(36756003)(40480700001)(86362001)(103116003)(40460700003)(36860700001)(83380400001)(6666004)(70586007)(70206006)(26005)(8676002)(316002)(54906003)(110136005)(4744005)(5660300002)(4326008)(186003)(1076003)(2906002)(336012)(2616005)(8936002)(478600001)(41300700001)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: YSWjF7LWkKO4kCkwUTB4WMwCq5aeuVH+MK2zyZMFK2G83A/QOD+KcH0Rx6Ofiwlphbu8cc7hpy+vTXunvmJhYYyIqHgWldw/n2y5xEU5IOs1ArUV6TCwnedvcXibxOA4CubVJSiyLjqOavENHy/nBHUt1NlgO1oeutNWoYFC5gBOpAy1RIdQw0cqoTLz/QeGs8yV93HsQjqjcE/EscdeMdNdklcRjtkneLPgY/WjXg1hdyYtrYsKiib4JWJjqi+e92y21l6jer0B1nMjpxl7QXc8mptiZenQT8zSIEAdDb3JwY3huymTf0zIqpIYYWdj51nMYrZXlWBZi2zNSWjRmNQRe+hpGm41XBt957a0QtBRxAC4vHMyNRsyHOGXpV1/kRNiA/3OsUfmo43fQD1F2sFq87Qg9dDNxHFjo6CtMQrp640osRMv+QCGQOV4AH/rnS78Eavb7r8R+g2U4XGtDcyIV5Ancvv5JmEWhZgm+//T3CMDn5mhc+GqFJITvFKNDZaFnPFKRbAtSdptuIRPzmGzCib+jpiTl+Gs2rOPiNk4YFHntwKRvUxFLEJVqT6TaKjpN/4h2E0CdkzSJ7dza4G5JJAjaat/h9qr8RErawqPwO1r3FbvL7AyRhzCPSdp7T0fnFDVuA5hWCd3eNmu+3VUV/aIACkrr7vM9bdpv2qwkz+gWaosIKK1SsvcCWN2widQYkJfJ616uSrI2PsWu+dqh3LIhMxUx4ieNBXPetKDjqcEOmbsiU/OmPi9PLwpDr6GtnzTo6nXUlSs/Hoi5EYNPnCr8c0fbSECPDvVGD8dbRWMRW6RBoGvxs+TPv2a
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(396003)(39860400002)(136003)(376002)(346002)(451199015)(40470700004)(46966006)(36840700001)(82310400005)(40460700003)(478600001)(5660300002)(8936002)(8676002)(41300700001)(70206006)(70586007)(54906003)(110136005)(4326008)(40480700001)(316002)(36860700001)(103116003)(2906002)(83380400001)(86362001)(356005)(47076005)(426003)(36756003)(82740400003)(81166007)(26005)(1076003)(336012)(2616005)(186003)(6666004)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2022 13:03:15.9126
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2022 13:03:19.6178
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09b46b53-9963-46fe-f0c8-08dab03ff498
+X-MS-Exchange-CrossTenant-Network-Message-Id: d51f0c87-5e3f-4c10-4fb4-08dab03ff6ce
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT041.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT055.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7038
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7022
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Having support for output-enable and bias-high-impedance properties
-causing system hang with older Xilinx ZynqMP Platform Management Firmware
-because there is missing autodetection feature.
+This reverts commit 133ad0d9af99bdca90705dadd8d31c20bfc9919f.
+
+On systems with older PMUFW (Xilinx ZynqMP Platform Management Firmware)
+using these pinctrl properties can cause system hang because there is
+missing feature autodetection.
 When this feature is implemented, support for these two properties should
 bring back.
 
-changes in v2:
--> Added stable tree tag in 1/2 and 2/2 patches.
+Cc: stable@vger.kernel.org
+Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+---
+ .../devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml      | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Sai Krishna Potthuri (2):
-  Revert "pinctrl: pinctrl-zynqmp: Add support for output-enable and
-    bias-high-impedance"
-  Revert "dt-bindings: pinctrl-zynqmp: Add output-enable configuration"
-
- .../devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml | 4 ----
- drivers/pinctrl/pinctrl-zynqmp.c                         | 9 ---------
- 2 files changed, 13 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
+index 1e2b9b627b12..2722dc7bb03d 100644
+--- a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
+@@ -274,10 +274,6 @@ patternProperties:
+           slew-rate:
+             enum: [0, 1]
+ 
+-          output-enable:
+-            description:
+-              This will internally disable the tri-state for MIO pins.
+-
+           drive-strength:
+             description:
+               Selects the drive strength for MIO pins, in mA.
 -- 
 2.17.1
 
