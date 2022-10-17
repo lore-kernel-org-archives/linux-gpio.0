@@ -2,94 +2,101 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADD8C43217
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Oct 2022 09:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5063C43217
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Oct 2022 09:25:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231260AbiJQJP0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Oct 2022 05:15:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33972 "EHLO
+        id S231347AbiJQJZZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Oct 2022 05:25:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231281AbiJQJOc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2022 05:14:32 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D908650BAB
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 02:13:44 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id y14so23372807ejd.9
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 02:13:43 -0700 (PDT)
+        with ESMTP id S231362AbiJQJZL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2022 05:25:11 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 680D34DB0A
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 02:25:04 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id s2so15168451edd.2
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2022 02:25:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qUk1uQhdbMxD0/T/au1bW4ciWhKciAmc4+RpG6d2heA=;
-        b=vfbDFYPQeOsjqvmBqlSXKZrnbw9dcBRMtC/z267YLsxGP7mXixqCCr+FChTkCxH2+o
-         q3AHwbpjoL8JJpkxbEv/rgopQpF5cvOOK1ZCvu72+2HzXSIqfHPH3tJ8WEvs/yPMGRH8
-         qnJbKsMekd6FtUlkPibir5Uw0cccXqTbmDC1b4ArqomJu1rL6mLzqZAksH3TUGP99UOk
-         cfbj2n9R7ZH3M6ntyMZKftT9U+7tudK4NdC45uKeF2SH5eLuGtYfHk8QqcKwHw5JdHI3
-         qU5QdFL6/bXHhXJ9ZKWumQrA4raDTMkyQdppjDfvAjnairo4MLHq81zqZIWlTNe39XFj
-         rbgQ==
+        bh=99HDygkhlYlkJy1VPrT+X4XIR81rX8ldiYCS5Kh+i58=;
+        b=awdS55iHEq9m/YsVeL8VJ4ffB/Rg1E3V1Lwv7O9z+YegdEb/YN4Ww52mVvg+Yr/B/o
+         bbm6f22xCqM5kevCff8qhZoHz8Jk5QZWYi485SKSlr0rDZbGWF/GQjFD0ElBdPcHdbnS
+         3ttKCFg/71s0SSxUpHgESfp0lS9hPKIcJLKR3rGSLiHI2gacCbNDijhVh0xWNItpcFlm
+         L6WDOxy/Ng4hCFG1I3KZE1GnpRa2ZfQELYAXmW326WZJhceEglOm+bgp9GkBAwTLdCOP
+         PmwkZiy8cJFvNTQUKOCxan6i4aylVXBUXyY6ZoEh9JYFdJnXBid0PmgCB2aCTAFY5uyo
+         UxTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qUk1uQhdbMxD0/T/au1bW4ciWhKciAmc4+RpG6d2heA=;
-        b=mEDGKHsyhsjrHKScBVTwE77TEHGgFYY5AP7p+4x78T/1egLi16/df+8Wng067CT/4k
-         zP/Le3aJCsz7+7fD0XMMeE6gFWGPV4IKuWSHeHWq/zee9xJ5eR62MWkUHQfj+0x1Cn0c
-         14C3lAtpfypKJi5VbNnJuoOiapl2ILku5fmBLhztPjZDy0JQ3EinMKs65TlOLm07U3y8
-         QDY20nLSV8IyezfS/au//bQrIFrNvFKbanlQh/di6HF1Go1bakdFuv2E2e+DrWLsAaZT
-         P2Umvhke49NhtpfmZHh4+WE3RjiohriGs13eMPWhv/IFDrg88ZRdKHC700qh/pHajS2H
-         T8rQ==
-X-Gm-Message-State: ACrzQf3egvCdu8l2u0tXRnf/1hd0UYC3xhbDUg+11HysPwmlVA/ORjxb
-        BE/BJamHnQM46oIOcTdjTfi+R7wDzB04BQv0sbJJmw==
-X-Google-Smtp-Source: AMsMyM5IcaB+/89z7lKy2GkwDgaJrMZTmiPyWfiVGfk2VKHOuGBwhZczAZ2NNHz84JySZqBRAKhaHChWmfkTPCymXmg=
-X-Received: by 2002:a17:907:7606:b0:78e:61d:757e with SMTP id
- jx6-20020a170907760600b0078e061d757emr7442664ejc.690.1665998019502; Mon, 17
- Oct 2022 02:13:39 -0700 (PDT)
+        bh=99HDygkhlYlkJy1VPrT+X4XIR81rX8ldiYCS5Kh+i58=;
+        b=iX6Y7+VaGJnlEtxT9tW0iAkjGzjjnG8206w6VJQbMO6UUstVm18dIfFbV6v+23/EdD
+         ZI8ExVzw3JkToIeqLmyo/rk/MgXkXoU15Q7klHcVWDxlb19VnTRaSNhUIHi0et2iLvFf
+         /zJEzkTPboADa1dvN94QjmnVnmMpkF0KDWpmYPn4kl855GYmoeEXgIHUka9cSaU3ytwt
+         9av/fuias0ntWz3e5XRZrPNDOI5d2MGsZSdMVqOeqqBIBeBzlF99HqltnpA6HJ+Ieuo4
+         OqPRu4I76B22/NZ/+OtIXOwkB/EXMoLEHYXcHHeOBy0DzDgf2L9+ZyW+o7Cv0xs2udmj
+         NTKA==
+X-Gm-Message-State: ACrzQf2/3tn2xU9wBhXfUteRceWt++iumBLiRsT+BY7MyEil1P+bvveN
+        alNBFGRD9qkHwHezCLgyEoQEupWXS15KHkHQSMk2jg==
+X-Google-Smtp-Source: AMsMyM7/azQg/5PEExog+1KORHtKOVrMXyY6GoCgMPlspSuXgL5EjVNSsRaF5/QTUPBBst867ntPiBH0ZWsO/2OcPmA=
+X-Received: by 2002:a50:eb8f:0:b0:458:482d:43de with SMTP id
+ y15-20020a50eb8f000000b00458482d43demr9417498edr.205.1665998703017; Mon, 17
+ Oct 2022 02:25:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221007125904.55371-1-y.oudjana@protonmail.com>
-In-Reply-To: <20221007125904.55371-1-y.oudjana@protonmail.com>
+References: <20221006140637.246665-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221006140637.246665-1-krzysztof.kozlowski@linaro.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 17 Oct 2022 11:13:28 +0200
-Message-ID: <CACRpkdb9b6Vckv3kVRWkB9dfTWetG5u6YkxMb7Re0O+EgH5QtA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] MediaTek pinctrl DT binding cleanup and MT6735
- pinctrl support
-To:     Yassine Oudjana <yassine.oudjana@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+Date:   Mon, 17 Oct 2022 11:24:51 +0200
+Message-ID: <CACRpkdYMa=bG3R4yfS25JZ=70=dOveFy1JocJBs2BOiBWP06PQ@mail.gmail.com>
+Subject: Re: [PATCH 00/34] pinctrl/arm64: qcom: continued - fix Qualcomm TLMM
+ pinctrl schema warnings (5th set)
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Andy Teng <andy.teng@mediatek.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
+        Stephan Gerhold <stephan@gerhold.net>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        krishna Lanka <quic_vamslank@quicinc.com>,
+        Iskren Chernev <iskren.chernev@gmail.com>,
+        Martin Botka <martin.botka@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Oct 7, 2022 at 2:59 PM Yassine Oudjana
-<yassine.oudjana@gmail.com> wrote:
+On Thu, Oct 6, 2022 at 4:06 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
+> Patches are organized not by file, but rather type of change
+> 1. First patches is for common TLMM schema and dropping unneeded refs.
+> 2. Last patches are pure cleanups without functional impact.
 >
-> This series adds a driver for the pin controller found on the MediaTek MT6735
-> and MT6735M SoCs. The two differ in the last 6 physical pins, which are used
-> for MSDC2 on MT6735 but don't exist on MT6735M (since MSDC2 doesn't exist on it
-> to begin with). In preparation to document DT bindings for this pin controller,
-> the existing documents for MT67xx SoCs are combined into one in order to
-> eliminate duplicate property definitions and standardize pin configuration node
-> names. Necessary cleanup is done along the way.
->
-> Changes since v2:
+> Overview
+> ========
+> This is the *fifth* patchset around Qualcomm pinctrl in recent days:
+> 1. First round of TLMM fixes: merged
+> 2. LPASS fixes:
+>    https://lore.kernel.org/linux-devicetree/20220927153429.55365-1-krzysztof.kozlowski@linaro.org/
+> 3. ARMv7 TLMM fixes:
+>    https://lore.kernel.org/linux-devicetree/20221006124659.217540-1-krzysztof.kozlowski@linaro.org/
+> 4. ARMv8 remaining TLMM fixes:
+>    https://lore.kernel.org/linux-devicetree/20220930192954.242546-1-krzysztof.kozlowski@linaro.org/
+> 5. Fifth clean - styles and using common TLMM schema: *THIS PATCHSET*
 
-v3 is already looking very good!
+Blanket:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Please fix up the remaining comments, then rebase on kernel
-v6.1-rc1 and resend, I think we can get the final reviews and apply
-it after that.
+Please send me pull requests for any parts that need to go into
+the pinctrl tree.
 
 Yours,
 Linus Walleij
