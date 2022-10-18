@@ -2,139 +2,116 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D3CC4332F
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Oct 2022 11:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D48BC4332F
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Oct 2022 12:17:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229774AbiJRLuH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Oct 2022 07:50:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42472 "EHLO
+        id S229674AbiJRMRr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Oct 2022 08:17:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229687AbiJRLuG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2022 07:50:06 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0424573C04
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Oct 2022 04:50:04 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id bh13so13081887pgb.4
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Oct 2022 04:50:03 -0700 (PDT)
+        with ESMTP id S229453AbiJRMRq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2022 08:17:46 -0400
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3939A3450
+        for <linux-gpio@vger.kernel.org>; Tue, 18 Oct 2022 05:17:45 -0700 (PDT)
+Received: by mail-qk1-x736.google.com with SMTP id a5so8445034qkl.6
+        for <linux-gpio@vger.kernel.org>; Tue, 18 Oct 2022 05:17:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E2QJkGMhqbbaOx5v1TbypyOHw9HBv90Z0xTzCJMEnAw=;
-        b=a1Gda1fiqMtLOfs1yyeuNQzLExEth9JAXG4gwD3DmexTde0liOLlgo00W/CKvuUCHw
-         y8LPObLbvNhMKHsyoH4GAkr6YFf1p79nHSd4l9+ALtbBz0NWvxyw7A+w8WB7UdrCfKxB
-         iovaFQVQFegReWc2XWjUnMRav13xJU4eb/pPtjoO+QUKg6lWKMry+WuixrLMkB8e1gjp
-         oR5Ss+jrzlJzqt3gkklqI2Byv2eKVfgHvwIAQM9uECg1FJAHbEynYLzT+1cU1ATm0lko
-         2DCNH+BxOpP0z86iqP23EFfDr0gdsT+L6H6pXb9Pd9ArX6RqYtNDqA0Cw7VrP6vwz3nb
-         Vjug==
+        bh=OlSg04/4Dd8U3EuUogDMELPRpoMqkuY3GumBRBmWFI0=;
+        b=ve3mDns3CqM7+7NxyWsndkD0guUHijbrCAucM26kfe6BL9xq0EPS69ikH1r+oKIwbw
+         XF19Fx7G2EHRFmsZw0LGj8fECAHmCZvQGThIwUQIt+begtsVLgoklhorPzaP/29PfM6p
+         CbgX4BaT+1W5j8RvXp/PFSlhmqG4E0756krQguM19r9lHxvnfdNPEL1ADd3PWBPf2lX7
+         VqVBZyjxaG1DvXLl5HcGzBLSurPLu57Yr+BBfjij4+g2o2/HDhfS9NCdiorCaqhZu76G
+         67b8HuzYk2s6m55RqeHTFjbNyGrPjL1g0zJmENKk6Ke3yLJk7j6oVWxPq2VsyuuW7ng0
+         5RDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E2QJkGMhqbbaOx5v1TbypyOHw9HBv90Z0xTzCJMEnAw=;
-        b=G8HF5XBdaa8toFRbJFqnXlihLtgCuP5GBOl0V42lpB5IbSiwSilcqvoS0k6JhAnURV
-         MPfUeDY4h2YrtwMwuVw4rOEVwdETOqNc1fzSY4mItINCVcmxjnfZfrI94ws0iQEGTyCZ
-         AgN9BjOPd5ewGqos2W/yvRYWg0v2+yWZ6nD9D7PZ2ZD/TWDsc/q3bWtXmZQB18Tb4L49
-         SVBmnN7PU7hZ+lsuVBNC9bH5MHjJQEyg6FkfBA8QFrjzPVyZldYXHiykN9KgWYfQ5WHa
-         75NjXzGz46+DTn0MfzAF6BLFrgd5lyADK9A1FTdzwOXqaYC+0exBIS9ANlvA6JQieWmn
-         /qKA==
-X-Gm-Message-State: ACrzQf2yMQjmVJ5ROND+GaWKTvF9vkJ6JqkYcPgMVYQDz6mSGtfndYfj
-        te9wfTzeHGsfciXVri9rbf8=
-X-Google-Smtp-Source: AMsMyM7IkrwxMTh/zDtVkUWHMWGC81MVa9KY4oY0X6I5NLBh0U4FN1wrxOOWGvp+WomHtN9h0fDIaw==
-X-Received: by 2002:a63:5c56:0:b0:464:85bb:8fd9 with SMTP id n22-20020a635c56000000b0046485bb8fd9mr2256037pgm.188.1666093803415;
-        Tue, 18 Oct 2022 04:50:03 -0700 (PDT)
-Received: from sol (110-174-58-111.static.tpgi.com.au. [110.174.58.111])
-        by smtp.gmail.com with ESMTPSA id j8-20020a170902da8800b0017305e99f00sm8504302plx.107.2022.10.18.04.49.59
+        bh=OlSg04/4Dd8U3EuUogDMELPRpoMqkuY3GumBRBmWFI0=;
+        b=ZZNC6VkH9e1C6CVokzWHQBc9wMUd/Nt3+urUDnGBK5j7+9Sb9yngjB7wCnbShh/NyN
+         f0kbiSxinotXF3BME4+Y56ON5jpOku7skULffYewAuAyx4qq8OFNQYeUlGZLV/p0Ftsj
+         HmmaHdUPYAxuPAAaCALk6x8AOByAdeN6XXbDon1qPJ4xhPy0Um3cee8FHibDpdEDznki
+         R2B7As6iIFPWRfree9Y32hNsudmFxaEJbaNr79nyABtCYOE3+uY9tQLnVcHNHJb166ym
+         yQ3EME+Y+V69C6vCmU9dZwnjB8MDSeUXR9hFUdO+6F+aJ6tenuk66x+hUYobdQy3jjhX
+         GP0g==
+X-Gm-Message-State: ACrzQf3BrvAgUq+sveA7zXt8Jq5ZOktiioTuLFAm8+TAhQTFp+NFuogD
+        93+dRrbqPYGa8eBg4a681ADgwA==
+X-Google-Smtp-Source: AMsMyM6ZG32yzEaXg8k2oSN/Tpw/jWYy6gTmmM/nXLeLt3qfUN1KFM8aIVURt5SG0G0p7IE4zhw70g==
+X-Received: by 2002:a37:ef0d:0:b0:6bb:4ec8:b312 with SMTP id j13-20020a37ef0d000000b006bb4ec8b312mr1529324qkk.249.1666095464842;
+        Tue, 18 Oct 2022 05:17:44 -0700 (PDT)
+Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id oo12-20020a05620a530c00b006eeae49537bsm2161924qkn.98.2022.10.18.05.17.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 04:50:02 -0700 (PDT)
-Date:   Tue, 18 Oct 2022 19:49:56 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-        stratos-dev@op-lists.linaro.org,
-        Gerard Ryan <g.m0n3y.2503@gmail.com>
-Subject: Re: [PATCH V7 1/8] libgpiod: Add libgpiod-sys rust crate
-Message-ID: <Y06S5GCFYeaPEW9E@sol>
-References: <cover.1665744170.git.viresh.kumar@linaro.org>
- <c8ef89c343a0c31e4132cc6757fdff8dec0d1669.1665744170.git.viresh.kumar@linaro.org>
- <Y01RqjgZINnkcyIC@sol>
- <20221018112204.l36wnimrqvexnvat@vireshk-i7>
+        Tue, 18 Oct 2022 05:17:43 -0700 (PDT)
+Date:   Tue, 18 Oct 2022 08:17:41 -0400
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Qingtao Cao <qingtao.cao.au@gmail.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v1 1/1] gpio: exar: Allow IO port access
+Message-ID: <Y06ZZQ4q3Ql0sNkm@fedora>
+References: <20221017170600.88480-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdbNkPG5KsB47jByseDh=nOt+J2eE_nh5EJqRLAPDp8v8A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Gqn9ZZgaixBaZ3cX"
 Content-Disposition: inline
-In-Reply-To: <20221018112204.l36wnimrqvexnvat@vireshk-i7>
+In-Reply-To: <CACRpkdbNkPG5KsB47jByseDh=nOt+J2eE_nh5EJqRLAPDp8v8A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 18, 2022 at 04:52:04PM +0530, Viresh Kumar wrote:
-> On 17-10-22, 20:59, Kent Gibson wrote:
-> > > diff --git a/bindings/rust/libgpiod-sys/Cargo.toml b/bindings/rust/libgpiod-sys/Cargo.toml
-> > > new file mode 100644
-> > > index 000000000000..77f82719d269
-> > > --- /dev/null
-> > > +++ b/bindings/rust/libgpiod-sys/Cargo.toml
-> > > @@ -0,0 +1,15 @@
-> > > +[package]
-> > > +name = "libgpiod-sys"
-> > > +version = "0.1.0"
-> > > +edition = "2018"
-> > > +
-> > 
-> > Add license and other relevant keys as per the link you helpfully include...
-> 
-> Is this enough ?
-> 
 
-You should add "categories" and "documentation" if you intend to publish
-to crates.io.
+--Gqn9ZZgaixBaZ3cX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/bindings/rust/libgpiod-sys/Cargo.toml b/bindings/rust/libgpiod-sys/Cargo.toml
-> index 77f82719d269..af4098cb137d 100644
-> --- a/bindings/rust/libgpiod-sys/Cargo.toml
-> +++ b/bindings/rust/libgpiod-sys/Cargo.toml
-> @@ -1,6 +1,11 @@
->  [package]
->  name = "libgpiod-sys"
->  version = "0.1.0"
-> +authors = ["Viresh Kumar <viresh.kumar@linaro.org>"]
-> +description = "A rust library for libgpiod public header bindings"
-> +repository = "https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/"
-> +keywords = ["libgpiod", "gpio"]
-> +license = "LGPL-2.1-or-later"
->  edition = "2018"
-> 
+On Tue, Oct 18, 2022 at 10:29:13AM +0200, Linus Walleij wrote:
+> On Mon, Oct 17, 2022 at 7:05 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+>=20
+> > It's possible that PCI device can provide an IO port resource for
+> > the device. regmap MMIO currently uses MMIO by default. With an
+> > additional flag we enable support for IO port accesses.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>=20
+> Looks clever to me!
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> I would let William have a look at it as well, as he's worked extensively
+> with port-mapped I/O.
+>=20
+> Yours,
+> Linus Walleij
 
-Why the 2018 edition, rather than 2021?
+I love how simple it is to add IO port support to these drivers now. :-)
 
-> I picked license details from C code, is that what we should be using
-> here too ?
-> 
+Acked-by: William Breathitt Gray <william.gray@linaro.org>
 
-LGPL is probably not appropriate here, as the binding code ends up
-being part of the binary - unless you plan to package it as a dynamic
-library?
+I'm hoping to convert several of the port-mapped GPIO drivers to the
+regmap API later this cycle, so it's good to see other modules making
+use of this interface as well.
 
-The licenses of your dependencies are:
-$ cargo license
-(MIT OR Apache-2.0) AND Unicode-DFS-2016 (1): unicode-ident
-Apache-2.0 AND BSD-3-Clause (1): vmm-sys-util
-Apache-2.0 OR MIT (8): bitflags, cc, libc, proc-macro2, quote, syn, thiserror, thiserror-impl
-MIT (1): intmap
-N/A (3): gpiosim, libgpiod, libgpiod-sys
+Thanks,
 
-IANAL, but one or more of those would be more appropriate than either
-GPL or LGPL.
-You, Bart and linaro(?) will have to come to some agreement on which
-license or combination to go with - it depends.
+William Breathitt Gray
 
-Cheers,
-Kent.
+--Gqn9ZZgaixBaZ3cX
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCY06ZZQAKCRC1SFbKvhIj
+K4a2AQC5tyMmVg9lmM0Ig4lRNMikOooM39OWgxDsLS6TvV4qaAD+LgrR2MNu2N7+
+UI00cdLogtU8YgtpqEbld147YhZXoQo=
+=vFbp
+-----END PGP SIGNATURE-----
+
+--Gqn9ZZgaixBaZ3cX--
