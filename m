@@ -2,90 +2,104 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B51C4332F
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Oct 2022 12:32:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886A1C433FE
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Oct 2022 13:08:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229701AbiJRMcF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Oct 2022 08:32:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60036 "EHLO
+        id S229573AbiJRNH7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Oct 2022 09:07:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229506AbiJRMcD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2022 08:32:03 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4868D27CD8;
-        Tue, 18 Oct 2022 05:32:03 -0700 (PDT)
+        with ESMTP id S229574AbiJRNH4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2022 09:07:56 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12603C6950;
+        Tue, 18 Oct 2022 06:07:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666096323; x=1697632323;
+  t=1666098475; x=1697634475;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=679yrLLfz5kJkADoDvJtXHkNCdTyNEeZjUBrx5uh7Gg=;
-  b=X7IKGcoJjIBaQCxoOEvI/OEg3aMXzvhnTNAVyT0i+kXGdXUzjH63BOmk
-   0Qpv5qnLwOE+cxhDWnSxouKQO58uMAm7UEoaBq6Hhj9ar23VIb10YqOCf
-   MPCQ52B8DVqwk3as6DHiPQVgy+1gfljdslxS987k3yIXys8QCYuV45j8o
-   2KypPNE3G4VwmkrGaWjx05lTZyIMDb75Gd+gRmaf1XUgwbC8aYs7AyX9B
-   RhCyXjM9M7EixQRkh3nxyINGj54CrwR7dcikk7TLAT7wXnrI0tGcVs3GG
-   npt8IXryVS5tiUdX6Qoxk0LFQYbx/L4cLNumQwfuZGTUjOcsOKEJyPov6
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10503"; a="289384271"
+  bh=sEQGqXRBwnqb8HWOCi92bXpDgq1DcIK6JeLU6KGQmhU=;
+  b=CpqjtYF41V8MLGIiXWK0qubbqKjLFQqYlBatPKpj3lpciNHFOUAj6Okg
+   4NXwnwuo+HhwmkyufYnRraKxMesHb6ACsYeT1717ICwGhkyof2l8pou3m
+   fePS+HYV+aL8L4HzVll9FEtSrc4HJojwzWOEQiB1hjUa/78DqN0GdnCcP
+   Pfn1XNEiqMMlSq/F0FgUjMiikCbPdacBdz3AK+3ZX525KJROm9puZAD17
+   c4yDFqRFZRtMyolMYr0F3fAENyZ1XW6s5/aRUQZaAx9+2AxQSC20Tzi4g
+   NZukQ+YWvtQPzklNP3Ae/ZEIk99UpNGa6TLdaIxf50ay3wrP8GM7whH4J
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="368126208"
 X-IronPort-AV: E=Sophos;i="5.95,193,1661842800"; 
-   d="scan'208";a="289384271"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2022 05:32:02 -0700
+   d="scan'208";a="368126208"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2022 06:07:54 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10503"; a="733605367"
+X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="659781896"
 X-IronPort-AV: E=Sophos;i="5.95,193,1661842800"; 
-   d="scan'208";a="733605367"
+   d="scan'208";a="659781896"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP; 18 Oct 2022 05:32:00 -0700
+  by orsmga008.jf.intel.com with ESMTP; 18 Oct 2022 06:07:49 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.96)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1okllG-009M9O-2Q;
-        Tue, 18 Oct 2022 15:31:58 +0300
-Date:   Tue, 18 Oct 2022 15:31:58 +0300
+        id 1okmJu-009NCP-2i;
+        Tue, 18 Oct 2022 16:07:46 +0300
+Date:   Tue, 18 Oct 2022 16:07:46 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 00/10] gpiolib: more quirks to handle legacy names
-Message-ID: <Y06cvrpcHn0jwZxU@smile.fi.intel.com>
-References: <20221011-gpiolib-quirks-v3-0-eae9cc2ed0a1@gmail.com>
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 36/36] pinctrl: Clean up headers
+Message-ID: <Y06lIq+2+MPRL45W@smile.fi.intel.com>
+References: <20221010201453.77401-1-andriy.shevchenko@linux.intel.com>
+ <20221010201453.77401-37-andriy.shevchenko@linux.intel.com>
+ <d63088d7-202b-a550-01e5-345a22de5f7d@amd.com>
+ <CAMuHMdUfdQnisexfs4yLjeKs-LUPY1HjChrgeNjNL1qSErir9Q@mail.gmail.com>
+ <Y0UyOWALxSFai2w6@smile.fi.intel.com>
+ <CAMuHMdVU-cTBMzgBrbzA9+ZYybVS8kdYaA9spU9oDfqrLMvCuA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221011-gpiolib-quirks-v3-0-eae9cc2ed0a1@gmail.com>
+In-Reply-To: <CAMuHMdVU-cTBMzgBrbzA9+ZYybVS8kdYaA9spU9oDfqrLMvCuA@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Oct 17, 2022 at 10:41:01PM -0700, Dmitry Torokhov wrote:
-> In preparation to converting several drivers to gpiod API, and to keep
-> existing DTS working, this series adds additional quirks to locate
-> gpio lines with legacy names.
-> 
-> Additionally the quirk handling has been reworked (once again) to pull
-> all simple renames (ones that do not involve change of indices or other
-> complex manipulations) into a single quirk with a table containing
-> transformations. This should make adding new quirks easier.
-> When using legacy names gpiolib will emit a message to nudge users to
-> update DTSes (when possible).
-> 
-> Note that the last patch requires the following change from the OF tree:
-> 
->         88269151be67 ("of: base: make of_device_compatible_match() accept const device node")
-> 
-> The change is also available in mainline - it has been merged in 6.1
-> merge window.
+On Tue, Oct 18, 2022 at 03:04:44PM +0200, Geert Uytterhoeven wrote:
+> On Tue, Oct 11, 2022 at 11:07 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Tue, Oct 11, 2022 at 10:46:30AM +0200, Geert Uytterhoeven wrote:
+> > > On Tue, Oct 11, 2022 at 9:31 AM Basavaraj Natikar <bnatikar@amd.com> wrote:
 
-I was wondering if we can use the approach that ACPI chose for itself,
-i.e.  the separate data that can be filled by the corresponding driver
-and then GPIO OF common code may use it. In that case each driver knows
-the exact list of compatible strings and associated quirks.
+...
+
+> > > I can confirm adding
+> > >
+> > >     #include <linux/pinctrl/pinconf.h>
+> > >
+> > > to drivers/pinctrl/renesas/pinctrl-rzn1.c and drivers/pinctrl/pinctrl-single.c
+> > > fixes the issues I was seeing with shmobile_defconfig and (out-of-tree)
+> > > renesas_defconfig.
+> >
+> > I will add this, thank you for reporting.
+> 
+> Same for drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c.
+
+Thanks!
+
+Not only. I have updated all of them (but missed zynq (it is in today's Linux
+Next).
 
 -- 
 With Best Regards,
