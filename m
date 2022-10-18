@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AE2C4332F
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Oct 2022 05:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A1EC433FE
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Oct 2022 05:41:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229683AbiJRFlU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Oct 2022 01:41:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37824 "EHLO
+        id S230304AbiJRFle (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Oct 2022 01:41:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229976AbiJRFlT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2022 01:41:19 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 825769DFBA;
-        Mon, 17 Oct 2022 22:41:18 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id c24so12849533plo.3;
-        Mon, 17 Oct 2022 22:41:18 -0700 (PDT)
+        with ESMTP id S230267AbiJRFlc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2022 01:41:32 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6AEA344C;
+        Mon, 17 Oct 2022 22:41:22 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id t12-20020a17090a3b4c00b0020b04251529so12986102pjf.5;
+        Mon, 17 Oct 2022 22:41:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jTn1dphwNOkdUyNvDetLqqezFlO3LTymy8eZ70ptOU4=;
-        b=lz0HD8RW5uepcDP4ExPxobkGeybyVM1a/aLHa5C8LHvYddXJ4DPGBq5N3gTF0xUkdT
-         5r+Y/MijFhpqdp9ZYE5yZJGylo3K+DSYD69+IuGZnJni/FEyqZe9sO79SZmNUCSPO1L7
-         VXglj6d4U3yuIqtRjTnzn/KYrpjkL4fG6yRwUN3mbojj3elf0Wtr/vELfeGOYgbAF+3B
-         nKDRrddxLyXbKnN92Cw09Z8lDqxi4s5Kxmi48bGQWeWrqsTpB7m/iFg8qRjp2gbiaVSd
-         lsdjBpgKqsmTW51CbYyK2OOZi888FUKFR9KT4555diSCxYJPobkBmP4kY4mlJWaOKXtr
-         lpJg==
+        bh=ch1kkg4DviDr6cISnBueqNw+RVHy+3iDkYpvZ9QTu+8=;
+        b=mHve54bc7ls4cCd6C+WM3vdDSNGdw+8I7tX818Y+FQd+0A1EfGoZp1Cu9SjKAkb8s3
+         Mz6bLG0nCRdSFm8PoxRktOPdBxTSH/1gJ+psd/3tNwGufenYlwBHOHRkanuiFHnkpNbi
+         qKTDWws9xj62X8nQs4UY3tIbcymrjuUmf4ng7BiDtgNfN/5CNBFnDncwzG+tmQfasCo8
+         EMOl9ry8ZHYazcKg0NtcFqpURBiE/IcwXyv8od3GcSZ50/ViCKHX4Hv5ukC0a5reOb+Y
+         EBu8Ag4Up1LyZ87fjL4Y/Qg9Hic/ClAL2eYp5ytA96PKAALHcXOMXHT+Xf1Vr8VqLTbg
+         bVtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jTn1dphwNOkdUyNvDetLqqezFlO3LTymy8eZ70ptOU4=;
-        b=bL8P92BPaem95UHz+/iLBsRLc54wTozKU2SWw7d5n5Sad1bttG/8Yz/l0F0v5D7c5W
-         tFdV0bhw+E7gPxEZx4S26GvFJy21It/PmLLPP3Tm8umWPDRF5k3paXeMqwUvtabwCa7i
-         rTZL1NKvs9KIkeEfhlDLpuNr94XXNLy305TkNh0bvdpeazHO08uB5BTM4emsTbPPyY60
-         TfDKeQcVzEF+m75JufesPEic+KEVUp5Utf5Ji0Tpvbp9E5/BApOkHMEUk5FE0n6omRUi
-         wGHyIWz9+p7T1S1qgSb/LGhmXjEWcPHarS96x3kc0R3YK/i0bvjL7Wy7atFZuKuCXHFT
-         QS/g==
-X-Gm-Message-State: ACrzQf3JyZA5I9k1QLjnO8ywsSe2dUHH1P76R5MB95X1ibxzM0rzmSO/
-        uRusPuhBrk0woGlIIYflJtAeHQjm09niHQ==
-X-Google-Smtp-Source: AMsMyM5rs1kB4rFeIfAfMs/wl4emcwgpOJcxfI8D4+foneG1Oqh62ltVnNeCS1hPaOOZKRp3wXqlkA==
-X-Received: by 2002:a17:90b:48c9:b0:20a:e225:1afd with SMTP id li9-20020a17090b48c900b0020ae2251afdmr36387992pjb.21.1666071677837;
-        Mon, 17 Oct 2022 22:41:17 -0700 (PDT)
+        bh=ch1kkg4DviDr6cISnBueqNw+RVHy+3iDkYpvZ9QTu+8=;
+        b=V25XIWm/413y8fw38/c/kKYX6ci7odKjkkukbkCWklhpkwSm00I8DQL8F0mgFAeh7f
+         ry8FZfMxDKiaiLFu7rdTxy1lTTyEKQ4j5Klp7l2k5J5cyA0p6ON9AeyBAtzvusZqp3rv
+         2im2sLjOutA3K3b+V0r5Qh84VnWQh6ds6Eph3kPlo+86ejBGr/oL7e/nwZiBqmgYck6G
+         TzoMDUpd75gnQIi+JuQautlHUs8Z/p1WRUBUtxesMl8QIQTRMcRg3QZBwUEZFYuXFWDB
+         ud+O7M9kvtEqpYqSrTQ5cYjJAqa/yGMhjWt3CoxUOhpdIqmGwYekdxpyg/ufbX1Wf1bS
+         WAyQ==
+X-Gm-Message-State: ACrzQf0yMio64LMOBScbZRmbYLrk119bd3MKtSt9b7HtA5LWgAGsimUj
+        VwNPFy2ePt4hncs6VOkVcY0=
+X-Google-Smtp-Source: AMsMyM7d59XGsjP6DygOpdlJU+BHF6POz0TjgtvZCukR/4f2RTioIXZcjn/vo/jVJHpfY2p3ENJHbA==
+X-Received: by 2002:a17:903:11c3:b0:17a:e62:16e8 with SMTP id q3-20020a17090311c300b0017a0e6216e8mr1354374plh.137.1666071681430;
+        Mon, 17 Oct 2022 22:41:21 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:9d:2:f7bc:1bb5:e0b1:92cb])
-        by smtp.gmail.com with ESMTPSA id z7-20020a1709027e8700b00172f4835f53sm7597435pla.192.2022.10.17.22.41.15
+        by smtp.gmail.com with ESMTPSA id z7-20020a1709027e8700b00172f4835f53sm7597435pla.192.2022.10.17.22.41.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Oct 2022 22:41:17 -0700 (PDT)
+        Mon, 17 Oct 2022 22:41:20 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Linus Walleij <linus.walleij@linaro.org>
@@ -57,9 +57,9 @@ Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Daniel Thompson <daniel.thompson@linaro.org>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 01/10] gpiolib: of: add a quirk for legacy names in Mediatek mt2701-cs42448
-Date:   Mon, 17 Oct 2022 22:41:02 -0700
-Message-Id: <20221011-gpiolib-quirks-v3-1-eae9cc2ed0a1@gmail.com>
+Subject: [PATCH v3 03/10] gpiolib: of: tighten selection of gpio renaming quirks
+Date:   Mon, 17 Oct 2022 22:41:04 -0700
+Message-Id: <20221011-gpiolib-quirks-v3-3-eae9cc2ed0a1@gmail.com>
 X-Mailer: git-send-email 2.38.0.413.g74048e4d9e-goog
 In-Reply-To: <20221011-gpiolib-quirks-v3-0-eae9cc2ed0a1@gmail.com>
 References: <20221011-gpiolib-quirks-v3-0-eae9cc2ed0a1@gmail.com>
@@ -71,70 +71,68 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The driver is using non-standard "i2s1-in-sel-gpio1" and
-"i2s1-in-sel-gpio2" names to describe its gpios. In preparation to
-converting to the standard naming (i2s1-in-sel-gpios) and switching the
-driver to gpiod API add a quirk to gpiolib to keep compatibility with
-existing DTSes.
+Tighten selection of legacy gpio renaming quirks so that they only
+considered on more relevant configurations.
 
+Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
 Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/gpio/gpiolib-of.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/gpio/gpiolib-of.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 0e4e1291604d..cef4f6634125 100644
+index 63c6fa3086f3..7d4bbf6484bc 100644
 --- a/drivers/gpio/gpiolib-of.c
 +++ b/drivers/gpio/gpiolib-of.c
-@@ -488,6 +488,38 @@ static struct gpio_desc *of_find_usb_gpio(struct device_node *np,
- 	return of_get_named_gpiod_flags(np, con_id, idx, of_flags);
- }
+@@ -385,18 +385,21 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
+ #if IS_ENABLED(CONFIG_MFD_ARIZONA)
+ 		{ "wlf,reset",	NULL,		NULL },
+ #endif
+-#if IS_ENABLED(CONFIG_REGULATOR)
++
+ 		/*
+ 		 * Some regulator bindings happened before we managed to
+ 		 * establish that GPIO properties should be named
+ 		 * "foo-gpios" so we have this special kludge for them.
+ 		 */
++#if IS_ENABLED(CONFIG_REGULATOR_ARIZONA_LDO1)
+ 		{ "wlf,ldoena",  NULL,		NULL }, /* Arizona */
++#endif
++#if IS_ENABLED(CONFIG_REGULATOR_WM8994)
+ 		{ "wlf,ldo1ena", NULL,		NULL }, /* WM8994 */
+ 		{ "wlf,ldo2ena", NULL,		NULL }, /* WM8994 */
+ #endif
+-#if IS_ENABLED(CONFIG_SPI_MASTER)
  
-+static struct gpio_desc *of_find_mt2701_gpio(struct device_node *np,
-+					     const char *con_id,
-+					     unsigned int idx,
-+					     enum of_gpio_flags *of_flags)
-+{
-+	struct gpio_desc *desc;
-+	const char *legacy_id;
-+
-+	if (!IS_ENABLED(CONFIG_SND_SOC_MT2701_CS42448))
-+		return ERR_PTR(-ENOENT);
-+
-+	if (!of_device_is_compatible(np, "mediatek,mt2701-cs42448-machine"))
-+		return ERR_PTR(-ENOENT);
-+
-+	if (!con_id || strcmp(con_id, "i2s1-in-sel"))
-+		return ERR_PTR(-ENOENT);
-+
-+	if (idx == 0)
-+		legacy_id = "i2s1-in-sel-gpio1";
-+	else if (idx == 1)
-+		legacy_id = "i2s1-in-sel-gpio2";
-+	else
-+		return ERR_PTR(-ENOENT);
-+
-+	desc = of_get_named_gpiod_flags(np, legacy_id, 0, of_flags);
-+	if (!gpiod_not_found(desc))
-+		pr_info("%s is using legacy gpio name '%s' instead of '%s-gpios'\n",
-+			of_node_full_name(np), legacy_id, con_id);
-+
-+	return desc;
-+}
-+
- typedef struct gpio_desc *(*of_find_gpio_quirk)(struct device_node *np,
- 						const char *con_id,
- 						unsigned int idx,
-@@ -498,6 +530,7 @@ static const of_find_gpio_quirk of_find_gpio_quirks[] = {
- 	of_find_regulator_gpio,
- 	of_find_arizona_gpio,
- 	of_find_usb_gpio,
-+	of_find_mt2701_gpio,
- 	NULL
- };
++#if IS_ENABLED(CONFIG_SPI_GPIO)
+ 		/*
+ 		 * The SPI GPIO bindings happened before we managed to
+ 		 * establish that GPIO properties should be named
+@@ -405,6 +408,7 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
+ 		{ "miso",	"gpio-miso",	"spi-gpio" },
+ 		{ "mosi",	"gpio-mosi",	"spi-gpio" },
+ 		{ "sck",	"gpio-sck",	"spi-gpio" },
++#endif
  
+ 		/*
+ 		 * The old Freescale bindings use simply "gpios" as name
+@@ -412,10 +416,14 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
+ 		 * all other SPI hardware. Allow this specifically for
+ 		 * Freescale and PPC devices.
+ 		 */
++#if IS_ENABLED(CONFIG_SPI_FSL_SPI)
+ 		{ "cs",		"gpios",	"fsl,spi" },
+ 		{ "cs",		"gpios",	"aeroflexgaisler,spictrl" },
++#endif
++#if IS_ENABLED(CONFIG_SPI_PPC4xx)
+ 		{ "cs",		"gpios",	"ibm,ppc4xx-spi" },
+ #endif
++
+ #if IS_ENABLED(CONFIG_TYPEC_FUSB302)
+ 		/*
+ 		 * Fairchild FUSB302 host is using undocumented "fcs,int_n"
 
 -- 
 b4 0.11.0-dev-5166b
