@@ -2,35 +2,35 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBD3C43217
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Oct 2022 03:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C7CC43217
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Oct 2022 03:09:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230150AbiJRDJ2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Oct 2022 23:09:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34126 "EHLO
+        id S230257AbiJRDJ3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Oct 2022 23:09:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230513AbiJRDIF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2022 23:08:05 -0400
+        with ESMTP id S230388AbiJRDIR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2022 23:08:17 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 290549AFB4;
-        Mon, 17 Oct 2022 20:07:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 473179AF9F;
+        Mon, 17 Oct 2022 20:07:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B30986136C;
-        Tue, 18 Oct 2022 03:07:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B009C43141;
-        Tue, 18 Oct 2022 03:07:07 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0648C61371;
+        Tue, 18 Oct 2022 03:07:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1E18C43141;
+        Tue, 18 Oct 2022 03:07:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666062428;
-        bh=1BfY1PnCTylRiKFpt8p1zmwAtZauu1fmolEvNIMb6I8=;
+        s=k20201202; t=1666062424;
+        bh=xLr45fjjYMsaA2oWkGlLP6xqQPpBY0Nk6pN8GqVbgpk=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=lk+PqEPC8pYWTpVz+i6D79fy6Fx15G6eSENpvrTtDBrbdS71xXwAiQ/go7to8oZxH
-         yoGUZ0P+MnwkwxkMk5358T5RxI9qQwUsvtllePNhvHXThkjYqedbWJyXWbqiyHZjVH
-         J1ben/ouoAz9Hw0T2zgK9BhBSVuVvFaJ3EB9y43pgXmi9Ap+wNHh4cSJS5720gQN9H
-         hfA88vrCNWHmTey99LRmshx7ar+B1ymvVW30S951M8k+kg/LUS/b3C/bRqtoz6Vrba
-         KnMgs6ER+SJ59FrC4IEGAVO94gGu7mPzDWwkBctO2ukd3LFkPJAHfa8B4+d+W9eVAv
-         1Yl8HRx2p8NtA==
+        b=TJs5AX/Fl0uv/cddO+TQeO5mP/02ak5a1d7iC10zuenrjofuxCBWXGNvOMtkoK9hJ
+         qUKDZWQKfuAbdbiI5xaHAZj/LcVZ3jTtgpqr8GvVOi3zBPOcKI52qFQQucHPIAy1s4
+         wVwVO+A0CLgN6H//xP3YhDfMQRhWCLbTbNtEPpAMlRyHVhOvhzZXQmHUXxbm7CwSfC
+         PS43LyC3hdOAW6bISLVVzQ2/wGkFih4aYljIiuXW8WA7JftO/LnaR6qaBp/vfrMEXK
+         p0soKwkWQ7w5kgsrNsHRBlqnH8CAeHcu6zK/iM6kPCdIfSx4FEM/PIp79/6V/CFQSS
+         kPMcJoTUuMduQ==
 From:   Bjorn Andersson <andersson@kernel.org>
 To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, agross@kernel.org,
@@ -38,12 +38,12 @@ To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: Re: (subset) [PATCH v3 1/4] arm64: dts: qcom: msm8998: add gpio-ranges to TLMM
-Date:   Mon, 17 Oct 2022 22:05:41 -0500
-Message-Id: <166606235861.3553294.17820472045453373115.b4-ty@kernel.org>
+Subject: Re: (subset) [PATCH v2 1/4] arm64: dts: qcom: sdm630: add UART pin functions
+Date:   Mon, 17 Oct 2022 22:05:38 -0500
+Message-Id: <166606235861.3553294.8390135332228667844.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221013210612.95994-1-krzysztof.kozlowski@linaro.org>
-References: <20221013210612.95994-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221011190231.76784-1-krzysztof.kozlowski@linaro.org>
+References: <20221011190231.76784-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -51,19 +51,20 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, 13 Oct 2022 17:06:09 -0400, Krzysztof Kozlowski wrote:
-> Qualcomm pinctrl bindings and drivers expect gpio-ranges property.
+On Tue, 11 Oct 2022 15:02:28 -0400, Krzysztof Kozlowski wrote:
+> Configure UART1 and UART2 pins to respective functions in default state,
+> otherwise the pins might stay as GPIOs.
 > 
 > 
 
 Applied, thanks!
 
-[1/4] arm64: dts: qcom: msm8998: add gpio-ranges to TLMM
-      commit: e3d5e948d1b87e8531d842f4c98f56e0bb1a5c60
-[2/4] arm64: dts: qcom: msm8998-oneplus-cheeseburger: fix backlight pin function
-      commit: 46546f28825cf3a5ef6873b9cf947cd85c8a7258
-[3/4] arm64: dts: qcom: msm8998: align TLMM pin configuration with DT schema
-      commit: ed9ba9e9b7437416ed97b36fe06ecb6001f0b067
+[1/4] arm64: dts: qcom: sdm630: add UART pin functions
+      commit: 804ec4dad48c4fc7844c66b5febe9dbc6198f8b5
+[2/4] arm64: dts: qcom: sdm630: correct I2C8 pin functions
+      commit: 06783c3ae8899aa71abc795d3d6490a4afa9ed99
+[3/4] arm64: dts: qcom: sdm630: align TLMM pin configuration with DT schema
+      commit: 048a765ac5712397cb58e374a7e1087c34875b5f
 
 Best regards,
 -- 
