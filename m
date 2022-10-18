@@ -2,101 +2,218 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EABB2C43217
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Oct 2022 08:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32411C433FE
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Oct 2022 08:50:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230368AbiJRIq3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Oct 2022 04:46:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51806 "EHLO
+        id S231140AbiJRIt7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Oct 2022 04:49:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230233AbiJRIq2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2022 04:46:28 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79B711D666
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Oct 2022 01:46:27 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id a67so19386661edf.12
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Oct 2022 01:46:27 -0700 (PDT)
+        with ESMTP id S231148AbiJRIt5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2022 04:49:57 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D82DF81;
+        Tue, 18 Oct 2022 01:49:28 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id m23so17025745lji.2;
+        Tue, 18 Oct 2022 01:49:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=C8yONvRRUQJPuoavB+xNZ/gSoA3xt5GYZLZQQi+w0go=;
-        b=nRefSusEqx9L/VcO+LJ8/n65ylL2w6HkuK9rQkkyeDbyS5UZrRNnrH4z5iRVhSIwa1
-         GmfmO5Ty085QZKg5899MZYNvWv810eLoSCCENzZxozx3jsIuWqGj8dKFlbmBjRI3x+W5
-         abAGpaKv9c9m24CwSxqIaK9V0LY8YQxstzNRmT51ozZRDh14JbTKuagUE8f8Frq7x/4Q
-         SwHLsIDnrz4JsDPUiaJqDKO3S/oUwvkgS3OdR/SysFKD/sMfaH8fTSGYol384HAid4v+
-         oYHbQAWLMPCB1HetJn6pWEXSceoZPrPQ5keSZlzwHey7EzbJHQCjCdxaU2lm4uhnUDb0
-         m1+g==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7Ittdb6vpPq1cRywgTUHTYSBDHDcOaOE6DaEoaGh8YM=;
+        b=krCqaYYSLmJYdJvQYwjptmDh1lS+zQ78QhKT3hTwbL799UkyWti9qu7P7B1G4pwhf1
+         IfHeyy+6RMdvVR3eoKxS01QsFdm33buS4EU2sO3+1VxSnAFjBrmtUMMMJvNb2X+ey84y
+         FJ1ZXzP7McqJbwhp1RSSFPwOieRid9X5YGWdQ73OiMumXxth449mIyWy4wHo+K+tYcYL
+         PThV/KTHciQHKK8f/pjDtG5T33ZXB9i9z3qcZOV0qLOrVMu8VPdKVb+hECO7Gijz/UIZ
+         GNfHhEk/dGzoYYs1DEIkv83UrqPGGlzFJCdcf4D+LkVxDTru0xVmy9Qi/na2fh0oOdQm
+         6UxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C8yONvRRUQJPuoavB+xNZ/gSoA3xt5GYZLZQQi+w0go=;
-        b=ZeWSMzXBaAYzxr6NuOu0hAhR0hpGt8oBx88wRjHgfx2O+g8PGavoRpBezyb0+O7D/z
-         gPc68C0P2BfH7S7tzyUfEv22syUuP2q1kQzASHsu786MJXMVqBcHYebmRigG6PvfHjEW
-         VhwBaDApelWDYO6Hz5zvBISG7ihTS+tyhrS4kWx6hxfWdfFEriEJxBrnH3k9rGqu89iV
-         qqcDXgwNhE7LYQ2womE4CDydtelVFc/JsqhJyQ3TFr8/c4U/0kZ26R+8/zGhNjpAaKEI
-         Uq7DnIbnpNOQr0GtLh0daCcsiP1EhWTooKMfCn3+Ayx1yme/VO4sHVPRcE+DTRHLH8JD
-         VSLg==
-X-Gm-Message-State: ACrzQf1cI4y7yFfJXGLDObnGP60G9G7Kug3s0vPOod18bXjLLWhoXvIx
-        mT6kmIvxlX7iyT6C8u5X4ANlyOLyMzs2TbTwlaXHgA==
-X-Google-Smtp-Source: AMsMyM5NcWmisEzHV59uUQHklByRJFIqWOZcpu4+XDbYo0YoIKJjnuyc6uWEd4Ko0V3yzD60DhsEWB+sXpCi358bd/s=
-X-Received: by 2002:a05:6402:448:b0:45c:8de5:4fc with SMTP id
- p8-20020a056402044800b0045c8de504fcmr1612720edw.133.1666082786025; Tue, 18
- Oct 2022 01:46:26 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7Ittdb6vpPq1cRywgTUHTYSBDHDcOaOE6DaEoaGh8YM=;
+        b=2DTWYlyH9rdRN3rjn5bkajPDsgsXYBAbvAurZPoQh9va6i0TrthqYTWUQz0aVRhZPu
+         Abhunh7UwMOUxswybwnjBne9zHeZxS0nAGK9lCXo3wZTuWywRFS2JXwQYcWR0fSElPy1
+         jIvwYQnzhGh3FLFGQMuDBIoq08ONm042rCymt8LizsaMywh7jBaySgjaw6/VIItvw58h
+         OEEBInWnYbNNPlfifJHTwKPnu/58jbD3X6uMwl0bWNu0mqODrOTlKSzuerC96A8/+iSl
+         hs/dy1a+bcYc77Q3mWpPijVEjU+tih04rn2Ajh05P5cpasokZDymuMVyOER+Eet9yU93
+         YHPg==
+X-Gm-Message-State: ACrzQf1QhUE9Z3lw7QWKhf6UVSmc++ap6qjGzB0DodncmPVoTdNv8foD
+        wVucU3dm3DyANZZMSeaNtPU=
+X-Google-Smtp-Source: AMsMyM6nI82WaGnIRN7vQ8B9NpOCEchM5Jz5QPjG0jHlhCqTwAzHr4pcUpynZbRYzC3Rcl6UUKkO8g==
+X-Received: by 2002:a2e:3801:0:b0:26f:f8da:5da9 with SMTP id f1-20020a2e3801000000b0026ff8da5da9mr213877lja.238.1666082967164;
+        Tue, 18 Oct 2022 01:49:27 -0700 (PDT)
+Received: from localhost.localdomain ([188.163.112.49])
+        by smtp.gmail.com with ESMTPSA id e10-20020a05651236ca00b004949f7cbb6esm1771890lfs.79.2022.10.18.01.49.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Oct 2022 01:49:26 -0700 (PDT)
+From:   Svyatoslav Ryhel <clamor95@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc:     linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] gpio: tegra: Convert to immutable irq chip
+Date:   Tue, 18 Oct 2022 11:49:04 +0300
+Message-Id: <20221018084905.21717-2-clamor95@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221018084905.21717-1-clamor95@gmail.com>
+References: <20221018084905.21717-1-clamor95@gmail.com>
 MIME-Version: 1.0
-References: <20221013215946.216184-1-marex@denx.de> <CACRpkdZG4a2SsNiunxz0SHR6kuXLX34LZcYp0dGakDigwbGdHw@mail.gmail.com>
- <86fb901a-ca3a-cfdc-8984-1af9235d5323@denx.de>
-In-Reply-To: <86fb901a-ca3a-cfdc-8984-1af9235d5323@denx.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 18 Oct 2022 10:46:14 +0200
-Message-ID: <CACRpkdaW55-KGKNTTStgbteHn9Kp9E86y1+fTsFBXuV3v3KEiQ@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] gpio: mxc: Protect GPIO irqchip RMW with bgpio spinlock
-To:     Marek Vasut <marex@denx.de>
-Cc:     linux-gpio@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 18, 2022 at 10:33 AM Marek Vasut <marex@denx.de> wrote:
-> On 10/17/22 12:23, Linus Walleij wrote:
-> > On Fri, Oct 14, 2022 at 12:00 AM Marek Vasut <marex@denx.de> wrote:
-> >
-> >> The driver currently performs register read-modify-write without locking
-> >> in its irqchip part, this could lead to a race condition when configuring
-> >> interrupt mode setting. Add the missing bgpio spinlock lock/unlock around
-> >> the register read-modify-write.
-> >>
-> >> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >> Reviewed-by: Marc Zyngier <maz@kernel.org>
-> >> Fixes: 07bd1a6cc7cbb ("MXC arch: Add gpio support for the whole platform")
-> >> Signed-off-by: Marek Vasut <marex@denx.de>
-> >
-> > Unrelated, but Marek can you have a look at this MXC patch since
-> > you're obviously working on the platform:
-> > https://lore.kernel.org/linux-gpio/20221007152853.838136-1-shenwei.wang@nxp.com/
->
-> Errrr, that's i.MX8, which is completely different chip than the i.MX8M
-> (except for the naming, which ... oh well). I work on the simpler i.MX8M.
+Update the driver to use an immutable IRQ chip to fix this warning:
 
-Yeah, I think a part of the problem is that the MXC GPIO is not connected
-to the back-end pin controller for i.MX so one rarely know which SoC
-it is used on.
+    "not an immutable chip, please consider fixing it!"
 
-> But looking at the patch, don't we already have a DT property which lets
-> one set GPIO as wake up source, without massive enumeration tables in
-> each GPIO driver ? It seems to me that's what NXP is trying to
-> implement, per GPIO wake up.
+Preserve per-chip labels by adding an ->irq_print_chip() callback.
 
-I had to bite the bullet and write a longer reply, hoping the i.MX
-and MXC maintainers wake up:
-https://lore.kernel.org/linux-gpio/CACRpkdaKncznz5qej6owA2OGMeqbrif9e_QO3CWN6+sGhEApDw@mail.gmail.com/T/#mac3a8d5399c486657c5e168107ed591694d4b155
+Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # TF201 T30
+Tested-by: Robert Eckelmann <longnoserob@gmail.com> # TF101 T20
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+---
+Changes since V2:
+- use CONFIG_PM_SLEEP ifdefs
 
-Yours,
-Linus Walleij
+Changes since V1:
+- Added tested-by info from testers
+- Patch itself is same, it had no review for 3 weeks
+- Test robot is triggering for pm_sleep_ptr, should not it be used to omit CONFIG_PM_SLEEP ifdefs?
+
+ drivers/gpio/gpio-tegra.c | 60 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 44 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index e4fb4cb38a0f..5b265a6fd3c1 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -18,6 +18,7 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/module.h>
++#include <linux/seq_file.h>
+ #include <linux/irqdomain.h>
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/pinctrl/consumer.h>
+@@ -94,7 +95,6 @@ struct tegra_gpio_info {
+ 	struct tegra_gpio_bank			*bank_info;
+ 	const struct tegra_gpio_soc_config	*soc;
+ 	struct gpio_chip			gc;
+-	struct irq_chip				ic;
+ 	u32					bank_count;
+ 	unsigned int				*irqs;
+ };
+@@ -288,6 +288,7 @@ static void tegra_gpio_irq_mask(struct irq_data *d)
+ 	unsigned int gpio = d->hwirq;
+ 
+ 	tegra_gpio_mask_write(tgi, GPIO_MSK_INT_ENB(tgi, gpio), gpio, 0);
++	gpiochip_disable_irq(chip, gpio);
+ }
+ 
+ static void tegra_gpio_irq_unmask(struct irq_data *d)
+@@ -296,6 +297,7 @@ static void tegra_gpio_irq_unmask(struct irq_data *d)
+ 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+ 	unsigned int gpio = d->hwirq;
+ 
++	gpiochip_enable_irq(chip, gpio);
+ 	tegra_gpio_mask_write(tgi, GPIO_MSK_INT_ENB(tgi, gpio), gpio, 1);
+ }
+ 
+@@ -598,10 +600,47 @@ static void tegra_gpio_irq_release_resources(struct irq_data *d)
+ 	tegra_gpio_enable(tgi, d->hwirq);
+ }
+ 
++static void tegra_gpio_irq_print_chip(struct irq_data *d, struct seq_file *s)
++{
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
++
++	seq_printf(s, dev_name(chip->parent));
++}
++
++static const struct irq_chip tegra_gpio_irq_chip = {
++	.irq_shutdown		= tegra_gpio_irq_shutdown,
++	.irq_ack		= tegra_gpio_irq_ack,
++	.irq_mask		= tegra_gpio_irq_mask,
++	.irq_unmask		= tegra_gpio_irq_unmask,
++	.irq_set_type		= tegra_gpio_irq_set_type,
++#ifdef CONFIG_PM_SLEEP
++	.irq_set_wake		= tegra_gpio_irq_set_wake,
++#endif
++	.irq_print_chip		= tegra_gpio_irq_print_chip,
++	.irq_request_resources	= tegra_gpio_irq_request_resources,
++	.irq_release_resources	= tegra_gpio_irq_release_resources,
++	.flags			= IRQCHIP_IMMUTABLE,
++};
++
++static const struct irq_chip tegra210_gpio_irq_chip = {
++	.irq_shutdown		= tegra_gpio_irq_shutdown,
++	.irq_ack		= tegra_gpio_irq_ack,
++	.irq_mask		= tegra_gpio_irq_mask,
++	.irq_unmask		= tegra_gpio_irq_unmask,
++	.irq_set_affinity	= tegra_gpio_irq_set_affinity,
++	.irq_set_type		= tegra_gpio_irq_set_type,
++#ifdef CONFIG_PM_SLEEP
++	.irq_set_wake		= tegra_gpio_irq_set_wake,
++#endif
++	.irq_print_chip		= tegra_gpio_irq_print_chip,
++	.irq_request_resources	= tegra_gpio_irq_request_resources,
++	.irq_release_resources	= tegra_gpio_irq_release_resources,
++	.flags			= IRQCHIP_IMMUTABLE,
++};
++
+ #ifdef	CONFIG_DEBUG_FS
+ 
+ #include <linux/debugfs.h>
+-#include <linux/seq_file.h>
+ 
+ static int tegra_dbg_gpio_show(struct seq_file *s, void *unused)
+ {
+@@ -689,18 +728,6 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	tgi->gc.ngpio			= tgi->bank_count * 32;
+ 	tgi->gc.parent			= &pdev->dev;
+ 
+-	tgi->ic.name			= "GPIO";
+-	tgi->ic.irq_ack			= tegra_gpio_irq_ack;
+-	tgi->ic.irq_mask		= tegra_gpio_irq_mask;
+-	tgi->ic.irq_unmask		= tegra_gpio_irq_unmask;
+-	tgi->ic.irq_set_type		= tegra_gpio_irq_set_type;
+-	tgi->ic.irq_shutdown		= tegra_gpio_irq_shutdown;
+-#ifdef CONFIG_PM_SLEEP
+-	tgi->ic.irq_set_wake		= tegra_gpio_irq_set_wake;
+-#endif
+-	tgi->ic.irq_request_resources	= tegra_gpio_irq_request_resources;
+-	tgi->ic.irq_release_resources	= tegra_gpio_irq_release_resources;
+-
+ 	platform_set_drvdata(pdev, tgi);
+ 
+ 	if (tgi->soc->debounce_supported)
+@@ -733,7 +760,6 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	irq = &tgi->gc.irq;
+-	irq->chip = &tgi->ic;
+ 	irq->fwnode = of_node_to_fwnode(pdev->dev.of_node);
+ 	irq->child_to_parent_hwirq = tegra_gpio_child_to_parent_hwirq;
+ 	irq->populate_parent_alloc_arg = tegra_gpio_populate_parent_fwspec;
+@@ -752,7 +778,9 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 		if (!irq->parent_domain)
+ 			return -EPROBE_DEFER;
+ 
+-		tgi->ic.irq_set_affinity = tegra_gpio_irq_set_affinity;
++		gpio_irq_chip_set_chip(irq, &tegra210_gpio_irq_chip);
++	} else {
++		gpio_irq_chip_set_chip(irq, &tegra_gpio_irq_chip);
+ 	}
+ 
+ 	tgi->regs = devm_platform_ioremap_resource(pdev, 0);
+-- 
+2.34.1
+
