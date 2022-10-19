@@ -2,97 +2,120 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 392EFC433FE
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 11:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E82C4332F
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 11:52:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231785AbiJSLvw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Oct 2022 07:51:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36708 "EHLO
+        id S230032AbiJSLwD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Oct 2022 07:52:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231852AbiJSLvd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 07:51:33 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EF5BC2CA2
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 04:29:52 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id b18so21719816ljr.13
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 04:29:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OvBLWk5C5odh/9kdFJYc5TXBeYmjOJo6M2fyyPPdQz0=;
-        b=akUtTjpyCFF0OTjTKaSIQN2KoiVQHuw3JGDlzrnyu0NzeMhwuzuXmpGGmD+ESE3PBI
-         RReEckn5zOjjdqhGk8OVBXTXotszYUd4J8SxnEzWBkC9WzyzjltWt2Od3JVh3Zv0dPaH
-         4IC9aqglZd4gzo6fTO6SrYC7SrQNesAB7OIJaz3SWYKvabXBWlYDJc9QaO7d2TZHiRQa
-         lC630l6a+fE3eBpcy1VNUtd3jEh6y5O2e2T7u57xfbXCfYGNKueXe2ZYmcccI6Q9VT2M
-         r/7fYthOqh44MSR/Ori7NBAh4X/4RqGqmqpf96lc3iyM9hGetlQTxNrsG/fJbfZ6IwDL
-         LVRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OvBLWk5C5odh/9kdFJYc5TXBeYmjOJo6M2fyyPPdQz0=;
-        b=BsDN6WgIOlSxqtEsuXF9/vw8kAFJB1DfADX3IMsfCLVAN0VkhG0BCRo0Sc17i342iu
-         /nX6MfZ4YqIaTX6AvMgkY+y3ZIuMt0hYzlU1zUSeO5hMDt7jqBVgp6m4TvVhwrSbao7g
-         gdNCKJKjboUIaWNRGzLFUFVYwKkXOsKJfbX8JHgrDO2LapHsBO/CWPA6s2J9fFMSZBrG
-         fo11SY0RstDVWRcEiPyOA7E7qRI9xxue8a2WhGaWWA3S2cJ2+XOA2mnXzmId0wf8qdpj
-         mZGJAG0X/McVU/lYqOtJ2TaoIeSwfgkwvZDAhxOziBuFhbjko2MTlRtSms1YAq+0pKAq
-         AQEw==
-X-Gm-Message-State: ACrzQf3HHukHHO8bY84HFx5nfMdk/In04RaIIOaLnJA6XP4w9b2bJ0jt
-        oT9P9he+4OPMmG+Ou8YDkuJxxmltb+ZoruPUCtI0xtp/omc=
-X-Google-Smtp-Source: AMsMyM411CtY5BP9UL9rEn1N96fK8eVNrW/afhn4tK4lAgLSapONCchtqYdva/IWjvHFfuQKS3tURWKmwIugqNo87Bg=
-X-Received: by 2002:a05:6402:d0b:b0:458:a244:4e99 with SMTP id
- eb11-20020a0564020d0b00b00458a2444e99mr6924119edb.46.1666177002887; Wed, 19
- Oct 2022 03:56:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221011-gpiolib-quirks-v3-0-eae9cc2ed0a1@gmail.com> <Y06cvrpcHn0jwZxU@smile.fi.intel.com>
-In-Reply-To: <Y06cvrpcHn0jwZxU@smile.fi.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 19 Oct 2022 12:56:31 +0200
-Message-ID: <CACRpkdZZZp5Li7OSybv8F7a8F5iik_gRumwR__BAwpWddfctxQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] gpiolib: more quirks to handle legacy names
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        with ESMTP id S231667AbiJSLvr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 07:51:47 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B4FE112AA4
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 04:30:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1666179009; x=1697715009;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=4YcfoLble85KQpMkw8dEMj5Q0sVuTa7xH+2uJMHUuQs=;
+  b=mHBf27CxL2X00X4FaCNJutSOUtH54dbHAta6qoa4g4CcN5H3A8MXF1hh
+   OY2Q2GoUTw8vnbolmr8LChT5hCFS109dbk0zIDgYV5oTsqNpdHbsTmKTL
+   J+yPamsMU8sGv9DhuK6ohf82m+Ub49Kmo9qHcfoPBerrd8O7ZllB0/igl
+   MTkckLvjTHa+hu2NFo1L2mhgwfPzgRnTD7BXxzfmrUk9TwIqJlsFUMCtn
+   W6Cm/QKL3W76wQmeoS5jNO5eP9FmVCI8v8YvWIXo/JPGKVq9DnWp2tWyn
+   Wv92RstLs1oT7e61vfvU0Rzx7+OepVJDwwcrhFuzmS3xpzjv5hM2CRUXk
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="286099416"
+X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
+   d="scan'208";a="286099416"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2022 04:29:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="624091750"
+X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
+   d="scan'208";a="624091750"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga007.jf.intel.com with ESMTP; 19 Oct 2022 04:29:01 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1ol7Fq-009pYJ-3B;
+        Wed, 19 Oct 2022 14:28:58 +0300
+Date:   Wed, 19 Oct 2022 14:28:58 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     =?iso-8859-1?B?Uul26XN6LA==?= Levente <levente.revesz@eilabs.com>
+Cc:     Martyn Welch <martyn.welch@collabora.com>,
+        Nate Drude <nate.d@variscite.com>,
+        Haibo Chen <haibo.chen@nxp.com>, Puyou Lu <puyou.lu@gmail.com>,
+        Justin Chen <justinpopo6@gmail.com>,
+        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
+        Peter Robinson <pbrobinson@gmail.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/2] gpio: pca953x: Add interrupt mask support for
+ pca953x chips
+Message-ID: <Y0/feqFujcGKS0pf@smile.fi.intel.com>
+References: <20221010132007.924810-1-levente.revesz@eilabs.com>
+ <CACRpkdbVCw=b-Hot83UpqmzaBSYGT0VY0g3QcgHNaPke4=grgA@mail.gmail.com>
+ <Y02RWJVvybzvNbaA@smile.fi.intel.com>
+ <VI1P194MB06553A18E489E4F456B0EBE1E32B9@VI1P194MB0655.EURP194.PROD.OUTLOOK.COM>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <VI1P194MB06553A18E489E4F456B0EBE1E32B9@VI1P194MB0655.EURP194.PROD.OUTLOOK.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 18, 2022 at 2:32 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Mon, Oct 17, 2022 at 10:41:01PM -0700, Dmitry Torokhov wrote:
-> > In preparation to converting several drivers to gpiod API, and to keep
-> > existing DTS working, this series adds additional quirks to locate
-> > gpio lines with legacy names.
+On Wed, Oct 19, 2022 at 10:15:01AM +0000, Révész, Levente wrote:
+> On Monday, October 17, 2022 7:31 PM, Andy Shevchenko wrote:
+> > At first glance I think this needs two prerequisite patches:
 > >
-> > Additionally the quirk handling has been reworked (once again) to pull
-> > all simple renames (ones that do not involve change of indices or other
-> > complex manipulations) into a single quirk with a table containing
-> > transformations. This should make adding new quirks easier.
-> > When using legacy names gpiolib will emit a message to nudge users to
-> > update DTSes (when possible).
+> > 1) convert _TYPE from bits to plain numbers, so we will have room
+> >    for up to 16 types;
 > >
-> > Note that the last patch requires the following change from the OF tree:
+> > 2) Introducing PCAL953X_TYPE.
 > >
-> >         88269151be67 ("of: base: make of_device_compatible_match() accept const device node")
-> >
-> > The change is also available in mainline - it has been merged in 6.1
-> > merge window.
->
-> I was wondering if we can use the approach that ACPI chose for itself,
-> i.e.  the separate data that can be filled by the corresponding driver
-> and then GPIO OF common code may use it. In that case each driver knows
-> the exact list of compatible strings and associated quirks.
+> > After this is done, the current series will be neater.
+> 
+> Thanks for the suggestions!
+> 
+> I have started implementing this change:
+> 
+>     * Convert _TYPE from bits to 4 bit integer
+> 
+>     * Define 4 chip types: PCA953X_TYPE, PCAL953X_TYPE,
+>                            PCAL653X_TYPE, PCA957X_TYPE
+> 
+> The PCA_PCAL bit is redundant, we know which chip is PCAL from their
+> chip type. Remove the PCA_PCAL bit and the PCA_LATCH_INT mask.
 
-I actually deliverately chose the other way around, to centralize all quirks,
-so that drivers look nice and simple and the ugly historical errors of the
-device tree be hidden away in gpiolib-of.c.
+Sounds good.
 
-Yours,
-Linus Walleij
+> The now modified bits were also used in the acpi_device_id
+> initialization:
+> 
+>     static const struct acpi_device_id pca953x_acpi_ids[] = {
+>         { "INT3491", 16 | PCA953X_TYPE | PCA_LATCH_INT, },
+>         { }
+>     };
+>     MODULE_DEVICE_TABLE(acpi, pca953x_acpi_ids);
+
+I do not see any modifications in the above.
+
+> I do not understand what is happening in this snippet.
+> What should be the id?
+
+INT3491 is the ID. The chip behind is (usually) PCAL9555. In the cases
+when it's not, there is no associated interrupt line in the ACPI tables,
+so it won't hurt, however it's not the best solution made that time.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
