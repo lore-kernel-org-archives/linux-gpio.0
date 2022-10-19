@@ -2,89 +2,167 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73858C433FE
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 14:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2304EC43217
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 15:22:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbiJSOxQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Oct 2022 10:53:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48756 "EHLO
+        id S232452AbiJSPWc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Oct 2022 11:22:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229889AbiJSOw4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 10:52:56 -0400
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 191B629359
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 07:44:37 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id d13so10814958qko.5
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 07:44:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vFqmsof4elJm21pzoAg/G9G0xB8dLKzDp3IL7lx6FJw=;
-        b=we7OpX9NoPh6lBqA7TpqJlgnmCqiMs+2U03f4+7/XFHxZct/6CBLsVFHM5L0lUubNg
-         QQmu0nnGOobJ3/ctqkiDZNuIo+YhXrwC5I43APTP6KFl7vTUFEV+RLFNZJQPTz3kTrRQ
-         oS3OTm1HewuC59pQIrU8DTzqMD/JqY0jKHflGy3IpjglBZYmo/ydPAgl4BgkZeYNZDfX
-         U8MomcQg0lbDZJVBVl5jhrwF5L6Eusi/gFM/JM5VP82CxuKg1yAkVpBapqlhzf40o/40
-         eSeAKNtW1PynQoGi+hHeLVZ7z5DruHvjJ2mFEiZATmbGhdUtlBfPnv3C0EPdw2Hu5ese
-         LodQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vFqmsof4elJm21pzoAg/G9G0xB8dLKzDp3IL7lx6FJw=;
-        b=2x26ykoDjNS5vTd+TiViiWCZ9EUPzaKB11+hbg1YhtsHHzRCfnrV6h4L7BQlfNr/sH
-         th6SUPtDzfCgSZzgOodQ1VOl/f2GP5q0Ehiy3i+ekFUUURD1TKtlbg/vd9w4GVZNcx5U
-         W3w2d0NlatD2smx1G2Su3h0nG9xRIIX34EkUuf1Bh1HVWKnFBf5pPiFnSSz/QIvSMhBC
-         7CAuSyzl/wolv2zCKdxf+Fsx6EGLyNZqWvgVT2ks5g/bRMhMOsZG6rQLfA/lbO/L5F+V
-         JePVCfngL2rhbWe25auA2n2YJiTbm6vGstPMAafBwGCCrdi8+GzKycYCovJFe+8VK5FB
-         fWQA==
-X-Gm-Message-State: ACrzQf1PDjkDuxpVvNaU05wQLy7lAX2n7v7TNYF02WZuXWZ2HF5INTRi
-        9fWgDsAenf/mifElMINdiRVZzA==
-X-Google-Smtp-Source: AMsMyM5L/3yBf3HXAEt118QSS1F24MC2zRKuqhpDUVmyZk5IURkgVDDQ+7XdT35NHbbOBJieFOLRKw==
-X-Received: by 2002:a37:557:0:b0:6ee:790e:d1d1 with SMTP id 84-20020a370557000000b006ee790ed1d1mr5899619qkf.118.1666190676793;
-        Wed, 19 Oct 2022 07:44:36 -0700 (PDT)
-Received: from krzk-bin.MSRM (pool-72-83-177-149.washdc.east.verizon.net. [72.83.177.149])
-        by smtp.gmail.com with ESMTPSA id y9-20020a05620a25c900b006ed61f18651sm5211917qko.16.2022.10.19.07.44.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Oct 2022 07:44:36 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S232459AbiJSPWG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 11:22:06 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9E1F1D63B5;
+        Wed, 19 Oct 2022 08:15:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 91C21B8223A;
+        Wed, 19 Oct 2022 15:14:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA2D8C433C1;
+        Wed, 19 Oct 2022 15:14:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666192466;
+        bh=oHhISD/CzMUmkWxHqFyoeUe7ZEcONDoFgdgwOoTRBYs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=imyorfygSIZT3yoeStIWjdN3TSeMWYmRlMZ5hnwx97K39seFcDJYd12q38IubJHar
+         1qrliULXdMJdBzD5H0lBgje3cgh9fKgzmKm4mmkoitABTbXSrSenqG4Du4mGdkCj6R
+         Wn6IkxkwMKWuT548PQqxHvxw/bhQ29df97xDZuYoLgvpp+0D/u8+7i/dReAFeNWd+U
+         mmLXsM3WmS/lCICWEOP6bwONhJVCnEU8Bsnrde/lmLFVsqZr//Su2g18+OPbQpY1Zl
+         OjFSCLOTXrexFqt3heo6E0QaYXRZJcmJO+mewQ7KPxHOke+LQVWjIHVJm+vd5vyluI
+         5VpU7GS7gJshA==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     linux-arm-kernel@lists.infradead.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Subject: Re: (subset) [PATCH 1/2] dt-bindings: pinctrl: qcom,msm8974: convert to dtschema
-Date:   Wed, 19 Oct 2022 10:44:29 -0400
-Message-Id: <166619067067.168589.14766691488395495770.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221017012225.8579-1-krzysztof.kozlowski@linaro.org>
-References: <20221017012225.8579-1-krzysztof.kozlowski@linaro.org>
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Lennert Buytenhek <buytenh@wantstofly.org>,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH 11/17] gpio: remove iop driver
+Date:   Wed, 19 Oct 2022 17:03:33 +0200
+Message-Id: <20221019150410.3851944-11-arnd@kernel.org>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20221019150410.3851944-1-arnd@kernel.org>
+References: <20221019144119.3848027-1-arnd@kernel.org>
+ <20221019150410.3851944-1-arnd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, 16 Oct 2022 21:22:24 -0400, Krzysztof Kozlowski wrote:
-> Convert Qualcomm MSM8974 pin controller bindings to DT schema.  Keep the
-> parsing of pin configuration subnodes consistent with other Qualcomm
-> schemas (children named with '-state' suffix, their children with
-> '-pins').
-> 
-> 
+From: Arnd Bergmann <arnd@arndb.de>
 
-Applied, thanks!
+The iop32x platform was removed, and its gpio driver is now
+orphaned.
 
-[1/2] dt-bindings: pinctrl: qcom,msm8974: convert to dtschema
-      https://git.kernel.org/krzk/linux-dt/c/6f3ff1689448448a955af4e0bd7a210ca7aafed9
+Cc: Lennert Buytenhek <buytenh@wantstofly.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpio/Kconfig    | 10 -------
+ drivers/gpio/Makefile   |  1 -
+ drivers/gpio/gpio-iop.c | 59 -----------------------------------------
+ 3 files changed, 70 deletions(-)
+ delete mode 100644 drivers/gpio/gpio-iop.c
 
-Best regards,
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index a01af1180616..30a2b4214472 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -345,16 +345,6 @@ config GPIO_IMX_SCU
+        def_bool y
+        depends on IMX_SCU
+ 
+-config GPIO_IOP
+-	tristate "Intel IOP GPIO"
+-	depends on ARCH_IOP32X || COMPILE_TEST
+-	select GPIO_GENERIC
+-	help
+-	  Say yes here to support the GPIO functionality of a number of Intel
+-	  IOP32X or IOP33X series of chips.
+-
+-	  If unsure, say N.
+-
+ config GPIO_IXP4XX
+ 	bool "Intel IXP4xx GPIO"
+ 	depends on ARCH_IXP4XX
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 29e3beb6548c..b8c2ebc4bc87 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -70,7 +70,6 @@ obj-$(CONFIG_GPIO_I8255)		+= gpio-i8255.o
+ obj-$(CONFIG_GPIO_ICH)			+= gpio-ich.o
+ obj-$(CONFIG_GPIO_IDT3243X)		+= gpio-idt3243x.o
+ obj-$(CONFIG_GPIO_IMX_SCU)		+= gpio-imx-scu.o
+-obj-$(CONFIG_GPIO_IOP)			+= gpio-iop.o
+ obj-$(CONFIG_GPIO_IT87)			+= gpio-it87.o
+ obj-$(CONFIG_GPIO_IXP4XX)		+= gpio-ixp4xx.o
+ obj-$(CONFIG_GPIO_JANZ_TTL)		+= gpio-janz-ttl.o
+diff --git a/drivers/gpio/gpio-iop.c b/drivers/gpio/gpio-iop.c
+deleted file mode 100644
+index 7390b5ca09e3..000000000000
+--- a/drivers/gpio/gpio-iop.c
++++ /dev/null
+@@ -1,59 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * arch/arm/plat-iop/gpio.c
+- * GPIO handling for Intel IOP3xx processors.
+- *
+- * Copyright (C) 2006 Lennert Buytenhek <buytenh@wantstofly.org>
+- */
+-
+-#include <linux/err.h>
+-#include <linux/module.h>
+-#include <linux/gpio/driver.h>
+-#include <linux/platform_device.h>
+-
+-#define IOP3XX_GPOE	0x0000
+-#define IOP3XX_GPID	0x0004
+-#define IOP3XX_GPOD	0x0008
+-
+-static int iop3xx_gpio_probe(struct platform_device *pdev)
+-{
+-	struct gpio_chip *gc;
+-	void __iomem *base;
+-	int err;
+-
+-	gc = devm_kzalloc(&pdev->dev, sizeof(*gc), GFP_KERNEL);
+-	if (!gc)
+-		return -ENOMEM;
+-
+-	base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
+-
+-	err = bgpio_init(gc, &pdev->dev, 1, base + IOP3XX_GPID,
+-			 base + IOP3XX_GPOD, NULL, NULL, base + IOP3XX_GPOE, 0);
+-	if (err)
+-		return err;
+-
+-	gc->base = 0;
+-	gc->owner = THIS_MODULE;
+-	gc->label = "gpio-iop";
+-
+-	return devm_gpiochip_add_data(&pdev->dev, gc, NULL);
+-}
+-
+-static struct platform_driver iop3xx_gpio_driver = {
+-	.driver = {
+-		.name = "gpio-iop",
+-	},
+-	.probe = iop3xx_gpio_probe,
+-};
+-
+-static int __init iop3xx_gpio_init(void)
+-{
+-	return platform_driver_register(&iop3xx_gpio_driver);
+-}
+-arch_initcall(iop3xx_gpio_init);
+-
+-MODULE_DESCRIPTION("GPIO handling for Intel IOP3xx processors");
+-MODULE_AUTHOR("Lennert Buytenhek <buytenh@wantstofly.org>");
+-MODULE_LICENSE("GPL");
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.29.2
+
