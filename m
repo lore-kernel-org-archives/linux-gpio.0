@@ -2,95 +2,151 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86405C4167B
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 12:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C92C4332F
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 13:18:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232468AbiJSMwO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Oct 2022 08:52:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53166 "EHLO
+        id S231887AbiJSNSt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Oct 2022 09:18:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233455AbiJSMv3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 08:51:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AFD918C412;
-        Wed, 19 Oct 2022 05:33:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9E04660ECC;
-        Wed, 19 Oct 2022 11:57:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2652C433D6;
-        Wed, 19 Oct 2022 11:57:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666180664;
-        bh=xN0ViNDIEFlvZ8cpBkJuaRDJox/j4tz1IrTtAUrllF8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GeCWefPnlnA1NzGiDEQ8qxrAzj7yyeV1+E0QxSdNxvJIjQzteSG9pJ94aYhk29CKc
-         JfJOjZV2IaoIGAjeo1Wv+eVg9jkNLK10jDKy+Pye0Q1Qw0wgDFd12UGrdX1FPPmfa8
-         A46q8Lg2jRXxqy9g1hNCcBtzoS/OYF59n2yBn8jXX1BZMH30+S12CeY4qvgg47okT+
-         k5G4vzXe/jr8HGoPhwJVJ5H4vGGTNYgppEd+5aY2N3VtQPNtjsb7iANuMrT6R2Fq6+
-         7TPEAvR8BNtq9QvEXaZqiFQp/UO+jO9stdeg+D0skw9+1v5lllzeDnImNgzVrPpHON
-         6/cjZ3lYbfVyg==
-Date:   Wed, 19 Oct 2022 12:57:37 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     chengwei <foxfly.lai.tw@gmail.com>
-Cc:     lee@kernel.org, rafael@kernel.org, mika.westerberg@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, linus.walleij@linaro.org,
-        brgl@bgdev.pl, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, lenb@kernel.org,
-        linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org,
-        GaryWang@aaeon.com.tw, musa.lin@yunjingtech.com,
-        jack.chang@yunjingtech.com, chengwei <larry.lai@yunjingtech.com>,
-        Nicola Lunghi <nicola.lunghi@emutex.com>
-Subject: Re: [PATCH 2/5] regmap: Expose regmap_writeable function to check if
- a register is writable
-Message-ID: <Y0/mMeVSTEKfOgBN@sirena.org.uk>
-Mail-Followup-To: chengwei <foxfly.lai.tw@gmail.com>, lee@kernel.org,
-        rafael@kernel.org, mika.westerberg@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, linus.walleij@linaro.org,
-        brgl@bgdev.pl, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, lenb@kernel.org,
-        linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org,
-        GaryWang@aaeon.com.tw, musa.lin@yunjingtech.com,
-        jack.chang@yunjingtech.com, chengwei <larry.lai@yunjingtech.com>,
-        Nicola Lunghi <nicola.lunghi@emutex.com>
-References: <20221019022450.16851-1-larry.lai@yunjingtech.com>
- <20221019022450.16851-3-larry.lai@yunjingtech.com>
+        with ESMTP id S230082AbiJSNSZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 09:18:25 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18E9486F83
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 06:04:14 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id q19so25145601edd.10
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 06:04:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=d3VL/mzhi5Wm2xdWGUHIAE4nO6Fe2O8bP7Z+pi4mNnY=;
+        b=qLKOVrL36vYKIVJTbr+QmsymiwkoR0GnSstj+Db1nLKXqpZRqq95w0cOa6xrAwfFWy
+         fetrIS3OK5N+eAV02l5JS7xZuQEiLu370QZ7tCHxYTlM92JEMueSMojPeYwG7MA7O+AQ
+         swLdq/zj690ykUqj4E09trLyIhnDuo/o83EmHYYg+p3hzUTbl/eICv3AVLQwwwXJq48b
+         xDzqa2HkMFKBXiy8CZC4XfOKwFY9aaIZlhIhfsVGX6ThS9Ltat8V/8mnqzrh/DNWKDSQ
+         n2BKxJTmCQ3EpSnO+QlTQeOHlRhvOCM72M/BAYZPQreiiucvl8GvLEafViCbNBK28OUp
+         GV3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d3VL/mzhi5Wm2xdWGUHIAE4nO6Fe2O8bP7Z+pi4mNnY=;
+        b=2u3XEUgj2xBlBOVwYNTKDWxAXIHwS8ZxtrIyhr2w+7xLCicraSa0K4CdYMiegqU6vK
+         Nbpv64OvsCTj5YZvOi45ol2UkSYGxIfm9Zro7LR90kHSo4IszY/jvFpvNcHJRg0Xkaax
+         VSHxbTw02MSp2LJnGIiJVfl0+doBm8FU6ov4aXPE45kLoBFO305QjopyQSLjCVV1L71i
+         sJR/ezpdk+euhyc0usB1FM8m4RWd1byzsLqhKANdsZce1pI4HE/OTiFKK1+vMXAibcrl
+         PuW0SrkrMHY/kKeLs4QffZDDjqPg1PZu6YKvZS9lAat8GJkaZVDGv41mEOAVWQQujti7
+         2oNw==
+X-Gm-Message-State: ACrzQf1VqfyeY9H6Wwz8E3MSkBO2n3wSa6Yu3xsavEb03mx51oo1mYJE
+        pQTvK+AYeEzl5l2XHATXr5HD5cljEaku6eXavA5TYg==
+X-Google-Smtp-Source: AMsMyM4hCSd4KMgo27A24eMkRwBD6tvC/jw40UALp2dVxz0XOx3StHwqY07dyLHa/kPw1NNkhDsD2df6Cb1WLoz831o=
+X-Received: by 2002:a05:6402:5419:b0:457:c955:a40f with SMTP id
+ ev25-20020a056402541900b00457c955a40fmr7132566edb.391.1666184629159; Wed, 19
+ Oct 2022 06:03:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5xY9Nrn608s6AE+Z"
-Content-Disposition: inline
-In-Reply-To: <20221019022450.16851-3-larry.lai@yunjingtech.com>
-X-Cookie: I like your SNOOPY POSTER!!
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 19 Oct 2022 18:33:37 +0530
+Message-ID: <CA+G9fYsfNsZs1ktOn1StM2PVgc+o1QEjKvMJ1gxEqwtgw8Dzkg@mail.gmail.com>
+Subject: drivers/pinctrl/freescale/pinctrl-imx1-core.c:209:2: error: implicit
+ declaration of function 'seq_printf'; did you mean 'scnprintf'? [-Werror=implicit-function-declaration]
+To:     NXP Linux Team <linux-imx@nxp.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        regressions@lists.linux.dev, lkft-triage@lists.linaro.org
+Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+[ Please ignore if this has been reported already ]
+Following build warnings / errors noticed on Linux next-20221018 and
+20221019 tags while building for arm.
 
---5xY9Nrn608s6AE+Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+make --silent --keep-going --jobs=8
+O=/home/tuxbuild/.cache/tuxmake/builds/1/build ARCH=arm
+CROSS_COMPILE=arm-linux-gnueabihf- 'CC=sccache
+arm-linux-gnueabihf-gcc' 'HOSTCC=sccache gcc' multi_v5_defconfig
+make --silent --keep-going --jobs=8
+O=/home/tuxbuild/.cache/tuxmake/builds/1/build ARCH=arm
+CROSS_COMPILE=arm-linux-gnueabihf- 'CC=sccache
+arm-linux-gnueabihf-gcc' 'HOSTCC=sccache gcc'
+drivers/pinctrl/freescale/pinctrl-imx1-core.c: In function 'imx1_pin_dbg_show':
+drivers/pinctrl/freescale/pinctrl-imx1-core.c:209:2: error: implicit
+declaration of function 'seq_printf'; did you mean 'scnprintf'?
+[-Werror=implicit-function-declaration]
+  209 |  seq_printf(s, "GPIO %d, function %d, direction %d, oconf %d,
+iconfa %d, iconfb %d",
+      |  ^~~~~~~~~~
+      |  scnprintf
+drivers/pinctrl/freescale/pinctrl-imx1-core.c: In function
+'imx1_pinconf_group_dbg_show':
+drivers/pinctrl/freescale/pinctrl-imx1-core.c:434:2: error: implicit
+declaration of function 'seq_puts'
+[-Werror=implicit-function-declaration]
+  434 |  seq_puts(s, "\n");
+      |  ^~~~~~~~
+cc1: some warnings being treated as errors
 
-On Wed, Oct 19, 2022 at 10:24:47AM +0800, chengwei wrote:
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-> Expose the regmap_writeable function for pinctrl-upboard reference.
+## Build
+* kernel: 6.1.0-rc1
+* git: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+* git branch: master
+* git commit: a72b55bc981b62f7186600d06d1824f1d0612b27
+* git describe: next-20221019
+* test details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20221019
 
-Why?  A driver should understand the register map of the device it is
-controlling.
+## Test Regressions (compared to next-20221017)
+* arm, build
+  - clang-11-imx_v4_v5_defconfig
+  - clang-11-multi_v5_defconfig
+  - clang-11-mxs_defconfig
+  - clang-12-imx_v4_v5_defconfig
+  - clang-12-multi_v5_defconfig
+  - clang-12-mxs_defconfig
+  - clang-13-imx_v4_v5_defconfig
+  - clang-13-multi_v5_defconfig
+  - clang-13-mxs_defconfig
+  - clang-14-imx_v4_v5_defconfig
+  - clang-14-multi_v5_defconfig
+  - clang-14-multi_v5_defconfig-65236a87
+  - clang-14-mxs_defconfig
+  - clang-nightly-imx_v4_v5_defconfig
+  - clang-nightly-multi_v5_defconfig
+  - clang-nightly-multi_v5_defconfig-65236a87
+  - clang-nightly-mxs_defconfig
+  - gcc-10-imx_v4_v5_defconfig
+  - gcc-10-multi_v5_defconfig
+  - gcc-10-mxs_defconfig
+  - gcc-11-imx_v4_v5_defconfig
+  - gcc-11-multi_v5_defconfig
+  - gcc-11-multi_v5_defconfig-65236a87
+  - gcc-11-mxs_defconfig
+  - gcc-12-imx_v4_v5_defconfig
+  - gcc-12-multi_v5_defconfig
+  - gcc-12-multi_v5_defconfig-65236a87
+  - gcc-12-mxs_defconfig
+  - gcc-8-imx_v4_v5_defconfig
+  - gcc-8-multi_v5_defconfig
+  - gcc-8-mxs_defconfig
+  - gcc-9-imx_v4_v5_defconfig
+  - gcc-9-multi_v5_defconfig
+  - gcc-9-mxs_defconfig
 
---5xY9Nrn608s6AE+Z
-Content-Type: application/pgp-signature; name="signature.asc"
+Build link
+https://builds.tuxbuild.com/2GKpciP8HzSjXDbeqau9HpFlipH/
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmNP5jAACgkQJNaLcl1U
-h9AnLAf/e9cHb/Ezq1Fzitr9dlOLq7JJm0v46MICOJKH6ri06LpV+vfWzLr1/JBX
-K8C/R3y+hcMe6UB6h+SK5+m4rXDTb+sD4so/z7eON/19lPtzFUw+mP2A5k31G2Yt
-mfUM/QfbkAexC5DejtdPb5+mO1MA3YzqLtYVV89CqXBby1VNWZwXDlBheweApkv1
-FTpGg1hbDK+490mA5UCzswq4qDHfaPJagao1isGEFFAVLHCSaj4c9tOATkrW6/y2
-cZLgDN9nh5W+uktXyS7vShXXjmkZlXE4+kjnpszP8s6ZcMba8n+aVYlRsh+gRXon
-KW/zSVfzuxwZbmmjBzd4WUxQer60TQ==
-=rCvO
------END PGP SIGNATURE-----
-
---5xY9Nrn608s6AE+Z--
+--
+Linaro LKFT
+https://lkft.linaro.org
