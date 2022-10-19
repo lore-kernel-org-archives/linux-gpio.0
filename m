@@ -2,114 +2,122 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2F9C43217
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Oct 2022 22:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FDD5C4332F
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 00:15:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229509AbiJRWeN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Oct 2022 18:34:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59050 "EHLO
+        id S230026AbiJSAPQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Oct 2022 20:15:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229973AbiJRWeL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2022 18:34:11 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 391622BB35;
-        Tue, 18 Oct 2022 15:34:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666132451; x=1697668451;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=+vCoymx5NkqT+DCUBjvcufzqfyqPvwuEyg7xUD1Func=;
-  b=MGWvVYPGJs7mcpKod8GqLcvj/TvRGAOrCMv5PGCfVI2AOSzsVeSOwKaW
-   QjURn6DvKC9EQW2BM59Neac8LrpddC3TD8bXM6XiuYewQuQ0KzIVE9bIo
-   Jy7vJci7eXpQp2mezT9IMkmIH6iBwivI1FkAU3UkvvSGxejtK5gdG4Rhq
-   gx/gf3BPUgFoOFkQrQLtBd4g6CH59+/jT7qolGxKnT/hLwW6n/BJNE9rY
-   Nk2zDIEiuX41Tf8ZbxgUQOiF7NzU1BJC+HZM0ScLpL8w+acqMH1TkvQrJ
-   5y3l/Tmc4mw72TFiwCvJhqZeGv/fKkALrDrdW0oXOi8JbDT1gJ14CqZy8
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="306236227"
-X-IronPort-AV: E=Sophos;i="5.95,194,1661842800"; 
-   d="scan'208";a="306236227"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2022 15:34:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="697745782"
-X-IronPort-AV: E=Sophos;i="5.95,194,1661842800"; 
-   d="scan'208";a="697745782"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 18 Oct 2022 15:34:07 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id D16643FD; Wed, 19 Oct 2022 01:34:28 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 5/5] pinctrl: tigerlake: Deduplicate COMMUNITY macro code
-Date:   Wed, 19 Oct 2022 01:34:27 +0300
-Message-Id: <20221018223427.43579-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221018223427.43579-1-andriy.shevchenko@linux.intel.com>
-References: <20221018223427.43579-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S230036AbiJSAO7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2022 20:14:59 -0400
+Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E5552EF
+        for <linux-gpio@vger.kernel.org>; Tue, 18 Oct 2022 17:14:19 -0700 (PDT)
+Received: by mail-qv1-xf30.google.com with SMTP id h10so10394170qvq.7
+        for <linux-gpio@vger.kernel.org>; Tue, 18 Oct 2022 17:14:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wwnm6LKiML+fh11gH9Tu7VPQ6RS5x21rDs+S4mP2wuc=;
+        b=oTI2kc1BjMDd7DajmAln6UVuu359RajTTxtsIEp9Ep4oTSmlOfMZ1+iQzbTiWyMgH5
+         YuSPOtV/9X5d05Dhwre7qdQ4b15JDtR0xGbehztWImf0AMAGtz35daHRBYPBhjMYZmyH
+         9zMPXTJpMtDqGzsQfix8ub0hXIa99ovm7j4cZYoJGu97U5u02QwW695Jda7nmlTpbBs3
+         7hXLVemapoAA2t0VVhNJtC+IIrcv2HAoJDOBcDnkvq1mzRZkisxlbPQnL/bCRA65Cy+q
+         iR5jR+mkIonsbWIE5uVIQkcPbsbLax6J5mPwVPgnv9V4/CAVC39/z5Aufoh/lSY4/BPn
+         cFww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wwnm6LKiML+fh11gH9Tu7VPQ6RS5x21rDs+S4mP2wuc=;
+        b=ZZY6/1bFOeaKyHPlY6ZTDQ4MqV7q+FFsqQrPKP0J3na7v92i5b3jMOCqSCiPGbky2w
+         zmP6+ZYJmE8jtz8YZfOXZ9AQGKpoiyw7Po1yPIyBGWJgdRzqbz+qCPaQv6bbpKYcdyIt
+         9pWKFYclScS+92Mh8UUK9TS0OdOleQeE6JijAOLwq4touuPtEdml0YlkqNcVLgSKLMI4
+         uN+lpHrOJhhHrDbXlsj0m2bYVo0QE0s6D4GhNhLDJWXRpRfHyMw9IU6K4ykmGR9zymIX
+         D0gpYomP41umuvGAGUn1MwJWxVq7OiGQsA8+Rss7I5tgOWOQ30PGy07kkl4zlhfb/zyw
+         wYvw==
+X-Gm-Message-State: ACrzQf0y1sEyxsc9czPxMSIwYFSTuYEulJT7gDiIWrZjn7c3xAsh5/bK
+        j5mBnXsAwJmiIWBXQ00smdQID0eLjwnpIQ==
+X-Google-Smtp-Source: AMsMyM7DvuH7HrtSqyD7TD/tEuLg3Qp247pXXermrRfUu6GlkjqRsIKW43ka5QyDCB3HDualpJDYnw==
+X-Received: by 2002:a05:6214:d06:b0:4b4:6bdb:27a with SMTP id 6-20020a0562140d0600b004b46bdb027amr4375273qvh.53.1666138442662;
+        Tue, 18 Oct 2022 17:14:02 -0700 (PDT)
+Received: from krzk-bin.MSRM (pool-72-83-177-149.washdc.east.verizon.net. [72.83.177.149])
+        by smtp.gmail.com with ESMTPSA id ay40-20020a05620a17a800b006bb78d095c5sm3381240qkb.79.2022.10.18.17.14.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Oct 2022 17:14:02 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 1/4] arm64: dts: qcom: sc7180-trogdor-homestar: fully configure secondary I2S pins
+Date:   Tue, 18 Oct 2022 20:13:48 -0400
+Message-Id: <20221019001351.1630089-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221019001351.1630089-1-krzysztof.kozlowski@linaro.org>
+References: <20221019001351.1630089-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Define a common COMUNITY macro and supply a variant to it.
-This removes some verbosity in macros.
+The Trogdor Homestar DTSI adds additional GPIO52 pin to secondary I2S pins
+("sec_mi2s_active") and configures it to "mi2s_1" function.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+The Trogdor DTSI (which is included by Homestar) configures drive
+strength and bias for all "sec_mi2s_active" pins, thus the intention was
+to apply this configuration also to GPIO52 on Homestar.
+
+Reported-by: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fixes: be0416a3f917 (""arm64: dts: qcom: Add sc7180-trogdor-homestar"")
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+
 ---
- drivers/pinctrl/intel/pinctrl-tigerlake.c | 28 +++++++++++------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-tigerlake.c b/drivers/pinctrl/intel/pinctrl-tigerlake.c
-index 5a4cd0d9a89f..4f5a3b80b72d 100644
---- a/drivers/pinctrl/intel/pinctrl-tigerlake.c
-+++ b/drivers/pinctrl/intel/pinctrl-tigerlake.c
-@@ -31,25 +31,25 @@
- 		.gpio_base = (g),			\
- 	}
+Changes since v2:
+1. Add tags.
+
+Changes since v1:
+1. New patch
+
+Not tested on hardware.
+
+Cc: Doug Anderson <dianders@chromium.org>
+---
+ arch/arm64/boot/dts/qcom/sc7180-trogdor-homestar.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor-homestar.dtsi b/arch/arm64/boot/dts/qcom/sc7180-trogdor-homestar.dtsi
+index 1bd6c7dcd9e9..bfab67f4a7c9 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180-trogdor-homestar.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor-homestar.dtsi
+@@ -194,6 +194,12 @@ pinmux {
+ 		pins = "gpio49", "gpio50", "gpio51", "gpio52";
+ 		function = "mi2s_1";
+ 	};
++
++	pinconf {
++		pins = "gpio49", "gpio50", "gpio51", "gpio52";
++		drive-strength = <2>;
++		bias-pull-down;
++	};
+ };
  
--#define TGL_COMMUNITY(b, s, e, pl, ho, g)		\
--	{						\
--		.barno = (b),				\
--		.padown_offset = TGL_PAD_OWN,		\
--		.padcfglock_offset = (pl),		\
--		.hostown_offset = (ho),			\
--		.is_offset = TGL_GPI_IS,		\
--		.ie_offset = TGL_GPI_IE,		\
--		.pin_base = (s),			\
--		.npins = ((e) - (s) + 1),		\
--		.gpps = (g),				\
--		.ngpps = ARRAY_SIZE(g),			\
-+#define TGL_COMMUNITY(b, s, e, g, v)				\
-+	{							\
-+		.barno = (b),					\
-+		.padown_offset = TGL_PAD_OWN,			\
-+		.padcfglock_offset = TGL_##v##_PADCFGLOCK,	\
-+		.hostown_offset = TGL_##v##_HOSTSW_OWN,		\
-+		.is_offset = TGL_GPI_IS,			\
-+		.ie_offset = TGL_GPI_IE,			\
-+		.pin_base = (s),				\
-+		.npins = ((e) - (s) + 1),			\
-+		.gpps = (g),					\
-+		.ngpps = ARRAY_SIZE(g),				\
- 	}
- 
- #define TGL_LP_COMMUNITY(b, s, e, g)			\
--	TGL_COMMUNITY(b, s, e, TGL_LP_PADCFGLOCK, TGL_LP_HOSTSW_OWN, g)
-+	TGL_COMMUNITY(b, s, e, g, LP)
- 
- #define TGL_H_COMMUNITY(b, s, e, g)			\
--	TGL_COMMUNITY(b, s, e, TGL_H_PADCFGLOCK, TGL_H_HOSTSW_OWN, g)
-+	TGL_COMMUNITY(b, s, e, g, H)
- 
- /* Tiger Lake-LP */
- static const struct pinctrl_pin_desc tgllp_pins[] = {
+ &ts_reset_l {
 -- 
-2.35.1
+2.34.1
 
