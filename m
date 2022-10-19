@@ -2,77 +2,115 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D794C4167B
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 13:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F15C43219
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 13:53:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233133AbiJSNtn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Oct 2022 09:49:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58712 "EHLO
+        id S233721AbiJSNx1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Oct 2022 09:53:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233697AbiJSNs6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 09:48:58 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86EDF19E90B;
-        Wed, 19 Oct 2022 06:33:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666186386; x=1697722386;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uMSS2UGALuEpzvvAM47D5sxAZNzAFsz3tkvccmabASw=;
-  b=jS3uZQIfZTGBP4YKRFEKP46zzLs2PGAsvGfPVC9R4QA9wizh5V/FyHMK
-   1GolAJIy5jlsZklxwFPv7UKBQNBLMPxCIC3BIdXuzfXw5Vz9qQI0+P+fp
-   loGhT1LFXVWmQunB+F+mByxdWhcW1tCzHVxmc/ayF5WhJoC0obli7ypgw
-   3UTLqvj1ocDM1aUSy88UoWoK9Ycj5lgeoZ4RUeahGmp4MocIDxa5BcOVC
-   kEcbTgmxwPEnoP+JJj/yEsmcp59hQBv+k5qI2rdVa08K2j48QZeurBdxD
-   IRvSsof26qgsLIcrkskwwxYpOHgCITATAkB1svygDeEKUwLnMjTWA2FW5
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10505"; a="307517393"
-X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
-   d="scan'208";a="307517393"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2022 06:32:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10505"; a="631670176"
-X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
-   d="scan'208";a="631670176"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga007.fm.intel.com with ESMTP; 19 Oct 2022 06:32:41 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1ol9BX-009sV1-2C;
-        Wed, 19 Oct 2022 16:32:39 +0300
-Date:   Wed, 19 Oct 2022 16:32:39 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     chengwei <foxfly.lai.tw@gmail.com>
-Cc:     lee@kernel.org, broonie@kernel.org, rafael@kernel.org,
-        mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
-        brgl@bgdev.pl, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, lenb@kernel.org,
-        linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org,
-        GaryWang@aaeon.com.tw, musa.lin@yunjingtech.com,
-        jack.chang@yunjingtech.com, chengwei <larry.lai@yunjingtech.com>
-Subject: Re: [PATCH 3/5] ACPI: acpi_node_add_pin_mapping added to header file
-Message-ID: <Y0/8d66G3HndiRJF@smile.fi.intel.com>
-References: <20221019022450.16851-1-larry.lai@yunjingtech.com>
- <20221019022450.16851-4-larry.lai@yunjingtech.com>
+        with ESMTP id S230160AbiJSNw5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 09:52:57 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AE08189C31
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 06:36:20 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id b4so29127542wrs.1
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 06:36:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1xeT1iLxWmll2HFnvRdJc4BDec5ldnrZaxMiO5DTNCE=;
+        b=q42c5u4WQI+XrEymaze9l3yVnZ7SRGt/txMEWq7CXqqBy/e7uxk9ROO3cINa9D636s
+         VuoVp6h+ZGDQMQCnLIIXToVmSE9Dk2sHfc3N7BMixH94Pc+EF/MfhUcUiWt75Un+LSs/
+         lz76Y8Ek3y5jv6RZuZxc9cFFWYxa7LsBAPvCyxXUurJetuGjp8meR/QoV01cMzxVkbEb
+         a7u+BNeWy+y7Tyy3Zma1vbnc0g6SptpFCTzHIrHZeHd87pb31ZHGPPLZZhexjsYP6X10
+         g1t3fJvtFsA0psuv3e4cfdl+l0m/LphO/Uw0uWUjEZ4mQSFrGSS9scrHUcn73vujHT6p
+         qyMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1xeT1iLxWmll2HFnvRdJc4BDec5ldnrZaxMiO5DTNCE=;
+        b=qKW5lurrVaZWNEdEKOUmgtUhrWJrClRX7XQCqwY6e+qKmE0F140q0lRJKgTNy5EnHg
+         qyBcuYYXfNcypFr3m4sqtWmLuBalhXjyyghFImQogA7OtvqwIiSlGKUA6SJiBUR3C31Q
+         Hw5hdfwYSlHC1/kQaQxhSSwGfjB7kT3h14VD+/Yyi3p3yJxEWLUkm5VAFjBvLhE661+3
+         5WWi8Ps5jpvcCt4osuDWjAdTfzDYK01SVLOZ6Obk6qYDH+UUxfUdBRAIMYtcI/V2tOXH
+         5Ao+jW74OTBlNJUmID3FIgKj0KzYj6Ckk0VweVphjkja487/fCJ8+btHJona7Ceuh4iR
+         Cfjw==
+X-Gm-Message-State: ACrzQf1+OePT9dtS5tUkIna0ssFbWDm3ay1yKNvb7cnshBoFHYRNqOHt
+        Uiu5OQznofFYwcotog2jFdyZJe6X6dBcE7bci7eimYK756gezw==
+X-Google-Smtp-Source: AMsMyM4ZLCSXvj95s+I5Xd7tlFDjVR9orZQQgRo/cYNAheFAynKo+utl0lVXigSgQljtaTdnBDPcM9oTE1PnadYF8AM=
+X-Received: by 2002:a17:907:7b93:b0:770:1d4f:4de9 with SMTP id
+ ne19-20020a1709077b9300b007701d4f4de9mr6791599ejc.201.1666185743528; Wed, 19
+ Oct 2022 06:22:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221019022450.16851-4-larry.lai@yunjingtech.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 19 Oct 2022 18:52:12 +0530
+Message-ID: <CA+G9fYtSwz0ADnHdAt1mFy9DA_JB1+MV3HoOcH_FbSuJObTqsw@mail.gmail.com>
+Subject: selftests: gpio: gpio-sim test FAIL - gpio gpiochip2:
+ (gpio-sim.0-node0): line cnt 34463 is greater than fast path cnt 512
+To:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        regressions@lists.linux.dev, lkft-triage@lists.linaro.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Oct 19, 2022 at 10:24:48AM +0800, chengwei wrote:
-> Declare acpi_node_add_pin_mapping added for pinctrl-upboard
-> reference.
+The selftest gpio gpio-sim.sh started failing from Linux next-20221018 and
+also noticed on next-20221019 here is the test log [1] and [2].
 
-This should be a part of the next change.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
--- 
-With Best Regards,
-Andy Shevchenko
+# selftests: gpio: gpio-sim.sh
+# 1. chip_name and dev_name attributes
+# 1.1. Chip name is communicated to user
+# 1.2. chip_name returns 'none' if the chip is still pending
+# 1.3. Device name is communicated to user
+# 2. Creating and configuring simulated chips
+# 2.1. Default number of lines is 1
+# 2.2. Number of lines can be specified
+# 2.3. Label can be set
+# 2.4. Label can be left empty
+# 2.5. Line names can be configured
+# 2.6. Line config can remain unused if offset is greater than number of lines
+# 2.7. Line configfs directory names are sanitized
+# 2.8. Multiple chips can be created
+# 2.9. Can't modify settings when chip is live
+# 2.10. Can't create line items when chip is live
+# 2.11. Probe errors are propagated to user-space
+[   74.861454] gpio gpiochip2: (gpio-sim.0-node0): line cnt 34463 is
+greater than fast path cnt 512
+[   78.907553] audit: type=1334 audit(1651167801.183:10): prog-id=0 op=UNLOAD
+[   78.914706] audit: type=1334 audit(1651167801.183:11): prog-id=0 op=UNLOAD
+# Probe error was not propagated
+# GPIO gpio-sim test FAIL
+not ok 2 selftests: gpio: gpio-sim.sh # exit=1
 
 
+## Build
+* kernel: 6.1.0-rc1
+* git: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+* git branch: master
+* git commit: a72b55bc981b62f7186600d06d1824f1d0612b27
+* git describe: next-20221019
+* test details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20221019
+
+## Test Regressions (compared to next-20221017)
+* bcm2711-rpi-4-b, kselftest-gpio
+  - gpio.gpio-sim.sh
+
+
+[1] https://lkft.validation.linaro.org/scheduler/job/5702400#L1325
+
+Test results comparison link,
+[2] https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20221019/testrun/12529653/suite/kselftest-gpio/test/gpio.gpio-sim.sh/history/
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
