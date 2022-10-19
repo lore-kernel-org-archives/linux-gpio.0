@@ -2,64 +2,64 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA19C4332F
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 15:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F93C43217
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 15:53:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232151AbiJSPxC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Oct 2022 11:53:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33066 "EHLO
+        id S232569AbiJSPxW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Oct 2022 11:53:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232689AbiJSPwm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 11:52:42 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E81769F36D
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 08:49:48 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id d26so40950660ejc.8
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 08:49:48 -0700 (PDT)
+        with ESMTP id S232689AbiJSPxH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 11:53:07 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDC4213C3CC
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 08:50:13 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a26so40598128ejc.4
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 08:50:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=x/LBGeRA1bR4x/er8ptm3OVF4CHSU/5RYrhJUueSgZE=;
-        b=C1ufBFChd3ta9Bpk6NhYscZbbJ7JDe1ZFQ+hb33zZWt91jdlj+w86KBpTM6vakXu2U
-         Qv0x1YlEOhpT9celq+q/nlE3hxnC7RldNre50cZVo02wJvg8NgB+MdadbWkRBZzB49bQ
-         k6FO3/apf9bvCZYQGYyY9ln1WQ/EFw8vZXsyY=
+        bh=oCxur44GiGn0KEf47+NGc2flFZLTxOPMJcgB85rch6w=;
+        b=Af1ORI7qLHGJw4ifz/2FBCp+Nq0eizmGhWVnbLOtKaMLO9xPtn7WgrxQFzTVHlGfI1
+         2lFZJu+P2cn2W4CKzeUJnS3n2wUNZDghZrIxPpbENfO1w+DMF4ypDyyfQGvc9uuprFoe
+         GBgp+bgwLUw6X0CUrZCNNCVIWXh2uD4Y7879s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=x/LBGeRA1bR4x/er8ptm3OVF4CHSU/5RYrhJUueSgZE=;
-        b=Gx0bUX/pLdK8LsdfzqpH8xEHzpSFwx7HusuZDA6DAqy9zBFmzlcoUjzGskQaLvYtWs
-         dPIX9q3m7wVpLsB4NubCHC+1f2KbyjZ3PkqdKu6Z+kecVuLd1mUc732savOpuKWM7yNw
-         W1+fFj13WWafDyQV9Bq1JOICIwDtLMpNehY1s9AFiKWva18PeC+Fvv5S8LOUW+nqh+hk
-         vAnDRZnZESNCIBQhrio2bXtQemLbwwQppBJ8Y5N9KrdtQsvr140CCvYKqRkxNGPxH2Tw
-         gvGWu+x/tXgrhhfwLPs1XPKkbZFb3gDkhWS1pWp3VB8TEiwtvqK7Egs6PJJvPteixzsx
-         xTWg==
-X-Gm-Message-State: ACrzQf3TFE59zts/+Eqir01TUT8KP8k+hD7VPVvhFMsWDYUro+Sz8kF5
-        Js3HLX1QPQ2mpkr50vbvtOuWaKK+5bS+kQ==
-X-Google-Smtp-Source: AMsMyM5pendeECZk/VfMAk1hPA2/wE4N7jFkiQSWdDvz3mOwD5vkKqgyz1pG3w6IYR83fARg56ZNJQ==
-X-Received: by 2002:a17:906:8a47:b0:78d:b6d8:f531 with SMTP id gx7-20020a1709068a4700b0078db6d8f531mr7382883ejc.287.1666194500899;
-        Wed, 19 Oct 2022 08:48:20 -0700 (PDT)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com. [209.85.128.41])
-        by smtp.gmail.com with ESMTPSA id m13-20020aa7c2cd000000b004580b26e32esm10763468edp.81.2022.10.19.08.48.19
+        bh=oCxur44GiGn0KEf47+NGc2flFZLTxOPMJcgB85rch6w=;
+        b=w8fgvewzDYv4E3Iw2HvBAm4CT578LH/wRleVs3IEGg0UfhVDzgvltDDF4Wr+Kvg4GI
+         WWpZ2+CXlU9LpOjm1K9N993e96HWbk6fzPBdwoXZ+migGHHLLGrzFzgfEp/LXleTCVSW
+         q0qQFc45OYq00lmmDUmy6m71SPgUS+lPB7X+5PC0dZ+S0UQlqSRS+k6Ny+Z0FZ6z46Aa
+         vb5vkzEU+mBDBYflgyL30kL0TOV51Jh9WFBTmdQDxEg/IyuwvctB1DBcL0ARBS28lJ91
+         Hh3eg+9TcH7i/b6NLtOr5WgrNEGNnwvROMLkq1l3KnFFaltBfvfmoVtpcIwYyF81pqdE
+         COQw==
+X-Gm-Message-State: ACrzQf1NtcJWn87LgSpK5xx/+fWvV6nVoYO5eDoeghgdiVzo938OXjtU
+        iHtx9Lwv6zv7iN94HUFZsZxD9P8g6j7MLz0/
+X-Google-Smtp-Source: AMsMyM5KQOAKlnW5Q8UnKUNqgPJjQZ5F8ka3IvJ2VrbwOl53mCNfDv+r03xqtz56XBRlfRdp9iWIuA==
+X-Received: by 2002:a17:907:94d1:b0:790:65a:3a18 with SMTP id dn17-20020a17090794d100b00790065a3a18mr7151570ejc.428.1666194530177;
+        Wed, 19 Oct 2022 08:48:50 -0700 (PDT)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
+        by smtp.gmail.com with ESMTPSA id r1-20020a1709061ba100b0072a881b21d8sm9088928ejg.119.2022.10.19.08.48.48
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Oct 2022 08:48:19 -0700 (PDT)
-Received: by mail-wm1-f41.google.com with SMTP id y10so13220461wma.0
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 08:48:19 -0700 (PDT)
-X-Received: by 2002:a05:600c:4b19:b0:3c6:cc7c:763c with SMTP id
- i25-20020a05600c4b1900b003c6cc7c763cmr6355432wmp.57.1666194498976; Wed, 19
- Oct 2022 08:48:18 -0700 (PDT)
+        Wed, 19 Oct 2022 08:48:48 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id bg9-20020a05600c3c8900b003bf249616b0so304513wmb.3
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 08:48:48 -0700 (PDT)
+X-Received: by 2002:a05:600c:19c9:b0:3c2:7fff:a689 with SMTP id
+ u9-20020a05600c19c900b003c27fffa689mr27767365wmq.85.1666194527713; Wed, 19
+ Oct 2022 08:48:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221019001351.1630089-1-krzysztof.kozlowski@linaro.org> <20221019001351.1630089-3-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221019001351.1630089-3-krzysztof.kozlowski@linaro.org>
+References: <20221019001351.1630089-1-krzysztof.kozlowski@linaro.org> <20221019001351.1630089-4-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221019001351.1630089-4-krzysztof.kozlowski@linaro.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 19 Oct 2022 08:48:04 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UriVs4-=KCg5TkzCuQaS=LEZS=CDOH0=69GsYjhPcu_g@mail.gmail.com>
-Message-ID: <CAD=FV=UriVs4-=KCg5TkzCuQaS=LEZS=CDOH0=69GsYjhPcu_g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] arm64: dts: qcom: sc7180: revert "arm64: dts:
- qcom: sc7180: Avoid glitching SPI CS at bootup on trogdor"
+Date:   Wed, 19 Oct 2022 08:48:35 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VsFbei4h_cwhJhReUi8Pk_C-qHu_8iDqfzf_e=C8QnXg@mail.gmail.com>
+Message-ID: <CAD=FV=VsFbei4h_cwhJhReUi8Pk_C-qHu_8iDqfzf_e=C8QnXg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: sc7180: align TLMM pin
+ configuration with DT schema
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
         Andy Gross <agross@kernel.org>,
@@ -81,39 +81,63 @@ Hi,
 On Tue, Oct 18, 2022 at 5:14 PM Krzysztof Kozlowski
 <krzysztof.kozlowski@linaro.org> wrote:
 >
-> This reverts commit e440e30e26dd6b0424002ad0ddcbbcea783efd85 because it
-> is not a reliable way of fixing SPI CS glitch and it depends on specific
-> Linux kernel pin controller driver behavior.
+> DT schema expects TLMM pin configuration nodes to be named with
+> '-state' suffix and their optional children with '-pins' suffix.
 >
-> This behavior of kernel driver was changed in commit b991f8c3622c
-> ("pinctrl: core: Handling pinmux and pinconf separately") thus
-> effectively the DTS fix stopped being effective.
+> Merge subnodes named 'pinconf' and 'pinmux' into one entry, add function
+> where missing (required by bindings for GPIOs) and reorganize overriding
+> pins by boards.
 >
-> Proper solution for the glitching SPI chip select must be implemented in
-> the drivers, not via ordering of entries in DTS.
+> Split the SPI and UART configuration into separate nodes
+> 1. SPI (MOSI, MISO, SCLK), SPI chip-select, SPI chip-select via GPIO,
+> 2. UART per each pin: TX, RX and optional CTS/RTS.
+>
+> This allows each board to customize them easily without adding any new
+> nodes.
 >
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 >
 > ---
 >
 > Changes since v2:
-> 1. New patch
+> 1. Rebase on reverted SPI CS glitch patch.
+>
+> Changes since v1:
+> 1. Split SPI and UART nodes, after discussion with Doug.
 >
 > Not tested on hardware.
 >
 > Cc: Doug Anderson <dianders@chromium.org>
 > ---
->  arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi | 27 +++-----------------
->  1 file changed, 3 insertions(+), 24 deletions(-)
+>  arch/arm64/boot/dts/qcom/sc7180-idp.dts       | 236 +++----
+>  .../boot/dts/qcom/sc7180-trogdor-coachz.dtsi  |  36 +-
+>  .../dts/qcom/sc7180-trogdor-homestar.dtsi     |  47 +-
+>  .../dts/qcom/sc7180-trogdor-kingoftown-r0.dts |  16 +-
+>  .../dts/qcom/sc7180-trogdor-kingoftown.dtsi   |   8 +-
+>  .../boot/dts/qcom/sc7180-trogdor-lazor.dtsi   |  16 +-
+>  .../dts/qcom/sc7180-trogdor-mrbland-rev0.dtsi |  25 +-
+>  .../boot/dts/qcom/sc7180-trogdor-mrbland.dtsi |  72 +-
+>  .../qcom/sc7180-trogdor-parade-ps8640.dtsi    |  32 +-
+>  .../boot/dts/qcom/sc7180-trogdor-pazquel.dtsi |   8 +-
+>  .../boot/dts/qcom/sc7180-trogdor-pompom.dtsi  |  14 +-
+>  .../qcom/sc7180-trogdor-quackingstick.dtsi    |  56 +-
+>  .../arm64/boot/dts/qcom/sc7180-trogdor-r1.dts |   8 +-
+>  .../dts/qcom/sc7180-trogdor-ti-sn65dsi86.dtsi |  16 +-
+>  .../qcom/sc7180-trogdor-wormdingler-rev0.dtsi |  25 +-
+>  .../dts/qcom/sc7180-trogdor-wormdingler.dtsi  |  72 +-
+>  arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  | 629 +++++++-----------
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi          | 597 +++++++++--------
+>  18 files changed, 776 insertions(+), 1137 deletions(-)
 
-It would have been nice for the commit message to mention the fix in
-the driver, which has already landed as commit d21f4b7ffc22 ("pinctrl:
-qcom: Avoid glitching lines when we first mux to output").
+You probably should send a v4 since this now conflicts with commit
+c24c9d53e001 ("arm64: dts: qcom: correct white-space before {"), which
+has landed.
 
-In any case:
+In any case, this looks nice to me.
 
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-I've confirmed that this patch is fine after taking the pinctrl fix.
+FWIW I put this on a sc7180-trogdor-coachz and the device booted up to
+the browser. I didn't do massive amounts of tests, but I'm OK with:
 
 Tested-by: Douglas Anderson <dianders@chromium.org>
