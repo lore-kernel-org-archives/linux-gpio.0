@@ -2,109 +2,112 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A136C4332F
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 12:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E27C43217
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 12:14:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232415AbiJSMBs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Oct 2022 08:01:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42292 "EHLO
+        id S231643AbiJSMOd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Oct 2022 08:14:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232087AbiJSMBD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 08:01:03 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24D0F183E01
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 04:38:21 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id u8-20020a17090a5e4800b002106dcdd4a0so131369pji.1
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 04:38:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=00Owmv7riSW1IYG4YrC2eALtO9iSt29iM3A9tEfHuNA=;
-        b=QPTpmzcNLhL57tNeGxi0t8V0u8mSkxTp9HrsbufzNFKZ1MRTGdCAOOsozSCdhynT6O
-         0jHKcYmV7eo7mNv3kDIbGs2APZT4mtxi1qOHQM6MjbKp46BcRPrasmvSBmfbC5vUr0Xe
-         w04++7Ob4xYyVA/OuAqSRuzzz4VBzAupeqD0QaXqN2Yp+RbXL3Xt5boZN39oW7zSToZq
-         qBm2FLNNHXapIoJJIiAHsSJZwvy83VBVDFstGQz5ZXmnNe8YyB3DRXfQo5HqSYjAx3gb
-         fRwi8QfxcAfPVMXxOB/tmIThGTMDV987Le8TI0kbNureXEjqmFnFwN52DzA2js5MKjrL
-         O1uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=00Owmv7riSW1IYG4YrC2eALtO9iSt29iM3A9tEfHuNA=;
-        b=G5mx9zfIXqaRb5UfqsqWLGvYP8n2fXEXEcq6ay+mK7eJw1zPKU77ImJk/49VUads4X
-         UpiXVFGbNrPG5HOko2aHZI5zVZtE/2ENgIQJl73MUfCj6hGR4MjuSWKCW9rU80N+7tKd
-         5KgnBoMFM1gfNBJrN/QP50NvrnoWv4bCt/AjNXi7dpXGx1JWqatFzlXVHBUYojjwhE5z
-         anpt1FQgpbmGrcRzAwoiolJUQbtGPhDKxgRaHHKRiLuhQqRixaoGd42AsYi8pBUZIXtj
-         n2OqqTtt/sbKYP5WLmKragOwVrMxVnLN/9iPubo/CneK0CedZLXHdzKzAlLhV7kHlFKP
-         J2zQ==
-X-Gm-Message-State: ACrzQf33/9rYnpSHo1NKCaIrjTt/YXm1QhmPjqGtTuP1yEDSntzixDqa
-        iSK53eHrju7aAaeP1E5H2NU5ilc+1JKofA==
-X-Google-Smtp-Source: AMsMyM4LAhK8pJsTDal1e3EI/Df4YjAw2rDCHaEOkFCNpQ/s5+p1W7PrReNtJ0kukVigrXRfK9nglw==
-X-Received: by 2002:a17:902:b907:b0:178:2898:8084 with SMTP id bf7-20020a170902b90700b0017828988084mr7968385plb.140.1666178574516;
-        Wed, 19 Oct 2022 04:22:54 -0700 (PDT)
-Received: from localhost ([122.172.86.128])
-        by smtp.gmail.com with ESMTPSA id s2-20020a17090a440200b001faf7a88138sm9785162pjg.42.2022.10.19.04.22.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Oct 2022 04:22:53 -0700 (PDT)
-Date:   Wed, 19 Oct 2022 16:52:51 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
+        with ESMTP id S232874AbiJSMOA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 08:14:00 -0400
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A13331A2086;
+        Wed, 19 Oct 2022 04:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Hr6GqhiNot3Wp0AyCg0faopd7+PRJ3WvXflOrKZONA4=; b=YFxyjHqd72qFv1ZmqquSjQj3Ni
+        D3wXXvK6M3WA1rk7s4+NX15Uz6XwiHA8v4FNuggbDx5WYXp54ANzsSwSuOZMgMQbrJixNWjYc5M9Y
+        UIFKPUj4d16f7o4LNoZ2EyKDedNZAK/z6bu5xJpI2vvu2zpyFRVWjrxOjAarxcMzPsvpJ9NDMmblH
+        P7L50yGZjjEqvCOICBap4c2fxBzrest7PZ4oh7k0nYwLCa6lw67T1MJkkxDCIsLXE9o+djXQEx5DX
+        BmUCmODre+YPvgPq0s67x3crjTk2KRr4w0v9FlaReFO11py7jYHZ2DTuIRNfB0VHsgoZlYL3FXxL4
+        zVAJ4jjw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34794)
+        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1ol7ZF-0005bK-1u; Wed, 19 Oct 2022 12:49:02 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1ol7Z9-00027o-Rf; Wed, 19 Oct 2022 12:48:55 +0100
+Date:   Wed, 19 Oct 2022 12:48:55 +0100
+From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
+To:     Hector Martin <marcan@marcan.st>, Petr Mladek <pmladek@suse.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        asahi@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
+        devicetree@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
         linux-gpio@vger.kernel.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-        stratos-dev@op-lists.linaro.org,
-        Gerard Ryan <g.m0n3y.2503@gmail.com>
-Subject: Re: [PATCH V7 1/8] libgpiod: Add libgpiod-sys rust crate
-Message-ID: <20221019112251.oyfek3gjodyt67lh@vireshk-i7>
-References: <cover.1665744170.git.viresh.kumar@linaro.org>
- <c8ef89c343a0c31e4132cc6757fdff8dec0d1669.1665744170.git.viresh.kumar@linaro.org>
- <Y01RqjgZINnkcyIC@sol>
- <20221018112204.l36wnimrqvexnvat@vireshk-i7>
- <Y06S5GCFYeaPEW9E@sol>
- <20221019064612.p4gu33dm65rnjwl6@vireshk-i7>
- <Y0+lZ9qcNGX1Q/Of@sol>
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sven Peter <sven@svenpeter.dev>
+Subject: Re: [PATCH 4/7] lib/vsprintf: Add support for generic FOURCCs by
+ extending %p4cc
+Message-ID: <Y0/kJwpbvbeul8n3@shell.armlinux.org.uk>
+References: <YxdInl2qzQWM+3bs@shell.armlinux.org.uk>
+ <E1oVYUS-005CmS-IA@rmk-PC.armlinux.org.uk>
+ <Y0/Kt9CW5vYcxHhK@alley>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y0+lZ9qcNGX1Q/Of@sol>
+In-Reply-To: <Y0/Kt9CW5vYcxHhK@alley>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 19-10-22, 15:21, Kent Gibson wrote:
-> That doesn't really work - you get a link to the files in github, not
-> as a web site.  You need somewhere that will host those generated files
-> as a web site.  You could do that with github-pages if you don't have other
-> options.
+On Wed, Oct 19, 2022 at 12:00:23PM +0200, Petr Mladek wrote:
+> On Tue 2022-09-06 14:19:44, Russell King wrote:
+> > From: Hector Martin <marcan@marcan.st>
+> > 
+... 
+> > +Generic FourCC code
+> > +-------------------
+> > +
+> > +::
+> > +	%p4c[hnbl]	gP00 (0x67503030)
+> > +
+> > +Print a generic FourCC code, as both ASCII characters and its numerical
+> > +value as hexadecimal.
+> > +
+> > +The additional ``h``, ``r``, ``b``, and ``l`` specifiers are used to specify
+> > +host, reversed, big or little endian order data respectively. Host endian
+> > +order means the data is interpreted as a 32-bit integer and the most
+> > +significant byte is printed first; that is, the character code as printed
+> > +matches the byte order stored in memory on big-endian systems, and is reversed
+> > +on little-endian systems.
+> > +
+> > +Passed by reference.
+> > +
+> > +Examples for a little-endian machine, given &(u32)0x67503030::
+> > +
+> > +	%p4ch	gP00 (0x67503030)
+> > +	%p4cl	gP00 (0x67503030)
+> > +	%p4cb	00Pg (0x30305067)
+> > +	%p4cr	00Pg (0x30305067)
+> 
+> Nit: I would prefer to keep the same order (h,r,b,l) everywhere.
+> 
+>      I guess that you wanted to show exactly the same results next
+>      to each other. But it is not the case on big-endian anyway.
 
-I don't have other options for now, so it is github.
+This is straight from the Asahi kernel tree, and is unmodified. I'm
+guessing you're use of "you" here refers to Hector rather than me.
 
-> When I've done that I would commit the docs to a separate
-> branch, just for the docs, and have github-pages host that branch.
+So, Hector, any opinions on Petr's comments please?
 
-Okay.
-
-> If you eventually publish your crate to crates.io you get documentation on
-> docs.rs for free - and you can skip the documentation key in that case too
-> - it defaults to the appropriate page on docs.rs.
-
-Right, that I knew.
-
-> I assume that would be the case long term - you just need to find
-> someway to host them in the meantime.
-
-I wonder if we should be doing this at all right now, or if required
-only Bartosz should do it instead of me, once this is merged ?
-
-Maybe we need a libgpiod username for that on github ? To make it
-independent of personal usernames ? From what I saw, the website name
-will be username.github.io eventually.
+Thanks.
 
 -- 
-viresh
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
