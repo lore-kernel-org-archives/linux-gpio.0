@@ -2,160 +2,105 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6586EC4332F
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 10:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD1DC433FE
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Oct 2022 11:45:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232160AbiJSKlJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Oct 2022 06:41:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50496 "EHLO
+        id S230059AbiJSLpi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Oct 2022 07:45:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232093AbiJSKkN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 06:40:13 -0400
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2063.outbound.protection.outlook.com [40.107.249.63])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34E2915745D
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Oct 2022 03:18:33 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PeeneaQeSun1/pc4qP2niZKJauiqJgUyTSuBtDE+wHqcy/aANa2QftJqRitPhqA0x/VGVPd5vjL4x1I6fX1AWFPg0LkQdEPJNEhf6YPHxb4NXeJc9KzPZuDlbxaOKMmrPLg23zcWSct/aLA9sPtlDBZyc+xHTDKFiDPxQhTsj9w+rneKp4A/OtMJrV5zpQx/a8K0G6wpxbp48DL3WSv8nsNTOGZgwag8ynnPKgT2Xv7HlOTr71JEoiAU+qbLFv6zmJM+QhYZJzbtR0io3e+VY5jIsWIPwBlsWdoIG3MumtqfvkjSMpHiVDAho8AvKyDniudi3AOYOdz0yyUEXC3E0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9MbhRJVM9mg/tKLePrIoh15+ClRLzbcz+uc3dxoEYtE=;
- b=YQlrhZUETHOGc/d6wMIFlqdABkTaiM9v4k8wgTExKx6DEmj/Q4buXaADYUdTGy/Syq78PInKkxLxjMG9wWiuNPdllSm945tt+6G+F97gnGvQdIsdNHGDyKox6AWYJw0ONkGfLTLYTk8GdP4Qn0NtjxkNB+kx7321yadgk/F8VsSllLeIgUJDYL4c6qfxmeKdeA9eE2VjtnENU3YtWQEa9F01ClF0ey0kSo06OPLUFAbjucS5VCzDiP4C8FB76zdaHXI2HpZGu+5l9sV2HYslifajAGtRopmZ5zifL9pnVvaglO1LFjBzVc3iYo6jUA/hy6lXHfWpKVMnaa9cA4wt4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=eilabs.com; dmarc=pass action=none header.from=eilabs.com;
- dkim=pass header.d=eilabs.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=eilabs.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9MbhRJVM9mg/tKLePrIoh15+ClRLzbcz+uc3dxoEYtE=;
- b=D0VOeTluVTWIXI1/uY7urGfs5fH6Ljz7k4Mbkep3DxYs53k8lN1L5p8+viSNewn1wqW6JxtpLIUBlEK7uL6zds+wcTl22cV/mCjnpFjMVYfW7ktecIn9H6rQ21hCSY0efjAFWrlPpjIGqxCwyATSw4AlA6yAqqXxpdgdYJTJIJg=
-Received: from VI1P194MB0655.EURP194.PROD.OUTLOOK.COM (2603:10a6:800:147::21)
- by DU2P194MB2200.EURP194.PROD.OUTLOOK.COM (2603:10a6:10:49f::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.32; Wed, 19 Oct
- 2022 10:15:01 +0000
-Received: from VI1P194MB0655.EURP194.PROD.OUTLOOK.COM
- ([fe80::2371:5129:3402:be5]) by VI1P194MB0655.EURP194.PROD.OUTLOOK.COM
- ([fe80::2371:5129:3402:be5%2]) with mapi id 15.20.5723.033; Wed, 19 Oct 2022
- 10:15:01 +0000
-From:   =?iso-8859-1?Q?R=E9v=E9sz=2C_Levente?= <levente.revesz@eilabs.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC:     Martyn Welch <martyn.welch@collabora.com>,
-        Nate Drude <nate.d@variscite.com>,
-        Haibo Chen <haibo.chen@nxp.com>, Puyou Lu <puyou.lu@gmail.com>,
-        Justin Chen <justinpopo6@gmail.com>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-        Peter Robinson <pbrobinson@gmail.com>,
+        with ESMTP id S231583AbiJSLpY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2022 07:45:24 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 005521EAF8;
+        Wed, 19 Oct 2022 04:24:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1666178699; x=1697714699;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=byhaK/IP5btEn4lSHeI7yfg5hfTKJgloqLB5svueUwQ=;
+  b=TYo2dHLegCvbr4GBqXYSkev1GVevnghChmZJ0i9AH/vEB2RMvxs6kRQn
+   p8q9XM//mt+KTCWfDxlHbiH0elWWV5kX3eay7ufPzZu0I1IvaNMIYUeNL
+   kjUksS6ClaD5jAuXQQ1acabg+pyUajTLPEaT3IQ/Zy0fv0Zo/GVmvzAKx
+   MfNH1WbnFX9cyreYC+LTcYEjaXpmvlSrBNeoqYIYRQ+aqpc8dm243VFt1
+   /s0F/oCbbj1ysaOEGWMXAShTbCps/blZ5ITkkKt6cYngIVjSecrgFXhNo
+   tDOCiSN8dJQYJjiC1e+SkisTpxXdlxe4aVIbZ01cvUvW+8v4c6d8F7BIW
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="293775825"
+X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
+   d="scan'208";a="293775825"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2022 04:16:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10504"; a="718435312"
+X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
+   d="scan'208";a="718435312"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by FMSMGA003.fm.intel.com with ESMTP; 19 Oct 2022 04:16:52 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1ol746-009pHc-10;
+        Wed, 19 Oct 2022 14:16:50 +0300
+Date:   Wed, 19 Oct 2022 14:16:50 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/2] gpio: pca953x: Add interrupt mask support for pca953x
- chips
-Thread-Topic: [PATCH 0/2] gpio: pca953x: Add interrupt mask support for
- pca953x chips
-Thread-Index: AQHY3Kt5nf8h6S+hwEOB92T1CHT6kq4SZbsAgAB9ZACAAqmr6Q==
-Date:   Wed, 19 Oct 2022 10:15:01 +0000
-Message-ID: <VI1P194MB06553A18E489E4F456B0EBE1E32B9@VI1P194MB0655.EURP194.PROD.OUTLOOK.COM>
-References: <20221010132007.924810-1-levente.revesz@eilabs.com>
- <CACRpkdbVCw=b-Hot83UpqmzaBSYGT0VY0g3QcgHNaPke4=grgA@mail.gmail.com>
- <Y02RWJVvybzvNbaA@smile.fi.intel.com>
-In-Reply-To: <Y02RWJVvybzvNbaA@smile.fi.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=eilabs.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: VI1P194MB0655:EE_|DU2P194MB2200:EE_
-x-ms-office365-filtering-correlation-id: 5f616bb7-5272-4238-1553-08dab1bac872
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: q1MWR6cybqo+jDPNJtDRRB5lkw0VL2FoZvgvQR8pZdNgCTJ9a7+/4o+tzTrP7VkVuxVWkpL2i512bHK/gvLmPdRuK8b71M7yVUyiC1yoctczI2i/t8Wu3dNfXIa2ZaTVKF5p/PnkcyUfp7EtkIcxTRs7nBC57gndekGJ+EBqKFkTsFz8VV9ni2wnxTBIskgyRnLTri7S3oU8Jw0GoCMQzEelwalZQRjF5iMOLBMBSRy7FVUqb4HRJSU8KFL7vbuwHEagVTSv0CFWm+KEx6OGFs1m53OVTyQ51NK7qnEIX9frIISa53u9jAQOaOO1zSjEuRA0qCsvsPQwwVeD2o7+UTjkeTf7I+F64qYPPf8sakrjbrLEgyPdiEv/PnlCOr+EhzWyloqdPLaa1lMe+rfXeEXnqs1PkfSKXwYV5Bpg7oM46O+2w/o7No5cI7MeVpJlUoTv6ueK8XOdowTTbpqKhaemQTa7cUM88ZYx4r50LvKr/xFDtldCIOQMsT/GzQKkdreaI25YeRAIG/WZssWgwjjV6r++v3oQtwBlWBRgc+gaqA8g1s8hKO9ke14j0CSnoI8zso4zxjIFkgWKP1XDvb2qDyLyRhLV81Zra1tY9nXkHFne9qeAj9blY/RsxD553wcIin4t8WZTdpDabwYelzEZoBRUD7n8MYLyquaflPq68hh1rTdoP/Epi5Scib+2cFJ8UiPrZqpSLo14T1vbF5mVDPk/wzFR6xF8JuiQ8eKx4pa6O3L2iibT9whgfAfM
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1P194MB0655.EURP194.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(39830400003)(136003)(346002)(366004)(396003)(376002)(451199015)(33656002)(86362001)(122000001)(7416002)(38100700002)(2906002)(4744005)(5660300002)(8936002)(54906003)(186003)(71200400001)(38070700005)(478600001)(6506007)(53546011)(4326008)(9686003)(7696005)(55016003)(26005)(6916009)(76116006)(66946007)(66446008)(66556008)(66476007)(316002)(52536014)(8676002)(64756008)(41300700001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?aRsjX6CcEMc8og9JAS4C/BHio1Jvx5p2FfE1Br+4TcK25Ynhly7XRg9zok?=
- =?iso-8859-1?Q?OD0FtFc/UykOo5guK40Q5u1oZaOmVqw9+Hlk2UP/TG+tanVf4uypVDfM7d?=
- =?iso-8859-1?Q?4Ier4iKghBzZ4eoDRnbM+oVVuUyFVTQZT5XM/Z67yfx9nM0zyR0ai67pZF?=
- =?iso-8859-1?Q?BsZjxFjo/+beQd00aDdg8cu04oLl2xVqejyk4d5woraloNt09oDx8ywO26?=
- =?iso-8859-1?Q?Xf8KC2CAFRFfC0tNoLawUDpLerQxpvJvKEPURV6GNqCq77uT8+3EC6zoPi?=
- =?iso-8859-1?Q?VeTDI54AiWZBQpvyFFoPa5vmtTgVgoNh4nyLh5JDAQa8TR/m4uae2U15kB?=
- =?iso-8859-1?Q?/4nj9cqrMBPwf3AC9YCYwnBuujdRX+Gp44QrVI8QQMppUL2bolCvx8iFm4?=
- =?iso-8859-1?Q?ZFxU319dvqcQur95pMBY9EvKpdGHitGOMl2nHQDGeijfuzfCgQjHbZyJyN?=
- =?iso-8859-1?Q?l34US95DHO+df9jjzzr/mQo/ln+PLkv4bdIOje695+pAmCb5g6svGmb5WG?=
- =?iso-8859-1?Q?q/fQU1mZDJHZ4oPzgkBytIu46Hk7Wmb9asTvdtrSJrYvo38o5cnJBQYwUE?=
- =?iso-8859-1?Q?qP8mVCZ6hV3ix6ZtWshC972Y7SQKrstlFh1LfNBD0Ee0PuxpuPoCrG7KRB?=
- =?iso-8859-1?Q?FhdlQ0L5MjVK+3CqHDzxBgFrzzTWhs5pugzcFyiVw7zxQ1bNCyujoRI59S?=
- =?iso-8859-1?Q?qto0DtKpzfNlFS7VQMwmLYrDjzK/4QqZig7t4zkFlT95NikelJ3KI2VKR0?=
- =?iso-8859-1?Q?yyBrE4kpNaO/+YeEcU8vinJcGSNzXbI89j3E8bZY6hlo2om7YP9F0NFqjW?=
- =?iso-8859-1?Q?spdqsVq3M6cuxF/KaZ4iyr/t51ygEauRNpiPts0pkNy+WmPfqhQdWgxsSO?=
- =?iso-8859-1?Q?4e55jFsGZbmhNTIFNWMsxnLUcFsBbXZzUtqMz9N/JKw/i1eVgechdGQWYm?=
- =?iso-8859-1?Q?H277hNmwChmjfusftagCSI83nfpQkp8eE2hSDr+MY8ZqZqVBOHuAdv37Z/?=
- =?iso-8859-1?Q?14O01w8/PAS0j18xurrb3BAfnH203ku0oAhTRQG99DOwsJEulOs2JB0nK/?=
- =?iso-8859-1?Q?xklGYFAQPAy0oVpBbX1r0/IvPyM0YakmzyopojQuiorokAaPfJ4RcLhe1Z?=
- =?iso-8859-1?Q?Omn0EsbmyB7HYmGZD9dll3Oz7kcCmDoBCywHvkoA04qVy4iFtr541wG/7C?=
- =?iso-8859-1?Q?HXdk1ZZ4BEMzrYNDBCDDaeVPjXfDki84VmJg8eWHMBw7+zhvQP9AlPab5t?=
- =?iso-8859-1?Q?0X2Ee7eikBdGpJWMytgUw9IucZ4KQmh6MU2LY2ghHD6JKOnMvk570UJcmQ?=
- =?iso-8859-1?Q?P+eda6WvSw8B6Qw638t9alNL0g8UwucJ6T5niKQInrzBnVWU8Wy37Wl8eS?=
- =?iso-8859-1?Q?Scz8HoQMijG1qErV4FOI/byPRIbCw04/wWhWCgtaY+epUggkVhMeIXgKfB?=
- =?iso-8859-1?Q?BxJR5rtGiNQEZFI+e4412o1PMq6Al9bnGtcpww4w/ydM3NAtk47/zy/aFb?=
- =?iso-8859-1?Q?A6du02oE/ZflHph09E3FVd2Utg7mx6ME9sBfyFQ/6o9j5qwFcHLXrkBWAy?=
- =?iso-8859-1?Q?cMnS4Pk8G4gqFjq/4WTD8HE0EMm33lWOTDse21hPZ/a3DzTjth7x6VAhcQ?=
- =?iso-8859-1?Q?q+5nAyvDLdQfBqgH0os3FAD2DzU0bozbJe?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v3 00/10] gpiolib: more quirks to handle legacy names
+Message-ID: <Y0/cot711ad/hG/o@smile.fi.intel.com>
+References: <20221011-gpiolib-quirks-v3-0-eae9cc2ed0a1@gmail.com>
+ <Y06cvrpcHn0jwZxU@smile.fi.intel.com>
+ <CACRpkdZZZp5Li7OSybv8F7a8F5iik_gRumwR__BAwpWddfctxQ@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: eilabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: VI1P194MB0655.EURP194.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f616bb7-5272-4238-1553-08dab1bac872
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Oct 2022 10:15:01.1144
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 6ef6a9ce-c7b1-47cb-80ec-8c54be45d567
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: khHTyb0uzMXUDZSk6lelngL0EROcf+uxK1GTKa8Ve9IWYQXxm0yx4U29/CpBcTb2NPDRVIrHLkuzJ3VeWTihH19EUjYEmoXl78hS10B8oec=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2P194MB2200
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZZZp5Li7OSybv8F7a8F5iik_gRumwR__BAwpWddfctxQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Monday, October 17, 2022 7:31 PM, Andy Shevchenko wrote:=0A=
-> At first glance I think this needs two prerequisite patches:=0A=
->=0A=
-> 1) convert _TYPE from bits to plain numbers, so we will have room=0A=
->    for up to 16 types;=0A=
->=0A=
-> 2) Introducing PCAL953X_TYPE.=0A=
->=0A=
-> After this is done, the current series will be neater.=0A=
-=0A=
-Thanks for the suggestions!=0A=
-=0A=
-I have started implementing this change:=0A=
-=0A=
-    * Convert _TYPE from bits to 4 bit integer=0A=
-=0A=
-    * Define 4 chip types: PCA953X_TYPE, PCAL953X_TYPE,=0A=
-                           PCAL653X_TYPE, PCA957X_TYPE=0A=
-=0A=
-The PCA_PCAL bit is redundant, we know which chip is PCAL from their=0A=
-chip type. Remove the PCA_PCAL bit and the PCA_LATCH_INT mask.=0A=
-=0A=
-The now modified bits were also used in the acpi_device_id=0A=
-initialization:=0A=
-=0A=
-    static const struct acpi_device_id pca953x_acpi_ids[] =3D {=0A=
-        { "INT3491", 16 | PCA953X_TYPE | PCA_LATCH_INT, },=0A=
-        { }=0A=
-    };=0A=
-    MODULE_DEVICE_TABLE(acpi, pca953x_acpi_ids);=0A=
-=0A=
-I do not understand what is happening in this snippet. =0A=
-What should be the id?=0A=
-=0A=
----=0A=
-Best regards,=0A=
-Levente=
+On Wed, Oct 19, 2022 at 12:56:31PM +0200, Linus Walleij wrote:
+> On Tue, Oct 18, 2022 at 2:32 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Mon, Oct 17, 2022 at 10:41:01PM -0700, Dmitry Torokhov wrote:
+> > > In preparation to converting several drivers to gpiod API, and to keep
+> > > existing DTS working, this series adds additional quirks to locate
+> > > gpio lines with legacy names.
+> > >
+> > > Additionally the quirk handling has been reworked (once again) to pull
+> > > all simple renames (ones that do not involve change of indices or other
+> > > complex manipulations) into a single quirk with a table containing
+> > > transformations. This should make adding new quirks easier.
+> > > When using legacy names gpiolib will emit a message to nudge users to
+> > > update DTSes (when possible).
+> > >
+> > > Note that the last patch requires the following change from the OF tree:
+> > >
+> > >         88269151be67 ("of: base: make of_device_compatible_match() accept const device node")
+> > >
+> > > The change is also available in mainline - it has been merged in 6.1
+> > > merge window.
+> >
+> > I was wondering if we can use the approach that ACPI chose for itself,
+> > i.e.  the separate data that can be filled by the corresponding driver
+> > and then GPIO OF common code may use it. In that case each driver knows
+> > the exact list of compatible strings and associated quirks.
+> 
+> I actually deliverately chose the other way around, to centralize all quirks,
+> so that drivers look nice and simple and the ugly historical errors of the
+> device tree be hidden away in gpiolib-of.c.
+
+This makes sense if and only if we may guarantee no quirks will appear in the
+future. So, it may be true for DT, but I'm quite skeptical about ACPI...
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
