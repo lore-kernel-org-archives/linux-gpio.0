@@ -2,64 +2,61 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE1EC43219
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 Oct 2022 08:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15280C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri, 21 Oct 2022 08:48:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbiJUIsP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 21 Oct 2022 04:48:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52818 "EHLO
+        id S230360AbiJUIsZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 21 Oct 2022 04:48:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229919AbiJUIsF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2022 04:48:05 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F9A224C128
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2022 01:47:59 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id a10so3260097wrm.12
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2022 01:47:59 -0700 (PDT)
+        with ESMTP id S230338AbiJUIsO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2022 04:48:14 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3691524F17B
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2022 01:47:58 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 186-20020a1c02c3000000b003c6c154d528so4496834wmc.4
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2022 01:47:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IbWZD88Csa/gnzCp+HMy/jlXVSOibosOwLIHUydjLSM=;
-        b=SsKIYrb7OvBJOeb8oL4usYLyXghenrQID5yZvH3pX0XKPhJN1CG7V6x/U0nKj8osd7
-         d808EvZBNDx/cY56qI+NXMpb+DZzaLrmrtRmbQ7SpR8d54YEQ5RgTmE4ra4VDJib2jam
-         vwiVe8T34UXKId38I0e2iHZddayU5VEz8LCYizNDMlp6tnl/0+bNIdU7H0z0I6BUpV+B
-         /ucURVgVWqJQXc+l9wJO1fW/vtVg3qM4neP415ndQIgao5xb30HpKN4zkISS9cUNDHFK
-         cCOliYL9hfvCH0QOuEltYQVMAU4liP5W10nmN5U/k1E2c37GVmxup5pG0eXlYky1YvTU
-         Yaqg==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8M+2HNwl7XWGItcQCTiwBk4Uc5IZqpHpGl3TOzAlGns=;
+        b=c6b8NGePdJZgI5zUn5CGAcV7JSaPVOUZ5eGZIO32zysb2gg4Gq2jYEA4/0zJAIq/xA
+         caON2UGCcujNP4oVN/7GnoNUHxfLnjYiTUANOrfbRL32OvhjvV9Hz059fZbvMvnkAfe4
+         pIUCjwBUyhGknBLtKXXK+UhsiwA3bBXkei0uw+y1x1n+8wex2FimMYlStj0HVgwf0qHP
+         Y7h/DbhbmJtIJMbEHSrnEX82UnoRRvRQGpkycEcodeuCM7W8RGt/t2AsiZaUVckaBwKf
+         pMjzNNjvALGEea705fgPe1uqEFAfYcPgWW9QqvNTEaPdqdZUHNCbvNiumPs00tsfma3j
+         LuxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IbWZD88Csa/gnzCp+HMy/jlXVSOibosOwLIHUydjLSM=;
-        b=cMSI5JKPc8ay6KXm1DxsE5PqMQMHUM6B0ggeHKDkPnb8ddSDRHGbzDk26aBuA6TAuY
-         fXl9To4HHOdo47sdq5ClOFkwwF69cOqnJ0DbWN/c7xYH0KUZqKZubl+UlMFWAat2pxg5
-         9LWdHnh8dHGXmDFAhqARt9YmKZAyNdq5HEzqiRQzkaBCjB4+k34gkHzsFRuHoAiNw+wF
-         NdQ3KCk1fGGBC+NJ4M5MgtjermIr4PL6i4ASZMG42rEETIQXiZ5ptsLsmOnOz93VtIuF
-         G7bGbexpAG8nSCwly4XPuCN5RQRomBgtecMnLUl+7lxzniDVv3ye99TAUb/D6/ka/C+9
-         nOpg==
-X-Gm-Message-State: ACrzQf3qrt+rOypFEi8hld4veboGWsDT/htSkauVuvht2nJGnL05tBNW
-        dVR0g+kpZFkvhh/MulkHNhzdJQ==
-X-Google-Smtp-Source: AMsMyM7uFs9IFzNVInzdSUYlLwCAHeX5bF4kkYp9ut4AlH8VXFPaQellUjaw5YdFzfU/trLsLMNTig==
-X-Received: by 2002:a5d:4cc2:0:b0:22e:372d:9c9 with SMTP id c2-20020a5d4cc2000000b0022e372d09c9mr11435346wrt.576.1666342077651;
-        Fri, 21 Oct 2022 01:47:57 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8M+2HNwl7XWGItcQCTiwBk4Uc5IZqpHpGl3TOzAlGns=;
+        b=HBLNC4XUgR5KfUVvDqKOgBmLOt3NlPsGg8vzWjzNYL/jRFhNYeLv3xVMqa5a5cgIjG
+         8WU6lAmmwSh66dUYoYqDozx5EuWqZe1M3lV1AAbni/uGyrcGEpS5mled0F57ulUpqGBZ
+         OnLKkwHULN308YkOSUtxO96oBhQRTk07u71DSr5E24LOxm3wmWWk+BIt29vvs0mgDhsB
+         Hm7jDxjMGRvyNV0IhS+PokEoAm8EjgkFCSfV1RIM8PEf6O3bJBDCg0eTAfH+84/QQ38G
+         Ap0D0nMHXeW+yDt3ixTMNp7lT0ENjH7zj4xp1uIpSDCNGvaHUK/GJS/lmmL8TakAjv6a
+         YGig==
+X-Gm-Message-State: ACrzQf0LhqzUrrObKAFlWxuCZqq/WyVqJAnz8Pe+8lzEq2EJDIB5SPcw
+        /l+QyhRqVzq3sXQJsct1PAXAhA==
+X-Google-Smtp-Source: AMsMyM4HSa3Zf2uqrt5mLvlsW1iSF834rjWiLDz0FCPhMsK555F9yMiVW5PDWzaMbU/lTMgeMLnvsg==
+X-Received: by 2002:a1c:f20e:0:b0:3c2:5062:4017 with SMTP id s14-20020a1cf20e000000b003c250624017mr32194144wmc.175.1666342076033;
+        Fri, 21 Oct 2022 01:47:56 -0700 (PDT)
 Received: from localhost.localdomain (laubervilliers-657-1-248-155.w90-24.abo.wanadoo.fr. [90.24.137.155])
-        by smtp.gmail.com with ESMTPSA id k5-20020a05600c0b4500b003c41144b3cfsm2040233wmr.20.2022.10.21.01.47.56
+        by smtp.gmail.com with ESMTPSA id k5-20020a05600c0b4500b003c41144b3cfsm2040233wmr.20.2022.10.21.01.47.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Oct 2022 01:47:57 -0700 (PDT)
+        Fri, 21 Oct 2022 01:47:55 -0700 (PDT)
 From:   bchihi@baylibre.com
 To:     sean.wang@kernel.org, linus.walleij@linaro.org,
         matthias.bgg@gmail.com
 Cc:     linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [v2, 2/2] pinctrl: mediatek: mt8365: use mt8365_set_clr_mode() callback
-Date:   Fri, 21 Oct 2022 10:47:08 +0200
-Message-Id: <20221021084708.1109986-3-bchihi@baylibre.com>
+Subject: [v2, 0/2] Fix broken SET/CLR mode of a certain number of pins for MediaTek MT8385 SoC
+Date:   Fri, 21 Oct 2022 10:47:06 +0200
+Message-Id: <20221021084708.1109986-1-bchihi@baylibre.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221021084708.1109986-1-bchihi@baylibre.com>
-References: <20221021084708.1109986-1-bchihi@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -68,53 +65,32 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Balsam CHIHI <bchihi@baylibre.com>
 
-On MT8365, the SET/CLR of the mode is broken and some pin modes won't
-be set correctly.
-Use the mt8365_set_clr_mode() callback to fix the issue.
+On MT8365, the SET/CLR of the mode is broken and some pins won't set or clear the modes correctly.
+To fix this issue, we add a specific callback mt8365_set_clr_mode() for this specific SoC.
+This callback uses the main R/W register to read/update/write the modes instead of using the SET/CLR register.
 
-Co-developed-by: Fabien Parent <fparent@baylibre.com>
-Signed-off-by: Fabien Parent <fparent@baylibre.com>
-Signed-off-by: Balsam CHIHI <bchihi@baylibre.com>
----
- drivers/pinctrl/mediatek/pinctrl-mt8365.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+This is the original patch series proposed by Fabien Parent <fparent@baylibre.com>.
+"https://lore.kernel.org/linux-arm-kernel/20220530123425.689459-1-fparent@baylibre.com/"
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8365.c b/drivers/pinctrl/mediatek/pinctrl-mt8365.c
-index 57f37a294063..42b48136ab77 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8365.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8365.c
-@@ -416,6 +416,23 @@ static const struct mtk_pin_ies_smt_set mt8365_smt_set[] = {
- 	MTK_PIN_IES_SMT_SPEC(144, 144, 0x480, 22),
- };
- 
-+static int mt8365_set_clr_mode(struct regmap *regmap,
-+		unsigned int bit, unsigned int reg_pullen, unsigned int reg_pullsel,
-+		bool enable, bool isup)
-+{
-+	int ret;
-+
-+	ret = regmap_update_bits(regmap, reg_pullen, BIT(bit), enable << bit);
-+	if (ret)
-+		return -EINVAL;
-+
-+	ret = regmap_update_bits(regmap, reg_pullsel, BIT(bit), isup << bit);
-+	if (ret)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static const struct mtk_pinctrl_devdata mt8365_pinctrl_data = {
- 	.pins = mtk_pins_mt8365,
- 	.npins = ARRAY_SIZE(mtk_pins_mt8365),
-@@ -431,6 +448,7 @@ static const struct mtk_pinctrl_devdata mt8365_pinctrl_data = {
- 	.n_spec_pupd = ARRAY_SIZE(mt8365_spec_pupd),
- 	.spec_pull_set = mtk_pctrl_spec_pull_set_samereg,
- 	.spec_ies_smt_set = mtk_pconf_spec_set_ies_smt_range,
-+	.mt8365_set_clr_mode = mt8365_set_clr_mode,
- 	.dir_offset = 0x0140,
- 	.dout_offset = 0x00A0,
- 	.din_offset = 0x0000,
+Changelog:
+Changes in v2 :
+        - Rebase on top of 6.1.0-rc1-next-20221020
+        - Delete MTK_PINCTRL_MODE_SET_CLR_BROKEN quirk
+        - Add mt8365_set_clr_mode() callback
+
+Changes in v1 :
+        - "https://lore.kernel.org/linux-arm-kernel/20220530123425.689459-1-fparent@baylibre.com/"
+
+Balsam CHIHI (2):
+  pinctrl: mediatek: common: add mt8365_set_clr_mode() callback for
+    broken SET/CLR modes
+  pinctrl: mediatek: mt8365: use mt8365_set_clr_mode() callback
+
+ drivers/pinctrl/mediatek/pinctrl-mt8365.c     | 18 ++++++++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 15 +++++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.h |  8 +++++++-
+ 3 files changed, 40 insertions(+), 1 deletion(-)
+
 -- 
 2.34.1
 
