@@ -2,61 +2,61 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8EFC433FE
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 Oct 2022 15:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24EE0C4321E
+	for <linux-gpio@archiver.kernel.org>; Fri, 21 Oct 2022 15:29:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230385AbiJUP3B (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 21 Oct 2022 11:29:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48624 "EHLO
+        id S230423AbiJUP3D (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 21 Oct 2022 11:29:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230390AbiJUP2o (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2022 11:28:44 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42B6227A897
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2022 08:28:02 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id w18so5396983wro.7
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2022 08:28:01 -0700 (PDT)
+        with ESMTP id S230438AbiJUP2p (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2022 11:28:45 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C43427A32E
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2022 08:27:59 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id f11so4987776wrm.6
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2022 08:27:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZMvv/9EZgWOQakQsn6xrZ9z1b0ZA4IEi0wTJMnNSZUE=;
-        b=FpfMDBOPa4ysB4TJzV9Xloy6cQKQmPKwhHx8zbpa5ngdvDMc/iy9AZSDunJFRWcv8d
-         fxIdaMWEvlulbrXyyubNUXL+qdfSxW22yXwWvpzwmj9RT9LG9/tS3V5Jd17ixrqgitKi
-         MDKHQJwlemtSGbmwmGTmg25zu1oq6Z5c0Jtof58Bfpd9YUJ369xqvKm2lSJOr4SmQ/5u
-         gyLBJnLKqsAMWFibGl0AeBu0l8tyOUJeuzFRDsMUCIG9Q/sFgtKwNSOPNRlwxkmrEfPE
-         kjrJRrQm9puc2eLpKjMkBvrphwro9D353Npx+oHZ0Rh7z7v4nlhAkqLajtHJaXmSi83G
-         WJkA==
+        bh=ML5NXIKWu+6+po3M0Jn1i9pygIWyWhf0++IKdAxC2NE=;
+        b=I0hMGNsmxG3ZiTQFLKO+2L81c/krssX9iSFnJDm/lWrin6K7SKCLr+cMo6ZQ4XTO6D
+         xGW2Yk8Fz5gDCUhM0NnXTAs0uU26kB/Ck/X8oFz5Cdazy71pZzUqEPGMWeg85Tslh/Vl
+         1h0hRXe6ivkMlU96bSvrLru4yKI663zoy5/aUbCMU5LcdhEjHdXrNcnQbKpMg+f7ziWO
+         OcD4Vdvd3aB4UfwHVhvST79mYA1tJRazORKULu74lH52+SysnmRrusAA+ffBfSYPiNL8
+         k+U4X+yVsTq4FZ3HH+2VSVujqY3ZCgqigjo31dnvQTdavNL03P4AAI3Odrpykev+b4dG
+         tJbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZMvv/9EZgWOQakQsn6xrZ9z1b0ZA4IEi0wTJMnNSZUE=;
-        b=kpV/BRpE0niPlgnz2nB7ctNQVDNnSDUibMv4OKk6f27T7hOpGIUIfxmS99toDMhpEl
-         6YYT6o+Nz+0o/3asMGm2j0sAXEYiANfg9noty5n5wL40wTP6orJJ3VemeWvIvwt3sCzh
-         CwY9xsSAWjUtbC/LId+NPqPNbHevoxBA6LbYhA8+BF8udFCC2ygvP0g6J1FYnf7ykTJ2
-         GKzlKprA+usdBPXbZnYxb5UJoFe5F0DGVl1UvdmYyA/Ur4m58tbbDal51KjidpNt//PT
-         PSmGukslJqePxEsilf1Jf6sEaqVwlj/ThjkuJhoBFB06ii8sSwlBngagblE9ZjIdlFFX
-         PIYQ==
-X-Gm-Message-State: ACrzQf36tdCTtnUAyOHFdTf/CHTEcH7fD2/hBBIKVbwTQjoggNe9hNrQ
-        r9mMShuNdgpDcFeDvWWS1Vporg==
-X-Google-Smtp-Source: AMsMyM5nHh/hh6ZpLi4L0jbWxv9dMiTSmN2yBVSlo1Pp9Xv8lBvtrWl4ih7SSkNj6obFU2UI7BFYiA==
-X-Received: by 2002:a05:6000:2a7:b0:22f:bb40:83f8 with SMTP id l7-20020a05600002a700b0022fbb4083f8mr12728324wry.288.1666366080288;
-        Fri, 21 Oct 2022 08:28:00 -0700 (PDT)
+        bh=ML5NXIKWu+6+po3M0Jn1i9pygIWyWhf0++IKdAxC2NE=;
+        b=E0U21lQdc+rbX9LDG7mayJE5DQuY5dpi4On7zVvHgKRogluPbD++mwcOg89seIPjGx
+         /C7y0woCZXkoBI9i9QgZSqSGvpgQfs3s3Lbso7/w7MZh6YdQ9hh31sHsI8LBW0opFeur
+         79zGX32syS+cSHxiF8Hs2rFguTWJ4Rhp5XlGSAXPGVe8QQN8iMhu7mz/xf/+zERQn5jw
+         wWpzCyEspzEh9Cszy9M9rUJQd/faJnu2Rw2aBVZ3v7bhTLQOi7lhGB4aNNhxRFwgTNoT
+         Yq9wvL/QDf9RPZQagN2fuDSOsps4QFQyBPWpf+qBms2oa5HwZdoL34AjQa90dVJgaxtG
+         XDUA==
+X-Gm-Message-State: ACrzQf2QQ/8RdoaqtaRcKy3FecW7SxVIjX1PLrRAWs3lDTY51yMOwCmF
+        rVMv/i9X5y7zigyaIEnvcDuHwQ==
+X-Google-Smtp-Source: AMsMyM5EMBudiVg0Hb43tE/Jjk/NTGhyMcCwq5aJfShETR3Gkz4RJxIArZknMIbRvLg9RqDvKO4pgA==
+X-Received: by 2002:adf:e88a:0:b0:234:ffee:978a with SMTP id d10-20020adfe88a000000b00234ffee978amr7574548wrm.247.1666366077409;
+        Fri, 21 Oct 2022 08:27:57 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id j8-20020a05600c1c0800b003c6b7f5567csm10706169wms.0.2022.10.21.08.27.59
+        by smtp.gmail.com with ESMTPSA id j8-20020a05600c1c0800b003c6b7f5567csm10706169wms.0.2022.10.21.08.27.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Oct 2022 08:27:59 -0700 (PDT)
+        Fri, 21 Oct 2022 08:27:57 -0700 (PDT)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Fri, 21 Oct 2022 17:27:57 +0200
-Subject: [PATCH v3 5/5] arm: dts: qcom-msm8660: align RPM regulators node name with
- bindings
+Date:   Fri, 21 Oct 2022 17:27:54 +0200
+Subject: [PATCH v3 2/5] arm: dts: qcom: mdm9615: wp8548-mangoh-green: fix sx150xq
+ node names and probe-reset property
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20221005-mdm9615-pinctrl-yaml-v3-5-e5e045644971@linaro.org>
+Message-Id: <20221005-mdm9615-pinctrl-yaml-v3-2-e5e045644971@linaro.org>
 References: <20221005-mdm9615-pinctrl-yaml-v3-0-e5e045644971@linaro.org>
 In-Reply-To: <20221005-mdm9615-pinctrl-yaml-v3-0-e5e045644971@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -77,36 +77,73 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Node names should be generic and new DT schema expects RPM regulators
-node to be just "regulators".
+Fix the sx150xq node names to pinctrl and use the right probe-reset property.
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- arch/arm/boot/dts/qcom-msm8660.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dts | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/qcom-msm8660.dtsi b/arch/arm/boot/dts/qcom-msm8660.dtsi
-index ddce7d64ba99..432bea52bfe9 100644
---- a/arch/arm/boot/dts/qcom-msm8660.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8660.dtsi
-@@ -471,7 +471,7 @@ rpmcc: clock-controller {
- 				clock-names = "pxo";
- 			};
+diff --git a/arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dts b/arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dts
+index 30a110984597..a8304769b509 100644
+--- a/arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dts
++++ b/arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dts
+@@ -116,7 +116,7 @@ i2c@4 {
+ 			#size-cells = <0>;
+ 			reg = <4>;
  
--			pm8901-regulators {
-+			regulators-0 {
- 				compatible = "qcom,rpm-pm8901-regulators";
+-			gpioext0: gpio@3e {
++			gpioext0: pinctrl@3e {
+ 				/* GPIO Expander 0 Mapping :
+ 				 * - 0: ARDUINO_RESET_Level shift
+ 				 * - 1: BattChrgr_PG_N
+@@ -142,7 +142,7 @@ gpioext0: gpio@3e {
+ 				interrupt-parent = <&gpioext1>;
+ 				interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
  
- 				pm8901_l0: l0 {};
-@@ -495,7 +495,7 @@ pm8901-regulators {
- 				pm8901_mvs: mvs {};
- 			};
+-				probe-reset;
++				semtech,probe-reset;
  
--			pm8058-regulators {
-+			regulators-1 {
- 				compatible = "qcom,rpm-pm8058-regulators";
+ 				gpio-controller;
+ 				interrupt-controller;
+@@ -154,7 +154,7 @@ i2c@5 {
+ 			#size-cells = <0>;
+ 			reg = <5>;
  
- 				pm8058_l0: l0 {};
+-			gpioext1: gpio@3f {
++			gpioext1: pinctrl@3f {
+ 				/* GPIO Expander 1 Mapping :
+ 				 * - 0: GPIOEXP_INT1
+ 				 * - 1: Battery detect
+@@ -183,7 +183,7 @@ gpioext1: gpio@3f {
+ 				interrupt-parent = <&msmgpio>;
+ 				interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
+ 
+-				probe-reset;
++				semtech,probe-reset;
+ 
+ 				gpio-controller;
+ 				interrupt-controller;
+@@ -195,7 +195,7 @@ i2c@6 {
+ 			#size-cells = <0>;
+ 			reg = <6>;
+ 
+-			gpioext2: gpio@70 {
++			gpioext2: pinctrl@70 {
+ 				/* GPIO Expander 2 Mapping :
+ 				 * - 0: USB_HUB_INTn
+ 				 * - 1: HUB_CONNECT
+@@ -221,7 +221,7 @@ gpioext2: gpio@70 {
+ 				interrupt-parent = <&gpioext1>;
+ 				interrupts = <14 IRQ_TYPE_EDGE_FALLING>;
+ 
+-				probe-reset;
++				semtech,probe-reset;
+ 
+ 				gpio-controller;
+ 				interrupt-controller;
 
 -- 
 b4 0.10.1
