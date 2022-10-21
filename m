@@ -2,101 +2,221 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D48E5C3A59D
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 Oct 2022 20:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F60C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri, 21 Oct 2022 21:11:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229960AbiJUUvh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 21 Oct 2022 16:51:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52766 "EHLO
+        id S229815AbiJUVLN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 21 Oct 2022 17:11:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229887AbiJUUvg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2022 16:51:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5BDE27D4D0;
-        Fri, 21 Oct 2022 13:51:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 73D6761F60;
-        Fri, 21 Oct 2022 20:51:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D309C43149;
-        Fri, 21 Oct 2022 20:51:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666385490;
-        bh=C4YwxPFCdn3Q3GHys925rodFzN+q7UHUwPccx2jNShc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HQtVdqaNmHZ/taeMNFPmG7a4fViYi1t6Imch4kFB2/CtGws0J3W2N4Q70nyTedXD7
-         Iaqc1glp/Qqi4RurV3kA6WoH2LIobw1Xw8QtiGGpnSiXTQqJrc4N4zuPpeU6qncgZo
-         DEdMG5qvagQdysAk+HyaEpaI0xwUE1Uimdw93Jd9onfytCAW6gUIHJS0d0o0bfGa+p
-         IY2aQSiYX7voytQxkxUFpGWLheJe0QrsuZaIL1zFf27gmpNnsb06dtKFqJE2IzCYcJ
-         1uqPkZerexOVUpwkd9TkRVwNQlriwBtV5oMVU1VczQKLnYqbpMmaLL9y82+biK/imo
-         pNgbo68E+N40A==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH 18/21] pinctrl: remove s3c24xx driver
-Date:   Fri, 21 Oct 2022 22:27:51 +0200
-Message-Id: <20221021203329.4143397-18-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20221021202254.4142411-1-arnd@kernel.org>
-References: <20221021202254.4142411-1-arnd@kernel.org>
+        with ESMTP id S229741AbiJUVLM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2022 17:11:12 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B01225E8B9
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2022 14:11:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1666386671; x=1697922671;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=zxmvMTuvu+ZnBDKZQynxDDnqchYiqDRuNWUIIUB4wbY=;
+  b=QhuLpIlsG/l2Xj5aCkM4FlhfHfbNV2uKN2lpcokfcRD8jARFULlDh+pU
+   7M+vYUnJaTZBfftly7JWrgNFHFepGLqEdWUVgctOoVYWdtLSQ43mdLSva
+   +DCzooNaV8ckffOGzKSVgnEfQNXeebq392JNW3HOX9SiNDq6mqr3kotPX
+   gOSHYLTxB4XhVbdFm9w1P8WHbgmrBS3Q/FO+l1mdUiJEYsqazxJtfGaO5
+   gkzkZLlHA1FGa3cDqBrTschk/n0+bRUVPA+Bguut6BFEnBcKU5Iy6yjAa
+   AmevMlfQx1NI/zGEcfW6mZ8jqDNy3aypM164NCyKxCTca1toVrLnDbZNQ
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10507"; a="393414931"
+X-IronPort-AV: E=Sophos;i="5.95,203,1661842800"; 
+   d="scan'208";a="393414931"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2022 14:11:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10507"; a="719877963"
+X-IronPort-AV: E=Sophos;i="5.95,203,1661842800"; 
+   d="scan'208";a="719877963"
+Received: from lkp-server02.sh.intel.com (HELO b6d29c1a0365) ([10.239.97.151])
+  by FMSMGA003.fm.intel.com with ESMTP; 21 Oct 2022 14:11:09 -0700
+Received: from kbuild by b6d29c1a0365 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1olzIK-0002yS-2z;
+        Fri, 21 Oct 2022 21:11:08 +0000
+Date:   Sat, 22 Oct 2022 05:10:25 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [linusw-pinctrl:devel] BUILD SUCCESS
+ 417c326091b06eadb93511e638e8c36230dae2e6
+Message-ID: <63530ac1.YcZtoWvLS6Jam18B%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+branch HEAD: 417c326091b06eadb93511e638e8c36230dae2e6  pinctrl: cy8c95x0: Don't use cy8c95x0_set_mode() twice
 
-The s3c24xx platform was removed, so this driver has no
-remaining users.
+elapsed time: 727m
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pinctrl/samsung/Kconfig           |   5 -
- drivers/pinctrl/samsung/Makefile          |   1 -
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 653 ----------------------
- 3 files changed, 659 deletions(-)
- delete mode 100644 drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+configs tested: 144
+configs skipped: 3
 
-diff --git a/drivers/pinctrl/samsung/Kconfig b/drivers/pinctrl/samsung/Kconfig
-index 7b0576f71376..697ff7812d8e 100644
---- a/drivers/pinctrl/samsung/Kconfig
-+++ b/drivers/pinctrl/samsung/Kconfig
-@@ -23,11 +23,6 @@ config PINCTRL_EXYNOS_ARM64
- 	bool "ARMv8-specific pinctrl driver for Samsung Exynos SoCs" if COMPILE_TEST
- 	depends on PINCTRL_EXYNOS
- 
--config PINCTRL_S3C24XX
--	bool "Samsung S3C24XX SoC pinctrl driver"
--	depends on ARCH_S3C24XX || (COMPILE_TEST && OF)
--	select PINCTRL_SAMSUNG
--
- config PINCTRL_S3C64XX
- 	bool "Samsung S3C64XX SoC pinctrl driver"
- 	depends on ARCH_S3C64XX || (COMPILE_TEST && OF)
-diff --git a/drivers/pinctrl/samsung/Makefile b/drivers/pinctrl/samsung/Makefile
-index ed951df6a112..4dd4a92ab6cc 100644
---- a/drivers/pinctrl/samsung/Makefile
-+++ b/drivers/pinctrl/samsung/Makefile
-@@ -5,5 +5,4 @@ obj-$(CONFIG_PINCTRL_SAMSUNG)	+= pinctrl-samsung.o
- obj-$(CONFIG_PINCTRL_EXYNOS)	+= pinctrl-exynos.o
- obj-$(CONFIG_PINCTRL_EXYNOS_ARM)	+= pinctrl-exynos-arm.o
- obj-$(CONFIG_PINCTRL_EXYNOS_ARM64)	+= pinctrl-exynos-arm64.o
--obj-$(CONFIG_PINCTRL_S3C24XX)	+= pinctrl-s3c24xx.o
- obj-$(CONFIG_PINCTRL_S3C64XX)	+= pinctrl-s3c64xx.o
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-deleted file mode 100644
-index 625cb1065eaf..000000000000
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+powerpc                           allnoconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+arc                                 defconfig
+s390                             allmodconfig
+x86_64                          rhel-8.3-func
+alpha                               defconfig
+x86_64                    rhel-8.3-kselftests
+s390                             allyesconfig
+s390                                defconfig
+m68k                             allmodconfig
+sh                               allmodconfig
+arc                              allyesconfig
+alpha                            allyesconfig
+i386                                defconfig
+arc                  randconfig-r043-20221018
+mips                             allyesconfig
+x86_64                           rhel-8.3-syz
+powerpc                          allmodconfig
+x86_64                        randconfig-a004
+riscv                randconfig-r042-20221018
+x86_64                         rhel-8.3-kunit
+s390                 randconfig-r044-20221018
+x86_64                        randconfig-a002
+x86_64                              defconfig
+m68k                             allyesconfig
+x86_64                        randconfig-a006
+i386                             allyesconfig
+arm                                 defconfig
+x86_64                           allyesconfig
+x86_64                               rhel-8.3
+sh                           se7750_defconfig
+sh                           se7343_defconfig
+nios2                         10m50_defconfig
+i386                          randconfig-a001
+i386                          randconfig-a012
+i386                          randconfig-a003
+i386                          randconfig-a016
+i386                          randconfig-a005
+i386                          randconfig-a014
+arm                              allyesconfig
+arm64                            allyesconfig
+x86_64                           rhel-8.3-kvm
+m68k                       m5475evb_defconfig
+xtensa                              defconfig
+sparc                            alldefconfig
+arm                          badge4_defconfig
+m68k                         apollo_defconfig
+arc                        vdk_hs38_defconfig
+sh                           se7712_defconfig
+arc                  randconfig-r043-20221020
+s390                 randconfig-r044-20221020
+riscv                randconfig-r042-20221020
+arm64                               defconfig
+powerpc                 linkstation_defconfig
+m68k                        mvme16x_defconfig
+loongarch                           defconfig
+arm                        oxnas_v6_defconfig
+openrisc                         alldefconfig
+powerpc                       holly_defconfig
+i386                          randconfig-c001
+arc                  randconfig-r043-20221019
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+riscv                    nommu_k210_defconfig
+riscv                             allnoconfig
+i386                   debian-10.3-kselftests
+i386                              debian-10.3
+arm                        multi_v7_defconfig
+sh                           se7721_defconfig
+powerpc                         ps3_defconfig
+m68k                           virt_defconfig
+powerpc                      ppc40x_defconfig
+i386                          debian-10.3-kvm
+i386                        debian-10.3-kunit
+i386                         debian-10.3-func
+sparc                       sparc32_defconfig
+sh                          sdk7786_defconfig
+parisc                           alldefconfig
+mips                      fuloong2e_defconfig
+arc                           tb10x_defconfig
+sh                            titan_defconfig
+powerpc                     pq2fads_defconfig
+arm                         nhk8815_defconfig
+ia64                          tiger_defconfig
+arm                        mvebu_v7_defconfig
+mips                    maltaup_xpa_defconfig
+arm                       omap2plus_defconfig
+arm                        clps711x_defconfig
+arc                            hsdk_defconfig
+openrisc                 simple_smp_defconfig
+arc                              alldefconfig
+m68k                          atari_defconfig
+powerpc                     tqm8548_defconfig
+arm                          lpd270_defconfig
+arm                          exynos_defconfig
+alpha                             allnoconfig
+arc                               allnoconfig
+arm                           u8500_defconfig
+csky                                defconfig
+parisc                generic-64bit_defconfig
+
+clang tested configs:
+hexagon              randconfig-r045-20221018
+hexagon              randconfig-r041-20221018
+x86_64                        randconfig-a005
+x86_64                        randconfig-a001
+x86_64                        randconfig-a003
+i386                          randconfig-a013
+i386                          randconfig-a011
+i386                          randconfig-a002
+i386                          randconfig-a015
+i386                          randconfig-a006
+i386                          randconfig-a004
+mips                       lemote2f_defconfig
+powerpc                    socrates_defconfig
+arm                         orion5x_defconfig
+i386                 randconfig-a013-20221017
+i386                 randconfig-a015-20221017
+i386                 randconfig-a016-20221017
+i386                 randconfig-a011-20221017
+i386                 randconfig-a014-20221017
+i386                 randconfig-a012-20221017
+x86_64                        randconfig-a012
+x86_64                        randconfig-a014
+x86_64                        randconfig-a016
+arm                        magician_defconfig
+arm                       mainstone_defconfig
+powerpc                          allmodconfig
+arm                         s3c2410_defconfig
+mips                           ip28_defconfig
+powerpc                    gamecube_defconfig
+x86_64                        randconfig-k001
+s390                 randconfig-r044-20221019
+hexagon              randconfig-r045-20221019
+riscv                randconfig-r042-20221019
+hexagon              randconfig-r041-20221019
+arm                      pxa255-idp_defconfig
+mips                          ath79_defconfig
+powerpc                      acadia_defconfig
+arm                             mxs_defconfig
+arm                       netwinder_defconfig
+mips                        maltaup_defconfig
+powerpc                 mpc8560_ads_defconfig
+arm                        vexpress_defconfig
+mips                       rbtx49xx_defconfig
+arm                           spitz_defconfig
+
 -- 
-2.29.2
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
