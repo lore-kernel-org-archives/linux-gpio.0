@@ -2,95 +2,99 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15280C433FE
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 Oct 2022 08:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDE6C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri, 21 Oct 2022 08:56:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230360AbiJUIsZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 21 Oct 2022 04:48:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52852 "EHLO
+        id S229576AbiJUI4J (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 21 Oct 2022 04:56:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230338AbiJUIsO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2022 04:48:14 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3691524F17B
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2022 01:47:58 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 186-20020a1c02c3000000b003c6c154d528so4496834wmc.4
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2022 01:47:57 -0700 (PDT)
+        with ESMTP id S230337AbiJUI4H (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2022 04:56:07 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40589158193
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2022 01:56:05 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id q9so5651414ejd.0
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2022 01:56:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8M+2HNwl7XWGItcQCTiwBk4Uc5IZqpHpGl3TOzAlGns=;
-        b=c6b8NGePdJZgI5zUn5CGAcV7JSaPVOUZ5eGZIO32zysb2gg4Gq2jYEA4/0zJAIq/xA
-         caON2UGCcujNP4oVN/7GnoNUHxfLnjYiTUANOrfbRL32OvhjvV9Hz059fZbvMvnkAfe4
-         pIUCjwBUyhGknBLtKXXK+UhsiwA3bBXkei0uw+y1x1n+8wex2FimMYlStj0HVgwf0qHP
-         Y7h/DbhbmJtIJMbEHSrnEX82UnoRRvRQGpkycEcodeuCM7W8RGt/t2AsiZaUVckaBwKf
-         pMjzNNjvALGEea705fgPe1uqEFAfYcPgWW9QqvNTEaPdqdZUHNCbvNiumPs00tsfma3j
-         LuxQ==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NYrwhi16X5/3SFMiHALA32aV8nqAFGSfduJWXT+ZmfA=;
+        b=TDhVMfud9VAZwnS8X4AWhWj5ZCfkWDcnpssLqNHsRBKjs+EihqzYt4oXeCewoH/0jQ
+         8BtEziI7BM9Y94IGBpt85J3YTJiKmmNg6tPK4/AGMa0IVHZFyDlmuIwVJqdqN7CtUeKL
+         TAF12XEXXThtODAl55aVvlgSzjY1YXBch67ySji7ypPMRxfgQPjNklsUFNb21YP3XNPf
+         NcmnHKM837GTgiN+9ZR4a30vJOuzoxd0qmX1pFgsuYJCShRRy7ksGK9eKmY7P2sk3pee
+         1HuND87Gr7EQC/IITCl7GXsBMeyn08XUfGPFg7oa/ASyt9RUxvvXGvH1B0WBvHdPVD+G
+         5Rvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8M+2HNwl7XWGItcQCTiwBk4Uc5IZqpHpGl3TOzAlGns=;
-        b=HBLNC4XUgR5KfUVvDqKOgBmLOt3NlPsGg8vzWjzNYL/jRFhNYeLv3xVMqa5a5cgIjG
-         8WU6lAmmwSh66dUYoYqDozx5EuWqZe1M3lV1AAbni/uGyrcGEpS5mled0F57ulUpqGBZ
-         OnLKkwHULN308YkOSUtxO96oBhQRTk07u71DSr5E24LOxm3wmWWk+BIt29vvs0mgDhsB
-         Hm7jDxjMGRvyNV0IhS+PokEoAm8EjgkFCSfV1RIM8PEf6O3bJBDCg0eTAfH+84/QQ38G
-         Ap0D0nMHXeW+yDt3ixTMNp7lT0ENjH7zj4xp1uIpSDCNGvaHUK/GJS/lmmL8TakAjv6a
-         YGig==
-X-Gm-Message-State: ACrzQf0LhqzUrrObKAFlWxuCZqq/WyVqJAnz8Pe+8lzEq2EJDIB5SPcw
-        /l+QyhRqVzq3sXQJsct1PAXAhA==
-X-Google-Smtp-Source: AMsMyM4HSa3Zf2uqrt5mLvlsW1iSF834rjWiLDz0FCPhMsK555F9yMiVW5PDWzaMbU/lTMgeMLnvsg==
-X-Received: by 2002:a1c:f20e:0:b0:3c2:5062:4017 with SMTP id s14-20020a1cf20e000000b003c250624017mr32194144wmc.175.1666342076033;
-        Fri, 21 Oct 2022 01:47:56 -0700 (PDT)
-Received: from localhost.localdomain (laubervilliers-657-1-248-155.w90-24.abo.wanadoo.fr. [90.24.137.155])
-        by smtp.gmail.com with ESMTPSA id k5-20020a05600c0b4500b003c41144b3cfsm2040233wmr.20.2022.10.21.01.47.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Oct 2022 01:47:55 -0700 (PDT)
-From:   bchihi@baylibre.com
-To:     sean.wang@kernel.org, linus.walleij@linaro.org,
-        matthias.bgg@gmail.com
-Cc:     linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [v2, 0/2] Fix broken SET/CLR mode of a certain number of pins for MediaTek MT8385 SoC
-Date:   Fri, 21 Oct 2022 10:47:06 +0200
-Message-Id: <20221021084708.1109986-1-bchihi@baylibre.com>
-X-Mailer: git-send-email 2.34.1
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NYrwhi16X5/3SFMiHALA32aV8nqAFGSfduJWXT+ZmfA=;
+        b=2ezlCbH0ffSU6evgyPXzRYOZHZX7KgrFCRmxk4VoEYLZ/uC8gHBw8T84yVBFjfo4KD
+         i9BAILiJIvKuKxedaD6ukhyQT9QMUGj+tmdmIyTjqxmDRCeltGMMK248MXJeZz0jhMZW
+         JPhgylXCrxdAfYSsyA0eMYajVf05Cb5KlLfe8wqXlm8T13HuuIJ+2ZA5g6S6T4i+0h/t
+         n+bbxWILmkMfKqTCOGshDwEOiOGCda6G3TRdnpEb2HaieAGPX5qzNDpRPw9V78vE9Exn
+         ePWgQq5Yf4BUcLDC53773rqRP2z+KdmpxnsftUifFRw4n7Y1sBNYCpG4DJV4mlNp9wAG
+         HnpQ==
+X-Gm-Message-State: ACrzQf3OGIvrNVpWRXplQH44dPQB3o2YdkMUJSP0wfq0yKq57Xi1aYCF
+        jUnHhVpS3qXaDPAcF/G4QzGUCHjzRfQ/94FJMehlytrDKUlg6g==
+X-Google-Smtp-Source: AMsMyM4yxyDYDupkHsdCM3pgOrn8sEVec9iYraBTwkj5aNBc2Uw8egkLYxTPGpqJ2vMQVoB/AkxugQf/lFbyPKYRh4Q=
+X-Received: by 2002:a17:907:a06b:b0:78d:d25f:b726 with SMTP id
+ ia11-20020a170907a06b00b0078dd25fb726mr14780288ejc.203.1666342563338; Fri, 21
+ Oct 2022 01:56:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 21 Oct 2022 10:55:52 +0200
+Message-ID: <CACRpkdbqRy5pXiy2r5CBiBXd8j7VbXKq40pmx_eXtFMynyAMug@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for the v6.1 series
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Balsam CHIHI <bchihi@baylibre.com>
+Hi Linus,
 
-On MT8365, the SET/CLR of the mode is broken and some pins won't set or clear the modes correctly.
-To fix this issue, we add a specific callback mt8365_set_clr_mode() for this specific SoC.
-This callback uses the main R/W register to read/update/write the modes instead of using the SET/CLR register.
+here are some first pin control fixes for the v6.1 series.
+I try to be quicker to get fixes upstream now.
 
-This is the original patch series proposed by Fabien Parent <fparent@baylibre.com>.
-"https://lore.kernel.org/linux-arm-kernel/20220530123425.689459-1-fparent@baylibre.com/"
+Details in the signed tag!
 
-Changelog:
-Changes in v2 :
-        - Rebase on top of 6.1.0-rc1-next-20221020
-        - Delete MTK_PINCTRL_MODE_SET_CLR_BROKEN quirk
-        - Add mt8365_set_clr_mode() callback
+Please pull it in.
 
-Changes in v1 :
-        - "https://lore.kernel.org/linux-arm-kernel/20220530123425.689459-1-fparent@baylibre.com/"
+Yours,
+Linus Walleij
 
-Balsam CHIHI (2):
-  pinctrl: mediatek: common: add mt8365_set_clr_mode() callback for
-    broken SET/CLR modes
-  pinctrl: mediatek: mt8365: use mt8365_set_clr_mode() callback
+The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
 
- drivers/pinctrl/mediatek/pinctrl-mt8365.c     | 18 ++++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 15 +++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-common.h |  8 +++++++-
- 3 files changed, 40 insertions(+), 1 deletion(-)
+  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
 
--- 
-2.34.1
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v6.1-2
+
+for you to fetch changes up to 9abf2313adc1ca1b6180c508c25f22f9395cc780:
+
+  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
+
+----------------------------------------------------------------
+Some pin control fixes for v6.1:
+
+- Fix typos in UART1 and MMC in the Ingenic driver.
+
+- A really well researched glitch bug fix to the Qualcomm driver
+  that was tracked down and fixed by Dough Anderson from
+  Chromium. Hats off for this one!
+
+- Revert two patches on the Xilinx ZynqMP driver: this needs a
+  proper solution making use of firmware version information to
+  adapt to different firmware releases.
+
+- Fix interrupt triggers in the Ocelot driver.
+
+----------------------------------------------------------------
