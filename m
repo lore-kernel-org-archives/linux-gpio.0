@@ -2,118 +2,224 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B56ACC433FE
-	for <linux-gpio@archiver.kernel.org>; Sat, 22 Oct 2022 01:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7E9C38A2D
+	for <linux-gpio@archiver.kernel.org>; Sat, 22 Oct 2022 02:09:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbiJVBz0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 21 Oct 2022 21:55:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60174 "EHLO
+        id S229635AbiJVCJn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 21 Oct 2022 22:09:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230041AbiJVBzQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2022 21:55:16 -0400
+        with ESMTP id S229597AbiJVCJn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2022 22:09:43 -0400
 Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EA0ADB03E0;
-        Fri, 21 Oct 2022 18:55:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DCE87357D4;
+        Fri, 21 Oct 2022 19:09:39 -0700 (PDT)
 Received: from loongson.cn (unknown [10.180.13.64])
-        by gateway (Coremail) with SMTP id _____8Cxbbd9TVNjdJEBAA--.1931S3;
-        Sat, 22 Oct 2022 09:55:09 +0800 (CST)
-Received: from [10.180.13.64] (unknown [10.180.13.64])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxXuB8TVNj9SYDAA--.12586S2;
-        Sat, 22 Oct 2022 09:55:09 +0800 (CST)
-Subject: Re: [PATCH v1 1/2] pinctrl: pinctrl-loongson2: add pinctrl driver
- support
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        zhuyinbo@loongson.cn, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zhanghongchen <zhanghongchen@loongson.cn>
-References: <20221021012728.22373-1-zhuyinbo@loongson.cn>
- <CACRpkdbBW1YNGfec2jEPsUGwqosc8TwwSP9ft+he5KWPf0otvw@mail.gmail.com>
+        by gateway (Coremail) with SMTP id _____8CxKdjiUFNj8JEBAA--.4953S3;
+        Sat, 22 Oct 2022 10:09:38 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.180.13.64])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8Dxr+DaUFNj0CgDAA--.12849S3;
+        Sat, 22 Oct 2022 10:09:37 +0800 (CST)
 From:   Yinbo Zhu <zhuyinbo@loongson.cn>
-Message-ID: <ad677eaa-60e1-c72c-a4e3-f28c92e12942@loongson.cn>
-Date:   Sat, 22 Oct 2022 09:55:08 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        zhanghongchen <zhanghongchen@loongson.cn>,
+        Yinbo Zhu <zhuyinbo@loongson.cn>
+Subject: [PATCH v2 2/2] dt-bindings: pinctrl: add loongson2 pinctrl
+Date:   Sat, 22 Oct 2022 10:09:27 +0800
+Message-Id: <20221022020927.25485-2-zhuyinbo@loongson.cn>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20221022020927.25485-1-zhuyinbo@loongson.cn>
+References: <20221022020927.25485-1-zhuyinbo@loongson.cn>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdbBW1YNGfec2jEPsUGwqosc8TwwSP9ft+he5KWPf0otvw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8CxXuB8TVNj9SYDAA--.12586S2
+X-CM-TRANSID: AQAAf8Dxr+DaUFNj0CgDAA--.12849S3
 X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoW7KF4DCr1fZryfXFW3ZrW3GFg_yoW8WF18pF
-        W3Cwn8KFWkGr4Ivw45JrZYqFWkCr97X3ZrCFsIk3s7WF9xX3Z3Gw4fKFn8C3ykuFy8J3ZF
-        vFW5A3sruF1DK3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+X-Coremail-Antispam: 1Uk129KBjvJXoWxXF47tF4DCF45ArykGr1fXrb_yoWrJFW8pF
+        4fC3sxGF12qa1xX39xCa40v3WfGan7AF9rCasFv34jqr4qqa4vvay5Krn0q3yDuF43AFW5
+        WFy5u347XF1UAw7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
         qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        b4kFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64
-        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84
-        ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc80
-        4VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67
-        AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48I
-        cVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l42xK82IY6x8Erc
-        xFaVAv8VWrMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
-        xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
-        IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY
-        6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
-        CY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUOyCJDUUUU
+        bzAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM2
+        8EF7xvwVC2z280aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAq
+        jxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcV
+        AFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG
+        0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4I
+        kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+        WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JF
+        I_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+        JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+        IYCTnIWIevJa73UjIFyTuYvjxUzCztUUUUU
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Add the loongson2 pinctrl binding with DT schema format using
+json-schema.
 
+Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+---
+Change in v2: 
+                1. Add "$ref to pinctrl.yaml".
+                2. Put required after patternProperties.
+                3. Add "additionalProperties: false" after '-pins$'
+                4. Add "unevaluatedProperties: false" after 'pinmux$'
+                5. Fixup the broken indentation in patternProperties node.
+                6. Use 4 spaces for example indentation. 
 
-在 2022/10/21 下午5:45, Linus Walleij 写道:
-> Hi Yinbo,
-> 
-> thanks for your patch!
-> 
-> On Fri, Oct 21, 2022 at 3:27 AM Yinbo Zhu <zhuyinbo@loongson.cn> wrote:
-> 
->> The loongson2 SoC has a few pins that can be used as GPIOs or take
->> multiple other functions. Add a driver for the pinmuxing.
->>
->> There is currently no support for GPIO pin pull-up and pull-down.
->>
->> Signed-off-by: zhanghongchen <zhanghongchen@loongson.cn>
->> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
-> 
-> (...)
-> 
->> +static int loongson2_pmx_set_mux(struct pinctrl_dev *pcdev, unsigned int func_num,
->> +                             unsigned int group_num)
->> +{
->> +       struct loongson2_pinctrl *pctrl = pinctrl_dev_get_drvdata(pcdev);
->> +       unsigned long reg = (unsigned long)pctrl->reg_base +
->> +                               loongson2_pmx_groups[group_num].reg;
->> +       unsigned int mux_bit = loongson2_pmx_groups[group_num].bit;
->> +       unsigned int val;
->> +       unsigned long flags;
->> +
->> +       raw_spin_lock_irqsave(&pctrl->lock, flags);
->> +       val = readl((void *)reg);
->> +       if (func_num == 0)
->> +               val &= ~(1<<mux_bit);
->> +       else
->> +               val |= (1<<mux_bit);
->> +       writel(val, (void *)reg);
->> +       raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-> 
-> Can you explain in the commit message or with a comment in the code
-> why you have to use a raw spinlock for this?
-> 
-> We usually only use raw spinlocks for things like low level
-> interrupt handlers...
-> 
-> My guess is that you can replace this with an ordinary spinlock.
-I was refer other platform, eg. pinctrl-amd.c, if the ordinary spinlock 
-was more appropriate I will use the ordinary spinlock.
+ .../pinctrl/loongson,ls2k-pinctrl.yaml        | 126 ++++++++++++++++++
+ MAINTAINERS                                   |   1 +
+ 2 files changed, 127 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml
 
-TKs
-Yinbo.
-> 
-> Yours,
-> Linus Walleij
-> 
+diff --git a/Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml
+new file mode 100644
+index 000000000000..bb511e103a4b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml
+@@ -0,0 +1,126 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/loongson,ls2k-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Loongson2 SoC Pinctrl Controller
++
++maintainers:
++  - zhanghongchen <zhanghongchen@loongson.cn>
++  - Yinbo Zhu <zhuyinbo@loongson.cn>
++
++allOf:
++  - $ref: "pinctrl.yaml#"
++
++properties:
++  compatible:
++    const: loongson,ls2k-pinctrl
++
++  reg:
++    maxItems: 1
++
++patternProperties:
++  '-pins$':
++    type: object
++
++    additionalProperties: false
++
++    patternProperties:
++      'pinmux$':
++        type: object
++        description: node for pinctrl.
++        $ref: pinmux-node.yaml#
++
++        unevaluatedProperties: false
++
++        properties:
++          groups:
++            description:
++              One or more groups of pins to mux to a certain function
++            items:
++              enum: [gpio, sdio, can1, can0, pwm3, pwm2, pwm1, pwm0, i2c1, i2c0,
++                     nand, sata_led, lio, i2s, hda, uart2, uart1, camera, dv01,
++                     dvo0]
++          function:
++            description:
++              The function that a group of pins is muxed to
++            items:
++              enum: [gpio, sdio, can1, can0, pwm3, pwm2, pwm1, pwm0, i2c1, i2c0,
++                     nand, sata_led, lio, i2s, hda, uart2, uart1, camera, dv01,
++                     dvo0]
++
++        dependencies:
++          groups: [function]
++          function: [groups]
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    pctrl: pinctrl@1fe00420 {
++        compatible = "loongson,ls2k-pinctrl";
++        reg = <0x1fe00420 0x18>;
++        sdio_pins_default: sdio-pins {
++            sdio-pinmux {
++                groups ="sdio";
++                function ="sdio";
++            };
++
++            sdio-det-pinmux {
++                groups ="pwm2";
++                function ="gpio";
++            };
++        };
++
++        pwm1_pins_default: pwm1-pins {
++            pinmux {
++                groups ="pwm1";
++                function ="pwm1";
++            };
++        };
++
++        pwm0_pins_default: pwm0-pins {
++            pinmux {
++                groups ="pwm0";
++                function ="pwm0";
++            };
++        };
++
++        i2c1_pins_default: i2c1-pins {
++            pinmux {
++                groups ="i2c1";
++                function ="i2c1";
++            };
++        };
++
++        i2c0_pins_default: i2c0-pins {
++            pinmux {
++                groups ="i2c0";
++                function ="i2c0";
++            };
++        };
++
++        nand_pins_default: nand-pins {
++            pinmux {
++                groups ="nand";
++                function ="nand";
++            };
++        };
++
++        hda_pins_default: hda-pins {
++            grp0-pinmux {
++                groups ="hda";
++                function ="hda";
++            };
++
++            grp1-pinmux {
++                groups ="i2s";
++                function ="gpio";
++            };
++        };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c9883f145acb..2d002509fc65 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11927,6 +11927,7 @@ M:	zhanghongchen <zhanghongchen@loongson.cn>
+ M:	Yinbo Zhu <zhuyinbo@loongson.cn>
+ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml
+ F:	drivers/pinctrl/pinctrl-loongson2.c
+ 
+ LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+-- 
+2.20.1
 
