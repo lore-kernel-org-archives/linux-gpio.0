@@ -2,108 +2,92 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 171CBC38A2D
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Oct 2022 13:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC32DFA3740
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Oct 2022 14:16:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235271AbiJXNIY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Oct 2022 09:08:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58538 "EHLO
+        id S230307AbiJXOQZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Oct 2022 10:16:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235480AbiJXNH0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Oct 2022 09:07:26 -0400
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22DC79AFFB;
-        Mon, 24 Oct 2022 05:21:09 -0700 (PDT)
-Received: by mail-pg1-f173.google.com with SMTP id r18so8498272pgr.12;
-        Mon, 24 Oct 2022 05:21:09 -0700 (PDT)
+        with ESMTP id S235050AbiJXOO1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Oct 2022 10:14:27 -0400
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C04241C430
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Oct 2022 05:54:16 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id z17so3304519qkj.8
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Oct 2022 05:54:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HjYrkoNn/w9eCU7yrVbjTDIZhBvPD6ZScXpgw+5hr9c=;
-        b=jmeE2A9PVXonUBLYE7PJ3793dNwil86xAYE9ljfjd4t7qocg4X07EmUOSvkoi4GWGg
-         3j7buNCyCfdU5fd4gxgIr6A7CxvUQbD/Zx1vuS2ckTB8oZxX4qQf9zGjUtYY8MuHN2NG
-         KsByZ0HVvYKE6ftkVe10Iydy36VWtFpm4iwamAw4tUPqdUzqLF8xPEAro1qVFWflaBX2
-         e94veiUelAor5mzz64bjMgHnN6tXsJBP6hApA2LPApkRiMHl44NyQUR/zmZ7edBiaLoF
-         WU6zsVkKbCV1MyLiT+x7ZXHIaw7e68CK+CjLXpn0zFsTXD6Z/nswLva84gPZ47LRHqkX
-         diSg==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1ygEQgsnk9+cnssDub4433kT8dBZoeCOzc672ndoDWg=;
+        b=SlDLfdUy7FfM/j7QiG7iu7R5ehXsgixPiskiqiZz8ANCZNMKNvKMN4SQ8xHCCFTfh0
+         IL9CWmBAGeMmmEhW1d9oE6p6DFgtMh0RXGsgVR3d6OLaAjQofCUGiB+XtXIU2f46Hl2/
+         LuG9p0eGO6BbiKnZeiD2PYnKGGMclmWBEo6u105MtfIoEGadCFMzniCqoEV3Oy70ODxa
+         Xq5jzlXxHvetS3Bp4+eXdsAzg9rowI9ErRzPnmfM9Ydv+iFtqk4FJrClAKNnwQt5rsAj
+         ZmcAHumpppe5TWyd9EA8LNrAYdlMYKcWdsQVbktKJHLK1zoZOpP9s3sjseMO+YsfMkc3
+         7ZIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HjYrkoNn/w9eCU7yrVbjTDIZhBvPD6ZScXpgw+5hr9c=;
-        b=Zyqg3oLXaCc20ECid6x4dwOrAAXNDSBlpKkr0qFw50QRitZ9/SgZfrfQq8SzBdspZM
-         joVYb6/djrw9Tu4kzksBQUAE8E3FwqiXiE+RwfLhYFJl1yKACIQJFZ9NQ5ZZz/GLgSyk
-         VW0inUQSDx+Z8ZpuJZzNYnu7FCtkGkhp1rgUwo2uRzut2IxJWIZn4BlG16/PMXoYNqJ9
-         +rXauJ2Jpu/CDgPQKDmiXlZS/koKkG9uKzaNKDy/WYxmtaCLb0YIjR9b1Y7aLN/ZJ58f
-         Hs1MjbavJAyqdfZmEVIY3Vh8zVs3KB4Zv/q9o4YtIabVgNH7eq38U8WE3BsaOtg1aDvM
-         XbMg==
-X-Gm-Message-State: ACrzQf1dCUM3YM+MQeC8or7JtEma/+jG3vdcuHASMKo8HPeuOmkF5MbA
-        u0mdgT8MDhMLS1dmbL6LlOI=
-X-Google-Smtp-Source: AMsMyM7OHnkxizf4KJ+aeemoWL1KT/VYuEttV1wJurdoHjrLQOkzJDccbujMlxPQq6ufJAVJVVSMIQ==
-X-Received: by 2002:a05:6a00:891:b0:565:85a7:a6e with SMTP id q17-20020a056a00089100b0056585a70a6emr32632316pfj.21.1666613891886;
-        Mon, 24 Oct 2022 05:18:11 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:3698:60f8:9964:1fb4])
-        by smtp.gmail.com with ESMTPSA id y9-20020aa793c9000000b0056bfd387c97sm549994pff.39.2022.10.24.05.18.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 05:18:11 -0700 (PDT)
-Date:   Mon, 24 Oct 2022 05:18:08 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] Get rid of
- devm_fwnode_get_[index_]gpiod_from_child()
-Message-ID: <Y1aCgJihNIqExUR2@google.com>
-References: <20220902-get_gpiod_from_child-remove-v1-0-1e47125df20f@gmail.com>
- <YyzYKmsjKflqT1xZ@google.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ygEQgsnk9+cnssDub4433kT8dBZoeCOzc672ndoDWg=;
+        b=a+wbISsIxFgxdEVaQUI1DMN/iqxay9rbXv4X82Qa1dNfL5yV9zw+q+WkTbZeYkAa0p
+         wOIFkkUonigB0fXAo3IADw3mNe6Zp7jhvI5eNoIfyZSj+CimhdPmQuf14gj4Hxd56KQ1
+         brZX26zm/ALMoLLZqNF9/tuSzFk+R2w/l4EvfKo2NSh6uRVHCqwRFJTTtDmoQrBrlNPe
+         KE3MCIBONgqFfRJ2wITrUMmhtiDQyxqv7A0HeSEZ39QrpFAQnR0bWPpvS/GKkk1HMVVV
+         kLnnSr2TYFHW3nAvPipdAGLo1nen8YdzbRGxLN8OURIRn2AaimzvVZbo6px6/54ZK4aI
+         pHbA==
+X-Gm-Message-State: ACrzQf0qRPHmcc81lFaNxYV4eOusx/fvF0l++f1hPBliVT7ZwTcmSGxl
+        uxb87umNtasjigIulLJ+KLfRnWKQwxOItQ==
+X-Google-Smtp-Source: AMsMyM4VcQFVy//DqykW/4nb9YZadw+5ViBgauM82Dcnz44iWfoB2+pR/piEsUdOm+S967/Rk7Hf/g==
+X-Received: by 2002:ae9:e8ce:0:b0:6ed:22ee:305e with SMTP id a197-20020ae9e8ce000000b006ed22ee305emr22141460qkg.255.1666615864646;
+        Mon, 24 Oct 2022 05:51:04 -0700 (PDT)
+Received: from [192.168.1.8] ([64.57.193.93])
+        by smtp.gmail.com with ESMTPSA id x18-20020a05620a259200b006eeb3165565sm14833626qko.80.2022.10.24.05.51.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Oct 2022 05:51:04 -0700 (PDT)
+Message-ID: <ed79cf58-17bd-5542-db9d-e6a9ea3a1bc2@linaro.org>
+Date:   Mon, 24 Oct 2022 08:51:02 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YyzYKmsjKflqT1xZ@google.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH 18/21] pinctrl: remove s3c24xx driver
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20221021202254.4142411-1-arnd@kernel.org>
+ <20221021203329.4143397-18-arnd@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221021203329.4143397-18-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Sep 22, 2022 at 02:48:26PM -0700, Dmitry Torokhov wrote:
-> Hi Pavel, Marek,
+On 21/10/2022 16:27, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> On Fri, Sep 02, 2022 at 05:55:24PM -0700, Dmitry Torokhov wrote:
-> > This drops the last uses of devm_fwnode_get_[index_]gpiod_from_child()
-> > from the tree and drops the stubs implementing this API on top of
-> > devm_fwnode_gpiod_get_index().
-> > 
-> > Note that the bulk of users were converted in 2019, the couple of LED
-> > drivers are all that have remained.
-> > 
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > 
-> > ---
-> > Dmitry Torokhov (3):
-> >       leds: gpio: switch to using devm_fwnode_gpiod_get()
-> >       leds: lgm-sso: switch to using devm_fwnode_gpiod_get()
-> >       gpiolib: remove devm_fwnode_get_[index_]gpiod_from_child()
-> > 
-> >  drivers/leds/blink/leds-lgm-sso.c |  5 ++---
-> >  drivers/leds/leds-gpio.c          |  5 ++---
-> >  include/linux/gpio/consumer.h     | 21 ---------------------
-> >  3 files changed, 4 insertions(+), 27 deletions(-)
-> > ---
-> > base-commit: 7fd22855300e693668c3397771b3a2b3948f827a
-> > change-id: 20220902-get_gpiod_from_child-remove-a62638849e91
-> > 
+> The s3c24xx platform was removed, so this driver has no
+> remaining users.
 > 
-> Could you please consider picking this up for 6.1? Or would you be OK
-> with this going through other tree (GPIO maybe)?
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-*ping* Could this go through GPIO tree? Dropping this API helps with
-some outstanding work that I have...
 
-Thanks.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
--- 
-Dmitry
+Best regards,
+Krzysztof
+
