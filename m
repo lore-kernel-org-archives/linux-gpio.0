@@ -2,161 +2,165 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4604BFA373F
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Oct 2022 17:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4594BFA3741
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Oct 2022 18:12:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234450AbiJXRSe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Oct 2022 13:18:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55486 "EHLO
+        id S232630AbiJXSMv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Oct 2022 14:12:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229716AbiJXRSQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Oct 2022 13:18:16 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00F7C2A25F;
-        Mon, 24 Oct 2022 08:53:09 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id m29-20020a05600c3b1d00b003c6bf423c71so10296287wms.0;
-        Mon, 24 Oct 2022 08:53:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PbDwJ7wvAUkhD1OcyTr/yjGyh92hqX3W/8ifm0JLlBU=;
-        b=JVyPXgCSH3tJQcxC6yJuJZDLmlQMpY9+7NvO2ibypMYpCzSEhz0PKaeict2Eem7RVq
-         6d4HEnbRMheXvVTm6Nz06d7i2wxAKqO8eqzMXINIWRGibI/qHsNtG4eLybGs/CyJ+K0J
-         lHPngM62fQOS+xMTJjaQ8xthvpx/of07x8qCMLitR5FNMOI0d+/XD2yCSa+7g9BentdN
-         Nl6hs4SFwd2SzyMtgEgYZFMvwhjEw1jnzw3cN8hpJXtIRF6fSHPimoMpDpcarPOv809S
-         zVA0KbYHvJME96+g5zXEAU6MTVH9a8AorP/rs6NFhKKuJCAhCVZ212zZL3+97ZI3+IGA
-         5uNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PbDwJ7wvAUkhD1OcyTr/yjGyh92hqX3W/8ifm0JLlBU=;
-        b=RW0yHlgUS1CCoJbk8DzrNR5yCIKQulQ7iMSRUZ5vwh2iSHuMOdEbr2SkNWWeJx3Q5o
-         cw/VxbYUrPhnnNfOtPnylFdJZrkbMaDQmMJkeilvwncMcxTGORBHfib8Iw5YDWv2iUjQ
-         kWOGN96pZkpFXGgzKmMcUZ1asFMTA6yUEuOU5Q1MEhZ0iWsi/3vwU54GDf6dDCQtjMw4
-         uDYnq7y9MDLoE7EE6jlhJlIGa8Im8jk/s1i2rWQf6RDNhgHFeuKl1Y3f9J/pvqw1ZR5L
-         mHlCrev7fueS55hir+m8yu8IOd5pueMT5hzbpdnQQMtXauCMIjFGxWu9joNH9BNaJ3GI
-         Odkg==
-X-Gm-Message-State: ACrzQf2t5q92t45IVs6jQK/pCpNAwGKsGjWb21g0NDIs1xRIiwmCBiNb
-        4e5mck0XHYgOybM40iibmyX1A7s91p0=
-X-Google-Smtp-Source: AMsMyM4ibbYeSmYuLZtdL2590VPkTSOLbiPc+BzORbth6dxnpg1pkgkpbVCoY44500sZAF1ZzSvWyw==
-X-Received: by 2002:a1c:f009:0:b0:3b4:9398:49c9 with SMTP id a9-20020a1cf009000000b003b4939849c9mr43310896wmb.174.1666620130862;
-        Mon, 24 Oct 2022 07:02:10 -0700 (PDT)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id n9-20020a05600c3b8900b003b4ff30e566sm20189398wms.3.2022.10.24.07.02.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 07:02:09 -0700 (PDT)
-Date:   Mon, 24 Oct 2022 16:02:07 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Prathamesh Shete <pshete@nvidia.com>
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
-        smangipudi@nvidia.com, Manish Bhardwaj <mbhardwaj@nvidia.com>
-Subject: Re: [PATCH] gpio: tegra186: Check PMC driver status before any
- request
-Message-ID: <Y1aa3/oJA2ElSGp0@orome>
-References: <20220912133309.18506-1-pshete@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="WWUO7I5ImHJZcyZm"
-Content-Disposition: inline
-In-Reply-To: <20220912133309.18506-1-pshete@nvidia.com>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+        with ESMTP id S231854AbiJXSMU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Oct 2022 14:12:20 -0400
+Received: from wnew4-smtp.messagingengine.com (wnew4-smtp.messagingengine.com [64.147.123.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C56126C452;
+        Mon, 24 Oct 2022 09:53:44 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.west.internal (Postfix) with ESMTP id 011D42B066F0;
+        Mon, 24 Oct 2022 09:19:09 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute3.internal (MEProxy); Mon, 24 Oct 2022 09:19:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1666617549; x=1666624749; bh=dNk4I7ELz1
+        Q72dRob/8j+4seSTYFKAZT/RUPASjRJ5c=; b=q+NqZuUcR73y8BnZPPG5dx1Zsk
+        6km9xLqa6tEkJrornmVIrbgVsoTaG0EQRj//U3P/qs5FFUR0kQj3xsDpIMDiHNAP
+        KHymuWr00P67rJl6tNZNMaSvfwBvDXs8mjOeO+DtIb91LFvy9u7IqPZlLBHzDqVY
+        OqQ+UV/5sGJOiUEzmGUI9NOmwTaSDzu4RgOGbpc9QTg1ReluTq9aBn60FamJs6vN
+        DKIJe0X1BrhoAYInvyHnNd5GZdOejs+w4Suvb5ImKHNqRwAYBvpipR0/HvaVLckd
+        CHTLMlrLH5H5bEpdNq1ZJ2ZVvg8gjN0DzzHIiqNjzW420ViiiKKJHNZdB8zg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1666617549; x=1666624749; bh=dNk4I7ELz1Q72dRob/8j+4seSTYF
+        KAZT/RUPASjRJ5c=; b=uYEImk9/JaoBLZkHmS4JMUN51UUW3Adz4NZ33zTXfhfn
+        X2zc+bMCIXUEr4nNHo354GqKRASijikTpJx4FFU+epgcfr8J1IPlgZPNpNiYVB9M
+        w8ihE4tr46Zh/a1sL2xOLJxavoW+rkvJ5mUtViAoLX1JGrLBO17yVcJcaCCL+4DZ
+        U79zEm+ybsbN3XMbJe7XZH2qegoAJbChw5mNkbbe1D33ukaTT9FYQuJEpTpQ+3Cm
+        dcgc9DJADBfxr4sonBlprzuNuFtddjyQxgp5OFhdXtZwXkncp0R9eBa1XvUUpv5H
+        Fai3j/IlJ8ZfnHiUrjBdKzUP8vcWG93GWsi2JgpEew==
+X-ME-Sender: <xms:zZBWY4d6hZdrWDWBmQnXOunjtmGBLNtVOGtYlcpUAkqGnIq3nQ_ULg>
+    <xme:zZBWY6ORVL4inZtEZ347UGYnYKlOyas-DedRgWZhgJSTlHghoiUBMTH5Vdl7j2SlB
+    orGRM2A45E3sznwkiE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgedtgedgheelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:zZBWY5jMfpgYOekZ5Xiy1zZWPWGF2N1SaGbKcsqvIIsAoksVTelYew>
+    <xmx:zZBWY98Y0Yr03VdtjC58Vfn64oQoe8znN7FH4bLecym0d8-7ie150w>
+    <xmx:zZBWY0u1N4N4cR6ZhhO6MwuQK8N3p7TbkgEiIMvu0C2hnaFTg0G-QA>
+    <xmx:zZBWY2px7fOBs4XObZs9jNKaCaM5g4TthCLLA4wr0bUEo7pzc_VBCiqJhiU>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 3DDB5B60086; Mon, 24 Oct 2022 09:19:09 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-1047-g9e4af4ada4-fm-20221005.001-g9e4af4ad
+Mime-Version: 1.0
+Message-Id: <e5aa233d-526b-45ab-9acb-ab792b8686bc@app.fastmail.com>
+In-Reply-To: <20221024130035.GA1645003-robh@kernel.org>
+References: <20221021202254.4142411-1-arnd@kernel.org>
+ <20221024130035.GA1645003-robh@kernel.org>
+Date:   Mon, 24 Oct 2022 15:18:41 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Rob Herring" <robh@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org, "Ben Dooks" <ben-linux@fluff.org>,
+        "Simtec Linux Team" <linux@simtec.co.uk>,
+        linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>,
+        linux-mtd@lists.infradead.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-watchdog@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-pwm@vger.kernel.org
+Subject: Re: [PATCH 00/21] ARM: s3c: clean out obsolete platforms
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Mon, Oct 24, 2022, at 15:00, Rob Herring wrote:
+> On Fri, Oct 21, 2022 at 10:22:28PM +0200, Arnd Bergmann wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>> 
+>> The s3c24xx platform was marked as deprecated a while ago,
+>> and for the s3c64xx platform, we marked all except one legacy
+>> board file as unused.
+>> 
+>> This series removes all of those, leaving only s3c64xx support
+>> for DT based boots as well as the cragg6410 board file.
+>> 
+>> About half of the s3c specific drivers were only used on
+>> the now removed machines, so these drivers can be retired
+>> as well. I can either merge the driver removal patches through
+>> the soc tree along with the board file patches, or subsystem
+>> maintainers can pick them up into their own trees, whichever
+>> they prefer.
+>
+> [...]
+>
+>>  Documentation/arm/index.rst                   |    1 -
+>>  Documentation/arm/samsung-s3c24xx/cpufreq.rst |   77 -
+>>  .../arm/samsung-s3c24xx/eb2410itx.rst         |   59 -
+>>  Documentation/arm/samsung-s3c24xx/gpio.rst    |  172 --
+>>  Documentation/arm/samsung-s3c24xx/h1940.rst   |   41 -
+>>  Documentation/arm/samsung-s3c24xx/index.rst   |   20 -
+>>  Documentation/arm/samsung-s3c24xx/nand.rst    |   30 -
+>>  .../arm/samsung-s3c24xx/overview.rst          |  311 ---
+>>  Documentation/arm/samsung-s3c24xx/s3c2412.rst |  121 -
+>>  Documentation/arm/samsung-s3c24xx/s3c2413.rst |   22 -
+>>  .../arm/samsung-s3c24xx/smdk2440.rst          |   57 -
+>>  Documentation/arm/samsung-s3c24xx/suspend.rst |  137 --
+>>  .../arm/samsung-s3c24xx/usb-host.rst          |   91 -
+>>  Documentation/arm/samsung/overview.rst        |   13 -
+>
+> What about?:
+>
+> Documentation/devicetree/bindings/clock/samsung,s3c2410-clock.txt
+> Documentation/devicetree/bindings/interrupt-controller/samsung,s3c24xx-irq.txt
+> Documentation/devicetree/bindings/mmc/samsung,s3cmci.txt
 
---WWUO7I5ImHJZcyZm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Good catch!
 
-On Mon, Sep 12, 2022 at 07:03:09PM +0530, Prathamesh Shete wrote:
-> This patch fixes the issue where even if pmc driver
-> status is disabled still we are invoking pmc driver
-> to process some request
+I've removed these three now and and will add the removal to
+the same patch, also the related
+samsung,s3c2412-clock.txt and samsung,s3c2443-clock.txt
+files.
 
-s/pmc/PMC/ twice above. Also, this is slightly misleading. We're not
-"invoking" the PMC driver, but rather we're trying to look up the IRQ
-domain that the PMC driver would've registered if it had been enabled.
-So perhaps reword this to more accurately reflect that.
+> Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
 
->=20
-> Signed-off-by: Manish Bhardwaj <mbhardwaj@nvidia.com>
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> ---
->  drivers/gpio/gpio-tegra186.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-> index 54d9fa7da9c1..efd508ba07a6 100644
-> --- a/drivers/gpio/gpio-tegra186.c
-> +++ b/drivers/gpio/gpio-tegra186.c
-> @@ -895,7 +895,7 @@ static int tegra186_gpio_probe(struct platform_device=
- *pdev)
->  		tegra186_gpio_init_route_mapping(gpio);
-> =20
->  	np =3D of_find_matching_node(NULL, tegra186_pmc_of_match);
-> -	if (np) {
-> +	if (of_device_is_available(np)) {
->  		irq->parent_domain =3D irq_find_host(np);
->  		of_node_put(np);
+samsung,s3c2412-nand is apparently still used on s3c6400,
+and the driver is selectable on that platform, so I think
+that should remain in there until we remove s3c64xx in 2024,
+even if it is not referenced by the dts files in the kernel.
 
-This now leaks a reference to np if np is found but not available. So
-this should be something like:
+> Documentation/devicetree/bindings/usb/s3c2410-usb.txt
 
-	if (np) {
-		if (of_device_is_available(np)) {
-			irq->parent_domain =3D irq_find_host(np);
-			of_node_put(np);
+Similarly, the driver is used on the crag6410 board
+(without DT), and probably just works with the DT based
+boards if one adds a node to s3c64xx.dtsi.
 
-			if (!irq->parent_domain)
-				return -EPROBE_DEFER;
-		} else {
-			of_node_put(np);
-		}
-	}
+I've also checked if any of the other removed drivers
+matches of_device_id[] strings to see if there are more
+bindings to kill off, but I don't see any that have
+now become obsolete. It did point me to pxa2xx_ac97_dt_ids,
+which Robert already complained about, this apparently
+is still used with dts files outside of mainline.
 
-or:
-
-	if (np) {
-		if (of_device_is_available(np))
-			irq->parent_domain =3D irq_find_host(np);
-
-		of_node_put(np);
-
-		if (of_device_is_available(np) && !irq->parent_domain)
-			return -EPROBE_DEFER;
-	}
-
-The former is a little nicer because it doesn't check availability
-twice.
-
-Thierry
-
---WWUO7I5ImHJZcyZm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmNWmt8ACgkQ3SOs138+
-s6FgJRAAnKzSEP41yRfOaOvjtZaYVNHq7iZ+pMv4cuRTh9/5P46v0OcJyAFD6h4M
-HrRrOhhXvJO6gTwylItsVxq0JIhhxzatNRGfVnUt4JhbycWpn7gJ/hdGx9JljdIG
-E5Vd+2uD1y9ZQA+NSEJPQDJLwu6uqR9HuAnH5KB+JUvqDF4GI8W/xlOjrhOISdSH
-YYBPw1kbnZYPfjCdcu9NJR6z8gITIMmlY4WeCS29HmkFgNa2ak3gv9Nvvgx9Q+fQ
-WwGmSfT6G0QcBbVvDL9z7wugbXwKtlppomU0eGwJ61IAlMKCExoEbFEDqW1PoLYc
-a6MXMmH0bVoHvcdH13tDbLlw0T8C29WZs2ZQPpxEvNv+cVbYLJmRhQUsQrBh+6fC
-MeNsnJkoFZVf48sc9+RNi5ThjVHKCkkJ+nQJh+oXrva5gofwD+hPazbZv+Qz3pmz
-/QaGuhMFp2dM7cDcgyHYQLf+R1kujXfS/rUvUBnIOtm110VhH22RV8cBktFP5rzI
-smNqGx9UWoOKUQiSRYv2/r7mxwxUxJm9icexY02TxqVNCss0NPG7z4sGDggiJxhk
-Tg/02gPDOE9t6giIhurr/wvaR2fVcNXTkNUmVygYr/VMcW0O8Zq4AIwkgvAI1skb
-Ik0ZsL6p8LYIYdPy/tNaBPEGHaKR7JuHvxNYlEAPHhKiZtkeIC0=
-=6xUl
------END PGP SIGNATURE-----
-
---WWUO7I5ImHJZcyZm--
+      Arnd
