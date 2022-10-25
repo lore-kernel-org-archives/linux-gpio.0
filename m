@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BB3C67871
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 Oct 2022 03:12:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 356A2FA3740
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 Oct 2022 03:12:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229707AbiJYDME (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Oct 2022 23:12:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48328 "EHLO
+        id S230281AbiJYDMI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Oct 2022 23:12:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229918AbiJYDMA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Oct 2022 23:12:00 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1B454361C
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Oct 2022 20:11:59 -0700 (PDT)
+        with ESMTP id S230052AbiJYDMC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Oct 2022 23:12:02 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D9796CD01
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Oct 2022 20:12:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666667519; x=1698203519;
+  t=1666667520; x=1698203520;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=l7nEpYjR7pb+wj9PnBDJRjN2aQkM6JWdH1aATL8MKNw=;
-  b=OdxzJC/Pg4ayb5Nayx/jw5knNHOWw70xY2CIcfLGo2VCih8Ra58uemNq
-   Vor/LUUw8zbLB+jYkGc39ljbaGBKQVQOnGJb+LFk/INGqYw2raecSBIGJ
-   L3j9SINGhbDfrwKZ90PqTq+ECp3muawNByTTZRfuxTg8yQJ7C8Ne63S6O
-   Gg/92Myw/urxtE4JmyLu1FvMOTOFZKnudzyfjDAua1KyOHw74OHg6EtuL
-   GSJrSXlzSTDq1DqAq6k4LM528qnsqM1JNOXuskrRBbzeexOyXwkadTlw1
-   R++vWL9acopdvSqJz1TsEer6/n2RHMTMXnDSvUZOvJyCuf0/1Klf93F9B
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="308669374"
+  bh=TRodRs33EWkZlGOg4iUqhZxqQpmg445Vru5bROBJmnE=;
+  b=DCkEthadOe4cjRqKpnycpX7+0NGlgOASfRehqX/qC8cfYkAjmDbrhDc5
+   I/1ElzFr+498dXH9SAQFt3X+8Qv1qdSCwO8qcosnmGcT2gBhiOy5JYpI8
+   hy8mY75YbAoNr1M9iSL3YtEmMYAAO5UNTkzIUfyYx+ZiBswb5Rs+rIC8w
+   jL4ekQ272cQVicOfYxFsc1nMVcYXmB+faZX0G7imHEDnm9P6HyAyXjjO0
+   S/Lkz2izzJtDdHPmsazCQ6dB9yR/syzAUOpW5KzLbLuYzRPCQP62IX5oo
+   oiQPERhSFgWjrAVSk7ozkzpM9nuS6yPJZ6v6T/xKwLnMwOTsyEWIqBaV+
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="287295673"
 X-IronPort-AV: E=Sophos;i="5.95,210,1661842800"; 
-   d="scan'208";a="308669374"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2022 20:11:59 -0700
+   d="scan'208";a="287295673"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2022 20:11:59 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="720701763"
+X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="960660461"
 X-IronPort-AV: E=Sophos;i="5.95,210,1661842800"; 
-   d="scan'208";a="720701763"
+   d="scan'208";a="960660461"
 Received: from lkp-server02.sh.intel.com (HELO b6d29c1a0365) ([10.239.97.151])
-  by FMSMGA003.fm.intel.com with ESMTP; 24 Oct 2022 20:11:58 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 24 Oct 2022 20:11:57 -0700
 Received: from kbuild by b6d29c1a0365 with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1onAM9-0005rm-1H;
+        id 1onAM9-0005rj-1A;
         Tue, 25 Oct 2022 03:11:57 +0000
-Date:   Tue, 25 Oct 2022 11:11:36 +0800
+Date:   Tue, 25 Oct 2022 11:11:46 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-gpio:gpio-descriptors-extcon-cleanup] BUILD SUCCESS
- bf7e76ba6926f3983209de5827d49fb7005ec4c9
-Message-ID: <635753e8.RAyHEtK2RbxCzDoa%lkp@intel.com>
+Subject: [linusw-gpio:gpio-descriptors-leds] BUILD SUCCESS
+ fab15821694d197658861b23e558372dc1876a81
+Message-ID: <635753f2.ypJ9ujXGjPcgKKmk%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,54 +57,39 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git gpio-descriptors-extcon-cleanup
-branch HEAD: bf7e76ba6926f3983209de5827d49fb7005ec4c9  extcon: gpio: Always check state on resume
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git gpio-descriptors-leds
+branch HEAD: fab15821694d197658861b23e558372dc1876a81  ARM: OMAP1: Move h2 LEDs to GPIO lookup table
 
-elapsed time: 729m
+elapsed time: 728m
 
-configs tested: 124
-configs skipped: 2
+configs tested: 108
+configs skipped: 107
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
 
 gcc tested configs:
-arc                               allnoconfig
-alpha                             allnoconfig
-riscv                             allnoconfig
-csky                              allnoconfig
-um                             i386_defconfig
-um                           x86_64_defconfig
-s390                             allyesconfig
-arc                                 defconfig
-s390                             allmodconfig
-alpha                               defconfig
-s390                                defconfig
-powerpc                           allnoconfig
-i386                                defconfig
-i386                             allyesconfig
-x86_64                           allyesconfig
-x86_64                              defconfig
-x86_64                    rhel-8.3-kselftests
-x86_64                          rhel-8.3-func
-x86_64                               rhel-8.3
-m68k                             allmodconfig
-arc                              allyesconfig
-arc                  randconfig-r043-20221024
-alpha                            allyesconfig
-riscv                randconfig-r042-20221024
-sh                               allmodconfig
-arc                  randconfig-r043-20221023
-m68k                             allyesconfig
-s390                 randconfig-r044-20221024
+arm                                 defconfig
 x86_64               randconfig-k001-20221024
-mips                             allyesconfig
-powerpc                          allmodconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
+x86_64                          rhel-8.3-func
+x86_64                    rhel-8.3-kselftests
+ia64                             allmodconfig
+arm                              allyesconfig
+x86_64                              defconfig
+x86_64                           allyesconfig
+x86_64                               rhel-8.3
+arc                  randconfig-r043-20221024
+s390                 randconfig-r044-20221024
+riscv                randconfig-r042-20221024
+x86_64                           rhel-8.3-kvm
 x86_64                           rhel-8.3-syz
 x86_64                         rhel-8.3-kunit
-x86_64                           rhel-8.3-kvm
-ia64                             allmodconfig
-i386                          randconfig-c001
+powerpc                           allnoconfig
+mips                             allyesconfig
+powerpc                          allmodconfig
+sh                               allmodconfig
 x86_64               randconfig-a014-20221024
 x86_64               randconfig-a015-20221024
 x86_64               randconfig-a016-20221024
@@ -117,31 +102,38 @@ i386                 randconfig-a015-20221024
 i386                 randconfig-a016-20221024
 i386                 randconfig-a012-20221024
 i386                 randconfig-a013-20221024
-powerpc                   motionpro_defconfig
-csky                             alldefconfig
-powerpc                 mpc837x_rdb_defconfig
-openrisc                            defconfig
+s390                                defconfig
+s390                             allmodconfig
+arc                                 defconfig
+alpha                               defconfig
+s390                             allyesconfig
+i386                             allyesconfig
+i386                                defconfig
 arm64                            allyesconfig
-arm                                 defconfig
-arm                              allyesconfig
+m68k                            q40_defconfig
+m68k                        m5307c3_defconfig
+powerpc                      cm5200_defconfig
 arm                       omap2plus_defconfig
 powerpc                 mpc85xx_cds_defconfig
 arm                        spear6xx_defconfig
 powerpc                      tqm8xx_defconfig
 powerpc                 mpc834x_mds_defconfig
 mips                            gpr_defconfig
-m68k                            q40_defconfig
-m68k                        m5307c3_defconfig
-powerpc                      cm5200_defconfig
+m68k                             allyesconfig
+m68k                             allmodconfig
+arc                              allyesconfig
+alpha                            allyesconfig
 sh                        sh7763rdp_defconfig
 ia64                             allyesconfig
 sh                             shx3_defconfig
 arc                      axs103_smp_defconfig
 mips                        vocore2_defconfig
+powerpc                   motionpro_defconfig
 sh                         ap325rxa_defconfig
 ia64                      gensparse_defconfig
 arm                          pxa910_defconfig
 i386                 randconfig-c001-20221024
+arc                  randconfig-r043-20221023
 parisc                generic-64bit_defconfig
 sh                           se7712_defconfig
 arc                              alldefconfig
@@ -152,37 +144,19 @@ xtensa                    xip_kc705_defconfig
 arm                        mini2440_defconfig
 powerpc                      chrp32_defconfig
 sh                          lboxre2_defconfig
-i386                          debian-10.3-kvm
-i386                        debian-10.3-kunit
-i386                         debian-10.3-func
+i386                          randconfig-c001
 m68k                       m5249evb_defconfig
 arm                       aspeed_g5_defconfig
 powerpc                  storcenter_defconfig
 powerpc                 canyonlands_defconfig
 riscv                    nommu_virt_defconfig
 riscv                          rv32_defconfig
+riscv                             allnoconfig
 i386                   debian-10.3-kselftests
 i386                              debian-10.3
-sparc                               defconfig
-xtensa                           allyesconfig
-csky                                defconfig
-sparc                            allyesconfig
-x86_64                                  kexec
 powerpc                     tqm8555_defconfig
 
 clang tested configs:
-hexagon              randconfig-r045-20221023
-hexagon              randconfig-r041-20221024
-riscv                randconfig-r042-20221023
-hexagon              randconfig-r045-20221024
-s390                 randconfig-r044-20221023
-hexagon              randconfig-r041-20221023
-i386                 randconfig-a004-20221024
-i386                 randconfig-a006-20221024
-i386                 randconfig-a002-20221024
-i386                 randconfig-a003-20221024
-i386                 randconfig-a001-20221024
-i386                 randconfig-a005-20221024
 x86_64               randconfig-a005-20221024
 x86_64               randconfig-a002-20221024
 x86_64               randconfig-a006-20221024
@@ -192,6 +166,16 @@ x86_64               randconfig-a003-20221024
 x86_64                        randconfig-a005
 x86_64                        randconfig-a003
 x86_64                        randconfig-a001
+i386                 randconfig-a004-20221024
+i386                 randconfig-a006-20221024
+i386                 randconfig-a002-20221024
+i386                 randconfig-a003-20221024
+i386                 randconfig-a001-20221024
+i386                 randconfig-a005-20221024
+s390                 randconfig-r044-20221023
+hexagon              randconfig-r041-20221023
+riscv                randconfig-r042-20221023
+hexagon              randconfig-r045-20221023
 mips                     loongson2k_defconfig
 arm                          moxart_defconfig
 arm                         s3c2410_defconfig
