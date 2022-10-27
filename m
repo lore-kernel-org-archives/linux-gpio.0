@@ -2,150 +2,89 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA53FA3741
-	for <linux-gpio@archiver.kernel.org>; Thu, 27 Oct 2022 17:03:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6368BFA3740
+	for <linux-gpio@archiver.kernel.org>; Thu, 27 Oct 2022 18:41:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236890AbiJ0RDm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 27 Oct 2022 13:03:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57952 "EHLO
+        id S236072AbiJ0Sla (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 27 Oct 2022 14:41:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236893AbiJ0RDl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Oct 2022 13:03:41 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A4A6196379
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Oct 2022 10:03:40 -0700 (PDT)
+        with ESMTP id S235686AbiJ0Sl3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Oct 2022 14:41:29 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9534A18A;
+        Thu, 27 Oct 2022 11:41:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666890220; x=1698426220;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=/ZdY1xM9lx79qDz7snR9YO+UqOMS2gCTM+WUVrfpqUY=;
-  b=fxJ8DuGfHiAH613hch/cCtb87FkDEXb1sYTmgrX/4Fw/H4aB4N5WHosP
-   ppweiTWSPm1wkEqmvJ5DVU4BBFuCsdP8BWrIY7QLgtOVLOUtzFZKaS/yl
-   F8eX90JYLhyYFeRr6KV5j9G8il4En3cOW1ZnJ1QlSgDzZ/F8VmJKz2nIU
-   yR1uHZNn4hahNa+ToGonVA5isRMQ6DkaenzByhUbcP837ZpGJ12rvl4Nz
-   +Gj4a7Rea0cZimz1qqGsEmCyvR6gopRcEV7b+YpoZuX8xaBaBZFHzDP+W
-   9rvhLA++/XBGLpWYeAd0R1J+wHy0Gv8/TEfLWsFVtyKyx2XnXsN+PyLvO
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10513"; a="307009129"
+  t=1666896088; x=1698432088;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=UZuk/q5fM41E9vtQd97mAMiexoqsdKI6J1hD4x0iZdM=;
+  b=e1wIgULMD5daRi8B5e4fLxIxNd+PfT0zH1oKTW2eBk5Xc6XclqsoJ1jK
+   j8lBJzpc7Y5GNp77R1qNK3QU567KCkXLdapWkpiRbfAKUFrLL3GAkufPb
+   qPY3/su+gobgWxucrtyfRoxDgt2ywD/FEKe/TRabzNNjK6IH6LHD9u4aU
+   8ckpP1p+KY2MMB8gG5bX0dc7KddaOm2iGbH0Jr2Yt7X6H2GoHM1zh7apd
+   vsq4Fi99yut4oKHrKsXUz85Lx3R5gVdPIzpfJKfgbv9+s2szRP5NII+f4
+   P8skRBj4zyT2jjnxQm1ibRljhIhQ4CJ2NDpwI0VbeaNnFj4//H7yvkwSH
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10513"; a="310007021"
 X-IronPort-AV: E=Sophos;i="5.95,218,1661842800"; 
-   d="scan'208";a="307009129"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2022 10:03:26 -0700
+   d="scan'208";a="310007021"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2022 11:41:27 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10513"; a="961697232"
+X-IronPort-AV: E=McAfee;i="6500,9779,10513"; a="665788119"
 X-IronPort-AV: E=Sophos;i="5.95,218,1661842800"; 
-   d="scan'208";a="961697232"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga005.fm.intel.com with ESMTP; 27 Oct 2022 10:03:24 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1oo6Hq-003Gwm-08;
-        Thu, 27 Oct 2022 20:03:22 +0300
-Date:   Thu, 27 Oct 2022 20:03:21 +0300
+   d="scan'208";a="665788119"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga001.jf.intel.com with ESMTP; 27 Oct 2022 11:41:25 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 9F4E1D0; Thu, 27 Oct 2022 21:41:47 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Martyn Welch <martyn.welch@collabora.com>
-Cc:     Levente =?iso-8859-1?B?Uul26XN6?= <levente.revesz@eilabs.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Haibo Chen <haibo.chen@nxp.com>, Puyou Lu <puyou.lu@gmail.com>,
-        Justin Chen <justinpopo6@gmail.com>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-        Nate Drude <nate.d@variscite.com>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] gpio: pca953x: Add PCAL953X as a separate chip
- type
-Message-ID: <Y1q52efyv93/z8BC@smile.fi.intel.com>
-References: <cc987520-d95b-01b9-5b65-53442ce122f6@eilabs.com>
- <9bdc962c-1cfe-8240-963c-491f3992b2cb@eilabs.com>
- <Y1luUgS25ddeSCT9@smile.fi.intel.com>
- <8b94b5a6-fac8-5087-b4da-ddba098d2265@eilabs.com>
- <ea34ed6788923b8be496317f7a962d7073946ff4.camel@collabora.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH v1 1/1] pinctrl: qcom: lpass-lpi: Add missed bitfield.h
+Date:   Thu, 27 Oct 2022 21:41:45 +0300
+Message-Id: <20221027184145.2533-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ea34ed6788923b8be496317f7a962d7073946ff4.camel@collabora.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Oct 27, 2022 at 02:54:38PM +0100, Martyn Welch wrote:
-> On Thu, 2022-10-27 at 15:36 +0200, Levente Révész wrote:
-> > Thank you for your guidance, it is much appreciated.
-> > On Wed, 26 Oct, 2022 at 17:29:17 +0000, Andy Shevchenko wrote:
-> > On Wed, 26 Oct, 2022 at 17:32:03 +0000, Andy Shevchenko wrote:
+Previously the cleanup change dropped the bitfield.h from the
+pinctrl-lpass-lpi.h, since it's not used there, but forgot to
+re-instantiate it in the C-file, where users are located.
 
-...
+Fix this by adding missed bitfield.h to the C-file.
 
-> > If I understand this correctly, this should be a sufficient solution:
-> > 
-> >  #define PCA_PCAL               BIT(9)
-> >  #define PCA_TYPE_MASK          GENMASK(15, 12)
-> > -#define PCA_CHIP_TYPE(x)       ((x) & PCA_TYPE_MASK)
-> > +#define PCA_CHIP_TYPE(x)       (((x) & PCA_TYPE_MASK) >> 11 | ((x) &
-> > PCA_PCAL) >> 9)
-> > +#define PCA_SET_TYPE(x)        ((x) << 11 & PCA_TYPE_MASK | (x) << 9
-> > & PCA_PCAL)
-> > 
-> > Use 5 bits to encode chip type: bit 15..12 and bit 9.
+Fixes: aa9430f8a6de ("pinctrl: qcom: Add missing header(s)")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Easier if you move PCA_PCAL to be bit 11 and extend mask by one bit.
-
-
-> > PCA_SET_TYPE() shifts bits of the TYPE to the correct positions in
-> > the id.
-> > PCA_CHIP_TYPE() gathers the bits from the ID to form a nice decimal
-> > number.
-> > 
-> > -#define PCA953X_TYPE           BIT(12)
-> > -#define PCA957X_TYPE           BIT(13)
-> > -#define PCAL653X_TYPE          BIT(14)
-> > +#define PCA953X_TYPE           2
-> > +#define PCA953XM_TYPE          6
-> > +#define PCAL953X_TYPE          3
-> > +#define PCAL653X_TYPE          9
-> > +#define PCA957X_TYPE           4
-> > 
-> > Types are decimal numbers. Values are carefully chosen to leave
-> > existing
-> > IDs unchanged.
-> > 
-> >     * 2 instead of            BIT(12), ID mask remains
-> > 0b0001'0000'0000'0000
-> >     * 4 instead of            BIT(13), ID mask remains
-> > 0b0010'0000'0000'0000
-> >     * 9 instead of BIT(14) | PCA_PCAL, ID mask remains
-> > 0b0100'0010'0000'0000
-> >     * 3 instead of BIT(12) | PCA_PCAL, ID mask remains
-> > 0b0001'0010'0000'0000
-> > 
-> > PCAL chips have odd IDs, which means the PCA_PCAL bit will be set.
-> > 
-> > It seems more natural now to have a separate type, PCA953XM_TYPE for
-> > pca9505,
-> > pca9506 and pca9698 with the [M]ask register. Only PCA953X type chips
-> > can have
-> > this register anyway.
-> > 
-> > What do you think?
-> > 
-> 
-> I don't like the idea of encoding whether a device is PCA or PCAL into
-> the bit offsets. Primarily because it's massively opaque, making
-> successfully adding support for another device that much more prone to
-> issues, especially if that person isn't already intimately familiar
-> with the driver. I'd also like to point out that not all PCAL can be
-> handled the same. The register layout of the PCAL653X_TYPE needs to be
-> handled differently from the PCAL953X_TYPE.
-
-PCA_PCAL is about having latched interrupts, it doesn't suggest the layout. So,
-somebody needs to take a pen and draw the current list of possible combinations
-of the features and layouts and then we can see what can be done as a type and
-what's not.
-
+diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+index d5cfa91e2eff..3dc670faa59e 100644
+--- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+@@ -4,6 +4,7 @@
+  * Copyright (c) 2020 Linaro Ltd.
+  */
+ 
++#include <linux/bitfield.h>
+ #include <linux/clk.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.35.1
 
