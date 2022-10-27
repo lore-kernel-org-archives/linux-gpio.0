@@ -2,369 +2,150 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9477AECAAA1
-	for <linux-gpio@archiver.kernel.org>; Thu, 27 Oct 2022 17:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA53FA3741
+	for <linux-gpio@archiver.kernel.org>; Thu, 27 Oct 2022 17:03:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236891AbiJ0RDi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 27 Oct 2022 13:03:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57860 "EHLO
+        id S236890AbiJ0RDm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 27 Oct 2022 13:03:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236890AbiJ0RDh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Oct 2022 13:03:37 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E90C196379
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Oct 2022 10:03:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
-        Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
-        In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=qc34ci+JzaGCTQAkDC2YK9TWiF9Lpl66UcsQXuswdeA=; b=sal8BPi78JiCUhdAuf/FFOZwy/
-        QsgbtsNyvJ6UTYvC6V/jFTC95bwNtuTOcUEGgN4UBeyQjio2smDPH11JA3DhZrZWyuD1PMIZ/Elym
-        SRmr/AsWWcaI/7vPm/sCCnQjj1fWevXzZ6SO6JaziTS5zuD7GP2yLlOOZ26rjYoAHbBl2RfJVRMma
-        c4yXSZhBz5zQOGJA0lovaV1eWIfEm4VAEc3lPaj0vwtj+yoFZfH4Xdd0+v6hvbJ7CnFnO7xV85dBD
-        2fH2cqHriCc630g5UC3LVLrrwmks8YirFY+jHmmck3hfUMTTqnszAcd0FUiEJ7MTyVvEmrCCFnmvV
-        YcPpfLBQ==;
-Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:39284 helo=rmk-PC.armlinux.org.uk)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <rmk@armlinux.org.uk>)
-        id 1oo6I2-0007KB-Ii; Thu, 27 Oct 2022 18:03:34 +0100
-Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <rmk@rmk-PC.armlinux.org.uk>)
-        id 1oo6I1-00HYpE-W5; Thu, 27 Oct 2022 18:03:34 +0100
-In-Reply-To: <Y1q5jW8ff0aUdjPd@shell.armlinux.org.uk>
-References: <Y1q5jW8ff0aUdjPd@shell.armlinux.org.uk>
-From:   Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+        with ESMTP id S236893AbiJ0RDl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Oct 2022 13:03:41 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A4A6196379
+        for <linux-gpio@vger.kernel.org>; Thu, 27 Oct 2022 10:03:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1666890220; x=1698426220;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=/ZdY1xM9lx79qDz7snR9YO+UqOMS2gCTM+WUVrfpqUY=;
+  b=fxJ8DuGfHiAH613hch/cCtb87FkDEXb1sYTmgrX/4Fw/H4aB4N5WHosP
+   ppweiTWSPm1wkEqmvJ5DVU4BBFuCsdP8BWrIY7QLgtOVLOUtzFZKaS/yl
+   F8eX90JYLhyYFeRr6KV5j9G8il4En3cOW1ZnJ1QlSgDzZ/F8VmJKz2nIU
+   yR1uHZNn4hahNa+ToGonVA5isRMQ6DkaenzByhUbcP837ZpGJ12rvl4Nz
+   +Gj4a7Rea0cZimz1qqGsEmCyvR6gopRcEV7b+YpoZuX8xaBaBZFHzDP+W
+   9rvhLA++/XBGLpWYeAd0R1J+wHy0Gv8/TEfLWsFVtyKyx2XnXsN+PyLvO
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10513"; a="307009129"
+X-IronPort-AV: E=Sophos;i="5.95,218,1661842800"; 
+   d="scan'208";a="307009129"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2022 10:03:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10513"; a="961697232"
+X-IronPort-AV: E=Sophos;i="5.95,218,1661842800"; 
+   d="scan'208";a="961697232"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga005.fm.intel.com with ESMTP; 27 Oct 2022 10:03:24 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1oo6Hq-003Gwm-08;
+        Thu, 27 Oct 2022 20:03:22 +0300
+Date:   Thu, 27 Oct 2022 20:03:21 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Martyn Welch <martyn.welch@collabora.com>
+Cc:     Levente =?iso-8859-1?B?Uul26XN6?= <levente.revesz@eilabs.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [PATCH 2/2] gpio: Add new gpio-macsmc driver for Apple Macs
+        Haibo Chen <haibo.chen@nxp.com>, Puyou Lu <puyou.lu@gmail.com>,
+        Justin Chen <justinpopo6@gmail.com>,
+        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
+        Nate Drude <nate.d@variscite.com>, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] gpio: pca953x: Add PCAL953X as a separate chip
+ type
+Message-ID: <Y1q52efyv93/z8BC@smile.fi.intel.com>
+References: <cc987520-d95b-01b9-5b65-53442ce122f6@eilabs.com>
+ <9bdc962c-1cfe-8240-963c-491f3992b2cb@eilabs.com>
+ <Y1luUgS25ddeSCT9@smile.fi.intel.com>
+ <8b94b5a6-fac8-5087-b4da-ddba098d2265@eilabs.com>
+ <ea34ed6788923b8be496317f7a962d7073946ff4.camel@collabora.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1oo6I1-00HYpE-W5@rmk-PC.armlinux.org.uk>
-Sender: Russell King <rmk@armlinux.org.uk>
-Date:   Thu, 27 Oct 2022 18:03:33 +0100
+In-Reply-To: <ea34ed6788923b8be496317f7a962d7073946ff4.camel@collabora.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Hector Martin <marcan@marcan.st>
+On Thu, Oct 27, 2022 at 02:54:38PM +0100, Martyn Welch wrote:
+> On Thu, 2022-10-27 at 15:36 +0200, Levente Révész wrote:
+> > Thank you for your guidance, it is much appreciated.
+> > On Wed, 26 Oct, 2022 at 17:29:17 +0000, Andy Shevchenko wrote:
+> > On Wed, 26 Oct, 2022 at 17:32:03 +0000, Andy Shevchenko wrote:
 
-This driver implements the GPIO service on top of the SMC framework
-on Apple Mac machines. In particular, these are the GPIOs present in the
-PMU IC which are used to control power to certain on-board devices.
+...
 
-Although the underlying hardware supports various pin config settings
-(input/output, open drain, etc.), this driver does not implement that
-functionality and leaves it up to the firmware to configure things
-properly. We also don't yet support interrupts/events. This is
-sufficient for device power control, which is the only thing we need to
-support at this point. More features will be implemented when needed.
+> > If I understand this correctly, this should be a sufficient solution:
+> > 
+> >  #define PCA_PCAL               BIT(9)
+> >  #define PCA_TYPE_MASK          GENMASK(15, 12)
+> > -#define PCA_CHIP_TYPE(x)       ((x) & PCA_TYPE_MASK)
+> > +#define PCA_CHIP_TYPE(x)       (((x) & PCA_TYPE_MASK) >> 11 | ((x) &
+> > PCA_PCAL) >> 9)
+> > +#define PCA_SET_TYPE(x)        ((x) << 11 & PCA_TYPE_MASK | (x) << 9
+> > & PCA_PCAL)
+> > 
+> > Use 5 bits to encode chip type: bit 15..12 and bit 9.
 
-To our knowledge, only Apple Silicon Macs implement this SMC feature.
+Easier if you move PCA_PCAL to be bit 11 and extend mask by one bit.
 
-Signed-off-by: Hector Martin <marcan@marcan.st>
-Reviewed-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Sven Peter <sven@svenpeter.dev>
-Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
----
- drivers/gpio/Kconfig       |  11 ++
- drivers/gpio/Makefile      |   1 +
- drivers/gpio/gpio-macsmc.c | 245 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 257 insertions(+)
- create mode 100644 drivers/gpio/gpio-macsmc.c
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 0642f579196f..9b87f5ebe1b9 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1292,6 +1292,17 @@ config GPIO_LP87565
- 	  This driver can also be built as a module. If so, the module will be
- 	  called gpio-lp87565.
- 
-+config GPIO_MACSMC
-+	tristate "Apple Mac SMC GPIO"
-+	depends on APPLE_SMC
-+	default ARCH_APPLE
-+	help
-+	  Support for GPIOs controlled by the SMC microcontroller on Apple Mac
-+	  systems.
-+
-+	  This driver can also be built as a module. If so, the module will be
-+	  called gpio-macsmc.
-+
- config GPIO_MADERA
- 	tristate "Cirrus Logic Madera class codecs"
- 	depends on PINCTRL_MADERA
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index a0985d30f51b..a401a467c6f4 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -83,6 +83,7 @@ obj-$(CONFIG_GPIO_LP873X)		+= gpio-lp873x.o
- obj-$(CONFIG_GPIO_LP87565)		+= gpio-lp87565.o
- obj-$(CONFIG_GPIO_LPC18XX)		+= gpio-lpc18xx.o
- obj-$(CONFIG_GPIO_LPC32XX)		+= gpio-lpc32xx.o
-+obj-$(CONFIG_GPIO_MACSMC)		+= gpio-macsmc.o
- obj-$(CONFIG_GPIO_MADERA)		+= gpio-madera.o
- obj-$(CONFIG_GPIO_MAX3191X)		+= gpio-max3191x.o
- obj-$(CONFIG_GPIO_MAX7300)		+= gpio-max7300.o
-diff --git a/drivers/gpio/gpio-macsmc.c b/drivers/gpio/gpio-macsmc.c
-new file mode 100644
-index 000000000000..24ec98ad18f7
---- /dev/null
-+++ b/drivers/gpio/gpio-macsmc.c
-@@ -0,0 +1,245 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/*
-+ * Apple SMC GPIO driver
-+ * Copyright The Asahi Linux Contributors
-+ *
-+ * This driver implements basic SMC PMU GPIO support that can read inputs
-+ * and write outputs. Mode changes and IRQ config are not yet implemented.
-+ */
-+
-+#include <linux/bitmap.h>
-+#include <linux/device.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/mfd/core.h>
-+#include <linux/mfd/macsmc.h>
-+
-+#define MAX_GPIO 64
-+
-+/*
-+ * Commands 0-6 are, presumably, the intended API.
-+ * Command 0xff lets you get/set the pin configuration in detail directly,
-+ * but the bit meanings seem not to be stable between devices/PMU hardware
-+ * versions.
-+ *
-+ * We're going to try to make do with the low commands for now.
-+ * We don't implement pin mode changes at this time.
-+ */
-+
-+#define CMD_ACTION	(0 << 24)
-+#define CMD_OUTPUT	(1 << 24)
-+#define CMD_INPUT	(2 << 24)
-+#define CMD_PINMODE	(3 << 24)
-+#define CMD_IRQ_ENABLE	(4 << 24)
-+#define CMD_IRQ_ACK	(5 << 24)
-+#define CMD_IRQ_MODE	(6 << 24)
-+#define CMD_CONFIG	(0xff << 24)
-+
-+#define MODE_INPUT	0
-+#define MODE_OUTPUT	1
-+#define MODE_VALUE_0	0
-+#define MODE_VALUE_1	2
-+
-+#define IRQ_MODE_HIGH		0
-+#define IRQ_MODE_LOW		1
-+#define IRQ_MODE_RISING		2
-+#define IRQ_MODE_FALLING	3
-+#define IRQ_MODE_BOTH		4
-+
-+#define CONFIG_MASK	GENMASK(23, 16)
-+#define CONFIG_VAL	GENMASK(7, 0)
-+
-+#define CONFIG_OUTMODE	GENMASK(7, 6)
-+#define CONFIG_IRQMODE	GENMASK(5, 3)
-+#define CONFIG_PULLDOWN	BIT(2)
-+#define CONFIG_PULLUP	BIT(1)
-+#define CONFIG_OUTVAL	BIT(0)
-+
-+/*
-+ * Output modes seem to differ depending on the PMU in use... ?
-+ * j274 / M1 (Sera PMU):
-+ *   0 = input
-+ *   1 = output
-+ *   2 = open drain
-+ *   3 = disable
-+ * j314 / M1Pro (Maverick PMU):
-+ *   0 = input
-+ *   1 = open drain
-+ *   2 = output
-+ *   3 = ?
-+ */
-+
-+struct macsmc_gpio {
-+	struct device *dev;
-+	struct apple_smc *smc;
-+	struct gpio_chip gc;
-+
-+	int first_index;
-+};
-+
-+static int macsmc_gpio_nr(smc_key key)
-+{
-+	int low = hex_to_bin(key & 0xff);
-+	int high = hex_to_bin((key >> 8) & 0xff);
-+
-+	if (low < 0 || high < 0)
-+		return -1;
-+
-+	return low | (high << 4);
-+}
-+
-+static int macsmc_gpio_key(unsigned int offset)
-+{
-+	return _SMC_KEY("gP\0\0") | hex_asc_hi(offset) << 8 | hex_asc_lo(offset);
-+}
-+
-+static int macsmc_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct macsmc_gpio *smcgp = gpiochip_get_data(gc);
-+	smc_key key = macsmc_gpio_key(offset);
-+	u32 val;
-+	int ret;
-+
-+	/* First try reading the explicit pin mode register */
-+	ret = apple_smc_rw_u32(smcgp->smc, key, CMD_PINMODE, &val);
-+	if (!ret)
-+		return (val & MODE_OUTPUT) ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
-+
-+	/*
-+	 * Less common IRQ configs cause CMD_PINMODE to fail, and so does open drain mode.
-+	 * Fall back to reading IRQ mode, which will only succeed for inputs.
-+	 */
-+	ret = apple_smc_rw_u32(smcgp->smc, key, CMD_IRQ_MODE, &val);
-+	return ret ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
-+}
-+
-+static int macsmc_gpio_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct macsmc_gpio *smcgp = gpiochip_get_data(gc);
-+	smc_key key = macsmc_gpio_key(offset);
-+	u32 cmd, val;
-+	int ret;
-+
-+	ret = macsmc_gpio_get_direction(gc, offset);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (ret == GPIO_LINE_DIRECTION_OUT)
-+		cmd = CMD_OUTPUT;
-+	else
-+		cmd = CMD_INPUT;
-+
-+	ret = apple_smc_rw_u32(smcgp->smc, key, cmd, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return val ? 1 : 0;
-+}
-+
-+static void macsmc_gpio_set(struct gpio_chip *gc, unsigned int offset, int value)
-+{
-+	struct macsmc_gpio *smcgp = gpiochip_get_data(gc);
-+	smc_key key = macsmc_gpio_key(offset);
-+	int ret;
-+
-+	value |= CMD_OUTPUT;
-+	ret = apple_smc_write_u32(smcgp->smc, key, CMD_OUTPUT | value);
-+	if (ret < 0)
-+		dev_err(smcgp->dev, "GPIO set failed %p4ch = 0x%x\n", &key, value);
-+}
-+
-+static int macsmc_gpio_init_valid_mask(struct gpio_chip *gc,
-+				       unsigned long *valid_mask, unsigned int ngpios)
-+{
-+	struct macsmc_gpio *smcgp = gpiochip_get_data(gc);
-+	int count;
-+	int i;
-+
-+	count = apple_smc_get_key_count(smcgp->smc) - smcgp->first_index;
-+	if (count > MAX_GPIO)
-+		count = MAX_GPIO;
-+
-+	bitmap_zero(valid_mask, ngpios);
-+
-+	for (i = 0; i < count; i++) {
-+		int ret, gpio_nr;
-+		smc_key key;
-+
-+		ret = apple_smc_get_key_by_index(smcgp->smc, smcgp->first_index + i, &key);
-+		if (ret < 0)
-+			return ret;
-+
-+		if (key > SMC_KEY(gPff))
-+			break;
-+
-+		gpio_nr = macsmc_gpio_nr(key);
-+		if (gpio_nr < 0 || gpio_nr > MAX_GPIO) {
-+			dev_err(smcgp->dev, "Bad GPIO key %p4ch\n", &key);
-+			continue;
-+		}
-+
-+		set_bit(gpio_nr, valid_mask);
-+	}
-+
-+	return 0;
-+}
-+
-+static int macsmc_gpio_probe(struct platform_device *pdev)
-+{
-+	struct macsmc_gpio *smcgp;
-+	struct apple_smc *smc = dev_get_drvdata(pdev->dev.parent);
-+	smc_key key;
-+	int ret;
-+
-+	smcgp = devm_kzalloc(&pdev->dev, sizeof(*smcgp), GFP_KERNEL);
-+	if (!smcgp)
-+		return -ENOMEM;
-+
-+	smcgp->dev = &pdev->dev;
-+	smcgp->smc = smc;
-+	smcgp->first_index = apple_smc_find_first_key_index(smc, SMC_KEY(gP00));
-+
-+	if (smcgp->first_index >= apple_smc_get_key_count(smc))
-+		return -ENODEV;
-+
-+	ret = apple_smc_get_key_by_index(smc, smcgp->first_index, &key);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (key > macsmc_gpio_key(MAX_GPIO - 1))
-+		return -ENODEV;
-+
-+	dev_info(smcgp->dev, "First GPIO key: %p4ch\n", &key);
-+
-+	smcgp->gc.label = "macsmc-pmu-gpio";
-+	smcgp->gc.owner = THIS_MODULE;
-+	smcgp->gc.get = macsmc_gpio_get;
-+	smcgp->gc.set = macsmc_gpio_set;
-+	smcgp->gc.get_direction = macsmc_gpio_get_direction;
-+	smcgp->gc.init_valid_mask = macsmc_gpio_init_valid_mask;
-+	smcgp->gc.can_sleep = true;
-+	smcgp->gc.ngpio = MAX_GPIO;
-+	smcgp->gc.base = -1;
-+	smcgp->gc.parent = &pdev->dev;
-+
-+	return devm_gpiochip_add_data(&pdev->dev, &smcgp->gc, smcgp);
-+}
-+
-+static const struct of_device_id macsmc_gpio_of_table[] = {
-+	{ .compatible = "apple,smc-gpio", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, macsmc_gpio_of_table);
-+
-+static struct platform_driver macsmc_gpio_driver = {
-+	.driver = {
-+		.name = "macsmc-gpio",
-+		.of_match_table = macsmc_gpio_of_table,
-+	},
-+	.probe = macsmc_gpio_probe,
-+};
-+module_platform_driver(macsmc_gpio_driver);
-+
-+MODULE_AUTHOR("Hector Martin <marcan@marcan.st>");
-+MODULE_LICENSE("Dual MIT/GPL");
-+MODULE_DESCRIPTION("Apple SMC GPIO driver");
-+MODULE_ALIAS("platform:macsmc-gpio");
+> > PCA_SET_TYPE() shifts bits of the TYPE to the correct positions in
+> > the id.
+> > PCA_CHIP_TYPE() gathers the bits from the ID to form a nice decimal
+> > number.
+> > 
+> > -#define PCA953X_TYPE           BIT(12)
+> > -#define PCA957X_TYPE           BIT(13)
+> > -#define PCAL653X_TYPE          BIT(14)
+> > +#define PCA953X_TYPE           2
+> > +#define PCA953XM_TYPE          6
+> > +#define PCAL953X_TYPE          3
+> > +#define PCAL653X_TYPE          9
+> > +#define PCA957X_TYPE           4
+> > 
+> > Types are decimal numbers. Values are carefully chosen to leave
+> > existing
+> > IDs unchanged.
+> > 
+> >     * 2 instead of            BIT(12), ID mask remains
+> > 0b0001'0000'0000'0000
+> >     * 4 instead of            BIT(13), ID mask remains
+> > 0b0010'0000'0000'0000
+> >     * 9 instead of BIT(14) | PCA_PCAL, ID mask remains
+> > 0b0100'0010'0000'0000
+> >     * 3 instead of BIT(12) | PCA_PCAL, ID mask remains
+> > 0b0001'0010'0000'0000
+> > 
+> > PCAL chips have odd IDs, which means the PCA_PCAL bit will be set.
+> > 
+> > It seems more natural now to have a separate type, PCA953XM_TYPE for
+> > pca9505,
+> > pca9506 and pca9698 with the [M]ask register. Only PCA953X type chips
+> > can have
+> > this register anyway.
+> > 
+> > What do you think?
+> > 
+> 
+> I don't like the idea of encoding whether a device is PCA or PCAL into
+> the bit offsets. Primarily because it's massively opaque, making
+> successfully adding support for another device that much more prone to
+> issues, especially if that person isn't already intimately familiar
+> with the driver. I'd also like to point out that not all PCAL can be
+> handled the same. The register layout of the PCAL653X_TYPE needs to be
+> handled differently from the PCAL953X_TYPE.
+
+PCA_PCAL is about having latched interrupts, it doesn't suggest the layout. So,
+somebody needs to take a pen and draw the current list of possible combinations
+of the features and layouts and then we can see what can be done as a type and
+what's not.
+
 -- 
-2.30.2
+With Best Regards,
+Andy Shevchenko
+
 
