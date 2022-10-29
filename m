@@ -2,143 +2,93 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFB4FA3742
-	for <linux-gpio@archiver.kernel.org>; Sat, 29 Oct 2022 03:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2974EC38A02
+	for <linux-gpio@archiver.kernel.org>; Sat, 29 Oct 2022 06:41:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229473AbiJ2DQF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 28 Oct 2022 23:16:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44848 "EHLO
+        id S229450AbiJ2GlJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 29 Oct 2022 02:41:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229756AbiJ2DP6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Oct 2022 23:15:58 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93A776F253
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Oct 2022 20:15:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1667013354; x=1698549354;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ju1xCFHBmtKAC+wQV/+jhs7B2jVm9kaAMtvoURGeQQ0=;
-  b=NwiKHJfhuKIQFxmenB1Jxu37B8nlV0MnlSX0SDKrgpc2T95kqIdEiSMP
-   LbWbyHMvfPnLDdz56p6Y6+sC/GVBUL9jFT+2vZ+7K/6P1+UCp4MhYL2Kh
-   A0EOAh4bJJSmudSEi4Fwepw2KQCevFjNyjCQyCgHLVjBZlMEWlIOy1DCc
-   eQwKiRRsPX3hMmOnddSekaPs5clPzW6RVsWm3+GtqgVEWak3cpYjkMXUO
-   gZrRj1tPkrPpwBMEwiHs7ZCWBk05iwFQUygfPNQaEOzkFt0WG0z8Q4lGz
-   M78VaBVaiE79JmtMNyJZjlEZycSBKk+a1Y1lJxY25FhvfzdmNmAPPQKc4
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10514"; a="308631973"
-X-IronPort-AV: E=Sophos;i="5.95,222,1661842800"; 
-   d="scan'208";a="308631973"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2022 20:15:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10514"; a="584130509"
-X-IronPort-AV: E=Sophos;i="5.95,222,1661842800"; 
-   d="scan'208";a="584130509"
-Received: from lkp-server02.sh.intel.com (HELO b6d29c1a0365) ([10.239.97.151])
-  by orsmga003.jf.intel.com with ESMTP; 28 Oct 2022 20:15:52 -0700
-Received: from kbuild by b6d29c1a0365 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oocK8-000AVx-0y;
-        Sat, 29 Oct 2022 03:15:52 +0000
-Date:   Sat, 29 Oct 2022 11:15:03 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [brgl:gpio/for-next] BUILD SUCCESS
- fbb19fe17eaef7b6ba2e68dbf0600a97060f2909
-Message-ID: <635c9ab7.FZO3hy/hd5aqrSRa%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S229379AbiJ2GlI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 29 Oct 2022 02:41:08 -0400
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CCEE69EF5
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Oct 2022 23:41:05 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: marcan@marcan.st)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id E27B741DF4;
+        Sat, 29 Oct 2022 06:41:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
+        t=1667025663; bh=zlfvaMlEW16tIV2PekMKgjqEmWJ18+KM0ANi+HZI96k=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To;
+        b=HxJPvwJu3anhirunpWjfBafxsoO8X0r0hrTElmLT5CY9r8YUT1LAehxQZzXVPi4Nh
+         cqTasVdNr/706wGpvMsfsTAmCBzASckxStbaNX6/T8wsgtLQxVkfVXEJZimdmgvcSm
+         XHNQhv81qnuzdSNbbfsN1m/xdtQvhZfbS3H2PxV8H0bfzGhQ0Oe/yTSZgH0NGOcQ5J
+         KN2uHcmu/KqL5bSnpoAA1Q6r1h1sgegK9DVFLO2sUMovubqC8dcVsT5xm8gPez9+53
+         ax1qa7peFW904UimPyXpgrkF1b7zy6VhADYqOmONTNVWK0w9yV7VX0BVtLxPvbE8NI
+         qHGAE8M3egLkw==
+Message-ID: <a92ca9ac-fbc8-a25f-4865-5bc7adb206e2@marcan.st>
+Date:   Sat, 29 Oct 2022 15:40:58 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Content-Language: en-US
+To:     Lee Jones <lee@kernel.org>
+Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        asahi@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        Sven Peter <sven@svenpeter.dev>
+References: <YxC5eZjGgd8xguDr@shell.armlinux.org.uk>
+ <E1oTkeW-003t9Y-Ey@rmk-PC.armlinux.org.uk> <YxnK3LeyfacKssLT@google.com>
+ <45ed0a37-60ac-3a06-92d1-6b30e18261ff@marcan.st>
+ <YxngtlhRLTVBw+iW@google.com>
+ <8f30a490-f970-6605-20cb-c2256daab9de@marcan.st>
+ <Yxnv2mKkl1tW4PUp@google.com>
+ <82088b05-2a0d-69cc-ba2c-d61c74c9d855@marcan.st>
+ <YxrwLwVihe/s9wxN@google.com>
+From:   Hector Martin <marcan@marcan.st>
+Subject: Re: [PATCH 4/6] platform/apple: Add new Apple Mac SMC driver
+In-Reply-To: <YxrwLwVihe/s9wxN@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-branch HEAD: fbb19fe17eaef7b6ba2e68dbf0600a97060f2909  gpio: pca9570: add slg7xl45106 support
+On 09/09/2022 16.50, Lee Jones wrote:
+>> What's the point of just having effectively an array of mfd_cell and
+>> wrappers to call into the mfd core in the drivers/mfd/ tree and the
+>> rest of the driver elsewhere?
+> 
+> They should be separate drivers, with MFD registering the Platform.
 
-elapsed time: 724m
+Why? What purpose does this serve? I'm still confused. There's one
+parent device, which provides services to the child devices. There isn't
+one parent device which wraps a platform service which is used by
+children. This makes no sense. The platform device is the root, if it
+exposes MFD services, then it has to be in that direction, not the other
+way around.
 
-configs tested: 67
-configs skipped: 2
+Look at how this patch series is architected. There is smc_core.c, which
+implements SMC helpers and wrappers on top of a generic backend, and
+registers with the MFD subsystem. And then there is smc_rtkit.c which is
+the actual platform implementation on top of the RTKit framework, and is
+the actual platform device entry point.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+A priori, the only thing that makes sense to me right now would be to
+move smc_core.c into drivers/mfd, and leave smc_rtkit.c in platform.
+That way the mfd registration would be in drivers/mfd (as would be the
+services offered to sub-drivers), but the actual backend implementation
+would be in platform/ (and there would eventually be others, e.g. at
+least two more for x86 systems). That does mean that the driver entry
+point will be in platform/, with mfd/smc_core.c serving as effectively
+library code to plumb in the mfd stuff into one of several possible
+platform devices. Would that work for you?
 
-gcc tested configs:
-um                             i386_defconfig
-um                           x86_64_defconfig
-arc                                 defconfig
-alpha                               defconfig
-powerpc                           allnoconfig
-s390                                defconfig
-i386                                defconfig
-s390                             allmodconfig
-s390                             allyesconfig
-i386                             allyesconfig
-i386                          randconfig-a001
-x86_64                          rhel-8.3-func
-i386                          randconfig-a003
-x86_64                           rhel-8.3-syz
-x86_64                    rhel-8.3-kselftests
-x86_64                         rhel-8.3-kunit
-x86_64                           rhel-8.3-kvm
-arc                  randconfig-r043-20221028
-i386                          randconfig-a005
-m68k                             allmodconfig
-ia64                             allmodconfig
-arc                              allyesconfig
-x86_64                        randconfig-a013
-arm                                 defconfig
-i386                          randconfig-a014
-i386                          randconfig-a012
-x86_64                        randconfig-a011
-i386                          randconfig-a016
-riscv                randconfig-r042-20221028
-alpha                            allyesconfig
-s390                 randconfig-r044-20221028
-x86_64                        randconfig-a002
-x86_64                        randconfig-a015
-x86_64                        randconfig-a006
-x86_64                        randconfig-a004
-m68k                             allyesconfig
-arm64                            allyesconfig
-arm                              allyesconfig
-x86_64                              defconfig
-x86_64                           allyesconfig
-mips                             allyesconfig
-x86_64                               rhel-8.3
-powerpc                          allmodconfig
-sh                               allmodconfig
-i386                          randconfig-c001
-arm                            hisi_defconfig
-xtensa                  cadence_csp_defconfig
-m68k                           virt_defconfig
-powerpc                       holly_defconfig
-
-clang tested configs:
-i386                          randconfig-a002
-hexagon              randconfig-r041-20221028
-i386                          randconfig-a013
-i386                          randconfig-a015
-hexagon              randconfig-r045-20221028
-i386                          randconfig-a011
-i386                          randconfig-a004
-i386                          randconfig-a006
-x86_64                        randconfig-a012
-x86_64                        randconfig-a001
-x86_64                        randconfig-a014
-x86_64                        randconfig-a003
-x86_64                        randconfig-a016
-x86_64                        randconfig-a005
-s390                 randconfig-r044-20221029
-hexagon              randconfig-r041-20221029
-hexagon              randconfig-r045-20221029
-riscv                randconfig-r042-20221029
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+- Hector
