@@ -2,119 +2,110 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1194CECAAA1
-	for <linux-gpio@archiver.kernel.org>; Sat, 29 Oct 2022 11:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8EDC433FE
+	for <linux-gpio@archiver.kernel.org>; Sat, 29 Oct 2022 17:46:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229667AbiJ2L2S (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 29 Oct 2022 07:28:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39756 "EHLO
+        id S229441AbiJ2RqY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 29 Oct 2022 13:46:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbiJ2L2R (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 29 Oct 2022 07:28:17 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 459806888E;
-        Sat, 29 Oct 2022 04:28:12 -0700 (PDT)
-Received: from canpemm500004.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Mzxwp5knPzHvHZ;
-        Sat, 29 Oct 2022 19:27:54 +0800 (CST)
-Received: from localhost (10.175.101.6) by canpemm500004.china.huawei.com
- (7.192.104.92) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Sat, 29 Oct
- 2022 19:28:10 +0800
-From:   Weilong Chen <chenweilong@huawei.com>
-To:     <chenweilong@huawei.com>, <linus.walleij@linaro.org>,
-        <brgl@bgdev.pl>, <f.fangjian@huawei.com>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>
-CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH next v3 1/2] gpio: hisi: Add initial device tree support
-Date:   Sat, 29 Oct 2022 19:35:41 +0800
-Message-ID: <20221029113542.170210-1-chenweilong@huawei.com>
-X-Mailer: git-send-email 2.31.GIT
+        with ESMTP id S229457AbiJ2RqX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 29 Oct 2022 13:46:23 -0400
+Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9766C4F692
+        for <linux-gpio@vger.kernel.org>; Sat, 29 Oct 2022 10:46:22 -0700 (PDT)
+Date:   Sat, 29 Oct 2022 17:46:08 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail3; t=1667065579; x=1667324779;
+        bh=NUwKkaw74u0IYn5eC8eCgD9RWGjApCJvdStDpxkOLHQ=;
+        h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+         Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+         Message-ID:BIMI-Selector;
+        b=Z1t/TXY/KuLEFLsFR06ZMkygQody6JyIRVvNtxwaZrfIOf0FhlzCIIjBj4pUo03Xi
+         Y/RfhcRAm2fYb9DoZtb99d0xelidxWlHCaCE+YNc9QWcpo69Fyx39kS6zaoFH62hbG
+         GHDzZHaITcsu7xi48o7O+9/nUdXzrDMVWCaq7NV2Y1BkW0eOWQlFVZrwZy1+glQqCl
+         NTK2ot377vVKhnFeX5GgHd2fN24k9/TcGj/iZT36zzWML1cheRVDZhEnEKkTBV5F04
+         WLlL697Js3NuGv4gReaR5v3FGwMZHzNfZ31D7IrXumQd/pVDXovlUK3xzEzkT8bRer
+         0YEbWLNVoeOfA==
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+From:   =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-gpio@vger.kernel.org, Kent Gibson <warthog618@gmail.com>,
+        =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
+        stratos-dev@op-lists.linaro.org,
+        Gerard Ryan <g.m0n3y.2503@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@gmail.com>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        y86-dev <y86-dev@protonmail.com>
+Subject: Re: [PATCH V7 0/8] libgpiod: Add Rust bindings
+Message-ID: <LdOsM9sY9hpjTANe2LeBbwfLlVkyYJ_t_xde616G-VJegRUD_1nkndfgqaIdHadyiP-Ei0rjUzPYvJtUC1J_OwXEuKkdpakUMonYfKHQBgI=@protonmail.com>
+In-Reply-To: <20221025064239.6dazljljxlprhqus@vireshk-i7>
+References: <cover.1665744170.git.viresh.kumar@linaro.org> <CANiq72m_9RK7viLpaREMGiMLuWs9m1oy9N78ok1d7uzC+18zNg@mail.gmail.com> <F4hN01T_BkoMFY7LNhQlmQPrXGv3a2byhEuDLleJfpWlfF98Dopa2FPrl4JDEoER8y7bN41KMkmWqM50YAIBK0BowT_9skmLKY8gsqYEJBc=@protonmail.com> <20221021093911.vj5todjdfqptdy7d@vireshk-i7> <YsZTLXUUjsBT-SzPWsI4ppoDBT_lGn0yfhF2r-5wfqcYxxeWWcdL2yIUcMMBmMTB-TjVUZkSqpMsvWNKTcSwoun5wzT4bbPi-ijZXUt8HWM=@protonmail.com> <20221025064239.6dazljljxlprhqus@vireshk-i7>
+Feedback-ID: 27884398:user:proton
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.101.6]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- canpemm500004.china.huawei.com (7.192.104.92)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for HiSilicon GPIO controller in embedded platform, which
-boot from devicetree.
+On Tuesday, October 25th, 2022 at 08:42, Viresh Kumar <viresh.kumar@linaro.=
+org> wrote:
 
-Signed-off-by: Weilong Chen <chenweilong@huawei.com>
----
-Change since v2:
-- No change
-Link: https://lore.kernel.org/lkml/20221028022453.163186-1-chenweilong@huawei.com/#r
 
- drivers/gpio/Kconfig     |  2 +-
- drivers/gpio/gpio-hisi.c | 15 ++++++++++++++-
- 2 files changed, 15 insertions(+), 2 deletions(-)
+> On 21-10-22, 14:34, Bj=C3=B6rn Roy Baron wrote:
+>=20
+> > > impl<'b> Event<'b> {
+> > >=20
+> > > /// Get an event stored in the buffer.
+> > > - pub(crate) fn new(buffer: &'b Buffer, index: usize) -> Result<Self>=
+ {
+> > >=20
+> > > + pub(crate) fn new(buffer: &'b Buffer, index: usize) -> Result<Event=
+<'b>> {
+> >=20
+> > This looks good to me.
+>=20
+> > > +impl<'e, 'b> Event<'e> {
+> > >=20
+> > > + pub fn event_clone(event: &Event<'b>) -> Result<Event<'e>>
+> > >=20
+> > > + where
+> > > + 'e: 'b,
+> >=20
+> > Using `Event<'b>` on both sides should work fine. `Event` is
+> > covariant in it's lifetime parameter, so `Event<'b>` can be turned
+> > into `Event<'e>` with `'e` being a shorter lifetime than `'b`. What
+> > you wrote here is not incorrect, so if you prefer keeping it this
+> > way that is fine with me.
+>=20
+>=20
+> That doesn't let the cloned event to live past read_edge_events().
+>=20
+> error[E0502]: cannot borrow `buffer` as mutable because it is also borrow=
+ed as immutable
+> --> libgpiod/examples/gpio_events.rs:70:50
+>=20
+> |
+> 64 | let event =3D buffer.event(0)?;
+> | --------------- immutable borrow occurs here
+> ...
+> 70 | let count =3D request.read_edge_events(&mut buffer)?;
+> | ^^^^^^^^^^^ mutable borrow occurs here
+> ...
+> 86 | }
+> | - immutable borrow might be used here, when `cloned_event` is dropped a=
+nd runs the `Drop` code for type `libgpiod::request::Event`
+>=20
+> --
+> viresh
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index e034f752e7ce..71a7880af59d 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -310,7 +310,7 @@ config GPIO_GRGPIO
- 
- config GPIO_HISI
- 	tristate "HiSilicon GPIO controller driver"
--	depends on (ARM64 && ACPI) || COMPILE_TEST
-+	depends on ARM64 || COMPILE_TEST
- 	select GPIO_GENERIC
- 	select GPIOLIB_IRQCHIP
- 	help
-diff --git a/drivers/gpio/gpio-hisi.c b/drivers/gpio/gpio-hisi.c
-index 3caabef5c7a2..92cf575f2eab 100644
---- a/drivers/gpio/gpio-hisi.c
-+++ b/drivers/gpio/gpio-hisi.c
-@@ -1,8 +1,10 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /* Copyright (c) 2020 HiSilicon Limited. */
-+#include <linux/acpi.h>
- #include <linux/gpio/driver.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/property.h>
- 
-@@ -215,11 +217,21 @@ static void hisi_gpio_init_irq(struct hisi_gpio *hisi_gpio)
- 	hisi_gpio_write_reg(chip, HISI_GPIO_INTCOMB_MASK_WX, 1);
- }
- 
-+#ifdef CONFIG_ACPI
- static const struct acpi_device_id hisi_gpio_acpi_match[] = {
- 	{"HISI0184", 0},
- 	{}
- };
- MODULE_DEVICE_TABLE(acpi, hisi_gpio_acpi_match);
-+#endif
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id hisi_gpio_dts_match[] = {
-+	{ .compatible = "hisilicon,ascend910-gpio", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, hisi_gpio_dts_match);
-+#endif
- 
- static void hisi_gpio_get_pdata(struct device *dev,
- 				struct hisi_gpio *hisi_gpio)
-@@ -310,7 +322,8 @@ static int hisi_gpio_probe(struct platform_device *pdev)
- static struct platform_driver hisi_gpio_driver = {
- 	.driver		= {
- 		.name	= HISI_GPIO_DRIVER_NAME,
--		.acpi_match_table = hisi_gpio_acpi_match,
-+		.acpi_match_table = ACPI_PTR(hisi_gpio_acpi_match),
-+		.of_match_table = of_match_ptr(hisi_gpio_dts_match),
- 	},
- 	.probe		= hisi_gpio_probe,
- };
--- 
-2.31.GIT
+I would have expected that to work fine, but as it doesn't work keeping you=
+r code with two separate lifetimes is fine.
 
+Cheers,
+Bjorn
