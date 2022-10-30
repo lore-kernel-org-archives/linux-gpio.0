@@ -2,203 +2,102 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456C2FA3744
-	for <linux-gpio@archiver.kernel.org>; Sun, 30 Oct 2022 04:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D69C38A02
+	for <linux-gpio@archiver.kernel.org>; Sun, 30 Oct 2022 08:05:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbiJ3Ekx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 30 Oct 2022 00:40:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34328 "EHLO
+        id S229549AbiJ3IFZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 30 Oct 2022 04:05:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbiJ3Ekw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Oct 2022 00:40:52 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A1813E9A;
-        Sat, 29 Oct 2022 21:40:51 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id c15-20020a17090a1d0f00b0021365864446so7742137pjd.4;
-        Sat, 29 Oct 2022 21:40:51 -0700 (PDT)
+        with ESMTP id S229515AbiJ3IFY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Oct 2022 04:05:24 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 642A26409
+        for <linux-gpio@vger.kernel.org>; Sun, 30 Oct 2022 01:05:23 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id j15so11922659wrq.3
+        for <linux-gpio@vger.kernel.org>; Sun, 30 Oct 2022 01:05:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pRAS1l5HUBJOvjS7imdI68KIF+eyQhg+QZ+KkL+P+2g=;
-        b=IW9IszOFSfXje3HQJOXnxwyZYF4wUAUfPHNakB1YleZg72SbG1Pz/OFHDVUHJ5zTwT
-         QCpemUlLKZUFcy/eIzKNGrNTQ2uLfqjXYI2PzecUs5XAqioyZpqeGv9dIGYe3pXXyR/O
-         st+Op5VRNYQovygrZ4vkNObGPhpR2MDfC38CZLdV4qktwd0Wa6aewwuwDMPLfH2T2rFC
-         H9EUvsIZRFe0TMBUXoToVielRXiXtxc3BIpWZRErAZks0S9t33pgegBdqK2GCDpoPE5z
-         A1iqiR5o3hhNgSEZR0MQDby7yfwSbFH6CCYaty/K2HLynacTs0ojFjISpJLI052wAq1j
-         LHpg==
+        bh=7ARXWl72zE64W9sxl9KtUP1FXDgSDHyODIedksNa9+0=;
+        b=vrQx0dFI0q1qIYGQiNNtUT2dcuIUQT85jSTM8mpp81vgE6+RoxJs012tJCPK2ocSBQ
+         FCOSgeb2tHVkq90yNV86O8VUZlyimoQ4nEkjQQ+md6G8FXyqmq9wzGkA4Ap4RxcFil13
+         6o5wMzPC05XPmDaKOBv7QqQKZDKvQs3onq9v8Q6jXdaiL9jOvPZnQyoMwGo85V8dWg/T
+         5p6dwikOwNlSYnqQT7BinSFD/DlH9MVs+uuSPyydTiU1aHWzqw9OROoSBS3PrtyQDOhW
+         qciMWhvbMOpqVHPTy9hyDfzITWdrJvJ1EZQqwX1VwhfAxmJ5uMVJdSp/S9D2LmkO4arC
+         rIhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pRAS1l5HUBJOvjS7imdI68KIF+eyQhg+QZ+KkL+P+2g=;
-        b=qApEGcqw+Xbnj7UUMSkY7UzVM53HDDmtGU/B0S4THNZ2qfS/k/Gtpm3t8QiE191OEG
-         BBj4tb3VeRgc3zHOrXS4w9VDgQtIGpN3L1pzsOTttQ23C3NA3Hc3/3wOdWKGFsJq23Ms
-         8yrQPwOOLs/ddoda5gFFAH+Nt6FxeqrnKriYsVOAJcXkKSpy6q3JoiLg7lmglNpAsyeA
-         kLrWMU7IU9qT5AGlRYSNJkfdrw4QBibPKGJGNHDEWpO/iJewtlF/eY3vfh+7gJIB0m/S
-         Zxb8wQAe0tMhKzk17fr2zaH52/TxDl2qGqUaB7ftQlx82CQ8895h/3jPFUVGlOVtjELm
-         0c/Q==
-X-Gm-Message-State: ACrzQf1PvYZnI91lskM9jBB39q71aIFJLFKZDz5eOpiBjYDFgdEJXueK
-        QtNCLvNmoS7JYMX9ya7vq2pudPdWCao=
-X-Google-Smtp-Source: AMsMyM4CSaO+jNssXNCIVPQXFzmKShnItlMqAlcGru/fmbXaUQlSc6Qk5FXKxevY95imon1PrdiakA==
-X-Received: by 2002:a17:902:ab89:b0:186:7cfc:cde8 with SMTP id f9-20020a170902ab8900b001867cfccde8mr7693100plr.9.1667104851363;
-        Sat, 29 Oct 2022 21:40:51 -0700 (PDT)
-Received: from dtor-ws.mtv.corp.google.com ([2620:15c:9d:2:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id l5-20020a170903120500b0018123556931sm2029632plh.204.2022.10.29.21.40.50
+        bh=7ARXWl72zE64W9sxl9KtUP1FXDgSDHyODIedksNa9+0=;
+        b=pXPZtg5VGy654whzPRsxsnXLRDZknZ+KMDjvtOjlE7+U9/Z3S2cOpbsVmAqwG8M3m9
+         A16N7Y6uzgLw8vh2eYnnMXFsQ+HUn6xTRSWT0VM5GMt0XQ1wPcrA8JWI+BTnGsxLsN5b
+         5o9xiCkgpxHx8e7yicm67c0QIG8HZ/yWdY5SVzCrCtWqSGBjg2cv5VKovuzdyKV/ijiD
+         zBIjTO8yM6y4F2ZGd0hl+7xxkKw1XpS2KQ68QKQmx+fkZgAFjhRJYa+II3L/d/sLaXcP
+         Dd95+/39R7r46CvJdH5ODSZiP4HH4jXtO12yqhZBqwSX5wdnzFcNHyl6EVUxneFmug9q
+         rtSg==
+X-Gm-Message-State: ACrzQf39SF1X0PSnmIb6+5DGLYrrznmquHhuhA2tZjN681LD06rkuFmD
+        IJULnoHenevKWTUeCWJzN92Pcg==
+X-Google-Smtp-Source: AMsMyM59bXcF2Xy5aurBDcM2CEEgt1J7miWZNJa2HwaL3mprd3DJF8kVBnw4FO1JmE/PYwlCvH11Vw==
+X-Received: by 2002:a05:6000:18a5:b0:231:e0c5:1322 with SMTP id b5-20020a05600018a500b00231e0c51322mr4467314wri.376.1667117121790;
+        Sun, 30 Oct 2022 01:05:21 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:41be:1aed:e53f:b9aa])
+        by smtp.gmail.com with ESMTPSA id w4-20020a05600c098400b003cf6a55d8e8sm2191995wmp.7.2022.10.30.01.05.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Oct 2022 21:40:50 -0700 (PDT)
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] gpiolib: of: factor out quirk setting polarity via separate property
-Date:   Sat, 29 Oct 2022 21:40:46 -0700
-Message-Id: <20221030044047.423859-1-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.38.1.273.g43a17bfeac-goog
+        Sun, 30 Oct 2022 01:05:21 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio: fixes for v6.1-rc3
+Date:   Sun, 30 Oct 2022 09:05:19 +0100
+Message-Id: <20221030080519.5467-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Several legacy bindings use a separate property to specify polarity of
-GPIOs instead of specifying it directly in the GPIO property. Factor
-out this code to make it easier to add more such cases.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
+Linus,
 
-v2: no changes
+Please pull the following fixes for the next rc. There's an update to the
+MAINTAINERS file and another immutable irqchip conversion.
 
- drivers/gpio/gpiolib-of.c | 98 +++++++++++++++++++++------------------
- 1 file changed, 53 insertions(+), 45 deletions(-)
+Bartosz
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 52616848a37c..331744c75faf 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -186,33 +186,68 @@ static void of_gpio_try_fixup_polarity(const struct device_node *np,
- 	}
- }
- 
--static void of_gpio_flags_quirks(const struct device_node *np,
--				 const char *propname,
--				 enum of_gpio_flags *flags,
--				 int index)
-+static void of_gpio_set_polarity_by_property(const struct device_node *np,
-+					     const char *propname,
-+					     enum of_gpio_flags *flags)
- {
--	of_gpio_try_fixup_polarity(np, propname, flags);
-+	static const struct {
-+		const char *compatible;
-+		const char *gpio_propname;
-+		const char *polarity_propname;
-+	} gpios[] = {
-+#if IS_ENABLED(CONFIG_FEC)
-+		/* Freescale Fast Ethernet Controller */
-+		{ "fsl,imx25-fec",   "phy-reset-gpios", "phy-reset-active-high" },
-+		{ "fsl,imx27-fec",   "phy-reset-gpios", "phy-reset-active-high" },
-+		{ "fsl,imx28-fec",   "phy-reset-gpios", "phy-reset-active-high" },
-+		{ "fsl,imx6q-fec",   "phy-reset-gpios", "phy-reset-active-high" },
-+		{ "fsl,mvf600-fec",  "phy-reset-gpios", "phy-reset-active-high" },
-+		{ "fsl,imx6sx-fec",  "phy-reset-gpios", "phy-reset-active-high" },
-+		{ "fsl,imx6ul-fec",  "phy-reset-gpios", "phy-reset-active-high" },
-+		{ "fsl,imx8mq-fec",  "phy-reset-gpios", "phy-reset-active-high" },
-+		{ "fsl,imx8qm-fec",  "phy-reset-gpios", "phy-reset-active-high" },
-+		{ "fsl,s32v234-fec", "phy-reset-gpios", "phy-reset-active-high" },
-+#endif
- 
--	/*
--	 * Some GPIO fixed regulator quirks.
--	 * Note that active low is the default.
--	 */
--	if (IS_ENABLED(CONFIG_REGULATOR) &&
--	    (of_device_is_compatible(np, "regulator-fixed") ||
--	     of_device_is_compatible(np, "reg-fixed-voltage") ||
--	     (!(strcmp(propname, "enable-gpio") &&
--		strcmp(propname, "enable-gpios")) &&
--	      of_device_is_compatible(np, "regulator-gpio")))) {
--		bool active_high = of_property_read_bool(np,
--							 "enable-active-high");
- 		/*
- 		 * The regulator GPIO handles are specified such that the
- 		 * presence or absence of "enable-active-high" solely controls
- 		 * the polarity of the GPIO line. Any phandle flags must
- 		 * be actively ignored.
- 		 */
--		of_gpio_quirk_polarity(np, active_high, flags);
-+#if IS_ENABLED(CONFIG_REGULATOR_FIXED_VOLTAGE)
-+		{ "regulator-fixed",   "gpios",        "enable-active-high" },
-+		{ "regulator-fixed",   "gpio",         "enable-active-high" },
-+		{ "reg-fixed-voltage", "gpios",        "enable-active-high" },
-+		{ "reg-fixed-voltage", "gpio",         "enable-active-high" },
-+#endif
-+#if IS_ENABLED(CONFIG_REGULATOR_GPIO)
-+		{ "regulator-gpio",    "enable-gpio",  "enable-active-high" },
-+		{ "regulator-gpio",    "enable-gpios", "enable-active-high" },
-+#endif
-+	};
-+	unsigned int i;
-+	bool active_high;
-+
-+	for (i = 0; i < ARRAY_SIZE(gpios); i++) {
-+		if (of_device_is_compatible(np, gpios[i].compatible) &&
-+		    !strcmp(propname, gpios[i].gpio_propname)) {
-+			active_high = of_property_read_bool(np,
-+						gpios[i].polarity_propname);
-+			of_gpio_quirk_polarity(np, active_high, flags);
-+			break;
-+		}
- 	}
-+}
-+
-+static void of_gpio_flags_quirks(const struct device_node *np,
-+				 const char *propname,
-+				 enum of_gpio_flags *flags,
-+				 int index)
-+{
-+	of_gpio_try_fixup_polarity(np, propname, flags);
-+	of_gpio_set_polarity_by_property(np, propname, flags);
-+
- 	/*
- 	 * Legacy open drain handling for fixed voltage regulators.
- 	 */
-@@ -267,33 +302,6 @@ static void of_gpio_flags_quirks(const struct device_node *np,
- 	    !strcmp(propname, "snps,reset-gpio") &&
- 	    of_property_read_bool(np, "snps,reset-active-low"))
- 		*flags |= OF_GPIO_ACTIVE_LOW;
--
--	/*
--	 * Freescale Fast Ethernet Controller uses a separate property to
--	 * describe polarity of the phy reset line.
--	 */
--	if (IS_ENABLED(CONFIG_FEC)) {
--		static const char * const fec_devices[] = {
--			"fsl,imx25-fec",
--			"fsl,imx27-fec",
--			"fsl,imx28-fec",
--			"fsl,imx6q-fec",
--			"fsl,mvf600-fec",
--			"fsl,imx6sx-fec",
--			"fsl,imx6ul-fec",
--			"fsl,imx8mq-fec",
--			"fsl,imx8qm-fec",
--			"fsl,s32v234-fec",
--			NULL
--		};
--
--		if (!strcmp(propname, "phy-reset-gpios") &&
--		    of_device_compatible_match(np, fec_devices)) {
--			bool active_high = of_property_read_bool(np,
--						"phy-reset-active-high");
--			of_gpio_quirk_polarity(np, active_high, flags);
--		}
--	}
- }
- 
- /**
--- 
-2.38.1.273.g43a17bfeac-goog
+The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
 
+  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.1-rc3
+
+for you to fetch changes up to 9ed88fcfb1b08c41bde0381dece84d152d53774c:
+
+  MAINTAINERS: Change myself to a maintainer (2022-10-28 16:50:14 +0200)
+
+----------------------------------------------------------------
+gpio: fixes for v6.1-rc3
+
+- convert gpio-tegra to using an immutable irqchip
+- MAINTAINERS update
+
+----------------------------------------------------------------
+Matti Vaittinen (1):
+      MAINTAINERS: Change myself to a maintainer
+
+Svyatoslav Ryhel (1):
+      gpio: tegra: Convert to immutable irq chip
+
+ MAINTAINERS               |  4 ++--
+ drivers/gpio/gpio-tegra.c | 60 ++++++++++++++++++++++++++++++++++-------------
+ 2 files changed, 46 insertions(+), 18 deletions(-)
