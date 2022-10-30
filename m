@@ -2,110 +2,102 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8EDC433FE
-	for <linux-gpio@archiver.kernel.org>; Sat, 29 Oct 2022 17:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3401CC38A02
+	for <linux-gpio@archiver.kernel.org>; Sun, 30 Oct 2022 04:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229441AbiJ2RqY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 29 Oct 2022 13:46:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39810 "EHLO
+        id S229743AbiJ3ElD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 30 Oct 2022 00:41:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiJ2RqX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 29 Oct 2022 13:46:23 -0400
-Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9766C4F692
-        for <linux-gpio@vger.kernel.org>; Sat, 29 Oct 2022 10:46:22 -0700 (PDT)
-Date:   Sat, 29 Oct 2022 17:46:08 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail3; t=1667065579; x=1667324779;
-        bh=NUwKkaw74u0IYn5eC8eCgD9RWGjApCJvdStDpxkOLHQ=;
-        h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-         Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-         Message-ID:BIMI-Selector;
-        b=Z1t/TXY/KuLEFLsFR06ZMkygQody6JyIRVvNtxwaZrfIOf0FhlzCIIjBj4pUo03Xi
-         Y/RfhcRAm2fYb9DoZtb99d0xelidxWlHCaCE+YNc9QWcpo69Fyx39kS6zaoFH62hbG
-         GHDzZHaITcsu7xi48o7O+9/nUdXzrDMVWCaq7NV2Y1BkW0eOWQlFVZrwZy1+glQqCl
-         NTK2ot377vVKhnFeX5GgHd2fN24k9/TcGj/iZT36zzWML1cheRVDZhEnEKkTBV5F04
-         WLlL697Js3NuGv4gReaR5v3FGwMZHzNfZ31D7IrXumQd/pVDXovlUK3xzEzkT8bRer
-         0YEbWLNVoeOfA==
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-From:   =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-gpio@vger.kernel.org, Kent Gibson <warthog618@gmail.com>,
-        =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
-        stratos-dev@op-lists.linaro.org,
-        Gerard Ryan <g.m0n3y.2503@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@gmail.com>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-        y86-dev <y86-dev@protonmail.com>
-Subject: Re: [PATCH V7 0/8] libgpiod: Add Rust bindings
-Message-ID: <LdOsM9sY9hpjTANe2LeBbwfLlVkyYJ_t_xde616G-VJegRUD_1nkndfgqaIdHadyiP-Ei0rjUzPYvJtUC1J_OwXEuKkdpakUMonYfKHQBgI=@protonmail.com>
-In-Reply-To: <20221025064239.6dazljljxlprhqus@vireshk-i7>
-References: <cover.1665744170.git.viresh.kumar@linaro.org> <CANiq72m_9RK7viLpaREMGiMLuWs9m1oy9N78ok1d7uzC+18zNg@mail.gmail.com> <F4hN01T_BkoMFY7LNhQlmQPrXGv3a2byhEuDLleJfpWlfF98Dopa2FPrl4JDEoER8y7bN41KMkmWqM50YAIBK0BowT_9skmLKY8gsqYEJBc=@protonmail.com> <20221021093911.vj5todjdfqptdy7d@vireshk-i7> <YsZTLXUUjsBT-SzPWsI4ppoDBT_lGn0yfhF2r-5wfqcYxxeWWcdL2yIUcMMBmMTB-TjVUZkSqpMsvWNKTcSwoun5wzT4bbPi-ijZXUt8HWM=@protonmail.com> <20221025064239.6dazljljxlprhqus@vireshk-i7>
-Feedback-ID: 27884398:user:proton
+        with ESMTP id S229742AbiJ3Ek7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Oct 2022 00:40:59 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A143F13E9A;
+        Sat, 29 Oct 2022 21:40:53 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id q1so8096274pgl.11;
+        Sat, 29 Oct 2022 21:40:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n5DCWOE96cYEzH6EecCbh3f/7PYy8DU5D8wpQ1RpsyU=;
+        b=IySmURz88rctW9YDMc+3u2/p1+WoDnyxJ3j5G9B9/SE4W8skp5pET1FkoCjfGPSQ+6
+         rYcCPtHLo5Z7J5LOeFozXftT8dD2W/stvU3T2ptN8BQVxwp2C5Yu9acYLlh5qztQjoTi
+         5dALitDl4y69Y+9JiI3bObMJ1mpY7jvvyqswTHD5eAX2bvqh6vhDkfVnr+XziPNSQbUV
+         KwcDLPT3yK6wWDh7ZjsAbd82jVv3q5xwhaY/KCs3w+COIJh3d6kU5BfW9aeiQmzluyD0
+         UPr8zJTI4ab9ZaTmkcNgRHcDJfuQtGWd71ANsYcsAiSHw7JhcZ+B0egOcE8AWS2k2HFD
+         7jZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n5DCWOE96cYEzH6EecCbh3f/7PYy8DU5D8wpQ1RpsyU=;
+        b=0b/DvNCA9JcEYj0pE0pqb8pWQC0U55iYXEpXsIOFjCxOVmDEG52O9LsYIWDtK5fajG
+         X4nkpSEH/5M8AfY4jF4BJwNQluCBPZshwu25sl9zlsBWgdMRzWJwGUSLTWhSFAyKlurc
+         JMqhGrbU2TUMhqh5leJCj08LLyfjrhWdzCbihbuYx+GNICCr8E9L1RNFhhhQQ22P4tCZ
+         OCtGceIgvGKTBo+MTV4WyABrhYQICL24AgWsRxO0Kk7EcYamt1GzlXRqFNGw40hwUAQf
+         v3wZDVHcOS9Kj93jX5AT73gf78iKZ9JPJBdgkrgXyfjjJfFy4y7Sk2Vpo668lDgf7HDX
+         46Aw==
+X-Gm-Message-State: ACrzQf35q3UWV6qgmGgaZ9gKbTjFBcL3OAXfhIeF6YkttzJzZk9dFA9v
+        Gw5Vnqozid5YT50RyNku0X8=
+X-Google-Smtp-Source: AMsMyM5aMVgHsv9YdrIf/ju6ox8TgMOBzXfRjq8N60ypxi4ZEGnx7RWPK43UjTQCeE/cP87P6k+TAQ==
+X-Received: by 2002:aa7:88c9:0:b0:56b:e851:5b67 with SMTP id k9-20020aa788c9000000b0056be8515b67mr7328688pff.78.1667104852964;
+        Sat, 29 Oct 2022 21:40:52 -0700 (PDT)
+Received: from dtor-ws.mtv.corp.google.com ([2620:15c:9d:2:a6ae:11ff:fe11:fcc3])
+        by smtp.gmail.com with ESMTPSA id l5-20020a170903120500b0018123556931sm2029632plh.204.2022.10.29.21.40.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Oct 2022 21:40:52 -0700 (PDT)
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] gpiolib: of: add polarity quirk for Freescale PCIe controller
+Date:   Sat, 29 Oct 2022 21:40:47 -0700
+Message-Id: <20221030044047.423859-2-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.38.1.273.g43a17bfeac-goog
+In-Reply-To: <20221030044047.423859-1-dmitry.torokhov@gmail.com>
+References: <20221030044047.423859-1-dmitry.torokhov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tuesday, October 25th, 2022 at 08:42, Viresh Kumar <viresh.kumar@linaro.=
-org> wrote:
+Bindings for Freescale PCIe controller use a separate property called
+"reset-gpio-active-high" to control polarity of its reset line, add it
+to the list of quirks in gpiolib so that gpiod API can be used in the
+driver.
 
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
 
-> On 21-10-22, 14:34, Bj=C3=B6rn Roy Baron wrote:
->=20
-> > > impl<'b> Event<'b> {
-> > >=20
-> > > /// Get an event stored in the buffer.
-> > > - pub(crate) fn new(buffer: &'b Buffer, index: usize) -> Result<Self>=
- {
-> > >=20
-> > > + pub(crate) fn new(buffer: &'b Buffer, index: usize) -> Result<Event=
-<'b>> {
-> >=20
-> > This looks good to me.
->=20
-> > > +impl<'e, 'b> Event<'e> {
-> > >=20
-> > > + pub fn event_clone(event: &Event<'b>) -> Result<Event<'e>>
-> > >=20
-> > > + where
-> > > + 'e: 'b,
-> >=20
-> > Using `Event<'b>` on both sides should work fine. `Event` is
-> > covariant in it's lifetime parameter, so `Event<'b>` can be turned
-> > into `Event<'e>` with `'e` being a shorter lifetime than `'b`. What
-> > you wrote here is not incorrect, so if you prefer keeping it this
-> > way that is fine with me.
->=20
->=20
-> That doesn't let the cloned event to live past read_edge_events().
->=20
-> error[E0502]: cannot borrow `buffer` as mutable because it is also borrow=
-ed as immutable
-> --> libgpiod/examples/gpio_events.rs:70:50
->=20
-> |
-> 64 | let event =3D buffer.event(0)?;
-> | --------------- immutable borrow occurs here
-> ...
-> 70 | let count =3D request.read_edge_events(&mut buffer)?;
-> | ^^^^^^^^^^^ mutable borrow occurs here
-> ...
-> 86 | }
-> | - immutable borrow might be used here, when `cloned_event` is dropped a=
-nd runs the `Drop` code for type `libgpiod::request::Event`
->=20
-> --
-> viresh
+v2: make it actually compile
 
-I would have expected that to work fine, but as it doesn't work keeping you=
-r code with two separate lifetimes is fine.
+ drivers/gpio/gpiolib-of.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Cheers,
-Bjorn
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 331744c75faf..206100d62db5 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -208,6 +208,15 @@ static void of_gpio_set_polarity_by_property(const struct device_node *np,
+ 		{ "fsl,imx8qm-fec",  "phy-reset-gpios", "phy-reset-active-high" },
+ 		{ "fsl,s32v234-fec", "phy-reset-gpios", "phy-reset-active-high" },
+ #endif
++#if IS_ENABLED(CONFIG_PCI_IMX6)
++		{ "fsl,imx6q-pcie",  "reset-gpio", "reset-gpio-active-high" },
++		{ "fsl,imx6sx-pcie", "reset-gpio", "reset-gpio-active-high" },
++		{ "fsl,imx6qp-pcie", "reset-gpio", "reset-gpio-active-high" },
++		{ "fsl,imx7d-pcie",  "reset-gpio", "reset-gpio-active-high" },
++		{ "fsl,imx8mq-pcie", "reset-gpio", "reset-gpio-active-high" },
++		{ "fsl,imx8mm-pcie", "reset-gpio", "reset-gpio-active-high" },
++		{ "fsl,imx8mp-pcie", "reset-gpio", "reset-gpio-active-high" },
++#endif
+ 
+ 		/*
+ 		 * The regulator GPIO handles are specified such that the
+-- 
+2.38.1.273.g43a17bfeac-goog
+
