@@ -2,87 +2,215 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 952D5C4332F
-	for <linux-gpio@archiver.kernel.org>; Wed,  2 Nov 2022 04:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEBBC433FE
+	for <linux-gpio@archiver.kernel.org>; Wed,  2 Nov 2022 08:58:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229436AbiKBEA4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 2 Nov 2022 00:00:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45630 "EHLO
+        id S230503AbiKBI6a (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 2 Nov 2022 04:58:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbiKBEAx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Nov 2022 00:00:53 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D79AE275C9
-        for <linux-gpio@vger.kernel.org>; Tue,  1 Nov 2022 21:00:52 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id z26so2175100pff.1
-        for <linux-gpio@vger.kernel.org>; Tue, 01 Nov 2022 21:00:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c/xn8GCuNPtzqzIP0fKQfVLGbGFp11OcImQCGfFohX0=;
-        b=cLsHozo/wyOeJFyvzuLqSQiNJCWM5PT7VAGkIuUHzIuYOtVU2A49zlayd+9P4jqakp
-         Vo7UPo5ISy+ivLCqKYfjdC7I7R/R5hDrOlFw4umLxXcHMwacECK2LfI9GIkTwXQUdVT1
-         cAg4QF28ZgG2QQ+O6wWWW5gItjDtvNcAyR/KqRfep5EEN6RVrsu4slXbF/n0CB5tctun
-         kXU4QI3U+UlPSedrS8UnoTKq7hmkQQv23IlBxFFWoh9FnemLROnPzAFa5FFO6cFmteOE
-         6rRmr/yz6yVaevjx1pb0jvalLocLzsqMki/SWa/wv7jJP5zDFNbomOT3KUU8jmazGAfh
-         iTCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c/xn8GCuNPtzqzIP0fKQfVLGbGFp11OcImQCGfFohX0=;
-        b=3nArUn2J1ykpmmHOQaw/gfYsDgJ3hbjT9RFKn07V9PKpbOuSa/g56ho2NVgzThrjQg
-         ImcClCpXzSq2O2GN5u7D5BYQUGq2zkjPkFmhlaoLIZ8cEo2AMTcG97KXzojwYrO0EhBb
-         OiMOdizRrEi64e5XX7dbeqXEpY5Fi0g2dqQzkxblJs9V6EELKTHS54VXNZ3YVIdYzn9n
-         eo+2qg4BagfDV+29KmTNZ5IbvoVzOZcbFyGv/BQ+x+rVuxm3nINkPvahw/AywLU2ePmI
-         yc91gkBuJOhQOLtCqTOQ+t/GcQpx5u7XJPKf//7AqiSeMNFIeC4xw9lZQke/PWNLG3H8
-         W4fQ==
-X-Gm-Message-State: ACrzQf0dwbc6QUYg0LoXoEbZjc8ggAiTv1AbsPpckZrLJeuddlpS/y3z
-        ICDr/YRDlpWhsFAsXOHNF44oHw==
-X-Google-Smtp-Source: AMsMyM742Va/Dt30lBVWWGVLhvLNKBTSCZclFW9W8xsinlgZIQseVPvLLdwAOY9ZEm8ms/qFcEhrDw==
-X-Received: by 2002:a65:6e0d:0:b0:42d:707c:94ee with SMTP id bd13-20020a656e0d000000b0042d707c94eemr19638872pgb.260.1667361652353;
-        Tue, 01 Nov 2022 21:00:52 -0700 (PDT)
-Received: from localhost ([122.172.84.80])
-        by smtp.gmail.com with ESMTPSA id n29-20020aa7985d000000b0056baca45977sm7264690pfq.21.2022.11.01.21.00.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Nov 2022 21:00:51 -0700 (PDT)
-Date:   Wed, 2 Nov 2022 09:30:49 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-        stratos-dev@op-lists.linaro.org,
-        Gerard Ryan <g.m0n3y.2503@gmail.com>
-Subject: Re: [PATCH V7 3/8] libgpiod: Add rust wrapper crate
-Message-ID: <20221102040049.64b3yll7itvi7vzw@vireshk-i7>
-References: <cover.1665744170.git.viresh.kumar@linaro.org>
- <6a94249d2d69bc5c1907fea9ed80c9d7e34278aa.1665744170.git.viresh.kumar@linaro.org>
- <Y01RvbboC3dMDVSy@sol>
- <20221021112238.teqz25pn3hz5d4cs@vireshk-i7>
- <Y1KTCWiGdUxkQ6Al@sol>
- <CAMRc=MdWce2Msjwjyo3ny9LyUsA8Zeq_WhhJ2=ar5CG1BPmhtg@mail.gmail.com>
- <Y1/AtfEhuijx1+tK@sol>
+        with ESMTP id S230372AbiKBI6R (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Nov 2022 04:58:17 -0400
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7B9FD27FDC;
+        Wed,  2 Nov 2022 01:58:15 -0700 (PDT)
+Received: from loongson.cn (unknown [10.180.13.64])
+        by gateway (Coremail) with SMTP id _____8Cxq9gmMWJjp_gDAA--.13811S3;
+        Wed, 02 Nov 2022 16:58:14 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.180.13.64])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8BxtuMeMWJjkssJAA--.29815S3;
+        Wed, 02 Nov 2022 16:58:13 +0800 (CST)
+From:   Yinbo Zhu <zhuyinbo@loongson.cn>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        zhanghongchen <zhanghongchen@loongson.cn>,
+        Yinbo Zhu <zhuyinbo@loongson.cn>
+Subject: [PATCH v6 2/2] dt-bindings: pinctrl: add loongson-2 pinctrl
+Date:   Wed,  2 Nov 2022 16:58:00 +0800
+Message-Id: <20221102085800.28910-2-zhuyinbo@loongson.cn>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20221102085800.28910-1-zhuyinbo@loongson.cn>
+References: <20221102085800.28910-1-zhuyinbo@loongson.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y1/AtfEhuijx1+tK@sol>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8BxtuMeMWJjkssJAA--.29815S3
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoWxXF47tFy8Kr4fJF43AFW8JFb_yoW5uw4UpF
+        43C3sxGr1IqF4xX398Ga40v3W3Gan7AF9rCasFv34jqr4Dta4vyay5Krn0q3yDCF47JFW5
+        WFyrury2qF1UCr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        b7AFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487
+        Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
+        IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJVW8JwAC
+        jcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I
+        0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
+        GVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI
+        0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0
+        rVWUJVWUCwCI42IY6I8E87Iv67AKxVWxJVW8Jr1lIxAIcVC2z280aVCY1x0267AKxVW8JV
+        W8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1wZ2DUUUUU==
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 31-10-22, 20:33, Kent Gibson wrote:
-> Wrt the Rust bindings, I was assuming that either Viresh would provide
-> support, or as his work appears to be on behalf of Linaro that they
-> would have an interest in maintaining it.
+Add the Loongson-2 pinctrl binding with DT schema format using
+json-schema.
 
-I will surely help in maintaining the Rust part. Not an issue.
+Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+---
+ .../pinctrl/loongson,ls2k-pinctrl.yaml        | 125 ++++++++++++++++++
+ MAINTAINERS                                   |   1 +
+ 2 files changed, 126 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml
 
+diff --git a/Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml
+new file mode 100644
+index 000000000000..34683a4856ad
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml
+@@ -0,0 +1,125 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/loongson,ls2k-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Loongson-2 SoC Pinctrl Controller
++
++maintainers:
++  - zhanghongchen <zhanghongchen@loongson.cn>
++  - Yinbo Zhu <zhuyinbo@loongson.cn>
++
++allOf:
++  - $ref: pinctrl.yaml#
++
++properties:
++  compatible:
++    const: loongson,ls2k-pinctrl
++
++  reg:
++    maxItems: 1
++
++patternProperties:
++  '-pins$':
++    type: object
++
++    additionalProperties: false
++
++    patternProperties:
++      'pinmux$':
++        type: object
++        description: node for pinctrl.
++        $ref: pinmux-node.yaml#
++
++        unevaluatedProperties: false
++
++        properties:
++          groups:
++            description:
++              One or more groups of pins to mux to a certain function
++            items:
++              enum: [gpio, sdio, can1, can0, pwm3, pwm2, pwm1, pwm0, i2c1, i2c0,
++                     nand, sata_led, lio, i2s, hda, uart2, uart1, camera, dv01,
++                     dvo0]
++          function:
++            description:
++              The function that a group of pins is muxed to
++            enum: [gpio, sdio, can1, can0, pwm3, pwm2, pwm1, pwm0, i2c1, i2c0,
++                   nand, sata_led, lio, i2s, hda, uart2, uart1, camera, dv01,
++                   dvo0]
++
++        required:
++          - groups
++          - function
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    pctrl: pinctrl@1fe00420 {
++        compatible = "loongson,ls2k-pinctrl";
++        reg = <0x1fe00420 0x18>;
++        sdio_pins_default: sdio-pins {
++            sdio-pinmux {
++                groups = "sdio";
++                function = "sdio";
++            };
++
++            sdio-det-pinmux {
++                groups = "pwm2";
++                function = "gpio";
++            };
++        };
++
++        pwm1_pins_default: pwm1-pins {
++            pinmux {
++                groups = "pwm1";
++                function = "pwm1";
++            };
++        };
++
++        pwm0_pins_default: pwm0-pins {
++            pinmux {
++                groups = "pwm0";
++                function = "pwm0";
++            };
++        };
++
++        i2c1_pins_default: i2c1-pins {
++            pinmux {
++                groups = "i2c1";
++                function = "i2c1";
++            };
++        };
++
++        i2c0_pins_default: i2c0-pins {
++            pinmux {
++                groups = "i2c0";
++                function = "i2c0";
++            };
++        };
++
++        nand_pins_default: nand-pins {
++            pinmux {
++                groups = "nand";
++                function = "nand";
++            };
++        };
++
++        hda_pins_default: hda-pins {
++            grp0-pinmux {
++                groups = "hda";
++                function = "hda";
++            };
++
++            grp1-pinmux {
++                groups = "i2s";
++                function = "gpio";
++            };
++        };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f75464dadaaa..c9dc5ddbd9fe 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12038,6 +12038,7 @@ M:	zhanghongchen <zhanghongchen@loongson.cn>
+ M:	Yinbo Zhu <zhuyinbo@loongson.cn>
+ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml
+ F:	drivers/pinctrl/pinctrl-loongson2.c
+ 
+ LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
 -- 
-viresh
+2.31.1
+
