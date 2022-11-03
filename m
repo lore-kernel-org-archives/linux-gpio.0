@@ -2,188 +2,382 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D2BC3A5A3
-	for <linux-gpio@archiver.kernel.org>; Thu,  3 Nov 2022 17:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA08DC4332F
+	for <linux-gpio@archiver.kernel.org>; Thu,  3 Nov 2022 18:08:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231792AbiKCRqQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 3 Nov 2022 13:46:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53546 "EHLO
+        id S230231AbiKCSIu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 3 Nov 2022 14:08:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231616AbiKCRp4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Nov 2022 13:45:56 -0400
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2041.outbound.protection.outlook.com [40.107.102.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F05F1AF22;
-        Thu,  3 Nov 2022 10:45:55 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eHP6M7NnR8lWAjzw4wN32kuoda64YH851ke5FqKyTMp7xZKMDHhlt9WrDmvdtg0mNIyjRnS+OWcen9V/fYLcyl8SWksWkljBjI8Cv2bQH7uGz6gnuzOWdav4jfJEsT3w5oJJ0W2RYRYrp62jX7j4E/kyRt0xaa48DfC3Hlcrx2Zlamcxep4k6rukSCHl7GISZKE8WqfCXPPL7cYHKx8ZWwEDcylXFzGwudpnATtad0+7G0fcjoZ8R/BIClAq07TVUlq5O98itrFz9E1SUaWSHaUxkxFrDD0gGYv1chzcfuqTT7l4MH0lroqEXV2Q3W0gsaUeFTOKV9P3AdIHvaXR/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3Jcl42L3FloEax58T988/vqZBnqDNnqpkHemK2a54Yo=;
- b=dwcrdOaPsJPVM53nfAAgbYppVE6MFV18AUaUQmHs/DC3M84hnaEsb5N73I+m8ArEwLYfkMASx9gAIikDaq5B1xlDmcNbCr2zvq4OxYHUSp+7qZAjUyAn07YpSI/Q7ITjDGebURSFk3VZjhChMyJMJFmxP2ktHTrcgV+5tznVwe1/kB2C+MV3ra56ViaewBDqtGJBk1Py4eE36fwru6Hu6SVDikB0RiXgzgDrCmI+UZ/BcF89WzP3kiZBuIVPdo1DeJ9iZDPfHLF+2PsRCVyz9fYfaIoEvSl6wKRsHuKPBuPSUjMJYUlJrvNPUVB6S28En0VWDYnoNrCNNz1C2yX5dg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Jcl42L3FloEax58T988/vqZBnqDNnqpkHemK2a54Yo=;
- b=ZjMlipZ1tFcjPC5o8C6QQp3aUVFDoRzn7GNjSqKPEAiO+oVKMpc1aI9NzTbXTHea9CK5mm3rOzALvHQhADIgQc7FMMbXooPuBVYnHL/qYqMyESd/2otW2ax5xxG3eCO42BuytJQx16mkReeSQPjJqp358kXD7dJ8sxlj5/9QyPHUIv63eRfZix6m78jh9VT/ePo3WH9941hEZyCTzLDFZDxN5fWq7RQXYU/oT7BpEAGrw1jZ4WB5086Syun6gGIumkdi1EUrWkth0k3BvE4zl0QqiOd1Zvq7sdbMAnJyJ82egFjAJ6tTO2LEXU/TMEydUoZHODgPpBCL24idyWvfZQ==
-Received: from BN8PR12CA0035.namprd12.prod.outlook.com (2603:10b6:408:60::48)
- by BL1PR12MB5994.namprd12.prod.outlook.com (2603:10b6:208:39a::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.20; Thu, 3 Nov
- 2022 17:45:53 +0000
-Received: from BN8NAM11FT033.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:60:cafe::80) by BN8PR12CA0035.outlook.office365.com
- (2603:10b6:408:60::48) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.22 via Frontend
- Transport; Thu, 3 Nov 2022 17:45:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- BN8NAM11FT033.mail.protection.outlook.com (10.13.177.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5791.20 via Frontend Transport; Thu, 3 Nov 2022 17:45:53 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Thu, 3 Nov 2022
- 10:45:36 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Thu, 3 Nov 2022 10:45:36 -0700
-Received: from dipenp.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.986.29 via Frontend
- Transport; Thu, 3 Nov 2022 10:45:36 -0700
-From:   Dipen Patel <dipenp@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linus.walleij@linaro.org>,
-        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <robh+dt@kernel.org>
-CC:     Dipen Patel <dipenp@nvidia.com>
-Subject: [PATCH 6/7] arm64: tegra: Enable GTE nodes
-Date:   Thu, 3 Nov 2022 10:45:22 -0700
-Message-ID: <20221103174523.29592-7-dipenp@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20221103174523.29592-1-dipenp@nvidia.com>
-References: <20221103174523.29592-1-dipenp@nvidia.com>
-X-NVConfidentiality: public
+        with ESMTP id S230233AbiKCSI3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Nov 2022 14:08:29 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F7ACF58;
+        Thu,  3 Nov 2022 11:06:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1667498803; x=1699034803;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=tb/bsJQ7ZOSsfUsJM4qE4cXo/y1Pld0tApVWQ4QgeSs=;
+  b=Sgo3a836bmxi/NN3kanYMRWksFf7EAutUPDjYdqxrrHTlhQevUBm65ma
+   YfUVcXc3P6XEax0p28xFRCuE/u7zfqlIP9hPBQmq+sfcvZwEWar7IqdGN
+   hLfr0LLbQD+4v3MPFOgHUwdrVL90beQxgjmotkpzxb6+hiGrPoFJQTWLd
+   6cDkObIqZitvHhB5Wqh98pc+7W1vm77GEh9C1JK2hGt3cikjNPg0J78kn
+   EgaeWj89W/ZsJaRr0x/yRjgXXZFzxnkzvgg7A8ovvM6kr+OJejkmBXL6W
+   7yDKX7i0jH3nbnYopqMZEK/gvm6YJJHDjI8iNmGzLRxtQI6CCMXIFVh0h
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10520"; a="293085576"
+X-IronPort-AV: E=Sophos;i="5.96,134,1665471600"; 
+   d="scan'208";a="293085576"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2022 11:06:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10520"; a="637272787"
+X-IronPort-AV: E=Sophos;i="5.96,134,1665471600"; 
+   d="scan'208";a="637272787"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 03 Nov 2022 11:06:25 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 63D93F7; Thu,  3 Nov 2022 20:06:48 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [rft, PATCH v2 1/1] gpiolib: Get rid of not used of_node member
+Date:   Thu,  3 Nov 2022 20:06:43 +0200
+Message-Id: <20221103180643.79352-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT033:EE_|BL1PR12MB5994:EE_
-X-MS-Office365-Filtering-Correlation-Id: e794a843-7ffd-477b-4937-08dabdc34101
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: RXWrQ1P7mCNXg6SFGP0IecPmUmUPz7afCgT6tVNvuAYOUYFe6Z8zG4VTFMSXkxqx/x9HVjkqUFKpG/H+jpgl0kk0UzIRYnNivJNumlgEHgX931PGQrDPQ/NbdQ1uPGNaUbfwJS93WMWi3JtqMmniaUmhxDRNHIc/yz/ZRSZT2JIARVewmzyhXAWjJv7ZweATvr9TNQk4kH+MlpKubMRJBgeBK80X7HpPtyDfh50CSoa2EBxwjQfym/P7RJdvAvsLOHhDRjLctYwGA2pdIDBlebYmniuuDlLt/ysMTsteEZhlzMS1+LLlv7bwhh0owNsqJ9/2GVERbz3YCBn5gqT3IzSY/4wGlWvXKfjmtEEt7yefZdMj8Q5rfy9PWKsO9tk4oECBygSNiphUEsADhdsL5H1+hE7rQA/QCssj8q/AJF2EqQtPj9T+Hd2n4iQpGC3FnmJnzFzNyeMdxHzxshWsVyd6c3cOYlR5Yk+eo9HvilOaWzy+utDhEpqeqha1XaFir0b4ZaGQ4ow11hgbpLLLU8Z8Sx2/vX/rcH0E5+oFUp+mrBo+UmNM9Pmi3+1WMoFzd/59x2KBxIuQVNL1rYydlweJcXqyE3UctLHUaGDpo1D/jIdXvKF+q5Iw/VdV2J4O7LriIZU/Yiq88BJSqE0bIlcblbIQkIu++QWjmIQFOQqNSdO+AtPlWV4LEePXuw3VxckP12Ekfgsctd2uvuw95Ovt12WfUquBNd1aqDSFpkfknMhfcwhAG/ZHmcR/fCjpYaIthqWWjZ6pWULrLbt7dAOvxHfYBIp3ES5oUyO4Z5I=
-X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(136003)(346002)(39860400002)(396003)(451199015)(46966006)(40470700004)(36840700001)(6666004)(107886003)(316002)(110136005)(70206006)(7696005)(70586007)(8676002)(4326008)(478600001)(5660300002)(40460700003)(336012)(41300700001)(8936002)(426003)(36756003)(26005)(83380400001)(2616005)(36860700001)(186003)(82740400003)(47076005)(7636003)(356005)(82310400005)(1076003)(2906002)(40480700001)(86362001)(2101003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2022 17:45:53.1191
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e794a843-7ffd-477b-4937-08dabdc34101
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT033.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5994
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add and enable AON and LIC GTE nodes by default.
+All new drivers should use fwnode and / or parent to provide the
+necessary information to the GPIO library.
 
-Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 20 ++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 20 ++++++++++++++++++++
- 2 files changed, 40 insertions(+)
+v2: resent against latest Linux Next: expected not to fail now
+    (Linux Next has no more users of of_node member of gpio_chip)
+v1: to test for now (using CIs and build bots) what is left uncoverted
+    (Expected to fail in some configurations!)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 41f3a7e188d0..67927d97956e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -1366,6 +1366,16 @@
- 			status = "disabled";
- 		};
+ drivers/gpio/gpiolib-acpi.c | 10 -------
+ drivers/gpio/gpiolib-acpi.h |  4 ---
+ drivers/gpio/gpiolib-of.c   | 60 ++++++++++++++-----------------------
+ drivers/gpio/gpiolib-of.h   |  5 ----
+ drivers/gpio/gpiolib.c      | 15 +---------
+ include/linux/gpio/driver.h |  7 -----
+ 6 files changed, 24 insertions(+), 77 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 064ba5150fd4..251e76b3a1f5 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -1363,16 +1363,6 @@ void acpi_gpiochip_remove(struct gpio_chip *chip)
+ 	kfree(acpi_gpio);
+ }
  
-+                hte_lic: hardware-timestamp@3aa0000 {
-+                        compatible = "nvidia,tegra194-gte-lic";
-+                        reg = <0x3aa0000 0x10000>;
-+                        interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+                        nvidia,int-threshold = <1>;
-+                        nvidia,slices = <11>;
-+                        #timestamp-cells = <1>;
-+                        status = "okay";
-+                };
-+
- 		hsp_top0: hsp@3c00000 {
- 			compatible = "nvidia,tegra194-hsp";
- 			reg = <0x03c00000 0xa0000>;
-@@ -1579,6 +1589,16 @@
- 			#mbox-cells = <2>;
- 		};
+-void acpi_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev)
+-{
+-	/* Set default fwnode to parent's one if present */
+-	if (gc->parent)
+-		ACPI_COMPANION_SET(&gdev->dev, ACPI_COMPANION(gc->parent));
+-
+-	if (gc->fwnode)
+-		device_set_node(&gdev->dev, gc->fwnode);
+-}
+-
+ static int acpi_gpio_package_count(const union acpi_object *obj)
+ {
+ 	const union acpi_object *element = obj->package.elements;
+diff --git a/drivers/gpio/gpiolib-acpi.h b/drivers/gpio/gpiolib-acpi.h
+index 01e0cb480a00..be26751b7b69 100644
+--- a/drivers/gpio/gpiolib-acpi.h
++++ b/drivers/gpio/gpiolib-acpi.h
+@@ -50,8 +50,6 @@ struct acpi_gpio_info {
+ void acpi_gpiochip_add(struct gpio_chip *chip);
+ void acpi_gpiochip_remove(struct gpio_chip *chip);
  
-+                hte_aon: hardware-timestamp@c1e0000 {
-+                        compatible = "nvidia,tegra194-gte-aon";
-+                        reg = <0xc1e0000 0x10000>;
-+                        interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+                        nvidia,int-threshold = <1>;
-+                        nvidia,slices = <3>;
-+                        #timestamp-cells = <1>;
-+                        status = "okay";
-+                };
-+
- 		gen2_i2c: i2c@c240000 {
- 			compatible = "nvidia,tegra194-i2c";
- 			reg = <0x0c240000 0x10000>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 0170bfa8a467..fecf9ab1bf17 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -949,6 +949,16 @@
- 			clock-names = "fuse";
- 		};
+-void acpi_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev);
+-
+ void acpi_gpiochip_request_interrupts(struct gpio_chip *chip);
+ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip);
  
-+                hte_lic: hardware-timestamp@3aa0000 {
-+                        compatible = "nvidia,tegra234-gte-lic";
-+                        reg = <0x3aa0000 0x10000>;
-+                        interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+                        nvidia,int-threshold = <1>;
-+                        nvidia,slices = <17>;
-+                        #timestamp-cells = <1>;
-+                        status = "okay";
-+                };
-+
- 		hsp_top0: hsp@3c00000 {
- 			compatible = "nvidia,tegra234-hsp", "nvidia,tegra194-hsp";
- 			reg = <0x03c00000 0xa0000>;
-@@ -1466,6 +1476,16 @@
- 			#mbox-cells = <2>;
- 		};
+@@ -74,8 +72,6 @@ int acpi_gpio_count(struct device *dev, const char *con_id);
+ static inline void acpi_gpiochip_add(struct gpio_chip *chip) { }
+ static inline void acpi_gpiochip_remove(struct gpio_chip *chip) { }
  
-+                hte_aon: hardware-timestamp@c1e0000 {
-+                        compatible = "nvidia,tegra234-gte-aon";
-+                        reg = <0xc1e0000 0x10000>;
-+                        interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+                        nvidia,int-threshold = <1>;
-+                        nvidia,slices = <3>;
-+                        #timestamp-cells = <1>;
-+                        status = "okay";
-+                };
+-static inline void acpi_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev) { }
+-
+ static inline void
+ acpi_gpiochip_request_interrupts(struct gpio_chip *chip) { }
+ 
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 52616848a37c..f6a07a5b0fa0 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -85,7 +85,7 @@ static int of_gpiochip_match_node_and_xlate(struct gpio_chip *chip, void *data)
+ {
+ 	struct of_phandle_args *gpiospec = data;
+ 
+-	return chip->gpiodev->dev.of_node == gpiospec->np &&
++	return device_match_of_node(&chip->gpiodev->dev, gpiospec->np) &&
+ 				chip->of_xlate &&
+ 				chip->of_xlate(chip, gpiospec, NULL) >= 0;
+ }
+@@ -122,9 +122,8 @@ static struct gpio_desc *of_xlate_and_get_gpiod_flags(struct gpio_chip *chip,
+ bool of_gpio_need_valid_mask(const struct gpio_chip *gc)
+ {
+ 	int size;
+-	const struct device_node *np = gc->of_node;
+ 
+-	size = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
++	size = fwnode_property_count_u32(gc->fwnode, "gpio-reserved-ranges");
+ 	if (size > 0 && size % 2 == 0)
+ 		return true;
+ 	return false;
+@@ -662,7 +661,7 @@ static struct gpio_desc *of_parse_own_gpio(struct device_node *np,
+ 					   unsigned long *lflags,
+ 					   enum gpiod_flags *dflags)
+ {
+-	struct device_node *chip_np;
++	struct device_node *chip_np = to_of_node(chip->fwnode);
+ 	enum of_gpio_flags xlate_flags;
+ 	struct of_phandle_args gpiospec;
+ 	struct gpio_desc *desc;
+@@ -670,7 +669,6 @@ static struct gpio_desc *of_parse_own_gpio(struct device_node *np,
+ 	u32 tmp;
+ 	int ret;
+ 
+-	chip_np = chip->of_node;
+ 	if (!chip_np)
+ 		return ERR_PTR(-EINVAL);
+ 
+@@ -759,16 +757,18 @@ static int of_gpiochip_add_hog(struct gpio_chip *chip, struct device_node *hog)
+  */
+ static int of_gpiochip_scan_gpios(struct gpio_chip *chip)
+ {
+-	struct device_node *np;
++	struct fwnode_handle *child;
+ 	int ret;
+ 
+-	for_each_available_child_of_node(chip->of_node, np) {
+-		if (!of_property_read_bool(np, "gpio-hog"))
++	fwnode_for_each_available_child_node(chip->fwnode, child) {
++		struct device_node *np = to_of_node(child);
 +
- 		gen2_i2c: i2c@c240000 {
- 			compatible = "nvidia,tegra194-i2c";
- 			reg = <0xc240000 0x100>;
++		if (!fwnode_property_read_bool(child, "gpio-hog"))
+ 			continue;
+ 
+ 		ret = of_gpiochip_add_hog(chip, np);
+ 		if (ret < 0) {
+-			of_node_put(np);
++			fwnode_handle_put(child);
+ 			return ret;
+ 		}
+ 
+@@ -920,14 +920,15 @@ int of_mm_gpiochip_add_data(struct device_node *np,
+ 			    struct of_mm_gpio_chip *mm_gc,
+ 			    void *data)
+ {
++	struct fwnode_handle *fwnode = of_fwnode_handle(np);
+ 	int ret = -ENOMEM;
+ 	struct gpio_chip *gc = &mm_gc->gc;
+ 
+-	gc->label = kasprintf(GFP_KERNEL, "%pOF", np);
++	gc->label = kasprintf(GFP_KERNEL, "%pfw", fwnode);
+ 	if (!gc->label)
+ 		goto err0;
+ 
+-	mm_gc->regs = of_iomap(np, 0);
++	mm_gc->regs = fwnode_iomap(fwnode, 0);
+ 	if (!mm_gc->regs)
+ 		goto err1;
+ 
+@@ -936,8 +937,8 @@ int of_mm_gpiochip_add_data(struct device_node *np,
+ 	if (mm_gc->save_regs)
+ 		mm_gc->save_regs(mm_gc);
+ 
+-	of_node_put(mm_gc->gc.of_node);
+-	mm_gc->gc.of_node = of_node_get(np);
++	fwnode_handle_put(mm_gc->gc.fwnode);
++	mm_gc->gc.fwnode = fwnode_handle_get(fwnode);
+ 
+ 	ret = gpiochip_add_data(gc, data);
+ 	if (ret)
+@@ -945,12 +946,12 @@ int of_mm_gpiochip_add_data(struct device_node *np,
+ 
+ 	return 0;
+ err2:
+-	of_node_put(np);
++	fwnode_handle_put(fwnode);
+ 	iounmap(mm_gc->regs);
+ err1:
+ 	kfree(gc->label);
+ err0:
+-	pr_err("%pOF: GPIO chip registration failed with status %d\n", np, ret);
++	pr_err("%pfw: GPIO chip registration failed with status %d\n", fwnode, ret);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(of_mm_gpiochip_add_data);
+@@ -974,9 +975,9 @@ EXPORT_SYMBOL_GPL(of_mm_gpiochip_remove);
+ 
+ static void of_gpiochip_init_valid_mask(struct gpio_chip *chip)
+ {
++	struct device_node *np = to_of_node(chip->fwnode);
+ 	int len, i;
+ 	u32 start, count;
+-	struct device_node *np = chip->of_node;
+ 
+ 	len = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
+ 	if (len < 0 || len % 2 != 0)
+@@ -997,7 +998,7 @@ static void of_gpiochip_init_valid_mask(struct gpio_chip *chip)
+ #ifdef CONFIG_PINCTRL
+ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ {
+-	struct device_node *np = chip->of_node;
++	struct device_node *np = to_of_node(chip->fwnode);
+ 	struct of_phandle_args pinspec;
+ 	struct pinctrl_dev *pctldev;
+ 	int index = 0, ret;
+@@ -1087,9 +1088,10 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip) { return 0; }
+ 
+ int of_gpiochip_add(struct gpio_chip *chip)
+ {
++	struct device_node *np = to_of_node(chip->fwnode);
+ 	int ret;
+ 
+-	if (!chip->of_node)
++	if (!np)
+ 		return 0;
+ 
+ 	if (!chip->of_xlate) {
+@@ -1106,32 +1108,16 @@ int of_gpiochip_add(struct gpio_chip *chip)
+ 	if (ret)
+ 		return ret;
+ 
+-	of_node_get(chip->of_node);
++	fwnode_handle_get(chip->fwnode);
+ 
+ 	ret = of_gpiochip_scan_gpios(chip);
+ 	if (ret)
+-		of_node_put(chip->of_node);
++		fwnode_handle_put(chip->fwnode);
+ 
+ 	return ret;
+ }
+ 
+ void of_gpiochip_remove(struct gpio_chip *chip)
+ {
+-	of_node_put(chip->of_node);
+-}
+-
+-void of_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev)
+-{
+-	/* Set default OF node to parent's one if present */
+-	if (gc->parent)
+-		gdev->dev.of_node = gc->parent->of_node;
+-
+-	if (gc->fwnode)
+-		gc->of_node = to_of_node(gc->fwnode);
+-
+-	/* If the gpiochip has an assigned OF node this takes precedence */
+-	if (gc->of_node)
+-		gdev->dev.of_node = gc->of_node;
+-	else
+-		gc->of_node = gdev->dev.of_node;
++	fwnode_handle_put(chip->fwnode);
+ }
+diff --git a/drivers/gpio/gpiolib-of.h b/drivers/gpio/gpiolib-of.h
+index 1b5df39a952e..34415be0ac61 100644
+--- a/drivers/gpio/gpiolib-of.h
++++ b/drivers/gpio/gpiolib-of.h
+@@ -24,7 +24,6 @@ int of_gpiochip_add(struct gpio_chip *gc);
+ void of_gpiochip_remove(struct gpio_chip *gc);
+ int of_gpio_get_count(struct device *dev, const char *con_id);
+ bool of_gpio_need_valid_mask(const struct gpio_chip *gc);
+-void of_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev);
+ #else
+ static inline struct gpio_desc *of_find_gpio(struct device *dev,
+ 					     const char *con_id,
+@@ -43,10 +42,6 @@ static inline bool of_gpio_need_valid_mask(const struct gpio_chip *gc)
+ {
+ 	return false;
+ }
+-static inline void of_gpio_dev_init(struct gpio_chip *gc,
+-				    struct gpio_device *gdev)
+-{
+-}
+ #endif /* CONFIG_OF_GPIO */
+ 
+ extern struct notifier_block gpio_of_notifier;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e8faedca6b14..be3240b805b4 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -594,7 +594,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 			       struct lock_class_key *lock_key,
+ 			       struct lock_class_key *request_key)
+ {
+-	struct fwnode_handle *fwnode = NULL;
+ 	struct gpio_device *gdev;
+ 	unsigned long flags;
+ 	int base = gc->base;
+@@ -602,11 +601,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 	int ret = 0;
+ 	u32 ngpios;
+ 
+-	if (gc->fwnode)
+-		fwnode = gc->fwnode;
+-	else if (gc->parent)
+-		fwnode = dev_fwnode(gc->parent);
+-
+ 	/*
+ 	 * First: allocate and populate the internal stat container, and
+ 	 * set up the struct device.
+@@ -619,14 +613,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 	gdev->chip = gc;
+ 	gc->gpiodev = gdev;
+ 
+-	of_gpio_dev_init(gc, gdev);
+-	acpi_gpio_dev_init(gc, gdev);
+-
+-	/*
+-	 * Assign fwnode depending on the result of the previous calls,
+-	 * if none of them succeed, assign it to the parent's one.
+-	 */
+-	gdev->dev.fwnode = dev_fwnode(&gdev->dev) ?: fwnode;
++	device_set_node(&gdev->dev, gc->fwnode ?: dev_fwnode(gc->parent));
+ 
+ 	gdev->id = ida_alloc(&gpio_ida, GFP_KERNEL);
+ 	if (gdev->id < 0) {
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 2a44600b01f7..ee382712f066 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -503,13 +503,6 @@ struct gpio_chip {
+ 	 * the device tree automatically may have an OF translation
+ 	 */
+ 
+-	/**
+-	 * @of_node:
+-	 *
+-	 * Pointer to a device tree node representing this GPIO controller.
+-	 */
+-	struct device_node *of_node;
+-
+ 	/**
+ 	 * @of_gpio_n_cells:
+ 	 *
+
+base-commit: 81214a573d19ae2fa5b528286ba23cd1cb17feec
 -- 
-2.17.1
+2.35.1
 
