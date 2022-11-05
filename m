@@ -2,49 +2,38 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A759C43219
-	for <linux-gpio@archiver.kernel.org>; Sat,  5 Nov 2022 14:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B675CC433FE
+	for <linux-gpio@archiver.kernel.org>; Sat,  5 Nov 2022 15:06:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229639AbiKEOwT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 5 Nov 2022 10:52:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47470 "EHLO
+        id S229894AbiKEPG1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 5 Nov 2022 11:06:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbiKEOwT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Nov 2022 10:52:19 -0400
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54DD8FAFC;
-        Sat,  5 Nov 2022 07:52:18 -0700 (PDT)
-Received: by mail-ot1-f52.google.com with SMTP id a7-20020a056830008700b0066c82848060so4045305oto.4;
-        Sat, 05 Nov 2022 07:52:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DoovjTJROPf6fM2d6KbXfBg+AzBsvogq3b4O78GD5fc=;
-        b=k4Oq2EREibB3tNVPklG5Agk3fkwFW3u2cp/H9pGI9GLu5qo5fzTgWtfbYp49NYZzRI
-         mIVh8OMlTMuoUrgOjr+2dfsRPcb5ZlSxtM6DxYZjijWOfXvekiZ0nDt18gLUg+60ZOMd
-         oW8FoZQLpB3oFVlK9JXXNLSiDN8msKt/L6ULIBJxS8mn5nybvBGpL7rHh2Kzq3uzMmAP
-         mjHaFNcR7YzDOXYzEtXQlmJcYUUn3iyxSJv053Ba4RVRs/WXgGQFnTvMGrzqo7/qD20A
-         x17g2rs2cIcVuVDd76GJoLHhkExGbCT8kvoNG5EyzvJP3a13Xk/qMW/YQ+aKzZzk0P64
-         pjOg==
-X-Gm-Message-State: ACrzQf19yORFaTA2jpTmVwOe/rIQqiuoCigfKXWU+qe3ckFO4+BXivEp
-        p0h+by0P2Nrh4SX9AQYfIdHDs8ytoA==
-X-Google-Smtp-Source: AMsMyM7ctCunns3BMIghObU2ApaO5yOV/1suuvtsTcyoWTfq/xmUWqLoqyUTo48J6DKebXvozOisyw==
-X-Received: by 2002:a9d:4b85:0:b0:66c:9226:75b0 with SMTP id k5-20020a9d4b85000000b0066c922675b0mr3999606otf.365.1667659937513;
-        Sat, 05 Nov 2022 07:52:17 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id y77-20020a4a4550000000b0049e9a4b2dd4sm655355ooa.30.2022.11.05.07.52.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Nov 2022 07:52:16 -0700 (PDT)
-Received: (nullmailer pid 27960 invoked by uid 1000);
-        Sat, 05 Nov 2022 14:52:16 -0000
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S229962AbiKEPGL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Nov 2022 11:06:11 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 791692CC9C;
+        Sat,  5 Nov 2022 08:04:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=public-files.de;
+        s=s31663417; t=1667660667;
+        bh=9HRqnYYikNNPoD5ufxUfY6iw/kgmW0wRUIiv/To2cDw=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=pEdIySWYG/wUQainNcS2k3z5zM++LsIUvl5hkt4NpHiScpg9yGT0Tqgp100kaNMqs
+         68Y9WQ6/6dx4iBAY0eIsV//aYuAFR+WLDdozM7UVZtVCYUPGd42sNQjCnenzWUuzGs
+         I4bzU2AHjp1ltYD9AtQzD1n5B+PuHVSWUZxJPEgjlvtcRfMD2oPm1tlu5U15ftwVMB
+         ZNecmkSGPbzrgWrVSSt+QxV2G3fZgzrOwrx85ASGxWCABdRcUJ+UxksOryimFgkcuv
+         122uHSMYPI8UrVs8Y2w2r5aNlnj62tQ+BkbmIbpPh1D3Sp57OD9qn4U4McE2dKgmYh
+         d0gI5IccBFnzQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [217.61.159.50] ([217.61.159.50]) by web-mail.gmx.net
+ (3c-app-gmx-bap26.server.lan [172.19.172.96]) (via HTTP); Sat, 5 Nov 2022
+ 16:04:27 +0100
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Frank Wunderlich <linux@fw-web.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+Message-ID: <trinity-93c64b9b-8363-406b-aa0b-07e6802ec84b-1667660667233@3c-app-gmx-bap26>
+From:   Frank Wunderlich <frank-w@public-files.de>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Frank Wunderlich <linux@fw-web.de>,
+        Rob Herring <robh+dt@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
@@ -52,68 +41,72 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Sam Shih <sam.shih@mediatek.com>, devicetree@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         linux-mediatek@lists.infradead.org,
-        Sean Wang <sean.wang@kernel.org>,
-        Frank Wunderlich <frank-w@public-files.de>
-In-Reply-To: <20221105092500.12145-1-linux@fw-web.de>
+        Sean Wang <sean.wang@kernel.org>
+Subject: Aw: Re: [PATCH v3] dt-bindings: pinctrl: update uart/mmc bindings
+ for MT7986 SoC
+Content-Type: text/plain; charset=UTF-8
+Date:   Sat, 5 Nov 2022 16:04:27 +0100
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <166765939212.4158869.5881767839110614067.robh@kernel.org>
 References: <20221105092500.12145-1-linux@fw-web.de>
-Message-Id: <166765939212.4158869.5881767839110614067.robh@kernel.org>
-Subject: Re: [PATCH v3] dt-bindings: pinctrl: update uart/mmc bindings for MT7986 SoC
-Date:   Sat, 05 Nov 2022 09:52:16 -0500
+ <166765939212.4158869.5881767839110614067.robh@kernel.org>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:9i6nkkBvk3T5O3ufr7r4jiF+bmV1GKMrD01K5YQwqSEMvYaep/nf7+b+ZBktNGIFNaSWT
+ k4rUG7O3gBAshWE1PcW0hdTJ7LRDYBKZDZaz5wOt4UjmCkNbnvtz8EkzGXxzCCAOBkzesai2NKAu
+ kNwp5DEvI5JvXLsFZH2gMf6n6ZOA1vjRqAxv87RvdxDDBQQGj/man4mEqksVg3YiJle8dlen6A95
+ NxBNsn4c3stFzaaZboDEJgNXZVZD3zkqyG0g/XIkzyrNvGJQB2/8rMtCrxZlcy1BfsvAszn6fYdS
+ aI=
+UI-OutboundReport: notjunk:1;M01:P0:3XgvP+Ek2cQ=;urkMPgTvJPxr4uarHrkP6J2gErj
+ YjTDX6vZGD3PnvOBHnh1i7g21qceKgOr87hkr4xw8nv66qdF7x3O81XCNP/ov1KyBHDNHYVgs
+ rCGX/iSGWEfZy/+1tIXLtIfOrlodzD6odIqaXO2n0uLaqrJ0VTn5IEsvVkFmt14D43JQVzDmz
+ 7KEmiB8gIW4P+Icj2GXZJCRHVp6p1DwjHZfnAS9mk2qjEYmI7YsWxnyDiPgt0/gjFYJlVayeZ
+ QZOey+xl4kb98Wm+YHZ03wnBxWMxrbLK7XG8r7iNWUmhQL2y5buj0Hezp7BthKUaXK2AX53z2
+ XiEQgE7Emp1fPhpRmMs1gnVSr7DKy+Wq/EaMu6A59ylSi0S9Aitj0jaFjT+hvnk/j04+c6XRY
+ 0+Enkk79ppwW3DsP/Wk/1fbAzRep2XB7B24wb54LwzwvPvMzH/dydigXEi1gLE8UVD7V3Z336
+ k6ANT+s0hMBfmd5xa2CTPOYRl1cxYGT9Q5f9d8fg8iXzi56HdEJ4vQw86ImL9wPx6WrvweEL3
+ i+Lg0gGR5VSxVNpmwc1TsSXfNV/SgoQgLeN++vM3VzppJWM9MR0pM8fBGXTpm+jIyEVY1/TjP
+ TZKqQ1EqOTthP3me5UXPUB0aTJy7aA5mJnvFTZ9hQWcsRQ5ptc6JOT/RKueh5tm8bRFe8q9ZZ
+ juCDjMRm3yl2VIdAdGDz04aPYqWjdyKsoH0JpZkFe6Qns0+iHlJfjNzE3mWnXuNq/7VkZ9MfL
+ y785P36gtS+UFgj/BZVnoJl6PeqIPN289mmwFdC17LaLipTD4XjrgUHawvYXktxWZuTeSSGPi
+ R9TWw0xuc8+oiYWsq9CueiT5vX4mlbDRYiSpmiIIM1fE4=
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Hi
+> Gesendet: Samstag, 05. November 2022 um 15:52 Uhr
+> Von: "Rob Herring" <robh@kernel.org>
 
-On Sat, 05 Nov 2022 10:25:00 +0100, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> Some pinmux pins of the mt7986 pinctrl driver is composed of multiple
-> pinctrl groups, the original binding only allows one pinctrl group
-> per dts node, this patch sets "maxItems" for these groups and add new
-> examples to the binding documentation.
-> 
-> Fixes: 65916a1ca90a ("dt-bindings: pinctrl: update bindings for MT7986 SoC")
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
-> sorry, messed up email-list, so resend it
-> 
-> v3:
-> - squashed version from sam
-> - v2 was ack'd by Krzysztof, but sams patch included updated emmc-names
->   and different structure for uart to allow 2 pingroups
-> v2:
-> - wrap on col 80
-> ---
->  .../pinctrl/mediatek,mt7986-pinctrl.yaml      | 46 +++++++++++++++++--
->  1 file changed, 41 insertions(+), 5 deletions(-)
-> 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> My bot found errors running 'make DT_CHECKER_FLAGS=3D-m dt_binding_check=
+'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>
+> yamllint warnings/errors:
+>
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/=
+pinctrl/mediatek,mt7986-pinctrl.example.dtb: pinctrl@1001f000: pcie-pins:m=
+ux:groups: ['pcie_clk', 'pcie_wake', 'pcie_pereset'] is too long
+> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/device=
+tree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/=
+pinctrl/mediatek,mt7986-pinctrl.example.dtb: pinctrl@1001f000: pwm-pins:mu=
+x:groups: ['pwm0', 'pwm1_0'] is too long
+> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/device=
+tree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/=
+pinctrl/mediatek,mt7986-pinctrl.example.dtb: pinctrl@1001f000: spi0-pins:m=
+ux:groups: ['spi0', 'spi0_wp_hold'] is too long
+> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/device=
+tree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
 
-yamllint warnings/errors:
+these are handled by this Patch, sorry to not mention the depency
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dtb: pinctrl@1001f000: pcie-pins:mux:groups: ['pcie_clk', 'pcie_wake', 'pcie_pereset'] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dtb: pinctrl@1001f000: pwm-pins:mux:groups: ['pwm0', 'pwm1_0'] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dtb: pinctrl@1001f000: spi0-pins:mux:groups: ['spi0', 'spi0_wp_hold'] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
+https://patchwork.kernel.org/project/linux-mediatek/patch/20221024074349.7=
+777-1-linux@fw-web.de/
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+regards Frank
