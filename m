@@ -2,99 +2,125 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F54C4332F
-	for <linux-gpio@archiver.kernel.org>; Sat,  5 Nov 2022 15:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E68D8C433FE
+	for <linux-gpio@archiver.kernel.org>; Sat,  5 Nov 2022 18:59:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229772AbiKEPHO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 5 Nov 2022 11:07:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51072 "EHLO
+        id S229788AbiKES7a (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 5 Nov 2022 14:59:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230092AbiKEPGr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Nov 2022 11:06:47 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3365011178;
-        Sat,  5 Nov 2022 08:06:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=public-files.de;
-        s=s31663417; t=1667660774;
-        bh=n1U3A9SAcBnA+C+iil55xu82QnWztEgrMkdDHc+35tA=;
+        with ESMTP id S229888AbiKES72 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Nov 2022 14:59:28 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C43AF2BE9;
+        Sat,  5 Nov 2022 11:59:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
+        t=1667674760; bh=p9YDZV3SVh65N5p5g+sDDmYbRp27o4nub0l5+Ua3VKI=;
         h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=AjCMWVh0BIFUTqmoQfp7lRLnuGtkKG69KMZkOGi9fmas2hbXnIymztQPqPKniCPzu
-         tc2FVPvr/68tXcVuU1en+xXydkBQC3IfJxo/ytMqAOVXc25SResmhgcWpAmkUSkGkm
-         D4e8aFu/WhkrXmkYEemMASD+4GxcpL5FukzfNQNlIy4O5ae3LfPHmpR203ZQn1bJwn
-         jw5qCDUn1xD7EZRiNTJIfxnag8EYx6w2HaZe9YPj/VF88rzTXQzI9gcVNYM79rZ7/h
-         zUBL9Pik+cV0IhVhf2n/IlKNx9Sxh8kzZ3I/iqVXDIbNBhuofLmQvBB1xVL7vt1vdV
-         yt6PPDhP7RF0g==
+        b=J3PoKDvhApuEyAoHR4cjNCvmbpvk2J/OZ40T+2RY1HFR429dXWIEeyNkwPA7EK9tp
+         mHU1yaiirfCRgKcCOZWd9VPPFo5Xcot1DA7vG7NJ3ISPpmksfeMUA4tBQmsie+MGkk
+         Lc/KX+d9f2EvBnqHiDKyacD4JjvHjf+om+tB8sHQCOLgjibvnDjo24iAQTgKmoJdx/
+         vm2lFk8Wx+d0+D8s7bEfZa9l9t8rFmWKzL35jOOTXLd89PMCb36IJdOUBjv+LVBISV
+         xQXAhYJJTI3xeLrCQKju0d+a+VtIxCimbzhcElA3qDTOtuKnap5NDn7bqFV1FJgK61
+         lWYQ86eYKEn7Q==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [217.61.159.50] ([217.61.159.50]) by web-mail.gmx.net
- (3c-app-gmx-bap26.server.lan [172.19.172.96]) (via HTTP); Sat, 5 Nov 2022
- 16:06:14 +0100
-MIME-Version: 1.0
-Message-ID: <trinity-c732b826-2a12-4ab1-aaac-294ac5524926-1667660774779@3c-app-gmx-bap26>
-From:   Frank Wunderlich <frank-w@public-files.de>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Frank Wunderlich <linux@fw-web.de>,
-        Sam Shih <sam.shih@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+Received: from probook ([87.78.44.193]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MdvmY-1pOnvi0Akw-00b1X1; Sat, 05
+ Nov 2022 19:59:20 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-spi@vger.kernel.org, openbmc@lists.ozlabs.org
+Cc:     Lee Jones <lee@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Sean Wang <sean.wang@kernel.org>
-Subject: Aw: Re: [PATCH v1 1/4] dt-bindings: pinctrl: mt7986: add generic
- bias-pull* support
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH 1/8] pinctrl: nuvoton: wpcm450: Refactor MFSEL setting code
+Date:   Sat,  5 Nov 2022 19:59:04 +0100
+Message-Id: <20221105185911.1547847-2-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20221105185911.1547847-1-j.neuschaefer@gmx.net>
+References: <20221105185911.1547847-1-j.neuschaefer@gmx.net>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date:   Sat, 5 Nov 2022 16:06:14 +0100
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <166765939131.4158830.8416727494529058690.robh@kernel.org>
-References: <20221105084905.9596-1-linux@fw-web.de>
- <20221105084905.9596-2-linux@fw-web.de>
- <166765939131.4158830.8416727494529058690.robh@kernel.org>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:9fTNNmdoC3U9t0q8xm2Ug5ZFFo0grHUmepRZAGw1MhDCqtX3M18QKeJzzXFiiiVS2S7Sk
- p67mKHnlzgsUM/uJUQBVYBQn5OhVPZTC2IqFecBXUgxb6RE+Jj6lyMYNbtJMhldk9gpL6yHpniMY
- VsuQ6C0lDgXc3lMsbhGv0IlXQ7OkxAVPSfhFNEVhtbFr3XZXr6h2BeIctzkG9bep5oCibVGgh0K+
- 7o+KUzsAIzonlCzBkDPpZ7+nfbJOyA11CTZ91uls6ez/UMc/GiTf8vNc7HgVg1J1bW5EpgBjgzSR
- Io=
-UI-OutboundReport: notjunk:1;M01:P0:ORwYdXrEkx8=;MkTnBmktZGm97zo4Cz1MuB1zExv
- QhXrJdLb/BuaVK+mKmyYmCSgq3xOJkrP9Qptx5qoVZFX6q2I1mkvtw/htlcv317gxC3JZWhTQ
- X5S1QXttGe0LNVlSfVDHTrn9PN+jLBUVwM4d3wnn5ECjmkJB76Of/za+ui5sm1PcLfchAlJNT
- NUp7uDkufGaqfKJXFZ055qYWjxCLv+rpmhWT78jHtWH0uaVnQcaN5Ek/mBkgEZ7pd77cgqe9Z
- tC0WIzbj8E7RNBo1wPJNCmZ1yml8ZWeVS5QsFPMoU34TPJOWHZk1RS8khjqJ2VCn0JWUbWhVi
- nkf+x8ZqDAxg9N2fFY7h/2x1+TBGvZX6kMsRKSb5n2P5D4fPuYnP2gZyGvEQZBcGIwbK4Y9Eg
- sOwolvOy2hD9h1hUoG9oC7h9lMZnoAn+YskxjZRRFHV8391r/MRbJWrobpF7rwXMRnGuUnL65
- ckalYf6Z833ZAhmx+hOKI8IOUzz+kTwG2B2WM+Taa4vZo5Fk6ITHb+o3vuOH0rAGPJSNQkw+R
- vB/yMeX6etXqlzkdApp8T1ysEIiaSHREwBP1yASDr/BC25hoeReWYWD9tNjdD+o/40/V4fq4T
- BPYGZm6liRW785dNUZxncP3AF0gQO+IPBHvH+FH0D2wQBBGKMhpLiEiTPAPolfNjW1EwjC1ln
- 6hHo3SYaTpn9rJ9Ud6VzmTAqImuJ15BtWxFZXaOdEaTTv9PuYyTOjIzgG97ifW8Yrm2NO2weS
- AQI24fiL0z8B2xgW6QP+eGZBlDowMk8GxQvL7hAebLUwK7pX5IF/B70BwIT/ApoaNDHOEqWAX
- Lur/xERm4fs4gmswIg2UjYoTzK7iLILjtL62W1YNbDazM=
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:O8qPZWuqzhHITt3VaDtMUqy6A+mhRlAcyIBz33LYKVUSnA0k061
+ eiFGOgB4CIqGiB4MazQ7WXcCbS1g20BwUtujxoGnrLpKrecE+6hwRCpKQxXXuhRCCp3sOYY
+ nqIdtLBweaYTKm6UE9Jf9NoSM+QGGXPgF5vmgLLQ+ZuzzQLEAORevw6Xn4ObjtbY0lErAJ3
+ kPuVjeMlnaVb3lso+lFaw==
+UI-OutboundReport: notjunk:1;M01:P0:/kSkirQ6yIk=;ZbO3NPnwS5AqaGY/XtD5IpIPc0R
+ tsuV8YWbMT4oFeb12DQe+y8AEpJqAGYPMHZNzCxovoY+9lPOV4geaYtEaarPft+Rpn4h73Kt1
+ 4Ii3uESLo/r6W3EB9eQZNYFmFH3ASH/wW4a1g7i3/1aUrJLHnOXA9jCgzixyL1k2maPOTuApy
+ d5WH3XI+wV+a18ZDvcGVqEBZdobunWXOS3hbxC3cAhHFwDgMRaOTwDvnMfDu8tfC88T1uQOPW
+ u1uNFbUfMvNWWIam+MMaDk+0D9rNuGkNba/AloMkcsGrV+YP9xTkV6pf8do61VeqFiN/VQCTj
+ QXNO0naRHjUJ/e7zPbww4iPsAxdjckURvF0adISGLt5x4x9p3KUhO3VKv6FiidNMve1PCaCB7
+ RLRJtTRIjEDqVHPxXJ2ipN77mT/aYWfWgBO84sGVNzqr8OcA5KIfxS7rBJufgfbTY/EFJ5ARq
+ Y7gH/0XoAK4kDrvQUCVV53n6U3ImswM8bZs0fm9EjNI9I4cSE4ag9heIXa9pHxVdwTecCyh6t
+ 2XKDkLhtBqTLNas0jmYBC3ZHZSzPoypOsaEETecyUDLliHJS3zmUkIJhqbEkXl7Msb1GjliWy
+ mPqM+Iy/RAKkAZPruz/oLXa6OHvDRaTQwlqLm6QzQHTSkTGRRTsewwhjjokjQqSz5upr1xxRL
+ tpdXcUY8akmfmCNAn+7GVVeopF91ZupfWX7M7hz5fbAzKU5jK64+lbgwnm4fD3jaFeE4KHeic
+ O+t7FeRscFNtsZWnqnr3PwQiwgUFm+0bc1rMUs9y7PwdMcU8sy97p1T3spZ9s7r1Tskg2L8pF
+ vEabcZjtF8HBfeA8DAOw4ALOsKh+BzagWb/OBx5byi+WFMMO9WdsJXTVn+7cHocetKPsHRNDB
+ BjuqsQ5P66YBH8ntab0bZpGl0kyfTcAYo+Mkuq6MLt5dxw+LuwcFTOPda42/Pacr1WdZMr/Z0
+ fJI7DRAxgxV779NC7sMwEnCl+5A=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi
+In preparation for the next patch, which makes the logic around
+setting/resetting bits in MFSEL a little more complicated, move that
+code to a new function
 
-> Gesendet: Samstag, 05. November 2022 um 15:52 Uhr
-> Von: "Rob Herring" <robh@kernel.org>
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ drivers/pinctrl/nuvoton/pinctrl-wpcm450.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-> yamllint warnings/errors:
->
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/=
-pinctrl/mediatek,mt7986-pinctrl.example.dtb: pinctrl@1001f000: mmc0-pins:m=
-ux:groups:0: 'emmc_51' is not one of ['emmc', 'emmc_rst']
-> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/device=
-tree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
+diff --git a/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c b/drivers/pinctrl/n=
+uvoton/pinctrl-wpcm450.c
+index 211ad32cc0d8f..49b2177af17b2 100644
+=2D-- a/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
++++ b/drivers/pinctrl/nuvoton/pinctrl-wpcm450.c
+@@ -800,6 +800,14 @@ static const struct pinctrl_pin_desc wpcm450_pins[] =
+=3D {
+ 	WPCM450_PIN(124), WPCM450_PIN(125), WPCM450_PIN(126), WPCM450_PIN(127),
+ };
 
-this is already solved by this Patch:
++/* Helper function to update MFSEL field according to the selected functi=
+on */
++static void wpcm450_update_mfsel(struct regmap *gcr_regmap, int reg, int =
+bit, int fn, int fn_selected)
++{
++	bool value =3D (fn =3D=3D fn_selected);
++
++	regmap_update_bits(gcr_regmap, reg, BIT(bit), value ? BIT(bit) : 0);
++}
++
+ /* Enable mode in pin group */
+ static void wpcm450_setfunc(struct regmap *gcr_regmap, const unsigned int=
+ *pin,
+ 			    int npins, int func)
+@@ -811,13 +819,11 @@ static void wpcm450_setfunc(struct regmap *gcr_regma=
+p, const unsigned int *pin,
+ 		cfg =3D &pincfg[pin[i]];
+ 		if (func =3D=3D fn_gpio || cfg->fn0 =3D=3D func || cfg->fn1 =3D=3D func=
+) {
+ 			if (cfg->reg0)
+-				regmap_update_bits(gcr_regmap, cfg->reg0,
+-						   BIT(cfg->bit0),
+-						   (cfg->fn0 =3D=3D func) ?  BIT(cfg->bit0) : 0);
++				wpcm450_update_mfsel(gcr_regmap, cfg->reg0,
++						     cfg->bit0, cfg->fn0, func);
+ 			if (cfg->reg1)
+-				regmap_update_bits(gcr_regmap, cfg->reg1,
+-						   BIT(cfg->bit1),
+-						   (cfg->fn1 =3D=3D func) ?  BIT(cfg->bit1) : 0);
++				wpcm450_update_mfsel(gcr_regmap, cfg->reg1,
++						     cfg->bit1, cfg->fn1, func);
+ 		}
+ 	}
+ }
+=2D-
+2.35.1
 
-https://patchwork.kernel.org/project/linux-mediatek/patch/20221105092500.1=
-2145-1-linux@fw-web.de/
-
-i decided to send a v3 or if instead of including it into this series
-
-regards Frank
