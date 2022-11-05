@@ -2,50 +2,51 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7926AC433FE
-	for <linux-gpio@archiver.kernel.org>; Sat,  5 Nov 2022 09:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC7FC433FE
+	for <linux-gpio@archiver.kernel.org>; Sat,  5 Nov 2022 09:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbiKEJEH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 5 Nov 2022 05:04:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49464 "EHLO
+        id S229540AbiKEJZQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 5 Nov 2022 05:25:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbiKEJEH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Nov 2022 05:04:07 -0400
-Received: from mxout3.routing.net (mxout3.routing.net [IPv6:2a03:2900:1:a::8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE4AD1F9C7;
-        Sat,  5 Nov 2022 02:04:05 -0700 (PDT)
+        with ESMTP id S229453AbiKEJZP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Nov 2022 05:25:15 -0400
+Received: from mxout1.routing.net (mxout1.routing.net [IPv6:2a03:2900:1:a::a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE012D1D2;
+        Sat,  5 Nov 2022 02:25:14 -0700 (PDT)
 Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
-        by mxout3.routing.net (Postfix) with ESMTP id 6AE6F604CC;
-        Sat,  5 Nov 2022 09:04:04 +0000 (UTC)
+        by mxout1.routing.net (Postfix) with ESMTP id 0559C3FF4C;
+        Sat,  5 Nov 2022 09:25:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-        s=20200217; t=1667639044;
+        s=20200217; t=1667640313;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding;
-        bh=tro3szDJlWgVsZyFublVkVtfBEGp54Hr61ecPAwf2UU=;
-        b=AwGhp1o7D+xhVDW7hM8g6httpx//aJuAElPaQH7UHP3BwqrlKXGC2uPVG0QakX34kQrZ1g
-        4NFdx7SlTMVCXfnFffFD5wMhOB1RvMY/aVAmyvQkbT24Clv/wCnJgOx+BC6OnFbO68tJcp
-        twtK6VXg5Tj7ppvMtAj1E0SkuKv7yoU=
+        bh=uo/Ed4Y8qzNEfRX3DlUQeK2B620x/akI0gmr6lmZoIk=;
+        b=tJRiiCW4T8C535oIw7XEGzfdHkLOJEeBTBHNc+7v+rRh5FxfmBDPtnXVa7z59fwFQBURQZ
+        ep58WRxghVtLoG4LCiNVASVMlGQbGrd9Mpi/NL8k4HpJFg2EDWi/BSatEf/GY+WThn7TT8
+        qTMvIA3EGswSmHvvGkerktD/Ddf3dCA=
 Received: from frank-G5.. (fttx-pool-217.61.159.50.bambit.de [217.61.159.50])
-        by mxbox2.masterlogin.de (Postfix) with ESMTPSA id 7DCC6100786;
-        Sat,  5 Nov 2022 09:04:03 +0000 (UTC)
+        by mxbox2.masterlogin.de (Postfix) with ESMTPSA id EEEBC1003E5;
+        Sat,  5 Nov 2022 09:25:11 +0000 (UTC)
 From:   Frank Wunderlich <linux@fw-web.de>
-To:     "linux-mediatek @ lists . infradead . org Linus Walleij" 
-        <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+To:     linux-mediatek@lists.infradead.org
+Cc:     Frank Wunderlich <frank-w@public-files.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Sean Wang <sean.wang@kernel.org>,
         Sam Shih <sam.shih@mediatek.com>, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Cc:     Frank Wunderlich <frank-w@public-files.de>
 Subject: [PATCH v3] dt-bindings: pinctrl: update uart/mmc bindings for MT7986 SoC
-Date:   Sat,  5 Nov 2022 10:03:58 +0100
-Message-Id: <20221105090359.11249-1-linux@fw-web.de>
+Date:   Sat,  5 Nov 2022 10:25:00 +0100
+Message-Id: <20221105092500.12145-1-linux@fw-web.de>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: c763ee95-2626-41c2-8a50-bcf2deb0d352
+X-Mail-ID: 19b8833f-3e9d-48d4-bf07-755f1bc822c7
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -61,6 +62,8 @@ Fixes: 65916a1ca90a ("dt-bindings: pinctrl: update bindings for MT7986 SoC")
 Signed-off-by: Sam Shih <sam.shih@mediatek.com>
 Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 ---
+sorry, messed up email-list, so resend it
+
 v3:
 - squashed version from sam
 - v2 was ack'd by Krzysztof, but sams patch included updated emmc-names
