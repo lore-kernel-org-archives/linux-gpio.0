@@ -2,78 +2,104 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21AFBC4332F
-	for <linux-gpio@archiver.kernel.org>; Sat,  5 Nov 2022 11:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA202C4332F
+	for <linux-gpio@archiver.kernel.org>; Sat,  5 Nov 2022 14:52:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229469AbiKELyB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 5 Nov 2022 07:54:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60366 "EHLO
+        id S229581AbiKEOwT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 5 Nov 2022 10:52:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiKELyA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Nov 2022 07:54:00 -0400
-X-Greylist: delayed 1819 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 05 Nov 2022 04:53:59 PDT
-Received: from pott.psjt.org (pott.psjt.org [46.38.234.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 353DF2AE13
-        for <linux-gpio@vger.kernel.org>; Sat,  5 Nov 2022 04:53:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=psjt.org;
-        s=psjt01; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-        Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=mpDcZc01pZViMYSVMkHvzduLdn1V2GWusqkCdYjkBbo=; b=Af5bUYSRjl9dUlJ77/pupcerL2
-        z0NkB3MMpjy5+JViE9sZKMROmaLna2i1uuNtNMnsZJ1yaok2CCgrHBOgWwxAajKPsjYuZp1yBnYUq
-        Ww93pt9ssenpingMlhQUjiFAFNpDlCQVGFKpSU1yaDv75Fx/QajFQIz0IPI5jo2N8fhGs3KLkitk9
-        mdG9B1e+j9p4TV/hmRCXnPwbjY/VYWkmPCs1KHHX0//qk6kEHJvdUKcunEN2/Yu4v69g2662iapdx
-        R7Q9hzKdN48bUUAXNbZNSMgDQxwf0EU9Uk70fVyMNG0ymLpGPUZMgmQKezXSNllNoabQaVmendtJg
-        TI2gdvgg==;
-Received: from [10.1.1.3] (helo=malachite.psjt.org)
-        by pott.psjt.org with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.96)
-        (envelope-from <stephan@psjt.org>)
-        id 1orHGz-0004jD-2t
-        for linux-gpio@vger.kernel.org;
-        Sat, 05 Nov 2022 12:23:37 +0100
-Received: from blaulicht.dmz.brux ([10.1.1.10])
-        by malachite.psjt.org with esmtp (Exim 4.96)
-        (envelope-from <stephan@psjt.org>)
-        id 1orHGz-0005LQ-1l;
-        Sat, 05 Nov 2022 12:23:37 +0100
-Received: from stephan by blaulicht.dmz.brux with local (Exim 4.96)
-        (envelope-from <stephan@psjt.org>)
-        id 1orHGz-0001SM-1h;
-        Sat, 05 Nov 2022 12:23:37 +0100
-From:   =?utf-8?Q?Stephan_B=C3=B6ttcher?= <linux@psjt.org>
-To:     linux-gpio@vger.kernel.org
-Subject: Question: switching alternate pin functions in bcm2835
-Date:   Sat, 05 Nov 2022 12:23:37 +0100
-Message-ID: <s6n8rkpably.fsf@psjt.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.1.91 (gnu/linux)
+        with ESMTP id S229453AbiKEOwS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Nov 2022 10:52:18 -0400
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84A60FAF8;
+        Sat,  5 Nov 2022 07:52:16 -0700 (PDT)
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-13bef14ea06so8454995fac.3;
+        Sat, 05 Nov 2022 07:52:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PcwwgX98pioZqmpF7IpPJDYkENxYcijXYjHPqyIhZNk=;
+        b=nr64UzSq6N9gHeBgs0HzkwVtYzRdu53HgbULVNodQ7xJkKeS+yS/KlzNAxZSpEcavl
+         1oL26fkfI0ySRiJPs7tJAHcxfeQxoW7dwIsL55ijDwZsTTd1I0ekqDXfC+n+S3gFl/F1
+         HOKn7SHouALr72EVLKeMj7Eyuoim9P1ua96TGeN7JUyN2EZvZR9Qe1EvOvC6INpHLgYI
+         WJM6Gmc6Fhlw7LvRIpx2m4yugSKXJ8yuiywektZs2ScGM6QVWKZvauEY64atEhgUOP7n
+         lftmTr8VVI4kDNf7tWso1//vMx6VkT6lJhwrXn9yVWOa0W+oUt5QwBDckVtFBtPxWTbl
+         aIpQ==
+X-Gm-Message-State: ANoB5pk6kDDtZaNuYc6pjihbVb0wMlJ2PxC8YNaiZbXVUdHBRYuBLSeO
+        M0rXJ3MHQ+WOHi6yG5NUEg==
+X-Google-Smtp-Source: AMsMyM4kYNdfuRTk0occtw+rgiRZ+CP73DXZYUn56GnB9f+gvwg8Zo+icy0yvtW6pg+iyM+ep7Dv3Q==
+X-Received: by 2002:a05:6870:82a4:b0:140:78f6:c954 with SMTP id q36-20020a05687082a400b0014078f6c954mr4581995oae.16.1667659935742;
+        Sat, 05 Nov 2022 07:52:15 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id d9-20020a4a3c09000000b0049bd96ec131sm677216ooa.8.2022.11.05.07.52.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Nov 2022 07:52:14 -0700 (PDT)
+Received: (nullmailer pid 27957 invoked by uid 1000);
+        Sat, 05 Nov 2022 14:52:16 -0000
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From:   Rob Herring <robh@kernel.org>
+To:     Frank Wunderlich <linux@fw-web.de>
+Cc:     Sam Shih <sam.shih@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Sean Wang <sean.wang@kernel.org>
+In-Reply-To: <20221105084905.9596-2-linux@fw-web.de>
+References: <20221105084905.9596-1-linux@fw-web.de>
+ <20221105084905.9596-2-linux@fw-web.de>
+Message-Id: <166765939131.4158830.8416727494529058690.robh@kernel.org>
+Subject: Re: [PATCH v1 1/4] dt-bindings: pinctrl: mt7986: add generic
+ bias-pull* support
+Date:   Sat, 05 Nov 2022 09:52:16 -0500
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 
-Moin,
+On Sat, 05 Nov 2022 09:49:02 +0100, Frank Wunderlich wrote:
+> From: Sam Shih <sam.shih@mediatek.com>
+> 
+> Since the bias-pull-{up,down} attribute already defines in pinctrl driver
+> of mediatek MT7986 SoC, this patch updates bindings to support mediatek
+> common bias-pull* function.
+> 
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> ---
+>  .../pinctrl/mediatek,mt7986-pinctrl.yaml      | 50 +++++++++++++++++--
+>  1 file changed, 47 insertions(+), 3 deletions(-)
+> 
 
-is it appropriate to ask user questions here?=20
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-On a Raspberry Pi 2B, I connected the UART pins among others to an
-ATtiny =C2=B5C to use avrdude in linuxgpio bit-banging mode to flash the
-program, and then use the same pins to talk to the ATtiny via
-/dev/ttyAMA0.  After a reboot I can use the serial port.  After using
-gpio on those pins, the serial link does not receive anything.  There
-are not errors opening, writing, or reading /dev/ttyAMA0.  Just no
-answer.
+yamllint warnings/errors:
 
-Is there a way (sysfs, ioclt, =E2=80=A6) to reconnect the pins to the UART
-without a reboot?
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.example.dtb: pinctrl@1001f000: mmc0-pins:mux:groups:0: 'emmc_51' is not one of ['emmc', 'emmc_rst']
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
 
-Thanks!
+doc reference errors (make refcheckdocs):
 
-Gru=C3=9F,
---=20
-Stephan
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
