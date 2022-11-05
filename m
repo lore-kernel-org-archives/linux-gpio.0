@@ -2,182 +2,168 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CAA5C4321E
-	for <linux-gpio@archiver.kernel.org>; Sat,  5 Nov 2022 08:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7926AC433FE
+	for <linux-gpio@archiver.kernel.org>; Sat,  5 Nov 2022 09:04:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbiKEItX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 5 Nov 2022 04:49:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46050 "EHLO
+        id S229567AbiKEJEH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 5 Nov 2022 05:04:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbiKEItU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Nov 2022 04:49:20 -0400
-Received: from mxout1.routing.net (mxout1.routing.net [IPv6:2a03:2900:1:a::a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4713722528;
-        Sat,  5 Nov 2022 01:49:19 -0700 (PDT)
+        with ESMTP id S229477AbiKEJEH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Nov 2022 05:04:07 -0400
+Received: from mxout3.routing.net (mxout3.routing.net [IPv6:2a03:2900:1:a::8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE4AD1F9C7;
+        Sat,  5 Nov 2022 02:04:05 -0700 (PDT)
 Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
-        by mxout1.routing.net (Postfix) with ESMTP id A65CD404A4;
-        Sat,  5 Nov 2022 08:49:17 +0000 (UTC)
+        by mxout3.routing.net (Postfix) with ESMTP id 6AE6F604CC;
+        Sat,  5 Nov 2022 09:04:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-        s=20200217; t=1667638157;
+        s=20200217; t=1667639044;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=c4sTT60tFhvVvkdJlkoRnV4vJdcHfpYoypJr9bb49Ng=;
-        b=uB5uF+fp+BWBhaMoKGyQrauu4MLKANm5B4Gxe/tb+nSXMCYPOOgp++gsa8n/+bzFh4aAiS
-        Uj4KqYuEURdeStfqi84Juki3ralRPdNd14TCizdSw0ZeuUakAnuK9Zrjch8jF0ayGG2Dsb
-        c8z0zjCLvtb9OUNsowEGU0tZZ+oyvyg=
+         content-transfer-encoding:content-transfer-encoding;
+        bh=tro3szDJlWgVsZyFublVkVtfBEGp54Hr61ecPAwf2UU=;
+        b=AwGhp1o7D+xhVDW7hM8g6httpx//aJuAElPaQH7UHP3BwqrlKXGC2uPVG0QakX34kQrZ1g
+        4NFdx7SlTMVCXfnFffFD5wMhOB1RvMY/aVAmyvQkbT24Clv/wCnJgOx+BC6OnFbO68tJcp
+        twtK6VXg5Tj7ppvMtAj1E0SkuKv7yoU=
 Received: from frank-G5.. (fttx-pool-217.61.159.50.bambit.de [217.61.159.50])
-        by mxbox2.masterlogin.de (Postfix) with ESMTPSA id DFCF31003E5;
-        Sat,  5 Nov 2022 08:49:16 +0000 (UTC)
+        by mxbox2.masterlogin.de (Postfix) with ESMTPSA id 7DCC6100786;
+        Sat,  5 Nov 2022 09:04:03 +0000 (UTC)
 From:   Frank Wunderlich <linux@fw-web.de>
-To:     linux-mediatek@lists.infradead.org
-Cc:     Frank Wunderlich <frank-w@public-files.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     "linux-mediatek @ lists . infradead . org Linus Walleij" 
+        <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Sean Wang <sean.wang@kernel.org>,
         Sam Shih <sam.shih@mediatek.com>, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/4] pinctrl: mediatek: extend pinctrl-moore to support new bias functions
-Date:   Sat,  5 Nov 2022 09:49:04 +0100
-Message-Id: <20221105084905.9596-4-linux@fw-web.de>
+Cc:     Frank Wunderlich <frank-w@public-files.de>
+Subject: [PATCH v3] dt-bindings: pinctrl: update uart/mmc bindings for MT7986 SoC
+Date:   Sat,  5 Nov 2022 10:03:58 +0100
+Message-Id: <20221105090359.11249-1-linux@fw-web.de>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221105084905.9596-1-linux@fw-web.de>
-References: <20221105084905.9596-1-linux@fw-web.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: b190883d-adf2-466d-9969-b5cbfa553c64
+X-Mail-ID: c763ee95-2626-41c2-8a50-bcf2deb0d352
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Sam Shih <sam.shih@mediatek.com>
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Commit fb34a9ae383a ("pinctrl: mediatek: support rsel feature")
-introduced SoC specify 'pull_type' attribute to mtk_pinconf_bias_set_combo
-and mtk_pinconf_bias_get_combo, and make the functions able to support
-almost all Mediatek SoCs that use pinctrl-mtk-common-v2.c.
+Some pinmux pins of the mt7986 pinctrl driver is composed of multiple
+pinctrl groups, the original binding only allows one pinctrl group
+per dts node, this patch sets "maxItems" for these groups and add new
+examples to the binding documentation.
 
-This patch enables pinctrl_moore to support these functions.
-
+Fixes: 65916a1ca90a ("dt-bindings: pinctrl: update bindings for MT7986 SoC")
 Signed-off-by: Sam Shih <sam.shih@mediatek.com>
 Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 ---
- drivers/pinctrl/mediatek/pinctrl-moore.c | 49 ++++++++++++++++++++----
- 1 file changed, 42 insertions(+), 7 deletions(-)
+v3:
+- squashed version from sam
+- v2 was ack'd by Krzysztof, but sams patch included updated emmc-names
+  and different structure for uart to allow 2 pingroups
+v2:
+- wrap on col 80
+---
+ .../pinctrl/mediatek,mt7986-pinctrl.yaml      | 46 +++++++++++++++++--
+ 1 file changed, 41 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
-index 526faaebaf77..cdc002d29932 100644
---- a/drivers/pinctrl/mediatek/pinctrl-moore.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
-@@ -8,6 +8,7 @@
-  *
-  */
+diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
+index 75766956cfad..b2b9c01efd70 100644
+--- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
+@@ -87,6 +87,8 @@ patternProperties:
+           "wifi_led"        "led"       1, 2
+           "i2c"             "i2c"       3, 4
+           "uart1_0"         "uart"      7, 8, 9, 10
++          "uart1_rx_tx"     "uart"      42, 43
++          "uart1_cts_rts"   "uart"      44, 45
+           "pcie_clk"        "pcie"      9
+           "pcie_wake"       "pcie"      10
+           "spi1_0"          "spi"       11, 12, 13, 14
+@@ -98,9 +100,11 @@ patternProperties:
+           "emmc_45"         "emmc"      22, 23, 24, 25, 26, 27, 28, 29, 30,
+                                         31, 32
+           "spi1_1"          "spi"       23, 24, 25, 26
+-          "uart1_2"         "uart"      29, 30, 31, 32
++          "uart1_2_rx_tx"   "uart"      29, 30
++          "uart1_2_cts_rts" "uart"      31, 32
+           "uart1_1"         "uart"      23, 24, 25, 26
+-          "uart2_0"         "uart"      29, 30, 31, 32
++          "uart2_0_rx_tx"   "uart"      29, 30
++          "uart2_0_cts_rts" "uart"      31, 32
+           "spi0"            "spi"       33, 34, 35, 36
+           "spi0_wp_hold"    "spi"       37, 38
+           "uart1_3_rx_tx"   "uart"      35, 36
+@@ -157,7 +161,7 @@ patternProperties:
+             then:
+               properties:
+                 groups:
+-                  enum: [emmc, emmc_rst]
++                  enum: [emmc_45, emmc_51]
+           - if:
+               properties:
+                 function:
+@@ -227,8 +231,12 @@ patternProperties:
+             then:
+               properties:
+                 groups:
+-                  enum: [uart1_0, uart1_1, uart1_2, uart1_3_rx_tx,
+-                         uart1_3_cts_rts, uart2_0, uart2_1, uart0, uart1, uart2]
++                  items:
++                    enum: [uart1_0, uart1_rx_tx, uart1_cts_rts, uart1_1,
++                           uart1_2_rx_tx, uart1_2_cts_rts, uart1_3_rx_tx,
++                           uart1_3_cts_rts, uart2_0_rx_tx, uart2_0_cts_rts,
++                           uart2_1, uart0, uart1, uart2]
++                  maxItems: 2
+           - if:
+               properties:
+                 function:
+@@ -362,6 +370,27 @@ examples:
+         interrupt-parent = <&gic>;
+         #interrupt-cells = <2>;
  
-+#include <dt-bindings/pinctrl/mt65xx.h>
- #include <linux/gpio/driver.h>
- #include "pinctrl-moore.h"
++        pcie_pins: pcie-pins {
++          mux {
++            function = "pcie";
++            groups = "pcie_clk", "pcie_wake", "pcie_pereset";
++          };
++        };
++
++        pwm_pins: pwm-pins {
++          mux {
++            function = "pwm";
++            groups = "pwm0", "pwm1_0";
++          };
++        };
++
++        spi0_pins: spi0-pins {
++          mux {
++            function = "spi";
++            groups = "spi0", "spi0_wp_hold";
++          };
++        };
++
+         uart1_pins: uart1-pins {
+           mux {
+             function = "uart";
+@@ -369,6 +398,13 @@ examples:
+           };
+         };
  
-@@ -105,7 +106,7 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
- {
- 	struct mtk_pinctrl *hw = pinctrl_dev_get_drvdata(pctldev);
- 	u32 param = pinconf_to_config_param(*config);
--	int val, val2, err, reg, ret = 1;
-+	int val, val2, err, pullup, reg, ret = 1;
- 	const struct mtk_pin_desc *desc;
- 
- 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
-@@ -114,7 +115,13 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
- 
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		if (hw->soc->bias_disable_get) {
-+		if (hw->soc->bias_get_combo) {
-+			err = hw->soc->bias_get_combo(hw, desc, &pullup, &ret);
-+			if (err)
-+				return err;
-+			if (ret != MTK_PUPD_SET_R1R0_00 && ret != MTK_DISABLE)
-+				return -EINVAL;
-+		} else if (hw->soc->bias_disable_get) {
- 			err = hw->soc->bias_disable_get(hw, desc, &ret);
- 			if (err)
- 				return err;
-@@ -123,7 +130,15 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
- 		}
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_UP:
--		if (hw->soc->bias_get) {
-+		if (hw->soc->bias_get_combo) {
-+			err = hw->soc->bias_get_combo(hw, desc, &pullup, &ret);
-+			if (err)
-+				return err;
-+			if (ret == MTK_PUPD_SET_R1R0_00 || ret == MTK_DISABLE)
-+				return -EINVAL;
-+			if (!pullup)
-+				return -EINVAL;
-+		} else if (hw->soc->bias_get) {
- 			err = hw->soc->bias_get(hw, desc, 1, &ret);
- 			if (err)
- 				return err;
-@@ -132,7 +147,15 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
- 		}
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_DOWN:
--		if (hw->soc->bias_get) {
-+		if (hw->soc->bias_get_combo) {
-+			err = hw->soc->bias_get_combo(hw, desc, &pullup, &ret);
-+			if (err)
-+				return err;
-+			if (ret == MTK_PUPD_SET_R1R0_00 || ret == MTK_DISABLE)
-+				return -EINVAL;
-+			if (pullup)
-+				return -EINVAL;
-+		} else if (hw->soc->bias_get) {
- 			err = hw->soc->bias_get(hw, desc, 0, &ret);
- 			if (err)
- 				return err;
-@@ -235,7 +258,11 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 
- 		switch (param) {
- 		case PIN_CONFIG_BIAS_DISABLE:
--			if (hw->soc->bias_disable_set) {
-+			if (hw->soc->bias_set_combo) {
-+				err = hw->soc->bias_set_combo(hw, desc, 0, MTK_DISABLE);
-+				if (err)
-+					return err;
-+			} else if (hw->soc->bias_disable_set) {
- 				err = hw->soc->bias_disable_set(hw, desc);
- 				if (err)
- 					return err;
-@@ -244,7 +271,11 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			}
- 			break;
- 		case PIN_CONFIG_BIAS_PULL_UP:
--			if (hw->soc->bias_set) {
-+			if (hw->soc->bias_set_combo) {
-+				err = hw->soc->bias_set_combo(hw, desc, 1, arg);
-+				if (err)
-+					return err;
-+			} else if (hw->soc->bias_set) {
- 				err = hw->soc->bias_set(hw, desc, 1);
- 				if (err)
- 					return err;
-@@ -253,7 +284,11 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			}
- 			break;
- 		case PIN_CONFIG_BIAS_PULL_DOWN:
--			if (hw->soc->bias_set) {
-+			if (hw->soc->bias_set_combo) {
-+				err = hw->soc->bias_set_combo(hw, desc, 0, arg);
-+				if (err)
-+					return err;
-+			} else if (hw->soc->bias_set) {
- 				err = hw->soc->bias_set(hw, desc, 0);
- 				if (err)
- 					return err;
++        uart1_3_pins: uart1-3-pins {
++          mux {
++            function = "uart";
++            groups = "uart1_3_rx_tx", "uart1_3_cts_rts";
++          };
++        };
++
+         uart2_pins: uart2-pins {
+           mux {
+             function = "uart";
 -- 
 2.34.1
 
