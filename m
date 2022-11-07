@@ -2,107 +2,240 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F078EC4332F
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Nov 2022 16:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EB0C4332F
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Nov 2022 16:12:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231646AbiKGQLF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Nov 2022 11:11:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35176 "EHLO
+        id S232338AbiKGQMp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Nov 2022 11:12:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231557AbiKGQLE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2022 11:11:04 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23BF9254;
-        Mon,  7 Nov 2022 08:11:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1667837464; x=1699373464;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=/kSwwswIzgCUAxVBjbvEobr7bEAkyBfEjUc94Vf2hq4=;
-  b=MVthJ47D5e0Q/HsA/oSXeNIhCmeE81stHEEqQ+vuIxLbaiEXwC5TTUht
-   ADRZ/9c+kQmvqJoV+O9yhemIpm0B+Y+XhVb5DVgCJOF7v9KNB0OJqPRfK
-   eNpEm5Nn/08LVu9nxLukGbl081mDISD3IHAFh2e90RtTRISvGPffNHX5o
-   j+nXQ3AyE0Qa031B+v0h41qczPP44NPASdyVasOk/jF1dm1M2X1W8piSE
-   HkKrMHv1Vbwt4Fhm67+e6aRqgdFfszx2mZEvupxwRw4wWwXZi99Ikqmaj
-   oCLqeLKD1XYWe8XflwfvXpkME5ArLyyMTcYemQwcvjuDshZkukYjUXHUE
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="310451919"
-X-IronPort-AV: E=Sophos;i="5.96,145,1665471600"; 
-   d="scan'208";a="310451919"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2022 08:10:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="778543956"
-X-IronPort-AV: E=Sophos;i="5.96,145,1665471600"; 
-   d="scan'208";a="778543956"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 07 Nov 2022 08:10:08 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E6B49F7; Mon,  7 Nov 2022 18:10:31 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 1/2] gpiolib: of: Prepare of_gpiochip_add() / of_gpiochip_remove() for fwnode
-Date:   Mon,  7 Nov 2022 18:10:26 +0200
-Message-Id: <20221107161027.43384-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S232273AbiKGQMm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2022 11:12:42 -0500
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 647DC201A3;
+        Mon,  7 Nov 2022 08:12:37 -0800 (PST)
+Received: by mail-pl1-x635.google.com with SMTP id b21so11486577plc.9;
+        Mon, 07 Nov 2022 08:12:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxtV4eNytGZqtTr58EFGp2fbSAZOZDoFPK3f2kbkRSc=;
+        b=Un0/gzqqJqp56xovtIlDx/l/4Wf3KozrwJ+Kvde3KzTeLg+iaDo42Wl6PMNlX/JaWd
+         PmB6+afpyMrrvup7NxbXAiWaqkCzP4waeRlZbICEmJc+ctRV/zlLSgYq+ymI7epfPsNZ
+         qW1WxTcaHcgqZbl8Nv6tRJ+hJoxyT+Veeplr34dhyYrUc+3z8L2oBQcSeYpFgFRN9GfD
+         HvlNiiQknOQXTQsQDBYbdQwJsFi4ZlGzZhAJzSj4IIul+sH1sW6D0U6+SYPtuQCuj4+r
+         +RlXc9obyw1H3h4v+L9s1Xln23utuF1D4SjyB5DrRG3fYMTrVEB2jPaP1wbtU6GXKoBd
+         ktkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OxtV4eNytGZqtTr58EFGp2fbSAZOZDoFPK3f2kbkRSc=;
+        b=IWZOujmH3iGrewKqTzN+9CHRqZVFsfZr11M+FZ6Jhs1iLr62tLZprtAeBI4IXhFmN7
+         hIYoRJHpHIVTr3EFj1ga37stM+SxJsyYqJjJO4PFZKERZIr1mM5hIXnIul8ZRZ2/vPVn
+         jMctM9sl4fhra7X0W7QQFqRPc8k0IABYRG4drUZMS6bIwQTcGjEd9V9yPLZowGZjvtwT
+         LCXCgZ58jndIKc7Zfc3fl3yAXJbrgRntPtRnI4AZLhKYrM8/NnFsyFuycz3i5edD84X7
+         6+e5AwIDNA+XyO8HcITuMJrJnrS1mJ0023rDxhgdrYKWR2qfu4GXkneFZoMPFCwZzYE5
+         /hBg==
+X-Gm-Message-State: ACrzQf1Mt3D/BcxdaokFmXz12lPMbnlyLH0fOPr4drdrAJ+UtRSViOE7
+        Ue+Eg6r1yQ4vMkxUBd/78D4=
+X-Google-Smtp-Source: AMsMyM66nke43Q8t/SVF5Qdo371dgX5xx0mM6O93qO0RYuPpneFRsifcjcbSFrIfa4oWl4Yes7cs+A==
+X-Received: by 2002:a17:903:25c3:b0:188:602c:5c25 with SMTP id jc3-20020a17090325c300b00188602c5c25mr20543498plb.133.1667837556560;
+        Mon, 07 Nov 2022 08:12:36 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:626:eb80:9eb9:1fd7])
+        by smtp.gmail.com with ESMTPSA id w69-20020a627b48000000b00545f5046372sm4628226pfc.208.2022.11.07.08.12.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Nov 2022 08:12:35 -0800 (PST)
+Date:   Mon, 7 Nov 2022 08:12:32 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/6] gpiolib: add support for software nodes
+Message-ID: <Y2kucGtw/t9v0245@google.com>
+References: <20221031-gpiolib-swnode-v1-0-a0ab48d229c7@gmail.com>
+ <20221031-gpiolib-swnode-v1-6-a0ab48d229c7@gmail.com>
+ <Y2VVA2Wp1IWoJf3m@smile.fi.intel.com>
+ <Y2Vo8g5HfvSi7Bck@google.com>
+ <Y2V8uwTHYw2McL5S@smile.fi.intel.com>
+ <Y2XrL0noH4HqsAU7@google.com>
+ <Y2jnGVKDmGvK94AV@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y2jnGVKDmGvK94AV@smile.fi.intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-GPIO library is getting rid of of_node, fwnode should be utilized instead.
-Prepare of_gpiochip_add() / of_gpiochip_remove() for fwnode.
+On Mon, Nov 07, 2022 at 01:08:09PM +0200, Andy Shevchenko wrote:
+> On Fri, Nov 04, 2022 at 09:48:47PM -0700, Dmitry Torokhov wrote:
+> > On Fri, Nov 04, 2022 at 10:57:31PM +0200, Andy Shevchenko wrote:
+> > > On Fri, Nov 04, 2022 at 12:33:06PM -0700, Dmitry Torokhov wrote:
+> > > > On Fri, Nov 04, 2022 at 08:08:03PM +0200, Andy Shevchenko wrote:
+> > > > > On Thu, Nov 03, 2022 at 11:10:16PM -0700, Dmitry Torokhov wrote:
+> 
+> ...
+> 
+> > > > > > const struct property_entry simone_key_enter_props[] __initconst = {
+> > > > > > 	PROPERTY_ENTRY_U32("linux,code", KEY_ENTER),
+> > > > > 
+> > > > > > 	PROPERTY_ENTRY_STRING("label", "enter"),
+> > > > > > 	PROPERTY_ENTRY_REF("gpios", &gpio_bank_b_node, 123, GPIO_ACTIVE_LOW),
+> > > > > 
+> > > > > Okay, can we have an example for something like reset-gpios? Because from
+> > > > > the above I can't easily get what label is and how in the `gpioinfo` tool
+> > > > > the requested line will look like.
+> > > > 
+> > > > The label is something unrelated to gpio. The example was supposed to
+> > > > match gpio-keys binding found in
+> > > > Documentation/devicetree/bindings/input/gpio-keys.yaml
+> > > 
+> > > Yes, but what would be output of `gpioinfo` for the above  example and
+> > > if GPIO is named properly (with con_id)?
+> > 
+> > Same as if I am using device tree, or ACPI, etc. I am not changing how
+> > labeling is done, so whatever rules were before adding swnode support
+> > they will be used with swnodes.
+> > 
+> > With the hack patch to gpio-keys.c below and device using the following
+> > DT fragment I see the following from gpioinfo:
+> > 
+> >         gpio_keys: gpio-keys {
+> >                 status = "okay";
+> > 
+> >                 compatible = "gpio-keys";
+> >                 pinctrl-names = "default";
+> >                 pinctrl-0 = <&pen_eject>;
+> > 
+> >                 pen_insert: pen-insert {
+> >                         label = "Pen Insert";
+> >                         /* Insert = low, eject = high */
+> >                         /* gpios = <&pio 18 GPIO_ACTIVE_LOW>; */
+> >                         linux,code = <SW_PEN_INSERTED>;
+> >                         linux,input-type = <EV_SW>;
+> >                         wakeup-event-action = <EV_ACT_DEASSERTED>;
+> >                         wakeup-source;
+> >                 };
+> >         };
+> > 
+> > Just "gpios" (con_id == NULL):
+> > 
+> >         line  18: "PEN_EJECT_OD" "Pen Insert" input active-low [used]
+> > 
+> > With "key-gpios" (con_id == "key") it is exactly the same:
+> > 
+> >         line  18: "PEN_EJECT_OD" "Pen Insert" input active-low [used]
+> > 
+> > Ah, I guess you wonder how it will look like if we do not pass this
+> > "label" into devm_fwnode_gpiod_get() and instead use NULL?
+> > 
+> > 	line  18: "PEN_EJECT_OD" "?" input active-low [used]
+> > 
+> > If the driver used gpiod_get() or similar it would either have the
+> > "con_id" label or device name (produced with dev_name(dev) if con_id is
+> > NULL. Still, not changes from using swnodes compared to ACPI or DT.
+> 
+> Yes, can you add a summary of above to the commit message?
+> 
+> > > > > > 	{ }
+> > > > > > };
+> 
+> ...
+> 
+> > > > > > +	/*
+> > > > > > +	 * We expect all swnode-described GPIOs have GPIO number and
+> > > > > > +	 * polarity arguments, hence nargs is set to 2.
+> > > > > > +	 */
+> > > > > 
+> > > > > Maybe instead you can provide a custom macro wrapper that will check the number
+> > > > > of arguments at compile time?
+> > > > 
+> > > > We could have PROPERTY_ENTRY_GPIO() built on top of PROPERTY_ENTRY_REF()
+> > > > that enforces needed arguments.
+> > > 
+> > > Yes, that's what I meant.
+> > 
+> > Where do you think it should go? Not sure if I want to pollute
+> > property.h, I guess linux/gpio/matchine.h will need to include
+> > property.h?
+> 
+> Good question. I was thinking more of a separate header for that,
+> because adding property.h adds tons of stuff which might be not
+> needed otherwise.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib-of.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+OK, I guess include/linux/gpio/property.h ?
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index be9c34cca322..000020eb78d8 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -1104,9 +1104,11 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip) { return 0; }
- 
- int of_gpiochip_add(struct gpio_chip *chip)
- {
-+	struct device_node *np;
- 	int ret;
- 
--	if (!chip->of_node)
-+	np = to_of_node(chip->fwnode);
-+	if (!np)
- 		return 0;
- 
- 	if (!chip->of_xlate) {
-@@ -1123,18 +1125,18 @@ int of_gpiochip_add(struct gpio_chip *chip)
- 	if (ret)
- 		return ret;
- 
--	of_node_get(chip->of_node);
-+	fwnode_handle_get(chip->fwnode);
- 
- 	ret = of_gpiochip_scan_gpios(chip);
- 	if (ret)
--		of_node_put(chip->of_node);
-+		fwnode_handle_put(chip->fwnode);
- 
- 	return ret;
- }
- 
- void of_gpiochip_remove(struct gpio_chip *chip)
- {
--	of_node_put(chip->of_node);
-+	fwnode_handle_put(chip->fwnode);
- }
- 
- void of_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev)
+> 
+> ...
+> 
+> > > > > > +	/*
+> > > > > > +	 * First look up GPIO in the secondary software node in case
+> > > > > > +	 * it was used to store updated properties.
+> > > > > 
+> > > > > Why this is done first? We don't try secondary before we have checked primary.
+> > > > 
+> > > > I believe we should check secondary first, so that secondaries can be
+> > > > used not only to add missing properties, but also to override existing
+> > > > ones in case they are incorrect.
+> > > 
+> > > It contradicts all code we have in the kernel regarding the use of software
+> > > nodes, you need very strong argument to justify that.
+> > > 
+> > > Personally I think this must be fixed.
+> > 
+> > I agree, the rest of the code should be fixed ;) I'll put it on my TODO
+> > list.
+> 
+> I'm not sure what "rest of the code" you are referring to. The core part of
+> device property APIs?
+
+Yes.
+
+> 
+> > I gave my argument above already: swnodes should not only be useful to
+> > add missing properties, but also allow fixing up existing ones. If I
+> > implemented what you are suggesting then I would not be able to create
+> > this concise example and would need to model entire DT node for GPIO
+> > keys.
+> 
+> Why do you need that in the first place? We should not use swnodes as primary
+> source of the information. The auxiliary one is fine. "Fixing" via priority
+> inversion in current model is not good thing to have.
+> 
+> If you really need that you have to first do the following:
+> - convert fwnode to be a list node
+> - unembed it from struct device (leaving only head of list there
+> - update all necessary APIs respectively
+> 
+> In such implementation list_add() / list_add_tail() will define a priority
+> and you may have stack of properties.
+
+Hmm, that will complicate things quite a bit. I wonder why you think
+that using swnodes to fix up the "bad" firmware data is not desirable.
+Swnodes are controlled by the kernel and thus we can potentially allow
+users tweak them from usersoace. There is a desire to allow easier
+access to various driver's parameters - see for example Hans patches to
+Goodix and Silead where he adds code that intercepts reading of device
+properties and instead gets data form module parameter - I would like to
+have such facility in more general way.
+
+https://lore.kernel.org/all/20221025122930.421377-3-hdegoede@redhat.com/
+
+> 
+> Doing it in a hackish way by allowing priority inversion in _some_ APIs
+> is no go in my opinion.
+
+Yes, I agree that we want to have all APIs behave in the similar way. It
+occurred to me that the topic of handling secondary node is actually
+separate from swnode hanlding, so I will remove it from this patch and I
+can start a separate thread/patches for it after we land this series.
+
+Thanks.
+
 -- 
-2.35.1
-
+Dmitry
