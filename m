@@ -2,166 +2,124 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79888C4321E
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Nov 2022 17:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D01C433FE
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Nov 2022 18:16:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232911AbiKGRzN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Nov 2022 12:55:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59238 "EHLO
+        id S233143AbiKGSQT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Nov 2022 13:16:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232625AbiKGRyO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2022 12:54:14 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D2A925E80;
-        Mon,  7 Nov 2022 09:53:20 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id r132-20020a1c448a000000b003cf4d389c41so513439wma.3;
-        Mon, 07 Nov 2022 09:53:20 -0800 (PST)
+        with ESMTP id S233098AbiKGSPX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2022 13:15:23 -0500
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6A331FCF1;
+        Mon,  7 Nov 2022 10:14:33 -0800 (PST)
+Received: by mail-pf1-x436.google.com with SMTP id v28so11368522pfi.12;
+        Mon, 07 Nov 2022 10:14:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zawac0oZnH0s6N9BmcF7Es7GdlbM3PMpMwX1yWYjaTo=;
-        b=aeQJnX0X9lWc+v6rMuS4tfwYDkYFXsu44LTAppZXyQBnkadQsryxirALgvlogjSP5B
-         QjgvOgPlCpmxYpzR5Q0mTb4CYhiEwn0nSmk8Q/O+7oxMEcxBBskM/F68NaLVCmhlunIn
-         W1axb8Cj0SCHjsq9JIpP4CZ/zWlkYlCWgNFlkumNOrFUJTc0UcObXjJF3K1T+WsxGiML
-         F6/QJwu25G/WEaY9hRZSZszc2zGsDC5TLKwqtXmekLksiAIhkwp6xE34ve58aIco6hYN
-         UQ0a6gGqJe+ajnVNjLBAHn5hSqV18g6bwhKy/fLLPYx28fqGEsIevJgsvP8eq16Fe4Ho
-         +ZcA==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rqwrPz5XaFAPqaC5i7DZPaqfSXndPxcC58Brabuv55s=;
+        b=P3iw55DLz21SyqpT1vwOTEvnZOGcqMjWXKV3GIrcCzMGda7w7D+I1039BxPSOLbyaI
+         Mt7fSotDkggXcWzGV4Sxn6ke8dRvck6nRLKThbEmoMhM5+COGeo5/UYyBDpA/1FAxKa/
+         TiSIiZoNhnQoTikFw4DynROAACoJyB8BDXiQYPSpjWQLV6t5/CBVWiahoKvaIUjqfhA9
+         H12tsipaAYNi5sJGlxkmPBV0XpWZbVDQvtXo8rg1Qdd9yFr+tUBuBynEXluPHKOkNKNs
+         2uMWkAzAuVzMoraLD32IORTCDv7YDliM+qH6i2t/Lr5KZHF0okFa4g+01ttPFVPOtLbM
+         o4Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zawac0oZnH0s6N9BmcF7Es7GdlbM3PMpMwX1yWYjaTo=;
-        b=T/Dw69AUiL33EDrBmqFf3OY8a3vwRwzdQRWHx744BJSQ89yhjQjT3Dq/0rAxCBTLvC
-         6SnZcQPdYp/KE53qMH2X2hLOb23zM5qS6L610BJELCx8ZItvXC6aPv0P7hNGVqUaMv2R
-         TnmCqGlNiU1wcficIyEhuCWde9Rd3UnYGmv3HtWHderxPmkmTgVRPIq+3VeLoYQSOBOH
-         wD478voIb9eeh5GEnnXojist8H/F4P4T5ufB8ZApXFlnLdUkuCBlwJ8URRbF8vaLShkL
-         HqFn6thY1MwP3B/CLgbsqmlkB/br4y2fUp0DkW1Dvfsr75azmrh+7D+rhG71v4jenXmx
-         VTqg==
-X-Gm-Message-State: ANoB5pkmeWWJFmdmkYKsEX2GUiu4o2rO2gjVCRXHBtPKFQjBUxan1s7z
-        7JjuXi9NOKm2t39JiXK+x58=
-X-Google-Smtp-Source: AA0mqf7REocKiPJ0asC3HlX7IZ4u3H9qtKtXmlXF2DOaNOPJ9TEbdNfcmhQLbQNzh4obBQBvuE2iJw==
-X-Received: by 2002:a05:600c:5250:b0:3cf:a56a:6c9e with SMTP id fc16-20020a05600c525000b003cfa56a6c9emr6626958wmb.50.1667843598760;
-        Mon, 07 Nov 2022 09:53:18 -0800 (PST)
-Received: from prasmi.home ([2a00:23c8:2501:c701:9c45:7ed3:c12e:e25b])
-        by smtp.gmail.com with ESMTPSA id v4-20020a5d4a44000000b002365254ea42sm8072454wrs.1.2022.11.07.09.53.17
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rqwrPz5XaFAPqaC5i7DZPaqfSXndPxcC58Brabuv55s=;
+        b=2cJf/T6bzkuY3wyZhkB/Y/taBhUP0OYanPgrynA1BiKfvDBgI6jPVOHiqqziGjA5j6
+         Ie/HPMNtVBj27lVIxuo61X0DoMYTGBFxKAYwRtq043xOElHildmrM3ay8jllrVROoSKt
+         fVrBvyevNqO7QukHtrrZPD5sK4GLVfKMkBeuVjEK5nquTz57G4uNiACNnnYHUBYmnznC
+         vnhAUTYbqqrSJQ7g9W6G2Wn87eB4v6Ecyvl70aNsjICJVWdJkemuWDRDB3ZoeN8k99L3
+         YimsH9Sop+snkNyqo8SlF5lLftpBy5e1OZLvihLn+WN8vzA3gXhsmkLJRosZVI/i14Yd
+         xizw==
+X-Gm-Message-State: ACrzQf1sRf5i/6F/gZB+NPAlSp+uKQAMi64GvtTIzUsd48MXYlu+w7ja
+        IziKY5nO/NbiQEK5GpzYRyrOKDQJl1k=
+X-Google-Smtp-Source: AMsMyM4NE9Sn8XwakVQs2poEBe+uRhMRwVwTjOHQxBQoTgHzYZRm+XzWBOYG65ZPhQqIuzf1f/x8Xg==
+X-Received: by 2002:a63:7909:0:b0:458:1ba6:ec80 with SMTP id u9-20020a637909000000b004581ba6ec80mr44495613pgc.414.1667844873160;
+        Mon, 07 Nov 2022 10:14:33 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:626:eb80:9eb9:1fd7])
+        by smtp.gmail.com with ESMTPSA id i65-20020a626d44000000b0056bd737fdf3sm4782030pfc.123.2022.11.07.10.14.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Nov 2022 09:53:18 -0800 (PST)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Mon, 07 Nov 2022 10:14:32 -0800 (PST)
+Date:   Mon, 7 Nov 2022 10:14:29 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH RFC 2/5] pinctrl: renesas: rzg2l: Fix configuring the GPIO pins as interrupts
-Date:   Mon,  7 Nov 2022 17:53:02 +0000
-Message-Id: <20221107175305.63975-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v1 1/2] gpiolib: of: Prepare of_gpiochip_add() /
+ of_gpiochip_remove() for fwnode
+Message-ID: <Y2lLBchlwBozRcDq@google.com>
+References: <20221107161027.43384-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221107161027.43384-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon, Nov 07, 2022 at 06:10:26PM +0200, Andy Shevchenko wrote:
+> GPIO library is getting rid of of_node, fwnode should be utilized instead.
+> Prepare of_gpiochip_add() / of_gpiochip_remove() for fwnode.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On the RZ/G2UL SoC we have less number of pins compared to RZ/G2L and also
-the pin configs are completely different. This patch makes sure we use the
-appropriate pin configs for each SoC (which is passed as part of the OF
-data) while configuring the GPIO pin as interrupts instead of using
-rzg2l_gpio_configs[] for all the SoCs.
+Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+> ---
+>  drivers/gpio/gpiolib-of.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index be9c34cca322..000020eb78d8 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -1104,9 +1104,11 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip) { return 0; }
+>  
+>  int of_gpiochip_add(struct gpio_chip *chip)
+>  {
+> +	struct device_node *np;
+>  	int ret;
+>  
+> -	if (!chip->of_node)
+> +	np = to_of_node(chip->fwnode);
+> +	if (!np)
+>  		return 0;
+>  
+>  	if (!chip->of_xlate) {
+> @@ -1123,18 +1125,18 @@ int of_gpiochip_add(struct gpio_chip *chip)
+>  	if (ret)
+>  		return ret;
+>  
+> -	of_node_get(chip->of_node);
+> +	fwnode_handle_get(chip->fwnode);
+>  
+>  	ret = of_gpiochip_scan_gpios(chip);
+>  	if (ret)
+> -		of_node_put(chip->of_node);
+> +		fwnode_handle_put(chip->fwnode);
+>  
+>  	return ret;
+>  }
+>  
+>  void of_gpiochip_remove(struct gpio_chip *chip)
+>  {
+> -	of_node_put(chip->of_node);
+> +	fwnode_handle_put(chip->fwnode);
+>  }
+>  
+>  void of_gpio_dev_init(struct gpio_chip *gc, struct gpio_device *gdev)
+> -- 
+> 2.35.1
+> 
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index a43824fd9505..dcc495baa678 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -127,6 +127,7 @@ struct rzg2l_dedicated_configs {
- struct rzg2l_pinctrl_data {
- 	const char * const *port_pins;
- 	const u32 *port_pin_configs;
-+	unsigned int n_port_pin_configs;
- 	struct rzg2l_dedicated_configs *dedicated_pins;
- 	unsigned int n_port_pins;
- 	unsigned int n_dedicated_pins;
-@@ -1122,7 +1123,7 @@ static struct {
- 	}
- };
- 
--static int rzg2l_gpio_get_gpioint(unsigned int virq)
-+static int rzg2l_gpio_get_gpioint(unsigned int virq, const struct rzg2l_pinctrl_data *data)
- {
- 	unsigned int gpioint;
- 	unsigned int i;
-@@ -1131,13 +1132,13 @@ static int rzg2l_gpio_get_gpioint(unsigned int virq)
- 	port = virq / 8;
- 	bit = virq % 8;
- 
--	if (port >= ARRAY_SIZE(rzg2l_gpio_configs) ||
--	    bit >= RZG2L_GPIO_PORT_GET_PINCNT(rzg2l_gpio_configs[port]))
-+	if (port >= data->n_port_pin_configs ||
-+	    bit >= RZG2L_GPIO_PORT_GET_PINCNT(data->port_pin_configs[port]))
- 		return -EINVAL;
- 
- 	gpioint = bit;
- 	for (i = 0; i < port; i++)
--		gpioint += RZG2L_GPIO_PORT_GET_PINCNT(rzg2l_gpio_configs[i]);
-+		gpioint += RZG2L_GPIO_PORT_GET_PINCNT(data->port_pin_configs[i]);
- 
- 	return gpioint;
- }
-@@ -1237,7 +1238,7 @@ static int rzg2l_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
- 	unsigned long flags;
- 	int gpioint, irq;
- 
--	gpioint = rzg2l_gpio_get_gpioint(child);
-+	gpioint = rzg2l_gpio_get_gpioint(child, pctrl->data);
- 	if (gpioint < 0)
- 		return gpioint;
- 
-@@ -1311,8 +1312,8 @@ static void rzg2l_init_irq_valid_mask(struct gpio_chip *gc,
- 		port = offset / 8;
- 		bit = offset % 8;
- 
--		if (port >= ARRAY_SIZE(rzg2l_gpio_configs) ||
--		    bit >= RZG2L_GPIO_PORT_GET_PINCNT(rzg2l_gpio_configs[port]))
-+		if (port >= pctrl->data->n_port_pin_configs ||
-+		    bit >= RZG2L_GPIO_PORT_GET_PINCNT(pctrl->data->port_pin_configs[port]))
- 			clear_bit(offset, valid_mask);
- 	}
- }
-@@ -1517,6 +1518,7 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
- static struct rzg2l_pinctrl_data r9a07g043_data = {
- 	.port_pins = rzg2l_gpio_names,
- 	.port_pin_configs = r9a07g043_gpio_configs,
-+	.n_port_pin_configs = ARRAY_SIZE(r9a07g043_gpio_configs),
- 	.dedicated_pins = rzg2l_dedicated_pins.common,
- 	.n_port_pins = ARRAY_SIZE(r9a07g043_gpio_configs) * RZG2L_PINS_PER_PORT,
- 	.n_dedicated_pins = ARRAY_SIZE(rzg2l_dedicated_pins.common),
-@@ -1525,6 +1527,7 @@ static struct rzg2l_pinctrl_data r9a07g043_data = {
- static struct rzg2l_pinctrl_data r9a07g044_data = {
- 	.port_pins = rzg2l_gpio_names,
- 	.port_pin_configs = rzg2l_gpio_configs,
-+	.n_port_pin_configs = ARRAY_SIZE(rzg2l_gpio_configs),
- 	.dedicated_pins = rzg2l_dedicated_pins.common,
- 	.n_port_pins = ARRAY_SIZE(rzg2l_gpio_names),
- 	.n_dedicated_pins = ARRAY_SIZE(rzg2l_dedicated_pins.common) +
 -- 
-2.25.1
-
+Dmitry
