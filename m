@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D46D4C4167E
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Nov 2022 17:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79888C4321E
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Nov 2022 17:55:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232844AbiKGRzM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Nov 2022 12:55:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59260 "EHLO
+        id S232911AbiKGRzN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Nov 2022 12:55:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232629AbiKGRyO (ORCPT
+        with ESMTP id S232625AbiKGRyO (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2022 12:54:14 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A93EBE1;
-        Mon,  7 Nov 2022 09:53:23 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id m7-20020a05600c090700b003cf8a105d9eso7633262wmp.5;
-        Mon, 07 Nov 2022 09:53:23 -0800 (PST)
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D2A925E80;
+        Mon,  7 Nov 2022 09:53:20 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id r132-20020a1c448a000000b003cf4d389c41so513439wma.3;
+        Mon, 07 Nov 2022 09:53:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q4TTGBwgL+ktdOw4ymdhP2iQ7Qgir5s0YZqnZpagiD8=;
-        b=qzc1ZsNUdzsob01/2wRaVQHNLF4py4pCfex3JUed9atVJy7CuwemVZfzOMiCo6zYV6
-         2H8nF9UxAtBfgaxZsEOg6JIVVirPswkP6fXN0v0z94G7BEgAm4SgM5EY9CmohgFN6yDp
-         0bdn6aXfJ/C9quufF9vJwDGIBpq7MKLQIqkKy1QqV0w9TCKesd/XcjVj1m2jhPIZjWBU
-         hN8P5oAuQrboUpdXg9DU52EOohOtP390+F9QCygoyXPSMKR7zwCoOFYQBpQVpy9trTF7
-         T9Q1vvuieZCCk2D4XjXCjpGQMQHH5n0OSRj7bYMEAAML+n5ilga1xsZh7617IUhPorvn
-         u2SQ==
+        bh=Zawac0oZnH0s6N9BmcF7Es7GdlbM3PMpMwX1yWYjaTo=;
+        b=aeQJnX0X9lWc+v6rMuS4tfwYDkYFXsu44LTAppZXyQBnkadQsryxirALgvlogjSP5B
+         QjgvOgPlCpmxYpzR5Q0mTb4CYhiEwn0nSmk8Q/O+7oxMEcxBBskM/F68NaLVCmhlunIn
+         W1axb8Cj0SCHjsq9JIpP4CZ/zWlkYlCWgNFlkumNOrFUJTc0UcObXjJF3K1T+WsxGiML
+         F6/QJwu25G/WEaY9hRZSZszc2zGsDC5TLKwqtXmekLksiAIhkwp6xE34ve58aIco6hYN
+         UQ0a6gGqJe+ajnVNjLBAHn5hSqV18g6bwhKy/fLLPYx28fqGEsIevJgsvP8eq16Fe4Ho
+         +ZcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q4TTGBwgL+ktdOw4ymdhP2iQ7Qgir5s0YZqnZpagiD8=;
-        b=YTjy9v0yV5sbbNJignAF9HC9XfSl8T2/5h2sA+UjxxoacyvnDEpyb04qQHvaqoYalZ
-         MO1oTReIwg+2TvS4BFH7Ktj9VP0nWmMuDpC9RveDliEtNm2wmTli1Kg+bzte2wkbYa7s
-         BikmdbwA4wQoXCmbsw8wNXIsShMIwHwNzFjQOvr0XzXsNtVUuZVYyBgF2MKjFFziBBxs
-         nq0uw9qN6rp/ozyRS7n8V1XoFRF9LYZPge5QzSe8qH6cePUSawniLQgsKDsCAbzdVWlK
-         WadDpjKDfOnqRJAD16GCPruQjKDV8eUu86eIvUbbFxb0U9ETIsHo3afj5dlnZQakeeXG
-         1FNg==
-X-Gm-Message-State: ANoB5pm+v230R+x/k2eCI6nxrZ+cEzZHavqasy3FP3gpoBiToOjs5Abd
-        4FNl3Qw0MsaH37eTSUAuH/w=
-X-Google-Smtp-Source: AA0mqf5+1sHKNcJD4wf6tL+PWNxmSW/c4aKVYkw8LrS7L2MjhvRDOnkfTbcFh68vIahIPRsaP3dW2g==
-X-Received: by 2002:a05:600c:4f44:b0:3cf:b5dd:46f7 with SMTP id m4-20020a05600c4f4400b003cfb5dd46f7mr419523wmq.73.1667843601979;
-        Mon, 07 Nov 2022 09:53:21 -0800 (PST)
+        bh=Zawac0oZnH0s6N9BmcF7Es7GdlbM3PMpMwX1yWYjaTo=;
+        b=T/Dw69AUiL33EDrBmqFf3OY8a3vwRwzdQRWHx744BJSQ89yhjQjT3Dq/0rAxCBTLvC
+         6SnZcQPdYp/KE53qMH2X2hLOb23zM5qS6L610BJELCx8ZItvXC6aPv0P7hNGVqUaMv2R
+         TnmCqGlNiU1wcficIyEhuCWde9Rd3UnYGmv3HtWHderxPmkmTgVRPIq+3VeLoYQSOBOH
+         wD478voIb9eeh5GEnnXojist8H/F4P4T5ufB8ZApXFlnLdUkuCBlwJ8URRbF8vaLShkL
+         HqFn6thY1MwP3B/CLgbsqmlkB/br4y2fUp0DkW1Dvfsr75azmrh+7D+rhG71v4jenXmx
+         VTqg==
+X-Gm-Message-State: ANoB5pkmeWWJFmdmkYKsEX2GUiu4o2rO2gjVCRXHBtPKFQjBUxan1s7z
+        7JjuXi9NOKm2t39JiXK+x58=
+X-Google-Smtp-Source: AA0mqf7REocKiPJ0asC3HlX7IZ4u3H9qtKtXmlXF2DOaNOPJ9TEbdNfcmhQLbQNzh4obBQBvuE2iJw==
+X-Received: by 2002:a05:600c:5250:b0:3cf:a56a:6c9e with SMTP id fc16-20020a05600c525000b003cfa56a6c9emr6626958wmb.50.1667843598760;
+        Mon, 07 Nov 2022 09:53:18 -0800 (PST)
 Received: from prasmi.home ([2a00:23c8:2501:c701:9c45:7ed3:c12e:e25b])
-        by smtp.gmail.com with ESMTPSA id v4-20020a5d4a44000000b002365254ea42sm8072454wrs.1.2022.11.07.09.53.20
+        by smtp.gmail.com with ESMTPSA id v4-20020a5d4a44000000b002365254ea42sm8072454wrs.1.2022.11.07.09.53.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Nov 2022 09:53:21 -0800 (PST)
+        Mon, 07 Nov 2022 09:53:18 -0800 (PST)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
@@ -63,9 +63,9 @@ Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH RFC 5/5] arm64: dts: renesas: rzg2ul-smarc-som: Add PHY interrupt support for ETH{0/1}
-Date:   Mon,  7 Nov 2022 17:53:05 +0000
-Message-Id: <20221107175305.63975-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH RFC 2/5] pinctrl: renesas: rzg2l: Fix configuring the GPIO pins as interrupts
+Date:   Mon,  7 Nov 2022 17:53:02 +0000
+Message-Id: <20221107175305.63975-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -77,64 +77,91 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The PHY interrupt (INT_N) pin is connected to IRQ2 and IRQ7 for ETH0 and
-ETH1 respectively.
+On the RZ/G2UL SoC we have less number of pins compared to RZ/G2L and also
+the pin configs are completely different. This patch makes sure we use the
+appropriate pin configs for each SoC (which is passed as part of the OF
+data) while configuring the GPIO pin as interrupts instead of using
+rzg2l_gpio_configs[] for all the SoCs.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-index 931efc07d6fb..49ecd33aeeb8 100644
---- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-@@ -6,6 +6,7 @@
-  */
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index a43824fd9505..dcc495baa678 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -127,6 +127,7 @@ struct rzg2l_dedicated_configs {
+ struct rzg2l_pinctrl_data {
+ 	const char * const *port_pins;
+ 	const u32 *port_pin_configs;
++	unsigned int n_port_pin_configs;
+ 	struct rzg2l_dedicated_configs *dedicated_pins;
+ 	unsigned int n_port_pins;
+ 	unsigned int n_dedicated_pins;
+@@ -1122,7 +1123,7 @@ static struct {
+ 	}
+ };
  
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irqc-rzg2l.h>
- #include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
+-static int rzg2l_gpio_get_gpioint(unsigned int virq)
++static int rzg2l_gpio_get_gpioint(unsigned int virq, const struct rzg2l_pinctrl_data *data)
+ {
+ 	unsigned int gpioint;
+ 	unsigned int i;
+@@ -1131,13 +1132,13 @@ static int rzg2l_gpio_get_gpioint(unsigned int virq)
+ 	port = virq / 8;
+ 	bit = virq % 8;
  
- / {
-@@ -77,6 +78,8 @@ phy0: ethernet-phy@7 {
- 		compatible = "ethernet-phy-id0022.1640",
- 			     "ethernet-phy-ieee802.3-c22";
- 		reg = <7>;
-+		interrupt-parent = <&irqc>;
-+		interrupts = <RZG2L_IRQ2 IRQ_TYPE_LEVEL_LOW>;
- 		rxc-skew-psec = <2400>;
- 		txc-skew-psec = <2400>;
- 		rxdv-skew-psec = <0>;
-@@ -104,6 +107,8 @@ phy1: ethernet-phy@7 {
- 		compatible = "ethernet-phy-id0022.1640",
- 			     "ethernet-phy-ieee802.3-c22";
- 		reg = <7>;
-+		interrupt-parent = <&irqc>;
-+		interrupts = <RZG2L_IRQ7 IRQ_TYPE_LEVEL_LOW>;
- 		rxc-skew-psec = <2400>;
- 		txc-skew-psec = <2400>;
- 		rxdv-skew-psec = <0>;
-@@ -151,7 +156,8 @@ eth0_pins: eth0 {
- 			 <RZG2L_PORT_PINMUX(3, 2, 1)>, /* ET0_RXD0 */
- 			 <RZG2L_PORT_PINMUX(3, 3, 1)>, /* ET0_RXD1 */
- 			 <RZG2L_PORT_PINMUX(4, 0, 1)>, /* ET0_RXD2 */
--			 <RZG2L_PORT_PINMUX(4, 1, 1)>; /* ET0_RXD3 */
-+			 <RZG2L_PORT_PINMUX(4, 1, 1)>, /* ET0_RXD3 */
-+			 <RZG2L_PORT_PINMUX(5, 1, 7)>; /* IRQ2 */
- 	};
+-	if (port >= ARRAY_SIZE(rzg2l_gpio_configs) ||
+-	    bit >= RZG2L_GPIO_PORT_GET_PINCNT(rzg2l_gpio_configs[port]))
++	if (port >= data->n_port_pin_configs ||
++	    bit >= RZG2L_GPIO_PORT_GET_PINCNT(data->port_pin_configs[port]))
+ 		return -EINVAL;
  
- 	eth1_pins: eth1 {
-@@ -169,7 +175,8 @@ eth1_pins: eth1 {
- 			 <RZG2L_PORT_PINMUX(9, 1, 1)>, /* ET1_RXD0 */
- 			 <RZG2L_PORT_PINMUX(9, 2, 1)>, /* ET1_RXD1 */
- 			 <RZG2L_PORT_PINMUX(9, 3, 1)>, /* ET1_RXD2 */
--			 <RZG2L_PORT_PINMUX(10, 0, 1)>; /* ET1_RXD3 */
-+			 <RZG2L_PORT_PINMUX(10, 0, 1)>, /* ET1_RXD3 */
-+			 <RZG2L_PORT_PINMUX(18, 5, 1)>; /* IRQ7 */
- 	};
+ 	gpioint = bit;
+ 	for (i = 0; i < port; i++)
+-		gpioint += RZG2L_GPIO_PORT_GET_PINCNT(rzg2l_gpio_configs[i]);
++		gpioint += RZG2L_GPIO_PORT_GET_PINCNT(data->port_pin_configs[i]);
  
- 	sdhi0_emmc_pins: sd0emmc {
+ 	return gpioint;
+ }
+@@ -1237,7 +1238,7 @@ static int rzg2l_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
+ 	unsigned long flags;
+ 	int gpioint, irq;
+ 
+-	gpioint = rzg2l_gpio_get_gpioint(child);
++	gpioint = rzg2l_gpio_get_gpioint(child, pctrl->data);
+ 	if (gpioint < 0)
+ 		return gpioint;
+ 
+@@ -1311,8 +1312,8 @@ static void rzg2l_init_irq_valid_mask(struct gpio_chip *gc,
+ 		port = offset / 8;
+ 		bit = offset % 8;
+ 
+-		if (port >= ARRAY_SIZE(rzg2l_gpio_configs) ||
+-		    bit >= RZG2L_GPIO_PORT_GET_PINCNT(rzg2l_gpio_configs[port]))
++		if (port >= pctrl->data->n_port_pin_configs ||
++		    bit >= RZG2L_GPIO_PORT_GET_PINCNT(pctrl->data->port_pin_configs[port]))
+ 			clear_bit(offset, valid_mask);
+ 	}
+ }
+@@ -1517,6 +1518,7 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
+ static struct rzg2l_pinctrl_data r9a07g043_data = {
+ 	.port_pins = rzg2l_gpio_names,
+ 	.port_pin_configs = r9a07g043_gpio_configs,
++	.n_port_pin_configs = ARRAY_SIZE(r9a07g043_gpio_configs),
+ 	.dedicated_pins = rzg2l_dedicated_pins.common,
+ 	.n_port_pins = ARRAY_SIZE(r9a07g043_gpio_configs) * RZG2L_PINS_PER_PORT,
+ 	.n_dedicated_pins = ARRAY_SIZE(rzg2l_dedicated_pins.common),
+@@ -1525,6 +1527,7 @@ static struct rzg2l_pinctrl_data r9a07g043_data = {
+ static struct rzg2l_pinctrl_data r9a07g044_data = {
+ 	.port_pins = rzg2l_gpio_names,
+ 	.port_pin_configs = rzg2l_gpio_configs,
++	.n_port_pin_configs = ARRAY_SIZE(rzg2l_gpio_configs),
+ 	.dedicated_pins = rzg2l_dedicated_pins.common,
+ 	.n_port_pins = ARRAY_SIZE(rzg2l_gpio_names),
+ 	.n_dedicated_pins = ARRAY_SIZE(rzg2l_dedicated_pins.common) +
 -- 
 2.25.1
 
