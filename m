@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99AC8C4321E
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Nov 2022 17:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94AC8C43219
+	for <linux-gpio@archiver.kernel.org>; Mon,  7 Nov 2022 17:55:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232047AbiKGRys (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Nov 2022 12:54:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59236 "EHLO
+        id S232490AbiKGRzI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Nov 2022 12:55:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232544AbiKGRyN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2022 12:54:13 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D78A2496D;
-        Mon,  7 Nov 2022 09:53:19 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id a14so17403962wru.5;
-        Mon, 07 Nov 2022 09:53:19 -0800 (PST)
+        with ESMTP id S232556AbiKGRyO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2022 12:54:14 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 603302CC;
+        Mon,  7 Nov 2022 09:53:22 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id ay14-20020a05600c1e0e00b003cf6ab34b61so10145943wmb.2;
+        Mon, 07 Nov 2022 09:53:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fZ1erY58kBlhlkmhk9QjyKuuzmHiyGJEgyZd797XqYk=;
-        b=eyrR2GZIXjzm6iz1blmbSY//jE433W7wwwq2lG3UhlpeoKyc4FvX4tFcR1kQbKyZcA
-         u+Ihdrjp6a2igl3uDxUCDm9QDuGFYXrlf47mAJf2xNSdHQbV3pXOUQKALB0kJEUCSpPz
-         RoHjJR98iRDJE5RDMJCr4zeXP6pQ/EHDhlG7DXz6NS8RRIx9kHz6lVDSEUVWI5qidF9V
-         D2JJaazfYsnjnig902R8l6htT3UgRON2KyxicuqtcN/aK9i3Ri5qfMFgSHARLCl8AfT2
-         KD45M1FgwaMqfgmfm7wHBhI8EQdxkxiT+jS5zxa5bMO3GcRJoBXdjTYBQtoeed3IXsXb
-         zToQ==
+        bh=Ol70elGXSkOXuxfrggtPBzq4RmwwfV6GuIgQ6Ej8CSA=;
+        b=cipDfNIYO9dRlaj4Jg1svXKSPG1N0oDpCTckBC7tkCqZ68QDlYxg+/nSo2jubRv+f9
+         jGOcxCqIAT302w9148xt4EMKC6mUR/0UWrDr56IIxNUFP7cqpIdt1y7pHxgwvNWp6dWe
+         gcfcjjmCer46Ghofszo4b+7GIzN/w72D5+iCtCcFCoydxUGxtoWwz+W0pmJnbI1BRyWx
+         I/M3BnYL1zyRXuYiI+jsBJTcbFwL+/JRm0fs1RczqZ5HcHzjl9CFWrXUysaZBGxlCHfE
+         zLE9n5iVYlKrmQV2T7u94MjWOX17SGxDGWmhln6w5ai0YXOmtZZad2zQAjMf3F/6YjH0
+         eKow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fZ1erY58kBlhlkmhk9QjyKuuzmHiyGJEgyZd797XqYk=;
-        b=2fh9QUtC40hUETPDLpz9e9G+aStpzTwyOq9JoBvBs5Jzx9a+IWSmUuX71qFicccZTF
-         GpAFk0h/MzM8Qtg11Or0QJXrTCTXhgYQvo+4Lq5KwN6iWM9VO94/0p6I4eGGc1tYvNgK
-         RIDTPW86oFV4BHr3DXzaITxSUO/4El+An5mvuASqE+tHHxu8UmLrmabuHyquWrwCRotF
-         x97IECGfPtmoZ8i9VPsr15m88oKOj8cAaPw6kedaDqBqzsTP42m9tAIU8c0LBCZzOqNN
-         pLDbqrTdDI84ZEEmy6BoZvs7vHt+OgeQi63yg8A4ujmD2CCvGhP1ldyGDZYCq56LvOdF
-         KCHA==
-X-Gm-Message-State: ACrzQf0acmkjXoIg2rexpyENOOb3d1PyHESeyi/jmgI+NFxvwnNcSOYI
-        PLed348cs2mNTWaIShN15b0=
-X-Google-Smtp-Source: AMsMyM5XNrG/+i6JNNIrr+JBnFnqI3iNiQ8pnIbp/mspxwOO/BeOD8TV8BCAmJo/Zki07Rp7tK2OlQ==
-X-Received: by 2002:a05:6000:10c6:b0:236:6613:a7bd with SMTP id b6-20020a05600010c600b002366613a7bdmr33617622wrx.570.1667843597649;
-        Mon, 07 Nov 2022 09:53:17 -0800 (PST)
+        bh=Ol70elGXSkOXuxfrggtPBzq4RmwwfV6GuIgQ6Ej8CSA=;
+        b=DjLON1Syl9gF9SWGptJxKgpmHiP5dC7wCFrNouS6K0n8asOfGTGGtGLPqC903wnyxC
+         FXQxtzVHrB8LTJaC0PCX4iCa0gBEdTd5mFGcPzx3MIC1l21+FL2kvxhbol5kD6z5tNFy
+         3IpGE6wDKkvaP9xDh81iVKHOwERXW/hmCRamv6uZlY0NifDQnCajJ8hDA5zVU2ygkAU1
+         QEFHi/zLmC9fdJkMCegEuCU3nnI1PFvoPmseSXy8GcGrRNQHT9/hhmZ+VgwblgtzjBsj
+         enKjShy/2zL9JSRfG9u2piHHmg28Yab2YFB9d3t/VPu9h262pyAOdHuOzORp/9Atul6T
+         BEMA==
+X-Gm-Message-State: ACrzQf3d+s9Kc1umEY/Tyi9rWLkcIojZAzkFb37CfB3WQ6qoGz483R5D
+        CfBZJfwLL9u7jxwKKiCwwEo=
+X-Google-Smtp-Source: AMsMyM7cnbn0gJsudNbXC9g4LN2e8/85YSN1C2HXnYAeCWVp4agWDareOr/Odx6X//SN0+0dhkiGMA==
+X-Received: by 2002:a05:600c:4383:b0:3cf:6ab5:5c38 with SMTP id e3-20020a05600c438300b003cf6ab55c38mr31601777wmn.194.1667843600793;
+        Mon, 07 Nov 2022 09:53:20 -0800 (PST)
 Received: from prasmi.home ([2a00:23c8:2501:c701:9c45:7ed3:c12e:e25b])
-        by smtp.gmail.com with ESMTPSA id v4-20020a5d4a44000000b002365254ea42sm8072454wrs.1.2022.11.07.09.53.16
+        by smtp.gmail.com with ESMTPSA id v4-20020a5d4a44000000b002365254ea42sm8072454wrs.1.2022.11.07.09.53.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Nov 2022 09:53:17 -0800 (PST)
+        Mon, 07 Nov 2022 09:53:20 -0800 (PST)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
@@ -63,9 +63,9 @@ Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH RFC 1/5] dt-bindings: interrupt-controller: renesas,rzg2l-irqc: Document RZ/G2UL SoC
-Date:   Mon,  7 Nov 2022 17:53:01 +0000
-Message-Id: <20221107175305.63975-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH RFC 4/5] arm64: dts: renesas: r9a07g043[u]: Update pinctrl node to handle GPIO interrupts
+Date:   Mon,  7 Nov 2022 17:53:04 +0000
+Message-Id: <20221107175305.63975-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -77,34 +77,46 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Document RZ/G2UL (R9A07G043) IRQC bindings. The RZ/G2UL IRQC block is
-identical to one found on the RZ/G2L SoC. No driver changes are
-required as generic compatible string "renesas,rzg2l-irqc" will be
-used as a fallback.
+Add required properties in pinctrl node to handle GPIO interrupts.
+
+Note as IRQC is not enabled in RZ/Five the phandle for interrupt-parent
+is added in RZ/G2UL specific dtsi so that RZ/Five pinctrl driver
+continues without waiting for IRQC to probe.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
-Note, renesas,r9a07g043u-irqc is added we have slight difference's compared to RZ/Five
-- G2UL IRQCHIP (hierarchical IRQ domain) -> GIC where as on RZ/Five we have PLIC (chained interrupt
-domain) -> RISCV INTC
-- On the RZ/Five we have additional registers for IRQC block
-- On the RZ/Five we have BUS_ERR_INT which needs to be handled by IRQC
----
- .../bindings/interrupt-controller/renesas,rzg2l-irqc.yaml        | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi  | 2 ++
+ arch/arm64/boot/dts/renesas/r9a07g043u.dtsi | 4 ++++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
-index 33b90e975e33..8f3678a82ba4 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
-@@ -26,6 +26,7 @@ properties:
-   compatible:
-     items:
-       - enum:
-+          - renesas,r9a07g043u-irqc   # RZ/G2UL
-           - renesas,r9a07g044-irqc    # RZ/G2{L,LC}
-           - renesas,r9a07g054-irqc    # RZ/V2L
-       - const: renesas,rzg2l-irqc
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+index 44b9bc6294be..afb1abaa8b9a 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+@@ -531,6 +531,8 @@ pinctrl: pinctrl@11030000 {
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			gpio-ranges = <&pinctrl 0 0 152>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD R9A07G043_GPIO_HCLK>;
+ 			power-domains = <&cpg>;
+ 			resets = <&cpg R9A07G043_GPIO_RSTN>,
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
+index 7a8ed7ae253b..65e7b029361e 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
+@@ -98,6 +98,10 @@ &irqc {
+ 	resets = <&cpg R9A07G043_IA55_RESETN>;
+ };
+ 
++&pinctrl {
++	interrupt-parent = <&irqc>;
++};
++
+ &soc {
+ 	interrupt-parent = <&gic>;
+ 
 -- 
 2.25.1
 
