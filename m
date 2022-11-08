@@ -2,83 +2,120 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A0BC4332F
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Nov 2022 14:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 397EFC4332F
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Nov 2022 14:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234105AbiKHO3V (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Nov 2022 09:29:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38752 "EHLO
+        id S233640AbiKHOvJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Nov 2022 09:51:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234089AbiKHO2v (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2022 09:28:51 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 698B15C776;
-        Tue,  8 Nov 2022 06:26:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1667917610; x=1699453610;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PF5aiFMvuJCck1QCgwE4v9546WvgeXFWsp175nRCSTU=;
-  b=f7329ker/B7xWvQX4aX/MJteJ01apb9a3wCJ+n/KRvbq0KiB2+tiTTg5
-   mimXHkFt9ygk4eXkpB/svsfYwNgqQ+wMst6TkcsCBJXXDTCdlnH+hr/Ri
-   h99bQJTTtb5ZFZ3l4LmlQS6cccdCnCiYvTh1eJBgdVqA4sF8OpLkR+KCC
-   3gHMRgeYeVxHRwbGZgXeYOVJQa9lMpz0fUjc5wyYWj0vYHYibOFHB6gWZ
-   vG04xwRwwhFDAkT62hbL+xuqRFa/mlHp907Cbzh5j2HckYhbNH1TgfJkk
-   5V7bqV5Moh11QqSCmsR8SQpqD7LqaBcC/mxYafPCWk8/fsAc5ME1ZUw/l
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="310701596"
-X-IronPort-AV: E=Sophos;i="5.96,148,1665471600"; 
-   d="scan'208";a="310701596"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2022 06:26:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="638804818"
-X-IronPort-AV: E=Sophos;i="5.96,148,1665471600"; 
-   d="scan'208";a="638804818"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga007.fm.intel.com with ESMTP; 08 Nov 2022 06:26:48 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1osPYt-009ASc-0d;
-        Tue, 08 Nov 2022 16:26:47 +0200
-Date:   Tue, 8 Nov 2022 16:26:46 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] pinctrl: intel: Add Intel Moorefield pin
- controller support
-Message-ID: <Y2pnJskyDcTMn8LL@smile.fi.intel.com>
-References: <20221108140931.62910-1-andriy.shevchenko@linux.intel.com>
- <Y2pmYOKcVcMZ+lF1@black.fi.intel.com>
+        with ESMTP id S233944AbiKHOvI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2022 09:51:08 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1666B13F6F
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Nov 2022 06:51:07 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id t25so39214857ejb.8
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Nov 2022 06:51:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5RfhvWt1Tv41V7xOdh182isXRfcqnMCvMMU4ZxjHa4I=;
+        b=vgPgq/fKoy91SWpS9t2e6oRNux2GYZ11uz4nq69Ecusn/WQxEr9PnRkXeciq96q9Kf
+         Y/uc1JXxwDcE7DZk4ERIHWnMD3xCOKQOkmZ9szh6zLYAHlS8jB3/9Vzu0GTEcRvD273p
+         QcJzqGu94FAUp4fND/CyiussZorc4AISQgkF6NZxvG/MLLVHHNxJkea27kaoeMZFf8NM
+         MrPmIrciQQHldO1W0L/ICYsoJczxk/E5K1ku/kfcnyWtcEYwFARIfMuiqAHSi0RwOReo
+         3xg6N55uGAcHesseexA8+25xPiouSe/QNOgAQpSqMWJsa4JVGZPnnvoO6B0S9mYDKIX0
+         HTaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5RfhvWt1Tv41V7xOdh182isXRfcqnMCvMMU4ZxjHa4I=;
+        b=QxqbY68h5l0MzK7TqHRjHgqYZgmJKiHdsyKEc/QzHaJGx73KiD6/uzFwkVgrc12+Kz
+         iyfgNcj9Suhliz+rX0oHqEsmv8Z/qVe5F2qPmQRKTA+HTmvifQZZ4mR8WdPxRSZQOtPR
+         jCdf9QH8ACDybieL3rNtlJge5RF07nUKhjmiz/he8JFe5zF0AcAK9/VU+wpzxF/1Lnid
+         +8m4UEzxNk6gEtJqjYjbproMhi32N0IioMgzYMk4Jtbsoqpx2qmX0IE/7x7ucqiNI4Fg
+         RonIruxL9PStkfJ2KoRpTDfAr/MQICqoHTf/MwhBuFz0qM4UMKxjCT67jWTr4FS2YFv2
+         mcGg==
+X-Gm-Message-State: ACrzQf3caF73+d9gyKuYe2FyABaqavL1FsN/L6HiHQ7KCzaJ2JROuCqP
+        Unyyce17lIxgh+TnTzu5SRcBgqyF6kpA3AwRf3MNIw==
+X-Google-Smtp-Source: AMsMyM43GACP12dQZV6v3KIC5Qxaj6QVCASShwmiPx6+SaG+30Y/RBMbREK4KJlCmGU7p1c/8UJC8IQmuja8j8BZsDc=
+X-Received: by 2002:a17:907:c1e:b0:7ae:31a0:571e with SMTP id
+ ga30-20020a1709070c1e00b007ae31a0571emr21471098ejc.690.1667919065615; Tue, 08
+ Nov 2022 06:51:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y2pmYOKcVcMZ+lF1@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20221025070255.14407-1-linux@fw-web.de> <e7192d9b-df86-a860-d5cb-8b4b9184e5bc@linaro.org>
+ <trinity-889b4468-8a50-4eae-80a1-6bd9ffbeaaf2-1667577856206@3c-app-gmx-bs24>
+In-Reply-To: <trinity-889b4468-8a50-4eae-80a1-6bd9ffbeaaf2-1667577856206@3c-app-gmx-bs24>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 8 Nov 2022 15:50:44 +0100
+Message-ID: <CACRpkdZFkeX7J9R2C0rhF+WZJXe65y6FfeBEMBGGkSTh4AWmsQ@mail.gmail.com>
+Subject: Re: Re: [PATCH v2] dt-bindings: pinctrl: update uart/mmc bindings for
+ MT7986 SoC
+To:     Frank Wunderlich <frank-w@public-files.de>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Frank Wunderlich <linux@fw-web.de>,
+        linux-mediatek@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 08, 2022 at 04:23:28PM +0200, Mika Westerberg wrote:
-> On Tue, Nov 08, 2022 at 04:09:31PM +0200, Andy Shevchenko wrote:
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Intel Moorefield SoC pinctrl driver
-> > + *
-> > + * Copyright (C) 2020, Intel Corporation
-> 
-> 2022
-> 
-> Otherwise looks nice to me,
+On Fri, Nov 4, 2022 at 5:04 PM Frank Wunderlich <frank-w@public-files.de> wrote:
 
-Fixed and pushed into my reqiew and testing queue, thanks!
+> > Gesendet: Dienstag, 25. Oktober 2022 um 20:35 Uhr
+> > Von: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
+> > Betreff: Re: [PATCH v2] dt-bindings: pinctrl: update uart/mmc bindings for MT7986 SoC
+> >
+> > On 25/10/2022 03:02, Frank Wunderlich wrote:
+> > > From: Frank Wunderlich <frank-w@public-files.de>
+> > >
+> > > Add new splitted uart pins and emmc_51
+> > >
+> > > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> >
+> >
+> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> after talking with MTK for the emmc pinctrl settings (custom pull-up) they suggested me to change
+> binding to fix other emmc-values and allow multiple (2) uart-items
+>
+> so on top of this patch
+>
+>              then:
+>                properties:
+>                  groups:
+> -                  enum: [emmc, emmc_rst, emmc_51]
+> +                  enum: [emmc_45, emmc_51]
+>            - if:
+>                properties:
+>                  function:
+> @@ -231,10 +231,12 @@ patternProperties:
+>              then:
+>                properties:
+>                  groups:
+> -                  enum: [uart1_0, uart1_rx_tx, uart1_cts_rts, uart1_1,
+> -                         uart1_2_rx_tx, uart1_2_cts_rts, uart1_3_rx_tx,
+> -                         uart1_3_cts_rts, uart2_0_rx_tx, uart2_0_cts_rts,
+> -                         uart2_1, uart0, uart1, uart2]
+> +                  items:
+> +                    enum: [uart1_0, uart1_rx_tx, uart1_cts_rts, uart1_1,
+> +                           uart1_2_rx_tx, uart1_2_cts_rts, uart1_3_rx_tx,
+> +                           uart1_3_cts_rts, uart2_0_rx_tx, uart2_0_cts_rts,
+> +                           uart2_1, uart0, uart1, uart2]
+> +                  maxItems: 2
+>
+> i would squash these changes and send as v3 or should i send an extra-patch?
 
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Squash and send av v3 if you haven't already! Easiest for me.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Yours,
+Linus Walleij
