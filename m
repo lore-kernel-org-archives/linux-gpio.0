@@ -2,108 +2,71 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 075D0C4321E
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Nov 2022 14:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2883C4332F
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Nov 2022 14:24:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233924AbiKHOWw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Nov 2022 09:22:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57362 "EHLO
+        id S234305AbiKHOYY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Nov 2022 09:24:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234352AbiKHOWT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2022 09:22:19 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 809DE54B2F;
-        Tue,  8 Nov 2022 06:22:18 -0800 (PST)
+        with ESMTP id S234100AbiKHOYE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2022 09:24:04 -0500
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A89712124A;
+        Tue,  8 Nov 2022 06:23:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1667917338; x=1699453338;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=E9ags/i2eDk5WiEL1lMfAOWBo+2EbAcbpeazBtcJaqI=;
-  b=IY8eOGG5AbGU/thfTYtpls063zxVpV5GhebaF0WBpN2XhwgrSwOyfsur
-   BRM61jpRSb4AobgbzZ+yG5nimeoU1d1v7Do86xiHmC/G6KJi9qOS9BQFv
-   Qq0ImAW8CxPffvRmL9vCtmOQK75sXKwYmaphjjLea5UZdu4zkguVYJrow
-   LSzqAE0zazYMulRy5y+mGWyHYLPYZrqlMDX4xmUDu1B973kBe9+nAcEVm
-   4RiIabUdg2lD8fJ1L1iTbSY48pDbzWmsXUNXTS4XlIgxeoAC8SUWH2RFK
-   pjS4y4T6biqEi/Id9/ILyH35ko5Mtlxx6KC4MU05w0g7TJaUAUJA3qmy4
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="310700753"
+  t=1667917387; x=1699453387;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2WavLr3MTefaumdPXWdllt3kTx6JgjBoL4oUVNHXSqQ=;
+  b=H8ADtzHpou/d0mmlcxsouvsBGlGbxUCla3YPOdORtfEcbii2xWhWVxPG
+   qqTno510llq7a8RvkL0dew334mnrr7nGxPZ2FA4U9QIYt8pPLsfJfqYnB
+   OeOecmxH0AObu2WIKhuzaylm8YqSRPw4Ps/leaySgz3zg246q7+3eeDuS
+   G8La/C0/sJmSmp2CfDUHHMK4OZpNfVDSbc0qEoQrpV9gKy6Z+kSqrm2Gu
+   GTWpvUDSuE678PLPps8lHeXlsan2/mv02rQ2LLWX2Le5mAc9bQiJ3zL3N
+   v8O01il8RXNivVRAYqjzsEc0sSC8rm0zKcuc+3X+36jgBJxC6EczomOd0
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="294072872"
 X-IronPort-AV: E=Sophos;i="5.96,148,1665471600"; 
-   d="scan'208";a="310700753"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2022 06:22:06 -0800
+   d="scan'208";a="294072872"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2022 06:23:06 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="587386418"
+X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="669562342"
 X-IronPort-AV: E=Sophos;i="5.96,148,1665471600"; 
-   d="scan'208";a="587386418"
+   d="scan'208";a="669562342"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 08 Nov 2022 06:22:03 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 75ED429D; Tue,  8 Nov 2022 16:22:27 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pwm@vger.kernel.org
-Cc:     Andy Shevchenko <andy@kernel.org>,
+  by orsmga001.jf.intel.com with ESMTP; 08 Nov 2022 06:23:05 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 2CD7D15C; Tue,  8 Nov 2022 16:23:28 +0200 (EET)
+Date:   Tue, 8 Nov 2022 16:23:28 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Andy Shevchenko <andy@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 2/6] pwm: lpss: Rename MAX_PWMS --> LPSS_MAX_PWMS
-Date:   Tue,  8 Nov 2022 16:22:22 +0200
-Message-Id: <20221108142226.63161-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221108142226.63161-1-andriy.shevchenko@linux.intel.com>
-References: <20221108142226.63161-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] pinctrl: intel: Add Intel Moorefield pin
+ controller support
+Message-ID: <Y2pmYOKcVcMZ+lF1@black.fi.intel.com>
+References: <20221108140931.62910-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221108140931.62910-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The MAX_PWMS definition is already being used by PWM core.
-Using the same name in the certain driver confuses people
-and potentially can clash with it.
+On Tue, Nov 08, 2022 at 04:09:31PM +0200, Andy Shevchenko wrote:
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Intel Moorefield SoC pinctrl driver
+> + *
+> + * Copyright (C) 2020, Intel Corporation
 
-Hence, rename it by adding LPSS prefix.
+2022
 
-Reported-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Otherwise looks nice to me,
+
 Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/pwm/pwm-lpss.c | 2 +-
- drivers/pwm/pwm-lpss.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pwm/pwm-lpss.c b/drivers/pwm/pwm-lpss.c
-index accdef5dd58e..b8739cd2c235 100644
---- a/drivers/pwm/pwm-lpss.c
-+++ b/drivers/pwm/pwm-lpss.c
-@@ -252,7 +252,7 @@ struct pwm_lpss_chip *pwm_lpss_probe(struct device *dev, void __iomem *base,
- 	int i, ret;
- 	u32 ctrl;
- 
--	if (WARN_ON(info->npwm > MAX_PWMS))
-+	if (WARN_ON(info->npwm > LPSS_MAX_PWMS))
- 		return ERR_PTR(-ENODEV);
- 
- 	lpwm = devm_kzalloc(dev, sizeof(*lpwm), GFP_KERNEL);
-diff --git a/drivers/pwm/pwm-lpss.h b/drivers/pwm/pwm-lpss.h
-index 8e82eb5a7e00..2c746c51b883 100644
---- a/drivers/pwm/pwm-lpss.h
-+++ b/drivers/pwm/pwm-lpss.h
-@@ -13,7 +13,7 @@
- #include <linux/device.h>
- #include <linux/pwm.h>
- 
--#define MAX_PWMS			4
-+#define LPSS_MAX_PWMS			4
- 
- struct pwm_lpss_chip {
- 	struct pwm_chip chip;
--- 
-2.35.1
-
