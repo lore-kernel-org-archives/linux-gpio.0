@@ -2,172 +2,264 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3629BC433FE
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Nov 2022 09:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2383DC4332F
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Nov 2022 09:21:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233696AbiKHJQE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Nov 2022 04:16:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37062 "EHLO
+        id S233683AbiKHJVV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Nov 2022 04:21:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233706AbiKHJQC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2022 04:16:02 -0500
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2126.outbound.protection.outlook.com [40.107.114.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F16D2A279;
-        Tue,  8 Nov 2022 01:16:01 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eXh8Lqr6SylhsfcujvohklTafdFfrcQ0VwDyJuTXaBwP1fOassDK/kmzJmExM9IOTif55iRAbKPo1r8+1Vlt4VRYcUcJ1WUMyf2rPUuHJ/bP7Z+hBkg1PZVVoD11j3e9eY6fy/z3Siu0dql8XSrqYhnPTmNlalmjzp/RIhat49ytijLUFokPhRNex85jqPxXfYb+RJaYLNUxqBesYv/ayyBL1hy6VWTaBSenGWJiuSisPhJWWfnSxU3cKXNhaIyGVPnPWJ1C1dCfkbPBuhkGq6rVo2v4HytUzDZF4ZjXZUG1HT1w/zjm00qbWbDjkqWLr044nod1Vr4WYDS3HYKmYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pxBfkvHi30f9VU51D4ZRKDXlOtNRxr/a7B68y08YP9I=;
- b=fj1NXjXLGSEaasSc1vLwFZdyM2lysaXlxxktizQIK9m04lJuaj6zCbDnaYlIZaVxd1Ew8Gl5/9MQJPINjLc+y1zk57mYiB29UMER52MyVQgFWjx69VLfc1SGV+PevCrqUqPBMlI8S4oYMm1PxRMD7gmcHabD3SPe5Pswj1ZysHZI0i85swnaXGsme+M46dMtyiKyQBXbwLH2+BG0Y9ftG+S7QipMjHExELAgzh4jXcb2o5Xrzr2cexp9pJ+XPMWIYYyi1jkVjktdIMVqOZPyeGb8Lhi2vRG1CJwNH+tj6gCwr3TSuPyCYjQpDjcljRk2ZmeWgrbrXpW7NcwmFq0d3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pxBfkvHi30f9VU51D4ZRKDXlOtNRxr/a7B68y08YP9I=;
- b=nbyJpFg6neo0kv851IdDyjMQOyARVDdtQglDSlT0Rw9SWjBxmN0ZbTrbq8fZ7NaD2pc0anNDyz+EA26MERJEnx3GLxvecXuGqzdrgLxs/7jnydUXm7qGIKais5l6k7PetflhoLCf9+divJ1Rq66qfukrOduXvJBf962pee0CgHY=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by TYYPR01MB8261.jpnprd01.prod.outlook.com (2603:1096:400:115::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.26; Tue, 8 Nov
- 2022 09:15:58 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::5b24:f581:85bd:6ce2]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::5b24:f581:85bd:6ce2%3]) with mapi id 15.20.5791.027; Tue, 8 Nov 2022
- 09:15:58 +0000
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
+        with ESMTP id S232929AbiKHJVU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2022 04:21:20 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C5270248CA;
+        Tue,  8 Nov 2022 01:21:17 -0800 (PST)
+Received: from loongson.cn (unknown [10.180.13.64])
+        by gateway (Coremail) with SMTP id _____8Dxu9iMH2pjLEcFAA--.17044S3;
+        Tue, 08 Nov 2022 17:21:16 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.180.13.64])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8Axf+CEH2pj+uEOAA--.41643S3;
+        Tue, 08 Nov 2022 17:21:13 +0800 (CST)
+From:   Yinbo Zhu <zhuyinbo@loongson.cn>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH RFC 2/5] pinctrl: renesas: rzg2l: Fix configuring the GPIO
- pins as interrupts
-Thread-Topic: [PATCH RFC 2/5] pinctrl: renesas: rzg2l: Fix configuring the
- GPIO pins as interrupts
-Thread-Index: AQHY8tHTw1YXCrAdj0KX+iZlhq0xQa40m+uwgAAiGoCAAADJIA==
-Date:   Tue, 8 Nov 2022 09:15:58 +0000
-Message-ID: <OS0PR01MB5922006090CFC5AAE4ED0D2C863F9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20221107175305.63975-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <OS0PR01MB592295C7DBA5E0A85B4D26AF863F9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <CA+V-a8u6J3+OkANOQYec9-Xe6voAiNTkLo_Zvy6dkC03EYp-4Q@mail.gmail.com>
-In-Reply-To: <CA+V-a8u6J3+OkANOQYec9-Xe6voAiNTkLo_Zvy6dkC03EYp-4Q@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TYYPR01MB8261:EE_
-x-ms-office365-filtering-correlation-id: c47a1598-b38e-4cc8-5a1c-08dac169d93a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: uRyLx9rO+8ioDpYV0bpdiZ27frKnMdmfF1s467r+ZmHEQZUa1FXFTFUD6DEZN5NU/7rX4yDxacGIvsegmmOYrjaKDaFo+XyQWQ+9JSXemnkVx/QFYPR/q9Z0ctdDvgFWlT3/iIId8ryiwu3JYPVhnieeVwqJAMAOqLwkMM/JUzxiTJxg/JKcQX+St+ShmiBgPNjUmMu3hYlOxg5Y2LCTU9MF8Z+vXAjl8NgEfmSZf6GGvbzrwygG7DRsjvGpbo/qiqYjqQPeC2Wo9b8eyPfTLTejmKRytKc8Z1N/YIetb+GCSBZuFoFusDc5fOnafvXtWTpdEa3pm2X2rXzx7RzcWzSf3ZyO5nIdA8G7I9P5xy3V8kxj5iD6h2vRNCDqhsCEH9qMyFEC18npkCSz1btUoz17bxXvD4Pa9mEAMoLyLlsF1wDth9EePXiZ5ZQ9kIh4xVBk8gHwwCienpKeDySO0UbKKV0+udYvdPq/h+kA+XoN57nq11nA/6tU6SCA6wUyTcFcDhxxwxLFxMQMs9LHIl3bth3tDGBkEXgjU7LyjSvrOpQVBTI6+8P71NIPWmTq3A38w6TmUPDu2Ku/hwz2orFjjbf4o5tgPM3mTfpvmbBeWv+3Hb5KZN8wW5CvrKQXaUy3uBf0sXV7HOJ10a0SOE2XfsbReWUJhH08YrWtUe7p/8pbjFtfV9Jr8xZlbq70F/uH4zw//97n41AjXOiomiriX6jhHETf7IZ97trqSgyekjktNgXJUInLn5hSiWqgmVYS6ra4FbRMF0v5XYLBbg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(39860400002)(346002)(376002)(136003)(366004)(451199015)(38100700002)(38070700005)(107886003)(76116006)(6506007)(5660300002)(66446008)(66476007)(7696005)(122000001)(66946007)(33656002)(86362001)(2906002)(66556008)(7416002)(41300700001)(83380400001)(8936002)(4326008)(186003)(9686003)(53546011)(26005)(6916009)(478600001)(64756008)(8676002)(316002)(54906003)(52536014)(55016003)(71200400001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RnZ1SXgreWpHOW9uejkwNHU2UE8wTGtXWXA3NkJXOEFtZDMwMXhEMWNFR1M4?=
- =?utf-8?B?NmZyczduK0FLanlTZENkVTdTT0t0QjBvbzEyYmQvM0Rtbm9rMk0vYS8wdW84?=
- =?utf-8?B?bWtCZXNYNmMvZUNDbjFsNmVNTjlTRnZnNjJ4aXpUVzlxYjRLQWpibWZrVHJX?=
- =?utf-8?B?SDFJQ3dLak9xd0NTYUN6Nkc4MVdXQ0w0NUM5VFYwVzFOWlNSdllPU2xiaEZt?=
- =?utf-8?B?RGJKTHd0V3V5dDZ1RjNNdklqd21ZR3dScHRiakdVZ2ZnNmovN0RmaXVlV3du?=
- =?utf-8?B?OUlqdnN1RFlqSDVSSk5sWHd5V3d4dVVwcmZtKzBCQm55anlnQnUzOTA1VFFq?=
- =?utf-8?B?QUw3UXg3M2gvZDVZU1pDZ1JQSm15aWVXbTV2UDQvN01ETWdXN1JXeG5JNTFM?=
- =?utf-8?B?QTdwN2ZDaGRYZDV6SnhOYi9uL3pTZm56M2xZMFBRVDlaM1Z6Mm5BM3JRb3ZM?=
- =?utf-8?B?eExEK0xUd2FHRkxieXBQQk5aMitVMFQ3U0tWS2ZMNHNJbmZpL1VQR3UzdndI?=
- =?utf-8?B?aHFpb25hcEo2RW1KakRvanM0OU1NcmQ1Qk84aGxIUlZjcFpGL0lRejVsU2tK?=
- =?utf-8?B?WlYzckhZeGU0MU81MC9WNEFNUEZ0THF2dGcrMVQrcERYMURLMHBFS214QXBM?=
- =?utf-8?B?eXVEZ3NEM3hGTWlBUEM1NjJqRTg4OVhINjk0RFNvcEkwMHZRTlFtSVM5SFJi?=
- =?utf-8?B?L2lPWDh0TnlzUjZkc3hFQmJpNm1QM1pXclFvSXBxRHpDSEZxellZTmIvV2NV?=
- =?utf-8?B?M0hGSWdFc3puWVlQa2VsaTUrM1AzV3JtNkYwaWZJNi9SV2JjNDlIRElTajd5?=
- =?utf-8?B?alJSYlB2M2NUckh6VlNDbnJqcndWTElmTmUxbnZjZkVVZ0RiOElLTWcwbWJp?=
- =?utf-8?B?dzZWYkRPdGllcEFkUGRXWG1MZ3hET1l1Tk4wUWFSelVSVnBBQjhTR3UwQWty?=
- =?utf-8?B?dVBoeWFSTjBBQVZZOEkrcjc2bDdRNXgxRjRuU2pRL3NwSnVrMmhDOFpTQThE?=
- =?utf-8?B?ZXI3TWo3Z3pUTDBiamxnaXVzK0YvMXZZdDhWNWtIQ0ZzeUN4NElQb3hLcUVJ?=
- =?utf-8?B?OURrSlRGY0xKM1VOdnQxbklvcThLNGhBL3FrVlVCTG1aNkNEaHViaytkU3N2?=
- =?utf-8?B?RlVHN1lEZjJ3TWV3WGVIUmJCaTRwZlFqa3FvYWN2RWswK25sWjJ3Z1lJS0NT?=
- =?utf-8?B?VWJyWU1lVW9ZNFFocm1KMDZuUEI5dDBnSmFtdXQzZ2ozZkhBR05oaVRjOTVD?=
- =?utf-8?B?TWxzQUo5amJWSzdFNWNoUTBaeHhsVE1ycm9VV0N4VjJQVUJONDRlcFFDOXJk?=
- =?utf-8?B?UVpOdTZ6Tkx0RXNxRVJuQUFzcDZTcjJmMnFqdFkzTGZoNkw3T2oyZC9Mclkw?=
- =?utf-8?B?cEhkb0c2TkpjeFJMMEVXMGhuYVJiUHVWS1pkdTg1NEZ1L0VFcHFJbWszZTVI?=
- =?utf-8?B?YTY3bk1qOVJ4V0lUU0xOcjNZMStBODlVNGxNMmZPaGFBNDU5N1R6S1RSaEla?=
- =?utf-8?B?YkhHU3V3ZXZydUR0VWVzMzBvVDk5RVFkNDRyb0hjaVJBK1hJUk1lTGV0bVR4?=
- =?utf-8?B?SElLQlRuRXVkc3U4Ym1qd1FkODlCV25adGtkMmtQblpPTjNHcWl3WW1VQTZr?=
- =?utf-8?B?T0s3b2dEbUN5OGpSaTVjS09NN1ZaekNFaDNDOFR4MXg1SDd1Qm5KelZ1WHJt?=
- =?utf-8?B?UXpaU1BHbjQ5cTZKOWMybjJ1MFd5RTYzMyt4OUlYWDY5YURrd3lGUUoxTkta?=
- =?utf-8?B?Ulp0bWtSdnhrbnJ0cy9xM2R2TEo3aHFHQWNrWWEzeWp1ZWw1d2NTNGF6dURa?=
- =?utf-8?B?eWVtUXFETEo0TFh3eWFNZlI4VjhvelhjOVJVNjdVdHN5T1FNNi9JS2JBdTRr?=
- =?utf-8?B?Y24xTVdVRTZ3QUltRTNUdE4wZ0Q4Q00yQWJld1RibzlSeXplMVMzcHZMWTlX?=
- =?utf-8?B?eC9UZUR5UlNIL3pTOGZ4NDliNG53SkI3bklxQlFrMGJTLzhaRVJmUDk2Zm5J?=
- =?utf-8?B?OHVDY09Jc29QbFg4Y1MwdWZUVXkxUXRlTjhWbE1tcCsvMWJCMC9aeDc1UlRB?=
- =?utf-8?B?NUhVL1ZqYWhyeWh3eXAxNFRtZk9GNWZ2MjdzS3lycjhJRkh3UzJzQ2xEbmwr?=
- =?utf-8?B?NGtJa1NGV1JGS3NGOFZlejBma1BxNWxzSzlYNXFPU2lwaTVKVjZ4MGg2b3hH?=
- =?utf-8?B?TVE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        WANG Xuerui <kernel@xen0n.name>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Juxin Gao <gaojuxin@loongson.cn>,
+        Bibo Mao <maobibo@loongson.cn>,
+        Yanteng Si <siyanteng@loongson.cn>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+        richard.liu@st.com, Arnaud Patard <apatard@mandriva.com>,
+        Hongbing Hu <huhb@lemote.com>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Yinbo Zhu <zhuyinbo@loongson.cn>
+Subject: [PATCH v1 2/2] dt-bindings: gpio: add loongson series gpio
+Date:   Tue,  8 Nov 2022 17:21:07 +0800
+Message-Id: <20221108092107.28996-2-zhuyinbo@loongson.cn>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20221108092107.28996-1-zhuyinbo@loongson.cn>
+References: <20221108092107.28996-1-zhuyinbo@loongson.cn>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c47a1598-b38e-4cc8-5a1c-08dac169d93a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2022 09:15:58.5928
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0ku9fwit3UmG5Fq7uATJ6P652dsDJ/McVAVJHuj1SRowvYPTgUSn8Jt6318OCncgPZXfi3/2GBkmXDhCUFLT5c8lFANI7UOaxoglQQN7xmw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB8261
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8Axf+CEH2pj+uEOAA--.41643S3
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoW3XrWUWr4UZFW7ZFWDur45Wrg_yoW7Ary3p3
+        WDZF9rX3y2gFnxZFs8Kan7Zr1fAr1kCw1rurnxC3yxtrW5Kw15ZF4fKFykG3WfWrWUXF17
+        XwsxurWFya43Aw7anT9S1TB71UUUUb7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bfkFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUAVWUZwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_Jw0_GFyle2I262IYc4CY
+        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+        0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
+        xVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+        C2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_
+        Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
+        WUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
+        CTnIWIevJa73UjIFyTuYvjxUIbyCDUUUU
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGFkLCBQcmFiaGFrYXIg
-PHByYWJoYWthci5jc2VuZ2dAZ21haWwuY29tPg0KPiBTZW50OiAwOCBOb3ZlbWJlciAyMDIyIDA5
-OjEwDQo+IFRvOiBCaWp1IERhcyA8YmlqdS5kYXMuanpAYnAucmVuZXNhcy5jb20+DQo+IENjOiBU
-aG9tYXMgR2xlaXhuZXIgPHRnbHhAbGludXRyb25peC5kZT47IE1hcmMgWnluZ2llciA8bWF6QGtl
-cm5lbC5vcmc+OyBSb2INCj4gSGVycmluZyA8cm9iaCtkdEBrZXJuZWwub3JnPjsgS3J6eXN6dG9m
-IEtvemxvd3NraQ0KPiA8a3J6eXN6dG9mLmtvemxvd3NraStkdEBsaW5hcm8ub3JnPjsgR2VlcnQg
-VXl0dGVyaG9ldmVuDQo+IDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT47IE1hZ251cyBEYW1tIDxt
-YWdudXMuZGFtbUBnbWFpbC5jb20+OyBMaW51cyBXYWxsZWlqDQo+IDxsaW51cy53YWxsZWlqQGxp
-bmFyby5vcmc+OyBsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZzsgbGludXgtcmVuZXNhcy0NCj4g
-c29jQHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0K
-PiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBQcmFiaGFrYXIgTWFoYWRldiBMYWQgPHByYWJoYWth
-ci5tYWhhZGV2LQ0KPiBsYWQucmpAYnAucmVuZXNhcy5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFU
-Q0ggUkZDIDIvNV0gcGluY3RybDogcmVuZXNhczogcnpnMmw6IEZpeCBjb25maWd1cmluZyB0aGUN
-Cj4gR1BJTyBwaW5zIGFzIGludGVycnVwdHMNCj4gDQo+IEhpIEJpanUsDQo+IA0KPiBPbiBUdWUs
-IE5vdiA4LCAyMDIyIGF0IDc6MTQgQU0gQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMu
-Y29tPiB3cm90ZToNCj4gPg0KPiA+IEhpIFByYWJoYWthciwNCj4gPg0KPiA+DQo+ID4gPiBTdWJq
-ZWN0OiBbUEFUQ0ggUkZDIDIvNV0gcGluY3RybDogcmVuZXNhczogcnpnMmw6IEZpeCBjb25maWd1
-cmluZw0KPiA+ID4gdGhlIEdQSU8gcGlucyBhcyBpbnRlcnJ1cHRzDQo+ID4gPg0KPiA+ID4gRnJv
-bTogTGFkIFByYWJoYWthciA8cHJhYmhha2FyLm1haGFkZXYtbGFkLnJqQGJwLnJlbmVzYXMuY29t
-Pg0KPiA+ID4NCj4gPiA+IE9uIHRoZSBSWi9HMlVMIFNvQyB3ZSBoYXZlIGxlc3MgbnVtYmVyIG9m
-IHBpbnMgY29tcGFyZWQgdG8gUlovRzJMDQo+ID4gPiBhbmQgYWxzbyB0aGUgcGluIGNvbmZpZ3Mg
-YXJlIGNvbXBsZXRlbHkgZGlmZmVyZW50LiBUaGlzIHBhdGNoIG1ha2VzDQo+ID4gPiBzdXJlIHdl
-IHVzZSB0aGUgYXBwcm9wcmlhdGUgcGluIGNvbmZpZ3MgZm9yIGVhY2ggU29DICh3aGljaCBpcw0K
-PiA+ID4gcGFzc2VkIGFzIHBhcnQgb2YgdGhlIE9GDQo+ID4gPiBkYXRhKSB3aGlsZSBjb25maWd1
-cmluZyB0aGUgR1BJTyBwaW4gYXMgaW50ZXJydXB0cyBpbnN0ZWFkIG9mIHVzaW5nDQo+ID4gPiBy
-emcybF9ncGlvX2NvbmZpZ3NbXSBmb3IgYWxsIHRoZSBTb0NzLg0KPiA+ID4NCj4gPg0KPiA+IExv
-b2tzIGxpa2UgeW91IGFyZSBtaXNzaW5nIGZpeGVzIHRhZy4NCj4gPiBGaXhlczogZGIyZTVmMjFh
-NDhlZCAoInBpbmN0cmw6IHJlbmVzYXM6IHBpbmN0cmwtcnpnMmw6IEFkZCBJUlEgZG9tYWluDQo+
-ID4gdG8gaGFuZGxlIEdQSU8gaW50ZXJydXB0IikNCj4gPg0KPiBJIGRpZCB0aGluayBhYm91dCBi
-dXQgdGhlbiBJIHJlYWxpc2VkIHRoaXMgZml4ZXMgdGhlIEdQSU8gSVJRIGZ1bmN0aW9ucyBvbmx5
-DQo+IGFuZCB3ZSBkaWRuJ3Qgc3VwcG9ydCBJUlFDIGFuZCBHUElPIGludGVycnVwdHMgdXAgdW50
-aWwgbm93IHNvIEkgaGFkbid0IGFkZGVkDQo+IHRoZSBmaXhlcyB0YWcuDQoNClllcCB0aGF0IGlz
-IHRydWUsIGV2ZW4gdGhvdWdoIHdlIGhhdmUgcGluY3RybCBzdXBwb3J0IGZvciBib3RoIFJaL0cy
-TCBhbmQgUlovRzJVTC4NCkludGVycnVwdCBzdXBwb3J0IGFkZGVkIG9ubHkgZm9yIFJaL0cyTCBh
-dCB0aGF0IHRpbWUuIE1heWJlIGNoYW5nZSB0byByZWZsZWN0DQpSWi9HMlVMIEdQSU8gaW50ZXJy
-dXB0IHN1cHBvcnQuDQoNCkNoZWVycywNCkJpanUNCg==
+Add the Loongson series gpio binding with DT schema format using
+json-schema.
+
+Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+---
+ .../bindings/gpio/loongson,ls-gpio.yaml       | 154 ++++++++++++++++++
+ MAINTAINERS                                   |  11 ++
+ 2 files changed, 165 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+
+diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+new file mode 100644
+index 000000000000..9d335262ddcc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+@@ -0,0 +1,154 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/loongson,ls-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Loongson series GPIO controller.
++
++maintainers:
++  - Yinbo Zhu <zhuyinbo@loongson.cn>
++
++properties:
++  compatible:
++    enum:
++      - loongson,ls2k-gpio
++      - loongson,ls7a-gpio
++
++  reg:
++    maxItems: 1
++
++  ngpios: true
++
++  "#gpio-cells":
++    const: 2
++
++  gpio-controller: true
++
++  gpio-ranges: true
++
++  loongson,conf_offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      This option indicate this GPIO configuration offset address.
++
++  loongson,out_offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      This option indicate this GPIO output value offset address.
++
++  loongson,in_offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      This option indicate this GPIO input value offset address.
++
++  loongson,gpio_base:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      This option indicate the first GPIO number in this node.
++
++  loongson,support_irq:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      This option indicate this GPIO whether support interrupt.
++
++  interrupts:
++    minItems: 1
++    maxItems: 64
++
++required:
++  - compatible
++  - reg
++  - ngpios
++  - "#gpio-cells"
++  - gpio-controller
++  - gpio-ranges
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    gpio0: gpio@1fe00500 {
++      compatible = "loongson,ls2k-gpio";
++      reg = <0x1fe00500 0x38>;
++      ngpios = <64>;
++      #gpio-cells = <2>;
++      gpio-controller;
++      gpio-ranges = <&pctrl 0 0 15>,
++                    <&pctrl 16 16 15>,
++                    <&pctrl 32 32 10>,
++                    <&pctrl 44 44 20>;
++      loongson,conf_offset = <0>;
++      loongson,out_offset = <0x10>;
++      loongson,in_offset = <0x20>;
++      loongson,gpio_base = <0>;
++      loongson,support_irq;
++      interrupt-parent = <&liointc1>;
++      interrupts = <28 IRQ_TYPE_LEVEL_LOW>,
++                   <29 IRQ_TYPE_LEVEL_LOW>,
++                   <30 IRQ_TYPE_LEVEL_LOW>,
++                   <30 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <>,
++                   <>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 916b2d9cffc0..878b8320ac3b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12048,6 +12048,17 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/hwinfo/loongson,ls2k-chipid.yaml
+ F:	drivers/soc/loongson/loongson2_guts.c
+ 
++LOONGSON SERIES GPIO DRIVER
++M:	Richard Liu, STMicroelectronics <richard.liu@st.com>
++M:	Arnaud Patard <apatard@mandriva.com>
++M:	Hongbing Hu <huhb@lemote.com>
++M:	Huacai Chen <chenhuacai@kernel.org>
++M:	Yinbo Zhu <zhuyinbo@loongson.cn>
++L:	linux-gpio@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
++F:	drivers/gpio/gpio-loongson.c
++
+ LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+ M:	Sathya Prakash <sathya.prakash@broadcom.com>
+ M:	Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+-- 
+2.20.1
+
