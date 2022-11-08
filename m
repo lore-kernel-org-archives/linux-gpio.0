@@ -2,135 +2,68 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A12BFC4332F
-	for <linux-gpio@archiver.kernel.org>; Mon,  7 Nov 2022 21:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AF0C4167B
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Nov 2022 01:27:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233545AbiKGVk6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 7 Nov 2022 16:40:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33658 "EHLO
+        id S233152AbiKHB15 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 7 Nov 2022 20:27:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232308AbiKGVk6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2022 16:40:58 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A48827FC5;
-        Mon,  7 Nov 2022 13:40:57 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id i3so11915467pfc.11;
-        Mon, 07 Nov 2022 13:40:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4MIh6FUPd6bRzAAr4QRjkFihYjlOaa459CYPKztD6ZQ=;
-        b=YGh02CAOhKVH0McFv4KzSvxTahloGGkcfV1/qliu/hfVciOW4jaFYya7tGMyFbLW2W
-         wPUajOOKNfpyEZYJUHD87HLUwEcozLEkRsXYZg0056iAd0VsKBcSwMMdFU7VIdTTmM5+
-         i4zImocMVX97kEP98dz25qemc09kX97cXCVQLk3ueCvEp+RoPvJZ7SkBKubaKlOV4lrL
-         dOuDPg/T/HNnD1mNZFtnJac/m8JkKhWL2gZCPRjt81M8F7jnJ3fLm11XgdMHRn0pq2hY
-         QxQ5mkJctyh4P/AHlgEMUBRh4TdYq74JG+civx9iE2+lBFdAsTk4gfkVYiq2HMedp+4K
-         MgWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4MIh6FUPd6bRzAAr4QRjkFihYjlOaa459CYPKztD6ZQ=;
-        b=gc4TacA+cUJD3ml5afx67NHRZeX+7Z45vjmQA+o43yPW1oyV+2mtMq1egx6BIyYdWG
-         /4x6PiWy4+r2Hcr5kYKlPgiYfXpUZ19H4h6MROl755ikvFVrxfbtWCydjVUQJwmlI/ap
-         F3lNTg1AZlKqEIxLkC9xVbgXwqA0CngQw8arlUysIsdDW11gYc8y69pU+aDuyO+Jebn2
-         4QUOc/wQhNQx4zHQbbon/XICP1an3UOHTLn6339KJpARivpSdpUfGg8WPR8XQOPQq2rQ
-         WQS06m53/LBiko+UdG0a2F0s1yAMASDWkMQTmv8R21Z6rAifTd6xxg34T7gETTnBxFWE
-         X1tQ==
-X-Gm-Message-State: ACrzQf2gn53YUHlZy55tGIuN/AOv826hloliOwlOatOZemFiUHzNh0yR
-        WBzPsxV5s9u5oPo0wl7sfSg=
-X-Google-Smtp-Source: AMsMyM4/jWq5qj2Rf6zWdlQ64H64Row+8w7UrlIqDgvF9mPredfh+BQEfyAK03/hmu0+havnYHED5g==
-X-Received: by 2002:a63:da4f:0:b0:43f:6af:74ed with SMTP id l15-20020a63da4f000000b0043f06af74edmr45958206pgj.290.1667857256868;
-        Mon, 07 Nov 2022 13:40:56 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:fb10:b5b0:232e:4afb])
-        by smtp.gmail.com with ESMTPSA id q10-20020a170902bd8a00b00186bc66d2cbsm5417969pls.73.2022.11.07.13.40.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Nov 2022 13:40:56 -0800 (PST)
-Date:   Mon, 7 Nov 2022 13:40:53 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 2/2] gpiolib: of: Integrate
- of_gpiochip_init_valid_mask() into gpiochip_init_valid_mask()
-Message-ID: <Y2l7ZRe7+wb9YkEm@google.com>
-References: <20221107161027.43384-1-andriy.shevchenko@linux.intel.com>
- <20221107161027.43384-2-andriy.shevchenko@linux.intel.com>
- <Y2lMdQ/bE2w4skOO@google.com>
- <Y2lz/4wEDYnaIJF/@smile.fi.intel.com>
+        with ESMTP id S233126AbiKHB1z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2022 20:27:55 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE3832AE0B;
+        Mon,  7 Nov 2022 17:27:53 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6D7016137A;
+        Tue,  8 Nov 2022 01:27:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4B5AC433C1;
+        Tue,  8 Nov 2022 01:27:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667870872;
+        bh=bp0D/V+DZaLHOzxFfU/M/uHm+4rg3Wd26xR7jS9z60Q=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=vOotKZJd63DQxYQ8J3/SMqUdB2mo2ZUNXeXOc/Qt5Q98rLJhTrV0uoBYVzVL/Xh3R
+         QHfUru3VzW/eiNJd/EPUU6NpOl+nfm3sOKsa9zkpYmm9ZMXTlUBJupbM9h2TbhoWpD
+         3M81MRE3esLGVrjh/GKtP8a+DMQOdJ4V4nehSxIYTJtzaIBun6hM1k6c+of16accM/
+         nbmSf3+ykd9nT0i3CVYC5S26yq0KHPtNpg5F7rAYxufHC6kGyqB/uAcnLRcTLtnEYv
+         X3M3iAxcOmmE8NQ63iuauqUVW+PjBM6r5IYb+AakByRHyHLSqt/1otpKS/wNW8w4cc
+         cRJenOyj+HN1A==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     devicetree@vger.kernel.org, robh+dt@kernel.org,
+        linus.walleij@linaro.org, konrad.dybcio@somainline.org,
+        krzysztof.kozlowski+dt@linaro.org, agross@kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        krzysztof.kozlowski@linaro.org, linux-arm-msm@vger.kernel.org
+Subject: Re: (subset) [PATCH v3 1/3] arm64: dts: qcom: msm8994: Correct SPI10 CS pin
+Date:   Mon,  7 Nov 2022 19:27:25 -0600
+Message-Id: <166787084677.599230.9490503702651891752.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20221018155450.39816-1-krzysztof.kozlowski@linaro.org>
+References: <20221018155450.39816-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y2lz/4wEDYnaIJF/@smile.fi.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Nov 07, 2022 at 11:09:19PM +0200, Andy Shevchenko wrote:
-> On Mon, Nov 07, 2022 at 10:20:37AM -0800, Dmitry Torokhov wrote:
-> > On Mon, Nov 07, 2022 at 06:10:27PM +0200, Andy Shevchenko wrote:
-> > > +static unsigned int gpiochip_count_reserved_ranges(struct gpio_chip *gc)
-> > > +{
-> > > +	int size;
-> > > +
-> > > +	size = fwnode_property_count_u32(gc->fwnode, "gpio-reserved-ranges");
-> > 
-> > I wonder if a comment why we need even size would not be helpful.
+On Tue, 18 Oct 2022 11:54:48 -0400, Krzysztof Kozlowski wrote:
+> The GPIO55 is part of SPI10 pins, not its chip-select.  Probably the
+> intention was to use one of dedicated chip-select GPIOs: 47 or 67.
+> GPIO47 is used for UART2, so choose GPIO67.
 > 
-> Was it in the original code?
-> Anyway, if Bart thinks so as well, I may add it in v2.
 > 
-> > > +	if (size > 0 && size % 2 == 0)
-> > > +		return size;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >  static int gpiochip_alloc_valid_mask(struct gpio_chip *gc)
-> > >  {
-> > > -	if (!(of_gpio_need_valid_mask(gc) || gc->init_valid_mask))
-> > > +	if (!(gpiochip_count_reserved_ranges(gc) || gc->init_valid_mask))
-> > >  		return 0;
-> > >  
-> > >  	gc->valid_mask = gpiochip_allocate_mask(gc);
-> > > @@ -457,8 +468,47 @@ static int gpiochip_alloc_valid_mask(struct gpio_chip *gc)
-> > >  	return 0;
-> > >  }
-> > >  
-> > > +static int gpiochip_apply_reserved_ranges(struct gpio_chip *gc, unsigned int sz)
-> > > +{
-> > > +	u32 *ranges;
-> > > +	int ret;
-> > > +
-> > > +	ranges = kmalloc_array(sz, sizeof(*ranges), GFP_KERNEL);
-> > > +	if (!ranges)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	ret = fwnode_property_read_u32_array(gc->fwnode, "gpio-reserved-ranges", ranges, sz);
-> > > +	if (ret) {
-> > > +		kfree(ranges);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	while (sz) {
-> > > +		u32 count = ranges[--sz];
-> > > +		u32 start = ranges[--sz];
-> > 
-> > I know we checked sz validity, but I wonder if re-checking it in this
-> > function would not insulate us from errors creeping in after some other
-> > code refactoring.
-> 
-> I'm not sure I understand what you meant. The fwnode_property_read_u32_array()
-> will fail if the given sz is too big for the real data, so while (sz) would
-> never even go on the invalid data.
 
-I am more worried about sz being odd and the loop ending up trying to
-dereference ranges[-1].
+Applied, thanks!
 
-Thanks.
+[1/3] arm64: dts: qcom: msm8994: Correct SPI10 CS pin
+      commit: 5d76dfb86850893f2506e15a1dc68977c3adc79f
+[2/3] arm64: dts: qcom: msm8994: Align TLMM pin configuration with DT schema
+      commit: 9d7d01da9a24a8e37fa156d93dbea893a0665f94
 
+Best regards,
 -- 
-Dmitry
+Bjorn Andersson <andersson@kernel.org>
