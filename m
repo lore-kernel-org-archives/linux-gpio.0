@@ -2,111 +2,102 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FEEC4332F
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Nov 2022 08:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4108CC43217
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Nov 2022 09:10:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233521AbiKHIm0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Nov 2022 03:42:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48290 "EHLO
+        id S233411AbiKHJKI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Nov 2022 04:10:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233358AbiKHImY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2022 03:42:24 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A20913CD0;
-        Tue,  8 Nov 2022 00:42:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1667896943; x=1699432943;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5kVqInTilwcBMCkk5iipAl+y1Yp4AvfbYxM7E8TDBYA=;
-  b=MXHWf1iIpR15ZGnzGTnW10RhF8EpUXb5/D9XD1D+YPabIWeDtnLFE72q
-   nmNk2F7R9wPU3gh9DMFhT4Vwrqpd7xK31j40HLx0xXPJvBxjaEJa8TN6H
-   1TGjQVK2Hwq/LFnrDlvQCv57/BFWwxzWNuuN7Ml8DV6fMDxrvg40501UN
-   jS5VkGnGlTzhsB2eih4zPSspc0vFn/oLifxE5uJ/CJbZz+zi9MXa0sJw0
-   PaQeb1LIEKgx+idAk5aoQ/pt9knQIetu0cByJP5fvt88eGd6++BJKToS9
-   6pDL+dAwVyXihY5G47uIbDr2T7s/07mRPEQVQuodgrethcDLoTjyjm1oy
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="311797842"
-X-IronPort-AV: E=Sophos;i="5.96,147,1665471600"; 
-   d="scan'208";a="311797842"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2022 00:41:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="741865519"
-X-IronPort-AV: E=Sophos;i="5.96,147,1665471600"; 
-   d="scan'208";a="741865519"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP; 08 Nov 2022 00:41:44 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1osKAx-0092v7-08;
-        Tue, 08 Nov 2022 10:41:43 +0200
-Date:   Tue, 8 Nov 2022 10:41:42 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 2/2] gpiolib: of: Integrate
- of_gpiochip_init_valid_mask() into gpiochip_init_valid_mask()
-Message-ID: <Y2oWRofuTzPbzHdE@smile.fi.intel.com>
-References: <20221107161027.43384-1-andriy.shevchenko@linux.intel.com>
- <20221107161027.43384-2-andriy.shevchenko@linux.intel.com>
- <Y2lMdQ/bE2w4skOO@google.com>
- <Y2lz/4wEDYnaIJF/@smile.fi.intel.com>
- <Y2l7ZRe7+wb9YkEm@google.com>
+        with ESMTP id S233358AbiKHJKH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2022 04:10:07 -0500
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D47451A047;
+        Tue,  8 Nov 2022 01:10:06 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id 21so21485716edv.3;
+        Tue, 08 Nov 2022 01:10:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wxg9R63E/LdpcjaJ1QXBZQ2mfpoLnn2CNR5q0txR95Q=;
+        b=ogCSi5jgLyz06Qj/c6EJv9UE5I5iKSMxLytwg1lrGusO+4y+j4+AxQscA2mU30i42a
+         JIASDnnCHv4STIP+XYOVQvGqZm7L6cWat+SmVGKGiJbMht7ZO33lSuaMyM+yy2s4TWZw
+         smqOj19N4qK+Pf3tloAaYEq3NZ/ybhbC9BNxMW7VR2uIzLiOODeIKwGIaQrGoFEMrL1k
+         jpKv/Xtx7iEzkApoe0yPfXaQr+B6ExWMiZD0vivjZzLMC4k/UpdQg0mcNU5J3tuZ0nzm
+         Cda232w0MQ4cXFptnNwidf4Vsxb39ivcI1B3MIIrGBLa1J8bGKR5q+XR9AxG0VMoa8cZ
+         dLtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wxg9R63E/LdpcjaJ1QXBZQ2mfpoLnn2CNR5q0txR95Q=;
+        b=DA+3K1PPBIgiWTuC4sJuxODGTLrEhuv8piuhRGouCob8FLVhB30gFJW1c+c96F1x9M
+         8lMxZTDQTA+nYL0jVl1JXtCvYHt0gcfdoE2jhRfmxf4GcZefgtRJjtez8agoqHHZnSxk
+         /Yl3GRq856pF9BhXmESrYnI58D65OcFRaESuJJUpJ1tdQ5RHWBc7YMXCrrm+vlR36ICv
+         VuxzKk02o1lOwNw9BF8Qqq+ZOryhcPYpRbA2kjwaML0gezSdeGP1HL4CrwVYtGOvCrw/
+         nOMjFB8xzLmf3tAtKSiUE0ZiAJ1AhMhaUOma5LVePRApzGlQ/f332NLEObIxUWM3vvET
+         xmNA==
+X-Gm-Message-State: ACrzQf36ruLK6+c3e67SsJSm/5UAd8Pd9/rtR97bHAmDcoTMdab6k0Vf
+        AZkjbANkyPtX6vaqAHvcTKBtO9xsSGSQPMoV0Gw=
+X-Google-Smtp-Source: AMsMyM6T8HbMBQWOPhacutnHoVxAwoc4LO6/Vkb+hKjPKYPLcf66oY+UO8xaFlbDTqs1tDwpCp3vAWrQhbUfzdh3GJs=
+X-Received: by 2002:a05:6402:3217:b0:461:d6d7:7f19 with SMTP id
+ g23-20020a056402321700b00461d6d77f19mr33389993eda.109.1667898605416; Tue, 08
+ Nov 2022 01:10:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y2l7ZRe7+wb9YkEm@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20221107175305.63975-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <OS0PR01MB592295C7DBA5E0A85B4D26AF863F9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: <OS0PR01MB592295C7DBA5E0A85B4D26AF863F9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Tue, 8 Nov 2022 09:09:39 +0000
+Message-ID: <CA+V-a8u6J3+OkANOQYec9-Xe6voAiNTkLo_Zvy6dkC03EYp-4Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/5] pinctrl: renesas: rzg2l: Fix configuring the GPIO
+ pins as interrupts
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Nov 07, 2022 at 01:40:53PM -0800, Dmitry Torokhov wrote:
-> On Mon, Nov 07, 2022 at 11:09:19PM +0200, Andy Shevchenko wrote:
-> > On Mon, Nov 07, 2022 at 10:20:37AM -0800, Dmitry Torokhov wrote:
-> > > On Mon, Nov 07, 2022 at 06:10:27PM +0200, Andy Shevchenko wrote:
+Hi Biju,
 
-...
+On Tue, Nov 8, 2022 at 7:14 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+>
+> Hi Prabhakar,
+>
+>
+> > Subject: [PATCH RFC 2/5] pinctrl: renesas: rzg2l: Fix configuring the GPIO
+> > pins as interrupts
+> >
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > On the RZ/G2UL SoC we have less number of pins compared to RZ/G2L and also
+> > the pin configs are completely different. This patch makes sure we use the
+> > appropriate pin configs for each SoC (which is passed as part of the OF
+> > data) while configuring the GPIO pin as interrupts instead of using
+> > rzg2l_gpio_configs[] for all the SoCs.
+> >
+>
+> Looks like you are missing fixes tag.
+> Fixes: db2e5f21a48ed ("pinctrl: renesas: pinctrl-rzg2l: Add IRQ domain to handle GPIO interrupt")
+>
+I did think about but then I realised this fixes the GPIO IRQ
+functions only and we didn't support IRQC and GPIO interrupts up until
+now so I hadn't added the fixes tag.
 
-> > > > +static int gpiochip_apply_reserved_ranges(struct gpio_chip *gc, unsigned int sz)
-> > > > +{
-> > > > +	u32 *ranges;
-> > > > +	int ret;
-> > > > +
-> > > > +	ranges = kmalloc_array(sz, sizeof(*ranges), GFP_KERNEL);
-> > > > +	if (!ranges)
-> > > > +		return -ENOMEM;
-> > > > +
-> > > > +	ret = fwnode_property_read_u32_array(gc->fwnode, "gpio-reserved-ranges", ranges, sz);
-> > > > +	if (ret) {
-> > > > +		kfree(ranges);
-> > > > +		return ret;
-> > > > +	}
-> > > > +
-> > > > +	while (sz) {
-> > > > +		u32 count = ranges[--sz];
-> > > > +		u32 start = ranges[--sz];
-> > > 
-> > > I know we checked sz validity, but I wonder if re-checking it in this
-> > > function would not insulate us from errors creeping in after some other
-> > > code refactoring.
-> > 
-> > I'm not sure I understand what you meant. The fwnode_property_read_u32_array()
-> > will fail if the given sz is too big for the real data, so while (sz) would
-> > never even go on the invalid data.
-> 
-> I am more worried about sz being odd and the loop ending up trying to
-> dereference ranges[-1].
-
-I see. What if we take amount of ranges as the parameter and convert to size by
-multiplying by 2?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Cheers,
+Prabhakar
