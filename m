@@ -2,86 +2,121 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B781EC43219
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Nov 2022 14:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E5BC433FE
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Nov 2022 14:22:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235166AbiKHOMH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Nov 2022 09:12:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48488 "EHLO
+        id S234710AbiKHOWd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Nov 2022 09:22:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235298AbiKHOLr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2022 09:11:47 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 347B8121259
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Nov 2022 06:11:22 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id bj12so38822349ejb.13
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Nov 2022 06:11:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GL2VB6yiqlJd7PXl9jCnnQ5NQhRNVLQL22XW+04witg=;
-        b=Hhzk8FopA98HaJrgwoizCtMQjYbKieZLMyCwD4Px4prPzIh0xGexW33aaq/j+JippB
-         cqlKGLoDi1XLjx+IY/su4mqqiHWvQUn+7tIVIJpEfiMquxhwIgRmC6N5SNcWnRVbdNtM
-         YqocapQY/un37wC8kJ/7a0MLAYUePF1vbV8ex4L8Iifyb07W16xzVj2vo1LoYLVFUy8N
-         aqdEWC1LNRy/bl5J7tZLgNbI7e8kqA4LHWdgOgQvzCSwe24kskKnAt7bt3IM1TdsdXyO
-         zuAVijftra0VXnB2A5j20mQhvzZMmjKJrg1kYqt9t3FKqqZ2I58VGv1kCgZ2SCIAeVEg
-         lwaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GL2VB6yiqlJd7PXl9jCnnQ5NQhRNVLQL22XW+04witg=;
-        b=N+x6nk0sLzh8ppyfunNd+LX9CL0kjUQuq6Qeh/2N7IgxvRX29p9e4wDtWkBOQDhLWg
-         pKqfFtXMh2mXmyNavM156fy/urV+4/UHClPkVoEq4xlaQ+dvjT6n7fEHdguhFS0NiidO
-         f4gb0rZ04OH2pfUzwwLNbZbZVwYmYUZDyTYlbUrUGl+HjIxHodGFeD89iExf8Na1lS1v
-         3cGuG1Gu46swBphBjpOfUuWun5c0V3T7Oc77TjTxiNtgt8F89FUw9M8MwXpI5Ofxz9vU
-         ngbtAig+xStUxKztuNGYo6dlUoiITKGJiZg25o5H/S+3atQXy1wpNQxEp8Wph5eopKQ5
-         h1Lw==
-X-Gm-Message-State: ACrzQf26FmwYOBokNy8qDymggKjRlMRQaIxENdoyucKS7fW8dECKH0FG
-        I4T1e6kOcFRbynhM+ZdCOaMvSDuEHgcYVVHM5mb+Xw==
-X-Google-Smtp-Source: AMsMyM7J3Sd4gnDvu8zGm0CMMNKR4LFB/CGFMpK5G/rfqAvubgf422+2XMl7L688bBueJ+zjJiz/yGcF4N7ozpUkS1c=
-X-Received: by 2002:a17:906:4c4b:b0:7ad:a197:b58e with SMTP id
- d11-20020a1709064c4b00b007ada197b58emr54232684ejw.203.1667916681564; Tue, 08
- Nov 2022 06:11:21 -0800 (PST)
+        with ESMTP id S234583AbiKHOWI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2022 09:22:08 -0500
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 374E854B0D;
+        Tue,  8 Nov 2022 06:22:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1667917327; x=1699453327;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=3WwHPrGYys4CM9wArmF05npxQAsVuUHXIQrsJgDTthA=;
+  b=ZN261CEaHOZHPI3HLUxY/UrppgnZgBuZlNn6VI7quBnUwrN+lgWzoSpV
+   BeD07CBevYXyfrgUE7VivGWGNRJLLlZ/v5wCpU5Hs6lL8WaIvG4JYgqTo
+   XQdd6VhQnJxjLgQv1pxZ08nM+l6aknOuwLSFmRwB5A8u5aejyA2aIr5AS
+   qbbPGgsbBKb+Xbk2JHquK5RkHr5La0WZ/CjBSmd9gJaOJSrem6mBoOlhK
+   Je0++cTO4vurwqRM/5P12zDOvgCrSt9MBrjffd7lnGpILcHYrW3u+87A5
+   cAoydPJl9VgeiAIoHmhrrTPlYSDAHKf/oSON+xzOm9rKTOyeHgbC1xYPM
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="298219278"
+X-IronPort-AV: E=Sophos;i="5.96,148,1665471600"; 
+   d="scan'208";a="298219278"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2022 06:22:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="699938289"
+X-IronPort-AV: E=Sophos;i="5.96,148,1665471600"; 
+   d="scan'208";a="699938289"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga008.fm.intel.com with ESMTP; 08 Nov 2022 06:22:03 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 7D7B92B7; Tue,  8 Nov 2022 16:22:27 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pwm@vger.kernel.org
+Cc:     Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2 3/6] pwm: lpss: Include headers we are direct user of
+Date:   Tue,  8 Nov 2022 16:22:23 +0200
+Message-Id: <20221108142226.63161-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20221108142226.63161-1-andriy.shevchenko@linux.intel.com>
+References: <20221108142226.63161-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20221104142345.1562750-1-thierry.reding@gmail.com> <20221104142345.1562750-5-thierry.reding@gmail.com>
-In-Reply-To: <20221104142345.1562750-5-thierry.reding@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 8 Nov 2022 15:11:10 +0100
-Message-ID: <CACRpkdbegcxckaYA5h0VKQonK72srZWDZYynHhUKSTHngWGHWA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] arm64: tegra: Separate AON pinmux from main pinmux
- on Tegra194
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Prathamesh Shete <pshete@nvidia.com>,
-        Vidya Sagar <vidyas@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Nov 4, 2022 at 3:23 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+For the sake of integrity, include headers we are direct user of.
 
-> From: Thierry Reding <treding@nvidia.com>
->
-> The registers for the AON pinmux reside in a partition different from
-> the registers for the main pinmux. Instead of treating them as one and
-> the same device, split them up so that they are each their own devices.
-> Also add gpio-ranges properties to the corresponding GPIO controllers
-> such that the pinmux and GPIO controllers can be paired up properly.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+While at it, move the struct pwm_lpss_chip to be after
+the struct pwm_lpss_boardinfo as the former uses pointer
+to the latter.
 
-Is this one of those few cases where this patch should also be
-applied to the pin control tree to keep things coherent for e.g.
-git bisect?
+Replace device.h with a forward declaration in order to improve
+the compilation time due to reducing overhead of device.h parsing
+with entire train of dependencies.
 
-Normally I would ask for this to be queued in the SoC tree separately.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/pwm/pwm-lpss.h | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pwm/pwm-lpss.h b/drivers/pwm/pwm-lpss.h
+index 2c746c51b883..4561d229b27d 100644
+--- a/drivers/pwm/pwm-lpss.h
++++ b/drivers/pwm/pwm-lpss.h
+@@ -10,16 +10,12 @@
+ #ifndef __PWM_LPSS_H
+ #define __PWM_LPSS_H
+ 
+-#include <linux/device.h>
+ #include <linux/pwm.h>
++#include <linux/types.h>
+ 
+-#define LPSS_MAX_PWMS			4
++struct device;
+ 
+-struct pwm_lpss_chip {
+-	struct pwm_chip chip;
+-	void __iomem *regs;
+-	const struct pwm_lpss_boardinfo *info;
+-};
++#define LPSS_MAX_PWMS			4
+ 
+ struct pwm_lpss_boardinfo {
+ 	unsigned long clk_rate;
+@@ -43,6 +39,12 @@ extern const struct pwm_lpss_boardinfo pwm_lpss_bsw_info;
+ extern const struct pwm_lpss_boardinfo pwm_lpss_bxt_info;
+ extern const struct pwm_lpss_boardinfo pwm_lpss_tng_info;
+ 
++struct pwm_lpss_chip {
++	struct pwm_chip chip;
++	void __iomem *regs;
++	const struct pwm_lpss_boardinfo *info;
++};
++
+ struct pwm_lpss_chip *pwm_lpss_probe(struct device *dev, void __iomem *base,
+ 				     const struct pwm_lpss_boardinfo *info);
+ 
+-- 
+2.35.1
+
