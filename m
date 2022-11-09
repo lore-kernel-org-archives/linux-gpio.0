@@ -2,183 +2,141 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11493C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84098C433FE
 	for <linux-gpio@archiver.kernel.org>; Wed,  9 Nov 2022 16:55:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230452AbiKIQzS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S230005AbiKIQzS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Wed, 9 Nov 2022 11:55:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52060 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229955AbiKIQzB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Nov 2022 11:55:01 -0500
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2097023E8A;
+        with ESMTP id S230038AbiKIQzC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Nov 2022 11:55:02 -0500
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1758275C2;
         Wed,  9 Nov 2022 08:53:56 -0800 (PST)
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2A9EEsmo027592;
-        Wed, 9 Nov 2022 10:53:36 -0600
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2A9EDNjP027347;
+        Wed, 9 Nov 2022 10:53:34 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=PODMain02222019;
- bh=cqQO47P2lcMdmDdGNz1/UmZ7HXFI+NKT10pg7/xczD0=;
- b=ZKr156hoeW/l7m+9K8hKpgGihOsnR6cjsNB8OtRje2skR46opdIR1HyBgVXnBClVFKpu
- wRggrD8afx8LYlNVWJQ8t7gYmpGl76Oimrdd5KxW5Lkpcn8P+LbQp1elQYVgLJJAv21W
- O1SFDMgzm8GudtmN1Oz3vVdyLvOX4wNhLvazhy10VwD4v/WVXyB7Nk7f50geOqNBkLcY
- lEm7Jv381AzIq5DkVl8FZ0Lw7pwurOuxNAYHOn/pC++zdnY/x6L423lAfCkQP9+njyG+
- N603M5wRayIzZtVo0hqtrSOll1FqOR6PZqsxsijBAmR8KzG7ka+lGUuNvchIYumoD/HG Lg== 
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3knn81nk99-1
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=PODMain02222019;
+ bh=k8YRcTfT3aisaN5ZDbd2wMS/yi2Pyuz/u1QMiJhNTwA=;
+ b=cnm30tkJRhHdUYk9JnJo8U30jfv7PnB/Ij+Dk58cTRsrvux0IA78y8MMYKCbSb+tpjAK
+ Qw2YsTqkw+vN4/aKHfbwnanHRVMEDi3woFvTyxkl3mBbvOfAjMK85kOM3y686SDBCD5v
+ YhsP753gLYkMphI7cKRa1lPbd4NVz9WihstDrKZV187YJz/tANHLZZtf9smI0nZ8IOuw
+ mpk2UenwqL/0Bi/4bKM2oOals4dbrB8JjlLJSzRZyBBhHktQsdlsvnGfzBQvPrBTF71m
+ op7hNtnVJWoCtT1oou4i2EA/ji0Xu2Usb/6kDgHhcfN556ncGi1ax6lGg+sYGk22A5HT Qw== 
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3knm8pde7v-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Nov 2022 10:53:36 -0600
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 09 Nov 2022 10:53:34 -0600
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.15; Wed, 9 Nov
- 2022 10:53:34 -0600
+ 2022 10:53:32 -0600
 Received: from ediswmail.ad.cirrus.com (198.61.86.93) by
  anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1118.15 via Frontend Transport; Wed, 9 Nov 2022 10:53:34 -0600
+ 15.2.1118.15 via Frontend Transport; Wed, 9 Nov 2022 10:53:32 -0600
 Received: from debianA11184.ad.cirrus.com (AUSNPC0LSNW1.ad.cirrus.com [198.61.65.92])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id D7F29468;
-        Wed,  9 Nov 2022 16:53:33 +0000 (UTC)
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 8D91E468;
+        Wed,  9 Nov 2022 16:53:31 +0000 (UTC)
 From:   Richard Fitzgerald <rf@opensource.cirrus.com>
 To:     <lee@kernel.org>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <linus.walleij@linaro.org>,
         <broonie@kernel.org>, <tglx@linutronix.de>, <maz@kernel.org>
 CC:     <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
         <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: [PATCH 04/12] dt-bindings: pinctrl: Add Cirrus Logic CS48L31/32/33
-Date:   Wed, 9 Nov 2022 16:53:23 +0000
-Message-ID: <20221109165331.29332-5-rf@opensource.cirrus.com>
+        <patches@opensource.cirrus.com>
+Subject: [PATCH 00/12] Add support for the Cirrus Logic CS48L32 audio codecs
+Date:   Wed, 9 Nov 2022 16:53:19 +0000
+Message-ID: <20221109165331.29332-1-rf@opensource.cirrus.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20221109165331.29332-1-rf@opensource.cirrus.com>
-References: <20221109165331.29332-1-rf@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: VTjH1W65hT9eMedc0D1BYTzdkwt1QPAO
-X-Proofpoint-GUID: VTjH1W65hT9eMedc0D1BYTzdkwt1QPAO
+X-Proofpoint-ORIG-GUID: 7OgRwOdDiCAARw0Ea_LvKQSL2ZxiXG9y
+X-Proofpoint-GUID: 7OgRwOdDiCAARw0Ea_LvKQSL2ZxiXG9y
 X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Codecs in this family have multiple digital I/O functions for audio,
-DSP subsystem, GPIO and various special functions. All muxable pins
-are selectable as either a GPIO or one of the available alternate
-functions.
+The CS48L32 is a high-performance low-power audio DSP for smartphones
+and other portable audio devices. It has various digital audio I/O,
+a programmable Halo Core DSP, fixed-function audio processors,
+configurable GPIO and microphone bias regulators.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
----
- .../bindings/pinctrl/cirrus,cs48l32.yaml      | 98 +++++++++++++++++++
- 1 file changed, 98 insertions(+)
+The CS48L31 and CS48L33 were derivatives of the CS48L32.
+
+Piotr Stankiewicz (2):
+  mfd: cs48l32: Add support for CS48L31/32/33 codecs
+  pinctrl: cirrus: Add support for CS48L31/32/33 codecs
+
+Richard Fitzgerald (9):
+  dt-bindings: mfd: Add Cirrus Logic CS48L32 audio codec
+  mfd: cs48l32: Add register definitions for Cirrus Logic CS48L31/32/33
+  dt-bindings: pinctrl: Add Cirrus Logic CS48L31/32/33
+  regulator: arizona-micsupp: Don't hardcode use of ARIZONA defines
+  regulator: arizona-micsupp: Don't use a common regulator name
+  regulator: arizona-micsupp: Support Cirrus Logic CS48L31/32/33
+  irqchip: cirrus: Add driver for Cirrus Logic CS48L31/32/33 codecs
+  ASoC: wm_adsp: Allow client to hook into pre_run callback
+  dt-bindings: sound: Add Cirrus Logic CS48L31/32/33 codecs
+
+Stuart Henderson (1):
+  ASoC: cs48l32: Add codec driver for Cirrus Logic CS48L31/32/33
+
+ .../bindings/mfd/cirrus,cs48l32.yaml          |  166 +
+ .../bindings/pinctrl/cirrus,cs48l32.yaml      |   98 +
+ .../bindings/sound/cirrus,cs48l32.yaml        |   96 +
+ MAINTAINERS                                   |   12 +-
+ drivers/irqchip/Kconfig                       |    3 +
+ drivers/irqchip/Makefile                      |    1 +
+ drivers/irqchip/irq-cirrus-cs48l32.c          |  281 ++
+ drivers/irqchip/irq-cirrus-cs48l32.h          |   74 +
+ drivers/mfd/Kconfig                           |   13 +
+ drivers/mfd/Makefile                          |    2 +
+ drivers/mfd/cs48l32-tables.c                  |  541 ++++
+ drivers/mfd/cs48l32.c                         |  434 +++
+ drivers/mfd/cs48l32.h                         |   28 +
+ drivers/pinctrl/cirrus/Kconfig                |    5 +
+ drivers/pinctrl/cirrus/Makefile               |    2 +
+ drivers/pinctrl/cirrus/pinctrl-cs48l32.c      |  932 ++++++
+ drivers/pinctrl/cirrus/pinctrl-cs48l32.h      |   62 +
+ drivers/regulator/Kconfig                     |    8 +-
+ drivers/regulator/arizona-micsupp.c           |   78 +-
+ include/dt-bindings/sound/cs48l32.h           |   25 +
+ include/linux/irqchip/irq-cirrus-cs48l32.h    |  101 +
+ include/linux/mfd/cs48l32/core.h              |   49 +
+ include/linux/mfd/cs48l32/registers.h         |  509 +++
+ include/sound/cs48l32.h                       |   89 +
+ sound/soc/codecs/Kconfig                      |    9 +
+ sound/soc/codecs/Makefile                     |    2 +
+ sound/soc/codecs/cs48l32-core.c               | 2782 +++++++++++++++++
+ sound/soc/codecs/cs48l32.c                    | 1211 +++++++
+ sound/soc/codecs/cs48l32.h                    |  386 +++
+ sound/soc/codecs/wm_adsp.c                    |   11 +
+ sound/soc/codecs/wm_adsp.h                    |    1 +
+ 31 files changed, 7997 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/cirrus,cs48l32.yaml
  create mode 100644 Documentation/devicetree/bindings/pinctrl/cirrus,cs48l32.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/cirrus,cs48l32.yaml
+ create mode 100644 drivers/irqchip/irq-cirrus-cs48l32.c
+ create mode 100644 drivers/irqchip/irq-cirrus-cs48l32.h
+ create mode 100644 drivers/mfd/cs48l32-tables.c
+ create mode 100644 drivers/mfd/cs48l32.c
+ create mode 100644 drivers/mfd/cs48l32.h
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs48l32.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs48l32.h
+ create mode 100644 include/dt-bindings/sound/cs48l32.h
+ create mode 100644 include/linux/irqchip/irq-cirrus-cs48l32.h
+ create mode 100644 include/linux/mfd/cs48l32/core.h
+ create mode 100644 include/linux/mfd/cs48l32/registers.h
+ create mode 100644 include/sound/cs48l32.h
+ create mode 100644 sound/soc/codecs/cs48l32-core.c
+ create mode 100644 sound/soc/codecs/cs48l32.c
+ create mode 100644 sound/soc/codecs/cs48l32.h
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/cirrus,cs48l32.yaml b/Documentation/devicetree/bindings/pinctrl/cirrus,cs48l32.yaml
-new file mode 100644
-index 000000000000..b24fbae6a8f8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/cirrus,cs48l32.yaml
-@@ -0,0 +1,98 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/cirrus,cs48l32.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cirrus Logic CS48L32 audio codec pinctrl driver
-+
-+maintainers:
-+  - patches@opensource.cirrus.com
-+
-+description: |
-+The Cirrus Logic CS48L32 codec has a number of GPIO functions for
-+interfacing to external hardware. Certain groups of GPIO pins also
-+have an alternate function.
-+
-+The properties for this driver exist within the parent MFD driver node.
-+See the core bindings for the parent MFD driver for an example:
-+
-+    Documentation/devicetree/bindings/mfd/cirrus,cs48l32.yaml
-+
-+And the generic pinctrl bindings:
-+
-+    Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-+
-+properties:
-+  pin-settings:
-+    description:
-+      One subnode is required to contain the default settings. It
-+      contains an arbitrary number of configuration subnodes, one for
-+      each group or pin configuration you want to apply as a default.
-+    type: object
-+    patternProperties:
-+      '-pins$':
-+        type: object
-+        allOf:
-+          - $ref: "pincfg-node.yaml#"
-+          - $ref: "pinmux-node.yaml#"
-+        properties:
-+          groups:
-+            description:
-+              Name of one pin group to configure.
-+            enum: [ asp1, asp2, in1-pdm, in2-pdm,
-+                    gpio1, gpio2, gpio3, gpio4, gpio5, gpio6, gpio7,
-+                    gpio8, gpio9, gpio10, gpio11, gpio12, gpio13,
-+                    gpio14, gpio15, gpio16 ]
-+
-+          function:
-+            description:
-+              Name of function to assign to this group.
-+            enum: [ asp1, asp2, in1-pdm, in2-pdm, spi2, io, dsp-gpio,
-+                    irq1, fll1-clk, fll1-lock, opclk, opclk-dsp, uart,
-+                    input-path-signal-detect,
-+                    ultrasonic-in1-activity-detect, ultrasonic-in2-activity-detect,
-+                    dma-ch0-programmable-transfer-complete,
-+                    dma-ch1-programmable-transfer-complete,
-+                    dma-ch2-programmable-transfer-complete,
-+                    dma-ch3-programmable-transfer-complete,
-+                    dma-ch4-programmable-transfer-complete,
-+                    dma-ch5-programmable-transfer-complete,
-+                    dma-ch6-programmable-transfer-complete,
-+                    dma-ch7-programmable-transfer-complete,
-+                    sample-rate-change-trigger-a, sample-rate-change-trigger-b,
-+                    sample-rate-change-trigger-c, sample-rate-change-trigger-d,
-+                    timer1-irq-ch1, timer1-irq-ch2, timer1-irq-ch3, timer1-irq-ch4,
-+                    timer2-irq-ch1, timer2-irq-ch2, timer2-irq-ch3, timer2-irq-ch4,
-+                    timer3-irq-ch1, timer3-irq-ch2, timer3-irq-ch3, timer3-irq-ch4,
-+                    timer4-irq-ch1, timer4-irq-ch2, timer4-irq-ch3, timer4-irq-ch4,
-+                    timer5-irq-ch1, timer5-irq-ch2, timer5-irq-ch3, timer5-irq-ch4,
-+                    timer-1, timer-2, timer-3, timer-4, timer-5 ]
-+
-+          bias-disable: true
-+
-+          bias-bus-hold: true
-+
-+          bias-pull-up: true
-+
-+          bias-pull-down: true
-+
-+          drive-push-pull: true
-+
-+          drive-open-drain: true
-+
-+          drive-strength:
-+            description:
-+              Drive strength in mA.
-+            enum: [ 4, 8 ]
-+
-+          output-low: true
-+
-+          output-high: true
-+
-+        additionalProperties: false
-+
-+        required:
-+          - groups
-+
-+    additionalProperties: false
 -- 
 2.30.2
 
