@@ -2,93 +2,86 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64201C433FE
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Nov 2022 10:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 708A7C4332F
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Nov 2022 10:02:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229929AbiKJKA1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Nov 2022 05:00:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42130 "EHLO
+        id S229973AbiKJKCT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Nov 2022 05:02:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229747AbiKJKAX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Nov 2022 05:00:23 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 519D518E09
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Nov 2022 02:00:22 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id r14so2266881edc.7
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Nov 2022 02:00:22 -0800 (PST)
+        with ESMTP id S229920AbiKJKCS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Nov 2022 05:02:18 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF8386B22C
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Nov 2022 02:02:17 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id 21so2304405edv.3
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Nov 2022 02:02:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2odpp67XrwEsYQ5qgNjwznTYFgGSgGMTen/aFOlfBHo=;
-        b=w5Oi/kOCYUP//oQsE/7WnRe4lkruoLsvkkON6QbMzHzT65213W8isBn10sgByyAphs
-         +YLn/DkdvpvQ29qVJ/b0p5xC4eJR6C7ZGjgwxQNzo1k5C6ly3dmzspu5oKyvtneCB8Km
-         aqpD8RAAK9LNQXkcnQLiWEkq0J7TgMQfJA9U9eXo55XWlEd4oOpyDCDZDO+cm3J3FpQO
-         H/6yusCZlu/zOzd9QjHMS5wM33wg8gtu2vLAZ4ZgNFCjqTeHkf/h0cSX93u4BGHAG8Ia
-         Pm1oOUmsjAhJVo8cinMRe6QjYmBJLHoePgHZPoipmGWFlkEmvLJMvo+GGD7OGJUv9jAG
-         KVMQ==
+        bh=VU3oEISNUYg+d9wlGb/h98JkMGsEQ9ti4i8WQ+4TZ8Y=;
+        b=l+2q3EoEkmW8KGxjLUAosaPRqu2QuiS97YcetdfBswNY2l1mTPG41tKL/97tNx2aqd
+         7mSqpF6EUPeU2jC3TP48/iKnJqPBF5FE2P6AjYJZGIu56KfW7qJL3cmD08aTmnBO9lVE
+         07dTococsvCklATL4SyE1b/aEr4+0J06VUIQYMJyDglGDouF0LJI4htyQq8QwuxsUsyo
+         w7oHSV75DAvKrCuBRg1V+HMXwXlBMcPYYy1GwTQXuMfSt+qEFbOJz2ST/Akt2O71n796
+         mpvHe1TqQ2cvW+5JN36H8uHw/pkQ/k8tQPO/FF9mBxquofw6+JXnXMMGJ3aOa1/7hOxc
+         aV0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2odpp67XrwEsYQ5qgNjwznTYFgGSgGMTen/aFOlfBHo=;
-        b=CPN9PSrBhKJFsub7tJN+OqbjsaIXosWb/NsNvgD2xdTOjs5D/ojtcTHFwvR4o9sK3R
-         +vNnGMGC097c8KXP+/K3VYMvZe9KOiCVzO+Lcrc/skHzc+WlBHu8k2652kIMFlIOhmZx
-         qZ2cr6F0YmJ9z0mnOuUMVV5eBgZGrtKH4c9+ouCDhKd4T3HNGeV0jxiJ29dcU1J2NIKq
-         B7T4bamAw93FSzN5zSIfsTcbhLsQtzmutCe3W+duxhDB8NEDQiHc/YSxXLixLoKxJa+c
-         z5Hka/Gg+N7I1fad/4yT2dz6W61oCRYTfudBJyPmvV/JaJhzMzFLnO5d5BRzCEOx8Koz
-         Gn3Q==
-X-Gm-Message-State: ACrzQf0I8jsVB5jkJKl8uxBJmKi6dzj8ROI/mjDuR/Vwe2k3mfNBGsfm
-        lcw7b5nzLYgnryBIrEoNQp2WzmrXjrov5bqFEtdbFQ==
-X-Google-Smtp-Source: AMsMyM6h/kF5BTrJAJvpwMlFB3z9bBGXZoV5+JPSItJMwFXOR5GNihzM7BleUV6gcrOiWnUTuuxCYagD9ge9jupAI4w=
-X-Received: by 2002:a05:6402:d0b:b0:458:a244:4e99 with SMTP id
- eb11-20020a0564020d0b00b00458a2444e99mr62575422edb.46.1668074420887; Thu, 10
- Nov 2022 02:00:20 -0800 (PST)
+        bh=VU3oEISNUYg+d9wlGb/h98JkMGsEQ9ti4i8WQ+4TZ8Y=;
+        b=Q+w2yf+t8rp6jlFVluPNzEVcMZFUbcZqldTliRHiRVoCyahAn4bsPV4cCsE3MZFd8n
+         CE7w8eDpizsKM9J7O1y7w4WkmmYqGXaVqS9Vp6n3T790YHklDL4FljfmNPePtO0jxwG/
+         lvRxZ+mbaeZ2n9k8Z2nGFBi6Q48YjRDIDPbrDwZ5AuLmZR1bS2jJ0jpuRH8CtkcR5ojo
+         L3G6684+kEwOVBwiAa+SASMcXzlryCEA/D7Ch54Eoks6pKR8HrCyzDUhddYHmZIYOHF7
+         CivpgWo2DCYgnSccwdJHWoykdttV6tN/ZvGpssoIFmAXVdyxz7eveWG1lb6Wqv4EfE+Q
+         Z5NQ==
+X-Gm-Message-State: ACrzQf3H+vaRdLOA45ay4aP6hy1g1q5k5a83L5jLEI+KbxGMCB4yaY26
+        yQO9/Dk/5vEoySTPwMJryzCHSe/s31DzSgbXJGAv8g==
+X-Google-Smtp-Source: AMsMyM7KfumBAxq1O0Hu284/fJyh87E4kMzRSpVWatlLqnsWvCWqK/Oe0aeHJFcUG6KvsBG6hLjUYXOuJ/9EBvQNA3A=
+X-Received: by 2002:a05:6402:659:b0:463:a83c:e0af with SMTP id
+ u25-20020a056402065900b00463a83ce0afmr1914987edx.158.1668074536441; Thu, 10
+ Nov 2022 02:02:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20221031100843.14579-1-clin@suse.com> <20221031100843.14579-2-clin@suse.com>
- <CACRpkdY-uaQ--vFM+vVPbwa-q9nbSU0rQB+qbL=9m0wVMwA3Aw@mail.gmail.com> <Y2vZJaoWThP2aipE@linux-8mug>
-In-Reply-To: <Y2vZJaoWThP2aipE@linux-8mug>
+References: <20221109165331.29332-1-rf@opensource.cirrus.com> <20221109165331.29332-6-rf@opensource.cirrus.com>
+In-Reply-To: <20221109165331.29332-6-rf@opensource.cirrus.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 10 Nov 2022 11:00:05 +0100
-Message-ID: <CACRpkdbW=WMA-9OkJgBoBov7ewGMN_Coy=KOQfS_uwzHNsuGwA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: add schema for NXP S32 SoCs
-To:     Chester Lin <clin@suse.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        s32@nxp.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Larisa Grigore <larisa.grigore@nxp.com>,
-        Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>
+Date:   Thu, 10 Nov 2022 11:02:05 +0100
+Message-ID: <CACRpkdbY7W2rDZ4knkrRHBSTn7MKYV3LYh_r8Wkn1Hh=j+oL5A@mail.gmail.com>
+Subject: Re: [PATCH 05/12] pinctrl: cirrus: Add support for CS48L31/32/33 codecs
+To:     Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc:     lee@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, broonie@kernel.org,
+        tglx@linutronix.de, maz@kernel.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Nov 9, 2022 at 5:45 PM Chester Lin <clin@suse.com> wrote:
+On Wed, Nov 9, 2022 at 5:53 PM Richard Fitzgerald
+<rf@opensource.cirrus.com> wrote:
 
-> > If you have the compatible, surely you know these indexes from
-> > that compatible string?
+> From: Piotr Stankiewicz <piotrs@opensource.cirrus.com>
 >
-> The nxp,pins property is more like a common language that both kernel and
-> u-boot can share with. Of course hardcoding indexes can be achieved as well
-> but that also means the index matrices in both kernel driver and u-boot driver
-> must be revised and synchronized if new boards may have different reg and
-> nxp,pins.
+> Codecs in this family have multiple digital I/O functions for audio,
+> DSP subsystem, GPIO and various special functions. All muxable pins
+> are selectable as either a GPIO or an alternate function.
+>
+> Signed-off-by: Piotr Stankiewicz <piotrs@opensource.cirrus.com>
+> Signed-off-by: Qi Zhou <qi.zhou@cirrus.com>
+> Signed-off-by: Stuart Henderson <stuarth@opensource.cirrus.com>
+> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 
-Is it new *BOARDS* that need a new table really or new *SOC:s*?
+This looks OK.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-I was under the impression that this is per-soc and then it can be derived
-from the compatible string and should be in the driver.
-
-If it is something that vary from board to board then it should be in the
-device tree because it can not be derived from the version of the hardware
-i.e the compatible string.
-
-So which one is it?
+Does this patch have compile-time dependencies on the other
+patches or is it something I can just merge separately?
 
 Yours,
 Linus Walleij
