@@ -2,107 +2,112 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D998C4321E
-	for <linux-gpio@archiver.kernel.org>; Fri, 11 Nov 2022 18:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F192C4332F
+	for <linux-gpio@archiver.kernel.org>; Fri, 11 Nov 2022 19:41:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234170AbiKKSnX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 11 Nov 2022 13:43:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46218 "EHLO
+        id S233965AbiKKTlI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 11 Nov 2022 14:41:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233938AbiKKSnP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Nov 2022 13:43:15 -0500
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB4B5F3C;
-        Fri, 11 Nov 2022 10:43:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1668192194; x=1699728194;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=lkVyJF5CFttda/7RqQwpuCpSUsjtTkmBgPQ7kL5ajWk=;
-  b=Fq4jrCYNR1jP51SJZdvHux3SxNYbV+/gkSNwmb/1uMgl5hUygqKCTwyl
-   8/Y/0cvPsMLScGQ32z+Ojt1O1yIJ9L+tWXBxzaStPPVpIFiQagDIjm/y1
-   u9zE8A7TG/FDHYQEvSGSrhPEqy1dczWHw1SH5UHp/E323JSaU1sdFhvO3
-   GsDpP1BpHp1b2cykt64qDCr4nWFCBOsso9RRP0dDtROkrxJhVwFkHXAt/
-   p46nuSJy8oBlCLonOO1u6rbYoBwFDSJ4ZXtr3/XQ+C0YLrFVf5UqFkxa1
-   UK0LFNAAyIJK2iFd5L5N6wJvcbZXjZ9ql+jaqRkFismfCG7CAmHtD7I6X
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10528"; a="309274056"
-X-IronPort-AV: E=Sophos;i="5.96,157,1665471600"; 
-   d="scan'208";a="309274056"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2022 10:43:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10528"; a="632103063"
-X-IronPort-AV: E=Sophos;i="5.96,157,1665471600"; 
-   d="scan'208";a="632103063"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 11 Nov 2022 10:43:11 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 490CB2B7; Fri, 11 Nov 2022 20:43:32 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        with ESMTP id S234245AbiKKTlH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Nov 2022 14:41:07 -0500
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5F92B7BE77;
+        Fri, 11 Nov 2022 11:41:06 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="5.96,157,1665414000"; 
+   d="scan'208";a="139760414"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 12 Nov 2022 04:41:05 +0900
+Received: from localhost.localdomain (unknown [10.226.92.47])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E073340E8D2B;
+        Sat, 12 Nov 2022 04:41:01 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Thierry Reding <thierry.reding@gmail.com>,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pwm@vger.kernel.org
-Cc:     Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v3 5/6] pwm: lpss: Add pwm_lpss_probe() stub
-Date:   Fri, 11 Nov 2022 20:43:27 +0200
-Message-Id: <20221111184328.58108-6-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221111184328.58108-1-andriy.shevchenko@linux.intel.com>
-References: <20221111184328.58108-1-andriy.shevchenko@linux.intel.com>
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 0/2] Add RZ/G2L POEG support
+Date:   Fri, 11 Nov 2022 19:40:57 +0000
+Message-Id: <20221111194059.718154-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In case the PWM LPSS module is not provided, allow users to be
-compiled with the help of the pwm_lpss_probe() stub.
+The output pins of the general PWM timer (GPT) can be disabled by using the port
+output enabling function for the GPT (POEG). Specifically, either of the
+following ways can be used.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Thierry Reding <thierry.reding@gmail.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- include/linux/platform_data/x86/pwm-lpss.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+  * Input level detection of the GTETRGA to GTETRGD pins.
+  * Output-disable request from the GPT.
+  * Register setting(ie, by setting POEGGn.SSF to 1)
 
-diff --git a/include/linux/platform_data/x86/pwm-lpss.h b/include/linux/platform_data/x86/pwm-lpss.h
-index 296bd837ddbb..c868b396ed2c 100644
---- a/include/linux/platform_data/x86/pwm-lpss.h
-+++ b/include/linux/platform_data/x86/pwm-lpss.h
-@@ -4,6 +4,8 @@
- #ifndef __PLATFORM_DATA_X86_PWM_LPSS_H
- #define __PLATFORM_DATA_X86_PWM_LPSS_H
- 
-+#include <linux/err.h>
-+#include <linux/kconfig.h>
- #include <linux/types.h>
- 
- struct device;
-@@ -27,7 +29,16 @@ struct pwm_lpss_boardinfo {
- 	bool other_devices_aml_touches_pwm_regs;
- };
- 
-+#if IS_REACHABLE(CONFIG_PWM_LPSS)
- struct pwm_lpss_chip *pwm_lpss_probe(struct device *dev, void __iomem *base,
- 				     const struct pwm_lpss_boardinfo *info);
-+#else
-+static inline
-+struct pwm_lpss_chip *pwm_lpss_probe(struct device *dev, void __iomem *base,
-+				     const struct pwm_lpss_boardinfo *info)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
-+#endif	/* CONFIG_PWM_LPSS */
- 
- #endif	/* __PLATFORM_DATA_X86_PWM_LPSS_H */
+This patch series add support for controlling output disable function using sysfs.
+
+For output disable operation, POEG group needs to be linked with GPT.
+Plan to send a follow up patch with renesas,poeg-group as numeric
+property in pwm bindings for linking both GPT and POEG devices.
+
+v3->v4:
+ * Replaced companion->renesas,gpt for the phandle to gpt instance
+ * Replaced renesas,id->renesas,poeg-id
+ * Removed default from renesas,poeg-id as default for a required
+   property doesn't make much sense.
+ * Updated the example and required properties with above changes
+v2->v3:
+ * Removed Rb tag from Rob as there are some changes introduced.
+ * Added companion property, so that poeg can link with gpt device
+ * Documented renesas,id, as identifier for POEGG{A,B,C,D}.
+ * Updated the binding example.
+ * Added sysfs documentation for output_disable
+ * PWM_RZG2L_GPT implies ARCH_RZG2L. So removed ARCH_RZG2L dependency
+ * Used dev_get_drvdata to get device data
+ * Replaced sprintf->sysfs_emit in show().
+v1->v2:
+ * Updated binding description.
+ * Renamed the file poeg-rzg2l->rzg2l-poeg
+ * Removed the macro POEGG as there is only single register and
+   updated rzg2l_poeg_write() and rzg2l_poeg_read()
+ * Updated error handling in probe()
+REF->v1:
+ * Modelled as pincontrol as most of its configuration is intended to be
+   static and moved driver files from soc to pincontrol directory.
+ * Updated reg size in dt binding example.
+ * Updated Kconfig
+
+REF:
+https://lore.kernel.org/linux-renesas-soc/20220510151112.16249-1-biju.das.jz@bp.renesas.com/
+
+
+Biju Das (2):
+  dt-bindings: pinctrl: renesas: Add RZ/G2L POEG binding
+  drivers: pinctrl: renesas: Add RZ/G2L POEG driver support
+
+ .../ABI/testing/sysfs-platform-rzg2l-poeg     |  18 ++
+ .../bindings/pinctrl/renesas,rzg2l-poeg.yaml  |  86 ++++++++++
+ drivers/pinctrl/renesas/Kconfig               |   2 +
+ drivers/pinctrl/renesas/Makefile              |   2 +
+ drivers/pinctrl/renesas/poeg/Kconfig          |  11 ++
+ drivers/pinctrl/renesas/poeg/Makefile         |   2 +
+ drivers/pinctrl/renesas/poeg/rzg2l-poeg.c     | 157 ++++++++++++++++++
+ 7 files changed, 278 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-rzg2l-poeg
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-poeg.yaml
+ create mode 100644 drivers/pinctrl/renesas/poeg/Kconfig
+ create mode 100644 drivers/pinctrl/renesas/poeg/Makefile
+ create mode 100644 drivers/pinctrl/renesas/poeg/rzg2l-poeg.c
+
 -- 
-2.35.1
+2.25.1
 
