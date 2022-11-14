@@ -2,108 +2,96 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 133ABC43217
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Nov 2022 16:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A036C43217
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Nov 2022 16:55:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236958AbiKNQrL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 14 Nov 2022 11:47:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55550 "EHLO
+        id S237921AbiKNQzh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 14 Nov 2022 11:55:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237983AbiKNQqv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Nov 2022 11:46:51 -0500
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1D6A2FC2E;
-        Mon, 14 Nov 2022 08:46:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=alWvsDEk2ast4MquuTzMfCnex7hE3JeGIqS6LusDl0c=; b=OvNCoOdy4QPkxzrWrzlQEsdgNV
-        IOkyFWL5tNj9hbIYkCtlE5b+1M5vHpQW/8Ov2fi7vXAOpcqdarNLBWSvWvKdvDIr/QX4q73+jRcIf
-        8GIUJwV/R+bSYqFAaOlWqrvjnj6tY//rU8nxSkHoHXnaoCWyL9POP77DQwHeCoSuDETFVLKAYZwYm
-        xoKYaFRlopJfoWF/aL9NazAcP0/ds20rr8+jRpROGOakFpt1ez+BwMuZlTPWvM0lLXokZOmJZvCNG
-        Cp/OlsLmdWNEUZ7MgLpqmClu3fnd5wC5Ny1J0i6ZiZNcLAfkiBtC3JHd9i2v8I/kiZ6H0naNZaxCw
-        qxoLBaqQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35266)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1oucbY-000169-1k; Mon, 14 Nov 2022 16:46:40 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1oucbU-0003xd-Jm; Mon, 14 Nov 2022 16:46:36 +0000
-Date:   Mon, 14 Nov 2022 16:46:36 +0000
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        asahi@lists.linux.dev, devicetree@vger.kernel.org,
-        Hector Martin <marcan@marcan.st>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sven Peter <sven@svenpeter.dev>
-Subject: Re: [PATCH v3 2/7] lib/vsprintf: Add support for generic FOURCCs by
- extending %p4cc
-Message-ID: <Y3Jw7PQVzjjaNniF@shell.armlinux.org.uk>
-References: <Y2qEpgIdpRTzTQbN@shell.armlinux.org.uk>
- <E1osRXO-002mvw-Fp@rmk-PC.armlinux.org.uk>
- <Y3Jf7xz2CQjJuEeT@alley>
- <Y3Jptob4bGL9Weel@shell.armlinux.org.uk>
+        with ESMTP id S237484AbiKNQz1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Nov 2022 11:55:27 -0500
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7236FCE6;
+        Mon, 14 Nov 2022 08:55:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1668444927; x=1699980927;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=/5ATWhqQrc1DZJ4f0j7ZyUNBHQXbdLiioN7qk5/mljI=;
+  b=WaN+xPZKEgkBTdTvXGn9VV+GSrKD5o19L+Z8GkL4UwSgzvxTfCPcaBvw
+   DMhQYzCHMNnYh7al1jAwWZvdw2996ww0R++Z8oN+qoLAZBeiZsAfWEQt+
+   0YsS9UDAlFTdQH0f0dpbD9T9go4k79SOYfNUEBJ9Lb+rrnWw+IfN7csz6
+   c1QuCW6vU1z+vu5k2fH1bJ1erRG02+ykPw6PUveEpzm+Lo7f0aFLYvtUF
+   7lImpXUjSlT8xjx2ugFrd4QBkm2UPui1JT1LxqqYie/vzNUvTDPW3mPmN
+   cIZOQkY/if5JUhR9NjiAOJNkBOK/JntLH60pUGAelsU8kTgOm+8hH1iHw
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10531"; a="295382829"
+X-IronPort-AV: E=Sophos;i="5.96,164,1665471600"; 
+   d="scan'208";a="295382829"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2022 08:55:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10531"; a="727593541"
+X-IronPort-AV: E=Sophos;i="5.96,164,1665471600"; 
+   d="scan'208";a="727593541"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by FMSMGA003.fm.intel.com with ESMTP; 14 Nov 2022 08:55:22 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id DC9A3B7; Mon, 14 Nov 2022 18:55:46 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pwm@vger.kernel.org
+Cc:     Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v4 1/7] pwm: Add a stub for devm_pwmchip_add()
+Date:   Mon, 14 Nov 2022 18:55:39 +0200
+Message-Id: <20221114165545.56088-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20221114165545.56088-1-andriy.shevchenko@linux.intel.com>
+References: <20221114165545.56088-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y3Jptob4bGL9Weel@shell.armlinux.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Nov 14, 2022 at 04:15:50PM +0000, Russell King (Oracle) wrote:
-> On Mon, Nov 14, 2022 at 04:34:07PM +0100, Petr Mladek wrote:
-> > >  	orig = get_unaligned(fourcc);
-> > > -	val = orig & ~BIT(31);
-> > > +	switch (fmt[2]) {
-> > > +	case 'h':
-> > > +		val = orig;
-> > > +		break;
-> > > +	case 'r':
-> > > +		val = orig = swab32(orig);
-> > 
-> > I do not like much these multi assignments. I think that the result
-> > was not even defined in some older C standards. Though, I can't find
-> > it now. And even make W=3 does not warn about it.
-> 
-> Err.
-> 
-> It's been supported for decades. I learnt about it back in 1992 when
-> I was introduced to C by another experienced C programmer. It's been
-> supported in ANSI C compilers. The Norcroft C compiler (which is
-> strict ANSI) on Acorn platforms back in the late 1980s/1990s even
-> supported it.
-> 
-> I think you're a bit out of date.
+The devm_pwmchip_add() can be called by a module that optionally
+instantiates PWM chip. In the case of CONFIG_PWM=n, the compilation
+can't be performed. Hence, add a necessary stub.
 
-Oh, and it's not like there isn't precedent for doing this in
-lib/vsprintf.c:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Thierry Reding <thierry.reding@gmail.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ include/linux/pwm.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-841a915d20c7 vsprintf: Do not have bprintf dereference pointers
-
-+                                       len = copy = strlen(args);
-
-If you grep lib/, there's many more examples. So, what is in Hectors
-patch is in no way any different from lots of other examples already
-merged into the kernel code.
-
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index d70c6e5a839d..bba492eea96c 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -478,6 +478,11 @@ static inline int pwmchip_remove(struct pwm_chip *chip)
+ 	return -EINVAL;
+ }
+ 
++static inline int devm_pwmchip_add(struct device *dev, struct pwm_chip *chip)
++{
++	return -EINVAL;
++}
++
+ static inline struct pwm_device *pwm_request_from_chip(struct pwm_chip *chip,
+ 						       unsigned int index,
+ 						       const char *label)
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+2.35.1
+
