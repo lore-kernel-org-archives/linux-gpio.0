@@ -2,257 +2,87 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDCCC4332F
-	for <linux-gpio@archiver.kernel.org>; Mon, 14 Nov 2022 08:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6487EC433FE
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Nov 2022 09:41:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236041AbiKNIp1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 14 Nov 2022 03:45:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60010 "EHLO
+        id S236989AbiKNJlT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 14 Nov 2022 04:41:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235843AbiKNIpZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Nov 2022 03:45:25 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D321B9D0
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Nov 2022 00:45:23 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id g12so18171449lfh.3
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Nov 2022 00:45:23 -0800 (PST)
+        with ESMTP id S237070AbiKNJlD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Nov 2022 04:41:03 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAD191E3E5
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Nov 2022 01:40:49 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id a29so18310742lfj.9
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Nov 2022 01:40:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JVmwIG2s4EyBaQ0ZMDJcfx3U/7J7QX25R/a+LsVxmaQ=;
-        b=alrOU5uP7aHB2OFLmG9pJgp21eMFCOH3j4AkhDcS2sO5Yizu6MhR4FQah7F2cKfipz
-         iD0Gh4I810N5WEy6laL4piM6oHiTDJYl8vW6zlEYX3KKRJBksbXi5iuGhuQ/0swEK4fV
-         GZjkloAP+/m4KHm2r0U+FD+pa4+4uWk+ooj8ROfxFRT5fEmY4Fy4Vf4ElgusOVZF+AQx
-         xwxSyhjAGg97ufFF6xLK6u0YBZPeE+TfXWTf6Zd+1/oAIoJD9YNyNGleEbbjv1uyZjqG
-         rEshg9X5fh7HXIK/rz80rtkH4Iq7v4J9ducjDJNdMIh4s8vQRJRendfxMsh68Uchrtau
-         p7TQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rhjMWnbPiyWtnSlNKUPMhCILBSQuKkW5JKpMpkNUhPc=;
+        b=xDoUbGyu7xJvnEe64C39u3W1WlMwPR+7xRgCl/wRlulZRVB3Am1KRRuuXYjae3A1EJ
+         lVpNipOsRjdFPusE3n6XM7Fqmck01W+FMuAkQMIe3loVPwnsQXRFLeHx4pgRM37t/fpF
+         oAvUVWZ+IkkClo/AFmdxBrxly65igc7syLBz4dz7snMDKP82fiVPlwk3Bt5WR/ytgBPf
+         T1vj6slkPUbNmHmAf9jg24hXqTwf8iY9W4EygHDV4Bi3tg3TeN3q7jBRkmBpjmcR8uTR
+         1SULd3xkB5JyMGZyoF+yh8vze7qQB/j4AWUgE+M6LPBV5Vx9frlUqsJe3XhZ5/RXY/kF
+         hrGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JVmwIG2s4EyBaQ0ZMDJcfx3U/7J7QX25R/a+LsVxmaQ=;
-        b=zJdtvc95rbtnm+eJ+33UWkhrRo+0AZtz2+0j/TSijDQTa/iXT0B5c2upivqS6bY/2a
-         0EBa7ByWPDd6lybjIOc6PDYw9IgYn9xl4ElxXWS80CdKzndOgXDOZVUx0LRIWIjAmFUO
-         lij2HgJpaZnc5l9xDx3GP7eNLajoZhRvVew/2T51IswpnfzlCAsCHZnr3pnJGer9xxUV
-         mUsMv6MJEJE/KHDZmbVwbOC13p1Wg3wcrvDyyBFS65leX2HROhyhRT1QI9NiYPfrzTEU
-         sFlaXmqDRooLC6cDca8PpR/x0SGuS67I3a+9buPgFWi3hkwybs4gDt8IBNkoJ61n01M+
-         X4Tw==
-X-Gm-Message-State: ANoB5pnfA0SnIk7qoj9UOAEpkTiZpBlurprZZUGnlxMEPsuBR9vtbYCN
-        IU7tirl1mkFWDN/r2qgK0DZqJA==
-X-Google-Smtp-Source: AA0mqf6q4FegMx0hyfkYq/jghX+kjt+/o7dthzyPPPyfPesctUBSYTYFvjnnMmZKzmBu7YqYCN99Mw==
-X-Received: by 2002:a05:6512:3f28:b0:4a2:2aab:5460 with SMTP id y40-20020a0565123f2800b004a22aab5460mr3548905lfa.62.1668415522033;
-        Mon, 14 Nov 2022 00:45:22 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id i16-20020a2ea230000000b0027710117ebdsm1907109ljm.121.2022.11.14.00.45.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Nov 2022 00:45:21 -0800 (PST)
-Message-ID: <5f012334-1815-2ef6-7dc0-08b4d60f754f@linaro.org>
-Date:   Mon, 14 Nov 2022 09:45:20 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 11/12] dt-bindings: sound: Add Cirrus Logic CS48L31/32/33
- codecs
-Content-Language: en-US
-To:     Richard Fitzgerald <rf@opensource.cirrus.com>, lee@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        linus.walleij@linaro.org, broonie@kernel.org, tglx@linutronix.de,
-        maz@kernel.org
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com
-References: <20221109165331.29332-1-rf@opensource.cirrus.com>
- <20221109165331.29332-12-rf@opensource.cirrus.com>
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rhjMWnbPiyWtnSlNKUPMhCILBSQuKkW5JKpMpkNUhPc=;
+        b=U4YmJTPOeodh3r/ziTdv9iTY9sqnwTeFA1H1NzJ4p9/yh8ld09Oha8p7T8nxEAUHWV
+         pUf/II/uwywo77kZZ8AOdLilc+vhdykijhE9tIEl7jsl0xjUE5NbTcCV6fnbsCUGfzPT
+         ypcrk4Di8GkZflNND0pZtgD/mAwc0J4PnaWKVQ2aHOOKAdg5IsAOadxUH4DEPLNDNWSw
+         5zbRIz669Ry0aqLCPBMzdUM4h8igHGD3A7VB8XUkj9YGpjdX3gB/iH/6TgyVggcfvWq+
+         isvV4Lur3haNO9Lic0AzK6U954DTE2cAIdFNHOZYD37bQE8ASmcdF2aFHPTA46JMqVa3
+         g56g==
+X-Gm-Message-State: ANoB5pm8NEe5D7yqoD587EJp1lBitHq6H3ODCeNbAL3BGoXOQ93BoaOT
+        RfbDWkxjf+sPSUc3tH0CO8P2Xw==
+X-Google-Smtp-Source: AA0mqf4dQ9dBRg41J79ai7kzpTgLAKtrtWRzPIvGXbB1MyW2oFA22ZTfWkIZpTFB1l+T1p5GnGRkcg==
+X-Received: by 2002:a19:645e:0:b0:4a9:e27a:1cfa with SMTP id b30-20020a19645e000000b004a9e27a1cfamr3719038lfj.147.1668418848354;
+        Mon, 14 Nov 2022 01:40:48 -0800 (PST)
+Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id n26-20020ac2491a000000b00494a603953dsm1762430lfi.89.2022.11.14.01.40.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Nov 2022 01:40:47 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221109165331.29332-12-rf@opensource.cirrus.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     devicetree@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: (subset) [PATCH 1/2] dt-bindings: pinctrl: qcom,ipq8074: convert to dtschema
+Date:   Mon, 14 Nov 2022 10:40:45 +0100
+Message-Id: <166841878696.36382.14839128580435642280.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221108142357.67202-1-krzysztof.kozlowski@linaro.org>
+References: <20221108142357.67202-1-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 09/11/2022 17:53, Richard Fitzgerald wrote:
-> Codecs in this family have multiple digital and analog audio I/O that
-> support a variety of external hardware connections and configurations.
+On Tue, 8 Nov 2022 15:23:56 +0100, Krzysztof Kozlowski wrote:
+> Convert Qualcomm IPQ8074 pin controller bindings to DT schema.  Keep the
+> parsing of pin configuration subnodes consistent with other Qualcomm
+> schemas (children named with '-state' suffix, their children with
+> '-pins').
 > 
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> ---
->  .../bindings/sound/cirrus,cs48l32.yaml        | 96 +++++++++++++++++++
->  include/dt-bindings/sound/cs48l32.h           | 25 +++++
->  2 files changed, 121 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/cirrus,cs48l32.yaml
->  create mode 100644 include/dt-bindings/sound/cs48l32.h
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/cirrus,cs48l32.yaml b/Documentation/devicetree/bindings/sound/cirrus,cs48l32.yaml
-> new file mode 100644
-> index 000000000000..70fb294c6dc1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/cirrus,cs48l32.yaml
-> @@ -0,0 +1,96 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/cirrus,cs48l32.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Cirrus Logic CS48L31/32/33 audio CODECs
-> +
-> +maintainers:
-> +  - patches@opensource.cirrus.com
-> +
-> +description: |
-> +  This describes audio configuration bindings for these codecs.
 
-Don't start with "This". Instead describe the hardware.
+Applied, thanks!
 
-> +
-> +  See also the core bindings for the parent MFD driver:
-> +
-> +    Documentation/devicetree/bindings/mfd/cirrus,cs48l32.yaml
-
-Same comment as for pinctrl patch.
-
-> +
-> +  and defines for values used in these bindings:
-> +
-> +    include/dt-bindings/sound/cs48l32.h
-> +
-> +  The properties are all contained in the parent MFD node.
-> +
-> +properties:
-
-Missing compatible. What's the point to organize bindings like that? The
-schema on its own does nothing - does not match anything.
-
-> +  '#sound-dai-cells':
-> +    const: 1
-> +
-> +  cirrus,in-type:
-> +    description:
-> +      A list of input type settings for each input. A maximum of 8 cells,
-> +      with four cells per input in the order INnL_1, INnR_1 INnL_2 INnR_2.
-> +      (where _1 and _2 are the alternative mux selections for that INn).
-> +      If the array is shorter than the number of inputs the unspecified
-> +      inputs default to CS48L32_IN_TYPE_DIFF.
-> +    $ref: "/schemas/types.yaml#/definitions/uint32-matrix"
-
-Drop quotes.
-
-> +    minItems: 1
-> +    maxItems: 8
-> +    items:
-> +      items:
-> +        - description:
-> +            The first cell is INnL_1 input type. One of the CS48L32_IN_TYPE_xxx.
-> +            For non-muxed inputs this sets the type of INnL.
-
-What is the "input type"? Referring to constants is not enough,
-especially that they are not descriptive. Explain here the values.
-
-> +            minimum: 0
-> +            maximum: 1
-> +        - description:
-> +            The second cell is INnR_1 input type. One of the CS48L32_IN_TYPE_xxx.
-> +            For non-muxed inputs this sets the type of INnR.
-> +            minimum: 0
-> +            maximum: 1
-> +        - description:
-> +            The third cell is INnL_2 input type. One of the CS48L32_IN_TYPE_xxx.
-> +            For non-muxed inputs this cell must be 0.
-> +            minimum: 0
-> +            maximum: 1
-> +        - description:
-> +            The fourth cell is INnR_2 input type. One of the CS48L32_IN_TYPE_xxx.
-> +            For non-muxed inputs this cell must be 0.
-> +            minimum: 0
-> +            maximum: 1
-> +
-> +  cirrus,max-channels-clocked:
-> +    description:
-> +      Maximum number of channels that clocks will be generated for. When using
-> +      multiple data lines, every sample slot can transfer multiple channels
-> +      (one per data line). This pdata sets the maximum number of slots.
-> +      One cell for each ASP, use a value of zero for ASPs that should be
-> +      handled normally.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 1
-> +    maxItems: 4
-> +    items:
-> +      default: 0
-> +
-> +  cirrus,pdm-sup:
-> +    description:
-> +      Indicates how the MICBIAS pins have been externally connected to DMICs
-> +      on each input. One cell per input (IN1, IN2, ...). One of the
-> +      CS48L32_MICBIAS_xxx values.
-> +      See the INn_PDM_SUP field in the datasheet for a description.
-
-No, explain here.
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 1
-> +    maxItems: 4
-> +
-> +examples:
-> +  - |
-> +        cs48l32@0 {
-
-Node names should be generic.
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-> +                compatible = "cirrus,cs48l32";
-> +
-
-Use 4 spaces for example indentation.
-
-> +                cirrus,in-type = <
-> +                        CS48L32_IN_TYPE_DIFF CS48L32_IN_TYPE_DIFF /* IN1[LR]_1 differential */
-> +                        CS48L32_IN_TYPE_SE   CS48L32_IN_TYPE_SE   /* IN1[LR]_2 single-ended */
-> +                        CS48L32_IN_TYPE_DIFF CS48L32_IN_TYPE_DIFF /* IN2[LR]_1 differential */
-> +                >;
-> +                cirrus,max-channels-clocked = <2 0 0>;
-> +        };
-> diff --git a/include/dt-bindings/sound/cs48l32.h b/include/dt-bindings/sound/cs48l32.h
-> new file mode 100644
-> index 000000000000..0b774da0a6c8
-> --- /dev/null
-> +++ b/include/dt-bindings/sound/cs48l32.h
-> @@ -0,0 +1,25 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-
-Dual license.
-
-> +/*
-> + * Device Tree defines for CS48L32 codec.
-> + *
-> + * Copyright (C) 2016-2018, 2022 Cirrus Logic, Inc. and
-> + *               Cirrus Logic International Semiconductor Ltd.
-> + */
-> +
-> +#ifndef DT_BINDINGS_SOUND_CS48L32_H
-> +#define DT_BINDINGS_SOUND_CS48L32_H
-> +
-> +#define CS48L32_IN_TYPE_DIFF		0
-> +#define CS48L32_IN_TYPE_SE		1
-> +
-> +#define CS48L32_PDM_SUP_VOUT_MIC	0
-> +#define CS48L32_PDM_SUP_MICBIAS1	1
-> +#define CS48L32_PDM_SUP_MICBIAS2	2
-> +#define CS48L32_PDM_SUP_MICBIAS3	3
-> +
-> +#define CS48L32_PDM_FMT_MODE_A_LSB_FIRST	0x0000
-> +#define CS48L32_PDM_FMT_MODE_B_LSB_FIRST	0x4000
-> +#define CS48L32_PDM_FMT_MODE_A_MSB_FIRST	0x8000
-> +#define CS48L32_PDM_FMT_MODE_B_MSB_FIRST	0xc000
-
-Register values do not belong to bindings.
-
-> +
-> +#endif
+[1/2] dt-bindings: pinctrl: qcom,ipq8074: convert to dtschema
 
 Best regards,
-Krzysztof
-
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
