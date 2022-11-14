@@ -2,127 +2,246 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE05BC4332F
-	for <linux-gpio@archiver.kernel.org>; Sun, 13 Nov 2022 16:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 051A3C433FE
+	for <linux-gpio@archiver.kernel.org>; Mon, 14 Nov 2022 02:49:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234351AbiKMQN7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 13 Nov 2022 11:13:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52570 "EHLO
+        id S235706AbiKNCt4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 13 Nov 2022 21:49:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233401AbiKMQN6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Nov 2022 11:13:58 -0500
-Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70FEE6578
-        for <linux-gpio@vger.kernel.org>; Sun, 13 Nov 2022 08:13:56 -0800 (PST)
-Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-141ca09c2fbso652765fac.6
-        for <linux-gpio@vger.kernel.org>; Sun, 13 Nov 2022 08:13:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rie3aJc2EdJufL+DgKGmAfwMS5IGiPxwZ8BE2w/f1TU=;
-        b=lK/RJQYpTTK0XTQPTPPXEm6cwO79eeuR/Svllm0NJbzcU5jjpJfnnkzu6nkzdQ89UP
-         oxE6yJW7wz8z1G8RH7r1W2LSZVreJFQ6Bpt8uhS4TFYtzeMXdLjjxDUlkXkBULOjvQAF
-         9VbpK1zis0t5LMN6bMkVQIblMI/CPegktj1+As1HPULKsbAKAADLiV3isGbaBFx5PwGz
-         Sl3SbbufEy9SK9BASDrYOLKGri87aeksqqYDcRQpm9m7njTNkGibIxBJSh8a6wOlNHxH
-         XEZlTLxtTm3VlV08vYN5XWbC5eDsJ5k/0o997xACFQd6ToFPoq1FTxPLQLRw71OJivsJ
-         VNxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rie3aJc2EdJufL+DgKGmAfwMS5IGiPxwZ8BE2w/f1TU=;
-        b=ALjSQOm9PVD5RFshv8X0z9npPwtxF08Rk77QSn87DT6wciIRJdC7auW02nyVnUETt9
-         A1EQzCVVwyQUqSlXKrl64hz4knzhq+rAzFvPsQEyyqctu/jW270lwpleDkK8XtBiHZnM
-         dk8q+tcadlZZaDT+3zuZSjwMOpkZdlpsPLNpt2OChAh7zKkRzWAeJzrF0iTY+XvM9UkS
-         ycCgYVq1rkKE3lIffDtNo+k1yfLVyFT2w1oPhzM6O0SV0q3ZYV5AWEesSV152mA7ndPA
-         bW8aMTJ9Aqn7UlIGGf2706f4Ted+Use2/LrgaV62ZBiEfdO9exzsWhGgI/2cHioSfyrP
-         O7TQ==
-X-Gm-Message-State: ANoB5pnr8T0/dVfEhX4E97mHqJEngP9DB7yumMGb5lpDBEzUnUhIW2vu
-        3JzVVdrE/6+vl5Ga86qafP4sIQ==
-X-Google-Smtp-Source: AA0mqf5q6u+2A+907zP4rxPzv2WmQbvMPCkOvpeg1RZBaTo13bdnAyTWIl8HolUgtH/YCDBFnhyvEg==
-X-Received: by 2002:a05:6870:7816:b0:135:1e5e:e71e with SMTP id hb22-20020a056870781600b001351e5ee71emr5086404oab.223.1668356034915;
-        Sun, 13 Nov 2022 08:13:54 -0800 (PST)
-Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id y18-20020a056808061200b0034d8abf42f1sm2770068oih.23.2022.11.13.08.13.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Nov 2022 08:13:54 -0800 (PST)
-Date:   Sun, 13 Nov 2022 09:13:34 -0500
-From:   William Breathitt Gray <william.gray@linaro.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linus.walleij@linaro.org, brgl@bgdev.pl,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        michael@walle.cc, broonie@kernel.org
-Subject: Re: [PATCH v2 4/4] gpio: i8255: Migrate to regmap API
-Message-ID: <Y3D7jipyk5L655AE@fedora>
-References: <cover.1668129763.git.william.gray@linaro.org>
- <61327a67cc308af413471a69a4810b2785e53e8e.1668129763.git.william.gray@linaro.org>
- <Y3Dol6rHduFNQT85@smile.fi.intel.com>
- <Y3D6Lji9bKeSbJaI@fedora>
+        with ESMTP id S235560AbiKNCty (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Nov 2022 21:49:54 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4382913F51;
+        Sun, 13 Nov 2022 18:49:53 -0800 (PST)
+Received: from loongson.cn (unknown [10.180.13.64])
+        by gateway (Coremail) with SMTP id _____8DxTtvQrHFjGcgGAA--.20674S3;
+        Mon, 14 Nov 2022 10:49:52 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.180.13.64])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxJlfIrHFjcjkSAA--.31072S3;
+        Mon, 14 Nov 2022 10:49:51 +0800 (CST)
+From:   Yinbo Zhu <zhuyinbo@loongson.cn>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        zhanghongchen <zhanghongchen@loongson.cn>,
+        Yinbo Zhu <zhuyinbo@loongson.cn>
+Subject: [PATCH v10 2/2] dt-bindings: pinctrl: add loongson-2 pinctrl
+Date:   Mon, 14 Nov 2022 10:49:42 +0800
+Message-Id: <20221114024942.8111-2-zhuyinbo@loongson.cn>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20221114024942.8111-1-zhuyinbo@loongson.cn>
+References: <20221114024942.8111-1-zhuyinbo@loongson.cn>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oTGlfTqifU6OR20N"
-Content-Disposition: inline
-In-Reply-To: <Y3D6Lji9bKeSbJaI@fedora>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8CxJlfIrHFjcjkSAA--.31072S3
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoWxXF47tFy5XFW7Gr4DAF4ruFg_yoWrCF4DpF
+        4fur93GF17ta1fu398Aa40vw1rGan3AFZrCa12v34jqr4qqa4qvay3Kr90qrWDur43Jay5
+        WFy5C347XF1UCr7anT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        b3xFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr
+        1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkE
+        cVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F4
+        0Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC
+        6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l42xK82IY6x8Erc
+        xFaVAv8VWrMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E
+        5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtV
+        W8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY
+        1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
+        0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7I
+        U8QzVUUUUUU==
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Add the Loongson-2 pinctrl binding with DT schema format using
+json-schema.
 
---oTGlfTqifU6OR20N
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+---
+Change in v10:
+		1. Remove lio/uart2/uart1/carmera/dvo1/dvo0 pins resue configuration.
+Change in v9:
+		1. NO change, but other patch in this series patches set has
+		   change.
+Change in v8:
+		1. NO change, but other patch in this series patches set has
+		   change.
+Change in v7:
+		1. Add all change log information. 
+Change in v6:
+		1. NO change, but other patch in this series patches set has
+		   change.
+Change in v5:
+		1. Drop dependencies.
+		2. Add spaces after '='.
+		3. Replace string loongson2 with loongson-2 in title.
+Change in v4:
+		1. Replace Loongson2 with Loongson-2.
+Change in v3:
+		1. Drop the quotes in "pinctrl.yaml#".
+		2. Remove the items in function node.
+		3. Add requird node for "group" and "function" in properties.
+Change in v2: 
+                1. Add "$ref to pinctrl.yaml".
+                2. Put required after patternProperties.
+                3. Add "additionalProperties: false" after '-pins$'
+                4. Add "unevaluatedProperties: false" after 'pinmux$'
+                5. Fixup the broken indentation in patternProperties node.
+                6. Use 4 spaces for example indentation. 
 
-On Sun, Nov 13, 2022 at 09:07:42AM -0500, William Breathitt Gray wrote:
-> On Sun, Nov 13, 2022 at 02:52:39PM +0200, Andy Shevchenko wrote:
-> > On Thu, Nov 10, 2022 at 08:55:53PM -0500, William Breathitt Gray wrote:
-> > >  drivers/gpio/Kconfig            |   2 +
-> > >  drivers/gpio/gpio-104-dio-48e.c | 397 ++++++++++-------------------
-> > >  drivers/gpio/gpio-gpio-mm.c     | 151 +++--------
-> > >  drivers/gpio/gpio-i8255.c       | 429 +++++++++++-------------------=
---
-> > >  drivers/gpio/gpio-i8255.h       |  80 +++---
-> >=20
-> > Can we actually split this to a few steps:
-> >  - providing gpio-i8255-regmap
-> >  - providing gpio-mm-regmap
-> >  - converting the driver
-> >  - removing not used modules (one by one)
-> > ?
-> >=20
-> > In this case if any regression somewhere appears, we can always perform=
- a
-> > (semi-)revert for a certain driver.
->=20
-> Sure, I can split the regmap_irq migration for 104-dio-48e into a
-> separate precursor patch to reduce the amount of changes we see here and
-> provide a revert path for these IRQ changes. I can do a similar change
-> for 104-idi-48 as well.
->=20
-> The rest of the changes for 104-dio-48 and gpio-mm are essentially just
-> the regmap configurations, so the patch will be largely identical even
-> if we migrate gpio-i8255 to regmap API first before migrating again to
-> the gpio_regmap in a second patch.
+ .../pinctrl/loongson,ls2k-pinctrl.yaml        | 123 ++++++++++++++++++
+ MAINTAINERS                                   |   1 +
+ 2 files changed, 124 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml
 
-Sorry, I realize now that you meant to split the i8255 gpio_regmap
-additions to their own patch, perform the driver migrations in the own
-respective patches, and then finally remove the dangling unused i8255
-functions and structures. Yes I think that would make for a cleaner
-patch series so I'll split it up that way.
+diff --git a/Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml
+new file mode 100644
+index 000000000000..bd8a45843566
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml
+@@ -0,0 +1,123 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/loongson,ls2k-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Loongson-2 SoC Pinctrl Controller
++
++maintainers:
++  - zhanghongchen <zhanghongchen@loongson.cn>
++  - Yinbo Zhu <zhuyinbo@loongson.cn>
++
++allOf:
++  - $ref: pinctrl.yaml#
++
++properties:
++  compatible:
++    const: loongson,ls2k-pinctrl
++
++  reg:
++    maxItems: 1
++
++patternProperties:
++  '-pins$':
++    type: object
++
++    additionalProperties: false
++
++    patternProperties:
++      'pinmux$':
++        type: object
++        description: node for pinctrl.
++        $ref: pinmux-node.yaml#
++
++        unevaluatedProperties: false
++
++        properties:
++          groups:
++            description:
++              One or more groups of pins to mux to a certain function
++            items:
++              enum: [gpio, sdio, can1, can0, pwm3, pwm2, pwm1, pwm0, i2c1, i2c0,
++                     nand, sata_led, i2s, hda]
++          function:
++            description:
++              The function that a group of pins is muxed to
++            enum: [gpio, sdio, can1, can0, pwm3, pwm2, pwm1, pwm0, i2c1, i2c0,
++                   nand, sata_led, i2s, hda]
++
++        required:
++          - groups
++          - function
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    pctrl: pinctrl@1fe00420 {
++        compatible = "loongson,ls2k-pinctrl";
++        reg = <0x1fe00420 0x18>;
++        sdio_pins_default: sdio-pins {
++            sdio-pinmux {
++                groups = "sdio";
++                function = "sdio";
++            };
++
++            sdio-det-pinmux {
++                groups = "pwm2";
++                function = "gpio";
++            };
++        };
++
++        pwm1_pins_default: pwm1-pins {
++            pinmux {
++                groups = "pwm1";
++                function = "pwm1";
++            };
++        };
++
++        pwm0_pins_default: pwm0-pins {
++            pinmux {
++                groups = "pwm0";
++                function = "pwm0";
++            };
++        };
++
++        i2c1_pins_default: i2c1-pins {
++            pinmux {
++                groups = "i2c1";
++                function = "i2c1";
++            };
++        };
++
++        i2c0_pins_default: i2c0-pins {
++            pinmux {
++                groups = "i2c0";
++                function = "i2c0";
++            };
++        };
++
++        nand_pins_default: nand-pins {
++            pinmux {
++                groups = "nand";
++                function = "nand";
++            };
++        };
++
++        hda_pins_default: hda-pins {
++            grp0-pinmux {
++                groups = "hda";
++                function = "hda";
++            };
++
++            grp1-pinmux {
++                groups = "i2s";
++                function = "gpio";
++            };
++        };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0e493b4d6e39..e85b0c1aeebb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12041,6 +12041,7 @@ M:	zhanghongchen <zhanghongchen@loongson.cn>
+ M:	Yinbo Zhu <zhuyinbo@loongson.cn>
+ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/pinctrl/loongson,ls2k-pinctrl.yaml
+ F:	drivers/pinctrl/pinctrl-loongson2.c
+ 
+ LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+-- 
+2.31.1
 
-William Breathitt Gray
-
---oTGlfTqifU6OR20N
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCY3D7jgAKCRC1SFbKvhIj
-K9xoAQChK9V3hkCewQu4U/YzHkR8KOf3J7N1Pl+9IK7YoX3TgwD+L7FDU83nXmWi
-g3MvYstO9i7FwtgWranyHbVBbcbCSwU=
-=bAac
------END PGP SIGNATURE-----
-
---oTGlfTqifU6OR20N--
