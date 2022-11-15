@@ -2,94 +2,92 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F41DC433FE
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Nov 2022 14:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 835BEC43217
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Nov 2022 16:09:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238328AbiKOOoT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 15 Nov 2022 09:44:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58132 "EHLO
+        id S229602AbiKOQJk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 15 Nov 2022 11:09:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238506AbiKOOnz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2022 09:43:55 -0500
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F28332EF54
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2022 06:42:21 -0800 (PST)
-Received: by mail-vs1-xe34.google.com with SMTP id z189so14844416vsb.4
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2022 06:42:21 -0800 (PST)
+        with ESMTP id S229887AbiKOQJj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2022 11:09:39 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A76EA1CB04
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2022 08:09:37 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id l8so18104325ljh.13
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2022 08:09:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=84ckuklXks9HDjrkjMUEdy8dxhQSVXrlasgbqbXw1SM=;
-        b=hgUxmimdIPmB+4nNGYIJ9EdfOw9q+yFbT/NQFg3dHBOhblRrcqIQqhEEe/Z+nc60z2
-         +38wv6QLa5IcwpbYhGSbbiwsA4nVplmuGpZ8mG55oBC5VyZnOlPtpXS/+YIQCyqgU53c
-         udt6lVY4pPw3DWWmKOkiSUWUK2DJSNq4DQahxBuv5kYNb6B72sQvbccO2RY7GIROgvZI
-         3/UzWGJS6u4LfbTM8gjZYEbUIozPsPm5ucgAPfTovxj1Ru3phDypn15hV/g6w4KatfwU
-         MP+nXZQF8qAW8ovZmJ8Tx7Ry/e1DkHJ76bwr8ss8SUOCO6zFUrCmRVqwPbITO68g+dnG
-         6lVQ==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wPBg3aPup1TQrck1IA/Yv4HNABzho1ILiMaAmTFfgE0=;
+        b=J2H4Z7E5myou0P94ccP1VezICVHOCg9j1V9hyj6oTeYMShonkKMCxchRDEF4WtW++z
+         oc2zj743sE+gfFI/bgkhBneMySmqq1ARc1G1sU0SjvaouB1HUnwV0723wnuv6u1469Jo
+         ya4LnWztcX5F4bu6SqC9Szf6fsCut0aR4LW6lghE6yKQayaprxfeHUi8Ua1zolYmtz9y
+         eCiFwYILjnL7DaRVn/Og4cnaHHYhIqcCJd3eHjyKj7aYXiGpdNW24hvgagGVoikOmPMN
+         Vk+pIZt0L3T1xLaBbpfVyKdHUZXlbWldJFLWuBObCPTzlfjm95KsCMn17vY/jZceYT4a
+         ScZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=84ckuklXks9HDjrkjMUEdy8dxhQSVXrlasgbqbXw1SM=;
-        b=zU5pMm11vuAvPz3oRZO9jnnOmevu2AQuy9DfEzFkpexKaUw0OFMCHmud0CEUAKS7dC
-         9AMRUkzV5Nc2GHIyB8OyXuZzbMsaMB0hSoXrnAo9zZksMfpwym3VAqkELlTfVQV/7hWb
-         H2Ul6FGhmymaKGCo2wtoO3Hkd3iA8WM4tqsnPOLehn64W/DHHQo5MexuTVpMRcvALVqq
-         p93+3ghSBoyY1pD5i/NSztMcpg6gaWV4X8tqKJoQB7xQ5NPdAUtBuhlRFkA2GgCuKjOr
-         nhBzIqtuvzJ34t1aftpv29gCxbvkfWjdG+yp9JY5pgh24LaTsGHnfV506r6/yKmtU1A4
-         cc3g==
-X-Gm-Message-State: ANoB5pnOqLGWY91TfMeWtfp/Lg1gTh1cP05kxNGiiQjFrdWD+RHf7Ghl
-        uo4DtmfakLu2AeR66oJmllU/4RIMjrV97yMTqKVlPQ==
-X-Google-Smtp-Source: AA0mqf5RcHXLxh4wClwTJ+sdCRhxHg6wKKdKXlFyBmeMuQBZMb6iWnNvGMAHZvmHMvjFHk9vIJ7Vs0S9Whvpr/9nPxg=
-X-Received: by 2002:a05:6102:4187:b0:3aa:c58:66 with SMTP id
- cd7-20020a056102418700b003aa0c580066mr8989589vsb.47.1668523340865; Tue, 15
- Nov 2022 06:42:20 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wPBg3aPup1TQrck1IA/Yv4HNABzho1ILiMaAmTFfgE0=;
+        b=iDCm6MpDTHKEjdTq2JqhfdLQYbkAGNBe8FHRemOwR/1dnly/AS2UWEFQZ18hY3rYVo
+         TJM+RAnwPTHhcdMogAyOmkLfTqHETTEgGNvs8cOxGf9+JNPLfr2shIf3vDD6gernd8sv
+         nTNZ/HCKxe74SWsP8W/nOYcvfGzdWXYR5wi7JJbj1xQu/gNZpODGTp4qYw6hy0pfa5A6
+         9saFRbi+W3ojAcgTJ9iQGIgx3lUokK9qHcxqv8dEzPgyhFtSWxzVatkPruy8DM99WrHF
+         0QkldNqn3CUZEQx6UpoDxBmNdrnMdVDYlFyUh16OMxJbidLuFLzNUOcBBJ42pP39Iq1z
+         aJAA==
+X-Gm-Message-State: ANoB5pn+SU0YY0NHO8QZmVdfCOJpNj/+UsnMBX5Deg2vdPdrovz2xcnW
+        ++EPZGTEDfOQdvxLRnRtEVUEBQ==
+X-Google-Smtp-Source: AA0mqf7yzjjbUJbfMhhx5CM/cCMWU0lHJVOEzMQnKBEhluX3cCqwirDxVh/yWeaZHBkZ4WGhQ5pjBQ==
+X-Received: by 2002:a2e:a803:0:b0:278:f5de:8478 with SMTP id l3-20020a2ea803000000b00278f5de8478mr4436665ljq.65.1668528575904;
+        Tue, 15 Nov 2022 08:09:35 -0800 (PST)
+Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id s2-20020a2eb622000000b0026fe0a052c5sm2555134ljn.129.2022.11.15.08.09.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Nov 2022 08:09:35 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Subject: Re: [PATCH v2] dt-bindings: pinctrl: qcom,msm8976: convert to dtschema
+Date:   Tue, 15 Nov 2022 17:09:33 +0100
+Message-Id: <166852857073.244019.11894552754264671717.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221110085230.15108-1-krzysztof.kozlowski@linaro.org>
+References: <20221110085230.15108-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-References: <20221112152928.42204-1-aidanmacdonald.0x0@gmail.com>
-In-Reply-To: <20221112152928.42204-1-aidanmacdonald.0x0@gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 15 Nov 2022 15:42:09 +0100
-Message-ID: <CAMRc=MeE97YAzow7MX5380_ucLdUONYqMd3+Nvd6YW_h9oHPJQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: sl28cpld: Replace irqchip mask_invert with unmask_base
-To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-Cc:     michael@walle.cc, linus.walleij@linaro.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Nov 12, 2022 at 4:29 PM Aidan MacDonald
-<aidanmacdonald.0x0@gmail.com> wrote:
->
-> Remove use of the deprecated mask_invert flag. Inverted mask
-> registers (where a '1' bit enables an IRQ) can be described more
-> directly as an unmask register.
->
-> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-> ---
->  drivers/gpio/gpio-sl28cpld.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-sl28cpld.c b/drivers/gpio/gpio-sl28cpld.c
-> index 52404736ac86..2195f88c2048 100644
-> --- a/drivers/gpio/gpio-sl28cpld.c
-> +++ b/drivers/gpio/gpio-sl28cpld.c
-> @@ -70,8 +70,7 @@ static int sl28cpld_gpio_irq_init(struct platform_device *pdev,
->         irq_chip->num_irqs = ARRAY_SIZE(sl28cpld_gpio_irqs);
->         irq_chip->num_regs = 1;
->         irq_chip->status_base = base + GPIO_REG_IP;
-> -       irq_chip->mask_base = base + GPIO_REG_IE;
-> -       irq_chip->mask_invert = true;
-> +       irq_chip->unmask_base = base + GPIO_REG_IE;
->         irq_chip->ack_base = base + GPIO_REG_IP;
->
->         ret = devm_regmap_add_irq_chip_fwnode(dev, dev_fwnode(dev),
-> --
-> 2.38.1
->
+On Thu, 10 Nov 2022 09:52:30 +0100, Krzysztof Kozlowski wrote:
+> Convert Qualcomm MSM8976 pin controller bindings to DT schema.  Keep the
+> parsing of pin configuration subnodes consistent with other Qualcomm
+> schemas (children named with '-state' suffix, their children with
+> '-pins').
+> 
+> Changes during conversion: update the list of non-mux pins (like sdc1)
+> to match Linux driver.
+> 
+> [...]
 
 Applied, thanks!
 
-Bartosz
+[1/1] dt-bindings: pinctrl: qcom,msm8976: convert to dtschema
+      https://git.kernel.org/krzk/linux-dt/c/966d0a44f103950265db458180b581275a225b89
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
