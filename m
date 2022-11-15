@@ -2,100 +2,146 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E49C433FE
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Nov 2022 20:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE71BC4332F
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Nov 2022 21:21:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbiKOUhe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 15 Nov 2022 15:37:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45274 "EHLO
+        id S238748AbiKOVVZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 15 Nov 2022 16:21:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231357AbiKOUhF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2022 15:37:05 -0500
-Received: from naboo.endor.pl (naboo.endor.pl [91.194.229.150])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFFC0B54
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2022 12:37:04 -0800 (PST)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by naboo.endor.pl (Postfix) with ESMTP id A32BFAE5685
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2022 21:37:02 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at 
-Received: from naboo.endor.pl ([91.194.229.15])
-        by localhost (naboo.endor.pl [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Nt5Klu9Lw-JX for <linux-gpio@vger.kernel.org>;
-        Tue, 15 Nov 2022 21:37:00 +0100 (CET)
-Received: from [192.168.55.113] (unknown [185.174.112.221])
-        (Authenticated sender: leszek@dubiel.pl)
-        by naboo.endor.pl (Postfix) with ESMTPSA id 8ED1AAE5715
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2022 21:37:00 +0100 (CET)
-Message-ID: <57c25430-284b-36dc-7a68-70847bc1bdcb@dubiel.pl>
-Date:   Tue, 15 Nov 2022 21:36:59 +0100
+        with ESMTP id S232119AbiKOVVD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2022 16:21:03 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9729831DCD
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2022 13:20:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1668547220; x=1700083220;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=P5FjMpTh5W7HLo3oMS/UjQ/k/hAjNz/gJzpGL+Lya4E=;
+  b=cQ3YlY6ZnI9B4AZk7H6D754hEs8/BVUa3U845W06boWHoCGsuW3VOsuw
+   0RJWmi11+8K4zVaVyGSyYnrxbCmMTN3YEsOn49W7oC8mTWrAPhMTgMzpy
+   n4T2Mz+IPEGuM4DAFG8EJcyM0LjUSD8GyxwxZtPb2UpkjML7SIkdn7/oW
+   +lRHjjwFmy3L0DvGn10QZmkVVlkDLrd5CYvsSk7jkQqfcx6Glt/r2AoSJ
+   RuSYdvBVz53aJft4cr0c25h9CWOHAjwH2MrRfR879bWy+Lt1CLluHjRgN
+   KmHzAbiIUmAnOEjxsqKLFSediXog49Hds4XsEhXUFoMfopKrbHdG+Op6D
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10532"; a="398659271"
+X-IronPort-AV: E=Sophos;i="5.96,167,1665471600"; 
+   d="scan'208";a="398659271"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2022 13:20:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10532"; a="884118468"
+X-IronPort-AV: E=Sophos;i="5.96,167,1665471600"; 
+   d="scan'208";a="884118468"
+Received: from lkp-server01.sh.intel.com (HELO ebd99836cbe0) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 15 Nov 2022 13:20:19 -0800
+Received: from kbuild by ebd99836cbe0 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1ov3Lu-0001fb-1s;
+        Tue, 15 Nov 2022 21:20:18 +0000
+Date:   Wed, 16 Nov 2022 05:19:54 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
+ 8555c646407de9e924f438d7dd81cd67c4a19bfa
+Message-ID: <6374027a.yjhj3J6+6sifjjFO%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-From:   Leszek Dubiel <leszek@dubiel.pl>
-Subject: Elegant way to kill previous gpioset?
-To:     linux-gpio@vger.kernel.org
-References: <fc3da423-1107-83a1-1c94-afb2ac5fa7c9@dubielvitrum.pl>
-Content-Language: pl-PL
-In-Reply-To: <fc3da423-1107-83a1-1c94-afb2ac5fa7c9@dubielvitrum.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
+branch HEAD: 8555c646407de9e924f438d7dd81cd67c4a19bfa  Merge branch 'devel' into for-next
 
+elapsed time: 720m
 
+configs tested: 70
+configs skipped: 2
 
-Different bash scripts from different servers
-ssh to Raspberry and set GPIO line:
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-         /dev/gpiochip2, pin number 7.
+gcc tested configs:
+um                             i386_defconfig
+x86_64                               rhel-8.3
+um                           x86_64_defconfig
+arc                                 defconfig
+x86_64                           rhel-8.3-kvm
+x86_64                         rhel-8.3-kunit
+alpha                               defconfig
+i386                                defconfig
+s390                                defconfig
+x86_64                           rhel-8.3-syz
+s390                             allmodconfig
+x86_64                          rhel-8.3-func
+x86_64                    rhel-8.3-kselftests
+x86_64                              defconfig
+powerpc                           allnoconfig
+s390                             allyesconfig
+i386                             allyesconfig
+x86_64               randconfig-a002-20221114
+x86_64               randconfig-a001-20221114
+x86_64               randconfig-a004-20221114
+i386                 randconfig-a001-20221114
+x86_64               randconfig-a003-20221114
+i386                 randconfig-a004-20221114
+x86_64               randconfig-a006-20221114
+i386                 randconfig-a002-20221114
+i386                 randconfig-a005-20221114
+i386                 randconfig-a003-20221114
+x86_64                           allyesconfig
+i386                 randconfig-a006-20221114
+arc                              allyesconfig
+x86_64               randconfig-a005-20221114
+alpha                            allyesconfig
+ia64                             allmodconfig
+m68k                             allyesconfig
+m68k                             allmodconfig
+sh                               allmodconfig
+arc                  randconfig-r043-20221114
+mips                             allyesconfig
+powerpc                          allmodconfig
+arm                                 defconfig
+arm                              allyesconfig
+x86_64                        randconfig-a011
+x86_64                        randconfig-a013
+x86_64                        randconfig-a015
+arm64                            allyesconfig
+i386                          randconfig-a012
+i386                          randconfig-a014
+i386                          randconfig-a016
+x86_64                            allnoconfig
 
-with such command:
+clang tested configs:
+x86_64               randconfig-a014-20221114
+x86_64               randconfig-a012-20221114
+x86_64               randconfig-a016-20221114
+x86_64               randconfig-a015-20221114
+x86_64               randconfig-a013-20221114
+x86_64               randconfig-a011-20221114
+i386                 randconfig-a011-20221114
+i386                 randconfig-a014-20221114
+i386                 randconfig-a013-20221114
+i386                 randconfig-a012-20221114
+i386                 randconfig-a015-20221114
+i386                 randconfig-a016-20221114
+riscv                randconfig-r042-20221114
+hexagon              randconfig-r041-20221114
+hexagon              randconfig-r045-20221114
+s390                 randconfig-r044-20221114
+hexagon              randconfig-r041-20221115
+hexagon              randconfig-r045-20221115
+x86_64                        randconfig-a005
+x86_64                        randconfig-a003
+x86_64                        randconfig-a001
 
-         gpioset -b -msignal /dev/gpiochip2 7=1
-
-
-
-If another script tries:
-
-       gpioset -b -msignal /dev/gpiochip2 7=0
-
-then it gets:
-
-       gpioset: error setting the GPIO line values: Device or resource busy
-
-
-
-So every bash script kills previous instance
-before setting gpio line:
-
-      pkill -ef "^gpioset .* /dev/gpiochip2 7=[01]$"
-      gpioset -b -msignal /dev/gpiochip2 7=0
-
-
-
-Pkill is bad solution:
-
-1. it is very slow, because it has to grep full command lines.
-
-2. it doesn't work if one of bash scripts
-used little bit different command, for example:
-
-      gpioset -b -msignal /dev/gpiochip2 7=0 5=2
-      gpiomon             /dev/gpiochip2 7
-
-
-
-Is there a better way to kill o replace
-previous instance of running gpioset?
-
-
-
-
-
-
-
-
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
