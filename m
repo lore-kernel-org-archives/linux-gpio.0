@@ -2,121 +2,83 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 642E9C433FE
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Nov 2022 09:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61CC4C4332F
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Nov 2022 09:20:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231622AbiKPJKZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Nov 2022 04:10:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33474 "EHLO
+        id S233620AbiKPJUA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Nov 2022 04:20:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238829AbiKPJKN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Nov 2022 04:10:13 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C408620F4F
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Nov 2022 01:10:01 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id d9so24099587wrm.13
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Nov 2022 01:10:01 -0800 (PST)
+        with ESMTP id S233517AbiKPJT6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Nov 2022 04:19:58 -0500
+Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9020926575
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Nov 2022 01:19:55 -0800 (PST)
+Received: by mail-vk1-xa2a.google.com with SMTP id bk51so7688956vkb.4
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Nov 2022 01:19:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:reply-to:organization:from
-         :references:cc:to:content-language:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+EWQaz6AjRSmTYx1xAEW3ez1+waZqAXR8+3Ii5G6qKY=;
-        b=Jd5kxV1FSvOV6K7/6NukSVogzsjR8X+lPT7Ct8DTbnvGDiUGxegx2yd/nsSNJ6uRpa
-         2ew2U+0EN1+VHBkBlGKM0saoaLDKkDfIjFRheK/Hhp3HUh3wBCQ8q8l8Qcwa5I+yjARJ
-         j/uS3wa3AyTIsFEzcSI30hJnGjIb5byhITw81TjyaOrXmPTvr5uAfj/Fci1VUbpbww3g
-         TBwhUG6RgdOYsSVilN0zXmhvSwq8fBTDFO5pAb99PTrXn1ZCvFHDZMWoNGsebDBe1jWK
-         m0gcXfhMO75ViKcPsCpYcWIf/BPPE5aBbLEHD3L16qnYikygymvhfTaVqJSueCXr8Xfa
-         w+tw==
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BUN7/4LmlekQxxQ0sXdskXPaxAf94LKcc0d3rUx3r1s=;
+        b=ollJLf1Jg84MwsEVRPIA1MT5NBd3ypjsOlaGQ207JHRbhdjzkHoFfiQx92AWNggo2V
+         QgMGD1QD4VAQBMRj8H5/VYcEydoicYj1Xs9a6N+NfrJ0mwFD5FRbbKdoaGnEwpMS5iMb
+         fzIIrztJL6OSYXKV/GqjONxsR2UW77qeGrMlXPMloN1WRJHEoXg2NPDXEZN/uIJ9145F
+         Al5uQWpW0TciAT0ts4kI8t3E94rjOqkJPS1TWj55VoxR6ODuMy3vPj7viBjy/CakP+AP
+         rTwg1VUwGcGjyQ840KTq/qXQiVAyFWXw7Wo+bXX5hhtWZr2AZfI6bFsLWhAKHzS6HgkI
+         D9kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:reply-to:organization:from
-         :references:cc:to:content-language:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+EWQaz6AjRSmTYx1xAEW3ez1+waZqAXR8+3Ii5G6qKY=;
-        b=RAjInURXOqugYnkcQvLWBXgKf/ab6IB9aeiLF1VQpKtKnwnZoTCxK2LzybNCSbWyiN
-         03pr80fWCYXZ5g3/xo+VXJHIfwLzg0mthAK8Np4K0Si8mvriBm1ECOdihsf+CT9njnx3
-         pesGdj/oVA67+iexNclmlrtkTzIeEtvDQBGVTbOz1hFMDF7lSi/bujLjhvGWeZubh9s7
-         l3O92FJX5pT6l3TNzl+qGosKt6h/xoVTyeTUfSOHl8ExPSzeyohJaSExhRyxmATQP67E
-         NwmksuwmB2saWeJhmCtioJeyOq5ialBB3cRSXI8u2hyfGh+EHb2mkix0lubT7KW7gWq/
-         J4zQ==
-X-Gm-Message-State: ANoB5pmBB2q4bK/9MkGilze2g+yYOG/6TTQF0w2RZbwgMPILdMLK3Z0L
-        V5Kpp09r7/ikHcrB5ggYAnertw==
-X-Google-Smtp-Source: AA0mqf7qtmWKrvfnyLLlcsy5HreT4080D+PHLRUfJtM7qj9c/DZNd9kmcoIZPKtDRZVHFWldDUgkjQ==
-X-Received: by 2002:a05:6000:22e:b0:236:6d6b:fb56 with SMTP id l14-20020a056000022e00b002366d6bfb56mr13467483wrz.198.1668589800269;
-        Wed, 16 Nov 2022 01:10:00 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:2a03:71a6:7a9d:9c71? ([2a01:e0a:982:cbb0:2a03:71a6:7a9d:9c71])
-        by smtp.gmail.com with ESMTPSA id e17-20020a05600c4e5100b003cfa81e2eb4sm1493890wmq.38.2022.11.16.01.09.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Nov 2022 01:09:59 -0800 (PST)
-Message-ID: <2ce5bc21-c4c5-ed61-3683-3288ed1057e2@linaro.org>
-Date:   Wed, 16 Nov 2022 10:09:58 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BUN7/4LmlekQxxQ0sXdskXPaxAf94LKcc0d3rUx3r1s=;
+        b=qdnmR28eDhBAi6BdNf7DE6YkYSuzxsi+3l+3aV2CWLwkUQMDkwZZaE+IstKZogznjX
+         JZNdt3hhjde4hj7OVlhDMZArLL5LLTWvIl+i4wCYQVuBiOBO1JxP4Lz11oUVjOhEjXlT
+         IkvhGW0V9ve+3H/4YrziPJNGPpm0wqZ22jGdKkHa8JNdJyj6z/Eo7Tw+DX4yp2Gjf6H+
+         Byr8cOz4XxCBSj3BY8G0RIzGApJ6k/WMdBIB/yhVCS0V4po1+lMu0Lx5cobtor+3av4t
+         tWlZsMN8M+XmWqicYaI91sLEZDUfrMYiL7F6jGtLmgW/GBw89xLcFq9HU2tsxcEjavqM
+         ie8w==
+X-Gm-Message-State: ANoB5pnNQb2smJJVGjDjsmv4MNbBLHPU+/45txXJ8jva1wwDPKrKe1Ci
+        jIc5jYCoovi9AZpshLQMkvOA8xvh4R5kLQQtZYDgrA==
+X-Google-Smtp-Source: AA0mqf7+38km0i0PCChmHH1AegbkOQf6ZutAJR2EMP69gRCuIpgWSEbF2mCWmGSmCboGG1wAk2yrP6aQ8HZB1Ou4rGc=
+X-Received: by 2002:a05:6122:2209:b0:3b7:3aca:9868 with SMTP id
+ bb9-20020a056122220900b003b73aca9868mr11918281vkb.33.1668590394633; Wed, 16
+ Nov 2022 01:19:54 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.3
+References: <20221114202943.2389489-1-bmasney@redhat.com> <7420da17-d6d6-10e6-c87e-d3dc37d17ffb@linaro.org>
+ <CAKXuJqgckbmikXwFi0g3P3Db5jvyst+xhQBcPoV7mA2XStVVzA@mail.gmail.com>
+In-Reply-To: <CAKXuJqgckbmikXwFi0g3P3Db5jvyst+xhQBcPoV7mA2XStVVzA@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 16 Nov 2022 10:19:43 +0100
+Message-ID: <CAMRc=McxHpm98eeq3jBdVKjqG1w2jhrPFe-5GuabwBaW1pTAUA@mail.gmail.com>
 Subject: Re: [PATCH RFC] gpiolib: ensure that fwnode is properly set
-Content-Language: en-US
-To:     Brian Masney <bmasney@redhat.com>, linus.walleij@linaro.org,
-        brgl@bgdev.pl
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Steev Klimaszewski <steev@kali.org>
+Cc:     "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Brian Masney <bmasney@redhat.com>, linus.walleij@linaro.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, psodagud@quicinc.com,
         quic_shazhuss@quicinc.com, quic_ppareek@quicinc.com,
         ahalaney@redhat.com, echanude@redhat.com,
-        nicolas.dechesne@linaro.org, 'Abel Vesa' <abel.vesa@linaro.org>
-References: <20221114202943.2389489-1-bmasney@redhat.com>
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Organization: Linaro Developer Services
-Reply-To: neil.armstrong@linaro.org
-In-Reply-To: <20221114202943.2389489-1-bmasney@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        nicolas.dechesne@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 14/11/2022 21:29, Brian Masney wrote:
-> Note that this is a RFC patch and not meant to be merged. I looked into
-> a problem with linux-next-20221110 on the Qualcomm SA8540P automotive
-> board (sc8280xp) where the UFS host controller would fail to probe due
-> to repeated probe deferrals when trying to get reset-gpios via
-> devm_gpiod_get_optional().
-> 
-> of_get_named_gpiod_flags() returns -EPROBE_DEFER, which is caused by
-> of_gpiochip_match_node_and_xlate() returning 0 since the of_xlate function
-> pointer is not set for the qcom,sc8280xp-tlmm pinctrl driver. The
-> pinctrl driver doesn't define one, so of_gpiochip_add() should
-> automatically setup of_gpio_simple_xlate() on it's behalf. This doesn't
-> happen since the fwnode member on the struct gpiochip is set to null
-> when of_gpiochip_add() is called. Let's work around this by ensuring
-> that it's set if available.
-> 
-> Note that this broke sometime within the last few weeks within
-> linux-next and I haven't bisected this. I'm posting this in the hopes
-> that someone may know offhand which patch(es) may have broken this.
-> 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->   drivers/gpio/gpiolib.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 11fb7ec883e9..8bec66008869 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -678,7 +678,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
->   	 * Assign fwnode depending on the result of the previous calls,
->   	 * if none of them succeed, assign it to the parent's one.
->   	 */
-> -	gdev->dev.fwnode = dev_fwnode(&gdev->dev) ?: fwnode;
-> +	gc->fwnode = gdev->dev.fwnode = dev_fwnode(&gdev->dev) ?: fwnode;
->   
->   	gdev->id = ida_alloc(&gpio_ida, GFP_KERNEL);
->   	if (gdev->id < 0) {
+On Tue, Nov 15, 2022 at 11:02 PM Steev Klimaszewski <steev@kali.org> wrote:
+>
+> Hi,
+>
+> Others in the thread pointed to Thierry's patch, but on the Lenovo
+> Thinkpad X13s, that patch did *not* fix the issue, and with it
+> applied, the X13s still immediately reboots as soon as exiting EFI
+> services.  With this patch applied, the X13s does *not* reboot after
+> exiting EFI services, so thank you for this patch.
+>
+> Tested-by: Steev Klimaszewski <steev@kali.org> #Lenovo Thinkpad X13s
 
-Fixes boot on 8550 on next-20221115
+My bad, I was under the impression that Thierry's patch fixed this
+issue too. Now applied.
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-
-Thanks,
-Neil
+Bart
