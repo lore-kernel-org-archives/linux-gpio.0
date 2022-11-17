@@ -2,78 +2,91 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC33C433FE
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 08:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A46EDC4332F
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 09:03:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239461AbiKQI7A (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Nov 2022 03:59:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57000 "EHLO
+        id S239381AbiKQJDt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Nov 2022 04:03:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239362AbiKQI6y (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 03:58:54 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74707419AF
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 00:58:53 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id a5so1536509edb.11
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 00:58:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qYZlkht9cjMAUGoNTf3GOMX0dDwCun9IlRoqXLzGEOI=;
-        b=fAdoTHJOKxKzmfxO0EnU+WR0qCfsr/huIjdlnNlWNLJNBVcDngovLdOUAZC2uagCPu
-         tVumLNvNwgpgSIDjx0EDsGI6Qj03/MmupUJiFUYPLHDf+yQIZn4HReLriERwbQDLnspZ
-         1MKNpkDYe0QMFO56uoD+lAxR57yLSToQm2n+4PlyxWhruCpfLi5ceyMifVq1SkAihCcM
-         CZlVW+aHgLr8SxSLBKtmvpoKIz15U1ERF6NCDOqH5I5YxYR2la5einX+KhuK0MD/wXgR
-         21rxP5OTeeZPZeb5ITOxvFgFQK8UeyufXWEwcbJgqew7K6rf17Di2vkUl0nanbP/Ws+t
-         ekqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qYZlkht9cjMAUGoNTf3GOMX0dDwCun9IlRoqXLzGEOI=;
-        b=RDeUh0lmCiEx+rIGLMKPZ9dL9DGZE4uXhQH3C3z57l9mt9MQ9GFN1WBqy12LG7A/yB
-         dg08kyVbRurZi1B9PfN+zJ5R/KdEKp7geyodOwxNVpQWr5i73T5MhJFQpVY7jZbMgZ/T
-         Nb65q9Dzqs8YffdpkJnc7FA4Oo1sTjLBAbIRimK61MXeblz3kN4y973BzxofGbncEY6t
-         +BLsNa4jtoONWuNDCH8wWrlcLrvMblxBn+hH7fxlH/EIrT0kOsJHGaHlzKuq2DSSOuAG
-         fWdLdxIeY/PevfqU7yTsy0/Z9TrrMIzI61XUWNKn8S1CcFsl1ZlwHLzL3VqVKnNE9gQP
-         f/Rw==
-X-Gm-Message-State: ANoB5pk0/E6EPhu5g3mAJcX/zV/wwxLFhM3fbmPTRUXXL6/ZKjkCSeGH
-        /CqhF+5+I8VdNAzpACSkfFW+CUjjuYJ9tYIL4+1lY2Qdz0s=
-X-Google-Smtp-Source: AA0mqf7CqLi6uOxXHGGceCqjCKxwYf2fbaD3a6EWZA2RCLx11Qq2CKova+ttchtlp/INUa/mOdlHQkqD+atRqwUwYQQ=
-X-Received: by 2002:a05:6402:2948:b0:463:bc31:2604 with SMTP id
- ed8-20020a056402294800b00463bc312604mr256367edb.32.1668675532087; Thu, 17 Nov
- 2022 00:58:52 -0800 (PST)
+        with ESMTP id S239394AbiKQJDs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 04:03:48 -0500
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1125A3F045;
+        Thu, 17 Nov 2022 01:03:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1668675827; x=1700211827;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=x7nxFgEVjow5vF1ZtZgrRtidFMoD/jvUa6AYtcXYANc=;
+  b=PCjRtbp89TbBGWSehXvLpMsqNm8E4Z7RURbSVzE4V4iJV9uq5Qqisccc
+   aWIAU8zV/2D9QeRdMVm6uitPe8F/tDxJVOGrPktX0HOeNqYaKQqXWwS5C
+   QUPnj694kfHSpqrcQ+GS9Xx5FZ8OeC0OvSSg2gtUXcg29CHxLe5XLSgaY
+   J0+25hZ64QUNH14b5NM+DEbGzO8UnBuywCF8AHSfWeQhDZEsHcq05Drpe
+   eCN588GJGFncozytJ9wsuw4IGD9b0evRD6B7lrHyGadbZoRWZ2awuyctZ
+   MVH3gT+59lNuyKh68/jQ2KUyBCIwq7Rx7C1ziAjC6XPhkSo0TKbmlo4Hm
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10533"; a="296163359"
+X-IronPort-AV: E=Sophos;i="5.96,171,1665471600"; 
+   d="scan'208";a="296163359"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2022 01:03:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10533"; a="670850555"
+X-IronPort-AV: E=Sophos;i="5.96,171,1665471600"; 
+   d="scan'208";a="670850555"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga008.jf.intel.com with ESMTP; 17 Nov 2022 01:03:44 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1ovaoA-00DVUa-1j;
+        Thu, 17 Nov 2022 11:03:42 +0200
+Date:   Thu, 17 Nov 2022 11:03:42 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pwm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 3/7] pwm: lpss: Include headers we are the direct user
+ of
+Message-ID: <Y3X47vdt8MpHNzcB@smile.fi.intel.com>
+References: <20221114165545.56088-1-andriy.shevchenko@linux.intel.com>
+ <20221114165545.56088-4-andriy.shevchenko@linux.intel.com>
+ <20221117085027.f5qy5rsauo7vhvw2@pengutronix.de>
 MIME-Version: 1.0
-References: <20221005-mdm9615-sx1509q-yaml-v3-0-e8b349eb1900@linaro.org>
-In-Reply-To: <20221005-mdm9615-sx1509q-yaml-v3-0-e8b349eb1900@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 17 Nov 2022 09:58:41 +0100
-Message-ID: <CACRpkdaqfaa5B-tRebw7M-Ldj6+pVntAN32UzJ_PGGTXV1ufsQ@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: pinctrl: convert semtech,sx150xq bindings
- to dt-schema
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh@kernel.org>, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221117085027.f5qy5rsauo7vhvw2@pengutronix.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 15, 2022 at 11:06 AM Neil Armstrong
-<neil.armstrong@linaro.org> wrote:
+On Thu, Nov 17, 2022 at 09:50:27AM +0100, Uwe Kleine-König wrote:
+> On Mon, Nov 14, 2022 at 06:55:41PM +0200, Andy Shevchenko wrote:
+> > For the sake of integrity, include headers we are the direct
+> > user of.
+> > 
+> > Replace the inclusion of device.h by a forward declaration
+> > of struct device plus a (cheaper) of types.h as device.h is
+> > an expensive include (measured in compiler effort).
+> > 
+> > While at it, move the struct pwm_lpss_chip to be after
+> > the struct pwm_lpss_boardinfo as the former uses pointer
+> > to the latter.
+> 
+> I stand by my feedback that this change is irrelevant in the end. If you
+> drop it here, the patch gets a bit nicer.
 
-> This converts the Semtech SX150Xq bindings to dt-schemas, add necessary
-> bindings documentation to cover all differences between HW variants
-> and current bindings usage.
->
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+OK, since you are insisting, I will modify this in v5.
 
-Patch applied!
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Yours,
-Linus Walleij
+
