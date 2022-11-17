@@ -2,89 +2,128 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D87C4332F
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 12:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E095C4332F
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 12:33:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240097AbiKQMSo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Nov 2022 07:18:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47478 "EHLO
+        id S240137AbiKQMdF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Nov 2022 07:33:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240059AbiKQMSl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 07:18:41 -0500
-Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22CF8716F4
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 04:18:18 -0800 (PST)
-Received: by mail-vs1-xe2c.google.com with SMTP id l190so1305920vsc.10
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 04:18:17 -0800 (PST)
+        with ESMTP id S239529AbiKQMcr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 07:32:47 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE4C0748C6;
+        Thu, 17 Nov 2022 04:31:21 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id s12so2306843edd.5;
+        Thu, 17 Nov 2022 04:31:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AgvtbeF1yF8fqN20VrfNgYPozbYIq0o5rEH1cjyl26Q=;
-        b=fFB+uTxDDDCfZmvf5A4NTlV2oeuFK3su3M4ugRQNHNR4ycep1i4UR9EVWY/77kLyzK
-         gGNDQE5CU+nJBmLgCvXPIOPfJZRoJq6Jw8G7zh9gkXtCD/BfnvLCwQUjeaYfb8sy2oc6
-         rz3o+6rqmmjjCiNPKhGwpjTVxJWlsTRSlXMHZdgJEHfORDaNnXF5+M2rwGguGWCnuGqa
-         VvfEEp/mk8Owv0NBsGEv6V5Ii9xJ668ZpoYIzVcjjv1YEl8EHu9vZ0q2KPY1EQfabMvI
-         zRw8WZeK0WJNvEUwYAwPyfwcUKzuuycIPzLhdKpcHAeC89O8mxNg2uK41lOrU7WPguRe
-         mSmw==
+        bh=jNlwoVZ6isbTxQ6Fyi04RsVlWpKWGpVpX4qwF59U3k0=;
+        b=jDqBvSXSDnn5qg+QnHzXcI7c08NsFOOHtVnQ161mlGnRQ5pp6Wj4ihkDz6QZW/II4j
+         qKt3pKxHh6LAlsPJfYa7tWUuRhu4sa8Znh+6AqiR97dQPqz1lxHvGVjLixhapGjyK9iG
+         KUNqf5gm0crsFNa/+zNU30R3ia6+UbeWsa2cAlyQGBKjyJC58NYVkeQOkDSuh/c4ADhZ
+         Kc1X+jEusaPrDtcQwRmnB9hOk629pl6bVCR4YAiJM3mEBZtWKIQLSWUT6Os6xmL1ZRMQ
+         ozVcs1W5F1ZIEn3mzjP4LxTYGnAQQOHjX/Gg7nB9zodbNlxMx+41QNos6ncYoE5g1WyE
+         rL1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AgvtbeF1yF8fqN20VrfNgYPozbYIq0o5rEH1cjyl26Q=;
-        b=HtkPJzJm9ywcTytcCFYIOnMoJ/8XbDlvrhiwiWh8vYoYuYOW3uB7VEq8VGyfRM3PWE
-         t9lPkrAppyg5O4d1blUmPfUksfukpxcVEuWnMNB3nriAZmjs5m/8O3d74bgwZTBr2g7X
-         b74ocKD2tPVJFCAvxZA/AwPylJT4JD8OXdEWG/GJ6m1+xu8nsx8hOXXIxOMQq1vorLlY
-         rWAZ0KhyuQHwOnVqbFfF3svqUSCpa7KkbShzrcMZDSP+jCc+ArW/K1jAh9sW4jq3/hRY
-         0o04rQq5bU/g1DA3qgJFFbCVlq0IGMfPgrs2I5gmWhI2eIK04jubqQuRjTViQkVBmNHC
-         YtHw==
-X-Gm-Message-State: ANoB5plq+RIr1KcEVgJc0KInvB07kfhCMLDGfcov7NJ/PFAQwhBNMCEv
-        zuIfq9YJgw4yGByDYhBof/m94nD0mz2uqxTTBmd71A==
-X-Google-Smtp-Source: AA0mqf613+kWaOq0XnmVfZzrl5W9GzW+PnnflO4NUtoC+wB0FJyf8ESGuZkSmoQzIxH/Lf7gf46s1z5NAUvs76RJfWA=
-X-Received: by 2002:a05:6102:114f:b0:3a9:afe1:eef6 with SMTP id
- j15-20020a056102114f00b003a9afe1eef6mr1378031vsg.61.1668687495018; Thu, 17
- Nov 2022 04:18:15 -0800 (PST)
+        bh=jNlwoVZ6isbTxQ6Fyi04RsVlWpKWGpVpX4qwF59U3k0=;
+        b=2qLMblnHjOoSidNiw2Oxc++zmTzNOTsFPnQrQic7XrA2Vla53KcJZNYx/0dmBGECut
+         lzncudgn4+5CPpwhgWrgwAQKU1U0otSRivziEa9AMeI7ZJaHR87SiwtGSguHuDTr6tsl
+         R0gKrjmC0DPSr3+LhVcOwJK0oUObinFshxy8pakRZmUmRbi1VSP2+1fqODD6eYbGFx5V
+         /Wx6n9TBsatx1sv4W8xOoju50dCrc/j0Uz562tFL2wU+YBQhEt/udGK1pvvO7grufaga
+         0cxbPhqoOHZCMfZ9TIHFVO0eqvwWetDUkKlBI8caFgQDZTAUtj/n+K0RkxP/HXtIUIfd
+         Dn9A==
+X-Gm-Message-State: ANoB5pm/XZYp6cK2b/h9oRpAC+Cb/MQPQmD8khUVYjbey/XnlCUf8RUY
+        AlJJHsy0IET/raQMKLyu/Qm4LvsVshS+Z69fooYz7GeJNRw=
+X-Google-Smtp-Source: AA0mqf5ojvCHVZasiK8GgXehtbh0pi3YqZa9rEl1/7vRevJBctBpQcu74pPoX3eFtAXLSLJINq0fK7RuissmhP/zdL4=
+X-Received: by 2002:a05:6402:2987:b0:45c:a9d3:d535 with SMTP id
+ eq7-20020a056402298700b0045ca9d3d535mr2006776edb.0.1668688280422; Thu, 17 Nov
+ 2022 04:31:20 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1667815011.git.viresh.kumar@linaro.org> <CAMRc=McWo-kUrMitbm-_YgeEYXx+ARneezAF-Tg7OMwgGydXkQ@mail.gmail.com>
- <20221117073120.g6xhn6i2dbzougx3@vireshk-i7> <CAMRc=MdNJV7gnz6-TKYCWt1uus0=urrtiBgmFdASAK7-dvSbzQ@mail.gmail.com>
- <20221117095609.uyamyqi5uuchrxdt@vireshk-i7> <CANiq72nxJn3F0hvWerUJvbgRjfyutQ=CCnpNqfMOEBumX62_SQ@mail.gmail.com>
- <CAMRc=McUTqUJzV-9yEA-7LxrQ8ktWzaPMv+x-1mOLZ0M2W+uJg@mail.gmail.com> <20221117112517.64fvaynvjwbcqeix@vireshk-i7>
-In-Reply-To: <20221117112517.64fvaynvjwbcqeix@vireshk-i7>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 17 Nov 2022 13:18:03 +0100
-Message-ID: <CAMRc=Mdyk4Fx5aKvjKjZSRhsSOq03wiHcMP7=Y2TG4ovWf-+zA@mail.gmail.com>
-Subject: Re: [libgpiod][PATCH V9 0/8] libgpiod: Add Rust bindings
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+References: <20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20221107175305.63975-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWgCdR8E+bgAprfSmL3S-1aY2R7frba9du-XfCeEV7T0g@mail.gmail.com>
+In-Reply-To: <CAMuHMdWgCdR8E+bgAprfSmL3S-1aY2R7frba9du-XfCeEV7T0g@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Thu, 17 Nov 2022 12:30:54 +0000
+Message-ID: <CA+V-a8soA=7bLXXqJCLtrceNhMCgwnHg9KUOr4m0DkHUuCYi4Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/5] arm64: dts: renesas: r9a07g043[u]: Add IRQC node
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Kent Gibson <warthog618@gmail.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Wedson Almeida Filho <wedsonaf@gmail.com>,
-        =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>,
-        stratos-dev@op-lists.linaro.org,
-        Gerard Ryan <g.m0n3y.2503@gmail.com>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-        y86-dev <y86-dev@protonmail.com>
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Nov 17, 2022 at 12:25 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 17-11-22, 12:15, Bartosz Golaszewski wrote:
-> > So I'd say - just use CC0-1.0 license in Cargo.toml?
->
-> The Cargo.toml files already have following currently:
->
-> license = "Apache-2.0 OR BSD-3-Clause"
->
+Hi Geert,
 
-Then let's just add the SPDX identifier on top to make reuse happy.
+Thank you for the review.
 
-Bart
+On Thu, Nov 17, 2022 at 11:13 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Mon, Nov 7, 2022 at 6:53 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add IRQC node to R9A07G043 (RZ/G2UL) SoC DTSI.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > ---
+> > Note,
+> > - clocks and resets are differnt when compared to RZ/Five hence its added
+> >   in r9a07g043u.dtsi
+> > - We have additional interrupt on RZ/Five hence interrupts are added in
+> >   r9a07g043u.dtsi
+>
+> Which additional interrupts?
+> Do you already have the r9a06g043f-variant ready, so we can compare?
+>
+I missed this RZ/G2UL has this interrupt too. So ignore this point.
+
+> > - clock-names is also added in r9a07g043u.dtsi to avoid dtbs_check warning
+>
+> Why does this warn?
+>
+If we add the clock-names property in the base dtsi we get a
+dtbs_check warning "clocks is a dependency of clock-names" for RZ/Five
+as we haven't added the clocks property to it.
+
+> > --- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+> > @@ -538,6 +538,14 @@ pinctrl: pinctrl@11030000 {
+> >                                  <&cpg R9A07G043_GPIO_SPARE_RESETN>;
+> >                 };
+> >
+> > +               irqc: interrupt-controller@110a0000 {
+> > +                       #interrupt-cells = <2>;
+> > +                       #address-cells = <0>;
+> > +                       interrupt-controller;
+> > +                       reg = <0 0x110a0000 0 0x10000>;
+>
+> The size of the "reg" property will be 0x20000 on RZ/Five, to cover the
+> extra [NIT]MSK registers, so I think this belongs in r9a07g043u.dtsi, too.
+>
+Agreed.
+
+Cheers,
+Prabhakar
