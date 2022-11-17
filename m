@@ -2,127 +2,192 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3738C4332F
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 09:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A91DC4332F
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 09:06:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239515AbiKQJFV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Nov 2022 04:05:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60986 "EHLO
+        id S239538AbiKQJGQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Nov 2022 04:06:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239476AbiKQJFH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 04:05:07 -0500
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC3BF5A6E9
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 01:05:05 -0800 (PST)
-Received: from kwepemi500024.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4NCYrc5bJ6zHw1d;
-        Thu, 17 Nov 2022 17:04:32 +0800 (CST)
-Received: from huawei.com (10.175.103.91) by kwepemi500024.china.huawei.com
- (7.221.188.100) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Thu, 17 Nov
- 2022 17:05:03 +0800
-From:   Zeng Heng <zengheng4@huawei.com>
-To:     <brgl@bgdev.pl>, <linux@roeck-us.net>, <linus.walleij@linaro.org>,
-        <warthog618@gmail.com>, <andriy.shevchenko@intel.com>
-CC:     <linux-gpio@vger.kernel.org>, <zengheng4@huawei.com>,
-        <liwei391@huawei.com>
-Subject: [PATCH v3] gpiolib: fix memory leak in gpiochip_setup_dev()
-Date:   Thu, 17 Nov 2022 17:02:47 +0800
-Message-ID: <20221117090247.122980-1-zengheng4@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <f118d0b1-1bf2-b710-c3b4-2745c72f02b3@huawei.com>
-References: <f118d0b1-1bf2-b710-c3b4-2745c72f02b3@huawei.com>
+        with ESMTP id S239391AbiKQJGQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 04:06:16 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5223E5A6C0
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 01:06:15 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ovaqV-0004HD-N6; Thu, 17 Nov 2022 10:06:07 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ovaqT-004p0y-Tx; Thu, 17 Nov 2022 10:06:06 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ovaqT-00HEYW-UH; Thu, 17 Nov 2022 10:06:05 +0100
+Date:   Thu, 17 Nov 2022 10:06:05 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pwm@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 7/7] pinctrl: intel: Enumerate PWM device when
+ community has a capability
+Message-ID: <20221117090605.ktgyaverpzl3irjo@pengutronix.de>
+References: <20221114165545.56088-1-andriy.shevchenko@linux.intel.com>
+ <20221114165545.56088-8-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemi500024.china.huawei.com (7.221.188.100)
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jmyufltz4xble7qf"
+Content-Disposition: inline
+In-Reply-To: <20221114165545.56088-8-andriy.shevchenko@linux.intel.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Here is a report about memory leak detected in gpiochip_setup_dev():
 
-unreferenced object 0xffff88810b406400 (size 512):
-  comm "python3", pid 1682, jiffies 4295346908 (age 24.090s)
-  backtrace:
-    kmalloc_trace
-    device_add 		device_private_init at drivers/base/core.c:3361
-			(inlined by) device_add at drivers/base/core.c:3411
-    cdev_device_add
-    gpiolib_cdev_register
-    gpiochip_setup_dev
-    gpiochip_add_data_with_key
+--jmyufltz4xble7qf
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-gcdev_register() & gcdev_unregister() would call device_add() &
-device_del() (no matter CONFIG_GPIO_CDEV is enabled or not) to
-register/unregister device.
+Hello,
 
-However, if device_add() succeeds, some resource (like
-struct device_private allocated by device_private_init())
-is not released by device_del().
+On Mon, Nov 14, 2022 at 06:55:45PM +0200, Andy Shevchenko wrote:
+> Some of the Communities may have PWM capability. In such cases,
 
-Therefore, after device_add() succeeds by gcdev_register(), it
-needs to call put_device() to release resource in the error handle
-path.
+Is "Communities" is proper name in this context? If not, I'd not
+capitalize it.
 
-Here we move forward the register of release function, and let it
-release every piece of resource by put_device() instead of kfree().
+> enumerate the PWM device via respective driver. User is still
 
-Fixes: 159f3cd92f17 ("gpiolib: Defer gpio device setup until after gpiolib initialization")
-Signed-off-by: Zeng Heng <zengheng4@huawei.com>
----
- drivers/gpio/gpiolib.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+s/User/A user/ ?
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 4756ea08894f..bb4dedc154b7 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -526,12 +526,13 @@ static int gpiochip_setup_dev(struct gpio_device *gdev)
- 	if (ret)
- 		return ret;
- 
-+	/* From this point, the .release() function cleans up gpio_device */
-+	gdev->dev.release = gpiodevice_release;
-+
- 	ret = gpiochip_sysfs_register(gdev);
- 	if (ret)
- 		goto err_remove_device;
- 
--	/* From this point, the .release() function cleans up gpio_device */
--	gdev->dev.release = gpiodevice_release;
- 	dev_dbg(&gdev->dev, "registered GPIOs %d to %d on %s\n", gdev->base,
- 		gdev->base + gdev->ngpio - 1, gdev->chip->label ? : "generic");
- 
-@@ -816,6 +817,13 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- err_free_gpiochip_mask:
- 	gpiochip_remove_pin_ranges(gc);
- 	gpiochip_free_valid_mask(gc);
-+	/*
-+	 * If gdev->dev.release has been registered by
-+	 * gpiochip_setup_dev(), print err msg and
-+	 * call put_device() to release all.
-+	 */
-+	if (gdev->dev.release)
-+		goto err_free_gdev;
- err_remove_from_list:
- 	spin_lock_irqsave(&gpio_lock, flags);
- 	list_del(&gdev->list);
-@@ -835,7 +843,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 		       gdev->base, gdev->base + gdev->ngpio - 1,
- 		       gc->label ? : "generic", ret);
- 	}
--	kfree(gdev);
-+	if (gdev->dev.release)
-+		put_device(&gdev->dev);
-+	else
-+		kfree(gdev);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(gpiochip_add_data_with_key);
--- 
-2.25.1
+> responsible for setting correct pin muxing for the line that
+> needs to output the signal.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Acked-by: Thierry Reding <thierry.reding@gmail.com>
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/pinctrl/intel/pinctrl-intel.c | 32 +++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+>=20
+> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/inte=
+l/pinctrl-intel.c
+> index 52ecd66ce357..d61c22e9d531 100644
+> --- a/drivers/pinctrl/intel/pinctrl-intel.c
+> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
+> @@ -21,6 +21,8 @@
+>  #include <linux/pinctrl/pinconf.h>
+>  #include <linux/pinctrl/pinconf-generic.h>
+> =20
+> +#include <linux/platform_data/x86/pwm-lpss.h>
+> +
+>  #include "../core.h"
+>  #include "pinctrl-intel.h"
+> =20
+> @@ -46,6 +48,8 @@
+>  #define PADOWN_MASK(p)			(GENMASK(3, 0) << PADOWN_SHIFT(p))
+>  #define PADOWN_GPP(p)			((p) / 8)
+> =20
+> +#define PWMC				0x204
+> +
+>  /* Offset from pad_regs */
+>  #define PADCFG0				0x000
+>  #define PADCFG0_RXEVCFG_SHIFT		25
+> @@ -1499,6 +1503,30 @@ static int intel_pinctrl_pm_init(struct intel_pinc=
+trl *pctrl)
+>  	return 0;
+>  }
+> =20
+> +static int intel_pinctrl_probe_pwm(struct intel_pinctrl *pctrl,
+> +				   struct intel_community *community)
+> +{
+> +	static const struct pwm_lpss_boardinfo info =3D {
+> +		.clk_rate =3D 19200000,
+> +		.npwm =3D 1,
+> +		.base_unit_bits =3D 22,
+> +		.bypass =3D true,
+> +	};
+> +	struct pwm_lpss_chip *pwm;
+> +
+> +	if (!(community->features & PINCTRL_FEATURE_PWM))
+> +		return 0;
+> +
+> +	if (!IS_REACHABLE(CONFIG_PWM_LPSS))
+> +		return 0;
+> +
+> +	pwm =3D devm_pwm_lpss_probe(pctrl->dev, community->regs + PWMC, &info);
+> +	if (IS_ERR(pwm))
+> +		return PTR_ERR(pwm);
+> +
+> +	return 0;
 
+The last 3 codelines can be replaced by
+
+	return PTR_ERR_OR_ZERO(pwm);
+
+(but I know it's subjective if you like that or not, so I won't insist;
+see also b784c77075023e1a71bc06e6b4f711acb99e9c73).
+
+> +}
+> +
+>  static int intel_pinctrl_probe(struct platform_device *pdev,
+>  			       const struct intel_pinctrl_soc_data *soc_data)
+>  {
+> @@ -1584,6 +1612,10 @@ static int intel_pinctrl_probe(struct platform_dev=
+ice *pdev,
+>  			ret =3D intel_pinctrl_add_padgroups_by_size(pctrl, community);
+>  		if (ret)
+>  			return ret;
+> +
+> +		ret =3D intel_pinctrl_probe_pwm(pctrl, community);
+> +		if (ret)
+> +			return ret;
+>  	}
+> =20
+>  	irq =3D platform_get_irq(pdev, 0);
+
+intel_pinctrl_add_padgroups_by_size() doesn't need cleanup in the error
+path, so this hunk is fine.
+
+All in all this is all very minor, so:
+
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+even if you keep the patch as is.
+
+Best regards
+Uwe
+
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--jmyufltz4xble7qf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmN1+XoACgkQwfwUeK3K
+7An41Qf9H02Ebbtnsoac/a/Q2UCAszSvtVhYehJVq0uC9RJYSyNVchLpxavRk4rV
+NGb6mfjl7A6OgS1gqoyQtqt0VP64FGKlp9YTNA+1AJvl6lvwcyNqgQ4nN3slp0pj
+sennz3ouKLREc3mSorDAz1tgr09xqU9etJYHDPUo4oipv74QGFT6KjWqr9bVE/yR
+5b1LYYvy8to+/tQwwt8FdnJmiP7TrtNz6LcEAH6BmmKw4/bMFFHAshHVlZTvINVZ
+q/D+qqzfrvD2evY/LOopcOCdl9movJwkltHbHhsJ4qODZjTIj2oJ39O9PgVf5V7V
++1Vi14LTUaPMblRWJe7tNhCP2H9v0g==
+=TlVN
+-----END PGP SIGNATURE-----
+
+--jmyufltz4xble7qf--
