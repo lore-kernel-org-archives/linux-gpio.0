@@ -2,95 +2,120 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6056C4321E
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 12:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90739C433FE
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 12:34:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240165AbiKQMd1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Nov 2022 07:33:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55458 "EHLO
+        id S239889AbiKQMeA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Nov 2022 07:34:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239823AbiKQMdI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 07:33:08 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC4A876146;
-        Thu, 17 Nov 2022 04:32:18 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id k19so2529940lji.2;
-        Thu, 17 Nov 2022 04:32:18 -0800 (PST)
+        with ESMTP id S240198AbiKQMdU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 07:33:20 -0500
+Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBA0E6325
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 04:32:46 -0800 (PST)
+Received: by mail-vs1-xe29.google.com with SMTP id a6so1362745vsc.5
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 04:32:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=25zzCeIdQLt2oZnq3HAIA1FC7vZFFoxeYg3WH60K9nE=;
-        b=qPGMkYweiJF1ezIePnlKNNr50vIJs3qoth6up0ubbki0AWF6i0eXAYm4WpLeQrR6sV
-         RI/LDYMNVXusVREwcxiVtzn7fXDWZxc6vm2I2uUgWz6FS1D8PTc3E+NjhbNGqrhdyxSB
-         urKQy6MCHB6xfhCuQIWsIR8ezalcpIoP9jLu2A6Rj9pbZ2TWKWlUTT/CLpcd09/Lz8Bp
-         FhpAutf3kXqJqaLqKNuFdzmKCmVhVEnQMDTjKQ9wK6taAILCYbuDCjFIIQ+3RIpbgPiX
-         n8RaLcWHx9Q3Tgi88H2LjUyGC/dvCgrPi6EVONCZRFGX51Q06JkviHBloW+6gbQwcfMD
-         L+BQ==
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ho1BHb7t/yZlzbbn3WaXvDZ8tjFZ8sHvOp6SzvbHeeU=;
+        b=ly34yopELHJkCvg8ZMvDLd7tjliQyJWZHBMIyN3ZuJ4ETennOzqBdRKl1gjWAupJSO
+         M5v3Hdfr5cIpbrt1VBfObQCuKg/8TpcmVRBEp2RbOQ6M4zprbS6q8OGFwst+VbcRyvdj
+         +DxPzWp68H0b0EKvB+rva89cN8MNbcXLapcYSgyLCZ5PpwJq6CijLDZ4+DbE1TKJnuhC
+         W8ewMMhB/FdIO2GpbkXFR/cjbU/1oxcHXzp7esTbDF3s6WLtV/gkFded3GKG4dR6uyYk
+         NsJkKlgpL0yf/PSUSOtL0d8u1gyODfbAR2fYjg16i/qzfzuL0wdEdBebsKnMY8cxUX8c
+         /M+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=25zzCeIdQLt2oZnq3HAIA1FC7vZFFoxeYg3WH60K9nE=;
-        b=O/fKsGU3j2DVZxeE6U1ReervR3VNCV0Dn8E/QLyR0PQrRSQUpYta7NjpcKpb2Tts5s
-         3dqYIh4JgytuSFMPgwuFCIdUE0XtrUiAXvXkl9WKqF7LCAaXZoZ1fBR7YIiLDJvLCh9Q
-         EaRR+BUpXqXJYJikyOYQ4K/ePaiX5PqJ6LPUlznmjLq26KpwEe5DdCy0ZogLGWbrYMPD
-         W+VwV/yu9XgTbC4OrI/ucu8axa3f7QKiTLeFBVmNDi0eKL1LJl8NDLKXGEJZAGqpmFUR
-         wXiH2iK3BF7h68rZuJBCcg/o8Xp3aX186tZkq4o9S3k1V5I1GHeTEH26GhgGz2hEa8Ay
-         r32w==
-X-Gm-Message-State: ANoB5pmdUNUEyTZR6tMNoQNsqyj0M1Usy80qF3yIdsrsohbiQn3d/JIB
-        LFc8Tck5/rOv5gGeyVUQuwY=
-X-Google-Smtp-Source: AA0mqf47EjZ7iHBlfAyyzeU7WAqvnuY3fphQib5vR6FIP9s2zwOuCRM7n70HaCpEFq6uQmqJt34J4Q==
-X-Received: by 2002:a2e:88d3:0:b0:277:72a:41a5 with SMTP id a19-20020a2e88d3000000b00277072a41a5mr1020205ljk.352.1668688336925;
-        Thu, 17 Nov 2022 04:32:16 -0800 (PST)
-Received: from mkor.rasu.local ([212.22.67.162])
-        by smtp.gmail.com with ESMTPSA id k20-20020ac24f14000000b0049ad315cfc3sm127362lfr.162.2022.11.17.04.32.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Nov 2022 04:32:16 -0800 (PST)
-From:   Maxim Korotkov <korotkov.maxim.s@gmail.com>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Maxim Korotkov <korotkov.maxim.s@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ho1BHb7t/yZlzbbn3WaXvDZ8tjFZ8sHvOp6SzvbHeeU=;
+        b=4rQ+qh3NezEFXGal2giydAmRxm7EsPM/C/lofrF0bzpxPdLFVUM0WPkeq4fydNDC/h
+         e1K7QvV9zxUj1pCtChYncyOJLiOa8FIGLkLP3K6jMrbGupxCBB+wDdaV+a/sxk8uiVmw
+         snZ5k04bJj6bcp0Z8zAUpp5mzFN7FyLdNmrlcSxtj0Wun2I9j534zkjOoL28v4ovPiAD
+         W63YCRbdJJT0GSAJFy00MtQK5X092Ji57U5xqAISNEv8rHO+EIi+cgNh4h0wUygkTQ7y
+         5/busNfAC2YDJg+VbfLF5wJ0Js54kahQY1XXT9h9+YTr0AoD4GwPch2jeGlnBC2j805z
+         bTaw==
+X-Gm-Message-State: ANoB5pldXUWwD1KUfdLuGP6XRD563PV4y4c4elsypZvMmRq89hrqgE3R
+        NX5yY6UdPKYxOcihGv7JCaR738Q7z9ZpiIQT4p3bLQ==
+X-Google-Smtp-Source: AA0mqf7HfYeMvoSE4svtl+wBJYZ6GWWDItpCoFWqy0AIiWLiVfHAAc+G7PvyvuPmIx2J7JMv6CJ5N/9Ja28TyIjq3dE=
+X-Received: by 2002:a67:fd19:0:b0:398:6504:9ece with SMTP id
+ f25-20020a67fd19000000b0039865049ecemr1513174vsr.16.1668688366051; Thu, 17
+ Nov 2022 04:32:46 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1667815011.git.viresh.kumar@linaro.org> <CAMRc=McWo-kUrMitbm-_YgeEYXx+ARneezAF-Tg7OMwgGydXkQ@mail.gmail.com>
+ <20221117073120.g6xhn6i2dbzougx3@vireshk-i7> <CAMRc=MdNJV7gnz6-TKYCWt1uus0=urrtiBgmFdASAK7-dvSbzQ@mail.gmail.com>
+ <20221117095609.uyamyqi5uuchrxdt@vireshk-i7> <CAMRc=MeOVWV=dp_ytxazwoWq4JW1dbr5mfEvQVYFxe-HYgKn_g@mail.gmail.com>
+ <20221117104006.wvpuenedh7wqsjjj@vireshk-i7> <CAMRc=Me3NBDicrTenfsZ97+T28QwQL8SfZsM=ECM=i=1sqHr+g@mail.gmail.com>
+ <20221117105534.shhm4ib2aukj7d3e@vireshk-i7> <CAMRc=MdYuxK3cPHy=N3M2tRgu3y_ZQD4BJtBPy323s=9Uq3tUA@mail.gmail.com>
+ <20221117111551.4w7zp6wfwwirps2t@vireshk-i7>
+In-Reply-To: <20221117111551.4w7zp6wfwwirps2t@vireshk-i7>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 17 Nov 2022 13:32:35 +0100
+Message-ID: <CAMRc=Md_F8wd_oO3ZMxWZDZDaC0W_gOTSJ_rT1vANvREYtjXjQ@mail.gmail.com>
+Subject: Re: [libgpiod][PATCH V9 0/8] libgpiod: Add Rust bindings
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Linus Walleij <linus.walleij@linaro.org>,
-        "Manjunathappa, Prakash" <prakash.pm@ti.com>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lvc-project@linuxtesting.org
-Subject: [PATCH] pinctrl: single: Fix potential division by zero
-Date:   Thu, 17 Nov 2022 15:30:34 +0300
-Message-Id: <20221117123034.27383-1-korotkov.maxim.s@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Kent Gibson <warthog618@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Wedson Almeida Filho <wedsonaf@gmail.com>,
+        =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>,
+        stratos-dev@op-lists.linaro.org,
+        Gerard Ryan <g.m0n3y.2503@gmail.com>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        y86-dev <y86-dev@protonmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There is a possibility of dividing by zero due to the pcs->bits_per_pin
-if pcs->fmask() also has a value of zero and called fls
-from asm-generic/bitops/builtin-fls.h or arch/x86/include/asm/bitops.h.
-The function pcs_probe() has the branch that assigned to fmask 0 before
-pcs_allocate_pin_table() was called
+On Thu, Nov 17, 2022 at 12:15 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 17-11-22, 12:05, Bartosz Golaszewski wrote:
+> > So it already only impacts developers exclusively and not users who'd
+> > for example want to install libgpiod from crates.io? If so then I
+> > don't really see a reason to keep those files in the repo really.
+>
+> Users are impacted in the sense that they will be forced to build the bindings
+> using bindgen now, automatically of course. It is an extra, time consuming,
+> operation which can be avoided. For rust-vmm projects, every pull request
+> results in fresh rebuild of the entire crate, which would mean two additional
+> bindgen builds too, just for gpio now. It isn't a huge problem, but it is time
+> that could have been saved.
+>
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+If build-time is the only issue then I vote for automatic generation
+at build-time and not storing those files.
 
-Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
-Signed-off-by: Maxim Korotkov <korotkov.maxim.s@gmail.com>
----
- drivers/pinctrl/pinctrl-single.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > I'm not familiar with rust-vmm containers but the fact that bindgen
+> > support is missing or causes problems sounds like a problem with
+> > rust-vmm and not users of bindgen, right?
+>
+> Yeah it can be, but IIUC, in the Rust world, more often than not such bindings
+> are pre-generated, as this basically is Rust code only. These bindings will
+> only change if we make a change to the gpiod API.
+>
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 67bec7ea0f8b..414ee6bb8ac9 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -727,7 +727,7 @@ static int pcs_allocate_pin_table(struct pcs_device *pcs)
- 
- 	mux_bytes = pcs->width / BITS_PER_BYTE;
- 
--	if (pcs->bits_per_mux) {
-+	if (pcs->bits_per_mux && pcs->fmask) {
- 		pcs->bits_per_pin = fls(pcs->fmask);
- 		nr_pins = (pcs->size * BITS_PER_BYTE) / pcs->bits_per_pin;
- 	} else {
--- 
-2.17.1
+Leaving space for maintainer errors when preparing releases I suppose.
+I don't know what the reason is for the Rust world to go that way but
+more often than not, files that are generated automatically are not
+checked in into repositories. This is my experience from working with
+Qt, GLib or the linux kernel (flex and bison files generated by
+kconfig).
 
+> Perhaps that's why I was asked to avoid generating the bindings there, but I can
+> ask again and try fixing the rust-vmm containers if it doesn't work.
+>
+
+Yes, if there's no show-stopper then let's generate the files at
+build-time which also fixes the licensing issue.
+
+Bart
