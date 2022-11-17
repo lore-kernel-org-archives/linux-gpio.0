@@ -2,145 +2,103 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA16EC4332F
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 15:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF595C43217
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 15:32:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233899AbiKQP11 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Nov 2022 10:27:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44338 "EHLO
+        id S230383AbiKQPcB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Nov 2022 10:32:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239776AbiKQP04 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 10:26:56 -0500
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 980E2248C5
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 07:25:38 -0800 (PST)
-Received: by mail-qv1-xf35.google.com with SMTP id p8so743086qvn.5
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 07:25:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qc7+zaKXIH748CZaku7bgeQA/ReE+fYPlO45pSTJDq0=;
-        b=xpY0zt7c8PFHwiXvJEWZQ9cRA2xfBqG4NMJVKocfUmFpDGS3y6XJmizFPEBARwF5ve
-         pJ9VH8tmyT4yK+uH7+tEXv65jnluDi9mjSV0fpmS3nm8/A/IFpcExc/MCI08iFEkg43Y
-         8w+TUyKQpDSoad2kIMPtTJ9DeT9Y0FDPdHnACG4UaVnWNdxVOet6Ibf8F0RV9O4887Zz
-         I05N6w/je0LK1/x9DVYSlazHQfHlA58Q1VQLWjhe3BUvAsR/X+TBuorhU/tXvNNAFOIR
-         evPIKi+N//BSvJMrR+msf9dWf8xILywQ4vhIMO9UhZi8uU2DOnA8u/RdpuYtWhBX8a+9
-         wXxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qc7+zaKXIH748CZaku7bgeQA/ReE+fYPlO45pSTJDq0=;
-        b=NYnOllLemV3cGX2445Y/bvFPBUv+Ti21IpOC78kqKsEsSEwxofhVf9m6v2GUlX5jjz
-         qDtj6X/wjQBeODOqih9ZUo6ZPBmLLu9QrFmAzn6nwnVym+OMcGI892aN97hT8XEOFMHe
-         Jng2Nd39bZmH1KpvTGqSV4xNmDu47iA9iDB4d3jEiK5fWr1kbZfKPbW4Ylk30UsZMSSp
-         i8X7JeN0iXCesEW8BxXI85DyZ96NTUgqxyY3rroJ1t+eqalW2iS6IwfzRXdL2LliP6RQ
-         T0xn4EMNK8fsIBup4kxwJgZKo7+fNGYuUSn//zZsLKmqCifKZceuzDJOgbk5GNhE/+MV
-         UFAQ==
-X-Gm-Message-State: ANoB5pkzkZgCWbgIBbR8B1RyFmFBIFTOfB9Ku63cdDkm7kztqIHnYzXK
-        fMU060ql+3MumT2gftfxN+dm9X5/szDL4g==
-X-Google-Smtp-Source: AA0mqf7QHFoRBh/VpJtrlbjn6odbmAPfogJSw9qJRRGdGsdx5DgqPcrGPeGgnE7OYdN+gr9WpirzUg==
-X-Received: by 2002:a0c:f788:0:b0:4bb:6518:4592 with SMTP id s8-20020a0cf788000000b004bb65184592mr2824773qvn.77.1668698737730;
-        Thu, 17 Nov 2022 07:25:37 -0800 (PST)
-Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id h4-20020a05620a284400b006f9e103260dsm609831qkp.91.2022.11.17.07.25.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Nov 2022 07:25:37 -0800 (PST)
-Date:   Thu, 17 Nov 2022 10:00:17 -0500
-From:   William Breathitt Gray <william.gray@linaro.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linus.walleij@linaro.org, brgl@bgdev.pl,
-        andriy.shevchenko@linux.intel.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, michael@walle.cc
-Subject: Re: [PATCH v2 2/4] regmap-irq: Add handle_mask_sync() callback
-Message-ID: <Y3ZMga3nphqmAtka@fedora>
-References: <cover.1668129763.git.william.gray@linaro.org>
- <53e9e89cc9d7e9c20cbdfc13b360dcb43d07f832.1668129763.git.william.gray@linaro.org>
- <Y3PI5n8FXxOtGhzP@sirena.org.uk>
+        with ESMTP id S234758AbiKQPb6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 10:31:58 -0500
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E468CE092
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 07:31:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1668699117; x=1700235117;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=56haqea2XXoij3OAnOcFxvu7OLoAYc5NUH4P9lnMUpw=;
+  b=KQNlDz4rH49Npeay48o70p5xbynh9hBU1ohDoD6cKX0TJcKRBGani9/n
+   k7ybY2xZr+BKcRKrzp9i3wKZAebjQ8dqD7vqBh4wyRpHapWOH3Cq6oaqV
+   G0gtdo5enP80S9zws5dtN4SpHGNw18HtGuHGxVywHiEl+TLOFWjJrBI54
+   MgZXiDa7dVnsYmx3pWb6Tn7guWSQDx0IhaF3hmmbaNIJJ56OMP9PtpCzG
+   p5fZU+sFmWm+be7knuMnAH0xX7oFfgDY/COi2zh1nxVgjvd/Ar5Ba9+Cb
+   s7uEHx6mxj7lti1YKVA+QM9Re/EVf0lmYLJwrm3d1C/L2ZJBZWlZA0jyh
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10534"; a="375011642"
+X-IronPort-AV: E=Sophos;i="5.96,171,1665471600"; 
+   d="scan'208";a="375011642"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2022 07:31:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10534"; a="634088495"
+X-IronPort-AV: E=Sophos;i="5.96,171,1665471600"; 
+   d="scan'208";a="634088495"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga007.jf.intel.com with ESMTP; 17 Nov 2022 07:31:54 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1ovgro-00DcwA-37;
+        Thu, 17 Nov 2022 17:31:52 +0200
+Date:   Thu, 17 Nov 2022 17:31:52 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     Zeng Heng <zengheng4@huawei.com>
+Cc:     brgl@bgdev.pl, linux@roeck-us.net, linus.walleij@linaro.org,
+        warthog618@gmail.com, linux-gpio@vger.kernel.org,
+        liwei391@huawei.com
+Subject: Re: [PATCH v3] gpiolib: fix memory leak in gpiochip_setup_dev()
+Message-ID: <Y3ZT6KUkPlSS7whW@smile.fi.intel.com>
+References: <f118d0b1-1bf2-b710-c3b4-2745c72f02b3@huawei.com>
+ <20221117090247.122980-1-zengheng4@huawei.com>
+ <Y3YR0rBSWHu5WhfL@smile.fi.intel.com>
+ <3ccf3b72-a3dd-66fe-4d8a-b22140ed9364@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pKPDdkdohjMYUtPY"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y3PI5n8FXxOtGhzP@sirena.org.uk>
+In-Reply-To: <3ccf3b72-a3dd-66fe-4d8a-b22140ed9364@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Thu, Nov 17, 2022 at 10:12:31PM +0800, Zeng Heng wrote:
+> On 2022/11/17 18:49, Andy Shevchenko wrote:
+> > On Thu, Nov 17, 2022 at 05:02:47PM +0800, Zeng Heng wrote:
 
---pKPDdkdohjMYUtPY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+...
 
-On Tue, Nov 15, 2022 at 05:14:14PM +0000, Mark Brown wrote:
-> On Thu, Nov 10, 2022 at 08:55:51PM -0500, William Breathitt Gray wrote:
->=20
-> > Provide a public callback handle_mask_sync() that drivers can use when
-> > they have more complex IRQ masking logic. The default implementation is
-> > regmap_irq_handle_mask_sync(), used if the chip doesn't provide its own
-> > callback.
->=20
-> Can you provide examples of something that would make sense to
-> open code in a driver rather than factoring out?  It looks like
-> this has been added due to one of the devices you're looking at
-> for some reason disabling it's upstream interrupt when all of the
-> downstream interrupts are masked, while weird that doesn't seem
-> especally device specific.
+> > > +	/*
+> > > +	 * If gdev->dev.release has been registered by
+> > > +	 * gpiochip_setup_dev(), print err msg and
+> > > +	 * call put_device() to release all.
+> > > +	 */
+> > > +	if (gdev->dev.release)
+> > > +		goto err_free_gdev;
+> > (1)
+> > 
+> > >   err_remove_from_list:
+> > >   	spin_lock_irqsave(&gpio_lock, flags);
+> > >   	list_del(&gdev->list);
+> > ...
+> > 
+> > > -	kfree(gdev);
+> > > +	if (gdev->dev.release)
+> > > +		put_device(&gdev->dev);
+> > Why you can't do this above at (1)?
+> > Is there any other hidden way to get here with release set?
+> 
+> As already mentioned in the mail, keep the error print info.
 
-Sure, I actually intend to use this callback for the 104-idi-48 module
-as well in the v3 submission so I'll describe that situations well.
+Can you refactor that to avoid double condition on the ->release() presence?
 
-For the 104-dio-48e we have the following:
+> > > +	else
+> > > +		kfree(gdev);
+> > >   	return ret;
 
-    Base Address +B (Write): Enable Interrupt
-    Base Address +B (Read): Disable Interrupt
-    Base Address +F (Read/Write): Clear Interrupt
+-- 
+With Best Regards,
+Andy Shevchenko
 
-So for 104-dio-48e, any write to 0xB will enable interrupts, while any
-read will disable interrupts; interrupts are with either a read or any
-write to 0xF. There's no status register either so software just has to
-assume that if an interrupt is raised then it was for the
-104-dio-48e device.
 
-For the 104-idi-48, we do get a status register and some basic masking
-but it's broken down by banks rather than individual GPIO; there are six
-8-bit banks (Port 0 Low Byte, Port 0 Mid Byte, Port 0 High Byte, Port 1
-Low Byte, Port 1 Mid Byte, Port 1 High Byte):
-
-    Base Address + 0 (Read/Write): Port 0 Low Byte
-    Base Address + 1 (Read/Write): Port 0 Mid Byte
-    Base Address + 2 (Read/Write): Port 0 High Byte
-    Base Address + 3: N/A
-    Base Address + 4 (Read/Write): Port 1 Low Byte
-    Base Address + 5 (Read/Write): Port 1 Mid Byte
-    Base Address + 6 (Read/Write): Port 1 High Byte
-    Base Address + 7 (Read): IRQ Status Register/IRQ Clear
-        Bit 0-5: Respective Bank IRQ Statuses
-        Bit 6: IRQ Status (Active Low)
-        Bit 7: IRQ Enable Status
-    Base Address + 7 (Write): IRQ Enable/Disable
-        Bit 0-5: Respective Bank IRQ Enable/Disable
-
-In this case, masking a bank will mask all 8 GPIO within that bank;
-so ideally I want a way to only mask a bank when all GPIO are masked,
-and unmasking when at least one is unmasked.
-
-Are there existing ways to support these kinds of configuration in
-regmap_irq?
-
-William Breathitt Gray
-
---pKPDdkdohjMYUtPY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCY3ZMgQAKCRC1SFbKvhIj
-K0tkAP0W7qrriEL+8XcqAtlCtVo5jH3iXr0hCdlvBlQ0qGpsQwD/YE6KpyUdScEb
-EpyPGmUgeR+FFhcDXh4ZxmnoBZXgWQE=
-=EmJX
------END PGP SIGNATURE-----
-
---pKPDdkdohjMYUtPY--
