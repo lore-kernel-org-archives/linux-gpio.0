@@ -2,125 +2,111 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F13C43219
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 11:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB6F8C4332F
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 11:16:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239595AbiKQLOP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Nov 2022 06:14:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32864 "EHLO
+        id S234595AbiKQLQB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Nov 2022 06:16:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239737AbiKQLNi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 06:13:38 -0500
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 406E2117A;
-        Thu, 17 Nov 2022 03:13:30 -0800 (PST)
-Received: by mail-qk1-f182.google.com with SMTP id k2so888680qkk.7;
-        Thu, 17 Nov 2022 03:13:30 -0800 (PST)
+        with ESMTP id S231558AbiKQLPz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 06:15:55 -0500
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A629C7B
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 03:15:55 -0800 (PST)
+Received: by mail-pf1-x430.google.com with SMTP id d192so1494840pfd.0
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 03:15:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O2AxnSCxxm4Ad4Ygs0iOonWA7XhN/csC5CmhxLhU/Qw=;
+        b=d+NXM9VREQX16pIV5AezDkrUE6CUR+q1R+8vasoYQ3l91VpCmSpAtLmSkWJN/XJC7V
+         JfJgGV5gV8xIuDbROr0fbGU66F1K3oiZQmxFETJ7PGaDkI9bYFLrcw+Z2bJNu4qmowAL
+         GeewOhnP3khB5oybplKsvSR62+/CLyJyFYemTAgCuUCdCMO0Y4rLIOlsIWXbBALtjlla
+         bAEMg/yavWQiE+JinO0iSHwxk0SdseS6YGqBRyPUJHsTE24Btp4ou2tjluBuINdyNnxP
+         G2/lYa3fraTzRZRSPKd4gHJXKbLotwwCue0P7/TYxaKix+LcMhD4a2dtYddk2v9zgba9
+         8fQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MhB2HStiiI/m0aRTs9w3oejsmvfYmBFRUtwPfZuMH2Q=;
-        b=eXNlhKS9QorQr65id/IgsDCJVSktCNXogAGAiYdNne5TSoAbpK4LfNQ4Z0UiJWzc6K
-         YIz//tMziU73EZ4MZYKr1ayDg+JtEX4cV9G7JtrpNmKEbKy2/5Zj/gvRgmnBWD15+eWr
-         OfNRVAIU68A79kEky08bPCbMXqmcjPL9xTXQZtsyIJ2IZ5Oxe0YNiDD7iHNYk9BOMcFK
-         +m7NbeZzZqnR8+Vp9XDMwqMd6f5uAq86NSHxTKqLeDlY/r9XJ2ggW1uZthv8ZkXI3BuK
-         DCuP/NN/U+IxEB0W4Z5Dgfx6Sm89h2dqGkw+Z7D1znUPcMNvu5To6jYdxC3D6Bun3dyW
-         rS5Q==
-X-Gm-Message-State: ANoB5pmLzGnZErTJo02Ax62zYE8wi08zURniFEenLnCn2wTDlJiCcZVK
-        x+eGKfIP050/PXrwAh01ElA7p1l174zktw==
-X-Google-Smtp-Source: AA0mqf6+2chMoLGUcjsi/CmoSSTI++rjQ5fIiNH4p/uTZTfSu1L/1HHVyRVF5THF8v5r94cxj2xxrA==
-X-Received: by 2002:a05:620a:1a02:b0:6fa:2d09:d2e5 with SMTP id bk2-20020a05620a1a0200b006fa2d09d2e5mr1134873qkb.609.1668683608878;
-        Thu, 17 Nov 2022 03:13:28 -0800 (PST)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id h9-20020a05620a284900b006f9ddaaf01esm240548qkp.102.2022.11.17.03.13.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Nov 2022 03:13:28 -0800 (PST)
-Received: by mail-yb1-f178.google.com with SMTP id i131so1447750ybc.9;
-        Thu, 17 Nov 2022 03:13:28 -0800 (PST)
-X-Received: by 2002:a25:8249:0:b0:6dd:b521:a8f2 with SMTP id
- d9-20020a258249000000b006ddb521a8f2mr1489452ybn.380.1668683607938; Thu, 17
- Nov 2022 03:13:27 -0800 (PST)
-MIME-Version: 1.0
-References: <20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20221107175305.63975-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20221107175305.63975-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 17 Nov 2022 12:13:16 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWgCdR8E+bgAprfSmL3S-1aY2R7frba9du-XfCeEV7T0g@mail.gmail.com>
-Message-ID: <CAMuHMdWgCdR8E+bgAprfSmL3S-1aY2R7frba9du-XfCeEV7T0g@mail.gmail.com>
-Subject: Re: [PATCH RFC 3/5] arm64: dts: renesas: r9a07g043[u]: Add IRQC node
-To:     Prabhakar <prabhakar.csengg@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O2AxnSCxxm4Ad4Ygs0iOonWA7XhN/csC5CmhxLhU/Qw=;
+        b=O/lqU6kHBv3pEbcpE9n3FXsPF/qJarfKWzGeSZ3gbJMBMV7cskMYMFvAEUR4iOwBWW
+         exRx/8lYMvl17lR/qU2g/uROBnNGF8Esv3LtxL0clKuFXKX4xmDXq4Tdpn2pHjatBiae
+         WfnCmTbEZqxmYoxMO9sRCEQ8SYxg39gnt4L1RWDXEYg7X2j8UHkmBFBb72atI5JlFVEL
+         mQlfDO7bo5m7jq7xor5gjGtkGCBedWwBpfOTKqCOP2OsfRPJjRAgbxAhT4WW6VHEapAN
+         M0XiiDxKBs4E0K/7xYPpW7UMb/coaboDZ6NWvoN33EeHM+dMkhRDUK+qHV4t6C51qOU2
+         6huQ==
+X-Gm-Message-State: ANoB5pk2EkwdTBFV59SZY2OiM5yiqsFd3ynDto7qYZX2nkzKoMBgnvY0
+        ERLbdto6fPIvAtHH72fd/0zLCg==
+X-Google-Smtp-Source: AA0mqf4KmMf3ii0UmHErq6Wn7PJWdrq0t1CF50SvmBj0+kyWt6oxg40O0+FJnDBU8HWIngaYybo6Zg==
+X-Received: by 2002:a62:5281:0:b0:561:efcf:1d21 with SMTP id g123-20020a625281000000b00561efcf1d21mr2432434pfb.68.1668683754814;
+        Thu, 17 Nov 2022 03:15:54 -0800 (PST)
+Received: from localhost ([122.172.85.60])
+        by smtp.gmail.com with ESMTPSA id 22-20020a621916000000b00565c860bf83sm816095pfz.150.2022.11.17.03.15.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Nov 2022 03:15:54 -0800 (PST)
+Date:   Thu, 17 Nov 2022 16:45:51 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Kent Gibson <warthog618@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Wedson Almeida Filho <wedsonaf@gmail.com>,
+        Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+        stratos-dev@op-lists.linaro.org,
+        Gerard Ryan <g.m0n3y.2503@gmail.com>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        y86-dev <y86-dev@protonmail.com>
+Subject: Re: [libgpiod][PATCH V9 0/8] libgpiod: Add Rust bindings
+Message-ID: <20221117111551.4w7zp6wfwwirps2t@vireshk-i7>
+References: <cover.1667815011.git.viresh.kumar@linaro.org>
+ <CAMRc=McWo-kUrMitbm-_YgeEYXx+ARneezAF-Tg7OMwgGydXkQ@mail.gmail.com>
+ <20221117073120.g6xhn6i2dbzougx3@vireshk-i7>
+ <CAMRc=MdNJV7gnz6-TKYCWt1uus0=urrtiBgmFdASAK7-dvSbzQ@mail.gmail.com>
+ <20221117095609.uyamyqi5uuchrxdt@vireshk-i7>
+ <CAMRc=MeOVWV=dp_ytxazwoWq4JW1dbr5mfEvQVYFxe-HYgKn_g@mail.gmail.com>
+ <20221117104006.wvpuenedh7wqsjjj@vireshk-i7>
+ <CAMRc=Me3NBDicrTenfsZ97+T28QwQL8SfZsM=ECM=i=1sqHr+g@mail.gmail.com>
+ <20221117105534.shhm4ib2aukj7d3e@vireshk-i7>
+ <CAMRc=MdYuxK3cPHy=N3M2tRgu3y_ZQD4BJtBPy323s=9Uq3tUA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MdYuxK3cPHy=N3M2tRgu3y_ZQD4BJtBPy323s=9Uq3tUA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Prabhakar,
+On 17-11-22, 12:05, Bartosz Golaszewski wrote:
+> So it already only impacts developers exclusively and not users who'd
+> for example want to install libgpiod from crates.io? If so then I
+> don't really see a reason to keep those files in the repo really.
 
-On Mon, Nov 7, 2022 at 6:53 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add IRQC node to R9A07G043 (RZ/G2UL) SoC DTSI.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Users are impacted in the sense that they will be forced to build the bindings
+using bindgen now, automatically of course. It is an extra, time consuming,
+operation which can be avoided. For rust-vmm projects, every pull request
+results in fresh rebuild of the entire crate, which would mean two additional
+bindgen builds too, just for gpio now. It isn't a huge problem, but it is time
+that could have been saved.
 
-Thanks for your patch!
+> I'm not familiar with rust-vmm containers but the fact that bindgen
+> support is missing or causes problems sounds like a problem with
+> rust-vmm and not users of bindgen, right?
 
-> ---
-> Note,
-> - clocks and resets are differnt when compared to RZ/Five hence its added
->   in r9a07g043u.dtsi
-> - We have additional interrupt on RZ/Five hence interrupts are added in
->   r9a07g043u.dtsi
+Yeah it can be, but IIUC, in the Rust world, more often than not such bindings
+are pre-generated, as this basically is Rust code only. These bindings will
+only change if we make a change to the gpiod API.
 
-Which additional interrupts?
-Do you already have the r9a06g043f-variant ready, so we can compare?
+Perhaps that's why I was asked to avoid generating the bindings there, but I can
+ask again and try fixing the rust-vmm containers if it doesn't work.
 
-> - clock-names is also added in r9a07g043u.dtsi to avoid dtbs_check warning
-
-Why does this warn?
-
-> --- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-> @@ -538,6 +538,14 @@ pinctrl: pinctrl@11030000 {
->                                  <&cpg R9A07G043_GPIO_SPARE_RESETN>;
->                 };
->
-> +               irqc: interrupt-controller@110a0000 {
-> +                       #interrupt-cells = <2>;
-> +                       #address-cells = <0>;
-> +                       interrupt-controller;
-> +                       reg = <0 0x110a0000 0 0x10000>;
-
-The size of the "reg" property will be 0x20000 on RZ/Five, to cover the
-extra [NIT]MSK registers, so I think this belongs in r9a07g043u.dtsi, too.
-
-> +                       power-domains = <&cpg>;
-> +               };
-> +
->                 dmac: dma-controller@11820000 {
->                         compatible = "renesas,r9a07g043-dmac",
->                                      "renesas,rz-dmac";
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+viresh
