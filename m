@@ -2,121 +2,298 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7958C4332F
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 11:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C6EC4332F
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Nov 2022 11:20:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239768AbiKQLQL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Nov 2022 06:16:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34292 "EHLO
+        id S232943AbiKQLUL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Nov 2022 06:20:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239689AbiKQLP6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 06:15:58 -0500
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD9D1CCB
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 03:15:57 -0800 (PST)
-Received: by mail-vs1-xe31.google.com with SMTP id t14so1163412vsr.9
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 03:15:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QU0nSJpD9ka9k8qpAWYKUoxPSuG3FpjCq7CoLXEwtfM=;
-        b=vbIDvXSCBP/n20uZKOJFzxEktFeddxaJxfntOT7UUZGdnbYbaLU35Kaw7cuTi+PUDV
-         ax4glYQ25XgZL2gOwUOA74iOi1jmfbrx80XwZZ0+FQ+ytQJU+JSeSd/RMYJR/g4jA/A/
-         5rNlD9awE/IYltBhcVDG6OXDrp/lJRbpullmzC9dDJEc/WWZlWBKFn0SsBBmkaVGqo2t
-         pk927Ev86zFzaiS7AVLHCFh1fbKTdzPedfzUHbaXwNKeyDd7QnTVY77PUdzJY6ummIIr
-         SFlVvBJfVvdEUmaNI3qABKRdqABIs8aD95E45cD/JAQcdW4NMcE2TonNaq4qB3ft5ZeW
-         ilnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QU0nSJpD9ka9k8qpAWYKUoxPSuG3FpjCq7CoLXEwtfM=;
-        b=7xMD0gPDAHBT5JDZuAQ1T8DYjSEoyH+npepiFQmXhUsFpKVCMVwGUItjHUyqzJcEfC
-         guneLJJqdLHLS75TNkKCqD3DVa+4yrTf8NgBfJqtlnwgVjiL49StNaSn+zUwXoLjEnGM
-         AEvXnSAdGcyQj33zJ7sc9LC7C5HoQmlEivVzGDe3WbDFhCVqvi6R6BHkiOHMueGM5k/H
-         Z7GMr11qV7wevQw2I39awNC65gynY7DEVJTv34AFDxtCNrrn+gL/wA1ftY1lth04VWw/
-         DUHNMat3xyU6jtGpo1XXIdtSsDfF+phSa/j0LdSvpeHTN2tVYBlyVjz/dnMa1Ip/7VWJ
-         T+nw==
-X-Gm-Message-State: ANoB5pkh2wMauCJmP3A33Cv4eyj2XFPszjA+oTeS6syCaF2+ZH2grQNs
-        sTPltf1DW+KeZLhnStlqlvw2dzzjxhf0YyCqduSihg==
-X-Google-Smtp-Source: AA0mqf4yStYnVmBdvxAEEPlkc+MTofFbbOa+Uj2n8uEGr8nndvakzZRgbHwgOngKHxnz1fBI0s6Z+1uQ+vGEUJa+F1s=
-X-Received: by 2002:a67:fbd6:0:b0:3ac:38c7:1bdd with SMTP id
- o22-20020a67fbd6000000b003ac38c71bddmr1330885vsr.9.1668683756848; Thu, 17 Nov
- 2022 03:15:56 -0800 (PST)
+        with ESMTP id S239359AbiKQLUJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2022 06:20:09 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1719F2B1BA
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2022 03:20:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1668684008; x=1700220008;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=XhnF+axqA1zHWqpzx9+jUGbGFanMBd7y0Idct9XsTNo=;
+  b=YkzkJD/Hx2r9pKsCOT4JpKwFkEHqcP7J15Nvw7XOug2Dtbtn/fXlV8o2
+   YuWTF38xOYgKBDvTeS6TJjkfbAgyv+ijna3Q+GblcXwW1YSlO/Q/4r2CM
+   asFmkL9RlCQjhGrM418FT2R7joY0MaNNrAp5Z9TgKjewTIDe7EXbERbED
+   cgpikFISqaoaOoGtURO8d1MGKQdPboRNA6jNOF0zF2i2e57guAZHjYaoY
+   N2IaKKE3U/AatT3L46Oe3AbnNANGIRnUJTsu4OFX6wDOoGCbdvWtNxJM0
+   owdx3t0RRsvhsGP0Rx48lCVvvHjIUtOLEHee1EuIauLQy421T1y+xWENd
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10533"; a="310455120"
+X-IronPort-AV: E=Sophos;i="5.96,171,1665471600"; 
+   d="scan'208";a="310455120"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2022 03:20:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10533"; a="639767564"
+X-IronPort-AV: E=Sophos;i="5.96,171,1665471600"; 
+   d="scan'208";a="639767564"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga002.jf.intel.com with ESMTP; 17 Nov 2022 03:20:06 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 04D8F2B7; Thu, 17 Nov 2022 13:20:30 +0200 (EET)
+Date:   Thu, 17 Nov 2022 13:20:30 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linux pin control <linux-gpio@vger.kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [GIT PULL] intel-pinctrl for 6.2-1
+Message-ID: <Y3YY/m0F/Rh0jUc7@black.fi.intel.com>
 MIME-Version: 1.0
-References: <cover.1667815011.git.viresh.kumar@linaro.org> <CAMRc=McWo-kUrMitbm-_YgeEYXx+ARneezAF-Tg7OMwgGydXkQ@mail.gmail.com>
- <20221117073120.g6xhn6i2dbzougx3@vireshk-i7> <CAMRc=MdNJV7gnz6-TKYCWt1uus0=urrtiBgmFdASAK7-dvSbzQ@mail.gmail.com>
- <20221117095609.uyamyqi5uuchrxdt@vireshk-i7> <CANiq72nxJn3F0hvWerUJvbgRjfyutQ=CCnpNqfMOEBumX62_SQ@mail.gmail.com>
-In-Reply-To: <CANiq72nxJn3F0hvWerUJvbgRjfyutQ=CCnpNqfMOEBumX62_SQ@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 17 Nov 2022 12:15:45 +0100
-Message-ID: <CAMRc=McUTqUJzV-9yEA-7LxrQ8ktWzaPMv+x-1mOLZ0M2W+uJg@mail.gmail.com>
-Subject: Re: [libgpiod][PATCH V9 0/8] libgpiod: Add Rust bindings
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kent Gibson <warthog618@gmail.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Wedson Almeida Filho <wedsonaf@gmail.com>,
-        =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>,
-        stratos-dev@op-lists.linaro.org,
-        Gerard Ryan <g.m0n3y.2503@gmail.com>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-        y86-dev <y86-dev@protonmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Nov 17, 2022 at 12:07 PM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Thu, Nov 17, 2022 at 10:56 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > On 17-11-22, 10:06, Bartosz Golaszewski wrote:
-> > >
-> > > Just use regular SPDX header at the top of the file in a # comment block?
-> >
-> > Miguel ? Kent ?
->
-> In the kernel at least, all files (including docs) should have an SPDX line.
->
-> However, configuration files which use a publicly documented format
-> (things like dot files) are not copyrightable apparently, and it was
-> proposed that the `scripts/spdxexclude` kernel script excludes those
-> [1], but the patch has not been merged (yet?) since I raised a couple
-> questions about how to handle those (sorry...).
->
-> So I am not sure if e.g. `Cargo.toml` should have a SPDX license
-> identifier or not.
->
-> [1] https://lore.kernel.org/lkml/20220516102615.884180377@linutronix.de/
->
-> Cheers,
-> Miguel
+Hi Linux pin control  maintainers,
 
-Ha! I wasn't even aware of this spdxexclude and spdxcheck mechanism.
-What does spdxcheck do better than reuse lint other than having its
-own ignore list?
+After headers cleanup, this is more focused on the Intel pin control drivers,
+and has been in the Linux Next for a couple of weeks without any problem
+reported. Please pull for v6.2 cycle!
 
-I'm not sure I want to import it into libgpiod though.
+Thanks,
 
-Reuse docs say:
+With Best Regards,
+Andy Shevchenko
 
----
-You probably will have files in your project that you do not find
-particularly copyrightable, for example configuration files such as
-.gitignore. Intuitively you may not want to license these files, but
-the fundamental idea of REUSE is that all your files will clearly have
-their copyright and licensing marked.
----
+The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
 
-So I'd say - just use CC0-1.0 license in Cargo.toml?
+  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
 
-Bart
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel.git tags/intel-pinctrl-v6.2-1
+
+for you to fetch changes up to b14ef61314b37a4a720a1f5686627d5061387480:
+
+  pinctrl: intel: Add Intel Moorefield pin controller support (2022-11-08 16:28:17 +0200)
+
+----------------------------------------------------------------
+intel-pinctrl for v6.2-1
+
+* Add Intel Moorefield pin control driver
+* Deduplicate COMMUNITY() macro in the Intel pin control drivers
+* Switch Freescale GPIO driver to use fwnode instead of of_node
+* Miscellaneous clenups here and there
+
+The following is an automated git shortlog grouped by driver:
+
+alderlake:
+ -  Deduplicate COMMUNITY macro code
+
+cannonlake:
+ -  Deduplicate COMMUNITY macro code
+
+device property:
+ -  Introduce fwnode_device_is_compatible() helper
+
+icelake:
+ -  Deduplicate COMMUNITY macro code
+
+intel:
+ -  Add Intel Moorefield pin controller support
+ -  Use temporary variable for struct device
+ -  Use str_enable_disable() helper
+
+merrifield:
+ -  Use temporary variable for struct device
+
+qcom:
+ -  lpass-lpi: Add missed bitfield.h
+
+soc:
+ -  fsl: qe: Switch to use fwnode instead of of_node
+
+sunrisepoint:
+ -  Deduplicate COMMUNITY macro code
+
+tigerlake:
+ -  Deduplicate COMMUNITY macro code
+
+----------------------------------------------------------------
+Andy Shevchenko (65):
+      gpio: aspeed: Add missing header(s)
+      gpio: arizona: Remove unused header(s)
+      gpio: da9052: Remove unused header(s)
+      gpio: mockup: Add missing header(s)
+      gpio: pca953x: Add missing header(s)
+      gpio: pl061: Add missing header(s)
+      gpio: reg: Add missing header(s)
+      gpio: wm8350: Remove unused header(s)
+      gpio: tegra186: Add missing header(s)
+      gpiolib: cdev: Add missing header(s)
+      gpiolib: Clean up headers
+      media: c8sectpfe: Add missing header(s)
+      pinctrl: actions: Add missing header(s)
+      pinctrl: apple-gpio: Add missing header(s)
+      pinctrl: aspeed: Add missing header(s)
+      pinctrl: at91: Add missing header(s)
+      pinctrl: axp209: Add missing header(s)
+      pinctrl: bcm: Add missing header(s)
+      pinctrl: bm1880: Add missing header(s)
+      pinctrl: cirrus: Add missing header(s)
+      pinctrl: cy8c95x0: Add missing header(s)
+      pinctrl: gemini: Add missing header(s)
+      pinctrl: imx: Add missing header(s)
+      pinctrl: ingenic: Add missing header(s)
+      pinctrl: k210: Add missing header(s)
+      pinctrl: lantiq: Add missing header(s)
+      pinctrl: lochnagar: Add missing header(s)
+      pinctrl: lpc18xx: Add missing header(s)
+      pinctrl: mediatek: Add missing header(s)
+      pinctrl: microchip-sgpio: Add missing header(s)
+      pinctrl: mvebu: Add missing header(s)
+      pinctrl: npcm7xx: Add missing header(s)
+      pinctrl: ocelot: Add missing header(s)
+      pinctrl: qcom: Add missing header(s)
+      pinctrl: renesas: Add missing header(s)
+      pinctrl: samsung: Add missing header(s)
+      pinctrl: single: Add missing header(s)
+      pinctrl: spear: Add missing header(s)
+      pinctrl: sprd: Add missing header(s)
+      pinctrl: st: Add missing header(s)
+      pinctrl: starfive: Add missing header(s)
+      pinctrl: stm32: Add missing header(s)
+      pinctrl: stmfx: Add missing header(s)
+      pinctrl: sunxi: Add missing header(s)
+      pinctrl: tegra: Add missing header(s)
+      pinctrl: ti-iodelay: Add missing header(s)
+      pinctrl: uniphier: Add missing header(s)
+      pinctrl: zynqmp: Add missing header(s)
+      pinctrl: cherryview: Add missing header(s)
+      pinctrl: lynxpoint: Add missing header(s)
+      pinctrl: merrifield: Add missing header(s)
+      pinctrl: intel: Add missing header(s)
+      pinctrl: Clean up headers
+      pinctrl: alderlake: Deduplicate COMMUNITY macro code
+      pinctrl: cannonlake: Deduplicate COMMUNITY macro code
+      pinctrl: icelake: Deduplicate COMMUNITY macro code
+      pinctrl: sunrisepoint: Deduplicate COMMUNITY macro code
+      pinctrl: tigerlake: Deduplicate COMMUNITY macro code
+      pinctrl: intel: Use str_enable_disable() helper
+      pinctrl: qcom: lpass-lpi: Add missed bitfield.h
+      device property: Introduce fwnode_device_is_compatible() helper
+      soc: fsl: qe: Switch to use fwnode instead of of_node
+      pinctrl: intel: Use temporary variable for struct device
+      pinctrl: merrifield: Use temporary variable for struct device
+      pinctrl: intel: Add Intel Moorefield pin controller support
+
+ drivers/gpio/gpio-arizona.c                        |   5 +-
+ drivers/gpio/gpio-aspeed.c                         |   5 +-
+ drivers/gpio/gpio-da9052.c                         |   9 +-
+ drivers/gpio/gpio-mockup.c                         |   1 +
+ drivers/gpio/gpio-pca953x.c                        |   3 +-
+ drivers/gpio/gpio-pl061.c                          |  15 +-
+ drivers/gpio/gpio-tegra186.c                       |   3 +-
+ drivers/gpio/gpio-wm8350.c                         |   7 +-
+ drivers/gpio/gpiolib-acpi.h                        |  12 +
+ drivers/gpio/gpiolib-cdev.c                        |   4 +-
+ drivers/gpio/gpiolib-of.h                          |  11 +-
+ drivers/gpio/gpiolib-sysfs.h                       |   2 +
+ .../platform/st/sti/c8sectpfe/c8sectpfe-core.c     |   8 +-
+ drivers/pinctrl/actions/pinctrl-owl.c              |  10 +-
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c            |   1 +
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c             |  13 +-
+ drivers/pinctrl/bcm/pinctrl-cygnus-mux.c           |   9 +-
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c           |  12 +-
+ drivers/pinctrl/bcm/pinctrl-ns2-mux.c              |   8 +-
+ drivers/pinctrl/bcm/pinctrl-nsp-mux.c              |   8 +-
+ drivers/pinctrl/cirrus/pinctrl-lochnagar.c         |   6 +-
+ drivers/pinctrl/cirrus/pinctrl-madera-core.c       |   5 +-
+ drivers/pinctrl/core.c                             |  19 +-
+ drivers/pinctrl/core.h                             |  12 +-
+ drivers/pinctrl/devicetree.h                       |   6 +
+ drivers/pinctrl/freescale/pinctrl-imx.c            |   8 +-
+ drivers/pinctrl/freescale/pinctrl-imx1-core.c      |   4 +-
+ drivers/pinctrl/freescale/pinctrl-mxs.c            |   7 +-
+ drivers/pinctrl/intel/Kconfig                      |  11 +
+ drivers/pinctrl/intel/Makefile                     |   1 +
+ drivers/pinctrl/intel/pinctrl-alderlake.c          |  40 +-
+ drivers/pinctrl/intel/pinctrl-cannonlake.c         |   8 +-
+ drivers/pinctrl/intel/pinctrl-cherryview.c         |   6 +-
+ drivers/pinctrl/intel/pinctrl-icelake.c            |   8 +-
+ drivers/pinctrl/intel/pinctrl-intel.c              |  32 +-
+ drivers/pinctrl/intel/pinctrl-lynxpoint.c          |   6 +-
+ drivers/pinctrl/intel/pinctrl-merrifield.c         |  19 +-
+ drivers/pinctrl/intel/pinctrl-moorefield.c         | 916 +++++++++++++++++++++
+ drivers/pinctrl/intel/pinctrl-sunrisepoint.c       |  32 +-
+ drivers/pinctrl/intel/pinctrl-tigerlake.c          |  28 +-
+ drivers/pinctrl/mediatek/pinctrl-moore.c           |   3 +
+ drivers/pinctrl/mediatek/pinctrl-paris.c           |   5 +
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c              |  14 +-
+ drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c          |  11 +-
+ drivers/pinctrl/pinconf.h                          |  10 +
+ drivers/pinctrl/pinctrl-apple-gpio.c               |   7 +-
+ drivers/pinctrl/pinctrl-at91-pio4.c                |  10 +-
+ drivers/pinctrl/pinctrl-at91.c                     |  16 +-
+ drivers/pinctrl/pinctrl-axp209.c                   |   8 +-
+ drivers/pinctrl/pinctrl-bm1880.c                   |   6 +-
+ drivers/pinctrl/pinctrl-cy8c95x0.c                 |   1 +
+ drivers/pinctrl/pinctrl-falcon.c                   |   9 +-
+ drivers/pinctrl/pinctrl-gemini.c                   |  12 +-
+ drivers/pinctrl/pinctrl-ingenic.c                  |  10 +-
+ drivers/pinctrl/pinctrl-k210.c                     |  12 +-
+ drivers/pinctrl/pinctrl-lantiq.c                   |   5 +-
+ drivers/pinctrl/pinctrl-lantiq.h                   |   7 +-
+ drivers/pinctrl/pinctrl-lpc18xx.c                  |   6 +-
+ drivers/pinctrl/pinctrl-microchip-sgpio.c          |   4 +-
+ drivers/pinctrl/pinctrl-ocelot.c                   |  10 +-
+ drivers/pinctrl/pinctrl-single.c                   |   6 +-
+ drivers/pinctrl/pinctrl-st.c                       |  21 +-
+ drivers/pinctrl/pinctrl-stmfx.c                    |   2 +
+ drivers/pinctrl/pinctrl-utils.h                    |   5 +
+ drivers/pinctrl/pinctrl-zynqmp.c                   |   5 +-
+ drivers/pinctrl/pinmux.c                           |  17 +-
+ drivers/pinctrl/pinmux.h                           |  11 +
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.c           |   5 +
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.h           |   9 +-
+ drivers/pinctrl/qcom/pinctrl-msm.c                 |  25 +-
+ drivers/pinctrl/qcom/pinctrl-msm.h                 |   5 +
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           |   8 +-
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c            |   8 +-
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c           |  18 +-
+ drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c            |  18 +-
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c            |   7 +-
+ drivers/pinctrl/renesas/pinctrl-rzn1.c             |   8 +-
+ drivers/pinctrl/renesas/pinctrl-rzv2m.c            |   4 +-
+ drivers/pinctrl/renesas/pinctrl.c                  |   8 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |  11 +-
+ drivers/pinctrl/spear/pinctrl-spear.c              |   6 +-
+ drivers/pinctrl/sprd/pinctrl-sprd.c                |   7 +-
+ drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c |   3 +
+ drivers/pinctrl/stm32/pinctrl-stm32.c              |  16 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c              |  18 +-
+ drivers/pinctrl/tegra/pinctrl-tegra-xusb.c         |   7 +-
+ drivers/pinctrl/tegra/pinctrl-tegra.c              |   6 +-
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c            |   8 +-
+ drivers/pinctrl/uniphier/pinctrl-uniphier-core.c   |   8 +-
+ drivers/soc/fsl/qe/gpio.c                          |   4 +-
+ include/linux/gpio.h                               |   2 +-
+ include/linux/gpio/aspeed.h                        |   4 +
+ include/linux/gpio/driver.h                        |   2 +-
+ include/linux/gpio/gpio-reg.h                      |   4 +
+ include/linux/gpio/machine.h                       |   1 -
+ include/linux/pinctrl/consumer.h                   |  31 +-
+ include/linux/pinctrl/devinfo.h                    |   6 +-
+ include/linux/pinctrl/machine.h                    |   8 +-
+ include/linux/pinctrl/pinconf-generic.h            |  23 +-
+ include/linux/pinctrl/pinctrl.h                    |  18 +-
+ include/linux/pinctrl/pinmux.h                     |   5 +-
+ include/linux/property.h                           |  10 +-
+ 102 files changed, 1522 insertions(+), 362 deletions(-)
+ create mode 100644 drivers/pinctrl/intel/pinctrl-moorefield.c
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
