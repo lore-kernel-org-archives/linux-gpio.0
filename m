@@ -2,273 +2,117 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43287C4167B
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Nov 2022 09:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0554C4332F
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Nov 2022 09:36:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241427AbiKRJXH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Nov 2022 04:23:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40650 "EHLO
+        id S241141AbiKRJgH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Nov 2022 04:36:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241907AbiKRJXD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2022 04:23:03 -0500
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8B6513FB4;
-        Fri, 18 Nov 2022 01:23:01 -0800 (PST)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2AI9McU6088988;
-        Fri, 18 Nov 2022 03:22:38 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1668763358;
-        bh=tXs6R0mvSUCO8x2+JuLayHsb/o4hcOq8dxYox3qUjUI=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=kbruheuCfW8eXPWeEbbI6zlBZdE8Ej2wXtyP1XLAi7x4k87G0JQOj52SS66L0hVEc
-         S09jztvq4nSvm9UVGlYNSYf+MOB4btQoxAZJo4AMPPTP8kYFrnZ+cCyOKkVt6REiyZ
-         xafENdEmAYzQMx6g58Yz6YDHo0JPVfvVfe9MUI4A=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2AI9Mcod031115
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 18 Nov 2022 03:22:38 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Fri, 18
- Nov 2022 03:22:37 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Fri, 18 Nov 2022 03:22:37 -0600
-Received: from localhost (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2AI9MYas027958;
-        Fri, 18 Nov 2022 03:22:36 -0600
-From:   Matt Ranostay <mranostay@ti.com>
-To:     <vigneshr@ti.com>, <robh@kernel.org>,
-        <krzysztof.kozlowski@linaro.org>, <a.zummo@towertech.it>,
-        <linus.walleij@linaro.org>, <lee@kernel.org>, <brgl@bgdev.pl>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-rtc@vger.kernel.org>, Keerthy <j-keerthy@ti.com>,
-        Matt Ranostay <mranostay@ti.com>
-Subject: [PATCH v4 3/4] rtc: rtc-tps6594x: Add support for TPS6594X PMIC RTC
-Date:   Fri, 18 Nov 2022 01:22:17 -0800
-Message-ID: <20221118092218.480147-4-mranostay@ti.com>
-X-Mailer: git-send-email 2.38.GIT
-In-Reply-To: <20221118092218.480147-1-mranostay@ti.com>
-References: <20221118092218.480147-1-mranostay@ti.com>
+        with ESMTP id S235236AbiKRJgG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2022 04:36:06 -0500
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAE1CA47E
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Nov 2022 01:36:03 -0800 (PST)
+Received: by mail-pf1-x42e.google.com with SMTP id y13so4369092pfp.7
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Nov 2022 01:36:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PMpH9QrMmZcD/iw8g7zfLIcvd9qzkR0/JcRk7BBC/tA=;
+        b=Xu78wYvixMCcCkwuUqfubwygNwbVnSAHygf58D81Lc3X7zyLqRDtTW94vMn8kdC/0k
+         AdTQiu9e7lO04BOOrKcq0EZAAO96Jl/2jvpijm5kX5EfITl1DWTbErsHGVGoEeabxMaL
+         u5+NONdGv6rHucaTsZXZwL2SBdHjKYTkJTmOOlOhjhNBI6ijwC3wCxwVlg5NRvm40nJH
+         cwV/areEzihw7d9zTSx7Vs3bXjBGRKjrm+L9EDCwTb3MDOqMbAPfoRf48MCAttZUsYAO
+         WQAR1hT58zfvWl9VYxKmdDYBN2uglwYG8qzG8cS2e/dQVYpB275UhKfXqx+HN75ygLpb
+         jm6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PMpH9QrMmZcD/iw8g7zfLIcvd9qzkR0/JcRk7BBC/tA=;
+        b=DWmCiQRfKDbAEPWOu2pSesVCd5C/5hQFHGgBRagQgkB2RrHzzbIQ/U++XZEWuzfvVa
+         X1bMlHA0qINJxPfaXX4kuGGy0ahMAlMKfzDAELhDr/3a0/RA1LmW8vfp0qgGK+f62OjQ
+         M51ECRpM6JMpUESPLqisg9Cl1j5UnoRFZlrbXw/+GOuN4VgmCipl/5qLQAhCEGeu4v6G
+         JbgFThRU2qsU45/CBeW5KxU8v1qjFjNJNN+Lu3djuOR6NhAFHPc8DktzGYAZu0H3g8iu
+         m+hbnH8mlGAlcly9XAqhXtGUQXIZkSxc9y3IN0ffH+H8LdJzNB75NRkmYjmgTl5PeR8n
+         TtgQ==
+X-Gm-Message-State: ANoB5pl1FOPda0dEU2oeJK246tl6zSNF5T2IUOktSZy8Q3q68FtSL9VW
+        cq5/FUXXSdsuEhGTxbA4sKIE8g==
+X-Google-Smtp-Source: AA0mqf6TuHjmiq21/1AYgbe+JxVlZpkN8xeKNuDSitQTJ02HdDuUvw3UCr91E5vDiNcS8dfhWjVN3A==
+X-Received: by 2002:a63:165d:0:b0:473:f7cd:6603 with SMTP id 29-20020a63165d000000b00473f7cd6603mr6037958pgw.336.1668764163207;
+        Fri, 18 Nov 2022 01:36:03 -0800 (PST)
+Received: from localhost ([122.172.85.60])
+        by smtp.gmail.com with ESMTPSA id u5-20020a170903124500b00186c3afb49esm3098403plh.209.2022.11.18.01.36.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Nov 2022 01:36:02 -0800 (PST)
+Date:   Fri, 18 Nov 2022 15:05:58 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Kent Gibson <warthog618@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Wedson Almeida Filho <wedsonaf@gmail.com>,
+        Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+        stratos-dev@op-lists.linaro.org,
+        Gerard Ryan <g.m0n3y.2503@gmail.com>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        y86-dev <y86-dev@protonmail.com>
+Subject: Re: [libgpiod][PATCH V9 0/8] libgpiod: Add Rust bindings
+Message-ID: <20221118093558.hopbhda6knmoekyt@vireshk-i7>
+References: <cover.1667815011.git.viresh.kumar@linaro.org>
+ <CAMRc=McWo-kUrMitbm-_YgeEYXx+ARneezAF-Tg7OMwgGydXkQ@mail.gmail.com>
+ <20221117073120.g6xhn6i2dbzougx3@vireshk-i7>
+ <CAMRc=MdNJV7gnz6-TKYCWt1uus0=urrtiBgmFdASAK7-dvSbzQ@mail.gmail.com>
+ <20221117095609.uyamyqi5uuchrxdt@vireshk-i7>
+ <CANiq72nxJn3F0hvWerUJvbgRjfyutQ=CCnpNqfMOEBumX62_SQ@mail.gmail.com>
+ <CAMRc=McUTqUJzV-9yEA-7LxrQ8ktWzaPMv+x-1mOLZ0M2W+uJg@mail.gmail.com>
+ <20221117112517.64fvaynvjwbcqeix@vireshk-i7>
+ <CAMRc=Mdyk4Fx5aKvjKjZSRhsSOq03wiHcMP7=Y2TG4ovWf-+zA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=Mdyk4Fx5aKvjKjZSRhsSOq03wiHcMP7=Y2TG4ovWf-+zA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Keerthy <j-keerthy@ti.com>
+On 17-11-22, 13:18, Bartosz Golaszewski wrote:
+> Then let's just add the SPDX identifier on top to make reuse happy.
 
-Add support for TPS6594X PMIC RTC. However, currently only get/set of
-time + date functionality is supported.
+This looks fine ?
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Signed-off-by: Matt Ranostay <mranostay@ti.com>
----
- drivers/rtc/Kconfig        |  10 +++
- drivers/rtc/Makefile       |   1 +
- drivers/rtc/rtc-tps6594x.c | 155 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 166 insertions(+)
- create mode 100644 drivers/rtc/rtc-tps6594x.c
+diff --git a/bindings/rust/Cargo.toml b/bindings/rust/Cargo.toml
+index 4fdf4e06ff90..85abe70b4aa5 100644
+--- a/bindings/rust/Cargo.toml
++++ b/bindings/rust/Cargo.toml
+@@ -1,7 +1,12 @@
++# SPDX-License-Identifier: CC0-1.0
++#
++# Copyright 2022 Linaro Ltd. All Rights Reserved.
++#     Viresh Kumar <viresh.kumar@linaro.org>
++
+ [workspace]
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index ab9a1f814119..50e0de4d6eb3 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -588,6 +588,16 @@ config RTC_DRV_TPS65910
- 	  This driver can also be built as a module. If so, the module
- 	  will be called rtc-tps65910.
- 
-+config RTC_DRV_TPS6594X
-+	tristate "TI TPS6594X RTC driver"
-+	depends on MFD_TPS6594X || COMPILE_TEST
-+	help
-+	  If you say yes here you get support for the RTC of TI TPS6594X series PMIC
-+	  chips.
+
+diff --git a/bindings/rust/libgpiod-sys/README.md b/bindings/rust/libgpiod-sys/README.md
+index ecf75b31c41e..567891a30868 100644
+--- a/bindings/rust/libgpiod-sys/README.md
++++ b/bindings/rust/libgpiod-sys/README.md
+@@ -1,11 +1,15 @@
++# SPDX-License-Identifier: CC0-1.0
++#
++# Copyright 2022 Linaro Ltd. All Rights Reserved.
++#     Viresh Kumar <viresh.kumar@linaro.org>
 +
-+	  This driver can also be built as a module. If so, the module
-+	  will be called rtc-tps6594x.
-+
- config RTC_DRV_RC5T583
- 	tristate "RICOH 5T583 RTC driver"
- 	depends on MFD_RC5T583
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index d3c042dcbc73..5e3a3b06fc20 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -175,6 +175,7 @@ obj-$(CONFIG_RTC_DRV_TEST)	+= rtc-test.o
- obj-$(CONFIG_RTC_DRV_TI_K3)	+= rtc-ti-k3.o
- obj-$(CONFIG_RTC_DRV_TPS6586X)	+= rtc-tps6586x.o
- obj-$(CONFIG_RTC_DRV_TPS65910)	+= rtc-tps65910.o
-+obj-$(CONFIG_RTC_DRV_TPS6594X)	+= rtc-tps6594x.o
- obj-$(CONFIG_RTC_DRV_TWL4030)	+= rtc-twl.o
- obj-$(CONFIG_RTC_DRV_V3020)	+= rtc-v3020.o
- obj-$(CONFIG_RTC_DRV_VT8500)	+= rtc-vt8500.o
-diff --git a/drivers/rtc/rtc-tps6594x.c b/drivers/rtc/rtc-tps6594x.c
-new file mode 100644
-index 000000000000..20fe076112e6
---- /dev/null
-+++ b/drivers/rtc/rtc-tps6594x.c
-@@ -0,0 +1,155 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * rtc-tps6594x.c -- TPS6594x Real Time Clock driver.
-+ *
-+ * Copyright (C) 2022 Texas Instruments Incorporated - https://www.ti.com
-+ */
-+
-+#include <linux/bcd.h>
-+#include <linux/errno.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/tps6594x.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/rtc.h>
-+#include <linux/types.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+struct tps6594x_rtc {
-+	struct rtc_device	*rtc;
-+	struct device		*dev;
-+};
-+
-+#define TPS6594X_RTC_POLL	20000
-+#define TPS6594X_RTC_TIMEOUT	100000
-+
-+#define TPS6594X_NUM_TIME_REGS	(TPS6594X_RTC_YEARS - TPS6594X_RTC_SECONDS + 1)
-+
-+static int tps6594x_rtc_read_time(struct device *dev, struct rtc_time *tm)
-+{
-+	unsigned char rtc_data[TPS6594X_NUM_TIME_REGS];
-+	struct tps6594x *tps6594x = dev_get_drvdata(dev->parent);
-+	int ret;
-+
-+	/* Reset TPS6594X_RTC_CTRL_REG_GET_TIME bit to zero, required for latch */
-+	ret = regmap_update_bits(tps6594x->regmap, TPS6594X_RTC_CTRL_1,
-+		TPS6594X_RTC_CTRL_REG_GET_TIME, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Copy RTC counting registers to static registers or latches */
-+	ret = regmap_update_bits(tps6594x->regmap, TPS6594X_RTC_CTRL_1,
-+		TPS6594X_RTC_CTRL_REG_GET_TIME, TPS6594X_RTC_CTRL_REG_GET_TIME);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = regmap_bulk_read(tps6594x->regmap, TPS6594X_RTC_SECONDS,
-+			rtc_data, TPS6594X_NUM_TIME_REGS);
-+	if (ret < 0)
-+		return ret;
-+
-+	tm->tm_sec = bcd2bin(rtc_data[0]);
-+	tm->tm_min = bcd2bin(rtc_data[1]);
-+	tm->tm_hour = bcd2bin(rtc_data[2]);
-+	tm->tm_mday = bcd2bin(rtc_data[3]);
-+	tm->tm_mon = bcd2bin(rtc_data[4]) - 1;
-+	tm->tm_year = bcd2bin(rtc_data[5]) + 100;
-+
-+	return ret;
-+}
-+
-+static int tps6594x_rtc_set_time(struct device *dev, struct rtc_time *tm)
-+{
-+	unsigned char rtc_data[TPS6594X_NUM_TIME_REGS];
-+	struct tps6594x *tps6594x = dev_get_drvdata(dev->parent);
-+	unsigned int val;
-+	int ret;
-+
-+	rtc_data[0] = bin2bcd(tm->tm_sec);
-+	rtc_data[1] = bin2bcd(tm->tm_min);
-+	rtc_data[2] = bin2bcd(tm->tm_hour);
-+	rtc_data[3] = bin2bcd(tm->tm_mday);
-+	rtc_data[4] = bin2bcd(tm->tm_mon + 1);
-+	rtc_data[5] = bin2bcd(tm->tm_year - 100);
-+
-+	/* Stop RTC while updating the RTC time registers */
-+	ret = regmap_update_bits(tps6594x->regmap, TPS6594X_RTC_CTRL_1,
-+				 TPS6594X_RTC_CTRL_REG_STOP_RTC, 0);
-+	if (ret < 0) {
-+		dev_err(dev, "RTC stop failed, err = %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Waiting till RTC isn't running */
-+	ret = regmap_read_poll_timeout(tps6594x->regmap, TPS6594X_RTC_STATUS,
-+				       val, !(val & TPS6594X_RTC_STATUS_RUN),
-+				       TPS6594X_RTC_POLL, TPS6594X_RTC_TIMEOUT);
-+	if (ret) {
-+		dev_err(dev, "RTC_STATUS is still RUNNING\n");
-+		return ret;
-+	}
-+
-+	ret = regmap_bulk_write(tps6594x->regmap, TPS6594X_RTC_SECONDS,
-+		rtc_data, TPS6594X_NUM_TIME_REGS);
-+	if (ret < 0) {
-+		dev_err(dev, "RTC_SECONDS reg write failed, err = %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Start back RTC */
-+	ret = regmap_update_bits(tps6594x->regmap, TPS6594X_RTC_CTRL_1,
-+				 TPS6594X_RTC_CTRL_REG_STOP_RTC,
-+				 TPS6594X_RTC_CTRL_REG_STOP_RTC);
-+	if (ret < 0)
-+		dev_err(dev, "RTC start failed, err = %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static const struct rtc_class_ops tps6594x_rtc_ops = {
-+	.read_time	= tps6594x_rtc_read_time,
-+	.set_time	= tps6594x_rtc_set_time,
-+};
-+
-+static int tps6594x_rtc_probe(struct platform_device *pdev)
-+{
-+	struct tps6594x_rtc *tps6594x_rtc;
-+
-+	tps6594x_rtc = devm_kzalloc(&pdev->dev, sizeof(*tps6594x_rtc), GFP_KERNEL);
-+	if (!tps6594x_rtc)
-+		return -ENOMEM;
-+
-+	tps6594x_rtc->dev = &pdev->dev;
-+	platform_set_drvdata(pdev, tps6594x_rtc);
-+
-+	tps6594x_rtc->rtc = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(tps6594x_rtc->rtc))
-+		return PTR_ERR(tps6594x_rtc->rtc);
-+
-+	tps6594x_rtc->rtc->ops = &tps6594x_rtc_ops;
-+
-+	return devm_rtc_register_device(tps6594x_rtc->rtc);
-+}
-+
-+static const struct of_device_id of_tps6594x_rtc_match[] = {
-+	{ .compatible = "ti,tps6594-rtc", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, of_tps6594x_rtc_match);
-+
-+static struct platform_driver tps6594x_rtc_driver = {
-+	.probe		= tps6594x_rtc_probe,
-+	.driver		= {
-+		.name	= "tps6594-rtc",
-+		.of_match_table = of_tps6594x_rtc_match,
-+	},
-+};
-+
-+module_platform_driver(tps6594x_rtc_driver);
-+
-+MODULE_ALIAS("platform:tps6594-rtc");
-+MODULE_DESCRIPTION("TI TPS6594x series RTC driver");
-+MODULE_AUTHOR("Keerthy J <j-keerthy@ti.com>");
-+MODULE_LICENSE("GPL");
+ # Generated libgpiod-sys Rust FFI bindings
+
 -- 
-2.38.GIT
-
+viresh
