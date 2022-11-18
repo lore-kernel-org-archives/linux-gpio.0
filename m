@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF0CC4167B
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Nov 2022 11:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF45C4332F
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Nov 2022 11:32:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235283AbiKRLcm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Nov 2022 06:32:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34398 "EHLO
+        id S234724AbiKRLco (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Nov 2022 06:32:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241392AbiKRLcW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2022 06:32:22 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBDBD8B126;
-        Fri, 18 Nov 2022 03:32:12 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id bs21so8812135wrb.4;
-        Fri, 18 Nov 2022 03:32:12 -0800 (PST)
+        with ESMTP id S241377AbiKRLcV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2022 06:32:21 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D34687FC0B;
+        Fri, 18 Nov 2022 03:32:07 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id c65-20020a1c3544000000b003cfffd00fc0so3326576wma.1;
+        Fri, 18 Nov 2022 03:32:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QAvy8c9gtUZy8nIKl3qnMpXIEQOhQbRLMkZCTIdFNcc=;
-        b=aNhQxWuIWQUM3GCgOEFW2ZaDl4AyvbGzGmidBaLQC+ptKYUkJMc2y1N5bL5BtqJzxw
-         tG8wHRSWcuOaP16tIMVDdNC3xcOongXTsakZi53NoIrWqwojxxQRR910c5rNJsGN0XxG
-         poretQK9G6L9xOKuCmwTSz4hu4u23ssH6RiUglyhhwxmkJWaBs5mxW3hi0gSYEzK/2sv
-         9P4C0fuDDKBKtSZSXiso47V3Lt7AImco8795s/Pv1mdBU3vvd4bioludYswbjBZ/mA/Q
-         wRA/uEOvlmJzTvalcY3EX/Ijgvvl/WaPXnmDEgwaq/4wOnCPsshoad8PU3GJouj/bG4Z
-         51Vg==
+        bh=FHS4xwDjkiA0w7wmXV8oTrtUiAVe60d4UjcHzqznohk=;
+        b=KxmieWi6LcnoMSufsx2H60XoPHytWoiY2g2xEWOpLds//yqefgYkioPdZRq/dmI6C/
+         bMUTa4mMMGso7LEpJUe9ymqDlkI+LH99ur3f3bbel5mul55QAGUPhcWgl/ONRekL+PwV
+         3BvmxJixyKduMKdD/fdvKNqo38Hb/WeQpDG3UJozSzcJ7Qf7KBmLL9R5ljuTC3eKmceK
+         fyJONdak3EMU23TMiBslV4uIyJbExCa0oJIxfKOKlmx7e99btj8vTPuOQ5/lenR8OgDc
+         HU1eKC0zO0IC8y/MD3RueO6KGr0mXr+3rTANpOigJLf1XjLcOmFH7Po2r+gtSsuMWbDH
+         p6Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QAvy8c9gtUZy8nIKl3qnMpXIEQOhQbRLMkZCTIdFNcc=;
-        b=rk9wrjYBTm+olV1nLbysIvLeBnQfYmicGyIjSCHurNS1SWCB3e6X1brhcpp+v4EtvD
-         Pe4hsRyOvGjk8X6ZeR74tehWMnQnZbN9VPRQsTOSRMGg7dd0iIq/yb/je8m+FF7vyGIv
-         RnVtpqrlvP0zq2GCv8aV0sS9lGo8Qr/beWrxPhncuWRC67lJm3aNytSKYSwpQpqzhVdn
-         NUdhW6NbxnCHy9ojqqw4YsqLQp1wS3dcmS0ky6cpEHZuWsbKlcWa4IZegf7WaWAuG6Rg
-         d5lkhU8qRoYcwVKvHrnSDf7+LTmQcdrZvwmiNsQAswfbKY6T7bnsCGtwB1bBMDCVZnyv
-         oMjg==
-X-Gm-Message-State: ANoB5plA3qZwWVzKpHlJYVUfwFd3jwr3gW1aMamRfTcq7QltMQ9snNFm
-        nBDXCvG2za1TpTG1It274TE=
-X-Google-Smtp-Source: AA0mqf4b9R5IXX/RtS2DBzFyEY8bsx3yi7235hc2wxNciic0J/Fvaap19LLqleaFiwRkkMUCKSOXCw==
-X-Received: by 2002:a05:6000:1d94:b0:238:3d85:8e2c with SMTP id bk20-20020a0560001d9400b002383d858e2cmr4121275wrb.650.1668771131382;
-        Fri, 18 Nov 2022 03:32:11 -0800 (PST)
+        bh=FHS4xwDjkiA0w7wmXV8oTrtUiAVe60d4UjcHzqznohk=;
+        b=vhxdiYphgv1T2dKeoP1OC3Gwvy6Rtk/b/fjjYKTjdDyCaLZika2EWzPOvzER1ceDvx
+         tVop0+rVMEjPYXhsg5CBFEdGBC0OpkFU5LvfU+d3XPfYENwY3HsHeSyZpSeooGIk3sXr
+         ZbNN2kKidtwjsrdLsUvQnAYrHwHZRj1C91Qbamjfo3W0NdESyUsVEEzs7vC47M+BMuYR
+         boAOpIDW9Igcr21LHBw4OZs9OfRHx2a9H9Ja2YQz1mIl/+PPEk/FRSX+hGwoR32q8tjR
+         Cbn3FeLOLPNhIg1BDkPXrV49Jx06IRYqpB9As4CdqdUaMy8wvm/WyfptMo4MfWKSquh8
+         xNmg==
+X-Gm-Message-State: ANoB5plVWW6Bla9U/wuDtPLdvoVl3nKqGHI1PTkWT/O7NFXYMNYTPMaF
+        MFAezCzrBrG313sFH40GvlU=
+X-Google-Smtp-Source: AA0mqf5b/Gnn4QxNOi6Wr/UKJy8KJUlCLqezaSAdhbXTNpi90xJbNjOwAXkPHMqD4QiKWZIuaEgejQ==
+X-Received: by 2002:a05:600c:1d14:b0:3cf:925e:198c with SMTP id l20-20020a05600c1d1400b003cf925e198cmr4537645wms.144.1668771126415;
+        Fri, 18 Nov 2022 03:32:06 -0800 (PST)
 Received: from localhost.localdomain ([95.183.227.98])
-        by smtp.gmail.com with ESMTPSA id l24-20020a05600c1d1800b003cf878c4468sm9894817wms.5.2022.11.18.03.32.09
+        by smtp.gmail.com with ESMTPSA id l24-20020a05600c1d1800b003cf878c4468sm9894817wms.5.2022.11.18.03.32.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 03:32:11 -0800 (PST)
+        Fri, 18 Nov 2022 03:32:06 -0800 (PST)
 From:   Yassine Oudjana <yassine.oudjana@gmail.com>
 X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
@@ -63,10 +63,10 @@ Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
         Yassine Oudjana <yassine.oudjana@gmail.com>,
         linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 6/7] dt-bindings: pinctrl: mediatek,mt6779-pinctrl: Document MT6735 pin controller
-Date:   Fri, 18 Nov 2022 14:30:27 +0300
-Message-Id: <20221118113028.145348-7-y.oudjana@protonmail.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 4/7] arm64: dts: mediatek: mt6797: Make pin configuration nodes follow DT bindings
+Date:   Fri, 18 Nov 2022 14:30:25 +0300
+Message-Id: <20221118113028.145348-5-y.oudjana@protonmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221118113028.145348-1-y.oudjana@protonmail.com>
 References: <20221118113028.145348-1-y.oudjana@protonmail.com>
@@ -78,135 +78,99 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Add bindings for the pin controller found on MediaTek MT6735 and
-MT6735M SoCs, including describing a method to manually specify
-a pin and function in the pinmux property making defining bindings
-for each pin/function combination unnecessary. The pin controllers
-on those SoCs are generally identical, with the only difference
-being the lack of MSDC2 pins (198-203) on MT6735M.
+Add -pins suffix to pin configuration nodes to follow DT bindings
+and pass dtbs_check.
 
 Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../pinctrl/mediatek,mt6779-pinctrl.yaml      | 55 ++++++++++++++++++-
- MAINTAINERS                                   |  6 ++
- 2 files changed, 60 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/mediatek/mt6797.dtsi | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-index c2238a86b7fe..4fe95b0107ba 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-@@ -10,6 +10,7 @@ maintainers:
-   - Andy Teng <andy.teng@mediatek.com>
-   - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-   - Sean Wang <sean.wang@kernel.org>
-+  - Yassine Oudjana <y.oudjana@protonmail.com>
+diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+index 15616231022a..0c2b477184ae 100644
+--- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+@@ -135,70 +135,70 @@ pio: pinctrl@10005000 {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
  
- description:
-   The MediaTek pin controller on MT6779 is used to control pin
-@@ -18,6 +19,8 @@ description:
- properties:
-   compatible:
-     enum:
-+      - mediatek,mt6735-pinctrl
-+      - mediatek,mt6735m-pinctrl
-       - mediatek,mt6765-pinctrl
-       - mediatek,mt6779-pinctrl
-       - mediatek,mt6795-pinctrl
-@@ -60,6 +63,42 @@ required:
+-		uart0_pins_a: uart0 {
++		uart0_pins_a: uart0-pins {
+ 			pins0 {
+ 				pinmux = <MT6797_GPIO234__FUNC_UTXD0>,
+ 					 <MT6797_GPIO235__FUNC_URXD0>;
+ 			};
+ 		};
  
- allOf:
-   - $ref: "pinctrl.yaml#"
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - mediatek,mt6735-pinctrl
-+              - mediatek,mt6735m-pinctrl
-+    then:
-+      properties:
-+        reg:
-+          minItems: 8
-+          maxItems: 8
-+
-+        reg-names:
-+          items:
-+            - const: gpio
-+            - const: iocfg0
-+            - const: iocfg1
-+            - const: iocfg2
-+            - const: iocfg3
-+            - const: iocfg4
-+            - const: iocfg5
-+            - const: eint
-+
-+        interrupts:
-+          items:
-+            - description: EINT interrupt
-+
-+      patternProperties:
-+        '-pins$':
-+          patternProperties:
-+            '^pins':
-+              properties:
-+                drive-strength:
-+                  enum: [1, 2, 4, 8, 16]
-+
-   - if:
-       properties:
-         compatible:
-@@ -352,18 +391,32 @@ examples:
-             };
+-		uart1_pins_a: uart1 {
++		uart1_pins_a: uart1-pins {
+ 			pins1 {
+ 				pinmux = <MT6797_GPIO232__FUNC_URXD1>,
+ 					 <MT6797_GPIO233__FUNC_UTXD1>;
+ 			};
+ 		};
  
-             /* GPIO0 set as multifunction GPIO0 */
--            gpio-pins {
-+            gpio0-pins {
-                 pins {
-                     pinmux = <PINMUX_GPIO0__FUNC_GPIO0>;
-                 };
-             };
+-		i2c0_pins_a: i2c0 {
++		i2c0_pins_a: i2c0-pins {
+ 			pins0 {
+ 				pinmux = <MT6797_GPIO37__FUNC_SCL0_0>,
+ 					 <MT6797_GPIO38__FUNC_SDA0_0>;
+ 			};
+ 		};
  
-+            /* GPIO1 set to function 0 (GPIO) */
-+            gpio1-pins {
-+                pins {
-+                    pinmux = <(MTK_PIN_NO(1) | 0)>;
-+                };
-+            };
-+
-             /* GPIO52 set as multifunction SDA0 */
-             i2c0-pins {
-                 pins {
-                   pinmux = <PINMUX_GPIO52__FUNC_SDA0>;
-                 };
-             };
-+
-+            /* GPIO62 set to function 1 (primary function) */
-+            i2c1-pins {
-+                pins {
-+                    pinmux = <(MTK_PIN_NO(62) | 1)>;
-+                };
-+            };
-         };
+-		i2c1_pins_a: i2c1 {
++		i2c1_pins_a: i2c1-pins {
+ 			pins1 {
+ 				pinmux = <MT6797_GPIO55__FUNC_SCL1_0>,
+ 					 <MT6797_GPIO56__FUNC_SDA1_0>;
+ 			};
+ 		};
  
-         mmc0 {
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1df62c469bd9..f9223c6cd5a8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16462,6 +16462,12 @@ F:	Documentation/devicetree/bindings/pinctrl/mediatek,mt7622-pinctrl.yaml
- F:	Documentation/devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.yaml
- F:	drivers/pinctrl/mediatek/
+-		i2c2_pins_a: i2c2 {
++		i2c2_pins_a: i2c2-pins {
+ 			pins2 {
+ 				pinmux = <MT6797_GPIO96__FUNC_SCL2_0>,
+ 					 <MT6797_GPIO95__FUNC_SDA2_0>;
+ 			};
+ 		};
  
-+PIN CONTROLLER - MEDIATEK MT6735
-+M:	Yassine Oudjana <y.oudjana@protonmail.com>
-+L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-+
- PIN CONTROLLER - MICROCHIP AT91
- M:	Ludovic Desroches <ludovic.desroches@microchip.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-		i2c3_pins_a: i2c3 {
++		i2c3_pins_a: i2c3-pins {
+ 			pins3 {
+ 				pinmux = <MT6797_GPIO75__FUNC_SDA3_0>,
+ 					 <MT6797_GPIO74__FUNC_SCL3_0>;
+ 			};
+ 		};
+ 
+-		i2c4_pins_a: i2c4 {
++		i2c4_pins_a: i2c4-pins {
+ 			pins4 {
+ 				pinmux = <MT6797_GPIO238__FUNC_SDA4_0>,
+ 					 <MT6797_GPIO239__FUNC_SCL4_0>;
+ 			};
+ 		};
+ 
+-		i2c5_pins_a: i2c5 {
++		i2c5_pins_a: i2c5-pins {
+ 			pins5 {
+ 				pinmux = <MT6797_GPIO240__FUNC_SDA5_0>,
+ 					 <MT6797_GPIO241__FUNC_SCL5_0>;
+ 			};
+ 		};
+ 
+-		i2c6_pins_a: i2c6 {
++		i2c6_pins_a: i2c6-pins {
+ 			pins6 {
+ 				pinmux = <MT6797_GPIO152__FUNC_SDA6_0>,
+ 					 <MT6797_GPIO151__FUNC_SCL6_0>;
+ 			};
+ 		};
+ 
+-		i2c7_pins_a: i2c7 {
++		i2c7_pins_a: i2c7-pins {
+ 			pins7 {
+ 				pinmux = <MT6797_GPIO154__FUNC_SDA7_0>,
+ 					 <MT6797_GPIO153__FUNC_SCL7_0>;
 -- 
 2.38.1
 
