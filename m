@@ -2,92 +2,237 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A11C4332F
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Nov 2022 10:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 646F2C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Nov 2022 10:45:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241514AbiKRKoA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Nov 2022 05:44:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33730 "EHLO
+        id S241789AbiKRKpz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Nov 2022 05:45:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241493AbiKRKn6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2022 05:43:58 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9EF111A23;
-        Fri, 18 Nov 2022 02:43:56 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id g12so7587257lfh.3;
-        Fri, 18 Nov 2022 02:43:56 -0800 (PST)
+        with ESMTP id S241788AbiKRKpZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2022 05:45:25 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9909970AC
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Nov 2022 02:45:08 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id h193so4640066pgc.10
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Nov 2022 02:45:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M54rSFxQLijO3j26nQU0jB0r1Bnt0dCKzsYSgimLrI4=;
-        b=KMvnRwY0L3d/A/JoE/GXTUQz3sVPfvFmvGZpaOggwoHMG6wnO+7CkXqhK7Q7RJI7sK
-         WfR74K9m6eZtlWz+JZxVHEICLP4OT//621qOZhBu2Tn5k35N3yYUwesIA9mDw4uLFE4W
-         4JK4Yr3psUhtsKmVuJNkgIhBQTZ5eg4xmgGVGsEgl4njX5METYg97AT+Byxfaou20Mg5
-         uzsCERH0AZpX+8LAzQ/2CC8ScUhF5Uwu30RlWuNpIY9X3gb5K6WyrSdQSoTfRsPmhoHb
-         NL1sGo6t0gtxPXc65aEsxspqq5QAfl+gMQgASAuNG5fNJGtDvTbsOM68Z3uB/xOQk8T8
-         FD4g==
+        bh=LCnV4M/bWZCJzk7Pe3pJbBiHKn9/ivVh97ayAYI0VZM=;
+        b=xfIXFWEHymvu31vkoFQ7yD5kNv6FDysOXDDiamoGR4+DVSqMUXy/fUG1OgmWseD1Uf
+         0ROsLCWJw8qCe4pKe27yzDE3z0xfcb3dgruiAOrsYscMaNnh/zGjbniZeNURJ69duxFw
+         b2qUoXwMB7f1AYxtko6Yz8E1feM+/jUQghMWuvdFZc4HTpxsr0KPFXs730ukviuH3LcU
+         YFsq6yh6um6iHAWKLF7IcQKOM8HUaZWH4cV9AvWlDi95dFoWAlUTAVcQIiuaVJamuiGx
+         Yy5VYJVWDPKUpzvkakg/G75RZdNyRMAr/OJ+tYXbgmhhCBpG1SrdmyDiLgrhdcsvacIl
+         Lo5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=M54rSFxQLijO3j26nQU0jB0r1Bnt0dCKzsYSgimLrI4=;
-        b=gMw2yel/DbddWShEycCRp1KUPRti2gF3BM5v8UdIs7Wd3h3+zkhW2D6ksutjf76mDU
-         NeLjkSO+6eZt+G9Y1F1/nL0DEEnayZtrYQU/lN74/o9HxEPtWGdFPA6ecdO/J/6RuYu/
-         znAlyXRH4OC9dCy0RgO2pX2fpxOLuyJpNffEwcQDsKpIYZE0UTfldTlu15FYyxgbeLwA
-         j7K8Hoe/fxMP/m7YWLfrrtVz9zk+wwjimLkF5RBkIXhYwsSBdzbA6CdmoI8CzACS3SNJ
-         0CX+8YEwLASRlv2EfCioWN9ooZKQMPRtsQBHzH3LwotvSrESIzA9WEkDeyyuMgIQcFA8
-         r+EQ==
-X-Gm-Message-State: ANoB5pndm94Ft0nQ83EBqKOw+WSA2T3kxtkiERVnRbjDNHuwk9wqXkve
-        0nndVMblJgBkWaR8WSHeupw=
-X-Google-Smtp-Source: AA0mqf5UbfQ4/CHQXYMvIKq/kso9soqgxgLcSAnHR3LCuoNPh4obki+ZWElYMSb07O6pDWTFEjJqfw==
-X-Received: by 2002:a05:6512:324c:b0:4a2:2e51:85c1 with SMTP id c12-20020a056512324c00b004a22e5185c1mr2134919lfr.658.1668768235135;
-        Fri, 18 Nov 2022 02:43:55 -0800 (PST)
-Received: from mkor.rasu.local ([212.22.67.162])
-        by smtp.gmail.com with ESMTPSA id v26-20020a056512049a00b0048b365176d9sm606174lfq.286.2022.11.18.02.43.54
+        bh=LCnV4M/bWZCJzk7Pe3pJbBiHKn9/ivVh97ayAYI0VZM=;
+        b=XrEeYzgOO8c7jUzMvTDf2WVeBpoWEYxZkKmvuX1awws8jgZ9oWalK8q0xzwBTWLusl
+         QB7ePWU7E0zWJervQCRaa2jh3MW3Q1i1SuwKpV04Qd6m+VrzhAIFbjdETDHUA6Jj4VHX
+         SsSiD9WJBTgLHlLapFGBU1MvHrsp1aVb0URQyWuqiAJ5s+B3DFHTBK9850jqFwDEGDOX
+         GUdJXcs8TQVjdMWgIlnYV2AzKS+cUreQGKTZiq98voDBCIKcuUO42Agr4g9ksqUdR/Cv
+         dk57S0k2ey1v0H0OOmnZ1mnvIEEJCWDZGhqmXsusqbWsz3n9Jn+an6P5odKN7XDMTxXR
+         WNgg==
+X-Gm-Message-State: ANoB5pm1pdPGq7aLr/aLZYc5+mckPJA12edJ4ECwy2EIl50q6mn/ftz9
+        2vzl71XtvESpuPzMUEz06dobMA==
+X-Google-Smtp-Source: AA0mqf4orijkFqzUWT0fiAdTsa4BO6h8B3j06OoMsVLr3C+cGAvFVlsEg0wjbLagOYoaAyV7AVuUAQ==
+X-Received: by 2002:a63:1062:0:b0:470:a47:996a with SMTP id 34-20020a631062000000b004700a47996amr6138750pgq.377.1668768308005;
+        Fri, 18 Nov 2022 02:45:08 -0800 (PST)
+Received: from localhost ([122.172.85.60])
+        by smtp.gmail.com with ESMTPSA id j7-20020a170903024700b00178aaf6247bsm3369202plh.21.2022.11.18.02.45.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 02:43:54 -0800 (PST)
-From:   Maxim Korotkov <korotkov.maxim.s@gmail.com>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Maxim Korotkov <korotkov.maxim.s@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lvc-project@linuxtesting.org
-Subject: [PATCH] pinctrl: single: fix potential NULL dereference
-Date:   Fri, 18 Nov 2022 13:43:32 +0300
-Message-Id: <20221118104332.943-1-korotkov.maxim.s@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 18 Nov 2022 02:45:07 -0800 (PST)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kent Gibson <warthog618@gmail.com>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@gmail.com>,
+        =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
+        stratos-dev@op-lists.linaro.org,
+        Gerard Ryan <g.m0n3y.2503@gmail.com>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+        y86-dev <y86-dev@protonmail.com>
+Subject: [libgpiod][PATCH V10 1/6] bindings: rust: Add libgpiod-sys rust crate
+Date:   Fri, 18 Nov 2022 16:14:37 +0530
+Message-Id: <7033d165595079799351384f8b45883401af0ff2.1668768040.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+In-Reply-To: <cover.1668768040.git.viresh.kumar@linaro.org>
+References: <cover.1668768040.git.viresh.kumar@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Added checking of pointer "function" in pcs_set_mux().
-pinmux_generic_get_function() can return NULL and the pointer
-"function" was dereferenced without checking against NULL.
+This adds libgpiod-sys rust crate, which provides FFI (foreign function
+interface) bindings for libgpiod APIs.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: 571aec4df5b7 ("pinctrl: single: Use generic pinmux helpers for managing functions")
-Signed-off-by: Maxim Korotkov <korotkov.maxim.s@gmail.com>
+Reviewed-by: Kent Gibson <warthog618@gmail.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/pinctrl/pinctrl-single.c | 2 ++
- 1 file changed, 2 insertions(+)
+ bindings/rust/.gitignore              |  4 +++
+ bindings/rust/Cargo.toml              |  9 ++++++
+ bindings/rust/libgpiod-sys/Cargo.toml | 21 ++++++++++++++
+ bindings/rust/libgpiod-sys/README.md  | 14 +++++++++
+ bindings/rust/libgpiod-sys/build.rs   | 41 +++++++++++++++++++++++++++
+ bindings/rust/libgpiod-sys/src/lib.rs | 11 +++++++
+ 6 files changed, 100 insertions(+)
+ create mode 100644 bindings/rust/.gitignore
+ create mode 100644 bindings/rust/Cargo.toml
+ create mode 100644 bindings/rust/libgpiod-sys/Cargo.toml
+ create mode 100644 bindings/rust/libgpiod-sys/README.md
+ create mode 100644 bindings/rust/libgpiod-sys/build.rs
+ create mode 100644 bindings/rust/libgpiod-sys/src/lib.rs
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 67bec7ea0f8b..5655a2da5413 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -372,6 +372,8 @@ static int pcs_set_mux(struct pinctrl_dev *pctldev, unsigned fselector,
- 	if (!pcs->fmask)
- 		return 0;
- 	function = pinmux_generic_get_function(pctldev, fselector);
-+	if (!function)
-+		return -EINVAL;
- 	func = function->data;
- 	if (!func)
- 		return -EINVAL;
+diff --git a/bindings/rust/.gitignore b/bindings/rust/.gitignore
+new file mode 100644
+index 000000000000..95054d9da312
+--- /dev/null
++++ b/bindings/rust/.gitignore
+@@ -0,0 +1,4 @@
++# Added by cargo
++
++target
++Cargo.lock
+diff --git a/bindings/rust/Cargo.toml b/bindings/rust/Cargo.toml
+new file mode 100644
+index 000000000000..e3e253a4cf5e
+--- /dev/null
++++ b/bindings/rust/Cargo.toml
+@@ -0,0 +1,9 @@
++# SPDX-License-Identifier: CC0-1.0
++# SPDX-FileCopyrightText: 2022 Linaro Ltd.
++# SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
++
++[workspace]
++
++members = [
++    "libgpiod-sys"
++]
+diff --git a/bindings/rust/libgpiod-sys/Cargo.toml b/bindings/rust/libgpiod-sys/Cargo.toml
+new file mode 100644
+index 000000000000..479184da3f7b
+--- /dev/null
++++ b/bindings/rust/libgpiod-sys/Cargo.toml
+@@ -0,0 +1,21 @@
++# SPDX-License-Identifier: CC0-1.0
++# SPDX-FileCopyrightText: 2022 Linaro Ltd.
++# SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
++
++[package]
++name = "libgpiod-sys"
++version = "0.1.0"
++authors = ["Viresh Kumar <viresh.kumar@linaro.org>"]
++description = "libgpiod public header bindings"
++repository = "https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git"
++categories = ["external-ffi-bindings", "os::linux-apis"]
++rust-version = "1.56"
++keywords = ["libgpiod", "gpio"]
++license = "Apache-2.0 OR BSD-3-Clause"
++edition = "2021"
++
++[dependencies]
++
++[build-dependencies]
++bindgen = "0.59.1"
++cc = "1.0.46"
+diff --git a/bindings/rust/libgpiod-sys/README.md b/bindings/rust/libgpiod-sys/README.md
+new file mode 100644
+index 000000000000..7e6e643ab2ab
+--- /dev/null
++++ b/bindings/rust/libgpiod-sys/README.md
+@@ -0,0 +1,14 @@
++# SPDX-License-Identifier: CC0-1.0
++# SPDX-FileCopyrightText: 2022 Linaro Ltd.
++# SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
++
++# Generated libgpiod-sys Rust FFI bindings
++Automatically generated Rust FFI bindings via
++	[bindgen](https://github.com/rust-lang/rust-bindgen).
++
++## License
++
++This project is licensed under either of
++
++- [Apache License](http://www.apache.org/licenses/LICENSE-2.0), Version 2.0
++- [BSD-3-Clause License](https://opensource.org/licenses/BSD-3-Clause)
+diff --git a/bindings/rust/libgpiod-sys/build.rs b/bindings/rust/libgpiod-sys/build.rs
+new file mode 100644
+index 000000000000..274069eb9e9d
+--- /dev/null
++++ b/bindings/rust/libgpiod-sys/build.rs
+@@ -0,0 +1,41 @@
++// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
++// SPDX-FileCopyrightText: 2022 Linaro Ltd.
++// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
++
++extern crate bindgen;
++
++use std::env;
++use std::path::PathBuf;
++
++fn generate_bindings() {
++    // Tell cargo to invalidate the built crate whenever following files change
++    println!("cargo:rerun-if-changed=../../../include/gpiod.h");
++
++    // The bindgen::Builder is the main entry point
++    // to bindgen, and lets you build up options for
++    // the resulting bindings.
++    let bindings = bindgen::Builder::default()
++        // The input header we would like to generate
++        // bindings for.
++        .header("../../../include/gpiod.h")
++        // Tell cargo to invalidate the built crate whenever any of the
++        // included header files changed.
++        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
++        // Finish the builder and generate the bindings.
++        .generate()
++        // Unwrap the Result and panic on failure.
++        .expect("Unable to generate bindings");
++
++    // Write the bindings to the $OUT_DIR/bindings.rs file.
++    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
++    bindings
++        .write_to_file(out_path.join("bindings.rs"))
++        .expect("Couldn't write bindings!");
++}
++
++fn main() {
++    generate_bindings();
++
++    println!("cargo:rustc-link-search=./../../lib/.libs/");
++    println!("cargo:rustc-link-lib=static=gpiod");
++}
+diff --git a/bindings/rust/libgpiod-sys/src/lib.rs b/bindings/rust/libgpiod-sys/src/lib.rs
+new file mode 100644
+index 000000000000..68526910c8ee
+--- /dev/null
++++ b/bindings/rust/libgpiod-sys/src/lib.rs
+@@ -0,0 +1,11 @@
++// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
++// SPDX-FileCopyrightText: 2022 Linaro Ltd.
++// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
++
++#[allow(non_camel_case_types, non_upper_case_globals)]
++#[cfg_attr(test, allow(deref_nullptr, non_snake_case))]
++
++mod bindings_raw {
++    include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
++}
++pub use bindings_raw::*;
 -- 
-2.17.1
+2.31.1.272.g89b43f80a514
 
