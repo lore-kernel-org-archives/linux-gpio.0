@@ -2,56 +2,56 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C588EC43217
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Nov 2022 14:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C540C433FE
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Nov 2022 15:23:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242123AbiKROl0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Nov 2022 09:41:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41918 "EHLO
+        id S241460AbiKRPXM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Nov 2022 10:23:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242188AbiKROlD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2022 09:41:03 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51B384A051
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Nov 2022 06:39:43 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id m7-20020a05600c090700b003cf8a105d9eso4171728wmp.5
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Nov 2022 06:39:43 -0800 (PST)
+        with ESMTP id S235170AbiKRPXM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2022 10:23:12 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F40312B26D
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Nov 2022 07:23:10 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id m7-20020a05600c090700b003cf8a105d9eso4255542wmp.5
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Nov 2022 07:23:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:organization:references:cc:to
          :content-language:subject:reply-to:from:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Y6Bg6qnbLbnNqXzsBHD84qTsLn1wOxnG7yqT2bB3ME=;
-        b=xSL2im09i1KIxS2mPzcxkjNvslnj6eMdv8/l3GIPKfG4be2IiNiuLJKAnl/n0kQ83D
-         ueBerELi5Z3NTPZ5fCLCgxXA9mPk70SfB35/gvlN67FuwH8rVgp5XUzjExACyecyM9Fz
-         Bkddcbdt9EhS9KqskfTAiQrXQm/eiyBeOSFvvh6CDUf3WGEwkfQRlk/6Ubkm+GT1RmFI
-         C2IvUn0oR1rLBUL/vfGd8WNtVWqEkiLuQOCCReOxeitCBqEicha3OmECgacodS862KHa
-         J54lBd7ktsG79azccKkmJMW3U3Y7Ip3DR5hGWToCbbb9QUxCThvX++tJIBsp0IDMLsuz
-         Jfeg==
+        bh=LcYxX7CS1Ufy2jDrgHKfbNrWxSi6NEkFbdecW+66ckA=;
+        b=kwWawBEtv8KFgdpgtP1kcjBH2zrLUgAusesVgFEwCuWYdfBgcA5wc/sBbYz/Gt60Fy
+         C04zvP0H/tOcx1EzY9ytQLrDGGHiqrxOfRPa50i7nY8v2N9LDYc8xgnsLc/GZOvrT6Io
+         vgTVe81WD/VJ1nVjtmE6LngjjQyGBUzEN3/SmMFWgHw+lrjQQjRIXbWlHn4WzsJsNGOP
+         sPy26VddXhOo5vWQpwZLlHy2CKNb/+D19+uuEKIcgHsHbUSe7ZvGcxDHweoT7IX+YDH1
+         0WeINkG/1vPNI8sPqxpkZFM+gQT4iTwUltg1AANvcWWf/B8iH+ezxZFEvkTs5mo/vXkr
+         WiQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:organization:references:cc:to
          :content-language:subject:reply-to:from:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+Y6Bg6qnbLbnNqXzsBHD84qTsLn1wOxnG7yqT2bB3ME=;
-        b=a4QioL2/8jvEYMIMp0yvYx4R1jdSMqC3z3daUDr+CN5Je7ogOUaimfF8VYn0I24eQn
-         OI0sLyxifUB5w7sR7LQ1ySDDSR5Eiwlf616MZSwZhTS5n1cYzNuJ0tTWgkPWGn643KdY
-         D7n/3lH+fAcveo2ltVZKvKTuvk/s71Jiae+J+EWELQl/lZQkhr4+DjqNBJypAp+vEpZ/
-         9wAuqkVB0FlIDsjvvCSi2+d6rhMLN2P+YW9VxwtIU1dJfFWo4VFgKLFU5JnhNG0BBo6G
-         onMc+dINlfeFWBU70/FCLeNj7NLijQelgdmHU+PepdYJa2vV4nRKPYUuW9vkteVLhF4X
-         MQsA==
-X-Gm-Message-State: ANoB5pmNgrjmdbqBHfT9xSY023csBRIRYyPBgwofOWEPn8hn8zlPVLFi
-        t24tFrL4npIkH6HQftEewzNmtaelzlFnmg==
-X-Google-Smtp-Source: AA0mqf6+xja8YwiiyJEjzyuPpa/nrBlOVNTSsYyM8az4DVr4K6oearAVW2j9Gpgbp5j0npawgfzhtw==
-X-Received: by 2002:a05:600c:4e12:b0:3cf:d4f7:e70d with SMTP id b18-20020a05600c4e1200b003cfd4f7e70dmr5140565wmq.187.1668782381730;
-        Fri, 18 Nov 2022 06:39:41 -0800 (PST)
+        bh=LcYxX7CS1Ufy2jDrgHKfbNrWxSi6NEkFbdecW+66ckA=;
+        b=ZCzwWy/qR/jQfKeD4at9OdgkCu2FtEsGFhn01gKTLlY7cq1nc8w0ySKs6ERFChqKPz
+         yS0y3/ElAbDjWVfGdJjtpEYCPMsB+2OjhMMml6YmlmiaC3mRfBz9fzGmfcl8CIbzQoZi
+         dtHUKbDte/phkk2xkM7XaegdO0O6lYIEXSjxbepx7zDgSE9KkZdPxdQwwEYVtu8Cheho
+         9hZ/ew+O85HMmicqh9rgIhPXcZmYsegaYux9Vv3UT/MfJ8hdzE+icPu2Rz3Y5pKKCldI
+         HYwj/InjB4dZSqWBffHouqVMeN6QnhovQSIT/c1E39VuOOVbezjvxsyF3sGjP4FwkGoA
+         PA5w==
+X-Gm-Message-State: ANoB5pmdioTMSnZS5YM5+X+STP+teBMe7a1CwZfqfRk1iIYTdmoG3fDk
+        BPKfXMeIaLkPbOGDvRWXX53L1A==
+X-Google-Smtp-Source: AA0mqf63aZ9cQQYw+4CNq3MjA++NwUGZ8iaNAcaISCCd+7/g1EHsFBDOhLklLe1GPigwlYD6F1nL5Q==
+X-Received: by 2002:a05:600c:348d:b0:3cf:88d3:5685 with SMTP id a13-20020a05600c348d00b003cf88d35685mr5340839wmq.38.1668784989562;
+        Fri, 18 Nov 2022 07:23:09 -0800 (PST)
 Received: from ?IPV6:2a01:e0a:982:cbb0:f7cc:460c:56ae:45a? ([2a01:e0a:982:cbb0:f7cc:460c:56ae:45a])
-        by smtp.gmail.com with ESMTPSA id c2-20020a05600c0a4200b003cfd4cf0761sm10164756wmq.1.2022.11.18.06.39.40
+        by smtp.gmail.com with ESMTPSA id e18-20020adfdbd2000000b0022da3977ec5sm3801120wrj.113.2022.11.18.07.23.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Nov 2022 06:39:41 -0800 (PST)
-Message-ID: <7c722431-a866-7d19-d7b2-83535719aed0@linaro.org>
-Date:   Fri, 18 Nov 2022 15:39:40 +0100
+        Fri, 18 Nov 2022 07:23:09 -0800 (PST)
+Message-ID: <b5970487-9326-9d41-a004-6369e854e530@linaro.org>
+Date:   Fri, 18 Nov 2022 16:23:08 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.3
@@ -60,38 +60,94 @@ Reply-To: neil.armstrong@linaro.org
 Subject: Re: [PATCH v3] dt-bindings: pinctrl: convert semtech,sx150xq bindings
  to dt-schema
 Content-Language: en-US
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+To:     Sander Vanheule <sander@svanheule.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Rob Herring <robh@kernel.org>, linux-gpio@vger.kernel.org
 References: <20221005-mdm9615-sx1509q-yaml-v3-0-e8b349eb1900@linaro.org>
- <CACRpkdYCUTb6-RdT0LPbmesxabUR1yMs5-YKCxxNcg+MC8Gf8A@mail.gmail.com>
+ <79ba65cc117db8102bd8f7e30d6d44fdbd0542f1.camel@svanheule.net>
 Organization: Linaro Developer Services
-In-Reply-To: <CACRpkdYCUTb6-RdT0LPbmesxabUR1yMs5-YKCxxNcg+MC8Gf8A@mail.gmail.com>
+In-Reply-To: <79ba65cc117db8102bd8f7e30d6d44fdbd0542f1.camel@svanheule.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 17/11/2022 09:56, Linus Walleij wrote:
-> On Tue, Nov 15, 2022 at 11:06 AM Neil Armstrong
-> <neil.armstrong@linaro.org> wrote:
+On 18/11/2022 16:19, Sander Vanheule wrote:
+> Hi,
 > 
+> On Tue, 2022-11-15 at 11:06 +0100, Neil Armstrong wrote:
 >> This converts the Semtech SX150Xq bindings to dt-schemas, add necessary
 >> bindings documentation to cover all differences between HW variants
 >> and current bindings usage.
 >>
 >> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 >> Reviewed-by: Rob Herring <robh@kernel.org>
+>> ---
+>> To: Linus Walleij <linus.walleij@linaro.org>
+>> To: Rob Herring <robh+dt@kernel.org>
+>> To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+>> Cc: linux-gpio@vger.kernel.org
+>> Cc: devicetree@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>> Changes in v3:
+>> - Resent with missing To: Linus Walleij
+>> - Link to v2: https://lore.kernel.org/r/20221005-mdm9615-sx1509q-yaml-v2-0-a4a5b8eecc7b@linaro.org
+>>
+>> Changes in v2:
+>> - fixed rob comments
+>> - added rob's Reviewed-by
+>> - Link to v1: https://lore.kernel.org/r/20221005-mdm9615-sx1509q-yaml-v1-0-0c26649b637c@linaro.org
+>> ---
 > 
-> The binding is a piece of art. Excellent work!
-
-Thanks ! Actually it was fun to write !
-
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> [snip]
 > 
-> Yours,
-> Linus Walleij
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - semtech,sx1503q
+>> +              - semtech,sx1506q
+>> +    then:
+>> +      patternProperties:
+>> +        '-cfg$':
+>> +          properties:
+>> +            pins:
+>> +              items:
+>> +                pattern: '^gpio[0-15]$'
+> 
+> [snip]
+> 
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: semtech,sx1509q
+>> +    then:
+>> +      patternProperties:
+>> +        '-cfg$':
+>> +          properties:
+>> +            pins:
+>> +              items:
+>> +                pattern: '^(oscio|gpio[0-15])$'
+> 
+> Sorry to be so late to reply, but don't these patterns only match "gpio0", "gpio1", and "gpio5"?
+> 
+> A quick search for some datasheets turned up the SX1503 and SX1509Q with 16 GPIOs, so I assume the
+> intention was to match "gpio0" to "gpio15". I think this should be "^(gpio[0-9]|gpio1[0-5])$" (or
+> something equivalent).
+
+Damn you're right, Linus should I resend or send a fixup ?
+
+Thanks,
+Neil
+
+> 
+> Best,
+> Sander
 
