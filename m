@@ -2,140 +2,211 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF7FC4332F
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Nov 2022 18:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BEA7C4332F
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Nov 2022 18:20:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232926AbiKRSPT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Nov 2022 13:15:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55554 "EHLO
+        id S235438AbiKRSU6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Nov 2022 13:20:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235281AbiKRSPS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2022 13:15:18 -0500
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3DEA898CF;
-        Fri, 18 Nov 2022 10:15:17 -0800 (PST)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2AIIFAMg084079;
-        Fri, 18 Nov 2022 12:15:10 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1668795310;
-        bh=JyQb2Ma01x7fRRs7TlYmPzx1wFI4WbhdeZZCWveBKt8=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=llEI2xMj14C2NWEoiT0IaTVyryh5KtqoBlJuwZ1FX2zsVpyzEhPwwwYfVEL0VlDhK
-         nwzyRcUhIPKW9gdch92GNlFyx+IXR4dqn36qtBbqxsK2Dm6ei/V/diEByavaYhsBO7
-         t5WO47WiKO5c1n0Gh80vvU8nApYg3zSVhv+Ie7xI=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2AIIFAPE072009
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 18 Nov 2022 12:15:10 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Fri, 18
- Nov 2022 12:15:10 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Fri, 18 Nov 2022 12:15:10 -0600
-Received: from [10.250.38.44] (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2AIIF9s3014409;
-        Fri, 18 Nov 2022 12:15:09 -0600
-Message-ID: <93242211-95e7-09a0-fced-5ef2deb9fc08@ti.com>
-Date:   Fri, 18 Nov 2022 12:15:09 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v3 4/4] arm64: dts: ti: Add support for J784S4 EVM board
-Content-Language: en-US
-To:     Nishanth Menon <nm@ti.com>
-CC:     Apurva Nandan <a-nandan@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        with ESMTP id S234447AbiKRSU5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2022 13:20:57 -0500
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B584072139;
+        Fri, 18 Nov 2022 10:20:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1668795656; x=1700331656;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=TZ0L5qMp+P3X3Ql3wEzGSMJacYIriCBWvjOdKjV90QE=;
+  b=EuA99BrUi1mxzMt6Apb/E2qaIIYrSYx0w04Cy/uXDE5zIbQj/Rbe3q2U
+   qBtZM+iI2hHROVrYH/ic9fm+L1YHNGC6vbsBX/PQpdiXTN/IbROrhWiAp
+   b63Wh444cK2acBnxH4NNTv7A7KnDgpUb+Bansp3kMfZ4rGnaF4fXUtE94
+   Y=;
+Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 18 Nov 2022 10:20:56 -0800
+X-QCInternal: smtphost
+Received: from nasanex01b.na.qualcomm.com ([10.46.141.250])
+  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2022 10:20:56 -0800
+Received: from hu-molvera-sd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Fri, 18 Nov 2022 10:20:55 -0800
+From:   Melody Olvera <quic_molvera@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, Hari Nagalla <hnagalla@ti.com>
-References: <20221116130428.161329-1-a-nandan@ti.com>
- <20221116130428.161329-5-a-nandan@ti.com>
- <b57433e7-b309-bd1c-f794-3da74021f03c@ti.com>
- <20221118174754.y37pq77drvla2uxj@tinderbox>
- <8c123fa2-caab-d2dd-5eb4-688f1c6abb33@ti.com>
- <20221118180808.wnel7d6gswsnooww@junkman>
-From:   Andrew Davis <afd@ti.com>
-In-Reply-To: <20221118180808.wnel7d6gswsnooww@junkman>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Melody Olvera <quic_molvera@quicinc.com>
+Subject: [PATCH v4 1/2] dt-bindings: pinctrl: qcom: Add QDU1000 and QRU1000 pinctrl
+Date:   Fri, 18 Nov 2022 10:20:38 -0800
+Message-ID: <20221118182039.29236-2-quic_molvera@quicinc.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20221118182039.29236-1-quic_molvera@quicinc.com>
+References: <20221118182039.29236-1-quic_molvera@quicinc.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 11/18/22 12:08 PM, Nishanth Menon wrote:
-> On 11:56-20221118, Andrew Davis wrote:
->> On 11/18/22 11:47 AM, Nishanth Menon wrote:
->>> On 11:40-20221118, Andrew Davis wrote:
->>>> On 11/16/22 7:04 AM, Apurva Nandan wrote:
->>>
->>> [...]
->>>
->>>>> +#include <dt-bindings/net/ti-dp83867.h>
->>>>> +#include <dt-bindings/gpio/gpio.h>
->>>>> +#include "k3-j784s4.dtsi"
->>>>> +
->>>>> +/ {
->>>>> +	compatible = "ti,j784s4-evm", "ti,j784s4";
->>>>> +	model = "Texas Instruments J784S4 EVM";
->>>>> +
->>>>> +	chosen {
->>>>> +		stdout-path = "serial2:115200n8";
->>>>> +	};
->>>>> +
->>>>> +	aliases {
->>>>> +		serial2 = &main_uart8;
->>>>
->>>> This feels hacky. Your chosen node picks serial2 as that is usually
->>>> the one that is wired up on K3 boards. But on this board it is main_uart8.
->>>> So why not have this be serial10, then choose
->>>>
->>>> stdout-path = "serial10:115200n8";
->>>>
->>>> Also, I've made comments on previous version of this series, it is
->>>> nice to include folks who have commented before in the CC for future
->>>> versions, that way our filters don't hide these away and we can more
->>>> easily check that our comments have been addressed.
->>>
->>> Please stick with the standard of serial2 as the linux console standard.
->>> We ended up with that to ease up capabilities of various distros to
->>> uniformly work across SoC and board variants.
->>>
->>
->> The chosen "stdout-path" is for setting the kernel's default output terminal.
->> Distros and other userspaces need to use their own policy mechanisms for
->> picking what serial port to run getty on or whatever the issue may be.
->>
->> Some look at the kernel command line, and our bootloader provides
->> that too, so still no reason to fake alias names here.
-> 
-> 
-> We have had this conversation earlier as well.
-> 
-> https://lore.kernel.org/linux-arm-kernel/CAK8P3a2VSBvOn1o+q1PYZaQ6LS9U4cz+DZGuDbisHkwNs2dAAw@mail.gmail.com/T/#m4ecb0dc6a78c84631f072faa1b0df0df46333d09
-> 
-> This is also the reason why we picked serial2 as linux console as a
-> standard across the boards based on the ecosystem.
-> 
+Add device tree bindings for QDU1000 and QRU1000 TLMM devices.
 
-I don't see either of those addressed in that thread, only that
-the aliases should go in the .dts files and be trimmed, nothing
-stops us from:
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+---
+ .../bindings/pinctrl/qcom,qdu1000-tlmm.yaml   | 134 ++++++++++++++++++
+ 1 file changed, 134 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,qdu1000-tlmm.yaml
 
-chosen {
-	stdout-path = "serial10:115200n8";
-};
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,qdu1000-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,qdu1000-tlmm.yaml
+new file mode 100644
+index 000000000000..cb0c496d8666
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,qdu1000-tlmm.yaml
+@@ -0,0 +1,134 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,qdu1000-tlmm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Technologies, Inc. QDU1000/QRU1000 TLMM block
++
++maintainers:
++  - Melody Olvera <quic_molvera@quicinc.com>
++
++description: |
++  This Top Level Mode Multiplexer block (TLMM) is found in the QDU1000 and
++  QRU1000 platforms.
++
++allOf:
++  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
++
++properties:
++  compatible:
++    const: qcom,qdu1000-tlmm
++
++  reg:
++    maxItems: 1
++
++  interrupts: true
++  interrupt-controller: true
++  "#interrupt-cells": true
++  gpio-controller: true
++
++  gpio-reserved-ranges:
++    minItems: 1
++    maxItems: 75
++
++  gpio-line-names:
++    maxItems: 151
++
++  "#gpio-cells": true
++  gpio-ranges: true
++  wakeup-parent: true
++
++patternProperties:
++  "-state$":
++    oneOf:
++      - $ref: "#/$defs/qcom-qdu1000-tlmm-state"
++      - patternProperties:
++          "-pins$":
++            $ref: "#/$defs/qcom-qdu1000-tlmm-state"
++        additionalProperties: false
++
++$defs:
++  qcom-qdu1000-tlmm-state:
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          oneOf:
++            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-4][0-9]|150)$"
++            - enum: [ sdc1_rclk, sdc1_clk, sdc1_cmd, sdc1_data ]
++        minItems: 1
++        maxItems: 36
++
++      function:
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++        enum: [ atest_char, atest_usb, char_exec, CMO_PRI, cmu_rng,
++                dbg_out_clk, ddr_bist, ddr_pxi1, ddr_pxi2, ddr_pxi3, ddr_pxi4,
++                ddr_pxi5, ddr_pxi6, ddr_pxi7, eth012_int_n, eth345_int_n,
++                gcc_gp1, gcc_gp2, gcc_gp3, gpio, gps_pps_in, hardsync_pps_in,
++                intr_c, jitter_bist_ref, pcie_clkreqn, phase_flag, pll_bist,
++                pll_clk, prng_rosc, qdss_cti, qdss_gpio, qlink0_enable,
++                qlink0_request, qlink0_wmss, qlink1_enable, qlink1_request,
++                qlink1_wmss, qlink2_enable, qlink2_request, qlink2_wmss,
++                qlink3_enable, qlink3_request, qlink3_wmss, qlink4_enable,
++                qlink4_request, qlink4_wmss, qlink5_enable, qlink5_request,
++                qlink5_wmss, qlink6_enable, qlink6_request, qlink6_wmss,
++                qlink7_enable, qlink7_request, qlink7_wmss, qspi_clk, qspi_cs,
++                qspi0, qspi1, qspi2, qspi3, qup00, qup01, qup02, qup03, qup04,
++                qup05, qup06, qup07, qup08, qup10, qup11, qup12, qup13, qup14,
++                qup15, qup16, qup17, qup20, qup21, qup22, SI5518_INT, smb_alert,
++                smb_clk, smb_dat, tb_trig, tgu_ch0, tgu_ch1, tgu_ch2, tgu_ch3,
++                tgu_ch4, tgu_ch5, tgu_ch6, tgu_ch7, tmess_prng0, tmess_prng1,
++                tmess_prng2, tmess_prng3, tod_pps_in, tsense_pwm1, tsense_pwm2,
++                usb2phy_ac, usb_con_det, usb_dfp_en, usb_phy, vfr_0, vfr_1,
++                vsense_trigger ]
++
++      bias-disable: true
++      bias-pull-down: true
++      bias-pull-up: true
++      drive-strength: true
++      input-enable: true
++      output-high: true
++      output-low: true
++
++    required:
++      - pins
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    pinctrl@f000000 {
++        compatible = "qcom,qdu1000-tlmm";
++        reg = <0xf000000 0x1000000>;
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        gpio-ranges = <&tlmm 0 0 151>;
++        wakeup-parent = <&pdc>;
++
++        uart0-default-state {
++            pins = "gpio6", "gpio7", "gpio8", "gpio9";
++            function = "qup00";
++        };
++    };
+-- 
+2.38.1
 
-aliases {
-	serial10 = &main_uart8;
-};
-
-Andrew
