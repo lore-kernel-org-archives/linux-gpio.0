@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A5F0C4167B
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Nov 2022 10:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED64C43217
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Nov 2022 10:46:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241622AbiKRKqF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Nov 2022 05:46:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35820 "EHLO
+        id S241674AbiKRKqG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Nov 2022 05:46:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241847AbiKRKpm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2022 05:45:42 -0500
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAD8899EB7
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Nov 2022 02:45:13 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id b21so4207780plc.9
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Nov 2022 02:45:13 -0800 (PST)
+        with ESMTP id S241808AbiKRKpp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2022 05:45:45 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 262589B3BB
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Nov 2022 02:45:17 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id r61-20020a17090a43c300b00212f4e9cccdso7931760pjg.5
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Nov 2022 02:45:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=byHabTvELlMk45euqQsA5LKhXM9HjAb2W8oGePuGo5k=;
-        b=dPg6URxBtHB3zeTo9phsm45S1VF8c6e+WmamihEmRmAq+vBfRUqnzFMQZj43DUXQHc
-         KzhTLAXaa4RkzVYc8hLk/n1opnXIO09yns43/AbADcNUHeGMTRcEj4TQmd4Donc7t5TQ
-         HkrrAk+vrZDYPh4bpm0ckL2Skb7O5FSr7KdAZr9djJoYeJ4Pc7HJ3e5eSsLzrzVovm6w
-         OMZgS9+d/XjFBXEKGa9MOmq8Gy+TeV9NwLPpI/362IXJzjtVdLio2C175f/PtVC4h2b4
-         EbSkJJ19TLTy8cD4iM9pWdqxJviPPL1BhgGeAmL/xkz3+8gWTD+uNUHBh87OQygeM7vf
-         B9ZQ==
+        bh=0+iF0FVeKh4bI0/r+79ToQ04mbzDH6mSm/2asNpzIbA=;
+        b=Ts4KwVJAB4Hdid26RsCOV9snFeOQNSrniG+QxIY0XVWIHPYuFRW8loNPK4fF4Cr0JB
+         P4sMkcVNaP1gb6HANIFPJ6Eu6wq/jSUPEsFCK3lbo6nOY/TH5JWmR/wwB0M5Bns7x87T
+         7ZMifaUtT8kcMnjA7ybticq1g2vyxEVkKJ9a7FAOmyg9eGb/XZeKfLAQUly0+XngXMg9
+         e6llPO1EvXakXtvbFV/I5GvhewSgGvPq+h08ol2PuE5fVvUv+ITHXDmb+Z71SOsQba4H
+         BKaFGnv0Jvg7KtOM1UZZAcysvUuZDoWWqU6LGwUjfFIuHE11Fj1aMAfqjRmno3dPryjW
+         bzMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=byHabTvELlMk45euqQsA5LKhXM9HjAb2W8oGePuGo5k=;
-        b=cXiIUPqUjfCYaY/YHv6iQv91J8MimrLjTwceEsZRBiiSJqVv83dX0lMdbpP9xMjXnQ
-         MoMU0EOfXx+jhLZqYax0yb2ZALlawihZ1L9/8J5vGH51mi6Hram2eEmmc/b+dX3ZoB1y
-         c1U+JEUN2SoFWz4U16KpOnldjkoy6xh15IiQoCBCCxneM1y2KsWpM/xf1aQiC86oOC5l
-         RvORDzO8Cn3jyFPRMGnvxrj3TxCvUX1gvT929K4Vp8vsHVTkT4ZcCeGqY+xZ+DsOp3Lu
-         /TJN8AG8WGGlfwrzntrKocYjdFc52oVOyn8ILD2FiEricC27Dj5MfZhubyPcRRhEO8JD
-         +6vA==
-X-Gm-Message-State: ANoB5pmARKEOzl4G8qyA4ifFOjrCwa9wXyWyzMGfCeJJ6zkklOA3/dX3
-        Wn/faI1e4RwFu5hVkNtl7PM3gA==
-X-Google-Smtp-Source: AA0mqf4b/iUW4VG7KjScRHktJ9x5x3Qkv3q5FPPdVZRZVHmWy/gw2YJ+1cBDMLUS175dspWp8AsWdg==
-X-Received: by 2002:a17:90a:d984:b0:213:d1d5:d661 with SMTP id d4-20020a17090ad98400b00213d1d5d661mr13431799pjv.43.1668768312026;
-        Fri, 18 Nov 2022 02:45:12 -0800 (PST)
+        bh=0+iF0FVeKh4bI0/r+79ToQ04mbzDH6mSm/2asNpzIbA=;
+        b=DvOe/6U3iV+zO8VhhB/KX6Ymf9Me/oO9SQlY168YxrpkpmFl92Ql/12643o7vW/0xs
+         ABLjU7Nje5ZYs6R5I54LMkKnVwasRylgeBNF9dAF6qjT20LGQIY5T4/L79gFFApvpHJC
+         UtmwsWvbdRo0XxWQLPuSgOBJ6GALLpJ1+k9XXJKUBMD9NOqBebyBU9xe3NGZjOntslZG
+         aah/1N2zNcRr4p9icFPwZqU4wIGFEzIh4axGV5KNZ1dOg6Hpe+PMxtOn24U0Pc9xFTVG
+         7AHiW09XBKt6A0IhxzFFNibJz/T65mHjNDuUEu57vb79tiNqJuRJ3jR5LJpqQd1S2nwV
+         NZBw==
+X-Gm-Message-State: ANoB5pnwycpZ0EmO6J9Llf1VycH1YlyfMX/slcbNrA7bDxJDJKVh3S/Z
+        e0CmiPxcGndDFsThjtNX1OqENs11Vmzyog==
+X-Google-Smtp-Source: AA0mqf6LU2KG8nn9de6wqRo8AXvVHmyN0MhD0WvK3qjWywgLJNRaqgERMy3ePYNl/rnVbIB2G0Knuw==
+X-Received: by 2002:a17:902:e492:b0:181:9900:18df with SMTP id i18-20020a170902e49200b00181990018dfmr7023106ple.70.1668768317330;
+        Fri, 18 Nov 2022 02:45:17 -0800 (PST)
 Received: from localhost ([122.172.85.60])
-        by smtp.gmail.com with ESMTPSA id y14-20020aa79aee000000b005609d3d3008sm2899925pfp.171.2022.11.18.02.45.10
+        by smtp.gmail.com with ESMTPSA id q20-20020aa78434000000b0056b91044485sm2807128pfn.133.2022.11.18.02.45.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 02:45:11 -0800 (PST)
+        Fri, 18 Nov 2022 02:45:16 -0800 (PST)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
@@ -65,9 +65,9 @@ Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
         =?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
         y86-dev <y86-dev@protonmail.com>
-Subject: [libgpiod][PATCH V10 2/6] bindings: rust: Add libgpiod crate
-Date:   Fri, 18 Nov 2022 16:14:38 +0530
-Message-Id: <daa3021e4c148d33a8d50c54841719082836c43a.1668768040.git.viresh.kumar@linaro.org>
+Subject: [libgpiod][PATCH V10 4/6] bindings: rust: Add examples to libgpiod crate
+Date:   Fri, 18 Nov 2022 16:14:40 +0530
+Message-Id: <31ef7e4d504bb6ddb8693d90546eba4b4afcb9b6.1668768040.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 In-Reply-To: <cover.1668768040.git.viresh.kumar@linaro.org>
 References: <cover.1668768040.git.viresh.kumar@linaro.org>
@@ -77,2161 +77,703 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add rust wrapper crate, around the libpiod-sys crate added earlier, to
-provide a convenient interface for the users.
+Add examples for the usage of the rust bindings, quite similar to the
+ones in cxx bindings.
 
 Reviewed-by: Kent Gibson <warthog618@gmail.com>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- bindings/rust/Cargo.toml                     |   1 +
- bindings/rust/libgpiod/Cargo.toml            |  22 +
- bindings/rust/libgpiod/src/chip.rs           | 309 ++++++++++++
- bindings/rust/libgpiod/src/edge_event.rs     |  92 ++++
- bindings/rust/libgpiod/src/event_buffer.rs   | 168 +++++++
- bindings/rust/libgpiod/src/info_event.rs     |  68 +++
- bindings/rust/libgpiod/src/lib.rs            | 478 +++++++++++++++++++
- bindings/rust/libgpiod/src/line_config.rs    | 134 ++++++
- bindings/rust/libgpiod/src/line_info.rs      | 161 +++++++
- bindings/rust/libgpiod/src/line_request.rs   | 226 +++++++++
- bindings/rust/libgpiod/src/line_settings.rs  | 296 ++++++++++++
- bindings/rust/libgpiod/src/request_config.rs |  94 ++++
- 12 files changed, 2049 insertions(+)
- create mode 100644 bindings/rust/libgpiod/Cargo.toml
- create mode 100644 bindings/rust/libgpiod/src/chip.rs
- create mode 100644 bindings/rust/libgpiod/src/edge_event.rs
- create mode 100644 bindings/rust/libgpiod/src/event_buffer.rs
- create mode 100644 bindings/rust/libgpiod/src/info_event.rs
- create mode 100644 bindings/rust/libgpiod/src/lib.rs
- create mode 100644 bindings/rust/libgpiod/src/line_config.rs
- create mode 100644 bindings/rust/libgpiod/src/line_info.rs
- create mode 100644 bindings/rust/libgpiod/src/line_request.rs
- create mode 100644 bindings/rust/libgpiod/src/line_settings.rs
- create mode 100644 bindings/rust/libgpiod/src/request_config.rs
+ .../rust/libgpiod/examples/gpio_events.rs     |  88 ++++++++++++
+ .../examples/gpio_threaded_info_events.rs     | 132 ++++++++++++++++++
+ bindings/rust/libgpiod/examples/gpiodetect.rs |  30 ++++
+ bindings/rust/libgpiod/examples/gpiofind.rs   |  36 +++++
+ bindings/rust/libgpiod/examples/gpioget.rs    |  45 ++++++
+ bindings/rust/libgpiod/examples/gpioinfo.rs   |  97 +++++++++++++
+ bindings/rust/libgpiod/examples/gpiomon.rs    |  74 ++++++++++
+ bindings/rust/libgpiod/examples/gpioset.rs    |  63 +++++++++
+ bindings/rust/libgpiod/examples/gpiowatch.rs  |  53 +++++++
+ 9 files changed, 618 insertions(+)
+ create mode 100644 bindings/rust/libgpiod/examples/gpio_events.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpio_threaded_info_events.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpiodetect.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpiofind.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpioget.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpioinfo.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpiomon.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpioset.rs
+ create mode 100644 bindings/rust/libgpiod/examples/gpiowatch.rs
 
-diff --git a/bindings/rust/Cargo.toml b/bindings/rust/Cargo.toml
-index e3e253a4cf5e..f4051387d581 100644
---- a/bindings/rust/Cargo.toml
-+++ b/bindings/rust/Cargo.toml
-@@ -5,5 +5,6 @@
- [workspace]
- 
- members = [
-+    "libgpiod",
-     "libgpiod-sys"
- ]
-diff --git a/bindings/rust/libgpiod/Cargo.toml b/bindings/rust/libgpiod/Cargo.toml
+diff --git a/bindings/rust/libgpiod/examples/gpio_events.rs b/bindings/rust/libgpiod/examples/gpio_events.rs
 new file mode 100644
-index 000000000000..a38df1c0b10d
+index 000000000000..981005043d55
 --- /dev/null
-+++ b/bindings/rust/libgpiod/Cargo.toml
-@@ -0,0 +1,22 @@
-+# SPDX-License-Identifier: CC0-1.0
-+# SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+# SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
-+
-+[package]
-+name = "libgpiod"
-+version = "0.1.0"
-+authors = ["Viresh Kumar <viresh.kumar@linaro.org>"]
-+description = "libgpiod wrappers"
-+repository = "https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git"
-+categories = ["api-bindings", "hardware-support", "embedded", "os::linux-apis"]
-+rust-version = "1.56"
-+keywords = ["libgpiod", "gpio"]
-+license = "Apache-2.0 OR BSD-3-Clause"
-+edition = "2021"
-+
-+[dependencies]
-+errno = "0.2.8"
-+intmap = "2.0.0"
-+libc = "0.2.39"
-+libgpiod-sys = { path = "../libgpiod-sys" }
-+thiserror = "1.0"
-diff --git a/bindings/rust/libgpiod/src/chip.rs b/bindings/rust/libgpiod/src/chip.rs
-new file mode 100644
-index 000000000000..91b4c947547b
---- /dev/null
-+++ b/bindings/rust/libgpiod/src/chip.rs
-@@ -0,0 +1,309 @@
-+// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
-+// SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
-+
-+pub mod info {
-+    /// GPIO chip info event related definitions.
-+    pub use crate::info_event::*;
-+}
-+
-+use std::cmp::Ordering;
-+use std::ffi::{CStr, CString};
-+use std::os::{raw::c_char, unix::prelude::AsRawFd};
-+use std::path::Path;
-+use std::str;
-+use std::sync::Arc;
-+use std::time::Duration;
-+
-+use super::{
-+    gpiod,
-+    line::{self, Offset},
-+    request, Error, OperationType, Result,
-+};
-+
-+#[derive(Debug, Eq, PartialEq)]
-+struct Internal {
-+    chip: *mut gpiod::gpiod_chip,
-+}
-+
-+impl Internal {
-+    /// Find a chip by path.
-+    fn open<P: AsRef<Path>>(path: &P) -> Result<Self> {
-+        // Null-terminate the string
-+        let path = path.as_ref().to_string_lossy() + "\0";
-+
-+        // SAFETY: The `gpiod_chip` returned by libgpiod is guaranteed to live as long
-+        // as the `struct Internal`.
-+        let chip = unsafe { gpiod::gpiod_chip_open(path.as_ptr() as *const c_char) };
-+        if chip.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::ChipOpen,
-+                errno::errno(),
-+            ));
-+        }
-+
-+        Ok(Self { chip })
-+    }
-+}
-+
-+impl Drop for Internal {
-+    /// Close the chip and release all associated resources.
-+    fn drop(&mut self) {
-+        // SAFETY: `gpiod_chip` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_chip_close(self.chip) }
-+    }
-+}
-+
-+/// GPIO chip
-+///
-+/// A GPIO chip object is associated with an open file descriptor to the GPIO
-+/// character device. It exposes basic information about the chip and allows
-+/// callers to retrieve information about each line, watch lines for state
-+/// changes and make line requests.
-+#[derive(Debug, Eq, PartialEq)]
-+pub struct Chip {
-+    ichip: Arc<Internal>,
-+}
-+
-+// SAFETY: Safe as `Internal` won't be freed until the `Chip` is dropped.
-+unsafe impl Send for Chip {}
-+
-+impl Chip {
-+    /// Find a chip by path.
-+    pub fn open<P: AsRef<Path>>(path: &P) -> Result<Self> {
-+        let ichip = Arc::new(Internal::open(path)?);
-+
-+        Ok(Self { ichip })
-+    }
-+
-+    /// Get the chip name as represented in the kernel.
-+    pub fn info(&self) -> Result<Info> {
-+        Info::new(self.ichip.clone())
-+    }
-+
-+    /// Get the path used to find the chip.
-+    pub fn path(&self) -> Result<&str> {
-+        // SAFETY: The string returned by libgpiod is guaranteed to live as long
-+        // as the `struct Chip`.
-+        let path = unsafe { gpiod::gpiod_chip_get_path(self.ichip.chip) };
-+
-+        // SAFETY: The string is guaranteed to be valid here by the C API.
-+        unsafe { CStr::from_ptr(path) }
-+            .to_str()
-+            .map_err(Error::StringNotUtf8)
-+    }
-+
-+    /// Get a snapshot of information about the line.
-+    pub fn line_info(&self, offset: Offset) -> Result<line::Info> {
-+        // SAFETY: The `gpiod_line_info` returned by libgpiod is guaranteed to live as long
-+        // as the `struct Info`.
-+        let info = unsafe { gpiod::gpiod_chip_get_line_info(self.ichip.chip, offset) };
-+
-+        if info.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::ChipGetLineInfo,
-+                errno::errno(),
-+            ));
-+        }
-+
-+        line::Info::new(info)
-+    }
-+
-+    /// Get the current snapshot of information about the line at given offset and start watching
-+    /// it for future changes.
-+    pub fn watch_line_info(&self, offset: Offset) -> Result<line::Info> {
-+        // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-+        let info = unsafe { gpiod::gpiod_chip_watch_line_info(self.ichip.chip, offset) };
-+
-+        if info.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::ChipWatchLineInfo,
-+                errno::errno(),
-+            ));
-+        }
-+
-+        line::Info::new_watch(info)
-+    }
-+
-+    /// Stop watching a line
-+    pub fn unwatch(&self, offset: Offset) {
-+        // SAFETY: `gpiod_chip` is guaranteed to be valid here.
-+        unsafe {
-+            gpiod::gpiod_chip_unwatch_line_info(self.ichip.chip, offset);
-+        }
-+    }
-+
-+    /// Wait for line status events on any of the watched lines on the chip.
-+    pub fn wait_info_event(&self, timeout: Option<Duration>) -> Result<bool> {
-+        let timeout = match timeout {
-+            Some(x) => x.as_nanos() as i64,
-+            // Block indefinitely
-+            None => -1,
-+        };
-+
-+        // SAFETY: `gpiod_chip` is guaranteed to be valid here.
-+        let ret = unsafe { gpiod::gpiod_chip_wait_info_event(self.ichip.chip, timeout) };
-+
-+        match ret {
-+            -1 => Err(Error::OperationFailed(
-+                OperationType::ChipWaitInfoEvent,
-+                errno::errno(),
-+            )),
-+            0 => Ok(false),
-+            _ => Ok(true),
-+        }
-+    }
-+
-+    /// Read a single line status change event from the chip. If no events are
-+    /// pending, this function will block.
-+    pub fn read_info_event(&self) -> Result<info::Event> {
-+        // SAFETY: The `gpiod_info_event` returned by libgpiod is guaranteed to live as long
-+        // as the `struct Event`.
-+        let event = unsafe { gpiod::gpiod_chip_read_info_event(self.ichip.chip) };
-+        if event.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::ChipReadInfoEvent,
-+                errno::errno(),
-+            ));
-+        }
-+
-+        Ok(info::Event::new(event))
-+    }
-+
-+    /// Map a GPIO line's name to its offset within the chip.
-+    pub fn line_offset_from_name(&self, name: &str) -> Result<Offset> {
-+        let name = CString::new(name).map_err(|_| Error::InvalidString)?;
-+
-+        // SAFETY: `gpiod_chip` is guaranteed to be valid here.
-+        let ret = unsafe {
-+            gpiod::gpiod_chip_get_line_offset_from_name(
-+                self.ichip.chip,
-+                name.as_ptr() as *const c_char,
-+            )
-+        };
-+
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::ChipGetLineOffsetFromName,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Ok(ret as u32)
-+        }
-+    }
-+
-+    /// Request a set of lines for exclusive usage.
-+    pub fn request_lines(
-+        &self,
-+        rconfig: &request::Config,
-+        lconfig: &line::Config,
-+    ) -> Result<request::Request> {
-+        // SAFETY: The `gpiod_line_request` returned by libgpiod is guaranteed to live as long
-+        // as the `struct Request`.
-+        let request = unsafe {
-+            gpiod::gpiod_chip_request_lines(self.ichip.chip, rconfig.config, lconfig.config)
-+        };
-+
-+        if request.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::ChipRequestLines,
-+                errno::errno(),
-+            ));
-+        }
-+
-+        request::Request::new(request)
-+    }
-+}
-+
-+impl AsRawFd for Chip {
-+    /// Get the file descriptor associated with the chip.
-+    ///
-+    /// The returned file descriptor must not be closed by the caller, else other methods for the
-+    /// `struct Chip` may fail.
-+    fn as_raw_fd(&self) -> i32 {
-+        // SAFETY: `gpiod_chip` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_chip_get_fd(self.ichip.chip) }
-+    }
-+}
-+
-+/// GPIO chip Information
-+#[derive(Debug, Eq)]
-+pub struct Info {
-+    info: *mut gpiod::gpiod_chip_info,
-+}
-+
-+impl Info {
-+    /// Find a GPIO chip by path.
-+    fn new(chip: Arc<Internal>) -> Result<Self> {
-+        // SAFETY: `gpiod_chip` is guaranteed to be valid here.
-+        let info = unsafe { gpiod::gpiod_chip_get_info(chip.chip) };
-+        if info.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::ChipGetInfo,
-+                errno::errno(),
-+            ));
-+        }
-+
-+        Ok(Self { info })
-+    }
-+
-+    /// Get the GPIO chip name as represented in the kernel.
-+    pub fn name(&self) -> Result<&str> {
-+        // SAFETY: The string returned by libgpiod is guaranteed to live as long
-+        // as the `struct Chip`.
-+        let name = unsafe { gpiod::gpiod_chip_info_get_name(self.info) };
-+
-+        // SAFETY: The string is guaranteed to be valid here by the C API.
-+        unsafe { CStr::from_ptr(name) }
-+            .to_str()
-+            .map_err(Error::StringNotUtf8)
-+    }
-+
-+    /// Get the GPIO chip label as represented in the kernel.
-+    pub fn label(&self) -> Result<&str> {
-+        // SAFETY: The string returned by libgpiod is guaranteed to live as long
-+        // as the `struct Chip`.
-+        let label = unsafe { gpiod::gpiod_chip_info_get_label(self.info) };
-+
-+        // SAFETY: The string is guaranteed to be valid here by the C API.
-+        unsafe { CStr::from_ptr(label) }
-+            .to_str()
-+            .map_err(Error::StringNotUtf8)
-+    }
-+
-+    /// Get the number of GPIO lines exposed by the chip.
-+    pub fn num_lines(&self) -> usize {
-+        // SAFETY: `gpiod_chip` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_chip_info_get_num_lines(self.info) as usize }
-+    }
-+}
-+
-+impl PartialEq for Info {
-+    fn eq(&self, other: &Self) -> bool {
-+        self.name().unwrap().eq(other.name().unwrap())
-+    }
-+}
-+
-+impl PartialOrd for Info {
-+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-+        let name = match self.name() {
-+            Ok(name) => name,
-+            _ => return None,
-+        };
-+
-+        let other_name = match other.name() {
-+            Ok(name) => name,
-+            _ => return None,
-+        };
-+
-+        name.partial_cmp(other_name)
-+    }
-+}
-+
-+impl Drop for Info {
-+    /// Close the GPIO chip info and release all associated resources.
-+    fn drop(&mut self) {
-+        // SAFETY: `gpiod_chip` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_chip_info_free(self.info) }
-+    }
-+}
-diff --git a/bindings/rust/libgpiod/src/edge_event.rs b/bindings/rust/libgpiod/src/edge_event.rs
-new file mode 100644
-index 000000000000..d8404952b0b0
---- /dev/null
-+++ b/bindings/rust/libgpiod/src/edge_event.rs
-@@ -0,0 +1,92 @@
-+// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
-+// SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
-+
-+use std::time::Duration;
-+
-+use super::{
-+    gpiod,
-+    line::{EdgeKind, Offset},
-+    Error, OperationType, Result,
-+};
-+
-+/// Line edge events handling
-+///
-+/// An edge event object contains information about a single line edge event.
-+/// It contains the event type, timestamp and the offset of the line on which
-+/// the event occurred as well as two sequence numbers (global for all lines
-+/// in the associated request and local for this line only).
-+///
-+/// Edge events are stored into an edge-event buffer object to improve
-+/// performance and to limit the number of memory allocations when a large
-+/// number of events are being read.
-+
-+#[derive(Debug, Eq, PartialEq)]
-+pub struct Event(*mut gpiod::gpiod_edge_event);
-+
-+impl Event {
-+    pub fn event_clone(event: &Event) -> Result<Event> {
-+        // SAFETY: `gpiod_edge_event` is guaranteed to be valid here.
-+        let event = unsafe { gpiod::gpiod_edge_event_copy(event.0) };
-+        if event.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::EdgeEventCopy,
-+                errno::errno(),
-+            ));
-+        }
-+
-+        Ok(Self(event))
-+    }
-+
-+    /// Get the event type.
-+    pub fn event_type(&self) -> Result<EdgeKind> {
-+        // SAFETY: `gpiod_edge_event` is guaranteed to be valid here.
-+        EdgeKind::new(unsafe { gpiod::gpiod_edge_event_get_event_type(self.0) } as u32)
-+    }
-+
-+    /// Get the timestamp of the event.
-+    pub fn timestamp(&self) -> Duration {
-+        // SAFETY: `gpiod_edge_event` is guaranteed to be valid here.
-+        Duration::from_nanos(unsafe { gpiod::gpiod_edge_event_get_timestamp_ns(self.0) })
-+    }
-+
-+    /// Get the offset of the line on which the event was triggered.
-+    pub fn line_offset(&self) -> Offset {
-+        // SAFETY: `gpiod_edge_event` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_edge_event_get_line_offset(self.0) }
-+    }
-+
-+    /// Get the global sequence number of the event.
-+    ///
-+    /// Returns sequence number of the event relative to all lines in the
-+    /// associated line request.
-+    pub fn global_seqno(&self) -> usize {
-+        // SAFETY: `gpiod_edge_event` is guaranteed to be valid here.
-+        unsafe {
-+            gpiod::gpiod_edge_event_get_global_seqno(self.0)
-+                .try_into()
-+                .unwrap()
-+        }
-+    }
-+
-+    /// Get the event sequence number specific to concerned line.
-+    ///
-+    /// Returns sequence number of the event relative to the line within the
-+    /// lifetime of the associated line request.
-+    pub fn line_seqno(&self) -> usize {
-+        // SAFETY: `gpiod_edge_event` is guaranteed to be valid here.
-+        unsafe {
-+            gpiod::gpiod_edge_event_get_line_seqno(self.0)
-+                .try_into()
-+                .unwrap()
-+        }
-+    }
-+}
-+
-+impl Drop for Event {
-+    /// Free the edge event.
-+    fn drop(&mut self) {
-+        // SAFETY: `gpiod_edge_event` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_edge_event_free(self.0) };
-+    }
-+}
-diff --git a/bindings/rust/libgpiod/src/event_buffer.rs b/bindings/rust/libgpiod/src/event_buffer.rs
-new file mode 100644
-index 000000000000..b56be9a27dc0
---- /dev/null
-+++ b/bindings/rust/libgpiod/src/event_buffer.rs
-@@ -0,0 +1,168 @@
-+// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
-+// SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
-+
-+use std::os::raw::c_ulong;
-+use std::ptr;
-+
-+use super::{
-+    gpiod,
-+    request::{Event, Request},
-+    Error, OperationType, Result,
-+};
-+
-+/// Line edge events
-+///
-+/// An iterator over the elements of type `Event`.
-+
-+pub struct Events<'a> {
-+    buffer: &'a mut Buffer,
-+    read_index: usize,
-+    len: usize,
-+}
-+
-+impl<'a> Events<'a> {
-+    pub fn new(buffer: &'a mut Buffer, len: usize) -> Self {
-+        Self {
-+            buffer,
-+            read_index: 0,
-+            len,
-+        }
-+    }
-+
-+    /// Get the number of contained events in the snapshot, this doesn't change
-+    /// on reading events from the iterator.
-+    pub fn len(&self) -> usize {
-+        self.len
-+    }
-+
-+    /// Check if buffer is empty.
-+    pub fn is_empty(&self) -> bool {
-+        self.len == 0
-+    }
-+}
-+
-+impl<'a> Iterator for Events<'a> {
-+    type Item = Result<&'a Event>;
-+
-+    fn nth(&mut self, n: usize) -> Option<Self::Item> {
-+        if self.read_index + n >= self.len {
-+            return None;
-+        }
-+
-+        self.read_index += n + 1;
-+        Some(self.buffer.event(self.read_index - 1))
-+    }
-+
-+    fn next(&mut self) -> Option<Self::Item> {
-+        self.nth(0)
-+    }
-+}
-+
-+/// Line edge events buffer
-+#[derive(Debug, Eq, PartialEq)]
-+pub struct Buffer {
-+    pub(crate) buffer: *mut gpiod::gpiod_edge_event_buffer,
-+    events: Vec<*mut gpiod::gpiod_edge_event>,
-+}
-+
-+impl Buffer {
-+    /// Create a new edge event buffer.
-+    ///
-+    /// If capacity equals 0, it will be set to a default value of 64. If
-+    /// capacity is larger than 1024, it will be limited to 1024.
-+    pub fn new(capacity: usize) -> Result<Self> {
-+        // SAFETY: The `gpiod_edge_event_buffer` returned by libgpiod is guaranteed to live as long
-+        // as the `struct Buffer`.
-+        let buffer = unsafe { gpiod::gpiod_edge_event_buffer_new(capacity as c_ulong) };
-+        if buffer.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::EdgeEventBufferNew,
-+                errno::errno(),
-+            ));
-+        }
-+
-+        // SAFETY: `gpiod_edge_event_buffer` is guaranteed to be valid here.
-+        let capacity = unsafe { gpiod::gpiod_edge_event_buffer_get_capacity(buffer) as usize };
-+
-+        Ok(Self {
-+            buffer,
-+            events: vec![ptr::null_mut(); capacity],
-+        })
-+    }
-+
-+    /// Get the capacity of the event buffer.
-+    pub fn capacity(&self) -> usize {
-+        self.events.len()
-+    }
-+
-+    /// Get edge events from a line request.
-+    ///
-+    /// This function will block if no event was queued for the line.
-+    pub fn read_edge_events(&mut self, request: &Request) -> Result<Events> {
-+        for i in 0..self.events.len() {
-+            self.events[i] = ptr::null_mut();
-+        }
-+
-+        // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
-+        let ret = unsafe {
-+            gpiod::gpiod_line_request_read_edge_event(
-+                request.request,
-+                self.buffer,
-+                self.events.len().try_into().unwrap(),
-+            )
-+        };
-+
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineRequestReadEdgeEvent,
-+                errno::errno(),
-+            ))
-+        } else {
-+            let ret = ret as usize;
-+
-+            if ret > self.events.len() {
-+                Err(Error::TooManyEvents(ret, self.events.len()))
-+            } else {
-+                Ok(Events::new(self, ret))
-+            }
-+        }
-+    }
-+
-+    /// Read an event stored in the buffer.
-+    fn event<'a>(&mut self, index: usize) -> Result<&'a Event> {
-+        if self.events[index].is_null() {
-+            // SAFETY: The `gpiod_edge_event` returned by libgpiod is guaranteed to live as long
-+            // as the `struct Event`.
-+            let event = unsafe {
-+                gpiod::gpiod_edge_event_buffer_get_event(self.buffer, index.try_into().unwrap())
-+            };
-+
-+            if event.is_null() {
-+                return Err(Error::OperationFailed(
-+                    OperationType::EdgeEventBufferGetEvent,
-+                    errno::errno(),
-+                ));
-+            }
-+
-+            self.events[index] = event;
-+        }
-+
-+        // SAFETY: Safe as the underlying events object won't get freed until the time the returned
-+        // reference is still used.
-+        Ok(unsafe {
-+            // This will not lead to `drop(event)`.
-+            (self.events.as_ptr().add(index) as *const Event)
-+                .as_ref()
-+                .unwrap()
-+        })
-+    }
-+}
-+
-+impl Drop for Buffer {
-+    /// Free the edge event buffer and release all associated resources.
-+    fn drop(&mut self) {
-+        // SAFETY: `gpiod_edge_event_buffer` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_edge_event_buffer_free(self.buffer) };
-+    }
-+}
-diff --git a/bindings/rust/libgpiod/src/info_event.rs b/bindings/rust/libgpiod/src/info_event.rs
-new file mode 100644
-index 000000000000..8bd558532095
---- /dev/null
-+++ b/bindings/rust/libgpiod/src/info_event.rs
-@@ -0,0 +1,68 @@
-+// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
-+// SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
-+
-+use std::time::Duration;
-+
-+use super::{
-+    gpiod,
-+    line::{self, InfoChangeKind},
-+    Error, OperationType, Result,
-+};
-+
-+/// Line status watch events
-+///
-+/// Accessors for the info event objects allowing to monitor changes in GPIO
-+/// line state.
-+///
-+/// Callers can be notified about changes in line's state using the interfaces
-+/// exposed by GPIO chips. Each info event contains information about the event
-+/// itself (timestamp, type) as well as a snapshot of line's state in the form
-+/// of a line-info object.
-+
-+#[derive(Debug, Eq, PartialEq)]
-+pub struct Event {
-+    pub(crate) event: *mut gpiod::gpiod_info_event,
-+}
-+
-+impl Event {
-+    /// Get a single chip's line's status change event.
-+    pub(crate) fn new(event: *mut gpiod::gpiod_info_event) -> Self {
-+        Self { event }
-+    }
-+
-+    /// Get the event type of the status change event.
-+    pub fn event_type(&self) -> Result<InfoChangeKind> {
-+        // SAFETY: `gpiod_info_event` is guaranteed to be valid here.
-+        InfoChangeKind::new(unsafe { gpiod::gpiod_info_event_get_event_type(self.event) } as u32)
-+    }
-+
-+    /// Get the timestamp of the event, read from the monotonic clock.
-+    pub fn timestamp(&self) -> Duration {
-+        // SAFETY: `gpiod_info_event` is guaranteed to be valid here.
-+        Duration::from_nanos(unsafe { gpiod::gpiod_info_event_get_timestamp_ns(self.event) })
-+    }
-+
-+    /// Get the line-info object associated with the event.
-+    pub fn line_info(&self) -> Result<line::Info> {
-+        // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-+        let info = unsafe { gpiod::gpiod_info_event_get_line_info(self.event) };
-+
-+        if info.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::InfoEventGetLineInfo,
-+                errno::errno(),
-+            ));
-+        }
-+
-+        line::Info::new_from_event(info)
-+    }
-+}
-+
-+impl Drop for Event {
-+    /// Free the info event object and release all associated resources.
-+    fn drop(&mut self) {
-+        // SAFETY: `gpiod_info_event` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_info_event_free(self.event) }
-+    }
-+}
-diff --git a/bindings/rust/libgpiod/src/lib.rs b/bindings/rust/libgpiod/src/lib.rs
-new file mode 100644
-index 000000000000..161de164dddd
---- /dev/null
-+++ b/bindings/rust/libgpiod/src/lib.rs
-@@ -0,0 +1,478 @@
++++ b/bindings/rust/libgpiod/examples/gpio_events.rs
+@@ -0,0 +1,88 @@
 +// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
 +// SPDX-FileCopyrightText: 2022 Linaro Ltd.
 +// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
 +//
-+// Rust wrappers for GPIOD APIs
++// Simplified Rust implementation to show handling of events, when the buffer
++// is read into multiple times. Based on gpiomon example.
 +
-+//! libgpiod public API
-+//!
-+//! This is the complete documentation of the public Rust API made available to
-+//! users of libgpiod.
-+//!
-+//! The API is logically split into several parts such as: GPIO chip & line
-+//! operators, GPIO events handling etc.
++use std::env;
 +
-+use std::ffi::CStr;
-+use std::fs;
-+use std::os::raw::c_char;
-+use std::path::Path;
-+use std::time::Duration;
-+use std::{fmt, str};
-+
-+use intmap::IntMap;
-+use thiserror::Error as ThisError;
-+
-+use libgpiod_sys as gpiod;
-+
-+/// Operation types, used with OperationFailed() Error.
-+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-+pub enum OperationType {
-+    ChipOpen,
-+    ChipWaitInfoEvent,
-+    ChipGetLine,
-+    ChipGetLineInfo,
-+    ChipGetLineOffsetFromName,
-+    ChipGetInfo,
-+    ChipReadInfoEvent,
-+    ChipRequestLines,
-+    ChipWatchLineInfo,
-+    EdgeEventBufferGetEvent,
-+    EdgeEventCopy,
-+    EdgeEventBufferNew,
-+    InfoEventGetLineInfo,
-+    LineConfigNew,
-+    LineConfigAddSettings,
-+    LineConfigGetOffsets,
-+    LineConfigGetSettings,
-+    LineRequestReconfigLines,
-+    LineRequestGetVal,
-+    LineRequestGetValSubset,
-+    LineRequestSetVal,
-+    LineRequestSetValSubset,
-+    LineRequestReadEdgeEvent,
-+    LineRequestWaitEdgeEvent,
-+    LineSettingsNew,
-+    LineSettingsCopy,
-+    LineSettingsGetOutVal,
-+    LineSettingsSetDirection,
-+    LineSettingsSetEdgeDetection,
-+    LineSettingsSetBias,
-+    LineSettingsSetDrive,
-+    LineSettingsSetActiveLow,
-+    LineSettingsSetDebouncePeriod,
-+    LineSettingsSetEventClock,
-+    LineSettingsSetOutputValue,
-+    RequestConfigNew,
-+    RequestConfigGetConsumer,
-+    SimBankGetVal,
-+    SimBankNew,
-+    SimBankSetLabel,
-+    SimBankSetNumLines,
-+    SimBankSetLineName,
-+    SimBankSetPull,
-+    SimBankHogLine,
-+    SimCtxNew,
-+    SimDevNew,
-+    SimDevEnable,
-+    SimDevDisable,
-+}
-+
-+impl fmt::Display for OperationType {
-+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-+        write!(f, "{:?}", self)
-+    }
-+}
-+
-+/// Result of libgpiod operations.
-+pub type Result<T> = std::result::Result<T, Error>;
-+
-+/// Error codes for libgpiod operations.
-+#[derive(Copy, Clone, Debug, Eq, PartialEq, ThisError)]
-+pub enum Error {
-+    #[error("Failed to get {0}")]
-+    NullString(&'static str),
-+    #[error("String not utf8: {0:?}")]
-+    StringNotUtf8(str::Utf8Error),
-+    #[error("Invalid String")]
-+    InvalidString,
-+    #[error("Invalid enum {0} value: {1}")]
-+    InvalidEnumValue(&'static str, u32),
-+    #[error("Operation {0} Failed: {1}")]
-+    OperationFailed(OperationType, errno::Errno),
-+    #[error("Invalid Arguments")]
-+    InvalidArguments,
-+    #[error("Event count more than buffer capacity: {0} > {1}")]
-+    TooManyEvents(usize, usize),
-+    #[error("Std Io Error")]
-+    IoError,
-+}
-+
-+mod info_event;
-+
-+/// GPIO chip related definitions.
-+pub mod chip;
-+
-+mod edge_event;
-+mod event_buffer;
-+mod line_request;
-+mod request_config;
-+
-+/// GPIO chip request related definitions.
-+pub mod request {
-+    pub use crate::edge_event::*;
-+    pub use crate::event_buffer::*;
-+    pub use crate::line_request::*;
-+    pub use crate::request_config::*;
-+}
-+
-+mod line_config;
-+mod line_info;
-+mod line_settings;
-+
-+/// GPIO chip line related definitions.
-+pub mod line {
-+    pub use crate::line_config::*;
-+    pub use crate::line_info::*;
-+    pub use crate::line_settings::*;
-+
-+    use super::*;
-+
-+    /// Value settings.
-+    #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-+    pub enum Value {
-+        /// Active
-+        Active,
-+        /// Inactive
-+        InActive,
-+    }
-+
-+    /// Maps offset to Value.
-+    pub type ValueMap = IntMap<Value>;
-+
-+    impl Value {
-+        pub fn new(val: i32) -> Result<Self> {
-+            Ok(match val {
-+                0 => Value::InActive,
-+                1 => Value::Active,
-+                _ => return Err(Error::InvalidEnumValue("Value", val as u32)),
-+            })
-+        }
-+
-+        pub(crate) fn value(&self) -> i32 {
-+            match self {
-+                Value::Active => 1,
-+                Value::InActive => 0,
-+            }
-+        }
-+    }
-+
-+    /// Offset type.
-+    pub type Offset = u32;
-+
-+    /// Direction settings.
-+    #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-+    pub enum Direction {
-+        /// Request the line(s), but don't change direction.
-+        AsIs,
-+        /// Direction is input - for reading the value of an externally driven GPIO line.
-+        Input,
-+        /// Direction is output - for driving the GPIO line.
-+        Output,
-+    }
-+
-+    impl Direction {
-+        pub(crate) fn new(dir: u32) -> Result<Self> {
-+            Ok(match dir {
-+                gpiod::GPIOD_LINE_DIRECTION_AS_IS => Direction::AsIs,
-+                gpiod::GPIOD_LINE_DIRECTION_INPUT => Direction::Input,
-+                gpiod::GPIOD_LINE_DIRECTION_OUTPUT => Direction::Output,
-+                _ => return Err(Error::InvalidEnumValue("Direction", dir)),
-+            })
-+        }
-+
-+        pub(crate) fn gpiod_direction(&self) -> u32 {
-+            match self {
-+                Direction::AsIs => gpiod::GPIOD_LINE_DIRECTION_AS_IS,
-+                Direction::Input => gpiod::GPIOD_LINE_DIRECTION_INPUT,
-+                Direction::Output => gpiod::GPIOD_LINE_DIRECTION_OUTPUT,
-+            }
-+        }
-+    }
-+
-+    /// Internal bias settings.
-+    #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-+    pub enum Bias {
-+        /// The internal bias is disabled.
-+        Disabled,
-+        /// The internal pull-up bias is enabled.
-+        PullUp,
-+        /// The internal pull-down bias is enabled.
-+        PullDown,
-+    }
-+
-+    impl Bias {
-+        pub(crate) fn new(bias: u32) -> Result<Option<Self>> {
-+            Ok(match bias {
-+                gpiod::GPIOD_LINE_BIAS_UNKNOWN => None,
-+                gpiod::GPIOD_LINE_BIAS_AS_IS => None,
-+                gpiod::GPIOD_LINE_BIAS_DISABLED => Some(Bias::Disabled),
-+                gpiod::GPIOD_LINE_BIAS_PULL_UP => Some(Bias::PullUp),
-+                gpiod::GPIOD_LINE_BIAS_PULL_DOWN => Some(Bias::PullDown),
-+                _ => return Err(Error::InvalidEnumValue("Bias", bias)),
-+            })
-+        }
-+
-+        pub(crate) fn gpiod_bias(bias: Option<Bias>) -> u32 {
-+            match bias {
-+                None => gpiod::GPIOD_LINE_BIAS_AS_IS,
-+                Some(bias) => match bias {
-+                    Bias::Disabled => gpiod::GPIOD_LINE_BIAS_DISABLED,
-+                    Bias::PullUp => gpiod::GPIOD_LINE_BIAS_PULL_UP,
-+                    Bias::PullDown => gpiod::GPIOD_LINE_BIAS_PULL_DOWN,
-+                },
-+            }
-+        }
-+    }
-+
-+    /// Drive settings.
-+    #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-+    pub enum Drive {
-+        /// Drive setting is push-pull.
-+        PushPull,
-+        /// Line output is open-drain.
-+        OpenDrain,
-+        /// Line output is open-source.
-+        OpenSource,
-+    }
-+
-+    impl Drive {
-+        pub(crate) fn new(drive: u32) -> Result<Self> {
-+            Ok(match drive {
-+                gpiod::GPIOD_LINE_DRIVE_PUSH_PULL => Drive::PushPull,
-+                gpiod::GPIOD_LINE_DRIVE_OPEN_DRAIN => Drive::OpenDrain,
-+                gpiod::GPIOD_LINE_DRIVE_OPEN_SOURCE => Drive::OpenSource,
-+                _ => return Err(Error::InvalidEnumValue("Drive", drive)),
-+            })
-+        }
-+
-+        pub(crate) fn gpiod_drive(&self) -> u32 {
-+            match self {
-+                Drive::PushPull => gpiod::GPIOD_LINE_DRIVE_PUSH_PULL,
-+                Drive::OpenDrain => gpiod::GPIOD_LINE_DRIVE_OPEN_DRAIN,
-+                Drive::OpenSource => gpiod::GPIOD_LINE_DRIVE_OPEN_SOURCE,
-+            }
-+        }
-+    }
-+
-+    /// Edge detection settings.
-+    #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-+    pub enum Edge {
-+        /// Line detects rising edge events.
-+        Rising,
-+        /// Line detects falling edge events.
-+        Falling,
-+        /// Line detects both rising and falling edge events.
-+        Both,
-+    }
-+
-+    impl Edge {
-+        pub(crate) fn new(edge: u32) -> Result<Option<Self>> {
-+            Ok(match edge {
-+                gpiod::GPIOD_LINE_EDGE_NONE => None,
-+                gpiod::GPIOD_LINE_EDGE_RISING => Some(Edge::Rising),
-+                gpiod::GPIOD_LINE_EDGE_FALLING => Some(Edge::Falling),
-+                gpiod::GPIOD_LINE_EDGE_BOTH => Some(Edge::Both),
-+                _ => return Err(Error::InvalidEnumValue("Edge", edge)),
-+            })
-+        }
-+
-+        pub(crate) fn gpiod_edge(edge: Option<Edge>) -> u32 {
-+            match edge {
-+                None => gpiod::GPIOD_LINE_EDGE_NONE,
-+                Some(edge) => match edge {
-+                    Edge::Rising => gpiod::GPIOD_LINE_EDGE_RISING,
-+                    Edge::Falling => gpiod::GPIOD_LINE_EDGE_FALLING,
-+                    Edge::Both => gpiod::GPIOD_LINE_EDGE_BOTH,
-+                },
-+            }
-+        }
-+    }
-+
-+    /// Line setting kind.
-+    #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-+    pub enum SettingKind {
-+        /// Line direction.
-+        Direction,
-+        /// Bias.
-+        Bias,
-+        /// Drive.
-+        Drive,
-+        /// Edge detection.
-+        EdgeDetection,
-+        /// Active-low setting.
-+        ActiveLow,
-+        /// Debounce period.
-+        DebouncePeriod,
-+        /// Event clock type.
-+        EventClock,
-+        /// Output value.
-+        OutputValue,
-+    }
-+
-+    /// Line settings.
-+    #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-+    pub enum SettingVal {
-+        /// Line direction.
-+        Direction(Direction),
-+        /// Bias.
-+        Bias(Option<Bias>),
-+        /// Drive.
-+        Drive(Drive),
-+        /// Edge detection.
-+        EdgeDetection(Option<Edge>),
-+        /// Active-low setting.
-+        ActiveLow(bool),
-+        /// Debounce period.
-+        DebouncePeriod(Duration),
-+        /// Event clock type.
-+        EventClock(EventClock),
-+        /// Output value.
-+        OutputValue(Value),
-+    }
-+
-+    impl fmt::Display for SettingVal {
-+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-+            write!(f, "{:?}", self)
-+        }
-+    }
-+
-+    /// Event clock settings.
-+    #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-+    pub enum EventClock {
-+        /// Line uses the monotonic clock for edge event timestamps.
-+        Monotonic,
-+        /// Line uses the realtime clock for edge event timestamps.
-+        Realtime,
-+        /// Line uses the hardware timestamp engine clock for edge event timestamps.
-+        HTE,
-+    }
-+
-+    impl EventClock {
-+        pub(crate) fn new(clock: u32) -> Result<Self> {
-+            Ok(match clock {
-+                gpiod::GPIOD_LINE_EVENT_CLOCK_MONOTONIC => EventClock::Monotonic,
-+                gpiod::GPIOD_LINE_EVENT_CLOCK_REALTIME => EventClock::Realtime,
-+                gpiod::GPIOD_LINE_EVENT_CLOCK_HTE => EventClock::HTE,
-+                _ => return Err(Error::InvalidEnumValue("Eventclock", clock)),
-+            })
-+        }
-+
-+        pub(crate) fn gpiod_clock(&self) -> u32 {
-+            match self {
-+                EventClock::Monotonic => gpiod::GPIOD_LINE_EVENT_CLOCK_MONOTONIC,
-+                EventClock::Realtime => gpiod::GPIOD_LINE_EVENT_CLOCK_REALTIME,
-+                EventClock::HTE => gpiod::GPIOD_LINE_EVENT_CLOCK_HTE,
-+            }
-+        }
-+    }
-+
-+    /// Line status change event types.
-+    #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-+    pub enum InfoChangeKind {
-+        /// Line has been requested.
-+        LineRequested,
-+        /// Previously requested line has been released.
-+        LineReleased,
-+        /// Line configuration has changed.
-+        LineConfigChanged,
-+    }
-+
-+    impl InfoChangeKind {
-+        pub(crate) fn new(kind: u32) -> Result<Self> {
-+            Ok(match kind {
-+                gpiod::GPIOD_INFO_EVENT_LINE_REQUESTED => InfoChangeKind::LineRequested,
-+                gpiod::GPIOD_INFO_EVENT_LINE_RELEASED => InfoChangeKind::LineReleased,
-+                gpiod::GPIOD_INFO_EVENT_LINE_CONFIG_CHANGED => InfoChangeKind::LineConfigChanged,
-+                _ => return Err(Error::InvalidEnumValue("InfoChangeKind", kind)),
-+            })
-+        }
-+    }
-+
-+    /// Edge event types.
-+    #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-+    pub enum EdgeKind {
-+        /// Rising edge event.
-+        Rising,
-+        /// Falling edge event.
-+        Falling,
-+    }
-+
-+    impl EdgeKind {
-+        pub(crate) fn new(kind: u32) -> Result<Self> {
-+            Ok(match kind {
-+                gpiod::GPIOD_EDGE_EVENT_RISING_EDGE => EdgeKind::Rising,
-+                gpiod::GPIOD_EDGE_EVENT_FALLING_EDGE => EdgeKind::Falling,
-+                _ => return Err(Error::InvalidEnumValue("EdgeEvent", kind)),
-+            })
-+        }
-+    }
-+}
-+
-+/// Various libgpiod-related functions.
-+
-+/// Check if the file pointed to by path is a GPIO chip character device.
-+///
-+/// Returns true if the file exists and is a GPIO chip character device or a
-+/// symbolic link to it.
-+pub fn is_gpiochip_device<P: AsRef<Path>>(path: &P) -> bool {
-+    // Null-terminate the string
-+    let path = path.as_ref().to_string_lossy() + "\0";
-+
-+    // SAFETY: libgpiod won't access the path reference once the call returns.
-+    unsafe { gpiod::gpiod_is_gpiochip_device(path.as_ptr() as *const c_char) }
-+}
-+
-+/// GPIO devices.
-+///
-+/// Returns a vector of unique available GPIO Chips.
-+///
-+/// The chips are sorted in ascending order of the chip names.
-+pub fn gpiochip_devices<P: AsRef<Path>>(path: &P) -> Result<Vec<chip::Chip>> {
-+    let mut devices = Vec::new();
-+
-+    for entry in fs::read_dir(path).map_err(|_| Error::IoError)?.flatten() {
-+        let path = entry.path();
-+
-+        if is_gpiochip_device(&path) {
-+            let chip = chip::Chip::open(&path)?;
-+            let info = chip.info()?;
-+
-+            devices.push((chip, info));
-+        }
-+    }
-+
-+    devices.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
-+    devices.dedup_by(|a, b| a.1.eq(&b.1));
-+
-+    Ok(devices.into_iter().map(|a| a.0).collect())
-+}
-+
-+/// Get the API version of the libgpiod library as a human-readable string.
-+pub fn libgpiod_version() -> Result<&'static str> {
-+    // SAFETY: The string returned by libgpiod is guaranteed to live forever.
-+    let version = unsafe { gpiod::gpiod_version_string() };
-+
-+    if version.is_null() {
-+        return Err(Error::NullString("GPIO library version"));
-+    }
-+
-+    // SAFETY: The string is guaranteed to be valid here by the C API.
-+    unsafe { CStr::from_ptr(version) }
-+        .to_str()
-+        .map_err(Error::StringNotUtf8)
-+}
-+
-+/// Get the API version of the libgpiod crate as a human-readable string.
-+pub fn crate_version() -> &'static str {
-+    env!("CARGO_PKG_VERSION")
-+}
-diff --git a/bindings/rust/libgpiod/src/line_config.rs b/bindings/rust/libgpiod/src/line_config.rs
-new file mode 100644
-index 000000000000..19dc187e6cbd
---- /dev/null
-+++ b/bindings/rust/libgpiod/src/line_config.rs
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
-+// SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
-+
-+use std::os::raw::{c_ulong, c_void};
-+use std::slice;
-+
-+use super::{
-+    gpiod,
-+    line::{Offset, Settings},
-+    Error, OperationType, Result,
++use libgpiod::{
++    chip::Chip,
++    line::{self, Edge, Offset},
++    request, Error, Result,
 +};
 +
-+/// Line configuration objects.
-+///
-+/// The line-config object contains the configuration for lines that can be
-+/// used in two cases:
-+///  - when making a line request
-+///  - when reconfiguring a set of already requested lines.
-+///
-+/// A new line-config object is empty. Using it in a request will lead to an
-+/// error. In order for a line-config to become useful, it needs to be assigned
-+/// at least one offset-to-settings mapping by calling
-+/// ::gpiod_line_config_add_line_settings.
-+///
-+/// When calling ::gpiod_chip_request_lines, the library will request all
-+/// offsets that were assigned settings in the order that they were assigned.
-+
-+#[derive(Debug, Eq, PartialEq)]
-+pub struct Config {
-+    pub(crate) config: *mut gpiod::gpiod_line_config,
++fn usage(name: &str) {
++    println!("Usage: {} <chip> <offset0> ...", name);
 +}
 +
-+impl Config {
-+    /// Create a new line config object.
-+    pub fn new() -> Result<Self> {
-+        // SAFETY: The `gpiod_line_config` returned by libgpiod is guaranteed to live as long
-+        // as the `struct Config`.
-+        let config = unsafe { gpiod::gpiod_line_config_new() };
-+
-+        if config.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::LineConfigNew,
-+                errno::errno(),
-+            ));
-+        }
-+
-+        Ok(Self { config })
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() < 3 {
++        usage(&args[0]);
++        return Err(Error::InvalidArguments);
 +    }
 +
-+    /// Resets the entire configuration stored in the object. This is useful if
-+    /// the user wants to reuse the object without reallocating it.
-+    pub fn reset(&mut self) {
-+        // SAFETY: `gpiod_line_config` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_line_config_reset(self.config) }
++    let mut lsettings = line::Settings::new()?;
++    let lconfig = line::Config::new()?;
++    let mut offsets = Vec::<Offset>::new();
++
++    for arg in &args[2..] {
++        let offset = arg.parse::<Offset>().map_err(|_| Error::InvalidArguments)?;
++        offsets.push(offset);
 +    }
 +
-+    /// Add line settings for a set of offsets.
-+    pub fn add_line_settings(&self, offsets: &[Offset], settings: Settings) -> Result<()> {
-+        // SAFETY: `gpiod_line_config` is guaranteed to be valid here.
-+        let ret = unsafe {
-+            gpiod::gpiod_line_config_add_line_settings(
-+                self.config,
-+                offsets.as_ptr(),
-+                offsets.len() as c_ulong,
-+                settings.settings,
-+            )
-+        };
++    lsettings.set_edge_detection(Some(Edge::Both))?;
++    lconfig.add_line_settings(&offsets, lsettings)?;
 +
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineConfigAddSettings,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Ok(())
-+        }
-+    }
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let chip = Chip::open(&path)?;
 +
-+    /// Get line settings for offset.
-+    pub fn line_settings(&self, offset: Offset) -> Result<Settings> {
-+        // SAFETY: `gpiod_line_config` is guaranteed to be valid here.
-+        let settings = unsafe { gpiod::gpiod_line_config_get_line_settings(self.config, offset) };
++    let rconfig = request::Config::new()?;
 +
-+        if settings.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::LineConfigGetSettings,
-+                errno::errno(),
-+            ));
-+        }
++    let mut buffer = request::Buffer::new(1)?;
++    let request = chip.request_lines(&rconfig, &lconfig)?;
 +
-+        Ok(Settings::new_with_settings(settings))
-+    }
-+
-+    /// Get configured offsets.
-+    pub fn offsets(&self) -> Result<Vec<Offset>> {
-+        let mut num: u64 = 0;
-+        let mut ptr: *mut Offset = std::ptr::null_mut();
-+
-+        // SAFETY: The `ptr` array returned by libgpiod is guaranteed to live as long
-+        // as it is not explicitly freed with `free()`.
-+        let ret = unsafe {
-+            gpiod::gpiod_line_config_get_offsets(
-+                self.config,
-+                &mut num as *mut _ as *mut _,
-+                &mut ptr,
-+            )
-+        };
-+
-+        if ret == -1 {
-+            return Err(Error::OperationFailed(
-+                OperationType::LineConfigGetOffsets,
-+                errno::errno(),
-+            ));
-+        }
-+
-+        // SAFETY: The `ptr` array returned by libgpiod is guaranteed to live as long
-+        // as it is not explicitly freed with `free()`.
-+        let offsets = unsafe { slice::from_raw_parts(ptr as *const Offset, num as usize).to_vec() };
-+
-+        // SAFETY: The `ptr` array is guaranteed to be valid here.
-+        unsafe { libc::free(ptr as *mut c_void) };
-+
-+        Ok(offsets)
-+    }
-+}
-+
-+impl Drop for Config {
-+    /// Free the line config object and release all associated resources.
-+    fn drop(&mut self) {
-+        // SAFETY: `gpiod_line_config` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_line_config_free(self.config) }
-+    }
-+}
-diff --git a/bindings/rust/libgpiod/src/line_info.rs b/bindings/rust/libgpiod/src/line_info.rs
-new file mode 100644
-index 000000000000..1784cde27e2f
---- /dev/null
-+++ b/bindings/rust/libgpiod/src/line_info.rs
-@@ -0,0 +1,161 @@
-+// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
-+// SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
-+
-+use std::ffi::CStr;
-+use std::str;
-+use std::time::Duration;
-+
-+use super::{
-+    gpiod,
-+    line::{Bias, Direction, Drive, Edge, EventClock, Offset},
-+    Error, Result,
-+};
-+
-+/// Line info
-+///
-+/// Exposes functions for retrieving kernel information about both requested and
-+/// free lines.  Line info object contains an immutable snapshot of a line's status.
-+///
-+/// The line info contains all the publicly available information about a
-+/// line, which does not include the line value.  The line must be requested
-+/// to access the line value.
-+
-+#[derive(Debug, Eq, PartialEq)]
-+pub struct Info {
-+    info: *mut gpiod::gpiod_line_info,
-+    contained: bool,
-+}
-+
-+impl Info {
-+    fn new_internal(info: *mut gpiod::gpiod_line_info, contained: bool) -> Result<Self> {
-+        Ok(Self { info, contained })
-+    }
-+
-+    /// Get a snapshot of information about the line.
-+    pub(crate) fn new(info: *mut gpiod::gpiod_line_info) -> Result<Self> {
-+        Info::new_internal(info, false)
-+    }
-+
-+    /// Get a snapshot of information about the line and start watching it for changes.
-+    pub(crate) fn new_watch(info: *mut gpiod::gpiod_line_info) -> Result<Self> {
-+        Info::new_internal(info, false)
-+    }
-+
-+    /// Get the Line info object associated with an event.
-+    pub(crate) fn new_from_event(info: *mut gpiod::gpiod_line_info) -> Result<Self> {
-+        Info::new_internal(info, true)
-+    }
-+
-+    /// Get the offset of the line within the GPIO chip.
-+    ///
-+    /// The offset uniquely identifies the line on the chip. The combination of the chip and offset
-+    /// uniquely identifies the line within the system.
-+
-+    pub fn offset(&self) -> Offset {
-+        // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_line_info_get_offset(self.info) }
-+    }
-+
-+    /// Get GPIO line's name.
-+    pub fn name(&self) -> Result<&str> {
-+        // SAFETY: The string returned by libgpiod is guaranteed to live as long
-+        // as the `struct Info`.
-+        let name = unsafe { gpiod::gpiod_line_info_get_name(self.info) };
-+        if name.is_null() {
-+            return Err(Error::NullString("GPIO line's name"));
-+        }
-+
-+        // SAFETY: The string is guaranteed to be valid here by the C API.
-+        unsafe { CStr::from_ptr(name) }
-+            .to_str()
-+            .map_err(Error::StringNotUtf8)
-+    }
-+
-+    /// Returns True if the line is in use, false otherwise.
-+    ///
-+    /// The user space can't know exactly why a line is busy. It may have been
-+    /// requested by another process or hogged by the kernel. It only matters that
-+    /// the line is used and we can't request it.
-+    pub fn is_used(&self) -> bool {
-+        // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_line_info_is_used(self.info) }
-+    }
-+
-+    /// Get the GPIO line's consumer name.
-+    pub fn consumer(&self) -> Result<&str> {
-+        // SAFETY: The string returned by libgpiod is guaranteed to live as long
-+        // as the `struct Info`.
-+        let name = unsafe { gpiod::gpiod_line_info_get_consumer(self.info) };
-+        if name.is_null() {
-+            return Err(Error::NullString("GPIO line's consumer name"));
-+        }
-+
-+        // SAFETY: The string is guaranteed to be valid here by the C API.
-+        unsafe { CStr::from_ptr(name) }
-+            .to_str()
-+            .map_err(Error::StringNotUtf8)
-+    }
-+
-+    /// Get the GPIO line's direction.
-+    pub fn direction(&self) -> Result<Direction> {
-+        // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-+        Direction::new(unsafe { gpiod::gpiod_line_info_get_direction(self.info) } as u32)
-+    }
-+
-+    /// Returns true if the line is "active-low", false otherwise.
-+    pub fn is_active_low(&self) -> bool {
-+        // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_line_info_is_active_low(self.info) }
-+    }
-+
-+    /// Get the GPIO line's bias setting.
-+    pub fn bias(&self) -> Result<Option<Bias>> {
-+        // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-+        Bias::new(unsafe { gpiod::gpiod_line_info_get_bias(self.info) } as u32)
-+    }
-+
-+    /// Get the GPIO line's drive setting.
-+    pub fn drive(&self) -> Result<Drive> {
-+        // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-+        Drive::new(unsafe { gpiod::gpiod_line_info_get_drive(self.info) } as u32)
-+    }
-+
-+    /// Get the current edge detection setting of the line.
-+    pub fn edge_detection(&self) -> Result<Option<Edge>> {
-+        // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-+        Edge::new(unsafe { gpiod::gpiod_line_info_get_edge_detection(self.info) } as u32)
-+    }
-+
-+    /// Get the current event clock setting used for edge event timestamps.
-+    pub fn event_clock(&self) -> Result<EventClock> {
-+        // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-+        EventClock::new(unsafe { gpiod::gpiod_line_info_get_event_clock(self.info) } as u32)
-+    }
-+
-+    /// Returns true if the line is debounced (either by hardware or by the
-+    /// kernel software debouncer), false otherwise.
-+    pub fn is_debounced(&self) -> bool {
-+        // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_line_info_is_debounced(self.info) }
-+    }
-+
-+    /// Get the debounce period of the line.
-+    pub fn debounce_period(&self) -> Duration {
-+        // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-+        Duration::from_micros(unsafe {
-+            gpiod::gpiod_line_info_get_debounce_period_us(self.info) as u64
-+        })
-+    }
-+}
-+
-+impl Drop for Info {
-+    fn drop(&mut self) {
-+        // We must not free the Line info object created from `struct chip::Event` by calling
-+        // libgpiod API.
-+        if !self.contained {
-+            // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-+            unsafe { gpiod::gpiod_line_info_free(self.info) }
-+        }
-+    }
-+}
-diff --git a/bindings/rust/libgpiod/src/line_request.rs b/bindings/rust/libgpiod/src/line_request.rs
-new file mode 100644
-index 000000000000..3215ab816434
---- /dev/null
-+++ b/bindings/rust/libgpiod/src/line_request.rs
-@@ -0,0 +1,226 @@
-+// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
-+// SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
-+
-+use std::os::{raw::c_ulong, unix::prelude::AsRawFd};
-+use std::time::Duration;
-+
-+use super::{
-+    gpiod,
-+    line::{self, Offset, Value, ValueMap},
-+    request, Error, OperationType, Result,
-+};
-+
-+/// Line request operations
-+///
-+/// Allows interaction with a set of requested lines.
-+#[derive(Debug, Eq, PartialEq)]
-+pub struct Request {
-+    pub(crate) request: *mut gpiod::gpiod_line_request,
-+}
-+
-+impl Request {
-+    /// Request a set of lines for exclusive usage.
-+    pub(crate) fn new(request: *mut gpiod::gpiod_line_request) -> Result<Self> {
-+        Ok(Self { request })
-+    }
-+
-+    /// Get the number of lines in the request.
-+    pub fn num_lines(&self) -> usize {
-+        // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_line_request_get_num_lines(self.request) as usize }
-+    }
-+
-+    /// Get the offsets of lines in the request.
-+    pub fn offsets(&self) -> Vec<Offset> {
-+        let mut offsets = vec![0; self.num_lines() as usize];
-+
-+        // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_line_request_get_offsets(self.request, offsets.as_mut_ptr()) };
-+        offsets
-+    }
-+
-+    /// Get the value (0 or 1) of a single line associated with the request.
-+    pub fn value(&self, offset: Offset) -> Result<Value> {
-+        // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
-+        let value = unsafe { gpiod::gpiod_line_request_get_value(self.request, offset) };
-+
-+        if value != 0 && value != 1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineRequestGetVal,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Value::new(value)
-+        }
-+    }
-+
-+    /// Get values of a subset of lines associated with the request.
-+    pub fn values_subset(&self, offsets: &[Offset]) -> Result<ValueMap> {
-+        let mut values = vec![0; offsets.len()];
-+
-+        // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
-+        let ret = unsafe {
-+            gpiod::gpiod_line_request_get_values_subset(
-+                self.request,
-+                offsets.len() as c_ulong,
-+                offsets.as_ptr(),
-+                values.as_mut_ptr(),
-+            )
-+        };
-+
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineRequestGetValSubset,
-+                errno::errno(),
-+            ))
-+        } else {
-+            let mut map = ValueMap::new();
-+
-+            for (i, val) in values.iter().enumerate() {
-+                map.insert(offsets[i].into(), Value::new(*val)?);
++    loop {
++        match request.wait_edge_event(None) {
++            Err(x) => {
++                println!("{:?}", x);
++                return Err(Error::InvalidArguments);
 +            }
 +
-+            Ok(map)
-+        }
-+    }
-+
-+    /// Get values of all lines associated with the request.
-+    pub fn values(&self) -> Result<ValueMap> {
-+        self.values_subset(&self.offsets())
-+    }
-+
-+    /// Set the value of a single line associated with the request.
-+    pub fn set_value(&self, offset: Offset, value: Value) -> Result<()> {
-+        // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
-+        let ret =
-+            unsafe { gpiod::gpiod_line_request_set_value(self.request, offset, value.value()) };
-+
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineRequestSetVal,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Ok(())
-+        }
-+    }
-+
-+    /// Get values of a subset of lines associated with the request.
-+    pub fn set_values_subset(&self, map: ValueMap) -> Result<()> {
-+        let mut offsets = Vec::new();
-+        let mut values = Vec::new();
-+
-+        for (offset, value) in map {
-+            offsets.push(offset as u32);
-+            values.push(value.value());
++            Ok(false) => {
++                // This shouldn't happen as the call is blocking.
++                panic!();
++            }
++            Ok(true) => (),
 +        }
 +
-+        // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
-+        let ret = unsafe {
-+            gpiod::gpiod_line_request_set_values_subset(
-+                self.request,
-+                offsets.len() as c_ulong,
-+                offsets.as_ptr(),
-+                values.as_ptr(),
-+            )
-+        };
++        let mut events = request.read_edge_events(&mut buffer)?;
 +
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineRequestSetValSubset,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Ok(())
-+        }
-+    }
++        // This can't be used across the next read_edge_events().
++        let event = events.next().unwrap()?;
 +
-+    /// Get values of all lines associated with the request.
-+    pub fn set_values(&self, values: &[Value]) -> Result<()> {
-+        if values.len() != self.num_lines() as usize {
-+            return Err(Error::InvalidArguments);
-+        }
++        // This will out live `event` and the next read_edge_events().
++        let cloned_event = request::Event::event_clone(event)?;
 +
-+        let mut new_values = Vec::new();
-+        for value in values {
-+            new_values.push(value.value());
-+        }
-+
-+        // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
-+        let ret =
-+            unsafe { gpiod::gpiod_line_request_set_values(self.request, new_values.as_ptr()) };
-+
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineRequestSetVal,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Ok(())
-+        }
-+    }
-+
-+    /// Update the configuration of lines associated with the line request.
-+    pub fn reconfigure_lines(&self, lconfig: &line::Config) -> Result<()> {
-+        // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
-+        let ret =
-+            unsafe { gpiod::gpiod_line_request_reconfigure_lines(self.request, lconfig.config) };
-+
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineRequestReconfigLines,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Ok(())
-+        }
-+    }
-+
-+    /// Wait for edge events on any of the lines associated with the request.
-+    pub fn wait_edge_event(&self, timeout: Option<Duration>) -> Result<bool> {
-+        let timeout = match timeout {
-+            Some(x) => x.as_nanos() as i64,
-+            // Block indefinitely
-+            None => -1,
-+        };
-+
-+        // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
-+        let ret = unsafe { gpiod::gpiod_line_request_wait_edge_event(self.request, timeout) };
-+
-+        match ret {
-+            -1 => Err(Error::OperationFailed(
-+                OperationType::LineRequestWaitEdgeEvent,
-+                errno::errno(),
-+            )),
-+            0 => Ok(false),
-+            _ => Ok(true),
-+        }
-+    }
-+
-+    /// Get a number of edge events from a line request.
-+    ///
-+    /// This function will block if no event was queued for the line.
-+    pub fn read_edge_events<'a>(
-+        &'a self,
-+        buffer: &'a mut request::Buffer,
-+    ) -> Result<request::Events> {
-+        buffer.read_edge_events(self)
-+    }
-+}
-+
-+impl AsRawFd for Request {
-+    /// Get the file descriptor associated with the line request.
-+    fn as_raw_fd(&self) -> i32 {
-+        // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_line_request_get_fd(self.request) }
-+    }
-+}
-+
-+impl Drop for Request {
-+    /// Release the requested lines and free all associated resources.
-+    fn drop(&mut self) {
-+        // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_line_request_release(self.request) }
-+    }
-+}
-diff --git a/bindings/rust/libgpiod/src/line_settings.rs b/bindings/rust/libgpiod/src/line_settings.rs
-new file mode 100644
-index 000000000000..cedf7cabafcc
---- /dev/null
-+++ b/bindings/rust/libgpiod/src/line_settings.rs
-@@ -0,0 +1,296 @@
-+// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
-+// SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
-+
-+use std::time::Duration;
-+
-+use super::{
-+    gpiod,
-+    line::{Bias, Direction, Drive, Edge, EventClock, SettingKind, SettingVal, Value},
-+    Error, OperationType, Result,
-+};
-+
-+/// Line settings objects.
-+///
-+/// Line settings object contains a set of line properties that can be used
-+/// when requesting lines or reconfiguring an existing request.
-+///
-+/// Mutators in general can only fail if the new property value is invalid. The
-+/// return values can be safely ignored - the object remains valid even after
-+/// a mutator fails and simply uses the sane default appropriate for given
-+/// property.
-+
-+#[derive(Debug, Eq, PartialEq)]
-+pub struct Settings {
-+    pub(crate) settings: *mut gpiod::gpiod_line_settings,
-+}
-+
-+impl Settings {
-+    /// Create a new line settings object.
-+    pub fn new() -> Result<Self> {
-+        // SAFETY: The `gpiod_line_settings` returned by libgpiod is guaranteed to live as long
-+        // as the `struct Settings`.
-+        let settings = unsafe { gpiod::gpiod_line_settings_new() };
-+
-+        if settings.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::LineSettingsNew,
-+                errno::errno(),
-+            ));
-+        }
-+
-+        Ok(Self { settings })
-+    }
-+
-+    pub fn new_with_settings(settings: *mut gpiod::gpiod_line_settings) -> Self {
-+        Self { settings }
-+    }
-+
-+    /// Resets the line settings object to its default values.
-+    pub fn reset(&mut self) {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_line_settings_reset(self.settings) }
-+    }
-+
-+    /// Makes copy of the settings object.
-+    pub fn settings_clone(&self) -> Result<Self> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        let settings = unsafe { gpiod::gpiod_line_settings_copy(self.settings) };
-+        if settings.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::LineSettingsCopy,
-+                errno::errno(),
-+            ));
-+        }
-+
-+        Ok(Self { settings })
-+    }
-+
-+    /// Set line prop setting.
-+    pub fn set_prop(&mut self, props: &[SettingVal]) -> Result<&mut Self> {
-+        for property in props {
-+            match property {
-+                SettingVal::Direction(prop) => self.set_direction(*prop)?,
-+                SettingVal::EdgeDetection(prop) => self.set_edge_detection(*prop)?,
-+                SettingVal::Bias(prop) => self.set_bias(*prop)?,
-+                SettingVal::Drive(prop) => self.set_drive(*prop)?,
-+                SettingVal::ActiveLow(prop) => self.set_active_low(*prop),
-+                SettingVal::DebouncePeriod(prop) => self.set_debounce_period(*prop),
-+                SettingVal::EventClock(prop) => self.set_event_clock(*prop)?,
-+                SettingVal::OutputValue(prop) => self.set_output_value(*prop)?,
-+            };
-+        }
-+
-+        Ok(self)
-+    }
-+
-+    /// Get the line prop setting.
-+    pub fn prop(&self, property: SettingKind) -> Result<SettingVal> {
-+        Ok(match property {
-+            SettingKind::Direction => SettingVal::Direction(self.direction()?),
-+            SettingKind::EdgeDetection => SettingVal::EdgeDetection(self.edge_detection()?),
-+            SettingKind::Bias => SettingVal::Bias(self.bias()?),
-+            SettingKind::Drive => SettingVal::Drive(self.drive()?),
-+            SettingKind::ActiveLow => SettingVal::ActiveLow(self.active_low()),
-+            SettingKind::DebouncePeriod => SettingVal::DebouncePeriod(self.debounce_period()?),
-+            SettingKind::EventClock => SettingVal::EventClock(self.event_clock()?),
-+            SettingKind::OutputValue => SettingVal::OutputValue(self.output_value()?),
-+        })
-+    }
-+
-+    /// Set the line direction.
-+    pub fn set_direction(&mut self, direction: Direction) -> Result<&mut Self> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        let ret = unsafe {
-+            gpiod::gpiod_line_settings_set_direction(
-+                self.settings,
-+                direction.gpiod_direction() as i32,
-+            )
-+        };
-+
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineSettingsSetDirection,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Ok(self)
-+        }
-+    }
-+
-+    /// Get the direction setting.
-+    pub fn direction(&self) -> Result<Direction> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        Direction::new(unsafe { gpiod::gpiod_line_settings_get_direction(self.settings) } as u32)
-+    }
-+
-+    /// Set the edge event detection setting.
-+    pub fn set_edge_detection(&mut self, edge: Option<Edge>) -> Result<&mut Self> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        let ret = unsafe {
-+            gpiod::gpiod_line_settings_set_edge_detection(
-+                self.settings,
-+                Edge::gpiod_edge(edge) as i32,
-+            )
-+        };
-+
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineSettingsSetEdgeDetection,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Ok(self)
-+        }
-+    }
-+
-+    /// Get the edge event detection setting.
-+    pub fn edge_detection(&self) -> Result<Option<Edge>> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        Edge::new(unsafe { gpiod::gpiod_line_settings_get_edge_detection(self.settings) } as u32)
-+    }
-+
-+    /// Set the bias setting.
-+    pub fn set_bias(&mut self, bias: Option<Bias>) -> Result<&mut Self> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        let ret = unsafe {
-+            gpiod::gpiod_line_settings_set_bias(self.settings, Bias::gpiod_bias(bias) as i32)
-+        };
-+
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineSettingsSetBias,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Ok(self)
-+        }
-+    }
-+
-+    /// Get the bias setting.
-+    pub fn bias(&self) -> Result<Option<Bias>> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        Bias::new(unsafe { gpiod::gpiod_line_settings_get_bias(self.settings) } as u32)
-+    }
-+
-+    /// Set the drive setting.
-+    pub fn set_drive(&mut self, drive: Drive) -> Result<&mut Self> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        let ret = unsafe {
-+            gpiod::gpiod_line_settings_set_drive(self.settings, drive.gpiod_drive() as i32)
-+        };
-+
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineSettingsSetDrive,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Ok(self)
-+        }
-+    }
-+
-+    /// Get the drive setting.
-+    pub fn drive(&self) -> Result<Drive> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        Drive::new(unsafe { gpiod::gpiod_line_settings_get_drive(self.settings) } as u32)
-+    }
-+
-+    /// Set active-low setting.
-+    pub fn set_active_low(&mut self, active_low: bool) -> &mut Self {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        unsafe {
-+            gpiod::gpiod_line_settings_set_active_low(self.settings, active_low);
-+        }
-+        self
-+    }
-+
-+    /// Check the active-low setting.
-+    pub fn active_low(&self) -> bool {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_line_settings_get_active_low(self.settings) }
-+    }
-+
-+    /// Set the debounce period setting.
-+    pub fn set_debounce_period(&mut self, period: Duration) -> &mut Self {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        unsafe {
-+            gpiod::gpiod_line_settings_set_debounce_period_us(
-+                self.settings,
-+                period.as_micros().try_into().unwrap(),
++        let events = request.read_edge_events(&mut buffer)?;
++        for event in events {
++            let event = event?;
++            println!(
++                "line: {} type: {:?}, time: {:?}",
++                event.line_offset(),
++                event.event_type(),
++                event.timestamp()
 +            );
 +        }
 +
-+        self
-+    }
-+
-+    /// Get the debounce period.
-+    pub fn debounce_period(&self) -> Result<Duration> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        Ok(Duration::from_micros(unsafe {
-+            gpiod::gpiod_line_settings_get_debounce_period_us(self.settings) as u64
-+        }))
-+    }
-+
-+    /// Set the event clock setting.
-+    pub fn set_event_clock(&mut self, clock: EventClock) -> Result<&mut Self> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        let ret = unsafe {
-+            gpiod::gpiod_line_settings_set_event_clock(self.settings, clock.gpiod_clock() as i32)
-+        };
-+
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineSettingsSetEventClock,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Ok(self)
-+        }
-+    }
-+
-+    /// Get the event clock setting.
-+    pub fn event_clock(&self) -> Result<EventClock> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        EventClock::new(unsafe { gpiod::gpiod_line_settings_get_event_clock(self.settings) } as u32)
-+    }
-+
-+    /// Set the output value setting.
-+    pub fn set_output_value(&mut self, value: Value) -> Result<&mut Self> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        let ret =
-+            unsafe { gpiod::gpiod_line_settings_set_output_value(self.settings, value.value()) };
-+
-+        if ret == -1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineSettingsSetOutputValue,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Ok(self)
-+        }
-+    }
-+
-+    /// Get the output value, 0 or 1.
-+    pub fn output_value(&self) -> Result<Value> {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        let value = unsafe { gpiod::gpiod_line_settings_get_output_value(self.settings) };
-+
-+        if value != 0 && value != 1 {
-+            Err(Error::OperationFailed(
-+                OperationType::LineSettingsGetOutVal,
-+                errno::errno(),
-+            ))
-+        } else {
-+            Value::new(value)
-+        }
++        // `cloned_event` is still available to be used.
++        println!(
++            "line: {} type: {:?}, time: {:?}",
++            cloned_event.line_offset(),
++            cloned_event.event_type(),
++            cloned_event.timestamp()
++        );
 +    }
 +}
-+
-+impl Drop for Settings {
-+    /// Free the line settings object and release all associated resources.
-+    fn drop(&mut self) {
-+        // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_line_settings_free(self.settings) }
-+    }
-+}
-diff --git a/bindings/rust/libgpiod/src/request_config.rs b/bindings/rust/libgpiod/src/request_config.rs
+diff --git a/bindings/rust/libgpiod/examples/gpio_threaded_info_events.rs b/bindings/rust/libgpiod/examples/gpio_threaded_info_events.rs
 new file mode 100644
-index 000000000000..9d38548dd817
+index 000000000000..e17f0f08bcfa
 --- /dev/null
-+++ b/bindings/rust/libgpiod/src/request_config.rs
-@@ -0,0 +1,94 @@
++++ b/bindings/rust/libgpiod/examples/gpio_threaded_info_events.rs
+@@ -0,0 +1,132 @@
 +// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
 +// SPDX-FileCopyrightText: 2022 Linaro Ltd.
 +// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation to show handling of info events, that are
++// generated from another thread.
 +
-+use std::ffi::{CStr, CString};
-+use std::os::raw::{c_char, c_ulong};
-+use std::str;
++use std::{
++    env,
++    sync::{
++        mpsc::{self, Receiver, Sender},
++        Arc, Mutex,
++    },
++    thread,
++    time::Duration,
++};
 +
-+use super::{gpiod, Error, OperationType, Result};
++use libgpiod::{
++    chip::Chip,
++    line::{self, Direction, InfoChangeKind, Offset},
++    request, Error, Result,
++};
 +
-+/// Request configuration objects
-+///
-+/// Request config objects are used to pass a set of options to the kernel at
-+/// the time of the line request. The mutators don't return error values. If the
-+/// values are invalid, in general they are silently adjusted to acceptable
-+/// ranges.
-+
-+#[derive(Debug, Eq, PartialEq)]
-+pub struct Config {
-+    pub(crate) config: *mut gpiod::gpiod_request_config,
++fn usage(name: &str) {
++    println!("Usage: {} <chip> <offset>", name);
 +}
 +
-+impl Config {
-+    /// Create a new request config object.
-+    pub fn new() -> Result<Self> {
-+        // SAFETY: The `gpiod_request_config` returned by libgpiod is guaranteed to live as long
-+        // as the `struct Config`.
-+        let config = unsafe { gpiod::gpiod_request_config_new() };
-+        if config.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::RequestConfigNew,
-+                errno::errno(),
-+            ));
-+        }
++fn request_reconfigure_line(
++    chip: Arc<Mutex<Chip>>,
++    offset: Offset,
++    tx: Sender<()>,
++    rx: Receiver<()>,
++) {
++    thread::spawn(move || {
++        let lconfig = line::Config::new().unwrap();
++        let lsettings = line::Settings::new().unwrap();
++        lconfig.add_line_settings(&[offset], lsettings).unwrap();
++        let rconfig = request::Config::new().unwrap();
 +
-+        Ok(Self { config })
-+    }
++        let request = chip
++            .lock()
++            .unwrap()
++            .request_lines(&rconfig, &lconfig)
++            .unwrap();
 +
-+    /// Set the consumer name for the request.
-+    ///
-+    /// If the consumer string is too long, it will be truncated to the max
-+    /// accepted length.
-+    pub fn set_consumer(&self, consumer: &str) -> Result<()> {
-+        let consumer = CString::new(consumer).map_err(|_| Error::InvalidString)?;
++        // Signal the parent to continue
++        tx.send(()).expect("Could not send signal on channel");
 +
-+        // SAFETY: `gpiod_request_config` is guaranteed to be valid here.
-+        unsafe {
-+            gpiod::gpiod_request_config_set_consumer(
-+                self.config,
-+                consumer.as_ptr() as *const c_char,
-+            )
-+        }
++        // Wait for parent to signal
++        rx.recv().expect("Could not receive from channel");
 +
-+        Ok(())
-+    }
++        let lconfig = line::Config::new().unwrap();
++        let mut lsettings = line::Settings::new().unwrap();
++        lsettings.set_direction(Direction::Output).unwrap();
++        lconfig.add_line_settings(&[offset], lsettings).unwrap();
 +
-+    /// Get the consumer name configured in the request config.
-+    pub fn consumer(&self) -> Result<&str> {
-+        // SAFETY: The string returned by libgpiod is guaranteed to live as long
-+        // as the `struct Config`.
-+        let consumer = unsafe { gpiod::gpiod_request_config_get_consumer(self.config) };
-+        if consumer.is_null() {
-+            return Err(Error::OperationFailed(
-+                OperationType::RequestConfigGetConsumer,
-+                errno::errno(),
-+            ));
-+        }
++        request.reconfigure_lines(&lconfig).unwrap();
 +
-+        // SAFETY: The string is guaranteed to be valid here by the C API.
-+        unsafe { CStr::from_ptr(consumer) }
-+            .to_str()
-+            .map_err(Error::StringNotUtf8)
-+    }
++        // Signal the parent to continue
++        tx.send(()).expect("Could not send signal on channel");
 +
-+    /// Set the size of the kernel event buffer for the request.
-+    pub fn set_event_buffer_size(&self, size: usize) {
-+        // SAFETY: `gpiod_request_config` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_request_config_set_event_buffer_size(self.config, size as c_ulong) }
-+    }
-+
-+    /// Get the edge event buffer size setting for the request config.
-+    pub fn event_buffer_size(&self) -> usize {
-+        // SAFETY: `gpiod_request_config` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_request_config_get_event_buffer_size(self.config) as usize }
-+    }
++        // Wait for parent to signal
++        rx.recv().expect("Could not receive from channel");
++    });
 +}
 +
-+impl Drop for Config {
-+    /// Free the request config object and release all associated resources.
-+    fn drop(&mut self) {
-+        // SAFETY: `gpiod_request_config` is guaranteed to be valid here.
-+        unsafe { gpiod::gpiod_request_config_free(self.config) }
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() != 3 {
++        usage(&args[0]);
++        return Err(Error::InvalidArguments);
 +    }
++
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let offset = args[2]
++        .parse::<Offset>()
++        .map_err(|_| Error::InvalidArguments)?;
++
++    let chip = Arc::new(Mutex::new(Chip::open(&path)?));
++    chip.lock().unwrap().watch_line_info(offset)?;
++
++    // Thread synchronizing mechanism
++    let (tx_main, rx_thread) = mpsc::channel();
++    let (tx_thread, rx_main) = mpsc::channel();
++
++    // Generate events
++    request_reconfigure_line(chip.clone(), offset, tx_thread, rx_thread);
++
++    // Wait for thread to signal
++    rx_main.recv().expect("Could not receive from channel");
++
++    // Line requested event
++    assert!(chip
++        .lock()
++        .unwrap()
++        .wait_info_event(Some(Duration::from_secs(1)))?);
++    let event = chip.lock().unwrap().read_info_event()?;
++    assert_eq!(event.event_type()?, InfoChangeKind::LineRequested);
++
++    // Signal the thread to continue
++    tx_main.send(()).expect("Could not send signal on channel");
++
++    // Wait for thread to signal
++    rx_main.recv().expect("Could not receive from channel");
++
++    // Line changed event
++    assert!(chip
++        .lock()
++        .unwrap()
++        .wait_info_event(Some(Duration::from_millis(10)))?);
++    let event = chip.lock().unwrap().read_info_event()?;
++    assert_eq!(event.event_type()?, InfoChangeKind::LineConfigChanged);
++
++    // Signal the thread to continue
++    tx_main.send(()).expect("Could not send signal on channel");
++
++    // Line released event
++    assert!(chip
++        .lock()
++        .unwrap()
++        .wait_info_event(Some(Duration::from_millis(10)))?);
++    let event = chip.lock().unwrap().read_info_event()?;
++    assert_eq!(event.event_type().unwrap(), InfoChangeKind::LineReleased);
++
++    // No events available
++    assert!(!chip
++        .lock()
++        .unwrap()
++        .wait_info_event(Some(Duration::from_millis(100)))?);
++
++    Ok(())
++}
+diff --git a/bindings/rust/libgpiod/examples/gpiodetect.rs b/bindings/rust/libgpiod/examples/gpiodetect.rs
+new file mode 100644
+index 000000000000..96581bc604c6
+--- /dev/null
++++ b/bindings/rust/libgpiod/examples/gpiodetect.rs
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
++// SPDX-FileCopyrightText: 2022 Linaro Ltd.
++// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of gpiodetect tool.
++
++use std::env;
++use std::path::Path;
++
++use libgpiod::{self, Error, Result};
++
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() > 1 {
++        println!("Usage: {}", args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    for chip in libgpiod::gpiochip_devices(&Path::new("/dev"))? {
++        let info = chip.info()?;
++        println!(
++            "{} [{}] ({})",
++            info.name()?,
++            info.label()?,
++            info.num_lines(),
++        );
++    }
++
++    Ok(())
++}
+diff --git a/bindings/rust/libgpiod/examples/gpiofind.rs b/bindings/rust/libgpiod/examples/gpiofind.rs
+new file mode 100644
+index 000000000000..99fba30c1a3c
+--- /dev/null
++++ b/bindings/rust/libgpiod/examples/gpiofind.rs
+@@ -0,0 +1,36 @@
++// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
++// SPDX-FileCopyrightText: 2022 Linaro Ltd.
++// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of gpiofind tool.
++
++use std::env;
++use std::path::Path;
++
++use libgpiod::{self, Error, Result};
++
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() != 2 {
++        println!("Usage: {} <line-name>", args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    for chip in libgpiod::gpiochip_devices(&Path::new("/dev"))? {
++        let offset = chip.line_offset_from_name(&args[1]);
++        let info = chip.info()?;
++
++        if offset.is_ok() {
++            println!(
++                "Line {} found: Chip: {}, offset: {}",
++                args[1],
++                info.name()?,
++                offset?
++            );
++            return Ok(());
++        }
++    }
++
++    println!("Failed to find line: {}", args[1]);
++    Ok(())
++}
+diff --git a/bindings/rust/libgpiod/examples/gpioget.rs b/bindings/rust/libgpiod/examples/gpioget.rs
+new file mode 100644
+index 000000000000..6e60833e243f
+--- /dev/null
++++ b/bindings/rust/libgpiod/examples/gpioget.rs
+@@ -0,0 +1,45 @@
++// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
++// SPDX-FileCopyrightText: 2022 Linaro Ltd.
++// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of gpioget tool.
++
++use std::env;
++
++use libgpiod::{
++    chip::Chip,
++    line::{self, Direction, Offset},
++    request, Error, Result,
++};
++
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() < 3 {
++        println!("Usage: {} <chip> <line_offset0> ...", args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    let mut lsettings = line::Settings::new()?;
++    let lconfig = line::Config::new()?;
++    let mut offsets = Vec::<Offset>::new();
++
++    for arg in &args[2..] {
++        let offset = arg.parse::<Offset>().map_err(|_| Error::InvalidArguments)?;
++        offsets.push(offset);
++    }
++
++    lsettings.set_direction(Direction::Input)?;
++    lconfig.add_line_settings(&offsets, lsettings)?;
++
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let chip = Chip::open(&path)?;
++
++    let rconfig = request::Config::new()?;
++    rconfig.set_consumer(&args[0])?;
++
++    let request = chip.request_lines(&rconfig, &lconfig)?;
++    let map = request.values()?;
++
++    println!("{:?}", map);
++    Ok(())
++}
+diff --git a/bindings/rust/libgpiod/examples/gpioinfo.rs b/bindings/rust/libgpiod/examples/gpioinfo.rs
+new file mode 100644
+index 000000000000..02d8c9765ab3
+--- /dev/null
++++ b/bindings/rust/libgpiod/examples/gpioinfo.rs
+@@ -0,0 +1,97 @@
++// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
++// SPDX-FileCopyrightText: 2022 Linaro Ltd.
++// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of gpioinfo tool.
++
++use std::env;
++use std::path::Path;
++
++use libgpiod::{
++    chip::Chip,
++    line::{Direction, Offset},
++    Error, Result,
++};
++
++fn line_info(chip: &Chip, offset: Offset) -> Result<()> {
++    let info = chip.line_info(offset)?;
++    let off = info.offset();
++
++    let name = match info.name() {
++        Ok(name) => name,
++        _ => "unused",
++    };
++
++    let consumer = match info.consumer() {
++        Ok(name) => name,
++        _ => "unnamed",
++    };
++
++    let low = if info.is_active_low() {
++        "active-low"
++    } else {
++        "active-high"
++    };
++
++    let dir = match info.direction()? {
++        Direction::AsIs => "None",
++        Direction::Input => "Input",
++        Direction::Output => "Output",
++    };
++
++    println!(
++        "\tline {:>3}\
++              \t{:>10}\
++              \t{:>10}\
++              \t{:>6}\
++              \t{:>14}",
++        off, name, consumer, dir, low
++    );
++
++    Ok(())
++}
++
++fn chip_info(chip: &Chip) -> Result<()> {
++    let info = chip.info()?;
++    let ngpio = info.num_lines();
++
++    println!("GPIO Chip name: {}", info.name()?);
++    println!("\tlabel: {}", info.label()?);
++    println!("\tpath: {}", chip.path()?);
++    println!("\tngpio: {}\n", ngpio);
++
++    println!("\tLine information:");
++
++    for offset in 0..ngpio {
++        line_info(chip, offset as Offset)?;
++    }
++    println!("\n");
++
++    Ok(())
++}
++
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() > 2 {
++        println!("Usage: {}", args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    if args.len() == 1 {
++        for chip in libgpiod::gpiochip_devices(&Path::new("/dev"))? {
++            chip_info(&chip)?;
++        }
++    } else {
++        let index = args[1]
++            .parse::<u32>()
++            .map_err(|_| Error::InvalidArguments)?;
++        let path = format!("/dev/gpiochip{}", index);
++        if libgpiod::is_gpiochip_device(&path) {
++            let chip = Chip::open(&path)?;
++
++            chip_info(&chip)?;
++        }
++    }
++
++    Ok(())
++}
+diff --git a/bindings/rust/libgpiod/examples/gpiomon.rs b/bindings/rust/libgpiod/examples/gpiomon.rs
+new file mode 100644
+index 000000000000..c38652c1deff
+--- /dev/null
++++ b/bindings/rust/libgpiod/examples/gpiomon.rs
+@@ -0,0 +1,74 @@
++// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
++// SPDX-FileCopyrightText: 2022 Linaro Ltd.
++// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of the gpiomon tool.
++
++use std::env;
++
++use libgpiod::{
++    chip::Chip,
++    line::{self, Edge, EdgeKind, Offset},
++    request, Error, Result,
++};
++
++fn usage(name: &str) {
++    println!("Usage: {} <chip> <offset0> ...", name);
++}
++
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() < 3 {
++        usage(&args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    let mut lsettings = line::Settings::new()?;
++    let lconfig = line::Config::new()?;
++    let mut offsets = Vec::<Offset>::new();
++
++    for arg in &args[2..] {
++        let offset = arg.parse::<Offset>().map_err(|_| Error::InvalidArguments)?;
++        offsets.push(offset);
++    }
++
++    lsettings.set_edge_detection(Some(Edge::Both))?;
++    lconfig.add_line_settings(&offsets, lsettings)?;
++
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let chip = Chip::open(&path)?;
++
++    let rconfig = request::Config::new()?;
++
++    let mut buffer = request::Buffer::new(1)?;
++    let request = chip.request_lines(&rconfig, &lconfig)?;
++
++    loop {
++        match request.wait_edge_event(None) {
++            Err(x) => {
++                println!("{:?}", x);
++                return Err(Error::InvalidArguments);
++            }
++
++            Ok(false) => {
++                // This shouldn't happen as the call is blocking.
++                panic!();
++            }
++            Ok(true) => (),
++        }
++
++        let events = request.read_edge_events(&mut buffer)?;
++        for event in events {
++            let event = event?;
++            println!(
++                "line: {} type: {}, time: {:?}",
++                event.line_offset(),
++                match event.event_type()? {
++                    EdgeKind::Rising => "Rising",
++                    EdgeKind::Falling => "Falling",
++                },
++                event.timestamp()
++            );
++        }
++    }
++}
+diff --git a/bindings/rust/libgpiod/examples/gpioset.rs b/bindings/rust/libgpiod/examples/gpioset.rs
+new file mode 100644
+index 000000000000..875a3ad72391
+--- /dev/null
++++ b/bindings/rust/libgpiod/examples/gpioset.rs
+@@ -0,0 +1,63 @@
++// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
++// SPDX-FileCopyrightText: 2022 Linaro Ltd.
++// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of the gpioset tool.
++
++use std::env;
++use std::io::{stdin, Read};
++
++use libgpiod::{
++    chip::Chip,
++    line::{self, Direction, Offset, SettingVal, Value},
++    request, Error, Result,
++};
++
++fn usage(name: &str) {
++    println!("Usage: {} <chip> <line_offset0>=<value0> ...", name);
++}
++
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() < 3 {
++        usage(&args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    let lconfig = line::Config::new()?;
++
++    for arg in &args[2..] {
++        let pair: Vec<&str> = arg.split('=').collect();
++        if pair.len() != 2 {
++            usage(&args[0]);
++            return Err(Error::InvalidArguments);
++        }
++
++        let offset = pair[0]
++            .parse::<Offset>()
++            .map_err(|_| Error::InvalidArguments)?;
++        let value = pair[1]
++            .parse::<i32>()
++            .map_err(|_| Error::InvalidArguments)?;
++
++        let mut lsettings = line::Settings::new()?;
++        lsettings.set_prop(&[
++            SettingVal::Direction(Direction::Output),
++            SettingVal::OutputValue(Value::new(value)?),
++        ])?;
++        lconfig.add_line_settings(&[offset], lsettings)?;
++    }
++
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let chip = Chip::open(&path)?;
++
++    let rconfig = request::Config::new()?;
++    rconfig.set_consumer(&args[0])?;
++
++    chip.request_lines(&rconfig, &lconfig)?;
++
++    // Wait for keypress, let user verify line status.
++    stdin().read_exact(&mut [0u8]).unwrap();
++
++    Ok(())
++}
+diff --git a/bindings/rust/libgpiod/examples/gpiowatch.rs b/bindings/rust/libgpiod/examples/gpiowatch.rs
+new file mode 100644
+index 000000000000..a356fd589721
+--- /dev/null
++++ b/bindings/rust/libgpiod/examples/gpiowatch.rs
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
++// SPDX-FileCopyrightText: 2022 Linaro Ltd.
++// SPDX-FileCopyrightTest: 2022 Viresh Kumar <viresh.kumar@linaro.org>
++//
++// Simplified Rust implementation of the gpiowatch tool.
++
++use std::env;
++
++use libgpiod::{chip::Chip, line::Offset, Error, Result};
++
++fn usage(name: &str) {
++    println!("Usage: {} <chip> <offset0> ...", name);
++}
++
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() < 2 {
++        usage(&args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let offset = args[2]
++        .parse::<Offset>()
++        .map_err(|_| Error::InvalidArguments)?;
++
++    let chip = Chip::open(&path)?;
++    let _info = chip.watch_line_info(offset)?;
++
++    match chip.wait_info_event(None) {
++        Err(x) => {
++            println!("{:?}", x);
++            return Err(Error::InvalidArguments);
++        }
++
++        Ok(false) => {
++            // This shouldn't happen as the call is blocking.
++            panic!();
++        }
++        Ok(true) => (),
++    }
++
++    let event = chip.read_info_event()?;
++    println!(
++        "line: {} type: {:?}, time: {:?}",
++        offset,
++        event.event_type()?,
++        event.timestamp()
++    );
++
++    chip.unwatch(offset);
++    Ok(())
 +}
 -- 
 2.31.1.272.g89b43f80a514
