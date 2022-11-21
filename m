@@ -2,872 +2,386 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E995EC4321E
-	for <linux-gpio@archiver.kernel.org>; Mon, 21 Nov 2022 11:10:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C7CC4332F
+	for <linux-gpio@archiver.kernel.org>; Mon, 21 Nov 2022 11:14:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230483AbiKULKh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 21 Nov 2022 06:10:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33698 "EHLO
+        id S230487AbiKULOs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 21 Nov 2022 06:14:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230020AbiKULJB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Nov 2022 06:09:01 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70614A4142
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Nov 2022 03:06:59 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id s8so18267078lfc.8
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Nov 2022 03:06:59 -0800 (PST)
+        with ESMTP id S230126AbiKULOY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Nov 2022 06:14:24 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 414ED9AC87
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Nov 2022 03:09:50 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id c1so18287482lfi.7
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Nov 2022 03:09:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QrnC6C9JHSD40BwwFaPwVjH6GOzvtXf9kxCHOCB8904=;
-        b=WbvZZW60vAADtSEFlq6wlXlBwMNO8tFukvPkw2JQajbHCW8iRq/BWXafQEgD1m8+O7
-         owf8ftkMdZQg2+XLOqnGgSTIcLQPyZuZNhZTJhqYxEC7zgYEkvv+8roCpiPUwBzdN3Ay
-         E3/T6T1MvOAHkuLAY+WA3K2Nt3kR5+teHKZ7bA/AKJcvvLUj92XixXmKSGkyJNzPDhL3
-         1OO9a9REzZnd7uxGuWL9iGcP9g1OfZ7VwNF0eeZwT/B3PBDPUQ5iF6u2eq9kyq7IDyr/
-         Xa4xsUimHdK9I/lz5+hPjeBpSVMIuYnwxq+vDlosTYpQzzNetbjSPGL83Sf5byeSHMXs
-         sh2A==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iuX6FZ1W0vpW7Y12XoeyLD7P4ETLxuBUk2BOI4aPQig=;
+        b=vborJQM1GpjC4QKjI3V7OXfJpKvWDITN5Gd+Vy0NUgNw9sXq7GXnIGClzgWX+ZIpR/
+         YZ5gNMrFOr3Z+59rcOxYHdnJ2bK2IBlcZCOcEzxdOfjnNYwhtJgoTgAwSGTVSDLrHKtt
+         gfKyQIlxCL1wJQaJCe9xU+UHekV7ZqOtkajkVoJxkQeD5oY/piFwuIobrQZg1SbIwT07
+         bX0QER8DoeIrSpuCw07qV+GsQRVNqIs35IWEHwFSS2wkPdAPPmYGtSsPYuV18u9tr3K/
+         8T3d11YUgvMDTJXu0fvMMxTRrlPk0APOEGiLGr7Ruz4KqEKt1xKO38GZ97FmeIf2Dlsd
+         WKGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QrnC6C9JHSD40BwwFaPwVjH6GOzvtXf9kxCHOCB8904=;
-        b=PCQ4hH6KzzabsEEwla90qPHOVdPwfsOJRNBp6HavX+YhYOzzMDXiHnkDH4epV0+1cU
-         lkM3OOKkyuO2bS/yXs/w+lUXsdrsyRJvYtOc6Bjz0jWpDwTQsISXLtFFxpKiI/Jc7b9h
-         ceLQWGc+Xmp9ONs4javCBM6ua9sXUahOYiJG9Rd8jFWgyw48EaeetL5ikd3LtzmVtmDy
-         JcZkgrKLBd92pwA/PCRGnUcGk94qEuSzExP3JILAmIPeSr0Dej1rZPVScQhUAuEnthuw
-         wl7I81o4aLdxTqZ92foBbUzJloqUTF613pq4+F6nkxd3DPWE+whB+RVM+14xT8WHIp6U
-         pRig==
-X-Gm-Message-State: ANoB5pmgNiEh3TSKbwpf30LTjEW5P12V+Lbn4bEkb8NWvXyU0s5ZG4xX
-        51wiMB4MnoTdO+n+xszxK+h7qw==
-X-Google-Smtp-Source: AA0mqf6mdIymmDY3rXv6NZfMD+24uN1io5lLvkQfW4kAU6d3MO1sFYXi1Sy7gCvugvbmy23by5cKnw==
-X-Received: by 2002:ac2:4e88:0:b0:4a6:fa2a:275b with SMTP id o8-20020ac24e88000000b004a6fa2a275bmr2702537lfr.87.1669028796696;
-        Mon, 21 Nov 2022 03:06:36 -0800 (PST)
-Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id n1-20020a05651203e100b0049313f77755sm1991521lfq.213.2022.11.21.03.06.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Nov 2022 03:06:35 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-watchdog@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH v2 7/9] dt-bindings: drop redundant part of title (beginning)
-Date:   Mon, 21 Nov 2022 12:06:13 +0100
-Message-Id: <20221121110615.97962-8-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221121110615.97962-1-krzysztof.kozlowski@linaro.org>
-References: <20221121110615.97962-1-krzysztof.kozlowski@linaro.org>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iuX6FZ1W0vpW7Y12XoeyLD7P4ETLxuBUk2BOI4aPQig=;
+        b=FIyHRF5W560FF+nq8F42XExwlIpr40zlOUjff/hyFG8wEGqVgKB7KCJRyug0r0xNSp
+         ix0cxsKNdImf9Yb+ML43APMp4HJOjTuKbpUUb2lTaJ9kcmYAH/gxaAZs/lcP2k8q2gic
+         fHGvOkWs6mGPl3K6Eh8ezy5agrhzkXd5c4QN45uoXCk53O9/Yov+J8yCfJHMiYsisa1L
+         Vp6U1WZI+qYwNagrwSx0hYlZBOSdFnJw3lZkDNTJ+1Q5AZd127tbExFsrjn82K3a1BbL
+         OUDzsoBKQQATbIF0/S0dV5E4H+uHC3wU35kBzcfC8+2BcXUQhAmAO5PCJwsJTa35h74q
+         a2Hw==
+X-Gm-Message-State: ANoB5pmqu6LRhX5lMzJMJjYeqLDiKP+bjs9Yh4rl0wanpl4WXanKgotj
+        Sqte1xuO5VozAgUUJnxa1e8cFw==
+X-Google-Smtp-Source: AA0mqf5oVU7cnw9LyMVs1IjiNHk6ZppVCKCoyYIeLsFxdgYYamCpTK6nzynQSBw1F0bEzSkQfNDVog==
+X-Received: by 2002:a05:6512:20c3:b0:4a2:776f:f3c6 with SMTP id u3-20020a05651220c300b004a2776ff3c6mr5442332lfr.302.1669028969401;
+        Mon, 21 Nov 2022 03:09:29 -0800 (PST)
+Received: from [192.168.1.101] (95.49.32.48.neoplus.adsl.tpnet.pl. [95.49.32.48])
+        by smtp.gmail.com with ESMTPSA id be40-20020a056512252800b00497a61453a9sm1987491lfb.243.2022.11.21.03.09.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Nov 2022 03:09:28 -0800 (PST)
+Message-ID: <fafbb9d3-5e4b-fee1-7227-044964bb2292@linaro.org>
+Date:   Mon, 21 Nov 2022 12:09:27 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v4 2/2] pinctrl: qcom: Add QDU1000/QRU1000 pinctrl driver
+Content-Language: en-US
+To:     Melody Olvera <quic_molvera@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221118182039.29236-1-quic_molvera@quicinc.com>
+ <20221118182039.29236-3-quic_molvera@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20221118182039.29236-3-quic_molvera@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Devicetree bindings document does not have to say in the title that
-it is a "Devicetree binding", but instead just describe the hardware.
 
-Drop beginning "Devicetree bindings" in various forms:
 
-  find Documentation/devicetree/bindings/ -type f -name '*.yaml' \
-    -exec sed -i -e 's/^title: [dD]evice[ -]\?[tT]ree [bB]indings\? for \([tT]he \)\?\(.*\)$/title: \u\2/' {} \;
+On 18.11.2022 19:20, Melody Olvera wrote:
+> Add pin control driver for the TLMM block found in the QDU1000
+> and QRU1000 SoC.
+> 
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> ---
+>  drivers/pinctrl/qcom/Kconfig           |   10 +
+>  drivers/pinctrl/qcom/Makefile          |    1 +
+>  drivers/pinctrl/qcom/pinctrl-qdu1000.c | 1273 ++++++++++++++++++++++++
+>  3 files changed, 1284 insertions(+)
+>  create mode 100644 drivers/pinctrl/qcom/pinctrl-qdu1000.c
+> 
+> diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
+> index 1378ddca084f..9ff4145646a3 100644
+> --- a/drivers/pinctrl/qcom/Kconfig
+> +++ b/drivers/pinctrl/qcom/Kconfig
+> @@ -248,6 +248,16 @@ config PINCTRL_QCOM_SSBI_PMIC
+>  	 which are using SSBI for communication with SoC. Example PMIC's
+>  	 devices are pm8058 and pm8921.
+>  
+> +config PINCTRL_QDU1000
+[...]
 
-  find Documentation/devicetree/bindings/ -type f -name '*.yaml' \
-    -exec sed -i -e 's/^title: [bB]indings\? for \([tT]he \)\?\(.*\)$/title: \u\2/' {} \;
+> +DECLARE_MSM_GPIO_PINS(145);
+> +DECLARE_MSM_GPIO_PINS(146);
+> +DECLARE_MSM_GPIO_PINS(147);
+> +DECLARE_MSM_GPIO_PINS(148);
+> +DECLARE_MSM_GPIO_PINS(149);
+> +DECLARE_MSM_GPIO_PINS(150);
+> +
+> +static const unsigned int sdc1_rclk_pins[] = { 151 };
+> +static const unsigned int sdc1_clk_pins[] = { 152 };
+> +static const unsigned int sdc1_cmd_pins[] = { 153 };
+> +static const unsigned int sdc1_data_pins[] = { 154 };
+> +
+> +enum qdu1000_functions {
+> +	msm_mux_gpio,
+> +	msm_mux_CMO_PRI,
+> +	msm_mux_SI5518_INT,
+Any reason these two are uppercase?
 
-  find Documentation/devicetree/bindings/ -type f -name '*.yaml' \
-    -exec sed -i -e 's/^title: [dD][tT] [bB]indings\? for \([tT]he \)\?\(.*\)$/title: \u\2/' {} \;
+Konrad
+> +	msm_mux_atest_char,
+> +	msm_mux_atest_usb,
+> +	msm_mux_char_exec,
+> +	msm_mux_cmu_rng,
+> +	msm_mux_dbg_out_clk,
+> +	msm_mux_ddr_bist,
+> +	msm_mux_ddr_pxi0,
+> +	msm_mux_ddr_pxi1,
+> +	msm_mux_ddr_pxi2,
+> +	msm_mux_ddr_pxi3,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml     | 2 +-
- Documentation/devicetree/bindings/clock/fixed-clock.yaml        | 2 +-
- Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml | 2 +-
- Documentation/devicetree/bindings/clock/fixed-mmio-clock.yaml   | 2 +-
- Documentation/devicetree/bindings/clock/idt,versaclock5.yaml    | 2 +-
- Documentation/devicetree/bindings/clock/renesas,9series.yaml    | 2 +-
- Documentation/devicetree/bindings/clock/ti/ti,clksel.yaml       | 2 +-
- .../devicetree/bindings/display/bridge/ingenic,jz4780-hdmi.yaml | 2 +-
- .../devicetree/bindings/display/bridge/intel,keembay-dsi.yaml   | 2 +-
- .../devicetree/bindings/display/intel,keembay-display.yaml      | 2 +-
- .../devicetree/bindings/display/intel,keembay-msscam.yaml       | 2 +-
- Documentation/devicetree/bindings/display/msm/gmu.yaml          | 2 +-
- Documentation/devicetree/bindings/display/msm/gpu.yaml          | 2 +-
- .../devicetree/bindings/display/panel/olimex,lcd-olinuxino.yaml | 2 +-
- .../devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml   | 2 +-
- .../devicetree/bindings/gpu/host1x/nvidia,tegra210-nvenc.yaml   | 2 +-
- .../devicetree/bindings/gpu/host1x/nvidia,tegra210-nvjpg.yaml   | 2 +-
- .../devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml   | 2 +-
- Documentation/devicetree/bindings/i2c/i2c-gpio.yaml             | 2 +-
- Documentation/devicetree/bindings/i2c/ti,omap4-i2c.yaml         | 2 +-
- .../devicetree/bindings/iio/adc/sigma-delta-modulator.yaml      | 2 +-
- Documentation/devicetree/bindings/input/gpio-keys.yaml          | 2 +-
- Documentation/devicetree/bindings/input/microchip,cap11xx.yaml  | 2 +-
- .../devicetree/bindings/interrupt-controller/renesas,irqc.yaml  | 2 +-
- Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml | 2 +-
- Documentation/devicetree/bindings/leds/register-bit-led.yaml    | 2 +-
- Documentation/devicetree/bindings/leds/regulator-led.yaml       | 2 +-
- Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml | 2 +-
- Documentation/devicetree/bindings/mmc/arasan,sdhci.yaml         | 2 +-
- Documentation/devicetree/bindings/net/ingenic,mac.yaml          | 2 +-
- Documentation/devicetree/bindings/power/supply/bq2415x.yaml     | 2 +-
- Documentation/devicetree/bindings/power/supply/bq24190.yaml     | 2 +-
- Documentation/devicetree/bindings/power/supply/bq24257.yaml     | 2 +-
- Documentation/devicetree/bindings/power/supply/bq24735.yaml     | 2 +-
- Documentation/devicetree/bindings/power/supply/bq25890.yaml     | 2 +-
- Documentation/devicetree/bindings/power/supply/isp1704.yaml     | 2 +-
- .../devicetree/bindings/power/supply/lltc,ltc294x.yaml          | 2 +-
- .../devicetree/bindings/power/supply/richtek,rt9455.yaml        | 2 +-
- Documentation/devicetree/bindings/power/supply/ti,lp8727.yaml   | 2 +-
- Documentation/devicetree/bindings/regulator/pwm-regulator.yaml  | 2 +-
- Documentation/devicetree/bindings/rng/ingenic,rng.yaml          | 2 +-
- Documentation/devicetree/bindings/rng/ingenic,trng.yaml         | 2 +-
- Documentation/devicetree/bindings/serial/8250_omap.yaml         | 2 +-
- Documentation/devicetree/bindings/serio/ps2-gpio.yaml           | 2 +-
- Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml       | 2 +-
- Documentation/devicetree/bindings/sound/qcom,wcd938x-sdw.yaml   | 2 +-
- Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml       | 2 +-
- Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml       | 2 +-
- Documentation/devicetree/bindings/sound/qcom,wsa883x.yaml       | 2 +-
- Documentation/devicetree/bindings/timer/ingenic,sysost.yaml     | 2 +-
- Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml    | 2 +-
- Documentation/devicetree/bindings/usb/realtek,rts5411.yaml      | 2 +-
- Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml         | 2 +-
- Documentation/devicetree/bindings/usb/ti,usb8041.yaml           | 2 +-
- 54 files changed, 54 insertions(+), 54 deletions(-)
+[...]
 
-diff --git a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-index 983033fe5b17..5e942bccf277 100644
---- a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-+++ b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/clock/adi,axi-clkgen.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for Analog Devices AXI clkgen pcore clock generator
-+title: Analog Devices AXI clkgen pcore clock generator
- 
- maintainers:
-   - Lars-Peter Clausen <lars@metafoo.de>
-diff --git a/Documentation/devicetree/bindings/clock/fixed-clock.yaml b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
-index b657ecd0ef1c..b0a4fb8256e2 100644
---- a/Documentation/devicetree/bindings/clock/fixed-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for simple fixed-rate clock sources
-+title: Simple fixed-rate clock sources
- 
- maintainers:
-   - Michael Turquette <mturquette@baylibre.com>
-diff --git a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
-index 0b02378a3a0c..8f71ab300470 100644
---- a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/clock/fixed-factor-clock.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for simple fixed factor rate clock sources
-+title: Simple fixed factor rate clock sources
- 
- maintainers:
-   - Michael Turquette <mturquette@baylibre.com>
-diff --git a/Documentation/devicetree/bindings/clock/fixed-mmio-clock.yaml b/Documentation/devicetree/bindings/clock/fixed-mmio-clock.yaml
-index 1453ac849a65..e22fc272d023 100644
---- a/Documentation/devicetree/bindings/clock/fixed-mmio-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/fixed-mmio-clock.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/clock/fixed-mmio-clock.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for simple memory mapped IO fixed-rate clock sources
-+title: Simple memory mapped IO fixed-rate clock sources
- 
- description:
-   This binding describes a fixed-rate clock for which the frequency can
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-index f9ba9864d8b5..61b246cf5e72 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/clock/idt,versaclock5.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for IDT VersaClock 5 and 6 programmable I2C clock generators
-+title: IDT VersaClock 5 and 6 programmable I2C clock generators
- 
- description: |
-   The IDT VersaClock 5 and VersaClock 6 are programmable I2C
-diff --git a/Documentation/devicetree/bindings/clock/renesas,9series.yaml b/Documentation/devicetree/bindings/clock/renesas,9series.yaml
-index 102eb95cb3fc..6b6cec3fba52 100644
---- a/Documentation/devicetree/bindings/clock/renesas,9series.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,9series.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/clock/renesas,9series.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for Renesas 9-series I2C PCIe clock generators
-+title: Renesas 9-series I2C PCIe clock generators
- 
- description: |
-   The Renesas 9-series are I2C PCIe clock generators providing
-diff --git a/Documentation/devicetree/bindings/clock/ti/ti,clksel.yaml b/Documentation/devicetree/bindings/clock/ti/ti,clksel.yaml
-index c56f911fff47..d525f96cf244 100644
---- a/Documentation/devicetree/bindings/clock/ti/ti,clksel.yaml
-+++ b/Documentation/devicetree/bindings/clock/ti/ti,clksel.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/clock/ti/ti,clksel.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for TI clksel clock
-+title: TI clksel clock
- 
- maintainers:
-   - Tony Lindgren <tony@atomide.com>
-diff --git a/Documentation/devicetree/bindings/display/bridge/ingenic,jz4780-hdmi.yaml b/Documentation/devicetree/bindings/display/bridge/ingenic,jz4780-hdmi.yaml
-index 89490fdffeb0..0b27df429bdc 100644
---- a/Documentation/devicetree/bindings/display/bridge/ingenic,jz4780-hdmi.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/ingenic,jz4780-hdmi.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/display/bridge/ingenic,jz4780-hdmi.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for Ingenic JZ4780 HDMI Transmitter
-+title: Ingenic JZ4780 HDMI Transmitter
- 
- maintainers:
-   - H. Nikolaus Schaller <hns@goldelico.com>
-diff --git a/Documentation/devicetree/bindings/display/bridge/intel,keembay-dsi.yaml b/Documentation/devicetree/bindings/display/bridge/intel,keembay-dsi.yaml
-index dcb1336ee2a5..958a073f4ff7 100644
---- a/Documentation/devicetree/bindings/display/bridge/intel,keembay-dsi.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/intel,keembay-dsi.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/display/bridge/intel,keembay-dsi.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Devicetree bindings for Intel Keem Bay mipi dsi controller
-+title: Intel Keem Bay mipi dsi controller
- 
- maintainers:
-   - Anitha Chrisanthus <anitha.chrisanthus@intel.com>
-diff --git a/Documentation/devicetree/bindings/display/intel,keembay-display.yaml b/Documentation/devicetree/bindings/display/intel,keembay-display.yaml
-index bc6622b010ca..2cf54ecc707a 100644
---- a/Documentation/devicetree/bindings/display/intel,keembay-display.yaml
-+++ b/Documentation/devicetree/bindings/display/intel,keembay-display.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/display/intel,keembay-display.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Devicetree bindings for Intel Keem Bay display controller
-+title: Intel Keem Bay display controller
- 
- maintainers:
-   - Anitha Chrisanthus <anitha.chrisanthus@intel.com>
-diff --git a/Documentation/devicetree/bindings/display/intel,keembay-msscam.yaml b/Documentation/devicetree/bindings/display/intel,keembay-msscam.yaml
-index a222b52d8b8f..cc7e1f318fe4 100644
---- a/Documentation/devicetree/bindings/display/intel,keembay-msscam.yaml
-+++ b/Documentation/devicetree/bindings/display/intel,keembay-msscam.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/display/intel,keembay-msscam.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Devicetree bindings for Intel Keem Bay MSSCAM
-+title: Intel Keem Bay MSSCAM
- 
- maintainers:
-   - Anitha Chrisanthus <anitha.chrisanthus@intel.com>
-diff --git a/Documentation/devicetree/bindings/display/msm/gmu.yaml b/Documentation/devicetree/bindings/display/msm/gmu.yaml
-index 67fdeeabae0c..ab14e81cb050 100644
---- a/Documentation/devicetree/bindings/display/msm/gmu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/gmu.yaml
-@@ -6,7 +6,7 @@
- $id: "http://devicetree.org/schemas/display/msm/gmu.yaml#"
- $schema: "http://devicetree.org/meta-schemas/core.yaml#"
- 
--title: Devicetree bindings for the GMU attached to certain Adreno GPUs
-+title: GMU attached to certain Adreno GPUs
- 
- maintainers:
-   - Rob Clark <robdclark@gmail.com>
-diff --git a/Documentation/devicetree/bindings/display/msm/gpu.yaml b/Documentation/devicetree/bindings/display/msm/gpu.yaml
-index ec4b1a75f46a..c5f49842dc7b 100644
---- a/Documentation/devicetree/bindings/display/msm/gpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/gpu.yaml
-@@ -5,7 +5,7 @@
- $id: "http://devicetree.org/schemas/display/msm/gpu.yaml#"
- $schema: "http://devicetree.org/meta-schemas/core.yaml#"
- 
--title: Devicetree bindings for the Adreno or Snapdragon GPUs
-+title: Adreno or Snapdragon GPUs
- 
- maintainers:
-   - Rob Clark <robdclark@gmail.com>
-diff --git a/Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.yaml b/Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.yaml
-index 2329d9610f83..9f97598efdfa 100644
---- a/Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/display/panel/olimex,lcd-olinuxino.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for Olimex Ltd. LCD-OLinuXino bridge panel.
-+title: Olimex Ltd. LCD-OLinuXino bridge panel.
- 
- maintainers:
-   - Stefan Mavrodiev <stefan@olimex.com>
-diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
-index 3cf862976448..ed9554c837ef 100644
---- a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
-+++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml
-@@ -4,7 +4,7 @@
- $id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra210-nvdec.yaml#"
- $schema: "http://devicetree.org/meta-schemas/core.yaml#"
- 
--title: Device tree binding for NVIDIA Tegra NVDEC
-+title: NVIDIA Tegra NVDEC
- 
- description: |
-   NVDEC is the hardware video decoder present on NVIDIA Tegra210
-diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvenc.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvenc.yaml
-index e63ae1a00818..8199e5fa8211 100644
---- a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvenc.yaml
-+++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvenc.yaml
-@@ -4,7 +4,7 @@
- $id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra210-nvenc.yaml#"
- $schema: "http://devicetree.org/meta-schemas/core.yaml#"
- 
--title: Device tree binding for NVIDIA Tegra NVENC
-+title: NVIDIA Tegra NVENC
- 
- description: |
-   NVENC is the hardware video encoder present on NVIDIA Tegra210
-diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvjpg.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvjpg.yaml
-index 8647404d67e4..895fb346ac72 100644
---- a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvjpg.yaml
-+++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra210-nvjpg.yaml
-@@ -4,7 +4,7 @@
- $id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra210-nvjpg.yaml#"
- $schema: "http://devicetree.org/meta-schemas/core.yaml#"
- 
--title: Device tree binding for NVIDIA Tegra NVJPG
-+title: NVIDIA Tegra NVJPG
- 
- description: |
-   NVJPG is the hardware JPEG decoder and encoder present on NVIDIA Tegra210
-diff --git a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml
-index 7cc2dd525a96..4bdc19a2bccf 100644
---- a/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml
-+++ b/Documentation/devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml
-@@ -4,7 +4,7 @@
- $id: "http://devicetree.org/schemas/gpu/host1x/nvidia,tegra234-nvdec.yaml#"
- $schema: "http://devicetree.org/meta-schemas/core.yaml#"
- 
--title: Device tree binding for NVIDIA Tegra234 NVDEC
-+title: NVIDIA Tegra234 NVDEC
- 
- description: |
-   NVDEC is the hardware video decoder present on NVIDIA Tegra210
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-gpio.yaml b/Documentation/devicetree/bindings/i2c/i2c-gpio.yaml
-index fd040284561f..e0d76d5eb103 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-gpio.yaml
-+++ b/Documentation/devicetree/bindings/i2c/i2c-gpio.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/i2c/i2c-gpio.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for GPIO bitbanged I2C
-+title: GPIO bitbanged I2C
- 
- maintainers:
-   - Wolfram Sang <wsa@kernel.org>
-diff --git a/Documentation/devicetree/bindings/i2c/ti,omap4-i2c.yaml b/Documentation/devicetree/bindings/i2c/ti,omap4-i2c.yaml
-index db0843be91c5..781108ae1ce3 100644
---- a/Documentation/devicetree/bindings/i2c/ti,omap4-i2c.yaml
-+++ b/Documentation/devicetree/bindings/i2c/ti,omap4-i2c.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/i2c/ti,omap4-i2c.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for I2C controllers on TI's OMAP and K3 SoCs
-+title: I2C controllers on TI's OMAP and K3 SoCs
- 
- maintainers:
-   - Vignesh Raghavendra <vigneshr@ti.com>
-diff --git a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
-index 2287697f1f61..cab0d425eaa4 100644
---- a/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/iio/adc/sigma-delta-modulator.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Device-Tree bindings for sigma delta modulator
-+title: Sigma delta modulator
- 
- maintainers:
-   - Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-diff --git a/Documentation/devicetree/bindings/input/gpio-keys.yaml b/Documentation/devicetree/bindings/input/gpio-keys.yaml
-index 17ac9dff7972..159cd9d9fe57 100644
---- a/Documentation/devicetree/bindings/input/gpio-keys.yaml
-+++ b/Documentation/devicetree/bindings/input/gpio-keys.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Device-Tree bindings for GPIO attached keys
-+title: GPIO attached keys
- 
- maintainers:
-   - Rob Herring <robh@kernel.org>
-diff --git a/Documentation/devicetree/bindings/input/microchip,cap11xx.yaml b/Documentation/devicetree/bindings/input/microchip,cap11xx.yaml
-index 96358b12f9b2..67d4d8f86a2d 100644
---- a/Documentation/devicetree/bindings/input/microchip,cap11xx.yaml
-+++ b/Documentation/devicetree/bindings/input/microchip,cap11xx.yaml
-@@ -4,7 +4,7 @@
- $id: "http://devicetree.org/schemas/input/microchip,cap11xx.yaml#"
- $schema: "http://devicetree.org/meta-schemas/core.yaml#"
- 
--title: Device tree bindings for Microchip CAP11xx based capacitive touch sensors
-+title: Microchip CAP11xx based capacitive touch sensors
- 
- description: |
-   The Microchip CAP1xxx Family of RightTouchTM multiple-channel capacitive
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.yaml b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.yaml
-index 62fd47c88275..95033cb514fb 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/interrupt-controller/renesas,irqc.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: DT bindings for the R-Mobile/R-Car/RZ/G interrupt controller
-+title: R-Mobile/R-Car/RZ/G interrupt controller
- 
- maintainers:
-   - Geert Uytterhoeven <geert+renesas@glider.be>
-diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
-index 5ac8605a53b1..5f1849bdabba 100644
---- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
-+++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/leds/backlight/qcom-wled.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for Qualcomm Technologies, Inc. WLED driver
-+title: Qualcomm Technologies, Inc. WLED driver
- 
- maintainers:
-   - Bjorn Andersson <bjorn.andersson@linaro.org>
-diff --git a/Documentation/devicetree/bindings/leds/register-bit-led.yaml b/Documentation/devicetree/bindings/leds/register-bit-led.yaml
-index 79b8fc0f9d23..ed26ec19ecbd 100644
---- a/Documentation/devicetree/bindings/leds/register-bit-led.yaml
-+++ b/Documentation/devicetree/bindings/leds/register-bit-led.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/leds/register-bit-led.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Device Tree Bindings for Register Bit LEDs
-+title: Register Bit LEDs
- 
- maintainers:
-   - Linus Walleij <linus.walleij@linaro.org>
-diff --git a/Documentation/devicetree/bindings/leds/regulator-led.yaml b/Documentation/devicetree/bindings/leds/regulator-led.yaml
-index 3e020d700c00..4ef7b96e9a08 100644
---- a/Documentation/devicetree/bindings/leds/regulator-led.yaml
-+++ b/Documentation/devicetree/bindings/leds/regulator-led.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/leds/regulator-led.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Device Tree Bindings for Regulator LEDs
-+title: Regulator LEDs
- 
- maintainers:
-   - Linus Walleij <linus.walleij@linaro.org>
-diff --git a/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
-index b7e7fa715437..9265a27037cb 100644
---- a/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
-+++ b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/mips/ingenic/ingenic,cpu.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for Ingenic XBurst family CPUs
-+title: Ingenic XBurst family CPUs
- 
- maintainers:
-   - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-diff --git a/Documentation/devicetree/bindings/mmc/arasan,sdhci.yaml b/Documentation/devicetree/bindings/mmc/arasan,sdhci.yaml
-index 83be9e93d221..4053de758db6 100644
---- a/Documentation/devicetree/bindings/mmc/arasan,sdhci.yaml
-+++ b/Documentation/devicetree/bindings/mmc/arasan,sdhci.yaml
-@@ -4,7 +4,7 @@
- $id: "http://devicetree.org/schemas/mmc/arasan,sdhci.yaml#"
- $schema: "http://devicetree.org/meta-schemas/core.yaml#"
- 
--title: Device Tree Bindings for the Arasan SDHCI Controller
-+title: Arasan SDHCI Controller
- 
- maintainers:
-   - Adrian Hunter <adrian.hunter@intel.com>
-diff --git a/Documentation/devicetree/bindings/net/ingenic,mac.yaml b/Documentation/devicetree/bindings/net/ingenic,mac.yaml
-index 93b3e991d209..bdea101c2f75 100644
---- a/Documentation/devicetree/bindings/net/ingenic,mac.yaml
-+++ b/Documentation/devicetree/bindings/net/ingenic,mac.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/net/ingenic,mac.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for MAC in Ingenic SoCs
-+title: MAC in Ingenic SoCs
- 
- maintainers:
-   - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-diff --git a/Documentation/devicetree/bindings/power/supply/bq2415x.yaml b/Documentation/devicetree/bindings/power/supply/bq2415x.yaml
-index a3c00e078918..f7287ffd4b12 100644
---- a/Documentation/devicetree/bindings/power/supply/bq2415x.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/bq2415x.yaml
-@@ -5,7 +5,7 @@
- $id: http://devicetree.org/schemas/power/supply/bq2415x.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for TI bq2415x Li-Ion Charger
-+title: TI bq2415x Li-Ion Charger
- 
- maintainers:
-   - Sebastian Reichel <sre@kernel.org>
-diff --git a/Documentation/devicetree/bindings/power/supply/bq24190.yaml b/Documentation/devicetree/bindings/power/supply/bq24190.yaml
-index 4884ec90e2b8..001c0ffb408d 100644
---- a/Documentation/devicetree/bindings/power/supply/bq24190.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/bq24190.yaml
-@@ -5,7 +5,7 @@
- $id: http://devicetree.org/schemas/power/supply/bq24190.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for TI BQ2419x Li-Ion Battery Charger
-+title: TI BQ2419x Li-Ion Battery Charger
- 
- maintainers:
-   - Sebastian Reichel <sre@kernel.org>
-diff --git a/Documentation/devicetree/bindings/power/supply/bq24257.yaml b/Documentation/devicetree/bindings/power/supply/bq24257.yaml
-index c7406bef0fa8..cc45939d385b 100644
---- a/Documentation/devicetree/bindings/power/supply/bq24257.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/bq24257.yaml
-@@ -5,7 +5,7 @@
- $id: http://devicetree.org/schemas/power/supply/bq24257.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for bq24250, bq24251 and bq24257 Li-Ion Charger
-+title: Bq24250, bq24251 and bq24257 Li-Ion Charger
- 
- maintainers:
-   - Sebastian Reichel <sre@kernel.org>
-diff --git a/Documentation/devicetree/bindings/power/supply/bq24735.yaml b/Documentation/devicetree/bindings/power/supply/bq24735.yaml
-index dd9176ce71b3..388ee16f8a1e 100644
---- a/Documentation/devicetree/bindings/power/supply/bq24735.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/bq24735.yaml
-@@ -5,7 +5,7 @@
- $id: http://devicetree.org/schemas/power/supply/bq24735.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for TI BQ24735 Li-Ion Battery Charger
-+title: TI BQ24735 Li-Ion Battery Charger
- 
- maintainers:
-   - Sebastian Reichel <sre@kernel.org>
-diff --git a/Documentation/devicetree/bindings/power/supply/bq25890.yaml b/Documentation/devicetree/bindings/power/supply/bq25890.yaml
-index ee51b6335e72..dae27e93af09 100644
---- a/Documentation/devicetree/bindings/power/supply/bq25890.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/bq25890.yaml
-@@ -5,7 +5,7 @@
- $id: http://devicetree.org/schemas/power/supply/bq25890.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for bq25890, bq25892, bq25895 and bq25896 Li-Ion Charger
-+title: Bq25890, bq25892, bq25895 and bq25896 Li-Ion Charger
- 
- maintainers:
-   - Sebastian Reichel <sre@kernel.org>
-diff --git a/Documentation/devicetree/bindings/power/supply/isp1704.yaml b/Documentation/devicetree/bindings/power/supply/isp1704.yaml
-index 7e3449ed70d4..fb3a812aa5a9 100644
---- a/Documentation/devicetree/bindings/power/supply/isp1704.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/isp1704.yaml
-@@ -5,7 +5,7 @@
- $id: http://devicetree.org/schemas/power/supply/isp1704.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for NXP ISP1704 USB Charger Detection
-+title: NXP ISP1704 USB Charger Detection
- 
- maintainers:
-   - Sebastian Reichel <sre@kernel.org>
-diff --git a/Documentation/devicetree/bindings/power/supply/lltc,ltc294x.yaml b/Documentation/devicetree/bindings/power/supply/lltc,ltc294x.yaml
-index 109b41a0d56c..774582cd3a2c 100644
---- a/Documentation/devicetree/bindings/power/supply/lltc,ltc294x.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/lltc,ltc294x.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/power/supply/lltc,ltc294x.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for LTC2941, LTC2942, LTC2943 and LTC2944 battery fuel gauges
-+title: LTC2941, LTC2942, LTC2943 and LTC2944 battery fuel gauges
- 
- description: |
-   All chips measure battery capacity.
-diff --git a/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml b/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml
-index bce15101318e..27bebc1757ba 100644
---- a/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/power/supply/richtek,rt9455.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for Richtek rt9455 battery charger
-+title: Richtek rt9455 battery charger
- 
- maintainers:
-   - Sebastian Reichel <sre@kernel.org>
-diff --git a/Documentation/devicetree/bindings/power/supply/ti,lp8727.yaml b/Documentation/devicetree/bindings/power/supply/ti,lp8727.yaml
-index 93654e732cda..ce6fbdba8f6b 100644
---- a/Documentation/devicetree/bindings/power/supply/ti,lp8727.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/ti,lp8727.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/power/supply/ti,lp8727.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for TI/National Semiconductor LP8727 Charger
-+title: TI/National Semiconductor LP8727 Charger
- 
- maintainers:
-   - Sebastian Reichel <sre@kernel.org>
-diff --git a/Documentation/devicetree/bindings/regulator/pwm-regulator.yaml b/Documentation/devicetree/bindings/regulator/pwm-regulator.yaml
-index 82b6f2fde422..7e58471097f8 100644
---- a/Documentation/devicetree/bindings/regulator/pwm-regulator.yaml
-+++ b/Documentation/devicetree/bindings/regulator/pwm-regulator.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/regulator/pwm-regulator.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for the Generic PWM Regulator
-+title: Generic PWM Regulator
- 
- maintainers:
-   - Brian Norris <briannorris@chromium.org>
-diff --git a/Documentation/devicetree/bindings/rng/ingenic,rng.yaml b/Documentation/devicetree/bindings/rng/ingenic,rng.yaml
-index b2e4a6a7f93a..79a023cbfdba 100644
---- a/Documentation/devicetree/bindings/rng/ingenic,rng.yaml
-+++ b/Documentation/devicetree/bindings/rng/ingenic,rng.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/rng/ingenic,rng.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for RNG in Ingenic SoCs
-+title: RNG in Ingenic SoCs
- 
- maintainers:
-   - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-diff --git a/Documentation/devicetree/bindings/rng/ingenic,trng.yaml b/Documentation/devicetree/bindings/rng/ingenic,trng.yaml
-index 044d9a065650..acaeb63caf24 100644
---- a/Documentation/devicetree/bindings/rng/ingenic,trng.yaml
-+++ b/Documentation/devicetree/bindings/rng/ingenic,trng.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/rng/ingenic,trng.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for DTRNG in Ingenic SoCs
-+title: DTRNG in Ingenic SoCs
- 
- maintainers:
-   - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-diff --git a/Documentation/devicetree/bindings/serial/8250_omap.yaml b/Documentation/devicetree/bindings/serial/8250_omap.yaml
-index 7b34ec8fa90e..53dc1212ad2e 100644
---- a/Documentation/devicetree/bindings/serial/8250_omap.yaml
-+++ b/Documentation/devicetree/bindings/serial/8250_omap.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for 8250 compliant UARTs on TI's OMAP2+ and K3 SoCs
-+title: 8250 compliant UARTs on TI's OMAP2+ and K3 SoCs
- 
- maintainers:
-   - Vignesh Raghavendra <vigneshr@ti.com>
-diff --git a/Documentation/devicetree/bindings/serio/ps2-gpio.yaml b/Documentation/devicetree/bindings/serio/ps2-gpio.yaml
-index a63d9172346f..99848bc34f6e 100644
---- a/Documentation/devicetree/bindings/serio/ps2-gpio.yaml
-+++ b/Documentation/devicetree/bindings/serio/ps2-gpio.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/serio/ps2-gpio.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for GPIO based PS/2
-+title: GPIO based PS/2
- 
- maintainers:
-   - Danilo Krummrich <danilokrummrich@dk-develop.de>
-diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml
-index 8ca19f2b0b3d..184e8ccbdd13 100644
---- a/Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml
-+++ b/Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/sound/qcom,wcd934x.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for Qualcomm WCD9340/WCD9341 Audio Codec
-+title: Qualcomm WCD9340/WCD9341 Audio Codec
- 
- maintainers:
-   - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd938x-sdw.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd938x-sdw.yaml
-index 49a267b306f6..b430dd3e1841 100644
---- a/Documentation/devicetree/bindings/sound/qcom,wcd938x-sdw.yaml
-+++ b/Documentation/devicetree/bindings/sound/qcom,wcd938x-sdw.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/sound/qcom,wcd938x-sdw.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for Qualcomm SoundWire Slave devices on WCD9380/WCD9385
-+title: Qualcomm SoundWire Slave devices on WCD9380/WCD9385
- 
- maintainers:
-   - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml
-index 51547190f709..cfb4b800789d 100644
---- a/Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml
-+++ b/Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/sound/qcom,wcd938x.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for Qualcomm WCD9380/WCD9385 Audio Codec
-+title: Qualcomm WCD9380/WCD9385 Audio Codec
- 
- maintainers:
-   - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-diff --git a/Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml b/Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
-index ea44d03e58ca..d702b489320f 100644
---- a/Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
-+++ b/Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/sound/qcom,wsa881x.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for Qualcomm WSA8810/WSA8815 Class-D Smart Speaker Amplifier
-+title: Qualcomm WSA8810/WSA8815 Class-D Smart Speaker Amplifier
- 
- maintainers:
-   - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-diff --git a/Documentation/devicetree/bindings/sound/qcom,wsa883x.yaml b/Documentation/devicetree/bindings/sound/qcom,wsa883x.yaml
-index 99f9c10bbc83..3a29f822132d 100644
---- a/Documentation/devicetree/bindings/sound/qcom,wsa883x.yaml
-+++ b/Documentation/devicetree/bindings/sound/qcom,wsa883x.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/sound/qcom,wsa883x.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for The Qualcomm WSA8830/WSA8832/WSA8835
-+title: Qualcomm WSA8830/WSA8832/WSA8835
-   smart speaker amplifier
- 
- maintainers:
-diff --git a/Documentation/devicetree/bindings/timer/ingenic,sysost.yaml b/Documentation/devicetree/bindings/timer/ingenic,sysost.yaml
-index 98648bf9e151..bdc82d8bce0e 100644
---- a/Documentation/devicetree/bindings/timer/ingenic,sysost.yaml
-+++ b/Documentation/devicetree/bindings/timer/ingenic,sysost.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/timer/ingenic,sysost.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Bindings for SYSOST in Ingenic XBurst family SoCs
-+title: SYSOST in Ingenic XBurst family SoCs
- 
- maintainers:
-   - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-index fd6e7c81426e..f6cb19efd98b 100644
---- a/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml
-@@ -4,7 +4,7 @@
- $id: "http://devicetree.org/schemas/usb/nvidia,tegra-xudc.yaml#"
- $schema: "http://devicetree.org/meta-schemas/core.yaml#"
- 
--title: Device tree binding for NVIDIA Tegra XUSB device mode controller (XUDC)
-+title: NVIDIA Tegra XUSB device mode controller (XUDC)
- 
- description:
-   The Tegra XUDC controller supports both USB 2.0 HighSpeed/FullSpeed and
-diff --git a/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml b/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml
-index 50f2b505bdeb..623d04a88a81 100644
---- a/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml
-+++ b/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/usb/realtek,rts5411.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for the Realtek RTS5411 USB 3.0 hub controller
-+title: Realtek RTS5411 USB 3.0 hub controller
- 
- maintainers:
-   - Matthias Kaehlcke <mka@chromium.org>
-diff --git a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
-index eedde385d299..f81ba3e90297 100644
---- a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
-+++ b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
-@@ -4,7 +4,7 @@
- $id: "http://devicetree.org/schemas/usb/ti,j721e-usb.yaml#"
- $schema: "http://devicetree.org/meta-schemas/core.yaml#"
- 
--title: Bindings for the TI wrapper module for the Cadence USBSS-DRD controller
-+title: TI wrapper module for the Cadence USBSS-DRD controller
- 
- maintainers:
-   - Roger Quadros <rogerq@kernel.org>
-diff --git a/Documentation/devicetree/bindings/usb/ti,usb8041.yaml b/Documentation/devicetree/bindings/usb/ti,usb8041.yaml
-index e04fbd8ab0b7..88ea6c952c66 100644
---- a/Documentation/devicetree/bindings/usb/ti,usb8041.yaml
-+++ b/Documentation/devicetree/bindings/usb/ti,usb8041.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/usb/ti,usb8041.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Binding for the TI USB8041 USB 3.0 hub controller
-+title: TI USB8041 USB 3.0 hub controller
- 
- maintainers:
-   - Alexander Stein <alexander.stein@ew.tq-group.com>
--- 
-2.34.1
+> +
+> +/* Every pin is maintained as a single group, and missing or non-existing pin
+/*
+ * Every pin...
 
+
+Konrad
+> + * would be maintained as dummy group to synchronize pin group index with
+> + * pin descriptor registered with pinctrl core.
+> + * Clients would not be able to request these dummy pin groups.
+> + */
+> +static const struct msm_pingroup qdu1000_groups[] = {
+> +	[0] = PINGROUP(0, qup20, qup21, ddr_bist, _, _, _, _, _, _),
+> +	[1] = PINGROUP(1, qup20, qup21, ddr_bist, _, _, _, _, _, _),
+> +	[2] = PINGROUP(2, qup21, qup20, ddr_bist, _,
+> +		       tsense_pwm1, _, _, _, _),
+> +	[3] = PINGROUP(3, qup21, qup20, ddr_bist, _,
+> +		       tsense_pwm2, _, _, _, _),
+> +	[4] = PINGROUP(4, qup22, _, _, _, _, _, _, _, _),
+> +	[5] = PINGROUP(5, qup22, _, _, _, _, _, _, _, _),
+> +	[6] = PINGROUP(6, qup00, tgu_ch0, phase_flag, _,
+> +		       qdss_gpio, _, _, _, _),
+> +	[7] = PINGROUP(7, qup00, tgu_ch1, phase_flag, _,
+> +		       qdss_gpio, _, _, _, _),
+> +	[8] = PINGROUP(8, qup00, tgu_ch2, phase_flag, _,
+> +		       qdss_gpio, _, _, _, _),
+> +	[9] = PINGROUP(9, qup00, tgu_ch3, phase_flag, _,
+> +		       qdss_gpio, _, _, _, _),
+> +	[10] = PINGROUP(10, qup01, qup02, _, _, _, _, _, _, _),
+> +	[11] = PINGROUP(11, qup01, qup02, _, _, _, _, _, _, _),
+> +	[12] = PINGROUP(12, qup02, qup01, qup17, _, _, _, _, _, _),
+> +	[13] = PINGROUP(13, qup02, qup01, qup17, _, _, _, _, _, _),
+> +	[14] = PINGROUP(14, qup03, qup04, qup17, _, _, _, _, _, _),
+> +	[15] = PINGROUP(15, qup03, qup04, _, _, _, _, _, _, _),
+> +	[16] = PINGROUP(16, qup04, qup03, phase_flag, _,
+> +			qdss_gpio, _, _, _, _),
+> +	[17] = PINGROUP(17, qup04, qup03, phase_flag, _,
+> +			qdss_gpio, _, _, _, _),
+> +	[18] = PINGROUP(18, qup10, prng_rosc, phase_flag,
+> +			_, qdss_gpio, _, _, _, _),
+> +	[19] = PINGROUP(19, qup10, prng_rosc, phase_flag,
+> +			_, qdss_gpio, _, _, _, _),
+> +	[20] = PINGROUP(20, qup10, prng_rosc, pll_bist,
+> +			phase_flag, _, qdss_gpio, _, _, _),
+> +	[21] = PINGROUP(21, qup10, prng_rosc, phase_flag,
+> +			_, qdss_gpio, _, _, _, _),
+> +	[22] = PINGROUP(22, qup11, qup12, phase_flag, _,
+> +			qdss_gpio, _, _, _, _),
+> +	[23] = PINGROUP(23, qup11, qup12, phase_flag, _,
+> +			qdss_gpio, _, _, _, _),
+> +	[24] = PINGROUP(24, qup12, qup11, phase_flag, _,
+> +			qdss_gpio, _, _, _, _),
+> +	[25] = PINGROUP(25, qup12, qup11, phase_flag, _,
+> +			qdss_gpio, _, _, _, _),
+> +	[26] = PINGROUP(26, qup13, qup14, intr_c,
+> +			phase_flag, _, qdss_gpio, _, _, _),
+> +	[27] = PINGROUP(27, qup13, qup14, intr_c,
+> +			phase_flag, _, qdss_gpio, _, _, _),
+> +	[28] = PINGROUP(28, qup14, qup13, intr_c,
+> +			phase_flag, _, qdss_gpio, _, _, _),
+> +	[29] = PINGROUP(29, qup14, qup13, qup16,
+> +			phase_flag, _, qdss_gpio, _, _, _),
+> +	[30] = PINGROUP(30, qup17, qup15, tmess_prng3,
+> +			phase_flag, _, qdss_gpio, _, _, _),
+> +	[31] = PINGROUP(31, qup17, qup15, tmess_prng2,
+> +			phase_flag, _, qdss_gpio, _, _, _),
+> +	[32] = PINGROUP(32, qup15, tmess_prng1, phase_flag,
+> +			_, qdss_gpio, _, _, _, _),
+> +	[33] = PINGROUP(33, qup15, tmess_prng0, phase_flag,
+> +			_, qdss_gpio, _, _, _, _),
+> +	[34] = PINGROUP(34, qup16, qdss_gpio, _, _, _, _, _, _, _),
+> +	[35] = PINGROUP(35, qup16, qdss_gpio, _, _, _, _, _, _, _),
+> +	[36] = PINGROUP(36, qup16, qdss_cti, _, _, _, _, _, _, _),
+> +	[37] = PINGROUP(37, qup16, qdss_cti, _, _, _, _, _, _, _),
+> +	[38] = PINGROUP(38, qup16, qdss_cti, _, _, _, _, _, _, _),
+> +	[39] = PINGROUP(39, qup16, qdss_cti, _, _, _, _, _, _, _),
+> +	[40] = PINGROUP(40, qup17, qdss_cti, _, _, _, _, _, _, _),
+> +	[41] = PINGROUP(41, qup17, qdss_cti, _, _, _, _, _, _, _),
+> +	[42] = PINGROUP(42, usb_con_det, phase_flag, _,
+> +			qdss_gpio, _, _, _, _, _),
+> +	[43] = PINGROUP(43, usb_dfp_en, phase_flag, _,
+> +			qdss_gpio, _, _, _, _, _),
+> +	[44] = PINGROUP(44, SI5518_INT, tgu_ch4, _, _, _, _, _, _, _),
+> +	[45] = PINGROUP(45, tgu_ch5, _, _, _, _, _, _, _, _),
+> +	[46] = PINGROUP(46, tgu_ch6, _, _, _, _, _, _, _, _),
+> +	[47] = PINGROUP(47, hardsync_pps_in, tgu_ch7, _, _, _, _, _, _, _),
+> +	[48] = PINGROUP(48, tod_pps_in, qdss_cti, _, _, _, _, _, _, _),
+> +	[49] = PINGROUP(49, gps_pps_in, qdss_cti, _, _, _, _, _, _, _),
+> +	[50] = PINGROUP(50, _, _, _, _, _, _, _, _, _),
+> +	[51] = PINGROUP(51, _, _, _, _, _, _, _, _, _),
+> +	[52] = PINGROUP(52, _, _, _, _, _, _, _, _, _),
+> +	[53] = PINGROUP(53, _, _, _, _, _, _, _, _, _),
+> +	[54] = PINGROUP(54, _, _, _, _, _, _, _, _, _),
+> +	[55] = PINGROUP(55, _, _, _, _, _, _, _, _, _),
+> +	[56] = PINGROUP(56, _, qlink6_wmss, _, _, _, _, _, _, _),
+> +	[57] = PINGROUP(57, _, qlink7_wmss, _, _, _, _, _, _, _),
+> +	[58] = PINGROUP(58, _, _, _, _, _, _, _, _, _),
+> +	[59] = PINGROUP(59, _, _, _, _, _, _, _, _, _),
+> +	[60] = PINGROUP(60, _, _, _, _, _, _, _, _, _),
+> +	[61] = PINGROUP(61, _, _, _, _, _, _, _, _, _),
+> +	[62] = PINGROUP(62, _, _, _, _, _, _, _, _, _),
+> +	[63] = PINGROUP(63, _, _, _, _, _, _, _, _, _),
+> +	[64] = PINGROUP(64, _, _, _, _, _, _, _, _, _),
+> +	[65] = PINGROUP(65, _, _, _, _, _, _, _, _, _),
+> +	[66] = PINGROUP(66, qlink0_request, _, _, _, _, _, _, _, _),
+> +	[67] = PINGROUP(67, qlink0_enable, _, _, _, _, _, _, _, _),
+> +	[68] = PINGROUP(68, qlink1_request, _, _, _, _, _, _, _, _),
+> +	[69] = PINGROUP(69, qlink1_enable, _, _, _, _, _, _, _, _),
+> +	[70] = PINGROUP(70, qlink2_request, _, _, _, _, _, _, _, _),
+> +	[71] = PINGROUP(71, qlink2_enable, _, _, _, _, _, _, _, _),
+> +	[72] = PINGROUP(72, qlink3_request, _, _, _, _, _, _, _, _),
+> +	[73] = PINGROUP(73, qlink3_enable, _, _, _, _, _, _, _, _),
+> +	[74] = PINGROUP(74, qlink4_request, _, _, _, _, _, _, _, _),
+> +	[75] = PINGROUP(75, qlink4_enable, _, _, _, _, _, _, _, _),
+> +	[76] = PINGROUP(76, qlink5_request, _, _, _, _, _, _, _, _),
+> +	[77] = PINGROUP(77, qlink5_enable, _, _, _, _, _, _, _, _),
+> +	[78] = PINGROUP(78, qlink6_request, _, _, _, _, _, _, _, _),
+> +	[79] = PINGROUP(79, qlink6_enable, _, _, _, _, _, _, _, _),
+> +	[80] = PINGROUP(80, qlink7_request, _, _, _, _, _, _, _, _),
+> +	[81] = PINGROUP(81, qlink7_enable, _, _, _, _, _, _, _, _),
+> +	[82] = PINGROUP(82, qlink0_wmss, _, _, _, _, _, _, _, _),
+> +	[83] = PINGROUP(83, qlink1_wmss, _, _, _, _, _, _, _, _),
+> +	[84] = PINGROUP(84, qlink4_wmss, _, _, _, _, _, _, _, _),
+> +	[85] = PINGROUP(85, qlink5_wmss, _, _, _, _, _, _, _, _),
+> +	[86] = PINGROUP(86, eth012_int_n, gcc_gp1, _, qdss_cti, _, _, _, _, _),
+> +	[87] = PINGROUP(87, eth345_int_n, gcc_gp2, _, qdss_cti, _, _, _, _, _),
+> +	[88] = PINGROUP(88, eth6_int_n, smb_alert, gcc_gp3, _,
+> +			qdss_gpio, _, _, _, _),
+> +	[89] = PINGROUP(89, phase_flag, cmu_rng, _,
+> +			qdss_gpio, atest_char, _, _, _, _),
+> +	[90] = PINGROUP(90, usb2phy_ac, phase_flag,
+> +			cmu_rng, _, qdss_gpio,
+> +			atest_char, _, _, _),
+> +	[91] = PINGROUP(91, usb_phy, phase_flag, cmu_rng,
+> +			_, qdss_gpio, atest_char, _, _, _),
+> +	[92] = PINGROUP(92, phase_flag, cmu_rng, _,
+> +			qdss_gpio, atest_char, _, _, _, _),
+> +	[93] = PINGROUP(93, vfr_0, qdss_cti, _, _, _, _, _, _, _),
+> +	[94] = PINGROUP(94, vfr_1, qdss_cti, _, _, _, _, _, _, _),
+> +	[95] = PINGROUP(95, phase_flag, _, qdss_gpio,
+> +			atest_char, _, _, _, _, _),
+> +	[96] = PINGROUP(96, phase_flag, _, qdss_gpio, _, _, _, _, _, _),
+> +	[97] = PINGROUP(97, phase_flag, _, qdss_gpio, _, _, _, _, _, _),
+> +	[98] = PINGROUP(98, pll_clk, _, _, _, _, _, _, _, _),
+> +	[99] = PINGROUP(99, pcie_clkreqn, char_exec, _, _, _, _, _, _, _),
+> +	[100] = PINGROUP(100, char_exec, _, _, _, _, _, _, _, _),
+> +	[101] = PINGROUP(101, smb_alert, _, _, _, _, _, _, _, _),
+> +	[102] = PINGROUP(102, phase_flag, _, qdss_gpio, _, _, _, _, _, _),
+> +	[103] = PINGROUP(103, CMO_PRI, qdss_gpio, _, _, _, _, _, _, _),
+> +	[104] = PINGROUP(104, _, _, _, _, _, _, _, _, _),
+> +	[105] = PINGROUP(105, _, _, _, _, _, _, _, _, _),
+> +	[106] = PINGROUP(106, _, _, _, _, _, _, _, _, _),
+> +	[107] = PINGROUP(107, _, _, _, _, _, _, _, _, _),
+> +	[108] = PINGROUP(108, _, _, _, _, _, _, _, _, _),
+> +	[109] = PINGROUP(109, _, _, _, _, _, _, _, _, _),
+> +	[110] = PINGROUP(110, _, _, _, _, _, _, _, _, _),
+> +	[111] = PINGROUP(111, _, _, _, _, _, _, _, _, _),
+> +	[112] = PINGROUP(112, _, _, _, _, _, _, _, _, _),
+> +	[113] = PINGROUP(113, _, _, _, _, _, _, _, _, _),
+> +	[114] = PINGROUP(114, qspi0, tb_trig, _,
+> +			 atest_usb, ddr_pxi0, _, _, _, _),
+> +	[115] = PINGROUP(115, qspi1, _, atest_usb,
+> +			 ddr_pxi0, _, _, _, _, _),
+> +	[116] = PINGROUP(116, qspi2, _, atest_usb,
+> +			 ddr_pxi1, _, _, _, _, _),
+> +	[117] = PINGROUP(117, qspi3, _, atest_usb,
+> +			 ddr_pxi1, _, _, _, _, _),
+> +	[118] = PINGROUP(118, _, atest_usb, ddr_pxi2, _, _, _, _, _, _),
+> +	[119] = PINGROUP(119, _, _, ddr_pxi2, _, _, _, _, _, _),
+> +	[120] = PINGROUP(120, _, _, ddr_pxi3, _, _, _, _, _, _),
+> +	[121] = PINGROUP(121, _, ddr_pxi3, _, _, _, _, _, _, _),
+> +	[122] = PINGROUP(122, _, ddr_pxi4, _, _, _, _, _, _, _),
+> +	[123] = PINGROUP(123, _, ddr_pxi4, _, _, _, _, _, _, _),
+> +	[124] = PINGROUP(124, _, ddr_pxi5, _, _, _, _, _, _, _),
+> +	[125] = PINGROUP(125, qspi_cs, _, ddr_pxi5, _, _, _, _, _, _),
+> +	[126] = PINGROUP(126, qspi_clk, _, ddr_pxi6, _, _, _, _, _, _),
+> +	[127] = PINGROUP(127, _, ddr_pxi6, _, _, _, _, _, _, _),
+> +	[128] = PINGROUP(128, qup22, _, ddr_pxi7, _, _, _, _, _, _),
+> +	[129] = PINGROUP(129, qup22, ddr_pxi7, _, _, _, _, _, _, _),
+> +	[130] = PINGROUP(130, qup05, qup06, jitter_bist_ref,
+> +			 qdss_cti, _, _, _, _, _),
+> +	[131] = PINGROUP(131, qup05, qup06, qdss_cti, _, _, _, _, _, _),
+> +	[132] = PINGROUP(132, qup06, qup05, smb_dat,
+> +			 qdss_cti, _, _, _, _, _),
+> +	[133] = PINGROUP(133, qup06, qup05, smb_clk,
+> +			 qdss_cti, _, _, _, _, _),
+> +	[134] = PINGROUP(134, qup08, qup07, gcc_gp1, _,
+> +			 qdss_cti, _, _, _, _),
+> +	[135] = PINGROUP(135, qup08, qup07, gcc_gp2, _,
+> +			 qdss_cti, vsense_trigger, _, _, _),
+> +	[136] = PINGROUP(136, gcc_gp3, dbg_out_clk, _, _, _, _, _, _, _),
+> +	[137] = PINGROUP(137, _, _, _, _, _, _, _, _, _),
+> +	[138] = PINGROUP(138, qlink2_wmss, _, _, _, _, _, _, _, _),
+> +	[139] = PINGROUP(139, qlink3_wmss, _, _, _, _, _, _, _, _),
+> +	[140] = PINGROUP(140, _, _, _, _, _, _, _, _, _),
+> +	[141] = PINGROUP(141, intr_c, _, _, _, _, _, _, _, _),
+> +	[142] = PINGROUP(142, intr_c, _, _, _, _, _, _, _, _),
+> +	[143] = PINGROUP(143, intr_c, _, _, _, _, _, _, _, _),
+> +	[144] = PINGROUP(144, qdss_cti, _, _, _, _, _, _, _, _),
+> +	[145] = PINGROUP(145, qdss_cti, _, _, _, _, _, _, _, _),
+> +	[146] = PINGROUP(146, _, _, _, _, _, _, _, _, _),
+> +	[147] = PINGROUP(147, _, _, _, _, _, _, _, _, _),
+> +	[148] = PINGROUP(148, _, _, _, _, _, _, _, _, _),
+> +	[149] = PINGROUP(149, _, _, _, _, _, _, _, _, _),
+> +	[150] = PINGROUP(150, _, _, _, _, _, _, _, _, _),
+> +	[151] = SDC_QDSD_PINGROUP(sdc1_rclk, 0x9e000, 0, 0),
+> +	[152] = SDC_QDSD_PINGROUP(sdc1_clk, 0x9d000, 13, 6),
+> +	[153] = SDC_QDSD_PINGROUP(sdc1_cmd, 0x9d000, 11, 3),
+> +	[154] = SDC_QDSD_PINGROUP(sdc1_data, 0x9d000, 9, 0),
+> +};
+> +static const struct msm_pinctrl_soc_data qdu1000_tlmm = {
+> +	.pins = qdu1000_pins,
+> +	.npins = ARRAY_SIZE(qdu1000_pins),
+> +	.functions = qdu1000_functions,
+> +	.nfunctions = ARRAY_SIZE(qdu1000_functions),
+> +	.groups = qdu1000_groups,
+> +	.ngroups = ARRAY_SIZE(qdu1000_groups),
+> +	.ngpios = 151,
+> +};
+> +
+> +static int qdu1000_tlmm_probe(struct platform_device *pdev)
+> +{
+> +	return msm_pinctrl_probe(pdev, &qdu1000_tlmm);
+> +}
+> +
+> +static const struct of_device_id qdu1000_tlmm_of_match[] = {
+> +	{ .compatible = "qcom,qdu1000-tlmm", },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, qdu1000_tlmm_of_match);
+> +
+> +static struct platform_driver qdu1000_tlmm_driver = {
+> +	.driver = {
+> +		.name = "qdu1000-tlmm",
+> +		.of_match_table = qdu1000_tlmm_of_match,
+> +	},
+> +	.probe = qdu1000_tlmm_probe,
+> +	.remove = msm_pinctrl_remove,
+> +};
+> +
+> +static int __init qdu1000_tlmm_init(void)
+> +{
+> +	return platform_driver_register(&qdu1000_tlmm_driver);
+> +}
+> +arch_initcall(qdu1000_tlmm_init);
+> +
+> +static void __exit qdu1000_tlmm_exit(void)
+> +{
+> +	platform_driver_unregister(&qdu1000_tlmm_driver);
+> +}
+> +module_exit(qdu1000_tlmm_exit);
+> +
+> +MODULE_DESCRIPTION("QTI QDU1000 TLMM driver");
+> +MODULE_LICENSE("GPL");
