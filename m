@@ -2,24 +2,24 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0723C433FE
-	for <linux-gpio@archiver.kernel.org>; Mon, 21 Nov 2022 12:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E76FFC4332F
+	for <linux-gpio@archiver.kernel.org>; Mon, 21 Nov 2022 12:38:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231533AbiKUMi0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 21 Nov 2022 07:38:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58546 "EHLO
+        id S231562AbiKUMi1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 21 Nov 2022 07:38:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231426AbiKUMiU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Nov 2022 07:38:20 -0500
+        with ESMTP id S231532AbiKUMiV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Nov 2022 07:38:21 -0500
 Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C700C11C28;
-        Mon, 21 Nov 2022 04:38:15 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B2A05B6B35;
+        Mon, 21 Nov 2022 04:38:16 -0800 (PST)
 Received: from loongson.cn (unknown [10.180.13.64])
-        by gateway (Coremail) with SMTP id _____8Cx7Ng1cXtjWxoJAA--.25294S3;
-        Mon, 21 Nov 2022 20:38:13 +0800 (CST)
+        by gateway (Coremail) with SMTP id _____8DxTts3cXtjaxoJAA--.25367S3;
+        Mon, 21 Nov 2022 20:38:15 +0800 (CST)
 Received: from localhost.localdomain (unknown [10.180.13.64])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxXuAwcXtjXpkXAA--.61043S2;
-        Mon, 21 Nov 2022 20:38:12 +0800 (CST)
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxXuAwcXtjXpkXAA--.61043S4;
+        Mon, 21 Nov 2022 20:38:13 +0800 (CST)
 From:   Yinbo Zhu <zhuyinbo@loongson.cn>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
@@ -36,207 +36,208 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Arnaud Patard <apatard@mandriva.com>,
         Huacai Chen <chenhuacai@kernel.org>,
         Yinbo Zhu <zhuyinbo@loongson.cn>
-Subject: [PATCH v5 1/3] gpio: loongson2ef: move driver to original location
-Date:   Mon, 21 Nov 2022 20:38:01 +0800
-Message-Id: <20221121123803.3786-1-zhuyinbo@loongson.cn>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v5 3/3] dt-bindings: gpio: add loongson gpio
+Date:   Mon, 21 Nov 2022 20:38:03 +0800
+Message-Id: <20221121123803.3786-3-zhuyinbo@loongson.cn>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20221121123803.3786-1-zhuyinbo@loongson.cn>
+References: <20221121123803.3786-1-zhuyinbo@loongson.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8CxXuAwcXtjXpkXAA--.61043S2
+X-CM-TRANSID: AQAAf8CxXuAwcXtjXpkXAA--.61043S4
 X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoW3Gw4DAry5Zw13Jry8WFyxuFg_yoWxKFyfpF
-        1fAw4kGrW8WF4fCrZ5CFykurZ8JanxGr9F9F47ur1UuF9rZa4UZr1ktF95Jr4DXrZ8JayI
-        9F9a9r12ka1jkwUanT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+X-Coremail-Antispam: 1Uk129KBjvJXoWxXF47tF45Wry5Zw45GFWxWFg_yoWrtr1fp3
+        WDZFZxX3y2grnxtFs8Ka17Zr4fAr1kC3WrurnxC3yxtrWUKwn8XFWfWFykG3Z3WrWUXF17
+        JwsrurWrta43Aw7anT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
         qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bfxFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUAVWUZwA2ocxC64
+        bfAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
         kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
-        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE
-        52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I
-        80ewAv7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCj
-        c4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-        AKI48JMxAIw28IcVCjz48v1sIEY20_WwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C2
-        67AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
-        8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5
-        JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
-        1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBI
-        daVFxhVjvjDU0xZFpf9x07j0zuAUUUUU=
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr
+        1l84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJVW0owAaw2AFwI0_JF0_Jw1le2I262IYc4CY
+        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_Wrv_ZF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+        0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xF
+        xVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+        C2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_
+        Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr
+        0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUv
+        cSsGvfC2KfnxnUUI43ZEXa7IU06WlPUUUUU==
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This gpio driver doesn't cover CPU_LOONGSON64 platforms, because
-of gpio address was wrong and I don't plan to support it thus
-move this driver to arch/mips/loongson2ef/ so that I can drop the
-shackles of the legacy driver and add a new driver that supports
-dts/acpi to support LoongArch platforms.
+Add the Loongson platform gpio binding with DT schema format using
+json-schema.
 
 Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- MAINTAINERS                                                 | 2 +-
- arch/loongarch/configs/loongson3_defconfig                  | 1 -
- arch/loongarch/include/asm/loongson.h                       | 6 ------
- arch/mips/configs/lemote2f_defconfig                        | 1 -
- arch/mips/configs/loongson2k_defconfig                      | 1 -
- arch/mips/configs/loongson3_defconfig                       | 1 -
- arch/mips/include/asm/mach-loongson64/loongson.h            | 5 -----
- arch/mips/loongson2ef/common/Makefile                       | 1 +
- .../gpio-loongson.c => arch/mips/loongson2ef/common/gpio.c  | 2 +-
- drivers/gpio/Kconfig                                        | 6 ------
- drivers/gpio/Makefile                                       | 1 -
- 11 files changed, 3 insertions(+), 24 deletions(-)
- rename drivers/gpio/gpio-loongson.c => arch/mips/loongson2ef/common/gpio.c (98%)
+Change in v5:
+		1. NO change, but other patch in this series of patches set has
+		   change.
+Change in v4:
+		1. Remove the string "series".
+		2. Add the reviewed-by information.
+Change in v3:
+		1. Separate some changes of MAINTAINERS file and enter the first patch.
+Change in v2:
+		1. Drop "loongson,gpio_base" and "gpio-ranges" will cover it.
+		1. Drop "loongson,conf_offset", "loongson,out_offset", "loongson,in_offset",
+		   "loongson,support_irq" and kernel driver will initial them that depend
+		   compatible in kernel.
+		3. Fixup maintainer for this driver.
 
+ .../bindings/gpio/loongson,ls-gpio.yaml       | 126 ++++++++++++++++++
+ MAINTAINERS                                   |   1 +
+ 2 files changed, 127 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+
+diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+new file mode 100644
+index 000000000000..fb86e8ce6349
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+@@ -0,0 +1,126 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/loongson,ls-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Loongson GPIO controller.
++
++maintainers:
++  - Yinbo Zhu <zhuyinbo@loongson.cn>
++
++properties:
++  compatible:
++    enum:
++      - loongson,ls2k-gpio
++      - loongson,ls7a-gpio
++
++  reg:
++    maxItems: 1
++
++  ngpios:
++    minimum: 1
++    maximum: 64
++
++  "#gpio-cells":
++    const: 2
++
++  gpio-controller: true
++
++  gpio-ranges: true
++
++  interrupts:
++    minItems: 1
++    maxItems: 64
++
++required:
++  - compatible
++  - reg
++  - ngpios
++  - "#gpio-cells"
++  - gpio-controller
++  - gpio-ranges
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    gpio0: gpio@1fe00500 {
++      compatible = "loongson,ls2k-gpio";
++      reg = <0x1fe00500 0x38>;
++      ngpios = <64>;
++      #gpio-cells = <2>;
++      gpio-controller;
++      gpio-ranges = <&pctrl 0 0 15>,
++                    <&pctrl 16 16 15>,
++                    <&pctrl 32 32 10>,
++                    <&pctrl 44 44 20>;
++      interrupt-parent = <&liointc1>;
++      interrupts = <28 IRQ_TYPE_LEVEL_LOW>,
++                   <29 IRQ_TYPE_LEVEL_LOW>,
++                   <30 IRQ_TYPE_LEVEL_LOW>,
++                   <30 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <>,
++                   <>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>;
++    };
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 916b2d9cffc0..7b80a64b70b9 100644
+index 47721a25249f..6381c0bebb34 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -13881,7 +13881,7 @@ M:	Jiaxun Yang <jiaxun.yang@flygoat.com>
- L:	linux-mips@vger.kernel.org
+@@ -12052,6 +12052,7 @@ LOONGSON GPIO DRIVER
+ M:	Yinbo Zhu <zhuyinbo@loongson.cn>
+ L:	linux-gpio@vger.kernel.org
  S:	Maintained
- F:	arch/mips/include/asm/mach-loongson2ef/
--F:	arch/mips/loongson2ef/
-+F:	arch/mips/loongson2ef/*
- F:	drivers/cpufreq/loongson2_cpufreq.c
++F:	Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+ F:	drivers/gpio/gpio-loongson.c
+ F:	include/linux/platform_data/gpio-loongson.h
  
- MIPS/LOONGSON64 ARCHITECTURE
-diff --git a/arch/loongarch/configs/loongson3_defconfig b/arch/loongarch/configs/loongson3_defconfig
-index 3540e9c0a631..d576d802ffd0 100644
---- a/arch/loongarch/configs/loongson3_defconfig
-+++ b/arch/loongarch/configs/loongson3_defconfig
-@@ -601,7 +601,6 @@ CONFIG_I2C_PIIX4=y
- CONFIG_I2C_GPIO=y
- CONFIG_SPI=y
- CONFIG_GPIO_SYSFS=y
--CONFIG_GPIO_LOONGSON=y
- CONFIG_SENSORS_LM75=m
- CONFIG_SENSORS_LM93=m
- CONFIG_SENSORS_W83795=m
-diff --git a/arch/loongarch/include/asm/loongson.h b/arch/loongarch/include/asm/loongson.h
-index 00db93edae1b..87587688fab8 100644
---- a/arch/loongarch/include/asm/loongson.h
-+++ b/arch/loongarch/include/asm/loongson.h
-@@ -29,12 +29,6 @@
- #define LOONGSON_REG_SIZE	0x00100000	/* 1M */
- #define LOONGSON_REG_TOP	(LOONGSON_REG_BASE+LOONGSON_REG_SIZE-1)
- 
--/* GPIO Regs - r/w */
--
--#define LOONGSON_GPIODATA		LOONGSON_REG(0x11c)
--#define LOONGSON_GPIOIE			LOONGSON_REG(0x120)
--#define LOONGSON_REG_GPIO_BASE          (LOONGSON_REG_BASE + 0x11c)
--
- #define MAX_PACKAGES 16
- 
- #define xconf_readl(addr) readl(addr)
-diff --git a/arch/mips/configs/lemote2f_defconfig b/arch/mips/configs/lemote2f_defconfig
-index 7e598d338979..81264ccaacfc 100644
---- a/arch/mips/configs/lemote2f_defconfig
-+++ b/arch/mips/configs/lemote2f_defconfig
-@@ -127,7 +127,6 @@ CONFIG_SERIAL_8250_EXTENDED=y
- CONFIG_SERIAL_8250_MANY_PORTS=y
- CONFIG_SERIAL_8250_FOURPORT=y
- CONFIG_HW_RANDOM=y
--CONFIG_GPIO_LOONGSON=y
- CONFIG_THERMAL=y
- CONFIG_MEDIA_SUPPORT=m
- CONFIG_FB=y
-diff --git a/arch/mips/configs/loongson2k_defconfig b/arch/mips/configs/loongson2k_defconfig
-index 728bef666f7a..f11be40ccb4e 100644
---- a/arch/mips/configs/loongson2k_defconfig
-+++ b/arch/mips/configs/loongson2k_defconfig
-@@ -230,7 +230,6 @@ CONFIG_SERIAL_NONSTANDARD=y
- CONFIG_HW_RANDOM=y
- CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_PIIX4=y
--CONFIG_GPIO_LOONGSON=y
- CONFIG_SENSORS_LM75=m
- CONFIG_SENSORS_LM93=m
- CONFIG_SENSORS_W83627HF=m
-diff --git a/arch/mips/configs/loongson3_defconfig b/arch/mips/configs/loongson3_defconfig
-index aca66a5f330d..82de65130722 100644
---- a/arch/mips/configs/loongson3_defconfig
-+++ b/arch/mips/configs/loongson3_defconfig
-@@ -269,7 +269,6 @@ CONFIG_VIRTIO_CONSOLE=y
- CONFIG_HW_RANDOM=y
- CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_PIIX4=y
--CONFIG_GPIO_LOONGSON=y
- CONFIG_SENSORS_LM75=m
- CONFIG_SENSORS_LM93=m
- CONFIG_SENSORS_W83627HF=m
-diff --git a/arch/mips/include/asm/mach-loongson64/loongson.h b/arch/mips/include/asm/mach-loongson64/loongson.h
-index f7c3ab6d724e..51ee80d98742 100644
---- a/arch/mips/include/asm/mach-loongson64/loongson.h
-+++ b/arch/mips/include/asm/mach-loongson64/loongson.h
-@@ -177,11 +177,6 @@ extern int mach_i8259_irq(void);
- #define LOONGSON_PCIMEMBASECFG		LOONGSON_REG(LOONGSON_REGBASE + 0x14)
- #define LOONGSON_PCIMAP_CFG		LOONGSON_REG(LOONGSON_REGBASE + 0x18)
- 
--/* GPIO Regs - r/w */
--
--#define LOONGSON_GPIODATA		LOONGSON_REG(LOONGSON_REGBASE + 0x1c)
--#define LOONGSON_GPIOIE			LOONGSON_REG(LOONGSON_REGBASE + 0x20)
--
- /* ICU Configuration Regs - r/w */
- 
- #define LOONGSON_INTEDGE		LOONGSON_REG(LOONGSON_REGBASE + 0x24)
-diff --git a/arch/mips/loongson2ef/common/Makefile b/arch/mips/loongson2ef/common/Makefile
-index 30ea8b5ca685..4d4063f90cc5 100644
---- a/arch/mips/loongson2ef/common/Makefile
-+++ b/arch/mips/loongson2ef/common/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_LOONGSON_UART_BASE) += serial.o
- obj-$(CONFIG_EARLY_PRINTK) += serial.o
- obj-$(CONFIG_LOONGSON_UART_BASE) += uart_base.o
- obj-$(CONFIG_LOONGSON_MC146818) += rtc.o
-+obj-$(CONFIG_GPIOLIB) += gpio.o
- 
- #
- # Enable CS5536 Virtual Support Module(VSM) to virtulize the PCI configure
-diff --git a/drivers/gpio/gpio-loongson.c b/arch/mips/loongson2ef/common/gpio.c
-similarity index 98%
-rename from drivers/gpio/gpio-loongson.c
-rename to arch/mips/loongson2ef/common/gpio.c
-index a42145873cc9..0d3e7aef46d3 100644
---- a/drivers/gpio/gpio-loongson.c
-+++ b/arch/mips/loongson2ef/common/gpio.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- /*
-- *  Loongson-2F/3A/3B GPIO Support
-+ *  Loongson-2F GPIO Support
-  *
-  *  Copyright (c) 2008 Richard Liu,  STMicroelectronics	 <richard.liu@st.com>
-  *  Copyright (c) 2008-2010 Arnaud Patard <apatard@mandriva.com>
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index a01af1180616..bc55b80f212a 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -375,12 +375,6 @@ config GPIO_LOGICVC
- 	  Say yes here to support GPIO functionality of the Xylon LogiCVC
- 	  programmable logic block.
- 
--config GPIO_LOONGSON
--	bool "Loongson-2/3 GPIO support"
--	depends on CPU_LOONGSON2EF || CPU_LOONGSON64
--	help
--	  Driver for GPIO functionality on Loongson-2F/3A/3B processors.
--
- config GPIO_LPC18XX
- 	tristate "NXP LPC18XX/43XX GPIO support"
- 	default y if ARCH_LPC18XX
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 29e3beb6548c..cfd298e00737 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -77,7 +77,6 @@ obj-$(CONFIG_GPIO_JANZ_TTL)		+= gpio-janz-ttl.o
- obj-$(CONFIG_GPIO_KEMPLD)		+= gpio-kempld.o
- obj-$(CONFIG_GPIO_LOGICVC)		+= gpio-logicvc.o
- obj-$(CONFIG_GPIO_LOONGSON1)		+= gpio-loongson1.o
--obj-$(CONFIG_GPIO_LOONGSON)		+= gpio-loongson.o
- obj-$(CONFIG_GPIO_LP3943)		+= gpio-lp3943.o
- obj-$(CONFIG_GPIO_LP873X)		+= gpio-lp873x.o
- obj-$(CONFIG_GPIO_LP87565)		+= gpio-lp87565.o
 -- 
 2.33.0
 
