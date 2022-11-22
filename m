@@ -2,105 +2,109 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 234E2C46467
-	for <linux-gpio@archiver.kernel.org>; Wed, 23 Nov 2022 13:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787F4C4332F
+	for <linux-gpio@archiver.kernel.org>; Wed, 23 Nov 2022 14:26:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236618AbiKWN5k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 23 Nov 2022 08:57:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45466 "EHLO
+        id S238448AbiKWO00 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 23 Nov 2022 09:26:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236767AbiKWN4v (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Nov 2022 08:56:51 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EBB3101F;
-        Wed, 23 Nov 2022 05:51:45 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id ED9E961CEC;
-        Wed, 23 Nov 2022 13:51:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B70F3C433D6;
-        Wed, 23 Nov 2022 13:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669211504;
-        bh=yn6IQg9xUUV9CgWL40Zq6y52rg1mn5sa8oD03o5v7Xs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UKfpNKKUztgIyNLf4JyG/Wh9x1SnC70ZZ6CMkTeLD14mkOzGlAm4+qghDz9TTaJEY
-         oavU1DO373ElaIHQhIEpVZi9OKHf+AB7y5AZ3a0QM4K6Mda5mlxZI6uj77Y+34o3+z
-         tC1+zaqNCkF1IRGWjNnvY9xTloZLlUjIwvwDNzzHVs6iAjJgjo18LVCElB+Z+suDGy
-         RWQBO44v5C47KQUPl5LJXsrQ6VqWTj1W9The96h2CM4sfIP1b0DOy3ZhTq1Wp6bXDL
-         C50DRWElKcd6PEaRVrgU5hEWY/A3MmvIZ+aqD+I2bHVUKaydHWSJ+FVF1rDhM8vyJp
-         Av8NqbWSqNyRA==
-Date:   Wed, 23 Nov 2022 13:51:32 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-watchdog@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 1/9] dt-bindings: drop redundant part of title of
- shared bindings
-Message-ID: <Y34lZFSBEwuI6G+a@sirena.org.uk>
-References: <20221121110615.97962-1-krzysztof.kozlowski@linaro.org>
- <20221121110615.97962-2-krzysztof.kozlowski@linaro.org>
+        with ESMTP id S236362AbiKWO0H (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Nov 2022 09:26:07 -0500
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 610816BDEF
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Nov 2022 06:25:13 -0800 (PST)
+Received: by mail-qt1-x82d.google.com with SMTP id s4so11282530qtx.6
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Nov 2022 06:25:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ri0mZ2K/fUhEx8zLPRzENIukosBulaHGjs8vpkuOJm0=;
+        b=EC4hFSm0jb5iWEd86vmGEvAc/8Ma+ky2jLRXJJTIFVvRrKxuX8aBHV4o6KA+QRFiEg
+         G4T9GTPHN5atxmaHJZpR9FNDfxVSSUUczqERka4epqICjB2nniRkfnnoUZdrMNcW8hs5
+         woLCpqW0jXHrKmIRmLo3Py3s6Sjd1OdonrwVLu37QUkkO+H+8+6+68PV/07+8wFIRs1j
+         BZuyvSBi7noGBsmRG8Rx5rcGJIi7d53Lp7lB/1jMjseMe0eYrjVxxiix4Zp8XyODUDsR
+         AbaSChID7GoAOdO50ZAi16FCWTuqTbA0xBRBVL5Xe8OCAt0nvVfJ47lkn24dnYbsqQi3
+         WJ5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ri0mZ2K/fUhEx8zLPRzENIukosBulaHGjs8vpkuOJm0=;
+        b=4qEo25+cx0+LRq5/YxkwXoppqFN7+plmSCCz+sNUZUcc6twGPY+ipzPkF1t+09BAGK
+         WyUg3HmUCFBHa6tlkC+0XZmcF8FWMdsWvjH6gBb6F1x9gjkiN0Wm0qZUFtXPYlByDi37
+         ML9h3aP1TKejKqdmnkJw+Yf+bU99MYHhNyK6LvaXSyQMHz67HIIXeolxAueBPJLKMzL0
+         5qHAQdgKThua4Lwmh4VHmuWNUSGjT8CmpmdVxV2qBG2Ob8XR0QosO57s6sJOnWpeT7g3
+         crAmIUQCe/bZKb6EjMmDN0IqH614AMlFSYPhaNrd9AnnDMHkmaFFIXtXCx870k3E7dO5
+         U0Fw==
+X-Gm-Message-State: ANoB5plCUxvuVZ9amA9vCjyqhMhFEipSwdFi494pmZHTVXD2zbnpYHu8
+        7S/alPAOcII8wEm658BhyVEigg==
+X-Google-Smtp-Source: AA0mqf6KhyiL9QLvsO2N1rrDnCRwyBYcd5DcYIM7vR3/HTGcruAKwCoAz1gRVgV9Pj2/miU5OQzqsQ==
+X-Received: by 2002:ac8:4b55:0:b0:3a4:fcde:734b with SMTP id e21-20020ac84b55000000b003a4fcde734bmr27038149qts.238.1669213512483;
+        Wed, 23 Nov 2022 06:25:12 -0800 (PST)
+Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id b28-20020a05620a127c00b006f9c2be0b4bsm11718802qkl.135.2022.11.23.06.25.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Nov 2022 06:25:11 -0800 (PST)
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     linus.walleij@linaro.org, brgl@bgdev.pl
+Cc:     andriy.shevchenko@linux.intel.com, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, michael@walle.cc, broonie@kernel.org,
+        William Breathitt Gray <william.gray@linaro.org>
+Subject: [PATCH v3 1/9] gpio: regmap: Always set gpio_chip get_direction
+Date:   Tue, 22 Nov 2022 02:10:58 -0500
+Message-Id: <4a7661f01803c100a9322dc15c8df17d61c2ed72.1669100542.git.william.gray@linaro.org>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <cover.1669100542.git.william.gray@linaro.org>
+References: <cover.1669100542.git.william.gray@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sez8m7aAndejrS5d"
-Content-Disposition: inline
-In-Reply-To: <20221121110615.97962-2-krzysztof.kozlowski@linaro.org>
-X-Cookie: I'm rated PG-34!!
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+If you only have reg_dat_base set, then it is input-only; if you only
+have reg_set_base set, then it is output-only. Thus, we can always set
+gpio_chip get_direction to gpio_regmap_get_direction and return
+GPIO_LINE_DIRECTION_IN/GPIO_LINE_DIRECTION_OUT given the respective
+register base addresses configuration.
 
---sez8m7aAndejrS5d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Michael Walle <michael@walle.cc>
+Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
+---
+ drivers/gpio/gpio-regmap.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-On Mon, Nov 21, 2022 at 12:06:07PM +0100, Krzysztof Kozlowski wrote:
-> The Devicetree bindings document does not have to say in the title that
-> it is a "binding", but instead just describe the hardware.  For shared
-> (re-usable) schemas, name them all as "common properties".
+diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+index 6383136cbe59..f907c9c19fce 100644
+--- a/drivers/gpio/gpio-regmap.c
++++ b/drivers/gpio/gpio-regmap.c
+@@ -111,6 +111,11 @@ static int gpio_regmap_get_direction(struct gpio_chip *chip,
+ 	unsigned int base, val, reg, mask;
+ 	int invert, ret;
+ 
++	if (gpio->reg_dat_base && !gpio->reg_set_base)
++		return GPIO_LINE_DIRECTION_IN;
++	if (gpio->reg_set_base && !gpio->reg_dat_base)
++		return GPIO_LINE_DIRECTION_OUT;
++
+ 	if (gpio->reg_dir_out_base) {
+ 		base = gpio_regmap_addr(gpio->reg_dir_out_base);
+ 		invert = 0;
+@@ -265,8 +270,8 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
+ 	else if (gpio->reg_set_base)
+ 		chip->set = gpio_regmap_set;
+ 
++	chip->get_direction = gpio_regmap_get_direction;
+ 	if (gpio->reg_dir_in_base || gpio->reg_dir_out_base) {
+-		chip->get_direction = gpio_regmap_get_direction;
+ 		chip->direction_input = gpio_regmap_direction_input;
+ 		chip->direction_output = gpio_regmap_direction_output;
+ 	}
+-- 
+2.38.1
 
-Acked-by: Mark Brown <broonie@kernel.org>
-
---sez8m7aAndejrS5d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmN+JWMACgkQJNaLcl1U
-h9CJ0gf/ajSRpLgN3RoHR7wLxFr99y5vWRywVoOaKU+lLq3UY2O6a9ssY8wOblzx
-J9LbUP4Acep2fofTZCX1Ks2sTUHXNBB95SaeCwpSD/MX2HltHr0QvTGh8Lc9EfRf
-f4l/ayjov4DbVsOJ019O7MKSgyuKezLb6Rj/5S38OrqdREbbzDoFe2ah8rSxpA8m
-OQPEsY4eAbVfELEo/JQ86QYXN8gT6p3qA0+8IxDb0D+iLi3JCIz3GTrn+ZCudWRS
-DkbD00vhGbeEaAbI/ufYp/KUWT0wfIoONENSAdGhmGMd+deqbmOt1Ryt+YoEt49j
-pRMeSDCxuBZIpBjQfw7H+5ofOT8jsg==
-=hoZL
------END PGP SIGNATURE-----
-
---sez8m7aAndejrS5d--
