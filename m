@@ -2,66 +2,81 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F93FC4332F
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Nov 2022 07:51:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB5DC4332F
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Nov 2022 08:24:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232585AbiKVHvP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 22 Nov 2022 02:51:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60994 "EHLO
+        id S232700AbiKVIY5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 22 Nov 2022 03:24:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232373AbiKVHvO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Nov 2022 02:51:14 -0500
-Received: from muru.com (muru.com [72.249.23.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 124B332B8C;
-        Mon, 21 Nov 2022 23:51:14 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id AEEB78061;
-        Tue, 22 Nov 2022 07:40:59 +0000 (UTC)
-Date:   Tue, 22 Nov 2022 09:51:12 +0200
-From:   Tony Lindgren <tony@atomide.com>
-To:     Andrew Davis <afd@ti.com>
-Cc:     Nishanth Menon <nm@ti.com>, Apurva Nandan <a-nandan@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Hari Nagalla <hnagalla@ti.com>
-Subject: Re: [PATCH v3 4/4] arm64: dts: ti: Add support for J784S4 EVM board
-Message-ID: <Y3x/cGYWLLB+J2zU@atomide.com>
-References: <20221116130428.161329-1-a-nandan@ti.com>
- <20221116130428.161329-5-a-nandan@ti.com>
- <b57433e7-b309-bd1c-f794-3da74021f03c@ti.com>
- <20221118174754.y37pq77drvla2uxj@tinderbox>
- <8c123fa2-caab-d2dd-5eb4-688f1c6abb33@ti.com>
- <20221118180808.wnel7d6gswsnooww@junkman>
- <93242211-95e7-09a0-fced-5ef2deb9fc08@ti.com>
- <20221118192744.wish2vrxgy7dg7c2@unnerving>
- <3d5e41f6-16a8-4298-ccd3-6db60f94eb47@ti.com>
+        with ESMTP id S232731AbiKVIYz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Nov 2022 03:24:55 -0500
+Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D2CB40442
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Nov 2022 00:24:54 -0800 (PST)
+Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-39451671bdfso111833017b3.10
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Nov 2022 00:24:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kb63W+UIsuIrJz3AXei8J+4cfxCV44ANkMXV9cCXccg=;
+        b=mH3OJYCvcyiKq8qtqJs/nYHURgE0zFOMnwKbBA4doL7OTC+Bxtbq4P7yK2l1D/UuvN
+         ANKZM0yAo0iINKoNVgjnUzbNgIWuqxYh1X/xuZiT8mSUoDlyeN0Lg8SU7M3+lTrVDYjS
+         iHouLEschtv7HO2nz9Lzpjav0eSDfmIgsT9Nn4hsNchVesmK4Zu7ZDmwQ2K4TpwokokN
+         a5aGK7yB03Ia45Ew8rOA5MugsI7VZS6F9h9VmiM/Mdefw1TNhTs49q1dDZhd3IqKIyxx
+         /r5PDA7TDx5CqBoR5hHQUR+MR/DydEW04bG7M5HO5mz3YOvwpFBisdBX5D1WZe761Mf5
+         sgsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kb63W+UIsuIrJz3AXei8J+4cfxCV44ANkMXV9cCXccg=;
+        b=KpUD9bUzzDY4+igW8Nw8kfNWhsBQz/kPsjfVE6v40WX3IOo9WkngsOo8Fn7kinOf6B
+         ccpGM8dF0JVIgJ39/dzfF3udcOAdQj2OVpztRtkbM5DWGxO8M5UDs+k4f57VkCFlloeI
+         W+RKOU99SGVI2NKDtJiEVBeTpEOUZVH4GhW9zJPhJjZ2W4btRcBs9KKecyF+xAp9xzcS
+         erYjpitO9Zqdc49FxACjWiVmYuCv24GJVE7kWEQBkdJ7+kt04kI9Dzy70+d/ttT05JO+
+         EHkAy0VMnEn0Cm4LHNwkj0X7ZBWF39JKJRA2GziUi9wwZV3JUyjsDTXw4MqaWU10Jocp
+         eraQ==
+X-Gm-Message-State: ANoB5pmsbneLHqg0pU5g1MJOia+uEVJg/QrdMQ3LRRml0qSoYntMQS7B
+        CH07+ncFttOEmKCgyadJhGpvrqHqxULa3gr1LUkA1g==
+X-Google-Smtp-Source: AA0mqf6v4Oku4YPWYpKZedL/YubM1du4LxGnRE3pB9Srgo4LCWZJDt8YSfISwjZdRDSTk8Jimww5m+PQcWGnpt8ZpOM=
+X-Received: by 2002:a05:690c:285:b0:3ab:189e:3465 with SMTP id
+ bf5-20020a05690c028500b003ab189e3465mr1206489ywb.343.1669105493788; Tue, 22
+ Nov 2022 00:24:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d5e41f6-16a8-4298-ccd3-6db60f94eb47@ti.com>
+References: <20221121-sx150xq_bindings_fixup-v1-0-e754f183b611@linaro.org>
+In-Reply-To: <20221121-sx150xq_bindings_fixup-v1-0-e754f183b611@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 22 Nov 2022 09:24:41 +0100
+Message-ID: <CACRpkdb+y=tkFQHLFdKmYDrBhz3h-6zyJ3EDEgxo6eT8Tew2-w@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: semtech,sx150xq: fix match patterns
+ for 16 GPIOs matching
+To:     Neil Armstrong <neil.armstrong@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sander Vanheule <sander@svanheule.net>,
+        linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-* Andrew Davis <afd@ti.com> [221118 21:05]:
-> Why do we need SERIAL_8250_NR_UARTS at all, might be a better question.
-> These should be dynamically allocated if the number goes over the
-> default count imposed by the TTY framework. Maybe folks are still a
-> bit too afraid to touch the TTY subsystem core, I don't blame them..
+On Mon, Nov 21, 2022 at 3:12 PM Neil Armstrong
+<neil.armstrong@linaro.org> wrote:
 
-The 8250 core preallocates a number of ports for use, see
-serial8250_isa_init_ports() and serial8250_register_8250_port(). As the
-serial port driver probes, the preallocated ports get re-assigned to
-the port driver.
+> The current pattern for SX1503 and SX1509Q with 16 GPIOs only matches
+> "gpio0", "gpio1", and "gpio5" instead of "gpio0" to "gpio15" included.
+>
+> Fix these patterns to match the whole 16 GPIO line names.
+>
+> Fixes: 29c10bcec50a ("dt-bindings: pinctrl: convert semtech,sx150xq bindings to dt-schema")
+> Reported-by: Sander Vanheule <sander@svanheule.net>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-Maybe we could keep the static serial8250_ports[] and add those ports
-to a list where also the dynamically allocated ports would go..
+Patch applied, thanks for fixing this up so quickly!
 
-Regards,
-
-Tony
+Yours,
+Linus Walleij
