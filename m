@@ -2,142 +2,167 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 212D8C4167D
-	for <linux-gpio@archiver.kernel.org>; Wed, 23 Nov 2022 14:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F646C4332F
+	for <linux-gpio@archiver.kernel.org>; Wed, 23 Nov 2022 14:26:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238481AbiKWO02 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 23 Nov 2022 09:26:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48490 "EHLO
+        id S238560AbiKWO0b (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 23 Nov 2022 09:26:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238449AbiKWO0H (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Nov 2022 09:26:07 -0500
-Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00B1F6EB52
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Nov 2022 06:25:10 -0800 (PST)
-Received: by mail-qv1-xf32.google.com with SMTP id df6so9995016qvb.0
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Nov 2022 06:25:10 -0800 (PST)
+        with ESMTP id S237323AbiKWO0L (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Nov 2022 09:26:11 -0500
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DEF37019F
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Nov 2022 06:25:15 -0800 (PST)
+Received: by mail-qt1-x833.google.com with SMTP id l15so11286302qtv.4
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Nov 2022 06:25:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=39zTu8o/p3Qi58Cd06Tx/HTRDhN0acLffx+GPkCPcLw=;
-        b=fNkr+DBrQCwW2gaIHncVcLZ/S0lRhEMRfbfzfnlXyirFUdhQdoDsMBLI5cRPuxYjuZ
-         3vpvUNrsFrDi8zBNGA/ZhBnARHFdI6zKtwUUGXyeWjghbWwiC2TcMtmimSSKe3kMM8Jf
-         LKLwcg/JrrB8JgmIkikSaKVtdPahmYXNhbF3ptty2u0NC3zkQua9QFnpHDDdJVISwshD
-         Zl4QkVmEhhoFL5U/sVL6T4E4nmQ/9yQX4DYFkLSy9ORL86NmMMiG88LOXYWu0dxSEi7j
-         6Ska4R9pyLhsOSJBiebJpCT3xCIfBaCWYFukOa2G5jk+535+iwSu/XnUYR7k0sj4p3pA
-         XTCw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cthntMJEQCPgBQBzQ9X0QMzb77dxt7cdP+6IqKGFEhE=;
+        b=wVC8m7Dvh9WJJOxTjjlPgsjTcADcr9YQAA1YXLdxymiRUdTVrHLA+x32CVZ7Yu1kJ+
+         JBjww9S9s6DRD1bKOaORGOBSBuDRIKvY/scrG5rxJxv2eqUVWbRWbmO/ozCeh+oQDc3H
+         hs0tIqSpWUntRx47G+V6U5l0GDkauXUBiVOgCdxLXXT+osrOSwa+QTZIhQCYLgqS1+mV
+         Vjaw8j/bkUP2/xN3g/gzMySasa0mvQn+fEfPEkYHY/jXyErW9W3pH/4bJ/VfzkHvAVfZ
+         K7br9l6vhqRxeMR4ZDfxujNxaMrIctDGzH0d2B7+savTQuHqncqX0LoqFmClgciBB2OH
+         cbfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=39zTu8o/p3Qi58Cd06Tx/HTRDhN0acLffx+GPkCPcLw=;
-        b=hi2VG1zFRPTbIHaIcfGN1bdKCMRRIdAQWqhhWYNu5R6AGSvJhKyyPCN4QaKZp2Gxb+
-         59Q1zPGvz7v2WJ78H9ZO6GEqDLZbjxqTcASVknUKd4iUMlPUnMMu/zxy194orxWvSbgQ
-         KiuYXtnPM7tc1NfUrmAxmveZmwOx7pHMxNFBbgQzTEmqJmFy/OQFXGDeIhN+5VoOYNt6
-         s1fLwSbDpxrzzZu5lm3qBxj7LuQSkaZBEU4Im8DS/Qscx7zwu5JO8vpC6//6n6h1PFWo
-         rQPYlsPHSfIyNp5lbJ1eGX4Ttb3ASP4sQRSIK0YdTJ6UTItg4ZwQ1ZkxTE9SESbh9ony
-         Qg1w==
-X-Gm-Message-State: ANoB5plaoK5A/NclpWlgnYeQditr9vytWqSzdPk9cTShMUAQGWyr43JL
-        d36ht+eAz9WEcDzL+dNT2t8RKA==
-X-Google-Smtp-Source: AA0mqf43oEzwmtThXOfPYgWsUoQFRaAz3JjEV3p3R0sBYk2jwUnkNsnsXdxqVZD8eQ2Ikubq5vZoGw==
-X-Received: by 2002:a0c:ea41:0:b0:4bb:9feb:9204 with SMTP id u1-20020a0cea41000000b004bb9feb9204mr10093704qvp.74.1669213510090;
-        Wed, 23 Nov 2022 06:25:10 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cthntMJEQCPgBQBzQ9X0QMzb77dxt7cdP+6IqKGFEhE=;
+        b=xqXQcVASay60dnPC4uLR7kbqpkqZftjBpKjF4VLZAKmpBkgHiCPPPm+zwyk4jeUn+0
+         ikbp/uDTkFsJDz+opDYihOY58efsANyiMeKxyyYn4NheyLY7Z4y/lGtTIpFce+OXa10j
+         XzjtcH4FN0uKDSjCnCkbbCAY6YZq+Kyh3+aZOIYXD6s/U0M7rbxcvpabKZTpzFJZN85y
+         upFu0ow9YP/cYqOBSdX1/OFafHOHGu1QaQ9x8ZxlejwtIGJ8VEfhB5itNr3o3kb+pVN8
+         gl7hsyGa+dHUAwG3okFIJIjiWa5D9/ozPYHxPAQsKbG4lAeH4lGIzVDKww3snFMNSYGc
+         25wQ==
+X-Gm-Message-State: ANoB5pkWEzgqyQgFOtGbSul1DoASZkrm9tEMo7v/MYi6u0pI9leKV/lE
+        LqCpzU0QbF6nxxSLwGKNaUwHxw==
+X-Google-Smtp-Source: AA0mqf61Ieuh9kiFl0RM0sHS/bA3IsUn57qQroiq4oJVl6aaO/v4ZT3NqReUfgvG0jIY9LeUnVMj4w==
+X-Received: by 2002:a05:622a:420b:b0:3a4:fb31:db9c with SMTP id cp11-20020a05622a420b00b003a4fb31db9cmr26218441qtb.637.1669213514399;
+        Wed, 23 Nov 2022 06:25:14 -0800 (PST)
 Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id b28-20020a05620a127c00b006f9c2be0b4bsm11718802qkl.135.2022.11.23.06.25.08
+        by smtp.gmail.com with ESMTPSA id b28-20020a05620a127c00b006f9c2be0b4bsm11718802qkl.135.2022.11.23.06.25.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Nov 2022 06:25:09 -0800 (PST)
+        Wed, 23 Nov 2022 06:25:13 -0800 (PST)
 From:   William Breathitt Gray <william.gray@linaro.org>
 To:     linus.walleij@linaro.org, brgl@bgdev.pl
 Cc:     andriy.shevchenko@linux.intel.com, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, michael@walle.cc, broonie@kernel.org,
         William Breathitt Gray <william.gray@linaro.org>
-Subject: [PATCH v3 0/9] Migrate i8255 GPIO drivers to regmap API
-Date:   Tue, 22 Nov 2022 02:10:57 -0500
-Message-Id: <cover.1669100542.git.william.gray@linaro.org>
+Subject: [PATCH v3 2/9] regmap-irq: Add handle_mask_sync() callback
+Date:   Tue, 22 Nov 2022 02:10:59 -0500
+Message-Id: <e083474b3d467a86e6cb53da8072de4515bd6276.1669100542.git.william.gray@linaro.org>
 X-Mailer: git-send-email 2.38.1
+In-Reply-To: <cover.1669100542.git.william.gray@linaro.org>
+References: <cover.1669100542.git.william.gray@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Changes in v3:
- - Changed handle_mask_sync description to show range using a more
-   typical mathematical notation ('[' changed to ')')
- - Split addition of new i8255 library regmap interface and removal of
-   old i8255 library interface to separate patches
- - Split migration of 104-dio-48e, 104-idi-48, and gpio-mm modules to
-   regmap-irq, gpio-regmap, and new i8255 library interface to separate
-   patches
- - Simplified logic in dio48e_handle_mask_sync(); the previous version
-   separated the conditional evaluations from the if statements which
-   made it more complicated than it needed to be
- - Removed initial interrupt clearing in dio48e_probe(); superfluous
-   because clear_on_unmask is set to true so the interrupts will be
-   cleared anyway later.
- - Replace IDI48_IRQ_REG with IDI48_IRQ_STATUS and IDI48_IRQ_ENABLE to
-   make the intent of this register clear
+Provide a public callback handle_mask_sync() that drivers can use when
+they have more complex IRQ masking logic. The default implementation is
+regmap_irq_handle_mask_sync(), used if the chip doesn't provide its own
+callback.
 
-The regmap API supports IO port accessors so we can take advantage of
-regmap abstractions rather than handling access to the device registers
-directly in the driver. The 104-dio-48e and gpio-mm modules depend on
-the i8255 library and are thus updated accordingly.
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
+---
+ drivers/base/regmap/regmap-irq.c | 44 ++++++++++++++++++++++----------
+ include/linux/regmap.h           |  5 ++++
+ 2 files changed, 36 insertions(+), 13 deletions(-)
 
-The 104-IDI-48 is hardwired as an input-only device. Because the i8255
-control registers are not exposed on the 104-IDI-48, the i8255 library
-doesn't provide much benefit here. In this case it's simpler to utilize
-the gpio_regmap API directly, so this patch series does such and removes
-the i8255 library dependency from the 104-idi-48 module.
-
-The first patch in this series adjusts gpio_regmap to always set
-gpio_chip get_direction. This patch is larger independent of the rest of
-the patches in the series and can be picked up separately if desired.
-I'm including it here because it allows the input-only 104-idi-48 driver
-to continue reporting offset directions after migrating to gpio_regmap.
-
-A handle_mask_sync() callback is introduced for the regmap_irq API. This
-is used by the 104-dio-48e driver to handle its enable/disable interrupt
-functionality. The 104-DIO-48E has a single register to handle
-enabling/disabling interrupts: a write of any value to this register
-enables interrupts, while any read disables interrupts.
-
-By leveraging the gpio_regmap API, the i8255 library is reduced to
-simply a devm_i8255_regmap_register() function, a configuration
-structure struct i8255_regmap_config, and a helper macro
-i8255_volatile_regmap_range() provided to simplify volatile PPI register
-hinting for the regmap.
-
-The regmap_irq API is leveraged by the 104-idi-48 and 104-dio-48e
-modules to support their IRQ functionality. Do their respective regmap
-configurations need use_hwlock set to true in this case, or is adequate
-locking already handled by the regmap_irq API?
-
-William Breathitt Gray (9):
-  gpio: regmap: Always set gpio_chip get_direction
-  regmap-irq: Add handle_mask_sync() callback
-  gpio: 104-dio-48e: Migrate to the regmap-irq API
-  gpio: 104-idi-48: Migrate to the regmap-irq API
-  gpio: 104-idi-48: Migrate to gpio-regmap API
-  gpio: i8255: Migrate to gpio-regmap API
-  gpio: 104-dio-48e: Migrate to regmap API
-  gpio: gpio-mm: Migrate to regmap API
-  gpio: i8255: Remove unused legacy interface
-
- drivers/base/regmap/regmap-irq.c |  44 +++-
- drivers/gpio/Kconfig             |   5 +-
- drivers/gpio/gpio-104-dio-48e.c  | 395 ++++++++++---------------------
- drivers/gpio/gpio-104-idi-48.c   | 325 ++++++++-----------------
- drivers/gpio/gpio-gpio-mm.c      | 153 +++---------
- drivers/gpio/gpio-i8255.c        | 320 +++++++------------------
- drivers/gpio/gpio-i8255.h        |  54 ++---
- drivers/gpio/gpio-regmap.c       |   7 +-
- include/linux/regmap.h           |   5 +
- 9 files changed, 412 insertions(+), 896 deletions(-)
-
-
-base-commit: 3687a82b1db1c827cc4b367e3efde3235f68d9f6
+diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+index 4ef9488d05cd..968681fa8d09 100644
+--- a/drivers/base/regmap/regmap-irq.c
++++ b/drivers/base/regmap/regmap-irq.c
+@@ -115,12 +115,20 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
+ 	 */
+ 	for (i = 0; i < d->chip->num_regs; i++) {
+ 		if (d->mask_base) {
+-			reg = d->get_irq_reg(d, d->mask_base, i);
+-			ret = regmap_update_bits(d->map, reg,
+-					d->mask_buf_def[i], d->mask_buf[i]);
+-			if (ret)
+-				dev_err(d->map->dev, "Failed to sync masks in %x\n",
+-					reg);
++			if (d->chip->handle_mask_sync)
++				d->chip->handle_mask_sync(d->map, i,
++							  d->mask_buf_def[i],
++							  d->mask_buf[i],
++							  d->chip->irq_drv_data);
++			else {
++				reg = d->get_irq_reg(d, d->mask_base, i);
++				ret = regmap_update_bits(d->map, reg,
++						d->mask_buf_def[i],
++						d->mask_buf[i]);
++				if (ret)
++					dev_err(d->map->dev, "Failed to sync masks in %x\n",
++						reg);
++			}
+ 		}
+ 
+ 		if (d->unmask_base) {
+@@ -917,13 +925,23 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
+ 		d->mask_buf[i] = d->mask_buf_def[i];
+ 
+ 		if (d->mask_base) {
+-			reg = d->get_irq_reg(d, d->mask_base, i);
+-			ret = regmap_update_bits(d->map, reg,
+-					d->mask_buf_def[i], d->mask_buf[i]);
+-			if (ret) {
+-				dev_err(map->dev, "Failed to set masks in 0x%x: %d\n",
+-					reg, ret);
+-				goto err_alloc;
++			if (chip->handle_mask_sync) {
++				ret = chip->handle_mask_sync(d->map, i,
++							     d->mask_buf_def[i],
++							     d->mask_buf[i],
++							     chip->irq_drv_data);
++				if (ret)
++					goto err_alloc;
++			} else {
++				reg = d->get_irq_reg(d, d->mask_base, i);
++				ret = regmap_update_bits(d->map, reg,
++						d->mask_buf_def[i],
++						d->mask_buf[i]);
++				if (ret) {
++					dev_err(map->dev, "Failed to set masks in 0x%x: %d\n",
++						reg, ret);
++					goto err_alloc;
++				}
+ 			}
+ 		}
+ 
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index ca3434dca3a0..cc07645501af 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -1542,6 +1542,8 @@ struct regmap_irq_chip_data;
+  *		     before regmap_irq_handler process the interrupts.
+  * @handle_post_irq: Driver specific callback to handle interrupt from device
+  *		     after handling the interrupts in regmap_irq_handler().
++ * @handle_mask_sync: Callback used to handle IRQ mask syncs. The index will be
++ *		      in the range [0, num_regs)
+  * @set_type_virt:   Driver specific callback to extend regmap_irq_set_type()
+  *		     and configure virt regs. Deprecated, use @set_type_config
+  *		     callback and config registers instead.
+@@ -1603,6 +1605,9 @@ struct regmap_irq_chip {
+ 
+ 	int (*handle_pre_irq)(void *irq_drv_data);
+ 	int (*handle_post_irq)(void *irq_drv_data);
++	int (*handle_mask_sync)(struct regmap *map, int index,
++				unsigned int mask_buf_def,
++				unsigned int mask_buf, void *irq_drv_data);
+ 	int (*set_type_virt)(unsigned int **buf, unsigned int type,
+ 			     unsigned long hwirq, int reg);
+ 	int (*set_type_config)(unsigned int **buf, unsigned int type,
 -- 
 2.38.1
 
