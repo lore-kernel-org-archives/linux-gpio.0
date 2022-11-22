@@ -2,78 +2,124 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E00C4332F
-	for <linux-gpio@archiver.kernel.org>; Tue, 22 Nov 2022 08:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D372C433FE
+	for <linux-gpio@archiver.kernel.org>; Tue, 22 Nov 2022 09:23:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232831AbiKVIgp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 22 Nov 2022 03:36:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41726 "EHLO
+        id S232341AbiKVJXS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 22 Nov 2022 04:23:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231319AbiKVIgo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Nov 2022 03:36:44 -0500
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFC4A2C663
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Nov 2022 00:36:43 -0800 (PST)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-3a4c2c83300so41549427b3.13
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Nov 2022 00:36:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lUUgD95//RU7QNfaqwzY3u2n51Gl06HD4BZ0NZiwqZk=;
-        b=fdRi8jqB82MbdhC/mDQxvLI8IL1vLHj3nLqB63J4wlOVnjP3ErEnflvFv9n97fXATT
-         VUYbeAdL+jb70TEKLjHPdTIn/t/zzAtNVw/jC7TU++lst6wYGGTLVHf23xD7QbySOvXA
-         ZgUeGiiKiwak+sployhEZFifSSodamyizVnaE23Kd91vtW5Zglol3Mjwi4Suv85XK5rC
-         kNC4wULi6a1NIHPI6Pcz5WaSyyWrXuM2qSAzjJ9sjk7n0GEUEqzYtdE5ZSgye/Bz3NfD
-         +dNT0MF8PPOUcTPHHWue7J2XsLbNGxQX/1QaqiQDqpeGZx8A2gZyE9gVlX9gV75oYSJx
-         DEpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lUUgD95//RU7QNfaqwzY3u2n51Gl06HD4BZ0NZiwqZk=;
-        b=bemT2N0ZhzrVAJ2LG5zCAfkdr4hfVcn5AWebUzZ83iu1ok7AMTLlRWVM4TObb0dlhk
-         jNdJ0aQSth9N2ExfgYo3/Z9vpAi/NUCnrBA0PIYsoww4tx9fV7ssraVdtgIXJD/rgfAa
-         sEIYF5BZ8VIzdJsZRYu7JUGaYYrMlE3Tw2OlF4HjfRYM5Ewm5N1CMB5mHT2GFvFFGQnC
-         O4HcPF5hjqZ3utDtS9yVzG0av71WrzRvMISL07hfxFvs418Xg1ZVIBWGaLnbnSsCI6yZ
-         pFCzhl02GV6NRj4Y3mAIRmec48++H0GkF5ynPeAoJ/dc2rxg+ExK92Z9L+zezLlItdOQ
-         mZGw==
-X-Gm-Message-State: ANoB5plYNIZF/ydLTG2VbFyGDrshDJR0gGiv++ChFdwTzVjUnPMwH3CX
-        Af78QNskC1mHrhvxp60fTGl5eqfo82fv7lsnn5WiDg==
-X-Google-Smtp-Source: AA0mqf7gJGL8BNHxmjcbLv085HdAVJ2BC5W4/LeM3apSj6BBZi4iDOLuIfjo/uIeUd18Uxg0LBYyqp0bf8dqjoK6b8g=
-X-Received: by 2002:a0d:fdc7:0:b0:37a:e8f:3cd3 with SMTP id
- n190-20020a0dfdc7000000b0037a0e8f3cd3mr20960901ywf.187.1669106203169; Tue, 22
- Nov 2022 00:36:43 -0800 (PST)
+        with ESMTP id S232108AbiKVJXR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Nov 2022 04:23:17 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2CD420F4E;
+        Tue, 22 Nov 2022 01:23:15 -0800 (PST)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B95126602AC7;
+        Tue, 22 Nov 2022 09:23:13 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1669108994;
+        bh=+mlBG/PJoJUc9mB4Fvqa/9O1jnPv1xX0SkB4mOqIHso=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=oATMFKxm8m+2BgI44UwSDJAtyNhdFHigDVbG6Z/9SiyBYFGV3ZSsbTLtST5gWh4KS
+         WJBQZWAGGa15Wiouudki0IYlWOUr+2EMIMnTehAUHfNbLwtF+sLHKydXIjqxCUz0AU
+         LuMRfxHk7vmryAUL9TDH1bxQDN8kjiY3HKNWtUu4CjarTpgLJ2tq8+RycPBNTjCLuy
+         PBnTp5ozH8QzSoabVMpb2uQqPng+rhyMbWe7oP8MxvyyQGyDwxugiijioK/ssdQRYx
+         q8cLwz48saX8Ksw857B93cNidbMc2/zl9LtpiF5RnE1QzdeoCkggEj5A96UEpZx51M
+         nfOBhknwD4Q5g==
+Message-ID: <a176dc88-add7-7ce2-16c8-2bd7c6821399@collabora.com>
+Date:   Tue, 22 Nov 2022 10:23:11 +0100
 MIME-Version: 1.0
-References: <20221122075853.2496680-1-zhangpeng362@huawei.com>
-In-Reply-To: <20221122075853.2496680-1-zhangpeng362@huawei.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 22 Nov 2022 09:36:32 +0100
-Message-ID: <CACRpkdbj56x+HwxrRzmR+wUQmYuViqu4JCuUGn6p9sCitTanyw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: call of_node_put() when breaking out of for_each_available_child_of_node()
-To:     Peng Zhang <zhangpeng362@huawei.com>
-Cc:     damien.lemoal@wdc.com, seanga2@gmail.com, palmerdabbelt@google.com,
-        linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sunnanyong@huawei.com,
-        wangkefeng.wang@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v1 1/1] pinctrl: meditatek: Startup with the IRQs disabled
+Content-Language: en-US
+To:     Ricardo Ribalda <ribalda@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ross Zwisler <zwisler@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>
+References: <20221122-mtk-pinctrl-v1-0-bedf5655a3d2@chromium.org>
+ <20221122-mtk-pinctrl-v1-1-bedf5655a3d2@chromium.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20221122-mtk-pinctrl-v1-1-bedf5655a3d2@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 22, 2022 at 8:34 AM Peng Zhang <zhangpeng362@huawei.com> wrote:
+Il 22/11/22 00:38, Ricardo Ribalda ha scritto:
+> If the system is restarted via kexec(), the peripherals do not start
+> with a known state.
+> 
+> If the previous system had enabled an IRQs we will receive unexected
+> IRQs that can lock the system.
+> 
+> [   28.109251] watchdog: BUG: soft lockup - CPU#0 stuck for 26s!
+> [swapper/0:0]
+> [   28.109263] Modules linked in:
+> [   28.109273] CPU: 0 PID: 0 Comm: swapper/0 Not tainted
+> 5.15.79-14458-g4b9edf7b1ac6 #1 9f2e76613148af94acccd64c609a552fb4b4354b
+> [   28.109284] Hardware name: Google Elm (DT)
+> [   28.109290] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS
+> 		BTYPE=--)
+> [   28.109298] pc : __do_softirq+0xa0/0x388
+> [   28.109309] lr : __do_softirq+0x70/0x388
+> [   28.109316] sp : ffffffc008003ee0
+> [   28.109321] x29: ffffffc008003f00 x28: 000000000000000a x27:
+> 0000000000000080
+> [   28.109334] x26: 0000000000000001 x25: ffffffefa7b350c0 x24:
+> ffffffefa7b47480
+> [   28.109346] x23: ffffffefa7b3d000 x22: 0000000000000000 x21:
+> ffffffefa7b0fa40
+> [   28.109358] x20: ffffffefa7b005b0 x19: ffffffefa7b47480 x18:
+> 0000000000065b6b
+> [   28.109370] x17: ffffffefa749c8b0 x16: 000000000000018c x15:
+> 00000000000001b8
+> [   28.109382] x14: 00000000000d3b6b x13: 0000000000000006 x12:
+> 0000000000057e91
+> [   28.109394] x11: 0000000000000000 x10: 0000000000000000 x9 :
+> ffffffefa7b47480
+> [   28.109406] x8 : 00000000000000e0 x7 : 000000000f424000 x6 :
+> 0000000000000000
+> [   28.109418] x5 : ffffffefa7dfaca0 x4 : ffffffefa7dfadf0 x3 :
+> 000000000000000f
+> [   28.109429] x2 : 0000000000000000 x1 : 0000000000000100 x0 :
+> 0000000001ac65c5
+> [   28.109441] Call trace:
+> [   28.109447]  __do_softirq+0xa0/0x388
+> [   28.109454]  irq_exit+0xc0/0xe0
+> [   28.109464]  handle_domain_irq+0x68/0x90
+> [   28.109473]  gic_handle_irq+0xac/0xf0
+> [   28.109480]  call_on_irq_stack+0x28/0x50
+> [   28.109488]  do_interrupt_handler+0x44/0x58
+> [   28.109496]  el1_interrupt+0x30/0x58
+> [   28.109506]  el1h_64_irq_handler+0x18/0x24
+> [   28.109512]  el1h_64_irq+0x7c/0x80
+> [   28.109519]  arch_local_irq_enable+0xc/0x18
+> [   28.109529]  default_idle_call+0x40/0x140
+> [   28.109539]  do_idle+0x108/0x290
+> [   28.109547]  cpu_startup_entry+0x2c/0x30
+> [   28.109554]  rest_init+0xe8/0xf8
+> [   28.109562]  arch_call_rest_init+0x18/0x24
+> [   28.109571]  start_kernel+0x338/0x42c
+> [   28.109578]  __primary_switched+0xbc/0xc4
+> [   28.109588] Kernel panic - not syncing: softlockup: hung tasks
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-> From: ZhangPeng <zhangpeng362@huawei.com>
->
-> Since for_each_available_child_of_node() will increase the refcount of
-> node, we need to call of_node_put() manually when breaking out of the
-> iteration.
->
-> Fixes: d4c34d09ab03 ("pinctrl: Add RISC-V Canaan Kendryte K210 FPIOA driver")
-> Signed-off-by: ZhangPeng <zhangpeng362@huawei.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Patch applied.
 
-Yours,
-Linus Walleij
