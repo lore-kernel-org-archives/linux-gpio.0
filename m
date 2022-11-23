@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C19E9C47088
-	for <linux-gpio@archiver.kernel.org>; Wed, 23 Nov 2022 15:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E24C3A59F
+	for <linux-gpio@archiver.kernel.org>; Wed, 23 Nov 2022 15:20:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236549AbiKWPU0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 23 Nov 2022 10:20:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56526 "EHLO
+        id S238758AbiKWPU1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 23 Nov 2022 10:20:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238722AbiKWPUP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Nov 2022 10:20:15 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CA38922FF
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Nov 2022 07:20:11 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id z4so15293301wrr.3
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Nov 2022 07:20:10 -0800 (PST)
+        with ESMTP id S238745AbiKWPUK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Nov 2022 10:20:10 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88B5F905BD
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Nov 2022 07:20:08 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id s5so12684981wru.1
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Nov 2022 07:20:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KN2/QtlLjs6UFWl8nj+yt8+0EJtSW1V4HYBBliOcWZU=;
-        b=vASi9wIAwi7NyOC+JAIYezcqoYjpHTurwdRxp58vNKtT/4omMKwrmGjE4iTV4anhri
-         OJ3CM7aGpLB27L5O5GqxOED2u/yexkYN4wsEXNzjZuzMkTFQu59j9vq/w736GI7M5chL
-         8y/1Wa0MNkKXH5jGV/k/4bfpeya3yHS2n2kzJTV8UY6znWO40gXSj8DkTQ+QzvbTWKJ+
-         R/YQToWISv9XZzJjG4lBeIAdS03dghBBllawSeVm4JvqFp9iFvh7jg8/OjotIGeMNHzJ
-         OLnH40F1wkeq0asTs4sNHdU+cXlN25BQcNHxdb3ASAmiGVw7FZBmO0zwp4sx5CCT3Fp6
-         d49g==
+        bh=wS8ehy3b6xOApRJUcIOnqGL3usaHNUDtf4/AopCfalM=;
+        b=ny3bJNhjpEQUpqXQDoXckFmwGMORtoQkwqBJJlRe0NZOlMij1GinW54uRJ0wYre8K1
+         IWkkNrt6jZSVyvHIJSgcq2e2BQ0+QG/0q8YnNzHv2dFfnhsetruPdMwF6T+KQEtbP0Aw
+         lbhiQmPMhxL+938z3OToUD7+4gKEvuzwxbQDBApQQu3rqtGTgq+8CxOStHo84qG7YaEF
+         Gwk80wEgv+PthWrcsky5q6ew2t+epvROySZ1rfHB48iO9oQkMNcRl+hDZzZZbT/hvf1H
+         2LMrrBxgagZTBr6zUZL9/dJbfwpq9IAxjW67GS4rxEOabyn3u+vd64aMk/RiO6TvXE0G
+         U/dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KN2/QtlLjs6UFWl8nj+yt8+0EJtSW1V4HYBBliOcWZU=;
-        b=Deb06ZJ7WXKPLqHvi10cmQbUoV0QyV/MCwtWUP+eipUSfJxwSWlfJNsLBk4OVTq+mi
-         J006x3LKPM1GY6sGWmn6WkWQUzQphARoqVLspsNKlL4ZxxBdcTLGeZZQtowR5QsMgJc+
-         wa8IqBK284keLPzkDNg2ZqWVSsz7iu324jBBs19pmGrhR4+S3IGza8Gl5q17uORCJCxm
-         LcTqEc8pn76f2iWkrObW1C/d0s8xyG3rwFgyIYLyJp/UAE2rt2SwR1WDnOjH8pTgLrXM
-         VNcPvrlAKwrN33vIkWOPXjhSAzGVZMEueo3LJWQ0kwsVwt1h0Pnsv/9pZrVR5HV6fzAo
-         IulA==
-X-Gm-Message-State: ANoB5pnx+RrRuU6tB0R4s8W8Hcu4JDEOk+1QGeDi1bZbmaIEEXkJjf77
-        33AR7TcrQpw+KOSOl+prvU/7NQ==
-X-Google-Smtp-Source: AA0mqf682lXAmgko7RMtxcHSFtApXR2SzqfBO+7Ao5r3yKfKG1PzE/P+1F7t9fIu2vjjipJtd/QXCQ==
-X-Received: by 2002:a5d:52d0:0:b0:241:c340:d1ea with SMTP id r16-20020a5d52d0000000b00241c340d1eamr10748919wrv.434.1669216809572;
-        Wed, 23 Nov 2022 07:20:09 -0800 (PST)
+        bh=wS8ehy3b6xOApRJUcIOnqGL3usaHNUDtf4/AopCfalM=;
+        b=CNLRMIi2SYyh6qfyJCYG7Cva+U+3xevj11P1q+LtBHm87SlJENBhvwBKFzOM9oL2Tt
+         hZx0neLIIpCLMd86RrK8h8pMiLx56nWHgCFuy/lxZYhCsMFvHBp/aWR1n+uff0a0nkGJ
+         feUh9p7EW/Oc8wrzUMWZz3QpR+9QCLWSX3+EWl3psVtFQClYClhC00qmyU6uaXr0XqeT
+         pmAwJQu9AYoqCnwdw8WAUaa1HXh5nKhQVARo6pAF01uFgdVothRtiSiQA8Ch0QRcYBPX
+         MLjDKSKpvU6koAAPrk4jR0WwSNzH7u2tvWvZM1G5o/Rt2ZkxIib/d91LOctmwDBl5DEN
+         mW8A==
+X-Gm-Message-State: ANoB5plHl14XbhIWnGloVYWKg6bPPGCSnpq7qMd+CMQEgh5BaOgtuWIz
+        2vsM7aZxf/5MFAFzbiZuf6aprtns6fviHw==
+X-Google-Smtp-Source: AA0mqf7aYOYQl41VZdGBYuvylb3vzQuyqICT2BJB14lHTC39+ptzT05i696n3hrvNhbFdWKXcEr7eA==
+X-Received: by 2002:a05:6000:1b86:b0:241:9606:1123 with SMTP id r6-20020a0560001b8600b0024196061123mr11928330wru.537.1669216807068;
+        Wed, 23 Nov 2022 07:20:07 -0800 (PST)
 Received: from localhost.localdomain ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id l10-20020adff48a000000b002366ded5864sm16764914wro.116.2022.11.23.07.20.08
+        by smtp.gmail.com with ESMTPSA id l10-20020adff48a000000b002366ded5864sm16764914wro.116.2022.11.23.07.20.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Nov 2022 07:20:09 -0800 (PST)
+        Wed, 23 Nov 2022 07:20:06 -0800 (PST)
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -58,11 +58,10 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Subject: [PATCH v2 3/4] pinctrl: qcom: add support for i2c specific pull feature
-Date:   Wed, 23 Nov 2022 17:20:00 +0200
-Message-Id: <20221123152001.694546-4-abel.vesa@linaro.org>
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: [PATCH v2 1/4] dt-bindings: pinctrl: qcom: Add SM8550 pinctrl
+Date:   Wed, 23 Nov 2022 17:19:58 +0200
+Message-Id: <20221123152001.694546-2-abel.vesa@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221123152001.694546-1-abel.vesa@linaro.org>
 References: <20221123152001.694546-1-abel.vesa@linaro.org>
@@ -72,93 +71,195 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Neil Armstrong <neil.armstrong@linaro.org>
+Add device tree binding Documentation details for Qualcomm SM8550
+TLMM device
 
-Add support for the new i2c_pull property introduced for SM8550 setting
-a I2C specific pull mode on I2C able pins.
-
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
 
 Changes since v1:
- * Added my missing Signed-off-by tag
+ * based on recent bindings, like Krzysztof asked
+ * changed gpio-line-names maxItems to 210
+ * moved required and additionalProperties below
+ * dropped *-hog since there are no such nodes yet on SM8550
+ * switch to double quotes everywhere
+ * dropped qcom,i2c-pull
+ * dropped if clause for ^gpio*
+ * added tlmm label
 
- drivers/pinctrl/qcom/pinctrl-msm.c | 20 ++++++++++++++++++++
- drivers/pinctrl/qcom/pinctrl-msm.h |  1 +
- 2 files changed, 21 insertions(+)
+ .../bindings/pinctrl/qcom,sm8550-tlmm.yaml    | 163 ++++++++++++++++++
+ 1 file changed, 163 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sm8550-tlmm.yaml
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 8fbb953c4bbe..f92082c1c805 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -83,6 +83,12 @@ struct msm_pinctrl {
- 	u32 phys_base[MAX_NR_TILES];
- };
- 
-+#define PIN_CONFIG_QCOM_I2C_PULL	(PIN_CONFIG_END + 1)
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8550-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8550-tlmm.yaml
+new file mode 100644
+index 000000000000..a457425ba112
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8550-tlmm.yaml
+@@ -0,0 +1,163 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,sm8550-tlmm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+static const struct pinconf_generic_params msm_pinconf_custom_bindings[] = {
-+	{"qcom,i2c-pull", PIN_CONFIG_END + 1, 0},
-+};
++title: Qualcomm Technologies, Inc. SM8550 TLMM block
 +
- #define MSM_ACCESSOR(name) \
- static u32 msm_readl_##name(struct msm_pinctrl *pctrl, \
- 			    const struct msm_pingroup *g) \
-@@ -324,6 +330,12 @@ static int msm_config_reg(struct msm_pinctrl *pctrl,
- 		*bit = g->oe_bit;
- 		*mask = 1;
- 		break;
-+	case PIN_CONFIG_QCOM_I2C_PULL:
-+		if (g->i2c_pull_bit == 0)
-+			return -EOPNOTSUPP;
-+		*bit = g->i2c_pull_bit;
-+		*mask = 1;
-+		break;
- 	default:
- 		return -ENOTSUPP;
- 	}
-@@ -415,6 +427,9 @@ static int msm_config_group_get(struct pinctrl_dev *pctldev,
- 			return -EINVAL;
- 		arg = 1;
- 		break;
-+	case PIN_CONFIG_QCOM_I2C_PULL:
-+		arg = 1;
-+		break;
- 	default:
- 		return -ENOTSUPP;
- 	}
-@@ -498,6 +513,9 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
- 			/* disable output */
- 			arg = 0;
- 			break;
-+		case PIN_CONFIG_QCOM_I2C_PULL:
-+			arg = 1;
-+			break;
- 		default:
- 			dev_err(pctrl->dev, "Unsupported config parameter: %x\n",
- 				param);
-@@ -1495,6 +1513,8 @@ int msm_pinctrl_probe(struct platform_device *pdev,
- 	pctrl->desc.name = dev_name(&pdev->dev);
- 	pctrl->desc.pins = pctrl->soc->pins;
- 	pctrl->desc.npins = pctrl->soc->npins;
-+	pctrl->desc.custom_params = msm_pinconf_custom_bindings;
-+	pctrl->desc.num_custom_params = ARRAY_SIZE(msm_pinconf_custom_bindings);
- 
- 	pctrl->pctrl = devm_pinctrl_register(&pdev->dev, &pctrl->desc, pctrl);
- 	if (IS_ERR(pctrl->pctrl)) {
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
-index 05a1209bf9ae..985eceda2517 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.h
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.h
-@@ -80,6 +80,7 @@ struct msm_pingroup {
- 
- 	unsigned pull_bit:5;
- 	unsigned drv_bit:5;
-+	unsigned i2c_pull_bit:5;
- 
- 	unsigned od_bit:5;
- 	unsigned egpio_enable:5;
++maintainers:
++  - Abel Vesa <abel.vesa@linaro.org>
++
++description:
++  Top Level Mode Multiplexer pin controller in Qualcomm SM8550 SoC.
++
++allOf:
++  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
++
++properties:
++  compatible:
++    const: qcom,sm8550-tlmm
++
++  reg:
++    maxItems: 1
++
++  interrupts: true
++  interrupt-controller: true
++  "#interrupt-cells": true
++  gpio-controller: true
++
++  gpio-reserved-ranges:
++    minItems: 1
++    maxItems: 105
++
++  gpio-line-names:
++    maxItems: 210
++
++  "#gpio-cells": true
++  gpio-ranges: true
++  wakeup-parent: true
++
++patternProperties:
++  "-state$":
++    oneOf:
++      - $ref: "#/$defs/qcom-sm8550-tlmm-state"
++      - patternProperties:
++          "-pins$":
++            $ref: "#/$defs/qcom-sm8550-tlmm-state"
++        additionalProperties: false
++
++$defs:
++  qcom-sm8550-tlmm-state:
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          oneOf:
++            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-9][0-9]|20[0-9])$"
++            - enum: [ ufs_reset, sdc2_clk, sdc2_cmd, sdc2_data ]
++        minItems: 1
++        maxItems: 36
++
++      function:
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++        enum: [ aon_cci, aoss_cti, atest_char, atest_usb,
++                audio_ext_mclk0, audio_ext_mclk1, audio_ref_clk,
++                cam_aon_mclk4, cam_mclk, cci_async_in, cci_i2c_scl,
++                cci_i2c_sda, cci_timer, cmu_rng, coex_uart1_rx,
++                coex_uart1_tx, coex_uart2_rx, coex_uart2_tx,
++                cri_trng, dbg_out_clk, ddr_bist_complete,
++                ddr_bist_fail, ddr_bist_start, ddr_bist_stop,
++                ddr_pxi0, ddr_pxi1, ddr_pxi2, ddr_pxi3, dp_hot,
++                gcc_gp1, gcc_gp2, gcc_gp3, gpio, i2chub0_se0,
++                i2chub0_se1, i2chub0_se2, i2chub0_se3, i2chub0_se4,
++                i2chub0_se5, i2chub0_se6, i2chub0_se7, i2chub0_se8,
++                i2chub0_se9, i2s0_data0, i2s0_data1, i2s0_sck,
++                i2s0_ws, i2s1_data0, i2s1_data1, i2s1_sck, i2s1_ws,
++                ibi_i3c, jitter_bist, mdp_vsync, mdp_vsync0_out,
++                mdp_vsync1_out, mdp_vsync2_out, mdp_vsync3_out,
++                mdp_vsync_e, nav_gpio0, nav_gpio1, nav_gpio2,
++                pcie0_clk_req_n, pcie1_clk_req_n, phase_flag,
++                pll_bist_sync, pll_clk_aux, prng_rosc0, prng_rosc1,
++                prng_rosc2, prng_rosc3, qdss_cti, qdss_gpio,
++                qlink0_enable, qlink0_request, qlink0_wmss,
++                qlink1_enable, qlink1_request, qlink1_wmss,
++                qlink2_enable, qlink2_request, qlink2_wmss,
++                qspi0, qspi1, qspi2, qspi3, qspi_clk, qspi_cs,
++                qup1_se0, qup1_se1, qup1_se2, qup1_se3, qup1_se4,
++                qup1_se5, qup1_se6, qup1_se7, qup2_se0,
++                qup2_se0_l0_mira, qup2_se0_l0_mirb, qup2_se0_l1_mira,
++                qup2_se0_l1_mirb, qup2_se0_l2_mira, qup2_se0_l2_mirb,
++                qup2_se0_l3_mira, qup2_se0_l3_mirb, qup2_se1,
++                qup2_se2, qup2_se3, qup2_se4, qup2_se5, qup2_se6,
++                qup2_se7, sd_write_protect, sdc40, sdc41, sdc42,
++                sdc43, sdc4_clk, sdc4_cmd, tb_trig_sdc2, tb_trig_sdc4,
++                tgu_ch0_trigout, tgu_ch1_trigout, tgu_ch2_trigout,
++                tgu_ch3_trigout, tmess_prng0, tmess_prng1, tmess_prng2,
++                tmess_prng3, tsense_pwm1, tsense_pwm2, tsense_pwm3,
++                uim0_clk, uim0_data, uim0_present, uim0_reset,
++                uim1_clk, uim1_data, uim1_present, uim1_reset,
++                usb1_hs, usb_phy, vfr_0, vfr_1, vsense_trigger_mirnat ]
++
++      bias-disable: true
++      bias-pull-down: true
++      bias-pull-up: true
++      drive-strength: true
++      input-enable: true
++      output-high: true
++      output-low: true
++
++    required:
++      - pins
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    tlmm: pinctrl@f100000 {
++        compatible = "qcom,sm8550-tlmm";
++        reg = <0x0f100000 0x300000>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        gpio-ranges = <&tlmm 0 0 211>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++
++        gpio-wo-state {
++            pins = "gpio1";
++            function = "gpio";
++        };
++
++        uart-w-state {
++            rx-pins {
++                pins = "gpio26";
++                function = "qup2_se7";
++                bias-pull-up;
++            };
++
++            tx-pins {
++                pins = "gpio27";
++                function = "qup2_se7";
++                bias-disable;
++            };
++        };
++    };
++...
 -- 
 2.34.1
 
