@@ -2,91 +2,90 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD9A0C46467
-	for <linux-gpio@archiver.kernel.org>; Wed, 23 Nov 2022 12:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8178DC4167D
+	for <linux-gpio@archiver.kernel.org>; Wed, 23 Nov 2022 13:31:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237528AbiKWMnP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 23 Nov 2022 07:43:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47614 "EHLO
+        id S237589AbiKWNbG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 23 Nov 2022 08:31:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236541AbiKWMmS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Nov 2022 07:42:18 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E20266C86;
-        Wed, 23 Nov 2022 04:41:43 -0800 (PST)
+        with ESMTP id S237472AbiKWNaq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Nov 2022 08:30:46 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44E3F8C0B1;
+        Wed, 23 Nov 2022 05:11:33 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EFA91B81F59;
-        Wed, 23 Nov 2022 12:41:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B462DC433B5;
-        Wed, 23 Nov 2022 12:41:39 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EDB11B81FDF;
+        Wed, 23 Nov 2022 13:11:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F3FC433D6;
+        Wed, 23 Nov 2022 13:11:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669207300;
-        bh=cXUFPo7OqE2nILNuP6wEGNjVgk3DTRgoHCsjSSUkV4k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KyB6oeikAMbuw6OB15Vtc1BxR6dnm5BwmryO9w24tusUxmxlRTEl1j069GrduGKLV
-         Pc8zC6qElt3IBtvo/g12W4PgraYX+oVlHOrM/+ak5XiCOXABPv+Zv/WcoznXu28edb
-         T+MwRGqt0HoiokWqi4mUrA3qV/cIocgGHLJ9nDTegTFCEgP65fp72ttdKX6n2fPbNz
-         2WeP0zJ1lcQDs8xIAiAFBY3anU5JZVmd7420hnoA428OBUJxU9/XXdOz44AolcyZ7z
-         v4FPoTv4E9cZHZOSjsmKNPCJMnCx2RtMVkWZvPVVjVMlwaSTlj6eiZTw6Q4J+l2KCO
-         VRRC54n4tvKpw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anjana Hari <quic_ahari@quicinc.com>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Andrew Halaney <ahalaney@redhat.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, andersson@kernel.org,
-        agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.0 17/44] pinctrl: qcom: sc8280xp: Rectify UFS reset pins
-Date:   Wed, 23 Nov 2022 07:40:26 -0500
-Message-Id: <20221123124057.264822-17-sashal@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221123124057.264822-1-sashal@kernel.org>
-References: <20221123124057.264822-1-sashal@kernel.org>
+        s=k20201202; t=1669209090;
+        bh=Pmimk6P6al4IzF3uS/yD4sA/hKmZqcQ3viaO89EoanQ=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=ZrUI/t5mVj7g/IwF947jY7DEP46UTmCGwZm1yrfeZj8sJpE/0UsmGkHz1oufRXJJT
+         VOoyod3pAfIt0tEPQ6mCEfbNTvdMImsLCgXoOXxN93nxZ3VQ9vEkBWU8/oaCgNo4+W
+         k4KDT+73KAx2I71qfX7xPMecXaE1GHnkrllRaM2dbqwB0souBB3OxSpKGHeHAVB5U+
+         WxRLzI4nKX6m4gcIwcosJQ5DhFHeZpPB7hyiwa3yGPbQIxb+Y+y430e8cbuxJ/Sysh
+         Zd+HS13Y8PBubLg5c1lya7GG/ae0Y6SAnCLQmUcQjytq+uokYlVfTowmBOtEXYDroi
+         iuz03vebUOwIg==
+From:   Mark Brown <broonie@kernel.org>
+To:     krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        linus.walleij@linaro.org, maz@kernel.org, tglx@linutronix.de,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        robh+dt@kernel.org
+Cc:     alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org
+In-Reply-To: <20221109165331.29332-1-rf@opensource.cirrus.com>
+References: <20221109165331.29332-1-rf@opensource.cirrus.com>
+Subject: Re: (subset) [PATCH 00/12] Add support for the Cirrus Logic CS48L32 audio codecs
+Message-Id: <166920908765.125457.5735851922084989509.b4-ty@kernel.org>
+Date:   Wed, 23 Nov 2022 13:11:27 +0000
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-fc921
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Anjana Hari <quic_ahari@quicinc.com>
+On Wed, 9 Nov 2022 16:53:19 +0000, Richard Fitzgerald wrote:
+> The CS48L32 is a high-performance low-power audio DSP for smartphones
+> and other portable audio devices. It has various digital audio I/O,
+> a programmable Halo Core DSP, fixed-function audio processors,
+> configurable GPIO and microphone bias regulators.
+> 
+> The CS48L31 and CS48L33 were derivatives of the CS48L32.
+> 
+> [...]
 
-[ Upstream commit f04a2862f9c3f64962b8709c75d788efba6df26b ]
+Applied to
 
-UFS reset pin offsets are wrongly configured for SC8280XP,
-correcting the same for both UFS instances here.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Signed-off-by: Anjana Hari <quic_ahari@quicinc.com>
-Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-Reviewed-by: Andrew Halaney <ahalaney@redhat.com>
-Tested-by: Andrew Halaney <ahalaney@redhat.com> # QDrive3
-Link: https://lore.kernel.org/r/20221103181051.26912-1-quic_bjorande@quicinc.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pinctrl/qcom/pinctrl-sc8280xp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks!
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-sc8280xp.c b/drivers/pinctrl/qcom/pinctrl-sc8280xp.c
-index aa2075390f3e..e96c00686a25 100644
---- a/drivers/pinctrl/qcom/pinctrl-sc8280xp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-sc8280xp.c
-@@ -1873,8 +1873,8 @@ static const struct msm_pingroup sc8280xp_groups[] = {
- 	[225] = PINGROUP(225, hs3_mi2s, phase_flag, _, _, _, _, egpio),
- 	[226] = PINGROUP(226, hs3_mi2s, phase_flag, _, _, _, _, egpio),
- 	[227] = PINGROUP(227, hs3_mi2s, phase_flag, _, _, _, _, egpio),
--	[228] = UFS_RESET(ufs_reset, 0xf1004),
--	[229] = UFS_RESET(ufs1_reset, 0xf3004),
-+	[228] = UFS_RESET(ufs_reset, 0xf1000),
-+	[229] = UFS_RESET(ufs1_reset, 0xf3000),
- 	[230] = SDC_QDSD_PINGROUP(sdc2_clk, 0xe8000, 14, 6),
- 	[231] = SDC_QDSD_PINGROUP(sdc2_cmd, 0xe8000, 11, 3),
- 	[232] = SDC_QDSD_PINGROUP(sdc2_data, 0xe8000, 9, 0),
--- 
-2.35.1
+[10/12] ASoC: wm_adsp: Allow client to hook into pre_run callback
+        commit: fe07130870c8540bc0cddbaa8d4521ecdba6b560
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
