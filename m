@@ -2,76 +2,103 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B21C4332F
-	for <linux-gpio@archiver.kernel.org>; Fri, 25 Nov 2022 18:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DA1C4332F
+	for <linux-gpio@archiver.kernel.org>; Fri, 25 Nov 2022 21:03:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229564AbiKYSa3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 25 Nov 2022 13:30:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45588 "EHLO
+        id S229891AbiKYVDW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 25 Nov 2022 16:03:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbiKYSa3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Nov 2022 13:30:29 -0500
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEE75317C6;
-        Fri, 25 Nov 2022 10:30:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1669401028; x=1700937028;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vmsGSwgyApl2cViKoF+PAPFSLOHMzKelVf+2z7aKa88=;
-  b=HzNfQqxJ2XGj8jONn1yYiChFtRFHE/RHUf8AHRxlySUSkh0dLfKI9x/G
-   ZIoQBRUfV5UswGGvgHnr3+7c5WT8tncLwRL3K5wO6iMqefChcf/K0MJfT
-   7oizD6c3aDG04mWjE8rjmju/hXfedD7+loNdKijQAeJYCnUPKCruilBOt
-   3wtD4B7SscrFtatXGQBnYzn4NG8LJnn30yzCEFtW/poHZ4Fs6s+n1OiQc
-   ssD2peETNHTcIAnQSnN9DxYM/Nq0kacBB1SPGsxFy622nwoyqv+maMVw2
-   TvqfDinuQKWCQUB7jMRwp3z3BWPt300seCLv9/AroLjAJQs0R2130DfeU
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10542"; a="312160858"
-X-IronPort-AV: E=Sophos;i="5.96,194,1665471600"; 
-   d="scan'208";a="312160858"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2022 10:30:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10542"; a="767433069"
-X-IronPort-AV: E=Sophos;i="5.96,194,1665471600"; 
-   d="scan'208";a="767433069"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga004.jf.intel.com with ESMTP; 25 Nov 2022 10:30:25 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1oydSx-00HM26-2q;
-        Fri, 25 Nov 2022 20:30:23 +0200
-Date:   Fri, 25 Nov 2022 20:30:23 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Brian Masney <bmasney@redhat.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>
-Subject: Re: [PATCH v1 1/1] gpiolib: Unify access to the device properties
-Message-ID: <Y4EJv2gCR8nj3hHj@smile.fi.intel.com>
-References: <20221116141728.72491-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S229722AbiKYVDV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Nov 2022 16:03:21 -0500
+Received: from mail-ua1-x929.google.com (mail-ua1-x929.google.com [IPv6:2607:f8b0:4864:20::929])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDEA7442C6
+        for <linux-gpio@vger.kernel.org>; Fri, 25 Nov 2022 13:03:18 -0800 (PST)
+Received: by mail-ua1-x929.google.com with SMTP id y15so1922106uan.6
+        for <linux-gpio@vger.kernel.org>; Fri, 25 Nov 2022 13:03:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OVEFqwCX0va+VfJ7c+eGlux97SoQeyh4xYOkEeZpCiI=;
+        b=5kpozuC8hYlXhFyeFbWRwWNpcWQ04RgM5YwI8JPfPklrr+LrcPKGJq6P5tqWAr2OGB
+         j9Z4/lUd3QB0P76YCwSM6krQPxjiDz96rOa9tN0lUEgEL8Fn2ekZcK0pM7iwvgNaWhlY
+         Td+Q6iOGsoykmpBC/aF4spDDi82QSnQ0Yd+H3K0VPWP0eyj9yKQQrsqMwiiThQh5OpDR
+         7w9z6M8/t9TkxmiwQ6oCJ3RZLIfTX8Z4Ttz+9oQo8nNSLNLFmAp6nSwl0ETbEppyNofL
+         y+5anKUiY2u0eePOQo2Cy2jtuGdRzKnq1MaBG6izLxAVt35uNUUrF0qumnAL2JbHcqfe
+         UG7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OVEFqwCX0va+VfJ7c+eGlux97SoQeyh4xYOkEeZpCiI=;
+        b=3UlAP0e2mZnnZ9HbSWI9ZIc2rhua+8CYNOZIioIfNmq4QQE9yKbc3GrO7A/XVCPFcC
+         aR5wnywHlxweSZ40GJ9TBnw5sOIUm9rnXj3Z69CIIgtzSB+Bnqa+22IOh0hzqyJLwx11
+         h0yx+BeedPmS6HsWarcoTQC7Uq7auyB+d72GssmpNh/56DuiR6C34cDJlsEcX9MI/Vsr
+         GEbzvTErYfxov4OBSS/Ibi1dVWxLiFZeSrxgZT1XPQ4iN1yojN2IDvawb0UXszjlC5Ru
+         IBJY8XuVZ2wW7lv3//MxseyXX6UiPMewOGYY0RxVC7DcwyHlWlUV5im1Y21UL+0U1qDh
+         DmFQ==
+X-Gm-Message-State: ANoB5plgSgXBI0Y5qtSd7s0b/ey42lu0AAXyfhN+7B8b2+vp4DyVb8CV
+        XQpyMqfT4JQQBdvM9qtrxC5CaiFXRwVi+oLWDRfI5ltHG8e25Q==
+X-Google-Smtp-Source: AA0mqf67ml0/y5Y6L0uB229FME78wZM/z+mBuVEXKMVNFI9Rv0NZ/gTWjiZKnZ5pNjCI7CxDjsDgzvDXrqcFxcDotaY=
+X-Received: by 2002:ab0:6015:0:b0:418:c2fa:f8a6 with SMTP id
+ j21-20020ab06015000000b00418c2faf8a6mr15600391ual.119.1669410197837; Fri, 25
+ Nov 2022 13:03:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221116141728.72491-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20221125153257.528826-1-brgl@bgdev.pl> <Y4DsTxPH1tv5eEwf@sol>
+ <CAMRc=Me83-_oiGEmwy4BUrzLEMT6ZsoMwWYsb6iXwg19yHMHdQ@mail.gmail.com> <Y4EBubusGqo4IroP@smile.fi.intel.com>
+In-Reply-To: <Y4EBubusGqo4IroP@smile.fi.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 25 Nov 2022 22:03:06 +0100
+Message-ID: <CAMRc=MdHtJC4Tmn3KgcnefmHTrpXy=ROAAXJLN9uv=ouJ-hQSw@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: cdev: fix NULL-pointer dereferences
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Nov 16, 2022 at 04:17:28PM +0200, Andy Shevchenko wrote:
-> Some of the functions are using struct fwnode_handle, some struct device
-> pointer. In the GPIO library the firmware node of the GPIO device is the
-> same as GPIO node of the GPIO chip. Due to this fact we may use former
-> to access properties everywhere in the code.
+On Fri, Nov 25, 2022 at 6:56 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Fri, Nov 25, 2022 at 05:48:02PM +0100, Bartosz Golaszewski wrote:
+> > On Fri, Nov 25, 2022 at 5:24 PM Kent Gibson <warthog618@gmail.com> wrote:
+>
+> ...
+>
+> > Then at the subsystem level, the GPIO device struct would need a lock
+> > that would be taken by every user-space operation AND the code
+> > unregistering the device so that we don't do what you described (i.e.
+> > if there's a thread doing a read(), then let's wait until it returns
+> > before we drop the device).
+>
+> It's called a reference counting, basically you need to get device and then
+> put when it makes sense.
+>
 
-Bart, can this be applied?
+Andy: I am aware of struct device reference counting but this isn't
+it. You can count references all you want, but when I disconnect my
+CP2112, the USB bus calls gpiochip_remove(), struct gpio_chip * inside
+struct gpio_device is set to NULL and while the underlying struct
+device itself is still alive, the GPIO chip is no longer usable.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Reference counting won't help because the device is no longer there,
+so this behavior is correct but there's an issue with user-space still
+being able to hold certain resources and we need to make sure that
+when it tries to use them, we return an error instead of crashing.
 
+I think that a good solution is to make sure, we cannot set gdev->gc
+to NULL as long as there are user-space operations in progress. After
+all, it's better to try to send a USB request to an unplugged device
+than to dereference a NULL pointer. To that end, we could have a
+user-space lock that would also be taken by gpiochip_remove().
 
+But this is still a per-subsystem solution. Most other subsystems
+suffer from the same issue.
+
+Bartosz
