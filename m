@@ -2,24 +2,24 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C08C47089
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Nov 2022 06:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DC9C4321E
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Nov 2022 06:43:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbiK1G0T (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 28 Nov 2022 01:26:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35674 "EHLO
+        id S229685AbiK1GnP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 28 Nov 2022 01:43:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229799AbiK1G0Q (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Nov 2022 01:26:16 -0500
+        with ESMTP id S229571AbiK1GnN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Nov 2022 01:43:13 -0500
 Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E67F3EE2D;
-        Sun, 27 Nov 2022 22:26:12 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 414755580;
+        Sun, 27 Nov 2022 22:43:10 -0800 (PST)
 Received: from loongson.cn (unknown [10.180.13.64])
-        by gateway (Coremail) with SMTP id _____8BxnuuDVIRjoJcBAA--.4001S3;
-        Mon, 28 Nov 2022 14:26:11 +0800 (CST)
+        by gateway (Coremail) with SMTP id _____8BxVPB8WIRjppgBAA--.3935S3;
+        Mon, 28 Nov 2022 14:43:08 +0800 (CST)
 Received: from localhost.localdomain (unknown [10.180.13.64])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Axf+B7VIRjpAcdAA--.8407S2;
-        Mon, 28 Nov 2022 14:26:08 +0800 (CST)
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxLuJ2WIRjVQwdAA--.8588S2;
+        Mon, 28 Nov 2022 14:43:07 +0800 (CST)
 From:   Yinbo Zhu <zhuyinbo@loongson.cn>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
@@ -39,31 +39,31 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
 Cc:     Jianmin Lv <lvjianmin@loongson.cn>,
         Hongchen Zhang <zhanghongchen@loongson.cn>,
         Liu Peibao <liupeibao@loongson.cn>
-Subject: [PATCH v7 1/2] gpio: loongson: add gpio driver support
-Date:   Mon, 28 Nov 2022 14:26:01 +0800
-Message-Id: <20221128062602.11473-1-zhuyinbo@loongson.cn>
+Subject: [PATCH v8 1/2] gpio: loongson: add gpio driver support
+Date:   Mon, 28 Nov 2022 14:42:59 +0800
+Message-Id: <20221128064300.12021-1-zhuyinbo@loongson.cn>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8Axf+B7VIRjpAcdAA--.8407S2
+X-CM-TRANSID: AQAAf8CxLuJ2WIRjVQwdAA--.8588S2
 X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvAXoWfGw1kWrWrWr1UZr1DtF15XFb_yoW8XFyrCo
-        W7WFZ8WrW8Wr17JayFq3WSqF47ZFn0qF10ywnakan8Ca15tr98Jry3C3y3XFy0yF1FgFyx
-        ZFyfur4fGFsrtF4Dn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXasCq-sGcSsGvf
+X-Coremail-Antispam: 1Uk129KBjvAXoWfGw1kWrWrWr1UZr1kJr1rCrg_yoW8XFykCo
+        W7WFZ8WrW8Wr17JayFq3WSqF47ZFn0qF10ywnakan8Ca15tr98Jry3C3y3XFy0vF1FgFy7
+        ZFyfur4fGFsrtF4Dn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXasCq-sGcSsGvf
         J3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnRJU
-        UUBY1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFV
-        AK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2
+        UUBY1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFV
+        AK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2
         z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr
         1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkE
         cVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F4
-        0Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC
-        6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2
+        0Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC
+        6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2
         Ij64vIr41l42xK82IY6x8ErcxFaVAv8VWrMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI
         1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
-        Wlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j
-        6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr
+        Wlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I
+        6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr
         0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUv
-        cSsGvfC2KfnxnUUI43ZEXa7IU8orW5UUUUU==
+        cSsGvfC2KfnxnUUI43ZEXa7IU8-4S5UUUUU==
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -82,6 +82,8 @@ Signed-off-by: Liu Peibao <liupeibao@loongson.cn>
 Signed-off-by: Juxin Gao <gaojuxin@loongson.cn>
 Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
 ---
+Change in v8:
+		1. Return the loongson_gpio_init function directly in probe.
 Change in v7:
 		1. Add the gpio irqchip support.
 		2. Replace __set_direction with loongson_commit_direction.
@@ -137,8 +139,8 @@ Change in v2:
  MAINTAINERS                        |   6 +
  drivers/gpio/Kconfig               |  12 +
  drivers/gpio/Makefile              |   1 +
- drivers/gpio/gpio-loongson-64bit.c | 380 +++++++++++++++++++++++++++++
- 4 files changed, 399 insertions(+)
+ drivers/gpio/gpio-loongson-64bit.c | 378 +++++++++++++++++++++++++++++
+ 4 files changed, 397 insertions(+)
  create mode 100644 drivers/gpio/gpio-loongson-64bit.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
@@ -195,10 +197,10 @@ index 29e3beb6548c..fc832484cc77 100644
  obj-$(CONFIG_GPIO_LP87565)		+= gpio-lp87565.o
 diff --git a/drivers/gpio/gpio-loongson-64bit.c b/drivers/gpio/gpio-loongson-64bit.c
 new file mode 100644
-index 000000000000..3b11fa37d837
+index 000000000000..19a0149480f8
 --- /dev/null
 +++ b/drivers/gpio/gpio-loongson-64bit.c
-@@ -0,0 +1,380 @@
+@@ -0,0 +1,378 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
 + * Loongson GPIO Support
@@ -516,9 +518,7 @@ index 000000000000..3b11fa37d837
 +	if (IS_ERR(reg_base))
 +		return PTR_ERR(reg_base);
 +
-+	loongson_gpio_init(dev, lgpio, np, reg_base);
-+
-+	return 0;
++	return loongson_gpio_init(dev, lgpio, np, reg_base);
 +}
 +
 +static const struct loongson_gpio_chip_data loongson_gpio_pdata0 = {
