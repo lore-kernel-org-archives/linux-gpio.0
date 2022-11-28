@@ -2,32 +2,27 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1273C433FE
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Nov 2022 06:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFBBC4321E
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Nov 2022 06:26:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbiK1GZc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 28 Nov 2022 01:25:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34994 "EHLO
+        id S229795AbiK1G0S (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 28 Nov 2022 01:26:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbiK1GZb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Nov 2022 01:25:31 -0500
+        with ESMTP id S229798AbiK1G0P (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Nov 2022 01:26:15 -0500
 Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 07A43BF72;
-        Sun, 27 Nov 2022 22:25:28 -0800 (PST)
-Received: from loongson.cn (unknown [117.133.84.114])
-        by gateway (Coremail) with SMTP id _____8CxrutXVIRjZpcBAA--.3934S3;
-        Mon, 28 Nov 2022 14:25:27 +0800 (CST)
-Received: from [192.168.1.7] (unknown [117.133.84.114])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Cx5VZVVIRjbQcdAA--.54968S3;
-        Mon, 28 Nov 2022 14:25:26 +0800 (CST)
-Message-ID: <a749cb75-eea8-c1af-5a07-5d85c7fc17ff@loongson.cn>
-Date:   Mon, 28 Nov 2022 14:25:25 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v6 1/2] gpio: loongson: add gpio driver support
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6366013F9F;
+        Sun, 27 Nov 2022 22:26:13 -0800 (PST)
+Received: from loongson.cn (unknown [10.180.13.64])
+        by gateway (Coremail) with SMTP id _____8BxnuuEVIRjqZcBAA--.4003S3;
+        Mon, 28 Nov 2022 14:26:12 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.180.13.64])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8Axf+B7VIRjpAcdAA--.8407S3;
+        Mon, 28 Nov 2022 14:26:09 +0800 (CST)
+From:   Yinbo Zhu <zhuyinbo@loongson.cn>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         WANG Xuerui <kernel@xen0n.name>,
@@ -40,147 +35,215 @@ Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
         loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
         Arnaud Patard <apatard@mandriva.com>,
         Huacai Chen <chenhuacai@kernel.org>,
-        Jianmin Lv <lvjianmin@loongson.cn>,
-        Hongchen Zhang <zhanghongchen@loongson.cn>,
-        Liu Peibao <liupeibao@loongson.cn>
-References: <20221123080414.14005-1-zhuyinbo@loongson.cn>
- <CACRpkdZ5OJpMFH1Wi31TKQZskQtCmNGyySdkOpouiNW2t_jV6Q@mail.gmail.com>
-From:   Yinbo Zhu <zhuyinbo@loongson.cn>
-In-Reply-To: <CACRpkdZ5OJpMFH1Wi31TKQZskQtCmNGyySdkOpouiNW2t_jV6Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Yinbo Zhu <zhuyinbo@loongson.cn>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v7 2/2] dt-bindings: gpio: add loongson gpio
+Date:   Mon, 28 Nov 2022 14:26:02 +0800
+Message-Id: <20221128062602.11473-2-zhuyinbo@loongson.cn>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20221128062602.11473-1-zhuyinbo@loongson.cn>
+References: <20221128062602.11473-1-zhuyinbo@loongson.cn>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8Cx5VZVVIRjbQcdAA--.54968S3
+X-CM-TRANSID: AQAAf8Axf+B7VIRjpAcdAA--.8407S3
 X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoWxurWDuF4kGr4xKFW5Wry8Xwb_yoW5KFyxpF
-        WxWayakF45JrWUCr1DXrW5ZFyakrZ0yrsrJFsFk3yv93s8Awn7XrWUWF15Zr97ur95uF17
-        ZFW8CFWv9a1DAFJanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+X-Coremail-Antispam: 1Uk129KBjvJXoWxXF47tF45Wry5Zw45GFWxWFg_yoWrKF15pF
+        1DZFZxX3y2gr13tF45Ka17Zr4fAr1kC3WruwnxC3yxtrWUKw13XFWfWFykG3Z3WrWUXF13
+        JwsxurWrta43Aw7anT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
         qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bDAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
-        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
-        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY
-        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
-        C2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
-        7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14
-        v26r126r1DMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_WwCFx2IqxVCFs4IE
-        7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I
-        0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAI
-        cVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
-        CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j1SoXUUUUU=
+        bfAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr
+        1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkE
+        cVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F4
+        0Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC
+        6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2
+        Ij64vIr41l42xK82IY6x8ErcxFaVAv8VWrMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI
+        1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
+        Wlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj
+        6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr
+        0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUv
+        cSsGvfC2KfnxnUUI43ZEXa7IU86yIUUUUUU==
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Add the Loongson platform gpio binding with DT schema format using
+json-schema.
 
-在 2022/11/24 6:14, Linus Walleij 写道:
-> On Wed, Nov 23, 2022 at 9:04 AM Yinbo Zhu <zhuyinbo@loongson.cn> wrote:
->
->> The Loongson platforms GPIO controller contains 60 GPIO pins in total,
->> 4 of which are dedicated GPIO pins, and the remaining 56 are reused
->> with other functions. Each GPIO can set input/output and has the
->> interrupt capability.
->>
->> This driver added support for Loongson GPIO controller and support to
->> use DTS or ACPI to descibe GPIO device resources.
->>
->> Signed-off-by: Jianmin Lv <lvjianmin@loongson.cn>
->> Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
->> Signed-off-by: Liu Peibao <liupeibao@loongson.cn>
->> Signed-off-by: Juxin Gao <gaojuxin@loongson.cn>
->> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
->> ---
->> Change in v6:
-> This is way better :)
->
-> I guess you notice how the driver gets smaller and smaller.
-> This is a good sign!
-It's thanks to your advice！
->> +static int loongson_gpio_request(
->> +                       struct gpio_chip *chip, unsigned int pin)
->> +{
->> +       if (pin >= chip->ngpio)
->> +               return -EINVAL;
->> +
->> +       return 0;
->> +}
-> Drop this altogether as discussed in my other reply.
-okay , I got it.
->
->> +static inline void __set_direction(struct loongson_gpio_chip *lgpio,
->> +                       unsigned int pin, int input)
->> +static void __set_level(struct loongson_gpio_chip *lgpio, unsigned int pin,
->> +                       int high)
-> I missed this before. Also the use of __underscore for inner functions
-> is a bad habit IMO (because __underscore is also used for compiler
-> primitives such as __init which is confusing) The signature of these
-> functions is too generic. Name them loongson_commit_direction() or
-> loongson_commit_level() or something.
-okay , I got it.
->
->> +static int loongson_gpio_get_direction(
->> +                               struct gpio_chip *chip, unsigned int pin)
-> thanks for implementing this!
->
->> +       if (lgpio->p_data->mode == BIT_CTRL_MODE) {
->> +               ret = bgpio_init(&lgpio->chip, dev, 8,
->> +                               LOONGSON_GPIO_IN(lgpio),
->> +                               LOONGSON_GPIO_OUT(lgpio), 0,
->> +                               LOONGSON_GPIO_OEN(lgpio), NULL, 0);
->> +               if (ret) {
->> +                       dev_err(dev, "unable to init generic GPIO\n");
->> +                       return ret;
->> +               }
->> +               lgpio->chip.ngpio = ngpios;
-> Neat!
->
->> +               lgpio->chip.base = 0;
-> Drop this. It is good that the base is unpredictable so
-> people don't start to rely on it. (drivers/gpio/TODO)
-okay, I got it.
->
->> +       rval = device_property_read_u16_array(dev, "gsi_idx_map", NULL, 0);
-> But this gsi_idx_map is missing from your device tree bindings,
-> is it not?
->
-> Or what am I missing here? Sorry I might overlook something...
+Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+Change in v7:
+		1. NO change, but other patch in this series of patches set has
+		   change.
+Change in v6:
+		1. NO change, but other patch in this series of patches set has
+		   change.
+Change in v5:
+		1. NO change, but other patch in this series of patches set has
+		   change.
+Change in v4:
+		1. Remove the string "series".
+		2. Add the reviewed-by information.
+Change in v3:
+		1. Separate some changes of MAINTAINERS file and enter the first patch.
+Change in v2:
+		1. Drop "loongson,gpio_base" and "gpio-ranges" will cover it.
+		1. Drop "loongson,conf_offset", "loongson,out_offset", "loongson,in_offset",
+		   "loongson,support_irq" and kernel driver will initial them that depend
+		   compatible in kernel.
+		3. Fixup maintainer for this driver.
 
-gsi_idx_map is for acpi, the dts doesn't use it, and acpi should be 
-follow dts,
+ .../bindings/gpio/loongson,ls-gpio.yaml       | 126 ++++++++++++++++++
+ MAINTAINERS                                   |   1 +
+ 2 files changed, 127 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
 
-so remove it.
-
->
->> +static int loongson_gpio_probe(struct platform_device *pdev)
->> +{
->> +       void __iomem *reg_base;
->> +       struct loongson_gpio_chip *lgpio;
->> +       struct device_node *np = pdev->dev.of_node;
->> +       struct device *dev = &pdev->dev;
->> +
->> +       lgpio = devm_kzalloc(dev, sizeof(*lgpio), GFP_KERNEL);
->> +       if (!lgpio)
->> +               return -ENOMEM;
->> +
->> +       loongson_gpio_get_props(pdev, lgpio);
->> +
->> +       lgpio->p_data = device_get_match_data(&pdev->dev);
-> lgpio->p_data = device_get_match_data(dev);
->
->
->> +static int __init loongson_gpio_setup(void)
->> +{
->> +       return platform_driver_register(&loongson_gpio_driver);
->> +}
->> +postcore_initcall(loongson_gpio_setup);
-> Why does this have to be postcore_initcall()?
-
-it was refer other gpio driver. other perpherial driver will use gpio, 
-the gpio driver
-
-  should be loaded as early as possible,so use postcore_initcall();
-
->
-> Yours,
-> Linus Walleij
+diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+new file mode 100644
+index 000000000000..fb86e8ce6349
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+@@ -0,0 +1,126 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/loongson,ls-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Loongson GPIO controller.
++
++maintainers:
++  - Yinbo Zhu <zhuyinbo@loongson.cn>
++
++properties:
++  compatible:
++    enum:
++      - loongson,ls2k-gpio
++      - loongson,ls7a-gpio
++
++  reg:
++    maxItems: 1
++
++  ngpios:
++    minimum: 1
++    maximum: 64
++
++  "#gpio-cells":
++    const: 2
++
++  gpio-controller: true
++
++  gpio-ranges: true
++
++  interrupts:
++    minItems: 1
++    maxItems: 64
++
++required:
++  - compatible
++  - reg
++  - ngpios
++  - "#gpio-cells"
++  - gpio-controller
++  - gpio-ranges
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    gpio0: gpio@1fe00500 {
++      compatible = "loongson,ls2k-gpio";
++      reg = <0x1fe00500 0x38>;
++      ngpios = <64>;
++      #gpio-cells = <2>;
++      gpio-controller;
++      gpio-ranges = <&pctrl 0 0 15>,
++                    <&pctrl 16 16 15>,
++                    <&pctrl 32 32 10>,
++                    <&pctrl 44 44 20>;
++      interrupt-parent = <&liointc1>;
++      interrupts = <28 IRQ_TYPE_LEVEL_LOW>,
++                   <29 IRQ_TYPE_LEVEL_LOW>,
++                   <30 IRQ_TYPE_LEVEL_LOW>,
++                   <30 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <26 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <>,
++                   <>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>,
++                   <27 IRQ_TYPE_LEVEL_LOW>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2854da69cabb..b8a02a60973d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12055,6 +12055,7 @@ LOONGSON GPIO DRIVER
+ M:	Yinbo Zhu <zhuyinbo@loongson.cn>
+ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+ F:	drivers/gpio/gpio-loongson-64bit.c
+ 
+ LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+-- 
+2.31.1
 
