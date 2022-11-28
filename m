@@ -2,120 +2,134 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A0EC433FE
-	for <linux-gpio@archiver.kernel.org>; Mon, 28 Nov 2022 21:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62ADCC4321E
+	for <linux-gpio@archiver.kernel.org>; Mon, 28 Nov 2022 22:57:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233972AbiK1VrH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 28 Nov 2022 16:47:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38996 "EHLO
+        id S233678AbiK1W5E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 28 Nov 2022 17:57:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231608AbiK1VrE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Nov 2022 16:47:04 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F083D2FFF9
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Nov 2022 13:44:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669671866;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ijZvrHfxzqLtf9v5WhrCliu1xtsXettjChSs9tCIBZo=;
-        b=ao0V4dA/GiKuky9D6YcmTq+gR3buqqSCJcXlGymGhrYvIBgxNafzil/A93KccW/bGjvShl
-        m5d5sSSXYq0Ny1PQB8iLbL+NIQWXbvIf0TcN94Xp99ZY33CCIVc/1v0oqCz11Y/+clzz6Y
-        ZaJkPAE7Y6s/avlSbiMcc09vAEnwHNc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-108-wfWKXQ0gMViXqONqWAwVAA-1; Mon, 28 Nov 2022 16:44:20 -0500
-X-MC-Unique: wfWKXQ0gMViXqONqWAwVAA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 142E3886463;
-        Mon, 28 Nov 2022 21:44:20 +0000 (UTC)
-Received: from shalem.redhat.com (unknown [10.39.192.115])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7911F40C6EC2;
-        Mon, 28 Nov 2022 21:44:18 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org
-Subject: [PATCH 4/5] media: ov8865: Add support for a privacy-led GPIO
-Date:   Mon, 28 Nov 2022 22:44:07 +0100
-Message-Id: <20221128214408.165726-5-hdegoede@redhat.com>
-In-Reply-To: <20221128214408.165726-1-hdegoede@redhat.com>
-References: <20221128214408.165726-1-hdegoede@redhat.com>
+        with ESMTP id S229501AbiK1W5E (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Nov 2022 17:57:04 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A17FF2A436
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Nov 2022 14:57:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1669676223; x=1701212223;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=THTWN/k2+GZeJ+TvXk5SuszPkUZhUUsflcyTBogm5wU=;
+  b=k7HFsS4db3g6OZpdJzLyqMmvxAe7KRKgM6p5IILDQ7grv9EySKk9dY6C
+   6dKIFi2F/WB9gonQoI7KOFhRwuDp0vIOMRVo7rRCa+o8Gd40ZmR6RGGe6
+   3UKdxDdPkVJ3Nlz4NHoHsbpfW4f5fYmVuWG+KfG/LnWgKCakiOPkxY7Z1
+   pSYPgk3zMLgnxx9/TWC3jLFvPCXgtaE3io6K+YGWU7z62k/2ylz+2FOrL
+   LrrEXM7XP/AOJVP9fMMPUYLBbJGgrxlcqIO2FZQZRDZ4d9C3z+q9vXucF
+   ac9zVSsHgMZm/I/GpHnCxGbUPupszmxvz2TOAr91oBLTGpcARFZcz8SFH
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10545"; a="401253275"
+X-IronPort-AV: E=Sophos;i="5.96,201,1665471600"; 
+   d="scan'208";a="401253275"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2022 14:57:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10545"; a="888612648"
+X-IronPort-AV: E=Sophos;i="5.96,201,1665471600"; 
+   d="scan'208";a="888612648"
+Received: from lkp-server01.sh.intel.com (HELO 64a2d449c951) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 28 Nov 2022 14:57:01 -0800
+Received: from kbuild by 64a2d449c951 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1ozn3d-0008MN-0Z;
+        Mon, 28 Nov 2022 22:57:01 +0000
+Date:   Tue, 29 Nov 2022 06:56:49 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [brgl:gpio/for-current] BUILD SUCCESS
+ ec851b23084b3a0af8bf0f5e51d33a8d678bdc49
+Message-ID: <63853cb1.utOEmBc4POrh3iFU%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for a privacy-led GPIO.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
+branch HEAD: ec851b23084b3a0af8bf0f5e51d33a8d678bdc49  gpiolib: fix memory leak in gpiochip_setup_dev()
 
-Making the privacy LED to controlable from userspace, as using the LED
-class subsystem would do, would make it too easy for spy-ware to disable
-the LED.
+elapsed time: 850m
 
-To avoid this have the sensor driver directly control the LED.
+configs tested: 58
+configs skipped: 2
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Note an additional advantage of directly controlling the GPIO is that
-GPIOs are tied directly to consumer devices. Where as with a LED class
-device, there would need to be some mechanism to tie the right LED
-(e.g front or back) to the right sensor.
----
- drivers/media/i2c/ov8865.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov8865.c
-index cae1866134a0..fe86b166b28b 100644
---- a/drivers/media/i2c/ov8865.c
-+++ b/drivers/media/i2c/ov8865.c
-@@ -688,6 +688,7 @@ struct ov8865_sensor {
- 	struct i2c_client *i2c_client;
- 	struct gpio_desc *reset;
- 	struct gpio_desc *powerdown;
-+	struct gpio_desc *privacy_led;
- 	struct regulator *avdd;
- 	struct regulator *dvdd;
- 	struct regulator *dovdd;
-@@ -2432,10 +2433,12 @@ static int ov8865_sensor_power(struct ov8865_sensor *sensor, bool on)
- 
- 		gpiod_set_value_cansleep(sensor->reset, 0);
- 		gpiod_set_value_cansleep(sensor->powerdown, 0);
-+		gpiod_set_value_cansleep(sensor->privacy_led, 1);
- 
- 		/* Time to enter streaming mode according to power timings. */
- 		usleep_range(10000, 12000);
- 	} else {
-+		gpiod_set_value_cansleep(sensor->privacy_led, 0);
- 		gpiod_set_value_cansleep(sensor->powerdown, 1);
- 		gpiod_set_value_cansleep(sensor->reset, 1);
- 
-@@ -3009,6 +3012,12 @@ static int ov8865_probe(struct i2c_client *client)
- 		goto error_endpoint;
- 	}
- 
-+	sensor->privacy_led = devm_gpiod_get_optional(dev, "privacy-led", GPIOD_OUT_LOW);
-+	if (IS_ERR(sensor->privacy_led)) {
-+		ret = PTR_ERR(sensor->privacy_led);
-+		goto error_endpoint;
-+	}
-+
- 	/* External Clock */
- 
- 	sensor->extclk = devm_clk_get(dev, NULL);
+gcc tested configs:
+um                           x86_64_defconfig
+powerpc                           allnoconfig
+um                             i386_defconfig
+i386                                defconfig
+x86_64                              defconfig
+x86_64                          rhel-8.3-func
+x86_64               randconfig-a001-20221128
+x86_64               randconfig-a006-20221128
+sh                               allmodconfig
+x86_64                    rhel-8.3-kselftests
+x86_64               randconfig-a003-20221128
+i386                 randconfig-a002-20221128
+i386                 randconfig-a003-20221128
+x86_64               randconfig-a004-20221128
+x86_64                           rhel-8.3-syz
+x86_64                               rhel-8.3
+arc                                 defconfig
+x86_64                         rhel-8.3-kunit
+s390                             allmodconfig
+x86_64               randconfig-a002-20221128
+mips                             allyesconfig
+alpha                               defconfig
+x86_64               randconfig-a005-20221128
+s390                                defconfig
+powerpc                          allmodconfig
+arc                  randconfig-r043-20221128
+s390                             allyesconfig
+i386                 randconfig-a001-20221128
+x86_64                           allyesconfig
+i386                 randconfig-a005-20221128
+x86_64                           rhel-8.3-kvm
+ia64                             allmodconfig
+i386                 randconfig-a006-20221128
+i386                 randconfig-a004-20221128
+i386                             allyesconfig
+m68k                             allyesconfig
+alpha                            allyesconfig
+arc                              allyesconfig
+arm                                 defconfig
+m68k                             allmodconfig
+arm                              allyesconfig
+arm64                            allyesconfig
+
+clang tested configs:
+hexagon              randconfig-r045-20221128
+riscv                randconfig-r042-20221128
+i386                 randconfig-a012-20221128
+i386                 randconfig-a011-20221128
+hexagon              randconfig-r041-20221128
+i386                 randconfig-a013-20221128
+s390                 randconfig-r044-20221128
+i386                 randconfig-a014-20221128
+i386                 randconfig-a015-20221128
+i386                 randconfig-a016-20221128
+x86_64               randconfig-a013-20221128
+x86_64               randconfig-a012-20221128
+x86_64               randconfig-a011-20221128
+x86_64               randconfig-a014-20221128
+x86_64               randconfig-a016-20221128
+x86_64               randconfig-a015-20221128
+
 -- 
-2.38.1
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
