@@ -2,100 +2,108 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B4FC4321E
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Nov 2022 11:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1D8C4321E
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Nov 2022 11:58:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232772AbiK2Lxg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 29 Nov 2022 06:53:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54254 "EHLO
+        id S233709AbiK2L56 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 29 Nov 2022 06:57:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232052AbiK2Lxf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Nov 2022 06:53:35 -0500
-X-Greylist: delayed 985 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 29 Nov 2022 03:53:33 PST
-Received: from 11.mo550.mail-out.ovh.net (11.mo550.mail-out.ovh.net [188.165.48.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BC5055A8F
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Nov 2022 03:53:33 -0800 (PST)
-Received: from player763.ha.ovh.net (unknown [10.109.146.143])
-        by mo550.mail-out.ovh.net (Postfix) with ESMTP id 0070525293
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Nov 2022 11:37:06 +0000 (UTC)
-Received: from milecki.pl (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
-        (Authenticated sender: rafal@milecki.pl)
-        by player763.ha.ovh.net (Postfix) with ESMTPSA id 96EE33144B9F5;
-        Tue, 29 Nov 2022 11:37:00 +0000 (UTC)
-Authentication-Results: garm.ovh; auth=pass (GARM-99G003f4d50c74-976e-459a-a7ad-12d1a0dc17fd,
-                    EBB6FAEB9E2E49B041ED7FFF0E08AB355E9D3184) smtp.auth=rafal@milecki.pl
-X-OVh-ClientIp: 194.187.74.233
-Message-ID: <6a7329e3-448f-bf1f-dfd3-34f6dd495408@milecki.pl>
-Date:   Tue, 29 Nov 2022 12:36:59 +0100
+        with ESMTP id S233523AbiK2L5l (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Nov 2022 06:57:41 -0500
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A1105EFB7;
+        Tue, 29 Nov 2022 03:57:18 -0800 (PST)
+Received: by mail-qk1-x72e.google.com with SMTP id d7so9497264qkk.3;
+        Tue, 29 Nov 2022 03:57:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=k/qaur6fm6SxJBVO5r7Os92xrCw8v3SLIgp9savh3Sw=;
+        b=d7Z42eq5GdrqFaltYXs/aJ0ZCkrgNqEOowbLwW63YbElI0x3WfmWQ5VJM/yACVsj+Q
+         I9ErwuJdYGTeCY6mrTOvJw4jRTFkW9114t/Rnd332V//uXZv8X9Pwuwh9KA0poQrRHkp
+         Ss4ppil0s6GG7DbGTfnJ6CzXDvVobD0lIfV5Ue0AZ0zAZajpDmgNItYgX9nRjq5lh51Z
+         YWncPMvWScjaB4tLicJCYPQ13rV6HaOQuEwRzA1hSVteuNrGPoy5S9tgv5R0RrMTue9k
+         t5oViGiP4lq9IVXCL1gltaImrjdkIpE2bXUPEbTC8GRLvVZ5X7NCla47UY5Zs1HxGS9R
+         Th9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k/qaur6fm6SxJBVO5r7Os92xrCw8v3SLIgp9savh3Sw=;
+        b=T9TjF9XmsMNFl+AxvB/nqzs7lxtfKnPBo2rwvu0e7YZJGSYB4F/v0OWPwnX46BxkQf
+         /0rImtickjr/uiN+jxvISJbvpxX4ceVWl8gAZ0L7LXIe6BjQHUD60DvZC9/zVBb9C7P7
+         tfF7e7Q1gUlxaRTprxr3fVg7pr/BmQ9qTbST+YJfxUeVWDS7vYZeJwWfrKbmsM2VHkeF
+         Opb3JnTbNPTZeB+7y/EqrFdM1WtPV2rvBJl6W3FNH9u+JAmTS+DhDMQGMvryDjdBx+sX
+         sIxXFMMTYAesMZNe39jBaUddyqlik26j3kuPKQXVZvxfmAv1iTCHDBfVsbEwgm27cGej
+         dsOA==
+X-Gm-Message-State: ANoB5pkTBOXRnXQh3l8V6X/QyXyUyQava/A1+AtfT9plrkJabhS8HBaL
+        VBoK6aPkNTbYxATJnbCwik8jde37rirG1ru8OP8=
+X-Google-Smtp-Source: AA0mqf7NKY01uPE5yr8p6yZosW5NXQyLzm0uprJiSd7kEqSfPgMu2RWCXA1ov/qS9/YkoMADlN0BrnHJ9cxNabHz7ok=
+X-Received: by 2002:a05:620a:21ce:b0:6fa:d149:6d47 with SMTP id
+ h14-20020a05620a21ce00b006fad1496d47mr33200615qka.734.1669723037619; Tue, 29
+ Nov 2022 03:57:17 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:96.0) Gecko/20100101
- Thunderbird/96.0
-Subject: Re: [PATCH v2] pinctrl: thunderbay: fix possible memory leak in
- thunderbay_build_functions()
-To:     Gaosheng Cui <cuigaosheng1@huawei.com>,
-        lakshmi.sowjanya.d@intel.com, linus.walleij@linaro.org,
-        kiran.kumar1.s@intel.com
-Cc:     linux-gpio@vger.kernel.org
-References: <20221129113410.1555592-1-cuigaosheng1@huawei.com>
-From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-In-Reply-To: <20221129113410.1555592-1-cuigaosheng1@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 17213039251098807209
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrtddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpeftrghfrghlucfoihhlvggtkhhiuceorhgrfhgrlhesmhhilhgvtghkihdrphhlqeenucggtffrrghtthgvrhhnpedtgeetheeutddvudekuddtkeetveehteegleehffetkeehjeetfffgveegkeefueenucfkphepuddvjedrtddrtddruddpudelgedrudekjedrjeegrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpeeorhgrfhgrlhesmhhilhgvtghkihdrphhlqedpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheehtddpmhhouggvpehsmhhtphhouhht
+References: <20221128214408.165726-1-hdegoede@redhat.com> <20221128214408.165726-2-hdegoede@redhat.com>
+ <CAHp75VcXfh46z4m+R4bDTZbcWrqEmebzg-2gT_P+2uAYTNPoYQ@mail.gmail.com> <9a4336d1-3222-fe50-f234-93ab175d606a@redhat.com>
+In-Reply-To: <9a4336d1-3222-fe50-f234-93ab175d606a@redhat.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 29 Nov 2022 13:56:41 +0200
+Message-ID: <CAHp75VdEd2-YMm2kGdRh2n7WwTJDEmOk68O4ydHU1m3W+Z83Lg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] gpio: tps68470: Fix tps68470_gpio_get() reading from
+ the wrong register
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Mark Gross <markgross@kernel.org>,
+        Andy Shevchenko <andy@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Scally <djrscally@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Tue, Nov 29, 2022 at 1:27 PM Hans de Goede <hdegoede@redhat.com> wrote:
+> On 11/29/22 11:22, Andy Shevchenko wrote:
+> > On Mon, Nov 28, 2022 at 11:44 PM Hans de Goede <hdegoede@redhat.com> wrote:
+> >>
+> >> For the regular GPIO pins the value should be read from TPS68470_REG_GPDI,
+> >> so that the actual value of the pin is read, rather then the value the pin
+> >
+> > than
+>
+> Ack.
+>
+> >> would output when put in output mode.
+> >
+> > I don't see it here and haven't checked the context, but the idea is
+> > to check the direction and return either input (if pin is in input
+> > mode) or [cached] output.If it's the case, the patch looks good to me.
+>
+> No the idea is to always actually use the input register when reading
+> the pins, independent of the input/output mode. Instead of always
+> reading the [cached] output register value.
 
+But why? This makes a little sense to me.
 
-On 29.11.2022 12:34, Gaosheng Cui wrote:
-> The thunderbay_add_functions() will free memory of thunderbay_funcs
-> when everything is ok, but thunderbay_funcs will not be freed when
-> thunderbay_add_functions() fails, then there will be a memory leak,
-> so add kfree() when thunderbay_add_functions() fails to fix it.
-> 
-> Fixes: 12422af8194d ("pinctrl: Add Intel Thunder Bay pinctrl driver")
-> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
-> ---
-> v2:
-> - Free the memory in thunderbay_build_functions, and update the commit
->    message and the fixes tag, thanks!
->   drivers/pinctrl/pinctrl-thunderbay.c | 9 ++++++++-
->   1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-thunderbay.c b/drivers/pinctrl/pinctrl-thunderbay.c
-> index 9328b17485cf..84b64c3217a5 100644
-> --- a/drivers/pinctrl/pinctrl-thunderbay.c
-> +++ b/drivers/pinctrl/pinctrl-thunderbay.c
-> @@ -817,6 +817,7 @@ static int thunderbay_build_functions(struct thunderbay_pinctrl *tpc)
->   	struct function_desc *thunderbay_funcs;
->   	void *ptr;
->   	int pin;
-> +	int ret;
->   
->   	/*
->   	 * Allocate maximum possible number of functions. Assume every pin
-> @@ -860,7 +861,13 @@ static int thunderbay_build_functions(struct thunderbay_pinctrl *tpc)
->   		return -ENOMEM;
->   
->   	thunderbay_funcs = ptr;
-> -	return thunderbay_add_functions(tpc, thunderbay_funcs);
-> +	ret = thunderbay_add_functions(tpc, thunderbay_funcs);
-> +	if (ret < 0) {
-> +		kfree(thunderbay_funcs);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
->   }
->   
->   static int thunderbay_pinconf_set_tristate(struct thunderbay_pinctrl *tpc,
+> The input buffer will still work when the device is in output mode
 
-Sorry, I probably wasn't precise enough.
+Does this hardware support HiZ?
 
-This patch still leaves *existing* kfree(funcs); in the
-thunderbay_add_functions(). Maybe you can get rid of that one and just
-handle freeing in the thunderbay_build_functions()?
+> and if somehow an external force is pushing the pin low/high against
+> the output value then the input buffer will correctly reflect this
+> (assuming the output is current limited and thus the magic smoke
+> stays inside the chip).
+
+Exactly, when smoke comes out, the hardware is broken and code,
+whatever is it, makes no difference at all.
+
+-- 
+With Best Regards,
+Andy Shevchenko
