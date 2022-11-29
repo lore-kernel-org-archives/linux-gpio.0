@@ -2,108 +2,120 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1D8C4321E
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Nov 2022 11:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 855CFC4321E
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Nov 2022 12:01:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233709AbiK2L56 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 29 Nov 2022 06:57:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58916 "EHLO
+        id S233349AbiK2MBN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 29 Nov 2022 07:01:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233523AbiK2L5l (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Nov 2022 06:57:41 -0500
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A1105EFB7;
-        Tue, 29 Nov 2022 03:57:18 -0800 (PST)
-Received: by mail-qk1-x72e.google.com with SMTP id d7so9497264qkk.3;
-        Tue, 29 Nov 2022 03:57:18 -0800 (PST)
+        with ESMTP id S233677AbiK2MA0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Nov 2022 07:00:26 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4304B5802E;
+        Tue, 29 Nov 2022 04:00:05 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id vp12so31920810ejc.8;
+        Tue, 29 Nov 2022 04:00:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=k/qaur6fm6SxJBVO5r7Os92xrCw8v3SLIgp9savh3Sw=;
-        b=d7Z42eq5GdrqFaltYXs/aJ0ZCkrgNqEOowbLwW63YbElI0x3WfmWQ5VJM/yACVsj+Q
-         I9ErwuJdYGTeCY6mrTOvJw4jRTFkW9114t/Rnd332V//uXZv8X9Pwuwh9KA0poQrRHkp
-         Ss4ppil0s6GG7DbGTfnJ6CzXDvVobD0lIfV5Ue0AZ0zAZajpDmgNItYgX9nRjq5lh51Z
-         YWncPMvWScjaB4tLicJCYPQ13rV6HaOQuEwRzA1hSVteuNrGPoy5S9tgv5R0RrMTue9k
-         t5oViGiP4lq9IVXCL1gltaImrjdkIpE2bXUPEbTC8GRLvVZ5X7NCla47UY5Zs1HxGS9R
-         Th9w==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TDOLMR594zYsAjsAazk0R55kE0LVNumA43X6Lp5DSGg=;
+        b=ByaIz4tUL3KsPofAPCjX8NcfMaKy3Aq4Ae6F6KyucvT1VNBksXPr2atiopwyBD+qCi
+         gchpbkIu8zC6Ur5Ux9SpCiFyLtRfQggVdCwcrrFrGD8xcvstu4faVt+XFhZDKIuvaZ77
+         o6WyNSm8f40oAcA+hkL9v9RtmBS401xxWmO8e2wWb3Z90pytfDI9gM0K8/cT7/O4/LHg
+         VyGUfSNNxjr/w3Z0ST29UJGDAt78XasW1X0YXI40Q9bHeN45KZjL4hACHfiE8N7uqN2u
+         BRjJRYaSk3jGPzbNO/4O07DE+U7uo6Ucq07ljG3FYhuBZ5zFB7+BXB2/aV4WlaP0iqE1
+         NDPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k/qaur6fm6SxJBVO5r7Os92xrCw8v3SLIgp9savh3Sw=;
-        b=T9TjF9XmsMNFl+AxvB/nqzs7lxtfKnPBo2rwvu0e7YZJGSYB4F/v0OWPwnX46BxkQf
-         /0rImtickjr/uiN+jxvISJbvpxX4ceVWl8gAZ0L7LXIe6BjQHUD60DvZC9/zVBb9C7P7
-         tfF7e7Q1gUlxaRTprxr3fVg7pr/BmQ9qTbST+YJfxUeVWDS7vYZeJwWfrKbmsM2VHkeF
-         Opb3JnTbNPTZeB+7y/EqrFdM1WtPV2rvBJl6W3FNH9u+JAmTS+DhDMQGMvryDjdBx+sX
-         sIxXFMMTYAesMZNe39jBaUddyqlik26j3kuPKQXVZvxfmAv1iTCHDBfVsbEwgm27cGej
-         dsOA==
-X-Gm-Message-State: ANoB5pkTBOXRnXQh3l8V6X/QyXyUyQava/A1+AtfT9plrkJabhS8HBaL
-        VBoK6aPkNTbYxATJnbCwik8jde37rirG1ru8OP8=
-X-Google-Smtp-Source: AA0mqf7NKY01uPE5yr8p6yZosW5NXQyLzm0uprJiSd7kEqSfPgMu2RWCXA1ov/qS9/YkoMADlN0BrnHJ9cxNabHz7ok=
-X-Received: by 2002:a05:620a:21ce:b0:6fa:d149:6d47 with SMTP id
- h14-20020a05620a21ce00b006fad1496d47mr33200615qka.734.1669723037619; Tue, 29
- Nov 2022 03:57:17 -0800 (PST)
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TDOLMR594zYsAjsAazk0R55kE0LVNumA43X6Lp5DSGg=;
+        b=CzjxhrOMGa8aBADDeFPaIUB39q4lG9KHJWwhm4fNwimZbEHqyAviy/XATTuxDJjDAU
+         zMMCtYc0wpLAbnbzsKM+O72SFxns2V74YLvK+ksiOsDkyVqFR0XjAQImL4WDf7W6CaoR
+         XMTn4eHbevF0kMv+i8lZ8zHfF9J0YCcn/1bP9IZC4r+VgphzyIzGqy5pXmffZ7rc5oTF
+         aDCgypw4RKC+EGUCcHf4Z1lHxG+yp/xLcX7w43H9XDK+21uYrCEYjve2xaMzD78tRryB
+         09PGryTHKOG/H8PUKbwRU4InAxYvvq84CebQlL8F4sNQCOOz7Cd5yrNMqqLWgaLYscXz
+         +Hrg==
+X-Gm-Message-State: ANoB5pkmpM83jNJFGNusoMlhntSEs3HlOTqQwFiBY2V3OJv1UzaCEV49
+        LovFPGttrt2EkRxHHfLfZFIsJa77uTQ=
+X-Google-Smtp-Source: AA0mqf4M9RnunuLXglmUJQDQyVncWVjbbJcg+k1UGCWYHhr6c5iFOdGQk7L+cZ9aLRQLUgw2Dlp6rw==
+X-Received: by 2002:a17:907:d412:b0:7bc:68cc:7913 with SMTP id vi18-20020a170907d41200b007bc68cc7913mr19240365ejc.589.1669723203599;
+        Tue, 29 Nov 2022 04:00:03 -0800 (PST)
+Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id i10-20020a1709064eca00b0079800b81709sm6035488ejv.219.2022.11.29.04.00.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Nov 2022 04:00:03 -0800 (PST)
+Date:   Tue, 29 Nov 2022 13:00:01 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux pin control <linux-gpio@vger.kernel.org>,
+        linux-pwm@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [GIT PULL] intel-pinctrl for 6.2-2
+Message-ID: <Y4X0QUVIIddOK2+I@orome>
+References: <Y30YOvHpqvte9otX@black.fi.intel.com>
+ <CACRpkdZa7hOuU5e-i+_=TqM_Ttec6tvzgXXPm8giy=NiFO2tEA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20221128214408.165726-1-hdegoede@redhat.com> <20221128214408.165726-2-hdegoede@redhat.com>
- <CAHp75VcXfh46z4m+R4bDTZbcWrqEmebzg-2gT_P+2uAYTNPoYQ@mail.gmail.com> <9a4336d1-3222-fe50-f234-93ab175d606a@redhat.com>
-In-Reply-To: <9a4336d1-3222-fe50-f234-93ab175d606a@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 29 Nov 2022 13:56:41 +0200
-Message-ID: <CAHp75VdEd2-YMm2kGdRh2n7WwTJDEmOk68O4ydHU1m3W+Z83Lg@mail.gmail.com>
-Subject: Re: [PATCH 1/5] gpio: tps68470: Fix tps68470_gpio_get() reading from
- the wrong register
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/GD0Vpfu2v3TcEyX"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZa7hOuU5e-i+_=TqM_Ttec6tvzgXXPm8giy=NiFO2tEA@mail.gmail.com>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 29, 2022 at 1:27 PM Hans de Goede <hdegoede@redhat.com> wrote:
-> On 11/29/22 11:22, Andy Shevchenko wrote:
-> > On Mon, Nov 28, 2022 at 11:44 PM Hans de Goede <hdegoede@redhat.com> wrote:
-> >>
-> >> For the regular GPIO pins the value should be read from TPS68470_REG_GPDI,
-> >> so that the actual value of the pin is read, rather then the value the pin
+
+--/GD0Vpfu2v3TcEyX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Nov 28, 2022 at 09:25:02PM +0100, Linus Walleij wrote:
+> On Tue, Nov 22, 2022 at 7:42 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+>=20
+> > This is an immutable tag with PWM feature enablement for Intel pin cont=
+rol IPs.
+> > It's targeting v6.2 and have been reviewed by all stakeholders.
 > >
-> > than
->
-> Ack.
->
-> >> would output when put in output mode.
-> >
-> > I don't see it here and haven't checked the context, but the idea is
-> > to check the direction and return either input (if pin is in input
-> > mode) or [cached] output.If it's the case, the patch looks good to me.
->
-> No the idea is to always actually use the input register when reading
-> the pins, independent of the input/output mode. Instead of always
-> reading the [cached] output register value.
+> > The idea is that PWM and pin control subsystem soak up it independently.
+>=20
+> I wanted to give Thierry the option to say if he's pulling this in,
+> but it needs rotation in linux-next so I've pulled it into the pin
+> control tree now.
 
-But why? This makes a little sense to me.
+My recollection is that Andy wanted to take this through the Intel pin
+control tree, so there's no need for me to pick this up as well unless
+perhaps for conflict resolution (which I'm not seeing right now).
 
-> The input buffer will still work when the device is in output mode
+Thierry
 
-Does this hardware support HiZ?
+--/GD0Vpfu2v3TcEyX
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> and if somehow an external force is pushing the pin low/high against
-> the output value then the input buffer will correctly reflect this
-> (assuming the output is current limited and thus the magic smoke
-> stays inside the chip).
+-----BEGIN PGP SIGNATURE-----
 
-Exactly, when smoke comes out, the hardware is broken and code,
-whatever is it, makes no difference at all.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmOF9EEACgkQ3SOs138+
+s6HW0A/+LyHVYZWbahmAwh3mKW4DXeOH7k7xg/DSGBsKF5Y1YB0HnA8Lf1t0szLQ
+Dc35qy4zvcjMEQVFOTyo8349jcO6O9oj/UFZ26GOxLacjpU16IPNX2T6OMjnVa14
+DjagdRoLhdjZfeh1LdDhifS5iAMfBJcx1bLRlLTHPT0ufMIkX9xBO0csB4Vs05jZ
+oluimHRuCUHicHenVpcoQ1Dwa+yrfbT4TGcienPe+faLpc5JcX8sGSxcTUVUuVUz
+fshMdr037NGBUQfrPqpL+4g1YVUcPvLM1S9DObhu2YTEJNkmFRAecm9dBjnpz2FH
+fP8pE8PY8yMU4NRFe8fiNX73mlve8FXmcxkc4Z3VaSYBUynvkUj+frZtcIF9y1GF
+Hj0qrb9VcUOZZjypI63+0vBK1Dl+ervbtsNhr0S3o+DfCwWrZjhSKJ2fH8GVZt+E
+36Kb15ARwUdRtmGmRbnjNW9xhiGOangqk0UBuO3Tcs7F3xgVYN34ukPq5rOnnsu3
+MH9WDHd/fmgmmvcWVdjW8koWJJzpvjgGkIpG9lj9yvMVLEAweOg0LAE87ZIF86FY
+FRuECYBxRf/DgpNl4Au7w3adqhBYNqMQZ3iFi8acObqpnajFD5mPmhRwYQHfLcT0
+Xzty1vDXhb8CRPGmCUBjKCRxJSToZwxdZLrS2YrW2jKypq6TDYo=
+=c13C
+-----END PGP SIGNATURE-----
 
--- 
-With Best Regards,
-Andy Shevchenko
+--/GD0Vpfu2v3TcEyX--
