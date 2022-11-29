@@ -2,80 +2,136 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A61C4321E
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Nov 2022 12:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F21C4321E
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Nov 2022 12:51:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230385AbiK2Mhf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 29 Nov 2022 07:37:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59976 "EHLO
+        id S234274AbiK2MvG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 29 Nov 2022 07:51:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230128AbiK2Mhd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Nov 2022 07:37:33 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E458D5D6B7;
-        Tue, 29 Nov 2022 04:37:30 -0800 (PST)
-X-IronPort-AV: E=McAfee;i="6500,9779,10545"; a="316232950"
-X-IronPort-AV: E=Sophos;i="5.96,203,1665471600"; 
-   d="scan'208";a="316232950"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2022 04:35:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10545"; a="643767060"
-X-IronPort-AV: E=Sophos;i="5.96,203,1665471600"; 
-   d="scan'208";a="643767060"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga002.jf.intel.com with ESMTP; 29 Nov 2022 04:35:54 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andy.shevchenko@gmail.com>)
-        id 1ozzq4-001hcv-0M;
-        Tue, 29 Nov 2022 14:35:52 +0200
-Date:   Tue, 29 Nov 2022 14:35:51 +0200
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Mark Gross <markgross@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org
-Subject: Re: [PATCH 3/5] gpio: tps68470: Add support for the indicator LED
- outputs
-Message-ID: <Y4X8p79GO2iLzNIP@smile.fi.intel.com>
-References: <20221128214408.165726-1-hdegoede@redhat.com>
- <20221128214408.165726-4-hdegoede@redhat.com>
- <CAHp75VcJJtYsxbAYt2FjqSEJGhjpok7Dsh3vp46VyOm3=5_2FQ@mail.gmail.com>
- <007a6345-62e7-20ee-1a48-4adb4a9fa9df@redhat.com>
- <CAHp75VdxRbFmqUzjmMbtmh1tDGMXre+A+2u-hz5H3HSLEBX+OQ@mail.gmail.com>
- <1940674f-84fc-e5c9-59c6-0e6389c9d285@redhat.com>
+        with ESMTP id S231841AbiK2MvE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Nov 2022 07:51:04 -0500
+Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8C1B31ED8
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Nov 2022 04:51:03 -0800 (PST)
+Received: by mail-ua1-x92c.google.com with SMTP id q6so4969241uao.9
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Nov 2022 04:51:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XwmBWeXqzFRkjLR/Y7tX6hBRPz/SUjO89KlcxDK6Fio=;
+        b=MRGbEnnoWIckois7J8FMXG3q8Da4E1FJGjqhHjtQgro1UCnpPetTFgEeP4v2fMHW72
+         4RkWuyZmc3E3Naa4A2lX7HJn9lkxMrxg/0exBwnxwdQZQ29yGcEr6RaVIE+1Ks7P42eg
+         JpsHZsmG+/SfKZIIniNQj7SlXMTjn00zhta6n0gNRtE4iWXkg5aGPYP/GM0O4WFHm+Jw
+         HpLBQ5e52dfED6gg6fiNbXifesTkkyU/lkpreYxANdZywSPoXHXqhwPODItTuMvrazx9
+         Dp/w+mR3u/yN2B8q7N4JPvBxwFbEnHSzo20yKzXYodk6NeFb6yBm031Eka+MBqzhuFPa
+         omiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XwmBWeXqzFRkjLR/Y7tX6hBRPz/SUjO89KlcxDK6Fio=;
+        b=g9XkfKBpgz34Yzu8WW5FLU1qei43ULqzajNy/+lyJWPNBTG1ztArvHfDbnNLyCx3tF
+         PI3ZddrucTw6wO/F5BkHksmLwQ1/VmavSZwEevOvgm0bdQRDkUZCSIua0ia9mlIGen65
+         qnD9uVLIOKCmhSrKpc1f2G4xBVOLPd7cnOl387c5X83igT9sj+J1OshxLA/IyFDLXeI/
+         uJu88GCUZ7m5nok1o606mk/gfta7ea1aj60aceSuihX7pi1f4QqBcuehrU4FVvT9+bDH
+         /LZveKz00BjM6HIX8Z45xAFYQHIIPrYdlHRVvRU2otYxT1OQUkZcljcgGj8d+MD9dZL9
+         V9yA==
+X-Gm-Message-State: ANoB5pliam/4g1Q681/Ng0WC6z29+RPUoNZLhdR0RUZLUsRO5s4pmE03
+        xwkUh2B7VpxIZ0McxIw3TdG0IzaO9nR4ERbeTpIgFK2Si1Y=
+X-Google-Smtp-Source: AA0mqf5H7jmD2TgPI2aHcQvGLdEIoyxZQmV0ulPABTDWe7ZLxtjU6J+EoNpEEEjWfBT58un5Pyo3UM4UK4Ql2cNQ5us=
+X-Received: by 2002:ab0:76d9:0:b0:419:1a4a:cefa with SMTP id
+ w25-20020ab076d9000000b004191a4acefamr7041792uaq.66.1669726262949; Tue, 29
+ Nov 2022 04:51:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1940674f-84fc-e5c9-59c6-0e6389c9d285@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20221128190055.6350-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20221128190055.6350-1-andriy.shevchenko@linux.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 29 Nov 2022 13:50:51 +0100
+Message-ID: <CAMRc=Mcfy7HjA0DvFgkgJUZ8LVF4Nnrq39jDr82UUVQ6xsmH8w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] gpiolib: Provide to_gpio_device() helper
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Nov 29, 2022 at 01:20:03PM +0100, Hans de Goede wrote:
-> On 11/29/22 12:59, Andy Shevchenko wrote:
+On Mon, Nov 28, 2022 at 8:00 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> Provide to_gpio_device() helper which can be utilized in the existing
+> and future code.
+>
+> While at it, make sure it becomes no-op at compilation time.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> v2: made helper static inline (Bart)
+>  drivers/gpio/gpiolib.c | 2 +-
+>  drivers/gpio/gpiolib.h | 9 +++++++--
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index a11480634213..ccd47da4ec66 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -548,7 +548,7 @@ EXPORT_SYMBOL_GPL(gpiochip_line_is_valid);
+>
+>  static void gpiodevice_release(struct device *dev)
+>  {
+> -       struct gpio_device *gdev = container_of(dev, struct gpio_device, dev);
+> +       struct gpio_device *gdev = to_gpio_device(dev);
+>         unsigned long flags;
+>
+>         spin_lock_irqsave(&gpio_lock, flags);
+> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+> index d900ecdbac46..e443c1023a37 100644
+> --- a/drivers/gpio/gpiolib.h
+> +++ b/drivers/gpio/gpiolib.h
+> @@ -20,9 +20,9 @@
+>
+>  /**
+>   * struct gpio_device - internal state container for GPIO devices
+> - * @id: numerical ID number for the GPIO chip
+>   * @dev: the GPIO device struct
+>   * @chrdev: character device for the GPIO device
+> + * @id: numerical ID number for the GPIO chip
+>   * @mockdev: class device used by the deprecated sysfs interface (may be
+>   * NULL)
+>   * @owner: helps prevent removal of modules exporting active GPIOs
+> @@ -47,9 +47,9 @@
+>   * userspace.
+>   */
+>  struct gpio_device {
+> -       int                     id;
 
-...
+Sorry I didn't notice it before but why the churn? This is not needed
+for container_of to work.
 
-> I'm sorry, but just like with your comments on patch 1/3
-> I really don't see the problem here. Unlike "dir" or "out_or_in"
-> get is a perfectly fine parameter name which is actually clearly
-> defined by the parameter-name itself.
-> 
-> And the function + the callers are all in the same file, so
-> anyone reading the code can easily deduce the meaning from
-> the code.
+Bart
 
-OK. I'm not insisting, it's a bikeshedding anyway.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+>         struct device           dev;
+>         struct cdev             chrdev;
+> +       int                     id;
+>         struct device           *mockdev;
+>         struct module           *owner;
+>         struct gpio_chip        *chip;
+> @@ -72,6 +72,11 @@ struct gpio_device {
+>  #endif
+>  };
+>
+> +static inline struct gpio_device *to_gpio_device(struct device *dev)
+> +{
+> +       return container_of(dev, struct gpio_device, dev);
+> +}
+> +
+>  /* gpio suffixes used for ACPI and device tree lookup */
+>  static __maybe_unused const char * const gpio_suffixes[] = { "gpios", "gpio" };
+>
+> --
+> 2.35.1
+>
