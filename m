@@ -2,90 +2,191 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A13C4332F
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Nov 2022 15:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEAECC433FE
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Nov 2022 15:22:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229699AbiK3PWr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Nov 2022 10:22:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46594 "EHLO
+        id S229835AbiK3PWt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Nov 2022 10:22:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229709AbiK3PWo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2022 10:22:44 -0500
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4325F1DA5E;
-        Wed, 30 Nov 2022 07:22:42 -0800 (PST)
-Received: by mail-ot1-f46.google.com with SMTP id db10-20020a0568306b0a00b0066d43e80118so11419429otb.1;
-        Wed, 30 Nov 2022 07:22:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KPaJ5QKuqa6JT5D+gY9tfaRaUFIibFo858rAr7vgvks=;
-        b=uw700WLkWANAVMvAxnKdPzGYlw/mEipvoGxgOwsst9wY8I2yQo4rmxVYu4FCXPKVI+
-         6nJVFJjYKSn9zFdA/IM2eRmgVCAOW640FmIM7Y0ofu6f3Jd0tXhOUp1bA6kgXnd8GTMt
-         Zp0nl/VsPuChHjQQQizDoo4K4aNXmR9GYLYxF4KGplZSTsZm7+EKAJKmgMZqWmhMzdsA
-         0rwVv5r2auBSFwRgN5dbGsTw4+qwte4XKWecPS1EhBuWvz6czsnq4lq0TqRq0fWJcrn7
-         NmCvf57S10VE0zmbSqPMzk1TWYI5m2rAgGNw5SidUXvRVGB5qb6CRqJSttzYFLo3FX1d
-         a/OQ==
-X-Gm-Message-State: ANoB5plF2SuwkUbhYXgb8cFYPzKH0iffPUJNhtymqI53xXKPnbYuhP7x
-        LBQse6e/Vi8dBslHOtUX5scyOYVzjQ==
-X-Google-Smtp-Source: AA0mqf7dVbk+/jtsj/44vjUhHrvULs52JnWmrmOJCkOc/Gmn2xkA8Fwx/65Db1wL3k47Y4ManV1BRA==
-X-Received: by 2002:a05:6830:1c7:b0:663:d3ce:ca26 with SMTP id r7-20020a05683001c700b00663d3ceca26mr21656129ota.67.1669821761469;
-        Wed, 30 Nov 2022 07:22:41 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id p186-20020aca5bc3000000b00359a9663053sm748103oib.4.2022.11.30.07.22.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Nov 2022 07:22:41 -0800 (PST)
-Received: (nullmailer pid 2190680 invoked by uid 1000);
-        Wed, 30 Nov 2022 15:22:40 -0000
-Date:   Wed, 30 Nov 2022 09:22:40 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Yassine Oudjana <yassine.oudjana@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-gpio@vger.kernel.org, Sean Wang <sean.wang@kernel.org>,
+        with ESMTP id S229775AbiK3PWs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2022 10:22:48 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C515C1CFC3
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2022 07:22:47 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1p0OuS-00009r-WF; Wed, 30 Nov 2022 16:22:05 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1p0OuI-001LdM-Fl; Wed, 30 Nov 2022 16:21:55 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1p0OuI-001VqY-Bk; Wed, 30 Nov 2022 16:21:54 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Conor Dooley <conor.dooley@microchip.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Andy Teng <andy.teng@mediatek.com>, devicetree@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Douglas Anderson <dianders@chromium.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v5 3/7] dt-bindings: pinctrl: mediatek,mt6779-pinctrl:
- Add MT6795
-Message-ID: <166982175979.2190622.1334007053392502335.robh@kernel.org>
-References: <20221118113028.145348-1-y.oudjana@protonmail.com>
- <20221118113028.145348-4-y.oudjana@protonmail.com>
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Michael Walle <michael@walle.cc>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Sean Anderson <sean.anderson@seco.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Satya Priya <quic_c_skakit@quicinc.com>,
+        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        chrome-platform@lists.linux.dev, linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>
+Subject: [PATCH v2 00/11] pwm: Allow .get_state to fail
+Date:   Wed, 30 Nov 2022 16:21:37 +0100
+Message-Id: <20221130152148.2769768-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221118113028.145348-4-y.oudjana@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4201; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=OJndCEVt3aO3P0WDGIcSb4svVqFYr4L7BRkc05e7KK8=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBjh3TeeKE42zO/dADA8GIRueUo9ayiBLrzlu5BRvEE w4nESiyJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCY4d03gAKCRDB/BR4rcrsCSMiB/ 9P92eEh5i/ykm3IhBfm7shzbMkb/wG7nDkc+vvv70Z73UbyxFvKLzsJ+xK5VXqTCLlo8DUkfo9BJPh gr8T1RvP6HUtOELqCuQE6ruqv9wlN28AYIytMCoO+QvOqLdbM84LW89W1fK1B6ImECmggYrGw60CXE f7Rv+b9z4cETy+dLsOSVyQ0zsix7/7HyoqlinRbwr3R1SJewjSjU++PJ6H8LCe6DcYMwdJkpBaC2Ol hVLwWlo1eF82Cow8M5bd0+XSEZXpG5oFaf6CebgL+JYlfUHRWLzOpJpq6RAXCmfilUqisk0cROhhop q2OYuXh1amqkiMJYz8hRni9/YulIOt
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Hello,
 
-On Fri, 18 Nov 2022 14:30:24 +0300, Yassine Oudjana wrote:
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
-> 
-> Combine MT6795 pin controller document into MT6779 one. In the
-> process, amend the example with comments and additional pinctrl
-> nodes from the MT6795 example, replace the current interrupts
-> property description with the one from the MT6795 document since
-> it makes more sense and define its items using conditionals
-> as they now vary between variants. Also use conditionals to define
-> valid values for the drive-strength property as well as items of
-> the interrupts property for each variant since they are different
-> on MT6795.
-> 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-> ---
->  .../pinctrl/mediatek,mt6779-pinctrl.yaml      |  78 +++++-
->  .../pinctrl/mediatek,pinctrl-mt6795.yaml      | 227 ------------------
->  2 files changed, 73 insertions(+), 232 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,pinctrl-mt6795.yaml
-> 
+I forgot about this series and was remembered when I talked to Conor
+Dooley about how .get_state() should behave in an error case.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Compared to (implicit) v1, sent with Message-Id: 20220916151506.298488-1-u.kleine-koenig@pengutronix.de
+I changed:
+
+ - Patch #1 which does the prototype change now just adds "return 0" to
+   all implementations and so gets simpler and doesn't change behaviour.
+   The adaptions to the different .get_state() implementations are split
+   out into individual patches to ease review.
+ - One minor inconsistency fixed in "pwm: Handle .get_state() failures"
+   that I noticed while looking into this patch.
+ - I skipped changing sun4i.c as I don't know how to handle the error
+   there. Someone might want to have a look. (That's not ideal, but it's
+   not worse than the same issue before this series.)
+
+In v1 Thierry had the concern:
+
+| That raises the question about what to do in these cases. If we return
+| an error, that could potentially throw off consumers. So perhaps the
+| closest would be to return a disabled PWM? Or perhaps it'd be up to the
+| consumer to provide some fallback configuration for invalidly configured
+| or unconfigured PWMs.
+
+.get_state() is only called in pwm_device_request on a pwm_state that a
+consumer might see. Before my series a consumer might have seen a
+partial modified pwm_state (because .get_state() might have modified
+.period, then stumbled and returned silently). The last patch ensures
+that this partial modification isn't given out to the consumer. Instead
+they now see the same as if .get_state wasn't implemented at all.
+
+Best regards
+Uwe
+
+Uwe Kleine-König (11):
+  pwm: Make .get_state() callback return an error code
+  pwm/tracing: Also record trace events for failed API calls
+  drm/bridge: ti-sn65dsi86: Propagate errors in .get_state() to the
+    caller
+  leds: qcom-lpg: Propagate errors in .get_state() to the caller
+  pwm: crc: Propagate errors in .get_state() to the caller
+  pwm: cros-ec: Propagate errors in .get_state() to the caller
+  pwm: imx27: Propagate errors in .get_state() to the caller
+  pwm: mtk-disp: Propagate errors in .get_state() to the caller
+  pwm: rockchip: Propagate errors in .get_state() to the caller
+  pwm: sprd: Propagate errors in .get_state() to the caller
+  pwm: Handle .get_state() failures
+
+ drivers/gpio/gpio-mvebu.c             |  9 ++++++---
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 14 ++++++++------
+ drivers/leds/rgb/leds-qcom-lpg.c      | 14 ++++++++------
+ drivers/pwm/core.c                    | 28 +++++++++++++++++----------
+ drivers/pwm/pwm-atmel.c               |  6 ++++--
+ drivers/pwm/pwm-bcm-iproc.c           |  8 +++++---
+ drivers/pwm/pwm-crc.c                 | 10 ++++++----
+ drivers/pwm/pwm-cros-ec.c             |  8 +++++---
+ drivers/pwm/pwm-dwc.c                 |  6 ++++--
+ drivers/pwm/pwm-hibvt.c               |  6 ++++--
+ drivers/pwm/pwm-imx-tpm.c             |  8 +++++---
+ drivers/pwm/pwm-imx27.c               |  8 +++++---
+ drivers/pwm/pwm-intel-lgm.c           |  6 ++++--
+ drivers/pwm/pwm-iqs620a.c             |  6 ++++--
+ drivers/pwm/pwm-keembay.c             |  6 ++++--
+ drivers/pwm/pwm-lpss.c                |  6 ++++--
+ drivers/pwm/pwm-meson.c               |  8 +++++---
+ drivers/pwm/pwm-mtk-disp.c            | 12 +++++++-----
+ drivers/pwm/pwm-pca9685.c             |  8 +++++---
+ drivers/pwm/pwm-raspberrypi-poe.c     |  8 +++++---
+ drivers/pwm/pwm-rockchip.c            | 12 +++++++-----
+ drivers/pwm/pwm-sifive.c              |  6 ++++--
+ drivers/pwm/pwm-sl28cpld.c            |  8 +++++---
+ drivers/pwm/pwm-sprd.c                |  8 +++++---
+ drivers/pwm/pwm-stm32-lp.c            |  8 +++++---
+ drivers/pwm/pwm-sun4i.c               | 12 +++++++-----
+ drivers/pwm/pwm-sunplus.c             |  6 ++++--
+ drivers/pwm/pwm-visconti.c            |  6 ++++--
+ drivers/pwm/pwm-xilinx.c              |  8 +++++---
+ include/linux/pwm.h                   |  4 ++--
+ include/trace/events/pwm.h            | 20 +++++++++----------
+ 31 files changed, 174 insertions(+), 109 deletions(-)
+
+
+base-commit: 50315945d178eebec4e8e2c50c265767ddb926eb
+-- 
+2.38.1
+
