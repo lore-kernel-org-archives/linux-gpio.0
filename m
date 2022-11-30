@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8CFC4332F
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Nov 2022 12:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3E0C433FE
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Nov 2022 12:43:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235033AbiK3MnB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Nov 2022 07:43:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53692 "EHLO
+        id S235045AbiK3MnD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Nov 2022 07:43:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235045AbiK3Mmu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2022 07:42:50 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E55E1DF38
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2022 04:42:43 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id o5so17881565wrm.1
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2022 04:42:43 -0800 (PST)
+        with ESMTP id S234906AbiK3Mmv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2022 07:42:51 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EAC125C5B
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2022 04:42:45 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id f18so4823878wrj.5
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2022 04:42:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NoA96d790qRsQ89rnEEt4R8/o1xErl2dRBGy7ZRzhJc=;
-        b=5WX8VPDMPPIw+EZo0+Ah82fYUjm44LTKSIaJli/U68TT1TXMvb36rLfD2s6PGJMi/8
-         pZeQNd0gGZaRyKB/huKbl5FJdhm96XRBDv0vwvOUm/ToQVOq71DggyejkMfM3nkZxweK
-         IlFe/BYtiqGP5dT+LCSRd7E2/jqMlf7e5UPPuspBiWD0xWilP/QcaToLZpLDggYYQ6sd
-         84wdRxJRw1hv05gauX41xouS1ExwOhODXx9IEyZWi8Zd6uEAo3w1hECjI2c9duGXvi4K
-         93Cq54Lx9s1lqq0TcFHmMrWaNRhl7yPIjUcf8Ja+hPYfiYTw0Bc6oBe3CnQ2XR7ZF1uh
-         9akA==
+        bh=weGqkWA9ZBLYNtzC4z0klFxDaB+1uLR2rJS1OFLA65M=;
+        b=rIaNxBcVcmlrsZJNHAsyCAf5pYFk7L+yOW5LWbcYkCn3iKwRNT3fiWK5vmMtVPj9/C
+         YXfJKeMDgAQE1zU0RuMqoEk4nWescYtEfBAih1gPE0WhxQMjLraUbX2bU3AFgTQ0UrvA
+         jDlhu0IWM3ZTCIlNzONn/2HFzA3REtCtKRbafep7i1e9dulZtjZFf0/2OtLjlCw/AgPE
+         iwN0x/eZp9Bp0DlY2WOXtyYdLZXhcXg9q+vOlIMMa4VQkzyLOdL2PF6NUjQM2v7PV5CC
+         jCpEb0MLuPuEz21YOngDQM5VpGJ6vkmG8DLV24J1tS6tVVGSm33e6okNCiFOs5N0ikL9
+         YE4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NoA96d790qRsQ89rnEEt4R8/o1xErl2dRBGy7ZRzhJc=;
-        b=LcCutciVLqSgESTQlcWWzI7Z3lTk7lspeGMFXKUCgUwkxG1A2UlvCp/3EYnsJJoort
-         sRXkWPpxgRgtC7F9kqPJhn0IUWKwUa/Y+HDIsRbcmX9Y5BGBc+d4NLzl7xfviJ4/xJXq
-         JozSx8a7a2c3RJ2Bqh7ANYA29gbwJi+yszDjy5DFb/3dcaz085AamUg7kOOgfFaynDGL
-         3bGk+zBs8OblHjojFpMqsyK5c+C0A68C5qeSBHaWhY7co0JEu08GAk+XnjstaKYIJKpJ
-         OpuYN6bjBYpTwGJ/hEhd3PUelHeJXv/8jykJ2kklyqOLwP6kaf+AvHaNpTl1dFDE6W8m
-         SF6g==
-X-Gm-Message-State: ANoB5pm4JE8/NzMDayzU4q4cSR83BvZyFdEH73nASPj1tC7p1Zti5fV5
-        yYfk3EuXa6Hk1983w98SFFbFMA==
-X-Google-Smtp-Source: AA0mqf5KnGyE/Fo8S6kSnpHk3I0bI1SioE0Fid7URYDX8By2onou5wd1YLHVkAhIf4izRRQpQddDNg==
-X-Received: by 2002:a5d:65c9:0:b0:241:bd29:6a73 with SMTP id e9-20020a5d65c9000000b00241bd296a73mr36070074wrw.499.1669812162130;
-        Wed, 30 Nov 2022 04:42:42 -0800 (PST)
+        bh=weGqkWA9ZBLYNtzC4z0klFxDaB+1uLR2rJS1OFLA65M=;
+        b=5JBy7tNOklzFl/R1c5oqoQQrgN9mElvKYwQFct4kGue9kOmwjcrdCellypFdLSP6MM
+         JL65V3w1Z37cXUhfgd8zmsrbjr9hwvhPmRFvOhK0X83xpThu6vX79DjYeqRZj6rdBcmU
+         LiAkxgeaMpcEketawxEuWiGhAKWiNRZnOz5zjlJPNw0Do6RIkS3q2NcGOwLUUN5Rep1+
+         mbIzG9ty3RfX3wJBeYlLfj3JU7r8g0ZkYVQ6G8KTbt7P5hiPNUvJGtUVz84KgH2rriRN
+         lSYcShNAsmZanngIJHjwcmQl5HrYINzdJQQnCB4xPa8vchxA6HUnpmij2E4huBuY7jDp
+         BZCQ==
+X-Gm-Message-State: ANoB5pkcoljEvubhe21jwqcz5lh6r/vGT54yArUoAzRTyK2FiTeQ19/f
+        nGW3y+D+mi1JK0Sh0gprPlR0yQ==
+X-Google-Smtp-Source: AA0mqf7izS41XH8nGzln6ePzLdXxwZeGfwHep+2twCrrohdel9rv2WVHIW9gyruHyufFenofVWH6cQ==
+X-Received: by 2002:a05:6000:1702:b0:241:ffc4:dd1c with SMTP id n2-20020a056000170200b00241ffc4dd1cmr19403344wrc.538.1669812164236;
+        Wed, 30 Nov 2022 04:42:44 -0800 (PST)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:458c:6db9:e033:a468])
-        by smtp.gmail.com with ESMTPSA id z2-20020a5d4402000000b00226dba960b4sm1514985wrq.3.2022.11.30.04.42.41
+        by smtp.gmail.com with ESMTPSA id z2-20020a5d4402000000b00226dba960b4sm1514985wrq.3.2022.11.30.04.42.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Nov 2022 04:42:41 -0800 (PST)
+        Wed, 30 Nov 2022 04:42:43 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -56,9 +56,9 @@ To:     Kent Gibson <warthog618@gmail.com>,
         Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [libgpiod][PATCH 08/11] bindings: rust: include rust sources in the release tarballs
-Date:   Wed, 30 Nov 2022 13:42:28 +0100
-Message-Id: <20221130124231.1054001-9-brgl@bgdev.pl>
+Subject: [libgpiod][PATCH 10/11] bindings: python: fix the GPIOD_WITH_TESTS build flag
+Date:   Wed, 30 Nov 2022 13:42:30 +0100
+Message-Id: <20221130124231.1054001-11-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20221130124231.1054001-1-brgl@bgdev.pl>
 References: <20221130124231.1054001-1-brgl@bgdev.pl>
@@ -70,197 +70,30 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Rust sources and Cargo files are not added to EXTRA_DIST. Add them so that
-they end up in the release tarballs generated by autotools.
+Currently in order to disable test the variable needs to be explicitly
+set to GPIOD_WITH_TESTS= in the environment or setup.py will crash.
+
+Assume tests should not be built if the variable is not set at all.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- bindings/rust/Makefile.am                       |  4 ++++
- bindings/rust/gpiosim-sys/Makefile.am           |  6 ++++++
- bindings/rust/gpiosim-sys/src/Makefile.am       |  5 +++++
- bindings/rust/libgpiod-sys/Makefile.am          |  6 ++++++
- bindings/rust/libgpiod-sys/src/Makefile.am      |  5 +++++
- bindings/rust/libgpiod/Makefile.am              |  6 ++++++
- bindings/rust/libgpiod/examples/Makefile.am     | 14 ++++++++++++++
- bindings/rust/libgpiod/src/Makefile.am          | 15 +++++++++++++++
- bindings/rust/libgpiod/tests/Makefile.am        | 15 +++++++++++++++
- bindings/rust/libgpiod/tests/common/Makefile.am |  5 +++++
- configure.ac                                    |  9 +++++++++
- 11 files changed, 90 insertions(+)
- create mode 100644 bindings/rust/gpiosim-sys/Makefile.am
- create mode 100644 bindings/rust/gpiosim-sys/src/Makefile.am
- create mode 100644 bindings/rust/libgpiod-sys/Makefile.am
- create mode 100644 bindings/rust/libgpiod-sys/src/Makefile.am
- create mode 100644 bindings/rust/libgpiod/Makefile.am
- create mode 100644 bindings/rust/libgpiod/examples/Makefile.am
- create mode 100644 bindings/rust/libgpiod/src/Makefile.am
- create mode 100644 bindings/rust/libgpiod/tests/Makefile.am
- create mode 100644 bindings/rust/libgpiod/tests/common/Makefile.am
+ bindings/python/setup.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/bindings/rust/Makefile.am b/bindings/rust/Makefile.am
-index a0d0772..1e01024 100644
---- a/bindings/rust/Makefile.am
-+++ b/bindings/rust/Makefile.am
-@@ -17,3 +17,7 @@ all:
+diff --git a/bindings/python/setup.py b/bindings/python/setup.py
+index 2a8481c..c90d7d7 100644
+--- a/bindings/python/setup.py
++++ b/bindings/python/setup.py
+@@ -28,8 +28,7 @@ gpiosim_ext = Extension(
+ )
  
- clean:
- 	cargo clean
-+
-+EXTRA_DIST = Cargo.toml
-+
-+SUBDIRS = gpiosim-sys libgpiod libgpiod-sys
-diff --git a/bindings/rust/gpiosim-sys/Makefile.am b/bindings/rust/gpiosim-sys/Makefile.am
-new file mode 100644
-index 0000000..9471b0e
---- /dev/null
-+++ b/bindings/rust/gpiosim-sys/Makefile.am
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+# SPDX-FileCopyrightTest: 2022 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+EXTRA_DIST = build.rs Cargo.toml README.md
-+SUBDIRS = src
-diff --git a/bindings/rust/gpiosim-sys/src/Makefile.am b/bindings/rust/gpiosim-sys/src/Makefile.am
-new file mode 100644
-index 0000000..af104d0
---- /dev/null
-+++ b/bindings/rust/gpiosim-sys/src/Makefile.am
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+# SPDX-FileCopyrightTest: 2022 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+EXTRA_DIST = lib.rs sim.rs
-diff --git a/bindings/rust/libgpiod-sys/Makefile.am b/bindings/rust/libgpiod-sys/Makefile.am
-new file mode 100644
-index 0000000..9471b0e
---- /dev/null
-+++ b/bindings/rust/libgpiod-sys/Makefile.am
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+# SPDX-FileCopyrightTest: 2022 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+EXTRA_DIST = build.rs Cargo.toml README.md
-+SUBDIRS = src
-diff --git a/bindings/rust/libgpiod-sys/src/Makefile.am b/bindings/rust/libgpiod-sys/src/Makefile.am
-new file mode 100644
-index 0000000..36361e7
---- /dev/null
-+++ b/bindings/rust/libgpiod-sys/src/Makefile.am
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+# SPDX-FileCopyrightTest: 2022 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+EXTRA_DIST = lib.rs
-diff --git a/bindings/rust/libgpiod/Makefile.am b/bindings/rust/libgpiod/Makefile.am
-new file mode 100644
-index 0000000..6b55d0d
---- /dev/null
-+++ b/bindings/rust/libgpiod/Makefile.am
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+# SPDX-FileCopyrightTest: 2022 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+EXTRA_DIST = Cargo.toml
-+SUBDIRS = examples src tests
-diff --git a/bindings/rust/libgpiod/examples/Makefile.am b/bindings/rust/libgpiod/examples/Makefile.am
-new file mode 100644
-index 0000000..6028fff
---- /dev/null
-+++ b/bindings/rust/libgpiod/examples/Makefile.am
-@@ -0,0 +1,14 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+# SPDX-FileCopyrightTest: 2022 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+EXTRA_DIST = \
-+	gpiodetect.rs \
-+	gpio_events.rs \
-+	gpiofind.rs \
-+	gpioget.rs \
-+	gpioinfo.rs \
-+	gpiomon.rs \
-+	gpioset.rs \
-+	gpio_threaded_info_events.rs \
-+	gpiowatch.rs
-diff --git a/bindings/rust/libgpiod/src/Makefile.am b/bindings/rust/libgpiod/src/Makefile.am
-new file mode 100644
-index 0000000..df63c72
---- /dev/null
-+++ b/bindings/rust/libgpiod/src/Makefile.am
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+# SPDX-FileCopyrightTest: 2022 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+EXTRA_DIST = \
-+	chip.rs \
-+	edge_event.rs \
-+	event_buffer.rs \
-+	info_event.rs \
-+	lib.rs \
-+	line_config.rs \
-+	line_info.rs \
-+	line_request.rs \
-+	line_settings.rs \
-+	request_config.rs
-diff --git a/bindings/rust/libgpiod/tests/Makefile.am b/bindings/rust/libgpiod/tests/Makefile.am
-new file mode 100644
-index 0000000..198f4e4
---- /dev/null
-+++ b/bindings/rust/libgpiod/tests/Makefile.am
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+# SPDX-FileCopyrightTest: 2022 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+EXTRA_DIST = \
-+	chip.rs \
-+	edge_event.rs \
-+	info_event.rs \
-+	line_config.rs \
-+	line_info.rs \
-+	line_request.rs \
-+	line_settings.rs \
-+	request_config.rs
-+
-+SUBDIRS = common
-diff --git a/bindings/rust/libgpiod/tests/common/Makefile.am b/bindings/rust/libgpiod/tests/common/Makefile.am
-new file mode 100644
-index 0000000..4cfc355
---- /dev/null
-+++ b/bindings/rust/libgpiod/tests/common/Makefile.am
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# SPDX-FileCopyrightText: 2022 Linaro Ltd.
-+# SPDX-FileCopyrightTest: 2022 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-+
-+EXTRA_DIST = config.rs mod.rs
-diff --git a/configure.ac b/configure.ac
-index ccbb88a..dc945ef 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -266,7 +266,16 @@ AC_CONFIG_FILES([Makefile
- 		 bindings/python/examples/Makefile
- 		 bindings/python/tests/Makefile
- 		 bindings/python/tests/gpiosim/Makefile
-+		 bindings/rust/libgpiod-sys/src/Makefile
-+		 bindings/rust/libgpiod-sys/Makefile
-+		 bindings/rust/libgpiod/src/Makefile
-+		 bindings/rust/libgpiod/tests/common/Makefile
-+		 bindings/rust/libgpiod/tests/Makefile
-+		 bindings/rust/libgpiod/Makefile
-+		 bindings/rust/libgpiod/examples/Makefile
- 		 bindings/rust/Makefile
-+		 bindings/rust/gpiosim-sys/src/Makefile
-+		 bindings/rust/gpiosim-sys/Makefile
- 		 man/Makefile])
+ extensions = [gpiod_ext]
+-with_tests = bool(environ["GPIOD_WITH_TESTS"])
+-if with_tests:
++if "GPIOD_WITH_TESTS" in environ and environ["GPIOD_WITH_TESTS"] == "1":
+     extensions.append(gpiosim_ext)
  
- AC_OUTPUT
+ with open("gpiod/version.py", "r") as fd:
 -- 
 2.37.2
 
