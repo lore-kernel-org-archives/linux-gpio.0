@@ -2,116 +2,193 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C3AC4321E
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Nov 2022 08:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759A2C4321E
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Nov 2022 09:06:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234360AbiK3IuY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Nov 2022 03:50:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55226 "EHLO
+        id S229954AbiK3JGE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Nov 2022 04:06:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232674AbiK3IuY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2022 03:50:24 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4856F2D1C0
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2022 00:49:31 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id n21so39593052ejb.9
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2022 00:49:31 -0800 (PST)
+        with ESMTP id S229922AbiK3JGC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2022 04:06:02 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3895148432
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2022 01:06:01 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id r4-20020a1c4404000000b003d076ee89d6so106437wma.0
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2022 01:06:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zH8aSJxK3c7rIzvimOimoZ81OVEIXiVR3DkWunf1dVY=;
-        b=SKx9ESLbDIM+R2PEQL44SkL15rgUxrVHEGlXGj7Sn0VUA+8S3+9xVhUkj6JkMT9o+x
-         N7B2V0SJJ+i0thf2KIvvSoA0rrEeMTCcxMSXhouQMMnvRPBpB3eBulwKYN+0sqsjDIcf
-         Qs4lfOD/5u22fzcokThwSlviaQnyNndMVptY7NcuZSYVYN6yiHY39Kc0dBLl0876uS6Q
-         Wg4/VHnPvSsRD6BHknUKcIY37a1MMfceitauqH2tZIJzwdJJ5uYSF6Ev/JaeU5djOi12
-         glEYaJ1WvEM++hkFpabx8Lfdqz8eNoVXLpPnKUb8pfgq2Cybsv3RRy/tP5rUfD1TI6ws
-         NRDQ==
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ysZtnS5xnth5w0LemSDO+wCvjLXEmog+vjYaOIZiWJQ=;
+        b=kok9z+BwG6oqUKdWE2UkF36lieA5csfb1Agg11U6bznRNMDgpRnqDzb1jeSIU8gs8O
+         WTIePJiOdCVxdjmuVGBX642nh8SR2pNcjQTeYiPm7NtJQ/jENCTwxqdse3Sk/fkK+Cwt
+         wFfAFqdl1mz7leMXkwFWfmc84oWFdui/X14xPiSk7LITXUqWEUn1WcgvdlhYEII0am4P
+         rYo0Y5f4DA2IQ+gGUNYPw/2WA6SANhApcEO7BbuVCsIoxgKajJDvi3nz4awkQhRQsy3V
+         cvQX3DAwoI8JKYXqV965hE2k/cvS3I4XIpZSmsoBbBPYX89i8xOpYvYMTdzJ4B0C5L5l
+         6lWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zH8aSJxK3c7rIzvimOimoZ81OVEIXiVR3DkWunf1dVY=;
-        b=cskRyXvvugptrDFi0enHLXfDeJ32loCBfLGWGKzfchj7OWN8LEWeUSKT2GeZk8btz8
-         fTQ080nh5OUARfskpCN1olnU/3EaBW8jozj8Mp0yOIvo0ZQ1foltryGIe2RM/Ie3ufvh
-         XQ1xf8RBwGocQosI/lLbqvZ1XQ4XiuG2U5O46TISzFhExpR1U4+yobzOjIGdKOn/vmTT
-         E/3PWoLfNFSr+AxjK+WuCdrnjqRj+cU2wkl27mm4fq/yMdbXUGAdA2BcFIZT01uuYBUN
-         Kv5B/psBqLoEkNMoPxz5c97AgL+SVy3y81MRUyZyDI2snjYlHQQQy+PJ809nsInxGk69
-         CtIA==
-X-Gm-Message-State: ANoB5pmGEt+ZPm/LktdGeKCKLZc8t3wBlVrLEPHmjn7+LZ1TH2K/4cXX
-        HhV+BFVA5XFRSmhx/yWhK+17mdwDoWw=
-X-Google-Smtp-Source: AA0mqf5WaYrj7q6B250TjWYZ+CSEnmrtkJqolTl0sHpgRtNqip2jbKBeBxeJP1nL3wZ3leAcOd2jYw==
-X-Received: by 2002:a17:906:4b04:b0:7b9:a75b:faf9 with SMTP id y4-20020a1709064b0400b007b9a75bfaf9mr30930145eju.473.1669798169775;
-        Wed, 30 Nov 2022 00:49:29 -0800 (PST)
-Received: from giga-mm.home ([2a02:1210:866e:6400:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id kx16-20020a170907775000b007c0934db0e0sm390135ejc.141.2022.11.30.00.49.28
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ysZtnS5xnth5w0LemSDO+wCvjLXEmog+vjYaOIZiWJQ=;
+        b=u3a5gJO/UX3A1/KwFFFKYhp+lGDz+j+tixtNG51/5FTjNCpEmmzCxjM6D/a/+k0crF
+         BdOAHlsAagMFqoEnuL93dk6giZ1upywasbtQBs3q4DBxZP4VWPz8g11Yol/ooPZvv1GF
+         YJEXAQIkzzSJHq6fg8x2zVo7jwAGvGnNEmOG6MwC0nlsA0ZDUJbd6D1r5lXFERfbjtWU
+         lSdYWiBvrqELu5X/WXiGqtl/0wRpFkKWmUYKcWQIOXeFHB0NdziWzZR1o1VIq3lBBSUJ
+         4bnpLwVupDqvVdqK3xVogHwT+YPi4vvallkbz6Q9AzT835w/Le6xqi6tFXBH7Q0WMUuT
+         dCGw==
+X-Gm-Message-State: ANoB5pk/s2dgeL65ct3/b9hBmtTuZsImfS1PCPRlIRm//OCLEXzuBcA4
+        ssfyGS3OOcXRta+1Vy6Z2l2BmA==
+X-Google-Smtp-Source: AA0mqf6tkyxIkozkwEdmwSnCSC74NhatapTw1vx61KGezBXp+IViS/TYR5zdCunAm78IhgGPi7sZFg==
+X-Received: by 2002:a7b:cbc6:0:b0:3c6:b650:34dd with SMTP id n6-20020a7bcbc6000000b003c6b65034ddmr37797612wmi.45.1669799159746;
+        Wed, 30 Nov 2022 01:05:59 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:458c:6db9:e033:a468])
+        by smtp.gmail.com with ESMTPSA id v24-20020a05600c4d9800b003cfbe1da539sm1168841wmp.36.2022.11.30.01.05.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Nov 2022 00:49:29 -0800 (PST)
-Message-ID: <97b4bac2f0d703cd693707adfbfc08d55031b85f.camel@gmail.com>
-Subject: Re: [PATCH v2] ARM: ep93xx: Convert to use descriptors for GPIO LEDs
-From:   Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        Nikita Shubin <nikita.shubin@maquefel.me>,
-        Lukasz Majewski <lukma@denx.de>
-Date:   Wed, 30 Nov 2022 09:49:28 +0100
-In-Reply-To: <20220902220421.604516-1-linus.walleij@linaro.org>
-References: <20220902220421.604516-1-linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4 
+        Wed, 30 Nov 2022 01:05:59 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v4 1/2] gpiolib: cdev: fix NULL-pointer dereferences
+Date:   Wed, 30 Nov 2022 10:05:55 +0100
+Message-Id: <20221130090556.40280-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20221130090556.40280-1-brgl@bgdev.pl>
+References: <20221130090556.40280-1-brgl@bgdev.pl>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-SGVsbG8gTGludXMhCgpPbiBTYXQsIDIwMjItMDktMDMgYXQgMDA6MDQgKzAyMDAsIExpbnVzIFdh
-bGxlaWogd3JvdGU6Cj4gVGhpcyBjb252ZXJ0cyB0aGUgRVA5M3h4IHRvIHVzZSBHUElPIGRlc2Ny
-aXB0b3JzIGZvciB0aGUKPiBMRURzLgo+IAo+IENjOiBOaWtpdGEgU2h1YmluIDxuaWtpdGEuc2h1
-YmluQG1hcXVlZmVsLm1lPgo+IENjOiBBbGV4YW5kZXIgU3ZlcmRsaW4gPGFsZXhhbmRlci5zdmVy
-ZGxpbkBnbWFpbC5jb20+Cj4gQ2M6IEhhcnRsZXkgU3dlZXRlbiA8aHN3ZWV0ZW5AdmlzaW9uZW5n
-cmF2ZXJzLmNvbT4KPiBDYzogTHVrYXN6IE1hamV3c2tpIDxsdWttYUBkZW54LmRlPgo+IFNpZ25l
-ZC1vZmYtYnk6IExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz4KCkkndmUg
-dGVzdGVkIGl0IG9uIEVEQjkzMDItc2ltaWxhciBjdXN0b20gYm9hcmQsIGJvdGggTEVEcwp3b3Jr
-IG5pY2VseS4KClRlc3RlZC1ieTogQWxleGFuZGVyIFN2ZXJkbGluIDxhbGV4YW5kZXIuc3ZlcmRs
-aW5AZ21haWwuY29tPgoKPiAtLS0KPiBDaGFuZ2VMb2cgdjEtPnYyOgo+IC0gRml4IHN5bnRheCBl
-cnJvciAoZG91YmxlZCBsZWZ0IHBhcmVucykKPiAtLS0KPiDCoGFyY2gvYXJtL21hY2gtZXA5M3h4
-L2NvcmUuYyB8IDEzICsrKysrKysrKysrLS0KPiDCoDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNlcnRp
-b25zKCspLCAyIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLWVw
-OTN4eC9jb3JlLmMgYi9hcmNoL2FybS9tYWNoLWVwOTN4eC9jb3JlLmMKPiBpbmRleCAyZDU4ZTI3
-M2M5NmQuLjMxOGMwOWVlNDcyMyAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9tYWNoLWVwOTN4eC9j
-b3JlLmMKPiArKysgYi9hcmNoL2FybS9tYWNoLWVwOTN4eC9jb3JlLmMKPiBAQCAtNDI1LDEwICs0
-MjUsOCBAQCB2b2lkIF9faW5pdCBlcDkzeHhfcmVnaXN0ZXJfc3BpKHN0cnVjdCBlcDkzeHhfc3Bp
-X2luZm8gKmluZm8sCj4gwqBzdGF0aWMgY29uc3Qgc3RydWN0IGdwaW9fbGVkIGVwOTN4eF9sZWRf
-cGluc1tdIF9faW5pdGNvbnN0ID0gewo+IMKgwqDCoMKgwqDCoMKgwqB7Cj4gwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAubmFtZcKgwqDCoD0gInBsYXRmb3JtOmdybGVkIiwKPiAtwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLmdwaW/CoMKgwqA9IEVQOTNYWF9HUElPX0xJTkVf
-R1JMRUQsCj4gwqDCoMKgwqDCoMKgwqDCoH0sIHsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoC5uYW1lwqDCoMKgPSAicGxhdGZvcm06cmRsZWQiLAo+IC3CoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAuZ3Bpb8KgwqDCoD0gRVA5M1hYX0dQSU9fTElORV9SRExFRCwKPiDCoMKg
-wqDCoMKgwqDCoMKgfSwKPiDCoH07Cj4gwqAKPiBAQCAtNDM3LDYgKzQzNSwxNiBAQCBzdGF0aWMg
-Y29uc3Qgc3RydWN0IGdwaW9fbGVkX3BsYXRmb3JtX2RhdGEgZXA5M3h4X2xlZF9kYXRhIF9faW5p
-dGNvbnN0ID0gewo+IMKgwqDCoMKgwqDCoMKgwqAubGVkc8KgwqDCoMKgwqDCoMKgwqDCoMKgwqA9
-IGVwOTN4eF9sZWRfcGlucywKPiDCoH07Cj4gwqAKPiArc3RhdGljIHN0cnVjdCBncGlvZF9sb29r
-dXBfdGFibGUgZXA5M3h4X2xlZHNfZ3Bpb190YWJsZSA9IHsKPiArwqDCoMKgwqDCoMKgwqAuZGV2
-X2lkID0gImxlZHMtZ3BpbyIsCj4gK8KgwqDCoMKgwqDCoMKgLnRhYmxlID0gewo+ICvCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAvKiBVc2UgbG9jYWwgb2Zmc2V0cyBvbiBncGlvY2hpcC9w
-b3J0ICJFIiAqLwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBHUElPX0xPT0tVUF9J
-RFgoIkUiLCAwLCBOVUxMLCAwLCBHUElPX0FDVElWRV9ISUdIKSwKPiArwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgR1BJT19MT09LVVBfSURYKCJFIiwgMSzCoE5VTEwsIDEsIEdQSU9fQUNU
-SVZFX0hJR0gpLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB7IH0KPiArwqDCoMKg
-wqDCoMKgwqB9LAo+ICt9Owo+ICsKPiDCoC8qKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqCj4gwqAgKiBFUDkzeHgg
-cHdtIHBlcmlwaGVyYWwgaGFuZGxpbmcKPiDCoCAqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqLwo+IEBAIC05ODks
-NiArOTk3LDcgQEAgc3RydWN0IGRldmljZSBfX2luaXQgKmVwOTN4eF9pbml0X2RldmljZXModm9p
-ZCkKPiDCoMKgwqDCoMKgwqDCoMKgcGxhdGZvcm1fZGV2aWNlX3JlZ2lzdGVyKCZlcDkzeHhfb2hj
-aV9kZXZpY2UpOwo+IMKgwqDCoMKgwqDCoMKgwqBwbGF0Zm9ybV9kZXZpY2VfcmVnaXN0ZXIoJmVw
-OTN4eF93ZHRfZGV2aWNlKTsKPiDCoAo+ICvCoMKgwqDCoMKgwqDCoGdwaW9kX2FkZF9sb29rdXBf
-dGFibGUoJmVwOTN4eF9sZWRzX2dwaW9fdGFibGUpOwo+IMKgwqDCoMKgwqDCoMKgwqBncGlvX2xl
-ZF9yZWdpc3Rlcl9kZXZpY2UoLTEsICZlcDkzeHhfbGVkX2RhdGEpOwo+IMKgCj4gwqDCoMKgwqDC
-oMKgwqDCoHJldHVybiBwYXJlbnQ7CgotLSAKQWxleGFuZGVyIFN2ZXJkbGluLgoK
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+There are several places where we can crash the kernel by requesting
+lines, unbinding the GPIO device, then calling any of the system calls
+relevant to the GPIO character device's annonymous file descriptors:
+ioctl(), read(), poll().
+
+While I observed it with the GPIO simulator, it will also happen for any
+of the GPIO devices that can be hot-unplugged - for instance any HID GPIO
+expander (e.g. CP2112).
+
+This affects both v1 and v2 uAPI.
+
+This fixes it partially by checking if gdev->chip is not NULL but it
+doesn't entirely remedy the situation as we still have a race condition
+in which another thread can remove the device after the check.
+
+Fixes: d7c51b47ac11 ("gpio: userspace ABI for reading/writing GPIO lines")
+Fixes: 3c0d9c635ae2 ("gpiolib: cdev: support GPIO_V2_GET_LINE_IOCTL and GPIO_V2_LINE_GET_VALUES_IOCTL")
+Fixes: aad955842d1c ("gpiolib: cdev: support GPIO_V2_GET_LINEINFO_IOCTL and GPIO_V2_GET_LINEINFO_WATCH_IOCTL")
+Fixes: a54756cb24ea ("gpiolib: cdev: support GPIO_V2_LINE_SET_CONFIG_IOCTL")
+Fixes: 7b8e00d98168 ("gpiolib: cdev: support GPIO_V2_LINE_SET_VALUES_IOCTL")
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib-cdev.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+index 0cb6b468f364..911d91668903 100644
+--- a/drivers/gpio/gpiolib-cdev.c
++++ b/drivers/gpio/gpiolib-cdev.c
+@@ -201,6 +201,9 @@ static long linehandle_ioctl(struct file *file, unsigned int cmd,
+ 	unsigned int i;
+ 	int ret;
+ 
++	if (!lh->gdev->chip)
++		return -ENODEV;
++
+ 	switch (cmd) {
+ 	case GPIOHANDLE_GET_LINE_VALUES_IOCTL:
+ 		/* NOTE: It's okay to read values of output lines */
+@@ -1384,6 +1387,9 @@ static long linereq_ioctl(struct file *file, unsigned int cmd,
+ 	struct linereq *lr = file->private_data;
+ 	void __user *ip = (void __user *)arg;
+ 
++	if (!lr->gdev->chip)
++		return -ENODEV;
++
+ 	switch (cmd) {
+ 	case GPIO_V2_LINE_GET_VALUES_IOCTL:
+ 		return linereq_get_values(lr, ip);
+@@ -1410,6 +1416,9 @@ static __poll_t linereq_poll(struct file *file,
+ 	struct linereq *lr = file->private_data;
+ 	__poll_t events = 0;
+ 
++	if (!lr->gdev->chip)
++		return 0;
++
+ 	poll_wait(file, &lr->wait, wait);
+ 
+ 	if (!kfifo_is_empty_spinlocked_noirqsave(&lr->events,
+@@ -1429,6 +1438,9 @@ static ssize_t linereq_read(struct file *file,
+ 	ssize_t bytes_read = 0;
+ 	int ret;
+ 
++	if (!lr->gdev->chip)
++		return -ENODEV;
++
+ 	if (count < sizeof(le))
+ 		return -EINVAL;
+ 
+@@ -1716,6 +1728,9 @@ static __poll_t lineevent_poll(struct file *file,
+ 	struct lineevent_state *le = file->private_data;
+ 	__poll_t events = 0;
+ 
++	if (!le->gdev->chip)
++		return 0;
++
+ 	poll_wait(file, &le->wait, wait);
+ 
+ 	if (!kfifo_is_empty_spinlocked_noirqsave(&le->events, &le->wait.lock))
+@@ -1740,6 +1755,9 @@ static ssize_t lineevent_read(struct file *file,
+ 	ssize_t ge_size;
+ 	int ret;
+ 
++	if (!le->gdev->chip)
++		return -ENODEV;
++
+ 	/*
+ 	 * When compatible system call is being used the struct gpioevent_data,
+ 	 * in case of at least ia32, has different size due to the alignment
+@@ -1821,6 +1839,9 @@ static long lineevent_ioctl(struct file *file, unsigned int cmd,
+ 	void __user *ip = (void __user *)arg;
+ 	struct gpiohandle_data ghd;
+ 
++	if (!le->gdev->chip)
++		return -ENODEV;
++
+ 	/*
+ 	 * We can get the value for an event line but not set it,
+ 	 * because it is input by definition.
+@@ -2407,6 +2428,9 @@ static __poll_t lineinfo_watch_poll(struct file *file,
+ 	struct gpio_chardev_data *cdev = file->private_data;
+ 	__poll_t events = 0;
+ 
++	if (!cdev->gdev->chip)
++		return 0;
++
+ 	poll_wait(file, &cdev->wait, pollt);
+ 
+ 	if (!kfifo_is_empty_spinlocked_noirqsave(&cdev->events,
+@@ -2425,6 +2449,9 @@ static ssize_t lineinfo_watch_read(struct file *file, char __user *buf,
+ 	int ret;
+ 	size_t event_size;
+ 
++	if (!cdev->gdev->chip)
++		return -ENODEV;
++
+ #ifndef CONFIG_GPIO_CDEV_V1
+ 	event_size = sizeof(struct gpio_v2_line_info_changed);
+ 	if (count < event_size)
+-- 
+2.37.2
 
