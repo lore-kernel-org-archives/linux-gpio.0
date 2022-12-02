@@ -2,61 +2,61 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B9AC47088
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Dec 2022 16:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48EB7C4321E
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Dec 2022 16:28:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234122AbiLBQ1e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Dec 2022 11:27:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43668 "EHLO
+        id S234159AbiLBQ2G (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Dec 2022 11:28:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233758AbiLBQ13 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Dec 2022 11:27:29 -0500
-Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EB9B5FD3
-        for <linux-gpio@vger.kernel.org>; Fri,  2 Dec 2022 08:27:27 -0800 (PST)
-Received: by mail-qt1-x82c.google.com with SMTP id cg5so5820931qtb.12
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Dec 2022 08:27:27 -0800 (PST)
+        with ESMTP id S234119AbiLBQ1b (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Dec 2022 11:27:31 -0500
+Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43387D11B
+        for <linux-gpio@vger.kernel.org>; Fri,  2 Dec 2022 08:27:29 -0800 (PST)
+Received: by mail-qt1-x832.google.com with SMTP id a4so1995129qtm.11
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Dec 2022 08:27:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eeTGikJOduCR4hf+ZAFaYh/6mZCP5jhCR6ZyAwRbPx0=;
-        b=KfAdsDX5Oim7j7iDc2Qtb5FSZAq2Y2GwYl2jIapLVSaUE2NW9hOWHgL72X6JxQuAUv
-         jFiFjmLx7jQQkbGMawQ6F8MeFHcVxBiF5P5opjvauPwKk65WeKm/yqY7K52KFCSIvB54
-         Uq+4ATmo19kgrXYQ7ChdPqkDT4jIifgLX6hyxlMel3/W11hv3w1cH6fZjrpHjurqYT7E
-         TlSBD4A8G3d+Z9m8rez7mMVtsS6+KF4xHjTfjBDZNbEiXG20JC28NIcqS30BF7Jop6gA
-         2HR/HLriRJ0tzoo3EnUpIBK6kuyaI6ezNqXww6qleLJhnGSi/Euek4m4VSuQVijpjQXU
-         wJ+A==
+        bh=JVwqscrh+zjqG/ZfukKo8keg+szpeWy+C9UuL6rL5R4=;
+        b=GNQMFw3IVBrZxWuDo2MS7jmEP2HXHWzNMZZn19+jhbPqk/YZ36Cz0q7hNFFhvokUnL
+         W42uVjdVI5BLX4KiIMuBxsKIEFJuy0NHVZo/+hXNrqRPYg6Ltt/M0qk6f2vtS57dVj3R
+         pjuGgkUlFlA1sGwnDjFYhadL8uLx62c0SLirU08imILEjLJWr4C67ulchV8iPdMD1Eg2
+         xS3ATRESbdYdL1QTbdA/k5woVrf3Nh8nOUGje+m5/g7gTcTaykLo+u1xBQhdFxGGoPCj
+         dElmRPbKiHUaepWYupQluGEb4OnCO7cGYRcZcBp/yq96M0T3q1SB0M7BH1vF/DPO6SVN
+         Iijw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eeTGikJOduCR4hf+ZAFaYh/6mZCP5jhCR6ZyAwRbPx0=;
-        b=XmF02HANjmc6hpTOi4LqeQWsdWxwywOFPbJzhkZxjnRsW9rHktCyzD31db622HrQP5
-         6Wp4MoDiuOK7p24Nnbbk+ZzVya8AKFjfv+S0R5XYz4CT+RDhzowOTfJwuEwtTlU0D2eA
-         7pepTxknhK1HhXzr8P93I4yQoLFnL+R8ZUqY+ZbY0iLI4tl/8N6r4cowAAAOan5pysua
-         vJxKPl/NlV36yfbMjRW+QCiszTtMU93up7XHSpW6bXVmjIX9obMlDJ/0Z6kfyTqB4eMU
-         ll9pulgqcOquIaWlLQu0F3RbzrKL27fy5vIIkxYeW31koYlZgmNvp1RM6X+B8CO89QN6
-         04UA==
-X-Gm-Message-State: ANoB5pkRCmxrcl/FYpPLtK0N9sWfcaw2Cszdx5SuazpnY/yFaTfHpfX4
-        aSElbaQ9k82/ldXuKXb/zBTvlX4K3CwGHQaw
-X-Google-Smtp-Source: AA0mqf46NZfcvR3CKAekWzD3uPdtD3kxgo9sjdw33nfKk8v5tYQMYnp0n+75jz9JQdY9VtwcsYjJKg==
-X-Received: by 2002:ac8:1189:0:b0:3a5:2766:552a with SMTP id d9-20020ac81189000000b003a52766552amr53216893qtj.79.1669998446908;
-        Fri, 02 Dec 2022 08:27:26 -0800 (PST)
+        bh=JVwqscrh+zjqG/ZfukKo8keg+szpeWy+C9UuL6rL5R4=;
+        b=LE36yNc/SU8Maukv1nEXLXSR7yniD/HeTX6BV1Lmto9J65n136pyJG43uJ+0kuPhZL
+         e2dGVUlA0hLzDyo1lc88ZOuFsfqrnHz8GOWzgCc1GMuxW01YZ0uKQlL1s8wtySV1WV1j
+         hJmQxP88Iu++fq/+a1oNFYdrqwMdman9q8qXFFMN0dFHZ0Qh3sF6I5M0iwCkTy8kRogm
+         hsdil+fWSpEHHQYE/zNqfUdRD0WdWzr9xxC0vFtspRjTkKQhhstv6kGjcNT9mQKAwHHC
+         lE/ZaUvCuf+WLk60oZLc54qvZwT9uKnEdVg5/DuKgIdpfw8HyLC5vCFIApLj2HIvkQw1
+         zXlg==
+X-Gm-Message-State: ANoB5plbsdcHvwjBLDJtnwyNUb7xdjizi/UyWlqV1tu/mZ4n/Gn0JrFJ
+        FvhLBdqhTl8np8Mt7j6RenQ2xw==
+X-Google-Smtp-Source: AA0mqf66Ffp92DU3hZ9EW6PqdDgVytipumz2Jq+L5AvlajYl9Rxt02V+2Ae+i4Vk3ry2mrfeADrN6w==
+X-Received: by 2002:ac8:4b55:0:b0:3a4:fcde:734b with SMTP id e21-20020ac84b55000000b003a4fcde734bmr67393401qts.238.1669998448864;
+        Fri, 02 Dec 2022 08:27:28 -0800 (PST)
 Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id fp38-20020a05622a50a600b00343057845f7sm4391887qtb.20.2022.12.02.08.27.26
+        by smtp.gmail.com with ESMTPSA id fp38-20020a05622a50a600b00343057845f7sm4391887qtb.20.2022.12.02.08.27.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Dec 2022 08:27:26 -0800 (PST)
+        Fri, 02 Dec 2022 08:27:28 -0800 (PST)
 From:   William Breathitt Gray <william.gray@linaro.org>
 To:     linus.walleij@linaro.org, brgl@bgdev.pl
 Cc:     andriy.shevchenko@linux.intel.com, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, michael@walle.cc, broonie@kernel.org,
         William Breathitt Gray <william.gray@linaro.org>
-Subject: [PATCH v4 5/9] gpio: 104-idi-48: Migrate to gpio-regmap API
-Date:   Fri,  2 Dec 2022 11:27:11 -0500
-Message-Id: <57cc57fcbe2fd94d4492d0dac7fba7beec071618.1669996867.git.william.gray@linaro.org>
+Subject: [PATCH v4 7/9] gpio: 104-dio-48e: Migrate to regmap API
+Date:   Fri,  2 Dec 2022 11:27:13 -0500
+Message-Id: <a0b923adb961e2917455c56318bf4ed24f2d3947.1669996867.git.william.gray@linaro.org>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <cover.1669996866.git.william.gray@linaro.org>
 References: <cover.1669996866.git.william.gray@linaro.org>
@@ -68,185 +68,203 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 The regmap API supports IO port accessors so we can take advantage of
 regmap abstractions rather than handling access to the device registers
-directly in the driver. Despite the underlying interface being based on
-i8255, it is simpler to use the gpio-regmap API directly because the
-104-IDI-48 device features only input signals. Therefore, the dependence
-on the i8255 GPIO library is removed in this patch.
+directly in the driver. The 104-dio-48e module is migrated to the new
+i8255 library interface leveraging the gpio-regmap API.
 
 Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
 ---
- drivers/gpio/Kconfig           |  2 +-
- drivers/gpio/gpio-104-idi-48.c | 97 +++++++---------------------------
- 2 files changed, 21 insertions(+), 78 deletions(-)
+ drivers/gpio/gpio-104-dio-48e.c | 137 ++------------------------------
+ 1 file changed, 7 insertions(+), 130 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 6892979e511a..dd34039fc31b 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -873,7 +873,7 @@ config GPIO_104_IDI_48
- 	select ISA_BUS_API
- 	select REGMAP_IRQ
- 	select GPIOLIB_IRQCHIP
--	select GPIO_I8255
-+	select GPIO_REGMAP
- 	help
- 	  Enables GPIO support for the ACCES 104-IDI-48 family (104-IDI-48A,
- 	  104-IDI-48AC, 104-IDI-48B, 104-IDI-48BC). The base port addresses for
-diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
-index f936e3e0ff12..ca2175b84e24 100644
---- a/drivers/gpio/gpio-104-idi-48.c
-+++ b/drivers/gpio/gpio-104-idi-48.c
-@@ -9,7 +9,7 @@
+diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
+index 4c3660d5dea5..31ae98a277a4 100644
+--- a/drivers/gpio/gpio-104-dio-48e.c
++++ b/drivers/gpio/gpio-104-dio-48e.c
+@@ -9,7 +9,6 @@
  #include <linux/bits.h>
  #include <linux/device.h>
  #include <linux/err.h>
 -#include <linux/gpio/driver.h>
-+#include <linux/gpio/regmap.h>
- #include <linux/interrupt.h>
  #include <linux/ioport.h>
  #include <linux/irq.h>
-@@ -20,10 +20,6 @@
- #include <linux/regmap.h>
- #include <linux/types.h>
+ #include <linux/isa.h>
+@@ -42,90 +41,6 @@ MODULE_PARM_DESC(irq, "ACCES 104-DIO-48E interrupt line numbers");
  
--#include "gpio-i8255.h"
--
--MODULE_IMPORT_NS(I8255);
--
- #define IDI_48_EXTENT 8
- #define MAX_NUM_IDI_48 max_num_isa_dev(IDI_48_EXTENT)
- 
-@@ -40,56 +36,17 @@ MODULE_PARM_DESC(irq, "ACCES 104-IDI-48 interrupt line numbers");
- #define IDI48_IRQ_STATUS 0x7
- #define IDI48_IRQ_ENABLE IDI48_IRQ_STATUS
+ #define DIO48E_NUM_PPI 2
  
 -/**
-- * struct idi_48_reg - device register structure
-- * @port0:	Port 0 Inputs
-- * @unused:	Unused
-- * @port1:	Port 1 Inputs
-- * @irq:	Read: IRQ Status Register/IRQ Clear
-- *		Write: IRQ Enable/Disable
+- * struct dio48e_reg - device register structure
+- * @ppi:		Programmable Peripheral Interface groups
 - */
--struct idi_48_reg {
--	u8 port0[3];
--	u8 unused;
--	u8 port1[3];
--	u8 irq;
+-struct dio48e_reg {
+-	struct i8255 ppi[DIO48E_NUM_PPI];
 -};
 -
 -/**
-- * struct idi_48_gpio - GPIO device private data structure
-- * @chip:	instance of the gpio_chip
-- * @reg:	I/O address offset for the device registers
+- * struct dio48e_gpio - GPIO device private data structure
+- * @chip:		instance of the gpio_chip
+- * @ppi_state:		PPI device states
+- * @reg:		I/O address offset for the device registers
 - */
--struct idi_48_gpio {
+-struct dio48e_gpio {
 -	struct gpio_chip chip;
--	struct idi_48_reg __iomem *reg;
+-	struct i8255_state ppi_state[DIO48E_NUM_PPI];
+-	struct dio48e_reg __iomem *reg;
 -};
 -
--static int idi_48_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+-static int dio48e_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
 -{
--	return GPIO_LINE_DIRECTION_IN;
+-	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
+-
+-	if (i8255_get_direction(dio48egpio->ppi_state, offset))
+-		return GPIO_LINE_DIRECTION_IN;
+-
+-	return GPIO_LINE_DIRECTION_OUT;
 -}
 -
--static int idi_48_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
-+static int idi_48_reg_mask_xlate(struct gpio_regmap *gpio, unsigned int base,
-+				 unsigned int offset, unsigned int *reg,
-+				 unsigned int *mask)
- {
+-static int dio48e_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
+-{
+-	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
+-
+-	i8255_direction_input(dio48egpio->reg->ppi, dio48egpio->ppi_state,
+-			      offset);
+-
 -	return 0;
 -}
 -
--static int idi_48_gpio_get(struct gpio_chip *chip, unsigned int offset)
+-static int dio48e_gpio_direction_output(struct gpio_chip *chip, unsigned int offset,
+-					int value)
 -{
--	struct idi_48_gpio *const idi48gpio = gpiochip_get_data(chip);
--	void __iomem *const ppi = idi48gpio->reg;
-+	const unsigned int line = offset % 8;
-+	const unsigned int stride = offset / 8;
-+	const unsigned int port = (stride / 3) * 4;
-+	const unsigned int port_stride = stride % 3;
- 
--	return i8255_get(ppi, offset);
+-	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
+-
+-	i8255_direction_output(dio48egpio->reg->ppi, dio48egpio->ppi_state,
+-			       offset, value);
+-
+-	return 0;
 -}
 -
--static int idi_48_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+-static int dio48e_gpio_get(struct gpio_chip *chip, unsigned int offset)
+-{
+-	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
+-
+-	return i8255_get(dio48egpio->reg->ppi, offset);
+-}
+-
+-static int dio48e_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
 -	unsigned long *bits)
 -{
--	struct idi_48_gpio *const idi48gpio = gpiochip_get_data(chip);
--	void __iomem *const ppi = idi48gpio->reg;
+-	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
 -
--	i8255_get_multiple(ppi, mask, bits, chip->ngpio);
-+	*reg = base + port + port_stride;
-+	*mask = BIT(line);
- 
- 	return 0;
+-	i8255_get_multiple(dio48egpio->reg->ppi, mask, bits, chip->ngpio);
+-
+-	return 0;
+-}
+-
+-static void dio48e_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
+-{
+-	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
+-
+-	i8255_set(dio48egpio->reg->ppi, dio48egpio->ppi_state, offset, value);
+-}
+-
+-static void dio48e_gpio_set_multiple(struct gpio_chip *chip,
+-	unsigned long *mask, unsigned long *bits)
+-{
+-	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
+-
+-	i8255_set_multiple(dio48egpio->reg->ppi, dio48egpio->ppi_state, mask,
+-			   bits, chip->ngpio);
+-}
+-
+ static const struct regmap_range dio48e_wr_ranges[] = {
+ 	regmap_reg_range(0x0, 0x9), regmap_reg_range(0xB, 0xB),
+ 	regmap_reg_range(0xD, 0xD), regmap_reg_range(0xF, 0xF),
+@@ -240,25 +155,10 @@ static int dio48e_irq_init_hw(struct regmap *const map)
+ 	return regmap_read(map, DIO48E_DISABLE_INTERRUPT, &val);
  }
-@@ -166,18 +123,14 @@ static const char *idi48_names[IDI48_NGPIO] = {
  
- static int idi_48_probe(struct device *dev, unsigned int id)
+-static void dio48e_init_ppi(struct i8255 __iomem *const ppi,
+-			    struct i8255_state *const ppi_state)
+-{
+-	const unsigned long ngpio = 24;
+-	const unsigned long mask = GENMASK(ngpio - 1, 0);
+-	const unsigned long bits = 0;
+-	unsigned long i;
+-
+-	/* Initialize all GPIO to output 0 */
+-	for (i = 0; i < DIO48E_NUM_PPI; i++) {
+-		i8255_mode0_output(&ppi[i]);
+-		i8255_set_multiple(&ppi[i], &ppi_state[i], &mask, &bits, ngpio);
+-	}
+-}
+-
+ static int dio48e_probe(struct device *dev, unsigned int id)
  {
--	struct idi_48_gpio *idi48gpio;
+-	struct dio48e_gpio *dio48egpio;
  	const char *const name = dev_name(dev);
-+	struct gpio_regmap_config config = {};
++	struct i8255_regmap_config config = {};
  	void __iomem *regs;
  	struct regmap *map;
- 	struct regmap_irq_chip *chip;
- 	struct regmap_irq_chip_data *chip_data;
  	int err;
+@@ -266,10 +166,6 @@ static int dio48e_probe(struct device *dev, unsigned int id)
+ 	unsigned int irq_mask;
+ 	struct regmap_irq_chip_data *chip_data;
  
--	idi48gpio = devm_kzalloc(dev, sizeof(*idi48gpio), GFP_KERNEL);
--	if (!idi48gpio)
+-	dio48egpio = devm_kzalloc(dev, sizeof(*dio48egpio), GFP_KERNEL);
+-	if (!dio48egpio)
 -		return -ENOMEM;
 -
- 	if (!devm_request_region(dev, base[id], IDI_48_EXTENT, name)) {
+ 	if (!devm_request_region(dev, base[id], DIO48E_EXTENT, name)) {
  		dev_err(dev, "Unable to lock port addresses (0x%X-0x%X)\n",
- 			base[id], base[id] + IDI_48_EXTENT);
-@@ -187,7 +140,6 @@ static int idi_48_probe(struct device *dev, unsigned int id)
- 	regs = devm_ioport_map(dev, base[id], IDI_48_EXTENT);
+ 			base[id], base[id] + DIO48E_EXTENT);
+@@ -279,7 +175,6 @@ static int dio48e_probe(struct device *dev, unsigned int id)
+ 	regs = devm_ioport_map(dev, base[id], DIO48E_EXTENT);
  	if (!regs)
  		return -ENOMEM;
--	idi48gpio->reg = regs;
+-	dio48egpio->reg = regs;
  
- 	map = devm_regmap_init_mmio(dev, regs, &idi48_regmap_config);
+ 	map = devm_regmap_init_mmio(dev, regs, &dio48e_regmap_config);
  	if (IS_ERR(map))
-@@ -211,25 +163,16 @@ static int idi_48_probe(struct device *dev, unsigned int id)
+@@ -314,31 +209,13 @@ static int dio48e_probe(struct device *dev, unsigned int id)
  	if (err)
  		return dev_err_probe(dev, err, "IRQ registration failed\n");
  
--	idi48gpio->chip.label = name;
--	idi48gpio->chip.parent = dev;
--	idi48gpio->chip.owner = THIS_MODULE;
--	idi48gpio->chip.base = -1;
--	idi48gpio->chip.ngpio = IDI48_NGPIO;
--	idi48gpio->chip.names = idi48_names;
--	idi48gpio->chip.get_direction = idi_48_gpio_get_direction;
--	idi48gpio->chip.direction_input = idi_48_gpio_direction_input;
--	idi48gpio->chip.get = idi_48_gpio_get;
--	idi48gpio->chip.get_multiple = idi_48_gpio_get_multiple;
+-	dio48egpio->chip.label = name;
+-	dio48egpio->chip.parent = dev;
+-	dio48egpio->chip.owner = THIS_MODULE;
+-	dio48egpio->chip.base = -1;
+-	dio48egpio->chip.ngpio = DIO48E_NGPIO;
+-	dio48egpio->chip.names = dio48e_names;
+-	dio48egpio->chip.get_direction = dio48e_gpio_get_direction;
+-	dio48egpio->chip.direction_input = dio48e_gpio_direction_input;
+-	dio48egpio->chip.direction_output = dio48e_gpio_direction_output;
+-	dio48egpio->chip.get = dio48e_gpio_get;
+-	dio48egpio->chip.get_multiple = dio48e_gpio_get_multiple;
+-	dio48egpio->chip.set = dio48e_gpio_set;
+-	dio48egpio->chip.set_multiple = dio48e_gpio_set_multiple;
 -
--	err = devm_gpiochip_add_data(dev, &idi48gpio->chip, idi48gpio);
+-	i8255_state_init(dio48egpio->ppi_state, DIO48E_NUM_PPI);
+-	dio48e_init_ppi(dio48egpio->reg->ppi, dio48egpio->ppi_state);
+-
+-	err = devm_gpiochip_add_data(dev, &dio48egpio->chip, dio48egpio);
 -	if (err) {
 -		dev_err(dev, "GPIO registering failed (%d)\n", err);
 -		return err;
 -	}
 +	config.parent = dev;
-+	config.regmap = map;
-+	config.ngpio = IDI48_NGPIO;
-+	config.names = idi48_names;
-+	config.reg_dat_base = GPIO_REGMAP_ADDR(0x0);
-+	config.ngpio_per_reg = 8;
-+	config.reg_mask_xlate = idi_48_reg_mask_xlate;
-+	config.irq_domain = regmap_irq_get_domain(chip_data);
++	config.map = map;
++	config.num_ppi = DIO48E_NUM_PPI;
++	config.names = dio48e_names;
++	config.domain = regmap_irq_get_domain(chip_data);
  
--	return gpiochip_irqchip_add_domain(&idi48gpio->chip,
+-	return gpiochip_irqchip_add_domain(&dio48egpio->chip,
 -					   regmap_irq_get_domain(chip_data));
-+	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &config));
++	return devm_i8255_regmap_register(dev, &config);
  }
  
- static struct isa_driver idi_48_driver = {
+ static struct isa_driver dio48e_driver = {
 -- 
 2.38.1
 
