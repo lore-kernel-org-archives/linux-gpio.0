@@ -2,253 +2,290 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E6FC47089
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Dec 2022 15:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBD9C4332F
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Dec 2022 18:56:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233105AbiLEPo4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 5 Dec 2022 10:44:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52368 "EHLO
+        id S231924AbiLES4i (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 5 Dec 2022 13:56:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233106AbiLEPof (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Dec 2022 10:44:35 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBB091FCC1
-        for <linux-gpio@vger.kernel.org>; Mon,  5 Dec 2022 07:44:13 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id bg10so9056807wmb.1
-        for <linux-gpio@vger.kernel.org>; Mon, 05 Dec 2022 07:44:13 -0800 (PST)
+        with ESMTP id S233299AbiLES4K (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Dec 2022 13:56:10 -0500
+Received: from mail-vk1-xa31.google.com (mail-vk1-xa31.google.com [IPv6:2607:f8b0:4864:20::a31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 767F81FF81
+        for <linux-gpio@vger.kernel.org>; Mon,  5 Dec 2022 10:55:41 -0800 (PST)
+Received: by mail-vk1-xa31.google.com with SMTP id 6so3681244vkz.0
+        for <linux-gpio@vger.kernel.org>; Mon, 05 Dec 2022 10:55:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+dSXXpqkOfI6iX7DPdSwqjx/kWkV+rgw6PUOKgDniLQ=;
-        b=F/C+bNc5BVLGPws2uUTW988I2HivgvoZ6p+JTXlCKQhLvg6SR0Id5SgeBJYoSbP2NN
-         SZdBKtDy7cP558innIXM8hj/D/ypDsRwAMH9FtPW5UQBRCUQMO6sKA3pxrCz3Hb1pXaf
-         5NPuer/nJXago+X6AiCJ8bhQwDhOfNN1fcsuq4cTvJX+0hSWW0b95i0Plk8cXtZDWrti
-         CwWJ26Jx1YgoeKJNI5I/o5rzgb/q63UJ+Teb9F3zISXW6OL+PB0E+kiwl39OJKVTI/ZV
-         yE1Ew4qvEC+fmVoRcfFhLiZQNljxRJpKbI0xoZMFKqXedvb0S0XZUF5lHU2LyfiGY1iI
-         SWxw==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kqXyG56vZw638sptnvBKf435AngiZcHLmHAhTx7KT1I=;
+        b=AmiqqYUDOw+4Wb3wAZZfObYO5ri3jKpa6RuvqHJAsCqHlmCB6si4pdOJqzVkSKN8NL
+         BjlFtFVfgXjQCCpVk1ViNzNtPcKzJxSP1YMVHGVtgF09DbPBHQPS0QvB6I6zXTBJex4Q
+         DiPiUQBe4nse6EedkEVrtRvOMRDmb+EHqeSFJpBuMxzUOthBcNaY0ic4QYc9E/feEHg2
+         U8uF7Ph3Fa6SikV1BUtXSRMNO5Zv+qg0mqFhZBb3gOka6mOXbQqzcPb7SPYVfy2ZZBvM
+         QYHPuC7bt2pK4bXQfpShT7N5S321VFYLWaQFFPrVRhJVITNrqBpEQ2EoDmQ714eU/qHE
+         ojdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+dSXXpqkOfI6iX7DPdSwqjx/kWkV+rgw6PUOKgDniLQ=;
-        b=egnvnY+XnjcHm/SgpdTn8/2jIZ7YjnHfmSCGlkDajQbuUKXeE4Zn5I78eLdYcHqfkL
-         UzhQu+pWRcyIN5p6Ye/BpGiPVV/BIAxjys3+29H4GhJtTqXZNTUZoL/+b3i6khOboQyU
-         mRfwDrBkKy+yW0/tfzjsCutygZpnX5mFP2B40m2aKuOqmaa4dSenLjCtIxYXf/HPtHoV
-         WDLh88R/ZA6Ax3CVX3SdwB/eNQ2Cj/5O84FlXe+Q884p289ggMvMdj5nSBNzYvLeczjS
-         gzxC8TyWslfonLPfzJo4E9c9BoiQBeCy4O7DRRhQc8+lMns/s/DL3ERMI4LSb6anJkbD
-         /IEQ==
-X-Gm-Message-State: ANoB5pnl61Qwm2eQIbvkqn2iiWhoPvjY3HrpXtLfyFNlATEWYYpZMNqQ
-        1wTeLBUvJpE8oflz+5qUL9MxJg==
-X-Google-Smtp-Source: AA0mqf4E5jtwThvGtdIMYPeAhjZeLR7tS4TUtwsfcdIqLLF0Beo0ruECcXsW5Q1Na9dKzT0WSXkutA==
-X-Received: by 2002:a05:600c:3c87:b0:3d0:58bb:9fa3 with SMTP id bg7-20020a05600c3c8700b003d058bb9fa3mr27348653wmb.39.1670255052235;
-        Mon, 05 Dec 2022 07:44:12 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:1845:911d:bbf3:b5df])
-        by smtp.gmail.com with ESMTPSA id i10-20020a1c540a000000b003cfc02ab8basm21138060wmb.33.2022.12.05.07.44.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Dec 2022 07:44:11 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [libgpiod][PATCH] gpiosim: fix a resource leak
-Date:   Mon,  5 Dec 2022 16:44:09 +0100
-Message-Id: <20221205154409.1012081-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.37.2
+        bh=kqXyG56vZw638sptnvBKf435AngiZcHLmHAhTx7KT1I=;
+        b=2BmsP2YEx0HBr8bgdRE36zP5Cj30ECd9L+vHdmpSV7SZqjHa4PgzNCfxnJzIHKvWUR
+         YK85KNrn2OKmkadpFFay/QBUSTcRhE328c0suAhJefbG+3wzzn7n2n2wCrd8qpfAcA8A
+         NJjZBE0cc0ZOmxl8N78y7XQWMzq/W33vqWu0R/emWyBPmUjGmkQ4iwDgRAuQkAyE+cC6
+         pxmFIPyg6hHFbbHA4BuVqsgVCEJTbShceVFQqEeKyL0ixc/d4CcHR2KaAdp3fcs9SOnH
+         uUTGAwEr0p55YdMkPYUVKc56Kg8BBg2PewdxykTVrYB0K4YAkqd4pyupyZxP89iPDuRf
+         2NXA==
+X-Gm-Message-State: ANoB5pkqNpfaB5b66BtD5pwP2QlZnzrZO2HSPzRZ4wVFQ8yjl8s7r5Q5
+        VVu1IutATPOxDMhsluN4FYioza+ihOkRywLaD04+DQ==
+X-Google-Smtp-Source: AA0mqf7N3FGcbaz3lxEgd6tfgFzsay2dqcKF4pOIl9bpWlTJi2dC5UqmVp9LMV9Ouf6QTr60dcYAIc+tTVTxPNjysKU=
+X-Received: by 2002:ac5:c915:0:b0:3b8:7fbd:9554 with SMTP id
+ t21-20020ac5c915000000b003b87fbd9554mr36935156vkl.27.1670266540449; Mon, 05
+ Dec 2022 10:55:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221205132207.94775-1-andrew@aj.id.au>
+In-Reply-To: <20221205132207.94775-1-andrew@aj.id.au>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 5 Dec 2022 19:55:29 +0100
+Message-ID: <CAMRc=Md9hpypoB_CYrGecp5ZkkmMJFWuZXo4LzbAkZdiv5oOag@mail.gmail.com>
+Subject: Re: [libgpiod][WIP PATCH 0/2] Convert the build from autotools to meson
+To:     Andrew Jeffery <andrew@aj.id.au>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Kent Gibson <warthog618@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, Dec 5, 2022 at 2:22 PM Andrew Jeffery <andrew@aj.id.au> wrote:
+>
+> Hello,
+>
+> Based on a recent poke [1] and in-between meetings I've put together a
+> WIP series that converts libgpiod's build from autotools to meson. As
+> far as I'm aware the meson build supports all the significant options to
+> enable or disable features exposed by the autotools build:
+>
+> * Tests
+> * Tools
+>   * Interactive gpioset
+> * Bindings
+>   * C++
+>   * Python
+>   * Rust
+> * Documentation
+>   * Manpages
+>   * Doxygen
+>
+> [1] https://lore.kernel.org/all/CAMRc=Mda8UnyH+_GxeX_4MyKd+DPN0BVH5K+J+VWnMJNC1vwTQ@mail.gmail.com/
+>
+> Meson has pretty good support for handling python and so the patch does
+> away with setup.py entirely.
 
-If we set the number of lines to x, set line names or hogs for lines
-from 0 through x, then set the number of lines to (x - y), we will not
-unlink all the line directories as we only iterate up to num_lines in
-bank_release().
+Eek! No, please do keep setup.py. Autotools too is capable of building
+python C extensions on its own and it's what we use in v1 but I want
+the python code to be built the standard python way. I actually plan
+to post libgpiod v2 on pypi and split out building python bindings
+into a separate bitbake recipe in meta-openembedded using the
+setuptools3 class.
 
-Allocate a small structure for every line we create a lineX directory
-for and iterate over it in bank_release() to know exactly which ones
-need freeing.
+So let's keep setup.py and just call it from meson.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- tests/gpiosim/gpiosim.c | 92 ++++++++++++++++++++++++++---------------
- 1 file changed, 58 insertions(+), 34 deletions(-)
+> However, the rust case isn't quite so
+> simple. In order to handle the dependencies of the rust bindings I've
+> called out to cargo through a custom target. It's not great, but from
+> what I could see it seems to be the path of least resistance given
+> meson's support for rust.
+>
+> There's no support for installing the rust bindings through meson, but
+> this is not worse than the support we appeared to have under autotools.
+>
 
-diff --git a/tests/gpiosim/gpiosim.c b/tests/gpiosim/gpiosim.c
-index 45a0013..a8410f3 100644
---- a/tests/gpiosim/gpiosim.c
-+++ b/tests/gpiosim/gpiosim.c
-@@ -228,6 +228,12 @@ static void list_del(struct list_head *entry)
- 	     !list_entry_is_head(pos, head, member); \
- 	     pos = list_next_entry(pos, member))
- 
-+#define list_for_each_entry_safe(pos, next, head, member) \
-+	for (pos = list_first_entry(head, typeof(*pos), member), \
-+	     next = list_next_entry(pos, member); \
-+	     !list_entry_is_head(pos, head, member); \
-+	     pos = next, next = list_next_entry(next, member))
-+
- static int open_write_close(int base_fd, const char *where, const char *what)
- {
- 	ssize_t written, size;
-@@ -411,6 +417,12 @@ struct gpiosim_bank {
- 	int cfs_dir_fd;
- 	int sysfs_dir_fd;
- 	size_t num_lines;
-+	struct list_head lines;
-+};
-+
-+struct gpiosim_line {
-+	struct list_head siblings;
-+	unsigned int offset;
- };
- 
- static inline struct gpiosim_ctx *to_gpiosim_ctx(struct refcount *ref)
-@@ -841,15 +853,18 @@ static void bank_release(struct refcount *ref)
- {
- 	struct gpiosim_bank *bank = to_gpiosim_bank(ref);
- 	struct gpiosim_dev *dev = bank->dev;
--	unsigned int i;
-+	struct gpiosim_line *line, *tmp;
- 	char buf[64];
- 
--	/* FIXME should be based on dirent because num_lines can change. */
--	for (i = 0; i < bank->num_lines; i++) {
--		snprintf(buf, sizeof(buf), "line%u/hog", i);
-+	list_for_each_entry_safe(line, tmp, &bank->lines, siblings) {
-+		snprintf(buf, sizeof(buf), "line%u/hog", line->offset);
- 		unlinkat(bank->cfs_dir_fd, buf, AT_REMOVEDIR);
--		snprintf(buf, sizeof(buf), "line%u", i);
-+
-+		snprintf(buf, sizeof(buf), "line%u", line->offset);
- 		unlinkat(bank->cfs_dir_fd, buf, AT_REMOVEDIR);
-+
-+		list_del(&line->siblings);
-+		free(line);
- 	}
- 
- 	list_del(&bank->siblings);
-@@ -900,6 +915,7 @@ GPIOSIM_API struct gpiosim_bank *gpiosim_bank_new(struct gpiosim_dev *dev)
- 	bank->item_name = item_name;
- 	bank->num_lines = 1;
- 	bank->id = id;
-+	list_init(&bank->lines);
- 
- 	return bank;
- 
-@@ -969,25 +985,34 @@ GPIOSIM_API int gpiosim_bank_set_num_lines(struct gpiosim_bank *bank,
- 	return 0;
- }
- 
--/*
-- * Create a sub-directory under given bank's configfs directory. Do nothing
-- * if the directory exists and is writable. Mode is O_RDONLY.
-- */
--static int bank_mkdirat(struct gpiosim_bank *bank, const char *path)
-+static int bank_make_line_dir(struct gpiosim_bank *bank, unsigned int offset)
- {
-+	struct gpiosim_line *line;
-+	char buf[32];
- 	int ret;
- 
--	ret = faccessat(bank->cfs_dir_fd, path, W_OK, 0);
-+	snprintf(buf, sizeof(buf), "line%u", offset);
-+
-+	ret = faccessat(bank->cfs_dir_fd, buf, W_OK, 0);
-+	if (!ret)
-+		return 0;
-+	if (ret && errno != ENOENT)
-+		return -1;
-+
-+	line = malloc(sizeof(*line));
-+	if (!line)
-+		return -1;
-+
-+	ret = mkdirat(bank->cfs_dir_fd, buf, O_RDONLY);
- 	if (ret) {
--		if (errno == ENOENT) {
--			ret = mkdirat(bank->cfs_dir_fd, path, O_RDONLY);
--			if (ret)
--				return -1;
--		} else {
--			return -1;
--		}
-+		free(line);
-+		return -1;
- 	}
- 
-+	memset(line, 0, sizeof(*line));
-+	line->offset = offset;
-+	list_add(&line->siblings, &bank->lines);
-+
- 	return 0;
- }
- 
-@@ -996,24 +1021,18 @@ GPIOSIM_API int gpiosim_bank_set_line_name(struct gpiosim_bank *bank,
- 					   const char *name)
- {
- 	char buf[32];
--	int ret, fd;
-+	int ret;
- 
- 	if (!dev_check_pending(bank->dev))
- 		return -1;
- 
--	snprintf(buf, sizeof(buf), "line%u", offset);
--
--	ret = bank_mkdirat(bank, buf);
-+	ret = bank_make_line_dir(bank, offset);
- 	if (ret)
- 		return -1;
- 
--	fd = openat(bank->cfs_dir_fd, buf, O_RDONLY);
--	if (fd < 0)
--		return -1;
-+	snprintf(buf, sizeof(buf), "line%u/name", offset);
- 
--	ret = open_write_close(fd, "name", name ?: "");
--	close(fd);
--	return ret;
-+	return open_write_close(bank->cfs_dir_fd, buf, name ?: "");
- }
- 
- GPIOSIM_API int gpiosim_bank_hog_line(struct gpiosim_bank *bank,
-@@ -1040,17 +1059,22 @@ GPIOSIM_API int gpiosim_bank_hog_line(struct gpiosim_bank *bank,
- 	if (!dev_check_pending(bank->dev))
- 		return -1;
- 
--	snprintf(buf, sizeof(buf), "line%u", offset);
--
--	ret = bank_mkdirat(bank, buf);
-+	ret = bank_make_line_dir(bank, offset);
- 	if (ret)
- 		return -1;
- 
- 	snprintf(buf, sizeof(buf), "line%u/hog", offset);
- 
--	ret = bank_mkdirat(bank, buf);
--	if (ret)
--		return -1;
-+	ret = faccessat(bank->cfs_dir_fd, buf, W_OK, 0);
-+	if (ret) {
-+		if (errno == ENOENT) {
-+			ret = mkdirat(bank->cfs_dir_fd, buf, O_RDONLY);
-+			if (ret)
-+				return -1;
-+		} else {
-+			return -1;
-+		}
-+	}
- 
- 	fd = openat(bank->cfs_dir_fd, buf, O_RDONLY);
- 	if (fd < 0)
--- 
-2.37.2
+I think Viresh too wants to keep cargo as the building agent for the rust code.
 
+> It's worth noting that you'll probably want to disable the rust bindings
+> if you need to run the install phase for libgpiod under e.g. sudo but
+> have used rustup to install cargo for your unpriviledged user.
+>
+
+Current autotools setup doesn't install rust bindings at all, can we
+keep it this way?
+
+> Also, if you've used rustup to install the rust toolchain you may also
+> need to install clang in order to pick up C toolchain headers for
+> consumption by bindgen.
+>
+> Anyway, feedback on the rust part is definitely appreciated. Maybe
+> there's a better approach?
+>
+
+Cc'ed Viresh and Kent.
+
+> Moving along, the following tests pass in their entirety in my test VM:
+>
+> * gpiod-test
+> * gpiod-cxx-test
+> * python -m gpiod.test
+>
+> I've also briefly compared the install trees for the autotools and meson
+> builds under some configurations. The differences are accounted for by
+> meson defaulting to multi-arch installation paths for shared objects and
+> picking the generic rather than interpreter-version-specific python3
+> dist-packages directory under $PREFIX. Let me know if those seem
+> problematic.
+>
+> A complete meson setup invocation looks as follows:
+>
+> ```
+> $ meson setup -Dbindings=cxx,python,rust -Ddocumentation=man,inline -Dexamples=true -Dtests=true -Dtools=true build
+> ```
+>
+> Subsequently the build can be performed with:
+>
+> ```
+> $ meson compile -C build
+> ```
+>
+> Meson defaults to using ninja as its backend, and automatically exploits
+> ccache[2] when available to keep repeated builds speedy.
+>
+
+It does show! Full rebuild with autotools:
+
+real 0m43,902s
+user 2m40,010s
+sys 0m20,172s
+
+Full rebuild with meson:
+
+real 0m10,001s
+user 1m1,334s
+sys 0m12,205s
+
+More than 4x faster now.
+
+> [2] https://ccache.dev/
+>
+> We end up with a net reduction of 254 LOC for the build system, and,
+> IMO, a single and fairly readable language to express it. Along with
+> that comes easy integration as a dependency in other (meson) projects
+> and a straight-forward path for their cross-compilation.
+>
+> Let me know what you think.
+
+Meson has a steep learning curve but I really want to move over to it
+now and will put in the time to learn it. Thanks for doing it. The
+patches are functional from what I tested so far.
+
+One thing I'd love to see changed is: put all API and ABI version
+number next to each other in a single place so that there's less risk
+of forgetting to update one of them when making a release. Is that
+possible?
+
+Bart
+
+>
+> Andrew
+>
+> Andrew Jeffery (2):
+>   Introduce meson as a build system
+>   Remove autotools in favour of meson
+>
+>  Doxyfile.in                               |   2 +-
+>  Makefile.am                               |  43 ----
+>  autogen.sh                                |  17 --
+>  bindings/Makefile.am                      |  22 --
+>  bindings/cxx/Makefile.am                  |  48 ----
+>  bindings/cxx/examples/Makefile.am         |  26 ---
+>  bindings/cxx/examples/meson.build         |   9 +
+>  bindings/cxx/gpiodcxx/Makefile.am         |  20 --
+>  bindings/cxx/gpiodcxx/meson.build         |  19 ++
+>  bindings/cxx/meson.build                  |  49 ++++
+>  bindings/cxx/tests/Makefile.am            |  32 ---
+>  bindings/cxx/tests/meson.build            |  26 +++
+>  bindings/meson.build                      |  14 ++
+>  bindings/python/Makefile.am               |  35 ---
+>  bindings/python/examples/Makefile.am      |  10 -
+>  bindings/python/examples/meson.build      |  12 +
+>  bindings/python/gpiod/Makefile.am         |  17 --
+>  bindings/python/gpiod/ext/Makefile.am     |  11 -
+>  bindings/python/gpiod/ext/meson.build     |  14 ++
+>  bindings/python/gpiod/meson.build         |  17 ++
+>  bindings/python/meson.build               |  16 ++
+>  bindings/python/setup.py                  |  47 ----
+>  bindings/python/tests/Makefile.am         |  17 --
+>  bindings/python/tests/gpiosim/Makefile.am |   7 -
+>  bindings/python/tests/gpiosim/meson.build |  12 +
+>  bindings/python/tests/meson.build         |  17 ++
+>  bindings/rust/Makefile.am                 |  19 --
+>  bindings/rust/gpiosim-sys/build.rs        |   9 +-
+>  bindings/rust/libgpiod-sys/build.rs       |   9 +-
+>  bindings/rust/meson.build                 |  33 +++
+>  configure.ac                              | 272 ----------------------
+>  include/Makefile.am                       |   4 -
+>  include/meson.build                       |   7 +
+>  lib/Makefile.am                           |  27 ---
+>  lib/meson.build                           |  30 +++
+>  man/Makefile.am                           |  16 --
+>  man/meson.build                           |  21 ++
+>  meson.build                               |  91 ++++++++
+>  meson_options.txt                         |   9 +
+>  tests/Makefile.am                         |  34 ---
+>  tests/gpiosim/Makefile.am                 |  16 --
+>  tests/gpiosim/meson.build                 |  24 ++
+>  tests/meson.build                         |  30 +++
+>  tools/Makefile.am                         |  39 ----
+>  tools/meson.build                         |  69 ++++++
+>  45 files changed, 532 insertions(+), 786 deletions(-)
+>  delete mode 100644 Makefile.am
+>  delete mode 100755 autogen.sh
+>  delete mode 100644 bindings/Makefile.am
+>  delete mode 100644 bindings/cxx/Makefile.am
+>  delete mode 100644 bindings/cxx/examples/Makefile.am
+>  create mode 100644 bindings/cxx/examples/meson.build
+>  delete mode 100644 bindings/cxx/gpiodcxx/Makefile.am
+>  create mode 100644 bindings/cxx/gpiodcxx/meson.build
+>  create mode 100644 bindings/cxx/meson.build
+>  delete mode 100644 bindings/cxx/tests/Makefile.am
+>  create mode 100644 bindings/cxx/tests/meson.build
+>  create mode 100644 bindings/meson.build
+>  delete mode 100644 bindings/python/Makefile.am
+>  delete mode 100644 bindings/python/examples/Makefile.am
+>  create mode 100644 bindings/python/examples/meson.build
+>  delete mode 100644 bindings/python/gpiod/Makefile.am
+>  delete mode 100644 bindings/python/gpiod/ext/Makefile.am
+>  create mode 100644 bindings/python/gpiod/ext/meson.build
+>  create mode 100644 bindings/python/gpiod/meson.build
+>  create mode 100644 bindings/python/meson.build
+>  delete mode 100644 bindings/python/setup.py
+>  delete mode 100644 bindings/python/tests/Makefile.am
+>  delete mode 100644 bindings/python/tests/gpiosim/Makefile.am
+>  create mode 100644 bindings/python/tests/gpiosim/meson.build
+>  create mode 100644 bindings/python/tests/meson.build
+>  delete mode 100644 bindings/rust/Makefile.am
+>  create mode 100644 bindings/rust/meson.build
+>  delete mode 100644 configure.ac
+>  delete mode 100644 include/Makefile.am
+>  create mode 100644 include/meson.build
+>  delete mode 100644 lib/Makefile.am
+>  create mode 100644 lib/meson.build
+>  delete mode 100644 man/Makefile.am
+>  create mode 100644 man/meson.build
+>  create mode 100644 meson.build
+>  create mode 100644 meson_options.txt
+>  delete mode 100644 tests/Makefile.am
+>  delete mode 100644 tests/gpiosim/Makefile.am
+>  create mode 100644 tests/gpiosim/meson.build
+>  create mode 100644 tests/meson.build
+>  delete mode 100644 tools/Makefile.am
+>  create mode 100644 tools/meson.build
+>
+> --
+> 2.37.2
+>
