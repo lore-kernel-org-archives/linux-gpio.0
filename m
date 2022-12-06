@@ -2,35 +2,35 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 878A6C63704
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Dec 2022 09:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 685E5C63707
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Dec 2022 09:52:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234331AbiLFJvc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Dec 2022 04:51:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57202 "EHLO
+        id S235248AbiLFJwZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Dec 2022 04:52:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233853AbiLFJuT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Dec 2022 04:50:19 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D922034C;
-        Tue,  6 Dec 2022 01:50:08 -0800 (PST)
+        with ESMTP id S235401AbiLFJvx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Dec 2022 04:51:53 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1276311470;
+        Tue,  6 Dec 2022 01:51:03 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0F104615E7;
-        Tue,  6 Dec 2022 09:50:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF3F6C4347C;
-        Tue,  6 Dec 2022 09:50:05 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A3D8C61607;
+        Tue,  6 Dec 2022 09:51:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CFCAC43142;
+        Tue,  6 Dec 2022 09:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670320207;
-        bh=p4GOASrrw7BbRUax2gtf0OMf5bM0UdngPhO3xqzted4=;
+        s=k20201202; t=1670320262;
+        bh=dbmSUR82P0cL+wKEywP2aWHs3sdjFr3uUeFglr1ybwE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QidMdmkzfp/+HVTlevOfjIgujF53bTTgjs/BlRt68FcW6h3aeL/IioGtpOgEb5RZt
-         SzLPPD7qjGKUorherFzyb231zlOJTvfEgEFFZSzXiGoBNhSX67fh1l/x+rCjLHhxJL
-         /ujxAn2VY6hI6NAx/uuwSBqfpRqyrnUpAwvs9J3lOwx7QWiP593VVouV7idYFwMylT
-         EcNoKYM0BGaDIJYRH9blviD9XMvtQu0hD1iNRejR/NtSH1T5hEBVLqhuFgkkPNtSoM
-         lEpTV4LqOdrqrLWVsMV5A47jS02ovy8LWGD5H53jiJ1SPo4ZLLWevmbiUmJ5oB3BP6
-         3FWp5T47OYyEw==
+        b=G57rDZ3PeXS6JGFiEepQ+5jisvlrau7uA/S3RuXfoKD+6zIuriZVsTF0OjHsziK2h
+         Dj0D59GQS1LSCqND74jL+ZjjAd2hR5irGI2JOzgYCQfCVyK312unihl9NoDVW+EqiK
+         bq4vePzVQ3HfIjeyLdeKnsfIqxaX1wkZIEH45KM1IDb8/jEl7oEyhPj4DlY+vcrjLR
+         KxoDpk3d6YEQwcIK2uBtCbBPKcN1M37XefOOoo0mFNRL1qVzPRU+v7ZAO8GfL5IV29
+         kx5/jNhgTBIMwzV0nVNR25ZL+BLlZPSruyEJsDwrr0LIU8H/IGX67wrESI//BquPIX
+         RLCNFQeUCQNMw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Ricardo Ribalda <ribalda@chromium.org>,
@@ -41,12 +41,12 @@ Cc:     Ricardo Ribalda <ribalda@chromium.org>,
         Sasha Levin <sashal@kernel.org>, sean.wang@kernel.org,
         linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.15 05/12] pinctrl: meditatek: Startup with the IRQs disabled
-Date:   Tue,  6 Dec 2022 04:49:47 -0500
-Message-Id: <20221206094955.987437-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 2/5] pinctrl: meditatek: Startup with the IRQs disabled
+Date:   Tue,  6 Dec 2022 04:50:52 -0500
+Message-Id: <20221206095055.987728-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221206094955.987437-1-sashal@kernel.org>
-References: <20221206094955.987437-1-sashal@kernel.org>
+In-Reply-To: <20221206095055.987728-1-sashal@kernel.org>
+References: <20221206095055.987728-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -127,10 +127,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
-index f7b54a551764..c24583bffa99 100644
+index 7e526bcf5e0b..24502dfeb83f 100644
 --- a/drivers/pinctrl/mediatek/mtk-eint.c
 +++ b/drivers/pinctrl/mediatek/mtk-eint.c
-@@ -287,12 +287,15 @@ static struct irq_chip mtk_eint_irq_chip = {
+@@ -277,12 +277,15 @@ static struct irq_chip mtk_eint_irq_chip = {
  
  static unsigned int mtk_eint_hw_init(struct mtk_eint *eint)
  {
