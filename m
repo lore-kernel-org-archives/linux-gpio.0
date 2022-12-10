@@ -2,92 +2,120 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 984B5C4708D
-	for <linux-gpio@archiver.kernel.org>; Sat, 10 Dec 2022 20:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BBB2C4332F
+	for <linux-gpio@archiver.kernel.org>; Sat, 10 Dec 2022 22:05:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229738AbiLJU50 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 10 Dec 2022 15:57:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53470 "EHLO
+        id S229849AbiLJWFw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 10 Dec 2022 17:05:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbiLJU5Y (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 10 Dec 2022 15:57:24 -0500
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D2C71705D;
-        Sat, 10 Dec 2022 12:57:23 -0800 (PST)
+        with ESMTP id S229844AbiLJWFj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 10 Dec 2022 17:05:39 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2883513CEB;
+        Sat, 10 Dec 2022 14:05:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1670705843; x=1702241843;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=8tRXcUKxGagfde91ZdUSDF88p8/b8+3NQn8nn2kaumc=;
-  b=NcB/GMthv49QkttcaJVa5iz/7pK2kbtiV/PAs9kKRZ9Bmto3zvimo4Bu
-   MD6rD9kttG4K4hiwbvwvlxsCLmV9i6amFqB03xp8U2XlgxV3vMmk5ZLza
-   F0RUSV4K5AJm84AXmaKV5bTahtJ87jB4h6xLK88kia3x7794QZXUJkoOL
-   BC+hfWbH/7p8Z4A9wh/E9qGmFKLLeLFvhs4RwxAlqE8it+0ZF58R1iJ3n
-   TUeMHMIyv6epzi25e4pK0Ad6xYcWZwZ/qYgzjcA18p7rUEvsAr8UvMJ1c
-   IAKhMqIB8OJtO7/QlKfVl88IOG1tlZ/7rt/LADvG9p0RYqdisThCudOQf
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10557"; a="315286169"
+  t=1670709939; x=1702245939;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=N9GIhe+43+8kbtpf4SUGwC07xNhkTl9g7PMWCO7shEk=;
+  b=DkaVK3Dy19fby5rI0Chy5g0tBZjq9GIA6u/6KMyOD206QsnwMudF8H7n
+   Q1NDJPxnLT03QZOwEM5BD+ugLhp94A3C+nKB8HiSRCx8N5/UZrfwXPx4a
+   goHIHIb5ki3nvw2wYRnYh/D6475mBp8pFtuWur37mRXx3yMGWg+OB2niO
+   ZC4OiS0FxSglLvoQNFEbGXx3KtDcQvq0i+Xf9VAPzi2wjbnOB5GF3yHk3
+   Pg2xre4QssOcVKxpnuVrOu9jjXliJ9r/rZc92SfOpltGlonBjOu1txsbc
+   chh0gROadD904qt6C0xwb6yg6NI4Ou5uowKV8XX7qYdmGCZGxBCAJRsd1
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10557"; a="403907178"
 X-IronPort-AV: E=Sophos;i="5.96,235,1665471600"; 
-   d="scan'208";a="315286169"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2022 12:57:23 -0800
+   d="scan'208";a="403907178"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2022 14:05:38 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10557"; a="678489946"
-X-IronPort-AV: E=Sophos;i="5.96,234,1665471600"; 
-   d="scan'208";a="678489946"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga008.jf.intel.com with ESMTP; 10 Dec 2022 12:57:18 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1p46uK-007g2g-33;
-        Sat, 10 Dec 2022 22:57:16 +0200
-Date:   Sat, 10 Dec 2022 22:57:16 +0200
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev, linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v2 00/11] pwm: Allow .get_state to fail
-Message-ID: <Y5TyrO5maz5VYic3@smile.fi.intel.com>
-References: <20221130152148.2769768-1-u.kleine-koenig@pengutronix.de>
- <Y5OtCjQOQjjltGPa@smile.fi.intel.com>
- <20221210091833.vdfir63nq4kpj5cm@pengutronix.de>
+X-IronPort-AV: E=McAfee;i="6500,9779,10557"; a="625470513"
+X-IronPort-AV: E=Sophos;i="5.96,235,1665471600"; 
+   d="scan'208";a="625470513"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 10 Dec 2022 14:05:36 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 5D9946B1; Sun, 11 Dec 2022 00:06:05 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 3/4] gpio: pca953x: Clean up pcal6534_check_register()
+Date:   Sun, 11 Dec 2022 00:06:00 +0200
+Message-Id: <20221210220601.77648-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20221210220601.77648-1-andriy.shevchenko@linux.intel.com>
+References: <20221210220601.77648-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221210091833.vdfir63nq4kpj5cm@pengutronix.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Dec 10, 2022 at 10:18:33AM +0100, Uwe Kleine-König wrote:
-> On Fri, Dec 09, 2022 at 11:47:54PM +0200, Andy Shevchenko wrote:
-> > On Wed, Nov 30, 2022 at 04:21:37PM +0100, Uwe Kleine-König wrote:
+The pcal6534_check_register() is a bit too verbose.
+Clean up it, by deduplicating some operations and
+switching to the modulo operation as on some architectures
+/ and % can become a single assembly instruction.
 
-...
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: new patch
+ drivers/gpio/gpio-pca953x.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
 
-> > I'm wondering why we didn't see a compiler warning about mistyped function
-> > prototypes in some drivers.
-> 
-> I don't understand where you expected a warning. Care to elaborate?
-
-intel-lpss.c has the prototype that returns an int. IIRC it was like this
-before your patches. Now the above wondering passage...
-
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 2c8586b3191f..8aba8df393bd 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -306,6 +306,7 @@ static bool pca953x_check_register(struct pca953x_chip *chip, unsigned int reg,
+ static bool pcal6534_check_register(struct pca953x_chip *chip, unsigned int reg,
+ 				    u32 checkbank)
+ {
++	int bank_shift;
+ 	int bank;
+ 	int offset;
+ 
+@@ -314,26 +315,22 @@ static bool pcal6534_check_register(struct pca953x_chip *chip, unsigned int reg,
+ 		 * Handle lack of reserved registers after output port
+ 		 * configuration register to form a bank.
+ 		 */
+-		int temp = reg - 0x54;
+-
+-		bank = temp / NBANK(chip);
+-		offset = temp - (bank * NBANK(chip));
+-		bank += 16;
++		reg -= 0x54;
++		bank_shift = 16;
+ 	} else if (reg >= 0x30) {
+ 		/*
+ 		 * Reserved block between 14h and 2Fh does not align on
+ 		 * expected bank boundaries like other devices.
+ 		 */
+-		int temp = reg - 0x30;
+-
+-		bank = temp / NBANK(chip);
+-		offset = temp - (bank * NBANK(chip));
+-		bank += 8;
++		reg -= 0x30;
++		bank_shift = 8;
+ 	} else {
+-		bank = reg / NBANK(chip);
+-		offset = reg - (bank * NBANK(chip));
++		bank_shift = 0;
+ 	}
+ 
++	bank = bank_shift + reg / NBANK(chip);
++	offset = reg % NBANK(chip);
++
+ 	/* Register is not in the matching bank. */
+ 	if (!(BIT(bank) & checkbank))
+ 		return false;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.35.1
 
