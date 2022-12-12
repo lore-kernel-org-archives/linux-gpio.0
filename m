@@ -2,142 +2,138 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 741CFC04FDE
-	for <linux-gpio@archiver.kernel.org>; Mon, 12 Dec 2022 10:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C807C4332F
+	for <linux-gpio@archiver.kernel.org>; Mon, 12 Dec 2022 12:40:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231989AbiLLKmS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 12 Dec 2022 05:42:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33630 "EHLO
+        id S231370AbiLLMk5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 12 Dec 2022 07:40:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232016AbiLLKk6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Dec 2022 05:40:58 -0500
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6494A11812;
-        Mon, 12 Dec 2022 02:35:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1670841335; x=1702377335;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=SZvNSGUvnYe1d22Vo+/FNiWxbX8g27X+rr6u+7Ne0/o=;
-  b=cap3KE83lIJrMaLFYXQAlz1C8vh1liovBUNw+SOxrGQYGx6cGCFW9GKA
-   MEZnvMQRaKIPWgJbGLInSmrQPrLEMQLQeKiIGZIjuRtzMq1OVswcwRII8
-   6IiaHjEX9gZ2tuOJNt0M/Li30qdbBAN41Bq4hVeUsCiRCN5oQJ/q+Syzi
-   EmmBoc6f5oKiTNHkHAccTHeAtSrBUE5fo/VR2cKjpEjLD5ag+o1dhVGp5
-   wdeLANU7bpqgJ2nGMFSDe0quYt09ROQhX0wEc/r9j7yGlRgr7zzQei+x0
-   fUG6Rzrh9m9tNC2iEs8FiIyBipcRyN2HDogK/wN6uNtNin+//DTU4qYWj
-   g==;
-X-IronPort-AV: E=Sophos;i="5.96,238,1665439200"; 
-   d="scan'208";a="27892495"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 12 Dec 2022 11:35:32 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Mon, 12 Dec 2022 11:35:32 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Mon, 12 Dec 2022 11:35:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1670841332; x=1702377332;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=SZvNSGUvnYe1d22Vo+/FNiWxbX8g27X+rr6u+7Ne0/o=;
-  b=MpEDeWMKsE2lAHuvdOM5wYUy7VswQOG4sahzB8gPxrrdvkOGRr5XsNaa
-   uV0bf1OcYa6ES/6y3SQnGD+KJfkeO9FZHvr+Upkmm6lhTsYY9JwCfOoh0
-   bV9Szc4pu9S+TKyqseyZHQU2FlQkiC3LzlfWthwDIbwRNAWUojXzuBor5
-   a1r6NwM10Z8BAUBwsmAq5WYMChMltNObJ4Z3OdBJhCYi05ZDFqjdpz1oy
-   KqHLsP/kwb4W/OBnEvZ2paCbpzS7EkVkQIMAFxH+A8WB2pBfZGgVnsyql
-   W7/794kAY53i7t21c/AXsytTKCgva8UX4TlDPPyCjgv2eHrTFLV7OMhbf
-   A==;
-X-IronPort-AV: E=Sophos;i="5.96,238,1665439200"; 
-   d="scan'208";a="27892493"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 12 Dec 2022 11:35:32 +0100
-Received: from steina-w.tq-net.de (unknown [10.123.53.21])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 47DC2280071;
-        Mon, 12 Dec 2022 11:35:32 +0100 (CET)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+        with ESMTP id S229527AbiLLMk4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Dec 2022 07:40:56 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD63C2C6;
+        Mon, 12 Dec 2022 04:40:54 -0800 (PST)
+Received: from pendragon.ideasonboard.com (213-243-189-158.bb.dnainternet.fi [213.243.189.158])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 054416CF;
+        Mon, 12 Dec 2022 13:40:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1670848853;
+        bh=9RKOLkgQNbJtHqKawJ6wOsZq6akcu9gDWHqS3sR1D1A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HuHZen4rwQH8gN4eWbpOohWlwB/mM1fNBJPkI2Yie72Yv70FZ0CllUJDuV2XrFp/P
+         /AM8eR5VC7zp/zxx3xNzN2KbBJhc3p0L3HPdCoCDQhLvK5leyqkAXRKzFoKBnw34hh
+         Et6C7J4kjVxFcLTSrx+a9iirx4qs984k15OEbH7M=
+Date:   Mon, 12 Dec 2022 14:40:50 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [RFC PATCH 0/3] gpiolib: ramp-up delay support
-Date:   Mon, 12 Dec 2022 11:35:22 +0100
-Message-Id: <20221212103525.231298-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
+        Marek Vasut <marex@denx.de>
+Subject: Re: [RFC PATCH 0/3] gpiolib: ramp-up delay support
+Message-ID: <Y5chUvK+SLMpm9XY@pendragon.ideasonboard.com>
+References: <20221212103525.231298-1-alexander.stein@ew.tq-group.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20221212103525.231298-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi all,
+Hi Alexander,
 
-this series is an RFC for a general approach to solve the issue at [1]. While
-a device specific property works as well, a more generic approach is preferred.
-In short: When enabling a GPIO the actual ramp-up time might be (much) bigger
-than what software usually assume, in my case >100ms. Adding a delay to each
-driver is cumbersome.
-Instead the (optional) ramp-up delay is added to each gpio_desc. The delays can
-be specified per gpio-controller, similar to 'gpio-line-names'. Actually the
-parsing code is almost a 1:1 copy of devprop_gpiochip_set_names(). Due to
-(temporary) memory allocation, I opted for a separate function, there is code
-duplication, but handling both properties in a single function seemed too
-tedious, let alone the to be added ramp-down delays.
+On Mon, Dec 12, 2022 at 11:35:22AM +0100, Alexander Stein wrote:
+> Hi all,
+> 
+> this series is an RFC for a general approach to solve the issue at [1]. While
 
-This feature could also be added as a callback in gpio_chip, but the callbacks
-have to be added to each driver then. I would prefer a single one-fits-all
-implementation and another indirection in the GPIO call chain.
+I'm impressed by how fast you came up with a solution :-)
 
-Laurent suggest to add a GPIO delay node in DT. IMHO this increased the DT
-complexity unnecessarily. But comments are welcome.
+> a device specific property works as well, a more generic approach is preferred.
+> In short: When enabling a GPIO the actual ramp-up time might be (much) bigger
+> than what software usually assume, in my case >100ms. Adding a delay to each
+> driver is cumbersome.
+> Instead the (optional) ramp-up delay is added to each gpio_desc. The delays can
+> be specified per gpio-controller, similar to 'gpio-line-names'. Actually the
+> parsing code is almost a 1:1 copy of devprop_gpiochip_set_names().
 
-The following 3 patches are a proof-of-concept on my platform, consisting of:
-Patch 1 is the proposed bindings and straight forward.
-Patch 2 is the current implementation
-Patch 3 is an actual usage example for specifying the delays
+While I like consistency, I wonder if it wouldn't be better in this case
+to use a list of <gpio-number delay> cells in gpio-ramp-up-delays-us. In
+typical use cases, very few GPIOs will need a delay, and a GPIO
+controller could support a very large number of GPIOs, which would make
+your current proposal cumbersome.
 
-TODO:
-1. Adding ramp-down delays (Just the inverse copy of ramp-up delay)
-2. Should these delays take active low flags into account?
-3. How to deal with setting multiple GPIOs at once?
+> Due to
+> (temporary) memory allocation, I opted for a separate function, there is code
+> duplication, but handling both properties in a single function seemed too
+> tedious, let alone the to be added ramp-down delays.
+> 
+> This feature could also be added as a callback in gpio_chip, but the callbacks
+> have to be added to each driver then. I would prefer a single one-fits-all
+> implementation and another indirection in the GPIO call chain.
 
-I skipped 1. for now, because this is just a copy with ramp-up being replaced
-with ramp-down.
+Agreed.
 
-I'm not that well versed in gpiolib code, so I'm not sure if I got all placed
-where GPIOs are set. So patch 2 might be incomplete.
+> Laurent suggest to add a GPIO delay node in DT. IMHO this increased the DT
+> complexity unnecessarily. But comments are welcome.
 
-For now I skipped setting multiple GPIOs at once completely, so to get some
-feedback on this approach. A possible solution is to check for the bigest delay
-in the set and use that for all afterwards. But I'm not sure about the overhead
-in this case.
+It's an alternative approach that could be considered if this one is
+rejected, but I have a preference for your solution.
 
-I hope there is some feedback. While thinking about this issue appears to be
-more widespread than I expected.
+> The following 3 patches are a proof-of-concept on my platform, consisting of:
+> Patch 1 is the proposed bindings and straight forward.
+> Patch 2 is the current implementation
+> Patch 3 is an actual usage example for specifying the delays
+> 
+> TODO:
+> 1. Adding ramp-down delays (Just the inverse copy of ramp-up delay)
+> 2. Should these delays take active low flags into account?
 
-Best regards,
-Alexander
+How so ?
 
-[1] https://lore.kernel.org/all/20221209083339.3780776-1-alexander.stein@ew.tq-group.com/
+> 3. How to deal with setting multiple GPIOs at once?
+> 
+> I skipped 1. for now, because this is just a copy with ramp-up being replaced
+> with ramp-down.
+> 
+> I'm not that well versed in gpiolib code, so I'm not sure if I got all placed
+> where GPIOs are set. So patch 2 might be incomplete.
+> 
+> For now I skipped setting multiple GPIOs at once completely, so to get some
+> feedback on this approach. A possible solution is to check for the bigest delay
+> in the set and use that for all afterwards. But I'm not sure about the overhead
+> in this case.
 
-Alexander Stein (3):
-  dt-bindings: gpio: Add optional ramp-up delay property
-  gpiolib: Add support for optional ramp-up delays
-  arm64: dts: mba8mx: Add GPIO ramp-up delays
+I assume you're talking about the gpiod_set_array_value() API. That
+sounds OK as an initial implementation, a caller of that function needs
+to be prepared for the GPIOs being set in a random order due to hardware
+delays, so it shouldn't break the API contract. I would however state
+this explicitly in the function documentation.
 
- .../devicetree/bindings/gpio/gpio.txt         | 22 +++++
- arch/arm64/boot/dts/freescale/mba8mx.dtsi     |  5 ++
- drivers/gpio/gpiolib.c                        | 80 +++++++++++++++++++
- drivers/gpio/gpiolib.h                        |  3 +
- 4 files changed, 110 insertions(+)
+> I hope there is some feedback. While thinking about this issue appears to be
+> more widespread than I expected.
+> 
+> Best regards,
+> Alexander
+> 
+> [1] https://lore.kernel.org/all/20221209083339.3780776-1-alexander.stein@ew.tq-group.com/
+> 
+> Alexander Stein (3):
+>   dt-bindings: gpio: Add optional ramp-up delay property
+>   gpiolib: Add support for optional ramp-up delays
+>   arm64: dts: mba8mx: Add GPIO ramp-up delays
+> 
+>  .../devicetree/bindings/gpio/gpio.txt         | 22 +++++
+>  arch/arm64/boot/dts/freescale/mba8mx.dtsi     |  5 ++
+>  drivers/gpio/gpiolib.c                        | 80 +++++++++++++++++++
+>  drivers/gpio/gpiolib.h                        |  3 +
+>  4 files changed, 110 insertions(+)
 
 -- 
-2.34.1
+Regards,
 
+Laurent Pinchart
