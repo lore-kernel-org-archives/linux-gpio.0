@@ -2,100 +2,106 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFCD8C4332F
-	for <linux-gpio@archiver.kernel.org>; Mon, 12 Dec 2022 09:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C62C4708E
+	for <linux-gpio@archiver.kernel.org>; Mon, 12 Dec 2022 10:42:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231436AbiLLJsp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 12 Dec 2022 04:48:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32954 "EHLO
+        id S232000AbiLLKmO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 12 Dec 2022 05:42:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230079AbiLLJso (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Dec 2022 04:48:44 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E144965AD
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Dec 2022 01:48:43 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id g10so11489933plo.11
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Dec 2022 01:48:43 -0800 (PST)
+        with ESMTP id S232032AbiLLKlC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Dec 2022 05:41:02 -0500
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17E2711A25;
+        Mon, 12 Dec 2022 02:35:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4/2+StBNCA6vo8R99ATuDpiHUYUI6I3zWT2VwDPYtBc=;
-        b=FHem91Y4w1G5XttDViCn0IAGHhpKD4jE1zX8tUF74tOoS8hNuDB/IlwT2n3gVPTNkF
-         wrL9xsFnLEaSz3RxfpNMLFnnXu76e7luTbrX3i8Zn5j7p41HtNJF7V+CTfVTs6XfvZXZ
-         zh3urgeDBG1BtsPfASgGikRvu3/jba46qPyxmp1T7CabB+rJi4FkZi1meHpH1K/FJMSX
-         saV71dtv20InNo1iaJm8/yOyhiWRTcnS5kDGaYDJo0D7zjg8O1An6ZQu/X8dYMb0lic1
-         /WcILQB0k7JA1PHO6uv6pIszCkLMLBQ1QLIV2lp4hvZf8NqRQOTRASay6TZPBDAKHIJ+
-         iW2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4/2+StBNCA6vo8R99ATuDpiHUYUI6I3zWT2VwDPYtBc=;
-        b=zIhIjh9DW5mCfhQV1if/2K+1Uzt7kJEFPJ42ZHKxdTyUH2+eEKQ6cQN8TMcmIMmqm5
-         78X1gGHWjHIBrPc1l1ABL170KyxPTu4kvkwTV+PtMBTBJ1q7fkFyuUy7OrKDrlfSEhA4
-         JyjWpoTLujFE8kqawBHqXmsTxvvLHzA3ndlSj6dWLWAyep5FKgfWj5yzOLniBISTzHxv
-         wyDG4rp9u7QfRFa49xrrKcLAkjYWWBZVi86jnSS8QIdEYi4Pf63UWxwStP4dRbmtpJbS
-         hAMhbZALvydIGCm+KiVO05DKPyv9ylc1PdjFMflqKc7EPBDKm8v76LNxsL6VSQn/WHJk
-         OZ/g==
-X-Gm-Message-State: ANoB5plvf+cQgGSH7TnazUZ2NfE2efjO1MOo1r+V1NvedMK3VUfocbaP
-        KSuBsdb+fMlB/3QtQYO2EwI=
-X-Google-Smtp-Source: AA0mqf50bzrQFfDMmSPg9GTNWrZ8s8RPeoVcY9Rd8JWawDhtmFfQF2GzgB2uk2eqmJBQNBIN6tq98g==
-X-Received: by 2002:a17:90a:51c3:b0:219:f911:9879 with SMTP id u61-20020a17090a51c300b00219f9119879mr15680198pjh.33.1670838523380;
-        Mon, 12 Dec 2022 01:48:43 -0800 (PST)
-Received: from sol (110-174-14-241.tpgi.com.au. [110.174.14.241])
-        by smtp.gmail.com with ESMTPSA id x8-20020a17090a294800b00219463262desm5003248pjf.39.2022.12.12.01.48.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Dec 2022 01:48:42 -0800 (PST)
-Date:   Mon, 12 Dec 2022 17:48:37 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [libgpiod][PATCH] tools: tests: remove leftover echo
-Message-ID: <Y5b49f+zuaDR2dES@sol>
-References: <20221212093510.146129-1-brgl@bgdev.pl>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1670841339; x=1702377339;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=i3oNkgCvGU7XkodDrTd0cWtqh6zSgIUVOFBt3scNphg=;
+  b=COT+kRMEoTBl+tKd5vICHx9LzlHdfcYmQmPSW83VOOfFVOJZLZ9Q951g
+   3rwPbG6ggGpacxNXyFjWTWWcIx4o2YxrDtQV07HGiRDxercrA7OzXDaOn
+   WQ3ddgySTCSZlO2oQ6iv1xjBl1HGanMtlub4wgiS/zK9x07r6gwld0Fc2
+   3cFlvkbQGCsCdzA01K+7nomdUsVCcb0VukgtH/5BOy3w/WhfQ2gdRwODW
+   GniN2y5oa/aNg5B6nyAtRFO1ciialzk2n9eyIpC6byR5nlyc5f+m8/qaD
+   ovZ1gmCxWlLG8DNnyrCOsJt1TTjKN/rLyF4IKSHwJzsTAMwR5AeBJimhN
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.96,238,1665439200"; 
+   d="scan'208";a="27892500"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 12 Dec 2022 11:35:33 +0100
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Mon, 12 Dec 2022 11:35:33 +0100
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Mon, 12 Dec 2022 11:35:33 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1670841333; x=1702377333;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=i3oNkgCvGU7XkodDrTd0cWtqh6zSgIUVOFBt3scNphg=;
+  b=oh6PR8MF9h+qP1lUjZ0btU9L2xXDzAVP+ZV2Qjwb3Hx/159oI10e9MKU
+   V9J3pTVMy4OF8jJUaql3zPBTYSclQ2Q/8zzw7PEIXehIVsHecNvCqsst5
+   Bk09vX6OH+qYOY3/27iqEuMUUjh7XZOyfF4CZYGA0E3RF/NJd60tHgCsa
+   nGs9M8w6Yb+m7pdsTcbiutOKUYXpRlQH3rlYv7hwTUL5Pgjcy1j99BWU4
+   aYYdge98faC//8c8y2O8wWM/npLOGkFz3K30jI7o5FO6tdyedrt/EnULT
+   GSoXIrWfi7Qi+8PV/RXFdrvzDzESFM7/izB2RSiMISTp8WfGolfh8DJpC
+   g==;
+X-IronPort-AV: E=Sophos;i="5.96,238,1665439200"; 
+   d="scan'208";a="27892499"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 12 Dec 2022 11:35:33 +0100
+Received: from steina-w.tq-net.de (unknown [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 094C2280071;
+        Mon, 12 Dec 2022 11:35:33 +0100 (CET)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        Marek Vasut <marex@denx.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [RFC PATCH 3/3] arm64: dts: mba8mx: Add GPIO ramp-up delays
+Date:   Mon, 12 Dec 2022 11:35:25 +0100
+Message-Id: <20221212103525.231298-4-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221212103525.231298-1-alexander.stein@ew.tq-group.com>
+References: <20221212103525.231298-1-alexander.stein@ew.tq-group.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221212093510.146129-1-brgl@bgdev.pl>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Dec 12, 2022 at 10:35:10AM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> This looks like some unneeded leftover from the development that was
-> missed because bats intercepts all echo output.
-> 
+GPIO6 on expander0 has a ramp-up time of ~113ms, so add a 120ms delay
 
-Indeed - you only see it when a test fails, and I obviously missed
-removing it after getting the offending test to pass.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ arch/arm64/boot/dts/freescale/mba8mx.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Reviewed-by: Kent Gibson <warthog618@gmail.com>
+diff --git a/arch/arm64/boot/dts/freescale/mba8mx.dtsi b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
+index cac8a44cba604..b5de77acc3f9c 100644
+--- a/arch/arm64/boot/dts/freescale/mba8mx.dtsi
++++ b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
+@@ -192,6 +192,11 @@ expander0: gpio@23 {
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 
++		gpio-ramp-up-delays-us = <0>, <0>, <0>, <0>,
++					 <0>, <0>, <120000>, <0>,
++					 <0>, <0>, <0>, <0>,
++					 <0>, <0>, <0>, <0>;
++
+ 		sd-mux-oe-hog {
+ 			gpio-hog;
+ 			gpios = <8 0>;
+-- 
+2.34.1
 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  tools/gpio-tools-test.bats | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/tools/gpio-tools-test.bats b/tools/gpio-tools-test.bats
-> index bf7f3d6..adbce94 100755
-> --- a/tools/gpio-tools-test.bats
-> +++ b/tools/gpio-tools-test.bats
-> @@ -392,7 +392,6 @@ request_release_line() {
->  
->  	run_tool gpioinfo
->  
-> -    echo "$output"
->  	output_contains_line "${GPIOSIM_CHIP_NAME[sim0]} - 4 lines:"
->  	output_contains_line "${GPIOSIM_CHIP_NAME[sim1]} - 8 lines:"
->  	output_regex_match "\\s+line\\s+0:\\s+unnamed\\s+input"
-> -- 
-> 2.37.2
-> 
