@@ -2,298 +2,173 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F37F5C4332F
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Dec 2022 09:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A968C001B2
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Dec 2022 11:55:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237993AbiLNJy1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 14 Dec 2022 04:54:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55598 "EHLO
+        id S238198AbiLNLz0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 14 Dec 2022 06:55:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238055AbiLNJyA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Dec 2022 04:54:00 -0500
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED18011B;
-        Wed, 14 Dec 2022 01:53:52 -0800 (PST)
+        with ESMTP id S238172AbiLNLzZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Dec 2022 06:55:25 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CA471A81F
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Dec 2022 03:55:24 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id p36so9996213lfa.12
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Dec 2022 03:55:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1671011633; x=1702547633;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gn2uz/l27FEWIkvWQjkXj9Cd5gqzlT+kGDtvIUOrdYs=;
-  b=WGwNCu1YYTaz/8JYOjuV8VeGTeCAWLxtGSBQcfSRnsvZpsf4GSIadA7T
-   Tfb16+LMyUudYOf8fSriOebuL+dnLnV/+5eGGQ0vZzkTq+sG5SejH8ACn
-   vuhQkmt8vx4OYWGvE6FfR9pV+rU1SjpgoQ6h17d53lVayfCFFz6rZqdwQ
-   LJoHdkAoa+N4poKeICpKRBVZv5ouN9xwRdfOfa0/cbI23vqeieW/DIS/D
-   Q5tVYAa/CCsL8lS70npHa55nRZZfWZ4+WfTvyIVFlGH81/m+MfjC1JoW2
-   M2A8If6tFseQ8NrIgT4auJZannANps4JnupsB3++yV05Cu0dLaIO6cwml
-   g==;
-X-IronPort-AV: E=Sophos;i="5.96,244,1665439200"; 
-   d="scan'208";a="27943177"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 14 Dec 2022 10:53:48 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Wed, 14 Dec 2022 10:53:48 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Wed, 14 Dec 2022 10:53:48 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1671011628; x=1702547628;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gn2uz/l27FEWIkvWQjkXj9Cd5gqzlT+kGDtvIUOrdYs=;
-  b=YpZmmZZ4jvK3ceXLNnq4lCdvB6Q3mlRna8csrZB8gBgj0gLuhz2ukRQh
-   XdgkDmjnghSWU54gTvMnH6cMsQ1obHH6xmo94/PbE83cHvm6ZHbN3HRvv
-   WZuPixaU9FwRXLa4B3vMNQgFIU5emp6PbBXjaCMaxDTxuhWYJX/6DkSgG
-   JsgEXKIYBHe+SHPVUmSt9SBa9sBFvxpPizJmSQwX8XuBg/561WWhc3kT0
-   /zJ+jkywMeq1aQGtI4a9to1frZJ6FGk+uW26mDU0LIhZGlYLXh/4C/pVt
-   RCqB/Lxm/QzD37+g0qba1np3KhKsB3LzPWUYiUsK5L63y43xqJhTjsDbK
-   w==;
-X-IronPort-AV: E=Sophos;i="5.96,244,1665439200"; 
-   d="scan'208";a="27943176"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 14 Dec 2022 10:53:48 +0100
-Received: from steina-w.tq-net.de (unknown [10.123.53.21])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 0FCBB280071;
-        Wed, 14 Dec 2022 10:53:48 +0100 (CET)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [RFC PATCH v2 2/3] gpio: Add gpio delay driver
-Date:   Wed, 14 Dec 2022 10:53:41 +0100
-Message-Id: <20221214095342.937303-3-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221214095342.937303-1-alexander.stein@ew.tq-group.com>
-References: <20221214095342.937303-1-alexander.stein@ew.tq-group.com>
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cPBqPNWuQqd8iPzh14Et+rK9vcZ1LSXVV8dYdeOHZ6c=;
+        b=d9Opn6CX+6jaux+E3iVm2NyBgLI8PREjwy5MeY1Lrro99hlHyyMusWfNulvNGBmlT+
+         sWGQZ8OgTIhBrmsKlFqcXkwlkcrtloR7cpiU8rWGJJXCR60EMB+ZWdogtIDrWTIoU08A
+         kvlc23GJjhTezCWJOd8SAR0kl60znuGEnDz+GE2J+2TbHR2xW2/UVpC25uSeLT6QkS9e
+         05VuKn+ani6pbjqRZC4uomXn8MA10l49E8Vsxi8w64EubWJyHX63wzGr3xKLbrtW8pec
+         yWihcri1LwJFp2Ct6weofdnrfX95O39+t5SsoM899CKrAstmzP2KIvFoFEPW1SligMk1
+         110g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cPBqPNWuQqd8iPzh14Et+rK9vcZ1LSXVV8dYdeOHZ6c=;
+        b=FwHUBEvTViAi5vvjlvf6vFyBq8xQly4sIPzzSYIEKJqfwze5kFlk8Q+nPcgojF7jYU
+         boWH5dd7TnCuALwVeiYdwhLGPdnDi8HdtgOOwCtwvf0XdZHOo6jkjMqGu5IwkcBEp8Gs
+         E+6DYEeKUfDnhaAmo1RHXPnyWfWSF8Nd90Zi2k4TCMij4fH/T2KQIzc7WE1CkpqRLHBO
+         JCl3Bn0lo4ExqspJIjGnnBqhopggc2Ixua21NsD9DDTZJkyacWDkmxXho+mCIgyafB8h
+         VrvQ4IDpFBFtbfUfQzXjy4qjn6yN7PLXoISZU6d3CXeadu6WSDtY9M9Z56KUbxNNdHyt
+         6yWQ==
+X-Gm-Message-State: ANoB5pnVIjqIO8ZF9oavyV9Tm3E9OnOOb9h80YRc9QKQKRkwBv0c7ybh
+        KHvo7/2FBRtQRAcT4eA9XuTt8w==
+X-Google-Smtp-Source: AA0mqf77t8fHCzNIhykIbYiHIQrxYCkQ2IPp64vlW2pWDRXhqprSlUO5qUJL1uv9aHCthTDOMZGKsw==
+X-Received: by 2002:a05:6512:acd:b0:4b6:f0ac:7af8 with SMTP id n13-20020a0565120acd00b004b6f0ac7af8mr3783419lfu.67.1671018922448;
+        Wed, 14 Dec 2022 03:55:22 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id o16-20020ac24e90000000b004b551cdfe13sm771276lfr.279.2022.12.14.03.55.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Dec 2022 03:55:22 -0800 (PST)
+Message-ID: <4ffd94b2-e72c-a081-4326-5bc254603ddf@linaro.org>
+Date:   Wed, 14 Dec 2022 12:55:21 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH 2/6] dt-bindings: pinctrl: mt7620: add proper function
+ muxing binding
+Content-Language: en-US
+To:     =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Luiz Angelo Daros de Luca <luizluca@gmail.com>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org
+References: <20221213130430.172876-1-arinc.unal@arinc9.com>
+ <20221213130430.172876-3-arinc.unal@arinc9.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221213130430.172876-3-arinc.unal@arinc9.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This driver implements a GPIO enable/disable delay. It supports a list
-of GPIO outputs, which ramp-up/ramp-down delay can be specified at
-consumer location.
-The main purpose is to address external, passive delays upon line
-voltage changes.
+On 13/12/2022 14:04, Arınç ÜNAL wrote:
+> Not every function can be muxed to a group. Add proper binding which
+> documents which function can be muxed to a group or set of groups.
+> 
+> Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+> ---
+>  .../pinctrl/ralink,mt7620-pinctrl.yaml        | 632 +++++++++++++++++-
+>  1 file changed, 596 insertions(+), 36 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml
+> index 6f17f3991640..06880c80ba80 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml
+> @@ -29,47 +29,608 @@ patternProperties:
+>          $ref: pinmux-node.yaml#
+>  
+>          properties:
+> -          groups:
+> -            description: The pin group to select.
+> -            enum: [
+> -              # common
+> -              i2c, spi, wdt,
+> -
+> -              # For MT7620 SoC
+> -              ephy, mdio, nd_sd, pa, pcie, rgmii1, rgmii2, spi refclk,
+> -              uartf, uartlite, wled,
+> -
+> -              # For MT7628 and MT7688 SoCs
+> -              gpio, i2s, p0led_an, p0led_kn, p1led_an, p1led_kn, p2led_an,
+> -              p2led_kn, p3led_an, p3led_kn, p4led_an, p4led_kn, perst, pwm0,
+> -              pwm1, refclk, sdmode, spi cs1, spis, uart0, uart1, uart2,
+> -              wled_an, wled_kn,
+> -            ]
+> -
+>            function:
+> -            description: The mux function to select.
+> -            enum: [
+> -              # common
+> -              gpio, i2c, refclk, spi,
+> -
+> -              # For MT7620 SoC
+> -              ephy, gpio i2s, gpio uartf, i2s uartf, mdio, nand, pa,
+> -              pcie refclk, pcie rst, pcm gpio, pcm i2s, pcm uartf,
+> -              rgmii1, rgmii2, sd, spi refclk, uartf, uartlite, wdt refclk,
+> -              wdt rst, wled,
+> -
+> -              # For MT7628 and MT7688 SoCs
+> -              antenna, debug, i2s, jtag, p0led_an, p0led_kn,
+> -              p1led_an, p1led_kn, p2led_an, p2led_kn, p3led_an, p3led_kn,
+> -              p4led_an, p4led_kn, pcie, pcm, perst, pwm, pwm0, pwm1, pwm_uart2,
+> -              rsvd, sdxc, sdxc d5 d4, sdxc d6, sdxc d7, spi cs1,
+> -              spis, sw_r, uart0, uart1, uart2, utif, wdt, wled_an, wled_kn, -,
+> -            ]
+> +            description:
+> +              A string containing the name of the function to mux to the group.
+> +            anyOf:
+> +              - description: For MT7620 SoC
+> +                enum: [ephy, gpio, gpio i2s, gpio uartf, i2c, i2s uartf, mdio, nand, pa,
+> +                       pcie refclk, pcie rst, pcm gpio, pcm i2s, pcm uartf, refclk,
+> +                       rgmii1, rgmii2, sd, spi, spi refclk, uartf, uartlite, wdt refclk,
+> +                       wdt rst, wled]
+> +
+> +              - description: For MT7628 and MT7688 SoCs
+> +                enum: [antenna, debug, gpio, i2c, i2s, jtag, p0led_an, p0led_kn,
+> +                       p1led_an, p1led_kn, p2led_an, p2led_kn, p3led_an, p3led_kn,
+> +                       p4led_an, p4led_kn, pcie, pcm, perst, pwm, pwm0, pwm1, pwm_uart2,
+> +                       refclk, rsvd, sdxc, sdxc d5 d4, sdxc d6, sdxc d7, spi, spi cs1,
+> +                       spis, sw_r, uart0, uart1, uart2, utif, wdt, wled_an, wled_kn, -]
+> +
+> +          groups:
+> +            description:
+> +              An array of strings. Each string contains the name of a group.
+>  
+>          required:
+>            - groups
+>            - function
+>  
+> +        allOf:
+> +          - if:
+> +              properties:
+> +                function:
+> +                  const: antenna
+> +            then:
+> +              properties:
+> +                groups:
+> +                  enum: [i2s]
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- drivers/gpio/Kconfig      |   8 ++
- drivers/gpio/Makefile     |   1 +
- drivers/gpio/gpio-delay.c | 164 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 173 insertions(+)
- create mode 100644 drivers/gpio/gpio-delay.c
+I have doubts such setup is maintainable and readable. I would suggest
+to leave just few - maybe for gpio, jtag, refclk, utif.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index ec7cfd4f52b1..8f1dcbe3fd00 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1684,6 +1684,14 @@ config GPIO_AGGREGATOR
- 	      industrial control context, to be operated from userspace using
- 	      the GPIO chardev interface.
- 
-+config GPIO_DELAY
-+	tristate "GPIO delay"
-+	help
-+	  Say yes here to enable the GPIO delay, which provides a way to
-+	  configure platform specific delays for GPIO ramp-up or ramp-down
-+	  delays. This can serve the following purposes:
-+	    - Open-drain output using an RC filter
-+
- config GPIO_LATCH
- 	tristate "GPIO latch driver"
- 	help
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 010587025fc8..56b6cbe35248 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -52,6 +52,7 @@ obj-$(CONFIG_GPIO_DA9052)		+= gpio-da9052.o
- obj-$(CONFIG_GPIO_DA9055)		+= gpio-da9055.o
- obj-$(CONFIG_GPIO_DAVINCI)		+= gpio-davinci.o
- obj-$(CONFIG_GPIO_DLN2)			+= gpio-dln2.o
-+obj-$(CONFIG_GPIO_DELAY)		+= gpio-delay.o
- obj-$(CONFIG_GPIO_DWAPB)		+= gpio-dwapb.o
- obj-$(CONFIG_GPIO_EIC_SPRD)		+= gpio-eic-sprd.o
- obj-$(CONFIG_GPIO_EM)			+= gpio-em.o
-diff --git a/drivers/gpio/gpio-delay.c b/drivers/gpio/gpio-delay.c
-new file mode 100644
-index 000000000000..a91d2ea9a8bc
---- /dev/null
-+++ b/drivers/gpio/gpio-delay.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright 2022 TQ-Systems GmbH
-+ * Author: Alexander Stein <linux@ew.tq-group.com>
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/platform_device.h>
-+#include <linux/delay.h>
-+
-+#include "gpiolib.h"
-+
-+struct gpio_delay_timing {
-+	unsigned long ramp_up_delay_us;
-+	unsigned long ramp_down_delay_us;
-+};
-+
-+struct gpio_delay_priv {
-+	struct gpio_chip gc;
-+	struct gpio_descs *input_gpio;
-+	struct gpio_delay_timing *delay_timings;
-+};
-+
-+static int gpio_delay_get_direction(struct gpio_chip *gc, unsigned int offset)
-+{
-+	return GPIO_LINE_DIRECTION_OUT;
-+}
-+
-+static void gpio_delay_set(struct gpio_chip *gc, unsigned int offset, int val)
-+{
-+	struct gpio_delay_priv *priv = gpiochip_get_data(gc);
-+	struct gpio_desc *gpio_desc = priv->input_gpio->desc[offset];
-+	const struct gpio_delay_timing *delay_timings;
-+	bool ramp_up;
-+
-+	gpiod_set_value(gpio_desc, val);
-+
-+	delay_timings = &priv->delay_timings[offset];
-+	ramp_up = (!gpiod_is_active_low(gpio_desc) && val) ||
-+		  (gpiod_is_active_low(gpio_desc) && !val);
-+
-+	if (ramp_up && delay_timings->ramp_up_delay_us)
-+		udelay(delay_timings->ramp_up_delay_us);
-+	if (!ramp_up && delay_timings->ramp_down_delay_us)
-+		udelay(delay_timings->ramp_down_delay_us);
-+}
-+
-+static void gpio_delay_set_can_sleep(struct gpio_chip *gc, unsigned int offset, int val)
-+{
-+	struct gpio_delay_priv *priv = gpiochip_get_data(gc);
-+	struct gpio_desc *gpio_desc = priv->input_gpio->desc[offset];
-+	const struct gpio_delay_timing *delay_timings;
-+	bool ramp_up;
-+
-+	gpiod_set_value_cansleep(gpio_desc, val);
-+
-+	delay_timings = &priv->delay_timings[offset];
-+	ramp_up = (!gpiod_is_active_low(gpio_desc) && val) ||
-+		  (gpiod_is_active_low(gpio_desc) && !val);
-+
-+	if (ramp_up && delay_timings->ramp_up_delay_us)
-+		fsleep(delay_timings->ramp_up_delay_us);
-+	if (!ramp_up && delay_timings->ramp_down_delay_us)
-+		fsleep(delay_timings->ramp_down_delay_us);
-+}
-+
-+static int gpio_delay_of_xlate(struct gpio_chip *gc,
-+			       const struct of_phandle_args *gpiospec,
-+			       u32 *flags)
-+{
-+	struct gpio_delay_priv *priv = gpiochip_get_data(gc);
-+	struct gpio_delay_timing *timings;
-+	u32 line;
-+
-+	if (gpiospec->args_count != gc->of_gpio_n_cells)
-+		return -EINVAL;
-+
-+	line = gpiospec->args[0];
-+	if (line >= gc->ngpio)
-+		return -EINVAL;
-+
-+	timings = &priv->delay_timings[line];
-+	timings->ramp_up_delay_us = gpiospec->args[1];
-+	timings->ramp_down_delay_us = gpiospec->args[2];
-+
-+	return line;
-+}
-+
-+static bool gpio_delay_can_sleep(const struct gpio_delay_priv *priv)
-+{
-+	int i;
-+
-+	for (i = 0; i < priv->input_gpio->ndescs; i++)
-+		if (gpiod_cansleep(priv->input_gpio->desc[i]))
-+			return true;
-+
-+	return false;
-+}
-+
-+static int gpio_delay_probe(struct platform_device *pdev)
-+{
-+	struct gpio_delay_priv *priv;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->input_gpio = devm_gpiod_get_array(&pdev->dev, "input", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->input_gpio))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(priv->input_gpio),
-+				     "Failed to get input-gpios");
-+
-+	priv->delay_timings = devm_kcalloc(&pdev->dev,
-+					   priv->input_gpio->ndescs,
-+					   sizeof(*priv->delay_timings),
-+					   GFP_KERNEL);
-+	if (!priv->delay_timings)
-+		return -ENOMEM;
-+
-+	if (gpio_delay_can_sleep(priv)) {
-+		priv->gc.can_sleep = true;
-+		priv->gc.set = gpio_delay_set_can_sleep;
-+	} else {
-+		priv->gc.can_sleep = false;
-+		priv->gc.set = gpio_delay_set;
-+	}
-+
-+	priv->gc.get_direction = gpio_delay_get_direction;
-+	priv->gc.of_xlate = gpio_delay_of_xlate;
-+	priv->gc.of_gpio_n_cells = 3;
-+	priv->gc.ngpio = priv->input_gpio->ndescs;
-+	priv->gc.owner = THIS_MODULE;
-+	priv->gc.base = -1;
-+	priv->gc.parent = &pdev->dev;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	return devm_gpiochip_add_data(&pdev->dev, &priv->gc, priv);
-+}
-+
-+static const struct of_device_id gpio_delay_ids[] = {
-+	{
-+		.compatible = "gpio-delay",
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, gpio_delay_ids);
-+
-+static struct platform_driver gpio_delay_driver = {
-+	.driver	= {
-+		.name		= "gpio-delay",
-+		.of_match_table	= gpio_delay_ids,
-+	},
-+	.probe	= gpio_delay_probe,
-+};
-+module_platform_driver(gpio_delay_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Alexander Stein <alexander.stein@ew.tq-group.com>");
-+MODULE_DESCRIPTION("GPIO delay driver");
--- 
-2.34.1
+
+Best regards,
+Krzysztof
 
