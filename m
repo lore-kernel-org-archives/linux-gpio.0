@@ -2,33 +2,33 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7354FC4332F
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Dec 2022 09:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD7DEC46467
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Dec 2022 09:54:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237896AbiLNJyX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 14 Dec 2022 04:54:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54702 "EHLO
+        id S237966AbiLNJyY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 14 Dec 2022 04:54:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238054AbiLNJyA (ORCPT
+        with ESMTP id S238056AbiLNJyA (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Dec 2022 04:54:00 -0500
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBA7421E30;
-        Wed, 14 Dec 2022 01:53:51 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C16C021C;
+        Wed, 14 Dec 2022 01:53:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1671011632; x=1702547632;
+  t=1671011634; x=1702547634;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=jSMLFNgpl5itBCtqAbPyBTBI01DUvC31suIJbP6CgHc=;
-  b=O0QOUHJb7Ksd8AyUauV5cpnTp5U7l3hviL3mU3WUrwFUFTRYCLyMsKhU
-   Wg1zBa3n8AadMOhAzy+Hu6PcTonZaae6jlN8mLOu2TdyxkTKXaAUbbFYT
-   hDLyB4FnP51MfKUpvgoJP8zzP7tYC3LoTK3tsndOoSFcgkX4JFZ7GLPCH
-   9tCmpb/u3xvrLfKEaI47gBRV9l6eDl2R6BoVzh6vIKPvoPD6y4ss4Feah
-   9zifDVzkKKH/yABYVjUmXIbieRin22N9OLcfCMnUObBDq1H8oGssxJGI0
-   KO8onK3M83ZvbaxQiw2/APVaTMxrQaR96DzWb3nfYlNmEcBXsmuG5vA3G
-   g==;
+  bh=LzqGGxmF1t3qGuJLCa6X1QP62ut/E2OTUEGN+pkAN+I=;
+  b=Z7PornlXpW7/J2W4xxlcLomCOdtd+HHnHEqaNRLbY4MqiUb7q3Uk0iKM
+   2a7Wa4UTAg+QkjNNC3ib3JNI1fgUdV1h4UyDRKnwSK90swbFHR/ZX6Kby
+   UvoGsVr5i5/L6ZZ7fTCQFA4srt8Ot6lWhkQ+xKFWXKLkNv2nyAKISp0mf
+   0rm09RYsowdjESM2/bsJrMjBFLF7UYQsiuSpJqqZJd3gr0OdgCiMO51AK
+   qOYTGMdZSszBh/YeZnmHIijwl47dIOvWE38pBl2B22uDQzHVn4J7bpRCQ
+   1uF4tLtSOVAKhsqB4xV3tll+3I+1o7CroH4k4DuCA68+b/cuhesxHu7ol
+   w==;
 X-IronPort-AV: E=Sophos;i="5.96,244,1665439200"; 
-   d="scan'208";a="27943175"
+   d="scan'208";a="27943179"
 Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
   by mx1-pgp.tq-group.com with ESMTP; 14 Dec 2022 10:53:48 +0100
 Received: from mx1.tq-group.com ([192.168.6.7])
@@ -41,23 +41,23 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   t=1671011628; x=1702547628;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=jSMLFNgpl5itBCtqAbPyBTBI01DUvC31suIJbP6CgHc=;
-  b=dcZYhwA3uBPFpLldGv6hzb64iagtMAJEzDy2E0R33jrJF6RdGGUQgSW+
-   m70LMcbIK+jE/TvIphh1ZzJmK4tTKmluaInJUM2solC8K/BS9pdGO6oCU
-   VkrKFBBUTlumfd/WhrYKDaWW+GEyt2zqrQO1a8csbqizseTii67nDKwWI
-   bpOVUB3k/95A5TBnFeQeKofuu36iOoNHsaFS2aa6v4eaeclqaRNKqEfNd
-   SNqKUsANAQbfJtMkt94jkOZM6ojqfFbUYNDrrDQ4mJEOB0DmLy7INMpJc
-   cRbGPCn+MLS42NMttSdnSIQXYu9upp6HLV7GDdPIFSlusjbTAFAQ+F8Ei
-   A==;
+  bh=LzqGGxmF1t3qGuJLCa6X1QP62ut/E2OTUEGN+pkAN+I=;
+  b=dlA0EUnXY7/pe8a6VpYC68WVr4InRSwN2qHkBOOL5gWii78uIIkY/S7t
+   zi7cZ/ATnCcuwjQTcICzNsptpES85t+XQeJ/q+irWs/XBTd7aTsIk7zyf
+   B/y3cwdRTW69UQnO7SDXgQEQ5DTn9XmiIhwjve8EePPuZPsIZervJ0HoP
+   Hzk8cYnt0aqPnENxcwAwgBxfRdJM2/4LP8rvKgibe5vym8vmR9t+rmtrN
+   dDDH5Qp9QvDhc43BOczHF6Lq37ol3+2YoeIlq3wbHQnkAexg1Q8xJAHSt
+   Z5jcV0Wq7K6VcPg2Ln3J+imds5F2pNUmvreJZTxvsSwXPPsWF7uW4/eg5
+   Q==;
 X-IronPort-AV: E=Sophos;i="5.96,244,1665439200"; 
-   d="scan'208";a="27943174"
+   d="scan'208";a="27943178"
 Received: from vtuxmail01.tq-net.de ([10.115.0.20])
   by mx1.tq-group.com with ESMTP; 14 Dec 2022 10:53:48 +0100
 Received: from steina-w.tq-net.de (unknown [10.123.53.21])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id D8B3F280072;
-        Wed, 14 Dec 2022 10:53:47 +0100 (CET)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 3CD34280072;
+        Wed, 14 Dec 2022 10:53:48 +0100 (CET)
 From:   Alexander Stein <alexander.stein@ew.tq-group.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
@@ -67,9 +67,9 @@ Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         Marek Vasut <marex@denx.de>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [RFC PATCH v2 1/3] dt-bindings: gpio: Add gpio-delay binding document
-Date:   Wed, 14 Dec 2022 10:53:40 +0100
-Message-Id: <20221214095342.937303-2-alexander.stein@ew.tq-group.com>
+Subject: [RFC PATCH v2 3/3] [DNI] arm64: dts: mba8mx: Use gpio-delay for LVDS bridge
+Date:   Wed, 14 Dec 2022 10:53:42 +0100
+Message-Id: <20221214095342.937303-4-alexander.stein@ew.tq-group.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221214095342.937303-1-alexander.stein@ew.tq-group.com>
 References: <20221214095342.937303-1-alexander.stein@ew.tq-group.com>
@@ -79,95 +79,53 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This adds bindings for a GPIO enable/disable delay driver.
+Add a gpio-delay for LVDS_BRIDGE_EN_1V8 which ramp-up time is defined
+by the external RC filter.
 
 Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
- .../devicetree/bindings/gpio/gpio-delay.yaml  | 75 +++++++++++++++++++
- 1 file changed, 75 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-delay.yaml
+ arch/arm64/boot/dts/freescale/mba8mx.dtsi | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-delay.yaml b/Documentation/devicetree/bindings/gpio/gpio-delay.yaml
-new file mode 100644
-index 000000000000..20871356e9b5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-delay.yaml
-@@ -0,0 +1,75 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/gpio-delay.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/freescale/mba8mx.dtsi b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
+index b0662dfa6194..a1ceadfa5b3d 100644
+--- a/arch/arm64/boot/dts/freescale/mba8mx.dtsi
++++ b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
+@@ -75,6 +75,14 @@ led2: led2 {
+ 		};
+ 	};
+ 
++	gpio_delays: gpio-delays {
++		compatible = "gpio-delay";
++		#gpio-cells = <3>;
++		gpio-controller;
++		input-gpios = <&expander0 6 GPIO_ACTIVE_HIGH>;
++		gpio-line-names = "LVDS_BRIDGE_EN_1V8";
++	};
 +
-+title: GPIO delay controller
-+
-+maintainers:
-+  - Alexander Stein <linux@ew.tq-group.com>
-+
-+description: |
-+  This binding describes an electrical setup where setting an GPIO output
-+  is delayed by some external setup, e.g. RC curcuit.
-+
-+  +----------+                    +-----------+
-+  |          |             VCC_B  |           |
-+  |          |              |     |           |
-+  |          | VCC_A        _     |           |
-+  |  GPIO    |             | | R  |  Consumer |
-+  |controller|        ___  |_|    |           |
-+  |          |       |   |  |     |           |
-+  |      [IOx|-------|   |--+-----|-----+     |
-+  |          |       |___|  |     |   input   |
-+  |          |              |     |           |
-+  +----------+             --- C  +-----------+
-+                           ---
-+                            |
-+                            -
-+                           GND
-+
-+  If the input on the consumer is controlled by an open-drain signal
-+  attached to an RC curcuit the ramp-up delay is not under control
-+  of the GPIO controller.
-+
-+properties:
-+  compatible:
-+    const: gpio-delay
-+
-+  "#gpio-cells":
-+    description: |
-+      Specifies the pin, ramp-up and ramp-down delays. The
-+      delays are specified in microseconds.
-+    const: 3
-+
-+  input-gpios:
-+    description: Array of GPIOs which output signal change is delayed
-+
-+  gpio-controller: true
-+
-+  gpio-line-names: true
-+
-+required:
-+  - compatible
-+  - "#gpio-cells"
-+  - gpio-controller
-+  - input-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    enable_delay: enable-delay {
-+        compatible = "gpio-delay";
-+        #gpio-cells = <3>;
-+        gpio-controller;
-+        input-gpios = <&gpio0 3 GPIO_ACTIVE_LOW>,
-+                      <&gpio3 1 GPIO_ACTIVE_HIGH>;
-+    };
-+
-+    consumer {
-+        enable-gpios = <&enable_delay 0 130000 30000>;
-+    };
+ 	panel0: panel_lvds0 {
+ 		/*
+ 		 * Display is not fixed, so compatible has to be added from
+@@ -191,6 +199,10 @@ expander0: gpio@23 {
+ 		interrupts = <9 IRQ_TYPE_EDGE_FALLING>;
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
++		gpio-line-names = "", "", "", "",
++				  "", "", "LVDS_BRIDGE_EN_3V3", "",
++				  "", "", "", "",
++				  "", "", "", "";
+ 
+ 		sd-mux-oe-hog {
+ 			gpio-hog;
+@@ -272,7 +284,7 @@ &i2c3 {
+ 	dsi_lvds_bridge: bridge@2d {
+ 		compatible = "ti,sn65dsi83";
+ 		reg = <0x2d>;
+-		enable-gpios = <&expander0 6 GPIO_ACTIVE_HIGH>;
++		enable-gpios = <&gpio_delays 0 130000 0>;
+ 		vcc-supply = <&reg_sn65dsi83_1v8>;
+ 		status = "disabled";
+ 
 -- 
 2.34.1
 
