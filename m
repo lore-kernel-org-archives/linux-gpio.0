@@ -2,77 +2,228 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB32C4332F
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Dec 2022 21:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2123C4167B
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Dec 2022 23:09:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229469AbiLPVva (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 16 Dec 2022 16:51:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38480 "EHLO
+        id S230122AbiLPXJm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 16 Dec 2022 18:09:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbiLPVv3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Dec 2022 16:51:29 -0500
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 816F55EDED
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Dec 2022 13:51:25 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id D3BA184F72;
-        Fri, 16 Dec 2022 22:51:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1671227484;
-        bh=TaufkRPCCj2JqxUzJ9D2saPzAqmTIvwTgeI/62dy3Ig=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=pjL+RnWNfH9v1XdPxbtyzVWxDlzw78R+p2kLeKotuNvJUw4y9LFmK6IUOkpT1nmpC
-         jjIgvA/jvIFfCgN5CoN2Sbnt7F6C6kRgmlgz2PpMAn++xNYgpQxjNOFD+aGMMLd8wC
-         7rMzz/tj7MYyFh6TbsCqDPCI+R5b52hh7SYaFoE/s9jdhYKIy0BghixhXiwu0p6imK
-         rgelgt9LYq7TJ5xplAgPNQCjyvfcoTDS3kSzGJsX+PhRUclb8HRYeSFRsBknefWlIb
-         nje/Boxe5Oowksy438O9MlkIW5sQO7i22Hv7FFvOyTQlSjSu9Ua6PII5VBLw1mFEhx
-         twNx52Nh/JG2g==
-Message-ID: <24df1fa1-c24e-a07b-f7bc-dbf9f059549d@denx.de>
-Date:   Fri, 16 Dec 2022 22:51:23 +0100
+        with ESMTP id S229968AbiLPXJT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Dec 2022 18:09:19 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 109EC72611;
+        Fri, 16 Dec 2022 15:09:09 -0800 (PST)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BGLq5Ee022268;
+        Fri, 16 Dec 2022 23:09:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=qcppdkim1;
+ bh=S4FT+SBwhJb5Xaaps1mzqEw7T9mOtMWZmy/Z7HN+d88=;
+ b=lxjDRTQAkHHY9nBP0C0SIwUcSpPEriJn1JJS6TOMqs8zmaCJqiRr3+YPRcP05htxu6ta
+ n6jpHZlNkZUcUyW/40Vclc5qqm7uZhKqr2S+rrFcyRb2hZTIEE7QCYM5JLtpkGxWJwl0
+ q9A2GKBBiY/i3e0Lk849mdR6RtBnWfu0x/fRKCBlEdgMaVtG7uRDqlj6ULoypY22YE9+
+ jHe/1rei4PoEUY9aVTQ1FlkjFMTMb1bP1o0sEohqG3WjD1vdalzyYF/SHYr0qDh+Q5xv
+ OfUxquSuH6jZk5eVwhdr3oBnQgvmf+rnJYeKOoZN3SfYWtKlFyAYKB+KR2HDECaOFmUW Tg== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mg3f8week-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 16 Dec 2022 23:09:05 +0000
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BGN94uD030902
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 16 Dec 2022 23:09:04 GMT
+Received: from hu-molvera-sd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Fri, 16 Dec 2022 15:09:04 -0800
+From:   Melody Olvera <quic_molvera@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Melody Olvera <quic_molvera@quicinc.com>
+Subject: [PATCH v5 1/2] dt-bindings: pinctrl: qcom: Add QDU1000 and QRU1000 pinctrl
+Date:   Fri, 16 Dec 2022 15:08:51 -0800
+Message-ID: <20221216230852.21691-2-quic_molvera@quicinc.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20221216230852.21691-1-quic_molvera@quicinc.com>
+References: <20221216230852.21691-1-quic_molvera@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v6 2/2] gpio: mxc: Always set GPIOs used as interrupt
- source to INPUT mode
-Content-Language: en-US
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Marc Zyngier <maz@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-References: <20221013215946.216184-1-marex@denx.de>
- <20221013215946.216184-2-marex@denx.de>
- <CACRpkdZwZCDA-pvneLYyMvxqeZkSoM3CFRHEkpOLoiWpPvXOxQ@mail.gmail.com>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <CACRpkdZwZCDA-pvneLYyMvxqeZkSoM3CFRHEkpOLoiWpPvXOxQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EopsATRhLxiXXR-ZjOiJSjPttSJfI705
+X-Proofpoint-ORIG-GUID: EopsATRhLxiXXR-ZjOiJSjPttSJfI705
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-16_14,2022-12-15_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ lowpriorityscore=0 spamscore=0 impostorscore=0 mlxlogscore=999
+ adultscore=0 phishscore=0 bulkscore=0 mlxscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2212160205
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 10/17/22 12:24, Linus Walleij wrote:
-> On Fri, Oct 14, 2022 at 12:00 AM Marek Vasut <marex@denx.de> wrote:
-> 
->> Always configure GPIO pins which are used as interrupt source as INPUTs.
->> In case the default pin configuration is OUTPUT, or the prior stage does
->> configure the pins as OUTPUT, then Linux will not reconfigure the pin as
->> INPUT and no interrupts are received.
->>
->> Always configure the interrupt source GPIO pin as input to fix the above case.
->>
->> Fixes: 07bd1a6cc7cbb ("MXC arch: Add gpio support for the whole platform")
->> Signed-off-by: Marek Vasut <marex@denx.de>
-> 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Add device tree bindings for QDU1000 and QRU1000 TLMM devices.
 
-Can you please just pick these two patches up ?
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+---
+ .../bindings/pinctrl/qcom,qdu1000-tlmm.yaml   | 134 ++++++++++++++++++
+ 1 file changed, 134 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,qdu1000-tlmm.yaml
 
-Thank you
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,qdu1000-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,qdu1000-tlmm.yaml
+new file mode 100644
+index 000000000000..7e5fb9a6e7d3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,qdu1000-tlmm.yaml
+@@ -0,0 +1,134 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,qdu1000-tlmm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Technologies, Inc. QDU1000/QRU1000 TLMM block
++
++maintainers:
++  - Melody Olvera <quic_molvera@quicinc.com>
++
++description: |
++  Top Level Mode Multiplexer pin controller found in the QDU1000 and
++  QRU1000 SoCs.
++
++allOf:
++  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
++
++properties:
++  compatible:
++    const: qcom,qdu1000-tlmm
++
++  reg:
++    maxItems: 1
++
++  interrupts: true
++  interrupt-controller: true
++  "#interrupt-cells": true
++  gpio-controller: true
++
++  gpio-reserved-ranges:
++    minItems: 1
++    maxItems: 76
++
++  gpio-line-names:
++    maxItems: 151
++
++  "#gpio-cells": true
++  gpio-ranges: true
++  wakeup-parent: true
++
++patternProperties:
++  "-state$":
++    oneOf:
++      - $ref: "#/$defs/qcom-qdu1000-tlmm-state"
++      - patternProperties:
++          "-pins$":
++            $ref: "#/$defs/qcom-qdu1000-tlmm-state"
++        additionalProperties: false
++
++$defs:
++  qcom-qdu1000-tlmm-state:
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          oneOf:
++            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-4][0-9]|150)$"
++            - enum: [ sdc1_rclk, sdc1_clk, sdc1_cmd, sdc1_data ]
++        minItems: 1
++        maxItems: 36
++
++      function:
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++        enum: [ atest_char, atest_usb, char_exec, CMO_PRI, cmu_rng,
++                dbg_out_clk, ddr_bist, ddr_pxi1, ddr_pxi2, ddr_pxi3, ddr_pxi4,
++                ddr_pxi5, ddr_pxi6, ddr_pxi7, eth012_int_n, eth345_int_n,
++                gcc_gp1, gcc_gp2, gcc_gp3, gpio, gps_pps_in, hardsync_pps_in,
++                intr_c, jitter_bist_ref, pcie_clkreqn, phase_flag, pll_bist,
++                pll_clk, prng_rosc, qdss_cti, qdss_gpio, qlink0_enable,
++                qlink0_request, qlink0_wmss, qlink1_enable, qlink1_request,
++                qlink1_wmss, qlink2_enable, qlink2_request, qlink2_wmss,
++                qlink3_enable, qlink3_request, qlink3_wmss, qlink4_enable,
++                qlink4_request, qlink4_wmss, qlink5_enable, qlink5_request,
++                qlink5_wmss, qlink6_enable, qlink6_request, qlink6_wmss,
++                qlink7_enable, qlink7_request, qlink7_wmss, qspi_clk, qspi_cs,
++                qspi0, qspi1, qspi2, qspi3, qup00, qup01, qup02, qup03, qup04,
++                qup05, qup06, qup07, qup08, qup10, qup11, qup12, qup13, qup14,
++                qup15, qup16, qup17, qup20, qup21, qup22, SI5518_INT, smb_alert,
++                smb_clk, smb_dat, tb_trig, tgu_ch0, tgu_ch1, tgu_ch2, tgu_ch3,
++                tgu_ch4, tgu_ch5, tgu_ch6, tgu_ch7, tmess_prng0, tmess_prng1,
++                tmess_prng2, tmess_prng3, tod_pps_in, tsense_pwm1, tsense_pwm2,
++                usb2phy_ac, usb_con_det, usb_dfp_en, usb_phy, vfr_0, vfr_1,
++                vsense_trigger ]
++
++      bias-disable: true
++      bias-pull-down: true
++      bias-pull-up: true
++      drive-strength: true
++      input-enable: true
++      output-high: true
++      output-low: true
++
++    required:
++      - pins
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    pinctrl@f000000 {
++        compatible = "qcom,qdu1000-tlmm";
++        reg = <0xf000000 0x1000000>;
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        gpio-ranges = <&tlmm 0 0 151>;
++        wakeup-parent = <&pdc>;
++
++        uart0-default-state {
++            pins = "gpio6", "gpio7", "gpio8", "gpio9";
++            function = "qup00";
++        };
++    };
+-- 
+2.38.1
+
