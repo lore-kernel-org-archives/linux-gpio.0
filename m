@@ -2,110 +2,101 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28227C3DA7C
-	for <linux-gpio@archiver.kernel.org>; Fri, 16 Dec 2022 11:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2F0C4167B
+	for <linux-gpio@archiver.kernel.org>; Fri, 16 Dec 2022 11:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231231AbiLPLcZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 16 Dec 2022 06:32:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37688 "EHLO
+        id S229789AbiLPLuK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 16 Dec 2022 06:50:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230406AbiLPLbs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Dec 2022 06:31:48 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00C64DC2
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Dec 2022 03:31:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1671190260;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=y7TLvSrWvfatuhCfgNH8fmV9U/Jntl1NPL0BbN22EY4=;
-        b=YekjFeEZcxhQ71g7lDJxsj9/UkhUvvlTJAkOYQMSrjRlx+dgDNNUs0JfFDmCWzOv1tvjjw
-        +fzwMP16BVKPzyrOfpYnzdpH/u2cOxNaAozxin4uWobBKtZU0Ej4tjOE6i6Od29o7wD5qb
-        hUmR+F7A+Nju5GWrpa/VxRJsyV602Gw=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-27-MdlXgQMgNM-InjGZix2EQQ-1; Fri, 16 Dec 2022 06:30:56 -0500
-X-MC-Unique: MdlXgQMgNM-InjGZix2EQQ-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1296F101A5B4;
-        Fri, 16 Dec 2022 11:30:56 +0000 (UTC)
-Received: from shalem.redhat.com (unknown [10.39.194.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BFEF9400F58;
-        Fri, 16 Dec 2022 11:30:52 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Kate Hsuan <hpa@redhat.com>,
-        Mark Pearson <markpearson@lenovo.com>,
-        Andy Yeh <andy.yeh@intel.com>, Yao Hao <yao.hao@intel.com>,
-        linux-media@vger.kernel.org
-Subject: [PATCH v3 10/11] platform/x86: int3472/discrete: Ensure the clk/power enable pins are in output mode
-Date:   Fri, 16 Dec 2022 12:30:12 +0100
-Message-Id: <20221216113013.126881-11-hdegoede@redhat.com>
-In-Reply-To: <20221216113013.126881-1-hdegoede@redhat.com>
-References: <20221216113013.126881-1-hdegoede@redhat.com>
+        with ESMTP id S229495AbiLPLuJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Dec 2022 06:50:09 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D6452CC80;
+        Fri, 16 Dec 2022 03:50:08 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id o15so1670157wmr.4;
+        Fri, 16 Dec 2022 03:50:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5f2szHXaGzFXM+QokmgsfkmBLkNqXSfiDGTjKRlczWs=;
+        b=qNZ/FYhREmmt5LtYE0eoBDKw5tiLcmpSabQQ8BzMy35Npi5VQMIekUewPLAqdd/iyj
+         8Yq7IbCiXb7szX5M/6hlnfGr9rMOGm4DdPuSy1DW3qp9QY216qFd8f944J6cv3ljEt/o
+         KgnlPEjTDQIShYwigGHS/TGqgC2pvUQNKx53o/Q2Gz+D1yawFjyCZpKtAsZYvpgzlJjg
+         lmFfkStNvmdsUZVGvOcArGBvfdMOl+IH9pMzTFk+kanuc2qPun0SOSosEqCUN572wmvi
+         XFZTU4WBsW/OwBdcNAr6z+cKpCVhKoCiQ/LI40OnAtSg7jZKTZIZo5yz8HYjMJXgB8TN
+         sUkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5f2szHXaGzFXM+QokmgsfkmBLkNqXSfiDGTjKRlczWs=;
+        b=jPsibZ+b8GWBFqyb6Le1rECERIubMLjpLiODGVO8/p4bbUpFiWFfC+Pdxw5/kPK4uP
+         2DMF2oq2UzcR1VGX6rO43124961rhjCtD6FiMkNy6lxQ/oDL2RvLJYP7pDhu9yT1QOsf
+         /yclTNeTTplgahWau4Cn3sw6emk9zzl3srm/Dn7tFplSgg1WQ7CxPJDMFmyOWuLumxz7
+         h/G4pInpbwXQgUSjIdAMUMvKBVwN6+5LdcCny+fnHAbwBz4uyST04aYTfVF6wliGNS6M
+         UOfmth1xWGM8rbqQMaUqsgYbLP8w/b3fUMt6m+ra3vlKpYb1+BZm6OAW9KLuNyNlZQBP
+         X2lA==
+X-Gm-Message-State: ANoB5plX21wh2wBOALp3glXHTy+6vvH8+xQiIkSYpYdDEfUTn0ca3qbY
+        10CkRyvdb8AaoesfTjPjYwc=
+X-Google-Smtp-Source: AA0mqf51vop4o/eMa8yjEyPDs/nsh8zNaWybH6NyGggUTd/tMDmyk1W78wI73sdCdOZ6ajioW9R8BQ==
+X-Received: by 2002:a05:600c:3508:b0:3cf:b73f:bf8f with SMTP id h8-20020a05600c350800b003cfb73fbf8fmr25612865wmq.7.1671191407196;
+        Fri, 16 Dec 2022 03:50:07 -0800 (PST)
+Received: from [192.168.1.132] ([207.188.167.132])
+        by smtp.gmail.com with ESMTPSA id p12-20020a05600c468c00b003cf483ee8e0sm11375737wmo.24.2022.12.16.03.50.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Dec 2022 03:50:06 -0800 (PST)
+Message-ID: <bc718a1e-13e9-db16-efef-06e94395ba39@gmail.com>
+Date:   Fri, 16 Dec 2022 12:50:04 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v3 5/7] arm64: dts: mediatek: Remove pins-are-numbered
+ property
+Content-Language: en-US
+To:     Kevin Hilman <khilman@baylibre.com>,
+        =?UTF-8?Q?Bernhard_Rosenkr=c3=a4nzer?= <bero@baylibre.com>,
+        devicetree@vger.kernel.org
+Cc:     linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        krzysztof.kozlowski@linaro.org,
+        angelogioacchino.delregno@collabora.com,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org
+References: <20221129023401.278780-1-bero@baylibre.com>
+ <20221129023401.278780-6-bero@baylibre.com> <7ho7si56n3.fsf@baylibre.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <7ho7si56n3.fsf@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-acpi_get_and_request_gpiod() does not take a gpio_lookup_flags argument
-specifying that the pins direction should be initialized to a specific
-value.
 
-This means that in some cases the pins might be left in input mode, causing
-the gpiod_set() calls made to enable the clk / regulator to not work.
 
-One example of this problem is the clk-enable GPIO for the ov01a1s sensor
-on a Dell Latitude 9420 being left in input mode causing the clk to
-never get enabled.
+On 05/12/2022 14:20, Kevin Hilman wrote:
+> Matthias,
+> 
+> Bernhard Rosenkränzer <bero@baylibre.com> writes:
+> 
+>> Remove the unnecessary pins-are-numbered property from
+>> arm64 Mediatek DeviceTrees
+>>
+>> Signed-off-by: Bernhard Rosenkränzer <bero@baylibre.com>
+>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Acked-by: Kevin Hilman <khilman@baylibre.com>
+> 
+> Now that the driver/binding parts are queued, I'm assuming you'll take this patch
+> (and patch 6) via the mediatek tree?
+> 
 
-Explicitly set the direction of the pins to output to fix this.
+Yes, both applied now. Thanks for the heads up.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/platform/x86/intel/int3472/clk_and_regulator.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/platform/x86/intel/int3472/clk_and_regulator.c b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-index 4b4d77db44ce..15a8bff645f7 100644
---- a/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-+++ b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-@@ -106,6 +106,9 @@ int skl_int3472_register_clock(struct int3472_discrete_device *int3472,
- 		return dev_err_probe(int3472->dev, ret, "getting regulator GPIO\n");
- 	}
- 
-+	/* Ensure the pin is in output mode and non-active state */
-+	gpiod_direction_output(int3472->clock.ena_gpio, 0);
-+
- 	init.name = kasprintf(GFP_KERNEL, "%s-clk",
- 			      acpi_dev_name(int3472->adev));
- 	if (!init.name) {
-@@ -198,6 +201,9 @@ int skl_int3472_register_regulator(struct int3472_discrete_device *int3472,
- 		return PTR_ERR(int3472->regulator.gpio);
- 	}
- 
-+	/* Ensure the pin is in output mode and non-active state */
-+	gpiod_direction_output(int3472->regulator.gpio, 0);
-+
- 	cfg.dev = &int3472->adev->dev;
- 	cfg.init_data = &init_data;
- 	cfg.ena_gpiod = int3472->regulator.gpio;
--- 
-2.38.1
-
+> Thanks,
+> 
+> Kevin
