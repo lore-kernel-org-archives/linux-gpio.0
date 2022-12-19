@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 869E4C46467
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1554C3DA7A
 	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 12:27:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231874AbiLSM0d (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S231863AbiLSM0d (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 19 Dec 2022 07:26:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37572 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231749AbiLSM0a (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 07:26:30 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F329DDF7C;
-        Mon, 19 Dec 2022 04:26:29 -0800 (PST)
+        with ESMTP id S231785AbiLSM02 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 07:26:28 -0500
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 348AADFC9;
+        Mon, 19 Dec 2022 04:26:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1671452789; x=1702988789;
+  t=1671452788; x=1702988788;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=9H3NXshAzg/RDaoFhIoQKl84tEskXKz1FHtjrazybbU=;
-  b=EK6hJzUI6B1jax7sAIFQmjxAEum8yyYiVskia7hm1QQizfhu0BD8s6ct
-   e3S2TZ/7/rtOvkYku4PAowTUtOhp4O1bdzReNJX1pLk9HBVSg1OrSfveJ
-   XfbP6OV3wsIhiSXUogxtIqmhbfBN6kFIbS6soX46vTJip/2ofJmcpBq2L
-   z2KgUw2sglOQdEly3QgC2vps/j0iUkVMWTQ3MGcpxD8NtNlqiR6gF+RMX
-   eyX/xY3ilz13RPcthgcNby98LZ+JZvFTdwZYBRx0K2EcHf9jQM0uFi6Do
-   zVL9dlvXWHMLIzEoOnNEhGn+U1NaAts09sV8JBRQ9dwSqUhxhg05UmFGt
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="319382665"
+  bh=+vr66mB+X+nN+FNV+H9xxqKlBUIy4h6hLuyR2XHOPV0=;
+  b=P1Ixxk21EawGwIZbyqJReZaax5jxmV89phE8QehiymMf+fOXznHlpSC5
+   xmik8cWlJq+Mj2XNRjXATdibq6MJB7lPUWwcacoJvOPdpx0NB0zRzGfeU
+   /5JIwubfym+zCyCtZXu2f5UXzaZlSgDizuHpLpRCLDu1xu0kGN7ybAdFX
+   +kH+uP4GkUqRuvh46YiKVjibxnut0keRiCSzLy/FEAFrmM7JnAqfP+VC7
+   gYhOG/enmz1HC72JMS8FTGhpoFHRBymGpPCb+LfRZIhO0vcMxqZA5n8fR
+   lDXzv78YZ56WPjkob17TgCnSgStXBSQRI+2u2vPuOr5mbwZQlC2rVatUe
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="302762243"
 X-IronPort-AV: E=Sophos;i="5.96,255,1665471600"; 
-   d="scan'208";a="319382665"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2022 04:26:29 -0800
+   d="scan'208";a="302762243"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2022 04:26:26 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="628283700"
+X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="824831630"
 X-IronPort-AV: E=Sophos;i="5.96,255,1665471600"; 
-   d="scan'208";a="628283700"
+   d="scan'208";a="824831630"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 19 Dec 2022 04:26:27 -0800
+  by orsmga005.jf.intel.com with ESMTP; 19 Dec 2022 04:26:24 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id F29A0529; Mon, 19 Dec 2022 14:26:54 +0200 (EET)
+        id C73BE132; Mon, 19 Dec 2022 14:26:54 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andy@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 09/17] pinctrl: geminilake: Replace GLK_COMMUNITY() by INTEL_COMMUNITY_SIZE()
-Date:   Mon, 19 Dec 2022 14:26:35 +0200
-Message-Id: <20221219122643.3513-9-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 05/17] pinctrl: cedarfork: Replace CDF_COMMUNITY() by INTEL_COMMUNITY_GPPS()
+Date:   Mon, 19 Dec 2022 14:26:31 +0200
+Message-Id: <20221219122643.3513-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221219122643.3513-1-andriy.shevchenko@linux.intel.com>
 References: <20221219122643.3513-1-andriy.shevchenko@linux.intel.com>
@@ -58,73 +58,37 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use INTEL_COMMUNITY_SIZE() common macro instead custom GLK_COMMUNITY().
+Use INTEL_COMMUNITY_GPPS() common macro instead custom CDF_COMMUNITY().
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-geminilake.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+ drivers/pinctrl/intel/pinctrl-cedarfork.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-geminilake.c b/drivers/pinctrl/intel/pinctrl-geminilake.c
-index df02028b40f3..918cc9f261cf 100644
---- a/drivers/pinctrl/intel/pinctrl-geminilake.c
-+++ b/drivers/pinctrl/intel/pinctrl-geminilake.c
-@@ -20,17 +20,8 @@
- #define GLK_GPI_IS	0x100
- #define GLK_GPI_IE	0x110
+diff --git a/drivers/pinctrl/intel/pinctrl-cedarfork.c b/drivers/pinctrl/intel/pinctrl-cedarfork.c
+index aa6f9040d3d8..2ab52b1fbc59 100644
+--- a/drivers/pinctrl/intel/pinctrl-cedarfork.c
++++ b/drivers/pinctrl/intel/pinctrl-cedarfork.c
+@@ -28,18 +28,7 @@
+ 	}
  
--#define GLK_COMMUNITY(s, e)				\
+ #define CDF_COMMUNITY(b, s, e, g)			\
 -	{						\
--		.padown_offset = GLK_PAD_OWN,		\
--		.padcfglock_offset = GLK_PADCFGLOCK,	\
--		.hostown_offset = GLK_HOSTSW_OWN,	\
--		.is_offset = GLK_GPI_IS,		\
--		.ie_offset = GLK_GPI_IE,		\
--		.gpp_size = 32,                         \
+-		.barno = (b),				\
+-		.padown_offset = CDF_PAD_OWN,		\
+-		.padcfglock_offset = CDF_PADCFGLOCK,	\
+-		.hostown_offset = CDF_HOSTSW_OWN,	\
+-		.is_offset = CDF_GPI_IS,		\
+-		.ie_offset = CDF_GPI_IE,		\
 -		.pin_base = (s),			\
 -		.npins = ((e) - (s) + 1),		\
+-		.gpps = (g),				\
+-		.ngpps = ARRAY_SIZE(g),			\
 -	}
-+#define GLK_COMMUNITY(b, s, e)				\
-+	INTEL_COMMUNITY_SIZE(b, s, e, 32, 4, GLK)
++	INTEL_COMMUNITY_GPPS(b, s, e, g, CDF)
  
- /* GLK */
- static const struct pinctrl_pin_desc glk_northwest_pins[] = {
-@@ -173,7 +164,7 @@ static const struct intel_function glk_northwest_functions[] = {
- };
- 
- static const struct intel_community glk_northwest_communities[] = {
--	GLK_COMMUNITY(0, 79),
-+	GLK_COMMUNITY(0, 0, 79),
- };
- 
- static const struct intel_pinctrl_soc_data glk_northwest_soc_data = {
-@@ -306,7 +297,7 @@ static const struct intel_function glk_north_functions[] = {
- };
- 
- static const struct intel_community glk_north_communities[] = {
--	GLK_COMMUNITY(0, 79),
-+	GLK_COMMUNITY(0, 0, 79),
- };
- 
- static const struct intel_pinctrl_soc_data glk_north_soc_data = {
-@@ -345,7 +336,7 @@ static const struct pinctrl_pin_desc glk_audio_pins[] = {
- };
- 
- static const struct intel_community glk_audio_communities[] = {
--	GLK_COMMUNITY(0, 19),
-+	GLK_COMMUNITY(0, 0, 19),
- };
- 
- static const struct intel_pinctrl_soc_data glk_audio_soc_data = {
-@@ -427,7 +418,7 @@ static const struct intel_function glk_scc_functions[] = {
- };
- 
- static const struct intel_community glk_scc_communities[] = {
--	GLK_COMMUNITY(0, 34),
-+	GLK_COMMUNITY(0, 0, 34),
- };
- 
- static const struct intel_pinctrl_soc_data glk_scc_soc_data = {
+ /* Cedar Fork PCH */
+ static const struct pinctrl_pin_desc cdf_pins[] = {
 -- 
 2.35.1
 
