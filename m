@@ -2,196 +2,95 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E14C3DA78
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 15:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 468B8C10F1B
+	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 19:22:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232673AbiLSPJd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 19 Dec 2022 10:09:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40788 "EHLO
+        id S232490AbiLSTWL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 19 Dec 2022 14:22:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231764AbiLSPJc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 10:09:32 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB24CDD3;
-        Mon, 19 Dec 2022 07:09:31 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id jo4so13280997ejb.7;
-        Mon, 19 Dec 2022 07:09:31 -0800 (PST)
+        with ESMTP id S232725AbiLSTVp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 14:21:45 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F7F2167FB;
+        Mon, 19 Dec 2022 11:20:24 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id 3-20020a17090a098300b00219041dcbe9so9811922pjo.3;
+        Mon, 19 Dec 2022 11:20:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CPP1UN7Ar0sMqvps1krvizfT4fcZtHufSOYInrdLQ9s=;
-        b=Vch5vX+53bFRoh4LYWYFeVvWjl23HwdshNcYIrYt9KdEtjBi94O8rE2bduXvoWcFSh
-         PDo72u2twvqRUL83mU6WAvXvKVluiiTtFe3o8ZHLws8mV/U700JP5wx5c9OUw25QwMNO
-         eSecGCeiLm22PJAIg/yqIAPm55FfjzJiw/jKPC5lq/3/pEZCvd92JTu2sun7ZxEjgDds
-         k4Kq2VTqpAzhSL2vdOQ8DsNGQvUgBcqX+VyX2mAzLoPh8w7z5hax4arzh5iHmAe9tA9K
-         Eb33UGe/EWhUnR6qo1yFRChWGRsn/STziD8yGy+gxX7W7GGmSh3hSjoNPQfwS4ndVSE6
-         cJjQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=skKyH0pCplF51paW1vc+b7xrSLxnYuoxKxvIMnik6dQ=;
+        b=KNcvtCjac7s9MpKpUwUH3y3B/MIoefQP1vQM/RIQsRIV6qwnNwRujTdsiEoiHnLO9/
+         NXY93MVJeHNqhWZLqHFW+zAreM14iThMtUayTVKSRP1Cx2F8gh88JOhUvOmoeI+DN1AO
+         aAQxHHHjqT9aJC9G0UN4ubtUsZQUDqh7qfpW/9nRBX92fenN9Tnx0HityOcdK7eBOXqD
+         jcOLzUd7iZxa6xnYRhq96dIJtUektstfd335NJ6Zw007wEu+LBRxv7YY5EO/SpmnteWo
+         WqBp3g4U7Wem7HmeWwLz/80cekxtn9FDRpMjukRP27LznrfLlf1BswdRRXig22Lt2rDl
+         soyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CPP1UN7Ar0sMqvps1krvizfT4fcZtHufSOYInrdLQ9s=;
-        b=0M1AYA4Mv0UhF/ytQoT75r7+xU6KAfwx48LOdlmP1DwOuXDs388MVxvHizX+VnRUaD
-         mXMxNTEsqAVTZk5RBPOjKemkOnbMEpUn54ibM2Rr1nnPtiR8FKXCUZDWlnp2EihknkFz
-         2MzUq2Is8zDs3+uHnO+JA11PfoRfiJUeTyNij7iXMhmvTCD0mHZkt4N6SZPk6Ggo0cw4
-         YLVajXIO4aTXpDFbvCmD6sa7m5ms0Ms+k8klybKkqmRZi9QZbcrXeO8I9hOJnc46MIKz
-         tLaqNdrua4t22Y6hDB4tWMtQl+xR2hZxVKtoGn0vug09n2/ZeIX5fpisEAKkSTE51EA5
-         PatQ==
-X-Gm-Message-State: ANoB5pnG5eXilvWZtSRIW9At37Bt962qi3bS8Cy8dfxByyKDCdnDHjWR
-        128MXeEFmEnV+DdJPadSo0XFSRxbe9oAkNekK/Q=
-X-Google-Smtp-Source: AA0mqf6m2mXu2pGxcOvvXRiO8sAwap1VisriEngJKVk0d5ABRsJFZ0uH+Dh9SlqcpfpgqQgDsuHPBji710regeC9qzs=
-X-Received: by 2002:a17:906:3e41:b0:78d:bc9f:33da with SMTP id
- t1-20020a1709063e4100b0078dbc9f33damr80730962eji.80.1671462570384; Mon, 19
- Dec 2022 07:09:30 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=skKyH0pCplF51paW1vc+b7xrSLxnYuoxKxvIMnik6dQ=;
+        b=n/n2oqbCscdIOp4qi5YFTYYz9ChajYa95Y3bny+4zMEwNSBse0S1ssQeDmkgQKaYd0
+         RdL7mVNuiCCnnBtopicdRWzfNA0xPtwmO6xHeHMuTjIeZ7u4XuUYnIAw15/z6TjAzdS9
+         x2VrCyiBG0+0N6FP5OnP1lHjzLHGPY9AWeFWfP51UxVNgNkExFzOBh+nRzenXYZarHeu
+         lTxBUCY/tlY/yM5dnVcCX3lBuBLkFbgGeZ5Pd0yck111togyeOhx0CXR1zHcDjVx/hP3
+         A5a7B8HN61RYyPH/BvSOfvmDfa9oI8ZNPom+4vahFNtd5XIFUfZRptIVm6ZjWJ41foaj
+         NcoA==
+X-Gm-Message-State: ANoB5plqc+EQc4RBFrjAnqqZbHEbOxi1jXvpdbTgEJ49PUtbCSKUqUZp
+        hU/zqnuRDnSCI8ZbfDtpJUmz1pwuB3E=
+X-Google-Smtp-Source: AA0mqf5Nfd1ZEOeAUhIAScWhBp46k0DNVoT/9fISCH6Uff1TuQgri7hPAQ4b4OXun5v/ML30HuriHQ==
+X-Received: by 2002:a05:6a20:4d92:b0:ac:16ae:f46 with SMTP id gj18-20020a056a204d9200b000ac16ae0f46mr50366952pzb.15.1671477624048;
+        Mon, 19 Dec 2022 11:20:24 -0800 (PST)
+Received: from dtor-ws.mtv.corp.google.com ([2620:15c:9d:2:4c62:79e:b4cd:2cbb])
+        by smtp.gmail.com with ESMTPSA id b6-20020a1709027e0600b001869f2120absm7488342plm.294.2022.12.19.11.20.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Dec 2022 11:20:23 -0800 (PST)
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 3/5] gpiolib: of: remove obsolete comment for of_gpio_get_count()
+Date:   Mon, 19 Dec 2022 11:20:14 -0800
+Message-Id: <20221219192016.1396950-3-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.39.0.314.g84b9a713c41-goog
+In-Reply-To: <20221219192016.1396950-1-dmitry.torokhov@gmail.com>
+References: <20221219192016.1396950-1-dmitry.torokhov@gmail.com>
 MIME-Version: 1.0
-References: <20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20221107175305.63975-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdV46aMfqu+kMW9E-RURugK-giOx0k-NPe5XX4nxKZJzkg@mail.gmail.com>
- <CA+V-a8uqQ2fK1UjRT864jyHdt6Z47V=iARSJC6B2M6Gikms=Eg@mail.gmail.com>
- <CA+V-a8sGLrsRWFi3-hNmB=Uj-aCQLD5VQesmUFb8N1NAqhyLuQ@mail.gmail.com>
- <CAMuHMdW_QuBUUypyrAbLqWPdZ81bWeYDyPbBf=2KmDht1X44bA@mail.gmail.com>
- <CA+V-a8uQFiU2KRcsoC5--tjfuWRj3VRJAUaZtv0+U0DziZQOwg@mail.gmail.com> <CAMuHMdWROUWd0eQXrjx2pUVs2AtvRvu7spbpGWf5EDumemetcw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWROUWd0eQXrjx2pUVs2AtvRvu7spbpGWf5EDumemetcw@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Mon, 19 Dec 2022 15:09:04 +0000
-Message-ID: <CA+V-a8sGe83hWRb228YPLy7_9Ap7N4abP36hj_y+Ms7zuj+wfw@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/5] dt-bindings: interrupt-controller:
- renesas,rzg2l-irqc: Document RZ/G2UL SoC
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Geert,
+The function is only being called form the main gpiolib module, so
+remove comment saying that it is also used by external callers.
 
-On Mon, Dec 19, 2022 at 2:47 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, Dec 19, 2022 at 3:26 PM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Mon, Dec 19, 2022 at 1:50 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Mon, Dec 19, 2022 at 1:57 PM Lad, Prabhakar
-> > > <prabhakar.csengg@gmail.com> wrote:
-> > > > On Fri, Nov 18, 2022 at 12:29 PM Lad, Prabhakar
-> > > > <prabhakar.csengg@gmail.com> wrote:
-> > > > > On Thu, Nov 17, 2022 at 10:54 AM Geert Uytterhoeven
-> > > > > <geert@linux-m68k.org> wrote:
-> > > > > > On Mon, Nov 7, 2022 at 6:53 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> > > > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > > > >
-> > > > > > > Document RZ/G2UL (R9A07G043) IRQC bindings. The RZ/G2UL IRQC block is
-> > > > > > > identical to one found on the RZ/G2L SoC. No driver changes are
-> > > > > > > required as generic compatible string "renesas,rzg2l-irqc" will be
-> > > > > > > used as a fallback.
-> > > > > > >
-> > > > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > > > > > Note, renesas,r9a07g043u-irqc is added we have slight difference's compared to RZ/Five
-> > > > > > > - G2UL IRQCHIP (hierarchical IRQ domain) -> GIC where as on RZ/Five we have PLIC (chained interrupt
-> > > > > > > domain) -> RISCV INTC
-> > > > > >
-> > > > > > I think this difference is purely a software difference, and abstracted
-> > > > > > in DTS through the interrupt hierarchy.
-> > > > > > Does it have any impact on the bindings?
-> > > > > >
-> > > > > > > - On the RZ/Five we have additional registers for IRQC block
-> > > > > >
-> > > > > > Indeed, the NMI/IRQ/TINT "Interruput" Mask Control Registers, thus
-> > > > > > warranting separate compatible values.
-> > > > > >
-> > > > > > > - On the RZ/Five we have BUS_ERR_INT which needs to be handled by IRQC
-> > > > > >
-> > > > > > Can you please elaborate? I may have missed something, but to me it
-> > > > > > looks like that is exactly the same on RZ/G2UL and on RZ/Five.
-> > > > > >
-> > > > > Now that we have to update the binding doc with the BUS_ERR_INT too,
-> > > > > do you think it would make sense to add interrupt-names too?
-> > >
-> > > > Gentle ping.
-> > >
-> > > Thanks for the ping, I had missed you were waiting on input from me.
-> > > Sorry for that...
-> > >
-> > No worries.
-> >
-> > > As there are three different groups of parent interrupts, adding
-> > > interrupt-names makes sense.
-> > Ok.
-> >
-> > > However, as this binding is already in active use since v6.1, you
-> > > probably need to keep on supporting the
-> > > ack of interrupt-names.  Or do you think there are no real users yet,
-> > > and we can drop support for that?
-> > >
-> > Sorry can you please elaborate on "ack of interrupt-names".
->
-> Oops, s/ack/lack/. I.e. what you described below.
->
-Got that.
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/gpio/gpiolib-of.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-> > So moving forward the driver will first check for interrupt-names
-> > property and if that exists it will map the IRQ0-7 and GPIO-TINIT
-> > interrupts (based on the names it will create a hierarchy domain) and
-> > for the NMI and BUS_ERR_INT we request the IRQ numbers and register
-> > the IRQ handler in IRQC driver itself.
-> >
-> > And for backward compatibility we parse the IRQ numbers based on
-> > indexes i.e. 0 = NMI, 1-8  = IRQ 0-7  and 9-41 GPIO TINT interrupts.
->
-> Exactly.
->
-> > > > > BUS_ERR_INT will have to be handled IRQC itself (i.e. IRQC will
-> > > > > register a handler for it).
-> > >
-> > > Do you mean you will need a fourth parent type for that?
-> > >
-> > No something like what we have for NMI we can add something similar
-> > below for bus error interrupts:
-> > interrupts = ....
-> >               <GIC_SPI 57 IRQ_TYPE_EDGE_RISING>;
-> > interrupt-names = ....,
-> >              "bus-error-int";
->
-> Hence a fourth name?
->
-Agreed.
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 6724e375678d..6114c5b3d2ce 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -76,12 +76,6 @@ static int of_gpio_spi_cs_get_count(struct device *dev, const char *con_id)
+ 	return of_gpio_named_count(np, "gpios");
+ }
+ 
+-/*
+- * This is used by external users of of_gpio_count() from <linux/of_gpio.h>
+- *
+- * FIXME: get rid of those external users by converting them to GPIO
+- * descriptors and let them all use gpiod_count()
+- */
+ int of_gpio_get_count(struct device *dev, const char *con_id)
+ {
+ 	int ret;
+-- 
+2.39.0.314.g84b9a713c41-goog
 
-> 1. legacy index  0 -> "nmi"
-> 2. legacy indices 1-8 -> "irq%u" (0-7)
-> 3. legacy indices 9-41 -> "tint%u" (0-31)
-> 4. (not supported) -> "bus-error-int" (or "bus-err"?)
->
-"bus-err" I think based on previous experience ;)
-
-While I am at it I'll expand the interrupts property with descriptions.
-
-> > As the registers to handle the NMI and BUS_ERR_INT are present on the
-> > IRQC block, the interrupt handler will have to be registered by the
-> > IRQC block itself by requesting the IRQ. So we will have to skip
-> > mapping of BUS_ERR_INT as we do for the NMI case. Does that make
-> > sense?
->
-> OK.
->
-> BTW, that means RZG2L_NMI from <dt-bindings/interrupt-controller/irqc-rzg2l.h>
-> will never be used?
->
-Agreed, that needs to be dropped.
-
-Cheers,
-Prabhakar
