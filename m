@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28ECCC3DA7B
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 12:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4991C3DA7A
+	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 12:27:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231785AbiLSM1G (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 19 Dec 2022 07:27:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37616 "EHLO
+        id S231511AbiLSM1E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 19 Dec 2022 07:27:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231861AbiLSM0c (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 07:26:32 -0500
+        with ESMTP id S231837AbiLSM0a (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 07:26:30 -0500
 Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DDCDDF7C;
-        Mon, 19 Dec 2022 04:26:31 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC2D5DEC2;
+        Mon, 19 Dec 2022 04:26:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1671452791; x=1702988791;
+  t=1671452789; x=1702988789;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=MgTVQspvxypYWPH2mE03rgHPPqPElJG5kwQZEMZhevw=;
-  b=ByrfnuLbTrjULg9L9M3+XIxMyjEzWgTYXw5GBjz201qtFTIHucY9gvfm
-   5ZRuI/8Xgnv3lKDjB/ePW82v+zApc0wpvZNHRrr/fV/fYwm4iudN1RVD+
-   iYyj079lNh2TCnyjP448BHtLQZVeLO++jdxgH1JYTQeP9F861ym0jqK60
-   GCfg9XKhry15rusEDz2CU8D6HPh6DxY334Dhl1DtN0y4tbVp4yGsMdyZ3
-   izhMBwi734mOgRcY4sEdVx+vAJin96Cwp/N4MfmBhHw9SA5GFpRXr09N5
-   l5qRr1aEjPBrqPo7W3r9MYYGEmkI3anaT0uCOOT595uJFpQri4ERy3XxJ
+  bh=mdWcVI4CgNkyNHsLiRZGRTpc2OVl6lYx9EbkNfottGA=;
+  b=LeTnpomKI01CR5uP0Jj1bJ7o3BNd8UWf+kXHj8prnJ0P+Yl4gqFYYl60
+   y9QVlTcXtX28xj71UdZDTvHJqfmShXtkPDQGveiSBu0m6Uma4yGhYsfFB
+   p4F1FUIyQ02CMk58ouvn7AL1CzUBffBdtw75IbLiMzNkLn/1puQ1sjTC8
+   idQMcUfd7fvLP8AjaKAy/iJ+sY5bXq9BqEhvSvkCV0NQZszJKm3RiCqpj
+   lwQ3nCX91VmhZcGSkSzlI6pTYBi1Sjk3+2TPt/R1nYlxZ6+Yjp8e4NnK9
+   4Hjk+JK4Q+uOeUgOxCx+gizaXTqs3ChSr0nrsOnJ0WUCL4Om+HlKfAxN8
    w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="319382680"
+X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="319382662"
 X-IronPort-AV: E=Sophos;i="5.96,255,1665471600"; 
-   d="scan'208";a="319382680"
+   d="scan'208";a="319382662"
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2022 04:26:30 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2022 04:26:29 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="628283704"
+X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="628283699"
 X-IronPort-AV: E=Sophos;i="5.96,255,1665471600"; 
-   d="scan'208";a="628283704"
+   d="scan'208";a="628283699"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 19 Dec 2022 04:26:28 -0800
+  by orsmga006.jf.intel.com with ESMTP; 19 Dec 2022 04:26:27 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 1C6BE5BB; Mon, 19 Dec 2022 14:26:55 +0200 (EET)
+        id DB50321C; Mon, 19 Dec 2022 14:26:54 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andy@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 12/17] pinctrl: lakefield: Replace LKF_COMMUNITY() by INTEL_COMMUNITY_GPPS()
-Date:   Mon, 19 Dec 2022 14:26:38 +0200
-Message-Id: <20221219122643.3513-12-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 07/17] pinctrl: elkhartlake: Replace EHL_COMMUNITY() by INTEL_COMMUNITY_GPPS()
+Date:   Mon, 19 Dec 2022 14:26:33 +0200
+Message-Id: <20221219122643.3513-7-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221219122643.3513-1-andriy.shevchenko@linux.intel.com>
 References: <20221219122643.3513-1-andriy.shevchenko@linux.intel.com>
@@ -58,37 +58,83 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use INTEL_COMMUNITY_GPPS() common macro instead custom LKF_COMMUNITY().
+Use INTEL_COMMUNITY_GPPS() common macro instead custom EHL_COMMUNITY().
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-lakefield.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ drivers/pinctrl/intel/pinctrl-elkhartlake.c | 24 ++++++---------------
+ 1 file changed, 7 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-lakefield.c b/drivers/pinctrl/intel/pinctrl-lakefield.c
-index 3c6283c4827f..8dac2d6012b1 100644
---- a/drivers/pinctrl/intel/pinctrl-lakefield.c
-+++ b/drivers/pinctrl/intel/pinctrl-lakefield.c
-@@ -29,18 +29,7 @@
+diff --git a/drivers/pinctrl/intel/pinctrl-elkhartlake.c b/drivers/pinctrl/intel/pinctrl-elkhartlake.c
+index 4702bdfa10e3..64b1997df0be 100644
+--- a/drivers/pinctrl/intel/pinctrl-elkhartlake.c
++++ b/drivers/pinctrl/intel/pinctrl-elkhartlake.c
+@@ -27,18 +27,8 @@
+ 		.size = ((e) - (s) + 1),		\
  	}
  
- #define LKF_COMMUNITY(b, s, e, g)			\
+-#define EHL_COMMUNITY(s, e, g)				\
 -	{						\
--		.barno = (b),				\
--		.padown_offset = LKF_PAD_OWN,		\
--		.padcfglock_offset = LKF_PADCFGLOCK,	\
--		.hostown_offset = LKF_HOSTSW_OWN,	\
--		.is_offset = LKF_GPI_IS,		\
--		.ie_offset = LKF_GPI_IE,		\
+-		.padown_offset = EHL_PAD_OWN,		\
+-		.padcfglock_offset = EHL_PADCFGLOCK,	\
+-		.hostown_offset = EHL_HOSTSW_OWN,	\
+-		.is_offset = EHL_GPI_IS,		\
+-		.ie_offset = EHL_GPI_IE,		\
 -		.pin_base = (s),			\
 -		.npins = ((e) - (s) + 1),		\
 -		.gpps = (g),				\
 -		.ngpps = ARRAY_SIZE(g),			\
 -	}
-+	INTEL_COMMUNITY_GPPS(b, s, e, g, LKF)
++#define EHL_COMMUNITY(b, s, e, g)			\
++	INTEL_COMMUNITY_GPPS(b, s, e, g, EHL)
  
- /* Lakefield */
- static const struct pinctrl_pin_desc lkf_pins[] = {
+ /* Elkhart Lake */
+ static const struct pinctrl_pin_desc ehl_community0_pins[] = {
+@@ -121,7 +111,7 @@ static const struct intel_padgroup ehl_community0_gpps[] = {
+ };
+ 
+ static const struct intel_community ehl_community0[] = {
+-	EHL_COMMUNITY(0, 66, ehl_community0_gpps),
++	EHL_COMMUNITY(0, 0, 66, ehl_community0_gpps),
+ };
+ 
+ static const struct intel_pinctrl_soc_data ehl_community0_soc_data = {
+@@ -262,7 +252,7 @@ static const struct intel_padgroup ehl_community1_gpps[] = {
+ };
+ 
+ static const struct intel_community ehl_community1[] = {
+-	EHL_COMMUNITY(0, 112, ehl_community1_gpps),
++	EHL_COMMUNITY(0, 0, 112, ehl_community1_gpps),
+ };
+ 
+ static const struct intel_pinctrl_soc_data ehl_community1_soc_data = {
+@@ -335,7 +325,7 @@ static const struct intel_padgroup ehl_community3_gpps[] = {
+ };
+ 
+ static const struct intel_community ehl_community3[] = {
+-	EHL_COMMUNITY(0, 46, ehl_community3_gpps),
++	EHL_COMMUNITY(0, 0, 46, ehl_community3_gpps),
+ };
+ 
+ static const struct intel_pinctrl_soc_data ehl_community3_soc_data = {
+@@ -441,7 +431,7 @@ static const struct intel_padgroup ehl_community4_gpps[] = {
+ };
+ 
+ static const struct intel_community ehl_community4[] = {
+-	EHL_COMMUNITY(0, 79, ehl_community4_gpps),
++	EHL_COMMUNITY(0, 0, 79, ehl_community4_gpps),
+ };
+ 
+ static const struct intel_pinctrl_soc_data ehl_community4_soc_data = {
+@@ -469,7 +459,7 @@ static const struct intel_padgroup ehl_community5_gpps[] = {
+ };
+ 
+ static const struct intel_community ehl_community5[] = {
+-	EHL_COMMUNITY(0, 7, ehl_community5_gpps),
++	EHL_COMMUNITY(0, 0, 7, ehl_community5_gpps),
+ };
+ 
+ static const struct intel_pinctrl_soc_data ehl_community5_soc_data = {
 -- 
 2.35.1
 
