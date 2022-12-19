@@ -2,94 +2,126 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5B9C4332F
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 12:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A31EC46467
+	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 12:57:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232033AbiLSMod (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 19 Dec 2022 07:44:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52082 "EHLO
+        id S231693AbiLSM5z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 19 Dec 2022 07:57:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232117AbiLSMnx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 07:43:53 -0500
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7831510B6A;
-        Mon, 19 Dec 2022 04:43:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1671453814; x=1702989814;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=EnL6MrmnzkZ9KQarfI8X6RWJyObe5UEYwf4Sqd3GiDU=;
-  b=kR5H9Ucv6tFIJTC8ZxC56T8V4lOJOgALziDm9O4f3SIvlqR6yAfILYXy
-   /+rhqRuuvz6GDRIqd6yjouPc65oluZaoioLjJ9JILRLLy4xSaa+ZpKT0h
-   ZbZ3QXuQncMG1k+O/pnanvfZd+1COaBNEG7KssR6/rlvxDZGvL49E2Unu
-   OOVOLBd6Hxk2adK+RnvynZz5jM7geui2+07bASEskrmZsi5Mrs4u5nm6x
-   XMqC8B3mX0BUFLEh/nYgtPaenuQ3mLjLaomanK/fGSBMxe8w7NrFeWSsh
-   /YoZAstGHGmFwiFeaAj2RPCtqgKGqlWxF6BKJKIKp4l45vGf1JN2hrm2z
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="381564859"
-X-IronPort-AV: E=Sophos;i="5.96,255,1665471600"; 
-   d="scan'208";a="381564859"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2022 04:42:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="979361554"
-X-IronPort-AV: E=Sophos;i="5.96,255,1665471600"; 
-   d="scan'208";a="979361554"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 19 Dec 2022 04:42:46 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id B67F0132; Mon, 19 Dec 2022 14:42:56 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 4/8] pinctrl: cherryview: Convert to use new memeber in struct intel_function
-Date:   Mon, 19 Dec 2022 14:42:36 +0200
-Message-Id: <20221219124240.62781-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221219124240.62781-1-andriy.shevchenko@linux.intel.com>
-References: <20221219124240.62781-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S231292AbiLSM5x (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 07:57:53 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AECAF59C;
+        Mon, 19 Dec 2022 04:57:52 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id kw15so21181278ejc.10;
+        Mon, 19 Dec 2022 04:57:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4LQE62+2wuigm3XEvUptVNxTDjUyXyDiBAp0xKdO5OI=;
+        b=avXCIb03aNF+/2KOLLu/1s2Q8CZXuni1vKuNEJpnt7VtrfmbOhDmbl0vMtN+C+YHjr
+         4dWIH1fOJEtgcUmuzMbis1uKmtya1+9bhRMNgkAtFvwiC53K/787JLPqh5Rf1wE4I3iJ
+         9NxduGDW8iJz9kUD3YidXhuVs/PCGE260dRl58DkgTRNDatt2EXvPgtOSBaRWE9kq8hs
+         F4ow8PV8ZYzIdaX04IWD/oKip4e0ZtPFL46uib+twstsTdMuKAblcFCT252wd+iOlC9t
+         eiGqikfD2lNDXthOFgQJfZ8BX+vlv91WAjebj4+znAIUrX9kja7+TfzdclkiT0sdWyr0
+         HBcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4LQE62+2wuigm3XEvUptVNxTDjUyXyDiBAp0xKdO5OI=;
+        b=4fu9SqdF4rcWLgEocX5vkwLdQHYYLUF+ELDKAG7eNZaVhjQll0oqRYpBxWCafSCIim
+         dJA93twdCOKTSiFqu1YYK1k/1UuPfkcQnJwNSLiaSY2mQBjDLrM1fyRmZ/F1a/4RXFN5
+         osGAp+GPooAJKDXbDYGYFFLeHKy43v08izuiuls6E0aqqB9HjSrozLwECJ6Grg7oeIwq
+         vkLVBPJSaGEXyryc03SWPsTpeiqIp5Q+ZJm27RnV5LqkIZcHoHAxcC3ofgmDzKLsQIu5
+         REQtl3PMQDkE5AvBfI2BPs+J53b0N0sWpAsxKm8wakmJ+y2rfu7HmG0qbfvW/oFg3I5s
+         NXrw==
+X-Gm-Message-State: ANoB5pmGgsCyhlz/Qa220U7TEdymROr3IAqdhB+7fJjq/KZoJG31xH7u
+        iZt7/TKuCmVoKuemZm2YiErjK51ggDKP0bHvAKc=
+X-Google-Smtp-Source: AA0mqf5xgU7O52hFIF6NaDL0v2bRjjn0g9Ry8We7IY1pr/I/+8hC77HKha6QNBV1ZJVq2Im1KSZXfdhQASsR1y4jrUE=
+X-Received: by 2002:a17:906:79c4:b0:778:e3e2:8311 with SMTP id
+ m4-20020a17090679c400b00778e3e28311mr72270959ejo.342.1671454670943; Mon, 19
+ Dec 2022 04:57:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20221107175305.63975-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdV46aMfqu+kMW9E-RURugK-giOx0k-NPe5XX4nxKZJzkg@mail.gmail.com> <CA+V-a8uqQ2fK1UjRT864jyHdt6Z47V=iARSJC6B2M6Gikms=Eg@mail.gmail.com>
+In-Reply-To: <CA+V-a8uqQ2fK1UjRT864jyHdt6Z47V=iARSJC6B2M6Gikms=Eg@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Mon, 19 Dec 2022 12:57:24 +0000
+Message-ID: <CA+V-a8sGLrsRWFi3-hNmB=Uj-aCQLD5VQesmUFb8N1NAqhyLuQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/5] dt-bindings: interrupt-controller:
+ renesas,rzg2l-irqc: Document RZ/G2UL SoC
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Convert driver to use generic data type and hence a new member in
-the struct intel_function. No functional change intended.
+Hi Geert,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Fri, Nov 18, 2022 at 12:29 PM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+>
+> Hi Geert,
+>
+> On Thu, Nov 17, 2022 at 10:54 AM Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> >
+> > Hi Prabhakar,
+> >
+> > On Mon, Nov 7, 2022 at 6:53 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Document RZ/G2UL (R9A07G043) IRQC bindings. The RZ/G2UL IRQC block is
+> > > identical to one found on the RZ/G2L SoC. No driver changes are
+> > > required as generic compatible string "renesas,rzg2l-irqc" will be
+> > > used as a fallback.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Thanks for your patch!
+> >
+> > > ---
+> > > Note, renesas,r9a07g043u-irqc is added we have slight difference's compared to RZ/Five
+> > > - G2UL IRQCHIP (hierarchical IRQ domain) -> GIC where as on RZ/Five we have PLIC (chained interrupt
+> > > domain) -> RISCV INTC
+> >
+> > I think this difference is purely a software difference, and abstracted
+> > in DTS through the interrupt hierarchy.
+> > Does it have any impact on the bindings?
+> >
+> > > - On the RZ/Five we have additional registers for IRQC block
+> >
+> > Indeed, the NMI/IRQ/TINT "Interruput" Mask Control Registers, thus
+> > warranting separate compatible values.
+> >
+> > > - On the RZ/Five we have BUS_ERR_INT which needs to be handled by IRQC
+> >
+> > Can you please elaborate? I may have missed something, but to me it
+> > looks like that is exactly the same on RZ/G2UL and on RZ/Five.
+> >
+> Now that we have to update the binding doc with the BUS_ERR_INT too,
+> do you think it would make sense to add interrupt-names too?
+>
+> BUS_ERR_INT will have to be handled IRQC itself (i.e. IRQC will
+> register a handler for it).
+>
+Gentle ping.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 11b81213922d..722990e27836 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -694,7 +694,7 @@ static const char *chv_get_function_name(struct pinctrl_dev *pctldev,
- {
- 	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
--	return pctrl->soc->functions[function].name;
-+	return pctrl->soc->functions[function].func.name;
- }
- 
- static int chv_get_function_groups(struct pinctrl_dev *pctldev,
-@@ -704,8 +704,8 @@ static int chv_get_function_groups(struct pinctrl_dev *pctldev,
- {
- 	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
--	*groups = pctrl->soc->functions[function].groups;
--	*ngroups = pctrl->soc->functions[function].ngroups;
-+	*groups = pctrl->soc->functions[function].func.groups;
-+	*ngroups = pctrl->soc->functions[function].func.ngroups;
- 	return 0;
- }
- 
--- 
-2.35.1
-
+Cheers,
+Prabhakar
