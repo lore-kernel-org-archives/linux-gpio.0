@@ -2,95 +2,101 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 468B8C10F1B
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 19:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C5DBC46467
+	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 19:22:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232490AbiLSTWL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 19 Dec 2022 14:22:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44374 "EHLO
+        id S232420AbiLSTWM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 19 Dec 2022 14:22:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232725AbiLSTVp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 14:21:45 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F7F2167FB;
-        Mon, 19 Dec 2022 11:20:24 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id 3-20020a17090a098300b00219041dcbe9so9811922pjo.3;
-        Mon, 19 Dec 2022 11:20:24 -0800 (PST)
+        with ESMTP id S232458AbiLSTVr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 14:21:47 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C16331704B;
+        Mon, 19 Dec 2022 11:20:23 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id 4so10007176plj.3;
+        Mon, 19 Dec 2022 11:20:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=skKyH0pCplF51paW1vc+b7xrSLxnYuoxKxvIMnik6dQ=;
-        b=KNcvtCjac7s9MpKpUwUH3y3B/MIoefQP1vQM/RIQsRIV6qwnNwRujTdsiEoiHnLO9/
-         NXY93MVJeHNqhWZLqHFW+zAreM14iThMtUayTVKSRP1Cx2F8gh88JOhUvOmoeI+DN1AO
-         aAQxHHHjqT9aJC9G0UN4ubtUsZQUDqh7qfpW/9nRBX92fenN9Tnx0HityOcdK7eBOXqD
-         jcOLzUd7iZxa6xnYRhq96dIJtUektstfd335NJ6Zw007wEu+LBRxv7YY5EO/SpmnteWo
-         WqBp3g4U7Wem7HmeWwLz/80cekxtn9FDRpMjukRP27LznrfLlf1BswdRRXig22Lt2rDl
-         soyA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VR46xdGbsg8mOM7/UFZLhsN0WuKq4eAgjSK/29pLVdw=;
+        b=aTfRBT+OcrFsAJU2Tq4Bcah4rMnw9eeLl7CBo9nh7WLnaxsF67mHOprqd2fATuQudf
+         mLY2RoXIDjaAT1Hcb8oDn4xSuO/w8d6trTe+82kbnJuTtrF9a3yal4ZpHiIN/vzcTmjz
+         ENzw6qeq9SDxRssTuytMOnAHbulRhF3C24FYzO/YNXhCyRCNDEJk38FNQJeu4rR+ND+x
+         Z4nNDriroEI1nbsFJ146UYHUU/5XgjZOYlPpFxLRDUdAguuEzy4mV5uH/af1XcGfVv2H
+         oYgyi8sMm1bkl+8fOrjMlVljLMxZ2BmTXTZni/NwbfISXhgmtZBW3dYT6XjitND9LOGJ
+         sxww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=skKyH0pCplF51paW1vc+b7xrSLxnYuoxKxvIMnik6dQ=;
-        b=n/n2oqbCscdIOp4qi5YFTYYz9ChajYa95Y3bny+4zMEwNSBse0S1ssQeDmkgQKaYd0
-         RdL7mVNuiCCnnBtopicdRWzfNA0xPtwmO6xHeHMuTjIeZ7u4XuUYnIAw15/z6TjAzdS9
-         x2VrCyiBG0+0N6FP5OnP1lHjzLHGPY9AWeFWfP51UxVNgNkExFzOBh+nRzenXYZarHeu
-         lTxBUCY/tlY/yM5dnVcCX3lBuBLkFbgGeZ5Pd0yck111togyeOhx0CXR1zHcDjVx/hP3
-         A5a7B8HN61RYyPH/BvSOfvmDfa9oI8ZNPom+4vahFNtd5XIFUfZRptIVm6ZjWJ41foaj
-         NcoA==
-X-Gm-Message-State: ANoB5plqc+EQc4RBFrjAnqqZbHEbOxi1jXvpdbTgEJ49PUtbCSKUqUZp
-        hU/zqnuRDnSCI8ZbfDtpJUmz1pwuB3E=
-X-Google-Smtp-Source: AA0mqf5Nfd1ZEOeAUhIAScWhBp46k0DNVoT/9fISCH6Uff1TuQgri7hPAQ4b4OXun5v/ML30HuriHQ==
-X-Received: by 2002:a05:6a20:4d92:b0:ac:16ae:f46 with SMTP id gj18-20020a056a204d9200b000ac16ae0f46mr50366952pzb.15.1671477624048;
-        Mon, 19 Dec 2022 11:20:24 -0800 (PST)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VR46xdGbsg8mOM7/UFZLhsN0WuKq4eAgjSK/29pLVdw=;
+        b=OJNl8ZPcpirIVbjx9KhovCSGcu9NWaP3jTGdbPDKpmeqBUwQspgAnGiwHHclTBX7uS
+         tgL66zyPTiwiO0ZLUDX28NIQEVLhqk/oFCnUs+hw6lQXVN3iitdXiK7a7u67yUZ9i1Ex
+         ePzOQV8t3MgvgPZuN5YRTA7vKGQ3b54zWz4W//YV9+kYEoFqpPpgCCB3TynUIj2JMD1I
+         lLRK+xxu0yghwQJlw+5SWdSo+7l8/fkg4/IblSB7P67Qdb4jpsFGJ5GGnYiRunWaD5zb
+         0o49cm0sau6xie/ZFZdK3dGD9W1M2CZUpZgsHtVm4o7OQ7wVTnBqBaZA6SNJkP8ySoBw
+         QwXA==
+X-Gm-Message-State: AFqh2kp2AWYAe7tAJW02VnhqRDOt9+W5xxVBq3KRP/iijrkw6GiqBknx
+        JsBpcXGjbgmtXhysY5KGmLhEPpmOdUU=
+X-Google-Smtp-Source: AMrXdXt9lF1+KsoIgLbpyfUFVSrwW0MHO+N6HPx2iUWtmmib3ZexnjW06+ojln4Y94KOklO1VRO3sw==
+X-Received: by 2002:a05:6a21:6d93:b0:9d:efbe:2052 with SMTP id wl19-20020a056a216d9300b0009defbe2052mr16503711pzb.8.1671477620884;
+        Mon, 19 Dec 2022 11:20:20 -0800 (PST)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:9d:2:4c62:79e:b4cd:2cbb])
-        by smtp.gmail.com with ESMTPSA id b6-20020a1709027e0600b001869f2120absm7488342plm.294.2022.12.19.11.20.22
+        by smtp.gmail.com with ESMTPSA id b6-20020a1709027e0600b001869f2120absm7488342plm.294.2022.12.19.11.20.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Dec 2022 11:20:23 -0800 (PST)
+        Mon, 19 Dec 2022 11:20:20 -0800 (PST)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 3/5] gpiolib: of: remove obsolete comment for of_gpio_get_count()
-Date:   Mon, 19 Dec 2022 11:20:14 -0800
-Message-Id: <20221219192016.1396950-3-dmitry.torokhov@gmail.com>
+Subject: [PATCH 1/5] gpiolib: of: remove of_gpio_count()
+Date:   Mon, 19 Dec 2022 11:20:12 -0800
+Message-Id: <20221219192016.1396950-1-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.39.0.314.g84b9a713c41-goog
-In-Reply-To: <20221219192016.1396950-1-dmitry.torokhov@gmail.com>
-References: <20221219192016.1396950-1-dmitry.torokhov@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The function is only being called form the main gpiolib module, so
-remove comment saying that it is also used by external callers.
+There are no more users of of_gpio_count() in the mainline kernel,
+remove it.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/gpio/gpiolib-of.c | 6 ------
- 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 6724e375678d..6114c5b3d2ce 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -76,12 +76,6 @@ static int of_gpio_spi_cs_get_count(struct device *dev, const char *con_id)
- 	return of_gpio_named_count(np, "gpios");
+After 6.2-rc1 there should be no more users of the APIs mentioned in
+this series.
+
+ include/linux/of_gpio.h | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
+index 6db627257a7b..39f16a960565 100644
+--- a/include/linux/of_gpio.h
++++ b/include/linux/of_gpio.h
+@@ -105,17 +105,6 @@ static inline int of_gpio_named_count(const struct device_node *np,
+ 	return of_count_phandle_with_args(np, propname, "#gpio-cells");
  }
  
--/*
-- * This is used by external users of of_gpio_count() from <linux/of_gpio.h>
+-/**
+- * of_gpio_count() - Count GPIOs for a device
+- * @np:		device node to count GPIOs for
 - *
-- * FIXME: get rid of those external users by converting them to GPIO
-- * descriptors and let them all use gpiod_count()
+- * Same as of_gpio_named_count, but hard coded to use the 'gpios' property
 - */
- int of_gpio_get_count(struct device *dev, const char *con_id)
+-static inline int of_gpio_count(const struct device_node *np)
+-{
+-	return of_gpio_named_count(np, "gpios");
+-}
+-
+ static inline int of_get_gpio_flags(const struct device_node *np, int index,
+ 		      enum of_gpio_flags *flags)
  {
- 	int ret;
 -- 
 2.39.0.314.g84b9a713c41-goog
 
