@@ -2,83 +2,174 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF406C4332F
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 00:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B18C4332F
+	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 12:26:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229570AbiLSA37 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 18 Dec 2022 19:29:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36000 "EHLO
+        id S231792AbiLSM02 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 19 Dec 2022 07:26:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbiLSA37 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 18 Dec 2022 19:29:59 -0500
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48498DC7
-        for <linux-gpio@vger.kernel.org>; Sun, 18 Dec 2022 16:29:56 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 82C69836CF;
-        Mon, 19 Dec 2022 01:29:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1671409794;
-        bh=NgmAgNayxTPcqg00OcThnZKFc/lLha9UWwaxL+K8Zhg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=jA9wRWVszZluq7dhd/fCkgAPTVA5Ax0yfFdAH1x9JlC2kRXSHbu7q6GI4AvWccGE9
-         Y0BGULTyf7IErrP2lmEEIlTUXFoo1DL3WYwJ3hISyeUvzFq58C7yvyoK4FwpVVTVFq
-         wXvlBy9sjW/MCyMfvUxTtJ4/NEX3UvGeY9WWIKgKGBJLpeuYL+NWHwsDBh/V04p3mj
-         qwVG25g+3uvCgZe0+RoBlGHObp6BUpe4tebdGJOItBTj6IAnq7OhlWi+FjnHXe8d3T
-         H0nD1bgofkCHf9VWdrCijW+RGiuENT8EUeduubWnOmLTJ6ClmIXgmnl2YKISYzb9Lq
-         k9LyDN4a5J4sg==
-Message-ID: <2c697aa3-a882-d0cc-11aa-1f31c8ca7c2f@denx.de>
-Date:   Mon, 19 Dec 2022 01:29:52 +0100
+        with ESMTP id S231470AbiLSM01 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 07:26:27 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C217DEC2;
+        Mon, 19 Dec 2022 04:26:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1671452787; x=1702988787;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=aBBWQuPXnbfhPvrb4CBjtw/6n/4eAOzLR7/jixNxHD4=;
+  b=Ig6QUFBOJbxo5couUek93JtsLZJ4Cj+p20okAS7hPxRBTn9dwos1+AKv
+   /sFKc2Cw+hy7shmmMQkhPP4i0fESyAEdyzaz4YwXJcX1evolu2erQVOPI
+   fTQQnWbiUj0FDOBswL58cZDHIa6xrxpE5bfZUZxsnoDccnUgFmR2+3uhs
+   UU6c3TNjU7H1TWyXWq3DkAsW4p3aKCYXZJetrm+Wclv2ARgKLGtWJFyBF
+   dSf5E/KtffHtnJheUP+xzow8OOHOOr0G5B/Lcs3CHeACrlEzmn0knfnbN
+   V7hFsn4RBk1oLB3t1dNS0weLI24wVxgXPW/ngUjMm0Hmkzb3te6biSmz2
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="319382653"
+X-IronPort-AV: E=Sophos;i="5.96,255,1665471600"; 
+   d="scan'208";a="319382653"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2022 04:26:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="628283683"
+X-IronPort-AV: E=Sophos;i="5.96,255,1665471600"; 
+   d="scan'208";a="628283683"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 19 Dec 2022 04:26:24 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id AE93E11D; Mon, 19 Dec 2022 14:26:54 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v1 03/17] pinctrl: broxton: Replace BXT_COMMUNITY() by INTEL_COMMUNITY_SIZE()
+Date:   Mon, 19 Dec 2022 14:26:29 +0200
+Message-Id: <20221219122643.3513-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20221219122643.3513-1-andriy.shevchenko@linux.intel.com>
+References: <20221219122643.3513-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v6 2/2] gpio: mxc: Always set GPIOs used as interrupt
- source to INPUT mode
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-gpio@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
-        Marc Zyngier <maz@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-References: <20221013215946.216184-1-marex@denx.de>
- <20221013215946.216184-2-marex@denx.de>
- <CACRpkdZwZCDA-pvneLYyMvxqeZkSoM3CFRHEkpOLoiWpPvXOxQ@mail.gmail.com>
- <24df1fa1-c24e-a07b-f7bc-dbf9f059549d@denx.de>
- <CACRpkdZ63r0Vo0TpQ8w4t9gzJ2uXu1ywaTWXJ3mmuT1zW+KH4g@mail.gmail.com>
-Content-Language: en-US
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <CACRpkdZ63r0Vo0TpQ8w4t9gzJ2uXu1ywaTWXJ3mmuT1zW+KH4g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 12/19/22 00:21, Linus Walleij wrote:
-> On Fri, Dec 16, 2022 at 10:51 PM Marek Vasut <marex@denx.de> wrote:
->> On 10/17/22 12:24, Linus Walleij wrote:
->>> On Fri, Oct 14, 2022 at 12:00 AM Marek Vasut <marex@denx.de> wrote:
->>>
->>>> Always configure GPIO pins which are used as interrupt source as INPUTs.
->>>> In case the default pin configuration is OUTPUT, or the prior stage does
->>>> configure the pins as OUTPUT, then Linux will not reconfigure the pin as
->>>> INPUT and no interrupts are received.
->>>>
->>>> Always configure the interrupt source GPIO pin as input to fix the above case.
->>>>
->>>> Fixes: 07bd1a6cc7cbb ("MXC arch: Add gpio support for the whole platform")
->>>> Signed-off-by: Marek Vasut <marex@denx.de>
->>>
->>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->>
->> Can you please just pick these two patches up ?
-> 
-> Bartosz is queueing GPIO patches, I'm sure he will get to
-> queue them soon enough.
+Use INTEL_COMMUNITY_SIZE() common macro instead custom BXT_COMMUNITY().
 
-Thanks
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-broxton.c | 31 +++++++++----------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/pinctrl/intel/pinctrl-broxton.c b/drivers/pinctrl/intel/pinctrl-broxton.c
+index fb15cd10a32f..77e921b2178d 100644
+--- a/drivers/pinctrl/intel/pinctrl-broxton.c
++++ b/drivers/pinctrl/intel/pinctrl-broxton.c
+@@ -20,17 +20,8 @@
+ #define BXT_GPI_IS	0x100
+ #define BXT_GPI_IE	0x110
+ 
+-#define BXT_COMMUNITY(s, e)				\
+-	{						\
+-		.padown_offset = BXT_PAD_OWN,		\
+-		.padcfglock_offset = BXT_PADCFGLOCK,	\
+-		.hostown_offset = BXT_HOSTSW_OWN,	\
+-		.is_offset = BXT_GPI_IS,		\
+-		.ie_offset = BXT_GPI_IE,		\
+-		.gpp_size = 32,                         \
+-		.pin_base = (s),			\
+-		.npins = ((e) - (s) + 1),		\
+-	}
++#define BXT_COMMUNITY(b, s, e)				\
++	INTEL_COMMUNITY_SIZE(b, s, e, 32, 4, BXT)
+ 
+ /* BXT */
+ static const struct pinctrl_pin_desc bxt_north_pins[] = {
+@@ -172,7 +163,7 @@ static const struct intel_function bxt_north_functions[] = {
+ };
+ 
+ static const struct intel_community bxt_north_communities[] = {
+-	BXT_COMMUNITY(0, 82),
++	BXT_COMMUNITY(0, 0, 82),
+ };
+ 
+ static const struct intel_pinctrl_soc_data bxt_north_soc_data = {
+@@ -289,7 +280,7 @@ static const struct intel_function bxt_northwest_functions[] = {
+ };
+ 
+ static const struct intel_community bxt_northwest_communities[] = {
+-	BXT_COMMUNITY(0, 71),
++	BXT_COMMUNITY(0, 0, 71),
+ };
+ 
+ static const struct intel_pinctrl_soc_data bxt_northwest_soc_data = {
+@@ -396,7 +387,7 @@ static const struct intel_function bxt_west_functions[] = {
+ };
+ 
+ static const struct intel_community bxt_west_communities[] = {
+-	BXT_COMMUNITY(0, 41),
++	BXT_COMMUNITY(0, 0, 41),
+ };
+ 
+ static const struct intel_pinctrl_soc_data bxt_west_soc_data = {
+@@ -472,7 +463,7 @@ static const struct intel_function bxt_southwest_functions[] = {
+ };
+ 
+ static const struct intel_community bxt_southwest_communities[] = {
+-	BXT_COMMUNITY(0, 30),
++	BXT_COMMUNITY(0, 0, 30),
+ };
+ 
+ static const struct intel_pinctrl_soc_data bxt_southwest_soc_data = {
+@@ -511,7 +502,7 @@ static const struct pinctrl_pin_desc bxt_south_pins[] = {
+ };
+ 
+ static const struct intel_community bxt_south_communities[] = {
+-	BXT_COMMUNITY(0, 19),
++	BXT_COMMUNITY(0, 0, 19),
+ };
+ 
+ static const struct intel_pinctrl_soc_data bxt_south_soc_data = {
+@@ -650,7 +641,7 @@ static const struct intel_function apl_north_functions[] = {
+ };
+ 
+ static const struct intel_community apl_north_communities[] = {
+-	BXT_COMMUNITY(0, 77),
++	BXT_COMMUNITY(0, 0, 77),
+ };
+ 
+ static const struct intel_pinctrl_soc_data apl_north_soc_data = {
+@@ -770,7 +761,7 @@ static const struct intel_function apl_northwest_functions[] = {
+ };
+ 
+ static const struct intel_community apl_northwest_communities[] = {
+-	BXT_COMMUNITY(0, 76),
++	BXT_COMMUNITY(0, 0, 76),
+ };
+ 
+ static const struct intel_pinctrl_soc_data apl_northwest_soc_data = {
+@@ -880,7 +871,7 @@ static const struct intel_function apl_west_functions[] = {
+ };
+ 
+ static const struct intel_community apl_west_communities[] = {
+-	BXT_COMMUNITY(0, 46),
++	BXT_COMMUNITY(0, 0, 46),
+ };
+ 
+ static const struct intel_pinctrl_soc_data apl_west_soc_data = {
+@@ -972,7 +963,7 @@ static const struct intel_function apl_southwest_functions[] = {
+ };
+ 
+ static const struct intel_community apl_southwest_communities[] = {
+-	BXT_COMMUNITY(0, 42),
++	BXT_COMMUNITY(0, 0, 42),
+ };
+ 
+ static const struct intel_pinctrl_soc_data apl_southwest_soc_data = {
+-- 
+2.35.1
+
