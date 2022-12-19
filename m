@@ -2,88 +2,86 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2158C54E76
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 12:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B981DC4332F
+	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 12:32:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232009AbiLSM1O (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 19 Dec 2022 07:27:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37906 "EHLO
+        id S231810AbiLSMc4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 19 Dec 2022 07:32:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232114AbiLSM06 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 07:26:58 -0500
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1636DFD6;
-        Mon, 19 Dec 2022 04:26:57 -0800 (PST)
+        with ESMTP id S232060AbiLSMch (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 07:32:37 -0500
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAA6CEE19;
+        Mon, 19 Dec 2022 04:31:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1671452817; x=1702988817;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=SYtkw/hm1hSKB4vnlGtuHusIzAgneRrEzLZaacIs33Y=;
-  b=iYfpR9pJBQ1dLOxi55T9PoYVRzA3kiN7pWlJ9TMW4R6A2YytMsxTX/d7
-   nAq4GodGUYRNuCsVEEQftN9MrnhUaAd5EyAvzIclFUK94UH3BZ6xoZfmy
-   hbVEByFt5t+t7hLl40E3fsPi5vZz16/LCpCEFUmqP/7SmKz32MqbxMGBb
-   rk8kcLHdJ6/z9r1D5P4bowftOgf4uGmCn1GbDeuKDn8Gb9zoXEhDk3CSN
-   IZVHPTQuu78liinWkYQydVulHCYA4zS9gn8jExshQlolKDExNuCFV/3cs
-   ui2NFe5r4YQdEnq4J3Wb+KYT8ASLJAHPsqfAi9ScIFv5APCPjJkTY1FZM
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="318024754"
+  t=1671453105; x=1702989105;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=f+Y573fbqCtXZip97WFp1idIb9kXQkOhGQmr7sMp5sg=;
+  b=UJtzmAGzI/X6LIguwsGIdUcM7mAIeeM/i5FKmK+2Gn5ibsp9HK8ZU+WR
+   gC0Hqvp5HQErkjaMsYJ4L/CDlfwmkzit22VQgb74rv1SRIJ52DoOB1RCP
+   h61S58CemmSMfuFTPcLL8aIQVWe/XchtwlUqfFvRA74rdXIIjWG2w5U1Z
+   Glrv4Fu/Q97PWDZXNyNOs9oZwIpnPLue/U7aIIRbJEWBbHcRvQEYg81Tg
+   DQZqdxGwIlFRGQAwmCotPfUL4JxlBIybheivi4P9n2l7BB9uU/7kJ4rva
+   YQW+e8eSNmLjcCC0WhhrSA+4Ia4M9RFlIp4DT+N14pDmeBR0J3ADlglRP
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="299670627"
 X-IronPort-AV: E=Sophos;i="5.96,255,1665471600"; 
-   d="scan'208";a="318024754"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2022 04:26:56 -0800
+   d="scan'208";a="299670627"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2022 04:31:45 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="681209042"
+X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="896027911"
 X-IronPort-AV: E=Sophos;i="5.96,255,1665471600"; 
-   d="scan'208";a="681209042"
+   d="scan'208";a="896027911"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 19 Dec 2022 04:26:54 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 19 Dec 2022 04:31:43 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 5AAF0F7; Mon, 19 Dec 2022 14:27:24 +0200 (EET)
+        id E287411D; Mon, 19 Dec 2022 14:32:13 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andy@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 1/1] pinctrl: intel: Convert to generic_handle_domain_irq()
-Date:   Mon, 19 Dec 2022 14:27:22 +0200
-Message-Id: <20221219122722.3639-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/4] pinctrl: intel: Add definitions to all possible biases
+Date:   Mon, 19 Dec 2022 14:32:07 +0200
+Message-Id: <20221219123208.5505-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20221219123208.5505-1-andriy.shevchenko@linux.intel.com>
+References: <20221219123208.5505-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Replace construct that matches generic_handle_irq(irq_find_mapping())
-to a single call to generic_handle_domain_irq().
+Add definitions to all possible biases, i.e. add ~800 Ohms,
+~952 Ohms, ~4 kOhms.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-intel.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 4029891ba628..8181a65fb815 100644
+index 6926f64b68d4..8ecb7ca7fbac 100644
 --- a/drivers/pinctrl/intel/pinctrl-intel.c
 +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -1215,13 +1215,8 @@ static int intel_gpio_community_irq_handler(struct intel_pinctrl *pctrl,
- 		/* Only interrupts that are enabled */
- 		pending &= enabled;
+@@ -81,8 +81,11 @@
+ #define PADCFG1_TERM_MASK		GENMASK(12, 10)
+ #define PADCFG1_TERM_20K		BIT(2)
+ #define PADCFG1_TERM_5K			BIT(1)
++#define PADCFG1_TERM_4K			(BIT(2) | BIT(1))
+ #define PADCFG1_TERM_1K			BIT(0)
++#define PADCFG1_TERM_952		(BIT(2) | BIT(0))
+ #define PADCFG1_TERM_833		(BIT(1) | BIT(0))
++#define PADCFG1_TERM_800		(BIT(2) | BIT(1) | BIT(0))
  
--		for_each_set_bit(gpp_offset, &pending, padgrp->size) {
--			unsigned int irq;
--
--			irq = irq_find_mapping(gc->irq.domain,
--					       padgrp->gpio_base + gpp_offset);
--			generic_handle_irq(irq);
--		}
-+		for_each_set_bit(gpp_offset, &pending, padgrp->size)
-+			generic_handle_domain_irq(gc->irq.domain, padgrp->gpio_base + gpp_offset);
- 
- 		ret += pending ? 1 : 0;
- 	}
+ #define PADCFG2				0x008
+ #define PADCFG2_DEBEN			BIT(0)
 -- 
 2.35.1
 
