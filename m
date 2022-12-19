@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8924C5479D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8EAC4708E
 	for <linux-gpio@archiver.kernel.org>; Mon, 19 Dec 2022 12:27:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231972AbiLSM1M (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 19 Dec 2022 07:27:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37632 "EHLO
+        id S231960AbiLSM1L (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 19 Dec 2022 07:27:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231869AbiLSM0d (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 07:26:33 -0500
+        with ESMTP id S231877AbiLSM0e (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Dec 2022 07:26:34 -0500
 Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42C2BDEC2;
-        Mon, 19 Dec 2022 04:26:32 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DCD2DF7C;
+        Mon, 19 Dec 2022 04:26:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1671452792; x=1702988792;
+  t=1671452793; x=1702988793;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=lD2WNMbGhWg9OhgYWLibWUcl9/Fo27U2GLeG+VzK6jo=;
-  b=PpSbCN3ZmUyG1NQ6jNwcQ26wzTK/qgO4oIkH2wACbLVX9ekhlV8aXgKu
-   C/X9dPOzqUSQJF65clnp6l7V/VCnxPd0q5MxgSvXN2G8Ae0XQ37yAjfI+
-   qTv0xS3NYIBjhGO1HOHIWI8kVy+qpvo2vqWQkLfGjnFC6MIX+7vQR7zx9
-   CugAHe+hjoVglN0sU32ii3nh0KHshGHdM/ciLSQ3tTJzoCyZ9SuaJTCCH
-   9MLXu2XIU1NxEhacs2fS+2FNsYlYC3Qgl79uIsGdTl/Ryzz9Np88ZF2zm
-   MwJ/TMxFi0wvPXfPfubPHB4UVewauuVr10W9eWPF8fr2nU1ymwGNTKb5z
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="302762257"
+  bh=RakmmzlY6jMPeov+PSuZEvYARu9FFL2L6z23c01ftqU=;
+  b=ILwmC99Gm5jMvAzy8MEYKAJ0NCxScMyb74v4khkcNK/lMMDlrJbkGvtF
+   CKcH+rwv55fQL6AvKPSIph209KYVAr7kDiq0wOoVwvGp+0NXXh5OBV/nb
+   rSHwKlaFgwELtYb6rwHGVOaCoL7gx71vimkK2V0T4bn3YjnH7gMlEqnBx
+   FG00PGwakClXa4pgmIf2g0U57rK5Is42mauiq/MpMlx56gqC56jQwu2gc
+   aapxsN+HRBx6fWS7nN4uL/qsvIrBYy4Tq4SjODr/laBs/Z80KryZzxxXV
+   DOwZj2mM4VeHP11eLq7Yf4Bf/gR+09yD9Eebe2k+lKsaHCjsz3DLzDrqi
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="302762263"
 X-IronPort-AV: E=Sophos;i="5.96,255,1665471600"; 
-   d="scan'208";a="302762257"
+   d="scan'208";a="302762263"
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2022 04:26:30 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2022 04:26:31 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="824831637"
+X-IronPort-AV: E=McAfee;i="6500,9779,10565"; a="824831639"
 X-IronPort-AV: E=Sophos;i="5.96,255,1665471600"; 
-   d="scan'208";a="824831637"
+   d="scan'208";a="824831639"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 19 Dec 2022 04:26:28 -0800
+  by orsmga005.jf.intel.com with ESMTP; 19 Dec 2022 04:26:30 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 2AB4C5F6; Mon, 19 Dec 2022 14:26:55 +0200 (EET)
+        id 440F0735; Mon, 19 Dec 2022 14:26:55 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andy@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 14/17] pinctrl: meteorlake: Replace MTL_COMMUNITY() by INTEL_COMMUNITY_GPPS()
-Date:   Mon, 19 Dec 2022 14:26:40 +0200
-Message-Id: <20221219122643.3513-14-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 17/17] pinctrl: intel: Always use gpp_num_padown_regs in the main driver
+Date:   Mon, 19 Dec 2022 14:26:43 +0200
+Message-Id: <20221219122643.3513-17-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221219122643.3513-1-andriy.shevchenko@linux.intel.com>
 References: <20221219122643.3513-1-andriy.shevchenko@linux.intel.com>
@@ -58,54 +58,67 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use INTEL_COMMUNITY_GPPS() common macro instead custom MTL_COMMUNITY().
+For the size-based communities, always use gpp_num_padown_regs,
+which is now provided explicitly via INTEL_COMMUNITY_SIZE() macro.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-meteorlake.c | 23 ++++++----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel.c |  9 +--------
+ drivers/pinctrl/intel/pinctrl-intel.h | 13 +++++++------
+ 2 files changed, 8 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-meteorlake.c b/drivers/pinctrl/intel/pinctrl-meteorlake.c
-index 9576dcd1cb29..a82f6754c45b 100644
---- a/drivers/pinctrl/intel/pinctrl-meteorlake.c
-+++ b/drivers/pinctrl/intel/pinctrl-meteorlake.c
-@@ -14,11 +14,11 @@
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index cc3aaba24188..4029891ba628 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1451,14 +1451,7 @@ static int intel_pinctrl_add_padgroups_by_size(struct intel_pinctrl *pctrl,
+ 		gpps[i].gpio_base = gpps[i].base;
+ 		gpps[i].padown_num = padown_num;
  
- #include "pinctrl-intel.h"
- 
--#define MTL_PAD_OWN	0x0b0
--#define MTL_PADCFGLOCK	0x110
--#define MTL_HOSTSW_OWN	0x140
--#define MTL_GPI_IS	0x200
--#define MTL_GPI_IE	0x210
-+#define MTL_P_PAD_OWN		0x0b0
-+#define MTL_P_PADCFGLOCK	0x110
-+#define MTL_P_HOSTSW_OWN	0x140
-+#define MTL_P_GPI_IS		0x200
-+#define MTL_P_GPI_IE		0x210
- 
- #define MTL_GPP(r, s, e, g)				\
- 	{						\
-@@ -29,18 +29,7 @@
+-		/*
+-		 * In older hardware the number of padown registers per
+-		 * group is fixed regardless of the group size.
+-		 */
+-		if (community->gpp_num_padown_regs)
+-			padown_num += community->gpp_num_padown_regs;
+-		else
+-			padown_num += DIV_ROUND_UP(gpps[i].size * 4, 32);
++		padown_num += community->gpp_num_padown_regs;
  	}
  
- #define MTL_COMMUNITY(b, s, e, g)			\
--	{						\
--		.barno = (b),				\
--		.padown_offset = MTL_PAD_OWN,		\
--		.padcfglock_offset = MTL_PADCFGLOCK,	\
--		.hostown_offset = MTL_HOSTSW_OWN,	\
--		.is_offset = MTL_GPI_IS,		\
--		.ie_offset = MTL_GPI_IE,		\
--		.pin_base = (s),			\
--		.npins = ((e) - (s) + 1),		\
--		.gpps = (g),				\
--		.ngpps = ARRAY_SIZE(g),			\
--	}
-+	INTEL_COMMUNITY_GPPS(b, s, e, g, MTL_P)
- 
- /* Meteor Lake-P */
- static const struct pinctrl_pin_desc mtlp_pins[] = {
+ 	community->ngpps = ngpps;
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
+index b0f2be4c1fd1..981c1f520f13 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.h
++++ b/drivers/pinctrl/intel/pinctrl-intel.h
+@@ -96,8 +96,7 @@ enum {
+  * @gpp_size: Maximum number of pads in each group, such as PADCFGLOCK,
+  *            HOSTSW_OWN, GPI_IS, GPI_IE. Used when @gpps is %NULL.
+  * @gpp_num_padown_regs: Number of pad registers each pad group consumes at
+- *			 minimum. Use %0 if the number of registers can be
+- *			 determined by the size of the group.
++ *			 minimum. Used when @gpps is %NULL.
+  * @gpps: Pad groups if the controller has variable size pad groups
+  * @ngpps: Number of pad groups in this community
+  * @pad_map: Optional non-linear mapping of the pads
+@@ -106,11 +105,13 @@ enum {
+  * @regs: Community specific common registers (reserved for core driver)
+  * @pad_regs: Community specific pad registers (reserved for core driver)
+  *
+- * In some of Intel GPIO host controllers this driver supports each pad group
++ * In older Intel GPIO host controllers, this driver supports, each pad group
+  * is of equal size (except the last one). In that case the driver can just
+- * fill in @gpp_size field and let the core driver to handle the rest. If
+- * the controller has pad groups of variable size the client driver can
+- * pass custom @gpps and @ngpps instead.
++ * fill in @gpp_size and @gpp_num_padown_regs fields and let the core driver
++ * to handle the rest.
++ *
++ * In newer Intel GPIO host controllers each pad group is of variable size,
++ * so the client driver can pass custom @gpps and @ngpps instead.
+  */
+ struct intel_community {
+ 	unsigned int barno;
 -- 
 2.35.1
 
