@@ -2,175 +2,110 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2824C4332F
-	for <linux-gpio@archiver.kernel.org>; Tue, 20 Dec 2022 14:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D5BAC4332F
+	for <linux-gpio@archiver.kernel.org>; Tue, 20 Dec 2022 17:08:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233840AbiLTOKW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 20 Dec 2022 09:10:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39732 "EHLO
+        id S229818AbiLTRIE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 20 Dec 2022 12:08:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233814AbiLTOKR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Dec 2022 09:10:17 -0500
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9C221B7A2;
-        Tue, 20 Dec 2022 06:10:12 -0800 (PST)
-Received: by mail-oi1-f174.google.com with SMTP id s187so10622351oie.10;
-        Tue, 20 Dec 2022 06:10:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SjBHXkyHGiWve/uXORSeTIM3nsUbZRLtIdh/xsIJaqY=;
-        b=3vCWeUFmZqqKAmbz1pbBx31HxJdX73A4uyQxK9JfPsFO8MPc8XXMlQarVGisPAx4U5
-         vgiLei66bnWr5stcJ8gS97tt3pNgppxTC2DT3eDhmSMfOYZQNdWkk77TpAjSSzrsBAY4
-         ZIIT2T+YH6S4fEm1wW1bFnCs5L+loxITGa6itbgGZd0vUpWdjZiHE9qksE2puEuCALHR
-         e2Sk2sfcbY2ZHiERyybRVJAmVgIT6CeFbjwa2WXMTUhQF2yYA68Bmk1zd+IkWiCaysE5
-         IMog1vBKNZNBsUeCt5hjyYW/Ni+x54UYwTkKIbh9gkHoU++2/n98dcFHxPf9TKjdrSFV
-         U45Q==
-X-Gm-Message-State: AFqh2krFkHlS1yPLO5LFmQRzQt7fGRJyJgCxmijalsbTSdEW0NiLewPj
-        bjiEX+pPsmFtHM4qC6qKWQ==
-X-Google-Smtp-Source: AMrXdXspHadroOLYY8Z4ogPudHrY6urHxn+kioyUvSh0MS4YyW567+BPsFy8G7Mi/VU2mH5AF4CEDg==
-X-Received: by 2002:a05:6808:2182:b0:361:8ea:a3b5 with SMTP id be2-20020a056808218200b0036108eaa3b5mr3111612oib.54.1671545411626;
-        Tue, 20 Dec 2022 06:10:11 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id p26-20020a9d745a000000b006391adb6034sm5642896otk.72.2022.12.20.06.10.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Dec 2022 06:10:11 -0800 (PST)
-Received: (nullmailer pid 226274 invoked by uid 1000);
-        Tue, 20 Dec 2022 14:10:10 -0000
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S229720AbiLTRID (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Dec 2022 12:08:03 -0500
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EECE61DD;
+        Tue, 20 Dec 2022 09:08:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1671556082; x=1703092082;
+  h=message-id:date:mime-version:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:subject;
+  bh=CJcRN8lmItUCYsoEzHAUyMmtBD/aumhVmGcaTarBcCc=;
+  b=leVA0STCj/zvqC28N3YX6eYBbW5a4rbejIcX+T/VvTsJR2ImwIsjSRUU
+   IXJ9SdynViLYzXfvTaIuaX/Ud/OziDuvUraYujWJPT5Ax/713WVFlEwxd
+   lIgkSocTZi6hgThD2RNv0QKZRBPsPtW8JwZqmkPUnm/UJ71BANoKgoPfT
+   o=;
+X-IronPort-AV: E=Sophos;i="5.96,259,1665446400"; 
+   d="scan'208";a="279159272"
+Subject: Re: [PATCH v3 1/1] i2c: Set pinctrl recovery info to device pinctrl
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-pdx-2b-m6i4x-a893d89c.us-west-2.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Dec 2022 17:07:58 +0000
+Received: from EX13MTAUWA002.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
+        by email-inbound-relay-pdx-2b-m6i4x-a893d89c.us-west-2.amazon.com (Postfix) with ESMTPS id EC0C34163D;
+        Tue, 20 Dec 2022 17:07:56 +0000 (UTC)
+Received: from EX19D021UWA004.ant.amazon.com (10.13.139.67) by
+ EX13MTAUWA002.ant.amazon.com (10.43.160.12) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.42; Tue, 20 Dec 2022 17:07:56 +0000
+Received: from EX13MTAUWA001.ant.amazon.com (10.43.160.58) by
+ EX19D021UWA004.ant.amazon.com (10.13.139.67) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1118.20; Tue, 20 Dec 2022 17:07:56 +0000
+Received: from [192.168.1.158] (10.1.213.27) by mail-relay.amazon.com
+ (10.43.160.118) with Microsoft SMTP Server id 15.0.1497.42 via Frontend
+ Transport; Tue, 20 Dec 2022 17:07:52 +0000
+Message-ID: <4344f575-65f5-2fde-e2d5-3dd5a18d13cb@amazon.com>
+Date:   Tue, 20 Dec 2022 19:07:51 +0200
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Jim Liu <jim.t90615@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        brgl@bgdev.pl, openbmc@lists.ozlabs.org, JJLIU0@nuvoton.com,
-        linux-kernel@vger.kernel.org, KWLIU@nuvoton.com,
-        devicetree@vger.kernel.org, linus.walleij@linaro.org,
-        robh+dt@kernel.org
-In-Reply-To: <20221220080139.1803-4-JJLIU0@nuvoton.com>
-References: <20221220080139.1803-1-JJLIU0@nuvoton.com>
- <20221220080139.1803-4-JJLIU0@nuvoton.com>
-Message-Id: <167154528944.200721.11678821541440830244.robh@kernel.org>
-Subject: Re: [PATCH v3 3/3] dt-bindings: gpio: add npcm7xx sgpio driver bindings
-Date:   Tue, 20 Dec 2022 08:10:10 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Content-Language: en-US
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC:     <wsa@kernel.org>, <linus.walleij@linaro.org>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <dwmw@amazon.co.uk>,
+        <benh@amazon.com>, <ronenk@amazon.com>, <talel@amazon.com>,
+        <jonnyc@amazon.com>, <hanochu@amazon.com>, <farbere@amazon.com>,
+        <itamark@amazon.com>
+References: <20221219193228.35078-1-hhhawa@amazon.com>
+ <Y6GUKf5TCumM1Swy@smile.fi.intel.com>
+From:   "Hawa, Hanna" <hhhawa@amazon.com>
+In-Reply-To: <Y6GUKf5TCumM1Swy@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 
-On Tue, 20 Dec 2022 16:01:39 +0800, Jim Liu wrote:
-> Add dt-bindings document for the NPCM7xx sgpio driver
+
+On 12/20/2022 12:53 PM, Andy Shevchenko wrote:
+>> Signed-off-by: Hanna Hawa <hhhawa@amazon.com>
+> > The same comment about changelog. Place it in the correct position.
+
+Will be fixed.
+
 > 
-> Signed-off-by: Jim Liu <JJLIU0@nuvoton.com>
-> ---
-> Changes for v3:
->    - modify description
->    - modify in/out property name
-> Changes for v2:
->    - modify description
-> ---
->  .../bindings/gpio/nuvoton,sgpio.yaml          | 83 +++++++++++++++++++
->  1 file changed, 83 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/nuvoton,sgpio.yaml
+>> Change Log v2->v3:
+>> - Add API to get the device pinctrl
+>> - Make the i2c init recovery to get the device pins
+>>
+>> Change Log v1->v2:
+>> - set the rinfo->pinctrl to dev->pins->p instead calling
+>>    devm_pinctrl_get()
+>> ---
 > 
+>>   include/linux/pinctrl/devinfo.h | 11 +++++++++++
+> 
+> This should be a separate patch.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Sure, will move and create cover letter with the change log.
 
-yamllint warnings/errors:
+> 
+> ...
+> 
+>> +static inline struct pinctrl *dev_pinctrl(struct device *dev)
+>> +{
+>> +     return dev->pins && dev->pins->p ? dev->pins->p : NULL;
+> 
+> GCC supports Elvis, you can use it to simplify the above.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/gpio/nuvoton,sgpio.yaml: properties:nuvoton,input-ngpios: True is not of type 'object'
-	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
-	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/gpio/nuvoton,sgpio.yaml: properties:nuvoton,input-ngpios: More than one condition true in oneOf schema:
-	{'description': 'Vendor specific properties must have a type and '
-	                'description unless they have a defined, common '
-	                'suffix.',
-	 'oneOf': [{'additionalProperties': False,
-	            'description': 'A vendor boolean property can use "type: '
-	                           'boolean"',
-	            'properties': {'deprecated': True,
-	                           'description': True,
-	                           'type': {'const': 'boolean'}},
-	            'required': ['type', 'description']},
-	           {'additionalProperties': False,
-	            'description': 'A vendor string property with exact values '
-	                           'has an implicit type',
-	            'oneOf': [{'required': ['enum']}, {'required': ['const']}],
-	            'properties': {'const': {'type': 'string'},
-	                           'deprecated': True,
-	                           'description': True,
-	                           'enum': {'items': {'type': 'string'}}},
-	            'required': ['description']},
-	           {'description': 'A vendor property needs a $ref to '
-	                           'types.yaml',
-	            'oneOf': [{'required': ['$ref']}, {'required': ['allOf']}],
-	            'properties': {'$ref': {'pattern': 'types.yaml#/definitions/'},
-	                           'allOf': {'items': [{'properties': {'$ref': {'pattern': 'types.yaml#/definitions/'}},
-	                                                'required': ['$ref']}]}},
-	            'required': ['description']},
-	           {'description': 'A vendor property can have a $ref to a a '
-	                           '$defs schema',
-	            'properties': {'$ref': {'pattern': '^#/(definitions|\\$defs)/'}},
-	            'required': ['$ref']}],
-	 'type': 'object'}
-	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
-	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/gpio/nuvoton,sgpio.yaml: properties:nuvoton,output-ngpios: True is not of type 'object'
-	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
-	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/gpio/nuvoton,sgpio.yaml: properties:nuvoton,output-ngpios: More than one condition true in oneOf schema:
-	{'description': 'Vendor specific properties must have a type and '
-	                'description unless they have a defined, common '
-	                'suffix.',
-	 'oneOf': [{'additionalProperties': False,
-	            'description': 'A vendor boolean property can use "type: '
-	                           'boolean"',
-	            'properties': {'deprecated': True,
-	                           'description': True,
-	                           'type': {'const': 'boolean'}},
-	            'required': ['type', 'description']},
-	           {'additionalProperties': False,
-	            'description': 'A vendor string property with exact values '
-	                           'has an implicit type',
-	            'oneOf': [{'required': ['enum']}, {'required': ['const']}],
-	            'properties': {'const': {'type': 'string'},
-	                           'deprecated': True,
-	                           'description': True,
-	                           'enum': {'items': {'type': 'string'}}},
-	            'required': ['description']},
-	           {'description': 'A vendor property needs a $ref to '
-	                           'types.yaml',
-	            'oneOf': [{'required': ['$ref']}, {'required': ['allOf']}],
-	            'properties': {'$ref': {'pattern': 'types.yaml#/definitions/'},
-	                           'allOf': {'items': [{'properties': {'$ref': {'pattern': 'types.yaml#/definitions/'}},
-	                                                'required': ['$ref']}]}},
-	            'required': ['description']},
-	           {'description': 'A vendor property can have a $ref to a a '
-	                           '$defs schema',
-	            'properties': {'$ref': {'pattern': '^#/(definitions|\\$defs)/'}},
-	            'required': ['$ref']}],
-	 'type': 'object'}
-	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
-	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+How you suggest to simplify this?
+I can use 'return dev->pins ? dev->pins->p ?: dev->pins->p : NULL;'
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20221220080139.1803-4-JJLIU0@nuvoton.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+> 
+>> +}
+> 
+> --
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
