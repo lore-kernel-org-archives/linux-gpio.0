@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 019BDC3DA7C
-	for <linux-gpio@archiver.kernel.org>; Wed, 21 Dec 2022 00:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D96C4167B
+	for <linux-gpio@archiver.kernel.org>; Wed, 21 Dec 2022 00:03:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234342AbiLUADR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 20 Dec 2022 19:03:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44902 "EHLO
+        id S234362AbiLUADa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 20 Dec 2022 19:03:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234326AbiLUADF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Dec 2022 19:03:05 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0B8E201A3;
-        Tue, 20 Dec 2022 16:03:04 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id f18so13444145wrj.5;
-        Tue, 20 Dec 2022 16:03:04 -0800 (PST)
+        with ESMTP id S234330AbiLUADH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Dec 2022 19:03:07 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2DAC1EEFD;
+        Tue, 20 Dec 2022 16:03:06 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id h10so13433043wrx.3;
+        Tue, 20 Dec 2022 16:03:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+DAEA+OzMJ+y7qc8/f9pAlMJNduPlcJJtkAkWJtqKPk=;
-        b=DfbUR+JAV41BAWSaslMgK9Rn22HISYIj37yvBSG9dbwFjAUME/dz76yfsip7P4kUXh
-         3uozgCxFJ1SbUKVFXez9pd0Gn+/ZJo8MZ+pCAA2vg55MYAqqwNHg9I+GP0WZKoh4MWvY
-         w2g4maCwg0g3GGGvXml4rf1WGRoaWA38Js2tFax+rGJAC/UK2P2NEOwSpje2qTarYdWA
-         tQ4aTr5MUYbvsfm1T2Z6b0DPrjL90Gc76yKfgn8yk/H9j2fgfAr5Q09ONOuLDui1TyHN
-         Wdc+Euh8rXLYzwGg1/OviHP425iut421IetER6yjB890xt4HrSHzWDUw+vNikXpcUYSX
-         29GQ==
+        bh=awbhKbYqdDZxY2mihbijUFx+EfQkURzCbhYMpJ68hQ8=;
+        b=KlMCQpPqtvHWQgSJQdmGVT+7pE/SitvLNZndFHphNMHWJK/zZqgKuge4RbTkb1o1ZH
+         0LW5nSYurUxPhpqvSdV1gpOocSYFLfCY/V3oLIbpF3sTGP6+djqDaauRLnboDj8hgOy/
+         UXm65S7PfCFTOviHgk5l+kwpzCrk5LUUFXSo/jc+z3E+JLk99aal/DY9v42jY6HV99WW
+         fIKy1CJ0wqqow90Dt5q4AD/Pyfo5OC9U79NGKbYnIxKwW4YBALVcWN2gXx6x9uSOKso1
+         WT3krOHiuOr0WtYVOJiLL6ohKhCyOs4ohNZsPxGhRWcfGsELMwXdrsPLQzHdRUuYLcaF
+         2gJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+DAEA+OzMJ+y7qc8/f9pAlMJNduPlcJJtkAkWJtqKPk=;
-        b=MKbjWzek9ZlXG4UbfVC9HZRy3OTXvgI00/PDS9okw+MKPBwl4eswktRJAr0X8KI6VU
-         eVdoEb+NyUoiekDVdSISqWOiO1rpaRxtY8D+PiEGOn9O/cJj/qYIl/l4PF2RuIszUdEz
-         iCaxkj4wxb8VKiOjNc2TwF3yYjzH162qq+C8ZATUkmqRoD5YjPM4hA5oX/tWleD5peD0
-         Aqd5h+KLS26Ixu5unmr7f45itYESgUv4K1sTjt78+c94IbCZ+5XTs1q4ipSMxrbRrp3l
-         tTMBeh1KuvScOQB8lIBS6ZVDfI3lK92zWKQastYGTft8J0aE3cJLLV54LUeVKodFEHRT
-         lL/g==
-X-Gm-Message-State: ANoB5plBOXfGEnXoZJtIkOG9Jtb26Gza/GeNVEhjgwO3H6H/Z6RqOuUw
-        7EVYHur1EPpdQtJoY/C2/H0=
-X-Google-Smtp-Source: AA0mqf6nxxoU7wNuTvAZZ4NmZQscwDQzJEpk+yZ0Zxo++wi+rRc/4uRs5QVSLLPeZ8OT8C75I9uP+A==
-X-Received: by 2002:a05:6000:1e1d:b0:242:15d5:2c0b with SMTP id bj29-20020a0560001e1d00b0024215d52c0bmr29936252wrb.22.1671580983240;
-        Tue, 20 Dec 2022 16:03:03 -0800 (PST)
+        bh=awbhKbYqdDZxY2mihbijUFx+EfQkURzCbhYMpJ68hQ8=;
+        b=EBCSCqASIY2k2WfqMe087KL1LH4L/SajeJX30CpgEMfQUqkkMXFdFEKVvyYN1KOsuv
+         nPXGb1VjDmOBR6YOu1zQmFoCg7s1GjKN+FDng2zii0T59tXWOQyGjWH03RRQQ57sPdSf
+         Jj81btG4cB7XO1yHsQdTNx4ZpVxyeedxuYJncxnQhllJD6HpjEhClDYYUu9MfHNVVH7F
+         p+pZZ4gpqfmNuAlLxp6rzMigSVgQrNAMtJEN8q2Nr1X0c5Vg10tiZ4a31MPKuz0LrCGw
+         x7ICGczs42IzTAA/e4MKVWKumQkp/Z3NsVCeBFU88iMMmjyC8MSs+geCm1fpkkOsfeLC
+         QJvA==
+X-Gm-Message-State: AFqh2kqdu8ca8pI0/14LhBKP5nj+eprPf22s/hRuDanSwB8LcLrRpRvD
+        Ke4Xx1lJ+7k8L2xfzGoSSTU=
+X-Google-Smtp-Source: AMrXdXuGZdQZlCDYdGWNJ63k7gmDEWAMJCSQe/wcIlsu9tQdMtNrukFmoPmXc22QLLx0cvDqeCm21A==
+X-Received: by 2002:adf:e5cc:0:b0:269:2b79:4cce with SMTP id a12-20020adfe5cc000000b002692b794ccemr1645314wrn.65.1671580985286;
+        Tue, 20 Dec 2022 16:03:05 -0800 (PST)
 Received: from prasmi.home ([2a00:23c8:2501:c701:1595:a48c:95a8:15e0])
-        by smtp.gmail.com with ESMTPSA id f2-20020a5d50c2000000b002362f6fcaf5sm13740150wrt.48.2022.12.20.16.03.02
+        by smtp.gmail.com with ESMTPSA id f2-20020a5d50c2000000b002362f6fcaf5sm13740150wrt.48.2022.12.20.16.03.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Dec 2022 16:03:02 -0800 (PST)
+        Tue, 20 Dec 2022 16:03:04 -0800 (PST)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
@@ -63,9 +63,9 @@ Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 6/9] pinctrl: renesas: rzg2l: Add BUILD_BUG_ON() checks
-Date:   Wed, 21 Dec 2022 00:02:39 +0000
-Message-Id: <20221221000242.340202-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 8/9] arm64: dts: renesas: r9a07g043[u]: Update pinctrl node to handle GPIO interrupts
+Date:   Wed, 21 Dec 2022 00:02:41 +0000
+Message-Id: <20221221000242.340202-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221221000242.340202-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20221221000242.340202-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -77,47 +77,49 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add BUILD_BUG_ON() checks to avoid overflows for GPIO configs for each
-supported SoC.
+Add required properties in pinctrl node to handle GPIO interrupts.
 
-While at it, for readability set n_port_pins based on the GPIO pin configs
-and not on GPIO names for r9a07g044_data as done for r9a07g043_data.
+Note as IRQC is not enabled in RZ/Five the phandle for interrupt-parent
+is added in RZ/G2UL specific dtsi so that RZ/Five pinctrl driver
+continues without waiting for IRQC to probe.
 
-Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
 v1 -> v2
-* New patch
+* No change
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi  | 2 ++
+ arch/arm64/boot/dts/renesas/r9a07g043u.dtsi | 4 ++++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 03e9462f39b1..8036485f2e92 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -1465,6 +1465,12 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
- 	struct rzg2l_pinctrl *pctrl;
- 	int ret;
- 
-+	BUILD_BUG_ON(ARRAY_SIZE(rzg2l_gpio_configs) * RZG2L_PINS_PER_PORT >
-+		     ARRAY_SIZE(rzg2l_gpio_names));
-+
-+	BUILD_BUG_ON(ARRAY_SIZE(r9a07g043_gpio_configs) * RZG2L_PINS_PER_PORT >
-+		     ARRAY_SIZE(rzg2l_gpio_names));
-+
- 	pctrl = devm_kzalloc(&pdev->dev, sizeof(*pctrl), GFP_KERNEL);
- 	if (!pctrl)
- 		return -ENOMEM;
-@@ -1528,7 +1534,7 @@ static struct rzg2l_pinctrl_data r9a07g044_data = {
- 	.port_pin_configs = rzg2l_gpio_configs,
- 	.n_ports = ARRAY_SIZE(rzg2l_gpio_configs),
- 	.dedicated_pins = rzg2l_dedicated_pins.common,
--	.n_port_pins = ARRAY_SIZE(rzg2l_gpio_names),
-+	.n_port_pins = ARRAY_SIZE(rzg2l_gpio_configs) * RZG2L_PINS_PER_PORT,
- 	.n_dedicated_pins = ARRAY_SIZE(rzg2l_dedicated_pins.common) +
- 		ARRAY_SIZE(rzg2l_dedicated_pins.rzg2l_pins),
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+index 3f7d451b1199..c8a83e42c4f3 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+@@ -531,6 +531,8 @@ pinctrl: pinctrl@11030000 {
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			gpio-ranges = <&pinctrl 0 0 152>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD R9A07G043_GPIO_HCLK>;
+ 			power-domains = <&cpg>;
+ 			resets = <&cpg R9A07G043_GPIO_RSTN>,
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
+index c6e25ad98011..a31cc54b8ed6 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
+@@ -49,6 +49,10 @@ timer {
+ 	};
  };
+ 
++&pinctrl {
++	interrupt-parent = <&irqc>;
++};
++
+ &soc {
+ 	interrupt-parent = <&gic>;
+ 
 -- 
 2.25.1
 
