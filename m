@@ -2,52 +2,53 @@ Return-Path: <linux-gpio-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4EAC4167B
-	for <linux-gpio@archiver.kernel.org>; Wed, 21 Dec 2022 00:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A1CC41535
+	for <linux-gpio@archiver.kernel.org>; Wed, 21 Dec 2022 00:03:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234004AbiLUADA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 20 Dec 2022 19:03:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44746 "EHLO
+        id S234286AbiLUADC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 20 Dec 2022 19:03:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229943AbiLUAC7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Dec 2022 19:02:59 -0500
+        with ESMTP id S234238AbiLUADB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Dec 2022 19:03:01 -0500
 Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43D161C900;
-        Tue, 20 Dec 2022 16:02:58 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id h16so13390292wrz.12;
-        Tue, 20 Dec 2022 16:02:58 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 439A31C900;
+        Tue, 20 Dec 2022 16:03:00 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id y16so13456597wrm.2;
+        Tue, 20 Dec 2022 16:03:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2bIxMvbuO9yaK81EcXrGxNHHur90BJYczDKwTQOVxFg=;
-        b=HizRdbK6aIQCTix5WLUu1NOK4XGS+3q5id/bxXXqrdlhxgvxEwOFBYgx8TLTnSX3W0
-         FWKkXv848Tp8THdEvkYi4xPosOqGoJ/8F/9KAzUGT4EETsZLQ0gV6XVUqEBWIwsX0EXE
-         FRi68GLaLqRmEzDfuzdYWmFadXzogZinKEWMVZ8JLZuKyAZnKUCWXmdq7ap+q9dum5e2
-         JvTJzIE7yTGdwofw4TpOC6WbpdY//60lnU8VTBU8LyptE52HDd2hiE0Xy9R56SeeEI4G
-         GizKAGJth/S9psWUeIi/Kv/A3F8It9UOQBizdSwmjU/kxohTTET+NOJKmf/SCwnURYEy
-         mbTQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M1g/qK+wITcmMNBzaKxGBCpgwiK6fj9WTq342zlrl9U=;
+        b=Ua0sxbOPrzWv+NNn2uxUgOEQEzqxLhlVwhO637MFvOZWWBlgRQH/rREgDkhXAl9y9b
+         mIcOn1TuRwM4UwuxFF6hyc2pBvlrEsdsTSeEz7WFUgWRBaDZRP7f9NBE0UBXe7u/xpOg
+         3yiL3Cixg8QeJJgPEEMoaB0waB8s2MkBHW/aXXQH74ETLk31uLHJdskA91I3MnD7gZxQ
+         zQqK5n7r+OYz06PbohEtHTNIIrzEjLXiwclY6QMGB1yut1YxmI8YNwh2L/SRWc37dMIN
+         IAoOYRG71JYE/FuPib/NijuoDl1M6s0oxEVq8exQBmXAyQZJrmkvvJ4LvUj1KkllsT21
+         1+PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2bIxMvbuO9yaK81EcXrGxNHHur90BJYczDKwTQOVxFg=;
-        b=F6Gt9p6DY77RPonRnbK0eJSWyiMuVxzl+Ia3MoU3GpQkY3VFIhKKnUguaVoZg9NWZC
-         j+jOC8DbPGeq66ugcVP1+2lMH8ZhDDJiA9RXFPkKeVTdPY87Oux4qGRdbjhoZfZapoae
-         IOgOFUXcWe0TNCzRLl+X6NnHH8Jw8SBBwQOBaXYj3Aa5fMoWVfqea5JH+t0bYcYbs3TM
-         qXKeoZAy55EAQnXCtyZUQiYNld9yaVdLv+AZZy4eld0bxBF3E8WkroMvB/gKOdnwoOMF
-         Zpn6ymPa5uccWU0s3Y5vtwSWSKxq1YpkhQOPVnwhT8u/wTbmjkcq8c/sa/lcVOpAThVP
-         wDgw==
-X-Gm-Message-State: AFqh2kqr4/rEODIwSPf8Z7SqYAx6wIowgLSz3QDbsU+C29NNleklxS7D
-        b3f1xNnEXDGgbprG06yASZc=
-X-Google-Smtp-Source: AMrXdXuEKOv0Mbi3S4xpZ2/K6HynC1Y8FEvzHEf1+33Rx8qtzvrlRjBrYGXikGX+jH3jyM8XiIrwGA==
-X-Received: by 2002:a5d:4d8a:0:b0:268:b15a:e7ae with SMTP id b10-20020a5d4d8a000000b00268b15ae7aemr1661740wru.5.1671580976699;
-        Tue, 20 Dec 2022 16:02:56 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M1g/qK+wITcmMNBzaKxGBCpgwiK6fj9WTq342zlrl9U=;
+        b=KH2jO9IGmflZOWMn7UXigkX73vkTVRP2QJqzx1y4wSWBrm/B7NXRkldmYRG9yin9v3
+         FuxJxgdAS80ym3AtsagFz97hQFw6oapINr4MIcoixDPM42Plk4JunvQsgsTp1ri0woYL
+         EuPTYkS8Ru0WXyauurjddQS8D7663wpXm4g8PqtxHcpc/o0/rctXt0URP+UacjHWvCYN
+         nieiTFbxMphwVAbSdcso/i5/eS4vagVpx0qii0g44cOgf8fEldqkMU2Oh+XqVs/qFSW1
+         RftlgQ0hXfnEbtw4nHrqjOJUh1yPYBmmuSWei9/uZFDFjbPZhO2qe7bh8LtzUp8XGGts
+         T/tA==
+X-Gm-Message-State: ANoB5pmBfDsSJEnjnC/F9c1y1CsZAzOgtA1IDoImR7pws+GC5WteTYr7
+        CCufYbVpkZwfFfA5X5VvZKc=
+X-Google-Smtp-Source: AA0mqf49swmiA1NfsE48IIYpD/gm+EK08KkuDqNydVay+PXkoEPAOluFubQk/lNISxWQzkd4bPiYsw==
+X-Received: by 2002:adf:f3cd:0:b0:241:f95f:eef8 with SMTP id g13-20020adff3cd000000b00241f95feef8mr27395099wrp.11.1671580978710;
+        Tue, 20 Dec 2022 16:02:58 -0800 (PST)
 Received: from prasmi.home ([2a00:23c8:2501:c701:1595:a48c:95a8:15e0])
-        by smtp.gmail.com with ESMTPSA id f2-20020a5d50c2000000b002362f6fcaf5sm13740150wrt.48.2022.12.20.16.02.55
+        by smtp.gmail.com with ESMTPSA id f2-20020a5d50c2000000b002362f6fcaf5sm13740150wrt.48.2022.12.20.16.02.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Dec 2022 16:02:56 -0800 (PST)
+        Tue, 20 Dec 2022 16:02:58 -0800 (PST)
 From:   Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
@@ -62,10 +63,12 @@ Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 0/9] Add IRQC support to RZ/G2UL SoC
-Date:   Wed, 21 Dec 2022 00:02:33 +0000
-Message-Id: <20221221000242.340202-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 2/9] dt-bindings: interrupt-controller: irqc-rzg2l: Drop RZG2L_NMI macro
+Date:   Wed, 21 Dec 2022 00:02:35 +0000
+Message-Id: <20221221000242.340202-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221221000242.340202-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20221221000242.340202-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -74,51 +77,31 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi All,
+NMI interrupt is not an external interrupt as compared to IRQ0-7 and
+TINT0-31 on RZ/G2L SoC, so there is no need for RZG2L_NMI macro.
 
-This patch series does the following:
-* Adds IRQC support to the RZ/G2UL SoC.
-* Drops mapping NMI interrupt as part of IRQ domain
-* Parses interrupts based in interrupt-names
-* Includes a fix for pinctrl driver when using GPIO pins as interrupts
-* Adds PHY interrupt support for ETH{0/1}
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v1 -> v2
+* New patch
+---
+ include/dt-bindings/interrupt-controller/irqc-rzg2l.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-v1->v2
-* Updated binding doc
-* Dropped mapping NMI interrupt as part of IRQ domain
-* Fixed review comments pointed by Geert
-* Added support to parse interrupts by name
-* Added compile time checks for gpio config arrays
-
-RFC v1: https://patchwork.kernel.org/project/linux-renesas-soc/cover/20221107175305.63975-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-
-Cheers,
-Prabhakar
-
-Lad Prabhakar (9):
-  dt-bindings: interrupt-controller: renesas,rzg2l-irqc: Document
-    RZ/G2UL SoC
-  dt-bindings: interrupt-controller: irqc-rzg2l: Drop RZG2L_NMI macro
-  irqchip: irq-renesas-rzg2l: Skip mapping NMI interrupt as part of
-    hierarchy domain
-  irqchip: irq-renesas-rzg2l: Add support for RZ/G2UL SoC
-  pinctrl: renesas: rzg2l: Fix configuring the GPIO pins as interrupts
-  pinctrl: renesas: rzg2l: Add BUILD_BUG_ON() checks
-  arm64: dts: renesas: r9a07g043u: Add IRQC node
-  arm64: dts: renesas: r9a07g043[u]: Update pinctrl node to handle GPIO
-    interrupts
-  arm64: dts: renesas: rzg2ul-smarc-som: Add PHY interrupt support for
-    ETH{0/1}
-
- .../renesas,rzg2l-irqc.yaml                   | 240 +++++++++++++-----
- arch/arm64/boot/dts/renesas/r9a07g043.dtsi    |   2 +
- arch/arm64/boot/dts/renesas/r9a07g043u.dtsi   |  72 ++++++
- .../boot/dts/renesas/rzg2ul-smarc-som.dtsi    |  11 +-
- drivers/irqchip/irq-renesas-rzg2l.c           | 102 ++++++--
- drivers/pinctrl/renesas/pinctrl-rzg2l.c       |  25 +-
- .../interrupt-controller/irqc-rzg2l.h         |   3 -
- 7 files changed, 366 insertions(+), 89 deletions(-)
-
+diff --git a/include/dt-bindings/interrupt-controller/irqc-rzg2l.h b/include/dt-bindings/interrupt-controller/irqc-rzg2l.h
+index 34ce778885a1..dd2da795208d 100644
+--- a/include/dt-bindings/interrupt-controller/irqc-rzg2l.h
++++ b/include/dt-bindings/interrupt-controller/irqc-rzg2l.h
+@@ -9,9 +9,6 @@
+ #ifndef __DT_BINDINGS_IRQC_RZG2L_H
+ #define __DT_BINDINGS_IRQC_RZG2L_H
+ 
+-/* NMI maps to SPI0 */
+-#define RZG2L_NMI	0
+-
+ /* IRQ0-7 map to SPI1-8 */
+ #define RZG2L_IRQ0	1
+ #define RZG2L_IRQ1	2
 -- 
 2.25.1
 
