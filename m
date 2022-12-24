@@ -2,46 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E76C4332F
-	for <linux-gpio@archiver.kernel.org>; Sat, 24 Dec 2022 01:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B4DC3DA79
+	for <linux-gpio@archiver.kernel.org>; Sat, 24 Dec 2022 01:29:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233226AbiLXB3w (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 23 Dec 2022 20:29:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56122 "EHLO
+        id S233404AbiLXB3x (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 23 Dec 2022 20:29:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232495AbiLXB3l (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Dec 2022 20:29:41 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ADE8165B1;
-        Fri, 23 Dec 2022 17:29:40 -0800 (PST)
+        with ESMTP id S232881AbiLXB3n (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Dec 2022 20:29:43 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFE3A1705E;
+        Fri, 23 Dec 2022 17:29:42 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0BF43B80A26;
-        Sat, 24 Dec 2022 01:29:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDAE2C433EF;
-        Sat, 24 Dec 2022 01:29:36 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7957A61FAB;
+        Sat, 24 Dec 2022 01:29:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14F0DC433F2;
+        Sat, 24 Dec 2022 01:29:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671845377;
-        bh=nQ3gqylzIAb0FxqjlgJvdP9xrDdNm7W917Iu9KRjr50=;
+        s=k20201202; t=1671845381;
+        bh=IAks9GWBJ69lvrtruKdzo2aohCxAvyK28p6EhgBP8Bg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yvb/HLbyFXShDUWEUdMz2sci4dXSXif8ige/QwzQ4LvNZsIKPsm09Aa2bLB9Tnxih
-         ihAKiXnmjYKPL7xizWaF4TmBMIhN4TgBrbwjF4w+odktY67ca7ADTeseig3Pa02sak
-         Bpd198MU+6GU/QA3ZvtVZH6V/XR+J87tJarGq42MMMV7UOcycERzSUD57VECfFfT1q
-         WjOL8UzsTFlM+9o8b56asOyfF9T2t5ovJ5KiXPQmbQ/Ww3ghdXh9WFQUv0EjHGd6Zx
-         z23IRzggjmWl6FzkQjTiTkOuWu6BevPCmPdHcSop2k4fFe+V7G6Ljt43DJxpALjPgr
-         fyDHQqKh5V+5w==
+        b=EqA2zXbEgawhIZf8GbOzC+ikB7a8RswVGiUKtfAxUMTnOEkNUrLSIIUKvJtko33th
+         af9pyNbKKJBtpX5YWEkWjYwfQJepYJ9utoJ5XGEMtBZdvZX+OztiU6qwUprOhlIPkJ
+         LZDpNOV4XqepzHDrN/1L54X6VJIOfRY/fYTt/zTR2OpwfbWPOeUGSirWGomLyGE5f3
+         8j2cgOe8RctH51LP0I+6bXCfKdOna9GLx+Oklm7gGI71tsPx/LAaponOdmPecSqFg9
+         S7EBAVhkOLWUtlcdzybTXgOrnOZe6hLVIHVr3AVaqQZQT8wmg/R1D3VxD9IbL8BM0w
+         voIfKw9vaSgIA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, brgl@bgdev.pl,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 04/26] gpiolib: of: add quirk for locating reset lines with legacy bindings
-Date:   Fri, 23 Dec 2022 20:29:08 -0500
-Message-Id: <20221224012930.392358-4-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linus.walleij@linaro.org,
+        brgl@bgdev.pl, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 07/26] gpiolib: of: add a quirk for legacy names in MOXA ART RTC
+Date:   Fri, 23 Dec 2022 20:29:11 -0500
+Message-Id: <20221224012930.392358-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221224012930.392358-1-sashal@kernel.org>
 References: <20221224012930.392358-1-sashal@kernel.org>
@@ -55,57 +53,37 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-[ Upstream commit fbbbcd177a27508a47c5136b31de5cf4c8d0ab1c ]
+[ Upstream commit eaf1a29665cda1c767cac0d523828892bd77a842 ]
 
-Some legacy mappings used "gpio[s]-reset" instead of "reset-gpios",
-add a quirk so that gpiod API will still work on unmodified DTSes.
+The driver is using non-standard "gpio-rtc-data", "gpio-rtc-sclk", and
+"gpio-rtc-reset" names for properties describing its gpios. In
+preparation to converting to the standard naming ("rtc-*-gpios") and
+switching the driver to gpiod API add a quirk to gpiolib to keep
+compatibility with existing DTSes.
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib-of.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/gpio/gpiolib-of.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 7d4bbf6484bc..2b5d1b3095c7 100644
+index ffdbac2eeaa6..d22498c72a67 100644
 --- a/drivers/gpio/gpiolib-of.c
 +++ b/drivers/gpio/gpiolib-of.c
-@@ -382,9 +382,18 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
- 		 */
- 		const char *compatible;
- 	} gpios[] = {
-+#if !IS_ENABLED(CONFIG_LCD_HX8357)
-+		/* Himax LCD controllers used "gpios-reset" */
-+		{ "reset",	"gpios-reset",	"himax,hx8357" },
-+		{ "reset",	"gpios-reset",	"himax,hx8369" },
-+#endif
+@@ -390,6 +390,11 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
  #if IS_ENABLED(CONFIG_MFD_ARIZONA)
  		{ "wlf,reset",	NULL,		NULL },
  #endif
-+#if !IS_ENABLED(CONFIG_PCI_LANTIQ)
-+		/* MIPS Lantiq PCI */
-+		{ "reset",	"gpios-reset",	"lantiq,pci-xway" },
++#if IS_ENABLED(CONFIG_RTC_DRV_MOXART)
++		{ "rtc-data",	"gpio-rtc-data",	"moxa,moxart-rtc" },
++		{ "rtc-sclk",	"gpio-rtc-sclk",	"moxa,moxart-rtc" },
++		{ "rtc-reset",	"gpio-rtc-reset",	"moxa,moxart-rtc" },
 +#endif
- 
- 		/*
- 		 * Some regulator bindings happened before we managed to
-@@ -399,6 +408,13 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
- 		{ "wlf,ldo2ena", NULL,		NULL }, /* WM8994 */
+ #if IS_ENABLED(CONFIG_NFC_MRVL_I2C)
+ 		{ "reset",	"reset-n-io",	"marvell,nfc-i2c" },
  #endif
- 
-+#if IS_ENABLED(CONFIG_SND_SOC_TLV320AIC3X)
-+		{ "reset",	"gpio-reset",	"ti,tlv320aic3x" },
-+		{ "reset",	"gpio-reset",	"ti,tlv320aic33" },
-+		{ "reset",	"gpio-reset",	"ti,tlv320aic3007" },
-+		{ "reset",	"gpio-reset",	"ti,tlv320aic3104" },
-+		{ "reset",	"gpio-reset",	"ti,tlv320aic3106" },
-+#endif
- #if IS_ENABLED(CONFIG_SPI_GPIO)
- 		/*
- 		 * The SPI GPIO bindings happened before we managed to
 -- 
 2.35.1
 
