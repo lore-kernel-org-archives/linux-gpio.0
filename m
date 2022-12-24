@@ -2,46 +2,45 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7B4C3DA7C
-	for <linux-gpio@archiver.kernel.org>; Sat, 24 Dec 2022 01:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B033C46467
+	for <linux-gpio@archiver.kernel.org>; Sat, 24 Dec 2022 01:29:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231846AbiLXB3j (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 23 Dec 2022 20:29:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56080 "EHLO
+        id S232728AbiLXB3l (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 23 Dec 2022 20:29:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231192AbiLXB3i (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Dec 2022 20:29:38 -0500
+        with ESMTP id S232624AbiLXB3k (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Dec 2022 20:29:40 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8512BBE10;
-        Fri, 23 Dec 2022 17:29:37 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32772165AB;
+        Fri, 23 Dec 2022 17:29:40 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0D26661FA3;
-        Sat, 24 Dec 2022 01:29:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800EBC433F1;
-        Sat, 24 Dec 2022 01:29:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BF75961EF2;
+        Sat, 24 Dec 2022 01:29:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A194C433F0;
+        Sat, 24 Dec 2022 01:29:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671845376;
-        bh=bPsOR11OZVIL37IPsgh68/1JSbEg6PvdNn0HBKzTsFU=;
+        s=k20201202; t=1671845379;
+        bh=Xvy8sH+o6FVAqnqZgRVxOGN9pNBp/CXiiIJpqdZMAYQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VeX4KRo1QquAncjmxSrRdYXd+DYzj/aZvWl3ruuCRdYUnVt5PP15/lOPiiciupNlN
-         TvIsUUW2o9BXNall6wU1nZG87InvOQvw5FiRulgQA086/W3/vd1Rwiqr7QZ6srL584
-         OO+bp/piKBUY0toMmGNkPYjNe56hgwqIP4RuiU3cLX3BjwC4/X40BfGE1oycj2Y7UR
-         55RZDYDhRVDq5TyAH6zLFdpAEgdSoF4cfaNneNRvMVzsnKJw5jamHFW18LEeHRYDWB
-         wDYlzXmpOzupuk+Bo6RQCG4W8zNz/cDOyU8WRUwERkVfIrf7/Z/vFRJqmVdrcBFW/U
-         gTc3fWuHakJFQ==
+        b=qljJv27nbd3FzvkDo43nKpF/MN4jnPYv73y6Nt//Q97Y99LYMw+AL4HpK+x96j//L
+         vAM5W9K0wqJbuk2Viw6QTlONFAH4RaKzmB2mF5N0rXpwEUITuqRt8Dw5ZBMN8U8M9c
+         td57+OO8XZ4WqOrbr5E/NWsvcL6Ywa3CrYb21ZXWlXdUHrUnmqx/c1gMuZWE3Ebezz
+         rqYl/SqeLESvIFCqDAxxejD65POs4S5AUxUap2DJjoFy+WRnQntY2+sECZIK8SAf3D
+         uuG+ieo40z2pBhTpIChR8bZxtm5cL8eaLMo0g99+Rz7k1o3n7YCEzKxXn+94qQ8RYR
+         Z00/c3t8pjVAQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Daniel Thompson <daniel.thompson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, brgl@bgdev.pl,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 03/26] gpiolib: of: tighten selection of gpio renaming quirks
-Date:   Fri, 23 Dec 2022 20:29:07 -0500
-Message-Id: <20221224012930.392358-3-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linus.walleij@linaro.org,
+        brgl@bgdev.pl, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 05/26] gpiolib: of: add a quirk for reset line for Marvell NFC controller
+Date:   Fri, 23 Dec 2022 20:29:09 -0500
+Message-Id: <20221224012930.392358-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221224012930.392358-1-sashal@kernel.org>
 References: <20221224012930.392358-1-sashal@kernel.org>
@@ -55,72 +54,41 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-[ Upstream commit 307c593ba5f915e308fd23a2daae7e9a5209b604 ]
+[ Upstream commit 9c2cc7171e08eef52110d272fdf2225d6dcd81b6 ]
 
-Tighten selection of legacy gpio renaming quirks so that they only
-considered on more relevant configurations.
+The controller is using non-standard "reset-n-io" name for its reset
+gpio property, whereas gpiod API expects "<name>-gpios". Add a quirk
+so that gpiod API will still work on unmodified DTSes.
 
-Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
 Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib-of.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib-of.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 63c6fa3086f3..7d4bbf6484bc 100644
+index 2b5d1b3095c7..a9cedc39a245 100644
 --- a/drivers/gpio/gpiolib-of.c
 +++ b/drivers/gpio/gpiolib-of.c
-@@ -385,18 +385,21 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
+@@ -390,6 +390,16 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
  #if IS_ENABLED(CONFIG_MFD_ARIZONA)
  		{ "wlf,reset",	NULL,		NULL },
  #endif
--#if IS_ENABLED(CONFIG_REGULATOR)
-+
- 		/*
- 		 * Some regulator bindings happened before we managed to
- 		 * establish that GPIO properties should be named
- 		 * "foo-gpios" so we have this special kludge for them.
- 		 */
-+#if IS_ENABLED(CONFIG_REGULATOR_ARIZONA_LDO1)
- 		{ "wlf,ldoena",  NULL,		NULL }, /* Arizona */
++#if IS_ENABLED(CONFIG_NFC_MRVL_I2C)
++		{ "reset",	"reset-n-io",	"marvell,nfc-i2c" },
 +#endif
-+#if IS_ENABLED(CONFIG_REGULATOR_WM8994)
- 		{ "wlf,ldo1ena", NULL,		NULL }, /* WM8994 */
- 		{ "wlf,ldo2ena", NULL,		NULL }, /* WM8994 */
- #endif
--#if IS_ENABLED(CONFIG_SPI_MASTER)
- 
-+#if IS_ENABLED(CONFIG_SPI_GPIO)
- 		/*
- 		 * The SPI GPIO bindings happened before we managed to
- 		 * establish that GPIO properties should be named
-@@ -405,6 +408,7 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
- 		{ "miso",	"gpio-miso",	"spi-gpio" },
- 		{ "mosi",	"gpio-mosi",	"spi-gpio" },
- 		{ "sck",	"gpio-sck",	"spi-gpio" },
++#if IS_ENABLED(CONFIG_NFC_MRVL_SPI)
++		{ "reset",	"reset-n-io",	"marvell,nfc-spi" },
 +#endif
- 
- 		/*
- 		 * The old Freescale bindings use simply "gpios" as name
-@@ -412,10 +416,14 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
- 		 * all other SPI hardware. Allow this specifically for
- 		 * Freescale and PPC devices.
- 		 */
-+#if IS_ENABLED(CONFIG_SPI_FSL_SPI)
- 		{ "cs",		"gpios",	"fsl,spi" },
- 		{ "cs",		"gpios",	"aeroflexgaisler,spictrl" },
++#if IS_ENABLED(CONFIG_NFC_MRVL_UART)
++		{ "reset",	"reset-n-io",	"marvell,nfc-uart" },
++		{ "reset",	"reset-n-io",	"mrvl,nfc-uart" },
 +#endif
-+#if IS_ENABLED(CONFIG_SPI_PPC4xx)
- 		{ "cs",		"gpios",	"ibm,ppc4xx-spi" },
- #endif
-+
- #if IS_ENABLED(CONFIG_TYPEC_FUSB302)
- 		/*
- 		 * Fairchild FUSB302 host is using undocumented "fcs,int_n"
+ #if !IS_ENABLED(CONFIG_PCI_LANTIQ)
+ 		/* MIPS Lantiq PCI */
+ 		{ "reset",	"gpios-reset",	"lantiq,pci-xway" },
 -- 
 2.35.1
 
