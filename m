@@ -2,88 +2,84 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6903C46467
-	for <linux-gpio@archiver.kernel.org>; Sat, 24 Dec 2022 01:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4CEC53210
+	for <linux-gpio@archiver.kernel.org>; Mon, 26 Dec 2022 22:37:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233459AbiLXB3y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 23 Dec 2022 20:29:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56170 "EHLO
+        id S232395AbiLZWhY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 26 Dec 2022 17:37:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232894AbiLXB3n (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Dec 2022 20:29:43 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CFDD17070;
-        Fri, 23 Dec 2022 17:29:43 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DBB37B8213E;
-        Sat, 24 Dec 2022 01:29:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC3FEC433D2;
-        Sat, 24 Dec 2022 01:29:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671845380;
-        bh=E0CE3/Ncpftc99OxHjSKjUIjOQ3ZRP5MRZpSU2Fk9jU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ohitV9oLvhCi7gK3bCq7dTU+aSw0G82Kejne5cFmaibZ659KDRz/6L0bgyy6iIAGT
-         bQZ0tNxe4oJFdyFfB8aNcOUWvivTlTXd37q7w7mQIdZ2NuXJ+89KCxvOdl+c7tge8G
-         3gmehpOBuwRREBhGdDV8CBT5Zcyjwb0F1oEkvoROl+RAAdlJt2If1ZVkMjjon9kXoL
-         saZilxznI68T7gIvIkDBDaXuCV1OIo8q3lHPgVwNwAZMlnhfEp4fGpkBPtBvuVriB/
-         PuUGUjTq3TpyrmGuRgCpJA+tm7PkW5kXDCYeZNleAw5du1B5u98lFMvQxdwzuOxTiv
-         SwuJc3YF8y1tA==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, brgl@bgdev.pl,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 06/26] gpiolib: of: add a quirk for reset line for Cirrus CS42L56 codec
-Date:   Fri, 23 Dec 2022 20:29:10 -0500
-Message-Id: <20221224012930.392358-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221224012930.392358-1-sashal@kernel.org>
-References: <20221224012930.392358-1-sashal@kernel.org>
+        with ESMTP id S232420AbiLZWgV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Dec 2022 17:36:21 -0500
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB8985F54;
+        Mon, 26 Dec 2022 14:36:14 -0800 (PST)
+Received: by mail-oi1-f180.google.com with SMTP id o66so11150390oia.6;
+        Mon, 26 Dec 2022 14:36:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AGjdttmcgkKOVEh+yLpPFWCyfTxrmdMALVwDhA4tbxk=;
+        b=q5YWFPJBfhAQiVNLSyXpu/t+RYP99z/WDuUvLrW0ONbEnFyQ4oxYONr6fXQsxonr35
+         ZlR9om3xxCVYQuDLTeqeWUNADtfLXsYabe6yg+0vMfc6GxGqRoxgP6qR3Ohl5wbP6yp0
+         EpjEIZrbKFL0xQitX4OM8ayOV/ClWDSy0V6tvANslNfEUgiN7uI0p6xGyu700z+QN4iR
+         8Fi1tWZ/O5PvImDXeZykJja2bnXwFLp5gnMirOZY5V1UVd3si59k0IWQAP5dhQn9jhUL
+         3KrM8/NBNxQDDxxwiVnyHSaaEk5k6nPj7xF+9ejW5kwSKvIB0eCkmH4m/YSZqCRPN6nl
+         FY6w==
+X-Gm-Message-State: AFqh2koGYfyJZP1YO4PX+peAJSI1T4Cs5P2yZNQcR6Ygd5X8F7Vks9Jo
+        SY8rGd0V35Zb2GJ6sEC5eQ==
+X-Google-Smtp-Source: AMrXdXsMw29uTavPyGsPxjWjy3/8ibqE9mMs5+r+xOX45/xNrSglsye61N2mME7UKlhGFVpLdDQUfA==
+X-Received: by 2002:aca:1b0a:0:b0:35e:6f1d:eda9 with SMTP id b10-20020aca1b0a000000b0035e6f1deda9mr13253583oib.53.1672094174044;
+        Mon, 26 Dec 2022 14:36:14 -0800 (PST)
+Received: from robh_at_kernel.org ([2605:ef80:80e8:2792:eb0e:539f:f657:547b])
+        by smtp.gmail.com with ESMTPSA id bk10-20020a0568081a0a00b0035c422bb303sm5264522oib.19.2022.12.26.14.36.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Dec 2022 14:36:13 -0800 (PST)
+Received: (nullmailer pid 42527 invoked by uid 1000);
+        Mon, 26 Dec 2022 18:53:03 -0000
+Date:   Mon, 26 Dec 2022 12:53:03 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     aisheng.dong@nxp.com, ping.bai@nxp.com, linus.walleij@linaro.org,
+        linux-imx@nxp.com, s.hauer@pengutronix.de,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
+        shawnguo@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-i2c@vger.kernel.org, festevam@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pinctrl: imx8m: Integrate duplicated i.MX
+ 8M schemas
+Message-ID: <167208078314.42480.9171070887547759021.robh@kernel.org>
+References: <20221223030708.91459-1-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221223030708.91459-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-[ Upstream commit 944004eb56dc977ad5f882ca4338f45396052317 ]
+On Fri, 23 Dec 2022 11:07:08 +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> The i.MX8MM/N/P/Q IOMUXC schemas are basically the same, it does not to
+> have four schemas for almost the same binding.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  ...mm-pinctrl.yaml => fsl,imx8m-pinctrl.yaml} | 16 ++--
+>  .../bindings/pinctrl/fsl,imx8mn-pinctrl.yaml  | 84 -------------------
+>  .../bindings/pinctrl/fsl,imx8mp-pinctrl.yaml  | 84 -------------------
+>  .../bindings/pinctrl/fsl,imx8mq-pinctrl.yaml  | 84 -------------------
+>  4 files changed, 10 insertions(+), 258 deletions(-)
+>  rename Documentation/devicetree/bindings/pinctrl/{fsl,imx8mm-pinctrl.yaml => fsl,imx8m-pinctrl.yaml} (82%)
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mn-pinctrl.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml
+> 
 
-The controller is using non-standard "cirrus,gpio-nreset" name for its
-reset gpio property, whereas gpiod API expects "<name>-gpios".
-Add a quirk so that gpiod API will still work on unmodified DTSes.
-
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpio/gpiolib-of.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index a9cedc39a245..ffdbac2eeaa6 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -418,6 +418,9 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
- 		{ "wlf,ldo2ena", NULL,		NULL }, /* WM8994 */
- #endif
- 
-+#if IS_ENABLED(CONFIG_SND_SOC_CS42L56)
-+		{ "reset",	"cirrus,gpio-nreset",	"cirrus,cs42l56" },
-+#endif
- #if IS_ENABLED(CONFIG_SND_SOC_TLV320AIC3X)
- 		{ "reset",	"gpio-reset",	"ti,tlv320aic3x" },
- 		{ "reset",	"gpio-reset",	"ti,tlv320aic33" },
--- 
-2.35.1
-
+Acked-by: Rob Herring <robh@kernel.org>
