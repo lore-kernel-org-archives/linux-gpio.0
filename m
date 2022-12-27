@@ -2,80 +2,72 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBF7C4167B
-	for <linux-gpio@archiver.kernel.org>; Tue, 27 Dec 2022 19:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2470FC46467
+	for <linux-gpio@archiver.kernel.org>; Tue, 27 Dec 2022 19:27:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231447AbiL0TZL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 27 Dec 2022 14:25:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45970 "EHLO
+        id S229915AbiL0T1H (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 27 Dec 2022 14:27:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232097AbiL0TYq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Dec 2022 14:24:46 -0500
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 772AFD2F3;
-        Tue, 27 Dec 2022 11:24:11 -0800 (PST)
+        with ESMTP id S232047AbiL0T0q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Dec 2022 14:26:46 -0500
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C468DEB3;
+        Tue, 27 Dec 2022 11:26:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1672169051; x=1703705051;
+  t=1672169201; x=1703705201;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=2BE9RH9bB4jftDqWDKVrmuMRF5jrC7+WeYWOKcz94t8=;
-  b=N3piHIFRIWEqpZR6568tUGMxYFBeErNYFUfkn6C9ONFSmcJYVh7nilww
-   xus2V8pdesLCQTgr43JISy64Y1cPo9gDQaY3R3cCxfmO4ayFz2F9KuQ22
-   l+OtZdArzazs/61/frSVDmilZ/DM0IENVRZtRubY3EC0xHWwNus2rQ/u+
-   ZdL33XGzZarzDxyXjJ5b1/4tSjDDAKUuG+5/dnayZ6v/VYTmPqtosLijs
-   NEuh1B0o9fO+KdfBchoD43nqmSmMYuAZBYVXPDDF9a8ZMRZGVQnRutqBA
-   pwX8vwYzICKWH1chGUuh40H1Q2NNlTHpDdqxZuqGeUkLhebtKPoE3ESl0
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10573"; a="322726437"
+  bh=bdnmzdLPhGnylPibn6OyUTv4aH136Snh4DgyixVJCbw=;
+  b=mkAcUxaBnA9rbpH0Tndy4kjiS5IvPnzGF6i7e+sfEsMAQJcTmD1tU5cA
+   Nvi8UWbSrBtIgj47YA/9ABu7LDbVqpWBdkUbJ+tPq5dpZ5i6u4gUOeWUy
+   kzdacGyy/tFq+gw7pYqcLTV7gGYtYo3AM/orakiWc57LipFDvBHa5QsOz
+   Nh1AZPG6udYcykjYaY0kOsq7e8vryablG5m2oXvapfHN/qsye9g7Y8QUl
+   s1jg5TO3VNZvy8LQX1Eb/0EsK/zIocrIA77qz4QEFREiZiE7C5RwXvjC4
+   mlUeOqhlbacPo/v5n2HCa1bP8jbRfa1Z/Ulnrk+UTSVSa5MLw8gENvbET
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10573"; a="385170802"
 X-IronPort-AV: E=Sophos;i="5.96,279,1665471600"; 
-   d="scan'208";a="322726437"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Dec 2022 11:24:11 -0800
+   d="scan'208";a="385170802"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Dec 2022 11:26:23 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10573"; a="741820711"
+X-IronPort-AV: E=McAfee;i="6500,9779,10573"; a="827196199"
 X-IronPort-AV: E=Sophos;i="5.96,279,1665471600"; 
-   d="scan'208";a="741820711"
+   d="scan'208";a="827196199"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by FMSMGA003.fm.intel.com with ESMTP; 27 Dec 2022 11:24:09 -0800
+  by orsmga005.jf.intel.com with ESMTP; 27 Dec 2022 11:26:22 -0800
 Received: from andy by smile.fi.intel.com with local (Exim 4.96)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1pAFYW-000CBo-1L;
-        Tue, 27 Dec 2022 21:24:08 +0200
-Date:   Tue, 27 Dec 2022 21:24:08 +0200
+        id 1pAFae-000CF1-2Z;
+        Tue, 27 Dec 2022 21:26:20 +0200
+Date:   Tue, 27 Dec 2022 21:26:20 +0200
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/4] pinctrl: intel: Add default case to
- intel_config_set_pull()
-Message-ID: <Y6tGWFqduPZxw5qs@smile.fi.intel.com>
-References: <20221219123208.5505-1-andriy.shevchenko@linux.intel.com>
- <Y6B4HrOXNPXGBDWZ@smile.fi.intel.com>
- <Y6FTwscP2xOw5ADE@black.fi.intel.com>
+Subject: Re: [PATCH v1 1/1] pinctrl: intel: Define maximum pad number in the
+ group
+Message-ID: <Y6tG3KJZeacSVa23@smile.fi.intel.com>
+References: <20221219123240.5601-1-andriy.shevchenko@linux.intel.com>
+ <Y6B2nIy4hXQLjgvU@black.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y6FTwscP2xOw5ADE@black.fi.intel.com>
+In-Reply-To: <Y6B2nIy4hXQLjgvU@black.fi.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Dec 20, 2022 at 08:18:42AM +0200, Mika Westerberg wrote:
-> On Mon, Dec 19, 2022 at 04:41:34PM +0200, Andy Shevchenko wrote:
-> > On Mon, Dec 19, 2022 at 02:32:05PM +0200, Andy Shevchenko wrote:
-> > > For the sake of symmetry with intel_config_get_pull(), add
-> > > a default case to the outer switch.
+On Mon, Dec 19, 2022 at 04:35:08PM +0200, Mika Westerberg wrote:
+> On Mon, Dec 19, 2022 at 02:32:40PM +0200, Andy Shevchenko wrote:
+> > Instead of using hard coded magic number here and there,
+> > define maximum pad number in the group in newly added
+> > INTEL_PINCTRL_MAX_GPP_SIZE.
 > > 
-> > The stats for the entire series:
-> > 
-> >  drivers/pinctrl/intel/pinctrl-intel.c | 45 +++++++++++++++++++++++++++------------------
-> >   1 file changed, 27 insertions(+), 18 deletions(-)
-> 
-> Thanks!
-> 
-> For the series,
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
 > Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
