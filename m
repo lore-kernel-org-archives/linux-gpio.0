@@ -2,243 +2,72 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 875E0C3DA7A
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Dec 2022 09:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98AC9C4167B
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Dec 2022 12:32:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232633AbiL1JUl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Dec 2022 04:20:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34830 "EHLO
+        id S230398AbiL1Mct (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Dec 2022 07:32:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232723AbiL1JUj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Dec 2022 04:20:39 -0500
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D234F15;
-        Wed, 28 Dec 2022 01:20:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1672219238; x=1703755238;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=hNd/hArL9/6boN9uSffZJyCUY4OmKqVMlCay2nIEb8I=;
-  b=bWc7r5zcnW8j5g8LSYJk6akI8ry7QzyDJcVUS6EfoW1TlbPGjUkOIS77
-   fwTriSAe4WdzAaIzXIWBVaagWEBh5QpWj6RIXOXy8Z2O/f1DnGoFXwP68
-   Wwvx3KMTFGMGjSYS4CIoSWjmkYZs2ZX9v/TixLelL/51163hRRPR9Te12
-   +emps6+O7wcKvlsYBMBzXp9Iy7UwEzyF5hcUwVl4T4Jhkb9sUK9A9tNVA
-   gVOmD+uoMDQNwFCo+5ml1OrnZ6sY61lS890kRosy4ydSyJWiloiXUi4PA
-   A75sEPfzzok7ZD8jAK8qTemXJkXRlBvhh+dJaro8NAQImbbRAO+IIA0Sx
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10573"; a="348041442"
-X-IronPort-AV: E=Sophos;i="5.96,280,1665471600"; 
-   d="scan'208";a="348041442"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Dec 2022 01:20:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10573"; a="721737258"
-X-IronPort-AV: E=Sophos;i="5.96,280,1665471600"; 
-   d="scan'208";a="721737258"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 28 Dec 2022 01:20:28 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E5663159; Wed, 28 Dec 2022 11:20:59 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v4 1/3] gpiolib: Introduce gpio_device_get() and gpio_device_put()
-Date:   Wed, 28 Dec 2022 11:20:43 +0200
-Message-Id: <20221228092045.80425-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221228092045.80425-1-andriy.shevchenko@linux.intel.com>
-References: <20221228092045.80425-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S232542AbiL1MZC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Dec 2022 07:25:02 -0500
+Received: from out2.migadu.com (out2.migadu.com [188.165.223.204])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3BB42BA;
+        Wed, 28 Dec 2022 04:25:00 -0800 (PST)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1672230298;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=TMV4Qv2vawvIPldNlgCxLwC6ooI0ZTG3WDHvdQQQ+So=;
+        b=eWtODONXkCdzYOiH9EFWtX5QkId0udUHns9htOGytFKvpZjydl+FDR/QIr+WRKwGZqx1lt
+        eFTU6cYt72pKUGbu/xwNraGUsP1ZjhZRe7TATXNu+bTQTMujzrL5MYrMBWzlNhbctAhvum
+        wUFotRJlONem/dDVjh95TYV0XiIIOis=
+From:   Cixi Geng <cixi.geng@linux.dev>
+To:     linus.walleij@linaro.org, brgl@bgdev.pl, orsonzhai@gmail.com,
+        baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        cixi.geng1@unisoc.com
+Subject: [PATCH V3 0/3] Make the irqchip immutable
+Date:   Wed, 28 Dec 2022 20:24:39 +0800
+Message-Id: <20221228122442.392504-1-cixi.geng@linux.dev>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Introduce gpio_device_get() and gpio_device_put() helpers
-and convert existing users.
+From: Cixi Geng <cixi.geng1@unisoc.com>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib-cdev.c | 21 +++++++++------------
- drivers/gpio/gpiolib.c      | 14 ++++++--------
- drivers/gpio/gpiolib.h      | 10 ++++++++++
- 3 files changed, 25 insertions(+), 20 deletions(-)
+Kernel warns about mutable irq_chips:
+    "not an immutable chip, please consider fixing!"
 
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index e878e3f22b0e..0a33971c964c 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -321,7 +321,7 @@ static void linehandle_free(struct linehandle_state *lh)
- 		if (lh->descs[i])
- 			gpiod_free(lh->descs[i]);
- 	kfree(lh->label);
--	put_device(&lh->gdev->dev);
-+	gpio_device_put(lh->gdev);
- 	kfree(lh);
- }
- 
-@@ -363,8 +363,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
- 	lh = kzalloc(sizeof(*lh), GFP_KERNEL);
- 	if (!lh)
- 		return -ENOMEM;
--	lh->gdev = gdev;
--	get_device(&gdev->dev);
-+	lh->gdev = gpio_device_get(gdev);
- 
- 	if (handlereq.consumer_label[0] != '\0') {
- 		/* label is only initialized if consumer_label is set */
-@@ -1576,7 +1575,7 @@ static void linereq_free(struct linereq *lr)
- 	}
- 	kfifo_free(&lr->events);
- 	kfree(lr->label);
--	put_device(&lr->gdev->dev);
-+	gpio_device_put(lr->gdev);
- 	kfree(lr);
- }
- 
-@@ -1646,8 +1645,7 @@ static int linereq_create(struct gpio_device *gdev, void __user *ip)
- 	if (!lr)
- 		return -ENOMEM;
- 
--	lr->gdev = gdev;
--	get_device(&gdev->dev);
-+	lr->gdev = gpio_device_get(gdev);
- 
- 	for (i = 0; i < ulr.num_lines; i++) {
- 		lr->lines[i].req = lr;
-@@ -1916,7 +1914,7 @@ static void lineevent_free(struct lineevent_state *le)
- 	if (le->desc)
- 		gpiod_free(le->desc);
- 	kfree(le->label);
--	put_device(&le->gdev->dev);
-+	gpio_device_put(le->gdev);
- 	kfree(le);
- }
- 
-@@ -2094,8 +2092,7 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
- 	le = kzalloc(sizeof(*le), GFP_KERNEL);
- 	if (!le)
- 		return -ENOMEM;
--	le->gdev = gdev;
--	get_device(&gdev->dev);
-+	le->gdev = gpio_device_get(gdev);
- 
- 	if (eventreq.consumer_label[0] != '\0') {
- 		/* label is only initialized if consumer_label is set */
-@@ -2671,7 +2668,7 @@ static int gpio_chrdev_open(struct inode *inode, struct file *file)
- 
- 	init_waitqueue_head(&cdev->wait);
- 	INIT_KFIFO(cdev->events);
--	cdev->gdev = gdev;
-+	cdev->gdev = gpio_device_get(gdev);
- 
- 	cdev->lineinfo_changed_nb.notifier_call = lineinfo_changed_notify;
- 	ret = blocking_notifier_chain_register(&gdev->notifier,
-@@ -2679,7 +2676,6 @@ static int gpio_chrdev_open(struct inode *inode, struct file *file)
- 	if (ret)
- 		goto out_free_bitmap;
- 
--	get_device(&gdev->dev);
- 	file->private_data = cdev;
- 
- 	ret = nonseekable_open(inode, file);
-@@ -2694,6 +2690,7 @@ static int gpio_chrdev_open(struct inode *inode, struct file *file)
- 	blocking_notifier_chain_unregister(&gdev->notifier,
- 					   &cdev->lineinfo_changed_nb);
- out_free_bitmap:
-+	gpio_device_put(gdev);
- 	bitmap_free(cdev->watched_lines);
- out_free_cdev:
- 	kfree(cdev);
-@@ -2716,7 +2713,7 @@ static int gpio_chrdev_release(struct inode *inode, struct file *file)
- 	bitmap_free(cdev->watched_lines);
- 	blocking_notifier_chain_unregister(&gdev->notifier,
- 					   &cdev->lineinfo_changed_nb);
--	put_device(&gdev->dev);
-+	gpio_device_put(gdev);
- 	kfree(cdev);
- 
- 	return 0;
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 5a66d9616d7c..fdb0dc464218 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -882,7 +882,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 	gpiochip_free_valid_mask(gc);
- 	if (gdev->dev.release) {
- 		/* release() has been registered by gpiochip_setup_dev() */
--		put_device(&gdev->dev);
-+		gpio_device_put(gdev);
- 		goto err_print_message;
- 	}
- err_remove_from_list:
-@@ -972,7 +972,7 @@ void gpiochip_remove(struct gpio_chip *gc)
- 	 */
- 	gcdev_unregister(gdev);
- 	up_write(&gdev->sem);
--	put_device(&gdev->dev);
-+	gpio_device_put(gdev);
- }
- EXPORT_SYMBOL_GPL(gpiochip_remove);
- 
-@@ -2063,17 +2063,15 @@ static int validate_desc(const struct gpio_desc *desc, const char *func)
- int gpiod_request(struct gpio_desc *desc, const char *label)
- {
- 	int ret = -EPROBE_DEFER;
--	struct gpio_device *gdev;
- 
- 	VALIDATE_DESC(desc);
--	gdev = desc->gdev;
- 
--	if (try_module_get(gdev->owner)) {
-+	if (try_module_get(desc->gdev->owner)) {
- 		ret = gpiod_request_commit(desc, label);
- 		if (ret)
--			module_put(gdev->owner);
-+			module_put(desc->gdev->owner);
- 		else
--			get_device(&gdev->dev);
-+			gpio_device_get(desc->gdev);
- 	}
- 
- 	if (ret)
-@@ -2134,7 +2132,7 @@ void gpiod_free(struct gpio_desc *desc)
- {
- 	if (desc && desc->gdev && gpiod_free_commit(desc)) {
- 		module_put(desc->gdev->owner);
--		put_device(&desc->gdev->dev);
-+		gpio_device_put(desc->gdev);
- 	} else {
- 		WARN_ON(extra_checks);
- 	}
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index b3c2db6eba80..cca81375f127 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -82,6 +82,16 @@ static inline struct gpio_device *to_gpio_device(struct device *dev)
- 	return container_of(dev, struct gpio_device, dev);
- }
- 
-+static inline struct gpio_device *gpio_device_get(struct gpio_device *gdev)
-+{
-+	return to_gpio_device(get_device(&gdev->dev));
-+}
-+
-+static inline void gpio_device_put(struct gpio_device *gdev)
-+{
-+	put_device(&gdev->dev);
-+}
-+
- /* gpio suffixes used for ACPI and device tree lookup */
- static __maybe_unused const char * const gpio_suffixes[] = { "gpios", "gpio" };
- 
+Make the struct irq_chip const, flag it as IRQCHIP_IMMUTABLE, add the
+new helper functions, and call the appropriate gpiolib functions.
+
+v2 changes:
+split the patch by each driver. and other comment by baolin in[1]
+
+v3 changes:
+fix cocci warnings test by lkp[2].
+
+[1]:https://lore.kernel.org/all/97e244d4-6b5c-31c9-7329-b8deef615645@linux.alibaba.com/
+[2]:https://lore.kernel.org/all/202212240406.9Nm190P8-lkp@intel.com/
+
+Cixi Geng (3):
+  gpio: eic-sprd: Make the irqchip immutable
+  gpio: gpio-pmic-eic-sprd: Make the irqchip immutable
+  gpio: gpio-sprd: Make the irqchip immutable
+
+ drivers/gpio/gpio-eic-sprd.c      | 23 ++++++++++++++---------
+ drivers/gpio/gpio-pmic-eic-sprd.c | 29 ++++++++++++++++++-----------
+ drivers/gpio/gpio-sprd.c          |  9 ++++++---
+ 3 files changed, 38 insertions(+), 23 deletions(-)
+
+
+base-commit: 1b929c02afd37871d5afb9d498426f83432e71c2
 -- 
-2.35.1
+2.34.1
 
