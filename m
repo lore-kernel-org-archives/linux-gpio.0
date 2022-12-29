@@ -2,89 +2,78 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 661B5C3DA7D
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Dec 2022 00:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F6EEC4332F
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Dec 2022 01:00:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231956AbiL2Akx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Dec 2022 19:40:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52976 "EHLO
+        id S229822AbiL2BAi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Dec 2022 20:00:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232345AbiL2Akv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Dec 2022 19:40:51 -0500
-Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D83B2EE3B
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Dec 2022 16:40:48 -0800 (PST)
-Received: by mail-ot1-x32e.google.com with SMTP id k7-20020a056830168700b0067832816190so10743694otr.1
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Dec 2022 16:40:48 -0800 (PST)
+        with ESMTP id S229716AbiL2BAh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Dec 2022 20:00:37 -0500
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 833C913D20
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Dec 2022 17:00:32 -0800 (PST)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-142b72a728fso20257578fac.9
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Dec 2022 17:00:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=f2p2shVUpdpBRcPbig+xzUB8/WfGytn/tvXqnk/G7/Y=;
-        b=Gzjw0D8iyAbTjlB/MOb4J4YmMSW1zdzpRQCifiwhKhsZ7e8lkDYZvuuDw9+alRwI9j
-         3becoCce9AZU4D3fLWu5VgjqdWZmwVbd16kzYohhpmZHS64shJslyqIbB4nhVjZ0BvJd
-         Z4W7VaKotC5HqA/8wU3fn8lx7vi9Ox2i0PP+M1J7GM9ZuO3VCpP7hQrRndAfHkWkOpX+
-         GqnNNrnymEPDCRoO6MXXEEoMbfXd5hdAdox8Pdi/2sMyzkBeHL9F5HM5PoULI+bK7L4z
-         xMvOqu25W0oUvfDLAg7fCGEqRnesaAEkZgN7/t8t2Vlu6z6gNhM4BhIjvS3lWghb//4p
-         Mj0g==
+        bh=X4+9D7Pdm++sqmI92y+Lbv8mA/3krcFyyp1iTzuS9Ao=;
+        b=ypqyR80QY9NGMCdqlvw9pUQW+S3bccILtvwOtjJjnRgaurvmX9ZjZ/Vpz3v1nZKiA+
+         QS8eqdzb5zHyPuWtI+pyowDD+kWAFZ57IkrlM/8wEqKsY5PNiVY7KwCK3zQtiMGZy06q
+         dOQe1EXK7pSE8p34wJ365oeNObii8g2KEkoxieKjd92FtcKremqmycijBCIuNAWHA+t0
+         mCFBZSQ4q0+zR41x0a3u7V/p6Yl8yRyrCuIgQ/VBZQufZwMmFML5AHEDvgOIutFwWmTG
+         YC5kRCo43ZrhL5kOIcSWKAhtinT3JttPtmIOKo+9X2VVf1KoWuWugHb7wXXhbABShK+l
+         ikpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=f2p2shVUpdpBRcPbig+xzUB8/WfGytn/tvXqnk/G7/Y=;
-        b=EKCK4gSCNmF6M2JnbieA7l7RnpLooYIeYgHdhC7Xhgh/GinbjtK4Mu2Sd7I5MdGEWO
-         Y0PlsILovrUGQby3/6L4wnSyHafo6jBa4x6nU/yNcaP+TUAdjQjp3h5Yb6f34Y4YFKmw
-         3j4ZcXP6YTpNRER9Ak4GZusO34Tci5bVX45hvdPl8xqDmGms/mAJUXqureFxk82SA6Ws
-         bY6PpJGdPtvxgiAniP4bWJWw5BN4JTJFkzBJZGwT+qKvfsBx6y6xcP0ASSKZEOFWtOvf
-         kMZLSKgBBheNww/3pj+xtVlIz3sup6XCh4Aa96iUtQl5YgEf2btyq4edvEPG9nYRpNLm
-         gX8w==
-X-Gm-Message-State: AFqh2kq2pXDHU5T94W99+pgOPkiMGdvKuzyr/YMQ84qS7yZMbGePkoaY
-        T1aTQw5kjTcn2VY+7iUE0lptqE1eoFdqipiArjLcFg==
-X-Google-Smtp-Source: AMrXdXss1Jmt661r3O2VlGaPW9mKv9FIuBxyzoUhU0tjN3DiJULKXqqoxPvNSGzhCM/K9neAcF+2BHIkcgzsyvCr2mg=
-X-Received: by 2002:a05:6830:3499:b0:66c:61c8:ceeb with SMTP id
- c25-20020a056830349900b0066c61c8ceebmr1793244otu.12.1672274448080; Wed, 28
- Dec 2022 16:40:48 -0800 (PST)
+        bh=X4+9D7Pdm++sqmI92y+Lbv8mA/3krcFyyp1iTzuS9Ao=;
+        b=qrPSoCcZe3Wt39JRiiTCqgvTP5MPR4S66/lwAA7WgI4gjWz4P/inFz8n+aUO3M/AFf
+         CR8c9fHLXnGOrqDpeMRJuSLmMwylDbJwlwdrN22Ld51hL6X9EVXgvjCCz6eRg8FmhFXn
+         kwopDPRAUzv8pvS4d4EKPJlWLt5x1a22oha5KHluS4DHYDlx367Tidwza9w2+u4icLFG
+         Nz0GPnFm0qhMlljBA98CWuyyoGY/Ados8F/alQzg3YepMwmgB1xffrPPWg08AfqEE4oc
+         cviLqj/LvGx8/AhFIUOMxtLhMtsId4qVoo4lSGAzZHfEqL1AAIVzUd2oCl3fSBgD5bvb
+         ArGA==
+X-Gm-Message-State: AFqh2kpVh3NGZaslk6lEoQCD+HA9bbnAlcythfm5BqrzyozH1REr6+Vl
+        TNRgdCgoIELCOdD7UD1RMnHkp3HOGq68W3Ug2ZuArQ==
+X-Google-Smtp-Source: AMrXdXuahkBwaMgezerrFQyBFMf9cSY8aqq5wzfcpM35x/XQY0U22KV1pvV92FBKKq+kNp1suE6fuFr9/cfBtAYTxyM=
+X-Received: by 2002:a05:6870:fd89:b0:14f:ede2:db25 with SMTP id
+ ma9-20020a056870fd8900b0014fede2db25mr900949oab.42.1672275631857; Wed, 28 Dec
+ 2022 17:00:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20221221210917.458537-1-fabrizio.castro.jz@renesas.com> <20221221210917.458537-4-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20221221210917.458537-4-fabrizio.castro.jz@renesas.com>
+References: <20221208093704.1151928-1-Basavaraj.Natikar@amd.com>
+In-Reply-To: <20221208093704.1151928-1-Basavaraj.Natikar@amd.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 29 Dec 2022 01:40:36 +0100
-Message-ID: <CACRpkdZBz_+MeJjP5-vjNGbqyrCBTj+f=gm87o4sgiMqRwndVQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] gpio: Add support for the Renesas RZ/V2M PWC GPIOs
-To:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>
+Date:   Thu, 29 Dec 2022 02:02:26 +0100
+Message-ID: <CACRpkdanLQ6qWOY1BZGNBgLoB4vDUvyLiGHic=Wbq+C1Y6Rzcw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: amd: Add Z-state wake control bits
+To:     Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+Cc:     Shyam-sundar.S-k@amd.com, linux-gpio@vger.kernel.org,
+        Rajesh1.Kumar@amd.com,
+        Mario Limonciello <mario.limonciello@amd.com>,
+        Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Dec 21, 2022 at 10:09 PM Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
+On Thu, Dec 8, 2022 at 10:37 AM Basavaraj Natikar
+<Basavaraj.Natikar@amd.com> wrote:
 
-> The RZ/V2M SoC contains an External Power Sequence Controller
-> (PWC) module. The PWC module provides an external power supply
-> on/off sequence, on/off signal for the LPDDR4 core power supply,
-> General-Purpose Outputs, and key input signals.
+> GPIO registers include Bit 27 for WakeCntrlZ used to enable wake in
+> Z state. Hence add Z-state wake control bits to debugfs output to
+> debug and analyze Z-states problems.
 >
-> Add a driver for controlling the General-Purpose Outputs.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+> Suggested-by: Mario Limonciello <mario.limonciello@amd.com>
+> Tested-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
 
-This is a nice driver.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Patch applied!
 
 Yours,
 Linus Walleij
