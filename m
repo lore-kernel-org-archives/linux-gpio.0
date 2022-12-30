@@ -2,100 +2,90 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78916C4167B
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Dec 2022 10:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA697C4167B
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Dec 2022 10:11:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234733AbiL3KIn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Dec 2022 05:08:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48992 "EHLO
+        id S233830AbiL3KLv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Dec 2022 05:11:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbiL3KIm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2022 05:08:42 -0500
-Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEA6260F3
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2022 02:08:41 -0800 (PST)
-Received: by mail-vk1-xa30.google.com with SMTP id b81so9908099vkf.1
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2022 02:08:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nG1e1EB+LUQPoePLVsT1vw/B+SKuWdrVdgTLpmKtQck=;
-        b=rSdqNet6OApI4Iukuk5+KjHsHYiQpYEQ8Z6tFVOzFpSpCR3NhRMmLO+xU6f+vrrEZX
-         vcHj7E4uppyBzsfFc4daKrb2d34xNBjQBQTWnXeBjO85CFgU7QMOMUprbjkPuAZZE8EM
-         gZw7g+cq5bBLiJrVs0I48WhIKBHuH7aPOXWygZ7a3hFty9cFLNaWcMFoJlkG0j/GfVXR
-         eAjmfkGnFMm8nA9HFVR2M5APi8ByIiQE9YeZuWuQn/XLj87wTT1Sf67+jI98ExO7ZmAm
-         DgRoTThMfCK/eVOjXcXBhhKBUWZ62d/NITzk2ogT73WCEh0rnVdZZZkHzHH/ZlB6c5Rp
-         r4mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nG1e1EB+LUQPoePLVsT1vw/B+SKuWdrVdgTLpmKtQck=;
-        b=RP+GWtDTHU3G4iixbiyly5wPNCNUscsY8JyKHow1FSVmcenWFddiUpk1JA4+v3IOI2
-         B+VRdeXES2pu5zkpCbbxtzfTPmZeGX0hYo2CT6ea+r2H5equEtC0D4KqKQiJc/HLZpRm
-         By8NrL1okB5qkCsTBWgA5rndTF96UmeP8GknmanzNHpv1gNIQirxfQG+CRUglKdNUjim
-         LA+H67/Vi7d13+DKzsE2VTnNNRohrGN8EtlTSKwZZD5aHEpmAPsVHanOgIXVGou49NG0
-         wobqkGeaL5U4imahJzsceYtJQymfar7zHJv8JzySfXFS3S8H4/xTgw0uaU9pGe+0/hXR
-         RFGw==
-X-Gm-Message-State: AFqh2kpoRtu4sQr1ZArgV6y9iVOU0nj0Q5pxsyZGyhVsgRcwNT3UJ5cv
-        H5J6hvyW6+QU7HkCK7bezLWqBH6So1fRfKOBRjrqYPKX9dwCcQ==
-X-Google-Smtp-Source: AMrXdXvTRymNFEOxroNyd90FbjoDvofx7povDWugU+kFCNEInZg+Myf0ov7ov540e7rppxIjGc0RNZNuq2crZhetvtA=
-X-Received: by 2002:ac5:c382:0:b0:3bd:e0b8:e350 with SMTP id
- s2-20020ac5c382000000b003bde0b8e350mr3451224vkk.25.1672394920937; Fri, 30 Dec
- 2022 02:08:40 -0800 (PST)
+        with ESMTP id S229485AbiL3KLt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2022 05:11:49 -0500
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1518101D6;
+        Fri, 30 Dec 2022 02:11:47 -0800 (PST)
+Received: from [2a02:8108:963f:de38:eca4:7d19:f9a2:22c5]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1pBCMc-0003A1-Im; Fri, 30 Dec 2022 11:11:46 +0100
+Message-ID: <702e11a8-f38b-8f99-8d8a-6342e90fddd7@leemhuis.info>
+Date:   Fri, 30 Dec 2022 11:11:44 +0100
 MIME-Version: 1.0
-References: <20221213135227.14398-1-johan+linaro@kernel.org>
-In-Reply-To: <20221213135227.14398-1-johan+linaro@kernel.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 30 Dec 2022 11:08:30 +0100
-Message-ID: <CAMRc=Mfp8HyQiUJdsNPQFHK0bosA1Qy=jvdmxOSVAzNo3AO_2w@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: use irq_domain_alloc_irqs()
-To:     Johan Hovold <johan+linaro@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH 6.2 regression fix] gpiolib: Fix using uninitialized
+ lookup-flags on ACPI platforms #forregzbot
+Content-Language: en-US, de-DE
+To:     "regressions @ lists . linux . dev" <regressions@lists.linux.dev>
+Cc:     linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+References: <20221229164501.76044-1-hdegoede@redhat.com>
+From:   Thorsten Leemhuis <regressions@leemhuis.info>
+In-Reply-To: <20221229164501.76044-1-hdegoede@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1672395108;95780a6b;
+X-HE-SMSGID: 1pBCMc-0003A1-Im
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Dec 13, 2022 at 2:52 PM Johan Hovold <johan+linaro@kernel.org> wrote:
->
-> Use the irq_domain_alloc_irqs() wrapper instead of the full
-> __irq_domain_alloc_irqs() interface, which was only intended for some
-> legacy (x86) use cases.
->
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+[Note: this mail contains only information for Linux kernel regression
+tracking. Mails like these contain '#forregzbot' in the subject to make
+then easy to spot and filter out. The author also tried to remove most
+or all individuals from the list of recipients to spare them the hassle.]
+
+On 29.12.22 17:45, Hans de Goede wrote:
+> Commit 8eb1f71e7acc ("gpiolib: consolidate GPIO lookups") refactors
+> fwnode_get_named_gpiod() and gpiod_get_index() into a unified
+> gpiod_find_and_request() helper.
+> 
+> The old functions both initialized their local lookupflags variable to
+> GPIO_LOOKUP_FLAGS_DEFAULT, but the new code leaves it uninitialized.
+> 
+> This is a problem for at least ACPI platforms, where acpi_find_gpio()
+> only does a bunch of *lookupflags |= GPIO_* statements and thus relies
+> on the variable being initialized.
+> 
+> The variable not being initialized leads to:
+> 
+> 1. Potentially the wrong flags getting used
+> 2. The check for conflicting lookup flags in gpiod_configure_flags():
+>    "multiple pull-up, pull-down or pull-disable enabled, invalid config"
+>    sometimes triggering, making the GPIO unavailable
+> 
+> Restore the initialization of lookupflags to GPIO_LOOKUP_FLAGS_DEFAULT
+> to fix this.
+> 
+> Fixes: 8eb1f71e7acc ("gpiolib: consolidate GPIO lookups")
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 > ---
->  drivers/gpio/gpiolib.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 5a66d9616d7c..ede9630b197c 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1126,14 +1126,8 @@ static void gpiochip_set_hierarchical_irqchip(struct gpio_chip *gc,
->                         /* Just pick something */
->                         fwspec.param[1] = IRQ_TYPE_EDGE_RISING;
->                         fwspec.param_count = 2;
-> -                       ret = __irq_domain_alloc_irqs(gc->irq.domain,
-> -                                                     /* just pick something */
-> -                                                     -1,
-> -                                                     1,
-> -                                                     NUMA_NO_NODE,
-> -                                                     &fwspec,
-> -                                                     false,
-> -                                                     NULL);
-> +                       ret = irq_domain_alloc_irqs(gc->irq.domain, 1,
-> +                                                   NUMA_NO_NODE, &fwspec);
->                         if (ret < 0) {
->                                 chip_err(gc,
->                                          "can not allocate irq for GPIO line %d parent hwirq %d in hierarchy domain: %d\n",
-> --
-> 2.37.4
->
+> Note I'm not working and not reading work email until Monday January 9th.
+> I hit this while doing some hobby stuff and I decided to send this out
+> right away to avoid others potentially wasting time debugging this, but
+> I will not see any replies until Monday January 9th.
 
-Applied, thanks!
+Thanks for the report. To be sure below issue doesn't fall through the
+cracks unnoticed, I'm adding it to regzbot, my Linux kernel regression
+tracking bot:
 
-Bart
+#regzbot ^introduced 8eb1f71e7acc
+#regzbot title gpiolib: potentially the wrong flags getting used
+#regzbot fix: gpiolib: Fix using uninitialized lookup-flags on ACPI
+platforms
+#regzbot ignore-activity
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+
+P.S.: As the Linux kernel's regression tracker I deal with a lot of
+reports and sometimes miss something important when writing mails like
+this. If that's the case here, don't hesitate to tell me in a public
+reply, it's in everyone's interest to set the public record straight.
