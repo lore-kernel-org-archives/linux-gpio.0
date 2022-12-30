@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F477C3DA7C
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Dec 2022 13:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BE0C10F1B
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Dec 2022 13:57:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235150AbiL3N5L (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Dec 2022 08:57:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50990 "EHLO
+        id S235156AbiL3N5N (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Dec 2022 08:57:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235157AbiL3N5A (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2022 08:57:00 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36FF01B9DF
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2022 05:56:54 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id j17so22336188lfr.3
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2022 05:56:54 -0800 (PST)
+        with ESMTP id S235174AbiL3N5B (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2022 08:57:01 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A67ED1B9ED
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2022 05:56:55 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id f34so31793797lfv.10
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2022 05:56:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HgHeaqGJtsrsZ+FkQskPR4BdMj+blbVrqMuxi9hy0OY=;
-        b=mDulusA+Qv3wl9EPdFQ04AO9iNkc7KUHFbidFwQDlV59bX8L1a9Y23I5iV9WPt1LpY
-         O7GmZuGrewdZpaCVgzgK2E8fvNcBX6/F4yjt08TRkw2/s1iG9MU2/gzuPuAVJ8Rvn4nP
-         4Kw9mIbNFXggexbKROaTeg1QYmSCZRb6lLI5wSBWjaTMsFjJALv+xnrUejsbYqrAuY0G
-         l5guViQA3iQiH3xfJNqQYGdh5cq5Vles5lm3jqWx8WTq0bCIXCV9fCr+SFWeeQuu3fqJ
-         ggd4K7xP77rjTmCHc5NWOHnSrLzkXnGj37Xiz0R85GTs/3gSfIFiViQgnBY4CQ5LXq3E
-         5vXg==
+        bh=dEDYZvgVyPAOOlZ0Tdi3/I1XVgoXj6+wIYuf6RkBBcQ=;
+        b=SVYgleMkK1GY8G6ghzN0sBA+L3RE32NOprRkU2Dt+303nLWwJEUytp3TW1g93UUhwT
+         HmMC9qFUWPrMlzfmswbpZmbKDxxg/Y2QSz1Ju4/AyQ0rv4CndbOIaXguFHQuF4Xmc1Hx
+         XR+RF2+q5V5TqnaUeTnmfl0hW09OyUE5iTbuipGl7cPirU4URUArmR+jPV71KzWLu//Q
+         oisQKPmIR4r08ipRuw0oAUHrpsbM0Ovek5gCn2cPaH93BESuNNy38ebTN6soaI0GtiOm
+         jCdqSY3An56/1omkjVitHHg9RKgFU1BaEb4xsysLaFlst7zGGeQ4skSvJVBqGSbCjKDX
+         BwJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HgHeaqGJtsrsZ+FkQskPR4BdMj+blbVrqMuxi9hy0OY=;
-        b=Vvz8FSm2RW2ExmGbzoGzZv0ofKo8wFT/lUoA06T6J35a1Eu+s+HRiE1w74MAcJHoj9
-         lcvqcqAEw7GamKafNHWhTyzUfyl9OSDNkRwi0ufkxkixMEpAMeKonpQf5vDYMGCIT8U6
-         hNbndpH1f2PQnJEEfJxTKSeHBEsrJde5T0rvWeYaJ6rDZZ10j9GPrxV0CzVRCb9nbp3J
-         g2O/yCq0VQQdNLKwEsOWV5AJoCzlvjtzjOclOqrf18kDWZEgrRBOe1OZtcVxeF7ENUSv
-         ZoaA4NEL4CQKpVTQ+5rTv3k4EHqb5ky2iKeYLNco5GAMBC9gQoCQXJuDP5TfbbV1SL+B
-         iHPg==
-X-Gm-Message-State: AFqh2kqtpsqY4546ph9hGZghp+bpo9N65p9W4k/bzDy3zTkmwkmraDah
-        4/RMXBwN0hduj/Nwr5RmsbmZog==
-X-Google-Smtp-Source: AMrXdXspSSfrPHNeHg9cm9HeLa92E88/a1Tzl2gASeMpw6YRI/gOAzoBWHbUdKG3R2XJC/o6CaBoXQ==
-X-Received: by 2002:a05:6512:348e:b0:4b5:8987:1db8 with SMTP id v14-20020a056512348e00b004b589871db8mr8064564lfr.59.1672408612491;
-        Fri, 30 Dec 2022 05:56:52 -0800 (PST)
+        bh=dEDYZvgVyPAOOlZ0Tdi3/I1XVgoXj6+wIYuf6RkBBcQ=;
+        b=KirywN03dquWzz4L2gZgifP7pzk25KlvYW+WP+qN9IAHCI1gQN18Oo/xzfhRkRHVVY
+         b6PF0i0rlVdeGC47MNzpQoaATSMlT3L+evCMKuo4juCc4IjiU9CS1TWEunLOlpcE1kUt
+         /OODjFYeeJHYGspRTjF2BbFvWfUSGUhSfv58sBTTyLCq9qx2iAHww2dw7DvdoWyMauPY
+         Jrrr3tJ4Q3utu1AB/8dMODVaTObKC4IcjbUMTrpjCMVRmqjE7gJqmWXmUr4vJ+2xaAy6
+         xEOJw3HeK8nPSNbMm6Xztglc1e2eHYe1HxWimkRyuTXTw8qh7cnLg30piXLPs5Eir0YT
+         Kw5A==
+X-Gm-Message-State: AFqh2krlJfF8JFluMtSE0Q2pFej2Y+3G8uf7TTjYREzn64xX3GwWHAr/
+        ogJutzFv+NBI1278rHlQrwPy4w==
+X-Google-Smtp-Source: AMrXdXu8hYQd0R8KQAFYEmjNDR+a1cROCHaSs8wU8I3jVHKf4C8rdiFUk4xvRpUb9yvn7mD+M7jd+Q==
+X-Received: by 2002:a05:6512:131d:b0:4cb:c3:9363 with SMTP id x29-20020a056512131d00b004cb00c39363mr6508692lfu.11.1672408615248;
+        Fri, 30 Dec 2022 05:56:55 -0800 (PST)
 Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id d9-20020a056512368900b004a26ba3458fsm3454787lfs.62.2022.12.30.05.56.51
+        by smtp.gmail.com with ESMTPSA id d9-20020a056512368900b004a26ba3458fsm3454787lfs.62.2022.12.30.05.56.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Dec 2022 05:56:51 -0800 (PST)
+        Fri, 30 Dec 2022 05:56:54 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -67,9 +67,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 4/9] dt-bindings: pinctrl: qcom,sm8350-tlmm: add gpio-line-names
-Date:   Fri, 30 Dec 2022 14:56:40 +0100
-Message-Id: <20221230135645.56401-4-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 6/9] dt-bindings: pinctrl: qcom,sm8350-tlmm: correct pins pattern
+Date:   Fri, 30 Dec 2022 14:56:42 +0100
+Message-Id: <20221230135645.56401-6-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221230135645.56401-1-krzysztof.kozlowski@linaro.org>
 References: <20221230135645.56401-1-krzysztof.kozlowski@linaro.org>
@@ -79,36 +79,26 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Allow gpio-line-names property (quite commonly used) and constrain
-gpio-reserved-ranges:
-
-  sm8350-sony-xperia-sagami-pdx215.dtb: pinctrl@f100000: 'gpio-line-names' does not match any of the regexes: '-state$', 'pinctrl-[0-9]+'
+SM8350 TLMM pin controller has GPIOs 0-202.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../devicetree/bindings/pinctrl/qcom,sm8350-tlmm.yaml    | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/pinctrl/qcom,sm8350-tlmm.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-tlmm.yaml
-index 0b1e4aa5819e..7795cae01e26 100644
+index 7795cae01e26..7b483e93bfe1 100644
 --- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-tlmm.yaml
 +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-tlmm.yaml
-@@ -26,7 +26,14 @@ properties:
-   interrupt-controller: true
-   "#interrupt-cells": true
-   gpio-controller: true
--  gpio-reserved-ranges: true
-+
-+  gpio-reserved-ranges:
-+    minItems: 1
-+    maxItems: 102
-+
-+  gpio-line-names:
-+    maxItems: 203
-+
-   "#gpio-cells": true
-   gpio-ranges: true
-   wakeup-parent: true
+@@ -68,7 +68,7 @@ $defs:
+           subnode.
+         items:
+           oneOf:
+-            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-9][0-9]|20[0-3])$"
++            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-9][0-9]|20[0-2])$"
+             - enum: [ sdc1_clk, sdc1_cmd, sdc1_data, sdc2_clk, sdc2_cmd, sdc2_data ]
+         minItems: 1
+         maxItems: 36
 -- 
 2.34.1
 
