@@ -2,171 +2,111 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4F1C3DA7D
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Dec 2022 13:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24779C3DA7C
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Dec 2022 13:57:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229456AbiL3NJY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Dec 2022 08:09:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60256 "EHLO
+        id S234992AbiL3N5H (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Dec 2022 08:57:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230283AbiL3NJX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2022 08:09:23 -0500
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C785B1A235
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2022 05:09:21 -0800 (PST)
-Received: by mail-vs1-xe31.google.com with SMTP id x65so7688382vsb.13
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2022 05:09:21 -0800 (PST)
+        with ESMTP id S235084AbiL3N46 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2022 08:56:58 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BED851B9C3
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2022 05:56:52 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id bq39so24043089lfb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2022 05:56:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=E52pxg0Ieuxx94IUZMALcwMIHlB9oJ0ae6r7GhsPesE=;
-        b=qOYzZ22PlOTxy5rz+2Jr6vOdX7lOUg0qaafPHrEjHG5f40E6RiScGPuGIEoUXr/2PH
-         +oGvuptZsVJRju9ipSuVycuQ2W1ky3QRWi8zYzVx1KdMuC/JFOidxN1UJUimAjP1fsmn
-         tm5Ny181bxJ6l/v6HbNscM306YS/OExwGnUmed+ZTlFqqct6x37nTtKHAO0ERc9MyPuo
-         EVizILuGKO2iB6xrLdsaHGozVKQ+DAXtMH9IsOyRbgKGplHS4KROXebu2krcdX8gRcfe
-         cFsAcKxLqZyiI1fpvuURw+3uSV1kv/KUBupXD4MMlFdCULnNBm1KUN2XFRlWZhdejD5I
-         SUjg==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/LFPu/nfv09qeuH7foczG8nitidZm7jiC/H/irSOvB0=;
+        b=FenquDmeM5xjvYwTOMVkaV1iRtMO3RONryG+sEZeZeoIYQMaHQ4rIPIHTtf9gwycFH
+         9ED5Id07W+cOR1CqHsPoEH9J4DVdFwGtiAzFJqlFCldTxZoLxN+6UNzkGMELLyyHSa/0
+         wxH94i1BAGrXOA52m1RHFIKoxa6UBPF3OouT99D9HGlf2Qj34V1MUaz/ImVx3x6yuxYT
+         dFhEild0R6nRlch9HHZ4niwOmGv3sc0MHXVR94hqm8PoWYSbcqZQU1bjVWkRmy1g3FuH
+         KTUXKvxXjH3Cf8ez1vqvtCqYrvU/bzWTCaDHQdP19FrQBqG7/bBv404dibrIVjhD1BDg
+         m9gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E52pxg0Ieuxx94IUZMALcwMIHlB9oJ0ae6r7GhsPesE=;
-        b=WJpV1eYWxCaepqIiwL+dp5zCnoCjIDBWNceaS4AjFVdRZ0dPGgTWtCJ+eJpo6Gorqm
-         Zpm1ss5f2kTmd8Xgw3oYhFmtkezsBSST8FwwhZQW8LzaopVummfdEekrk7ByLtrGZMvB
-         gtZms8pR9Gm/Ud7ezlF/m/43LDA9+tiNo886yOAwhRBcYXivBY+4Ox7QM9J+PbzazhBV
-         W63qJyywNlvEsDUkTdeby0wCChirbj3r8q71eRPalAYPCHBknRfB2Caz3ELcPFgHKgOT
-         Rj+lPO/hHGPvMepJ2KQ/BRjiU9zlL8FmlGsUBmf0u99GBxrf2hM53eW0WR+R47UbHwfB
-         ufzg==
-X-Gm-Message-State: AFqh2krLpoLaaPCW2brv5/l3wrfwtXOJcf1mhjIsHuA0fcLpZak4dFnV
-        eDesz4wiBY149oG6ZIkvefMmKkc0BEIGG54NESLPHA==
-X-Google-Smtp-Source: AMrXdXuiIsORfdwTU8aiPfidGRU10vfw7irJHhwQafIrscv2Z2093Jcg+5ApA5mnSo+X462x4xJnegGVTE5BWClrxZ0=
-X-Received: by 2002:a05:6102:3d9f:b0:3c4:4918:80c with SMTP id
- h31-20020a0561023d9f00b003c44918080cmr2749753vsv.9.1672405760903; Fri, 30 Dec
- 2022 05:09:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20221209171629.3351420-1-robh@kernel.org>
-In-Reply-To: <20221209171629.3351420-1-robh@kernel.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 30 Dec 2022 14:09:10 +0100
-Message-ID: <CAMRc=MeVNcaGdZE-JUAA9EZDUwAn4yhicgHZHizEsugecWj+GA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: gpio: Convert Fujitsu MB86S7x GPIO to DT schema
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/LFPu/nfv09qeuH7foczG8nitidZm7jiC/H/irSOvB0=;
+        b=VRV6rIvLX6N+4USqEJDU9rM0PmB4RcK0t3u8O/9xPQ8e3/1zZ+7fqqgMGyz1I04pTZ
+         8y5ADAq2t66gPbUOAj9vJVSX7/7UcJ7Q2KYMLRowS67VLWuXe5Oej5skqq1E2rQMrZZR
+         3QsOrAa+zI3b80Vv440RPZ7dpuHkSAr5TZnksUnvOe/A0N25AMODmTSWIkGUaUl42boM
+         zIdfBP506XBwEJxxvxV/0oyBE05kB9CcT75JRsiYtm3jvQGc1fscgLaavDiUe2kSuyWc
+         KwoGk+VGob3YL3UEP5r3LeE98j4Spd5UCdWCbrvkXX4+MypV6uCsLiOG58lDotRmLwlF
+         HqNQ==
+X-Gm-Message-State: AFqh2koTWhKH4938jNQo3uAXUysHsM0sqdoz/m3wxOducJ1BVwEP01Ob
+        wPhstzfWPyUFH4No7yYfh6qSjw==
+X-Google-Smtp-Source: AMrXdXtz5qJKZlog4jA903P0FBj6sn0ZKWF1jQjXH4xcsohitA2gUJ2BvVm6Md/VN8xGqKNaKGHAWw==
+X-Received: by 2002:a05:6512:220e:b0:4b4:b610:1427 with SMTP id h14-20020a056512220e00b004b4b6101427mr14824948lfu.8.1672408611102;
+        Fri, 30 Dec 2022 05:56:51 -0800 (PST)
+Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id d9-20020a056512368900b004a26ba3458fsm3454787lfs.62.2022.12.30.05.56.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Dec 2022 05:56:50 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Stephan Gerhold <stephan@gerhold.net>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Richard Acayan <mailingradian@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        krishna Lanka <quic_vamslank@quicinc.com>,
+        Iskren Chernev <me@iskren.info>,
+        Martin Botka <martin.botka@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 3/9] dt-bindings: pinctrl: qcom,sm6350-tlmm: add gpio-line-names
+Date:   Fri, 30 Dec 2022 14:56:39 +0100
+Message-Id: <20221230135645.56401-3-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221230135645.56401-1-krzysztof.kozlowski@linaro.org>
+References: <20221230135645.56401-1-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Dec 9, 2022 at 6:16 PM Rob Herring <robh@kernel.org> wrote:
->
-> Convert the Fujitsu MB86S7x GPIO binding to DT schema format.
->
-> The "socionext,synquacer-gpio" compatible was not documented, but is
-> compatible with "fujitsu,mb86s70-gpio" and is in use (in u-boot
-> Synquacer dts).
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../bindings/gpio/fujitsu,mb86s70-gpio.txt    | 20 --------
->  .../bindings/gpio/fujitsu,mb86s70-gpio.yaml   | 50 +++++++++++++++++++
->  2 files changed, 50 insertions(+), 20 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt
->  create mode 100644 Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.yaml
->
-> diff --git a/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt b/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt
-> deleted file mode 100644
-> index bef353f370d8..000000000000
-> --- a/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.txt
-> +++ /dev/null
-> @@ -1,20 +0,0 @@
-> -Fujitsu MB86S7x GPIO Controller
-> --------------------------------
-> -
-> -Required properties:
-> -- compatible: Should be "fujitsu,mb86s70-gpio"
-> -- reg: Base address and length of register space
-> -- clocks: Specify the clock
-> -- gpio-controller: Marks the device node as a gpio controller.
-> -- #gpio-cells: Should be <2>. The first cell is the pin number and the
-> -  second cell is used to specify optional parameters:
-> -   - bit 0 specifies polarity (0 for normal, 1 for inverted).
-> -
-> -Examples:
-> -       gpio0: gpio@31000000 {
-> -               compatible = "fujitsu,mb86s70-gpio";
-> -               reg = <0 0x31000000 0x10000>;
-> -               gpio-controller;
-> -               #gpio-cells = <2>;
-> -               clocks = <&clk 0 2 1>;
-> -       };
-> diff --git a/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.yaml b/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.yaml
-> new file mode 100644
-> index 000000000000..d18d95285465
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/fujitsu,mb86s70-gpio.yaml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/fujitsu,mb86s70-gpio.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Fujitsu MB86S7x GPIO Controller
-> +
-> +maintainers:
-> +  - Jassi Brar <jaswinder.singh@linaro.org>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - const: socionext,synquacer-gpio
-> +          - const: fujitsu,mb86s70-gpio
-> +      - const: fujitsu,mb86s70-gpio
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#gpio-cells':
-> +    const: 2
-> +
-> +  gpio-controller: true
-> +  gpio-line-names: true
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#gpio-cells'
-> +  - gpio-controller
-> +  - clocks
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    gpio@31000000 {
-> +        compatible = "fujitsu,mb86s70-gpio";
-> +        reg = <0x31000000 0x10000>;
-> +        gpio-controller;
-> +        #gpio-cells = <2>;
-> +        clocks = <&clk 0 2 1>;
-> +    };
-> +...
-> --
-> 2.35.1
->
+Allow gpio-line-names property (quite commonly used) and constrain
+gpio-reserved-ranges.
 
-Applied, thanks!
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../devicetree/bindings/pinctrl/qcom,sm6350-tlmm.yaml    | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Bart
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm6350-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm6350-tlmm.yaml
+index 41e3e0afc9a8..b099649e58f7 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sm6350-tlmm.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm6350-tlmm.yaml
+@@ -26,7 +26,14 @@ properties:
+   interrupt-controller: true
+   "#interrupt-cells": true
+   gpio-controller: true
+-  gpio-reserved-ranges: true
++
++  gpio-reserved-ranges:
++    minItems: 1
++    maxItems: 78
++
++  gpio-line-names:
++    maxItems: 156
++
+   "#gpio-cells": true
+   gpio-ranges: true
+   wakeup-parent: true
+-- 
+2.34.1
+
