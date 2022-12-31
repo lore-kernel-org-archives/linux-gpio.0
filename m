@@ -2,88 +2,150 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A13F6C4332F
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Dec 2022 21:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF6BCC4332F
+	for <linux-gpio@archiver.kernel.org>; Sat, 31 Dec 2022 04:40:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229967AbiL3Vgr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Dec 2022 16:36:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40942 "EHLO
+        id S229906AbiLaEkz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Dec 2022 23:40:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbiL3Vgq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2022 16:36:46 -0500
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D67BDE9A;
-        Fri, 30 Dec 2022 13:36:45 -0800 (PST)
+        with ESMTP id S229527AbiLaEkz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2022 23:40:55 -0500
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E7EE111D
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2022 20:40:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1672436205; x=1703972205;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hhmLOiAZf7BxRbrYtXcXiCs8onuPuJHs5gnpEYdvPwU=;
-  b=ZgDrcwUi5dXMC5Q/1+w3CHoJDLt4qWXUNMGIDICzXrU5vnOUBNBITBQg
-   BG4G6/Fw2wJFQ/abg27pN0YNj/+nlpQa32vmlFJzB0loaT7PKGo0T4q09
-   MAtNpq0I8cbp5RD5MU3rsD8nf09BncEoJwTuyp8i5EDwFURTFceiNgVkB
-   GlNDdd63uQ1bUtS29GT6Jfd9Ko3TFV5pyawCyL1dRxrKcCJSF/3bUm8Wl
-   62oMBvI1l/QB4uDst/6uvzc8HrjbBEynmM6XK9ob9DgbamN3eOWkKjFUs
-   DBGLIV7WHwjNAmz3oSBbvxVsm+VW1sJh23rQzRN2aD0uX2GYf8GhelKXx
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10576"; a="309022250"
-X-IronPort-AV: E=Sophos;i="5.96,288,1665471600"; 
-   d="scan'208";a="309022250"
+  t=1672461654; x=1703997654;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=4uNVOOUi860oribfPQvobg6JLgzkD+JKuw7m9zNoEQA=;
+  b=JZeo/E2UWXZIYWO5hVJvRg1y3KRQpY5ZVpaWX2Cwf6/OufieiqmFqYOb
+   6akdBXM9Aul2vzvtbgGCllnErORUyi2J1dA+J5qfDwa4kY9y14GDHoCZl
+   cMMmvfRpSa4TXULms69QhAt29HSkT4fAfwYv5XlRSS6dxJ5KrwWEd9Rgc
+   rOsebrX/Uv0soeIaezwFZ8DfHm6vPAYcmqTNQT8VBUG1TwoA2G1zwslZt
+   WrqLJsZuxw202ffOQ02TSEJ9bE70rIc0SVBOqO0cLguiI8L6otFqIhsN+
+   pFNTqfyWxQRrCKkws4BDy1Cx/bB2BQODBdnwtvV0HGZ1tueVxMLkautNr
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10576"; a="300972675"
+X-IronPort-AV: E=Sophos;i="5.96,289,1665471600"; 
+   d="scan'208";a="300972675"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2022 13:36:44 -0800
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2022 20:40:53 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10576"; a="982742689"
-X-IronPort-AV: E=Sophos;i="5.96,288,1665471600"; 
-   d="scan'208";a="982742689"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga005.fm.intel.com with ESMTP; 30 Dec 2022 13:36:42 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1pBN3Q-001thA-2g;
-        Fri, 30 Dec 2022 23:36:40 +0200
-Date:   Fri, 30 Dec 2022 23:36:40 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Haibo Chen <haibo.chen@nxp.com>
-Subject: Re: [PATCH v2 1/4] gpio: pca953x: avoid to use uninitialized value
- pinctrl
-Message-ID: <Y69Z6FhmypFASRyX@smile.fi.intel.com>
-References: <20221210220601.77648-1-andriy.shevchenko@linux.intel.com>
- <Y67T2u0VfSnq48KQ@smile.fi.intel.com>
- <CAMRc=MdZ4RN=EFS0Brf0Avis9FOVh9+8x5rB52b8eO_Ln+CGiA@mail.gmail.com>
+X-IronPort-AV: E=McAfee;i="6500,9779,10576"; a="982807960"
+X-IronPort-AV: E=Sophos;i="5.96,289,1665471600"; 
+   d="scan'208";a="982807960"
+Received: from lkp-server01.sh.intel.com (HELO b5d47979f3ad) ([10.239.97.150])
+  by fmsmga005.fm.intel.com with ESMTP; 30 Dec 2022 20:40:52 -0800
+Received: from kbuild by b5d47979f3ad with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pBTfw-000N1T-0L;
+        Sat, 31 Dec 2022 04:40:52 +0000
+Date:   Sat, 31 Dec 2022 12:40:27 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [brgl:gpio/for-current] BUILD SUCCESS
+ 9883ddf9d68db5332f08dfc7283db69f69f8d6d2
+Message-ID: <63afbd3b.myrlbPOvJUhGC5EJ%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MdZ4RN=EFS0Brf0Avis9FOVh9+8x5rB52b8eO_Ln+CGiA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Dec 30, 2022 at 01:48:20PM +0100, Bartosz Golaszewski wrote:
-> On Fri, Dec 30, 2022 at 1:04 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Sun, Dec 11, 2022 at 12:05:58AM +0200, Andy Shevchenko wrote:
-> > > From: Haibo Chen <haibo.chen@nxp.com>
-> > >
-> > > There is a variable pinctrl declared without initializer. And then
-> > > has the case (switch operation chose the default case) to directly
-> > > use this uninitialized value, this is not a safe behavior. So here
-> > > initialize the pinctrl as 0 to avoid this issue.
-> > > This is reported by Coverity.
-> >
-> > Bart, any comments on the series?
-> 
-> Now applied. I just got back from Christmas break, give me a moment. :)
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
+branch HEAD: 9883ddf9d68db5332f08dfc7283db69f69f8d6d2  gpio: sprd: Make the irqchip immutable
 
-Sure and thank you! Merry xmas!
+elapsed time: 725m
+
+configs tested: 74
+configs skipped: 2
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+powerpc                           allnoconfig
+sh                               allmodconfig
+arc                                 defconfig
+mips                             allyesconfig
+alpha                               defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+s390                             allmodconfig
+s390                                defconfig
+s390                             allyesconfig
+x86_64                           rhel-8.3-syz
+x86_64                         rhel-8.3-kunit
+x86_64                           rhel-8.3-kvm
+x86_64                           rhel-8.3-bpf
+alpha                            allyesconfig
+arc                              allyesconfig
+m68k                             allyesconfig
+powerpc                          allmodconfig
+i386                                defconfig
+m68k                             allmodconfig
+ia64                             allmodconfig
+x86_64                              defconfig
+i386                 randconfig-a012-20221226
+x86_64                    rhel-8.3-kselftests
+i386                 randconfig-a016-20221226
+x86_64                          rhel-8.3-func
+i386                 randconfig-a011-20221226
+i386                 randconfig-a015-20221226
+i386                 randconfig-a013-20221226
+i386                 randconfig-a014-20221226
+x86_64                               rhel-8.3
+x86_64                           allyesconfig
+i386                             allyesconfig
+x86_64               randconfig-a014-20221226
+x86_64               randconfig-a013-20221226
+arm                                 defconfig
+x86_64               randconfig-a011-20221226
+x86_64               randconfig-a012-20221226
+x86_64               randconfig-a015-20221226
+x86_64               randconfig-a016-20221226
+arm64                            allyesconfig
+arm                              allyesconfig
+arm                  randconfig-r046-20221225
+arc                  randconfig-r043-20221225
+arc                  randconfig-r043-20221227
+arm                  randconfig-r046-20221227
+arc                  randconfig-r043-20221226
+riscv                randconfig-r042-20221226
+s390                 randconfig-r044-20221226
+x86_64                            allnoconfig
+
+clang tested configs:
+x86_64                          rhel-8.3-rust
+i386                 randconfig-a004-20221226
+i386                 randconfig-a001-20221226
+i386                 randconfig-a003-20221226
+i386                 randconfig-a002-20221226
+x86_64               randconfig-a002-20221226
+x86_64               randconfig-a003-20221226
+x86_64               randconfig-a001-20221226
+i386                 randconfig-a005-20221226
+x86_64               randconfig-a004-20221226
+i386                 randconfig-a006-20221226
+x86_64               randconfig-a005-20221226
+x86_64               randconfig-a006-20221226
+hexagon              randconfig-r045-20221225
+riscv                randconfig-r042-20221227
+hexagon              randconfig-r041-20221225
+s390                 randconfig-r044-20221227
+hexagon              randconfig-r041-20221227
+hexagon              randconfig-r041-20221226
+arm                  randconfig-r046-20221226
+s390                 randconfig-r044-20221225
+hexagon              randconfig-r045-20221226
+riscv                randconfig-r042-20221225
+hexagon              randconfig-r045-20221227
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
