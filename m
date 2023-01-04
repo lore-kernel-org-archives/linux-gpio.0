@@ -2,83 +2,144 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81515C4332F
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Jan 2023 11:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FF4C4332F
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Jan 2023 13:46:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234419AbjADLLD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Jan 2023 06:11:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44348 "EHLO
+        id S231886AbjADNp7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Jan 2023 08:45:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230423AbjADLLB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Jan 2023 06:11:01 -0500
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D62671275D;
-        Wed,  4 Jan 2023 03:11:00 -0800 (PST)
+        with ESMTP id S239281AbjADNpz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Jan 2023 08:45:55 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F38D186B0
+        for <linux-gpio@vger.kernel.org>; Wed,  4 Jan 2023 05:45:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1672830660; x=1704366660;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EF5y8cJBIgIZwE1pcFSYf3Xzp/7I0nWn/GnCSDBV3U4=;
-  b=e1d92xNfO6eMGFam68o1YrPq+P321iADTnQ9KGFJg5kxMgw6yKzSNhAx
-   jei6vYPqd+jxkrVAYwk18BO2ATIpFb+KJRrXSh1VNQ+IRMD5gFXXfKQW1
-   IHTSeAk9Eql63Ol7IT28IzQbRSZEIBLgstefUC7e8RNCLVodGpjlncI1b
-   TreIJ+MkHtkrgJNiSl2ZsUYv1FtSYj7rVwqEqapi33sgGJxAciyjXoOBd
-   0SOnCxEpG/mN9u1wPQeTE7/RwexNIo6bb4Y6V6SX9dyhdmJatvmm46EsX
-   wEkmVxjeWq+1xDzMGlyhC6cszv2obFEqc/dW5oYCMiKphd4FkbDB69/6e
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10579"; a="319619321"
-X-IronPort-AV: E=Sophos;i="5.96,299,1665471600"; 
-   d="scan'208";a="319619321"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jan 2023 03:11:00 -0800
+  t=1672839955; x=1704375955;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=IdsMhfTnBpJ3zQInTwkvEYSJlwODnsfJPLFPnCoFjj0=;
+  b=GIAxtkrbxEfvsPYQXOWATi5ky0PBLIS0+WubslCHTvyI4baSqcPlud99
+   9BSsGK8y8YldPtJfs80wd1pAfT3jQsvW0z+vIC9K3wmiIc9g/fV6RkJx0
+   nVibwjwgDJNbZypOvUXiOTZS8iW7RbQo5RVRFn3C87FUNzFnrws+uH69C
+   Ukqc1MJyUf98tnEGoWXAfhuZGKCfB7ucNOaDcOMuri1eaetFv49wwQh9g
+   ya3aNg4s3d3tcXZfVfYMzsMQTT6APmhe2TjgJzxIvDOZR4xb/zPi2ckn8
+   dbCAac47LPzsSCRDOKQe5N/t4grqHdeMXCY/1JXPhMrTG6nmp8q04r2Lm
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10580"; a="320646279"
+X-IronPort-AV: E=Sophos;i="5.96,300,1665471600"; 
+   d="scan'208";a="320646279"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jan 2023 05:45:54 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10579"; a="762640159"
-X-IronPort-AV: E=Sophos;i="5.96,299,1665471600"; 
-   d="scan'208";a="762640159"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP; 04 Jan 2023 03:10:57 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1pD1fc-004HFz-0O;
-        Wed, 04 Jan 2023 13:10:56 +0200
-Date:   Wed, 4 Jan 2023 13:10:55 +0200
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        William Dean <williamsukatube@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: sp7021: fix unused function warning
-Message-ID: <Y7Vev23G+E2+bgjp@smile.fi.intel.com>
-References: <20221215163822.542622-1-arnd@kernel.org>
+X-IronPort-AV: E=McAfee;i="6500,9779,10580"; a="779208925"
+X-IronPort-AV: E=Sophos;i="5.96,300,1665471600"; 
+   d="scan'208";a="779208925"
+Received: from lkp-server02.sh.intel.com (HELO f1920e93ebb5) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 04 Jan 2023 05:45:53 -0800
+Received: from kbuild by f1920e93ebb5 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pD45Y-0000PD-29;
+        Wed, 04 Jan 2023 13:45:52 +0000
+Date:   Wed, 04 Jan 2023 21:45:02 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
+ 937e7a39068d806c1a951f19e38e1326be20f1b0
+Message-ID: <63b582de.RtTpOSxuYlfFDxHG%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221215163822.542622-1-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Dec 15, 2022 at 05:38:10PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> sppctl_gpio_inv_get is only used from the debugfs code inside
-> of an #ifdef, so we get a warning without that:
-> 
-> drivers/pinctrl/sunplus/sppctl.c:393:12: error: 'sppctl_gpio_inv_get' defined but not used [-Werror=unused-function]
->   393 | static int sppctl_gpio_inv_get(struct gpio_chip *chip, unsigned int offset)
->       |            ^~~~~~~~~~~~~~~~~~~
-> 
-> Replace the #ifdef with an IS_ENABLED() check that avoids the warning.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
+branch HEAD: 937e7a39068d806c1a951f19e38e1326be20f1b0  pinctrl: nomadik: Add missing header(s)
 
-I;m wondering why we can't use PTR_IF() here and in similar cases...
+elapsed time: 720m
+
+configs tested: 68
+configs skipped: 2
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+um                             i386_defconfig
+x86_64                            allnoconfig
+um                           x86_64_defconfig
+arc                                 defconfig
+powerpc                           allnoconfig
+alpha                            allyesconfig
+sh                               allmodconfig
+alpha                               defconfig
+arc                              allyesconfig
+s390                             allmodconfig
+mips                             allyesconfig
+m68k                             allyesconfig
+s390                                defconfig
+m68k                             allmodconfig
+i386                 randconfig-a004-20230102
+i386                 randconfig-a003-20230102
+i386                 randconfig-a001-20230102
+i386                 randconfig-a002-20230102
+arm                                 defconfig
+ia64                             allmodconfig
+i386                 randconfig-a005-20230102
+arm64                            allyesconfig
+s390                             allyesconfig
+x86_64                              defconfig
+i386                 randconfig-a006-20230102
+x86_64                           rhel-8.3-bpf
+x86_64                           rhel-8.3-syz
+arm                              allyesconfig
+x86_64                         rhel-8.3-kunit
+x86_64                           rhel-8.3-kvm
+x86_64                               rhel-8.3
+x86_64               randconfig-a001-20230102
+x86_64               randconfig-a004-20230102
+x86_64               randconfig-a002-20230102
+x86_64               randconfig-a003-20230102
+i386                                defconfig
+powerpc                          allmodconfig
+x86_64               randconfig-a006-20230102
+x86_64               randconfig-a005-20230102
+x86_64                           allyesconfig
+x86_64                    rhel-8.3-kselftests
+i386                             allyesconfig
+x86_64                          rhel-8.3-func
+riscv                randconfig-r042-20230101
+arc                  randconfig-r043-20230102
+arm                  randconfig-r046-20230102
+arc                  randconfig-r043-20230101
+s390                 randconfig-r044-20230101
+
+clang tested configs:
+i386                 randconfig-a013-20230102
+i386                 randconfig-a012-20230102
+i386                 randconfig-a011-20230102
+i386                 randconfig-a014-20230102
+i386                 randconfig-a016-20230102
+i386                 randconfig-a015-20230102
+x86_64                          rhel-8.3-rust
+hexagon              randconfig-r041-20230102
+x86_64               randconfig-a011-20230102
+hexagon              randconfig-r045-20230101
+x86_64               randconfig-a014-20230102
+hexagon              randconfig-r045-20230102
+x86_64               randconfig-a012-20230102
+arm                  randconfig-r046-20230101
+x86_64               randconfig-a013-20230102
+x86_64               randconfig-a015-20230102
+x86_64               randconfig-a016-20230102
+riscv                randconfig-r042-20230102
+hexagon              randconfig-r041-20230101
+s390                 randconfig-r044-20230102
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
