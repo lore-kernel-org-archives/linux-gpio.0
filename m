@@ -2,104 +2,103 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9ED1C63707
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Jan 2023 13:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 256EFC3DA7A
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Jan 2023 13:14:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234410AbjAFNAu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Jan 2023 08:00:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48896 "EHLO
+        id S229869AbjAFNOk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Jan 2023 08:14:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234814AbjAFNA3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Jan 2023 08:00:29 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EC0E745B5
-        for <linux-gpio@vger.kernel.org>; Fri,  6 Jan 2023 05:00:28 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id ay40so1006051wmb.2
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Jan 2023 05:00:27 -0800 (PST)
+        with ESMTP id S229697AbjAFNOj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Jan 2023 08:14:39 -0500
+Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74EBE71FF7
+        for <linux-gpio@vger.kernel.org>; Fri,  6 Jan 2023 05:14:38 -0800 (PST)
+Received: by mail-vs1-xe2d.google.com with SMTP id x65so1379356vsb.13
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Jan 2023 05:14:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hcacv4C/Ndszi4c1+3X/NkZcmh9g/VIcIhHnZLgTk1Q=;
-        b=H8ZkhKg4v9pqQIecZAeTk4koXrftJoxsfl5esAx5D7npdLgbGNxMOG2wdykHgUZIOj
-         5iC4XUt5ZRa+K8t2jpNFmRNL0WyFhCy9/3rNyuJ/RqfU9fopv0jDs4dXWJgIZT+HTVT4
-         k736CEhXjNQ6jQmclCvNjv7aRHAqpSBx1mBqZPtN6vL7ya3ndb61d78XUg+3Jv8hYIPU
-         QdSxa4cP1+JIn1qnSG8f2Ie5+5HeGG5fqJ2G5tW+vizRiBSybvxbAIZkx5U8qItZVV+j
-         dzPf4DlyelQ7XLqsp97tztvMZs/KxahpHHC2qN0agvJ2Nnn+wd721Bd97LE5Hh5gKrG2
-         B8MQ==
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kRSichjsSpl7nn5VML7hlKwtWCxMGkZW9sF0ceCpu7Y=;
+        b=7nOV/pGUMtVuAg1wKzMZoJfLp+ifawDysT1k1gSKBnWNmZxkNlDd+a9s4ja2CzEzdJ
+         ewZnZ2O3WCbXCqHy6TZO/py3dGt2C+U7slBz7sP6qeoaOzc39Uuz5nGDLtwc3m099+Ba
+         8Z9AHA/Cb6lncQEDvS6LzH3vDS3i79asj/1VypjVxg7qQuTGxAaWiuKvNl+4D6R1wmoK
+         OHQYm1kXGZLLPW4mskl74LpBC2/eb1aYTC7BRu+SGUu/B84EQC58uVxczdDUNbnVT+ic
+         QyYkKm88vf1vmOk4xMsEfWHHXrDXOXxha6SDlhxu4IBkwSrD7qs2X0/OdJai0afC9zxV
+         Zs1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hcacv4C/Ndszi4c1+3X/NkZcmh9g/VIcIhHnZLgTk1Q=;
-        b=I90Cj2zcBaTqE8dahVhsHtp44Nhb/eNfukI6xideyGII6vn6/NEKobJPbfOKF4KJFL
-         2rjCJD1oqyCLXkLBwkZphWlTY7JMw8q9KRuBmNy7RlkM74UaAF9zOgjljx11VE9s8bFF
-         MlUCZ/wbKPDi/1zJkLfeDXIOy9Eg/KJStngM9swa1jB7JRP5YVkJXC/9xlW3gYK9PPBP
-         bgaPNkLM3gTiPGZ/DJwHZHY3RPo3nS9VNyw4YwawOGT6oo5kc7+VChXhPXAu8B5UoUwE
-         Eq2Adwv6TOXhozjewe889pm6QcxpnQKtf+9alby6Z/DnECzUKLJUSDJY9qZnvnfuZvsb
-         71tQ==
-X-Gm-Message-State: AFqh2krCNW3clZ+WF3njnT+/F0W6dg/oXLwROx9+su75eG0meOk3ArVf
-        iFy1ldFtmZjHW6P7JYraKU1iMA==
-X-Google-Smtp-Source: AMrXdXsUlGHYvYlldam47AoNC0W35ATwpNwr+TFul48LTnk/dNvyQBHUj9gg0w+z8wWmktTDFwOirw==
-X-Received: by 2002:a05:600c:3485:b0:3d1:ee6c:f897 with SMTP id a5-20020a05600c348500b003d1ee6cf897mr39273405wmq.3.1673010026593;
-        Fri, 06 Jan 2023 05:00:26 -0800 (PST)
-Received: from [192.168.1.102] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id n7-20020a05600c4f8700b003c6bd12ac27sm1957714wmq.37.2023.01.06.05.00.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Jan 2023 05:00:26 -0800 (PST)
-Message-ID: <2dc8f878-f89a-4773-1cc9-3ca7c620f32c@linaro.org>
-Date:   Fri, 6 Jan 2023 14:00:24 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kRSichjsSpl7nn5VML7hlKwtWCxMGkZW9sF0ceCpu7Y=;
+        b=381BWTPyPEvfebcJ6IhRzalEqPAFWVI1PKGK8cbq0n2UrUTNiUs5MXGvBdCGinTV7C
+         JVh66Qn69Jo9ysl7UShg23SZlT5kE0nOy/bZsAQSL5S75Zx6ZtfSzomNXFBMcd93F+8Z
+         APpiJGxe6JQB9R+cAA8+ptEAm1OVLPfBMLes61hgvXecYzKQX+ZpCWzvZSD8VkoM7c6J
+         HZeRboe9frOuLsvchT0rny4W5u7kGbTrU55ZuVmuxPjbF1HW7E2oaBE38Eby27WDAwcF
+         48fcm7oN1wneGHZUMbr6F/yikHc9NW+T6CnBxPrPSuBw8ceTOZncssar80uMuuEawPF5
+         JCow==
+X-Gm-Message-State: AFqh2ko63uzv8lxxRxIwYmWg2OTRwd4IT6V23MdIaKIbljbKmwWxpshy
+        nn1wOiEZoIHW9r9Dauq2J8uDjgaI4WDiNaoLj2yEDw==
+X-Google-Smtp-Source: AMrXdXu7UBvoVaA3py91tPW1+5NfFOXh7jkcGj9+qlFVxuoA0psBokCY/DlLkdH01j7W9wipaLbbX/zr3ecBEiacoO4=
+X-Received: by 2002:a67:f642:0:b0:3c4:ec4b:b943 with SMTP id
+ u2-20020a67f642000000b003c4ec4bb943mr6737873vso.17.1673010877549; Fri, 06 Jan
+ 2023 05:14:37 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: msm8226: Add General Purpose
- clocks
-Content-Language: en-US
-To:     =?UTF-8?Q?Matti_Lehtim=c3=a4ki?= <matti.lehtimaki@gmail.com>,
-        linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230106114403.275865-1-matti.lehtimaki@gmail.com>
- <20230106114403.275865-2-matti.lehtimaki@gmail.com>
- <b866e6e1-da10-9152-8bda-966015998877@linaro.org>
- <2a6748b5-df3b-b3a7-f17a-664aab030b48@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <2a6748b5-df3b-b3a7-f17a-664aab030b48@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20230105150603.2810510-1-michael@walle.cc>
+In-Reply-To: <20230105150603.2810510-1-michael@walle.cc>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 6 Jan 2023 14:14:26 +0100
+Message-ID: <CAMRc=McEin9uXOFEeB1=oDKmUTu+hvKoaUGjCx-7Prc7RXubJw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] gpio: regmap: use new regmap_might_sleep()
+To:     Michael Walle <michael@walle.cc>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        William Breathitt Gray <william.gray@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 06/01/2023 13:41, Matti Lehtimäki wrote:
-> On 6.1.2023 14.32, Krzysztof Kozlowski wrote:
->> On 06/01/2023 12:44, Matti Lehtimäki wrote:
->>> +                blsp_uart3, blsp_uart4, blsp_uart5, cam_mclk0,
->>> cam_mclk1, +                gp0_clk, gp1_clk, sdc3, wlan ]
->>
->> Driver does not support them (and there is no driver change, unless
->> you cc-ed people selectively...).
-> 
-> The driver changes are in patch number 2 of the series, I used
-> git send-mail with a cc script, which uses get_maintainer.pl to
-> get the needed addresses for each patch, to send the patches. It
-> probably didn't send every patch to everyone and would need some
-> improvement.
+On Thu, Jan 5, 2023 at 4:06 PM Michael Walle <michael@walle.cc> wrote:
+>
+> Now that the regmap can be queried whether it might sleep, we can get
+> rid of the conservative setting "can_sleep = true". New drivers which
+> want to use gpio-regmap and can access the registers memory-mapped won't
+> have the restriction that their consumers have to use the
+> gpiod_*cansleep() variants anymore.
+>
+> Signed-off-by: Michael Walle <michael@walle.cc>
+> ---
+>  drivers/gpio/gpio-regmap.c | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+> index f907c9c19fce..fca17d478984 100644
+> --- a/drivers/gpio/gpio-regmap.c
+> +++ b/drivers/gpio/gpio-regmap.c
+> @@ -254,15 +254,7 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
+>         chip->ngpio = config->ngpio;
+>         chip->names = config->names;
+>         chip->label = config->label ?: dev_name(config->parent);
+> -
+> -       /*
+> -        * If our regmap is fast_io we should probably set can_sleep to false.
+> -        * Right now, the regmap doesn't save this property, nor is there any
+> -        * access function for it.
+> -        * The only regmap type which uses fast_io is regmap-mmio. For now,
+> -        * assume a safe default of true here.
+> -        */
+> -       chip->can_sleep = true;
+> +       chip->can_sleep = regmap_might_sleep(config->regmap);
+>
+>         chip->get = gpio_regmap_get;
+>         if (gpio->reg_set_base && gpio->reg_clr_base)
+> --
+> 2.30.2
+>
 
-Ah, ok, such method is recommended for big patchsets. In regular cases
-please Cc everyone for all patches. I am using this one:
+Applied, thanks!
 
-https://pastebin.com/HAjuht68
-
-Best regards,
-Krzysztof
-
+Bart
