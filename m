@@ -2,140 +2,93 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE47C63707
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Jan 2023 12:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D6DFC3DA7A
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Jan 2023 13:01:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233971AbjAFM6l (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Jan 2023 07:58:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46696 "EHLO
+        id S232599AbjAFNAt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Jan 2023 08:00:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234573AbjAFM6d (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Jan 2023 07:58:33 -0500
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BAA056B19D;
-        Fri,  6 Jan 2023 04:58:31 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.96,305,1665414000"; 
-   d="scan'208";a="145413764"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Jan 2023 21:58:31 +0900
-Received: from mulinux.example.org (unknown [10.226.92.206])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1C67B4254DA6;
-        Fri,  6 Jan 2023 21:58:25 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
+        with ESMTP id S234865AbjAFNAl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Jan 2023 08:00:41 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E6B674596
+        for <linux-gpio@vger.kernel.org>; Fri,  6 Jan 2023 05:00:39 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id m8-20020a05600c3b0800b003d96f801c48so3491171wms.0
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Jan 2023 05:00:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lgWKN4BC25iQsFl18LVmSiEqTMGjTidigfA1GhXpKMk=;
+        b=cm+5t3LsBGEAqZdKRk9YLkNRRlSly53rX9jK5aKMyeyncspEFhHenvFoOE/nMr5UK7
+         szFawdRCazhPAEw7BHWdmr5lFACZyJNjRnKJGpdwvWdm6coJog/e6tAPczn67J19omFe
+         A1slEvDZoiTJe1nuxkk3WAyjBcpUN69vACJNfp29KBVzy/3l1NrLerBCimGi8UjrIpLA
+         T5xozCSSiaYH9xbZmOo8kS1XVR8dx3aqlHui/BpceQTy+I4wd9KzjArgJX4ICv3wYPIW
+         eT3Nmp4GB6fWq0XKKTQ/sHjuE5u2INgTJWsZJSQAqaohXR5bCEJ6QSOmXczoz15g0pTN
+         z81A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lgWKN4BC25iQsFl18LVmSiEqTMGjTidigfA1GhXpKMk=;
+        b=7hPEUJqF2AVGEgDbq6JnelYxoYIH7WzjV4RMi/FVUj5iit3/y0j4MA4bO3TdxDaYwX
+         eOxnUDjD+tgC3yv3EKBCQb1MmKKW2FXnbBQBtY2X/nluJC0cS0pI8YqtVtjDIw8/c9cV
+         QbcpA1puzA1MX1v5Ce8EN8FDMZw9J4cCjlokFQR5oNL99fmRAslbvP0SuMg2OUckgJ4t
+         +z/pCyy/HGsn3Gr2SWz+LoPdeJuVOv2kUbLywy/HM75GIfahhBX1KwO4E5dykKxHKS47
+         ih8VT0npxLFdZb29QtCDdbIU6vfQVVsGP/sGpgGf+wMqdpfRgeWCIK/2fGAzgT9IA3+M
+         ftxQ==
+X-Gm-Message-State: AFqh2kpXO+hYa6orIT9NJVNiUCTS0np8r2IWZ9SDVMEXaJ08gawEGOr3
+        Q5muxyE+gJEOMjHw/yQkCZlVPA==
+X-Google-Smtp-Source: AMrXdXtU4rPoND/C7GvhipJUtrrgA1BqCPGW/S1ljlBzIbPVuvZcSavg+Qml/zEh5Hsk2OpdpjYvUA==
+X-Received: by 2002:a05:600c:3b2a:b0:3d9:7950:dc6d with SMTP id m42-20020a05600c3b2a00b003d97950dc6dmr28914413wms.40.1673010038168;
+        Fri, 06 Jan 2023 05:00:38 -0800 (PST)
+Received: from [192.168.1.102] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id m35-20020a05600c3b2300b003d973e939d3sm1874301wms.1.2023.01.06.05.00.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Jan 2023 05:00:37 -0800 (PST)
+Message-ID: <4486aeb5-ce70-3792-96e3-249d2e5223c8@linaro.org>
+Date:   Fri, 6 Jan 2023 14:00:36 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: msm8226: Add General Purpose
+ clocks
+Content-Language: en-US
+To:     =?UTF-8?Q?Matti_Lehtim=c3=a4ki?= <matti.lehtimaki@gmail.com>,
+        linux-arm-msm@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>, Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 1/2] dt-bindings: soc: renesas: Add RZ/V2M PWC
-Date:   Fri,  6 Jan 2023 12:58:15 +0000
-Message-Id: <20230106125816.10600-2-fabrizio.castro.jz@renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230106125816.10600-1-fabrizio.castro.jz@renesas.com>
-References: <20230106125816.10600-1-fabrizio.castro.jz@renesas.com>
-MIME-Version: 1.0
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230106114403.275865-1-matti.lehtimaki@gmail.com>
+ <20230106114403.275865-2-matti.lehtimaki@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230106114403.275865-2-matti.lehtimaki@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Renesas RZ/V2M External Power Sequence Controller (PWC) IP
-is capable of:
-* external power supply on/off sequence generation
-* on/off signal generation for the LPDDR4 core power supply (LPVDD)
-* key input signals processing
-* general-purpose output pins
+On 06/01/2023 12:44, Matti Lehtimäki wrote:
+> Document the general purpose clock functions that are found on MSM8226.
+> 
+> Signed-off-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
+> ---
+>  .../devicetree/bindings/pinctrl/qcom,msm8226-pinctrl.yaml     | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Add the corresponding dt-bindings.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-v1->v2: I have dropped syscon, simple-mfd, regmap, offset, and the child nodes.
-v2->v3: No change.
-v3->v4: Moved file under Documentation/devicetree/bindings/soc/renesas,
-        and changed $id accordingly.
-v4->v5: Fixed subject line and changelog. Rob, I have kept your Reviewed-by tag
-        assuming you are still happy, please do jump in if you think  that's not
-        appropriate anymore.
-
- .../soc/renesas/renesas,rzv2m-pwc.yaml        | 56 +++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/renesas/renesas,rzv2m-pwc.yaml
-
-diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzv2m-pwc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzv2m-pwc.yaml
-new file mode 100644
-index 000000000000..12df33f58484
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzv2m-pwc.yaml
-@@ -0,0 +1,56 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/renesas/renesas,rzv2m-pwc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas RZ/V2M External Power Sequence Controller (PWC)
-+
-+description: |+
-+  The PWC IP found in the RZ/V2M family of chips comes with the below
-+  capabilities
-+    - external power supply on/off sequence generation
-+    - on/off signal generation for the LPDDR4 core power supply (LPVDD)
-+    - key input signals processing
-+    - general-purpose output pins
-+
-+maintainers:
-+  - Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - renesas,r9a09g011-pwc # RZ/V2M
-+          - renesas,r9a09g055-pwc # RZ/V2MA
-+      - const: renesas,rzv2m-pwc
-+
-+  reg:
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 2
-+
-+  renesas,rzv2m-pwc-power:
-+    description: The PWC is used to control the system power supplies.
-+    type: boolean
-+
-+required:
-+  - compatible
-+  - reg
-+  - gpio-controller
-+  - '#gpio-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pwc: pwc@a3700000 {
-+      compatible = "renesas,r9a09g011-pwc", "renesas,rzv2m-pwc";
-+      reg = <0xa3700000 0x800>;
-+      gpio-controller;
-+      #gpio-cells = <2>;
-+      renesas,rzv2m-pwc-power;
-+    };
--- 
-2.34.1
+Best regards,
+Krzysztof
 
