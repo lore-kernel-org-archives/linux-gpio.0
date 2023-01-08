@@ -2,85 +2,89 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE22C54EBD
-	for <linux-gpio@archiver.kernel.org>; Sat,  7 Jan 2023 17:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8C2C61DB3
+	for <linux-gpio@archiver.kernel.org>; Sun,  8 Jan 2023 20:08:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232557AbjAGRSs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 7 Jan 2023 12:18:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33514 "EHLO
+        id S233759AbjAHUIg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 8 Jan 2023 15:08:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231785AbjAGRSq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Jan 2023 12:18:46 -0500
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D669445657;
-        Sat,  7 Jan 2023 09:18:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=ApdrS3tSWj75Jx4ozDcfURvKE8QjJ1d5AVnSBy/AzuQ=; b=c2T+A4Qv0SjXNNHpM3dbOAlQfA
-        Dbolq53uUXvu8D6DU5Y/CydTxr0o3b4/oo3V2H2vz1fZ5KxB4iTRi981LfK+n7sbTr5OfouKAva1t
-        /sND2MtNQLPAfaenVae4HskA/G89pIJCp6FCpZhiigxJUpw5AGK3VAMj+WCnfn4fbz5w=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1pECps-001R2T-1u; Sat, 07 Jan 2023 18:18:24 +0100
-Date:   Sat, 7 Jan 2023 18:18:24 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Klaus Kudielka <klaus.kudielka@gmail.com>
-Cc:     Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S233795AbjAHUId (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Jan 2023 15:08:33 -0500
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A38F2DF9F;
+        Sun,  8 Jan 2023 12:08:32 -0800 (PST)
+Received: by mail-il1-f172.google.com with SMTP id i16so3420584ilq.9;
+        Sun, 08 Jan 2023 12:08:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e6qFMj8l+ipPL83CwbU3UOHpDArXzes4bLrB2i8j8C0=;
+        b=7ilri7i6r8qvT1mkNBj/pqMMnfOPRy/kXWLcWC4/Mo1ca+MR4RnYqcEl7KY5oME6ZJ
+         EsFmF+/lQPufLPS6YMnIoR3l39//XypU2NzsN/fNfLnjA10GIXD1saQ66eHEQlZQQdJ+
+         LIi6u/vyt5nCYf1qCHWaBjCCcWd1UiLtqMyHyudqkf57skQAAQk+lTWhVnn4fwaZVDFV
+         S3DbmExRMDeNVuC49lb2+CpiMV2DFGCQo42JSYAoqXmyD/ODJKIgCA3ZsD1CHEdyTkKg
+         ybiwOREYXeUZT5K8KWTIjllH5ZUm1MXN4gyL/4GPlyB+rFSNLqiXiP1zNkchNbcIMUzS
+         HnjQ==
+X-Gm-Message-State: AFqh2kqsM6N7UvSJp1BDc4G8TL1pJB2/BNeFeZeN7lRaZjsp/8WgH08b
+        voUe+zJFalk72pZ+/YPIOQ==
+X-Google-Smtp-Source: AMrXdXvTkWGHCGzQ0jeyIBp5MoDkQ1m6A/r1AhuDG3PVHNXHTZwOWX8rnUo7yhgV2FIj9xuZxwbnvw==
+X-Received: by 2002:a92:870d:0:b0:307:739a:db47 with SMTP id m13-20020a92870d000000b00307739adb47mr45025387ild.27.1673208511869;
+        Sun, 08 Jan 2023 12:08:31 -0800 (PST)
+Received: from robh_at_kernel.org ([2605:ef80:8069:516a:f2b0:691e:4315:7c0f])
+        by smtp.gmail.com with ESMTPSA id j7-20020a056e020ee700b0030c463d743esm1071801ilk.85.2023.01.08.12.08.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Jan 2023 12:08:31 -0800 (PST)
+Received: (nullmailer pid 212759 invoked by uid 1000);
+        Sun, 08 Jan 2023 20:08:26 -0000
+Date:   Sun, 8 Jan 2023 14:08:26 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] Revert "ARM: dts: armada-38x: Fix compatible
- string for gpios"
-Message-ID: <Y7mpYFsvLrqpEp7W@lunn.ch>
-References: <20230107144149.5743-1-klaus.kudielka@gmail.com>
+        Andy Gross <agross@kernel.org>,
+        krishna Lanka <quic_vamslank@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Iskren Chernev <me@iskren.info>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Richard Acayan <mailingradian@gmail.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        devicetree@vger.kernel.org,
+        Martin Botka <martin.botka@somainline.org>
+Subject: Re: [PATCH 1/9] dt-bindings: pinctrl: qcom,sc8280xp-lpass-lpi:
+ correct pins pattern
+Message-ID: <167320850561.212688.17704162807220133540.robh@kernel.org>
+References: <20221230135645.56401-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230107144149.5743-1-klaus.kudielka@gmail.com>
+In-Reply-To: <20221230135645.56401-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Jan 07, 2023 at 03:41:48PM +0100, Klaus Kudielka wrote:
-> This reverts commit c4de4667f15d04ef5920bacf41e514ec7d1ef03d, which causes
-> a regression on Turris Omnia (Armada 385): GPIO interrupts cease to work,
-> ending up in the DSA switch being non-functional.
-> 
-> The blamed commit is incorrect in the first place:
-> If compatible = "marvell,armadaxp-gpio", the second (address, size) pair
-> of the reg property must to point to the per-CPU interrupt registers
-> <0x18800 0x30> / <0x18840 0x30>, and not to the blink enable registers
-> <0x181c0 0x08> / <0x181c8 0x08>.
-> 
-> But even fixing that leaves the GPIO interrupts broken on the Omnia.
-> 
-> Furthermore:
-> Commit 5f79c651e81e explains very well, why the gpio-mvebu driver does not
-> work reliably with per-CPU interrupts.
-> Commit 988c8c0cd04d deprecates compatible = marvell,armadaxp-gpio for this
-> reason.
-> 
-> Fixes: c4de4667f15d ("ARM: dts: armada-38x: Fix compatible string for gpios")
-> Reported-by: Klaus Kudielka <klaus.kudielka@gmail.com>
-> Link: https://lore.kernel.org/r/f24474e70c1a4e9692bd596ef6d97ceda9511245.camel@gmail.com/
-> 
-> Signed-off-by: Klaus Kudielka <klaus.kudielka@gmail.com>
 
-Hi Klaus
+On Fri, 30 Dec 2022 14:56:37 +0100, Krzysztof Kozlowski wrote:
+> SC8280XP LPASS LPI pin controller has GPIO 0-18:
+> 
+>   sa8540p-ride.dtb: pinctrl@33c0000: tx-swr-default-state: 'oneOf' conditional failed, one must be fixed:
+>     'pins' is a required property
+>     'function' is a required property
+>     'clk-pins', 'data-pins' do not match any of the regexes: 'pinctrl-[0-9]+'
+>     'bias-bus-hold' does not match any of the regexes: 'pinctrl-[0-9]+'
+>     'gpio2' does not match '^gpio([0-1]|1[0-8])$'
+> 
+> Fixes: 958bb025f5b3 ("dt-bindings: pinctrl: qcom: Add sc8280xp lpass lpi pinctrl bindings")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/pinctrl/qcom,sc8280xp-lpass-lpi-pinctrl.yaml       | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-I was hoping Pali would comment, maybe fix it. But i think enough time
-has passed, we should accept your reverts.
-
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+Reviewed-by: Rob Herring <robh@kernel.org>
