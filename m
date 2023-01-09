@@ -2,65 +2,64 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7B5C61DB3
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Jan 2023 18:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56BC4C5479D
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Jan 2023 18:21:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236528AbjAISU2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Jan 2023 13:20:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40886 "EHLO
+        id S237560AbjAISVa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Jan 2023 13:21:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237600AbjAISTj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jan 2023 13:19:39 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A96E138ACF
-        for <linux-gpio@vger.kernel.org>; Mon,  9 Jan 2023 10:16:21 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id d17so9102024wrs.2
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Jan 2023 10:16:21 -0800 (PST)
+        with ESMTP id S237418AbjAISUk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jan 2023 13:20:40 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FABBF7
+        for <linux-gpio@vger.kernel.org>; Mon,  9 Jan 2023 10:18:36 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id g13so14306832lfv.7
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Jan 2023 10:18:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aZ+UcSvH1/yFH/DmcCw5T1cgnvux9jRR+4vdCZNHnV8=;
-        b=g/2cZ66foHel6/6Em/n7eMR4GqyyKF5VFQLa1Al2lQkhnnsue8mhSixFvd7htRUIRY
-         8ijIBWiPJmOl0Ez71XV2l0wGtXlQaLYBPYYrc5IvrCgr+Vcu5X6rqEDnZxETIWcVNizs
-         mrJisga5WmPvLBH21Du83bWZuFI9TMiXpzf5JcYQY5Vr7Nc+rGO/TDIvwQKFYvBBor+s
-         aaaMXPlteVo/Wzb5FOJIzMX1JewvkMcfGlx0/yjf8y9WVb/0iy55skA6dff2c4DOrjuv
-         oEA4ZQMR0/ozXexHgyDEI4ACcsr8AGA+6Mtt6O8CagW1r+DKMxVaVVPhOQ9GksNnfTe/
-         x4Yw==
+        bh=5LmS5ZO2TtDQ6P61GlWGjss8FaAkcuFxtuwA1Gc1BKc=;
+        b=UQ5oyt2wJYJPvyhWkud0csDfT4+TRsuKrLRKk7KKa1oMDZW4QLxwSANhoO8h33NFWQ
+         TwhEa6L9sgnJuFkQFsEw5ML75KiOXSskXam//k1BJ4BI7vjDw+AjsComy+UjSZb7IO0X
+         FfikElm0UKN8L+NnGOe6XnIpw9tvOK8d4BOf8a7tBYsJADC2dmc0L7/9REDH6h95T/gh
+         VnrzXsBENgmzMN1untytGy5hdxcDWSB28wXjOKBZkHN1dBa4ab4X3xV7OhVdP0eHS5sI
+         OP35GZH9N8NjE4KZcXniYEfIj/TRbvCYZ/YJl4f2IG7CeHuL2HpTPGRAOzu4EK06yWgR
+         YH7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aZ+UcSvH1/yFH/DmcCw5T1cgnvux9jRR+4vdCZNHnV8=;
-        b=VNzrlrvNDC/xob4elaetvSWZxqZ+KmKFJkHHWo0nEM1nDaT3nJRUwZPaR7u+QooCU5
-         2K2UXLcKL1/oQ21pDIg0lWCES4Z1ZnFzq0m/+ifu8fw1i30rs3V330ariT7vDG0pVWis
-         kK+to9mDPKQGPD3iSzbTYPkzKVz1Su9xwcd0YL7+XLikoCxJnMgnQdhVxvbxYfigY6C/
-         MwUgWMhwU7ToPs7DaFXPj/2GuZRGEf7kBK6GxKGn0YhCp8WoAZCAD9hLll6lbiHUXiaH
-         YAfpCwMHQmH82QOamI1mwZAMbO33UNTOvfq6JrfbadUI/pp9txZPpx+05WhyvP93Vk+Z
-         U+qQ==
-X-Gm-Message-State: AFqh2kpzlihq+0z1UlzzveDYl1BLzovLUbqV1J+o0yDAPjcqWQR+Zcp9
-        2MpxKzTpYHqWG7hT7PSend13GQ==
-X-Google-Smtp-Source: AMrXdXvWp+uWmOkR4I+WvA3APw37a5af3OBw2MaJnBDtJFjrrt5W7j+NRUEHGx2JTxqFhl1RnFgtag==
-X-Received: by 2002:adf:f80d:0:b0:2bc:7d3c:5a57 with SMTP id s13-20020adff80d000000b002bc7d3c5a57mr2110866wrp.1.1673288180257;
-        Mon, 09 Jan 2023 10:16:20 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id r10-20020adfda4a000000b0029a06f11022sm9118968wrl.112.2023.01.09.10.16.17
+        bh=5LmS5ZO2TtDQ6P61GlWGjss8FaAkcuFxtuwA1Gc1BKc=;
+        b=C9+/f3/5n+upUHqhMO4uiXGx0c7GRf+6p/ioomcSKsKRNelI2US0kwyuS5XL1GdHYB
+         35Ym/qr0ANNA0NTrNzQu1cqXK1RFzZKsG+QZ1GI3SbfjDzrJV568F/xsqroVzgdOCYKa
+         bISTq/T5ubowtNDdOvdD8RGmO/wldWfEzyDTveXacVpwFY3WsNjn0YAgoNMRpQXJ7xoz
+         6G5oTRAIhoFpjJ2alj33t7EsiUo2qNq6zwvlHxVELztMEwhwT5k5gl2GQwWzyyXicT7m
+         huemuAG/JulpM1ZyPgPXc7PepDW/cg/qg/5P+HxNO7kbi+FZdK07UCepgnSZ5xTVPVWo
+         khAw==
+X-Gm-Message-State: AFqh2kputoZi+0Q9KlCT++dr5fUjqzQbeou5gTl9swjgIKAOZ10TZjiE
+        IX/a+KCl/5KABFXPtO+YDUsrZw==
+X-Google-Smtp-Source: AMrXdXvvfOFbQwwZ3SbTKgeWOk2i/0UCppSMUdlr8v90NtZNo80+hz5+ach7NcITAU1Ni/Itfyh0Wg==
+X-Received: by 2002:a05:6512:c1b:b0:4cb:3e50:f5e3 with SMTP id z27-20020a0565120c1b00b004cb3e50f5e3mr8899209lfu.61.1673288315004;
+        Mon, 09 Jan 2023 10:18:35 -0800 (PST)
+Received: from [192.168.1.101] (abxi45.neoplus.adsl.tpnet.pl. [83.9.2.45])
+        by smtp.gmail.com with ESMTPSA id e15-20020a05651236cf00b00492e3c8a986sm1718439lfs.264.2023.01.09.10.18.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Jan 2023 10:16:19 -0800 (PST)
-Message-ID: <60dabb25-683e-2649-7045-d7504de7d128@linaro.org>
-Date:   Mon, 9 Jan 2023 19:16:16 +0100
+        Mon, 09 Jan 2023 10:18:33 -0800 (PST)
+Message-ID: <7b58565f-c512-57c4-c417-49dcff19fa2b@linaro.org>
+Date:   Mon, 9 Jan 2023 19:18:29 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH 01/18] dt-bindings: clock: sa8775p: add bindings for
- Qualcomm gcc-sa8775p
+Subject: Re: [PATCH 02/18] clk: qcom: add the GCC driver for sa8775p
 Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 To:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -80,30 +79,136 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
-        netdev@vger.kernel.org,
+        netdev@vger.kernel.org, Shazad Hussain <quic_shazhuss@quicinc.com>,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 References: <20230109174511.1740856-1-brgl@bgdev.pl>
- <20230109174511.1740856-2-brgl@bgdev.pl>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230109174511.1740856-2-brgl@bgdev.pl>
+ <20230109174511.1740856-3-brgl@bgdev.pl>
+ <bbd21894-234e-542e-80ec-8f2bb11e268e@linaro.org>
+In-Reply-To: <bbd21894-234e-542e-80ec-8f2bb11e268e@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 09/01/2023 18:44, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On 9.01.2023 18:58, Konrad Dybcio wrote:
 > 
-> Add DT bindings for the GCC clock on SA8775P platforms. Add relevant
-> DT include definitions as well.
 > 
+> On 9.01.2023 18:44, Bartosz Golaszewski wrote:
+>> From: Shazad Hussain <quic_shazhuss@quicinc.com>
+>>
+>> Add support for the Global Clock Controller found in the QTI SA8775P
+>> platforms.
+>>
+>> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
+>> [Bartosz: made the driver ready for upstream]
+>> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>> ---
+> [...]
+> 
+>> +
+>> +static struct gdsc usb20_prim_gdsc = {
+>> +	.gdscr = 0x1C004,
+> Please use lowercase hex literals outside #defines.
+> 
+>> +	.pd = {
+>> +		.name = "usb20_prim_gdsc",
+>> +	},
+>> +	.pwrsts = PWRSTS_OFF_ON,
+>> +};
+>> +
+> [...]
+> 
+>> +
+>> +static const struct regmap_config gcc_sa8775p_regmap_config = {
+>> +	.reg_bits = 32,
+>> +	.reg_stride = 4,
+>> +	.val_bits = 32,
+>> +	.max_register = 0x472cffc,
+> This is faaaaar more than what your DT node specifies.
+> 
+> With these two fixed, LGTM:
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> 
+> Konrad
+>> +	.fast_io = true,
+>> +};
+>> +
+>> +static const struct qcom_cc_desc gcc_sa8775p_desc = {
+>> +	.config = &gcc_sa8775p_regmap_config,
+>> +	.clks = gcc_sa8775p_clocks,
+>> +	.num_clks = ARRAY_SIZE(gcc_sa8775p_clocks),
+>> +	.resets = gcc_sa8775p_resets,
+>> +	.num_resets = ARRAY_SIZE(gcc_sa8775p_resets),
+>> +	.gdscs = gcc_sa8775p_gdscs,
+>> +	.num_gdscs = ARRAY_SIZE(gcc_sa8775p_gdscs),
+>> +};
+>> +
+>> +static const struct of_device_id gcc_sa8775p_match_table[] = {
+>> +	{ .compatible = "qcom,gcc-sa8775p" },
+One more thing, this should be qcom,sa8775p-gcc.
 
-Ah, and same comments as for all other patches:
-
-Subject: drop second/last, redundant "bindings". The "dt-bindings"
-prefix is already stating that these are bindings.
-
-Best regards,
-Krzysztof
-
+Konrad
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, gcc_sa8775p_match_table);
+>> +
+>> +static int gcc_sa8775p_probe(struct platform_device *pdev)
+>> +{
+>> +	struct regmap *regmap;
+>> +	int ret;
+>> +
+>> +	regmap = qcom_cc_map(pdev, &gcc_sa8775p_desc);
+>> +	if (IS_ERR(regmap))
+>> +		return PTR_ERR(regmap);
+>> +
+>> +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
+>> +				       ARRAY_SIZE(gcc_dfs_clocks));
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/*
+>> +	 * Keep the clocks always-ON
+>> +	 * GCC_CAMERA_AHB_CLK, GCC_CAMERA_XO_CLK, GCC_DISP1_AHB_CLK,
+>> +	 * GCC_DISP1_XO_CLK, GCC_DISP_AHB_CLK, GCC_DISP_XO_CLK,
+>> +	 * GCC_GPU_CFG_AHB_CLK, GCC_VIDEO_AHB_CLK, GCC_VIDEO_XO_CLK.
+>> +	 */
+>> +	regmap_update_bits(regmap, 0x32004, BIT(0), BIT(0));
+>> +	regmap_update_bits(regmap, 0x32020, BIT(0), BIT(0));
+>> +	regmap_update_bits(regmap, 0xc7004, BIT(0), BIT(0));
+>> +	regmap_update_bits(regmap, 0xc7018, BIT(0), BIT(0));
+>> +	regmap_update_bits(regmap, 0x33004, BIT(0), BIT(0));
+>> +	regmap_update_bits(regmap, 0x33018, BIT(0), BIT(0));
+>> +	regmap_update_bits(regmap, 0x7d004, BIT(0), BIT(0));
+>> +	regmap_update_bits(regmap, 0x34004, BIT(0), BIT(0));
+>> +	regmap_update_bits(regmap, 0x34024, BIT(0), BIT(0));
+>> +
+>> +	return qcom_cc_really_probe(pdev, &gcc_sa8775p_desc, regmap);
+>> +}
+>> +
+>> +static struct platform_driver gcc_sa8775p_driver = {
+>> +	.probe = gcc_sa8775p_probe,
+>> +	.driver = {
+>> +		.name = "gcc-sa8775p",
+>> +		.of_match_table = gcc_sa8775p_match_table,
+>> +	},
+>> +};
+>> +
+>> +static int __init gcc_sa8775p_init(void)
+>> +{
+>> +	return platform_driver_register(&gcc_sa8775p_driver);
+>> +}
+>> +subsys_initcall(gcc_sa8775p_init);
+>> +
+>> +static void __exit gcc_sa8775p_exit(void)
+>> +{
+>> +	platform_driver_unregister(&gcc_sa8775p_driver);
+>> +}
+>> +module_exit(gcc_sa8775p_exit);
+>> +
+>> +MODULE_DESCRIPTION("Qualcomm SA8775P GCC driver");
+>> +MODULE_LICENSE("GPL");
