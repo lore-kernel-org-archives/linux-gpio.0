@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29AE0C678DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8FAC678DE
 	for <linux-gpio@archiver.kernel.org>; Mon,  9 Jan 2023 17:49:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231365AbjAIRs5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Jan 2023 12:48:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36050 "EHLO
+        id S237565AbjAIRs4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Jan 2023 12:48:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237430AbjAIRrP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jan 2023 12:47:15 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 938BDB60
-        for <linux-gpio@vger.kernel.org>; Mon,  9 Jan 2023 09:45:52 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id z5so7949081wrt.6
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Jan 2023 09:45:52 -0800 (PST)
+        with ESMTP id S237436AbjAIRrQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jan 2023 12:47:16 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96BC52676
+        for <linux-gpio@vger.kernel.org>; Mon,  9 Jan 2023 09:45:55 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id bk16so8988603wrb.11
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Jan 2023 09:45:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WUcGV5fbtjxqFE0T6p3J3bmXfyuMT3kH12S7+49//HE=;
-        b=6MwA8kcVFm4Dtxz03gS3O9kr+VDwecpPiUxj83LoGLmyZetVHS2kt0hKyJ1TDXFNlj
-         2kjEjWgFJJViaRLqoNdNqwStVUl53rFwx5Gedn54jRycLv/8zwYqhfrhoylLJE8pictL
-         SV/4JqCv4ZZ+SgsahBfgvhMo9oZN5NdjSa79NGncPRxtmP8Vr6ONPej3FuswYGYA6cur
-         0x/3SMmalfMeJVsCrLfFPcTc96IeoTajsGnfwEKz/9H9UEmbp8qE8tCxMZmnfsZ5yotN
-         JVHx/e7U2F6iIgfdRQIvruw56UAPLQcYl1iXAux1uUkqoWmW1akxEnL3sh4AU8Xg7+m9
-         MOtg==
+        bh=my6K8WfaV8OBcEHlajm+pAlQLMbwnRAqnVV0EWJPD+M=;
+        b=f8546yXbDGBZ2/Cab4AwVn+CY73PZix4rzGPYYVM0ehIlbInz0tsCHofPUAYh4FMfz
+         BltT713JgdnrnrSpYZZaYMW07SS2kjKJgPaBIAfjKMWvyBzubdgq99q9ufeDpVO6yEP7
+         Z6n1ov4R827R6nW+PaUO2aiuGgb8kcDj+1o2Vu9pq+YqOF3Kow8g4QXdkx4a66zQQuNE
+         CmiJ8+Qh1JEnHIv1ek3IfJmvXEh1KCV8T4w25JzOaWGMdK7VEhDpt2UB7Q0MzXZmHGlk
+         k4F/+ho6dBz3Dln/Lw3BnRyY6atTXYDrgb17tUy5VOUtBNGFUNqVi7O7UWQTcNypssGe
+         cnZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WUcGV5fbtjxqFE0T6p3J3bmXfyuMT3kH12S7+49//HE=;
-        b=P2YWJssMTopoFK+tHyxHfErcss1M6/k9yW4eLhdF6rQjgjnl4KuKnbnew6Msar2uWj
-         9cyuv27GINhTB8dY+qygdEJccT8w6JE22NTraK/vMnsryxfJ7O3Dt1uVG6dJ5kJ+UuAM
-         ee/8zsdqTWeCA7AbtyPPhYxrJTGzE8+WKSBxnzuLDjGuw4cjjud+NdYXrs9Z7gk1hjS+
-         Y0KBISDC6P0ey60ayXFGqyw82ZAsFkSlt6TYYN/DoFoCgKqvKX6Yp8ETFvyKdlr88KLx
-         PeF0sFAg9GmEKPt56KVL0vrIT339JJlXQUxfDNV0OLlTBU0reLBh1bxXNlcy4lXGDkGq
-         PdCw==
-X-Gm-Message-State: AFqh2koqjDPW9mnkN1nsj+cYO/pl5XUd2umDY48kCoA2UjZszakdk3JS
-        DXqllP4bjf6a7tyzuzHHlePwPw==
-X-Google-Smtp-Source: AMrXdXudM7bU6n2NQ6Zx2DujyRBImBGf6Invf+dwrnygEzLWbZcDXm1UZ8KC/h30e2Si+7WbZKPQ/w==
-X-Received: by 2002:adf:f183:0:b0:255:96ed:950b with SMTP id h3-20020adff183000000b0025596ed950bmr39349795wro.60.1673286351007;
-        Mon, 09 Jan 2023 09:45:51 -0800 (PST)
+        bh=my6K8WfaV8OBcEHlajm+pAlQLMbwnRAqnVV0EWJPD+M=;
+        b=yLJ7P2/FzsYz9T0n/IQFO05M4R/RjiJ3vNcRLWh/PyvRz01GaD7alE0it0atTozWDK
+         vDV69jRp3EBka3CtLYQSE6pj3oczsHg6SVyTQ9oijuCkf1/yO7KuDu3LiP3nO7oAgiaA
+         /95dmMwzyNAZqN98nxISiZXW4f5L2Sg2JrOQo/p9F33lIczjofKu7PpJfJkALQpFA/eu
+         r2EXwrDAdLTsrgpE5VNTCGYZTEiaAg8Q0yNcNbDM6K0O+7LkpU8uB8nW7fSKoG6t+KNh
+         FjGBAPQuGqjbV1JKPq2Q9N+rGoC7BdEkrpISxenQDktJ3sThueba0RX30DFNYcnwfx1D
+         olOA==
+X-Gm-Message-State: AFqh2koT6XPl8WZfxwn2/51sk5F3KOzs/2AsXe1UjwgLaqmn0La7XsHs
+        24n2ua+8B543kpIvYM2RAwgdaQ==
+X-Google-Smtp-Source: AMrXdXvl5wsiu+cNpizaVJFWRHQ6Yuw6VrDw/F/LMZCUxOZm7siOcV1jqP2kHD93R/Tca7UPu7QwlA==
+X-Received: by 2002:a05:6000:90a:b0:2a2:e87a:b4e1 with SMTP id bz10-20020a056000090a00b002a2e87ab4e1mr13759954wrb.36.1673286355114;
+        Mon, 09 Jan 2023 09:45:55 -0800 (PST)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:c88:901e:c74c:8e80])
-        by smtp.gmail.com with ESMTPSA id m1-20020a5d6241000000b002bbdaf21744sm6142902wrv.113.2023.01.09.09.45.49
+        by smtp.gmail.com with ESMTPSA id m1-20020a5d6241000000b002bbdaf21744sm6142902wrv.113.2023.01.09.09.45.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jan 2023 09:45:50 -0800 (PST)
+        Mon, 09 Jan 2023 09:45:54 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -74,9 +74,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
         netdev@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 14/18] soc: qcom: rmphpd: add power domains for sa8775p
-Date:   Mon,  9 Jan 2023 18:45:07 +0100
-Message-Id: <20230109174511.1740856-15-brgl@bgdev.pl>
+Subject: [PATCH 17/18] dt-bindings: arm: qcom: document the sa8775p reference board
+Date:   Mon,  9 Jan 2023 18:45:10 +0100
+Message-Id: <20230109174511.1740856-18-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230109174511.1740856-1-brgl@bgdev.pl>
 References: <20230109174511.1740856-1-brgl@bgdev.pl>
@@ -88,72 +88,29 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add power domain description for sa8775p and a new compatible to match it.
+Add a new compatible for the sa8775p-ride board.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/soc/qcom/rpmhpd.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ Documentation/devicetree/bindings/arm/qcom.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
-index 4c2d2c296790..f20e2a49a669 100644
---- a/drivers/soc/qcom/rpmhpd.c
-+++ b/drivers/soc/qcom/rpmhpd.c
-@@ -187,6 +187,16 @@ static struct rpmhpd nsp = {
- 	.res_name = "nsp.lvl",
- };
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index 27063a045bd0..7490eb0c3e3c 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -751,6 +751,11 @@ properties:
+           - const: qcom,qcs404-evb
+           - const: qcom,qcs404
  
-+static struct rpmhpd nsp0 = {
-+	.pd = { .name = "nsp0", },
-+	.res_name = "nsp0.lvl",
-+};
++      - items:
++          - enum:
++              - qcom,sa8775p-ride
++          - const: qcom,sa8775p
 +
-+static struct rpmhpd nsp1 = {
-+	.pd = { .name = "nsp1", },
-+	.res_name = "nsp1.lvl",
-+};
-+
- static struct rpmhpd qphy = {
- 	.pd = { .name = "qphy", },
- 	.res_name = "qphy.lvl",
-@@ -212,6 +222,29 @@ static const struct rpmhpd_desc sa8540p_desc = {
- 	.num_pds = ARRAY_SIZE(sa8540p_rpmhpds),
- };
- 
-+/* SA8775P RPMH power domains */
-+static struct rpmhpd *sa8775p_rpmhpds[] = {
-+	[SA8775P_CX] = &cx,
-+	[SA8775P_CX_AO] = &cx_ao,
-+	[SA8775P_EBI] = &ebi,
-+	[SA8775P_GFX] = &gfx,
-+	[SA8775P_LCX] = &lcx,
-+	[SA8775P_LMX] = &lmx,
-+	[SA8775P_MMCX] = &mmcx,
-+	[SA8775P_MMCX_AO] = &mmcx_ao,
-+	[SA8775P_MXC] = &mxc,
-+	[SA8775P_MXC_AO] = &mxc_ao,
-+	[SA8775P_MX] = &mx,
-+	[SA8775P_MX_AO] = &mx_ao,
-+	[SA8775P_NSP0] = &nsp0,
-+	[SA8775P_NSP1] = &nsp1,
-+};
-+
-+static const struct rpmhpd_desc sa8775p_desc = {
-+	.rpmhpds = sa8775p_rpmhpds,
-+	.num_pds = ARRAY_SIZE(sa8775p_rpmhpds),
-+};
-+
- /* SDM670 RPMH powerdomains */
- static struct rpmhpd *sdm670_rpmhpds[] = {
- 	[SDM670_CX] = &cx_w_mx_parent,
-@@ -487,6 +520,7 @@ static const struct rpmhpd_desc sc8280xp_desc = {
- static const struct of_device_id rpmhpd_match_table[] = {
- 	{ .compatible = "qcom,qdu1000-rpmhpd", .data = &qdu1000_desc },
- 	{ .compatible = "qcom,sa8540p-rpmhpd", .data = &sa8540p_desc },
-+	{ .compatible = "qcom,sa8775p-rpmhpd", .data = &sa8775p_desc },
- 	{ .compatible = "qcom,sc7180-rpmhpd", .data = &sc7180_desc },
- 	{ .compatible = "qcom,sc7280-rpmhpd", .data = &sc7280_desc },
- 	{ .compatible = "qcom,sc8180x-rpmhpd", .data = &sc8180x_desc },
+       - items:
+           - enum:
+               - qcom,sa8155p-adp
 -- 
 2.37.2
 
