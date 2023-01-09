@@ -2,60 +2,60 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6513CC61DB3
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Jan 2023 18:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D331EC678DD
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Jan 2023 18:10:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237686AbjAISFb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Jan 2023 13:05:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53386 "EHLO
+        id S237007AbjAISKI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Jan 2023 13:10:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237621AbjAISEu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jan 2023 13:04:50 -0500
+        with ESMTP id S237249AbjAISIz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jan 2023 13:08:55 -0500
 Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 069AF4A969
-        for <linux-gpio@vger.kernel.org>; Mon,  9 Jan 2023 10:04:11 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id f34so14210616lfv.10
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Jan 2023 10:04:10 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18F2348594
+        for <linux-gpio@vger.kernel.org>; Mon,  9 Jan 2023 10:08:15 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id y25so14258418lfa.9
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Jan 2023 10:08:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NaY/2DqaoSidppPHSkUy2BcLqUqFjFP11ep0OZTy/9g=;
-        b=Fg//XqJM9WKhPv5WbbeOGHnwk+Rth3gxnPKIESr5UrbVYIpyUKikYqDCZKX0JJ3sWc
-         tXAA/ICSy07weUIwdyfiXhf7h+5A402Ds4SvfkvOF6A0+MoURv3XH4ba7MQTvWnGrKEa
-         3nbcXDYGDMu2PXuegkdNtRmSUvftWBLEcRq4C8Hwek/yUFLGBKDFqNF16lfsf8kTYnCI
-         MrNa0KL0VAk8heoX7uxajUsjsmdzkZ5p/QcHcpAMdSY6e4TyDXQuj6SaO0ZB5D7c8zwp
-         6Q+DLO7U8AsRZKpwRnSvx9TzzDVwaVcncIHBLVOakqDT0+/w9jrH5h9qeZg+G2uiIT53
-         Rk4w==
+        bh=e1JMPoTV80PEJefONcOYlms/hHbc5vj9vRLyRa7UBTM=;
+        b=wL3QGkdKztFOkWWeW09aqswuc2d3KrnalWesJnYDWz07wftez/OhOySylYmGPkbnXh
+         v+gY20wHq44rAdZct4rxh439oyw4yJuAueOvueAk6bY8iun/fOAbt/MARe9G5NPzfGgL
+         4OlPvd42d8ctkrUqp+QKrMsvRjiZ/SXnheyYzuhxaOhR5CBGqr5151o/HleYba9Exf1c
+         gi5uGiRwkOtiXoPM3b0QU4nlerMA8Qt8xcmGMhgwfwdz48FUhujTs86X/ugCe5paRsq0
+         j4yH6A6tf0gMlR7Y36vGYWcG70SOQH17nCHhSuvkuwO+pC+FLHKEzMXyM6Vesg7mLQIv
+         dUHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NaY/2DqaoSidppPHSkUy2BcLqUqFjFP11ep0OZTy/9g=;
-        b=3T0k8Mk+gVtaXYUGBbZ3qV9LF06LXGwoPqX6HMx4Z/KPYfhAH6H0NnCWUzSWTnVAe0
-         XzHmXEGnI+ncv1A9ZmeeghzEaNA1tH8gmMz9oHnMPhr/bjfd3ehssaksEA1KtCKQWiaB
-         0hPsXK4VN5HnWBTjfzX9Dbs2BYKeOGjndJQNZ03nnSgNKRFmQP+fb9+Wa8woUWoMBRiv
-         9f8VVkZRiAJI53tJyOk9W8g3ybr9lR5Y9KB0+wKSnNc18e1nv9k1cCI9rZaHoBsxgodU
-         whIDcduEEfZJka0fZNjQ2sTpA5/Yyk9RRJZcYHbRZAA+Yv4xFHQ7ErX5f9I8bhQk6J/5
-         hicQ==
-X-Gm-Message-State: AFqh2krRsiVF+XctLkly4Au9ShXw8slS/PKTzSHUxBSzuO1fTJsD/qF8
-        /kYY5H7ABpWTmuQZgSeG/GrhyQ==
-X-Google-Smtp-Source: AMrXdXsZTo7DsBtHT1Kmx9G45xUp19RzsFbkBS642qI0FX5WuYrR8ikmr2qzmwx3vmMgXWDt/ssYUA==
-X-Received: by 2002:a05:6512:3d10:b0:4cc:7b66:6d64 with SMTP id d16-20020a0565123d1000b004cc7b666d64mr2410770lfv.39.1673287449389;
-        Mon, 09 Jan 2023 10:04:09 -0800 (PST)
+        bh=e1JMPoTV80PEJefONcOYlms/hHbc5vj9vRLyRa7UBTM=;
+        b=e1jl1JMqNbWLDgt0xku41zdtcsQPP+el9MINNvXKA4GUL6PuRdHJv20yuuV6ROCm2/
+         plH+T9jyki+OsB+459bo+kbKtbg/P0ME/KZ3lFfcFCXh9/3vYq/SHc08tiGqbzJBs5/Z
+         RpqtJXXSsW+c16G1DelVYwXM/Kjk7AN3GtiPalSdaKqwvr4AYAAiWYfg93B3vtrqU87a
+         8InoRacwaM7hxfhOpcfz4k8CV9n1Hg6FuZ2QFw6tc/6qVcDWODvmAR4o104tXcbDORXo
+         kP9DzKT4W++9YMPy6srEqWBJ4K5DsTgMlUPQhCJ8+9q5Zo//aGzxwtZAGmCJpV9HI3YP
+         sIFQ==
+X-Gm-Message-State: AFqh2ko9Baui1M//nNS2JG6nl0u00gfYhC7KGL9VfawTjZ5LscVRxxEB
+        g6ZtkiFj/NqUtYaaFotz/JPgYA==
+X-Google-Smtp-Source: AMrXdXuHQ4Z4c3jNaPXxZMQVMkuAuL7LiQ/JV1NHaQswZ17QQXQ1WWKUQftP4wAWRoYpEIJgYWZPRA==
+X-Received: by 2002:a05:6512:2591:b0:4b5:7dd6:4df0 with SMTP id bf17-20020a056512259100b004b57dd64df0mr18516952lfb.32.1673287693455;
+        Mon, 09 Jan 2023 10:08:13 -0800 (PST)
 Received: from [192.168.1.101] (abxi45.neoplus.adsl.tpnet.pl. [83.9.2.45])
-        by smtp.gmail.com with ESMTPSA id u6-20020a05651220c600b004cc865fdfdfsm325270lfr.89.2023.01.09.10.04.06
+        by smtp.gmail.com with ESMTPSA id g2-20020a056512118200b004a27d2ea029sm1731866lfr.172.2023.01.09.10.08.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Jan 2023 10:04:08 -0800 (PST)
-Message-ID: <f62fb561-5ddd-203e-1204-f1bbafcc7ea8@linaro.org>
-Date:   Mon, 9 Jan 2023 19:04:05 +0100
+        Mon, 09 Jan 2023 10:08:12 -0800 (PST)
+Message-ID: <7b1d8756-efd2-5dc5-a411-0b13b2de555a@linaro.org>
+Date:   Mon, 9 Jan 2023 19:08:09 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH 08/18] arm64: defconfig: enable the interconnect driver
- for Qualcomm SA8775P
+Subject: Re: [PATCH 11/18] arm64: defconfig: enable the pinctrl driver for
+ Qualcomm SA8775P platforms
 Content-Language: en-US
 To:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Gross <agross@kernel.org>,
@@ -82,9 +82,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         netdev@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 References: <20230109174511.1740856-1-brgl@bgdev.pl>
- <20230109174511.1740856-9-brgl@bgdev.pl>
+ <20230109174511.1740856-12-brgl@bgdev.pl>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230109174511.1740856-9-brgl@bgdev.pl>
+In-Reply-To: <20230109174511.1740856-12-brgl@bgdev.pl>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -96,9 +96,8 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 On 9.01.2023 18:45, Bartosz Golaszewski wrote:
 > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Enable the Qualcomm SA8775P interconnect driver for arm64 builds. It's
-> required to be built-in for QUPv3 to work early which in turn is needed
-> for the console.
+> Enable the Qualcomm SA8775P TLMM pinctrl and GPIO driver. It needs to be
+> built-in for UART to provide a console.
 > 
 > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
@@ -109,14 +108,14 @@ Konrad
 >  1 file changed, 1 insertion(+)
 > 
 > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 1cb586125c46..d5c938adbd2d 100644
+> index d5c938adbd2d..6c752b9a4565 100644
 > --- a/arch/arm64/configs/defconfig
 > +++ b/arch/arm64/configs/defconfig
-> @@ -1332,6 +1332,7 @@ CONFIG_INTERCONNECT_QCOM_MSM8916=m
->  CONFIG_INTERCONNECT_QCOM_MSM8996=m
->  CONFIG_INTERCONNECT_QCOM_OSM_L3=m
->  CONFIG_INTERCONNECT_QCOM_QCS404=m
-> +CONFIG_INTERCONNECT_QCOM_SA8775P=y
->  CONFIG_INTERCONNECT_QCOM_SC7180=y
->  CONFIG_INTERCONNECT_QCOM_SC7280=y
->  CONFIG_INTERCONNECT_QCOM_SC8180X=y
+> @@ -555,6 +555,7 @@ CONFIG_PINCTRL_QCM2290=y
+>  CONFIG_PINCTRL_QCS404=y
+>  CONFIG_PINCTRL_QDF2XXX=y
+>  CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
+> +CONFIG_PINCTRL_SA8775P=y
+>  CONFIG_PINCTRL_SC7180=y
+>  CONFIG_PINCTRL_SC7280=y
+>  CONFIG_PINCTRL_SC8180X=y
