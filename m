@@ -2,42 +2,42 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4C2C54EBC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB79AC678D5
 	for <linux-gpio@archiver.kernel.org>; Tue, 10 Jan 2023 12:18:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238452AbjAJMSI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S232087AbjAJMSI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Tue, 10 Jan 2023 07:18:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59150 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238329AbjAJMRH (ORCPT
+        with ESMTP id S238338AbjAJMRH (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Jan 2023 07:17:07 -0500
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CE8A5F7E;
-        Tue, 10 Jan 2023 04:15:33 -0800 (PST)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30A7MsKp002636;
-        Tue, 10 Jan 2023 12:14:51 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 287C16583;
+        Tue, 10 Jan 2023 04:15:46 -0800 (PST)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30A4Y2G7024368;
+        Tue, 10 Jan 2023 12:14:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=Zh8ff5SGXAi8WExp+0Dqs+4YIfe+rE8T4hBS6987tBk=;
- b=JWXKKWvtTPiLjnChZEz5tdzkCjh4nsFvtX7zw0t0ySbrl7wdiivwc9Fmi7ldY2R1Vcm5
- 2+ZZs4gX/2hE7+BQiRsfqYt9EQxgu8MJnacp7NVPMbSiJo4m8meIlfZKGlfSkcQiTiV2
- V9qzUO1/d2bkLwpXGMhS9ikw/pPOIFNKIqhbLgu7+JOiwtzCGLa9FMTks/u1lrmL4JG8
- 4IiXtOw/GWEnAUt2bQncVsav6cOd6kx6wGy2aBVi91KM6GrMUJqtq0GDsHJtbK69c1Ez
- erqV/Q1MGpZvNSBxBS9T7vRUJ6Apkngtz/bmBL3TPASkOCiTAxjJ1U+n8zkokaeHPFXj XA== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n12vprnbs-1
+ bh=kkZoWRDShwYxA3ad/aFybpgHWe8jJVKnvvaB5BGXxyg=;
+ b=BSaofVzI5qCrNBtAmG5jIjL/y698mF7zdGiTz5P2LzePz5jhXw6IxCbUugAXeoAogiE7
+ gA5+3Lw56K5V5yNvhg/LXTdjdU9suGAn6xSEwZw2pIYhyjXT+Zq0A6eIChHqv3c+YJ5C
+ bPeJjBQS6wR/II8HZBd8Ux+UdfTPe9JI2+EC12v5AAynEBMz7mc3aIAF1UzwOw7ajnBN
+ PP31YHFgVy6yxtk280YyFl/aDS+xc+VBr7pmLQ3ZWtC21OZZHcHKweJIBf5ADvXBPXwi
+ +VSt8n3yoN+s+d/8KkKejEzDalqmXUxPNIaVAWKrxhb5tNNhg5rSbEe/BCmgIgtkywqL SA== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n113p0w2h-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Jan 2023 12:14:51 +0000
+        Tue, 10 Jan 2023 12:14:35 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30ACEoov012522
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30ACEXTf017692
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Jan 2023 12:14:50 GMT
+        Tue, 10 Jan 2023 12:14:34 GMT
 Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Tue, 10 Jan 2023 04:14:42 -0800
+ 15.2.986.36; Tue, 10 Jan 2023 04:14:25 -0800
 From:   devi priya <quic_devipriy@quicinc.com>
 To:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
@@ -55,9 +55,9 @@ CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
         <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
         <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
         <quic_poovendh@quicinc.com>
-Subject: [PATCH 7/7] arm64: defconfig: Enable IPQ9574 SoC base configs
-Date:   Tue, 10 Jan 2023 17:43:16 +0530
-Message-ID: <20230110121316.24892-8-quic_devipriy@quicinc.com>
+Subject: [PATCH 5/7] dt-bindings: qcom: Add ipq9574 bindings
+Date:   Tue, 10 Jan 2023 17:43:14 +0530
+Message-ID: <20230110121316.24892-6-quic_devipriy@quicinc.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230110121316.24892-1-quic_devipriy@quicinc.com>
 References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
@@ -68,49 +68,61 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DfXUNGc4rmmDEFeSQI5gN_cLvUEme2c9
-X-Proofpoint-ORIG-GUID: DfXUNGc4rmmDEFeSQI5gN_cLvUEme2c9
+X-Proofpoint-GUID: OMc-UYpBxCia5hsIanqstj_0enO-YUTa
+X-Proofpoint-ORIG-GUID: OMc-UYpBxCia5hsIanqstj_0enO-YUTa
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2023-01-10_03,2023-01-10_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 spamscore=0 priorityscore=1501 impostorscore=0 adultscore=0
- clxscore=1015 mlxscore=0 suspectscore=0 malwarescore=0 bulkscore=0
- mlxlogscore=764 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ suspectscore=0 mlxlogscore=999 impostorscore=0 lowpriorityscore=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 mlxscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2212070000 definitions=main-2301100074
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Enables clk & pinctrl related configs
+Document the new ipq9574 SOC/board device tree bindings
 
 Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
 Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
 Signed-off-by: devi priya <quic_devipriy@quicinc.com>
 ---
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/arm/qcom.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 851e8f9be06d..e0ae0996d5ad 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -545,6 +545,7 @@ CONFIG_PINCTRL_IMX93=y
- CONFIG_PINCTRL_MSM=y
- CONFIG_PINCTRL_IPQ8074=y
- CONFIG_PINCTRL_IPQ6018=y
-+CONFIG_PINCTRL_IPQ9574=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8953=y
- CONFIG_PINCTRL_MSM8976=y
-@@ -1093,6 +1094,7 @@ CONFIG_QCOM_CLK_SMD_RPM=y
- CONFIG_QCOM_CLK_RPMH=y
- CONFIG_IPQ_GCC_6018=y
- CONFIG_IPQ_GCC_8074=y
-+CONFIG_IPQ_GCC_9574=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index 27063a045bd0..83102fe2d366 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -32,6 +32,7 @@ description: |
+         ipq4018
+         ipq6018
+         ipq8074
++        ipq9574
+         mdm9615
+         msm8226
+         msm8916
+@@ -80,6 +81,7 @@ description: |
+         hk01
+         hk10-c1
+         hk10-c2
++        ap-al02-c7
+         idp
+         liquid
+         mtp
+@@ -304,6 +306,11 @@ properties:
+               - qcom,ipq8074-hk10-c2
+           - const: qcom,ipq8074
+ 
++      - items:
++          - enum:
++              - qcom,ipq9574-ap-al02-c7
++          - const: qcom,ipq9574
++
+       - description: Sierra Wireless MangOH Green with WP8548 Module
+         items:
+           - const: swir,mangoh-green-wp8548
 -- 
 2.17.1
 
