@@ -2,61 +2,61 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9C4C678D9
-	for <linux-gpio@archiver.kernel.org>; Wed, 11 Jan 2023 09:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B358C46467
+	for <linux-gpio@archiver.kernel.org>; Wed, 11 Jan 2023 09:51:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232486AbjAKJsX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 11 Jan 2023 04:48:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46846 "EHLO
+        id S238400AbjAKJvG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 11 Jan 2023 04:51:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235879AbjAKJrg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2023 04:47:36 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43E22AE52
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2023 01:46:07 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id g10so10676922wmo.1
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2023 01:46:07 -0800 (PST)
+        with ESMTP id S238211AbjAKJtg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2023 04:49:36 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF307BE3F
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2023 01:48:28 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id bn26so14476822wrb.0
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2023 01:48:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=T8qJr9kxb2tGVbF6bozT+Foz2HcY6He6TrHRTcyBEDM=;
-        b=rsjaoGyhFkfmSubHNTKsjmnS6j/NmQ2fI7phFAvhMi1KiNzoVpbU32S/6rCEQav80Q
-         k8wcwGy3RWZ7sAS5zTiIob3nVWXuDCVwKQJBl5dg0fbA/BO2dARaE+gLiJu74Hykirhy
-         nTrYygWQ6HxEpJf18QaCMVhwgthjG0/ZcU73PjN1mvRVqgMD+4Hy5ssT1PUJSHTWGpEe
-         hZDBKFXVTpmqweD8YSHKy/16VP/8WYUvrHZJxFB9ZY5xzgFp+DZD+xF998O60Dlr4ph2
-         63enZTgXLDiIS81V7cev0/G770QAuiHVx1BD/q7KMVDK0OqjzW4YrDq8K2g7/dJPQPW8
-         cTow==
+        bh=k4e/bFIClwcTBFeT4bkg7MJYA1/OHdeu+1QtASBuUpA=;
+        b=yCNGqgnirpDTpOmA9ZMnA71FVuItnXd5NTyRIB4RcKl6FpMMbIvgPc0qrOAIGF2BEo
+         ym28MJvtaDewPgjpX0+rodvcVLZelQLUjHsfesTrdhoSMyeOxcXV403RuEoFm8u2Q4tN
+         D4YK5Jgg9UYPITFDTxS5wLSjuR/jSo+zyB752B5jukBSo9xp4n62JrjqXRGNcNgs8gf/
+         Yo0APw7M8kL/sqx+CYOJ7FpvtoS88KUDkx78WYE+vh4W/E8G38ZkrPD4AkVB7LR4oIEH
+         dA0XsZ8o0NYzgdbCtDHWKeW8jAji4eDsQgsVskL/hdAWVLw5mpMXGBhpdHhVOlnXfEqJ
+         H3eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T8qJr9kxb2tGVbF6bozT+Foz2HcY6He6TrHRTcyBEDM=;
-        b=7RF3wyyhvXVXzPsEjFdhjo7UDfgSRaYPclwwbidLU3lOypy+0J98MR6g+vXKMBe2xd
-         UqwliSAJtuOjh+M3r+exGUHmo3LYkMZEuS2CE3M4yoIaHNouELE25WOGgoUnLhc7tFPk
-         O+W1pmkc3pUhqaS3YYZArwAdyB+NEIy9b4CjtjCciT0IKk8d8m8fRCEvMs227OXZRTgq
-         x5lJsIcYZ8SU9AZig9HlL2ZZrBA+rghRqGL+8TSINQSI02p8Hty8DrfTLtl5iijYBar7
-         xAr9aL5jrqRRg7LdK2Rma3+gkWzW92rzq3jhAmPzShudsfOjlx5tZA62vEqCHir1WctQ
-         +Udw==
-X-Gm-Message-State: AFqh2kr8gOB33fKVjjG7zbWPbP+URyfQ7wXYcWsq4IZDl52tTucHjbyF
-        3sMpRVOMRCMbO55bETFT3Icopw==
-X-Google-Smtp-Source: AMrXdXvOSu6TmuYVPNW8+fAGh0hq7brP7g4tp3JJcm7IGvJ4njHTnFBbiRTuZMJLH4ukwt7yYhNCQQ==
-X-Received: by 2002:a05:600c:22d4:b0:3cf:82b9:2fe6 with SMTP id 20-20020a05600c22d400b003cf82b92fe6mr61741450wmg.8.1673430365782;
-        Wed, 11 Jan 2023 01:46:05 -0800 (PST)
+        bh=k4e/bFIClwcTBFeT4bkg7MJYA1/OHdeu+1QtASBuUpA=;
+        b=kQXIdGYVBAEFVvgClIF/3vC/gM7w6RZFrhGu70n9a/LHe2YJ7W6V0syi3ll6rZt5fs
+         B6W2cZc/FXgGr8gNfy8AIG4qN9EOV2joQBGArTEudm+7bQ/+r+03BI8ThQYkd94z7fYu
+         88FQyL/jNNtsJKWjEFUg1BFDCKVUdlEc3G4Mhh0bIQCtaviniDxDzld4BH3hgILqyrE3
+         htMmpbIeq8lSFRvWLlKasvI8CuJURuk6Efit86iPJK/c48u1ZWLk0YK44BsSjuXk7J5Y
+         rsIq+NG977deI1ehXRzb0pibd3hT2jJ5LA7U+yfwwG5XGkP0pYyOl5ev86t/8z0UzKkB
+         8gzA==
+X-Gm-Message-State: AFqh2ko2hvi5kVNM4t8GvchH4aeeuObFPd7pfVfEA+2Yr8auY5XzibbX
+        UK72C2/5cEvMTc41nT/QkZU9EA==
+X-Google-Smtp-Source: AMrXdXuAIqa4Yx/QQNnTYGq31pq8ZDb6GToJbV+OAf2qTRr/UFfcFhrwFymZTtQABI2yg3S+/SIoLg==
+X-Received: by 2002:a5d:680a:0:b0:2bd:c690:2e66 with SMTP id w10-20020a5d680a000000b002bdc6902e66mr595170wru.5.1673430507469;
+        Wed, 11 Jan 2023 01:48:27 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id t8-20020a1c7708000000b003d9f00c8f07sm9678192wmi.21.2023.01.11.01.46.02
+        by smtp.gmail.com with ESMTPSA id t19-20020a0560001a5300b002362f6fcaf5sm13289650wry.48.2023.01.11.01.48.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jan 2023 01:46:05 -0800 (PST)
-Message-ID: <4d3003e7-f671-9971-dd3e-08b8654473db@linaro.org>
-Date:   Wed, 11 Jan 2023 10:46:02 +0100
+        Wed, 11 Jan 2023 01:48:27 -0800 (PST)
+Message-ID: <16b185ae-99a7-61d9-b5a0-f3eb157ea420@linaro.org>
+Date:   Wed, 11 Jan 2023 10:48:23 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH 1/7] dt-bindings: arm64: ipq9574: Add binding descriptions
- for clock and reset
+Subject: Re: [PATCH 6/7] arm64: dts: Add ipq9574 SoC and AL02 board support
 Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     devi priya <quic_devipriy@quicinc.com>, agross@kernel.org,
         andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
@@ -73,27 +73,29 @@ Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
         quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
         quic_poovendh@quicinc.com
 References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
- <20230110121316.24892-2-quic_devipriy@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230110121316.24892-2-quic_devipriy@quicinc.com>
+ <20230110121316.24892-7-quic_devipriy@quicinc.com>
+ <f6ef1834-b629-b76c-9cde-55af56320665@linaro.org>
+In-Reply-To: <f6ef1834-b629-b76c-9cde-55af56320665@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 10/01/2023 13:13, devi priya wrote:
-> Adding support for the global clock controller found on
-> IPQ9574 based devices
+On 11/01/2023 10:44, Krzysztof Kozlowski wrote:
+> And here
 > 
-> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
-> ---
+>> +			clock-names = "xo", "iface", "core";
+> 
+> Does not look like you tested the bindings. Please run `make
+> dt_binding_check` (see
+> Documentation/devicetree/bindings/writing-schema.rst for instructions).
 
-Use subject prefixes matching the subsystem (which you can get for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching).
+Apologies, wrong template. Correct comment:
+
+Does not look like you tested the DTS against bindings. Please run `make
+dtbs_check` (see Documentation/devicetree/bindings/writing-schema.rst
+for instructions).
 
 Best regards,
 Krzysztof
