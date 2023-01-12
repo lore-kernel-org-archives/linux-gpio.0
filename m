@@ -2,48 +2,49 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D98C6C61DB3
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 15:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C2DC61DB3
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 16:26:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240314AbjALP06 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Jan 2023 10:26:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43548 "EHLO
+        id S235956AbjALQ0O (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Jan 2023 11:26:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232473AbjALP0N (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 10:26:13 -0500
+        with ESMTP id S234044AbjALQZv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 11:25:51 -0500
 Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A1F73D9C2;
-        Thu, 12 Jan 2023 07:18:54 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8F3B479C1;
+        Thu, 12 Jan 2023 08:22:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1673536734; x=1705072734;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=tUZlln14GPxQq7kWMeSVk86M/DOORIiTmAPcsVtVcz8=;
-  b=CnAZJJVTiexghmNcROMnJ3aO4efzCUnW9WFIfCSatq7xzyKQJ8YJ+OWq
-   S0tdStukPR7KUqaIpW0rAqez3ppegy7r6rK7CzISj8V9jN1XBYjsqVvwW
-   HEkaDGhpyHyJVFQ0lWlrnuOxGBs2dS2RNky1P3HbHIGXhoMS/3ed/2Sir
-   9g+dr8jkPSMo5ZYJJnuj0x2Jpvjnqtle3KVUHwqfLZEBNr5tplwssUGox
-   IwVYB4nl8lytR8Mh4uagcdGtzt2rVZ6RtX0C/xZPrF8vYSnzacaEO4cDa
-   lsVjPbjLtCkP4s2Ym7b14+mQhJL8e2LWgcv+5gWmdhwBH0yZaOALonT4T
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="388210527"
+  t=1673540551; x=1705076551;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=b1y0t5i31C9uBnIOZ8Em+IhwTn+G8oRmBT8YWgv/OBQ=;
+  b=VGnlRUe/j6FpiGPeMUuIWarb0AF44BS9cdum+DL2xX9uWYE73Pe3bXr9
+   YvogKh4yWKVyiWP1Hmb/HPCvLssTYviWyb65rNBK6QnQHLNjGWjS3dLLJ
+   349xd30ApLWBvDAGnfUDCyFCSmSxvFVgOadmvP/kTpq7k4QfCG9WtorlE
+   NZjuPPm9wWYcoVuoVLVuAl2Y9qDan1HbkBtqavc4tW3f1Z4oICiGZwc7e
+   5n4hYnvQ4WJlnCx6njFNDbQB9+X+/LdCxKDL7gYyg8HqOGGB6D6vFEu5A
+   vdFxWskMQIrEn8ZLn6T/T7LS+2J4v0/OIcH6dGN22lb8X3opr77By24vJ
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="388239573"
 X-IronPort-AV: E=Sophos;i="5.97,211,1669104000"; 
-   d="scan'208";a="388210527"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2023 06:45:09 -0800
+   d="scan'208";a="388239573"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2023 08:22:31 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="659809686"
+X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="688381595"
 X-IronPort-AV: E=Sophos;i="5.97,211,1669104000"; 
-   d="scan'208";a="659809686"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 12 Jan 2023 06:45:06 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id BA7EA130; Thu, 12 Jan 2023 16:45:40 +0200 (EET)
+   d="scan'208";a="688381595"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga008.jf.intel.com with ESMTP; 12 Jan 2023 08:22:27 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1pG0LS-0088hY-0Z;
+        Thu, 12 Jan 2023 18:22:26 +0200
+Date:   Thu, 12 Jan 2023 18:22:25 +0200
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
@@ -51,55 +52,39 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Rob Herring <robh+dt@kernel.org>,
         Frank Rowand <frowand.list@gmail.com>
-Subject: [PATCH v1 1/1] gpiolib: Remove unused of_mm_gpiochip_add()
-Date:   Thu, 12 Jan 2023 16:45:26 +0200
-Message-Id: <20230112144526.66794-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.39.0
+Subject: Re: [PATCH v1 1/1] gpiolib: of: Move enum of_gpio_flags to its only
+ user
+Message-ID: <Y8AzwdCGr4VFjP5X@smile.fi.intel.com>
+References: <20230112145140.67573-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230112145140.67573-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-of_mm_gpiochip_add() is unused API, remove it for good.
+On Thu, Jan 12, 2023 at 04:51:40PM +0200, Andy Shevchenko wrote:
+> GPIO library for OF is the only user for enum of_gpio_flags.
+> Move it there.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/TODO       | 4 ++--
- include/linux/of_gpio.h | 5 -----
- 2 files changed, 2 insertions(+), 7 deletions(-)
+...
 
-diff --git a/drivers/gpio/TODO b/drivers/gpio/TODO
-index 76560744587a..68ada1066941 100644
---- a/drivers/gpio/TODO
-+++ b/drivers/gpio/TODO
-@@ -61,8 +61,8 @@ Work items:
- 
- - Get rid of struct of_mm_gpio_chip altogether: use the generic  MMIO
-   GPIO for all current users (see below). Delete struct of_mm_gpio_chip,
--  to_of_mm_gpio_chip(), of_mm_gpiochip_add_data(), of_mm_gpiochip_add()
--  of_mm_gpiochip_remove() from the kernel.
-+  to_of_mm_gpio_chip(), of_mm_gpiochip_add_data(), of_mm_gpiochip_remove()
-+  from the kernel.
- 
- - Change all consumer drivers that #include <linux/of_gpio.h> to
-   #include <linux/gpio/consumer.h> and stop doing custom parsing of the
-diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-index e27a9187c0c6..935225caf70d 100644
---- a/include/linux/of_gpio.h
-+++ b/include/linux/of_gpio.h
-@@ -56,11 +56,6 @@ extern int of_get_named_gpio(const struct device_node *np,
- extern int of_mm_gpiochip_add_data(struct device_node *np,
- 				   struct of_mm_gpio_chip *mm_gc,
- 				   void *data);
--static inline int of_mm_gpiochip_add(struct device_node *np,
--				     struct of_mm_gpio_chip *mm_gc)
--{
--	return of_mm_gpiochip_add_data(np, mm_gc, NULL);
--}
- extern void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc);
- 
- #else /* CONFIG_OF_GPIO */
+> +/*
+> + * This is Linux-specific flags. By default controllers' and Linux' mapping
+> + * match, but GPIO controllers are free to translate their own flags to
+> + * Linux-specific in their .xlate callback. Though, 1:1 mapping is recommended.
+> + */
+
+Now that I re-read the comment, I think this can be postponed until we get a
+consensus that no new driver is ever should do non 1:1 mapping.
+
+If that consensus achieved, we may drop this enum altogether and replace it
+with the generic flags..
+
 -- 
-2.39.0
+With Best Regards,
+Andy Shevchenko
+
 
