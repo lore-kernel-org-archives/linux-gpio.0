@@ -2,54 +2,54 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 406DCC61DB3
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 16:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17555C54EBE
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 16:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240800AbjALQw6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Jan 2023 11:52:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36118 "EHLO
+        id S240831AbjALQxA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Jan 2023 11:53:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241016AbjALQro (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 11:47:44 -0500
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F4F1A21E;
-        Thu, 12 Jan 2023 08:38:57 -0800 (PST)
+        with ESMTP id S241612AbjALQuz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 11:50:55 -0500
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C47875B145;
+        Thu, 12 Jan 2023 08:39:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1673541537; x=1705077537;
+  t=1673541584; x=1705077584;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=DjhbpXJ4UzxzTVG+1M3vVGXgk0odHr0Gd679xzGxvLM=;
-  b=Fh+RnI58gc4uWiVLFarYWY/GKsi15vZgJoa6Q4WDRzfZXnuixGMAC405
-   w6+4a0xu6q82IPgXj9Y3ud5Wo07BWnjSB9F1XYKdY4PwZGKm8T6rUEt6r
-   oQDIPK8tKfg2x/Pgauj7+eUcY7YZ98gnQHumfYatojLYDyCr16TJG0Yd6
-   NM+AHKqKw2oau4yyjs4phgeHc0w/UUiXQHxR9fmne0d6gnGRdaGhT7Fpl
-   Jcht2/nt/m55EHkGQY8TEtSm//et1K6CR50N5ERMblmt4bU8pF6qOIgYF
-   nXB6NZdOgNjSJaGeWiUyF2VhMAOmJQgWmTk7mEE3Euq8pbmLgsYb2DLo9
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="386092098"
+  bh=JF5iRDY0fpuumx63GOwMxnOeegscSLVnrkxXT4Iq3pE=;
+  b=UZUU/AITYcPRovBh5YnLR1t08amSk7p1JvgnXAFkVOmpQ4Ey66RqMHuS
+   g70hiiHwttMAFUCQPmUh/jMd9F6zEZTTfLx0jwIUivacxt8tE2N2eL3kQ
+   5pLFK56tOl2Jt88cTk28PJh2oRcob7zqZZueyJTWLxbfXJOOM6PN+F1lG
+   5IhvvYishx9YadrRbbCOcjKNHi9cdIdqi0qyXOzNDb+dJf0UASc8Wmfjq
+   7D8Od/yx+NNzM0ppjr06rn1wf3fN18b58G0COjKD3etmYibA84JwASdIh
+   YMUQpaR8EM9FWBFhnOTDkpYQQ+2buTpM/KzR48rmASh460LQl9+rIdQ6d
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="304132804"
 X-IronPort-AV: E=Sophos;i="5.97,211,1669104000"; 
-   d="scan'208";a="386092098"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2023 08:38:29 -0800
+   d="scan'208";a="304132804"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2023 08:39:11 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="659871828"
+X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="635447549"
 X-IronPort-AV: E=Sophos;i="5.97,211,1669104000"; 
-   d="scan'208";a="659871828"
+   d="scan'208";a="635447549"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 12 Jan 2023 08:38:27 -0800
+  by orsmga006.jf.intel.com with ESMTP; 12 Jan 2023 08:39:08 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 2ECE0E1; Thu, 12 Jan 2023 18:39:01 +0200 (EET)
+        id 1D4DAE1; Thu, 12 Jan 2023 18:39:43 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Devarsh Thakkar <devarsht@ti.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Keerthy <j-keerthy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] gpio: davinci: Remove duplicate assignment of of_gpio_n_cells
-Date:   Thu, 12 Jan 2023 18:38:55 +0200
-Message-Id: <20230112163855.73032-1-andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Moses Christopher Bollavarapu <mosescb.dev@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v1 1/2] gpio: zevio: Remove duplicate assignment of of_gpio_n_cells
+Date:   Thu, 12 Jan 2023 18:39:40 +0200
+Message-Id: <20230112163941.73143-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -62,21 +62,21 @@ not defined. No need to assign it explicitly in the driver.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-davinci.c | 1 -
+ drivers/gpio/gpio-zevio.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index e1c1b9a527db..26b1f7465e09 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -252,7 +252,6 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	chips->chip.base = pdata->no_auto_base ? pdata->base : -1;
+diff --git a/drivers/gpio/gpio-zevio.c b/drivers/gpio/gpio-zevio.c
+index ce9d1282165c..c9f4c26cae3d 100644
+--- a/drivers/gpio/gpio-zevio.c
++++ b/drivers/gpio/gpio-zevio.c
+@@ -162,7 +162,6 @@ static const struct gpio_chip zevio_gpio_chip = {
+ 	.base			= 0,
+ 	.owner			= THIS_MODULE,
+ 	.ngpio			= 32,
+-	.of_gpio_n_cells	= 2,
+ };
  
- #ifdef CONFIG_OF_GPIO
--	chips->chip.of_gpio_n_cells = 2;
- 	chips->chip.parent = dev;
- 	chips->chip.request = gpiochip_generic_request;
- 	chips->chip.free = gpiochip_generic_free;
+ /* Initialization */
 -- 
 2.39.0
 
