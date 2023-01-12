@@ -2,94 +2,90 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C67C54EBC
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 09:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FDCC54EBD
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 10:14:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229550AbjALJIz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Jan 2023 04:08:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57150 "EHLO
+        id S236828AbjALKOi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Jan 2023 05:14:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239965AbjALJH5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 04:07:57 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A99E5473F
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Jan 2023 01:03:10 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id fy8so42994252ejc.13
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Jan 2023 01:03:10 -0800 (PST)
+        with ESMTP id S237845AbjALKNV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 05:13:21 -0500
+Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 914E5395;
+        Thu, 12 Jan 2023 02:11:54 -0800 (PST)
+Received: by mail-ot1-x32c.google.com with SMTP id f5-20020a9d5f05000000b00684c0c2eb3fso1248405oti.10;
+        Thu, 12 Jan 2023 02:11:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gVQDEVhmqO4sgcOXdj4mcnu6JqTblyj60RYXipJ+fRY=;
-        b=yRgKjWr9Nv0UFBLyj0uDXk928R3LCKNkJldBI8nbkDYuUhXAjiPCmrSj4OCZSMq4bZ
-         UXZjppYpkTGDjv8o/1tYhkE8hDp5fYDOUR+DVmPLtCN7naGdTo1YjhWqXpsp+hLbfptb
-         Cb9+hJkXDL/lSuCPTkO6ugHzIJleuTXVM8aIF5alsEbtvEiugts8ZXGtp/pAu42UjJZv
-         +r6cAOdFx68r8B86PwoCYBwTrku479xxrmQdxtmYMtnMOvIkIZ7616PcGM4B7sN0Vvnc
-         ioBtrdJAcgJyHQLVHO/13KwcM64NQs92JqY/AKmSbpu0PlnZbpr4lkCvsTHx5KATBoHa
-         YL9A==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GdaiFhugD6+oPaJhwaL4Kajgsb7fLINSYFgd7bDk4J8=;
+        b=D6929yU096JD5AfK5EnzixHXiNvJbcDjIam7feV518ZFPQ6LVTQh5wQIhG+OgWPiRw
+         KvLXMi97RsaXG8bTb3+V56xQKO4wlgzrhRd64S8cS9kQnyLAlgmhOikgWH1PtOGq3TlG
+         lIvP5HqZfj4l08Ki6geXDihjhmOt5p1udP93sv5SKL8q5N1HEaJSDwHAMEd10sQStEeR
+         QYyLm8JAvEX+LhUQgRu3nEQGJtb2ehJYr3DSgH0qofHyay7TvmGejEX5GjcGOt0XfgSt
+         NFZbmf4PlO8vZ/H98VLaBUhuDiLeFCq3lIT3juTqm2DutAJtg8mz26hz780GefQO9mYs
+         nEVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gVQDEVhmqO4sgcOXdj4mcnu6JqTblyj60RYXipJ+fRY=;
-        b=JVeMBzahKZOFr39yQgO9+rE73P6Q1YwnNo+aj+MyM/ggJi/9FiGmZQm66OX3DvwpXl
-         m5RIywq4eufsmDBIfL+VNU9VVtUF+8szGdCjIbWQ9xgNiyq+KPb/tIZWPfgR2wTbC1Qj
-         5sCwpzoYZIxtYyvF/QiK5C9GnOl5krwxVpjqViRu2bPd3+WK59HEik+V83uxo2UF6UNw
-         9Nze1LuSGON6i6iOlV+qlkkcswSS7bSsWMHno8a1bdZ4e9iV0Uf16m0I8BL/TShP/KCB
-         D5STKjMbFyhLQtT/00ZcB7yVWNg1fu0+JyAwvkENsZFXeoEed/hd9q7+MMy4gWulk+p2
-         r4GA==
-X-Gm-Message-State: AFqh2koz0n5Q2WS2dj3HdmzeB/0ZlP7u5D3awKvmhyX5zGukmDSpsCTY
-        RannFJmNKzHckW+6HatG8sb5Lg==
-X-Google-Smtp-Source: AMrXdXtXL/qJQ+0tabMkwVX+Mi6xriBlWoHWdL9LJKoT7hxFrLQ1toZowaBk1Vanz5nmWRIlNt0DOQ==
-X-Received: by 2002:a17:906:3ec8:b0:846:cdd9:d23 with SMTP id d8-20020a1709063ec800b00846cdd90d23mr61180807ejj.19.1673514189146;
-        Thu, 12 Jan 2023 01:03:09 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id v19-20020a509553000000b0046cbcc86bdesm7065250eda.7.2023.01.12.01.03.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jan 2023 01:03:08 -0800 (PST)
-Message-ID: <e1f9b552-cdcb-11fd-c90b-4e9aef2124c4@linaro.org>
-Date:   Thu, 12 Jan 2023 10:03:06 +0100
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GdaiFhugD6+oPaJhwaL4Kajgsb7fLINSYFgd7bDk4J8=;
+        b=0JyKCHHxTtZMEjPOXQ6Jt6BrEU5CISEo2BvCmr+dOgFvOrc0/lVVmfv8ut+VPoQmP1
+         Db3cBxuv3xeZzBAZf8F4pligR2Uegn8iQRYRSF0xLtv4IJ2HIZvokZEieSm46x+5ZrNY
+         PbAoUUr/4ZH3S4XJqqskxt0DdeaJ3H2jbInjsmqu99xB1PHd12WZUdiw5VxouMC8iB3R
+         N7IB7c7oOxcwc7/W0vaDxEULexjo6AN1eI9i0M9LHrw+nQn6NRlMkw1oFc/nbk9VQBqp
+         uBPdG2v6ifLyG8ARBqJ9QBFexstxkF3VPffB6+DrS/9Z5D4Wf3OS3j9nU9CaMTFj0P9p
+         mwYQ==
+X-Gm-Message-State: AFqh2kq030eCCQQPrNxuatz+U0fHvfE6PaxcdWtpKLKaf6484dEvpBCS
+        ucDWNdvMkZx3kvtUnt1X5PpzcS024on9G9kvA6M=
+X-Google-Smtp-Source: AMrXdXu4i8RZ9oUXZZSSmOvejAHMluXivRyO1ot2lck+WOreatEKCm4GQt8+55NYUd7PhqhGQaNxDyqmW1WQ2gYseuU=
+X-Received: by 2002:a9d:75d5:0:b0:675:4bf4:dba2 with SMTP id
+ c21-20020a9d75d5000000b006754bf4dba2mr6017172otl.304.1673518314006; Thu, 12
+ Jan 2023 02:11:54 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v3 5/6] dt-bindings: pinctrl: rt305x: add proper function
- muxing binding
-Content-Language: en-US
-To:     =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+References: <20221231160849.40544-1-arinc.unal@arinc9.com>
+In-Reply-To: <20221231160849.40544-1-arinc.unal@arinc9.com>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Thu, 12 Jan 2023 11:11:42 +0100
+Message-ID: <CAMhs-H848zZRtnGjaEty4+0DmD69rN11FHUfrd7xQcaastfH3w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Enhance Ralink pinctrl documentation
+To:     =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mips@vger.kernel.org, erkin.bozoglu@xeront.com
-References: <20221231160849.40544-1-arinc.unal@arinc9.com>
- <20221231160849.40544-6-arinc.unal@arinc9.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221231160849.40544-6-arinc.unal@arinc9.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 31/12/2022 17:08, Arınç ÜNAL wrote:
-> Not every function can be muxed to a group. Add proper binding which
-> documents which function can be muxed to a group or set of groups.
-> 
-> Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
-> ---
->  .../pinctrl/ralink,rt305x-pinctrl.yaml        | 236 ++++++++++++++++--
->  1 file changed, 211 insertions(+), 25 deletions(-)
-> 
+On Sat, Dec 31, 2022 at 5:09 PM Ar=C4=B1n=C3=A7 =C3=9CNAL <arinc.unal@arinc=
+9.com> wrote:
+>
+> Ho ho ho,
+>
+> This series mainly enhances the Ralink pinctrl documentation, and make a
+> small variable name change on the subdrivers.
+>
+> I've compile-tested all the subdrivers.
+> I've tested the dt-binding changes with:
+> make dt_binding_check DT_SCHEMA_FILES=3Dpinctrl/ralink
+>
+> v3:
+> - Changes on v2 were put on the last patch. Fix that.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+For the whole series:
 
+Acked-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
-Best regards,
-Krzysztof
-
+Thanks,
+    Sergio Paracuellos
