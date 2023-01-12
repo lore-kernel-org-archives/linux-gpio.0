@@ -2,81 +2,184 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F5AC61DB3
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 19:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBD6C61DB3
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 19:39:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232421AbjALTJR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Jan 2023 14:09:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60990 "EHLO
+        id S231660AbjALTjV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Jan 2023 14:39:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232727AbjALTIs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 14:08:48 -0500
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64F216445;
-        Thu, 12 Jan 2023 10:50:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1673549454; x=1705085454;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=LawLnTNYcPdrqJ0ONp98furwA0CqtsHwm67K1q+IPrQ=;
-  b=GveMztBdBzfqFrbe2a323gMam9hx9KDV+jeaDERjXbfNy1egswGc9kcZ
-   NBUlLUFuLbfh6ckUUPHjKuWb3VKfiBhLfXfpqXiLlLof/1kdE7kPlSVyd
-   4aNnxtGpQUIGsV1ONqMNzXqRpvS0GRYYwasIkFjzObDmHJ0jgnT0i+UsR
-   2+HFjHe2W39OrkzbYt7i/PrvZB0HOAGkBaP25CjYkugaqtl5E2CXyfCdf
-   oPThFCEMNlTYcdCW6JPmVAWaAB5FzUYpo9ZFjsbrg/q3E9hB+bIghlW8H
-   kQlvAe3dVZQKsqbCCS9KY2OtHkVQptFi9yyrxt3ZFKErqdirlrBQZdM6G
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="321491083"
-X-IronPort-AV: E=Sophos;i="5.97,211,1669104000"; 
-   d="scan'208";a="321491083"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2023 10:50:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="659928630"
-X-IronPort-AV: E=Sophos;i="5.97,211,1669104000"; 
-   d="scan'208";a="659928630"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 12 Jan 2023 10:50:51 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id D1CA314B; Thu, 12 Jan 2023 20:51:25 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Wells Lu <wellslutw@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Dvorkin Dmitry <dvorkin@tibbo.com>,
+        with ESMTP id S240699AbjALTi5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 14:38:57 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0FCDBC93;
+        Thu, 12 Jan 2023 11:31:11 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3B8ACB8201C;
+        Thu, 12 Jan 2023 19:30:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EFDEC433D2;
+        Thu, 12 Jan 2023 19:30:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673551809;
+        bh=9M4Qgev96bLgOABkSP/gBl9aDcrGQTN4+95208uj1t4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CfxDrEYPeDGPKgPehnJzyQ/y3i7IsLzKtBWdZUwhXi7BIEgHs6V9M3ddKqHvF4qxW
+         hGlRhZTaReK4hRo+hMYWObxByFEizEHlO05g7Vi6JszUa2zMVaBdVuKqg6uByCEnCl
+         0MNj5a+cKbJstCy5F0Dn3kxjetHurTj3yMjHJxdnCqgZmsfKG1FR8GIzy5ocfWZjL1
+         DNE3lpMupnlTugpkRCzVLkqy3ZdDdbX1fND7shU0BWMRjijHL90DmRhlzm3WoC6iU1
+         6IqBowE1fGWu2C+4JhA3tdSp++bgp0PKyEcRtkzreeIcL6B00m36wBmiaI3X8rJKv7
+         5k1zKZh47MFGw==
+Date:   Thu, 12 Jan 2023 19:30:05 +0000
+From:   Conor Dooley <conor@kernel.org>
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] pinctrl: sunplus: sppctl: Remove duplicate assignment of of_gpio_n_cells
-Date:   Thu, 12 Jan 2023 20:51:22 +0200
-Message-Id: <20230112185122.45216-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.39.0
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Jianlong Huang <jianlong.huang@starfivetech.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] Basic pinctrl support for StarFive JH7110 RISC-V
+ SoC
+Message-ID: <Y8BfvQCFNz9KNrDY@spud>
+References: <20221220005529.34744-1-hal.feng@starfivetech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="+7GE2eStfBy4cbGi"
+Content-Disposition: inline
+In-Reply-To: <20221220005529.34744-1-hal.feng@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The of_gpio_n_cells default is 2 when ->of_xlate() callback is
-not defined. No need to assign it explicitly in the driver.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/sunplus/sppctl.c | 1 -
- 1 file changed, 1 deletion(-)
+--+7GE2eStfBy4cbGi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pinctrl/sunplus/sppctl.c b/drivers/pinctrl/sunplus/sppctl.c
-index 9c57bccc4bda..2ed0591fb51d 100644
---- a/drivers/pinctrl/sunplus/sppctl.c
-+++ b/drivers/pinctrl/sunplus/sppctl.c
-@@ -553,7 +553,6 @@ static int sppctl_gpio_new(struct platform_device *pdev, struct sppctl_pdata *pc
- 	gchip->base             = -1;
- 	gchip->ngpio            = sppctl_gpio_list_sz;
- 	gchip->names            = sppctl_gpio_list_s;
--	gchip->of_gpio_n_cells  = 2;
- 
- 	pctl->pctl_grange.npins = gchip->ngpio;
- 	pctl->pctl_grange.name  = gchip->label;
--- 
-2.39.0
+Hey Hal Feng,
 
+On Tue, Dec 20, 2022 at 08:55:24AM +0800, Hal Feng wrote:
+> This patch series adds basic pinctrl support for StarFive JH7110 SoC.
+> You can simply get or review the patches at the link [1].
+
+> [1]: https://github.com/hal-feng/linux/commits/visionfive2-minimal
+
+Do you intend submitting a new version of the patchset to address the
+comments about the bindings, or are you waiting for comments on the
+code?
+
+Thanks,
+Conor.
+
+> Changes since v2:
+> - Rebased on tag v6.1.
+> Patch 1:
+> - Renamed pinctrl-starfive-jh7110.h to
+>   starfive,jh7110-pinctrl.h. (by Krzysztof)
+> - Separated the register values in the binding header and stored them in
+>   a new file arch/riscv/boot/dts/starfive/jh7110-pinfunc.h. (by Krzysztof)
+> - Split patch 1 into sys part and aon part. Merged them into patch 2
+>   and patch 3 respectively.
+> Patch 2 & 3:
+> - Dropped "reg-names" and the description of "interrupts". Dropped quotes
+>   behind "$ref" and kept consisitent quotes. (by Krzysztof)
+> - Moved gpio properties behind interrupt properties.
+> - Moved "required" behind "patternProperties". (by Krzysztof)
+> - Rewrote the examples of bindings. (by Krzysztof and Emil)
+> - Added Co-developed-by tag for Emil.
+> - Dropped unused "clocks" property in patch 3.
+> Patch 4 & 5:
+> - Renamed "pinctrl-starfive.*" to "pinctrl-starfive-jh7110.*" and replaced
+>   all "starfive_" prefix with "jh7110_" in these files. (by Emil)
+> - Dropped macro GPIO_NUM_PER_WORD. (by Emil)
+> - Dropped unused flag member in starfive_pinctrl_soc_info structure. (by =
+Emil)
+> - Renamed "pinctrl-jh7110-sys.c" to "pinctrl-starfive-jh7110-sys.c".
+>   Renamed "pinctrl-jh7110-aon.c" to "pinctrl-starfive-jh7110-aon.c". (by =
+Emil)
+> - Added individual Kconfig options for sys and aon pinctrl drivers. (by E=
+mil)
+> - Made the sys and aon pinctrl drivers be modules. (by Emil)
+> - Added "JH7110_" prefix for macro SYS_GPO_PDA_0_74_CFG,
+>   SYS_GPO_PDA_89_94_CFG and AON_GPO_PDA_0_5_CFG. (by Emil)
+> - Dropped jh7110_sys_pinctrl_probe() and jh7110_aon_pinctrl_probe().
+>   Got the match data in the common jh7110_pinctrl_probe() and used it
+>   to probe. (by Emil)
+> - Dropped the of_match_ptr macro(). (by Emil)
+> - Set the MODULE_LICENSE as "GPL" according to commit bf7fbeeae6db.
+>=20
+>   v2: https://lore.kernel.org/all/20221118011108.70715-1-hal.feng@starfiv=
+etech.com/
+>=20
+> Changes since v1:
+> - Rebased on tag v6.1-rc5.
+> - Dropped patch 22 and 23 since they were merged in v6.1-rc1.
+> - Removed some unused macros and register values which do not belong to
+>   bindings. Simplified pinctrl definitions in patch 24. (by Krzysztof)
+> - Split the bindings into sys pinctrl bindings and aon pinctrl bindings,
+>   and split patch 25 into two patches.
+> - Made the bindings follow generic pinctrl bindings. (by Krzysztof)
+> - Fixed some wrong indentation in bindings, and checked it with
+>   `make dt_binding_check`.
+> - Split the patch 26 into two patches which added sys and aon pinctrl
+>   driver respectively.
+> - Restructured the pinctrl drivers so made them follow generic pinctrl
+>   bindings. Rewrote `dt_node_to_map` and extracted the public code to make
+>   it clearer.
+>=20
+>   v1: https://lore.kernel.org/all/20220929143225.17907-1-hal.feng@linux.s=
+tarfivetech.com/
+>=20
+> Jianlong Huang (5):
+>   riscv: dts: starfive: Add StarFive JH7110 pin function definitions
+>   dt-bindings: pinctrl: Add StarFive JH7110 sys pinctrl
+>   dt-bindings: pinctrl: Add StarFive JH7110 aon pinctrl
+>   pinctrl: starfive: Add StarFive JH7110 sys controller driver
+>   pinctrl: starfive: Add StarFive JH7110 aon controller driver
+>=20
+>  .../pinctrl/starfive,jh7110-aon-pinctrl.yaml  | 126 +++
+>  .../pinctrl/starfive,jh7110-sys-pinctrl.yaml  | 142 +++
+>  MAINTAINERS                                   |   9 +-
+>  arch/riscv/boot/dts/starfive/jh7110-pinfunc.h | 308 ++++++
+>  drivers/pinctrl/starfive/Kconfig              |  33 +
+>  drivers/pinctrl/starfive/Makefile             |   4 +
+>  .../starfive/pinctrl-starfive-jh7110-aon.c    | 177 ++++
+>  .../starfive/pinctrl-starfive-jh7110-sys.c    | 449 ++++++++
+>  .../starfive/pinctrl-starfive-jh7110.c        | 979 ++++++++++++++++++
+>  .../starfive/pinctrl-starfive-jh7110.h        |  70 ++
+>  .../pinctrl/starfive,jh7110-pinctrl.h         | 137 +++
+>  11 files changed, 2431 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jh=
+7110-aon-pinctrl.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jh=
+7110-sys-pinctrl.yaml
+>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
+>  create mode 100644 drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c
+>  create mode 100644 drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c
+>  create mode 100644 drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
+>  create mode 100644 drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h
+>  create mode 100644 include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
+>=20
+>=20
+> base-commit: 830b3c68c1fb1e9176028d02ef86f3cf76aa2476
+> --=20
+> 2.38.1
+>=20
+
+--+7GE2eStfBy4cbGi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY8BfvQAKCRB4tDGHoIJi
+0jicAQDpd58lcug0jLR0d3ZBCfGJREtWqXWojElhKKTnaBVt/wD/fEJEOoEDLicn
+rE8j7Kiv1yzRhnRxiQU5zZqRlLGFiAg=
+=MdQF
+-----END PGP SIGNATURE-----
+
+--+7GE2eStfBy4cbGi--
