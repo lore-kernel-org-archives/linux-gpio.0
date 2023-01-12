@@ -2,59 +2,59 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9754CC54EBD
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 09:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C3EC677F1
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 09:08:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240000AbjALJHY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Jan 2023 04:07:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53530 "EHLO
+        id S239631AbjALJIz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Jan 2023 04:08:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239855AbjALJGl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 04:06:41 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B161C11A33
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Jan 2023 01:02:06 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id u9so43168374ejo.0
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Jan 2023 01:02:06 -0800 (PST)
+        with ESMTP id S236775AbjALJIM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 04:08:12 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A0E14ECA0
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Jan 2023 01:03:20 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id tz12so43113613ejc.9
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Jan 2023 01:03:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6gs7ncFQfkYI2fHig91qe7q1AclJ2kNZKwU5d4VfqOo=;
-        b=r9RscOYJgQkrS+a9PCGCimrjNTd1GiKH4RoURn+HjNbFpXQ/txdyB11jHMX4rnaa+/
-         odSn4Ny63ApFLXnwoC90ArUG5CYuMUA6RkkbjWnMjgzJctEhdHi80DXTRGH3eCVd3Au3
-         ATh+A4lIOpbjEGK3lD6wr5clGIpu6tlGkc3ucETdPp9q26owU9g/ccwauKxjy33qX9g8
-         ADK2Vbey429rreGqLmkw3WsSs1ri5andl392EZUorKroCg5K2XEUE81EaRCaTr5m5pr/
-         Vsm0w8V/fwfl2CACn8VtrVsgVrNAYIFvNccCDChgnXWS4bdz60aJnwMITq9FAtCLVCnK
-         Pbig==
+        bh=NPg45aihulxFcwTt727w+mL/usKIND+jUszExCuHhXY=;
+        b=MEKnkpY7fZaDBRZ0GOoGL+5J1rSvAP8tz+GM5LCiulO58ykRwW5361vjH5gxAeEoTv
+         8HhjnXzMTuVGML79PFXQGwbgf5poVUiyY3JZQ/kxQKDoQDOgSFvZirbzNAoalx5RnAIo
+         W837pnqEu6ErV/K5C/TSut+95htAA3jdC85im8RYpa2Mv6Wf8gigkXc66wQ3vp7EW9jG
+         99CbxHCvE1P/wla42oE6rDpKSOx9JX2xV8TtbABTXNatIUem6GM68FEzT9TlJi46V4F5
+         p4OAsmgHzFf9g/x76nO013ohi75SH8DxRI4ld+AMCZf9VNCU4qQSAPS7K1ju3MGQsRPN
+         surw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6gs7ncFQfkYI2fHig91qe7q1AclJ2kNZKwU5d4VfqOo=;
-        b=4JyKSc7jsgIUfdLNKBIjLr3gpLREb16jRsfAS6Ch45nVlh2H98yQ5WMrY/dov+dQoL
-         S98W+BVeEfkeFhjXUZuarTAuzbMzUsB6/aa/AX0X8DVOJzQ8X4V3uHhMFRov58+FLnnR
-         0WiMo7UL2wTlLqCnrhidbFG2L5llJnbQLN3Kf9a+inf08zA1anTLSpy1bywGQRrb/2dV
-         2UpH7Kgk0ro/PmwmqzWMm5u9Efp7ZopijnLFfbJ3a8MeqfE3V+pQFlKrGk/3KcJPBo3L
-         ewluXx53oI/jk7RNKiEOGdoTLZPl4bB9UPyP4P2AM4/00be/rrTcMQgSak+2ZeZ/Qf4L
-         b9/w==
-X-Gm-Message-State: AFqh2kpdXS40Tt0aRQgdy/V6IKynRdlRkunnSj8R1h6mVyOiJGgP5c/Z
-        X8lChylag3KxbvsKIhPTG6pUzA==
-X-Google-Smtp-Source: AMrXdXuaa0nMPMSZmtKh+p0I0syiVT4ni3wfYqNeRZhL3G76s3abDWvbBQHSjUEXbuOkmp9A85YgwQ==
-X-Received: by 2002:a17:907:a510:b0:866:d374:7b7e with SMTP id vr16-20020a170907a51000b00866d3747b7emr1171457ejc.15.1673514126348;
-        Thu, 12 Jan 2023 01:02:06 -0800 (PST)
+        bh=NPg45aihulxFcwTt727w+mL/usKIND+jUszExCuHhXY=;
+        b=waV1itwQ0PnGn4MR+JPICiNM1KMyLgRbN7a2u3o0YdrM23YoBa6G5lJ40HyHtVY7xK
+         p2Y41RaFL6BA1lQ4kiBzId07y9jRISQ3x8cSKcMZAR1uZTK2IvWjq3nSzBAvPVHZBjC+
+         ewxJt3mXGr+MMxd+gLnEaJZEQRrbQmA3+5J1dzSpWJQV1ooTxPE7e02C9kADww6EyZ1n
+         8PYEYO8Zg378ISsfCjNoGws2acwWZEKkLjoRtfSkAY+2UvpZSYWvHn/Jqw2LtPb/t/cy
+         u0iSzAIfdyKhJdDvPztzcF/0oHc939rTVxTEtxtcxy5V9K8fuTPFAnQyaENKGZuTXUbE
+         upQg==
+X-Gm-Message-State: AFqh2kpYRfW+CMwTqw8qMG0eJ+LHNLaDDSfuf1nrPxk0WGaZituw47bK
+        qsMKox0tuCTsF+mloY1XYktvfQ==
+X-Google-Smtp-Source: AMrXdXvzRX9flDjGK/8oJ+WqOQPVMaaniUk/Te2rCqcHpO/BoL8tDSkKBKpzsxbv6klDJbEcUyLzaA==
+X-Received: by 2002:a17:906:1655:b0:7b5:73aa:9984 with SMTP id n21-20020a170906165500b007b573aa9984mr60091934ejd.14.1673514199160;
+        Thu, 12 Jan 2023 01:03:19 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id 5-20020a170906318500b00782ee6b34f2sm7144238ejy.183.2023.01.12.01.02.04
+        by smtp.gmail.com with ESMTPSA id 17-20020a170906059100b007933047f923sm7202212ejn.118.2023.01.12.01.03.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jan 2023 01:02:05 -0800 (PST)
-Message-ID: <f7771bb2-59bd-a704-2dc8-82d050600d56@linaro.org>
-Date:   Thu, 12 Jan 2023 10:02:04 +0100
+        Thu, 12 Jan 2023 01:03:18 -0800 (PST)
+Message-ID: <21a5fc20-05d7-5d96-aa75-bc335835033c@linaro.org>
+Date:   Thu, 12 Jan 2023 10:03:16 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH v3 4/6] dt-bindings: pinctrl: rt2880: add proper function
+Subject: Re: [PATCH v3 6/6] dt-bindings: pinctrl: rt3883: add proper function
  muxing binding
 Content-Language: en-US
 To:     =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
@@ -68,9 +68,9 @@ Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mips@vger.kernel.org, erkin.bozoglu@xeront.com
 References: <20221231160849.40544-1-arinc.unal@arinc9.com>
- <20221231160849.40544-5-arinc.unal@arinc9.com>
+ <20221231160849.40544-7-arinc.unal@arinc9.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221231160849.40544-5-arinc.unal@arinc9.com>
+In-Reply-To: <20221231160849.40544-7-arinc.unal@arinc9.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -83,10 +83,6 @@ On 31/12/2022 17:08, Arınç ÜNAL wrote:
 > 
 > Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
 > ---
->  .../pinctrl/ralink,rt2880-pinctrl.yaml        | 86 +++++++++++++++++--
->  1 file changed, 80 insertions(+), 6 deletions(-)
-> 
-
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
