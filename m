@@ -2,114 +2,83 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FCFC63797
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 19:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 998B3C61DB3
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 19:07:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240087AbjALTGr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Jan 2023 14:06:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34328 "EHLO
+        id S240259AbjALTHz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Jan 2023 14:07:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237748AbjALTFn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 14:05:43 -0500
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC2A253701;
-        Thu, 12 Jan 2023 10:47:59 -0800 (PST)
+        with ESMTP id S238687AbjALTGv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 14:06:51 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFEE265A7;
+        Thu, 12 Jan 2023 10:48:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1673549280; x=1705085280;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ISG4iMQCmJbQyOjDtFzJuWJ6r9CraDTaJ1v4LxJL5H8=;
-  b=iGCeQcHYfVice9l/n+aJmmTE2VH9ahVOp0iM6nNplxFwzUIUNG6OKZTn
-   k/YKIX9iskFIBlqT3Az+5zI733ZEf0bZJTE8G1GwPBo9MLJqTPIyTiCF+
-   JpZO8pDs/UF3zvdZ+eoKyLdcq50cOWETDBd2uFxc2Ponl3KQF2Gn+YTBk
-   uBoI55mNm5YvE0w9WYkd7u8tSFPmT1dTQ1e3emc3WZVTaKDb/MZpJnph0
-   IoXoM0259jbOHhkUn7LWWdTHnScGLeudJPIZxQTHcW8GXCwsDQa+EsWT+
-   f9+lzj3DikpnbFxj4z132MD+hF5nJgUvjPS7av/G0Xxvwi306Aw+TypDa
+  t=1673549337; x=1705085337;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9ZqpR6hozABIVRF8f5BclL/5aXMMC3qUWYKR8P4jke0=;
+  b=dFyr17eVhAHEMTovZiRdnosj6a7QP34deyTCofi3unlkLICa6IQLA4b3
+   PdgBUT9y42CFa48prP64zhVq2HWqkHRHY6VI/lJWZUMgDradJPfTleNcg
+   ursWJau7oTsI8eIai0tLd+F0AAldtfVcnhpy09CMThTAPsn3VGZaQfwI4
+   pXX2PMy3Vwo/CUyd5SRSBnVSu/arfNdP5CgiVdcLuVzhjgRH8tWOnzDQ0
+   f9zi0HMe4e4jKQzhqFPFABMeGercZy5sCDUH8vZ2lVlkfIEVxLTMnwPjQ
+   wyqz54s/hjxZ3DXziOu6j1CJLIuwsNZhdn4YYCmgmnhSlToRt69w6NhCh
    A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="351021824"
+X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="323853959"
 X-IronPort-AV: E=Sophos;i="5.97,211,1669104000"; 
-   d="scan'208";a="351021824"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2023 10:47:58 -0800
+   d="scan'208";a="323853959"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2023 10:48:57 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="800333026"
+X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="726429625"
 X-IronPort-AV: E=Sophos;i="5.97,211,1669104000"; 
-   d="scan'208";a="800333026"
+   d="scan'208";a="726429625"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Jan 2023 10:47:56 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 12 Jan 2023 10:48:55 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 562691A3; Thu, 12 Jan 2023 20:48:30 +0200 (EET)
+        id 012BA14B; Thu, 12 Jan 2023 20:49:28 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
-        Jianlong Huang <jianlong.huang@starfivetech.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Baruch Siach <baruch@tkos.co.il>
-Subject: [PATCH v1 2/2] pinctrl: digicolor: Use proper headers and drop OF dependency
-Date:   Thu, 12 Jan 2023 20:48:23 +0200
-Message-Id: <20230112184823.80349-2-andriy.shevchenko@linux.intel.com>
+        Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] pinctrl: qcom: lpass-lpi: Remove duplicate assignment of of_gpio_n_cells
+Date:   Thu, 12 Jan 2023 20:49:23 +0200
+Message-Id: <20230112184923.80442-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230112184823.80349-1-andriy.shevchenko@linux.intel.com>
-References: <20230112184823.80349-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The driver doesn't depend on the OF to be complied. Hence
-the proper header to use is mod_devicetable.h. Replace of*.h with
-the above mentioned and drop redundant dependency.
+The of_gpio_n_cells default is 2 when ->of_xlate() callback is
+not defined. No need to assign it explicitly in the driver.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/Kconfig             | 2 +-
- drivers/pinctrl/pinctrl-digicolor.c | 9 +++++----
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 476f3cbbdce0..1e44708201ad 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -170,7 +170,7 @@ config PINCTRL_DA9062
+diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+index 3dc670faa59e..87920257bb73 100644
+--- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+@@ -430,7 +430,6 @@ int lpi_pinctrl_probe(struct platform_device *pdev)
+ 	pctrl->chip.base = -1;
+ 	pctrl->chip.ngpio = data->npins;
+ 	pctrl->chip.label = dev_name(dev);
+-	pctrl->chip.of_gpio_n_cells = 2;
+ 	pctrl->chip.can_sleep = false;
  
- config PINCTRL_DIGICOLOR
- 	bool
--	depends on OF && (ARCH_DIGICOLOR || COMPILE_TEST)
-+	depends on ARCH_DIGICOLOR || COMPILE_TEST
- 	select PINMUX
- 	select GENERIC_PINCONF
- 
-diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
-index 05213261b8a4..a0423172bdd6 100644
---- a/drivers/pinctrl/pinctrl-digicolor.c
-+++ b/drivers/pinctrl/pinctrl-digicolor.c
-@@ -11,18 +11,19 @@
-  * - Pin pad configuration (pull up/down, strength)
-  */
- 
-+#include <linux/gpio/driver.h>
- #include <linux/init.h>
--#include <linux/platform_device.h>
--#include <linux/of.h>
--#include <linux/of_device.h>
- #include <linux/io.h>
--#include <linux/gpio/driver.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/platform_device.h>
- #include <linux/spinlock.h>
-+
- #include <linux/pinctrl/machine.h>
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinconf-generic.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinmux.h>
-+
- #include "pinctrl-utils.h"
- 
- #define DRIVER_NAME	"pinctrl-digicolor"
+ 	mutex_init(&pctrl->slew_access_lock);
 -- 
 2.39.0
 
