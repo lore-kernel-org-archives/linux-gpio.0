@@ -2,118 +2,108 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A34D8C54EBD
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 16:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1BBC61DB3
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 16:52:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240998AbjALQqp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Jan 2023 11:46:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48128 "EHLO
+        id S240621AbjALQw4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Jan 2023 11:52:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241305AbjALQoo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 11:44:44 -0500
+        with ESMTP id S241620AbjALQu4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 11:50:56 -0500
 Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2026DBE14;
-        Thu, 12 Jan 2023 08:38:33 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B5855B149;
+        Thu, 12 Jan 2023 08:39:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1673541513; x=1705077513;
+  t=1673541585; x=1705077585;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=4BOtLkvp4AVdkK2zPygGM6fUB1lerPp5K/6FblR5a3Q=;
-  b=R5vyJ2Bagf28KdcLpfMWEKK5BjBZkusDsNjni2ghCRQUqfVKwfjpxcrs
-   TXkCSRImEkmjOPXH5Yp9jW+F+y6U1od1pg3zAns3M7aRI8Ef3F11TmAXF
-   aYLg5QnZvFTTrAeCqQn672iYh9ccv9tTe6+n8KaiRWlAntvdW1D8vNiwP
-   eXVrVtYyVIBc19iZKZRSEVORw7nZ18sNdco5+2ZUr8Az8cK4haiLTVQBq
-   6Sn1OB+ZIh5g9ovU8p+r2z2MptqvQyVp35o2SgUOUiQt2xxPGd0sEbeAi
-   D22IRZrUzrggCcKD9Pnn0MBjOTyEcqjOOsx6WaXaW+gzxjnXxe8g7htZx
+  bh=WIWZ0DmAMKPeq1ebVrtoFWO2d/xuqrJNfK25fBjzBSY=;
+  b=boCmxMT389eKgtro9IqEkxHiFSysEpRNfuWj4YhKfbz2HMzWEDZzHwrE
+   o5aXMcIn6hf6NU6M1SFyLdnbrluwThKvv/bgAn5W6ulHOMuw0FYpdIIXO
+   82zoHlxEPUlLcaJloz/KE+TMw3mJdBy22OhxsRfxCGLDqRt5T/HuHfFWw
+   lkPOsAqQ2jsE9qnJfzYF82gvZDEtSD14d8jUyh3nQ//sbYwnh3CxxK8rq
+   G7teWj2Dd9oGwL/spohvjuvbJeYRsAYfW3xHHQUL2w1FCD4pa5kENkoXL
+   Cdk/y0sXOPmTc5xgRXV8B20/LwmHJOH6RSJMlW293zBWbJ5zcqEBJuctC
    Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="304132472"
+X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="304132815"
 X-IronPort-AV: E=Sophos;i="5.97,211,1669104000"; 
-   d="scan'208";a="304132472"
+   d="scan'208";a="304132815"
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2023 08:38:04 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2023 08:39:12 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="635446946"
+X-IronPort-AV: E=McAfee;i="6500,9779,10588"; a="635447556"
 X-IronPort-AV: E=Sophos;i="5.97,211,1669104000"; 
-   d="scan'208";a="635446946"
+   d="scan'208";a="635447556"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 12 Jan 2023 08:37:59 -0800
+  by orsmga006.jf.intel.com with ESMTP; 12 Jan 2023 08:39:10 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id B8AE0130; Thu, 12 Jan 2023 18:38:33 +0200 (EET)
+        id 26792130; Thu, 12 Jan 2023 18:39:44 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/2] gpiolib: of: Remove no more used ->of_gpio_ranges_fallback()
-Date:   Thu, 12 Jan 2023 18:38:25 +0200
-Message-Id: <20230112163825.72983-2-andriy.shevchenko@linux.intel.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Moses Christopher Bollavarapu <mosescb.dev@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v1 2/2] gpio: zevio: Use proper headers and drop OF_GPIO dependency
+Date:   Thu, 12 Jan 2023 18:39:41 +0200
+Message-Id: <20230112163941.73143-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230112163825.72983-1-andriy.shevchenko@linux.intel.com>
-References: <20230112163825.72983-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20230112163941.73143-1-andriy.shevchenko@linux.intel.com>
+References: <20230112163941.73143-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Since the only one and last user of the ->of_gpio_ranges_fallback()
-gone, remove the callback completely. New platforms must use the
-gpio-ranges property.
+The driver doesn't depend on the OF_GPIO to be compiled. Hence
+the proper header to use is mod_devicetable.h. Replace of*.h with
+the above mentioned and drop redundant dependency.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpiolib-of.c   |  5 -----
- include/linux/gpio/driver.h | 11 -----------
- 2 files changed, 16 deletions(-)
+ drivers/gpio/Kconfig      | 2 +-
+ drivers/gpio/gpio-zevio.c | 7 ++++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 72d8a3da31e3..266352b1a966 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -980,11 +980,6 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 	if (!np)
- 		return 0;
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 3b2078a654ce..a2f64f880163 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -751,7 +751,7 @@ config GPIO_XTENSA
  
--	if (!of_property_read_bool(np, "gpio-ranges") &&
--	    chip->of_gpio_ranges_fallback) {
--		return chip->of_gpio_ranges_fallback(chip, np);
--	}
--
- 	group_names = of_find_property(np, group_names_propname, NULL);
+ config GPIO_ZEVIO
+ 	bool "LSI ZEVIO SoC memory mapped GPIOs"
+-	depends on ARM && OF_GPIO
++	depends on ARM
+ 	help
+ 	  Say yes here to support the GPIO controller in LSI ZEVIO SoCs.
  
- 	for (;; index++) {
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index ddc7a14a274f..29c283919f8a 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -522,17 +522,6 @@ struct gpio_chip {
- 	int (*of_xlate)(struct gpio_chip *gc,
- 			const struct of_phandle_args *gpiospec, u32 *flags);
+diff --git a/drivers/gpio/gpio-zevio.c b/drivers/gpio/gpio-zevio.c
+index c9f4c26cae3d..61e47456c33a 100644
+--- a/drivers/gpio/gpio-zevio.c
++++ b/drivers/gpio/gpio-zevio.c
+@@ -5,13 +5,14 @@
+  * Author: Fabian Vogt <fabian@ritter-vogt.de>
+  */
  
--	/**
--	 * @of_gpio_ranges_fallback:
--	 *
--	 * Optional hook for the case that no gpio-ranges property is defined
--	 * within the device tree node "np" (usually DT before introduction
--	 * of gpio-ranges). So this callback is helpful to provide the
--	 * necessary backward compatibility for the pin ranges.
--	 */
--	int (*of_gpio_ranges_fallback)(struct gpio_chip *gc,
--				       struct device_node *np);
--
- #endif /* CONFIG_OF_GPIO */
- };
+-#include <linux/spinlock.h>
++#include <linux/bitops.h>
+ #include <linux/errno.h>
+ #include <linux/init.h>
+-#include <linux/bitops.h>
+ #include <linux/io.h>
+-#include <linux/of_device.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/slab.h>
++#include <linux/spinlock.h>
++
+ #include <linux/gpio/driver.h>
  
+ /*
 -- 
 2.39.0
 
