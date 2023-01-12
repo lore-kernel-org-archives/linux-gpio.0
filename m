@@ -2,62 +2,92 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B8CC61DB3
-	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 08:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C41C54EBD
+	for <linux-gpio@archiver.kernel.org>; Thu, 12 Jan 2023 09:07:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239864AbjALI5z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 12 Jan 2023 03:57:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50340 "EHLO
+        id S239926AbjALJHB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 12 Jan 2023 04:07:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239823AbjALI44 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 03:56:56 -0500
-Received: from mail.glencoeaur.com (mail.glencoeaur.com [217.61.97.113])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F8622F7BE
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Jan 2023 00:54:57 -0800 (PST)
-Received: by mail.glencoeaur.com (Postfix, from userid 1001)
-        id 0764B82183; Thu, 12 Jan 2023 08:35:42 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=glencoeaur.com;
-        s=mail; t=1673512557;
-        bh=2S0GQFScndXkBEK4sqdoOhOYLqsB2sEH8Q5XQfVvKpo=;
-        h=Date:From:To:Subject:From;
-        b=JCrqa+aLlm43ogmvmcUL+8Oy81dnBnOakN5bTQGFtLQK+HrSpJP35r6aw4DeZhKwo
-         Tmr+mwbod5GowDSe9QrbMBo7DtlHI4NykxuaVOe564rJPIU7gwYS6KiV0sGNckP++k
-         QLKY3WTmHLd74s6aFpRDWy5GUxUgC3+ql0QlFTuxllHGz5aYKDFDxaDLF1vqyiQ/CY
-         H7e1JYiMWhOef268Atl98lqxutd1EL9cSXvKToUBE9iI/ME/ekBuNNjASQlas2GE0M
-         /mOSbHX44D9AvlaG87xZB2gOL/pgcvr7RL3aEaz0EoOrH9eEL5jvKUKERmD8QPqIIN
-         zBCsYIwvDFEfg==
-Received: by mail.glencoeaur.com for <linux-gpio@vger.kernel.org>; Thu, 12 Jan 2023 08:35:33 GMT
-Message-ID: <20230112074500-0.1.z.3fqd.0.hc6gket8j3@glencoeaur.com>
-Date:   Thu, 12 Jan 2023 08:35:33 GMT
-From:   "Zbynek Spacek" <zbynek.spacek@glencoeaur.com>
-To:     <linux-gpio@vger.kernel.org>
-Subject: Silikonmischungen
-X-Mailer: mail.glencoeaur.com
+        with ESMTP id S239943AbjALJGY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2023 04:06:24 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D025B7D1
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Jan 2023 01:01:38 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id tz12so43103121ejc.9
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Jan 2023 01:01:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Fw3Q/H2DqZcykx9Yf41o4SkW0Lqzy2WimZ0SDIfRlGk=;
+        b=v7RpQTEjYePJD15M7bQOhOp9x1hrcoCCtsYjcZGrE2dnoQAko+4f180sMszd/yRtg3
+         mVupZj8TJgJj1qJkhYYzbpqY3Gaf7ts3XhsdzPBbhIJ+PIagEIi89+ZprEVTLl9hiNyH
+         OYJKzWF4AcP22D/wMUnwEq4+koIM5T8SbJ7YMVK6HRyXxczA4a6m3MrhFbbJQJpG/f3u
+         c4AMTDWdNxebDmZ8SEBTCxyb5W57EzGcSBos1RLvk5eoeXKG8uBYMidcLpaRnChBj/25
+         9Kp0QpR9UrQYplZd2dmgnTrQfaYnEyhUv/ew0g16feu+TK48/8IbpSVSdyM3+Wdl1nRi
+         xTgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fw3Q/H2DqZcykx9Yf41o4SkW0Lqzy2WimZ0SDIfRlGk=;
+        b=Rc08d81ZEqOu9YdoobHK4mVGLvLObWQs/PmJSRdNnfUTBLZNWvGzbvyoGOadKl0ok6
+         uGiR7vSGW8AlL8k7QkFWs0ZwikWVcm/dGsVZSniCG8BDKPm4IQhZCmguHH1sXkGp3CVz
+         4hA+LAnjFXUJe5vBSeSArOMzGmp5orLBjzbNckdRzwgnV7AWstKxeZ952Cvarh3F524O
+         7nXU6+f9qaCvZjLPtLCVAN0uSDEs+xqPj9+jtJ9vGMN4lrQe7O3i0GKhwvBHROuztLzc
+         DjuIP85AC/OjNGDXf6YlCIw++WX+2gtepEIJ85dBu59qqNpuYve8ej4mShp6T9/9fCgw
+         28Fg==
+X-Gm-Message-State: AFqh2krfuK85ZA1dQ1yajDXZDdlJ3+lnaBjiivhcyAH2gUJ7nFYrc/Pj
+        k/BsJ/LjDtyqtKyT9yudP06e6Q==
+X-Google-Smtp-Source: AMrXdXv4mC7D8HDXP4WeWECNsQDB1gN1Ra2s3PCCbrk2dewthSPR0qKu3wp1FZvvgOfmypDSgOJ5JQ==
+X-Received: by 2002:a17:907:a643:b0:83c:7308:b2ed with SMTP id vu3-20020a170907a64300b0083c7308b2edmr66493767ejc.17.1673514097334;
+        Thu, 12 Jan 2023 01:01:37 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id s10-20020a17090699ca00b0084d43100f19sm5176918ejn.89.2023.01.12.01.01.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jan 2023 01:01:36 -0800 (PST)
+Message-ID: <1b5880bb-d0ce-9dde-2fe6-e058f6efb6f1@linaro.org>
+Date:   Thu, 12 Jan 2023 10:01:35 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v3 3/6] dt-bindings: pinctrl: mt7621: add proper function
+ muxing binding
+Content-Language: en-US
+To:     =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, erkin.bozoglu@xeront.com
+References: <20221231160849.40544-1-arinc.unal@arinc9.com>
+ <20221231160849.40544-4-arinc.unal@arinc9.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221231160849.40544-4-arinc.unal@arinc9.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Good morning,
+On 31/12/2022 17:08, Arınç ÜNAL wrote:
+> Not every function can be muxed to a group. Add proper binding which
+> documents which function can be muxed to a group or set of groups.
+> 
+> Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
 
-do you need intermediates for processing, plastics (e.g. rubber) or silic=
-one mixtures?
+Didn't I already ack it?
 
-We provide a wide range of silicone rubbers with various properties, sili=
-cone mixtures from renowned manufacturers such as Wacker, Elastosil LR an=
-d dyes, stabilizers, primers and anti-adhesive additives.
-
-We also produce technical silicone compounds with increased resistance to=
- oils, resistant to high temperatures and water vapor, conductive and man=
-y more.
-
-We provide fast order fulfillment, timely deliveries and cost optimizatio=
-n.
-
-Can I introduce what we can offer you?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
-Best regards
-Zbynek Spacek
+Best regards,
+Krzysztof
+
