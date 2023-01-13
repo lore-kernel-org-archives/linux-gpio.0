@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0BFC6379F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BC5C3DA78
 	for <linux-gpio@archiver.kernel.org>; Fri, 13 Jan 2023 21:52:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230411AbjAMVwa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 13 Jan 2023 16:52:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43886 "EHLO
+        id S231169AbjAMVwb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 13 Jan 2023 16:52:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231182AbjAMVw2 (ORCPT
+        with ESMTP id S230428AbjAMVw2 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2023 16:52:28 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCDEB58F94
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Jan 2023 13:52:26 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id bk16so22237150wrb.11
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Jan 2023 13:52:26 -0800 (PST)
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 112D089BF0
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Jan 2023 13:52:27 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id p1-20020a05600c1d8100b003d8c9b191e0so18297110wms.4
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Jan 2023 13:52:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oY8/6WY3HsxwuOetEGEoZ4t9eIVGCq5j+RCrFrdVSxg=;
-        b=PIGG269TuzftPJwEIxNCKmo9NDKwMvMTUCBRDUdoPtiKxsbWpukXJGZZtNcTvtMdYj
-         aodR9DXFNYYR/FQlWgb7xzlSGQKxqvqgDGfeC3VZvIPl8tdxqn9ZPXjHCx3Q0/Ihh4Jl
-         RLjk+T4TQx4gEsu5qosptF8I0ifbtrxv65tVlkBiYL6XcU9XVu79LN/BvgJllJUiJ9+P
-         3oMlj0VH+kfS8hNWVl4dbUX21ikhRzO3E8TVt0LgAXguDk/+SxR1/VFWXKK0ECXEa9Gl
-         MmUqMB9xX4gn4Hu2MiUR1T8AYFLyREAAbvpyxbBLFjEfbsLzFCbvNtQANm1QBKz/9Xf/
-         qKxg==
+        bh=QqYkAVDDJHqckoBGfhi4xsYYLbZddtA7wLw1qqPJGNc=;
+        b=z4cWGqMJ5Z59D9JfHVDzxPPHVnRxz9KaYgGNk5H8pWDcxxSUtzDM4pJHPS+egPHWLJ
+         QKiER924sqlxMvv+XYKJsWwkM4anB4IBhGCkKvPRkskwAM4tJG8saqGndy5ZX+hIiqGe
+         6PjxoFJ4ATyIwVylrWhE1uRJ4rtEsUdqR9aZAxJ8aDxY1WBfhBRmpHBGrtcNzNmKycv6
+         2tAyRFW0HEsFj7ZXzoUs3JZEahQh9jQ5Jk98wOIEdQOFqG4/flkU3mAofcOTA6EUmxvH
+         Jto/rZnCkCyJqjCt5R2aXNZhC18oRa/yszmyaYlJWaRjFPNN18pyaSfK6GGh5yeExWC0
+         hu0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oY8/6WY3HsxwuOetEGEoZ4t9eIVGCq5j+RCrFrdVSxg=;
-        b=Ms9AcjjYvhd/w8M4VhkEtLMDqKAh1IokE+Pco0RpoGfQXNNVyTaWm+AONsOvxysp6X
-         7EZt97dA+SQDwJrTDyAflohuY2iCBvxTSoWVqN/Ee71A2vmhuIf2k/KtPcsoCpE97+MI
-         +d972+EAjimniy7+XlC8N2mXBv+MJPb9PBajHmrRtaJKWKVdtoyr91jGlGutcx+9C8LW
-         GIy8QpIMGawrnGxESd9BOOrY9Ox0NJ9HKSAjC5XUSB/bCG8rLRlbRRYL61ak1aDOZdJo
-         33zQUPf7jsTRUxNEW9Py8nCLuEoPhznlqiVnaVWkbBKZOixFhlQK2JXyyUT1JWxmnVWa
-         zeXQ==
-X-Gm-Message-State: AFqh2krfz9hqeJ14Rnwu31CWDcNHU1X1jfGSC0I3ZhvbIetVrxeocHQ3
-        shwHgx9IIBV9S3pUYVa7r+P9hA==
-X-Google-Smtp-Source: AMrXdXv7L83FyrWoZSq1/0vJMeUWgHrvHBhaIMKwCBmZ/cnk1cFSbwgxXbASiaE/JVr4MBAvqP1xXA==
-X-Received: by 2002:a5d:4d85:0:b0:2bd:d8f1:2efe with SMTP id b5-20020a5d4d85000000b002bdd8f12efemr864901wru.34.1673646745333;
-        Fri, 13 Jan 2023 13:52:25 -0800 (PST)
+        bh=QqYkAVDDJHqckoBGfhi4xsYYLbZddtA7wLw1qqPJGNc=;
+        b=QCTtsk9xArUOiu8bByhXrZGw/1vZvsey4Aw2F+NdCqckY6YQKli0vKUfcfmBScWdVj
+         UBGhyp1gdFtPISfXQPFieUTPR7QNwzlzL+QnkidogNDMIM7vBVdabx4B8wF95YLBu2zO
+         tSFtExlp5LKSKEYfEKzSKVMoCU4tiMvzgsnpZI/Wd78qmiLuzFU3oBzMhz22mWQWrrra
+         RTJouJbH/I9hVM8sMeH7fMelkyPYj4kJz+5GSH7PGJIBwMHyfd1R7WEmXn6CL7Dbyszi
+         3hpjSodMrLXp9imb2HXPdlDcFVTbq4JakX0XG2btOiJJzzWWKw2qQa58I+zjXhgQK2C9
+         eQkQ==
+X-Gm-Message-State: AFqh2ko6cuAdaNKtBE5eYk9MtJO8Ln+fiU4U07k/80lhtLQD0vWofv6p
+        bZt+l/4Tq13oNZHXyfeYzDNCSA==
+X-Google-Smtp-Source: AMrXdXuRggr3qfGgM8FysCW7OkcVpeQsH5Vp0MHfUzp33pxq6SkXqDARhLreOp37FaGRfo38XKzFuQ==
+X-Received: by 2002:a05:600c:1f12:b0:3cf:8155:2adc with SMTP id bd18-20020a05600c1f1200b003cf81552adcmr61056616wmb.33.1673646747533;
+        Fri, 13 Jan 2023 13:52:27 -0800 (PST)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:ba79:38ad:100f:e9ee])
-        by smtp.gmail.com with ESMTPSA id g12-20020a05600c310c00b003c70191f267sm33179234wmo.39.2023.01.13.13.52.24
+        by smtp.gmail.com with ESMTPSA id g12-20020a05600c310c00b003c70191f267sm33179234wmo.39.2023.01.13.13.52.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 13:52:24 -0800 (PST)
+        Fri, 13 Jan 2023 13:52:27 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -56,9 +56,9 @@ To:     Kent Gibson <warthog618@gmail.com>,
         Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [libgpiod][PATCH 09/16] tests: add a helper for reading back line settings from line config
-Date:   Fri, 13 Jan 2023 22:52:03 +0100
-Message-Id: <20230113215210.616812-10-brgl@bgdev.pl>
+Subject: [libgpiod][PATCH 11/16] gpioset: use gpiod_line_config_set_output_values()
+Date:   Fri, 13 Jan 2023 22:52:05 +0100
+Message-Id: <20230113215210.616812-12-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230113215210.616812-1-brgl@bgdev.pl>
 References: <20230113215210.616812-1-brgl@bgdev.pl>
@@ -70,74 +70,55 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add a helper for getting line settings from line config that allows to
-shrink the test code a bit.
+Use the new line config function to shrink the gpioset code and drop one
+for loop.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- tests/gpiod-test-helpers.h | 10 ++++++++++
- tests/tests-line-config.c  | 13 ++++---------
- 2 files changed, 14 insertions(+), 9 deletions(-)
+ tools/gpioset.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/tests/gpiod-test-helpers.h b/tests/gpiod-test-helpers.h
-index b40b820..fb3fd7d 100644
---- a/tests/gpiod-test-helpers.h
-+++ b/tests/gpiod-test-helpers.h
-@@ -126,6 +126,16 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC(struct_gpiod_edge_event_buffer,
- 		gpiod_test_return_if_failed(); \
- 	} while (0)
+diff --git a/tools/gpioset.c b/tools/gpioset.c
+index a871a16..1429d65 100644
+--- a/tools/gpioset.c
++++ b/tools/gpioset.c
+@@ -870,9 +870,9 @@ int main(int argc, char **argv)
+ 	struct gpiod_line_config *line_cfg;
+ 	struct line_resolver *resolver;
+ 	enum gpiod_line_value *values;
+-	int i, j, num_lines, ret;
+ 	struct gpiod_chip *chip;
+ 	unsigned int *offsets;
++	int i, num_lines, ret;
+ 	struct config cfg;
+ 	char **lines;
  
-+#define gpiod_test_line_config_get_line_settings_or_fail(_line_cfg, _offset) \
-+	({ \
-+		struct gpiod_line_settings *_settings = \
-+			gpiod_line_config_get_line_settings(_line_cfg, \
-+							    _offset); \
-+		g_assert_nonnull(_settings); \
-+		gpiod_test_return_if_failed(); \
-+		_settings; \
-+	})
+@@ -933,15 +933,16 @@ int main(int argc, char **argv)
+ 							values);
+ 
+ 		gpiod_line_config_reset(line_cfg);
+-		for (j = 0; j < num_lines; j++) {
+-			gpiod_line_settings_set_output_value(settings,
+-							     values[j]);
+-
+-			ret = gpiod_line_config_add_line_settings(
+-				line_cfg, &offsets[j], 1, settings);
+-			if (ret)
+-				die_perror("unable to add line settings");
+-		}
 +
- #define gpiod_test_create_request_config_or_fail() \
- 	({ \
- 		struct gpiod_request_config *_config = \
-diff --git a/tests/tests-line-config.c b/tests/tests-line-config.c
-index ef85c3a..7f5e4b1 100644
---- a/tests/tests-line-config.c
-+++ b/tests/tests-line-config.c
-@@ -46,9 +46,7 @@ GPIOD_TEST_CASE(get_line_settings)
- 	gpiod_test_line_config_add_line_settings_or_fail(config, offsets, 4,
- 							 settings);
++		ret = gpiod_line_config_add_line_settings(line_cfg, offsets,
++							  num_lines, settings);
++		if (ret)
++			die_perror("unable to add line settings");
++
++		ret = gpiod_line_config_set_output_values(line_cfg,
++							  values, num_lines);
++		if (ret)
++			die_perror("unable to set output values");
  
--	retrieved = gpiod_line_config_get_line_settings(config, 2);
--	g_assert_nonnull(retrieved);
--	gpiod_test_return_if_failed();
-+	retrieved = gpiod_test_line_config_get_line_settings_or_fail(config, 2);
- 
- 	g_assert_cmpint(gpiod_line_settings_get_direction(settings), ==,
- 			GPIOD_LINE_DIRECTION_INPUT);
-@@ -146,9 +144,7 @@ GPIOD_TEST_CASE(null_settings)
- 	gpiod_test_line_config_add_line_settings_or_fail(config, offsets, 4,
- 							 NULL);
- 
--	settings = gpiod_line_config_get_line_settings(config, 2);
--	g_assert_nonnull(settings);
--	gpiod_test_return_if_failed();
-+	settings = gpiod_test_line_config_get_line_settings_or_fail(config, 2);
- 
- 	g_assert_cmpint(gpiod_line_settings_get_drive(settings), ==,
- 			GPIOD_LINE_DIRECTION_AS_IS);
-@@ -171,9 +167,8 @@ GPIOD_TEST_CASE(reset_config)
- 	gpiod_test_line_config_add_line_settings_or_fail(config, offsets, 4,
- 							 settings);
- 
--	retrieved0 = gpiod_line_config_get_line_settings(config, 2);
--	g_assert_nonnull(retrieved0);
--	gpiod_test_return_if_failed();
-+	retrieved0 = gpiod_test_line_config_get_line_settings_or_fail(config,
-+								      2);
- 
- 	g_assert_cmpint(gpiod_line_settings_get_direction(retrieved0), ==,
- 			GPIOD_LINE_DIRECTION_INPUT);
+ 		chip = gpiod_chip_open(resolver->chips[i].path);
+ 		if (!chip)
 -- 
 2.37.2
 
