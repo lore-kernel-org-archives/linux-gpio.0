@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E0AC6379F
-	for <linux-gpio@archiver.kernel.org>; Fri, 13 Jan 2023 21:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6257EC3DA78
+	for <linux-gpio@archiver.kernel.org>; Fri, 13 Jan 2023 21:53:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230428AbjAMVx2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 13 Jan 2023 16:53:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44352 "EHLO
+        id S231182AbjAMVxn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 13 Jan 2023 16:53:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230347AbjAMVx0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2023 16:53:26 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E81658F94;
-        Fri, 13 Jan 2023 13:53:26 -0800 (PST)
+        with ESMTP id S231221AbjAMVxj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2023 16:53:39 -0500
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B69889BF9;
+        Fri, 13 Jan 2023 13:53:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1673646806; x=1705182806;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=G/VQved2ff+tefAVfi0iakcBPqZfQVrJ7htF8hbF9mk=;
-  b=WmLNyfNptEBenlkmcC9oMLJ0gnh5lk/56TQDu9D9KEMfBctjN7+TBWkR
-   OmiVnIO50KVEZQZ0aQn3VWMHkYOSlsDE1DV8rkFZK4Vu2Pb7EN0KVFwuv
-   sVK/9knKK8E2A7pavP7pX3P9ewqN0DX7m1LfMPZlYr4h5IcV+etJ94ji5
-   sJr3aM3nw+Fh70GS1VY9RmtpJJeAx+tneHllhf6CaZySb+hDkwgswH/Il
-   tibnPTj+8UWVPdQr7nnWAsVRw/YbC4YwTNdm+hdc2NXUZvnpO8eea/ZTm
-   aT1Z5LSTbnRStUCtAvvmrqUAZ9NfhKYvzSaGl9XPmAxbL+V26tn4HoCGj
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10589"; a="324166136"
+  t=1673646818; x=1705182818;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=mauPY81Xtcz+rmaZWIXeWEYO5Sk4VsNtM/vWELEMpbQ=;
+  b=daOVOUbFkaf/B8j55E12+MQ0Xon3UGfDMHOTxdMJJiG4wwOwemr3uJh4
+   QZi7SvNoDWE8dMM9lnpOwYpu2AUMNtrP3mPrXUDuZVkK6RY2LCYDSbVEY
+   r4GFzZEY2Ec/UBjUviE88oogAjlSZYuGCuSvYl2/gtIPkTzQtbkHeg0pt
+   yJoSECF81hhvccvt84Ydz1fOxiZeqP+SJuHSonXtTAVuFt0uA1kM3Tcix
+   FuFroGQMG4Zkc72rKwEva5As72XbhzV+jUmUpj34XclRo2XP0r73J7UHD
+   R7MVPj6nO4MpUns7uwfPXA/t0pl/RWbBBIF3MKzKH8zFkLdrPPEN4Qav4
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10589"; a="351343138"
 X-IronPort-AV: E=Sophos;i="5.97,214,1669104000"; 
-   d="scan'208";a="324166136"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2023 13:53:25 -0800
+   d="scan'208";a="351343138"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2023 13:53:37 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10589"; a="987142579"
-X-IronPort-AV: E=Sophos;i="5.97,214,1669104000"; 
-   d="scan'208";a="987142579"
+X-IronPort-AV: E=McAfee;i="6500,9779,10589"; a="766170870"
+X-IronPort-AV: E=Sophos;i="5.97,215,1669104000"; 
+   d="scan'208";a="766170870"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Jan 2023 13:53:22 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 13 Jan 2023 13:53:22 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 5C84AE1; Fri, 13 Jan 2023 23:53:56 +0200 (EET)
+        id 8BFD931D; Fri, 13 Jan 2023 23:53:56 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -55,38 +55,68 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Broadcom internal kernel review list 
         <bcm-kernel-feedback-list@broadcom.com>,
         Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH v3 0/4] gpiolib: get rid of exessive ->of_gpio_ranges_fallback()
-Date:   Fri, 13 Jan 2023 23:53:48 +0200
-Message-Id: <20230113215352.44272-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 4/4] Revert "gpiolib: of: Introduce hook for missing gpio-ranges"
+Date:   Fri, 13 Jan 2023 23:53:52 +0200
+Message-Id: <20230113215352.44272-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230113215352.44272-1-andriy.shevchenko@linux.intel.com>
+References: <20230113215352.44272-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The ->of_gpio_ranges_fallback() repeats the idea that lies behind
-->add_pin_ranges(), while the latter covers more cases that the former
-hook. Drop the former one for good.
+This reverts commit 3550bba25d5587a701e6edf20e20984d2ee72c78.
 
-Changelog v3:
-- moved check of the property presense to GPIO library
-- split out the refcount fix in a separate patch
-- added cover letter
+No users for this one, revert it for good.
+The ->add_pin_ranges() can be used instead.
 
-Andy Shevchenko (4):
-  gpiolib: Check "gpio-ranges" before calling ->add_pin_ranges()
-  pinctrl: bcm2835: Remove of_node_put() in
-    bcm2835_of_gpio_ranges_fallback()
-  pinctrl: bcm2835: Switch to use ->add_pin_ranges()
-  Revert "gpiolib: of: Introduce hook for missing gpio-ranges"
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib-of.c   |  5 -----
+ include/linux/gpio/driver.h | 12 ------------
+ 2 files changed, 17 deletions(-)
 
- drivers/gpio/gpiolib-of.c             |  5 -----
- drivers/gpio/gpiolib.c                |  8 ++++++++
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 10 ++++------
- include/linux/gpio/driver.h           | 12 ------------
- 4 files changed, 12 insertions(+), 23 deletions(-)
-
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 72d8a3da31e3..266352b1a966 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -980,11 +980,6 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 	if (!np)
+ 		return 0;
+ 
+-	if (!of_property_read_bool(np, "gpio-ranges") &&
+-	    chip->of_gpio_ranges_fallback) {
+-		return chip->of_gpio_ranges_fallback(chip, np);
+-	}
+-
+ 	group_names = of_find_property(np, group_names_propname, NULL);
+ 
+ 	for (;; index++) {
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index ddc7a14a274f..5ab50ba3c309 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -521,18 +521,6 @@ struct gpio_chip {
+ 	 */
+ 	int (*of_xlate)(struct gpio_chip *gc,
+ 			const struct of_phandle_args *gpiospec, u32 *flags);
+-
+-	/**
+-	 * @of_gpio_ranges_fallback:
+-	 *
+-	 * Optional hook for the case that no gpio-ranges property is defined
+-	 * within the device tree node "np" (usually DT before introduction
+-	 * of gpio-ranges). So this callback is helpful to provide the
+-	 * necessary backward compatibility for the pin ranges.
+-	 */
+-	int (*of_gpio_ranges_fallback)(struct gpio_chip *gc,
+-				       struct device_node *np);
+-
+ #endif /* CONFIG_OF_GPIO */
+ };
+ 
 -- 
 2.39.0
 
