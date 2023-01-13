@@ -2,82 +2,95 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6748DC54EBD
-	for <linux-gpio@archiver.kernel.org>; Fri, 13 Jan 2023 14:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88726C54EBE
+	for <linux-gpio@archiver.kernel.org>; Fri, 13 Jan 2023 15:26:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbjAMO4f (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 13 Jan 2023 09:56:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49484 "EHLO
+        id S230201AbjAMP0e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 13 Jan 2023 10:26:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229526AbjAMO4E (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2023 09:56:04 -0500
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB7E90845;
-        Fri, 13 Jan 2023 06:42:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1673620937; x=1705156937;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=18oofQWHf5DFIwDs98Wn9Hl16JNrdAL2In5saqMvGME=;
-  b=JaipAo6oX0LcypWynuh2CGNn65JVY7qXzYpJ3Cua3Q8jkWlkMpei/mtO
-   3tMWwPLrVE036SJ//Z4ky5L72NVC53v4t4/etx/cJ/Md2T0HK3UnW4j5R
-   ekXtk8tqJnFuw/9bnG7REcDUZVjPbrUOzaYTvMn1DLtBt9a1Vw+Bw6lNO
-   4walz+pwTZCocwqAABsTyaf0ngb7wunM5Pu51OM4j1pOlMZ3iWYr5Bas0
-   9bc71s0otBlV5soJjND+E1l3RbJrmNPT7aQcCu1M5OmUhzhZ/UGSnj86X
-   ft244a9uQrcgg9L9q8D6ut7cINBvOIvtHn8GukNkPI5WwXjrA2kpnzUET
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10589"; a="307548090"
-X-IronPort-AV: E=Sophos;i="5.97,214,1669104000"; 
-   d="scan'208";a="307548090"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2023 06:36:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10589"; a="766033116"
-X-IronPort-AV: E=Sophos;i="5.97,214,1669104000"; 
-   d="scan'208";a="766033116"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 13 Jan 2023 06:36:07 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id BFE7C130; Fri, 13 Jan 2023 16:36:41 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Baruch Siach <baruch@tkos.co.il>
-Subject: [PATCH v2 1/2] pinctrl: digicolor: Remove duplicate assignment of of_gpio_n_cells
-Date:   Fri, 13 Jan 2023 16:36:39 +0200
-Message-Id: <20230113143640.24302-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.39.0
+        with ESMTP id S230188AbjAMP0L (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2023 10:26:11 -0500
+Received: from mail-vk1-xa2f.google.com (mail-vk1-xa2f.google.com [IPv6:2607:f8b0:4864:20::a2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4478D4ECB7
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Jan 2023 07:18:29 -0800 (PST)
+Received: by mail-vk1-xa2f.google.com with SMTP id v81so10335872vkv.5
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Jan 2023 07:18:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rVtN3K9mnpeDZHFf7lev4Sj9elnbL+XiynQF7HQce4M=;
+        b=Cik0XGAFoR5TWFWC6vud1pQ/7F3ZC/4yXfYRlm7rPH+zzWz7wKgMmtJSYf0/YkoW69
+         meineUAPaf0mwXDzQoiTRxEqVwwWDq46e0NT0ZJ6KlxbckCxexE8tpJQ43vz37JA+TOy
+         URFuXGbhHgdpDNp18mNTMgXiKNgmxCs9vzs8MBP76EjLH5ohCMREJiMZ0xcBqbK1V+kK
+         P/Zp/u8BMCrOXyRHeOJ6atM88AJxKPfCgit5NA40WbLbORBXfx5HXQFQyfg1RdmpsWq+
+         ZZHJhISNiTVdAAHK2orsO0oOSxRYkgaQDD3QEuKBEpyaOELNPFPcdo6+sKRO1lI05RLl
+         yAjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rVtN3K9mnpeDZHFf7lev4Sj9elnbL+XiynQF7HQce4M=;
+        b=NEaraf8R0SF8inDjN4z++ZVvwSemKAw3G/8KExP4qyu1MysUDA05zsHmKbfwllRsg3
+         IAJw60dS7np3+7dij8Uv83I4pZ9FDcwwhRg2za8o5ytPXGkRGHvUYF0MB4NCf05AVRvu
+         KH8gZafbJLufqrCJo4Kd5YqqGybz00vF4zB/6Y/gMGis2ZiupTBSl3wlImuhivHV7UPf
+         gxhwLWBtFX4vCbKjjuhRwW2y5Uq1GcBeigyZybp4ka2CRI3Ve+JNxKko7xIxRYmUhVke
+         xQ0Eb8Qrsn9TmRoVmk9vOf34ELD19ZcutxSgt3/wmTL4w8aTVKudFsreBHuGM4yWzcYG
+         HG6A==
+X-Gm-Message-State: AFqh2ko2MpFB8tcss+HvQlUqx3QvKSyGJiJ5yvWlbEjTDB+NFrU0H1R4
+        ZogzjwC7n2eIogD+24FcomtgUSDFDqBUKL3EvEhTdg==
+X-Google-Smtp-Source: AMrXdXvockga8iZEgIHNW2j1FyU0XR2H2L/Hb4GTKyAiwlS8C0vNvOP+VpqEt9X1+Wg3Qf21rkumD27oqr4mSsbt09Q=
+X-Received: by 2002:a1f:324a:0:b0:3db:138f:3502 with SMTP id
+ y71-20020a1f324a000000b003db138f3502mr716112vky.28.1673623108336; Fri, 13 Jan
+ 2023 07:18:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230112134645.59232-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20230112134645.59232-1-andriy.shevchenko@linux.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 13 Jan 2023 16:18:17 +0100
+Message-ID: <CAMRc=Mc791ZKZziZQu_c1YhphqH6yXtyYzpsw2UCRFbs5OhdKg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] gpio: davinci: Do not mention legacy API in the code
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Devarsh Thakkar <devarsht@ti.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Keerthy <j-keerthy@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The of_gpio_n_cells default is 2 when ->of_xlate() callback is
-not defined. No need to assign it explicitly in the driver.
+On Thu, Jan 12, 2023 at 2:46 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> Replace mentioning of legacy API by the latest one.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/gpio/gpio-davinci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+> index fa51a91afa54..e1c1b9a527db 100644
+> --- a/drivers/gpio/gpio-davinci.c
+> +++ b/drivers/gpio/gpio-davinci.c
+> @@ -534,7 +534,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+>         }
+>
+>         /*
+> -        * Arrange gpio_to_irq() support, handling either direct IRQs or
+> +        * Arrange gpiod_to_irq() support, handling either direct IRQs or
+>          * banked IRQs.  Having GPIOs in the first GPIO bank use direct
+>          * IRQs, while the others use banked IRQs, would need some setup
+>          * tweaks to recognize hardware which can do that.
+> --
+> 2.39.0
+>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Baruch Siach <baruch@tkos.co.il>
----
-v2: added tag (Baruch), avoid confusion with previously sent patch
- drivers/pinctrl/pinctrl-digicolor.c | 1 -
- 1 file changed, 1 deletion(-)
+Applied, thanks!
 
-diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
-index cc3546fc4610..05213261b8a4 100644
---- a/drivers/pinctrl/pinctrl-digicolor.c
-+++ b/drivers/pinctrl/pinctrl-digicolor.c
-@@ -248,7 +248,6 @@ static int dc_gpiochip_add(struct dc_pinmap *pmap)
- 	chip->set		= dc_gpio_set;
- 	chip->base		= -1;
- 	chip->ngpio		= PINS_COUNT;
--	chip->of_gpio_n_cells	= 2;
- 
- 	spin_lock_init(&pmap->lock);
- 
--- 
-2.39.0
-
+Bart
