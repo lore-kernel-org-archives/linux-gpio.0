@@ -2,124 +2,161 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9694BC3DA78
-	for <linux-gpio@archiver.kernel.org>; Fri, 13 Jan 2023 21:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7220C6379F
+	for <linux-gpio@archiver.kernel.org>; Fri, 13 Jan 2023 21:52:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230463AbjAMVcF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 13 Jan 2023 16:32:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36704 "EHLO
+        id S229707AbjAMVwV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 13 Jan 2023 16:52:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230411AbjAMVcC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2023 16:32:02 -0500
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F582AE6;
-        Fri, 13 Jan 2023 13:31:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1673645484; x=1705181484;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=SLmxe4+aIxsCW+XX4xedaaboKVOBP5e1UnAYk1kMH7Q=;
-  b=EMqeV0ErT5Pjbmc8ByBZ9DrKwdyLRwOscb0DW9/ueuWpn8lxYi1ewq6I
-   tHPiQ7AWUcNdl1XLY/96ujqQHBtpBHmpZQXI/+WkaHOZY3yFVU1dVwbiY
-   IcN4Hi35cK603H96t7uFJbw44CWqjAMyRwtnOdVW6yKqsm4OYj81r6iY6
-   MPk0ETIbfx74UBDHl/W+wEHUVh8g+YwlGgLob+nl81UnnlMAl4zWxDSAg
-   K1zR7q9ysTHnI/lug/cQBlcRd0GH67g8BJbL3S9VSTcmKTwbI5HN57QH2
-   BcvA8fZdRfhkXEZYU6mZKdo8U0H1rUUQoFDmA820sGeoB0N4yjoqBOWO/
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10589"; a="303802037"
-X-IronPort-AV: E=Sophos;i="5.97,214,1669104000"; 
-   d="scan'208";a="303802037"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2023 13:31:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10589"; a="987132454"
-X-IronPort-AV: E=Sophos;i="5.97,214,1669104000"; 
-   d="scan'208";a="987132454"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Jan 2023 13:31:20 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1pGRdu-008rWo-1S;
-        Fri, 13 Jan 2023 23:31:18 +0200
-Date:   Fri, 13 Jan 2023 23:31:18 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        with ESMTP id S230303AbjAMVwU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2023 16:52:20 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 884E289BCD
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Jan 2023 13:52:18 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id g10so16106786wmo.1
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Jan 2023 13:52:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xf3VCHX9G7NEnm6DH5J+oX0WrIsiqfcIHSHFq9HHsok=;
+        b=f57bzUxHI4FdG1+93JOTETjh1Y4o5qnb/fezZ0isN2oaroqx3crVWElxcEqNsirdmL
+         qnmUVaOIncyIx5cZz6OUczgkmiPPrrkzsph1P5tw+3okDbSYg+gP56n2Dw5v6IGeXvET
+         bnGuqTnIP97BEdn2a8E8KedrSZC6RJmCxv2Bh3Q5IA/4+HdelMGYXBr1IhC4km7KarL6
+         6gUcuPlkgcdlPjLUUAZZXsr+Qh2ymnhY+ghAtxldZBWktKskt2nyyiRbq130Ud0MXFwy
+         Fbs/ouLXdb98HjWmkMA/3Vy61T3fMWAUsWsAhW4kT4QXrU4Bc5+2KpANl2WnRXt+iKbn
+         Jd4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xf3VCHX9G7NEnm6DH5J+oX0WrIsiqfcIHSHFq9HHsok=;
+        b=i0/iasTOfFF3IiNLETC7YajThx8gXaC8QJU1RU8M8iPr6Pw3ckIMVTrImZJBkYRDXE
+         EXY0HWRsKygfrc+DQ+9rgkM+Jb5y4udlf6N+wqtugJVZXvmmH+LSC1YhkbKzY0KVXudO
+         twZqYLYK0aghth4A8YONNm6ZLs/sJmcpS73c+nSnxTw/XjIDGhZBKVxZesXICS1FCTqJ
+         tuKzVPjWbtdZyjSncqPGvSqsJ7UCp2NilsgHSt+tp2Zb71C7DFpgYmYEH9QK0SoQ4/K1
+         HO+5bxFJuFBEUidb/wth+D+fSheD653mCbdrsLWjYYW8xU7HUwBMzb01gNy07J09z6hR
+         2fcA==
+X-Gm-Message-State: AFqh2kr1AcWBssKJijoSeXcMszLvjyuYtGK1PCjDSeW7fpPVhT8IeZj8
+        gbCZ/MQc0lXExBrSVlWFUHq4sw==
+X-Google-Smtp-Source: AMrXdXug5/egwuoRcgMsnfpEIZLuuH6i1LGlVjKN6ajpkMDlYRI27MvRYGe0J0PTla0y0KTvbNKNHg==
+X-Received: by 2002:a05:600c:348b:b0:3d1:fcb4:4074 with SMTP id a11-20020a05600c348b00b003d1fcb44074mr70800254wmq.22.1673646737083;
+        Fri, 13 Jan 2023 13:52:17 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:ba79:38ad:100f:e9ee])
+        by smtp.gmail.com with ESMTPSA id g12-20020a05600c310c00b003c70191f267sm33179234wmo.39.2023.01.13.13.52.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jan 2023 13:52:16 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Subject: Re: [PATCH v2 1/2] pinctrl: bcm: bcm2835: Switch to use
- ->add_pin_ranges()
-Message-ID: <Y8HNpokX5qCQTRqu@smile.fi.intel.com>
-References: <20230113171051.19309-1-andriy.shevchenko@linux.intel.com>
- <916654ca-e70f-5663-f3a3-9b370c24aea9@i2se.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [libgpiod][PATCH 01/16] README: update for libgpiod v2
+Date:   Fri, 13 Jan 2023 22:51:55 +0100
+Message-Id: <20230113215210.616812-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20230113215210.616812-1-brgl@bgdev.pl>
+References: <20230113215210.616812-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <916654ca-e70f-5663-f3a3-9b370c24aea9@i2se.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jan 13, 2023 at 09:13:23PM +0100, Stefan Wahren wrote:
-> Am 13.01.23 um 18:10 schrieb Andy Shevchenko:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-...
+Certain parts of the README file still refer to concepts removed from
+libgpiod v2. Update whatever needs updating.
 
-> > v2: fixed compilation issues (LKP), Cc'ed to the author of original code
-> > 
-> > Btw, the commit d2b67744fd99 ("pinctrl: bcm2835: implement hook for
-> > missing gpio-ranges") seems problematic in the fist place due to
-> > odd of_node_put() call. I dunno how that part had been tested, or
-> > how it's supposed to work, i.e. where is the counterpart of_node_get().
-> > Anyway this change drops it for good.
-> 
-> The countpart is in of_pinctrl_get(). I was just following the pattern like
-> in other drivers like gpio-rockchip. The original commit has been tested by
-> Florian Fainelli and me. I'm not sure if it's safe to drop it completely.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ README | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-Please, elaborate how of_pinctrl_get() increases refcount of the parameter.
-Maybe I'm looking into a wrong place?
-
-> Btw this is not the only platform affected by the gpio-ranges compatibility
-> issue [1].
-
-This is the only one that uses unnecessary added callback.
-
-> > Perhaps we can check gpio-ranges property presence inside the GPIO
-> > library, so this ->add_pin_ranges() won't be called at all.
-> 
-> I thought this could be very platform specific, so i implemented a hook. But
-> yes my initial hack modified gpiolib-of [2].
-
-The point is that possibly documentation of ->add_pin_ranges() should be
-amended to take care of the cases like this. We don't need two or more
-hooks to do the same, esp. taking into account that OF specific doesn't
-cover other cases.
-
-> [1] - https://patchwork.kernel.org/project/linux-arm-msm/patch/20180412190138.12372-1-chunkeey@gmail.com/
-> 
-> [2] - https://lore.kernel.org/linux-arm-kernel/75266ed1-666a-138b-80f1-ae9a06b7bdf3@i2se.com/
-> 
-> > Also I would like to understand the dance around checking for pin
-> > control device. The original commit lacks of comments in the non-trivial
-> > code.
-
-Any comment on this?
-
+diff --git a/README b/README
+index d51d701..894fc5d 100644
+--- a/README
++++ b/README
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: CC-BY-SA-4.0
+-# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
++# SPDX-FileCopyrightText: 2017-2023 Bartosz Golaszewski <brgl@bgdev.pl>
+ 
+ libgpiod
+ ========
+@@ -30,14 +30,10 @@ allow an easy conversion of user scripts to using the character device.
+ BUILDING
+ --------
+ 
+-This is a pretty standard autotools project. It does not depend on any
+-libraries other than the standard C library with GNU extensions.
++This is a pretty standard autotools project. The core C library does not have
++any external dependencies other than the standard C library with GNU extensions.
+ 
+-The autoconf version needed to compile the project is 2.61.
+-
+-Recent kernel headers are also required for the GPIO user API definitions. For
+-the exact version of kernel headers required, please refer to the configure.ac
+-contents.
++The command-line tools optionally depend on libedit for the interactive feature.
+ 
+ To build the project (including command-line utilities) run:
+ 
+@@ -51,6 +47,8 @@ arguments to it.
+ If building from release tarballs, the configure script is already provided and
+ there's no need to invoke autogen.sh.
+ 
++For all configure features, see: ./configure --help.
++
+ TOOLS
+ -----
+ 
+@@ -231,10 +229,10 @@ interface.
+ 
+ The minimum kernel version required to run the tests can be checked in the
+ tests/gpiod-test.c source file (it's subject to change if new features are
+-added to the kernel). The tests work together with the gpio-mockup kernel
+-module which must be enabled. NOTE: the module must not be built-in. A helper
+-library - libgpiomockup - is included to enable straightforward interaction
+-with the module.
++added to the kernel). The tests work together with the gpio-sim kernel which
++must either be built-in or available for loading using kmod. A helper
++library - libgpiosim - is included to enable straightforward interaction with
++the module.
+ 
+ To build the testing executable add the '--enable-tests' option when running
+ the configure script. If enabled, the tests will be installed next to
+@@ -251,12 +249,12 @@ The gpio-tools programs can be tested separately using the gpio-tools-test.bats
+ script. It requires bats[1] to run and assumes that the tested executables are
+ in the same directory as the script.
+ 
+-Both C++ and Python bindings also include their own test-suites. Both reuse the
+-libgpiomockup library to avoid code duplication when interacting with
+-gpio-mockup.
++C++, Rust and Python bindings also include their own test-suites. Both reuse the
++libgpiosim library to avoid code duplication when interacting with gpio-sim.
+ 
+ Python test-suite uses the standard unittest package. C++ tests use an external
+-testing framework - Catch2 - which must be installed in the system.
++testing framework - Catch2 - which must be installed in the system. Rust
++bindings use the standard tests module layout and the #[test] attribute.
+ 
+ DOCUMENTATION
+ -------------
+@@ -268,6 +266,8 @@ doxygen markup blocks. Doxygen documentation can be generated by executing
+ Python bindings contain help strings that can be accessed with the help
+ builtin.
+ 
++Rust bindings use rustdoc.
++
+ Man pages for command-line programs are generated automatically if gpio-tools
+ were selected and help2man is available in the system.
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.37.2
 
