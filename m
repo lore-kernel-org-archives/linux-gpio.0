@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0311C678D6
-	for <linux-gpio@archiver.kernel.org>; Fri, 13 Jan 2023 21:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 049A3C3DA78
+	for <linux-gpio@archiver.kernel.org>; Fri, 13 Jan 2023 21:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230463AbjAMVwc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 13 Jan 2023 16:52:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43856 "EHLO
+        id S230439AbjAMVwe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 13 Jan 2023 16:52:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230482AbjAMVw3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2023 16:52:29 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1137989BF2
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Jan 2023 13:52:27 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id m3so16121833wmq.0
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Jan 2023 13:52:27 -0800 (PST)
+        with ESMTP id S231168AbjAMVwa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2023 16:52:30 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28D6D58F94
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Jan 2023 13:52:29 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id f25-20020a1c6a19000000b003da221fbf48so1975551wmc.1
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Jan 2023 13:52:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M0MI4lw5cWdwPbslfrt2Bdc0oat3npjZrM1m0HACgPI=;
-        b=MfnDgV40sOhf8kxOivxKpTWoEGYsoTJrGKdLGB9a7Rd4z2ELHXmZ/C+d/0WFwCeBt6
-         drDfY8GIF9JsqzUqm0H/HR6uy48zKUFooHZUqDJ8DfEqJa27uGs8w/RpjLsq0SCFYNOa
-         +egwcaO+Z1r6gT90Q2B1Q80773ggik1Yy/AZRmJqvfpPd+Lvan0PnhNpPPQ7+En4LBlp
-         fMBLIbCHCjtmdrrqTmwm7NNPAPtHBZ4vGAs6bVMZKZXzzh8pH3FmdntUDw++tGRABClh
-         ZjaDn4TMSfb5AB7KADlOzdSPzgZoPelqPKw17jb5w5QCeSRhsMxTq2IzkoCF/FYEYpA6
-         unZQ==
+        bh=WgI3Fk/2gyiGGUplRcEoLYgVoGEyCL5gPGqpn2TaikQ=;
+        b=q68+/sXwusDmmwW92XsrdVJJb3YgBYJh9FrYWP73MrgOLeNV5JHO6v6L1bKnuhpHph
+         ZfngntSf6s9m7O7xLW8plNN+b4WSUcC5X7kWvSt2Qh3o5qLhA6+3r7qBkB+cTqb3M+r/
+         YgZ/R+Yho/iKPwqYcA+xBx4orrkew1xPrhfVAJfoDsCUXz02WtRa77BqvaVR3w5lUI0n
+         EXtA6asv1L1WlzMtKwlxbrGyDnyVogMCDAq46sJzsltYxrebveuMjfTaGfqNAmhw4+wL
+         mGMcjrOnOiFeFFEJP2RMym++/4FoEy7vzlxRE0YZXaphopKifQ5Nnl3OxJDJ3J4HDyP4
+         b0/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=M0MI4lw5cWdwPbslfrt2Bdc0oat3npjZrM1m0HACgPI=;
-        b=tDrfhL8y2oDVfnim7FzmJmqAyim8iTK/ETPKdbbD7NZRNEz60FFO7JulsDpDyOx+dF
-         fLxHolrxERv57v/udv0jacLdstaNJhKx7zbZ8W5Gnp4v0Pg5xxIGC0WUHcGjguzwZF7v
-         2MrMxf6EZs7A8rDKxUjHwmSM0heDv+gqtm7yoNegNzFxYc5Uhs+wyLXat07rJhQT3nK8
-         iofiusyMwpKwE6RHnX2KDcXYgY+0HZ76ipny87+oluJBv504DiRAiyGvROSzvP8pRyj8
-         +Tz9TbbyyrT+iMwiwn1bw9kAg2za1PdOATr4Ag355LKNrlhzvhzTwQXyqocPB2tKmNEa
-         bRMA==
-X-Gm-Message-State: AFqh2kr4S9Rnz3qsvKiBHAVIdmLR4SAAeavxRJeYtWf0Q6q0e4WkPZto
-        PCovGd7KaZZidN7kE3cgpJxhRw==
-X-Google-Smtp-Source: AMrXdXumZqhm1kku2PmguPO53Ew+lsN/3fCAGpbcV+RyAo3MicZhyX8uEef+AQeRclE9QfsKiX7+kQ==
-X-Received: by 2002:a05:600c:1603:b0:3d1:c895:930c with SMTP id m3-20020a05600c160300b003d1c895930cmr59446218wmn.35.1673646746414;
-        Fri, 13 Jan 2023 13:52:26 -0800 (PST)
+        bh=WgI3Fk/2gyiGGUplRcEoLYgVoGEyCL5gPGqpn2TaikQ=;
+        b=2AF3bX7JE3DkSD3pyYkQnKnwLmkUA2AYAXPasQ52C+mQe2B8sM2nQPSsNMxxRzjh7s
+         m+9ChrHdARZRrjcQ/YKxgB3BdUSW4A1YcKUonO2NyjcNa2JKdFU2b4N7My2kMKq8LAyh
+         C0pGPxRDqNDRXreL4St/T2xvwIDLpAYbnlZ+St2RdcngyNSjw/5JSsVNAZVu9V8vUOXM
+         zFVfQZpGMJWmIQknfqmorX5EmbsAjHmIEuD5u6LDqnCITAkUHmZ+Mt4eySft7mzKKs6s
+         OzSQQN0A8vWrr3o167eRFRFZNgB33UGw//ejK2D3ut7mntkl3cQd2WZy/1u8TVQJxv1p
+         rfTA==
+X-Gm-Message-State: AFqh2kqcB19WM1xyEbRmC4JhTZ38gy4F7GAcFScozSJ+EVsPAvEP2rdz
+        AthHxAk0tkRrUnRoZGgidwvpdg==
+X-Google-Smtp-Source: AMrXdXsrbV3Man8fBOAovMdWUZLVkUvAv9NN4RVUFfAKQYbnCfriCgkRGX7QLzpKvjRoxhuyE+1feA==
+X-Received: by 2002:a05:600c:2046:b0:3da:1357:4ca2 with SMTP id p6-20020a05600c204600b003da13574ca2mr6685809wmg.11.1673646748705;
+        Fri, 13 Jan 2023 13:52:28 -0800 (PST)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:ba79:38ad:100f:e9ee])
-        by smtp.gmail.com with ESMTPSA id g12-20020a05600c310c00b003c70191f267sm33179234wmo.39.2023.01.13.13.52.25
+        by smtp.gmail.com with ESMTPSA id g12-20020a05600c310c00b003c70191f267sm33179234wmo.39.2023.01.13.13.52.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 13:52:25 -0800 (PST)
+        Fri, 13 Jan 2023 13:52:28 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -56,9 +56,9 @@ To:     Kent Gibson <warthog618@gmail.com>,
         Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [libgpiod][PATCH 10/16] core: provide gpiod_line_config_set_output_values()
-Date:   Fri, 13 Jan 2023 22:52:04 +0100
-Message-Id: <20230113215210.616812-11-brgl@bgdev.pl>
+Subject: [libgpiod][PATCH 12/16] bindings: cxx: add line_config.set_output_values()
+Date:   Fri, 13 Jan 2023 22:52:06 +0100
+Message-Id: <20230113215210.616812-13-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230113215210.616812-1-brgl@bgdev.pl>
 References: <20230113215210.616812-1-brgl@bgdev.pl>
@@ -70,262 +70,165 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Currently if user wants to use the same settings for a set of requested
-lines with the exception of the output value - they need to go through
-hoops by updating the line settings object and adding it one by one to
-the line config. Provide a helper function that allows to set a global
-list of output values that override the settings. For details on the
-interface: see documentation in this commit.
+Extend line_config to expose a new method - set_output_values() - which
+wraps the new C function for setting multiple output values at once.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- include/gpiod.h            | 27 +++++++++++++++
- lib/line-config.c          | 60 +++++++++++++++++++++++++++++++---
- tests/gpiod-test-helpers.h | 10 ++++++
- tests/tests-line-config.c  | 67 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 160 insertions(+), 4 deletions(-)
+ bindings/cxx/gpiodcxx/line-config.hpp    |  7 ++++
+ bindings/cxx/internal.hpp                |  1 +
+ bindings/cxx/line-config.cpp             | 15 +++++++
+ bindings/cxx/line-settings.cpp           |  5 +++
+ bindings/cxx/tests/tests-line-config.cpp | 51 ++++++++++++++++++++++++
+ 5 files changed, 79 insertions(+)
 
-diff --git a/include/gpiod.h b/include/gpiod.h
-index 8cede47..c552135 100644
---- a/include/gpiod.h
-+++ b/include/gpiod.h
-@@ -785,6 +785,33 @@ struct gpiod_line_settings *
- gpiod_line_config_get_line_settings(struct gpiod_line_config *config,
- 				    unsigned int offset);
+diff --git a/bindings/cxx/gpiodcxx/line-config.hpp b/bindings/cxx/gpiodcxx/line-config.hpp
+index a917913..b76fdff 100644
+--- a/bindings/cxx/gpiodcxx/line-config.hpp
++++ b/bindings/cxx/gpiodcxx/line-config.hpp
+@@ -76,6 +76,13 @@ public:
+ 	 */
+ 	line_config& add_line_settings(const line::offsets& offsets, const line_settings& settings);
  
-+/**
-+ * @brief Set output values for a number of lines.
-+ * @param config Line config object.
-+ * @param values Buffer containing the output values.
-+ * @param num_values Number of values in the buffer.
-+ * @return 0 on success, -1 on error.
-+ *
-+ * This is a helper that allows users to set multiple (potentially different)
-+ * output values at once while using the same line settings object. Instead of
-+ * modifying the output value in the settings object and calling
-+ * ::gpiod_line_config_add_line_settings multiple times, we can specify the
-+ * settings, add them for a set of offsets and then call this function to
-+ * set the output values.
-+ *
-+ * Values set by this function override whatever values were specified in the
-+ * regular line settings.
-+ *
-+ * The order of the output values in the array corresponds with the order in
-+ * which offsets were added by ::gpiod_line_config_add_line_settings. For
-+ * example calling add_settings([1, 3]) and add_settings([2, 4]) and then
-+ * calling this function with the following logicall values : [0, 1, 0, 1]
-+ * will result in the following offset->value mapping: 1->0, 2->0, 3->1, 4->1.
-+ */
-+int gpiod_line_config_set_output_values(struct gpiod_line_config *config,
-+					const enum gpiod_line_value *values,
-+					size_t num_values);
++	/**
++	 * @brief Set output values for a number of lines.
++	 * @param values Buffer containing the output values.
++	 * @return Reference to self.
++	 */
++	line_config& set_output_values(const line::values& values);
 +
- /**
-  * @brief Get the number of configured line offsets.
-  * @param config Line config object.
-diff --git a/lib/line-config.c b/lib/line-config.c
-index b00e5e6..901eb02 100644
---- a/lib/line-config.c
-+++ b/lib/line-config.c
-@@ -25,6 +25,8 @@ struct per_line_config {
- struct gpiod_line_config {
- 	struct per_line_config line_configs[LINES_MAX];
- 	size_t num_configs;
-+	enum gpiod_line_value output_values[LINES_MAX];
-+	size_t num_output_values;
- 	struct settings_node *sref_list;
- };
- 
-@@ -136,23 +138,60 @@ GPIOD_API struct gpiod_line_settings *
- gpiod_line_config_get_line_settings(struct gpiod_line_config *config,
- 				    unsigned int offset)
- {
-+	struct gpiod_line_settings *settings;
- 	struct per_line_config *per_line;
- 	size_t i;
-+	int ret;
- 
- 	assert(config);
- 
- 	for (i = 0; i < config->num_configs; i++) {
- 		per_line = &config->line_configs[i];
- 
--		if (per_line->offset == offset)
--			return gpiod_line_settings_copy(
-+		if (per_line->offset == offset) {
-+			settings = gpiod_line_settings_copy(
- 					per_line->node->settings);
-+			if (!settings)
-+				return NULL;
-+
-+			/*
-+			 * If a global output value was set for this line - use
-+			 * it and override the one stored in settings.
-+			 */
-+			if (config->num_output_values > i) {
-+				ret = gpiod_line_settings_set_output_value(
-+						settings,
-+						config->output_values[i]);
-+				if (ret) {
-+					gpiod_line_settings_free(settings);
-+					return NULL;
-+				}
-+			}
-+
-+			return settings;
-+		}
- 	}
- 
- 	errno = ENOENT;
- 	return NULL;
+ 	/**
+ 	 * @brief Get a mapping of offsets to line settings stored by this
+ 	 *        object.
+diff --git a/bindings/cxx/internal.hpp b/bindings/cxx/internal.hpp
+index 6aceac1..8322e12 100644
+--- a/bindings/cxx/internal.hpp
++++ b/bindings/cxx/internal.hpp
+@@ -31,6 +31,7 @@ map_enum_c_to_cxx(c_enum_type value, const ::std::map<c_enum_type, cxx_enum_type
  }
  
-+GPIOD_API int
-+gpiod_line_config_set_output_values(struct gpiod_line_config *config,
-+				    const enum gpiod_line_value *values,
-+				    size_t num_values)
+ void throw_from_errno(const ::std::string& what);
++::gpiod_line_value map_output_value(line::value value);
+ 
+ template<class T, void F(T*)> struct deleter
+ {
+diff --git a/bindings/cxx/line-config.cpp b/bindings/cxx/line-config.cpp
+index 3ec99f0..233ba33 100644
+--- a/bindings/cxx/line-config.cpp
++++ b/bindings/cxx/line-config.cpp
+@@ -100,6 +100,21 @@ GPIOD_CXX_API line_config& line_config::add_line_settings(const line::offsets& o
+ 	return *this;
+ }
+ 
++GPIOD_CXX_API line_config& line_config::set_output_values(const line::values& values)
 +{
-+	if (num_values > LINES_MAX) {
-+		errno = EINVAL;
-+		return -1;
++	::std::vector<::gpiod_line_value> mapped_values(values.size());
++
++	for (unsigned int i = 0; i < values.size(); i++)
++		mapped_values[i] = map_output_value(values[i]);
++
++	auto ret = ::gpiod_line_config_set_output_values(this->_m_priv->config.get(),
++							 mapped_values.data(), mapped_values.size());
++	if (ret)
++		throw_from_errno("unable to set output values");
++
++	return *this;
++}
++
+ GPIOD_CXX_API ::std::map<line::offset, line_settings> line_config::get_line_settings() const
+ {
+ 	::std::size_t num_offsets = ::gpiod_line_config_get_num_configured_offsets(
+diff --git a/bindings/cxx/line-settings.cpp b/bindings/cxx/line-settings.cpp
+index 32f21a3..2159062 100644
+--- a/bindings/cxx/line-settings.cpp
++++ b/bindings/cxx/line-settings.cpp
+@@ -139,6 +139,11 @@ cxx_enum_type get_mapped_value(::gpiod_line_settings* settings,
+ 
+ } /* namespace */
+ 
++::gpiod_line_value map_output_value(line::value value)
++{
++	return do_map_value(value, value_mapping);
++}
++
+ line_settings::impl::impl()
+ 	: settings(make_line_settings())
+ {
+diff --git a/bindings/cxx/tests/tests-line-config.cpp b/bindings/cxx/tests/tests-line-config.cpp
+index 5fa0f94..5e439a1 100644
+--- a/bindings/cxx/tests/tests-line-config.cpp
++++ b/bindings/cxx/tests/tests-line-config.cpp
+@@ -4,12 +4,17 @@
+ #include <catch2/catch.hpp>
+ #include <gpiod.hpp>
+ 
++#include "gpiosim.hpp"
+ #include "helpers.hpp"
+ 
++using ::gpiosim::make_sim;
+ using namespace ::std::chrono_literals;
+ using direction = ::gpiod::line::direction;
+ using drive = ::gpiod::line::drive;
+ using edge = ::gpiod::line::edge;
++using simval = ::gpiosim::chip::value;
++using value = ::gpiod::line::value;
++using values = ::gpiod::line::values;
+ 
+ namespace {
+ 
+@@ -72,6 +77,52 @@ TEST_CASE("line_config can be reset", "[line-config]")
+ 	REQUIRE(cfg.get_line_settings().size() == 0);
+ }
+ 
++TEST_CASE("output values can be set globally", "[line-config]")
++{
++	const values vals = { value::ACTIVE, value::INACTIVE, value::ACTIVE, value::INACTIVE };
++
++	auto sim = make_sim()
++		.set_num_lines(4)
++		.build();
++
++	::gpiod::line_config cfg;
++
++	SECTION("request with globally set output values")
++	{
++		cfg
++			.add_line_settings(
++				{0, 1, 2, 3},
++				::gpiod::line_settings().set_direction(direction::OUTPUT)
++			)
++			.set_output_values(vals);
++
++		auto request = ::gpiod::chip(sim.dev_path())
++			.prepare_request()
++			.set_line_config(cfg)
++			.do_request();
++
++		REQUIRE(sim.get_value(0) == simval::ACTIVE);
++		REQUIRE(sim.get_value(1) == simval::INACTIVE);
++		REQUIRE(sim.get_value(2) == simval::ACTIVE);
++		REQUIRE(sim.get_value(3) == simval::INACTIVE);
 +	}
 +
-+	memcpy(config->output_values, values, num_values * sizeof(*values));
-+	config->num_output_values = num_values;
++	SECTION("read back global output values")
++	{
++		cfg
++			.add_line_settings(
++				{0, 1, 2, 3},
++				::gpiod::line_settings()
++					.set_direction(direction::OUTPUT)
++					.set_output_value(value::ACTIVE)
++			)
++			.set_output_values(vals);
 +
-+	return 0;
-+}
-+
- GPIOD_API size_t
- gpiod_line_config_get_num_configured_offsets(struct gpiod_line_config *config)
- {
-@@ -209,6 +248,13 @@ static bool has_at_least_one_output_direction(struct gpiod_line_config *config)
- 	return false;
- }
- 
-+static void set_output_value(uint64_t *vals, size_t bit,
-+			     enum gpiod_line_value value)
-+{
-+	gpiod_line_mask_assign_bit(vals, bit,
-+				   value == GPIOD_LINE_VALUE_ACTIVE ? 1 : 0);
-+}
-+
- static void set_kernel_output_values(uint64_t *mask, uint64_t *vals,
- 				     struct gpiod_line_config *config)
- {
-@@ -230,8 +276,14 @@ static void set_kernel_output_values(uint64_t *mask, uint64_t *vals,
- 		gpiod_line_mask_set_bit(mask, i);
- 		value = gpiod_line_settings_get_output_value(
- 			per_line->node->settings);
--		gpiod_line_mask_assign_bit(
--			vals, i, value == GPIOD_LINE_VALUE_ACTIVE ? 1 : 0);
-+		set_output_value(vals, i, value);
++		auto settings = cfg.get_line_settings()[1];
++		REQUIRE(settings.output_value() == value::INACTIVE);
 +	}
-+
-+	/* "Global" output values override the ones from per-line settings. */
-+	for (i = 0; i < config->num_output_values; i++) {
-+		gpiod_line_mask_set_bit(mask, i);
-+		value = config->output_values[i];
-+		set_output_value(vals, i, value);
- 	}
- }
- 
-diff --git a/tests/gpiod-test-helpers.h b/tests/gpiod-test-helpers.h
-index fb3fd7d..760949e 100644
---- a/tests/gpiod-test-helpers.h
-+++ b/tests/gpiod-test-helpers.h
-@@ -136,6 +136,16 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC(struct_gpiod_edge_event_buffer,
- 		_settings; \
- 	})
- 
-+#define gpiod_test_line_config_set_output_values_or_fail(_line_cfg, _values, \
-+							 _num_values) \
-+	do { \
-+		gint _ret = gpiod_line_config_set_output_values(_line_cfg, \
-+								_values, \
-+								_num_values); \
-+		g_assert_cmpint(_ret, ==, 0); \
-+		gpiod_test_return_if_failed(); \
-+	} while (0)
-+
- #define gpiod_test_create_request_config_or_fail() \
- 	({ \
- 		struct gpiod_request_config *_config = \
-diff --git a/tests/tests-line-config.c b/tests/tests-line-config.c
-index 7f5e4b1..78a4632 100644
---- a/tests/tests-line-config.c
-+++ b/tests/tests-line-config.c
-@@ -238,3 +238,70 @@ GPIOD_TEST_CASE(get_null_offsets)
- 							       NULL, 10);
- 	g_assert_cmpuint(num_offsets, ==, 0);
- }
-+
-+GPIOD_TEST_CASE(set_global_output_values)
-+{
-+	static const guint offsets[] = { 0, 1, 2, 3 };
-+	static const enum gpiod_line_value values[] = {
-+		GPIOD_LINE_VALUE_ACTIVE,
-+		GPIOD_LINE_VALUE_INACTIVE,
-+		GPIOD_LINE_VALUE_ACTIVE,
-+		GPIOD_LINE_VALUE_INACTIVE,
-+	};
-+
-+	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 4, NULL);
-+	g_autoptr(struct_gpiod_line_settings) settings = NULL;
-+	g_autoptr(struct_gpiod_line_config) config = NULL;
-+	g_autoptr(struct_gpiod_line_request) request = NULL;
-+	g_autoptr(struct_gpiod_chip) chip = NULL;
-+
-+	chip = gpiod_test_open_chip_or_fail(g_gpiosim_chip_get_dev_path(sim));
-+	settings = gpiod_test_create_line_settings_or_fail();
-+	config = gpiod_test_create_line_config_or_fail();
-+
-+	gpiod_line_settings_set_direction(settings,
-+					  GPIOD_LINE_DIRECTION_OUTPUT);
-+	gpiod_test_line_config_add_line_settings_or_fail(config, offsets, 4,
-+							 settings);
-+	gpiod_test_line_config_set_output_values_or_fail(config, values, 4);
-+
-+	request = gpiod_test_request_lines_or_fail(chip, NULL, config);
-+
-+	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 0), ==,
-+			GPIOD_LINE_VALUE_ACTIVE);
-+	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 1), ==,
-+			GPIOD_LINE_VALUE_INACTIVE);
-+	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 2), ==,
-+			GPIOD_LINE_VALUE_ACTIVE);
-+	g_assert_cmpint(g_gpiosim_chip_get_value(sim, 3), ==,
-+			GPIOD_LINE_VALUE_INACTIVE);
 +}
 +
-+GPIOD_TEST_CASE(read_back_global_output_values)
-+{
-+	static const guint offsets[] = { 0, 1, 2, 3 };
-+	static const enum gpiod_line_value values[] = {
-+		GPIOD_LINE_VALUE_ACTIVE,
-+		GPIOD_LINE_VALUE_INACTIVE,
-+		GPIOD_LINE_VALUE_ACTIVE,
-+		GPIOD_LINE_VALUE_INACTIVE,
-+	};
-+
-+	g_autoptr(struct_gpiod_line_settings) settings = NULL;
-+	g_autoptr(struct_gpiod_line_settings) retrieved = NULL;
-+	g_autoptr(struct_gpiod_line_config) config = NULL;
-+
-+	settings = gpiod_test_create_line_settings_or_fail();
-+	config = gpiod_test_create_line_config_or_fail();
-+
-+	gpiod_line_settings_set_direction(settings,
-+					  GPIOD_LINE_DIRECTION_OUTPUT);
-+	gpiod_line_settings_set_output_value(settings, GPIOD_LINE_VALUE_ACTIVE);
-+	gpiod_test_line_config_add_line_settings_or_fail(config, offsets, 4,
-+							 settings);
-+	gpiod_test_line_config_set_output_values_or_fail(config, values, 4);
-+
-+	retrieved = gpiod_test_line_config_get_line_settings_or_fail(config, 1);
-+	g_assert_cmpint(gpiod_line_settings_get_output_value(retrieved), ==,
-+			GPIOD_LINE_VALUE_INACTIVE);
-+}
+ TEST_CASE("line_config stream insertion operator works", "[line-config]")
+ {
+ 	::gpiod::line_config cfg;
 -- 
 2.37.2
 
