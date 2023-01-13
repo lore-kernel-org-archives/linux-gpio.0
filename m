@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6257EC3DA78
-	for <linux-gpio@archiver.kernel.org>; Fri, 13 Jan 2023 21:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C8BC6379F
+	for <linux-gpio@archiver.kernel.org>; Fri, 13 Jan 2023 21:53:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231182AbjAMVxn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 13 Jan 2023 16:53:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44530 "EHLO
+        id S231199AbjAMVxo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 13 Jan 2023 16:53:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231221AbjAMVxj (ORCPT
+        with ESMTP id S231202AbjAMVxj (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2023 16:53:39 -0500
 Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B69889BF9;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6993589BE3;
         Fri, 13 Jan 2023 13:53:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1673646818; x=1705182818;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=mauPY81Xtcz+rmaZWIXeWEYO5Sk4VsNtM/vWELEMpbQ=;
-  b=daOVOUbFkaf/B8j55E12+MQ0Xon3UGfDMHOTxdMJJiG4wwOwemr3uJh4
-   QZi7SvNoDWE8dMM9lnpOwYpu2AUMNtrP3mPrXUDuZVkK6RY2LCYDSbVEY
-   r4GFzZEY2Ec/UBjUviE88oogAjlSZYuGCuSvYl2/gtIPkTzQtbkHeg0pt
-   yJoSECF81hhvccvt84Ydz1fOxiZeqP+SJuHSonXtTAVuFt0uA1kM3Tcix
-   FuFroGQMG4Zkc72rKwEva5As72XbhzV+jUmUpj34XclRo2XP0r73J7UHD
-   R7MVPj6nO4MpUns7uwfPXA/t0pl/RWbBBIF3MKzKH8zFkLdrPPEN4Qav4
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10589"; a="351343138"
+  bh=Y3oi7Gj2ErV8+ybgUGSfWPirQT8+KB+Vm+W6w2+sHKU=;
+  b=PwyQitnIHdPil6OYFRrSA6GhsoV5BTYUU2lBulxY/xQfcpUDeNVhoSeP
+   3wXQsinn4ElwFvrKRbBtAn1mG/BcLdq/lmUnpEpojnjNcrBcxo9blqetV
+   IhPCG6XUZkjzI4Bn3mrNV4p/twcckJJZcb5cCgMBxxOG3HDp8u31oPt8B
+   Cnweihs9W4nB6XAmt6B4r9LBbgjfSpLEJwmcPv14vf7SL+8J8xEFZzoaM
+   XGkS6dMeQ4oLNHpx4BGF/LsSIKaaMmpZX9B1zehCtJHfiqr2wDVqQiYcd
+   suNFnXPfY8Im9E0g889IATwwtjydmsH+r6sOCqZo+54w8xHTyDW2bLnNM
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10589"; a="351343147"
 X-IronPort-AV: E=Sophos;i="5.97,214,1669104000"; 
-   d="scan'208";a="351343138"
+   d="scan'208";a="351343147"
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2023 13:53:37 -0800
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2023 13:53:38 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10589"; a="766170870"
+X-IronPort-AV: E=McAfee;i="6500,9779,10589"; a="766170867"
 X-IronPort-AV: E=Sophos;i="5.97,215,1669104000"; 
-   d="scan'208";a="766170870"
+   d="scan'208";a="766170867"
 Received: from black.fi.intel.com ([10.237.72.28])
   by fmsmga002.fm.intel.com with ESMTP; 13 Jan 2023 13:53:22 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 8BFD931D; Fri, 13 Jan 2023 23:53:56 +0200 (EET)
+        id 658C292; Fri, 13 Jan 2023 23:53:56 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -55,9 +55,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Broadcom internal kernel review list 
         <bcm-kernel-feedback-list@broadcom.com>,
         Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH v3 4/4] Revert "gpiolib: of: Introduce hook for missing gpio-ranges"
-Date:   Fri, 13 Jan 2023 23:53:52 +0200
-Message-Id: <20230113215352.44272-5-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 1/4] gpiolib: Check "gpio-ranges" before calling ->add_pin_ranges()
+Date:   Fri, 13 Jan 2023 23:53:49 +0200
+Message-Id: <20230113215352.44272-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230113215352.44272-1-andriy.shevchenko@linux.intel.com>
 References: <20230113215352.44272-1-andriy.shevchenko@linux.intel.com>
@@ -67,55 +67,36 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This reverts commit 3550bba25d5587a701e6edf20e20984d2ee72c78.
+The ->add_pin_ranges() is supposed to be called for the backward
+compatiblity on Device Tree platforms or non-DT ones. Ensure that
+by checking presense of the "gpio-ranges" property.
 
-No users for this one, revert it for good.
-The ->add_pin_ranges() can be used instead.
+This allows to clean up a few existing drivers to avoid duplication
+of the check.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpiolib-of.c   |  5 -----
- include/linux/gpio/driver.h | 12 ------------
- 2 files changed, 17 deletions(-)
+ drivers/gpio/gpiolib.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 72d8a3da31e3..266352b1a966 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -980,11 +980,6 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 	if (!np)
- 		return 0;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 16858ef4dac1..49cfcc7510e1 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -533,6 +533,14 @@ static void gpiochip_free_valid_mask(struct gpio_chip *gc)
  
--	if (!of_property_read_bool(np, "gpio-ranges") &&
--	    chip->of_gpio_ranges_fallback) {
--		return chip->of_gpio_ranges_fallback(chip, np);
--	}
--
- 	group_names = of_find_property(np, group_names_propname, NULL);
- 
- 	for (;; index++) {
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index ddc7a14a274f..5ab50ba3c309 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -521,18 +521,6 @@ struct gpio_chip {
- 	 */
- 	int (*of_xlate)(struct gpio_chip *gc,
- 			const struct of_phandle_args *gpiospec, u32 *flags);
--
--	/**
--	 * @of_gpio_ranges_fallback:
--	 *
--	 * Optional hook for the case that no gpio-ranges property is defined
--	 * within the device tree node "np" (usually DT before introduction
--	 * of gpio-ranges). So this callback is helpful to provide the
--	 * necessary backward compatibility for the pin ranges.
--	 */
--	int (*of_gpio_ranges_fallback)(struct gpio_chip *gc,
--				       struct device_node *np);
--
- #endif /* CONFIG_OF_GPIO */
- };
+ static int gpiochip_add_pin_ranges(struct gpio_chip *gc)
+ {
++	/*
++	 * Device Tree platforms are supposed to use "gpio-ranges"
++	 * property. This check ensures that the ->add_pin_ranges()
++	 * won't be called for them.
++	 */
++	if (device_property_present(&gc->gpiodev->dev, "gpio-ranges"))
++		return 0;
++
+ 	if (gc->add_pin_ranges)
+ 		return gc->add_pin_ranges(gc);
  
 -- 
 2.39.0
