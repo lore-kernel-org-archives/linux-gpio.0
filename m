@@ -2,113 +2,128 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61275C54EBE
-	for <linux-gpio@archiver.kernel.org>; Mon, 16 Jan 2023 12:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32612C54EBE
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Jan 2023 12:46:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230014AbjAPMpX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 16 Jan 2023 07:45:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36684 "EHLO
+        id S230344AbjAPMqg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 16 Jan 2023 07:46:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229722AbjAPMpW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Jan 2023 07:45:22 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 983881E29B
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Jan 2023 04:45:21 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id b17so22718909pld.7
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Jan 2023 04:45:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CAtPlyrRzFRMEDqXoBAAEM1RtC2ddfmD7RUkZi6yGoc=;
-        b=AgMgrruDCUIXkbxeZDI7wRxaTWWO4FW8tVA8k+ghCN09sbCN0hQY/GWqzODJxRQvGR
-         FpdmBLbW0gtYF3XwUO1FhomvxhDUg7GrOa+rW8XJfwdXTp0te7YZ39qxG23rTeQ8UdbG
-         3uhxezqpxSTykntJxIYYEKz8hE/7lx7HFjX84dogPRdu3CXmmqm45fQescQsNeRUnKhi
-         ubW5jg9S8GgbNFe2zno+QUcHhkrboayt8LJE9sUZZr5Qj/29WlpFH/Fn1hfe9XRU4sEw
-         gdN72/aqYJxbEvL8rQ8ydvKpzy3eKSOtb81An/9K/6+Tf1CxFjtcc+D5N2ukd0kjfJT8
-         nX1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CAtPlyrRzFRMEDqXoBAAEM1RtC2ddfmD7RUkZi6yGoc=;
-        b=y81j+yqRQqWf82B9W5me3uKUq8h6wdfDgjuF2CF4kD7ewPNHMcKFBOaGLV4r1Sgckj
-         onJM4OEHQAOuPIXTYRiKDRpsIW0rmTqLc9ewlC2GwKLB6NV+S5vJciBfxRHYbGr2MCd8
-         UJuwHPMuoLPV7czSe5hCC0pS5CgIyHDMZzyxf/TSRnAEJ3i51ZFi8Xgox/H7HzgFPOTK
-         RHGlc/38g7Lv5gm6OKpYRLKK51vscEAz3oW24OxQW7LaRGrqsj0C9hMezQAv1XMXBHB9
-         Z6DzRFfdo+1Df+lmT0/jfDoccbdoqbxhwFYfZc59hipjH/CBCvugUvGuEC92eoaEqdxY
-         fCYA==
-X-Gm-Message-State: AFqh2koZQDCmKO5hG2L5TyvsGJ0cCRnPWf6Z3ohBWXzKe2V7mfi9B5j9
-        v13W6lXVLINWFqwI8bidrbDLLWsmgEtyPw==
-X-Google-Smtp-Source: AMrXdXsFj27FL0pHi7Z4bTCiTe3yF5KV4QGqdVt8rnpQlfSAsep7UV+Gug8/hiUUHMGda8/jrePrpQ==
-X-Received: by 2002:a17:90a:b38a:b0:225:c902:c86a with SMTP id e10-20020a17090ab38a00b00225c902c86amr20957098pjr.28.1673873121054;
-        Mon, 16 Jan 2023 04:45:21 -0800 (PST)
-Received: from sol (110-174-14-241.tpgi.com.au. [110.174.14.241])
-        by smtp.gmail.com with ESMTPSA id cl14-20020a17090af68e00b00218a7808ec9sm16805471pjb.8.2023.01.16.04.45.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jan 2023 04:45:20 -0800 (PST)
-Date:   Mon, 16 Jan 2023 20:45:16 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     linux-gpio@vger.kernel.org
-Subject: Re: [libgpiod][PATCH] bindings: rust: fix documentation of
- line_request set_values
-Message-ID: <Y8VG3LxGa1z95FzA@sol>
-References: <20230116003606.11998-1-warthog618@gmail.com>
- <CAMRc=MdHUV5vS5cWn+s-owEPFVCzoi8=hA0XF5V1cPPLcATx6Q@mail.gmail.com>
+        with ESMTP id S229548AbjAPMqf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Jan 2023 07:46:35 -0500
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 565713A9D;
+        Mon, 16 Jan 2023 04:46:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1673873194; x=1705409194;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=BwXZVfB+xF4aartu15hkES7lfjOUi/vmIT0fRE7IbyM=;
+  b=TJZTGM3Wrv7m1D6vLl7IVK1nIjHSaOvX6Xifqm99PpiM16bdf6WC0kiT
+   YSf9r/zSuXJI11xM0aoURxto1QUTcvllgQn267XoEVB+2wNM2iSkStEYa
+   k8nd1pBjaNJmK5WiGoTEtZF6snJmfswCGclBLfhY199n6BK+oBMatRYqt
+   MPoP3QNvFqFbaSXrbdSsfO9OWhD7S5Q3zr7vqVeNWBVX36N/uOyLtonYy
+   /JXYW2BE2OVdz5ajR4+dPvtUIGkldizA2dlQ4fZ4VSDzVu15ZyNK17d1R
+   rMXDr3NPeMgYUnf3NCpikgm/tWiYrmLVrUs5IGmQgaK4jvLDWmF0xkFIR
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10591"; a="312306377"
+X-IronPort-AV: E=Sophos;i="5.97,221,1669104000"; 
+   d="scan'208";a="312306377"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2023 04:46:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10591"; a="987791362"
+X-IronPort-AV: E=Sophos;i="5.97,221,1669104000"; 
+   d="scan'208";a="987791362"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 16 Jan 2023 04:46:32 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id BBCF914B; Mon, 16 Jan 2023 14:47:06 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v1 2/3] gpio: pcf857x: Make use of device properties
+Date:   Mon, 16 Jan 2023 14:47:03 +0200
+Message-Id: <20230116124704.30470-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230116124704.30470-1-andriy.shevchenko@linux.intel.com>
+References: <20230116124704.30470-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MdHUV5vS5cWn+s-owEPFVCzoi8=hA0XF5V1cPPLcATx6Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jan 16, 2023 at 10:05:43AM +0100, Bartosz Golaszewski wrote:
-> On Mon, Jan 16, 2023 at 1:36 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > Replace "Get" with "Set".
-> >
-> > Signed-off-by: Kent Gibson <warthog618@gmail.com>
-> > ---
-> >  bindings/rust/libgpiod/src/line_request.rs | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/bindings/rust/libgpiod/src/line_request.rs b/bindings/rust/libgpiod/src/line_request.rs
-> > index 2816cc1..35f07b3 100644
-> > --- a/bindings/rust/libgpiod/src/line_request.rs
-> > +++ b/bindings/rust/libgpiod/src/line_request.rs
-> > @@ -106,7 +106,7 @@ impl Request {
-> >          }
-> >      }
-> >
-> > -    /// Get values of a subset of lines associated with the request.
-> > +    /// Set values of a subset of lines associated with the request.
-> >      pub fn set_values_subset(&self, map: ValueMap) -> Result<()> {
-> >          let mut offsets = Vec::new();
-> >          let mut values = Vec::new();
-> > @@ -136,7 +136,7 @@ impl Request {
-> >          }
-> >      }
-> >
-> > -    /// Get values of all lines associated with the request.
-> > +    /// Set values of all lines associated with the request.
-> >      pub fn set_values(&self, values: &[Value]) -> Result<()> {
-> >          if values.len() != self.num_lines() {
-> >              return Err(Error::InvalidArguments);
-> > --
-> > 2.39.0
-> >
-> 
-> What commit is this patch's parent? It doesn't apply on top of master.
-> 
+Convert the module to be property provider agnostic and allow
+it to be used on non-OF platforms.
 
-My bad - I've got a commit in there where I was playing with fixing the
-clippy warnings from rust 1.66 (I suspect they are false positives so
-haven't submitted a patch).
+Add mod_devicetable.h include.
 
-I'll rebase and resubmit.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-pcf857x.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-Cheers,
-Kent.
+diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+index dfa15444a24a..9d34776109db 100644
+--- a/drivers/gpio/gpio-pcf857x.c
++++ b/drivers/gpio/gpio-pcf857x.c
+@@ -11,9 +11,9 @@
+ #include <linux/irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
+-#include <linux/of_device.h>
++#include <linux/property.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+@@ -35,7 +35,6 @@ static const struct i2c_device_id pcf857x_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, pcf857x_id);
+ 
+-#ifdef CONFIG_OF
+ static const struct of_device_id pcf857x_of_table[] = {
+ 	{ .compatible = "nxp,pcf8574" },
+ 	{ .compatible = "nxp,pcf8574a" },
+@@ -53,7 +52,6 @@ static const struct of_device_id pcf857x_of_table[] = {
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, pcf857x_of_table);
+-#endif
+ 
+ /*
+  * The pcf857x, pca857x, and pca967x chips only expose one read and one
+@@ -275,12 +273,11 @@ static const struct irq_chip pcf857x_irq_chip = {
+ static int pcf857x_probe(struct i2c_client *client)
+ {
+ 	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+-	struct device_node *np = client->dev.of_node;
+ 	struct pcf857x *gpio;
+ 	unsigned int n_latch = 0;
+ 	int status;
+ 
+-	of_property_read_u32(np, "lines-initial-states", &n_latch);
++	device_property_read_u32(&client->dev, "lines-initial-states", &n_latch);
+ 
+ 	/* Allocate, initialize, and register this gpio_chip. */
+ 	gpio = devm_kzalloc(&client->dev, sizeof(*gpio), GFP_KERNEL);
+@@ -420,7 +417,7 @@ static void pcf857x_shutdown(struct i2c_client *client)
+ static struct i2c_driver pcf857x_driver = {
+ 	.driver = {
+ 		.name	= "pcf857x",
+-		.of_match_table = of_match_ptr(pcf857x_of_table),
++		.of_match_table = pcf857x_of_table,
+ 	},
+ 	.probe_new = pcf857x_probe,
+ 	.shutdown = pcf857x_shutdown,
+-- 
+2.39.0
+
