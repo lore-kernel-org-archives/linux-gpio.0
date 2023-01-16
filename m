@@ -2,89 +2,95 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F569C54EBE
-	for <linux-gpio@archiver.kernel.org>; Mon, 16 Jan 2023 14:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B813C46467
+	for <linux-gpio@archiver.kernel.org>; Mon, 16 Jan 2023 15:21:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232789AbjAPO4Q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 16 Jan 2023 09:56:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49604 "EHLO
+        id S229699AbjAPPVg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 16 Jan 2023 10:21:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231689AbjAPOzo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Jan 2023 09:55:44 -0500
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBE39265BF;
-        Mon, 16 Jan 2023 06:44:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1673880287; x=1705416287;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/FcwCcmYR+YBoDpa/d8YDulm759cNORuNKsoMFxGRKg=;
-  b=fccPD59rjUDhbt40nC1e3u0QbzjcSutuATBvCasaKpHTyODJy2Mitkmk
-   GM7d8Tsgv5qzLtGOg+5BcLkvAa/JPm7KFXKV1hS+DRXb/e2E6VG1HnCuw
-   Kkj+WeH7v2W/6AX8tuEJXNxU8uXH0uJNG4NhyrN3PPV+kZ+efLNaLg3Ja
-   1ysp/hYSF3I0VPOI8yqcCzE7JJS4kY5oe2Swaepyd1zbdofQnBNu6cgYk
-   8qLgPHW0xkmsUA++rCl1TBpvy5hOhaaMhjRmCMygT8skslu67NSFkqtjJ
-   48L22XqGsySQ0u9yuPS8M3U7Im+gbpLn4swuU3Pon5cTc8pTjz6UXipdB
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10592"; a="410723454"
-X-IronPort-AV: E=Sophos;i="5.97,221,1669104000"; 
-   d="scan'208";a="410723454"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2023 06:44:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10592"; a="659050112"
-X-IronPort-AV: E=Sophos;i="5.97,221,1669104000"; 
-   d="scan'208";a="659050112"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga002.jf.intel.com with ESMTP; 16 Jan 2023 06:44:44 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1pHQj4-00A7vu-3A;
-        Mon, 16 Jan 2023 16:44:42 +0200
-Date:   Mon, 16 Jan 2023 16:44:42 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH v1 1/1] gpiolib: Remove unused of_mm_gpiochip_add()
-Message-ID: <Y8Vi2tHh21Ihepe0@smile.fi.intel.com>
-References: <20230112144526.66794-1-andriy.shevchenko@linux.intel.com>
- <CACRpkdYD-MfgCBUdTdNU0+kx+Z6parEmWwQC_3smDYxG73=XGw@mail.gmail.com>
+        with ESMTP id S231844AbjAPPVL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Jan 2023 10:21:11 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4044E1CF57
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Jan 2023 07:16:52 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id k22-20020a05600c1c9600b003d1ee3a6289so22384552wms.2
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Jan 2023 07:16:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iiDSfvvVnpnlPivdw8/50/rt1TZas44bwqpU4QDG+KM=;
+        b=MXFMmsp6IH4Ui26w9QQlkuO+QQZFU1BhPmTplhIIf6Ez7G3vMUelROvs78F96C37rz
+         068+fRc7bRA8Ww2tCBtn1+jtNOaG4P1Zx/9Nav74bCJJmnGpyHal0ZMz2L44UIXWbuiG
+         rCUPt2D5nvyDkiVi8SmPZWCRqTl++kWpozJ8V/RsSTs/3tdwIA1iUu11FqMsl6qdPxrC
+         Wa55XIi/rjbSUr6v8Bd3EhYwBwctFHeCPm+FRGQQrX9C/zX/Cf92ABdb7dNDEHiTAQbW
+         4c9ba9HaPrL/8fLX8egJ5exoJzGZZDEDc64jIExmpsXTQa+DX4oozhrp04SU39wu48zC
+         NYXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iiDSfvvVnpnlPivdw8/50/rt1TZas44bwqpU4QDG+KM=;
+        b=A7ATuKSvn1dAzYlK8xw9mV6ZUI0Oy+gnbebKszDioTSiL8cHF79ihq+vuHxBZ9SD58
+         ChObtmoaN+o9eWu2r/xBy4eBlvVG8xKNudgxu8m1DC89KRjBvjqW9vqw6Sp+MQUFoE0Q
+         PwwRA+2fvtF7Bd/MjfAtHaGO7F3s+mDQTNi9TRco2dIyezbl8neb9xdU0sTB9qoDq4dr
+         TnmUgk+w077832z+Vm2dQS1SH9z3z/hI4zc94vVz1YytKA5EImRLwXkVEbOXw1Xns4kE
+         mlAcIY0YFgL/ZG+Y7LVjQtBJCpYi7wD+NIlK2yMrtxz4nohCTqDmFcQ+ysXyXfqGD97X
+         NMEQ==
+X-Gm-Message-State: AFqh2kr3p1T4que1EAR2CYiXokZTvXQ9XjDrUz7RvQWnaynAhnJaPbht
+        zMWA3wMeRycDylgZRLINsp/9IQ==
+X-Google-Smtp-Source: AMrXdXvCoZduBzcjYnGugfB09zZs95/zp8X+9+1AiXkQd5s1cyB5+HB4ADHJR4DiI5gv0a7EC9k2aQ==
+X-Received: by 2002:a05:600c:354c:b0:3da:fc7b:1f7b with SMTP id i12-20020a05600c354c00b003dafc7b1f7bmr3158225wmq.33.1673882210814;
+        Mon, 16 Jan 2023 07:16:50 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:2f9d:c271:2ba9:4f2a])
+        by smtp.gmail.com with ESMTPSA id f6-20020a05600c4e8600b003db03725e86sm636892wmq.8.2023.01.16.07.16.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jan 2023 07:16:50 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [libgpiod][PATCH 2/2] build: update the required python version
+Date:   Mon, 16 Jan 2023 16:16:46 +0100
+Message-Id: <20230116151646.338282-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20230116151646.338282-1-brgl@bgdev.pl>
+References: <20230116151646.338282-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYD-MfgCBUdTdNU0+kx+Z6parEmWwQC_3smDYxG73=XGw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jan 16, 2023 at 03:17:29PM +0100, Linus Walleij wrote:
-> On Thu, Jan 12, 2023 at 4:18 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > of_mm_gpiochip_add() is unused API, remove it for good.
-> >
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> A bit late to the party but THANKS for doing this Andy, it's been
-> a pain for years to have this cruft around.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-You're welcome! But note, that we still have a few more APIs to remove.
+We don't guarantee libgpiod python bindings to work with anything older
+than python 3.9. Let's fix the required version in configure.ac.
 
-> We even have some traction toward eventual <linux/gpio.h> removal
-> now thanks to Dmitry's efforts, this is great.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I agree, Dmitry did a nice job on this to be happen eventually!
-
+diff --git a/configure.ac b/configure.ac
+index d305506..7b8c65a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -216,7 +216,7 @@ AM_CONDITIONAL([WITH_BINDINGS_PYTHON], [test "x$with_bindings_python" = xtrue])
+ 
+ if test "x$with_bindings_python" = xtrue
+ then
+-	AM_PATH_PYTHON([3.0], [],
++	AM_PATH_PYTHON([3.9], [],
+ 		[AC_MSG_ERROR([python3 not found - needed for python bindings])])
+ 	AC_CHECK_PROG([has_python_config], [python3-config], [true], [false])
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.37.2
 
