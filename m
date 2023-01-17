@@ -2,199 +2,115 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B60C54EBE
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Jan 2023 03:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5FBC63797
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Jan 2023 05:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235113AbjAQDLW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 16 Jan 2023 22:11:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36296 "EHLO
+        id S235245AbjAQFT7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Jan 2023 00:19:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235228AbjAQDLU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Jan 2023 22:11:20 -0500
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 521D81CF7F
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Jan 2023 19:11:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1673925080; x=1705461080;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=LwXPo7uT2EziMrnRl2THFKWevveWoRMjf9CrDtEauFw=;
-  b=QLIpa/Oo1PrvgtaMoXTIxVLEHilhI3wjDn7F0idanVGnUbyX6QHDdYSY
-   V36VgaBsaTObxhtxHzIRlP90P4NJYfkjeYAO4bPW5WrpyxzEhtTzk1TvS
-   cApUZ2zlBgDpQUagUahu5o8MHjPLhmM8zg/Ezxd0kIQxcjMv48HraWTv0
-   wr1pjYHNFJfRqFWaDdoj17YDeoYtsVeOe0emzr43wyyNQeCQlPjhS2unv
-   TCSh2fOFfiAaPQrakEtCCePqo7FYBymHYThFJnInDfmsEkdMfgRKAVvVZ
-   8os1tct845ZZ4xpUORCSEn/6NuqhCyz2DtCRUmIzLwy+hSbir503POjBQ
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10592"; a="308161953"
-X-IronPort-AV: E=Sophos;i="5.97,222,1669104000"; 
-   d="scan'208";a="308161953"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2023 19:11:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10592"; a="652419274"
-X-IronPort-AV: E=Sophos;i="5.97,222,1669104000"; 
-   d="scan'208";a="652419274"
-Received: from lkp-server02.sh.intel.com (HELO f57cd993bc73) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 16 Jan 2023 19:10:54 -0800
-Received: from kbuild by f57cd993bc73 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pHcNB-0000u8-1z;
-        Tue, 17 Jan 2023 03:10:53 +0000
-Date:   Tue, 17 Jan 2023 11:09:53 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
- d20e767f7d62d11ce6609436ed95141bdb305660
-Message-ID: <63c61181.VmzNjP4/x9VujNyF%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S235192AbjAQFT4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Jan 2023 00:19:56 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D958E2749A
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Jan 2023 21:19:54 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id u1-20020a17090a450100b0022936a63a21so9516591pjg.4
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Jan 2023 21:19:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fTf7XdsKsuIAnhFqoRBIASXsAQIeGzy1MIly6J3SX8s=;
+        b=g0Qjt143j3zIQAsUS0c5E0VJb2GF6z0pouNHTVth4lyIu0+D2TNcW/oOhnKDg6mdb7
+         IrHO7p3Xhrq/7f/FqJIPHprG37h06tJmeOA94Jsf+i9uRnZP40M+O+LnfXxIyHn4pLBS
+         lQXfZySYYnCZoUvZ/k3f63gSwiBMQAYq8aRDlDEPEFFEEC6L6ZpwCV4IVZM2ea2p8p5j
+         sxtXYCJ/H4tbFncJk1EG74GZurQPNW6J835Z94XufibMI8C+W/Sbiu0RSQZ3zjw3koIm
+         yhVo0p6aGT2AKihMNp6YVDjGYdtneaufj0YFWH/GEb6d7Amt0zExJsHdaWrJ9cw4jD5x
+         De5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fTf7XdsKsuIAnhFqoRBIASXsAQIeGzy1MIly6J3SX8s=;
+        b=dWs2sCf4gcXOkfNCV3JQkVTTxiEf8pXFMoDYIGRm4PLggBoCrqLhbeTPQoqGFRW9XC
+         VHChEvlSpFoq1OAU5mmaEou1zmzyVX8tn+i/+6RqCcc9p5I919wMMdeCojXxFG1Pujf7
+         tC7NaTYFvioK4u2rF5IC++u1ZgjT3ICZ/hlRATfTrnyCxDK5UMH+Qv93N0ticS1L3RK4
+         11znJrP4a9w7zQ4Lr6InvYCIwPv9q1JIGuVrjk2zNQqs0SC2i64NicISBxhJSwdUhxhA
+         A2RfTDFARwGB2wgISnJnrUZo7QCYU458un4DpXHv7gO3yl951NkaTAMRbtBVtz9pyrlq
+         8bgg==
+X-Gm-Message-State: AFqh2koMh2mBNbdlKq+3e2zA/b6ngG+537q5YAGIQ0GFuTCrgGFLD0fo
+        SrlVw/Nv8ZeuQsvyTVki5TOMeA==
+X-Google-Smtp-Source: AMrXdXt+MdvaGQj1bGpFnHqKND24UVQc+mKPsTNK1lxj0BLOR/cpQUoaD3OMoVLtcGqXJjz1wDWnHw==
+X-Received: by 2002:a17:902:d582:b0:194:8b08:a571 with SMTP id k2-20020a170902d58200b001948b08a571mr2319178plh.2.1673932794390;
+        Mon, 16 Jan 2023 21:19:54 -0800 (PST)
+Received: from localhost ([122.172.81.45])
+        by smtp.gmail.com with ESMTPSA id q14-20020a17090311ce00b00189c536c72asm20246025plh.148.2023.01.16.21.19.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jan 2023 21:19:53 -0800 (PST)
+Date:   Tue, 17 Jan 2023 10:49:51 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [libgpiod][PATCH 15/16] bindings: rust: make mutators return
+ &mut self
+Message-ID: <20230117051951.ouw3tglnw5tkwc4j@vireshk-i7>
+References: <20230113215210.616812-1-brgl@bgdev.pl>
+ <20230113215210.616812-16-brgl@bgdev.pl>
+ <20230116060250.c6i6ouu2ojutubcd@vireshk-i7>
+ <CAMRc=MdX+SbN65m2jkZqJOYKobGgi=H0jCVyqcHCPo56152fMA@mail.gmail.com>
+ <20230116094058.7m3d4pdy7llnk7my@vireshk-i7>
+ <CAMRc=MerVcJW=yBpSGbWhk9cWENtLZE-OVx4NT=xm9fBtZgpBQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MerVcJW=yBpSGbWhk9cWENtLZE-OVx4NT=xm9fBtZgpBQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-branch HEAD: d20e767f7d62d11ce6609436ed95141bdb305660  Merge branch 'devel' into for-next
+On 16-01-23, 13:57, Bartosz Golaszewski wrote:
+> Seems like I went overboard with converting all of those cases but in
+> same places this still fails:
+> 
+> error[E0502]: cannot borrow `config` as immutable because it is also
+> borrowed as mutable
+>    --> libgpiod/tests/line_request.rs:449:24
+>     |
+> 441 |             let request = config.request();
+>     |                           ---------------- mutable borrow occurs here
+> ...
+> 449 |             let info = config.chip().line_info(0).unwrap();
+>     |                        ^^^^^^^^^^^^^ immutable borrow occurs here
+> ...
+> 456 |             request.reconfigure_lines(&lconfig).unwrap();
+>     |             ----------------------------------- mutable borrow
+> later used here
+> 
+> If I make config.chip() return &mut Chip then it fails like that:
+> 
+> error[E0499]: cannot borrow `config` as mutable more than once at a time
+>    --> libgpiod/tests/line_request.rs:449:24
+>     |
+> 441 |             let request = config.request();
+>     |                           ---------------- first mutable borrow
+> occurs here
+> ...
+> 449 |             let info = config.chip().line_info(0).unwrap();
+>     |                        ^^^^^^^^^^^^^ second mutable borrow occurs here
+> ...
+> 456 |             request.reconfigure_lines(&lconfig).unwrap();
+>     |             ----------------------------------- first borrow
+> later used here
+> 
+> Not sure how to go about this.
 
-elapsed time: 723m
-
-configs tested: 123
-configs skipped: 4
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm                                 defconfig
-x86_64                            allnoconfig
-arc                  randconfig-r043-20230116
-riscv                randconfig-r042-20230116
-s390                 randconfig-r044-20230116
-arm64                            allyesconfig
-arm                              allyesconfig
-x86_64               randconfig-a011-20230116
-x86_64               randconfig-a016-20230116
-x86_64               randconfig-a014-20230116
-x86_64               randconfig-a013-20230116
-x86_64               randconfig-a015-20230116
-x86_64               randconfig-a012-20230116
-um                           x86_64_defconfig
-um                             i386_defconfig
-x86_64                          rhel-8.3-func
-x86_64                    rhel-8.3-kselftests
-x86_64                           rhel-8.3-kvm
-x86_64                           rhel-8.3-syz
-x86_64                           rhel-8.3-bpf
-x86_64                         rhel-8.3-kunit
-ia64                             allmodconfig
-x86_64                              defconfig
-x86_64                           allyesconfig
-x86_64                               rhel-8.3
-i386                             allyesconfig
-i386                                defconfig
-s390                                defconfig
-s390                             allmodconfig
-arc                                 defconfig
-alpha                               defconfig
-s390                             allyesconfig
-i386                 randconfig-a013-20230116
-i386                 randconfig-a012-20230116
-i386                 randconfig-a016-20230116
-i386                 randconfig-a014-20230116
-i386                 randconfig-a015-20230116
-i386                 randconfig-a011-20230116
-riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
-riscv                    nommu_k210_defconfig
-riscv                             allnoconfig
-i386                   debian-10.3-kselftests
-i386                              debian-10.3
-m68k                             allyesconfig
-m68k                             allmodconfig
-arc                              allyesconfig
-alpha                            allyesconfig
-mips                           jazz_defconfig
-powerpc                      ep88xc_defconfig
-powerpc                  storcenter_defconfig
-arm                             ezx_defconfig
-sh                        sh7785lcr_defconfig
-powerpc                           allnoconfig
-mips                             allyesconfig
-powerpc                          allmodconfig
-sh                               allmodconfig
-nios2                            allyesconfig
-nios2                               defconfig
-parisc                              defconfig
-parisc64                            defconfig
-parisc                           allyesconfig
-mips                        bcm47xx_defconfig
-mips                         bigsur_defconfig
-powerpc                mpc7448_hpc2_defconfig
-powerpc                       ppc64_defconfig
-arm                         lpc18xx_defconfig
-powerpc                 mpc834x_itx_defconfig
-riscv                            allyesconfig
-powerpc                       holly_defconfig
-sparc                               defconfig
-xtensa                           allyesconfig
-csky                                defconfig
-sparc                            allyesconfig
-x86_64                                  kexec
-powerpc                  iss476-smp_defconfig
-sh                         apsh4a3a_defconfig
-sh                                  defconfig
-sh                 kfr2r09-romimage_defconfig
-m68k                         apollo_defconfig
-um                               alldefconfig
-mips                         db1xxx_defconfig
-powerpc                 mpc837x_rdb_defconfig
-i386                          debian-10.3-kvm
-i386                        debian-10.3-kunit
-i386                         debian-10.3-func
-arm                  randconfig-r046-20230117
-arc                  randconfig-r043-20230117
-i386                 randconfig-c001-20230116
-sh                        sh7763rdp_defconfig
-sh                         ap325rxa_defconfig
-alpha                            alldefconfig
-arc                         haps_hs_defconfig
-
-clang tested configs:
-arm                  randconfig-r046-20230116
-hexagon              randconfig-r045-20230116
-hexagon              randconfig-r041-20230116
-x86_64               randconfig-a003-20230116
-x86_64               randconfig-a004-20230116
-x86_64               randconfig-a006-20230116
-x86_64               randconfig-a005-20230116
-x86_64               randconfig-a001-20230116
-x86_64               randconfig-a002-20230116
-i386                 randconfig-a002-20230116
-i386                 randconfig-a004-20230116
-i386                 randconfig-a001-20230116
-i386                 randconfig-a003-20230116
-i386                 randconfig-a005-20230116
-i386                 randconfig-a006-20230116
-arm                        vexpress_defconfig
-powerpc                 mpc8315_rdb_defconfig
-riscv                randconfig-r042-20230115
-s390                 randconfig-r044-20230115
-hexagon              randconfig-r041-20230115
-hexagon              randconfig-r045-20230115
-arm                          pxa168_defconfig
-arm                     am200epdkit_defconfig
-mips                           mtx1_defconfig
-powerpc                     pseries_defconfig
-x86_64                          rhel-8.3-rust
-x86_64                        randconfig-k001
-i386                              allnoconfig
-powerpc                   lite5200b_defconfig
-mips                  cavium_octeon_defconfig
+What you did earlier is the easiest way to get around it probably.
+i.e. use config.request().reconfigure_lines().
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+viresh
