@@ -2,132 +2,196 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FC4C63797
-	for <linux-gpio@archiver.kernel.org>; Tue, 17 Jan 2023 09:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9DFC63797
+	for <linux-gpio@archiver.kernel.org>; Tue, 17 Jan 2023 10:14:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236598AbjAQJj2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 17 Jan 2023 04:39:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38430 "EHLO
+        id S236049AbjAQKOW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 17 Jan 2023 05:14:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236751AbjAQJiw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Jan 2023 04:38:52 -0500
-Received: from mail-vk1-xa36.google.com (mail-vk1-xa36.google.com [IPv6:2607:f8b0:4864:20::a36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF8C42659A
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Jan 2023 01:36:22 -0800 (PST)
-Received: by mail-vk1-xa36.google.com with SMTP id z190so14509722vka.4
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Jan 2023 01:36:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YEbNl1l/q4Fnu+8d9D+L62Z+w9les95RQo/Y5UcOKmQ=;
-        b=RYij5spKeMtkBOpNHssp3ONvhFkceeFvNz3fqOShvMXrR+moIc7foFfbOrgCPGIKxC
-         jeiM/kGIIH5dh91GeGlziAbxHDGiHvP8j+XXSSwvT4Mn11lmIT9ZlDuTyg4bunLXMI9p
-         kfc8kHnNyE05triUJs41SFuoOOlwNoml9lRiN0RjE550EeWYDQEzj1+1rCv3b15ms3Ix
-         xAS8VKWkB2WAYEqfjNfM99Fin5MrmZW1OcKGp89MlJyCoj7zv4x7Q0Cu6HMa4SBNWfgc
-         nSEycrzdMg6K7stfVnoYV+CU4UXKs2f2pI1Q1EkkFUsj3ydRLxYgCL3beixd4sLUiFmn
-         GqDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YEbNl1l/q4Fnu+8d9D+L62Z+w9les95RQo/Y5UcOKmQ=;
-        b=V5oUDS/Ar8+0E0anv/jq1+1Xr8FL77mHDsjy2vFOQgRihAeZDtnCDuO6cuL4nLjwcS
-         RHyohHS/R4HGz8vZOWpRknbGa3KF9ig7EkAmzpYxdLZh8UkgXC1fBr57SHjlsWv4nnMA
-         1gQq5GO6mnf3V+nN4kL8y9Pf81GvONUveKBCuVLDO2g77XjP96vbvPECHj/YCSuUhQ2R
-         BWPirwR4yNz3lTzSspMUgkbIE4PFNOPI0xGDLWi9g1uAGa4fNxJbHBWc9Rb6F4OLdXW6
-         F6yuYnCja8pw82l91TPxev/Vm1mBMbuKZHjRikw/5mw5BWDrLy2aSuotiTNr7RiYn+K1
-         Sp7w==
-X-Gm-Message-State: AFqh2kpCZJyGGfTrp7W36BrvFz7GROzwI87dHFZknJ3vl5O9nfOuSHTD
-        2ohviueQgUJHZrO77bgWHHp5iR4042tuZ0PAPvCJXw==
-X-Google-Smtp-Source: AMrXdXvFwOQaYs/Ay+3F1maDF78qpOzI1mjjG4wUYiCyM/jJ5K/LxlMb0q2ZshdBRTKrkY+Xo+w3C/brLvsCHDQfG5g=
-X-Received: by 2002:a1f:91d4:0:b0:3db:104:6d13 with SMTP id
- t203-20020a1f91d4000000b003db01046d13mr329321vkd.25.1673948181819; Tue, 17
- Jan 2023 01:36:21 -0800 (PST)
+        with ESMTP id S235848AbjAQKOV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Jan 2023 05:14:21 -0500
+X-Greylist: delayed 320 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 17 Jan 2023 02:14:19 PST
+Received: from forward106p.mail.yandex.net (forward106p.mail.yandex.net [77.88.28.109])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA7A2717;
+        Tue, 17 Jan 2023 02:14:18 -0800 (PST)
+Received: from sas1-71299a9d5a62.qloud-c.yandex.net (sas1-71299a9d5a62.qloud-c.yandex.net [IPv6:2a02:6b8:c08:210e:0:640:7129:9a9d])
+        by forward106p.mail.yandex.net (Yandex) with ESMTP id 3C0EC2FC146B;
+        Tue, 17 Jan 2023 13:08:59 +0300 (MSK)
+Received: by sas1-71299a9d5a62.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id q8hUV81caqM1-gLFtdELT;
+        Tue, 17 Jan 2023 13:08:58 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1673950138;
+        bh=13oqyiL3oCSWyyK89szmL0p9HX+bAt5xjKGvK/84qyU=;
+        h=Message-Id:Date:In-Reply-To:Cc:Subject:References:To:From;
+        b=LZOORB60TvX8leSH04bEkqqZoLQYZP9RlXhfMywTLS5gfCPDkQGplKo9F5nM2nl6B
+         jOVspOMvu7YqEPP6rSedWdTu94p1ANlnfyleDt9Dvysn0FKZkQUT341jLNDucxfpyj
+         xeorTe+nRdsMZvT3z6ujBgPsvSh57Ox75B5nXcvQ=
+Authentication-Results: sas1-71299a9d5a62.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
+From:   Nikita Shubin <nikita.shubin@maquefel.me>
+To:     linux-gpio@vger.kernel.org
+Cc:     Nikita Shubin <nikita.shubin@maquefel.me>,
+        Hartley Sweeten <hsweeten@visionengravers.com>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Lukasz Majewski <lukma@denx.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] gpio: ep93xx: Make irqchip immutable
+Date:   Tue, 17 Jan 2023 13:08:44 +0300
+Message-Id: <20230117100845.16708-2-nikita.shubin@maquefel.me>
+X-Mailer: git-send-email 2.37.4
+In-Reply-To: <20230117100845.16708-1-nikita.shubin@maquefel.me>
+References: <20230117100845.16708-1-nikita.shubin@maquefel.me>
 MIME-Version: 1.0
-References: <20230116140811.27201-1-pierluigi.p@variscite.com>
-In-Reply-To: <20230116140811.27201-1-pierluigi.p@variscite.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 17 Jan 2023 10:36:11 +0100
-Message-ID: <CAMRc=MfeQ_92Vb6inv-1_h=kc1d2as6LLPqJHHtbNk1pK1xRuA@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: fix linker errors when GPIOLIB is disabled
-To:     Pierluigi Passaro <pierluigi.p@variscite.com>
-Cc:     linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, eran.m@variscite.com,
-        nate.d@variscite.com, francesco.f@variscite.com,
-        pierluigi.passaro@gmail.com, kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jan 16, 2023 at 3:08 PM Pierluigi Passaro
-<pierluigi.p@variscite.com> wrote:
->
-> Both the functions gpiochip_request_own_desc and
-> gpiochip_free_own_desc are exported from
->     drivers/gpio/gpiolib.c
-> but this file is compiled only when CONFIG_GPIOLIB is enabled.
-> Move the protototypes under "#ifdef CONFIG_GPIOLIB" and provide
-> reasonable definitions in the "#else" branch.
->
-> Signed-off-by: Pierluigi Passaro <pierluigi.p@variscite.com>
-> Reported-by: kernel test robot <lkp@intel.com>
+This turns the Cirrus ep93xx gpio irqchip immutable.
 
-Please add a Fixes tag.
+Preserve per-chip labels by adding an ->irq_print_chip() callback.
 
-Bart
+Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+---
+ drivers/gpio/gpio-ep93xx.c | 52 +++++++++++++++++++++++---------------
+ 1 file changed, 31 insertions(+), 21 deletions(-)
 
-> ---
->  include/linux/gpio/driver.h | 20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-> index 44783fc16125..ed77c6fc0beb 100644
-> --- a/include/linux/gpio/driver.h
-> +++ b/include/linux/gpio/driver.h
-> @@ -758,6 +758,8 @@ gpiochip_remove_pin_ranges(struct gpio_chip *gc)
->
->  #endif /* CONFIG_PINCTRL */
->
-> +#ifdef CONFIG_GPIOLIB
-> +
->  struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
->                                             unsigned int hwnum,
->                                             const char *label,
-> @@ -765,8 +767,6 @@ struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
->                                             enum gpiod_flags dflags);
->  void gpiochip_free_own_desc(struct gpio_desc *desc);
->
-> -#ifdef CONFIG_GPIOLIB
-> -
->  /* lock/unlock as IRQ */
->  int gpiochip_lock_as_irq(struct gpio_chip *gc, unsigned int offset);
->  void gpiochip_unlock_as_irq(struct gpio_chip *gc, unsigned int offset);
-> @@ -776,6 +776,22 @@ struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc);
->
->  #else /* CONFIG_GPIOLIB */
->
-> +static inline struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
-> +                                           unsigned int hwnum,
-> +                                           const char *label,
-> +                                           enum gpio_lookup_flags lflags,
-> +                                           enum gpiod_flags dflags)
-> +{
-> +       /* GPIO can never have been requested */
-> +       WARN_ON(1);
-> +       return ERR_PTR(-ENODEV);
-> +}
-> +
-> +static inline void gpiochip_free_own_desc(struct gpio_desc *desc)
-> +{
-> +       WARN_ON(1);
-> +}
-> +
->  static inline struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc)
->  {
->         /* GPIO can never have been requested */
-> --
-> 2.37.2
->
+diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+index dff2ce050522..0f87dcd0e84c 100644
+--- a/drivers/gpio/gpio-ep93xx.c
++++ b/drivers/gpio/gpio-ep93xx.c
+@@ -17,9 +17,9 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/bitops.h>
+ #include <linux/interrupt.h>
++#include <linux/seq_file.h>
+ 
+ struct ep93xx_gpio_irq_chip {
+-	struct irq_chip ic;
+ 	void __iomem *base;
+ 	u8 int_unmasked;
+ 	u8 int_enabled;
+@@ -139,7 +139,8 @@ static void ep93xx_gpio_irq_mask_ack(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
+-	int port_mask = BIT(irqd_to_hwirq(d));
++	u32 offset = irqd_to_hwirq(d);
++	int port_mask = BIT(offset);
+ 
+ 	if (irqd_get_trigger_type(d) == IRQ_TYPE_EDGE_BOTH)
+ 		eic->int_type2 ^= port_mask; /* switch edge direction */
+@@ -148,23 +149,29 @@ static void ep93xx_gpio_irq_mask_ack(struct irq_data *d)
+ 	ep93xx_gpio_update_int_params(eic);
+ 
+ 	writeb(port_mask, eic->base + EP93XX_INT_EOI_OFFSET);
++	gpiochip_disable_irq(gc, offset);
+ }
+ 
+ static void ep93xx_gpio_irq_mask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
++	u32 offset = irqd_to_hwirq(d);
+ 
+-	eic->int_unmasked &= ~BIT(irqd_to_hwirq(d));
++	eic->int_unmasked &= ~BIT(offset);
+ 	ep93xx_gpio_update_int_params(eic);
++
++	gpiochip_disable_irq(gc, offset);
+ }
+ 
+ static void ep93xx_gpio_irq_unmask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
++	u32 offset = irqd_to_hwirq(d);
+ 
+-	eic->int_unmasked |= BIT(irqd_to_hwirq(d));
++	gpiochip_enable_irq(gc, offset);
++	eic->int_unmasked |= BIT(offset);
+ 	ep93xx_gpio_update_int_params(eic);
+ }
+ 
+@@ -240,15 +247,25 @@ static int ep93xx_gpio_set_config(struct gpio_chip *gc, unsigned offset,
+ 	return 0;
+ }
+ 
+-static void ep93xx_init_irq_chip(struct device *dev, struct irq_chip *ic)
++static void ep93xx_irq_print_chip(struct irq_data *data, struct seq_file *p)
+ {
+-	ic->irq_ack = ep93xx_gpio_irq_ack;
+-	ic->irq_mask_ack = ep93xx_gpio_irq_mask_ack;
+-	ic->irq_mask = ep93xx_gpio_irq_mask;
+-	ic->irq_unmask = ep93xx_gpio_irq_unmask;
+-	ic->irq_set_type = ep93xx_gpio_irq_type;
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
++
++	seq_printf(p, dev_name(gc->parent));
+ }
+ 
++static const struct irq_chip gpio_eic_irq_chip = {
++	.name			= "ep93xx-gpio-eic",
++	.irq_ack		= ep93xx_gpio_irq_ack,
++	.irq_mask		= ep93xx_gpio_irq_mask,
++	.irq_unmask		= ep93xx_gpio_irq_unmask,
++	.irq_mask_ack	= ep93xx_gpio_irq_mask_ack,
++	.irq_set_type	= ep93xx_gpio_irq_type,
++	.irq_print_chip	= ep93xx_irq_print_chip,
++	.flags			= IRQCHIP_IMMUTABLE,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS,
++};
++
+ static int ep93xx_setup_irqs(struct platform_device *pdev,
+ 			     struct ep93xx_gpio_chip *egc)
+ {
+@@ -257,7 +274,6 @@ static int ep93xx_setup_irqs(struct platform_device *pdev,
+ 	struct gpio_irq_chip *girq = &gc->irq;
+ 	struct irq_chip *ic;
+ 	int ret, irq, i = 0;
+-	const char *label = 0;
+ 	void __iomem *intr = devm_platform_ioremap_resource_byname(pdev, "intr");
+ 
+ 	if (IS_ERR(intr))
+@@ -271,14 +287,7 @@ static int ep93xx_setup_irqs(struct platform_device *pdev,
+ 		return -ENOMEM;
+ 
+ 	egc->eic->base = intr;
+-	ic = &egc->eic->ic;
+-	label = dev_name(dev);
+-	ic->name = devm_kasprintf(dev, GFP_KERNEL, "gpio-irq-%s", label);
+-	if (!ic->name)
+-		return -ENOMEM;
+-
+-	ep93xx_init_irq_chip(dev, ic);
+-	girq->chip = ic;
++	gpio_irq_chip_set_chip(girq, &gpio_eic_irq_chip);
+ 	girq->num_parents = platform_irq_count(pdev);
+ 	if (girq->num_parents == 0)
+ 		return -EINVAL;
+@@ -293,7 +302,7 @@ static int ep93xx_setup_irqs(struct platform_device *pdev,
+ 		irq = platform_get_irq(pdev, 0);
+ 		ret = devm_request_irq(dev, irq,
+ 				ep93xx_ab_irq_handler,
+-				IRQF_SHARED, ic->name, gc);
++				IRQF_SHARED, gc->label, gc);
+ 		if (ret) {
+ 			dev_err(dev, "error requesting IRQ : %d\n", irq);
+ 			return ret;
+@@ -315,7 +324,8 @@ static int ep93xx_setup_irqs(struct platform_device *pdev,
+ 	}
+ 
+ 	girq->default_type = IRQ_TYPE_NONE;
+-	girq->handler = handle_bad_irq;
++	/* TODO: replace wuth handle_bad_irq once we are fully hierarchical */
++	girq->handler = handle_simple_irq;
+ 
+ 	return 0;
+ }
+-- 
+2.37.4
+
