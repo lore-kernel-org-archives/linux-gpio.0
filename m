@@ -2,128 +2,170 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10AE9C32793
-	for <linux-gpio@archiver.kernel.org>; Wed, 18 Jan 2023 06:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B06C004D4
+	for <linux-gpio@archiver.kernel.org>; Wed, 18 Jan 2023 07:30:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229819AbjARGeK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 18 Jan 2023 01:34:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57840 "EHLO
+        id S229579AbjARHa3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 18 Jan 2023 02:30:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229907AbjARG3S (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Jan 2023 01:29:18 -0500
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE5761DB9F;
-        Tue, 17 Jan 2023 22:20:44 -0800 (PST)
-X-UUID: 3ab82f6e96f811eda06fc9ecc4dadd91-20230118
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=ssiHBlg9ViK4cAVSgimSmbQQJThFkTp/ayRhvOH0KqM=;
-        b=qB38iEgssuub0qP7ZKdb9UscZ6XjbVmZxbWvfdS8lurobkDogPePTafZeYZ8VHITg4tCMVtGPJzz0+oYNjr3qOVtPMUnrlzvGVdpKvgK7JPB5YuSWgC76XxLOqGJB2e36V0tx5tZZbGEYdUQHSqtbr2Ubwfx6hshmsTBgqeNmlY=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.18,REQID:de6120d4-8f0b-484f-a3b0-2b9ad0720a7d,IP:0,U
-        RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-        :release,TS:-5
-X-CID-META: VersionHash:3ca2d6b,CLOUDID:3be3fa54-dd49-462e-a4be-2143a3ddc739,B
-        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
-X-CID-BVR: 0
-X-UUID: 3ab82f6e96f811eda06fc9ecc4dadd91-20230118
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
-        (envelope-from <guodong.liu@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 623970952; Wed, 18 Jan 2023 14:20:39 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Wed, 18 Jan 2023 14:20:38 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.15 via Frontend Transport; Wed, 18 Jan 2023 14:20:37 +0800
-From:   Guodong Liu <Guodong.Liu@mediatek.com>
-To:     Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Light Hsieh <light.hsieh@mediatek.com>,
-        Rob Herring <robh@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Zhiyong Tao <zhiyong.tao@mediatek.com>,
-        Guodong Liu <Guodong.Liu@mediatek.com>
-Subject: [PATCH 0/2] MediaTek pinctrl cleanups and improvements
-Date:   Wed, 18 Jan 2023 14:20:34 +0800
-Message-ID: <20230118062036.26258-1-Guodong.Liu@mediatek.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S230186AbjARH0P (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Jan 2023 02:26:15 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A0B2875BE
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Jan 2023 22:44:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674024281; x=1705560281;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BTUhRgVXGXYq3ghvqIaDzlRZAFDZRIkq18KEGunpYeM=;
+  b=S6iC1i+Q5BP0ST7gUpzhbiFSYO1NlYD3/r5odW8XXOpln3808wuWA81I
+   P5q9ZD5K3W9pdV8c1ODLSrceflkkeLnScexyO+/QF3eumuSwZY/GV+12h
+   W+nsodyqd0vDI3IEbRvfN1whKd1nQRhU6JetNv6ba9t0zf8SdikiO4TGG
+   IinEWkFq85CEcaEi+l46XduECOErxxfiSPz+0VCxn099NXNLaPqwgAyzq
+   30kKYpHQ+IYEmfmoyGVzE21cdp3ZjRpTSIZiCgiV8+iSO5ywGeyssDGbZ
+   3g82IplwyhJz+pNG0SnhOYr4luS4XL6bgDdrHR4umlCpsFOkfu/bwhhNn
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10593"; a="323601064"
+X-IronPort-AV: E=Sophos;i="5.97,224,1669104000"; 
+   d="scan'208";a="323601064"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2023 22:44:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10593"; a="904945978"
+X-IronPort-AV: E=Sophos;i="5.97,224,1669104000"; 
+   d="scan'208";a="904945978"
+Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 17 Jan 2023 22:44:34 -0800
+Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pI2BV-00004Y-29;
+        Wed, 18 Jan 2023 06:44:33 +0000
+Date:   Wed, 18 Jan 2023 14:44:14 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
+ 900a37df9d98e6868be71cdaf24f42b4d2b2d0a7
+Message-ID: <63c7953e.TL+9CpJeXNGsgd0W%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Patch 1. Fix coverity by initializing pullen and pullup as zero.
-Coverity error message:
-	This issue is detected by 
-		Checker: UNINIT
-		Type: Uninitialized scalar variable
-	Defect is in:
-		File: drivers/pinctrl/mediatek/pinctrl-paris.c
-		Function and lines: 
-				mtk_pctrl_show_one_pin:627
-	CID 10350517 (#1 of 2): Uninitialized scalar variable (UNINIT)
-	(7) uninit_use: Using uninitialized value pullen.
-	                rsel = pullen;
-	                pullen = 1;
-	        } else {
-	CID 10350553 (#1 of 1): Uninitialized scalar variable (UNINIT)
-	(8) uninit_use_in_call: Using uninitialized value pullup when
-	    calling scnprintf.
-        len += scnprintf(buf + len, buf_len - len,
-                        "%03d: %1d%1d%1d%1d%02d%1d%1d%1d%1d",
-                        gpio,
-                        pinmux,
-                        mtk_pctrl_get_direction(hw, gpio),
-                        mtk_pctrl_get_out(hw, gpio),
-                        mtk_pctrl_get_in(hw, gpio),
-                        mtk_pctrl_get_driving(hw, gpio),
-                        mtk_pctrl_get_smt(hw, gpio),
-                        mtk_pctrl_get_ies(hw, gpio),
-                        pullen,
-                        pullup);
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
+branch HEAD: 900a37df9d98e6868be71cdaf24f42b4d2b2d0a7  Merge branch 'devel' into for-next
 
-Patch 2. Fix coverity by initializing *buf as zero.
-Coverity error message:
-	This issue is detected by 
-		Checker: UNINIT
-		Type: Uninitialized scalar variable
-	Defect is in:
-		File: drivers/pinctrl/mediatek/pinctrl-paris.c
-		Function and lines: 
-				mtk_pctrl_dbg_show
-	static void mtk_pctrl_dbg_show(struct pinctrl_dev *pctldev,
-				       struct seq_file *s,
-				       unsigned int gpio)
-	{
-	        struct mtk_pinctrl *hw = pinctrl_dev_get_drvdata(pctldev);
-        	(1) var_decl: Declaring variable buf without initializer.
-	        char buf[PIN_DBG_BUF_SZ];
+elapsed time: 726m
 
-        	(void)mtk_pctrl_show_one_pin(hw, gpio, buf, PIN_DBG_BUF_SZ);
+configs tested: 94
+configs skipped: 3
 
-	CID 10801732 (#1 of 1): Uninitialized scalar variable (UNINIT)
-	(2) uninit_use_in_call: Using uninitialized value *buf as argument to %s
-	    when calling seq_printf.
-	seq_printf(s, "%s", buf);
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Guodong Liu (2):
-  pinctrl: mediatek: Initialize variable pullen and pullup to zero
-  pinctrl: mediatek: Initialize variable *buf to zero
+gcc tested configs:
+um                             i386_defconfig
+um                           x86_64_defconfig
+powerpc                           allnoconfig
+sh                               allmodconfig
+mips                             allyesconfig
+arc                                 defconfig
+s390                             allmodconfig
+alpha                               defconfig
+s390                                defconfig
+ia64                             allmodconfig
+x86_64                           rhel-8.3-syz
+x86_64                         rhel-8.3-kunit
+s390                             allyesconfig
+x86_64                           rhel-8.3-kvm
+x86_64                           rhel-8.3-bpf
+i386                 randconfig-a014-20230116
+powerpc                          allmodconfig
+m68k                             allyesconfig
+i386                 randconfig-a013-20230116
+m68k                             allmodconfig
+i386                 randconfig-a012-20230116
+arc                              allyesconfig
+i386                 randconfig-a011-20230116
+alpha                            allyesconfig
+x86_64                            allnoconfig
+i386                 randconfig-a015-20230116
+i386                 randconfig-a016-20230116
+x86_64               randconfig-a011-20230116
+x86_64               randconfig-a013-20230116
+x86_64               randconfig-a012-20230116
+x86_64               randconfig-a014-20230116
+x86_64               randconfig-a015-20230116
+x86_64               randconfig-a016-20230116
+x86_64                              defconfig
+x86_64                    rhel-8.3-kselftests
+x86_64                          rhel-8.3-func
+i386                                defconfig
+x86_64                               rhel-8.3
+arm                                 defconfig
+x86_64                           allyesconfig
+arm                              allyesconfig
+arm64                            allyesconfig
+i386                             allyesconfig
+i386                          randconfig-c001
+i386                          randconfig-a012
+i386                          randconfig-a014
+i386                          randconfig-a016
+riscv                randconfig-r042-20230116
+arm                  randconfig-r046-20230117
+s390                 randconfig-r044-20230116
+arc                  randconfig-r043-20230117
+arc                  randconfig-r043-20230116
+arm                  randconfig-r046-20230115
+arc                  randconfig-r043-20230115
+m68k                          hp300_defconfig
+arm                            lart_defconfig
+i386                 randconfig-c001-20230116
+i386                          debian-10.3-kvm
+i386                        debian-10.3-kunit
+i386                         debian-10.3-func
+powerpc                      bamboo_defconfig
+arm                           imxrt_defconfig
+powerpc                      makalu_defconfig
+arm                        cerfcube_defconfig
+ia64                        generic_defconfig
+sh                 kfr2r09-romimage_defconfig
+openrisc                         alldefconfig
 
- drivers/pinctrl/mediatek/pinctrl-paris.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+clang tested configs:
+x86_64                          rhel-8.3-rust
+x86_64                        randconfig-k001
+x86_64               randconfig-a003-20230116
+x86_64               randconfig-a004-20230116
+x86_64               randconfig-a006-20230116
+x86_64               randconfig-a005-20230116
+x86_64               randconfig-a001-20230116
+x86_64               randconfig-a002-20230116
+i386                 randconfig-a002-20230116
+i386                 randconfig-a004-20230116
+i386                 randconfig-a001-20230116
+i386                 randconfig-a003-20230116
+i386                 randconfig-a005-20230116
+i386                 randconfig-a006-20230116
+powerpc                      acadia_defconfig
+arm                        magician_defconfig
+riscv                             allnoconfig
+arm                          sp7021_defconfig
+powerpc                     ppa8548_defconfig
+powerpc                     tqm8560_defconfig
+arm                  colibri_pxa270_defconfig
+arm                         hackkit_defconfig
+mips                          malta_defconfig
+mips                        qi_lb60_defconfig
+arm                           sama7_defconfig
+riscv                          rv32_defconfig
+powerpc                    mvme5100_defconfig
 
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
