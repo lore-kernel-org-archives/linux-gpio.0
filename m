@@ -2,221 +2,125 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C6DFC46467
-	for <linux-gpio@archiver.kernel.org>; Thu, 19 Jan 2023 13:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E1F6C6379F
+	for <linux-gpio@archiver.kernel.org>; Thu, 19 Jan 2023 13:22:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230345AbjASNFB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 19 Jan 2023 08:05:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42962 "EHLO
+        id S229593AbjASNWA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 19 Jan 2023 08:22:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230479AbjASNDY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Jan 2023 08:03:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5442A3EC6E
-        for <linux-gpio@vger.kernel.org>; Thu, 19 Jan 2023 05:01:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674133313;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=l9xeL1zpogfyrYrFJMv0Trz14AvIItPWkA0MzwazoJk=;
-        b=BgcVwqglvWQJwijOOLXv4XKma3bZXjZKbrzSzU63t/xZuzoMhiM1uSCzdOEnCUxebgzyLI
-        1XyFHlgrY6bT0QEGrcE4Uxg2P2YQhrhn10jZMfkN47m4iePg/gDZ9fq3fy9QfYgPPVcaJO
-        Awn4LowT32uR3O+SWGH3L4sb/A8NuB0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-519-q6VhBPwsNiypXfcce6WUCw-1; Thu, 19 Jan 2023 08:01:52 -0500
-X-MC-Unique: q6VhBPwsNiypXfcce6WUCw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1C82185CBE3;
-        Thu, 19 Jan 2023 13:01:51 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.39.194.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 67BAB1415108;
-        Thu, 19 Jan 2023 13:01:46 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Mark Gross <markgross@kernel.org>,
+        with ESMTP id S229968AbjASNVv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Jan 2023 08:21:51 -0500
+Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBBF183;
+        Thu, 19 Jan 2023 05:21:49 -0800 (PST)
+Received: by mail-qt1-x834.google.com with SMTP id x7so1459254qtv.13;
+        Thu, 19 Jan 2023 05:21:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=I2YXU2FJo+t/nPqAWwtxUT6+gPscBXDImBHIMu0OQoE=;
+        b=mZ1wsengVANkOpLmveEJz/cZ/OeeZqyyGrfyOojZoGAMu1KFEhdcSfXX91CJxKUUN3
+         9RKbeafQCjnksI1Hq5+YqajMUTthJJIcGvZfCxF7Nx77igqbWTMMfvYap/Og1VTHgMT7
+         NXxmqgd/MapFLBWzM7mRoSAT450SCn3/ZgC8rHN5NUDf3cN0z2eOmpmfdN6lQ1te/C5I
+         CTnnlLtGUa8GqW1VDTtd2uf+1jLC/E2iHMtgspbwDc4A9YxPg0nqvKVjbM+5MmtGvDOe
+         ApTeEer/LKLao15XbWpQKYw1gmB6+QO5kZqQHYWIZW8uCTOGcYqZPMghbSvLD9aiNWQw
+         flpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I2YXU2FJo+t/nPqAWwtxUT6+gPscBXDImBHIMu0OQoE=;
+        b=sgqv+tdO9xINtatnbMOt3n9f8ILuhlFwbjVUouhqG5ndS+sUF0InlpOIyH5WcquCiT
+         IrL55hYS/VrUsYF9f+hC31DOsq66/BJ9iiCaOixrZoxRsq73xirkpt2wVHP4G+7zNZ2R
+         JXjfl6mX6rGQjWfhcZGE0rLYC5u0xNyg/9xfbUJaVlmLi+EDpVqLZXjku0sUjohayAmk
+         Ou2UULkB3gEiLizq6ux3sO35qEsBqG0k4cGu81WxOSPpPHjVVtlnamlfzmEEfgBuOSfh
+         oz3eCHuSQOMJtcbme+PlmjjjhFD9xbtOEcmOcgLoPoKAl9k1y8oWI31Sfo/EEqxf0CP1
+         0IAg==
+X-Gm-Message-State: AFqh2kqICXE6uP2AwMYyGnLTe96OJpl9dnGRCriEoyRju1/qRgJc5m66
+        3ONWgHVvjM/HW5yGJxnQEiwHZ/cu0tXD1Fr8J4M=
+X-Google-Smtp-Source: AMrXdXt0K5GhdCCtT122Dc/CITFbyoRnhv2Lafu/DlF77tVGiHkxbuQDut8cAmeznttld4vXHOVNpmvTniAz1BscjIE=
+X-Received: by 2002:a05:622a:4115:b0:3b0:736:9de with SMTP id
+ cc21-20020a05622a411500b003b0073609demr568846qtb.61.1674134508725; Thu, 19
+ Jan 2023 05:21:48 -0800 (PST)
+MIME-Version: 1.0
+References: <20230119130053.111344-1-hdegoede@redhat.com> <20230119130053.111344-2-hdegoede@redhat.com>
+In-Reply-To: <20230119130053.111344-2-hdegoede@redhat.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 19 Jan 2023 15:21:12 +0200
+Message-ID: <CAHp75Ve1WtkyvLDHmrmJT8erqZn2B1m0ak=PSiy5cWWF-11HKg@mail.gmail.com>
+Subject: Re: [PATCH v4 01/11] leds: led-class: Add missing put_device() to led_put()
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Mark Gross <markgross@kernel.org>,
         Andy Shevchenko <andy@kernel.org>, Pavel Machek <pavel@ucw.cz>,
         Lee Jones <lee@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Daniel Scally <djrscally@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-gpio@vger.kernel.org, Kate Hsuan <hpa@redhat.com>,
         Mark Pearson <markpearson@lenovo.com>,
         Andy Yeh <andy.yeh@intel.com>, Hao Yao <hao.yao@intel.com>,
         linux-media@vger.kernel.org
-Subject: [PATCH v4 10/11] platform/x86: int3472/discrete: Move GPIO request to skl_int3472_register_clock()
-Date:   Thu, 19 Jan 2023 14:00:52 +0100
-Message-Id: <20230119130053.111344-11-hdegoede@redhat.com>
-In-Reply-To: <20230119130053.111344-1-hdegoede@redhat.com>
-References: <20230119130053.111344-1-hdegoede@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Move the requesting of the clk-enable GPIO to skl_int3472_register_clock()
-(and move the gpiod_put to unregister).
+On Thu, Jan 19, 2023 at 3:01 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> led_put() is used to "undo" a successful of_led_get() call,
+> of_led_get() uses class_find_device_by_of_node() which returns
+> a reference to the device which must be free-ed with put_device()
+> when the caller is done with it.
+>
+> Add a put_device() call to led_put() to free the reference returned
+> by class_find_device_by_of_node().
+>
+> And also add a put_device() in the error-exit case of try_module_get()
+> failing.
 
-This mirrors the GPIO handling in skl_int3472_register_regulator() and
-allows removing skl_int3472_map_gpio_to_clk() from discrete.c.
+This sounds to me like a bugfix. Why not the Fixes tag?
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- .../x86/intel/int3472/clk_and_regulator.c     | 28 +++++++++++++++--
- drivers/platform/x86/intel/int3472/common.h   |  3 +-
- drivers/platform/x86/intel/int3472/discrete.c | 30 ++-----------------
- 3 files changed, 30 insertions(+), 31 deletions(-)
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+>  drivers/leds/led-class.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 6a8ea94834fa..7391d2cf1370 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -241,8 +241,10 @@ struct led_classdev *of_led_get(struct device_node *np, int index)
+>
+>         led_cdev = dev_get_drvdata(led_dev);
+>
+> -       if (!try_module_get(led_cdev->dev->parent->driver->owner))
+> +       if (!try_module_get(led_cdev->dev->parent->driver->owner)) {
+> +               put_device(led_cdev->dev);
+>                 return ERR_PTR(-ENODEV);
+> +       }
+>
+>         return led_cdev;
+>  }
+> @@ -255,6 +257,7 @@ EXPORT_SYMBOL_GPL(of_led_get);
+>  void led_put(struct led_classdev *led_cdev)
+>  {
+>         module_put(led_cdev->dev->parent->driver->owner);
+> +       put_device(led_cdev->dev);
+>  }
+>  EXPORT_SYMBOL_GPL(led_put);
+>
+> --
+> 2.39.0
+>
 
-diff --git a/drivers/platform/x86/intel/int3472/clk_and_regulator.c b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-index e3b597d93388..626e5e86f4e0 100644
---- a/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-+++ b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-@@ -86,18 +86,34 @@ static const struct clk_ops skl_int3472_clock_ops = {
- 	.recalc_rate = skl_int3472_clk_recalc_rate,
- };
- 
--int skl_int3472_register_clock(struct int3472_discrete_device *int3472)
-+int skl_int3472_register_clock(struct int3472_discrete_device *int3472,
-+			       struct acpi_resource_gpio *agpio)
- {
-+	char *path = agpio->resource_source.string_ptr;
- 	struct clk_init_data init = {
- 		.ops = &skl_int3472_clock_ops,
- 		.flags = CLK_GET_RATE_NOCACHE,
- 	};
- 	int ret;
- 
-+	if (int3472->clock.cl)
-+		return -EBUSY;
-+
-+	int3472->clock.ena_gpio = acpi_get_and_request_gpiod(path, agpio->pin_table[0],
-+							     "int3472,clk-enable");
-+	if (IS_ERR(int3472->clock.ena_gpio))
-+		return dev_err_probe(int3472->dev, PTR_ERR(int3472->clock.ena_gpio),
-+				     "getting clk-enable GPIO\n");
-+
-+	/* Ensure the pin is in output mode and non-active state */
-+	gpiod_direction_output(int3472->clock.ena_gpio, 0);
-+
- 	init.name = kasprintf(GFP_KERNEL, "%s-clk",
- 			      acpi_dev_name(int3472->adev));
--	if (!init.name)
--		return -ENOMEM;
-+	if (!init.name) {
-+		ret = -ENOMEM;
-+		goto out_put_gpio;
-+	}
- 
- 	int3472->clock.frequency = skl_int3472_get_clk_frequency(int3472);
- 
-@@ -123,14 +139,20 @@ int skl_int3472_register_clock(struct int3472_discrete_device *int3472)
- 	clk_unregister(int3472->clock.clk);
- out_free_init_name:
- 	kfree(init.name);
-+out_put_gpio:
-+	gpiod_put(int3472->clock.ena_gpio);
- 
- 	return ret;
- }
- 
- void skl_int3472_unregister_clock(struct int3472_discrete_device *int3472)
- {
-+	if (!int3472->clock.cl)
-+		return;
-+
- 	clkdev_drop(int3472->clock.cl);
- 	clk_unregister(int3472->clock.clk);
-+	gpiod_put(int3472->clock.ena_gpio);
- }
- 
- int skl_int3472_register_regulator(struct int3472_discrete_device *int3472,
-diff --git a/drivers/platform/x86/intel/int3472/common.h b/drivers/platform/x86/intel/int3472/common.h
-index 82dc37e08882..0d4fa7d00b5f 100644
---- a/drivers/platform/x86/intel/int3472/common.h
-+++ b/drivers/platform/x86/intel/int3472/common.h
-@@ -121,7 +121,8 @@ int skl_int3472_get_sensor_adev_and_name(struct device *dev,
- 					 struct acpi_device **sensor_adev_ret,
- 					 const char **name_ret);
- 
--int skl_int3472_register_clock(struct int3472_discrete_device *int3472);
-+int skl_int3472_register_clock(struct int3472_discrete_device *int3472,
-+			       struct acpi_resource_gpio *agpio);
- void skl_int3472_unregister_clock(struct int3472_discrete_device *int3472);
- 
- int skl_int3472_register_regulator(struct int3472_discrete_device *int3472,
-diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/platform/x86/intel/int3472/discrete.c
-index 38b1372e0745..b7752c2b798d 100644
---- a/drivers/platform/x86/intel/int3472/discrete.c
-+++ b/drivers/platform/x86/intel/int3472/discrete.c
-@@ -2,8 +2,6 @@
- /* Author: Dan Scally <djrscally@gmail.com> */
- 
- #include <linux/acpi.h>
--#include <linux/clkdev.h>
--#include <linux/clk-provider.h>
- #include <linux/device.h>
- #include <linux/gpio/consumer.h>
- #include <linux/gpio/machine.h>
-@@ -154,24 +152,6 @@ static int skl_int3472_map_gpio_to_sensor(struct int3472_discrete_device *int347
- 	return 0;
- }
- 
--static int skl_int3472_map_gpio_to_clk(struct int3472_discrete_device *int3472,
--				       struct acpi_resource_gpio *agpio)
--{
--	char *path = agpio->resource_source.string_ptr;
--	u16 pin = agpio->pin_table[0];
--	struct gpio_desc *gpio;
--
--	gpio = acpi_get_and_request_gpiod(path, pin, "int3472,clk-enable");
--	if (IS_ERR(gpio))
--		return (PTR_ERR(gpio));
--
--	int3472->clock.ena_gpio = gpio;
--	/* Ensure the pin is in output mode and non-active state */
--	gpiod_direction_output(int3472->clock.ena_gpio, 0);
--
--	return skl_int3472_register_clock(int3472);
--}
--
- static void int3472_get_func_and_polarity(u8 type, const char **func, u32 *polarity)
- {
- 	switch (type) {
-@@ -277,9 +257,9 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
- 
- 		break;
- 	case INT3472_GPIO_TYPE_CLK_ENABLE:
--		ret = skl_int3472_map_gpio_to_clk(int3472, agpio);
-+		ret = skl_int3472_register_clock(int3472, agpio);
- 		if (ret)
--			err_msg = "Failed to map GPIO to clock\n";
-+			err_msg = "Failed to register clock\n";
- 
- 		break;
- 	case INT3472_GPIO_TYPE_PRIVACY_LED:
-@@ -342,11 +322,7 @@ static int skl_int3472_discrete_remove(struct platform_device *pdev)
- 
- 	gpiod_remove_lookup_table(&int3472->gpios);
- 
--	if (int3472->clock.cl)
--		skl_int3472_unregister_clock(int3472);
--
--	gpiod_put(int3472->clock.ena_gpio);
--
-+	skl_int3472_unregister_clock(int3472);
- 	skl_int3472_unregister_pled(int3472);
- 	skl_int3472_unregister_regulator(int3472);
- 
+
 -- 
-2.39.0
-
+With Best Regards,
+Andy Shevchenko
