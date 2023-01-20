@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09866C27C76
-	for <linux-gpio@archiver.kernel.org>; Fri, 20 Jan 2023 09:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3E3C25B50
+	for <linux-gpio@archiver.kernel.org>; Fri, 20 Jan 2023 09:45:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229928AbjATJp1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 20 Jan 2023 04:45:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37752 "EHLO
+        id S229533AbjATJp0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 20 Jan 2023 04:45:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbjATJp0 (ORCPT
+        with ESMTP id S229928AbjATJp0 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Jan 2023 04:45:26 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDD657AF0B
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Jan 2023 01:45:25 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id c10-20020a05600c0a4a00b003db0636ff84so3238173wmq.0
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Jan 2023 01:45:25 -0800 (PST)
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DF237AF13
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Jan 2023 01:45:24 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id l41-20020a05600c1d2900b003daf986faaeso3215527wms.3
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Jan 2023 01:45:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QqYkAVDDJHqckoBGfhi4xsYYLbZddtA7wLw1qqPJGNc=;
-        b=fISfqToLdi2KsdJevtG0TxCiHuprHieWJwPsyciUAouZKO8TZG27n9D/yLLZAUT9uw
-         VvDWmGN84dDgZ8qNNkRc54SWP3zzXhjg+21UBDKGKqWk/z+zbmvS2L4kExPxDml3I1/Y
-         PApCz3GgjoY7AHdCu7fieapAg9mpJWRzSbJr2fRvxsQuJXlGs1ug63FsiUVg4URgO5yt
-         q74Ryg4AhAR/pGBoBO7XWM3JMAjD7RRJWwu+/GLxrRw0PCQpxqFw/ZldFZVk/pZX02Om
-         jDf7Y9/RDYMr9og3HcaVNxr6DqSVDUePh6lWS0SmHJYQEvkzlVGI+3HR4jo6A+r7a3U7
-         kZ4Q==
+        bh=z5+SW9LTuCmqNqI0GFaxRM/Jn8L/U60QiwU3h3L6sx0=;
+        b=ByzD2BGq0uBG9Ieqmj4I1nCLvrvm/6DHMyScgZY2/RNSvYUDRVkL9YUP5CsyxfQCCv
+         x4GNznjWKM91kFsg88m1uuiW7pAipqOk7yeRYPwAnILVwNSJpUGYCLhKcActqk2L28kO
+         WgnScl9QYvcEfrXXTPNKQKfFjNuMGGl+kqZCrRKZpMkCRskwT/SJH9NKx2SjWIZbhVlS
+         hlgKrjJz0CmBDBT/ZnuDSmruE1W5SspJ/4Nwtxi7n71myAdvZZC7x4a3N1GEkoXNDzmu
+         canuKTWuRvhgJIAKXt7TmespVVjMhVSxfS6uk0rLL8Ra22fXOcrRorwmGPftjaclqYIl
+         vLBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QqYkAVDDJHqckoBGfhi4xsYYLbZddtA7wLw1qqPJGNc=;
-        b=ub4opv+3Lw3s93Iw6RxMmeuN/AJEtPC0fHO095vyNyjF+J2wCTaCOJx8eu5T1XBV/X
-         OnSHsWgBqrBHJjZSLuccBcVzsHH3oG4yQxyNhqvXoHlRM2ZJkq2MyPZAHXIMZpXW9bTQ
-         e77cFtVD7GlGufyQ7A37dt0Co9komt5tV4CbVNVnf0vwKzvWvpxgTSCR5lzpP73T+E+r
-         uRVyx9G8gAmRr1HY7hMxQlwz8eP3EWAm2QnrdofvItgGYebtTJpRtn2gQgTXw1rLtGcc
-         Kpm9gslw39wqgQ+3zGL3aEoPMbstZ4Rad5XAyR3HtMWYfo3waR2hlWplWUUIvJ/BN/iK
-         +p3w==
-X-Gm-Message-State: AFqh2kpzSFFCkMD6lbPdEwgNXWTC2XFzW2KcblYikgCFlS9SFC9BIhQJ
-        YZnS3yOErCCr6RFceeeWGHm8+tYYeeo0MNSv
-X-Google-Smtp-Source: AMrXdXuct8PIJR/hayrQfsHjYIDoSQBQqgerheEd9FYQ3rQNeAf19NmffoYaOToP+2Aknzp/iJcfMw==
-X-Received: by 2002:a05:600c:538e:b0:3da:516:19ed with SMTP id hg14-20020a05600c538e00b003da051619edmr13339214wmb.29.1674207925469;
-        Fri, 20 Jan 2023 01:45:25 -0800 (PST)
+        bh=z5+SW9LTuCmqNqI0GFaxRM/Jn8L/U60QiwU3h3L6sx0=;
+        b=PK1vyny0WYCI1lxIANtfwbuqxb9aNzhHCjPcAU4kMxNi24IywImyjwwqyyKN6p6QoA
+         4i/Fd7RdSVy94ic0NY8j5xA7ELAqZg+DNFCvzOr7uNlyG6eStK7Ui9GaUuwdLtpsz5vn
+         uyO91240nKggatbgWR90I/CQxypnJffSQBfVd6FuFaEqlEOYhYoaZXumwtfrNX0uGfJ8
+         TsOogbreh72OaY3lk5ecqHZVWuUqfqAnMRElTKxGol90sjef4t43/GoHqWCTqtiBJzvi
+         ji7ZlS4UwJHRenjLKbS+DF8QB4pY/+gl7xXxI612rFi6CIj1rUve+7xVUxjtsG3ZSuNP
+         3bkw==
+X-Gm-Message-State: AFqh2kqKScFRGVvmOUWzRDJWnb+TS6ZbmJ4kQbRB3PIYZg+lzbBacJOo
+        9Wdqmj4kSVwe5bBMTFvldPG0Zg==
+X-Google-Smtp-Source: AMrXdXsIrg4FxG22oWxbe/uDx6cB1y9XNKC2QkIpWLVqBvoK4+jZF+J1W8UDmS9hJ2fg4+Wz/I4i7w==
+X-Received: by 2002:a05:600c:3488:b0:3cf:68f8:790b with SMTP id a8-20020a05600c348800b003cf68f8790bmr9828598wmq.11.1674207922955;
+        Fri, 20 Jan 2023 01:45:22 -0800 (PST)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:580c:7b02:3ffd:b2e])
-        by smtp.gmail.com with ESMTPSA id v17-20020a05600c445100b003d9e74dd9b2sm1800485wmn.9.2023.01.20.01.45.24
+        by smtp.gmail.com with ESMTPSA id v17-20020a05600c445100b003d9e74dd9b2sm1800485wmn.9.2023.01.20.01.45.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jan 2023 01:45:25 -0800 (PST)
+        Fri, 20 Jan 2023 01:45:22 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -56,9 +56,9 @@ To:     Kent Gibson <warthog618@gmail.com>,
         Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [libgpiod][PATCH v2 4/8] gpioset: use gpiod_line_config_set_output_values()
-Date:   Fri, 20 Jan 2023 10:45:11 +0100
-Message-Id: <20230120094515.40464-5-brgl@bgdev.pl>
+Subject: [libgpiod][PATCH v2 1/8] README: update for libgpiod v2
+Date:   Fri, 20 Jan 2023 10:45:08 +0100
+Message-Id: <20230120094515.40464-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230120094515.40464-1-brgl@bgdev.pl>
 References: <20230120094515.40464-1-brgl@bgdev.pl>
@@ -70,55 +70,94 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Use the new line config function to shrink the gpioset code and drop one
-for loop.
+Certain parts of the README file still refer to concepts removed from
+libgpiod v2. Update whatever needs updating.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- tools/gpioset.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ README | 33 +++++++++++++++++----------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/tools/gpioset.c b/tools/gpioset.c
-index a871a16..1429d65 100644
---- a/tools/gpioset.c
-+++ b/tools/gpioset.c
-@@ -870,9 +870,9 @@ int main(int argc, char **argv)
- 	struct gpiod_line_config *line_cfg;
- 	struct line_resolver *resolver;
- 	enum gpiod_line_value *values;
--	int i, j, num_lines, ret;
- 	struct gpiod_chip *chip;
- 	unsigned int *offsets;
-+	int i, num_lines, ret;
- 	struct config cfg;
- 	char **lines;
+diff --git a/README b/README
+index d51d701..b71739e 100644
+--- a/README
++++ b/README
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: CC-BY-SA-4.0
+-# SPDX-FileCopyrightText: 2017-2021 Bartosz Golaszewski <bartekgola@gmail.com>
++# SPDX-FileCopyrightText: 2017-2023 Bartosz Golaszewski <brgl@bgdev.pl>
  
-@@ -933,15 +933,16 @@ int main(int argc, char **argv)
- 							values);
+ libgpiod
+ ========
+@@ -30,14 +30,10 @@ allow an easy conversion of user scripts to using the character device.
+ BUILDING
+ --------
  
- 		gpiod_line_config_reset(line_cfg);
--		for (j = 0; j < num_lines; j++) {
--			gpiod_line_settings_set_output_value(settings,
--							     values[j]);
+-This is a pretty standard autotools project. It does not depend on any
+-libraries other than the standard C library with GNU extensions.
++This is a pretty standard autotools project. The core C library does not have
++any external dependencies other than the standard C library with GNU extensions.
+ 
+-The autoconf version needed to compile the project is 2.61.
 -
--			ret = gpiod_line_config_add_line_settings(
--				line_cfg, &offsets[j], 1, settings);
--			if (ret)
--				die_perror("unable to add line settings");
--		}
-+
-+		ret = gpiod_line_config_add_line_settings(line_cfg, offsets,
-+							  num_lines, settings);
-+		if (ret)
-+			die_perror("unable to add line settings");
-+
-+		ret = gpiod_line_config_set_output_values(line_cfg,
-+							  values, num_lines);
-+		if (ret)
-+			die_perror("unable to set output values");
+-Recent kernel headers are also required for the GPIO user API definitions. For
+-the exact version of kernel headers required, please refer to the configure.ac
+-contents.
++The command-line tools optionally depend on libedit for the interactive feature.
  
- 		chip = gpiod_chip_open(resolver->chips[i].path);
- 		if (!chip)
+ To build the project (including command-line utilities) run:
+ 
+@@ -51,6 +47,8 @@ arguments to it.
+ If building from release tarballs, the configure script is already provided and
+ there's no need to invoke autogen.sh.
+ 
++For all configure features, see: ./configure --help.
++
+ TOOLS
+ -----
+ 
+@@ -231,10 +229,10 @@ interface.
+ 
+ The minimum kernel version required to run the tests can be checked in the
+ tests/gpiod-test.c source file (it's subject to change if new features are
+-added to the kernel). The tests work together with the gpio-mockup kernel
+-module which must be enabled. NOTE: the module must not be built-in. A helper
+-library - libgpiomockup - is included to enable straightforward interaction
+-with the module.
++added to the kernel). The tests work together with the gpio-sim kernel module
++which must either be built-in or available for loading using kmod. A helper
++library - libgpiosim - is included to enable straightforward interaction with
++the module.
+ 
+ To build the testing executable add the '--enable-tests' option when running
+ the configure script. If enabled, the tests will be installed next to
+@@ -251,12 +249,13 @@ The gpio-tools programs can be tested separately using the gpio-tools-test.bats
+ script. It requires bats[1] to run and assumes that the tested executables are
+ in the same directory as the script.
+ 
+-Both C++ and Python bindings also include their own test-suites. Both reuse the
+-libgpiomockup library to avoid code duplication when interacting with
+-gpio-mockup.
++C++, Rust and Python bindings also include their own test-suites. All three
++reuse the libgpiosim library to avoid code duplication when interacting with
++gpio-sim.
+ 
+ Python test-suite uses the standard unittest package. C++ tests use an external
+-testing framework - Catch2 - which must be installed in the system.
++testing framework - Catch2 - which must be installed in the system. Rust
++bindings use the standard tests module layout and the #[test] attribute.
+ 
+ DOCUMENTATION
+ -------------
+@@ -268,6 +267,8 @@ doxygen markup blocks. Doxygen documentation can be generated by executing
+ Python bindings contain help strings that can be accessed with the help
+ builtin.
+ 
++Rust bindings use rustdoc.
++
+ Man pages for command-line programs are generated automatically if gpio-tools
+ were selected and help2man is available in the system.
+ 
 -- 
 2.37.2
 
