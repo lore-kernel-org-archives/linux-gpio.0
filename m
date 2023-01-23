@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3996C61D9D
-	for <linux-gpio@archiver.kernel.org>; Mon, 23 Jan 2023 16:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED858C54EAA
+	for <linux-gpio@archiver.kernel.org>; Mon, 23 Jan 2023 16:39:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233258AbjAWQiu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 23 Jan 2023 11:38:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40728 "EHLO
+        id S233299AbjAWQjH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 23 Jan 2023 11:39:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233260AbjAWQin (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Jan 2023 11:38:43 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E71DC196A0
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Jan 2023 08:38:40 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id kt14so32101942ejc.3
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Jan 2023 08:38:40 -0800 (PST)
+        with ESMTP id S233302AbjAWQix (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Jan 2023 11:38:53 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A7882C667
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Jan 2023 08:38:45 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id tz11so32160501ejc.0
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Jan 2023 08:38:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=a+hdoITDtYQdRah2TmgE8D0Rqy5YhdMJSbiS7Eipx1Q=;
-        b=bqGaDLWcZa7cmKNnVDJMPgBiuu5kjGqexCcQeQWaisS9AUqB0RoxbhTKqjlP2Row9s
-         rkzeXajDcmviwr1Ut0Ir7UZNjUOPfiF+evHL3aqygM3l/w6Pg7EmtB60e8CY64Yb3u9e
-         RtdiCUU2vmQp+FlnGmwy3ZumdlODl8HjDI5KFalo3wphL3M2A+hHrDHFhjPpQFQIOFps
-         KmKvcQO1f5ks57h4dkfAaf5rK17iCpws4HsVOPVNSb4+WVXTlkzE1ez5B0UNt1gnaBUI
-         awgQXL6o0RnO5a36izxG4ByhDlvsBufcVF/Z5cqitFtf4aIS3jUKFzhvICJsW1JodutL
-         D27w==
+        bh=re/iBS/krfavbjAybh8kxWH3jwUIJgUXVLFDpOuxVaQ=;
+        b=tte5UV9bJSfSYqJ7ySed85BL8AL0jf3Szrq2yD2EprWKr4hrug4SnSoRf2ZXdGkcYH
+         7EVPyKY7z8kv4jSmr/YWXpVpEV5kqmAc+XLUWyQrGo40UWI2Gc2CCySrzuyifdituidQ
+         UcEisgl01lpt4XPsYmAk/Bt4gEr5LbDgn7++ah0ohiSa7JzWaqpcA6rtdoPNhUj91NDS
+         q9MjGODS04+gDtCQh0dNKg6JDwLHh4qqXhzyzbtLTUGDlNPx8ZZ+JZeaQLE86JoJAQoO
+         uR9e4k3HG3VGSFAq0ASYg3f62O5vqmD0hzx7WUYXpi1VCQxUjHQtTG+8TGpBeBFI54Xb
+         91EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=a+hdoITDtYQdRah2TmgE8D0Rqy5YhdMJSbiS7Eipx1Q=;
-        b=32gj/TDi2SrTdoMsGjmtOi9hXZlWjIe/fajB5LkEaQQVKMxfnajYlqYpZxgBReSa56
-         i8yIkjg5nn1R7JlcxXFP3XVPH26DlmInfsXc8g2AEwM83geGFac5o8t8/i6U7OkWTSxT
-         PK+KD79N8NXQkgg3RYnjrwmiojZl/y1UPD8dzu55nIFjMko01MXKnaJlI+ZnnlhKmCSr
-         1BSa4MCXY4zyg3g76uA9vaDaJAaRn8UAGScn5/IjX8nuRiHTrklZcgpCPK7hEfoBH0aM
-         WYaKQiC5Nx5/s4lEPL6ii6EaxaOtDYrl3mmUz0AOm83cg7jdWlzHKCTbYC+oRiW0/+t+
-         rCNA==
-X-Gm-Message-State: AFqh2kopA0mQM+SWp3oAmzSp/F7nRcnyVvkoykdvX5QRidXag3tIOTDU
-        lV2JCCrPmsncq5MFMD6fdHEVmQ==
-X-Google-Smtp-Source: AMrXdXtMyQtPV6Ld/eU46UfccpYnPBqrsYGxZtMQovkjb39Rb2TTGeTrY+HK4UKnXUqqYxKPpefy9w==
-X-Received: by 2002:a17:907:961b:b0:872:8e48:3b91 with SMTP id gb27-20020a170907961b00b008728e483b91mr33187398ejc.52.1674491920432;
-        Mon, 23 Jan 2023 08:38:40 -0800 (PST)
+        bh=re/iBS/krfavbjAybh8kxWH3jwUIJgUXVLFDpOuxVaQ=;
+        b=WyzJk6RBqel/SRkDwp7VqQ/+DKgbN22PbmqNBs+V23ummrhvtUmVvMnu28eL3cD9+J
+         BA4W8TV6T+yEXmUS/R+4mQFNsEdc+jcI8JtlzVqZdwBbe3xUMJ52J2tGVdpcU3u/Xmr0
+         Xc5WHaWmxd6yMNvaxi9w8H9Ed8LnBJiw7MVNF9N6cJOiP5aLwiA7x0ZGD9NjlydukzYs
+         9V7h9AN0C/xB9itfLdOwAZLFMR4q8wS2KuL9K8pTpTcz0yKyy57Q6gA6PBs8wEWSLNtG
+         bM/yR1+rL1oga9Q3cjgNrAnD5WgvgNAHxATJHZJcmXjgYEtOSPo5zj53+vbxpR2/TbdV
+         4Dfw==
+X-Gm-Message-State: AFqh2kp8p7BuVlFejsv5KvBch3ek6OJ72Po34NuBXSYzlu6xL/+/g9m4
+        g/PM4eIWAGCmSBPyomLuQYObTg==
+X-Google-Smtp-Source: AMrXdXvh5fhFr1zDZgmt1Fk7cgrD4iLURkeGSSmFiCTQtEWqT12tYjTRyMlLpFC6Yl1qMfW7FzGM7A==
+X-Received: by 2002:a17:906:368f:b0:877:593a:58d0 with SMTP id a15-20020a170906368f00b00877593a58d0mr21327808ejc.29.1674491924794;
+        Mon, 23 Jan 2023 08:38:44 -0800 (PST)
 Received: from c64.fritz.box ([81.221.122.240])
-        by smtp.gmail.com with ESMTPSA id lb25-20020a170907785900b007c00323cc23sm22198562ejc.27.2023.01.23.08.38.39
+        by smtp.gmail.com with ESMTPSA id lb25-20020a170907785900b007c00323cc23sm22198562ejc.27.2023.01.23.08.38.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jan 2023 08:38:40 -0800 (PST)
+        Mon, 23 Jan 2023 08:38:43 -0800 (PST)
 From:   =?UTF-8?q?Bernhard=20Rosenkr=C3=A4nzer?= <bero@baylibre.com>
 To:     linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -62,9 +62,9 @@ To:     linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
         allen-kh.cheng@mediatek.com, nfraprado@collabora.com,
         andrew@lunn.ch, gtk3@inbox.ru, sean.wang@mediatek.com,
         zhiyong.tao@mediatek.com
-Subject: [PATCH v8 4/9] dt-bindings: pinctrl: add bindings for Mediatek MT8365 SoC
-Date:   Mon, 23 Jan 2023 17:38:28 +0100
-Message-Id: <20230123163833.1007181-5-bero@baylibre.com>
+Subject: [PATCH v8 7/9] dt-bindings: timer: mediatek,mtk-timer: add MT8365 SoC bindings
+Date:   Mon, 23 Jan 2023 17:38:31 +0100
+Message-Id: <20230123163833.1007181-8-bero@baylibre.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230123163833.1007181-1-bero@baylibre.com>
 References: <20230123163833.1007181-1-bero@baylibre.com>
@@ -75,218 +75,25 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add devicetree bindings for Mediatek MT8365 pinctrl driver.
+Add binding description for mediatek,mt8365-systimer
 
 Signed-off-by: Bernhard Rosenkränzer <bero@baylibre.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../pinctrl/mediatek,mt8365-pinctrl.yaml      | 197 ++++++++++++++++++
- 1 file changed, 197 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml
+ Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml
-new file mode 100644
-index 0000000000000..4b96884a1afc7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml
-@@ -0,0 +1,197 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/mediatek,mt8365-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Mediatek MT8365 Pin Controller
-+
-+maintainers:
-+  - Zhiyong Tao <zhiyong.tao@mediatek.com>
-+  - Bernhard Rosenkränzer <bero@baylibre.com>
-+
-+description: |
-+  The MediaTek's MT8365 Pin controller is used to control SoC pins.
-+
-+properties:
-+  compatible:
-+    const: mediatek,mt8365-pinctrl
-+
-+  reg:
-+    maxItems: 1
-+
-+  mediatek,pctl-regmap:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    items:
-+      maxItems: 1
-+    minItems: 1
-+    maxItems: 2
-+    description: |
-+      Should be phandles of the syscfg node.
-+
-+  gpio-controller: true
-+
-+  "#gpio-cells":
-+    const: 2
-+    description: |
-+      Number of cells in GPIO specifier. Since the generic GPIO
-+      binding is used, the amount of cells must be specified as 2. See the below
-+      mentioned gpio binding representation for description of particular cells.
-+
-+  interrupt-controller: true
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  "#interrupt-cells":
-+    const: 2
-+
-+patternProperties:
-+  "-pins$":
-+    type: object
-+    additionalProperties: false
-+    patternProperties:
-+      "pins$":
-+        type: object
-+        additionalProperties: false
-+        description: |
-+          A pinctrl node should contain at least one subnode representing the
-+          pinctrl groups available on the machine. Each subnode will list the
-+          pins it needs, and how they should be configured, with regard to muxer
-+          configuration, pullups, drive strength, input enable/disable and input
-+          schmitt.
-+        $ref: /schemas/pinctrl/pincfg-node.yaml
-+
-+        properties:
-+          pinmux:
-+            description:
-+              integer array, represents gpio pin number and mux setting.
-+              Supported pin number and mux varies for different SoCs, and are
-+              defined as macros in <soc>-pinfunc.h directly.
-+
-+          bias-disable: true
-+
-+          bias-pull-up:
-+            description: |
-+              Besides generic pinconfig options, it can be used as the pull up
-+              settings for 2 pull resistors, R0 and R1. User can configure those
-+              special pins.
-+
-+          bias-pull-down: true
-+
-+          input-enable: true
-+
-+          input-disable: true
-+
-+          output-low: true
-+
-+          output-high: true
-+
-+          input-schmitt-enable: true
-+
-+          input-schmitt-disable: true
-+
-+          mediatek,drive-strength-adv:
-+            description: |
-+              Describe the specific driving setup property.
-+              For I2C pins, the existing generic driving setup can only support
-+              2/4/6/8/10/12/14/16mA driving. But in specific driving setup, they
-+              can support 0.125/0.25/0.5/1mA adjustment. If we enable specific
-+              driving setup, the existing generic setup will be disabled.
-+              The specific driving setup is controlled by E1E0EN.
-+              When E1=0/E0=0, the strength is 0.125mA.
-+              When E1=0/E0=1, the strength is 0.25mA.
-+              When E1=1/E0=0, the strength is 0.5mA.
-+              When E1=1/E0=1, the strength is 1mA.
-+              EN is used to enable or disable the specific driving setup.
-+              Valid arguments are described as below:
-+              0: (E1, E0, EN) = (0, 0, 0)
-+              1: (E1, E0, EN) = (0, 0, 1)
-+              2: (E1, E0, EN) = (0, 1, 0)
-+              3: (E1, E0, EN) = (0, 1, 1)
-+              4: (E1, E0, EN) = (1, 0, 0)
-+              5: (E1, E0, EN) = (1, 0, 1)
-+              6: (E1, E0, EN) = (1, 1, 0)
-+              7: (E1, E0, EN) = (1, 1, 1)
-+              So the valid arguments are from 0 to 7.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [0, 1, 2, 3, 4, 5, 6, 7]
-+
-+          mediatek,pull-up-adv:
-+            description: |
-+              Pull up setings for 2 pull resistors, R0 and R1. User can
-+              configure those special pins. Valid arguments are described as below:
-+              0: (R1, R0) = (0, 0) which means R1 disabled and R0 disabled.
-+              1: (R1, R0) = (0, 1) which means R1 disabled and R0 enabled.
-+              2: (R1, R0) = (1, 0) which means R1 enabled and R0 disabled.
-+              3: (R1, R0) = (1, 1) which means R1 enabled and R0 enabled.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [0, 1, 2, 3]
-+
-+          mediatek,pull-down-adv:
-+            description: |
-+              Pull down settings for 2 pull resistors, R0 and R1. User can
-+              configure those special pins. Valid arguments are described as below:
-+              0: (R1, R0) = (0, 0) which means R1 disabled and R0 disabled.
-+              1: (R1, R0) = (0, 1) which means R1 disabled and R0 enabled.
-+              2: (R1, R0) = (1, 0) which means R1 enabled and R0 disabled.
-+              3: (R1, R0) = (1, 1) which means R1 enabled and R0 enabled.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [0, 1, 2, 3]
-+
-+          mediatek,tdsel:
-+            description: |
-+              An integer describing the steps for output level shifter duty
-+              cycle when asserted (high pulse width adjustment). Valid arguments
-+              are from 0 to 15.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+
-+          mediatek,rdsel:
-+            description: |
-+              An integer describing the steps for input level shifter duty cycle
-+              when asserted (high pulse width adjustment). Valid arguments are
-+              from 0 to 63.
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+
-+        required:
-+          - pinmux
-+
-+required:
-+  - compatible
-+  - reg
-+  - gpio-controller
-+  - "#gpio-cells"
-+
-+allOf:
-+  - $ref: pinctrl.yaml#
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/pinctrl/mt8365-pinfunc.h>
-+    soc {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
-+
-+      pio: pinctrl@1000b000 {
-+        compatible = "mediatek,mt8365-pinctrl";
-+        reg = <0 0x1000b000 0 0x1000>;
-+        mediatek,pctl-regmap = <&syscfg_pctl>;
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        interrupt-controller;
-+        #interrupt-cells = <2>;
-+        interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
-+
-+        pio-pins {
-+          pins {
-+            pinmux = <MT8365_PIN_59_SDA1__FUNC_SDA1_0>, <MT8365_PIN_60_SCL1__FUNC_SCL1_0>;
-+            mediatek,pull-up-adv = <3>;
-+            mediatek,drive-strength-adv = <00>;
-+            bias-pull-up;
-+          };
-+        };
-+      };
-+    };
+diff --git a/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt b/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
+index 8bbb6e94508b2..b3e797e8aa313 100644
+--- a/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
++++ b/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
+@@ -33,6 +33,7 @@ Required properties:
+ 
+ 	For those SoCs that use CPUX
+ 	* "mediatek,mt6795-systimer" for MT6795 compatible timers (CPUX)
++	* "mediatek,mt8365-systimer" for MT8365 compatible timers (CPUX)
+ 
+ - reg: Should contain location and length for timer register.
+ - clocks: Should contain system clock.
 -- 
 2.39.1
 
