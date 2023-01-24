@@ -2,95 +2,104 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B59BC25B4E
-	for <linux-gpio@archiver.kernel.org>; Tue, 24 Jan 2023 08:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0188C54EAA
+	for <linux-gpio@archiver.kernel.org>; Tue, 24 Jan 2023 08:36:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231749AbjAXIYZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 24 Jan 2023 03:24:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48448 "EHLO
+        id S231593AbjAXIgU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 24 Jan 2023 03:36:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229753AbjAXIYZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Jan 2023 03:24:25 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6520BB
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Jan 2023 00:24:23 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id k13so14078028plg.0
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Jan 2023 00:24:23 -0800 (PST)
+        with ESMTP id S232064AbjAXIgT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Jan 2023 03:36:19 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52B41659A
+        for <linux-gpio@vger.kernel.org>; Tue, 24 Jan 2023 00:36:17 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id j17so10844403wms.0
+        for <linux-gpio@vger.kernel.org>; Tue, 24 Jan 2023 00:36:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=K7gLXq4ZFSqafs80Sd3lKjhLu4IsjizEIRLtplmdEu8=;
-        b=DyaGK6aEgVhUnauB3u70U/RPhXVViT8cJJuewveqL6g0ykbQqzgslkzXBR+MgI8JW6
-         mWy961hyNTCIUy0UiydUSW4jn0E0m8hs/dZwmJOZTAhYmViF1WqYHca1Ouuk77MtteiL
-         cwsZ5K4AWN3IgvqoCt+CkB63ApaeotVGCso21WqtR6Xrz86lbvoep6pnKgjO9pint5e1
-         vPf8edHXIBRaDIUqhK5i8cIrOEGcSh3mTjwbfiWGrKblwx1oSe55rRYuQ1TLGwG7hS5j
-         3J2zAon9pdBeUCpvjCVpDhbFH4kShbGlDqenSWa0McezJqjQDO6aKqW/yhe8c0WEe+DF
-         KBfQ==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+DHAHqm5mVrdyz4PxCFvnliRLiDdHHafIf1mzcKDvns=;
+        b=mVnjvE2s1a9WXq6NVhTnCnlMlrcB0t4g8HtTagw/livwWU9M2TNbPPAnFGNu7wMV5w
+         p7S41sleaY9OAnp5hcsFq33lpXA2LD55vjPjZR8imXG0WHcvn8yXnSDhaX+oUr/YqGCc
+         Ous99brkpsYno9LrL7bkm6bfbm5ee+RtEFKsHSbZzJr+FSgFwVHJKapEAvaxhfzs5mE/
+         w5PsuVQf0wZygT6HoGiXtGz2JPzq7W4zalPINmXOKYL3QTa0YTyFtdsxYTexIBQ6DoGK
+         VNkP2P5Jh4volMp3GhhTsBly5JuF5kWGY9CW/fw30y6jwSWIyjKiEyWeht1Vl8iM1wxI
+         V1sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K7gLXq4ZFSqafs80Sd3lKjhLu4IsjizEIRLtplmdEu8=;
-        b=1EgNvI5Z5LU3eMJINDDsWiPCGVM8Cec0g30L+aIF/f9IcZM0tpu9EktTZRedSpdkrD
-         D7eNrwA5nC2eyVIWNYDjWcIQrvVoCG+m+eOXqml07YnQ6WYrWAGOIMowO+jkf98OrNJd
-         /rSAVr3Fru0VKdYxYAk3tIqPva56ZtIkfQwEIvXJfao1+agLZrImE26OgwhvK/8Y8w7T
-         6DhwMyTU+xZhWp++0uWIMNxXg9cwMD8B6Zhp8bVciQuon7l7vpVN2PdgR458BNk8lLz5
-         F3V/QTaTkAp/5QBm9WiAYfK5UKAGaquTvsA1vPXwjyy7mqq561fou3akqTv0uOhnGvh9
-         j1kQ==
-X-Gm-Message-State: AFqh2kpdWM5ZV9X3tQ1MUEsFSdzWL0GE1Jp5Pt9r4WJI9p887eulj+4h
-        FAmC8FrxW9BYFGEHeR6UmiDmYlvcMJDyYuYT
-X-Google-Smtp-Source: AMrXdXv2UDb41hZdiqq/MCgxNuFgHX1qzCtxX6WV3yXo8SDPIE0Y3cga+F3b4eXyO5u0TE7uX5siDQ==
-X-Received: by 2002:a17:902:a717:b0:194:78e2:f272 with SMTP id w23-20020a170902a71700b0019478e2f272mr27564660plq.53.1674548663442;
-        Tue, 24 Jan 2023 00:24:23 -0800 (PST)
-Received: from localhost ([122.172.83.155])
-        by smtp.gmail.com with ESMTPSA id be1-20020a170902aa0100b0019608291564sm1044086plb.134.2023.01.24.00.24.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jan 2023 00:24:22 -0800 (PST)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>
-Subject: [PATCH] rust: Allow reusing locally installed gpio library
-Date:   Tue, 24 Jan 2023 13:53:43 +0530
-Message-Id: <3d03ede97ce0717e3f69de8fd4175407a3aa3a0e.1674548651.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+DHAHqm5mVrdyz4PxCFvnliRLiDdHHafIf1mzcKDvns=;
+        b=ToIu4eWiaocLidCBfxtLTdp4eUMrQTVKRN3GTG44janIlsjRom3/YV2HuaUv4+7QFT
+         nusLm+dV1Fa095GJPQaHLGgjmi8STf8Sosbn7PT5ZI2GEWKH5OY1U96SvLeeweE0iNCw
+         jutuOalnJZMReSYDr/U1plJHKW3cBPjDLlg5Ok4fMtAW546Ny+y9OEHkpsDwNG5J2cKH
+         tSWG6xeI7uCHZUDHGs3dsNrDUAbXw5Mn/mhOCC1wdC4xRHlY7bCDHBZB7KZmzZhuBpC9
+         HekfM0Mo9pbiz1H4U1GP2ro4julsSlBgysiQkkhNhKeGPskvZd7FfQUmcMfFVGq5gQ8z
+         3LDw==
+X-Gm-Message-State: AFqh2kq40sL9kHketiJ6Tl5DbkcWwvWqlsBzVk3gnPbfXLSlHvBilMQD
+        sTu4slIWyE8mmzSQDTwgHdYcTw==
+X-Google-Smtp-Source: AMrXdXvqFer9U2gpvrkA9katgZ3v+FI8mwsJhUFMGM29c0UiNV1/dLmZ0rvPr3GsXvG9rXnwONePew==
+X-Received: by 2002:a05:600c:310e:b0:3db:fc3:6de4 with SMTP id g14-20020a05600c310e00b003db0fc36de4mr23498044wmo.35.1674549375874;
+        Tue, 24 Jan 2023 00:36:15 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id n15-20020a5d4c4f000000b002bfad438811sm658147wrt.74.2023.01.24.00.36.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Jan 2023 00:36:14 -0800 (PST)
+Message-ID: <3fdf9e1d-456a-c538-89b6-82b299aabd48@linaro.org>
+Date:   Tue, 24 Jan 2023 09:36:11 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 6/7] arm64: dts: Add ipq9574 SoC and AL02 board support
+Content-Language: en-US
+To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linus.walleij@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
+        dmitry.baryshkov@linaro.org, nfraprado@collabora.com,
+        broonie@kernel.org, tdas@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
+ <20230110121316.24892-7-quic_devipriy@quicinc.com>
+ <f6ef1834-b629-b76c-9cde-55af56320665@linaro.org>
+ <7f157b73-f856-04d2-1b39-e1f8861d0439@quicinc.com>
+ <84aa79c3-b793-0d0e-d6a5-035aff5a17b4@linaro.org>
+ <278a2e6e-69e0-81b0-f476-571edea950ff@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <278a2e6e-69e0-81b0-f476-571edea950ff@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The rust crates builds fine when built with the 'make' command, as
-static linking works fine. But when referenced from a remote rust crate,
-it gives following error:
+On 24/01/2023 08:19, Devi Priya wrote:
+>>>>> +			gpio-ranges = <&tlmm 0 0 65>;
+>>>>> +			gpio-reserved-ranges = <59 1>;
+>>>>
+>>>> Hm, why reserved ranges are in SoC?
+>>> As the gpio is forbidden on all ipq9574 boards, we have added it in SoC
+>>
+>> Why it is forbidden on all boards? I guess it depends on the firmware
+>> and this can differ, can't it?
+>>
+> This GPIO is protected and used by the TZ firmware and is forbidden on 
+> all the boards & firmware
 
-error: could not find native static library `gpiod`, perhaps an -L flag is missing?
+OK
 
-This happens since we only support 'static' LIB-KIND currently. Remove
-the same to allow others to work too.
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- bindings/rust/libgpiod-sys/build.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/bindings/rust/libgpiod-sys/build.rs b/bindings/rust/libgpiod-sys/build.rs
-index 274069eb9e9d..e3ed04afa141 100644
---- a/bindings/rust/libgpiod-sys/build.rs
-+++ b/bindings/rust/libgpiod-sys/build.rs
-@@ -37,5 +37,5 @@ fn main() {
-     generate_bindings();
- 
-     println!("cargo:rustc-link-search=./../../lib/.libs/");
--    println!("cargo:rustc-link-lib=static=gpiod");
-+    println!("cargo:rustc-link-lib=gpiod");
- }
--- 
-2.31.1.272.g89b43f80a514
+Best regards,
+Krzysztof
 
