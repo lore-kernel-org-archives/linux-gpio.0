@@ -2,96 +2,107 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E82C54EAA
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Jan 2023 11:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E759CC54EAA
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Jan 2023 11:41:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234833AbjAYLia (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Jan 2023 06:38:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59178 "EHLO
+        id S235687AbjAYLla (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Jan 2023 06:41:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235313AbjAYLiZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2023 06:38:25 -0500
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 112EE5618E;
-        Wed, 25 Jan 2023 03:37:55 -0800 (PST)
-Received: by mail-qv1-f54.google.com with SMTP id m12so13866102qvt.9;
-        Wed, 25 Jan 2023 03:37:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E/t7ys6E2CbYDYuVcXfgtBpZgdyeb4IZ4cqbwkss4Uo=;
-        b=UZBvsy//01TZAyy8XetTeHupyQ0DKpMhFBtSMsATvkYgH2X/0Mo1rjz5UmMCCx1g+d
-         BRa83TsBJkJo7HBuNt5w8OaKLRJEgqnq9V0tb6bFqZXCa93/Gjj1xK9s9NuLesGjNywL
-         SNUVk9MGOCFurN/H3JUhNKq2uo8FQmM5MBpXwxlO829K5xkXt45MrMQe4MSJnmkaC0Km
-         lMfZP4h8kmeqv+Wc4L0k4gNm1ssNCfDGWe32HW/8AYIudLjoRNgtL0FKZBcgcaeoalFd
-         8/vGl+qkZCfxRB5d8NQOduFhEbu17noPcITdEs2GNCDruarJk4iUVpSsgF9qJJQEL49X
-         Dkyg==
-X-Gm-Message-State: AO0yUKUCxF53zUrkAkStATOr06XGhjEIVu3Wqfu9auCH0Qtsd6f0EaoK
-        oNOHcH8WH/WIOyg/mf95J47Qr25SNSyirg==
-X-Google-Smtp-Source: AK7set9OF5JhON/JLlyY5FFbCkQZmy+rqSEs2v5J2i1sSCZoOgt+xUwTy+lwrQrqGwC3KYROOsz3NQ==
-X-Received: by 2002:a0c:f441:0:b0:537:7057:49cf with SMTP id h1-20020a0cf441000000b00537705749cfmr5215902qvm.37.1674646630205;
-        Wed, 25 Jan 2023 03:37:10 -0800 (PST)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id i65-20020a37b844000000b006fec1c0754csm3329969qkf.87.2023.01.25.03.37.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jan 2023 03:37:09 -0800 (PST)
-Received: by mail-yb1-f173.google.com with SMTP id p141so19819238ybg.12;
-        Wed, 25 Jan 2023 03:37:09 -0800 (PST)
-X-Received: by 2002:a25:9ac1:0:b0:7b4:6a33:d89f with SMTP id
- t1-20020a259ac1000000b007b46a33d89fmr2485292ybo.543.1674646629124; Wed, 25
- Jan 2023 03:37:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20230102221815.273719-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20230102221815.273719-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20230102221815.273719-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 25 Jan 2023 12:36:57 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXeEXgMYgFq_nTRmco7P7TFSMKcRoQxcL-hKECn+_5FGw@mail.gmail.com>
-Message-ID: <CAMuHMdXeEXgMYgFq_nTRmco7P7TFSMKcRoQxcL-hKECn+_5FGw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] arm64: dts: renesas: r9a07g043[u]: Update pinctrl
- node to handle GPIO interrupts
-To:     Prabhakar <prabhakar.csengg@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        with ESMTP id S235575AbjAYLl3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2023 06:41:29 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C5D9298CC;
+        Wed, 25 Jan 2023 03:41:28 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D3C4614D4;
+        Wed, 25 Jan 2023 11:41:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E044DC433D2;
+        Wed, 25 Jan 2023 11:41:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674646887;
+        bh=BSf4VdDu/Cipkbp8RNs0rNyAzPjqHzof5Fj9ZYA48xM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GfilqO/eKu/QoPePHTTuTn8J1r0Gfr8WyYnJTWSK83NPY89Lt3LaqRMiaWnnxEdz1
+         5GfmqGH8yJFKJlrPMbcp84JgDUzRLc2uldIX4k89jTMcPIFXHFbL6PPgMyEPoohaU3
+         uAQ2xL2z2Rjhzaa8w1lCI5+i1z2YED4iJtXXyaxZ0XqaEafwrnSL76HnHSEhWrfZh2
+         BSVoMTAFP3PkmPkb7Kyti1fKVYFgPbZvpPHr2csZ0HOGM4Do6P0nTDzzOAj/HPpgzU
+         RU4p1z0AJO7YjLO6ciSZmTplImSf9p4ZS2V0k6wbLHUb3lAFakk5haqH41gWo/0kO1
+         OKWEJLNDmmlsQ==
+Date:   Wed, 25 Jan 2023 11:41:25 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Lee Jones <lee@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-pm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Add missing
+ (unevaluated|additional)Properties on child node schemas
+Message-ID: <Y9EVZQJEV8i5vdgp@sirena.org.uk>
+References: <20230124230048.371144-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YLw58GmZKH9QcKuc"
+Content-Disposition: inline
+In-Reply-To: <20230124230048.371144-1-robh@kernel.org>
+X-Cookie: Serving suggestion.
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jan 2, 2023 at 11:19 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add required properties in pinctrl node to handle GPIO interrupts.
->
-> Note as IRQC is not enabled in RZ/Five the phandle for interrupt-parent
-> is added in RZ/G2UL specific dtsi so that RZ/Five pinctrl driver
-> continues without waiting for IRQC to probe.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v2 -> v3
-> * No change
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.3.
+--YLw58GmZKH9QcKuc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Gr{oetje,eeting}s,
+On Tue, Jan 24, 2023 at 05:00:48PM -0600, Rob Herring wrote:
+> Just as unevaluatedProperties or additionalProperties are required at
+> the top level of schemas, they should (and will) also be required for
+> child node schemas. That ensures only documented properties are
+> present.
+>=20
+> Add unevaluatedProperties or additionalProperties as appropriate, and
+> then add any missing properties flagged by the addition.
 
-                        Geert
+Acked-by: Mark Brown <broonie@kernel.org>
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--YLw58GmZKH9QcKuc
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmPRFWIACgkQJNaLcl1U
+h9C5IQf9Gj9QI/FW6Xw+gMpDw41zL45NSAa01ZJ7G8XkRAaJNWXTMWR1sZKiK4XJ
+5rjn6QJUusYQuPpRmgG2DjO115ttDY8PNNWUlbpHxdQ+0dQI/dzilsrEFOrFXH1S
+PcEA3qn6o7eU3ICxhOnhcJzf1auMMUeq0hHtfjHxHLhgxeJZ13yZA61DnR9uShhF
+DT2ZXj0DrflrKoX2haOnuhvLc0Rx5qV+O3LfPBcO53OdCgjkAkmW2Jll2UrtTUIc
+9+G5v1R2fy/qBGUUQSzfPcTESH8bAwxpdP3i61xeoUYzaRNM/K4F/00nXADmY71w
+uWdFdQq7y1nxrTCAKIbIk2i8KCJlTg==
+=IpOI
+-----END PGP SIGNATURE-----
+
+--YLw58GmZKH9QcKuc--
