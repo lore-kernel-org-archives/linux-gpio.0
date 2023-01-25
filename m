@@ -2,199 +2,133 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A88CC61D97
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Jan 2023 19:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B546DC27C76
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Jan 2023 20:10:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235552AbjAYTWR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Jan 2023 14:22:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37410 "EHLO
+        id S236332AbjAYUKv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Jan 2023 15:10:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236111AbjAYTWN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2023 14:22:13 -0500
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CC825C0CE;
-        Wed, 25 Jan 2023 11:22:10 -0800 (PST)
-Received: by mail-oi1-f172.google.com with SMTP id r9so17123612oig.12;
-        Wed, 25 Jan 2023 11:22:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9PVEqBCzfLUzY4IompNf+WDKcAK9eA2hdVNa/dgEZEM=;
-        b=64XRWRO7jNWT3ritowQPdT/UV/FlGGUIIVFkoG7vqIJ2eZ4oBoD5ZrrGdPqODKP2Hr
-         +ODSepk4lqprdLyuNN3xUKmEcTOkAHd3HM4W+unQ+SbM1dNB3XZxG9mups+nbHvXK6uo
-         uzfzTa7duHbnKpQZLMrgSPz4Z6q6DCl6XzhP82GURxUIlM3spDwKfGq5hca9BxaYIwW+
-         zBu6LI/uxfz0TQ/iRgagA5//oS5gNyVz1B9EmBBbaDvVvUZpo+o47yyCnQbi8fqp5IeD
-         7Mwjm60Te0B2UiOJBenMuo9A40ZjV4czhLgTC8X12hJKpRMG8JWaU6Vg+tMw/4kH+Ume
-         2fyw==
-X-Gm-Message-State: AFqh2kqAwjeNY1a+JRUT1Vhn6HrO3qUGOkdZNHdKSqcY7vUZgbBIqo9F
-        yGtNFnoqMgfK7ESkU46xGg==
-X-Google-Smtp-Source: AMrXdXtSGTGKDZXApqdn1BokhZuqhAW4CWOl6Q8yAt6sCWvdBefTWfX8VBhMIBueSOmJDZQTrHxWyA==
-X-Received: by 2002:a05:6808:2015:b0:36c:e058:9cc with SMTP id q21-20020a056808201500b0036ce05809ccmr16173734oiw.7.1674674529265;
-        Wed, 25 Jan 2023 11:22:09 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id m24-20020a05680806d800b0035ec1384c9esm2396349oih.23.2023.01.25.11.22.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jan 2023 11:22:08 -0800 (PST)
-Received: (nullmailer pid 2716000 invoked by uid 1000);
-        Wed, 25 Jan 2023 19:22:08 -0000
-Date:   Wed, 25 Jan 2023 13:22:08 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH 6/8] dt-bindings: pwm: Add Amlogic Meson PWM binding
-Message-ID: <20230125192208.GA2713777-robh@kernel.org>
-References: <cb62dfc0-cb3d-beba-6d0b-8db18583dda0@gmail.com>
- <0d492f0e-abb3-33f6-3ee9-09e1440a9015@gmail.com>
+        with ESMTP id S236338AbjAYUKs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2023 15:10:48 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3EC45D11A;
+        Wed, 25 Jan 2023 12:10:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674677418; x=1706213418;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=mWptUuAvNZS0kbLHRKn6oORyrZ25KQvA1dzBPjHWj5Y=;
+  b=W2j+5NCuuX9pBpvjyjnweD+WaROJFjF8T0ZucJZB2nuFzVfah4nYli2y
+   FPmk1UyN5rMTibZfXz7K+D0gWnLpf26Yo7fa/GwuYjU+KsnrmyDXsW0GW
+   JyHz8mPoX3IR9+ZKGXEMo4aGxYYRXgcaVD9dHcYpfwaMulEfQdLSGPbrQ
+   uVdqXRkC33Vo59KxgO0yEOOh+3iDItsHD79IPj1MuA5Ga5kSEu6cbfuss
+   sOL7wYnOek1Q0ZbY4Du8LnDMN/j99/ARG3138/bvpsrHsT456z3yXPRHB
+   NbD3Rjk94XR9hPO4yYSIjjeFtdpctugJt3N3E8RXu0z8BJBu9Ix11rVu2
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10601"; a="326694750"
+X-IronPort-AV: E=Sophos;i="5.97,246,1669104000"; 
+   d="scan'208";a="326694750"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2023 12:09:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10601"; a="770871658"
+X-IronPort-AV: E=Sophos;i="5.97,246,1669104000"; 
+   d="scan'208";a="770871658"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 25 Jan 2023 12:09:49 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 3ABE992; Wed, 25 Jan 2023 22:10:25 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Pierluigi Passaro <pierluigi.p@variscite.com>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH v1 1/5] gpiolib: fix linker errors when GPIOLIB is disabled
+Date:   Wed, 25 Jan 2023 22:10:16 +0200
+Message-Id: <20230125201020.10948-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230125201020.10948-1-andriy.shevchenko@linux.intel.com>
+References: <20230125201020.10948-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d492f0e-abb3-33f6-3ee9-09e1440a9015@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jan 23, 2023 at 10:29:27PM +0100, Heiner Kallweit wrote:
-> Add Amlogic Meson PWM binding.
-> Tested with make targets dt_binding_check and dtbs_check.
-> 
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> ---
->  .../devicetree/bindings/pwm/pwm-amlogic.yaml  | 61 +++++++++++++++++++
->  .../devicetree/bindings/pwm/pwm-meson.txt     | 29 ---------
->  2 files changed, 61 insertions(+), 29 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-meson.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml b/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
-> new file mode 100644
-> index 000000000..443ff4e5b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
-> @@ -0,0 +1,61 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pwm/pwm-amlogic.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Amlogic PWM
-> +
-> +maintainers:
-> +  - Heiner Kallweit <hkallweit1@gmail.com>
-> +
-> +allOf:
-> +  - $ref: pwm.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - amlogic,meson8b-pwm
-> +      - amlogic,meson-gxbb-pwm
-> +      - amlogic,meson-gxbb-ao-pwm
-> +      - amlogic,meson-axg-ee-pwm
-> +      - amlogic,meson-axg-ao-pwm
-> +      - amlogic,meson-g12a-ee-pwm
-> +      - amlogic,meson-g12a-ao-pwm-ab
-> +      - amlogic,meson-g12a-ao-pwm-cd
-> +      - amlogic,meson-s4-pwm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+From: Pierluigi Passaro <pierluigi.p@variscite.com>
 
-No need for a type, 'clocks' already has one. You need how many and what 
-each one is when more than 1.
+Both the functions gpiochip_request_own_desc and
+gpiochip_free_own_desc are exported from
+    drivers/gpio/gpiolib.c
+but this file is compiled only when CONFIG_GPIOLIB is enabled.
+Move the prototypes under "#ifdef CONFIG_GPIOLIB" and provide
+reasonable definitions and includes in the "#else" branch.
 
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 2
+Fixes: 9091373ab7ea ("gpio: remove less important #ifdef around declarations")
+Signed-off-by: Pierluigi Passaro <pierluigi.p@variscite.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/linux/gpio/driver.h | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
-Need the exact names here.
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 26a808fb8a25..67990908a040 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -751,6 +751,8 @@ gpiochip_remove_pin_ranges(struct gpio_chip *gc)
+ 
+ #endif /* CONFIG_PINCTRL */
+ 
++#ifdef CONFIG_GPIOLIB
++
+ struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
+ 					    unsigned int hwnum,
+ 					    const char *label,
+@@ -758,8 +760,6 @@ struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
+ 					    enum gpiod_flags dflags);
+ void gpiochip_free_own_desc(struct gpio_desc *desc);
+ 
+-#ifdef CONFIG_GPIOLIB
+-
+ /* lock/unlock as IRQ */
+ int gpiochip_lock_as_irq(struct gpio_chip *gc, unsigned int offset);
+ void gpiochip_unlock_as_irq(struct gpio_chip *gc, unsigned int offset);
+@@ -769,6 +769,25 @@ struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc);
+ 
+ #else /* CONFIG_GPIOLIB */
+ 
++#include <linux/gpio/machine.h>
++#include <linux/gpio/consumer.h>
++
++static inline struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
++					    unsigned int hwnum,
++					    const char *label,
++					    enum gpio_lookup_flags lflags,
++					    enum gpiod_flags dflags)
++{
++	/* GPIO can never have been requested */
++	WARN_ON(1);
++	return ERR_PTR(-ENODEV);
++}
++
++static inline void gpiochip_free_own_desc(struct gpio_desc *desc)
++{
++	WARN_ON(1);
++}
++
+ static inline struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc)
+ {
+ 	/* GPIO can never have been requested */
+-- 
+2.39.0
 
-> +
-> +  "#pwm-cells":
-> +    const: 3
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    apb@fe000000 {
-> +      reg = <0x0 0xfe000000 0x0 0x480000>;
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +
-> +      pwm@8550 {
-> +        compatible = "amlogic,meson-gxbb-pwm";
-> +        reg = <0x0 0x08550 0x0 0x10>;
-> +        clocks = <&xtal>, <&xtal>;
-> +        clock-names = "clkin0", "clkin1";
-> +        #pwm-cells = <3>;
-> +      };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-meson.txt b/Documentation/devicetree/bindings/pwm/pwm-meson.txt
-> deleted file mode 100644
-> index bd02b0a14..000000000
-> --- a/Documentation/devicetree/bindings/pwm/pwm-meson.txt
-> +++ /dev/null
-> @@ -1,29 +0,0 @@
-> -Amlogic Meson PWM Controller
-> -============================
-> -
-> -Required properties:
-> -- compatible: Shall contain "amlogic,meson8b-pwm"
-> -                         or "amlogic,meson-gxbb-pwm"
-> -                         or "amlogic,meson-gxbb-ao-pwm"
-> -                         or "amlogic,meson-axg-ee-pwm"
-> -                         or "amlogic,meson-axg-ao-pwm"
-> -                         or "amlogic,meson-g12a-ee-pwm"
-> -                         or "amlogic,meson-g12a-ao-pwm-ab"
-> -                         or "amlogic,meson-g12a-ao-pwm-cd"
-> -- #pwm-cells: Should be 3. See pwm.yaml in this directory for a description of
-> -  the cells format.
-> -
-> -Optional properties:
-> -- clocks: Could contain one or two parents clocks phandle for each of the two
-> -  PWM channels.
-> -- clock-names: Could contain at least the "clkin0" and/or "clkin1" names.
-> -
-> -Example:
-> -
-> -	pwm_ab: pwm@8550 {
-> -		compatible = "amlogic,meson-gxbb-pwm";
-> -		reg = <0x0 0x08550 0x0 0x10>;
-> -		#pwm-cells = <3>;
-> -		clocks = <&xtal>, <&xtal>;
-> -		clock-names = "clkin0", "clkin1";
-> -	}
-> -- 
-> 2.39.1
-> 
-> 
