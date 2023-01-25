@@ -2,74 +2,89 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A506C54E94
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Jan 2023 08:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF4BBC27C76
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Jan 2023 08:45:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233965AbjAYIf5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Jan 2023 03:35:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41734 "EHLO
+        id S235281AbjAYIpN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Jan 2023 03:45:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234627AbjAYIf4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2023 03:35:56 -0500
-X-Greylist: delayed 319 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 25 Jan 2023 00:35:55 PST
-Received: from forward103o.mail.yandex.net (forward103o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::606])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 084296A77;
-        Wed, 25 Jan 2023 00:35:54 -0800 (PST)
-Received: from sas2-ffeb92823cb1.qloud-c.yandex.net (sas2-ffeb92823cb1.qloud-c.yandex.net [IPv6:2a02:6b8:c08:6803:0:640:ffeb:9282])
-        by forward103o.mail.yandex.net (Yandex) with ESMTP id C648F10AAF53;
-        Wed, 25 Jan 2023 11:30:31 +0300 (MSK)
-Received: by sas2-ffeb92823cb1.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id UUKCeP8ZA4Y1-fXis0HZR;
-        Wed, 25 Jan 2023 11:30:31 +0300
+        with ESMTP id S235483AbjAYIou (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2023 03:44:50 -0500
+X-Greylist: delayed 417 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 25 Jan 2023 00:40:17 PST
+Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d500])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9329E53565;
+        Wed, 25 Jan 2023 00:40:16 -0800 (PST)
+Received: from sas8-92ddc00f49ef.qloud-c.yandex.net (sas8-92ddc00f49ef.qloud-c.yandex.net [IPv6:2a02:6b8:c1b:2988:0:640:92dd:c00f])
+        by forward500b.mail.yandex.net (Yandex) with ESMTP id D8C285F39A;
+        Wed, 25 Jan 2023 11:33:16 +0300 (MSK)
+Received: by sas8-92ddc00f49ef.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id CXKlpM8YBeA1-MrFzk96U;
+        Wed, 25 Jan 2023 11:33:16 +0300
 X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1674635431;
-        bh=vMqQxoLJ0OjTyTvK+N3TACsOXvm5uWLcaMM3em0scfI=;
-        h=Message-Id:Date:In-Reply-To:Cc:Subject:References:To:From;
-        b=h57w1pwdXDfOgFlMXJmd0nrUDrwmLoZ8bV/PehuPKirn9G5jQTU/Dk+FZKlTrzcCA
-         HR81ibZqhTTSlXu2xLCat4johVr6Rp1bUHH44fw2XNuIicUoTMxZ0XoChqUttN/Ht8
-         QqwmlOi2Fdjs/XjD3ECiYcQ4fg3Bg9beUCj2HKCc=
-Authentication-Results: sas2-ffeb92823cb1.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1674635596;
+        bh=Iu7kC5v6n5QYhMcI1r9TLZt9aPN3xDWmxLQey5H8/Sc=;
+        h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+        b=fBIvUJjSADfV0T9Xa3qtwCwY5pN92MQzDF2KhoQm8bB4GVPvcjCQdTPhlN5+qiUUr
+         S++rIecuSu/WVFVwrkjTh15i/Y2pHGTsqHUIpPbGT0cUPmio7Pgj1DtNrR4hGdHn+d
+         XfzmtzALnXKiv0CZBuhU/yIjEr71jRACDBQIBqOs=
+Authentication-Results: sas8-92ddc00f49ef.qloud-c.yandex.net; dkim=pass header.i=@maquefel.me
+Date:   Wed, 25 Jan 2023 11:33:11 +0300
 From:   Nikita Shubin <nikita.shubin@maquefel.me>
-To:     linux-gpio@vger.kernel.org
-Cc:     Nikita Shubin <nikita.shubin@maquefel.me>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Lukasz Majewski <lukma@denx.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
+To:     "Arnd Bergmann" <arnd@arndb.de>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
+        "Hartley Sweeten" <hsweeten@visionengravers.com>,
+        "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
+        "Russell King" <linux@armlinux.org.uk>,
+        "Lukasz Majewski" <lukma@denx.de>,
+        "Bartosz Golaszewski" <brgl@bgdev.pl>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/3] gpio-ep93xx: prepare for dt, fixes
-Date:   Wed, 25 Jan 2023 11:30:23 +0300
-Message-Id: <20230125083026.5399-1-nikita.shubin@maquefel.me>
-X-Mailer: git-send-email 2.37.4
-In-Reply-To: <20230117100845.16708-1-nikita.shubin@maquefel.me>
+Subject: Re: [PATCH 1/2] gpio: ep93xx: convert driver to DT
+Message-ID: <20230125113311.2aff259d@redslave.neermore.group>
+In-Reply-To: <a699e52a-db19-4374-a4bc-a3948ecc43ef@app.fastmail.com>
 References: <20230117100845.16708-1-nikita.shubin@maquefel.me>
+        <a699e52a-db19-4374-a4bc-a3948ecc43ef@app.fastmail.com>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series introduce fixes and DT conver preparations:
+Hello Arnd!
 
-- fix F port irq numbers out of sync
-- make immutable
-- prepare for DT conversion
+On Tue, 17 Jan 2023 11:15:20 +0100
+"Arnd Bergmann" <arnd@arndb.de> wrote:
 
+> On Tue, Jan 17, 2023, at 11:08, Nikita Shubin wrote:
+> 
+> > 
+> > +#ifdef CONFIG_OF
+> > +static const struct of_device_id ep93xx_gpio_match[] = {
+> > +	{ .compatible = "cirrus,ep93xx-gpio" },
+> > +	{ /* end of table */ },
+> > +};
+> > +MODULE_DEVICE_TABLE(of, ep93xx_gpio_match);
+> > +#endif
+> > +
+> >  static struct platform_driver ep93xx_gpio_driver = {
+> >  	.driver		= {
+> >  		.name	= "gpio-ep93xx",
+> > +		.of_match_table = ep93xx_gpio_match,
+> >  	},
+> >  	.probe		= ep93xx_gpio_probe,  
+> 
+> The #ifdef here is wrong and will cause a build failure because
+> of the unconditional reference to the variable.
+> 
+> Just remove the #ifdef/#endif.
 
-Nikita Shubin (3):
-  gpio: ep93xx: Fix port F hwirq numbers in handler
-  gpio: ep93xx: Make irqchip immutable
-  gpio: ep93xx: split device in multiple
+Sorry about that - i remember that i should drop it everywhere, which
+did for all but ep93xx-gpio, i am dropping match currently, as it will
+produce a warning without dt-bindings documentation, it will be
+introduced together with the rest of series.
 
- arch/arm/mach-ep93xx/core.c          | 121 ++++++++-
- arch/arm/mach-ep93xx/edb93xx.c       |   2 +-
- arch/arm/mach-ep93xx/simone.c        |   4 +-
- arch/arm/mach-ep93xx/ts72xx.c        |   4 +-
- arch/arm/mach-ep93xx/vision_ep9307.c |  10 +-
- drivers/gpio/gpio-ep93xx.c           | 357 +++++++++++----------------
- 6 files changed, 258 insertions(+), 240 deletions(-)
-
--- 
-2.37.4
+> 
+>     Arnd
 
