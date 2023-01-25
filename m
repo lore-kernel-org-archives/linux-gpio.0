@@ -2,100 +2,133 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97CF0C27C76
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Jan 2023 11:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E3BC54E94
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Jan 2023 11:08:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235383AbjAYLGr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Jan 2023 06:06:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33880 "EHLO
+        id S235729AbjAYLIe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Jan 2023 06:08:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235336AbjAYLGq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2023 06:06:46 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9827A3F2A6
-        for <linux-gpio@vger.kernel.org>; Wed, 25 Jan 2023 03:05:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674644757;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=n5qm8P0JsQd5Owi7O2JfGZus7IqmfxLWRnRacW5aPkM=;
-        b=fRvuIKP+53k5zYKD42fUzPbMguGnMFhhfKBmPQw+rlgTK+8PBFu2B46bLtc1R4TNcSbOjW
-        8zklYCkbMuiRFjuqetivyWRyYvLfYPjBpyo2ljCO6sFP1ybxJZT35MmjLVmsrao0b2iLui
-        Qswf7OH4WphvTRI09t3Qmk9h5uev3cg=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-494-Uz4rKV6aMSCwH8rViEOnzw-1; Wed, 25 Jan 2023 06:05:53 -0500
-X-MC-Unique: Uz4rKV6aMSCwH8rViEOnzw-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EA0873C10EC3;
-        Wed, 25 Jan 2023 11:05:52 +0000 (UTC)
-Received: from shalem.redhat.com (unknown [10.39.193.104])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AA93F492B02;
-        Wed, 25 Jan 2023 11:05:51 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Daniel Scally <dan.scally@ideasonboard.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-gpio@vger.kernel.org
-Subject: [PATCH v2 resend 2/2] gpio: tps68470: Make tps68470_gpio_output() always set the initial value
-Date:   Wed, 25 Jan 2023 12:05:47 +0100
-Message-Id: <20230125110547.18093-3-hdegoede@redhat.com>
-In-Reply-To: <20230125110547.18093-1-hdegoede@redhat.com>
-References: <20230125110547.18093-1-hdegoede@redhat.com>
+        with ESMTP id S235520AbjAYLIL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2023 06:08:11 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4572028865
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Jan 2023 03:08:04 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id fl24so153563wmb.1
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Jan 2023 03:08:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tgNd6pdprwR64P3gTI1USNLkbTKHZW562SWliCwEACM=;
+        b=ADO6TqbweMkdaSb2eI1zg9+zyiYl+laiAa083zdMlJDzys8Pf2H6WOla5OukORSZeo
+         qQd3U9cLObqdPg4kvHCN8gkLJMsRbMBGs3k+6IznwRBEDwR/gjZTZ5A7hF9w82nwVdCT
+         RedDxB9/P2okicTBIOud0z319G2b+A8QZo+C5w4tjPRm1us3gDknrA9THTS+N9qvlek2
+         IMuWpuLGH1QyqJmEGZYJ99izXbJuT009pX6TxtGhLnLrGbrzHDytRSy+D5F/EKF5MuWc
+         uwEvTVsgwUdzzu7D/VcoM+l/INLsrvkbf3OEDuRNoDsQqtZ6kenhhqImeTyHgc9SK+cg
+         P61Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tgNd6pdprwR64P3gTI1USNLkbTKHZW562SWliCwEACM=;
+        b=F5fw6bbHNu7PEAqvWyYtp+MqV1dTqtAlA3yjhZJtbdfisB9P7UTz2GbKUJKr98iglz
+         9AeLBUIWEtJuT0QlybrWEYz3ZvcKlC5CoCpJM0UdsJK3uWnYpAb5NFqlnZ7JJS9M2MJB
+         JwRoGQo9Wx7Ams9yKPHduHckucYor0Pt66PR2DXBD6Cn1fv0AeQibY+v8ACuzIKfnayr
+         cTT5QkU9CMSWZ+jSyApCm3oL+QVa0v8mwnF7uE+anTgVU8ZjnSw2PrsVNXOAKQtAkoiw
+         EI55Jd5hesimMy+1DZ/a9LW0ZkBj+iMULtkpFTtZcJbkvWOfIEcMNTv38pKK9qFyDEJF
+         zz/w==
+X-Gm-Message-State: AFqh2kpAeOY+eFEZCgztTjCrrh1IDB9DMnQEgUmbAeUPpHl2E0iMR828
+        ymENzdi94mUFRGJEeW+B1rfWmw==
+X-Google-Smtp-Source: AMrXdXsPehuhP8/0wsrKQRHY7pty6KTDfGXFEaq+5JL6AFSYRRELry8uhLX7C+8zyV2XA47766i/fQ==
+X-Received: by 2002:a05:600c:46cb:b0:3db:1afd:ac45 with SMTP id q11-20020a05600c46cb00b003db1afdac45mr26226470wmo.7.1674644882380;
+        Wed, 25 Jan 2023 03:08:02 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id b5-20020a05600c150500b003dafb0c8dfbsm1760931wmg.14.2023.01.25.03.07.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Jan 2023 03:08:01 -0800 (PST)
+Message-ID: <36c9c3ce-1ae0-6619-d74d-142ed34b2f3f@linaro.org>
+Date:   Wed, 25 Jan 2023 12:07:59 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH V1 3/8] dt-bindings: pinctrl: qcom: Document IPQ9574
+ pinctrl driver
+Content-Language: en-US
+To:     devi priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
+        dmitry.baryshkov@linaro.org, nfraprado@collabora.com,
+        broonie@kernel.org, tdas@codeaurora.org, bhupesh.sharma@linaro.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+References: <20230124141541.8290-1-quic_devipriy@quicinc.com>
+ <20230124141541.8290-4-quic_devipriy@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230124141541.8290-4-quic_devipriy@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Make tps68470_gpio_output() call tps68470_gpio_set() for output-only pins
-too, so that the initial value passed to gpiod_direction_output() is
-honored for these pins too.
+On 24/01/2023 15:15, devi priya wrote:
+> Document the pinctrl driver for IPQ9574
+> 
+> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+> ---
+>  .../bindings/pinctrl/qcom,ipq9574-tlmm.yaml   | 135 ++++++++++++++++++
+>  1 file changed, 135 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq9574-tlmm.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq9574-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,ipq9574-tlmm.yaml
+> new file mode 100644
+> index 000000000000..d736f0fb7835
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq9574-tlmm.yaml
+> @@ -0,0 +1,135 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/qcom,ipq9574-tlmm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Technologies, Inc. IPQ9574 TLMM block
+> +
+> +maintainers:
+> +  - Bjorn Andersson <andersson@kernel.org>
+> +  - Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> +
+> +description:
+> +  Top Level Mode Multiplexer pin controller in Qualcomm IPQ9574 SoC.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,ipq9574-tlmm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts: true
 
-Fixes: 275b13a65547 ("gpio: Add support for TPS68470 GPIOs")
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-Tested-by: Daniel Scally <dan.scally@ideasonboard.com>
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Changes in v2:
-- Add Fixes tag
-- Add Andy's Reviewed-by
----
- drivers/gpio/gpio-tps68470.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Also - missing maxItems.
 
-diff --git a/drivers/gpio/gpio-tps68470.c b/drivers/gpio/gpio-tps68470.c
-index 778a72cf800c..2ca86fbe1d84 100644
---- a/drivers/gpio/gpio-tps68470.c
-+++ b/drivers/gpio/gpio-tps68470.c
-@@ -91,13 +91,13 @@ static int tps68470_gpio_output(struct gpio_chip *gc, unsigned int offset,
- 	struct tps68470_gpio_data *tps68470_gpio = gpiochip_get_data(gc);
- 	struct regmap *regmap = tps68470_gpio->tps68470_regmap;
- 
-+	/* Set the initial value */
-+	tps68470_gpio_set(gc, offset, value);
-+
- 	/* rest are always outputs */
- 	if (offset >= TPS68470_N_REGULAR_GPIO)
- 		return 0;
- 
--	/* Set the initial value */
--	tps68470_gpio_set(gc, offset, value);
--
- 	return regmap_update_bits(regmap, TPS68470_GPIO_CTL_REG_A(offset),
- 				 TPS68470_GPIO_MODE_MASK,
- 				 TPS68470_GPIO_MODE_OUT_CMOS);
--- 
-2.39.0
+I think you based your patches on some older version, so you might miss
+here changes we did recently.
+
+Best regards,
+Krzysztof
 
