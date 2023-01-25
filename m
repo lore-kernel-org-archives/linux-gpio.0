@@ -2,150 +2,113 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED5B9C27C76
-	for <linux-gpio@archiver.kernel.org>; Wed, 25 Jan 2023 14:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6672CC54E94
+	for <linux-gpio@archiver.kernel.org>; Wed, 25 Jan 2023 14:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235681AbjAYOfe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 25 Jan 2023 09:35:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37810 "EHLO
+        id S235751AbjAYOfl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 25 Jan 2023 09:35:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235671AbjAYOfd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2023 09:35:33 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 670F559B48
-        for <linux-gpio@vger.kernel.org>; Wed, 25 Jan 2023 06:35:07 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id hw16so48089092ejc.10
-        for <linux-gpio@vger.kernel.org>; Wed, 25 Jan 2023 06:35:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PdB/SfQ0SWBNWh08eH3SW1QsUqwi/lP4LXtXf+kq5IA=;
-        b=Dd+et0jm0/0xlucO8IFpitLrtrMSv/ALQqB/ABHM6GgO6GnUzbRaEoTk9f90z5SHOH
-         9895maVzDl98Arm+NjPKIpdjElFiPZ9Jeo3LnXvbd4H05ZCFdnrJZi99XjV9DuJIyOuk
-         hXLfIXmUZKYnIFIDh41CJkrMdT4MIPZV0C/TCRbZvgVNOnT6O1KVuJs617S0kWw2mpSQ
-         uZdVaCSLaejaA7nV+bDUgxTpJXKRrsO9QkaYrxMBLf3VRY+v1eKc6Mv7GoRJIYGKTsQM
-         cWQ4yjrV9wrx0iL3inejwa5YjLJHK4dEDve3GY1NPGCTVeDN74focNhN5QW8lINjPCTf
-         02Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PdB/SfQ0SWBNWh08eH3SW1QsUqwi/lP4LXtXf+kq5IA=;
-        b=vqG4zbCKSX139q1Qva0Ut5WXNfdIZsRG7qYe+8yWyP/Wvfq8fOqtge5/O9lA39hWLn
-         RG8LM7KfUIUePThZRmU+UDa7GsxSBs8EZ4NMkbHKgLgp4hHSzYA+sxAje3VGFVren2d7
-         sVEfBfAiM9K6pNpJINaV2jEIj7tiekxRuL9OVH7uoXIZQLZHG62ZpX4CRe663FDMMwlE
-         S0yItYob61p8v5jbIfR+8QjzaJb5O/jJ4lJMesM4e6J/ovjfwo3nQiAmo8NYdbKvEHde
-         yFqh5J+UEJMVHZCB7hCrZK7Z6zqMJ1qi2POZR57UnXCRyeVb6vnB9DpBHXuyc3iyniYl
-         DpMw==
-X-Gm-Message-State: AFqh2kr3rmNOvdggTHn4+YBsZQDPMzmVfvYR/L/ad4R0CpvVXFV0VeT+
-        eLNZrA3EUtaIsl5dIoOLkV6WmA==
-X-Google-Smtp-Source: AMrXdXvIoSQXuacQCMREvujIPcbrM3wN6HpuxYCIHNdefXOQtvM5NR0Td/Q1ffeOepulflZ21gnbaA==
-X-Received: by 2002:a17:906:6b13:b0:872:cc12:f712 with SMTP id q19-20020a1709066b1300b00872cc12f712mr30129839ejr.43.1674657305792;
-        Wed, 25 Jan 2023 06:35:05 -0800 (PST)
-Received: from c64.fritz.box ([81.221.122.240])
-        by smtp.gmail.com with ESMTPSA id gx2-20020a1709068a4200b0082000f8d871sm2437789ejc.152.2023.01.25.06.35.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jan 2023 06:35:05 -0800 (PST)
-From:   =?UTF-8?q?Bernhard=20Rosenkr=C3=A4nzer?= <bero@baylibre.com>
-To:     linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
-        linux-usb@vger.kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, tglx@linutronix.de,
-        maz@kernel.org, lee@kernel.org, linus.walleij@linaro.org,
-        matthias.bgg@gmail.com, gregkh@linuxfoundation.org,
-        daniel.lezcano@linaro.org, chunfeng.yun@mediatek.com,
-        angelogioacchino.delregno@collabora.com, nfraprado@collabora.com,
-        allen-kh.cheng@mediatek.com, sean.wang@mediatek.com,
-        zhiyong.tao@mediatek.com
-Subject: [PATCH v9 0/9] Add minimal MT8365 and MT8365-EVK support
-Date:   Wed, 25 Jan 2023 15:34:54 +0100
-Message-Id: <20230125143503.1015424-1-bero@baylibre.com>
-X-Mailer: git-send-email 2.39.1
+        with ESMTP id S235705AbjAYOfg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2023 09:35:36 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4095B5927C;
+        Wed, 25 Jan 2023 06:35:10 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D5DDAB819FC;
+        Wed, 25 Jan 2023 14:35:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17329C4339C;
+        Wed, 25 Jan 2023 14:35:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1674657305;
+        bh=DwE0aciCS7m1CLloDdEbT7AoS3V1fBrqXEptGTtb0rM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Affl/NlCjExKztE4qzigDJQkInvfvtCIrYxIvlFxplAQlFKKBKPjPicyergcu0VEs
+         mnldq2oV5JNcE2Q7uuFLlFFERUT6cYcWS0cyde5uyy2oTCzp/RaPABF65YcrGxK61o
+         PknfYSDA12Xv0MtPGnatIXO/wxd3AjIIhGAS5G1o=
+Date:   Wed, 25 Jan 2023 15:35:02 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Lee Jones <lee@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-pm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Add missing
+ (unevaluated|additional)Properties on child node schemas
+Message-ID: <Y9E+FjXnZiizTLc6@kroah.com>
+References: <20230124230048.371144-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230124230048.371144-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-v9:
-  - Fix a regression in v8 that broke the USB port
-  - Remove superfluous include in mt8365.dtsi
-  - Fix some naming issues pointed out by dtbs_check
+On Tue, Jan 24, 2023 at 05:00:48PM -0600, Rob Herring wrote:
+> Just as unevaluatedProperties or additionalProperties are required at
+> the top level of schemas, they should (and will) also be required for
+> child node schemas. That ensures only documented properties are
+> present.
+> 
+> Add unevaluatedProperties or additionalProperties as appropriate, and
+> then add any missing properties flagged by the addition.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> To: David Airlie <airlied@gmail.com>
+> To: Daniel Vetter <daniel@ffwll.ch>
+> To: Bartosz Golaszewski <brgl@bgdev.pl>
+> To: Jean Delvare <jdelvare@suse.com>
+> To: Guenter Roeck <linux@roeck-us.net>
+> To: Thomas Gleixner <tglx@linutronix.de>
+> To: Marc Zyngier <maz@kernel.org>
+> To: Jassi Brar <jassisinghbrar@gmail.com>
+> To: Mauro Carvalho Chehab <mchehab@kernel.org>
+> To: Lee Jones <lee@kernel.org>
+> To: Ulf Hansson <ulf.hansson@linaro.org>
+> To: Richard Weinberger <richard@nod.at>
+> To: Vignesh Raghavendra <vigneshr@ti.com>
+> To: Sebastian Reichel <sre@kernel.org>
+> To: Mark Brown <broonie@kernel.org>
+> To: "Rafael J. Wysocki" <rafael@kernel.org>
+> To: Daniel Lezcano <daniel.lezcano@linaro.org>
+> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-hwmon@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: openbmc@lists.ozlabs.org
+> Cc: linux-mmc@vger.kernel.org
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-spi@vger.kernel.org
+> Cc: linux-usb@vger.kernel.org
 
-v8:
-  - Add binding descriptions for mediatek,mt8365-systimer and
-    mediatek,mt8365-uart
-  - Specify ranges with parameters for u3phy
-
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-
-v7:
-  - Update GIC information in mt8365.dtsi (thanks to Marc Zyngier for
-    pointing out the problem)
-  - Adjust the timer to match the updated GIC information
-
-v6:
-  - Add systimer in mt8365.dtsi
-  - Add I/D caches and L2 cache details in mt8365.dtsi
-  - Move bl31_secmon_reserved from mt8365.dtsi to mt8365-evk.dts
-  - Fix inconsistent indentation in mt8365-pinctrl example
-  - Further mt8365.dtsi cleanups
-  - Submit to additional maintainers spotted by get_maintainer.pl
-
-v5:
-  - Reorder top-level entries in mediatek,mt8365-pinctrl.yaml to match
-    example-schema
-  - Use consistent quotes
-
-v4:
-  - Remove pins-are-numbered references that have been holding things up
-    now that the patches removing it from dt-bindings have landed in linux-next
-
-v3:
-  - Remove a number of components that are not yet supported (they will
-    come back alongside the corresponding drivers)
-  - Address issues found by dt_binding_check (mostly fixing pinctrl
-    bindings)
-  - Address issues pointed out in comments
-  - Reorder patches
-
-v2:
-  - Add missing dt-bindings documentation
-  - Small cleanups addressing issues in v1 pointed out by Krzysztof Kozlowski
-
-
-Bernhard Rosenkränzer (6):
-  dt-bindings: arm64: dts: mediatek: Add mt8365-evk board
-  dt-bindings: irq: mtk, sysirq: add support for mt8365
-  dt-bindings: mfd: syscon: Add mt8365-syscfg
-  dt-bindings: pinctrl: add bindings for Mediatek MT8365 SoC
-  dt-bindings: timer: mediatek,mtk-timer: add MT8365
-  dt-bindings: serial: mediatek,uart: add MT8365
-
-Fabien Parent (3):
-  dt-bindings: usb: mediatek,mtu3: add MT8365 SoC bindings
-  dt-bindings: usb: mediatek,mtk-xhci: add MT8365 SoC bindings
-  arm64: dts: mediatek: Initial mt8365-evk support
-
- .../devicetree/bindings/arm/mediatek.yaml     |   4 +
- .../interrupt-controller/mediatek,sysirq.txt  |   1 +
- .../devicetree/bindings/mfd/syscon.yaml       |   1 +
- .../pinctrl/mediatek,mt8365-pinctrl.yaml      | 197 +++++++++
- .../bindings/serial/mediatek,uart.yaml        |   1 +
- .../bindings/timer/mediatek,mtk-timer.txt     |   1 +
- .../bindings/usb/mediatek,mtk-xhci.yaml       |   1 +
- .../bindings/usb/mediatek,mtu3.yaml           |   1 +
- arch/arm64/boot/dts/mediatek/Makefile         |   1 +
- arch/arm64/boot/dts/mediatek/mt8365-evk.dts   | 168 ++++++++
- arch/arm64/boot/dts/mediatek/mt8365.dtsi      | 377 ++++++++++++++++++
- 11 files changed, 753 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8365-evk.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8365.dtsi
-
--- 
-2.39.1
-
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
