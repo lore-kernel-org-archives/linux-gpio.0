@@ -2,108 +2,94 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F40C54E94
-	for <linux-gpio@archiver.kernel.org>; Thu, 26 Jan 2023 14:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A90C54E94
+	for <linux-gpio@archiver.kernel.org>; Thu, 26 Jan 2023 15:04:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232367AbjAZOzM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 26 Jan 2023 09:55:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60926 "EHLO
+        id S231686AbjAZPEc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 26 Jan 2023 10:04:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230016AbjAZOzL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2023 09:55:11 -0500
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF75E10D6;
-        Thu, 26 Jan 2023 06:55:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674744909; x=1706280909;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FEz9CKiJLBT5n3U8/37EjkzAAVbIya2ifV79yxHOuys=;
-  b=Uuefvi0KoYyPbgq/7sq0jGOI3iKKruit/mYWJJQUvVaLq4C0PhWMtsAz
-   B+6MS5/bXhjZqmHc2ZbPgxyiIFCN4d/KwZ7ze8Q4Lcx2DkMQ/IMM5QXsS
-   0yrM58uUr5+gjZ2RfMVIndY8eVsWLLYOV3wDkpdjDBvJLPwFj+K/8Pisb
-   JKPw1d7gJMQzl05QBpkAS3IC7UH6jXPkIsyQmoeLR/wNdaFFt5fJS2gxp
-   VbAGTLNhavvO9uNgUM5XkJpOmsrDKRezRLVKM1AFRUe3LlwHXiKw/SUJb
-   9NBVgr9qmb74O+AxRH63iHLgSh7WkgpnTO5jaxHfkvyznyLi7ssuSuonk
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10602"; a="328926205"
-X-IronPort-AV: E=Sophos;i="5.97,248,1669104000"; 
-   d="scan'208";a="328926205"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2023 06:24:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10602"; a="908241064"
-X-IronPort-AV: E=Sophos;i="5.97,248,1669104000"; 
-   d="scan'208";a="908241064"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga006.fm.intel.com with ESMTP; 26 Jan 2023 06:24:27 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1pL3Av-00FRH9-0v;
-        Thu, 26 Jan 2023 16:24:25 +0200
-Date:   Thu, 26 Jan 2023 16:24:24 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Arnd Bergmann <arnd@kernel.org>,
-        Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-wpan@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] at86rf230: convert to gpio descriptors
-Message-ID: <Y9KNGPTGK/Os4gZe@smile.fi.intel.com>
-References: <20230126135215.3387820-1-arnd@kernel.org>
- <20230126151243.3acc1fe2@xps-13>
+        with ESMTP id S230476AbjAZPEc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2023 10:04:32 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30AE534303
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2023 07:04:30 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id y25so3406722lfa.9
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2023 07:04:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=85g64dsl/DcFY/LlzFQvHEB0mO6DyTsjvCN0CbsFtNw=;
+        b=RkiI+vwnnL7VCkolwfyJmz2pmhwyz1uPFgE9WrH3eTnJ0h1OjtfKBo3De8gNoeWD+X
+         l3xRPZIq/L9vFJzv6PULtvhXKKJtDa9LLTd2AiHrb4BZ60JZC+IqDP/SwDQlwxNDg3Lu
+         9JvSTWA0sLX1/2yvxrUmgT4h1TvymGWt7fVAn2xOTJDbbM8Feyi8EviAkCrynsKOph1z
+         JlCZLF6rHye2m3z2r22q6SSNhTHJoseOKvgJklu5p9zXC51NgfsruhZVLFQ0SRjjMd8L
+         sQonnT13MfN0mupzXLJTbk49qRIe8hctNAc3jWuKFq37gyG4sRWzTKJCqEAo/+pvSIr+
+         DyPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=85g64dsl/DcFY/LlzFQvHEB0mO6DyTsjvCN0CbsFtNw=;
+        b=05hJPpBBzwXQrnk28cRHqnKfrqqnEMPvBR7qU6nBzmFGLDk9rfpMEdiVzCUplAa1Pk
+         r7D7vIcLg8A3r1NFMPc0X71+WgrcBgVnObRq3zse9jHipkpImEWiNjXTCvD8vRy5ezr/
+         UqR1PqzFsmQiMIJZMs0G6jC1kuEByEnXJMRFf3148u7cnO08ZCNkueDI1quSjMYJqR3A
+         7ooABMgvrT1W1t5RcuxDI3L6aIjsDrk6NkVyPugObR16m2EsLF7Wd84Sp2BhZFHyJONF
+         SDnZXZ8QngWb0TrWr+Q7P/SIvIWYhglPB8ThB+lE2+J2EgmcmzXGqtHyY9XZU26tAKAA
+         D58w==
+X-Gm-Message-State: AFqh2kpahcxU0+D3F1rhd76Mk3hQZjzgbXBHs7IouCpyLwS4nox14E+L
+        +djDljJYU1im5PenW+pQSldMGA==
+X-Google-Smtp-Source: AMrXdXu6eyBeVwquiscq6dc3oKOQoMKYuh59bv0ZswxZ5ffCDxH44vMaC4VrsM+OBs46fi7tYToQIA==
+X-Received: by 2002:ac2:4f0c:0:b0:4ca:f887:fe99 with SMTP id k12-20020ac24f0c000000b004caf887fe99mr9661416lfr.25.1674745468435;
+        Thu, 26 Jan 2023 07:04:28 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id p8-20020adff208000000b002423edd7e50sm1618824wro.32.2023.01.26.07.04.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Jan 2023 07:04:27 -0800 (PST)
+Message-ID: <0a47dfbd-d786-c7bd-e4f5-c71e1b649b9f@linaro.org>
+Date:   Thu, 26 Jan 2023 16:04:25 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230126151243.3acc1fe2@xps-13>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v9 7/9] dt-bindings: timer: mediatek,mtk-timer: add MT8365
+Content-Language: en-US
+To:     =?UTF-8?Q?Bernhard_Rosenkr=c3=a4nzer?= <bero@baylibre.com>,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+        linux-usb@vger.kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, tglx@linutronix.de,
+        maz@kernel.org, lee@kernel.org, linus.walleij@linaro.org,
+        matthias.bgg@gmail.com, gregkh@linuxfoundation.org,
+        chunfeng.yun@mediatek.com, angelogioacchino.delregno@collabora.com,
+        nfraprado@collabora.com, allen-kh.cheng@mediatek.com,
+        sean.wang@mediatek.com, zhiyong.tao@mediatek.com
+References: <20230125143503.1015424-1-bero@baylibre.com>
+ <20230125143503.1015424-8-bero@baylibre.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20230125143503.1015424-8-bero@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jan 26, 2023 at 03:12:43PM +0100, Miquel Raynal wrote:
-> arnd@kernel.org wrote on Thu, 26 Jan 2023 14:51:23 +0100:
-
-...
-
-> > There are no remaining in-tree users of the platform_data,
-> > so this driver can be converted to using the simpler gpiod
-> > interfaces.
-> > 
-> > Any out-of-tree users that rely on the platform data can
-> > provide the data using the device_property and gpio_lookup
-> > interfaces instead.
-
-[...]
-
-> > @@ -1682,7 +1650,7 @@ MODULE_DEVICE_TABLE(spi, at86rf230_device_id);
-> >  static struct spi_driver at86rf230_driver = {
-> >  	.id_table = at86rf230_device_id,
-> >  	.driver = {
-> > -		.of_match_table = of_match_ptr(at86rf230_of_match),
-> > +		.of_match_table = at86rf230_of_match,linux-gnueabihf embed a C library which relies on kernel headers (for example, to provide an open API which translates to an open syscall), for exam
+On 25/01/2023 15:35, Bernhard Rosenkränzer wrote:
+> Add binding description for mediatek,mt8365-systimer
 > 
-> Looks like an unrelated change? Or is it a consequence of "not having
-> any in-tree users of platform_data" that plays a role here?
+> Signed-off-by: Bernhard Rosenkränzer <bero@baylibre.com>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-This enables this driver to work on ACPI-based platforms without needed the
-legacy platform data. Dunno if it will be ever the case, but still...
-
-> Anyhow, the changes in the driver look good, so:
-> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thank you!
+Applied, thanks
 
 -- 
-With Best Regards,
-Andy Shevchenko
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
