@@ -2,35 +2,35 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB34C54E94
-	for <linux-gpio@archiver.kernel.org>; Thu, 26 Jan 2023 13:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B724C05027
+	for <linux-gpio@archiver.kernel.org>; Thu, 26 Jan 2023 13:28:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236859AbjAZN2k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 26 Jan 2023 08:28:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37856 "EHLO
+        id S236922AbjAZN2x (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 26 Jan 2023 08:28:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236877AbjAZN2j (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2023 08:28:39 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA19A7EC5;
-        Thu, 26 Jan 2023 05:28:18 -0800 (PST)
+        with ESMTP id S236115AbjAZN2k (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2023 08:28:40 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38DC865BD;
+        Thu, 26 Jan 2023 05:28:23 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 479AE617DA;
-        Thu, 26 Jan 2023 13:28:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E27FDC4339B;
-        Thu, 26 Jan 2023 13:28:15 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C6EC7617D5;
+        Thu, 26 Jan 2023 13:28:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64426C433EF;
+        Thu, 26 Jan 2023 13:28:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674739697;
-        bh=yam+jLkV2aIotM+LcFhs3VFxetZhu0iwa3c53kK12Jg=;
+        s=k20201202; t=1674739702;
+        bh=jxcMnfhyxChs+Qs+/oO6mhoGvEOqz9EkwgWaoWZcekc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nxb42sJq248/EkqVNmMy+cif6Q4Gc6oIGMFIS55ig/oyRuIPgiKJeKE+pRsud452+
-         FikPBlZ5y+hbCtO1wdhKst7RZxXqvUqihaxLESc/4WnSzRGZ13U6J2wGZ4a+CZJbbO
-         OdbDoItl0q45ubTUZnjXwWB5q11LAA/f5bl4b8uJH+X+f4AbyI5pjopNgjONF4FUMB
-         dtk5bbeUBzzl+42GvvfCpMTx+nj5aCtYMoW7d2yVOgaxJIOPWFGZpyxmJ2bFbQn+OK
-         q1shCykGkYitaqaqwVVEbBlCy68ZBK5qGDx8hlTBASR9rq4OTA/D76Dj2458aUzOza
-         V/D+h2dvWPplw==
+        b=QO2veeVyvDxgGnxxwYXJr3Q/tu2KFGf/XIsPHVlblFXE4ix9fdAKBiOly0Akp9H6p
+         dbZGEPUknC6YcBk12pPknWw0vmv09Q9eaCRX7eUWiAU5COeL5MMNFYR74/3Cvg0E+O
+         DQPGJcoeUW39blFCliWBc8DVK/S+jFMenvp4PDisWOzxw+KaEZ9GsxV/OTq845SxUD
+         E/EnFmJl/IBqYi7VFgHq3WQ7qq4oTSFjbdlEk8gP3/JE5oiAbKSBHN9JwUJYfD/tDG
+         /0+T+qAJXfDeW2QPFZuUddvM7WKAl5z80DZlqpdRDBlP1ABToomwIztzo4kscITGp2
+         ngMcqZH456JLw==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     linux-gpio@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -40,9 +40,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4/8] gpiolib: remove gpio_set_debounce
-Date:   Thu, 26 Jan 2023 14:27:57 +0100
-Message-Id: <20230126132801.2042371-5-arnd@kernel.org>
+Subject: [PATCH 6/8] gpiolib: split linux/gpio/driver.h out of linux/gpio.h
+Date:   Thu, 26 Jan 2023 14:27:59 +0100
+Message-Id: <20230126132801.2042371-7-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230126132801.2042371-1-arnd@kernel.org>
 References: <20230126132801.2042371-1-arnd@kernel.org>
@@ -54,155 +54,121 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-gpio_set_debounce() only has a single user, which is trivially
-converted to gpiod_set_debounce().
+Almost all gpio drivers include linux/gpio/driver.h, and other
+files should not rely on includes from this header.
+
+Remove the indirect include from here and include the correct
+headers directly from where they are used.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- Documentation/driver-api/gpio/legacy.rst |  2 --
- drivers/input/touchscreen/ads7846.c      | 24 +++++++++++++-----------
- include/linux/gpio.h                     | 22 ----------------------
- 3 files changed, 13 insertions(+), 35 deletions(-)
+ arch/arm/mach-omap1/irq.c                              | 1 +
+ arch/arm/mach-orion5x/board-rd88f5182.c                | 1 +
+ arch/arm/mach-s3c/s3c64xx.c                            | 1 +
+ arch/arm/mach-sa1100/assabet.c                         | 1 +
+ arch/arm/plat-orion/gpio.c                             | 1 +
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/led.c | 1 +
+ include/linux/gpio.h                                   | 2 --
+ include/linux/mfd/ucb1x00.h                            | 1 +
+ 8 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/driver-api/gpio/legacy.rst b/Documentation/driver-api/gpio/legacy.rst
-index a0559d93efd1..e0306e78e34b 100644
---- a/Documentation/driver-api/gpio/legacy.rst
-+++ b/Documentation/driver-api/gpio/legacy.rst
-@@ -238,8 +238,6 @@ setup or driver probe/teardown code, so this is an easy constraint.)::
-         ## 	gpio_free_array()
+diff --git a/arch/arm/mach-omap1/irq.c b/arch/arm/mach-omap1/irq.c
+index 9ccc784fd614..bfc7ab010ae2 100644
+--- a/arch/arm/mach-omap1/irq.c
++++ b/arch/arm/mach-omap1/irq.c
+@@ -41,6 +41,7 @@
+ #include <linux/sched.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
++#include <linux/irqdomain.h>
  
-                 gpio_free()
--                gpio_set_debounce()
--
- 
- 
- Claiming and Releasing GPIOs
-diff --git a/drivers/input/touchscreen/ads7846.c b/drivers/input/touchscreen/ads7846.c
-index 4c3dd01902d0..354da71ff037 100644
---- a/drivers/input/touchscreen/ads7846.c
-+++ b/drivers/input/touchscreen/ads7846.c
-@@ -27,6 +27,7 @@
- #include <linux/of.h>
- #include <linux/of_gpio.h>
- #include <linux/of_device.h>
-+#include <linux/gpio/consumer.h>
+ #include <asm/irq.h>
+ #include <asm/exception.h>
+diff --git a/arch/arm/mach-orion5x/board-rd88f5182.c b/arch/arm/mach-orion5x/board-rd88f5182.c
+index 596601367989..1c14e49a90a6 100644
+--- a/arch/arm/mach-orion5x/board-rd88f5182.c
++++ b/arch/arm/mach-orion5x/board-rd88f5182.c
+@@ -9,6 +9,7 @@
  #include <linux/gpio.h>
- #include <linux/spi/spi.h>
- #include <linux/spi/ads7846.h>
-@@ -139,7 +140,7 @@ struct ads7846 {
- 	int			(*filter)(void *data, int data_idx, int *val);
- 	void			*filter_data;
- 	int			(*get_pendown_state)(void);
--	int			gpio_pendown;
-+	struct gpio_desc	*gpio_pendown;
- 
- 	void			(*wait_for_sync)(void);
- };
-@@ -222,7 +223,7 @@ static int get_pendown_state(struct ads7846 *ts)
- 	if (ts->get_pendown_state)
- 		return ts->get_pendown_state();
- 
--	return !gpio_get_value(ts->gpio_pendown);
-+	return !gpiod_get_value(ts->gpio_pendown);
- }
- 
- static void ads7846_report_pen_up(struct ads7846 *ts)
-@@ -1005,7 +1006,6 @@ static int ads7846_setup_pendown(struct spi_device *spi,
- 	if (pdata->get_pendown_state) {
- 		ts->get_pendown_state = pdata->get_pendown_state;
- 	} else if (gpio_is_valid(pdata->gpio_pendown)) {
--
- 		err = devm_gpio_request_one(&spi->dev, pdata->gpio_pendown,
- 					    GPIOF_IN, "ads7846_pendown");
- 		if (err) {
-@@ -1015,15 +1015,17 @@ static int ads7846_setup_pendown(struct spi_device *spi,
- 			return err;
- 		}
- 
--		ts->gpio_pendown = pdata->gpio_pendown;
--
--		if (pdata->gpio_pendown_debounce)
--			gpio_set_debounce(pdata->gpio_pendown,
--					  pdata->gpio_pendown_debounce);
-+		ts->gpio_pendown = gpio_to_desc(pdata->gpio_pendown);
- 	} else {
--		dev_err(&spi->dev, "no get_pendown_state nor gpio_pendown?\n");
--		return -EINVAL;
-+		ts->gpio_pendown = gpiod_get(&spi->dev, "pendown-gpio", GPIOD_IN);
-+		if (IS_ERR(ts->gpio_pendown)) {
-+			dev_err(&spi->dev, "no get_pendown_state nor gpio_pendown?\n");
-+			return PTR_ERR(ts->gpio_pendown);
-+		}
- 	}
-+	if (pdata->gpio_pendown_debounce)
-+		gpiod_set_debounce(ts->gpio_pendown,
-+				   pdata->gpio_pendown_debounce);
- 
- 	return 0;
- }
-@@ -1192,7 +1194,7 @@ static const struct ads7846_platform_data *ads7846_probe_dt(struct device *dev)
- 	pdata->wakeup = of_property_read_bool(node, "wakeup-source") ||
- 			of_property_read_bool(node, "linux,wakeup");
- 
--	pdata->gpio_pendown = of_get_named_gpio(dev->of_node, "pendown-gpio", 0);
-+	pdata->gpio_pendown = -1;
- 
- 	return pdata;
- }
+ #include <linux/kernel.h>
+ #include <linux/init.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pci.h>
+ #include <linux/irq.h>
+diff --git a/arch/arm/mach-s3c/s3c64xx.c b/arch/arm/mach-s3c/s3c64xx.c
+index c20163e6a8b4..c5aa4d8ed8bd 100644
+--- a/arch/arm/mach-s3c/s3c64xx.c
++++ b/arch/arm/mach-s3c/s3c64xx.c
+@@ -24,6 +24,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/reboot.h>
+ #include <linux/io.h>
++#include <linux/of.h>
+ #include <linux/clk/samsung.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/irq.h>
+diff --git a/arch/arm/mach-sa1100/assabet.c b/arch/arm/mach-sa1100/assabet.c
+index 04f8a1680bc1..06e7b1358226 100644
+--- a/arch/arm/mach-sa1100/assabet.c
++++ b/arch/arm/mach-sa1100/assabet.c
+@@ -12,6 +12,7 @@
+ #include <linux/errno.h>
+ #include <linux/gpio/gpio-reg.h>
+ #include <linux/gpio/machine.h>
++#include <linux/gpio/driver.h>
+ #include <linux/gpio_keys.h>
+ #include <linux/ioport.h>
+ #include <linux/platform_data/sa11x0-serial.h>
+diff --git a/arch/arm/plat-orion/gpio.c b/arch/arm/plat-orion/gpio.c
+index 3ef9ecdd6343..4946d8066f6a 100644
+--- a/arch/arm/plat-orion/gpio.c
++++ b/arch/arm/plat-orion/gpio.c
+@@ -19,6 +19,7 @@
+ #include <linux/bitops.h>
+ #include <linux/io.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/driver.h>
+ #include <linux/leds.h>
+ #include <linux/of.h>
+ #include <linux/of_irq.h>
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/led.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/led.c
+index 9540a05247c2..89c8829528c2 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/led.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/led.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <net/mac80211.h>
+ #include <linux/bcma/bcma_driver_chipcommon.h>
++#include <linux/gpio.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/gpio/machine.h>
+ #include <linux/gpio/consumer.h>
 diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index e273a3287d8e..da7a5ae68e47 100644
+index 57ec3975b656..06a33339994e 100644
 --- a/include/linux/gpio.h
 +++ b/include/linux/gpio.h
-@@ -100,11 +100,6 @@ static inline int gpio_direction_output(unsigned gpio, int value)
- 	return gpiod_direction_output_raw(gpio_to_desc(gpio), value);
- }
+@@ -54,8 +54,6 @@ struct gpio {
+ };
  
--static inline int gpio_set_debounce(unsigned gpio, unsigned debounce)
--{
--	return gpiod_set_debounce(gpio_to_desc(gpio), debounce);
--}
--
- static inline int gpio_get_value_cansleep(unsigned gpio)
- {
- 	return gpiod_get_raw_value_cansleep(gpio_to_desc(gpio));
-@@ -123,11 +118,6 @@ static inline void gpio_set_value(unsigned gpio, int value)
- 	return gpiod_set_raw_value(gpio_to_desc(gpio), value);
- }
+ #ifdef CONFIG_GPIOLIB
+-#include <linux/compiler.h>
+-#include <linux/gpio/driver.h>
+ #include <linux/gpio/consumer.h>
  
--static inline int gpio_cansleep(unsigned gpio)
--{
--	return gpiod_cansleep(gpio_to_desc(gpio));
--}
--
- static inline int gpio_to_irq(unsigned gpio)
- {
- 	return gpiod_to_irq(gpio_to_desc(gpio));
-@@ -215,11 +205,6 @@ static inline int gpio_direction_output(unsigned gpio, int value)
- 	return -ENOSYS;
- }
+ /*
+diff --git a/include/linux/mfd/ucb1x00.h b/include/linux/mfd/ucb1x00.h
+index 9aed2797d3d5..2e65354fc7b8 100644
+--- a/include/linux/mfd/ucb1x00.h
++++ b/include/linux/mfd/ucb1x00.h
+@@ -9,6 +9,7 @@
  
--static inline int gpio_set_debounce(unsigned gpio, unsigned debounce)
--{
--	return -ENOSYS;
--}
--
- static inline int gpio_get_value(unsigned gpio)
- {
- 	/* GPIO can never have been requested or set as {in,out}put */
-@@ -233,13 +218,6 @@ static inline void gpio_set_value(unsigned gpio, int value)
- 	WARN_ON(1);
- }
+ #include <linux/device.h>
+ #include <linux/mfd/mcp.h>
++#include <linux/gpio/driver.h>
+ #include <linux/gpio.h>
+ #include <linux/mutex.h>
  
--static inline int gpio_cansleep(unsigned gpio)
--{
--	/* GPIO can never have been requested or set as {in,out}put */
--	WARN_ON(1);
--	return 0;
--}
--
- static inline int gpio_get_value_cansleep(unsigned gpio)
- {
- 	/* GPIO can never have been requested or set as {in,out}put */
 -- 
 2.39.0
 
