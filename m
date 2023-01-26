@@ -2,116 +2,106 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6627C54EAA
-	for <linux-gpio@archiver.kernel.org>; Thu, 26 Jan 2023 10:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BD9C05027
+	for <linux-gpio@archiver.kernel.org>; Thu, 26 Jan 2023 12:14:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236302AbjAZKuQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 26 Jan 2023 05:50:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42176 "EHLO
+        id S235934AbjAZMOx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 26 Jan 2023 07:14:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236383AbjAZKuO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2023 05:50:14 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A77762798
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2023 02:49:31 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1pKzou-0002UH-7o; Thu, 26 Jan 2023 11:49:28 +0100
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1pKzot-0005cb-S0; Thu, 26 Jan 2023 11:49:27 +0100
-Date:   Thu, 26 Jan 2023 11:49:27 +0100
-From:   Sascha Hauer <sha@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        bartosz.golaszewski@linaro.org, christophe.leroy@csgroup.eu,
-        linux-gpio@vger.kernel.org, kernel@pengutronix.de,
-        shawnguo@kernel.org
-Subject: Re: GPIO static allocation warning with v6.2-rcX
-Message-ID: <20230126104927.GE23347@pengutronix.de>
-References: <20230120104647.nwki4silrtd7bt3w@pengutronix.de>
- <CAMRc=Mdo0tvJUJ2G+9BGfyVYBwUQKRZU36JEUZdxVVnXETZHLg@mail.gmail.com>
- <20230125093548.GB23347@pengutronix.de>
- <CACRpkdbcrTv+=7Ev750O=UO=V=afp5NnTT4znb0rzWLkom+_cg@mail.gmail.com>
+        with ESMTP id S235193AbjAZMOx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2023 07:14:53 -0500
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91801474C9;
+        Thu, 26 Jan 2023 04:14:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674735292; x=1706271292;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fMhmF78sLkly7xduJ/mjkQCmfGoPv2TV3bjvj2gw+g4=;
+  b=n6/9Gwmhkxjzw8Wh1iZkJd4zMxiO81Y13YiBQSLijjP/t7i+cItOdvsP
+   8RhdhCQUtR7pytdwQ3XWYbkBJJ+85ciVgJhpr3cIgzsobZRdVsjzUqnUT
+   un71uottdjkFOiI68n/eGnKriPo9z6Thi5nzv/H5GtRc0KffKSZzEZ+Ga
+   e+3s2lVJuiNif4dzuDxSyLoxzxBe2u4i74ELGCdQoYURhkU9E7WANCCd1
+   jGnIvHiLbzjBVAGw9EpJtW0lAvp2O4TQF39Eht6JSiHoeWvZRhDoNftVS
+   +KDLEEwECgfBGYH4J1eU2Oj9aylphNcPnMntwF8vuQNwQ7xB/ptG/PrFY
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10601"; a="354094327"
+X-IronPort-AV: E=Sophos;i="5.97,248,1669104000"; 
+   d="scan'208";a="354094327"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2023 04:14:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10601"; a="693311923"
+X-IronPort-AV: E=Sophos;i="5.97,248,1669104000"; 
+   d="scan'208";a="693311923"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga008.jf.intel.com with ESMTP; 26 Jan 2023 04:14:48 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1pL19R-00FNTo-2p;
+        Thu, 26 Jan 2023 14:14:45 +0200
+Date:   Thu, 26 Jan 2023 14:14:45 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Pierluigi Passaro <pierluigi.p@variscite.com>,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v1 1/5] gpiolib: fix linker errors when GPIOLIB is
+ disabled
+Message-ID: <Y9JutROZBPIHj7z6@smile.fi.intel.com>
+References: <20230125201020.10948-1-andriy.shevchenko@linux.intel.com>
+ <20230125201020.10948-2-andriy.shevchenko@linux.intel.com>
+ <ca399c86-5bfc-057b-6f9f-50614b91a9b9@csgroup.eu>
+ <05d32a58-c119-4abb-8e62-9d79bd95324f@app.fastmail.com>
+ <Y9JTPAL7VDXNPy5h@smile.fi.intel.com>
+ <7bf72f8f-1936-4b1e-b970-2fe09b6641ca@app.fastmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACRpkdbcrTv+=7Ev750O=UO=V=afp5NnTT4znb0rzWLkom+_cg@mail.gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+In-Reply-To: <7bf72f8f-1936-4b1e-b970-2fe09b6641ca@app.fastmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jan 26, 2023 at 10:35:22AM +0100, Linus Walleij wrote:
-> On Wed, Jan 25, 2023 at 10:35 AM Sascha Hauer <sha@pengutronix.de> wrote:
+On Thu, Jan 26, 2023 at 11:27:51AM +0100, Arnd Bergmann wrote:
+> On Thu, Jan 26, 2023, at 11:17, Andy Shevchenko wrote:
+> > On Thu, Jan 26, 2023 at 09:40:18AM +0100, Arnd Bergmann wrote:
+> >> On Thu, Jan 26, 2023, at 09:14, Christophe Leroy wrote:
+> >> 
+> >> All of these should already prevent the link failure through
+> >> a Kconfig 'depends on GPIOLIB' for the driver, or 'select GPIOLIB'
+> >> for the platform code. I checked all of the above and they seem fine.
+> >> If anything else calls the function, I'd add the same dependency
+> >> there.
+> >
+> > So, you think it's worth to send a few separate fixes as adding that
+> > dependency? But doesn't it feel like a papering over the issue with
+> > that APIs used in some of the drivers in the first place?
 > 
-> > You are trying to remove the GPIO sysfs API for many years now without
-> > success so far, and I doubt that you will succeed in future because the
-> > Kernel comes with the promise that userspace won't be broke.
+> If there are drivers that use the interfaces but shouldn't then
+> fixing those drivers is clearly better than adding a dependency,
+> but we can decide that when someone sends a patch.
 > 
-> I see it more as permanent deprecation and nudging than removal as of now.
+> Adding a stub helper that can never be used legitimately
+> but turns a build time error into a run time warning seems
+> counterproductive to me, as the CI systems are no longer
+> able to report these automatically.
 
-I am fine with permanent nudging. The sysfs API is deprecated and it's
-ok to remind people that there's a new API they should use instead, but
-as said, please don't actively break this API. Well to be correct,
-adding this warning is not breaking the API by itself, instead it
-motivates other people to do so, so you're getting there even without
-making your own hands dirty ;)
-
-> 
-> For some reason people perceive all nudging as militant and as a
-> my-way-or-the-highway style of communication but it's not really intended.
-> OK maybe I am softer now than in the past, one grow humbler with
-> old age.
-> 
-> It will become more interesting once we removed all in-kernel users of
-> the global numberspace, which is well underway. At that point we can
-> move the management of the global numberspace into the sysfs code
-> and distros etc that don't want to use it can compile it out completely.
-
-Perfectly fine with me. As I said: Push the sysfs API into a corner
-where it hurts nobody let it stay there.
-
-> 
-> But the idea was never to slam people to not use something they use and like,
-> it was to offer something new because they want it and like it more.
-> 
-> So using the character device with libgpiod users can:
-> 
-> - Get and set multiple lines at the same time
-> - Do biasing (if supported by HW) pull up/down
-> - Do drive strength (if supported by HW)
-> - Properly listen to IRQ-driven events on lines with real-time timestamps
->   to ensure strict event order
-> - Use HTE timestamps (new feature!)
-> - libgpiod for the above with C, C++, Python and Rust bindings
-> 
-> By offering those new tasty features only for the character device and not
-> for the sysfs ABI, at least the advanced users are expected to switch over
-> to using the character device.
-
-Ack, perfectly fine with me. Providing new features only for the new API
-is a good way of gently pushing people towards the new API.
-
-What's missing is a way to let a GPIO stay in the current state when I
-release a GPIO chip. Unlike the new features you listed above this is a
-feature that the sysfs API offers and that's important for us.
-
-Sascha
+What about adding ifdeffery in their code instead with a FIXME comment? So
+we will know that it's ugly and needs to be solved better sooner than later.
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+With Best Regards,
+Andy Shevchenko
+
+
