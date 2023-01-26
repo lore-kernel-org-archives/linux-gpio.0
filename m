@@ -2,100 +2,100 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C72C54EAA
-	for <linux-gpio@archiver.kernel.org>; Thu, 26 Jan 2023 10:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C73DC54E94
+	for <linux-gpio@archiver.kernel.org>; Thu, 26 Jan 2023 10:18:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236355AbjAZKRp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 26 Jan 2023 05:17:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40570 "EHLO
+        id S237067AbjAZKSz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 26 Jan 2023 05:18:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237062AbjAZKRj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2023 05:17:39 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87E2F14491;
-        Thu, 26 Jan 2023 02:17:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674728232; x=1706264232;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6/mVui7KHyg/685hFsXA62gG5MkPwHTsQ8fsOw6kk7o=;
-  b=j58poB+wqVja46qdWNa/H9DDea6SyONu+oXNC262PPzYpehoYZPpDNgg
-   dUuqEcpytvzmL3y8XxxwDrGcT2VSfPhHg6abaK7XRd2ACQWuFji3igkUz
-   IGsJMCaIvxZuPuvOdLiaPDQvokCZxQI5agoQtgRgpvkwQESyea2Qtf8WH
-   HS2hSqb55w97rAnOVgEqS9ca7CdZflIp+Ei/9E585uTaoxubmhevwpU+E
-   ZR8xnDhFHnNi1MqUIBBOpjDaBq1LHy65XO8nBhoWaCAzIhu5NVdWMPlPU
-   ER86munb+p5tbQItq6KyKNjN/xk3GSZo7VNrzkbGl7Z80K1zSMmNUj5TE
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10601"; a="328029234"
-X-IronPort-AV: E=Sophos;i="5.97,248,1669104000"; 
-   d="scan'208";a="328029234"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2023 02:16:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10601"; a="726223665"
-X-IronPort-AV: E=Sophos;i="5.97,248,1669104000"; 
-   d="scan'208";a="726223665"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga008.fm.intel.com with ESMTP; 26 Jan 2023 02:16:18 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1pKzIm-00FKtE-0t;
-        Thu, 26 Jan 2023 12:16:16 +0200
-Date:   Thu, 26 Jan 2023 12:16:16 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v1 5/5] gpio: Clean up headers
-Message-ID: <Y9JS8HEPMu+/zEFb@smile.fi.intel.com>
-References: <20230125201020.10948-1-andriy.shevchenko@linux.intel.com>
- <20230125201020.10948-6-andriy.shevchenko@linux.intel.com>
- <8454db45-a967-4542-8f16-538043542e14@app.fastmail.com>
+        with ESMTP id S237063AbjAZKSi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2023 05:18:38 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD5B61846;
+        Thu, 26 Jan 2023 02:18:10 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DB635B81D58;
+        Thu, 26 Jan 2023 10:18:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 81FA7C4339B;
+        Thu, 26 Jan 2023 10:18:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674728284;
+        bh=jQyK54Ac2Nf4g5m1Qyhvp73lWbZ9baHSRpo8ImPR0Tc=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+        b=aKoZkWz5/wCTW4C9GZvNGsjrUBj97qXkGfxxJmttMRQ6x5G2TMbntSr9zFZvw4FLa
+         6L/cJF3fkDNQqAd2Z7RnsO3VGgZQ6856UKrbJcDSC1EtHAxBdeiaOVjLlGXYkbEUU2
+         4TI7r5Ddx7n9qbWmYlhsz2/xWPEg24iwr3XXcWYdaNReS8Ak4vkwbUPi7KJL1M89qM
+         vcgWv1EQz68Dangvivk/zIp3YLajvTep1+Vq6qx2KuYK62iTIl2e+nfX6NoFmahNMx
+         h5BcmSyG0vDZYgNjJL83kg3iC1svacBXWcbPQtMmQ63g+z9zqm525xL4sh2sQK4TxN
+         XQr9HoFV9qfMg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.lore.kernel.org (Postfix) with ESMTP id 6C3DEC61DA2;
+        Thu, 26 Jan 2023 10:18:04 +0000 (UTC)
+From:   Niall Leonard via B4 Submission Endpoint 
+        <devnull+nl250060.ncr.com@kernel.org>
+Date:   Thu, 26 Jan 2023 10:17:23 +0000
+Subject: [PATCH 2/3] gpio: Add new flag BGPIOF_NO_INPUT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8454db45-a967-4542-8f16-538043542e14@app.fastmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230126-gpio-mmio-fix-v1-2-8a20ce0e8275@ncr.com>
+References: <20230126-gpio-mmio-fix-v1-0-8a20ce0e8275@ncr.com>
+In-Reply-To: <20230126-gpio-mmio-fix-v1-0-8a20ce0e8275@ncr.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Niall Leonard <nl250060@ncr.com>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=725; i=nl250060@ncr.com;
+ h=from:subject:message-id; bh=TggMaJeCcpeNdUyuVzDRaxsQqKzgRTR7wrZ7HE9dDhg=; 
+ =?utf-8?q?b=3DowEBbQKS/ZANAwAKAVGiIrYFD2P/AcsmYgBj0lNal1QTJQw+z/cl0dkuF4eBM?=
+ =?utf-8?q?GFEgzNxPwt88RAJ_yEncf7CJAjMEAAEKAB0WIQSha1EPjh6hUqdtwZNRoiK2BQ9j/?=
+ =?utf-8?q?wUCY9JTWgAKCRBRoiK2BQ9j/2wzEA_CMVU+Aqyd/S4fxzF9epmJOp+NTI0QKcCM6A?=
+ =?utf-8?q?45WtIHkfL24d6XnOrzA2WFb7Q1vaVC3rQp4+8RfvBMv_sAziC5leMO2WOG9GdYmi/?=
+ =?utf-8?q?if320+fJ607I4yILRKqDhS5MDm4UHSc2m8LTrIpz1XkxpUTOeLQPNiof6_3nXXDMF?=
+ =?utf-8?q?Pv0fekhtnODoKjU0Phjug+zP4mG8pN6eaGSmlLSrMTCrcdX8CPWxOS35eeE7dLmqD?=
+ =?utf-8?q?pafFzP_v+wurMIZ2e82Wr2e+RYw3d/66R95x6ydrRY9V/x4eFFQ5bDGeHSinITtfn?=
+ =?utf-8?q?t2Dbmjwp7vMzKwOWFEtE_Ja1luHGeJXr7Ohj4zK6/GTBqf2Ok12BlSbAkKZqtLXXC?=
+ =?utf-8?q?R8QQ1WBuG7TAYLStl40iYLRakboE7mF11X_7V+AdaEeJmAuDt/3xVTqeq4h8xaEx9?=
+ =?utf-8?q?/ve4saAexZd8BBOnTzusBNLg3/mlJu7pGK5hpaAePb164wpz_3vnCzYB2fQSt9gI5?=
+ =?utf-8?q?jEUPtBbflj2SbU97YRXMhq2du1x28HBoXWn540z/1LNtlcxm4VfDkZkKGJ/bZs_4V?=
+ =?utf-8?q?8Z35PJUWbdcMbiYmnxI4Av4J4wxwb5isvVMpd5txE4xXCIv1C4vIQs1blJ9HWbHs8?=
+ =?utf-8?q?7pQZliGoyIN?=
+ LPjBqKZaMKmtP4STpIsEqABTWONFeEbzXv5LfkPTxKCSQWuh5ye426xXsUdQ==
+X-Developer-Key: i=nl250060@ncr.com; a=openpgp;
+ fpr=A16B510F8E1EA152A76DC19351A222B6050F63FF
+X-Endpoint-Received: by B4 Submission Endpoint for nl250060@ncr.com/default with auth_id=26
+X-Original-From: Niall Leonard <nl250060@ncr.com>
+Reply-To: <nl250060@ncr.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jan 26, 2023 at 09:42:32AM +0100, Arnd Bergmann wrote:
-> On Wed, Jan 25, 2023, at 21:10, Andy Shevchenko wrote:
-> > There is a few things done:
-> > - include only the headers we are direct user of
-> > - when pointer is in use, provide a forward declaration
-> > - add missing headers
-> > - group generic headers and subsystem headers
-> > - sort each group alphabetically
-> >
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  include/asm-generic/gpio.h    |  8 --------
-> >  include/linux/gpio.h          |  9 +++------
-> >  include/linux/gpio/consumer.h | 14 ++++++++++----
-> >  include/linux/gpio/driver.h   | 34 ++++++++++++++++++++++++----------
-> >  4 files changed, 37 insertions(+), 28 deletions(-)
-> 
-> This change looks fine, but it conflicts with a slightly
-> broader cleanup that I meant to have already submitted,
-> folding include/asm-generic/gpio.h into linux/gpio.h and
-> removing the driver-side interface from that.
-> 
-> Let me try to dig out my series again, we should be able to
-> either use my version, or merge parts of this patch into it.
+From: Niall Leonard <nl250060@ncr.com>
 
-Can you share your patches, so I will rebase mine on top and see what's left?
+Signed-off-by: Niall Leonard <nl250060@ncr.com>
+---
+ include/linux/gpio/driver.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 44783fc16125..e8e57310e3b8 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -682,6 +682,7 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
+ #define BGPIOF_READ_OUTPUT_REG_SET	BIT(4) /* reg_set stores output value */
+ #define BGPIOF_NO_OUTPUT		BIT(5) /* only input */
+ #define BGPIOF_NO_SET_ON_INPUT		BIT(6)
++#define BGPIOF_NO_INPUT				BIT(7)	/* only output */
+ 
+ int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+ 		     irq_hw_number_t hwirq);
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
