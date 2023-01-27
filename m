@@ -2,82 +2,95 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2027C38142
-	for <linux-gpio@archiver.kernel.org>; Fri, 27 Jan 2023 11:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 253F0C54EAA
+	for <linux-gpio@archiver.kernel.org>; Fri, 27 Jan 2023 12:31:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233252AbjA0Lb1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 27 Jan 2023 06:31:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41746 "EHLO
+        id S229830AbjA0MbY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 27 Jan 2023 07:31:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233356AbjA0LbJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Jan 2023 06:31:09 -0500
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11B097C700;
-        Fri, 27 Jan 2023 03:29:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674818983; x=1706354983;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rmwYl6qmr6ZgUlWhIMYLF75xQQfhdp7GeiJDmf9FXZg=;
-  b=OlwmEjbAP+qhXTY+vopoaYgyyCvQJAA3qH6KInIqyyuqoLXX4AwTlfMH
-   z4oJ575i5OoJv8IE66iuluegyNQGounA3a/tu93UErlsEWYqR68ld4ReP
-   2jYIKGRQobTmKco+mFe8sykUkftgjnanvmWX+JFIHla1KuuG0UKRmkzlG
-   4D38gSUTlhaKukxFYpJW0sL9Z8HJccNPKEVitiwxAupw0wR/agLT9HS7e
-   f08wqyLNJCmxgPHb/gt3W/6//jSSozF/b9MbT7JprgFzEUg0SsHzirE6i
-   Ogwg2LkQo8ZwqlxKGEZCaAwGdfrK2Qu9LGXltc7x982UU7unjC8hLw92f
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10602"; a="315020703"
-X-IronPort-AV: E=Sophos;i="5.97,250,1669104000"; 
-   d="scan'208";a="315020703"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2023 03:29:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10602"; a="665216343"
-X-IronPort-AV: E=Sophos;i="5.97,250,1669104000"; 
-   d="scan'208";a="665216343"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga007.fm.intel.com with ESMTP; 27 Jan 2023 03:29:38 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1pLMvI-00Fw7Z-16;
-        Fri, 27 Jan 2023 13:29:36 +0200
-Date:   Fri, 27 Jan 2023 13:29:36 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] gpiolib cleanups
-Message-ID: <Y9O1oA2KKUUvOcnP@smile.fi.intel.com>
-References: <20230127101149.3475929-1-arnd@kernel.org>
+        with ESMTP id S233215AbjA0MbW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Jan 2023 07:31:22 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 954FF7EDA
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Jan 2023 04:31:02 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id m14so4369789wrg.13
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Jan 2023 04:31:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M8CjuepKqg/M2e9r104+g32dAzdxIZplyTbJV2ebBZo=;
+        b=iqxr9FqsaidMPrEaVCVYlkoELWhLll8EXvNyLvLvjamiEVOnwfJ6fUE6RQaNXCIJma
+         YkICzzr8KKUs+BiyCxRmNq18mSDpELj5CzoQfyfc0R8RcQuy/zPQ6NjK4FI9zMy6kYyF
+         hQ1SsDXTRHdofy1r1ve5SwK58MOULgj/WlR+Re+FxpehxL/l6ZQRXsS4HwvvAsQk8R6R
+         liZ98XSjDl8ZslrQQgn25sJqvqpYPRazROQ/S48TjWijA2Xp0aTSurWjercLFyOxOZOg
+         V+lOgmUlOzpErrgKX4YPRmk1K3yoMON/AA506gv0wio1ja9GwVJcP+zs/GUWNrFpXbVZ
+         fMkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M8CjuepKqg/M2e9r104+g32dAzdxIZplyTbJV2ebBZo=;
+        b=VyTtrrixr4qAOp3n8ViSnQG8k3l5G2kTQtZ5TGbi8TXuyzhZnQfmm3KmHnsO3NIPm6
+         4XL4N6jGRulxVznRu53kU45dkBPx1jubwFwIXqe+bIGqQUbncSXS1oL5zek0cMeZV98D
+         fd8sn7wKb8F3KYdBnzYUhqBO2FixShlBLw5WBO/DIb7/v6FIw3OvJhj6bJr9xX438Wyn
+         HgGhLwC3EJizOARqR+2nj7mBd6S57KmfkePcW/AnOHzAQR7ZMm/EKGzLpZ/pnapnQmew
+         zr6xp42etiY0oL6tTDUSclwugUSJq9sV/rYMxYqwuaqFyRNe5ghklnOVDzcBmF2/bapj
+         vC7Q==
+X-Gm-Message-State: AFqh2krhrHw+TivIIa5c6M+4HFMJ8RRL7nQwpSp1pygADai+QXQHfpzZ
+        2dnErUpyOQufFI1wBHnkBsGXXWAvzbrPyZax
+X-Google-Smtp-Source: AMrXdXtiHMB2tYFVFGT/0KfCHLVOttqaiXk7SjYZzkljWe1gENLnu9UPl2GGCcbhrs2zWXqVSf2h1g==
+X-Received: by 2002:a17:906:4094:b0:854:956:1438 with SMTP id u20-20020a170906409400b0085409561438mr103617805ejj.25.1674822650062;
+        Fri, 27 Jan 2023 04:30:50 -0800 (PST)
+Received: from fedora.. ([85.235.10.72])
+        by smtp.gmail.com with ESMTPSA id va17-20020a17090711d100b00876479361edsm2196078ejb.149.2023.01.27.04.30.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jan 2023 04:30:49 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     linux-gpio@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: at91: Tag suspend/resume __maybe_unused
+Date:   Fri, 27 Jan 2023 13:30:47 +0100
+Message-Id: <20230127123047.933776-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230127101149.3475929-1-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jan 27, 2023 at 11:11:42AM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> These are some older patches I did last year, rebased to linux-next-20230127.
-> 
-> The main goal is to remove some of the legacy bits of the gpiolib
-> interfaces, where the corner cases are easily avoided or replaced
-> with gpio descriptor based interfaces.
+Tag the suspend/resume callbacks as __maybe_unused to silence
+complaints from the build robots.
 
-Thank you!
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/pinctrl-at91.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I guess we may go with this via GPIO tree.
-
+diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+index cf2423855a80..2b91816ca286 100644
+--- a/drivers/pinctrl/pinctrl-at91.c
++++ b/drivers/pinctrl/pinctrl-at91.c
+@@ -1649,7 +1649,7 @@ static int gpio_irq_set_wake(struct irq_data *d, unsigned state)
+ 	return 0;
+ }
+ 
+-static int at91_gpio_suspend(struct device *dev)
++static int __maybe_unused at91_gpio_suspend(struct device *dev)
+ {
+ 	struct at91_gpio_chip *at91_chip = dev_get_drvdata(dev);
+ 	void __iomem *pio = at91_chip->regbase;
+@@ -1667,7 +1667,7 @@ static int at91_gpio_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int at91_gpio_resume(struct device *dev)
++static int __maybe_unused at91_gpio_resume(struct device *dev)
+ {
+ 	struct at91_gpio_chip *at91_chip = dev_get_drvdata(dev);
+ 	void __iomem *pio = at91_chip->regbase;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
