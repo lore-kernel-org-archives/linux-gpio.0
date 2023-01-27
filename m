@@ -2,220 +2,227 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C41C61DA3
-	for <linux-gpio@archiver.kernel.org>; Fri, 27 Jan 2023 15:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18885C38142
+	for <linux-gpio@archiver.kernel.org>; Fri, 27 Jan 2023 15:45:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234132AbjA0PjU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 27 Jan 2023 10:39:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36210 "EHLO
+        id S231593AbjA0Po7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 27 Jan 2023 10:44:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234254AbjA0PjT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Jan 2023 10:39:19 -0500
-X-Greylist: delayed 154 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 27 Jan 2023 07:39:16 PST
-Received: from mx0a-00209e01.pphosted.com (mx0a-00209e01.pphosted.com [148.163.148.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A9947438;
-        Fri, 27 Jan 2023 07:39:16 -0800 (PST)
-Received: from pps.filterd (m0131214.ppops.net [127.0.0.1])
-        by mx0b-00209e01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30R9jSX3010814;
-        Fri, 27 Jan 2023 06:39:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ncr.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pod1119;
- bh=2moKXPveB3U/AsaNrVqV9yZCXCpoAiH1zAPuuqyWI5w=;
- b=p6/Dl+xugjPR99gOa14xwJYOe4nUwr4O5+LRvlOYqjOMZWGpwNGnLhjMhuH59AUifcem
- CJ5RxAjnv8Q/9tBrYut4WUyaJC5NrJ5N05OvkPa8WboLuRv0f/nXAGr/Dsyje0ZYYZLR
- /btQe8dh+h8XnEsuyq66V1hELzrFLZbyjEtHYPezAbcmS5JxZn7Qeubspa1qUpCU9zCK
- muntmG5+10t9WnNoCuYDBwbsiRKe3IQNGreFAvo+GjLEYMLM+KnlOE3uRi1QzQtBskJ5
- MuzOuboGvQ1DKTtZVrCKuApfxJakZHdv+HhCo14zwjhRyVCUgpsvXFJqtQUoPbmmeBK4 Cw== 
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2169.outbound.protection.outlook.com [104.47.58.169])
-        by mx0b-00209e01.pphosted.com (PPS) with ESMTPS id 3nbsmsr1vc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Jan 2023 06:39:11 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IS6m6PwbKjI8gDJk4YrAerigtCtoKaw7BMvoLOqhmrE3oPSPJ1lVJh3c1Yy05Qf849yIxtfYlnITP1W84nDmYvNlBnAcy5HHT1vlOGIlbW7RBbmp2qx4Wr5YjSyIEZvai7B9wf0vK6h07Y+hZczNrO/mQXRISp5MCwLBuesRJjyOK+ETO8MQfBOjA1DXqziItM0x/Mgz+AH3XP3wkEV7qBz0vuH7iaz3Pv5zpYfYFPXhRZIjZEHxqYAw8NUgAO2N8L6LtjiubLfHGHxa5imjTkmAW1nj4xAV1s5EXZRpjoVqNKgZwgwOYm9sxvxHYBh/ptWBoHz+kSG/sTSL361Hlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2moKXPveB3U/AsaNrVqV9yZCXCpoAiH1zAPuuqyWI5w=;
- b=CK8yNUFS5oVP0EhzNv3X5lMTWBzrlI/15BVWwx6693dFL6drZ4pMv6Yu7tB39S3YFHGU7HDz2dKpKJSjvLJHS6RTpQ3Pp5gv2+sNtjmUyZVYtf4U9OKUbgX+L26Z73Gghgf5Q909U92mucTC3GJX0X9sAE2gnXC70sUaK2A8cWWkoUbxZhOXnaWLmtxuUQvOrSaovk2DcACMdmdEl+kwGpygL3xF2PbzJmLxTDBOko8DWkAnIHBkVDC94Cd/fVREb1IhYKnn10ijvjrCtvsGc0++wCoiOuYs32KMRGXknW+jkHuLivMx1fn0MGnG6fhC9oLIAnNSh5xdh3pDPYXo7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ncr.com; dmarc=pass action=none header.from=ncr.com; dkim=pass
- header.d=ncr.com; arc=none
-Received: from MW5PR15MB5218.namprd15.prod.outlook.com (2603:10b6:303:19e::18)
- by SA1PR15MB4468.namprd15.prod.outlook.com (2603:10b6:806:197::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.24; Fri, 27 Jan
- 2023 11:39:09 +0000
-Received: from MW5PR15MB5218.namprd15.prod.outlook.com
- ([fe80::e141:b605:48c7:bcf6]) by MW5PR15MB5218.namprd15.prod.outlook.com
- ([fe80::e141:b605:48c7:bcf6%3]) with mapi id 15.20.6043.023; Fri, 27 Jan 2023
- 11:39:08 +0000
-From:   "Leonard, Niall" <Niall.Leonard@ncr.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        with ESMTP id S234648AbjA0Pov (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Jan 2023 10:44:51 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A67E841A9
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Jan 2023 07:44:33 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id c10-20020a05600c0a4a00b003db0636ff84so3800101wmq.0
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Jan 2023 07:44:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PbuCJYfBaR4C2S/WLqugkA5/Q6fuYjOLse30J3FkCqY=;
+        b=oFbit4frrwa7j6dB45lUdEM8+K42JSB7bxwUCBozLWKDN/PiDt+7uI7iuMzHmRwNvW
+         wf5d8p0NwxG/qIdZriZCDH3lu2Go+ufEdbgi2hivDg2j7PgTV5s+7qZo9CaQl115O4wf
+         cibLxv1PjDuVYCBpYdMD8paEPVrhevQwDnm713Ea2Qvy+v9PqMymt+Ktc0bczlwuf96C
+         HP65BjdeZEy9J17SWmN7LdsTdeG3VWn32RCUhtCADAtdxflh1NsBMqjzHumnwj8cILEL
+         J3J8L8VGI8MtCLo6emy0G91H0TEKuT7Wn+XNxQaqFotinnV40mL0BBTScI0NpHmGBYPC
+         4czw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PbuCJYfBaR4C2S/WLqugkA5/Q6fuYjOLse30J3FkCqY=;
+        b=LPXbs5P00UB6+eSv1QOA6lmVm3AFgE0we+YBgCRdI24LhSWyIdyjUhzrhKt88nN1LG
+         OywhuEDCfcEMkRBjp7MDkkr2SF0ku7xyzaA4QpYmUuz0asX+SZ+MQGQxOOcnC7pJYtOB
+         tb2qBTgvzItSeO1tUF2+omPrOZiyfuwkz6vuoWxKfN90QCMg75fMz3kDplw7l5hbWGzk
+         wDy2y7wC690kikoHNg9bYwdWlfH2Xja21owaoAqxh096+k83Z+ERf10+hO8HF0iGcr+m
+         ZD/9+GK31AFcEIt5YZz2YjtyRozFBzWNtVtQMUn9kvAWS4QPj++bU3mFOHtodSW7lD3O
+         YyIg==
+X-Gm-Message-State: AO0yUKVGBYtItNiXuv8HZTyN3KYCMWNFenvtzRnKb1s8NlPT3MMcmtET
+        xDflpHpmMI9NP3LwajItEPhakA==
+X-Google-Smtp-Source: AK7set9sYS+UfS/9r2Ts9VFVpSLIiOFNaW0FCbX4pbVtE6a/tPDkv4DsonDpibV1Fs+SpJr0x1Pj+w==
+X-Received: by 2002:a05:600c:354a:b0:3dc:357a:f4ab with SMTP id i10-20020a05600c354a00b003dc357af4abmr3199140wmq.15.1674834271252;
+        Fri, 27 Jan 2023 07:44:31 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:624:f1a4:edb9:78d5])
+        by smtp.gmail.com with ESMTPSA id n6-20020a7bcbc6000000b003d237d60318sm4755229wmi.2.2023.01.27.07.44.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jan 2023 07:44:30 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-CC:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/3] gpio: dt-bindings: add new property to wd,mbl-gpio
- bindings
-Thread-Topic: [PATCH 1/3] gpio: dt-bindings: add new property to wd,mbl-gpio
- bindings
-Thread-Index: AQHZMW99YCz74HQkk0+hHBCSYD4Bfa6woJsAgAF0QhA=
-Date:   Fri, 27 Jan 2023 11:39:08 +0000
-Message-ID: <MW5PR15MB52184F83BA524D9600B820F5FDCC9@MW5PR15MB5218.namprd15.prod.outlook.com>
-References: <20230126-gpio-mmio-fix-v1-0-8a20ce0e8275@ncr.com>
- <20230126-gpio-mmio-fix-v1-1-8a20ce0e8275@ncr.com>
- <d4a70ab2-c5a2-2478-3fa9-c703c1619252@linaro.org>
-In-Reply-To: <d4a70ab2-c5a2-2478-3fa9-c703c1619252@linaro.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_dc233488-06c6-4c2b-96ac-e256c4376f84_Enabled=true;
- MSIP_Label_dc233488-06c6-4c2b-96ac-e256c4376f84_SetDate=2023-01-27T10:41:12Z;
- MSIP_Label_dc233488-06c6-4c2b-96ac-e256c4376f84_Method=Standard;
- MSIP_Label_dc233488-06c6-4c2b-96ac-e256c4376f84_Name=dc233488-06c6-4c2b-96ac-e256c4376f84;
- MSIP_Label_dc233488-06c6-4c2b-96ac-e256c4376f84_SiteId=ae4df1f7-611e-444f-897e-f964e1205171;
- MSIP_Label_dc233488-06c6-4c2b-96ac-e256c4376f84_ActionId=bf6f4fa3-0652-4cd3-b06a-6e6caf7b13e1;
- MSIP_Label_dc233488-06c6-4c2b-96ac-e256c4376f84_ContentBits=0
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MW5PR15MB5218:EE_|SA1PR15MB4468:EE_
-x-ms-office365-filtering-correlation-id: 83afb761-fcf7-4286-4504-08db005b1a6e
-x-from-ncr-tenant: Processed
-x-pp-secret: m9yph.359rsj96jnp6w-uuxnb8thy.9r62ir35fve
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: qu1/EO/ykLui4GadzqvpCuMlrTLDg/5FL9CoxNAjaRL+VksXTjxOh6JKrppGpF6toPa/pfylVF3pn2Ba259UUkf/E6a+T1CYcGWbMWb/K2HWWtL6cabh3s0qXCWG91qDIA5yxFGYxX3VKhXL0h65yon/cVAgmeIfYQz/he9/P+5SJHyujqZMrP2ZPk6BlE9A6rWwlG74byVC0+wq2JBSbib9s6SFye/0SQHdwGM/d+ITqgcQU/ie+WjGjL/lUgckRWgGFxgfUmSGMSMliK4Mc6xq0Jwav00NdohmG1d4azj/dybHDyaOHZRjG4tZr9uczAMs92Ep54H+ROavucStfBNwZkfN5DCUSYw43YUF3HESa4UgQE/5Li8SKZp/1+jBLlxlosKrCfVuvg6Iec1WeyO1Rvi5/OlpS7KaPjD9QNSO0nWfFD//mNC/PoZOHXQNqrJwoB0AsVMy+TFBvBXOB5X1AB3Mj1i2whsAizCAhLIFnoucv3xh//yrTKE1qBd+LMexZh9LLge/Evy3rxkP/kFODw1yA2kCBb1s9v/kSM3OoRkeBVxWkSNofecSJeWsRycnrrspKpH0jX5SDXzF6FHQu/bDC3Nv+fjgALrInntkpypV/KrCkiwQUSuJeIYJlYOqOc/JAkzWuLy7y8//lPfXhfUA1iO9lkrMBQGt7BDolLwCmgHaaLYrsm5vs3MtdS+DKhfNJoBZ9XGmTQArSg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR15MB5218.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(366004)(346002)(136003)(39860400002)(396003)(376002)(451199018)(66476007)(76116006)(2906002)(5660300002)(316002)(66556008)(122000001)(7696005)(33656002)(26005)(64756008)(66946007)(478600001)(4326008)(186003)(110136005)(38070700005)(52536014)(9686003)(83380400001)(66446008)(82960400001)(8936002)(8676002)(86362001)(38100700002)(6506007)(53546011)(71200400001)(54906003)(41300700001)(55236004)(55016003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?y09PapT8yXUwcWpPq4eleI7B34yP0HOC0RlMnnw4AgVcvT+m5hc5iHIiY2qs?=
- =?us-ascii?Q?l4tCe2AWbLlIXVhNttuBFPmLayKDJJ3dPh0EGExlmuRvOGoLjmB5v4H3d1GI?=
- =?us-ascii?Q?j1Ret+9wWzalhjSPU1ldvzM21kWlw88Lum1nh6/DrTVIybJI79lcp52YyFIk?=
- =?us-ascii?Q?fq+Pwq9kAoxLNBT5sjMTwsfQ4mge5MEadSh9/muWFTWvFg3+cNmYYP81qLlA?=
- =?us-ascii?Q?+LDwOqMt3aETadMPkT95I/KOTaoq2AXUYIK9zQZ1a/8j/DEb8mGfFzdR2RSR?=
- =?us-ascii?Q?h4e3N6iXgCwzJ2+tdngMzPRB7+0b2xfuJRHbUC0cKA9KxR9QtObg3iFFHtdJ?=
- =?us-ascii?Q?ToH2v+tc6ECi0/UIDRdtkL4xZuaG5val+F0rzQWjqcL0lOEItl7C6EKNl3kk?=
- =?us-ascii?Q?ioUH7R22l1DGD3jrwVZ7TgZlbpSntmCuugoStBdin5mwsaAETDqo5NwvnLLt?=
- =?us-ascii?Q?5Kcqq9g8pPQ59UhRBVB/MnMExvk+2zzqtl0wsKOzc6TkCvcPn0jstaCA6ApO?=
- =?us-ascii?Q?2VATIJdlRlQPcf1MeoCCuKMttoDDurqq6gvT7cBDfMQqHeJ9aUqbDY2fLLxD?=
- =?us-ascii?Q?APWHwY05bHyIKvMdyaH3XGs4nLbACVd6a71yjHcygWFhveWQ9cIRXmiATJ+f?=
- =?us-ascii?Q?rPGm9GI8QWl/924xlPKpVeXVh1b60Rc+aN4gOrUQvCsiI4ppiQkimkCkNSMB?=
- =?us-ascii?Q?dKsweuWhVvamrUDFhBfK9UhYZprGuYMuVyLF92bk9WMA4vqvRKuvLweaJ2N6?=
- =?us-ascii?Q?ame0MewnJBdC8dTOYGruiYRrJcYEUgURqlrv8IoEMH2OXrC5/LGba673tARK?=
- =?us-ascii?Q?jRO75XcMyH8iYKDkNamv2DEOO0HUXNXvxJM/0NUvhKM1mxUl5DHATt5iv4Aq?=
- =?us-ascii?Q?hwyeCdquCHv9OFOS/HSdwkDhP3aVd31R/+ZueekV7fSaaSPCLiuB/QDZkv9W?=
- =?us-ascii?Q?TFJfCpw5nbvb3hZkxSfCdIxCKzFBs51Ox0yBIYDCgcHfGomfSgqo1nG5evIC?=
- =?us-ascii?Q?4UmmBwUuPd+7ZAJpAdDTgN9ikm8F67NNnMua9uLF7wimb6DzsdXn5kpxh+Hw?=
- =?us-ascii?Q?am9f30/4Rs1SmdNp1SnJQrSmBEKkVKAY15C7sWyY2YnegtNqa0mNyzNdHzLR?=
- =?us-ascii?Q?rwHg3D/uZ6oq9IYAbi8IP89dySBII0Dp8Z5VCyv5IlE8nUyIW7Zn+2NU3pck?=
- =?us-ascii?Q?QLlqqRfnWa8f+tYg1k+L+4c2j7bGYrUopz88gz8o+gEfZpNRyhYFu0XGyS3G?=
- =?us-ascii?Q?vH9n0aKuveH33nBX9xzAnq9E3n35CaPhW2NEn7MLWwW49Is7oF4qZwlLXf+l?=
- =?us-ascii?Q?8v2DcbtlKThKh4DoN7HGPh2fk7bXHvuky2bVGJJ2v95kBc54a02qeFJk30OV?=
- =?us-ascii?Q?1MXHprrRxzqi9aj0q28va6EPXiUvvRbcb42JZJG9EbdIbA6e2gZShrS7lkAB?=
- =?us-ascii?Q?JZb83dE9DYk5YFCb+bvU829Hl/SynWfTRKfx0QVxLrzWvgHkOB7Ihs49HHPj?=
- =?us-ascii?Q?s+vkRSfa8xMQ8Cr+45UdQkAHCSwTRj0kxaAOyCY8qeD30kdJfbyjZzXqO/2i?=
- =?us-ascii?Q?OsmWr8taE4zVuf0RhFCeOf5U2N7asyl2HbADZx+C?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v2 1/2] dt-bindings: pinctrl: describe sa8775p-tlmm
+Date:   Fri, 27 Jan 2023 16:44:25 +0100
+Message-Id: <20230127154426.173863-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20230127154426.173863-1-brgl@bgdev.pl>
+References: <20230127154426.173863-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: qe1V3S2WBQuxqo+yf4g0uIejdIC1PRJEgV+Xuv9KiZ14fQk+YhZ5pBeZRTM1x1bzGbX3wGIzjPLD1URrGI8MeCHLD1TIf3Y4TEdquO1AgrO8Lo07KwpCZAH8fcSpRGol61qNbfijRkUhST/TxtQrhDsjIaScficEi07fsaftsFIzKvfG7VsLny9p4u2MPpukUUO5o549VClnytNRN2zfBFmChTcMXV/Ri/WOJf9q6HvEH75IdRnL3ifSWSaZ8/4odjeN1S/k6o+xHorfgniRWOIsypI2c91q6SshexOn/wFRjSpNYP0/jriucSsUfPndCHjuMVmYIEhY3U8QGwUNO9WM90BUTxzpN/g7ZMYyfX/SkUpdRJQhS1UuYq55vad5YojMN9Bab47hcJC4mfRHWLYWFtnvHFqAjhhVGOD0komv0QojuIcAWLYNAieVotfQInD18csUlIhQ+OD1BSmO2DUp7q27jRS5BZSM5QYlshpOfbxl+727bMmMSuJbhJGMVe/KyNwXoVpKgu3/PDZOw7JqpSojAYWBFZ1wSNGunWj0x2UsEPM+HGvtrxF0q/PmRPi14iE7mYOIMDzfSHm964JV1qx0K7aoCUVeaNqnkxbia2pQ8pDq1ZPwv7sGxN4W+/BkIPRRT4jEiNyiJdF4Aj4GwVRcT1MgWD4GRoffFUJhJqdH69ILIdqJDtifO+eoLVd50PIjeaSK4stR5vDMxOD+0HrG+peRIuacLVTOQ9ohXzcjo9GhteiSU+yIlY4bkUoRTTdbH6N80DmL3CjPb3a8EfJkHVjT9HUvQS0hMeacvtZJ8mB5E3f+VolwcSpISHlb/UTYdmOPUfPLMUj0bHNzFj08blJPeoKYnVlU0rM=
-X-OriginatorOrg: ncr.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MW5PR15MB5218.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83afb761-fcf7-4286-4504-08db005b1a6e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jan 2023 11:39:08.8358
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: ae4df1f7-611e-444f-897e-f964e1205171
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2SDC3Hl8gz43WiAjcs9xLFXCfAYcA/AMxkq0Unt5zcvRE+3mEyXG4y5hwIUfIY1r2t4K6Nm3pcXbiFN9Fz8yhg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR15MB4468
-X-Proofpoint-GUID: Y6oyQigHHMV-Bf1whAT_v-ic23QUCNLE
-X-Proofpoint-ORIG-GUID: Y6oyQigHHMV-Bf1whAT_v-ic23QUCNLE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-27_06,2023-01-27_01,2022-06-22_01
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+Add DT bindings for the TLMM controller on sa8775p platforms.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Sent: 26 January 2023 12:29
-> To: Leonard, Niall <Niall.Leonard@ncr.com>; Linus Walleij
-> <linus.walleij@linaro.org>; Bartosz Golaszewski <brgl@bgdev.pl>; Rob
-> Herring <robh+dt@kernel.org>; Krzysztof Kozlowski
-> <krzysztof.kozlowski+dt@linaro.org>
-> Cc: linux-gpio@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH 1/3] gpio: dt-bindings: add new property to wd,mbl-gp=
-io
-> bindings
->=20
-> *External Message* - Use caution before opening links or attachments
->=20
-> On 26/01/2023 11:17, Niall Leonard via B4 Submission Endpoint wrote:
-> > From: Niall Leonard <nl250060@ncr.com>
->=20
-> Subject: missing "wd,mbl-gpio:" prefix.
->=20
-> Subject: drop second/last, redundant "bindings". The "dt-bindings"
-> prefix is already stating that these are bindings.
->=20
-> >
-> > Added optional "no-input" property
->=20
-> Missing full stop.
->=20
-> >
-> > Signed-off-by: Niall Leonard <nl250060@ncr.com>
-> > ---
-> >  Documentation/devicetree/bindings/gpio/wd,mbl-gpio.txt | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/gpio/wd,mbl-gpio.txt
-> > b/Documentation/devicetree/bindings/gpio/wd,mbl-gpio.txt
-> > index 038c3a6a1f4d..9405f9dad522 100644
-> > --- a/Documentation/devicetree/bindings/gpio/wd,mbl-gpio.txt
-> > +++ b/Documentation/devicetree/bindings/gpio/wd,mbl-gpio.txt
-> > @@ -18,6 +18,7 @@ Required properties:
-> >
-> >  Optional properties:
-> >  	- no-output: GPIOs are read-only.
-> > +	- no-input: GPIOs are write-only. Read is via a shadow register.
->=20
-> Why this property is needed? Why driver cannot always use shadow
-> register?
->=20
-The shadow register is currently only used during the write operation. It i=
-s not available during the read operation. That is essentially the change I=
- have=20
-submitted.
-An alternative approach would have been to develop an entire new gpio drive=
-r similar to the 74xx driver, but I felt this approach was better.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ .../bindings/pinctrl/qcom,sa8775p-tlmm.yaml   | 136 ++++++++++++++++++
+ 1 file changed, 136 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml
 
-> Anyway, please convert the bindings to DT schema first (see writing-schem=
-a
-> and example-schema).
-> Documentation/devicetree/bindings/writing-schema.rst
->=20
-The bindings for this driver are duplicated in a few files even though they=
- use the same driver.
-i.e. wd,mbl-gpio.txt, ni,169445-nand-gpio.txt, brcm,bcm6345-gpio.yaml
-I don't know why these multiple bindings exist. It would perhaps make sense=
- to remove these duplicate binding documentation files and replace with a s=
-ingle one for "basic-mmio-gpio". I happened to pick ". wd,mbl-gpio.txt", bu=
-t I could have just as easily chosen one of the other 2.
-
-What's your view ?
-
-> Best regards,
-> Krzysztof
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml
+new file mode 100644
+index 000000000000..fa67718a886c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml
+@@ -0,0 +1,136 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,sa8775p-tlmm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Technologies, Inc. SA8775P TLMM block
++
++maintainers:
++  - Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++
++description: |
++  Top Level Mode Multiplexer pin controller in Qualcomm SA8775P SoC.
++
++allOf:
++  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
++
++properties:
++  compatible:
++    const: qcom,sa8775p-tlmm
++
++  reg:
++    maxItems: 1
++
++  interrupts: true
++  interrupt-controller: true
++  "#interrupt-cells": true
++  gpio-controller: true
++  "#gpio-cells": true
++  gpio-ranges: true
++  gpio-reserved-ranges:
++    minItems: 1
++    maxItems: 74
++  gpio-line-names:
++    maxItems: 148
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++patternProperties:
++  "-state$":
++    oneOf:
++      - $ref: "#/$defs/qcom-sa8775p-tlmm-state"
++      - patternProperties:
++          "-pins$":
++            $ref: "#/$defs/qcom-sa8775p-tlmm-state"
++        additionalProperties: false
++
++$defs:
++  qcom-sa8775p-tlmm-state:
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          oneOf:
++            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-3][0-9]|14[0-8])$"
++            - enum: [ sdc1_clk, sdc1_cmd, sdc1_data, sdc1_rclk, ufs_reset ]
++        minItems: 1
++        maxItems: 16
++
++      function:
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++
++        enum: [ atest_char, atest_usb2, audio_ref, cam_mclk, cci_async, cci_i2c,
++                cci_timer0, cci_timer1, cci_timer2, cci_timer3, cci_timer4,
++                cci_timer5, cci_timer6, cci_timer7, cci_timer8, cci_timer9,
++                cri_trng, cri_trng0, cri_trng1, dbg_out, ddr_bist, ddr_pxi0,
++                ddr_pxi1, ddr_pxi2, ddr_pxi3, ddr_pxi4, ddr_pxi5, edp0_hot,
++                edp0_lcd, edp1_hot, edp1_lcd, edp2_hot, edp2_lcd, edp3_hot,
++                edp3_lcd, emac0_mcg0, emac0_mcg1, emac0_mcg2, emac0_mcg3,
++                emac0_mdc, emac0_mdio, emac0_ptp_aux, emac0_ptp_pps, emac1_mcg0,
++                emac1_mcg1, emac1_mcg2, emac1_mcg3, emac1_mdc, emac1_mdio,
++                emac1_ptp_aux, emac1_ptp_pps, gcc_gp1, gcc_gp2, gcc_gp3,
++                gcc_gp4, gcc_gp5, hs0_mi2s, hs1_mi2s, hs2_mi2s, ibi_i3c,
++                jitter_bist, mdp0_vsync0, mdp0_vsync1, mdp0_vsync2, mdp0_vsync3,
++                mdp0_vsync4, mdp0_vsync5, mdp0_vsync6, mdp0_vsync7, mdp0_vsync8,
++                mdp1_vsync0, mdp1_vsync1, mdp1_vsync2, mdp1_vsync3, mdp1_vsync4,
++                mdp1_vsync5, mdp1_vsync6, mdp1_vsync7, mdp1_vsync8, mdp_vsync,
++                mi2s1_data0, mi2s1_data1, mi2s1_sck, mi2s1_ws, mi2s2_data0,
++                mi2s2_data1, mi2s2_sck, mi2s2_ws, mi2s_mclk0, mi2s_mclk1,
++                pcie0_clkreq, pcie1_clkreq, phase_flag, pll_bist, pll_clk,
++                prng_rosc0, prng_rosc1, prng_rosc2, prng_rosc3, qdss_cti,
++                qdss_gpio, qup0_se0, qup0_se1, qup0_se2, qup0_se3, qup0_se4,
++                qup0_se5, qup1_se0, qup1_se1, qup1_se2, qup1_se3, qup1_se4,
++                qup1_se5, qup1_se6, qup2_se0, qup2_se1, qup2_se2, qup2_se3,
++                qup2_se4, qup2_se5, qup2_se6, qup3_se0, sailss_emac0,
++                sailss_ospi, sail_top, sgmii_phy, tb_trig, tgu_ch0, tgu_ch1,
++                tgu_ch2, tgu_ch3, tgu_ch4, tgu_ch5, tsense_pwm1, tsense_pwm2,
++                tsense_pwm3, tsense_pwm4, usb2phy_ac, vsense_trigger ]
++
++      bias-disable: true
++      bias-pull-down: true
++      bias-pull-up: true
++      drive-strength: true
++      input-enable: true
++      output-high: true
++      output-low: true
++
++    required:
++      - pins
++
++    additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    tlmm: pinctrl@f000000 {
++        compatible = "qcom,sa8775p-tlmm";
++        reg = <0xf000000 0x1000000>;
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        gpio-ranges = <&tlmm 0 0 149>;
++
++        qup-uart10-state {
++            pins = "gpio46", "gpio47";
++            function = "qup1_se3";
++        };
++    };
++...
+-- 
+2.37.2
 
