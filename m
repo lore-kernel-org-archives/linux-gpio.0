@@ -2,51 +2,48 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B53CC636CC
-	for <linux-gpio@archiver.kernel.org>; Tue, 31 Jan 2023 13:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B342C636CC
+	for <linux-gpio@archiver.kernel.org>; Tue, 31 Jan 2023 13:49:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232389AbjAaNtp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 31 Jan 2023 08:49:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60084 "EHLO
+        id S232403AbjAaNtq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 31 Jan 2023 08:49:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231861AbjAaNto (ORCPT
+        with ESMTP id S232347AbjAaNto (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Jan 2023 08:49:44 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F9464DBCD;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 960254B483;
         Tue, 31 Jan 2023 05:49:43 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 10E20B81C95;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 429FFB81CDF;
         Tue, 31 Jan 2023 13:49:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BC9EEC433D2;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D826CC4339B;
         Tue, 31 Jan 2023 13:49:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1675172980;
-        bh=1Z7cFnIaVZYHOUdHNJcuzkiLztx+3TEdtrF5p6m8WUQ=;
-        h=From:Subject:Date:To:Cc:Reply-To:From;
-        b=CPa7O6jH1u2doQWEM0n18EidGCsTBtqRT/56VA5vc+MPatJO7XeDy3CbLgdiy8PQC
-         Mg2X5necEynfG4FgNjXDlKtI8KAyMs79L4LEBUbkmEh81raF627CrkfymA/v1wB960
-         sTkLL8m0TkfbSN3G6rOHvNW1kG3XIlj71Vlq32WQAJo3eMAoqo6o1nD+NeB1rjvLf/
-         KiHuIDiD8862rTLE3tKB7AtrEzAjZCvUMMU41C9nz/v6MKgR0qMdw9VpO+m6wsL47l
-         gkd+65PtRODBVBxb+DItfF/+QJ/9Ai382/wGyk8JBq+Y8ef3P01hz7Suwcjkpjgi4z
-         3vJJl185p1d9A==
+        bh=2a2lkU6K2uCveC71ivewBVMghpO7dbUOieeM5PNFeK0=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+        b=UJ27/uL/1ZBdH5Mqb5dOkVjo9goPIMc2eIY3HzDvbHDt1OtdwdIdOfwxgFoFAFCML
+         uam8JgupPWFGTOfIPsTFZmUapQR9OZxAbaLG1QbeYWmVK7AI5FiSlIDqGza2HO/iUH
+         G433WFLpod+UN0FpKctwiytA4VrWQQIN7RMYWo7om6p2m8UQTS/6fa2aYc2zjCDbsH
+         1XLEzeDusOOqUpRCZOKvGLYLflt3GUIOcsFVZq18YF92siLjn2NZukr4qFD/mpzihR
+         9x7pTDQZxlozu5aDeiMu3+g5oXFnt9hukwAzdDJJ7MTj8ddYElEPzGs0l8Q/WG43+V
+         QYTqgL6P3r6bg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.lore.kernel.org (Postfix) with ESMTP id ABAAAC636D4;
+        by smtp.lore.kernel.org (Postfix) with ESMTP id C4E43C64EC3;
         Tue, 31 Jan 2023 13:49:40 +0000 (UTC)
 From:   Niall Leonard via B4 Submission Endpoint 
         <devnull+nl250060.ncr.com@kernel.org>
-Subject: [PATCH v2 0/2] Introduce new optional property to mark port as
- write only.
-Date:   Tue, 31 Jan 2023 13:49:36 +0000
-Message-Id: <20230126-gpio-mmio-fix-v2-0-38397aace340@ncr.com>
+Date:   Tue, 31 Jan 2023 13:49:38 +0000
+Subject: [PATCH v2 2/2] gpio: mmio: Use new flag BGPIOF_NO_INPUT.
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHAc2WMC/3WNSw6DMAxEr4K8rqskqHy64h4VixBc8CIJchBqh
- bh7A/tuRnpjj94OiYQpwbPYQWjjxDFkMLcC3GzDRMhjZjDKlEqbCqeFI3qf480f1LZqR1WSa6m
- GvBlsIhzEBjefK2/TSnIeFqH8f4lefeaZ0xrle3k3fbb/FJtGhY01ypGixtSPLji5u+ihP47jB
- wXno9nBAAAA
+Message-Id: <20230126-gpio-mmio-fix-v2-2-38397aace340@ncr.com>
+References: <20230126-gpio-mmio-fix-v2-0-38397aace340@ncr.com>
+In-Reply-To: <20230126-gpio-mmio-fix-v2-0-38397aace340@ncr.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Rob Herring <robh+dt@kernel.org>,
@@ -54,22 +51,22 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
 Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Niall Leonard <nl250060@ncr.com>
 X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1814; i=nl250060@ncr.com;
- h=from:subject:message-id; bh=1Z7cFnIaVZYHOUdHNJcuzkiLztx+3TEdtrF5p6m8WUQ=; 
- =?utf-8?q?b=3DowEBbQKS/ZANAwAKAVGiIrYFD2P/AcsmYgBj2RxylmuT5skkrTH/YOGohMmNJ?=
- =?utf-8?q?8jj5UPwlHDOiDQ2_Schczg6JAjMEAAEKAB0WIQSha1EPjh6hUqdtwZNRoiK2BQ9j/?=
- =?utf-8?q?wUCY9kccgAKCRBRoiK2BQ9j/3B4EA_CDgRlwzS6iaobZ21c4NI7EohDkC3mafEZFU?=
- =?utf-8?q?C8J27JAwqTcq4dJ8TuDFD7WJm0M5a2f4j6QuvDueKpZ_Qr3jXmaTNe+vtWSimB6Fz?=
- =?utf-8?q?I4sl7ZbMyRyzg0w+zlbge3WfMKitPdWVEW5KaXWz89KFs+RctteMWxp5o_Dr8uDcB?=
- =?utf-8?q?QlYPzyC3WIVfFPiZPk2L40BHik9pwUq1qey9pRVIoBFiNBKgF/K6N2SI5Opn4jkpv?=
- =?utf-8?q?8t0n+e_4O3j2BhwbkcWMFoMR8r3Ilob9FXUPgpVWZ3mh3vOBH/6ZeAk9uRIZYuC5L?=
- =?utf-8?q?YsYRo0u25YL2GS8cnm2d_KUSPSfbXch/hE95DF6ynGOuQpxyFMaqeiXn+hT60ipYF?=
- =?utf-8?q?UsDNXivaukdHcLnVRRGRe7Tdh2BQ8FZ1V1_0nUNxEWGOUPP7Uu1xViJByfk00IqLx?=
- =?utf-8?q?9h7plFvFpOow63EiPqV4Ccd2IHA1RZ791V9Gccwi1kUT/c50_5dQU3J5DV5EmPN/8?=
- =?utf-8?q?7s2e15MrZ18LJhFGcwF5FpjsdPEn8+UN9+KXnsAxDbqowKy+WLZM43L/izKci2_pF?=
- =?utf-8?q?TA+0ohdkPiXiQT5Bl6nxQvl4s4xc8gvkSortHZBkxJcqDaje22bgvDbObEavGg5Pc?=
- =?utf-8?q?gmFIFUHpBJq?=
- bAm7AC73+49N7SukOS4spYL6ePPlQxVRMIzbam89BQfq/sScdXKcvYbXaDkA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3171; i=nl250060@ncr.com;
+ h=from:subject:message-id; bh=qw+ukSOOr1LL8jakS9qqqS7Ifx1mSYww3yijW1VYn/c=; 
+ =?utf-8?q?b=3DowEBbQKS/ZANAwAKAVGiIrYFD2P/AcsmYgBj2RxzG8Rs4mvsqSBm+6z29boec?=
+ =?utf-8?q?XRRXeqa8Uuy4anQ_ehqbzcSJAjMEAAEKAB0WIQSha1EPjh6hUqdtwZNRoiK2BQ9j/?=
+ =?utf-8?q?wUCY9kccwAKCRBRoiK2BQ9j/9FKEA_DNju1HJb+AUeRe9LgvDDLjnqhfbAV0+NsnU?=
+ =?utf-8?q?co9AgeNNsZ87CaMOIThcNTLH6kLkwxeeMb7XuWieLMe_x6CDnp9Gj2PUsvqJZBSuN?=
+ =?utf-8?q?w9oX2DnxytOxXB8je/3fzhDvDTUAo4caKnXA7pna8rQbeY7NxbsItkBqy_vpRYD3L?=
+ =?utf-8?q?oKFXsIrVPsvUbn7/wkW4flcjhuY5AcwCGHIzOUsiAxKqYRVhAl8oX+g7PT6xH0BeL?=
+ =?utf-8?q?g6xX9x_Fldqj93K4zJXEFypyYcrwVzzWEpHE3sWPPazVYBv+0D2TJIFWaVIwgCDln?=
+ =?utf-8?q?oNgbvCB7grUaeskAmrCS_Gr6val+X4RZmUcv7iQua+13bzeLWeZ9Q1yYffKpdWBB7?=
+ =?utf-8?q?vJnYQIDHqQ3nkNC6Azgx8msVcSPdTDsF8Q_EvqPLSB8RvkQ73JKHwfx0R/ROdSfqN?=
+ =?utf-8?q?GS9Znzbr9Qh4pLvq4OLz1F8Ao1dLlQ4XTNTBNAczNk+MOw3x_8e2LAmLv0x6CYMnP?=
+ =?utf-8?q?HC3VWZ3KKOepEKneoLJ3ec0PykAkMt1GVhAskcopvCUXaWKik2dogK0nZd0aAh_RX?=
+ =?utf-8?q?1R42naQaNEK0fE/tw6iZLlJz0t/UU1ZiMb87edPInPTW+wYjSsmRij1JGaoPNEskw?=
+ =?utf-8?q?jZ1qgNRWcqm?=
+ 5VdwCAqUsIc/ocBhTdEjer4JBiYr01gvxrJginHJNWG8OcrfN+IIfg6UPiAw==
 X-Developer-Key: i=nl250060@ncr.com; a=openpgp;
  fpr=A16B510F8E1EA152A76DC19351A222B6050F63FF
 X-Endpoint-Received: by B4 Submission Endpoint for nl250060@ncr.com/default with auth_id=26
@@ -79,46 +76,97 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Some electronics do not allow the data regsister to be read without
-corrupting the existing data on the port. It a quirk of the board
-design.
-e.g. I have a couple of boards where the electronics engineer decided 
-to only use the chip select line, so no read/write signal is connected. 
-This means that reading the address activates the chip select and drives 
-the contents of the data bus to the port.This makes it impossible to 
-read the last data written to the port.
+From: Niall Leonard <nl250060@ncr.com>
 
-This solution is to use the existing shadow data register 'bgpio_data'.
-It  can be used to return the last value written to the port by the read 
-operation.
- 
-This is enabled for a particular port using a new flag and a new
-device tree property "no-input" to allow it to be selected on a board by 
-board basis. This means it will only effect hardware that requests it.
+Add new flag BGPIOF_NO_INPUT to header file.
+Use the existing shadow data register 'bgpio_data' to allow
+the last written value to be returned by the read operation
+when BGPIOF_NO_INPUT flag is set.
+Ensure this change only applies to the specific binding "wd,mbl-gpio".
 
 Signed-off-by: Niall Leonard <nl250060@ncr.com>
 ---
-Changes in v2:
-- Description of change updated to clarify why it is needed.
-- Patches squashed as per request during review.
-- wd,mbl-gpio bindings updated to yaml format.
-- Link to v1: https://lore.kernel.org/r/20230126-gpio-mmio-fix-v1-0-8a20ce0e8275@ncr.com
+ drivers/gpio/gpio-mmio.c    | 24 +++++++++++++++++++++---
+ include/linux/gpio/driver.h |  1 +
+ 2 files changed, 22 insertions(+), 3 deletions(-)
 
----
-Niall Leonard (2):
-      dt-bindings: improve wb,mbl-gpio binding documentation.
-      gpio: mmio: Use new flag BGPIOF_NO_INPUT.
+diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+index d9dff3dc92ae..9939fdbf6345 100644
+--- a/drivers/gpio/gpio-mmio.c
++++ b/drivers/gpio/gpio-mmio.c
+@@ -164,6 +164,11 @@ static int bgpio_get_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+ 	return 0;
+ }
+ 
++static int bgpio_get_shadow(struct gpio_chip *gc, unsigned int gpio)
++{
++	return !!(gc->bgpio_data & bgpio_line2mask(gc, gpio));
++}
++
+ static int bgpio_get(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	return !!(gc->read_reg(gc->reg_dat) & bgpio_line2mask(gc, gpio));
+@@ -526,7 +531,10 @@ static int bgpio_setup_io(struct gpio_chip *gc,
+ 		 * reading each line individually in that fringe case.
+ 		 */
+ 	} else {
+-		gc->get = bgpio_get;
++		if (flags & BGPIOF_NO_INPUT)
++			gc->get = bgpio_get_shadow;
++		else
++			gc->get = bgpio_get;
+ 		if (gc->be_bits)
+ 			gc->get_multiple = bgpio_get_multiple_be;
+ 		else
+@@ -630,7 +638,11 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	gc->bgpio_data = gc->read_reg(gc->reg_dat);
++	if (flags & BGPIOF_NO_INPUT)
++		gc->bgpio_data = 0;
++	else
++		gc->bgpio_data = gc->read_reg(gc->reg_dat);
++
+ 	if (gc->set == bgpio_set_set &&
+ 			!(flags & BGPIOF_UNREADABLE_REG_SET))
+ 		gc->bgpio_data = gc->read_reg(gc->reg_set);
+@@ -694,8 +706,9 @@ static struct bgpio_pdata *bgpio_parse_dt(struct platform_device *pdev,
+ 					  unsigned long *flags)
+ {
+ 	struct bgpio_pdata *pdata;
++	const struct of_device_id *of_id;
+ 
+-	if (!of_match_device(bgpio_of_match, &pdev->dev))
++	if (!(of_id = of_match_device(bgpio_of_match, &pdev->dev)))
+ 		return NULL;
+ 
+ 	pdata = devm_kzalloc(&pdev->dev, sizeof(struct bgpio_pdata),
+@@ -711,6 +724,11 @@ static struct bgpio_pdata *bgpio_parse_dt(struct platform_device *pdev,
+ 	if (of_property_read_bool(pdev->dev.of_node, "no-output"))
+ 		*flags |= BGPIOF_NO_OUTPUT;
+ 
++	if (!strcmp(of_id->compatible, "wd,mbl-gpio")) {
++		if (of_property_read_bool(pdev->dev.of_node, "no-input"))
++			*flags |= BGPIOF_NO_INPUT;
++	}
++
+ 	return pdata;
+ }
+ #else
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 44783fc16125..e8e57310e3b8 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -682,6 +682,7 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
+ #define BGPIOF_READ_OUTPUT_REG_SET	BIT(4) /* reg_set stores output value */
+ #define BGPIOF_NO_OUTPUT		BIT(5) /* only input */
+ #define BGPIOF_NO_SET_ON_INPUT		BIT(6)
++#define BGPIOF_NO_INPUT				BIT(7)	/* only output */
+ 
+ int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+ 		     irq_hw_number_t hwirq);
 
- .../devicetree/bindings/gpio/wd,mbl-gpio.txt       | 38 -----------
- .../devicetree/bindings/gpio/wd,mbl-gpio.yaml      | 78 ++++++++++++++++++++++
- drivers/gpio/gpio-mmio.c                           | 24 ++++++-
- include/linux/gpio/driver.h                        |  1 +
- 4 files changed, 100 insertions(+), 41 deletions(-)
----
-base-commit: 1b929c02afd37871d5afb9d498426f83432e71c2
-change-id: 20230126-gpio-mmio-fix-1a69d03ec9e7
-
-Best regards,
 -- 
-Niall Leonard <nl250060@ncr.com>
+2.34.1
 
