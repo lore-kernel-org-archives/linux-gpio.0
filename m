@@ -2,221 +2,171 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F7BC636D4
-	for <linux-gpio@archiver.kernel.org>; Tue, 31 Jan 2023 13:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9900EC636CC
+	for <linux-gpio@archiver.kernel.org>; Tue, 31 Jan 2023 14:08:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232394AbjAaNtq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 31 Jan 2023 08:49:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60090 "EHLO
+        id S229890AbjAaOIw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 31 Jan 2023 09:08:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232358AbjAaNto (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Jan 2023 08:49:44 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74F874DBEA;
-        Tue, 31 Jan 2023 05:49:43 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2CC1EB81CD8;
-        Tue, 31 Jan 2023 13:49:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C7415C433EF;
-        Tue, 31 Jan 2023 13:49:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675172980;
-        bh=7uS99guVEB4XU7LjGkPqNw0LUaTw0sbs4tjMoJ9K564=;
-        h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-        b=J7a8fZSUs+lYf7LZMmzS7MATftH5bDlUCXYiECSixOaqU0b9AvY+pxzTcMUfnKIkH
-         4YY/2PBV5lSOY2Glx3xPRLFjLwz+hup2gXXRFsyrduoxqigHVuG1ltV7DB5fhX0v4B
-         w6Mc6agHugLUXU/zfs6zrd/DxZwB0QDHRSe9M3TAKm8RZjdY4xsuyedZMjofzkToYx
-         nvj7ww2Mv9pPF80wUDofgDQaq6OFniPGE/k9l+zZR19X6ArIuS7QLTH8SgHrCZrGjC
-         AP3px/o7EIjrdapKJ29a4kw6d3+QtFiQbsBaIwCBtFj1n28uhJ9QBRvlH3qQlyaCgQ
-         SKI8PQcI7fO3Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.lore.kernel.org (Postfix) with ESMTP id B7E7CC636D7;
-        Tue, 31 Jan 2023 13:49:40 +0000 (UTC)
-From:   Niall Leonard via B4 Submission Endpoint 
-        <devnull+nl250060.ncr.com@kernel.org>
-Date:   Tue, 31 Jan 2023 13:49:37 +0000
-Subject: [PATCH v2 1/2] dt-bindings: improve wb,mbl-gpio binding
- documentation.
+        with ESMTP id S229590AbjAaOIw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Jan 2023 09:08:52 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C002836FFC;
+        Tue, 31 Jan 2023 06:08:50 -0800 (PST)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 69D8F22B05;
+        Tue, 31 Jan 2023 14:08:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1675174129; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=T49m4aNneycdJRUox2NnWvbDHKOK5LQ0u6zBagVR6NY=;
+        b=19R4zxNGaLGs0/BdyhligmSWKz7ncKw4I9vEaCeJbqvAajD+uc6ET5AkprNHNtGxxTaWE3
+        0ufCmT501ll9cnG5BVbwJ1I5evVot1UbC9ZFNvj1AJTanWK7on2pM1aV2ql50USH5b+oyu
+        uIt7lKO+GN8nQQdrYzdqRIm2OEVTxNI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1675174129;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=T49m4aNneycdJRUox2NnWvbDHKOK5LQ0u6zBagVR6NY=;
+        b=z2/uq1WlpP3hZGyMEyL9G0pYl2Vz7xEmuiuYkEuS7QEeRHzP5SU+PqQxN8+KvFbFYWng4I
+        1U0pLFoHuEecFyCg==
+Received: from hawking.suse.de (unknown [10.168.4.11])
+        by relay2.suse.de (Postfix) with ESMTP id E15DE2C141;
+        Tue, 31 Jan 2023 14:08:48 +0000 (UTC)
+Received: by hawking.suse.de (Postfix, from userid 17005)
+        id 9D17F440D4E; Tue, 31 Jan 2023 15:08:48 +0100 (CET)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Jianlong Huang <jianlong.huang@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 4/5] pinctrl: starfive: Add StarFive JH7110 sys
+ controller driver
+References: <20221220005529.34744-1-hal.feng@starfivetech.com>
+        <20221220005529.34744-5-hal.feng@starfivetech.com>
+X-Yow:  My polyvinyl cowboy wallet was made in Hong Kong by Montgomery Clift!
+Date:   Tue, 31 Jan 2023 15:08:48 +0100
+In-Reply-To: <20221220005529.34744-5-hal.feng@starfivetech.com> (Hal Feng's
+        message of "Tue, 20 Dec 2022 08:55:28 +0800")
+Message-ID: <mvm4js6zthr.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230126-gpio-mmio-fix-v2-1-38397aace340@ncr.com>
-References: <20230126-gpio-mmio-fix-v2-0-38397aace340@ncr.com>
-In-Reply-To: <20230126-gpio-mmio-fix-v2-0-38397aace340@ncr.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Niall Leonard <nl250060@ncr.com>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3862; i=nl250060@ncr.com;
- h=from:subject:message-id; bh=142m7Aqg9vw0k6ow9nta9rhrZ0z5xj3jNyxgUalZmSE=; 
- =?utf-8?q?b=3DowEBbQKS/ZANAwAKAVGiIrYFD2P/AcsmYgBj2Rxz/48ADK4QFJhVsMMPjq97F?=
- =?utf-8?q?Yf9+GU+yxYhz3oB_Ru8fQjOJAjMEAAEKAB0WIQSha1EPjh6hUqdtwZNRoiK2BQ9j/?=
- =?utf-8?q?wUCY9kccwAKCRBRoiK2BQ9j/wfqD/_9MfkaSMi+fNT85L55YvriK0JaptFrIHxrzl?=
- =?utf-8?q?FJkfh1nGjioTNPmW5mT742ULSkzx0ZJjzvYh1ay8Hvo_iBV2bG3RkqCZmS8mCD7kY?=
- =?utf-8?q?6nm729bvgLoj968DNt2UQNHiFlZ9w2Ftl7eOYCOKLAVLq5THkCE3FGlu9_qVR95vc?=
- =?utf-8?q?3ZIQfWIBF6K92t8c/nigXW31IfBnNEZJAU4JflHT091gaHq0fzgsnUb+4rDXfN8fU?=
- =?utf-8?q?hBUPYU_DD8A9mGV16pxJ3UxzgtPmn/ax5FTYxMe2daeKsU0II1SiJSQgWqAd17zku?=
- =?utf-8?q?Wwnm5VtK6T5HUz0fI0R1_ojpLc6fvAAvMR/UT87sjoXPwY6KiSYUSCRzpga3Iifq5?=
- =?utf-8?q?XrxObXEWbZqjqAJ8KiuzWxSH2xkp0x/tHu_/RNTfLvOFLHFZ4N5BAzFEFSjdH1+xj?=
- =?utf-8?q?Bo7SkA/zG1GmmhwyAujGu4n2vn0zNcpGTJ/4/75YRlOx53V9_LPmTS7pvTer4Bmzx?=
- =?utf-8?q?JdW2WqV6K1JSRHwi8o9zxNyocMMkhdPxZzbbhpZt8AWMNqgrsc7/wt7r6SVkvU_tV?=
- =?utf-8?q?HtW0CRFyWF+JB+ezrD4cBLX3I5Hd5SAVbAAtplpqD+8dIjE6YzGOYImUqGMyMWBj6?=
- =?utf-8?q?Rhu8odA2r9H?=
- m7SJgWML6WQbWU8eiGZ8CHPMsT8HH7fKIDMf51D0mQsw12JF5ymFL8punxGw==
-X-Developer-Key: i=nl250060@ncr.com; a=openpgp;
- fpr=A16B510F8E1EA152A76DC19351A222B6050F63FF
-X-Endpoint-Received: by B4 Submission Endpoint for nl250060@ncr.com/default with auth_id=26
-X-Original-From: Niall Leonard <nl250060@ncr.com>
-Reply-To: <nl250060@ncr.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Niall Leonard <nl250060@ncr.com>
+On Dez 20 2022, Hal Feng wrote:
 
-Convert existing wd,mbl-gpio binding documentation to YAML and add
-new optional propery "no-input".
+> diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
+> new file mode 100644
+> index 000000000000..85df9d0ae1de
+> --- /dev/null
+> +++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
+> @@ -0,0 +1,979 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Pinctrl / GPIO driver for StarFive JH7110 SoC
+> + *
+> + * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
+> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
+> + */
+> +
+> +#include <linux/bits.h>
+> +#include <linux/clk.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/io.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset.h>
+> +#include <linux/spinlock.h>
+> +
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/pinctrl/pinmux.h>
+> +
+> +#include <dt-bindings/pinctrl/starfive,jh7110-pinctrl.h>
+> +
+> +#include "../core.h"
+> +#include "../pinctrl-utils.h"
+> +#include "../pinmux.h"
+> +#include "../pinconf.h"
+> +#include "pinctrl-starfive-jh7110.h"
 
-Signed-off-by: Niall Leonard <nl250060@ncr.com>
----
- .../devicetree/bindings/gpio/wd,mbl-gpio.txt       | 38 -----------
- .../devicetree/bindings/gpio/wd,mbl-gpio.yaml      | 78 ++++++++++++++++++++++
- 2 files changed, 78 insertions(+), 38 deletions(-)
+This misses a couple of headers, see commit 042b93c9b666.
 
-diff --git a/Documentation/devicetree/bindings/gpio/wd,mbl-gpio.txt b/Documentation/devicetree/bindings/gpio/wd,mbl-gpio.txt
-deleted file mode 100644
-index 038c3a6a1f4d..000000000000
---- a/Documentation/devicetree/bindings/gpio/wd,mbl-gpio.txt
-+++ /dev/null
-@@ -1,38 +0,0 @@
--Bindings for the Western Digital's MyBook Live memory-mapped GPIO controllers.
--
--The Western Digital MyBook Live has two memory-mapped GPIO controllers.
--Both GPIO controller only have a single 8-bit data register, where GPIO
--state can be read and/or written.
--
--Required properties:
--	- compatible: should be "wd,mbl-gpio"
--	- reg-names: must contain
--		"dat" - data register
--	- reg: address + size pairs describing the GPIO register sets;
--		order must correspond with the order of entries in reg-names
--	- #gpio-cells: must be set to 2. The first cell is the pin number and
--			the second cell is used to specify the gpio polarity:
--			0 = active high
--			1 = active low
--	- gpio-controller: Marks the device node as a gpio controller.
--
--Optional properties:
--	- no-output: GPIOs are read-only.
--
--Examples:
--	gpio0: gpio0@e0000000 {
--		compatible = "wd,mbl-gpio";
--		reg-names = "dat";
--		reg = <0xe0000000 0x1>;
--		#gpio-cells = <2>;
--		gpio-controller;
--	};
--
--	gpio1: gpio1@e0100000 {
--		compatible = "wd,mbl-gpio";
--		reg-names = "dat";
--		reg = <0xe0100000 0x1>;
--		#gpio-cells = <2>;
--		gpio-controller;
--		no-output;
--	};
-diff --git a/Documentation/devicetree/bindings/gpio/wd,mbl-gpio.yaml b/Documentation/devicetree/bindings/gpio/wd,mbl-gpio.yaml
-new file mode 100644
-index 000000000000..d1c72a42c5bc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/wd,mbl-gpio.yaml
-@@ -0,0 +1,78 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/wd,mbl-gpio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Western Digital's MyBook Live memory-mapped GPIO controllers.
-+
-+maintainers:
-+  - Niall Leonard <nl250060@ncr.com>
-+
-+description: |+
-+  Bindings for the Western Digital's MyBook Live memory-mapped GPIO controllers.
-+
-+  The Western Digital MyBook Live has two memory-mapped GPIO controllers.
-+  Both GPIO controller only have a single 8-bit data register, where GPIO
-+  state can be read and/or written.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - wd,mbl-gpio
-+
-+  reg-names:
-+    items:
-+      - const: dat
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+  gpio-controller: true
-+
-+  no-output:
-+    description: GPIOs are read-only.
-+
-+  no-input:
-+    description: GPIOs are write-only.
-+
-+required:
-+  - compatible
-+  - reg-names
-+  - reg
-+  - '#gpio-cells'
-+  - gpio-controller
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    gpio0: gpio0@e0000000 {
-+        compatible = "wd,mbl-gpio";
-+        reg-names = "dat";
-+        reg = <0xe0000000 0x1>;
-+        #gpio-cells = <2>;
-+        gpio-controller;
-+    };
-+
-+    gpio1: gpio1@e0100000 {
-+        compatible = "wd,mbl-gpio";
-+        reg-names = "dat";
-+        reg = <0xe0100000 0x1>;
-+        #gpio-cells = <2>;
-+        gpio-controller;
-+        no-output;
-+    };
-+
-+    gpio2: gpio1@e0200000 {
-+        compatible = "wd,mbl-gpio";
-+        reg-names = "dat";
-+        reg = <0xe0200000 0x1>;
-+        #gpio-cells = <2>;
-+        gpio-controller;
-+        no-input;
-+    };
-+
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c: In function 'jh7110_pin_dbg_show':
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:100:9: error: implicit declaration of function 'seq_printf'; did you mean 'bstr_printf'? [-Werror=implicit-function-declaration]
+  100 |         seq_printf(s, "%s", dev_name(pctldev->dev));
+      |         ^~~~~~~~~~
+      |         bstr_printf
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c: At top level:
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:538:21: error: variable 'jh7110_pinconf_ops' has initializer but incomplete type
+  538 | static const struct pinconf_ops jh7110_pinconf_ops = {
+      |                     ^~~~~~~~~~~
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:539:10: error: 'const struct pinconf_ops' has no member named 'pin_config_get'
+  539 |         .pin_config_get         = jh7110_pinconf_get,
+      |          ^~~~~~~~~~~~~~
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:539:35: warning: excess elements in struct initializer
+  539 |         .pin_config_get         = jh7110_pinconf_get,
+      |                                   ^~~~~~~~~~~~~~~~~~
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:539:35: note: (near initialization for 'jh7110_pinconf_ops')
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:540:10: error: 'const struct pinconf_ops' has no member named 'pin_config_group_get'
+  540 |         .pin_config_group_get   = jh7110_pinconf_group_get,
+      |          ^~~~~~~~~~~~~~~~~~~~
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:540:35: warning: excess elements in struct initializer
+  540 |         .pin_config_group_get   = jh7110_pinconf_group_get,
+      |                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:540:35: note: (near initialization for 'jh7110_pinconf_ops')
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:541:10: error: 'const struct pinconf_ops' has no member named 'pin_config_group_set'
+  541 |         .pin_config_group_set   = jh7110_pinconf_group_set,
+      |          ^~~~~~~~~~~~~~~~~~~~
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:541:35: warning: excess elements in struct initializer
+  541 |         .pin_config_group_set   = jh7110_pinconf_group_set,
+      |                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:541:35: note: (near initialization for 'jh7110_pinconf_ops')
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:542:10: error: 'const struct pinconf_ops' has no member named 'pin_config_dbg_show'
+  542 |         .pin_config_dbg_show    = jh7110_pinconf_dbg_show,
+      |          ^~~~~~~~~~~~~~~~~~~
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:542:35: warning: excess elements in struct initializer
+  542 |         .pin_config_dbg_show    = jh7110_pinconf_dbg_show,
+      |                                   ^~~~~~~~~~~~~~~~~~~~~~~
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:542:35: note: (near initialization for 'jh7110_pinconf_ops')
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:543:10: error: 'const struct pinconf_ops' has no member named 'is_generic'
+  543 |         .is_generic             = true,
+      |          ^~~~~~~~~~
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:543:35: warning: excess elements in struct initializer
+  543 |         .is_generic             = true,
+      |                                   ^~~~
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:543:35: note: (near initialization for 'jh7110_pinconf_ops')
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c: In function 'jh7110_gpio_request':
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:548:16: error: implicit declaration of function 'pinctrl_gpio_request' [-Werror=implicit-function-declaration]
+  548 |         return pinctrl_gpio_request(gc->base + gpio);
+      |                ^~~~~~~~~~~~~~~~~~~~
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c: In function 'jh7110_gpio_free':
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:553:9: error: implicit declaration of function 'pinctrl_gpio_free' [-Werror=implicit-function-declaration]
+  553 |         pinctrl_gpio_free(gc->base + gpio);
+      |         ^~~~~~~~~~~~~~~~~
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c: At top level:
+../drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c:538:33: error: storage size of 'jh7110_pinconf_ops' isn't known
+  538 | static const struct pinconf_ops jh7110_pinconf_ops = {
+      |                                 ^~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[4]: *** [../scripts/Makefile.build:253: drivers/pinctrl/starfive/pinctrl-starfive-jh7110.o] Error 1
 
 -- 
-2.34.1
-
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
