@@ -2,152 +2,94 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B83BC636CC
-	for <linux-gpio@archiver.kernel.org>; Tue, 31 Jan 2023 12:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 677A9C38142
+	for <linux-gpio@archiver.kernel.org>; Tue, 31 Jan 2023 13:14:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230172AbjAaMFR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 31 Jan 2023 07:05:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59616 "EHLO
+        id S231408AbjAaNON (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 31 Jan 2023 08:14:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230325AbjAaMFQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Jan 2023 07:05:16 -0500
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25A004CE5F
-        for <linux-gpio@vger.kernel.org>; Tue, 31 Jan 2023 04:05:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1675166702; x=1706702702;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=cEJ8NG/rIyZSFx4mpfJJsepS84tQ9RRDfs0e8DghY+o=;
-  b=fk9mYxThrNV/mbF5TeMO07q4fkijSRCmXFrHMxIu//8HYp1wE8FjZOgb
-   v+xNXOnWwP5XbwHqOyCfXp0qY29DzHEr7Pv+rAQ1In65d53l23YNV2pNK
-   036yCKGGxJGSBNwzOBBSv602LyjEMXWeyryWvWU+qBACklt7M0ISLioTm
-   rmvobCRibsby2hvu4KYwRwHFEFjeqsnW+hL1HF0z20SYH5Y61aAvltD+C
-   Xzw4W51YG6SZFBGEJJOwoxhiM0tvKLdUboprI4uTfUITA3UFffaMGloab
-   NF9JI420v9uIzPWttTJBdvTY1VWPUYquKRihIBF1mavXJ3kLR3NCZMO1/
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10606"; a="315783899"
-X-IronPort-AV: E=Sophos;i="5.97,261,1669104000"; 
-   d="scan'208";a="315783899"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2023 04:04:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10606"; a="614431460"
-X-IronPort-AV: E=Sophos;i="5.97,261,1669104000"; 
-   d="scan'208";a="614431460"
-Received: from lkp-server01.sh.intel.com (HELO ffa7f14d1d0f) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 31 Jan 2023 04:04:52 -0800
-Received: from kbuild by ffa7f14d1d0f with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pMpNb-0004Pn-2C;
-        Tue, 31 Jan 2023 12:04:51 +0000
-Date:   Tue, 31 Jan 2023 20:04:18 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
- 606d4ef4922662ded34aa7218288c3043ce0a41a
-Message-ID: <63d903c2.ja/SgUDTv/bX5IK8%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S230295AbjAaNOJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Jan 2023 08:14:09 -0500
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B59F12721
+        for <linux-gpio@vger.kernel.org>; Tue, 31 Jan 2023 05:13:56 -0800 (PST)
+Received: by mail-yb1-xb30.google.com with SMTP id e15so17974657ybn.10
+        for <linux-gpio@vger.kernel.org>; Tue, 31 Jan 2023 05:13:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lebX9VzQP7VMYHLa2vyK4hrBtzDqJ9eFCBgK4dZHGqY=;
+        b=qXtrFvc8NPvibTzkOdKNUNcSgLQUKhwmE6ALIFFlhhema+9UDs2/xEAIp+1VFL2AAa
+         9YdIL9SgKkLhDEhuwRUiuvwE+TJRxMZaSHitbLSVMLJWtVAtYkK0GK6tJyPqTuRp+uQL
+         z9Swhwf9izFHI+zJzgyEejUwavw8wqvwJqCFL7fTGGGc8rUk6bd8vUrsAR80S6dFW0CU
+         hZiVxhUNlbWJv7m3ZE4fyFtpkBPjAJ3YI9uNsWLMWDjXerT9A5FLOXeafa1i88ACzgEk
+         ucAdfE/0nfU4LAz+zOTnAF/Jz8srUae8pvFzBqYWFGMrKyNnJMDbovdndrXlESHtXAa3
+         /m+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lebX9VzQP7VMYHLa2vyK4hrBtzDqJ9eFCBgK4dZHGqY=;
+        b=t8y8EXFl0xu0vSFH5+0aOYFzn0f4ZprJqrE6X1cjeDMJcKfzKofp5cObyi+dsDwuL6
+         srXWmBqxUB0oXmue8X0musMoFC1d5B06W2mrS04YujJJ9FaQRm/ZfpFJl6+adZvScAX8
+         Rt9gXSDRB3O7jNTol+D/BhH4TpPGsnoe1mk/R7GcABDXLvxMYVUSCRDYVNuQB9Vxcj+A
+         UC3qhqwLR1MAR0d2FwhmrPIz+q7ufWjiLoLnbjM5DPut/RAs5RkTwj2A0BsFion4ZIFX
+         nmtYqhF8vyehmVLQPZXR7Jx/mAlb8crMNBU3TWCZca7ubFoLGl+2Z04fulVURgt/0pZA
+         R6zQ==
+X-Gm-Message-State: AO0yUKXuJSFHYLGm69VNfOn/L+P+FLZOqY/rLuzOCuMp1FmIaGTGIFCP
+        BvaKJL8/Q+YOc+7OFeV+E0uloQTYkh9NQJPc1cLq2w==
+X-Google-Smtp-Source: AK7set/ssVUH1Rz89sAOJnKBoqT7NZMWXa8/qUnWnQSWqihB5+j26vSuiStV4rczYgZIb+D5YQtZAm1c0IjM0yuMuo4=
+X-Received: by 2002:a25:2fce:0:b0:83e:bd63:6dd7 with SMTP id
+ v197-20020a252fce000000b0083ebd636dd7mr45490ybv.24.1675170835979; Tue, 31 Jan
+ 2023 05:13:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+References: <20221220005529.34744-1-hal.feng@starfivetech.com>
+In-Reply-To: <20221220005529.34744-1-hal.feng@starfivetech.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 31 Jan 2023 14:13:44 +0100
+Message-ID: <CACRpkdbU=Y_LVBfSctQULzFuo4tB9KxgFbv=JGHPuuok6jC8FQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] Basic pinctrl support for StarFive JH7110 RISC-V SoC
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Jianlong Huang <jianlong.huang@starfivetech.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
-branch HEAD: 606d4ef4922662ded34aa7218288c3043ce0a41a  pinctrl: aspeed: Revert "Force to disable the function's signal"
+On Tue, Dec 20, 2022 at 1:55 AM Hal Feng <hal.feng@starfivetech.com> wrote:
 
-elapsed time: 726m
+> This patch series adds basic pinctrl support for StarFive JH7110 SoC.
+> You can simply get or review the patches at the link [1].
+>
+> [1]: https://github.com/hal-feng/linux/commits/visionfive2-minimal
+>
+> Changes since v2:
+> - Rebased on tag v6.1.
 
-configs tested: 76
-configs skipped: 2
+Overall this looks OK, the DT bindings does not have any review from
+the DT people but I think they had enough time to do that and were
+properly CC:ed so not your fault.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+However when I try to apply this to the pinctrl tree it fails,
+for example it seems to depend on an entry in MAINTAINERS
+which isn't upstream.
 
-gcc tested configs:
-um                           x86_64_defconfig
-x86_64                            allnoconfig
-um                             i386_defconfig
-powerpc                           allnoconfig
-sh                               allmodconfig
-mips                             allyesconfig
-powerpc                          allmodconfig
-arc                                 defconfig
-s390                             allmodconfig
-alpha                               defconfig
-x86_64                              defconfig
-s390                                defconfig
-x86_64                               rhel-8.3
-s390                             allyesconfig
-ia64                             allmodconfig
-x86_64                    rhel-8.3-kselftests
-x86_64                           allyesconfig
-x86_64                          rhel-8.3-func
-m68k                             allyesconfig
-m68k                             allmodconfig
-x86_64               randconfig-a001-20230130
-arc                              allyesconfig
-x86_64               randconfig-a003-20230130
-alpha                            allyesconfig
-x86_64               randconfig-a004-20230130
-x86_64               randconfig-a002-20230130
-x86_64               randconfig-a006-20230130
-x86_64               randconfig-a005-20230130
-i386                 randconfig-a002-20230130
-i386                 randconfig-a001-20230130
-i386                 randconfig-a004-20230130
-i386                 randconfig-a003-20230130
-i386                 randconfig-a005-20230130
-i386                 randconfig-a006-20230130
-x86_64                           rhel-8.3-syz
-x86_64                         rhel-8.3-kunit
-x86_64                           rhel-8.3-kvm
-x86_64                           rhel-8.3-bpf
-i386                                defconfig
-arc                  randconfig-r043-20230129
-arm                  randconfig-r046-20230129
-arm                  randconfig-r046-20230130
-arc                  randconfig-r043-20230130
-i386                             allyesconfig
-i386                          randconfig-a014
-i386                          randconfig-a012
-i386                          randconfig-a016
-i386                          randconfig-c001
-arm                                 defconfig
-arm                              allyesconfig
-x86_64                        randconfig-a013
-arm64                            allyesconfig
+Can you please rebase the patches that are supposed to be
+applied to the pinctrl tree (for example normally not patch 1, the DTS
+patch) on my "devel" branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=devel
 
-clang tested configs:
-x86_64                          rhel-8.3-rust
-hexagon              randconfig-r041-20230129
-riscv                randconfig-r042-20230129
-riscv                randconfig-r042-20230130
-hexagon              randconfig-r045-20230130
-hexagon              randconfig-r041-20230130
-hexagon              randconfig-r045-20230129
-s390                 randconfig-r044-20230129
-s390                 randconfig-r044-20230130
-i386                          randconfig-a013
-i386                          randconfig-a015
-i386                          randconfig-a011
-x86_64                        randconfig-k001
-powerpc                 mpc8560_ads_defconfig
-arm                          ixp4xx_defconfig
-arm                         s5pv210_defconfig
-powerpc                     skiroot_defconfig
-powerpc                    gamecube_defconfig
-i386                 randconfig-a014-20230130
-i386                 randconfig-a013-20230130
-i386                 randconfig-a015-20230130
-i386                 randconfig-a016-20230130
-i386                 randconfig-a012-20230130
-i386                 randconfig-a011-20230130
+If you resend this quickly I can apply it pronto.
 
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Yours,
+Linus Walleij
