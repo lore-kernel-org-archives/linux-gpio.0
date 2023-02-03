@@ -2,100 +2,366 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 762C9C636D4
-	for <linux-gpio@archiver.kernel.org>; Fri,  3 Feb 2023 13:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD84AC05027
+	for <linux-gpio@archiver.kernel.org>; Fri,  3 Feb 2023 14:18:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233754AbjBCN7A (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 3 Feb 2023 08:59:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42022 "EHLO
+        id S232636AbjBCOSs convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 3 Feb 2023 09:18:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233536AbjBCN6m (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Feb 2023 08:58:42 -0500
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37AE2A2A45;
-        Fri,  3 Feb 2023 05:55:47 -0800 (PST)
-Received: by mail-qt1-f176.google.com with SMTP id f10so5472656qtv.1;
-        Fri, 03 Feb 2023 05:55:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nbKgXRRhHOsf8b2qFYqubarXiD/2JOI3CXyxQSetlOo=;
-        b=HlEDPXIokd/UDyTtc0FxQNaDH0ZU/iUhw74FrRW24qFU+x/UvHrM3GvgjU6XYoPfK4
-         2a2wgRqkfLi1xDl5PSBd5UkwLYsdlnwlmZvc5sMXnZVOKO0ld5QsKfMM4Xta/ms5CNxS
-         ppXL+O3ObR9qo8Vq45mIVyXo+YcXgreGnvBUUWGiX/vXsD14bkYewuWgtd2COS54VdSy
-         KUKU9eEw5Wp39brBfUJYMOM/S6kXT2FUwFn4y6EgyrZO/Pm8GUtPRNZ4nQee+mT+NH8Z
-         kX+5LCYAEVVGBYc2Zw2vGRC3e6C9SSXL77LKPQVWLKskZTa4XqQmh9orAtTSvVK3EXoP
-         CEEA==
-X-Gm-Message-State: AO0yUKVcLrFdcEncIeo8DCv1VeOvmBlSU4e1lgl6i+PjpTk7oXrN7eCy
-        /8MGYFvKOvbzHC1alr44Fi3raKccTgAn8Q==
-X-Google-Smtp-Source: AK7set/VrH2W/hF5htoK/wyjMPPVEuFk9wCswUkXu2hSgQiBOpjFpUlZY44JgVrrob1RrSq8KnXVeA==
-X-Received: by 2002:ac8:57d6:0:b0:3b8:4bb8:5aa5 with SMTP id w22-20020ac857d6000000b003b84bb85aa5mr20729191qta.54.1675432441314;
-        Fri, 03 Feb 2023 05:54:01 -0800 (PST)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id n3-20020ac86743000000b003b80a69d353sm1577481qtp.49.2023.02.03.05.54.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Feb 2023 05:54:00 -0800 (PST)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-5254e8994e8so23778007b3.6;
-        Fri, 03 Feb 2023 05:54:00 -0800 (PST)
-X-Received: by 2002:a0d:c2c4:0:b0:514:a90f:10ea with SMTP id
- e187-20020a0dc2c4000000b00514a90f10eamr1025067ywd.316.1675432440139; Fri, 03
- Feb 2023 05:54:00 -0800 (PST)
+        with ESMTP id S232568AbjBCOS1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Feb 2023 09:18:27 -0500
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B94DD17164;
+        Fri,  3 Feb 2023 06:18:07 -0800 (PST)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 8F32924E24E;
+        Fri,  3 Feb 2023 22:18:04 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 3 Feb
+ 2023 22:18:04 +0800
+Received: from ubuntu.localdomain (113.72.144.84) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 3 Feb
+ 2023 22:18:03 +0800
+From:   Hal Feng <hal.feng@starfivetech.com>
+To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>
+CC:     Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andreas Schwab <schwab@suse.de>,
+        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
+        Jianlong Huang <jianlong.huang@starfivetech.com>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 1/4] dt-bindings: pinctrl: Add StarFive JH7110 sys pinctrl
+Date:   Fri, 3 Feb 2023 22:17:58 +0800
+Message-ID: <20230203141801.59083-2-hal.feng@starfivetech.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20230203141801.59083-1-hal.feng@starfivetech.com>
+References: <20230203141801.59083-1-hal.feng@starfivetech.com>
 MIME-Version: 1.0
-References: <20230113062339.1909087-1-hch@lst.de> <20230113062339.1909087-2-hch@lst.de>
- <Y8EMZ0GI5rtor9xr@pendragon.ideasonboard.com> <20230203071506.GB24833@lst.de> <Y90Q73ykVEHRNII4@pendragon.ideasonboard.com>
-In-Reply-To: <Y90Q73ykVEHRNII4@pendragon.ideasonboard.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 3 Feb 2023 14:53:48 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVi1DPqYNbB5xWeG+1kK4x=8zQ0y57WSJ_j2xENCjQREQ@mail.gmail.com>
-Message-ID: <CAMuHMdVi1DPqYNbB5xWeG+1kK4x=8zQ0y57WSJ_j2xENCjQREQ@mail.gmail.com>
-Subject: Re: [PATCH 01/22] gpu/drm: remove the shmobile drm driver
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-        dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-sh@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [113.72.144.84]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Laurent,
+From: Jianlong Huang <jianlong.huang@starfivetech.com>
 
-On Fri, Feb 3, 2023 at 2:49 PM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Fri, Feb 03, 2023 at 08:15:06AM +0100, Christoph Hellwig wrote:
-> > So given that the big series doesn't go in, can we get this removal
-> > picked up through the drm tree?
->
-> Geert has a board with an ARM-based SoC compatible with this driver, and
-> he expressed interest in taking over maintainership. Geert, could you
-> share your plans ? Should the shmobile_drm driver be dropped now, or
-> will you revive it in a relatively near future ?
+Add pinctrl bindings for StarFive JH7110 SoC sys pinctrl controller.
 
-(Trying to) get it working on that board is on my list...
+Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
+Co-developed-by: Emil Renner Berthing <kernel@esmil.dk>
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+---
+ .../pinctrl/starfive,jh7110-sys-pinctrl.yaml  | 141 ++++++++++++++++++
+ MAINTAINERS                                   |   6 +-
+ .../pinctrl/starfive,jh7110-pinctrl.h         | 115 ++++++++++++++
+ 3 files changed, 260 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jh7110-sys-pinctrl.yaml
+ create mode 100644 include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
 
-Gr{oetje,eeting}s,
+diff --git a/Documentation/devicetree/bindings/pinctrl/starfive,jh7110-sys-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/starfive,jh7110-sys-pinctrl.yaml
+new file mode 100644
+index 000000000000..22554e68ec91
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/starfive,jh7110-sys-pinctrl.yaml
+@@ -0,0 +1,141 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/starfive,jh7110-sys-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: StarFive JH7110 SYS Pin Controller
++
++description: |
++  Bindings for the JH7110 RISC-V SoC from StarFive Technology Ltd.
++
++  Out of the SoC's many pins only the ones named PAD_GPIO0 to PAD_GPIO63
++  can be multiplexed and have configurable bias, drive strength,
++  schmitt trigger etc.
++  Some peripherals have their I/O go through the 64 "GPIOs". This also
++  includes a number of other UARTs, I2Cs, SPIs, PWMs etc.
++  All these peripherals are connected to all 64 GPIOs such that
++  any GPIO can be set up to be controlled by any of the peripherals.
++
++maintainers:
++  - Jianlong Huang <jianlong.huang@starfivetech.com>
++
++properties:
++  compatible:
++    const: starfive,jh7110-sys-pinctrl
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
++patternProperties:
++  '-[0-9]+$':
++    type: object
++    additionalProperties: false
++    patternProperties:
++      '-pins$':
++        type: object
++        description: |
++          A pinctrl node should contain at least one subnode representing the
++          pinctrl groups available on the machine. Each subnode will list the
++          pins it needs, and how they should be configured, with regard to
++          muxer configuration, bias, input enable/disable, input schmitt
++          trigger enable/disable, slew-rate and drive strength.
++        $ref: /schemas/pinctrl/pincfg-node.yaml
++        additionalProperties: false
++
++        properties:
++          pinmux:
++            description: |
++              The list of GPIOs and their mux settings that properties in the
++              node apply to. This should be set using the GPIOMUX or PINMUX
++              macros.
++            $ref: /schemas/pinctrl/pinmux-node.yaml#/properties/pinmux
++
++          bias-disable: true
++
++          bias-pull-up:
++            type: boolean
++
++          bias-pull-down:
++            type: boolean
++
++          drive-strength:
++            enum: [ 2, 4, 8, 12 ]
++
++          input-enable: true
++
++          input-disable: true
++
++          input-schmitt-enable: true
++
++          input-schmitt-disable: true
++
++          slew-rate:
++            maximum: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - interrupts
++  - interrupt-controller
++  - '#interrupt-cells'
++  - gpio-controller
++  - '#gpio-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    pinctrl@13040000 {
++        compatible = "starfive,jh7110-sys-pinctrl";
++        reg = <0x13040000 0x10000>;
++        clocks = <&syscrg 112>;
++        resets = <&syscrg 2>;
++        interrupts = <86>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        gpio-controller;
++        #gpio-cells = <2>;
++
++        uart0-0 {
++            tx-pins {
++                pinmux = <0xff140005>;
++                bias-disable;
++                drive-strength = <12>;
++                input-disable;
++                input-schmitt-disable;
++                slew-rate = <0>;
++            };
++
++            rx-pins {
++                pinmux = <0x0E000406>;
++                bias-pull-up;
++                drive-strength = <2>;
++                input-enable;
++                input-schmitt-enable;
++                slew-rate = <0>;
++            };
++        };
++    };
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f61eb221415b..babd133cdc4b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19890,13 +19890,15 @@ F:	Documentation/devicetree/bindings/clock/starfive,jh7100-*.yaml
+ F:	drivers/clk/starfive/clk-starfive-jh7100*
+ F:	include/dt-bindings/clock/starfive-jh7100*.h
+ 
+-STARFIVE JH7100 PINCTRL DRIVER
++STARFIVE JH71X0 PINCTRL DRIVERS
+ M:	Emil Renner Berthing <kernel@esmil.dk>
++M:	Jianlong Huang <jianlong.huang@starfivetech.com>
+ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
++F:	Documentation/devicetree/bindings/pinctrl/starfive,jh71*.yaml
+ F:	drivers/pinctrl/starfive/
+ F:	include/dt-bindings/pinctrl/pinctrl-starfive-jh7100.h
++F:	include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
+ 
+ STARFIVE JH7100 RESET CONTROLLER DRIVER
+ M:	Emil Renner Berthing <kernel@esmil.dk>
+diff --git a/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h b/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
+new file mode 100644
+index 000000000000..57c1659e4bbf
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
+@@ -0,0 +1,115 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
++/*
++ * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
++ * Copyright (C) 2022 StarFive Technology Co., Ltd.
++ */
++
++#ifndef __DT_BINDINGS_PINCTRL_STARFIVE_JH7110_H__
++#define __DT_BINDINGS_PINCTRL_STARFIVE_JH7110_H__
++
++/* sys_iomux pins */
++#define	PAD_GPIO0		0
++#define	PAD_GPIO1		1
++#define	PAD_GPIO2		2
++#define	PAD_GPIO3		3
++#define	PAD_GPIO4		4
++#define	PAD_GPIO5		5
++#define	PAD_GPIO6		6
++#define	PAD_GPIO7		7
++#define	PAD_GPIO8		8
++#define	PAD_GPIO9		9
++#define	PAD_GPIO10		10
++#define	PAD_GPIO11		11
++#define	PAD_GPIO12		12
++#define	PAD_GPIO13		13
++#define	PAD_GPIO14		14
++#define	PAD_GPIO15		15
++#define	PAD_GPIO16		16
++#define	PAD_GPIO17		17
++#define	PAD_GPIO18		18
++#define	PAD_GPIO19		19
++#define	PAD_GPIO20		20
++#define	PAD_GPIO21		21
++#define	PAD_GPIO22		22
++#define	PAD_GPIO23		23
++#define	PAD_GPIO24		24
++#define	PAD_GPIO25		25
++#define	PAD_GPIO26		26
++#define	PAD_GPIO27		27
++#define	PAD_GPIO28		28
++#define	PAD_GPIO29		29
++#define	PAD_GPIO30		30
++#define	PAD_GPIO31		31
++#define	PAD_GPIO32		32
++#define	PAD_GPIO33		33
++#define	PAD_GPIO34		34
++#define	PAD_GPIO35		35
++#define	PAD_GPIO36		36
++#define	PAD_GPIO37		37
++#define	PAD_GPIO38		38
++#define	PAD_GPIO39		39
++#define	PAD_GPIO40		40
++#define	PAD_GPIO41		41
++#define	PAD_GPIO42		42
++#define	PAD_GPIO43		43
++#define	PAD_GPIO44		44
++#define	PAD_GPIO45		45
++#define	PAD_GPIO46		46
++#define	PAD_GPIO47		47
++#define	PAD_GPIO48		48
++#define	PAD_GPIO49		49
++#define	PAD_GPIO50		50
++#define	PAD_GPIO51		51
++#define	PAD_GPIO52		52
++#define	PAD_GPIO53		53
++#define	PAD_GPIO54		54
++#define	PAD_GPIO55		55
++#define	PAD_GPIO56		56
++#define	PAD_GPIO57		57
++#define	PAD_GPIO58		58
++#define	PAD_GPIO59		59
++#define	PAD_GPIO60		60
++#define	PAD_GPIO61		61
++#define	PAD_GPIO62		62
++#define	PAD_GPIO63		63
++#define	PAD_SD0_CLK		64
++#define	PAD_SD0_CMD		65
++#define	PAD_SD0_DATA0		66
++#define	PAD_SD0_DATA1		67
++#define	PAD_SD0_DATA2		68
++#define	PAD_SD0_DATA3		69
++#define	PAD_SD0_DATA4		70
++#define	PAD_SD0_DATA5		71
++#define	PAD_SD0_DATA6		72
++#define	PAD_SD0_DATA7		73
++#define	PAD_SD0_STRB		74
++#define	PAD_GMAC1_MDC		75
++#define	PAD_GMAC1_MDIO		76
++#define	PAD_GMAC1_RXD0		77
++#define	PAD_GMAC1_RXD1		78
++#define	PAD_GMAC1_RXD2		79
++#define	PAD_GMAC1_RXD3		80
++#define	PAD_GMAC1_RXDV		81
++#define	PAD_GMAC1_RXC		82
++#define	PAD_GMAC1_TXD0		83
++#define	PAD_GMAC1_TXD1		84
++#define	PAD_GMAC1_TXD2		85
++#define	PAD_GMAC1_TXD3		86
++#define	PAD_GMAC1_TXEN		87
++#define	PAD_GMAC1_TXC		88
++#define	PAD_QSPI_SCLK		89
++#define	PAD_QSPI_CS0		90
++#define	PAD_QSPI_DATA0		91
++#define	PAD_QSPI_DATA1		92
++#define	PAD_QSPI_DATA2		93
++#define	PAD_QSPI_DATA3		94
++
++#define GPOUT_LOW		0
++#define GPOUT_HIGH		1
++
++#define GPOEN_ENABLE		0
++#define GPOEN_DISABLE		1
++
++#define GPI_NONE		255
++
++#endif
+-- 
+2.38.1
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
