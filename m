@@ -2,122 +2,145 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C72EBC63797
-	for <linux-gpio@archiver.kernel.org>; Fri,  3 Feb 2023 10:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD39C636CC
+	for <linux-gpio@archiver.kernel.org>; Fri,  3 Feb 2023 10:56:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231860AbjBCKlV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 3 Feb 2023 05:41:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38636 "EHLO
+        id S233074AbjBCK4T (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 3 Feb 2023 05:56:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229785AbjBCKlT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Feb 2023 05:41:19 -0500
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AF2B1BCD;
-        Fri,  3 Feb 2023 02:41:18 -0800 (PST)
-Received: by mail-qt1-f177.google.com with SMTP id g8so4900859qtq.13;
-        Fri, 03 Feb 2023 02:41:18 -0800 (PST)
+        with ESMTP id S233102AbjBCK4M (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Feb 2023 05:56:12 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C626991CE
+        for <linux-gpio@vger.kernel.org>; Fri,  3 Feb 2023 02:56:03 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id qw12so14290363ejc.2
+        for <linux-gpio@vger.kernel.org>; Fri, 03 Feb 2023 02:56:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BdYRjOM1n9bt8CN7mBjbmqA+shKAXX8Ovt8jaNWTShU=;
+        b=TTe8dPHkBNkUesxIWp8id6+kZt6bBhVLN1AbM9Q2yUCXy0U0dQnhiMNlSNMCzYlgVh
+         ZJW5B+IG4lEzWL1mLjJWKnN8UQFbKZMQPETLWbYmHSN0LcAy/We92w1jDFhdutqAY0XS
+         5AuBsWSWyyfvrOr6kJ315r7Lcv3OK9WY0u+NshplJxk9jO3CUwvRdr9gDuhaUcAJEel2
+         Rxk6vJlam0U+WN0pRVaHVSDFYHhIJTyfbexAko7p3nLyc6AiCCJc/MLchscD7GbZqEre
+         lCD6Dl3muFeI/L+0vtEjM8LVGU+9/lNYdSaHB03zKVEfGZTlRD99lLBWIaMdfvO+Xuu/
+         W3MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7A9k4QSf8av6qzMk9PJKNV90s0Q4PXBSAXyaJlyJVU8=;
-        b=am+1AT4lhoVM6wqmxALHPFCLZUMPsYWhGo62zC7G+AtkY86Opme3by+3C0DEnxtJKP
-         JXHTy9dpYDeDQD8+A8kxGjP0/Z45o4NFhedPIKsftsbS9eFr7J1ZwGCQtG7ti0UojZ9k
-         mQRU/+i8aOEHs+RIntLkgqXhe2S+7xtMSvhizF7IIOHf3YwtFHBlM+fJOzMrKGqVDsHT
-         Pb3jhGNQ+ct1mjcriME4qjGzNMuxYWQlUzxQMOwDKpR6AdlHDj7Lu2vil5fPjcvj+3Li
-         lqc5smXXWwhHcWknsdLPvGMcZfGQ3dlqoywHozKD1y5GiWhHfpLqXI6ykJigkRwIxXOv
-         kzvw==
-X-Gm-Message-State: AO0yUKWvF1f0VsFcoCJ7dx+hcgAfKLyDRrGEYQfFKvz0z20gl3m9dpmy
-        R8Q6wGqY+H3IKQpW1hCAPWcLRcYpOMrpJg==
-X-Google-Smtp-Source: AK7set+00rykB5Nae53BloQzE0HluidqWGrvcn6wS/Sj78GrbnuGE+A6Txy+8UtQaFzP8LGpaBaySg==
-X-Received: by 2002:a05:622a:1ce:b0:3b6:334b:2cbc with SMTP id t14-20020a05622a01ce00b003b6334b2cbcmr19738789qtw.65.1675420877133;
-        Fri, 03 Feb 2023 02:41:17 -0800 (PST)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id o14-20020ac872ce000000b003b62bc6cd1csm1298100qtp.82.2023.02.03.02.41.16
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BdYRjOM1n9bt8CN7mBjbmqA+shKAXX8Ovt8jaNWTShU=;
+        b=IyoqwQHDy2zF/L6HG3WmpkFuop5Aw3QgSH72tqgFwcJ7m0XKhCCK6dRDJRGJlNK2i9
+         ItTmIIfM4RlQq4ON5E6XmbHqfttjYzYKRKjB0c3w6i0mjUi5OM1qoA4ChJvFWrKHc6n2
+         j2K9G2W1b1XYMQyOoKlWp07c1698949JgPT++gyu85L5WJ02iyD87ock6cJRs63eY1+j
+         zTrXM0C/AyTpvYVV7oWkWSexu7DFUbG3RThGc/sQ2MvkRL9nA1JN8iAqd99Yy2k9D4AO
+         6x7uf2UoEIoAAJQ7ey6kuGMBQJAqWzoStBviAbA+l+Dz0VMw2uPsGfoYRyO8T6BPNfz8
+         +s1g==
+X-Gm-Message-State: AO0yUKXZq68K4UEqj2nmWACGZ7D0AD/Y3DZ52wvctCuw4i8rhAb1upxw
+        gA6eU2Nh1VB50+O2HBsMwYdL2w==
+X-Google-Smtp-Source: AK7set+MxWM0+nZqvviW/bwAcAGYQkQyWGDadUbnUIpVzeXcg1uw20STr4HiMhMPlosIWq5Jv3GQrA==
+X-Received: by 2002:a17:906:9610:b0:878:5e84:e1d6 with SMTP id s16-20020a170906961000b008785e84e1d6mr11002336ejx.75.1675421761914;
+        Fri, 03 Feb 2023 02:56:01 -0800 (PST)
+Received: from [192.168.1.101] (abyl20.neoplus.adsl.tpnet.pl. [83.9.31.20])
+        by smtp.gmail.com with ESMTPSA id p2-20020a170906498200b00878803d4049sm1219445eju.93.2023.02.03.02.55.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Feb 2023 02:41:17 -0800 (PST)
-Received: by mail-yb1-f174.google.com with SMTP id 123so5721369ybv.6;
-        Fri, 03 Feb 2023 02:41:16 -0800 (PST)
-X-Received: by 2002:a25:9c83:0:b0:7bf:d201:60cb with SMTP id
- y3-20020a259c83000000b007bfd20160cbmr900933ybo.365.1675420405273; Fri, 03 Feb
- 2023 02:33:25 -0800 (PST)
+        Fri, 03 Feb 2023 02:56:01 -0800 (PST)
+Message-ID: <e34f36b0-35a8-0b77-e6ab-49851213108e@linaro.org>
+Date:   Fri, 3 Feb 2023 11:55:58 +0100
 MIME-Version: 1.0
-References: <20230113062339.1909087-1-hch@lst.de> <11e2e0a8-eabe-2d8c-d612-9cdd4bcc3648@physik.fu-berlin.de>
- <20230116071306.GA15848@lst.de> <40dc1bc1-d9cd-d9be-188e-5167ebae235c@physik.fu-berlin.de>
- <20230203071423.GA24833@lst.de> <afd056a95d21944db1dc0c9708f692dd1f7bb757.camel@physik.fu-berlin.de>
- <20230203083037.GA30738@lst.de> <d10fe31b2af6cf4e03618f38ca9d3ca5c72601ed.camel@physik.fu-berlin.de>
-In-Reply-To: <d10fe31b2af6cf4e03618f38ca9d3ca5c72601ed.camel@physik.fu-berlin.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 3 Feb 2023 11:33:13 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUitVfW088YOmqYm4kwbKwkwb22fAakHcu6boxv7dXDfQ@mail.gmail.com>
-Message-ID: <CAMuHMdUitVfW088YOmqYm4kwbKwkwb22fAakHcu6boxv7dXDfQ@mail.gmail.com>
-Subject: Re: remove arch/sh
-To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-        dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-sh@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH V6 2/7] clk: qcom: Add Global Clock Controller driver for
+ IPQ9574
+To:     Kathiravan T <quic_kathirav@quicinc.com>,
+        Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linus.walleij@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
+        dmitry.baryshkov@linaro.org, nfraprado@collabora.com,
+        broonie@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_arajkuma@quicinc.com,
+        quic_anusha@quicinc.com, quic_poovendh@quicinc.com
+References: <20230202150619.22425-1-quic_devipriy@quicinc.com>
+ <20230202150619.22425-3-quic_devipriy@quicinc.com>
+ <1d144aa4-6f0f-b10f-1d32-4acf4e06ae85@quicinc.com>
+Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <1d144aa4-6f0f-b10f-1d32-4acf4e06ae85@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Adrian,
 
-On Fri, Feb 3, 2023 at 11:29 AM John Paul Adrian Glaubitz
-<glaubitz@physik.fu-berlin.de> wrote:
-> On Fri, 2023-02-03 at 09:30 +0100, Christoph Hellwig wrote:
-> > On Fri, Feb 03, 2023 at 09:24:46AM +0100, John Paul Adrian Glaubitz wrote:
-> > > Since this is my very first time stepping up as a kernel maintainer, I was hoping
-> > > to get some pointers on what to do to make this happen.
-> > >
-> > > So far, we have set up a new kernel tree and I have set up a local development and
-> > > test environment for SH kernels using my SH7785LCR board as the target platform.
-> > >
-> > > Do I just need to send a patch asking to change the corresponding entry in the
-> > > MAINTAINERS file?
-> >
-> > I'm not sure a there is a document, but:
-> >
-> >  - add the MAINTAINERS change to your tree
-> >  - ask Stephen to get your tree included in linux-next
-> >
-> > then eventually send a pull request to Linus with all of that.  Make
-> > sure it's been in linux-next for a while.
->
-> OK, thanks for the pointers! Will try to get this done by next week.
->
-> We're still discussing among SuperH developer community whether there will be a second
-> maintainer, so please bear with us a few more days. I will collect patches in the
-> meantime.
 
-Thanks a lot!
+On 3.02.2023 06:47, Kathiravan T wrote:
+> 
+> On 2/2/2023 8:36 PM, Devi Priya wrote:
+>> Add Global Clock Controller (GCC) driver for ipq9574 based devices
+>>
+>> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>> ---
 
-If you need any help with process, setup, ... don't hesitate to ask
-(on e.g. #renesas-soc on Libera).
+[...]
 
-Gr{oetje,eeting}s,
+>> +static int gcc_ipq9574_probe(struct platform_device *pdev)
+>> +{
+>> +    struct regmap *regmap;
+>> +    struct qcom_cc_desc ipq9574_desc = gcc_ipq9574_desc;
+>> +
+>> +    regmap = qcom_cc_map(pdev, &ipq9574_desc);
+>> +    if (IS_ERR(regmap))
+>> +        return PTR_ERR(regmap);
+>> +
+>> +    return qcom_cc_really_probe(pdev, &ipq9574_desc, regmap);
+> 
+> 
+> can we use qcom_cc_probe as suggested here https://lore.kernel.org/linux-arm-msm/84f68577f5629e6ef6d6b14357a79f84.sboyd@kernel.org/ ?
+Yes we can.
 
-                        Geert
+When you're answering a long long long long email, please cut off
+parts that you aren't replying to, I had to scroll and scroll and
+scroll and scroll to get to this sentence and I'm not even sure if
+you said something inbetween that I missed..
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Konrad
+> 
+> 
+>> +}
+>> +
+>> +static struct platform_driver gcc_ipq9574_driver = {
+>> +    .probe = gcc_ipq9574_probe,
+>> +    .driver = {
+>> +        .name   = "qcom,gcc-ipq9574",
+>> +        .of_match_table = gcc_ipq9574_match_table,
+>> +    },
+>> +};
+>> +
+>> +static int __init gcc_ipq9574_init(void)
+>> +{
+>> +    return platform_driver_register(&gcc_ipq9574_driver);
+>> +}
+>> +core_initcall(gcc_ipq9574_init);
+>> +
+>> +static void __exit gcc_ipq9574_exit(void)
+>> +{
+>> +    platform_driver_unregister(&gcc_ipq9574_driver);
+>> +}
+>> +module_exit(gcc_ipq9574_exit);
+>> +
+>> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. GCC IPQ9574 Driver");
+>> +MODULE_LICENSE("GPL");
