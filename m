@@ -2,81 +2,109 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFF5C61DA4
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Feb 2023 11:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7584DC61DA4
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Feb 2023 11:42:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229819AbjBFL1J (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 6 Feb 2023 06:27:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42772 "EHLO
+        id S229863AbjBFLml (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 6 Feb 2023 06:42:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230052AbjBFL1I (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2023 06:27:08 -0500
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC9D8FF1D
-        for <linux-gpio@vger.kernel.org>; Mon,  6 Feb 2023 03:27:02 -0800 (PST)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-4b718cab0e4so150692507b3.9
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Feb 2023 03:27:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GJR7iIBYxeHMKeEYc9yJlmGGl4YAGtrHLk1xmdfWkjY=;
-        b=cEiqbsgShNHfgqVqwAK88z6dPmS5LNgW4KwIyRVk3eWmxUXP0lv1ECQABJxp4IuAW4
-         08SmBAO/PDsRaPrMqDLjT3iOOCqXXb/OLe791QjQFGztN3jDiPclnERlhhuQg37GtVIK
-         uruJuMVn/c+RFufhHvA1+2oVj6SHkahm3MvAtdj2UdPrjz981YKz03DmWmA/Mml3Ebo2
-         vgLuq6z4a1wu8/LSs5sn3+RErEjRdU1L1PTnIJqzqC0aArFJrsaTANiqN1TlCwSK+P+p
-         k+lZZZF0sQH3lVORlgXpVQUkbl1FE8R1/ZFV35uUjtD4VSBn4jrBaeuXzuqVkGAB60uh
-         pFeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GJR7iIBYxeHMKeEYc9yJlmGGl4YAGtrHLk1xmdfWkjY=;
-        b=Npg4VcPc4nTo0lTAa9LZU7HD5acrpSW3f7eyS7EJsRiXL9UHvSSDkOedcx1UZFjh4D
-         fsi0yAP2cD0DDoS8na5iHjPloGMdyLGpXT4r5mpTlmi70JgwJMUWvljPlAyiK6HoWhNU
-         uKTStTJMhkp7i7JctKXlJulzFe0MhZE39lXTJSYTIF1DFjNy3hnUVysabl0ZqrhaX96W
-         2pZS79BJyx0mXL6ET/9+ITuZ8yg6JRkHynpHPCI+SRok/ol1W5stH9NQcubJckxyfmMT
-         Ivzy4Kbx5ZkrKpnjGPF+b3KG2MDZa/brVINevkFa2FbiE3Uk/9pt0tYcy8XBcvlNTP2i
-         WhDA==
-X-Gm-Message-State: AO0yUKVBj/i7WOZCBLof11oyeF0Vx5igOD6ZLv7tP/TZ1tCILFwWgqLB
-        Cm30kudgLd/WE/PisqSqSdQu2dXcnMpxX3Gy5jNW9g==
-X-Google-Smtp-Source: AK7set8L3VLeOObm9qWRrIhVr41MTYoDvVibtG9Ay2RHWLmtjUwNSvhhckk7653hSCZoO5nkPQYJMfhJ+CrdMrR5rTM=
-X-Received: by 2002:a05:690c:b18:b0:4f3:8d0e:edce with SMTP id
- cj24-20020a05690c0b1800b004f38d0eedcemr1702307ywb.185.1675682822071; Mon, 06
- Feb 2023 03:27:02 -0800 (PST)
+        with ESMTP id S229561AbjBFLml (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2023 06:42:41 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3F3565B0;
+        Mon,  6 Feb 2023 03:42:38 -0800 (PST)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3166KBHh003454;
+        Mon, 6 Feb 2023 11:42:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=2AkN329K6J+91VYzBSNBGV3qS2/+ZXQLtTRYt0TZRG0=;
+ b=YP6o5PT6XaAgW6lBHHMXOlQCramnKS0OKaQp05U3WakVK8Ze51EK+3YpqqDg0HOZa+V9
+ dFddCWdfN1LTbB7tKNBNAYk8DjvxiUXdTODn2FG0wFuJpEVGq7EpikRVVjmXqYFfPgbV
+ MH1xZPBmNQnJx0VBjkRKQY5S5nvEyCsK9IjE1w8+sPYpEm44tbm5bEqeJXwWwIN1BlAZ
+ IhQy6zc1nG55WIHk886qaIHqkb6mE/pJNhyyKWTIq0acPaN9wscvST4HERYPSg1urSL6
+ KFN2y5DSo3qQHrCUll1kU3uKE4xiFndGvA7XF8TP4uq8nuFokSQAhMfIeE4DdTx/E1FZ oA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nhff2kjue-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Feb 2023 11:42:20 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 316BgIC1005857
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 6 Feb 2023 11:42:18 GMT
+Received: from [10.50.19.98] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 6 Feb 2023
+ 03:42:11 -0800
+Message-ID: <b5f08d0b-6009-39bb-1819-322a8dc056c4@quicinc.com>
+Date:   Mon, 6 Feb 2023 17:12:08 +0530
 MIME-Version: 1.0
-References: <03627216-54b5-5d9b-f91d-adcd637819e3@gmail.com> <137b56f0-8e86-f705-4ba7-d5dfe3c0b477@gmail.com>
-In-Reply-To: <137b56f0-8e86-f705-4ba7-d5dfe3c0b477@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 6 Feb 2023 12:26:50 +0100
-Message-ID: <CACRpkda3TNyLqy5ZSKMsp8E+Tzys8o1h=q6qSoBCta+08BYZ_w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/8] dt-bindings: pinctrl: rockchip,pinctrl: mark gpio
- sub nodes of pinctrl as deprecated
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     brgl@bgdev.pl, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, heiko@sntech.de,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kever.yang@rock-chips.com, sjg@chromium.org,
-        philipp.tomsich@vrull.eu, john@metanate.com,
-        quentin.schulz@theobroma-systems.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH V3 0/9] Add minimal boot support for IPQ5332
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     <krzysztof.kozlowski@linaro.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <shawnguo@kernel.org>, <arnd@arndb.de>,
+        <dmitry.baryshkov@linaro.org>, <marcel.ziswiler@toradex.com>,
+        <nfraprado@collabora.com>, <robimarko@gmail.com>,
+        <quic_gurus@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_varada@quicinc.com>,
+        <quic_srichara@quicinc.com>
+References: <20230206071217.29313-1-quic_kathirav@quicinc.com>
+ <CACRpkdbtEFCSKX8VcD9bAZLy-PYfwVCRKYwXJmh0hnK2Nroq0A@mail.gmail.com>
+Content-Language: en-US
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+In-Reply-To: <CACRpkdbtEFCSKX8VcD9bAZLy-PYfwVCRKYwXJmh0hnK2Nroq0A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: iWipT9JYFiain5QlH-cLgyurHdlkRwe6
+X-Proofpoint-GUID: iWipT9JYFiain5QlH-cLgyurHdlkRwe6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-02-06_05,2023-02-06_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ spamscore=0 impostorscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=900
+ suspectscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2302060100
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Jan 21, 2023 at 12:08 PM Johan Jonker <jbx6244@gmail.com> wrote:
 
-> Mark gpio sub nodes of pinctrl as deprecated.
-> Gpio nodes are now placed in the root of the device tree.
-> The relation to pinctrl is now described with the
-> "gpio-ranges" property.
+On 2/6/2023 4:55 PM, Linus Walleij wrote:
+> Hi Kathiravan,
 >
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> thanks for your patches!
+>
+> On Mon, Feb 6, 2023 at 8:12 AM Kathiravan T <quic_kathirav@quicinc.com> wrote:
+>
+>> Kathiravan T (9):
+>>    dt-bindings: pinctrl: qcom: add IPQ5332 pinctrl
+>>    pinctrl: qcom: Introduce IPQ5332 TLMM driver
+> I have applied these two patches to the pin control tree for v6.3.
 
-This patch applied to the pinctrl tree.
 
-Yours,
-Linus Walleij
+Thanks a lot Linus!
+
+
+>
+> I see no reason to wait for more review since Krzysztof acked the
+> bindings and the driver isn't invasive at all, any problems can certainly
+> be fixed up in-tree.
+>
+> Yours,
+> Linus Walleij
