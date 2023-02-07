@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 195C3C05027
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 697C5C636D3
 	for <linux-gpio@archiver.kernel.org>; Tue,  7 Feb 2023 00:34:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229447AbjBGAeb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S229478AbjBGAeb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 6 Feb 2023 19:34:31 -0500
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbjBGAe2 (ORCPT
+        with ESMTP id S229601AbjBGAe2 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2023 19:34:28 -0500
 Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 455609ED5
-        for <linux-gpio@vger.kernel.org>; Mon,  6 Feb 2023 16:34:28 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A6379032
+        for <linux-gpio@vger.kernel.org>; Mon,  6 Feb 2023 16:34:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1675730068; x=1707266068;
+  t=1675730067; x=1707266067;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=qu+OTEbisF7xWX1TsM90TkydERwOfLXazqjrH6g8P+U=;
-  b=Rva1I7hnvFRyZ8cBCN+wgzwND9cIe6D9BIC2SKxt+3ksNeXqO3B342KA
-   x3i9inO3D9fKF447dPcKjbRBCKUw/HUcC6VYr1hkaeGKOu6zPI8cvhvrv
-   3mX36KviKwKT/a7AXugnvf936claC53JWHMte+lP1AHf9bIx4K9dMct60
-   4yvsN48IWqt+0/RuSRF4fW1Lsa1vwqcHfeKPBgKS33ppkh3im5d53PKlz
-   fmNCgq7Kl9Iywka0iLWW+qOSfoc6p+zdO8rF1IwB9L6GlTjbxrQoGz9xY
-   0g+O08KYN6/WvF6wO+Du1E6IejPyQ4hkZQGBe/FJ/ZYWkNMRRxw1NX3sJ
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10613"; a="309693374"
+  bh=DGFS34+9TgduiIP91+UUkZLoos8XpVGwafWoP4KBb9s=;
+  b=XIOeNVC2sVFLh2puFX1+nOVUvd8SNn+qasYDmPd6vls+kN99i6ELsd94
+   MCf9PdedMCxLSfhKexISgmi5hr7R5rpc5kD5iMN7t45NCNWd/+GaDEyEs
+   dSbM7BQ5IDzxEMUrqrT8ugdYHf7GE+AQZ+Ac0GR/CYMTl8JYR70HMxo0X
+   JQ/VGTRITsKQoTuhNDf5EI1gmm1LzV4ApL5LA+fFpe5mEDTRcJVdZs5ss
+   rSD27PIuYqM63kdn1w7a0T5Y/NsK1QeUlny3SQOI2k+GEIYxkNQPwRJ5d
+   +S7w3o81kvLJOP3Ys3xmpnAdniY4Tln7wHjrXdbmOULCLGSUAKELNhvYL
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10613"; a="309693371"
 X-IronPort-AV: E=Sophos;i="5.97,276,1669104000"; 
-   d="scan'208";a="309693374"
+   d="scan'208";a="309693371"
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
   by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Feb 2023 16:34:27 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10613"; a="790605154"
+X-IronPort-AV: E=McAfee;i="6500,9779,10613"; a="790605152"
 X-IronPort-AV: E=Sophos;i="5.97,276,1669104000"; 
-   d="scan'208";a="790605154"
+   d="scan'208";a="790605152"
 Received: from lkp-server01.sh.intel.com (HELO 4455601a8d94) ([10.239.97.150])
   by orsmga004.jf.intel.com with ESMTP; 06 Feb 2023 16:34:25 -0800
 Received: from kbuild by 4455601a8d94 with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1pPBwH-0002u2-0A;
+        id 1pPBwH-0002u0-07;
         Tue, 07 Feb 2023 00:34:25 +0000
-Date:   Tue, 07 Feb 2023 08:33:51 +0800
+Date:   Tue, 07 Feb 2023 08:33:49 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- ff51053424ec6dcaae95e02ce900cc8cbe1c3ed6
-Message-ID: <63e19c6f.O2oQl8qbQXwH22pm%lkp@intel.com>
+Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
+ 58378dd700d48851bad511a765e112d055962f7d
+Message-ID: <63e19c6d.E6PCg3O/r32WTPhT%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -57,69 +57,57 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: ff51053424ec6dcaae95e02ce900cc8cbe1c3ed6  dt-bindings: pinctrl: rockchip,pinctrl: mark gpio sub nodes of pinctrl as deprecated
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
+branch HEAD: 58378dd700d48851bad511a765e112d055962f7d  Merge branch 'devel' into for-next
 
-elapsed time: 721m
+elapsed time: 720m
 
-configs tested: 50
+configs tested: 38
 configs skipped: 2
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
 
 gcc tested configs:
-x86_64                            allnoconfig
-powerpc                           allnoconfig
-sh                               allmodconfig
-mips                             allyesconfig
-powerpc                          allmodconfig
 um                             i386_defconfig
 um                           x86_64_defconfig
-m68k                             allyesconfig
+x86_64                            allnoconfig
+powerpc                           allnoconfig
+arc                                 defconfig
+s390                             allmodconfig
+alpha                               defconfig
+s390                                defconfig
+sh                               allmodconfig
+s390                             allyesconfig
+x86_64                              defconfig
 m68k                             allmodconfig
 alpha                            allyesconfig
-arc                                 defconfig
-arc                              allyesconfig
-alpha                               defconfig
-x86_64                           rhel-8.3-bpf
-s390                             allmodconfig
-x86_64                              defconfig
-s390                                defconfig
-x86_64                           rhel-8.3-syz
+mips                             allyesconfig
+m68k                             allyesconfig
 x86_64                               rhel-8.3
+x86_64                           rhel-8.3-syz
+powerpc                          allmodconfig
+i386                 randconfig-a011-20230206
+arc                              allyesconfig
 x86_64                         rhel-8.3-kunit
-x86_64                           rhel-8.3-kvm
-x86_64                           allyesconfig
-s390                             allyesconfig
+i386                 randconfig-a014-20230206
 ia64                             allmodconfig
-i386                          randconfig-a014
-i386                          randconfig-a012
-i386                          randconfig-a016
-arc                  randconfig-r043-20230205
-arm                  randconfig-r046-20230205
-arc                  randconfig-r043-20230206
-riscv                randconfig-r042-20230206
-s390                 randconfig-r044-20230206
-i386                                defconfig
+x86_64                           rhel-8.3-kvm
+i386                 randconfig-a012-20230206
+x86_64                           rhel-8.3-bpf
+i386                 randconfig-a013-20230206
+i386                 randconfig-a015-20230206
+i386                 randconfig-a016-20230206
+x86_64                           allyesconfig
 arm                                 defconfig
 x86_64                    rhel-8.3-kselftests
 x86_64                          rhel-8.3-func
-i386                             allyesconfig
 arm64                            allyesconfig
+i386                                defconfig
 arm                              allyesconfig
+i386                             allyesconfig
 
 clang tested configs:
-i386                          randconfig-a013
-i386                          randconfig-a011
-i386                          randconfig-a015
-hexagon              randconfig-r041-20230205
-riscv                randconfig-r042-20230205
-hexagon              randconfig-r045-20230206
-hexagon              randconfig-r041-20230206
-arm                  randconfig-r046-20230206
-hexagon              randconfig-r045-20230205
-s390                 randconfig-r044-20230205
 x86_64                          rhel-8.3-rust
 
 -- 
