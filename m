@@ -2,99 +2,101 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB88C05027
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Feb 2023 16:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8013C05027
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Feb 2023 16:49:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230119AbjBQQcm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Feb 2023 11:32:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43318 "EHLO
+        id S229689AbjBQQtl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Feb 2023 11:49:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229734AbjBQQcl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Feb 2023 11:32:41 -0500
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [IPv6:2a01:238:4321:8900:456f:ecd6:43e:202c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5827874411;
-        Fri, 17 Feb 2023 08:32:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=fdyKvwYgQMyYOvs0tXMattzjV5AJbXrXbx9GVNi92gc=; b=rB70gVJYdKjUfB2yk/iVq2XOG1
-        Kgz5TPxBW/7arPV6XSZz1yZ12auLu2TXIoaD7K1FW7uVqa7Wsyapj81K0uh4ETQJe0YucyxwXfZpy
-        JAWsOqemDPnYuCoYmLLtqw4gPH5njmPZcee71RnsRhqjJqZk5RvQeRKNKHrtD7lssDjdYV5n1amOe
-        eKJ4MgDUEax7LfqUoDPNYve/gQX9vV9j0+WlUmBSa9sdoJQdCjuzI1JKc36+uMNZ3/Ue/j/mXAhwL
-        UCjZUecALDmF/lsNq1WZWU3DfsBUsTMeVWxjcMsU5G8HWJEn2M+viihT0izK/FZKldRpU0JBFzo8l
-        N5Mx9YRg==;
-Received: from p200300ccff0dfd001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff0d:fd00:1a3d:a2ff:febf:d33a] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1pT3de-00064j-S3; Fri, 17 Feb 2023 17:31:11 +0100
-Date:   Fri, 17 Feb 2023 17:31:08 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mun Yew Tham <mun.yew.tham@intel.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, Alban Bedel <albeu@free.fr>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Jay Fang <f.fangjian@huawei.com>,
-        Daniel Palmer <daniel@thingy.jp>,
-        Romain Perier <romain.perier@gmail.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        William Breathitt Gray <william.gray@linaro.org>,
+        with ESMTP id S229674AbjBQQtk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Feb 2023 11:49:40 -0500
+Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCC0B474C0
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Feb 2023 08:49:39 -0800 (PST)
+Received: by mail-qv1-xf32.google.com with SMTP id e17so1647645qvw.8
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Feb 2023 08:49:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JBYJ6k0k+VwIOBHwk5gBDh6Agwe69W8vixfj+NTwllQ=;
+        b=cbgLFejJCkpFAA1rG+0UhVL12J9Kobhzxs0sUeSCZnsDNZuzpFAfmYkqndjEtV5DI6
+         kW2GzbI/EGgOyvKiAUPizIKx9rIHbtAD6uh0yQJmEwX2G3wd19DeZjt5IBx7lhC7dWKV
+         Q7X5UAmCemucN9qoxsVo0IBoSCKebEk61Nhszx8Sl8Usu2DJ+Aqpz5aj7l6503HM9tzA
+         NnvgIlOBe0c+qyb2NAIM+aoTLTpFeWxjV0E/ucnvZc8gelIXfot1NkS/BQe9RcKsIxzk
+         L78sDo5LO9hkFyA0yyaQlf8yev3PON+TGZi9nncsFpbw3iq4OqrbksgUXl7V4eOYzT+K
+         QwsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JBYJ6k0k+VwIOBHwk5gBDh6Agwe69W8vixfj+NTwllQ=;
+        b=CbJJOfzKV4ZYBJdnXEiQ+76Rq7y3NqZkB1TaMcm5NZRg4UtLtEFTEhdOMSFNSWFomS
+         Cn34STwP8KjHs9k+CJLx8W4LVAZo1xZMOKVNpnmF4bIoRK4Vwx3G3n1+roeWSARa4PYe
+         mgY0ARmxTYcos0upEoYQ0weR8d9u1KsFqacZzfHyrBxhmjxR3WvaR25+BFaIaINIsQte
+         YN3UAa1mOPHVTZfCtlMUrVkJsP+rsZsrO03WbxaGD4T2x56whMW12bymNa/q6fYof4av
+         mErfDbL6+XZRHXeRnbbSzcfz+vQW9nh7cbN1rd5CiUOfNVATUJcAq/cuD1DpzOk2YBRo
+         t5/A==
+X-Gm-Message-State: AO0yUKUjORwCI2E8d2MmFiho1kAMDtseSVeCgQLv5GLZ6AY4rQXxzosi
+        DuJy58apT3Yf7rmtBHppIdqP36S2cD2I0zq4
+X-Google-Smtp-Source: AK7set9tVasjBlEnZHW2dQ+jbQys+MEkEojuhwaDAbV3NzS4mykkijQTQKiIyqYuqqIuadRnPy2pHQ==
+X-Received: by 2002:a05:6214:1942:b0:56e:aa11:daa3 with SMTP id q2-20020a056214194200b0056eaa11daa3mr2767351qvk.14.1676652579014;
+        Fri, 17 Feb 2023 08:49:39 -0800 (PST)
+Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id b68-20020a37b247000000b0073980414888sm3569161qkf.42.2023.02.17.08.49.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Feb 2023 08:49:38 -0800 (PST)
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     linus.walleij@linaro.org, brgl@bgdev.pl
+Cc:     broonie@kernel.org, andriy.shevchenko@linux.intel.com,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-omap@vger.kernel.org,
-        Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH 15/17] gpio: omap: Convert to immutable irq_chip
-Message-ID: <20230217173108.1448ce92@aktux>
-In-Reply-To: <Y+8xkV5aUrAajLNP@atomide.com>
-References: <20230215-immutable-chips-v1-0-51a8f224a5d0@linaro.org>
-        <20230215-immutable-chips-v1-15-51a8f224a5d0@linaro.org>
-        <Y+8xkV5aUrAajLNP@atomide.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        William Breathitt Gray <william.gray@linaro.org>
+Subject: [PATCH 0/6] Migrate IDIO-16 GPIO drivers to regmap API
+Date:   Wed,  8 Feb 2023 12:18:15 -0500
+Message-Id: <cover.1675876659.git.william.gray@linaro.org>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, 17 Feb 2023 09:49:37 +0200
-Tony Lindgren <tony@atomide.com> wrote:
+The regmap API supports IO port accessors so we can take advantage of
+regmap abstractions rather than handling access to the device registers
+directly in the driver. The 104-idio-16 and pci-idio-16 modules depend
+on the IDIO-16 library and are thus updated accordingly.
 
-> Hi,
-> 
-> * Linus Walleij <linus.walleij@linaro.org> [230216 09:38]:
-> > Convert the driver to immutable irq-chip with a bit of
-> > intuition.
-> > 
-> > This driver require some special care: .irq_ack() was copied
-> > from dummy_irq_chip where it was defined as noop. This only
-> > makes sense if using handle_edge_irq() that will unconditionally
-> > call .irq_ack() to avoid a crash, but this driver is not ever
-> > using handle_edge_irq() so just avoid assigning .irq_ack().
-> > 
-> > A separate chip had to be created for the non-wakeup instance.  
-> 
-> Nice, works for me.
-> 
-> BTW, I still see these warnings remaining on boot:
-> 
-> gpio gpiochip0: Static allocation of GPIO base is deprecated, use dynamic allocation.
-> 
-> Seems like we might be able to get rid of those too now or are
-> there still some dependencies with /sys/class/gpio for example?
-> 
-on what are you testing? on -next? I thought I have fixed theese warning with
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=92bf78b33b0b463b00c6b0203b49aea845daecc8
+The 104-IDIO-16 lacks a status register (as does the 104-DIO-48E), so a
+no_status flag is introduced to the regmap-irq API to properly handle
+such cases and avoid hacks. The 104-dio-48e module is updated in a
+subsequent patch to take advantage of this new no_status flag.
 
-Regards,
-Andreas
+By leveraging the regmap API, the idio-16 library is reduced to simply a
+devm_idio_16_regmap_register() function and a configuration structure
+struct idio_16_regmap_config.
+
+William Breathitt Gray (6):
+  regmap-irq: Add no_status support
+  gpio: 104-dio-48e: Utilize no_status regmap-irq flag
+  gpio: idio-16: Migrate to the regmap API
+  gpio: 104-idio-16: Migrate to the regmap API
+  gpio: pci-idio-16: Migrate to the regmap API
+  gpio: idio-16: Remove unused legacy interface
+
+ drivers/base/regmap/regmap-irq.c |  23 ++-
+ drivers/gpio/Kconfig             |   7 +-
+ drivers/gpio/gpio-104-dio-48e.c  |   6 +-
+ drivers/gpio/gpio-104-idio-16.c  | 294 ++++++++----------------------
+ drivers/gpio/gpio-idio-16.c      | 255 ++++++++++++++------------
+ drivers/gpio/gpio-idio-16.h      |  80 +++------
+ drivers/gpio/gpio-pci-idio-16.c  | 295 +++++++------------------------
+ include/linux/regmap.h           |   2 +
+ 8 files changed, 326 insertions(+), 636 deletions(-)
+
+
+base-commit: 4827aae061337251bb91801b316157a78b845ec7
+-- 
+2.39.1
+
