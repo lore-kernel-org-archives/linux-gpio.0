@@ -2,128 +2,138 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F08C636D4
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Feb 2023 15:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CF6C636CC
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Feb 2023 15:53:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231277AbjBHPqi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 8 Feb 2023 10:46:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36300 "EHLO
+        id S231151AbjBHPxn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Feb 2023 10:53:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231187AbjBHPqg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Feb 2023 10:46:36 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B837BAA;
-        Wed,  8 Feb 2023 07:46:31 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id bg26so13644271wmb.0;
-        Wed, 08 Feb 2023 07:46:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QU2t04Vz0L4YBcL3LbO96riKtXp80tCkHBnfxGNCEIU=;
-        b=pEbS3Me0KO689JUNk9hXzyEDagcWuorGVsaPjPMzRcCp/8R9MjQzAkS17PvvYwQFj8
-         LJj3rOnowahYQHDNwvPjaOnG1FGvuFc8dLIFa0GxuJbhi3UMqm4q4FmVwdmKVnQD9GHe
-         jto5qCK/KxqcVR9lGwA1JXPc9bdkQ5nwmmcuel7T3BZIZTNesZxidKWo54sWB6j58HUr
-         i8LK+UctQo5Zy2ooHtJNTN5aU+vdF1fCy9iNivxyKvvskM1JT2Wnb6lnQRIHQGjzmp4u
-         9DYeqMu04CxR7qWJX7U3gANfSMxNfljyZNQ8Sseb7UDUlc2Eus/goaasMRQS5CUrn0YX
-         ohNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QU2t04Vz0L4YBcL3LbO96riKtXp80tCkHBnfxGNCEIU=;
-        b=0+v5PBmxB4h+hJ++TZHbj5sQ1pTDGKxU39MKxDSRfpttkXt5RIy2vEA35bqcLV3qBA
-         GnHLioe5pRZq6J7nNSmmCuSxp3d2R4ZQCH205sICF7+yUKkXmNdnPSm9M2+tPaE4yi8L
-         Xvh4US+S5+7XEF7MHVPi9Cg6lEgx6sMofOWgV/8RhbfDsm2+5MMsDPohk8errhGXo8bk
-         Cv1QfBmbzQY9JL5gxmGYUCVl1UqV5RI69lBrTV2OeANuu7ARnB8frwOJzwqgTAEegR0u
-         3PM58hgd6wqwzR4LWcnDaCGIN7JVZSYSROzPeNgfO+WIPvZF/q06XuRpe5N4ZOV/nHq+
-         n9JQ==
-X-Gm-Message-State: AO0yUKUc7VoUOnIC4iuqh89wdje+vnyBz04MTftmsl5JLhmqFbeRqX19
-        iySjcG69U2+5tSzjEOwoKNU=
-X-Google-Smtp-Source: AK7set9PpKIxdxDU92yb5BTSfyg4MbnoxWJ8jiFk8RIH6B+9+Ow5++VbYuslJwDrpp27azxbKudn/g==
-X-Received: by 2002:a05:600c:1898:b0:3df:f7ba:14e1 with SMTP id x24-20020a05600c189800b003dff7ba14e1mr7732827wmp.8.1675871190204;
-        Wed, 08 Feb 2023 07:46:30 -0800 (PST)
-Received: from orome (p200300e41f201d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f20:1d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id j37-20020a05600c1c2500b003daf6e3bc2fsm6368834wms.1.2023.02.08.07.46.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Feb 2023 07:46:29 -0800 (PST)
-Date:   Wed, 8 Feb 2023 16:46:28 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Prathamesh Shete <pshete@nvidia.com>, jonathanh@nvidia.com,
-        linus.walleij@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        smangipudi@nvidia.com
-Subject: Re: [PATCH 3/3] arm64: tegra: Add Tegra234 pinmux device
-Message-ID: <Y+PD1M6eC1QqEq7o@orome>
-References: <20230207115617.12088-1-pshete@nvidia.com>
- <20230207115617.12088-3-pshete@nvidia.com>
- <f0d58e5b-74df-26cf-592e-302a00d08eee@linaro.org>
- <Y+OAthBgds9InvKp@orome>
- <7bb3e201-954d-c8eb-9430-19626c43fe75@linaro.org>
- <1dc0589b-2434-47c5-a1d2-d253b06d3a67@linaro.org>
+        with ESMTP id S230295AbjBHPxm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Feb 2023 10:53:42 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07BA34A1D0;
+        Wed,  8 Feb 2023 07:53:23 -0800 (PST)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 318Eoai7027144;
+        Wed, 8 Feb 2023 15:53:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=1a/BErtpHmYZ0oEStrA8oXWYhd8LnuSHP+YOZT49M2k=;
+ b=XkayuXjmksJS7iHiUJmjwAWC+yPMrz7UHa5JAXlTG0HubiQNd3UZU1pZOQLHCuF9dPlo
+ vHwd2OtnO9n9yKOUNY9xXcG8Vj/5oxNXn+PCmLwcKBiPr9KL6cKzVc+ZnsdkCOuFqiaE
+ 9UaXq8+OOEJTj02w37o1EwRHPKNMuEnxtLXUNcMuSBYSXr2jQyGgznlHDgbK/p1K9AOU
+ PgzzGGGNO1VDrpPGU6rj/hwIIQ5e6WrZI2h6IVbnwvxOUpNUWkLpTbm0vkII91rZ3hjp
+ 7vb85v2bT7JfLD5KoBO/1M4REcG3pt/eLR/n2zMi1C8ENXaRxKTa7qJrf3+/j01y/kov lA== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nm8x1ry8b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Feb 2023 15:53:06 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 318Fr4IN032204
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 8 Feb 2023 15:53:04 GMT
+Received: from kathirav-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Wed, 8 Feb 2023 07:52:57 -0800
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+To:     <krzysztof.kozlowski@linaro.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <shawnguo@kernel.org>, <arnd@arndb.de>,
+        <dmitry.baryshkov@linaro.org>, <marcel.ziswiler@toradex.com>,
+        <nfraprado@collabora.com>, <robimarko@gmail.com>,
+        <quic_gurus@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>,
+        Kathiravan T <quic_kathirav@quicinc.com>
+Subject: [PATCH V4 1/7] clk: qcom: Add STROMER PLUS PLL type for IPQ5332
+Date:   Wed, 8 Feb 2023 21:22:26 +0530
+Message-ID: <20230208155232.11500-2-quic_kathirav@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230208155232.11500-1-quic_kathirav@quicinc.com>
+References: <20230208155232.11500-1-quic_kathirav@quicinc.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kznfj9f1arh8i+uH"
-Content-Disposition: inline
-In-Reply-To: <1dc0589b-2434-47c5-a1d2-d253b06d3a67@linaro.org>
-User-Agent: Mutt/2.2.9 (2022-11-12)
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 06AOuWpQZuhw-ETWBvvU-89wy8ox1flw
+X-Proofpoint-ORIG-GUID: 06AOuWpQZuhw-ETWBvvU-89wy8ox1flw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-02-08_06,2023-02-08_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ mlxscore=0 suspectscore=0 malwarescore=0 mlxlogscore=816
+ lowpriorityscore=0 spamscore=0 impostorscore=0 adultscore=0
+ priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2212070000 definitions=main-2302080141
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Add the support for stromer plus pll, which is found on the IPQ5332
+SoCs. Programming sequence is same as the stromer pll, so we can re-use
+the same.
 
---kznfj9f1arh8i+uH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+---
+Changes in V4:
+	- No changes
 
-On Wed, Feb 08, 2023 at 01:06:02PM +0100, Krzysztof Kozlowski wrote:
-> On 08/02/2023 13:01, Krzysztof Kozlowski wrote:
-> >> I wonder if there's a good way to detect these. We'd have to run checks
-> >> on the DT source files, so that's a bit difficult. I do have an
-> >> experimental script that tries to capture some common pitfalls on
-> >> sources but it's quite ugly and slow, but I guess I could add something
-> >> like this. But perhaps there are better ways?
-> >=20
-> > One way to easy spot them is to override always by label, thus every
-> > node defined like above is a new node. However I think we talked about
-> > this and you do not follow this practice, thus there is no way to tell -
-> > is the status reasonable or not.
-> >=20
-> > Automated tools could help here as well - run fdtdump on DTB and look
-> > for status=3Dokay.
->=20
-> Eh, obviously it won't work - every node which was disabled in DTSI and
-> enabled in DTS will have the status=3Dokay...
+Changes in V3:
+	- No changes
 
-Yeah, I was originally thinking along the same lines, but when things
-are overridden that check no longer works. I suppose DTC could be taught
-to check for this when it merges nodes.
+Changes in V2:
+	- Added the Reviewed-by tag
 
-Thierry
+ drivers/clk/qcom/clk-alpha-pll.c | 11 +++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  1 +
+ 2 files changed, 12 insertions(+)
 
---kznfj9f1arh8i+uH
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 14f9436b62fc..b9f6535a7ba7 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -216,6 +216,17 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_TEST_CTL_U] = 0x34,
+ 		[PLL_OFF_STATUS] = 0x28,
+ 	},
++	[CLK_ALPHA_PLL_TYPE_STROMER_PLUS] =  {
++		[PLL_OFF_L_VAL] = 0x04,
++		[PLL_OFF_USER_CTL] = 0x08,
++		[PLL_OFF_USER_CTL_U] = 0x0c,
++		[PLL_OFF_CONFIG_CTL] = 0x10,
++		[PLL_OFF_TEST_CTL] = 0x14,
++		[PLL_OFF_TEST_CTL_U] = 0x18,
++		[PLL_OFF_STATUS] = 0x1c,
++		[PLL_OFF_ALPHA_VAL] = 0x24,
++		[PLL_OFF_ALPHA_VAL_U] = 0x28,
++	},
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+ 
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index ff25c7f7b43e..d07b17186b90 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -27,6 +27,7 @@ enum {
+ 	CLK_ALPHA_PLL_TYPE_DEFAULT_EVO,
+ 	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
+ 	CLK_ALPHA_PLL_TYPE_STROMER,
++	CLK_ALPHA_PLL_TYPE_STROMER_PLUS,
+ 	CLK_ALPHA_PLL_TYPE_MAX,
+ };
+ 
+-- 
+2.17.1
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmPjw9QACgkQ3SOs138+
-s6GkwRAAkRn3zAbCODESQbqwSh+94YN9rvV18HbC7A5VXcR2IVetIFWim6Pvsh1F
-UHk7bwvlJqfsxmRnMr17UIVfIfhGzYB0QDj2Bynvb5nk2tYdSripecGq95mbtIPV
-d1wjzcHn+UkpFKP8hYzWqDn8w2fOHWqfllMVV/4z2j9zIAzcFatTQ/oYyKlPBSd1
-SDur8hIQ+VzXFuPGFlJKlqOPq7jwacZq123MoNzYo4Fye2kjJHyKZ7tHA4FEkUdi
-x2GxRg0b/nCkeTMWGxk0l/A9+nGqhQBpkovPUnwu+0i1jscQ9kDTqyu8OM85JitU
-fk3XwtM4o2kN996MPkNGiZGpIae0RtTDiM2W90MF7MR1Bo6B2Oez8an5918Gr5ao
-2GHxC12UTwLbLUcsrKB0YbHokaavoFglYbFelJ0bvmFhI9yRnBoFPcgEjBMCEoYe
-8oTUpZ6K6hXrJ9tpf9uD2XfrtcXHrIVQZMjevNAlQ4tY6IVreuBs1C4xE/URpJWv
-y34sVLqu6Eum/R360fXt/iENuaF4ynF9lX+P38fRzHZuQ5m7QXy5Xt9Yl8zUjmk/
-1uj00qrbQ+GQiD8VVt+gYVadXNZPUOrEXogcmt9grQ/6RHY/6uR+j4CxGn3pQhy/
-l3+3AsaUEUF5uXLmtWjyuPjRpDDl6lXqQWE+2x1diASq4/2bxxw=
-=sh86
------END PGP SIGNATURE-----
-
---kznfj9f1arh8i+uH--
