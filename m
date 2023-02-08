@@ -2,112 +2,172 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43DEFC61DA4
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Feb 2023 11:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C27C61DA4
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Feb 2023 12:06:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229580AbjBPLtW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Feb 2023 06:49:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39428 "EHLO
+        id S229561AbjBPMGS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Feb 2023 07:06:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229575AbjBPLtV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Feb 2023 06:49:21 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35C9E4DBE0;
-        Thu, 16 Feb 2023 03:49:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E482BB824B3;
-        Thu, 16 Feb 2023 11:49:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F0CC433EF;
-        Thu, 16 Feb 2023 11:49:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1676548157;
-        bh=9vmuzx3tH6MHeToyGwqVw/F+KPzFPeoWov9zhDgvWbA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=W7v0sWiqfGK/oPS+QDKM604v5mm/OXkQ52M7ak0hvSnFlSg7Lvae5AwUXMS+GoBzF
-         xkxSMfDiymFEDNKth8SD+T9R7IgRWJSZCmp+uPnr1MDdXeQ6+9MSqG5LpQJ3QdFEjC
-         zThsiToJSD1VuE1k62ADoCleoR0teQ0HRMkQrc3s=
-Date:   Thu, 16 Feb 2023 12:49:15 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kumaravel.Thiagarajan@microchip.com
-Cc:     michael@walle.cc, Tharunkumar.Pasumarthi@microchip.com,
-        UNGLinuxDriver@microchip.com, arnd@arndb.de,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        srinivas.kandagatla@linaro.org
-Subject: Re: [PATCH v5 char-misc-next] misc: microchip: pci1xxxx: Add
- OTP/EEPROM driver for the pci1xxxx switch
-Message-ID: <Y+4YO7HSmETanIU2@kroah.com>
-References: <20230212035743.231353-1-tharunkumar.pasumarthi@microchip.com>
- <20230214082804.2761756-1-michael@walle.cc>
- <BN8PR11MB36680842890C294566A156C3E9A39@BN8PR11MB3668.namprd11.prod.outlook.com>
- <7276bef47792e489abd093e4bd0044de@walle.cc>
- <Y+yeyNCA48IbKOKC@kroah.com>
- <BN8PR11MB36680D97C97B4894E321CAD9E9A39@BN8PR11MB3668.namprd11.prod.outlook.com>
- <BN8PR11MB3668A1E8541035E257F2C500E9A39@BN8PR11MB3668.namprd11.prod.outlook.com>
- <Y+zFo4SP5L/KkT/v@kroah.com>
- <BN8PR11MB3668C37EFBB42FB3FFC7618FE9A09@BN8PR11MB3668.namprd11.prod.outlook.com>
+        with ESMTP id S229657AbjBPMGR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Feb 2023 07:06:17 -0500
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF3202D153
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 04:06:13 -0800 (PST)
+Received: by mail-ot1-x32f.google.com with SMTP id r34-20020a05683044a200b0068d4a8a8d2dso517403otv.12
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 04:06:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uglBygBs9ijyHk9bCgsz1JnjSH+tWIY8t2J8IkoGaKg=;
+        b=OxdaKe43FG9pkV/bxMqLQm3QB4w5+H6Nr/d+Bjy8+kEDM3NJEhkGNiSMjs3fsLD7nX
+         3FQL3VJawYluNdpGWKhI0CjkAQEJJ0k3lKaioo9f336frqO1cuVZtKtUcEpMmj3Q8HnO
+         VKlCxnjEruwsZ+y9RMnSfEXge6AGxzVKYQ7rMLP5iJEMNcZjr4oT5VDcToTZjzAtvSja
+         3xs6UQaKA5O5AAeox08IcxpMEml2d+IZwaPiKmacDw3lWpGyRi4/ovKLZPZ+2llCiSRY
+         UOZt0X5DNWwDYjiNEGh4ij+s8vL2gbmYTOLAdfTolGGIPH7/Y12V0HHcEyXM3THm3ctI
+         1HFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uglBygBs9ijyHk9bCgsz1JnjSH+tWIY8t2J8IkoGaKg=;
+        b=A1DFY/WcR7eVRTHYqFiA5b6RFkkRsN4NaaCs8zpMsTOjyMprQ9vJ8c7EV3ctKUs17a
+         nNC7EFM04Evo7kxu7gfHPAW0Ae+V62FAk/CDDyzcYhirdbgJVQK8ZBNCzC1B+5Np+zBK
+         ZatMQwWwPy7o3awAESZd54dXFoJ+OUWVRlXl/BXgsIJvlVtpIErYgphT0Q959Mt9u+y0
+         M3q/sFUcSuLFEJlbj6VZSuxfvz7pCScb0RGBqDmHcK9UvChRTxlXFnyXuyW0cp8mfrKJ
+         /XQ2Fzn670jMIZ9yHUXeYzBWXauXdBfr2boAB4qsLIneb/I7Br29RlGOIWRmrc3fv2hn
+         OYBg==
+X-Gm-Message-State: AO0yUKUBoCBw32CMTn0S6s2zDV9Ors9Rv/e1cQMO57aX0KBQCORFczgB
+        IizagyEeYPSQhZvBw6rdV/h2+g==
+X-Google-Smtp-Source: AK7set/QViwHWfznjRNuw1BE1wQ1msM8bPS/oX7O9gJb49xGfWna2ZIBMwHXu83+kYvTCy95yhddwg==
+X-Received: by 2002:a05:6830:2a04:b0:68d:6175:d5b9 with SMTP id y4-20020a0568302a0400b0068d6175d5b9mr778243otu.19.1676549173177;
+        Thu, 16 Feb 2023 04:06:13 -0800 (PST)
+Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id n12-20020a9d64cc000000b0068d4a8a8d40sm544774otl.81.2023.02.16.04.06.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Feb 2023 04:06:12 -0800 (PST)
+Date:   Wed, 8 Feb 2023 06:16:44 -0500
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Mun Yew Tham <mun.yew.tham@intel.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, Alban Bedel <albeu@free.fr>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Jay Fang <f.fangjian@huawei.com>,
+        Daniel Palmer <daniel@thingy.jp>,
+        Romain Perier <romain.perier@gmail.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-omap@vger.kernel.org,
+        Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH 16/17] gpio: pci-idio-16: Convert to immutable irq_chip
+Message-ID: <Y+OEnM/gZ+lLRELc@fedora>
+References: <20230215-immutable-chips-v1-0-51a8f224a5d0@linaro.org>
+ <20230215-immutable-chips-v1-16-51a8f224a5d0@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="AySwEFEhj9sTbaXz"
 Content-Disposition: inline
-In-Reply-To: <BN8PR11MB3668C37EFBB42FB3FFC7618FE9A09@BN8PR11MB3668.namprd11.prod.outlook.com>
+In-Reply-To: <20230215-immutable-chips-v1-16-51a8f224a5d0@linaro.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Feb 16, 2023 at 11:39:12AM +0000, Kumaravel.Thiagarajan@microchip.com wrote:
-> > -----Original Message-----
-> > From: Greg KH <gregkh@linuxfoundation.org>
-> > Sent: Wednesday, February 15, 2023 5:15 PM
-> > To: Kumaravel Thiagarajan - I21417 <Kumaravel.Thiagarajan@microchip.com>
-> > Subject: Re: [PATCH v5 char-misc-next] misc: microchip: pci1xxxx: Add
-> > OTP/EEPROM driver for the pci1xxxx switch
 
-What is this header for?
+--AySwEFEhj9sTbaXz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please fix your email client to not add this to the body of the text...
+On Thu, Feb 16, 2023 at 10:37:17AM +0100, Linus Walleij wrote:
+> Convert the driver to immutable irq-chip with a bit of
+> intuition.
+>=20
+> Cc: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-> > > > Greg & Michael, I do not want to expose the entire or even partial
-> > > > set of device registers to the user space access directly for safety
-> > reasons.
-> > 
-> > But that's all exposed here through this block device, right?
-> The block device created by this driver does not expose the device registers to the user space applications.
+FYI, I'm migrating pci-idio-16 to the regmap-irq API soon, so this patch
+might not be necessary once the code is removed. Anyway, here's my ack
+in case this patch series is merged first.
 
-What is it exposing?
+Acked-by: William Breathitt Gray <william.gray@linaro.org>
 
-And please use line-wrapping :)
+> ---
+>  drivers/gpio/gpio-pci-idio-16.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-pci-idio-16.c b/drivers/gpio/gpio-pci-idio=
+-16.c
+> index a86ce748384b..6726c32e31e6 100644
+> --- a/drivers/gpio/gpio-pci-idio-16.c
+> +++ b/drivers/gpio/gpio-pci-idio-16.c
+> @@ -107,6 +107,8 @@ static void idio_16_irq_mask(struct irq_data *data)
+> =20
+>  		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+>  	}
+> +
+> +	gpiochip_disable_irq(chip, irqd_to_hwirq(data));
+>  }
+> =20
+>  static void idio_16_irq_unmask(struct irq_data *data)
+> @@ -117,6 +119,8 @@ static void idio_16_irq_unmask(struct irq_data *data)
+>  	const unsigned long prev_irq_mask =3D idio16gpio->irq_mask;
+>  	unsigned long flags;
+> =20
+> +	gpiochip_enable_irq(chip, irqd_to_hwirq(data));
+> +
+>  	idio16gpio->irq_mask |=3D mask;
+> =20
+>  	if (!prev_irq_mask) {
+> @@ -138,12 +142,14 @@ static int idio_16_irq_set_type(struct irq_data *da=
+ta, unsigned int flow_type)
+>  	return 0;
+>  }
+> =20
+> -static struct irq_chip idio_16_irqchip =3D {
+> +static const struct irq_chip idio_16_irqchip =3D {
+>  	.name =3D "pci-idio-16",
+>  	.irq_ack =3D idio_16_irq_ack,
+>  	.irq_mask =3D idio_16_irq_mask,
+>  	.irq_unmask =3D idio_16_irq_unmask,
+> -	.irq_set_type =3D idio_16_irq_set_type
+> +	.irq_set_type =3D idio_16_irq_set_type,
+> +	.flags =3D IRQCHIP_IMMUTABLE,
+> +	GPIOCHIP_IRQ_RESOURCE_HELPERS,
+>  };
+> =20
+>  static irqreturn_t idio_16_irq_handler(int irq, void *dev_id)
+> @@ -242,7 +248,7 @@ static int idio_16_probe(struct pci_dev *pdev, const =
+struct pci_device_id *id)
+>  	idio_16_state_init(&idio16gpio->state);
+> =20
+>  	girq =3D &idio16gpio->chip.irq;
+> -	girq->chip =3D &idio_16_irqchip;
+> +	gpio_irq_chip_set_chip(girq, &idio_16_irqchip);
+>  	/* This will let us handle the parent IRQ in the driver */
+>  	girq->parent_handler =3D NULL;
+>  	girq->num_parents =3D 0;
+>=20
+> --=20
+> 2.34.1
+>=20
 
-> The device hardware provides separate set of registers to read and write into the OTP memory and EEPROM.
-> The driver uses these hardware registers and abstracts the programming logic inside and exposes the only the memory as devices to the user space.
+--AySwEFEhj9sTbaXz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-What memory is being exposed?  And how?
+-----BEGIN PGP SIGNATURE-----
 
-> I don't have any user program to program the device. I use the Linux dd command only.
-> If I want to view the contents of the memory, I can use any hex editor tool in Linux this way.
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCY+OEnAAKCRC1SFbKvhIj
+K5eCAPwLmxXCtGXXgP0akD13UFw7dXSdGyxVszeP+0DYBG+nUwD9GF6hkUXvQwOW
+2bR53NrSasEyxAdN84aY3rFim+gKKQE=
+=Zw1V
+-----END PGP SIGNATURE-----
 
-Exposing the memory of a device as a block device is not normal, it
-should just be mmapped, right?
-
-> > And this is already exposed to userspace today, no need to add anything the
-> > kernel already provides this.
-> Can you explain this? Are you referring to any sysfs directories / files? What is the necessity to do this? I am trying to understand this.
-
-PCI device accesses can go through userspace directly.  Is this just
-memory mapped in your PCI device?
-
-> If this is for any debug purpose and whether kernel does this under some conditional compilation or is that the default behavior?
-
-Is this only for debugging?  If so, please document it as such so that
-no one accidentally enables it as a valid build option.
-
-> Even if the user is a super user, should he be allowed to access the device hardware registers mandatorily. It should depend on the policy the system owner want to adopt. Right?
-
-Again, is this PCI memory that can be accessed directly?
-
-And again, a block device is very odd, that is not the normal way to
-access a device's memory.
-
-thanks,
-
-greg k-h
+--AySwEFEhj9sTbaXz--
