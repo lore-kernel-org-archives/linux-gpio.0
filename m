@@ -2,100 +2,76 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EC1C05027
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Feb 2023 04:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84CF7C61DA4
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Feb 2023 04:33:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230007AbjBIEcc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 8 Feb 2023 23:32:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47974 "EHLO
+        id S229977AbjBIEdt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Feb 2023 23:33:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230033AbjBIEbs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Feb 2023 23:31:48 -0500
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 038A0410A4;
-        Wed,  8 Feb 2023 20:31:24 -0800 (PST)
-Received: by mail-qt1-x82a.google.com with SMTP id cr22so740513qtb.10;
-        Wed, 08 Feb 2023 20:31:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VYWiP+RsM80H7wNl1WU3UTCyecPhj1rDTS0XQ6/EiJw=;
-        b=hbYjs18CuQ0IQIi/4UFBBwFlt4MSIr6vr81jKyijX8hbDAOoyJN3fTFZjDoMHUG1bM
-         0iIhI3c62lP2A4OrZEnGXHLhMTNnGsO1RnuaHvqAiPT66Z/L0AcirFHqvngA05AA2WvT
-         NFAm7bgGiHeu/JNV2zkLZdWEyRXt9JeOXCVKbaeRnU5sfmkKE8mWIqR2bEtMy24mM0QK
-         XKjnLUFEIz07fE1krRmq/21MV48wsOFCIbomIIM8oqgbxQRfsM+K5aPe7IfKIwPXdqBz
-         tSkSj4WVRYZy9I4VIe5nSz/kjjvZd/Bnc1T/rX1pQsvv/0wCxWZsmWl5/dw2GKaFU2FF
-         JJNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VYWiP+RsM80H7wNl1WU3UTCyecPhj1rDTS0XQ6/EiJw=;
-        b=PdyzyKYa8PoIVlFIhxIFVbAPzTqni0sUUhbgGW6onEh+XWFXU++9L5JOjrTGcAbyWA
-         midH2vVQqB390AEJGkLcl7MO9W9vQ5Om/YQD3Zt/qEJnmx8YtnXMZ9JdIySbfu74NxeJ
-         E/8U1xGe4t990gQf8l5szDMkVYak905jsMK74qcTapcmVuskPfmq29hdAqip1tUA3fqH
-         o2//gmAVi087uYizEeL2x1JQyJDjswC18jjZvlyZknsEcbFuoAayBWxTbhEnksepyEgE
-         z3aDapJiGIDmieGUl4af3P0o5Ls+wA/GJCUg5QgM/Vk3kUYEHBLHwBGVtfHF92A3j0oG
-         b5vg==
-X-Gm-Message-State: AO0yUKVPPzPwAEirZL0qlqLI+NT30QyLqjkaYtWcOCMApd879gUmdhIJ
-        ezetJQgBRQL7CdaM/tR3M41LWi8UF4k=
-X-Google-Smtp-Source: AK7set8dGL84ssKLZLSeE60Lv0RqogRPo+cGf2+zrA1Ok1ed4iVWSrC5cSgmpAS+7CG0FqkagsDylw==
-X-Received: by 2002:ac8:48cd:0:b0:3b9:bc8c:c213 with SMTP id l13-20020ac848cd000000b003b9bc8cc213mr844571qtr.30.1675917076899;
-        Wed, 08 Feb 2023 20:31:16 -0800 (PST)
-Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
-        by smtp.gmail.com with ESMTPSA id ca16-20020a05622a1f1000b003a7e38055c9sm548560qtb.63.2023.02.08.20.31.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Feb 2023 20:31:16 -0800 (PST)
-From:   Trevor Woerner <twoerner@gmail.com>
-To:     linux-kernel@vger.kernel.org,
+        with ESMTP id S229924AbjBIEdd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Feb 2023 23:33:33 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A3944615F;
+        Wed,  8 Feb 2023 20:32:21 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 62A96B8200D;
+        Thu,  9 Feb 2023 04:21:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECB6EC433A0;
+        Thu,  9 Feb 2023 04:21:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675916515;
+        bh=G2r3kSQ1Co7MVTjNBMPUvFWBM5qFAEB7sHgj5pWaJUk=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=Kjw5M8UH6+kVFIupYwCDNns/EpZjB/xuTMvQQVAthtq9E+OTPb5fONR19mBjVwJUk
+         Amo7LZ/l38k3Px3zg60dGeUmcF97xs98B7Q1dZvBEg772G3MSseZrkHev4aJ6uDdzX
+         R7vv/fJ4RpWxoWQUYhqUWgo06oQ7jwi+oymb5y0atbju/BQcov94mpr3zv5IzEXqGe
+         mp14INmtZwKRxymT3j4EdHR4XLIRg5Aw4jPNBuZG02TABwFEE7vx7Yg/tI0GKvtT1u
+         gicRD2FR2BZ+L5cwYsZuabKnQ8O5/XgpnJ31/eQjDxHKaDoo3+jeTEq/xEDfooPMKH
+         xD1PZEneYSEwQ==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Iskren Chernev <me@iskren.info>, Andy Gross <agross@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
+        linux-gpio@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>,
+        Rob Herring <robh+dt@kernel.org>, Luca Weiss <luca@z3ntu.xyz>,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: gpio: nxp,pcf8575: add gpio-line-names
-Date:   Wed,  8 Feb 2023 23:31:00 -0500
-Message-Id: <20230209043100.1508-1-twoerner@gmail.com>
-X-Mailer: git-send-email 2.36.0.rc2.17.g4027e30c53
-In-Reply-To: <20230209041752.35380-1-twoerner@gmail.com>
-References: <20230209041752.35380-1-twoerner@gmail.com>
+        linux-arm-msm@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 00/10] pinctrl/ARM/arm64: qcom: correct TLMM gpio-ranges and GPIO pin names
+Date:   Wed,  8 Feb 2023 20:23:11 -0800
+Message-Id: <167591660371.1230100.12926809817038643079.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230202104452.299048-1-krzysztof.kozlowski@linaro.org>
+References: <20230202104452.299048-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The family of PCF857x-compatible chips describe 8-bit i2c i/o expanders.
-Allow the user to specify names for the 8 gpio lines.
+On Thu, 2 Feb 2023 11:44:42 +0100, Krzysztof Kozlowski wrote:
+> Changes since v1:
+> 1. Match the driver's ngpios (so usually include the ufs-reset where
+>    applicable). Several patches were dropped, other rewritten.
+> 2. Add tags
+> 
+> Best regards,
+> Krzysztof
+> 
+> [...]
 
-Signed-off-by: Trevor Woerner <twoerner@gmail.com>
----
-changes in v2:
-- the original said [PATCH 1/2], there is no 2/2
+Applied, thanks!
 
----
- Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+[08/10] ARM: dts: qcom: sdx55: correct TLMM gpio-ranges
+        commit: 2291bbd74f3869fb0400a6f867e2ec6d2620b1c2
 
-diff --git a/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml b/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
-index f0ff66c4c74e..81b825a4353c 100644
---- a/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
-+++ b/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
-@@ -39,6 +39,10 @@ properties:
-   reg:
-     maxItems: 1
- 
-+  gpio-line-names:
-+    minItems: 1
-+    maxItems: 8
-+
-   gpio-controller: true
- 
-   '#gpio-cells':
+Best regards,
 -- 
-2.36.0.rc2.17.g4027e30c53
-
+Bjorn Andersson <andersson@kernel.org>
