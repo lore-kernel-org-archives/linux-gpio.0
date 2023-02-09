@@ -2,70 +2,100 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E42C61DA4
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Feb 2023 04:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EC1C05027
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Feb 2023 04:32:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230017AbjBIEcD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 8 Feb 2023 23:32:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47162 "EHLO
+        id S230007AbjBIEcc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Feb 2023 23:32:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbjBIEbf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Feb 2023 23:31:35 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 510003F281;
-        Wed,  8 Feb 2023 20:31:11 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B67FCB81FF2;
-        Thu,  9 Feb 2023 04:21:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B02DC4339C;
-        Thu,  9 Feb 2023 04:21:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675916507;
-        bh=OHLpBrJ0hjdIxLyMLRBE1hql53zytqHQsAHsFhOj2ME=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=UIJmL7tPxuLhruaMSzbR1oY/iqNyz2uHD4HmzzM6OHBMmnLZrUafkQVmtub3S2+E/
-         f14PJX91JWGyfGoEiOTwXy/IcB73lbyYDqPlRjxtG5aSBZ9qIWkCUNT/VG995kaaGl
-         kuMJ/AiFoOJHiAhMrxeZy4hQAf6fuwBiY2pWb0auguriE2j6aPSBUdS+8MCpfT+iPK
-         vpEGQqOuGj0kabvzRVtkF29U7om0oJTxpPB9a0UjA9vCrZ15Pq/XbRaS28CthPOfzw
-         uHoiKAWOgncH81tvCRrzkycwffi0CxiDk1kYCo536odggB8WkVf2q9nsWFncLfXQuY
-         JgeFhda8hMqvg==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Andy Gross <agross@kernel.org>, linux-gpio@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-kernel@vger.kernel.org,
+        with ESMTP id S230033AbjBIEbs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Feb 2023 23:31:48 -0500
+Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 038A0410A4;
+        Wed,  8 Feb 2023 20:31:24 -0800 (PST)
+Received: by mail-qt1-x82a.google.com with SMTP id cr22so740513qtb.10;
+        Wed, 08 Feb 2023 20:31:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VYWiP+RsM80H7wNl1WU3UTCyecPhj1rDTS0XQ6/EiJw=;
+        b=hbYjs18CuQ0IQIi/4UFBBwFlt4MSIr6vr81jKyijX8hbDAOoyJN3fTFZjDoMHUG1bM
+         0iIhI3c62lP2A4OrZEnGXHLhMTNnGsO1RnuaHvqAiPT66Z/L0AcirFHqvngA05AA2WvT
+         NFAm7bgGiHeu/JNV2zkLZdWEyRXt9JeOXCVKbaeRnU5sfmkKE8mWIqR2bEtMy24mM0QK
+         XKjnLUFEIz07fE1krRmq/21MV48wsOFCIbomIIM8oqgbxQRfsM+K5aPe7IfKIwPXdqBz
+         tSkSj4WVRYZy9I4VIe5nSz/kjjvZd/Bnc1T/rX1pQsvv/0wCxWZsmWl5/dw2GKaFU2FF
+         JJNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VYWiP+RsM80H7wNl1WU3UTCyecPhj1rDTS0XQ6/EiJw=;
+        b=PdyzyKYa8PoIVlFIhxIFVbAPzTqni0sUUhbgGW6onEh+XWFXU++9L5JOjrTGcAbyWA
+         midH2vVQqB390AEJGkLcl7MO9W9vQ5Om/YQD3Zt/qEJnmx8YtnXMZ9JdIySbfu74NxeJ
+         E/8U1xGe4t990gQf8l5szDMkVYak905jsMK74qcTapcmVuskPfmq29hdAqip1tUA3fqH
+         o2//gmAVi087uYizEeL2x1JQyJDjswC18jjZvlyZknsEcbFuoAayBWxTbhEnksepyEgE
+         z3aDapJiGIDmieGUl4af3P0o5Ls+wA/GJCUg5QgM/Vk3kUYEHBLHwBGVtfHF92A3j0oG
+         b5vg==
+X-Gm-Message-State: AO0yUKVPPzPwAEirZL0qlqLI+NT30QyLqjkaYtWcOCMApd879gUmdhIJ
+        ezetJQgBRQL7CdaM/tR3M41LWi8UF4k=
+X-Google-Smtp-Source: AK7set8dGL84ssKLZLSeE60Lv0RqogRPo+cGf2+zrA1Ok1ed4iVWSrC5cSgmpAS+7CG0FqkagsDylw==
+X-Received: by 2002:ac8:48cd:0:b0:3b9:bc8c:c213 with SMTP id l13-20020ac848cd000000b003b9bc8cc213mr844571qtr.30.1675917076899;
+        Wed, 08 Feb 2023 20:31:16 -0800 (PST)
+Received: from localhost.localdomain (pppoe-209-91-167-254.vianet.ca. [209.91.167.254])
+        by smtp.gmail.com with ESMTPSA id ca16-20020a05622a1f1000b003a7e38055c9sm548560qtb.63.2023.02.08.20.31.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Feb 2023 20:31:16 -0800 (PST)
+From:   Trevor Woerner <twoerner@gmail.com>
+To:     linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: (subset) [PATCH 1/3] arm64: dts: qcom: sm8350-hdk: align pin config node names with bindings
-Date:   Wed,  8 Feb 2023 20:23:03 -0800
-Message-Id: <167591660370.1230100.8387648997702407659.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230201154321.276419-1-krzysztof.kozlowski@linaro.org>
-References: <20230201154321.276419-1-krzysztof.kozlowski@linaro.org>
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: gpio: nxp,pcf8575: add gpio-line-names
+Date:   Wed,  8 Feb 2023 23:31:00 -0500
+Message-Id: <20230209043100.1508-1-twoerner@gmail.com>
+X-Mailer: git-send-email 2.36.0.rc2.17.g4027e30c53
+In-Reply-To: <20230209041752.35380-1-twoerner@gmail.com>
+References: <20230209041752.35380-1-twoerner@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 1 Feb 2023 16:43:19 +0100, Krzysztof Kozlowski wrote:
-> Bindings expect pins to be named with certain pattern.
-> 
-> 
+The family of PCF857x-compatible chips describe 8-bit i2c i/o expanders.
+Allow the user to specify names for the 8 gpio lines.
 
-Applied, thanks!
+Signed-off-by: Trevor Woerner <twoerner@gmail.com>
+---
+changes in v2:
+- the original said [PATCH 1/2], there is no 2/2
 
-[1/3] arm64: dts: qcom: sm8350-hdk: align pin config node names with bindings
-      commit: 9927f8a59f42b6c0bde9ba770ffe9d9d9bce79da
-[2/3] arm64: dts: qcom: sm8350-hdk: correct LT9611 pin function
-      commit: cd06d923304355762d426b030a30d99fdf765b84
+---
+ Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml b/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
+index f0ff66c4c74e..81b825a4353c 100644
+--- a/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
++++ b/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
+@@ -39,6 +39,10 @@ properties:
+   reg:
+     maxItems: 1
+ 
++  gpio-line-names:
++    minItems: 1
++    maxItems: 8
++
+   gpio-controller: true
+ 
+   '#gpio-cells':
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.36.0.rc2.17.g4027e30c53
+
