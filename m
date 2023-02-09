@@ -2,90 +2,368 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B05C2C05027
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Feb 2023 13:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DEC3C61DA4
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Feb 2023 14:37:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230145AbjBINYf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Feb 2023 08:24:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51962 "EHLO
+        id S230525AbjBIOhO convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Feb 2023 09:37:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230147AbjBINYf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Feb 2023 08:24:35 -0500
-Received: from mail.3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 592C55357D;
-        Thu,  9 Feb 2023 05:24:32 -0800 (PST)
-Received: from mwalle01.kontron.local. (unknown [213.135.10.150])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.3ffe.de (Postfix) with ESMTPSA id 830A73CE;
-        Thu,  9 Feb 2023 14:24:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-        t=1675949070;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nStzcWGawBN+FFQgxCUoGQgyi6tWKaLoIEQNCXCbs5E=;
-        b=CAOvNc++i1yy4bn7QWCkKmOiAPRZaT3Sf12XY3NDahIE5g/B1IEQChLnqr9Qt6YueWoblL
-        iCx3r+c5yyGfAlX7WteUBviEtl8TY5BxRF77in/7CueN/fVxYo5HQ50CgVRSZJgiQYX2yB
-        VdsuKMaQmzy7LRDtELuj5bDLiC69U28alewBt/a68Ql6g/lojCAlXFcuSlVnAxP8JadodR
-        C2+WMdB8A9tCyJ+tvF25UqXEt2BZzNLI4Lm2iqU4Mzo5cO1tMzFziJherKOjINcSYOjVEP
-        zr56czSyTIE9kNa804vAUv48gWDNobclBtWmJ414Z2NQ3tEPAqesBBC+JScGwQ==
-From:   Michael Walle <michael@walle.cc>
-To:     linus.walleij@linaro.org
-Cc:     Claudiu.Beznea@microchip.com, Ludovic.Desroches@microchip.com,
-        Nicolas.Ferre@microchip.com, Ryan.Wanner@microchip.com,
-        alexandre.belloni@bootlin.com, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Walle <michael@walle.cc>
-Subject: Re: I2c GPIO Recovery with pinctrl strict mode
-Date:   Thu,  9 Feb 2023 14:24:22 +0100
-Message-Id: <20230209132422.179674-1-michael@walle.cc>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <CACRpkdbK8A9X4nCZEc53-wXU0Vgkc53j_r5rLQiSeoNbmvm8sg@mail.gmail.com>
-References: <CACRpkdbK8A9X4nCZEc53-wXU0Vgkc53j_r5rLQiSeoNbmvm8sg@mail.gmail.com>
+        with ESMTP id S230060AbjBIOhO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Feb 2023 09:37:14 -0500
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58B51C17E;
+        Thu,  9 Feb 2023 06:37:07 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 8AD5124E0D8;
+        Thu,  9 Feb 2023 22:37:04 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 9 Feb
+ 2023 22:37:04 +0800
+Received: from ubuntu.localdomain (183.27.96.33) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 9 Feb
+ 2023 22:37:03 +0800
+From:   Hal Feng <hal.feng@starfivetech.com>
+To:     <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        Andreas Schwab <schwab@suse.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor@kernel.org>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Jianlong Huang <jianlong.huang@starfivetech.com>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 1/4] dt-bindings: pinctrl: Add StarFive JH7110 sys pinctrl
+Date:   Thu, 9 Feb 2023 22:36:59 +0800
+Message-ID: <20230209143702.44408-2-hal.feng@starfivetech.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20230209143702.44408-1-hal.feng@starfivetech.com>
+References: <20230209143702.44408-1-hal.feng@starfivetech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [183.27.96.33]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
->> My main issue is the process of freeing ownership of a pin(s) having
->> another driver, in this case gpio, to take ownership then free that
->> ownership back to the default state, in this case it would be back to
->> i2c.
->>
->> I have tried calling pinmux_disable_setting() and then claiming the
->> gpios then enabling them for recovery then disabling them again. This
->> causes lots of warnings and some cases the full ownership is not
->> transferred.
->>
->> It seems that what I am attempting to achieve is not doable currently.
->> Is this the case or am I missing some extra things needing to prepare
->> for this action?
->
-> There are several other i2c bus drivers doing this already, for example
-> drivers/i2c/busses/i2c-imx.c
-> 
-> The idea is to have some different pinctrl states and move between
-> them explicitly in the driver to move pins from i2c mode to GPIO
-> mode and back.
-> 
-> The imx driver depend on the ability of the i.MX pin controller to use
-> the pins as a certain function and GPIO at the same time.
+From: Jianlong Huang <jianlong.huang@starfivetech.com>
 
-But that's because this is a limitation of the imx i2c controller.
-Usually, if i2c controllers don't have a hardware bus recovery (which
-is broken in most designs..) they usually have an override bit to
-bit bang SDA and SCL manually. Do the microchip cores have such bits?
+Add pinctrl bindings for StarFive JH7110 SoC sys pinctrl controller.
 
-Fun fact: also the layerscape SoCs use the imx i2c cores. It's just that
-layerscape SoCs doesn't support dynamic pinmuxing...
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
+Co-developed-by: Emil Renner Berthing <kernel@esmil.dk>
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+---
+ .../pinctrl/starfive,jh7110-sys-pinctrl.yaml  | 142 ++++++++++++++++++
+ MAINTAINERS                                   |   6 +-
+ .../pinctrl/starfive,jh7110-pinctrl.h         | 115 ++++++++++++++
+ 3 files changed, 261 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jh7110-sys-pinctrl.yaml
+ create mode 100644 include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
 
--michael
+diff --git a/Documentation/devicetree/bindings/pinctrl/starfive,jh7110-sys-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/starfive,jh7110-sys-pinctrl.yaml
+new file mode 100644
+index 000000000000..222b9e240f8a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/starfive,jh7110-sys-pinctrl.yaml
+@@ -0,0 +1,142 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/starfive,jh7110-sys-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: StarFive JH7110 SYS Pin Controller
++
++description: |
++  Bindings for the JH7110 RISC-V SoC from StarFive Technology Ltd.
++
++  Out of the SoC's many pins only the ones named PAD_GPIO0 to PAD_GPIO63
++  can be multiplexed and have configurable bias, drive strength,
++  schmitt trigger etc.
++  Some peripherals have their I/O go through the 64 "GPIOs". This also
++  includes a number of other UARTs, I2Cs, SPIs, PWMs etc.
++  All these peripherals are connected to all 64 GPIOs such that
++  any GPIO can be set up to be controlled by any of the peripherals.
++
++maintainers:
++  - Jianlong Huang <jianlong.huang@starfivetech.com>
++
++properties:
++  compatible:
++    const: starfive,jh7110-sys-pinctrl
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
++patternProperties:
++  '-[0-9]+$':
++    type: object
++    additionalProperties: false
++    patternProperties:
++      '-pins$':
++        type: object
++        description: |
++          A pinctrl node should contain at least one subnode representing the
++          pinctrl groups available on the machine. Each subnode will list the
++          pins it needs, and how they should be configured, with regard to
++          muxer configuration, bias, input enable/disable, input schmitt
++          trigger enable/disable, slew-rate and drive strength.
++        allOf:
++          - $ref: /schemas/pinctrl/pincfg-node.yaml
++          - $ref: /schemas/pinctrl/pinmux-node.yaml
++        additionalProperties: false
++
++        properties:
++          pinmux:
++            description: |
++              The list of GPIOs and their mux settings that properties in the
++              node apply to. This should be set using the GPIOMUX or PINMUX
++              macros.
++
++          bias-disable: true
++
++          bias-pull-up:
++            type: boolean
++
++          bias-pull-down:
++            type: boolean
++
++          drive-strength:
++            enum: [ 2, 4, 8, 12 ]
++
++          input-enable: true
++
++          input-disable: true
++
++          input-schmitt-enable: true
++
++          input-schmitt-disable: true
++
++          slew-rate:
++            maximum: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - interrupts
++  - interrupt-controller
++  - '#interrupt-cells'
++  - gpio-controller
++  - '#gpio-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    pinctrl@13040000 {
++        compatible = "starfive,jh7110-sys-pinctrl";
++        reg = <0x13040000 0x10000>;
++        clocks = <&syscrg 112>;
++        resets = <&syscrg 2>;
++        interrupts = <86>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        gpio-controller;
++        #gpio-cells = <2>;
++
++        uart0-0 {
++            tx-pins {
++                pinmux = <0xff140005>;
++                bias-disable;
++                drive-strength = <12>;
++                input-disable;
++                input-schmitt-disable;
++                slew-rate = <0>;
++            };
++
++            rx-pins {
++                pinmux = <0x0E000406>;
++                bias-pull-up;
++                drive-strength = <2>;
++                input-enable;
++                input-schmitt-enable;
++                slew-rate = <0>;
++            };
++        };
++    };
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f61eb221415b..babd133cdc4b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19890,13 +19890,15 @@ F:	Documentation/devicetree/bindings/clock/starfive,jh7100-*.yaml
+ F:	drivers/clk/starfive/clk-starfive-jh7100*
+ F:	include/dt-bindings/clock/starfive-jh7100*.h
+ 
+-STARFIVE JH7100 PINCTRL DRIVER
++STARFIVE JH71X0 PINCTRL DRIVERS
+ M:	Emil Renner Berthing <kernel@esmil.dk>
++M:	Jianlong Huang <jianlong.huang@starfivetech.com>
+ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
++F:	Documentation/devicetree/bindings/pinctrl/starfive,jh71*.yaml
+ F:	drivers/pinctrl/starfive/
+ F:	include/dt-bindings/pinctrl/pinctrl-starfive-jh7100.h
++F:	include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
+ 
+ STARFIVE JH7100 RESET CONTROLLER DRIVER
+ M:	Emil Renner Berthing <kernel@esmil.dk>
+diff --git a/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h b/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
+new file mode 100644
+index 000000000000..57c1659e4bbf
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
+@@ -0,0 +1,115 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
++/*
++ * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
++ * Copyright (C) 2022 StarFive Technology Co., Ltd.
++ */
++
++#ifndef __DT_BINDINGS_PINCTRL_STARFIVE_JH7110_H__
++#define __DT_BINDINGS_PINCTRL_STARFIVE_JH7110_H__
++
++/* sys_iomux pins */
++#define	PAD_GPIO0		0
++#define	PAD_GPIO1		1
++#define	PAD_GPIO2		2
++#define	PAD_GPIO3		3
++#define	PAD_GPIO4		4
++#define	PAD_GPIO5		5
++#define	PAD_GPIO6		6
++#define	PAD_GPIO7		7
++#define	PAD_GPIO8		8
++#define	PAD_GPIO9		9
++#define	PAD_GPIO10		10
++#define	PAD_GPIO11		11
++#define	PAD_GPIO12		12
++#define	PAD_GPIO13		13
++#define	PAD_GPIO14		14
++#define	PAD_GPIO15		15
++#define	PAD_GPIO16		16
++#define	PAD_GPIO17		17
++#define	PAD_GPIO18		18
++#define	PAD_GPIO19		19
++#define	PAD_GPIO20		20
++#define	PAD_GPIO21		21
++#define	PAD_GPIO22		22
++#define	PAD_GPIO23		23
++#define	PAD_GPIO24		24
++#define	PAD_GPIO25		25
++#define	PAD_GPIO26		26
++#define	PAD_GPIO27		27
++#define	PAD_GPIO28		28
++#define	PAD_GPIO29		29
++#define	PAD_GPIO30		30
++#define	PAD_GPIO31		31
++#define	PAD_GPIO32		32
++#define	PAD_GPIO33		33
++#define	PAD_GPIO34		34
++#define	PAD_GPIO35		35
++#define	PAD_GPIO36		36
++#define	PAD_GPIO37		37
++#define	PAD_GPIO38		38
++#define	PAD_GPIO39		39
++#define	PAD_GPIO40		40
++#define	PAD_GPIO41		41
++#define	PAD_GPIO42		42
++#define	PAD_GPIO43		43
++#define	PAD_GPIO44		44
++#define	PAD_GPIO45		45
++#define	PAD_GPIO46		46
++#define	PAD_GPIO47		47
++#define	PAD_GPIO48		48
++#define	PAD_GPIO49		49
++#define	PAD_GPIO50		50
++#define	PAD_GPIO51		51
++#define	PAD_GPIO52		52
++#define	PAD_GPIO53		53
++#define	PAD_GPIO54		54
++#define	PAD_GPIO55		55
++#define	PAD_GPIO56		56
++#define	PAD_GPIO57		57
++#define	PAD_GPIO58		58
++#define	PAD_GPIO59		59
++#define	PAD_GPIO60		60
++#define	PAD_GPIO61		61
++#define	PAD_GPIO62		62
++#define	PAD_GPIO63		63
++#define	PAD_SD0_CLK		64
++#define	PAD_SD0_CMD		65
++#define	PAD_SD0_DATA0		66
++#define	PAD_SD0_DATA1		67
++#define	PAD_SD0_DATA2		68
++#define	PAD_SD0_DATA3		69
++#define	PAD_SD0_DATA4		70
++#define	PAD_SD0_DATA5		71
++#define	PAD_SD0_DATA6		72
++#define	PAD_SD0_DATA7		73
++#define	PAD_SD0_STRB		74
++#define	PAD_GMAC1_MDC		75
++#define	PAD_GMAC1_MDIO		76
++#define	PAD_GMAC1_RXD0		77
++#define	PAD_GMAC1_RXD1		78
++#define	PAD_GMAC1_RXD2		79
++#define	PAD_GMAC1_RXD3		80
++#define	PAD_GMAC1_RXDV		81
++#define	PAD_GMAC1_RXC		82
++#define	PAD_GMAC1_TXD0		83
++#define	PAD_GMAC1_TXD1		84
++#define	PAD_GMAC1_TXD2		85
++#define	PAD_GMAC1_TXD3		86
++#define	PAD_GMAC1_TXEN		87
++#define	PAD_GMAC1_TXC		88
++#define	PAD_QSPI_SCLK		89
++#define	PAD_QSPI_CS0		90
++#define	PAD_QSPI_DATA0		91
++#define	PAD_QSPI_DATA1		92
++#define	PAD_QSPI_DATA2		93
++#define	PAD_QSPI_DATA3		94
++
++#define GPOUT_LOW		0
++#define GPOUT_HIGH		1
++
++#define GPOEN_ENABLE		0
++#define GPOEN_DISABLE		1
++
++#define GPI_NONE		255
++
++#endif
+-- 
+2.38.1
 
-> This is due to the imx pin controller not setting the .strict attribute
-> on the struct pinmux_ops so that pins can be used in parallel for
-> i2c and GPIO and gpiod_get() will not fail. But the Atmel driver does
-> not set this so you should be fine I think.
