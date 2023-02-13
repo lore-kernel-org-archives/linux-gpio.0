@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF21AC636CC
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Feb 2023 15:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F8B1C64EC7
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Feb 2023 15:45:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229812AbjBMPpC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Feb 2023 10:45:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58818 "EHLO
+        id S230015AbjBMPpD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Feb 2023 10:45:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231220AbjBMPo7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Feb 2023 10:44:59 -0500
+        with ESMTP id S231252AbjBMPpB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Feb 2023 10:45:01 -0500
 Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE3E4193ED;
-        Mon, 13 Feb 2023 07:44:58 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B6E8193EC;
+        Mon, 13 Feb 2023 07:45:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1676303098; x=1707839098;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=xlBf3u2jIImE6JHKLtR/28/lGgiDloE+1ryfEFZJMy0=;
-  b=bJ0a39FmTWi6vMrRwXso1Ix2IoUOj6ddqF1gDCjKp3vQ+Aw3lduE/GiR
-   MiaxMsNV2yndYqEcvpH3qbDV4j2GTUrFi9B3qv2cJV1KIzJ1V2Rx5bH+A
-   rLC/sT3WJkWILaV+iY0rfSChl+5OjuzFqu//8d+VwrUdJBLnnA0nPQqFP
-   pGWuV1wJgcg5DnjTT2ILDtH1+NCF1QA2/RmJOWrbYYqJ3U2mRBh7RDa+W
-   6Z6wjkODv7WcCNCVVieU3Jkzxn8HSABtZcZRXhYqOBuFOfFLnekLJRz66
-   5h1OuZDum2YPD3mPMDZ4jgLcOPmCGkfzDyokR2T5FIZeoFT8S50pMDDy1
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10620"; a="318938337"
+  t=1676303100; x=1707839100;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=GCTJpmH0g4s615gzulXEqG52DaZfgj/STvSUqeWLqJI=;
+  b=KL7kCTd0z6e2vpfL9YlSg3ke+sGAG0awaORtOL5Bb39mHRAsV1CYXeWU
+   Sx/MjIme8N/BzugoRVWI+pfr5Qt4byAYjwMmczhQYZYvo77HDtJgo3OH5
+   8U5dmL3DLINZEEK7enPAAWeBI+D1xe2AGZKaf2FDNmZztbL1a3k2iTfsp
+   7ohmerCOlPD37zdY0i8Zzoh8lJHDNqgJAEfmjNb8doLm0FhC4NBsxQMdE
+   Q4lgx+GTzY0hcVpCr+aWTizUEc+uFUlLk4OWML+M5rESVl44G3M69KoMb
+   uDY9qa6yTFYovnUFVJl/xFA55L5MkefQFV2zXrrN2G3h1Dgk34NOlcklp
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10620"; a="318938347"
 X-IronPort-AV: E=Sophos;i="5.97,294,1669104000"; 
-   d="scan'208";a="318938337"
+   d="scan'208";a="318938347"
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2023 07:44:57 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2023 07:44:58 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10620"; a="618682262"
+X-IronPort-AV: E=McAfee;i="6500,9779,10620"; a="618682265"
 X-IronPort-AV: E=Sophos;i="5.97,294,1669104000"; 
-   d="scan'208";a="618682262"
+   d="scan'208";a="618682265"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orsmga003.jf.intel.com with ESMTP; 13 Feb 2023 07:44:55 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 0D42E1A6; Mon, 13 Feb 2023 17:45:34 +0200 (EET)
+        id 26C61210; Mon, 13 Feb 2023 17:45:35 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -49,34 +49,49 @@ Cc:     Ludovic Desroches <ludovic.desroches@microchip.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Claudiu Beznea <claudiu.beznea@microchip.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 0/5] pinctrl: at91: Cleanups
-Date:   Mon, 13 Feb 2023 17:45:27 +0200
-Message-Id: <20230213154532.32992-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 3/5] pinctrl: at91: Use of_device_get_match_data()
+Date:   Mon, 13 Feb 2023 17:45:30 +0200
+Message-Id: <20230213154532.32992-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230213154532.32992-1-andriy.shevchenko@linux.intel.com>
+References: <20230213154532.32992-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The kasprintf() patch makes me look into the driver code and besides
-missed fix, there is a room to improve. Hence this series.
+Use of_device_get_match_data() to simplify the code.
 
-Compile tested only.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/pinctrl-at91.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Changes in v2:
-- fixed compilation errors (LKP)
-
-Andy Shevchenko (5):
-  pinctrl: at91: use devm_kasprintf() to avoid potential leaks (part 2)
-  pinctrl: at91: Don't mix non-devm calls with devm ones
-  pinctrl: at91: Use of_device_get_match_data()
-  pinctrl: at91: Use dev_err_probe() instead of custom messaging
-  pinctrl: at91: Utilise temporary variable for struct device
-
- drivers/pinctrl/pinctrl-at91.c | 164 ++++++++++++++-------------------
- 1 file changed, 67 insertions(+), 97 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+index 6d9015ed8a3b..055a88b2dacc 100644
+--- a/drivers/pinctrl/pinctrl-at91.c
++++ b/drivers/pinctrl/pinctrl-at91.c
+@@ -1304,8 +1304,7 @@ static int at91_pinctrl_probe_dt(struct platform_device *pdev,
+ 		return -ENODEV;
+ 
+ 	info->dev = &pdev->dev;
+-	info->ops = (const struct at91_pinctrl_mux_ops *)
+-		of_match_device(at91_pinctrl_of_match, &pdev->dev)->data;
++	info->ops = of_device_get_match_data(dev);
+ 	at91_pinctrl_child_count(info, np);
+ 
+ 	/*
+@@ -1844,8 +1843,7 @@ static int at91_gpio_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	at91_chip->ops = (const struct at91_pinctrl_mux_ops *)
+-		of_match_device(at91_gpio_of_match, &pdev->dev)->data;
++	at91_chip->ops = of_device_get_match_data(dev);
+ 	at91_chip->pioc_virq = irq;
+ 	at91_chip->pioc_idx = alias_idx;
+ 
 -- 
 2.39.1
 
