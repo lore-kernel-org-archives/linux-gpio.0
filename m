@@ -2,144 +2,112 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 262D6C05027
-	for <linux-gpio@archiver.kernel.org>; Sun, 12 Feb 2023 21:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C85BC636CC
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Feb 2023 08:45:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229760AbjBLVr5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 12 Feb 2023 16:47:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39862 "EHLO
+        id S230031AbjBMIpc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Feb 2023 03:45:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229679AbjBLVr4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 12 Feb 2023 16:47:56 -0500
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1E7D9750
-        for <linux-gpio@vger.kernel.org>; Sun, 12 Feb 2023 13:47:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1676238475; x=1707774475;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=W9VHxmt5OExJwTOnHFZ/HUvyDmFFCgydGvIbDkfecp4=;
-  b=Qy4+kftKC6X15D9E7WC8ELxYoSqOJv/ri0kFakSWkWlEvsArwmtAXCCp
-   m7FKo6Wg941XlQ+IfR/vy9HuCoyMk3NLpBan5TawWAAZtnVEJYPntyNDQ
-   6ojhUA7aqHMbzUXZkdmXxmXp3u4FMye4WYxQjrlMCWJ+Nx5P8sASt0LLh
-   dyK9Yc/0V8YW1Px8MbyuxRjdXUjMfbtuQz6/JVcFP9IL9RH04ryUytgbp
-   +lgSUYBtb391eYOjFmYvS8LKU3snP82tslzmORIo/304hi9pz8nWWUhpV
-   XlV3lUkYV4DnnjCSez6cI+n5x4qqmwckkGNXv+DWVRgExwwRSzcOlgAW8
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10619"; a="318785891"
-X-IronPort-AV: E=Sophos;i="5.97,291,1669104000"; 
-   d="scan'208";a="318785891"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2023 13:47:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10619"; a="811392676"
-X-IronPort-AV: E=Sophos;i="5.97,291,1669104000"; 
-   d="scan'208";a="811392676"
-Received: from lkp-server01.sh.intel.com (HELO 4455601a8d94) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Feb 2023 13:47:53 -0800
-Received: from kbuild by 4455601a8d94 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pRKCO-0007Ov-1A;
-        Sun, 12 Feb 2023 21:47:52 +0000
-Date:   Mon, 13 Feb 2023 05:47:34 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org
-Subject: [linusw-gpio:gpiochip-no-driver-h 5/5] arch/mips/ar7/gpio.c:24:38:
- warning: initialization of 'struct ar7_gpio_chip *' from 'int' makes pointer
- from integer without a cast
-Message-ID: <202302130551.RReykD8t-lkp@intel.com>
+        with ESMTP id S229747AbjBMIpb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Feb 2023 03:45:31 -0500
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6026E10C6;
+        Mon, 13 Feb 2023 00:45:30 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 84ACE3200903;
+        Mon, 13 Feb 2023 03:45:28 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Mon, 13 Feb 2023 03:45:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm2; t=1676277928; x=
+        1676364328; bh=CHr6ZXr+PKDm6XjaoSQUGvnP/21g+79OjDTwDq5gaPY=; b=W
+        t3ThRa6m8G//ZEGPBt9bSSWQHtwhnV+V66r8PioCLDbu2gujONsSUIE6N7CaMz8n
+        ky2KFbzjefwT+/SKdn5N7Hs5kcanFKFDxmSDuNwwUF+1JMt6i/XtTjrGoyiU6WHE
+        ZPg80dNS3oXlCNbStquw7YzXLUjfuWiVAoXw17rwPPDa9Cw0/bQwWXNgz4PymR3B
+        HDYjzC19w2gxR6IRQl3+u5X9lzRGR742qBYNwugmKqE0UmSvA7uyi/F66odrIbHY
+        1m8Y7Y9taEsgdqPPvpR0qDQTfcLrWboPvxK9BoqDzdFDQZDCW/k6XO/eyrkNFpcS
+        zTpUGZzmPB0KfFlm+GfUg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1676277928; x=
+        1676364328; bh=CHr6ZXr+PKDm6XjaoSQUGvnP/21g+79OjDTwDq5gaPY=; b=U
+        3B8svi7ofTzNzNfCrAkG5k+OjjSV6n2kG450pJCl56tjYBA/tn63V0XsL6DCIZNf
+        RWG7zesab0Z+Nxa4xd9OQuLFKTOmdmlF4tLUheQxeGtwZCh80zmaRTXKjeGtNb6y
+        Nc4U16cHZaseGwb4xi+mXt74vqE4mTUfsIdd8NqFa4eX1hS5UDXoOQgVmUd6+X36
+        W5KwL5iVYYbdIVBwpB3NLThPZHtf/IUW0o4lYCPMLPD64b6WGxnkG7w4Qa5LsrGb
+        oTWrqf3qOwKzwDBd6BHZLmOELaIA/T5xOQeIvFZCidmSUeVyv/v1Sv9R5SsMN0pD
+        SLp6d1fwrM40ctXRApsZw==
+X-ME-Sender: <xms:p_jpY0Kmk_nnZfqC7dkLu06A6-ZB0R4EvAxbU-cR7-YIYhmYcwfgEA>
+    <xme:p_jpY0IyC7SgFeAu1hYO5A0vnxHENzQ4PDfyFKNXNG3iiGOOqsjPbQ9Hv6gUnT5Md
+    EN83NUt_yQuF59rHOU>
+X-ME-Received: <xmr:p_jpY0sKJEAZ25PyphufYsur7gkQrbXalkNswmtuZwDHFsdPwW7Bu5vOJTKz5nQPRcIIxg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudeitddguddvvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgr
+    gihimhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtf
+    frrghtthgvrhhnpeetgfelgefggeekkefggfeludeiudffjeffgeevveekjedukedtudeu
+    teefteefgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:p_jpYxYwn3ytOO-2l-lqxezN2qmW_yIOcHhdbFAUi1_Flkpi3oQCAg>
+    <xmx:p_jpY7YBh7lz6U76wlAhWJXkGHIIg07pBuH55d-7fcxarpyFrTtdrQ>
+    <xmx:p_jpY9DaszLO6-KEtbb-GbVPbzJTza2fDaXjtbd4D4JgL-k_Vf4ekw>
+    <xmx:qPjpY4QLNbGa4x2nK2jJAPx-hBvBn7kR_0Za636p63BVIzYe-vgb-g>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 13 Feb 2023 03:45:27 -0500 (EST)
+Date:   Mon, 13 Feb 2023 09:45:25 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Andreas Feldner <pelzi@flying-snail.de>
+Cc:     Andre Przywara <andre.przywara@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] pinctrl: sunxi: set minimal debounce on
+ input-debounce 0
+Message-ID: <20230213084525.gr4urlvygsmonati@houat>
+References: <Y+kuD+/v3+N1vwxR@debian-qemu.internal.flying-snail.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Y+kuD+/v3+N1vwxR@debian-qemu.internal.flying-snail.de>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git gpiochip-no-driver-h
-head:   df771cce328bbd37333797d0df3471c2e03ecb03
-commit: df771cce328bbd37333797d0df3471c2e03ecb03 [5/5] gpio: Make the legacy <linux/gpio.h> consumer-only
-config: mips-ar7_defconfig (https://download.01.org/0day-ci/archive/20230213/202302130551.RReykD8t-lkp@intel.com/config)
-compiler: mipsel-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/commit/?id=df771cce328bbd37333797d0df3471c2e03ecb03
-        git remote add linusw-gpio https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-        git fetch --no-tags linusw-gpio gpiochip-no-driver-h
-        git checkout df771cce328bbd37333797d0df3471c2e03ecb03
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=mips olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=mips SHELL=/bin/bash arch/mips/ar7/
+Hi,
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202302130551.RReykD8t-lkp@intel.com/
+On Sun, Feb 12, 2023 at 07:21:03PM +0100, Andreas Feldner wrote:
+> sunxi-h3-h5 based boards have no support for switching
+> off IRQ debouncing filter. This would be the expected
+> behaviour of value 0 for the general pinctl parameter
+> input-debounce.
+> The current driver implementation ignores value 0
+> for input-debounce, leaving the chip's default. This
+> default, however, is not minimal, but equivalent to
+> value 31 (microseconds).
+>=20
+> This patch does not ignore value 0 but instead makes
+> sure the corresponding IRQ debounce filter is set
+> to the shortest time selectable, i. e. the fast
+> oscillator with a divider of 1 =3D=3D (2 ^ 0).
+>=20
+> Fixes: 7c926492d38a ("pinctrl: sunxi: Add support for interrupt debouncin=
+g")
+>=20
+> Signed-off-by: Andreas Feldner <pelzi@flying-snail.de>
 
-All warnings (new ones prefixed by >>):
+Like I said in the other thread, I don't think that deviating from the
+generic property semantics is a good thing.
 
-   arch/mips/ar7/gpio.c:19:33: error: field 'chip' has incomplete type
-      19 |         struct gpio_chip        chip;
-         |                                 ^~~~
-   arch/mips/ar7/gpio.c: In function 'ar7_gpio_get_value':
-   arch/mips/ar7/gpio.c:24:38: error: implicit declaration of function 'gpiochip_get_data' [-Werror=implicit-function-declaration]
-      24 |         struct ar7_gpio_chip *gpch = gpiochip_get_data(chip);
-         |                                      ^~~~~~~~~~~~~~~~~
->> arch/mips/ar7/gpio.c:24:38: warning: initialization of 'struct ar7_gpio_chip *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-   arch/mips/ar7/gpio.c: In function 'titan_gpio_get_value':
-   arch/mips/ar7/gpio.c:32:38: warning: initialization of 'struct ar7_gpio_chip *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-      32 |         struct ar7_gpio_chip *gpch = gpiochip_get_data(chip);
-         |                                      ^~~~~~~~~~~~~~~~~
-   arch/mips/ar7/gpio.c: In function 'ar7_gpio_set_value':
-   arch/mips/ar7/gpio.c:42:38: warning: initialization of 'struct ar7_gpio_chip *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-      42 |         struct ar7_gpio_chip *gpch = gpiochip_get_data(chip);
-         |                                      ^~~~~~~~~~~~~~~~~
-   arch/mips/ar7/gpio.c: In function 'titan_gpio_set_value':
-   arch/mips/ar7/gpio.c:55:38: warning: initialization of 'struct ar7_gpio_chip *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-      55 |         struct ar7_gpio_chip *gpch = gpiochip_get_data(chip);
-         |                                      ^~~~~~~~~~~~~~~~~
-   arch/mips/ar7/gpio.c: In function 'ar7_gpio_direction_input':
-   arch/mips/ar7/gpio.c:68:38: warning: initialization of 'struct ar7_gpio_chip *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-      68 |         struct ar7_gpio_chip *gpch = gpiochip_get_data(chip);
-         |                                      ^~~~~~~~~~~~~~~~~
-   arch/mips/ar7/gpio.c: In function 'titan_gpio_direction_input':
-   arch/mips/ar7/gpio.c:78:38: warning: initialization of 'struct ar7_gpio_chip *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-      78 |         struct ar7_gpio_chip *gpch = gpiochip_get_data(chip);
-         |                                      ^~~~~~~~~~~~~~~~~
-   arch/mips/ar7/gpio.c: In function 'ar7_gpio_direction_output':
-   arch/mips/ar7/gpio.c:93:38: warning: initialization of 'struct ar7_gpio_chip *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-      93 |         struct ar7_gpio_chip *gpch = gpiochip_get_data(chip);
-         |                                      ^~~~~~~~~~~~~~~~~
-   arch/mips/ar7/gpio.c: In function 'titan_gpio_direction_output':
-   arch/mips/ar7/gpio.c:105:38: warning: initialization of 'struct ar7_gpio_chip *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     105 |         struct ar7_gpio_chip *gpch = gpiochip_get_data(chip);
-         |                                      ^~~~~~~~~~~~~~~~~
-   arch/mips/ar7/gpio.c: In function 'ar7_gpio_init':
-   arch/mips/ar7/gpio.c:318:15: error: implicit declaration of function 'gpiochip_add_data' [-Werror=implicit-function-declaration]
-     318 |         ret = gpiochip_add_data(&gpch->chip, gpch);
-         |               ^~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +24 arch/mips/ar7/gpio.c
-
-7ca5dc145bc7da Florian Fainelli 2009-06-24  21  
-5f3c909881d5de Florian Fainelli 2010-01-03  22  static int ar7_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
-7ca5dc145bc7da Florian Fainelli 2009-06-24  23  {
-1b2766fb496c46 Linus Walleij    2015-12-08 @24  	struct ar7_gpio_chip *gpch = gpiochip_get_data(chip);
-5f3c909881d5de Florian Fainelli 2010-01-03  25  	void __iomem *gpio_in = gpch->regs + AR7_GPIO_INPUT;
-7ca5dc145bc7da Florian Fainelli 2009-06-24  26  
-249e573d99ab59 Linus Walleij    2015-12-22  27  	return !!(readl(gpio_in) & (1 << gpio));
-5f3c909881d5de Florian Fainelli 2010-01-03  28  }
-5f3c909881d5de Florian Fainelli 2010-01-03  29  
-
-:::::: The code at line 24 was first introduced by commit
-:::::: 1b2766fb496c462b3f6e1d1c52c72f8601ac8540 MIPS: ar7: use gpiochip data pointer
-
-:::::: TO: Linus Walleij <linus.walleij@linaro.org>
-:::::: CC: Linus Walleij <linus.walleij@linaro.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Maxime
