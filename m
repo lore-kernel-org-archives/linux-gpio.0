@@ -2,168 +2,105 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD95C64EC4
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Feb 2023 12:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1B2C636CC
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Feb 2023 12:08:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229580AbjBPMGs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Feb 2023 07:06:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50696 "EHLO
+        id S229768AbjBPMIp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Feb 2023 07:08:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229601AbjBPMGq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Feb 2023 07:06:46 -0500
-Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA1A8552A3
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 04:06:42 -0800 (PST)
-Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-16cc1e43244so2214954fac.12
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 04:06:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mRWEN0keF6NiEd7O9ayzoP6wwuhhhF8V1d3xPTIxNoI=;
-        b=CoYVjdLzmYKvj7Vd87G8M0+tYb1Ba3tu1VwpLjaeGT/voYVghBoZRmM3+NienWGtJU
-         MeuZV+1IDBoQO59Jj+fWFaIIHgUFxpG6EyTJ+CSnW819UHaOAv9ugYbCRh7m94dzjC2k
-         5P0Otds2OcdruKvClfV1YcUlCxNC7O7iC4pesdlSbV8v1Xw+ibyXN2ukLOxwQ/WzGiSl
-         qkfAUjvubdR7Lf9Dudmsni/8S6hkq9i3mIm9cQ3CNfSodZaLJZKuj7vf/OLtjIC3OL/W
-         LUihx7TpXmnrgxDgiV6QlthzG9184i9sa4dGeoaLus31NR4hFhW00FPj8MW+q2sIFUWU
-         dalQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mRWEN0keF6NiEd7O9ayzoP6wwuhhhF8V1d3xPTIxNoI=;
-        b=1inAXEjtpyzKA2OF7O2mlvkQHS6Xz/gdyPU9OYLoaTz/272af5xkdVGe4wCDOns0CL
-         lauL3mrSD3RnL1/LqmunXHiiVU/FobSltSH6qbRTdU8XfwN1a6WQfvYKOcxYR88ZHqTu
-         urpsUM14mCZtigMgTQO3rUvMNbtZuZIpLciFyqQlzAsDW5InEpt3ZcVOgEsx6/i1BBjq
-         SsyYm0Cx5ZxYIVKfvkA5V6uBCEn1r/oi1fa1PmZzoZ6UPrv3czQIrz3l96WMu2L8Iezs
-         hD5j3aqoSMjsppas+qAiNZbcWr8YgEM9rJi2b5OgbSNBba+MxPC3N5/VLPvenKsXfTJw
-         wVUg==
-X-Gm-Message-State: AO0yUKXX4Lultp+x17mRxOxPp6oExv6dNmV2D+nB8A8jDnhy3jFuU+Us
-        S35NdHiypjYlytU8F1bEnkK7Ew==
-X-Google-Smtp-Source: AK7set94J1nmitezcU13KRwKZUpuXlQCbbTw5DAP8kxFwGDFXsKNw5nnYXe6YgwYapp9po8R9SvLqQ==
-X-Received: by 2002:a05:6870:b51f:b0:16d:ea1d:6a6a with SMTP id v31-20020a056870b51f00b0016dea1d6a6amr2823105oap.40.1676549201345;
-        Thu, 16 Feb 2023 04:06:41 -0800 (PST)
-Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id m3-20020a056870a40300b00152c52608dbsm476595oal.34.2023.02.16.04.06.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 04:06:40 -0800 (PST)
-Date:   Wed, 8 Feb 2023 06:17:14 -0500
-From:   William Breathitt Gray <william.gray@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Mun Yew Tham <mun.yew.tham@intel.com>,
+        with ESMTP id S229593AbjBPMIo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Feb 2023 07:08:44 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21A6455E4E
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 04:08:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1676549324; x=1708085324;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=tj8voV6fZuhZzz+3XZk5V8mkpf9X9ETHPoz+1IFQo9U=;
+  b=I8QPqlYLG4FCxBYGEBBJZoG4AfMDSYnBir7CNruzmfFH+NmufO9Vq5ee
+   4G0bdQLeMOF9lLRrLFbjctb02RaUcgUudMIzr8uJL5Pif8yVDTZdE6JF8
+   kko3s88LQ+DiDpLRC7H5yO+6tDKzvC3Ro5jlCWWpqZbTOEXQsknqlSQsm
+   oQotrXMFUFI3XyONVWWxvEwg3eBiKLl0OOrpLfApjLzwMEixzEQCfL+6h
+   rvnCIfz5Dyyvu+rd8rrzMhjgda//zb1FVJWzsAIPuPwsLdnMEA8m8vaDK
+   V1dY4+taHB8dcH+lcn2vQ+dRZ3zWMldQW+DzBa/dkOVEb5yeKasUbTj+I
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10622"; a="333869696"
+X-IronPort-AV: E=Sophos;i="5.97,302,1669104000"; 
+   d="scan'208";a="333869696"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2023 04:08:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10622"; a="733848683"
+X-IronPort-AV: E=Sophos;i="5.97,302,1669104000"; 
+   d="scan'208";a="733848683"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga008.fm.intel.com with ESMTP; 16 Feb 2023 04:08:42 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 371421A6; Thu, 16 Feb 2023 14:09:22 +0200 (EET)
+Date:   Thu, 16 Feb 2023 14:09:22 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linux GPIO <linux-gpio@vger.kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, Alban Bedel <albeu@free.fr>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Jay Fang <f.fangjian@huawei.com>,
-        Daniel Palmer <daniel@thingy.jp>,
-        Romain Perier <romain.perier@gmail.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-omap@vger.kernel.org,
-        Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH 17/17] gpio: pcie-idio-24: Convert to immutable irq_chip
-Message-ID: <Y+OEujGudfk1SkSS@fedora>
-References: <20230215-immutable-chips-v1-0-51a8f224a5d0@linaro.org>
- <20230215-immutable-chips-v1-17-51a8f224a5d0@linaro.org>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [GIT PULL] intel-gpio for 6.2-2
+Message-ID: <Y+4c8k/+CXha53Le@black.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cyeQsMhX/E0TO8qE"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230215-immutable-chips-v1-17-51a8f224a5d0@linaro.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Hi Linux GPIO  maintainers,
 
---cyeQsMhX/E0TO8qE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A couple of patches against GPIO ACPI library for the v6.2 cycle. Were a bit in
+the mailing list and Linux Next without any problems reported. Please, pull.
 
-On Thu, Feb 16, 2023 at 10:37:18AM +0100, Linus Walleij wrote:
-> Convert the driver to immutable irq-chip with a bit of
-> intuition.
->=20
-> Cc: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Thanks,
 
-Acked-by: William Breathitt Gray <william.gray@linaro.org>
+With Best Regards,
+Andy Shevchenko
 
-> ---
->  drivers/gpio/gpio-pcie-idio-24.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-id=
-io-24.c
-> index 8a9b98fa418f..ac42150f4009 100644
-> --- a/drivers/gpio/gpio-pcie-idio-24.c
-> +++ b/drivers/gpio/gpio-pcie-idio-24.c
-> @@ -396,6 +396,8 @@ static void idio_24_irq_mask(struct irq_data *data)
->  	}
-> =20
->  	raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
-> +
-> +	gpiochip_disable_irq(chip, irqd_to_hwirq(data));
->  }
-> =20
->  static void idio_24_irq_unmask(struct irq_data *data)
-> @@ -408,6 +410,8 @@ static void idio_24_irq_unmask(struct irq_data *data)
->  	const unsigned long bank_offset =3D bit_offset / 8;
->  	unsigned char cos_enable_state;
-> =20
-> +	gpiochip_enable_irq(chip, irqd_to_hwirq(data));
-> +
->  	raw_spin_lock_irqsave(&idio24gpio->lock, flags);
-> =20
->  	prev_irq_mask =3D idio24gpio->irq_mask >> bank_offset * 8;
-> @@ -437,12 +441,14 @@ static int idio_24_irq_set_type(struct irq_data *da=
-ta, unsigned int flow_type)
->  	return 0;
->  }
-> =20
-> -static struct irq_chip idio_24_irqchip =3D {
-> +static const struct irq_chip idio_24_irqchip =3D {
->  	.name =3D "pcie-idio-24",
->  	.irq_ack =3D idio_24_irq_ack,
->  	.irq_mask =3D idio_24_irq_mask,
->  	.irq_unmask =3D idio_24_irq_unmask,
-> -	.irq_set_type =3D idio_24_irq_set_type
-> +	.irq_set_type =3D idio_24_irq_set_type,
-> +	.flags =3D IRQCHIP_IMMUTABLE,
-> +	GPIOCHIP_IRQ_RESOURCE_HELPERS,
->  };
-> =20
->  static irqreturn_t idio_24_irq_handler(int irq, void *dev_id)
-> @@ -535,7 +541,7 @@ static int idio_24_probe(struct pci_dev *pdev, const =
-struct pci_device_id *id)
->  	idio24gpio->chip.set_multiple =3D idio_24_gpio_set_multiple;
-> =20
->  	girq =3D &idio24gpio->chip.irq;
-> -	girq->chip =3D &idio_24_irqchip;
-> +	gpio_irq_chip_set_chip(girq, &idio_24_irqchip);
->  	/* This will let us handle the parent IRQ in the driver */
->  	girq->parent_handler =3D NULL;
->  	girq->num_parents =3D 0;
->=20
-> --=20
-> 2.34.1
->=20
+The following changes since commit ceaa837f96adb69c0df0397937cd74991d5d821a:
 
---cyeQsMhX/E0TO8qE
-Content-Type: application/pgp-signature; name="signature.asc"
+  Linux 6.2-rc8 (2023-02-12 14:10:17 -0800)
 
------BEGIN PGP SIGNATURE-----
+are available in the Git repository at:
 
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCY+OEugAKCRC1SFbKvhIj
-K02BAP91FSltXanO1Y/3GfoNBCJE7RStvsFHG9hsQlUmwpOJuwEA/eYRZLIo5k9G
-AtVeJJfhJC6J5AUcb0/9/dTNIIukVQ4=
-=HUho
------END PGP SIGNATURE-----
+  git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-gpio-intel.git tags/intel-gpio-v6.2-2
 
---cyeQsMhX/E0TO8qE--
+for you to fetch changes up to a69982c37cd0586e6832268155349301b87f2e35:
+
+  gpiolib: acpi: Add a ignore wakeup quirk for Clevo NH5xAx (2023-02-15 16:58:45 +0200)
+
+----------------------------------------------------------------
+intel-gpio for v6.2-2
+
+* Ignore spurious wakeup by touchpad on Clevo NH5xAx
+* Miscellaneous fix(es)
+
+The following is an automated git shortlog grouped by driver:
+
+gpiolib:
+ -  acpi: Add a ignore wakeup quirk for Clevo NH5xAx
+ -  acpi: remove redundant declaration
+
+----------------------------------------------------------------
+Raag Jadav (1):
+      gpiolib: acpi: remove redundant declaration
+
+Werner Sembach (1):
+      gpiolib: acpi: Add a ignore wakeup quirk for Clevo NH5xAx
+
+ drivers/gpio/gpiolib-acpi.c | 12 ++++++++++++
+ drivers/gpio/gpiolib-acpi.h |  1 -
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
