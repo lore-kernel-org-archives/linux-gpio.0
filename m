@@ -2,60 +2,60 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39640C636D6
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Feb 2023 09:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB05C636D6
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Feb 2023 09:38:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230144AbjBPJiA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Feb 2023 04:38:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50002 "EHLO
+        id S230173AbjBPJiW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Feb 2023 04:38:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229547AbjBPJhr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Feb 2023 04:37:47 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C89294DE20
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 01:37:19 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id cf42so2055055lfb.1
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 01:37:19 -0800 (PST)
+        with ESMTP id S230171AbjBPJhw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Feb 2023 04:37:52 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B18F4DE36
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 01:37:23 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id x40so1988033lfu.12
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 01:37:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ry5OnWVskBi4BrdDCKYO13gYLHKJ1rB2gI1jhA/bpo8=;
-        b=SGT5ef7orsKNrCqYQFZR22y2iea9Iq5Hu+B/zU6a2XbuRnlsvavElsveBuqKa9ipo0
-         K2zLjQB/xujmDJfJx8M7Z88EO4D6nqL7vbRG93o0NtCNT5b6aA3Sr5YfJ8r6VwXObRmW
-         Lw7fDTmesulU3WDDKo/PV7r1U5XPrL7RDsVEehUckXswMsXW+Zzv/B0WGbk+NeB7edEa
-         bhNitulJI/sjTNDYrM1hmGbRGUM2Tf9Tm+86lcWO18zzEYIyS4ARSQYrqtdMUUejuYZc
-         425teKK5KJzqs3reT1HUblsELON0U4gsnobVTQJmqiz/V8WUxfdy9FSaQhM6pZ8/TcQh
-         Nf7g==
+        bh=w5NV/DiggKvJS6hijrypI8dvD8vGEXvscfdW3OAZ7gw=;
+        b=vpOt4uIdS4CejmbNFkjtETdFWC9FSHKvQ24Mu+ZFcoLfxbHaW88ULFuU4G+rZlkDUe
+         zNJ1xbJCTmjJpTEZw3KUcXTKtbTwSaftY/fJ/4f71Zm8xO1pNyi6/rOw7OWtA9QMXnc/
+         lppLL1EOvafjCqYNHlqCdZL0ronsId+/JAFvK3Z5R09hQVlz4go49yid8vY0lHg03AP1
+         fzrhd4chP2Rlh2ZGEuHCK8jAiYTf+guPmN6Jnf6RT1RBmqFmG8cTFHbRJ2guhAb0hAel
+         swb0rOA1qCdh189AjisbVRtcDYRZbRfDWAo0c5P3jdsDb57H1DsF0jcVx2v1w9XQos+r
+         3+ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ry5OnWVskBi4BrdDCKYO13gYLHKJ1rB2gI1jhA/bpo8=;
-        b=SFqiw0UQ4AOX89IOhP5NeNpaGbb0lvjzjDKjUiv7Zne3plY40U29ZyYqyM2Jmz3ayJ
-         ccKrHgQXynkLBrFzjjhGQ5aO2qJrCvzk8/iQYY+D+JKruirKU+N+2o3o+AAu6wvimQPR
-         SpLP3QxUYd2fSifX1f/fM/jxMESTBblnweK+QxWx+KwxvOJlRmjl1Sd+BKQa8qV5F8XB
-         c+BoWm+J1wmGPf8O1uv9aFbbcRWVFOq+IaEYRGQ5cSJRD0pz/Ms9W9ypvhmv/LSNBiFy
-         CacmC7RDz5qr9fVCGT8PCvq6dYzeU4sOUdAoQKequwvaVGyfTRqrZLSEUtUKhBlp/OBP
-         BeBg==
-X-Gm-Message-State: AO0yUKUTjJT5UxBLbuYM08y+pZpbv3Tx6F3t0hjLnOfJ/VHOjo3E2JPS
-        jBfb8JGoKqZVcChI4NKvNloRmQ==
-X-Google-Smtp-Source: AK7set+Ei8dmPA2TKd7Lgl9zrfTFJBr1TygLew3k3innm7y6MvkDs03iup+HYl8iKgVlIR79HK7D8w==
-X-Received: by 2002:a05:6512:69:b0:4d8:6b96:dae8 with SMTP id i9-20020a056512006900b004d86b96dae8mr1375547lfo.43.1676540239273;
-        Thu, 16 Feb 2023 01:37:19 -0800 (PST)
+        bh=w5NV/DiggKvJS6hijrypI8dvD8vGEXvscfdW3OAZ7gw=;
+        b=uq2JIPsck/gSahckXKYd/145dcJFC66KI8Ir1AH5/6GUhhZzAu+7uy9pF4B8Rlml+l
+         /Yq65zKTMiJXVPJiDWgm4sHqjbV9QJx9kZwlHStbM8NZ/NIiLwO7XR/MA9ngEdc9lFQh
+         a1AmdkGM5V7pK0xmI7pF8iz7pHcMTKK9lDZSSUjrDwmoQSL1keLVXvqeSmpBo4RVrzM9
+         90f39VwXGXEXJOBmp0FLjwCDM40xpHyq0+B0gCDpzCz88hGEMYQlwwuiljm2ZTVQX+cC
+         ih6lIuoz2PnQCgFIcaBTnEO/vJ0WkO3RhMNMbyz3bqnSTWUgy/+G6+DQiP3nxL6smtzN
+         CtDg==
+X-Gm-Message-State: AO0yUKV0bRuDVcLh8Vd+ByljVYm9OQjIU6kQwk4u8S9V0fmmLaGb8uKU
+        t3eW496VCeopgbn7saDVzK/niA==
+X-Google-Smtp-Source: AK7set+qQrC7lMxYHqBp5xLFc7wIVKYwgnuciFyKGblH7dLNUHl12igWqNWavwew9Je0VGw61SCQWQ==
+X-Received: by 2002:ac2:5977:0:b0:4d5:ae35:b221 with SMTP id h23-20020ac25977000000b004d5ae35b221mr1395185lfp.34.1676540243189;
+        Thu, 16 Feb 2023 01:37:23 -0800 (PST)
 Received: from [127.0.1.1] ([85.235.12.219])
-        by smtp.gmail.com with ESMTPSA id r3-20020a19ac43000000b004d8758a452asm229069lfc.288.2023.02.16.01.37.18
+        by smtp.gmail.com with ESMTPSA id r3-20020a19ac43000000b004d8758a452asm229069lfc.288.2023.02.16.01.37.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Feb 2023 01:37:18 -0800 (PST)
+        Thu, 16 Feb 2023 01:37:22 -0800 (PST)
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 16 Feb 2023 10:37:13 +0100
-Subject: [PATCH 12/17] gpio: mlxbf2: Convert to immutable irq_chip
+Date:   Thu, 16 Feb 2023 10:37:15 +0100
+Subject: [PATCH 14/17] gpio: omap: Drop irq_base
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230215-immutable-chips-v1-12-51a8f224a5d0@linaro.org>
+Message-Id: <20230215-immutable-chips-v1-14-51a8f224a5d0@linaro.org>
 References: <20230215-immutable-chips-v1-0-51a8f224a5d0@linaro.org>
 In-Reply-To: <20230215-immutable-chips-v1-0-51a8f224a5d0@linaro.org>
 To:     Mun Yew Tham <mun.yew.tham@intel.com>,
@@ -76,110 +76,67 @@ Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-aspeed@lists.ozlabs.org, linux-omap@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Marc Zyngier <maz@kernel.org>
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Tony Lindgren <tony@atomide.com>, Marc Zyngier <maz@kernel.org>
 X-Mailer: b4 0.12.1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Convert the driver to immutable irq-chip with a bit of
-intuition.
+The OMAP1 at one point was using static irqs but that time is gone,
+OMAP1 uses sparse irqs like all other multiplatform targets so this
+static allocation of descriptors should just go.
 
-Cc: Marc Zyngier <maz@kernel.org>
+Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Tony Lindgren <tony@atomide.com>
+Acked-by: Marc Zyngier <maz@kernel.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-mlxbf2.c | 32 +++++++++++++++++++++++++-------
- 1 file changed, 25 insertions(+), 7 deletions(-)
+ drivers/gpio/gpio-omap.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mlxbf2.c b/drivers/gpio/gpio-mlxbf2.c
-index 77a41151c921..6abe01bc39c3 100644
---- a/drivers/gpio/gpio-mlxbf2.c
-+++ b/drivers/gpio/gpio-mlxbf2.c
-@@ -17,6 +17,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm.h>
- #include <linux/resource.h>
-+#include <linux/seq_file.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 80ddc43fd875..292e62c06008 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -992,7 +992,6 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc,
+ 	struct gpio_irq_chip *irq;
+ 	static int gpio;
+ 	const char *label;
+-	int irq_base = 0;
+ 	int ret;
  
-@@ -65,10 +66,10 @@ struct mlxbf2_gpio_context_save_regs {
- /* BlueField-2 gpio block context structure. */
- struct mlxbf2_gpio_context {
- 	struct gpio_chip gc;
--	struct irq_chip irq_chip;
+ 	/*
+@@ -1024,19 +1023,6 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc,
+ 	}
+ 	bank->chip.ngpio = bank->width;
  
- 	/* YU GPIO blocks address */
- 	void __iomem *gpio_io;
-+	struct device *dev;
- 
- 	struct mlxbf2_gpio_context_save_regs *csave_regs;
- };
-@@ -237,6 +238,7 @@ static void mlxbf2_gpio_irq_enable(struct irq_data *irqd)
- 	unsigned long flags;
- 	u32 val;
- 
-+	gpiochip_enable_irq(gc, irqd_to_hwirq(irqd));
- 	raw_spin_lock_irqsave(&gs->gc.bgpio_lock, flags);
- 	val = readl(gs->gpio_io + YU_GPIO_CAUSE_OR_CLRCAUSE);
- 	val |= BIT(offset);
-@@ -261,6 +263,7 @@ static void mlxbf2_gpio_irq_disable(struct irq_data *irqd)
- 	val &= ~BIT(offset);
- 	writel(val, gs->gpio_io + YU_GPIO_CAUSE_OR_EVTEN0);
- 	raw_spin_unlock_irqrestore(&gs->gc.bgpio_lock, flags);
-+	gpiochip_disable_irq(gc, irqd_to_hwirq(irqd));
- }
- 
- static irqreturn_t mlxbf2_gpio_irq_handler(int irq, void *ptr)
-@@ -322,6 +325,24 @@ mlxbf2_gpio_irq_set_type(struct irq_data *irqd, unsigned int type)
- 	return 0;
- }
- 
-+static void mlxbf2_gpio_irq_print_chip(struct irq_data *irqd,
-+				       struct seq_file *p)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
-+	struct mlxbf2_gpio_context *gs = gpiochip_get_data(gc);
-+
-+	seq_printf(p, dev_name(gs->dev));
-+}
-+
-+static const struct irq_chip mlxbf2_gpio_irq_chip = {
-+	.irq_set_type = mlxbf2_gpio_irq_set_type,
-+	.irq_enable = mlxbf2_gpio_irq_enable,
-+	.irq_disable = mlxbf2_gpio_irq_disable,
-+	.irq_print_chip = mlxbf2_gpio_irq_print_chip,
-+	.flags = IRQCHIP_IMMUTABLE,
-+	GPIOCHIP_IRQ_RESOURCE_HELPERS,
-+};
-+
- /* BlueField-2 GPIO driver initialization routine. */
- static int
- mlxbf2_gpio_probe(struct platform_device *pdev)
-@@ -340,6 +361,8 @@ mlxbf2_gpio_probe(struct platform_device *pdev)
- 	if (!gs)
- 		return -ENOMEM;
- 
-+	gs->dev = dev;
-+
- 	/* YU GPIO block address */
- 	gs->gpio_io = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(gs->gpio_io))
-@@ -376,13 +399,8 @@ mlxbf2_gpio_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq >= 0) {
--		gs->irq_chip.name = name;
--		gs->irq_chip.irq_set_type = mlxbf2_gpio_irq_set_type;
--		gs->irq_chip.irq_enable = mlxbf2_gpio_irq_enable;
--		gs->irq_chip.irq_disable = mlxbf2_gpio_irq_disable;
+-#ifdef CONFIG_ARCH_OMAP1
+-	/*
+-	 * REVISIT: Once we have OMAP1 supporting SPARSE_IRQ, we can drop
+-	 * irq_alloc_descs() since a base IRQ offset will no longer be needed.
+-	 */
+-	irq_base = devm_irq_alloc_descs(bank->chip.parent,
+-					-1, 0, bank->width, 0);
+-	if (irq_base < 0) {
+-		dev_err(bank->chip.parent, "Couldn't allocate IRQ numbers\n");
+-		return -ENODEV;
+-	}
+-#endif
 -
- 		girq = &gs->gc.irq;
--		girq->chip = &gs->irq_chip;
-+		gpio_irq_chip_set_chip(girq, &mlxbf2_gpio_irq_chip);
- 		girq->handler = handle_simple_irq;
- 		girq->default_type = IRQ_TYPE_NONE;
- 		/* This will let us handle the parent IRQ in the driver */
+ 	/* MPUIO is a bit different, reading IRQ status clears it */
+ 	if (bank->is_mpuio && !bank->regs->wkup_en)
+ 		irqc->irq_set_wake = NULL;
+@@ -1047,7 +1033,6 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc,
+ 	irq->default_type = IRQ_TYPE_NONE;
+ 	irq->num_parents = 1;
+ 	irq->parents = &bank->irq;
+-	irq->first = irq_base;
+ 
+ 	ret = gpiochip_add_data(&bank->chip, bank);
+ 	if (ret)
 
 -- 
 2.34.1
