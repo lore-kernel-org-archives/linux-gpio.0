@@ -2,91 +2,145 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E44CC61DA4
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Feb 2023 09:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D32C61DA4
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Feb 2023 09:37:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbjBPJfs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Feb 2023 04:35:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47490 "EHLO
+        id S229838AbjBPJhI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Feb 2023 04:37:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229554AbjBPJfr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Feb 2023 04:35:47 -0500
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82B1B38677
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 01:35:46 -0800 (PST)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.west.internal (Postfix) with ESMTP id D1766320083A;
-        Thu, 16 Feb 2023 04:35:44 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Thu, 16 Feb 2023 04:35:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1676540144; x=1676626544; bh=hljOJv/Nlh
-        Zo5xPpIEqF0Ap3RGmRA978HIIYBff6hxQ=; b=JgXQEmaG94RagIIdcO6/fwvW3d
-        lLjuepMwc//e5gLXBGKjEvQYSOntoRt3AUFO8oy68rYfW8GTj57UzJhtU/H9nCCS
-        gXeaJPpzChiyHu6aw8hIIqFj1flV76J18hhMsYuk/ZTCAJBMcKMoQvzxoPDBflgy
-        d399eGTHi2TbTrzuZ3zH0cBdDIyT5Gj9z4uwagnm0gp4+xfFygjBoQfdBsREnN5j
-        K6a0CHA3VLzdO2iGPPE7OtUqUAkFM39vgggalQlJDOQi7phON5R6bY4Uhutsb4JH
-        h8HtTKWysZV75iaeBxNEk1YPMVPrKakzFC7eRBGWn4i/EXFM5xDf1ck7EX4A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1676540144; x=1676626544; bh=hljOJv/NlhZo5xPpIEqF0Ap3RGmR
-        A978HIIYBff6hxQ=; b=cr02bg3l1EBSBnNUeFsJ/Rh7XZOkGzgvdIyuqKNaUd9Q
-        MySvHL7rWmGLxjjpsIHFvMBKru3+UmMBlTBThy8Co4Atck5h/1tGLBpqETDNgWyr
-        qpBXGxlMUG+9owYcbZ4toEFqXp2YaMwJI1a33qVQDWofQi+VTUzJ7oLvilQ9RR6S
-        WKeIOftCG9BrWsrqDOYI0OZCXRV5NdiVK2nu3QY8jDO1ongfD6KVIgLDw+nrKpIp
-        L9/ryfK2/634jCaJSi26MDXLQ0zKOCVLQ9P4KXqgwW6NeTym/H/k31VmaepsDytO
-        /yUxiQ34cuVvJ3b/NBrGW6Syc+c+9fk/llDpW7aOYg==
-X-ME-Sender: <xms:7_jtY6tjmGHO6C3MkMTNkV_8xn-TIIBwGpCGtbAxBnka1AjtF5iTlA>
-    <xme:7_jtY_ctCOsPtdJljzcSq6pBHRcDkM6G72xjuaiV6vtIKic8AbMuxOpXWfuoAJwWZ
-    Kj8zn6PyxVHijGWmWk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrudeijedgtdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:7_jtY1zU2_RL3wLzDmACWHApX3LvT7Po8zx02Jzr7eit-luq2q_88w>
-    <xmx:7_jtY1N_F5Q8oeHuK-S6wMJ1sJKpUgwD5gRDHT2_jK3ZjNznWQYVzg>
-    <xmx:7_jtY6-MLcHrFXsmnGy0pm2XZzY7mr3PFWyfp3DJYyLVroex9Y6xig>
-    <xmx:8PjtYxYIVq6YLrd3wTcvkcHxdLRiFsOT7NY6V9xW0G0LQqMo7bMdBA>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 8135EB60086; Thu, 16 Feb 2023 04:35:43 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-156-g081acc5ed5-fm-20230206.001-g081acc5e
-Mime-Version: 1.0
-Message-Id: <eb7339be-dfb7-4dd3-95d6-2f1e8c40d76b@app.fastmail.com>
-In-Reply-To: <20230215213843.1737181-1-linus.walleij@linaro.org>
-References: <20230215213843.1737181-1-linus.walleij@linaro.org>
-Date:   Thu, 16 Feb 2023 10:35:26 +0100
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Linus Walleij" <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "Bartosz Golaszewski" <brgl@bgdev.pl>
-Cc:     "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
-        "Tony Lindgren" <tony@atomide.com>, "Marc Zyngier" <maz@kernel.org>
-Subject: Re: [PATCH] gpio: omap: Drop irq_base
-Content-Type: text/plain
+        with ESMTP id S229510AbjBPJhI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Feb 2023 04:37:08 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 457F92DE5D
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 01:37:06 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id g28so2096966lfv.0
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 01:37:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J4kcTI2putLnbdN9MP2mFPB2+31xxohlAWl8A4kqJzM=;
+        b=IWvdWUomqTO8QzgT9/RsA6AztLIRxUOVfgNmvqvN5Gxqy/9cUOZIxx4zOEI1GUMEuO
+         V9TAsRuESAn9eSAcdJ2Q3Y3LmKVgHE8dfzqSPMuCxP/X5dVXTxpT/3K4G5ne2L20BOdg
+         +Ns/bp3nNMVysizAwePy8SWWIByCVc5VQGg8CAYpY3pYPX0k66HI0RMoIupaYO98vhyF
+         UQv0R+0F5TTrERZ+m2rMar8TvjV9kY3VTcqgBRT3yds+E6jk3uqrdTy6JBPMpNEg1k6H
+         AheohWlxTzNKMooy9nCo7cHAhRm+3PHCMpalddk4nPGaayP7ES+3UEPmE2SdsVilbLTV
+         raJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J4kcTI2putLnbdN9MP2mFPB2+31xxohlAWl8A4kqJzM=;
+        b=z0+rY6kbxL3ZD4Vqgjp3zZsXcDyl7wqx+go6YxZWc9KsWmcEVAkrc3xAtvDTu8HAEB
+         gP3m8DN8jWeH+cQr+T8SazOPDrR1k85kp8doz86463WaDre+SO7NLSL0YWTUjUI4iIb4
+         k9EW7CXJAntGGCtncGxaZTyMGwTD/6LB8WU4KptZ4ARVJpeM8yLEY0ZPo2zvFuD8Dw1M
+         Gg40nH3qn6RJNYAEuGwUyyQCbSie8WG2Ym4lWi3jtfEWr7A9mhJR7XEV1OWfrIfT6tXU
+         TWH92SZzLVm9rUOa8DavHvest69ZgVMT4AzQY2/PPBfHH56pYWAJCtamcZH1uaZuHmL/
+         wGyQ==
+X-Gm-Message-State: AO0yUKXvQPprDgOk3fo+s8PkCAGHxTffYAcW1xDgsvecgd7PC5V0y/yd
+        NsoF7oyESBGCC3YVQSWPZclLHA==
+X-Google-Smtp-Source: AK7set8LMDSUl/0lfLpNLdxiWXIpZtBeu3tMcI1noiOnxnhVDDzyYiOekOwnbuCrkq4smDZqBa7rOg==
+X-Received: by 2002:a05:6512:48f:b0:4ce:88af:473b with SMTP id v15-20020a056512048f00b004ce88af473bmr1118725lfq.54.1676540224493;
+        Thu, 16 Feb 2023 01:37:04 -0800 (PST)
+Received: from [127.0.1.1] ([85.235.12.219])
+        by smtp.gmail.com with ESMTPSA id r3-20020a19ac43000000b004d8758a452asm229069lfc.288.2023.02.16.01.37.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Feb 2023 01:37:04 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 00/17] Mass convert GPIO IRQ chips to be immutable
+Date:   Thu, 16 Feb 2023 10:37:01 +0100
+Message-Id: <20230215-immutable-chips-v1-0-51a8f224a5d0@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD357WMC/0XNQQqDMBCF4avIrDtgprTBXqV0kaSjGdAYMioF8
+ e6N3XT5w/t4OygXYYVHs0PhTVTmVMNcGgjRpYFR3rWBWrq2ZG4o07Quzo+MIUpWtHfqiMja3jB
+ U5Z0y+uJSiKcbssx/cw5y4V4+v8vn6zi+Vg6p2IIAAAA=
+To:     Mun Yew Tham <mun.yew.tham@intel.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, Alban Bedel <albeu@free.fr>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Jay Fang <f.fangjian@huawei.com>,
+        Daniel Palmer <daniel@thingy.jp>,
+        Romain Perier <romain.perier@gmail.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        William Breathitt Gray <william.gray@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-omap@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>
+X-Mailer: b4 0.12.1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Feb 15, 2023, at 22:38, Linus Walleij wrote:
-> The OMAP1 at one point was using static irqs but that time is gone,
-> OMAP1 uses sparse irqs like all other multiplatform targets so this
-> static allocation of descriptors should just go.
->
-> Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+We are getting tired of these irq_chips not getting converted
+to be immutable, so I just take out the big hammer and fix
+some that I deem not too complex as best I can.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+I stopped after doing some, I will take another sweep at some
+point I guess.
+
+Please test if you have the hardware. The OMAP patch especially,
+hi Tony ;)
+
+I don't expect this to be merged to v6.3, but as Bartosz may
+feel it is fixes material they are of course fine to trickle
+in on a case-by-case basis.
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+Linus Walleij (17):
+      gpio: altera: Convert to immutable irq_chip
+      gpio: adnp: Convert to immutable irq_chip
+      gpio: aspeed: Convert to immutable irq_chip
+      gpio: aspeed-sgpio: Convert to immutable irq_chip
+      gpio: ath79: Convert to immutable irq_chip
+      gpio: cadence: Convert to immutable irq_chip
+      gpio: eic_sprd: Convert to immutable irq_chip
+      gpio: hisi: Convert to immutable irq_chip
+      gpio: hlwd: Convert to immutable irq_chip
+      gpio: idt3243x: Convert to immutable irq_chip
+      gpio: msc313: Convert to immutable irq_chip
+      gpio: mlxbf2: Convert to immutable irq_chip
+      gpio: max732x: Convert to immutable irq_chip
+      gpio: omap: Drop irq_base
+      gpio: omap: Convert to immutable irq_chip
+      gpio: pci-idio-16: Convert to immutable irq_chip
+      gpio: pcie-idio-24: Convert to immutable irq_chip
+
+ drivers/gpio/gpio-adnp.c         |  9 ++++-
+ drivers/gpio/gpio-altera.c       | 25 +++++++-----
+ drivers/gpio/gpio-aspeed-sgpio.c | 44 +++++++++++++++++----
+ drivers/gpio/gpio-aspeed.c       | 44 ++++++++++++++++++---
+ drivers/gpio/gpio-ath79.c        |  8 +++-
+ drivers/gpio/gpio-cadence.c      | 10 +++--
+ drivers/gpio/gpio-eic-sprd.c     | 33 +++++++++++-----
+ drivers/gpio/gpio-hisi.c         | 25 +++++++-----
+ drivers/gpio/gpio-hlwd.c         | 33 ++++++++++++----
+ drivers/gpio/gpio-idt3243x.c     | 11 ++++--
+ drivers/gpio/gpio-max732x.c      |  8 +++-
+ drivers/gpio/gpio-mlxbf2.c       | 32 ++++++++++++----
+ drivers/gpio/gpio-msc313.c       | 26 +++++++++++--
+ drivers/gpio/gpio-omap.c         | 83 ++++++++++++++++++++++------------------
+ drivers/gpio/gpio-pci-idio-16.c  | 12 ++++--
+ drivers/gpio/gpio-pcie-idio-24.c | 12 ++++--
+ 16 files changed, 297 insertions(+), 118 deletions(-)
+---
+base-commit: 1b929c02afd37871d5afb9d498426f83432e71c2
+change-id: 20230215-immutable-chips-762922277f1e
+
+Best regards,
+-- 
+Linus Walleij <linus.walleij@linaro.org>
+
