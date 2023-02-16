@@ -2,73 +2,112 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE33C61DA4
-	for <linux-gpio@archiver.kernel.org>; Thu, 16 Feb 2023 08:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF91C636CC
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Feb 2023 09:19:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbjBPIh4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 16 Feb 2023 03:37:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59856 "EHLO
+        id S229627AbjBPJTT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Feb 2023 04:19:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbjBPIhz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Feb 2023 03:37:55 -0500
-Received: from mail-vk1-xa32.google.com (mail-vk1-xa32.google.com [IPv6:2607:f8b0:4864:20::a32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9806D55B3
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 00:37:50 -0800 (PST)
-Received: by mail-vk1-xa32.google.com with SMTP id a12so825056vkl.8
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 00:37:50 -0800 (PST)
+        with ESMTP id S229636AbjBPJTR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Feb 2023 04:19:17 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F9E1EBD1
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 01:19:15 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id o20so1978384lfk.5
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 01:19:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1676536669;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=l3OoYD62rT/ZLARA50zVqJaeysgx/Dw3ixwRgNP2kLg=;
-        b=d4VK7mcm/mNhoOnQnZX39ie7kwdP4jn9fYpTSCF2Le4pVye+C2MBfF6uQhzEfZfccZ
-         VJJAVQT2Do7kjfgMDx/IqYdYHbkKiBP2TM8/qMMP/nNLoqnQ0Iv+OcQTlxGj1Nhzihe1
-         RfItqnZ3UVwQgsS7BQYhog0lJFPm9NG2Al6rhpfxotM+Oo40VzVOqKpJLwv5MaVpXGD0
-         LM4UK6gKt/tU5X5viSlQCZ6TXGmtpOHVGj4Drza+9yApA+lkVIhS/Po5N/27LCmoSXaO
-         0zjDR9SveS6VCTlNr3EblnzVvu00mwSEHD3EcH4/U+7plpj64fLazc8Qc+JnyBGNW4+F
-         dotw==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QHGrJaM+v3HFBCl8mBiFJnmJYZqmXZ++B7X5nh+0dNs=;
+        b=XgA58Bsd+W9C16i/19W9II5IsFUbVxt+oKD8e4+xMKb5uhYel6/mtFB/Y7q2729vcL
+         A4/cYoFu/EdUt44wViffvD/2QGYWbviHqPIGge7vJSaCZbIPBYFVrDpDQqKWjQZpvdmk
+         8+jLovTBOV3LyRV9OzYmrF9qm16MZeTpqWqhm8PDFq2IVynNLqzmZaCoG2CTsTErVl5T
+         ABYNW2lxvqllmLgCOqXGpbOnfZ3wZzJDBFPSdESu2oxhQnmtAQpC/teVltIezEZQiwKB
+         T4begiohjYvbtwTzEzfViu5g4yePUhBpyb/xwEItLYRh9Sm6ZgUz0UXNDOiY9uelI5I3
+         Ay7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676536669;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l3OoYD62rT/ZLARA50zVqJaeysgx/Dw3ixwRgNP2kLg=;
-        b=IThQIGOXAP0+zLMJD8XOVX/5jEwIRB4ymBAfYuiOvgFvO+N5Her/vDAxTfYQfpKAsD
-         AEJ6TNpcC0mVQkKBpEH9AvW7DyNngwiP1x2z3jl5sTjAK7SDG58jL7Id+42Ha3JK8WAq
-         D/f79Y6EzNWduaMwnnd5EsOKYUDGX/mVT+2o+iNnXbyn791Wy1DWZNlhu7FgxfGkZYxy
-         CZBhu2rEoo0SWQCerVCswaQhMGmHIXH5z998m8vniMeIeVJD/4JljF8wD3FeI2yLkfY0
-         0BUV3tC07TaKGe+fmIsLDnTWhrEH2CBOlnDBVQ3a4cGJqBR0bKqRSh+SBUREdyuNcSoU
-         ds/w==
-X-Gm-Message-State: AO0yUKWpO+0s6gchhHage74Ia/3K6CV9UmGQG36rheK7Of4C1fKApkGr
-        TsjrpSeNHTG6qRGgFW0WLJjX3Agz4Ui9c7zDQdJdFP2HE3YPIVB3
-X-Google-Smtp-Source: AK7set8+APLHhlJzVieoTGPP4NWMU+n6Rg2N3gF24eshkxVAudLmIHYGZ/KwePZoscQ5WP/Y6VWlul+NgDMgWIfFPok=
-X-Received: by 2002:a1f:f28d:0:b0:401:8b9a:d80e with SMTP id
- q135-20020a1ff28d000000b004018b9ad80emr757792vkh.21.1676536669357; Thu, 16
- Feb 2023 00:37:49 -0800 (PST)
-MIME-Version: 1.0
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 16 Feb 2023 09:37:38 +0100
-Message-ID: <CAMRc=McLq0reqwyx3=k=ittdjL7fPzCwPMBt+O0oCCrQ6WVq=A@mail.gmail.com>
-Subject: [ANNOUNCE] libgpiod v2.0-rc2 released
-To:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QHGrJaM+v3HFBCl8mBiFJnmJYZqmXZ++B7X5nh+0dNs=;
+        b=lL2A3Z3yxtxuZjw51VYnywCrWZSk/P8uJMCZas/kA9K3/gYT1SHD19gXyVPKOJE8Hz
+         K2a2vtkXj7vIF5gz0yvbOOUDBib5h/jHG9XIpytc8Bkais/QcPVqQInJr1GPrWDMHQbQ
+         J6mpOBz6OaYhcF2kLJCrnnzDYOvCY+3FxCvFVkAVr+AZJF00pSqCMKWrzXyLmXInHOds
+         CMkE7+MbZw84NDGoEFFzRGB18BI4ToXJiPXe3Dy9FLl1ycJmhhdb5Uo4WOH4om14Y1fR
+         LA0AFba6RCJmcegtxTE/R7aY9UIm0sxpY+LOJtbxs05HoaZPRJkP+EWhKOIF6Y/AEJgG
+         pvSA==
+X-Gm-Message-State: AO0yUKWzu7fdcuji6DMpVnBCAnYyL+FUFUgPWu0Mt2+52X6cf2LxGwMD
+        rFo8TQ7X5WVsc2aTe7NRVYiSkqsbJjrCPfPf
+X-Google-Smtp-Source: AK7set+Uxc8TFqNNgfoIWr+a2gKRJMmelqZ2YnVruHBqHACGlwO/KCxTAKe7UjfQi/iXJ1U7IOXPkQ==
+X-Received: by 2002:a05:6512:942:b0:4db:2a28:6453 with SMTP id u2-20020a056512094200b004db2a286453mr1284446lft.25.1676539153369;
+        Thu, 16 Feb 2023 01:19:13 -0800 (PST)
+Received: from fedora.. ([85.235.12.219])
+        by smtp.gmail.com with ESMTPSA id p6-20020ac246c6000000b004db3890cb53sm219680lfo.223.2023.02.16.01.19.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Feb 2023 01:19:12 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Ferry Toth <fntoth@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Cixi Geng <cixi.geng1@unisoc.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: [PATCH] gpio: pmic-eic-sprd: Move Kconfig to MFD expanders
+Date:   Thu, 16 Feb 2023 10:19:09 +0100
+Message-Id: <20230216091909.1808306-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.39.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Giving the RC exposure to meta-openembedded autobuilders was a great
-idea and several build and runtime bugs were detected. This version
-should now build fine with clang and musl.
+The Spreadtrum PMIC EIC interrupt controller is part of an
+MFD expander and should thus be in the MFD GPIO expander
+menu section with the rest. Move it.
 
-If nothing serious comes up, I imagine v2.0 will be released next week.
+Cc: Cixi Geng <cixi.geng1@unisoc.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/Kconfig | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-The tarball and git tree are in their usual places[1][2].
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index c9f3ef56eb24..58b742a50fe0 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -492,14 +492,6 @@ config GPIO_PL061
+ 	help
+ 	  Say yes here to support the PrimeCell PL061 GPIO device.
+ 
+-config GPIO_PMIC_EIC_SPRD
+-	tristate "Spreadtrum PMIC EIC support"
+-	depends on MFD_SC27XX_PMIC || COMPILE_TEST
+-	depends on OF_GPIO
+-	select GPIOLIB_IRQCHIP
+-	help
+-	  Say yes here to support Spreadtrum PMIC EIC device.
+-
+ config GPIO_PXA
+ 	bool "PXA GPIO support"
+ 	depends on ARCH_PXA || ARCH_MMP || COMPILE_TEST
+@@ -1310,6 +1302,14 @@ config GPIO_PALMAS
+ 	  Select this option to enable GPIO driver for the TI PALMAS
+ 	  series chip family.
+ 
++config GPIO_PMIC_EIC_SPRD
++	tristate "Spreadtrum PMIC EIC support"
++	depends on MFD_SC27XX_PMIC || COMPILE_TEST
++	depends on OF_GPIO
++	select GPIOLIB_IRQCHIP
++	help
++	  Say yes here to support Spreadtrum PMIC EIC device.
++
+ config GPIO_RC5T583
+ 	bool "RICOH RC5T583 GPIO"
+ 	depends on MFD_RC5T583
+-- 
+2.34.1
 
-Bart
-
-[1] https://mirrors.edge.kernel.org/pub/software/libs/libgpiod/
-[2] git://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git
