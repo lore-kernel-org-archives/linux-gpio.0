@@ -2,151 +2,663 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE25C61DA4
-	for <linux-gpio@archiver.kernel.org>; Fri, 24 Feb 2023 15:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB9F0C64ED8
+	for <linux-gpio@archiver.kernel.org>; Thu, 16 Feb 2023 08:52:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbjBXP7m (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 24 Feb 2023 10:59:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54042 "EHLO
+        id S229628AbjBPIwX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 16 Feb 2023 03:52:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbjBXP7k (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Feb 2023 10:59:40 -0500
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2083.outbound.protection.outlook.com [40.107.95.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 326926CF24;
-        Fri, 24 Feb 2023 07:59:35 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YVYYmc5jUQTwY8xyBs0FzuItM5WT9xw60WIyo81BQAFFHgFRJQUe14zZZfhFx/aCj+/BVMNm8fZEqUHwMLdlHUr79vhy2WBd4OZsvtIj/KnHNoeHF8eaGfo7ZzAkkxEVUCsAs3XhaeCORpUBL7/zLRYOHj9hTQqyG2+bNZpAmlAjyYqdzlq9PZJ+UKsCNoNfcTTqDyIYxWLoWPxLhDNHzTK7cnijQvFFa/F6fglw++vBTQhEK2FI04sj5K2IPYHf6ryl7om9ln4JLiWOJPupwjdxeFhrnmBiz4bh8WbMmFCp9P/UQCLGxs/JW1n0o0HlJldra2kFJ7lEZA7mQ681JA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I9nKTIQI1XbA0mMxvL2sPQPfgF1pKAwHa1LU/3y2Bi4=;
- b=Pcc7CV2Chwxe1S0kksTKrtsNWGHuGTYn8SKvPKzHZ06g5qsx93YEvweuzfCjxyzvi3T7yAYku3oID2uch3HMOeSHvzCC46/7HyK7OX8ZFf5NAAsoMZrDZsbMgAExHdAHlAtqQ7lbQD6Lg/c9fC8itjAj6OgmdPeACysc32RxR3qN/ge3+1+4bSOxfBOKS9vjihKCRlm9ZUJc9OoWqOC6dWlP75ORCIblRM0RkjKPq+BDydz9ljTKgMiL6ZyegSGwoX6gNCNUfHLi/RD1Zs7IXbRp+9gbkcIx8sSM2tX3X2Dotvyao/uyZw3MmwVIGih3Vjt/tKpmz4Ej50tacPrKqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I9nKTIQI1XbA0mMxvL2sPQPfgF1pKAwHa1LU/3y2Bi4=;
- b=SeKtVyeZNS0YvBzlHqS/zoyTNv6v+Z+mvBQCQii9L/oogFPxq7lVQ7BQGrkIOSdhq0SK7ylReOe+7mgQV3be/g7fHKfVIRZ/kEAxBgj2ZhZDdH/+unxJmpR28DbG8UQ7+q4HqKcPQZeu7iPraV+Fv1+6IzeIlGhv/WMM6pJyRUeW7L/qwzcZltV2n6gc+RSAIzay2wAlDoC/Q9VQTcw+U5EFPKJHiYvbLEkwDm8pdKXGqc6etyNOreBOq7u5W/k13SH6Vwb617IuRzrUpex1/G/SxaR32VheOxYJ5rf1W2Mm58xc74GwOJdrCWzFjeDpp1AScpWuVyFMjweg0Ult7w==
-Received: from CH2PR12MB3895.namprd12.prod.outlook.com (2603:10b6:610:2a::13)
- by BL1PR12MB5755.namprd12.prod.outlook.com (2603:10b6:208:392::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.21; Fri, 24 Feb
- 2023 15:59:33 +0000
-Received: from CH2PR12MB3895.namprd12.prod.outlook.com
- ([fe80::5f35:2f2d:94a4:f7c3]) by CH2PR12MB3895.namprd12.prod.outlook.com
- ([fe80::5f35:2f2d:94a4:f7c3%4]) with mapi id 15.20.6134.019; Fri, 24 Feb 2023
- 15:59:33 +0000
-From:   Asmaa Mnebhi <asmaa@nvidia.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-CC:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Subject: RE: [PATCH v4 1/2] gpio: gpio-mlxbf3: Add gpio driver support
-Thread-Topic: [PATCH v4 1/2] gpio: gpio-mlxbf3: Add gpio driver support
-Thread-Index: AQHZQxaSlkLDlqQj4USzupFOvdT5/67TwvwAgAeH+DCAARyQgIAAhNPAgAAP7gCAAC3a0IAAuciAgABPpICAAAsLgIAADIHQ
-Date:   Fri, 24 Feb 2023 15:59:32 +0000
-Message-ID: <CH2PR12MB389570356FFCCE60DE13AB4FD7A89@CH2PR12MB3895.namprd12.prod.outlook.com>
-References: <cover.1676042188.git.asmaa@nvidia.com>
- <cover.1676668853.git.asmaa@nvidia.com>
- <28f0d670407c127614b64d9c382b11c795f5077d.1676668853.git.asmaa@nvidia.com>
- <CAHp75VdeVpjzg5Y_4Y+Ke9=3wog28vUBN4Fd8zxfa8dWGrqUUA@mail.gmail.com>
- <CH2PR12MB3895520749883D912E5021F1D7AA9@CH2PR12MB3895.namprd12.prod.outlook.com>
- <CAHp75Vc+iSt2XvpOYzwZnzX7Qg013e-E27CPjPaO-QmtferWVg@mail.gmail.com>
- <CH2PR12MB389509F68E6AFE776C5B0AC6D7AB9@CH2PR12MB3895.namprd12.prod.outlook.com>
- <CAHp75VdoUDMvVk1uMQcAKQteL6gbYGpoKpFn96ysdS81LjPGCQ@mail.gmail.com>
- <CH2PR12MB389530C5929100CB54396CF5D7AB9@CH2PR12MB3895.namprd12.prod.outlook.com>
- <CAHp75VfZ1r_sNus_qMYumja3YrJawA6hRHUbi-uPFUprorQ_Kw@mail.gmail.com>
- <CH2PR12MB3895124032E3276B54570676D7A89@CH2PR12MB3895.namprd12.prod.outlook.com>
- <CAHp75Vc8=_bfuLrpygCFnDcAZMyGMQXN7xEiZv=Yn3u3NzRpjQ@mail.gmail.com>
-In-Reply-To: <CAHp75Vc8=_bfuLrpygCFnDcAZMyGMQXN7xEiZv=Yn3u3NzRpjQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH2PR12MB3895:EE_|BL1PR12MB5755:EE_
-x-ms-office365-filtering-correlation-id: 131f7624-bc7e-49b2-b54b-08db16801ea8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: l4tozmI+6ZEVGqDTSGA4SGFJjTx7GXf2/j4dl9DiYIqU1kDc0mCgVJlP96OVpUWE8F4n0voFdfE8v1X4lx5HPeEkxIdz80CwlhnGOdvaR6kwByHh4PSUxqYsKOJSLXPTcBIcXQoB9cGHrx5v2QfiN2vqwwEP4uCZI96MTnjMBI6xoUs2ZzVtRymMiwSbY2kLEBx1eAml5fxQvY2DUUc21VZQIj2ZlYdnPo5W/v5cOjODGg9TF3hDXOQwgRdukSHYi9J3MkADujj9l3Bo4hzXCyDEJJrUHbcwWr/LkdDlKV8yku7IS5gc8H+wBqGlM8AOFeIw89AdTnyfYRBDRnjpYsSckTYaaBC+Qhpd8d8p11xrrtPKpczRFVtB3kClY7MtRVtUKc+3RnX5HOtjCJxSvZnmPFQxlcHfCU1oaTIZkQ+ZDX7jc/YDcoXaBLHy3dGZ4faE9++1HttqcYvUmSxR93uxkqKnGeqvg+KAk1a/aIdFFOU3Q7laxd06YydLkCvXdXidnr8A6S4OCvqpPACq2ZTKXAWaNlLn7JYlHjLFmHJy7VbG445b3/RDfWmVTGf+cqVED1D8r+6gcRKoKGmq6Z0x+IsirGRIIhRNwacqzv0UH6MhlwH+tuWoVyr5xNcOsE9pPW/tk7sJF2UnhHSsuPD4B2kNaULwRxUZDWepEZGwSmxVvWuf2GrVfF7X24Us4Kpo4YhdNwq+851lI9vblA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3895.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(376002)(39860400002)(396003)(366004)(346002)(136003)(451199018)(2906002)(66446008)(33656002)(64756008)(66556008)(122000001)(316002)(66476007)(71200400001)(7696005)(41300700001)(6506007)(66946007)(76116006)(5660300002)(9686003)(55016003)(478600001)(6916009)(4744005)(38070700005)(186003)(4326008)(8676002)(8936002)(54906003)(86362001)(38100700002)(26005)(52536014);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?YTdmTDJWeVM0am1jS1lsNVZTZkV0MysweVZreTlqZ1lPT0I4WSsvQ1d4aHRk?=
- =?utf-8?B?TVJmTHdaOHljR2E5dDVHVEdmTHNuOTEyQkV1RWhCbGdsTnZua2o0WEF1SGlr?=
- =?utf-8?B?K0dROWtxcGo0Q2hPNHFqS01ncitmd3l1MWNTaE92dDF1cENHdUhmT2hRMG13?=
- =?utf-8?B?dEZWOGtLSTJHQXRkZWVlajE0T1BkZ3FUdnlyMGlrVEI3UVRSUFRTRmt4aDNM?=
- =?utf-8?B?L0VDRlZwblpkZmFKMUYweFptczNWb21POUl0TWNtdGIyblJHMzRZWWhvZEc1?=
- =?utf-8?B?dkRQbDBmTWd1blZSWno2bkEyY2NldlhWQlRJYXA3SDE5Ty9HKzhhMVdNWEdN?=
- =?utf-8?B?ZU9GSHQ4OVZNSGR1aVhVQ0lKczEzbHJ6TjlkUE9vLy82bjc5Q01UNEk3S1pL?=
- =?utf-8?B?Y1owTE9qWUNTWnViSklTMTN2SVRWTDdnSFJ5OHoreGZ5MjVkZnZiYitEVE4x?=
- =?utf-8?B?dHFib0VzWXNDeHFOOURvMXFEekd2cVpXOThobnlYMWZQaktyVGxUQlgyS2Nu?=
- =?utf-8?B?N3d6cWdEY3daYmpzRFB1ZkEwTHJHVzBwRE5lZWNSZE41b3NCV3ROWWlvaHJJ?=
- =?utf-8?B?bnNjeXhVYUJNUm90dTZwenhuSXdwWUJ2bUFEOTJmV0srMUo5ZEZxWGNVYWJR?=
- =?utf-8?B?aEpoaVE2bTZLQU1wTml3SUR2V2VHNUNwd3Y1UmEzQ1dTOFpESGZQL2RERTZH?=
- =?utf-8?B?Nk1wWERXMjZFOTFvbkVJeDNtZ2R3QkZqNUpZMnd4V2pRaGxQYnJKZGZxVVYr?=
- =?utf-8?B?VUx6Skd5MXpjZHFDUEJYd0VnZ1JSVnhqd2d1U0dVZTh1SXNUVUQyVXlIOVdI?=
- =?utf-8?B?MjBzMFI0S2R1MzBCcjBXMkIrSFFYTElDaFlwd09jUTl5Zk5BdThOa1hVdDlW?=
- =?utf-8?B?dktLYzhobWc5U1U5ejJRMjU4RFB1K3hQUVRTZGluKzJGRzI1UHErcXZPV09C?=
- =?utf-8?B?KzJYOVRMM0xOUjllQWJqSDV1TFNacjM3VzJZcm5FQ0xWUHFOS3EyZnZJdnZl?=
- =?utf-8?B?cGdUaHZSMGhIakpBNTVId3cxb2lPQ2FrVklReDBTR1Z5dWZldkEvbWZFU2ZP?=
- =?utf-8?B?ckoyN1pVSi9SNlI3YzhLWUtjWVd1bVM5MmU2SG9yUzhwbVJmb3prZmpXM0gv?=
- =?utf-8?B?ZEQ1WnJDdCt5WnlRbkJGRnU4T2M1dFZFdjhRNmFSeUtoQjFRajhGR3haa0JO?=
- =?utf-8?B?R1BuelJtTXpDRXdtdUFuaWwybVZCZEtUVUxxLzR3RG93a2VOcmJnRDZjNFRD?=
- =?utf-8?B?SFlSYnA2OGxqUENzbElleFkxUmxDMzJhZFVHQUtkQjAvZTNDblNySGlGMkRX?=
- =?utf-8?B?RHRyMmtnQldwUnpNYUM3OExTRGVNUjM2c2J4L3ZtQWk5cHErZngzUVNrd3Nz?=
- =?utf-8?B?cUdDY1g1WW1ZT3lPUDZmZDZiU0tyUUpmOE0rdlhSOWk1KzRyOU5Gek0xdU5B?=
- =?utf-8?B?UFQvcXhVNjF3MEo2akU4QzczVFR6OHE4WTdnS1ZQMUdMNjA0OVJKWTE5NG91?=
- =?utf-8?B?UDdPVVVhYXQ4WXkzdVZhalgvQW5sYUdWcFEvVWJOY2hxVkZ4Wm9yZ09XelZT?=
- =?utf-8?B?QUp4YndYSmU1THR1akVabldTV3pFL20wdUFRTDhyM3BMNEtlYm45MEZBWHg3?=
- =?utf-8?B?WHl0R1FKa2x5UmdqcVRZNnE3a3FLQzdtQVErM1lSUFE1aWJ6NHI4Vis5NSt6?=
- =?utf-8?B?SThBL2xJYkhaVVZIOEtFS2tEUm0vQXhQcjVHWDZvS3V2aUtPMHcwUTZtSHJQ?=
- =?utf-8?B?RnI0VTY4T2JwKzhWTEx2RjN1OWNMRVIvUmNidTdyQlJLR0tDT2RZNm9mazY5?=
- =?utf-8?B?ejdHUnp0aXdYYnRuOTZXREJ4VnJ1MkhwZFl3Lzc2UXFhQnZkM3ZYYjZMczB6?=
- =?utf-8?B?MVFrMkdVc1l2NnBiQUQwQXY1UzJSZ3dDY3lTMHZsYit3eW1zd3owVHNCc1Jj?=
- =?utf-8?B?QTRkNUo2NFRFZXVOcFNKUUdwUnFHNHpNb2xpTHc2NzJ5Q24xTWtRR3ovRXZh?=
- =?utf-8?B?dVlyM1NEbitRUjgzMU5uVnNoSmJaZGwxOG1WS1Rzb1hWQmtMVHgyVkdsTkQr?=
- =?utf-8?B?OXFDWWdvS3A0aW4zVTMxTlZXMUx5KzNmdHlQd2pHeUI2TkhKZFRHS2hiZVR2?=
- =?utf-8?Q?VeNY=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        with ESMTP id S229916AbjBPIwW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Feb 2023 03:52:22 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E126A3A84D
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 00:52:16 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id o15so1074877wrc.9
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2023 00:52:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=STizLQEo6AFp+2JHNavG4oDnohguTIhcAZn6+qlmAu4=;
+        b=POr8x7TTWt+5UiHyHkNpkATA2fBOi4I59Y1PGmWSj5Yog7+ijIU8xsVozDHY2GMhVM
+         0nAt6N8gsEohe/1B5WnCbA/ZF7qnJzmpxYh6DJRYopkQckvtKYxFndCfMx1fkZfuy02T
+         I2Yn2oT49FBkIz1JFDoATXTxrUWPGzqxq5eHbU5GMxgMGuXnbGnHgcFah87hbMji3wqM
+         2n/999p+vQJVgJx2M4a1uYa2ldbf5qNfh7o6lt2jKzTiDEgsRaKYwPgCwwNk65AgYwz6
+         RrJ/xx42waKUCzVMN6ZtzKDmADaSPaaIVuPBPeQyPTrh9+4K9j0s7q3V6xdYiGz7C/P/
+         Vp2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=STizLQEo6AFp+2JHNavG4oDnohguTIhcAZn6+qlmAu4=;
+        b=2g8N1M1HFXx7MGy6qLh8AzdpK0xlHiKqD+1ZxFISQmsfOkpw849aWR5Z7tKNN0R2ro
+         xNImNJWazSUjV7fmKvupLy0ZlQd6Xw5uRRy5kOTt9ifsSMsXpl/7VG4VlcR+lqUhplZU
+         zbSxcNb+FkFwRhM+PNcOItMYJRdszxH7qK7dnzO2KDjEmQHerrRbgRZbRW1P5Sap4Tua
+         w1i4srkRs8BKzioeC0epJ9SURcEbu25azme3CEh16qnmm9+rMeWnmBR3G1CAMfEQOYOs
+         pqKnG3Fops0upfs96wfAqYKLqMVFLeIJaiQqS5ty+4hR65jL6xvxY2jB4YAmVqoIurb4
+         /gqA==
+X-Gm-Message-State: AO0yUKWr3UMmSVIqa7zN8UD24mSvMo0vH6GjF8zO1/AUMyOiVkGkVIzw
+        ECnMWmpsfM0NU8FRIzUNzVusKg==
+X-Google-Smtp-Source: AK7set+vzp/1deCNLdAI/O0Pjpadgp1UcIZhP7Lv/ZuiLy1zAYeSIjCIaT74bAXwjZhHWkvWWqpoNA==
+X-Received: by 2002:adf:f6c2:0:b0:2c5:4c8e:ac5b with SMTP id y2-20020adff6c2000000b002c54c8eac5bmr4520119wrp.21.1676537535248;
+        Thu, 16 Feb 2023 00:52:15 -0800 (PST)
+Received: from [192.168.1.172] (158.22.5.93.rev.sfr.net. [93.5.22.158])
+        by smtp.gmail.com with ESMTPSA id m18-20020adfe952000000b002c56a7872f4sm910396wrn.82.2023.02.16.00.52.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Feb 2023 00:52:14 -0800 (PST)
+Message-ID: <be3a9a60-5a6f-4983-1822-fc3fcb8d1e66@baylibre.com>
+Date:   Thu, 16 Feb 2023 09:52:13 +0100
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3895.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 131f7624-bc7e-49b2-b54b-08db16801ea8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2023 15:59:32.8742
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7R7lkT5ebw3/QXx7oXstyiu5i1AtVwUQUouw26ADzCpc2VEKOS/TfNT9YfFvy5vD+0MybdFKQmgFsaUNmg2rEg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5755
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v9 9/9] arm64: dts: mediatek: Initial mt8365-evk support
+Content-Language: en-US
+To:     =?UTF-8?Q?Bernhard_Rosenkr=c3=a4nzer?= <bero@baylibre.com>,
+        matthias.bgg@gmail.com, khilman@baylibre.com
+References: <20230125143503.1015424-1-bero@baylibre.com>
+ <20230125143503.1015424-10-bero@baylibre.com>
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+In-Reply-To: <20230125143503.1015424-10-bero@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-PiA+ID4gPiBHcGlvY2hpcF9hZGRfZGF0YV93aXRoX2tleXMgb25seSByZWFkcyB0aGUgbmdwaW9z
-IHByb3BlcnR5IGlmDQo+ID4gPiA+IChuZ3Bpb3MgPT0gMCkgd2hpY2ggaXMgbm90IHRoZSBjYXNl
-IHdoZW4gYmdwaW9faW5pdCBpcyBjYWxsZWQuIGJncGlvX2luaXQNCj4gdXNlcyAic3oiDQo+ID4g
-PiBhcmd1bWVudCB0byBwb3B1bGF0ZSB0aGUgbmdwaW8gaW4gYmdwaW9faW5pdCwgd2hpY2ggaXMg
-bm90IHdoYXQgd2Ugd2FudC4NCj4gPiA+DQo+ID4gPiBNYXliZSBiZ3Bpb19pbml0KCkgaXMgbm90
-IGEgZ29vZCBBUEkgZm9yIHlvdXIgY2FzZT8NCj4gPg0KPiA+IEF0IHRoZSBtb21lbnQsIGJncGlv
-X2luaXQgaGFuZGxlcyBhbGwgdGhlIGRpcmVjdGlvbiBpbi9vdXQgZ2V0L3NldCBncGlvIHZhbHVl
-DQo+IGZvciB1cy4NCj4gPiBTbyBJIGNhbiBlaXRoZXIgcmVtb3ZlIGJncGlvX2luaXQgc28gdGhh
-dCB3ZSBnZXQgdGhlIGNvcnJlY3QgbmdwaW9zDQo+IHByb3BlcnR5LCBidXQgd2lsbCBoYXZlIHRv
-IGRlZmluZSBnZXRfZ3Bpbywgc2V0X2dwaW8sIGRpciBpbiBhbmQgZGlyIG91dC4NCj4gPiBPciBJ
-IGNhbiBrZWVwIGJncGlvX2luaXQgYW5kIGRldmljZV9wcm9wZXJ0eV9yZWFkX3UzMiBpbiB0aGUg
-Z3Bpby0NCj4gbWx4YmYzLmMgZHJpdmVyLg0KPiANCj4gU28gZmFyIGl0IHNlZW1zIHRoZSBpc3N1
-ZSBpcyBpbiBiZ3Bpb19pbml0KCkgdGhhdCBkb2Vzbid0IGhhbmRsZSBuZ3Bpb3MgcHJvcGVybHku
-DQo+IE1heWJlIHdlIG5lZWQgdG8gZml4IHRoaXMgZmlyc3Q/DQoNCk9rIEkgd2lsbCBzZW5kIGEg
-c3BlcmF0ZSBwYXRjaCBzaG9ydGx5IGFkZHJlc3NpbmcgdGhpcy4NCg0KPiBCdHcsIGhhdmUgeW91
-IGNvbnNpZGVyZWQgdXNpbmcgdGhlIGdwaW8tcmVnbWFwIGFwcHJvYWNoPw0KDQpUaGFua3MhICBJ
-IHNlZSBleGFtcGxlcyBvZiBkcml2ZXJzIGFscmVhZHkgdXNpbmcgdGhpcyAoZ3Bpby10bjQ4bS5j
-KS4gV2lsbCB0YWtlIGEgbG9vay4NCg0K
+Hi Matthias,
+
+This is a gentle ping to know if you can take this patch.
+
+Best regards,
+Alex
+
+On 25/01/2023 15:35, Bernhard Rosenkränzer wrote:
+> From: Fabien Parent <fparent@baylibre.com>
+> 
+> This adds minimal support for the Mediatek 8365 SOC and the EVK reference
+> board, allowing the board to boot to initramfs with serial port I/O.
+> 
+> Signed-off-by: Fabien Parent <fparent@baylibre.com>
+> [bero@baylibre.com: Removed parts depending on drivers that aren't upstream yet, cleanups, add CPU cache layout, add systimer, fix GIC]
+> Signed-off-by: Bernhard Rosenkränzer <bero@baylibre.com>
+> Tested-by: Kevin Hilman <khilman@baylibre.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>   arch/arm64/boot/dts/mediatek/Makefile       |   1 +
+>   arch/arm64/boot/dts/mediatek/mt8365-evk.dts | 168 +++++++++
+>   arch/arm64/boot/dts/mediatek/mt8365.dtsi    | 377 ++++++++++++++++++++
+>   3 files changed, 546 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8365-evk.dts
+>   create mode 100644 arch/arm64/boot/dts/mediatek/mt8365.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+> index 813e735c5b96d..d78523c5a7dd6 100644
+> --- a/arch/arm64/boot/dts/mediatek/Makefile
+> +++ b/arch/arm64/boot/dts/mediatek/Makefile
+> @@ -47,4 +47,5 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8195-cherry-tomato-r2.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8195-cherry-tomato-r3.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8195-demo.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8195-evb.dtb
+> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt8365-evk.dtb
+>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8516-pumpkin.dtb
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
+> new file mode 100644
+> index 0000000000000..4683704ea2355
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
+> @@ -0,0 +1,168 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2021-2022 BayLibre, SAS.
+> + * Authors:
+> + * Fabien Parent <fparent@baylibre.com>
+> + * Bernhard Rosenkränzer <bero@baylibre.com>
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/pinctrl/mt8365-pinfunc.h>
+> +#include "mt8365.dtsi"
+> +
+> +/ {
+> +	model = "MediaTek MT8365 Open Platform EVK";
+> +	compatible = "mediatek,mt8365-evk", "mediatek,mt8365";
+> +
+> +	aliases {
+> +		serial0 = &uart0;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:921600n8";
+> +	};
+> +
+> +	firmware {
+> +		optee {
+> +			compatible = "linaro,optee-tz";
+> +			method = "smc";
+> +		};
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&gpio_keys>;
+> +
+> +		key-volume-up {
+> +			gpios = <&pio 24 GPIO_ACTIVE_LOW>;
+> +			label = "volume_up";
+> +			linux,code = <KEY_VOLUMEUP>;
+> +			wakeup-source;
+> +			debounce-interval = <15>;
+> +		};
+> +	};
+> +
+> +	memory@40000000 {
+> +		device_type = "memory";
+> +		reg = <0 0x40000000 0 0xc0000000>;
+> +	};
+> +
+> +	usb_otg_vbus: regulator-0 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "otg_vbus";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		gpio = <&pio 16 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +	};
+> +
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		/* 128 KiB reserved for ARM Trusted Firmware (BL31) */
+> +		bl31_secmon_reserved: secmon@43000000 {
+> +			no-map;
+> +			reg = <0 0x43000000 0 0x20000>;
+> +		};
+> +
+> +		/* 12 MiB reserved for OP-TEE (BL32)
+> +		 * +-----------------------+ 0x43e0_0000
+> +		 * |      SHMEM 2MiB       |
+> +		 * +-----------------------+ 0x43c0_0000
+> +		 * |        | TA_RAM  8MiB |
+> +		 * + TZDRAM +--------------+ 0x4340_0000
+> +		 * |        | TEE_RAM 2MiB |
+> +		 * +-----------------------+ 0x4320_0000
+> +		 */
+> +		optee_reserved: optee@43200000 {
+> +			no-map;
+> +			reg = <0 0x43200000 0 0x00c00000>;
+> +		};
+> +	};
+> +};
+> +
+> +&pio {
+> +	gpio_keys: gpio-keys-pins {
+> +		pins {
+> +			pinmux = <MT8365_PIN_24_KPCOL0__FUNC_KPCOL0>;
+> +			bias-pull-up;
+> +			input-enable;
+> +		};
+> +	};
+> +
+> +	uart0_pins: uart0-pins {
+> +		pins {
+> +			pinmux = <MT8365_PIN_35_URXD0__FUNC_URXD0>,
+> +				 <MT8365_PIN_36_UTXD0__FUNC_UTXD0>;
+> +		};
+> +	};
+> +
+> +	uart1_pins: uart1-pins {
+> +		pins {
+> +			pinmux = <MT8365_PIN_37_URXD1__FUNC_URXD1>,
+> +				 <MT8365_PIN_38_UTXD1__FUNC_UTXD1>;
+> +		};
+> +	};
+> +
+> +	uart2_pins: uart2-pins {
+> +		pins {
+> +			pinmux = <MT8365_PIN_39_URXD2__FUNC_URXD2>,
+> +				 <MT8365_PIN_40_UTXD2__FUNC_UTXD2>;
+> +		};
+> +	};
+> +
+> +	usb_pins: usb-pins {
+> +		id-pins {
+> +			pinmux = <MT8365_PIN_17_GPIO17__FUNC_GPIO17>;
+> +			input-enable;
+> +			bias-pull-up;
+> +		};
+> +
+> +		usb0-vbus-pins {
+> +			pinmux = <MT8365_PIN_16_GPIO16__FUNC_USB_DRVVBUS>;
+> +			output-high;
+> +		};
+> +
+> +		usb1-vbus-pins {
+> +			pinmux = <MT8365_PIN_18_GPIO18__FUNC_GPIO18>;
+> +			output-high;
+> +		};
+> +	};
+> +
+> +	pwm_pins: pwm-pins {
+> +		pins {
+> +			pinmux = <MT8365_PIN_19_DISP_PWM__FUNC_PWM_A>,
+> +				 <MT8365_PIN_116_I2S_BCK__FUNC_PWM_C>;
+> +		};
+> +	};
+> +};
+> +
+> +&pwm {
+> +	pinctrl-0 = <&pwm_pins>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +};
+> +
+> +&uart0 {
+> +	pinctrl-0 = <&uart0_pins>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +};
+> +
+> +&uart1 {
+> +	pinctrl-0 = <&uart1_pins>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	pinctrl-0 = <&uart2_pins>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8365.dtsi b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
+> new file mode 100644
+> index 0000000000000..15ac4c1f09661
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
+> @@ -0,0 +1,377 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * (C) 2018 MediaTek Inc.
+> + * Copyright (C) 2022 BayLibre SAS
+> + * Fabien Parent <fparent@baylibre.com>
+> + * Bernhard Rosenkränzer <bero@baylibre.com>
+> + */
+> +#include <dt-bindings/clock/mediatek,mt8365-clk.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/phy/phy.h>
+> +
+> +/ {
+> +	compatible = "mediatek,mt8365";
+> +	interrupt-parent = <&sysirq>;
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu-map {
+> +			cluster0 {
+> +				core0 {
+> +					cpu = <&cpu0>;
+> +				};
+> +				core1 {
+> +					cpu = <&cpu1>;
+> +				};
+> +				core2 {
+> +					cpu = <&cpu2>;
+> +				};
+> +				core3 {
+> +					cpu = <&cpu3>;
+> +				};
+> +			};
+> +		};
+> +
+> +		cpu0: cpu@0 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x0>;
+> +			#cooling-cells = <2>;
+> +			enable-method = "psci";
+> +			i-cache-size = <0x8000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <256>;
+> +			next-level-cache = <&l2>;
+> +		};
+> +
+> +		cpu1: cpu@1 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x1>;
+> +			#cooling-cells = <2>;
+> +			enable-method = "psci";
+> +			i-cache-size = <0x8000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <256>;
+> +			next-level-cache = <&l2>;
+> +		};
+> +
+> +		cpu2: cpu@2 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x2>;
+> +			#cooling-cells = <2>;
+> +			enable-method = "psci";
+> +			i-cache-size = <0x8000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <256>;
+> +			next-level-cache = <&l2>;
+> +		};
+> +
+> +		cpu3: cpu@3 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x3>;
+> +			#cooling-cells = <2>;
+> +			enable-method = "psci";
+> +			i-cache-size = <0x8000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <256>;
+> +			next-level-cache = <&l2>;
+> +		};
+> +
+> +		l2: l2-cache {
+> +			compatible = "cache";
+> +			cache-level = <2>;
+> +			cache-size = <0x80000>;
+> +			cache-line-size = <64>;
+> +			cache-sets = <512>;
+> +			cache-unified;
+> +		};
+> +	};
+> +
+> +	clk26m: oscillator {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <26000000>;
+> +		clock-output-names = "clk26m";
+> +	};
+> +
+> +	psci {
+> +		compatible = "arm,psci-1.0";
+> +		method = "smc";
+> +	};
+> +
+> +	soc {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		compatible = "simple-bus";
+> +		ranges;
+> +
+> +		gic: interrupt-controller@c000000 {
+> +			compatible = "arm,gic-v3";
+> +			#interrupt-cells = <3>;
+> +			interrupt-parent = <&gic>;
+> +			interrupt-controller;
+> +			reg = <0 0x0c000000 0 0x10000>, /* GICD */
+> +			      <0 0x0c080000 0 0x80000>, /* GICR */
+> +			      <0 0x0c400000 0 0x2000>,  /* GICC */
+> +			      <0 0x0c410000 0 0x1000>,  /* GICH */
+> +			      <0 0x0c420000 0 0x2000>;  /* GICV */
+> +
+> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +		};
+> +
+> +		topckgen: syscon@10000000 {
+> +			compatible = "mediatek,mt8365-topckgen", "syscon";
+> +			reg = <0 0x10000000 0 0x1000>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		infracfg: syscon@10001000 {
+> +			compatible = "mediatek,mt8365-infracfg", "syscon";
+> +			reg = <0 0x10001000 0 0x1000>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		pericfg: syscon@10003000 {
+> +			compatible = "mediatek,mt8365-pericfg", "syscon";
+> +			reg = <0 0x10003000 0 0x1000>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		syscfg_pctl: syscfg-pctl@10005000 {
+> +			compatible = "mediatek,mt8365-syscfg", "syscon";
+> +			reg = <0 0x10005000 0 0x1000>;
+> +		};
+> +
+> +		pio: pinctrl@1000b000 {
+> +			compatible = "mediatek,mt8365-pinctrl";
+> +			reg = <0 0x1000b000 0 0x1000>;
+> +			mediatek,pctl-regmap = <&syscfg_pctl>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
+> +		};
+> +
+> +		apmixedsys: syscon@1000c000 {
+> +			compatible = "mediatek,mt8365-apmixedsys", "syscon";
+> +			reg = <0 0x1000c000 0 0x1000>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		keypad: keypad@10010000 {
+> +			compatible = "mediatek,mt6779-keypad";
+> +			reg = <0 0x10010000 0 0x1000>;
+> +			wakeup-source;
+> +			interrupts = <GIC_SPI 124 IRQ_TYPE_EDGE_FALLING>;
+> +			clocks = <&clk26m>;
+> +			clock-names = "kpd";
+> +			status = "disabled";
+> +		};
+> +
+> +		mcucfg: syscon@10200000 {
+> +			compatible = "mediatek,mt8365-mcucfg", "syscon";
+> +			reg = <0 0x10200000 0 0x2000>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		sysirq: interrupt-controller@10200a80 {
+> +			compatible = "mediatek,mt8365-sysirq", "mediatek,mt6577-sysirq";
+> +			interrupt-controller;
+> +			#interrupt-cells = <3>;
+> +			interrupt-parent = <&gic>;
+> +			reg = <0 0x10200a80 0 0x20>;
+> +		};
+> +
+> +		infracfg_nao: infracfg@1020e000 {
+> +			compatible = "mediatek,mt8365-infracfg", "syscon";
+> +			reg = <0 0x1020e000 0 0x1000>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		rng: rng@1020f000 {
+> +			compatible = "mediatek,mt8365-rng", "mediatek,mt7623-rng";
+> +			reg = <0 0x1020f000 0 0x100>;
+> +			clocks = <&infracfg CLK_IFR_TRNG>;
+> +			clock-names = "rng";
+> +		};
+> +
+> +		apdma: dma-controller@11000280 {
+> +			compatible = "mediatek,mt8365-uart-dma", "mediatek,mt6577-uart-dma";
+> +			reg = <0 0x11000280 0 0x80>,
+> +			      <0 0x11000300 0 0x80>,
+> +			      <0 0x11000380 0 0x80>,
+> +			      <0 0x11000400 0 0x80>,
+> +			      <0 0x11000580 0 0x80>,
+> +			      <0 0x11000600 0 0x80>;
+> +			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_LOW>,
+> +				     <GIC_SPI 46 IRQ_TYPE_LEVEL_LOW>,
+> +				     <GIC_SPI 47 IRQ_TYPE_LEVEL_LOW>,
+> +				     <GIC_SPI 48 IRQ_TYPE_LEVEL_LOW>,
+> +				     <GIC_SPI 51 IRQ_TYPE_LEVEL_LOW>,
+> +				     <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
+> +			dma-requests = <6>;
+> +			clocks = <&infracfg CLK_IFR_AP_DMA>;
+> +			clock-names = "apdma";
+> +			#dma-cells = <1>;
+> +		};
+> +
+> +		uart0: serial@11002000 {
+> +			compatible = "mediatek,mt8365-uart", "mediatek,mt6577-uart";
+> +			reg = <0 0x11002000 0 0x1000>;
+> +			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_LOW>;
+> +			clocks = <&clk26m>, <&infracfg CLK_IFR_UART0>;
+> +			clock-names = "baud", "bus";
+> +			dmas = <&apdma 0>, <&apdma 1>;
+> +			dma-names = "tx", "rx";
+> +			status = "disabled";
+> +		};
+> +
+> +		uart1: serial@11003000 {
+> +			compatible = "mediatek,mt8365-uart", "mediatek,mt6577-uart";
+> +			reg = <0 0x11003000 0 0x1000>;
+> +			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_LOW>;
+> +			clocks = <&clk26m>, <&infracfg CLK_IFR_UART1>;
+> +			clock-names = "baud", "bus";
+> +			dmas = <&apdma 2>, <&apdma 3>;
+> +			dma-names = "tx", "rx";
+> +			status = "disabled";
+> +		};
+> +
+> +		uart2: serial@11004000 {
+> +			compatible = "mediatek,mt8365-uart", "mediatek,mt6577-uart";
+> +			reg = <0 0x11004000 0 0x1000>;
+> +			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_LOW>;
+> +			clocks = <&clk26m>, <&infracfg CLK_IFR_UART2>;
+> +			clock-names = "baud", "bus";
+> +			dmas = <&apdma 4>, <&apdma 5>;
+> +			dma-names = "tx", "rx";
+> +			status = "disabled";
+> +		};
+> +
+> +		pwm: pwm@11006000 {
+> +			compatible = "mediatek,mt8365-pwm";
+> +			reg = <0 0x11006000 0 0x1000>;
+> +			#pwm-cells = <2>;
+> +			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_LOW>;
+> +			clocks = <&infracfg CLK_IFR_PWM_HCLK>,
+> +				 <&infracfg CLK_IFR_PWM>,
+> +				 <&infracfg CLK_IFR_PWM1>,
+> +				 <&infracfg CLK_IFR_PWM2>,
+> +				 <&infracfg CLK_IFR_PWM3>;
+> +			clock-names = "top", "main", "pwm1", "pwm2", "pwm3";
+> +		};
+> +
+> +		spi: spi@1100a000 {
+> +			compatible = "mediatek,mt8365-spi", "mediatek,mt7622-spi";
+> +			reg = <0 0x1100a000 0 0x100>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_LOW>;
+> +			clocks = <&topckgen CLK_TOP_UNIVPLL2_D4>,
+> +				 <&topckgen CLK_TOP_SPI_SEL>,
+> +				 <&infracfg CLK_IFR_SPI0>;
+> +			clock-names = "parent-clk", "sel-clk", "spi-clk";
+> +			status = "disabled";
+> +		};
+> +
+> +		ssusb: usb@11201000 {
+> +			compatible = "mediatek,mt8365-mtu3", "mediatek,mtu3";
+> +			reg = <0 0x11201000 0 0x2e00>, <0 0x11203e00 0 0x0100>;
+> +			reg-names = "mac", "ippc";
+> +			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_LOW>;
+> +			phys = <&u2port0 PHY_TYPE_USB2>,
+> +			       <&u2port1 PHY_TYPE_USB2>;
+> +			clocks = <&topckgen CLK_TOP_SSUSB_TOP_CK_EN>,
+> +				 <&infracfg CLK_IFR_SSUSB_REF>,
+> +				 <&infracfg CLK_IFR_SSUSB_SYS>,
+> +				 <&infracfg CLK_IFR_ICUSB>;
+> +			clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck";
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges;
+> +			status = "disabled";
+> +
+> +			usb_host: usb@11200000 {
+> +				compatible = "mediatek,mt8365-xhci", "mediatek,mtk-xhci";
+> +				reg = <0 0x11200000 0 0x1000>;
+> +				reg-names = "mac";
+> +				interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_LOW>;
+> +				clocks = <&topckgen CLK_TOP_SSUSB_TOP_CK_EN>,
+> +					 <&infracfg CLK_IFR_SSUSB_REF>,
+> +					 <&infracfg CLK_IFR_SSUSB_SYS>,
+> +					 <&infracfg CLK_IFR_ICUSB>,
+> +					 <&infracfg CLK_IFR_SSUSB_XHCI>;
+> +				clock-names = "sys_ck", "ref_ck", "mcu_ck",
+> +					      "dma_ck", "xhci_ck";
+> +				status = "disabled";
+> +			};
+> +		};
+> +
+> +		u3phy: t-phy@11cc0000 {
+> +			compatible = "mediatek,mt8365-tphy", "mediatek,generic-tphy-v2";
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges = <0 0 0x11cc0000 0x9000>;
+> +
+> +			u2port0: usb-phy@0 {
+> +				reg = <0x0 0x400>;
+> +				clocks = <&topckgen CLK_TOP_SSUSB_PHY_CK_EN>,
+> +					 <&topckgen CLK_TOP_USB20_48M_EN>;
+> +				clock-names = "ref", "da_ref";
+> +				#phy-cells = <1>;
+> +			};
+> +
+> +			u2port1: usb-phy@1000 {
+> +				reg = <0x1000 0x400>;
+> +				clocks = <&topckgen CLK_TOP_SSUSB_PHY_CK_EN>,
+> +					 <&topckgen CLK_TOP_USB20_48M_EN>;
+> +				clock-names = "ref", "da_ref";
+> +				#phy-cells = <1>;
+> +			};
+> +		};
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +
+> +	system_clk: dummy13m {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <13000000>;
+> +		#clock-cells = <0>;
+> +	};
+> +
+> +	systimer: timer@10017000 {
+> +		compatible = "mediatek,mt8365-systimer", "mediatek,mt6795-systimer";
+> +		reg = <0 0x10017000 0 0x10>;
+> +		interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&system_clk>;
+> +		clock-names = "clk13m";
+> +	};
+> +};
+
