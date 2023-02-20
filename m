@@ -2,134 +2,119 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9308DC64EC4
-	for <linux-gpio@archiver.kernel.org>; Mon, 20 Feb 2023 13:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAC1C05027
+	for <linux-gpio@archiver.kernel.org>; Mon, 20 Feb 2023 14:59:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232200AbjBTNns (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 20 Feb 2023 08:43:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54566 "EHLO
+        id S231865AbjBTO7r (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 20 Feb 2023 09:59:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232197AbjBTNnr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Feb 2023 08:43:47 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3F791CF65;
-        Mon, 20 Feb 2023 05:43:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1676900626; x=1708436626;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=p5Fzs0PuYxqzAHUd7WjCollPuEeFNcBcwHoxSVkIjbQ=;
-  b=B2VAaFC+xOEObTKYGGLXAzgxMo7Qqru3cgTYq8b2KE3ccWZ8Uz5gnggk
-   IRFpLnz/0GgD0rSnIkYh98uhdjSulo94uh6uUNWJRpVx++lIYmjKsSWWm
-   ho2B8MHKgmf1ENBzej1a6bGHt2mKJomKqJURv1liEjtZ8832ePBl/V0Zf
-   twR0UdImbfAZ/yBGhPJqhMJ625ngZ+ccAv7iQm99JoK8NtV31jxuceRuL
-   K6lu/YJYm3Gr7kC9RuKeuY0NiRX2hHNWvC73zsTsd8jDxR0XlES2UZBXO
-   iUBhnVNl4YFktexZEd5ncnPbnIBYX1/1p56CbVcHMHrK8X+tgS9b19PI9
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10627"; a="332406164"
-X-IronPort-AV: E=Sophos;i="5.97,312,1669104000"; 
-   d="scan'208";a="332406164"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2023 05:43:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10627"; a="814142224"
-X-IronPort-AV: E=Sophos;i="5.97,312,1669104000"; 
-   d="scan'208";a="814142224"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga001.fm.intel.com with ESMTP; 20 Feb 2023 05:43:44 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1pU6SE-009R9G-2p;
-        Mon, 20 Feb 2023 15:43:42 +0200
-Date:   Mon, 20 Feb 2023 15:43:42 +0200
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: INFO: REPRODUCED: memory leak in gpio device in 6.2-rc6
-Message-ID: <Y/N5Dt6G397rkfBd@smile.fi.intel.com>
-References: <cdb562c5-040e-687f-a61f-4273fc356ff3@alu.unizg.hr>
- <fb12086b-ff5f-333a-3199-a8690c4d4bdf@alu.unizg.hr>
- <Y+j1dbZ0A1mndwXp@smile.fi.intel.com>
- <36d8e761-58e2-2515-fd1a-65a11731d1b1@alu.unizg.hr>
- <Y+y5nZJwZ6ykf0Fz@smile.fi.intel.com>
- <3d96e50b-ed17-9bf5-149b-8a50c7b4cca2@alu.unizg.hr>
- <CAMRc=Mcx=Ko5H_c1YGzA5Jfu3KJqx1pfL3RZuMrV6oTObnUrhQ@mail.gmail.com>
- <4b001ce6-b35d-3ad1-b757-f5f6baca7b51@alu.unizg.hr>
+        with ESMTP id S232177AbjBTO7q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Feb 2023 09:59:46 -0500
+Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 701451CACB
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Feb 2023 06:59:39 -0800 (PST)
+Received: by mail-vs1-xe2c.google.com with SMTP id v3so588204vse.0
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Feb 2023 06:59:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1676905178;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2EAsGyZAvm6u7RebXhNM4OstmhJzau/0diJUFrUURCA=;
+        b=knB3hT1duc1MTs0iknQypTc/pO26udEf2033nsquaRLESS+79t7qjfrPeuZQCT0Tej
+         OtmuoZ2rrXAdEnOnl2vDvoXC+zg6VaaDyz/awt8YVx3OjJRiep5hg1yUbdm0KYKyvgLn
+         DEhG/sTtb34ObEyUdnystXBdAJrThhvXHkk1SEpQz6LrvU4LZlaY+ArBNpujE0ZrTxdE
+         Fm0B9Kk6NEgTBf2+1gx68vxEmoBLNFVqERhiM7l7nUvsfucnqIP7K7bGsfv8Abh2ZEf6
+         vhi6oOpmIUvgZ44Ml+53uK91yJfoh2mANts9s7Evo5k2yvc/WM87/aAhMLTRvJnQtfW/
+         e+DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1676905178;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2EAsGyZAvm6u7RebXhNM4OstmhJzau/0diJUFrUURCA=;
+        b=0ELszqVTeqXkqL3VYX9pvFjCFQ8sXxQ+2pPbJO+AkRQNd0pwUj1dEHhi+XMgKbEGFz
+         snn6huKaPCSdzsxNF7aXGl1Tt34d616Dqa+pJJqBJop3wMyzqiPJpnOVZ+FXJdJVKKT+
+         cAcEpdcVID60D36g3mo4npmeQ/ejm7izb9ph3rze6+tHrcHzBkd8SoEpu6Vl3ZFgG5TY
+         w7UjeR3m57h0c0ivCeK2EEVpAsi835OQeY/NmjdaROkuKS6xRG3qxJ/mq/ojocLPuHFX
+         9J3p2H0fRNwCQ9OrZQ07MaRX43Tv/6EEdSptNX2eAhvXonMwOOwU9wD8O91cize55A5r
+         Shvg==
+X-Gm-Message-State: AO0yUKU/fCM7EkkiM9GNlK+JoB4ZFdWOdk3wqZnvFbbnMo8p3EDZjv65
+        KoLFY7MXnltVONAT03azxMQSlcyHbYuixprsQ3vOLQ==
+X-Google-Smtp-Source: AK7set+++EUPmQLlCLmCPgXUxyzMvrtxfaiJJYKJlRr3HPWDYe4wgU5/IM0rTx3xz15k0zKKoKU/sN8+67Fmz+ZO2Vs=
+X-Received: by 2002:a67:d61e:0:b0:414:4aab:3c73 with SMTP id
+ n30-20020a67d61e000000b004144aab3c73mr192421vsj.71.1676905178358; Mon, 20 Feb
+ 2023 06:59:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4b001ce6-b35d-3ad1-b757-f5f6baca7b51@alu.unizg.hr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Mon, 20 Feb 2023 20:29:27 +0530
+Message-ID: <CA+G9fYs4JsmNxX4+W=wijfSPdDsOy=SWLBSitZper5ncPpdxqA@mail.gmail.com>
+Subject: arm64: libgpiod: refcount_t: underflow; use-after-free.
+To:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        lkft-triage@lists.linaro.org
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ferry Toth <fntoth@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>, warthog618@gmail.com,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Feb 20, 2023 at 02:10:00PM +0100, Mirsad Todorovac wrote:
-> On 2/16/23 15:16, Bartosz Golaszewski wrote:
+Following kernel warning notices on qemu-arm64, qemu-arm and also on devices
+running Linux version v6.2.0 while running libgpiod tests.
 
-...
-
-> As Mr. McKenney once said, a bunch of monkeys with keyboard could
-> have done it in a considerable number of trials and errors ;-)
-> 
-> But here I have something that could potentially leak as well. I could not devise a
-> reproducer due to the leak being lightly triggered only in extreme memory contention.
-> 
-> See it for yourself:
-> 
-> drivers/gpio/gpio-sim.c:
->  301 static int gpio_sim_setup_sysfs(struct gpio_sim_chip *chip)
->  302 {
->  303         struct device_attribute *val_dev_attr, *pull_dev_attr;
->  304         struct gpio_sim_attribute *val_attr, *pull_attr;
->  305         unsigned int num_lines = chip->gc.ngpio;
->  306         struct device *dev = chip->gc.parent;
->  307         struct attribute_group *attr_group;
->  308         struct attribute **attrs;
->  309         int i, ret;
->  310
->  311         chip->attr_groups = devm_kcalloc(dev, sizeof(*chip->attr_groups),
->  312                                          num_lines + 1, GFP_KERNEL);
->  313         if (!chip->attr_groups)
->  314                 return -ENOMEM;
->  315
->  316         for (i = 0; i < num_lines; i++) {
->  317                 attr_group = devm_kzalloc(dev, sizeof(*attr_group), GFP_KERNEL);
->  318                 attrs = devm_kcalloc(dev, GPIO_SIM_NUM_ATTRS, sizeof(*attrs),
->  319                                      GFP_KERNEL);
->  320                 val_attr = devm_kzalloc(dev, sizeof(*val_attr), GFP_KERNEL);
->  321                 pull_attr = devm_kzalloc(dev, sizeof(*pull_attr), GFP_KERNEL);
->  322                 if (!attr_group || !attrs || !val_attr || !pull_attr)
->  323                         return -ENOMEM;
->  324
->  325                 attr_group->name = devm_kasprintf(dev, GFP_KERNEL,
->  326                                                   "sim_gpio%u", i);
->  327                 if (!attr_group->name)
->  328                         return -ENOMEM;
-> 
-> Apparently, if the memory allocation only partially succeeds, in the theoretical case
-> that the system is close to its kernel memory exhaustion, `return -ENOMEM` would not
-> free the partially succeeded allocs, would it?
-> 
-> To explain it better, I tried a version that is not yet full doing "all or nothing"
-> memory allocation for the gpio-sim driver, because I am not that familiar with the
-> driver internals.
-
-devm_*() mean that the resource allocation is made in a managed manner, so when
-it's done, it will be freed automatically.
-
-The question is: is the lifetime of the attr_groups should be lesser or the
-same as chip->gc.parent? Maybe it's incorrect to call devm_*() in the first place?
-
-Or maybe the chip->gc.parent should be changed to something else (actual GPIO
-device, but then it's unclear how to provide the attributes in non-racy way.
-
--- 
-With Best Regards,
-Andy Shevchenko
++ ./gpiod.sh /opt/libgpiod/bin/
+  [INFO]    libgpiod test suite
+  [INFO]    117 tests registered
+  [INFO]    checking the linux kernel version
+  [INFO]    kernel release is v6.2.0 - ok to run tests
+  [INFO]    using gpio-tools from '/usr/bin'
+[   10.499036] ------------[ cut here ]------------
+[   10.499656] refcount_t: underflow; use-after-free.
+[   10.500264] WARNING: CPU: 2 PID: 291 at lib/refcount.c:28
+refcount_warn_saturate+0xf4/0x144
+[   10.501306] Modules linked in: gpio_mockup(-) cfg80211 bluetooth
+rfkill crct10dif_ce fuse drm
+[   10.502364] CPU: 2 PID: 291 Comm: gpiod-test Not tainted 6.2.0 #1
+[   10.503229] Hardware name: linux,dummy-virt (DT)
+[   10.503883] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   10.505331] pc : refcount_warn_saturate+0xf4/0x144
+[   10.505723] lr : refcount_warn_saturate+0xf4/0x144
+[   10.506115] sp : ffff800008983cd0
+[   10.506391] x29: ffff800008983cd0 x28: ffff0000c4c4c100 x27: 0000000000000000
+[   10.506961] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+[   10.507533] x23: 0000000000000200 x22: ffff0000c4e66800 x21: ffff0000c7734640
+[   10.508104] x20: 0000000000000001 x19: ffff0000c7734600 x18: ffffffffffffffff
+[   10.508677] x17: 3d4d455453595342 x16: ffffcf0234432020 x15: ffff800088983957
+[   10.509424] x14: 0000000000000000 x13: 2e656572662d7265 x12: 7466612d65737520
+[   10.510003] x11: 3b776f6c66726564 x10: ffffcf02365db580 x9 : ffffcf0233b20138
+[   10.510575] x8 : 00000000ffffefff x7 : ffffcf02365db580 x6 : 0000000000000001
+[   10.511145] x5 : ffffcf023655f000 x4 : ffffcf023655f2e8 x3 : 0000000000000000
+[   10.511721] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0000c4c4c100
+[   10.512294] Call trace:
+[   10.512494]  refcount_warn_saturate+0xf4/0x144
+[   10.512971]  kobject_put+0x164/0x220
+[   10.513224]  fwnode_remove_software_node+0x44/0x60
+[   10.513554]  gpio_mockup_unregister_pdevs+0x54/0x70 [gpio_mockup]
+[   10.513970]  gpio_mockup_exit+0x10/0x328 [gpio_mockup]
+[   10.514322]  __arm64_sys_delete_module+0x190/0x2a0
+[   10.514653]  invoke_syscall+0x50/0x120
+[   10.514915]  el0_svc_common.constprop.0+0x104/0x124
+[   10.515277]  do_el0_svc+0x44/0xcc
+[   10.515541]  el0_svc+0x30/0x94
+[   10.515788]  el0t_64_sync_handler+0xbc/0x13c
+[   10.516126]  el0t_64_sync+0x190/0x194
+[   10.516419] ---[ end trace 0000000000000000 ]---
 
 
+Build and test logs,
+https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.2/testrun/14856342/suite/libgpiod/test/ctxless-get-value-single-line/log
+https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.2/testrun/14856342/suite/libgpiod/tests/
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
