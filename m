@@ -2,90 +2,161 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0885AC636D6
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Feb 2023 15:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2340C64ED6
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Feb 2023 18:40:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232321AbjBVPBx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 22 Feb 2023 10:01:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48168 "EHLO
+        id S232449AbjBVSkR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 22 Feb 2023 13:40:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232363AbjBVPBa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Feb 2023 10:01:30 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23EC53BD84;
-        Wed, 22 Feb 2023 07:01:02 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id cy6so26050256edb.5;
-        Wed, 22 Feb 2023 07:01:02 -0800 (PST)
+        with ESMTP id S232048AbjBVSkQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Feb 2023 13:40:16 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16C8A3CE28;
+        Wed, 22 Feb 2023 10:40:01 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id l25so8349732wrb.3;
+        Wed, 22 Feb 2023 10:40:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yN89DAJMRBXcVJVWoF647sPGNR5k1aPb4CYJyqyPfsI=;
-        b=FuFZGNy7pX+t95imynP1lkrz40gOGA5ZzTtvPgFiAYCISthy8lxNE3YoHVqsxxV+Ex
-         DT3rpldKsci1tcwzKXZRRS076maWBH8qDuEWAfUKiwkMN9fwgLEc23anls1RiUVhQIMS
-         fHWlFzbE6EXvxSelKkIyJ38VlUap+4xJF4VCMvxLvE99JrIwIc4sQGJEDkLonHjElfly
-         XDLMqSA1+n38So5Ogt7IL928vevQyjWGZVmuEz+9p8Y7CzXR0jcp1a3vx9PfDbKWc05A
-         +uR9CupPXC3leO0dhtIhBNCAjNpXAYQJ3EXlMwrrsjDgpkVYipLySJiEGXmKj2tbGEUx
-         JEEQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=foDA/GXxUeG6qywVw7pPHlQfm+Orh3kvLzj/my6QoE8=;
+        b=B9+WOGfkjvzGfunEXkLYy8KTjSrl99QhGvrJByDf0VqgZLm54rAB8+A9V8YhbSMxEv
+         BBVeVV1Kk+uc/mDULVvKuDcXyq/JGZ14j1nhe6Fiqk4cjafKSUB3jOUazpz0YqspXaot
+         o1vYvzu4/0RXvgATzshU0UETf2CZIIkkM2YOMMXZb/Y6z6pqxT5LKQYFNsfd3StDvWPI
+         jIUEIwgzsmqfLOoEgnnRUMLE54hbtE/zjEspIUang04Lj4OZ+F+IwDpkUW6Xjxnzd/5k
+         j8l4oMQcFZTAtrFtuzIXALV+kn6wQE+4Fi+ThhcG3XuAubClZdzey8Y7wEAnJJxKJdZx
+         q9SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yN89DAJMRBXcVJVWoF647sPGNR5k1aPb4CYJyqyPfsI=;
-        b=hI7XqgJTdGkrY8cBZzgBE6l8r7eqjWTxqBZ67j5f5nDCU48ed2ErhZ4iyjrvpVVa2K
-         W6x29EpdVivrOLkG3G9gme/ZZUK9OIU4uOH98FPtbHjWOqTQ8uTPRg5BE+tF9Uh3sJKo
-         b8L2zn/SMOnFYOZkM7l5IN0J50/xJKufOImeRMN07kMb+ext6d+QNHTPXKCO2KlpSePZ
-         8kc3er9bwhyB0IZHM3Yn1FLgo5VmwLoM1e8mkj9yoZhHATHue92a5WivCAj5Nicbol4L
-         vimQnmZssu+H8oy2Tf9Yf0j9VnqPYObcbl/mV69hNBDYJSuWH/K5koCqtIPrqAl1Krww
-         73Xg==
-X-Gm-Message-State: AO0yUKX4OblJc52vTQ/GdiWo0VFtfbWR9+RfiRfSxqC/JmoTJ6nK4yhr
-        lTzD52AVDXqJ8hZm159zr+w=
-X-Google-Smtp-Source: AK7set+P7v0pcUhYROkp+tnbnV1UtvndPMUZHU/DOCFNvfgS5U3L/ZWNhvfrVvrdbbTqNh6LCW/G4g==
-X-Received: by 2002:a17:907:6d03:b0:8b3:6da3:c788 with SMTP id sa3-20020a1709076d0300b008b36da3c788mr27810734ejc.51.1677078057740;
-        Wed, 22 Feb 2023 07:00:57 -0800 (PST)
-Received: from einstein.dilieto.eu (smtp.dilieto.eu. [188.68.43.228])
-        by smtp.gmail.com with ESMTPSA id j16-20020a508a90000000b004873927780bsm3685433edj.20.2023.02.22.07.00.56
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=foDA/GXxUeG6qywVw7pPHlQfm+Orh3kvLzj/my6QoE8=;
+        b=iZX5BryTfvDOinxdygNG7MffPa7cXFQbLToP8lnyCwsYiICByGyMGRNfI8DsIjaOZh
+         yJmuO2k1gy4vCIuSBStZ2cyRCQwadumPXIjeIbobx5qHdYl2LUJEENaKuf+yoOaVqJk/
+         6VnhW6FX/7f7rz4Ll+YaCqUQ7j4u54YyWojNKg5IAwHvkCCHr6PccvZv8RjrUaE64P9U
+         3cntJnwj9JM3TYi4aq0V1/0DuFLKTjvMhZ/ghOoZeMU2d+ON2ZT241GJPQ29/OcCtMQs
+         RcogyaHMGwKC+txQ+cLvW0pAC5x72lszK2zBYPtGvJw0lob/yTyjf3Pcls8VGduRXcRx
+         5D5Q==
+X-Gm-Message-State: AO0yUKXxmh6Mg4S8wtVwIH0yWsX2IOWlZ/q0GgDGXTKsnLSJZdrt0CAF
+        hv/7H8BoZaahBQonT0D3o80=
+X-Google-Smtp-Source: AK7set9VipcuXxYpnZ45Df1zEkwY+VzCevZIE9fa4nfCbZ7L/fI0ChM6/Zx2yWmI9RnPiMQlYfZ5Nw==
+X-Received: by 2002:a5d:67cc:0:b0:2c5:6016:496 with SMTP id n12-20020a5d67cc000000b002c560160496mr8555585wrw.27.1677091199479;
+        Wed, 22 Feb 2023 10:39:59 -0800 (PST)
+Received: from arinc9-PC.lan ([37.120.152.236])
+        by smtp.gmail.com with ESMTPSA id l18-20020a5d4112000000b002c56179d39esm9372845wrp.44.2023.02.22.10.39.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Feb 2023 07:00:57 -0800 (PST)
-Date:   Wed, 22 Feb 2023 16:00:54 +0100
-From:   Nicola Di Lieto <nicola.dilieto@gmail.com>
-To:     andy.shevchenko@gmail.com
-Cc:     Angelo Compagnucci <angelo.compagnucci@gmail.com>,
+        Wed, 22 Feb 2023 10:39:59 -0800 (PST)
+From:   arinc9.unal@gmail.com
+X-Google-Original-From: arinc.unal@arinc9.com
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] pwm: pwm-gpio: New driver
-Message-ID: <Y/YuJoxkz+o0Omie@einstein.dilieto.eu>
-References: <20201209072842.amvpwe37zvfmve3g@pengutronix.de>
- <20201211170432.6113-1-nicola.dilieto@gmail.com>
- <20201211170432.6113-2-nicola.dilieto@gmail.com>
- <20210117130434.663qpp6noujptdyt@pengutronix.de>
- <CACRpkdawMpuznr-XC2uvZm8PvOj-jObpnbz6iptV-Q4OFxjesw@mail.gmail.com>
- <CA+TH9VnrsSQDUfvXk8c+q6Sx2Jc5TCN5XLYCRLtgv55-6voLWg@mail.gmail.com>
- <Y/YPtJK8nVBthCML@surfacebook>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
+        linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        William Dean <williamsukatube@gmail.com>,
+        Daniel Golle <daniel@makrotopia.org>,
+        Daniel Santos <daniel.santos@pobox.com>,
+        Luiz Angelo Daros de Luca <luizluca@gmail.com>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Landen Chao <Landen.Chao@mediatek.com>,
+        DENG Qingfang <dqfext@gmail.com>,
+        Sean Wang <sean.wang@mediatek.com>, erkin.bozoglu@xeront.com
+Subject: [RFC PATCH 01/16] pinctrl: ralink: reintroduce ralink,rt2880-pinmux compatible string
+Date:   Wed, 22 Feb 2023 21:39:17 +0300
+Message-Id: <20230222183932.33267-2-arinc.unal@arinc9.com>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20230222183932.33267-1-arinc.unal@arinc9.com>
+References: <20230222183932.33267-1-arinc.unal@arinc9.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <Y/YPtJK8nVBthCML@surfacebook>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello Andy
+From: Arınç ÜNAL <arinc.unal@arinc9.com>
 
-On Wed, Feb 22, 2023 at 02:51:00PM +0200, andy.shevchenko@gmail.com wrote:
->
->Seems not much interest neither from community nor from author. Maybe later
->people will look into this?
->
+There have been stable releases with the ralink,rt2880-pinmux compatible
+string included. Having it removed breaks the ABI. Reintroduce it.
 
-It's not lack of interest, but rather lack of time. I should be able to 
-have a look at this sometime the week after next.
+Fixes: e5981cd46183 ("pinctrl: ralink: add new compatible strings for each pinctrl subdriver")
+Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+---
+ drivers/pinctrl/ralink/pinctrl-mt7620.c | 1 +
+ drivers/pinctrl/ralink/pinctrl-mt7621.c | 1 +
+ drivers/pinctrl/ralink/pinctrl-rt2880.c | 1 +
+ drivers/pinctrl/ralink/pinctrl-rt305x.c | 1 +
+ drivers/pinctrl/ralink/pinctrl-rt3883.c | 1 +
+ 5 files changed, 5 insertions(+)
 
-Nicola
+diff --git a/drivers/pinctrl/ralink/pinctrl-mt7620.c b/drivers/pinctrl/ralink/pinctrl-mt7620.c
+index 4e8d26bb3430..06b86c726839 100644
+--- a/drivers/pinctrl/ralink/pinctrl-mt7620.c
++++ b/drivers/pinctrl/ralink/pinctrl-mt7620.c
+@@ -372,6 +372,7 @@ static int mt7620_pinctrl_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id mt7620_pinctrl_match[] = {
+ 	{ .compatible = "ralink,mt7620-pinctrl" },
++	{ .compatible = "ralink,rt2880-pinmux" },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, mt7620_pinctrl_match);
+diff --git a/drivers/pinctrl/ralink/pinctrl-mt7621.c b/drivers/pinctrl/ralink/pinctrl-mt7621.c
+index eddc0ba6d468..fb5824922e78 100644
+--- a/drivers/pinctrl/ralink/pinctrl-mt7621.c
++++ b/drivers/pinctrl/ralink/pinctrl-mt7621.c
+@@ -97,6 +97,7 @@ static int mt7621_pinctrl_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id mt7621_pinctrl_match[] = {
+ 	{ .compatible = "ralink,mt7621-pinctrl" },
++	{ .compatible = "ralink,rt2880-pinmux" },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, mt7621_pinctrl_match);
+diff --git a/drivers/pinctrl/ralink/pinctrl-rt2880.c b/drivers/pinctrl/ralink/pinctrl-rt2880.c
+index 3e2f1aaaf095..d7a65fcc7755 100644
+--- a/drivers/pinctrl/ralink/pinctrl-rt2880.c
++++ b/drivers/pinctrl/ralink/pinctrl-rt2880.c
+@@ -41,6 +41,7 @@ static int rt2880_pinctrl_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id rt2880_pinctrl_match[] = {
+ 	{ .compatible = "ralink,rt2880-pinctrl" },
++	{ .compatible = "ralink,rt2880-pinmux" },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, rt2880_pinctrl_match);
+diff --git a/drivers/pinctrl/ralink/pinctrl-rt305x.c b/drivers/pinctrl/ralink/pinctrl-rt305x.c
+index bdaee5ce1ee0..f6092c64383e 100644
+--- a/drivers/pinctrl/ralink/pinctrl-rt305x.c
++++ b/drivers/pinctrl/ralink/pinctrl-rt305x.c
+@@ -118,6 +118,7 @@ static int rt305x_pinctrl_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id rt305x_pinctrl_match[] = {
+ 	{ .compatible = "ralink,rt305x-pinctrl" },
++	{ .compatible = "ralink,rt2880-pinmux" },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, rt305x_pinctrl_match);
+diff --git a/drivers/pinctrl/ralink/pinctrl-rt3883.c b/drivers/pinctrl/ralink/pinctrl-rt3883.c
+index 392208662355..5f766d76bafa 100644
+--- a/drivers/pinctrl/ralink/pinctrl-rt3883.c
++++ b/drivers/pinctrl/ralink/pinctrl-rt3883.c
+@@ -88,6 +88,7 @@ static int rt3883_pinctrl_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id rt3883_pinctrl_match[] = {
+ 	{ .compatible = "ralink,rt3883-pinctrl" },
++	{ .compatible = "ralink,rt2880-pinmux" },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, rt3883_pinctrl_match);
+-- 
+2.37.2
+
