@@ -2,90 +2,64 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B827EC61DA4
-	for <linux-gpio@archiver.kernel.org>; Wed, 22 Feb 2023 12:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E58C636D6
+	for <linux-gpio@archiver.kernel.org>; Wed, 22 Feb 2023 12:51:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231622AbjBVMhq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 22 Feb 2023 07:37:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36892 "EHLO
+        id S231299AbjBVMvE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 22 Feb 2023 07:51:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230440AbjBVMhp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Feb 2023 07:37:45 -0500
-Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90C7C39CE9
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Feb 2023 04:37:40 -0800 (PST)
+        with ESMTP id S232202AbjBVMvD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Feb 2023 07:51:03 -0500
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF81034C33
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Feb 2023 04:51:02 -0800 (PST)
 Received: from localhost (88-113-24-128.elisa-laajakaista.fi [88.113.24.128])
-        by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-        id 505041fe-b2ab-11ed-a2f4-005056bdd08f;
-        Wed, 22 Feb 2023 14:20:37 +0200 (EET)
+        by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+        id 8ed9ad1e-b2af-11ed-bd9b-005056bd6ce9;
+        Wed, 22 Feb 2023 14:51:00 +0200 (EET)
 From:   andy.shevchenko@gmail.com
-Date:   Wed, 22 Feb 2023 14:20:37 +0200
-To:     Keguang Zhang <keguang.zhang@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Subject: Re: [PATCH 3/4] gpio: loongson1: Add DT support
-Message-ID: <Y/YIlb8axBVVW3VV@surfacebook>
-References: <20230222111213.2241633-1-keguang.zhang@gmail.com>
- <20230222111213.2241633-4-keguang.zhang@gmail.com>
+Date:   Wed, 22 Feb 2023 14:51:00 +0200
+To:     Angelo Compagnucci <angelo.compagnucci@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Nicola Di Lieto <nicola.dilieto@gmail.com>,
+        linux-pwm@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] pwm: pwm-gpio: New driver
+Message-ID: <Y/YPtJK8nVBthCML@surfacebook>
+References: <20201209072842.amvpwe37zvfmve3g@pengutronix.de>
+ <20201211170432.6113-1-nicola.dilieto@gmail.com>
+ <20201211170432.6113-2-nicola.dilieto@gmail.com>
+ <20210117130434.663qpp6noujptdyt@pengutronix.de>
+ <CACRpkdawMpuznr-XC2uvZm8PvOj-jObpnbz6iptV-Q4OFxjesw@mail.gmail.com>
+ <CA+TH9VnrsSQDUfvXk8c+q6Sx2Jc5TCN5XLYCRLtgv55-6voLWg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230222111213.2241633-4-keguang.zhang@gmail.com>
+In-Reply-To: <CA+TH9VnrsSQDUfvXk8c+q6Sx2Jc5TCN5XLYCRLtgv55-6voLWg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Wed, Feb 22, 2023 at 07:12:12PM +0800, Keguang Zhang kirjoitti:
-> This patch adds DT support for Loongson-1 GPIO driver,
-> including the following changes.
-> - Add the of_match_table
-> - Parse the ngpios property
-> - Parse the alias id
-
-Split!
+Fri, Feb 10, 2023 at 10:54:49PM +0100, Angelo Compagnucci kirjoitti:
+> Il giorno ven 22 gen 2021 alle ore 11:20 Linus Walleij
+> <linus.walleij@linaro.org> ha scritto:
 
 ...
 
-> +	if (of_property_read_u32(dn, "ngpios", &ngpios)) {
-> +		dev_err(dev, "Missing ngpios OF property\n");
-> +		return -ENODEV;
-> +	}
+> More than a year passed from the last message, could we reopen the
+> discussion? I'd like to have this upstream!
 
-Why?! GPIO library has this already.
+Seems not much interest neither from community nor from author. Maybe later
+people will look into this?
 
-...
-
-> +	id = of_alias_get_id(dn, "gpio");
-> +	if (id < 0) {
-> +		dev_err(dev, "Couldn't get OF id\n");
-> +		return id;
-> +	}
-
-What is this for?
-
-...
-
-> +	ls1x_gc->gc.base = pdev->id * BITS_PER_LONG;
-> -	ls1x_gc->gc.base = pdev->id * 32;
-
-No way. This is change makes me thing that initially it's simply wrong. Please,
-just use -1 for the base.
-
-...
-
-> +static const struct of_device_id ls1x_gpio_dt_ids[] = {
-> +	{ .compatible = "loongson,ls1x-gpio", },
-
-Inner comma is not needed.
-
-> +	{ /* sentinel */ }
-> +};
-
-You missed MODULE_DEVICE_TABLE().
+P.S> FWIW, I have reviewed code more than a week ago.
 
 -- 
 With Best Regards,
