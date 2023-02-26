@@ -2,114 +2,77 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F22C7EE2E
-	for <linux-gpio@archiver.kernel.org>; Sat, 25 Feb 2023 20:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA48C7EE31
+	for <linux-gpio@archiver.kernel.org>; Sun, 26 Feb 2023 05:40:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbjBYUhT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 25 Feb 2023 15:37:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44912 "EHLO
+        id S229629AbjBZFkA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 26 Feb 2023 00:40:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229787AbjBYUgr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 25 Feb 2023 15:36:47 -0500
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50A0215573;
-        Sat, 25 Feb 2023 12:36:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1677357406; x=1708893406;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mqSM0I91U6IAY9Cj5vU5OR9snlGfnxVyIBIv1dpHmOw=;
-  b=Bc8vDyffWPwoQvDr3+HaxLxEwgwvvp73oq1rKkNkPwR0ZJezF9FZWKYA
-   rvOKLAEyppZeYd2PMK0hxsaDpEjGzyUSDZnLO64fRr83NRiM5B/c032U9
-   C6feXIJNeJKGDAACjd1CWSUGxl4E6WZrvat/DVwADarGXiEnhD+8qg0kZ
-   OyhtlPbiOUfDQgkhYjODzi6YSLnmEFdgJAYJXojaC8AtmKHGOM8UxVLs3
-   WCCBXTRYk2Uuo9bcEKZLNtB1XJTg4ByYoBTOYfQVb+EMmldqsUkVRtpYs
-   A6P4xpVMJYljnbOuU7JP+72IkQuzvL3Ua7lW514Nm7OHz2s/Qh3plA991
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10632"; a="419927863"
-X-IronPort-AV: E=Sophos;i="5.97,328,1669104000"; 
-   d="scan'208";a="419927863"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2023 12:36:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10632"; a="1002204939"
-X-IronPort-AV: E=Sophos;i="5.97,328,1669104000"; 
-   d="scan'208";a="1002204939"
-Received: from lkp-server01.sh.intel.com (HELO 3895f5c55ead) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 25 Feb 2023 12:36:42 -0800
-Received: from kbuild by 3895f5c55ead with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pW1He-0003Op-04;
-        Sat, 25 Feb 2023 20:36:42 +0000
-Date:   Sun, 26 Feb 2023 04:36:24 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Esteban Blanc <eblanc@baylibre.com>, linus.walleij@linaro.org,
-        lgirdwood@gmail.com, broonie@kernel.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org, jpanis@baylibre.com,
-        jneanne@baylibre.com
-Subject: Re: [PATCH INTERNAL v1 2/3] pinctrl: tps6594: add for TPS6594 PMIC
-Message-ID: <202302260423.CycoSTtT-lkp@intel.com>
-References: <20230224133129.887203-3-eblanc@baylibre.com>
+        with ESMTP id S229597AbjBZFj7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Feb 2023 00:39:59 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7B48136EA;
+        Sat, 25 Feb 2023 21:39:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=6v9IARzIwbKOte5wIp9AIhAolACRtWXmOhlJpgpaN3Y=; b=WFsJLwpKRp042RteZ5099Lv9Q/
+        IYDDh6FBSdDCOpOzVw/X0tnu3oyQrkokrHwzhI9BZmkcL2W81fDAIAwPZtDeOwBbD5LiqSfZa/TaB
+        Lj16t/8lxset8GyzVL5oZzP9mMoQ5JnAJ+9I/CkjkAET9HyYjdZvj62WRvNL7gUclDN8o9gL4wDyv
+        OMHZAZhkoYlAgnpKw9Cu0mI7tUhANa9sZD8/tMuyQ6/21I4TsXvPWoUaqOuJoDnsU4qrvp2ap3x6a
+        DqHfVoNpVCI8TDlyD9jlfsjY2MAvr8hXyCBU4NtKItIUSxIdYPtTOuNrmxqECDTyHhy+ElsYnLCMs
+        y0MfmFqw==;
+Received: from [2601:1c2:980:9ec0::df2f] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pW9lL-006qYL-Sq; Sun, 26 Feb 2023 05:39:56 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Michael Walle <michael@walle.cc>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
+Subject: [PATCH 3/8] gpio: GPIO_REGMAP: select REGMAP instead of depending on it
+Date:   Sat, 25 Feb 2023 21:39:48 -0800
+Message-Id: <20230226053953.4681-4-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230226053953.4681-1-rdunlap@infradead.org>
+References: <20230226053953.4681-1-rdunlap@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230224133129.887203-3-eblanc@baylibre.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Esteban,
+REGMAP is a hidden (not user visible) symbol. Users cannot set it
+directly thru "make *config", so drivers should select it instead of
+depending on it if they need it.
 
-Thank you for the patch! Perhaps something to improve:
+Consistently using "select" or "depends on" can also help reduce
+Kconfig circular dependency issues.
 
-[auto build test WARNING on linusw-pinctrl/devel]
-[also build test WARNING on linusw-pinctrl/for-next broonie-regulator/for-next abelloni/rtc-next linus/master v6.2 next-20230225]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Therefore, change the use of "depends on REGMAP" to "select REGMAP".
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Esteban-Blanc/rtc-tps6594-add-driver-for-TPS6594-PMIC-RTC/20230224-213323
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20230224133129.887203-3-eblanc%40baylibre.com
-patch subject: [PATCH INTERNAL v1 2/3] pinctrl: tps6594: add for TPS6594 PMIC
-config: x86_64-allmodconfig (https://download.01.org/0day-ci/archive/20230226/202302260423.CycoSTtT-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/5abddc736234d1cd3e28ef7e205bc0bfef263c15
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Esteban-Blanc/rtc-tps6594-add-driver-for-TPS6594-PMIC-RTC/20230224-213323
-        git checkout 5abddc736234d1cd3e28ef7e205bc0bfef263c15
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash drivers/pinctrl/
+Fixes: ebe363197e52 ("gpio: add a reusable generic gpio_chip using regmap")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Michael Walle <michael@walle.cc>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org
+---
+ drivers/gpio/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202302260423.CycoSTtT-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/pinctrl/pinctrl-tps6594.c:8:9: warning: 'DEBUG' macro redefined [-Wmacro-redefined]
-   #define DEBUG
-           ^
-   <command line>:6:9: note: previous definition is here
-   #define DEBUG 1
-           ^
-   1 warning generated.
-
-
-vim +/DEBUG +8 drivers/pinctrl/pinctrl-tps6594.c
-
-   > 8	#define DEBUG
-     9	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+diff -- a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -100,7 +100,7 @@ config GPIO_GENERIC
+ 	tristate
+ 
+ config GPIO_REGMAP
+-	depends on REGMAP
++	select REGMAP
+ 	tristate
+ 
+ # put drivers in the right section, in alphabetical order
