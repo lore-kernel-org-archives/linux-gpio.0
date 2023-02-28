@@ -2,136 +2,72 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8171C64ED6
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Feb 2023 19:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F39C64EC4
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Feb 2023 20:44:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229525AbjB1TnA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Feb 2023 14:43:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44120 "EHLO
+        id S229698AbjB1UoI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Feb 2023 15:44:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229571AbjB1TnA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Feb 2023 14:43:00 -0500
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A2525FFD
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Feb 2023 11:42:57 -0800 (PST)
-Received: by mail-qt1-x82d.google.com with SMTP id c18so11873703qte.5
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Feb 2023 11:42:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1677613376;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eOLmVC7ejN2NslNDrJPSovA+e0oAlLmLUDFX6bU2iDE=;
-        b=UOmMXfoWjXX3L7h271Pz1av820iIZFA6qfstUFcokEpR9qGkZdJUsPgoqaNNNee2XO
-         +E/CShNg0tEKk1ccgiw20tlWXgouSakcR/Yz7Higekzc8eVeMd9e7ejuL2xg1mZj5ooc
-         w8gl+kFZD0ho4yeqrVBup5kRcCCpQzRNDwACI7PZ0i77aS9RkljAWp5jVAj3lX22oaaU
-         EA9wo2UkVIR2OCAR/XYxyo8SHC9zPHzGEKMJWtaxmV0upOIAip9G2fvIufJqHOCcBMHt
-         R3w4Ud5b4t8JbXK/JdBtjCgrSKhZiF3/6o1Lk0ORnMMYQxZJBvwvo13vsqcre+Tjuwj9
-         pxgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677613376;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eOLmVC7ejN2NslNDrJPSovA+e0oAlLmLUDFX6bU2iDE=;
-        b=lFNHyAzlh1lUgDgx7Lbu772M0cUlPAuyWQYyUg8mCBlw+wNbn1miXbN086PLxAPsZf
-         onhqxGIzrapcn9DPKUmQ9VvYQ50c6e1omQ4xaR4xIlnG4UOk1Wuj6enPM8x/rM4o5yGh
-         FqdvDwEY01ML8m7Pwx23hPI/yJExJ26Fm0hyXFt5zp9usGO07QNsu6Gc9/wJxAKuUUYc
-         hokakdazTdKbHMRBveint4wIB21QrfqcYmCehiHS8E3xj2G9MV7PkJDkAP1UnWV1jGnf
-         cRz8Enzbnx5TrMvUDTdHhygXjdChSA7lFANoChc9pniX7dUlpL2ktDjH9bLtxCGKiqQJ
-         45eg==
-X-Gm-Message-State: AO0yUKVCBREDc3xkExJRSsKSyrk3Ch1Q38UEpK82leoI9phOCGBGvR5s
-        1yzltycwA19YQzop6e89aFVoaw==
-X-Google-Smtp-Source: AK7set+ttYqmHcaA29zqYdFS6PsD1sZyWny+1cUSaxr3LNkFIkzE2W7iOASVWMBd8RCUp7xYc+8/lQ==
-X-Received: by 2002:a05:622a:1ba4:b0:3bc:dd21:4a0 with SMTP id bp36-20020a05622a1ba400b003bcdd2104a0mr7411969qtb.30.1677613376600;
-        Tue, 28 Feb 2023 11:42:56 -0800 (PST)
-Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id g3-20020ac84803000000b003be56bdd3b1sm6857999qtq.92.2023.02.28.11.42.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Feb 2023 11:42:56 -0800 (PST)
-Date:   Mon, 27 Feb 2023 21:40:47 -0500
-From:   William Breathitt Gray <william.gray@linaro.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linus.walleij@linaro.org, brgl@bgdev.pl,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        michael@walle.cc, quarium@gmail.com, jhentges@accesio.com,
-        jay.dolan@accesio.com
-Subject: Re: [PATCH 0/3] Migrate PCIe-IDIO-24 GPIO driver to the regmap API
-Message-ID: <Y/1pr33s5IAE4QJS@fedora>
-References: <cover.1677547393.git.william.gray@linaro.org>
- <Y/5RfjJCDdrZbHgJ@sirena.org.uk>
- <Y/1ksJHUENCwg/jy@fedora>
- <Y/5V7a4M+LhZQhsM@sirena.org.uk>
+        with ESMTP id S229529AbjB1UoI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Feb 2023 15:44:08 -0500
+Received: from mail.3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4272359FB
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Feb 2023 12:44:07 -0800 (PST)
+Received: from 3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.3ffe.de (Postfix) with ESMTPSA id 28FD46D5;
+        Tue, 28 Feb 2023 21:44:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
+        t=1677617043;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=S1v6w6DTzkEbKtrSUwNsxP5WAtnW7YNf54tXklMOUDM=;
+        b=wRdO30Sk6qRlzSXmrtf4HggMiB91LHLcJdgiNxZpkagN39Hmso7NJTx/df+RhAXG93pE7k
+        gcd8XZ5C2p8MocFyLMUP5omGpE3HxJS5ktYgCVPJxAMLIKw85JlK0T55qNlVyv0gyeNXq1
+        PJRbugYK6/axJs9rG8ORWbkmeCrbOoIJ0it6Un6X29L7pn2o7MCc3+3F62OTL3pJISO5Lv
+        LRz7yveLxyrpGsEEsqqzcRV/CQTssk5VoMvr0MTHiJi2JZ5vFVmEFzwB1Y+PYHmYvhOAf8
+        8i2bidRyuFwni+cbhqYX3DRVI2ijaaNeiKNn4c05JCUQWU+K6flyvH5f/L3Fng==
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="1ZpSqVT8lVV/SEQV"
-Content-Disposition: inline
-In-Reply-To: <Y/5V7a4M+LhZQhsM@sirena.org.uk>
+Date:   Tue, 28 Feb 2023 21:44:02 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     William Breathitt Gray <william.gray@linaro.org>
+Cc:     linus.walleij@linaro.org, brgl@bgdev.pl, broonie@kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quarium@gmail.com, jhentges@accesio.com, jay.dolan@accesio.com
+Subject: Re: [PATCH 2/3] gpio: gpio-regmap: Expose struct gpio_regmap in
+ linux/gpio/regmap.h
+In-Reply-To: <5c0354c87d4d2a082cf0c331076d5aad18a93169.1677547393.git.william.gray@linaro.org>
+References: <cover.1677547393.git.william.gray@linaro.org>
+ <5c0354c87d4d2a082cf0c331076d5aad18a93169.1677547393.git.william.gray@linaro.org>
+User-Agent: Roundcube Webmail/1.4.13
+Message-ID: <0e0901de3668baec5ce7cd4836c045a5@walle.cc>
+X-Sender: michael@walle.cc
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Hi,
 
---1ZpSqVT8lVV/SEQV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Am 2023-02-28 02:53, schrieb William Breathitt Gray:
+> A struct gpio_regmap is passed as a parameter for reg_mask_xlate(), but
+> for callbacks to access its members the declaration must be exposed.
 
-On Tue, Feb 28, 2023 at 07:28:45PM +0000, Mark Brown wrote:
-> On Mon, Feb 27, 2023 at 09:19:28PM -0500, William Breathitt Gray wrote:
-> > On Tue, Feb 28, 2023 at 07:09:50PM +0000, Mark Brown wrote:
->=20
-> > > The values from the config buffer are supposed to be written out in
-> > > regmap_irq_sync_unlock() - why is something custom needed here?
->=20
-> > The PCIe-IDIO-24 "COS Enable" serves a dual purpose of interrupt
-> > enabling/disabling as well as configuring the interrupt types. Since
-> > this register is used for masking, config buffer would clobber the
-> > register if we use it in this particular case. Instead, we ignore the
-> > config buffer and configure the type directly for the device (handling
-> > the case where interrupts are masked and shouldn't be enabled).
->=20
-> Could you be more concrete about what's going on here please?  In what
-> way does this "COS Enable" serve these dual functions and why do they
-> clobber each other?
+That parameter is only an opaque one to call any gpio_regmap_*().
 
-An explanation of the device registers is provided in [PATCH 3/3];
-here's the relevant portion:
+> Move the struct gpio_regmap declaration from drivers/gpio/gpio-regmap.c
+> to include/linux/gpio/regmap.h so callbacks can properly interact with
+> struct gpio_regmap members.
 
-The COS Enable register is used to enable/disable interrupts and
-configure the interrupt levels; each bit maps to a group of eight inputs
-as described below:
+That struct should be kept private. It seems you only need the
+regmap. Either introduce a gpio_regmap_get_regmap() or add the
+regmap to a private struct and use gpio_regmap_get_drvdata().
 
-    Bit 0: IRQ EN Rising Edge IN0-7
-    Bit 1: IRQ EN Rising Edge IN8-15
-    Bit 2: IRQ EN Rising Edge IN16-23
-    Bit 3: IRQ EN Rising Edge TTL0-7
-    Bit 4: IRQ EN Falling Edge IN0-7
-    Bit 5: IRQ EN Falling Edge IN8-15
-    Bit 6: IRQ EN Falling Edge IN16-23
-    Bit 7: IRQ EN Falling Edge TTL0-7
-
-An interrupt is asserted when a change-of-state matching the interrupt
-level configuration respective for a particular group of eight inputs
-with enabled COS is detected.
-
-So in order to mask lines, the respective bits need to be set to 0.
-However, if we use the regmap-irq config buffer to set the type, this
-mask will be cloberred and the disabled lines become enabled. To prevent
-the clobber, we can save the type configuration to irq_drv_data for use
-later in handle_mask_sync() and then update the type in this COS Enable
-register only when the lines are unmasked.
-
-William Breathitt Gray
-
---1ZpSqVT8lVV/SEQV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCY/1prwAKCRC1SFbKvhIj
-K9s+AQCtKcJaTgx6IbX3HD2eUty2muCO/guMz/Cm1PjLitiLuQEAlSup7rwoNaBJ
-Pa3mDIMAMQpO0Kugdp57+rXzMlVsvgU=
-=nE8M
------END PGP SIGNATURE-----
-
---1ZpSqVT8lVV/SEQV--
+-michael
