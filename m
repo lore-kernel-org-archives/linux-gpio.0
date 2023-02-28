@@ -2,72 +2,112 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F39C64EC4
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Feb 2023 20:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80ED1C64EC4
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Feb 2023 20:50:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbjB1UoI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Feb 2023 15:44:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33190 "EHLO
+        id S229841AbjB1Uuu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Feb 2023 15:50:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbjB1UoI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Feb 2023 15:44:08 -0500
-Received: from mail.3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4272359FB
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Feb 2023 12:44:07 -0800 (PST)
-Received: from 3ffe.de (0001.3ffe.de [IPv6:2a01:4f8:c0c:9d57::1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.3ffe.de (Postfix) with ESMTPSA id 28FD46D5;
-        Tue, 28 Feb 2023 21:44:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-        t=1677617043;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=S1v6w6DTzkEbKtrSUwNsxP5WAtnW7YNf54tXklMOUDM=;
-        b=wRdO30Sk6qRlzSXmrtf4HggMiB91LHLcJdgiNxZpkagN39Hmso7NJTx/df+RhAXG93pE7k
-        gcd8XZ5C2p8MocFyLMUP5omGpE3HxJS5ktYgCVPJxAMLIKw85JlK0T55qNlVyv0gyeNXq1
-        PJRbugYK6/axJs9rG8ORWbkmeCrbOoIJ0it6Un6X29L7pn2o7MCc3+3F62OTL3pJISO5Lv
-        LRz7yveLxyrpGsEEsqqzcRV/CQTssk5VoMvr0MTHiJi2JZ5vFVmEFzwB1Y+PYHmYvhOAf8
-        8i2bidRyuFwni+cbhqYX3DRVI2ijaaNeiKNn4c05JCUQWU+K6flyvH5f/L3Fng==
-MIME-Version: 1.0
-Date:   Tue, 28 Feb 2023 21:44:02 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     William Breathitt Gray <william.gray@linaro.org>
+        with ESMTP id S229786AbjB1Uuu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Feb 2023 15:50:50 -0500
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BD7E9EEC
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Feb 2023 12:50:49 -0800 (PST)
+Received: by mail-qt1-x831.google.com with SMTP id z6so12194912qtv.0
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Feb 2023 12:50:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1677617448;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9V0E1rJTrvC5d+cKJrObAJitCaY9TIGIgqzXrqAQgnE=;
+        b=ADDop40f3f2P+t2JdmV8VSwYnKONB/KR2gFYPXPVCIp1u+yUIgg/HoVlKadQrcrKFN
+         lT9vBq+1iBO/LhKfUhNXi+UIzRphcKQVwj+bxdvo/BBAiNHlLL8Dpnn4iCz3UyTUXzK4
+         BOUTEMNH28JsmSXIRicAFcAkJVMK5R62eZQoV8JoG9Zi89Q5BMOVvUWpmPKMUa633+R+
+         Fh1PHh1udOznnKxlwFN7+rO3kFUUJ9iUyLlKsWrFaszt/drasVqM/2Dh6Bec7ukUAVY/
+         sWsuMJRiEQTn+IwI0BnEwICbHkPEkWDRPZYcrMiXkV/B/QKw+PLDurNN3uLhNE+SO/05
+         XguQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677617448;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9V0E1rJTrvC5d+cKJrObAJitCaY9TIGIgqzXrqAQgnE=;
+        b=NZsz4WFtowirNGXrUpn9VLFUgZ9+GElqT6HKY81WYWP53PGMu8gsmn6wjTCAh5+uKq
+         hiEevsATznwRRm2TO2e1JGaalquGKAX8yoRfcGuHhLg58ol+OgkF22QFZfLFPI+T3lAj
+         jzmn9lWgueVeAjNkbR7mONai6/2pJoNz5qGZYUnSgqhDc8imq10pvD1x2AiiRs8F6h6h
+         nqrpeucSjHC/RmwgqzQAGhtqbt36p9GHi2ycYxXUpXpLF4qahnNcdPyRzf5OG+Mqhh5r
+         x6EAuAHJYRVUqbSaFFjHqKdnmv6gtyYSOEapYlI0HPZy9A8lZUVJmhqAEcBHbQSmUk9G
+         JDVQ==
+X-Gm-Message-State: AO0yUKUluoiFpCmUxFGfyLxjqrpGPWCyY3bZQIWz0Fm0Z9uyHCW3pJIX
+        UDJ3YM8BwcBGyB4twriEZ/h8hQ==
+X-Google-Smtp-Source: AK7set+GOU+U/LQWVOHF8IMoL9BLrOCNDHLn5apqJd0S9LVhnZZmMp5D/YOLRluf1Ghyk2KNBH2lfw==
+X-Received: by 2002:a05:622a:50:b0:3bf:c6c9:2f29 with SMTP id y16-20020a05622a005000b003bfc6c92f29mr7906472qtw.27.1677617448146;
+        Tue, 28 Feb 2023 12:50:48 -0800 (PST)
+Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id r23-20020ac85217000000b003b8238114d9sm7047639qtn.12.2023.02.28.12.50.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Feb 2023 12:50:47 -0800 (PST)
+Date:   Mon, 27 Feb 2023 22:12:27 -0500
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     Michael Walle <michael@walle.cc>
 Cc:     linus.walleij@linaro.org, brgl@bgdev.pl, broonie@kernel.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         quarium@gmail.com, jhentges@accesio.com, jay.dolan@accesio.com
 Subject: Re: [PATCH 2/3] gpio: gpio-regmap: Expose struct gpio_regmap in
  linux/gpio/regmap.h
-In-Reply-To: <5c0354c87d4d2a082cf0c331076d5aad18a93169.1677547393.git.william.gray@linaro.org>
+Message-ID: <Y/1xG+K1yzcRZtZ4@fedora>
 References: <cover.1677547393.git.william.gray@linaro.org>
  <5c0354c87d4d2a082cf0c331076d5aad18a93169.1677547393.git.william.gray@linaro.org>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <0e0901de3668baec5ce7cd4836c045a5@walle.cc>
-X-Sender: michael@walle.cc
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+ <0e0901de3668baec5ce7cd4836c045a5@walle.cc>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4P2X6kH733MEoG5H"
+Content-Disposition: inline
+In-Reply-To: <0e0901de3668baec5ce7cd4836c045a5@walle.cc>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
 
-Am 2023-02-28 02:53, schrieb William Breathitt Gray:
-> A struct gpio_regmap is passed as a parameter for reg_mask_xlate(), but
-> for callbacks to access its members the declaration must be exposed.
+--4P2X6kH733MEoG5H
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That parameter is only an opaque one to call any gpio_regmap_*().
+On Tue, Feb 28, 2023 at 09:44:02PM +0100, Michael Walle wrote:
+> Hi,
+>=20
+> Am 2023-02-28 02:53, schrieb William Breathitt Gray:
+> > A struct gpio_regmap is passed as a parameter for reg_mask_xlate(), but
+> > for callbacks to access its members the declaration must be exposed.
+>=20
+> That parameter is only an opaque one to call any gpio_regmap_*().
+>=20
+> > Move the struct gpio_regmap declaration from drivers/gpio/gpio-regmap.c
+> > to include/linux/gpio/regmap.h so callbacks can properly interact with
+> > struct gpio_regmap members.
+>=20
+> That struct should be kept private. It seems you only need the
+> regmap. Either introduce a gpio_regmap_get_regmap() or add the
+> regmap to a private struct and use gpio_regmap_get_drvdata().
+>=20
+> -michael
 
-> Move the struct gpio_regmap declaration from drivers/gpio/gpio-regmap.c
-> to include/linux/gpio/regmap.h so callbacks can properly interact with
-> struct gpio_regmap members.
+Ah, I'll drop this patch then and use gpio_regmap_get_drvdata() in v2
+instead to get access to the regmap.
 
-That struct should be kept private. It seems you only need the
-regmap. Either introduce a gpio_regmap_get_regmap() or add the
-regmap to a private struct and use gpio_regmap_get_drvdata().
+William Breathitt Gray
 
--michael
+--4P2X6kH733MEoG5H
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCY/1xGwAKCRC1SFbKvhIj
+K6wQAQDYbtyg6tuPPY4lER4AZoJHKCG9Dw5uTQjYToENfO9mhAEAyhvpWcsNNt50
+RwPbG2WFbcZbFB7Ihb9hV9MEZyE9Kg4=
+=JR+8
+-----END PGP SIGNATURE-----
+
+--4P2X6kH733MEoG5H--
