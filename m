@@ -2,170 +2,203 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6370C7EE30
-	for <linux-gpio@archiver.kernel.org>; Wed,  1 Mar 2023 09:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BDAC7EE31
+	for <linux-gpio@archiver.kernel.org>; Wed,  1 Mar 2023 12:47:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229774AbjCAJud (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 1 Mar 2023 04:50:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35866 "EHLO
+        id S229874AbjCAMrx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 1 Mar 2023 07:47:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229511AbjCAJuc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Mar 2023 04:50:32 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48F2925B8C;
-        Wed,  1 Mar 2023 01:50:28 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id cq23so51519097edb.1;
-        Wed, 01 Mar 2023 01:50:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/qA5ZFeLE/hhjzy4kqiXBkHpSYNDEtXNEiCoxkQ8GIE=;
-        b=pTF9D0MQn3mmpu9pJ5FXzNm4p5KcIqLVfIWv4wB+m5QZu8tMyVdkm2OpYEspiGmjx5
-         U1Ahqjsg2Oh9DMKimZ8JAnVoPGk6CxyDyRAu0SDK3RCryD+MxCKULCioq/JfE5HciOHv
-         np1+QkGGGoeLOlncFW3QOlik6qnCjItl6rIjki3yBeLExPeruxvSs/gxGwRUvhnCuBlY
-         4Bb2RRpNF3uBIyREoXUgMzAEojd+s2IuoJMg9IKffZTQxnaAc0hKn4Yjb9jLXjPb+WmA
-         IIHQUGxRwcJcJV97/gdILakqjgLoeL7X/EdPx+cskP2SzD91AsT6gbsBZUq2D8vkXh7q
-         D8Bg==
+        with ESMTP id S229652AbjCAMrw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Mar 2023 07:47:52 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 776D13D911
+        for <linux-gpio@vger.kernel.org>; Wed,  1 Mar 2023 04:47:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1677674832;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PrHWi0O3bp5TW073HxIoo2GqwQh60ydUW1vLbyoS8FU=;
+        b=VTPJg8i+eYq5rBgoF9XUbb1GuYajScIVeggUcrjkeI32WpQI3RS82/lBZAsq8oUj5cNyyU
+        E2AUqjrO63uzQlZ7H8293k4dZx2/xUL9PL/AcmBTEL52x7QfEweiguAlXhYCTO3FRE77fu
+        /vjPNFXUOAyeR/OFdTI+Hqjg1G4KFe4=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-46-n9ZlHrR3NaiFakCGhMubDQ-1; Wed, 01 Mar 2023 07:47:10 -0500
+X-MC-Unique: n9ZlHrR3NaiFakCGhMubDQ-1
+Received: by mail-ed1-f72.google.com with SMTP id q13-20020a5085cd000000b004af50de0bcfso19279269edh.15
+        for <linux-gpio@vger.kernel.org>; Wed, 01 Mar 2023 04:47:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/qA5ZFeLE/hhjzy4kqiXBkHpSYNDEtXNEiCoxkQ8GIE=;
-        b=2xhTJEvb/xdKW3KLuQrzn745W5dv0P54eLvDpyIP5KA20Lwi7hWHS6y4AAkTOHWrMs
-         ah4F2hNvvv4b2UQyhREwM2YY5a1sOGds1QdGjcLajEHmhHaGewW9Bjxc+oePKOCwx3O6
-         i9OHyTYvXt84cOsSm+6DhX9h/at+Dz1qX7UxJ9hpcHR3dr+Jv4q7tgJBx+Nt4Yu7fUHK
-         mt8qFXHfAk8h74hEXfX5xP4uyPr7/udeeO/V4zp+ySNg3zU5exqx6lCOHkuza4sFhDo6
-         AO4CHTWiGUBzv6pdmUjTQcLTQbp1a5TfAOK5wNRf1HLxSISh9ZChpI1wQlpgjtsng9qg
-         IBLA==
-X-Gm-Message-State: AO0yUKUjNpXM+ZnRMbPLMEqu5jx8BfYtMi8Jh7LMzm5jHExcOVvEu4z4
-        9HxuXlnx1ccqj+u0zdEs+5NyIMNBmBZiHTiy1qcJt1Dj7H0=
-X-Google-Smtp-Source: AK7set8Y0j2oUGKL6afGBF88DWXfyo/9L2sEQMoOqwHMjnBv0LEDByGQxw35zwIwVsdWmtF/I/qRg/P5RfUEKF3D/jE=
-X-Received: by 2002:a50:f695:0:b0:4bb:e549:a2ad with SMTP id
- d21-20020a50f695000000b004bbe549a2admr872671edn.4.1677664226668; Wed, 01 Mar
- 2023 01:50:26 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PrHWi0O3bp5TW073HxIoo2GqwQh60ydUW1vLbyoS8FU=;
+        b=8N1BbLgs6WFP05T7meWcERcu3GqoJnjvkKCsV5zIYj4/W0oEbCuDO99YM8oEh7NHFR
+         5DhZbATATAFcxRwIEnJwb0ltVXmX36q1J7n3tG2/JLjdHl5Mm2vqHku9Up5IeKpUCbjO
+         E/Nn1M2JQ8B/no5gkOULXD+Z2JcXOmEOvWwpp1WTeRKZczkz2b24KTLWcc3UqCY6zxU/
+         Fs81pX8Gp2SkxInnemO8O+JSikSmKCeWzdMijnC4KNQ6B8Q3EmAWjT7t6HFND0UR4xVE
+         GzyFMhinmKmw+FHaSNs3Oq/FIssjLJf/buue9d/6mZCBZ5gCDeGfkuAGd9q8eKL0tW7Y
+         iQNg==
+X-Gm-Message-State: AO0yUKXINn+yuNa0oxblJRs4hxLyYXomh1NzF2Zop85O3KjFXc/nytfX
+        pQLPalnRLOIZ5uxXxEGPd/LrWzstxvOIRT1RZsOxjo339cgRyz4z043sx53wDMror5b9dsHQBil
+        9daEuYjmHI3h+LXUGtfO7iQ==
+X-Received: by 2002:aa7:d6c4:0:b0:4af:59c0:744a with SMTP id x4-20020aa7d6c4000000b004af59c0744amr7757576edr.24.1677674829574;
+        Wed, 01 Mar 2023 04:47:09 -0800 (PST)
+X-Google-Smtp-Source: AK7set/gegt3wNPFIA5UaAFSkM0H/Cu2JETEa5VzADkRpzuOeLZLY8c4YHH4dVV9FidRJQJWbeU9sQ==
+X-Received: by 2002:aa7:d6c4:0:b0:4af:59c0:744a with SMTP id x4-20020aa7d6c4000000b004af59c0744amr7757547edr.24.1677674829268;
+        Wed, 01 Mar 2023 04:47:09 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id b18-20020a50b412000000b004bda465da32sm374934edh.1.2023.03.01.04.47.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Mar 2023 04:47:08 -0800 (PST)
+Message-ID: <5bb49015-0a9c-5b9d-b22c-38011439c984@redhat.com>
+Date:   Wed, 1 Mar 2023 13:47:07 +0100
 MIME-Version: 1.0
-References: <20230222111213.2241633-1-keguang.zhang@gmail.com>
- <20230222111213.2241633-5-keguang.zhang@gmail.com> <18d1048e-c66b-fea8-2755-6c1c6e23fde9@linaro.org>
-In-Reply-To: <18d1048e-c66b-fea8-2755-6c1c6e23fde9@linaro.org>
-From:   Kelvin Cheung <keguang.zhang@gmail.com>
-Date:   Wed, 1 Mar 2023 17:50:10 +0800
-Message-ID: <CAJhJPsUOYJ6B=YSiZxDe3_h5+Rix_uuFvUDbo9wO084N71Q+jQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] dt-bindings: gpio: Add Loongson-1 GPIO
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 0/8] drivers: select REGMAP instead of depending on it
+Content-Language: en-US, nl
+To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc:     Andrew Jeffery <andrew@aj.id.au>, Corey Minyard <minyard@acm.org>,
+        openipmi-developer@lists.sourceforge.net,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Riku Voipio <riku.voipio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Michael Walle <michael@walle.cc>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-gpio@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        Michael Shych <michaelsh@nvidia.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        platform-driver-x86@vger.kernel.org,
+        Yegnesh S Iyer <yegnesh.s.iyer@intel.com>,
+        Bin Gao <bin.gao@intel.com>, Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>, linux-pm@vger.kernel.org,
+        Oskar Senft <osk@google.com>, linux-serial@vger.kernel.org
+References: <20230226053953.4681-1-rdunlap@infradead.org>
+ <7dd27ec5-0619-128d-8407-6711a05ef271@redhat.com>
+ <6a95a337-2972-427f-635d-5ef4e91a82fa@infradead.org>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <6a95a337-2972-427f-635d-5ef4e91a82fa@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Feb 22, 2023 at 8:35=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 22/02/2023 12:12, Keguang Zhang wrote:
-> > Add devicetree binding document for Loongson-1 GPIO.
-> >
-> > Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
-> > ---
-> >  .../bindings/gpio/loongson,ls1x-gpio.yaml     | 60 +++++++++++++++++++
-> >  1 file changed, 60 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/gpio/loongson,ls1=
-x-gpio.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls1x-gpio.=
-yaml b/Documentation/devicetree/bindings/gpio/loongson,ls1x-gpio.yaml
-> > new file mode 100644
-> > index 000000000000..e4ab49d48fae
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/gpio/loongson,ls1x-gpio.yaml
-> > @@ -0,0 +1,60 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/gpio/loongson,ls1x-gpio.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Loongson-1 GPIO controller
-> > +
-> > +maintainers:
-> > +  - Keguang Zhang <keguang.zhang@gmail.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: loongson,ls1x-gpio
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  gpio-controller: true
-> > +
-> > +  "#gpio-cells":
-> > +    const: 2
-> > +
-> > +  ngpios:
-> > +    minimum: 1
-> > +    maximum: 32
->
-> Isn't this fixed at 32? Do you have hardware with different number of GPI=
-Os?
->
-Yes. The GPIO number of some groups is less than 32.
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - gpio-controller
-> > +  - '#gpio-cells'
->
-> Use consistent quotes - either " or '
->
-Will do.
+Hi,
 
-> > +  - ngpios
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    gpio0: gpio@1fd010c0 {
-> > +        compatible =3D "loongson,ls1x-gpio";
-> > +        reg =3D <0x1fd010c0 0x4>;
-> > +
-> > +        gpio-controller;
-> > +        #gpio-cells =3D <2>;
-> > +
-> > +        ngpios =3D <32>;
-> > +    };
-> > +
-> > +  - |
-> > +    gpio1: gpio@1fd010c4 {
-> > +        compatible =3D "loongson,ls1x-gpio";
-> > +        reg =3D <0x1fd010c4 0x4>;
-> > +
-> > +        gpio-controller;
-> > +        #gpio-cells =3D <2>;
-> > +
-> > +        ngpios =3D <32>;
-> > +    };
->
-> These are two the same examples, keep only one.
->
-Will do.
+On 2/27/23 17:07, Randy Dunlap wrote:
+> 
+> 
+> On 2/27/23 01:31, Hans de Goede wrote:
+>> Hi Randy,
+>>
+>> On 2/26/23 06:39, Randy Dunlap wrote:
+>>> REGMAP is a hidden (not user visible) symbol. Users cannot set it
+>>> directly thru "make *config", so drivers should select it instead of
+>>> depending on it if they need it.
+>>>
+>>> Consistently using "select" or "depends on" can also help reduce
+>>> Kconfig circular dependency issues.
+>>>
+>>> REGMAP is selected 94 times and is depended on 11 times in
+>>> current linux-next. Eliminate the uses of "depends on" by
+>>> converting them to "select".
+>>
+>> Thank you for your work on this. Mixing of depends on vs select
+>> is a real problem with many Kconfig symbols.
+>>
+>>>  [PATCH 1/8] ipmi: ASPEED_BT_IPMI_BMC: select REGMAP_MMIO instead of depending on it
+>>>  [PATCH 2/8] clk: HI655X: select REGMAP instead of depending on it
+>>>  [PATCH 3/8] gpio: GPIO_REGMAP: select REGMAP instead of depending on it
+>>>  [PATCH 4/8] leds: TI_LMU_COMMON: select REGMAP instead of depending on it
+>>>  [PATCH 5/8] platform: mellanox: select REGMAP instead of depending on it
+>>>  [PATCH 6/8] platform: x86: MLX_PLATFORM: select REGMAP instead of depending on it
+>>>  [PATCH 7/8] thermal: intel: BXT_PMIC: select REGMAP instead of depending on it
+>>>  [PATCH 8/8] serial: 8250: ASPEED_VUART: select REGMAP instead of depending on it
+>>
+>> For patch 5/8 and 6/8, do you want me to merge them through the pdx86
+>> (platform-drivers-x86) tree, or do you plan to merge this whole series
+>> in one go through some other tree?
+> 
+> Hi Hans,
+> Please merge them thru the pdx86 tree.
 
-> Best regards,
-> Krzysztof
->
+Ok, I've applied patch 5/8 + 6/8 to my review-hans branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+I'll rebase that branch once 6.3-rc1 is out and then push the rebased
+patch to the fixes branch and include it in my next 6.3 fixes pull-req
+to Linus.
+
+Regards,
+
+Hans
 
 
---=20
-Best regards,
 
-Kelvin Cheung
+
+
+>>>
+>>> diffstat:
+>>>  drivers/char/ipmi/Kconfig         |    3 ++-
+>>>  drivers/clk/Kconfig               |    2 +-
+>>>  drivers/gpio/Kconfig              |    2 +-
+>>>  drivers/leds/Kconfig              |    2 +-
+>>>  drivers/platform/mellanox/Kconfig |    9 ++++-----
+>>>  drivers/platform/x86/Kconfig      |    3 ++-
+>>>  drivers/thermal/intel/Kconfig     |    3 ++-
+>>>  drivers/tty/serial/8250/Kconfig   |    3 ++-
+>>>  8 files changed, 15 insertions(+), 12 deletions(-)
+>>>
+>>> Cc: Andrew Jeffery <andrew@aj.id.au>
+>>> Cc: Corey Minyard <minyard@acm.org>
+>>> Cc: openipmi-developer@lists.sourceforge.net
+>>> Cc: Arnd Bergmann <arnd@arndb.de>
+>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> Cc: Riku Voipio <riku.voipio@linaro.org>
+>>> Cc: Stephen Boyd <sboyd@kernel.org>
+>>> Cc: Michael Turquette <mturquette@baylibre.com>
+>>> Cc: linux-clk@vger.kernel.org
+>>> Cc: Michael Walle <michael@walle.cc>
+>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+>>> Cc: linux-gpio@vger.kernel.org
+>>> Cc: Dan Murphy <dmurphy@ti.com>
+>>> Cc: Pavel Machek <pavel@ucw.cz>
+>>> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>>> Cc: Lee Jones <lee@kernel.org>
+>>> Cc: linux-leds@vger.kernel.org
+>>> Cc: Darren Hart <dvhart@infradead.org>
+>>> Cc: Hans de Goede <hdegoede@redhat.com>
+>>> Cc: Michael Shych <michaelsh@nvidia.com>
+>>> Cc: Mark Gross <markgross@kernel.org>
+>>> Cc: Vadim Pasternak <vadimp@nvidia.com>
+>>> Cc: platform-driver-x86@vger.kernel.org
+>>> Cc: Yegnesh S Iyer <yegnesh.s.iyer@intel.com>
+>>> Cc: Bin Gao <bin.gao@intel.com>
+>>> Cc: Zhang Rui <rui.zhang@intel.com>
+>>> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>> Cc: Amit Kucheria <amitk@kernel.org>
+>>> Cc: linux-pm@vger.kernel.org
+>>> Cc: Oskar Senft <osk@google.com>
+>>> Cc: linux-serial@vger.kernel.org
+>>>
+>>
+> 
+
