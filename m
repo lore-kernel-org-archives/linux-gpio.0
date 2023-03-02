@@ -2,55 +2,55 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0050C7EE36
-	for <linux-gpio@archiver.kernel.org>; Thu,  2 Mar 2023 10:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BB9C7EE30
+	for <linux-gpio@archiver.kernel.org>; Thu,  2 Mar 2023 10:29:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbjCBKAQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 2 Mar 2023 05:00:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39294 "EHLO
+        id S229451AbjCBK3R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 2 Mar 2023 05:29:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229984AbjCBJ7S (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Mar 2023 04:59:18 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE70A4988C
-        for <linux-gpio@vger.kernel.org>; Thu,  2 Mar 2023 01:58:27 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id cw28so16118501edb.5
-        for <linux-gpio@vger.kernel.org>; Thu, 02 Mar 2023 01:58:27 -0800 (PST)
+        with ESMTP id S229535AbjCBK3Q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Mar 2023 05:29:16 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BED3010413
+        for <linux-gpio@vger.kernel.org>; Thu,  2 Mar 2023 02:29:14 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id da10so65685870edb.3
+        for <linux-gpio@vger.kernel.org>; Thu, 02 Mar 2023 02:29:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1677751089;
+        d=linaro.org; s=google; t=1677752953;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=quQsZmkiKaETnYTMJly9CAnrwXfTyfISOr41GqRBHEQ=;
-        b=EquMUUnvVYKbhMQ8FO3/GqZAqUdsqFcAHF2Od/g2fwxJrzGIcnUXUguaQjkE210wYQ
-         JTRHE/CL4DRh63ooBFLsL4VF3wxWvUT2m2/AbAOlbgWRaBbUau0Gfwfta6TaVjWcQckD
-         +acdhoOnX9sSQoVs3a2vipKxW2kFD4EEEmM0TG3FW8Wnx1pffFUMV5DzL4SubvC5cI1R
-         LmxzySDELNeUx0jsrq+zGmqaCezKsWOSuitbBU784p6DqpfC7vjLGOqtms8+3eQjFhkX
-         6bs+8ygvoNXRPdnxBiJVyENjZ/1RoiwlFPvpMxy3kHLRiXdpjjZdjk6APmc7MBY51oir
-         eImg==
+        bh=GRjMQJRtE2Bj9BjD+ekrQkZUrzfyzg03TWtGip3bI4w=;
+        b=fGGD97qyolMbVM2MF8TJC9kNf5yy1V/Nxss8muasMPP04By5S2huAuT6M4F9BEhjw+
+         LZ7ShcpNaOZz49Xm730maLefpmezUuUODHNmDCCkG4h+o7758mUtk++09bXmSvBMVue5
+         jN/Ud8OJeKiMp8BzM0HsmCzTWbuupJyuWWiiy24SACAbx4XfhYA0tAow6F0M2jWto9rA
+         WP5zO7vwBEh942WiyRXNnUgE+PU9UKznVZuuTpSX7nQCE8iiRHZBaQTnkfo0cSeNfDEM
+         hdihAt1v9K1aCoRPflebQKC+KL5W2xSZkJlsDh3UZoSy0y4Ge/FmkPtuPY4ajPM3u3Dq
+         d4Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677751089;
+        d=1e100.net; s=20210112; t=1677752953;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=quQsZmkiKaETnYTMJly9CAnrwXfTyfISOr41GqRBHEQ=;
-        b=P60p6Fpq+rH8/nGwQVuOiJwoQWzaqX1uASbwP6E62ePQR3PqhEmLOip8U4eS0b97iA
-         MJqp9BceUBfAqYEv6HY/ZdmkeYs80jvSep0/8eXPvh2oUO+IKDyxJuWrMVqjX8oP1f7E
-         nxak/OyAAwAcq+k5vJ1BcBKzXihoyZqgqnV82PZHaiLevzyWb2LdVJlm3pS0U6EDOpYO
-         gYn3YybVuZNrnF5oBshGDgZYp7WsmbBQdP+ZHOF5gNX1USJxY+GLO/qLOHo3KRrQcCLS
-         oIXZHIt67sY3iY28BoSeuBgj+NZC/xyJnCM/DojVZThuP5hmo6j36E7a2DQLOVlUsp8m
-         ELWA==
-X-Gm-Message-State: AO0yUKVAuLJxqn5QPvkWsezuo+UZtL87ERRR1P2Bq+nzzv7c+SVP5VWv
-        7XAQ4Q0nI4olOEbSLIIKfGufbA==
-X-Google-Smtp-Source: AK7set9OnArQH/PxHu599zgwQafDCjw20cNu6UwnMirkt5rBsGrvK3lhjvbsD0K6SyI6ANwQJ1e26g==
-X-Received: by 2002:a17:906:1907:b0:8b1:304e:58a3 with SMTP id a7-20020a170906190700b008b1304e58a3mr9990669eje.52.1677751089159;
-        Thu, 02 Mar 2023 01:58:09 -0800 (PST)
+        bh=GRjMQJRtE2Bj9BjD+ekrQkZUrzfyzg03TWtGip3bI4w=;
+        b=oCEecQQZQ9yGbKBpTGIQcVdx+o6T3rMtrrz+R7FfH82V0f8nKRv3jPTtGbuK1vL0m6
+         PF97oHDPx6LIZ+hrBV6ZDGkwCMUm1knp5JFi5dJa4ZzpcGiRj9v+Jw1zz4cPGWmQ2FBA
+         zKTdpFbD0adfG7FyjVD6cDU3MMs+Pc1m6WL8dFTXuNK+W83pNVN0PrN35Ch5lcsLu2Ca
+         Se9rg6yxjt0oOlni8awnbOWrxA8skM0HvaMKJWP13twaJlWwobVEb3wIrRs9eBSHSo4f
+         PXWFiDCDvuM3jvbI1OhLfCrGNGvMlVkhlC1x64TbgWyRFBuHs2uPG8kaG1Xng+cI4hhE
+         XneA==
+X-Gm-Message-State: AO0yUKVrBg4eKziCqccL+VgZgh8dCUakqetD+8VoFQ5KUpNSdwSsv+o4
+        nla0O28Dm4nChCiPTckocYZF+w==
+X-Google-Smtp-Source: AK7set8MX5Ca2LfKKYqYHZj9wih46oAtJRMNpT+QV58afPq6J8YNFqnWqw3SqRcubazacAt+XkczUQ==
+X-Received: by 2002:a05:6402:1acd:b0:499:b672:ee30 with SMTP id ba13-20020a0564021acd00b00499b672ee30mr10272126edb.11.1677752953229;
+        Thu, 02 Mar 2023 02:29:13 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id h12-20020a170906530c00b008d71e08c78dsm6852623ejo.81.2023.03.02.01.58.06
+        by smtp.gmail.com with ESMTPSA id u6-20020a50c046000000b0049ef70a2894sm1756994edd.38.2023.03.02.02.29.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Mar 2023 01:58:08 -0800 (PST)
-Message-ID: <1aae7ac9-c83d-71b4-4fce-325f02fcd722@linaro.org>
-Date:   Thu, 2 Mar 2023 10:58:06 +0100
+        Thu, 02 Mar 2023 02:29:12 -0800 (PST)
+Message-ID: <2ccb573d-39f4-cb80-7a3e-63a60c2bc0a8@linaro.org>
+Date:   Thu, 2 Mar 2023 11:29:10 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
@@ -83,134 +83,38 @@ References: <20230222183932.33267-1-arinc.unal@arinc9.com>
  <ae3346de-140f-f181-b6a3-ccaa694e1548@arinc9.com>
  <11d3c806-04b6-da54-65f1-c0bd154affbc@linaro.org>
  <a9acd3b4-2b03-86c0-711c-a3840aeab574@arinc9.com>
+ <1aae7ac9-c83d-71b4-4fce-325f02fcd722@linaro.org>
+ <89588f69-9cf0-e7a4-b976-5ce87d42e296@arinc9.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <a9acd3b4-2b03-86c0-711c-a3840aeab574@arinc9.com>
+In-Reply-To: <89588f69-9cf0-e7a4-b976-5ce87d42e296@arinc9.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 02/03/2023 10:17, Arınç ÜNAL wrote:
-> On 2.03.2023 11:28, Krzysztof Kozlowski wrote:
->> On 01/03/2023 09:15, Arınç ÜNAL wrote:
->>> On 1.03.2023 05:44, Rob Herring wrote:
->>>> On Tue, Feb 28, 2023 at 07:46:36PM +0300, Arınç ÜNAL wrote:
->>>>> On 27/02/2023 20:33, Rob Herring wrote:
->>>>>> On Wed, Feb 22, 2023 at 09:39:23PM +0300, arinc9.unal@gmail.com wrote:
->>>>>>> From: Arınç ÜNAL <arinc.unal@arinc9.com>
->>>>>>>
->>>>>>> Add the ralink,rt2880-pinmux compatible string. It had been removed from
->>>>>>> the driver which broke the ABI.
->>>>>>>
->>>>>>> Add the mediatek compatible strings. Change the compatible string on the
->>>>>>> examples with the mediatek compatible strings.
->>>>>>>
->>>>>>> Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
->>>>>>> ---
->>>>>>>     .../devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml | 7 +++++--
->>>>>>>     .../devicetree/bindings/pinctrl/ralink,mt7621-pinctrl.yaml | 7 +++++--
->>>>>>>     .../devicetree/bindings/pinctrl/ralink,rt2880-pinctrl.yaml | 7 +++++--
->>>>>>>     .../devicetree/bindings/pinctrl/ralink,rt305x-pinctrl.yaml | 7 +++++--
->>>>>>>     .../devicetree/bindings/pinctrl/ralink,rt3883-pinctrl.yaml | 7 +++++--
->>>>>>>     5 files changed, 25 insertions(+), 10 deletions(-)
->>>>>>>
->>>>>>> diff --git a/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml
->>>>>>> index 1e63ea34146a..531b5f616c3d 100644
->>>>>>> --- a/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml
->>>>>>> +++ b/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml
->>>>>>> @@ -17,7 +17,10 @@ description:
->>>>>>>     properties:
->>>>>>>       compatible:
->>>>>>> -    const: ralink,mt7620-pinctrl
->>>>>>> +    enum:
->>>>>>> +      - mediatek,mt7620-pinctrl
->>>>>>> +      - ralink,mt7620-pinctrl
->>>>>>
->>>>>> We don't update compatible strings based on acquistions nor marketing
->>>>>> whims. If you want to use 'mediatek' for new things, then fine.
->>>>>
->>>>> Understood. Only the SoCs with rtXXXX were rebranded, the mtXXXX SoCs share
->>>>> the same architecture from Ralink, so they were incorrectly called Ralink
->>>>> SoCs.
->>>>>
->>>>> I can remove the new strings from Ralink SoCs and add them only for MediaTek
->>>>> SoCs. Or you could make an exception for this one, regarding the situation.
->>>>> Whatever you think is best.
->>>>
->>>> I'm not in a position to make an exception as I know little about this
->>>> platform. Carrying both strings is a NAK. Either you (and everyone using
->>>> these platforms) care about the ABI and are stuck with the "wrong"
->>>> string. In the end, they are just unique identifiers. Or you don't care
->>>> and break the ABI and rename everything. If you do that, do just that in
->>>> your patches and make it crystal clear in the commit msg that is your
->>>> intention and why that is okay.
+On 02/03/2023 11:22, Arınç ÜNAL wrote:
 >>>
->>> Ralink had their MIPS SoCs pre-acquisition, RT2880, etc. MediaTek
->>> introduced new SoCs post-acquisition, MT7620, MT7621, MT7628, and
->>> MT7688, utilising the same platform from Ralink, sharing the same
->>> architecture code, pinctrl core driver, etc.
+>>> ## Incorrect naming
 >>>
->>> I don't intend to break the ABI at all. On the contrary, I fix it where
->>> possible.
->>>
->>> If I understand correctly, from this conversation and what Krzysztof
->>> said, all strings must be kept on the schemas so I can do what I said on
->>> the composed mail. Only match the pin muxing information on the strings
->>> that won't match multiple pin muxing information from other schemas.
->>>
->>> This way we don't break the ABI, introduce new compatible strings while
->>> keeping the remaining ones, and make schemas match correctly.
->>>
->>> Let me know if this is acceptable to you.
+>>> MT7620, MT7621, MT7628, and MT7688 SoCs are incorrectly called Ralink,
+>>> introduce new ralink->mediatek compatible strings to address it.
 >>
->> If by "introduce new compatible strings" you mean duplicate compatibles
->> to fix the ralink->mediatek, then you ignored entire email from Rob -
->> this and previous. We don't do this. Leave them as is.
->>
->> If you meant something else, explain more...
+>> So this part was addressed by Rob - we don't do it, because it does not
+>> matter. Ralink is now Mediatek, thus there is no conflict and no issues
+>> with different vendor used.
 > 
-> Let me put them in a group to better explain.
+> I think Rob was rather addressing that updating compatible strings based 
+> on acquisition or marketing whims is not permitted. This condition does 
+> not apply here as these SoCs were never Ralink.
 > 
-> ## Fix ABI
-> 
-> ralink,rt2880-pinmux was there before, it was removed which broke the 
-> ABI. I'm reintroducing it to fix it.
-> 
-> ## New strings to be able to split bindings
-> 
-> New strings are needed for MT7628/MT7688 and some RT SoCs to be able to 
-> properly document the pin muxing information.
+> I understand your point that Ralink is now MediaTek but still, calling 
+> these SoCs Ralink would be a bit misleading, don't you think?
 
-Then ok.
-
-> 
-> ## Incorrect naming
-> 
-> MT7620, MT7621, MT7628, and MT7688 SoCs are incorrectly called Ralink, 
-> introduce new ralink->mediatek compatible strings to address it.
-
-So this part was addressed by Rob - we don't do it, because it does not
-matter. Ralink is now Mediatek, thus there is no conflict and no issues
-with different vendor used.
-
-> 
-> ## Exception for RT SoCs to be called MediaTek
-> 
-> This is where I was asking an exception to be made. Rob told us here 
-> they know little about the platform so I explained it.
-> 
-> MediaTek acquired Ralink and then introduced new MediaTek SoCs utilising 
-> the same platform from Ralink.
-> 
-> Anyway, now that I look at this again, it makes sense to me as well not 
-> to rename the Ralink SoCs. I'll call the RT SoCs Ralink on the kconfig, 
-> pinctrl driver,
-
-These are separate. We did not comment on how you call Linux drivers.
-The mail thread was only about:
-
-> and dt-binding schemas on my next version.
+Misleading yes, but also does not matter. At least matter not enough to
+justify ABI break, so you would need to deprecate old ones and keep
+everything backwards compatible. You still would affect 3rd party users
+of DTS, though...
 
 Best regards,
 Krzysztof
