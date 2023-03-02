@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4832EC7EE33
-	for <linux-gpio@archiver.kernel.org>; Thu,  2 Mar 2023 11:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E08CC678D4
+	for <linux-gpio@archiver.kernel.org>; Thu,  2 Mar 2023 11:01:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229992AbjCBLBz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 2 Mar 2023 06:01:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50034 "EHLO
+        id S230015AbjCBLB5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 2 Mar 2023 06:01:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229947AbjCBLBv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Mar 2023 06:01:51 -0500
+        with ESMTP id S230020AbjCBLBx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Mar 2023 06:01:53 -0500
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42BA9460AF;
-        Thu,  2 Mar 2023 03:01:38 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C560E4743C;
+        Thu,  2 Mar 2023 03:01:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1677754899; x=1709290899;
+  t=1677754901; x=1709290901;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Bf1Z7/sfzlJmrMOEOjhTIy25zAMrI0ji7izXGtHopIU=;
-  b=dYO4Di4CJyy1Aaqk+akeLRkiMp+nyps3JxGJRHa9nF5ncv8oQ/3O+bP5
-   hN3EuQS5f/kktg4A3OWE380E8dR33b8w6pBEhk/pjNBYSAdNpknTzB4gj
-   CgTMUZE2qMcX3j/BOS05Lw+PP+WrDW7wLUokSNhkDRtN8U1oxRjmR8e9e
-   Kh8lZbNKYBA2G1YMalGIcQeS1A/BUPieFSVP8r2DdvgrXL88G2wZAgFrq
-   xTSQ8IBclg1zDGJu+bgUwfg048ig+QiMSaXYlskmZIwtqECjJ1f6s1QVC
-   uyJ4ILPQgmyMM9Y8WOWsH/dhfrZl3cjjgANzvISV7u+ayxLql7gOijMUC
+  bh=mY3cAYnyOKmX1eK5KErN3GRqlF6KJtvyLr/5G2kFtdA=;
+  b=YM0jVCj/lx1/MU0uhBunApAJLzP//SxcCkp7yrmAZIKyk9Z3MJdemmcn
+   QtGDaFeGzrhPMzAbRrTY72hXgo+AmmvhDoBz91AH6iH4CSvajQDHY0C1C
+   udJtTbnzuvbjnwRLSrfU072jhd/G5DmqSy/F+SPOLBclZaGu/ksjx1V5M
+   EcD7UiYUi7KXPUXXvI3KnfHyv15G8JUtHtAREmLdULsWodMT/svhebzTz
+   1Z1cGnzEXu1cmqe25eMoVJHdiMSV7pyI5ZCa+CGW4cEA9IRnvERRXaqnB
+   SHl/FV4/eStvXNrZIeqJgkh01QUlihX3Bu16Ou7auHruw7Q3xPgd0mrSO
    A==;
 X-IronPort-AV: E=Sophos;i="5.98,227,1673938800"; 
-   d="scan'208";a="203271644"
+   d="scan'208";a="202949584"
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Mar 2023 04:01:37 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Mar 2023 04:01:41 -0700
 Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Thu, 2 Mar 2023 04:01:35 -0700
+ 15.1.2507.16; Thu, 2 Mar 2023 04:01:40 -0700
 Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
  chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.16 via Frontend Transport; Thu, 2 Mar 2023 04:01:33 -0700
+ 15.1.2507.16 via Frontend Transport; Thu, 2 Mar 2023 04:01:38 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <ludovic.desroches@microchip.com>, <linus.walleij@linaro.org>,
         <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 2/4] pinctrl: at91-pio4: use device_get_match_data()
-Date:   Thu, 2 Mar 2023 13:01:14 +0200
-Message-ID: <20230302110116.342486-3-claudiu.beznea@microchip.com>
+Subject: [PATCH 4/4] pinctrl: at91-pio4: use proper format specifier for unsigned int
+Date:   Thu, 2 Mar 2023 13:01:16 +0200
+Message-ID: <20230302110116.342486-5-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230302110116.342486-1-claudiu.beznea@microchip.com>
 References: <20230302110116.342486-1-claudiu.beznea@microchip.com>
@@ -57,41 +57,26 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use device_get_match_data() to simplify the code.
+Use %u instead of %d as line is unsigned int.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- drivers/pinctrl/pinctrl-at91-pio4.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/pinctrl/pinctrl-at91-pio4.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 0aceb723f94c..93023d0fd75b 100644
+index 783968182bc7..d6426367594e 100644
 --- a/drivers/pinctrl/pinctrl-at91-pio4.c
 +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -1067,7 +1067,6 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct pinctrl_pin_desc	*pin_desc;
- 	const char **group_names;
--	const struct of_device_id *match;
- 	int i, ret;
- 	struct atmel_pioctrl *atmel_pioctrl;
- 	const struct atmel_pioctrl_data *atmel_pioctrl_data;
-@@ -1079,12 +1078,11 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
- 	atmel_pioctrl->node = dev->of_node;
- 	platform_set_drvdata(pdev, atmel_pioctrl);
+@@ -1144,7 +1144,7 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
  
--	match = of_match_node(atmel_pctrl_of_match, dev->of_node);
--	if (!match) {
--		dev_err(dev, "unknown compatible string\n");
-+	atmel_pioctrl_data = device_get_match_data(dev);
-+	if (!atmel_pioctrl_data) {
-+		dev_err(dev, "Invalid device data\n");
- 		return -ENODEV;
- 	}
--	atmel_pioctrl_data = match->data;
- 	atmel_pioctrl->nbanks = atmel_pioctrl_data->nbanks;
- 	atmel_pioctrl->npins = atmel_pioctrl->nbanks * ATMEL_PIO_NPINS_PER_BANK;
- 	/* if last bank has limited number of pins, adjust accordingly */
+ 		pin_desc[i].number = i;
+ 		/* Pin naming convention: P(bank_name)(bank_pin_number). */
+-		pin_desc[i].name = kasprintf(GFP_KERNEL, "P%c%d",
++		pin_desc[i].name = kasprintf(GFP_KERNEL, "P%c%u",
+ 					     bank + 'A', line);
+ 
+ 		group->name = group_names[i] = pin_desc[i].name;
 -- 
 2.34.1
 
