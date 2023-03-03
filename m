@@ -2,59 +2,60 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D053C7EE3A
-	for <linux-gpio@archiver.kernel.org>; Fri,  3 Mar 2023 00:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CFEDC6FA8E
+	for <linux-gpio@archiver.kernel.org>; Fri,  3 Mar 2023 00:30:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229820AbjCCAal (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 2 Mar 2023 19:30:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41922 "EHLO
+        id S230073AbjCCAan (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 2 Mar 2023 19:30:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230040AbjCCAah (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Mar 2023 19:30:37 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF2259E70;
-        Thu,  2 Mar 2023 16:30:12 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id h9so776813ljq.2;
-        Thu, 02 Mar 2023 16:30:11 -0800 (PST)
+        with ESMTP id S229612AbjCCAaj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Mar 2023 19:30:39 -0500
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66DC559E5C;
+        Thu,  2 Mar 2023 16:30:19 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id h9so776979ljq.2;
+        Thu, 02 Mar 2023 16:30:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677803411;
+        d=gmail.com; s=20210112; t=1677803416;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ct2y6EoMrN+HJxQD2RfUFZp0XRCxO4iCVehUYgYijVs=;
-        b=FwM7QY25lZengJrJwyQSjL5E6EosTaG/+eugSo4UGZwRYY8gKfpS9IxSeMotKhKENz
-         biglUWtHjccGIf9oq0UngdlPPqw1v/YPEobXNbQ+ZgSjR0EzCtHX3pkszkI+g5JKCm0R
-         yJWwrt0BmYv9MBtO1HPmDRBY5Qi1EjFNSSAYUbCnfmpUN87UC3QSwWkTpRYmWhsQ7HTo
-         hdg8QBpC9f3W+dZ5Q3q9x9tcGaI02jQW8LxIzA7n/QhHDJpZB7RGt+KR+sw5MkXN1ycr
-         m377JWoET6qxAf4D+0mrGk2Z91C8B0BUWMh6FMnyPgBXBf3KErnTXdBx0fQIGyn8NGEj
-         Gr7A==
+        bh=WT6hzu0DmgFDhxzzLNhQjlkkdnwsxET9D8SPDLbHKjA=;
+        b=FUCkHFzYk6uA1qpDe0K69On13PRuhL+cHZ03RX2YCH+418wxuPSORlL521C5p3W3lR
+         T3A2nlspl0f4MC1Blmfs5VUHKEQgJcOAYD/KCiaL/SheRk9HKod3lXkO3KbE3r79o4Ye
+         0HWcugVUcIR1x80xH+QW1/YtU8+VAAdc+/zoDnpHdfJzv+BxSvGbpLG/wYvmwFTZ/7ru
+         tRKp4b3YuYWrdYgSVzXKVYgu/r2ObnKGwyVUMsHj0ngFBtgiwR6vAapRoiuyiYqw/I9O
+         nU5zCt9CDd9YYwfOBkb34MXJAkNr6B4Ndg60T6orug/zJ821MkVmDUZ0MXxIW+ySeHwp
+         Gn5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677803411;
+        d=1e100.net; s=20210112; t=1677803416;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ct2y6EoMrN+HJxQD2RfUFZp0XRCxO4iCVehUYgYijVs=;
-        b=vtid0BHQuEdf/cUkihyUt025qqvFj/AK0QKx1BmXP49rx3J3Mqj7Yy6rjzvvTnrBWv
-         L8inydqxYJQFNJnWzYaTh8XRlbf3FINqaMk/Ay8j/yDFlNOBkDuJIJMX7cV0eR1krM++
-         5AYcLmz/kokgAtHhyARqKckYAelMRwn+UMuinyQCcv0AGM/+S2Uotobroc20d/rJjns9
-         +LWGaCUPryfMocqebPFIOzimZ8fgC3FK4lRt3HiDrrPbFmS/XwuZXOFO/qgnLecz13u1
-         r5tf2j0a+o0Yb8E5RD3pzZwoUytcg9yBAZbKMHUD0ZdzASYD7hsYy4kLzZvKaM/iP/TP
-         SBFQ==
-X-Gm-Message-State: AO0yUKUqUUE15y8MlChVVKCU4Vztzzi9TtobtxZjGTX0wBkdQeeXibYf
-        GdzSLlgJZ8rUq7nAwMtfw0E=
-X-Google-Smtp-Source: AK7set+7dqKolQq1dLdyJinry05b+SRKAJDd4GYsDcYXoX757fWcDh/aP+KdZ3FWHQIOUWKVHYhvDw==
-X-Received: by 2002:a2e:7810:0:b0:295:94f4:c22c with SMTP id t16-20020a2e7810000000b0029594f4c22cmr3635070ljc.49.1677803411429;
-        Thu, 02 Mar 2023 16:30:11 -0800 (PST)
+        bh=WT6hzu0DmgFDhxzzLNhQjlkkdnwsxET9D8SPDLbHKjA=;
+        b=yxTLhwW3c4vCPqZFri3pxJJz5hS09dWMWJLRI1q92uv0uH2KcUCrtfeL/UDMt7/QoP
+         LSmdGN6pSkogbsaleBm1Uy66bone/+zfXBWlzo1aFM9ngIHq9r613KMhCpfXVZ7p0C9t
+         83TFUyFrR/lsEMXOvSmnSMcqgBQhstq8yP8jfe8t/ZsOonQhv7vj1X/yWeIy+cRAfqZY
+         sorwObDBdW+9QNkITQMu3Tb1GmXhHhnuSMMA/eqAogGUtxMAyERyBnp7T4l3PCqhBqoE
+         2i6+PJ7gvFercV50l5cRH/HAQK68XHvPzQsvQ8jUUbgfn7mTfs/Uoydx3sXTKZJxSIhp
+         3qQA==
+X-Gm-Message-State: AO0yUKVgH8seALs0Ia6MGH5snW3iYmeuA1JjKM9gzy9Gf9O8QsDoYJ+X
+        XDTsvhM34G5evUNn5nocCiE=
+X-Google-Smtp-Source: AK7set/7b3ronXMGDdX5jtEOBuC1OZlspMiNXDaIFPdv0MAWmDGsS4nx/Dsm3gop63oqDdwkrf++rQ==
+X-Received: by 2002:a2e:bc0c:0:b0:292:f882:95ee with SMTP id b12-20020a2ebc0c000000b00292f88295eemr1301300ljf.9.1677803416604;
+        Thu, 02 Mar 2023 16:30:16 -0800 (PST)
 Received: from arinc9-PC.lan ([212.68.60.226])
-        by smtp.gmail.com with ESMTPSA id v19-20020a2e9f53000000b002932b817990sm64901ljk.31.2023.03.02.16.30.08
+        by smtp.gmail.com with ESMTPSA id v19-20020a2e9f53000000b002932b817990sm64901ljk.31.2023.03.02.16.30.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Mar 2023 16:30:11 -0800 (PST)
+        Thu, 02 Mar 2023 16:30:16 -0800 (PST)
 From:   arinc9.unal@gmail.com
 X-Google-Original-From: arinc.unal@arinc9.com
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
+        Rob Herring <robh@kernel.org>,
         linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -69,9 +70,9 @@ Cc:     =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
         Landen Chao <Landen.Chao@mediatek.com>,
         DENG Qingfang <dqfext@gmail.com>,
         Sean Wang <sean.wang@mediatek.com>, erkin.bozoglu@xeront.com
-Subject: [PATCH 08/20] dt-bindings: pinctrl: ralink: add new compatible strings
-Date:   Fri,  3 Mar 2023 03:28:37 +0300
-Message-Id: <20230303002850.51858-9-arinc.unal@arinc9.com>
+Subject: [PATCH 10/20] dt-bindings: pinctrl: mediatek: mt6795: rename to mediatek,mt6795-pinctrl
+Date:   Fri,  3 Mar 2023 03:28:39 +0300
+Message-Id: <20230303002850.51858-11-arinc.unal@arinc9.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230303002850.51858-1-arinc.unal@arinc9.com>
 References: <20230303002850.51858-1-arinc.unal@arinc9.com>
@@ -84,85 +85,32 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Arınç ÜNAL <arinc.unal@arinc9.com>
 
-Add the new mediatek compatible strings. Change the compatible string on
-the examples with the mediatek compatible strings.
-
-Add the new compatible strings for mt7620, mt76x8, and rt305x to be able to
-properly document the pin muxing information of each SoC, or SoCs that use
-the same pinmux data.
+Rename mediatek,pinctrl-mt6795.yaml to mediatek,mt6795-pinctrl.yaml to be
+on par with the compatible string and other mediatek dt-binding schemas.
 
 Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml | 7 +++++--
- .../devicetree/bindings/pinctrl/ralink,mt7621-pinctrl.yaml | 6 ++++--
- .../devicetree/bindings/pinctrl/ralink,rt305x-pinctrl.yaml | 5 ++++-
- 3 files changed, 13 insertions(+), 5 deletions(-)
+ ...ediatek,pinctrl-mt6795.yaml => mediatek,mt6795-pinctrl.yaml} | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ rename Documentation/devicetree/bindings/pinctrl/{mediatek,pinctrl-mt6795.yaml => mediatek,mt6795-pinctrl.yaml} (98%)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml
-index cde6de77e228..a94d2e7a5f37 100644
---- a/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml
-@@ -17,7 +17,10 @@ description:
+diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,pinctrl-mt6795.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6795-pinctrl.yaml
+similarity index 98%
+rename from Documentation/devicetree/bindings/pinctrl/mediatek,pinctrl-mt6795.yaml
+rename to Documentation/devicetree/bindings/pinctrl/mediatek,mt6795-pinctrl.yaml
+index 9399e0215526..c5131f053b61 100644
+--- a/Documentation/devicetree/bindings/pinctrl/mediatek,pinctrl-mt6795.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6795-pinctrl.yaml
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/pinctrl/mediatek,pinctrl-mt6795.yaml#
++$id: http://devicetree.org/schemas/pinctrl/mediatek,mt6795-pinctrl.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
  
- properties:
-   compatible:
--    const: ralink,mt7620-pinctrl
-+    enum:
-+      - mediatek,mt7620-pinctrl
-+      - mediatek,mt76x8-pinctrl
-+      - ralink,mt7620-pinctrl
- 
- patternProperties:
-   '-pins$':
-@@ -646,7 +649,7 @@ additionalProperties: false
- examples:
-   - |
-     pinctrl {
--      compatible = "ralink,mt7620-pinctrl";
-+      compatible = "mediatek,mt7620-pinctrl";
- 
-       i2c_pins: i2c0-pins {
-         pinmux {
-diff --git a/Documentation/devicetree/bindings/pinctrl/ralink,mt7621-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/ralink,mt7621-pinctrl.yaml
-index fb8c5459ea93..eb0746cfc6d6 100644
---- a/Documentation/devicetree/bindings/pinctrl/ralink,mt7621-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/ralink,mt7621-pinctrl.yaml
-@@ -17,7 +17,9 @@ description:
- 
- properties:
-   compatible:
--    const: ralink,mt7621-pinctrl
-+    enum:
-+      - mediatek,mt7621-pinctrl
-+      - ralink,mt7621-pinctrl
- 
- patternProperties:
-   '-pins$':
-@@ -250,7 +252,7 @@ additionalProperties: false
- examples:
-   - |
-     pinctrl {
--      compatible = "ralink,mt7621-pinctrl";
-+      compatible = "mediatek,mt7621-pinctrl";
- 
-       i2c_pins: i2c0-pins {
-         pinmux {
-diff --git a/Documentation/devicetree/bindings/pinctrl/ralink,rt305x-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/ralink,rt305x-pinctrl.yaml
-index 8b1256af09c3..23fb82f9959c 100644
---- a/Documentation/devicetree/bindings/pinctrl/ralink,rt305x-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/ralink,rt305x-pinctrl.yaml
-@@ -18,7 +18,10 @@ description:
- 
- properties:
-   compatible:
--    const: ralink,rt305x-pinctrl
-+    enum:
-+      - ralink,rt305x-pinctrl
-+      - ralink,rt3352-pinctrl
-+      - ralink,rt5350-pinctrl
- 
- patternProperties:
-   '-pins$':
+ title: Mediatek MT6795 Pin Controller
 -- 
 2.37.2
 
