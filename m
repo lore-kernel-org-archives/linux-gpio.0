@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D15CC6FD1A
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 19:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05565C742A7
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 19:55:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230176AbjCFTzm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 6 Mar 2023 14:55:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57232 "EHLO
+        id S230191AbjCFTzn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 6 Mar 2023 14:55:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230163AbjCFTzk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2023 14:55:40 -0500
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA65256522;
+        with ESMTP id S229753AbjCFTzl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2023 14:55:41 -0500
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E898D59427;
         Mon,  6 Mar 2023 11:55:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1678132539; x=1709668539;
+  t=1678132540; x=1709668540;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=kqgmkF6/LXf8ZTPjacKEJCrkdjdR/gKDvDdM5DRJJDo=;
-  b=M8oDdntv+9UpQtYk5qzoJH7JFWjdMGIAbklgz13ZXpmCoKTW7YSLPwcO
-   jsEetOsNV35aA0aIoQTMSqX56fHK5j7AKKUvMZjoH/ji/30rUQUgtVexm
-   l//OVMAuJIXLy2FdThuKuIvUH9GIwOGCOXVh2cX3ejQmkJfMJcaLiiBl3
-   Pa6dEreOcBtPOGtl3UMg+VYjVhe7AsXTdnOI4CwEr7fELSXsiCZmh6bwM
-   Dm1/vfULvwGHGnXvaybyq03aWecIGf8XnK6HDKl0qyymYy9ReUGwYNdvw
-   aDny+kmEL+kPzCpYIKFxCxP6FM0VlixffyVQazILUVm7NSwh8H+I9wWKH
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="398240771"
+  bh=EDvZyVrBDVc7Nwzs9i+qoHy3DJw3++NSTTOOF+lSAxI=;
+  b=elBBbmFOveSrjoKIlVza1kPML3XJ5AJUUtkLgfZNLpnRkRuHjhVbfdJe
+   rQctpexiGsmUo6FV68vzAAFz6RyIULnAlT5M8Zg2MhcfaMA9aS43upntQ
+   abIg7o/rcOYiGhqQwSgc2y04OZyYbp9IykiEbWtxG1sjthg04FHkw8QNE
+   d3LxlNLJgFxLi0/gAHzpDCqTF5IvPdfm7gbKl+QAHeV+Xq4t0mDfi0Gip
+   gLLfI45hSwTDMeksA80JlY3Cy/wXS5PMP4e7JFqj/sJlh2buhUNuNo+uu
+   9Y8M0YwrtogbtbwZY5uwW+mwkRuD3ga5XZt3wO7ooqHIOMAUQBHXNi2JJ
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="400483922"
 X-IronPort-AV: E=Sophos;i="5.98,238,1673942400"; 
-   d="scan'208";a="398240771"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2023 11:55:35 -0800
+   d="scan'208";a="400483922"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2023 11:55:39 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="819423553"
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="1005549582"
 X-IronPort-AV: E=Sophos;i="5.98,238,1673942400"; 
-   d="scan'208";a="819423553"
+   d="scan'208";a="1005549582"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 06 Mar 2023 11:55:28 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 06 Mar 2023 11:55:34 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 61EF6367; Mon,  6 Mar 2023 21:56:12 +0200 (EET)
+        id C33FB5F8; Mon,  6 Mar 2023 21:56:12 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Schspa Shi <schspa@gmail.com>, Marc Zyngier <maz@kernel.org>,
@@ -63,9 +63,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         <sathyanarayanan.kuppuswamy@linux.intel.com>,
         Nandor Han <nandor.han@ge.com>,
         Semi Malinen <semi.malinen@ge.com>
-Subject: [PATCH v1 03/16] lib/string_choices: Add str_high_low() helper
-Date:   Mon,  6 Mar 2023 21:55:43 +0200
-Message-Id: <20230306195556.55475-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 12/16] gpio: stmpe: Utilize helpers from string_choices.h
+Date:   Mon,  6 Mar 2023 21:55:52 +0200
+Message-Id: <20230306195556.55475-13-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230306195556.55475-1-andriy.shevchenko@linux.intel.com>
 References: <20230306195556.55475-1-andriy.shevchenko@linux.intel.com>
@@ -75,39 +75,73 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add str_high_low() helper to return 'high' or 'low' string literal.
-Also add an inversed variant, i.e. str_low_high().
+There are a few helpers available to convert a boolean variable
+to the dedicated string literals depending on the application.
+Use them in the driver.
 
-All the same for str_hi_low().
+While at, utilize specifier field for padding the strings where
+it's required.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- include/linux/string_choices.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/gpio/gpio-stmpe.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/string_choices.h b/include/linux/string_choices.h
-index b7e7b9fd098c..48120222b9b2 100644
---- a/include/linux/string_choices.h
-+++ b/include/linux/string_choices.h
-@@ -14,6 +14,18 @@ static inline const char *str_enabled_disabled(bool v)
- 	return v ? "enabled" : "disabled";
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index 0fa4f0a93378..ca8a98b252c2 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -14,6 +14,7 @@
+ #include <linux/mfd/stmpe.h>
+ #include <linux/seq_file.h>
+ #include <linux/bitops.h>
++#include <linux/string_choices.h>
+ 
+ /*
+  * These registers are modified under the irq bus lock and cached to avoid
+@@ -264,12 +265,12 @@ static void stmpe_dbg_show_one(struct seq_file *s,
+ 	ret = stmpe_reg_read(stmpe, dir_reg);
+ 	if (ret < 0)
+ 		return;
+-	dir = !!(ret & mask);
+ 
++	dir = !!(ret & mask);
++	seq_printf(s, " gpio-%-3d (%-20.20s) %-3.3s %-2.2s ", gpio,
++		   label ?: "(none)", str_out_in(dir), str_hi_lo(val));
+ 	if (dir) {
+-		seq_printf(s, " gpio-%-3d (%-20.20s) out %s",
+-			   gpio, label ?: "(none)",
+-			   val ? "hi" : "lo");
++		seq_putc(s, '\n');
+ 	} else {
+ 		u8 edge_det_reg;
+ 		u8 rise_reg;
+@@ -336,11 +337,9 @@ static void stmpe_dbg_show_one(struct seq_file *s,
+ 			return;
+ 		irqen = !!(ret & mask);
+ 
+-		seq_printf(s, " gpio-%-3d (%-20.20s) in  %s %13s %13s %25s %25s",
+-			   gpio, label ?: "(none)",
+-			   val ? "hi" : "lo",
++		seq_printf(s, "%13s IRQ-%9s %25s %25s\n",
+ 			   edge_det_values[edge_det],
+-			   irqen ? "IRQ-enabled" : "IRQ-disabled",
++			   str_enabled_disabled(irqen),
+ 			   rise_values[rise],
+ 			   fall_values[fall]);
+ 	}
+@@ -351,10 +350,8 @@ static void stmpe_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+ 	unsigned i;
+ 	unsigned gpio = gc->base;
+ 
+-	for (i = 0; i < gc->ngpio; i++, gpio++) {
++	for (i = 0; i < gc->ngpio; i++, gpio++)
+ 		stmpe_dbg_show_one(s, gc, i, gpio);
+-		seq_putc(s, '\n');
+-	}
  }
  
-+static inline const char *str_hi_lo(bool v)
-+{
-+	return v ? "hi" : "lo";
-+}
-+#define str_lo_hi(v)		str_hi_lo(!(v))
-+
-+static inline const char *str_high_low(bool v)
-+{
-+	return v ? "high" : "low";
-+}
-+#define str_low_high(v)		str_high_low(!(v))
-+
- static inline const char *str_read_write(bool v)
- {
- 	return v ? "read" : "write";
+ static struct irq_chip stmpe_gpio_irq_chip = {
 -- 
 2.39.1
 
