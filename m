@@ -2,104 +2,113 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D210BC61DA4
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 10:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C8BC61DA4
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 12:41:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231129AbjCFKSX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 6 Mar 2023 05:18:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42022 "EHLO
+        id S229713AbjCFMlO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 6 Mar 2023 07:41:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230417AbjCFKRy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2023 05:17:54 -0500
-Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C906122001
-        for <linux-gpio@vger.kernel.org>; Mon,  6 Mar 2023 02:17:29 -0800 (PST)
-Received: by mail-ua1-x92f.google.com with SMTP id x1so6035655uav.9
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Mar 2023 02:17:29 -0800 (PST)
+        with ESMTP id S229580AbjCFMlO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2023 07:41:14 -0500
+Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3C132B2B2
+        for <linux-gpio@vger.kernel.org>; Mon,  6 Mar 2023 04:41:12 -0800 (PST)
+Received: by mail-qt1-x832.google.com with SMTP id r5so10240310qtp.4
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Mar 2023 04:41:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1678097849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XKtYenUqtd6VLS14GJrUPd5L2ue++xHl4Zvl1BOmIFU=;
-        b=WnA1PDe7IO9i9LNud6CZrnh3mgBD12jgBwRQDB6tfNWrXF9y28VFhW+Flxl/4gNY4e
-         e0TWsqMvgW8RM72Js22NYwfVvtYMLdzmNCYbt8D51secquUaetoU8bYZp4zxkqOEmQcj
-         +8+7zJfzSKuQ7EdEZeTYMcNcE5nO3ShTa0zbkuc3uQGfkguTecW4Lgb18lL6i1GYsSbh
-         8qqE8Fbgqmd11uYDkfwQbbyDr9JYjCgazgIzJjasSucop9ttnlbGajizf5/2Hp0oJpiM
-         zxGgRYswZoJucJz+iPdixZkTEEmOjN7tWBs0Fvw3De6nnit/Bm9dqp7luej92qXu51vJ
-         fmqg==
+        d=linaro.org; s=google; t=1678106472;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6XrdgZjMDlRLFUbyVPxJfBpwx76lgBG7lHXmFXxIIe0=;
+        b=U92togDggQfebFB+oCNSCcXsZbxpGePUFP3ikADRG6yzR7syMch4sYx3BcPbAHkflT
+         XK1Kj+4jKssvq/kJJq1e8naG9O8KHAnyfxBVzOBoFkIpBEWAh9DPnvxr05kI8FLpl0aj
+         kumC2G3oTOFIk7cWg3iIQjO12DUpbeZ27eyh+PD142mAqUYXfI6XQc2bQW16b7Dm6Anl
+         iVr8ApM5YTEDLOSpsYjlxQZKpKvTHphg2oAtc/e1B3uZ5iiD/PjC8O0R6RyChc+SzMqS
+         e4Wfc2RpqIbpxMTo2MpTDso63NBC9hYdfTUUs4kRyuvJG7E97nsjdO5rurLS0Myq7xaF
+         4vvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678097849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XKtYenUqtd6VLS14GJrUPd5L2ue++xHl4Zvl1BOmIFU=;
-        b=NYmlsw51zFcze6ZfXc/Z3RWmB3VgRpKvm97Z01ItqW/0fpOGr2SnO7cmMtL8tgAx+S
-         d3a25H//jkeaChGG/xz05z9bGEU23DTPaiiLPlivwp81VsNBHgP0RcoX9GmcLXQFNwpA
-         FJMncm1Ofb21ccze8WX3keRicO4Wb5/Ht4Zx0nyCU708XhOsXriaws0q0UAECahx5vTd
-         hfHOXEsxW3rSqAptvr9tk16MJUxi9YejrGS/yZdL9T27R0gQGB72PmQEBD5MiW7UZxKU
-         cgVAxddjpde4vJenNtwyEpyP8J2CE3jcFuQCLJiiuZb96QnATygj+orgtxLGZZZvkzQ1
-         pzmg==
-X-Gm-Message-State: AO0yUKWdbOM0CnAA4r/zBG0Q5XMxKTUp7pcVrHlAU9lkmEh+kk8I+5ol
-        gE9QNl+Ws9YFaAWcbjwaR9wQ0MTI+QyJSQg1g9kj4A==
-X-Google-Smtp-Source: AK7set/X1gbAlXGfd9w/+La9Un/k7BbX9YRtJU9/AJdwxyPogFCGtQifMzZmGZ0sqrTFpoLiV/EVM8Bh5GgzffrAR7o=
-X-Received: by 2002:a1f:1888:0:b0:401:8c72:4cf4 with SMTP id
- 130-20020a1f1888000000b004018c724cf4mr6487877vky.1.1678097848924; Mon, 06 Mar
- 2023 02:17:28 -0800 (PST)
+        d=1e100.net; s=20210112; t=1678106472;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6XrdgZjMDlRLFUbyVPxJfBpwx76lgBG7lHXmFXxIIe0=;
+        b=gexVkObqH/CbF+IPQS2dMslo5kkHpyuDVWM1ubkJViuJN9bGwFTIoCx9qLOYRiVqNK
+         mdxh45pLD/Q2ah9+kKPkRPldUej3kQJso3JkNrqZtq2VILPu880+AqgyKuhCnj641D3p
+         dSGgovBb5oKpppGwf4CLOYZilONeDGXdMi627DfPLbiuDPZBGsnyfeW9AAKpVoapj6nE
+         3JpUevKNcCa8T0yn7avi8EAIjar4qunXMdwS6gYhJXN5PJRlPu+2cbGEDOsHduT6iWCr
+         s8M7om0rcRQXRzgcoxnejSUDFACDHAYjwrxoAAoKu9z6y/+1S9HYdEj7Zyc8QOzLOg+b
+         pmTw==
+X-Gm-Message-State: AO0yUKXQ2d80X8YRgWWan4/4KtaqAPVsNZMJkVUyAacp+CIs7Hg4meH+
+        yNjt5+K7rbXdeTTF3isRO0rdFw==
+X-Google-Smtp-Source: AK7set9TfEy2X1DOujpMKIH+igyL2YEO/hoGzriXXAWSRxRsb3UHkcR/L6n7Onm7AHa1lQCQR1vI8g==
+X-Received: by 2002:a05:622a:34b:b0:3b8:6ca4:bb23 with SMTP id r11-20020a05622a034b00b003b86ca4bb23mr15273152qtw.15.1678106471798;
+        Mon, 06 Mar 2023 04:41:11 -0800 (PST)
+Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id l19-20020a05620a211300b007423c122457sm7340219qkl.63.2023.03.06.04.41.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Mar 2023 04:41:11 -0800 (PST)
+Date:   Mon, 6 Mar 2023 07:41:09 -0500
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, techsupport@winsystems.com,
+        stable@vger.kernel.org,
+        Paul Demetrotion <pdemetrotion@winsystems.com>
+Subject: Re: [RESEND] gpio: ws16c48: Fix off-by-one error in WS16C48 resource
+ region extent
+Message-ID: <ZAXfZbywWOo2pg4L@fedora>
+References: <20230228081724.94786-1-william.gray@linaro.org>
+ <CAMRc=MfD3=ifo9EJf=5_HZKLXnbASi=ehYm=Zs4WQA+YxfffQw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20230226053953.4681-1-rdunlap@infradead.org> <20230226053953.4681-4-rdunlap@infradead.org>
-In-Reply-To: <20230226053953.4681-4-rdunlap@infradead.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 6 Mar 2023 11:17:18 +0100
-Message-ID: <CAMRc=McJk4QE_hbjKzPcVTdfOAqT+jcfCenwdPzds8CqRYVtZw@mail.gmail.com>
-Subject: Re: [PATCH 3/8] gpio: GPIO_REGMAP: select REGMAP instead of depending
- on it
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, Michael Walle <michael@walle.cc>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="zqx7Ofl6bIpHu7bU"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MfD3=ifo9EJf=5_HZKLXnbASi=ehYm=Zs4WQA+YxfffQw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sun, Feb 26, 2023 at 6:40=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org=
-> wrote:
->
-> REGMAP is a hidden (not user visible) symbol. Users cannot set it
-> directly thru "make *config", so drivers should select it instead of
-> depending on it if they need it.
->
-> Consistently using "select" or "depends on" can also help reduce
-> Kconfig circular dependency issues.
->
-> Therefore, change the use of "depends on REGMAP" to "select REGMAP".
->
-> Fixes: ebe363197e52 ("gpio: add a reusable generic gpio_chip using regmap=
-")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Michael Walle <michael@walle.cc>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> Cc: linux-gpio@vger.kernel.org
-> ---
->  drivers/gpio/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff -- a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -100,7 +100,7 @@ config GPIO_GENERIC
->         tristate
->
->  config GPIO_REGMAP
-> -       depends on REGMAP
-> +       select REGMAP
->         tristate
->
->  # put drivers in the right section, in alphabetical order
 
-Queued for fixes, thanks!
+--zqx7Ofl6bIpHu7bU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Bart
+On Mon, Mar 06, 2023 at 10:23:30AM +0100, Bartosz Golaszewski wrote:
+> On Thu, Mar 2, 2023 at 11:30=E2=80=AFPM William Breathitt Gray
+> <william.gray@linaro.org> wrote:
+> >
+> > The WinSystems WS16C48 I/O address region spans offsets 0x0 through 0xA,
+> > which is a total of 11 bytes. Fix the WS16C48_EXTENT define to the
+> > correct value of 11 so that access to necessary device registers is
+> > properly requested in the ws16c48_probe() callback by the
+> > devm_request_region() function call.
+> >
+> > Fixes: 2c05a0f29f41 ("gpio: ws16c48: Implement and utilize register str=
+uctures")
+> > Cc: stable@vger.kernel.org
+> > Cc: Paul Demetrotion <pdemetrotion@winsystems.com>
+> > Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
+> > ---
+>=20
+> Why did you need to resend this? Anything changed?
+>=20
+> Bart
+
+No changes in code, just added the stable@ver.kernel.org Cc tag.
+
+William Breathitt Gray
+
+--zqx7Ofl6bIpHu7bU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZAXfZQAKCRC1SFbKvhIj
+K5j3AQCDDi/opSFAVX095eZN7sUZr/Nq6/HOpDiRxrg0Da27EAD+Ir3Vs4hMQ8ik
+dvGD/xKnfiuEDHex5yeQzjHChNUO6Qo=
+=d1q2
+-----END PGP SIGNATURE-----
+
+--zqx7Ofl6bIpHu7bU--
