@@ -2,158 +2,202 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A9D8C6FD1C
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 08:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAFEEC6FD19
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 08:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229988AbjCFIdp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 6 Mar 2023 03:33:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34938 "EHLO
+        id S229940AbjCFIl4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 6 Mar 2023 03:41:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229955AbjCFIdn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2023 03:33:43 -0500
-X-Greylist: delayed 965 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 06 Mar 2023 00:33:03 PST
-Received: from smtp16.bhosted.nl (smtp16.bhosted.nl [IPv6:2a02:9e0:8000::27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DFA21DB9D
-        for <linux-gpio@vger.kernel.org>; Mon,  6 Mar 2023 00:33:02 -0800 (PST)
+        with ESMTP id S229519AbjCFIlz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2023 03:41:55 -0500
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B655A212BC
+        for <linux-gpio@vger.kernel.org>; Mon,  6 Mar 2023 00:41:53 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id k10so11298154edk.13
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Mar 2023 00:41:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=protonic.nl; s=202111;
-        h=message-id:references:in-reply-to:reply-to:subject:cc:to:from:date:
-         content-transfer-encoding:content-type:mime-version:from;
-        bh=iGJBerep9CUnwc0kKc070FLg5wgjahdY5flMGzZYQMs=;
-        b=oDYibHiF3QQbdSnLfVFRXWqS6z3NQmb6kugL8YV+AzvXesLHyr5JzoQv36TlUtoc6W5KCotN1l9wN
-         9LSOB4Bu9Yfgb0XpMplMCVfXibebalo7a5aESxI1lFy0L3DA6RZo6UFgR79W8gl98jQrxQ/tLvd2T2
-         0xEQnuRgzH1ORWF+wpRq+raboR/TqFqi3nosbBYytoNMkARO5GE2FASMRvbgozacXT968pNevzID08
-         kd2Bb6hh7pzuv819gTpRFHFjwmhc4+RnlmqnZW8aNjXY3z24ty79Y1uQG7spYocRbf484LhNNLEwf4
-         6CAVA7hl0v6jQA7FXN1mdH2h85/uHYw==
-X-MSG-ID: 412d5329-bbf7-11ed-829c-0050569d2c73
+        d=linaro.org; s=google; t=1678092112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vC2UMy/rdFsJj0D2BlHZptJUd1EfeaZsqvifezHhP80=;
+        b=GlyLxJXQRtZVPo3XhuyN75NML1JaCyxuD2Mi4XOKvRip5DG/fEuki7mxlqpd9cpR1f
+         rUtTWXVvab9MczuD0fo5h8EWCHN/gcPmnwsjc10LUtFbCSXv2fJgyKn45jCvrxzOkPYf
+         E8hnWuwayUZcydUaXpXx16PT5hWrEjr3h6cyACAteAvczjOHzU4rv8MBYOuwBwAyCP8K
+         N33X1gkbC+DYrhrqgKV89tOPjv0/Ec9q6neM/BDELQNNCq8iX6VK+BxcA2wfirzuLX+G
+         4w3VUj+sLeR8jyCHqgWv6xzEYjO+8ZRoNfsrOrnS3MAxacWSZDVNm6vqVP02FwmxyFaB
+         etuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678092112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vC2UMy/rdFsJj0D2BlHZptJUd1EfeaZsqvifezHhP80=;
+        b=urQ7rJbQlsReZNyI1I+yWTyHiCyvBAvWlHchyiQ8TnFxNlXACa8ySJiKU4bhbZANQw
+         Ei/AnB1quklOWWJ3qo+TUp8CfQs3afqae32uNWzITz0N88tltsfz6upTDvfnbRQ9gy+A
+         DCKwRB7WIxFg0FI/lfYpA+4nmhTyvSCubjdK9CA7SgTJGnWGKJLUISS3VmmGO+jsRqoF
+         JeOktCbNH+BQ0iZAH6VWgJ0Wvg9nY5EZPZcUrS1W9eG/0/PusWaKs5IqfN5cyoGyPwgh
+         KTJr/bLl2okaWvUP1TXSoNL1vovJIBjnraGgemZpT15f6xhPvri25U49Txn6BLNhFLiu
+         gc9A==
+X-Gm-Message-State: AO0yUKWidEXBEUWvNL5NaAxXUKruM/DLVStXVpXl9vFm0o1tAWbSmasQ
+        o0Uf7qPrnQXEVOeaS0/uYOFpLg==
+X-Google-Smtp-Source: AK7set/LZG0DGhn2WM9G7iZfaL/U03tBL9IUollWkti6wvZuDTVbK9E23k3Dq9iI1GyC/hL+s7VoOg==
+X-Received: by 2002:a17:906:b14f:b0:8b1:7de9:b38c with SMTP id bt15-20020a170906b14f00b008b17de9b38cmr9381185ejb.52.1678092112251;
+        Mon, 06 Mar 2023 00:41:52 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:d85d:5a4b:9830:fcfe? ([2a02:810d:15c0:828:d85d:5a4b:9830:fcfe])
+        by smtp.gmail.com with ESMTPSA id c15-20020a170906170f00b008c6c47f59c1sm4208292eje.48.2023.03.06.00.41.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Mar 2023 00:41:51 -0800 (PST)
+Message-ID: <95d5b97c-ccdc-cede-a6d7-8cc64086d62d@linaro.org>
+Date:   Mon, 6 Mar 2023 09:41:50 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Mon, 06 Mar 2023 09:16:54 +0100
-From:   Robin van der Gracht <robin@protonic.nl>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        netdev@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-pm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Fix SPI and I2C bus node names in examples
-Organization: Protonic Holland
-Reply-To: robin@protonic.nl
-Mail-Reply-To: robin@protonic.nl
-In-Reply-To: <CANiq72mm9qX8uuS2y_vvtcza2hAgG3zFEy24koQTfSEOWkKDYQ@mail.gmail.com>
-References: <20230228215433.3944508-1-robh@kernel.org>
- <CANiq72mm9qX8uuS2y_vvtcza2hAgG3zFEy24koQTfSEOWkKDYQ@mail.gmail.com>
-Message-ID: <61190cb766083d73ef3b1455dcf3ff61@protonic.nl>
-X-Sender: robin@protonic.nl
-User-Agent: Roundcube Webmail/1.3.1 
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v1 1/2] dt-bindings: gpio: add fcs,fxl6408-gpio binding
+ document
+Content-Language: en-US
+To:     Francesco Dolcini <francesco@dolcini.it>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-kernel@vger.kernel.org
+References: <20230306083446.41082-1-francesco@dolcini.it>
+ <20230306083446.41082-2-francesco@dolcini.it>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230306083446.41082-2-francesco@dolcini.it>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-> From: Rob Herring <robh@kernel.org>
-> Date: Tue, Feb 28, 2023 at 10:54 PM
-> Subject: [PATCH] dt-bindings: Fix SPI and I2C bus node names in 
-> examples
-> To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> Cc: <devicetree@vger.kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-> Benson Leung <bleung@chromium.org>, Guenter Roeck
-> <groeck@chromium.org>, Stephen Boyd <sboyd@kernel.org>, Andrzej Hajda
-> <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
-> Robert Foss <rfoss@kernel.org>, Thierry Reding
-> <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, MyungJoo
-> Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-> Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
-> <brgl@bgdev.pl>, Pavel Machek <pavel@ucw.cz>, Lee Jones
-> <lee@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, David S.
-> Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-> Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-> Wolfgang Grandegger <wg@grandegger.com>, Kalle Valo
-> <kvalo@kernel.org>, Sebastian Reichel <sre@kernel.org>, Mark Brown
-> <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-> <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-> <linux-gpio@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-> <linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
-> <netdev@vger.kernel.org>, <linux-can@vger.kernel.org>,
-> <linux-wireless@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-> <alsa-devel@alsa-project.org>, <linux-usb@vger.kernel.org>
+On 06/03/2023 09:34, Francesco Dolcini wrote:
+> From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 > 
-> 
-> SPI and I2C bus node names are expected to be "spi" or "i2c",
-> respectively, with nothing else, a unit-address, or a '-N' index. A
-> pattern of 'spi0' or 'i2c0' or similar has crept in. Fix all these
-> cases. Mostly scripted with the following commands:
-> 
-> git grep -l '\si2c[0-9] {' Documentation/devicetree/ | xargs sed -i -e
-> 's/i2c[0-9] {/i2c {/'
-> git grep -l '\sspi[0-9] {' Documentation/devicetree/ | xargs sed -i -e
-> 's/spi[0-9] {/spi {/'
-> 
-> With this, a few errors in examples were exposed and fixed.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> Cc: Miguel Ojeda <ojeda@kernel.org>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> Cc: Benson Leung <bleung@chromium.org>
-> Cc: Guenter Roeck <groeck@chromium.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Andrzej Hajda <andrzej.hajda@intel.com>
-> Cc: Neil Armstrong <neil.armstrong@linaro.org>
-> Cc: Robert Foss <rfoss@kernel.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Lee Jones <lee@kernel.org>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: Wolfgang Grandegger <wg@grandegger.com>
-> Cc: Kalle Valo <kvalo@kernel.org>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-i2c@vger.kernel.org
-> Cc: linux-leds@vger.kernel.org
-> Cc: linux-media@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-can@vger.kernel.org
-> Cc: linux-wireless@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-usb@vger.kernel.org
-> ---
->  .../bindings/auxdisplay/holtek,ht16k33.yaml       |  2 +-
+> Add binding document for Fairchild FXL6408 GPIO expander.
 
-....
+Subject: drop second/last, redundant "binding document". The
+"dt-bindings" prefix is already stating that these are bindings.
 
->  86 files changed, 110 insertions(+), 103 deletions(-)
 > 
-> diff --git 
-> a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-> b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-> index fc4873deb76f..286e726cd052 100644
-> --- a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-> +++ b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
-> @@ -72,7 +72,7 @@ examples:
->      #include <dt-bindings/interrupt-controller/irq.h>
->      #include <dt-bindings/input/input.h>
->      #include <dt-bindings/leds/common.h>
-> -    i2c1 {
+> Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+
+Missing SoB.
+
+> ---
+>  .../bindings/gpio/fcs,fxl6408-gpio.yaml       | 73 +++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/fcs,fxl6408-gpio.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/fcs,fxl6408-gpio.yaml b/Documentation/devicetree/bindings/gpio/fcs,fxl6408-gpio.yaml
+> new file mode 100644
+> index 000000000000..ccf946040d00
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/fcs,fxl6408-gpio.yaml
+> @@ -0,0 +1,73 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/fcs,fxl6408-gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: FXL6408 GPIO driver
+
+If "driver" means Linux driver, then drop.
+
+Fairchild FXL6408 GPIO Expander
+
+> +
+> +maintainers:
+> +  - Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+> +
+> +description: |
+> +  Driver for Fairchild FXL6408 GPIO expander
+
+This is not a driver. Drop entire description as it is duplicating title
+or add here something useful.
+
+
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fcs,fxl6408
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +
+> +  gpio-controller: true
+> +
+> +  gpio-line-names:
+> +    minItems: 1
+> +    maxItems: 8
+> +
+> +patternProperties:
+> +  "^(hog-[0-9]+|.+-hog(-[0-9]+)?)$":
+
+From here....
+
+> +    type: object
+> +    properties:
+> +      gpio-hog: true
+> +      gpios: true
+> +      input: true
+> +      output-high: true
+> +      output-low: true
+> +      line-name: true
+> +
+> +    required:
+> +      - gpio-hog
+> +      - gpios
+> +
+> +    additionalProperties: false
+
+To here, all this can be simpler:
+
+  "^(hog-[0-9]+|.+-hog(-[0-9]+)?)$":
+    required:
+      - gpio-hog
+
+which selects gpio hog schema.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - gpio-controller
+> +  - "#gpio-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
 > +    i2c {
->              #address-cells = <1>;
->              #size-cells = <0>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        gpio_expander_43: gpio-expander@43 {
+> +            compatible = "fcs,fxl6408";
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            reg = <0x43>;
+> +            gpio-line-names = "Wi-Fi_W_DISABLE", "Wi-Fi_WKUP_WLAN",
+> +              "PWR_EN_+V3.3_WiFi_N", "PCIe_REF_CLK_EN",
 
-Acked-by: Robin van der Gracht <robin@protonic.nl>
+Align with previous line/entries.
+
+> +              "USB_RESET_N", "USB_BYPASS_N", "Wi-Fi_PDn",
+> +              "Wi-Fi_WKUP_BT";
+> +        };
+> +    };
+
+Best regards,
+Krzysztof
+
