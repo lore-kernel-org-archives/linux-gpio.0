@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0108C6FD1D
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 19:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A42C74A44
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 19:55:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230177AbjCFTzk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 6 Mar 2023 14:55:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57108 "EHLO
+        id S229627AbjCFTzl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 6 Mar 2023 14:55:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbjCFTzh (ORCPT
+        with ESMTP id S230160AbjCFTzh (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2023 14:55:37 -0500
 Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A77A64A93;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C681664C6;
         Mon,  6 Mar 2023 11:55:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1678132536; x=1709668536;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=x77bSH20Ou4EihSoiJQDgs4+5OFy75brI2gUDSEqixA=;
-  b=cMryF/q2DkCkGdjn36ecf/XF5C/Kdn/qJO3rQFe5iTgajiG6nR5bLnlJ
-   pgA5t5nWmhjnQLHfBGmau/ZeYXdMrQKxh491XwFjlKqzfyb/BU+o/PCDv
-   oUQ2B8N22aJh0yF4wWDoSWG4hSRZkjtHARIMv4blbIjTCRbTmhEm8rdix
-   adiWN0u4mfDQzWas5FerAK/fBnGfBMSVkSUKRbF82hp+Z57y8Cm4HUSFz
-   teN6rr9gStnG8Pjv4NDmditY057hyrt0+VwRgz7iyLpZPZgK+9ijInGvS
-   ckR7VRvvq54Kko+G78+LQuK8iKq+CRgYuuayM3VBBSbqcqAg2WzIlQzqI
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="400483892"
+  bh=tShFWIVCdDeqrNoh0yuO5Gnio4e4ieLf0f/Lj6I9KNA=;
+  b=iWklsGNCdF7Ojl6Kg8e0oXm2Nx7aPDdgCHsQh1fJKxL2Lh07gg47Kq2d
+   8VFTbdrUsY+CgTuyiHJjAfsTEsKMEdWtODqG18yOTPLl0y3/klNgkON2K
+   tx91bJ0jUUXz0eZ91VDs8cSwEvvTaWoCvt5V8P1+fIqgc8/G8hMi1bf0b
+   DHAH5CdwLW4rSqvf91WpJYwMbI0Re5I7sLtOYFXoDG7T9HPyG4VRhYKrQ
+   riZgxayVbjdEHRGLIijYZB17T8YZSitikw8Hbn4XUI9iP0jTdpCgL0etm
+   18IKiTRXw7QZxzpiHTdeeHFPd7sYjRHNtB34bLPBu9ZJvye5npleBB/Vb
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="400483899"
 X-IronPort-AV: E=Sophos;i="5.98,238,1673942400"; 
-   d="scan'208";a="400483892"
+   d="scan'208";a="400483899"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
   by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2023 11:55:34 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="1005549562"
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="1005549565"
 X-IronPort-AV: E=Sophos;i="5.98,238,1673942400"; 
-   d="scan'208";a="1005549562"
+   d="scan'208";a="1005549565"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Mar 2023 11:55:28 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 06 Mar 2023 11:55:29 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 6B292398; Mon,  6 Mar 2023 21:56:12 +0200 (EET)
+        id 8366246E; Mon,  6 Mar 2023 21:56:12 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Schspa Shi <schspa@gmail.com>, Marc Zyngier <maz@kernel.org>,
@@ -63,9 +63,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         <sathyanarayanan.kuppuswamy@linux.intel.com>,
         Nandor Han <nandor.han@ge.com>,
         Semi Malinen <semi.malinen@ge.com>
-Subject: [PATCH v1 04/16] lib/string_choices: Add str_input_output() helper
-Date:   Mon,  6 Mar 2023 21:55:44 +0200
-Message-Id: <20230306195556.55475-5-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 06/16] gpio: adnp: Utilize helpers from string_choices.h
+Date:   Mon,  6 Mar 2023 21:55:46 +0200
+Message-Id: <20230306195556.55475-7-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230306195556.55475-1-andriy.shevchenko@linux.intel.com>
 References: <20230306195556.55475-1-andriy.shevchenko@linux.intel.com>
@@ -75,39 +75,61 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add str_input_output() helper to return 'input' or 'output' string literal.
-Also add an inversed variant, i.e. str_output_input().
+There are a few helpers available to convert a boolean variable
+to the dedicated string literals depending on the application.
+Use them in the driver.
 
-All the same for str_in_out().
+While at, utilize specifier field for padding the strings where
+it's required.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- include/linux/string_choices.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/gpio/gpio-adnp.c | 24 ++++++------------------
+ 1 file changed, 6 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/string_choices.h b/include/linux/string_choices.h
-index 48120222b9b2..ad345df325ec 100644
---- a/include/linux/string_choices.h
-+++ b/include/linux/string_choices.h
-@@ -26,6 +26,18 @@ static inline const char *str_high_low(bool v)
- }
- #define str_low_high(v)		str_high_low(!(v))
+diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
+index a6439e3daff0..823cad855ee8 100644
+--- a/drivers/gpio/gpio-adnp.c
++++ b/drivers/gpio/gpio-adnp.c
+@@ -11,6 +11,7 @@
+ #include <linux/property.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
++#include <linux/string_choices.h>
  
-+static inline const char *str_in_out(bool v)
-+{
-+	return v ? "in" : "out";
-+}
-+#define str_out_in(v)		str_in_out(!(v))
-+
-+static inline const char *str_input_output(bool v)
-+{
-+	return v ? "input" : "output";
-+}
-+#define str_output_input(v)	str_input_output(!(v))
-+
- static inline const char *str_read_write(bool v)
- {
- 	return v ? "read" : "write";
+ #define GPIO_DDR(gpio) (0x00 << (gpio)->reg_shift)
+ #define GPIO_PLR(gpio) (0x01 << (gpio)->reg_shift)
+@@ -211,25 +212,12 @@ static void adnp_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 
+ 		for (j = 0; j < 8; j++) {
+ 			unsigned int bit = (i << adnp->reg_shift) + j;
+-			const char *direction = "input ";
+-			const char *level = "low ";
+-			const char *interrupt = "disabled";
+-			const char *pending = "";
+ 
+-			if (ddr & BIT(j))
+-				direction = "output";
+-
+-			if (plr & BIT(j))
+-				level = "high";
+-
+-			if (ier & BIT(j))
+-				interrupt = "enabled ";
+-
+-			if (isr & BIT(j))
+-				pending = "pending";
+-
+-			seq_printf(s, "%2u: %s %s IRQ %s %s\n", bit,
+-				   direction, level, interrupt, pending);
++			seq_printf(s, "%2u: %-6.6s %-4.4s IRQ %-8.8s %s\n", bit,
++				   str_output_input(ddr & BIT(j)),
++				   str_high_low(plr & BIT(j)),
++				   str_enabled_disabled(ier & BIT(j)),
++				   (isr & BIT(j)) ? "pending" : "");
+ 		}
+ 	}
+ 
 -- 
 2.39.1
 
