@@ -2,100 +2,153 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD32AC61DA4
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 07:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96CD4C678D4
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 08:32:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229732AbjCFHb2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 6 Mar 2023 02:31:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34664 "EHLO
+        id S229668AbjCFIcX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 6 Mar 2023 03:32:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229660AbjCFHb0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2023 02:31:26 -0500
-Received: from muru.com (muru.com [72.249.23.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 03E181E1F6;
-        Sun,  5 Mar 2023 23:31:26 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 5D1AC8027;
-        Mon,  6 Mar 2023 07:31:25 +0000 (UTC)
-Date:   Mon, 6 Mar 2023 09:31:24 +0200
-From:   Tony Lindgren <tony@atomide.com>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mun Yew Tham <mun.yew.tham@intel.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, Alban Bedel <albeu@free.fr>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Jay Fang <f.fangjian@huawei.com>,
-        Daniel Palmer <daniel@thingy.jp>,
-        Romain Perier <romain.perier@gmail.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
+        with ESMTP id S229988AbjCFIcV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2023 03:32:21 -0500
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7169212AA;
+        Mon,  6 Mar 2023 00:31:59 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id i34so35072927eda.7;
+        Mon, 06 Mar 2023 00:31:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678091518;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=l9LP7bOG1M0J7nDrxY/rPNDyeXRjQxGxyQ2mWu+wlb0=;
+        b=R79rh8cvsq/BotA7SR/qy1NbOqU5r5GPQiW9SsnU0rQ2gmdV07G9BqGwwW+lNsFcMS
+         5Agkz/rdka2zcFhFAgcOS9zvd3oL6hD621/IWVbha+M+vCVSylYzQXDgg+5uy/uuRcB+
+         Gc07ZSXHdIUIYT0Yp9XaYCVb5LpKJsDutCcY0DDl5SOCSsG8VkRpsmkVUdesvHnKoavl
+         YNVQcpYREsUPzQIpfFpeMmV4gmVn5blMdzWFHSqxWKEGiRxpjC7luLHPTWJF4AtYrv4a
+         ybrcX2AUWPLTueL1pg9e2k7egNucZJj2JDR40vCrCrW67WhBfBU4i85A69FsZv7X/wko
+         ldgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678091518;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l9LP7bOG1M0J7nDrxY/rPNDyeXRjQxGxyQ2mWu+wlb0=;
+        b=e+i5+5PVrogiEPggcqiJ5zJkqDib357Jpu0TKwOib9ZeLbZtB502f7Vsa7b6Rpzpm+
+         hSQ4T53HsIBSb/eldqVK+9gmG4gcyOvnjD9tydn19zR0Cwvlr3zHBIXxh/TnwIBP4/lp
+         9wENGyzjUsRSZqiD+xNiwSBIhXhDIcV1n1r/4IKmsKFIWPZ+aMlMir77lCPd91HPcWUS
+         ddnM6C0vfy70Ckwcv9kH4icLIGJc7/d1wuzjHjKpz/OUVhcwaJKesnHAbgrQkvFFMdp/
+         KbC8uGjG0hsFDzOLurbzHYU+p2TUL665G4s23xYHz/cxbB66Mexf+GEgiwPWdZArgbtM
+         5raQ==
+X-Gm-Message-State: AO0yUKVY/qh12yhq+CVhfPy3XKpSP3wePbEGgL+yUJMlHZRpFzjbKTtX
+        YfJJhBxOXVEurStt1ZvzhZA=
+X-Google-Smtp-Source: AK7set9qotnlsbz5yc0qVnc49U4ouzoOZ0iySrvzB7SZ0KUHh9LNdwGGMFF3oYw8OnyX4EhVRmfwoA==
+X-Received: by 2002:a17:907:1c15:b0:8af:2fa1:2226 with SMTP id nc21-20020a1709071c1500b008af2fa12226mr12771669ejc.6.1678091518019;
+        Mon, 06 Mar 2023 00:31:58 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id gq15-20020a170906e24f00b008b17b123a47sm4205223ejb.208.2023.03.06.00.31.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Mar 2023 00:31:57 -0800 (PST)
+Date:   Mon, 6 Mar 2023 11:31:52 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     oe-kbuild@lists.linux.dev,
         William Breathitt Gray <william.gray@linaro.org>,
+        linus.walleij@linaro.org, brgl@bgdev.pl
+Cc:     lkp@intel.com, oe-kbuild-all@lists.linux.dev,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-omap@vger.kernel.org,
-        Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH 15/17] gpio: omap: Convert to immutable irq_chip
-Message-ID: <20230306073124.GC7501@atomide.com>
-References: <20230215-immutable-chips-v1-0-51a8f224a5d0@linaro.org>
- <20230215-immutable-chips-v1-15-51a8f224a5d0@linaro.org>
- <Y+8xkV5aUrAajLNP@atomide.com>
- <20230217173108.1448ce92@aktux>
- <20230306072852.GB7501@atomide.com>
+        broonie@kernel.org,
+        William Breathitt Gray <william.gray@linaro.org>,
+        Arnaud de Turckheim <quarium@gmail.com>,
+        John Hentges <jhentges@accesio.com>,
+        Jay Dolan <jay.dolan@accesio.com>
+Subject: Re: [PATCH v3 2/3] gpio: pcie-idio-24: Migrate to the regmap API
+Message-ID: <179ed443-a67b-4633-b62c-a4dda0f0f088@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230306072852.GB7501@atomide.com>
+In-Reply-To: <278e328cd1689a4e331e7515050c12c29f2a4785.1678034378.git.william.gray@linaro.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [230306 07:28]:
-> * Andreas Kemnade <andreas@kemnade.info> [230217 16:31]:
-> > On Fri, 17 Feb 2023 09:49:37 +0200
-> > Tony Lindgren <tony@atomide.com> wrote:
-> > 
-> > > Hi,
-> > > 
-> > > * Linus Walleij <linus.walleij@linaro.org> [230216 09:38]:
-> > > > Convert the driver to immutable irq-chip with a bit of
-> > > > intuition.
-> > > > 
-> > > > This driver require some special care: .irq_ack() was copied
-> > > > from dummy_irq_chip where it was defined as noop. This only
-> > > > makes sense if using handle_edge_irq() that will unconditionally
-> > > > call .irq_ack() to avoid a crash, but this driver is not ever
-> > > > using handle_edge_irq() so just avoid assigning .irq_ack().
-> > > > 
-> > > > A separate chip had to be created for the non-wakeup instance.  
-> > > 
-> > > Nice, works for me.
-> > > 
-> > > BTW, I still see these warnings remaining on boot:
-> > > 
-> > > gpio gpiochip0: Static allocation of GPIO base is deprecated, use dynamic allocation.
-> > > 
-> > > Seems like we might be able to get rid of those too now or are
-> > > there still some dependencies with /sys/class/gpio for example?
-> > > 
-> > on what are you testing? on -next? I thought I have fixed theese warning with
-> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=92bf78b33b0b463b00c6b0203b49aea845daecc8
-> 
-> You're right, sorry looks like I pasted the wrong line from the dmesg
-> output :)
-> 
-> I intended to paste this example instead of the static allocation line:
-> 
-> gpio gpiochip1: (gpio-32-63): not an immutable chip, please consider fixing it!
+Hi William,
 
-Hmm, nope, sorry it seems I was just confused between two patches.
-Hopefully all the gpio warnings will be gone with this $subject patch
-applied.
+url:    https://github.com/intel-lab-lkp/linux/commits/William-Breathitt-Gray/regmap-Pass-irq_drv_data-as-a-parameter-for-set_type_config/20230306-010313
+base:   4827aae061337251bb91801b316157a78b845ec7
+patch link:    https://lore.kernel.org/r/278e328cd1689a4e331e7515050c12c29f2a4785.1678034378.git.william.gray%40linaro.org
+patch subject: [PATCH v3 2/3] gpio: pcie-idio-24: Migrate to the regmap API
+config: loongarch-randconfig-m041-20230305 (https://download.01.org/0day-ci/archive/20230306/202303060606.ooBzB3pr-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 12.1.0
 
-Regards,
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <error27@gmail.com>
+| Link: https://lore.kernel.org/r/202303060606.ooBzB3pr-lkp@intel.com/
 
-Tony
+smatch warnings:
+drivers/gpio/gpio-pcie-idio-24.c:365 idio_24_probe() error: potentially dereferencing uninitialized 'idio24gpio'.
+
+vim +/idio24gpio +365 drivers/gpio/gpio-pcie-idio-24.c
+
+58556204662812 William Breathitt Gray 2018-01-09  330  static int idio_24_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+58556204662812 William Breathitt Gray 2018-01-09  331  {
+58556204662812 William Breathitt Gray 2018-01-09  332  	struct device *const dev = &pdev->dev;
+58556204662812 William Breathitt Gray 2018-01-09  333  	struct idio_24_gpio *idio24gpio;
+58556204662812 William Breathitt Gray 2018-01-09  334  	int err;
+10a2f11d3c9e48 Arnaud de Turckheim    2020-11-04  335  	const size_t pci_plx_bar_index = 1;
+58556204662812 William Breathitt Gray 2018-01-09  336  	const size_t pci_bar_index = 2;
+58556204662812 William Breathitt Gray 2018-01-09  337  	const char *const name = pci_name(pdev);
+e60d5c32ff098c William Breathitt Gray 2023-03-05  338  	struct gpio_regmap_config gpio_config = {};
+e60d5c32ff098c William Breathitt Gray 2023-03-05  339  	void __iomem *pex8311_intcsr;
+e60d5c32ff098c William Breathitt Gray 2023-03-05  340  	void __iomem *idio_24_regs;
+e60d5c32ff098c William Breathitt Gray 2023-03-05  341  	struct regmap *pex8311_intcsr_map;
+e60d5c32ff098c William Breathitt Gray 2023-03-05  342  	struct regmap_irq_chip *chip;
+e60d5c32ff098c William Breathitt Gray 2023-03-05  343  	struct regmap_irq_chip_data *chip_data;
+58556204662812 William Breathitt Gray 2018-01-09  344  
+58556204662812 William Breathitt Gray 2018-01-09  345  	err = pcim_enable_device(pdev);
+58556204662812 William Breathitt Gray 2018-01-09  346  	if (err) {
+58556204662812 William Breathitt Gray 2018-01-09  347  		dev_err(dev, "Failed to enable PCI device (%d)\n", err);
+58556204662812 William Breathitt Gray 2018-01-09  348  		return err;
+58556204662812 William Breathitt Gray 2018-01-09  349  	}
+58556204662812 William Breathitt Gray 2018-01-09  350  
+10a2f11d3c9e48 Arnaud de Turckheim    2020-11-04  351  	err = pcim_iomap_regions(pdev, BIT(pci_plx_bar_index) | BIT(pci_bar_index), name);
+58556204662812 William Breathitt Gray 2018-01-09  352  	if (err) {
+58556204662812 William Breathitt Gray 2018-01-09  353  		dev_err(dev, "Unable to map PCI I/O addresses (%d)\n", err);
+58556204662812 William Breathitt Gray 2018-01-09  354  		return err;
+58556204662812 William Breathitt Gray 2018-01-09  355  	}
+58556204662812 William Breathitt Gray 2018-01-09  356  
+e60d5c32ff098c William Breathitt Gray 2023-03-05  357  	pex8311_intcsr = pcim_iomap_table(pdev)[pci_plx_bar_index] + PLX_PEX8311_PCI_LCS_INTCSR;
+e60d5c32ff098c William Breathitt Gray 2023-03-05  358  	idio_24_regs = pcim_iomap_table(pdev)[pci_bar_index];
+e60d5c32ff098c William Breathitt Gray 2023-03-05  359  
+e60d5c32ff098c William Breathitt Gray 2023-03-05  360  	pex8311_intcsr_map = devm_regmap_init_mmio(dev, pex8311_intcsr,
+e60d5c32ff098c William Breathitt Gray 2023-03-05  361  						   &pex8311_intcsr_regmap_config);
+e60d5c32ff098c William Breathitt Gray 2023-03-05  362  	if (IS_ERR(pex8311_intcsr_map))
+e60d5c32ff098c William Breathitt Gray 2023-03-05  363  		return dev_err_probe(dev, PTR_ERR(pex8311_intcsr_map),
+e60d5c32ff098c William Breathitt Gray 2023-03-05  364  				     "Unable to initialize PEX8311 register map\n");
+e60d5c32ff098c William Breathitt Gray 2023-03-05 @365  	idio24gpio->map = devm_regmap_init_mmio(dev, idio_24_regs,
+e60d5c32ff098c William Breathitt Gray 2023-03-05  366  					    &idio_24_regmap_config);
+
+Heh.  This needs to be after the idio24gpio = devm_kzalloc().
+
+e60d5c32ff098c William Breathitt Gray 2023-03-05  367  	if (IS_ERR(idio24gpio->map))
+e60d5c32ff098c William Breathitt Gray 2023-03-05  368  		return dev_err_probe(dev, PTR_ERR(idio24gpio->map),
+e60d5c32ff098c William Breathitt Gray 2023-03-05  369  				     "Unable to initialize register map\n");
+e60d5c32ff098c William Breathitt Gray 2023-03-05  370  
+e60d5c32ff098c William Breathitt Gray 2023-03-05  371  	idio24gpio = devm_kzalloc(dev, sizeof(*idio24gpio), GFP_KERNEL);
+e60d5c32ff098c William Breathitt Gray 2023-03-05  372  	if (!idio24gpio)
+e60d5c32ff098c William Breathitt Gray 2023-03-05  373  		return -ENOMEM;
+e60d5c32ff098c William Breathitt Gray 2023-03-05  374  
+e60d5c32ff098c William Breathitt Gray 2023-03-05  375  	mutex_init(&idio24gpio->lock);
+e60d5c32ff098c William Breathitt Gray 2023-03-05  376  
+e60d5c32ff098c William Breathitt Gray 2023-03-05  377  	/* Initialize all IRQ type configuration to IRQ_TYPE_EDGE_BOTH */
+e60d5c32ff098c William Breathitt Gray 2023-03-05  378  	idio24gpio->irq_type = GENMASK(7, 0);
+e60d5c32ff098c William Breathitt Gray 2023-03-05  379  
+e60d5c32ff098c William Breathitt Gray 2023-03-05  380  	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+e60d5c32ff098c William Breathitt Gray 2023-03-05  381  	if (!chip)
+e60d5c32ff098c William Breathitt Gray 2023-03-05  382  		return -ENOMEM;
+e60d5c32ff098c William Breathitt Gray 2023-03-05  383  
+e60d5c32ff098c William Breathitt Gray 2023-03-05  384  	chip->name = name;
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
+
