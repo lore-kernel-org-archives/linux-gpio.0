@@ -2,75 +2,77 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BCDEC61DA4
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 14:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B64CC678D4
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 14:24:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230071AbjCFOWF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 6 Mar 2023 09:22:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55952 "EHLO
+        id S229944AbjCFOYV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 6 Mar 2023 09:24:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230292AbjCFOVi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2023 09:21:38 -0500
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 530D334333
-        for <linux-gpio@vger.kernel.org>; Mon,  6 Mar 2023 06:20:13 -0800 (PST)
-Received: by mail-yb1-xb2a.google.com with SMTP id x12so8214851ybt.7
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Mar 2023 06:20:13 -0800 (PST)
+        with ESMTP id S230028AbjCFOYF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2023 09:24:05 -0500
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C1EC31E18
+        for <linux-gpio@vger.kernel.org>; Mon,  6 Mar 2023 06:23:09 -0800 (PST)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-536bbe5f888so186377317b3.8
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Mar 2023 06:23:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678112332;
+        d=linaro.org; s=google; t=1678112461;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BSuWilkYCJFsV7IY3WrT2Gn2CfcAm+FHoFIi1EIJdfw=;
-        b=CrCSn/hY/Pn3OIYiTzzC8GJtvWpUB9dzR3nWq6D52TKPxspzM5n1Pdvl94fz/mx87C
-         m/1PEAwns2uSZyTOG8Mnyneu/EZmd8VLZU4KePObsSanw1hntLXEjaQMug6t1K8iIqdi
-         fnmq9fsgDrAH/Mx+DTyy/d/YbQ+kgBGOpM3sBH4bjH0uOJ58CQp1p9K5g9rEUYBW9oxP
-         DNwRhsNDFEw1ax6MCVyH3XbsNlUbvTFVOugDAwBLZSNkFL3Xitr2RedlbUajuyUHAgj8
-         delve7oZI+VqEg28RCSoYlORT3B2T+RZ+RpsvG2tRn7VRyOBt1moQJmyx4IIr1xzcPkb
-         8I5g==
+        bh=5dOWzz5ptG78/24FUVPQGUEThQ6H9diL9d3zhvn+uWM=;
+        b=GNs48ysPbT/xZ24D4CfgtbT9TZY3jSruyqLWF5Fty1geh6KAQp8eXevTTOfRrxGoqR
+         mEG1UOzDvKmcE14L7+UEteRTt1OAXVAa2ExjPl98v7DlH34ZFXtGgrBBr3FTBs5BCqgc
+         xhBv7a5nSXvLqYxurnCASKlNTk/gB7RxuxujOSiRFBjGXExeWMO/WKqXI8LzgfDw7jvw
+         z65e6Xw0SRWVGgPKZkBREn9O6AC5oGztdhduwBZVu3cH05+XgSWEINmgjl0FRJorH9sg
+         eggxDRSs4XVFSNvXGkZBQbbXObC/ezaFPG4NiFrb8t6yZ6nZ7LCs3kSMVTOCqsf4WoqH
+         3v5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678112332;
+        d=1e100.net; s=20210112; t=1678112461;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BSuWilkYCJFsV7IY3WrT2Gn2CfcAm+FHoFIi1EIJdfw=;
-        b=S1jg/CGzRyvza/hpZHLBIR0Fbt2Yiv7fbbRknwLC8xCGA/tFZrJEuLmlqbFWoM6wCd
-         Y+5X/q0gODcf+vFFZjsLiSdA8MZZviRIEnLQn+VTIrtE9DBScXypPF3UApIWbPAvCF6k
-         EXHBrlGjPlk4WWkvixlPINK9dgDGvlQu7YmaNAEanZQwwhU/mLsKL70nHru555XOcDzZ
-         xdMjIBdmxI0G70l2DkaEIa23UvXjv96HYTgIUnLKvivLw2yisSOCChQRQklpL/BzyUuc
-         gvZC9Caqtom3XDCfvk1QgYavoOmtZfZZ/M6bAJA3DafBIpojRr40j/DLiUpHaEZ3sI8X
-         Bf/A==
-X-Gm-Message-State: AO0yUKXB2er5NErnGmwHoAWlJrKZu3jHoaSSuf8L6Z6pxNHLr886XPRF
-        KNDMnCXUTNuTZHDtTICNGjGBW262t0Z7emcEnKQOfQ==
-X-Google-Smtp-Source: AK7set8SLvtaEIzMFs/ct9lUoE90JnY9UNlhBsKArcGXEzrP5gpzowNx3909XhZ7n3C1qDJEkWxKzgtuWVYK6UiyEsg=
-X-Received: by 2002:a5b:b84:0:b0:ab8:1ed9:cfd2 with SMTP id
- l4-20020a5b0b84000000b00ab81ed9cfd2mr6552182ybq.5.1678112332336; Mon, 06 Mar
- 2023 06:18:52 -0800 (PST)
+        bh=5dOWzz5ptG78/24FUVPQGUEThQ6H9diL9d3zhvn+uWM=;
+        b=Xt1Q+iioPodP4FYbvr3f/6Gn4aYEI+peMPPsxF7211l5aae6sRBQdbFSxg5ivoO/53
+         MArFK8eQXyI2QtSPHJWArtoOx0G43bQ3oYrrio+8JWRiYk8lBI4wxmnplfIf0JRDy02r
+         +1TGDPZHGGjxwhb9fXbNYSm2iEdwvZwldekW2+kyfdY9hm3Zm7yuq6cg6GPCbI7h/lL7
+         6P4zTIamIDQ+VYMALTSq8aJFjKIR4NTNLB8Z4fBgmlJkkRqY6rhSMLS1LJeTP8aw53GQ
+         acAA6/Rr4dSNpUwJnCeC/zHm+B3M+/SW5bd5S64efoyXJ69PAYTuZnrOheDvOdapkWxq
+         lx0Q==
+X-Gm-Message-State: AO0yUKXt7nZu3H5rwkjjS0Oyq6j4GboMTPSSECOEPJRw1B3KR1wn5Kan
+        fmt1zCx+EWTbD4WGx0mt4b0ipAZDKXvhG2yAb2xpJg==
+X-Google-Smtp-Source: AK7set8qwioBxXmsDhA0H0TuRhZ8UNvJ2+iD4V1ti22S71JgWl+a31bTY+XLGka4hSvMtw5SMO+aM+npxDywx06BCDw=
+X-Received: by 2002:a81:a12:0:b0:533:9d13:a067 with SMTP id
+ 18-20020a810a12000000b005339d13a067mr9186983ywk.3.1678112461287; Mon, 06 Mar
+ 2023 06:21:01 -0800 (PST)
 MIME-Version: 1.0
-References: <20230206203720.1177718-1-horatiu.vultur@microchip.com>
-In-Reply-To: <20230206203720.1177718-1-horatiu.vultur@microchip.com>
+References: <20230227205131.2104082-1-dario.binacchi@amarulasolutions.com>
+In-Reply-To: <20230227205131.2104082-1-dario.binacchi@amarulasolutions.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 6 Mar 2023 15:18:40 +0100
-Message-ID: <CACRpkdZsWFJEU7xoc-r+tBkD2TzRTW34x3RbeqMEqrRfq6A7YA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: ocelot: Fix alt mode for ocelot
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alexandre.belloni@bootlin.com, andy.shevchenko@gmail.com
+Date:   Mon, 6 Mar 2023 15:20:50 +0100
+Message-ID: <CACRpkdYLRyAzRuQDe2PZxOGQG_YwmE2YNnE8UDcj_c+Nt0HH5A@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: stm32: use dynamic allocation of GPIO base
+To:     Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        =?UTF-8?Q?Bernhard_Rosenkr=C3=A4nzer?= <bero@baylibre.com>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Marek Vasut <marex@denx.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Feb 6, 2023 at 9:37 PM Horatiu Vultur
-<horatiu.vultur@microchip.com> wrote:
+On Mon, Feb 27, 2023 at 9:51 PM Dario Binacchi
+<dario.binacchi@amarulasolutions.com> wrote:
 
-> In case the driver was trying to set an alternate mode for gpio
-> 0 or 32 then the mode was not set correctly. The reason is that
-> there is computation error inside the function ocelot_pinmux_set_mux
-> because in this case it was trying to shift to left by -1.
-> Fix this by actually shifting the function bits and not the position.
->
-> Fixes: 4b36082e2e09 ("pinctrl: ocelot: fix pinmuxing for pins after 31")
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> Since commit 502df79b860563d7 ("gpiolib: Warn on drivers still using static
+> gpiobase allocation"), one or more warnings are printed during boot on
+> systems where static allocation of GPIO base is used:
 
 Patch applied for fixes.
 
