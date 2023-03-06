@@ -2,99 +2,213 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32998C61DA4
-	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 15:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E9CC64EC4
+	for <linux-gpio@archiver.kernel.org>; Mon,  6 Mar 2023 15:15:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229486AbjCFPAM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 6 Mar 2023 10:00:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43462 "EHLO
+        id S231281AbjCFPPZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 6 Mar 2023 10:15:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230408AbjCFPAL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2023 10:00:11 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEC052A9B6;
-        Mon,  6 Mar 2023 07:00:07 -0800 (PST)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3266RFn2000531;
-        Mon, 6 Mar 2023 14:46:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id; s=qcppdkim1;
- bh=5JRGOQbm0JBuLxYt4MzA6HybTg38jSMU6E2GDw++4aI=;
- b=YvcQA/w0B4Eh5GEtqz1bFrzdyRybeccuvt7or/616AUwSXvc/Amkmx7z16nh+ZMEH31j
- ahZKViNqmJuhXjGVofKRGcQ8II/Q4a/UwuBhrCcVd1zjaMsk5J61zjv8+pPoY/IYMfSD
- BLoiELGjaDdL2pelJC4fR1E32upGn5zW2PiOq6V2AQlU9mqrKKsFcB9awm3fOG8/niHi
- IeVIJ25M7TVK9eiXhov3z36vlnxaHDKUbNViO3OOnJ5RnYDS6uGcAiP45OlbN3ezMUOe
- AO8zYMEfqQeUFJiDTFCMAboZ+FkcxU7w1BfXHmUjTo/N4bKlkD5yAdQmSgrAvA302t9B Tw== 
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3p417d4y1p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Mar 2023 14:46:46 +0000
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-        by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 326EkheE017348;
-        Mon, 6 Mar 2023 14:46:43 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 3p4fft5j33-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 06 Mar 2023 14:46:43 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 326EfjQG011965;
-        Mon, 6 Mar 2023 14:46:43 GMT
-Received: from mdalam-linux.qualcomm.com (mdalam-linux.qualcomm.com [10.201.2.71])
-        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 326EkhVT017343;
-        Mon, 06 Mar 2023 14:46:43 +0000
-Received: by mdalam-linux.qualcomm.com (Postfix, from userid 466583)
-        id 51EE712010CA; Mon,  6 Mar 2023 20:16:42 +0530 (IST)
-From:   Md Sadre Alam <quic_mdalam@quicinc.com>
-To:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
-        linus.walleij@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     quic_sjaganat@quicinc.com, quic_srichara@quicinc.com,
-        quic_varada@quicinc.com, quic_mdalam@quicinc.com
-Subject: [PATCH 4/5] pinctrl: qcom: Use devm_platform_get_and_ioremap_resource()
-Date:   Mon,  6 Mar 2023 20:16:41 +0530
-Message-Id: <20230306144641.21955-1-quic_mdalam@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IYc9OB0druSbGCCo8z-rf0Daqc6MsuQj
-X-Proofpoint-ORIG-GUID: IYc9OB0druSbGCCo8z-rf0Daqc6MsuQj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-06_08,2023-03-06_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 spamscore=0 malwarescore=0 bulkscore=0 mlxlogscore=656
- phishscore=0 clxscore=1011 adultscore=0 priorityscore=1501 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2303060130
+        with ESMTP id S230189AbjCFPPU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2023 10:15:20 -0500
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 255142B2BD;
+        Mon,  6 Mar 2023 07:15:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678115714; x=1709651714;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=rKQuh9h196n6Xnhs+CHc4rwkxt9Wy3guLd/Pq8bxo4Y=;
+  b=D5I+rtqKXT/WQndEl5iMT32cXX0g6qcPxouXlfMt7Xz60FyUVU1+aIvV
+   gUe82VHoJ4xTdeFnpWvLiSEknUt1XjitufeXICx/1/eLfzvYsmDkiuocb
+   s8Nbh6NU2uPSpzAKPvD3rXT7Ii5xrbacbMxs/bV0ojT+1/tgDCKhTAKWp
+   y9u+1fKzpY7xHIMMYp4NBiAqdR0HwC701t6KJlRtJesTHJNoREIKbGug/
+   jLG+iGlkKRCweZzNrYtYpxyHJqgVvxXe6hPHHTdM3Ro5EEo1p50gznlo5
+   QxIj9r3rnokmCaLvZ91MFRE3Bk9Y+iXssvVALDgKfpRJzsH3BZsWdTWb6
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="323884948"
+X-IronPort-AV: E=Sophos;i="5.98,238,1673942400"; 
+   d="scan'208";a="323884948"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2023 07:09:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="740361332"
+X-IronPort-AV: E=Sophos;i="5.98,238,1673942400"; 
+   d="scan'208";a="740361332"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga008.fm.intel.com with ESMTP; 06 Mar 2023 07:09:13 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id D5651143; Mon,  6 Mar 2023 17:09:56 +0200 (EET)
+Date:   Mon, 6 Mar 2023 17:09:56 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linux GPIO <linux-gpio@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [GIT PULL] intel-gpio for 6.3-1
+Message-ID: <ZAYCRPsKR8Je6LOW@black.fi.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Convert platform_get_resource(), devm_ioremap_resource() to a single
-call to devm_platform_get_and_ioremap_resource(), as this is exactly
-what this function does.
+Hi Linux GPIO maintainers et al.,
 
-Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Combined series to clean up headers in the GPIO library and drivers.
+Along with it, drop a few unused legacy APIs.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index daeb79a9a602..e25e7b5cdda2 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -1480,8 +1480,7 @@ int msm_pinctrl_probe(struct platform_device *pdev,
- 				return PTR_ERR(pctrl->regs[i]);
- 		}
- 	} else {
--		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--		pctrl->regs[0] = devm_ioremap_resource(&pdev->dev, res);
-+		pctrl->regs[0] = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
- 		if (IS_ERR(pctrl->regs[0]))
- 			return PTR_ERR(pctrl->regs[0]);
- 
+This tag is immutable, enjoy!
+
+Thanks,
+
+With Best Regards,
+Andy Shevchenko
+
+The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6:
+
+  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-gpio-intel.git tags/intel-gpio-v6.3-1
+
+for you to fetch changes up to 380c7ba3923c6e471aff0f951a6cf42e8dec2c79:
+
+  gpiolib: Clean up headers (2023-03-06 12:33:02 +0200)
+
+----------------------------------------------------------------
+intel-gpio for v6.3-1
+
+* Remove some of the legacy APIs that are not used anymore
+* Clean up headers in the GPIO library and drivers
+
+The following is an automated git shortlog grouped by driver:
+
+aggregator:
+ -  Add missing header(s)
+
+ARM:
+ -  s3c64xx: Use the right include
+ -  orion/gpio: Use the right include
+
+gpiolib:
+ -  Clean up headers
+ -  Group forward declarations in consumer.h
+ -  Deduplicate forward declarations in consumer.h
+ -  Drop unused forward declaration from driver.h
+ -  split of_mm_gpio_chip out of linux/of_gpio.h
+ -  split linux/gpio/driver.h out of linux/gpio.h
+ -  remove legacy gpio_export()
+ -  remove gpio_set_debounce()
+ -  remove asm-generic/gpio.h
+ -  coldfire: remove custom asm/gpio.h
+ -  remove empty asm/gpio.h files
+ -  Make the legacy <linux/gpio.h> consumer-only
+
+hte:
+ -  tegra-194: Use proper includes
+
+reg:
+ -  Add missing header(s)
+
+regmap:
+ -  Add missing header(s)
+
+----------------------------------------------------------------
+Andy Shevchenko (7):
+      gpio: aggregator: Add missing header(s)
+      gpio: reg: Add missing header(s)
+      gpio: regmap: Add missing header(s)
+      gpiolib: Drop unused forward declaration from driver.h
+      gpiolib: Deduplicate forward declarations in consumer.h
+      gpiolib: Group forward declarations in consumer.h
+      gpiolib: Clean up headers
+
+Arnd Bergmann (7):
+      gpiolib: remove empty asm/gpio.h files
+      gpiolib: coldfire: remove custom asm/gpio.h
+      gpiolib: remove asm-generic/gpio.h
+      gpiolib: remove gpio_set_debounce()
+      gpiolib: remove legacy gpio_export()
+      gpiolib: split linux/gpio/driver.h out of linux/gpio.h
+      gpiolib: split of_mm_gpio_chip out of linux/of_gpio.h
+
+Linus Walleij (4):
+      ARM: orion/gpio: Use the right include
+      ARM: s3c64xx: Use the right include
+      hte: tegra-194: Use proper includes
+      gpiolib: Make the legacy <linux/gpio.h> consumer-only
+
+ Documentation/admin-guide/gpio/sysfs.rst           |   2 +-
+ Documentation/driver-api/gpio/legacy.rst           |  23 ----
+ .../translations/zh_CN/driver-api/gpio/legacy.rst  |  20 ---
+ Documentation/translations/zh_TW/gpio.txt          |  19 ---
+ MAINTAINERS                                        |   1 -
+ arch/arm/Kconfig                                   |   1 -
+ arch/arm/include/asm/gpio.h                        |  21 ---
+ arch/arm/mach-omap1/irq.c                          |   1 +
+ arch/arm/mach-omap2/pdata-quirks.c                 |   9 +-
+ arch/arm/mach-orion5x/board-rd88f5182.c            |   1 +
+ arch/arm/mach-s3c/s3c64xx.c                        |   2 +-
+ arch/arm/mach-sa1100/assabet.c                     |   1 +
+ arch/arm/plat-orion/gpio.c                         |   5 +-
+ arch/m68k/Kconfig.cpu                              |   1 -
+ arch/m68k/include/asm/gpio.h                       |  95 -------------
+ arch/m68k/include/asm/mcfgpio.h                    |   2 +-
+ arch/powerpc/platforms/44x/Kconfig                 |   1 +
+ arch/powerpc/platforms/4xx/gpio.c                  |   2 +-
+ arch/powerpc/platforms/8xx/Kconfig                 |   1 +
+ arch/powerpc/platforms/8xx/cpm1.c                  |   2 +-
+ arch/powerpc/platforms/Kconfig                     |   2 +
+ arch/powerpc/sysdev/cpm_common.c                   |   2 +-
+ arch/sh/Kconfig                                    |   1 -
+ arch/sh/boards/board-magicpanelr2.c                |   1 +
+ arch/sh/boards/mach-ap325rxa/setup.c               |   7 +-
+ arch/sh/include/asm/gpio.h                         |  45 -------
+ drivers/gpio/Kconfig                               |  19 +--
+ drivers/gpio/TODO                                  |  15 ++-
+ drivers/gpio/gpio-aggregator.c                     |   9 +-
+ drivers/gpio/gpio-altera.c                         |   2 +-
+ drivers/gpio/gpio-davinci.c                        |   2 -
+ drivers/gpio/gpio-mm-lantiq.c                      |   2 +-
+ drivers/gpio/gpio-mpc5200.c                        |   2 +-
+ drivers/gpio/gpio-reg.c                            |  12 +-
+ drivers/gpio/gpio-regmap.c                         |  12 +-
+ drivers/gpio/gpiolib-acpi.c                        |  10 +-
+ drivers/gpio/gpiolib-acpi.h                        |   1 -
+ drivers/gpio/gpiolib-of.c                          |   9 +-
+ drivers/gpio/gpiolib-of.h                          |   1 -
+ drivers/gpio/gpiolib-swnode.c                      |   5 +-
+ drivers/gpio/gpiolib-sysfs.c                       |  25 +++-
+ drivers/gpio/gpiolib.c                             |   9 +-
+ drivers/hte/hte-tegra194-test.c                    |  10 +-
+ drivers/input/touchscreen/ads7846.c                |   5 +-
+ drivers/media/pci/sta2x11/sta2x11_vip.c            |  10 +-
+ drivers/net/ieee802154/ca8210.c                    |   3 +-
+ .../net/wireless/broadcom/brcm80211/brcmsmac/led.c |   1 +
+ drivers/pinctrl/core.c                             |   1 -
+ drivers/soc/fsl/qe/gpio.c                          |   2 +-
+ include/asm-generic/gpio.h                         | 147 ---------------------
+ include/linux/gpio.h                               | 104 +++++++++------
+ include/linux/gpio/consumer.h                      |  24 ++--
+ include/linux/gpio/driver.h                        |  31 +++--
+ include/linux/gpio/legacy-of-mm-gpiochip.h         |  36 +++++
+ include/linux/mfd/ucb1x00.h                        |   1 +
+ include/linux/of_gpio.h                            |  21 ---
+ 56 files changed, 271 insertions(+), 528 deletions(-)
+ delete mode 100644 arch/arm/include/asm/gpio.h
+ delete mode 100644 arch/m68k/include/asm/gpio.h
+ delete mode 100644 arch/sh/include/asm/gpio.h
+ delete mode 100644 include/asm-generic/gpio.h
+ create mode 100644 include/linux/gpio/legacy-of-mm-gpiochip.h
+
 -- 
-2.17.1
+With Best Regards,
+Andy Shevchenko
+
 
