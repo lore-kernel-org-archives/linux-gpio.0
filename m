@@ -2,90 +2,131 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A5FC678D5
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Mar 2023 18:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C020CC678D5
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Mar 2023 19:45:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233230AbjCGSrY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Mar 2023 13:47:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37530 "EHLO
+        id S231646AbjCGTpu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Mar 2023 14:45:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232098AbjCGSrE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Mar 2023 13:47:04 -0500
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7F2FBAD2E;
-        Tue,  7 Mar 2023 10:36:14 -0800 (PST)
-Received: by mail-qt1-x82b.google.com with SMTP id d7so15395339qtr.12;
-        Tue, 07 Mar 2023 10:36:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678214149;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=h2mBcr4WZsvt4Bcr6dnxp9ONM85phZYpVsfFFx8PJFU=;
-        b=D9awXMSZ79lX1tu4O1dyMkljVSVaz23XvDIiTiUkWiJZEmOYhW5lvok5a84H7/qlpO
-         5GEqXV8KgriaDJVdbHoM5UYTuAtxfD6a4QPins52SWoOeHJfhQdM+qxWnou+kNoaI90M
-         iz6Vr5RwC8a1dMDFNyFej81PPRycb6KJvL3K6we5CN/RoVvdBUeQk1iI5MBuM16uPicj
-         rXFeo1vEMcViI1nuikuFT2cB+d6vGIVWOtSqoVzLZDUfMmSfbeTk5R1YytQUJnqkhuW5
-         APi1jGs9ifUhuP5jz+UDr2BcD8JNc/9aFGzk9MPCQXZCKCvnEn17+y2ZWvDWWl9n40Hp
-         SIew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678214149;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h2mBcr4WZsvt4Bcr6dnxp9ONM85phZYpVsfFFx8PJFU=;
-        b=7/meirdC8MbVAEd6ez6/pl2Bb6R0XNmfkGeeH/PAGPNj3RTD8DWAhKKuHqwNS9oxse
-         Ack7WB3PgtRzBAzRHSS9lLSkfRoktgVqIMdRt57NyChw7bGQLYtzlSKpEFSrC6DFSScS
-         VNUvQohM7mki8S3AWp83wZveJSRFcrONKTyv+xDwztaMj2OXH7GDr2Xwn++1kEnEKW0I
-         RsuEipqxHNeMOX3Lt7sx4PzthHe6zAWE5GrFNA5kpxNI/u+TE9Vew9k+c5BeF+k603UN
-         t3P54dp60NfFnaGFSuGyUBGV5wOPcYCRHZ6Gq9MbMnDXsxVbuh4NaXIvoX5asl7QGcX6
-         Y0Cw==
-X-Gm-Message-State: AO0yUKUZ/Eg8KoSe/4+bEWPx33ocqWgmqLWEemrglwKXFBcqKPKWFknJ
-        9PWOx2f2fH4Ri7CF6pj1dhWPtkSw6rt3YiK+46A=
-X-Google-Smtp-Source: AK7set9ztZHKUEAImfMt7M4fDI3qHFJrQpse/I5SIZkdyfjvUp6ZuvUdIe/AWzhOocCHEY+n8DuJ82mo1ui40I6GscE=
-X-Received: by 2002:ac8:40cb:0:b0:3bf:c33e:93a9 with SMTP id
- f11-20020ac840cb000000b003bfc33e93a9mr4443310qtm.1.1678214149330; Tue, 07 Mar
- 2023 10:35:49 -0800 (PST)
+        with ESMTP id S231936AbjCGTod (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Mar 2023 14:44:33 -0500
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3023984CD;
+        Tue,  7 Mar 2023 11:33:51 -0800 (PST)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 327JXlRV032057;
+        Tue, 7 Mar 2023 13:33:47 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1678217627;
+        bh=ZZ2CX0VbEpPFPtwgXxUtM9c1eVceTlwlTZUDyoR3v1Y=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=bNl9+8uqN53pjLIupqoy/oH95usAq5iHt1SAZA5xK/EAbqhQapiX/52A/0RBumICm
+         XHfvxY305hPCuHu8+SqYaeLMQtb795U5YV1MREGR649P3KZY+/X3SAYfLCmUHGXBH/
+         LyHp8AQrbpS/IWw4tRphgftFtqj8RKymQGcv/l5s=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 327JXlGm022502
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 7 Mar 2023 13:33:47 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Tue, 7
+ Mar 2023 13:33:46 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Tue, 7 Mar 2023 13:33:46 -0600
+Received: from ula0226330.dal.design.ti.com (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 327JXkWr026389;
+        Tue, 7 Mar 2023 13:33:46 -0600
+From:   Andrew Davis <afd@ti.com>
+To:     Peter Tyser <ptyser@xes-inc.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Andrew Davis <afd@ti.com>
+Subject: [PATCH v2 6/6] gpio: tps65086: Use devm_gpiochip_add_data() to simplify remove path
+Date:   Tue, 7 Mar 2023 13:33:46 -0600
+Message-ID: <20230307193346.8718-6-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230307193346.8718-1-afd@ti.com>
+References: <20230307193346.8718-1-afd@ti.com>
 MIME-Version: 1.0
-References: <20230220023320.3499-1-clin@suse.com> <CACRpkdYknZo3Q7_CeSkOL2XwwAmKERskx24o-toaVy=rs0Yf5Q@mail.gmail.com>
- <ZAZ3JZQ4Tuz5vyH1@surfacebook> <CACRpkdbksZ59ndrRAQpTGa01GTq4c_2EcOQ2mtz1PLjqU8_nug@mail.gmail.com>
- <CAHp75Vf3ve-NdMG6iti-KSs=tGGgGf9tNj=aK7Jofk9233WocQ@mail.gmail.com>
- <CACRpkdaCZSoem31GmDC97LPYcZqRjkyf=6VGtXdXK0iwrV74qA@mail.gmail.com>
- <ZAc3nKEiYbUEX2xv@linux-8mug> <ZAdP1Z+LcgOQWvtK@linux-8mug>
-In-Reply-To: <ZAdP1Z+LcgOQWvtK@linux-8mug>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 7 Mar 2023 20:35:13 +0200
-Message-ID: <CAHp75VfkmJnk_HqFjpfw1q+D+JgTDNe62OryEgwW4CyDbwQwrg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] Add pinctrl support for S32 SoC family
-To:     Chester Lin <clin@suse.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, s32@nxp.com,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Larisa Grigore <larisa.grigore@nxp.com>,
-        Ghennadi Procopciuc <Ghennadi.Procopciuc@oss.nxp.com>,
-        Andrei Stefanescu <andrei.stefanescu@nxp.com>,
-        Radu Pirea <radu-nicolae.pirea@nxp.com>,
-        Matthias Brugger <mbrugger@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Mar 7, 2023 at 4:53 PM Chester Lin <clin@suse.com> wrote:
+Use devm version of gpiochip add function to handle removal for us.
 
-...
+While here update copyright and module author.
 
-> Sorry that I just found that my mailbox didn't receive Andy's mail [comments on
-> v5 2/3]. I will try answering it and come up with a patch ASAP.
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ drivers/gpio/gpio-tps65086.c | 20 ++++----------------
+ 1 file changed, 4 insertions(+), 16 deletions(-)
 
-The thread is available here:
-https://lore.kernel.org/all/20230220023320.3499-1-clin@suse.com/
-
-You can even download it using the `b4` tool (available in your distro
-quite likely).
-
+diff --git a/drivers/gpio/gpio-tps65086.c b/drivers/gpio/gpio-tps65086.c
+index 1e9d8262d0ff..0b8b631441ae 100644
+--- a/drivers/gpio/gpio-tps65086.c
++++ b/drivers/gpio/gpio-tps65086.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (C) 2015 Texas Instruments Incorporated - http://www.ti.com/
+- *	Andrew F. Davis <afd@ti.com>
++ * Copyright (C) 2015-2023 Texas Instruments Incorporated - https://www.ti.com/
++ *	Andrew Davis <afd@ti.com>
+  *
+  * Based on the TPS65912 driver
+  */
+@@ -86,13 +86,11 @@ static int tps65086_gpio_probe(struct platform_device *pdev)
+ 	if (!gpio)
+ 		return -ENOMEM;
+ 
+-	platform_set_drvdata(pdev, gpio);
+-
+ 	gpio->tps = dev_get_drvdata(pdev->dev.parent);
+ 	gpio->chip = template_chip;
+ 	gpio->chip.parent = gpio->tps->dev;
+ 
+-	ret = gpiochip_add_data(&gpio->chip, gpio);
++	ret = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
+ 		return ret;
+@@ -101,15 +99,6 @@ static int tps65086_gpio_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int tps65086_gpio_remove(struct platform_device *pdev)
+-{
+-	struct tps65086_gpio *gpio = platform_get_drvdata(pdev);
+-
+-	gpiochip_remove(&gpio->chip);
+-
+-	return 0;
+-}
+-
+ static const struct platform_device_id tps65086_gpio_id_table[] = {
+ 	{ "tps65086-gpio", },
+ 	{ /* sentinel */ }
+@@ -121,11 +110,10 @@ static struct platform_driver tps65086_gpio_driver = {
+ 		.name = "tps65086-gpio",
+ 	},
+ 	.probe = tps65086_gpio_probe,
+-	.remove = tps65086_gpio_remove,
+ 	.id_table = tps65086_gpio_id_table,
+ };
+ module_platform_driver(tps65086_gpio_driver);
+ 
+-MODULE_AUTHOR("Andrew F. Davis <afd@ti.com>");
++MODULE_AUTHOR("Andrew Davis <afd@ti.com>");
+ MODULE_DESCRIPTION("TPS65086 GPIO driver");
+ MODULE_LICENSE("GPL v2");
 -- 
-With Best Regards,
-Andy Shevchenko
+2.39.2
+
