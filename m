@@ -2,42 +2,42 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DE4C742A7
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Mar 2023 19:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC94C678D5
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Mar 2023 19:45:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229920AbjCGTpw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Mar 2023 14:45:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37868 "EHLO
+        id S230218AbjCGTpx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Mar 2023 14:45:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231894AbjCGTod (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Mar 2023 14:44:33 -0500
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A324A98850;
-        Tue,  7 Mar 2023 11:33:51 -0800 (PST)
+        with ESMTP id S232512AbjCGToe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Mar 2023 14:44:34 -0500
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 959DA9AFD2;
+        Tue,  7 Mar 2023 11:33:52 -0800 (PST)
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 327JXk43032053;
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 327JXkLV129393;
         Tue, 7 Mar 2023 13:33:46 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
         s=ti-com-17Q1; t=1678217626;
-        bh=MjozjsM7oc2HrtgkTcGYDiESorMVaDXnh/A+VTPqizc=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=oVGE1yOnfCxQuT8mDvLuDK359VltJfZcdeDlDg8J1L2l5CL2+bLWKb3f8nB3BOWMw
-         5/7k0czFmU+HEAECuEn14y1C8k6iJ/PkMstb0kwGaHlgLIXhJlWEFFFG5+UItmbar/
-         4Q5GYmZv/meOe/QC2sOwy2rQLtDbofV6YdLB0jIA=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 327JXkY3123444
+        bh=VZPQo90BF4za+2DxTnTfA4rqN5o7cRlXJuablQTN0vI=;
+        h=From:To:CC:Subject:Date;
+        b=s3h3WlDG9pUBA/NUm3vq1MQtBXYjRR+DzoctbMy4B8PC61IQOiCU/fPY5XNNRTeO/
+         d1AFt1+ue4ol9FOC3OOvhDZ36iWhgp9Q/6OYduT030cUjRuioM3ts4AZTxXcNXcsai
+         DlhLlBXU/rA5ZvB/bWXhNqw2Zkcwf8/aMMYBOAXE=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 327JXkEA123433
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
         Tue, 7 Mar 2023 13:33:46 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Tue, 7
  Mar 2023 13:33:46 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
  Frontend Transport; Tue, 7 Mar 2023 13:33:46 -0600
 Received: from ula0226330.dal.design.ti.com (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 327JXkWq026389;
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 327JXkWm026389;
         Tue, 7 Mar 2023 13:33:46 -0600
 From:   Andrew Davis <afd@ti.com>
 To:     Peter Tyser <ptyser@xes-inc.com>,
@@ -46,12 +46,10 @@ To:     Peter Tyser <ptyser@xes-inc.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>
 CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Andrew Davis <afd@ti.com>
-Subject: [PATCH v2 5/6] gpio: tpic2810: Use devm_gpiochip_add_data() to simplify remove path
-Date:   Tue, 7 Mar 2023 13:33:45 -0600
-Message-ID: <20230307193346.8718-5-afd@ti.com>
+Subject: [PATCH v2 1/6] gpio: ich: Use devm_gpiochip_add_data() to simplify remove path
+Date:   Tue, 7 Mar 2023 13:33:41 -0600
+Message-ID: <20230307193346.8718-1-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230307193346.8718-1-afd@ti.com>
-References: <20230307193346.8718-1-afd@ti.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -62,72 +60,44 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 Use devm version of gpiochip add function to handle removal for us.
 
-While here update copyright and module author.
-
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/gpio/gpio-tpic2810.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+ drivers/gpio/gpio-ich.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/drivers/gpio/gpio-tpic2810.c b/drivers/gpio/gpio-tpic2810.c
-index 349c5fbd9b02..718053edd76a 100644
---- a/drivers/gpio/gpio-tpic2810.c
-+++ b/drivers/gpio/gpio-tpic2810.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) 2015 Texas Instruments Incorporated - http://www.ti.com/
-- *	Andrew F. Davis <afd@ti.com>
-+ * Copyright (C) 2015-2023 Texas Instruments Incorporated - https://www.ti.com/
-+ *	Andrew Davis <afd@ti.com>
-  */
+diff --git a/drivers/gpio/gpio-ich.c b/drivers/gpio/gpio-ich.c
+index 3b31f5e9bf40..0be9285efebc 100644
+--- a/drivers/gpio/gpio-ich.c
++++ b/drivers/gpio/gpio-ich.c
+@@ -457,7 +457,7 @@ static int ichx_gpio_probe(struct platform_device *pdev)
  
- #include <linux/gpio/driver.h>
-@@ -107,8 +107,6 @@ static int tpic2810_probe(struct i2c_client *client)
- 	if (!gpio)
- 		return -ENOMEM;
- 
--	i2c_set_clientdata(client, gpio);
--
- 	gpio->chip = template_chip;
- 	gpio->chip.parent = &client->dev;
- 
-@@ -116,7 +114,7 @@ static int tpic2810_probe(struct i2c_client *client)
- 
- 	mutex_init(&gpio->lock);
- 
--	ret = gpiochip_add_data(&gpio->chip, gpio);
-+	ret = devm_gpiochip_add_data(&client->dev, &gpio->chip, gpio);
- 	if (ret < 0) {
- 		dev_err(&client->dev, "Unable to register gpiochip\n");
- 		return ret;
-@@ -125,13 +123,6 @@ static int tpic2810_probe(struct i2c_client *client)
+ init:
+ 	ichx_gpiolib_setup(&ichx_priv.chip);
+-	err = gpiochip_add_data(&ichx_priv.chip, NULL);
++	err = devm_gpiochip_add_data(dev, &ichx_priv.chip, NULL);
+ 	if (err) {
+ 		dev_err(dev, "Failed to register GPIOs\n");
+ 		return err;
+@@ -469,19 +469,11 @@ static int ichx_gpio_probe(struct platform_device *pdev)
  	return 0;
  }
  
--static void tpic2810_remove(struct i2c_client *client)
+-static int ichx_gpio_remove(struct platform_device *pdev)
 -{
--	struct tpic2810 *gpio = i2c_get_clientdata(client);
+-	gpiochip_remove(&ichx_priv.chip);
 -
--	gpiochip_remove(&gpio->chip);
+-	return 0;
 -}
 -
- static const struct i2c_device_id tpic2810_id_table[] = {
- 	{ "tpic2810", },
- 	{ /* sentinel */ }
-@@ -144,11 +135,10 @@ static struct i2c_driver tpic2810_driver = {
- 		.of_match_table = tpic2810_of_match_table,
+ static struct platform_driver ichx_gpio_driver = {
+ 	.driver		= {
+ 		.name	= DRV_NAME,
  	},
- 	.probe_new = tpic2810_probe,
--	.remove = tpic2810_remove,
- 	.id_table = tpic2810_id_table,
+ 	.probe		= ichx_gpio_probe,
+-	.remove		= ichx_gpio_remove,
  };
- module_i2c_driver(tpic2810_driver);
  
--MODULE_AUTHOR("Andrew F. Davis <afd@ti.com>");
-+MODULE_AUTHOR("Andrew Davis <afd@ti.com>");
- MODULE_DESCRIPTION("TPIC2810 8-Bit LED Driver GPIO Driver");
- MODULE_LICENSE("GPL v2");
+ module_platform_driver(ichx_gpio_driver);
 -- 
 2.39.2
 
