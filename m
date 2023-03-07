@@ -2,147 +2,149 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007F1C678D4
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Mar 2023 12:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE226C678D5
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Mar 2023 13:05:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229729AbjCGMvv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Mar 2023 07:51:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45982 "EHLO
+        id S229605AbjCGNFa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Mar 2023 08:05:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229716AbjCGMvs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Mar 2023 07:51:48 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE6807E7B9;
-        Tue,  7 Mar 2023 04:51:45 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id F343CCE1B6B;
-        Tue,  7 Mar 2023 12:51:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B388C4339C;
-        Tue,  7 Mar 2023 12:51:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678193502;
-        bh=IWd9Oaqk5hzYFUwF9cR13Rf1+gfQ9UgDEiSB8uRtlwg=;
-        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=KuYImHCaJquf8HqMPScaiJR2lp6W9mEzEi2yRdjmKK5D3XZKvMg6AihfABaeD968M
-         TY09FqIyWmqvkG7NtgrLjWk9SyWH0kaSBGcfBnSthzapM11OAJy6q3AbByI59YUD/0
-         WOwZkD23mGez0LDxfKB7GjoAksjwCSLB08d3D5JssyHpPNHj/mz0C7zb3fIlb9OPP5
-         jcxk9CzuHaOmV4js5PlYkFYD45CUOSZhNHeNK9QIBlQCsx2Fy83OrEdzq8hUcXVg3M
-         JWMtnC82WcbVRps6ET9v6+RfYESDJyVG1hudBbMuFiW+r704krFViD1vnEw2rSlzuI
-         pNCFPOYfSn2xA==
-From:   Mark Brown <broonie@kernel.org>
-Date:   Tue, 07 Mar 2023 12:51:27 +0000
-Subject: [PATCH v2 1/2] pinctrl: at91: Make the irqchip immutable
+        with ESMTP id S230028AbjCGNFP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Mar 2023 08:05:15 -0500
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8365176F45
+        for <linux-gpio@vger.kernel.org>; Tue,  7 Mar 2023 05:04:52 -0800 (PST)
+Received: by mail-lj1-x229.google.com with SMTP id b13so13062578ljf.6
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Mar 2023 05:04:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678194285;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aWAazNHBDVRAh2BONHNMgJ6UofOBNN4Fn8MZeeYeiu0=;
+        b=pkj0393XpFRI99wm6saQTaQPPmMUBplQtNlf1h4PD/Zay63D1nQisoaVe95PSHJwpN
+         ygvUWiwScJvDaV3Qe0PmHcXYpGaY9oYV0Gm/e28LQX7jl8pK/q4nQ3eM0pSpjMezHbPW
+         H6PXcnX+D+M8x3lOF27cHdUdwokO7ggt0zBh2mB7Xil4V66wDg3blNn4emtr0iooL/U/
+         cK3lNt3eIE14tUXw57R31rqUhT9FgZCfEhpJX271vdEjMhNqiZT4zQqK6FxSEZClUIfI
+         LtnKt4NpstuXMZxk+P7Knq9c5kOTBkMVtdk4GxBEmsHt3DSDrq+mDUcZRmfspMzrn5xO
+         a1eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678194285;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aWAazNHBDVRAh2BONHNMgJ6UofOBNN4Fn8MZeeYeiu0=;
+        b=5+dLxvIQ8BCcSZbbDeH8rEIEGL4enMQ3iMr3q1wdcKWwG7SunIZ46siUmUfrjZA4Jn
+         iM49XO9l5305I6GXmXXLnKnhmwWSKf+4VNmL94aWxUOmJshMPwxhqxkUSVhk+cSb3uzd
+         rfZ/svA1inZmriFb4cqdrB0zPMfr6W9Wkb7OsAE8cohY8oD2JMjZJ0lH9XHGAT/msuX8
+         aVBJdl53hPQwfubuOb6lSohAfZTfKzCfg1WJBKiBhN7hLSYSd81EbQA+gLDaUKATbA9u
+         qW2zN6s0fr5Lvu+TkWmcycmt/yS6wi2oI8qTEgJcBnidhdWRrhCNNPGndgTspPK1DynT
+         wF8g==
+X-Gm-Message-State: AO0yUKW8koW5MRPGElPxea2jcgT6I+y3eC0miP1gQzmFeSQosedaHhiR
+        xJf8wsHuLNuEpDqSfPtq6CS0dw==
+X-Google-Smtp-Source: AK7set/+CaDoWlGsmws8NLZ0ArqU7rN6NOrFt0w/Lq4mckNLP+Uoto4U0QDcb4hzd4153c9yamDYeA==
+X-Received: by 2002:a05:651c:544:b0:298:4424:aea9 with SMTP id q4-20020a05651c054400b002984424aea9mr2870926ljp.21.1678194285179;
+        Tue, 07 Mar 2023 05:04:45 -0800 (PST)
+Received: from [127.0.1.1] ([85.235.12.219])
+        by smtp.gmail.com with ESMTPSA id w14-20020ac2598e000000b004caf992bba9sm2030548lfn.268.2023.03.07.05.04.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Mar 2023 05:04:44 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2 00/16] Mass convert GPIO IRQ chips to be immutable
+Date:   Tue, 07 Mar 2023 14:04:42 +0100
+Message-Id: <20230215-immutable-chips-v2-0-d6b0e3f2d991@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230216-gpio-at91-immutable-v2-1-326ef362dbc7@kernel.org>
-References: <20230216-gpio-at91-immutable-v2-0-326ef362dbc7@kernel.org>
-In-Reply-To: <20230216-gpio-at91-immutable-v2-0-326ef362dbc7@kernel.org>
-To:     Ludovic Desroches <ludovic.desroches@microchip.com>,
+X-B4-Tracking: v=1; b=H4sIAGo2B2QC/3WOwQ6CMBBEf4X07Jp2FVFP/ofhUGChm0BLtkg0h
+ H+3cPHk8U3mZWZRkYQpqnu2KKGZIwefAA+Zqp31HQE3iRVqPGk0OfAwvCZb9QS14zFCccEbIhZ
+ Fa0glq7KRoBLra7d53cjh52yFUajl9z75LBM7jlOQz/5gNlv6f2w2oCE39toinm3e6EfP3ko4B
+ ulUua7rF6W1ixPQAAAA
+To:     Mun Yew Tham <mun.yew.tham@intel.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, Alban Bedel <albeu@free.fr>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Jay Fang <f.fangjian@huawei.com>,
+        Daniel Palmer <daniel@thingy.jp>,
+        Romain Perier <romain.perier@gmail.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        William Breathitt Gray <william.gray@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-omap@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.13-dev-bd1bf
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3089; i=broonie@kernel.org;
- h=from:subject:message-id; bh=IWd9Oaqk5hzYFUwF9cR13Rf1+gfQ9UgDEiSB8uRtlwg=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBkBzNY63owOkiJaom5NFGp8rCdUFUBiegMB560vrfl
- bxsbYZOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZAczWAAKCRAk1otyXVSH0DqmB/
- 9FfOXcyy58/Rbpojezo69U1IdBDCuGIKXNWUAD8rhQ04A51vGcPJH1uP92wZQRDoAMOGlptJ2N3XoU
- atoktWYBmuySTr0ytbtCQSSJnt+thvZ8KdKk5KyS/Qbx0F5czs1mvr7dVAMPCTIaP06fr7sTMDx/Ia
- MnPHKXpJ4Zb8xVQfntaDUq5VKTwo4fQOKkiODY2MN0cv7atX7MtKSYBW+LP3Ek+B6SBHf8o+0SYpSS
- rdCB350gmNxrNWwFMhbpLt283eqbme3C4DxP6AjJbxvJUgBi/Y0uvBSiue9QqyO04aGkVNikHFbbqU
- qA2nteO9PusPnDgo8SD3NxLe6umP0Q
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>, Arnd Bergmann <arnd@arndb.de>
+X-Mailer: b4 0.12.1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-To help gpiolib not fiddle around with the internals of the irqchip
-flag the chip as immutable, adding the calls into the gpiolib core
-required to do so.
+We are getting tired of these irq_chips not getting converted
+to be immutable, so I just take out the big hammer and fix
+some that I deem not too complex as best I can.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
+I stopped after doing some, I will take another sweep at some
+point I guess.
+
+This is v6.4 material.
+
+The last two patches to pci-idio-* (patch 15 and 16) can be
+omitted if William's patches to convert this driver to
+regmap GPIO are merged first.
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/pinctrl-at91.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+Changes in v2:
+- Rebased on v6.3-rc1
+- Collected some test and ACK tags
+- Link to v1: https://lore.kernel.org/r/20230215-immutable-chips-v1-0-51a8f224a5d0@linaro.org
 
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index 79b7061fc8f3..1e083fc7666b 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -1526,6 +1526,20 @@ static void at91_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- #define at91_gpio_dbg_show	NULL
- #endif
- 
-+static int gpio_irq_request_resources(struct irq_data *d)
-+{
-+	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
-+
-+	return gpiochip_lock_as_irq(&at91_gpio->chip, irqd_to_hwirq(d));
-+}
-+
-+static void gpio_irq_release_resources(struct irq_data *d)
-+{
-+	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
-+
-+	gpiochip_unlock_as_irq(&at91_gpio->chip, irqd_to_hwirq(d));
-+}
-+
- /* Several AIC controller irqs are dispatched through this GPIO handler.
-  * To use any AT91_PIN_* as an externally triggered IRQ, first call
-  * at91_set_gpio_input() then maybe enable its glitch filter.
-@@ -1545,6 +1559,9 @@ static void gpio_irq_mask(struct irq_data *d)
- 	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
- 	void __iomem	*pio = at91_gpio->regbase;
- 	unsigned	mask = 1 << d->hwirq;
-+	unsigned        gpio = irqd_to_hwirq(d);
-+
-+	gpiochip_disable_irq(&at91_gpio->chip, gpio);
- 
- 	if (pio)
- 		writel_relaxed(mask, pio + PIO_IDR);
-@@ -1555,6 +1572,9 @@ static void gpio_irq_unmask(struct irq_data *d)
- 	struct at91_gpio_chip *at91_gpio = irq_data_get_irq_chip_data(d);
- 	void __iomem	*pio = at91_gpio->regbase;
- 	unsigned	mask = 1 << d->hwirq;
-+	unsigned        gpio = irqd_to_hwirq(d);
-+
-+	gpiochip_enable_irq(&at91_gpio->chip, gpio);
- 
- 	if (pio)
- 		writel_relaxed(mask, pio + PIO_IER);
-@@ -1721,12 +1741,15 @@ static int at91_gpio_of_irq_setup(struct platform_device *pdev,
- 	at91_gpio->pioc_hwirq = irqd_to_hwirq(d);
- 
- 	gpio_irqchip->name = "GPIO";
-+	gpio_irqchip->irq_request_resources = gpio_irq_request_resources;
-+	gpio_irqchip->irq_release_resources = gpio_irq_release_resources;
- 	gpio_irqchip->irq_ack = gpio_irq_ack;
- 	gpio_irqchip->irq_disable = gpio_irq_mask;
- 	gpio_irqchip->irq_mask = gpio_irq_mask;
- 	gpio_irqchip->irq_unmask = gpio_irq_unmask;
- 	gpio_irqchip->irq_set_wake = pm_ptr(gpio_irq_set_wake);
- 	gpio_irqchip->irq_set_type = at91_gpio->ops->irq_type;
-+	gpio_irqchip->flags = IRQCHIP_IMMUTABLE;
- 
- 	/* Disable irqs of this PIO controller */
- 	writel_relaxed(~0, at91_gpio->regbase + PIO_IDR);
-@@ -1737,7 +1760,7 @@ static int at91_gpio_of_irq_setup(struct platform_device *pdev,
- 	 * interrupt.
- 	 */
- 	girq = &at91_gpio->chip.irq;
--	girq->chip = gpio_irqchip;
-+	gpio_irq_chip_set_chip(girq, gpio_irqchip);
- 	girq->default_type = IRQ_TYPE_NONE;
- 	girq->handler = handle_edge_irq;
- 
+---
+Linus Walleij (16):
+      gpio: altera: Convert to immutable irq_chip
+      gpio: adnp: Convert to immutable irq_chip
+      gpio: aspeed: Convert to immutable irq_chip
+      gpio: aspeed-sgpio: Convert to immutable irq_chip
+      gpio: ath79: Convert to immutable irq_chip
+      gpio: cadence: Convert to immutable irq_chip
+      gpio: hisi: Convert to immutable irq_chip
+      gpio: hlwd: Convert to immutable irq_chip
+      gpio: idt3243x: Convert to immutable irq_chip
+      gpio: msc313: Convert to immutable irq_chip
+      gpio: mlxbf2: Convert to immutable irq_chip
+      gpio: max732x: Convert to immutable irq_chip
+      gpio: omap: Drop irq_base
+      gpio: omap: Convert to immutable irq_chip
+      gpio: pci-idio-16: Convert to immutable irq_chip
+      gpio: pcie-idio-24: Convert to immutable irq_chip
 
+ drivers/gpio/gpio-adnp.c         |  9 ++++-
+ drivers/gpio/gpio-altera.c       | 25 +++++++-----
+ drivers/gpio/gpio-aspeed-sgpio.c | 44 +++++++++++++++++----
+ drivers/gpio/gpio-aspeed.c       | 44 ++++++++++++++++++---
+ drivers/gpio/gpio-ath79.c        |  8 +++-
+ drivers/gpio/gpio-cadence.c      | 10 +++--
+ drivers/gpio/gpio-hisi.c         | 25 +++++++-----
+ drivers/gpio/gpio-hlwd.c         | 33 ++++++++++++----
+ drivers/gpio/gpio-idt3243x.c     | 11 ++++--
+ drivers/gpio/gpio-max732x.c      |  8 +++-
+ drivers/gpio/gpio-mlxbf2.c       | 32 ++++++++++++----
+ drivers/gpio/gpio-msc313.c       | 26 +++++++++++--
+ drivers/gpio/gpio-omap.c         | 83 ++++++++++++++++++++++------------------
+ drivers/gpio/gpio-pci-idio-16.c  | 12 ++++--
+ drivers/gpio/gpio-pcie-idio-24.c | 12 ++++--
+ 15 files changed, 273 insertions(+), 109 deletions(-)
+---
+base-commit: fe15c26ee26efa11741a7b632e9f23b01aca4cc6
+change-id: 20230215-immutable-chips-762922277f1e
+
+Best regards,
 -- 
-2.30.2
+Linus Walleij <linus.walleij@linaro.org>
 
