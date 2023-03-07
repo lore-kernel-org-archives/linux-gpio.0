@@ -2,156 +2,98 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 203A6C678D5
-	for <linux-gpio@archiver.kernel.org>; Tue,  7 Mar 2023 19:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D63CC6FD1E
+	for <linux-gpio@archiver.kernel.org>; Tue,  7 Mar 2023 19:50:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230492AbjCGTpz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 7 Mar 2023 14:45:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33058 "EHLO
+        id S229780AbjCGTuo convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 7 Mar 2023 14:50:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231623AbjCGToe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Mar 2023 14:44:34 -0500
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D29898EAC;
-        Tue,  7 Mar 2023 11:33:51 -0800 (PST)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 327JXkUT129401;
-        Tue, 7 Mar 2023 13:33:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1678217626;
-        bh=DjK0sRaZ4GVXYwVt87u0D782I7dRwIU+ZR/XTBfA0TU=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=EitCBHAh+cm7VmVxIbji4uMTPu+LdVUOa7hsuXAzdv9vz/sEfS3wFfbzAUwY4V9XL
-         PRXtDV9PkXkSZGDShQHGn/Zb1X8ALlbZlM9cWRA62FZKfmIgHsySoJyOn6FJzg9oUZ
-         PA3tgf7JANtolRhICYY5N6j/BMqOWmyy5kyPjans=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 327JXk6p007552
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 7 Mar 2023 13:33:46 -0600
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Tue, 7
- Mar 2023 13:33:46 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Tue, 7 Mar 2023 13:33:46 -0600
-Received: from ula0226330.dal.design.ti.com (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 327JXkWp026389;
-        Tue, 7 Mar 2023 13:33:46 -0600
-From:   Andrew Davis <afd@ti.com>
-To:     Peter Tyser <ptyser@xes-inc.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Andrew Davis <afd@ti.com>
-Subject: [PATCH v2 4/6] gpio: pisosr: Use devm_gpiochip_add_data() to simplify remove path
-Date:   Tue, 7 Mar 2023 13:33:44 -0600
-Message-ID: <20230307193346.8718-4-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230307193346.8718-1-afd@ti.com>
-References: <20230307193346.8718-1-afd@ti.com>
+        with ESMTP id S229799AbjCGTuR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Mar 2023 14:50:17 -0500
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85861BA85A
+        for <linux-gpio@vger.kernel.org>; Tue,  7 Mar 2023 11:41:30 -0800 (PST)
+Received: by mail-pl1-f175.google.com with SMTP id x11so10777717pln.12
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Mar 2023 11:41:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678218046;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:to:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CWFDL0Togo3L/5bvFloyMlrVxNWJz2dZaxBpDesLPPY=;
+        b=qWbAWquwDYwhihHD84WfVRkOXTgny4nPq7JZFuNInuDmtfXgC3DiCKWQegLDe8D9+C
+         TRLVtH+cSLwj9wv1MBRZKx9ihsv6917yrY96NZI5TCnRQJ3wvBYZjQLH746fORxJVZV1
+         jYIRz2rXDVKA50gLXQdmy6Yo0t/DkKLmC6rEXFdd6Gi4QACtS5cZ7GJqHGljLdiTZi+B
+         djrAmiWUFL2vfBPB/2awA2palxzGZXr1ZhbgpvURdgv5A/lB9y3p+ozog0lAgyFykZH1
+         /qw79wj7i0O7L+Ctof2CNAHxw6893SdFwePwlCO3UbquoDBZbyMsmwb4zcMhOp3sW0gC
+         v5mg==
+X-Gm-Message-State: AO0yUKX82N6oaP+jj8yCWUoEQkvgK+GmT3l1MHX4Q4j/lqZWFA0OE9cy
+        5KH5jnW2TxRSKFEtZqtS++ALWQ==
+X-Google-Smtp-Source: AK7set9Pfl0SQYm8o4d/CzeLw+E0U3nXeg314CNzFcmKQNtPX+Scglz04h5m+eRyrouDFqS1XFo04A==
+X-Received: by 2002:a17:90b:4b49:b0:234:234c:72d9 with SMTP id mi9-20020a17090b4b4900b00234234c72d9mr16195349pjb.14.1678218046516;
+        Tue, 07 Mar 2023 11:40:46 -0800 (PST)
+Received: from localhost (63-228-113-140.tukw.qwest.net. [63.228.113.140])
+        by smtp.gmail.com with ESMTPSA id fy1-20020a17090b020100b0022bfcf5d297sm9742902pjb.9.2023.03.07.11.40.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Mar 2023 11:40:45 -0800 (PST)
+From:   Kevin Hilman <khilman@kernel.org>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Bernhard =?utf-8?Q?Rosenkr?= =?utf-8?Q?=C3=A4nzer?= 
+        <bero@baylibre.com>, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        tglx@linutronix.de, maz@kernel.org, lee@kernel.org,
+        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
+        daniel.lezcano@linaro.org, chunfeng.yun@mediatek.com,
+        angelogioacchino.delregno@collabora.com, nfraprado@collabora.com,
+        allen-kh.cheng@mediatek.com, sean.wang@mediatek.com,
+        zhiyong.tao@mediatek.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v9 8/9] dt-bindings: serial: mediatek,uart: add MT8365
+In-Reply-To: <0dec66ce-424c-e682-3f73-594e5b1edb65@gmail.com>
+References: <20230125143503.1015424-1-bero@baylibre.com>
+ <20230125143503.1015424-9-bero@baylibre.com>
+ <0dec66ce-424c-e682-3f73-594e5b1edb65@gmail.com>
+Date:   Tue, 07 Mar 2023 11:40:45 -0800
+Message-ID: <7httywfiyq.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use devm version of gpiochip add function to handle removal for us.
+Hi Matthias,
 
-While here update copyright and module author.
+Matthias Brugger <matthias.bgg@gmail.com> writes:
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
+> On 25/01/2023 15:35, Bernhard Rosenkränzer wrote:
+>> Add binding description for mediatek,mt8365-uart
+>> 
+>> Signed-off-by: Bernhard Rosenkränzer <bero@baylibre.com>
+>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>
+> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+>
+> Greg will you take 5,6 and 8 from this series through your branch or are you Ok 
+> if I take them. They are all just adding a new compatible string to the 
+> following files:
+> Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
+> Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.yaml
+> and
+> Documentation/devicetree/bindings/serial/mediatek,uart.yaml
 
-Changes from v1:
- - Use devm to cleanup mutex
+Might I gently suggest that you take these along with patch 9 through
+your tree?
 
- drivers/gpio/gpio-pisosr.c | 30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+The driver portions were all been merged and the bindings and DT all
+reviewed since end of January.
 
-diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
-index 67071bea08c2..4c9d138a7dc7 100644
---- a/drivers/gpio/gpio-pisosr.c
-+++ b/drivers/gpio/gpio-pisosr.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) 2015 Texas Instruments Incorporated - http://www.ti.com/
-- *	Andrew F. Davis <afd@ti.com>
-+ * Copyright (C) 2015-2023 Texas Instruments Incorporated - https://www.ti.com/
-+ *	Andrew Davis <afd@ti.com>
-  */
- 
- #include <linux/bitmap.h>
-@@ -116,6 +116,13 @@ static const struct gpio_chip template_chip = {
- 	.can_sleep		= true,
- };
- 
-+static void pisosr_mutex_destroy(void *data)
-+{
-+	struct mutex *lock = data;
-+
-+	mutex_destroy(lock);
-+}
-+
- static int pisosr_gpio_probe(struct spi_device *spi)
- {
- 	struct device *dev = &spi->dev;
-@@ -126,8 +133,6 @@ static int pisosr_gpio_probe(struct spi_device *spi)
- 	if (!gpio)
- 		return -ENOMEM;
- 
--	spi_set_drvdata(spi, gpio);
--
- 	gpio->chip = template_chip;
- 	gpio->chip.parent = dev;
- 	of_property_read_u16(dev->of_node, "ngpios", &gpio->chip.ngpio);
-@@ -145,8 +150,11 @@ static int pisosr_gpio_probe(struct spi_device *spi)
- 				     "Unable to allocate load GPIO\n");
- 
- 	mutex_init(&gpio->lock);
-+	ret = devm_add_action_or_reset(dev, pisosr_mutex_destroy, &gpio->lock);
-+	if (ret)
-+		return ret;
- 
--	ret = gpiochip_add_data(&gpio->chip, gpio);
-+	ret = devm_gpiochip_add_data(dev, &gpio->chip, gpio);
- 	if (ret < 0) {
- 		dev_err(dev, "Unable to register gpiochip\n");
- 		return ret;
-@@ -155,15 +163,6 @@ static int pisosr_gpio_probe(struct spi_device *spi)
- 	return 0;
- }
- 
--static void pisosr_gpio_remove(struct spi_device *spi)
--{
--	struct pisosr_gpio *gpio = spi_get_drvdata(spi);
--
--	gpiochip_remove(&gpio->chip);
--
--	mutex_destroy(&gpio->lock);
--}
--
- static const struct spi_device_id pisosr_gpio_id_table[] = {
- 	{ "pisosr-gpio", },
- 	{ /* sentinel */ }
-@@ -182,11 +181,10 @@ static struct spi_driver pisosr_gpio_driver = {
- 		.of_match_table = pisosr_gpio_of_match_table,
- 	},
- 	.probe = pisosr_gpio_probe,
--	.remove = pisosr_gpio_remove,
- 	.id_table = pisosr_gpio_id_table,
- };
- module_spi_driver(pisosr_gpio_driver);
- 
--MODULE_AUTHOR("Andrew F. Davis <afd@ti.com>");
-+MODULE_AUTHOR("Andrew Davis <afd@ti.com>");
- MODULE_DESCRIPTION("SPI Compatible PISO Shift Register GPIO Driver");
- MODULE_LICENSE("GPL v2");
--- 
-2.39.2
+Thanks,
 
+Kevin
