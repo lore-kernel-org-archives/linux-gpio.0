@@ -2,48 +2,49 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C79C74A44
-	for <linux-gpio@archiver.kernel.org>; Wed,  8 Mar 2023 21:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4AB0C64EC4
+	for <linux-gpio@archiver.kernel.org>; Wed,  8 Mar 2023 21:22:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229886AbjCHVUR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 8 Mar 2023 16:20:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32948 "EHLO
+        id S229582AbjCHVWv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 8 Mar 2023 16:22:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229691AbjCHVUK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Mar 2023 16:20:10 -0500
-Received: from sender4-op-o10.zoho.com (sender4-op-o10.zoho.com [136.143.188.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B526911E5;
-        Wed,  8 Mar 2023 13:20:07 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1678310382; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=gA+tGT++N3Im9cwUp1oLMLklYhP64B4CvyN+Ho36QWnmJwux0JwHPkXMW3gPGuo3WbZn5QwE/oskEtSmCZNZzKwXjN0f7re10kXJQCjo9sfyUAnM/xjLhxqGmI4lIBd+MS2NMBK0LdbtEUXBAZ88EEAZeJVhx2v38mDRg08naio=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1678310382; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=oG/xR11RXYcadeo3pBvUPl91gDhrpsPP8G0zdddstRE=; 
-        b=bhYZie34pW2RsNiv1EivBl2jBBTfYP2RdAslIDo6O0UTh9zJNMm9o3QuvJlyAUDeXyr2tVTc1QZ1bHKzdan9TUy2SI35FDeEyIApAoKDHi8zON5mRTTmvULUVLNRHzTXrLVJc4N3IiEcKKt+OHMkD6RYkP8+dHMdDarBk/T029U=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=arinc9.com;
-        spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
-        dmarc=pass header.from=<arinc.unal@arinc9.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1678310382;
-        s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
-        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=oG/xR11RXYcadeo3pBvUPl91gDhrpsPP8G0zdddstRE=;
-        b=PQmhFAipPOfOIgKXj/1dppIC0wu7tKa9jYuhbdJKnG0WArbdFqT9ScjdfoRaQ5p0
-        +hNJ/JcyccviGoKPZoqA72IBWQjV9O4QurmxoSZPmKg7VzFQMyT3bQExCzYD4u/iHLg
-        Btrtwzil+kR8/+0ufvSkafoL07SJUDcq50mYK3ew=
-Received: from [10.10.10.3] (212.68.60.226 [212.68.60.226]) by mx.zohomail.com
-        with SMTPS id 1678310378501868.040720355281; Wed, 8 Mar 2023 13:19:38 -0800 (PST)
-Message-ID: <1c704ea4-2241-ef21-dc6c-d2d243d3bbad@arinc9.com>
-Date:   Thu, 9 Mar 2023 00:19:32 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 08/20] dt-bindings: pinctrl: ralink: add new compatible
- strings
-To:     Rob Herring <robh@kernel.org>
+        with ESMTP id S229483AbjCHVWu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Mar 2023 16:22:50 -0500
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9189041081;
+        Wed,  8 Mar 2023 13:22:49 -0800 (PST)
+Received: by mail-ot1-f52.google.com with SMTP id e9-20020a056830200900b00694651d19f6so6871991otp.12;
+        Wed, 08 Mar 2023 13:22:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678310569;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I60t2b90wzss81s3fKq0o1a4IobvW8p+fvRrTeKfSkI=;
+        b=gasjcAtAZMyLPjxnrIynvHWGwNQkSaJPsRjnsxczNHM5TbHH4PQGoSar+McgwiDUNC
+         tRhZbZbiFIjNZ/PcrqJ6w13qMUKatUvb9dXV1YWobz6Bn90UICk7s+mktOd4Ay35yJB7
+         xpAMhfgFTD4g+gkrTlc7QLxGmdWPR+dGvcleU0Zg5gsFH9TV3+S/O/fuy5zFourUjB0h
+         2KRP6Y9qWxMO3Ayl2kahw2RsTP/RLYHiCnz58FuMzQckAk60gdN/ccysjsGaBs24cIvN
+         qnZZ4qrJDhKjMcQuyRrhVnhAxbhXjFBucX3wT+8QLhIuIVbSU5d4sb1cXbErYBmU+VAl
+         pkrg==
+X-Gm-Message-State: AO0yUKXFKq4rfcmRQws0Psek3zmCb1EdVrzU3gzjIjt0hVJFBdC0+SNr
+        WTTACz8n9UMNsJBZaavBFw==
+X-Google-Smtp-Source: AK7set+PTfJOJQBTkd9lD5mgbdaKikQsLsBMNOdi9P+5Ho56tU02sSuQtD0n97ZBDotTbKjZTin1uw==
+X-Received: by 2002:a9d:19e8:0:b0:694:7da5:d045 with SMTP id k95-20020a9d19e8000000b006947da5d045mr4325288otk.13.1678310568875;
+        Wed, 08 Mar 2023 13:22:48 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id a5-20020a9d4705000000b00684a10970adsm6860770otf.16.2023.03.08.13.22.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Mar 2023 13:22:48 -0800 (PST)
+Received: (nullmailer pid 3865582 invoked by uid 1000);
+        Wed, 08 Mar 2023 21:22:47 -0000
+Date:   Wed, 8 Mar 2023 15:22:47 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     arinc9.unal@gmail.com
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
         linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -58,79 +59,42 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Landen Chao <Landen.Chao@mediatek.com>,
         DENG Qingfang <dqfext@gmail.com>,
         Sean Wang <sean.wang@mediatek.com>, erkin.bozoglu@xeront.com
+Subject: Re: [PATCH 19/20] dt-bindings: pinctrl: mediatek: mt7620: split
+ binding
+Message-ID: <20230308212247.GA3858368-robh@kernel.org>
 References: <20230303002850.51858-1-arinc.unal@arinc9.com>
- <20230303002850.51858-9-arinc.unal@arinc9.com>
- <20230308210017.GA3744272-robh@kernel.org>
-Content-Language: en-US
-From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <20230308210017.GA3744272-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <20230303002850.51858-20-arinc.unal@arinc9.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+In-Reply-To: <20230303002850.51858-20-arinc.unal@arinc9.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 9.03.2023 00:00, Rob Herring wrote:
-> On Fri, Mar 03, 2023 at 03:28:37AM +0300, arinc9.unal@gmail.com wrote:
->> From: Arınç ÜNAL <arinc.unal@arinc9.com>
->>
->> Add the new mediatek compatible strings. Change the compatible string on
->> the examples with the mediatek compatible strings.
->>
->> Add the new compatible strings for mt7620, mt76x8, and rt305x to be able to
->> properly document the pin muxing information of each SoC, or SoCs that use
->> the same pinmux data.
->>
->> Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
->> ---
->>   .../devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml | 7 +++++--
->>   .../devicetree/bindings/pinctrl/ralink,mt7621-pinctrl.yaml | 6 ++++--
->>   .../devicetree/bindings/pinctrl/ralink,rt305x-pinctrl.yaml | 5 ++++-
->>   3 files changed, 13 insertions(+), 5 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml
->> index cde6de77e228..a94d2e7a5f37 100644
->> --- a/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml
->> +++ b/Documentation/devicetree/bindings/pinctrl/ralink,mt7620-pinctrl.yaml
->> @@ -17,7 +17,10 @@ description:
->>   
->>   properties:
->>     compatible:
->> -    const: ralink,mt7620-pinctrl
->> +    enum:
->> +      - mediatek,mt7620-pinctrl
->> +      - mediatek,mt76x8-pinctrl
->> +      - ralink,mt7620-pinctrl
+On Fri, Mar 03, 2023 at 03:28:48AM +0300, arinc9.unal@gmail.com wrote:
+> From: Arınç ÜNAL <arinc.unal@arinc9.com>
 > 
-> To repeat the options from last time:
+> The MT7628 and MT7688 SoCs contain different pin muxing information,
+> therefore, should be split. This can be done now that there are compatible
+> strings to distinguish them from other SoCs.
 > 
->> Carrying both strings is a NAK. Either you (and everyone using
->> these platforms) care about the ABI and are stuck with the "wrong"
->> string. In the end, they are just unique identifiers. Or you don't care
->> and break the ABI and rename everything. If you do that, do just that
->> in your patches and make it crystal clear in the commit msg that is
->> your intention and why that is okay.
+> Split the schema out to mediatek,mt76x8-pinctrl.yaml.
 > 
-> Marketing/acquistion renames was just an example and common reason. That
-> doesn't make other reasons okay. I don't see any reason given here.
-
-I did give the reason on patch 2 and 9 but I should've put it on this 
-patch as well.
-
-> This platform from Ralink was acquired by MediaTek in 2011. Then, MediaTek
-> introduced these SoCs which utilise this platform. Add new compatible
-> strings to address the incorrect naming.
-
-I'm continuing the conversation regarding this under patch 9.
-
+> Remove mediatek,mt76x8-pinctrl from mt7620.
 > 
-> If you want to break the ABI (do you??, because the commit message
-> still doesn't say), then you don't need "ralink,mt7620-pinctrl".
+> Deprecate ralink,mt7620-pinctrl. The reason is, the DTs for mt76x8 which
+> use this string will incorrectly match the pin muxing information for
+> mt7620. There's a new string, mediatek,mt7620-pinctrl, which makes the
+> deprecation possible.
 
-I don't want to break the ABI. But I deprecate ralink,mt7620-pinctrl on 
-later patches. The driver still has it though, so old DTs will keep 
-working. That keeps the ABI intact regardless of deprecating strings on 
-the dt-binding schema, right?
+This should be 2 patches.
 
-Arınç
+You aren't deprecating either. That means still documented and labeled 
+with 'deprecated: true'. But again, just 'fixing' the vendor is not a 
+reason to deprecate and for us to have to carry the old compatible. We 
+deprecate when there is some advantage to it such as using common 
+properties instead of vendor specific ones.
+
+Rob
