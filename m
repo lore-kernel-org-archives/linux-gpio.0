@@ -2,113 +2,89 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 967DDC61DA4
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 18:53:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C806C64EC4
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 18:56:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230373AbjCISxH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Mar 2023 13:53:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35340 "EHLO
+        id S230009AbjCIS4G (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Mar 2023 13:56:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230527AbjCISw7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 13:52:59 -0500
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF192FA8FC;
-        Thu,  9 Mar 2023 10:52:47 -0800 (PST)
+        with ESMTP id S229546AbjCIS4F (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 13:56:05 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2160637FB;
+        Thu,  9 Mar 2023 10:56:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1678387967; x=1709923967;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Nfve8Lce1zqiun7hFxXQB5VXtzhusgUqDvAevZjwCms=;
-  b=QL4yPECllz8fiezQzXMucNJiDxvD2fihn58bCTow4F09ZL+a/MeEVMOh
-   i4HaUAk93UhHht/AwTl0+fHhgYmRc6eTjUem1aBWRc/dj829z/kl0GaML
-   0PBWg7AEn19xCG0PTSAj9B8sm/ZWaqXcA+ZjljbXTjz+2+6O77xxOcISu
-   jxFTh87FTRlZEQ/lqVU8fTnFNRUvOTL7OlCuOxTUUrwhzg1GtwKRSMxPl
-   0s/YW74VO9aHBVoKuqx21HpwtxGUjEF6hQ2QbGY+omY5c5u+m5Bl3PwaS
-   PEghUk3A6Ehf2An/le9tXUHXG9c1E6Szqp+hliSXl2PRFfhHMI4Ld74Fs
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10644"; a="334014492"
+  t=1678388164; x=1709924164;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6hOXmOXtJFVPOFkTP/FI7Gap65pkHG6+MiLkeFpe28A=;
+  b=E8d8uGcDJnAW6R6tMSOcmUG6lGuZNhTc/AqfSdI/tppxT+DhkX7KlJyz
+   vjxHYUl3rTl0f4npAW8s82usFoOe1WjdJhKH3CAyVh3niazl4gKtdqHGl
+   zeWV7lz328jM//LlZoIIbnbHOVVO4bIt1YZNxUB/w458kZErZq+XdrikE
+   ngzGqSMxtVRLK2jXT2PDY6cCG5jDnXgd495TAhZ91tNMrqEtaI1fF8JnN
+   AVPd7OghQKdQ9FgsJglD5AG3k3RNZGO1gxCn7hFhccuCyeW6vEdUwYBz/
+   eBb4GfZMPeWWDxmnXQzRLEYUFJjNCtyoxD8EojzcFMCfKwFSDwR5SJWwL
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10644"; a="336550865"
 X-IronPort-AV: E=Sophos;i="5.98,247,1673942400"; 
-   d="scan'208";a="334014492"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2023 10:52:47 -0800
+   d="scan'208";a="336550865"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2023 10:55:49 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10644"; a="801275762"
+X-IronPort-AV: E=McAfee;i="6500,9779,10644"; a="1006849488"
 X-IronPort-AV: E=Sophos;i="5.98,247,1673942400"; 
-   d="scan'208";a="801275762"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga004.jf.intel.com with ESMTP; 09 Mar 2023 10:52:45 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1paLNc-000UVC-0S;
-        Thu, 09 Mar 2023 20:52:44 +0200
-Date:   Thu, 9 Mar 2023 20:52:43 +0200
+   d="scan'208";a="1006849488"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 09 Mar 2023 10:55:47 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id ED31D143; Thu,  9 Mar 2023 20:56:31 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 3/3] gpiolib: Move gpiodevice_*() to gpiodev namespace
-Message-ID: <ZAoq+yAyPnI4zgto@smile.fi.intel.com>
-References: <20230307182557.42215-1-andriy.shevchenko@linux.intel.com>
- <20230307182557.42215-4-andriy.shevchenko@linux.intel.com>
- <CAMRc=MdW7JjWvJUtvwJDwWLB5ygPiCRWLNM8E0iyRoD=HbzfVw@mail.gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v1 1/1] gpiolib: Remove duplicative check in gpiod_find_and_request()
+Date:   Thu,  9 Mar 2023 20:56:26 +0200
+Message-Id: <20230309185626.84997-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdW7JjWvJUtvwJDwWLB5ygPiCRWLNM8E0iyRoD=HbzfVw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Mar 08, 2023 at 11:49:53AM +0100, Bartosz Golaszewski wrote:
-> On Tue, Mar 7, 2023 at 7:25 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > The functions that operates on the same device object would
-> > have the same namespace for better code understanding and
-> > maintenance.
+The gpiod_find_by_fwnode() already checks for NULL and returns
+correct error code in case fwnode is invalid. Drop the respective
+check and assignment in the gpiod_find_and_request().
 
-...
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-> > -static void gpiodevice_release(struct device *dev)
-> > +static void gpiodev_release(struct device *dev)
-> >  {
-> >         struct gpio_device *gdev = to_gpio_device(dev);
-> >         unsigned long flags;
-> > @@ -617,7 +617,7 @@ static int gpiochip_setup_dev(struct gpio_device *gdev)
-> >                 return ret;
-> >
-> >         /* From this point, the .release() function cleans up gpio_device */
-> > -       gdev->dev.release = gpiodevice_release;
-> > +       gdev->dev.release = gpiodev_release;
-> >
-> >         ret = gpiochip_sysfs_register(gdev);
-> >         if (ret)
-
-> But the only other function that's in the gpiodev_ namespace operates
-> on struct gpio_device so that change doesn't make much sense to me.
-
-I'm not sure I understood the comment.
-After this change we will have
-
-static int gpiodev_add_to_list(struct gpio_device *gdev)
-static void gpiodev_release(struct device *dev)
-
-There are also gpio_device_*() I have noticed, so may be these should be
-actually in that namespace?
-
-And we have
-
-static int gpiochip_setup_dev(struct gpio_device *gdev)
-static void gpiolib_dbg_show(struct seq_file *s, struct gpio_device *gdev)
-
-That said, what do you think is the best to make this more consistent?
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 8ecfe3afde1e..333ccd44e2b2 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3927,13 +3927,10 @@ static struct gpio_desc *gpiod_find_and_request(struct device *consumer,
+ 						bool platform_lookup_allowed)
+ {
+ 	unsigned long lookupflags = GPIO_LOOKUP_FLAGS_DEFAULT;
+-	struct gpio_desc *desc = ERR_PTR(-ENOENT);
++	struct gpio_desc *desc;
+ 	int ret;
+ 
+-	if (!IS_ERR_OR_NULL(fwnode))
+-		desc = gpiod_find_by_fwnode(fwnode, consumer, con_id, idx,
+-					    &flags, &lookupflags);
+-
++	desc = gpiod_find_by_fwnode(fwnode, consumer, con_id, idx, &flags, &lookupflags);
+ 	if (gpiod_not_found(desc) && platform_lookup_allowed) {
+ 		/*
+ 		 * Either we are not using DT or ACPI, or their lookup did not
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.39.1
 
