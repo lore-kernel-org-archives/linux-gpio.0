@@ -2,60 +2,60 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2015AC61DA4
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 07:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C2BC64EC4
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 07:46:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230015AbjCIHqc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Mar 2023 02:46:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45656 "EHLO
+        id S230187AbjCIHqm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Mar 2023 02:46:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230176AbjCIHqG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 02:46:06 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67327DD5A7
-        for <linux-gpio@vger.kernel.org>; Wed,  8 Mar 2023 23:46:03 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id m6so1161250lfq.5
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Mar 2023 23:46:03 -0800 (PST)
+        with ESMTP id S230134AbjCIHqN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 02:46:13 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4B82DDB1D
+        for <linux-gpio@vger.kernel.org>; Wed,  8 Mar 2023 23:46:05 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id f18so1171447lfa.3
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Mar 2023 23:46:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678347963;
+        d=linaro.org; s=google; t=1678347965;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YxZa+3MhOrXUUjhkc+LrGW+xXurv1Litsrz7qLnZ7aI=;
-        b=t8rkah655HCn9cL1h3Am/2+vV9AgN0P4gZ9nz2b0HxputsAayTbj821PqUa7otUYtR
-         4rT352da4OCJCfzzGkx9v813htRdIT96XMYNv1//VWUxakgKq165OFenRYcp5/5kdn30
-         Ag75I+gOCogp/+q0kzxvJtJZogUvIVcQ6yVAT6f0Y/qOf2S88dCiQqa5kz0UCIj+C6e6
-         1m4ygY3ig91t87dlglPlwRBVeCJWVMX0RsTwJN65yun6okbknftwuSQ0DyUnVS6P73If
-         0ODs59J99Vwr19HNTlOec8uCB7RYpPoN87qHQYs/v3qQNAJdhj0QMK29Zyylffu6ehsm
-         KNbw==
+        bh=zhXTDSkBpSBmoLnt16h1xxcFV0v4vmTT7mnJI/zNpFI=;
+        b=RdVd7acfqbV/RJ0zljVIdHf8OEekFM1TtLnwjfbFmZBCfpKs48zDqq9jmJ00FNhc3+
+         /21cJMiUoapp6aQgyYn2yng55EYkn3VehxFmuN1KnP/66ZoKwnbW0Wb8Gmj1f2X4zxlV
+         6LNliyaEJkqXcqyNFaQ/sM8kHziZlZvQx4gpkJETQSQ83/q9298lWDpGeGdTJmd6GNn4
+         cGXLY4Hj3atvGpFxTvp1/dXiAJqtNMlGCMP2rAqJr2cXTfR7dDa2I1yjcHTBYj/eTDgY
+         qwctT1YvUcEGtoaxJZUIzCJNr3Gjesc1tFMnBD9WrbkLI9DoPMhpqxXXFYdpMbMvZm76
+         LW1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678347963;
+        d=1e100.net; s=20210112; t=1678347965;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YxZa+3MhOrXUUjhkc+LrGW+xXurv1Litsrz7qLnZ7aI=;
-        b=ti8vHDMsE+1r9j+UFAaT6HVcb/PamjMHom6PUZYyanzCS+zPq/fZ9hzZKASiEB77sS
-         KKs0aEvRBQ83yDRdv3XeUGWg+f0EJHTJdDU6A6m/OnmSygNk0qiefcGQHp3n33MJ9hVY
-         mFs2EvyAVGMnOmjxkMDVX8hMxMqTN/EvOXzbOkfD+S1T1mEi+YPIHtsBV3sLy05OUEGP
-         XKq3Huxq70sPfPFemaa11HxyywFuDzebHsgMymGokq28OBUsKsm+WH+1QOEq2BucO95o
-         mOYmdiYryLAffzDw0PJzmKnUop+T7d5Rl1I0Hqe/Kg/52Ti9Ka0ID664PxdS2Jdh7T2r
-         1ghg==
-X-Gm-Message-State: AO0yUKV3Z78o8VtERBUe44xBIRkgATGJ+5ErCK+QEvCWWuUsNb8bSibv
-        /GNa8zhWGEEfyEiv/zdET1v/VA==
-X-Google-Smtp-Source: AK7set9+YUkmbffwVNF3AIk/o8rXQz65/wJCi4qVl7hoX4l3kYgknjGEoz/Z3F52gOsCNKsSA4bbQA==
-X-Received: by 2002:ac2:4475:0:b0:4b0:1305:6e02 with SMTP id y21-20020ac24475000000b004b013056e02mr6031006lfl.8.1678347962992;
-        Wed, 08 Mar 2023 23:46:02 -0800 (PST)
+        bh=zhXTDSkBpSBmoLnt16h1xxcFV0v4vmTT7mnJI/zNpFI=;
+        b=xW1xJnu0s7iQf4AJoPjSJKVOZQ266FTsjMxN2j1/UiCw2VUBj6Zlqiiau0JekMhzjl
+         ZgL3hdDVSKEbUwwcZQEk7eJmTiJgceioD4WyrqdNnX2CMGJ9IClnrVoLLkgBZB2i12GY
+         w0nYD/9/w6MnvmOtNm0KHrwJeYwpmJWhIOj00+uJmpJpXs6iK4VqoTScAUeTwRWc9oxz
+         irku+Hkuvp+KibSv90Pktqp8b5jcjL2Ak1MqgQ1bxApIlhVzNnYv6V53Gj2UuM427jv9
+         zzsqMU27xcbvu9s1284+mhBE4Pk2VzCn6ddkGOlX8PvUn9Rx6tgT/9VIUTEiW0YQWUce
+         G9cA==
+X-Gm-Message-State: AO0yUKXBiM/sZaNWZv02eWaZdgA3D4X0QO0WWn9bqcq38jKsc7UlxQ5n
+        JJ7wHl8U9C9lKMrbt3s/dYQ9yA==
+X-Google-Smtp-Source: AK7set+l0IBAcPEMof3/gCWtD/52DgbhsGMf+RINIiurOj/KsNvWkoCxqcEPKNnC9v2V7US9f4a2Fg==
+X-Received: by 2002:ac2:5630:0:b0:4db:384c:bb8 with SMTP id b16-20020ac25630000000b004db384c0bb8mr5204447lff.69.1678347965235;
+        Wed, 08 Mar 2023 23:46:05 -0800 (PST)
 Received: from [127.0.1.1] ([85.235.12.219])
-        by smtp.gmail.com with ESMTPSA id a6-20020a056512020600b004bb766e01a4sm2568972lfo.245.2023.03.08.23.46.02
+        by smtp.gmail.com with ESMTPSA id a6-20020a056512020600b004bb766e01a4sm2568972lfo.245.2023.03.08.23.46.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 23:46:02 -0800 (PST)
+        Wed, 08 Mar 2023 23:46:04 -0800 (PST)
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 09 Mar 2023 08:45:55 +0100
-Subject: [PATCH v3 07/17] gpio: cadence: Convert to immutable irq_chip
+Date:   Thu, 09 Mar 2023 08:45:57 +0100
+Subject: [PATCH v3 09/17] gpio: hlwd: Convert to immutable irq_chip
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230215-immutable-chips-v3-7-972542092a77@linaro.org>
+Message-Id: <20230215-immutable-chips-v3-9-972542092a77@linaro.org>
 References: <20230215-immutable-chips-v3-0-972542092a77@linaro.org>
 In-Reply-To: <20230215-immutable-chips-v3-0-972542092a77@linaro.org>
 To:     Mun Yew Tham <mun.yew.tham@intel.com>,
@@ -88,52 +88,94 @@ Cc: Marc Zyngier <maz@kernel.org>
 Acked-by: Marc Zyngier <maz@kernel.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-cadence.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-hlwd.c | 33 +++++++++++++++++++++++++--------
+ 1 file changed, 25 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpio/gpio-cadence.c b/drivers/gpio/gpio-cadence.c
-index 137aea49ba02..3720b90cad10 100644
---- a/drivers/gpio/gpio-cadence.c
-+++ b/drivers/gpio/gpio-cadence.c
-@@ -70,6 +70,7 @@ static void cdns_gpio_irq_mask(struct irq_data *d)
- 	struct cdns_gpio_chip *cgpio = gpiochip_get_data(chip);
+diff --git a/drivers/gpio/gpio-hlwd.c b/drivers/gpio/gpio-hlwd.c
+index 4e13e937f832..c208ac1c54a6 100644
+--- a/drivers/gpio/gpio-hlwd.c
++++ b/drivers/gpio/gpio-hlwd.c
+@@ -11,6 +11,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
++#include <linux/seq_file.h>
+ #include <linux/slab.h>
  
- 	iowrite32(BIT(d->hwirq), cgpio->regs + CDNS_GPIO_IRQ_DIS);
-+	gpiochip_disable_irq(chip, irqd_to_hwirq(d));
+ /*
+@@ -48,7 +49,7 @@
+ 
+ struct hlwd_gpio {
+ 	struct gpio_chip gpioc;
+-	struct irq_chip irqc;
++	struct device *dev;
+ 	void __iomem *regs;
+ 	int irq;
+ 	u32 edge_emulation;
+@@ -123,6 +124,7 @@ static void hlwd_gpio_irq_mask(struct irq_data *data)
+ 	mask &= ~BIT(data->hwirq);
+ 	iowrite32be(mask, hlwd->regs + HW_GPIOB_INTMASK);
+ 	raw_spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
++	gpiochip_disable_irq(&hlwd->gpioc, irqd_to_hwirq(data));
  }
  
- static void cdns_gpio_irq_unmask(struct irq_data *d)
-@@ -77,6 +78,7 @@ static void cdns_gpio_irq_unmask(struct irq_data *d)
- 	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
- 	struct cdns_gpio_chip *cgpio = gpiochip_get_data(chip);
+ static void hlwd_gpio_irq_unmask(struct irq_data *data)
+@@ -132,6 +134,7 @@ static void hlwd_gpio_irq_unmask(struct irq_data *data)
+ 	unsigned long flags;
+ 	u32 mask;
  
-+	gpiochip_enable_irq(chip, irqd_to_hwirq(d));
- 	iowrite32(BIT(d->hwirq), cgpio->regs + CDNS_GPIO_IRQ_EN);
++	gpiochip_enable_irq(&hlwd->gpioc, irqd_to_hwirq(data));
+ 	raw_spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
+ 	mask = ioread32be(hlwd->regs + HW_GPIOB_INTMASK);
+ 	mask |= BIT(data->hwirq);
+@@ -202,6 +205,24 @@ static int hlwd_gpio_irq_set_type(struct irq_data *data, unsigned int flow_type)
+ 	return 0;
  }
  
-@@ -138,11 +140,13 @@ static void cdns_gpio_irq_handler(struct irq_desc *desc)
- 	chained_irq_exit(irqchip, desc);
- }
- 
--static struct irq_chip cdns_gpio_irqchip = {
-+static const struct irq_chip cdns_gpio_irqchip = {
- 	.name		= "cdns-gpio",
- 	.irq_mask	= cdns_gpio_irq_mask,
- 	.irq_unmask	= cdns_gpio_irq_unmask,
--	.irq_set_type	= cdns_gpio_irq_set_type
-+	.irq_set_type	= cdns_gpio_irq_set_type,
-+	.flags		= IRQCHIP_IMMUTABLE,
++static void hlwd_gpio_irq_print_chip(struct irq_data *data, struct seq_file *p)
++{
++	struct hlwd_gpio *hlwd =
++		gpiochip_get_data(irq_data_get_irq_chip_data(data));
++
++	seq_printf(p, dev_name(hlwd->dev));
++}
++
++static const struct irq_chip hlwd_gpio_irq_chip = {
++	.irq_mask = hlwd_gpio_irq_mask,
++	.irq_unmask = hlwd_gpio_irq_unmask,
++	.irq_enable = hlwd_gpio_irq_enable,
++	.irq_set_type = hlwd_gpio_irq_set_type,
++	.irq_print_chip = hlwd_gpio_irq_print_chip,
++	.flags = IRQCHIP_IMMUTABLE,
 +	GPIOCHIP_IRQ_RESOURCE_HELPERS,
- };
++};
++
+ static int hlwd_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct hlwd_gpio *hlwd;
+@@ -216,6 +237,8 @@ static int hlwd_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(hlwd->regs))
+ 		return PTR_ERR(hlwd->regs);
  
- static int cdns_gpio_probe(struct platform_device *pdev)
-@@ -222,7 +226,7 @@ static int cdns_gpio_probe(struct platform_device *pdev)
- 		struct gpio_irq_chip *girq;
++	hlwd->dev = &pdev->dev;
++
+ 	/*
+ 	 * Claim all GPIOs using the OWNER register. This will not work on
+ 	 * systems where the AHBPROT memory firewall hasn't been configured to
+@@ -259,14 +282,8 @@ static int hlwd_gpio_probe(struct platform_device *pdev)
+ 			return hlwd->irq;
+ 		}
  
- 		girq = &cgpio->gc.irq;
--		girq->chip = &cdns_gpio_irqchip;
-+		gpio_irq_chip_set_chip(girq, &cdns_gpio_irqchip);
- 		girq->parent_handler = cdns_gpio_irq_handler;
+-		hlwd->irqc.name = dev_name(&pdev->dev);
+-		hlwd->irqc.irq_mask = hlwd_gpio_irq_mask;
+-		hlwd->irqc.irq_unmask = hlwd_gpio_irq_unmask;
+-		hlwd->irqc.irq_enable = hlwd_gpio_irq_enable;
+-		hlwd->irqc.irq_set_type = hlwd_gpio_irq_set_type;
+-
+ 		girq = &hlwd->gpioc.irq;
+-		girq->chip = &hlwd->irqc;
++		gpio_irq_chip_set_chip(girq, &hlwd_gpio_irq_chip);
+ 		girq->parent_handler = hlwd_gpio_irqhandler;
  		girq->num_parents = 1;
  		girq->parents = devm_kcalloc(&pdev->dev, 1,
 
