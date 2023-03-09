@@ -2,60 +2,60 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47480C6FD19
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 07:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 549D0C61DA4
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 07:46:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230295AbjCIHqn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Mar 2023 02:46:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45704 "EHLO
+        id S230319AbjCIHqp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Mar 2023 02:46:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230190AbjCIHqR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 02:46:17 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA1E6DD5B5
-        for <linux-gpio@vger.kernel.org>; Wed,  8 Mar 2023 23:46:05 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id d36so1141302lfv.8
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Mar 2023 23:46:05 -0800 (PST)
+        with ESMTP id S230226AbjCIHqW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 02:46:22 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C23F1DF721
+        for <linux-gpio@vger.kernel.org>; Wed,  8 Mar 2023 23:46:07 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id t11so1176134lfr.1
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Mar 2023 23:46:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678347964;
+        d=linaro.org; s=google; t=1678347967;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=c+tr96cZPYMIs0/699FeDkH9/3i8GidF6/NXAvTE8Kg=;
-        b=oGW4OUQOWAHop80go+7eApoUqKVJQON4IntulrZQevBtG7/txnRJ1hEPqqfqWliJ3/
-         eQ4luTNNRRIvo4ZQ5IrXKX2HMtUI5ARBUVi+45UZ1NSgSLq4lvMHn6XqEqz4PuYZPIT8
-         m1upl/zAA244KcLjUxk4wfhic/fEhP7jUJ3IX4y8pzpIJU3DfwSwgaLQVTGrYIpE1/Zm
-         ZeiA75Yomc6pyu7as9PecDHpKv56m+T6RsagMseeYS43IzgC3i46K4zTFv9L1g0HyJBO
-         gxkj/MIhbE3NYOS/6XbaMpAvFGhW9BbJLj8mSKHyRgsNKzqcStlN38pffi9HgN3ksQ97
-         XAwg==
+        bh=Nj6jio3cM/arnjJ3w8Z7XTVvD/CZOiBuUJssoRypJa0=;
+        b=xwf8KALZLR0nIYkuFjQZGVcY2mmqSH9Bfzggzf2PNDHJUzO3FLSp55bkFvwwJSjugU
+         bySHixGlQTucE5mALVhMAqd0U+SRxp4YOp92wG1995YoeXHMhdFR3yToSBGokblA+vvP
+         memzY3k/ZT9CqUyFJw0X9S2BjjUsf9rzmVL+yqMBnchOcpNOFJ1qUcxjGEm8hYv+nACV
+         BjEEZ/dQQF5gc2Is9vQYGVC+P6zD65aux1fObZAcWAyhb9Uw2cwVjkKt23QS8an5bAgg
+         zOP52WaV4fGwrWmCuf1qkEqT69qCzTzLIdQrXVCadt6QYxOuR83ew8G9YRq2lNEF30VF
+         DUKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678347964;
+        d=1e100.net; s=20210112; t=1678347967;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=c+tr96cZPYMIs0/699FeDkH9/3i8GidF6/NXAvTE8Kg=;
-        b=gfAYGC5lEgsdH+npQ6tO8xB1I+/t/c+WFDuHHqjL3MuamQwKlLC9nVAuXHmg5nEmfN
-         YW+SWQh5llFgb5OdMCmkIorBHfflBCuE1wHwiqdOWAVslZyaaCAxU7nvGvPrT4P3THPp
-         sdx/tGGaKHrsB5WK8U0REFkRTpSds7YsEut4O5MfbnjwMSgHA7E4UcZOrH6dJQI+qNzo
-         utNfT4XxmgoNYrFiBpsq/jn9DAGay3/8tC+etisivjykHWKLoIeY14vWE6es7rTwqKi9
-         hrOUaj46jeceE9G7z+peL38P9HzXg73uD93eQ1b9Df9oR7H93fPKQBoU00MQwwRYdMuw
-         JTyQ==
-X-Gm-Message-State: AO0yUKWvxiPPsZGh9dshas9qL1qn/bTLxsyX/6XnzbXQUcEmGwURvPTa
-        5w71uaSltNXEgaeyGtGeVBN7dw==
-X-Google-Smtp-Source: AK7set9O0Rzn6gceHkhyQLCg6KQ/J7lIL+u70P7LbVjJf285Bv2SVczsQHACcSpz6PjNCY+uHSpttA==
-X-Received: by 2002:a05:6512:4c9:b0:4dd:d687:4ea7 with SMTP id w9-20020a05651204c900b004ddd6874ea7mr5528402lfq.36.1678347964117;
-        Wed, 08 Mar 2023 23:46:04 -0800 (PST)
+        bh=Nj6jio3cM/arnjJ3w8Z7XTVvD/CZOiBuUJssoRypJa0=;
+        b=kVOFjbERmElbsGUg8/fAfJEJH09wViH1hQZhIoCXLXe+acvu65UK8dKskptcAv2JWv
+         Ql4PI0OHUWXplYIGwrF6KFL+ITiNZF+fltXzfJ6QkdR/tZb79Ufy8kzgKAx9h3NShaUa
+         UcFz+e0DQcdZmYxee6Cp9CW0ys5ZHnfZhaSfMZ99cMXblv9KMWeuTryonnPB7vCkST44
+         nMvjJwfPvbmlZSSms/1ibbBjsu3ypvcsx+6vFyKeRtPnhkALJ/sIVl7vu40c8bmw2MEE
+         3t2JXTNoTHhWJMaufZcDnXS45EEXlhxl7zmHkTnFawOiLaffaWqVPGJl16ihObFIFDOo
+         39jw==
+X-Gm-Message-State: AO0yUKWPFkxydSLTR+LakpKZzwWxJksWWW1kZ0JsARte9NsuR1x+XyU4
+        gOwkbUWM8T4JG02dCIW/6MUAxQ==
+X-Google-Smtp-Source: AK7set+7SeKoeP6ww+p3rAPDNpLbeniGpZIzW6H3NPKfLtikv3/3WvapNsR2GFMi6AMLr1TPdSWKnQ==
+X-Received: by 2002:a19:a416:0:b0:4dd:a025:d8e with SMTP id q22-20020a19a416000000b004dda0250d8emr6336857lfc.47.1678347967362;
+        Wed, 08 Mar 2023 23:46:07 -0800 (PST)
 Received: from [127.0.1.1] ([85.235.12.219])
-        by smtp.gmail.com with ESMTPSA id a6-20020a056512020600b004bb766e01a4sm2568972lfo.245.2023.03.08.23.46.03
+        by smtp.gmail.com with ESMTPSA id a6-20020a056512020600b004bb766e01a4sm2568972lfo.245.2023.03.08.23.46.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 23:46:03 -0800 (PST)
+        Wed, 08 Mar 2023 23:46:07 -0800 (PST)
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 09 Mar 2023 08:45:56 +0100
-Subject: [PATCH v3 08/17] gpio: hisi: Convert to immutable irq_chip
+Date:   Thu, 09 Mar 2023 08:45:59 +0100
+Subject: [PATCH v3 11/17] gpio: msc313: Convert to immutable irq_chip
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230215-immutable-chips-v3-8-972542092a77@linaro.org>
+Message-Id: <20230215-immutable-chips-v3-11-972542092a77@linaro.org>
 References: <20230215-immutable-chips-v3-0-972542092a77@linaro.org>
 In-Reply-To: <20230215-immutable-chips-v3-0-972542092a77@linaro.org>
 To:     Mun Yew Tham <mun.yew.tham@intel.com>,
@@ -84,77 +84,68 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 Convert the driver to immutable irq-chip with a bit of
 intuition.
 
-The IRQ chip was unnamed which seems unwise, so we just
-assign the name "HISI-GPIO".
+This conversion follows the pattern of the gpio-ixp4xx
+hierarchical GPIO interrupt driver.
 
 Cc: Marc Zyngier <maz@kernel.org>
 Acked-by: Marc Zyngier <maz@kernel.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-hisi.c | 25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+ drivers/gpio/gpio-msc313.c | 26 ++++++++++++++++++++++----
+ 1 file changed, 22 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpio-hisi.c b/drivers/gpio/gpio-hisi.c
-index 55bd69043bf4..29a03de37fd8 100644
---- a/drivers/gpio/gpio-hisi.c
-+++ b/drivers/gpio/gpio-hisi.c
-@@ -37,7 +37,6 @@ struct hisi_gpio {
- 	struct device		*dev;
- 	void __iomem		*reg_base;
- 	unsigned int		line_num;
--	struct irq_chip		irq_chip;
- 	int			irq;
- };
- 
-@@ -100,12 +99,14 @@ static void hisi_gpio_irq_set_mask(struct irq_data *d)
- 	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
- 
- 	hisi_gpio_write_reg(chip, HISI_GPIO_INTMASK_SET_WX, BIT(irqd_to_hwirq(d)));
-+	gpiochip_disable_irq(chip, irqd_to_hwirq(d));
+diff --git a/drivers/gpio/gpio-msc313.c b/drivers/gpio/gpio-msc313.c
+index b0773e5652fa..036ad2324892 100644
+--- a/drivers/gpio/gpio-msc313.c
++++ b/drivers/gpio/gpio-msc313.c
+@@ -532,17 +532,35 @@ static int msc313_gpio_direction_output(struct gpio_chip *chip, unsigned int off
+ 	return 0;
  }
  
- static void hisi_gpio_irq_clr_mask(struct irq_data *d)
- {
- 	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
- 
-+	gpiochip_enable_irq(chip, irqd_to_hwirq(d));
- 	hisi_gpio_write_reg(chip, HISI_GPIO_INTMASK_CLR_WX, BIT(irqd_to_hwirq(d)));
- }
- 
-@@ -191,20 +192,24 @@ static void hisi_gpio_irq_handler(struct irq_desc *desc)
- 	chained_irq_exit(irq_c, desc);
- }
- 
-+static const struct irq_chip hisi_gpio_irq_chip = {
-+	.name = "HISI-GPIO",
-+	.irq_ack = hisi_gpio_set_ack,
-+	.irq_mask = hisi_gpio_irq_set_mask,
-+	.irq_unmask = hisi_gpio_irq_clr_mask,
-+	.irq_set_type = hisi_gpio_irq_set_type,
-+	.irq_enable = hisi_gpio_irq_enable,
-+	.irq_disable = hisi_gpio_irq_disable,
++static void msc313_gpio_irq_mask(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++
++	irq_chip_mask_parent(d);
++	gpiochip_disable_irq(gc, d->hwirq);
++}
++
++static void msc313_gpio_irq_unmask(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++
++	gpiochip_enable_irq(gc, d->hwirq);
++	irq_chip_unmask_parent(d);
++}
++
+ /*
+  * The interrupt handling happens in the parent interrupt controller,
+  * we don't do anything here.
+  */
+-static struct irq_chip msc313_gpio_irqchip = {
++static const struct irq_chip msc313_gpio_irqchip = {
+ 	.name = "GPIO",
+ 	.irq_eoi = irq_chip_eoi_parent,
+-	.irq_mask = irq_chip_mask_parent,
+-	.irq_unmask = irq_chip_unmask_parent,
++	.irq_mask = msc313_gpio_irq_mask,
++	.irq_unmask = msc313_gpio_irq_unmask,
+ 	.irq_set_type = irq_chip_set_type_parent,
+ 	.irq_set_affinity = irq_chip_set_affinity_parent,
 +	.flags = IRQCHIP_IMMUTABLE,
 +	GPIOCHIP_IRQ_RESOURCE_HELPERS,
-+};
-+
- static void hisi_gpio_init_irq(struct hisi_gpio *hisi_gpio)
- {
- 	struct gpio_chip *chip = &hisi_gpio->chip;
- 	struct gpio_irq_chip *girq_chip = &chip->irq;
+ };
  
--	/* Set hooks for irq_chip */
--	hisi_gpio->irq_chip.irq_ack = hisi_gpio_set_ack;
--	hisi_gpio->irq_chip.irq_mask = hisi_gpio_irq_set_mask;
--	hisi_gpio->irq_chip.irq_unmask = hisi_gpio_irq_clr_mask;
--	hisi_gpio->irq_chip.irq_set_type = hisi_gpio_irq_set_type;
--	hisi_gpio->irq_chip.irq_enable = hisi_gpio_irq_enable;
--	hisi_gpio->irq_chip.irq_disable = hisi_gpio_irq_disable;
--
--	girq_chip->chip = &hisi_gpio->irq_chip;
-+	gpio_irq_chip_set_chip(girq_chip, &hisi_gpio_irq_chip);
- 	girq_chip->default_type = IRQ_TYPE_NONE;
- 	girq_chip->num_parents = 1;
- 	girq_chip->parents = &hisi_gpio->irq;
+ /*
+@@ -644,7 +662,7 @@ static int msc313_gpio_probe(struct platform_device *pdev)
+ 	gpiochip->names = gpio->gpio_data->names;
+ 
+ 	gpioirqchip = &gpiochip->irq;
+-	gpioirqchip->chip = &msc313_gpio_irqchip;
++	gpio_irq_chip_set_chip(gpioirqchip, &msc313_gpio_irqchip);
+ 	gpioirqchip->fwnode = of_node_to_fwnode(dev->of_node);
+ 	gpioirqchip->parent_domain = parent_domain;
+ 	gpioirqchip->child_to_parent_hwirq = msc313e_gpio_child_to_parent_hwirq;
 
 -- 
 2.34.1
