@@ -2,81 +2,167 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22595C64EC4
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 07:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC94C6FD1F
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 07:46:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229927AbjCIHiq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Mar 2023 02:38:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34634 "EHLO
+        id S230041AbjCIHqB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Mar 2023 02:46:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230182AbjCIHi2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 02:38:28 -0500
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1589497C7
-        for <linux-gpio@vger.kernel.org>; Wed,  8 Mar 2023 23:38:23 -0800 (PST)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-53d277c1834so19257767b3.10
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Mar 2023 23:38:23 -0800 (PST)
+        with ESMTP id S229692AbjCIHp7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 02:45:59 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B985DD34C
+        for <linux-gpio@vger.kernel.org>; Wed,  8 Mar 2023 23:45:58 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id j11so1117543lfg.13
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Mar 2023 23:45:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678347503;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a/LUZgYrR0Ysr7+Ej1P1ngFsSFpgqj0GwvWlQto+e2M=;
-        b=lg+58u/rcX6KGQPiFTKChAzbGLROJbQGHgi2GeDH7tA+SuLf7B3lMURC2xAV8tmUjs
-         eL2AYYrAMAKfw2GJ3rS6E0e1q5R6/WxLffLj03MaSglH3QcPM1Tgb26jkddhQKKNnl4K
-         XABYDocIuff0tU/0kshegshi4OmkMUyV9QUjGRSJRWxKITpJUFX/W+2FyctkX5jRaCyP
-         8HV/cIQ/36vQ6MOiSXmBdwamKtYvRqflEgOh+Nv+dekd0vux+8t7uWNBFIAEp3dJBCCT
-         VdHJtm4jZAj8lZrxiKnV73HizqZ7rM4JMUTWXbE87bJGcluA4nOMrruGx6KP9QPRwL60
-         l12w==
+        d=linaro.org; s=google; t=1678347956;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t+KEmI8whzjEUAizVJPshJjrICLTLWn62dQQiYVD1jA=;
+        b=IzVpcZj96fumWwiZ9ce8p3OR00lwH2NSwIo6JgwE3eUrUbaCenSVg9A2IfJ0T5yKrF
+         SkQWIosnVkJASnorq0HjSVujiLGhuf+H/CU3+yYMQDsjvDUskV5emKdM0lVSezIrvkss
+         FdSBrCi4CbAaiEwps34Uui98JaatpeK5ak6yYuz8f0AyWyYZGKxp09rbxX+XT2uue5iD
+         y0EBrkyqDVoaygONBXCc3okeqz57bWs1/PtSZqIlcbl24A1He/CyjbG+PL8ikEmDC83G
+         bojse/lcmBP4bVFZ6FWWkICZkNA3MUkOtFnZcL3KeJuhzjI5+iXI9EZUHsr5eguGZ3l2
+         MDkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678347503;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20210112; t=1678347956;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=a/LUZgYrR0Ysr7+Ej1P1ngFsSFpgqj0GwvWlQto+e2M=;
-        b=TaRG9heYkKhTRrTXJCvyoEPtUyC/A2WAiS1Qq6l0iSRaJnau1NBTBW8YwRpwEDF/y/
-         vDorxCv9BBK8Ca0qXWW5gdycMOC5WtDARScCi52wqOuvQ5/GiEZZc2L3O7Y2as8DzNye
-         gM+ESglHR7idxdm42roLajoKEizhZxduRBa94bGmyuqC4AL/oizXSCj0W/qbGqMrQP8v
-         ZKqNvmFb1uhCi82hdixSeZIY2ZWgjrxzhKwCP9ibkcZkPplfvAmkpX3T6oKXpc0gOQL9
-         2+2VqeuR5LVxXd5OJcTCfs09pRNVYkHKx/SRLuaL/JTceV3fCBXRYnsr+yxGERH48Q2a
-         /yrg==
-X-Gm-Message-State: AO0yUKUwkMtiyJE2XLeBnOb6hT1GJDFyvQJrw5JzJ5EkjzpZviqhezXg
-        LONfTPI4/dGk0GB+4QsIOZvN7B0+JPubPsrZUxYgnA609cGv2CO8
-X-Google-Smtp-Source: AK7set+9L5i2dic4vjPaEUChT97wsmBnVt2hJYHC48czJtDtf4Yau2W0U2eTlSW/M6bcbCj5zYcbrf3yuIFHsYNbXWU=
-X-Received: by 2002:a81:b615:0:b0:52e:c77d:3739 with SMTP id
- u21-20020a81b615000000b0052ec77d3739mr12131466ywh.9.1678347502993; Wed, 08
- Mar 2023 23:38:22 -0800 (PST)
-MIME-Version: 1.0
-References: <20230309050855.3311834-1-joel@jms.id.au>
-In-Reply-To: <20230309050855.3311834-1-joel@jms.id.au>
+        bh=t+KEmI8whzjEUAizVJPshJjrICLTLWn62dQQiYVD1jA=;
+        b=EDGQN3g45XtMH2KeZ8xkkXV4Q+bLYbnthPOAGARErgN+N0frd7Bi1mX4aAD/419tZU
+         RTAXJbTMJbcU/d7Q9JstDNZ/Ri2rtOLm6eLzv2IvU++aaoNA0VVHPx85nd9OhnVffDnj
+         3BMKYQPu6FZzN6AcDxSp53TyDrQug9Prx9hlFb5jFPRubf+9rLheeW10tgomVo4TkXQn
+         6NgSa0O+5Em9wHnlOl7ah/ruuZe7dDtSzn++9/mHFvKV+ryd8ugExr6TdnsFM8OozMQh
+         eK7UbKh16fBrpwA7HEsD5Ef49UQSGooHvh8GghKgZR7Mr7c03U9yaOUDewS5rYkHL1Ci
+         s12A==
+X-Gm-Message-State: AO0yUKWnCU+I8LnFQzSBfXLyoe6SafWmkieoievjan03TvxoN4nzIxmp
+        Z6AVJqpJAk00XFO7bw+Wv+VRlg==
+X-Google-Smtp-Source: AK7set9WPD6eu/vWCYRu6sj0S213JwL98jfUk1++KvMe+8mAaYh/4t0MAArd1j+T9EDICORejXX9CQ==
+X-Received: by 2002:ac2:4c0d:0:b0:4e2:3453:40eb with SMTP id t13-20020ac24c0d000000b004e2345340ebmr5437312lfq.34.1678347956342;
+        Wed, 08 Mar 2023 23:45:56 -0800 (PST)
+Received: from [127.0.1.1] ([85.235.12.219])
+        by smtp.gmail.com with ESMTPSA id a6-20020a056512020600b004bb766e01a4sm2568972lfo.245.2023.03.08.23.45.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Mar 2023 23:45:55 -0800 (PST)
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 9 Mar 2023 08:38:11 +0100
-Message-ID: <CACRpkdba--WpCGEF7jF=oWowps1JpieoTo6UswcCZyvs2s5z6g@mail.gmail.com>
-Subject: Re: [PATCH] gpio: aspeed: Always register the irqchip
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Jeremy Kerr <jk@codeconstruct.com.au>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 09 Mar 2023 08:45:49 +0100
+Subject: [PATCH v3 01/17] gpio: altera: Convert to immutable irq_chip
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230215-immutable-chips-v3-1-972542092a77@linaro.org>
+References: <20230215-immutable-chips-v3-0-972542092a77@linaro.org>
+In-Reply-To: <20230215-immutable-chips-v3-0-972542092a77@linaro.org>
+To:     Mun Yew Tham <mun.yew.tham@intel.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, Alban Bedel <albeu@free.fr>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Jay Fang <f.fangjian@huawei.com>,
+        Daniel Palmer <daniel@thingy.jp>,
+        Romain Perier <romain.perier@gmail.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        William Breathitt Gray <william.gray@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-omap@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Marc Zyngier <maz@kernel.org>
+X-Mailer: b4 0.12.1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Mar 9, 2023 at 6:09=E2=80=AFAM Joel Stanley <joel@jms.id.au> wrote:
+Convert the driver to immutable irq-chip with a bit of
+intuition.
 
-> The driver was implemented in a way that made the irqchip optional, if a
-> irq was not present in the device tree. However, all of the device trees
-> have always had an irq, so the optional-ness has never been used.
->
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
-> ---
-> Linus, feel free to put this in your immutable gpiochip series
+Cc: Marc Zyngier <maz@kernel.org>
+Acked-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-altera.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
-Perfect, I will merge it into my v3 set to help Bartosz avoid merge
-conflicts.
+diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+index b59fae993626..c1599edb3453 100644
+--- a/drivers/gpio/gpio-altera.c
++++ b/drivers/gpio/gpio-altera.c
+@@ -24,14 +24,12 @@
+ * @interrupt_trigger	: specifies the hardware configured IRQ trigger type
+ *			  (rising, falling, both, high)
+ * @mapped_irq		: kernel mapped irq number.
+-* @irq_chip		: IRQ chip configuration
+ */
+ struct altera_gpio_chip {
+ 	struct of_mm_gpio_chip mmchip;
+ 	raw_spinlock_t gpio_lock;
+ 	int interrupt_trigger;
+ 	int mapped_irq;
+-	struct irq_chip irq_chip;
+ };
+ 
+ static void altera_gpio_irq_unmask(struct irq_data *d)
+@@ -43,6 +41,7 @@ static void altera_gpio_irq_unmask(struct irq_data *d)
+ 
+ 	altera_gc = gpiochip_get_data(irq_data_get_irq_chip_data(d));
+ 	mm_gc = &altera_gc->mmchip;
++	gpiochip_enable_irq(&mm_gc->gc, irqd_to_hwirq(d));
+ 
+ 	raw_spin_lock_irqsave(&altera_gc->gpio_lock, flags);
+ 	intmask = readl(mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
+@@ -68,6 +67,7 @@ static void altera_gpio_irq_mask(struct irq_data *d)
+ 	intmask &= ~BIT(irqd_to_hwirq(d));
+ 	writel(intmask, mm_gc->regs + ALTERA_GPIO_IRQ_MASK);
+ 	raw_spin_unlock_irqrestore(&altera_gc->gpio_lock, flags);
++	gpiochip_disable_irq(&mm_gc->gc, irqd_to_hwirq(d));
+ }
+ 
+ /*
+@@ -233,6 +233,17 @@ static void altera_gpio_irq_leveL_high_handler(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
++static const struct irq_chip altera_gpio_irq_chip = {
++	.name = "altera-gpio",
++	.irq_mask = altera_gpio_irq_mask,
++	.irq_unmask = altera_gpio_irq_unmask,
++	.irq_set_type = altera_gpio_irq_set_type,
++	.irq_startup  = altera_gpio_irq_startup,
++	.irq_shutdown = altera_gpio_irq_mask,
++	.flags = IRQCHIP_IMMUTABLE,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS,
++};
++
+ static int altera_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *node = pdev->dev.of_node;
+@@ -278,15 +289,9 @@ static int altera_gpio_probe(struct platform_device *pdev)
+ 	}
+ 	altera_gc->interrupt_trigger = reg;
+ 
+-	altera_gc->irq_chip.name = "altera-gpio";
+-	altera_gc->irq_chip.irq_mask     = altera_gpio_irq_mask;
+-	altera_gc->irq_chip.irq_unmask   = altera_gpio_irq_unmask;
+-	altera_gc->irq_chip.irq_set_type = altera_gpio_irq_set_type;
+-	altera_gc->irq_chip.irq_startup  = altera_gpio_irq_startup;
+-	altera_gc->irq_chip.irq_shutdown = altera_gpio_irq_mask;
+-
+ 	girq = &altera_gc->mmchip.gc.irq;
+-	girq->chip = &altera_gc->irq_chip;
++	gpio_irq_chip_set_chip(girq, &altera_gpio_irq_chip);
++
+ 	if (altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH)
+ 		girq->parent_handler = altera_gpio_irq_leveL_high_handler;
+ 	else
 
-Yours,
-Linus Walleij
+-- 
+2.34.1
+
