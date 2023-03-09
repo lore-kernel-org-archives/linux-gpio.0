@@ -2,142 +2,260 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B853CC61DA4
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 15:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD11C74A5B
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 16:11:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231216AbjCIP6y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Mar 2023 10:58:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43126 "EHLO
+        id S230144AbjCIQLa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Mar 2023 11:11:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230448AbjCIP6u (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 10:58:50 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EB692055C;
-        Thu,  9 Mar 2023 07:58:49 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0511761A15;
-        Thu,  9 Mar 2023 15:58:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2C7DC433D2;
-        Thu,  9 Mar 2023 15:58:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1678377528;
-        bh=t69UDhoxhHrHpDpl6paYNWueK0bZtsVn6gfBnfrYROk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JO24IpEK0pSJ3dljpnV0AuGqz2G9JT40zHPjdfl8aYPJhDPNL5jKYkmrV5hnuhuJy
-         3nMB3Oqlv3QfOKiM4Nt4RDU30C0VCjd+c7mbsHN3mVrvL92DZyuwInOuYhg/5JH97g
-         8n5diV3ZsgV1JH6ge/YZw2BIRFq29cY7RmeGyGeQ=
-Date:   Thu, 9 Mar 2023 16:58:45 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Ye, Xiang" <xiang.ye@intel.com>
-Cc:     Andi Shyti <andi.shyti@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Lee Jones <lee@kernel.org>, Wolfram Sang <wsa@kernel.org>,
-        Tyrone Ting <kfting@nuvoton.com>,
-        Mark Brown <broonie@kernel.org>,
+        with ESMTP id S232417AbjCIQKK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 11:10:10 -0500
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2083.outbound.protection.outlook.com [40.107.22.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6656FCBEE;
+        Thu,  9 Mar 2023 08:04:33 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ALCbnx/smOEUD8fsEGhFxz5JxREqNJG20b3cNxCGL7L8tc0ytZEbIpN7r3RWwJ4L9l2akqeB3oUCjgOIF25M6bbe/Y3owLCzMwis0yZXgBXWxtmfgVDOP2NKjCTnxpexGcR4ggUEhUHI0OAB4xu4pmvrBJcsyMLW+yY0KCudZqOVYaUPl6slzvJGP3CZRIeVeJhbSYoqOkXf9yJnxFbWA3bvueOO6NTx8MSHb83kER8DRLfy6gubNeEoEfIDSip7t4wPW/OZJYo3RRKeN0udEKM+PyzQdYunIZ/JLt9zLZK6Oj8CclQaaAtUGx4GPJ/CqL4wd++Vx+jJsbXFOZ1Wrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MBzFW3D4ZBMThKsdB4MrbTfftRdYBzghjEmDWMVN+1E=;
+ b=fC3R4OTBvaA05yd2hn/QBhIOI1oPhA+kNo3Qk0KVJmcOmjCHlEv5/0RAf1aZ8060LHQeEK+jYdge5OFG3uxn9qnnxCODTy6jLokFXFM4XzKtQgfF/7RxNGo3/CCf8QanrVuixDH6sylwB1G8VWriLZ8yjOmOYt/DqdEIzM+o6iD1LxXRQyFirGm7Z5tLsyzmQVmJBGTmRPZ5WqFovBvQUFzz6OswioGrBiDcP1dgOWfVsYsQOQzwWSkFU+GylCoFz2YRNmdrN9QhNSUBzxIlh92TBTq+oDsyxnIIWYMn7zrq+KwRathk2cfs5jxsOuiDSTQJtj17T9yhCyQT7kd45g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
+ dkim=pass header.d=seco.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MBzFW3D4ZBMThKsdB4MrbTfftRdYBzghjEmDWMVN+1E=;
+ b=EFI1fAnk8itR0y22u5ancy4ptW6WRGnz1IPSAwk22Cekpc0mvKWArqSQO54zaFJB8HScXQgSWlRWcOXBY/lr3L//ja0TZ6b6aSWeKz7bAp9uBSExY/tACedNZ+vawluBIN7fhtdxQkPV18ZAsRqKBLCNJ1ar9bpA4p/i0VHavPeuMTm8HlSOpcmd+u1evAHN9RIWX9J1+51/9O2njxHF3hirruK5t80WyBWUozoEfWU3lH5WT+vlk9ZrEUDQmwaTNBoPemRlB6e7tC2A04bkryyBRiL7V35B2jnTfHhpFnQSEQ5kzLY3gLjHYtlE16QZEnl97B6bRs5k+LgXv8YMPg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=seco.com;
+Received: from DB9PR03MB8847.eurprd03.prod.outlook.com (2603:10a6:10:3dd::13)
+ by PAVPR03MB9211.eurprd03.prod.outlook.com (2603:10a6:102:325::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.28; Thu, 9 Mar
+ 2023 16:03:44 +0000
+Received: from DB9PR03MB8847.eurprd03.prod.outlook.com
+ ([fe80::dbcf:1089:3242:614e]) by DB9PR03MB8847.eurprd03.prod.outlook.com
+ ([fe80::dbcf:1089:3242:614e%5]) with mapi id 15.20.6156.027; Thu, 9 Mar 2023
+ 16:03:44 +0000
+Message-ID: <4fbd84ff-8a0c-669c-2f27-d542640ded24@seco.com>
+Date:   Thu, 9 Mar 2023 11:03:38 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH v10 03/13] dt-bindings: Convert gpio-mmio to yaml
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-phy@lists.infradead.org,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        =?UTF-8?Q?Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, linux-usb@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org,
-        srinivas.pandruvada@intel.com, heikki.krogerus@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, sakari.ailus@linux.intel.com,
-        zhifeng.wang@intel.com, wentong.wu@intel.com, lixu.zhang@intel.com
-Subject: Re: [PATCH v4 1/5] mfd: Add support for Intel LJCA device
-Message-ID: <ZAoCNR/iAv3IOJ6D@kroah.com>
-References: <20230309071100.2856899-1-xiang.ye@intel.com>
- <20230309071100.2856899-2-xiang.ye@intel.com>
- <ZAmQOIh/71rY4Pa4@kroah.com>
- <ZAmngB84ty1flD9K@ye-NUC7i7DNHE>
- <ZAmpse14Evvrfa/f@kroah.com>
- <ZAmvocpy68qurCvt@intel.intel>
- <ZAn/L8Dg/Ehx9bMo@ye-NUC7i7DNHE>
+        linux-gpio@vger.kernel.org
+References: <20230306191535.1917656-1-sean.anderson@seco.com>
+ <20230306191535.1917656-4-sean.anderson@seco.com>
+ <20230308231018.GA4039466-robh@kernel.org>
+From:   Sean Anderson <sean.anderson@seco.com>
+In-Reply-To: <20230308231018.GA4039466-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BL1PR13CA0386.namprd13.prod.outlook.com
+ (2603:10b6:208:2c0::31) To DB9PR03MB8847.eurprd03.prod.outlook.com
+ (2603:10a6:10:3dd::13)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZAn/L8Dg/Ehx9bMo@ye-NUC7i7DNHE>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR03MB8847:EE_|PAVPR03MB9211:EE_
+X-MS-Office365-Filtering-Correlation-Id: 50de237c-7647-434c-bec5-08db20b7dbc9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 83O6ltIldWTsDkxp0qFDA5Yk/RwWUyCZOdXTssY1ubVcX9nUB2x/NX7oOpcMxQw02uwugujGPafK/68MxGy/Dzo6VfVYByWjFQDU3PMvXSHvPaZvt0G6zkpRdTMH+P6f3cVUUAoogA1gZDPaXnatd/YeyynyCvUR2RCEN81RpZIqI1cP2KkXHtFDrqQcgtQt9JGqzQdmo70TXjRJP1UyWdP7JBHvvIQ7IHGa5T1R+6vrFsoFumcbhUtwETFj8tz+LDV+fIdd4nwpRubC3l2VhSorUuq6LCWxR+QXOXyDzEeIMN93LNUWhAXhLltfWHlcuc9QJToy4jbIVOI5WRQvBXlG8BtneQ7P9rGK1Gl7OAS1lL7hHVX/PKlyKGDC+/IInCRrkOIzDHt0O/yhVc2ijqNbxM3gacXrtzv2IseGmAGMTQUqYOP2+YzWpcdu/HEJ8RbzpxslAyg5HnMMwGevhcZZ/sYGmdegivdtDn7a02rh9/5h8qo13ggImnsVcMIO51wCqraSj5f0IQU4UOlc63FJ2YIyb+RK4t8U6TOxHIt46MPVo68BOoklL+Marl76iDLfsf/0OJMDfKEG9yM1W/Cp/+RiEsxKXFCovn3Ng9TdU/JukEWZbWYld25uCcSz5DyZrowHsQIEAdZ9wEp7s+PmaP3XuIotZotkF+4hoegJzK4lNRWxb5WrSTArwdCU7TIr7pl8XWiJyeJCvbvbsMg5/PMbIf/PTfoTgGzkjrc8OCUM4iNObv8E8F4fisUk
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR03MB8847.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(366004)(39850400004)(346002)(376002)(396003)(136003)(451199018)(6506007)(54906003)(316002)(2616005)(83380400001)(31696002)(66574015)(36756003)(38100700002)(478600001)(6666004)(6512007)(966005)(52116002)(86362001)(38350700002)(53546011)(6486002)(186003)(5660300002)(41300700001)(44832011)(26005)(8936002)(31686004)(2906002)(66946007)(8676002)(7416002)(66476007)(6916009)(4326008)(66556008)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UE1MMGRyZmZMZk03SW8zN3lWQzVLa2thNDE0bmhqV2RzcXY3Qjg1OGFMaFRK?=
+ =?utf-8?B?OW1HTkl6Ri9NMjFkcWxXbFMxd3NQd3BMOU5sdlZpRHdJbGNFQXdkV09CMTRI?=
+ =?utf-8?B?RGs0bWswWFF6anVMTnpWWVk3OG41QXVUOUVoSDYvTVRUdkJKcENkcFlUeUk3?=
+ =?utf-8?B?ckRwS1lXbzhOcDR1Z0RPeHEyZDhrZG54dG1FRm1LKzRySVJGRVY0emRuWEVF?=
+ =?utf-8?B?QTZIYnlqcGhZNmxmM01SWU1MalVWZkFBekxtenRMa2lxSXJvVEIwaCt4WDhq?=
+ =?utf-8?B?c1pqd0JvOXdLTGVGd1p0U25mZFlaVWd5WWJobEtNWTdPWmFVSTVlRi9SQkdI?=
+ =?utf-8?B?c3FYeWV3ZWZBYnUwS25DNjhCSEhhMkpKNWJoRk04bVJkeGRuL3J3UkZ0TTNi?=
+ =?utf-8?B?QUFKQUxFdnJ4Vno2NnBVQ2JqNCtBUTNKUERGU0R6RmRESVFXSWlOVkVjSUVC?=
+ =?utf-8?B?OE5KYzlPd29aZ2crWkdweExhU3lkSGpDMHQyY3RIUHBET0VwNnlzZi9iQjhj?=
+ =?utf-8?B?OVc3QVVhaEYyNy9pSG9ZMmVKVXRxa2VvbnJ1bGcrQ0JIWmQ5NEUzdGhuQVlz?=
+ =?utf-8?B?VlRXT1pYZUxKdGhSdE1PN2tLekV6Vm42dndzRFJXdEtQdCszQlc1VUN2RXdC?=
+ =?utf-8?B?NjVBS2lKK09QcDBBVjVYdnloa09rYzBoZSt2dXpBR1dHb2VxKy80b08xNkxr?=
+ =?utf-8?B?N0ZHK0NQR0s2ZTVaK0JwL3pXbXRtMUVwN0M4czF6dUpzd2E3b3ZqTHZTY05n?=
+ =?utf-8?B?K0RXS3E4Zmoxd3p0ZjJIMlBqejlDUWlac2pUTlEwWkNFc2tMSGluTUNEU3R0?=
+ =?utf-8?B?ZHEwaXowemU2K0VOT2VkUUhFNWptd3dlZDloRjI1MDd4VTR1UnY5RDJxNndJ?=
+ =?utf-8?B?cVJzMjBqVnU4b1p2T1N2SkhlOHI1R1crOFI4Z3Q5T3ZsTVZGbU9rSXdvUWYv?=
+ =?utf-8?B?RjNXWmZEdkRBVHdnSVc1YmptazExTDJyRWJ0OElZd2FBOFB4UE9PdW1LY3Rp?=
+ =?utf-8?B?S3RRUmhjanN1ZWdLT1llNmtyQTl1QndZM21FVHozWi90VjBUWUE4aU5naHJm?=
+ =?utf-8?B?cVM0WU0wd2RKdnJtamt5VlJTQmtSbXJqTStnaGZpL2ZDeW1rMjhkS3JFOEJq?=
+ =?utf-8?B?QzE5RXRvR0VJUys1Z1J0VExYRHQvZENlQkhxRXVnc2xUZ1VINDNUN214d055?=
+ =?utf-8?B?RS94NEJBRFo5M2FOZ0RDQlB0ZDhsU2FTaFcxcWhnbzdDdkZ2Wk5lbmowKzVK?=
+ =?utf-8?B?aEprbll4Y2M3ZG9lUnhyWlppMnNjUGVna01OU25aMWNKeDJEaEQ0cTZpcitz?=
+ =?utf-8?B?UmgvZEd5U0lkLzlkU2VwV0QrY21wL1dUWmlMOGFCSEhQUU8xSmFsR3hoWEpU?=
+ =?utf-8?B?MUpJMVUvcUprSmFNaVYvdHNSNlNBU01FUTJsZHVtUDlqQzZSd1RjZ1pZa1d1?=
+ =?utf-8?B?a2tBS1JxVmJpc0pZdk9MVjRubzB0QzVraXZOUnU4RGE1c0JqMFFwWEI1a2pB?=
+ =?utf-8?B?eUMxRU5CYnc0T1V4VWtEbFRja0lJT3lkdTk4OUYybjVNVDRHQmJmNnFaYW5T?=
+ =?utf-8?B?ajYxQUlndzJORlFQUGNVSnphNStGNjljY1d0eXdSSkZISEIzOXNFa0hrb3p3?=
+ =?utf-8?B?MHUyL1RsRGh3ZDBOSUlMQUQxcjJrNDBEOW5NR20yMEtGTlM5OXhMcWgwb3Jh?=
+ =?utf-8?B?c29xR2JoeHA4UkFRdVppWXU2K1ViUEdaZE9mQURTM0hRb3Z4VVlmWEtyNGFj?=
+ =?utf-8?B?SlRmZjJJcE5mTXFnb2EvQmZEdXBOK05sdHZhWkhNUnRPTm9uQWYvRkJPWUcw?=
+ =?utf-8?B?emlCTXRuMW1KckU1RldyQjJ0YXZVZlEwZ29wM1gycmRWb1JNd0tjMmFZSzhT?=
+ =?utf-8?B?ZmtwZG1ZTUdqTkZRZFRVVkJ1VnExcDVNdG5ENk1zOXlUSTVMN2M1bUVmK0VG?=
+ =?utf-8?B?NnoyY2pNamprMzZSSGtLamJTbkFGanl1VFZLVDZXSUxyUjdCdDU3cGZLU3ph?=
+ =?utf-8?B?TDZydThxOFBXQUlRUXpSeG5jTE1HNVRKM0tZaUJKTk1ickpIQ2xBNFp6Nmlw?=
+ =?utf-8?B?TDkxbkhRaVRYYlpZME1MN0NjM3FtNjErSG9HTmdDUlFWT3o2cy9NSGl4RERv?=
+ =?utf-8?B?dWhjOWxNaEtIUk13aC94MHJ4a0J2eDdOcjRHejdMcFMzeGh4SmJxMmluNzdi?=
+ =?utf-8?B?b3c9PQ==?=
+X-OriginatorOrg: seco.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50de237c-7647-434c-bec5-08db20b7dbc9
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR03MB8847.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2023 16:03:44.3623
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vpxjVuQMjpDNELPdFubUJlKWrhUb5iij9K0988IUjUjlWodH4e5+qrNK1L3wz90SnvkjX7kMhHTZRlXZUmasrg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR03MB9211
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Mar 09, 2023 at 11:45:51PM +0800, Ye, Xiang wrote:
-> On Thu, Mar 09, 2023 at 11:06:25AM +0100, Andi Shyti wrote:
-> > On Thu, Mar 09, 2023 at 10:41:05AM +0100, Greg Kroah-Hartman wrote:
-> > > On Thu, Mar 09, 2023 at 05:31:44PM +0800, Ye, Xiang wrote:
-> > > > On Thu, Mar 09, 2023 at 08:52:24AM +0100, Greg Kroah-Hartman wrote:
-> > > > > On Thu, Mar 09, 2023 at 03:10:56PM +0800, Ye Xiang wrote:
-> > > > > > +static int ljca_mng_get_version(struct ljca_stub *stub, char *buf)
-> > > > > > +{
-> > > > > > +	struct fw_version version = {};
-> > > > > > +	unsigned int len = sizeof(version);
-> > > > > > +	int ret;
-> > > > > > +
-> > > > > > +	ret = ljca_stub_write(stub, LJCA_MNG_GET_VERSION, NULL, 0, &version, &len, true,
-> > > > > > +			      LJCA_USB_WRITE_ACK_TIMEOUT_MS);
-> > > > > > +	if (ret)
-> > > > > > +		return ret;
-> > > > > > +
-> > > > > > +	if (len != sizeof(version)) {
-> > > > > > +		dev_err(&stub->intf->dev, "get version failed, len:%d\n", len);
-> > > > > > +		return -EINVAL;
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	return sysfs_emit(buf, "%d.%d.%d.%d\n", version.major, version.minor,
-> > > > > > +			  le16_to_cpu(version.patch), le16_to_cpu(version.build));
-> > > > > > +}
-> > > > > 
-> > > > > You have sysfs files, yet no Documentation/ABI/ entries?  That's not
-> > > > > allowed, you know this :(
-> > > > The Documentation/ABI/ entries is added for the sysfs on patch 5 of this series.
-> > > > https://patchwork.kernel.org/project/linux-usb/patch/20230309071100.2856899-6-xiang.ye@intel.com/
-> > > 
-> > > Ah, missed that, sorry.
-> > > 
-> > > > > 
-> > > > > > +static ssize_t cmd_store(struct device *dev, struct device_attribute *attr, const char *buf,
-> > > > > > +			 size_t count)
-> > > > > > +{
-> > > > > > +	struct usb_interface *intf = to_usb_interface(dev);
-> > > > > > +	struct ljca_dev *ljca_dev = usb_get_intfdata(intf);
-> > > > > > +	struct ljca_stub *mng_stub = ljca_stub_find(ljca_dev, LJCA_MNG_STUB);
-> > > > > > +	struct ljca_stub *diag_stub = ljca_stub_find(ljca_dev, LJCA_DIAG_STUB);
-> > > > > > +
-> > > > > > +	if (sysfs_streq(buf, "dfu"))
-> > > > > > +		ljca_mng_set_dfu_mode(mng_stub);
-> > > > > > +	else if (sysfs_streq(buf, "debug"))
-> > > > > > +		ljca_diag_set_trace_level(diag_stub, 3);
-> > > > > 
-> > > > > Sorry, but no, you can't do this in a sysfs file.
-> > > > Do you mean that we can't use sysfs to send "debug" command to device?
-> > > 
-> > > That is correct, use the kernel-wide debugging facilities that we have
-> > > for this NEVER create your own custom interface just for one tiny
-> > > driver, that is not allowed.
-> > > 
-> > > > Could you provide some detail or hints?
-> > > 
-> > > dev_dbg().
-> But, this command is sent to SET LJCA Firmware logging level.
+On 3/8/23 18:10, Rob Herring wrote:
+> On Mon, Mar 06, 2023 at 02:15:25PM -0500, Sean Anderson wrote:
+>> This is a generic binding for simple MMIO GPIO controllers. Although we
+>> have a single driver for these controllers, they were previously spread
+>> over several files. Consolidate them. The register descriptions are
+>> adapted from the comments in the source. There is no set order for the
+>> registers, so I have not specified one.
+>> 
+>> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
+>> ---
+>> 
+>> Changes in v10:
+>> - New
+>> 
+>>  .../bindings/gpio/brcm,bcm6345-gpio.yaml      |  16 +--
+>>  .../devicetree/bindings/gpio/gpio-mmio.yaml   | 136 ++++++++++++++++++
+>>  .../bindings/gpio/ni,169445-nand-gpio.txt     |  38 -----
+>>  .../devicetree/bindings/gpio/wd,mbl-gpio.txt  |  38 -----
+>>  4 files changed, 137 insertions(+), 91 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mmio.yaml
+>>  delete mode 100644 Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
+>>  delete mode 100644 Documentation/devicetree/bindings/gpio/wd,mbl-gpio.txt
+>> 
+>> diff --git a/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.yaml b/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.yaml
+>> index 4d69f79df859..e11f4af49c52 100644
+>> --- a/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.yaml
+>> +++ b/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.yaml
+>> @@ -4,7 +4,7 @@
+>>  $id: http://devicetree.org/schemas/gpio/brcm,bcm6345-gpio.yaml#
+>>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>>  
+>> -title: Broadcom BCM6345 GPIO controller
+>> +title: Broadcom BCM63xx GPIO controller
+>>  
+>>  maintainers:
+>>    - Álvaro Fernández Rojas <noltari@gmail.com>
+>> @@ -18,8 +18,6 @@ description: |+
+>>  
+>>    BCM6338 have 8-bit data and dirout registers, where GPIO state can be read
+>>    and/or written, and the direction changed from input to output.
+>> -  BCM6345 have 16-bit data and dirout registers, where GPIO state can be read
+>> -  and/or written, and the direction changed from input to output.
+>>    BCM6318, BCM6328, BCM6358, BCM6362, BCM6368 and BCM63268 have 32-bit data
+>>    and dirout registers, where GPIO state can be read and/or written, and the
+>>    direction changed from input to output.
+>> @@ -29,7 +27,6 @@ properties:
+>>      enum:
+>>        - brcm,bcm6318-gpio
+>>        - brcm,bcm6328-gpio
+>> -      - brcm,bcm6345-gpio
+>>        - brcm,bcm6358-gpio
+>>        - brcm,bcm6362-gpio
+>>        - brcm,bcm6368-gpio
+>> @@ -63,17 +60,6 @@ required:
+>>  additionalProperties: false
+>>  
+>>  examples:
+>> -  - |
+>> -    gpio@fffe0406 {
+>> -      compatible = "brcm,bcm6345-gpio";
+>> -      reg-names = "dirout", "dat";
+>> -      reg = <0xfffe0406 2>, <0xfffe040a 2>;
+>> -      native-endian;
+>> -
+>> -      gpio-controller;
+>> -      #gpio-cells = <2>;
+>> -    };
+>> -
+>>    - |
+>>      gpio@0 {
+>>        compatible = "brcm,bcm63268-gpio";
+>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mmio.yaml b/Documentation/devicetree/bindings/gpio/gpio-mmio.yaml
+>> new file mode 100644
+>> index 000000000000..fd5c7055d542
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpio/gpio-mmio.yaml
+>> @@ -0,0 +1,136 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/gpio/gpio-mmio.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Generic MMIO GPIO
+>> +
+>> +maintainers:
+>> +  - Linus Walleij <linus.walleij@linaro.org>
+>> +  - Bartosz Golaszewski <brgl@bgdev.pl>
+>> +
+>> +description: |
+> 
+> Don't need '|' unless you want line endings preserved. Elsewhere too.
 
-What command?
+OK
 
-This isn't documented at all, sorry, I don't understand what you are
-trying to do here.
+>> +  Some simple GPIO controllers may consist of a single data register or a pair
+>> +  of set/clear-bit registers. Such controllers are common for glue logic in
+>> +  FPGAs or ASICs. Commonly, these controllers are accessed over memory-mapped
+>> +  NAND-style parallel busses.
+>> +
+>> +properties:
+>> +  big-endian:
+>> +    true
+> 
+> big-endian: true
 
-> > I'm not sure this is the same thing, though, as it's not a drvier
-> > to user debug message.
-> > 
-> > Ye, can you please explain better what this command does? You are
-> > sending a LJCA_DIAG_SET_TRACE_LEVEL command to the device with a
-> > parameter "3" which has a meaining only for you :)
-> Sure, the LJCA_DIAG_SET_TRACE_LEVEL command is used to set LJCA FW
-> logging level. 3 means debug level for FW. It is used for LJCA FW
-> debugging: when FW got some issue, we can send debug level to FW
-> to make FW print degging log for analysis.
+OK
 
-And where is that printed?  In the kernel log?  Somewhere else?  What
-does the firmware have to do with any of this?
+>> +
+>> +  compatible:
+>> +    enum:
+>> +      - brcm,bcm6345-gpio # Broadcom BCM6345 GPIO controller
+>> +      - wd,mbl-gpio # Western Digital MyBook Live memory-mapped GPIO controller
+>> +      - ni,169445-nand-gpio # National Instruments 169445 GPIO NAND controller
+>> +
+>> +  '#gpio-cells':
+>> +    const: 2
+>> +
+>> +  gpio-controller:
+>> +    true
+> 
+> ditto.
 
-thanks,
+OK
 
-greg k-h
+--Sean
