@@ -2,119 +2,91 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E80C3C6FD1F
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 14:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A35FFC6FD1F
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 14:07:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231513AbjCIOHJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Mar 2023 09:07:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38982 "EHLO
+        id S231490AbjCIOHp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Mar 2023 09:07:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231617AbjCIOGr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 09:06:47 -0500
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0F0DF2C2E;
-        Thu,  9 Mar 2023 06:05:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1678370715; x=1709906715;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xyu2LhQmiWMU7PEtu0Xqa5WBJtDdVhaFUmfdUENtKaQ=;
-  b=X0jppAABYmvm7dDz4YhZfEVFesTTZv6g3TingN8cFot8igaeOLsH1NDn
-   OTueHIqkZg/hmlZl2szP2GEkSWQzdhOe7sUVJtlGyRl8fZGPqb3SuvWyc
-   M+uJYUaHZ2DsTNBfR4W71E/MKaCEvWKNaWplIay675px25r3LZjFGwqkg
-   w7KAzqUEkydzXcmCCe19QUwDqQaaYz/NjCl+LAqDJiqxntmKT8XDUmhr1
-   yA/AiTeryyUzRSIx5VzNuwn6eD/0D5QSogfEShU6tBNZ1Ro+Dnr6DKhBk
-   4eO6QN6w14KJTrDOFor6BofQJPAkM9UascPq6j9L0s33nq8mIy+ACRhR1
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10643"; a="320279826"
-X-IronPort-AV: E=Sophos;i="5.98,246,1673942400"; 
-   d="scan'208";a="320279826"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2023 06:03:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10643"; a="741571681"
-X-IronPort-AV: E=Sophos;i="5.98,246,1673942400"; 
-   d="scan'208";a="741571681"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga008.fm.intel.com with ESMTP; 09 Mar 2023 06:03:20 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1paGrX-000Loh-0G;
-        Thu, 09 Mar 2023 16:03:19 +0200
-Date:   Thu, 9 Mar 2023 16:03:18 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        with ESMTP id S231491AbjCIOHI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 09:07:08 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F02E05D747;
+        Thu,  9 Mar 2023 06:06:15 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7584C61B5C;
+        Thu,  9 Mar 2023 14:06:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5766AC433EF;
+        Thu,  9 Mar 2023 14:06:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1678370774;
+        bh=HukZ+ILxzTnCQfpiikli+vpJ+j7QZXr1rOExU9Cd028=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=A7w0BiKmJDFqnf6FXNmD0HW/rcBRaXuGdvtl/atJt2ssNfdcEieJ5YyfIALm53wLC
+         cgIMAHNHnbHvWfY9g6zZcHICQFsiHvDJNq2sx9TcWl8DAjgCrjnWA/G/jIKMfspZiI
+         PrIOXv6CaBrI25isoxOuosC+ZtG82vx0B9SKkWpM=
+Date:   Thu, 9 Mar 2023 15:06:11 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Oliver Neukum <oneukum@suse.com>, Ye Xiang <xiang.ye@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Lee Jones <lee@kernel.org>, Wolfram Sang <wsa@kernel.org>,
+        Tyrone Ting <kfting@nuvoton.com>,
+        Mark Brown <broonie@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Daniel Kaehn <kaehndan@gmail.com>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: acpi: use the fwnode in acpi_gpiochip_find()
-Message-ID: <ZAnnJpdtlEOS4tiS@smile.fi.intel.com>
-References: <20230309-fix-acpi-gpio-v1-1-b392d225efe8@redhat.com>
+        Bartosz Golaszewski <brgl@bgdev.pl>, linux-usb@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org,
+        srinivas.pandruvada@intel.com, heikki.krogerus@linux.intel.com,
+        sakari.ailus@linux.intel.com, zhifeng.wang@intel.com,
+        wentong.wu@intel.com, lixu.zhang@intel.com
+Subject: Re: [PATCH v4 2/5] gpio: Add support for Intel LJCA USB GPIO driver
+Message-ID: <ZAnn07XEqxeV8Bpq@kroah.com>
+References: <20230309071100.2856899-1-xiang.ye@intel.com>
+ <20230309071100.2856899-3-xiang.ye@intel.com>
+ <2865f3d0-428b-0df1-fc50-f6af3cb9dac3@suse.com>
+ <ZAnku01goVDCuNM+@smile.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230309-fix-acpi-gpio-v1-1-b392d225efe8@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <ZAnku01goVDCuNM+@smile.fi.intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Mar 09, 2023 at 02:40:51PM +0100, Benjamin Tissoires wrote:
-> While trying to set up an SSDT override for a USB-2-I2C chip [0],
-> I realized that the function acpi_gpiochip_find() was using the parent
-> of the gpio_chip to do the ACPI matching.
+On Thu, Mar 09, 2023 at 03:52:59PM +0200, Andy Shevchenko wrote:
+> On Thu, Mar 09, 2023 at 02:40:10PM +0100, Oliver Neukum wrote:
+> > On 09.03.23 08:10, Ye Xiang wrote:
+> > 
+> > > +#define LJCA_GPIO_BUF_SIZE 60
+> > > +struct ljca_gpio_dev {
+> > > +	struct platform_device *pdev;
+> > > +	struct gpio_chip gc;
+> > > +	struct ljca_gpio_info *gpio_info;
+> > > +	DECLARE_BITMAP(unmasked_irqs, LJCA_MAX_GPIO_NUM);
+> > > +	DECLARE_BITMAP(enabled_irqs, LJCA_MAX_GPIO_NUM);
+> > > +	DECLARE_BITMAP(reenable_irqs, LJCA_MAX_GPIO_NUM);
+> > > +	u8 *connect_mode;
+> > > +	/* mutex to protect irq bus */
+> > > +	struct mutex irq_lock;
+> > > +	struct work_struct work;
+> > > +	/* lock to protect package transfer to Hardware */
+> > > +	struct mutex trans_lock;
+> > > +
+> > > +	u8 obuf[LJCA_GPIO_BUF_SIZE];
+> > > +	u8 ibuf[LJCA_GPIO_BUF_SIZE];
+> > 
+> > And here we have a violation of DMA coherency rules.
+> > Basically you cannot embed buffers into other data structures
+> > if they can be subject to DMA.
 > 
-> This works fine on my icelake laptop because AFAICT, the DSDT presents
-
-Ice Lake
-
-> the PCI device INT3455 as the "Device (GPI0)", but is in fact handled
-> by the pinctrl driver in Linux.
-> The pinctrl driver then creates a gpio_chip device. This means that the
-> gc->parent device in that case is the GPI0 device from ACPI and everything
-> works.
+> Huh?!
 > 
-> However, in the hid-cp2112 case, the parent is the USB device, and the
-> gpio_chip is directly under that USB device. Which means that in this case
-> gc->parent points at the USB device, and so we can not do an ACPI match
-> towards the GPIO device.
-> 
-> I think it is safe to resolve the ACPI matching through the fwnode
-> because when we call gpiochip_add_data(), the first thing it does is
-> setting a proper gc->fwnode: if it is not there, it borrows the fwnode
-> of the parent.
-> 
-> So in my icelake case, gc->fwnode is the one from the parent, meaning
+> The problem here is alignment. But other than that I can't see the issue with
+> embedding into structures the instances of which will be allocated on the heap.
 
-Ice Lake
-
-> that the ACPI handle we will get is the one from the GPI0 in the DSDT
-> (the pincrtl one). And in the hid-cp2112 case, we get the actual
-> fwnode from the gpiochip we created in the HID device, making it working.
-
-Thinking more about it. In ACPI we have those nodes defined as devices, right?
-So, strictly speaking the platform tells us that they _are_ devices.
-
-The question here is what this device node in ACPI means:
-1) the physical device or subdevice of the physical device OR
-2) the physical device even if it's a part of combined (Multi-Functional)
-   device.
-
-Second question is, does Device Tree specification allows something
-that is not a device node, but can be enumerated as a subdevice of
-a physical one?
-
-P.S. I don't have objections against the patch, but I would like to
-have a clear picture on what the semantics of the two specifications
-WRT possibilities of device enumeration. It might be that we actually
-abuse ACPI specification in cases of Diolan DLN-2 or other way around
-trying to abuse it with this patch.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+As you said, the problem is alignment.
