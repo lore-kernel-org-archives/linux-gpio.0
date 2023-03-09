@@ -2,107 +2,74 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 396F8C76186
-	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 14:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48674C6FD1F
+	for <linux-gpio@archiver.kernel.org>; Thu,  9 Mar 2023 14:01:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230147AbjCIOAE convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 9 Mar 2023 09:00:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56102 "EHLO
+        id S231612AbjCIOB1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 9 Mar 2023 09:01:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231462AbjCIN7l (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 08:59:41 -0500
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69264F184C;
-        Thu,  9 Mar 2023 05:56:45 -0800 (PST)
-Received: by mail-qt1-f172.google.com with SMTP id h19so1960436qtk.7;
-        Thu, 09 Mar 2023 05:56:45 -0800 (PST)
+        with ESMTP id S231449AbjCIOAX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2023 09:00:23 -0500
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 280CB4E5EB
+        for <linux-gpio@vger.kernel.org>; Thu,  9 Mar 2023 05:58:14 -0800 (PST)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-536c02eea4dso36626727b3.4
+        for <linux-gpio@vger.kernel.org>; Thu, 09 Mar 2023 05:58:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678370293;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=h2y6QDQG/TAZRXyZk306/rRInMHlB69SkUEYaGz2stI=;
+        b=svF1mz3VQbXcXWYB1S0ldYiBKKN8f/cTKs4pOovoMrctkqn4b02YYdHGND2lk8uG3u
+         IBI3/P5JToSO8lPqdvd11mgg1S0tv0R3VcNXdIEdCoF7QtXJmdLzsMoh43TIDpzOF+HD
+         vB1xZF3PPR51aI766jujuDi0lEXCqr8V6vD7W47Hwez1wucANSCNWZ8beNFTUs0JX1JP
+         ghapBcNT9yXfUsQysdi96lvgSBxrePpNz5uCRluUgupFssEKHMZCcuOFGdOD0gkHCM20
+         kzHbO7WV9DaIbgR1+eO/pPgK8101Kk5EU1vNggaunfoHMkYG8vvdkpa7llLiXTBrgWAf
+         6PoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678370204;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FLNeuP6UyITHef9gvZx7n863rnHNAiqi/ViL295oG8w=;
-        b=Q5/UZ4WcFYbF/dk8hUaRDS9r2b8+mJnWR+T/CSxGXvwYk90bD0nz/5yKv7H/h3aanw
-         80Bw8xORUnFWkYz2USHreLwgpTmvu+4IGufl/Vd1R4gf0lKThhbIFL+8jPWM4XluoC6R
-         hc2Vf08E+hA0ef/k0KFdpPbF2dopEqonQXkEH/3JLXhbOcootrHbz1njg/dZKYZIHqKq
-         CT8H5PclAyM+HHA9tZ5B76U0SNJU9IsVzhOJv7M53DTRvJCp1q54cQJXGpk4Xi2wTrlZ
-         7skt5oVBAXTibbgVJUF7RnQr7iwxj6jEFlSDYCmCRxsvy6pNZ8vW6lmlTOCB38u6GgSl
-         e9/A==
-X-Gm-Message-State: AO0yUKX8Kv32sOmOVMjP9j5T4ci+66+PLO3O9ib2fQtiEB6z8dfuO4h0
-        nG5TsJygnTWqm0T9vl5R3JakZcgJmU/LVQ==
-X-Google-Smtp-Source: AK7set/H9deSQh6GsXSGe/eAZZjUB9Z6xSso/wONZ1fhsOLEPB+Go2F+Ws7JATNsl0XfNF2BuJIwmw==
-X-Received: by 2002:a05:622a:1042:b0:3b8:6b74:8ac3 with SMTP id f2-20020a05622a104200b003b86b748ac3mr1612830qte.28.1678370204189;
-        Thu, 09 Mar 2023 05:56:44 -0800 (PST)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id j11-20020a05622a038b00b003bd0f0b26b0sm14119377qtx.77.2023.03.09.05.56.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Mar 2023 05:56:43 -0800 (PST)
-Received: by mail-yb1-f171.google.com with SMTP id v101so1981069ybi.2;
-        Thu, 09 Mar 2023 05:56:43 -0800 (PST)
-X-Received: by 2002:a5b:b91:0:b0:a6f:b653:9f21 with SMTP id
- l17-20020a5b0b91000000b00a6fb6539f21mr13549994ybq.12.1678370203203; Thu, 09
- Mar 2023 05:56:43 -0800 (PST)
+        d=1e100.net; s=20210112; t=1678370293;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h2y6QDQG/TAZRXyZk306/rRInMHlB69SkUEYaGz2stI=;
+        b=2es2YRXUXmJWB4JlJ99SjODeR6xwYqIkfKhd98g1BQPhcqTkLbxk3huq+nzsPwCUiL
+         w5KcgbCX2CdI897V+IDPoRG4e3fvs1ZQCNVUOnWH/veAbZomRwZ9zgHl3UAZCd7r+dM6
+         DaRuSONBQdAL0Og7rdTJ0uJ3HGpKNoDnTZsMGQFYmypNnffbrTWCCErNNskJXHjrZx8h
+         n7qdVy7DVA6a4MoP6+PWwUTHAKIo4QM4u+oHbxVaDgpt/KFNVmqKvnjieD8sXLXDntH6
+         zXH6KqbyXg0SSmeYlrZvJLlbR4uiNEEcv5fGn6ieaE4ekVcsNqtzdagfJmW6HjFBZWoX
+         NV3A==
+X-Gm-Message-State: AO0yUKXFoDU/bLnp1bE7HMvSgk8dMhss/B65BJDm11rkAf8WQ4N+72cf
+        mMVSiV/oFXOvWcz0NBYdDzeN8YgMTwb629Wm3xjISg==
+X-Google-Smtp-Source: AK7set95MU4XZ8BWZzLEK2+DVoz+Hpik4vCE9vP7gUDCd7geIa+dFDSa7ahGPRwbjikNTH9UUKzNOfUUTbKCUv/k69A=
+X-Received: by 2002:a81:4005:0:b0:532:e887:2c23 with SMTP id
+ l5-20020a814005000000b00532e8872c23mr14603176ywn.9.1678370293417; Thu, 09 Mar
+ 2023 05:58:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20230309135255.3861308-1-geert+renesas@glider.be> <a1f72b2bb25f8a06a10a436138e1032cc12b6506.camel@physik.fu-berlin.de>
-In-Reply-To: <a1f72b2bb25f8a06a10a436138e1032cc12b6506.camel@physik.fu-berlin.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 9 Mar 2023 14:56:31 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUbZ69hcUBUBHpH1P1ZJ59ejTF=9vOdUMO-cgOHtBgGCA@mail.gmail.com>
-Message-ID: <CAMuHMdUbZ69hcUBUBHpH1P1ZJ59ejTF=9vOdUMO-cgOHtBgGCA@mail.gmail.com>
-Subject: Re: [PATCH] sh: mach-x3proto: Add missing #include <linux/gpio/driver.h>
-To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-gpio@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux Kernel Functional Testing <lkft@linaro.org>
+References: <20230307182557.42215-1-andriy.shevchenko@linux.intel.com> <20230307182557.42215-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20230307182557.42215-2-andriy.shevchenko@linux.intel.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 9 Mar 2023 14:58:02 +0100
+Message-ID: <CACRpkdY4beehqZbbn0+qVyfcja7eBVPETe3bh3vT3Q3JBN=JCg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] gpiolib: Access device's fwnode via dev_fwnode()
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Adrian,
+On Tue, Mar 7, 2023 at 7:25 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-> On Thu, 2023-03-09 at 14:52 +0100, Geert Uytterhoeven wrote:
-> > shx3_defconfig:
-> >
-> >     arch/sh/boards/mach-x3proto/setup.c: In function ‘x3proto_devices_setup’:
-> >     arch/sh/boards/mach-x3proto/setup.c:246:62: error: invalid use of undefined type ‘struct gpio_chip’
-> >       246 |                 baseboard_buttons[i].gpio = x3proto_gpio_chip.base + i;
-> >         |                                                              ^
-> >
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > Link: https://lore.kernel.org/r/CA+G9fYs7suzGsEDK40G0pzxXyR1o2V4Pn-oy1owTsTWRVEVHog@mail.gmail.com
-> > Fixes: 21d9526d13b5467b ("gpiolib: Make the legacy <linux/gpio.h> consumer-only")
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> > --- a/arch/sh/boards/mach-x3proto/setup.c
-> > +++ b/arch/sh/boards/mach-x3proto/setup.c
-> > @@ -17,6 +17,7 @@
-> >  #include <linux/usb/r8a66597.h>
-> >  #include <linux/usb/m66592.h>
-> >  #include <linux/gpio.h>
-> > +#include <linux/gpio/driver.h>
-> >  #include <linux/gpio_keys.h>
-> >  #include <mach/ilsel.h>
-> >  #include <mach/hardware.h>
+> GPIO device's fwnode should be accessed via dev_fwnode().
+> Make sure that gpiochip_setup_dev() follows that.
 >
-> Thanks. You were much faster than me. I didn't even have the time to have a look
-> at the problem yet ;-). Is it sufficient to pick this up for 6.4?
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-As the problem is introduced in and only found in gpio/for-next,
-I expect Linus or Andy to pick it up.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
