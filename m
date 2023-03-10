@@ -2,120 +2,154 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5900FC6FD1C
-	for <linux-gpio@archiver.kernel.org>; Fri, 10 Mar 2023 10:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C02E2C64EC4
+	for <linux-gpio@archiver.kernel.org>; Fri, 10 Mar 2023 10:46:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231318AbjCJKgD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 10 Mar 2023 05:36:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59880 "EHLO
+        id S230082AbjCJKqS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 10 Mar 2023 05:46:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230197AbjCJKfl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Mar 2023 05:35:41 -0500
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 067E9136C9;
-        Fri, 10 Mar 2023 02:35:01 -0800 (PST)
-Received: by mail-pg1-x530.google.com with SMTP id p6so2803851pga.0;
-        Fri, 10 Mar 2023 02:35:00 -0800 (PST)
+        with ESMTP id S229928AbjCJKqL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Mar 2023 05:46:11 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62B3665C44
+        for <linux-gpio@vger.kernel.org>; Fri, 10 Mar 2023 02:46:00 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id bg16-20020a05600c3c9000b003eb34e21bdfso5707328wmb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 10 Mar 2023 02:46:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678444420;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YrNzsS4yDEQMUDPv9ek+bekWTDdRMD0SzIqqeBsqXfs=;
-        b=j7yDOF4vjuMwEC50NwSCaNecKzZ2/3xLGtDe67+v5aE7gFEJV+8w+NQx8s0kvgTst5
-         +naqkoEiK0kI7PmpwOb5Z39aKZNATOodTn+e4rIODobgKz7qibnXmEGO/zSzsEwxaEJJ
-         Nya/2AXZC+NK7iLeBBktVHDwyoQAIODH98bn6kKcHWhTGloTdt3wjzwXQoip9pUe+SAx
-         S1gDd/X+962d6qPwwzxeYCGWzsx5BicoCCYEy0jICNUfQuZ41zQly40a/C1JQkQ+f45C
-         AAtJkeim9GRcRkFMG0hHD0Dvbfnm8eHHdMcarpnh5n/nKRsDyvu3YQLBU9/HVR3/9ruY
-         ZBQA==
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1678445159;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JFOtVTztKbusbP3luh9Uo0/xgHafDNyU9O/h30YfjE8=;
+        b=k5GuEGMyPfi+MqxK7ra5gXUqPgzjfkSBcNxVM2uHtz8jbYMxJuNEw4zkhq5X2FWuBh
+         fxBYS1t2HCVy34XTpWpZeuD/osi4Zctyl0PNwdyXndJnxejbO9PoGKrEcrXY+u78geMa
+         5PS/agL7mPzja/KAt5hWzya4nOP+bRXygCTuym54t9cCUj5K1ohLQCRMqF/Mg9RF+JDt
+         Io3s4SsPPd8tu/cUiWnM5SOV3xQn2hbGboTvkL5IcUTiCsaeHhogrxFVVEMjP9F/RL1B
+         k0BST/viweaYhWlNGd7B5wsBdRmNzjdpaZYpmDv/fpotzKgCP/76m2yWaTYHkRlgDvlF
+         V6VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678444420;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20210112; t=1678445159;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YrNzsS4yDEQMUDPv9ek+bekWTDdRMD0SzIqqeBsqXfs=;
-        b=FILFd50cMvM3VCkDxVdxW/T4kpuRWZLP0eYXg2YBSsskBhHn6n8P+YSY+noLnXP1xi
-         rivo28g5wJ09MottbJ2nU/myd6OtlMiYf2JXfjQbG6pvQ8prr7Xxx/5jTM+OCUcz/y1u
-         k3qhajMLuZ2v8gJ9kWlHpiRF5557yb4i3phfxacl5d5UFCpYnd/N3IChToivqojCgR78
-         xOAqRN2mxrktbvrBSToKzUD63MTiG7Fxqf1MEpbVqJzW9phurbRAr61t6UfXFw8uTpe6
-         p/9e00R2AOh77I1Z6pqyUZRgBxofSZmhATBPoArrGfIfvObKJMzUCWziwCfKNspDjo2f
-         VktA==
-X-Gm-Message-State: AO0yUKU/piPmC1FhfGXXE2FRtEaCFE8+NXvSYfz8Qsa0ubeqGu+u1y3G
-        n2eEhWuHyc6ZgfFx1DTt+8hNgVwt2SK6hI1yjYg=
-X-Google-Smtp-Source: AK7set8WnxbFY5oTrVIKnhdrvft3bVtLVrqnp8sLn5OeESTjitANPmUjpUeCrnOQfk59jWma/T/rN7BdO7v9GpO4T8o=
-X-Received: by 2002:a62:828e:0:b0:593:da6f:fb1c with SMTP id
- w136-20020a62828e000000b00593da6ffb1cmr10533664pfd.4.1678444419668; Fri, 10
- Mar 2023 02:33:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20230306191535.1917656-1-sean.anderson@seco.com>
- <20230306191535.1917656-4-sean.anderson@seco.com> <CAOiHx=mcANqHTk9=b0TGHa2rk9nppnKa2EB1v05uHb5jhzoawA@mail.gmail.com>
- <49b24502-1b21-f05b-ef4a-18d5aa375f8d@seco.com>
-In-Reply-To: <49b24502-1b21-f05b-ef4a-18d5aa375f8d@seco.com>
-From:   Jonas Gorski <jonas.gorski@gmail.com>
-Date:   Fri, 10 Mar 2023 11:33:28 +0100
-Message-ID: <CAOiHx=k8f6irVChBOtSoUJZiW6VS3sdg_KWhTo+C+ZWoGmmfdQ@mail.gmail.com>
-Subject: Re: [PATCH v10 03/13] dt-bindings: Convert gpio-mmio to yaml
-To:     Sean Anderson <sean.anderson@seco.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-phy@lists.infradead.org,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        =?UTF-8?Q?Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>,
+        bh=JFOtVTztKbusbP3luh9Uo0/xgHafDNyU9O/h30YfjE8=;
+        b=uECBu2K4oHbwJCEOGd5pq1j5f3nPWcf/2qiym7RMjBVFqqICsawfyAKJh3gBIBXYMY
+         SMAwVXUkQaTKB2DG0ACXfiy7SSqKe8/iaNzJwQITfmNauY/JR0UWtzD9807jSnYRVlTY
+         kT2VMaT0B52As3xgpp14w1N22c9mzJe3Jcjg0V2NBVDvi7vYKoouI0pAnL8WHEE9/V9P
+         R5rVjAoPCUFraGOB+fbPsg73MwZfZv9t2CER6TJ31HGZxrijhzgjz3ykzaXWMRhJTS2o
+         HuAF26GCFw0y8k/Dv4LIzgZnfBCLa/PX5Fbjkl9yuoJ0jBfhqZ9x6w/6ahiaUVyhiVZE
+         nvOA==
+X-Gm-Message-State: AO0yUKWwkWgyTkn3jyF44xI3wFK2mtQoa69GqTj8Wrj6G8sLDsVSAFsc
+        C0whqElMKF+MKwXHVhK1p4mpkWWX5bEr5Soh94M=
+X-Google-Smtp-Source: AK7set86TAINXhJTqL9YC+Zig7lNtysJ6jibGDq4YJJ6j6PfuUSlyqylmezs4punB5vcpQl0q7okwQ==
+X-Received: by 2002:a05:600c:34c4:b0:3eb:3998:8bca with SMTP id d4-20020a05600c34c400b003eb39988bcamr896460wmq.17.1678445158770;
+        Fri, 10 Mar 2023 02:45:58 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:60e1:2dd9:3b20:5b74])
+        by smtp.gmail.com with ESMTPSA id h15-20020a05600c2caf00b003e8f0334db8sm3071437wmc.5.2023.03.10.02.45.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Mar 2023 02:45:58 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [libgpiod][PATCH] bindings: rust: examples: add a reimplementation of gpionotify
+Date:   Fri, 10 Mar 2023 11:45:55 +0100
+Message-Id: <20230310104555.62813-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.37.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, 6 Mar 2023 at 22:27, Sean Anderson <sean.anderson@seco.com> wrote:
->
-> On 3/6/23 15:51, Jonas Gorski wrote:
-> > Hi,
-> >
-> > On Mon, 6 Mar 2023 at 20:16, Sean Anderson <sean.anderson@seco.com> wrote:
-> >>
-> >> This is a generic binding for simple MMIO GPIO controllers. Although we
-> >> have a single driver for these controllers, they were previously spread
-> >> over several files. Consolidate them. The register descriptions are
-> >> adapted from the comments in the source. There is no set order for the
-> >> registers, so I have not specified one.
-> >>
-> >> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
-> >> ---
-> >>
-> >> Changes in v10:
-> >> - New
-> >>
-> >>  .../bindings/gpio/brcm,bcm6345-gpio.yaml      |  16 +--
-> >>  .../devicetree/bindings/gpio/gpio-mmio.yaml   | 136 ++++++++++++++++++
-> >>  .../bindings/gpio/ni,169445-nand-gpio.txt     |  38 -----
-> >>  .../devicetree/bindings/gpio/wd,mbl-gpio.txt  |  38 -----
-> >>  4 files changed, 137 insertions(+), 91 deletions(-)
-> >>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mmio.yaml
-> >>  delete mode 100644 Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
-> >>  delete mode 100644 Documentation/devicetree/bindings/gpio/wd,mbl-gpio.txt
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.yaml b/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.yaml
-> >> index 4d69f79df859..e11f4af49c52 100644
-> >> --- a/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.yaml
-> >> +++ b/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.yaml
-> >
-> > You are (re-)moving the compatible this file is named after, you might
-> > want to rename the file as well then. Going by age bcm6358 would be
-> > the next oldest one (bcm6318 would be the newest, despite the lowest
-> > number).
->
-> I can do that. Would it be fine to rename to e.g. brcm,bcm63xx-gpio.yaml?
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I'm not up to date with current naming policies (if there are any at
-all), but looking at what's currently there this should be fine.
+Add a new rust example - a simplified reimplementation of the gpionotify
+tool.
 
-Jonas
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Viresh, please take a look at my attempt at a rust sample. :)
+
+ bindings/rust/libgpiod/examples/Makefile.am   |  1 +
+ bindings/rust/libgpiod/examples/gpionotify.rs | 53 +++++++++++++++++++
+ 2 files changed, 54 insertions(+)
+ create mode 100644 bindings/rust/libgpiod/examples/gpionotify.rs
+
+diff --git a/bindings/rust/libgpiod/examples/Makefile.am b/bindings/rust/libgpiod/examples/Makefile.am
+index 6028fff..2e1ccbd 100644
+--- a/bindings/rust/libgpiod/examples/Makefile.am
++++ b/bindings/rust/libgpiod/examples/Makefile.am
+@@ -9,6 +9,7 @@ EXTRA_DIST = \
+ 	gpioget.rs \
+ 	gpioinfo.rs \
+ 	gpiomon.rs \
++	gpionotify.rs \
+ 	gpioset.rs \
+ 	gpio_threaded_info_events.rs \
+ 	gpiowatch.rs
+diff --git a/bindings/rust/libgpiod/examples/gpionotify.rs b/bindings/rust/libgpiod/examples/gpionotify.rs
+new file mode 100644
+index 0000000..54445d2
+--- /dev/null
++++ b/bindings/rust/libgpiod/examples/gpionotify.rs
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: Apache-2.0 OR BSD-3-Clause
++// SPDX-FileCopyrightText: 2023 Linaro Ltd.
++// SPDX-FileCopyrightTest: 2023 Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
++//
++// Simplified Rust implementation of the gpionotify tool.
++
++use std::env;
++
++use libgpiod::{
++    chip::Chip,
++    line::{Offset, InfoChangeKind},
++    Error, Result,
++};
++
++fn usage(name: &str) {
++    println!("Usage: {} <chip> <offset0> ...", name);
++}
++
++fn main() -> Result<()> {
++    let args: Vec<String> = env::args().collect();
++    if args.len() < 3 {
++        usage(&args[0]);
++        return Err(Error::InvalidArguments);
++    }
++
++    let mut offsets = Vec::<Offset>::new();
++
++    for arg in &args[2..] {
++        let offset = arg.parse::<Offset>().map_err(|_| Error::InvalidArguments)?;
++        offsets.push(offset);
++    }
++
++    let path = format!("/dev/gpiochip{}", args[1]);
++    let chip = Chip::open(&path)?;
++
++    for &offset in offsets.iter() {
++        let _info = chip.watch_line_info(offset).unwrap();
++    }
++
++    loop {
++        let event = chip.read_info_event().unwrap();
++        println!(
++            "event: {}, line: {}, timestamp: {:?}",
++            match event.event_type()? {
++                InfoChangeKind::LineRequested => "Line requested",
++                InfoChangeKind::LineReleased => "Line released",
++                InfoChangeKind::LineConfigChanged => "Line config changed",
++            },
++            event.line_info().unwrap().offset(),
++            event.timestamp()
++        );
++    }
++}
+-- 
+2.37.2
+
