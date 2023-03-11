@@ -2,107 +2,87 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79218C74A5B
-	for <linux-gpio@archiver.kernel.org>; Sat, 11 Mar 2023 11:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B30CC6FD1F
+	for <linux-gpio@archiver.kernel.org>; Sat, 11 Mar 2023 11:30:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229801AbjCKLNp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 11 Mar 2023 06:13:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44220 "EHLO
+        id S229774AbjCKLaE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 11 Mar 2023 06:30:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229956AbjCKLNW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 11 Mar 2023 06:13:22 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF0A813DF4
-        for <linux-gpio@vger.kernel.org>; Sat, 11 Mar 2023 03:13:16 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id s11so30720321edy.8
-        for <linux-gpio@vger.kernel.org>; Sat, 11 Mar 2023 03:13:16 -0800 (PST)
+        with ESMTP id S230510AbjCKL3Y (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 11 Mar 2023 06:29:24 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1217F14724E
+        for <linux-gpio@vger.kernel.org>; Sat, 11 Mar 2023 03:25:35 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id j11so30794128edq.4
+        for <linux-gpio@vger.kernel.org>; Sat, 11 Mar 2023 03:25:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678533195;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0wsjEFg411f3j1GspmCDAJvrOGJIOzP6/PbM4Sd3D2A=;
-        b=XhfSoLEog6AUz2J6PG6GYohg6cYoVFocyuaGxSFjpkU1pCGqvxorZPijHHSMQi/xKo
-         /P0LizNb/zLTXk+vbMrXMpGlmU+jdQg9dAiHeT8/aCRS1sbq6HffoLTmD1eu2YwMS/IX
-         sGWA2Y7kTrdUsfwemZA10Gc43Rln2DPpIUAymagKYYysvnv0ZlUBY1Y8/0xWSsB0iOAa
-         RAyY7ZOUWIpAX/CnRWX4PdK6wCHSLVHpqv47VIufbYQPX7BYtdCqnYDsQ2HiOT+BgoX1
-         TM9CKg3QC0oqE9ZS/8HLT++P2NsNRrZ7VLUs0EbKFvIh6Im+cCvKfF4NPdtAWmOf4MKj
-         wQaQ==
+        d=linaro.org; s=google; t=1678533915;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/vla60hxkVwnjodZl4FnF3exvzWOL+nSLnS08WriKNo=;
+        b=D5gG28gWdnct+Z+6S1MGZeQhxUKglcYIICJhtGcYHF1UvV6nAebI4TiFYRAlD61EQ7
+         ni1DBCll40k4DmvLmUf1r6NTKXVo79om03j3OsXHo1XKQKOJPJ+1k84qLwwbJC244Aqy
+         6H83gtzHEPuo/VEeOoEGyePwlvmvLjlVIITfOszuII4ui1CNj9WL4/TpqLkg0AbojkS1
+         o+FuHfXvOSKUtwshSvpYT4omRFVbLNHk/KjfagGorTHM+8vUkz6TbstS16X1YUQWOMV7
+         4zy4YcZW4f0XG/JeKjRjEUm5jjOthSfxWWWid4RXzezGAXaWesmbCZtzVsUdvaUt4BNs
+         rGJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678533195;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0wsjEFg411f3j1GspmCDAJvrOGJIOzP6/PbM4Sd3D2A=;
-        b=f3SjJAaqJTbxYoX90SWLPhCxMkInrrNHWNoR1jnntajIqHCv4J4vwLFoxMkmSHHXti
-         jZGXHn55NV90vmXjn6363Vtp8pU1j+TEJVg33PWUn1D1fJV7alEltmeCtsLSiQc5WTPc
-         iHjyIJ+BYvU9McM5yn02634kLuqfTPBYVqcDzsmPbRXvf6lCq0UzXBG4uOWgYvC6VWHg
-         5u/Kqr77xw7civMxPRv3E1zeIRYJvjzKCgcox+OHygyfz9hWeaGkpe5Z9+PSNIZL7r6I
-         ldpFs/JE4hLepvst+xjxSApTYYIYjBPFyigOpWYb8s0H/NZwnwtr+NhCjD/CaeRjiv8u
-         ZXLw==
-X-Gm-Message-State: AO0yUKWsB+1qc8h34PKrQYnFVivpxLzMtrdCtHOHByM6B6FbL5t8zYGG
-        dZB6esB8PXcvcILpzp3taYUeag==
-X-Google-Smtp-Source: AK7set8+yT6UzSrYOGn3LNs3My65y6SinT09SwukP5nlfb5NWOHN8GOPBLSL/652xN3+evwtWbuaFA==
-X-Received: by 2002:a17:906:7f8c:b0:921:5cce:6592 with SMTP id f12-20020a1709067f8c00b009215cce6592mr1057307ejr.59.1678533195246;
-        Sat, 11 Mar 2023 03:13:15 -0800 (PST)
+        d=1e100.net; s=20210112; t=1678533915;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/vla60hxkVwnjodZl4FnF3exvzWOL+nSLnS08WriKNo=;
+        b=PnQH7yMBhXnyYAJlWY9gb3ZRGeuThK2J4AtsAHDCexih53Z4DBFIHsMxufzUsxtpTV
+         M2j3qZH6dAVyr02BrUmPzKsSLUxdEbpA8wFaiBnxhtLhz3aotrivGKFS5cnb/LLcQ/rl
+         eVWcP3a7j81k3N0DbFGKESl4tZpA0PBmDt3NFtrcKzYuDD1uPp77KkJtgDx1+UFhYuTn
+         y3oEewDx7kI5Ejfk6HnLjBNWjyuIQKD2CtDXksQ77COAUH6xm9YqxHHVMa8Z2HglaeKE
+         1XKDp8Yf/0Pafmq7N17OgGDQlH1Nrgpdb1SvYreHH60tPl0C4uqmJj6pb87jVVUi3el1
+         wQ3A==
+X-Gm-Message-State: AO0yUKV/VNKlJSmAHdM3zxdeBkhA8mhdUwp0NAZ/6T4wGNSQkFcSj2M/
+        zdd9GVfSegRUaJX5YizutqEBEQ==
+X-Google-Smtp-Source: AK7set/nVIPdHdLWiwaPe4gVuKQl7DnJsaIhi67UsZZqRQtxK+KwZyq4Pnj9MVMNAJBsJfAQS/qhfQ==
+X-Received: by 2002:a05:6402:110b:b0:4fa:ba31:6c66 with SMTP id u11-20020a056402110b00b004faba316c66mr821171edv.42.1678533915213;
+        Sat, 11 Mar 2023 03:25:15 -0800 (PST)
 Received: from krzk-bin.. ([2a02:810d:15c0:828:fa97:2d7c:bdd7:e1b])
-        by smtp.gmail.com with ESMTPSA id s11-20020a170906bc4b00b008ee95ccfe06sm973189ejv.119.2023.03.11.03.13.14
+        by smtp.gmail.com with ESMTPSA id k10-20020a50c08a000000b004c2158e87e6sm1038041edf.97.2023.03.11.03.25.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Mar 2023 03:13:14 -0800 (PST)
+        Sat, 11 Mar 2023 03:25:14 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Mun Yew Tham <mun.yew.tham@intel.com>,
+To:     Nandor Han <nandor.han@ge.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Nandor Han <nandor.han@ge.com>,
-        Semi Malinen <semi.malinen@ge.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-riscv@lists.infradead.org
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 6/8] gpio: sama5d2-piobu: drop of_match_ptr for ID table
-Date:   Sat, 11 Mar 2023 12:13:05 +0100
-Message-Id: <20230311111307.251123-6-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] MAINTAINERS: gpio: xra1403: drop Semi Malinen
+Date:   Sat, 11 Mar 2023 12:25:13 +0100
+Message-Id: <20230311112513.254095-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230311111307.251123-1-krzysztof.kozlowski@linaro.org>
-References: <20230311111307.251123-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The driver can match only via the DT table so the table should be always
-used and the of_match_ptr does not have any sense (this also allows ACPI
-matching via PRP0001, even though it might not be relevant here).
-
-  drivers/gpio/gpio-sama5d2-piobu.c:230:34: error: ‘sama5d2_piobu_ids’ defined but not used [-Werror=unused-const-variable=]
+Emails bounce: 550 5.1.1 No such user - pp
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/gpio/gpio-sama5d2-piobu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-sama5d2-piobu.c b/drivers/gpio/gpio-sama5d2-piobu.c
-index 3e95da717fc9..767c33ae3213 100644
---- a/drivers/gpio/gpio-sama5d2-piobu.c
-+++ b/drivers/gpio/gpio-sama5d2-piobu.c
-@@ -236,7 +236,7 @@ MODULE_DEVICE_TABLE(of, sama5d2_piobu_ids);
- static struct platform_driver sama5d2_piobu_driver = {
- 	.driver = {
- 		.name		= "sama5d2-piobu",
--		.of_match_table	= of_match_ptr(sama5d2_piobu_ids)
-+		.of_match_table	= sama5d2_piobu_ids,
- 	},
- 	.probe = sama5d2_piobu_probe,
- };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5383af5d3b45..d73560738f46 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -23084,7 +23084,6 @@ F:	drivers/i2c/busses/i2c-xlp9xx.c
+ 
+ XRA1403 GPIO EXPANDER
+ M:	Nandor Han <nandor.han@ge.com>
+-M:	Semi Malinen <semi.malinen@ge.com>
+ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
 -- 
 2.34.1
 
