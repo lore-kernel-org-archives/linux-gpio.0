@@ -2,82 +2,104 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA84AC6FD19
-	for <linux-gpio@archiver.kernel.org>; Sat, 11 Mar 2023 03:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDBEC61DA4
+	for <linux-gpio@archiver.kernel.org>; Sat, 11 Mar 2023 11:13:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229476AbjCKDAh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 10 Mar 2023 22:00:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36428 "EHLO
+        id S229478AbjCKLNZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 11 Mar 2023 06:13:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbjCKDAg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Mar 2023 22:00:36 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEB4E1151D2;
-        Fri, 10 Mar 2023 19:00:35 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8B4C5B8248E;
-        Sat, 11 Mar 2023 03:00:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C661C433EF;
-        Sat, 11 Mar 2023 03:00:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678503633;
-        bh=rUdvhWn70PfTjrZiWuFzfL6i0ilNZGpzMShdJagugC8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=shgZQjHCKg4hSudPSRbA25wDHiEpyAe0nesRMePgXkjDR8z9kOxgHBGpQTgO3AMka
-         sjl/QAN1M5suHktsHHcJ8rZWaEnj+c+by5E5HThBQnpHAjKwFVns7evS6Yi4QRsr4D
-         AWTUFgLGEP4CGEveIkTdriix9/oA110VnSyG7xC2HF++iNS2qa8w0qMhS+x5C64Fxt
-         xIgLXyRgT+sgEUXcwjza/Jx2BnZ4U7zVM12qiPbnoTPz+bXW8ySpsx1v/RO77tdQPh
-         O9ltFz1OHJQUphrKXuWJnPigoGSUoWYkryciPMK1l47OKvnY4Y3saQHt3PnkUniuBm
-         SctwoSqIjvpcg==
-Received: by mail-ua1-f49.google.com with SMTP id l24so4813317uac.12;
-        Fri, 10 Mar 2023 19:00:33 -0800 (PST)
-X-Gm-Message-State: AO0yUKWePQMfs0ZXcGnc2+L/PtBIEs1Bm2fC1LOTYZfDrhZW9SOZ+aiS
-        fRXOeXri0avv21xaCCSt8m4aYRlDIQEPCiBCvw==
-X-Google-Smtp-Source: AK7set8xgX8DtsrAL+iBoo8IO5Ld3oM1dW73gRD2fp0NVF/t5kL088eW3IC5QV8kdWJ7Ht4S+A/RIs7rb2s/5lO77Pc=
-X-Received: by 2002:a1f:b44c:0:b0:41d:acb5:6c1c with SMTP id
- d73-20020a1fb44c000000b0041dacb56c1cmr17481409vkf.2.1678503632076; Fri, 10
- Mar 2023 19:00:32 -0800 (PST)
+        with ESMTP id S229912AbjCKLNS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 11 Mar 2023 06:13:18 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E96B310AA2
+        for <linux-gpio@vger.kernel.org>; Sat, 11 Mar 2023 03:13:10 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id x3so30651665edb.10
+        for <linux-gpio@vger.kernel.org>; Sat, 11 Mar 2023 03:13:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678533189;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bq/suyyejHELTOKo5Lqe9JDVsAF8B3eTSU6jYYaw5rs=;
+        b=GcR1BBQCdR4Nyqe7Dp9VmqBVN4+13vTx5EQOi44pJiaYeXD+D+mKtO4fvpp9GIPG7r
+         BRskmMZAc7XIdFRRJjgBgEQ1P5GIFa4CF13JemkF79TJICvhP2c10MUllTPK1seye4pi
+         re5dV0XML2v+mh3EmItQ33rYyB5W+zffyWOzFosg/rs/L4s7KEG0ns7ppsI7jsSDRr5F
+         W2qiVDcRrk8B46+pmYoU4PIX7mUPqicOY9cvI7rvl/lClgykghEKJdGipn0oy64VBbz9
+         cZ3ElInRGqJOoyxjVR0VwTCWuuHRceQZLGarrhTJRQ2bWjnZs0TKtT3xc/PFhZQxHq1+
+         0p0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678533189;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bq/suyyejHELTOKo5Lqe9JDVsAF8B3eTSU6jYYaw5rs=;
+        b=fKR6KDwrm4H6d5rfbTGr0/47V3IsyhRMDMie/slVSDGJ1g9AKGS79eb8cG1ZXrMTuO
+         5kX0JyqUfAeALl4avI6hETXE2Q8eosVSe/2TbFaWgMLcPLjYxcmyz9qglVCPpHXKRAW5
+         42Ln7ZHGgQoRlBmKctltE4IRNGoCaSiaGsaLuTTULKpWdM6YxHrHA77kR+JsD848VnPb
+         YLyMyD4E2aNT8Xie3l7M3wGbMnK2B+bk9/3DdbnXvz+yG4OH+Lf7s6SsPIaLow9JI2nS
+         jiKJJb0bSR39oGxLNHZFkRm97LDQMWnIZ9RVmdnmMIXDZAfjlLv5HDuisdjE5R4WeKiV
+         hc7Q==
+X-Gm-Message-State: AO0yUKVfbJL19yPmL6ZP1ofVBq51HBqGw/TCNgtOUFaxWuH43Z2fOC7J
+        yqD9f7NJTiwsxLMQfvwg5pNOKQ==
+X-Google-Smtp-Source: AK7set9dk+CAqDZes0jxHQYmgJHEtMKUFbr5JbHgUMiQ/8tZWwFWDoce+nP6IcyAWHRx026mDdaNnQ==
+X-Received: by 2002:a17:907:c61b:b0:878:4e5a:18b8 with SMTP id ud27-20020a170907c61b00b008784e5a18b8mr30977606ejc.66.1678533189212;
+        Sat, 11 Mar 2023 03:13:09 -0800 (PST)
+Received: from krzk-bin.. ([2a02:810d:15c0:828:fa97:2d7c:bdd7:e1b])
+        by smtp.gmail.com with ESMTPSA id s11-20020a170906bc4b00b008ee95ccfe06sm973189ejv.119.2023.03.11.03.13.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Mar 2023 03:13:08 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Mun Yew Tham <mun.yew.tham@intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Nandor Han <nandor.han@ge.com>,
+        Semi Malinen <semi.malinen@ge.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-riscv@lists.infradead.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/8] gpio: ftgpio010: drop of_match_ptr for ID table
+Date:   Sat, 11 Mar 2023 12:13:00 +0100
+Message-Id: <20230311111307.251123-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230310144704.1542114-1-robh@kernel.org> <CACRpkda+aEUD7A2e-TfY3=yJG4L+P+Zh8G9U1K0xHHA-DxnJiA@mail.gmail.com>
-In-Reply-To: <CACRpkda+aEUD7A2e-TfY3=yJG4L+P+Zh8G9U1K0xHHA-DxnJiA@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 10 Mar 2023 21:00:20 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKSJXwJ20Mn=wua_7YwJ9nU4Xqq+b29mYvEw+JaoHEuhg@mail.gmail.com>
-Message-ID: <CAL_JsqKSJXwJ20Mn=wua_7YwJ9nU4Xqq+b29mYvEw+JaoHEuhg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: Use of_property_read_bool() for boolean properties
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Mar 10, 2023 at 4:41=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
-.org> wrote:
->
-> On Fri, Mar 10, 2023 at 3:47=E2=80=AFPM Rob Herring <robh@kernel.org> wro=
-te:
->
-> > It is preferred to use typed property access functions (i.e.
-> > of_property_read_<type> functions) rather than low-level
-> > of_get_property/of_find_property functions for reading properties.
-> > Convert reading boolean properties to to of_property_read_bool().
-> >
-> > Signed-off-by: Rob Herring <robh@kernel.org>
->
-> You are using of_property_present() rather than of_property_read_bool()
-> but I'm not picky about commit message details.
+The driver can match only via the DT table so the table should be always
+used and the of_match_ptr does not have any sense (this also allows ACPI
+matching via PRP0001, even though it might not be relevant here).
 
-ugg, well, it's the commit message that's correct. I missed updating
-this one to use of_property_read_bool().
+  drivers/gpio/gpio-ftgpio010.c:336:34: error: ‘ftgpio_gpio_of_match’ defined but not used [-Werror=unused-const-variable=]
 
-Rob
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/gpio/gpio-ftgpio010.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->
-> Yours,
-> Linus Walleij
+diff --git a/drivers/gpio/gpio-ftgpio010.c b/drivers/gpio/gpio-ftgpio010.c
+index 2728672ef9f8..31e26072f6ae 100644
+--- a/drivers/gpio/gpio-ftgpio010.c
++++ b/drivers/gpio/gpio-ftgpio010.c
+@@ -349,7 +349,7 @@ static const struct of_device_id ftgpio_gpio_of_match[] = {
+ static struct platform_driver ftgpio_gpio_driver = {
+ 	.driver = {
+ 		.name		= "ftgpio010-gpio",
+-		.of_match_table = of_match_ptr(ftgpio_gpio_of_match),
++		.of_match_table = ftgpio_gpio_of_match,
+ 	},
+ 	.probe = ftgpio_gpio_probe,
+ 	.remove = ftgpio_gpio_remove,
+-- 
+2.34.1
+
