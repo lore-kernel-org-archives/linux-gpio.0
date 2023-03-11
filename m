@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 947B2C74A44
-	for <linux-gpio@archiver.kernel.org>; Sat, 11 Mar 2023 11:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FD2C61DA4
+	for <linux-gpio@archiver.kernel.org>; Sat, 11 Mar 2023 11:13:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229958AbjCKLNm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 11 Mar 2023 06:13:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44530 "EHLO
+        id S230107AbjCKLNn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 11 Mar 2023 06:13:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229963AbjCKLNW (ORCPT
+        with ESMTP id S229965AbjCKLNW (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Sat, 11 Mar 2023 06:13:22 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B589213DFA
-        for <linux-gpio@vger.kernel.org>; Sat, 11 Mar 2023 03:13:17 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id x3so30652311edb.10
-        for <linux-gpio@vger.kernel.org>; Sat, 11 Mar 2023 03:13:17 -0800 (PST)
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A80A12CCB
+        for <linux-gpio@vger.kernel.org>; Sat, 11 Mar 2023 03:13:14 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id cn21so527621edb.0
+        for <linux-gpio@vger.kernel.org>; Sat, 11 Mar 2023 03:13:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678533196;
+        d=linaro.org; s=google; t=1678533193;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SV/dLCNcysuQ7CKaIgag1w22Gn4yS1/4xn0PDWGs4Eo=;
-        b=aewFZRIKniBekuXeMaGJNez/58uZHOVwAjNPwR+B2kHBdCJ63CkilQSENhCJYv1pG8
-         zcdnWH8Q+yGhNsdegLlOpHWz7AwkjhUo95EFhrKrhmzfm1bOy3rn2FLD0oFpAV7LWLEj
-         v3vF0mvNf0CiJkdaUGzWtA0y0C65mtU2nG6C7ACOubceuA5VnzGpt7TduSKrg1nOpJRr
-         ia6lVsJaLdTEQsL1KCrPsaeT7F1X85eZ/ho87my7n2LIlKlqaRn762ULmRFIxorqevxu
-         JVa0UPmb8expOEojDdKdP9vfyvMKf7Aja4zcK8MX/wkFeoGATANvM2Dl7hg0aqiNPoxQ
-         Zqiw==
+        bh=Aq77vQWPmqN0P1uClqWDA1EHy5/jRECv7qlu+zNRs6E=;
+        b=wZhAnnIZeT7MXdc2zrQmCUUtQSrHgd18EBJULNpexDsCm+kAnXxTsna2cYJudLEItk
+         EVVR7jB0HWSsrGexv1t8WRVbDv5wiS5X//Q0Q9UMBICgstFHLykEeIsMc6nwZy9fen4c
+         faYhgqvPZW1XIDNVoq6yAs+68/2LWZRambKNXfznY0FiBh5/u7OEEQjVU3BHVid3UbSA
+         i4E/T8AhOCumDQaXRrE4rCMBDIWT83vVj77CAWwhZhc1AfVj2SKQQVno+4LUVO4sqpa3
+         AauuUHbFYJBBWl52L0yEnst547gn9FOMwbwMk80vK54jc9rhgbqlUzyOp0Iwc6+g4UB3
+         tAXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678533196;
+        d=1e100.net; s=20210112; t=1678533193;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SV/dLCNcysuQ7CKaIgag1w22Gn4yS1/4xn0PDWGs4Eo=;
-        b=OM2l69ocpZ4tib0c28pgd4nbbXY5C5U+pez3xgfajDvCfDnLP/f9u1CQZpPDtyVrrn
-         dzyWRCSoC/ALM4RzghAOoFfnaf1yz40HktT4ApcjOREDO2m87BE4hz5oyJbThgupjS9S
-         pVqvGEXZJI41q8xJhna4FPqzIiRjLQaJ4+XAa6cgmkqmstOhZDtvBY0cLjiiwCeqPziw
-         IqEqT7PpvMiqHVHwRU+ZdCMufJpLZNWw70mxFlgWt1/HQC0ecK3MlPdy2JBA2qfLgzdn
-         87qZmNzkZV0Tlrw5Hw08zbFPnXOPIpU2gnl6luAVmZt5q4PXDTT0nrgNfhfpjPYXkUPt
-         5GLg==
-X-Gm-Message-State: AO0yUKW/pUrjAyh0e7T0IE+f6S91RNjoj9OvHA5N6oEE2xSO8CqofMWs
-        dI5jrzc8QexWSimgFE+/x65xtIJHlRQfMSptocI=
-X-Google-Smtp-Source: AK7set+zT8di1EH1vwo5WQtIvhf3MGOHHVEN7hy7axJP4iQDi22LYOiHLEsY77pHOuQpGOh2MpfNuA==
-X-Received: by 2002:aa7:d78e:0:b0:4fa:d75c:16c6 with SMTP id s14-20020aa7d78e000000b004fad75c16c6mr515662edq.38.1678533196359;
-        Sat, 11 Mar 2023 03:13:16 -0800 (PST)
+        bh=Aq77vQWPmqN0P1uClqWDA1EHy5/jRECv7qlu+zNRs6E=;
+        b=NlHG7fOvNL0ooqcLmuMDkvvJGSOGSu+WbVKc+cK8aZXKM8EoRRLn84QDpyui7+RA1T
+         578ZpgkV80+iKdbZXMgLjQlR3DCbpnQOUAqsZiGduQidn1DJLgfZggkatDTcWj78ULaA
+         skoGIG3CNKlvoIP07g82kcphBAqlxDN72wKFwg2er8NcmswznUloapyHycwVDQV4/YX5
+         p2QE0eOwMPsasXoF9zhdkNQflIYGjtHY1xkWvyxtUnud0odn4cRVwgulYF0PXyiy3O5E
+         wx+11qbMiS/RFAGrpngTIz3cwUfXAOHrjCpDnKIkqTFVcpgcoYuWeqo8tnKDQOAJyzID
+         Irrw==
+X-Gm-Message-State: AO0yUKVvFP62p/8Z75FJUuggBGmznlVvQ79IE31DBlQSxltLk+FAehZi
+        bndaB2BAUHw2S5U32pk0XrUDdw==
+X-Google-Smtp-Source: AK7set+/rTdizsglqbDuXDqPYxb8+Sz15WC2l2nH3OBdecIwjfF3xVJtNxtd/pcpj3MJ2dwtHbkMww==
+X-Received: by 2002:a17:906:52ca:b0:8ae:b008:9b5a with SMTP id w10-20020a17090652ca00b008aeb0089b5amr27143452ejn.69.1678533193246;
+        Sat, 11 Mar 2023 03:13:13 -0800 (PST)
 Received: from krzk-bin.. ([2a02:810d:15c0:828:fa97:2d7c:bdd7:e1b])
-        by smtp.gmail.com with ESMTPSA id s11-20020a170906bc4b00b008ee95ccfe06sm973189ejv.119.2023.03.11.03.13.15
+        by smtp.gmail.com with ESMTPSA id s11-20020a170906bc4b00b008ee95ccfe06sm973189ejv.119.2023.03.11.03.13.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Mar 2023 03:13:16 -0800 (PST)
+        Sat, 11 Mar 2023 03:13:12 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Mun Yew Tham <mun.yew.tham@intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -66,9 +66,9 @@ To:     Mun Yew Tham <mun.yew.tham@intel.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-riscv@lists.infradead.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 7/8] gpio: xra1403: mark OF related data as maybe unused
-Date:   Sat, 11 Mar 2023 12:13:06 +0100
-Message-Id: <20230311111307.251123-7-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 4/8] gpio: visconti: drop of_match_ptr for ID table
+Date:   Sat, 11 Mar 2023 12:13:03 +0100
+Message-Id: <20230311111307.251123-4-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230311111307.251123-1-krzysztof.kozlowski@linaro.org>
 References: <20230311111307.251123-1-krzysztof.kozlowski@linaro.org>
@@ -79,29 +79,30 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The driver can be compile tested with !CONFIG_OF making certain data
-unused:
+The driver can match only via the DT table so the table should be always
+used and the of_match_ptr does not have any sense (this also allows ACPI
+matching via PRP0001, even though it might not be relevant here).
 
-  drivers/gpio/gpio-xra1403.c:198:34: error: ‘xra1403_spi_of_match’ defined but not used [-Werror=unused-const-variable=]
+  drivers/gpio/gpio-visconti.c:187:34: error: ‘visconti_gpio_of_match’ defined but not used [-Werror=unused-const-variable=]
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/gpio/gpio-xra1403.c | 2 +-
+ drivers/gpio/gpio-visconti.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-xra1403.c b/drivers/gpio/gpio-xra1403.c
-index 49c878cfd5c6..51d6119e1bb4 100644
---- a/drivers/gpio/gpio-xra1403.c
-+++ b/drivers/gpio/gpio-xra1403.c
-@@ -195,7 +195,7 @@ static const struct spi_device_id xra1403_ids[] = {
+diff --git a/drivers/gpio/gpio-visconti.c b/drivers/gpio/gpio-visconti.c
+index 5e108ba9956a..10d9de41f29b 100644
+--- a/drivers/gpio/gpio-visconti.c
++++ b/drivers/gpio/gpio-visconti.c
+@@ -194,7 +194,7 @@ static struct platform_driver visconti_gpio_driver = {
+ 	.probe		= visconti_gpio_probe,
+ 	.driver		= {
+ 		.name	= "visconti_gpio",
+-		.of_match_table = of_match_ptr(visconti_gpio_of_match),
++		.of_match_table = visconti_gpio_of_match,
+ 	}
  };
- MODULE_DEVICE_TABLE(spi, xra1403_ids);
- 
--static const struct of_device_id xra1403_spi_of_match[] = {
-+static const struct of_device_id xra1403_spi_of_match[] __maybe_unused = {
- 	{ .compatible = "exar,xra1403" },
- 	{},
- };
+ module_platform_driver(visconti_gpio_driver);
 -- 
 2.34.1
 
