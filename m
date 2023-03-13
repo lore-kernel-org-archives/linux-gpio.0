@@ -2,360 +2,331 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BD7C61DA4
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Mar 2023 17:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD4DC6FD19
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Mar 2023 17:36:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229823AbjCMR33 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Mar 2023 13:29:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38964 "EHLO
+        id S229807AbjCMRf7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Mar 2023 13:35:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbjCMR32 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Mar 2023 13:29:28 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A212415CAF;
-        Mon, 13 Mar 2023 10:28:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1678728527; x=1710264527;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LiRcsdvUcHjSjrHumuqBshpBcS2sbw2ceIjGZzEcC9E=;
-  b=nN0ZAY5rV3t9cryf12ekKapBgVRTzQH+4QGPE6osHyMMOCre8YFnPAmN
-   Zw+7RAHiuHFIN9vT6+QTkf+M30spTfMM/r2ZRyrZfVLH7Q1RlFvVhUuYX
-   EJS+PgPv2DEl2JzPjYCZQAOzh7ABqxY8ztH9zUr2jN3GjAzu6aP3pX6cW
-   vVZPzvtZUAfm4F+rPCiQ7bhZFuqUyOB+1hChNI3I8Ltpo6G8E8Qw6wFPU
-   M/38BZKK/GY54VwqVaiW0puRPZe9eZ64QIwz6lJqdxbd/QhLw+rrSAhP+
-   aquNhwTRfMpfOhzGvaN2UtBT9Z4AOm5k5PeeXqtWMzwfgXXmRiK3gAPyp
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10648"; a="317598104"
-X-IronPort-AV: E=Sophos;i="5.98,257,1673942400"; 
-   d="scan'208";a="317598104"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2023 10:27:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10648"; a="802535313"
-X-IronPort-AV: E=Sophos;i="5.98,257,1673942400"; 
-   d="scan'208";a="802535313"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 13 Mar 2023 10:27:33 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pblxM-0005vl-2I;
-        Mon, 13 Mar 2023 17:27:32 +0000
-Date:   Tue, 14 Mar 2023 01:27:14 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [rft, PATCH v1 1/1] gpio: Drop unused inclusions from of_gpio.h
-Message-ID: <202303140127.447rXq8p-lkp@intel.com>
-References: <20230313144557.35856-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S229516AbjCMRf6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Mar 2023 13:35:58 -0400
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71F82B47C;
+        Mon, 13 Mar 2023 10:35:57 -0700 (PDT)
+Received: by mail-qk1-x72e.google.com with SMTP id b34so1323146qkp.8;
+        Mon, 13 Mar 2023 10:35:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678728956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YRj2MDdqf5/iLIV1yny10fSUAfun2B/qRHShe3qPCaI=;
+        b=eeyEW66ABReoEiuMJ8NHIcaxVWMZXUWuZjMB69rxhW2hsJsnmMC3Ptyns/3orxmwFE
+         PSQykcL3gPWZTdrJl8y28tDXU3ZL7hcA9CzbfK/5HGRf6gKjfY64RBN95oef0KTi33TZ
+         IX7GXdZHsffNgjX2nmqXHl87t53eR44uGkBw54BsuMV+/gMhLbQ9YX+hecfltfByftk3
+         SP0d6LK/21jMDUyk5gNi/55RAK7LGZ3uLUkQycWQo0cgoclmctajNMuSYMLpn0nMswSW
+         QtHb02uq+QjK6sgDDWEuNd9eU2s0d7z8GvL/uZKV7wWk4ko+2ezGcPcXKDu+N4dmBMpQ
+         MDOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678728956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YRj2MDdqf5/iLIV1yny10fSUAfun2B/qRHShe3qPCaI=;
+        b=qj2lnDSMLLqBiaQ14jVt8gGwQmJMrjhe1coAC0CbuIAnVdMga4nsQGc+/yGqB1rxoT
+         Gc8v1DYRk6TCqpKFGzbNWVq4qXf0QF/aHVb/HEGC5VC9QJ6octo/621VEzu7AxI1EEjo
+         loDhocOIKIY7Vli5y9DWCxx9R/rF8x7Kapc4Rg8g9VvxMRqLI1HzEWiTJrfQEHHIMCkv
+         W1xeNIDgvsg0gcJ/47M0zApuffUpvObNNz+bMuqcvXHVVw3LrOWX3btui54aQBttWGHi
+         zkCLQbp5MlmaI4VfPVE8lSuN0qPU3LmncpDczFf1hbpdVhBYS/akXwX+FIpAyZUF6h3C
+         W9/g==
+X-Gm-Message-State: AO0yUKUYJCKwsZD/7Bfj1Y6AQCHjssHY/Gxzzxd6IvOWNSy8dT13YKoY
+        z16JtxN9OtXN8llAmhMrGlkHtmd2zc0vqLZoSeU=
+X-Google-Smtp-Source: AK7set/8je9Ik+3KBxZJ2QH/38nWQVioPeBz98OSLoHzkmUBF4fIkmt58LGm0fRBLW5WeV/9YUuDELCbHNQXqRa3gIQ=
+X-Received: by 2002:a37:6407:0:b0:745:bd3d:51df with SMTP id
+ y7-20020a376407000000b00745bd3d51dfmr102448qkb.3.1678728956344; Mon, 13 Mar
+ 2023 10:35:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230313144557.35856-1-andriy.shevchenko@linux.intel.com>
+References: <20230313170950.256964-1-francesco@dolcini.it> <20230313170950.256964-3-francesco@dolcini.it>
+In-Reply-To: <20230313170950.256964-3-francesco@dolcini.it>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 13 Mar 2023 19:35:20 +0200
+Message-ID: <CAHp75VetwU3pr59sE5zHPf5jPxYb6yJnXZWpD_qn4o6d5Dnmog@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] gpio: fxl6408: add I2C GPIO expander driver
+To:     Francesco Dolcini <francesco@dolcini.it>
+Cc:     linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+        linux-kernel@vger.kernel.org,
+        Francesco Dolcini <francesco.dolcini@toradex.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Andy,
+On Mon, Mar 13, 2023 at 7:09=E2=80=AFPM Francesco Dolcini <francesco@dolcin=
+i.it> wrote:
+>
+> From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+>
+> Add minimal driver for Fairchild FXL6408 8-bit I2C-controlled GPIO expand=
+er
+> using the generic regmap based GPIO driver (GPIO_REGMAP).
+>
+> The driver implements setting the GPIO direction, reading inputs
+> and writing outputs.
+>
+> In addition to that the FXL6408 has the following functionalities:
+> - allows to monitor input ports for data transitions with an interrupt pi=
+n
+> - all inputs can be configured with pull-up or pull-down resistors
 
-I love your patch! Perhaps something to improve:
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+But see below.
 
-[auto build test WARNING on brgl/gpio/for-next]
-[also build test WARNING on linus/master v6.3-rc2 next-20230310]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Datasheet: https://www.onsemi.com/download/data-sheet/pdf/fxl6408-d.pdf
+> Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+> Co-developed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> ---
+> v3:
+>  * add include files: kernel.h and err.h
+>  * refactor of fxl6408_identify and used dev_err_probe instead of dev_err
+>  * use FXL6408_REG_INT_STS instead of FXL6408_MAX_REGISTER
+>
+> v2:
+>  * remove includes: <linux/gpio.h> and <linux/of_platform.h>
+>  * add missing and required select REGMAP_I2C in KConfig
+>  * use dev_err_probe()
+>  * add "Datasheet:" tag in commit message
+>  * improve KConfig help section
+>  * fix newlines, multi-line comments and trailing commas
+> ---
+>  drivers/gpio/Kconfig        |  10 +++
+>  drivers/gpio/Makefile       |   1 +
+>  drivers/gpio/gpio-fxl6408.c | 158 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 169 insertions(+)
+>  create mode 100644 drivers/gpio/gpio-fxl6408.c
+>
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 13be729710f2..56a73007ebcb 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -1000,6 +1000,16 @@ config GPIO_ADNP
+>           enough to represent all pins, but the driver will assume a
+>           register layout for 64 pins (8 registers).
+>
+> +config GPIO_FXL6408
+> +       tristate "FXL6408 I2C GPIO expander"
+> +       select GPIO_REGMAP
+> +       select REGMAP_I2C
+> +       help
+> +         GPIO driver for Fairchild Semiconductor FXL6408 GPIO expander.
+> +
+> +         To compile this driver as a module, choose M here: the module w=
+ill
+> +         be called gpio-fxl6408.
+> +
+>  config GPIO_GW_PLD
+>         tristate "Gateworks PLD GPIO Expander"
+>         depends on OF_GPIO
+> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> index c048ba003367..12027f4c3bee 100644
+> --- a/drivers/gpio/Makefile
+> +++ b/drivers/gpio/Makefile
+> @@ -60,6 +60,7 @@ obj-$(CONFIG_GPIO_EP93XX)             +=3D gpio-ep93xx.=
+o
+>  obj-$(CONFIG_GPIO_EXAR)                        +=3D gpio-exar.o
+>  obj-$(CONFIG_GPIO_F7188X)              +=3D gpio-f7188x.o
+>  obj-$(CONFIG_GPIO_FTGPIO010)           +=3D gpio-ftgpio010.o
+> +obj-$(CONFIG_GPIO_FXL6408)             +=3D gpio-fxl6408.o
+>  obj-$(CONFIG_GPIO_GE_FPGA)             +=3D gpio-ge.o
+>  obj-$(CONFIG_GPIO_GPIO_MM)             +=3D gpio-gpio-mm.o
+>  obj-$(CONFIG_GPIO_GRGPIO)              +=3D gpio-grgpio.o
+> diff --git a/drivers/gpio/gpio-fxl6408.c b/drivers/gpio/gpio-fxl6408.c
+> new file mode 100644
+> index 000000000000..d7387c0101e2
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-fxl6408.c
+> @@ -0,0 +1,158 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * FXL6408 GPIO driver
+> + *
+> + * Copyright 2023 Toradex
+> + *
+> + * Author: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/gpio/regmap.h>
+> +#include <linux/kernel.h>
+> +#include <linux/i2c.h>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/gpio-Drop-unused-inclusions-from-of_gpio-h/20230313-224656
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20230313144557.35856-1-andriy.shevchenko%40linux.intel.com
-patch subject: [rft, PATCH v1 1/1] gpio: Drop unused inclusions from of_gpio.h
-config: x86_64-randconfig-a016-20230313 (https://download.01.org/0day-ci/archive/20230314/202303140127.447rXq8p-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/b108d11788b6db9e37a6c4b3110c09cecf30a46c
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Andy-Shevchenko/gpio-Drop-unused-inclusions-from-of_gpio-h/20230313-224656
-        git checkout b108d11788b6db9e37a6c4b3110c09cecf30a46c
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash drivers/regulator/
+Seems unordered?
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303140127.447rXq8p-lkp@intel.com/
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +
+> +#define FXL6408_REG_DEVICE_ID          0x01
+> +#define FXL6408_MF_FAIRCHILD           0b101
+> +#define FXL6408_MF_SHIFT               5
+> +
+> +/* Bits set here indicate that the GPIO is an output. */
+> +#define FXL6408_REG_IO_DIR             0x03
+> +
+> +/*
+> + * Bits set here, when the corresponding bit of IO_DIR is set, drive
+> + * the output high instead of low.
+> + */
+> +#define FXL6408_REG_OUTPUT             0x05
+> +
+> +/* Bits here make the output High-Z, instead of the OUTPUT value. */
+> +#define FXL6408_REG_OUTPUT_HIGH_Z      0x07
+> +
+> +/* Returns the current status (1 =3D HIGH) of the input pins. */
+> +#define FXL6408_REG_INPUT_STATUS       0x0f
+> +
+> +/*
+> + * Return the current interrupt status
+> + * This bit is HIGH if input GPIO !=3D default state (register 09h).
+> + * The flag is cleared after being read (bit returns to 0).
+> + * The input must go back to default state and change again before this =
+flag is raised again.
+> + */
+> +#define FXL6408_REG_INT_STS            0x13
+> +
+> +#define FXL6408_NGPIO                  8
+> +
+> +static const struct regmap_range rd_range[] =3D {
+> +       { FXL6408_REG_DEVICE_ID, FXL6408_REG_DEVICE_ID },
+> +       { FXL6408_REG_IO_DIR, FXL6408_REG_OUTPUT },
+> +       { FXL6408_REG_INPUT_STATUS, FXL6408_REG_INPUT_STATUS },
+> +};
+> +
+> +static const struct regmap_range wr_range[] =3D {
+> +       { FXL6408_REG_DEVICE_ID, FXL6408_REG_DEVICE_ID },
+> +       { FXL6408_REG_IO_DIR, FXL6408_REG_OUTPUT },
+> +       { FXL6408_REG_OUTPUT_HIGH_Z, FXL6408_REG_OUTPUT_HIGH_Z },
+> +};
+> +
+> +static const struct regmap_range volatile_range[] =3D {
+> +       { FXL6408_REG_DEVICE_ID, FXL6408_REG_DEVICE_ID },
+> +       { FXL6408_REG_INPUT_STATUS, FXL6408_REG_INPUT_STATUS },
+> +};
+> +
+> +static const struct regmap_access_table rd_table =3D {
+> +       .yes_ranges =3D rd_range,
+> +       .n_yes_ranges =3D ARRAY_SIZE(rd_range),
+> +};
+> +
+> +static const struct regmap_access_table wr_table =3D {
+> +       .yes_ranges =3D wr_range,
+> +       .n_yes_ranges =3D ARRAY_SIZE(wr_range),
+> +};
+> +
+> +static const struct regmap_access_table volatile_table =3D {
+> +       .yes_ranges =3D volatile_range,
+> +       .n_yes_ranges =3D ARRAY_SIZE(volatile_range),
+> +};
+> +
+> +static const struct regmap_config regmap =3D {
+> +       .reg_bits =3D 8,
+> +       .val_bits =3D 8,
+> +
+> +       .max_register =3D FXL6408_REG_INT_STS,
+> +       .wr_table =3D &wr_table,
+> +       .rd_table =3D &rd_table,
+> +       .volatile_table =3D &volatile_table,
+> +
+> +       .cache_type =3D REGCACHE_RBTREE,
+> +       .num_reg_defaults_raw =3D FXL6408_REG_INT_STS + 1,
+> +};
+> +
+> +static int fxl6408_identify(struct device *dev, struct regmap *regmap)
+> +{
+> +       int val, ret;
+> +
+> +       ret =3D regmap_read(regmap, FXL6408_REG_DEVICE_ID, &val);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "error reading DEVICE_ID\n=
+");
+> +       if (val >> FXL6408_MF_SHIFT !=3D FXL6408_MF_FAIRCHILD)
+> +               return dev_err_probe(dev, -ENODEV, "invalid device id 0x%=
+02x\n", val);
+> +
+> +       return 0;
+> +}
+> +
+> +static int fxl6408_probe(struct i2c_client *client)
+> +{
+> +       struct device *dev =3D &client->dev;
+> +       int ret;
+> +       struct gpio_regmap_config gpio_config =3D {
+> +               .parent =3D dev,
+> +               .ngpio =3D FXL6408_NGPIO,
+> +               .reg_dat_base =3D GPIO_REGMAP_ADDR(FXL6408_REG_INPUT_STAT=
+US),
+> +               .reg_set_base =3D GPIO_REGMAP_ADDR(FXL6408_REG_OUTPUT),
+> +               .reg_dir_out_base =3D GPIO_REGMAP_ADDR(FXL6408_REG_IO_DIR=
+),
+> +               .ngpio_per_reg =3D FXL6408_NGPIO,
+> +       };
+> +
+> +       gpio_config.regmap =3D devm_regmap_init_i2c(client, &regmap);
+> +       if (IS_ERR(gpio_config.regmap))
+> +               return dev_err_probe(dev, PTR_ERR(gpio_config.regmap),
+> +                                    "failed to allocate register map\n")=
+;
+> +
+> +       ret =3D fxl6408_identify(dev, gpio_config.regmap);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /* Disable High-Z of outputs, so that our OUTPUT updates actually=
+ take effect. */
+> +       ret =3D regmap_write(gpio_config.regmap, FXL6408_REG_OUTPUT_HIGH_=
+Z, 0);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "failed to write 'output h=
+igh Z' register\n");
+> +
+> +       return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &gpio_confi=
+g));
+> +}
+> +
+> +static const __maybe_unused struct of_device_id fxl6408_dt_ids[] =3D {
+> +       { .compatible =3D "fcs,fxl6408" },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(of, fxl6408_dt_ids);
+> +
+> +static const struct i2c_device_id fxl6408_id[] =3D {
+> +       { "fxl6408", 0 },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, fxl6408_id);
+> +
+> +static struct i2c_driver fxl6408_driver =3D {
+> +       .driver =3D {
+> +               .name   =3D "fxl6408",
+> +               .of_match_table =3D fxl6408_dt_ids,
+> +       },
+> +       .probe_new      =3D fxl6408_probe,
+> +       .id_table       =3D fxl6408_id,
+> +};
+> +module_i2c_driver(fxl6408_driver);
+> +
+> +MODULE_AUTHOR("Emanuele Ghidoli <emanuele.ghidoli@toradex.com>");
+> +MODULE_DESCRIPTION("FXL6408 GPIO driver");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.25.1
+>
 
-All warnings (new ones prefixed by >>):
 
-   drivers/regulator/s5m8767.c:274:2: error: implicit declaration of function 'gpio_set_value' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
-           ^
-   drivers/regulator/s5m8767.c:274:2: note: did you mean 'gpiod_set_value'?
-   include/linux/gpio/consumer.h:122:6: note: 'gpiod_set_value' declared here
-   void gpiod_set_value(struct gpio_desc *desc, int value);
-        ^
-   drivers/regulator/s5m8767.c:285:2: error: implicit declaration of function 'gpio_set_value' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
-           ^
-   drivers/regulator/s5m8767.c:493:8: error: implicit declaration of function 'gpio_is_valid' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-                   if (!gpio_is_valid(gpio)) {
-                        ^
-   drivers/regulator/s5m8767.c:493:8: note: did you mean 'uuid_is_valid'?
-   include/linux/uuid.h:102:19: note: 'uuid_is_valid' declared here
-   bool __must_check uuid_is_valid(const char *uuid);
-                     ^
-   drivers/regulator/s5m8767.c:511:8: error: implicit declaration of function 'gpio_is_valid' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-                   if (!gpio_is_valid(gpio)) {
-                        ^
-   drivers/regulator/s5m8767.c:535:18: error: implicit declaration of function 'of_get_child_by_name' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           regulators_np = of_get_child_by_name(pmic_np, "regulators");
-                           ^
->> drivers/regulator/s5m8767.c:535:16: warning: incompatible integer to pointer conversion assigning to 'struct device_node *' from 'int' [-Wint-conversion]
-           regulators_np = of_get_child_by_name(pmic_np, "regulators");
-                         ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/regulator/s5m8767.c:542:26: error: implicit declaration of function 'of_get_child_count' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           pdata->num_regulators = of_get_child_count(regulators_np);
-                                   ^
-   drivers/regulator/s5m8767.c:542:26: note: did you mean 'of_get_child_by_name'?
-   drivers/regulator/s5m8767.c:535:18: note: 'of_get_child_by_name' declared here
-           regulators_np = of_get_child_by_name(pmic_np, "regulators");
-                           ^
-   drivers/regulator/s5m8767.c:548:3: error: implicit declaration of function 'of_node_put' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-                   of_node_put(regulators_np);
-                   ^
-   drivers/regulator/s5m8767.c:556:3: error: implicit declaration of function 'of_node_put' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-                   of_node_put(regulators_np);
-                   ^
-   drivers/regulator/s5m8767.c:562:2: error: implicit declaration of function 'for_each_child_of_node' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           for_each_child_of_node(regulators_np, reg_np) {
-           ^
-   drivers/regulator/s5m8767.c:562:47: error: expected ';' after expression
-           for_each_child_of_node(regulators_np, reg_np) {
-                                                        ^
-                                                        ;
-   drivers/regulator/s5m8767.c:564:8: error: implicit declaration of function 'of_node_name_eq' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-                           if (of_node_name_eq(reg_np, regulators[i].name))
-                               ^
-   drivers/regulator/s5m8767.c:571:4: error: 'continue' statement not in loop statement
-                           continue;
-                           ^
-   drivers/regulator/s5m8767.c:576:4: error: implicit declaration of function 'of_fwnode_handle' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-                           of_fwnode_handle(reg_np),
-                           ^
->> drivers/regulator/s5m8767.c:576:4: warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'struct fwnode_handle *' [-Wint-conversion]
-                           of_fwnode_handle(reg_np),
-                           ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/gpio/consumer.h:573:28: note: passing argument to parameter 'fwnode' here
-                                           struct fwnode_handle *fwnode,
-                                                                 ^
-   drivers/regulator/s5m8767.c:583:4: error: implicit declaration of function 'of_node_put' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-                           of_node_put(reg_np);
-                           ^
-   drivers/regulator/s5m8767.c:595:7: error: implicit declaration of function 'of_property_read_u32' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-                   if (of_property_read_u32(reg_np, "op_mode",
-                       ^
-   drivers/regulator/s5m8767.c:606:2: error: implicit declaration of function 'of_node_put' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           of_node_put(regulators_np);
-           ^
-   drivers/regulator/s5m8767.c:608:6: error: implicit declaration of function 'of_get_property' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           if (of_get_property(pmic_np, "s5m8767,pmic-buck2-uses-gpio-dvs", NULL)) {
-               ^
-   drivers/regulator/s5m8767.c:611:7: error: implicit declaration of function 'of_property_read_u32_array' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-                   if (of_property_read_u32_array(pmic_np,
-                       ^
-   drivers/regulator/s5m8767.c:622:7: error: implicit declaration of function 'of_property_read_u32_array' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-                   if (of_property_read_u32_array(pmic_np,
-                       ^
-   fatal error: too many errors emitted, stopping now [-ferror-limit=]
-   2 warnings and 20 errors generated.
-
-
-vim +535 drivers/regulator/s5m8767.c
-
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  519  
-cbb0ed495ca165 Axel Lin                 2013-02-13  520  static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  521  					struct sec_platform_data *pdata)
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  522  {
-cbb0ed495ca165 Axel Lin                 2013-02-13  523  	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  524  	struct device_node *pmic_np, *regulators_np, *reg_np;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  525  	struct sec_regulator_data *rdata;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  526  	struct sec_opmode_data *rmode;
-04f9f068a619cc Chanwoo Choi             2013-10-10  527  	unsigned int i, dvs_voltage_nr = 8, ret;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  528  
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  529  	pmic_np = iodev->dev->of_node;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  530  	if (!pmic_np) {
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  531  		dev_err(iodev->dev, "could not find pmic sub-node\n");
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  532  		return -ENODEV;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  533  	}
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  534  
-4e52c03dfcdef5 Sachin Kamat             2014-02-13 @535  	regulators_np = of_get_child_by_name(pmic_np, "regulators");
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  536  	if (!regulators_np) {
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  537  		dev_err(iodev->dev, "could not find regulators sub-node\n");
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  538  		return -EINVAL;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  539  	}
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  540  
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  541  	/* count the number of regulators to be supported in pmic */
-1f91b6f6c747d3 Axel Lin                 2013-02-06  542  	pdata->num_regulators = of_get_child_count(regulators_np);
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  543  
-a86854d0c599b3 Kees Cook                2018-06-12  544  	rdata = devm_kcalloc(&pdev->dev,
-a86854d0c599b3 Kees Cook                2018-06-12  545  			     pdata->num_regulators, sizeof(*rdata),
-a86854d0c599b3 Kees Cook                2018-06-12  546  			     GFP_KERNEL);
-a5872bd3398d0f Krzysztof Kozlowski      2021-01-21  547  	if (!rdata) {
-a5872bd3398d0f Krzysztof Kozlowski      2021-01-21  548  		of_node_put(regulators_np);
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  549  		return -ENOMEM;
-a5872bd3398d0f Krzysztof Kozlowski      2021-01-21  550  	}
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  551  
-a86854d0c599b3 Kees Cook                2018-06-12  552  	rmode = devm_kcalloc(&pdev->dev,
-a86854d0c599b3 Kees Cook                2018-06-12  553  			     pdata->num_regulators, sizeof(*rmode),
-a86854d0c599b3 Kees Cook                2018-06-12  554  			     GFP_KERNEL);
-a5872bd3398d0f Krzysztof Kozlowski      2021-01-21  555  	if (!rmode) {
-a5872bd3398d0f Krzysztof Kozlowski      2021-01-21  556  		of_node_put(regulators_np);
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  557  		return -ENOMEM;
-a5872bd3398d0f Krzysztof Kozlowski      2021-01-21  558  	}
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  559  
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  560  	pdata->regulators = rdata;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  561  	pdata->opmode = rmode;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  562  	for_each_child_of_node(regulators_np, reg_np) {
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  563  		for (i = 0; i < ARRAY_SIZE(regulators); i++)
-c32569e358adea Rob Herring              2018-12-05  564  			if (of_node_name_eq(reg_np, regulators[i].name))
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  565  				break;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  566  
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  567  		if (i == ARRAY_SIZE(regulators)) {
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  568  			dev_warn(iodev->dev,
-0c9721a5d1dea7 Rob Herring              2018-08-27  569  			"don't know how to configure regulator %pOFn\n",
-0c9721a5d1dea7 Rob Herring              2018-08-27  570  			reg_np);
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  571  			continue;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  572  		}
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  573  
-5be0e549e18f8a Dmitry Torokhov          2019-10-04  574  		rdata->ext_control_gpiod = devm_fwnode_gpiod_get(
-63239e4bf7eff3 Linus Walleij            2018-10-15  575  			&pdev->dev,
-5be0e549e18f8a Dmitry Torokhov          2019-10-04 @576  			of_fwnode_handle(reg_np),
-5be0e549e18f8a Dmitry Torokhov          2019-10-04  577  			"s5m8767,pmic-ext-control",
-63239e4bf7eff3 Linus Walleij            2018-10-15  578  			GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
-9ae5cc75ceaacf Linus Walleij            2018-05-14  579  			"s5m8767");
-dea6dd2ba63f8c Pan Bian                 2021-01-20  580  		if (PTR_ERR(rdata->ext_control_gpiod) == -ENOENT) {
-025bf37725f192 Waibel Georg             2019-06-20  581  			rdata->ext_control_gpiod = NULL;
-dea6dd2ba63f8c Pan Bian                 2021-01-20  582  		} else if (IS_ERR(rdata->ext_control_gpiod)) {
-dea6dd2ba63f8c Pan Bian                 2021-01-20  583  			of_node_put(reg_np);
-dea6dd2ba63f8c Pan Bian                 2021-01-20  584  			of_node_put(regulators_np);
-9ae5cc75ceaacf Linus Walleij            2018-05-14  585  			return PTR_ERR(rdata->ext_control_gpiod);
-dea6dd2ba63f8c Pan Bian                 2021-01-20  586  		}
-ee1e0994ab1bd3 Krzysztof Kozlowski      2014-01-24  587  
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  588  		rdata->id = i;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  589  		rdata->initdata = of_get_regulator_init_data(
-072e78b12bf518 Javier Martinez Canillas 2014-11-10  590  						&pdev->dev, reg_np,
-072e78b12bf518 Javier Martinez Canillas 2014-11-10  591  						&regulators[i]);
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  592  		rdata->reg_node = reg_np;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  593  		rdata++;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  594  		rmode->id = i;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  595  		if (of_property_read_u32(reg_np, "op_mode",
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  596  				&rmode->mode)) {
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  597  			dev_warn(iodev->dev,
-f3c7f7b636ef50 Christophe JAILLET       2019-12-03  598  				"no op_mode property at %pOF\n",
-7799167b7a14fe Rob Herring              2017-07-18  599  				reg_np);
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  600  
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  601  			rmode->mode = S5M8767_OPMODE_NORMAL_MODE;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  602  		}
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  603  		rmode++;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  604  	}
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  605  
-b7db01f3b3b86f Sachin Kamat             2014-02-13  606  	of_node_put(regulators_np);
-b7db01f3b3b86f Sachin Kamat             2014-02-13  607  
-04f9f068a619cc Chanwoo Choi             2013-10-10  608  	if (of_get_property(pmic_np, "s5m8767,pmic-buck2-uses-gpio-dvs", NULL)) {
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  609  		pdata->buck2_gpiodvs = true;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  610  
-04f9f068a619cc Chanwoo Choi             2013-10-10  611  		if (of_property_read_u32_array(pmic_np,
-04f9f068a619cc Chanwoo Choi             2013-10-10  612  				"s5m8767,pmic-buck2-dvs-voltage",
-04f9f068a619cc Chanwoo Choi             2013-10-10  613  				pdata->buck2_voltage, dvs_voltage_nr)) {
-04f9f068a619cc Chanwoo Choi             2013-10-10  614  			dev_err(iodev->dev, "buck2 voltages not specified\n");
-04f9f068a619cc Chanwoo Choi             2013-10-10  615  			return -EINVAL;
-04f9f068a619cc Chanwoo Choi             2013-10-10  616  		}
-04f9f068a619cc Chanwoo Choi             2013-10-10  617  	}
-04f9f068a619cc Chanwoo Choi             2013-10-10  618  
-04f9f068a619cc Chanwoo Choi             2013-10-10  619  	if (of_get_property(pmic_np, "s5m8767,pmic-buck3-uses-gpio-dvs", NULL)) {
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  620  		pdata->buck3_gpiodvs = true;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  621  
-04f9f068a619cc Chanwoo Choi             2013-10-10  622  		if (of_property_read_u32_array(pmic_np,
-04f9f068a619cc Chanwoo Choi             2013-10-10  623  				"s5m8767,pmic-buck3-dvs-voltage",
-04f9f068a619cc Chanwoo Choi             2013-10-10  624  				pdata->buck3_voltage, dvs_voltage_nr)) {
-04f9f068a619cc Chanwoo Choi             2013-10-10  625  			dev_err(iodev->dev, "buck3 voltages not specified\n");
-04f9f068a619cc Chanwoo Choi             2013-10-10  626  			return -EINVAL;
-04f9f068a619cc Chanwoo Choi             2013-10-10  627  		}
-04f9f068a619cc Chanwoo Choi             2013-10-10  628  	}
-04f9f068a619cc Chanwoo Choi             2013-10-10  629  
-04f9f068a619cc Chanwoo Choi             2013-10-10  630  	if (of_get_property(pmic_np, "s5m8767,pmic-buck4-uses-gpio-dvs", NULL)) {
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  631  		pdata->buck4_gpiodvs = true;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  632  
-04f9f068a619cc Chanwoo Choi             2013-10-10  633  		if (of_property_read_u32_array(pmic_np,
-04f9f068a619cc Chanwoo Choi             2013-10-10  634  				"s5m8767,pmic-buck4-dvs-voltage",
-04f9f068a619cc Chanwoo Choi             2013-10-10  635  				pdata->buck4_voltage, dvs_voltage_nr)) {
-04f9f068a619cc Chanwoo Choi             2013-10-10  636  			dev_err(iodev->dev, "buck4 voltages not specified\n");
-04f9f068a619cc Chanwoo Choi             2013-10-10  637  			return -EINVAL;
-04f9f068a619cc Chanwoo Choi             2013-10-10  638  		}
-04f9f068a619cc Chanwoo Choi             2013-10-10  639  	}
-04f9f068a619cc Chanwoo Choi             2013-10-10  640  
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  641  	if (pdata->buck2_gpiodvs || pdata->buck3_gpiodvs ||
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  642  						pdata->buck4_gpiodvs) {
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  643  		ret = s5m8767_pmic_dt_parse_dvs_gpio(iodev, pdata, pmic_np);
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  644  		if (ret)
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  645  			return -EINVAL;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  646  
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  647  		if (of_property_read_u32(pmic_np,
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  648  				"s5m8767,pmic-buck-default-dvs-idx",
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  649  				&pdata->buck_default_idx)) {
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  650  			pdata->buck_default_idx = 0;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  651  		} else {
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  652  			if (pdata->buck_default_idx >= 8) {
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  653  				pdata->buck_default_idx = 0;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  654  				dev_info(iodev->dev,
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  655  				"invalid value for default dvs index, use 0\n");
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  656  			}
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  657  		}
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  658  	}
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  659  
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  660  	ret = s5m8767_pmic_dt_parse_ds_gpio(iodev, pdata, pmic_np);
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  661  	if (ret)
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  662  		return -EINVAL;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  663  
-033054e8603036 Chanwoo Choi             2013-10-10  664  	if (of_get_property(pmic_np, "s5m8767,pmic-buck2-ramp-enable", NULL))
-033054e8603036 Chanwoo Choi             2013-10-10  665  		pdata->buck2_ramp_enable = true;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  666  
-033054e8603036 Chanwoo Choi             2013-10-10  667  	if (of_get_property(pmic_np, "s5m8767,pmic-buck3-ramp-enable", NULL))
-033054e8603036 Chanwoo Choi             2013-10-10  668  		pdata->buck3_ramp_enable = true;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  669  
-033054e8603036 Chanwoo Choi             2013-10-10  670  	if (of_get_property(pmic_np, "s5m8767,pmic-buck4-ramp-enable", NULL))
-033054e8603036 Chanwoo Choi             2013-10-10  671  		pdata->buck4_ramp_enable = true;
-033054e8603036 Chanwoo Choi             2013-10-10  672  
-033054e8603036 Chanwoo Choi             2013-10-10  673  	if (pdata->buck2_ramp_enable || pdata->buck3_ramp_enable
-033054e8603036 Chanwoo Choi             2013-10-10  674  			|| pdata->buck4_ramp_enable) {
-033054e8603036 Chanwoo Choi             2013-10-10  675  		if (of_property_read_u32(pmic_np, "s5m8767,pmic-buck-ramp-delay",
-033054e8603036 Chanwoo Choi             2013-10-10  676  				&pdata->buck_ramp_delay))
-033054e8603036 Chanwoo Choi             2013-10-10  677  			pdata->buck_ramp_delay = 0;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  678  	}
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  679  
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  680  	return 0;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  681  }
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  682  #else
-cbb0ed495ca165 Axel Lin                 2013-02-13  683  static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  684  					struct sec_platform_data *pdata)
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  685  {
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  686  	return 0;
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  687  }
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  688  #endif /* CONFIG_OF */
-26aec009f6b61c Amit Daniel Kachhap      2013-02-03  689  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+--=20
+With Best Regards,
+Andy Shevchenko
