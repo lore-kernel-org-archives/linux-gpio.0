@@ -2,135 +2,261 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16351C61DA4
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Mar 2023 11:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3430C6FD19
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Mar 2023 11:34:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229684AbjCMLCQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Mar 2023 07:02:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34528 "EHLO
+        id S229987AbjCMLe2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Mar 2023 07:34:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229617AbjCMLCP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Mar 2023 07:02:15 -0400
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 784AB3644C;
-        Mon, 13 Mar 2023 04:02:02 -0700 (PDT)
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 218BEC0018;
-        Mon, 13 Mar 2023 11:01:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1678705320;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=KAu5eb5cBM2N0TFrpHaTmeciWLo9iKA5Z5jW5dA0qRM=;
-        b=EYM8Zc5ZL7e06LhrgrC9uRPTpRu53MWxRGT+Mr7yC8ny1mCmyi4AsrYABcg5Yc94SppL5A
-        BCSL08OjV9F5n87md8ab/rHDU3x1dccJ9xEc0CiOU9lGdo2hx+DP0Yy7gw1SQEf0iRP4sE
-        w4gAtqa9JCXHB6DRG/eyqYuEUJjr0TgCcRsMELvTodgC1/oEriv789FY9NV82WV86mXuU0
-        dll5QV54bF1EVCASZnRrLbwDVd3m4rX0Jgt58ZCnGBFajMKeCytFAnxpFK3uNEDgV0ZAWW
-        A7jFjDdYu11lP1DAT4csoHyV1K/6KpY96XkL2ToQnL0B4ma502MVOXNKf4EjXg==
-Date:   Mon, 13 Mar 2023 12:01:58 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Esteban Blanc <eblanc@baylibre.com>
-Cc:     linus.walleij@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-        a.zummo@towertech.it, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        jpanis@baylibre.com, jneanne@baylibre.com
-Subject: Re: [PATCH INTERNAL v1 1/3] rtc: tps6594: add driver for TPS6594
- PMIC RTC
-Message-ID: <20230313110158f5c27b63@mail.local>
-References: <20230224133129.887203-1-eblanc@baylibre.com>
- <20230224133129.887203-2-eblanc@baylibre.com>
- <ZAcbJxrNtWTTTSjR@mail.local>
- <CR556BV2M4I4.2L3LLJ8V1I352@burritosblues>
+        with ESMTP id S229704AbjCMLe1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Mar 2023 07:34:27 -0400
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E54E1A493;
+        Mon, 13 Mar 2023 04:34:01 -0700 (PDT)
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+        by mail11.truemail.it (Postfix) with ESMTPA id 4A36221DF3;
+        Mon, 13 Mar 2023 12:33:15 +0100 (CET)
+From:   Francesco Dolcini <francesco@dolcini.it>
+To:     linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+        linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
+        Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: [PATCH v2 2/2] gpio: fxl6408: add I2C GPIO expander driver
+Date:   Mon, 13 Mar 2023 12:33:08 +0100
+Message-Id: <20230313113308.157930-3-francesco@dolcini.it>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230313113308.157930-1-francesco@dolcini.it>
+References: <20230313113308.157930-1-francesco@dolcini.it>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CR556BV2M4I4.2L3LLJ8V1I352@burritosblues>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 13/03/2023 10:18:45+0100, Esteban Blanc wrote:
-> On Tue Mar 7, 2023 at 12:08 PM CET, Alexandre Belloni wrote:
-> > On 24/02/2023 14:31:27+0100, Esteban Blanc wrote:
-> > > +struct tps6594_rtc {
-> > > +   struct rtc_device *rtc;
-> > > +};
-> >
-> > Is the struct actually useful?
-> 
-> Good catch, it's not. I will remove it for V2.
-> 
-> (...)
-> 
-> > > +/*
-> > > + * Gets current tps6594 RTC time and date parameters.
-> > > + *
-> > > + * The RTC's time/alarm representation is not what gmtime(3) requires
-> > > + * Linux to use:
-> > > + *
-> > > + *  - Months are 1..12 vs Linux 0-11
-> > > + *  - Years are 0..99 vs Linux 1900..N (we assume 21st century)
-> > > + */
-> >
-> > I don't find this comment to be particularly useful.
-> 
-> Ok. I propose that I add 2 constants for the -1 and +100 in the month and year
-> calculation. This way, without the comment the computation would be a
-> bit more self explanatory.
-> What do you think?
+From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 
-I don't think this is necessary, keep -1 for the month and +100 for the
-year, those are very common operations in the subsystem and don't really
-need any explanation
+Add minimal driver for Fairchild FXL6408 8-bit I2C-controlled GPIO expander
+using the generic regmap based GPIO driver (GPIO_REGMAP).
 
-> 
-> (...)
-> 
-> > > +static int tps6594_rtc_probe(struct platform_device *pdev)
-> > > +{
-> > > +   struct tps6594 *tps6594;
-> > > +   struct tps6594_rtc *tps_rtc;
-> > > +   int irq;
-> > > +   int ret;
-> > > +
-> > > +   tps6594 = dev_get_drvdata(pdev->dev.parent);
-> > > +
-> > > +   tps_rtc = devm_kzalloc(&pdev->dev, sizeof(struct tps6594_rtc),
-> > > +                          GFP_KERNEL);
-> > > +   if (!tps_rtc)
-> > > +           return -ENOMEM;
-> > > +
-> > > +   tps_rtc->rtc = devm_rtc_allocate_device(&pdev->dev);
-> > > +   if (IS_ERR(tps_rtc->rtc))
-> > > +           return PTR_ERR(tps_rtc->rtc);
-> > > +
-> > > +   /* Enable crystal oscillator */
-> > > +   ret = regmap_set_bits(tps6594->regmap, TPS6594_REG_RTC_CTRL_2,
-> > > +                         TPS6594_BIT_XTAL_EN);
-> > > +   if (ret < 0)
-> > > +           return ret;
-> > > +
-> > > +   /* Start rtc */
-> > > +   ret = regmap_set_bits(tps6594->regmap, TPS6594_REG_RTC_CTRL_1,
-> > > +                         TPS6594_BIT_STOP_RTC);
-> > > +   if (ret < 0)
-> > > +           return ret;
-> >
-> > Do that (XTAL_EN and clearing STOP) only once the time is known to be
-> > set to a correct value so read_time doesn't have a chance to return a
-> > bogus value.
-> >
-> 
-> (...)
-> 
-> I understand your point, however I'm not sure of the canonical way to do
-> this. Simply calling `tps6594_rtc_set_time` is enough?
+The driver implements setting the GPIO direction, reading inputs
+and writing outputs.
 
-Yeah, let userspace set the time and start the rtc at that point.
+In addition to that the FXL6408 has the following functionalities:
+- allows to monitor input ports for data transitions with an interrupt pin
+- all inputs can be configured with pull-up or pull-down resistors
 
+Datasheet: https://www.onsemi.com/download/data-sheet/pdf/fxl6408-d.pdf
+Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+---
+v2:
+ * remove includes: <linux/gpio.h> and <linux/of_platform.h>
+ * add missing and required select REGMAP_I2C in KConfig
+ * use dev_err_probe()
+ * add "Datasheet:" tag in commit message
+ * improve KConfig help section
+ * fix newlines, multi-line comments and trailing commas
+---
+ drivers/gpio/Kconfig        |  10 +++
+ drivers/gpio/Makefile       |   1 +
+ drivers/gpio/gpio-fxl6408.c | 152 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 163 insertions(+)
+ create mode 100644 drivers/gpio/gpio-fxl6408.c
 
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 13be729710f2..56a73007ebcb 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1000,6 +1000,16 @@ config GPIO_ADNP
+ 	  enough to represent all pins, but the driver will assume a
+ 	  register layout for 64 pins (8 registers).
+ 
++config GPIO_FXL6408
++	tristate "FXL6408 I2C GPIO expander"
++	select GPIO_REGMAP
++	select REGMAP_I2C
++	help
++	  GPIO driver for Fairchild Semiconductor FXL6408 GPIO expander.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called gpio-fxl6408.
++
+ config GPIO_GW_PLD
+ 	tristate "Gateworks PLD GPIO Expander"
+ 	depends on OF_GPIO
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index c048ba003367..12027f4c3bee 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -60,6 +60,7 @@ obj-$(CONFIG_GPIO_EP93XX)		+= gpio-ep93xx.o
+ obj-$(CONFIG_GPIO_EXAR)			+= gpio-exar.o
+ obj-$(CONFIG_GPIO_F7188X)		+= gpio-f7188x.o
+ obj-$(CONFIG_GPIO_FTGPIO010)		+= gpio-ftgpio010.o
++obj-$(CONFIG_GPIO_FXL6408)		+= gpio-fxl6408.o
+ obj-$(CONFIG_GPIO_GE_FPGA)		+= gpio-ge.o
+ obj-$(CONFIG_GPIO_GPIO_MM)		+= gpio-gpio-mm.o
+ obj-$(CONFIG_GPIO_GRGPIO)		+= gpio-grgpio.o
+diff --git a/drivers/gpio/gpio-fxl6408.c b/drivers/gpio/gpio-fxl6408.c
+new file mode 100644
+index 000000000000..2560fe99c2d6
+--- /dev/null
++++ b/drivers/gpio/gpio-fxl6408.c
+@@ -0,0 +1,152 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * FXL6408 GPIO driver
++ *
++ * Copyright 2023 Toradex
++ *
++ * Author: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
++ */
++
++#include <linux/gpio/regmap.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++
++#define FXL6408_REG_DEVICE_ID		0x01
++#define FXL6408_MF_FAIRCHILD		0b101
++#define FXL6408_MF_SHIFT		5
++
++/* Bits set here indicate that the GPIO is an output. */
++#define FXL6408_REG_IO_DIR		0x03
++
++/*
++ * Bits set here, when the corresponding bit of IO_DIR is set, drive
++ * the output high instead of low.
++ */
++#define FXL6408_REG_OUTPUT		0x05
++
++/* Bits here make the output High-Z, instead of the OUTPUT value. */
++#define FXL6408_REG_OUTPUT_HIGH_Z	0x07
++
++/* Returns the current status (1 = HIGH) of the input pins. */
++#define FXL6408_REG_INPUT_STATUS	0x0f
++
++#define FXL6408_MAX_REGISTER		0x13
++
++#define FXL6408_NGPIO			8
++
++static const struct regmap_range rd_range[] = {
++	{ FXL6408_REG_DEVICE_ID, FXL6408_REG_DEVICE_ID },
++	{ FXL6408_REG_IO_DIR, FXL6408_REG_OUTPUT },
++	{ FXL6408_REG_INPUT_STATUS, FXL6408_REG_INPUT_STATUS },
++};
++
++static const struct regmap_range wr_range[] = {
++	{ FXL6408_REG_DEVICE_ID, FXL6408_REG_DEVICE_ID },
++	{ FXL6408_REG_IO_DIR, FXL6408_REG_OUTPUT },
++	{ FXL6408_REG_OUTPUT_HIGH_Z, FXL6408_REG_OUTPUT_HIGH_Z },
++};
++
++static const struct regmap_range volatile_range[] = {
++	{ FXL6408_REG_DEVICE_ID, FXL6408_REG_DEVICE_ID },
++	{ FXL6408_REG_INPUT_STATUS, FXL6408_REG_INPUT_STATUS },
++};
++
++static const struct regmap_access_table rd_table = {
++	.yes_ranges = rd_range,
++	.n_yes_ranges = ARRAY_SIZE(rd_range),
++};
++
++static const struct regmap_access_table wr_table = {
++	.yes_ranges = wr_range,
++	.n_yes_ranges = ARRAY_SIZE(wr_range),
++};
++
++static const struct regmap_access_table volatile_table = {
++	.yes_ranges = volatile_range,
++	.n_yes_ranges = ARRAY_SIZE(volatile_range),
++};
++
++static const struct regmap_config regmap = {
++	.reg_bits = 8,
++	.val_bits = 8,
++
++	.max_register = FXL6408_MAX_REGISTER,
++	.wr_table = &wr_table,
++	.rd_table = &rd_table,
++	.volatile_table = &volatile_table,
++
++	.cache_type = REGCACHE_RBTREE,
++	.num_reg_defaults_raw = FXL6408_MAX_REGISTER + 1,
++};
++
++static int fxl6408_identify(struct device *dev, struct regmap *regmap)
++{
++	int val, ret;
++
++	ret = regmap_read(regmap, FXL6408_REG_DEVICE_ID, &val);
++	if (ret) {
++		dev_err(dev, "error %d reading DEVICE_ID\n", ret);
++	} else if (val >> FXL6408_MF_SHIFT != FXL6408_MF_FAIRCHILD) {
++		dev_err(dev, "invalid device id 0x%02x\n", val);
++		ret = -ENODEV;
++	}
++
++	return ret;
++}
++
++static int fxl6408_probe(struct i2c_client *client)
++{
++	struct device *dev = &client->dev;
++	int ret;
++	struct gpio_regmap_config gpio_config = {
++		.parent = dev,
++		.ngpio = FXL6408_NGPIO,
++		.reg_dat_base = GPIO_REGMAP_ADDR(FXL6408_REG_INPUT_STATUS),
++		.reg_set_base = GPIO_REGMAP_ADDR(FXL6408_REG_OUTPUT),
++		.reg_dir_out_base = GPIO_REGMAP_ADDR(FXL6408_REG_IO_DIR),
++		.ngpio_per_reg = FXL6408_NGPIO,
++	};
++
++	gpio_config.regmap = devm_regmap_init_i2c(client, &regmap);
++	if (IS_ERR(gpio_config.regmap))
++		return dev_err_probe(dev, PTR_ERR(gpio_config.regmap),
++				     "failed to allocate register map\n");
++
++	ret = fxl6408_identify(dev, gpio_config.regmap);
++	if (ret)
++		return ret;
++
++	/* Disable High-Z of outputs, so that our OUTPUT updates actually take effect. */
++	ret = regmap_write(gpio_config.regmap, FXL6408_REG_OUTPUT_HIGH_Z, 0);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to write 'output high Z' register\n");
++
++	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &gpio_config));
++}
++
++static const __maybe_unused struct of_device_id fxl6408_dt_ids[] = {
++	{ .compatible = "fcs,fxl6408" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, fxl6408_dt_ids);
++
++static const struct i2c_device_id fxl6408_id[] = {
++	{ "fxl6408", 0 },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, fxl6408_id);
++
++static struct i2c_driver fxl6408_driver = {
++	.driver = {
++		.name	= "fxl6408",
++		.of_match_table = fxl6408_dt_ids,
++	},
++	.probe_new	= fxl6408_probe,
++	.id_table	= fxl6408_id,
++};
++module_i2c_driver(fxl6408_driver);
++
++MODULE_AUTHOR("Emanuele Ghidoli <emanuele.ghidoli@toradex.com>");
++MODULE_DESCRIPTION("FXL6408 GPIO driver");
++MODULE_LICENSE("GPL");
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.25.1
+
