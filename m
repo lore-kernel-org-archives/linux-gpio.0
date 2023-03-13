@@ -2,59 +2,60 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A945FC76196
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Mar 2023 21:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 976E7C7618B
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Mar 2023 21:01:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230371AbjCMVB1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Mar 2023 17:01:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49458 "EHLO
+        id S230182AbjCMVB3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Mar 2023 17:01:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230375AbjCMVBE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Mar 2023 17:01:04 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95012848CD;
-        Mon, 13 Mar 2023 14:00:34 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id ek18so22899894edb.6;
-        Mon, 13 Mar 2023 14:00:34 -0700 (PDT)
+        with ESMTP id S230326AbjCMVBC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Mar 2023 17:01:02 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 885836FFE6;
+        Mon, 13 Mar 2023 14:00:27 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id cn21so23867737edb.0;
+        Mon, 13 Mar 2023 14:00:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678741232;
+        d=gmail.com; s=20210112; t=1678741224;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yAgVEaQ3wTWSM/roB3rZ4d22w+naU3QZ4J68IrDFTUw=;
-        b=IalN9Q8RaXhjHjxH3l9HGeNjsyB3xTYsslGPKTz8tChbt/Iwdvm+yvjo0LZ8FH+mkZ
-         /RPwdd8qZpyy77bbX3v2FxsP7Eqo2KVsBHDvx5E71n2i7nsQ7NCiIPkF3QvQGgcVn4xW
-         wpnUR6TsFlPxV6ZDTT3oCcoM0UPzMoSK9CcNijBmmQowD6qkajRqmY5KF5pVa2B0L5XC
-         2mBbap3IF2h8owmV8DQnPkeUWIjuYQczHNP5IS11/6FDOFmG8XzDDJ4nDWMAaO4kP66V
-         AhCMQweebRzKoBC+vzrrc2BVZ5Ske7bMVmouggePpR26a+qFiSLFTZc09RQVcjscoLOL
-         ORrQ==
+        bh=S1EO681NLLyGQFHGfJf2gv1cVQUWKJ2bHIXepwv2glw=;
+        b=p+Ht8kEwWQVBWrm7LbVKZZP1kAizcIUyIo0vjcuRnquV3lDbYV2dVfhZaeR0PYG+dl
+         aOTM3J1qVO6QVjKAQv9yRE5OwQoKzrneZmL2gl8dgGIrKwJV3VkeyP80//StuFRKkJel
+         LJNbbaHUXg15eKrSRqiXtV4xtCnMOwpO/1tFBFqVp7G6DkDESTodgxC7E5ABl2KYnJOd
+         66fauggi47slQOAZLeaL9gRcVbgF30l8GuP/3gMOVbJHSQGCpY+4+62nZ0LLeCUTKH4L
+         euM86uk5LXRM0oVNA5tAEUQ7cRw5d+hyAEwNK09F8g5TLNriU/DpiLZ9cCJSGnMlpFI1
+         bo2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678741232;
+        d=1e100.net; s=20210112; t=1678741224;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yAgVEaQ3wTWSM/roB3rZ4d22w+naU3QZ4J68IrDFTUw=;
-        b=jQRou4rWNVHQuHlpCh8POWjUxKL4GmFnB57kkQh31HCWqAnqQusQuSlGNc7MKxViUZ
-         BV2fOmCoiRFUq5HqT9BhyQsxjNKVEo+wC3SS1/jfTKnZFCi1CO92sG5aIC12JS161JLc
-         cEw0u4yh4XuDqJ9uG4iyR60qMAm6Dv2mj5Zbfgi7Kd4FUDmb9oAu6OvMkg45C0CcsFhB
-         XQed+3qBKc5/C3w9piUsdoReds6RgNYNkO8e6ko3J0bjgRPFtaWeinBrKncAE8YUPr0z
-         FqRuDbaISnB/f1nkXwbp0Z6SJn1FS72UjICr+aXvHuaKeLlMvIOT67QTyuhmybyg7A+Y
-         EA/w==
-X-Gm-Message-State: AO0yUKXCqV7WUBi1ek+dj28NDGQhffYFmLDujI8E2TJqETmbGpuo2YiO
-        Pqwgz6pk2AiaWR35DdcXp7I=
-X-Google-Smtp-Source: AK7set+G713ElsBQl+Y9N92iqgiMaNOa80KkfENVNuNDxxOqv9NftZuA9TMy3fMZJU5ZhXHZOLxb/Q==
-X-Received: by 2002:a17:906:b007:b0:8aa:c038:974c with SMTP id v7-20020a170906b00700b008aac038974cmr36455676ejy.54.1678741232102;
-        Mon, 13 Mar 2023 14:00:32 -0700 (PDT)
+        bh=S1EO681NLLyGQFHGfJf2gv1cVQUWKJ2bHIXepwv2glw=;
+        b=BvtTDg92nwgZlWqj7wVKvQ8Vcvo69Wumj/W9xd3OpPAv4oDUhnnHF2ohAEkaUiDggL
+         mL5QDlAek37qLieglXgtctJmvZNQSrm+DHffEOseXgwui2gY4C/US+E0LENvJ0Cper/g
+         s4cxAgJq3zyja945Zz87zrfqkHa6u8cwZ2sCxGVWBxWw0/mUe1qirmnHrYslM7eIBTKW
+         3hZXFGMuJ8ek88PaGOiSyyajlw5QW67PVY6aZlWIkVvqnfjI+4OSx3ME05WMsF030+0Q
+         tqdaJX3i6xg/VTte1k4EGrVNRpJRxk1EgX1YU0yRBzUoKRnAKuhrJti0aLzG6YO/A26r
+         Fr4w==
+X-Gm-Message-State: AO0yUKWPELIaraohSdDVLSLEA9IF6K4mZEKKiLPtTSM4dB6UZ+QOMgQ9
+        XM5Ruf48G465uVRBlXlWW0Q=
+X-Google-Smtp-Source: AK7set/NwnCMVaKCHebK0llGSJTd79DjIqPgRgqeEVRZgG2AZ6tsRTFCH9D4B9Nd/al8H2T0Fvi8LQ==
+X-Received: by 2002:a17:906:7c0b:b0:92a:b78a:8fb8 with SMTP id t11-20020a1709067c0b00b0092ab78a8fb8mr4426489ejo.37.1678741224361;
+        Mon, 13 Mar 2023 14:00:24 -0700 (PDT)
 Received: from arinc9-PC.lan ([149.91.1.15])
-        by smtp.gmail.com with ESMTPSA id j11-20020a170906830b00b008ee5356801dsm219853ejx.187.2023.03.13.14.00.29
+        by smtp.gmail.com with ESMTPSA id j11-20020a170906830b00b008ee5356801dsm219853ejx.187.2023.03.13.14.00.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Mar 2023 14:00:31 -0700 (PDT)
+        Mon, 13 Mar 2023 14:00:24 -0700 (PDT)
 From:   arinc9.unal@gmail.com
 X-Google-Original-From: arinc.unal@arinc9.com
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
+        Rob Herring <robh@kernel.org>,
         William Dean <williamsukatube@gmail.com>,
         Sean Wang <sean.wang@kernel.org>,
         Andy Teng <andy.teng@mediatek.com>,
@@ -74,9 +75,9 @@ Cc:     =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
         linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org
-Subject: [PATCH v2 16/21] dt-bindings: pinctrl: mediatek: fix pinmux header location
-Date:   Mon, 13 Mar 2023 23:59:16 +0300
-Message-Id: <20230313205921.35342-17-arinc.unal@arinc9.com>
+Subject: [PATCH v2 13/21] dt-bindings: pinctrl: mediatek: mt8195: rename to mediatek,mt8195-pinctrl
+Date:   Mon, 13 Mar 2023 23:59:13 +0300
+Message-Id: <20230313205921.35342-14-arinc.unal@arinc9.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230313205921.35342-1-arinc.unal@arinc9.com>
 References: <20230313205921.35342-1-arinc.unal@arinc9.com>
@@ -89,56 +90,32 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Arınç ÜNAL <arinc.unal@arinc9.com>
 
-Fix the location of the pinmux header files mentioned on the schemas.
+Rename pinctrl-mt8195.yaml to mediatek,mt8195-pinctrl.yaml to be on par
+with the compatible string and other mediatek dt-binding schemas.
 
 Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml  | 2 +-
- .../devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml  | 2 +-
- .../devicetree/bindings/pinctrl/mediatek,mt8188-pinctrl.yaml  | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ .../{pinctrl-mt8195.yaml => mediatek,mt8195-pinctrl.yaml}       | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ rename Documentation/devicetree/bindings/pinctrl/{pinctrl-mt8195.yaml => mediatek,mt8195-pinctrl.yaml} (99%)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-index 5e80621800a9..3b3d59140073 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-@@ -90,7 +90,7 @@ patternProperties:
-             description:
-               Integer array, represents gpio pin number and mux setting.
-               Supported pin number and mux varies for different SoCs, and are
--              defined as macros in <soc>-pinfunc.h directly.
-+              defined as macros in dt-bindings/pinctrl/<soc>-pinfunc.h directly.
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8195-pinctrl.yaml
+similarity index 99%
+rename from Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml
+rename to Documentation/devicetree/bindings/pinctrl/mediatek,mt8195-pinctrl.yaml
+index 66fe17e9e4d3..7b3dfc14eedc 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8195.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8195-pinctrl.yaml
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/pinctrl/pinctrl-mt8195.yaml#
++$id: http://devicetree.org/schemas/pinctrl/mediatek,mt8195-pinctrl.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
  
-           bias-disable: true
- 
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-index 1d038f6f8971..e5e7143674b5 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-@@ -131,7 +131,7 @@ patternProperties:
-             description:
-               Integer array, represents gpio pin number and mux setting.
-               Supported pin number and mux varies for different SoCs, and are
--              defined as macros in boot/dts/<soc>-pinfunc.h directly.
-+              defined as macros in dt-bindings/pinctrl/<soc>-pinfunc.h directly.
- 
-           bias-disable: true
- 
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8188-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8188-pinctrl.yaml
-index 51b3d1247614..028146fb173f 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8188-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8188-pinctrl.yaml
-@@ -88,8 +88,8 @@ patternProperties:
-             description:
-               Integer array, represents gpio pin number and mux setting.
-               Supported pin number and mux varies for different SoCs, and are
--              defined as macros in dt-bindings/pinctrl/mediatek,<soc>-pinfunc.h
--              directly.
-+              defined as macros in dt-bindings/pinctrl/mediatek,mt8188-pinfunc.h
-+              directly, for this SoC.
- 
-           drive-strength:
-             enum: [2, 4, 6, 8, 10, 12, 14, 16]
+ title: Mediatek MT8195 Pin Controller
 -- 
 2.37.2
 
