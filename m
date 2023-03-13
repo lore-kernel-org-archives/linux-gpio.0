@@ -2,123 +2,168 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45598C61DA4
-	for <linux-gpio@archiver.kernel.org>; Mon, 13 Mar 2023 11:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A548C6FD19
+	for <linux-gpio@archiver.kernel.org>; Mon, 13 Mar 2023 12:10:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230200AbjCMLe3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 13 Mar 2023 07:34:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36614 "EHLO
+        id S229906AbjCMMKp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 13 Mar 2023 08:10:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230005AbjCMLe1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Mar 2023 07:34:27 -0400
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E6581EBFD;
-        Mon, 13 Mar 2023 04:34:01 -0700 (PDT)
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-        by mail11.truemail.it (Postfix) with ESMTPA id CBE1921DF2;
-        Mon, 13 Mar 2023 12:33:14 +0100 (CET)
-From:   Francesco Dolcini <francesco@dolcini.it>
-To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: [PATCH v2 1/2] dt-bindings: gpio: add fcs,fxl6408
-Date:   Mon, 13 Mar 2023 12:33:07 +0100
-Message-Id: <20230313113308.157930-2-francesco@dolcini.it>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230313113308.157930-1-francesco@dolcini.it>
-References: <20230313113308.157930-1-francesco@dolcini.it>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S229814AbjCMMKo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Mar 2023 08:10:44 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EF5734C07
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Mar 2023 05:10:41 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id j2so11065873wrh.9
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Mar 2023 05:10:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1678709440;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3GQdHiuhV8qcwtZCrgLpmIG7i8TQyBjFWs+jLg6cK9I=;
+        b=YjN+/sfQrVtEHFnNa7CD1R+ohcYIxX4rAYXHTfbDoDlUUsxElUHtD7b8qdRIgYvvjF
+         TpydeuG8YcAxvysqENM+ZLs2VovI4itwmvOdGeazAgB67lp4/CZ0sJ1vmnRaING9xiQd
+         vbxttPNvNn9ilAgJcDV8ZGZoHnrhRnrSqg3s1I1BKEdUhG0dEN/64r5DPoj0XBZIDBcJ
+         16eCrTx/n+hOUky+fS5BuyuI3EZMTeyzvAUgUPIBQXYL1IN81EeV7+ncTC8lr1U1pIA+
+         qJa2sQ6BUoLysZVtG638AiykkV1hkJfKEQNQj9qQom0a9skUvs5Wn7H2MJ7Wunl6XXpA
+         oJ4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678709440;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3GQdHiuhV8qcwtZCrgLpmIG7i8TQyBjFWs+jLg6cK9I=;
+        b=1XpTM+SRWXpstL0Fpj2WKGM+jtewHMt7RJGRLjR4mwF+DgrQLw1tgfQuxYSYr4XdUa
+         qGiSytW4rT5+a6Ty6ctzqCTvvWaRLLVX37HCMQ8tYffQ9D2H0Fm4I4DjLiWgOrFuMIdS
+         n/Rvact15lZi3kph5ikv+ttbUsasizCGqrAzWeY7MeUYKUwYgWlyhB6ZwRDAVnHOIBIQ
+         S/OnYAUDjl1fDiT8su8IdgYyNN4v5VyqPnZtxLt4mZd6+DX3SkkcLcGe8Bxib9V6NVH6
+         uf1ad3biDhgxlyNaurxu9tHmcEgApV1kg1936SCKNFa2Hxfzc96amblCgYKX12PzAmo0
+         obFw==
+X-Gm-Message-State: AO0yUKUSzeqaAhQLx75QTxXymQbwuraNm+1+hDmoEQ345c1kg6VTGy5d
+        Yi2mGW6hh9203dxE41cG77axNA==
+X-Google-Smtp-Source: AK7set9GdQPxf5ICUKtYJ/RP6unuyLgdOzr7MbGdghf6aL//AXX4x/y08dJdSndDoJN7h27+hzwYeA==
+X-Received: by 2002:adf:ef90:0:b0:2c5:a38f:ca31 with SMTP id d16-20020adfef90000000b002c5a38fca31mr8003174wro.7.1678709439797;
+        Mon, 13 Mar 2023 05:10:39 -0700 (PDT)
+Received: from localhost (91-170-53-155.subs.proxad.net. [91.170.53.155])
+        by smtp.gmail.com with ESMTPSA id e29-20020a5d595d000000b002c5706f7c6dsm7714376wri.94.2023.03.13.05.10.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Mar 2023 05:10:39 -0700 (PDT)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Mon, 13 Mar 2023 13:10:37 +0100
+Message-Id: <CR58TXDRGAUA.3CSML8HXRI97S@burritosblues>
+Cc:     <linus.walleij@linaro.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <a.zummo@towertech.it>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-rtc@vger.kernel.org>, <jpanis@baylibre.com>,
+        <jneanne@baylibre.com>
+Subject: Re: [PATCH INTERNAL v1 1/3] rtc: tps6594: add driver for TPS6594
+ PMIC RTC
+From:   "Esteban Blanc" <eblanc@baylibre.com>
+To:     "Alexandre Belloni" <alexandre.belloni@bootlin.com>
+X-Mailer: aerc 0.14.0
+References: <20230224133129.887203-1-eblanc@baylibre.com>
+ <20230224133129.887203-2-eblanc@baylibre.com> <ZAcbJxrNtWTTTSjR@mail.local>
+ <CR556BV2M4I4.2L3LLJ8V1I352@burritosblues>
+ <20230313110158f5c27b63@mail.local>
+In-Reply-To: <20230313110158f5c27b63@mail.local>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+On Mon Mar 13, 2023 at 12:01 PM CET, Alexandre Belloni wrote:
+> On 13/03/2023 10:18:45+0100, Esteban Blanc wrote:
+> > On Tue Mar 7, 2023 at 12:08 PM CET, Alexandre Belloni wrote:
+> > > On 24/02/2023 14:31:27+0100, Esteban Blanc wrote:
+> > > > +/*
+> > > > + * Gets current tps6594 RTC time and date parameters.
+> > > > + *
+> > > > + * The RTC's time/alarm representation is not what gmtime(3) requi=
+res
+> > > > + * Linux to use:
+> > > > + *
+> > > > + *  - Months are 1..12 vs Linux 0-11
+> > > > + *  - Years are 0..99 vs Linux 1900..N (we assume 21st century)
+> > > > + */
+> > >
+> > > I don't find this comment to be particularly useful.
+> >=20
+> > Ok. I propose that I add 2 constants for the -1 and +100 in the month a=
+nd year
+> > calculation. This way, without the comment the computation would be a
+> > bit more self explanatory.
+> > What do you think?
+>
+> I don't think this is necessary, keep -1 for the month and +100 for the
+> year, those are very common operations in the subsystem and don't really
+> need any explanation
 
-Add Fairchild FXL6408 8-bit I2C-controlled GPIO expander.
+Ok. I will just remove the comment then.
 
-Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
-v2:
- * remove "driver" word from yaml
- * simplify gpio-hog property definition
- * rename fcs,fxl6408-gpio.yaml to fcs,fxl6408.yaml
- * add missing SoB
----
- .../devicetree/bindings/gpio/fcs,fxl6408.yaml | 58 +++++++++++++++++++
- 1 file changed, 58 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/fcs,fxl6408.yaml
+> > > > +static int tps6594_rtc_probe(struct platform_device *pdev)
+> > > > +{
+> > > > +   struct tps6594 *tps6594;
+> > > > +   struct tps6594_rtc *tps_rtc;
+> > > > +   int irq;
+> > > > +   int ret;
+> > > > +
+> > > > +   tps6594 =3D dev_get_drvdata(pdev->dev.parent);
+> > > > +
+> > > > +   tps_rtc =3D devm_kzalloc(&pdev->dev, sizeof(struct tps6594_rtc)=
+,
+> > > > +                          GFP_KERNEL);
+> > > > +   if (!tps_rtc)
+> > > > +           return -ENOMEM;
+> > > > +
+> > > > +   tps_rtc->rtc =3D devm_rtc_allocate_device(&pdev->dev);
+> > > > +   if (IS_ERR(tps_rtc->rtc))
+> > > > +           return PTR_ERR(tps_rtc->rtc);
+> > > > +
+> > > > +   /* Enable crystal oscillator */
+> > > > +   ret =3D regmap_set_bits(tps6594->regmap, TPS6594_REG_RTC_CTRL_2=
+,
+> > > > +                         TPS6594_BIT_XTAL_EN);
+> > > > +   if (ret < 0)
+> > > > +           return ret;
+> > > > +
+> > > > +   /* Start rtc */
+> > > > +   ret =3D regmap_set_bits(tps6594->regmap, TPS6594_REG_RTC_CTRL_1=
+,
+> > > > +                         TPS6594_BIT_STOP_RTC);
+> > > > +   if (ret < 0)
+> > > > +           return ret;
+> > >
+> > > Do that (XTAL_EN and clearing STOP) only once the time is known to be
+> > > set to a correct value so read_time doesn't have a chance to return a
+> > > bogus value.
+> > >
+> >=20
+> > (...)
+> >=20
+> > I understand your point, however I'm not sure of the canonical way to d=
+o
+> > this. Simply calling `tps6594_rtc_set_time` is enough?
+>
+> Yeah, let userspace set the time and start the rtc at that point.
 
-diff --git a/Documentation/devicetree/bindings/gpio/fcs,fxl6408.yaml b/Documentation/devicetree/bindings/gpio/fcs,fxl6408.yaml
-new file mode 100644
-index 000000000000..65b6970e42fb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/fcs,fxl6408.yaml
-@@ -0,0 +1,58 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/fcs,fxl6408.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Fairchild FXL6408 I2C GPIO Expander
-+
-+maintainers:
-+  - Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - fcs,fxl6408
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+  gpio-controller: true
-+
-+  gpio-line-names:
-+    minItems: 1
-+    maxItems: 8
-+
-+patternProperties:
-+  "^(hog-[0-9]+|.+-hog(-[0-9]+)?)$":
-+    required:
-+      - gpio-hog
-+
-+required:
-+  - compatible
-+  - reg
-+  - gpio-controller
-+  - "#gpio-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        gpio_expander_43: gpio-expander@43 {
-+            compatible = "fcs,fxl6408";
-+            reg = <0x43>;
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+            gpio-line-names = "Wi-Fi_W_DISABLE", "Wi-Fi_WKUP_WLAN",
-+                              "PWR_EN_+V3.3_WiFi_N", "PCIe_REF_CLK_EN",
-+                              "USB_RESET_N", "USB_BYPASS_N", "Wi-Fi_PDn",
-+                              "Wi-Fi_WKUP_BT";
-+        };
-+    };
--- 
-2.25.1
+The problem with that is we might have some RTCs that will just not be
+usable. We have boards with multiple TP6594 PMICs where only one of them
+has a crystal oscillator. The way to detect this is to start the RTC
+then checked if the STOP_RTC bit is still 0. By doing this in the probe,
+I'm able to not register an RTC device that doesn't work.
+
+If I just start the RTC on the first call to `tps6594_rtc_set_time`, it
+will work for the RTC with the crystal and fails for all the others=20
+
+I can stop the RTC at the end of the probe, after the check to rule out
+unusable devices. If I add the check you proposed in
+`tps6594_rtc_read_time` it will fail until a successful call to
+`tps6594_rtc_set_time`. Would that be a suitable solution?
+
+Best regards,
+--=20
+Esteban Blanc
+BayLibre
 
