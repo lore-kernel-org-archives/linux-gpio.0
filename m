@@ -2,115 +2,145 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E2BC6FD1C
-	for <linux-gpio@archiver.kernel.org>; Tue, 14 Mar 2023 14:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFBEC6FD1F
+	for <linux-gpio@archiver.kernel.org>; Tue, 14 Mar 2023 15:41:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230284AbjCNOvp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 14 Mar 2023 10:51:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49332 "EHLO
+        id S231441AbjCNPlR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 14 Mar 2023 11:41:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbjCNOvo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2023 10:51:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EA05A56A5;
-        Tue, 14 Mar 2023 07:51:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3EB83617D6;
-        Tue, 14 Mar 2023 14:51:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9898BC4339B;
-        Tue, 14 Mar 2023 14:51:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678805501;
-        bh=HjYwDLvn5xq8HcnewhUzuZI6AHtUqffuITl4OpzsUJM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UfGjjKJjxHq0erIiGeuKqrDUiysOREmw2zI31nyW/8PZ2WrjhQSW9MJUzGqPIkObL
-         +jq3uBOiat3vuoxFWieX2DcF41nC2yjzbnQV9n1X5PWAomaWA6QmNDJks8BC/Qi9gY
-         niOd5o/JctKHXVQ0PzULjyc7SKHdlZB4rE6PR19PlVytbdlBlWXuFUUIphkf9kISTO
-         5g0ZVP3feKnVTc/e8EUzubAGjIylfFIqXLLUGskruKavhehuZ+xx44v7b6z/WGiVMK
-         tWh/Z+rCcx119HZ9aiXIZRTYcCQ4+EXp0PG64zdMBN8n8xg/laWP2K0MGbz8ui+r3N
-         G1C9zdJsc/HYQ==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1pc616-00081K-Tt; Tue, 14 Mar 2023 15:52:45 +0100
-Date:   Tue, 14 Mar 2023 15:52:44 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>
-Subject: Re: [PATCH 1/1] gpiolib: allow device numbering using OF alias
-Message-ID: <ZBCKPMll1yt5gMf0@hovoldconsulting.com>
-References: <20230215092421.143199-1-alexander.stein@ew.tq-group.com>
- <CACRpkdZbcs4zgGtuF5U4_JghHJ=A31T8jp2NTcN68P2Eh2azxg@mail.gmail.com>
+        with ESMTP id S229571AbjCNPku (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2023 11:40:50 -0400
+Received: from sender4-op-o10.zoho.com (sender4-op-o10.zoho.com [136.143.188.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F7FEAFBBE;
+        Tue, 14 Mar 2023 08:40:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1678808324; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=RAOnXKx8Fb4MqB1wVrAAxOBX7beM5WUE8KoKAAw/vni8gi6JlsigmpoPkfqyAJE1U4+kCyKhTOdwqOGhhmgbYdUbHTx1az0uXXIBEtKHLaeCxh6MXkxrz8kMNwBXKwT5MHdQxMDpUHRRLX/3BNeqP6WcK83WuwcaUX6wsZoI7nA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1678808324; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=6olgbthaOhN3f4AFE/3iBlFPFGb625oZX9E4dP1sDhg=; 
+        b=GL95TvrtiRIE/4EbRySqwytvKn4VW5GOSZjZB8tymYHsOzZlxj3JEqkKGJdjRK7idqIUmOnhF8LH1h+hb3CK+EUBIjbWTsT+BXIQC5gxtKLK+WkhfEuiAhZeQXmBRMvk/KZzDM/up3yg7Bm0Ig2JGG1ps/N+MT88TaRzEN1LrEU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=arinc9.com;
+        spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
+        dmarc=pass header.from=<arinc.unal@arinc9.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1678808324;
+        s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
+        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=6olgbthaOhN3f4AFE/3iBlFPFGb625oZX9E4dP1sDhg=;
+        b=iPKP6Gz/R1TpNa0LjJzAreb6ProiuSXPsWVPDsG+WoHUGHzCtu30dgnnboxtfPpE
+        YHRCLUQBcRTvMNOHanG03z3sV6ubEkSeBA0sK9B+gpmviiOUKDKzRdAQp/RwApF0n+h
+        h+kLW1V3vRWssWZQBNdY7+uEAUd1A0Aw2hc+So2c=
+Received: from [10.10.10.3] (149.91.1.15 [149.91.1.15]) by mx.zohomail.com
+        with SMTPS id 1678808321651755.4458697967328; Tue, 14 Mar 2023 08:38:41 -0700 (PDT)
+Message-ID: <c64d9f88-75ca-3a6c-b5c2-6e4b1a161d5f@arinc9.com>
+Date:   Tue, 14 Mar 2023 18:38:33 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZbcs4zgGtuF5U4_JghHJ=A31T8jp2NTcN68P2Eh2azxg@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v2 15/21] dt-bindings: pinctrl: {mediatek,ralink}: fix
+ formatting
+To:     Rob Herring <robh@kernel.org>
+Cc:     Sean Wang <sean.wang@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Luiz Angelo Daros de Luca <luizluca@gmail.com>,
+        =?UTF-8?Q?Bernhard_Rosenkr=c3=a4nzer?= <bero@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Hui Liu <hui.liu@mediatek.com>,
+        Landen Chao <Landen.Chao@mediatek.com>,
+        linux-kernel@vger.kernel.org,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Del Regno <angelogioacchino.delregno@collabora.com>,
+        erkin.bozoglu@xeront.com, linux-gpio@vger.kernel.org,
+        Zhiyong Tao <zhiyong.tao@mediatek.com>,
+        Daniel Santos <daniel.santos@pobox.com>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Golle <daniel@makrotopia.org>,
+        Andy Teng <andy.teng@mediatek.com>,
+        William Dean <williamsukatube@gmail.com>,
+        devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org,
+        DENG Qingfang <dqfext@gmail.com>
+References: <20230313205921.35342-1-arinc.unal@arinc9.com>
+ <20230313205921.35342-16-arinc.unal@arinc9.com>
+ <167880254685.25972.15349420182231511267.robh@kernel.org>
+Content-Language: en-US
+From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <167880254685.25972.15349420182231511267.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
-
-and sorry about the late reply on this.
-
-On Wed, Feb 15, 2023 at 03:43:41PM +0100, Linus Walleij wrote:
-> Top-posting because important people are missing from the to:line.
+On 14.03.2023 17:10, Rob Herring wrote:
 > 
-> It seems you are trying to enforce topology here,
-> i.e. hammering down what should come first, second etc, despite the
-> probe order.
+> On Mon, 13 Mar 2023 23:59:15 +0300, arinc9.unal@gmail.com wrote:
+>> From: Arınç ÜNAL <arinc.unal@arinc9.com>
+>>
+>> Change the style of description properties to plain style where there's no
+>> need to preserve the line endings, and vice versa.
+>>
+>> Fit the schemas to 80 columns for each line.
+>>
+>> Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> ---
+>>   .../pinctrl/mediatek,mt65xx-pinctrl.yaml      | 22 +++---
+>>   .../pinctrl/mediatek,mt6779-pinctrl.yaml      | 33 +++++----
+>>   .../pinctrl/mediatek,mt6795-pinctrl.yaml      | 33 +++++----
+>>   .../pinctrl/mediatek,mt7620-pinctrl.yaml      |  2 +-
+>>   .../pinctrl/mediatek,mt7621-pinctrl.yaml      |  2 +-
+>>   .../pinctrl/mediatek,mt7622-pinctrl.yaml      | 26 +++----
+>>   .../pinctrl/mediatek,mt7981-pinctrl.yaml      | 33 +++++----
+>>   .../pinctrl/mediatek,mt7986-pinctrl.yaml      | 68 ++++++++---------
+>>   .../pinctrl/mediatek,mt8183-pinctrl.yaml      | 26 ++++---
+>>   .../pinctrl/mediatek,mt8186-pinctrl.yaml      | 47 ++++++------
+>>   .../pinctrl/mediatek,mt8188-pinctrl.yaml      | 74 ++++++++++---------
+>>   .../pinctrl/mediatek,mt8192-pinctrl.yaml      | 47 ++++++------
+>>   .../pinctrl/mediatek,mt8195-pinctrl.yaml      | 41 +++++-----
+>>   .../pinctrl/mediatek,mt8365-pinctrl.yaml      | 28 +++----
+>>   .../pinctrl/ralink,rt2880-pinctrl.yaml        |  2 +-
+>>   .../pinctrl/ralink,rt305x-pinctrl.yaml        |  2 +-
+>>   .../pinctrl/ralink,rt3883-pinctrl.yaml        |  2 +-
+>>   17 files changed, 254 insertions(+), 234 deletions(-)
+>>
 > 
-> First the DT people need to acknowledge that this is a valid way to use
-> device tree aliases. I'm not so sure about that. Remember that DT
-> is mostly OS neutral, but we do have aliases for some use cases that
-> can be the same tricky in any OS.
-
-Yeah, I believe the idea is that aliases should generally be avoided
-expect possibly for the console (or named) serial ports and first
-ethernet interface.
-
-> Second I want Johan Hovolds input on this from the Linux sysfs side, as
-> he keeps reminding me that sysfs already has topology and should be
-> discovered from there (loosely paraphrased from memory). It might
-> be that you are fixing something that should not be fixed.
-
-If user space needs to access some gpios directly then you can name
-those resources and that should not rely on having stable gpiochip
-ids.
-
-> On Wed, Feb 15, 2023 at 10:24 AM Alexander Stein
-> <alexander.stein@ew.tq-group.com> wrote:
+> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
 > 
-> > From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-> >
-> > This is useful e.g. for the following cases
-> >
-> > - GPIO IP name order is not aligned with SOC addresses
-> >   (i.MX93 from NXP)
-> > - reproducible naming for GPIO expander chips
-> >
-> > The implementation is a mix of the one found for MMC and RTC.
-> >
-> > Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > ---
-> > imx93 specifies alias for 4 on-chip GPIO controllers. But they are
-> > ignored:
-> > $ ls -o -g /sys/bus/gpio/devices/
-> > total 0
-> > lrwxrwxrwx 1 0 Feb 15 10:03 gpiochip0 -> ../../../devices/platform/soc@0/42000000.bus/42530000.i2c/i2c-2/2-0071/gpiochip0
-> > lrwxrwxrwx 1 0 Feb 15 10:03 gpiochip1 -> ../../../devices/platform/soc@0/42000000.bus/42530000.i2c/i2c-2/2-0072/gpiochip1
-> > lrwxrwxrwx 1 0 Feb 15 10:03 gpiochip2 -> ../../../devices/platform/soc@0/43810080.gpio/gpiochip2
-> > lrwxrwxrwx 1 0 Feb 15 10:03 gpiochip3 -> ../../../devices/platform/soc@0/43820080.gpio/gpiochip3
-> > lrwxrwxrwx 1 0 Feb 15 10:03 gpiochip4 -> ../../../devices/platform/soc@0/43830080.gpio/gpiochip4
-> > lrwxrwxrwx 1 0 Feb 15 10:03 gpiochip5 -> ../../../devices/platform/soc@0/47400080.gpio/gpiochip5
-> > lrwxrwxrwx 1 0 Feb 15 10:03 gpiochip6 -> ../../../devices/platform/soc@0/42000000.bus/42530000.i2c/i2c-2/2-0070/gpiochip6
+> yamllint warnings/errors:
+> ./Documentation/devicetree/bindings/pinctrl/mediatek,mt6795-pinctrl.yaml:103:16: [warning] wrong indentation: expected 14 but found 15 (indentation)
+> ./Documentation/devicetree/bindings/pinctrl/mediatek,mt6795-pinctrl.yaml:113:16: [warning] wrong indentation: expected 14 but found 15 (indentation)
+> 
+> dtschema/dtc warnings/errors:
+> 
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230313205921.35342-16-arinc.unal@arinc9.com
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
 
-Johan
+I do see the warning. Looks like the wrong indentation was there before 
+my patch series. I'll address that as well on this patch on v3.
+
+Will you review the rest of v2?
+
+Arınç
