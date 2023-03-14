@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B7FC7618D
-	for <linux-gpio@archiver.kernel.org>; Tue, 14 Mar 2023 18:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEADFC74A44
+	for <linux-gpio@archiver.kernel.org>; Tue, 14 Mar 2023 18:31:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230336AbjCNSbN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 14 Mar 2023 14:31:13 -0400
+        id S230234AbjCNSbQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 14 Mar 2023 14:31:16 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230346AbjCNSbK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2023 14:31:10 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2877CF744
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2023 11:30:59 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id bg16-20020a05600c3c9000b003eb34e21bdfso13863106wmb.0
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2023 11:30:59 -0700 (PDT)
+        with ESMTP id S230390AbjCNSbL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2023 14:31:11 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B71C302B9
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2023 11:31:01 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id bi20so1123729wmb.2
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2023 11:31:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1678818657;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1678818659;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kIxBA2zlxML9hOs0dvz6DfCwg7oJrI83UIUnR1uCeBs=;
-        b=EmK746apIdSh2XdjgbFudbJUw7DZowe3fkKEnVOTcm+/waCIPVsMPo5l9XVIZqhEIO
-         QFNPofrD2Wt/8/WEmFgMPOfKG46WUG6a1AgapIsGwUjKpOt/KBWtPBR4QlqpwpZbFzZg
-         915V6WTJzBBU9t6rcmlxJaWbjy1PC6Z8GY8HtgmGoxQMMRtEumaRbig0x1hYgs9KzMJm
-         zgiEOQC394GKZ+hYtmQ77I4zJ480N9DANqlT9JUtwxGU3AHw2ooJMdDhgIR79U1vQ9Lh
-         GaAb6R+5HZaGdjcacVzUNkE695LrM+TKoXodjCh3ZgioY0UgxFcux1eeH0k15P1H/DFc
-         Myeg==
+        bh=2bIVnlHmt6qvzfXTr0gBom9xZmGvzExFYpzsX6hvpJY=;
+        b=ZewGe8JODcxm8N4lkEAmiZACO9UYNA8LS27Av68xAGVjmTY0Y0qH4+L5NgVK1MKr5k
+         Lw5r98+JhKhss3uxnUSW21Va2cUq9qOyFqYISkZ45yCsQYs7ORGk+0iHQ0WVH9UOp1js
+         qw5reT72dUevLljlqfifNyaf61dLinbFPtB9XNGUNThjlwrvrND7ZPzgIyRPc9ad0VIP
+         SVAErNCyZfNP7619XkHpQn+rkp5xVaMBQwweETgPEMDHejGbmsFWcORJo8+K6t0XsZNP
+         UXeX0zw3pTyJAicF86+JPxsU+yxZJ34hEWVD28ZFDNEb7WvCfAP7myvpvPjHxGugkJAL
+         DVKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678818657;
+        d=1e100.net; s=20210112; t=1678818659;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kIxBA2zlxML9hOs0dvz6DfCwg7oJrI83UIUnR1uCeBs=;
-        b=0sDk0hOe0vaTKQvBihqtawc7Y9+zrOJB69VSnOO8AlJQPhp+8Nv9lbVwto7U+otV0M
-         ReG8kd7t3EkkTQCgcg1ntac7msixeRh683SRr5+v6Kjdcm/qieFrqQiotdxk2cwAzZfM
-         QrlrCXTSVoGlpJA2AlzDQhyL4DqWbJHXsobjnLdmPK5NouczbcnQeHZvVySOGUz0x+e+
-         QuOXqX/xqPiJHypSJkxOpJB+F2588cMh7119H0D9ue3l7b1FcQbglX+wYL25U38uXkq5
-         Kif6EINNpP9h7ZrLKeTXK+8Pfpwyf49ZbAyGEW4msXxhpYuUYePCaWQjg3mefs04aOht
-         QNzw==
-X-Gm-Message-State: AO0yUKXfBlJhJwfuGrI6tYf31jLwjn6xtWeJ6eIheONjuSa9zmTB5ndk
-        ClRRTY0Vnz5LB1bcSXDolVw3RQ==
-X-Google-Smtp-Source: AK7set84D2+qEChnMMW7hzfFJ0HZv09T5dJ/RFfHz5KNaLX2ov7ZL0fOGx3WxVO4zS+Y8j7bQGU+1w==
-X-Received: by 2002:a05:600c:4746:b0:3ed:25c4:9 with SMTP id w6-20020a05600c474600b003ed25c40009mr3150753wmo.15.1678818657622;
-        Tue, 14 Mar 2023 11:30:57 -0700 (PDT)
+        bh=2bIVnlHmt6qvzfXTr0gBom9xZmGvzExFYpzsX6hvpJY=;
+        b=NGHUvfLDRlPlahG6aRKh0+D1pXL1MKW1bqawZ+NwuDUkdtf5WenoPzHe5QEAfZx5IO
+         IC5WOWQgM6PU4mDMUEjpdgc648qaLd+OGfhZH4IdECxE8OAzQHuaoBU8q/WBke5DDwUg
+         Hyd2PLegvprsMQGnUP5gSk+tSqB1BZEBpWSAvzxY5K8ueS5eJ5HyM2JzTde1pPy48BHe
+         PV9TcS19nU0XQBbyeNLQ3o07Ejr9QtZARL9Eb5pqR8iDmpI3QlI8labIHNpSj1u+8Nk8
+         CVTGF6x3SWOeL0rg/B4BDuac0RQlukueAF5O9HH29iUHOVQ8mXUOsHPcBqZKbS7mEujN
+         WE5A==
+X-Gm-Message-State: AO0yUKXCoSyXnk6ruxe8S1jGnE8keg8pxjxt6CZ0YZAfb9LpmnGGIVwd
+        ikAReDjIfWMjQWMQxi3KvVa8XA==
+X-Google-Smtp-Source: AK7set/nKHX2wRJy6hNhNP/sgA34E70MD8dHqidIvZL0NhP/gMaiEJgIB8b7sf8ZgG8GrGzmdjOPyQ==
+X-Received: by 2002:a05:600c:a4c:b0:3e2:589:2512 with SMTP id c12-20020a05600c0a4c00b003e205892512mr14964571wmq.21.1678818659533;
+        Tue, 14 Mar 2023 11:30:59 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:fd14:bd52:b53b:d94c])
-        by smtp.gmail.com with ESMTPSA id k28-20020a05600c1c9c00b003e209b45f6bsm4083938wms.29.2023.03.14.11.30.56
+        by smtp.gmail.com with ESMTPSA id k28-20020a05600c1c9c00b003e209b45f6bsm4083938wms.29.2023.03.14.11.30.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Mar 2023 11:30:57 -0700 (PDT)
+        Tue, 14 Mar 2023 11:30:59 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -57,11 +57,10 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Lee Jones <lee@kernel.org>
-Subject: [PATCH 04/14] dt-bindings: mfd: qcom,spmi-pmic: add compatible for pmm8654au
-Date:   Tue, 14 Mar 2023 19:30:33 +0100
-Message-Id: <20230314183043.619997-5-brgl@bgdev.pl>
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 06/14] arm64: dts: qcom: sa8775p-ride: enable PMIC support
+Date:   Tue, 14 Mar 2023 19:30:35 +0100
+Message-Id: <20230314183043.619997-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230314183043.619997-1-brgl@bgdev.pl>
 References: <20230314183043.619997-1-brgl@bgdev.pl>
@@ -73,27 +72,26 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-PMM8654au is the SPMI PMIC variant used on sa8775p-ride. Add a compatible
-for it.
+Include the PMIC .dtsi file in the board's .dts to enable PMIC support
+on sa8775p-ride.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Lee Jones <lee@kernel.org>
 ---
- Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml | 1 +
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dts | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
-index 8f076bb622b1..078d47a6ac83 100644
---- a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
-+++ b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
-@@ -78,6 +78,7 @@ properties:
-           - qcom,pmk8350
-           - qcom,pmk8550
-           - qcom,pmm8155au
-+          - qcom,pmm8654au
-           - qcom,pmp8074
-           - qcom,pmr735a
-           - qcom,pmr735b
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dts b/arch/arm64/boot/dts/qcom/sa8775p-ride.dts
+index 1020dfd21da2..b7ee4cc676b5 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dts
++++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dts
+@@ -6,6 +6,7 @@
+ /dts-v1/;
+ 
+ #include "sa8775p.dtsi"
++#include "sa8775p-pmics.dtsi"
+ 
+ / {
+ 	model = "Qualcomm SA8775P Ride";
 -- 
 2.37.2
 
