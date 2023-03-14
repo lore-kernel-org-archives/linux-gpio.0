@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC7E0C7618B
-	for <linux-gpio@archiver.kernel.org>; Tue, 14 Mar 2023 18:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8901DC7618D
+	for <linux-gpio@archiver.kernel.org>; Tue, 14 Mar 2023 18:32:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231224AbjCNSb6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 14 Mar 2023 14:31:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41182 "EHLO
+        id S230522AbjCNScC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 14 Mar 2023 14:32:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbjCNSbY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2023 14:31:24 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BF6092F18
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2023 11:31:06 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id x22so5568270wmj.3
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2023 11:31:06 -0700 (PDT)
+        with ESMTP id S229715AbjCNSbf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2023 14:31:35 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B9FF900B9
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2023 11:31:08 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id o38-20020a05600c512600b003e8320d1c11so1053853wms.1
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2023 11:31:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1678818665;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1678818667;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hnfu4ltYl8F1jZ0009KdabFBU7pxUH3F+Inm6kcRMQ0=;
-        b=485hQ61jDQ8PlsUl9Jqt9Q9N0OVkEnQI8GouysBYgbKWrdeDxnarStmuSf/rUMkEQs
-         fWjESKlmJL0z64Hi7uQ6dSs2euOPhQ7hO+LxUWPYdrG649dE3V1qy+ptdNucj7Zxrg0c
-         QDxd2pOF8p6nmr9MeFVfblqc2Sg6m/GWme6nJAbINFbyH8YixMckULpRrha47zkVCGzQ
-         3BIlqK/iryIa1HVh5U+QsPfHsNrNF8EObUkmAidNiHWVXTV2DDp2TNw2n9ycFABUPnni
-         n7JLgcbpr4f02lejZFHTYKYGSlFmqOZRZ7k6Nf0dtYtZ2yvA9o0yfJsIe82J9ALjIhJI
-         doAA==
+        bh=G4AMa6Oqf4gT2LvWhoj3//Gdma5toQWQSvKa1CfmIFA=;
+        b=MfpriJTqV7XxmV1DbN+XH1LuZMZxc5ZxvVRiNNADhMQCGEp+jK96jkBJFoiQBmFGwq
+         V7+4ovPI2mAs1NkhnGwuLpI9yppJ5AIq6ZQbKiCNe5ok7nnE+xYFNjeXMvb6xnQd4XW/
+         EMmfKgKPus/wkcrySLpQgVaDeoNaOMWStIC72e3g298cugZgT8FHqS3CF76ZF4jufZ5z
+         WqVwYsO5V6OiayRQE2hVh03LmPDQCOKsEqTvHjO/SGzWcubnDoNELWWhXtygMehvR1Pe
+         7LUHwSaKFeP4Vk0cdKadCR9ufs+LEAqCYSATRckai0YwCJlFD6K/xQEEnoAGsMHbLB3p
+         7GLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678818665;
+        d=1e100.net; s=20210112; t=1678818667;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hnfu4ltYl8F1jZ0009KdabFBU7pxUH3F+Inm6kcRMQ0=;
-        b=6wBBwrxdy0F5dvQEwwYnBiFzW8I/dBsnbyBFRri+0ZGX0hA+YDh9s6mNAcwDc0vI2i
-         /ZwwpX6etrrnCvyoKhqO4UCrL/HZuD/mmdYXVIvDFIjFPrHQW9K3QpowklIVAmTiKVdJ
-         tbaEKDoNesiAGR2cjGvR0RC2+rCakio+1sgrZynDPeuOJP6RDTBPWf7/yDSuLy++JLJ4
-         c4ajE8Jx8bO/UK0UpB1/vUcimtWJ4Ne/f3cXl75vvzOiQqMbxvnhI9GlpLN41SEqT7kg
-         HbB3l1FTO3s1GVMIqWfArb5l8SrK3kqEZsw9AbaCmKjVu7rKkYosCWJY15CAEE0hBrml
-         JN1Q==
-X-Gm-Message-State: AO0yUKUKA74PVu+8/cQRhTJmVCsnG5tPUhcLzWfNjc8n4BmZYua1CRG6
-        0xmKIt2W41cLtsttoGWaZwdGymhp23kUDX/EFfQ=
-X-Google-Smtp-Source: AK7set8fGravp7JJ1UiwqKxbBI6VX8TRvR9oLYuhie5zHE4x/0pn5egOszK7o6QbF7c+d4HNJb9mvw==
-X-Received: by 2002:a05:600c:4509:b0:3ed:29f7:5b43 with SMTP id t9-20020a05600c450900b003ed29f75b43mr4796338wmo.27.1678818665204;
-        Tue, 14 Mar 2023 11:31:05 -0700 (PDT)
+        bh=G4AMa6Oqf4gT2LvWhoj3//Gdma5toQWQSvKa1CfmIFA=;
+        b=lKmbdvfo1NMsZZ66ijfoZmnFTMjrfPajjVprQSHW3c8xsPIEx5juISwvgFFbEzrzdR
+         V/p18xe8XA6PhcqH/ld/WV3jxzBdnJjmb+XPw0ZMrHxsOyLhRz9Q4+decEjdsd28BBnI
+         2/KZ+v3p509UtS1tro98HRO4s+xvx0/ocRlQYEXrNie6nts3qq6f1Nf4eqjebCuUeRUr
+         KKhIaSHmEuLqjHNOjssjheVO8pRJ1xw9K06xOy6YOMuGz8C9oeyyDJ4AErmu8Q0jFNCh
+         a6IcC2wZI9AALiv9epBu4qNR/w5SQGgaYP5XYU5I57zttLiTe7z78xegLUXSCLlpa06f
+         PNZA==
+X-Gm-Message-State: AO0yUKWksyzd09h+VFnj8nDA3yO0VKV8s8E5WCWVQaKrGtW73qryATct
+        rnvfUdpDlMRhyozNWI4KnRFiuA==
+X-Google-Smtp-Source: AK7set/sLhpCzzE4tmqIVfeHOmnwAcyar8EBJ+MIbwS2ol79sXUSmUiapA9ffjldZL4BDjOBr9p2CA==
+X-Received: by 2002:a05:600c:a46:b0:3ed:276d:81a4 with SMTP id c6-20020a05600c0a4600b003ed276d81a4mr6734519wmq.32.1678818666912;
+        Tue, 14 Mar 2023 11:31:06 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:fd14:bd52:b53b:d94c])
-        by smtp.gmail.com with ESMTPSA id k28-20020a05600c1c9c00b003e209b45f6bsm4083938wms.29.2023.03.14.11.31.04
+        by smtp.gmail.com with ESMTPSA id k28-20020a05600c1c9c00b003e209b45f6bsm4083938wms.29.2023.03.14.11.31.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Mar 2023 11:31:04 -0700 (PDT)
+        Tue, 14 Mar 2023 11:31:06 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -57,11 +57,10 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 12/14] dt-bindings: pinctrl: qcom,pmic-gpio: add compatible for pmm8654au-gpio
-Date:   Tue, 14 Mar 2023 19:30:41 +0100
-Message-Id: <20230314183043.619997-13-brgl@bgdev.pl>
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 14/14] arm64: dts: qcom: sa8775p: add PMIC GPIO controller nodes
+Date:   Tue, 14 Mar 2023 19:30:43 +0100
+Message-Id: <20230314183043.619997-15-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230314183043.619997-1-brgl@bgdev.pl>
 References: <20230314183043.619997-1-brgl@bgdev.pl>
@@ -73,35 +72,52 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add a new compatible for the GPIO controller on the pm8654au PMIC. It
-has 12 pins with no holes.
+Add GPIO controller nodes to PMICs that have the GPIO hooked up on
+sa8775p-ride.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
-index db505fdeac86..512378a2d4fd 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
-@@ -58,6 +58,7 @@ properties:
-           - qcom,pmk8350-gpio
-           - qcom,pmk8550-gpio
-           - qcom,pmm8155au-gpio
-+          - qcom,pmm8654au-gpio
-           - qcom,pmp8074-gpio
-           - qcom,pmr735a-gpio
-           - qcom,pmr735b-gpio
-@@ -439,6 +440,7 @@ $defs:
-                  - gpio1-gpio4 for pmk8350
-                  - gpio1-gpio6 for pmk8550
-                  - gpio1-gpio10 for pmm8155au
-+                 - gpio1-gpio12 for pmm8654au
-                  - gpio1-gpio12 for pmp8074 (holes on gpio1 and gpio12)
-                  - gpio1-gpio4 for pmr735a
-                  - gpio1-gpio4 for pmr735b
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
+index 437cfa8aee2f..9386a113f1f8 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
+@@ -77,6 +77,16 @@ pmk8775_0_pon_resin: resin {
+ 				status = "disabled";
+ 			};
+ 		};
++
++		pm8775_0_gpios: gpio@8800 {
++			compatible = "qcom,pmm8654au-gpio", "qcom,spmi-gpio";
++			reg = <0x8800>;
++			gpio-controller;
++			gpio-ranges = <&pm8775_0_gpios 0 0 12>;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
+ 	};
+ 
+ 	pmk8775_1: pmic@2 {
+@@ -98,6 +108,16 @@ pmk8775_2: pmic@4 {
+ 		reg = <0x4 SPMI_USID>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++
++		pm8775_2_gpios: gpio@8800 {
++			compatible = "qcom,pmm8654au-gpio", "qcom,spmi-gpio";
++			reg = <0x8800>;
++			gpio-controller;
++			gpio-ranges = <&pm8775_2_gpios 0 0 12>;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
+ 	};
+ 
+ 	pmk8775_3: pmic@6 {
 -- 
 2.37.2
 
