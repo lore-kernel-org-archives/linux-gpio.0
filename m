@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B13C6FD1D
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Mar 2023 11:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8914C76195
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Mar 2023 11:09:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231529AbjCOLJc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Mar 2023 07:09:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44678 "EHLO
+        id S232042AbjCOLJf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Mar 2023 07:09:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231452AbjCOLJI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2023 07:09:08 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E785280E01;
-        Wed, 15 Mar 2023 04:07:13 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id h12-20020a17090aea8c00b0023d1311fab3so1538005pjz.1;
-        Wed, 15 Mar 2023 04:07:13 -0700 (PDT)
+        with ESMTP id S231944AbjCOLJK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2023 07:09:10 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C60C8A381;
+        Wed, 15 Mar 2023 04:07:16 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id h12so2555738pfh.5;
+        Wed, 15 Mar 2023 04:07:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678878427;
+        d=gmail.com; s=20210112; t=1678878435;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=erfjIHSmGXfoAF8ObS8yp8f/sPlytQRqicin+mQofyE=;
-        b=hdXigU3R6KAcjNj0bYviTN6QNoX9fU+TVX2vOj3PLR2GJBVAIuFCuCTVwx2oA4QiuO
-         Mm38P96tRgZbxkx4D6J++L4g4Ejy5NuHk6HMrHEgBWfRAThZwPuZnLSfd8tJWRuIIKZZ
-         BZjcMp1TIpLlT6DY0XChSrVO4FfxSJMbjI61qagzM7gGcwP81mHDAT5qWPfoHOcvl2E6
-         k0IYg9scNojB05W8sQy7PRlBenZ5Q+x70D79BTzoNfEg+OjjJymk5CXBYqLk8PEwz9O1
-         hQd/Gil2ynOyaYo+K3V887aS4PWZyd+YnCkKhKlcunJy7BIV8qB+iY+rUx4rOLlFEO7I
-         +e1g==
+        bh=ENZGfn0N5sbbl8jujN5yatFHQa0wMdAEr3milXh8ga4=;
+        b=QwaQwQTpf1tFpCrehpL5Tyxx2PvivtwFRGQ+2g63q9DRPT0iJpuIEW8aL2Xm62Y9ys
+         3mDgW4bOoMoydaV8ves1yBEXZQC9O6S3QxDvd472spfwRsW9Os65vbWnEAg3Y7lgiQC2
+         Skzt974XUv96M8Mn6Uc3G//MVte5u7/u1yDzF3wQ/ezurk/HDxWNVT/VPozaUnnt5juC
+         qcqBVsGjql+wlf4sMzKmllb4tRLVZg756g8e4fjG09jCCcp2/ql9FGJCAn1N4zO+7YgU
+         eMDBagzau5d0kmX3wqUKf0HkrIebPdkowPFw1P+GvI/kl+DocrmqRrWb2Ba2aKEClyj3
+         cNcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678878427;
+        d=1e100.net; s=20210112; t=1678878435;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=erfjIHSmGXfoAF8ObS8yp8f/sPlytQRqicin+mQofyE=;
-        b=uDaVjTn9tnG5743ZMwoZBsaC4dT5rzvTeKs3qOOuRlOpwhBty9rd0dIPWPtdEsEMfW
-         1ZA/AeLsklO3R8QToVdrspDsCG5Xs4eZIpQfefDzbdbkq6CxC6gni+f19rs/xuCJ/t5r
-         6StUVSfyosFyUd1JWsMGeUaq0Ywu/NwkI72XYFe6vsPAX7RYCfj2oAfq2DTSAcQnBsWw
-         ykwChIoDlrp/QYTj7GaZY38b6PwLLBmPRsJK62Vhnvm28+F9Q9wwYj/YluTEKzIzYPWL
-         wpWQXjL2GySHF12ZxS4tUXVcIvcZ3M12sJS6BJ/+F6/RbraYEbW+nxQVNSKQwP/Vu2hd
-         bJXw==
-X-Gm-Message-State: AO0yUKVFUh7GiITNiPYoSufxHUAGOy0DUtmiC/L6mST66L+78t7Y1Kpy
-        nybeV9pryyKIA3hjIbU0acyvCktKYb7b0Q==
-X-Google-Smtp-Source: AK7set/2tKoo97CmIefQTlqsJEeNZfDRiU2LnEzZhC2h2SQBe52QyQnM/yx0WYLPaEN9a+zXJ0ZYmw==
-X-Received: by 2002:a05:6a20:160f:b0:d3:a13a:4c43 with SMTP id l15-20020a056a20160f00b000d3a13a4c43mr15223302pzj.0.1678878426702;
-        Wed, 15 Mar 2023 04:07:06 -0700 (PDT)
+        bh=ENZGfn0N5sbbl8jujN5yatFHQa0wMdAEr3milXh8ga4=;
+        b=w2jJk22c98MPjnGmytlYy2u+Q0fTjbP5DtmhCsaLcRSeDHAFnPc5U+G2rMdKHBQAxM
+         0dd+gEV/x+ZHkvDqLJV1djeV/hKuLaZLXUd4PseRW+IGOu3sad19mB24PEm2I/crabaE
+         k1gmDHz1ns2F2KOfggCFD7oGCPsh0Ytmx4A3MWWPQSZm+cuyoDavCv/P4IEruOSOKblJ
+         o3E5eB+dapJA5lthUm61yFmH098cUyx4RX8ma2rt8JyAkzpzEhUu2aewA/vjlh/ghgRw
+         fmqcDz5UOSAeKQ2At4fRgNg6yszk/Rgz/xWWrobalg1YciaC4cKYxaXFVETgIqMzgOxf
+         KdFw==
+X-Gm-Message-State: AO0yUKUnd+HNTxenVwAj1j1VoIjF/91FWzmDpMjvujHsMAcoGObSl1pb
+        DJW0hwrDR1bpy2/t5+qdlzk/Lu0shji9Mg==
+X-Google-Smtp-Source: AK7set+PWLrf/DlRfDSG5f4bqHukXK6xMHNFVopCKXQWA1Mp8+HPh7WAzOCp+nPmzafpDyFr8mv3gw==
+X-Received: by 2002:a62:5285:0:b0:625:68f7:d552 with SMTP id g127-20020a625285000000b0062568f7d552mr4789285pfb.7.1678878434748;
+        Wed, 15 Mar 2023 04:07:14 -0700 (PDT)
 Received: from kelvin-ThinkPad-L14-Gen-1.. (94.130.220.35.bc.googleusercontent.com. [35.220.130.94])
-        by smtp.gmail.com with ESMTPSA id v4-20020aa78084000000b005892ea4f092sm3337489pff.95.2023.03.15.04.07.02
+        by smtp.gmail.com with ESMTPSA id v4-20020aa78084000000b005892ea4f092sm3337489pff.95.2023.03.15.04.07.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Mar 2023 04:07:06 -0700 (PDT)
+        Wed, 15 Mar 2023 04:07:14 -0700 (PDT)
 From:   Keguang Zhang <keguang.zhang@gmail.com>
 To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -57,9 +57,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Keguang Zhang <keguang.zhang@gmail.com>
-Subject: [PATCH v3 1/4] gpio: loongson1: Convert to SPDX identifier
-Date:   Wed, 15 Mar 2023 19:06:47 +0800
-Message-Id: <20230315110650.142577-2-keguang.zhang@gmail.com>
+Subject: [PATCH v3 3/4] gpio: loongson1: Add DT support
+Date:   Wed, 15 Mar 2023 19:06:49 +0800
+Message-Id: <20230315110650.142577-4-keguang.zhang@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230315110650.142577-1-keguang.zhang@gmail.com>
 References: <20230315110650.142577-1-keguang.zhang@gmail.com>
@@ -69,44 +69,66 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use SPDX-License-Identifier instead of the license text.
-
-The current author name is unofficial, change it to my real name.
+This patch adds DT support for Loongson-1 GPIO driver.
 
 Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
 ---
-V2 -> V3: Explain the reason for changing the author name in commit message
-V1 -> V2: Keep GPLv2, just convert to SPDX identifier
+V2 -> V3: None
+V1 -> V2: Let gpiolib parse ngpios property
+          Remove unnecessary alias id parsing
+          Remove superfluous initialization done by bgpio_init()
+          Add MODULE_DEVICE_TABLE()
+          Other minor fixes
 ---
- drivers/gpio/gpio-loongson1.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-loongson1.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpio-loongson1.c b/drivers/gpio/gpio-loongson1.c
-index 5d90b3bc5a25..8862c9ea0d41 100644
+index dddfc71f0e10..6ca3b969db4d 100644
 --- a/drivers/gpio/gpio-loongson1.c
 +++ b/drivers/gpio/gpio-loongson1.c
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0-only
- /*
-  * GPIO Driver for Loongson 1 SoC
-  *
-- * Copyright (C) 2015-2016 Zhang, Keguang <keguang.zhang@gmail.com>
-- *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2. This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-+ * Copyright (C) 2015-2023 Keguang Zhang <keguang.zhang@gmail.com>
-  */
+@@ -68,25 +68,38 @@ static int ls1x_gpio_probe(struct platform_device *pdev)
+ 	ls1x_gc->gc.owner = THIS_MODULE;
+ 	ls1x_gc->gc.request = ls1x_gpio_request;
+ 	ls1x_gc->gc.free = ls1x_gpio_free;
+-	ls1x_gc->gc.base = pdev->id * 32;
++	/*
++	 * Clear ngpio to let gpiolib get the correct number
++	 * by reading ngpios property
++	 */
++	ls1x_gc->gc.ngpio = 0;
  
- #include <linux/module.h>
-@@ -90,6 +87,6 @@ static struct platform_driver ls1x_gpio_driver = {
+ 	ret = devm_gpiochip_add_data(dev, &ls1x_gc->gc, ls1x_gc);
+ 	if (ret)
+ 		goto err;
  
- module_platform_driver(ls1x_gpio_driver);
+ 	platform_set_drvdata(pdev, ls1x_gc);
+-	dev_info(dev, "Loongson1 GPIO driver registered\n");
++
++	dev_info(dev, "GPIO controller registered with %d pins\n",
++		 ls1x_gc->gc.ngpio);
  
--MODULE_AUTHOR("Kelvin Cheung <keguang.zhang@gmail.com>");
-+MODULE_AUTHOR("Keguang Zhang <keguang.zhang@gmail.com>");
- MODULE_DESCRIPTION("Loongson1 GPIO driver");
- MODULE_LICENSE("GPL");
+ 	return 0;
+ err:
+-	dev_err(dev, "failed to register GPIO device\n");
++	dev_err(dev, "failed to register GPIO controller\n");
+ 	return ret;
+ }
+ 
++static const struct of_device_id ls1x_gpio_dt_ids[] = {
++	{ .compatible = "loongson,ls1x-gpio" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, ls1x_gpio_dt_ids);
++
+ static struct platform_driver ls1x_gpio_driver = {
+ 	.probe	= ls1x_gpio_probe,
+ 	.driver	= {
+ 		.name	= "ls1x-gpio",
++		.of_match_table = ls1x_gpio_dt_ids,
+ 	},
+ };
+ 
 -- 
 2.34.1
 
