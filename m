@@ -2,42 +2,42 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CB7C7618B
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Mar 2023 15:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 544B7C7618D
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Mar 2023 15:53:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232708AbjCOPx0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Mar 2023 11:53:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45974 "EHLO
+        id S232675AbjCOPx1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Mar 2023 11:53:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232721AbjCOPxR (ORCPT
+        with ESMTP id S232739AbjCOPxR (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2023 11:53:17 -0400
 Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5804E7F008;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 582B77F009;
         Wed, 15 Mar 2023 08:52:43 -0700 (PDT)
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32FFqTLd020130;
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32FFqTOI020134;
         Wed, 15 Mar 2023 10:52:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
         s=ti-com-17Q1; t=1678895549;
-        bh=XCi0sFGU/bZfIGFWcczdfBpZzs0AJQJeF/GJyUhgGhk=;
+        bh=EPaGXL7WSbD+eR9e7fHd0vVyJfW9zplQ6K25URbSFzc=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=I5d/uvPihmNbnXaAFBLMRXfzw5nr0Tbe9gCYECYyxLYciOr+pFSe17HfPpMqgQNiL
-         7wtFrDbJjatEFIXLlRX/RptrfpXju0BVVOkjJN+pidDWkgMTCYv//SD7pbD3n4VHSN
-         SC/SlzQPF3P8ddm8FjPfvbicSFGM4jGp0HnUW/sA=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32FFqTBt051769
+        b=pdWS6JTRCRT/PJ7N53qUfp6pGOlz/8K5IsU05cG6Dqdr/QxmnoZqhuC+9VHkJFXoz
+         u+bbiO91kjwM3j5mLRgtcXLMkJtPt0ODPlqQ8Jqyy+Rqjy9TEdGlxrKigqdu6mk3uq
+         homMfAM57CeiCyWOU3nQSEJrY3de9Ykszw925088=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32FFqTED051772
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
         Wed, 15 Mar 2023 10:52:29 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Wed, 15
  Mar 2023 10:52:29 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
  Frontend Transport; Wed, 15 Mar 2023 10:52:29 -0500
-Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32FFqTPc080258;
+Received: from localhost (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32FFqToR027876;
         Wed, 15 Mar 2023 10:52:29 -0500
 From:   Nishanth Menon <nm@ti.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
@@ -54,9 +54,9 @@ CC:     Sekhar Nori <nsekhar@ti.com>, <linux-gpio@vger.kernel.org>,
         Vignesh Raghavendra <vigneshr@ti.com>,
         Nishanth Menon <nm@ti.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH V2 1/3] dt-bindings: net: ti: k3-am654-cpsw-nuss: Drop pinmux header
-Date:   Wed, 15 Mar 2023 10:52:26 -0500
-Message-ID: <20230315155228.1566883-2-nm@ti.com>
+Subject: [PATCH V2 3/3] dt-bindings: pinctrl: k3: Deprecate header with register constants
+Date:   Wed, 15 Mar 2023 10:52:28 -0500
+Message-ID: <20230315155228.1566883-4-nm@ti.com>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20230315155228.1566883-1-nm@ti.com>
 References: <20230315155228.1566883-1-nm@ti.com>
@@ -68,33 +68,48 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Drop the pinmux header reference as it is not used. Examples should
-just show the node definition.
+For convenience (less code duplication), the pin controller pin
+configuration register values were defined in the bindings header.
+These are not some IDs or other abstraction layer but raw numbers used
+in the registers.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+These constants do not fit the purpose of bindings. They do not
+provide any abstraction, any hardware and driver independent ID. In
+fact, the Linux pinctrl-single driver actually do not use the bindings
+header at all.
+
+All of the constants were moved already to headers local to DTS
+(residing in DTS directory), so remove any references to the bindings
+header and add a warning that it is deprecated.
+
+Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Link: https://lore.kernel.org/linux-arm-kernel/71c7feff-4189-f12f-7353-bce41a61119d@linaro.org/
 Signed-off-by: Nishanth Menon <nm@ti.com>
 ---
-Changes since V1:
- - Minor update to the commit message to indicate the header reference
-   is not used.
+New patch in V2 series and we expect to remove this header after a kernel
+rev.
 
-V1: https://lore.kernel.org/linux-arm-kernel/20230311131325.9750-2-nm@ti.com/
+ include/dt-bindings/pinctrl/k3.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
- Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml b/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
-index 628d63e1eb1f..f456093840ed 100644
---- a/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
-+++ b/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
-@@ -232,7 +232,6 @@ additionalProperties: false
+diff --git a/include/dt-bindings/pinctrl/k3.h b/include/dt-bindings/pinctrl/k3.h
+index 6bb9df1a264d..b5aca149664e 100644
+--- a/include/dt-bindings/pinctrl/k3.h
++++ b/include/dt-bindings/pinctrl/k3.h
+@@ -8,6 +8,13 @@
+ #ifndef _DT_BINDINGS_PINCTRL_TI_K3_H
+ #define _DT_BINDINGS_PINCTRL_TI_K3_H
  
- examples:
-   - |
--    #include <dt-bindings/pinctrl/k3.h>
-     #include <dt-bindings/soc/ti,sci_pm_domain.h>
-     #include <dt-bindings/net/ti-dp83867.h>
-     #include <dt-bindings/interrupt-controller/irq.h>
++/*
++ * These bindings are deprecated, because they do not match the actual
++ * concept of bindings but rather contain pure register values.
++ * Instead include the header in the DTS source directory.
++ */
++#warning "These bindings are deprecated. Instead, use the header in the DTS source directory."
++
+ #define PULLUDEN_SHIFT		(16)
+ #define PULLTYPESEL_SHIFT	(17)
+ #define RXACTIVE_SHIFT		(18)
 -- 
 2.40.0
 
