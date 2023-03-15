@@ -2,108 +2,99 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDF8C7618D
-	for <linux-gpio@archiver.kernel.org>; Wed, 15 Mar 2023 15:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CB7C7618B
+	for <linux-gpio@archiver.kernel.org>; Wed, 15 Mar 2023 15:53:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232329AbjCOPOY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 15 Mar 2023 11:14:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45762 "EHLO
+        id S232708AbjCOPx0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 15 Mar 2023 11:53:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232069AbjCOPOW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2023 11:14:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 338D215C87;
-        Wed, 15 Mar 2023 08:14:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C298D616F0;
-        Wed, 15 Mar 2023 15:14:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45977C433D2;
-        Wed, 15 Mar 2023 15:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678893260;
-        bh=1aEGn0I/sJkreuvZWctVb3fO08m2I27PC3lgARoKKRg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jMnGB/X0RGUKUDzg8ge8mix5aU30MmvkInAhVoE2j2wLBR1q4KmZs6yEItwMngx5e
-         AaDCtgLNxZyUlnQ1u7Z4c9w1WVJnrAwtuOopB1HpAxo0rQ6sqhIwVQi3wzv2ub+FG1
-         ZqpW3e53qpf8AIuwxHfoaodF7riVBz29p7lxAQaS++I+qyKu2J8noHjJmziydMznm3
-         1NTJdgGE48WZy5Jh7iSg19NC8wHi4IVhJqqavdwMSGfa0CWmWfBtxq0Gu+UUg2z7tl
-         AF+QZWWSeR4lEhitiixzr4E/b3BFzIhXuZikqixrxeYCDIFIOQQ7baVx4BwbpwhCn1
-         cRNN1bdb9gA2g==
-Date:   Wed, 15 Mar 2023 15:14:14 +0000
-From:   Lee Jones <lee@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Tony Lindgren <tony@atomide.com>,
-        Felipe Balbi <balbi@kernel.org>, linux-omap@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2] leds: Mark GPIO LED trigger broken
-Message-ID: <20230315151414.GZ9667@google.com>
-References: <20230314210059.419159-1-linus.walleij@linaro.org>
+        with ESMTP id S232721AbjCOPxR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2023 11:53:17 -0400
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5804E7F008;
+        Wed, 15 Mar 2023 08:52:43 -0700 (PDT)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32FFqTLd020130;
+        Wed, 15 Mar 2023 10:52:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1678895549;
+        bh=XCi0sFGU/bZfIGFWcczdfBpZzs0AJQJeF/GJyUhgGhk=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=I5d/uvPihmNbnXaAFBLMRXfzw5nr0Tbe9gCYECYyxLYciOr+pFSe17HfPpMqgQNiL
+         7wtFrDbJjatEFIXLlRX/RptrfpXju0BVVOkjJN+pidDWkgMTCYv//SD7pbD3n4VHSN
+         SC/SlzQPF3P8ddm8FjPfvbicSFGM4jGp0HnUW/sA=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32FFqTBt051769
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 15 Mar 2023 10:52:29 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Wed, 15
+ Mar 2023 10:52:29 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Wed, 15 Mar 2023 10:52:29 -0500
+Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32FFqTPc080258;
+        Wed, 15 Mar 2023 10:52:29 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     Sekhar Nori <nsekhar@ti.com>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>, Tero Kristo <kristo@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Nishanth Menon <nm@ti.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH V2 1/3] dt-bindings: net: ti: k3-am654-cpsw-nuss: Drop pinmux header
+Date:   Wed, 15 Mar 2023 10:52:26 -0500
+Message-ID: <20230315155228.1566883-2-nm@ti.com>
+X-Mailer: git-send-email 2.40.0
+In-Reply-To: <20230315155228.1566883-1-nm@ti.com>
+References: <20230315155228.1566883-1-nm@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230314210059.419159-1-linus.walleij@linaro.org>
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 14 Mar 2023, Linus Walleij wrote:
+Drop the pinmux header reference as it is not used. Examples should
+just show the node definition.
 
-> The GPIO LED trigger exposes a userspace ABI where a user
-> can echo a GPIO number from the global GPIO numberspace into
-> a file that will trigger a certain LED when active.
->
-> This is problematic because the global GPIO numberspace is
-> inherently instable. The trigger came about at a time when
-> systems had one GPIO controller that defined hard-wired
-> GPIOs numbered 0..N and this number space was stable.
->
-> We have since moved to dynamic allocation of GPIO numbers
-> and there is no real guarantee that a GPIO number will stay
-> consistent even across a reboot: consider a USB attached
-> GPIO controller for example. Or two. Or the effect of
-> probe order after adding -EPROBE_DEFER to the kernel.
->
-> The trigger was added to support keypad LEDs on the Nokia
-> n810 from the GPIO event when a user slides up/down the
-> keypad. This is arch/arm/boot/dts/omap2420-n810.dts.
-> A userspace script is needed to activate the trigger.
-> This will be broken unless the script was updated recently
-> since the OMAP GPIO controller now uses dynamic GPIO
-> number allocations.
->
-> I want to know that this trigger has active users that
-> cannot live without it if we are to continue to support it.
->
-> Option if this is really needed: I can develop a new trigger
-> that can associate GPIOs with LEDs as triggers using device
-> tree, which should also remove the use of userspace custom
-> scripts to achieve this and be much more trustworthy, if
-> someone with the Nokia n810 or a device with a similar need
-> is willing to test it.
->
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Felipe Balbi <balbi@kernel.org>
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
->
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Be less intrusive and just mark the feature broken
->   for now.
-> ---
->  drivers/leds/trigger/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Nishanth Menon <nm@ti.com>
+---
+Changes since V1:
+ - Minor update to the commit message to indicate the header reference
+   is not used.
 
-Added Pavel's Suggested-by:
+V1: https://lore.kernel.org/linux-arm-kernel/20230311131325.9750-2-nm@ti.com/
 
-Applied, thanks
+ Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml | 1 -
+ 1 file changed, 1 deletion(-)
 
---
-Lee Jones [李琼斯]
+diff --git a/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml b/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
+index 628d63e1eb1f..f456093840ed 100644
+--- a/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
++++ b/Documentation/devicetree/bindings/net/ti,k3-am654-cpsw-nuss.yaml
+@@ -232,7 +232,6 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/pinctrl/k3.h>
+     #include <dt-bindings/soc/ti,sci_pm_domain.h>
+     #include <dt-bindings/net/ti-dp83867.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+-- 
+2.40.0
+
