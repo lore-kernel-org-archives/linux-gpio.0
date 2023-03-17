@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B0DC7618B
-	for <linux-gpio@archiver.kernel.org>; Fri, 17 Mar 2023 21:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E10C7618B
+	for <linux-gpio@archiver.kernel.org>; Fri, 17 Mar 2023 21:32:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231178AbjCQVbl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 17 Mar 2023 17:31:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42796 "EHLO
+        id S230383AbjCQVcA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 17 Mar 2023 17:32:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230462AbjCQVbU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Mar 2023 17:31:20 -0400
+        with ESMTP id S230385AbjCQVbf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Mar 2023 17:31:35 -0400
 Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EC432F066;
-        Fri, 17 Mar 2023 14:30:54 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id y4so25506177edo.2;
-        Fri, 17 Mar 2023 14:30:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC5FA2F793;
+        Fri, 17 Mar 2023 14:31:00 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id cy23so25349146edb.12;
+        Fri, 17 Mar 2023 14:31:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679088651;
+        d=gmail.com; s=20210112; t=1679088657;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b9p6wOBW5PQerq1HTDlv49KWPwyL5YVG4dkYohadujA=;
-        b=Y1q8QX8fRYbHlhtBrofBLj8DHlx58qpzQNb2sU660jMYBN0Cvcu2wiBXRKD5v14jDQ
-         MoUm3JyBSMR2hueHrlm5SE1/rdc0uv0lGM/vKflFx7Ur7VpNmepcnOoaZV9aEZifZzn3
-         VwZAU+zKUBLPUsJplSTaT/hJRbDwRRrXvO6YHcKsHb6UxcczqDtWb6dY1DPkuVq93dHX
-         EotKsaotbGWLuGzxPKFwmJGWlL9E8EAQpfGLWEpfpXXdyDk2xBuMY3J3SviRfoZj9VqD
-         AqVyCWZ8fg0AblH035+Jiin60j4ZUtLPz85nHU1L1oWQ30kS6CoZsVNftsXd3y7nCfOU
-         HrpQ==
+        bh=277v3QDHxGQ1e2vDSHNJ1RgrCQUtqjYsBl0P+spQaKY=;
+        b=AKZeqzQtnCUfHf+sC2z6FujqATaMDElVe1Kb7asiqi2gApeooDYo+dvNc18Yi1rnaC
+         1vzmZ//1f4NHby7q8Imaq7/tO3LMrIp45cKpL2wo466wrDA7wX6rQiPdWNgztj+59QwC
+         OgwCOtJfLbmTScN4eySQ0Uu+fGls2BB6afCCIYzyZeqaP1BwFGCe+IVy2NSdZCJnYDwv
+         /6Q22L8kwHDYAGEj8fwePcOXZsQqI3Es/o7xX2TB7Y+W+0hgsap8voTvZt4F6vDxNpzO
+         iV5XgWUyGF6rs4pf45z5M5Eqfa5PTm+DzXL8alzLyJsJ5pOxdfcVGWvSqa1RfmsgJCg/
+         PyQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679088651;
+        d=1e100.net; s=20210112; t=1679088657;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b9p6wOBW5PQerq1HTDlv49KWPwyL5YVG4dkYohadujA=;
-        b=7BChCISIDIJ5dN9eXe4JLbkrjGo5fpCQ8ZoJr4Je2OrFB40sFxLNHDJaVnd5t0x+DM
-         Tk1ZUcTSrHXcBUhMrdQNw73rUM5VmfWE4L17prbeU6xOS2knQG1iFeM4FoGUCcQwYPDy
-         y4ygfYEBB2ZM2k9S8/ue56MevFwj+pyw5xEOewnSY/1Mc8owLhQmf7HcD2D8abJdatZa
-         rNbqOCZ2cHQfMCKYUrxaSnEKzLvJimUOElf33r0JPuitLYmbmqsWd+I6lpKBCPfrJUon
-         r84+WoTUzZkUkKBb560pPFflrTww6VZrX27pNMVO/9G9OKUSY4raAbCNocOm5b1fuPZ/
-         BUog==
-X-Gm-Message-State: AO0yUKVJuIKYpKK++YtR6NETAuuTrCat+fJKIyXbLh0lgPbb8sKHsjPT
-        o+FM+8AAtpPTvVQM+oAbaDY=
-X-Google-Smtp-Source: AK7set+IGDu520sNWxrl5Nt2zELXj95368h87QzdpUDuEjvmJBAAH0mYRZTkmUFEZDIUfOSMgwKOkg==
-X-Received: by 2002:a17:907:7f87:b0:925:6bcb:4796 with SMTP id qk7-20020a1709077f8700b009256bcb4796mr951351ejc.38.1679088651611;
-        Fri, 17 Mar 2023 14:30:51 -0700 (PDT)
+        bh=277v3QDHxGQ1e2vDSHNJ1RgrCQUtqjYsBl0P+spQaKY=;
+        b=qbJ4sle2ZCO3qSq2fCRX9gkmFhuEDiTJ2z2SAqmgp4EGPPjAPNpC3eBMg+vhcJWVd6
+         ylhAA102hMHdpBbPT02+8roy8WMydURmZYEcw+YVmD+ev8h7kWzGt5FxTRXcP1rdmWWQ
+         RGdujb3V0PbHqp3QIA2XSZfi/ffGgVVijEwZAtJ9/9lRRBdZCnsIFh6iUj+us18G9M62
+         pXAOL7+Qdujf+FuGTSI0QpqrR8CJUCY0LfX68JMRSKqQcQ9IMRHU4L4iEZcBOUZwcAd6
+         8nzuM57CayB2+DzryuxLR7rkN8SpWVcygnvdAUbil52CrUN76MvjULS1fHSyTXXmDZa1
+         iZ3A==
+X-Gm-Message-State: AO0yUKXDIPoYpRrum6ioYnnK63IB3BfWdcqdnybhJ6rd7FMJcOjg0YZD
+        tw39M0niCs5Z0ZEt3nZ82WU=
+X-Google-Smtp-Source: AK7set8J5Y0Ip/HTJOArW+lQprOCLQawHAUMxX8XoeiqqznMShgkzJGiK4AMIN4ygknSUFodhayigg==
+X-Received: by 2002:aa7:d6c8:0:b0:4fa:785d:121 with SMTP id x8-20020aa7d6c8000000b004fa785d0121mr4391276edr.16.1679088657090;
+        Fri, 17 Mar 2023 14:30:57 -0700 (PDT)
 Received: from arinc9-PC.lan ([149.91.1.15])
-        by smtp.gmail.com with ESMTPSA id v19-20020a17090651d300b0092b86d41dbasm1404683ejk.114.2023.03.17.14.30.49
+        by smtp.gmail.com with ESMTPSA id v19-20020a17090651d300b0092b86d41dbasm1404683ejk.114.2023.03.17.14.30.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Mar 2023 14:30:51 -0700 (PDT)
+        Fri, 17 Mar 2023 14:30:56 -0700 (PDT)
 From:   arinc9.unal@gmail.com
 X-Google-Original-From: arinc.unal@arinc9.com
 To:     Linus Walleij <linus.walleij@linaro.org>,
@@ -75,9 +75,9 @@ Cc:     =?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
         linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org
-Subject: [PATCH v3 14/21] dt-bindings: pinctrl: mediatek: fix naming inconsistency
-Date:   Sat, 18 Mar 2023 00:30:04 +0300
-Message-Id: <20230317213011.13656-15-arinc.unal@arinc9.com>
+Subject: [PATCH v3 16/21] dt-bindings: pinctrl: mediatek: fix pinmux header location
+Date:   Sat, 18 Mar 2023 00:30:06 +0300
+Message-Id: <20230317213011.13656-17-arinc.unal@arinc9.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230317213011.13656-1-arinc.unal@arinc9.com>
 References: <20230317213011.13656-1-arinc.unal@arinc9.com>
@@ -90,204 +90,57 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Arınç ÜNAL <arinc.unal@arinc9.com>
 
-Some schemas include "MediaTek", some "Mediatek". Rename all to "MediaTek"
-to address the naming inconsistency.
+Fix the location of the pinmux header files mentioned on the schemas.
 
 Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml  | 4 ++--
+ .../devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml  | 2 +-
  .../devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml  | 2 +-
- .../devicetree/bindings/pinctrl/mediatek,mt6795-pinctrl.yaml  | 4 ++--
- .../devicetree/bindings/pinctrl/mediatek,mt7622-pinctrl.yaml  | 2 +-
- .../devicetree/bindings/pinctrl/mediatek,mt7981-pinctrl.yaml  | 2 +-
- .../devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml  | 2 +-
- .../devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.yaml  | 2 +-
- .../devicetree/bindings/pinctrl/mediatek,mt8186-pinctrl.yaml  | 4 ++--
- .../devicetree/bindings/pinctrl/mediatek,mt8192-pinctrl.yaml  | 4 ++--
- .../devicetree/bindings/pinctrl/mediatek,mt8195-pinctrl.yaml  | 4 ++--
- .../devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml  | 2 +-
- 11 files changed, 16 insertions(+), 16 deletions(-)
+ .../devicetree/bindings/pinctrl/mediatek,mt8188-pinctrl.yaml  | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-index a55c8e4ff26e..77b1b52f5799 100644
+index 5e80621800a9..3b3d59140073 100644
 --- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
 +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-@@ -4,13 +4,13 @@
- $id: http://devicetree.org/schemas/pinctrl/mediatek,mt65xx-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+@@ -90,7 +90,7 @@ patternProperties:
+             description:
+               Integer array, represents gpio pin number and mux setting.
+               Supported pin number and mux varies for different SoCs, and are
+-              defined as macros in <soc>-pinfunc.h directly.
++              defined as macros in dt-bindings/pinctrl/<soc>-pinfunc.h directly.
  
--title: Mediatek MT65xx Pin Controller
-+title: MediaTek MT65xx Pin Controller
+           bias-disable: true
  
- maintainers:
-   - Sean Wang <sean.wang@kernel.org>
- 
- description: |+
--  The Mediatek's Pin controller is used to control SoC pins.
-+  The MediaTek's MT65xx Pin controller is used to control SoC pins.
- 
- properties:
-   compatible:
 diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-index a2141eb0854e..c2fea29fa02f 100644
+index 1d038f6f8971..e5e7143674b5 100644
 --- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
 +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/pinctrl/mediatek,mt6779-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+@@ -131,7 +131,7 @@ patternProperties:
+             description:
+               Integer array, represents gpio pin number and mux setting.
+               Supported pin number and mux varies for different SoCs, and are
+-              defined as macros in boot/dts/<soc>-pinfunc.h directly.
++              defined as macros in dt-bindings/pinctrl/<soc>-pinfunc.h directly.
  
--title: Mediatek MT6779 Pin Controller
-+title: MediaTek MT6779 Pin Controller
+           bias-disable: true
  
- maintainers:
-   - Andy Teng <andy.teng@mediatek.com>
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6795-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6795-pinctrl.yaml
-index c5131f053b61..a78df32e6c39 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6795-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6795-pinctrl.yaml
-@@ -4,14 +4,14 @@
- $id: http://devicetree.org/schemas/pinctrl/mediatek,mt6795-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8188-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8188-pinctrl.yaml
+index 51b3d1247614..028146fb173f 100644
+--- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8188-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8188-pinctrl.yaml
+@@ -88,8 +88,8 @@ patternProperties:
+             description:
+               Integer array, represents gpio pin number and mux setting.
+               Supported pin number and mux varies for different SoCs, and are
+-              defined as macros in dt-bindings/pinctrl/mediatek,<soc>-pinfunc.h
+-              directly.
++              defined as macros in dt-bindings/pinctrl/mediatek,mt8188-pinfunc.h
++              directly, for this SoC.
  
--title: Mediatek MT6795 Pin Controller
-+title: MediaTek MT6795 Pin Controller
- 
- maintainers:
-   - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-   - Sean Wang <sean.wang@kernel.org>
- 
- description: |
--  The Mediatek's Pin controller is used to control SoC pins.
-+  The MediaTek's MT6795 Pin controller is used to control SoC pins.
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7622-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7622-pinctrl.yaml
-index ac93eb8f01a6..3531b63ca4bf 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7622-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7622-pinctrl.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/pinctrl/mediatek,mt7622-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Mediatek MT7622 Pin Controller
-+title: MediaTek MT7622 Pin Controller
- 
- maintainers:
-   - Sean Wang <sean.wang@kernel.org>
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7981-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7981-pinctrl.yaml
-index 74c66fbcb2ae..c3373290a8a1 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7981-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7981-pinctrl.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/pinctrl/mediatek,mt7981-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Mediatek MT7981 Pin Controller
-+title: MediaTek MT7981 Pin Controller
- 
- maintainers:
-   - Daniel Golle <daniel@makrotopia.org>
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
-index 216b356cd519..71033831d03d 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7986-pinctrl.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/pinctrl/mediatek,mt7986-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Mediatek MT7986 Pin Controller
-+title: MediaTek MT7986 Pin Controller
- 
- maintainers:
-   - Sean Wang <sean.wang@kernel.org>
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.yaml
-index c30cd0d010dd..3e34b03e11fc 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Mediatek MT8183 Pin Controller
-+title: MediaTek MT8183 Pin Controller
- 
- maintainers:
-   - Sean Wang <sean.wang@kernel.org>
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8186-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8186-pinctrl.yaml
-index 32d64416eb16..a0519acc92fe 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8186-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8186-pinctrl.yaml
-@@ -4,13 +4,13 @@
- $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8186-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Mediatek MT8186 Pin Controller
-+title: MediaTek MT8186 Pin Controller
- 
- maintainers:
-   - Sean Wang <sean.wang@mediatek.com>
- 
- description: |
--  The Mediatek's Pin controller is used to control SoC pins.
-+  The MediaTek's MT8186 Pin controller is used to control SoC pins.
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8192-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8192-pinctrl.yaml
-index e764cb0f8c1a..3c3dd142a989 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8192-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8192-pinctrl.yaml
-@@ -4,13 +4,13 @@
- $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8192-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Mediatek MT8192 Pin Controller
-+title: MediaTek MT8192 Pin Controller
- 
- maintainers:
-   - Sean Wang <sean.wang@mediatek.com>
- 
- description: |
--  The Mediatek's Pin controller is used to control SoC pins.
-+  The MediaTek's MT8192 Pin controller is used to control SoC pins.
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8195-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8195-pinctrl.yaml
-index 7b3dfc14eedc..d4d5357cdd1d 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8195-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8195-pinctrl.yaml
-@@ -4,13 +4,13 @@
- $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8195-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Mediatek MT8195 Pin Controller
-+title: MediaTek MT8195 Pin Controller
- 
- maintainers:
-   - Sean Wang <sean.wang@mediatek.com>
- 
- description: |
--  The Mediatek's Pin controller is used to control SoC pins.
-+  The MediaTek's MT8195 Pin controller is used to control SoC pins.
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml
-index 4b96884a1afc..42964dfa9fdb 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8365-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Mediatek MT8365 Pin Controller
-+title: MediaTek MT8365 Pin Controller
- 
- maintainers:
-   - Zhiyong Tao <zhiyong.tao@mediatek.com>
+           drive-strength:
+             enum: [2, 4, 6, 8, 10, 12, 14, 16]
 -- 
 2.37.2
 
