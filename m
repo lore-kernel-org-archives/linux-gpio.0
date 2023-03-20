@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E8EC6FD1D
-	for <linux-gpio@archiver.kernel.org>; Mon, 20 Mar 2023 15:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 475A5C7618A
+	for <linux-gpio@archiver.kernel.org>; Mon, 20 Mar 2023 15:58:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232307AbjCTP5y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 20 Mar 2023 11:57:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41576 "EHLO
+        id S231164AbjCTP55 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 20 Mar 2023 11:57:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232083AbjCTP53 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Mar 2023 11:57:29 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE0813D081
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Mar 2023 08:48:53 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id h17so10806060wrt.8
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Mar 2023 08:48:53 -0700 (PDT)
+        with ESMTP id S231398AbjCTP5a (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Mar 2023 11:57:30 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C25F13DD6
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Mar 2023 08:48:59 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id j2so10808536wrh.9
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Mar 2023 08:48:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1679327332;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1679327333;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wQBrWOWMRyJ3wjDq0yJMqRO2YdabzJXcF1JUT5g0hCM=;
-        b=oWcV8JzzdxXip4NBl0sEP1Becezov8gw6ttzDvqXSH6tTN70W+tSfKmnWq2C/Ne8of
-         FJzS3UBntdhrl/ZyM2y6+tL2Kyp37kKMFoD0/kkf/ntd4ndn9eVz1fS89r3Jnk1A9SOG
-         tzuOuJp7xpPC3lNN9WK8bnS/d744gu+GxLyOMKLSzPvqOZnfKFo5H7iPsdcmCZdpJhfu
-         uyXY+1Cq9tsJTdphfRf2Nz18zxPBVY1WOcjLQk6Pe6q2Y64wKgHP9Kre+KpcaFWRHM8l
-         biiF0MArvAuc6AzhZlulI6puI1KG4J7FYdf9hC0kqn3lmoNkOwj5XKlhYfgfs0bpsssR
-         xYTA==
+        bh=TFagH7Wy467yArlN8PfToUzWlF73GJmp8tPyB6uSnJQ=;
+        b=vnmRwAYvwZyssqyU9wLZpzq8nIWxTaGZXQlRnxm1fXwsQ593+tpR2tkU5vE+7zlbAi
+         sGVK89/px4tfIjb4mW5gn7a8lG1okwSze+/7lk2aiCQHFlsNLiJfKacOCf7MajHNFg7Q
+         y0+j2bA79u8J++dxDeOTkWVqhzKZgZ56OUu+oLm2PHYxPHEh/YtbW6/dexC3w5NbdxZR
+         NF14xScb1aSpHH7lf8/bd4OZ0+ln98QhkaT/XYx99aw2YHw1n0mBS/q5N0xi1qECW5JQ
+         btClEg8KgYN4BunpWAvboGjvLVvN2fksb7DF6OssZ0h2ayAmnPJ+97lnhxnwkjNUsq7c
+         4WRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679327332;
+        d=1e100.net; s=20210112; t=1679327333;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wQBrWOWMRyJ3wjDq0yJMqRO2YdabzJXcF1JUT5g0hCM=;
-        b=ZSMoxJ4T56Cma1EpwrLCIpvuIDVGDrq271s5RvPW0u+OhJA3o10jXvfFP71WsctN4X
-         5pT/BerBHhzvhFuhdDzYu/BWTKwaKLMpemKq2F5NyNfdbPHckpOGHk0kf0SojO3jJ7GI
-         OjHd0Z2QZpPki2aNhDBBMn1JwEDQIqCZUc7FjmfsQC2eSc6+HiQMATducK4XQ3YoTFd/
-         HKa/zIiV1RgHTf1y/Ffc4+F2idtg3pvvAg4FRXQ53aebjKAqr9Dxy52/ZihPmhewYQms
-         spr13gIwxQBBs06+dCf46RUCB2gDW7fYghswevdHtjEDK+oX3MW1UhJ+qLtl5sD/vi1r
-         laLg==
-X-Gm-Message-State: AO0yUKVee+nmOk0VlS6OP2XLDf5izOgIJDY7k7gnA7SgQxBqAXW2WH6P
-        WXgf7wgwgVwc2gldwbiB+4fJLg==
-X-Google-Smtp-Source: AK7set+lvmuy/Fsjw3E59GUjp5+8DqDwzar9JJBlr6msE6Roi3Nf9qP6DN//uhEZD3bUgm8Tym30lA==
-X-Received: by 2002:adf:dc51:0:b0:2cf:ea5d:f607 with SMTP id m17-20020adfdc51000000b002cfea5df607mr13953804wrj.17.1679327331794;
-        Mon, 20 Mar 2023 08:48:51 -0700 (PDT)
+        bh=TFagH7Wy467yArlN8PfToUzWlF73GJmp8tPyB6uSnJQ=;
+        b=OfVYKiVr1DhQIeUI4doLO73O41bHu7fd6E4Ho9xTMmaQLIC5bixHXNCpEdd33aYn7r
+         e14ChnmizO37DN31iy4GJnhEPvIWLsdGTuELhkyGfvHyz9wZ8btMqN4UcQ4wfINsjhqC
+         yFo55gFCp08M18Nm/B8L4CffSE+X1zFtpv0B0Q3d7pqm4o+cKYoB6Zo9P4Tya8A6A6A8
+         WAtJabMVkNdFHBs/KwxM5njxRJNPgWEfzF+rx0u7ryuh512oAMzMX9Q8XqA73kyLonuX
+         XwP9E6jYYvbgM5eRQoOOb/FFhBsNMHx32qNpKPC4LXlAqCQulzEBIYWLGE9U+Fd2Odv2
+         NtHQ==
+X-Gm-Message-State: AO0yUKWF+yOx2IPJtnXjP8COlxXF9ncnQtglAq4MhZFv0pxP35/gBCWM
+        lK415mBTCO+dttvJweyEGDPSPQ==
+X-Google-Smtp-Source: AK7set8VjWoOGZp5xF04nkSq+DWMPKhBwqP/Ha8x+7e4jjE+1/rOXUm2nzJZNtKSqaXjPHP6a1dHRw==
+X-Received: by 2002:adf:e4d2:0:b0:2c7:fc61:12d4 with SMTP id v18-20020adfe4d2000000b002c7fc6112d4mr13373767wrm.47.1679327333782;
+        Mon, 20 Mar 2023 08:48:53 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:d7d9:4f38:38b4:82b4])
-        by smtp.gmail.com with ESMTPSA id o6-20020adfeac6000000b002c71a32394dsm9202578wrn.64.2023.03.20.08.48.50
+        by smtp.gmail.com with ESMTPSA id o6-20020adfeac6000000b002c71a32394dsm9202578wrn.64.2023.03.20.08.48.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 08:48:51 -0700 (PDT)
+        Mon, 20 Mar 2023 08:48:53 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -57,10 +57,13 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 01/15] arm64: dts: qcom: sa8775p: pad reg properties to 8 digits
-Date:   Mon, 20 Mar 2023 16:48:27 +0100
-Message-Id: <20230320154841.327908-2-brgl@bgdev.pl>
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 03/15] dt-bindings: interrupt-controller: qcom-pdc: add compatible for sa8775p
+Date:   Mon, 20 Mar 2023 16:48:29 +0100
+Message-Id: <20230320154841.327908-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230320154841.327908-1-brgl@bgdev.pl>
 References: <20230320154841.327908-1-brgl@bgdev.pl>
@@ -72,72 +75,28 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-The file has inconsistent padding of the address part of soc node
-children's reg properties. Fix it.
+Add a compatible for the Power Domain Controller on SA8775p platforms.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Marc Zyngier <maz@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ .../devicetree/bindings/interrupt-controller/qcom,pdc.yaml       | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index c5b73c591e0f..5aa28a3b12ae 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -440,7 +440,7 @@ soc: soc@0 {
- 
- 		gcc: clock-controller@100000 {
- 			compatible = "qcom,sa8775p-gcc";
--			reg = <0x0 0x100000 0x0 0xc7018>;
-+			reg = <0x0 0x00100000 0x0 0xc7018>;
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
-@@ -464,7 +464,7 @@ gcc: clock-controller@100000 {
- 
- 		ipcc: mailbox@408000 {
- 			compatible = "qcom,sa8775p-ipcc", "qcom,ipcc";
--			reg = <0x0 0x408000 0x0 0x1000>;
-+			reg = <0x0 0x00408000 0x0 0x1000>;
- 			interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-@@ -473,7 +473,7 @@ ipcc: mailbox@408000 {
- 
- 		qupv3_id_1: geniqup@ac0000 {
- 			compatible = "qcom,geni-se-qup";
--			reg = <0x0 0xac0000 0x0 0x6000>;
-+			reg = <0x0 0x00ac0000 0x0 0x6000>;
- 			#address-cells = <2>;
- 			#size-cells = <2>;
- 			ranges;
-@@ -485,7 +485,7 @@ qupv3_id_1: geniqup@ac0000 {
- 
- 			uart10: serial@a8c000 {
- 				compatible = "qcom,geni-uart";
--				reg = <0x0 0xa8c000 0x0 0x4000>;
-+				reg = <0x0 0x00a8c000 0x0 0x4000>;
- 				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
- 				clock-names = "se";
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
-@@ -735,7 +735,7 @@ rpmhpd_opp_turbo_l1: opp-9 {
- 
- 		tcsr_mutex: hwlock@1f40000 {
- 			compatible = "qcom,tcsr-mutex";
--			reg = <0x0 0x1f40000 0x0 0x20000>;
-+			reg = <0x0 0x01f40000 0x0 0x20000>;
- 			#hwlock-cells = <1>;
- 		};
- 
-@@ -754,7 +754,7 @@ cpufreq_hw: cpufreq@18591000 {
- 
- 		tlmm: pinctrl@f000000 {
- 			compatible = "qcom,sa8775p-tlmm";
--			reg = <0x0 0xf000000 0x0 0x1000000>;
-+			reg = <0x0 0x0f000000 0x0 0x1000000>;
- 			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+index 94791e261c42..25c4662a0280 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+@@ -26,6 +26,7 @@ properties:
+   compatible:
+     items:
+       - enum:
++          - qcom,sa8775p-pdc
+           - qcom,sc7180-pdc
+           - qcom,sc7280-pdc
+           - qcom,sc8280xp-pdc
 -- 
 2.37.2
 
