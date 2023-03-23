@@ -2,254 +2,128 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 657E2C6FD1F
-	for <linux-gpio@archiver.kernel.org>; Thu, 23 Mar 2023 01:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76025C6FD1F
+	for <linux-gpio@archiver.kernel.org>; Thu, 23 Mar 2023 01:29:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229543AbjCWB0c (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 22 Mar 2023 21:26:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46340 "EHLO
+        id S229958AbjCWB3l (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 22 Mar 2023 21:29:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbjCWB0b (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Mar 2023 21:26:31 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CC832FCD2
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Mar 2023 18:26:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1679534789; x=1711070789;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ZkGbgWWOqmguyF/qJk0Xfw0Ahx3qSoeIjrBaGvZWR+M=;
-  b=SJnfDGe7ZT5B5k/Y9bBJ+4RwqZHNQjMKDMFfb9m9U4ZpNskFDSv+yFec
-   dScfVbmdE2YGo9YkdzEucLQ5Os6z+6pTLr89vjqtL+lHkVTxcSl1UMBGZ
-   iwgBChDex6ITLyOMauuwYQ+ZrzMKvAPY5R5CDkSM8/ayWuKsIl/N5D6ku
-   sYR0lPQDPoP3xRE41WfVig2DlKUq9Vsc0CUBQe0+6MxlWyfRWa+ow7QZp
-   2W5oD6aJB/OZwtDmt93biUxm1Ft73q1YIuXdaCdz663s8+NepYSbWUfq7
-   3yZ8+DUFVuiy9aqJ8MLiRndnB3EprM8yh2ZygSOZ0jyOOPpUodk9qIKd4
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10657"; a="319022128"
-X-IronPort-AV: E=Sophos;i="5.98,283,1673942400"; 
-   d="scan'208";a="319022128"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2023 18:26:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10657"; a="684513829"
-X-IronPort-AV: E=Sophos;i="5.98,283,1673942400"; 
-   d="scan'208";a="684513829"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 22 Mar 2023 18:26:08 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pf9iN-000DoQ-0C;
-        Thu, 23 Mar 2023 01:26:03 +0000
-Date:   Thu, 23 Mar 2023 09:25:40 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     William Breathitt Gray <william.gray@linaro.org>
-Cc:     oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [brgl:gpio/for-next 55/68] drivers/gpio/gpio-pci-idio-16.c:39:13:
- error: implicit declaration of function 'idio_16_get_direction'; did you
- mean 'idio_16_gpio_get_direction'?
-Message-ID: <202303230922.hLLAnLQ6-lkp@intel.com>
+        with ESMTP id S229499AbjCWB3l (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Mar 2023 21:29:41 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2058.outbound.protection.outlook.com [40.107.243.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD7B2D56;
+        Wed, 22 Mar 2023 18:29:40 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=A8Eu00o1g8L4SOMqGnBGgn/eBXMZhgF7Q8PXfPhMMcuv+MUcfwvlmt+aHQJkv4iAKE2xmgoJCfiUkPnEV4QnsoEqcGoKqGfqiq2YzZ3ci5UQrioFSvwZClHsPeJzd0iVkxgANcvPpbeZ7vuM01dIC4h+UWBC+5NVazOFZXVvSxecOHWjiVH1K/qI/y2LOKc1ix3poWYj/fW77+m1KOoY99r0fQHfxSEW5lRjei6ob9kHZ8RzPXHjWRiOfBqBBF4MvsEZ0tpDQk1VBkLie3B3IIyKxT1LL55+sdn6NRIAXg9NwmjnGTIebH5nF8LO3eT0+lKk4wqRusgU3ynyNiufWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kStb/h2bxxTnpUoG8mlerqt8YY7TMtzqPvYaHaQ0ccE=;
+ b=Rr2QlQqSFjmaxt0/SsDdXSL6AySWQzD8mvFSmDdaQd2zWUMxI/SobPvHKV+UkYeVfT1u9h2ChqV1YnAr+R1uODBfDzGYOJbX4Lo+IW3FcAVhmCM0iime1WJNwqafw0PjJWBcwaKqhLqNUxxBWCrmIu6cAroCcFkWlguhOz2Ck77m2OiS/knWIJ1DDsSFiWyVPu7YfIMU57zqg2o52SDu8bAmb2839Zoanb15ddiVeRUbo59cQBk7Yb7qzU5ZNXKx1bSQTG3u0N5mchrcFjXR8ejh17c/Qxu3gMf1Ji/9BD0Ri6NMU6RYp1AfexcP0caIa+foa3YjS+fWE8kDXz8jnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kStb/h2bxxTnpUoG8mlerqt8YY7TMtzqPvYaHaQ0ccE=;
+ b=mlUuHUAH1VAQmAEA0qPBB8iTehzOWYPBT+4P9CfpLuPc7HenovVZQeN04kMrNLVnV7FEzXQh8fXukQaInCmrqQ2RZr18wvBgf5CxAWrO6vUz0kyZojN6Q0TnxVwceWoG8ZCYyFcKKdhl0YFAJFXFjNIrkq2IGDIlvEVIMt43oep61Kg2SwgWQIGVFgAwLdyudwZzAD5znAPGoPGfSMhrHWH20Zq+T0ZLjH2SSv33m5ftNnfLHIXJXs4xr1qMQE0DlT9Et1+Cwl9de4VbNNQecNWZWZvrH/JY1E2k2gnGSeJyoreeBk/UXWDOUVKE/FcreogsusQtco3lha4W1ZJP9g==
+Received: from DM6PR06CA0010.namprd06.prod.outlook.com (2603:10b6:5:120::23)
+ by DM4PR12MB7743.namprd12.prod.outlook.com (2603:10b6:8:101::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Thu, 23 Mar
+ 2023 01:29:38 +0000
+Received: from DM6NAM11FT096.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:120:cafe::12) by DM6PR06CA0010.outlook.office365.com
+ (2603:10b6:5:120::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37 via Frontend
+ Transport; Thu, 23 Mar 2023 01:29:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DM6NAM11FT096.mail.protection.outlook.com (10.13.173.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6222.17 via Frontend Transport; Thu, 23 Mar 2023 01:29:38 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Wed, 22 Mar 2023
+ 18:29:32 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Wed, 22 Mar
+ 2023 18:29:32 -0700
+Received: from dipenp.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.986.5 via Frontend
+ Transport; Wed, 22 Mar 2023 18:29:32 -0700
+From:   Dipen Patel <dipenp@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linus.walleij@linaro.org>,
+        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <robh+dt@kernel.org>, <timestamp@lists.linux.dev>,
+        <krzysztof.kozlowski+dt@linaro.org>, <brgl@bgdev.pl>,
+        <corbet@lwn.net>, <gregkh@linuxfoundation.org>
+CC:     Dipen Patel <dipenp@nvidia.com>
+Subject: [PATCH V4 01/10] MAINTAINERS: Add HTE/timestamp subsystem details
+Date:   Wed, 22 Mar 2023 18:29:20 -0700
+Message-ID: <20230323012929.10815-2-dipenp@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230323012929.10815-1-dipenp@nvidia.com>
+References: <20230323012929.10815-1-dipenp@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT096:EE_|DM4PR12MB7743:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e760af3-047a-4311-ab61-08db2b3e1193
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ac06nvqAjwLcnnJxcAsVPEcuoxKriXu4+4qeYgroJyiN1nVNQDLzA4WmxnoyEic2c31nhElT7wYuzJWFpUoSY+P/17D6Oybq4IFUQdM5DUCKgmIsu7VHjzQXdbq/r9JWMvNb5aK97/9rQ7+3/YRSnFQ6iFGMGSGyeMywuR0R3XO9Kn5Tz0K5bTUh9kUGjGhiSKBw+qmIWMOgCTODsw1mil+at6uQgcozO+osMH27SiOPPGY4s1kIvShqprUmoFixAjiNyp7H/HALf1npImx1UA+RB0wF/UHXfnoAVA9sctgekl/BBIHeHcWYLivxQC6OHn0O1PDm7K0ybOdQMdBOBTbUNbpeHTsy2qv60uiV69iH2oT/wwZDqhTx8J2mnh35CVHdyVuj2EWSFXl6+Xj4PZxk7UygDPu9TraMS1diJRCeb9uWU8XInisKLkBVCUGdCS2XZSB0NdhGhhLINrxFCBfbySUbQLvCsTFYRlKKXlXMkzO+mF0IwT0t2Kv4AQuL/wIKpfYpYOkJcUn8SJrR74RRIpboBmooe8o2JkeR2zWMcnqz/yfp3R+LXP+CwotmxtF7nFjqpikxPG2ggbv+NcKem7X/Ysd+S9D3zsjeVbxLWFnywl+dAySfe24uT4HR3TCXtAvhBojC+VXrf0+GnonbUQ9fpJxRt+WLoFJhHeJpvlcKoOoy/GjTiUuchP9dGU+GkEXyV32pQ57nRBlR3hKd6wd24taMLdFcy8QWr5lM1hdUv56yoGXqIxuNvY0hvwZWx5WWj5akFqU49YDy9EGEsQqGUVpVkxoSSuttz7kIn/EgY8+J0yitDKV1iNPWheVUv8N9rc4+/e3SQFod7OxhSAP26s5Q5da1YDP3NxM=
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(376002)(396003)(346002)(136003)(451199018)(46966006)(40470700004)(36840700001)(7696005)(7416002)(41300700001)(40480700001)(6666004)(107886003)(966005)(8936002)(47076005)(5660300002)(426003)(36860700001)(4744005)(40460700003)(336012)(921005)(186003)(2906002)(82310400005)(7636003)(478600001)(356005)(2616005)(316002)(110136005)(86362001)(26005)(4326008)(1076003)(36756003)(82740400003)(70206006)(70586007)(8676002)(83996005)(2101003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2023 01:29:38.4508
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e760af3-047a-4311-ab61-08db2b3e1193
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT096.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7743
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-head:   16d6fa5a94b3873968941b701b99903abc4e5059
-commit: 473b79057bbd9756f6969e6647e2d9ecababa7af [55/68] gpio: idio-16: Remove unused legacy interface
-config: riscv-allmodconfig (https://download.01.org/0day-ci/archive/20230323/202303230922.hLLAnLQ6-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git/commit/?id=473b79057bbd9756f6969e6647e2d9ecababa7af
-        git remote add brgl https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
-        git fetch --no-tags brgl gpio/for-next
-        git checkout 473b79057bbd9756f6969e6647e2d9ecababa7af
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=riscv olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash drivers/gpio/
+Add tree, mailing list and patchwork details.
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303230922.hLLAnLQ6-lkp@intel.com/
+Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+---
+ MAINTAINERS | 3 +++
+ 1 file changed, 3 insertions(+)
 
-All errors (new ones prefixed by >>):
-
->> drivers/gpio/gpio-pci-idio-16.c:32:30: error: field 'state' has incomplete type
-      32 |         struct idio_16_state state;
-         |                              ^~~~~
-   drivers/gpio/gpio-pci-idio-16.c: In function 'idio_16_gpio_get_direction':
->> drivers/gpio/gpio-pci-idio-16.c:39:13: error: implicit declaration of function 'idio_16_get_direction'; did you mean 'idio_16_gpio_get_direction'? [-Werror=implicit-function-declaration]
-      39 |         if (idio_16_get_direction(offset))
-         |             ^~~~~~~~~~~~~~~~~~~~~
-         |             idio_16_gpio_get_direction
-   drivers/gpio/gpio-pci-idio-16.c: In function 'idio_16_gpio_get':
->> drivers/gpio/gpio-pci-idio-16.c:62:16: error: implicit declaration of function 'idio_16_get'; did you mean 'idio_16_gpio_get'? [-Werror=implicit-function-declaration]
-      62 |         return idio_16_get(idio16gpio->reg, &idio16gpio->state, offset);
-         |                ^~~~~~~~~~~
-         |                idio_16_gpio_get
-   drivers/gpio/gpio-pci-idio-16.c: In function 'idio_16_gpio_get_multiple':
->> drivers/gpio/gpio-pci-idio-16.c:70:9: error: implicit declaration of function 'idio_16_get_multiple'; did you mean 'idio_16_gpio_get_multiple'? [-Werror=implicit-function-declaration]
-      70 |         idio_16_get_multiple(idio16gpio->reg, &idio16gpio->state, mask, bits);
-         |         ^~~~~~~~~~~~~~~~~~~~
-         |         idio_16_gpio_get_multiple
-   drivers/gpio/gpio-pci-idio-16.c: In function 'idio_16_gpio_set':
->> drivers/gpio/gpio-pci-idio-16.c:79:9: error: implicit declaration of function 'idio_16_set'; did you mean 'idio_16_gpio_set'? [-Werror=implicit-function-declaration]
-      79 |         idio_16_set(idio16gpio->reg, &idio16gpio->state, offset, value);
-         |         ^~~~~~~~~~~
-         |         idio_16_gpio_set
-   drivers/gpio/gpio-pci-idio-16.c: In function 'idio_16_gpio_set_multiple':
->> drivers/gpio/gpio-pci-idio-16.c:87:9: error: implicit declaration of function 'idio_16_set_multiple'; did you mean 'idio_16_gpio_set_multiple'? [-Werror=implicit-function-declaration]
-      87 |         idio_16_set_multiple(idio16gpio->reg, &idio16gpio->state, mask, bits);
-         |         ^~~~~~~~~~~~~~~~~~~~
-         |         idio_16_gpio_set_multiple
-   drivers/gpio/gpio-pci-idio-16.c: In function 'idio_16_irq_mask':
->> drivers/gpio/gpio-pci-idio-16.c:106:45: error: invalid use of undefined type 'struct idio_16'
-     106 |                 iowrite8(0, &idio16gpio->reg->irq_ctl);
-         |                                             ^~
-   drivers/gpio/gpio-pci-idio-16.c: In function 'idio_16_irq_unmask':
-   drivers/gpio/gpio-pci-idio-16.c:129:41: error: invalid use of undefined type 'struct idio_16'
-     129 |                 ioread8(&idio16gpio->reg->irq_ctl);
-         |                                         ^~
-   drivers/gpio/gpio-pci-idio-16.c: In function 'idio_16_irq_handler':
-   drivers/gpio/gpio-pci-idio-16.c:164:46: error: invalid use of undefined type 'struct idio_16'
-     164 |         irq_status = ioread8(&idio16gpio->reg->irq_status);
-         |                                              ^~
-   drivers/gpio/gpio-pci-idio-16.c:178:37: error: invalid use of undefined type 'struct idio_16'
-     178 |         iowrite8(0, &idio16gpio->reg->in0_7);
-         |                                     ^~
-   drivers/gpio/gpio-pci-idio-16.c: In function 'idio_16_irq_init_hw':
-   drivers/gpio/gpio-pci-idio-16.c:198:37: error: invalid use of undefined type 'struct idio_16'
-     198 |         iowrite8(0, &idio16gpio->reg->irq_ctl);
-         |                                     ^~
-   drivers/gpio/gpio-pci-idio-16.c:199:37: error: invalid use of undefined type 'struct idio_16'
-     199 |         iowrite8(0, &idio16gpio->reg->in0_7);
-         |                                     ^~
-   drivers/gpio/gpio-pci-idio-16.c: In function 'idio_16_probe':
-   drivers/gpio/gpio-pci-idio-16.c:232:37: error: invalid use of undefined type 'struct idio_16'
-     232 |         iowrite8(0, &idio16gpio->reg->filter_ctl);
-         |                                     ^~
->> drivers/gpio/gpio-pci-idio-16.c:248:9: error: implicit declaration of function 'idio_16_state_init'; did you mean 'file_ra_state_init'? [-Werror=implicit-function-declaration]
-     248 |         idio_16_state_init(&idio16gpio->state);
-         |         ^~~~~~~~~~~~~~~~~~
-         |         file_ra_state_init
-   drivers/gpio/gpio-pci-idio-16.c: In function 'idio_16_gpio_get':
-   drivers/gpio/gpio-pci-idio-16.c:63:1: error: control reaches end of non-void function [-Werror=return-type]
-      63 | }
-         | ^
-   cc1: some warnings being treated as errors
-
-
-vim +39 drivers/gpio/gpio-pci-idio-16.c
-
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   19  
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   20  /**
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   21   * struct idio_16_gpio - GPIO device private data structure
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   22   * @chip:	instance of the gpio_chip
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   23   * @lock:	synchronization lock to prevent I/O race conditions
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   24   * @reg:	I/O address offset for the GPIO device registers
-e7f758fa9b7fda8 William Breathitt Gray 2022-09-18   25   * @state:	ACCES IDIO-16 device state
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   26   * @irq_mask:	I/O bits affected by interrupts
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   27   */
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   28  struct idio_16_gpio {
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   29  	struct gpio_chip chip;
-ea38ce081d15553 Julia Cartwright       2017-03-21   30  	raw_spinlock_t lock;
-e7f758fa9b7fda8 William Breathitt Gray 2022-09-18   31  	struct idio_16 __iomem *reg;
-e7f758fa9b7fda8 William Breathitt Gray 2022-09-18  @32  	struct idio_16_state state;
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   33  	unsigned long irq_mask;
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   34  };
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   35  
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   36  static int idio_16_gpio_get_direction(struct gpio_chip *chip,
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   37  	unsigned int offset)
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   38  {
-e7f758fa9b7fda8 William Breathitt Gray 2022-09-18  @39  	if (idio_16_get_direction(offset))
-e42615ec233b30d Matti Vaittinen        2019-11-06   40  		return GPIO_LINE_DIRECTION_IN;
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   41  
-e42615ec233b30d Matti Vaittinen        2019-11-06   42  	return GPIO_LINE_DIRECTION_OUT;
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   43  }
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   44  
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   45  static int idio_16_gpio_direction_input(struct gpio_chip *chip,
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   46  	unsigned int offset)
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   47  {
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   48  	return 0;
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   49  }
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   50  
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   51  static int idio_16_gpio_direction_output(struct gpio_chip *chip,
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   52  	unsigned int offset, int value)
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   53  {
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   54  	chip->set(chip, offset, value);
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   55  	return 0;
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   56  }
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   57  
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   58  static int idio_16_gpio_get(struct gpio_chip *chip, unsigned int offset)
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   59  {
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   60  	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   61  
-e7f758fa9b7fda8 William Breathitt Gray 2022-09-18  @62  	return idio_16_get(idio16gpio->reg, &idio16gpio->state, offset);
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   63  }
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   64  
-810ebfc5efca9a0 William Breathitt Gray 2018-03-22   65  static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
-810ebfc5efca9a0 William Breathitt Gray 2018-03-22   66  	unsigned long *mask, unsigned long *bits)
-810ebfc5efca9a0 William Breathitt Gray 2018-03-22   67  {
-810ebfc5efca9a0 William Breathitt Gray 2018-03-22   68  	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
-810ebfc5efca9a0 William Breathitt Gray 2018-03-22   69  
-e7f758fa9b7fda8 William Breathitt Gray 2022-09-18  @70  	idio_16_get_multiple(idio16gpio->reg, &idio16gpio->state, mask, bits);
-810ebfc5efca9a0 William Breathitt Gray 2018-03-22   71  	return 0;
-810ebfc5efca9a0 William Breathitt Gray 2018-03-22   72  }
-810ebfc5efca9a0 William Breathitt Gray 2018-03-22   73  
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   74  static void idio_16_gpio_set(struct gpio_chip *chip, unsigned int offset,
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   75  	int value)
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   76  {
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   77  	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   78  
-e7f758fa9b7fda8 William Breathitt Gray 2022-09-18  @79  	idio_16_set(idio16gpio->reg, &idio16gpio->state, offset, value);
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   80  }
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   81  
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   82  static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   83  	unsigned long *mask, unsigned long *bits)
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   84  {
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   85  	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   86  
-e7f758fa9b7fda8 William Breathitt Gray 2022-09-18  @87  	idio_16_set_multiple(idio16gpio->reg, &idio16gpio->state, mask, bits);
-2dc7c3c16daac73 William Breathitt Gray 2019-12-04   88  }
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   89  
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   90  static void idio_16_irq_ack(struct irq_data *data)
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   91  {
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   92  }
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   93  
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   94  static void idio_16_irq_mask(struct irq_data *data)
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   95  {
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   96  	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   97  	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   98  	const unsigned long mask = BIT(irqd_to_hwirq(data));
-02e74fc0401ae3f William Breathitt Gray 2017-02-01   99  	unsigned long flags;
-02e74fc0401ae3f William Breathitt Gray 2017-02-01  100  
-02e74fc0401ae3f William Breathitt Gray 2017-02-01  101  	idio16gpio->irq_mask &= ~mask;
-02e74fc0401ae3f William Breathitt Gray 2017-02-01  102  
-02e74fc0401ae3f William Breathitt Gray 2017-02-01  103  	if (!idio16gpio->irq_mask) {
-ea38ce081d15553 Julia Cartwright       2017-03-21  104  		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
-02e74fc0401ae3f William Breathitt Gray 2017-02-01  105  
-02e74fc0401ae3f William Breathitt Gray 2017-02-01 @106  		iowrite8(0, &idio16gpio->reg->irq_ctl);
-02e74fc0401ae3f William Breathitt Gray 2017-02-01  107  
-ea38ce081d15553 Julia Cartwright       2017-03-21  108  		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
-02e74fc0401ae3f William Breathitt Gray 2017-02-01  109  	}
-141d5527568e923 Linus Walleij          2023-03-09  110  
-141d5527568e923 Linus Walleij          2023-03-09  111  	gpiochip_disable_irq(chip, irqd_to_hwirq(data));
-02e74fc0401ae3f William Breathitt Gray 2017-02-01  112  }
-02e74fc0401ae3f William Breathitt Gray 2017-02-01  113  
-
-:::::: The code at line 39 was first introduced by commit
-:::::: e7f758fa9b7fda8b91f2e429b2be93ae0b88ac33 gpio: pci-idio-16: Utilize the idio-16 GPIO library
-
-:::::: TO: William Breathitt Gray <william.gray@linaro.org>
-:::::: CC: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8d5bc223f305..65b58963f0d2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9425,6 +9425,9 @@ F:	drivers/input/touchscreen/htcpen.c
+ 
+ HTE SUBSYSTEM
+ M:	Dipen Patel <dipenp@nvidia.com>
++L:	timestamp@lists.linux.dev
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pateldipen1984/linux.git
++Q:	https://patchwork.kernel.org/project/timestamp/list/
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/timestamp/
+ F:	Documentation/driver-api/hte/
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+2.17.1
+
