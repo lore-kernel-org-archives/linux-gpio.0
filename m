@@ -2,186 +2,110 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D66C76196
-	for <linux-gpio@archiver.kernel.org>; Fri, 24 Mar 2023 13:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1C8C6FD1C
+	for <linux-gpio@archiver.kernel.org>; Fri, 24 Mar 2023 14:03:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231269AbjCXNwG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 24 Mar 2023 09:52:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44824 "EHLO
+        id S231661AbjCXODz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 24 Mar 2023 10:03:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229600AbjCXNwF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Mar 2023 09:52:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 052131ACD0;
-        Fri, 24 Mar 2023 06:52:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8D1A362AEA;
-        Fri, 24 Mar 2023 13:52:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6672C433EF;
-        Fri, 24 Mar 2023 13:52:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679665923;
-        bh=VFWAIb8kkILCZjlK61SwCOvFMSQhSfMr3UVPM0P/zus=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SXopr78XpZY1/cIa89tHN8Gw5yH20HpN0aGPkqKIPiD5moPjVY7lsN+q6BQMSKv3p
-         f8leXa+g9xPRdFusTlbRkvwcpWw/l5SO59+Irknegn5INhKKP9cHpbfrZgVomd0lp5
-         EuAIGxPDoIjTGC1iZkqgxL7XJwpHbtiJeqIMDuxVenqMjVCYWMm3inZ+7t4LHHki26
-         c8JhMhXxXeoLxq4VuHThegvMz4ZhQkRmKAusm6TeUThGpO1ARrsjnad5zKQ5pYcKUv
-         ty5+R6fd1wtKGF9kiU861dN59wUDWRUrlSxuP6pRCtXAlhE+C6eN6fnyGfiYYDlr9S
-         iFQsZr8SIpq5w==
-Date:   Fri, 24 Mar 2023 06:55:12 -0700
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-gpio@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-spi@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/14] pinctrl: qcom: Support OUTPUT_ENABLE; deprecate
- INPUT_ENABLE
-Message-ID: <20230324135512.afplb6cbugwr63ej@ripper>
-References: <20230323173019.3706069-1-dianders@chromium.org>
- <20230323102605.8.Id740ae6a993f9313b58add6b10f6a92795d510d4@changeid>
+        with ESMTP id S231963AbjCXODQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Mar 2023 10:03:16 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4111B1B566
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Mar 2023 07:02:20 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pfhzT-0001aI-0K; Fri, 24 Mar 2023 15:01:59 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pfhzR-006OjW-VK; Fri, 24 Mar 2023 15:01:57 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pfhzR-007dbX-Db; Fri, 24 Mar 2023 15:01:57 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, kernel@pengutronix.de
+Subject: [PATCH 1/2] pinctrl: mcp23s08: Rename and change function that wraps regmap_update_bits()
+Date:   Fri, 24 Mar 2023 15:01:47 +0100
+Message-Id: <20230324140148.479125-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230323102605.8.Id740ae6a993f9313b58add6b10f6a92795d510d4@changeid>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2354; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=JrfoQzGUvDct0oV0HRenLavBh2moq7myR4OF0F6611g=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkHa1KPcxbavTuD23ALPFKQ4KapTjVabgNwkaB8 4BsjGtLw4GJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZB2tSgAKCRCPgPtYfRL+ TnG/B/0fkHd3uNalN04FrscGDC0IXchsDYi9YmfM2V2G6UXNX/Y6P3tJdFtyyY6ux4HbSigmLE1 Se5O/h7ugu65Z/MBFAzyqKjjEH+ijlU2Is0fsZ8DX0ID2+5zzG2pIUvRbBS/SNrgZSzqvaMctqq oxfyszAMZLOFZm4Pv9WCBn24RAjAxD+b9051mrYlhKWaZ61wTfHDdzYvMXr53JkBtlMplNK4ukQ HTTrS5bSRiRyrMsOUS0okJQIpwnFh+THydPiZeMft+t+m58vn+OYUCe51QOdY2i73gguXoc+CiG DjSHyY297NkVtcUo1ygs6hyHrbujgQRJaenxg7TEw4YN9cyF
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Mar 23, 2023 at 10:30:12AM -0700, Douglas Anderson wrote:
-> The Qualcomm pinctrl driver has been violating the documented meaning
-> of PIN_CONFIG_INPUT_ENABLE. That documentation says:
-> 
->   Note that this does not affect the pin's ability to drive output.
-> 
-> ...yet the Qualcomm driver's sole action when asked to "enable input"
-> on a pin is to disable its output.
-> 
+The semantic of mcp_set_mask() was surprising to me when I first read
+that driver. So it was unexpected that in the call
 
-Seemed like a good idea at the time...
+	mcp_set_mask(mcp, MCP_OLAT, mask, value);
 
-> The Qualcomm driver's implementation stems from the fact that
-> "output-disable" is a "new" property from 2017. It was introduced in
-> commit 425562429d4f ("pinctrl: generic: Add output-enable
-> property"). The "input-enable" handling in Qualcomm drivers is from
-> 2015 introduced in commit 407f5e392f9c ("pinctrl: qcom: handle
-> input-enable pinconf property").
-> 
-> Let's change the Qualcomm driver to move us in the right direction. As
-> part of this:
-> 1. We'll now support PIN_CONFIG_OUTPUT_ENABLE
-> 2. We'll still support using PIN_CONFIG_INPUT_ENABLE to disable a
->    pin's output (in violation of the docs) with a big comment in the
->    code. This is needed because old device trees have "input-enable"
->    in them and, in some cases, people might need the old
->    behavior. While we could programmatically change all old device
->    trees, it doesn't really hurt to keep supporting the old behavior
->    and we're _supposed_ to try to be compatible with old device trees
->    anyway.
-> 
-> It can also be noted that the PIN_CONFIG_INPUT_ENABLE handling code
-> seems to have purposefully ignored its argument. That means that old
-> boards that had _either_ "input-disable" or "input-enable" in them
-> would have had the effect of disabling a pin's output. While we could
-> change this behavior, since we're only leaving the
-> PIN_CONFIG_INPUT_ENABLE there for backward compatibility we might as
-> well be fully backward compatible.
-> 
+value was a bool. Make the function a thinner wrapper around
+regmap_update_bits() and rename it to also have a similar name.
 
-It made total sense to to spell input-disable as output-{high,low} back
-then, but we're wiser now. Thanks for fixing it.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pinctrl/pinctrl-mcp23s08.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-> NOTE: despite the fact that we'll still support
-> PIN_CONFIG_INPUT_ENABLE for _setting_ config, we take it away from
-> msm_config_group_get(). This appears to be only used for populating
-> debugfs and fixing debugfs to "output enabled" where relevant instead
-> of "input enabled" makes more sense and has more truthiness.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index 5f356edfd0fd..79a41d418482 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -144,10 +144,9 @@ static int mcp_write(struct mcp23s08 *mcp, unsigned int reg, unsigned int val)
+ 	return regmap_write(mcp->regmap, reg << mcp->reg_shift, val);
+ }
+ 
+-static int mcp_set_mask(struct mcp23s08 *mcp, unsigned int reg,
+-		       unsigned int mask, bool enabled)
++static int mcp_update_bits(struct mcp23s08 *mcp, unsigned int reg,
++			   unsigned int mask, unsigned int val)
+ {
+-	u16 val  = enabled ? 0xffff : 0x0000;
+ 	return regmap_update_bits(mcp->regmap, reg << mcp->reg_shift,
+ 				  mask, val);
+ }
+@@ -156,7 +155,7 @@ static int mcp_set_bit(struct mcp23s08 *mcp, unsigned int reg,
+ 		       unsigned int pin, bool enabled)
+ {
+ 	u16 mask = BIT(pin);
+-	return mcp_set_mask(mcp, reg, mask, enabled);
++	return mcp_update_bits(mcp, reg, mask, enabled ? mask : 0);
+ }
+ 
+ static const struct pinctrl_pin_desc mcp23x08_pins[] = {
+@@ -310,7 +309,7 @@ static int mcp23s08_get(struct gpio_chip *chip, unsigned offset)
+ 
+ static int __mcp23s08_set(struct mcp23s08 *mcp, unsigned mask, bool value)
+ {
+-	return mcp_set_mask(mcp, MCP_OLAT, mask, value);
++	return mcp_update_bits(mcp, MCP_OLAT, mask, value ? mask : 0);
+ }
+ 
+ static void mcp23s08_set(struct gpio_chip *chip, unsigned offset, int value)
+@@ -333,7 +332,7 @@ mcp23s08_direction_output(struct gpio_chip *chip, unsigned offset, int value)
+ 	mutex_lock(&mcp->lock);
+ 	status = __mcp23s08_set(mcp, mask, value);
+ 	if (status == 0) {
+-		status = mcp_set_mask(mcp, MCP_IODIR, mask, false);
++		status = mcp_update_bits(mcp, MCP_IODIR, mask, 0);
+ 	}
+ 	mutex_unlock(&mcp->lock);
+ 	return status;
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+base-commit: fe15c26ee26efa11741a7b632e9f23b01aca4cc6
+-- 
+2.39.2
 
-Regards,
-Bjorn
-
-> ---
-> 
->  drivers/pinctrl/qcom/pinctrl-msm.c | 36 +++++++++++++++++++++++++-----
->  1 file changed, 31 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index daeb79a9a602..4515f375c5e8 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -323,6 +323,7 @@ static int msm_config_reg(struct msm_pinctrl *pctrl,
->  		break;
->  	case PIN_CONFIG_OUTPUT:
->  	case PIN_CONFIG_INPUT_ENABLE:
-> +	case PIN_CONFIG_OUTPUT_ENABLE:
->  		*bit = g->oe_bit;
->  		*mask = 1;
->  		break;
-> @@ -414,11 +415,9 @@ static int msm_config_group_get(struct pinctrl_dev *pctldev,
->  		val = msm_readl_io(pctrl, g);
->  		arg = !!(val & BIT(g->in_bit));
->  		break;
-> -	case PIN_CONFIG_INPUT_ENABLE:
-> -		/* Pin is output */
-> -		if (arg)
-> +	case PIN_CONFIG_OUTPUT_ENABLE:
-> +		if (!arg)
->  			return -EINVAL;
-> -		arg = 1;
->  		break;
->  	default:
->  		return -ENOTSUPP;
-> @@ -502,9 +501,36 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
->  			arg = 1;
->  			break;
->  		case PIN_CONFIG_INPUT_ENABLE:
-> -			/* disable output */
-> +			/*
-> +			 * According to pinctrl documentation this should
-> +			 * actually be a no-op.
-> +			 *
-> +			 * The docs are explicit that "this does not affect
-> +			 * the pin's ability to drive output" but what we do
-> +			 * here is to modify the output enable bit. Thus, to
-> +			 * follow the docs we should remove that.
-> +			 *
-> +			 * The docs say that we should enable any relevant
-> +			 * input buffer, but TLMM there is no input buffer that
-> +			 * can be enabled/disabled. It's always on.
-> +			 *
-> +			 * The points above, explain why this _should_ be a
-> +			 * no-op. However, for historical reasons and to
-> +			 * support old device trees, we'll violate the docs
-> +			 * still affect the output.
-> +			 *
-> +			 * It should further be noted that this old historical
-> +			 * behavior actually overrides arg to 0. That means
-> +			 * that "input-enable" and "input-disable" in a device
-> +			 * tree would _both_ disable the output. We'll
-> +			 * continue to preserve this behavior as well since
-> +			 * we have no other use for this attribute.
-> +			 */
->  			arg = 0;
->  			break;
-> +		case PIN_CONFIG_OUTPUT_ENABLE:
-> +			arg = !!arg;
-> +			break;
->  		default:
->  			dev_err(pctrl->dev, "Unsupported config parameter: %x\n",
->  				param);
-> -- 
-> 2.40.0.348.gf938b09366-goog
-> 
