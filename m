@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA90C76195
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F21EBC7619A
 	for <linux-gpio@archiver.kernel.org>; Mon, 27 Mar 2023 12:54:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230251AbjC0MyG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 27 Mar 2023 08:54:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51268 "EHLO
+        id S232603AbjC0MyH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 27 Mar 2023 08:54:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232603AbjC0Mxg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Mar 2023 08:53:36 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D006944B0
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Mar 2023 05:53:34 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id y14so8686505wrq.4
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Mar 2023 05:53:34 -0700 (PDT)
+        with ESMTP id S232620AbjC0Mxh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Mar 2023 08:53:37 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C58C644B8
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Mar 2023 05:53:35 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id bg16-20020a05600c3c9000b003eb34e21bdfso7336307wmb.0
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Mar 2023 05:53:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1679921613;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1679921615;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mYNa0jgyigOb3tpiANMB3XSz00l/mRdfB4P8rKzPX6Y=;
-        b=QQSZ68UnwqIriBeygjmiEv57UqO3B5qJj67XKpduNTxu5dqP2GZMaQbgJcQAO/9l4Y
-         Ula4B7A8Q7CZWSROlsXe5dahzlYooQ9h0gogN1vsFzA/ueLLxWKEZlU+ntdyFvZzFM6U
-         JGfWpoEVJVZP/Gf3P6sRnqhqVR2TyRQNh783jZygOYmKIHiNg0yet7Pp+wN8BBewZ1dU
-         hnpqzaDGN6rBxe8rgGhW+5nL23logymVqKCDbaWHGmq/yXuM1bcyFNF96q+Du8LGWjr2
-         KfzJB6CWAoCvw+vqDi6hSCxeDFlnPsSOX1NGOgjj1oISIQBzsMM1+fleVd6UbjIdotKw
-         7pUg==
+        bh=xUUSEO3n82oExAtWC9rzQU8vJ+6r7+eAysrgLy7HO+M=;
+        b=cOBDGUpnxpTVaMs9FZS0b2dEIizTFb5TZ7ADOSNJWYamswM5ZfCynNfkltTDxFHSLI
+         HS2oY1320LmJfHSY2kkYH/Dxj0sdlUiiij2tS9yDt0iD9lG1ktmqRZa36cxGx5vlyZvI
+         MQOmmBerwnQXnbZZOLbFqYamTfMfFa9NnWKqFWv2IFZNypjwKT9ddamLba92LVjJa1ab
+         7PLzjv1O3jRmVfBWQF7oHOWzWecru2QgO8wguwiD5a8IiJapAOpQdjo3WlYc+7HoduTZ
+         4p9TiXkhXzKWOmzvKO/V0AjrcdSmJbraUSrKKJp2A1M5rdd8Nr4SgKxfWj/3dBLUjmO2
+         XjiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679921613;
+        d=1e100.net; s=20210112; t=1679921615;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mYNa0jgyigOb3tpiANMB3XSz00l/mRdfB4P8rKzPX6Y=;
-        b=haLK9lUQsJPTgYbEz2PchC+cGQSAiayPbn2bmzDKAdc+t3I/+f0jarMv8araoqhPTO
-         z1rJbAWdtC8nhsAl+Gx1XsKXQ5XhRAshS4n/EBHc6pB8Wk4SmLcXrl9thsJbK3FzSl74
-         kqf2cIB6riAWFneDctcC89vIVxmm1NeWuZ9BMuikJyzXr/7G3phWdnKdjyXzd26cs3Gy
-         VBGlw6fVepOORN0NSEhc0FzzqQbAVF4YdY4gAsjBbrDfIz7TailcotjzEjaJ/2kyvreh
-         bfTIfpNt54FaCCEHEURgklDTJ7gucxJphZv6f2YwTCs1Zmls+iXOwGviGosrdM4rSKEV
-         KkDA==
-X-Gm-Message-State: AAQBX9e1uk+IBxJwA7xJDNbOwL20o/r4C0ITEQO+OaFah1jhN8mI5gBd
-        CVt+Tj6cHDjBBFeuvOrQUeIixA==
-X-Google-Smtp-Source: AKy350ZpdD60ftBG/ysIV9tsx46gFHPch4LkCxYc4AzfiKIZTKU/E5YVnHTMSi6++9zW5UX+/WJYYw==
-X-Received: by 2002:a5d:538a:0:b0:2cf:f454:95d2 with SMTP id d10-20020a5d538a000000b002cff45495d2mr8824775wrv.12.1679921613360;
-        Mon, 27 Mar 2023 05:53:33 -0700 (PDT)
+        bh=xUUSEO3n82oExAtWC9rzQU8vJ+6r7+eAysrgLy7HO+M=;
+        b=tm+TpeIHbAEM3T+ZKtBrWmqvTA6G0i70dinkxSFZ7r+TPforpTVVYvPAN5LM1aDb7J
+         dcrhzggZHqI+sKYsVURR01OZ0nUdc16TkSkziyf5C0UxtS665sbn2bomfgw7rw4pak88
+         6Aw5lTtZlVFqjZ+6R+42VUWkwJ5HaF/zu/zzeEykF7063qT+jQt1+4gCho1EsZXzGNnz
+         5xShJKkAPa4p7G88djWewAPnBoH/NexTneQucmzub81mwHMDvOGRz41pfr+D1lDpGGnr
+         k2T+Png3NlTZRrj8+hzFLSY1jjcOZbhB84YYHoQjWHgXGK+7gvVVEGOXsKNcEe+2kyJt
+         f1Vw==
+X-Gm-Message-State: AO0yUKXlwGjluL7d3pU3UL/NeUPI9i3HAox9dkga0qaLctpovVZkeMDt
+        Wturmyws8JR4CrQcYCbnEm9LUg==
+X-Google-Smtp-Source: AK7set9t6T82YBmAdzVga+yKTwTAAhlvYH93ek3LolfE0tf1LsE4KZO1ainSyZbbfLWa4F8VAO0vSQ==
+X-Received: by 2002:a05:600c:22cd:b0:3eb:29fe:7343 with SMTP id 13-20020a05600c22cd00b003eb29fe7343mr9145616wmg.33.1679921615302;
+        Mon, 27 Mar 2023 05:53:35 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:313d:a304:2790:a949])
-        by smtp.gmail.com with ESMTPSA id q25-20020a1ce919000000b003ee58e8c971sm13572220wmc.14.2023.03.27.05.53.32
+        by smtp.gmail.com with ESMTPSA id q25-20020a1ce919000000b003ee58e8c971sm13572220wmc.14.2023.03.27.05.53.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 05:53:33 -0700 (PDT)
+        Mon, 27 Mar 2023 05:53:34 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -57,10 +57,11 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v3 15/18] arm64: dts: qcom: sa8775p-ride: set gpio-line-names for PMIC GPIOs
-Date:   Mon, 27 Mar 2023 14:53:13 +0200
-Message-Id: <20230327125316.210812-16-brgl@bgdev.pl>
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH v3 17/18] regulator: qcom-rpmh: add support for pmm8654au regulators
+Date:   Mon, 27 Mar 2023 14:53:15 +0200
+Message-Id: <20230327125316.210812-18-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230327125316.210812-1-brgl@bgdev.pl>
 References: <20230327125316.210812-1-brgl@bgdev.pl>
@@ -72,75 +73,108 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Set line names for GPIO lines exposed by PMICs on sa8775p-ride.
+Add the RPMH regulators exposed by the PMM8654au PMIC and its variants.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/sa8775p-ride.dts | 51 +++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+ drivers/regulator/qcom-rpmh-regulator.c | 55 +++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dts b/arch/arm64/boot/dts/qcom/sa8775p-ride.dts
-index b7ee4cc676b5..a0d2024a69df 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dts
-@@ -32,6 +32,57 @@ &i2c18 {
- 	status = "okay";
+diff --git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rpmh-regulator.c
+index 4826d60e5d95..b0a58c62b1e2 100644
+--- a/drivers/regulator/qcom-rpmh-regulator.c
++++ b/drivers/regulator/qcom-rpmh-regulator.c
+@@ -694,6 +694,16 @@ static const struct rpmh_vreg_hw_data pmic5_pldo_lv = {
+ 	.of_map_mode = rpmh_regulator_pmic4_ldo_of_map_mode,
  };
  
-+&pmm8654au_0_gpios {
-+	gpio-line-names = "DS_EN",
-+			  "POFF_COMPLETE",
-+			  "UFS0_VER_ID",
-+			  "FAST_POFF",
-+			  "DBU1_PON_DONE",
-+			  "AOSS_SLEEP",
-+			  "CAM_DES0_EN",
-+			  "CAM_DES1_EN",
-+			  "CAM_DES2_EN",
-+			  "CAM_DES3_EN",
-+			  "UEFI",
-+			  "ANALOG_PON_OPT";
++static const struct rpmh_vreg_hw_data pmic5_pldo515_mv = {
++	.regulator_type = VRM,
++	.ops = &rpmh_regulator_vrm_drms_ops,
++	.voltage_range = REGULATOR_LINEAR_RANGE(1800000, 0, 187, 8000),
++	.n_voltages = 188,
++	.hpm_min_load_uA = 10000,
++	.pmic_mode_map = pmic_mode_map_pmic5_ldo,
++	.of_map_mode = rpmh_regulator_pmic4_ldo_of_map_mode,
 +};
 +
-+&pmm8654au_1_gpios {
-+	gpio-line-names = "PMIC_C_ID0",
-+			  "PMIC_C_ID1",
-+			  "UFS1_VER_ID",
-+			  "IPA_PWR",
-+			  "",
-+			  "WLAN_DBU4_EN",
-+			  "WLAN_EN",
-+			  "BT_EN",
-+			  "USB2_PWR_EN",
-+			  "USB2_FAULT";
-+};
-+
-+&pmm8654au_2_gpios {
-+	gpio-line-names = "PMIC_E_ID0",
-+			  "PMIC_E_ID1",
-+			  "USB0_PWR_EN",
-+			  "USB0_FAULT",
-+			  "SENSOR_IRQ_1",
-+			  "SENSOR_IRQ_2",
-+			  "SENSOR_RST",
-+			  "SGMIIO0_RST",
-+			  "SGMIIO1_RST",
-+			  "USB1_PWR_ENABLE",
-+			  "USB1_FAULT",
-+			  "VMON_SPX8";
-+};
-+
-+&pmm8654au_3_gpios {
-+	gpio-line-names = "PMIC_G_ID0",
-+			  "PMIC_G_ID1",
-+			  "GNSS_RST",
-+			  "GNSS_EN",
-+			  "GNSS_BOOT_MODE";
-+};
-+
- &qupv3_id_1 {
- 	status = "okay";
+ static const struct rpmh_vreg_hw_data pmic5_nldo = {
+ 	.regulator_type = VRM,
+ 	.ops = &rpmh_regulator_vrm_drms_ops,
+@@ -704,6 +714,16 @@ static const struct rpmh_vreg_hw_data pmic5_nldo = {
+ 	.of_map_mode = rpmh_regulator_pmic4_ldo_of_map_mode,
  };
+ 
++static const struct rpmh_vreg_hw_data pmic5_nldo515 = {
++	.regulator_type = VRM,
++	.ops = &rpmh_regulator_vrm_drms_ops,
++	.voltage_range = REGULATOR_LINEAR_RANGE(320000, 0, 210, 8000),
++	.n_voltages = 211,
++	.hpm_min_load_uA = 30000,
++	.pmic_mode_map = pmic_mode_map_pmic5_ldo,
++	.of_map_mode = rpmh_regulator_pmic4_ldo_of_map_mode,
++};
++
+ static const struct rpmh_vreg_hw_data pmic5_hfsmps510 = {
+ 	.regulator_type = VRM,
+ 	.ops = &rpmh_regulator_vrm_ops,
+@@ -749,6 +769,15 @@ static const struct rpmh_vreg_hw_data pmic5_ftsmps525_mv = {
+ 	.of_map_mode = rpmh_regulator_pmic4_smps_of_map_mode,
+ };
+ 
++static const struct rpmh_vreg_hw_data pmic5_ftsmps527 = {
++	.regulator_type = VRM,
++	.ops = &rpmh_regulator_vrm_ops,
++	.voltage_range = REGULATOR_LINEAR_RANGE(320000, 0, 215, 8000),
++	.n_voltages = 215,
++	.pmic_mode_map = pmic_mode_map_pmic5_smps,
++	.of_map_mode = rpmh_regulator_pmic4_smps_of_map_mode,
++};
++
+ static const struct rpmh_vreg_hw_data pmic5_hfsmps515 = {
+ 	.regulator_type = VRM,
+ 	.ops = &rpmh_regulator_vrm_ops,
+@@ -937,6 +966,28 @@ static const struct rpmh_vreg_init_data pmm8155au_vreg_data[] = {
+ 	{}
+ };
+ 
++static const struct rpmh_vreg_init_data pmm8654au_vreg_data[] = {
++	RPMH_VREG("smps1",  "smp%s1",  &pmic5_ftsmps527,  "vdd-s1"),
++	RPMH_VREG("smps2",  "smp%s2",  &pmic5_ftsmps527,  "vdd-s2"),
++	RPMH_VREG("smps3",  "smp%s3",  &pmic5_ftsmps527,  "vdd-s3"),
++	RPMH_VREG("smps4",  "smp%s4",  &pmic5_ftsmps527,  "vdd-s4"),
++	RPMH_VREG("smps5",  "smp%s5",  &pmic5_ftsmps527,  "vdd-s5"),
++	RPMH_VREG("smps6",  "smp%s6",  &pmic5_ftsmps527,  "vdd-s6"),
++	RPMH_VREG("smps7",  "smp%s7",  &pmic5_ftsmps527,  "vdd-s7"),
++	RPMH_VREG("smps8",  "smp%s8",  &pmic5_ftsmps527,  "vdd-s8"),
++	RPMH_VREG("smps9",  "smp%s9",  &pmic5_ftsmps527,  "vdd-s9"),
++	RPMH_VREG("ldo1",   "ldo%s1",  &pmic5_nldo515,    "vdd-s9"),
++	RPMH_VREG("ldo2",   "ldo%s2",  &pmic5_nldo515,    "vdd-l2-l3"),
++	RPMH_VREG("ldo3",   "ldo%s3",  &pmic5_nldo515,    "vdd-l2-l3"),
++	RPMH_VREG("ldo4",   "ldo%s4",  &pmic5_nldo515,    "vdd-s9"),
++	RPMH_VREG("ldo5",   "ldo%s5",  &pmic5_nldo515,    "vdd-s9"),
++	RPMH_VREG("ldo6",   "ldo%s6",  &pmic5_nldo515,    "vdd-l6-l7"),
++	RPMH_VREG("ldo7",   "ldo%s7",  &pmic5_nldo515,    "vdd-l6-l7"),
++	RPMH_VREG("ldo8",   "ldo%s8",  &pmic5_pldo515_mv, "vdd-l8-l9"),
++	RPMH_VREG("ldo9",   "ldo%s9",  &pmic5_pldo,       "vdd-l8-l9"),
++	{}
++};
++
+ static const struct rpmh_vreg_init_data pm8350_vreg_data[] = {
+ 	RPMH_VREG("smps1",  "smp%s1",  &pmic5_ftsmps510, "vdd-s1"),
+ 	RPMH_VREG("smps2",  "smp%s2",  &pmic5_ftsmps510, "vdd-s2"),
+@@ -1431,6 +1482,10 @@ static const struct of_device_id __maybe_unused rpmh_regulator_match_table[] = {
+ 		.compatible = "qcom,pmm8155au-rpmh-regulators",
+ 		.data = pmm8155au_vreg_data,
+ 	},
++	{
++		.compatible = "qcom,pmm8654au-rpmh-regulators",
++		.data = pmm8654au_vreg_data,
++	},
+ 	{
+ 		.compatible = "qcom,pmx55-rpmh-regulators",
+ 		.data = pmx55_vreg_data,
 -- 
 2.37.2
 
