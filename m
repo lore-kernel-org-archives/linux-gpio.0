@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC79EC761AF
-	for <linux-gpio@archiver.kernel.org>; Mon, 27 Mar 2023 12:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8A8C77B6D
+	for <linux-gpio@archiver.kernel.org>; Mon, 27 Mar 2023 12:53:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232614AbjC0Mxg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 27 Mar 2023 08:53:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49952 "EHLO
+        id S232628AbjC0Mxh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 27 Mar 2023 08:53:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232394AbjC0MxZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Mar 2023 08:53:25 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39383171C
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Mar 2023 05:53:23 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id l15-20020a05600c4f0f00b003ef6d684102so1996853wmq.3
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Mar 2023 05:53:23 -0700 (PDT)
+        with ESMTP id S232437AbjC0Mx0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Mar 2023 08:53:26 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6DEB195
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Mar 2023 05:53:24 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id o32so4992639wms.1
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Mar 2023 05:53:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1679921602;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1679921603;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OsAcKkkhh2xD0zEWe6Y/fbdCXDRgje0cU2EbheBpM/A=;
-        b=crvlb5LZYRYaB2aefRVBBvfY4adxPmvFiQ7x6Y/BbCLGjvQ9YH5VPGWZTw0DgV3gWH
-         H2Im8TvZ39/vc0JTK4RQkPgTT2VYQJmNb+9gIBG3k0uTL1IaXqVBfbMDd3ps8DeSZFDr
-         POfPH78wyxJQDZJHPX4m233yfIFCmPIku/JKfeV6j9crPhkF3QbF2MoJ8KWwX5CyM87h
-         OIcUu44J0gL+mSSBzjJpabZ0IJv/n+P7G03DeMCcQ/xOFURDICH+S/9hYQxzJ13Ot2oX
-         /qet0Fq8oqLpAcGhTASro/mN+wklHXlX/H6MZ9jN9NVXkpIkd5d8SeS5nAzlUDG/HekN
-         syRw==
+        bh=zqs1fkBQs8nw1jpdBWvEsWXPgVAImtCVIZ35WMtgf4Y=;
+        b=LAausXqslBfOWHdLTIbdWiSB2uQLF7qvUx7rTugsESHd6BLL/Nxcz5U4OC6TMW+hf7
+         RCiSKCzrqLEEYLv7e4AtCKh7wuoOJg7v0qb+8obWdAPQHescy6yuwryH90qv05cKjSfJ
+         nVjO9pw2MatOvFen5n+tiYxzZbp4B3ybgK0pi/Fhx7/ExWiEGsfwH4DiB9tC81v40WEK
+         CLY1ZJvdCAKYxN5xXI9vXpFnx/rvd8lOpMuzYQQr3ze1yfDD+McNOfSn3oEpQXgCfMEv
+         c9jquI6ZThkU58jL+G25eEP5KuVqadmrf3aQ+5wZMEs+i1xsieLcMES273cvpOxC04gR
+         sUgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679921602;
+        d=1e100.net; s=20210112; t=1679921603;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OsAcKkkhh2xD0zEWe6Y/fbdCXDRgje0cU2EbheBpM/A=;
-        b=o7DQ1Ij/J2ZmS8u/QIpOHGilAfOhL9UlGbBnEBwRrR9UnxV8O9m9R48JcGNpv0nV74
-         UH3H1WvR8pkudovbdULxFJijFuxwJIdFewWO0FnM5RUJPngttxWGmRl6+dvciNK6at4y
-         9vJyjGgwIp20wmpjcaEUeHI1dx1Xzp8YM+r4SxzYGfJRZNaOxFzKFtqA6oVFZbxwPU6C
-         213lf58qqmF2Q2PGFrzCsnMvuD1TFijlo9kam1TN2WEPKgVNgzyDrQVcFMs6OjEsztX2
-         F6hiMfuaK8PNzcSO2y88zd18GMRO0pp/p9huVLxxkCfrGKFtcsx26Nzf2vU/picB56Y6
-         rySw==
-X-Gm-Message-State: AO0yUKWIWgRwp6rim7RG7YRDJXEWS54FqTyjJGD+XZWLsk+2GZgrsFEi
-        phhwzC99MsSgCCHsU6eW0Blhjg==
-X-Google-Smtp-Source: AK7set/2d6R65fkSCinPsHucKuonJMyNpgCFkbo5jXe3E16ZX8HxQ+b6Hkl8TlAxJG2xOI4PKy/xyA==
-X-Received: by 2002:a7b:c38a:0:b0:3ed:276d:81a4 with SMTP id s10-20020a7bc38a000000b003ed276d81a4mr9319532wmj.32.1679921601703;
-        Mon, 27 Mar 2023 05:53:21 -0700 (PDT)
+        bh=zqs1fkBQs8nw1jpdBWvEsWXPgVAImtCVIZ35WMtgf4Y=;
+        b=i1UQH7u0FDJ8K8HA7rfuHSJ6/jyfhiez0LsE4lzaXMTx/Q92n8WU7NW5fwZReIx7+g
+         vMCGw0KovXtWajuSJmkHZ3+1uNc3pUBL+hY+SAWsPw91auSeodO83ah37Xo56ahnNoLm
+         y6FW8LSi80mfZIWSYLAxqKXYwxopIqt6nMcCkqvMxl4UusrpliDWv/hDd8el+JLmsvSj
+         MzfOoz7+T0U8DoyxuUG4PxH/NTXg57wP8wuFtWFJjo41DKbK2k6/I6gj9mJQsLQSnFSk
+         1Lz7Ugh4Le1ZiWXAqROSN9o2FCWqWm4gt2/E+8F+AcMfM7381I3+ncBdOW1+d0OZqL5d
+         IRMQ==
+X-Gm-Message-State: AO0yUKWEZ1UWPypiGW6/ED1yDfRguhigR/sCOuOP6urZOed+dUyZ/DUF
+        sYIY7rBUSGbtSwBPuFLSWz7J9g==
+X-Google-Smtp-Source: AK7set+GJrq9WCTESgejHy8VIVpRUZcxemrJkaUssAb5F3qglJLgqnINejfzEiRq88QQN8o+OMpJrQ==
+X-Received: by 2002:a05:600c:d5:b0:3ed:bc83:3745 with SMTP id u21-20020a05600c00d500b003edbc833745mr8730794wmm.25.1679921603468;
+        Mon, 27 Mar 2023 05:53:23 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:313d:a304:2790:a949])
-        by smtp.gmail.com with ESMTPSA id q25-20020a1ce919000000b003ee58e8c971sm13572220wmc.14.2023.03.27.05.53.20
+        by smtp.gmail.com with ESMTPSA id q25-20020a1ce919000000b003ee58e8c971sm13572220wmc.14.2023.03.27.05.53.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 05:53:21 -0700 (PDT)
+        Mon, 27 Mar 2023 05:53:23 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -58,9 +58,9 @@ To:     Andy Gross <agross@kernel.org>,
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v3 02/18] arm64: dts: qcom: sa8775p: sort soc nodes by reg property
-Date:   Mon, 27 Mar 2023 14:53:00 +0200
-Message-Id: <20230327125316.210812-3-brgl@bgdev.pl>
+Subject: [PATCH v3 04/18] arm64: dts: qcom: sa8775p: add the pdc node
+Date:   Mon, 27 Mar 2023 14:53:02 +0200
+Message-Id: <20230327125316.210812-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230327125316.210812-1-brgl@bgdev.pl>
 References: <20230327125316.210812-1-brgl@bgdev.pl>
@@ -72,449 +72,71 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Sort all children of the soc node by the first address in their reg
-property. This was mostly already the case but there were some nodes
-that didn't follow it so fix it now for consistency.
+Add the Power Domain Controller node for SA8775p.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 394 +++++++++++++-------------
- 1 file changed, 197 insertions(+), 197 deletions(-)
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi | 47 +++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 5aa28a3b12ae..296ba69b81ab 100644
+index 296ba69b81ab..6bb1db1839cc 100644
 --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
 +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -471,50 +471,6 @@ ipcc: mailbox@408000 {
- 			#mbox-cells = <2>;
- 		};
- 
--		qupv3_id_1: geniqup@ac0000 {
--			compatible = "qcom,geni-se-qup";
--			reg = <0x0 0x00ac0000 0x0 0x6000>;
--			#address-cells = <2>;
--			#size-cells = <2>;
--			ranges;
--			clock-names = "m-ahb", "s-ahb";
--			clocks = <&gcc GCC_QUPV3_WRAP_1_M_AHB_CLK>,
--				 <&gcc GCC_QUPV3_WRAP_1_S_AHB_CLK>;
--			iommus = <&apps_smmu 0x443 0x0>;
--			status = "disabled";
--
--			uart10: serial@a8c000 {
--				compatible = "qcom,geni-uart";
--				reg = <0x0 0x00a8c000 0x0 0x4000>;
--				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
--				clock-names = "se";
--				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
--				interconnect-names = "qup-core", "qup-config";
--				interconnects = <&clk_virt MASTER_QUP_CORE_1 0
--						 &clk_virt SLAVE_QUP_CORE_1 0>,
--						<&gem_noc MASTER_APPSS_PROC 0
--						 &config_noc SLAVE_QUP_1 0>;
--				power-domains = <&rpmhpd SA8775P_CX>;
--				operating-points-v2 = <&qup_opp_table_100mhz>;
--				status = "disabled";
--			};
--
--			uart12: serial@a94000 {
--				compatible = "qcom,geni-uart";
--				reg = <0x0 0x00a94000 0x0 0x4000>;
--				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
--				clock-names = "se";
--				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
--						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
--						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
--						 &config_noc SLAVE_QUP_1 QCOM_ICC_TAG_ALWAYS>;
--				interconnect-names = "qup-core", "qup-config";
--				power-domains = <&rpmhpd SA8775P_CX>;
--				status = "disabled";
--			};
--		};
--
- 		qupv3_id_2: geniqup@8c0000 {
- 			compatible = "qcom,geni-se-qup";
- 			reg = <0x0 0x008c0000 0x0 0x6000>;
-@@ -585,173 +541,56 @@ &config_noc SLAVE_QUP_2 QCOM_ICC_TAG_ALWAYS>,
- 			};
- 		};
- 
--		intc: interrupt-controller@17a00000 {
--			compatible = "arm,gic-v3";
--			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
--			      <0x0 0x17a60000 0x0 0x100000>;    /* GICR * 8 */
--			interrupt-controller;
--			#interrupt-cells = <3>;
--			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
--			#redistributor-regions = <1>;
--			redistributor-stride = <0x0 0x20000>;
--		};
--
--		memtimer: timer@17c20000 {
--			compatible = "arm,armv7-timer-mem";
--			reg = <0x0 0x17c20000 0x0 0x1000>;
--			ranges = <0x0 0x0 0x0 0x20000000>;
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			frame@17c21000 {
--				reg = <0x17c21000 0x1000>,
--				      <0x17c22000 0x1000>;
--				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
--				frame-number = <0>;
--			};
--
--			frame@17c23000 {
--				reg = <0x17c23000 0x1000>;
--				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
--				frame-number = <1>;
--				status = "disabled";
--			};
--
--			frame@17c25000 {
--				reg = <0x17c25000 0x1000>;
--				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
--				frame-number = <2>;
--				status = "disabled";
--			};
--
--			frame@17c27000 {
--				reg = <0x17c27000 0x1000>;
--				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
--				frame-number = <3>;
--				status = "disabled";
--			};
--
--			frame@17c29000 {
--				reg = <0x17c29000 0x1000>;
--				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
--				frame-number = <4>;
--				status = "disabled";
--			};
-+		qupv3_id_1: geniqup@ac0000 {
-+			compatible = "qcom,geni-se-qup";
-+			reg = <0x0 0x00ac0000 0x0 0x6000>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+			clock-names = "m-ahb", "s-ahb";
-+			clocks = <&gcc GCC_QUPV3_WRAP_1_M_AHB_CLK>,
-+				 <&gcc GCC_QUPV3_WRAP_1_S_AHB_CLK>;
-+			iommus = <&apps_smmu 0x443 0x0>;
-+			status = "disabled";
- 
--			frame@17c2b000 {
--				reg = <0x17c2b000 0x1000>;
--				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
--				frame-number = <5>;
-+			uart10: serial@a8c000 {
-+				compatible = "qcom,geni-uart";
-+				reg = <0x0 0x00a8c000 0x0 0x4000>;
-+				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
-+				clock-names = "se";
-+				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
-+				interconnect-names = "qup-core", "qup-config";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_1 0
-+						 &clk_virt SLAVE_QUP_CORE_1 0>,
-+						<&gem_noc MASTER_APPSS_PROC 0
-+						 &config_noc SLAVE_QUP_1 0>;
-+				power-domains = <&rpmhpd SA8775P_CX>;
-+				operating-points-v2 = <&qup_opp_table_100mhz>;
- 				status = "disabled";
- 			};
- 
--			frame@17c2d000 {
--				reg = <0x17c2d000 0x1000>;
--				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
--				frame-number = <6>;
-+			uart12: serial@a94000 {
-+				compatible = "qcom,geni-uart";
-+				reg = <0x0 0x00a94000 0x0 0x4000>;
-+				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
-+				clock-names = "se";
-+				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
-+						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
-+						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+						 &config_noc SLAVE_QUP_1 QCOM_ICC_TAG_ALWAYS>;
-+				interconnect-names = "qup-core", "qup-config";
-+				power-domains = <&rpmhpd SA8775P_CX>;
- 				status = "disabled";
- 			};
- 		};
- 
--		apps_rsc: rsc@18200000 {
--			compatible = "qcom,rpmh-rsc";
--			reg = <0x0 0x18200000 0x0 0x10000>,
--			      <0x0 0x18210000 0x0 0x10000>,
--			      <0x0 0x18220000 0x0 0x10000>;
--			reg-names = "drv-0", "drv-1", "drv-2";
--			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
--			      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
--			      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
--			qcom,tcs-offset = <0xd00>;
--			qcom,drv-id = <2>;
--			qcom,tcs-config = <ACTIVE_TCS 2>,
--					  <SLEEP_TCS 3>,
--					  <WAKE_TCS 3>,
--					  <CONTROL_TCS 0>;
--			label = "apps_rsc";
--
--			apps_bcm_voter: bcm-voter {
--				compatible = "qcom,bcm-voter";
--			};
--
--			rpmhcc: clock-controller {
--				compatible = "qcom,sa8775p-rpmh-clk";
--				#clock-cells = <1>;
--				clock-names = "xo";
--				clocks = <&xo_board_clk>;
--			};
--
--			rpmhpd: power-controller {
--				compatible = "qcom,sa8775p-rpmhpd";
--				#power-domain-cells = <1>;
--				operating-points-v2 = <&rpmhpd_opp_table>;
--
--				rpmhpd_opp_table: opp-table {
--					compatible = "operating-points-v2";
--
--					rpmhpd_opp_ret: opp-0 {
--						opp-level = <RPMH_REGULATOR_LEVEL_RETENTION>;
--					};
--
--					rpmhpd_opp_min_svs: opp-1 {
--						opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
--					};
--
--					rpmhpd_opp_low_svs: opp2 {
--						opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
--					};
--
--					rpmhpd_opp_svs: opp3 {
--						opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
--					};
--
--					rpmhpd_opp_svs_l1: opp-4 {
--						opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
--					};
--
--					rpmhpd_opp_nom: opp-5 {
--						opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
--					};
--
--					rpmhpd_opp_nom_l1: opp-6 {
--						opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
--					};
--
--					rpmhpd_opp_nom_l2: opp-7 {
--						opp-level = <RPMH_REGULATOR_LEVEL_NOM_L2>;
--					};
--
--					rpmhpd_opp_turbo: opp-8 {
--						opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
--					};
--
--					rpmhpd_opp_turbo_l1: opp-9 {
--						opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
--					};
--				};
--			};
--		};
--
- 		tcsr_mutex: hwlock@1f40000 {
- 			compatible = "qcom,tcsr-mutex";
- 			reg = <0x0 0x01f40000 0x0 0x20000>;
+@@ -591,6 +591,53 @@ tcsr_mutex: hwlock@1f40000 {
  			#hwlock-cells = <1>;
  		};
  
--		cpufreq_hw: cpufreq@18591000 {
--			compatible = "qcom,sa8775p-cpufreq-epss",
--				     "qcom,cpufreq-epss";
--			reg = <0x0 0x18591000 0x0 0x1000>,
--			      <0x0 0x18593000 0x0 0x1000>;
--			reg-names = "freq-domain0", "freq-domain1";
--
--			clocks = <&rpmhcc RPMH_CXO_CLK>, <&gcc GCC_GPLL0>;
--			clock-names = "xo", "alternate";
--
--			#freq-domain-cells = <1>;
--		};
--
++		pdc: interrupt-controller@b220000 {
++			compatible = "qcom,sa8775p-pdc", "qcom,pdc";
++			reg = <0x0 0x0b220000 0x0 0x30000>,
++			      <0x0 0x17c000f0 0x0 0x64>;
++			qcom,pdc-ranges = <0 480 40>,
++					  <40 140 14>,
++					  <54 263 1>,
++					  <55 306 4>,
++					  <59 312 3>,
++					  <62 374 2>,
++					  <64 434 2>,
++					  <66 438 2>,
++					  <70 520 1>,
++					  <73 523 1>,
++					  <118 568 6>,
++					  <124 609 3>,
++					  <159 638 1>,
++					  <160 720 3>,
++					  <169 728 30>,
++					  <199 416 2>,
++					  <201 449 1>,
++					  <202 89 1>,
++					  <203 451 1>,
++					  <204 462 1>,
++					  <205 264 1>,
++					  <206 579 1>,
++					  <207 653 1>,
++					  <208 656 1>,
++					  <209 659 1>,
++					  <210 122 1>,
++					  <211 699 1>,
++					  <212 705 1>,
++					  <213 450 1>,
++					  <214 643 2>,
++					  <216 646 5>,
++					  <221 390 5>,
++					  <226 700 2>,
++					  <228 440 1>,
++					  <229 663 1>,
++					  <230 524 2>,
++					  <232 612 3>,
++					  <235 723 5>;
++			#interrupt-cells = <2>;
++			interrupt-parent = <&intc>;
++			interrupt-controller;
++		};
++
  		tlmm: pinctrl@f000000 {
  			compatible = "qcom,sa8775p-tlmm";
  			reg = <0x0 0x0f000000 0x0 0x1000000>;
-@@ -900,6 +739,167 @@ apps_smmu: iommu@15000000 {
- 				     <GIC_SPI 892 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 891 IRQ_TYPE_LEVEL_HIGH>;
- 		};
-+
-+		intc: interrupt-controller@17a00000 {
-+			compatible = "arm,gic-v3";
-+			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
-+			      <0x0 0x17a60000 0x0 0x100000>;    /* GICR * 8 */
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			#redistributor-regions = <1>;
-+			redistributor-stride = <0x0 0x20000>;
-+		};
-+
-+		memtimer: timer@17c20000 {
-+			compatible = "arm,armv7-timer-mem";
-+			reg = <0x0 0x17c20000 0x0 0x1000>;
-+			ranges = <0x0 0x0 0x0 0x20000000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			frame@17c21000 {
-+				reg = <0x17c21000 0x1000>,
-+				      <0x17c22000 0x1000>;
-+				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <0>;
-+			};
-+
-+			frame@17c23000 {
-+				reg = <0x17c23000 0x1000>;
-+				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <1>;
-+				status = "disabled";
-+			};
-+
-+			frame@17c25000 {
-+				reg = <0x17c25000 0x1000>;
-+				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <2>;
-+				status = "disabled";
-+			};
-+
-+			frame@17c27000 {
-+				reg = <0x17c27000 0x1000>;
-+				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <3>;
-+				status = "disabled";
-+			};
-+
-+			frame@17c29000 {
-+				reg = <0x17c29000 0x1000>;
-+				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <4>;
-+				status = "disabled";
-+			};
-+
-+			frame@17c2b000 {
-+				reg = <0x17c2b000 0x1000>;
-+				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <5>;
-+				status = "disabled";
-+			};
-+
-+			frame@17c2d000 {
-+				reg = <0x17c2d000 0x1000>;
-+				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <6>;
-+				status = "disabled";
-+			};
-+		};
-+
-+		apps_rsc: rsc@18200000 {
-+			compatible = "qcom,rpmh-rsc";
-+			reg = <0x0 0x18200000 0x0 0x10000>,
-+			      <0x0 0x18210000 0x0 0x10000>,
-+			      <0x0 0x18220000 0x0 0x10000>;
-+			reg-names = "drv-0", "drv-1", "drv-2";
-+			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+			      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+			      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			qcom,tcs-offset = <0xd00>;
-+			qcom,drv-id = <2>;
-+			qcom,tcs-config = <ACTIVE_TCS 2>,
-+					  <SLEEP_TCS 3>,
-+					  <WAKE_TCS 3>,
-+					  <CONTROL_TCS 0>;
-+			label = "apps_rsc";
-+
-+			apps_bcm_voter: bcm-voter {
-+				compatible = "qcom,bcm-voter";
-+			};
-+
-+			rpmhcc: clock-controller {
-+				compatible = "qcom,sa8775p-rpmh-clk";
-+				#clock-cells = <1>;
-+				clock-names = "xo";
-+				clocks = <&xo_board_clk>;
-+			};
-+
-+			rpmhpd: power-controller {
-+				compatible = "qcom,sa8775p-rpmhpd";
-+				#power-domain-cells = <1>;
-+				operating-points-v2 = <&rpmhpd_opp_table>;
-+
-+				rpmhpd_opp_table: opp-table {
-+					compatible = "operating-points-v2";
-+
-+					rpmhpd_opp_ret: opp-0 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_RETENTION>;
-+					};
-+
-+					rpmhpd_opp_min_svs: opp-1 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
-+					};
-+
-+					rpmhpd_opp_low_svs: opp2 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-+					};
-+
-+					rpmhpd_opp_svs: opp3 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+					};
-+
-+					rpmhpd_opp_svs_l1: opp-4 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-+					};
-+
-+					rpmhpd_opp_nom: opp-5 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
-+					};
-+
-+					rpmhpd_opp_nom_l1: opp-6 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
-+					};
-+
-+					rpmhpd_opp_nom_l2: opp-7 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_NOM_L2>;
-+					};
-+
-+					rpmhpd_opp_turbo: opp-8 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
-+					};
-+
-+					rpmhpd_opp_turbo_l1: opp-9 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
-+					};
-+				};
-+			};
-+		};
-+
-+		cpufreq_hw: cpufreq@18591000 {
-+			compatible = "qcom,sa8775p-cpufreq-epss",
-+				     "qcom,cpufreq-epss";
-+			reg = <0x0 0x18591000 0x0 0x1000>,
-+			      <0x0 0x18593000 0x0 0x1000>;
-+			reg-names = "freq-domain0", "freq-domain1";
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>, <&gcc GCC_GPLL0>;
-+			clock-names = "xo", "alternate";
-+
-+			#freq-domain-cells = <1>;
-+		};
- 	};
- 
- 	arch_timer: timer {
 -- 
 2.37.2
 
