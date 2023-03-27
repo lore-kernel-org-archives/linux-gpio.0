@@ -2,51 +2,50 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F47FC77B6C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B4CFC77B6D
 	for <linux-gpio@archiver.kernel.org>; Mon, 27 Mar 2023 16:43:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229986AbjC0Qm3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 27 Mar 2023 12:42:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56980 "EHLO
+        id S232446AbjC0Qmb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 27 Mar 2023 12:42:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232488AbjC0Qly (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Mar 2023 12:41:54 -0400
+        with ESMTP id S232618AbjC0QmD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Mar 2023 12:42:03 -0400
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 646C4271E;
-        Mon, 27 Mar 2023 09:41:51 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32RDv4BU015017;
-        Mon, 27 Mar 2023 16:41:48 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF99A3A8C;
+        Mon, 27 Mar 2023 09:41:58 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32RE6Bgf019036;
+        Mon, 27 Mar 2023 16:41:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=WBWxgfw1drJhnxfAO2rN43QRoy939GS0Cvk3nm2plig=;
- b=ZLtWQLMDnuE9j9VtCphYcvdC7H3nVVw23nBKbCghUt0+9Q7T0gIbji6UsRfsXQ2MAXNN
- 1Icmwg4oov1BtnJuT7pj9NSyzhq/6Gex1EorhVh+iJpAEfeWTMbOTP5uOOse6CGsohhD
- rWsO6nibtVNBIeYDumVtv5gNKQ3+sK3Q/EsC/Jq8D1EvUNi/cg6rlv8U92DS5NtAMnxz
- 4kzA7rD4LWiao40rdIu6n2Qkfcx6t8mMY8biq1Ohbzc4rIK9mVKj7Cnu+b4a6OdZmFLC
- 07M2DzPCcTht5kxbI/APIP1NgBoshdqj2VKjignOfrGOKIJG7YidoQsHhSG+NvoSTIdW lA== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pkby48k0u-1
+ bh=rdW3275cbw6qbQR0iizsgq/hJswZIcUGspaRgj6jMLk=;
+ b=JaS0orVPRDkP93z0JaL9efVuYSQ6NSU5xqZxMz+mdZQl+EQpdrwukzfQpHAyUvMpQ2yz
+ D9ZLhbdFc7wrGazWluHXarB1v3FRij4LI5e96vJqiWd988mS4W6m5Swx1UKokVz2c2oq
+ sCnTNiDLR5KZkFH+lYWY4KTEsBgLHdv8agPrSjgv3bzeQxIUqUtt14exky4a5Jy2R66J
+ ckRcqjHKDinJrhexU7j4gVgufTIM7Itt5vjhPkZnlEBPWrKoQxv/7N1Fag99HarVud56
+ uq/tnPtFT4ZTHQzBjrDltHHL9S8hCOrR8/fY/dqce+U8QJzgVx/+tgDxQJOJoD285VRL /A== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pkcm2rg4h-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 27 Mar 2023 16:41:48 +0000
+        Mon, 27 Mar 2023 16:41:54 +0000
 Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32RGfl1j022812
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32RGfrHX022663
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 27 Mar 2023 16:41:47 GMT
+        Mon, 27 Mar 2023 16:41:53 GMT
 Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
  nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Mon, 27 Mar 2023 09:41:44 -0700
+ 15.2.986.41; Mon, 27 Mar 2023 09:41:50 -0700
 From:   Mukesh Ojha <quic_mojha@quicinc.com>
 To:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <linus.walleij@linaro.org>
 CC:     <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>,
-        Poovendhan Selvaraj <quic_poovendh@quicinc.com>
-Subject: [PATCH v4 3/5] firmware: scm: Modify only the download bits in TCSR register
-Date:   Mon, 27 Mar 2023 22:11:19 +0530
-Message-ID: <1679935281-18445-4-git-send-email-quic_mojha@quicinc.com>
+        <linux-gpio@vger.kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: [PATCH v4 5/5] firmware: qcom_scm: Add multiple download mode support
+Date:   Mon, 27 Mar 2023 22:11:21 +0530
+Message-ID: <1679935281-18445-6-git-send-email-quic_mojha@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1679935281-18445-1-git-send-email-quic_mojha@quicinc.com>
 References: <1679935281-18445-1-git-send-email-quic_mojha@quicinc.com>
@@ -57,56 +56,80 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: dL0mLgZziigV_OZ2r9BkioyTvvUzIk3W
-X-Proofpoint-GUID: dL0mLgZziigV_OZ2r9BkioyTvvUzIk3W
+X-Proofpoint-ORIG-GUID: BPRsb3e66BsdNY7tW2-pp1CxjgSMXdre
+X-Proofpoint-GUID: BPRsb3e66BsdNY7tW2-pp1CxjgSMXdre
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-03-24_11,2023-03-27_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
- impostorscore=0 phishscore=0 mlxlogscore=999 mlxscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ malwarescore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 clxscore=1015 impostorscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2303200000 definitions=main-2303270134
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-CrashDump collection is based on the DLOAD bit of TCSR register.
-To retain other bits, we read the register and modify only the
-DLOAD bit as the other bits have their own significance.
+Currently, scm driver only supports full dump when download
+mode is selected. Add support to enable minidump as well both
+dump(full dump + minidump).
 
-Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
 Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 ---
- drivers/firmware/qcom_scm.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/firmware/qcom_scm.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
-index 431fe1f..3c6c5e7 100644
+index 0c94429..19315d0 100644
 --- a/drivers/firmware/qcom_scm.c
 +++ b/drivers/firmware/qcom_scm.c
-@@ -30,6 +30,9 @@ module_param(download_mode, bool, 0);
- #define SCM_HAS_IFACE_CLK	BIT(1)
- #define SCM_HAS_BUS_CLK		BIT(2)
+@@ -32,6 +32,8 @@ static u32 download_mode;
  
-+#define QCOM_DOWNLOAD_MODE_MASK 0x30
-+#define QCOM_DOWNLOAD_FULLDUMP	0x1
-+
+ #define QCOM_DOWNLOAD_MODE_MASK 0x30
+ #define QCOM_DOWNLOAD_FULLDUMP	0x1
++#define QCOM_DOWNLOAD_MINIDUMP  0x2
++#define QCOM_DOWNLOAD_BOTHDUMP	(QCOM_DOWNLOAD_FULLDUMP | QCOM_DOWNLOAD_MINIDUMP)
+ #define QCOM_DOWNLOAD_NODUMP	0x0
+ 
  struct qcom_scm {
- 	struct device *dev;
- 	struct clk *core_clk;
-@@ -448,8 +451,9 @@ static void qcom_scm_set_download_mode(bool enable)
- 	if (avail) {
- 		ret = __qcom_scm_set_dload_mode(__scm->dev, enable);
- 	} else if (__scm->dload_mode_addr) {
--		ret = qcom_scm_io_writel(__scm->dload_mode_addr,
--				enable ? QCOM_SCM_BOOT_SET_DLOAD_MODE : 0);
-+		ret = qcom_scm_io_update_field(__scm->dload_mode_addr,
-+				QCOM_DOWNLOAD_MODE_MASK,
-+				enable ? QCOM_DOWNLOAD_FULLDUMP : 0);
- 	} else {
- 		dev_err(__scm->dev,
- 			"No available mechanism for setting download mode\n");
+@@ -1421,13 +1423,16 @@ static irqreturn_t qcom_scm_irq_handler(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
+-
+ static int get_download_mode(char *buffer, const struct kernel_param *kp)
+ {
+ 	int len = 0;
+ 
+ 	if (download_mode == QCOM_DOWNLOAD_FULLDUMP)
+ 		len = sysfs_emit(buffer, "full\n");
++	else if (download_mode == QCOM_DOWNLOAD_MINIDUMP)
++		len = sysfs_emit(buffer, "mini\n");
++	else if (download_mode == QCOM_DOWNLOAD_BOTHDUMP)
++		len = sysfs_emit(buffer, "both\n");
+ 	else if (download_mode == QCOM_DOWNLOAD_NODUMP)
+ 		len = sysfs_emit(buffer, "off\n");
+ 
+@@ -1440,6 +1445,10 @@ static int set_download_mode(const char *val, const struct kernel_param *kp)
+ 
+ 	if (!strncmp(val, "full", strlen("full"))) {
+ 		download_mode = QCOM_DOWNLOAD_FULLDUMP;
++	} else if (!strncmp(val, "mini", strlen("mini"))) {
++		download_mode = QCOM_DOWNLOAD_MINIDUMP;
++	} else if (!strncmp(val, "both", strlen("both"))) {
++		download_mode = QCOM_DOWNLOAD_BOTHDUMP;
+ 	} else if (!strncmp(val, "off", strlen("off"))) {
+ 		download_mode = QCOM_DOWNLOAD_NODUMP;
+ 	} else if (kstrtouint(val, 0, &download_mode) ||
+@@ -1462,7 +1471,7 @@ static const struct kernel_param_ops download_mode_param_ops = {
+ 
+ module_param_cb(download_mode, &download_mode_param_ops, NULL, 0644);
+ MODULE_PARM_DESC(download_mode,
+-		 "Download mode: off/full or 0/1 for existing users");
++		 "download mode: off/full/mini/both(full+mini) or 0/1 for existing users");
+ 
+ static int qcom_scm_probe(struct platform_device *pdev)
+ {
 -- 
 2.7.4
 
