@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F15C77B62
-	for <linux-gpio@archiver.kernel.org>; Mon, 27 Mar 2023 12:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFC8C76195
+	for <linux-gpio@archiver.kernel.org>; Mon, 27 Mar 2023 12:53:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232477AbjC0Mxm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 27 Mar 2023 08:53:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52444 "EHLO
+        id S232769AbjC0Mxp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 27 Mar 2023 08:53:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232473AbjC0Mxa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Mar 2023 08:53:30 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6391210C6
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Mar 2023 05:53:28 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id t17-20020a05600c451100b003edc906aeeaso4854816wmo.1
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Mar 2023 05:53:28 -0700 (PDT)
+        with ESMTP id S232056AbjC0Mx2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Mar 2023 08:53:28 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2230170C
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Mar 2023 05:53:26 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id l37so4996477wms.2
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Mar 2023 05:53:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1679921608;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1679921605;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CCfaLfkFa9+r23DNhVQqZmyOO2Rn4kY0uWG6aZK0HR8=;
-        b=PYBN+u4b1Gohk9bh2TKYaETvHvNPu8a/7/SNvTVGy8lroSQ6N6YNFD3LFHqGuO/OHn
-         ucJyoCHrpNHTvFYD+Fve6MCPLWomRjMJDY4tdk0dReUgC0Iubjy6wOi0EnjCM7VlqALs
-         e6Kcd8Rq66c5HJVX5lyvB6K19tmWa9bIc3HlGSYJ6VOzYJHWFRQkjPuqwS0j2G7nVNt9
-         zww0SLIMSbSoL5jE+xEL0vT1WI102PMMAimVnzzgwRMaSY3gFqTBTvU9fHorqjVoxPoD
-         tFEoA5B4ta2xMRZjxrL+WEpST86DotAQTbi5djxeYLdk5irUAVW1e/iHTPS2dqvM/KN5
-         vQxA==
+        bh=OdWVdTE/8Dyw4hqegkINdb1CQZwRDCkTAUWJC3MHmmA=;
+        b=HvYgD4KGYU/NxUu1HsxoxwPql4ri+9vu7aNFmN/pL48Rqhg8qSXg6EJk94NuMbJu54
+         sVCkXD6JWcW1vJ2QCfwh65LyWiJNdXGN4aLIH1McTfvsBjhMr95Y0PcqOXgwIbQT+J7M
+         U+xH04cfB+GTeUfoROWlcZg8iwEHQy+uPrgMAVChBrGlHeRUEkXrQ0/p0h51zw0dkoDd
+         loC77Ifuc/ho6A1MMEnEfuBaSHyvBmHLRjTT/UUzG29Y7Rll+tVZ5P5QQAzbZN10oQYa
+         mM48wLP2IeZg/ZI28lXy4J6y2MkDW4rmHJntSRGRwz5I0FPlKL2Kz6R9hOSwYTxwdtmr
+         oIbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679921608;
+        d=1e100.net; s=20210112; t=1679921605;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CCfaLfkFa9+r23DNhVQqZmyOO2Rn4kY0uWG6aZK0HR8=;
-        b=jqxQrs9XZFoEib8EpVnSFFz7fBxASYCZfam7EErf3jVA3hRUb7fGuVaDC/RzfyjHIb
-         Yex8frFtefDb0qd3F8BgYywVQ3Zf5ZBz8hpQuKl/ParEaYJg2+f+JJS/BWqWDcu152y4
-         Z+i1bfXfrCfc3ij7NroxTFrGUE2NAMhP4rgtpRa1AI8TsrwjuGo7nIBa+gBGUqq4oinj
-         /Ne7xbWgOcHvIB3aoV36Pt9S5VNYFRypXvQAN8Ey710UD5cqvW/F/m2Mg4k2Y02AwwXr
-         Jhj2eNZK+0iGmrDNnziY4t34c6RlV9NSL4sSnxNTR4KZOq40R91x6khmi6I+/3ah+evK
-         Df9A==
-X-Gm-Message-State: AO0yUKV/1i7SSbaXZFZRjEtcydxN2nMBSHsk1vjvGguV08QSsKYn08+d
-        oAMPW88p+ahuEvIGhLoGeCFSLQ==
-X-Google-Smtp-Source: AK7set+brWqvOktXTMt7JRWGxzKOEw32VebNsxv+m3zTuLyQQgQ+hqQDyx53EY5Yk3RvBviZPdJJQA==
-X-Received: by 2002:a1c:770b:0:b0:3ed:4b0f:5378 with SMTP id t11-20020a1c770b000000b003ed4b0f5378mr9168056wmi.27.1679921607876;
-        Mon, 27 Mar 2023 05:53:27 -0700 (PDT)
+        bh=OdWVdTE/8Dyw4hqegkINdb1CQZwRDCkTAUWJC3MHmmA=;
+        b=37BJMaX78M8dbaQIbcui7r2H57RxM3nhuCFfPBz2iy+x6FulCw3wHjxok6FvdLlt5k
+         h+72UAAyUPPofLFywEFU5l0f/cp9v2PKgdkkrBFuvfAaO7TVFDiikXVmen5aWMzr9x6I
+         6+4PM8yfIvd76ImVBTRfPBnFCl9nymO217HsI5kmUqVWYAsviJT0VkvuvtTRsvcGE49X
+         WkzSD462aNY91p5dlZi14eJHlKkvdK1/nFkopr2ptCw1VC98Tlaywe15fEUOg9npScrm
+         hSN+scgfUkcNpN20V7yLEdDJ1pMGZu6FKr74swcUYcYZck5NCFeyHbhO6L3jhQmNOklS
+         KL+A==
+X-Gm-Message-State: AO0yUKVK6xNUb8IAlOdibQYB8Ju5g6PPT+u7L7BGvFe3T0mDOaPQCC/5
+        PibYMzUPJzUSuxOQM285XKUo0A==
+X-Google-Smtp-Source: AK7set94sTqbHq2k11xMJPQMd1/OwxqKj4ebw0WPvxg1kpr6t6SgH7ZqF+5WDOJLKhR/GtJn+EEE7g==
+X-Received: by 2002:a1c:7318:0:b0:3ed:3cec:d2ec with SMTP id d24-20020a1c7318000000b003ed3cecd2ecmr9836530wmb.15.1679921605220;
+        Mon, 27 Mar 2023 05:53:25 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:313d:a304:2790:a949])
-        by smtp.gmail.com with ESMTPSA id q25-20020a1ce919000000b003ee58e8c971sm13572220wmc.14.2023.03.27.05.53.27
+        by smtp.gmail.com with ESMTPSA id q25-20020a1ce919000000b003ee58e8c971sm13572220wmc.14.2023.03.27.05.53.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 05:53:27 -0700 (PDT)
+        Mon, 27 Mar 2023 05:53:24 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -57,10 +57,11 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v3 09/18] arm64: dts: qcom: sa8775p: pmic: add the power key
-Date:   Mon, 27 Mar 2023 14:53:07 +0200
-Message-Id: <20230327125316.210812-10-brgl@bgdev.pl>
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>
+Subject: [PATCH v3 06/18] dt-bindings: mfd: qcom,spmi-pmic: add compatible for pmm8654au
+Date:   Mon, 27 Mar 2023 14:53:04 +0200
+Message-Id: <20230327125316.210812-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230327125316.210812-1-brgl@bgdev.pl>
 References: <20230327125316.210812-1-brgl@bgdev.pl>
@@ -72,32 +73,28 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add the power key node under the PON node for PMIC #0 on sa8775p.
+PMM8654au is the SPMI PMIC variant used on sa8775p-ride. Add a compatible
+for it.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Lee Jones <lee@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
-index dbc596e32253..f421d4d64c8e 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
-@@ -19,6 +19,13 @@ pmm8654au_0_pon: pon@1200 {
- 			reg-names = "hlos", "pbs";
- 			mode-recovery = <0x1>;
- 			mode-bootloader = <0x2>;
-+
-+			pmm8654au_0_pon_pwrkey: pwrkey {
-+				compatible = "qcom,pmk8350-pwrkey";
-+				interrupts-extended = <&spmi_bus 0x0 0x12 0x7 IRQ_TYPE_EDGE_BOTH>;
-+				linux,code = <KEY_POWER>;
-+				debounce = <15625>;
-+			};
- 		};
- 	};
- 
+diff --git a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
+index 975c30aad23c..0f7dd7ac9630 100644
+--- a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
++++ b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
+@@ -79,6 +79,7 @@ properties:
+           - qcom,pmk8350
+           - qcom,pmk8550
+           - qcom,pmm8155au
++          - qcom,pmm8654au
+           - qcom,pmp8074
+           - qcom,pmr735a
+           - qcom,pmr735b
 -- 
 2.37.2
 
