@@ -2,114 +2,196 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA225C77B60
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Mar 2023 10:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF48C76195
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Mar 2023 10:20:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232838AbjC1KL2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Mar 2023 06:11:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34926 "EHLO
+        id S229620AbjC1KUE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Mar 2023 06:20:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232709AbjC1KLY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2023 06:11:24 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 05AA683C2;
-        Tue, 28 Mar 2023 03:11:02 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.98,297,1673881200"; 
-   d="scan'208";a="157440708"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 28 Mar 2023 19:10:50 +0900
-Received: from localhost.localdomain (unknown [10.226.92.2])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5326640071EC;
-        Tue, 28 Mar 2023 19:10:47 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [DO NOT APPLY PATCH v7 09/10] pinctrl: renesas: rzg2l-poeg: output-disable request by external pin
-Date:   Tue, 28 Mar 2023 11:10:10 +0100
-Message-Id: <20230328101011.185594-10-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230328101011.185594-1-biju.das.jz@bp.renesas.com>
-References: <20230328101011.185594-1-biju.das.jz@bp.renesas.com>
+        with ESMTP id S229611AbjC1KUE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2023 06:20:04 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D122A5FC0
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2023 03:20:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1679998802; x=1711534802;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=H9h4onXTM9/BKFqJ9M7pNPTPWwggIzk/NVW4rtMgX40=;
+  b=elOYj9sYYI6q+XurZho1C9sZ9f+e/d5U04S4m5q6KYgeXOpGF9VosoV+
+   XzGLNQm534DAxajQmsO0+HbPXkltXHkq8O444jyyOshoTzb/i1UOxNCmk
+   QHW/7DyfcZIV+yIwKP9mclAPDWT4dzHt71j5HAeef7EofkIrUAcb9S0vR
+   r6RralBF5zIsyy0L2brEQo20a8dEXKRmliaGvEW4cBBLALpqb10IO3J6E
+   LFpWgYb/LYj5T8t+5IMW1DzBD5Sd9J42pr+ItpdIdLaRuCuYo/ousWUsm
+   eMbdPe6G1VpOgJi6KiqBPhDXIpsKje4cBAJo/rJKZC6TrJwC4Ua7oZOTH
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10662"; a="403140071"
+X-IronPort-AV: E=Sophos;i="5.98,297,1673942400"; 
+   d="scan'208";a="403140071"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2023 03:20:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10662"; a="858023216"
+X-IronPort-AV: E=Sophos;i="5.98,297,1673942400"; 
+   d="scan'208";a="858023216"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 28 Mar 2023 03:20:01 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1ph6Qq-000ITH-1M;
+        Tue, 28 Mar 2023 10:20:00 +0000
+Date:   Tue, 28 Mar 2023 18:19:11 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [linusw-pinctrl:devel] BUILD SUCCESS
+ 94df03a4527611bfa7b461f2ba45370341e763b8
+Message-ID: <6422bf1f.ZRy5pYA6TfHiSimA%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for output-disable request by external pin.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+branch HEAD: 94df03a4527611bfa7b461f2ba45370341e763b8  dt-bindings: pinctrl: Convert Amlogic Meson pinctrl binding
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/pinctrl/renesas/poeg/rzg2l-poeg.c | 9 +++++++++
- include/linux/pinctrl/rzg2l-poeg.h        | 2 ++
- 2 files changed, 11 insertions(+)
+elapsed time: 721m
 
-diff --git a/drivers/pinctrl/renesas/poeg/rzg2l-poeg.c b/drivers/pinctrl/renesas/poeg/rzg2l-poeg.c
-index 7576f756af3c..5d93a0be33f3 100644
---- a/drivers/pinctrl/renesas/poeg/rzg2l-poeg.c
-+++ b/drivers/pinctrl/renesas/poeg/rzg2l-poeg.c
-@@ -15,13 +15,16 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/pwm/rzg2l-gpt.h>
-+#include <linux/pinctrl/rzg2l-poeg.h>
- #include <linux/poll.h>
- #include <linux/reset.h>
- #include <linux/wait.h>
- 
- #define POEGG_IOCE	BIT(5)
-+#define POEGG_PIDE	BIT(4)
- #define POEGG_SSF	BIT(3)
- #define POEGG_IOCF	BIT(1)
-+#define POEGG_PIDF	BIT(0)
- 
- #define RZG2L_POEG_MAX_INDEX		3
- 
-@@ -113,6 +116,9 @@ static irqreturn_t rzg2l_poeg_irq(int irq, void *ptr)
- 	if (val & POEGG_IOCF)
- 		val &= ~POEGG_IOCF;
- 
-+	if (val & POEGG_PIDF)
-+		val &= ~POEGG_PIDF;
-+
- 	rzg2l_poeg_write(chip, val);
- 
- 	return IRQ_HANDLED;
-@@ -378,6 +384,9 @@ static int rzg2l_poeg_probe(struct platform_device *pdev)
- 			assign_bit(RZG2L_GPT_OABLF, chip->gpt_irq, true);
- 			assign_bit(RZG2L_GPT_DTEF, chip->gpt_irq, true);
- 			break;
-+		case POEG_EXT_PIN_CTRL:
-+			rzg2l_poeg_write(chip, POEGG_PIDE);
-+			break;
- 		default:
- 			ret = -EINVAL;
- 			goto err_pm;
-diff --git a/include/linux/pinctrl/rzg2l-poeg.h b/include/linux/pinctrl/rzg2l-poeg.h
-index 5441de7f3751..359849fea6a0 100644
---- a/include/linux/pinctrl/rzg2l-poeg.h
-+++ b/include/linux/pinctrl/rzg2l-poeg.h
-@@ -7,11 +7,13 @@
- #define RZG2L_GPT_DTEF	0
- #define RZG2L_GPT_OABHF	1
- #define RZG2L_GPT_OABLF	2
-+#define RZG2L_POEG_EXT_PIN_CTRL	3
- 
- #define RZG2L_POEG_USR_CTRL_ENABLE_CMD	0
- #define RZG2L_POEG_USR_CTRL_DISABLE_CMD	1
- #define RZG2L_POEG_GPT_CFG_IRQ_CMD		2
- #define RZG2L_POEG_GPT_FAULT_CLR_CMD		3
-+#define RZG2L_POEG_EXT_PIN_CTRL_FAULT_CLR_CMD	4
- 
- struct poeg_event {
- 	__u32 gpt_disable_irq_status;
+configs tested: 122
+configs skipped: 14
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r034-20230327   gcc  
+arc                  randconfig-r043-20230326   gcc  
+arc                  randconfig-r043-20230327   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm          buildonly-randconfig-r002-20230327   gcc  
+arm                                 defconfig   gcc  
+arm                  randconfig-r022-20230326   clang
+arm                  randconfig-r031-20230327   clang
+arm                  randconfig-r046-20230326   clang
+arm                  randconfig-r046-20230327   gcc  
+arm64                            allyesconfig   gcc  
+arm64        buildonly-randconfig-r002-20230326   clang
+arm64                               defconfig   gcc  
+arm64                randconfig-r021-20230326   gcc  
+csky                                defconfig   gcc  
+csky                 randconfig-r012-20230326   gcc  
+csky                 randconfig-r016-20230326   gcc  
+csky                 randconfig-r024-20230326   gcc  
+csky                 randconfig-r026-20230326   gcc  
+csky                 randconfig-r034-20230326   gcc  
+hexagon              randconfig-r022-20230327   clang
+hexagon              randconfig-r041-20230326   clang
+hexagon              randconfig-r041-20230327   clang
+hexagon              randconfig-r045-20230326   clang
+hexagon              randconfig-r045-20230327   clang
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-r006-20230327   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-a001-20230327   gcc  
+i386                 randconfig-a002-20230327   gcc  
+i386                 randconfig-a003-20230327   gcc  
+i386                 randconfig-a004-20230327   gcc  
+i386                 randconfig-a005-20230327   gcc  
+i386                 randconfig-a006-20230327   gcc  
+i386                 randconfig-a011-20230327   clang
+i386                 randconfig-a012-20230327   clang
+i386                 randconfig-a013-20230327   clang
+i386                 randconfig-a014-20230327   clang
+i386                 randconfig-a015-20230327   clang
+i386                 randconfig-a016-20230327   clang
+i386                 randconfig-r004-20230327   gcc  
+ia64                             allmodconfig   gcc  
+ia64                                defconfig   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch    buildonly-randconfig-r005-20230327   gcc  
+loongarch                           defconfig   gcc  
+loongarch            randconfig-r002-20230327   gcc  
+loongarch            randconfig-r004-20230326   gcc  
+loongarch            randconfig-r015-20230326   gcc  
+loongarch            randconfig-r025-20230326   gcc  
+loongarch            randconfig-r032-20230326   gcc  
+loongarch            randconfig-r033-20230327   gcc  
+m68k                             allmodconfig   gcc  
+m68k         buildonly-randconfig-r003-20230327   gcc  
+m68k         buildonly-randconfig-r004-20230326   gcc  
+m68k                                defconfig   gcc  
+m68k                 randconfig-r003-20230326   gcc  
+m68k                 randconfig-r023-20230326   gcc  
+m68k                 randconfig-r031-20230326   gcc  
+microblaze   buildonly-randconfig-r004-20230327   gcc  
+microblaze   buildonly-randconfig-r005-20230326   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                 randconfig-r001-20230326   gcc  
+mips                 randconfig-r006-20230326   gcc  
+nios2                               defconfig   gcc  
+openrisc             randconfig-r021-20230327   gcc  
+openrisc             randconfig-r025-20230327   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc              randconfig-r036-20230327   gcc  
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv        buildonly-randconfig-r001-20230326   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r013-20230326   gcc  
+riscv                randconfig-r026-20230327   clang
+riscv                randconfig-r042-20230326   gcc  
+riscv                randconfig-r042-20230327   clang
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r003-20230327   gcc  
+s390                 randconfig-r024-20230327   clang
+s390                 randconfig-r044-20230326   gcc  
+s390                 randconfig-r044-20230327   clang
+sh                               allmodconfig   gcc  
+sh                   randconfig-r011-20230326   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r001-20230327   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64       buildonly-randconfig-r001-20230327   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-a001-20230327   gcc  
+x86_64               randconfig-a002-20230327   gcc  
+x86_64               randconfig-a003-20230327   gcc  
+x86_64               randconfig-a004-20230327   gcc  
+x86_64               randconfig-a005-20230327   gcc  
+x86_64               randconfig-a006-20230327   gcc  
+x86_64               randconfig-a011-20230327   clang
+x86_64               randconfig-a012-20230327   clang
+x86_64               randconfig-a013-20230327   clang
+x86_64               randconfig-a014-20230327   clang
+x86_64               randconfig-a015-20230327   clang
+x86_64               randconfig-a016-20230327   clang
+x86_64               randconfig-r035-20230327   gcc  
+x86_64                               rhel-8.3   gcc  
+xtensa       buildonly-randconfig-r006-20230326   gcc  
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
