@@ -2,205 +2,267 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8C3C76195
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Mar 2023 10:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F5CC76196
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Mar 2023 10:39:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229670AbjC1KUT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Mar 2023 06:20:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55656 "EHLO
+        id S230315AbjC1KjV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Mar 2023 06:39:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbjC1KUT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2023 06:20:19 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5640D4EE8
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2023 03:20:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1679998818; x=1711534818;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=992kA1wysFY98d8wCqhL0kdaIiWdhyItsKlFB1M5d6A=;
-  b=Ak/TWSKsKKAynTJlFKPsEm7LF975ggv9uy3toa86pikws1wq7T4D5fYt
-   KaFZSB7RTQWv2Sih8n1KXDyN2oZRLlul/6oMd0/IoTFw8Y1Gm7yroV+u5
-   CBtpZ1lwnwCm5D2RHLFgYwsIxrqBBCohg28bZRM9ROqj0BQUWoM+vV2CR
-   kDG3TroVxigKEKOqKmLql7mXcOr2irkvCnOJIEuAcaTE+sGrX3aMvE5LW
-   4hTWGRF4UMCMWvsgMlPz0tIxTqYhw5qgxSnj8s7JnscylDIlxYvMvllDK
-   0tCEglmuhZ14UJXdo6qapVMtlkuLxxKodvqAvl/MKAcZLlpbBW6KCfJPr
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10662"; a="342936757"
-X-IronPort-AV: E=Sophos;i="5.98,297,1673942400"; 
-   d="scan'208";a="342936757"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2023 03:20:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10662"; a="773092815"
-X-IronPort-AV: E=Sophos;i="5.98,297,1673942400"; 
-   d="scan'208";a="773092815"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 28 Mar 2023 03:20:01 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1ph6Qq-000ITJ-1U;
-        Tue, 28 Mar 2023 10:20:00 +0000
-Date:   Tue, 28 Mar 2023 18:19:01 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
- 5278b8e458f38be91b502530573744ed59c97caa
-Message-ID: <6422bf15.JbfAwArwR5mY7KVf%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S229436AbjC1KjT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2023 06:39:19 -0400
+Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13370618A
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2023 03:39:17 -0700 (PDT)
+Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-545cb3c9898so146168087b3.7
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2023 03:39:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679999956;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WeJvOmb4UiZDVdrpjbdoZEi88r2fueDviw4j3TobD+s=;
+        b=in30x2eTX3jMdB5lq1/bDRTxEHiNx9CtvD7goZQ6srXY+8gNricGHD/FTz0kAZsX9h
+         ry0Ldo03nV1VdMZBxhOiz0iMe1BRmASe+mD65YEruCVXoY0kbUsM/FgZLzv4q1n6Ll0z
+         GVUioTnM9Eejmtvl5rRwz/3cwRjYeG2w5D9ULfltX9JSeLE9ixzw9M/O45MFf6240+qe
+         d2lTNggLA6nKiLPBrpxqqlEqBXcbUQFTRY3MQ3HPDrzVtvSk+C3SvbaQrtA3Wek29dHU
+         VcwRILvcyIQWn84anR+3PRXriNK7zyc07nGzltmgzqqyHmk3BywN1lNyUfLfgtFs836/
+         lVkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679999956;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WeJvOmb4UiZDVdrpjbdoZEi88r2fueDviw4j3TobD+s=;
+        b=d6IwYogqsWedmDoHPKNxYN5jST9bUpUWPvCTJ8EP/2p9fADObwyZdBDg21mYjDCe7b
+         aokdIkwlO42WPAqPTU0uNanAD6XvaiB+PJ9pNKxbge58fYQ6aXomiIPIglmTSS9d2f6F
+         Tb57rS56bNEDurpkdlLWnZuBID/ggl+ZzmWU8C5WCaGfn1V1LR+ngRMw09KBAw9ZQOMn
+         F/mCyAMMXY897nc5rKkJWw75aZMAfbw8sq4Z0kJ3xoonoBXz2kqsRebr9b/nqGLcs0GN
+         TIVNrG8JjcKDjKLkOiWRIEfDmauvMkNFmeUuK+A7PFmMrg4T1mhNm/AkYCLf0fFR9zdI
+         Kkgw==
+X-Gm-Message-State: AAQBX9fbrPKDGSRneYzvdp/vkhoqjNM/ywrWY5td8kLAdybG2unRoo0V
+        j7RVDApdAOVlFX0YFAvfZQIHCbrovqPxxMTifVgujg==
+X-Google-Smtp-Source: AKy350brQY738lvkF7Rq2rzNE3EKxx6So7gaAZKzG1faUECV9zEl3gL5esGUxz85xxrR5C20f9Chy1kDFvI+CQ0wU18=
+X-Received: by 2002:a81:4410:0:b0:545:a7d8:f278 with SMTP id
+ r16-20020a814410000000b00545a7d8f278mr6595880ywa.5.1679999956113; Tue, 28 Mar
+ 2023 03:39:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+References: <20230327132718.573-1-quic_devipriy@quicinc.com>
+ <20230327132718.573-4-quic_devipriy@quicinc.com> <CAA8EJprTm1sZ8fnfNee+NJTiaFq17QwWaEnSoJWVYs_GY65xFg@mail.gmail.com>
+ <a6225636-7abb-3c5c-c78f-8d40c25167b9@quicinc.com>
+In-Reply-To: <a6225636-7abb-3c5c-c78f-8d40c25167b9@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Tue, 28 Mar 2023 13:39:05 +0300
+Message-ID: <CAA8EJprgcMOX-WRXP2i9k850La1A1UKaKuODd-fVi27nOxMbyA@mail.gmail.com>
+Subject: Re: [PATCH V10 3/4] arm64: dts: qcom: Add support for ipq9574 SoC and
+ RDP433 variant
+To:     Devi Priya <quic_devipriy@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, catalin.marinas@arm.com, will@kernel.org,
+        p.zabel@pengutronix.de, shawnguo@kernel.org, arnd@arndb.de,
+        marcel.ziswiler@toradex.com, nfraprado@collabora.com,
+        broonie@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, quic_srichara@quicinc.com,
+        quic_gokulsri@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
+        quic_anusha@quicinc.com, quic_poovendh@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-branch HEAD: 5278b8e458f38be91b502530573744ed59c97caa  Merge branch 'devel' into for-next
+On Tue, 28 Mar 2023 at 10:31, Devi Priya <quic_devipriy@quicinc.com> wrote:
+> On 3/27/2023 8:15 PM, Dmitry Baryshkov wrote:
+> > On Mon, 27 Mar 2023 at 16:28, Devi Priya <quic_devipriy@quicinc.com> wrote:
+> >>
+> >> Add initial device tree support for Qualcomm IPQ9574 SoC and
+> >> Reference Design Platform(RDP) 433 which is based on IPQ9574
+> >> family of SoCs
+> >>
+> >> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+> >> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> >> Co-developed-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+> >> Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+> >> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> >> ---
+> >>   Changes in V10:
+> >>          - Renamed the Board Device Tree Source to use the RDP numbers
+> >>          - Updated the Makefile, subject and commit message accordingly
+> >>
+> >>   arch/arm64/boot/dts/qcom/Makefile           |   1 +
+> >>   arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts |  84 ++++++
+> >>   arch/arm64/boot/dts/qcom/ipq9574.dtsi       | 270 ++++++++++++++++++++
+> >>   3 files changed, 355 insertions(+)
+> >>   create mode 100644 arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+> >>   create mode 100644 arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> >>
+> >> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> >> index 1a29403400b7..52f1f92c5195 100644
+> >> --- a/arch/arm64/boot/dts/qcom/Makefile
+> >> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> >> @@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_QCOM) += ipq6018-cp01-c1.dtb
+> >>   dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk01.dtb
+> >>   dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk10-c1.dtb
+> >>   dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk10-c2.dtb
+> >> +dtb-$(CONFIG_ARCH_QCOM)        += ipq9574-rdp433.dtb
+> >>   dtb-$(CONFIG_ARCH_QCOM)        += msm8916-acer-a1-724.dtb
+> >>   dtb-$(CONFIG_ARCH_QCOM)        += msm8916-alcatel-idol347.dtb
+> >>   dtb-$(CONFIG_ARCH_QCOM)        += msm8916-asus-z00l.dtb
+> >> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+> >> new file mode 100644
+> >> index 000000000000..2ce8e09e7565
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+> >> @@ -0,0 +1,84 @@
+> >> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+> >> +/*
+> >> + * IPQ9574 RDP433 board device tree source
+> >> + *
+> >> + * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+> >> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+> >> + */
+> >> +
+> >> +/dts-v1/;
+> >> +
+> >> +#include "ipq9574.dtsi"
+> >> +
+> >> +/ {
+> >> +       model = "Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7";
+> >> +       compatible = "qcom,ipq9574-ap-al02-c7", "qcom,ipq9574";
+> >> +
+> >> +       aliases {
+> >> +               serial0 = &blsp1_uart2;
+> >> +       };
+> >> +
+> >> +       chosen {
+> >> +               stdout-path = "serial0:115200n8";
+> >> +       };
+> >> +};
+> >> +
+> >> +&blsp1_uart2 {
+> >> +       pinctrl-0 = <&uart2_pins>;
+> >> +       pinctrl-names = "default";
+> >> +       status = "okay";
+> >> +};
+> >> +
+> >> +&sdhc_1 {
+> >> +       pinctrl-0 = <&sdc_default_state>;
+> >> +       pinctrl-names = "default";
+> >> +       mmc-ddr-1_8v;
+> >> +       mmc-hs200-1_8v;
+> >> +       mmc-hs400-1_8v;
+> >> +       mmc-hs400-enhanced-strobe;
+> >> +       max-frequency = <384000000>;
+> >> +       bus-width = <8>;
+> >> +       status = "okay";
+> >> +};
+> >> +
+> >> +&sleep_clk {
+> >> +       clock-frequency = <32000>;
+> >> +};
+> >> +
+> >> +&tlmm {
+> >> +       sdc_default_state: sdc-default-state {
+> >> +               clk-pins {
+> >> +                       pins = "gpio5";
+> >> +                       function = "sdc_clk";
+> >> +                       drive-strength = <8>;
+> >> +                       bias-disable;
+> >> +               };
+> >> +
+> >> +               cmd-pins {
+> >> +                       pins = "gpio4";
+> >> +                       function = "sdc_cmd";
+> >> +                       drive-strength = <8>;
+> >> +                       bias-pull-up;
+> >> +               };
+> >> +
+> >> +               data-pins {
+> >> +                       pins = "gpio0", "gpio1", "gpio2",
+> >> +                              "gpio3", "gpio6", "gpio7",
+> >> +                              "gpio8", "gpio9";
+> >> +                       function = "sdc_data";
+> >> +                       drive-strength = <8>;
+> >> +                       bias-pull-up;
+> >> +               };
+> >> +
+> >> +               rclk-pins {
+> >> +                       pins = "gpio10";
+> >> +                       function = "sdc_rclk";
+> >> +                       drive-strength = <8>;
+> >> +                       bias-pull-down;
+> >> +               };
+> >> +       };
+> >> +};
+> >> +
+> >> +&xo_board_clk {
+> >> +       clock-frequency = <24000000>;
+> >> +};
+> >> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> >> new file mode 100644
+> >> index 000000000000..3bb7435f5e7f
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> >> @@ -0,0 +1,270 @@
+> >> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+> >> +/*
+> >> + * IPQ9574 SoC device tree source
+> >> + *
+> >> + * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+> >> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+> >> + */
+> >> +
+> >> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> >> +#include <dt-bindings/clock/qcom,ipq9574-gcc.h>
+> >> +#include <dt-bindings/reset/qcom,ipq9574-gcc.h>
+> >> +
+> >> +/ {
+> >> +       interrupt-parent = <&intc>;
+> >> +       #address-cells = <2>;
+> >> +       #size-cells = <2>;
+> >> +
+> >> +       clocks {
+> >> +               bias_pll_ubi_nc_clk: bias-pll-ubi-nc-clk {
+> >> +                       compatible = "fixed-clock";
+> >> +                       clock-frequency = <353000000>;
+> >> +                       #clock-cells = <0>;
+> >> +               };
+> >
+> > What is the source for this clock? With it clocking at 353 MHz, I
+> > doubt that it is an external clock.
+> bias_pll_ubi_nc_clk (353MHz)is a backup source
+> for Q6_AXIM2_CLK/PCIE2_AXIM_CLK/PCIE3_AXIM_CLK/SNOC-CLK
+> It is from the CMN_PLL, and is the same as that of PPE core clock.
+> Do you suggest to move its clock-frequency to Board DT similar to
+> xo/sleep clock?
 
-elapsed time: 720m
+No, I suggest moving it to the device where it originates. If it comes
+from GCC, it should be provided by the GCC, not by the top-level fixed
+clock.
 
-configs tested: 131
-configs skipped: 11
+> >
+> >> +
+> >> +               sleep_clk: sleep-clk {
+> >> +                       compatible = "fixed-clock";
+> >> +                       #clock-cells = <0>;
+> >> +               };
+> >> +
+> >> +               xo_board_clk: xo-board-clk {
+> >> +                       compatible = "fixed-clock";
+> >> +                       #clock-cells = <0>;
+> >> +               };
+> >> +       };
+> >
+> > [skipped the rest]
+> >
+> Regards,
+> Devi Priya
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
 
-tested configs:
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allyesconfig   gcc  
-arc          buildonly-randconfig-r004-20230327   gcc  
-arc                                 defconfig   gcc  
-arc                  randconfig-r016-20230327   gcc  
-arc                  randconfig-r031-20230326   gcc  
-arc                  randconfig-r043-20230326   gcc  
-arc                  randconfig-r043-20230327   gcc  
-arm                              allmodconfig   gcc  
-arm                              allyesconfig   gcc  
-arm          buildonly-randconfig-r003-20230326   clang
-arm                                 defconfig   gcc  
-arm                  randconfig-r025-20230326   clang
-arm                  randconfig-r046-20230326   clang
-arm                  randconfig-r046-20230327   gcc  
-arm64                            allyesconfig   gcc  
-arm64        buildonly-randconfig-r005-20230326   clang
-arm64                               defconfig   gcc  
-arm64                randconfig-r012-20230326   gcc  
-arm64                randconfig-r013-20230327   clang
-csky                                defconfig   gcc  
-csky                 randconfig-r003-20230327   gcc  
-hexagon              randconfig-r006-20230326   clang
-hexagon              randconfig-r036-20230326   clang
-hexagon              randconfig-r041-20230326   clang
-hexagon              randconfig-r041-20230327   clang
-hexagon              randconfig-r045-20230326   clang
-hexagon              randconfig-r045-20230327   clang
-i386                             allyesconfig   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                 randconfig-a001-20230327   gcc  
-i386                 randconfig-a002-20230327   gcc  
-i386                 randconfig-a003-20230327   gcc  
-i386                 randconfig-a004-20230327   gcc  
-i386                 randconfig-a005-20230327   gcc  
-i386                 randconfig-a006-20230327   gcc  
-i386                 randconfig-a011-20230327   clang
-i386                 randconfig-a012-20230327   clang
-i386                 randconfig-a013-20230327   clang
-i386                 randconfig-a014-20230327   clang
-i386                 randconfig-a015-20230327   clang
-i386                 randconfig-a016-20230327   clang
-i386                 randconfig-r022-20230327   clang
-ia64                             allmodconfig   gcc  
-ia64                                defconfig   gcc  
-ia64                 randconfig-r003-20230326   gcc  
-ia64                 randconfig-r015-20230327   gcc  
-ia64                 randconfig-r016-20230326   gcc  
-ia64                 randconfig-r033-20230326   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-m68k                             allmodconfig   gcc  
-m68k         buildonly-randconfig-r003-20230327   gcc  
-m68k         buildonly-randconfig-r006-20230326   gcc  
-m68k                                defconfig   gcc  
-m68k                 randconfig-r005-20230327   gcc  
-m68k                 randconfig-r036-20230327   gcc  
-microblaze           randconfig-r004-20230327   gcc  
-microblaze           randconfig-r034-20230326   gcc  
-mips                             allmodconfig   gcc  
-mips                             allyesconfig   gcc  
-mips         buildonly-randconfig-r001-20230326   gcc  
-mips         buildonly-randconfig-r006-20230327   clang
-nios2                               defconfig   gcc  
-nios2                randconfig-r006-20230327   gcc  
-nios2                randconfig-r013-20230326   gcc  
-openrisc     buildonly-randconfig-r005-20230327   gcc  
-openrisc             randconfig-r004-20230326   gcc  
-parisc       buildonly-randconfig-r002-20230327   gcc  
-parisc                              defconfig   gcc  
-parisc               randconfig-r001-20230327   gcc  
-parisc               randconfig-r005-20230326   gcc  
-parisc               randconfig-r026-20230326   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc              randconfig-r012-20230327   clang
-powerpc              randconfig-r024-20230326   gcc  
-powerpc              randconfig-r031-20230327   gcc  
-powerpc              randconfig-r032-20230327   gcc  
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv                               defconfig   gcc  
-riscv                randconfig-r024-20230327   clang
-riscv                randconfig-r042-20230326   gcc  
-riscv                randconfig-r042-20230327   clang
-riscv                          rv32_defconfig   gcc  
-s390                             allmodconfig   gcc  
-s390                             allyesconfig   gcc  
-s390                                defconfig   gcc  
-s390                 randconfig-r014-20230326   gcc  
-s390                 randconfig-r014-20230327   clang
-s390                 randconfig-r022-20230326   gcc  
-s390                 randconfig-r044-20230326   gcc  
-s390                 randconfig-r044-20230327   clang
-sh                               allmodconfig   gcc  
-sh                   randconfig-r035-20230326   gcc  
-sparc        buildonly-randconfig-r001-20230327   gcc  
-sparc                               defconfig   gcc  
-sparc                randconfig-r021-20230326   gcc  
-sparc                randconfig-r025-20230327   gcc  
-sparc64      buildonly-randconfig-r004-20230326   gcc  
-sparc64              randconfig-r026-20230327   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64                              defconfig   gcc  
-x86_64                                  kexec   gcc  
-x86_64               randconfig-a001-20230327   gcc  
-x86_64               randconfig-a002-20230327   gcc  
-x86_64               randconfig-a003-20230327   gcc  
-x86_64               randconfig-a004-20230327   gcc  
-x86_64               randconfig-a005-20230327   gcc  
-x86_64               randconfig-a006-20230327   gcc  
-x86_64               randconfig-a011-20230327   clang
-x86_64               randconfig-a012-20230327   clang
-x86_64               randconfig-a013-20230327   clang
-x86_64               randconfig-a014-20230327   clang
-x86_64               randconfig-a015-20230327   clang
-x86_64               randconfig-a016-20230327   clang
-x86_64               randconfig-r002-20230327   gcc  
-x86_64               randconfig-r021-20230327   clang
-x86_64               randconfig-r033-20230327   gcc  
-x86_64                               rhel-8.3   gcc  
-xtensa               randconfig-r011-20230326   gcc  
-xtensa               randconfig-r011-20230327   gcc  
-xtensa               randconfig-r035-20230327   gcc  
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+With best wishes
+Dmitry
