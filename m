@@ -2,43 +2,43 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7B3C6FD18
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Mar 2023 17:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51294C76196
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Mar 2023 17:43:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229477AbjC1Rn0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Mar 2023 13:43:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53366 "EHLO
+        id S229693AbjC1Rn1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Mar 2023 13:43:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjC1RnZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2023 13:43:25 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2063.outbound.protection.outlook.com [40.107.220.63])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FF08E394;
-        Tue, 28 Mar 2023 10:43:12 -0700 (PDT)
+        with ESMTP id S229668AbjC1Rn0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2023 13:43:26 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2069.outbound.protection.outlook.com [40.107.243.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A38EED50D;
+        Tue, 28 Mar 2023 10:43:13 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YlgE5CdSUd0l3psCCiutvZodOBrzAXJvjaZ0w1jQkEyBuwiwS9FvWlQqqDlnBSTPBoljXMeNnSTBT/LdbRKJumBMwa4Slj49fDv7JBxlNCECGSfAGRlpsvjLJXDMrY47/qaRzqwgi1jg6X2nvfNeGbdEmO2JquOgLEipysrvOx448d8VjJeKv3paQZ6FVe8LU5LG5g4UMp5lWQp5uf8BQK+Y8qePxPtYlK2yGgd5ZxFm3G8E7MIccE6Ae0IGbvbL1bhFQdijaKlZk4vgj3X4X03kq2RTkVKtFjcfPnYE1hSC0mDo+O6K2eiZMFDLqAWkEx76l9lgiArLXH1HdEaemQ==
+ b=AiK6mdYlMf19x2YJ4ORIl4iPCRQA6m6Fc3i5QmFm3f1pYH21uvVhdYPHiFpA5JTtuMDyy1DNGEPTCL3KX4l5SFNFlwLmqkijpw0vzMKqpoCa+6mPzSXbr+nR2o913aOvHn2/wAxa2WzQ6Q4M27bcK4/2SYpfZ/y2k5noOu5ugW943eUlXk4s+6QpXtGI/PKXJ0bAYqm0vnTcQycHb3pFqzZo2C4cl+3QwFhhjpn6ln8UuS51G+VegqSmvbLAWHug+SgC14TjF5hqjuFClpI7ZQSshQSAO5Z636mO3gDSE3kdCJmBLDwABltquuxZoHwcmSfLfq2fJfghlTqElf7nrw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YhY/rlU8RYv3+aQouIv82ntGhVizJZfeuwcxLTA0rtM=;
- b=THbXCvFTiRTElpG9DKwUPOo3e2E3kNyPqnuI3mPukDmINIRAK8bwVAUaQSVjZPaRJAtbftKMdj/jLbXwgzbw0nU+6cjevwy34V3z20unKxqbn3ACW/Y9lob15vMWcWpOmZxQiTyWYCW0HjLGJldLGT19ITV68vV0IZpP4wKTVXYfU77XrxlTNMU1va5Pg7scUsgaBppaervgJ23CrZjKYYqevOWgcuc+lu5rT6YuZ9NUjsjKbkeG1u1SyMhvXp2Fh9I8tit8cXa+o2BBdHNk4KvReDM2KhRrdv1h0KXhcyAE9NUOfTNTPFrYfoaspObIvgHOj5jQbqCvRGwDyGHtQQ==
+ bh=5hbgjoW3lXuWAlH5JJ5NsfG0s7gg+q8tDyId+wx566Y=;
+ b=hO5143jkFBNxggF/5m39uzcncHEH3TSosaKqnqmDM/OpJJBGHV60aAIaf+rCmp+JprTwnBo9zRaorZ9zrVw4fNJroOViRLC7acHoHOL0bCRRNkDhg4BJeS1pIGJR1yDZFvl+7DH3qt5injmh3Bgyfh/K8MoagQjkA0Ahq7tvjQQXEd7xVn1IiSKXojtW+6q7LXsQtvSyoj5xmRYOAp8xBhn1cNeRW6RMAg77bhzANGHZnFUp1O4UEXpytTxjOv5p+EtyRuT3oSNMiMwyf+P4RvbLHY7l1cTC2HcaXhZuB8OD3rmQOEJpD9AcfKUjMrmPUfdV1hBpsBfCmdBuuLGVjA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none
+ 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YhY/rlU8RYv3+aQouIv82ntGhVizJZfeuwcxLTA0rtM=;
- b=sUc4SeGdvQ9tJfmiOjaDyJtiSX3kz8ue5kjJmvHpCtknGDqCjflNb7L2K4pcivmxuvrOttyPFp9tH5PPvcLPJAUbO79uaOoi5NHV0RDmYID1H7s2TjAXnMr9yZHFlwHmwQXN6rv6TCKqAk83gGfsEu/GF6aenSjIcPvkcVOv78I=
-Received: from MW4PR03CA0277.namprd03.prod.outlook.com (2603:10b6:303:b5::12)
- by PH7PR12MB6834.namprd12.prod.outlook.com (2603:10b6:510:1b4::18) with
+ bh=5hbgjoW3lXuWAlH5JJ5NsfG0s7gg+q8tDyId+wx566Y=;
+ b=WzFmw2n02zDVRL4Si5p5Wm8TWIsYzppyoqgoHJcpLHfrTkxfohVkXHGov6HpJRiMrmw4Jj4RhXYLX1IgdlhkCyNs34eIV41kNT5bCyMSrui38f4M93w/T50xf46xINmpPKouHOKiiBGoxgWMurD0S0BIOMcERldU0r3jzjdKUMM=
+Received: from MW4PR03CA0021.namprd03.prod.outlook.com (2603:10b6:303:8f::26)
+ by LV2PR12MB5847.namprd12.prod.outlook.com (2603:10b6:408:174::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.38; Tue, 28 Mar
- 2023 17:43:08 +0000
-Received: from CO1NAM11FT010.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:b5:cafe::56) by MW4PR03CA0277.outlook.office365.com
- (2603:10b6:303:b5::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.42 via Frontend
- Transport; Tue, 28 Mar 2023 17:43:08 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6222.33; Tue, 28 Mar
+ 2023 17:43:10 +0000
+Received: from CO1NAM11FT035.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:8f:cafe::cc) by MW4PR03CA0021.outlook.office365.com
+ (2603:10b6:303:8f::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.43 via Frontend
+ Transport; Tue, 28 Mar 2023 17:43:10 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -46,22 +46,25 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1NAM11FT010.mail.protection.outlook.com (10.13.175.88) with Microsoft SMTP
+ CO1NAM11FT035.mail.protection.outlook.com (10.13.175.36) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6222.22 via Frontend Transport; Tue, 28 Mar 2023 17:43:08 +0000
+ 15.20.6222.17 via Frontend Transport; Tue, 28 Mar 2023 17:43:10 +0000
 Received: from AUS-LX-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Tue, 28 Mar
- 2023 12:43:03 -0500
+ 2023 12:43:04 -0500
 From:   Mario Limonciello <mario.limonciello@amd.com>
 To:     Natikar Basavaraj <Basavaraj.Natikar@amd.com>,
-        <linux-gpio@vger.kernel.org>
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        Linus Walleij <linus.walleij@linaro.org>
 CC:     Mario Limonciello <mario.limonciello@amd.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 0/2] pinctrl-amd debugfs improvements
-Date:   Tue, 28 Mar 2023 12:42:29 -0500
-Message-ID: <20230328174231.8924-1-mario.limonciello@amd.com>
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 2/2] pinctrl: amd: Add fields for interrupt status and wake status
+Date:   Tue, 28 Mar 2023 12:42:31 -0500
+Message-ID: <20230328174231.8924-3-mario.limonciello@amd.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230328174231.8924-1-mario.limonciello@amd.com>
+References: <20230328174231.8924-1-mario.limonciello@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
@@ -70,60 +73,92 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT010:EE_|PH7PR12MB6834:EE_
-X-MS-Office365-Filtering-Correlation-Id: 015f775a-88fd-43c9-c03f-08db2fb3e4bf
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT035:EE_|LV2PR12MB5847:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3d064557-2b8a-40ba-6110-08db2fb3e5fe
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: MypF3BCA53D3YZBDncC9wlpul2rPBqHxGfDmEtPICNDF7ld6oankR7DmM/5psfQYQCTB67zUapgpaIifhKMRoFhvNsUk2wQ83pBealuQLY1YFP+Z3PdojY1T3syRlN0xlO/eQGVMKeL38DvVaegcfhDNW5SPhdKaT0L66VIAxt7Q+3FGIToXpq5ES4I3KOxlEsrMtIuW/5STMGc9MCNNYb1zniSAB3abKaDBQMkfICX2G5Q58v99VkQyiGMAznlEFAJzbjQjdETJW93Xmfpc0XAoVZRBeu+TePkeJH7a+vYZhrg8oZPkbN9kfEJaykz8S+X6qgHkuppj1n8aWQNrF84cvia5QKAjCxt48ooxBwOXMymBugJQ+0vCpNTDL42v1F6tcNHRLZgcd81OxEZE1TYR0i2RRPC8nanOC5Qd7mlk8/Y/QZyze0VV9qhIn6gPT/e7q77El1ZWmBaJ7foZXbilYFljcbSKbpJ64Gy4icOi25iSDV75RWQ37hozTJP8LDq0Z0KyhoIrG1xO2LWgbu0njmXjSyGwcgiKNLS7rKQ/VJH5lBdi/zCkgh0wBiHanLsJ7gqruhO8PJaWKSZgtaAdcHh0QlIWsq7DIRwzDOQxby7jJobXax3xPAfJeT4p2PN9L9QRgDuFDbQUwIpD493IGP1BI8hc+EXceyoMESgkMhY/BCKa/suavw0B2vVYF6NrKttuenGbUEGpW+zb91uenZQPkNbqnvsANarCDHA=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(136003)(396003)(376002)(346002)(39860400002)(451199021)(36840700001)(40470700004)(46966006)(41300700001)(36860700001)(336012)(356005)(8676002)(450100002)(5660300002)(7696005)(40480700001)(70586007)(26005)(1076003)(8936002)(110136005)(82310400005)(54906003)(6666004)(2906002)(16526019)(44832011)(40460700003)(186003)(36756003)(83380400001)(82740400003)(426003)(47076005)(478600001)(2616005)(316002)(4326008)(86362001)(70206006)(81166007)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: kCWDr+EW+8et08Aigb+kpDtNaqkX4CpWHvzgBWhqLqAwUmHxr6+fWPDqtlTW53U3uN1RdDZYr9F3bGVzM3BBDfI7YjZi7PRP1gLmoJsOX1pV4CPyslL5TnOTsEW6ffgEvkKBzvzDxRQcxBDI/7z1K/meT/JBNNfiioUxCnS7pqaFyDPmdf6bj7I4+08hv5eErueqFEuGx4wnesP9RbDMMUv/58VfQPaMuFsor9FlisVxIuLS1xG0Hx6rvgPEw2zd0nf36ofYmzy4+RqeVDPL1DmsDsoSn3hYOCLLQiuK5TcirYEfAWYIrdvFBGbpyscvHzjDAkxJTzYs0h8V5ULhAaY3rkG5UetkoeRRhwC3qSHNFP2acknoXjWXKdTl+6pLaW9dtx86bT0e9+jGZR4HOK7xAmvZwE/ZMul4Drd/VDqCDZar7CyoNryglbektIwLHdFt2XIvqZIX8XrL3CNJ4TmVtb2VHlQmvL9JN84HDrewKk83YvkncdzXfc8ew0QNhHExEJK3LkNi8MYvrNlOPcseh6TZxnbDm1Ic/gBf6YAq9vnstZZSeDUAhv55b5fXjIZ9DJVTlGGTdVVVsxO088lJFee7e5Bw7wqDAl6eXCuMYZAu7UVltBKlxRe5iGXpJ4IhP7Vy58LlsLRv3TmDJT+RLBYT8KefKDXfjOz7M80x9ByrenHATrzsJEGRWZLTD3+h6eH+kD2eSE+ObpP61V5DqgQZ6Db9OaK6goz/eqY=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(39860400002)(396003)(136003)(451199021)(40470700004)(36840700001)(46966006)(86362001)(47076005)(426003)(336012)(82740400003)(36756003)(16526019)(2906002)(83380400001)(82310400005)(2616005)(186003)(5660300002)(1076003)(26005)(8936002)(81166007)(356005)(6666004)(40460700003)(36860700001)(70206006)(70586007)(41300700001)(40480700001)(4326008)(7696005)(54906003)(44832011)(316002)(8676002)(478600001)(110136005)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2023 17:43:08.4761
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2023 17:43:10.5955
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 015f775a-88fd-43c9-c03f-08db2fb3e4bf
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d064557-2b8a-40ba-6110-08db2fb3e5fe
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT010.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT035.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6834
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5847
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Debugging an issue recently of poor residency in a low power state
-concluded it was caused by GPIO controller misprogrammed in BIOS.
+If the firmware has misconfigured a GPIO it may cause interrupt
+status or wake status bits to be set and not asserted. Add these
+to debug output to catch this case.
 
-What happened was _CRS was missing a configuration but device was
-trying to assert an interrupt.  This is found by interrupt status
-bit which isn't currently covered in debug output.
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/pinctrl/pinctrl-amd.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-Add this and also the similar wake status bit to debug output.
-As the display is very busy and growing long again with so much info,
-adjust the display to only render characters for relevant bits
-and to now use headers for each GPIO bank.
-
-New sample output, including demonstrating detection of
-BIOS issue (by 🔥):
-
-gpio	  int|active|trigger|S0i3| S3|S4/S5| Z|wake|pull|  orient|       debounce|reg
-#0	   😛|     ↑|   edge|  ⏰| ⏰|     |⏰|    |4k ↑|input  ↑|b (🕑 046875us)|0x81578e3
-#1	    ∅|      |       |    |   |     |  |    |4k ↑|input  ↑|               |0x150000
-#2	   😛|     ↓|   edge|  ⏰| ⏰|     |  |    |4k ↑|input  ↑|               |0x157a00
-#3	   😛|     ↓|   edge|  ⏰| ⏰|     |  |    |4k ↑|input  ↑|               |0x157a00
-#4	    ∅|      |       |    |   |     |  |    |4k ↑|input  ↑|               |0x150000
-#5	    ∅|      |       |    |   |     |  |    |4k ↑|input  ↑|               |0x150000
-#6	   😷|     ↓|  level|    |   |     |⏰|    |4k ↑|input  ↑|               |0x8150b00
-#7	    ∅|      |       |    |   |     |  |    |4k ↑|input  ↑|               |0x150200
-#8	🔥 😷|     ↓|  level|    |   |     |⏰|    |4k ↑|input  ↓|               |0x18140b00
-
-Mario Limonciello (2):
-  pinctrl: amd: Adjust debugfs output
-  pinctrl: amd: Add fields for interrupt status and wake status
-
- drivers/pinctrl/pinctrl-amd.c | 90 +++++++++++++++++------------------
- 1 file changed, 44 insertions(+), 46 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 822f29440f15..c250110f6775 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -211,6 +211,8 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+ 	char *wake_cntrl1;
+ 	char *wake_cntrl2;
+ 	char *pin_sts;
++	char *interrupt_sts;
++	char *wake_sts;
+ 	char *pull_up_sel;
+ 	char *orientation;
+ 	char debounce_value[40];
+@@ -243,7 +245,7 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+ 			continue;
+ 		}
+ 		seq_printf(s, "GPIO bank%d\n", bank);
+-		seq_puts(s, "gpio\tint|active|trigger|S0i3| S3|S4/S5| Z|wake|pull|  orient|       debounce|reg\n");
++		seq_puts(s, "gpio\t  int|active|trigger|S0i3| S3|S4/S5| Z|wake|pull|  orient|       debounce|reg\n");
+ 		for (; i < pin_num; i++) {
+ 			seq_printf(s, "#%d\t", i);
+ 			raw_spin_lock_irqsave(&gpio_dev->lock, flags);
+@@ -274,12 +276,18 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+ 				else
+ 					interrupt_mask = "😷";
+ 
+-				seq_printf(s, "%s|     %s|  %s|",
++				if (pin_reg & BIT(INTERRUPT_STS_OFF))
++					interrupt_sts = "🔥";
++				else
++					interrupt_sts = "  ";
++
++				seq_printf(s, "%s %s|     %s|  %s|",
++				   interrupt_sts,
+ 				   interrupt_mask,
+ 				   active_level,
+ 				   level_trig);
+ 			} else
+-				seq_puts(s, "  ∅|      |       |");
++				seq_puts(s, "    ∅|      |       |");
+ 
+ 			if (pin_reg & BIT(WAKE_CNTRL_OFF_S0I3))
+ 				wake_cntrl0 = "⏰";
+@@ -305,6 +313,12 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+ 				wake_cntrlz = "  ";
+ 			seq_printf(s, "%s|", wake_cntrlz);
+ 
++			if (pin_reg & BIT(WAKE_STS_OFF))
++				wake_sts = "🔥";
++			else
++				wake_sts = " ";
++			seq_printf(s, "   %s|", wake_sts);
++
+ 			if (pin_reg & BIT(PULL_UP_ENABLE_OFF)) {
+ 				if (pin_reg & BIT(PULL_UP_SEL_OFF))
+ 					pull_up_sel = "8k";
 -- 
 2.34.1
 
