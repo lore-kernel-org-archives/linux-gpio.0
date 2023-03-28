@@ -2,269 +2,290 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB812C77B61
-	for <linux-gpio@archiver.kernel.org>; Tue, 28 Mar 2023 17:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB67C77B6C
+	for <linux-gpio@archiver.kernel.org>; Tue, 28 Mar 2023 18:35:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229706AbjC1Rn3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 28 Mar 2023 13:43:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53456 "EHLO
+        id S229638AbjC1SfX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 28 Mar 2023 14:35:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbjC1Rn1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2023 13:43:27 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2043.outbound.protection.outlook.com [40.107.244.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ECA0EF82;
-        Tue, 28 Mar 2023 10:43:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NIKB5tdcsFIwU8+VBbSXuvBnZ3KpuaYA4ukPVw1OQpXQ6N6d+oMmvr8dqcM4uRmx99mrl2NB/kF0CkvmGNMVU6c9rwQZhHU+kioF2Co7DdsGRyCYgIA5om9Zjs3Mv6Yut0E2PViLNNg3eyAbMKUpasEn0k0FzQU9DJGMll3X8f8TyxXX5bizTDYRqt8dnr1f3XOFu+6W3uqaBSN4khA3ZXnMUlSId32z8isGGLFF3fUs+r4TpDOO2M8rBbmN9CZe5ziFJcoqoYW8B1yvvhkl9NMexN10nDjm7HnkwrvnYxp5Xet3yqa9QR6ofuktfrXSK8+QVp2PT2MVshl8qOzxHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NSuoLr/9O/R09usuVCbLBPYgQ9ZvhGbin8jKbizBPpQ=;
- b=AdabLB7vXL6FENes0eHmkWepDDM5Yc8+y18sJf7IXMFmfx9j2lUiU7Eq6lvkI3Y5pMZjcI03xKbkWF+h0Fjb4KN4KB97vhcp2WJy2+l+WGWGApjcV0tv8fCnhYsl517VoGt+OXPUFjqXsd72gJxnulEyf03OWwSbg+Olmi6EvzdZkb+FfBy3bwcKW5otIlCtooW0Ul9+Se3eneJn68hqL4IvSqBRt81OvASc2TGacLfBpJW1lwAMInRpU7dx4xnKyyyxDPTdh5kaiERJCtig5Fp8NGSrz5uTe/PFOtEBvcpCOKFpmuvgDoPZ0FnJKXvC+Lbm4lI0kxrLqsX3O7oLeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NSuoLr/9O/R09usuVCbLBPYgQ9ZvhGbin8jKbizBPpQ=;
- b=gH7X1/6rrzD6/zN28P8IuzhGq4kK4t/PuyMz+4PlQWtNdylHQ1Q4q+Gw2x0D/cfZIrfLHfhgyGI+uLoa9/HDcI45wRwY81oM6YnZN95C7kX9PkH55k/U7iIk7lDg+hpw5o6vpDaeK1UzipP6Ozaqsw2IgZIgA9lE9v8gxZNTAfg=
-Received: from MW4PR03CA0300.namprd03.prod.outlook.com (2603:10b6:303:b5::35)
- by IA0PR12MB8906.namprd12.prod.outlook.com (2603:10b6:208:481::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6222.33; Tue, 28 Mar
- 2023 17:43:11 +0000
-Received: from CO1NAM11FT010.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:b5:cafe::d1) by MW4PR03CA0300.outlook.office365.com
- (2603:10b6:303:b5::35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.43 via Frontend
- Transport; Tue, 28 Mar 2023 17:43:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1NAM11FT010.mail.protection.outlook.com (10.13.175.88) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6222.22 via Frontend Transport; Tue, 28 Mar 2023 17:43:10 +0000
-Received: from AUS-LX-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Tue, 28 Mar
- 2023 12:43:03 -0500
-From:   Mario Limonciello <mario.limonciello@amd.com>
-To:     Natikar Basavaraj <Basavaraj.Natikar@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     Mario Limonciello <mario.limonciello@amd.com>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/2] pinctrl: amd: Adjust debugfs output
-Date:   Tue, 28 Mar 2023 12:42:30 -0500
-Message-ID: <20230328174231.8924-2-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230328174231.8924-1-mario.limonciello@amd.com>
-References: <20230328174231.8924-1-mario.limonciello@amd.com>
+        with ESMTP id S229436AbjC1SfW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2023 14:35:22 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E42F19F;
+        Tue, 28 Mar 2023 11:35:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1680028521; x=1711564521;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BeQ/zO5tBpJqenzqiAW7Jszl5ERiiqTZmgr4aBbjDak=;
+  b=cJy576AaUPg6PMzHDIsEV9cdt1nUQ0rW6h8HKA8+hJJE1u9LkPV3GbIj
+   iL/3N8YyUttTNKGvKYLXTVXG1gFXKmOwdkTVUKj8KuuHj6t7QQsoPed17
+   HuF4tpxno6aokp8G0jwFsMpZVpCoBO+3MVgwEhHoASPf3uVp3XFsswvSy
+   YdYAW9uPm/gekDpzrOHsaIaue+T+MAPNqVztBJsR/X3AKh/MUT7ZtvVyU
+   WyHyNPyiZDK4THrP/FNK9fVUperWXmgQqF7KihLQrrjBkxSNyNwTIsSMe
+   2Vy5fafcg7Htrh1R0nNDPAvhyMUVbv/ooopzsfTInuShLcM1NDpTn2BgR
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10663"; a="342247521"
+X-IronPort-AV: E=Sophos;i="5.98,297,1673942400"; 
+   d="scan'208";a="342247521"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2023 11:35:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10663"; a="773246016"
+X-IronPort-AV: E=Sophos;i="5.98,297,1673942400"; 
+   d="scan'208";a="773246016"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 28 Mar 2023 11:35:17 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1phEA8-000Ior-2G;
+        Tue, 28 Mar 2023 18:35:16 +0000
+Date:   Wed, 29 Mar 2023 02:34:38 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-wireless@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        io-uring@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: [linux-next:master] BUILD REGRESSION
+ a6faf7ea9fcb7267d06116d4188947f26e00e57e
+Message-ID: <6423333e.lGUVMQXkx2DT8H2X%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT010:EE_|IA0PR12MB8906:EE_
-X-MS-Office365-Filtering-Correlation-Id: b6bd8834-44a2-4d38-240a-08db2fb3e5ec
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HuLVap3kywE5bY9nApqI+4lyFTXPtIiBtdz0dT54WxAGGhfLFx0wRNyVSDX5nIfKBwUe9JIy4GBB9OzQHhFDii7FThp3CqTRhpMWQz59s7w6fJ43zl7GMs26ml1OEVCLDusq1/NJ8PrlHkmxftCDuzu6OSFnYlBxwWR+BdvWkxiwOa6W0VYgQOSgXXXY1vErsqo4M/k0TrTsOz3go0l0rz5/oJ0x9uq3Xz4q9Z66rjfuMMJYzwKh72P8QquaZLmvVJMmabUDzVaL+UDCQmVD9IHUdTXCeL3/c5Va08Vx6dbGH47Nr8h9cDPVlYEsuBjaRFfyVXClh66Pfa8IgQYLs4WN3ZRENpVU9Yed9SOFXj0jK07hjuiia7PWf49tNcmjo+lEtmEBzhEjmmMHEdt5vYKKGktMfiwjjR/CYh0V969cb0TZeQ8cJqMSCjIp8/OuELTvpw6DP7ktB2RQZFgdpqdIfUH2km/rKh3val+efQWjUUU1ESHEvPTXPC5xIcIxbbPCtRo09SyZ/Uke2sFhxsSIM8b1RzlGedlpt9fGc6fg0X9cr1VrdqYjkYj39N3aO032u1l6a/BuL3FiWl6pyiagOZ/4n+fF0d/xQrn29pjBgo7slk3RRTbLSPXiJ1iRoA+HXFw9BFuxT7/ALk2mQrM6i/FHZHjvLMEA20F8VJOELLcOax0ClNBdlE4KDA2elzBDunLmVjJ1yzxgMgSj7P5dWS/S2fbdpFH4/t8If2A=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(39860400002)(376002)(346002)(451199021)(46966006)(40470700004)(36840700001)(8936002)(5660300002)(44832011)(82310400005)(83380400001)(47076005)(16526019)(4326008)(186003)(426003)(336012)(2616005)(26005)(36860700001)(81166007)(70206006)(82740400003)(356005)(86362001)(41300700001)(70586007)(8676002)(40480700001)(1076003)(6666004)(316002)(110136005)(7696005)(36756003)(40460700003)(478600001)(54906003)(2906002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2023 17:43:10.4604
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6bd8834-44a2-4d38-240a-08db2fb3e5ec
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT010.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8906
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-More fields are to be added, so to keep the display from being
-too busy, adjust it.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: a6faf7ea9fcb7267d06116d4188947f26e00e57e  Add linux-next specific files for 20230328
 
-1) Add a header to all columns
-2) Except for interrupt, when fields have no data show empty
-3) Remove otherwise blank whitespace
+Error/Warning reports:
 
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/pinctrl/pinctrl-amd.c | 76 ++++++++++++++---------------------
- 1 file changed, 30 insertions(+), 46 deletions(-)
+https://lore.kernel.org/oe-kbuild-all/202303161521.jbGbaFjJ-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303281539.zzI4vpw1-lkp@intel.com
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 9236a132c7ba..822f29440f15 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -206,15 +206,12 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
- 
- 	char *level_trig;
- 	char *active_level;
--	char *interrupt_enable;
- 	char *interrupt_mask;
- 	char *wake_cntrl0;
- 	char *wake_cntrl1;
- 	char *wake_cntrl2;
- 	char *pin_sts;
- 	char *pull_up_sel;
--	char *pull_up_enable;
--	char *pull_down_enable;
- 	char *orientation;
- 	char debounce_value[40];
- 	char *debounce_enable;
-@@ -246,6 +243,7 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
- 			continue;
- 		}
- 		seq_printf(s, "GPIO bank%d\n", bank);
-+		seq_puts(s, "gpio\tint|active|trigger|S0i3| S3|S4/S5| Z|wake|pull|  orient|       debounce|reg\n");
- 		for (; i < pin_num; i++) {
- 			seq_printf(s, "#%d\t", i);
- 			raw_spin_lock_irqsave(&gpio_dev->lock, flags);
-@@ -255,7 +253,6 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
- 			if (pin_reg & BIT(INTERRUPT_ENABLE_OFF)) {
- 				u8 level = (pin_reg >> ACTIVE_LEVEL_OFF) &
- 						ACTIVE_LEVEL_MASK;
--				interrupt_enable = "+";
- 
- 				if (level == ACTIVE_LEVEL_HIGH)
- 					active_level = "↑";
-@@ -272,65 +269,54 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
- 				else
- 					level_trig = " edge";
- 
--			} else {
--				interrupt_enable = "∅";
--				active_level = "∅";
--				level_trig = "    ∅";
--			}
-+				if (pin_reg & BIT(INTERRUPT_MASK_OFF))
-+					interrupt_mask = "😛";
-+				else
-+					interrupt_mask = "😷";
- 
--			if (pin_reg & BIT(INTERRUPT_MASK_OFF))
--				interrupt_mask = "😛";
--			else
--				interrupt_mask = "😷";
--			seq_printf(s, "int %s (%s)| active-%s| %s-⚡| ",
--				   interrupt_enable,
-+				seq_printf(s, "%s|     %s|  %s|",
- 				   interrupt_mask,
- 				   active_level,
- 				   level_trig);
-+			} else
-+				seq_puts(s, "  ∅|      |       |");
- 
- 			if (pin_reg & BIT(WAKE_CNTRL_OFF_S0I3))
- 				wake_cntrl0 = "⏰";
- 			else
--				wake_cntrl0 = " ∅";
--			seq_printf(s, "S0i3 %s| ", wake_cntrl0);
-+				wake_cntrl0 = "  ";
-+			seq_printf(s, "  %s| ", wake_cntrl0);
- 
- 			if (pin_reg & BIT(WAKE_CNTRL_OFF_S3))
- 				wake_cntrl1 = "⏰";
- 			else
--				wake_cntrl1 = " ∅";
--			seq_printf(s, "S3 %s| ", wake_cntrl1);
-+				wake_cntrl1 = "  ";
-+			seq_printf(s, "%s|", wake_cntrl1);
- 
- 			if (pin_reg & BIT(WAKE_CNTRL_OFF_S4))
- 				wake_cntrl2 = "⏰";
- 			else
--				wake_cntrl2 = " ∅";
--			seq_printf(s, "S4/S5 %s| ", wake_cntrl2);
-+				wake_cntrl2 = "  ";
-+			seq_printf(s, "   %s|", wake_cntrl2);
- 
- 			if (pin_reg & BIT(WAKECNTRL_Z_OFF))
- 				wake_cntrlz = "⏰";
- 			else
--				wake_cntrlz = " ∅";
--			seq_printf(s, "Z %s| ", wake_cntrlz);
-+				wake_cntrlz = "  ";
-+			seq_printf(s, "%s|", wake_cntrlz);
- 
- 			if (pin_reg & BIT(PULL_UP_ENABLE_OFF)) {
--				pull_up_enable = "+";
- 				if (pin_reg & BIT(PULL_UP_SEL_OFF))
- 					pull_up_sel = "8k";
- 				else
- 					pull_up_sel = "4k";
--			} else {
--				pull_up_enable = "∅";
--				pull_up_sel = "  ";
-+				seq_printf(s, "%s ↑|",
-+					   pull_up_sel);
-+			} else if (pin_reg & BIT(PULL_DOWN_ENABLE_OFF)) {
-+				seq_puts(s, "   ↓|");
-+			} else  {
-+				seq_puts(s, "    |");
- 			}
--			seq_printf(s, "pull-↑ %s (%s)| ",
--				   pull_up_enable,
--				   pull_up_sel);
--
--			if (pin_reg & BIT(PULL_DOWN_ENABLE_OFF))
--				pull_down_enable = "+";
--			else
--				pull_down_enable = "∅";
--			seq_printf(s, "pull-↓ %s| ", pull_down_enable);
- 
- 			if (pin_reg & BIT(OUTPUT_ENABLE_OFF)) {
- 				pin_sts = "output";
-@@ -345,7 +331,7 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
- 				else
- 					orientation = "↓";
- 			}
--			seq_printf(s, "%s %s| ", pin_sts, orientation);
-+			seq_printf(s, "%s %s|", pin_sts, orientation);
- 
- 			db_cntrl = (DB_CNTRl_MASK << DB_CNTRL_OFF) & pin_reg;
- 			if (db_cntrl) {
-@@ -364,19 +350,17 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
- 						unit = 61;
- 				}
- 				if ((DB_TYPE_REMOVE_GLITCH << DB_CNTRL_OFF) == db_cntrl)
--					debounce_enable = "b +";
-+					debounce_enable = "b";
- 				else if ((DB_TYPE_PRESERVE_LOW_GLITCH << DB_CNTRL_OFF) == db_cntrl)
--					debounce_enable = "↓ +";
-+					debounce_enable = "↓";
- 				else
--					debounce_enable = "↑ +";
--
-+					debounce_enable = "↑";
-+				snprintf(debounce_value, sizeof(debounce_value), "%06u", time * unit);
-+				seq_printf(s, "%s (🕑 %sus)|", debounce_enable, debounce_value);
- 			} else {
--				debounce_enable = "  ∅";
--				time = 0;
-+				seq_puts(s, "               |");
- 			}
--			snprintf(debounce_value, sizeof(debounce_value), "%u", time * unit);
--			seq_printf(s, "debounce %s (🕑 %sus)| ", debounce_enable, debounce_value);
--			seq_printf(s, " 0x%x\n", pin_reg);
-+			seq_printf(s, "0x%x\n", pin_reg);
- 		}
- 	}
- }
+Error/Warning: (recently discovered and may have been fixed)
+
+drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:351:13: warning: variable 'bw_needed' set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:352:25: warning: variable 'link' set but not used [-Wunused-but-set-variable]
+drivers/net/wireless/legacy/ray_cs.c:628:17: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+drivers/perf/arm_pmuv3.c:44:2: error: use of undeclared identifier 'PERF_MAP_ALL_UNSUPPORTED'
+drivers/perf/arm_pmuv3.c:59:2: error: use of undeclared identifier 'PERF_CACHE_MAP_ALL_UNSUPPORTED'
+drivers/perf/arm_pmuv3.c:61:13: error: use of undeclared identifier 'OP_READ'
+drivers/perf/arm_pmuv3.c:61:25: error: use of undeclared identifier 'RESULT_ACCESS'
+drivers/perf/arm_pmuv3.c:61:3: error: call to undeclared function 'C'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+drivers/perf/arm_pmuv3.c:61:5: error: use of undeclared identifier 'L1D'
+drivers/perf/arm_pmuv3.c:62:25: error: use of undeclared identifier 'RESULT_MISS'
+drivers/perf/arm_pmuv3.c:64:5: error: use of undeclared identifier 'L1I'
+drivers/perf/arm_pmuv3.c:67:5: error: use of undeclared identifier 'DTLB'
+
+Unverified Error/Warning (likely false positive, please contact us if interested):
+
+arch/parisc/kernel/firmware.c:1271 pdc_soft_power_button_panic() error: uninitialized symbol 'flags'.
+include/linux/gpio/consumer.h: linux/err.h is included more than once.
+include/linux/gpio/driver.h: asm/bug.h is included more than once.
+io_uring/io_uring.c:432 io_prep_async_work() error: we previously assumed 'req->file' could be null (see line 425)
+io_uring/kbuf.c:221 __io_remove_buffers() warn: variable dereferenced before check 'bl->buf_ring' (see line 219)
+
+Error/Warning ids grouped by kconfigs:
+
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
+|-- alpha-randconfig-r012-20230327
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arc-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arm-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arm-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- arm64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- i386-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- ia64-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
+|-- loongarch-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- loongarch-buildonly-randconfig-r001-20230326
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- loongarch-defconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- mips-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- mips-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- parisc-randconfig-m031-20230326
+|   |-- arch-parisc-kernel-firmware.c-pdc_soft_power_button_panic()-error:uninitialized-symbol-flags-.
+|   |-- io_uring-io_uring.c-io_prep_async_work()-error:we-previously-assumed-req-file-could-be-null-(see-line-)
+|   `-- io_uring-kbuf.c-__io_remove_buffers()-warn:variable-dereferenced-before-check-bl-buf_ring-(see-line-)
+|-- parisc-randconfig-r025-20230326
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
+|-- powerpc-allmodconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
+clang_recent_errors
+`-- arm-randconfig-r024-20230326
+    |-- drivers-perf-arm_pmuv3.c:error:call-to-undeclared-function-C-ISO-C99-and-later-do-not-support-implicit-function-declarations
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-DTLB
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-L1D
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-L1I
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-OP_READ
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-PERF_CACHE_MAP_ALL_UNSUPPORTED
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-PERF_MAP_ALL_UNSUPPORTED
+    |-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-RESULT_ACCESS
+    `-- drivers-perf-arm_pmuv3.c:error:use-of-undeclared-identifier-RESULT_MISS
+
+elapsed time: 829m
+
+configs tested: 123
+configs skipped: 13
+
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha        buildonly-randconfig-r003-20230326   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r005-20230326   gcc  
+alpha                randconfig-r012-20230327   gcc  
+alpha                randconfig-r013-20230326   gcc  
+alpha                randconfig-r015-20230327   gcc  
+alpha                randconfig-r016-20230326   gcc  
+arc                              allyesconfig   gcc  
+arc          buildonly-randconfig-r001-20230327   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r002-20230326   gcc  
+arc                  randconfig-r043-20230326   gcc  
+arc                  randconfig-r043-20230327   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                                 defconfig   gcc  
+arm                  randconfig-r003-20230327   clang
+arm                  randconfig-r011-20230326   clang
+arm                  randconfig-r046-20230326   clang
+arm                  randconfig-r046-20230327   gcc  
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+csky         buildonly-randconfig-r004-20230327   gcc  
+csky                                defconfig   gcc  
+hexagon              randconfig-r015-20230326   clang
+hexagon              randconfig-r041-20230326   clang
+hexagon              randconfig-r041-20230327   clang
+hexagon              randconfig-r045-20230326   clang
+hexagon              randconfig-r045-20230327   clang
+i386                             allyesconfig   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-a001-20230327   gcc  
+i386                 randconfig-a002-20230327   gcc  
+i386                 randconfig-a003-20230327   gcc  
+i386                 randconfig-a004-20230327   gcc  
+i386                 randconfig-a005-20230327   gcc  
+i386                 randconfig-a006-20230327   gcc  
+i386                 randconfig-a011-20230327   clang
+i386                 randconfig-a012-20230327   clang
+i386                 randconfig-a013-20230327   clang
+i386                 randconfig-a014-20230327   clang
+i386                 randconfig-a015-20230327   clang
+i386                 randconfig-a016-20230327   clang
+ia64                             allmodconfig   gcc  
+ia64                                defconfig   gcc  
+ia64                 randconfig-r005-20230327   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch    buildonly-randconfig-r001-20230326   gcc  
+loongarch    buildonly-randconfig-r006-20230326   gcc  
+loongarch                           defconfig   gcc  
+loongarch            randconfig-r012-20230326   gcc  
+loongarch            randconfig-r024-20230326   gcc  
+loongarch            randconfig-r036-20230328   gcc  
+m68k                             allmodconfig   gcc  
+m68k                                defconfig   gcc  
+m68k                 randconfig-r001-20230326   gcc  
+m68k                 randconfig-r016-20230327   gcc  
+microblaze   buildonly-randconfig-r004-20230326   gcc  
+microblaze           randconfig-r026-20230326   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips         buildonly-randconfig-r002-20230326   gcc  
+nios2                               defconfig   gcc  
+nios2                randconfig-r023-20230327   gcc  
+parisc                              defconfig   gcc  
+parisc               randconfig-r004-20230326   gcc  
+parisc               randconfig-r021-20230326   gcc  
+parisc               randconfig-r022-20230327   gcc  
+parisc               randconfig-r025-20230326   gcc  
+parisc               randconfig-r033-20230328   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc              randconfig-r006-20230326   clang
+powerpc              randconfig-r031-20230328   clang
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r042-20230326   gcc  
+riscv                randconfig-r042-20230327   clang
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r013-20230327   clang
+s390                 randconfig-r024-20230327   clang
+s390                 randconfig-r044-20230326   gcc  
+s390                 randconfig-r044-20230327   clang
+sh                               allmodconfig   gcc  
+sh                   randconfig-r002-20230327   gcc  
+sh                   randconfig-r006-20230327   gcc  
+sh                   randconfig-r023-20230326   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r001-20230327   gcc  
+sparc                randconfig-r011-20230327   gcc  
+sparc                randconfig-r014-20230326   gcc  
+sparc                randconfig-r021-20230327   gcc  
+sparc                randconfig-r026-20230327   gcc  
+sparc64      buildonly-randconfig-r002-20230327   gcc  
+sparc64      buildonly-randconfig-r005-20230327   gcc  
+sparc64              randconfig-r003-20230326   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-a001-20230327   gcc  
+x86_64               randconfig-a002-20230327   gcc  
+x86_64               randconfig-a003-20230327   gcc  
+x86_64               randconfig-a004-20230327   gcc  
+x86_64               randconfig-a005-20230327   gcc  
+x86_64               randconfig-a006-20230327   gcc  
+x86_64               randconfig-a011-20230327   clang
+x86_64               randconfig-a012-20230327   clang
+x86_64               randconfig-a013-20230327   clang
+x86_64               randconfig-a014-20230327   clang
+x86_64               randconfig-a015-20230327   clang
+x86_64               randconfig-a016-20230327   clang
+x86_64                               rhel-8.3   gcc  
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
