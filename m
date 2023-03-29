@@ -2,206 +2,169 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F1BC74A5B
-	for <linux-gpio@archiver.kernel.org>; Wed, 29 Mar 2023 08:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBF9C74A5B
+	for <linux-gpio@archiver.kernel.org>; Wed, 29 Mar 2023 08:54:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231409AbjC2Iv1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 29 Mar 2023 04:51:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38106 "EHLO
+        id S229590AbjC2Iy7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 29 Mar 2023 04:54:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231311AbjC2IvP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Mar 2023 04:51:15 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 663A646A8
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Mar 2023 01:50:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1680079858; x=1711615858;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=I2wwxedT4VtcCFnYLMwPIlmp7+WjU4Ss3e5wI1Aw28E=;
-  b=mRBsr+EGpNwdcLNBGvW5nIVqsZbpHdvQrsb5V34JFkbDAGZIt80ZRxRu
-   UzFxyd4DcbVgO9DRjUr7DdUcmIk3YJI0xMcx89bKF8IPXXWYT+n5XV4jT
-   /IRjUk/5HxsNaiWHAygnRqVAzHYmMzgmpNr/tAtyEv1aZpvrEsbqAZhG4
-   KyA3TIomWccPXH5lsu8FpRJOUkIXLzOxjV2ylJDMxglBnqYGssuFhwDnl
-   j9ZvO8h0kqsEb7lZQzC5iu6T0TLoUMOMdZVn703Xy2eN+ts/N+76iK8g1
-   Srv9yziWrJLJ1hGP3xyrshtEBfZ6oCuQ7Dj04JIIdAJZ7M/2CVXD/ePEs
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10663"; a="324724631"
-X-IronPort-AV: E=Sophos;i="5.98,300,1673942400"; 
-   d="scan'208";a="324724631"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2023 01:50:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10663"; a="827809135"
-X-IronPort-AV: E=Sophos;i="5.98,300,1673942400"; 
-   d="scan'208";a="827809135"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 29 Mar 2023 01:50:44 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1phRVz-000JNc-0r;
-        Wed, 29 Mar 2023 08:50:43 +0000
-Date:   Wed, 29 Mar 2023 16:50:19 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
- 4b7e73b5db33a3f4d23e4648635a495a716d9fb5
-Message-ID: <6423fbcb.DYc1oShqx4x/+I/h%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S229917AbjC2Iy6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Mar 2023 04:54:58 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 179691724
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Mar 2023 01:54:55 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id r29so14816527wra.13
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Mar 2023 01:54:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1680080093;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uzdO+lxAfOJTORFrou5SxAjDVdCRcCpSAaKg+Ly9+Yo=;
+        b=4sW4i7rA5XGJYWXbRj7E9hHI/H8WM4pXoWaXpU/eM7Y6mgfqcI722Nvfi0AtZr654k
+         Pf2WGcgNZXvzbYJ2Jf3ecdD1GMyApi+9xQeRVG993cYY891D1SS+UCHvfaTQauRsEjtG
+         a7/UgoT92z2OdSbT9YrU1bTuD3i5DOZzn9CwY0V3PjMe1nAsGQbvNbDYu5ePqQYCSVtd
+         I/uM2mEn7ZvBLKTQdm0lXx9NOj6W8JpKz6jMqkjljdXmRhh84m28diVuwRoEYGb2igUe
+         OZ8mrFZN0uHCTY5CQaLKZTHgbE2ejaRty8T7OBEe8fG1LKeYLjqXKsMV+slOMPMbkNau
+         aiUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680080093;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uzdO+lxAfOJTORFrou5SxAjDVdCRcCpSAaKg+Ly9+Yo=;
+        b=sTp2SIY7DMQqM8YYvn2yi27RoUo+zQ7ftbg6mJl9kXrPcC1a6nSeknW1Z6NjtOWB/i
+         VRlWEHDIMxYq5/UTpL3EdwcCRf6KYtDAmAG3ARvzlYlmfXbOHaGKjzYDdg2XuRfrDrOs
+         c8ksuw95Q99tN6AVG4u6Dk6MKcNNVXNgt0is3Dqyk3gtMCqOp2Ex7d1kyZwPQHZL0Uw3
+         WGjYSB9KIctL9eucsF2sL20dj27ticiseYgrq6OHGn+yuVOQEu4aNR+5/CaqH3X+36It
+         zludUaT/3PZQgAzUFwx5CMOGalCvV83P1umn7Oi1B6BU1nbdRAZHcJPMsiDJVVNkTfkk
+         SjZQ==
+X-Gm-Message-State: AAQBX9dZj2EE7JOM4mG4/6uzfiqxX+5kzP9fD3xbpQrsBYazokQ+rbil
+        iC58Hm9d12ULV8avdMlfkYeFuQ==
+X-Google-Smtp-Source: AKy350YBJmqeUhUjQyfCAqVgv5XtFtzTflowmykdXvxURkGr/ltJSCccPuaqoPcUxGCCy4NGiuPXBQ==
+X-Received: by 2002:a5d:5229:0:b0:2c7:1c08:121c with SMTP id i9-20020a5d5229000000b002c71c08121cmr15195510wra.61.1680080093551;
+        Wed, 29 Mar 2023 01:54:53 -0700 (PDT)
+Received: from [127.0.1.1] (158.22.5.93.rev.sfr.net. [93.5.22.158])
+        by smtp.googlemail.com with ESMTPSA id f9-20020adff989000000b002cea392f000sm29571964wrr.69.2023.03.29.01.54.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Mar 2023 01:54:53 -0700 (PDT)
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+Subject: [PATCH v3 00/17] Improve the MT8365 SoC and EVK board support
+Date:   Wed, 29 Mar 2023 10:54:21 +0200
+Message-Id: <20230203-evk-board-support-v3-0-0003e80e0095@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL38I2QC/4XNTQrCMBAF4KuUrI1MEtuoK+8hLvIz2mBNStIGS
+ undHVy60NXwHrxvVlYwByzs3KwsYw0lpEhB7RrmehMfyIOnzCRIBRIUx/rkNpnseZnHMeWJ+9Z
+ qc1Qn9Noy2llTkNtsoutpGedhoLIPZUp5+fypgs71F1kFBw4dKKmhPQjfXqxZhmAz7l16sRuBV
+ f5FJCEdOu28FeDc/QvZtu0N/ksqGv8AAAA=
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Wenbin Mei <wenbin.mei@mediatek.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Zhiyong Tao <zhiyong.tao@mediatek.com>,
+        =?utf-8?q?Bernhard_Rosenkr=C3=A4nzer?= <bero@baylibre.com>
+Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-mmc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Amjad Ouled-Ameur <aouledameur@baylibre.com>,
+        Alexandre Mergnat <amergnat@baylibre.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2566; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=g3X31va/VDwpY2eFLvZJUQe6Yd+D9Pt4ItUQKxlH3oA=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBkI/zbKYL5HQCSxV8z4D6VVyX8VhpZc/3jth3XoWuF
+ qJn1N86JAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZCP82wAKCRArRkmdfjHURScIEA
+ CvYNYx5SNpOC5jRj/ilI2B3OdPkasa3RaWWW303TI7JDD0gGDMXX+bHpcCYqVzFg7FlcnIcGBjRs7E
+ Jr6x1jv3WkPl5+mUAELpby4F5zh7pegFOCfcrJ9HtcHX/cdLEiRJ2umjXGlu5VQVuv3ZmQEOcV3WJh
+ tfPh92mwf0eLS8lfXw7tOkky3kpD387xb1JgnN9gsUCDBsjUIU7MRcJx7HHQcjiuUrrytSt5klBcwP
+ 9RZ71pZfTDDD7VRiM9VxlvU3th766j4bA+UqINLHM2IohbGpCr6NbhVrD7JdqJF5gJ9eOP4LshWjqE
+ 0+vNMsXOpmmcpugJkEQ7zuL247NHfgZU29xmUlpq7KtYjW2YXseIG7G+p5SpKY++45RS4GdgJMDIl7
+ E0wUMxMkzJ5BgIea5tQTfSJ85Ooozh+mLb1d1svXE0aR55EV7xMvr/RdL/c89cCJe+F1btaWHk3rUk
+ 4Qdgrma2LVv/C+4vvTt6csqs2Zl6YN10PeMMsEpPTHlfZV+zcyQ40vAvYMBS+SPPoN5Tc9rk9rRglf
+ Vrx1rY1XqtGk8xcwjoVxdp+k09y3RfKcUJuouOkpVUefkghZJrMM1r5dkDP8irJkJB04SiQB9CkCH7
+ ESqzmMQ6PBazV6JhB2Ilp9LNDGhUWQvC6MYaVdy3ipJxNsnZzVPL/SultYNA==
+X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
+ fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-branch HEAD: 4b7e73b5db33a3f4d23e4648635a495a716d9fb5  Merge branch 'devel' into for-next
+This commits are based on the Fabien Parent <fparent@baylibre.com> work.
 
-elapsed time: 793m
+The purpose of this series is to add the following HWs / IPs support for
+the mt8365-evk board:
+- Watchdog
+- Power Management Integrated Circuit "PMIC" wrapper
+  - MT6357 PMIC
+- MultiMediaCard "MMC" & Secure Digital "SD" controller
+- USB controller
+- Ethernet MAC controller
 
-configs tested: 132
-configs skipped: 10
+Add CPU Freq & IDLE support for this board.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+This series depends to another one which add support for MT8365 SoC and
+EVK board [1].
 
-tested configs:
-alpha                            allyesconfig   gcc  
-alpha        buildonly-randconfig-r001-20230327   gcc  
-alpha                               defconfig   gcc  
-alpha                randconfig-r004-20230327   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arc                  randconfig-r043-20230326   gcc  
-arc                  randconfig-r043-20230327   gcc  
-arm                              allmodconfig   gcc  
-arm                              allyesconfig   gcc  
-arm                                 defconfig   gcc  
-arm                  randconfig-r001-20230326   gcc  
-arm                  randconfig-r006-20230326   gcc  
-arm                  randconfig-r025-20230326   clang
-arm                  randconfig-r046-20230326   clang
-arm                  randconfig-r046-20230327   gcc  
-arm64                            allyesconfig   gcc  
-arm64                               defconfig   gcc  
-csky                                defconfig   gcc  
-csky                 randconfig-r003-20230326   gcc  
-csky                 randconfig-r013-20230326   gcc  
-csky                 randconfig-r022-20230326   gcc  
-csky                 randconfig-r032-20230326   gcc  
-csky                 randconfig-r032-20230327   gcc  
-hexagon      buildonly-randconfig-r003-20230322   clang
-hexagon              randconfig-r023-20230326   clang
-hexagon              randconfig-r026-20230326   clang
-hexagon              randconfig-r036-20230326   clang
-hexagon              randconfig-r041-20230326   clang
-hexagon              randconfig-r041-20230327   clang
-hexagon              randconfig-r045-20230326   clang
-hexagon              randconfig-r045-20230327   clang
-i386                             allyesconfig   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                 randconfig-a001-20230327   gcc  
-i386                 randconfig-a002-20230327   gcc  
-i386                 randconfig-a003-20230327   gcc  
-i386                 randconfig-a004-20230327   gcc  
-i386                 randconfig-a005-20230327   gcc  
-i386                 randconfig-a006-20230327   gcc  
-i386                 randconfig-a011-20230327   clang
-i386                 randconfig-a012-20230327   clang
-i386                 randconfig-a013-20230327   clang
-i386                 randconfig-a014-20230327   clang
-i386                 randconfig-a015-20230327   clang
-i386                 randconfig-a016-20230327   clang
-ia64                             allmodconfig   gcc  
-ia64         buildonly-randconfig-r006-20230327   gcc  
-ia64                                defconfig   gcc  
-ia64                 randconfig-r021-20230326   gcc  
-ia64                 randconfig-r025-20230327   gcc  
-ia64                 randconfig-r035-20230327   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch    buildonly-randconfig-r001-20230322   gcc  
-loongarch                           defconfig   gcc  
-loongarch            randconfig-r023-20230327   gcc  
-loongarch            randconfig-r024-20230326   gcc  
-loongarch            randconfig-r033-20230327   gcc  
-m68k                             allmodconfig   gcc  
-m68k                                defconfig   gcc  
-m68k                 randconfig-r003-20230327   gcc  
-m68k                 randconfig-r012-20230327   gcc  
-m68k                 randconfig-r014-20230326   gcc  
-m68k                 randconfig-r034-20230326   gcc  
-microblaze   buildonly-randconfig-r006-20230322   gcc  
-mips                             allmodconfig   gcc  
-mips                             allyesconfig   gcc  
-mips         buildonly-randconfig-r004-20230327   clang
-mips                 randconfig-r026-20230327   gcc  
-nios2        buildonly-randconfig-r004-20230322   gcc  
-nios2                               defconfig   gcc  
-nios2                randconfig-r011-20230327   gcc  
-nios2                randconfig-r016-20230327   gcc  
-nios2                randconfig-r024-20230327   gcc  
-nios2                randconfig-r031-20230327   gcc  
-openrisc     buildonly-randconfig-r002-20230327   gcc  
-openrisc             randconfig-r011-20230326   gcc  
-openrisc             randconfig-r014-20230327   gcc  
-openrisc             randconfig-r016-20230326   gcc  
-parisc                              defconfig   gcc  
-parisc               randconfig-r002-20230326   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv                               defconfig   gcc  
-riscv                randconfig-r015-20230327   clang
-riscv                randconfig-r042-20230326   gcc  
-riscv                randconfig-r042-20230327   clang
-riscv                          rv32_defconfig   gcc  
-s390                             allmodconfig   gcc  
-s390                             allyesconfig   gcc  
-s390                                defconfig   gcc  
-s390                 randconfig-r001-20230327   gcc  
-s390                 randconfig-r044-20230326   gcc  
-s390                 randconfig-r044-20230327   clang
-sh                               allmodconfig   gcc  
-sh                   randconfig-r021-20230327   gcc  
-sh                   randconfig-r031-20230326   gcc  
-sparc        buildonly-randconfig-r003-20230327   gcc  
-sparc        buildonly-randconfig-r005-20230327   gcc  
-sparc                               defconfig   gcc  
-sparc                randconfig-r004-20230326   gcc  
-sparc                randconfig-r005-20230327   gcc  
-sparc                randconfig-r015-20230326   gcc  
-sparc                randconfig-r033-20230326   gcc  
-sparc64              randconfig-r002-20230327   gcc  
-sparc64              randconfig-r005-20230326   gcc  
-sparc64              randconfig-r012-20230326   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64                              defconfig   gcc  
-x86_64                                  kexec   gcc  
-x86_64               randconfig-a001-20230327   gcc  
-x86_64               randconfig-a002-20230327   gcc  
-x86_64               randconfig-a003-20230327   gcc  
-x86_64               randconfig-a004-20230327   gcc  
-x86_64               randconfig-a005-20230327   gcc  
-x86_64               randconfig-a006-20230327   gcc  
-x86_64               randconfig-a011-20230327   clang
-x86_64               randconfig-a012-20230327   clang
-x86_64               randconfig-a013-20230327   clang
-x86_64               randconfig-a014-20230327   clang
-x86_64               randconfig-a015-20230327   clang
-x86_64               randconfig-a016-20230327   clang
-x86_64                               rhel-8.3   gcc  
-xtensa               randconfig-r022-20230327   gcc  
+Regards,
+Alex
 
+[1]: https://lore.kernel.org/all/20230125143503.1015424-1-bero@baylibre.com/
+
+Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+---
+Changes in v3:
+- Add trailers and simply resend.
+- Link to v2: https://lore.kernel.org/r/20230203-evk-board-support-v2-0-6ec7cdb10ccf@baylibre.com
+
+---
+Alexandre Bailon (1):
+      arm64: dts: mediatek: Increase the size BL31 reserved memory
+
+Alexandre Mergnat (12):
+      dt-bindings: watchdog: mediatek,mtk-wdt: add mt8365
+      dt-bindings: pinctrl: mediatek,mt8365-pinctrl: add drive strength property
+      arm64: dts: mediatek: add watchdog support for mt8365 SoC
+      arm64: dts: mediatek: add pwrap support to mt8365 SoC
+      arm64: dts: mediatek: add mt6357 PMIC support for  mt8365-evk
+      arm64: dts: mediatek: add mmc support for mt8365 SoC
+      arm64: dts: mediatek: add mmc support for mt8365-evk
+      arm64: dts: mediatek: add usb controller support for mt8365-evk
+      arm64: dts: mediatek: add ethernet support for mt8365 SoC
+      arm64: dts: mediatek: add ethernet support for mt8365-evk
+      arm64: dts: mediatek: add OPP support for mt8365 SoC
+      arm64: dts: mediatek: add cpufreq support for mt8365-evk
+
+Amjad Ouled-Ameur (2):
+      arm64: dts: mediatek: fix systimer properties
+      arm64: dts: mediatek: Add CPU Idle support
+
+Fabien Parent (2):
+      arm64: dts: mediatek: add mt6357 device-tree
+      arm64: dts: mediatek: set vmc regulator as always on
+
+ .../bindings/pinctrl/mediatek,mt8365-pinctrl.yaml  |   3 +
+ .../bindings/watchdog/mediatek,mtk-wdt.yaml        |   1 +
+ arch/arm64/boot/dts/mediatek/mt6357.dtsi           | 282 +++++++++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt8365-evk.dts        | 254 ++++++++++++++++++-
+ arch/arm64/boot/dts/mediatek/mt8365.dtsi           | 196 +++++++++++++-
+ 5 files changed, 731 insertions(+), 5 deletions(-)
+---
+base-commit: 555b3a55823ec063129de4403899203febb58788
+change-id: 20230203-evk-board-support-d5b7a839ed7b
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Alexandre Mergnat <amergnat@baylibre.com>
+
