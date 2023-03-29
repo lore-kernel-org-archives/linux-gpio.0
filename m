@@ -2,59 +2,71 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 095FDC74A5B
-	for <linux-gpio@archiver.kernel.org>; Wed, 29 Mar 2023 08:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B278BC77B60
+	for <linux-gpio@archiver.kernel.org>; Wed, 29 Mar 2023 08:51:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231229AbjC2Iou (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 29 Mar 2023 04:44:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33126 "EHLO
+        id S231313AbjC2IvQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 29 Mar 2023 04:51:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231231AbjC2Ior (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Mar 2023 04:44:47 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E394A1FCC
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Mar 2023 01:44:46 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id cf7so18390030ybb.5
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Mar 2023 01:44:46 -0700 (PDT)
+        with ESMTP id S231284AbjC2IvK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Mar 2023 04:51:10 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22465270B
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Mar 2023 01:50:48 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-545cb3c9898so205575557b3.7
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Mar 2023 01:50:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680079486;
+        d=linaro.org; s=google; t=1680079845;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=11JaD7hdMGYDMEVM2bxoT0TPTbslQdWxsEeb3qIPYls=;
-        b=F/o42EqN0ifcxbRNd2+xZEitnwqM3+QHnI4io7mZ8NINwIjSuv6zRlWQKAnB0xn8JZ
-         xqC9xpLrnqHJ1583+emjfoQUQIvaptA5QNA3Ve/9P21GdEOPBwhecYZ7ZrBrmXgHxd0X
-         34pz6cHbfQzaSiwaRhsvYkuq6D7Mj3d5y2cpHJKCXJRe0Pob7g90/kVZQjgzxK0NjIiQ
-         bPA+AXBN/E8AU0UzMjylFIuBEqTe2EBiaEnywlhplY+UDDgQkFQEP9iIrjoQt0w6pVdc
-         gpajMqQnK/xBB/d1YndivVpogE0QOTwVTQK+djV+pW+UqNgLn9631XK5Rk2Ae6NdUqu7
-         et8g==
+        bh=B/cLIW46SmIRvY4RiouMRQ/RQJOiGzxyqmPyutTg+zA=;
+        b=QhOBzkThcCEEP2ZCg5zliykwCig0tej4mEtO5cAaTlCJE7r/I4bMQ4iBSSpjrhnae0
+         L2LF5rs7cU1RatgupQufqFqIBeFvIlZv+NuT+sHNQjGGOFQ+1hgE49sNPzLCJxCdOSUP
+         3GiHOBNJ4kNxbuv07uuvTShV166HoyO9x4tjK8dsgQhMHDuFGpYKNYzU6v85fOH0nA8N
+         BTRDzTAcMumMh174PCFF3cgm5M/IFBYKvPVZzaqtHkv13p8pYzObR23/QK9kSAbFoS1V
+         agkIoyxZgi5fPU94wcu6PdvvGt682AWB+XwG0s6houGBOcUHyk/TLJjCvaFXua8JDf+Q
+         vvdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680079486;
+        d=1e100.net; s=20210112; t=1680079845;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=11JaD7hdMGYDMEVM2bxoT0TPTbslQdWxsEeb3qIPYls=;
-        b=FWVbk6/dk2gM3sS6vzTV1U6ieYlnisceIKGtiQ26zG+FvuOdr9BWXu0dmDcnmuaw1X
-         VWhlDzUKwNOZTY+/CPH9Ulhm81hrfrJ2EY5+I1MR9anGT9/RhodxSGdIjD7crwQ98P9z
-         Cm9H8rG/04L2dvnjJDb7QY5ZJLx4avSoIf5eTBHJ+SXgXcZ5uZJv44Ej9eDSIdCfR9Da
-         tP/Tjqbb5bqbW6MJ17QDz06RLGMYDfX/RVTKro0NEEdLrMpKJruTtY+iavF3isgMUuC1
-         es9g3DCftINpYqaSn5Mgj+JIlYtb32aONahC7saL/NMh8WqmwKdbZigAXDEa7Fr6JLLi
-         QuHA==
-X-Gm-Message-State: AAQBX9fm8M4R+JqZctpVOdv/+6OrWWCSpkrzCve1X/CPTujjeCzvorUd
-        duoP+OPPjgqsK1k2WqMRlWuO6MuS5OucBgfc68yMKw==
-X-Google-Smtp-Source: AKy350aY55dPk1jxy2/5OQeOccyqKlQM19jufZynt6zF0+7H1kF7mvdwzMfPacylJ663xZp1I52XCMlaxXmLogmbD9E=
-X-Received: by 2002:a25:8712:0:b0:b74:3236:2fac with SMTP id
- a18-20020a258712000000b00b7432362facmr11757896ybl.4.1680079485954; Wed, 29
- Mar 2023 01:44:45 -0700 (PDT)
+        bh=B/cLIW46SmIRvY4RiouMRQ/RQJOiGzxyqmPyutTg+zA=;
+        b=ZqYl6gnEo0GTM92vgYovMyT6t5cPQeXir5h3Mv06JiQ7s8OTzXGa5FJE5XuRUq9JX/
+         CFBjciPlGUMs1Kfz2KTSEstYQAoRj0ao2LbtYsQrYxvbhSHEmtRALmdlNQPYps58b8zK
+         A1tKHuhKoFCA7Wl1lykrCwZN4rdQ9EJdAO5M4JkxifSEYHGOhl77vu8KA8cZDe6Vgor9
+         wciTGlBJFB+th6xFqJmcWXU9kDy3GP3fgnooKzgFWNttNeqLrGkTnmiOQkK2tThveH6C
+         Tw1/MpgGbjAUWHK1huF278E46mwYV8qkXyIahkP2YLrbSy3F503nHHrqXWTPeQ1Fmo1q
+         QhnQ==
+X-Gm-Message-State: AAQBX9cORboNlg2arXptG072v8q2uGHmfWQKoNN8kYLgNllzOt8xXEQR
+        hN2KF56G+hZSFEe9PmL1sa6nSNK8UZ4KrR4aKLL7V39O7XJtZtomC28=
+X-Google-Smtp-Source: AKy350YTOjcMWaqS3odZ4BorOYs3mIxmhScLtgIMGEm9pyUKhYrReflkix3snorSrRrckz5gmqV7SwVJyJWO3XKBcJ8=
+X-Received: by 2002:a81:a709:0:b0:545:4133:fc40 with SMTP id
+ e9-20020a81a709000000b005454133fc40mr8817132ywh.9.1680079845742; Wed, 29 Mar
+ 2023 01:50:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230323205733.20763-1-asmaa@nvidia.com>
-In-Reply-To: <20230323205733.20763-1-asmaa@nvidia.com>
+References: <20230323173019.3706069-1-dianders@chromium.org>
+ <CACRpkdaGpaiOVjEN6Ftq5=-yuAyD0xb7OcvtEsoqbTzias-xxw@mail.gmail.com> <CAD=FV=W6QKfQxGcSrQdgp4VHYxfk7aYZOkYx4ve7QSpoZ-LM=A@mail.gmail.com>
+In-Reply-To: <CAD=FV=W6QKfQxGcSrQdgp4VHYxfk7aYZOkYx4ve7QSpoZ-LM=A@mail.gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 29 Mar 2023 10:44:34 +0200
-Message-ID: <CACRpkdbc1p_BmGkQRNJYxjNAahJQQ_5+zUadm4fh4UxRmM_PyQ@mail.gmail.com>
-Subject: Re: [PATCH v1] gpio: mmio: fix calculation of bgpio_bits
-To:     Asmaa Mnebhi <asmaa@nvidia.com>
-Cc:     andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
+Date:   Wed, 29 Mar 2023 10:50:34 +0200
+Message-ID: <CACRpkdaUZbyEfkcHsNuQ=KhyuiKpunZJgvrnq90kQK8Z2V4jtg@mail.gmail.com>
+Subject: Re: [PATCH 00/14] Control Quad SPI pinctrl better on Qualcomm Chromebooks
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-gpio@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-spi@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Rajesh Patil <rajpat@codeaurora.org>,
+        Roja Rani Yarubandi <rojay@codeaurora.org>,
         linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -62,19 +74,31 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Mar 23, 2023 at 9:57=E2=80=AFPM Asmaa Mnebhi <asmaa@nvidia.com> wro=
-te:
+On Mon, Mar 27, 2023 at 11:51=E2=80=AFPM Doug Anderson <dianders@chromium.o=
+rg> wrote:
 
-> If the "ngpios" property is specified, bgpio_bits is calculated
-> as the round up value of ngpio. At the moment, the only requirement
-> specified is that the round up value must be a multiple of 8 but
-> it should also be a power of 2 because we provide accessors based
-> on the bank size in bgpio_setup_accessors().
+> 1. Mark could land the SPI patch at any time, assuming he's OK with
+> it. It can land totally independently.
+
+OK this happened.
+
+> Option A:
 >
-> Signed-off-by: Asmaa Mnebhi <asmaa@nvidia.com>
+> 3. You land the pinctrl and binding patches in an immutable branch and
+> merge into pinctrl.
+>
+> 4. Bjorn merges the immutable branch into the Qulacomm tree and places
+> the last 3 dts patches atop.
 
-Neat fixup,
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Looks most appetizing.
+
+I have applied patches 6,7,8 to this immutable branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/lo=
+g/?h=3Dib-qcom-quad-spi
+
+and I merged that into my "devel" branch for v6.4.
+
+Bjorn can grab the branch if he wants it.
 
 Yours,
 Linus Walleij
