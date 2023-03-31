@@ -2,167 +2,127 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F4CC77B6F
-	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 17:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8087CC77B6C
+	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 17:55:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230208AbjCaRjW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 31 Mar 2023 13:39:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35316 "EHLO
+        id S232607AbjCaRzj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 31 Mar 2023 13:55:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232199AbjCaRjU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 13:39:20 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20B20C153
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 10:39:18 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id r29so23177483wra.13
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 10:39:18 -0700 (PDT)
+        with ESMTP id S231766AbjCaRzi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 13:55:38 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4573512CDE
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 10:55:36 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id o24-20020a05600c511800b003ef59905f26so14376949wms.2
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 10:55:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1680284356;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1680285335;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=h/PKiRdK/AdCxhQPLVxp6qRTTYRDZGG0+AZ8Pt0BlOY=;
-        b=xb2DAmdVIUD0mU4ZM/DecBkaOGR5wsQ6d9c+8vO0ZCq9EzXbbrDYS2OikBJmEMDjs2
-         3dCeGNehnUlRSkQ0uuFsk99EuTCG6pU/RB42JLRqfZq+YwiiCEg3GkRCGtDrfp65MPvk
-         McAhpZ5R5z/KSekNsSBFlBAhnFaOJDb1pS5Lbk9sEfGD0scfLOR0YB2LKFz4WJ2S7qLt
-         5B7CxaayfziYW2P+NHWNaSTZnRQK/HEAoBRY0K9Nt3U2WUQkHT0Koy3gpxJCjN2B8yK7
-         xH5fU5UoS2UGd4E3Vsjom0Y1dEvrbPdAypLr7NSdLGwv9fZsWqf9jn0jutUntQHSkHEc
-         Bj2g==
+        bh=4QkkEgowsBjZnjX/gOtAy8+xgH7LTkosTkX/GzGdyGM=;
+        b=XxTBPV4KNcEe0qPmkZRrKyQI5uhQxtQU/7gDyEpIWalnmi94Qk4DmEkGrL9oH39gpH
+         942jLhOGte/z6PyFr7pnjP798UhzFFx1gYheTGAzM8cmc/PLEUht2ePK9dUOox+5oJrj
+         5JkJKAXYdnzy4G3bu5M508dculDRr34xnOLXJXEcSe0TgUGCBADodzMbwQNswaAmLxi0
+         0eLLC/ZmU/FnqIHUmuJSdFvCUsrp8TI0vN9Mw8BVcmQ7A4L0t9py4vQuSOBRLJsnFnw2
+         o631GIkfqFXofwlGUffDj3KQ/3My1MbdiqKfKYQYOe1mYA7VU8O/FJQc8nhxjkgOhzvE
+         IDzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680284356;
+        d=1e100.net; s=20210112; t=1680285335;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h/PKiRdK/AdCxhQPLVxp6qRTTYRDZGG0+AZ8Pt0BlOY=;
-        b=lTZcuKZxWQP30j1F/RJjqRQvskG97u6bNsGgKGdGLneRpllQ0QRnX9XkDkZzpdPY8a
-         K64B/gB60jDsV5iRBDnXYXJpdqNt7al5HUhSMftENiQK2/Z6eHsUOZ0ONY42ov1KcLRn
-         UnbSEg+F/YfF42O4v0m44IctyBLzDsu83gTo3Y2IspNBXkGKuBiT8Td1vrdULNALLZQ3
-         0sv7/7WqrNi2Poa33DIdhecIS9etobn+1oFaILpX+jCJf2BaTT/iD9bQb4OI5zcTdX+s
-         m48vPtl18706MhvqVRllc/BJUyowuL8gNnCu6b/M2VMEAr/jg8OmJHYWX4WAlqqf0HeN
-         DEgg==
-X-Gm-Message-State: AAQBX9cwA+3okzi8B7KrCLKeqpSEfjK+hRfdwQd0cKKNXjZyYgBwknio
-        j5SgSTiFdqQZ6RiKIJhv8okGVw==
-X-Google-Smtp-Source: AKy350Z5qBmyx03YFMY4exnOGUjSMNVkNU5SbYP4fhFOR/ObMcOrfWTagg7GiOvZeoINCeNRFUsb/A==
-X-Received: by 2002:adf:df88:0:b0:2c7:604:52a1 with SMTP id z8-20020adfdf88000000b002c7060452a1mr19563658wrl.29.1680284356630;
-        Fri, 31 Mar 2023 10:39:16 -0700 (PDT)
+        bh=4QkkEgowsBjZnjX/gOtAy8+xgH7LTkosTkX/GzGdyGM=;
+        b=rOaWOVLf0FCN8EQSDgVLpY3MqV2f1rx5SniQyV0IK/lqHu7aZNIsvaMpJrWxlSVcwo
+         1QVtzJ/YiNndtIGuCZSvWdB6h/bLHMIZ3s0bzHzxpk1UfzGifK8V5iNhvUqaN8sY7uwg
+         PPGCsy5gwC1XuF2PGnLxNbxI9NYKHwNANkR+KGyzGwiko3zmMKTM3gMK5fse8rMkt4OQ
+         CTiuwmQUl7EVA5E5AWVhqNe0uGNCQWz8m1MYO+xJYIh92+YNXovaw2rw9MG8F22/TMvH
+         upsHc+FNHaUWHs43AHK7WX48bCM6ekwp8AgCr8ggdRsGJ+2vmgfKXwbtL//5IYQ/2J/T
+         kJnw==
+X-Gm-Message-State: AAQBX9d9U8clKAPRCsiC0pyByQAb8cEF9i3zRgqdeAraCob9Re8+iSUX
+        uDlaKVKIbZz+vzacte8B86lRgQ==
+X-Google-Smtp-Source: AKy350Z1Zp+HAJjMVsRnd0RSQj/iy8owoVZuBlU/QzAW/hhi49p8EfXc8/Am/kKX+2hEOs8VeQosKQ==
+X-Received: by 2002:a1c:ed15:0:b0:3f0:39ab:347c with SMTP id l21-20020a1ced15000000b003f039ab347cmr4719000wmh.23.1680285334697;
+        Fri, 31 Mar 2023 10:55:34 -0700 (PDT)
 Received: from [127.0.1.1] (158.22.5.93.rev.sfr.net. [93.5.22.158])
-        by smtp.googlemail.com with ESMTPSA id o5-20020adfcf05000000b002c592535839sm2733550wrj.17.2023.03.31.10.39.15
+        by smtp.googlemail.com with ESMTPSA id 1-20020a05600c22c100b003eeb1d6a470sm3370171wmg.13.2023.03.31.10.55.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Mar 2023 10:39:16 -0700 (PDT)
+        Fri, 31 Mar 2023 10:55:34 -0700 (PDT)
 From:   Alexandre Mergnat <amergnat@baylibre.com>
-Date:   Fri, 31 Mar 2023 19:39:00 +0200
-Subject: [PATCH v2 2/2] dt-bindings: pinctrl: mediatek: deprecate custom
- bias pull properties for mt8365
+Date:   Fri, 31 Mar 2023 19:54:45 +0200
+Subject: [PATCH v4 01/11] dt-bindings: watchdog: mediatek,mtk-wdt: add
+ mt8365
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230327-cleanup-pinctrl-binding-v2-2-f21fbcc3016e@baylibre.com>
-References: <20230327-cleanup-pinctrl-binding-v2-0-f21fbcc3016e@baylibre.com>
-In-Reply-To: <20230327-cleanup-pinctrl-binding-v2-0-f21fbcc3016e@baylibre.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+Message-Id: <20230203-evk-board-support-v4-1-5cffe66a38c0@baylibre.com>
+References: <20230203-evk-board-support-v4-0-5cffe66a38c0@baylibre.com>
+In-Reply-To: <20230203-evk-board-support-v4-0-5cffe66a38c0@baylibre.com>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Wenbin Mei <wenbin.mei@mediatek.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Zhiyong Tao <zhiyong.tao@mediatek.com>,
         =?utf-8?q?Bernhard_Rosenkr=C3=A4nzer?= <bero@baylibre.com>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-mmc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Amjad Ouled-Ameur <aouledameur@baylibre.com>,
         Alexandre Mergnat <amergnat@baylibre.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3599; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=99/zsAro4iog0C+4jUroqtzB5pHnwrzuYQWT6NZAlsM=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBkJxrBc+oHkE+9tNrcKZp9r++zV1rP91TNBZwe1D7T
- WVhYllSJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZCcawQAKCRArRkmdfjHURX9rD/
- 4pfi2lithVMijjiYZPLKnaAHoQGss4png8T9snd06mrSkSOW/XHJ2DAT1vj2Z7F1du3OZJIIFBKusu
- Sd9Mqwb+IbwgfZI3arRrv1PpkSmUFh5SrT6bNkTr1ghyc4P7wm/mvz+jxgZawAbczk3AzHnntrAIEF
- cPm9MWc9KGbD9m+6/0mwxapjLBl82frEvCSxiLp+MQzcFjBtz/JOek6v5L7OIcZO/P94n/o3xrKmwz
- 8Rz01ll2XoQaL27tDO8YX/7KTZHOtHeCmrjh9EuozCidfCP8c2THTy0KTYQbzFA2mNjtr8QDMCjJeq
- /xDGnAyYZ5VMIUO6OC5dSnh5eWhQLQwYFOykT7ay67Ir9APCeh7Mube5RfnKowcy4qIAkW6r4iO4dz
- o+iinLYMwXIckKCvvraBH6yQQ8BA4SzcUHNrE4klJ2fKd5zEdOGw7Em2nwY2m86ytSXOOkr6wm9tel
- NVLSOQCeHGrdZJ+bHaJ3G01RAyJ0Exun25N4soIioWmNJyc4B2eK83S4jJZqeegWFFzg+HGhDffcGD
- kq9V1VNom+q+aPhy6w1owWIi2sY9DqsXZHQBeZ7SiorT/SGU3CEd4+ovuVkwJixAyYFsXxVpR2W/X5
- cd7P//yboXTqXP1AzX8+zN7MWeZCZvYNl1YjUL9N5kw6zBgtjFyfQJKuKRAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1036; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=e/j+wpeA8gY8YWfUFggkrkBUqt/uFn1RH7+Bbqouv28=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBkJx6ThWr+36gSjZmFPEG0zdxk33vsAzu6ZhTBFMOW
+ 4r6UzFmJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZCcekwAKCRArRkmdfjHURcC9D/
+ sHF98xyCV9ux8a8j63oXjR4rwT+x72x1oBMjK4zHRXv1kRipKbyGzB0WZ3g4Feusrz6Kwua0SFvejA
+ GSQCu+BhEpIDS12gbC9tUY771EKuUla0XJ6WRNVX6Z3iwnbPGJk9QO2Dww0AWgR2/NZIrL+upjRlbD
+ imrhhexpY9x0YhszDoZFfEs82J8/sNd/LEsqboduMTiBt75b+PFSGO9W95AhVA9ubB4bOm0MmFWSSn
+ kDrZu2Rc1H6KvLHUclS2mq6Z/o6IiLNeIKAj3ZxZpwWlXENq3h78iz2MAl/JCpgxNfJrXJlyv9VN/f
+ t669pTa6eWagYP678MPg7/AGKdQlCAosoGPSDUDclVTULmJGDJovpb6ia/7nYDZdSnrtZ13rvF7efE
+ BbGY3I2iWvNm/GBxqjYq1qvyv2EenRe4Y/yGOClc6p6oMxkHvQe79/vTr36OEw32wn38zjb6ouJUxa
+ SiFNG8V7Y1vu57OpfOKlh0YHW69XdUwvcx7Pb3I6AyTNR/qsq5/gDwWgkQ3leykV5YuyQYh9hDDdy6
+ hFQcXdn7TClzRwLcQbAV0fkXnJuElc1Nmpk3lkvTUm6ZKGb3RJdykQ9HV+dYKu9H9KL9Ynk+tCQSRq
+ g5XhZ0D1UP3Vp3gdBKFmAinx5yWPez2EfIrcSezJ/QPZgj2Qf/rSB2SI14dQ==
 X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
  fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In order to be more generic, "mediatek,pull-up-adv" and
-"mediatek,pull-down-adv" should be deprecated. Use "bias-pull-up" and
-"bias-pull-down" instead.
+Add binding description for mediatek,mt8365-wdt
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 ---
- .../bindings/pinctrl/mediatek,mt8365-pinctrl.yaml  | 32 +++++++++++++++++++---
- 1 file changed, 28 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/watchdog/mediatek,mtk-wdt.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml
-index 347f533776ba..2ce6a69b0bf9 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml
-@@ -72,12 +72,32 @@ patternProperties:
-           bias-disable: true
+diff --git a/Documentation/devicetree/bindings/watchdog/mediatek,mtk-wdt.yaml b/Documentation/devicetree/bindings/watchdog/mediatek,mtk-wdt.yaml
+index 55b34461df1b..66cacea8e47f 100644
+--- a/Documentation/devicetree/bindings/watchdog/mediatek,mtk-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/mediatek,mtk-wdt.yaml
+@@ -38,6 +38,7 @@ properties:
+               - mediatek,mt7623-wdt
+               - mediatek,mt7629-wdt
+               - mediatek,mt8173-wdt
++              - mediatek,mt8365-wdt
+               - mediatek,mt8516-wdt
+           - const: mediatek,mt6589-wdt
  
-           bias-pull-up:
-+            oneOf:
-+              - type: boolean
-+              - enum: [100, 101, 102, 103]
-+                description: Pull up R1/R0 type define value.
-             description: |
--              Besides generic pinconfig options, it can be used as the pull up
--              settings for 2 pull resistors, R0 and R1. User can configure those
--              special pins.
-+              For pull up type is normal, it don't need add R1/R0 define.
-+              For pull up type is R1/R0 type, it can add value to set different
-+              resistance. Valid arguments are described as below:
-+              0: (R1, R0) = (0, 0) which means R1 disabled and R0 disabled.
-+              1: (R1, R0) = (0, 1) which means R1 disabled and R0 enabled.
-+              2: (R1, R0) = (1, 0) which means R1 enabled and R0 disabled.
-+              3: (R1, R0) = (1, 1) which means R1 enabled and R0 enabled.
- 
--          bias-pull-down: true
-+          bias-pull-down:
-+            oneOf:
-+              - type: boolean
-+              - enum: [100, 101, 102, 103]
-+                description: Pull down R1/R0 type define value.
-+            description: |
-+              For pull down type is normal, it don't need add R1/R0 define.
-+              For pull down type is R1/R0 type, it can add value to set
-+              different resistance. Valid arguments are described as below:
-+              0: (R1, R0) = (0, 0) which means R1 disabled and R0 disabled.
-+              1: (R1, R0) = (0, 1) which means R1 disabled and R0 enabled.
-+              2: (R1, R0) = (1, 0) which means R1 enabled and R0 disabled.
-+              3: (R1, R0) = (1, 1) which means R1 enabled and R0 enabled.
- 
-           input-enable: true
- 
-@@ -123,7 +143,9 @@ patternProperties:
-             enum: [0, 1, 2, 3, 4, 5, 6, 7]
- 
-           mediatek,pull-up-adv:
-+            deprecated: true
-             description: |
-+              DEPRECATED: Please use bias-pull-up instead.
-               Pull up setings for 2 pull resistors, R0 and R1. User can
-               configure those special pins. Valid arguments are described as below:
-               0: (R1, R0) = (0, 0) which means R1 disabled and R0 disabled.
-@@ -134,7 +156,9 @@ patternProperties:
-             enum: [0, 1, 2, 3]
- 
-           mediatek,pull-down-adv:
-+            deprecated: true
-             description: |
-+              DEPRECATED: Please use bias-pull-down instead.
-               Pull down settings for 2 pull resistors, R0 and R1. User can
-               configure those special pins. Valid arguments are described as below:
-               0: (R1, R0) = (0, 0) which means R1 disabled and R0 disabled.
 
 -- 
 2.25.1
