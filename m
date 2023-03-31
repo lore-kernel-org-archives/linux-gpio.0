@@ -2,61 +2,61 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE2EC76196
-	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 17:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C097C76196
+	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 17:56:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232819AbjCaR4F (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 31 Mar 2023 13:56:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54526 "EHLO
+        id S232896AbjCaR4P (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 31 Mar 2023 13:56:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230463AbjCaRzt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 13:55:49 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF15E22226
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 10:55:41 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id l15-20020a05600c4f0f00b003ef6d684102so10572871wmq.3
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 10:55:41 -0700 (PDT)
+        with ESMTP id S232696AbjCaRzu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 13:55:50 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7751A1A453
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 10:55:44 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id i5-20020a05600c354500b003edd24054e0so15883429wmq.4
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 10:55:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1680285340;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1680285342;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YzQKBxaJfTtZgFEarsLsGgbh5GyaHaFrFFoVYkzh/dE=;
-        b=1WiWu83YTDyzTUyd/W70MoO7qX35QRUxIBM/DuF/wjsQs/ITxt8Yl7XFlGAqOrm1ok
-         ZWOxvDjyhXuiwqu3szeEKR+a0CuWrXppOELyzzwxkeGLeUubf/t05OsicTxWhcCxpTil
-         hccAwdEl8OspkbPjNqY9HAhJnfDs0ajpSHmGWKG93/QJeeTxHDsT7XkJiyUp4Z4HWTYk
-         FTRVFTkQyQvtqk0zErEm5BubuoakiODUrO0xJK+fWFswY7HtJuln3Cv0Tj8UPdGuqhsd
-         xDTVEh+IEeiTijnGmQVbyNSn0t94oiER9Kb988JLpJ7ZNkFCap8dNxAN7bjfEnB15YDI
-         HmJA==
+        bh=D2q+psvx4yJ9KCnO3jUj6x64A5eBfyf7+pEcxfNP/wU=;
+        b=00roHh6wZyKgRCCS+tXlJUdtX4rgsWnaZ8SGGXUPitntIFu77w/7V0dtJ6HeavSwsH
+         FiHoKQ6o4VGXUe30lak9/6XFwk1YCPjlgMxbemWndm5zaEu2SPfcDkssoUwFr3wunTSf
+         KuRwuj+td150IeBqtyjQoR8lbEM2RTenzGd3E3oqNttxLPIA5Y8qhVPHvCiybAzZkp5W
+         h3ixW4pUXotfs2YTtmkEONDKdQ3m5VB02qiWgzj81+wwZ7JhFMHwNviGZy88Px9r9IN0
+         HJXb2CvsrpSX+PetG97VIG/BCiBmRpt789a/k6q0kc3/BXtUdNz2xyCDbxqHn+VHc3Yl
+         eN3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680285340;
+        d=1e100.net; s=20210112; t=1680285342;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YzQKBxaJfTtZgFEarsLsGgbh5GyaHaFrFFoVYkzh/dE=;
-        b=LBOZq1AtGbwlXM/g6EWDqKvbjmBsE8fOUqyd45c7Cv593huOvK2YZXIpaIpGhSRNGy
-         BtSy25QKjnEohod1R4ppNqoNGs6OUsJ5jvm5TUq8jZr5+yN7nXS3VOQGPsOJiH3wb9ht
-         o7KSYndRvOTM+3U8Bzet+e9JxXcCGJZU3ouLnidnqwkoaC70LnCCDjocg8lxIGVtt6ly
-         EMQsVc3/vDxKP6Xbe1ttr5wYlsfF6BqB+Q2iE7A2OnX5sZycLy2X7MgOTdAo+hiew2TE
-         eEbRG2QDkwwtnBY9WiS+QOvFHY0GyJP9Ak4BtFiyFOtlGr4Zo+Sz5ielE5zlOi0X0cxq
-         +j4g==
-X-Gm-Message-State: AO0yUKXyOnGtf1IbRg6rf44wCh2RhoDphZa4EcLjbNrSokGWoft2ApjQ
-        mMPNr1aDIS1hzy1pgiB493Tqpg==
-X-Google-Smtp-Source: AK7set/2D/l2ZFdo55JHgf8O4RcAGsB67PsU8O9ue5Szm1z5ZozwaDHbixBnEFGZHAzA784oyzt41Q==
-X-Received: by 2002:a05:600c:2254:b0:3df:e41f:8396 with SMTP id a20-20020a05600c225400b003dfe41f8396mr20536017wmm.37.1680285340382;
-        Fri, 31 Mar 2023 10:55:40 -0700 (PDT)
+        bh=D2q+psvx4yJ9KCnO3jUj6x64A5eBfyf7+pEcxfNP/wU=;
+        b=qUaxXCH6BXcemfEcYd6qaY9m6cpTfoXewg0IKrFY/8F3/M3xglgWmUaau6qThi9D8N
+         T6lrZBou3+dJAaFGAme+Qlq/ME+qGS746SfwUapSdmROR/KtMt+xOV3+pUTkFxoqKD0/
+         Y66iVDNsG6yqq7ZnD7CgweKgyhe9ZRRciTAVBx5zUQfknTsEfafMRXgf+WOTz+9YJOCq
+         G0IpiapXB5qUsluHr6Bjr9pwkU8IZBEDS3mGOxzCD0NaG7T7cUbWJKVNsZLUbZMjoAkQ
+         fcRtJFYjX3Qm+O6lpglmQazvDtdKuXtXOoJOKRk2QM9KHN9p1CAmajO5xMRq8sI3y1uy
+         eb1A==
+X-Gm-Message-State: AAQBX9c+6sx/sw2snVKSAGk3mh2L3+n3cSt86hwlkxhFS8xdVNnplbNL
+        apwrj+SBAnVaG6N507XAhn7Thg==
+X-Google-Smtp-Source: AKy350aXgWDWLroHpqWoUJQEh5Ilf+/ch4Ure/VySqTE578hpAJcDVWXSKXsHKwIZARfmozgRUkXRw==
+X-Received: by 2002:a05:600c:1c0e:b0:3f0:3144:89d9 with SMTP id j14-20020a05600c1c0e00b003f0314489d9mr5723564wms.20.1680285342671;
+        Fri, 31 Mar 2023 10:55:42 -0700 (PDT)
 Received: from [127.0.1.1] (158.22.5.93.rev.sfr.net. [93.5.22.158])
-        by smtp.googlemail.com with ESMTPSA id 1-20020a05600c22c100b003eeb1d6a470sm3370171wmg.13.2023.03.31.10.55.39
+        by smtp.googlemail.com with ESMTPSA id 1-20020a05600c22c100b003eeb1d6a470sm3370171wmg.13.2023.03.31.10.55.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Mar 2023 10:55:40 -0700 (PDT)
-From:   amergnat@baylibre.com
-Date:   Fri, 31 Mar 2023 19:54:50 +0200
-Subject: [PATCH v4 06/11] arm64: dts: mediatek: set vmc regulator as always
- on
+        Fri, 31 Mar 2023 10:55:42 -0700 (PDT)
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+Date:   Fri, 31 Mar 2023 19:54:52 +0200
+Subject: [PATCH v4 08/11] arm64: dts: mediatek: add ethernet support for
+ mt8365-evk
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230203-evk-board-support-v4-6-5cffe66a38c0@baylibre.com>
+Message-Id: <20230203-evk-board-support-v4-8-5cffe66a38c0@baylibre.com>
 References: <20230203-evk-board-support-v4-0-5cffe66a38c0@baylibre.com>
 In-Reply-To: <20230203-evk-board-support-v4-0-5cffe66a38c0@baylibre.com>
 To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
@@ -81,51 +81,113 @@ Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         Amjad Ouled-Ameur <aouledameur@baylibre.com>,
         Alexandre Mergnat <amergnat@baylibre.com>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=733; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=uQmwTOCvAzVnfNhZj39MxdhTEW1pXL/YxThy6HLL1ww=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBkJx6UFEGO3EPfGZzJN25PtdCGUGHY0eT4OfvboZf+
- +B9lQf2JAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZCcelAAKCRArRkmdfjHURUhyD/
- 4m79Sfb36DHmtlwAKTlZFD6nfbVFS+2Ggip4saKhmYeLvKgD2PrzNlQON/R0RcFL+xZjLNrBZ+Fn6P
- iEqh+lCO6BpRmWJvhgYMF0gGd6Lr2AzbjpBT8TIpAN1YLmWydvnGqsBOPt+3UoeNOWz88XISB2DsFk
- CAQyKrvpEM88hCaxWKQEL27qHKi5WEMmMtzQfgW1eNSBUnMPaMAPyEDIDj6x0+YZ8uByep4HFlv46Q
- jcpQvqFZ2a4Hv8SPyLeKZ5AOpeAzlmdx5dF/FwhQuLDxXMdivJVM7OD7SgFzSKqnFjyl+vP64Wn/AU
- +h2anbG6bCCVFm4ljSZKxvQt9TzLxxYTDAU/r0TXWtnIF5wYPPnpNnPbA4iK+fC9oouTPwvbnBvc1i
- pN8KR8eV5NrzR6OING65eLLr/wxPgFvL8blbzU0gPOGCgGEub2WP1VUcHuuB+XCJc0hCc3v1CrC4dW
- N0quJbr2lO7gZNHhdPBUu7+RAm/cJVfG3Mbh35EqPi+2zLCbO5OIXZFdRExPsSxFFzIlbkbZNA53zE
- TSuOYh2b3qXy9Xh66PFHOu6xP3MPZr7RXMDPfYxcYVQjRCfBRMOuqE9aF9aZMcKMMdeaM6JkoLckFv
- ayQf8qx/mVqfUAy+0jP07TVxljlDB1i33FLzRWYolSWPAIn8Pqcgh/WT0EQw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2431; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=qis7u9dUHrWOnbhiX3GDPhugjgVXBkDPDVj5m9M4200=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBkJx6UOf7L3FRMEsUrOg6xNMM9dW/tVoLzYAojXt1k
+ 22C2XmeJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZCcelAAKCRArRkmdfjHURVUiD/
+ 9xeBEAPPTteBP+awV0QGdcAjA43p+sXmW4Uz4l1lDajfdkmF3WOLsDriu2lXHYluEUb4LTj1v+6Bqz
+ 05TDbqO9Hr08FEgws298QlNdAWt7TTfaxq03RuT6aaCr9ogo+CEIz1Fo3GcjLef8tmdtCHTocxocQ1
+ BU/EGmy/jxFzc3a6c4iLvVxZw2D4n4aSEfZK2p3vbWBy/muuXTfvJ8xk9eBdApsI1JzT5Pi/sQGwzI
+ ikAehWJJ1YiKdZ+ibwKmL0mL98ARqqomaA2CMM89pA7kSXwg+JUIgQ0ELUKDTuLwSANhh0fBy5Ttqy
+ 712jyZuAcfZyivZobWGnWzI4Akd2DZ03HiSBHvsm7fWKzWx/5JZY4bHafE83o7RCuKBGV4sDCc+qOM
+ xmea747WYqKgLi5vNap+Uud6kepBx5nql3eLR3yRJyGpUswZ97LddOKIHReVIUtvprkkYb1hLhBnMH
+ Czd6eWS0JKtHb4vUAxqyzkiwj2hV7zctgH4jQIG73idOau+QXvw8vm4YCzhigd/FY22yykAtrC2fJa
+ KsinFMXclme7YoBGTX/v60qkL9Kfr0nHbqfu1mQoIAI+dYq0Eleh4tdedNU8w8pDN5EN8rs2KxPw1a
+ vDvw+OhO/SFO0/0bDhytP571ZgnN29juqpoqYhbXXe+0UcjVrGaj170q95Nw==
 X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
  fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Fabien Parent <fparent@baylibre.com>
+- Enable "vibr" and "vsim2" regulators to power the ethernet chip.
 
-MSDC1 IP block is powered by VMC. Make sure it is always on.
-
-Signed-off-by: Fabien Parent <fparent@baylibre.com>
 Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8365-evk.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt8365-evk.dts | 57 +++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-index cd920d09c3fe..1c36d8f19525 100644
+index 9760f181eb34..431078f8670e 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
 +++ b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-@@ -137,6 +137,11 @@ &mt6357_pmic {
+@@ -88,6 +88,28 @@ optee_reserved: optee@43200000 {
+ 	};
+ };
+ 
++&ethernet {
++	pinctrl-0 = <&ethernet_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&eth_phy>;
++	phy-mode = "rmii";
++	/*
++	 * Ethernet and HDMI (DSI0) are sharing pins.
++	 * Only one can be enabled at a time and require the physical switch
++	 * SW2101 to be set on LAN position
++	 */
++	status = "disabled";
++
++	mdio {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		eth_phy: ethernet-phy@0 {
++			reg = <0>;
++		};
++	};
++};
++
+ &i2c0 {
+ 	clock-frequency = <100000>;
+ 	pinctrl-0 = <&i2c0_pins>;
+@@ -137,12 +159,47 @@ &mt6357_pmic {
  	#interrupt-cells = <2>;
  };
  
-+/* Needed by MSDC1 */
-+&mt6357_vmc_reg {
++/* Needed by analog switch (multiplexer), HDMI and ethernet */
++&mt6357_vibr_reg {
++	regulator-always-on;
++};
++
+ /* Needed by MSDC1 */
+ &mt6357_vmc_reg {
+ 	regulator-always-on;
+ };
+ 
++/* Needed by ethernet */
++&mt6357_vsim2_reg {
 +	regulator-always-on;
 +};
 +
  &pio {
++	ethernet_pins: ethernet-pins {
++		phy_reset_pins {
++			pinmux = <MT8365_PIN_133_TDM_TX_DATA1__FUNC_GPIO133>;
++		};
++
++		rmii_pins {
++			pinmux = <MT8365_PIN_0_GPIO0__FUNC_EXT_TXD0>,
++				 <MT8365_PIN_1_GPIO1__FUNC_EXT_TXD1>,
++				 <MT8365_PIN_2_GPIO2__FUNC_EXT_TXD2>,
++				 <MT8365_PIN_3_GPIO3__FUNC_EXT_TXD3>,
++				 <MT8365_PIN_4_GPIO4__FUNC_EXT_TXC>,
++				 <MT8365_PIN_5_GPIO5__FUNC_EXT_RXER>,
++				 <MT8365_PIN_6_GPIO6__FUNC_EXT_RXC>,
++				 <MT8365_PIN_7_GPIO7__FUNC_EXT_RXDV>,
++				 <MT8365_PIN_8_GPIO8__FUNC_EXT_RXD0>,
++				 <MT8365_PIN_9_GPIO9__FUNC_EXT_RXD1>,
++				 <MT8365_PIN_10_GPIO10__FUNC_EXT_RXD2>,
++				 <MT8365_PIN_11_GPIO11__FUNC_EXT_RXD3>,
++				 <MT8365_PIN_12_GPIO12__FUNC_EXT_TXEN>,
++				 <MT8365_PIN_13_GPIO13__FUNC_EXT_COL>,
++				 <MT8365_PIN_14_GPIO14__FUNC_EXT_MDIO>,
++				 <MT8365_PIN_15_GPIO15__FUNC_EXT_MDC>;
++		};
++	};
++
  	gpio_keys: gpio-keys-pins {
  		pins {
+ 			pinmux = <MT8365_PIN_24_KPCOL0__FUNC_KPCOL0>;
 
 -- 
 2.25.1
