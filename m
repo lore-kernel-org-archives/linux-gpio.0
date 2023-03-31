@@ -2,63 +2,63 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA5DC76196
-	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 17:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7DFC77B73
+	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 17:55:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232638AbjCaRzl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 31 Mar 2023 13:55:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54466 "EHLO
+        id S232649AbjCaRzm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 31 Mar 2023 13:55:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232223AbjCaRzi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 13:55:38 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2182893FD
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 10:55:35 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id m6-20020a05600c3b0600b003ee6e324b19so14418141wms.1
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 10:55:35 -0700 (PDT)
+        with ESMTP id S232499AbjCaRzj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 13:55:39 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 563B62220F
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 10:55:37 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id s13so13353307wmr.4
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 10:55:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1680285333;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fsdpYjF3syBHZgFNYzSRIs96odbvYEi5NYnPkaWji2s=;
-        b=D7fMYdzDV7g7vU0VtE5FK+/I/b67QflgYkVGo3+z6uejVQqKRbhrzkGl6wBwAIaCFe
-         mjoOxShki3XXGhnp1HrwTqOqZ4VqJ693r7oBiAmdCyICnSE010hxHLZEQi/32FLdrre+
-         ZfFroHJa2PJ8/91y4Z96ESDqaDucBjOGLDhT7lhr9CNlbr5to9fOfanR/NOnSSXtr2AN
-         XZN9REigG7TAw+usWXRan3gMo5Nv4+qeqc7zz7FLe7/UPKXQ1OsSZHdWmi+fLiBoKktp
-         c201ih/2dP1lRwQC3ePlipZN52062wclF32GY1UOJzDGLU/VjNVqfC5ywUrdJzhfFg+E
-         BWDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680285333;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1680285336;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fsdpYjF3syBHZgFNYzSRIs96odbvYEi5NYnPkaWji2s=;
-        b=HgZfN6+/Ef8XLmKKsOCCoeHJLKvqJ6Bx6FdW067twRmDOoZaCyBFC4ZdRTskIgX2BT
-         5zAjdERw09QqDAGWxioTIBxgU956+25zv1bWIBw3l50cp0JZ3rSWGCeUHLDhhF7RIsBf
-         EAyF0dk+i+4Tz3halILt5yX17Jurj6QGcFi3zrWgFvF0GYV2boDEWWyL5zG46EngLlcD
-         YEqOk6McN9VSkBRqPefW7yShSzxFzCtrX2SWfIMORozfdQCucYKrmUA5JK47ikfVlOZY
-         SdARIHivvOxg+BJn01AKlbk1pEaj6i8FzF9/nwiHmo/92TFxMxOvS3wN8CCwgZssVHic
-         vyhQ==
-X-Gm-Message-State: AAQBX9efUqlGzf2wvOgH1jF+/+UylC4OXlPWD51j4pe42NZCkGKlwNbo
-        dbIzCQ+0zi0NOTYYuggxBMH6VQ==
-X-Google-Smtp-Source: AKy350addcoFAOVXSbc4akoysm1SuwS/0dymFAe3JQRHQ2q6/IjRuVXoPj9fXXz5CNR8FEJY3RL4Dg==
-X-Received: by 2002:a1c:4b04:0:b0:3ed:c84c:7efe with SMTP id y4-20020a1c4b04000000b003edc84c7efemr7957386wma.7.1680285333533;
-        Fri, 31 Mar 2023 10:55:33 -0700 (PDT)
+        bh=6X9QsV9/LyrqNbg7T/d+xDRVkLo4KEmI/Lt+kJ3J8UQ=;
+        b=WQgrqRggpUC2NAvpGwIZ+aVzYzjpU65hI38zU68+ESLBi3LeZLy7MqzISwJWs2tKeH
+         v+Kynr2DBRR4dl/s27O7yozU9FIuoFe+6T4hP866340Pg7qVoisM0D/Rfpaw7/ZzCe/8
+         QLD5+UhFLyv0tVy89VSnBvTyXIBj/UmTK4moZzWcWZWVjWwuYCgrwLHgi2fXKYv8TiA9
+         cjHGi8O4lHk3LYSsUdXmUKptE5DgglSWPW5VE+fC4lcD/ReIrEAIjg4F+WVF5UkBx4Ia
+         Rsx6z4UZf6pabewb7baz/BuH305id47jPgY8kqyjBrJibHyTHx1i8I0FhaVQPjPXyF/Z
+         hUcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680285336;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6X9QsV9/LyrqNbg7T/d+xDRVkLo4KEmI/Lt+kJ3J8UQ=;
+        b=SYAR85Oa1NCSsWuLpRnnNDOVsQ4OIc9cO+RIlzmOT/ShZIsZF8z0y1HJV8RIMvWGc6
+         NnyxWq57yPBXQ9uXfkWYcWG4BOzbeayhIlb6ZeSAPiQXjFwyb/pETMqIcH3T+2CcvE5q
+         HZ9tG6roclY5q2hIWKtyiQjFTdw3JqPt564wH9XONY9pdFAW8Wrz7KrhMmB+O68aVFnv
+         Km7unLHnkXZM4PW2Q2YigENhNGopG2Ecr1YsnuuQ2lA7vDPT+768MiSC32Q7GY0mARlg
+         PaPjt/8ZASor5m88vIs7xMR7rmP8Tj8vTTK80UxM3X4w6R8WLBDM4xg+VzoxYGNEtgL5
+         qusg==
+X-Gm-Message-State: AO0yUKXvWL0SyfGK5Q/a0e1Y9YNzPKt/9dLdqO94e+up1KoDCufYQvYV
+        ceHyJ7/2/1t1IX1q7qtmLZ2v6w==
+X-Google-Smtp-Source: AK7set8LXk8MGcZxkHFo/cUpFNkBaTHtM3PNM2BZD8vGkKaYKAXxnw5lu6FxBcIN6ciVOkC2542xoQ==
+X-Received: by 2002:a1c:6a13:0:b0:3ea:e834:d0d1 with SMTP id f19-20020a1c6a13000000b003eae834d0d1mr22112353wmc.36.1680285335909;
+        Fri, 31 Mar 2023 10:55:35 -0700 (PDT)
 Received: from [127.0.1.1] (158.22.5.93.rev.sfr.net. [93.5.22.158])
-        by smtp.googlemail.com with ESMTPSA id 1-20020a05600c22c100b003eeb1d6a470sm3370171wmg.13.2023.03.31.10.55.32
+        by smtp.googlemail.com with ESMTPSA id 1-20020a05600c22c100b003eeb1d6a470sm3370171wmg.13.2023.03.31.10.55.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Mar 2023 10:55:32 -0700 (PDT)
+        Fri, 31 Mar 2023 10:55:35 -0700 (PDT)
 From:   Alexandre Mergnat <amergnat@baylibre.com>
-Subject: [PATCH v4 00/11] Improve the MT8365 SoC and EVK board support
-Date:   Fri, 31 Mar 2023 19:54:44 +0200
-Message-Id: <20230203-evk-board-support-v4-0-5cffe66a38c0@baylibre.com>
+Date:   Fri, 31 Mar 2023 19:54:46 +0200
+Subject: [PATCH v4 02/11] dt-bindings: pinctrl: mediatek,mt8365-pinctrl:
+ add drive strength property
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGQeJ2QC/4XOTQ6CMBAF4KuQrq0ZWqDgynsYF/0ZpRFb0kITQ
- ri71aUxspq8Sd43s5KIwWIkp2IlAZON1rscqkNBdC/dHak1ORMGjAMDTjE9qPIyGBrncfRhoqZ
- WQra8QyMUyT0lI1IVpNN9brp5GPKyt3HyYfncSWUel39kKilQaIAzAXVVmvqs5DJYFfCo/ZNcM
- 5jYLsIy0qAW2qgStL79QPguwt+fAHBsAQG670+2bXsBCfE25UQBAAA=
+Message-Id: <20230203-evk-board-support-v4-2-5cffe66a38c0@baylibre.com>
+References: <20230203-evk-board-support-v4-0-5cffe66a38c0@baylibre.com>
+In-Reply-To: <20230203-evk-board-support-v4-0-5cffe66a38c0@baylibre.com>
 To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
         Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>,
@@ -82,99 +82,60 @@ Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         Alexandre Mergnat <amergnat@baylibre.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3143; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=g6QcyfmR6WQISod8SsOAV0fvqJ4GAS81PN4pXjBo1YI=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBkJx6TMUNWgOq1M9kKUf8Hyk+HBOdRhDM9kCQ8bvha
- bettplqJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZCcekwAKCRArRkmdfjHURVMjD/
- sEAJOXUkkF49/VjifC4cfaa2kBphhLpZPFyZy+n/avDNRgE0iHhywdwOmcPqZoob/ZC+ULKnr1iYUB
- jpeARQaaZzTHRbDD51JpBrsxftK5O/c8O227dK9uOysUNhW5W1ngRT/WYjPHcrsiAq0vBKnzKiz1R0
- KEynockGlTutS1AuGmD9ITjENf10wKwmw1jjX64D6wtrjqpYcDjvNlcXnTe9q46n6Uu0tr5m2MZnI8
- PpDHL6HvtelgbCbq0aFu51UtSUjS3Z+ULBlcVUgZGUk/G3l8JYd281XbtWtmOjd1jSwo+KcW9QbtAz
- AU0Ac7bJeZl2pk/rhm4HOEd+kZwtwxwKjdG6d2OIGi73PWTaX6q/QbZiTyIOSNjx0JDsY0GvQhgGwO
- NL0DJ1/RZAo2eJ/KCQ/JJssDycLH419+aY9YV+jI7mr3MUX8wnx3gOWzyfEYnKuilohS8BVB/WlUyE
- aLQ9QEz5YrMhCgCOJNmkFYI3qMO1phScvcQxFquHtQp01bP/Jhy69kKp1PyzO3+2qJ1Gd/MNhOCOey
- 6Xbat62XXilnLPLqOpHdWFcs/Gi9a132g0wSLG3ylrVEQLUIst/WeJG6fr8X6zgusgsd9aA/kX/w8/
- ZiHx2EevzYolV+Hp0a2u1fyFnf0ZqIXSQAOOWwci5AB6/4szhTi3CECHgI6g==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1299; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=xlWHZhxtm0yXUQxDn68Sgf/MoHrbwggc8aGclOBYQIw=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBkJx6T99FfMtpFkuU48Et3y/qOSZvfZnpPnVu0aq5L
+ pHHO68iJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZCcekwAKCRArRkmdfjHURTeHEA
+ Cj+We5q8HnBwf3AGOj3djXUpNInuJoYFw6juyY4xlR4yKWMZdkoTG8mViEkRgMTdIyaUu+aD4SCpd/
+ 2b5azbeBwLyBZlIUa/n91u4j8mq8SoTvOpfKzohQfbFw71l/H5djaxf/ewkaeqNYz4MJhXquv1ZxML
+ Yhs9Oz8SCM4uGtg3Ah0UasSMnbzLacOC3iI/yYb5Pv4pjsEQVwOaWAgQt9znDf056YnZrVHf5I5gPv
+ ynQ4YQsCqYRoHq/buFGCbwOhJMVmuAhAtluiwSDlAx7eyhBQkWOcU+xsVcy2aTVvONB4QfPLFUljkF
+ kGSNSUSTopoHBNIhPe4FdSZDpDxVl8eeb/rhaPONeGqFPFG/4qkvh5hbNE5LQpQP1Q3EVbeckH6wo/
+ qbx1Vfne4DdktBTt9jHEx20Nkq7fyqB90M+3Ee51WRNq86b7gYibDr8/fDd2MWnym3HYmzkPSr1ICo
+ PVxtecCmcuQBhjCcknuhtcQ2k3P/aYy2aSvuxoKiQZLR2SgM+L0n4Q8bnCeIvGgI1An8/dxNawgR3a
+ RmJ6SAeHjy1nXdrCIUIqBhlanKHfHNuuUNno8UQ2ZZ/3tEeESrQBy5/r7X9P2c8ARNFeMFBweodh1O
+ 2gpmV/NwRMv4/vMUWDyQjwpabIwm0W+vvxG4GU+K1Lav2GB7mMhjFmDmayBQ==
 X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
  fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This commits are based on the Fabien Parent <fparent@baylibre.com> work.
+This SoC is able to drive the following output current:
+- 2 mA
+- 4 mA
+- 6 mA
+- 8 mA
+- 10 mA
+- 12 mA
+- 14 mA
+- 16 mA
 
-The purpose of this series is to add the following HWs / IPs support for
-the mt8365-evk board:
-- Watchdog
-- Power Management Integrated Circuit "PMIC" wrapper
-  - MT6357 PMIC
-- MultiMediaCard "MMC" & Secure Digital "SD" controller
-- USB controller
-- Ethernet MAC controller
+Then drive-strength property is set with enum to reflect its HW capability.
 
-Add CPU Freq & IDLE support for this board.
-
-This series depends to anothers which add support for MT8365 EVK board
-[1] and the MT8365 I2C support [2]. Both are currently applied.
-
-The DTB check may failed/warn about pinctrl binding, but it should be
-fixed thanks to this serie [3]
-
-Regards,
-Alex
-
-[1]: https://lore.kernel.org/all/20230309213501.794764-1-bero@baylibre.com/
-[2]: https://lore.kernel.org/all/20221122-mt8365-i2c-support-v6-0-e1009c8afd53@baylibre.com/
-[3]: https://lore.kernel.org/all/20230327-cleanup-pinctrl-binding-v2-0-f21fbcc3016e@baylibre.com/
-
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 ---
-Changes in v4:
-- Remove v3 applied patch from the serie:
-  - arm64: dts: mediatek: add ethernet support for mt8365 SoC
-  - arm64: dts: mediatek: add mmc support for mt8365 SoC
-  - arm64: dts: mediatek: add mt6357 device-tree
-  - arm64: dts: mediatek: add pwrap support to mt8365 SoC
-  - arm64: dts: mediatek: Increase the size BL31 reserved memory
-- Drop "arm64: dts: mediatek: fix systimer properties" which is done [1]
-- Fix style, typo and re-order properties.
-- Use interrupts-extended for the PMIC node.
-- Link to v3: https://lore.kernel.org/r/20230203-evk-board-support-v3-0-0003e80e0095@baylibre.com
+ Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Changes in v3:
-- Remove v2 applied patch from the serie:
-  - dt-bindings: mmc: mediatek,mtk-sd: add mt8365
-- Add trailers and simply resend.
-- Link to v2: https://lore.kernel.org/r/20230203-evk-board-support-v2-0-6ec7cdb10ccf@baylibre.com
+diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml
+index 4ebc7f1caf55..df8e9b32ac2c 100644
+--- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8365-pinctrl.yaml
+@@ -99,6 +99,9 @@ patternProperties:
+               2: (R1, R0) = (1, 0) which means R1 enabled and R0 disabled.
+               3: (R1, R0) = (1, 1) which means R1 enabled and R0 enabled.
+ 
++          drive-strength:
++            enum: [2, 4, 6, 8, 10, 12, 14, 16]
++
+           input-enable: true
+ 
+           input-disable: true
 
----
-Alexandre Mergnat (9):
-      dt-bindings: watchdog: mediatek,mtk-wdt: add mt8365
-      dt-bindings: pinctrl: mediatek,mt8365-pinctrl: add drive strength property
-      arm64: dts: mediatek: add watchdog support for mt8365 SoC
-      arm64: dts: mediatek: add mt6357 PMIC support for  mt8365-evk
-      arm64: dts: mediatek: add mmc support for mt8365-evk
-      arm64: dts: mediatek: add usb controller support for mt8365-evk
-      arm64: dts: mediatek: add ethernet support for mt8365-evk
-      arm64: dts: mediatek: add OPP support for mt8365 SoC
-      arm64: dts: mediatek: add cpufreq support for mt8365-evk
-
-Amjad Ouled-Ameur (1):
-      arm64: dts: mediatek: Add CPU Idle support
-
-Fabien Parent (1):
-      arm64: dts: mediatek: set vmc regulator as always on
-
- .../bindings/pinctrl/mediatek,mt8365-pinctrl.yaml  |   3 +
- .../bindings/watchdog/mediatek,mtk-wdt.yaml        |   1 +
- arch/arm64/boot/dts/mediatek/mt8365-evk.dts        | 249 +++++++++++++++++++++
- arch/arm64/boot/dts/mediatek/mt8365.dtsi           | 142 ++++++++++++
- 4 files changed, 395 insertions(+)
----
-base-commit: 4f2a499a344b36ebb325e610265452ea88541116
-change-id: 20230203-evk-board-support-d5b7a839ed7b
-
-Best regards,
 -- 
-Alexandre Mergnat <amergnat@baylibre.com>
+2.25.1
 
