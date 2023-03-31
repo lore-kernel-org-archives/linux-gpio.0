@@ -2,61 +2,61 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E0FC76196
-	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 08:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E934C6FD18
+	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 08:37:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231694AbjCaIhE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 31 Mar 2023 04:37:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56432 "EHLO
+        id S231716AbjCaIhK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 31 Mar 2023 04:37:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231706AbjCaIgT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 04:36:19 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3BA01CBA8
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 01:35:09 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id e18so21584232wra.9
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 01:35:09 -0700 (PDT)
+        with ESMTP id S231719AbjCaIgb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 04:36:31 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBF9C1D935
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 01:35:11 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id o32so12416587wms.1
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 01:35:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680251709;
+        d=linaro.org; s=google; t=1680251704;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=A5/X3/1Tx5hLaqv79uU7wuySkv7lfnq2I4RAVqFuiIk=;
-        b=JRJQX3qf6nbWRRhjPQNrARTIyJRjN85WbOZTRhfjLkq95loPYQtmcz9uuRtmXD+gF0
-         pbjlvjWUpM5s35eLwCfaIEAjNdqCVJqUbIoJ0QQ+NUMzZjtV7Kxbb9qHdGemp2rn+kMY
-         Iogew4j3vSCvnnTWMPSv3pUmltFB4eJLvdhtB7DgxhbLKFxRNR7Kae+MW+amWDOuGH+K
-         0TIBTDavzQ/ATWYsYCgjlgvssAy0cZ+yRGjNI/IOQWRKqbCot7nTCcwYctdEE3g9Fhow
-         0GHMU5sij/cF06KleMdx4uNj5gz06aYrtqcKb/iZZ8GuVraLGpO2QvwZWp3MdMXVyQ6A
-         wvNA==
+        bh=DTkJHErpGDJ9v7s3ekjmHN8aO4NJsl7q6Q7QZM8QMbI=;
+        b=UGr6jhzO3hUVTB6rY7/leRAeWl750ZHVMPEYAKeTT4X06mEnwpBCz4Phsf+P7ItSjw
+         TIi62QAKl2i4gwbJZgnixjiWLnYymuWJtQlev/UOTE8L3tTaSoTPelFszUO9MlZAhEBb
+         svJnNSmQ+fTYwJwHOfZ+BnzUQABhVZKyZM2IISk4TAN6KerdE9+u76JqT768MMwy0WrZ
+         hHa30huv6N2SbwamrxfA5MxDt5MO3eFrL7KNDytCeuOyhCtNf98GhPdjDroQkxFbYiio
+         9lM6zhXS3q9g9LP/PSzlqPbEENCEjOSZL6tjJxXO/fNDHiRHf4knVvhNWSfCrnbGAaBR
+         r18g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680251709;
+        d=1e100.net; s=20210112; t=1680251704;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=A5/X3/1Tx5hLaqv79uU7wuySkv7lfnq2I4RAVqFuiIk=;
-        b=A6N9fhxDK7Hhs0hwy6FFK/HH0PZzo+6Ars7FJ5ifuhbEXYryfmGHNPka8cabPyaKR2
-         ID0Z5lgwQpefjVPxV6+sWTJFYkGlNPAHh23xGU3pYVJP/++2pPhtLarjDrYY5o5wcFpe
-         lWbuwI8vab8gKGuFSKWWscC4Uv8NSQYawDa0+pWMmh2O73FJjnoEg8u4aYYa7CzewBKv
-         fz0yh+KGrl4s0SZRB5oK9qAGciDqa6bZBGJfWf/OIrDno2Mit7L7GAVEm9yCKDi4kvI/
-         XCWFLofAaX3YBUJqMpEY6vwEzEh0p17tVXTfFazpaJX6FYCskq7hHDM+he162OcSeuOB
-         LM2A==
-X-Gm-Message-State: AAQBX9ctZzgfkH8A9W7r8JrPuUH6hv61FFq6bAewOQqc6AZq5RsWluYx
-        UL2tnFHmRbaPRMA8jc/0xI0OUzhDzEg3DXO3EvCahA==
-X-Google-Smtp-Source: AKy350aYemXoWmOPKcUW9zRssljXvnRo5Q8xdKbF8v8OuSCqLpxJ51RrFOLM7mEYYMCY0HOKI4STBA==
-X-Received: by 2002:adf:f04b:0:b0:2d8:57b1:db6c with SMTP id t11-20020adff04b000000b002d857b1db6cmr18990831wro.9.1680251709411;
-        Fri, 31 Mar 2023 01:35:09 -0700 (PDT)
+        bh=DTkJHErpGDJ9v7s3ekjmHN8aO4NJsl7q6Q7QZM8QMbI=;
+        b=7GLKPOVE7yXg6PISytwRt+2+Lt1p7/QYj+2Vp9oc4X355paIs0AdHKa6o2QUQ1zmX/
+         /Jaoa6saTwk7gBjKqdM/IGGuZv/qQlzbcRhZWmipH3OUVX22Fi2bWXoPHAW6AxPxTqdA
+         iM9qNUj1Duqc0BapPOWBz7/WRAaz7EVP1GfklwGj1R5CaD4pNnwAT2YE6X8BUtG1zm9P
+         vqBG5K2F/sGCR26mzD4VmQS+D3X1N0+SjavUQjjaPtIaazMvC0HH9Cu2NDHFqqcmyEzu
+         ExE7FljUDGgQUtKqxt6LDrdk93bm9qEueaHDqu6C2m8YFTyZe2a4opDS9rPVyPIK50e+
+         56ig==
+X-Gm-Message-State: AO0yUKV5KSlVlaOrfqeiOFnLtFt5MyKPkhU6gCmjyP9YceVDfmC6CIsk
+        mWp5vFhY9wdsA+dsFhB/1dKrRw==
+X-Google-Smtp-Source: AK7set+EJ3ur6/ee9yCfqdjB5MLNFawGDsn0ZJD+xQ08Aa57oAcgfY47mb3l6TfHxYQ73tsX3o+sPw==
+X-Received: by 2002:a1c:7714:0:b0:3ee:3f7:35aa with SMTP id t20-20020a1c7714000000b003ee03f735aamr21641887wmi.19.1680251703765;
+        Fri, 31 Mar 2023 01:35:03 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id e11-20020a5d4e8b000000b002cde626cd96sm1563153wru.65.2023.03.31.01.35.08
+        by smtp.gmail.com with ESMTPSA id e11-20020a5d4e8b000000b002cde626cd96sm1563153wru.65.2023.03.31.01.35.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Mar 2023 01:35:09 -0700 (PDT)
+        Fri, 31 Mar 2023 01:35:03 -0700 (PDT)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Fri, 31 Mar 2023 10:34:56 +0200
-Subject: [PATCH RFC 18/20] irqchip: irq-versatile-fpga: remove obsolete
- oxnas compatible
+Date:   Fri, 31 Mar 2023 10:34:52 +0200
+Subject: [PATCH RFC 14/20] dt-bindings: pinctrl: oxnas,pinctrl: remove
+ obsolete bindings
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230331-topic-oxnas-upstream-remove-v1-18-5bd58fd1dd1f@linaro.org>
+Message-Id: <20230331-topic-oxnas-upstream-remove-v1-14-5bd58fd1dd1f@linaro.org>
 References: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
 In-Reply-To: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
 To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
@@ -95,24 +95,76 @@ List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 Due to lack of maintainance and stall of development for a few years now,
-and since no new features will ever be added upstream, remove support
-for OX810 and OX820 IRQ controller.
+and since no new features will ever be added upstream, remove the
+OX810 and OX820 pinctrl bindings.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- drivers/irqchip/irq-versatile-fpga.c | 1 -
- 1 file changed, 1 deletion(-)
+ .../devicetree/bindings/pinctrl/oxnas,pinctrl.txt  | 56 ----------------------
+ 1 file changed, 56 deletions(-)
 
-diff --git a/drivers/irqchip/irq-versatile-fpga.c b/drivers/irqchip/irq-versatile-fpga.c
-index ba543ed9c154..5018a06060e6 100644
---- a/drivers/irqchip/irq-versatile-fpga.c
-+++ b/drivers/irqchip/irq-versatile-fpga.c
-@@ -242,5 +242,4 @@ static int __init fpga_irq_of_init(struct device_node *node,
- }
- IRQCHIP_DECLARE(arm_fpga, "arm,versatile-fpga-irq", fpga_irq_of_init);
- IRQCHIP_DECLARE(arm_fpga_sic, "arm,versatile-sic", fpga_irq_of_init);
--IRQCHIP_DECLARE(ox810se_rps, "oxsemi,ox810se-rps-irq", fpga_irq_of_init);
- #endif
+diff --git a/Documentation/devicetree/bindings/pinctrl/oxnas,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/oxnas,pinctrl.txt
+deleted file mode 100644
+index b1159434f593..000000000000
+--- a/Documentation/devicetree/bindings/pinctrl/oxnas,pinctrl.txt
++++ /dev/null
+@@ -1,56 +0,0 @@
+-* Oxford Semiconductor OXNAS SoC Family Pin Controller
+-
+-Please refer to pinctrl-bindings.txt, ../gpio/gpio.txt, and
+-../interrupt-controller/interrupts.txt for generic information regarding
+-pin controller, GPIO, and interrupt bindings.
+-
+-OXNAS 'pin configuration node' is a node of a group of pins which can be
+-used for a specific device or function. This node represents configurations of
+-pins, optional function, and optional mux related configuration.
+-
+-Required properties for pin controller node:
+- - compatible: "oxsemi,ox810se-pinctrl" or "oxsemi,ox820-pinctrl"
+- - oxsemi,sys-ctrl: a phandle to the system controller syscon node
+-
+-Required properties for pin configuration sub-nodes:
+- - pins: List of pins to which the configuration applies.
+-
+-Optional properties for pin configuration sub-nodes:
+-----------------------------------------------------
+- - function: Mux function for the specified pins.
+- - bias-pull-up: Enable weak pull-up.
+-
+-Example:
+-
+-pinctrl: pinctrl {
+-	compatible = "oxsemi,ox810se-pinctrl";
+-
+-	/* Regmap for sys registers */
+-	oxsemi,sys-ctrl = <&sys>;
+-
+-	pinctrl_uart2: pinctrl_uart2 {
+-		uart2a {
+-			pins = "gpio31";
+-			function = "fct3";
+-		};
+-		uart2b {
+-			pins = "gpio32";
+-			function = "fct3";
+-		};
+-	};
+-};
+-
+-uart2: serial@900000 {
+-	compatible = "ns16550a";
+-	reg = <0x900000 0x100000>;
+-	clocks = <&sysclk>;
+-	interrupts = <29>;
+-	reg-shift = <0>;
+-	fifo-size = <16>;
+-	reg-io-width = <1>;
+-	current-speed = <115200>;
+-	no-loopback-test;
+-	resets = <&reset 22>;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_uart2>;
+-};
 
 -- 
 2.34.1
