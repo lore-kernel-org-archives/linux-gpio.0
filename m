@@ -2,61 +2,61 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF3C8C77B6D
-	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 08:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4092C76196
+	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 08:35:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231600AbjCaIfZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 31 Mar 2023 04:35:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56536 "EHLO
+        id S230464AbjCaIfd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 31 Mar 2023 04:35:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231290AbjCaIfE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 04:35:04 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 811131CBA0
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 01:34:54 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id i9so21597001wrp.3
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 01:34:53 -0700 (PDT)
+        with ESMTP id S231628AbjCaIfF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 04:35:05 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B79241CBB8
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 01:34:55 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id e18so21583568wra.9
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 01:34:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680251692;
+        d=linaro.org; s=google; t=1680251695;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7wf9SwyOhQz7g6EiRpZy5Wi8C0ELh2QJL8BxOtMQjNQ=;
-        b=KOfHL6QnQCbHbqPXUqo6ZvEG2z1yZ++Zi9D2AelVIxvkp3v4CBUgHj9Knl5oyIiOkB
-         RrLOU3ZwudVZ4jmfljtYSayheSg0vohkiDofTFnTQhoEha1hc0cuTi9XKRouKDzXZhEr
-         J9XyeJo0ntnzkjZsx99LRBmjqS5GHaMww2M2xDFwaAvJzpSGXfs/qmrNrcmQRbSAdJ9P
-         xmGZEQokLL06b9oHiwSanHGu2Q5TyyUzNnrPVGdbyUw9MDXkSyki0njbE2Agt7SfqB0D
-         D7v/KRdGjRtIvJ2ttztoo255ZEcYzA6ZAXEMdFTzwMRTu+yhrAtLfGcHK4n+pYDtPeRB
-         Recg==
+        bh=0V8nry5kWVC4/7uVK2TIBPivIea0+SnMt7iP0mU4Cw8=;
+        b=chZXAA03Ktj6cCYt4xjrNnHn2g3CbaZsDusqs4uU9Vhv0+pAm8jD8YNmIH6rxRpV+h
+         vZbIeRwPEq02v7H1BQWanP2WxcrxIeZKG+trsgqWf+VelBUfmK5t3LKEmSAqUKxTZ13L
+         +G9CVycFJ35xf9hcvHQ/5mpMm4vgT5JJt3pCOGXggW1pTaO5/XGxwGfSkh0l2D4lx3xm
+         CdU9FttI+BGLbTmFYxZ4WJMPU0cKt87qQLmEz7fPijrzLc+aEfpd2hBm32tMeL2yzewe
+         wa8ggH+56W4skf84z3SrfyGgzpsmcwI8xPuwXPLIfYxeKh5XiRGPo7geoXtpM7Y1dKG0
+         wv7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680251692;
+        d=1e100.net; s=20210112; t=1680251695;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7wf9SwyOhQz7g6EiRpZy5Wi8C0ELh2QJL8BxOtMQjNQ=;
-        b=fpEY6WnVHdKBAiTfF02ZdXE7TYTNRFpV3UJBZYzLi/yoWyBMPszYDiJzfdDHq04CZz
-         HGwP52386CZvQR2+DTWKeagzMzy4x/iXucHZEvhMEqhgCF530/PvwjwA6LH7q7vWK5MN
-         7Wonxraeo7Zh2E0atzbU0XQ5Mv/YUyyRxrmtUEyvxFDsnhRz/Q/+75FlC6QLNB2tZ6c1
-         WPiIObgAOPPkOlUrnGV3fxOgJ+nXIrkKaFk3VXovqCKQpspaZVnWNOd8OmwzrtARN+er
-         K8MynwetX6D3pOfKBGPWvYZIgbvjxkupF9QlsvhzuAG8EEVsCXTi8S05BpyaiohwEmXK
-         dbeA==
-X-Gm-Message-State: AAQBX9fJ+rjughZ9bWVhFboz0Ty/tEDXnw14o7SCo8v0gy0jDY4xeq1a
-        Ec9qw8tOjEzraZziMMMi301IgA==
-X-Google-Smtp-Source: AKy350abqfIAr0v3P1V1HSk/CRdjBgvVisNOx4Kso+mcTsWdfBK5jYsqahojN5zQQJmGitx5MuUOFA==
-X-Received: by 2002:adf:ff85:0:b0:2e4:aa42:787e with SMTP id j5-20020adfff85000000b002e4aa42787emr4054721wrr.51.1680251692431;
-        Fri, 31 Mar 2023 01:34:52 -0700 (PDT)
+        bh=0V8nry5kWVC4/7uVK2TIBPivIea0+SnMt7iP0mU4Cw8=;
+        b=i7lSLdNtGnElX47yG9jjxvATikqy4PUCSHG7lp4M4V7s1+01YiQ4YYu8k5ejJRBtc2
+         MDJLjhtZoOkdMT4jPHuQr/INgSuChpM9QTnhp5niTNNjpuofwNC5X3sCbD9X3wwBsF/J
+         ZdnRI5n+G7OaVBvanYaay1+oI9CJf/W+p1GeiOf9qOYrmgr7a80pms5OpOSMJpy5yPU+
+         LnA64ebbaYipkUVmCa7TJXHoI6G7X38gk0/8OlUwcnzFhXwAcCWIgje8jJjOkvJp7j38
+         9FtMPHny5kNCC6f60Nh4v3DmErR5Xi3X9PxFr7c9Ouc6u5p6rc5SvMttG5P3Owr0im+I
+         iFng==
+X-Gm-Message-State: AAQBX9eUpQj5grpPviRKjhNOOStP2KYakq36hUksSdFARHob6Esg/6bj
+        Envkygo/WgrPrBkb3ZP0KyqzGA==
+X-Google-Smtp-Source: AKy350bhK+x7s++84IOWEFVO/gMXDRH9T/LCqh08NqEq24KOmp+VFPEpoLewHAutg0wJysva85qmrQ==
+X-Received: by 2002:a5d:550c:0:b0:2d9:5608:ee0 with SMTP id b12-20020a5d550c000000b002d956080ee0mr20654106wrv.69.1680251695160;
+        Fri, 31 Mar 2023 01:34:55 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id e11-20020a5d4e8b000000b002cde626cd96sm1563153wru.65.2023.03.31.01.34.51
+        by smtp.gmail.com with ESMTPSA id e11-20020a5d4e8b000000b002cde626cd96sm1563153wru.65.2023.03.31.01.34.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Mar 2023 01:34:52 -0700 (PDT)
+        Fri, 31 Mar 2023 01:34:54 -0700 (PDT)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Fri, 31 Mar 2023 10:34:44 +0200
-Subject: [PATCH RFC 06/20] dt-bindings: clk: oxnas: remove obsolete
- bindings
+Date:   Fri, 31 Mar 2023 10:34:46 +0200
+Subject: [PATCH RFC 08/20] dt-bindings: timer: oxsemi,rps-timer: remove
+ obsolete bindings
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230331-topic-oxnas-upstream-remove-v1-6-5bd58fd1dd1f@linaro.org>
+Message-Id: <20230331-topic-oxnas-upstream-remove-v1-8-5bd58fd1dd1f@linaro.org>
 References: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
 In-Reply-To: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
 To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
@@ -96,46 +96,35 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 Due to lack of maintainance and stall of development for a few years now,
 and since no new features will ever be added upstream, remove the
-OX810 and OX820 clock bindings.
+OX810 and OX820 timer bindings.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- .../devicetree/bindings/clock/oxnas,stdclk.txt     | 28 ----------------------
- 1 file changed, 28 deletions(-)
+ .../devicetree/bindings/timer/oxsemi,rps-timer.txt      | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt b/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
+diff --git a/Documentation/devicetree/bindings/timer/oxsemi,rps-timer.txt b/Documentation/devicetree/bindings/timer/oxsemi,rps-timer.txt
 deleted file mode 100644
-index b652f3fb7796..000000000000
---- a/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
+index d191612539e8..000000000000
+--- a/Documentation/devicetree/bindings/timer/oxsemi,rps-timer.txt
 +++ /dev/null
-@@ -1,28 +0,0 @@
--Oxford Semiconductor OXNAS SoC Family Standard Clocks
+@@ -1,17 +0,0 @@
+-Oxford Semiconductor OXNAS SoCs Family RPS Timer
 -================================================
 -
--Please also refer to clock-bindings.txt in this directory for common clock
--bindings usage.
--
 -Required properties:
--- compatible: For OX810SE, should be "oxsemi,ox810se-stdclk"
--	      For OX820, should be "oxsemi,ox820-stdclk"
--- #clock-cells: 1, see below
--
--Parent node should have the following properties :
--- compatible: For OX810SE, should be
--		"oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd"
--	      For OX820, should be
--		"oxsemi,ox820-sys-ctrl", "syscon", "simple-mfd"
+-- compatible: Should be "oxsemi,ox810se-rps-timer" or "oxsemi,ox820-rps-timer"
+-- reg : Specifies base physical address and size of the registers.
+-- interrupts : The interrupts of the two timers
+-- clocks : The phandle of the timer clock source
 -
 -example:
 -
--sys: sys-ctrl@000000 {
--	compatible = "oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd";
--	reg = <0x000000 0x100000>;
--
--	stdclk: stdclk {
--		compatible = "oxsemi,ox810se-stdclk";
--		#clock-cells = <1>;
--	};
+-timer0: timer@200 {
+-	compatible = "oxsemi,ox810se-rps-timer";
+-	reg = <0x200 0x40>;
+-	clocks = <&rpsclk>;
+-	interrupts = <4 5>;
 -};
 
 -- 
