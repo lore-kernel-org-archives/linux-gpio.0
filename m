@@ -2,62 +2,62 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A4DDC77B60
-	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 21:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61491C77B6C
+	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 21:05:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231770AbjCaVFu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 31 Mar 2023 17:05:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37732 "EHLO
+        id S233050AbjCaVFy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 31 Mar 2023 17:05:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232508AbjCaVFt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 17:05:49 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3452E1D847
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 14:05:48 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-54606036bb3so272818737b3.6
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 14:05:48 -0700 (PDT)
+        with ESMTP id S232974AbjCaVFw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 17:05:52 -0400
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EB3B1D84A
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 14:05:51 -0700 (PDT)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-544787916d9so437797507b3.13
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 14:05:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680296747;
+        d=linaro.org; s=google; t=1680296750;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iW1s1+Gu9N67RQRLodX4e69YS2yEkIKFeu2veFvolAY=;
-        b=FqHGbsSKX5sGUwzQY5HxvkUfXAxXuLY/nefqRa+MPxMyped11D/dbhy6BE3o9YupAn
-         PIdJpCwzPkBSmyWzAy4fI0yhS394sJyI1IbDae+ypddTCiOsseW/ZrZiuOznBN5UgK7n
-         726GqSSii9pMkRs8HbA64baQbpiwfMbRjlwCVW9rW+B4iVYyjFiQy4v5KAjDpTN+Vhwc
-         IfgSD4rBJTikwwiEa0eXEeGosWI2j5XTgefnSGJO5FRKwFHauOp3n/OD4h3ntclFfv0e
-         S+FJbASPjnAMmJakwld5Pl1NfI8DREnLs8QdFbdXMCxuOup35POefXvRCeLln/ITVkJQ
-         0mbg==
+        bh=KlccS8PuhgiaZf91f27SabAjxszuRJsMXVMDszCbILs=;
+        b=hJtRlMwEdV+FXGwi9QXe+mRxKskphkSscXmkBxcqM+bWcwHHBS1W35qX1vFNWcIewr
+         n+qT5fFFCIxE9ghL4tTc+OsPY+ksiDDolMVsTIwafsGYFC/npAgeJrMcHNChfCqBG1CG
+         iKbmuLKKi4B4keXb1IYOJKdMYznFljMIZMFQVvhBerpFivChNNdFhG6cQv4cln4iWpnZ
+         UymjGn8P137BiEoL1ZIIJ9ENpRq165as3/hQIXLh3bUXoewMZZyuxlbcNjMT7XY9ZBCz
+         XotLRkFb9pA+6hNMeAVzCKvuDBBek808UPv8ncntcU2NFbOnTMcrt0SYMKKQ0jmf6yYH
+         WTIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680296747;
+        d=1e100.net; s=20210112; t=1680296750;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iW1s1+Gu9N67RQRLodX4e69YS2yEkIKFeu2veFvolAY=;
-        b=qTNTOl53vnLHJgsxe9rcFzWvzubjQdhNAaOxoJegEHPKjYUmuNCRbLGW62ZqnezN7q
-         WD3lDNZK0iIoxxk2zKYilHkAnHDDAcFv6e7TSx/fFJpNAB57Ss5ir7uuwVGb2wrRQ8ml
-         uXoFYiqjUxQynDLk1KbPo6kp65seyrIJgNq5d2HD4GUemaWsd3hPEr0oRRarl2SSLVWu
-         QDPuAk05+F8pdBfXzPq2NV/ZVPJMnb2BgslmpXqr3arXxqc85aKMblazPJJqbO/9OHrH
-         Fp1/6cnOEItCXJ3g6Z21QpHMxT3Byrd1hnR0itDnvXJ+gEU1yphNJJWo4p67RxfyDrbX
-         AhKg==
-X-Gm-Message-State: AAQBX9dNrdlSu0nQFEih+c0BvVvekfEolcOpezRAW2egd1ZzAV2jlH7M
-        A2s7mcsC80Um7Lf7bpjQWJQoNw==
-X-Google-Smtp-Source: AKy350YSx8syFV4NQsQQ+Zjw0jVUbNDc+6UCbJp4LSfepx5rYJHMOPcuxW7mHe6J7yeu2IcyfytauA==
-X-Received: by 2002:a81:a505:0:b0:541:4561:544d with SMTP id u5-20020a81a505000000b005414561544dmr24906326ywg.43.1680296747311;
-        Fri, 31 Mar 2023 14:05:47 -0700 (PDT)
+        bh=KlccS8PuhgiaZf91f27SabAjxszuRJsMXVMDszCbILs=;
+        b=ocp0m61mHraNULbau1n4OCmewjhGeGyuKxMePk96ep2UYaIxSauovCdHHJmR4mnGpa
+         RugWwKW/u//eZ4N/WNnk5VsuKc95TBEe+UI5wlCxR0cji0xpd9d5zl8M3d9bMdwFGfO0
+         f3gaxhYfksNutJO+6kNuAKuIxjmsMZYFEaIafVvvXlGtdj3dBvgYXGtxFY/PZIUvIk0z
+         sTWlSYUJR9I8JCvz/UiivdU/j9sOdgC2Un/16KQ7Aew6400qCXcifXLVds1uFL92KlGp
+         VEpTR6sZMgPT1mp1sFkChofrZIcXGkObzR2Y0Ncck2mZVMmTB874qEj0itJGgrFNawYT
+         BZmg==
+X-Gm-Message-State: AAQBX9c4CFwm/IvKxk+mf/k3rQXeXuZnAP7p2XeaJBasDuA0j2IC5yaK
+        NUlURIk+3r21pDhQOm/9JBG2wA==
+X-Google-Smtp-Source: AKy350Zig3kb0gtLjKETx+QjCVgAdPmHmQbyKdRvbaYXvJyjnDq6VBi6iB4CLefDsdjnmkN2VXSxgg==
+X-Received: by 2002:a81:a209:0:b0:545:91c2:d5eb with SMTP id w9-20020a81a209000000b0054591c2d5ebmr25732254ywg.28.1680296750352;
+        Fri, 31 Mar 2023 14:05:50 -0700 (PDT)
 Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id q70-20020a81b249000000b0054601ee157fsm751990ywh.114.2023.03.31.14.05.46
+        by smtp.gmail.com with ESMTPSA id q70-20020a81b249000000b0054601ee157fsm751990ywh.114.2023.03.31.14.05.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Mar 2023 14:05:46 -0700 (PDT)
+        Fri, 31 Mar 2023 14:05:50 -0700 (PDT)
 From:   William Breathitt Gray <william.gray@linaro.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         William Breathitt Gray <william.gray@linaro.org>
-Subject: [PATCH v4 1/4] gpio: idio-16: Migrate to the regmap API
-Date:   Fri, 31 Mar 2023 17:05:23 -0400
-Message-Id: <dfbc3a5c5b18848a8c00da5c29adb0d3003d351e.1680296343.git.william.gray@linaro.org>
+Subject: [PATCH v4 4/4] gpio: idio-16: Remove unused legacy interface
+Date:   Fri, 31 Mar 2023 17:05:26 -0400
+Message-Id: <3d77e0b3dd3b3d3f7dad53222a755459b5e2aa57.1680296343.git.william.gray@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <cover.1680296343.git.william.gray@linaro.org>
 References: <cover.1680296343.git.william.gray@linaro.org>
@@ -67,281 +67,256 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The regmap API supports IO port accessors so we can take advantage of
-regmap abstractions rather than handling access to the device registers
-directly in the driver.
+All idio-16 library consumers have migrated to the new interface
+leveraging the gpio-regmap API. Legacy interface functions and code are
+removed as no longer needed.
 
-By leveraging the regmap API, the idio-16 library is reduced to simply a
-devm_idio_16_regmap_register() function and a configuration structure
-struct idio_16_regmap_config.
-
-Legacy functions and code will be removed once all consumers have
-migrated to the new idio-16 library interface.
-
-For IDIO-16 devices we have the following IRQ registers:
-
-    Base Address +1 (Write): Clear Interrupt
-    Base Address +2 (Read): Enable Interrupt
-    Base Address +2 (Write): Disable Interrupt
-
-An interrupt is asserted whenever a change-of-state is detected on any
-of the inputs. Any write to 0x2 will disable interrupts, while any read
-will enable interrupts. Interrupts are cleared by a write to 0x1.
-
-For 104-IDIO-16 devices, there is no IRQ status register, so software
-has to assume that if an interrupt is raised then it was for the
-104-IDIO-16 device.
-
-For PCI-IDIO-16 devices, there is an additional IRQ register:
-
-    Base Address +6 (Read): Interrupt Status
-
-Interrupt status can be read from 0x6 where bit 2 set indicates that an
-IRQ has been generated.
-
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
 ---
-Changes in v4:
- - Remove superfluous base check in idio_16_reg_mask_xlate()
- - Format idio_16_names[] to 8 GPIO per line
- - Utilize dev_err_probe() in idio_16_regmap_register()
+Changes in v4: none
 
- drivers/gpio/Kconfig        |   3 +
- drivers/gpio/gpio-idio-16.c | 155 ++++++++++++++++++++++++++++++++++++
- drivers/gpio/gpio-idio-16.h |  26 ++++++
- 3 files changed, 184 insertions(+)
+ drivers/gpio/gpio-idio-16.c | 131 +-----------------------------------
+ drivers/gpio/gpio-idio-16.h |  65 ------------------
+ 2 files changed, 1 insertion(+), 195 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 68f58b0ba79f..415b86cfd1a9 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -111,6 +111,9 @@ config GPIO_MAX730X
- 
- config GPIO_IDIO_16
- 	tristate
-+	select REGMAP_IRQ
-+	select GPIOLIB_IRQCHIP
-+	select GPIO_REGMAP
- 	help
- 	  Enables support for the idio-16 library functions. The idio-16 library
- 	  provides functions to facilitate communication with devices within the
 diff --git a/drivers/gpio/gpio-idio-16.c b/drivers/gpio/gpio-idio-16.c
-index 13315242d220..f9349e8d7fdc 100644
+index f9349e8d7fdc..53b1eb876a12 100644
 --- a/drivers/gpio/gpio-idio-16.c
 +++ b/drivers/gpio/gpio-idio-16.c
-@@ -4,9 +4,13 @@
+@@ -3,15 +3,13 @@
+  * GPIO library for the ACCES IDIO-16 family
   * Copyright (C) 2022 William Breathitt Gray
   */
- #include <linux/bitmap.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
+-#include <linux/bitmap.h>
++#include <linux/bits.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
  #include <linux/export.h>
-+#include <linux/gpio/regmap.h>
- #include <linux/io.h>
+ #include <linux/gpio/regmap.h>
+-#include <linux/io.h>
  #include <linux/module.h>
-+#include <linux/regmap.h>
- #include <linux/spinlock.h>
+ #include <linux/regmap.h>
+-#include <linux/spinlock.h>
  #include <linux/types.h>
  
-@@ -14,6 +18,157 @@
+ #include "gpio-idio-16.h"
+@@ -169,133 +167,6 @@ int devm_idio_16_regmap_register(struct device *const dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_idio_16_regmap_register);
  
- #define DEFAULT_SYMBOL_NAMESPACE GPIO_IDIO_16
- 
-+#define IDIO_16_DAT_BASE 0x0
-+#define IDIO_16_OUT_BASE IDIO_16_DAT_BASE
-+#define IDIO_16_IN_BASE (IDIO_16_DAT_BASE + 1)
-+#define IDIO_16_CLEAR_INTERRUPT 0x1
-+#define IDIO_16_ENABLE_IRQ 0x2
-+#define IDIO_16_DEACTIVATE_INPUT_FILTERS 0x3
-+#define IDIO_16_DISABLE_IRQ IDIO_16_ENABLE_IRQ
-+#define IDIO_16_INTERRUPT_STATUS 0x6
-+
-+#define IDIO_16_NGPIO 32
-+#define IDIO_16_NGPIO_PER_REG 8
-+#define IDIO_16_REG_STRIDE 4
-+
-+struct idio_16_data {
-+	struct regmap *map;
-+	unsigned int irq_mask;
-+};
-+
-+static int idio_16_handle_mask_sync(const int index, const unsigned int mask_buf_def,
-+				    const unsigned int mask_buf, void *const irq_drv_data)
-+{
-+	struct idio_16_data *const data = irq_drv_data;
-+	const unsigned int prev_mask = data->irq_mask;
-+	int err;
-+	unsigned int val;
-+
-+	/* exit early if no change since the previous mask */
-+	if (mask_buf == prev_mask)
-+		return 0;
-+
-+	/* remember the current mask for the next mask sync */
-+	data->irq_mask = mask_buf;
-+
-+	/* if all previously masked, enable interrupts when unmasking */
-+	if (prev_mask == mask_buf_def) {
-+		err = regmap_write(data->map, IDIO_16_CLEAR_INTERRUPT, 0x00);
-+		if (err)
-+			return err;
-+		return regmap_read(data->map, IDIO_16_ENABLE_IRQ, &val);
-+	}
-+
-+	/* if all are currently masked, disable interrupts */
-+	if (mask_buf == mask_buf_def)
-+		return regmap_write(data->map, IDIO_16_DISABLE_IRQ, 0x00);
-+
-+	return 0;
-+}
-+
-+static int idio_16_reg_mask_xlate(struct gpio_regmap *const gpio, const unsigned int base,
-+				  const unsigned int offset, unsigned int *const reg,
-+				  unsigned int *const mask)
-+{
-+	unsigned int stride;
-+
-+	/* Input lines start at GPIO 16 */
-+	if (offset < 16) {
-+		stride = offset / IDIO_16_NGPIO_PER_REG;
-+		*reg = IDIO_16_OUT_BASE + stride * IDIO_16_REG_STRIDE;
-+	} else {
-+		stride = (offset - 16) / IDIO_16_NGPIO_PER_REG;
-+		*reg = IDIO_16_IN_BASE + stride * IDIO_16_REG_STRIDE;
-+	}
-+
-+	*mask = BIT(offset % IDIO_16_NGPIO_PER_REG);
-+
-+	return 0;
-+}
-+
-+static const char *idio_16_names[IDIO_16_NGPIO] = {
-+	"OUT0", "OUT1", "OUT2", "OUT3", "OUT4", "OUT5", "OUT6", "OUT7",
-+	"OUT8", "OUT9", "OUT10", "OUT11", "OUT12", "OUT13", "OUT14", "OUT15",
-+	"IIN0", "IIN1", "IIN2", "IIN3", "IIN4", "IIN5", "IIN6", "IIN7",
-+	"IIN8", "IIN9", "IIN10", "IIN11", "IIN12", "IIN13", "IIN14", "IIN15",
-+};
-+
-+/**
-+ * devm_idio_16_regmap_register - Register an IDIO-16 GPIO device
-+ * @dev:	device that is registering this IDIO-16 GPIO device
-+ * @config:	configuration for idio_16_regmap_config
-+ *
-+ * Registers an IDIO-16 GPIO device. Returns 0 on success and negative error number on failure.
-+ */
-+int devm_idio_16_regmap_register(struct device *const dev,
-+				 const struct idio_16_regmap_config *const config)
-+{
-+	struct gpio_regmap_config gpio_config = {};
-+	int err;
-+	struct idio_16_data *data;
-+	struct regmap_irq_chip *chip;
-+	struct regmap_irq_chip_data *chip_data;
-+
-+	if (!config->parent)
-+		return -EINVAL;
-+
-+	if (!config->map)
-+		return -EINVAL;
-+
-+	if (!config->regmap_irqs)
-+		return -EINVAL;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+	data->map = config->map;
-+
-+	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	chip->name = dev_name(dev);
-+	chip->status_base = IDIO_16_INTERRUPT_STATUS;
-+	chip->mask_base = IDIO_16_ENABLE_IRQ;
-+	chip->ack_base = IDIO_16_CLEAR_INTERRUPT;
-+	chip->no_status = config->no_status;
-+	chip->num_regs = 1;
-+	chip->irqs = config->regmap_irqs;
-+	chip->num_irqs = config->num_regmap_irqs;
-+	chip->handle_mask_sync = idio_16_handle_mask_sync;
-+	chip->irq_drv_data = data;
-+
-+	/* Disable IRQ to prevent spurious interrupts before we're ready */
-+	err = regmap_write(data->map, IDIO_16_DISABLE_IRQ, 0x00);
-+	if (err)
-+		return err;
-+
-+	err = devm_regmap_add_irq_chip(dev, data->map, config->irq, 0, 0, chip, &chip_data);
-+	if (err)
-+		return dev_err_probe(dev, err, "IRQ registration failed\n");
-+
-+	if (config->filters) {
-+		/* Deactivate input filters */
-+		err = regmap_write(data->map, IDIO_16_DEACTIVATE_INPUT_FILTERS, 0x00);
-+		if (err)
-+			return err;
-+	}
-+
-+	gpio_config.parent = config->parent;
-+	gpio_config.regmap = data->map;
-+	gpio_config.ngpio = IDIO_16_NGPIO;
-+	gpio_config.names = idio_16_names;
-+	gpio_config.reg_dat_base = GPIO_REGMAP_ADDR(IDIO_16_DAT_BASE);
-+	gpio_config.reg_set_base = GPIO_REGMAP_ADDR(IDIO_16_DAT_BASE);
-+	gpio_config.ngpio_per_reg = IDIO_16_NGPIO_PER_REG;
-+	gpio_config.reg_stride = IDIO_16_REG_STRIDE;
-+	gpio_config.irq_domain = regmap_irq_get_domain(chip_data);
-+	gpio_config.reg_mask_xlate = idio_16_reg_mask_xlate;
-+
-+	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &gpio_config));
-+}
-+EXPORT_SYMBOL_GPL(devm_idio_16_regmap_register);
-+
- /**
-  * idio_16_get - get signal value at signal offset
-  * @reg:	ACCES IDIO-16 device registers
+-/**
+- * idio_16_get - get signal value at signal offset
+- * @reg:	ACCES IDIO-16 device registers
+- * @state:	ACCES IDIO-16 device state
+- * @offset:	offset of signal to get
+- *
+- * Returns the signal value (0=low, 1=high) for the signal at @offset.
+- */
+-int idio_16_get(struct idio_16 __iomem *const reg,
+-		struct idio_16_state *const state, const unsigned long offset)
+-{
+-	const unsigned long mask = BIT(offset);
+-
+-	if (offset < IDIO_16_NOUT)
+-		return test_bit(offset, state->out_state);
+-
+-	if (offset < 24)
+-		return !!(ioread8(&reg->in0_7) & (mask >> IDIO_16_NOUT));
+-
+-	if (offset < 32)
+-		return !!(ioread8(&reg->in8_15) & (mask >> 24));
+-
+-	return -EINVAL;
+-}
+-EXPORT_SYMBOL_GPL(idio_16_get);
+-
+-/**
+- * idio_16_get_multiple - get multiple signal values at multiple signal offsets
+- * @reg:	ACCES IDIO-16 device registers
+- * @state:	ACCES IDIO-16 device state
+- * @mask:	mask of signals to get
+- * @bits:	bitmap to store signal values
+- *
+- * Stores in @bits the values (0=low, 1=high) for the signals defined by @mask.
+- */
+-void idio_16_get_multiple(struct idio_16 __iomem *const reg,
+-			  struct idio_16_state *const state,
+-			  const unsigned long *const mask,
+-			  unsigned long *const bits)
+-{
+-	unsigned long flags;
+-	const unsigned long out_mask = GENMASK(IDIO_16_NOUT - 1, 0);
+-
+-	spin_lock_irqsave(&state->lock, flags);
+-
+-	bitmap_replace(bits, bits, state->out_state, &out_mask, IDIO_16_NOUT);
+-	if (*mask & GENMASK(23, 16))
+-		bitmap_set_value8(bits, ioread8(&reg->in0_7), 16);
+-	if (*mask & GENMASK(31, 24))
+-		bitmap_set_value8(bits, ioread8(&reg->in8_15), 24);
+-
+-	spin_unlock_irqrestore(&state->lock, flags);
+-}
+-EXPORT_SYMBOL_GPL(idio_16_get_multiple);
+-
+-/**
+- * idio_16_set - set signal value at signal offset
+- * @reg:	ACCES IDIO-16 device registers
+- * @state:	ACCES IDIO-16 device state
+- * @offset:	offset of signal to set
+- * @value:	value of signal to set
+- *
+- * Assigns output @value for the signal at @offset.
+- */
+-void idio_16_set(struct idio_16 __iomem *const reg,
+-		 struct idio_16_state *const state, const unsigned long offset,
+-		 const unsigned long value)
+-{
+-	unsigned long flags;
+-
+-	if (offset >= IDIO_16_NOUT)
+-		return;
+-
+-	spin_lock_irqsave(&state->lock, flags);
+-
+-	__assign_bit(offset, state->out_state, value);
+-	if (offset < 8)
+-		iowrite8(bitmap_get_value8(state->out_state, 0), &reg->out0_7);
+-	else
+-		iowrite8(bitmap_get_value8(state->out_state, 8), &reg->out8_15);
+-
+-	spin_unlock_irqrestore(&state->lock, flags);
+-}
+-EXPORT_SYMBOL_GPL(idio_16_set);
+-
+-/**
+- * idio_16_set_multiple - set signal values at multiple signal offsets
+- * @reg:	ACCES IDIO-16 device registers
+- * @state:	ACCES IDIO-16 device state
+- * @mask:	mask of signals to set
+- * @bits:	bitmap of signal output values
+- *
+- * Assigns output values defined by @bits for the signals defined by @mask.
+- */
+-void idio_16_set_multiple(struct idio_16 __iomem *const reg,
+-			  struct idio_16_state *const state,
+-			  const unsigned long *const mask,
+-			  const unsigned long *const bits)
+-{
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&state->lock, flags);
+-
+-	bitmap_replace(state->out_state, state->out_state, bits, mask,
+-		       IDIO_16_NOUT);
+-	if (*mask & GENMASK(7, 0))
+-		iowrite8(bitmap_get_value8(state->out_state, 0), &reg->out0_7);
+-	if (*mask & GENMASK(15, 8))
+-		iowrite8(bitmap_get_value8(state->out_state, 8), &reg->out8_15);
+-
+-	spin_unlock_irqrestore(&state->lock, flags);
+-}
+-EXPORT_SYMBOL_GPL(idio_16_set_multiple);
+-
+-/**
+- * idio_16_state_init - initialize idio_16_state structure
+- * @state:	ACCES IDIO-16 device state
+- *
+- * Initializes the ACCES IDIO-16 device @state for use in idio-16 library
+- * functions.
+- */
+-void idio_16_state_init(struct idio_16_state *const state)
+-{
+-	spin_lock_init(&state->lock);
+-}
+-EXPORT_SYMBOL_GPL(idio_16_state_init);
+-
+ MODULE_AUTHOR("William Breathitt Gray");
+ MODULE_DESCRIPTION("ACCES IDIO-16 GPIO Library");
+ MODULE_LICENSE("GPL");
 diff --git a/drivers/gpio/gpio-idio-16.h b/drivers/gpio/gpio-idio-16.h
-index 928f8251a2bd..255bd8504ed7 100644
+index 255bd8504ed7..93b08ad73065 100644
 --- a/drivers/gpio/gpio-idio-16.h
 +++ b/drivers/gpio/gpio-idio-16.h
-@@ -6,6 +6,30 @@
- #include <linux/spinlock.h>
- #include <linux/types.h>
+@@ -3,9 +3,6 @@
+ #ifndef _IDIO_16_H_
+ #define _IDIO_16_H_
  
-+struct device;
-+struct regmap;
-+struct regmap_irq;
-+
-+/**
-+ * struct idio_16_regmap_config - Configuration for the IDIO-16 register map
-+ * @parent:		parent device
-+ * @map:		regmap for the IDIO-16 device
-+ * @regmap_irqs:	descriptors for individual IRQs
-+ * @num_regmap_irqs:	number of IRQ descriptors
-+ * @irq:		IRQ number for the IDIO-16 device
-+ * @no_status:		device has no status register
-+ * @filters:		device has input filters
-+ */
-+struct idio_16_regmap_config {
-+	struct device *parent;
-+	struct regmap *map;
-+	const struct regmap_irq *regmap_irqs;
-+	int num_regmap_irqs;
-+	unsigned int irq;
-+	bool no_status;
-+	bool filters;
-+};
-+
- /**
-  * struct idio_16 - IDIO-16 registers structure
-  * @out0_7:	Read: FET Drive Outputs 0-7
-@@ -68,4 +92,6 @@ void idio_16_set_multiple(struct idio_16 __iomem *reg,
- 			  const unsigned long *mask, const unsigned long *bits);
- void idio_16_state_init(struct idio_16_state *state);
+-#include <linux/spinlock.h>
+-#include <linux/types.h>
+-
+ struct device;
+ struct regmap;
+ struct regmap_irq;
+@@ -30,68 +27,6 @@ struct idio_16_regmap_config {
+ 	bool filters;
+ };
  
-+int devm_idio_16_regmap_register(struct device *dev, const struct idio_16_regmap_config *config);
-+
+-/**
+- * struct idio_16 - IDIO-16 registers structure
+- * @out0_7:	Read: FET Drive Outputs 0-7
+- *		Write: FET Drive Outputs 0-7
+- * @in0_7:	Read: Isolated Inputs 0-7
+- *		Write: Clear Interrupt
+- * @irq_ctl:	Read: Enable IRQ
+- *		Write: Disable IRQ
+- * @filter_ctl:	Read: Activate Input Filters 0-15
+- *		Write: Deactivate Input Filters 0-15
+- * @out8_15:	Read: FET Drive Outputs 8-15
+- *		Write: FET Drive Outputs 8-15
+- * @in8_15:	Read: Isolated Inputs 8-15
+- *		Write: Unused
+- * @irq_status:	Read: Interrupt status
+- *		Write: Unused
+- */
+-struct idio_16 {
+-	u8 out0_7;
+-	u8 in0_7;
+-	u8 irq_ctl;
+-	u8 filter_ctl;
+-	u8 out8_15;
+-	u8 in8_15;
+-	u8 irq_status;
+-};
+-
+-#define IDIO_16_NOUT 16
+-
+-/**
+- * struct idio_16_state - IDIO-16 state structure
+- * @lock:	synchronization lock for accessing device state
+- * @out_state:	output signals state
+- */
+-struct idio_16_state {
+-	spinlock_t lock;
+-	DECLARE_BITMAP(out_state, IDIO_16_NOUT);
+-};
+-
+-/**
+- * idio_16_get_direction - get the I/O direction for a signal offset
+- * @offset:	offset of signal to get direction
+- *
+- * Returns the signal direction (0=output, 1=input) for the signal at @offset.
+- */
+-static inline int idio_16_get_direction(const unsigned long offset)
+-{
+-	return (offset >= IDIO_16_NOUT) ? 1 : 0;
+-}
+-
+-int idio_16_get(struct idio_16 __iomem *reg, struct idio_16_state *state,
+-		unsigned long offset);
+-void idio_16_get_multiple(struct idio_16 __iomem *reg,
+-			  struct idio_16_state *state,
+-			  const unsigned long *mask, unsigned long *bits);
+-void idio_16_set(struct idio_16 __iomem *reg, struct idio_16_state *state,
+-		 unsigned long offset, unsigned long value);
+-void idio_16_set_multiple(struct idio_16 __iomem *reg,
+-			  struct idio_16_state *state,
+-			  const unsigned long *mask, const unsigned long *bits);
+-void idio_16_state_init(struct idio_16_state *state);
+-
+ int devm_idio_16_regmap_register(struct device *dev, const struct idio_16_regmap_config *config);
+ 
  #endif /* _IDIO_16_H_ */
 -- 
 2.39.2
