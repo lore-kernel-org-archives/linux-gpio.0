@@ -2,81 +2,80 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E20C761AF
-	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 12:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB0FC6FD18
+	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 12:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232268AbjCaMXR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 31 Mar 2023 08:23:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36758 "EHLO
+        id S232311AbjCaMZD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 31 Mar 2023 08:25:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232300AbjCaMXN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 08:23:13 -0400
-Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B5F120314
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 05:22:48 -0700 (PDT)
-Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-5445009c26bso411400947b3.8
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 05:22:48 -0700 (PDT)
+        with ESMTP id S232365AbjCaMYw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 08:24:52 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75E9A1A474
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 05:24:35 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id i6so27183552ybu.8
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 05:24:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680265365;
+        d=linaro.org; s=google; t=1680265474;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2owAB3QIh/fJmsl2/RdqrmdgMBNDGNEWdkKSHrJDCNo=;
-        b=AHL3dXDDbBLaLWU/gvqB57G6n+zZ5P0WuNtY7UVz7hYQg1Dyt4lEIR9ezSGfR3YgH2
-         l7gRTIFuVsxhmhcvoK6nuBb4rcjcEaz70KC485Awzk6urblUULbmP1V6FCuxXJw2c9NM
-         IaFa7XSp3NK7BuzOpxGYBfO8pHG+eqFODg0R9nNLi7KTASWGm68SB7iiirBlFHfhCOI1
-         P4l+FiMUs026/Rq/pFvBBm3mEx6ylsqBOdbUQyiJjM+yEz0uVNRm9QRR1q/d6SMciH/A
-         Wy7QL4OddVTtYV1qa58u4QSOGYDQKpBA6j2XX7q+beXqVTX6XCRnnUI03BU5cG1EhBaB
-         Tu9g==
+        bh=PXFJEpQ4XHmA2YSoBH/MUjVigw2iWnosi2S1nnemWkQ=;
+        b=pXNQV82uYxsIbav/3DvbycIekmnwuZ3rvTcqj8VXpmWo7DIIpGha4v4PS5TWGkHS2E
+         rsYy+MQLaPn0FxerV8LD40fBXp6pHY4uX8kkRYioyk0OOKicsAbE3RWXmZ31OzCK8p1g
+         xjh8db24kK+JB+cufGCfz8IigeAQWnIvqOacEa/Hbz/fJsNQvMU4oX+RwIt+1rAjh86C
+         jRq0ZDVwN3IytbRuY7X4xv20DP1DFNJlpekH90r0JJF7Bm3GH9oon1yYkUtAFs6zK2zU
+         TAME/qfK2scMkrUE70+Itql2GuJMjxcS1uuT1Y5uaOiLPsyA2Yiqreyc9JWM9rPzcJJP
+         Q7HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680265365;
+        d=1e100.net; s=20210112; t=1680265474;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2owAB3QIh/fJmsl2/RdqrmdgMBNDGNEWdkKSHrJDCNo=;
-        b=JrbziMn9rQsv0eyYa7M29bpCkOCdUR7c5h3FZsVW5/Qz6P5JIaP7PhS/aq9dra/77+
-         R3cl/3sup1yatyzYOzaDMeo64zApZnNgPoQOJeumBBcVS+cQSAt1KOtdC6mpiNi5OfOg
-         A0KnZMTDH4ufUo50PMwjfp/0SBtFUqU5skwWNzmLHFmyFj2E0a055kRvmyvOYF63gCHI
-         7HQpof/HHw36JeYfwPXd0Fu6d674KCxmb59EMqRJOHQ9yGFxa8umeBFM5dNZ7EB/SuOV
-         4UbFDj328NqWAEkWkauZhx+WiwXJ5NFg/cdQbQKPz4VNM+CBo+v7E82Jg5QNh4V+4JXo
-         j9Tg==
-X-Gm-Message-State: AAQBX9cgNBTE7T0mmr1vTpAXsWsX/4Fg+pTthKvScxq9xyYkgkhhZTOW
-        ouXXIQzJqFviNSzmgPojIOhInHZJHKGY9xI/qWIxNQ==
-X-Google-Smtp-Source: AKy350Y75Hrriomm/pGgLwtjhceJ4FaC1JCezQW32b0yP9veCHMLvw9+T4Ah1HaSl9byrDxUB04ZhK9nb9gkqXcBrsI=
-X-Received: by 2002:a81:4426:0:b0:53d:2772:65d with SMTP id
- r38-20020a814426000000b0053d2772065dmr13513308ywa.9.1680265365023; Fri, 31
- Mar 2023 05:22:45 -0700 (PDT)
+        bh=PXFJEpQ4XHmA2YSoBH/MUjVigw2iWnosi2S1nnemWkQ=;
+        b=Ium/ujDREVud9qiKRgym6A8RoKHrI6XqyeqI5d8MLuLBJdVaRZzz4dGcBo3GwSw7LY
+         HnumMBeumSJhMv5JtO+B/9euurxExCnI0AyPtVULYp1nZwUwJNhlGEVNG3PSCFVYDM24
+         cOOD1KGOHDmdzUa/Uz+9lSucYhfI22mjygALQgaigRRe836LwYweYLGGg35qhwVROm4t
+         21dbM4wB4Dvumv/Pn5JEfpfzu4cHOE3GbMzP+y3svCKB532qI9ja9cO/L3a7iEkD4QVV
+         lV05thP0fR6qIxVU3s/9FU0cZe+iW7Lqv+cujhyUcqHsse0VHGz8oWB3uZjYyJaEYWCK
+         WK3w==
+X-Gm-Message-State: AAQBX9fPuxjr1UttBftO0xCd+Pbj/c7bkm4dYq+nAsHrky0KRDD/CK5e
+        R0Xh3aA+bhcXjaIg0ZGlANQVv459nqVYx2JKoSkb2A==
+X-Google-Smtp-Source: AKy350aE91H/6QW4fgrlaypZVf8/ibhExISeAYu4i38CNTK+JgANOp/slZSzTYYJYDz0EHiQh+XjiaOWn8sImADlBJI=
+X-Received: by 2002:a05:6902:1006:b0:b78:4b00:775f with SMTP id
+ w6-20020a056902100600b00b784b00775fmr12968348ybt.4.1680265474658; Fri, 31 Mar
+ 2023 05:24:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230328052912.1957000-1-peng.fan@oss.nxp.com>
-In-Reply-To: <20230328052912.1957000-1-peng.fan@oss.nxp.com>
+References: <20230328174231.8924-1-mario.limonciello@amd.com> <20230328174231.8924-2-mario.limonciello@amd.com>
+In-Reply-To: <20230328174231.8924-2-mario.limonciello@amd.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 31 Mar 2023 14:22:33 +0200
-Message-ID: <CACRpkdbx_4CqMokdKf8Zs0BrBz6iEZrwL_8c7nrP7yqxM46A1g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: gpio: fsl-imx-gpio: update gpio-ranges
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     brgl@bgdev.pl, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, stefan@agner.ch, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Date:   Fri, 31 Mar 2023 14:24:23 +0200
+Message-ID: <CACRpkdYiNTMq6YfGi+i1_k+92_1QShFrX_WFtV4eLFOQLAGD-A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: amd: Adjust debugfs output
+To:     Mario Limonciello <mario.limonciello@amd.com>
+Cc:     Natikar Basavaraj <Basavaraj.Natikar@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Mar 28, 2023 at 7:24=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.co=
-m> wrote:
+On Tue, Mar 28, 2023 at 7:43=E2=80=AFPM Mario Limonciello
+<mario.limonciello@amd.com> wrote:
 
-> From: Peng Fan <peng.fan@nxp.com>
+> More fields are to be added, so to keep the display from being
+> too busy, adjust it.
 >
-> one is not enough for i.MX8, so enlarge it.
+> 1) Add a header to all columns
+> 2) Except for interrupt, when fields have no data show empty
+> 3) Remove otherwise blank whitespace
 >
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
-Makes sense.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Patches applied!
 
 Yours,
 Linus Walleij
