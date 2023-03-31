@@ -2,61 +2,61 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 044E5C77B78
-	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 08:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF3C8C77B6D
+	for <linux-gpio@archiver.kernel.org>; Fri, 31 Mar 2023 08:35:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230501AbjCaIfD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 31 Mar 2023 04:35:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56332 "EHLO
+        id S231600AbjCaIfZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 31 Mar 2023 04:35:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231290AbjCaIey (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 04:34:54 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B9E41A95C
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 01:34:50 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id e18so21583318wra.9
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 01:34:50 -0700 (PDT)
+        with ESMTP id S231290AbjCaIfE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 04:35:04 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 811131CBA0
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 01:34:54 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id i9so21597001wrp.3
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 01:34:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680251689;
+        d=linaro.org; s=google; t=1680251692;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vqQMlPFjpwyJDFMp/Q+5qT+SRMNMN9WWVCzGVB/CCjE=;
-        b=Z8O/YlVKluZ3frIjBWHinHyf35Hl9tXFgyrb2DvpZeBIUlCdj7trg1eKmtw4ORy470
-         mjOyF9tBJQi2Ey8HheeRE65rpBTqzTq9i3mTVsYp3fwCYypvkM8U5gPx6qo1NyW4w1AT
-         RfYhDtpld7nV252R85LScU8iMrj1F28/lGNNhzXDXFzbXr5XuNt/qTx3rFv33Dysc9qj
-         ng2S0S7/e4gg8Qc0+fK2hotP9nkIwGeMnI0zHMmxfcMcDiw6soURCd1MEiMLog9EoaiT
-         Chmx1245yKaUYuvICD7WIsPKuFiAmHnlmK5dBY5gRvaOBgG75ZXytjZ5wMeIuLRKYD2k
-         uZ8g==
+        bh=7wf9SwyOhQz7g6EiRpZy5Wi8C0ELh2QJL8BxOtMQjNQ=;
+        b=KOfHL6QnQCbHbqPXUqo6ZvEG2z1yZ++Zi9D2AelVIxvkp3v4CBUgHj9Knl5oyIiOkB
+         RrLOU3ZwudVZ4jmfljtYSayheSg0vohkiDofTFnTQhoEha1hc0cuTi9XKRouKDzXZhEr
+         J9XyeJo0ntnzkjZsx99LRBmjqS5GHaMww2M2xDFwaAvJzpSGXfs/qmrNrcmQRbSAdJ9P
+         xmGZEQokLL06b9oHiwSanHGu2Q5TyyUzNnrPVGdbyUw9MDXkSyki0njbE2Agt7SfqB0D
+         D7v/KRdGjRtIvJ2ttztoo255ZEcYzA6ZAXEMdFTzwMRTu+yhrAtLfGcHK4n+pYDtPeRB
+         Recg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680251689;
+        d=1e100.net; s=20210112; t=1680251692;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vqQMlPFjpwyJDFMp/Q+5qT+SRMNMN9WWVCzGVB/CCjE=;
-        b=4hK3WyVE8Cop0Sh3WFbd5JVdIYAt5n+ixspCfu6PLv9yYK2in8YvxA/3Sq1PsG4gjo
-         mX8IyizgjTRM6bNRLtCK8RMAqyewcheK9I1RMY9pQf/CirHqfIVeZs/nBHAZ9EgnaRse
-         HNfvMO7RkooZ7u6SZWDF5AKUaJi8a3ALfdyBqtxMz3itmm4HyV30cZXMK1MKillwxxuB
-         Lms986hPXAoSiW2ZiWKgqmZ0yfvUhb+q+8UjI8LdkjVdCsi/FbCCVVsUk+pmWRt3L5uR
-         LCr2MYzlOEeomUXdWJsioKDNh6/Sry7YWPHC9gmoN8FNK9QQ0/RBFfi9cIycrorFQmoB
-         /mew==
-X-Gm-Message-State: AAQBX9cpGFM+lSZ5P3g1NDgl7FLsOfFURz6F+syq3VB3O7hQHXwhbXl2
-        emB98V5vpZJIVwjjLvrPGEvBnA==
-X-Google-Smtp-Source: AKy350aYMRhuGCU7lgJkqotrX72DL9blN95WJq8/pg0rFFj2/jBzU25Plf3PTEmdwgAKOY8ASbmEgw==
-X-Received: by 2002:a5d:5742:0:b0:2d0:c37a:5ebd with SMTP id q2-20020a5d5742000000b002d0c37a5ebdmr19721443wrw.64.1680251689686;
-        Fri, 31 Mar 2023 01:34:49 -0700 (PDT)
+        bh=7wf9SwyOhQz7g6EiRpZy5Wi8C0ELh2QJL8BxOtMQjNQ=;
+        b=fpEY6WnVHdKBAiTfF02ZdXE7TYTNRFpV3UJBZYzLi/yoWyBMPszYDiJzfdDHq04CZz
+         HGwP52386CZvQR2+DTWKeagzMzy4x/iXucHZEvhMEqhgCF530/PvwjwA6LH7q7vWK5MN
+         7Wonxraeo7Zh2E0atzbU0XQ5Mv/YUyyRxrmtUEyvxFDsnhRz/Q/+75FlC6QLNB2tZ6c1
+         WPiIObgAOPPkOlUrnGV3fxOgJ+nXIrkKaFk3VXovqCKQpspaZVnWNOd8OmwzrtARN+er
+         K8MynwetX6D3pOfKBGPWvYZIgbvjxkupF9QlsvhzuAG8EEVsCXTi8S05BpyaiohwEmXK
+         dbeA==
+X-Gm-Message-State: AAQBX9fJ+rjughZ9bWVhFboz0Ty/tEDXnw14o7SCo8v0gy0jDY4xeq1a
+        Ec9qw8tOjEzraZziMMMi301IgA==
+X-Google-Smtp-Source: AKy350abqfIAr0v3P1V1HSk/CRdjBgvVisNOx4Kso+mcTsWdfBK5jYsqahojN5zQQJmGitx5MuUOFA==
+X-Received: by 2002:adf:ff85:0:b0:2e4:aa42:787e with SMTP id j5-20020adfff85000000b002e4aa42787emr4054721wrr.51.1680251692431;
+        Fri, 31 Mar 2023 01:34:52 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id e11-20020a5d4e8b000000b002cde626cd96sm1563153wru.65.2023.03.31.01.34.48
+        by smtp.gmail.com with ESMTPSA id e11-20020a5d4e8b000000b002cde626cd96sm1563153wru.65.2023.03.31.01.34.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Mar 2023 01:34:49 -0700 (PDT)
+        Fri, 31 Mar 2023 01:34:52 -0700 (PDT)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Fri, 31 Mar 2023 10:34:42 +0200
-Subject: [PATCH RFC 04/20] dt-bindings: arm: oxnas: remove obsolete
+Date:   Fri, 31 Mar 2023 10:34:44 +0200
+Subject: [PATCH RFC 06/20] dt-bindings: clk: oxnas: remove obsolete
  bindings
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230331-topic-oxnas-upstream-remove-v1-4-5bd58fd1dd1f@linaro.org>
+Message-Id: <20230331-topic-oxnas-upstream-remove-v1-6-5bd58fd1dd1f@linaro.org>
 References: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
 In-Reply-To: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
 To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
@@ -96,33 +96,47 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 Due to lack of maintainance and stall of development for a few years now,
 and since no new features will ever be added upstream, remove the
-OX810 and OX820 SoC and boards bindings.
+OX810 and OX820 clock bindings.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- Documentation/devicetree/bindings/arm/oxnas.txt | 14 --------------
- 1 file changed, 14 deletions(-)
+ .../devicetree/bindings/clock/oxnas,stdclk.txt     | 28 ----------------------
+ 1 file changed, 28 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/oxnas.txt b/Documentation/devicetree/bindings/arm/oxnas.txt
+diff --git a/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt b/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
 deleted file mode 100644
-index ac64e60f99f1..000000000000
---- a/Documentation/devicetree/bindings/arm/oxnas.txt
+index b652f3fb7796..000000000000
+--- a/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
 +++ /dev/null
-@@ -1,14 +0,0 @@
--Oxford Semiconductor OXNAS SoCs Family device tree bindings
---------------------------------------------
+@@ -1,28 +0,0 @@
+-Oxford Semiconductor OXNAS SoC Family Standard Clocks
+-================================================
 -
--Boards with the OX810SE SoC shall have the following properties:
--  Required root node property:
--    compatible: "oxsemi,ox810se"
+-Please also refer to clock-bindings.txt in this directory for common clock
+-bindings usage.
 -
--Boards with the OX820 SoC shall have the following properties:
--  Required root node property:
--    compatible: "oxsemi,ox820"
+-Required properties:
+-- compatible: For OX810SE, should be "oxsemi,ox810se-stdclk"
+-	      For OX820, should be "oxsemi,ox820-stdclk"
+-- #clock-cells: 1, see below
 -
--Board compatible values:
--  - "wd,mbwe" (OX810SE)
--  - "cloudengines,pogoplugv3" (OX820)
+-Parent node should have the following properties :
+-- compatible: For OX810SE, should be
+-		"oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd"
+-	      For OX820, should be
+-		"oxsemi,ox820-sys-ctrl", "syscon", "simple-mfd"
+-
+-example:
+-
+-sys: sys-ctrl@000000 {
+-	compatible = "oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd";
+-	reg = <0x000000 0x100000>;
+-
+-	stdclk: stdclk {
+-		compatible = "oxsemi,ox810se-stdclk";
+-		#clock-cells = <1>;
+-	};
+-};
 
 -- 
 2.34.1
