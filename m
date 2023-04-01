@@ -2,260 +2,135 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D533FC76196
-	for <linux-gpio@archiver.kernel.org>; Sat,  1 Apr 2023 02:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4704C76196
+	for <linux-gpio@archiver.kernel.org>; Sat,  1 Apr 2023 16:28:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233599AbjDACGL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 31 Mar 2023 22:06:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37992 "EHLO
+        id S229626AbjDAQ2e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 1 Apr 2023 12:28:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229909AbjDACGK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2023 22:06:10 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5606F1710
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2023 19:06:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1680314769; x=1711850769;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=BLWJ85p03s8ccR+rHtFbi0hmLdvKIBXiUG4tfB6u11c=;
-  b=dm5JlPeySgknixTTcK1MYY5fEZHkxJk67coENYY3VyCpML2/RPVz/ioR
-   qCaYD2VIFBjhKEcTdqH28D4WkvgeZaNHwCRxzrlv9gWGSb1sIuJhgmDtA
-   VUD4cU/jFYtkK/H7RYE2BXmsdLdL21C2M2PnLIeUM02B9OTby9KgVG2PW
-   jh+BzGfa+lc1hjh0YyqFYHO+BU0mdI7bdRlccKDl+xFVS2nXZDg3zCVFp
-   0RlJMDm5YOAObz6ly5H+O4Tb+0rtv7C5myWWU+mj9j4LqhoZhUSZUPyo2
-   1j41xFyLc1GcEZ4w3xhndDM+Ug2vsYqutZMohJfbEVr8eDowRhuSh8WC4
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10666"; a="340324431"
-X-IronPort-AV: E=Sophos;i="5.98,308,1673942400"; 
-   d="scan'208";a="340324431"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2023 19:06:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10666"; a="828927736"
-X-IronPort-AV: E=Sophos;i="5.98,308,1673942400"; 
-   d="scan'208";a="828927736"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 31 Mar 2023 19:06:07 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1piQd4-000MMb-2Y;
-        Sat, 01 Apr 2023 02:06:06 +0000
-Date:   Sat, 01 Apr 2023 10:06:03 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- c436561687421493fe745c2cc26a8ad0f8dc208b
-Message-ID: <6427918b.kF6n/kvxOj8e+0G+%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S229461AbjDAQ2d (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 1 Apr 2023 12:28:33 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 389DA11EBD
+        for <linux-gpio@vger.kernel.org>; Sat,  1 Apr 2023 09:28:32 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-544f7c176easo472768457b3.9
+        for <linux-gpio@vger.kernel.org>; Sat, 01 Apr 2023 09:28:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680366511;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SwTNo3Ki2aER2ZIEedraVm2CwLGI/LI38zPc5dQIans=;
+        b=LX/HcdgqO2RVPx90CkmZvm/8vG74P0Fzg9Pf1f6imquWRijLCYoJFkBywXrtVQLumK
+         vAGV9LyHB+jrWwOf7Fr+tfzOjJeGfJvxVLK6awf8He80dd24q8J7nTJiBhI4zDmVLSU1
+         EUGB9XTuzlSdntsxE1YYdmABDekg0CIGd0OfNxB4wghzTj4Hwyb9o+20XzxYTrTOLuXZ
+         DNoPc2Le82S13zSH8GIgyhFpuUBJlnm/spZZtkCcf7f+X/Z3/xs1gYiJ8rWsw0NMDdQV
+         SLxpIuaQvVDj2iJBYFLQLcZ3vndHxc94wX8FHoWB04ftgwEB2ifuv5qKDSPZhtm9UUKN
+         VIdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680366511;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SwTNo3Ki2aER2ZIEedraVm2CwLGI/LI38zPc5dQIans=;
+        b=nel8NbGxIVHs6fbV38axSLGAX93eiT6YCE0ylEkTApUv6ed+KvomamYOsRUBaZm33C
+         ZxcZP9tE3QDU5F4D8Sj9KLLI70c9LohD6z7uv+RW5E81638CN2zqA0mrYdQKbFeF+yXR
+         PiABiVo0w0VWcL765srIQ8JzGXXyxzPZTyG4F3ajaUQltxVrRQrG0dSlMwiI8EqJFVPW
+         o5tw6DjgxewVNvNH9hjXx0QAjUwnomGLMjPfYbpmcECyw8oSXyJMNUYeI9OcR/9DHLgh
+         hJarfRJH1HFswJ5QnIgqvguKqW73VWKDmH4XJZ11UIjvfIHPmi4udXfMQquXvV2yCl/H
+         MeKw==
+X-Gm-Message-State: AAQBX9fWmrpSle2ZW9n33ZuIrYkDc3kysEp9XZznV3+FPAP6NnZQZm/y
+        aj+vuU8zFnmN6bybvsfOXbp/cLYAWQoKTEFdFciDmg==
+X-Google-Smtp-Source: AKy350aSqQLfOEJsp5nxESdUZUTqkKWIrBRSCxN8+xZZ2K9i6N4/UlMjYOmcA9Z+2QBUekzOy+0hA+KgjaxbxX8OCEM=
+X-Received: by 2002:a81:de0d:0:b0:541:a0ab:bd28 with SMTP id
+ k13-20020a81de0d000000b00541a0abbd28mr7057595ywj.4.1680366511416; Sat, 01 Apr
+ 2023 09:28:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 1 Apr 2023 18:28:20 +0200
+Message-ID: <CACRpkdZqoUZuLr9ra9JbSEQqqOWZvdh33Lk+R2P7qw8upx3nnA@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for v6.3
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: c436561687421493fe745c2cc26a8ad0f8dc208b  dt-bindings: pinctrl: xway: drop the deprecated compatible strings
+Hi Linus,
 
-elapsed time: 777m
+here are some pin control fixes for the v6.3 series.
+The most notable and urgent one is probably the AMD
+fix which affects AMD laptops, found by the Chromium
+people.
 
-configs tested: 186
-configs skipped: 8
+Please pull it in!
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Yours,
+Linus Walleij
 
-tested configs:
-alpha                            allyesconfig   gcc  
-alpha        buildonly-randconfig-r002-20230329   gcc  
-alpha                               defconfig   gcc  
-alpha                randconfig-r003-20230329   gcc  
-alpha                randconfig-r004-20230329   gcc  
-alpha                randconfig-r005-20230329   gcc  
-alpha                randconfig-r016-20230329   gcc  
-alpha                randconfig-r024-20230329   gcc  
-alpha                randconfig-r025-20230329   gcc  
-alpha                randconfig-r034-20230329   gcc  
-arc                              allyesconfig   gcc  
-arc          buildonly-randconfig-r003-20230329   gcc  
-arc                                 defconfig   gcc  
-arc                  randconfig-r004-20230329   gcc  
-arc                  randconfig-r013-20230329   gcc  
-arc                  randconfig-r016-20230329   gcc  
-arc                  randconfig-r025-20230329   gcc  
-arc                  randconfig-r033-20230329   gcc  
-arc                  randconfig-r035-20230329   gcc  
-arm                              allmodconfig   gcc  
-arm                              allyesconfig   gcc  
-arm                        clps711x_defconfig   gcc  
-arm                                 defconfig   gcc  
-arm                           sunxi_defconfig   gcc  
-arm64                            allyesconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                randconfig-r006-20230329   gcc  
-arm64                randconfig-r036-20230329   gcc  
-csky                                defconfig   gcc  
-csky                 randconfig-r003-20230329   gcc  
-csky                 randconfig-r013-20230331   gcc  
-csky                 randconfig-r022-20230329   gcc  
-csky                 randconfig-r033-20230329   gcc  
-csky                 randconfig-r035-20230329   gcc  
-hexagon              randconfig-r023-20230329   clang
-hexagon              randconfig-r041-20230329   clang
-hexagon              randconfig-r041-20230330   clang
-hexagon              randconfig-r045-20230329   clang
-hexagon              randconfig-r045-20230330   clang
-i386                             allyesconfig   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                          randconfig-a002   clang
-i386                          randconfig-a004   clang
-i386                          randconfig-a006   clang
-i386                          randconfig-a012   gcc  
-i386                          randconfig-a014   gcc  
-i386                          randconfig-a016   gcc  
-i386                          randconfig-c001   gcc  
-ia64                             allmodconfig   gcc  
-ia64                                defconfig   gcc  
-ia64                 randconfig-r012-20230329   gcc  
-ia64                 randconfig-r023-20230329   gcc  
-ia64                 randconfig-r024-20230329   gcc  
-ia64                 randconfig-r025-20230329   gcc  
-ia64                 randconfig-r031-20230329   gcc  
-ia64                 randconfig-r036-20230329   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch    buildonly-randconfig-r006-20230329   gcc  
-loongarch                           defconfig   gcc  
-loongarch            randconfig-r001-20230329   gcc  
-loongarch            randconfig-r002-20230330   gcc  
-loongarch            randconfig-r005-20230330   gcc  
-loongarch            randconfig-r021-20230329   gcc  
-loongarch            randconfig-r023-20230329   gcc  
-loongarch            randconfig-r036-20230329   gcc  
-m68k                             allmodconfig   gcc  
-m68k                                defconfig   gcc  
-m68k                            mac_defconfig   gcc  
-m68k                 randconfig-r001-20230330   gcc  
-m68k                 randconfig-r013-20230329   gcc  
-m68k                 randconfig-r015-20230329   gcc  
-m68k                 randconfig-r031-20230329   gcc  
-m68k                 randconfig-r035-20230329   gcc  
-microblaze           randconfig-r023-20230329   gcc  
-microblaze           randconfig-r024-20230329   gcc  
-microblaze           randconfig-r032-20230329   gcc  
-microblaze           randconfig-r036-20230329   gcc  
-mips                             allmodconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                        bcm47xx_defconfig   gcc  
-mips         buildonly-randconfig-r003-20230329   clang
-mips                            gpr_defconfig   gcc  
-mips                 randconfig-r021-20230329   gcc  
-mips                 randconfig-r026-20230329   gcc  
-mips                          rb532_defconfig   gcc  
-nios2        buildonly-randconfig-r004-20230329   gcc  
-nios2        buildonly-randconfig-r005-20230329   gcc  
-nios2                               defconfig   gcc  
-nios2                randconfig-r004-20230330   gcc  
-nios2                randconfig-r006-20230329   gcc  
-nios2                randconfig-r014-20230331   gcc  
-nios2                randconfig-r026-20230329   gcc  
-nios2                randconfig-r033-20230329   gcc  
-nios2                randconfig-r035-20230329   gcc  
-openrisc     buildonly-randconfig-r003-20230329   gcc  
-openrisc     buildonly-randconfig-r006-20230329   gcc  
-openrisc                    or1ksim_defconfig   gcc  
-openrisc             randconfig-r004-20230329   gcc  
-openrisc             randconfig-r006-20230330   gcc  
-openrisc             randconfig-r011-20230329   gcc  
-openrisc             randconfig-r021-20230329   gcc  
-openrisc             randconfig-r034-20230329   gcc  
-openrisc             randconfig-r036-20230329   gcc  
-parisc                              defconfig   gcc  
-parisc               randconfig-r003-20230330   gcc  
-parisc               randconfig-r006-20230329   gcc  
-parisc               randconfig-r014-20230329   gcc  
-parisc               randconfig-r015-20230329   gcc  
-parisc               randconfig-r022-20230329   gcc  
-parisc               randconfig-r025-20230329   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                   motionpro_defconfig   gcc  
-powerpc                 mpc837x_rdb_defconfig   gcc  
-powerpc                      pcm030_defconfig   gcc  
-powerpc              randconfig-r032-20230329   gcc  
-powerpc              randconfig-r034-20230329   gcc  
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv        buildonly-randconfig-r006-20230329   clang
-riscv                               defconfig   gcc  
-riscv                randconfig-r016-20230331   gcc  
-riscv                randconfig-r032-20230329   gcc  
-riscv                randconfig-r035-20230329   gcc  
-riscv                randconfig-r042-20230329   clang
-riscv                randconfig-r042-20230330   clang
-riscv                          rv32_defconfig   gcc  
-s390                             allmodconfig   gcc  
-s390                             allyesconfig   gcc  
-s390         buildonly-randconfig-r002-20230329   clang
-s390         buildonly-randconfig-r003-20230329   clang
-s390                                defconfig   gcc  
-s390                 randconfig-r005-20230329   gcc  
-s390                 randconfig-r015-20230331   gcc  
-s390                 randconfig-r031-20230329   gcc  
-s390                 randconfig-r032-20230329   gcc  
-s390                 randconfig-r034-20230329   gcc  
-s390                 randconfig-r035-20230329   gcc  
-s390                 randconfig-r044-20230329   clang
-s390                 randconfig-r044-20230330   clang
-sh                               allmodconfig   gcc  
-sh                     magicpanelr2_defconfig   gcc  
-sh                   randconfig-r011-20230331   gcc  
-sh                   randconfig-r014-20230329   gcc  
-sh                   randconfig-r023-20230329   gcc  
-sh                   randconfig-r024-20230329   gcc  
-sh                   randconfig-r031-20230329   gcc  
-sh                   randconfig-r032-20230329   gcc  
-sh                           se7705_defconfig   gcc  
-sh                           sh2007_defconfig   gcc  
-sparc                               defconfig   gcc  
-sparc                randconfig-r004-20230329   gcc  
-sparc                randconfig-r022-20230329   gcc  
-sparc64              randconfig-r002-20230329   gcc  
-sparc64              randconfig-r012-20230329   gcc  
-sparc64              randconfig-r024-20230329   gcc  
-sparc64              randconfig-r025-20230329   gcc  
-sparc64              randconfig-r031-20230329   gcc  
-sparc64              randconfig-r032-20230329   gcc  
-sparc64              randconfig-r034-20230329   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64                              defconfig   gcc  
-x86_64                                  kexec   gcc  
-x86_64                        randconfig-a001   clang
-x86_64                        randconfig-a003   clang
-x86_64                        randconfig-a005   clang
-x86_64                        randconfig-a011   gcc  
-x86_64                        randconfig-a012   clang
-x86_64                        randconfig-a013   gcc  
-x86_64                        randconfig-a014   clang
-x86_64                        randconfig-a015   gcc  
-x86_64                        randconfig-a016   clang
-x86_64                        randconfig-k001   clang
-x86_64                          rhel-8.3-rust   clang
-x86_64                               rhel-8.3   gcc  
-xtensa               randconfig-r002-20230329   gcc  
-xtensa               randconfig-r012-20230329   gcc  
-xtensa               randconfig-r026-20230329   gcc  
-xtensa               randconfig-r031-20230329   gcc  
-xtensa               randconfig-r033-20230329   gcc  
+The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6=
+:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v6.3-2
+
+for you to fetch changes up to e4056e38ec87b4c21eb34bb8e38b1b0ca1221744:
+
+  dt-bindings: pinctrl: qcom,sm8550-lpass-lpi: allow input-enabled and
+bias-bus-hold (2023-03-29 10:41:57 +0200)
+
+----------------------------------------------------------------
+Pin control fixes for the v6.3 kernel cycle:
+
+- Fix up the Kconfig options for MediaTek MT7981.
+
+- Fix the irq domain name in the AT91-PIO4 driver.
+
+- Fix some alternative muxing modes in the Ocelot
+  driver.
+
+- Allocate the GPIO numbers dynamically in the STM32
+  driver.
+
+- Disable and mask interrupts on resume in the AMD
+  driver.
+
+- Fix a typo in the Qualcomm SM8550 pin control
+  device tree bindings.
+
+----------------------------------------------------------------
+Ar=C4=B1n=C3=A7 =C3=9CNAL (2):
+      pinctrl: mediatek: add missing options to PINCTRL_MT7981
+      pinctrl: mediatek: fix naming inconsistency
+
+Dario Binacchi (1):
+      pinctrl: stm32: use dynamic allocation of GPIO base
+
+Horatiu Vultur (1):
+      pinctrl: ocelot: Fix alt mode for ocelot
+
+Johan Hovold (1):
+      pinctrl: at91-pio4: fix domain name assignment
+
+Kornel Dul=C4=99ba (1):
+      pinctrl: amd: Disable and mask interrupts on resume
+
+Krzysztof Kozlowski (1):
+      dt-bindings: pinctrl: qcom,sm8550-lpass-lpi: allow input-enabled
+and bias-bus-hold
+
+ .../pinctrl/qcom,sm8550-lpass-lpi-pinctrl.yaml     |  2 +
+ drivers/pinctrl/mediatek/Kconfig                   | 44 +++++++++++-------=
+----
+ drivers/pinctrl/pinctrl-amd.c                      | 36 ++++++++++--------
+ drivers/pinctrl/pinctrl-at91-pio4.c                |  1 -
+ drivers/pinctrl/pinctrl-ocelot.c                   |  2 +-
+ drivers/pinctrl/stm32/pinctrl-stm32.c              |  2 +-
+ 6 files changed, 47 insertions(+), 40 deletions(-)
