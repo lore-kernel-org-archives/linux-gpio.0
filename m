@@ -2,59 +2,64 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE06C761A6
-	for <linux-gpio@archiver.kernel.org>; Tue,  4 Apr 2023 14:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA271C6FD1D
+	for <linux-gpio@archiver.kernel.org>; Tue,  4 Apr 2023 14:06:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235676AbjDDOCr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 4 Apr 2023 10:02:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37824 "EHLO
+        id S235664AbjDDOGd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 4 Apr 2023 10:06:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235752AbjDDOCg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Apr 2023 10:02:36 -0400
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 763965592
-        for <linux-gpio@vger.kernel.org>; Tue,  4 Apr 2023 07:02:09 -0700 (PDT)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-5416698e889so615682557b3.2
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Apr 2023 07:02:09 -0700 (PDT)
+        with ESMTP id S235605AbjDDOGK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Apr 2023 10:06:10 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E41F5245
+        for <linux-gpio@vger.kernel.org>; Tue,  4 Apr 2023 07:05:50 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id k17so38771785ybm.11
+        for <linux-gpio@vger.kernel.org>; Tue, 04 Apr 2023 07:05:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680616917;
+        d=linaro.org; s=google; t=1680617150;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GhHi1rvDP10jyqp6elYeOU798evHTjpyzcCbCEvb8Kc=;
-        b=LGGP+RsXJ62qou0+C1xjBzSyj+8IzaLTZ6O/t/gVnmwtvFnC8CePoPk8ZSiKmtZ09t
-         6ZgPlk78Ov+L/lKuSWrK7/vcNqb+EqUk9ChBn3+Fm4XANMzbqL++UxnSlFEODa425ByS
-         5utDLusg1dlDtgj9zNNKadRhGRDgu21cjvn5qcyZugFQNGAfWbVDrbwgoCyjWVqN/avT
-         Qsr6WQ0m8uRFtpoUgAA805PfrP+Ewzw/0pQJ0AI7ecxOK51thHJMATbvv2X69/r6WEBp
-         YI8pd/8vgMCFEUSGNGt5VodRwGnzA7rFEaPI+dHmEPvkYKwGaEOf0r9AS9ZzDDL0oXv2
-         8Deg==
+        bh=P/rAq+ST3GBb2vUM4m8DtvtohGPy7+QO7yjCXRomrhI=;
+        b=scZVfz5ryQtum9HOUhBLd6U+SRbeQdOY7ntr1sB1wL39EsWMyp1eZ+TaDyCAFdHS74
+         PT2H8y57Rr7zYQxewXQBb1W3tjx+PPa55CaLQTJOJMhuyG+tkXp9qDw7KpGY5eeiEu9z
+         5eSg2E8PQQ/1Y5bVnrhXuCfex9m0tQmdQ6Nv5KP4/HuIfuEVEBz11HxjQBB8u7sb5LHV
+         98Mx/nGGYptIGjvPTzQWiOfDLUuZ3kn+mNBXQcS0uB2YP3LAR1NHggsVDBrLK6Q/3A0q
+         r/TKMO0hl4dMiJRTnd3s5TuGoiSGwuvIl/XR04mdRPG011jVIQHesVGJVbBlmPBFwRmT
+         StUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680616917;
+        d=1e100.net; s=20210112; t=1680617150;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GhHi1rvDP10jyqp6elYeOU798evHTjpyzcCbCEvb8Kc=;
-        b=yHvO589OyQuL4wwb1tmDSkFoVa8DfnXMs9fZBbqFEPHUjw310UykNJdsGplrhSKecV
-         x3tu22g42aaVBUACSr9jFJppn2KKxKyydAJPid10ML2sj9I5sMMbLcZiTlMFfyHV/dym
-         Df7UKeDTXWPKeI3X8jw+goD1STySDpXlQVLnyiiv4wtAu9++p7GoNNsUnG/ao+ESjlEV
-         y7WorLjTQTqB7u3EzSQJX9betfLU35gcMT3b2aUTGagy1QRTTWyxk/sxqz199vgQmhU6
-         pbctirYiaNXNLR92qo4TThlT4n2kmpGsNPfVCEIYK7HUt9R1cxduIXRPbESV3iCLQw5T
-         I/JQ==
-X-Gm-Message-State: AAQBX9ehScEzQ9lhI6uuxk68Z+2QxsKYm4eFsBQ/cExEjOB4P6NeydRs
-        ZAg2NyK2/7GD8q9XLzyeAZ5GE+1ooE484JOjH0l9vg==
-X-Google-Smtp-Source: AKy350bxbwzpZz18ICNta7OUeGE74gnB4fQ2IiKbCVd5qVGch1T/mzQirta1Ay6x7i930ZuDKOP4WhZqpAGZjoTzt6A=
-X-Received: by 2002:a81:ce07:0:b0:53d:2772:65d with SMTP id
- t7-20020a81ce07000000b0053d2772065dmr1561312ywi.9.1680616916859; Tue, 04 Apr
- 2023 07:01:56 -0700 (PDT)
+        bh=P/rAq+ST3GBb2vUM4m8DtvtohGPy7+QO7yjCXRomrhI=;
+        b=d/gNcJDL4t5I9VzMFSdKjsSVb/ycN6nOgv9jVM1yLzKUuT+g/N90xHiWFqgOXlETDA
+         zbqLDrbFmoNh6sRwHYHV7p85oJOV+onzoBRO/qXHced3JmZs0EvsiQDUItMiMg8BqbsW
+         bIgfxIh3RzllBciLtb0oQZ+5AFjPip0W3GJn6PIFlEjXa9qhXuBJ3CHFrsnWshsuJT01
+         TH/9DYezhOMSCkZhXettHT954DOQFFduzGUDfuBe+0aFe/xVCD1p+V+zO3p0r0xGeYgm
+         6JhqtB5zMr/3DigLVDplbkg6ctC81+M87lszEia51TkGFKv36ZyA1Q80ZQDK0pujRQc5
+         vY5g==
+X-Gm-Message-State: AAQBX9djCI9uw4msOFpIQ61D0eU433KVWSO/nDL4gEpXg2nzMX2NUsWm
+        FEvLlhaRgSQLV1c9cGXypNgufrN5OEAQO5UYla8BbQ==
+X-Google-Smtp-Source: AKy350axZePoyx4o9rTILxAsbYkfqxgivSY+UY0/KR4iEdDvk1UQSC2TmZR7wYJl6Qpynoa1bHyUBL3hoWmZg2/iTT8=
+X-Received: by 2002:a25:c383:0:b0:b09:6f3d:ea1f with SMTP id
+ t125-20020a25c383000000b00b096f3dea1fmr1966432ybf.4.1680617150033; Tue, 04
+ Apr 2023 07:05:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1680543810.git.william.gray@linaro.org>
-In-Reply-To: <cover.1680543810.git.william.gray@linaro.org>
+References: <20230403114033.8336-1-edmund.berenson@emlix.com> <20230403114033.8336-2-edmund.berenson@emlix.com>
+In-Reply-To: <20230403114033.8336-2-edmund.berenson@emlix.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 4 Apr 2023 16:01:45 +0200
-Message-ID: <CACRpkdbp0o2UDqcz17sha9WCchhwhGuFHBdWfyLSerioxiJ1qQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Fix possible deadlocks for i8255 GPIO drivers
-To:     William Breathitt Gray <william.gray@linaro.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+Date:   Tue, 4 Apr 2023 16:05:39 +0200
+Message-ID: <CACRpkdbnj-BiA8D0e4nza-za-E8g_AEBNjR4b3gWUZpw70U33g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] gpio: max7317: Add gpio expander driver
+To:     Edmund Berenson <edmund.berenson@emlix.com>,
+        Michael Walle <michael@walle.cc>
+Cc:     Lukasz Zemla <Lukasz.Zemla@woodward.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -62,19 +67,22 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Apr 3, 2023 at 7:53=E2=80=AFPM William Breathitt Gray
-<william.gray@linaro.org> wrote:
+On Mon, Apr 3, 2023 at 1:41=E2=80=AFPM Edmund Berenson
+<edmund.berenson@emlix.com> wrote:
 
-> The 104-dio-48e and 104-idi-48 drivers leverage regmap-irq to handle
-> IRQ. The default regmap locking utilizes spinlocks but this can result
-> in deadlocks for IRQ chips when running -rt kernels [0]. Enable
-> use_raw_spinlock for the regmap_config of these drivers to prevent such.
+> Add driver for maxim MAX7317 SPI-Interfaced 10 Port
+> GPIO Expander.
 >
-> [0] https://lore.kernel.org/all/1466065537-82027-1-git-send-email-mika.we=
-sterberg@linux.intel.com/
+> v2: adjust driver to use regmap
+>
+> Co-developed-by: Lukasz Zemla <Lukasz.Zemla@woodward.com>
+> Signed-off-by: Lukasz Zemla <Lukasz.Zemla@woodward.com>
+> Signed-off-by: Edmund Berenson <edmund.berenson@emlix.com>
 
-This looks reasonable.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Notwithstanding the other comments from Bartosz, this seems like
+a driver that should be using the regmap GPIO helper library.
+git grep GPIO_REGMAP will show you examples of other drivers
+that use this and how it is used.
 
 Yours,
 Linus Walleij
