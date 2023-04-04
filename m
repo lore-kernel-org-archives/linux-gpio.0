@@ -2,435 +2,197 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D42C6FD1D
-	for <linux-gpio@archiver.kernel.org>; Tue,  4 Apr 2023 14:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 621D7C77B60
+	for <linux-gpio@archiver.kernel.org>; Tue,  4 Apr 2023 14:36:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234699AbjDDOdC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 4 Apr 2023 10:33:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36410 "EHLO
+        id S234223AbjDDOgL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 4 Apr 2023 10:36:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235583AbjDDOdA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Apr 2023 10:33:00 -0400
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7CA31A2
-        for <linux-gpio@vger.kernel.org>; Tue,  4 Apr 2023 07:32:58 -0700 (PDT)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-545e907790fso501406317b3.3
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Apr 2023 07:32:58 -0700 (PDT)
+        with ESMTP id S234588AbjDDOgK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Apr 2023 10:36:10 -0400
+Received: from mx0b-00128a01.pphosted.com (mx0b-00128a01.pphosted.com [148.163.139.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85B9310DF;
+        Tue,  4 Apr 2023 07:36:08 -0700 (PDT)
+Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 334Cx3ci002655;
+        Tue, 4 Apr 2023 10:36:03 -0400
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2169.outbound.protection.outlook.com [104.47.58.169])
+        by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3pph89pk87-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 04 Apr 2023 10:36:03 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eqz3wasUt8h68/1wFS2Tj1tS5wuVI5yVhaQHOBWbotuocshxXeO2qwy5V7p2HDjBX25bRxPRqGrcaneBbGjsJNpvgKnay3UG2lwz7r6BbSJdYpAwWw7h/0neerZl/Ha9mfolwVNwSMCEAen665V3ixWTMVTkpcy/gktY3VJwG9xBDy90yLTaKrYhopdgNuDIVHdN4GwWoPMWJxjwkg2x42QdPRBggOGgXTyI4m/YVPjuZkgzw+lLmDi+iT9op+y/K2DJEXZS9VR9shRYYWDwF9jcNf74UW7A0+COFz/76Ju9h6k8FbYX5AnSw1+OPiccloRDckb/b58KVPcP4sJFDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9qQ0Q3hMxM//O7HKioYPELrHiAZdzzZukZyAtyFgHuQ=;
+ b=iIFld5diqiUejr+tkHkKakypEV4LXMvx6Jbyn5GSbuTLKEEvXI+cYGo+/QLun7Y6F/PeSbhLmWNTomsmPKdV/OTcZLjEKNZPGx28ZPE1pvSVZZ0fWiHHuKGgUZ+UxqT38GuaIIBpneDYwkFTeHRxNMyfV/R7vEa3dH8nwDFQiXgWtyYC5LuukAdPfmsTgK+Jlms5qmJxO0ZjiVIhuVfXqLUV7N+Y+aXUtpdZzSbBK6AB5KqkxWz+VfYqas0iyT+gFS8BgBWfVTjK6rvajYHTb7sB5Cu1qz6x+aAfY7fIF7PWgqc16cMUoaAR9eRBGjqrICfrztzrDszZ55+ZS4ELoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680618778;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T/LD1M7cBKP9NWQI6XaJq7hrg5nPvnA4dl+TOBNZofI=;
-        b=ioGf8aygzKkCoGSaCKqREJ6lJvQsiCBiBdKBu7046Nrc6NNgAGc3UI7dl9YSnqhllR
-         frbVlY2QTAvo8PHx/56FqNBU24rRIDVXviXAkn/G20udW1Fz9tqXgvo6qS7Z1bK+SRvn
-         PqD65dF5HzE6USas6r4uawhIibAJXO5oyh1llKCvzMUHSpx79bi38PDecPzLMs3tZpe4
-         ZnFjF8V80Wu0jET6fT8cnK1ha/2QmVjFPlxXqjeJKq85AER464Zmn0IU7RAEBmICbteh
-         L350cebooqegiM1oosK69MvrWzeVbO4VjGikec4prcoLg6vjN32zWcvuNx5MVXDAXCu9
-         ccFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680618778;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T/LD1M7cBKP9NWQI6XaJq7hrg5nPvnA4dl+TOBNZofI=;
-        b=I6Lt66GwTumXf+DmvB7pohugXaXSHJhuCbArfWXK/iBOju/RxU4SpAWaakP4L497/G
-         pb6l9Hj53CHd2oihw3+E37KfHx3z3swG8hBLgx/XUSNwq44qMqM+7J4S3WO8mKDLlAX4
-         6IdAyIl43quEo8bx+kA1VJmWKOLzen0e6cRuxFWddZ+q47ZqOpWnij/KNwRMzycrggaT
-         Z6eTBn9/hoILXb47zKSl3GGvCQrgWhEz7c+yudwnjq8vqZpVnxEc8KPd2GlqobvDvrf2
-         AYhX6L98vYWRwLq4ll3iEM/8cfk0DXvchCca0Ar5CzKuA58YKoo8ZT2UfdbxGagqbIEM
-         0jVw==
-X-Gm-Message-State: AAQBX9e2ipnO2+al9qxhr/iFP/yEaxLnnntS76NP9Psm4DnOdXJJuCfu
-        +/7LY5EEN93bv/WdwPYrwPlFDg==
-X-Google-Smtp-Source: AKy350ZOFCFo6D0M7+wfB8vZYHPL9WZfOTIW2KMMNan+6/hV9qUq6L7Hsc/TROXE3ex6VphcDjTVtA==
-X-Received: by 2002:a0d:d686:0:b0:541:8b94:68c7 with SMTP id y128-20020a0dd686000000b005418b9468c7mr2353257ywd.23.1680618777890;
-        Tue, 04 Apr 2023 07:32:57 -0700 (PDT)
-Received: from fedora.attlocal.net (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
-        by smtp.gmail.com with ESMTPSA id p76-20020a81984f000000b00545a0818489sm3234439ywg.25.2023.04.04.07.32.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Apr 2023 07:32:57 -0700 (PDT)
-From:   William Breathitt Gray <william.gray@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        William Breathitt Gray <william.gray@linaro.org>
-Subject: [PATCH v5 3/4] gpio: pci-idio-16: Migrate to the regmap API
-Date:   Tue,  4 Apr 2023 10:32:47 -0400
-Message-Id: <5ba5405c64aca984d5cf3bdbdffa04c325e5a147.1680618405.git.william.gray@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1680618405.git.william.gray@linaro.org>
-References: <cover.1680618405.git.william.gray@linaro.org>
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9qQ0Q3hMxM//O7HKioYPELrHiAZdzzZukZyAtyFgHuQ=;
+ b=7ZtG3XRNQssIAs1dWNzCIDgDFhCUHfbM7bfFotX3/dseTi50IA/H4kfQRuSU8T/3pFtlFa6dsi1heFUykUUZYOiXxqSwvbNOA2Gc0t2L/KBct1I4ektmrdLR2F1qLl1Kz4pOo5LhyixVLOoScVKQNWpFc+rha+w2Da+oOoBqXrU=
+Received: from MN2PR03MB5168.namprd03.prod.outlook.com (2603:10b6:208:1ec::19)
+ by SJ0PR03MB5728.namprd03.prod.outlook.com (2603:10b6:a03:2dc::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.30; Tue, 4 Apr
+ 2023 14:35:58 +0000
+Received: from MN2PR03MB5168.namprd03.prod.outlook.com
+ ([fe80::8f99:7745:fa5d:3dea]) by MN2PR03MB5168.namprd03.prod.outlook.com
+ ([fe80::8f99:7745:fa5d:3dea%4]) with mapi id 15.20.6254.033; Tue, 4 Apr 2023
+ 14:35:57 +0000
+From:   "Sahin, Okan" <Okan.Sahin@analog.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v1 2/2] gpio: ds4520: Add ADI DS4520 Regulator Support
+Thread-Topic: [PATCH v1 2/2] gpio: ds4520: Add ADI DS4520 Regulator Support
+Thread-Index: AQHZYKxFzu/viFi84UyZMktWpJEoz68UqJ8AgAaZoUA=
+Date:   Tue, 4 Apr 2023 14:35:57 +0000
+Message-ID: <MN2PR03MB51682210CADA6E33FB99052CE7939@MN2PR03MB5168.namprd03.prod.outlook.com>
+References: <20230327130010.8342-1-okan.sahin@analog.com>
+ <20230327130010.8342-3-okan.sahin@analog.com>
+ <CACRpkda5G5b+At5s1WFudpQBQ6LDQxhE3fZj7eBhkZ=thvnQhg@mail.gmail.com>
+In-Reply-To: <CACRpkda5G5b+At5s1WFudpQBQ6LDQxhE3fZj7eBhkZ=thvnQhg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
+ =?utf-8?B?bk5jYjJ0aGJpNXpZV2hwYmx4aGNIQmtZWFJoWEhKdllXMXBibWRjTURsa09E?=
+ =?utf-8?B?UTVZall0TXpKa015MDBZVFF3TFRnMVpXVXRObUk0TkdKaE1qbGxNelZpWEcx?=
+ =?utf-8?B?elozTmNiWE5uTFRBeE56Y3dZMlk0TFdReVpqWXRNVEZsWkMxaVpXTXhMVEEw?=
+ =?utf-8?B?TjJKallqVmhZekEwT0Z4aGJXVXRkR1Z6ZEZ3d01UYzNNR05tWVMxa01tWTJM?=
+ =?utf-8?B?VEV4WldRdFltVmpNUzB3TkRkaVkySTFZV013TkRoaWIyUjVMblI0ZENJZ2Mz?=
+ =?utf-8?B?bzlJakV6TmpnaUlIUTlJakV6TXpJMU1Ea3lOVFUxTmpnNE9Ua3pNeUlnYUQw?=
+ =?utf-8?B?aVVUVk1aVEJpYVhoSmFGTXpWalJXUkcwd1JHeHRPRFJEYmpOclBTSWdhV1E5?=
+ =?utf-8?B?SWlJZ1ltdzlJakFpSUdKdlBTSXhJaUJqYVQwaVkwRkJRVUZGVWtoVk1WSlRV?=
+ =?utf-8?B?bFZHVGtOblZVRkJSVzlEUVVGQ1RtVmpMMFJCYldaYVFWRmpkVnBzWTIwclky?=
+ =?utf-8?B?MW1RbmsxYlZaNVlqVjVXamhFUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVWhCUVVGQlJHRkJVVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVVkJRVkZCUWtGQlFVRlJaR2xyTlZGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZLTkVGQlFVSm9RVWRSUVdGUlFtWkJTRTFCV2xGQ2FrRklWVUZqWjBKc1FV?=
+ =?utf-8?B?WTRRV05CUW5sQlJ6aEJZV2RDYkVGSFRVRmtRVUo2UVVZNFFWcG5RbWhCUjNk?=
+ =?utf-8?B?QlkzZENiRUZHT0VGYVowSjJRVWhOUVdGUlFqQkJSMnRCWkdkQ2JFRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlJVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRm5RVUZCUVVGQmJtZEJRVUZIUlVGYVFVSndRVVk0UVdOM1FteEJSMDFC?=
+ =?utf-8?B?WkZGQ2VVRkhWVUZZZDBKM1FVaEpRV0ozUW5GQlIxVkJXWGRDTUVGSVRVRllk?=
+ =?utf-8?B?MEl3UVVkclFWcFJRbmxCUkVWQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VkZCUVVGQlFVRkJRVUZEUVVGQlFVRkJRMlZCUVVGQldWRkNhMEZIYTBGWWQw?=
+ =?utf-8?B?SjZRVWRWUVZsM1FqRkJTRWxCV2xGQ1prRklRVUZqWjBKMlFVZHZRVnBSUW1w?=
+ =?utf-8?B?QlNGRkJZM2RDWmtGSVVVRmhVVUpzUVVoSlFVMW5RVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVKQlFVRkJRVUZCUVVGQlNVRkJRVUZCUVVFOVBTSXZQand2?=
+ =?utf-8?Q?bWV0YT4=3D?=
+x-dg-rorf: true
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN2PR03MB5168:EE_|SJ0PR03MB5728:EE_
+x-ms-office365-filtering-correlation-id: eb6fddba-ec1c-4393-71db-08db3519e79e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: zESU8sYO82preVXO+RatCNuHQNIxzbUuc2DWU6MbOc9oIrfNXHnuCde6iROYMWUUkWwgDg48xCUqSBzNz2b9HmghjghJp9DwrCXUaNtD6in8rufjtLtubnCCrGxZQiC91FyfqAmCjE6iTUrE48MnFxqK0Ml8iYppt78t5l4/KsVrvwZ34zlRYkE+PWBkhufQ2UCZvPObV+GQIzrooKaS+PNXXXyhDB0NqJAh1n4TYXomMfaz9imuBODIYcLuwdpu3ScaQ1rp7pHxx62HSfiXyjkIOXCFcaBq4QB+qL8dTHsSWWEfIQKxojeysvHTh2LxkXtFEci2GR463xRM8cacQQexKCyKtN9jAql0wZqSapE8z6UbXXGypGhvpt71UHo9o6vvGEma4cocVmAYbBS7v0cZPhPuSFRYvzRr7CTDoFgira91PGp3kUzE1S+RCTmKhaU3DdlhTDN/4fgpXV/VBVsOEh3JE7ENDvhdyXuirJLJSPWzjIyxEo+C8klvBty6SlkI6Rjx/Oojj+w6Uc8QQzv9dOKJffRbpQkYj+c31L+PqeQoLdOVB3zTWV000jK53/vTFiQ5s6gJQvS3IwUctimLREKB54iIPluk1VfdWAgul35quPuwmzbYM65ThfBa
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB5168.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(346002)(376002)(39860400002)(136003)(396003)(451199021)(55016003)(4326008)(478600001)(122000001)(64756008)(66476007)(6916009)(66556008)(66946007)(76116006)(66446008)(54906003)(52536014)(8936002)(8676002)(316002)(38100700002)(41300700001)(5660300002)(186003)(71200400001)(6506007)(26005)(9686003)(86362001)(33656002)(2906002)(38070700005)(7696005);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZUVPR3A4RnhrSEkrTjZQZUVJWmlFM3hOUHJTM3FDeUJ3bzFoY0VaeEJEYXhD?=
+ =?utf-8?B?ckxGM3pZY2gvNmJUZDljRFhSR1BUU29JRU1mcUorZmMwV3hYdlJwVHJMTFdm?=
+ =?utf-8?B?VXdIUjUyQXJSUzVZSFZIalVWb1YxVmpLWDVndld3NEJ0U1FVVWY2RXZ1SHVR?=
+ =?utf-8?B?RDhlRGhSQnVGbk8xVDlJK1dKSjVZVEZlMUdPWHdnNTBxZEdtWXowbnlybFAy?=
+ =?utf-8?B?VWRKNHBhRUNTTllmU0p6Ky95Q2x6VUpYTVJRbDdmWXRNZjVmbWl4b2Z6eVdR?=
+ =?utf-8?B?bndBQXA3ZjdkNlNqeE1idmJENXFQNktVZlFlbnR1OWZuMElIU3N0Qk0vUDFy?=
+ =?utf-8?B?V1FNS09ET3B4dXRMYmlYMzRzbkpKM2RiRG5JRTNCT2tSSUJScm1oZXh0Qkp3?=
+ =?utf-8?B?eVhOWXJWVml0QnJ6dzExQ2NPaDdVZEtGMUhWNGd1cGpGYTN5TjJQd25BZTFB?=
+ =?utf-8?B?ZzBkbHR1UmJuOVI0RzF2NHZrUmFDZzdVQmh1OVhxN2hFU1EwcVU1WU9LYUdl?=
+ =?utf-8?B?S3Vzb0N3a1pIRGhUd0RUU241VGdaYkRmeUF6cUx3MHFEa0llbGo4Vi9keGJR?=
+ =?utf-8?B?T2lNVjlGYzN5N0RqYVhuVGRwZ2V5d0dYUzRxTjZXU0pmbTNCT2NRUlI1aE9N?=
+ =?utf-8?B?cWxaTEVBb2xwSEdhOTJuSFNwbGpvQWtMRUdOWnZySSs0NFN1a1NINTlvRTRj?=
+ =?utf-8?B?ZjVTTlk0Y3ZlQkMzamxpZkR3Y2tqUWtYTG9RTk9KalJVZ3Badkl5M2ZhUW9k?=
+ =?utf-8?B?T2JYT2dtbWYvL1FvckNnb0hQMzQ3ay9EM29udloyU3VrN3kvYmM0YmJRN0Yv?=
+ =?utf-8?B?UlhlVXpnNE1LRXZpaHNLbzd4eitRemhBK3R0WVR5SVRzSnh6Wm5nQTBBakc0?=
+ =?utf-8?B?bHc2djJsZmJ2dFJFdTNZVVE3Y0FhcklBRWhHTHF2WFlzM3c3ZHliUTRiZkpN?=
+ =?utf-8?B?S1BDL3V1eEZQeVlHR3prck1iZ1NveXIzTCtvRWd0UkVSOEZaV1Npa21IY2FN?=
+ =?utf-8?B?RWxodHpMNU82Y0FJa0ZJQjNsYUtjR0FYamVhejVTQkt2S085U0pHbXJWSnRX?=
+ =?utf-8?B?M3VzbGErZnJGN1Nramhzb3JKK2hjbmJsdGZaRU5rMHVaRm1xbDRsT1RxalNw?=
+ =?utf-8?B?RGsxT2Z1NHBJK3hYMWNzaDRmNHM2dm80UVVuZUZLQWFrYWRIUWJEVlN6QTI1?=
+ =?utf-8?B?K3oyL2NMSHVYWkpqME1lQnN0ZmcwZnhpT1BncFNjTStsajRoM094ZTN3Y2xZ?=
+ =?utf-8?B?Z1JuSjltbXl5WThYdWhGM2psbmk1bDR0YmQ2bDVCQXl0RjR1TGpQdnNPdGhW?=
+ =?utf-8?B?RUNkc1hjTStRNVFTRW1jUFZNbE5nSVA4YTk3ZWhLRCtUZ0Zlc09jZVlsL3F0?=
+ =?utf-8?B?dXVmdEQ5N2RSOTUxM2FwWStzcUIzYkVLd2xXQVB5R3lBSk5CelcyaUU1UjZ1?=
+ =?utf-8?B?OUJOdUlKRzd6akN0MnhyTk9EQWlVcGNMU2dwWm1vUG9YRlFhbENES2tOWGt2?=
+ =?utf-8?B?LzZaUERkTWZBSHFYL2J4OTJsWkZxZGZPaHJ0bXUreW82Sll2eGhQdVljN1dP?=
+ =?utf-8?B?aUhpOWJhYm1VdFdxaU0rSE80NCt3YW44bWpsV01sQndKMkwyOXJPa1c4Vnpl?=
+ =?utf-8?B?N0Y4S2ZnQyszWDE4ZzJBTE5uMWpRRUlQVnlTUm80NkoyNTlQb041d0NmeTQx?=
+ =?utf-8?B?SjBXcmN5Wnh4NW5GcU5OSndMSUtCaHQxWGp5Rkt2dDcrTjBnVGlNZWJGcDR6?=
+ =?utf-8?B?NWlvVEVPMzdhZlJDRHBFZVg2UXBjVm9hdS9aTmpMa1NkVVRRVjJ4amNXc0JJ?=
+ =?utf-8?B?enduSEo0ZngvV0MzMFE0RDZpZUxTVE1QTE1WaWNYU0RyblorY1c0eVJxakpN?=
+ =?utf-8?B?UkxxZG9Ed29FUmRYSFYrT1BwT21yZ0Z5Wi9KUXFqZkgyN013Y2JNRnRabjFK?=
+ =?utf-8?B?NmNJSEZMQTdvVzJ0WmdkRWpycGpscnJHbzhjc2NIY0tVUW5PSEZWT3RpT1Y3?=
+ =?utf-8?B?Z3dBaGdHSnk1OFVLQjFBNEM4NFBtRTFRZkgvZ0kvVXd0anpZVXZkMThweERC?=
+ =?utf-8?B?VDVGN1VPYUI5bWdkUUFyVHBRZzFNcTVFL2oyRXYrUzdOSGdncUV2YUtpejFY?=
+ =?utf-8?Q?o5dGnnbVOwXypYL/TSUBQ02MZ?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB5168.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb6fddba-ec1c-4393-71db-08db3519e79e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Apr 2023 14:35:57.9151
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Mumw4fUjWgAZdbCjWvPWaizEt4Z6l0Co/DqFn++3DeA9SCTEdi5aPuVA7bugcdupijI691Gn1BqUEqcqk2vn/w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR03MB5728
+X-Proofpoint-ORIG-GUID: 0Ursxb0qRAWz_Ekjsfrbeo_pe6hjxbdY
+X-Proofpoint-GUID: 0Ursxb0qRAWz_Ekjsfrbeo_pe6hjxbdY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-04_06,2023-04-04_04,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=696 phishscore=0
+ adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0 impostorscore=0
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304040135
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The regmap API supports IO port accessors so we can take advantage of
-regmap abstractions rather than handling access to the device registers
-directly in the driver. Migrate the pci-idio-16 module to the new
-idio-16 library interface leveraging the gpio-regmap API.
-
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
----
-Changes in v5:
- - Remove regmap_config max_register line as superfluous
- - Enable use_raw_spinlock to prevent deadlocks when running -rt kernels
-
- drivers/gpio/Kconfig            |   2 +-
- drivers/gpio/gpio-pci-idio-16.c | 294 +++++++-------------------------
- 2 files changed, 62 insertions(+), 234 deletions(-)
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 9f7ec4f3fdbf..e19b2612e67c 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1580,7 +1580,7 @@ config GPIO_PCH
- 
- config GPIO_PCI_IDIO_16
- 	tristate "ACCES PCI-IDIO-16 GPIO support"
--	select GPIOLIB_IRQCHIP
-+	select REGMAP_MMIO
- 	select GPIO_IDIO_16
- 	help
- 	  Enables GPIO support for the ACCES PCI-IDIO-16. An interrupt is
-diff --git a/drivers/gpio/gpio-pci-idio-16.c b/drivers/gpio/gpio-pci-idio-16.c
-index 6726c32e31e6..44c0a21b1d1d 100644
---- a/drivers/gpio/gpio-pci-idio-16.c
-+++ b/drivers/gpio/gpio-pci-idio-16.c
-@@ -5,214 +5,75 @@
-  */
- #include <linux/bits.h>
- #include <linux/device.h>
--#include <linux/errno.h>
--#include <linux/gpio/driver.h>
--#include <linux/interrupt.h>
--#include <linux/irqdesc.h>
-+#include <linux/err.h>
-+#include <linux/irq.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/pci.h>
--#include <linux/spinlock.h>
-+#include <linux/regmap.h>
- #include <linux/types.h>
- 
- #include "gpio-idio-16.h"
- 
--/**
-- * struct idio_16_gpio - GPIO device private data structure
-- * @chip:	instance of the gpio_chip
-- * @lock:	synchronization lock to prevent I/O race conditions
-- * @reg:	I/O address offset for the GPIO device registers
-- * @state:	ACCES IDIO-16 device state
-- * @irq_mask:	I/O bits affected by interrupts
-- */
--struct idio_16_gpio {
--	struct gpio_chip chip;
--	raw_spinlock_t lock;
--	struct idio_16 __iomem *reg;
--	struct idio_16_state state;
--	unsigned long irq_mask;
-+static const struct regmap_range idio_16_wr_ranges[] = {
-+	regmap_reg_range(0x0, 0x2), regmap_reg_range(0x3, 0x4),
- };
--
--static int idio_16_gpio_get_direction(struct gpio_chip *chip,
--	unsigned int offset)
--{
--	if (idio_16_get_direction(offset))
--		return GPIO_LINE_DIRECTION_IN;
--
--	return GPIO_LINE_DIRECTION_OUT;
--}
--
--static int idio_16_gpio_direction_input(struct gpio_chip *chip,
--	unsigned int offset)
--{
--	return 0;
--}
--
--static int idio_16_gpio_direction_output(struct gpio_chip *chip,
--	unsigned int offset, int value)
--{
--	chip->set(chip, offset, value);
--	return 0;
--}
--
--static int idio_16_gpio_get(struct gpio_chip *chip, unsigned int offset)
--{
--	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
--
--	return idio_16_get(idio16gpio->reg, &idio16gpio->state, offset);
--}
--
--static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
--	unsigned long *mask, unsigned long *bits)
--{
--	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
--
--	idio_16_get_multiple(idio16gpio->reg, &idio16gpio->state, mask, bits);
--	return 0;
--}
--
--static void idio_16_gpio_set(struct gpio_chip *chip, unsigned int offset,
--	int value)
--{
--	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
--
--	idio_16_set(idio16gpio->reg, &idio16gpio->state, offset, value);
--}
--
--static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
--	unsigned long *mask, unsigned long *bits)
--{
--	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
--
--	idio_16_set_multiple(idio16gpio->reg, &idio16gpio->state, mask, bits);
--}
--
--static void idio_16_irq_ack(struct irq_data *data)
--{
--}
--
--static void idio_16_irq_mask(struct irq_data *data)
--{
--	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
--	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
--	const unsigned long mask = BIT(irqd_to_hwirq(data));
--	unsigned long flags;
--
--	idio16gpio->irq_mask &= ~mask;
--
--	if (!idio16gpio->irq_mask) {
--		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
--
--		iowrite8(0, &idio16gpio->reg->irq_ctl);
--
--		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
--	}
--
--	gpiochip_disable_irq(chip, irqd_to_hwirq(data));
--}
--
--static void idio_16_irq_unmask(struct irq_data *data)
--{
--	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
--	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
--	const unsigned long mask = BIT(irqd_to_hwirq(data));
--	const unsigned long prev_irq_mask = idio16gpio->irq_mask;
--	unsigned long flags;
--
--	gpiochip_enable_irq(chip, irqd_to_hwirq(data));
--
--	idio16gpio->irq_mask |= mask;
--
--	if (!prev_irq_mask) {
--		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
--
--		ioread8(&idio16gpio->reg->irq_ctl);
--
--		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
--	}
--}
--
--static int idio_16_irq_set_type(struct irq_data *data, unsigned int flow_type)
--{
--	/* The only valid irq types are none and both-edges */
--	if (flow_type != IRQ_TYPE_NONE &&
--		(flow_type & IRQ_TYPE_EDGE_BOTH) != IRQ_TYPE_EDGE_BOTH)
--		return -EINVAL;
--
--	return 0;
--}
--
--static const struct irq_chip idio_16_irqchip = {
--	.name = "pci-idio-16",
--	.irq_ack = idio_16_irq_ack,
--	.irq_mask = idio_16_irq_mask,
--	.irq_unmask = idio_16_irq_unmask,
--	.irq_set_type = idio_16_irq_set_type,
--	.flags = IRQCHIP_IMMUTABLE,
--	GPIOCHIP_IRQ_RESOURCE_HELPERS,
-+static const struct regmap_range idio_16_rd_ranges[] = {
-+	regmap_reg_range(0x1, 0x2), regmap_reg_range(0x5, 0x6),
- };
--
--static irqreturn_t idio_16_irq_handler(int irq, void *dev_id)
--{
--	struct idio_16_gpio *const idio16gpio = dev_id;
--	unsigned int irq_status;
--	struct gpio_chip *const chip = &idio16gpio->chip;
--	int gpio;
--
--	raw_spin_lock(&idio16gpio->lock);
--
--	irq_status = ioread8(&idio16gpio->reg->irq_status);
--
--	raw_spin_unlock(&idio16gpio->lock);
--
--	/* Make sure our device generated IRQ */
--	if (!(irq_status & 0x3) || !(irq_status & 0x4))
--		return IRQ_NONE;
--
--	for_each_set_bit(gpio, &idio16gpio->irq_mask, chip->ngpio)
--		generic_handle_domain_irq(chip->irq.domain, gpio);
--
--	raw_spin_lock(&idio16gpio->lock);
--
--	/* Clear interrupt */
--	iowrite8(0, &idio16gpio->reg->in0_7);
--
--	raw_spin_unlock(&idio16gpio->lock);
--
--	return IRQ_HANDLED;
--}
--
--#define IDIO_16_NGPIO 32
--static const char *idio_16_names[IDIO_16_NGPIO] = {
--	"OUT0", "OUT1", "OUT2", "OUT3", "OUT4", "OUT5", "OUT6", "OUT7",
--	"OUT8", "OUT9", "OUT10", "OUT11", "OUT12", "OUT13", "OUT14", "OUT15",
--	"IIN0", "IIN1", "IIN2", "IIN3", "IIN4", "IIN5", "IIN6", "IIN7",
--	"IIN8", "IIN9", "IIN10", "IIN11", "IIN12", "IIN13", "IIN14", "IIN15"
-+static const struct regmap_range idio_16_precious_ranges[] = {
-+	regmap_reg_range(0x2, 0x2),
-+};
-+static const struct regmap_access_table idio_16_wr_table = {
-+	.yes_ranges = idio_16_wr_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(idio_16_wr_ranges),
-+};
-+static const struct regmap_access_table idio_16_rd_table = {
-+	.yes_ranges = idio_16_rd_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(idio_16_rd_ranges),
-+};
-+static const struct regmap_access_table idio_16_precious_table = {
-+	.yes_ranges = idio_16_precious_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(idio_16_precious_ranges),
-+};
-+static const struct regmap_config idio_16_regmap_config = {
-+	.reg_bits = 8,
-+	.reg_stride = 1,
-+	.val_bits = 8,
-+	.io_port = true,
-+	.wr_table = &idio_16_wr_table,
-+	.rd_table = &idio_16_rd_table,
-+	.volatile_table = &idio_16_rd_table,
-+	.precious_table = &idio_16_precious_table,
-+	.cache_type = REGCACHE_FLAT,
-+	.use_raw_spinlock = true,
- };
- 
--static int idio_16_irq_init_hw(struct gpio_chip *gc)
--{
--	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(gc);
--
--	/* Disable IRQ by default and clear any pending interrupt */
--	iowrite8(0, &idio16gpio->reg->irq_ctl);
--	iowrite8(0, &idio16gpio->reg->in0_7);
-+/* Only input lines (GPIO 16-31) support interrupts */
-+#define IDIO_16_REGMAP_IRQ(_id)						\
-+	[16 + _id] = {							\
-+		.mask = BIT(2),						\
-+		.type = { .types_supported = IRQ_TYPE_EDGE_BOTH },	\
-+	}
- 
--	return 0;
--}
-+static const struct regmap_irq idio_16_regmap_irqs[] = {
-+	IDIO_16_REGMAP_IRQ(0), IDIO_16_REGMAP_IRQ(1), IDIO_16_REGMAP_IRQ(2), /* 0-2 */
-+	IDIO_16_REGMAP_IRQ(3), IDIO_16_REGMAP_IRQ(4), IDIO_16_REGMAP_IRQ(5), /* 3-5 */
-+	IDIO_16_REGMAP_IRQ(6), IDIO_16_REGMAP_IRQ(7), IDIO_16_REGMAP_IRQ(8), /* 6-8 */
-+	IDIO_16_REGMAP_IRQ(9), IDIO_16_REGMAP_IRQ(10), IDIO_16_REGMAP_IRQ(11), /* 9-11 */
-+	IDIO_16_REGMAP_IRQ(12), IDIO_16_REGMAP_IRQ(13), IDIO_16_REGMAP_IRQ(14), /* 12-14 */
-+	IDIO_16_REGMAP_IRQ(15), /* 15 */
-+};
- 
- static int idio_16_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- {
- 	struct device *const dev = &pdev->dev;
--	struct idio_16_gpio *idio16gpio;
- 	int err;
- 	const size_t pci_bar_index = 2;
- 	const char *const name = pci_name(pdev);
--	struct gpio_irq_chip *girq;
--
--	idio16gpio = devm_kzalloc(dev, sizeof(*idio16gpio), GFP_KERNEL);
--	if (!idio16gpio)
--		return -ENOMEM;
-+	struct idio_16_regmap_config config = {};
-+	void __iomem *regs;
-+	struct regmap *map;
- 
- 	err = pcim_enable_device(pdev);
- 	if (err) {
-@@ -226,53 +87,20 @@ static int idio_16_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		return err;
- 	}
- 
--	idio16gpio->reg = pcim_iomap_table(pdev)[pci_bar_index];
-+	regs = pcim_iomap_table(pdev)[pci_bar_index];
- 
--	/* Deactivate input filters */
--	iowrite8(0, &idio16gpio->reg->filter_ctl);
-+	map = devm_regmap_init_mmio(dev, regs, &idio_16_regmap_config);
-+	if (IS_ERR(map))
-+		return dev_err_probe(dev, PTR_ERR(map), "Unable to initialize register map\n");
- 
--	idio16gpio->chip.label = name;
--	idio16gpio->chip.parent = dev;
--	idio16gpio->chip.owner = THIS_MODULE;
--	idio16gpio->chip.base = -1;
--	idio16gpio->chip.ngpio = IDIO_16_NGPIO;
--	idio16gpio->chip.names = idio_16_names;
--	idio16gpio->chip.get_direction = idio_16_gpio_get_direction;
--	idio16gpio->chip.direction_input = idio_16_gpio_direction_input;
--	idio16gpio->chip.direction_output = idio_16_gpio_direction_output;
--	idio16gpio->chip.get = idio_16_gpio_get;
--	idio16gpio->chip.get_multiple = idio_16_gpio_get_multiple;
--	idio16gpio->chip.set = idio_16_gpio_set;
--	idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
--
--	idio_16_state_init(&idio16gpio->state);
--
--	girq = &idio16gpio->chip.irq;
--	gpio_irq_chip_set_chip(girq, &idio_16_irqchip);
--	/* This will let us handle the parent IRQ in the driver */
--	girq->parent_handler = NULL;
--	girq->num_parents = 0;
--	girq->parents = NULL;
--	girq->default_type = IRQ_TYPE_NONE;
--	girq->handler = handle_edge_irq;
--	girq->init_hw = idio_16_irq_init_hw;
--
--	raw_spin_lock_init(&idio16gpio->lock);
--
--	err = devm_gpiochip_add_data(dev, &idio16gpio->chip, idio16gpio);
--	if (err) {
--		dev_err(dev, "GPIO registering failed (%d)\n", err);
--		return err;
--	}
--
--	err = devm_request_irq(dev, pdev->irq, idio_16_irq_handler, IRQF_SHARED,
--		name, idio16gpio);
--	if (err) {
--		dev_err(dev, "IRQ handler registering failed (%d)\n", err);
--		return err;
--	}
-+	config.parent = dev;
-+	config.map = map;
-+	config.regmap_irqs = idio_16_regmap_irqs;
-+	config.num_regmap_irqs = ARRAY_SIZE(idio_16_regmap_irqs);
-+	config.irq = pdev->irq;
-+	config.filters = true;
- 
--	return 0;
-+	return devm_idio_16_regmap_register(dev, &config);
- }
- 
- static const struct pci_device_id idio_16_pci_dev_id[] = {
--- 
-2.39.2
-
+PkhpIE9rYW4sDQo+DQo+dGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPg0KPkZpcnN0OiB3aHkgaXMg
+dGhlIHdvcmQgIlJlZ3VsYXRvciIgaW4gdGhlIHN1YmplY3Q/IEkgZG9uJ3QgcXVpdGUgZ2V0IGl0
+Lg0KPg0KPk9uIE1vbiwgTWFyIDI3LCAyMDIzIGF0IDM6MDHigK9QTSBPa2FuIFNhaGluIDxva2Fu
+LnNhaGluQGFuYWxvZy5jb20+IHdyb3RlOg0KPj4NCj4+IEdwaW8gSS9PIGV4cGFuZGVyLg0KPj4N
+Cj4+IFNpZ25lZC1vZmYtYnk6IE9rYW4gU2FoaW4gPG9rYW4uc2FoaW5AYW5hbG9nLmNvbT4NCj4N
+Cj5UaGlzIGNvbW1pdCBsb2cgaXMgdG9vIHRlcnNlLiBXcml0ZSBhIGJpdCBhYm91dCB3aGF0IHRo
+aXMgaGFyZHdhcmUgaXMuDQo+DQo+PiArY29uZmlnIEdQSU9fRFM0NTIwDQo+PiArICAgICAgIHRy
+aXN0YXRlICJEUzQ1MjAgSTJDIEdQSU8gZXhwYW5kZXIiDQo+PiArICAgICAgIHNlbGVjdCBSRUdN
+QVBfSTJDDQo+PiArICAgICAgIGhlbHANCj4+ICsgICAgICAgICBHUElPIGRyaXZlciBmb3IgTWF4
+aW0gTUFYNzMwMCBJMkMtYmFzZWQgR1BJTyBleHBhbmRlci4NCj4NCj5JcyBpdCBNQVg3MzAwLCBJ
+IGRvbid0IGdldCB0aGlzLCBpdCBzZWVtcyBzdXBlci1jb25mdXNlZC4NCj4NCj4+ICsgICAgICAg
+ICBTYXkgeWVzIGhlcmUgdG8gZW5hYmxlIHRoZSBHUElPIGRyaXZlciBmb3IgdGhlIEFESSBEUzQ1
+MjAgY2hpcC4NCj4+ICsNCj4+ICsgICAgICAgICBUbyBjb21waWxlIHRoaXMgZHJpdmVyIGFzIGEg
+bW9kdWxlLCBjaG9vc2UgTSBoZXJlOiB0aGUgbW9kdWxlIHdpbGwNCj4+ICsgICAgICAgICBiZSBj
+YWxsZWQgZ3Bpby1kczQ1MjAuDQo+DQo+KC4uLikNCj4NCj5UaGUgZHJpdmVyIGlzIHByZXR0eSBz
+dHJhaWdodC1mb3J3YXJkLCBidXQgSSB0aGluayB0aGlzIGNhbiB1c2UgdGhlIGdlbmVyaWMNCj5H
+UElPX1JFR01BUCBoZWxwZXJzIGluIGRyaXZlcnMvZ3Bpby9ncGlvLXJlZ21hcC5jIGNoZWNrIG90
+aGVyIGRyaXZlcnMgc2VsZWN0aW5nDQo+dGhpcyBoZWxwZXIgbGlicmFyeSBmb3IgaW5zcGlyYXRp
+b24uDQo+DQo+WW91cnMsDQo+TGludXMgV2FsbGVpag0KDQpIaSBMaW51cywNCg0KVGhhbmsgeW91
+IGZvciB5b3VyIGNvbnRyaWJ1dGlvbi4gU2hvdWxkIEkgYWRkIHNlbGVjdCBHUElPX1JFR01BUCBp
+bnRvIEtjb25maWc/DQpJIGFtIHRyeWluZyB0byB1bmRlcnN0YW5kIGNvbXBsZXRlbHkgYmVmb3Jl
+IHNlbmRpbmcgbmV3IHBhdGNoLg0KSSB3aWxsIGZpeCB5b3VyIG90aGVyIGNvbW1lbnRzLg0KDQpS
+ZWdhcmRzLA0KT2thbiBTYWhpbg0K
