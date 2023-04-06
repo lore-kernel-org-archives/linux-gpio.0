@@ -2,183 +2,166 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B03D4C77B73
-	for <linux-gpio@archiver.kernel.org>; Thu,  6 Apr 2023 09:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32304C77B6C
+	for <linux-gpio@archiver.kernel.org>; Thu,  6 Apr 2023 10:27:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236485AbjDFJeV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 6 Apr 2023 05:34:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45974 "EHLO
+        id S236968AbjDFK1S (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 6 Apr 2023 06:27:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236418AbjDFJeT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Apr 2023 05:34:19 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D2AE30FD;
-        Thu,  6 Apr 2023 02:34:16 -0700 (PDT)
+        with ESMTP id S237047AbjDFK1P (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Apr 2023 06:27:15 -0400
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540E33C12;
+        Thu,  6 Apr 2023 03:27:14 -0700 (PDT)
+Received: by mail-qk1-x731.google.com with SMTP id dw4so12059098qkb.10;
+        Thu, 06 Apr 2023 03:27:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1680773657; x=1712309657;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ynEZcqNy/IaT++AxOWRMNMVKii1jBSvUZHK9u0RsDq8=;
-  b=X2EKQh6JPHhnpQn+RjzFEtfsCU9sc7Vt0pFiNKx8p9dPjmYF0fNtuX1Q
-   aQu+GVCc8a4XhV0nI4DncrttVHMkjUPvOobVcjOcJlEe7HlEVdcVTafKm
-   VouvJZmK58ofrE3YEg7HQul+FJ6XSUxVODqbohL/mhsnAqu6uAzJee7t7
-   rAdHoRdbbp8jiA096uLG/3edp2/mOOGgf43e0hhkbh2F+J9NdY1E0oi1I
-   15oyFmqaW5cLfjucHohsZMjyP8TurZBEHV+aBH7iiVLUYLF2cEN2xDPsv
-   ymNcxlrfw5ezp+bmqLHWLV2ecH9EAk/b7K+e9AtQk5U+gNDvgZiLFC0ES
-   w==;
-X-IronPort-AV: E=Sophos;i="5.98,323,1673910000"; 
-   d="scan'208";a="30188774"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 06 Apr 2023 11:33:52 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Thu, 06 Apr 2023 11:33:52 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Thu, 06 Apr 2023 11:33:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1680773632; x=1712309632;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ynEZcqNy/IaT++AxOWRMNMVKii1jBSvUZHK9u0RsDq8=;
-  b=ifZ4BZ6Q1Ok9S7Gf/SDDJpyFE9FnGgBDUcNobRTbMwFv4qvV4eWPDNUM
-   hj5POs4Y7gm0XKsi9RX1mi1CyxRWE3UYwPsYJMsuEIz9OBkM4PX0PXOW4
-   oXF4WK4yNXPFPgvalPV18IQgDcreJcPY6bG58Va8RrWqOtQIzPPzEOWBx
-   vdndptVxeiwk/dOtZ0KRYqvDAoWNpovjAjS8Yp7z/zWbBTkEJQOL7S2QG
-   yN8i6xdpkfz4xW11I+UHLc4BTkidH+nGmoHXLvMmzMYhGdrxi2KLPWWA9
-   MK6nfcpK7I9V0GiDkLhK061q4AZTneIpNGi94eg2ngZakIfLrBNi02RHG
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.98,323,1673910000"; 
-   d="scan'208";a="30188770"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 06 Apr 2023 11:33:52 +0200
-Received: from steina-w.tq-net.de (unknown [10.123.53.21])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 2F313280072;
-        Thu,  6 Apr 2023 11:33:52 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v1 1/3] dt-bindings: gpio: Add gpio-delay binding document
-Date:   Thu,  6 Apr 2023 11:33:42 +0200
-Message-Id: <20230406093344.917259-2-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230406093344.917259-1-alexander.stein@ew.tq-group.com>
-References: <20230406093344.917259-1-alexander.stein@ew.tq-group.com>
+        d=gmail.com; s=20210112; t=1680776832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YKHYiJH86czCteQw3t0gPmm0rVsFJxuWCCtAJ1eRpng=;
+        b=p4/tDTZ4e6vVezjF3sZSmRKDd5HTdoOxKtd5WYZn+KeLTWJyPvrf8JyLDBYknd70kn
+         +mSmdwfZQc/ouuwp+g/M9go83TrpwmVA/wca4ef9xlY0P6f+RibklUNWEckuYzD3mbVr
+         6gtX4jEwhGgNWnwJFSPFdgDAJrfrYK0zEszSyG1oqfYHZuTald5ovV81DBhwrNvVsVI3
+         BqHmCZt4AnORdFzMI4OOQwLz9w5vKKssXQgaCMkm+ZBKne/xu2EAvgR6OagCpp3XsasY
+         P2kHlTCE7MS5LK5cFKCBVbMDPY+9BlPF50KTXGY32MtVH5KXFtRt6KAYVp0fBBRJTzX8
+         crWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680776832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YKHYiJH86czCteQw3t0gPmm0rVsFJxuWCCtAJ1eRpng=;
+        b=48xodL6jh1tjHDzfmr1pVbQ9fCWgQAWE2tELGCswuG1M40sBW2H1H5X1UrWgJlmX06
+         HFp0GwY4pOCb1pZaLemjSy0Z4PCBKP769Go2GYEtFMrTMrFSmAsTcX5Ir9Cosvqvmog9
+         DF3wUequ4fPZRe6XmoCvNqZ8E/f5Y5PbE/RwAQ0He5rYq26QxQe7PEGEN1RA4RCJYYCr
+         MdGMRTGSqsJH6LmcT/k3fTwS7k8QVFpF1waElgCMKvVT0xAUKGBtLo+oll6atxC1BtOh
+         MLBefwKMF4HNj8EHZizRE9kop1KV9E2BOEROwmPduS1NRSGa+Uii1nCr7Fu0cx3DXF+K
+         VMkw==
+X-Gm-Message-State: AAQBX9cbThXHBGLtJzSte00REvgqn4WsAMH6VzQMH7s3MWMwRxethUrP
+        mDoTuQbFJLiSNWV7Xul6D8++SZINNRtpax7dXp8=
+X-Google-Smtp-Source: AKy350atjzlo6Zxcs+pePfnODHDiYSug84zs6Jww12Uuksk0Fg4XkvSpGpww/mK21Xcw4USo/V2FAPalTkoApXDfarI=
+X-Received: by 2002:a05:620a:4415:b0:742:412d:1dc6 with SMTP id
+ v21-20020a05620a441500b00742412d1dc6mr2418559qkp.14.1680776832227; Thu, 06
+ Apr 2023 03:27:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <ZC6OHBjdwBdT4sSb@xpf.sh.intel.com>
+In-Reply-To: <ZC6OHBjdwBdT4sSb@xpf.sh.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 6 Apr 2023 13:26:36 +0300
+Message-ID: <CAHp75VebjkJZkC=0ubGSVYm75M6sFAHt3kq=WqqfDmtBJrvVDQ@mail.gmail.com>
+Subject: Re: [gpio kself-test & bisect] gpio-mockup.sh kslef-test failed in v6.3-rc5
+To:     Pengfei Xu <pengfei.xu@intel.com>
+Cc:     christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
+        heng.su@intel.com, linux-kselftest@vger.kernel.org, lkp@intel.com,
+        linux-gpio@vger.kernel.org, john.fastabend@gmail.com,
+        edumazet@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This adds bindings for a GPIO enable/disable delay driver.
+On Thu, Apr 6, 2023 at 12:15=E2=80=AFPM Pengfei Xu <pengfei.xu@intel.com> w=
+rote:
+>
+> Hi Christophe Leroy and gpio experts,
+>
+> Greeting!
+>
+> Platform: Tigerlake-H and so on x86 platforms
+>
+> All detailed info is in link: https://github.com/xupengfe/syzkaller_logs/=
+tree/main/issue_bisect/230406_gpio-mockup_kselftest_failed_bisect_v63rc5
+> Bisect info: https://github.com/xupengfe/syzkaller_logs/blob/main/issue_b=
+isect/230406_gpio-mockup_kselftest_failed_bisect_v63rc5/bisect_info.txt
+>
+> gpio-mockup.sh kslef-test failed in v6.3-rc5 kernel.
+> gpio-mockup.sh(gpio overflow test) in kself-test could reproduce this iss=
+ue:
+> cd linux/tools/testing/selftests
+>  1.  ./kselftest_install.sh
+>  2.  cd  linux/tools/testing/selftests/kselftest_install/gpio
+>  # ./gpio-mockup.sh
+>  1.  Module load tests
+>  1.1.  dynamic allocation of gpio
+>  2.  Module load error tests
+>  2.1 gpio overflow
+>  test failed: unexpected chip - gpiochip1
+>  GPIO gpio-mockup test FAIL
+>
+> And the simplified steps to reproduce this issue are as follow:
+> "
+> # Load gpio_mockup with overflow ranges -1,1024:
+> modprobe -q gpio_mockup gpio_mockup_ranges=3D"-1,1024"
+>
+> # Check is there some Call Trace generated in dmesg
+> dmesg | grep -C 5 Call
+>
+> # Should not generate any gpiochip folder like /sys/kernel/debug/gpio-moc=
+kup/gpiochip1
+> # Because load gpio_mockup with overflow ranges -1,1024
+> find "/sys/kernel/debug/gpio-mockup/" -name gpiochip* -type d | sort
+>
+> # Unload the gpio_mockup module
+> modprobe -r gpio_mockup
+> # Check is there "Call Trace" generated in dmesg
+> dmesg | grep -C 5 Call
+> "
+>
+> Actually the judgement "gpio-mockup.sh" test/bisect judgement point is th=
+at:
+> Should not generate any gpiochip folder like
+> /sys/kernel/debug/gpio-mockup/gpiochip1 after load gpio_mockup with overf=
+low
+> ranges -1,1024.
+>
+> I met gpio-mockup.sh test failed but there is no any "Call Trace" dmesg i=
+nfo
+> sometimes.
+>
+> So the shortest check steps are as follow:
+> "
+> 1. modprobe -q gpio_mockup gpio_mockup_ranges=3D"-1,1024"
+> After above gpio_mockup module loaded with overflow range "-1,1024":
+> Correct behavior as previous v6.1 or older kernel:"gpio should not load "=
+gpiochip1" due to overflow range -1,1024";
+> Wrong behavior in v6.3-rc5 kernel: "gpio *load* "gpiochip1" with overflow=
+ range -1,1024 and "gpiochip1" should not be loaded".
+> The underlying problem was already buried here.
+>
+> 2. Could use below command to check if "gpiochip1" generated:
+> As before v6.1,  there was no "/sys/kernel/debug/gpio-mockup/gpiochip1" s=
+ysfs folder due to overflow range -1,1024";
+> Wrong behavior in v6.3-rc5 kernel: "/sys/kernel/debug/gpio-mockup/gpiochi=
+p1" sysfs folder generated as follow command check:
+> # find "/sys/kernel/debug/gpio-mockup/" -name gpiochip* -type d | sort
+> /sys/kernel/debug/gpio-mockup/gpiochip1
+> If there is gpiochip* generated, gpio-mockup.sh kself-test would be faile=
+d also.
+> "
+>
+> Bisected and found the bad commit was:
+> "
+> 7b61212f2a07a5afd213c8876e52b5c9946441e2
+> gpiolib: Get rid of ARCH_NR_GPIOS
+> "
+> And after reverted the above commit on top of v6.3-rc5 kernel, above
+> gpio-mockup.sh kself-test could pass and this issue was gone.
+>
+> Now gpio-mockup.sh kself-test is failed on almost all x86 platform from
+> v6.2 cycle mainline kernel.
+>
+> I hope above info is helpful to solve the "gpio-mockup.sh kself-test fail=
+ed"
+> problem.
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
-Changes since RFC v2:
-* Remove 'input' prefix for GPIOs
-* Add minItems/maxItems for GPIOs
-* Adjust example
-* Added Linus' A-b
+Thank you for the report and full analysis of the root cause. I think
+we may fix the test script however the gpio-mockup is obsoleted and
+should be actually replaced with tests again gpio-sim.
 
- .../devicetree/bindings/gpio/gpio-delay.yaml  | 79 +++++++++++++++++++
- 1 file changed, 79 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-delay.yaml
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-delay.yaml b/Documentation/devicetree/bindings/gpio/gpio-delay.yaml
-new file mode 100644
-index 000000000000..7c16a4e1a768
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-delay.yaml
-@@ -0,0 +1,79 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/gpio-delay.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: GPIO delay controller
-+
-+maintainers:
-+  - Alexander Stein <linux@ew.tq-group.com>
-+
-+description: |
-+  This binding describes an electrical setup where setting an GPIO output
-+  is delayed by some external setup, e.g. RC curcuit.
-+
-+  +----------+                    +-----------+
-+  |          |             VCC_B  |           |
-+  |          |              |     |           |
-+  |          | VCC_A        _     |           |
-+  |  GPIO    |             | | R  |  Consumer |
-+  |controller|        ___  |_|    |           |
-+  |          |       |   |  |     |           |
-+  |      [IOx|-------|   |--+-----|-----+     |
-+  |          |       |___|  |     |   input   |
-+  |          |              |     |           |
-+  +----------+             --- C  +-----------+
-+                           ---
-+                            |
-+                            -
-+                           GND
-+
-+  If the input on the consumer is controlled by an open-drain signal
-+  attached to an RC curcuit the ramp-up delay is not under control
-+  of the GPIO controller.
-+
-+properties:
-+  compatible:
-+    const: gpio-delay
-+
-+  "#gpio-cells":
-+    description: |
-+      Specifies the pin, ramp-up and ramp-down delays. The
-+      delays are specified in microseconds.
-+    const: 3
-+
-+  gpios:
-+    description: Array of GPIOs which output signal change is delayed
-+    minItems: 1
-+    maxItems: 32
-+
-+  gpio-controller: true
-+
-+  gpio-line-names:
-+    minItems: 1
-+    maxItems: 32
-+
-+required:
-+  - compatible
-+  - "#gpio-cells"
-+  - gpio-controller
-+  - gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    enable_delay: enable-delay {
-+        compatible = "gpio-delay";
-+        #gpio-cells = <3>;
-+        gpio-controller;
-+        gpios = <&gpio0 3 GPIO_ACTIVE_LOW>,
-+                <&gpio3 1 GPIO_ACTIVE_HIGH>;
-+    };
-+
-+    consumer {
-+        enable-gpios = <&enable_delay 0 130000 30000>;
-+    };
--- 
-2.34.1
-
+--=20
+With Best Regards,
+Andy Shevchenko
