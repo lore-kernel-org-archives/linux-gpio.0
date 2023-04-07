@@ -2,25 +2,25 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D7EDC77B71
-	for <linux-gpio@archiver.kernel.org>; Fri,  7 Apr 2023 18:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BAF9C77B6F
+	for <linux-gpio@archiver.kernel.org>; Fri,  7 Apr 2023 18:51:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233112AbjDGSvG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 7 Apr 2023 14:51:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59986 "EHLO
+        id S233603AbjDGSvE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 7 Apr 2023 14:51:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233325AbjDGSul (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Apr 2023 14:50:41 -0400
+        with ESMTP id S233112AbjDGSuj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Apr 2023 14:50:39 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA0F3C650;
-        Fri,  7 Apr 2023 11:49:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F1B6EF80;
+        Fri,  7 Apr 2023 11:49:16 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CAD1C647D6;
-        Fri,  7 Apr 2023 18:48:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DB7EC433D2;
-        Fri,  7 Apr 2023 18:48:49 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C423F65211;
+        Fri,  7 Apr 2023 18:49:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9224BC433EF;
+        Fri,  7 Apr 2023 18:49:10 +0000 (UTC)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -42,9 +42,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 35/40] dt-bindings: pinctrl: qcom,sm7150-tlmm: simplify with unevaluatedProperties
-Date:   Fri,  7 Apr 2023 20:45:41 +0200
-Message-Id: <20230407184546.161168-35-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 39/40] dt-bindings: pinctrl: qcom,sm8450-tlmm: simplify with unevaluatedProperties
+Date:   Fri,  7 Apr 2023 20:45:45 +0200
+Message-Id: <20230407184546.161168-39-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230407184546.161168-1-krzysztof.kozlowski@linaro.org>
 References: <20230407184546.161168-1-krzysztof.kozlowski@linaro.org>
@@ -60,13 +60,13 @@ set provided by qcom,tlmm-common.yaml schema.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../devicetree/bindings/pinctrl/qcom,sm7150-tlmm.yaml | 11 +----------
+ .../devicetree/bindings/pinctrl/qcom,sm8450-tlmm.yaml | 11 +----------
  1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm7150-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm7150-tlmm.yaml
-index a57d44efe5bd..ede0f3acad9c 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sm7150-tlmm.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm7150-tlmm.yaml
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-tlmm.yaml
+index 56c8046f1be0..5163fe3f5365 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-tlmm.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8450-tlmm.yaml
 @@ -62,6 +62,7 @@ $defs:
        Pinctrl node's client devices use subnodes for desired pin configuration.
        Client device subnodes use below standard properties.
@@ -75,13 +75,13 @@ index a57d44efe5bd..ede0f3acad9c 100644
  
      properties:
        pins:
-@@ -102,19 +103,9 @@ $defs:
-                 wlan1_adc0, wlan1_adc1, wlan2_adc0, wlan2_adc1, wsa_clk,
-                 wsa_data ]
+@@ -103,19 +104,9 @@ $defs:
+                 uim0_reset, uim1_clk, uim1_data, uim1_present, uim1_reset,
+                 usb2phy_ac, usb_phy, vfr_0, vfr_1, vsense_trigger ]
  
+-      bias-disable: true
 -      bias-pull-down: true
 -      bias-pull-up: true
--      bias-disable: true
 -      drive-strength: true
 -      input-enable: true
 -      output-high: true
@@ -92,9 +92,9 @@ index a57d44efe5bd..ede0f3acad9c 100644
  
 -    additionalProperties: false
 -
- required:
-   - compatible
-   - reg
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
 -- 
 2.34.1
 
