@@ -2,63 +2,57 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74392C77B70
-	for <linux-gpio@archiver.kernel.org>; Fri,  7 Apr 2023 13:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68067C77B6F
+	for <linux-gpio@archiver.kernel.org>; Fri,  7 Apr 2023 13:08:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233133AbjDGNAO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 7 Apr 2023 09:00:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38208 "EHLO
+        id S230217AbjDGNIk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 7 Apr 2023 09:08:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238453AbjDGM7z (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Apr 2023 08:59:55 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB355A5CE
-        for <linux-gpio@vger.kernel.org>; Fri,  7 Apr 2023 05:59:54 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id j1so2923356wrb.0
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Apr 2023 05:59:54 -0700 (PDT)
+        with ESMTP id S230429AbjDGNIj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Apr 2023 09:08:39 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FDE97692
+        for <linux-gpio@vger.kernel.org>; Fri,  7 Apr 2023 06:08:36 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id d3so21050862ybu.1
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Apr 2023 06:08:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1680872394; x=1683464394;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JUmOIxvTfzN/vGXSwBwDqutiowJ/QbUaHMK8ehs6bJ0=;
-        b=Wx5r6rwoZXIrXBsodMUM0oII/5nipadhyGy6LHtFD+bB5yZjumtsv4QneVp0SBZlYK
-         EP2Ng+ZOMLwIwTZ8ljMgdOKNDwLICtVoOp6+QWwgzXJdTky87OjW8pYOgmN3EqwoTdjq
-         bniT5A+2hwsiahPETKGJQxe1dhH3cYn2EUawUyPFQFutmCa9wMYmImPuZtRdLQf6Yx7f
-         ekqIrj60MXo1MSas3WS7rtqGPnhN9Lu0+uSSXpIgBDX5LyzVM/fg047O5ADZ+hHKFChf
-         uxU3kC4CaX0D2nJqFP1qRtxoLePe/++yhC9McgUyAymTga45UysulDKvRS+WPy2Jk841
-         G92Q==
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1680872916; x=1683464916;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XLLVgeqbEDeqTFPI4P39tQQxxRUKPGk2hxPwWtx7KaE=;
+        b=XN9SbYQd3XpeqF2Z0PQ7esBc1Gl7JYH957ZcK4vzDgrc5a9oooVC9gq29yPtGtcCfa
+         4jF9UDhJVY30Lg+Lu67gkWQgQkbbDE5W6XM+v1atHBlSadRPW93TQuaf2Ee2fkTw9Txx
+         3dyUKpRyCDZc5beDgMniaBTbFrEioazA8YZZiYMeLDN60BOe7ShNR7fSCNsrT9n5KqA1
+         TMbUwhS7u9yqeMRGxRb8MzJtg7qFAMw1ctou6vCxO/jNZ8UFwr0ScM0YN/qQ7uV5beja
+         GFr0U/dHBQ5JtaLVPsMHyOoQYdID/sBLTIhDcGGkXYWbYkfm2jnCvWlgbu2+NLsO171K
+         a+oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680872394; x=1683464394;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20210112; t=1680872916; x=1683464916;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JUmOIxvTfzN/vGXSwBwDqutiowJ/QbUaHMK8ehs6bJ0=;
-        b=5AuDxq/J07etka70bJJnS1udVLyhSSq3h3ahizvyx8uelZpv7PChqyDZaN2KeLmOo5
-         6i9Rn7XDJCFd004pJ60nQHMKBcjmgnePUncz79p0hEvzYCHt6sGNmHvIVzx7CJekpQca
-         dONyYNxA9coTzBncDyAisdOhhaqF/6NupRqsjhQOFYdWpqJ117my+cKEnGPU1c/NXjpM
-         dXZbBs7hWq1DmeNCor8I4IxmVaOnW6CxCE7hCx1yRfEuRu98wAKJLmOEyngoByE89rQ4
-         JHD+3kze53EeWI0z/XP8/8FsF1dHOoqd9WRiYFM4T+6cSaJ+BV8UL6pcSmztf5F6mKEZ
-         J+pQ==
-X-Gm-Message-State: AAQBX9f1tsrO/cq91lYOT8pKkGjvMAt61//OvT+uyY+o6FbYSC+a10u9
-        QHHPITuNYT1quS0LWM9ul1nhfA==
-X-Google-Smtp-Source: AKy350aU5oyIMQNJHKB2Q7i2iktd547uIw2cnWKNsd/AChoC9Z5ZjLNanzFJpOzwSjJwcwg8elCIFg==
-X-Received: by 2002:a5d:440f:0:b0:2ce:aa73:4960 with SMTP id z15-20020a5d440f000000b002ceaa734960mr1151038wrq.5.1680872394222;
-        Fri, 07 Apr 2023 05:59:54 -0700 (PDT)
-Received: from [127.0.1.1] (158.22.5.93.rev.sfr.net. [93.5.22.158])
-        by smtp.googlemail.com with ESMTPSA id t4-20020a5d6a44000000b002e558f1c45fsm4471446wrw.69.2023.04.07.05.59.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Apr 2023 05:59:53 -0700 (PDT)
-From:   Alexandre Mergnat <amergnat@baylibre.com>
-Date:   Fri, 07 Apr 2023 14:59:30 +0200
-Subject: [PATCH v5 11/12] arm64: dts: mediatek: add cpufreq support for
- mt8365-evk
+        bh=XLLVgeqbEDeqTFPI4P39tQQxxRUKPGk2hxPwWtx7KaE=;
+        b=e4o+nU0qivr6gPWuag0ktAYAGvW1orwN1m1N7/eUnkhjGU+MBPN5YqtsMOkC5Og+/u
+         TcxlwCOmogJoDC4IiHLKa+2cxPR1gW9pAMRkv6IP78xW6MR9lBjrMvjAmHxrloG2rkYg
+         a9fZeNG2w9Pfelg4qEB4r7xgNiRaY6J+pc3DXM2c/13m3q+6gM0GJaDmKpvboXPbDnkA
+         Jp0Ib0fZab3WoU+IUkfU6SpmSK0MiZDi85m9nHNMEwdXbKdfV+a1yFG8JYM/D/2Qyle/
+         KdEsgbPa6LV1WP7Zk4/tUeyMAmERl/EaQQZJUel5ip6Bh3do11VNrY8jiV61re8gXySK
+         VWig==
+X-Gm-Message-State: AAQBX9eeJALyM23hVEhOwRor1i2Fr71EqlNGFMbjVoClSKGaK90+LtF+
+        xOfwAVb4js4cY+kXtQ1qcJDDE2wx2TM0JMha8YTrSw==
+X-Google-Smtp-Source: AKy350YLZihMhzB+mdd71bZKDJZvF/AIGIyRY1E58MdNGmy1VpnHnj4VC2+IDSkQ7AmfGY7ZYm4clBM+wIUjda9dog0=
+X-Received: by 2002:a25:d958:0:b0:b75:3fd4:1b31 with SMTP id
+ q85-20020a25d958000000b00b753fd41b31mr1807164ybg.1.1680872915732; Fri, 07 Apr
+ 2023 06:08:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230203-evk-board-support-v5-11-1883c1b405ad@baylibre.com>
 References: <20230203-evk-board-support-v5-0-1883c1b405ad@baylibre.com>
 In-Reply-To: <20230203-evk-board-support-v5-0-1883c1b405ad@baylibre.com>
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+Date:   Fri, 7 Apr 2023 15:08:24 +0200
+Message-ID: <CAFGrd9pV8Zk-4M3gPRYBSqqG7dTA6bri4LV2ZcfKyTZN6STsmA@mail.gmail.com>
+Subject: Re: [PATCH v5 00/12] Improve the MT8365 SoC and EVK board support
 To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
         Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>,
@@ -71,7 +65,8 @@ To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
         Wenbin Mei <wenbin.mei@mediatek.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Zhiyong Tao <zhiyong.tao@mediatek.com>,
-        =?utf-8?q?Bernhard_Rosenkr=C3=A4nzer?= <bero@baylibre.com>
+        =?UTF-8?Q?Bernhard_Rosenkr=C3=A4nzer?= <bero@baylibre.com>,
+        catalin.marinas@arm.com, Will Deacon <will@kernel.org>
 Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-mmc@vger.kernel.org,
@@ -79,68 +74,129 @@ Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         Alexandre Bailon <abailon@baylibre.com>,
         Fabien Parent <fparent@baylibre.com>,
         Amjad Ouled-Ameur <aouledameur@baylibre.com>,
-        Alexandre Mergnat <amergnat@baylibre.com>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1153; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=thd5AdegnYYpCr5cvUhR9vmXYqLF1bam1m97/2vSMvw=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBkMBO7mlVygoKoHzDLc4skrgvWXMffmUB2OTqvE1Pi
- c3wcQU6JAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZDATuwAKCRArRkmdfjHURW/wD/
- 919ZvcBWotpNTzA2QakuXWR8YpgHzJv5llnmMuVSbhBbh98pYJEpyrCdApt/o0bQ/uIRm5pkF60WSm
- 8ZJ7SXU6o2qiBf/gmARfVUhXHMQilV8rCLWY/i533DB7NAGSR3641+5YUwcKW28WuhiNpH6p+0NC3K
- 7trOW4KYf5i1PGss8QxCNWPHZzBO38y+QlmHQEo+UnmuBlA8ZPsnPMg2huqM9o80mrsYrhuY4+3UMH
- vWeInJFh9FitTBqjrE3dhuqu8ARfdpC/xlg6FlwOPVmNAEww1g5xth+44gh92VO7ppRL7+86ZEb4cM
- H9HVVm/UUXOmjuM4Qt8hBBQJ0tjz6sWSsQ4op9PaUCGgyosrZuh7DC4HtDMXyXgUmplQ95udNEXpdY
- f16gCioiIcveLbisi7y1ZLbtEhOO07DN5Ky1u5o5/7eYNLjMwjfK7gr4j90jEesvhW2QKpBdqIb1p+
- fNT4MKHSFAAUPFSoIXludMBQJC2y8K81qgGeHQo1I9RvFAF3m72PsA0S3Qu3MLYahHunihh1AQx6yQ
- taahWZkbNOu/mDMJeI29FKFhLlmLh/AG93+/XSdjOS8/Z8OM+GExcPp4bQdR0k0vUYYE6vpaYMi95M
- NqmK5xInj549swvCtQciPhpvZw+qTpSgs60jzuGbzUnlKAFBswFG4IY+PY7g==
-X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
- fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In order to have cpufreq support, this patch adds proc-supply and
-sram-supply for each CPU.
++ To: Catalin Marinas <catalin.marinas@arm.com>
++ To: Will Deacon <will@kernel.org>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
----
- arch/arm64/boot/dts/mediatek/mt8365-evk.dts | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Sorry for the noise.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-index 431078f8670e..d723838ed49b 100644
---- a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-@@ -88,6 +88,26 @@ optee_reserved: optee@43200000 {
- 	};
- };
- 
-+&cpu0 {
-+	proc-supply = <&mt6357_vproc_reg>;
-+	sram-supply = <&mt6357_vsram_proc_reg>;
-+};
-+
-+&cpu1 {
-+	proc-supply = <&mt6357_vproc_reg>;
-+	sram-supply = <&mt6357_vsram_proc_reg>;
-+};
-+
-+&cpu2 {
-+	proc-supply = <&mt6357_vproc_reg>;
-+	sram-supply = <&mt6357_vsram_proc_reg>;
-+};
-+
-+&cpu3 {
-+	proc-supply = <&mt6357_vproc_reg>;
-+	sram-supply = <&mt6357_vsram_proc_reg>;
-+};
-+
- &ethernet {
- 	pinctrl-0 = <&ethernet_pins>;
- 	pinctrl-names = "default";
+Regards,
+Alexandre
 
--- 
-2.25.1
-
+Le ven. 7 avr. 2023 =C3=A0 14:59, Alexandre Mergnat <amergnat@baylibre.com>=
+ a =C3=A9crit :
+>
+> This commits are based on the Fabien Parent <fparent@baylibre.com> work.
+>
+> The purpose of this series is to add the following HWs / IPs support for
+> the mt8365-evk board:
+> - Watchdog
+> - Power Management Integrated Circuit "PMIC" wrapper
+> - MT6357 PMIC
+> - MultiMediaCard "MMC" & Secure Digital "SD" controller
+> - USB controller
+> - Ethernet MAC controller
+>
+> Add CPU Freq & IDLE support for this board.
+>
+> This series depends to anothers which add support for MT8365 EVK board
+> [1], add the MT8365 I2C support [2] (both are currently applied) and
+> finally the pinctrl binding cleanup [3].
+>
+> =3D=3D=3D Build:
+>
+> To test this serie, cherry-pick patches from the dependent series ([1],[2=
+],[3])
+> and the applied patches from this serie (documented in the "Changes" belo=
+w).
+> Be carefull, the pinctrl serie [3] is rebased to linusw/linux-pinctrl,
+> cherry-pick will not be straightforward.
+> Finally, cherry-pick this serie.
+>
+> You can also take my branch [4] which have all the needed patches
+> retrieved from the instructions above.
+>
+> Use the arm64 defconfig to make the build.
+>
+> Regards,
+> Alex
+>
+> [1]: https://lore.kernel.org/all/20230309213501.794764-1-bero@baylibre.co=
+m/
+> [2]: https://lore.kernel.org/all/20221122-mt8365-i2c-support-v6-0-e1009c8=
+afd53@baylibre.com/
+> [3]: https://lore.kernel.org/all/20230327-cleanup-pinctrl-binding-v3-0-6f=
+56d5c7a8de@baylibre.com/
+> [4]: https://gitlab.baylibre.com/baylibre/mediatek/bsp/linux/-/commits/am=
+ergnat/i350-evk-board-support
+>
+> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+> ---
+> Changes in v5:
+> - Add patches to build the MT6357 regulator driver and MTK PMIC keys by d=
+efault
+> - Remove "dt-bindings: pinctrl: mediatek,mt8365-pinctrl: add drive streng=
+th property"
+>   patch from this serie and add it to the pinctrl serie [3]
+> - Link to v4: https://lore.kernel.org/r/20230203-evk-board-support-v4-0-5=
+cffe66a38c0@baylibre.com
+>
+> Changes in v4:
+> - Remove v3 applied patch from the serie:
+>   - arm64: dts: mediatek: add ethernet support for mt8365 SoC
+>   - arm64: dts: mediatek: add mmc support for mt8365 SoC
+>   - arm64: dts: mediatek: add mt6357 device-tree
+>   - arm64: dts: mediatek: add pwrap support to mt8365 SoC
+>   - arm64: dts: mediatek: Increase the size BL31 reserved memory
+> - Drop "arm64: dts: mediatek: fix systimer properties" which is done [1]
+> - Fix style, typo and re-order properties.
+> - Use interrupts-extended for the PMIC node.
+> - Link to v3: https://lore.kernel.org/r/20230203-evk-board-support-v3-0-0=
+003e80e0095@baylibre.com
+>
+> Changes in v3:
+> - Remove v2 applied patch from the serie:
+>   - dt-bindings: mmc: mediatek,mtk-sd: add mt8365
+> - Add trailers and simply resend.
+> - Link to v2: https://lore.kernel.org/r/20230203-evk-board-support-v2-0-6=
+ec7cdb10ccf@baylibre.com
+>
+> ---
+> Alexandre Mergnat (10):
+>       arm64: defconfig: enable MT6357 regulator
+>       arm64: defconfig: enable Mediatek PMIC key
+>       dt-bindings: watchdog: mediatek,mtk-wdt: add mt8365
+>       arm64: dts: mediatek: add watchdog support for mt8365 SoC
+>       arm64: dts: mediatek: add mt6357 PMIC support for  mt8365-evk
+>       arm64: dts: mediatek: add mmc support for mt8365-evk
+>       arm64: dts: mediatek: add usb controller support for mt8365-evk
+>       arm64: dts: mediatek: add ethernet support for mt8365-evk
+>       arm64: dts: mediatek: add OPP support for mt8365 SoC
+>       arm64: dts: mediatek: add cpufreq support for mt8365-evk
+>
+> Amjad Ouled-Ameur (1):
+>       arm64: dts: mediatek: Add CPU Idle support
+>
+> Fabien Parent (1):
+>       arm64: dts: mediatek: set vmc regulator as always on
+>
+>  .../bindings/watchdog/mediatek,mtk-wdt.yaml        |   1 +
+>  arch/arm64/boot/dts/mediatek/mt8365-evk.dts        | 249 +++++++++++++++=
+++++++
+>  arch/arm64/boot/dts/mediatek/mt8365.dtsi           | 142 ++++++++++++
+>  arch/arm64/configs/defconfig                       |   3 +
+>  4 files changed, 395 insertions(+)
+> ---
+> base-commit: 4f2a499a344b36ebb325e610265452ea88541116
+> change-id: 20230203-evk-board-support-d5b7a839ed7b
+>
+> Best regards,
+> --
+> Alexandre Mergnat <amergnat@baylibre.com>
+>
