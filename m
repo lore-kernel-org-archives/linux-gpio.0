@@ -2,25 +2,25 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18EC2C77B6F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C143BC77B70
 	for <linux-gpio@archiver.kernel.org>; Fri,  7 Apr 2023 18:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232540AbjDGSsF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 7 Apr 2023 14:48:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58736 "EHLO
+        id S232391AbjDGSsH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 7 Apr 2023 14:48:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232212AbjDGSrn (ORCPT
+        with ESMTP id S232209AbjDGSrn (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Apr 2023 14:47:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98637C169;
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BF2BC14E;
         Fri,  7 Apr 2023 11:47:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 620C865389;
-        Fri,  7 Apr 2023 18:46:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13F58C4339B;
-        Fri,  7 Apr 2023 18:46:53 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 31024653C6;
+        Fri,  7 Apr 2023 18:47:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA05EC433D2;
+        Fri,  7 Apr 2023 18:47:09 +0000 (UTC)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -42,9 +42,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 13/40] dt-bindings: pinctrl: qcom,msm8974: simplify with unevaluatedProperties
-Date:   Fri,  7 Apr 2023 20:45:19 +0200
-Message-Id: <20230407184546.161168-13-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 16/40] dt-bindings: pinctrl: qcom,msm8996: simplify with unevaluatedProperties
+Date:   Fri,  7 Apr 2023 20:45:22 +0200
+Message-Id: <20230407184546.161168-16-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230407184546.161168-1-krzysztof.kozlowski@linaro.org>
 References: <20230407184546.161168-1-krzysztof.kozlowski@linaro.org>
@@ -60,13 +60,13 @@ set provided by qcom,tlmm-common.yaml schema.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/pinctrl/qcom,msm8974-pinctrl.yaml        | 11 +----------
+ .../bindings/pinctrl/qcom,msm8996-pinctrl.yaml        | 11 +----------
  1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.yaml
-index afe4a80f0b79..8a3be65c51ed 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.yaml
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.yaml
+index 047b4584e3c0..59d406b60957 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.yaml
 @@ -53,6 +53,7 @@ $defs:
        Pinctrl node's client devices use subnodes for desired pin configuration.
        Client device subnodes use below standard properties.
@@ -75,9 +75,9 @@ index afe4a80f0b79..8a3be65c51ed 100644
  
      properties:
        pins:
-@@ -93,14 +94,6 @@ $defs:
-                 tsif1, tsif2, hsic, grfc, audio_ref_clk, qua_mi2s, pri_mi2s,
-                 spkr_mi2s, ter_mi2s, sec_mi2s, bt, fm, wlan, slimbus, hsic_ctl ]
+@@ -122,19 +123,9 @@ $defs:
+                 modem_tsync, nav_dr, nav_pps, pci_e1, gsm_tx, qspi_cs, ssbi2,
+                 ssbi1, mss_lte, qspi_clk, qspi0, qspi1, qspi2, qspi3 ]
  
 -      bias-pull-down: true
 -      bias-pull-up: true
@@ -89,10 +89,6 @@ index afe4a80f0b79..8a3be65c51ed 100644
 -
      required:
        - pins
- 
-@@ -124,8 +117,6 @@ $defs:
-             output-high: false
-             output-low: false
  
 -    additionalProperties: false
 -
