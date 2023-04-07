@@ -2,25 +2,25 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7D6C76196
-	for <linux-gpio@archiver.kernel.org>; Fri,  7 Apr 2023 18:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CC7C77B6C
+	for <linux-gpio@archiver.kernel.org>; Fri,  7 Apr 2023 18:50:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233674AbjDGSuj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 7 Apr 2023 14:50:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59146 "EHLO
+        id S233697AbjDGSum (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 7 Apr 2023 14:50:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233113AbjDGSuS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Apr 2023 14:50:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5545E071;
-        Fri,  7 Apr 2023 11:48:57 -0700 (PDT)
+        with ESMTP id S233399AbjDGSuW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Apr 2023 14:50:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94D0AE079;
+        Fri,  7 Apr 2023 11:49:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 124CC611DF;
-        Fri,  7 Apr 2023 18:48:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C714DC433D2;
-        Fri,  7 Apr 2023 18:48:33 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1C0E4611AE;
+        Fri,  7 Apr 2023 18:48:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8559C433EF;
+        Fri,  7 Apr 2023 18:48:12 +0000 (UTC)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -42,9 +42,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 32/40] dt-bindings: pinctrl: qcom,sm6125-tlmm: simplify with unevaluatedProperties
-Date:   Fri,  7 Apr 2023 20:45:38 +0200
-Message-Id: <20230407184546.161168-32-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 28/40] dt-bindings: pinctrl: qcom,sdm845: simplify with unevaluatedProperties
+Date:   Fri,  7 Apr 2023 20:45:34 +0200
+Message-Id: <20230407184546.161168-28-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230407184546.161168-1-krzysztof.kozlowski@linaro.org>
 References: <20230407184546.161168-1-krzysztof.kozlowski@linaro.org>
@@ -58,15 +58,20 @@ All Qualcomm SoC Top Level Mode Multiplexer pin controllers have similar
 capabilities regarding pin properties, thus we can just accept entire
 set provided by qcom,tlmm-common.yaml schema.
 
+This also fixes warnings like:
+
+  sdm845-cheza-r1.dtb: pinctrl@3400000: qspi-sleep-state: 'oneOf' conditional failed, one must be fixed:
+    'output-disable' does not match any of the regexes: 'pinctrl-[0-9]+'
+
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../devicetree/bindings/pinctrl/qcom,sm6125-tlmm.yaml | 11 +----------
+ .../bindings/pinctrl/qcom,sdm845-pinctrl.yaml         | 11 +----------
  1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm6125-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm6125-tlmm.yaml
-index c9bc4893e8e8..8d77707b02b9 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sm6125-tlmm.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm6125-tlmm.yaml
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.yaml
+index 23d7c030fec0..d301881ddfa8 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.yaml
 @@ -61,6 +61,7 @@ $defs:
        Pinctrl node's client devices use subnodes for desired pin configuration.
        Client device subnodes use below standard properties.
@@ -75,9 +80,9 @@ index c9bc4893e8e8..8d77707b02b9 100644
  
      properties:
        pins:
-@@ -101,19 +102,9 @@ $defs:
-                 wlan1_adc0, wlan1_adc1, wlan2_adc0, wlan2_adc1, wsa_clk, wsa_data ]
- 
+@@ -102,19 +103,9 @@ $defs:
+                 uim_batt, usb_phy, vfr_1, vsense_trigger, wlan1_adc0,
+                 wlan1_adc1, wlan2_adc0, wlan2_adc1]
  
 -      bias-disable: true
 -      bias-pull-down: true
@@ -92,9 +97,9 @@ index c9bc4893e8e8..8d77707b02b9 100644
  
 -    additionalProperties: false
 -
- examples:
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
+ required:
+   - compatible
+   - reg
 -- 
 2.34.1
 
