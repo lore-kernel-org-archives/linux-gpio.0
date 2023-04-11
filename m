@@ -2,83 +2,110 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E1FFC7619A
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Apr 2023 20:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA6DC7619A
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Apr 2023 20:50:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229531AbjDKUqn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 Apr 2023 16:46:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52156 "EHLO
+        id S229751AbjDKUuo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 Apr 2023 16:50:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbjDKUqm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Apr 2023 16:46:42 -0400
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E982D10E
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Apr 2023 13:46:41 -0700 (PDT)
-Received: by mail-yb1-xb2a.google.com with SMTP id y186so9677374yby.13
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Apr 2023 13:46:41 -0700 (PDT)
+        with ESMTP id S229612AbjDKUuo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Apr 2023 16:50:44 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F0F30C8
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Apr 2023 13:50:42 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-54f64b29207so73634447b3.8
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Apr 2023 13:50:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681246001;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Po1MCvCf5OQxV9nwlMwg/r9Glz6To+YmkbTBIFPIgs0=;
-        b=sKxLGyKycdzz5MFSp3E9IS9EFd871Flxvh5NgsRmglRJUNfboQvxQXEAgRXu72Yvhy
-         fFNhYQjMTTRhOE9gg1nsJW7Wt/e2tOQjxD/3Q/mVJ0sI4oFzHI99QI0G1hBhVD85NKJW
-         EUwdO/DJC4ma7K9HNSstSQ5jBNqRgo+QfF82z1c3+T9xDLmEiFMQJYobLaaF4SonVWex
-         2psED3f9soFbJHgsHhhnJqs19HWpTqJfSsqioJ4+Lz4MXgv46dClH1hmQerMR3QQeIoH
-         wVhuYb23x0s8GBSPj14Ehx1/mMuoscqJ1MwKLd2FkdIB4uL9WQ/jtM35/6FkEe+Gj0Mc
-         5+HA==
+        d=linaro.org; s=google; t=1681246242; x=1683838242;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=90ZS3RARJn1pbosQkkwGD6uVjXJlR/yMXJuGr/i+428=;
+        b=F3u8l12T7i1wa5vz4VQOIMOj40AUXc6G7TeBT2r7LrKiIp8Cu9GPL4sEEull5USmzY
+         cX/NKqrQBX6iI7wQ9rmU00QKhNx9p75nr0/lPefFCjxIMpsnpF0S0IpmP/txPbEH4Mpr
+         YPHhYzGH3DNA0b6fXz5g5VexU+gZJ4UggufPqGb5p72KxSPdkYSaZjMY0HOffvbeFaPR
+         fCOTCsxWEMiWgJ4Sqs5LWxNV2i9nWrvMU9XHEnv5HBVKSnp4XlSEROJAHwqKNFQRT41l
+         g/CcJ+SBx9RNdiFzL6lvdTeR69lzK8ftGE7PNlBoNtHm/whUQtImQFOuQianz6Itu5JJ
+         yKxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681246001;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Po1MCvCf5OQxV9nwlMwg/r9Glz6To+YmkbTBIFPIgs0=;
-        b=UzRPITfUQ6HYQfiGCT8zDCS9QmCUGii5vz8J0OgxnCF4MN8uADV2KzkSBHoHYUNIWV
-         DNqvt+YptAr5CBKydFUK46kdQJJrBQi4Vj6bxo+jB/YGWQ30Vwog8HzOmKAT8G86kaq2
-         s7r41OtJpzDvZIlo7QhFLL2Xf7lxYv/TZP8zLD52nDUTMlwEAPft6u4uUPdiF4g+FTHg
-         bBygErGQKynHiOXsrw8Emb7EYRNb7vwxcTgRB4e3XKEE7efRpU9PY34uKwwVWgnmtde0
-         kRLRbgBFezBJAeIRtGUzDQdTnvvMF9tfermPMgdQ7ZPO4/82RRzjUTDdpoU1OA2GYAaH
-         vQKg==
-X-Gm-Message-State: AAQBX9edMGceeW7j8aiyc/gYu6sox3eS1ZX+vKPxaasVt1wTw+N7W06V
-        S9Ow6GiZp6qMI+axkAwjym9LJNAwWQoXB24qpMPl8Q==
-X-Google-Smtp-Source: AKy350YMuCQT9UcSmIL1nhQvQq2Ll1FqF/WxgWvjJpN6Rile4v8m1nTnvcOubzCK97qgvWJYmwW7yO33QW3BU/M4WOQ=
-X-Received: by 2002:a25:df4a:0:b0:b8b:eda6:27c7 with SMTP id
- w71-20020a25df4a000000b00b8beda627c7mr7883592ybg.4.1681246001137; Tue, 11 Apr
- 2023 13:46:41 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1681246242; x=1683838242;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=90ZS3RARJn1pbosQkkwGD6uVjXJlR/yMXJuGr/i+428=;
+        b=YyY2rRXxR9ivo6WAO1VFARDu/OGmxc07heRhXKLt8dc0KZ70+iSfwWCgODIi1VHqJI
+         th/H0N7DcjO5Fqm7sJ3Ie33VGOSasc9UKxnKcE8kbMEessoHt8GK2sJcQMsz/EdEqof6
+         P+gDxpC7/ye18/uVL4uZjKw1M0/SMgMoFnh4y2DDzFfpeggLDAoq5L5ptGozNXE6iDOC
+         0IKitJtRoYhcPauE2BhPns642ouqgicVqkPVlUyNBME73clnOVSBAUqsXPTUj68jygf+
+         mC19fdJfSVcw/OBukOZNiJfmledwG/+SeOkhLuqZIZJGpoN+Swap7lN2ylXYYm50y1C+
+         D3lg==
+X-Gm-Message-State: AAQBX9c5Gh6zlWCATWqsOw1ud6etIA3KTRms5w71knZe2PXe1+2jsztY
+        Xw/dzzWQD21M416wP/lJwXLXvg==
+X-Google-Smtp-Source: AKy350ZS21K7AikZG9EHCozWg6+zhROxDkhWHtGf+2xSC4asYa679e1dqtlvlD90zpgF6GjEG0JXEw==
+X-Received: by 2002:a81:5b89:0:b0:543:1dc1:828b with SMTP id p131-20020a815b89000000b005431dc1828bmr11398781ywb.33.1681246242008;
+        Tue, 11 Apr 2023 13:50:42 -0700 (PDT)
+Received: from fedora (69-109-179-158.lightspeed.dybhfl.sbcglobal.net. [69.109.179.158])
+        by smtp.gmail.com with ESMTPSA id j19-20020a25d213000000b00b7767ca7487sm3886829ybg.36.2023.04.11.13.50.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Apr 2023 13:50:41 -0700 (PDT)
+Date:   Tue, 11 Apr 2023 14:36:23 -0400
+From:   William Breathitt Gray <william.gray@linaro.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v3 1/2] gpio: 104-dio-48e: Implement struct dio48e_gpio
+Message-ID: <ZDWopwozNjFg/9NX@fedora>
+References: <cover.1679323449.git.william.gray@linaro.org>
+ <ca710d14a710fee44f7911f2a84b6a55570561ee.1679323449.git.william.gray@linaro.org>
+ <571b4df1-91ea-481c-9797-842974dfa922@sirena.org.uk>
 MIME-Version: 1.0
-References: <20230411134932.292287-1-korneld@chromium.org>
-In-Reply-To: <20230411134932.292287-1-korneld@chromium.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 11 Apr 2023 22:46:30 +0200
-Message-ID: <CACRpkdbJxU_Z=Zyc+y1mYW+D6gnqBrzMYph1DMiZKsBsGtBGJQ@mail.gmail.com>
-Subject: Re: [PATCH] Revert "pinctrl: amd: Disable and mask interrupts on resume"
-To:     =?UTF-8?Q?Kornel_Dul=C4=99ba?= <korneld@chromium.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        upstream@semihalf.com, rad@semihalf.com, mattedavis@google.com,
-        Gong Richard <richard.gong@amd.com>,
-        Mario Limonciello <mario.limonciello@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="U8bW8/8WuuNm+L45"
+Content-Disposition: inline
+In-Reply-To: <571b4df1-91ea-481c-9797-842974dfa922@sirena.org.uk>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Apr 11, 2023 at 3:49=E2=80=AFPM Kornel Dul=C4=99ba <korneld@chromiu=
-m.org> wrote:
 
-> This reverts commit b26cd9325be4c1fcd331b77f10acb627c560d4d7.
->
-> This patch introduces a regression on Lenovo Z13, which can't wake
-> from the lid with it applied; and some unspecified AMD based Dell
-> platforms are unable to wake from hitting the power button
->
-> Signed-off-by: Kornel Dul=C4=99ba <korneld@chromium.org>
+--U8bW8/8WuuNm+L45
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Patch applied for fixes, pushing for linux-next and will then relay
-this to Torvalds.
+On Tue, Apr 11, 2023 at 09:23:55PM +0100, Mark Brown wrote:
+> On Mon, Mar 20, 2023 at 10:50:15AM -0400, William Breathitt Gray wrote:
+> > A private data structure struct dio48e_gpio is introduced to facilitate
+> > passage of the regmap and IRQ mask state for the device to the callback
+> > dio48e_handle_mask_sync(). This is in preparation for the removal of the
+> > handle_mask_sync() map parameter in a subsequent patch.
+>=20
+> What's the story with this patch?
 
-Yours,
-Linus Walleij
+Currently dio48e_handle_mask_sync() uses the map argument in its
+implementation. Once the map parameter is removed, the current
+implementation of dio48e_handle_mask_sync() will no longer build, so we
+must adjust the implementation to no longer depend on map.
+
+The reason for this particular patch is to keep the reimplementation of
+dio48e_handle_mask_sync() separate so that the handle_mask_sync() map
+parameter removal patch is simple. This keeps the git history clear
+and allows us to address any possible regressions to 104-dio-48e
+separately without affecting the handle_mask_sync() API.
+
+William Breathitt Gray
+
+--U8bW8/8WuuNm+L45
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZDWopwAKCRC1SFbKvhIj
+K/klAP0RkCm4BErLS4tTTLEWJk3HbRLesstQCvHYBOJikpHA4AD/VLLCn37yeW5D
+2v1D9rFD2XkEGF5lvJTWppJl4zQnPgs=
+=rYW8
+-----END PGP SIGNATURE-----
+
+--U8bW8/8WuuNm+L45--
