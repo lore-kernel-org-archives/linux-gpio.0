@@ -2,139 +2,79 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD97C76196
-	for <linux-gpio@archiver.kernel.org>; Tue, 11 Apr 2023 07:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9441EC77B72
+	for <linux-gpio@archiver.kernel.org>; Tue, 11 Apr 2023 08:23:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbjDKHTk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 11 Apr 2023 03:19:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40356 "EHLO
+        id S230411AbjDKIXz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 11 Apr 2023 04:23:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229990AbjDKHTO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Apr 2023 03:19:14 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B57B2D5F;
-        Tue, 11 Apr 2023 00:19:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1681197545; x=1712733545;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cZXvDbQl28WDJ14V+pbr3auBRhAtraEXByP7krH+22w=;
-  b=OH5n7I0xofBq6b92yFit7gh4J3F5VOfyRTzTFbgdbYHaChOAYkpCUqaf
-   pPqK2I20kQfDQ6IqPlxLQSnxJUJHMrEYLTC0UoVMt8Tt9ZWy5qziiFBDs
-   bJr1gVs726a1X8+laQPGi/7Wns19G0hnhESJUeEoktAUuShroUyrDnk3F
-   wBp71Vhbw7GG6KQyX45Fp/dEfUDWQnmtlv1mLQuC7cKhLJ3wziBSHDybs
-   icZnic1Bu4BEVIDDOhcC+r+l14K+/pTC00MmBJft4fP901PawL+BqwAXn
-   AowmFP5JDDWJKpLj05sO2TL24F0eXKOIOzJzJHMmzZKstFwsa/FsQpzxx
-   A==;
-X-IronPort-AV: E=Sophos;i="5.98,336,1673910000"; 
-   d="scan'208";a="30238425"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 11 Apr 2023 09:19:03 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Tue, 11 Apr 2023 09:19:03 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Tue, 11 Apr 2023 09:19:03 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1681197543; x=1712733543;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cZXvDbQl28WDJ14V+pbr3auBRhAtraEXByP7krH+22w=;
-  b=mHqLQAIIzETjpZruemlbNjCIUNhvXfYXusdx26zUGGBneQUQbsVA2ii2
-   pSpKYbrf3XGr2QuLZntqHTIHjE4qIxlSFIw9MRNPnoFnhJWT9gf1MmZtJ
-   qiWTtG9Q13uFbB2TD74+VBqrUUpxL92AaiVECzNa6+6vWXsPfmCScxedC
-   ea2+W7Nv5u43AvA/PtPCsSuhc+Eix4KvodlM0KWPszi693gORbI9UYDgy
-   jc/gKJEedDm6u5gSkQDD4agJUAsgae4pQBsc7NID6TIYXVd98u8eAxTeb
-   lIAWMW6gUrg7aJa2ogPi9eSUISXbSR7/3dAI0bvQsUuAjlnuXA0PLRpjx
-   g==;
-X-IronPort-AV: E=Sophos;i="5.98,336,1673910000"; 
-   d="scan'208";a="30238424"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 11 Apr 2023 09:19:02 +0200
-Received: from steina-w.localnet (unknown [10.123.53.21])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        with ESMTP id S230334AbjDKIXg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Apr 2023 04:23:36 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC4A330D6;
+        Tue, 11 Apr 2023 01:22:20 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id A6132280072;
-        Tue, 11 Apr 2023 09:19:02 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     andy.shevchenko@gmail.com
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id C97A466031E9;
+        Tue, 11 Apr 2023 09:22:17 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1681201339;
+        bh=hvRLTruikuzHoGIAziMiEYGR8Or1q+1dehgCP7XVjVQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=is+TzxSxRy6Qy2649H3i4F1Dihqygvu9Lwy1R/C5+F1F4ZjBj/+wVssxtH3tWUhxe
+         fxoIbU6RU15oDJDVXSB0m897UTWeXAUBgWGcY6CnexyR1bgmikJWmCgJlM82s5MSGX
+         j6S7VSciCZ06l13HuIfBmewhwj0VzGfSoAIY8RMS8F7NblZUwpFx7I9erZBAqMcoqc
+         sOSFBGO/L3lmSfDUOXiF47u4MKfgmIgJMkIzFqc+hbKBup7f9QbCUAEVBxuzxxTMl5
+         5JqkETcWEuLmCjQy2jIp15oOvbeFJAntf/O8fyzdasJs6h6zkyxNE1WqmV+sEzOh4b
+         DrWwHOckVZUPw==
+Message-ID: <b968a3f6-1aba-fc72-a2fc-1b0d7944b07c@collabora.com>
+Date:   Tue, 11 Apr 2023 10:22:14 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v5 05/12] arm64: dts: mediatek: add mt6357 PMIC support
+ for mt8365-evk
+Content-Language: en-US
+To:     Alexandre Mergnat <amergnat@baylibre.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v1 0/3] gpio: Add gpio-delay support
-Date:   Tue, 11 Apr 2023 09:19:01 +0200
-Message-ID: <3231223.aeNJFYEL58@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <ZDBnnKy7QF0KZuZd@surfacebook>
-References: <20230406093344.917259-1-alexander.stein@ew.tq-group.com> <ZDBnnKy7QF0KZuZd@surfacebook>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Wenbin Mei <wenbin.mei@mediatek.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Zhiyong Tao <zhiyong.tao@mediatek.com>,
+        =?UTF-8?Q?Bernhard_Rosenkr=c3=a4nzer?= <bero@baylibre.com>
+Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-mmc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Amjad Ouled-Ameur <aouledameur@baylibre.com>
+References: <20230203-evk-board-support-v5-0-1883c1b405ad@baylibre.com>
+ <20230203-evk-board-support-v5-5-1883c1b405ad@baylibre.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230203-evk-board-support-v5-5-1883c1b405ad@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Andy,
+Il 07/04/23 14:59, Alexandre Mergnat ha scritto:
+> This power management system chip integration helps to manage regulators
+> and keys.
+> 
+> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 
-Am Freitag, 7. April 2023, 20:57:32 CEST schrieb andy.shevchenko@gmail.com:
-> Thu, Apr 06, 2023 at 11:33:41AM +0200, Alexander Stein kirjoitti:
-> > Hello everyone,
-> >=20
-> > thanks for the feedback I've received. This is the first non-RFC series
-> > for
-> > adressing a platform specific ramp-up/ramp-down delay on GPIO outputs.
-> >=20
-> > Changes compared to RFC v2 are mentioned in each patch.
->=20
-> Reading the (poor?) documentation does not clarify the use case.
-> Looking at them I think that this is can be implemented as debounce.
-
-Debounce for GPIOs? There is nothing like that yet.
-
-> Also I have no clue why it's so important that we _need_ to have a
-> driver for this. We have plenty of consumer drivers that implement
-> delays on ramping up or down or whatever if they need.
-
-But this delay I am dealing with is actually not consumer dependent, e.g. a=
-=20
-power-on delay specified in a datasheet. Instead this driver deals with a=20
-platform-specific curiosity, e.g. RC-circuit on an open-drain output. So th=
-is=20
-is something which sits inbetween ICs.
-In the RFC we came to the conclusion to not adjust (each) consumer to deal=
-=20
-with this, given this will be rarely used. Instead provide a generic way fo=
-r=20
-specifying this delay.
-
-> Which part(s) did I got wrong?
-
-Maybe there needs to be an explicit example in the bindings document what's=
-=20
-the actual issue to deal with.
-Right now if a GPIO is set, it is expected the signal on the receiver side =
-has=20
-changed as well within a negligible time as well. But due to external reaso=
-ns=20
-(see RC_curcuit above) the change on the receiver side can occur much later=
-,=20
->100ms in my case.
-
-Best regards,
-Alexander
-
-> P.S. Are we going to have a _driver_ per each subtle feature like this?
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
