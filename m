@@ -2,70 +2,118 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D70B9C77B61
-	for <linux-gpio@archiver.kernel.org>; Thu, 13 Apr 2023 22:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A725EC77B6E
+	for <linux-gpio@archiver.kernel.org>; Thu, 13 Apr 2023 23:18:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230033AbjDMWVT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 13 Apr 2023 18:21:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42422 "EHLO
+        id S230411AbjDMXSR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 13 Apr 2023 19:18:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230034AbjDMWVS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Apr 2023 18:21:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2791D26BE;
-        Thu, 13 Apr 2023 15:21:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B3CE26097C;
-        Thu, 13 Apr 2023 22:21:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0C3C8C4339B;
-        Thu, 13 Apr 2023 22:21:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681424477;
-        bh=0rrr7OdSB9qE/D5AdQXC5z3zw4NJw/nKCU+KXyu3Z/M=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=VE+wT2xQPlVha5tPRejIf99t3E8olk45TWRwgDSArwzo9t9JTFWgW7wb3BQJBvzUs
-         QBy5DC8UMtLnZvuFse3IIoS0g6V5Gu5YyJXyJhBiNAFLX9x29j+jU5XDP4u3EToJKl
-         OuJLM+Sq69QJIg+VD48taOb6pflL2lKvQjpHXK8OHDtL7A2BLeD3aAUAbR3b5pfmeA
-         zr1t6T0Y/om80ck3W3ClMs1FXBAL6Ig8hbBLlIYCL8Fpu3csAk6YA/0DcAujrOCeMa
-         E1GMWFvdr0j4CK2yyEmFzxvuBxuSvk/cUpVu6QtyAFyAlfauIoRLXmcG653z4awlC/
-         m/D2voeavzR5Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EE692E29F3B;
-        Thu, 13 Apr 2023 22:21:16 +0000 (UTC)
-Subject: Re: [GIT PULL] Pin control fix for AMD laptops
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdZsoGihp-cVVKTMPFBPBj_7_ScaYJZFU6jZNugucyx3qg@mail.gmail.com>
-References: <CACRpkdZsoGihp-cVVKTMPFBPBj_7_ScaYJZFU6jZNugucyx3qg@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdZsoGihp-cVVKTMPFBPBj_7_ScaYJZFU6jZNugucyx3qg@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.3-3
-X-PR-Tracked-Commit-Id: 534e465845ebfb4a97eb5459d3931a0b35e3b9a5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 531f27ad5e3a85128a9668c9063c58fc35d4e89b
-Message-Id: <168142447696.24378.12217055712296399050.pr-tracker-bot@kernel.org>
-Date:   Thu, 13 Apr 2023 22:21:16 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Kornel_Dul=C4=99ba?= <korneld@chromium.org>
+        with ESMTP id S229820AbjDMXSR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Apr 2023 19:18:17 -0400
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C908BE1;
+        Thu, 13 Apr 2023 16:18:15 -0700 (PDT)
+Received: from [192.168.178.23] (unknown [62.108.10.64])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 24979D0C50;
+        Thu, 13 Apr 2023 23:18:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1681427894; bh=4Q57cOxz+lYlEwmm+I38ufedAPx45aCnfTXWfnz7tmk=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc;
+        b=f7MmPelu/Wcs3poFCFUUu097g5/9nFwaDFVTgboDcju6vZdRrKVGG9m9gJnjgvbeZ
+         uJPFt2bPIJd4j9eMdhzrZT+ic2amVkoK8G73P9taVa3Ltab9jLJaNKlZE2YNa/esEe
+         JUxPDoOyOYgox8zDypDP7fbzGlTENRL9DdA+Cx90=
+From:   Luca Weiss <luca@z3ntu.xyz>
+Date:   Fri, 14 Apr 2023 01:17:48 +0200
+Subject: [PATCH 4/8] leds: qcom-lpg: Add support for PMI632 LPG
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230414-pmi632-v1-4-fe94dc414832@z3ntu.xyz>
+References: <20230414-pmi632-v1-0-fe94dc414832@z3ntu.xyz>
+In-Reply-To: <20230414-pmi632-v1-0-fe94dc414832@z3ntu.xyz>
+To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-iio@vger.kernel.org,
+        Luca Weiss <luca@z3ntu.xyz>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1771; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=4Q57cOxz+lYlEwmm+I38ufedAPx45aCnfTXWfnz7tmk=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkOI2w4ji/JSdN8pwMAx9rdvdxYBMkGFfcSN6T+
+ RbXbb6fs16JAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZDiNsAAKCRBy2EO4nU3X
+ Vu5xEACAExu0wzlBGq2iCUgTIGmn2DnQNk7ea59TuiJ2A0KhXIDascR0hbVtdKLJbEV1YNR813D
+ FcuEOBioCmY+yMNpnm0RvBnbM1GMQH98Q4vCyxc79RD5itEFQAMmezyjlrohgBRXctoZxFrc9K4
+ FxWyf267gY2rOYEmplFo6bUD+qNfnzDySEV1K0a/6Y/RLHzt8vh7YwS7I7R/6O5xY6m+eiYDxSE
+ VGsNAfd965WGdmXhCrrAI/VmrC6A7gwgKs01Xm7f4qulWROck+O6UwIi/AqD8DnO6AYvD9bYoGV
+ rnf3J7ZvymqNX2ab21zlEZFNAoB18i4Ni57gV28Wijfaif1CFTeLM2NCX3zYYImtnlzGxwZkBKB
+ ZTaclMDPVEgYHAkMVVHPwm0skb5Wu8r6yd4gaRhPbqJnwO31CKqyp5K36tONqEcKKgo1E9TofiE
+ +FsHqY4QhoF1hw6OoPW9UguFDekvst6yR55tpGhfShND4HHTGgQqKtUr/MuD2x8sYUYq3+TCPxa
+ rDNXprHv9j9gvem0nggjUiMcq6fidHdXdE6ReBdk6AwK+hn3MMWQgBT3k1tXN2uIS637eCWwv8n
+ 1S8rlmTTXLn/C7qilIcv9VNkEHSgiQr73X3s5vXgxyjc1kxUU8RRttmujZuH1UqPOlxdNa2Tbzf
+ EJPEzySAQu1fyQQ==
+X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Thu, 13 Apr 2023 22:09:58 +0200:
+The PMI632 PMIC contains 5 PWM channels, 3 of which can be used for
+LEDs.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.3-3
+For the LED pattern it doesn't have LUT like other PMICs but uses SDAM
+instead. This is not currently implemented in the driver but since LPG
+works fine without it, add support for the PMIC now.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/531f27ad5e3a85128a9668c9063c58fc35d4e89b
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+---
+ drivers/leds/rgb/leds-qcom-lpg.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Thank you!
+diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
+index 67f48f222109..51763ecb8c1e 100644
+--- a/drivers/leds/rgb/leds-qcom-lpg.c
++++ b/drivers/leds/rgb/leds-qcom-lpg.c
+@@ -1353,6 +1353,20 @@ static const struct lpg_data pm8994_lpg_data = {
+ 	},
+ };
+ 
++/* PMI632 uses SDAM instead of LUT for pattern */
++static const struct lpg_data pmi632_lpg_data = {
++	.triled_base = 0xd000,
++
++	.num_channels = 5,
++	.channels = (const struct lpg_channel_data[]) {
++		{ .base = 0xb300, .triled_mask = BIT(7) },
++		{ .base = 0xb400, .triled_mask = BIT(6) },
++		{ .base = 0xb500, .triled_mask = BIT(5) },
++		{ .base = 0xb600 },
++		{ .base = 0xb700 },
++	},
++};
++
+ static const struct lpg_data pmi8994_lpg_data = {
+ 	.lut_base = 0xb000,
+ 	.lut_size = 24,
+@@ -1436,6 +1450,7 @@ static const struct of_device_id lpg_of_table[] = {
+ 	{ .compatible = "qcom,pm8916-pwm", .data = &pm8916_pwm_data },
+ 	{ .compatible = "qcom,pm8941-lpg", .data = &pm8941_lpg_data },
+ 	{ .compatible = "qcom,pm8994-lpg", .data = &pm8994_lpg_data },
++	{ .compatible = "qcom,pmi632-lpg", .data = &pmi632_lpg_data },
+ 	{ .compatible = "qcom,pmi8994-lpg", .data = &pmi8994_lpg_data },
+ 	{ .compatible = "qcom,pmi8998-lpg", .data = &pmi8998_lpg_data },
+ 	{ .compatible = "qcom,pmc8180c-lpg", .data = &pm8150l_lpg_data },
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.40.0
+
