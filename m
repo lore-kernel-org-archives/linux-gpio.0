@@ -2,35 +2,34 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9242DC7EE29
-	for <linux-gpio@archiver.kernel.org>; Thu, 13 Apr 2023 23:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1283C7EE2C
+	for <linux-gpio@archiver.kernel.org>; Thu, 13 Apr 2023 23:18:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231161AbjDMXSX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 13 Apr 2023 19:18:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49970 "EHLO
+        id S229708AbjDMXSY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 13 Apr 2023 19:18:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230495AbjDMXST (ORCPT
+        with ESMTP id S230506AbjDMXST (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Apr 2023 19:18:19 -0400
 Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0BE1BE;
-        Thu, 13 Apr 2023 16:18:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FE41E9;
+        Thu, 13 Apr 2023 16:18:18 -0700 (PDT)
 Received: from [192.168.178.23] (unknown [62.108.10.64])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 6862BD0C51;
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 022C8D0C53;
         Thu, 13 Apr 2023 23:18:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1681427894; bh=FCBw8XDNRhE4YdMQX9/OeTPh8F87PXGZsKt/roj2lZA=;
+        t=1681427895; bh=7RMg8Ln4xlJYycH7FzafrbQEIQWc5NsSasFf9SDAdbY=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc;
-        b=ElRyy3/eGjLjnPL9epuoPuvJamXadHbyXW9hsax22PdmfysDyA4OxOi48PZfQZhXE
-         oTseleVrDue0VWBqM3etXSHC9KoUhgMl6lrUwynII7N4fbIHDfZoCYsFq9bI4CjPSG
-         o/tN0hkw7IeHbPRjUxMZsQ0nA1J8Twuv1v8rqOok=
+        b=VDyx9eHqp2JLgDZHucvkJZ8JEIx/wjkgPsbQP9A2Is1bTrImgZYGVLo9QXbpxUiwT
+         mbQ8JnSYIoVLy5vnUipo+gNOa+8MNTWIJSBVU1S2/QSzq/oXtTV6gXC5WTLdZgwD1Q
+         aK0A733OUwwMn6sBkQKw/PP2p15UEaB3d0KXE5Uc=
 From:   Luca Weiss <luca@z3ntu.xyz>
-Date:   Fri, 14 Apr 2023 01:17:49 +0200
-Subject: [PATCH 5/8] dt-bindings: iio: adc: qcom,spmi-vadc: Allow 1/16 for
- pre-scaling
+Date:   Fri, 14 Apr 2023 01:17:51 +0200
+Subject: [PATCH 7/8] arm64: dts: qcom: Add PMI632 PMIC
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230414-pmi632-v1-5-fe94dc414832@z3ntu.xyz>
+Message-Id: <20230414-pmi632-v1-7-fe94dc414832@z3ntu.xyz>
 References: <20230414-pmi632-v1-0-fe94dc414832@z3ntu.xyz>
 In-Reply-To: <20230414-pmi632-v1-0-fe94dc414832@z3ntu.xyz>
 To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
@@ -49,47 +48,205 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-leds@vger.kernel.org, linux-iio@vger.kernel.org,
         Luca Weiss <luca@z3ntu.xyz>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=907; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=FCBw8XDNRhE4YdMQX9/OeTPh8F87PXGZsKt/roj2lZA=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkOI2xbIPcdKZh9IQXKUO+TxGTsdPhQSARWauW8
- Ej3E04fojKJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZDiNsQAKCRBy2EO4nU3X
- Vi8ZD/9dRAJu9zCMylW34QTtL3TnwNl+kPTu/AcQwhYsqwJ/R6JlAVQ1yYk/jFOjpm7Li26+4AH
- BuVTQk/Rnc9lLE82C3GhZuW3juTiTOcGAzrANhaYVB/qoVmxmnAmYwypxV7nvSF6i+eeNpM07rk
- GCNHvQ8q2TPLSse+oFNk2vU5IEnXiCHIDbvvXRe/Ua/jWF21DCRiqDHw1n82BbIJhZu/BBwNtsU
- kd690cgY/5sYpdvvNrTl6Av31+XZbnjSm5WXKG9Wy27USIQHRhHMNipm/fLVTcBmYgx4Ktz+QQq
- 7nRDKLG4vNSQi/sqTK6DfG0r6NBvPK+XGJwyOGRonC76oSPf9SOwBUSOfzSke9Vbdzjn+KRoFoM
- hVyf1dAUgjMHYX7SrbJDAzAMpX4lFeGo/24z+hFf5YcDNlmgStiV8Y8t0+fWed97BRanni93HfT
- KJy2ywoxzng7sUW8SonyAXGSL/R4Bd/70stichwVYGXVsySlT0c6ui2t8XdAKJkdGfLkFvAmat7
- TIbFIA2EOoyNUkYqj+yw6/VLdQZ6b2vFsnf8m8EUEJwz28wGYWTA/KEv/Z48nkrQiRdIC6wV0Iv
- WaqRNBUZbEt0aCTZLgt1Je0BlnO6I4yDeDgNDCc0xuPTw+KzKUl1e/cgauUzu5EeIYA5DeVw9eK
- wB+viIhCkaZoyqQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4010; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=7RMg8Ln4xlJYycH7FzafrbQEIQWc5NsSasFf9SDAdbY=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkOI2zgSdTjIHoYDRO6LPIjBzipUFmmwaiQ01xu
+ 8mIbAmYk2iJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZDiNswAKCRBy2EO4nU3X
+ VrD7D/0TwQSNwSmG8BtNzuPejs0b6YeW84OrTUQJaZ3PetXVW9pG5R+Tdbj/WlfrfHlwqqExhjV
+ GKE+36+onsSOHACTkd9AD386ir0Svh6mOyYo/sdPWVSEJjxL+mhjPv0RYh0EJD0kadjPL8bxXbi
+ iLm1N0y1n1g6ZntjlLGQRxekfccAUGJXhfMsjYnEOE+LXVLcNjW3ziSTqr2RhhRizmeFatDI/84
+ UvZ9BkpUyWGzvSZp6kescihcHbdo/S3iPImXhzoalMOIdGt9OBR3+fC1+6AoQG/4FJxN+mw5R6s
+ nIaSY6ViADK7gw++aR0MKfoIwdRMuXY82UQ9yBmIQFgoeh+7h4sAtNm7RL1z20jsmkZsJ3HK0DK
+ HteVxKnzSTtETiuziiOlVeQeRYS0c4XSHWLbswWY9F1Rr0RwigcaqOw8pguAsGR3kq7HLuG0oms
+ KjvDDCeZG/M7Jyk9aXKcIhWqvEfDvIe11pEuc6i8OZvbFmukGOUB0EDa09f6oOzKAgDQz1RmRkY
+ apQJZGBlOC4Xe7wfplG6KN1niBWkfJONARZNwWJZVKOp1q1IDqGZiiug4GyQVRC/JMWTTNOkbGS
+ 7HywTX5Rp36yWFWbUfxgi7jMEKalqrmUXXAtQU3SXFAgU4c9340T4L/kF8Tvjfbq4Nd4UaE2Oaz
+ zogZINs/jPcUkYg==
 X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
  fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The channel ADC5_USB_IN_V_16 is using 1/16 pre-scaling on at least
-pm7250b and pmi632. Allow that in the schema.
+The PMI632, commonly found on SoCs with SDM632 has various standard
+functions like ADC, GPIOs, LPG and more.
 
 Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
 ---
- Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/pmi632.dtsi | 165 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 165 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
-index bd6e0d6f6e0c..365aa3528a87 100644
---- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
-@@ -101,7 +101,7 @@ patternProperties:
-         oneOf:
-           - items:
-               - const: 1
--              - enum: [ 1, 3, 4, 6, 20, 8, 10 ]
-+              - enum: [ 1, 3, 4, 6, 20, 8, 10, 16 ]
-           - items:
-               - const: 10
-               - const: 81
+diff --git a/arch/arm64/boot/dts/qcom/pmi632.dtsi b/arch/arm64/boot/dts/qcom/pmi632.dtsi
+new file mode 100644
+index 000000000000..4eb79e0ce40a
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/pmi632.dtsi
+@@ -0,0 +1,165 @@
++// SPDX-License-Identifier: BSD-3-Clause
++/*
++ * Copyright (C) 2023 Luca Weiss <luca@z3ntu.xyz>
++ */
++
++#include <dt-bindings/iio/qcom,spmi-vadc.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/spmi/spmi.h>
++
++/ {
++	thermal-zones {
++		pmi632-thermal {
++			polling-delay-passive = <100>;
++			polling-delay = <0>;
++
++			thermal-sensors = <&pmi632_temp>;
++
++			trips {
++				trip0 {
++					temperature = <95000>;
++					hysteresis = <0>;
++					type = "passive";
++				};
++
++				trip1 {
++					temperature = <115000>;
++					hysteresis = <0>;
++					type = "hot";
++				};
++
++				trip2 {
++					temperature = <125000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++			};
++		};
++	};
++};
++
++&spmi_bus {
++	pmic@2 {
++		compatible = "qcom,pmi632", "qcom,spmi-pmic";
++		reg = <0x2 SPMI_USID>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		pmi632_temp: temp-alarm@2400 {
++			compatible = "qcom,spmi-temp-alarm";
++			reg = <0x2400>;
++			interrupts = <0x2 0x24 0x0 IRQ_TYPE_EDGE_BOTH>;
++			#thermal-sensor-cells = <0>;
++		};
++
++		pmi632_adc: adc@3100 {
++			compatible = "qcom,spmi-adc5";
++			reg = <0x3100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			#io-channel-cells = <1>;
++			interrupts = <0x2 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
++
++			channel@0 {
++				reg = <ADC5_REF_GND>;
++				qcom,pre-scaling = <1 1>;
++				label = "ref_gnd";
++			};
++
++			channel@1 {
++				reg = <ADC5_1P25VREF>;
++				qcom,pre-scaling = <1 1>;
++				label = "vref_1p25";
++			};
++
++			channel@6 {
++				reg = <ADC5_DIE_TEMP>;
++				qcom,pre-scaling = <1 1>;
++				label = "die_temp";
++			};
++
++			channel@7 {
++				reg = <ADC5_USB_IN_I>;
++				qcom,pre-scaling = <1 1>;
++				label = "usb_in_i_uv";
++			};
++
++			channel@8 {
++				reg = <ADC5_USB_IN_V_16>;
++				qcom,pre-scaling = <1 16>;
++				label = "usb_in_v_div_16";
++			};
++
++			channel@9 {
++				reg = <ADC5_CHG_TEMP>;
++				qcom,pre-scaling = <1 1>;
++				label = "chg_temp";
++			};
++
++			channel@4b {
++				reg = <ADC5_BAT_ID_100K_PU>;
++				qcom,hw-settle-time = <200>;
++				qcom,pre-scaling = <1 1>;
++				qcom,ratiometric;
++				label = "bat_id";
++			};
++
++			channel@83 {
++				reg = <ADC5_VPH_PWR>;
++				qcom,pre-scaling = <1 3>;
++				label = "vph_pwr";
++			};
++
++			channel@84 {
++				reg = <ADC5_VBAT_SNS>;
++				qcom,pre-scaling = <1 3>;
++				label = "vbat_sns";
++			};
++		};
++
++		pmi632_adc_tm: adc-tm@3500 {
++			compatible = "qcom,spmi-adc-tm5";
++			reg = <0x3500>;
++			interrupts = <0x2 0x35 0x0 IRQ_TYPE_EDGE_RISING>;
++			#thermal-sensor-cells = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		pmi632_sdam_7: nvram@b600 {
++			compatible = "qcom,spmi-sdam";
++			reg = <0xb600>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0 0xb600 0x100>;
++		};
++
++		pmi632_gpios: gpio@c000 {
++			compatible = "qcom,pmi632-gpio", "qcom,spmi-gpio";
++			reg = <0xc000>;
++			gpio-controller;
++			gpio-ranges = <&pmi632_gpios 0 0 8>;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++	};
++
++	pmic@3 {
++		compatible = "qcom,pmi632", "qcom,spmi-pmic";
++		reg = <0x3 SPMI_USID>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		pmi632_lpg: pwm {
++			compatible = "qcom,pmi632-lpg";
++
++			#address-cells = <1>;
++			#size-cells = <0>;
++			#pwm-cells = <2>;
++
++			status = "disabled";
++		};
++	};
++};
 
 -- 
 2.40.0
