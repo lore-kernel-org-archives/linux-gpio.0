@@ -2,145 +2,148 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A32C77B78
-	for <linux-gpio@archiver.kernel.org>; Thu, 13 Apr 2023 23:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCECC77B6E
+	for <linux-gpio@archiver.kernel.org>; Fri, 14 Apr 2023 00:45:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbjDMXgp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 13 Apr 2023 19:36:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60122 "EHLO
+        id S229716AbjDNApM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 13 Apr 2023 20:45:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229640AbjDMXgo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Apr 2023 19:36:44 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A12881727
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Apr 2023 16:36:42 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id i6so9552069lfp.1
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Apr 2023 16:36:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681429001; x=1684021001;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r9ajKjdjmVKYZR0o2RYS00gCwWXzx+OByS0IkZ5vWrg=;
-        b=SVEjyBOGaxj1mckia8+8F4tBz1UaxMbdTgcRhw3El6pgcSSVVULIgBzGaISjFEobmy
-         7Op5etGGtc7DIeL/p/C9F6/9iiyv5+0EMT9PawHnseed2spJ62pcQR3F6SxwPZVGMPBG
-         JL9uX9mVXLQYa3bK+ZfNJv4rJNlH+EUBJZrT3/ck3yaJWv6py781rpgZrk4w49itUKck
-         GH37nQ5NHr5WAn1z3tlVFiar3bOZrTX55x3zEm1ujXpjmrN46OFDXwhbk/yW0lNg8MST
-         IrLLXnQTT8LFYMmjBLa7Bjuc5fr4PJXga0qXvOHLLFwHTtLglYDWmLGCVrTobGV9oHqW
-         ixxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681429001; x=1684021001;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r9ajKjdjmVKYZR0o2RYS00gCwWXzx+OByS0IkZ5vWrg=;
-        b=hB+0xqAI3fVV/BgABxdg29ECcvIlx+ByW+V6qTvw8DV8azTO9KWv4PxV8VgD6ZCqvX
-         CSCXwEcFQ3Ed9DC6p9qyn/6jIM1AC1IJ7oWcCQV1Aww3wp0CuwhA24sqA0WXCI8kWNtl
-         N4smVR2nD5jg8Y9UaSr3SywjXDEFU7EkzGmwa33FONNJR+EdO+7oYgKTMEiN8mG48UqM
-         4FhAPVd0XeBGB68J2QZf1k8sfMD9EA+KXOeprRsJxCbGY4rdSS84SZGrp82AiFU5P+pD
-         GITXs4mhOVVNidviViZ9QMkIrUCMTn39t5h7Uw4vmlvy0Zhev/me34kaJ9YwYh5iq0tg
-         x1GA==
-X-Gm-Message-State: AAQBX9eSyu/jH8fcqlNbQmXyPsRtP4cSQVCbdpR9PPriy/HzpziWicHr
-        yBQojb/9sMcZrQRaPzPx7XaueA==
-X-Google-Smtp-Source: AKy350Zo99hWzMgWvX+LgY/9CK+7rZVz2nOI2ypxTsltEFwJGq7j79xeqJ8GdXR+H5DJke5A5SynGg==
-X-Received: by 2002:ac2:51a2:0:b0:4de:ca63:b2d2 with SMTP id f2-20020ac251a2000000b004deca63b2d2mr1316274lfk.26.1681429000930;
-        Thu, 13 Apr 2023 16:36:40 -0700 (PDT)
-Received: from [192.168.1.101] (abyl123.neoplus.adsl.tpnet.pl. [83.9.31.123])
-        by smtp.gmail.com with ESMTPSA id i15-20020ac25d2f000000b004e26bd0a533sm510735lfb.288.2023.04.13.16.36.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Apr 2023 16:36:40 -0700 (PDT)
-Message-ID: <96180862-6dbf-77e1-4aca-9a3b9ee39294@linaro.org>
-Date:   Fri, 14 Apr 2023 01:36:38 +0200
+        with ESMTP id S229707AbjDNApL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Apr 2023 20:45:11 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12hn2212.outbound.protection.outlook.com [52.100.166.212])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C10C2691;
+        Thu, 13 Apr 2023 17:45:09 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BR+BFWMiRnUmRx9RK1xc5okFViJREhCmKbIbsRkhgsDLWsuN0RdN0ZNIv5b2ry7IU++bUrO3rXGhbBs6QAHdspmX6V5RMF9tmVcqaNjt54UH6AIa9NfRIHsk1JQRXAypxgmFuHZS96EFweQBGb74DBfNJnb57wVKrhQgTuVR72G7RRsiuO551nKMllJvY2YTtTlKJiBdh5wHdNUbZ/P7tjCryon5Ed6vjJLKyyC2UjKv/qNaXJmcPAK+nSeQpFOzzhBGgpFCK8lH1c8dk8CFg2Qj3hgrT01RUeyhMQPoxLP1GpZaM3nBWGZxeLIUKWZbBgrpu3TySChsRPj8FLjiSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Kx/kpYZ7ir9/y4hkhUOBaWiXie83l6Pngi0Gj/5GgOI=;
+ b=DsliWIUfv75vxeOv2AhWOx4mc8LKRy3D5qs4zFS2oB+/1cZXWcNclXSzrXBOBUwXdkXAIcWqTT5GMXLXWpiysviDAVenlGh6/XbzGd5PvCvn8i8vV0lvfg2R3F6Yc1dNdWuLZ8RC/DRwM1/Av44UxOz4UHFajuEM6xY6FfcUUqjqZiLc7MWcVgUpE+WU/QuFyC6dlLZG+8OrB6NKdM6Q/Jqt+9jZvny5505cYKYLiNH1ys6d9cyUfn7UmRSiQTjRSZ9QzggJrU0MrNssu8wlQrHaNDD5YE6HCAu3O3UVsV9EUPjycamZ97IyX20hhUACVVOmCKislu3D32rDpMdqCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kx/kpYZ7ir9/y4hkhUOBaWiXie83l6Pngi0Gj/5GgOI=;
+ b=hysT+jL55GsRRKNwZ5Bk3AvPRHNJ8iKLFx7x4GG40peGgIaHvS2TpKX9d0nf+mBnzpPo+f+EwaVQr5W0sb4/4s/jRNjk2JpjhlUWRxZuNqSJYar+K1fOhSqv8t9eAlBlvg4wn2qdR5ucXuKCsLkaD7nbbQjK7kDo8I24fkL8rPHoQZ6RML+7lchhJYYSfXnTAZau8QPqztedW4soB2gsLfU9vYcX40r6InBXEpB5r0iLZ02cXlrf9TASaUZKynaZRvmKimcxi2HqchBAZEhJ6+WHtZJL/nQeL+/fyIHs4iwZMVr6QrgFWzX9ULmDg86+GevRZGHIZCCD0h+z2I5VHg==
+Received: from MW4PR04CA0135.namprd04.prod.outlook.com (2603:10b6:303:84::20)
+ by CH3PR12MB8879.namprd12.prod.outlook.com (2603:10b6:610:171::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.30; Fri, 14 Apr
+ 2023 00:45:06 +0000
+Received: from CO1NAM11FT028.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:84:cafe::d7) by MW4PR04CA0135.outlook.office365.com
+ (2603:10b6:303:84::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.32 via Frontend
+ Transport; Fri, 14 Apr 2023 00:45:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CO1NAM11FT028.mail.protection.outlook.com (10.13.175.214) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6298.30 via Frontend Transport; Fri, 14 Apr 2023 00:45:06 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 13 Apr 2023
+ 17:45:00 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Thu, 13 Apr
+ 2023 17:44:59 -0700
+Received: from dipenp.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.986.37 via Frontend
+ Transport; Thu, 13 Apr 2023 17:44:59 -0700
+From:   Dipen Patel <dipenp@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linus.walleij@linaro.org>,
+        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <robh+dt@kernel.org>, <timestamp@lists.linux.dev>,
+        <krzysztof.kozlowski+dt@linaro.org>, <brgl@bgdev.pl>,
+        <corbet@lwn.net>, <gregkh@linuxfoundation.org>
+CC:     Dipen Patel <dipenp@nvidia.com>
+Subject: [V6 4/9] arm64: tegra: Add Tegra234 GTE nodes
+Date:   Thu, 13 Apr 2023 17:44:50 -0700
+Message-ID: <20230414004455.19275-5-dipenp@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230414004455.19275-1-dipenp@nvidia.com>
+References: <20230414004455.19275-1-dipenp@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH 8/8] arm64: dts: qcom: sdm632-fairphone-fp3: Add
- notification LED
-Content-Language: en-US
-To:     Luca Weiss <luca@z3ntu.xyz>, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-iio@vger.kernel.org
-References: <20230414-pmi632-v1-0-fe94dc414832@z3ntu.xyz>
- <20230414-pmi632-v1-8-fe94dc414832@z3ntu.xyz>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230414-pmi632-v1-8-fe94dc414832@z3ntu.xyz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT028:EE_|CH3PR12MB8879:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3edf3882-7daa-461c-ea8d-08db3c817de5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9CZSDJZ1D3MK8f7u5sJD401cNrrnJ0yKWFkn2sl/KMt2s6nmOxC7dmuABY5f67vQQL8sYXe04cnFWzc9I50SEiLH+Bd30Fmx3pxNaqS+432+0gz1iFz8ES9xxpo/lMloOVKU+ol4tJo3vekYaNeW8B34l0KDx+tTIx6UieTJ4cc6EB5datFE13pBT05dD3uPmSKkZQ8eYFdUgz3efckm716H/BX//Ffux0Tnp1svfRaPU/y5MymWE0J6cENjf+nelTy/A11nWTZKVLGX1K/eCUmBZON5OoMQ96/4XcUhoQ4NegSr984PYO1l52FhpAfMYbB7exKHVMJEYTtYrGt75YJtnCOcQAsP1WpMdNifLf4fQfpojz8D17diK+CItoyH5pfFIDzwJKa44Z8NDvUub+1JG9ykmIfzGjbFcpC/acCaJ9UXQIqRHEptJeGWwptTNAZ5eVzyT4Rig3/9ZKpifekEVLcUNKH7bHwMYP5mpSIn1WCVc1BRHXOMa+2gGBtuZuEJhkGDWODOF8ASuHdns6JsGUoE9cO/Df5//c11MvSG3j/PvJ4x0R5rqxTZwFLe1fQS5ZolDHNzwwqRhM+YKyF1hKkr1yekMm2Zn2I9SPxpm3iaZTMafSNA0yB2912cUN0TSEn9Vztq7uCrf38/kyjCnTr0bGwt1W9pWyhtBhFGYqPEKasajkaOKPdMcNu1IZas6oIqgXzePt4g9P+DVNshdgXtpHER8vwdyfXwhkXC/jZNd/BgEc7nkWzOD39pKjblDgaVSmIYroN2k+1Jr8ndJI2BrHrIsVM5GCw9jyQlRHtTqNKGNEIj2A2c68wC0VchOxT4vyRbE6cmDGoiR5wCCLjG0mFHWWVjimEHuSUrJHrrFLfnWVeMRsPtVuag
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(39860400002)(136003)(396003)(376002)(451199021)(5400799015)(36840700001)(40470700004)(46966006)(6666004)(7696005)(40460700003)(4326008)(36756003)(70586007)(70206006)(110136005)(2906002)(7416002)(86362001)(356005)(7636003)(41300700001)(5660300002)(8676002)(8936002)(82740400003)(82310400005)(921005)(316002)(34020700004)(478600001)(40480700001)(1076003)(336012)(26005)(426003)(2616005)(36860700001)(107886003)(186003)(47076005)(83380400001)(83996005)(2101003)(12100799027);DIR:OUT;SFP:1501;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2023 00:45:06.2787
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3edf3882-7daa-461c-ea8d-08db3c817de5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT028.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8879
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Add GTE LIC and AON GPIO nodes for the tegra234 SoC.
 
+Signed-off-by: Dipen Patel <dipenp@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-On 14.04.2023 01:17, Luca Weiss wrote:
-> The phone features a notification LED connected to the pmi632. Configure
-> the RGB led found on it.
-> 
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> ---
->  arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts | 29 +++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-> index 70e683b7e4fc..301eca9a4f31 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-> @@ -4,8 +4,10 @@
->   */
->  /dts-v1/;
->  
-> +#include <dt-bindings/leds/common.h>
->  #include "sdm632.dtsi"
->  #include "pm8953.dtsi"
-> +#include "pmi632.dtsi"
->  
->  / {
->  	model = "Fairphone 3";
-> @@ -83,6 +85,33 @@ &pm8953_resin {
->  	linux,code = <KEY_VOLUMEDOWN>;
->  };
->  
-> +&pmi632_lpg {
-qcom,power-source?
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+index 8fe8eda7654d..54790c6b6a2c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+@@ -1156,6 +1156,14 @@
+ 			clock-names = "fuse";
+ 		};
+ 
++		hte_lic: hardware-timestamp@3aa0000 {
++			compatible = "nvidia,tegra234-gte-lic";
++			reg = <0x0 0x3aa0000 0x0 0x10000>;
++			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			nvidia,int-threshold = <1>;
++			#timestamp-cells = <1>;
++		};
++
+ 		hsp_top0: hsp@3c00000 {
+ 			compatible = "nvidia,tegra234-hsp", "nvidia,tegra194-hsp";
+ 			reg = <0x0 0x03c00000 0x0 0xa0000>;
+@@ -1673,6 +1681,15 @@
+ 			#mbox-cells = <2>;
+ 		};
+ 
++		hte_aon: hardware-timestamp@c1e0000 {
++			compatible = "nvidia,tegra234-gte-aon";
++			reg = <0x0 0xc1e0000 0x0 0x10000>;
++			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
++			nvidia,int-threshold = <1>;
++			nvidia,gpio-controller = <&gpio_aon>;
++			#timestamp-cells = <1>;
++		};
++
+ 		gen2_i2c: i2c@c240000 {
+ 			compatible = "nvidia,tegra194-i2c";
+ 			reg = <0x0 0xc240000 0x0 0x100>;
+-- 
+2.17.1
 
-Konrad
-> +	status = "okay";
-> +
-> +	multi-led {
-> +		color = <LED_COLOR_ID_RGB>;
-> +		function = LED_FUNCTION_STATUS;
-> +
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		led@1 {
-> +			reg = <1>;
-> +			color = <LED_COLOR_ID_RED>;
-> +		};
-> +
-> +		led@2 {
-> +			reg = <2>;
-> +			color = <LED_COLOR_ID_GREEN>;
-> +		};
-> +
-> +		led@3 {
-> +			reg = <3>;
-> +			color = <LED_COLOR_ID_BLUE>;
-> +		};
-> +	};
-> +};
-> +
->  &sdhc_1 {
->  	status = "okay";
->  	vmmc-supply = <&pm8953_l8>;
-> 
