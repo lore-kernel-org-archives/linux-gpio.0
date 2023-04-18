@@ -2,84 +2,227 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93EB5C6FD18
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Apr 2023 15:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 110A6C77B7F
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Apr 2023 15:32:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231393AbjDRPGm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Apr 2023 11:06:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59742 "EHLO
+        id S232250AbjDRPcJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Apr 2023 11:32:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232166AbjDRPGl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Apr 2023 11:06:41 -0400
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CB1797;
-        Tue, 18 Apr 2023 08:06:40 -0700 (PDT)
-Received: by mail-oo1-f50.google.com with SMTP id k13-20020a4ad98d000000b00542416816b1so1966479oou.7;
-        Tue, 18 Apr 2023 08:06:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681830399; x=1684422399;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=baDH5PC9Q3OXodQBfAb2KmBTW16rF3r01RqVZE8Cm4s=;
-        b=BvE1VYl7dD8t7/AL3JwTw8Qwo9HO4vBavmiwL8QJmJ5o8OLedaz7rVZZYm0ivpr+u1
-         t1y3srw8Z5/AwBASeAqK1YxXNCeV5R4eCIflaWOZcu+glGLGWl6QP+G3BeuJEpl3nmSn
-         LKxNcih5E2qdOKHleb4tIsWNKLE84155r9kMl1frD0E9Dxsko/CfqUFmplQMjmKU49oD
-         LkokdVLO591uJs+tOneRwg5kDTXk/cb1QsS2xTChId3zs+IEqooNbj59z63fjxDEXZaC
-         907NQcPlXV5gV2JuX9LD3WruNoYxSdXPYxJCoeaMS0fa++iottf80r11mTrSs9Icw4Dk
-         KXgQ==
-X-Gm-Message-State: AAQBX9fyWEK6ECkg1xSOwQ/2MVgTHiWz+xQ6VGteuEQHuRed0NyFTT+j
-        HGmnNTTdsDgluN4A0Zsrue4OXX4VNw==
-X-Google-Smtp-Source: AKy350ZyDtxsefmfWARj/PxgbCKUyFdL99JKOLXn0Ok71FXGwtLrnSXpqfJBIXHKboG9VNxEP6m9eQ==
-X-Received: by 2002:a4a:374a:0:b0:546:1d7b:20be with SMTP id r71-20020a4a374a000000b005461d7b20bemr3743663oor.7.1681830399196;
-        Tue, 18 Apr 2023 08:06:39 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id 187-20020a4a09c4000000b00525240c6149sm6034941ooa.31.2023.04.18.08.06.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Apr 2023 08:06:38 -0700 (PDT)
-Received: (nullmailer pid 1528349 invoked by uid 1000);
-        Tue, 18 Apr 2023 15:06:19 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: pinctrl: qcom,sm8150: Drop duplicate function value "atest_usb2"
-Date:   Tue, 18 Apr 2023 10:06:13 -0500
-Message-Id: <20230418150613.1528233-1-robh@kernel.org>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S231727AbjDRPcJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Apr 2023 11:32:09 -0400
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB17B125AD;
+        Tue, 18 Apr 2023 08:32:06 -0700 (PDT)
+Received: from pps.filterd (m0150242.ppops.net [127.0.0.1])
+        by mx0a-002e3701.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33I7rAQr028406;
+        Tue, 18 Apr 2023 15:31:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=from : to : subject :
+ date : message-id : in-reply-to : references : mime-version; s=pps0720;
+ bh=BLhWr7KA05LWTtyvACxcjFLqx/2vJ08FWT4M67w7BaQ=;
+ b=VSMs/Kb6RtsDSJfpluG2R5QhgjO3aonnYWhkBvQgH2VT4qOhRVcxkppVjnfz0sXNpXVs
+ jNdyQnDIcpe6GciiTNpsC/p/kJffO2fV5v5oDg7oV6ueJsQWgL3Pod+74vhXzlKYLZC4
+ rV2qBCpHxZF+ZsKrFghfvmIT4MHjRRapI3+8k0DIEdgoRaVkf4VRx7UYBtsd3jSMGxOs
+ sZTQVZHiQhzw2nZ457K15IRJ2WxKCgDHEXGdwyyOuUvqs99SEDMrzI+a4o2V4gRFVNy5
+ h5x3JZPCb6eDPES9oRJCCL+3zP8Jj0bMPqrge7awdAUqypPbQChKCfA68148HLZKoEDx SQ== 
+Received: from p1lg14881.it.hpe.com (p1lg14881.it.hpe.com [16.230.97.202])
+        by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 3q1ca1045s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Apr 2023 15:31:39 +0000
+Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 80D9F805E92;
+        Tue, 18 Apr 2023 15:31:38 +0000 (UTC)
+Received: from hpe.com (unknown [16.231.227.36])
+        by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTP id D6D7481733A;
+        Tue, 18 Apr 2023 15:31:37 +0000 (UTC)
+From:   nick.hawkins@hpe.com
+To:     verdun@hpe.com, nick.hawkins@hpe.com, linus.walleij@linaro.org,
+        brgl@bgdev.pl, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, jdelvare@suse.com,
+        linux@roeck-us.net, linux@armlinux.org.uk,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v1 5/9] dt-bindings: gpio: Add HPE GXP GPIO
+Date:   Tue, 18 Apr 2023 10:28:20 -0500
+Message-Id: <20230418152824.110823-6-nick.hawkins@hpe.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230418152824.110823-1-nick.hawkins@hpe.com>
+References: <20230418152824.110823-1-nick.hawkins@hpe.com>
+X-Proofpoint-GUID: gwlaID5TfhXmNWG6DHkXrFURaNaViBqw
+X-Proofpoint-ORIG-GUID: gwlaID5TfhXmNWG6DHkXrFURaNaViBqw
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-18_11,2023-04-18_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ impostorscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
+ mlxlogscore=999 phishscore=0 priorityscore=1501 clxscore=1015 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304180132
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The enum value "atest_usb2" appears twice. Remove the duplicate. The
-meta-schema normally catches these, but schemas under "$defs" was not
-getting checked. A fix for that is pending.
+From: Nick Hawkins <nick.hawkins@hpe.com>
 
-Signed-off-by: Rob Herring <robh@kernel.org>
+Provide access to the registers and interrupts for GPIO. The GPIO
+will have two driver instances: One for host, the other for CPLD.
+
+Signed-off-by: Nick Hawkins <nick.hawkins@hpe.com>
 ---
- .../devicetree/bindings/pinctrl/qcom,sm8150-pinctrl.yaml        | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/gpio/hpe,gxp-gpio.yaml           | 137 ++++++++++++++++++
+ 1 file changed, 137 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/hpe,gxp-gpio.yaml
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8150-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8150-pinctrl.yaml
-index 4376a9bd4d70..b61ade8f3713 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sm8150-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8150-pinctrl.yaml
-@@ -81,7 +81,7 @@ $defs:
-         enum: [ adsp_ext, agera_pll, aoss_cti, ddr_pxi2, atest_char,
-                 atest_char0, atest_char1, atest_char2, atest_char3, audio_ref,
-                 atest_usb1, atest_usb2, atest_usb10, atest_usb11, atest_usb12,
--                atest_usb13, atest_usb20, atest_usb21, atest_usb22, atest_usb2,
-+                atest_usb13, atest_usb20, atest_usb21, atest_usb22,
-                 atest_usb23, btfm_slimbus, cam_mclk, cci_async, cci_i2c,
-                 cci_timer0, cci_timer1, cci_timer2, cci_timer3, cci_timer4,
-                 cri_trng, cri_trng0, cri_trng1, dbg_out, ddr_bist, ddr_pxi0,
+diff --git a/Documentation/devicetree/bindings/gpio/hpe,gxp-gpio.yaml b/Documentation/devicetree/bindings/gpio/hpe,gxp-gpio.yaml
+new file mode 100644
+index 000000000000..1cf4cff26d5f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/hpe,gxp-gpio.yaml
+@@ -0,0 +1,137 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/hpe,gxp-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: HPE GXP gpio controllers
++
++maintainers:
++  - Nick Hawkins <nick.hawkins@hpe.com>
++
++description:
++  Interruptable GPIO drivers for the HPE GXP that covers multiple interfaces.
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - hpe,gxp-gpio
++              - hpe,gxp-gpio-pl
++
++  reg:
++    minItems: 3
++    maxItems: 6
++
++  reg-names:
++    minItems: 3
++    maxItems: 6
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
++  gpio-line-names:
++    minItems: 1
++    maxItems: 300
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - gpio-controller
++  - "#gpio-cells"
++
++additionalProperties: false
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - hpe,gxp-gpio
++    then:
++      properties:
++        reg:
++          items:
++            - description: CSM
++            - description: fn2 virtual button
++            - description: fn2 system status
++            - description: vuhc status
++            - description: external virtual button
++        reg-names:
++          items:
++            - const: csm
++            - const: fn2-vbtn
++            - const: fn2-stat
++            - const: vuhc
++            - const: vbtn
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - hpe,gxp-gpio-pl
++    then:
++      properties:
++        reg:
++          items:
++            - description: Programmable logic led
++            - description: Programmable logic health led
++            - description: Programmable logic interrupt interface
++        reg-names:
++          items:
++            - const: pl-led
++            - const: pl-health
++            - const: pl-int
++
++examples:
++  - |
++        gpio@0 {
++          compatible = "hpe,gxp-gpio";
++          reg = <0x0 0x400>, <0x200046 0x1>, <0x200070 0x08>, <0x400064 0x80>, <0x5100030f 0x1>;
++          reg-names = "csm", "fn2-vbtn", "fn2-stat", "vuhc", "vbtn";
++          gpio-controller;
++          #gpio-cells = <2>;
++          interrupt-parent = <&vic0>;
++          interrupts = <10>;
++          gpio-line-names =
++          "IOP_LED1", "IOP_LED2", "IOP_LED3", "IOP_LED4", "IOP_LED5", "IOP_LED6", "IOP_LED7", "IOP_LED8",
++          "FAN1_INST", "FAN2_INST", "FAN3_INST", "FAN4_INST", "FAN5_INST", "FAN6_INST", "FAN7_INST",
++          "FAN8_INST", "FAN1_FAIL", "FAN2_FAIL", "FAN3_FAIL", "FAN4_FAIL", "FAN5_FAIL", "FAN6_FAIL",
++          "FAN7_FAIL", "FAN8_FAIL", "FAN1_ID", "FAN2_ID", "FAN3_ID", "FAN4_ID", "FAN5_ID", "FAN6_ID",
++          "FAN7_ID", "FAN8_ID", "IDENTIFY", "HEALTH_RED", "HEALTH_AMBER", "POWER_BUTTON", "UID_PRESS",
++          "SLP", "NMI_BUTTON", "RESET_BUTTON", "SIO_S5", "SO_ON_CONTROL", "PSU1_INST", "PSU2_INST",
++          "PSU3_INST", "PSU4_INST", "PSU5_INST", "PSU6_INST", "PSU7_INST", "PSU8_INST", "PSU1_AC",
++          "PSU2_AC", "PSU3_AC", "PSU4_AC", "PSU5_AC", "PSU6_AC", "PSU7_AC", "PSU8_AC", "PSU1_DC",
++          "PSU2_DC", "PSU3_DC", "PSU4_DC", "PSU5_DC", "PSU6_DC", "PSU7_DC", "PSU8_DC", "", "", "", "",
++          "", "", "", "", "", "", "", "", "", "";
++        };
++
++  - |
++        gpio@51000304 {
++          compatible = "hpe,gxp-gpio-pl";
++          reg = <0x51000304 0x2>, <0x5100030d 0x01>, <0x51000380 0x7f>;
++          reg-names = "pl-led", "pl-health", "pl-int";
++          gpio-controller;
++          #gpio-cells = <2>;
++          interrupt-parent = <&vic0>;
++          interrupts = <24>;
++          gpio-line-names =
++          "IOP_LED1", "IOP_LED2", "IOP_LED3", "IOP_LED4", "IOP_LED5", "IOP_LED6", "IOP_LED7", "IOP_LED8",
++          "FAN1_INST", "FAN2_INST", "FAN3_INST", "FAN4_INST", "FAN5_INST", "FAN6_INST", "FAN7_INST",
++          "FAN8_INST", "FAN1_FAIL", "FAN2_FAIL", "FAN3_FAIL", "FAN4_FAIL", "FAN5_FAIL", "FAN6_FAIL",
++          "FAN7_FAIL", "FAN8_FAIL", "FAN1_ID", "FAN2_ID", "FAN3_ID", "FAN4_ID", "FAN5_ID", "FAN6_ID",
++          "FAN7_ID", "FAN8_ID", "IDENTIFY", "HEALTH_RED", "HEALTH_AMBER", "POWER_BUTTON", "UID_PRESS",
++          "SLP", "NMI_BUTTON", "RESET_BUTTON", "SIO_S5", "SO_ON_CONTROL", "PSU1_INST", "PSU2_INST",
++          "PSU3_INST", "PSU4_INST", "PSU5_INST", "PSU6_INST", "PSU7_INST", "PSU8_INST", "PSU1_AC",
++          "PSU2_AC", "PSU3_AC", "PSU4_AC", "PSU5_AC", "PSU6_AC", "PSU7_AC", "PSU8_AC", "PSU1_DC",
++          "PSU2_DC", "PSU3_DC", "PSU4_DC", "PSU5_DC", "PSU6_DC", "PSU7_DC", "PSU8_DC", "", "", "", "",
++          "", "", "", "", "", "", "", "", "", "";
++        };
 -- 
-2.39.2
+2.17.1
 
