@@ -2,35 +2,34 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8600C77B7F
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Apr 2023 16:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6013C77B78
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Apr 2023 16:44:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232580AbjDRQnv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Apr 2023 12:43:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55310 "EHLO
+        id S232566AbjDRQoQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Apr 2023 12:44:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232566AbjDRQnt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Apr 2023 12:43:49 -0400
+        with ESMTP id S230445AbjDRQoP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Apr 2023 12:44:15 -0400
 Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0129173F;
-        Tue, 18 Apr 2023 09:43:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38D2710F2;
+        Tue, 18 Apr 2023 09:44:14 -0700 (PDT)
 Received: from [192.168.178.23] (unknown [62.108.10.64])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id AAF81CB3AD;
-        Tue, 18 Apr 2023 16:43:44 +0000 (UTC)
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 4ADABCA65D;
+        Tue, 18 Apr 2023 16:43:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1681836224; bh=w9CMcpt8FL5D9w8gvtXVGIn+tTYwLetgcp8M0Diuyuc=;
+        t=1681836222; bh=cf8LvtTKNrXgOVqnfPBTTBrobXcm7GixsxPTc9CbZI8=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc;
-        b=ZnDSLBBFeLdQ0Gm7dpIBk2y1Bt1WIOZsPvLP3SvHAMWXzOfgOhR/iUJxVdqrnUoWv
-         omVXdNbDtxBqnS8Dray8d+uh4KOSWP6cc9A1BETDpEMVFe38meEhwwxa6sbcOF36KN
-         9v8ILuCt60xYjHmNNQ7T+V3vfNLUFJPhR0fMwa/A=
+        b=YDpqgryyebKOo21fnxTWC+nCRdpBuErzrEBraHI1qLBIYwfGauslOiJs4u8WoaSZC
+         FvqEDtkNCOfC4+AiWDID9IIK/8XjnkDoZTIqUbd6krN/FY97nkr5lKVPA09pyIqQea
+         2SKm++LAM+o6YXk7GnM94YOxc9k7CmEE9i7PcmE0=
 From:   Luca Weiss <luca@z3ntu.xyz>
-Date:   Tue, 18 Apr 2023 18:43:23 +0200
-Subject: [PATCH v2 7/8] arm64: dts: qcom: sdm632-fairphone-fp3: Add
- notification LED
+Date:   Tue, 18 Apr 2023 18:43:17 +0200
+Subject: [PATCH v2 1/8] dt-bindings: pinctrl: qcom,pmic-gpio: add PMI632
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230414-pmi632-v2-7-98bafa909c36@z3ntu.xyz>
+Message-Id: <20230414-pmi632-v2-1-98bafa909c36@z3ntu.xyz>
 References: <20230414-pmi632-v2-0-98bafa909c36@z3ntu.xyz>
 In-Reply-To: <20230414-pmi632-v2-0-98bafa909c36@z3ntu.xyz>
 To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
@@ -50,83 +49,61 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-leds@vger.kernel.org, linux-iio@vger.kernel.org,
         linux-doc@vger.kernel.org, Luca Weiss <luca@z3ntu.xyz>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1288; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=w9CMcpt8FL5D9w8gvtXVGIn+tTYwLetgcp8M0Diuyuc=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkPsi8vYlpY7wKs390Rhf/aagKnfQMiUzXfdHHy
- 7gQbQcBUF6JAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZD7IvAAKCRBy2EO4nU3X
- VhIOD/9iI3TQwsiXjbb7iG6g7WlZ5/5asS7XXLBR4yCppvJErjPP6Rt84vrpk95AvNthJlf4mM0
- BshKczxyS7Fl5mJY/IYwVtvglJcdpiXhKhQFoOTlz1gR2qJCmyJrf0N1Ijlc1urgG2HdH4g+OLl
- zW4p7rfrfXxo9n8oWMUlpUmCf2dkbw6hq+1KqY92WGIkVzZlrSsoq8Uy38VUNrStzW2ZY3qAmQp
- dKd4omuTGDd58I2jVA1zfsGEPa8VrwRGaX/BpmxNmrNLtVMBi1wH+T53wiZ/dEnhMB/3EuMhDT7
- HpbnNeL6JARNTl9uNvJuz7DtTPY2CG0jW6skgUioeClH7Rfyccryh+HWjKAtnoWkgeATPGu5Xbj
- ZaE8s2DUurjnhgGbJk/KurFSVSnI3AekqP0TzNYhFOSwyjSyfhRhsEFz71nnpksFjVBCr5E5z+R
- 1wwHKu+sLJroOZw+RM96RTRG18UAi8Q8ophnPYLni1+jeQWK9VNdGIEoo2+8uiJBaidpkz2svjY
- fk0LTzPnFcKRaBqO7phSPF976KSq4Dh9vVc1/tOIw4w+0T9qglWC5wiSbLBSsTyuW0H3V8IOw2q
- 1K8Wmym+/7nJTjyWeQPWL25bjyEZmiimMM/h2wZAqObk0O6bcjYpAFe8sFly4j9zIomspgt3N6d
- /TM9W1RDCD3OhxA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1358; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=cf8LvtTKNrXgOVqnfPBTTBrobXcm7GixsxPTc9CbZI8=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkPsi3SNkpS8d/Eulaj4wZnh0Vn8qnQgZ954mj5
+ +KwnBfY12KJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZD7ItwAKCRBy2EO4nU3X
+ VoovD/wLzln3jpbza/IVaQxcgbOH2+0Y3AFysC0yUZYVdkEePlQ1Qt236/z8G4cgwqB/qNBovtD
+ /t6JNhmW+b8Oe7z1xG7ylpBwtXv7orb6l6D44xfmckJx1ifbQf57ybSaDUM7QLTBT752ceGPg+O
+ GW1AP3skMPHSBpum9O5fhHtOS/u9B5g9N7dObLV6boE35XvExofQdFNvz5LX5MplZVGGWLQX9z9
+ fpsMJLaWg9XqBEUZAq+uJydwKfHb+ds1M9jGVK26S9w59BUizCNi4gA1+hCopJJhSELJeiwgbnM
+ nwth7Z0/4GTdq90HvQIcipsh7nA2yEZgUjl5DQnbbplbxNMLIJzQCSWARcHPYO231YFOOCflc+A
+ kig4tjUPSACivzVLBLVGICxe6rOkJHLZsaNcln6nwusl+N+0e4nMVtfTmerwOB1VW7uJxb03b4g
+ 2iB21ANIG/xCjY+JdTQvrRbJXO3fqzmAlGYEwJMDg42Ag2M8NJc+C51KwcA6YZjoc3HMzAiLEaY
+ K4BMQOFg4USWURIWyDjNnYrC7jNtFFEZsHJBTggwPHRqKIUQSe4EWKAt08BS3/B3yFDFmoF1uOZ
+ nuBCfu+H5fX7eKwpQBZLt35HMHJSK+3VLzn5UqRH6jM8B0HHdaLhe4PNcue83shNiLTa7ACZPip
+ bm97szTkULXMUqg==
 X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
  fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The phone features a notification LED connected to the pmi632. Configure
-the RGB led found on it.
+Document the 8 GPIOs found on PMI632.
 
 Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
 ---
- arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts | 29 +++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-index 70e683b7e4fc..301eca9a4f31 100644
---- a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-@@ -4,8 +4,10 @@
-  */
- /dts-v1/;
- 
-+#include <dt-bindings/leds/common.h>
- #include "sdm632.dtsi"
- #include "pm8953.dtsi"
-+#include "pmi632.dtsi"
- 
- / {
- 	model = "Fairphone 3";
-@@ -83,6 +85,33 @@ &pm8953_resin {
- 	linux,code = <KEY_VOLUMEDOWN>;
- };
- 
-+&pmi632_lpg {
-+	status = "okay";
-+
-+	multi-led {
-+		color = <LED_COLOR_ID_RGB>;
-+		function = LED_FUNCTION_STATUS;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		led@1 {
-+			reg = <1>;
-+			color = <LED_COLOR_ID_RED>;
-+		};
-+
-+		led@2 {
-+			reg = <2>;
-+			color = <LED_COLOR_ID_GREEN>;
-+		};
-+
-+		led@3 {
-+			reg = <3>;
-+			color = <LED_COLOR_ID_BLUE>;
-+		};
-+	};
-+};
-+
- &sdhc_1 {
- 	status = "okay";
- 	vmmc-supply = <&pm8953_l8>;
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+index 36c6435cfd0a..eaadd5a9a445 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+@@ -52,6 +52,7 @@ properties:
+           - qcom,pm8994-gpio
+           - qcom,pm8998-gpio
+           - qcom,pma8084-gpio
++          - qcom,pmi632-gpio
+           - qcom,pmi8950-gpio
+           - qcom,pmi8994-gpio
+           - qcom,pmi8998-gpio
+@@ -174,6 +175,7 @@ allOf:
+               - qcom,pm8350b-gpio
+               - qcom,pm8550ve-gpio
+               - qcom,pm8950-gpio
++              - qcom,pmi632-gpio
+     then:
+       properties:
+         gpio-line-names:
+@@ -435,6 +437,7 @@ $defs:
+                  - gpio1-gpio22 for pm8994
+                  - gpio1-gpio26 for pm8998
+                  - gpio1-gpio22 for pma8084
++                 - gpio1-gpio8 for pmi632
+                  - gpio1-gpio2 for pmi8950
+                  - gpio1-gpio10 for pmi8994
+                  - gpio1-gpio4 for pmk8350
 
 -- 
 2.40.0
