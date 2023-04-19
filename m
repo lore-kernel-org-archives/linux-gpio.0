@@ -2,92 +2,96 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFB5C77B78
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Apr 2023 16:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79168C77B73
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Apr 2023 18:06:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230522AbjDSQNV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Apr 2023 12:13:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59424 "EHLO
+        id S230256AbjDSSGN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Apr 2023 14:06:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233666AbjDSQNJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Apr 2023 12:13:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA994AF05
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Apr 2023 09:12:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 66351640BC
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Apr 2023 16:12:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C9AE5C433D2;
-        Wed, 19 Apr 2023 16:12:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681920775;
-        bh=x1PfG08LgKfxyzsOdioEQCjx6FyjGxmUyXzBkKrfmhQ=;
-        h=From:To:In-Reply-To:References:Subject:Date:From;
-        b=JKqydB4lnBYSmR+g+lY00ZpyJM/K7qo8fHXcFPGrOGxlm8Et7MewtX004MCLmG0FA
-         xtZ/0R7nSKc1v6shhXSyMF8u6WNgFWQTtyg6Q/TeMxNckog+3ln3NIKPv8QeweL5vv
-         egMvqRrdKmAw0oNvsvuTlAVCOOKSRcx0kN8WiyOpdVC0qwq5iUOefqvdTohtnY90uZ
-         QfbAezFqENMnM03HBV/d0hAeqoq1ruMNldgKvXLrOfLdA4oYccKaWt/LD3xJlKwcTy
-         FTzIPqgbUCjFPOsYI3Vlq5Y5SS9IifjCeraCYdwOE8M7OlY16qR1+7F4pUv3isrirp
-         VXQdcYBfrsyKg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AFA5BE330AB;
-        Wed, 19 Apr 2023 16:12:55 +0000 (UTC)
+        with ESMTP id S233327AbjDSSGL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Apr 2023 14:06:11 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AF365FEC
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Apr 2023 11:06:08 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a5so435471ejb.6
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Apr 2023 11:06:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681927567; x=1684519567;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jvCt3MywFrcX9GHqlm3zcnse8V+3gXrJugEUN4idsnw=;
+        b=EzfCCYkVCLb2BQNhpT8c00YwjvF+DJAXdwFOhgWEZeVlGAjdR0EdCTh9LDIDAHWAPb
+         5SNr2emCsOF3HrZE2h4vQ5EW6q3DMbeMI284TeAHop5vi/FlFflmM4zKyKuCIM8hwd1E
+         8CiRD+p8GcyMdeDamDHOyx9TI3xAffzC3vxGU5ftq9QbCASHW5tsUn7bjpF9XXgCSkTD
+         NKFOzJBlSHRpkt+WUDLowdyEU6SifzFGlUMtIBrrcSjYZM3tZtupKR5oJx19C4nR4l3/
+         ueI2fncC2jXh22K6CJplLYpF5QsPSJV/TYU3Tm6j+8R/HdBu7JnTkiAyVA5lu0RJdVk3
+         Vz7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681927567; x=1684519567;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jvCt3MywFrcX9GHqlm3zcnse8V+3gXrJugEUN4idsnw=;
+        b=BbMwklUcCv/eh11E9Z42RdctsYNUg9zZzj/rOldcpSYVlUFPkPHrbuHXeGyrd+UxZF
+         1W/Yvg/+TZ9ObvRFGO2LxWGNP/7RQYjybrZPIwErCY8xFbkAhprZUBy/cjlQEiJceTqw
+         Jv10iRYNcTZEuwyZOsys3y+X0IHvobJZbvI85f6CnkYULyyy86zbXv344sijbOkBagdH
+         xhXFffSrNw84mGRsRtUx6ndx8VUWMXWMsDBhD8ykGTNRNwemMbVvIy1A4IfbCq8aerqT
+         GIJYOg3Wdrr/wtlBIjttZgtS+tKb8vTLQoSrUV0Wtsl7tDvegfPqwV+AvTqOZxBcglPE
+         E/Aw==
+X-Gm-Message-State: AAQBX9cX/AcxEU42m7G288FHZWmAOlPIr1GeSRfaJ6w0RtaP5y6HU/6H
+        cbyanhVpFpXouplFkbaXeH6zwQ==
+X-Google-Smtp-Source: AKy350Z1kQaGqxZpRrHlcGb8/o5E+CPyrAvlnkfJSBEVz7jTcsZ1Val0XBAReq1zz/NEb7k3I5jCIQ==
+X-Received: by 2002:a17:907:a70e:b0:953:429e:fff6 with SMTP id vw14-20020a170907a70e00b00953429efff6mr4586906ejc.51.1681927566817;
+        Wed, 19 Apr 2023 11:06:06 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:b7d8:d88b:1fac:c802? ([2a02:810d:15c0:828:b7d8:d88b:1fac:c802])
+        by smtp.gmail.com with ESMTPSA id f4-20020a170906ef0400b0094f969e877bsm3839652ejs.43.2023.04.19.11.06.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Apr 2023 11:06:06 -0700 (PDT)
+Message-ID: <206724fd-dc64-9724-8541-34325a1b96c7@linaro.org>
+Date:   Wed, 19 Apr 2023 20:06:05 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2 1/8] dt-bindings: pinctrl: qcom,pmic-gpio: add PMI632
+Content-Language: en-US
+To:     Luca Weiss <luca@z3ntu.xyz>, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-doc@vger.kernel.org
+References: <20230414-pmi632-v2-0-98bafa909c36@z3ntu.xyz>
+ <20230414-pmi632-v2-1-98bafa909c36@z3ntu.xyz>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230414-pmi632-v2-1-98bafa909c36@z3ntu.xyz>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-From:   "Kernel.org Bugbot" <bugbot@kernel.org>
-To:     bugs@lists.linux.dev, linus.walleij@linaro.org,
-        linux-gpio@vger.kernel.org
-Message-ID: <20230419-b217334c1-7af366b3bb44@bugzilla.kernel.org>
-In-Reply-To: <20230419-b217334c0-3101f9f4b426@bugzilla.kernel.org>
-References: <20230419-b217334c0-3101f9f4b426@bugzilla.kernel.org>
-Subject: Re: rockchip rk3328 pinctrl unable to change gpio function of pins
- defined in rk3328_mux_recalced_data
-X-Bugzilla-Product: Linux
-X-Bugzilla-Component: Kernel
-X-Mailer: peebz 0.1
-Date:   Wed, 19 Apr 2023 16:12:55 +0000 (UTC)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-antwain.schneider writes via Kernel.org Bugzilla:
+On 18/04/2023 18:43, Luca Weiss wrote:
+> Document the 8 GPIOs found on PMI632.
+> 
+> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
 
-so here's as best as i understand what's going on
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-in pinctrl-rockchip.c
-
-rk3328_pin_banks
-
-PIN_BANK_IOMUX_FLAGS(2, 32, "gpio2", 0, IOMUX_WIDTH_3BIT, IOMUX_WIDTH_3BIT, 0),
-
-it states that gpio2b is 3 bits per gpio, but if you look at the rk3328 trm, it's only 1 gpio pin in bank 2 that is three bits, e.g.
-
-/* GRF_GPIO2BL_IOMUX 2'bxxx */
-/* 2b0 */	"spi_clkm0", NULL, NULL,
-/* 2b1 */	"spi_txdm0", NULL, NULL,
-/* 2b2 */	"spi_rxdm0", NULL, NULL,
-/* 2b3 */	"spi_csn0m0", NULL, NULL,
-/* 2b4 */	"spi_csn1m0", "flash_vol_sel", NULL,
-/* 2b5 */	"i2c2_sda", "tsadc_shut", NULL,
-/* 2b6 */	"i2c2_scl", NULL, NULL,
-/* GRF_GPIO2BH_IOMUX 3'bxxx */
-/* 2b7 */	"i2s1_mclk", NULL, "tsp_syncm1", "cif_clkoutm1", NULL, NULL, NULL,
-
-so by not adding addtional explicit 2 bit alignment adjustments to rk3328_mux_recalced_data, everything is 'slightly off'
-
-david wu originally submitted the correct alignment on the initial patch[1], but it wasn't commited, but on the official rockchip linux fork, he readded the alignment in 2019[2]
-
-so i request someone please add this back into the kernel
-
-[1] https://lore.kernel.org/linux-rockchip/1485074286-7863-1-git-send-email-david.wu@rock-chips.com/
-[2] https://github.com/rockchip-linux/kernel/commit/d69af8ab6534bb28c1556076f08d2a5ab4935d95
-
-View: https://bugzilla.kernel.org/show_bug.cgi?id=217334#c1
-You can reply to this message to join the discussion.
--- 
-Deet-doot-dot, I am a bot.
-Kernel.org Bugzilla (peebz 0.1)
+Best regards,
+Krzysztof
 
