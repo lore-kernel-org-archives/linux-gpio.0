@@ -2,137 +2,84 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0497CC77B7A
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Apr 2023 08:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 682FAC6FD18
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Apr 2023 09:59:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232627AbjDSIba (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Apr 2023 04:31:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40948 "EHLO
+        id S232699AbjDSJ7P (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Apr 2023 05:59:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232622AbjDSIbT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Apr 2023 04:31:19 -0400
-X-Greylist: delayed 113 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 19 Apr 2023 01:30:58 PDT
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C48ADCC1D;
-        Wed, 19 Apr 2023 01:30:57 -0700 (PDT)
-X-QQ-mid: bizesmtp68t1681892941tlvcx37i
-Received: from wxdbg.localdomain.com ( [183.129.236.74])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Wed, 19 Apr 2023 16:29:00 +0800 (CST)
-X-QQ-SSF: 01400000000000I0Z000000A0000000
-X-QQ-FEAT: +oIWmpEafD8Rbt12g7AWeObfmd3XKPv+z6RgD17MkAZi6IlAkCVoMgGE2PJc6
-        tm5bKP5p8flC8JKqrlUGgpXBGjEvn7lRs6LSp6F2ocM7nW0qAsbgZFaqjVAfAJINWOiBxFR
-        H+5hj13acbm5DoPgiMgaSlZQLhmLDKoHn4CTXRWIhKkhtg9OLMi0n6ltpG5qV1lThh7CMM/
-        eSVGPZ1NWEgBAgpuZMBU0vNk+FdPIxYYg/f2WZSLjcYTNfIbXS14ck4YMBrZB3GTxoFZN0g
-        1JA/L1vPLm+6w2nq4RPXwIn3N6L3groj2KFEbNXmhZ7bTos1Ej7FmvNb1HOKxtfheIyR+o0
-        Tx++gKwlOd6KTRK3ZAFnkxwMtkTB9QIMeexeDuE9/Cfkwebwx8Ah6BewReCHvVe/O+my51K
-        uHOKY8HRqSWWqP3sL4GEnQ==
-X-QQ-GoodBg: 2
-X-BIZMAIL-ID: 18199863075408619699
-From:   Jiawen Wu <jiawenwu@trustnetic.com>
-To:     netdev@vger.kernel.org, linux@armlinux.org.uk
-Cc:     linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-        olteanv@gmail.com, mengyuanlou@net-swift.com,
-        Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH net-next v3 4/8] net: txgbe: Add SFP module identify
-Date:   Wed, 19 Apr 2023 16:27:35 +0800
-Message-Id: <20230419082739.295180-5-jiawenwu@trustnetic.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20230419082739.295180-1-jiawenwu@trustnetic.com>
-References: <20230419082739.295180-1-jiawenwu@trustnetic.com>
+        with ESMTP id S232041AbjDSJ7O (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Apr 2023 05:59:14 -0400
+Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 602C513C03
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Apr 2023 02:58:44 -0700 (PDT)
+Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-54c12009c30so599945117b3.9
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Apr 2023 02:58:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681898323; x=1684490323;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2G/WSZo+gcH6X6a1a2caBC9aHUd84iNzgEOnV4p0Mlk=;
+        b=bQi3HLYKCH1/8G+OpThAaZzC9IRR5jRpC6DZAuX0XVuPccFqvdps9wAKZTazR1Q04W
+         CcASfNW7/A6+wS2N3ZMUhYOaeBD71g0rlQLEamrj1P1AIOShbgSFaWj/oZic5d/IH4gM
+         7l0INQA7pJBRBbTCLJJhzi/Gp0N/F3XrV/nngE7SpsUk+GR1/0aSSxvV7/5f5aoWGMjk
+         O5safwi7X9huQkHGG8DZwg8+v8DpeaPwHAUmtixkFZnjF9EtPR1jny/RsgC8myDK5Twv
+         k0pAJvaX/4xCnrHbRXV494Hbx7CeI402QomIKfLderF5yEdIMMIkseg8RSfrREvdFCDF
+         dSfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681898323; x=1684490323;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2G/WSZo+gcH6X6a1a2caBC9aHUd84iNzgEOnV4p0Mlk=;
+        b=iBFpA/OambgDhWXrClx7cB3SSln7ArBdQBiXPZLc4HQ9D7deuKfcr6MjE3/3zy1qjM
+         u45qvuxmxmmk2Z3gTxgDU4McsqNUtargDL9DAKoEI/SuPX4O/eDyByfrxo5pxU9tTaHL
+         04IoSRs+tk6Rs7pwrUEywEzfBhlSj6XeXXFUEmAA6389QPSXQA/nUgM0P9Wq8xQs3PKr
+         0uYwY4LPAv16PbMkmIDF01ZS/F4KXwqCCgpN2eSvGvaR0wxnRaaEU2KI5PgSf09M0oMm
+         Q4kAlu29qxCwCCjsJahPwUYR2EHYUMxWE7yvYSs7MKcOF1PIcPYgjgla7lMcCx0EJr7a
+         accg==
+X-Gm-Message-State: AAQBX9ddRkiUJQLYbVP3nZKpZfUZC5TDuCWtPwUykE7XEn8o0LeaoV/L
+        8mx0kC3aa5J+uA7KJvHY3l0YEokulyb21DtVxxxHUUBMJ9Eyewd/
+X-Google-Smtp-Source: AKy350acsT0E4K6ol3tkI/tXP64rKIFIIW2NIyRxCOSDdj1EhyYenQ2tx7NHCcDnG790k6W7B/D1G5VVxH1ZFAy2TIc=
+X-Received: by 2002:a0d:e287:0:b0:54f:752e:9e60 with SMTP id
+ l129-20020a0de287000000b0054f752e9e60mr2457916ywe.37.1681898323539; Wed, 19
+ Apr 2023 02:58:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:trustnetic.com:qybglogicsvr:qybglogicsvr5
+References: <20230419072848.gwe3oga57qyg4u42@vireshk-i7>
+In-Reply-To: <20230419072848.gwe3oga57qyg4u42@vireshk-i7>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Wed, 19 Apr 2023 11:58:32 +0200
+Message-ID: <CANiq72mHuu-GWU8KO2Xb0e8vfLPOdSynT7pi4mOjY_kjYOnsTw@mail.gmail.com>
+Subject: Re: Broken build with rust bindings (without --enable-tests)
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-gpio@vger.kernel.org,
+        =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>,
+        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Register SFP platform device to get modules information.
+On Wed, Apr 19, 2023 at 9:28=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
+>
+> I earlier thought that if I am doing "cargo build" without "--tests"
+> or "--examples", then dev-dependencies are not built. I was wrong.
 
-Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
----
- drivers/net/ethernet/wangxun/Kconfig          |  1 +
- .../net/ethernet/wangxun/txgbe/txgbe_phy.c    | 27 +++++++++++++++++++
- .../net/ethernet/wangxun/txgbe/txgbe_type.h   |  1 +
- 3 files changed, 29 insertions(+)
+No, it will not get built. If you do `cargo build` on `libgpiod`, then it w=
+orks.
 
-diff --git a/drivers/net/ethernet/wangxun/Kconfig b/drivers/net/ethernet/wangxun/Kconfig
-index 8acd6a0d84dc..d2dbaf19e53d 100644
---- a/drivers/net/ethernet/wangxun/Kconfig
-+++ b/drivers/net/ethernet/wangxun/Kconfig
-@@ -42,6 +42,7 @@ config TXGBE
- 	depends on PCI
- 	select I2C_DESIGNWARE_PLATFORM
- 	select LIBWX
-+	select SFP
- 	help
- 	  This driver supports Wangxun(R) 10GbE PCI Express family of
- 	  adapters.
-diff --git a/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c b/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c
-index 8bb7f1d9acc7..faa0479f1df3 100644
---- a/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c
-+++ b/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c
-@@ -105,6 +105,25 @@ static int txgbe_i2c_register(struct txgbe *txgbe)
- 	return 0;
- }
- 
-+static int txgbe_sfp_register(struct txgbe *txgbe)
-+{
-+	struct pci_dev *pdev = txgbe->wx->pdev;
-+	struct platform_device_info info = {};
-+	struct platform_device *sfp_dev;
-+
-+	info.parent = &pdev->dev;
-+	info.fwnode = software_node_fwnode(txgbe->nodes.group[SWNODE_SFP]);
-+	info.name = "sfp";
-+	info.id = (pdev->bus->number << 8) | pdev->devfn;
-+	sfp_dev = platform_device_register_full(&info);
-+	if (IS_ERR(sfp_dev))
-+		return PTR_ERR(sfp_dev);
-+
-+	txgbe->sfp_dev = sfp_dev;
-+
-+	return 0;
-+}
-+
- int txgbe_init_phy(struct txgbe *txgbe)
- {
- 	int ret;
-@@ -121,6 +140,12 @@ int txgbe_init_phy(struct txgbe *txgbe)
- 		goto err;
- 	}
- 
-+	ret = txgbe_sfp_register(txgbe);
-+	if (ret) {
-+		wx_err(txgbe->wx, "failed to register sfp\n");
-+		goto err;
-+	}
-+
- 	return 0;
- 
- err:
-@@ -131,6 +156,8 @@ int txgbe_init_phy(struct txgbe *txgbe)
- 
- void txgbe_remove_phy(struct txgbe *txgbe)
- {
-+	if (txgbe->sfp_dev)
-+		platform_device_unregister(txgbe->sfp_dev);
- 	if (txgbe->i2c_dev)
- 		platform_device_unregister(txgbe->i2c_dev);
- 
-diff --git a/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h b/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h
-index 771aefbc7c80..aa94c4fce311 100644
---- a/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h
-+++ b/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h
-@@ -149,6 +149,7 @@ struct txgbe_nodes {
- struct txgbe {
- 	struct wx *wx;
- 	struct txgbe_nodes nodes;
-+	struct platform_device *sfp_dev;
- 	struct platform_device *i2c_dev;
- };
- 
--- 
-2.27.0
+The problem is in the `Makefile.am`s instead -- `make` is told to go
+into all of the crates and run `cargo build` for each:
 
+    SUBDIRS =3D gpiosim-sys libgpiod libgpiod-sys
+
+Cheers,
+Miguel
