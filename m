@@ -2,37 +2,36 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7965AC7EE20
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 Apr 2023 21:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 140A6C7EE26
+	for <linux-gpio@archiver.kernel.org>; Fri, 21 Apr 2023 21:57:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233416AbjDUV5G (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 21 Apr 2023 17:57:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44410 "EHLO
+        id S233573AbjDUV5H (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 21 Apr 2023 17:57:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229656AbjDUV5D (ORCPT
+        with ESMTP id S231282AbjDUV5D (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Apr 2023 17:57:03 -0400
 Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBFCE10E6;
-        Fri, 21 Apr 2023 14:57:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 987F01FCB;
+        Fri, 21 Apr 2023 14:57:01 -0700 (PDT)
 Received: from [192.168.178.23] (unknown [62.108.10.64])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 2207ACCBD3;
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id CAB2FCEB78;
         Fri, 21 Apr 2023 21:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1682114189; bh=E5+af9y0IDMMqoRD5fAdSt1t/WbYFI3JGXbdgrIPnBI=;
-        h=From:Subject:Date:To:Cc;
-        b=J3U2NyrhqJim+Vt0gALA7AAKpwa+g/PeV8bP6XhhtSs+aS9EoD7UBZmQy+T5RM8UP
-         ciDp3gfysE9RSKGGGD015IYAIKP+kaKZtPumklNS2fS9amBOpwQYgOREgaqR7tUHEC
-         BtlX0Mp8VhZUos35KXq/Vvd7hYFZiOmpwCSzTrhA=
+        t=1682114189; bh=fk4m8YwqRaRJJmWRy3zDyiyWOrKUWffj2G1xoANhfek=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc;
+        b=fGAv2QOHd6hWFBl6xJfawnWE/UPOKCpuKX5gcfwScI+Yz/AFufTJ305XiDHTgGiay
+         riHftwBU+KBomqLSn+/BrErwgJBdxbmrhzNx9+bdjG8zDroD+AwMiCwth0KPUErAV1
+         ZllLtr1FOYwXrdr2Fy/pw2XDKwmqnGjwEEZTK7PQ=
 From:   Luca Weiss <luca@z3ntu.xyz>
-Subject: [PATCH 0/3] Add GPIO support to PM8953 PMIC
-Date:   Fri, 21 Apr 2023 23:56:19 +0200
-Message-Id: <20230421-pm8953-gpio-v1-0-3d33e2de47e3@z3ntu.xyz>
+Date:   Fri, 21 Apr 2023 23:56:22 +0200
+Subject: [PATCH 3/3] arm64: dts: qcom: pm8953: add GPIOs
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAIMGQ2QC/x2NQQqDMBAAvyJ7diGbWKz9ivQQ46oLNoYEiyD+3
- cXjDAxzQuEsXOBTnZD5L0W2qEB1BWHxcWaUURmssc40ljD93t3L4ZxkQzd1hloeQ0sEWgy+MA7
- Zx7BoE/d1VZkyT3I8i/57XTeoaANgcgAAAA==
+Message-Id: <20230421-pm8953-gpio-v1-3-3d33e2de47e3@z3ntu.xyz>
+References: <20230421-pm8953-gpio-v1-0-3d33e2de47e3@z3ntu.xyz>
+In-Reply-To: <20230421-pm8953-gpio-v1-0-3d33e2de47e3@z3ntu.xyz>
 To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -44,45 +43,55 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Luca Weiss <luca@z3ntu.xyz>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=717; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=E5+af9y0IDMMqoRD5fAdSt1t/WbYFI3JGXbdgrIPnBI=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkQwaHk8YA8kvtVmDIO6hRCpf1Dfi+1mt6IBrm0
- EuVguPLxXKJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZEMGhwAKCRBy2EO4nU3X
- VnXJD/4s1iPYvOU/Z0haMwONz3fNjExrGa9OTsfiPmHRIL70IIj/PmfMNkU83HFp/9KJEirThPs
- zml8ZrC6nOStQAU6E/e10OiVUp4k04pnr5oPqvnMB/WQrQKpff3IYxEY7muV1vHPhwEm4EwOVc+
- cAD8s588zTkBQ6RvsHR/Lj0wVzs5k594+9dbcRGQWAwrKhmPPh4/ydWSgQk7Vrpjz4NdpTiGys3
- mOlR7ro1AzvygSoU6AdfMQj/LvvG+ROMdrBmS2nRiDCQmg1UTT4Kgrx29XXFVNtEvh97fFmtf1j
- 3v676u6TnjjdX7AqyMCp4O/eTMWDr/IRL+9SjcUrsHfEm9TVP8Whj/cdu8aTjyv45B6/Ni08N+x
- 0CZ8HFy3GBZN3TJHmFKoA9BE+wZCa3qMIoay052Kj4+nNzqxaqUYurAYmUUG1nsXvvNDz+ASZgf
- n99j/cXhzqGblvN+N5ivgiQuLhRM4Jgj9Knxz1TGHu5XHNOkB+OlfAIcbbUCSZdLgkIIIijID6K
- 66/V6d0jE5U1A/Xu1KSsOqF+N/Dp6q4ZIaW731khtzv34byMcLi3Oe1Wx4AbZ0gKmpbCgWDLp6J
- yBuaz4wWpp/A1IDRtqooRH/o8gGlYv57cBaYiApQ1nkXmJOBoDyMetNK4ubgf7J/uNp0ChCOxQE
- yGTyxP+SJzH+aAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=832; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=fk4m8YwqRaRJJmWRy3zDyiyWOrKUWffj2G1xoANhfek=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkQwaMImZ+W584Oat8uesHpge4QKk05bqMg1HV/
+ z+ZSyaXgNuJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZEMGjAAKCRBy2EO4nU3X
+ VklcD/9Jyz/pXTNAqmOjjsdKWA+5qsT5hUAerfmzpfKvCzI33ymSQXJ6aQE/9zbEMAHmGal0V/T
+ sCfoMBK9PXW6KRAQavv29n3RLD/JoF3OZY5P9XBUFSKqjol6nA9mPuH2FpmCvRDdkN1V7SkIMEq
+ F/p/D4kcXnOWcxvA0y8ZXqtMJNp3TZZTHD5cQ7500rDaM+fLEsanffxePZPe/Blo8qS2peqi3Wb
+ ft+OsiuYnKv/6dsIkiK6V7JvVXCYwit8Mx3zb9VqOty8U0GNCny4+Sh5/gsyObC8CoRXB5r3QK4
+ Xvm3VZZM3VL1WmECqpv7SiyQbqKruvK2JiOFXWlLVP0IjMRCIfDo4cbN5gmDNpuHTO95ZlLWi7D
+ p3vbuMgIAGaJY4i06CFhozKErg/R1kYRnUT6wivuB/THbjeo6abwj7K41GaeN/vuv4L6AM5tMQH
+ DWvcl6/OaVWchRt3VrA5nAyjvW3Antk4oDsJcvkTzq1d/45MiKTG5uqDuhYleHUOYH9SjnEDIoP
+ qWivYDo3hntsaihZulcsS8wZUwDZesCv6Y40uMbxf7JpZtgBLFfevkouFQSf6IROd6XeDy1FFvv
+ TEJZGZ3JYBn9WJewaTKhMXjGcSf4CtDiiRPt/yi38ZNXMea7/H4Ym/Ypcg7pVwgMyVE91ZyxLmC
+ 24vzPg+vNKxsrmA==
 X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
  fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for the 8 GPIOs found on the PM8953 PMIC used with msm8953
-SoC.
+Add a node for the GPIOs found on the pm8953.
 
 Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
 ---
-Luca Weiss (3):
-      dt-bindings: pinctrl: qcom,pmic-gpio: add PM8953
-      pinctrl: qcom: spmi-gpio: Add PM8953 support
-      arm64: dts: qcom: pm8953: add GPIOs
+ arch/arm64/boot/dts/qcom/pm8953.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml |  3 +++
- arch/arm64/boot/dts/qcom/pm8953.dtsi                          | 10 ++++++++++
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c                      |  2 ++
- 3 files changed, 15 insertions(+)
----
-base-commit: 347e9b4e41bfff51993807962eb1082f6d8ab439
-change-id: 20230421-pm8953-gpio-3f9017edc711
+diff --git a/arch/arm64/boot/dts/qcom/pm8953.dtsi b/arch/arm64/boot/dts/qcom/pm8953.dtsi
+index a1d36f9ebbd2..2268daf27fa7 100644
+--- a/arch/arm64/boot/dts/qcom/pm8953.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm8953.dtsi
+@@ -79,6 +79,16 @@ rtc@6000 {
+ 			reg-names = "rtc", "alarm";
+ 			interrupts = <0x0 0x61 0x1 IRQ_TYPE_EDGE_RISING>;
+ 		};
++
++		pm8953_gpios: gpio@c000 {
++			compatible = "qcom,pm8953-gpio", "qcom,spmi-gpio";
++			reg = <0xc000>;
++			gpio-controller;
++			gpio-ranges = <&pm8953_gpios 0 0 8>;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
+ 	};
+ 
+ 	pmic@1 {
 
-Best regards,
 -- 
-Luca Weiss <luca@z3ntu.xyz>
+2.40.0
 
