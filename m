@@ -2,103 +2,239 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDC3C77B73
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 Apr 2023 02:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5527FC77B73
+	for <linux-gpio@archiver.kernel.org>; Fri, 21 Apr 2023 03:17:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233119AbjDUCVC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 Apr 2023 22:21:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59044 "EHLO
+        id S230083AbjDUDRN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 Apr 2023 23:17:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232042AbjDUCVB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Apr 2023 22:21:01 -0400
-Received: from smtpbg156.qq.com (smtpbg156.qq.com [15.184.82.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADF4B2722;
-        Thu, 20 Apr 2023 19:20:57 -0700 (PDT)
-X-QQ-mid: Yeas43t1682043622t658t06080
-Received: from 7082A6556EBF4E69829842272A565F7C (jiawenwu@trustnetic.com [183.129.236.74])
-X-QQ-SSF: 00400000000000F0FM9000000000000
-From:   =?utf-8?b?Smlhd2VuIFd1?= <jiawenwu@trustnetic.com>
-X-BIZMAIL-ID: 6262557014173028678
-To:     "'Andrew Lunn'" <andrew@lunn.ch>
-Cc:     <netdev@vger.kernel.org>, <linux@armlinux.org.uk>,
-        <linux-i2c@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <olteanv@gmail.com>, <mengyuanlou@net-swift.com>,
-        "'Jarkko Nikula'" <jarkko.nikula@linux.intel.com>
-References: <20230419082739.295180-1-jiawenwu@trustnetic.com> <20230419082739.295180-3-jiawenwu@trustnetic.com> <ec095b8a-00af-4fb7-be11-f643ea75e924@lunn.ch> <03ef01d97372$f2ee26a0$d8ca73e0$@trustnetic.com> <72703dc2-0ee1-41b2-9618-2a3185869cbf@lunn.ch>
-In-Reply-To: <72703dc2-0ee1-41b2-9618-2a3185869cbf@lunn.ch>
-Subject: RE: [PATCH net-next v3 2/8] i2c: designware: Add driver support for Wangxun 10Gb NIC
-Date:   Fri, 21 Apr 2023 10:20:17 +0800
-Message-ID: <03f501d973f7$d0c889a0$72599ce0$@trustnetic.com>
+        with ESMTP id S234306AbjDUDQl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Apr 2023 23:16:41 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C319F8A52
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Apr 2023 20:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1682046968; x=1713582968;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7JXz4qdBiICWASW67B8UBudNGwHZoA+ni6z9YMqiPLk=;
+  b=QuqdcJRBADVr/zgacyxq2+I/FuW7s3rxG3rlKFVyyBA+9fTwYeoSinX4
+   AxvZLHWjSMgL/E+U3KPxCurPFsSbuDuYPYsQ6ont4Sk/tYIW522RhoNd9
+   jJz1Z5XFsUgsuabo8N1sFqc0VhuaJmHT5hXwYiJ7D0FHFXiWHJNyW3TVP
+   Orq08W7egN37KCVUX+eBjOA4blo0gemGsQGb5y1lwQ7+Ypq3ihPH4jazV
+   LOv6diEGnAls2dQac2BxCuGocscH6LwdFNSXWWPcxm16SZUJ2VrxRyK/W
+   QTbXVjZ5EUFg/09A3bOxwOnxqVTFMqIxCnYy9nAYC14/aVAzuKuCaVdVP
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10686"; a="326231669"
+X-IronPort-AV: E=Sophos;i="5.99,214,1677571200"; 
+   d="scan'208";a="326231669"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Apr 2023 20:16:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10686"; a="692140841"
+X-IronPort-AV: E=Sophos;i="5.99,214,1677571200"; 
+   d="scan'208";a="692140841"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 20 Apr 2023 20:16:06 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pphFh-000gGr-0M;
+        Fri, 21 Apr 2023 03:16:01 +0000
+Date:   Fri, 21 Apr 2023 11:15:57 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [linusw-pinctrl:devel] BUILD SUCCESS
+ 19bcff7e2777c7337caeef5532ad6f93f3d24d64
+Message-ID: <6441ffed.fu+lNol4NaMXjOVK%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: zh-cn
-Thread-Index: AQILBR3gZkFBC9g1wrfKT5ke1rRywwLGjwA7ApvXcEkCESm4NAMW1Vunrn2IXaA=
-X-QQ-SENDSIZE: 520
-Feedback-ID: Yeas:trustnetic.com:qybglogicsvr:qybglogicsvr5
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thursday, April 20, 2023 9:23 PM, Andrew Lunn wrote:
-> On Thu, Apr 20, 2023 at 06:29:11PM +0800, Jiawen Wu wrote:
-> > On Thursday, April 20, 2023 4:58 AM, Andrew Lunn wrote:
-> > > On Wed, Apr 19, 2023 at 04:27:33PM +0800, Jiawen Wu wrote:
-> > > > Wangxun 10Gb ethernet chip is connected to Designware I2C, to communicate
-> > > > with SFP.
-> > > >
-> > > > Add platform data to pass IOMEM base address, board flag and other
-> > > > parameters, since resource address was mapped on ethernet driver.
-> > > >
-> > > > The exists IP limitations are dealt as workarounds:
-> > > > - IP does not support interrupt mode, it works on polling mode.
-> > > > - I2C cannot read continuously, only one byte can at a time.
-> > >
-> > > Are you really sure about that?
-> > >
-> > > It is a major limitation for SFP devices. It means you cannot access
-> > > the diagnostics, since you need to perform an atomic 2 byte read.
-> > >
-> > > Or maybe i'm understanding you wrong.
-> > >
-> > >    Andrew
-> > >
-> >
-> > Maybe I'm a little confused about this. Every time I read a byte info, I have to
-> > write a 'read command'. It can normally get the information for SFP devices.
-> > But I'm not sure if this is regular I2C behavior.
-> 
-> I don't know this hardware, so i cannot say what a 'read command'
-> actually does. Can you put a bus pirate or similar sort of device on
-> the bus and look at the actual I2C signals. Is it performing one I2C
-> transaction per byte? If so, that is not good.
-> 
-> The diagnostic values, things like temperature sensor, voltage sensor,
-> received signal power are all 16 bits. You cannot read them using two
-> time one byte reads. Say the first read sees a 16bit value of 0x00FF,
-> but only reads the first byte. The second read sees a 16bit value of
-> 0x0100 but only reads the second byte. You end up with 0x0000. When
-> you do a multi byte read, the SFP should do an atomic read of the
-> sensor, so you would see either 0x00FF, or 0x0100.
-> 
-> If your hardware can only do single byte reads, please make sure the
-> I2C framework knows this. The SFP driver should then refuse to access
-> the diagnostic parts of the SFP, because your I2C bus master hardware
-> is too broken. The rest of the SFP should still work.
-> 
-> 	Andrew.
-> 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+branch HEAD: 19bcff7e2777c7337caeef5532ad6f93f3d24d64  pinctrl: qcom ssbi-gpio: Convert to immutable irq_chip
 
-You may have misunderstood. If you want to read a 16-bit message, the
-size of 'i2c_msg.len' is set to 2 in the array that 'flags = I2C_M_RD'.
+elapsed time: 727m
 
-For example in sfp_i2c_read(), block_size limits the message length of every
-time call i2c_transfer() to read, usually it is 16. The one-byte read limit I
-mentioned means that during the 16-byte read, I2C device needs to write a
-read command and then read the message 16 times to fill the 16-byte buffer,
-instead of reading 16 bytes at once after stop command writes.
+configs tested: 165
+configs skipped: 13
 
-Before I thought this behavior might be strange, so I mentioned in the commit.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r001-20230416   gcc  
+alpha                randconfig-r001-20230420   gcc  
+alpha                randconfig-r003-20230416   gcc  
+alpha                randconfig-r011-20230418   gcc  
+alpha                randconfig-r013-20230416   gcc  
+alpha                randconfig-r021-20230416   gcc  
+alpha                randconfig-r022-20230416   gcc  
+alpha                randconfig-r025-20230417   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r043-20230416   gcc  
+arc                  randconfig-r043-20230417   gcc  
+arc                  randconfig-r043-20230419   gcc  
+arc                  randconfig-r043-20230420   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                                 defconfig   gcc  
+arm                  randconfig-r006-20230416   gcc  
+arm                  randconfig-r022-20230417   gcc  
+arm                  randconfig-r034-20230417   clang
+arm                  randconfig-r034-20230418   gcc  
+arm                  randconfig-r035-20230418   gcc  
+arm                  randconfig-r046-20230416   clang
+arm                  randconfig-r046-20230417   gcc  
+arm                  randconfig-r046-20230419   gcc  
+arm                  randconfig-r046-20230420   clang
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                randconfig-r003-20230417   gcc  
+arm64                randconfig-r011-20230417   clang
+csky                                defconfig   gcc  
+csky                 randconfig-r012-20230417   gcc  
+csky                 randconfig-r021-20230420   gcc  
+csky                 randconfig-r026-20230420   gcc  
+csky                 randconfig-r035-20230417   gcc  
+hexagon              randconfig-r005-20230417   clang
+hexagon              randconfig-r041-20230416   clang
+hexagon              randconfig-r041-20230417   clang
+hexagon              randconfig-r041-20230419   clang
+hexagon              randconfig-r041-20230420   clang
+hexagon              randconfig-r045-20230416   clang
+hexagon              randconfig-r045-20230417   clang
+hexagon              randconfig-r045-20230419   clang
+hexagon              randconfig-r045-20230420   clang
+i386                             allyesconfig   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-a001-20230417   gcc  
+i386                 randconfig-a002-20230417   gcc  
+i386                 randconfig-a003-20230417   gcc  
+i386                 randconfig-a004-20230417   gcc  
+i386                 randconfig-a005-20230417   gcc  
+i386                 randconfig-a006-20230417   gcc  
+i386                 randconfig-a011-20230417   clang
+i386                 randconfig-a012-20230417   clang
+i386                 randconfig-a013-20230417   clang
+i386                 randconfig-a014-20230417   clang
+i386                 randconfig-a015-20230417   clang
+i386                 randconfig-a016-20230417   clang
+i386                 randconfig-r006-20230417   gcc  
+ia64                             allmodconfig   gcc  
+ia64         buildonly-randconfig-r005-20230420   gcc  
+ia64                                defconfig   gcc  
+ia64                 randconfig-r024-20230417   gcc  
+ia64                 randconfig-r034-20230420   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch            randconfig-r015-20230417   gcc  
+loongarch            randconfig-r022-20230420   gcc  
+m68k                             allmodconfig   gcc  
+m68k                                defconfig   gcc  
+m68k                 randconfig-r012-20230418   gcc  
+m68k                 randconfig-r025-20230420   gcc  
+m68k                 randconfig-r031-20230417   gcc  
+m68k                 randconfig-r033-20230418   gcc  
+m68k                 randconfig-r035-20230416   gcc  
+m68k                 randconfig-r035-20230420   gcc  
+m68k                 randconfig-r036-20230417   gcc  
+microblaze           randconfig-r004-20230420   gcc  
+microblaze           randconfig-r011-20230416   gcc  
+microblaze           randconfig-r026-20230417   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips         buildonly-randconfig-r002-20230420   gcc  
+nios2                               defconfig   gcc  
+nios2                randconfig-r002-20230417   gcc  
+openrisc             randconfig-r024-20230416   gcc  
+openrisc             randconfig-r024-20230420   gcc  
+openrisc             randconfig-r031-20230418   gcc  
+openrisc             randconfig-r036-20230420   gcc  
+parisc                              defconfig   gcc  
+parisc               randconfig-r012-20230416   gcc  
+parisc               randconfig-r026-20230416   gcc  
+parisc               randconfig-r033-20230420   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc              randconfig-r013-20230418   gcc  
+powerpc              randconfig-r023-20230420   gcc  
+powerpc              randconfig-r032-20230416   clang
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv        buildonly-randconfig-r001-20230420   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r005-20230416   clang
+riscv                randconfig-r016-20230417   clang
+riscv                randconfig-r023-20230416   gcc  
+riscv                randconfig-r031-20230420   clang
+riscv                randconfig-r033-20230417   gcc  
+riscv                randconfig-r034-20230416   clang
+riscv                randconfig-r042-20230416   gcc  
+riscv                randconfig-r042-20230417   clang
+riscv                randconfig-r042-20230419   clang
+riscv                randconfig-r042-20230420   gcc  
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390         buildonly-randconfig-r003-20230420   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r002-20230420   clang
+s390                 randconfig-r003-20230420   clang
+s390                 randconfig-r016-20230416   gcc  
+s390                 randconfig-r025-20230416   gcc  
+s390                 randconfig-r044-20230416   gcc  
+s390                 randconfig-r044-20230417   clang
+s390                 randconfig-r044-20230419   clang
+s390                 randconfig-r044-20230420   gcc  
+sh                               allmodconfig   gcc  
+sh           buildonly-randconfig-r006-20230420   gcc  
+sh                   randconfig-r004-20230417   gcc  
+sh                   randconfig-r013-20230417   gcc  
+sh                   randconfig-r031-20230416   gcc  
+sh                   randconfig-r036-20230416   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r014-20230416   gcc  
+sparc                randconfig-r032-20230417   gcc  
+sparc                randconfig-r036-20230418   gcc  
+sparc64      buildonly-randconfig-r004-20230420   gcc  
+sparc64              randconfig-r014-20230418   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-a001-20230417   gcc  
+x86_64               randconfig-a002-20230417   gcc  
+x86_64               randconfig-a003-20230417   gcc  
+x86_64               randconfig-a004-20230417   gcc  
+x86_64               randconfig-a005-20230417   gcc  
+x86_64               randconfig-a006-20230417   gcc  
+x86_64               randconfig-a011-20230417   clang
+x86_64               randconfig-a012-20230417   clang
+x86_64               randconfig-a013-20230417   clang
+x86_64               randconfig-a014-20230417   clang
+x86_64               randconfig-a015-20230417   clang
+x86_64               randconfig-a016-20230417   clang
+x86_64               randconfig-r021-20230417   clang
+x86_64                               rhel-8.3   gcc  
+xtensa               randconfig-r015-20230416   gcc  
+xtensa               randconfig-r016-20230418   gcc  
+xtensa               randconfig-r032-20230420   gcc  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
