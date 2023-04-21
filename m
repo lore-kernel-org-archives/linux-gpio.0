@@ -2,88 +2,209 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD69C7EE2A
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 Apr 2023 21:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F81EC77B76
+	for <linux-gpio@archiver.kernel.org>; Fri, 21 Apr 2023 22:02:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233609AbjDUV5I (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 21 Apr 2023 17:57:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44414 "EHLO
+        id S232891AbjDUWC3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 21 Apr 2023 18:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232058AbjDUV5D (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Apr 2023 17:57:03 -0400
-Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40A941BD6;
-        Fri, 21 Apr 2023 14:57:01 -0700 (PDT)
-Received: from [192.168.178.23] (unknown [62.108.10.64])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 9775BCEB77;
-        Fri, 21 Apr 2023 21:56:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1682114189; bh=kARpF42x0a3Ol3hkdLTct9brZ7ygU/8j2A4lKB9TSv4=;
-        h=From:Date:Subject:References:In-Reply-To:To:Cc;
-        b=Gsk0VQqEgTTb50ebWdPGEEAnq2KtAd8E+kURS9XcDYhQx+omvAP8aKyuUmglVVhII
-         iLCoLII1J/C8+FAbSznMXIam4O5PixyHa71srhXQNmyK9tRbWhkXJna+hez/3+XI7O
-         gdGTNPbVDwhZ4kpwBzEdhP4fZg/jF+F96qDZVmYk=
-From:   Luca Weiss <luca@z3ntu.xyz>
-Date:   Fri, 21 Apr 2023 23:56:21 +0200
-Subject: [PATCH 2/3] pinctrl: qcom: spmi-gpio: Add PM8953 support
+        with ESMTP id S231955AbjDUWC2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Apr 2023 18:02:28 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ADFF1B3
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Apr 2023 15:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1682114547; x=1713650547;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=kOjRkFk1qah9vuUgbRv0IZsT5I5svvqzJTqCd7TkLsw=;
+  b=WNcJ3QPINJHLx5BviiW8W++59PRxQTuFE1H5H/wBkx5iudgACsbGMfP/
+   tunfW3Lgpxdw9O/S1ar60n4j+45aFuYq9ddrMKnwQGxqdgXNFeuXQiR6O
+   nqaRTp4ddAlTsgLc3w6Lfsp/hA1kUp2INATixlw5peOOSN6Hi6YDQQytT
+   OpfBJqGOc2itFAh9F7s6BG3eSYMja3nEr5Ez4053+lYkoonMjKuZof6i6
+   p1BylM93KrAIIL2eDsqgb89+Ny9gqpwWYSGuPN/esRU5gM+y+zSz9GDc5
+   EXffLYJrlU9UZ7u+90nPfNGbHPqt9xkvNIYAuI5E5hTSDKSJEkXM7cQ3O
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10687"; a="334976397"
+X-IronPort-AV: E=Sophos;i="5.99,216,1677571200"; 
+   d="scan'208";a="334976397"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2023 15:02:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10687"; a="724987751"
+X-IronPort-AV: E=Sophos;i="5.99,216,1677571200"; 
+   d="scan'208";a="724987751"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 21 Apr 2023 15:02:25 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1ppypk-000gqy-1a;
+        Fri, 21 Apr 2023 22:02:24 +0000
+Date:   Sat, 22 Apr 2023 06:02:02 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org
+Subject: [linusw-pinctrl:for-next] BUILD SUCCESS
+ 79debe43aa8b118e9a95d36c984bf3c0863b7289
+Message-ID: <644307da.Eut5yTZwOp0psjQn%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230421-pm8953-gpio-v1-2-3d33e2de47e3@z3ntu.xyz>
-References: <20230421-pm8953-gpio-v1-0-3d33e2de47e3@z3ntu.xyz>
-In-Reply-To: <20230421-pm8953-gpio-v1-0-3d33e2de47e3@z3ntu.xyz>
-To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luca Weiss <luca@z3ntu.xyz>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=979; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=kARpF42x0a3Ol3hkdLTct9brZ7ygU/8j2A4lKB9TSv4=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkQwaL9fLrouqWGfHrkJj525FY2yYIP4nAeMc2e
- tlqdtMX2X+JAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZEMGiwAKCRBy2EO4nU3X
- VsLOEACBoR5dtbAeSqEemXnxA3tGdW0pt0dBKJn+xCfEhurE4UE7eZDy7JgdeTSZxBb4sUvfIKK
- f589BNs1QCO8ozEXcz025JoZ6T4TA9aFqTqp15qw245+jG8WxPpQMOJsLJ3mBcl13bcuggWxpTy
- gpyC4euSNcEP9apz6yzA/nIvvjFDx5ohuz0eXvDAv53vE+8CvRUf82ce+bzmMESmfiQyjPa7dgJ
- YT20kKzdXkSyeAcl9Xbp9UxVc5qcCFf8IbmPo135VT8X4kOiOeuGqrmVcoVYL2PUa29Q3W345ot
- 2OGl6783szwokGTYA5vCFlzdf0e8GXwW6FuwaVexcTabcjT7aUT+xe9sm4FRvDTfCDnUy9Zorpo
- 6P+uWJ13YKrXFbWwtaDObWYXHf6E7vvUQ6ul7+4yjF+9pO4Mhu5+GPicQDhtMIq4WDuGDX7hy3L
- c/hL8bwiK5+m6KWT0/RbWYo+sMld9arCJ0bwEZ6hpD92jDfkdHS2gQRypS+A2EPPQwlx9nKsddV
- RFnxZOYCOXjZ/JCqHLXkmfrCg/48p403rlV6Df03EV9cRIZ4491Tq+3KUMASZ3E5s0YLvN1DDuW
- s3w42YqEs9rmhqgNP7i7AoIFaagKBUbqGkLYzvQj+1DbHDcLIKV6B8gpDLJMN3VT5rUp6myMJwb
- JE/hTpcf4oIeMwQ==
-X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for the 8 GPIOs found on PM8953.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
+branch HEAD: 79debe43aa8b118e9a95d36c984bf3c0863b7289  Merge branch 'devel' into for-next
 
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
----
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 2 ++
- 1 file changed, 2 insertions(+)
+elapsed time: 724m
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index 43c7857c06a5..b4cd66886f29 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -1229,6 +1229,8 @@ static const struct of_device_id pmic_gpio_of_match[] = {
- 	{ .compatible = "qcom,pm8941-gpio", .data = (void *) 36 },
- 	/* pm8950 has 8 GPIOs with holes on 3 */
- 	{ .compatible = "qcom,pm8950-gpio", .data = (void *) 8 },
-+	/* pm8953 has 8 GPIOs with holes on 3 and 6 */
-+	{ .compatible = "qcom,pm8953-gpio", .data = (void *) 8 },
- 	{ .compatible = "qcom,pm8994-gpio", .data = (void *) 22 },
- 	{ .compatible = "qcom,pm8998-gpio", .data = (void *) 26 },
- 	{ .compatible = "qcom,pma8084-gpio", .data = (void *) 22 },
+configs tested: 135
+configs skipped: 12
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha        buildonly-randconfig-r001-20230421   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r004-20230421   gcc  
+alpha                randconfig-r005-20230421   gcc  
+arc                              allyesconfig   gcc  
+arc                          axs103_defconfig   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r003-20230421   gcc  
+arc                  randconfig-r026-20230421   gcc  
+arc                  randconfig-r043-20230419   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                                 defconfig   gcc  
+arm                            dove_defconfig   clang
+arm                          exynos_defconfig   gcc  
+arm                         nhk8815_defconfig   gcc  
+arm                  randconfig-r046-20230419   gcc  
+arm                        shmobile_defconfig   gcc  
+arm                           tegra_defconfig   gcc  
+arm64                            allyesconfig   gcc  
+arm64        buildonly-randconfig-r004-20230421   gcc  
+arm64                               defconfig   gcc  
+arm64                randconfig-r031-20230421   gcc  
+csky                                defconfig   gcc  
+hexagon      buildonly-randconfig-r001-20230421   clang
+hexagon              randconfig-r041-20230419   clang
+hexagon              randconfig-r041-20230421   clang
+hexagon              randconfig-r045-20230419   clang
+hexagon              randconfig-r045-20230421   clang
+i386                             allyesconfig   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-a001-20230417   gcc  
+i386                 randconfig-a002-20230417   gcc  
+i386                          randconfig-a002   clang
+i386                 randconfig-a003-20230417   gcc  
+i386                 randconfig-a004-20230417   gcc  
+i386                          randconfig-a004   clang
+i386                 randconfig-a005-20230417   gcc  
+i386                 randconfig-a006-20230417   gcc  
+i386                          randconfig-a006   clang
+i386                 randconfig-a011-20230417   clang
+i386                 randconfig-a012-20230417   clang
+i386                          randconfig-a012   gcc  
+i386                 randconfig-a013-20230417   clang
+i386                 randconfig-a014-20230417   clang
+i386                          randconfig-a014   gcc  
+i386                 randconfig-a015-20230417   clang
+i386                 randconfig-a016-20230417   clang
+i386                          randconfig-a016   gcc  
+ia64                             allmodconfig   gcc  
+ia64                                defconfig   gcc  
+ia64                 randconfig-r003-20230421   gcc  
+loongarch                        alldefconfig   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch            randconfig-r011-20230421   gcc  
+loongarch            randconfig-r035-20230421   gcc  
+loongarch            randconfig-r036-20230421   gcc  
+m68k                             allmodconfig   gcc  
+m68k                                defconfig   gcc  
+m68k                            mac_defconfig   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                     loongson1b_defconfig   gcc  
+mips                 randconfig-r002-20230421   clang
+mips                 randconfig-r006-20230421   clang
+nios2        buildonly-randconfig-r002-20230421   gcc  
+nios2                               defconfig   gcc  
+nios2                randconfig-r006-20230421   gcc  
+nios2                randconfig-r014-20230421   gcc  
+nios2                randconfig-r023-20230421   gcc  
+openrisc             randconfig-r022-20230421   gcc  
+parisc                              defconfig   gcc  
+parisc               randconfig-r016-20230421   gcc  
+parisc               randconfig-r021-20230421   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc      buildonly-randconfig-r006-20230421   clang
+powerpc              randconfig-r025-20230421   clang
+powerpc              randconfig-r032-20230421   gcc  
+powerpc              randconfig-r034-20230421   gcc  
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv        buildonly-randconfig-r004-20230421   clang
+riscv        buildonly-randconfig-r005-20230421   clang
+riscv                               defconfig   gcc  
+riscv                randconfig-r001-20230421   gcc  
+riscv                randconfig-r002-20230421   gcc  
+riscv                randconfig-r042-20230419   clang
+riscv                randconfig-r042-20230421   clang
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r012-20230421   clang
+s390                 randconfig-r023-20230421   clang
+s390                 randconfig-r044-20230419   clang
+s390                 randconfig-r044-20230421   clang
+sh                               allmodconfig   gcc  
+sh                          sdk7786_defconfig   gcc  
+sh                           se7712_defconfig   gcc  
+sparc        buildonly-randconfig-r005-20230421   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r005-20230421   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-a001-20230417   gcc  
+x86_64                        randconfig-a001   clang
+x86_64               randconfig-a002-20230417   gcc  
+x86_64               randconfig-a003-20230417   gcc  
+x86_64                        randconfig-a003   clang
+x86_64               randconfig-a004-20230417   gcc  
+x86_64               randconfig-a005-20230417   gcc  
+x86_64                        randconfig-a005   clang
+x86_64               randconfig-a006-20230417   gcc  
+x86_64               randconfig-a011-20230417   clang
+x86_64                        randconfig-a011   gcc  
+x86_64                        randconfig-a012   clang
+x86_64               randconfig-a013-20230417   clang
+x86_64                        randconfig-a013   gcc  
+x86_64               randconfig-a014-20230417   clang
+x86_64                        randconfig-a014   clang
+x86_64               randconfig-a015-20230417   clang
+x86_64                        randconfig-a015   gcc  
+x86_64                        randconfig-a016   clang
+x86_64                               rhel-8.3   gcc  
+xtensa               randconfig-r025-20230421   gcc  
 
 -- 
-2.40.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
