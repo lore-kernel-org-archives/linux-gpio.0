@@ -2,261 +2,172 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8547C77B76
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 Apr 2023 22:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 206A8C6FD18
+	for <linux-gpio@archiver.kernel.org>; Sat, 22 Apr 2023 04:59:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232340AbjDUWDf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 21 Apr 2023 18:03:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48558 "EHLO
+        id S229632AbjDVE7e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 22 Apr 2023 00:59:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233258AbjDUWDd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Apr 2023 18:03:33 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACA3310FF
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Apr 2023 15:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1682114612; x=1713650612;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Nn3gNw74DOd8Ae2stKEc8+DgQX1I6ojfetLLVCFTTfQ=;
-  b=Ue2zT2JYIH5VhEYkNNU+iLJw8zCZqR1LgXdsiPcWnqx+TQwSotE41yga
-   zjeJX0huL00u7ClZP93NacRpoonKxfPr+F9b472Oez7JHv3tLCDCfUvDM
-   udjUU2laN6MgQmTUJmX0pRnOq6RsrhOn9f46Kxr0wjNMMb9J8+X4bcCQt
-   NfzbDu1WZ9WgjSTuSSbZ2nHbMM8mKssKtjR9YrBusybUSu2ICYXr42IfH
-   zhgGf6gS2TiOkw2OGhA+m9rq4PP1p3V0aHdFs10V7X+7Q0stGTIOU+Ih5
-   8bMSe69ffdvxMNY7ggurT5/tjwNHgmT2eb1MXnwr6mHfX6fifJM4W3n6l
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10687"; a="330294193"
-X-IronPort-AV: E=Sophos;i="5.99,216,1677571200"; 
-   d="scan'208";a="330294193"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2023 15:03:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10687"; a="761715877"
-X-IronPort-AV: E=Sophos;i="5.99,216,1677571200"; 
-   d="scan'208";a="761715877"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 21 Apr 2023 15:03:30 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1ppyqi-000grS-2H;
-        Fri, 21 Apr 2023 22:03:24 +0000
-Date:   Sat, 22 Apr 2023 06:03:14 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- b7badd752de05312fdb1aeb388480f706d0c087f
-Message-ID: <64430822.sOZurIO1TvR/my8b%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S229451AbjDVE7d (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 22 Apr 2023 00:59:33 -0400
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 644AE1BE3;
+        Fri, 21 Apr 2023 21:59:30 -0700 (PDT)
+X-QQ-mid: bizesmtp66t1682139536tmblnj9b
+Received: from wxdbg.localdomain.com ( [183.129.236.74])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Sat, 22 Apr 2023 12:58:55 +0800 (CST)
+X-QQ-SSF: 01400000000000I0Z000000A0000000
+X-QQ-FEAT: p8PN4UZ3LytHY1c9ZSEY1Y3Um3l5OT33oeXZ9cGR4Q1k7d80LWLzckHRY+BgR
+        x68aHojT4CwV/B2xVu0GaEMh3iUmEevgVEqw2D/Do3Du3aXTP69hAiVs6ruTFMjaabR6eTw
+        mw/UQSVuYJ8yNg0yZLWO3z+2xLxoSoZfnLY/F5orFsa7VjaMjhVoAq6EmphSoEdFzOY9E9O
+        vxKUUOadAkLRbW29tltDfR835uiJzT5m0cW2pMgGpMTtjrB113IdZ+mo+rVi2Mu62gtnQ+r
+        eTOfTZmkDLlf3fXEpj4eE6F7fGizERCgA8PQ+r0plKFluQMKj3tqLaFWa609ahnKcEaQZqd
+        J4EDqux/U8mqelP+oKkq/fpBpfjpwRYb4yPTxwlDH09IYrhQTVt0QCCRvO8l1Shx1Izs6QH
+        j97fJDqthXCd2l03v5s55A==
+X-QQ-GoodBg: 2
+X-BIZMAIL-ID: 17808385363380690387
+From:   Jiawen Wu <jiawenwu@trustnetic.com>
+To:     netdev@vger.kernel.org, andrew@lunn.ch, linux@armlinux.org.uk,
+        jarkko.nikula@linux.intel.com, olteanv@gmail.com,
+        andriy.shevchenko@linux.intel.com, hkallweit1@gmail.com
+Cc:     linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+        mengyuanlou@net-swift.com, Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH net-next v4 3/8] net: txgbe: Register I2C platform device
+Date:   Sat, 22 Apr 2023 12:56:16 +0800
+Message-Id: <20230422045621.360918-4-jiawenwu@trustnetic.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20230422045621.360918-1-jiawenwu@trustnetic.com>
+References: <20230422045621.360918-1-jiawenwu@trustnetic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:trustnetic.com:qybglogicsvr:qybglogicsvr5
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: b7badd752de05312fdb1aeb388480f706d0c087f  pinctrl-bcm2835.c: fix race condition when setting gpio dir
+Register the platform device to use Designware I2C bus master driver.
 
-elapsed time: 727m
+Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
+---
+ drivers/net/ethernet/wangxun/Kconfig          |  1 +
+ .../net/ethernet/wangxun/txgbe/txgbe_phy.c    | 48 +++++++++++++++++++
+ .../net/ethernet/wangxun/txgbe/txgbe_type.h   |  4 ++
+ 3 files changed, 53 insertions(+)
 
-configs tested: 187
-configs skipped: 15
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-alpha                randconfig-r004-20230421   gcc  
-alpha                randconfig-r006-20230419   gcc  
-alpha                randconfig-r014-20230416   gcc  
-alpha                randconfig-r015-20230416   gcc  
-alpha                randconfig-r025-20230420   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arc                  randconfig-r003-20230421   gcc  
-arc                  randconfig-r013-20230417   gcc  
-arc                  randconfig-r021-20230420   gcc  
-arc                  randconfig-r043-20230420   gcc  
-arm                              allmodconfig   gcc  
-arm                              allyesconfig   gcc  
-arm          buildonly-randconfig-r005-20230416   clang
-arm                                 defconfig   gcc  
-arm                            dove_defconfig   clang
-arm                          exynos_defconfig   gcc  
-arm                        multi_v5_defconfig   clang
-arm                         nhk8815_defconfig   gcc  
-arm                  randconfig-r011-20230416   clang
-arm                  randconfig-r024-20230420   clang
-arm                  randconfig-r046-20230420   clang
-arm64                            allyesconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                randconfig-r004-20230418   clang
-arm64                randconfig-r006-20230417   gcc  
-arm64                randconfig-r031-20230421   gcc  
-csky         buildonly-randconfig-r001-20230420   gcc  
-csky         buildonly-randconfig-r004-20230420   gcc  
-csky                                defconfig   gcc  
-csky                 randconfig-r012-20230416   gcc  
-hexagon      buildonly-randconfig-r001-20230421   clang
-hexagon              randconfig-r001-20230417   clang
-hexagon              randconfig-r034-20230420   clang
-hexagon              randconfig-r035-20230420   clang
-hexagon              randconfig-r041-20230420   clang
-hexagon              randconfig-r041-20230421   clang
-hexagon              randconfig-r045-20230420   clang
-hexagon              randconfig-r045-20230421   clang
-i386                             allyesconfig   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                 randconfig-a001-20230417   gcc  
-i386                 randconfig-a002-20230417   gcc  
-i386                          randconfig-a002   clang
-i386                 randconfig-a003-20230417   gcc  
-i386                 randconfig-a004-20230417   gcc  
-i386                          randconfig-a004   clang
-i386                 randconfig-a005-20230417   gcc  
-i386                 randconfig-a006-20230417   gcc  
-i386                          randconfig-a006   clang
-i386                 randconfig-a011-20230417   clang
-i386                 randconfig-a012-20230417   clang
-i386                          randconfig-a012   gcc  
-i386                 randconfig-a013-20230417   clang
-i386                 randconfig-a014-20230417   clang
-i386                          randconfig-a014   gcc  
-i386                 randconfig-a015-20230417   clang
-i386                 randconfig-a016-20230417   clang
-i386                          randconfig-a016   gcc  
-ia64                             allmodconfig   gcc  
-ia64         buildonly-randconfig-r001-20230417   gcc  
-ia64         buildonly-randconfig-r005-20230418   gcc  
-ia64                                defconfig   gcc  
-ia64                 randconfig-r004-20230416   gcc  
-ia64                 randconfig-r005-20230416   gcc  
-ia64                 randconfig-r006-20230416   gcc  
-loongarch                        alldefconfig   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch    buildonly-randconfig-r005-20230420   gcc  
-loongarch                           defconfig   gcc  
-loongarch            randconfig-r001-20230419   gcc  
-loongarch            randconfig-r035-20230421   gcc  
-loongarch            randconfig-r036-20230421   gcc  
-m68k                             allmodconfig   gcc  
-m68k         buildonly-randconfig-r006-20230416   gcc  
-m68k                                defconfig   gcc  
-m68k                            mac_defconfig   gcc  
-m68k                 randconfig-r005-20230418   gcc  
-m68k                 randconfig-r006-20230418   gcc  
-m68k                 randconfig-r016-20230416   gcc  
-microblaze   buildonly-randconfig-r004-20230418   gcc  
-microblaze   buildonly-randconfig-r006-20230418   gcc  
-microblaze           randconfig-r003-20230416   gcc  
-mips                             allmodconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                        qi_lb60_defconfig   clang
-mips                 randconfig-r002-20230418   gcc  
-mips                 randconfig-r004-20230417   clang
-mips                 randconfig-r013-20230416   clang
-nios2                         3c120_defconfig   gcc  
-nios2                            alldefconfig   gcc  
-nios2        buildonly-randconfig-r001-20230416   gcc  
-nios2                               defconfig   gcc  
-nios2                randconfig-r005-20230417   gcc  
-nios2                randconfig-r006-20230421   gcc  
-nios2                randconfig-r022-20230420   gcc  
-nios2                randconfig-r033-20230420   gcc  
-openrisc             randconfig-r004-20230419   gcc  
-openrisc             randconfig-r015-20230417   gcc  
-parisc       buildonly-randconfig-r003-20230416   gcc  
-parisc                              defconfig   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                   bluestone_defconfig   clang
-powerpc      buildonly-randconfig-r003-20230417   clang
-powerpc      buildonly-randconfig-r004-20230417   clang
-powerpc      buildonly-randconfig-r006-20230421   clang
-powerpc                 mpc837x_mds_defconfig   gcc  
-powerpc              randconfig-r025-20230421   clang
-powerpc              randconfig-r032-20230420   clang
-powerpc              randconfig-r032-20230421   gcc  
-powerpc              randconfig-r034-20230421   gcc  
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv        buildonly-randconfig-r001-20230418   gcc  
-riscv        buildonly-randconfig-r004-20230421   clang
-riscv        buildonly-randconfig-r005-20230421   clang
-riscv                               defconfig   gcc  
-riscv                randconfig-r002-20230417   gcc  
-riscv                randconfig-r002-20230419   gcc  
-riscv                randconfig-r002-20230421   gcc  
-riscv                randconfig-r016-20230417   clang
-riscv                randconfig-r042-20230420   gcc  
-riscv                randconfig-r042-20230421   clang
-riscv                          rv32_defconfig   gcc  
-s390                             allmodconfig   gcc  
-s390                             allyesconfig   gcc  
-s390         buildonly-randconfig-r002-20230421   clang
-s390         buildonly-randconfig-r004-20230416   gcc  
-s390         buildonly-randconfig-r004-20230421   clang
-s390         buildonly-randconfig-r005-20230421   clang
-s390                                defconfig   gcc  
-s390                 randconfig-r023-20230421   clang
-s390                 randconfig-r044-20230420   gcc  
-s390                 randconfig-r044-20230421   clang
-sh                               allmodconfig   gcc  
-sh           buildonly-randconfig-r002-20230416   gcc  
-sh           buildonly-randconfig-r005-20230417   gcc  
-sh                        edosk7760_defconfig   gcc  
-sh                             espt_defconfig   gcc  
-sh                          landisk_defconfig   gcc  
-sh                   randconfig-r001-20230418   gcc  
-sh                   randconfig-r003-20230417   gcc  
-sh                   randconfig-r026-20230420   gcc  
-sh                   randconfig-r031-20230420   gcc  
-sh                           se7712_defconfig   gcc  
-sparc                               defconfig   gcc  
-sparc                randconfig-r005-20230421   gcc  
-sparc                randconfig-r011-20230417   gcc  
-sparc                       sparc64_defconfig   gcc  
-sparc64      buildonly-randconfig-r002-20230417   gcc  
-sparc64      buildonly-randconfig-r003-20230418   gcc  
-sparc64      buildonly-randconfig-r003-20230420   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64                              defconfig   gcc  
-x86_64                                  kexec   gcc  
-x86_64               randconfig-a001-20230417   gcc  
-x86_64                        randconfig-a001   clang
-x86_64               randconfig-a002-20230417   gcc  
-x86_64               randconfig-a003-20230417   gcc  
-x86_64                        randconfig-a003   clang
-x86_64               randconfig-a004-20230417   gcc  
-x86_64               randconfig-a005-20230417   gcc  
-x86_64                        randconfig-a005   clang
-x86_64               randconfig-a006-20230417   gcc  
-x86_64               randconfig-a011-20230417   clang
-x86_64               randconfig-a012-20230417   clang
-x86_64                        randconfig-a012   clang
-x86_64               randconfig-a013-20230417   clang
-x86_64               randconfig-a014-20230417   clang
-x86_64                        randconfig-a014   clang
-x86_64               randconfig-a015-20230417   clang
-x86_64               randconfig-a016-20230417   clang
-x86_64                        randconfig-a016   clang
-x86_64               randconfig-r012-20230417   clang
-x86_64                               rhel-8.3   gcc  
-xtensa                  audio_kc705_defconfig   gcc  
-xtensa               randconfig-r001-20230416   gcc  
-xtensa               randconfig-r014-20230417   gcc  
-
+diff --git a/drivers/net/ethernet/wangxun/Kconfig b/drivers/net/ethernet/wangxun/Kconfig
+index c9d88673d306..8acd6a0d84dc 100644
+--- a/drivers/net/ethernet/wangxun/Kconfig
++++ b/drivers/net/ethernet/wangxun/Kconfig
+@@ -40,6 +40,7 @@ config NGBE
+ config TXGBE
+ 	tristate "Wangxun(R) 10GbE PCI Express adapters support"
+ 	depends on PCI
++	select I2C_DESIGNWARE_PLATFORM
+ 	select LIBWX
+ 	help
+ 	  This driver supports Wangxun(R) 10GbE PCI Express family of
+diff --git a/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c b/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c
+index 39762c7fc851..d573f77007db 100644
+--- a/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c
++++ b/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c
+@@ -1,6 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /* Copyright (c) 2015 - 2023 Beijing WangXun Technology Co., Ltd. */
+ 
++#include <linux/platform_data/i2c-dw.h>
++#include <linux/platform_device.h>
+ #include <linux/gpio/property.h>
+ #include <linux/i2c.h>
+ #include <linux/pci.h>
+@@ -69,6 +71,40 @@ static int txgbe_swnodes_register(struct txgbe *txgbe)
+ 	return software_node_register_node_group(nodes->group);
+ }
+ 
++static int txgbe_i2c_register(struct txgbe *txgbe)
++{
++	struct pci_dev *pdev = txgbe->wx->pdev;
++	struct dw_i2c_platform_data pdata = {};
++	struct platform_device_info info = {};
++	struct platform_device *i2c_dev;
++	struct resource res = {};
++
++	pdata.base = txgbe->wx->hw_addr + TXGBE_I2C_BASE;
++	pdata.flags = BIT(11); /* MODEL_WANGXUN_SP */
++	pdata.ss_hcnt = 600;
++	pdata.ss_lcnt = 600;
++
++	info.parent = &pdev->dev;
++	info.fwnode = software_node_fwnode(txgbe->nodes.group[SWNODE_I2C]);
++	info.name = "i2c_designware";
++	info.id = (pdev->bus->number << 8) | pdev->devfn;
++	info.data = &pdata;
++	info.size_data = sizeof(pdata);
++
++	res.start = pdev->irq;
++	res.end = pdev->irq;
++	res.flags = IORESOURCE_IRQ;
++	info.res = &res;
++	info.num_res = 1;
++	i2c_dev = platform_device_register_full(&info);
++	if (IS_ERR(i2c_dev))
++		return PTR_ERR(i2c_dev);
++
++	txgbe->i2c_dev = i2c_dev;
++
++	return 0;
++}
++
+ int txgbe_init_phy(struct txgbe *txgbe)
+ {
+ 	int ret;
+@@ -79,10 +115,22 @@ int txgbe_init_phy(struct txgbe *txgbe)
+ 		return ret;
+ 	}
+ 
++	ret = txgbe_i2c_register(txgbe);
++	if (ret) {
++		wx_err(txgbe->wx, "failed to init i2c interface: %d\n", ret);
++		goto err_unregister_swnode;
++	}
++
+ 	return 0;
++
++err_unregister_swnode:
++	software_node_unregister_node_group(txgbe->nodes.group);
++
++	return ret;
+ }
+ 
+ void txgbe_remove_phy(struct txgbe *txgbe)
+ {
++	platform_device_unregister(txgbe->i2c_dev);
+ 	software_node_unregister_node_group(txgbe->nodes.group);
+ }
+diff --git a/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h b/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h
+index 51bbecb28433..771aefbc7c80 100644
+--- a/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h
++++ b/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h
+@@ -55,6 +55,9 @@
+ #define TXGBE_TS_CTL                            0x10300
+ #define TXGBE_TS_CTL_EVAL_MD                    BIT(31)
+ 
++/* I2C registers */
++#define TXGBE_I2C_BASE                          0x14900
++
+ /* Part Number String Length */
+ #define TXGBE_PBANUM_LENGTH                     32
+ 
+@@ -146,6 +149,7 @@ struct txgbe_nodes {
+ struct txgbe {
+ 	struct wx *wx;
+ 	struct txgbe_nodes nodes;
++	struct platform_device *i2c_dev;
+ };
+ 
+ #endif /* _TXGBE_TYPE_H_ */
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+2.27.0
+
