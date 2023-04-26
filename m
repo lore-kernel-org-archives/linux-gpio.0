@@ -2,179 +2,240 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E238C7618E
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Apr 2023 12:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD958C7618E
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Apr 2023 13:27:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240789AbjDZMGa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 26 Apr 2023 08:06:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57942 "EHLO
+        id S240775AbjDZN1E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 26 Apr 2023 09:27:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240267AbjDZMG2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Apr 2023 08:06:28 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on20624.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe5b::624])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 213F159F1;
-        Wed, 26 Apr 2023 05:06:25 -0700 (PDT)
+        with ESMTP id S240448AbjDZN1C (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Apr 2023 09:27:02 -0400
+Received: from mx0a-0039f301.pphosted.com (mx0a-0039f301.pphosted.com [148.163.133.242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35831170D;
+        Wed, 26 Apr 2023 06:26:57 -0700 (PDT)
+Received: from pps.filterd (m0174678.ppops.net [127.0.0.1])
+        by mx0a-0039f301.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33Q9uUQw029566;
+        Wed, 26 Apr 2023 13:26:45 GMT
+Received: from eur01-he1-obe.outbound.protection.outlook.com (mail-he1eur01lp2054.outbound.protection.outlook.com [104.47.0.54])
+        by mx0a-0039f301.pphosted.com (PPS) with ESMTPS id 3q6ahkwm6b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 26 Apr 2023 13:26:44 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=S3rR+PowSaaBqp6nwSmoCYf8RE1Lg2GLtcZ98gg0u5aR+nB+wjAOCske5cMN38qMIhycVECyy+TAP6NtF+itEDZUm1qJxMhYFl1WaxSIobDYhBJjrBcV6wuIqZzduPAavE8HaCpHuRqN1WQzImwjkgdGbyuG2kOmDlw58s2IuuTff3vfh+h73bZLR3rEFV8AoSK2AQc9GuekAGtpBfY/v7o+K51ZcOD5oQyj0aa4p5BrURhmAms4Rqk2x54aAkPcA1GR7q84IHqos7n8PLd5OqvZT80iLQeOZ8kAumkCEw/7PjVT2sFvwDSVL0hNssT9nJHCvpAu/qifjh9YbAiddA==
+ b=LNoN8U6No9BJlQkSIvV76CeaTY4QfbLiEIWvXJOr9jsMVrpjCoB1HsOtTMHXFMe6M+m9foiKJOehRQTdmN5K2+mqAnwZfriaAWEgHzDDrzVS+4A9lbdDIPRSf8MqHIYUQ/XQoU5UqWjImDOBgJiDGhdTzDcOdKC1FhUg4vhyCPiRMGDjmznvzudu7RUa6awlmJS1eBfbzU7hAg1J9m0rWCOMsnpDoK6ql3dVtDnKqDwH59cFuKA/IzZc09Z2nwrwZ9g21VzWMYxDghvtnHF6cqq1PyIlEkCEckM7EcfD5+E5vh/32Z6el0QwLsKV8YECD/AQCQnrir4YyaE2NWeMOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0Jy9GVv7FhePxyf+UsTYcz18+NHjxJ8jPSpzT81qO+I=;
- b=ft66ugfhhbZ6D2I/yCZkod9FcpGSuhS1Rzb2gcwe4ZwYMGJXTsxZ0uvHUQf5XELw445st9kre/qze+UnDVyN7jVVSUGSkREXQ5eA2vVtLn27zhq50sVf+70aLTVZaqDjGezm9M9x5KNSx3rXPMj7gBYKJcEEI9VDEY2hrGrKjS3Z0rsQXsWcgWNI+vm2yEVolzNV6Y5LzkLdZ19OEw/M75e5JN2jpyveDfQVgX4hjVW3TjRAHp8c6K1Jzr0ByUwlQQplbWPjsVVQer0/xk7rS/i881YnTF6aaAs+NcE3x0o9XZ/OubTonGVFHVaxZmhK7HVAAt6Akl07AUzA45JD3A==
+ bh=pyof/IvHyf2ZBLD2cKuGurdEc+LS5/o9SwZ6hqrgSJI=;
+ b=Dpstp540/MOrtmdYtDU6j/sdPEQEAO41VqsMjq+wkMmMhXyIFrVqxAjmX2Heku8fJ3uVAITkhbaG0HJEqLwDvvUawK7BM/DkfvMnxFXBKfXvAhq0QmeKn9MY5sTlbTteFacVkRYz+UlFUgZ3qZHv/0zYkhDEJ4XCUg6kfsfFOkBcM7Aj8e6KvHa1kcquZNgQKRnRtxw/XVBUC+NId4K6Zp4RXULVlsPCjnntSLR5hTj2HSNZPxDaZYoiAvmQdw1qXS2sMiLxeu7x/uD0nHj6r0Wyqaiv2ANeSTfsLUUbUMP9XSU9FLG2XW5GNFsIgeiM/XO3+d8COsSCrETHYRH5+Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=epam.com; dmarc=pass action=none header.from=epam.com;
+ dkim=pass header.d=epam.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=epam.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0Jy9GVv7FhePxyf+UsTYcz18+NHjxJ8jPSpzT81qO+I=;
- b=Zo5EfwsM6s4p9exepS2Iyx+RU6JvDL65l1/MsPCWC4IdcWLy3ymgfgM51KEF/G2eVJqL2idk88SE45aCQFXWgFgfBCBkpS7OMSnmBakeoHZrVKs4q7kOzaovarNcXNQTYBq1+2SWdjkvh3p4MmpIFnoNmhp2i8AZ6rWZlINFzLs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BYAPR12MB4758.namprd12.prod.outlook.com (2603:10b6:a03:a5::28)
- by LV2PR12MB5749.namprd12.prod.outlook.com (2603:10b6:408:17f::20) with
+ bh=pyof/IvHyf2ZBLD2cKuGurdEc+LS5/o9SwZ6hqrgSJI=;
+ b=sNLL2FLJbO8mti75yGLgSxiYO5BaXrhxHYU2ojgwpfAqDURE3r0jx1sLjq4kOiYsX3f14/cdwfkg2Wrbieu+r39CPXABFtjF7UqvEXVxSYqnWjYwjOx1/9+C45idygxuVLhqpz9q2QEXzeuRhCFYAd1KsusiY4AIdslUL3J82paH+vPXmxEVaQuqarLp0X1qyF9otYYhhT6IyueJ5BPqHUXrDMhkobrzBWlk2CcFwlXNSxSndwTXqLBV4AW6EBGahNXYOCzs0QFzdlCCwB6FIcGD9h1SYLM5feXZcvmX7eaJQNniV2DBExeFuPaosBkrChhouxgBw2sw4pvHHQqtyg==
+Received: from PA4PR03MB7136.eurprd03.prod.outlook.com (2603:10a6:102:ea::23)
+ by GV2PR03MB9380.eurprd03.prod.outlook.com (2603:10a6:150:d2::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.21; Wed, 26 Apr
- 2023 12:06:19 +0000
-Received: from BYAPR12MB4758.namprd12.prod.outlook.com
- ([fe80::8c5f:e48:a658:7611]) by BYAPR12MB4758.namprd12.prod.outlook.com
- ([fe80::8c5f:e48:a658:7611%5]) with mapi id 15.20.6340.021; Wed, 26 Apr 2023
- 12:06:19 +0000
-Message-ID: <905bd588-38c7-e3ad-c201-534c4593aa51@amd.com>
-Date:   Wed, 26 Apr 2023 14:06:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [RFC v1 0/2] Introducing generic SCMI pinctrl driver
- implementation
-Content-Language: en-US
-To:     Oleksii Moisieiev <Oleksii_Moisieiev@epam.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.54; Wed, 26 Apr
+ 2023 13:26:39 +0000
+Received: from PA4PR03MB7136.eurprd03.prod.outlook.com
+ ([fe80::bcf5:cd14:fd35:1300]) by PA4PR03MB7136.eurprd03.prod.outlook.com
+ ([fe80::bcf5:cd14:fd35:1300%8]) with mapi id 15.20.6340.021; Wed, 26 Apr 2023
+ 13:26:39 +0000
+From:   Oleksii Moisieiev <Oleksii_Moisieiev@epam.com>
+To:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>
+CC:     Oleksii Moisieiev <Oleksii_Moisieiev@epam.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Peng Fan <peng.fan@oss.nxp.com>,
+        Michal Simek <michal.simek@amd.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-References: <cover.1680793130.git.oleksii_moisieiev@epam.com>
-From:   Michal Simek <michal.simek@amd.com>
-In-Reply-To: <cover.1680793130.git.oleksii_moisieiev@epam.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR0202CA0004.eurprd02.prod.outlook.com
- (2603:10a6:803:14::17) To BYAPR12MB4758.namprd12.prod.outlook.com
- (2603:10b6:a03:a5::28)
+Subject: [RFC v2 3/3] dt-bindings: firmware: arm,scmi: Add support for pinctrl
+ protocol
+Thread-Topic: [RFC v2 3/3] dt-bindings: firmware: arm,scmi: Add support for
+ pinctrl protocol
+Thread-Index: AQHZeEK6qDUGtqz4K06E9chyDcKW7g==
+Date:   Wed, 26 Apr 2023 13:26:38 +0000
+Message-ID: <a361b227a273315fe9a9b822419863f0eb59bb46.1682513390.git.oleksii_moisieiev@epam.com>
+References: <cover.1682513390.git.oleksii_moisieiev@epam.com>
+In-Reply-To: <cover.1682513390.git.oleksii_moisieiev@epam.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PA4PR03MB7136:EE_|GV2PR03MB9380:EE_
+x-ms-office365-filtering-correlation-id: 4b85c04f-9786-4e42-6e0e-08db4659dde3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: sB7jkFcrAisKbBhIX8tEXnt0jCtyHudfiovAomSOe7kortmUJq00hubfca39pQYjJv6dPYlUtlrCvMDNxadXSCIvgwU9qkI9SWqhIbba1b14ObXYVG66Gs9BXjxblv2F3RJgUbDIlnau8Pcmw5+8ohNhgz5SmWhkOSHO6x7F4p4lN2c3TRayAGrNYHaFP/+bydtF5h/tflt4WRAUQvj5cSJHSVX21Or+iD5jtau0UmkZHeZ0o5xTvTskSFvLleFwMMejoAGDOidtDfMeYj0GVH/d8gBdLqbbeK359TpTx9LeuTQa7iEF5J25p2jpqGB2/0kRkM0OOvdFiSijLGWHnaSQr8J/G51g2KMYSDzJ17Cp0g2hkF6Hi/RTjeYFWRMOMvJ9O1QDiC0lqQ8fMxFcN0f2Jrp6w7s6PzToLQpHEc8qH0N8jylc8oF13hNe0SWkPjfwqj4uTgh8ZBMie4T2G2D6CcRnsJIDxfqFFUvAPykNAolXA/FYep5koin+Gj6Z1f3d4lsPXD4t+S1XRyBx7EPHOKkbAPjr9q0QFHfPxihkW1LjrYOHquT/XCH310or74rs2BNTkHjhC4SRsfpGuOL61Bxr5pO174ZwkY0OXv8Zb5hUKQOm709DftZggoR9
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR03MB7136.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(396003)(376002)(136003)(366004)(39860400002)(451199021)(8936002)(2616005)(122000001)(8676002)(478600001)(36756003)(91956017)(316002)(76116006)(66946007)(71200400001)(66476007)(66446008)(41300700001)(6916009)(4326008)(66556008)(64756008)(6486002)(86362001)(54906003)(6506007)(26005)(6512007)(186003)(2906002)(38070700005)(5660300002)(38100700002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?VNu2IY3P5h4I73alhbw/6xcK/baqO7/GhYsSqBOBlLvFziqbPVtYxq6GG8?=
+ =?iso-8859-1?Q?cCT5C97YoilxpuCvyIpHpYuMgP49O+9lq/Mt8BpgJcgxfn+gv3SrrXgC9r?=
+ =?iso-8859-1?Q?BP7fg8uE3EcuY12F5dLGEWh71KZU0aSER8Z8bNTkVxTKHHGf4W2K6LJcKy?=
+ =?iso-8859-1?Q?3WHAdai9l28IPg64za+4TvwP00Dt47B3rY9PWwxmvUMUKOEBqXtEbcbq4z?=
+ =?iso-8859-1?Q?F31H95EOUsfEhRrblHcs6UHxZLUOg8/pY3xjeptRH/3fa4kTzu2rWTT1AA?=
+ =?iso-8859-1?Q?PT6+aT2DggHGJSSatX43cyuDrKHvjniTtH6iVT8t/Y/PHY+HkypnljDzP2?=
+ =?iso-8859-1?Q?Hx4eIKObBmzPsUKW74Muf/O/7+PCdM4a1EobUBHui+tdv/yatbGjnqQHXw?=
+ =?iso-8859-1?Q?fbqQJfh4ruKjIqzr1XBAa2AaaZyHJjm/uQ45HP2wF2n4jX8nslnhTHbHna?=
+ =?iso-8859-1?Q?n6Tn4q0/IHOWoYhykdI8mILIvhWJPlOaybuMqU2QOIS51YAGVhyR1BUZDF?=
+ =?iso-8859-1?Q?TWY3JnxSzdoWWLJEhrfxvFfZpwoVYmSqc0mgS0RnGwPGuJB4uW6SpPyO/8?=
+ =?iso-8859-1?Q?6THwPIs/ssp9dZxF0I+nWnE4kodJajtpj1L69O9ymvD3zd0le9oxEy6Xow?=
+ =?iso-8859-1?Q?ZU4Eiqy8dUdHt8RRK5fj8/6nL/WdlH1NzZDv7umhEpLtfvu6u04Y2Gg/ne?=
+ =?iso-8859-1?Q?cSTJhxtLmXk7uFmike7xLRO9VlReC5KkQu41J1CYpYVSc72I2BiudvGtk+?=
+ =?iso-8859-1?Q?TrunehooGOmOr0oDy6k4UFZxSM1VBpQEuzIV2f0LglFsywgNDoAZ3gOP5v?=
+ =?iso-8859-1?Q?CoSE5EVPuzoPCiGBffbd/JuoTOhgaP5J/1Vh3zQTaZ9XfMlFoDxJez+JNl?=
+ =?iso-8859-1?Q?zvNOHVKHCEQ+MLgD8b0jgl/KAk9QWtY/iE1zx6aO4OgJSBXnK7PVq3lwh2?=
+ =?iso-8859-1?Q?lVxWK3j5A2/X6/N0vcWFK5V4jVXf/MwSGOACyPeiZs2Xh3CSwcpAgDJf+2?=
+ =?iso-8859-1?Q?7G4IVNG3Xc1R8WxOE3qkv9s1lb3HcmbJm9migkrKNeoNmZ8Mw4c12T2P4b?=
+ =?iso-8859-1?Q?BIFCUv976t36GcDTmmDFPMErEoPhR6TWPpeuDIk9tOGQwGlAfMvDJ+KH7c?=
+ =?iso-8859-1?Q?oj7ufERZPvJ4IixLMHjQWq5MWtxpH9srnVa1kY1iIQsyOcnNh1ZqbauLjX?=
+ =?iso-8859-1?Q?nozP35FcOFzOqEkvpWDkPYfdQkKjqTdfOW2cr4oohtTU/FXl/LPxR7Ogb1?=
+ =?iso-8859-1?Q?3c1o5esAzVSw5OszVJWQ/deQdyimoe9Gl+g2dlhLWEfpuZGJde75Sna3rj?=
+ =?iso-8859-1?Q?Kv3OEKD/nx1zFwg/6QNjpPxzCn9gUNc2SU/d+qTcY8b0c/acy5/TLGToNP?=
+ =?iso-8859-1?Q?VI4p1oFrC0d5+B9oME6+Njdqv2cpRleRc3+LXN9t9Pk2DNwD+8k40ML+XW?=
+ =?iso-8859-1?Q?exHVe6bLaVL+PeXKYY1j/LI9gX/bOMt4IJHPAK55ojdFWMvdlYlS0//SkS?=
+ =?iso-8859-1?Q?bRDS41Z+ns/vGlFwo5uL+nCmdE39Y3A4iJ5SEdygjveONtb08uiWnYe6uQ?=
+ =?iso-8859-1?Q?rmsUxs4UG9UdpOX5ksrva+5ZM8BQXLFBAYrrAwGKvpiKTNyY0il7yACQtp?=
+ =?iso-8859-1?Q?ljbRHTZTZ3WB/y0GFVGBnpw2urRQsggf2rrYqGFEEp8DzxltpCjl1YIQ?=
+ =?iso-8859-1?Q?=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR12MB4758:EE_|LV2PR12MB5749:EE_
-X-MS-Office365-Filtering-Correlation-Id: d20c741e-0ae0-4ca2-019a-08db464ea4e8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: nwrSARBVA6KH3BcLydFvaYhvYOfzcM2qPgSseWDaAc4df/h0vsosilnJcwRhPCc6nQs/R2r8QwB1pwllgAp2uf+E02/2ATa58TmfEYN5OxhRWQOteuMHXFS7LM+yGzK0RC+9+CQpub38+0hVOE6bpB7Hwx2fCAy3hiASUpY7Gw3T70z7U+XlI5pbp2WYJNVf6KNo33nBJOGu4uctiW+m2/0T1oFwpKbEys10yCb8QGJd11C+XyMCjs2PERd1mop6vM8Uudd+xVnMMchmQUOwFW3HkJau2tFxNopw+/cfrWbWH1jjhfaNiXlyvPpOiSSkvIux0OGXE6U+EQQ4EciW1q0NHFDKablhSxRmKpNFrdSwE4s8p2OyLC4y5Fb1rb+o5X20mc7bDM0ToNviJ4rOWfAOHfV3QMRz96qKtWV1nIQPC09z5eB3O6J8RWpM9uXpNX+1f0MtXzPGs/k189BocFrUpHrSXMnBMi9qgkFKth0g64rR8UnERrORMsruS/ZjqYi9I7p4LFFCTYijBWKdyxgah1OcsvwU62K0cuNqZLU8RjJ17iwyQ0I4UUkIVE5MgZpMkUwpis8Zid9W0l72hQJj51jYm03MDBh0rDE79tQ42teS2wSE6ekXuRdIvcTMx77qSkI5q0IygNK3qB4yOnqnqZUNp4qirG+R86aYovk=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB4758.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(39860400002)(136003)(346002)(376002)(396003)(451199021)(31686004)(31696002)(86362001)(36756003)(2906002)(53546011)(6486002)(2616005)(6666004)(186003)(83380400001)(6512007)(26005)(6506007)(44832011)(66556008)(66476007)(4326008)(110136005)(66946007)(478600001)(316002)(5660300002)(41300700001)(38100700002)(54906003)(8936002)(8676002)(41533002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bDByMlNnTjNuaDV5eWViaUN5WG4vNndYM2lkVXRMejUyRFFzb0QxZUV0RmNK?=
- =?utf-8?B?eGozT0pBMHdYcDIzYlY2Y2Y0ck5VQ0lsK0E5bkFFdHg3TXhWK3ptbCtkdU45?=
- =?utf-8?B?V0xKWnpYMW5PY05jckJpS1ExOU8yZFNGMGJ0V0dDSmt3NjE0czRyeE5DM2VR?=
- =?utf-8?B?VnBUQndsY05WR1JpSHNsS0Y4RmduSnhkdlJOYnFoVUVXK0RrZHorZ1BuNDdM?=
- =?utf-8?B?SmJQQ1EySERNcGNrbXY1YytmUTYyaVdXQ2VVaUtVYmlBQ2VZN0ZVYWVPY0RQ?=
- =?utf-8?B?RTZ3dHBSRVVZOGE5dFdvOXA0TC9GZUZyaHBlZzN5d1VHOHIrT2pqajBna21t?=
- =?utf-8?B?MzRTdDFTQld0N3hpL0hnOFpRWmdvcE9pcVhROS9jQ2RxZVBMSDdVVTNTenZS?=
- =?utf-8?B?QnNUSHpPUjh5OWs5U1oxRU5wcW1pdXhHQzRrelBraTJJYWpTL3FCUlI5TVh4?=
- =?utf-8?B?KzJ5TlQ0WlRoL3dQeVE5NmgyQW9JOUJ3ZHV1SWxlL09Nc2h1dWNnQUdaSHdh?=
- =?utf-8?B?L1FQcUdNa1JSL3N0SG5NVzRpQ3ZVSXBnZHNFM09aeGtxR29TSDhzQzNDa0FQ?=
- =?utf-8?B?ZndJZjgvZzFpZmQ2a3ZUSDZDVUxqZjJNYi9KQWdZUGVXWlVRSWwrWmU5cWxR?=
- =?utf-8?B?aDd5a0tkVlFBSjFjRzJLRTd4eklVZk1lSFFobUh3Y2V3WCtGTnFyVEZhdURM?=
- =?utf-8?B?ajlwYVoxWlJyQS96YVgrckJsYm9SU01kNE1RZDZVdmhtR2VHcmRHcis4ek5m?=
- =?utf-8?B?ZVAweVdtUStxc1dWeDZ2MzRkT2VXbjNlTjFyTVdlRExmV2k1Q0ZoTy8xaXNr?=
- =?utf-8?B?dDdUQ2d6NXRITFJtQXpKREVKbWtZMDlad24vWERzc0ppcktPLzNjVVVFYlRT?=
- =?utf-8?B?R1NBMlV6d1Y2SzM2SnVMWXFiNHlXTmlKVXRiTXFDVmJMRVRCdkVwckdnektq?=
- =?utf-8?B?ZFJod1Q4am5hZHM2Yng2dk1HZUIzWTNISEsrNVAybCtpZndhVzdkZmJlYVNE?=
- =?utf-8?B?Rjl6dk9lUXJHRnkzc2RrejZ3VDMyVXJ6ZDVIVHA0ZVU2WHB6aDNxYmlScVFv?=
- =?utf-8?B?TlNtMitHY1dadks2NkYrQ3BiSndQVHB0RmxEZ21nTUd3MTRjNTJGRUVETUxy?=
- =?utf-8?B?RmxZakpVREtaTyt3OHpvN0JpZnV2ZzVoUDVqdlhCQUNHTU9QUDhQK3QyVmYz?=
- =?utf-8?B?d1FycGFjdnVBTXlVQmhDNjhRQ3hFSHJKVkovS1Z4UzBKazN2K2E3bG5HOHhi?=
- =?utf-8?B?SW5OYkthLzU2SytSelI1RWxlc0xxM3BnZU1ucXc3VlQwSFVxVFdYQ2Q3ZkFK?=
- =?utf-8?B?RGY5VDcyS29yZE9TR0w4R2x6VU83eVlaUzdxcWVmei9ZN0FLVHdoZU91cDRJ?=
- =?utf-8?B?UGQ0TDhCZzJ1RDVDZDJvbWE4dnZKblArMzl2aHFsUWR5TkdabFJ1UVh3N0ty?=
- =?utf-8?B?UklhRS9QV0o4d0h4YzNyMlZ2WGNMMFFaRmI1aHFQZWU1VWRNRlZLK0VROXRK?=
- =?utf-8?B?Sm5UeFNua2lOY3dOa0VGVGg0WGlEb0NCWGY1d0N2NTZBT1lPUHhXTWszVmtP?=
- =?utf-8?B?bzRkQnJNK3Z0MERsSzdsU2pLOGdEMk1IdVNWdERBMFdRN2JnWTMwdmhHKy9E?=
- =?utf-8?B?VVlOTjc5UGN3K05tN0FlY2hPcWhVVUxxaW95S0pyMUJYc0FrdU9ncE9uTGNR?=
- =?utf-8?B?Y1NGNlc2USswMDFZM2lmcEtVaStTalNjLy9kTGtMM3kvbE10RFl4NGhqNUpH?=
- =?utf-8?B?VEl3RHNaTjRUZkJlZHBBQkU2R0tHSk8vcStKVktveWxYaDFadEIybXdKRFFI?=
- =?utf-8?B?a0JPbU9ROVJRb1V1eVYwQ0dYMm85eVczdHlQZXRicEU5NWE2NmRtOFFPaU4x?=
- =?utf-8?B?NXcyS245eSsxWTR3c05YUytQaTIxbzNndWJuZHZvUWN3ckZxSjhKOUFnMmxY?=
- =?utf-8?B?Y1kvR1dCQXc3M281YkRIcDdEeXg3Yi9mWXQ3TDk2dlJ5eThQWGFYZ0U1KzBT?=
- =?utf-8?B?MHQyWmRXNUV1RlpXVlBndmxnR1YzRVZpWWhTb0l0U1UySG12WGdQWDRsdXFh?=
- =?utf-8?B?MFVrL3VDRWxGRzBUV1BVdEErVWZXb0d3czJlRGZ3L3pLLzRRaDVOaEFtUDla?=
- =?utf-8?Q?BNF2zxqOGyFFTUVNQMmmoB14j?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d20c741e-0ae0-4ca2-019a-08db464ea4e8
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB4758.namprd12.prod.outlook.com
+X-OriginatorOrg: epam.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2023 12:06:19.2736
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR03MB7136.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b85c04f-9786-4e42-6e0e-08db4659dde3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Apr 2023 13:26:38.3498
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sVzZTgKJORIXnu3narce1DvevMtiq52buQlexQ5TxdPChx7EOJ/8jP4GO50vj6s1
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5749
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b41b72d0-4e9f-4c26-8a69-f949f367c91d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: nBrjQMVOGk5rVqTcnCFBILkaPLNL7sN0K8ZCA51mBhrl89IEsuSBqCidrCrESLaUKlUQUfPN4vEQk1Fr1d9x6J7P72GBrWcgA16By34N7YM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR03MB9380
+X-Proofpoint-ORIG-GUID: 2SX5shMOSi0Uup788ZcpSqux5_CEH-j3
+X-Proofpoint-GUID: 2SX5shMOSi0Uup788ZcpSqux5_CEH-j3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-26_05,2023-04-26_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 malwarescore=0 suspectscore=0 adultscore=0 mlxlogscore=999
+ spamscore=0 bulkscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304260119
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+Add new SCMI v3.2 pinctrl protocol bindings definitions and example.
 
-On 4/7/23 12:18, Oleksii Moisieiev wrote:
-> This RFC patch series is intended to introduce the potential generic driver for
-> pin controls over SCMI protocol, provided in the latest beta version of DEN0056 [0].
-> 
-> On ARM-based systems, a separate Cortex-M based System Control Processor (SCP)
-> provides control on pins, as well as with power, clocks, reset controllers. In this case,
-> kernel should use one of the possible transports, described in [0] to access SCP and
-> control clocks/power-domains etc. This driver is using SMC transport to communicate with SCP via
-> SCMI protocol and access to the Pin Control Subsystem.
-> 
-> The provided driver consists of 2 parts:
->   - firmware/arm_scmi/pinctrl.c - the SCMI pinctrl protocol inmplementation
->     responsible for the communication with SCP firmware.
-> 
->   - drivers/pinctrl/pinctrl-scmi.c - pinctrl driver, which is using pinctrl
->    protocol implementation to access all necessary data.
-> 
-> Configuration:
-> The scmi-pinctrl driver can be configured using DT bindings.
-> For example:
-> / {
-> 	cpu_scp_shm: scp-shmem@0x53FF0000 {
-> 		compatible = "arm,scmi-shmem";
-> 		reg = <0x0 0x53FF0000 0x0 0x1000>;
-> 	};
-> 
-> 	firmware {
-> 		scmi {
-> 			compatible = "arm,scmi-smc";
-> 			arm,smc-id = <0x82000002>;
-> 			shmem = <&cpu_scp_shm>;
-> 			#address-cells = <1>;
-> 			#size-cells = <0>;
-> 
-> 			scmi_pinctrl: protocol@19 {
-> 				reg = <0x18>;
-> 				#pinctrl-cells = <0>;
-> 
-> 				i2c2_pins: i2c2 {
-> 					groups = "i2c2_a";
-> 					function = "i2c2";
-> 				};
-> 			};
-> 		};
-> 	};
-> };
+Signed-off-by: Oleksii Moisieiev <oleksii_moisieiev@epam.com>
+---
+ .../bindings/firmware/arm,scmi.yaml           | 77 +++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-Spec itself has as the part of pinctrl also gpio support.
-Here the example there is no gpio-cells property that's why I am curious if you 
-plan to also add it here.
-
-Thanks,
-Michal
-
+diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Doc=
+umentation/devicetree/bindings/firmware/arm,scmi.yaml
+index 2f7c51c75e85..41ba5b8d8151 100644
+--- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
++++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+@@ -212,6 +212,63 @@ properties:
+       reg:
+         const: 0x18
+=20
++  protocol@19:
++    $ref: '#/$defs/protocol-node'
++
++    properties:
++      reg:
++        const: 0x19
++
++      '#pinctrl-cells':
++        const: 0
++
++    allOf:
++      - $ref: "/schemas/pinctrl/pinctrl.yaml#"
++
++    required:
++      - reg
++
++    additionalProperties:
++      anyOf:
++        - type: object
++          allOf:
++            - $ref: /schemas/pinctrl/pincfg-node.yaml#
++            - $ref: /schemas/pinctrl/pinmux-node.yaml#
++
++          description:
++            A pin multiplexing sub-node describe how to configure a
++            set of pins is some desired function.
++            A single sub-node may define several pin configurations.
++            This sub-node is using default pinctrl bindings to configure
++            pin multiplexing and using SCMI protocol to apply specified
++            configuration using SCMI protocol.
++
++          properties:
++            phandle: true
++            function: true
++            groups: true
++            pins: true
++            bias-bus-hold: true
++            bias-disable: true
++            bias-high-impedance: true
++            bias-pull-up: true
++            bias-pull-default: true
++            bias-pull-down: true
++            drive-open-drain: true
++            drive-open-source: true
++            drive-push-pull: true
++            drive-strength: true
++            input-debounce: true
++            input-value: true
++            input-schmitt: true
++            low-power-mode: true
++            output-mode: true
++            output-value: true
++            power-source: true
++            skew-rate: true
++
++          additionalProperties: true
++
+ additionalProperties: false
+=20
+ $defs:
+@@ -356,6 +413,26 @@ examples:
+             scmi_powercap: protocol@18 {
+                 reg =3D <0x18>;
+             };
++
++            scmi_pinctrl: protocol@19 {
++                reg =3D <0x19>;
++                #pinctrl-cells =3D <0>;
++
++                i2c2 {
++                    groups =3D "i2c2_a", "i2c2_b";
++                    function =3D "i2c2";
++                };
++
++                pins_mdio {
++                    groups =3D "avb_mdio";
++                    drive-strength =3D <24>;
++                };
++
++                keys_pins: keys {
++                    pins =3D "GP_5_17", "GP_5_20", "GP_5_22", "GP_2_1";
++                    bias-pull-up;
++                };
++            };
+         };
+     };
+=20
+--=20
+2.25.1
