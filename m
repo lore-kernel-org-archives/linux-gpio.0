@@ -2,88 +2,116 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D8EC77B61
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Apr 2023 11:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E34C77B60
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Apr 2023 13:32:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345760AbjD1Lo0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 28 Apr 2023 07:44:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38352 "EHLO
+        id S229844AbjD1Ncr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 28 Apr 2023 09:32:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230145AbjD1LoZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2023 07:44:25 -0400
-Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net [178.154.239.82])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78BD055A3;
-        Fri, 28 Apr 2023 04:44:23 -0700 (PDT)
-Received: from mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0f:26a7:0:640:a2d5:0])
-        by forward502a.mail.yandex.net (Yandex) with ESMTP id 7926E5EB96;
-        Fri, 28 Apr 2023 14:44:21 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id KiHVIE1Ba8c0-kLMgT63n;
-        Fri, 28 Apr 2023 14:44:21 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1682682261;
-        bh=P5dAEFXCyQi6+rdwlxT4TYQBkm3BseljpBsRS20Ci8M=;
-        h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-        b=GOJgSUi30rxJXVvgNEnAr96wjzGSIXWH0TV+ZOfFqq17/ayGyrdh/jHhwg7442ixu
-         bYUDrbIcdC7sBc+aeLcre2Cl1uQzgM88pmN3dYEs5zokzhQEQ0zt91rp1FubbCtv3O
-         DNL/PvTtQWYXxbU4lmFTcdczNuQPrwAgEWEYq+80=
-Authentication-Results: mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <db1013a28b517a7d37a052290173d4f12b6325b9.camel@maquefel.me>
-Subject: Re: [PATCH 32/43] dt-bindings: gpio: Add DT bindings ep93xx gpio
-From:   Nikita Shubin <nikita.shubin@maquefel.me>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Cc:     Arnd Bergmann <arnd@kernel.org>, Linus Walleij <linusw@kernel.org>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 28 Apr 2023 17:44:22 +0300
-In-Reply-To: <CACRpkdY_1-4QPzuQs0aqX4M=RDzT3y9m7FTA_Dq71vEn22A8qw@mail.gmail.com>
-References: <20230424123522.18302-1-nikita.shubin@maquefel.me>
-         <20230424123522.18302-33-nikita.shubin@maquefel.me>
-         <20230424163203.GK2701399-robh@kernel.org>
-         <CACRpkdY_1-4QPzuQs0aqX4M=RDzT3y9m7FTA_Dq71vEn22A8qw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.3 
+        with ESMTP id S1346298AbjD1Ncp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2023 09:32:45 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8B6346BB;
+        Fri, 28 Apr 2023 06:32:43 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1a6f0d8cdfeso75793425ad.2;
+        Fri, 28 Apr 2023 06:32:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682688763; x=1685280763;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:to
+         :content-language:user-agent:mime-version:date:message-id:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ecf3y//8as8pmNBqc+FV/KL+yi6EQ2HAAYSLWqdkKMY=;
+        b=S8lRCV5XNase7pRtd37xsGAZzTDD6LYZluEpOiqWveUN07ffsE754Ypw1bTZS8+Ri3
+         iNhAND76FztYXHLw8cHxo3ZFPtOanPUx2/7cmTo1PIjXf3kFnF3wetAybVUNKAXg6mss
+         nGJ8yinhECeQ0K0ehiocBmq9TSphAmxKsis/LJw7K1wKm4Kph/pweqWndZ15sk9oE6G6
+         IFbL5zqrXNU6KQtDAOuPZ7X+qFAVE/uhXDcV9lNvwlv+RLTNtw+Toz7AbI9Q6aoQorDt
+         nx9g+PL/PTf1t4Yy8SZwi1BCl+aAgxQnJgjlkNiVsyOwYt9WYWHtnY7xO+RDEE/HtGo2
+         mQeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682688763; x=1685280763;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:to
+         :content-language:user-agent:mime-version:date:message-id:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ecf3y//8as8pmNBqc+FV/KL+yi6EQ2HAAYSLWqdkKMY=;
+        b=grLy7fcAEBOhv79yQC1iwDj0+XZMGx4PeoWfYZBHDL0pJw1fzYZjHhV2USi7yvEc6O
+         IO21u7rQ4s89i79lWaru48mm8iOLGFMlOmdhnJg8CzJWXudVc8aK02FaTMNgt0ZbvHGA
+         PKwjNLxGawf2wOmyfAWdJH0MOhA/OYc4DVQ/NHmtln5vS7OzzNanBe84HAgKMjFGde/o
+         D8j6ZuFZNdMZ2JreLO/pEvUJtJc3Qzg+Gy/ccKyFtYHtPta7c1NcYfgj26H5sp4n2M/U
+         emaNQuv4oe2JipqApsyuq4UN8VNjlRv/n+l/3z6A9iu+7ytxQ5V+vE2lNqYzixIjDd2i
+         Sgjw==
+X-Gm-Message-State: AC+VfDygc2jNwMu8TIFdZSBIaIbFixSJeOvBnLCNGi0DirbIfWiYsXlZ
+        T+6rV35YwPVYHlfBYVFlgHw=
+X-Google-Smtp-Source: ACHHUZ6MuvKOGxaqrdszoikil1JyMqWsmcNZ0YJGxut2ugRIYmruVervYbpv5rJ01rxEqUYJPDjMrA==
+X-Received: by 2002:a17:902:ec83:b0:1a6:f93a:a135 with SMTP id x3-20020a170902ec8300b001a6f93aa135mr5944888plg.61.1682688763155;
+        Fri, 28 Apr 2023 06:32:43 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f5-20020a170902ab8500b001991f3d85acsm13241904plr.299.2023.04.28.06.32.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Apr 2023 06:32:42 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <b0bbd842-2262-8979-d8f8-ec611310c44f@roeck-us.net>
+Date:   Fri, 28 Apr 2023 06:32:39 -0700
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Content-Language: en-US
+To:     "Hawkins, Nick" <nick.hawkins@hpe.com>,
+        "Verdun, Jean-Marie" <verdun@hpe.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "brgl@bgdev.pl" <brgl@bgdev.pl>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "jdelvare@suse.com" <jdelvare@suse.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20230418152824.110823-1-nick.hawkins@hpe.com>
+ <20230418152824.110823-2-nick.hawkins@hpe.com>
+ <c27e07d2-8eb1-16a8-4619-280967fc0de9@roeck-us.net>
+ <DM4PR84MB1927C9D3C5CC5B001713CE57886A9@DM4PR84MB1927.NAMPRD84.PROD.OUTLOOK.COM>
+From:   Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v1 1/9] gpio: gxp: Add HPE GXP GPIO
+In-Reply-To: <DM4PR84MB1927C9D3C5CC5B001713CE57886A9@DM4PR84MB1927.NAMPRD84.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello Linus!
+On 4/27/23 07:53, Hawkins, Nick wrote:
+> 
+> 
+> 
+>> This is not information which should be reported through a gpio driver.
+>> Besides, the functions don't exist at this point in the series,
+>> and there should be no extern declarations in source files.
+> 
+>> If you want to model fan or psu information through gpio, drop
+>> the hwmon drivers and implement reading the status here, then use
+>> the existing gpio-fan hwmon driver to report it in the hwmon subsystem.
+> 
+> Thank you for the feedback Guenter,
+> 
+> I see how it is possible to use gpio-fan for the fan. As for the gxp-psu
+> Hwmon driver can I model the gpio-fan driver to get the necessary
+> gpio information for power supplies?
+> 
 
-On Wed, 2023-04-26 at 22:48 +0200, Linus Walleij wrote:
-> On Mon, Apr 24, 2023 at 6:32=E2=80=AFPM Rob Herring <robh@kernel.org> wro=
-te:
-> > On Mon, Apr 24, 2023 at 03:34:48PM +0300, Nikita Shubin wrote:
->=20
-> > > Add YAML bindings for ep93xx SoC.
-> > >=20
-> > > Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
-> (...)
-> > > +=C2=A0 chip-label:
-> > > +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > > +=C2=A0=C2=A0=C2=A0 description: human readable name.
-> >=20
-> > Why do you need this? It's not standard and I don't see other GPIO
-> > controllers needing it.
->=20
-> Caught my eye too, Nikita can you live without this and just use
-> dev_name()
-> or something to name the chip in Linux?
->=20
-> If it is to conform to EP93xx documentation naming I guess it should
-> be
-> cirrus,ep93xx-gpio-chip-name =3D "..."; ?
+Sorry, I don't understand. Looking into the code again, the major problem
+I see is that you want to model fan install status and fan fault
+status as gpio pins. The same is true for psu information (installed,
+ac, dc flags).
 
-Nah, i should drop it, it was a reverence to people which are sad about
-gpio index reordering.
+If you want to do this, fine, but then get the status from the gpio
+driver and don't export anything to the gpio driver. The kernel supports
+means to do that (look at gpiod_get and similar functions). It makes the
+code more complex, but I assume you know what you are doing.
 
-Through i like the idea of "cirrus,ep93xx-gpio-chip-name".
-
->=20
-> Yours,
-> Linus Walleij
+Guenter
 
