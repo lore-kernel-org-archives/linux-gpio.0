@@ -2,162 +2,82 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E85BBC77B7F
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Apr 2023 14:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2946DC77B60
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Apr 2023 17:43:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229977AbjD1OpO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 28 Apr 2023 10:45:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43822 "EHLO
+        id S1346475AbjD1RnF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 28 Apr 2023 13:43:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229759AbjD1OpN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2023 10:45:13 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B965B46BB;
-        Fri, 28 Apr 2023 07:45:12 -0700 (PDT)
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33SEZfak002849;
-        Fri, 28 Apr 2023 14:44:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=bWdQD3LqkH6qu6+vND77KayVLTWo2mL3i9gljvMTrH4=;
- b=qcIEQhD55bBGUTK/bZTdG0QdHxYFIGs3TRNOSHn4gOkh0oUSIxxT5YQHezS5qmbhZI7y
- r9UVleqcVhGBNAz751yEuyBAdGhHcdNDUSv65otJaZiF9I6PxUFCl+b5jVO/l8iQuLRC
- PdikO5PSzRzNU5JK245nCsx3rmXhbZfsRgkyBrr8WXEr/pv3Sh2pw9sLtcKygvMLgfVk
- Jty+oCbNG2jdLisEfrRzbFuAhAEQ9kq5h8IjagN23dymvScMvezEPSWMI+1NcnwKo4IE
- CFA/DkKnLnKyz2b6tbVwCNdhHrvUY12V3GhO7+lFE5f7IN79TPbYy/dmC5mXFK/EaGse 1Q== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q8fvcgpfs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Apr 2023 14:44:54 +0000
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33SEgU7P012171;
-        Fri, 28 Apr 2023 14:43:35 GMT
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q8fvcgkm8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Apr 2023 14:43:35 +0000
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 33SC6kCx013595;
-        Fri, 28 Apr 2023 14:41:28 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-        by ppma02fra.de.ibm.com (PPS) with ESMTPS id 3q47772ykm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Apr 2023 14:41:28 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-        by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 33SEfPYm2622036
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Apr 2023 14:41:25 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BC52F2004B;
-        Fri, 28 Apr 2023 14:41:25 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D69DB20043;
-        Fri, 28 Apr 2023 14:41:24 +0000 (GMT)
-Received: from [9.171.55.26] (unknown [9.171.55.26])
-        by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 28 Apr 2023 14:41:24 +0000 (GMT)
-Message-ID: <9a0feb128bc3b26ca444367ce4ee44e80aa9f469.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 09/38] gpio: add HAS_IOPORT dependencies
-From:   Niklas Schnelle <schnelle@linux.ibm.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-pci@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>,
-        linux-gpio@vger.kernel.org
-Date:   Fri, 28 Apr 2023 16:41:24 +0200
-In-Reply-To: <CACRpkdbS1U8_qakdWV0YZq3bhr1NvFuL0Umv3QsXD0wYu7Hd9A@mail.gmail.com>
-References: <20230314121216.413434-1-schnelle@linux.ibm.com>
-         <20230314121216.413434-10-schnelle@linux.ibm.com>
-         <CACRpkdbS1U8_qakdWV0YZq3bhr1NvFuL0Umv3QsXD0wYu7Hd9A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+        with ESMTP id S1346465AbjD1Rmw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2023 13:42:52 -0400
+Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D8674212;
+        Fri, 28 Apr 2023 10:42:51 -0700 (PDT)
+Received: by mail-qk1-x733.google.com with SMTP id af79cd13be357-74fbf99adc2so3118185a.3;
+        Fri, 28 Apr 2023 10:42:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682703770; x=1685295770;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TIp0PfLYwbyf4Zc/oKnBGo6p7i0B4STZURLC1RcDcMg=;
+        b=lbUslbnhnDoU8yHLKndgdczTSBHW6Zv1abaAwJegPSH4G0eI1l+8IRP10G9r9XqpLc
+         7eb5tLmiRn/7AtKL5rrk39CHKUN3IHIt+Bree7u7CzvHiBodSjoCy6jjFVYGUTjyA3St
+         v8F6y/NdmatQp8jAgZpwYx44GxB9knxUC04BTjCKjIJ+X4ro0sRzQSB0iWYKayjbvq7H
+         tPo9j2LbzGTp6WiVMgtO0kg7sbIt//3SzRVon7GDYf/lVcJIuAX4hYQ+pcOywz7vmD6F
+         dFP5cea3hp4dOamDwiDlRT0G82ghat1e/WFdd3/w30p2hDxINiQ23DQ+6vzBf0Nosh5o
+         OQgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682703770; x=1685295770;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TIp0PfLYwbyf4Zc/oKnBGo6p7i0B4STZURLC1RcDcMg=;
+        b=S3C/55MrWBSgHoWWxdfGjoeKMe9bBFM9kzS94MoM307tm0Ylb49cdsx4I59b8FYX1y
+         zn1fIhWsgtHTTMpx69l5OoaFiL1Cj3RWgcNRtAeXxFQa2SBW9G/c6VfGsPRTNiHijVB6
+         oHz6nrZ8g0EUwSRRlTTVioObxz/wz81nYpj6uZmShsMvQzrIasL/wOmlaPQlbq8fUgrP
+         mOpYEGcy44AKJZeMPJhJo7VSGjGy0OkVpPqCfZuacxgCkOFVSE3XY/hA5S241hfvtfy7
+         dmFt7qUDx9fIYtj/YSqgQs/9LsMKIJAT9UdHp+UQAczCKHo1Jq/Yr9XqKvJd0zHdphua
+         Aq+w==
+X-Gm-Message-State: AC+VfDz00Eegg3pS1cW56kO+kO4lmUzSoy/GW8GKJ7FgjpW2uVXh8O/K
+        aCCMMO/KQUVLDSsYIPXuvog=
+X-Google-Smtp-Source: ACHHUZ5d2qF1BGFPnOTR5Y+3K4+zazXVQL0g0Ke6qHkBcOBB5jpv1S1RhUNmDBF0RLcXZPeA+Ab7kQ==
+X-Received: by 2002:a05:6214:5089:b0:5ee:f961:4b74 with SMTP id kk9-20020a056214508900b005eef9614b74mr9243396qvb.9.1682703770707;
+        Fri, 28 Apr 2023 10:42:50 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id eb11-20020a05620a480b00b0074411b03972sm6857470qkb.51.2023.04.28.10.42.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Apr 2023 10:42:50 -0700 (PDT)
+Message-ID: <31bf7156-36b7-0c4d-585c-fd149963d6ef@gmail.com>
+Date:   Fri, 28 Apr 2023 10:42:45 -0700
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: SHXZ4IlH0V4Ypv-hAr4Jt82f9UHskpBQ
-X-Proofpoint-ORIG-GUID: POsiq4k905P5VL3Ha4rX0PZ9uotS258b
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-28_04,2023-04-27_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- suspectscore=0 phishscore=0 malwarescore=0 clxscore=1011 impostorscore=0
- priorityscore=1501 bulkscore=0 lowpriorityscore=0 spamscore=0
- mlxlogscore=691 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304280119
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH -next] gpio: brcmstb: Use
+ devm_platform_get_and_ioremap_resource()
+Content-Language: en-US
+To:     Yang Li <yang.lee@linux.alibaba.com>, linus.walleij@linaro.org
+Cc:     brgl@bgdev.pl, opendmb@gmail.com, f.fainelli@gmail.com,
+        bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20230428061109.102343-1-yang.lee@linux.alibaba.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20230428061109.102343-1-yang.lee@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 2023-03-15 at 09:42 +0100, Linus Walleij wrote:
-> Hi Niklas,
->=20
-> thanks for your patch!
->=20
-> On Tue, Mar 14, 2023 at 1:12=E2=80=AFPM Niklas Schnelle <schnelle@linux.i=
-bm.com> wrote:
-> >=20
-> > In a future patch HAS_IOPORT=3Dn will result in inb()/outb() and friend=
-s
-> > not being declared. We thus need to add HAS_IOPORT as dependency for
-> > those drivers using them.
-> >=20
-> > Co-developed-by: Arnd Bergmann <arnd@kernel.org>
-> > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> > ---
-> >  drivers/gpio/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> > index 13be729710f2..5a874e67fc13 100644
-> > --- a/drivers/gpio/Kconfig
-> > +++ b/drivers/gpio/Kconfig
-> > @@ -688,7 +688,7 @@ config GPIO_VISCONTI
-> >=20
-> >  config GPIO_VX855
-> >         tristate "VIA VX855/VX875 GPIO"
-> > -       depends on (X86 || COMPILE_TEST) && PCI
-> > +       depends on (X86 || COMPILE_TEST) && PCI && HAS_IOPORT
->=20
-> But is this the right fix? Further down in the Kconfig we have:
->=20
-> menu "Port-mapped I/O GPIO drivers"
->         depends on X86 # Unconditional I/O space access
->=20
-> config GPIO_I8255
->         tristate
->         select GPIO_REGMAP
->=20
-> (...)
->=20
-> Isn't the right fix to:
->=20
-> 1) Move this Kconfig entry (VX855) down under the Port-mapped /O drivers,
->    and then:
->=20
-> 2) Make the whole submenu for port-mapped IO drivers depend on
->    X86 && HAS_IOPORT
->=20
-> Yours,
-> Linus Walleij
+On 4/27/23 23:11, Yang Li wrote:
+> Convert platform_get_resource(), devm_ioremap_resource() to a single
+> call to devm_platform_get_and_ioremap_resource(), as this is exactly
+> what this function does.
+> 
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
 
-Makes sense I changed it to the above approach for v4. One thing this
-makes me wonder is if then one should change the X86 dependency to at
-least X86 || COMPILE_TEST or even remove it and rely on HAS_IOPORT. The
-comment there at least suggests that it is there only for the I/O space
-access.
-
-Thanks,
-Niklas
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
 
