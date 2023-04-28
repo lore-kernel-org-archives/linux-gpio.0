@@ -2,155 +2,88 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B3FC77B61
-	for <linux-gpio@archiver.kernel.org>; Fri, 28 Apr 2023 10:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D8EC77B61
+	for <linux-gpio@archiver.kernel.org>; Fri, 28 Apr 2023 11:44:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345901AbjD1KGm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 28 Apr 2023 06:06:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48968 "EHLO
+        id S1345760AbjD1Lo0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 28 Apr 2023 07:44:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345505AbjD1KGl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2023 06:06:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 432CD1735;
-        Fri, 28 Apr 2023 03:06:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CF8B261610;
-        Fri, 28 Apr 2023 10:06:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD47C433EF;
-        Fri, 28 Apr 2023 10:06:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682676399;
-        bh=81OkaQlfi3CrgD0EqbtFoJUkJdZFa1rVghoCulNspY8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ZximVBIuPdOi+pwiva8zkP48wBNEhFzkukIzxqilzyieetx0RRa9fwflJLXosbXdw
-         DlZfWsL10oOzaGxnWfee8x40HA9Y9zz4vZT7+R8WgcGy4+DOVH6Iw/SSibm4hFURzP
-         NAUDm0Wy+GBXPhxnVsGhRhsRftRKVyTQWbQZs950F6S50Astnfp3ENuVchmgx78F8p
-         luk8Ti+6xo1xF6ilCNV/Uf9a1dVTo3QcB2V4thlQ328UfJaWxu7mMbQcLy104wXMNJ
-         U5/9IzOIbRSGHmfPOkowr/kswengIZN7zgcrQzetjioPLIgb1zTSnG3pQKt/flvAbh
-         QxQfRtNTgaHHQ==
-Message-ID: <9eda664b-e2ce-1f95-a112-1a808c95e011@kernel.org>
-Date:   Fri, 28 Apr 2023 12:06:32 +0200
+        with ESMTP id S230145AbjD1LoZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2023 07:44:25 -0400
+Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net [178.154.239.82])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78BD055A3;
+        Fri, 28 Apr 2023 04:44:23 -0700 (PDT)
+Received: from mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0f:26a7:0:640:a2d5:0])
+        by forward502a.mail.yandex.net (Yandex) with ESMTP id 7926E5EB96;
+        Fri, 28 Apr 2023 14:44:21 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id KiHVIE1Ba8c0-kLMgT63n;
+        Fri, 28 Apr 2023 14:44:21 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1682682261;
+        bh=P5dAEFXCyQi6+rdwlxT4TYQBkm3BseljpBsRS20Ci8M=;
+        h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+        b=GOJgSUi30rxJXVvgNEnAr96wjzGSIXWH0TV+ZOfFqq17/ayGyrdh/jHhwg7442ixu
+         bYUDrbIcdC7sBc+aeLcre2Cl1uQzgM88pmN3dYEs5zokzhQEQ0zt91rp1FubbCtv3O
+         DNL/PvTtQWYXxbU4lmFTcdczNuQPrwAgEWEYq+80=
+Authentication-Results: mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <db1013a28b517a7d37a052290173d4f12b6325b9.camel@maquefel.me>
+Subject: Re: [PATCH 32/43] dt-bindings: gpio: Add DT bindings ep93xx gpio
+From:   Nikita Shubin <nikita.shubin@maquefel.me>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Cc:     Arnd Bergmann <arnd@kernel.org>, Linus Walleij <linusw@kernel.org>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 28 Apr 2023 17:44:22 +0300
+In-Reply-To: <CACRpkdY_1-4QPzuQs0aqX4M=RDzT3y9m7FTA_Dq71vEn22A8qw@mail.gmail.com>
+References: <20230424123522.18302-1-nikita.shubin@maquefel.me>
+         <20230424123522.18302-33-nikita.shubin@maquefel.me>
+         <20230424163203.GK2701399-robh@kernel.org>
+         <CACRpkdY_1-4QPzuQs0aqX4M=RDzT3y9m7FTA_Dq71vEn22A8qw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.3 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [RFC v2 3/3] dt-bindings: firmware: arm,scmi: Add support for
- pinctrl protocol
-To:     Oleksii Moisieiev <Oleksii_Moisieiev@epam.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Peng Fan <peng.fan@oss.nxp.com>,
-        Michal Simek <michal.simek@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-References: <cover.1682513390.git.oleksii_moisieiev@epam.com>
- <a361b227a273315fe9a9b822419863f0eb59bb46.1682513390.git.oleksii_moisieiev@epam.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <a361b227a273315fe9a9b822419863f0eb59bb46.1682513390.git.oleksii_moisieiev@epam.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 26/04/2023 15:26, Oleksii Moisieiev wrote:
-> Add new SCMI v3.2 pinctrl protocol bindings definitions and example.
-> 
-> Signed-off-by: Oleksii Moisieiev <oleksii_moisieiev@epam.com>
+Hello Linus!
 
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC.  It might happen, that command when run on an older
-kernel, gives you outdated entries.  Therefore please be sure you base
-your patches on recent Linux kernel.
+On Wed, 2023-04-26 at 22:48 +0200, Linus Walleij wrote:
+> On Mon, Apr 24, 2023 at 6:32=E2=80=AFPM Rob Herring <robh@kernel.org> wro=
+te:
+> > On Mon, Apr 24, 2023 at 03:34:48PM +0300, Nikita Shubin wrote:
+>=20
+> > > Add YAML bindings for ep93xx SoC.
+> > >=20
+> > > Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+> (...)
+> > > +=C2=A0 chip-label:
+> > > +=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > > +=C2=A0=C2=A0=C2=A0 description: human readable name.
+> >=20
+> > Why do you need this? It's not standard and I don't see other GPIO
+> > controllers needing it.
+>=20
+> Caught my eye too, Nikita can you live without this and just use
+> dev_name()
+> or something to name the chip in Linux?
+>=20
+> If it is to conform to EP93xx documentation naming I guess it should
+> be
+> cirrus,ep93xx-gpio-chip-name =3D "..."; ?
 
-You missed several entries, including DT list, so this won't be tested.
-I won't be doing full review, no point if patch is not tested.
+Nah, i should drop it, it was a reverence to people which are sad about
+gpio index reordering.
 
-> ---
->  .../bindings/firmware/arm,scmi.yaml           | 77 +++++++++++++++++++
->  1 file changed, 77 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> index 2f7c51c75e85..41ba5b8d8151 100644
-> --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> @@ -212,6 +212,63 @@ properties:
->        reg:
->          const: 0x18
->  
-> +  protocol@19:
-> +    $ref: '#/$defs/protocol-node'
-> +
-> +    properties:
-> +      reg:
-> +        const: 0x19
-> +
-> +      '#pinctrl-cells':
-> +        const: 0
-> +
-> +    allOf:
-> +      - $ref: "/schemas/pinctrl/pinctrl.yaml#"
+Through i like the idea of "cirrus,ep93xx-gpio-chip-name".
 
-Drop quotes.
-
-> +
-> +    required:
-> +      - reg
-> +
-> +    additionalProperties:
-> +      anyOf:
-> +        - type: object
-> +          allOf:
-> +            - $ref: /schemas/pinctrl/pincfg-node.yaml#
-> +            - $ref: /schemas/pinctrl/pinmux-node.yaml#
-> +
-> +          description:
-> +            A pin multiplexing sub-node describe how to configure a
-> +            set of pins is some desired function.
-> +            A single sub-node may define several pin configurations.
-> +            This sub-node is using default pinctrl bindings to configure
-> +            pin multiplexing and using SCMI protocol to apply specified
-> +            configuration using SCMI protocol.
-> +
-> +          properties:
-> +            phandle: true
-
-What's this?
-
-> +            function: true
-> +            groups: true
-> +            pins: true
-> +            bias-bus-hold: true
-> +            bias-disable: true
-> +            bias-high-impedance: true
-> +            bias-pull-up: true
-> +            bias-pull-default: true
-> +            bias-pull-down: true
-> +            drive-open-drain: true
-> +            drive-open-source: true
-> +            drive-push-pull: true
-> +            drive-strength: true
-> +            input-debounce: true
-> +            input-value: true
-> +            input-schmitt: true
-> +            low-power-mode: true
-> +            output-mode: true
-> +            output-value: true
-> +            power-source: true
-> +            skew-rate: true
-> +
-> +          additionalProperties: true
-
-This should be false... but if it is true, then listing all properties
-does not make sense. And anyway usual way is to make it instead
-unevaluatedProperties:false. I have troubles understanding your goal here.
-
-Best regards,
-Krzysztof
+>=20
+> Yours,
+> Linus Walleij
 
