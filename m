@@ -2,217 +2,86 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F8CC7EE21
-	for <linux-gpio@archiver.kernel.org>; Wed,  3 May 2023 17:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29603C77B75
+	for <linux-gpio@archiver.kernel.org>; Wed,  3 May 2023 19:14:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229847AbjECRWl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 3 May 2023 13:22:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57462 "EHLO
+        id S229736AbjECTOI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 3 May 2023 15:14:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229620AbjECRWk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 May 2023 13:22:40 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F93210F1;
-        Wed,  3 May 2023 10:22:39 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 343GmLI0019257;
-        Wed, 3 May 2023 17:04:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=3j6qKMufK1xOS3WjPDSg9QQXFKVRPXyyQTDI+AWUpgI=;
- b=ihSW94Fxv8BF+qz/loxVJczsOPRnVmMCC/uRdbKBcYgyV3HijWNH6rDBVBqdOtMw+JHG
- ue1qFjbgzzCCJI3lhRgCUgErKK1M1ZtSDbjRZbYH/vaWO9mxOsRb8zKWWRxIpj74KkSy
- AHm+hzzXFrwSiDcLHrqGD6hqunm3P3jeYq/mnI8abpk2Z3y1WMhk3LS8vEkIk1xYU18C
- QJsWvZYoqx6gdzztSvWaLJvi9oIc4I0j1PAKldLqzu/Bq5c6tgOdW8wliPQxRxNE7/sj
- XebdbZF4OoONDKuHcFKq4S2X5LGJ+p4m7vXd+NjJyOLenEROege+bpxQn+2iOS93QHhb pg== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qbk7sh7qy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 03 May 2023 17:04:12 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 343H44fs005070
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 3 May 2023 17:04:04 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 3 May 2023 10:03:58 -0700
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <corbet@lwn.net>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
-        <linux-gpio@vger.kernel.org>, <srinivas.kandagatla@linaro.org>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-doc@vger.kernel.org>, "Mukesh Ojha" <quic_mojha@quicinc.com>
-Subject: [PATCH v3 12/18] soc: qcom: Register pstore frontend region with minidump
-Date:   Wed, 3 May 2023 22:32:26 +0530
-Message-ID: <1683133352-10046-13-git-send-email-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
-References: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
+        with ESMTP id S229719AbjECTOG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 May 2023 15:14:06 -0400
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08F7C7AB8
+        for <linux-gpio@vger.kernel.org>; Wed,  3 May 2023 12:14:04 -0700 (PDT)
+Received: from localhost (88-113-26-95.elisa-laajakaista.fi [88.113.26.95])
+        by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+        id a912b3f3-e9e6-11ed-b972-005056bdfda7;
+        Wed, 03 May 2023 22:14:01 +0300 (EEST)
+From:   andy.shevchenko@gmail.com
+Date:   Wed, 3 May 2023 22:14:00 +0300
+To:     Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        ping.bai@nxp.com, kernel@pengutronix.de, linus.walleij@linaro.org,
+        shenwei.wang@nxp.com, bartosz.golaszewski@linaro.org,
+        peng.fan@nxp.com, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v2][PATCH] pinctrl: freescale: Fix a memory out of bounds when
+ num_configs is 1
+Message-ID: <ZFKyeFQOuCaDOh1n@surfacebook>
+References: <20230503012127.4157304-1-xiaolei.wang@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: KciCwc0YGPllTPgHlxaAHCpumGHprIXZ
-X-Proofpoint-GUID: KciCwc0YGPllTPgHlxaAHCpumGHprIXZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-03_12,2023-05-03_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 bulkscore=0 adultscore=0 priorityscore=1501 impostorscore=0
- mlxscore=0 spamscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2305030146
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230503012127.4157304-1-xiaolei.wang@windriver.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Since qcom_pstore_minidump driver creates platform device
-for qualcomm devices, so it knows the physical addresses
-of the frontend region now. Let's register the regions
-with qcom_minidump driver.
+Wed, May 03, 2023 at 09:21:27AM +0800, Xiaolei Wang kirjoitti:
+> The config passed in by pad wakeup is 1, When num_configs is 1,
+> configs[1] should not be obtained, which will generate the
+> following memory out-of-bounds situation:
+> 
+> BUG: KASAN: stack out of bounds in imx_pinconf_set_scu+0x9c/0x160
+>   Read size 8 at address ffff8000104c7558 by task sh/664
+>   CPU: 3 PID: 664 Communication: sh Tainted: G WC 6.1.20 #1
+>      Hardware name: Freescale i.MX8QM MEK (DT)
+>   Call trace:
+>     dump_backtrace.part.0+0xe0/0xf0
+>     show stack+0x18/0x30
+>     dump_stack_lvl+0x64/0x80
+>     print report +0x154/0x458
+>     kasan_report+0xb8/0x100
+>     __asan_load8+0x80/0xac
+>     imx_pinconf_set_scu+0x9c/0x160
+>     imx_pinconf_set+0x6c/0x214
+>     pinconf_set_config+0x68/0x90
+>     pinctrl_gpio_set_config+0x138/0x170
+>     gpiochip_generic_config+0x44/0x60
+>     mxc_gpio_set_pad_wakeup+0x100/0x140
+>     mxc_gpio_noirq_suspend+0x50/0x74
+>     pm_generic_suspend_noirq+0x4c/0x70
+>     genpd_finish_suspend+0x174/0x260
+>     genpd_suspend_noirq+0x14/0x20
+>     dpm_run_callback.constprop.0+0x48/0xec
+>     __device_suspend_noirq+0x1a8/0x370
+>     dpm_noirq_suspend_devices+0x1cc/0x320
+>     dpm_suspend_noirq+0x7c/0x11c
+>     suspend_devices_and_enter+0x27c/0x760
+>     pm_suspend+0x36c/0x3e0
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
- drivers/soc/qcom/qcom_pstore_minidump.c | 80 ++++++++++++++++++++++++++++++++-
- 1 file changed, 79 insertions(+), 1 deletion(-)
+I have already pointed out to the documentation in which you may find what to
+do to make above better. 
 
-diff --git a/drivers/soc/qcom/qcom_pstore_minidump.c b/drivers/soc/qcom/qcom_pstore_minidump.c
-index 8d58500..c2bba4e 100644
---- a/drivers/soc/qcom/qcom_pstore_minidump.c
-+++ b/drivers/soc/qcom/qcom_pstore_minidump.c
-@@ -11,6 +11,8 @@
- #include <linux/pstore_ram.h>
- #include <soc/qcom/qcom_minidump.h>
- 
-+#define QCOM_PSTORE_TYPE_MAX	4
-+
- struct qcom_ramoops_config {
- 	unsigned long	record_size;
- 	unsigned long	console_size;
-@@ -24,6 +26,11 @@ struct qcom_ramoops_config {
- struct qcom_ramoops_dd {
- 	struct ramoops_platform_data qcom_ramoops_pdata;
- 	struct platform_device *ramoops_pdev;
-+	struct device *dev;
-+	struct qcom_apss_minidump_region *record_region;
-+	struct qcom_apss_minidump_region *console_region;
-+	struct qcom_apss_minidump_region *pmsg_region;
-+	struct qcom_apss_minidump_region *ftrace_region;
- };
- 
- static struct qcom_ramoops_config default_ramoops_config = {
-@@ -35,6 +42,64 @@ static struct qcom_ramoops_config default_ramoops_config = {
- };
- 
- static struct qcom_ramoops_dd *qcom_rdd;
-+
-+static int
-+__qcom_ramoops_minidump_region_register(struct qcom_apss_minidump_region *md_region,
-+					const char *name, phys_addr_t phys_addr,
-+					unsigned long size)
-+{
-+	int ret;
-+
-+	if (!size)
-+		return 0;
-+
-+	md_region = devm_kzalloc(qcom_rdd->dev, sizeof(*md_region), GFP_KERNEL);
-+	if (!md_region)
-+		return -ENOMEM;
-+
-+	strlcpy(md_region->name, name, sizeof(md_region->name));
-+	md_region->phys_addr = phys_addr;
-+	md_region->virt_addr = phys_to_virt(phys_addr);
-+	md_region->size = size;
-+	ret = qcom_apss_minidump_region_register(md_region);
-+	if (ret)
-+		dev_err(qcom_rdd->dev,
-+			"failed to add %s in minidump: err: %d\n", name, ret);
-+
-+	return ret;
-+}
-+
-+static int
-+qcom_ramoops_minidump_region_register(struct ramoops_platform_data *qcom_ramoops_data)
-+{
-+	phys_addr_t phys_addr;
-+	int ret = 0;
-+
-+	phys_addr = qcom_ramoops_data->mem_address;
-+	ret = __qcom_ramoops_minidump_region_register(qcom_rdd->record_region,
-+			"KDMESG", phys_addr, qcom_ramoops_data->record_size);
-+	if (ret)
-+		return ret;
-+
-+	phys_addr += qcom_ramoops_data->record_size;
-+	ret = __qcom_ramoops_minidump_region_register(qcom_rdd->console_region,
-+			"KCONSOLE", phys_addr, qcom_ramoops_data->console_size);
-+	if (ret)
-+		return ret;
-+
-+	phys_addr += qcom_ramoops_data->console_size;
-+	ret = __qcom_ramoops_minidump_region_register(qcom_rdd->pmsg_region,
-+			"KPMSG", phys_addr, qcom_ramoops_data->pmsg_size);
-+	if (ret)
-+		return ret;
-+
-+	phys_addr += qcom_ramoops_data->pmsg_size;
-+	ret = __qcom_ramoops_minidump_region_register(qcom_rdd->ftrace_region,
-+			"KFTRACE", phys_addr, qcom_ramoops_data->ftrace_size);
-+
-+	return ret;
-+}
-+
- static int qcom_ramoops_probe(struct platform_device *pdev)
- {
- 	struct device_node *of_node = pdev->dev.of_node;
-@@ -59,6 +124,7 @@ static int qcom_ramoops_probe(struct platform_device *pdev)
- 	if (!qcom_rdd)
- 		return -ENOMEM;
- 
-+	qcom_rdd->dev = &pdev->dev;
- 	cfg = of_device_get_match_data(&pdev->dev);
- 	if (!cfg) {
- 		dev_err(&pdev->dev, "failed to get supported matched data\n");
-@@ -81,13 +147,25 @@ static int qcom_ramoops_probe(struct platform_device *pdev)
- 		ret = PTR_ERR(qcom_rdd->ramoops_pdev);
- 		dev_err(&pdev->dev, "could not create platform device: %ld\n", ret);
- 		qcom_rdd->ramoops_pdev = NULL;
-+		return ret;
- 	}
- 
--	return ret;
-+	return qcom_ramoops_minidump_region_register(pdata);
- }
- 
- static int qcom_ramoops_remove(struct platform_device *pdev)
- {
-+	struct ramoops_platform_data *pdata;
-+
-+	pdata = &qcom_rdd->qcom_ramoops_pdata;
-+	if (pdata->record_size)
-+		qcom_apss_minidump_region_unregister(qcom_rdd->record_region);
-+	if (pdata->console_size)
-+		qcom_apss_minidump_region_unregister(qcom_rdd->console_region);
-+	if (pdata->pmsg_size)
-+		qcom_apss_minidump_region_unregister(qcom_rdd->pmsg_region);
-+	if (pdata->ftrace_size)
-+		qcom_apss_minidump_region_unregister(qcom_rdd->ftrace_region);
- 	platform_device_unregister(qcom_rdd->ramoops_pdev);
- 	qcom_rdd->ramoops_pdev = NULL;
- 
+> Fixes: f60c9eac54af ("gpio: mxc: enable pad wakeup on i.MX8x platforms")
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> ---
+
+Where is the changelog?
+
 -- 
-2.7.4
+With Best Regards,
+Andy Shevchenko
+
 
