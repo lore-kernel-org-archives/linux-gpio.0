@@ -2,90 +2,264 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B7AC77B7C
-	for <linux-gpio@archiver.kernel.org>; Wed, 10 May 2023 11:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87649C7EE22
+	for <linux-gpio@archiver.kernel.org>; Wed, 10 May 2023 11:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236797AbjEJLVA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 10 May 2023 07:21:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45616 "EHLO
+        id S236640AbjEJLjQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 10 May 2023 07:39:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235609AbjEJLU7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 May 2023 07:20:59 -0400
-Received: from muru.com (muru.com [72.249.23.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 131571FF7;
-        Wed, 10 May 2023 04:20:53 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 5CCD18109;
-        Wed, 10 May 2023 11:20:52 +0000 (UTC)
-Date:   Wed, 10 May 2023 14:20:51 +0300
-From:   Tony Lindgren <tony@atomide.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [PATCH v4 2/2] dt-bindings: pinctrl: Update pinctrl-single to
- use yaml
-Message-ID: <20230510112051.GD14287@atomide.com>
-References: <20230510095330.30742-1-tony@atomide.com>
- <20230510095330.30742-2-tony@atomide.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230510095330.30742-2-tony@atomide.com>
+        with ESMTP id S236658AbjEJLjO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 May 2023 07:39:14 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194097D96;
+        Wed, 10 May 2023 04:38:56 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34A9D4wU030035;
+        Wed, 10 May 2023 11:38:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=qcppdkim1;
+ bh=nbX9m9duY4Ccv7LjqF2S0/odDkqSyyaYinMSibystkI=;
+ b=fPLqndBCqYLDrLVbBeBeqla3JAqocVZXUkF/T4/vfo4Fr8o7SBJLz4d06g6r9wFWVaGq
+ yFl3uyGcmXWm96g5xor6+mjD2OqU7DDdmB9oSEWfeBI6YTftucfKwmbN15itW/LAcuzd
+ dQ6uvilLy/fpFN0i51GsN2ZrgG7dAXk2A2bH1xr87aFV7hQgVg4DleLVKvNXAP/vW+pg
+ XlAG8wC2ERk6fEv/85Iu8PBI/CZfLcyk7gGuXtz3YP+rraam4HFV9IC4Ptv6pRKaErUR
+ qGE9MYPxgR8Cv5hsI5D/U7sx79/mdKswmMApvgrF79Jub4fS+grDq3b45FmYIirPHAFy Lg== 
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qg5mprjg2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 10 May 2023 11:38:51 +0000
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+        by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 34ABclU0020134;
+        Wed, 10 May 2023 11:38:47 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 3qdy5bkpvm-1;
+        Wed, 10 May 2023 11:38:47 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34ABclEv020125;
+        Wed, 10 May 2023 11:38:47 GMT
+Received: from hu-sgudaval-hyd.qualcomm.com (hu-rohiagar-hyd.qualcomm.com [10.213.106.138])
+        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 34ABckn5020121;
+        Wed, 10 May 2023 11:38:47 +0000
+Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3970568)
+        id 5E15A5136; Wed, 10 May 2023 17:08:46 +0530 (+0530)
+From:   Rohit Agarwal <quic_rohiagar@quicinc.com>
+To:     andy.shevchenko@gmail.com, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, linus.walleij@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        richardcochran@gmail.com, manivannan.sadhasivam@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Rohit Agarwal <quic_rohiagar@quicinc.com>
+Subject: [PATCH v6 1/4] dt-bindings: pinctrl: qcom: Add SDX75 pinctrl devicetree compatible
+Date:   Wed, 10 May 2023 17:08:42 +0530
+Message-Id: <1683718725-14869-2-git-send-email-quic_rohiagar@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1683718725-14869-1-git-send-email-quic_rohiagar@quicinc.com>
+References: <1683718725-14869-1-git-send-email-quic_rohiagar@quicinc.com>
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: muOVb2ciwbGpNuyVV0O9t-k3nfdTytVF
+X-Proofpoint-GUID: muOVb2ciwbGpNuyVV0O9t-k3nfdTytVF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-10_04,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 phishscore=0 mlxlogscore=999 clxscore=1015
+ suspectscore=0 malwarescore=0 mlxscore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2304280000 definitions=main-2305100092
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [230510 09:54]:
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
-...
-> +patternProperties:
-...
-> +  'cpsw_default|cpsw_sleep|davinci_mdio_default|davinci_mdio_sleep':
-> +    description: Deprecated legacy naming for cpsw and mdio on TI SoCs
-> +    deprecated: true
-> +    type: object
-> +    $ref: pinmux-node.yaml#
-> +
-> +  'usb1_drvvbus|usb_hub_ctrl|usb2_phy':
-> +    description: Deprecated legacy naming for USB on TI SoCs
-> +    deprecated: true
-> +    type: object
-> +    $ref: pinmux-node.yaml#
-> +
-> +  'gpio_keys_s0|matrix_keypad_default|matrix_keypad_sleep|matrix_keypad_s0':
-> +    description: Deprecated legacy naming for input on TI SoCs
-> +    deprecated: true
-> +    type: object
-> +    $ref: pinmux-node.yaml#
-> +
-> +  'user_leds_s0|gpio_led_pmx':
-> +    description: Deprecated legacy naming for LEDs on TI SoCs
-> +    deprecated: true
-> +    type: object
-> +    $ref: pinmux-node.yaml#
-> +
-> +  'nand_flash_x8':
-> +    description: Deprecated legacy naming for NAND on TI SoCs
-> +    deprecated: true
-> +    type: object
-> +    $ref: pinmux-node.yaml#
+Add device tree binding Documentation details for Qualcomm SDX75
+pinctrl driver.
 
-Looks like fixing the pin group node names for all the older TI SoC dts
-files should not be too bad, for example diffstat for experimental am335x
-changes is:
+Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/pinctrl/qcom,sdx75-tlmm.yaml          | 169 +++++++++++++++++++++
+ 1 file changed, 169 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdx75-tlmm.yaml
 
-42 files changed, 323 insertions(+), 323 deletions(-)
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdx75-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sdx75-tlmm.yaml
+new file mode 100644
+index 0000000..7ebc69d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdx75-tlmm.yaml
+@@ -0,0 +1,169 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,sdx75-tlmm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Technologies, Inc. SDX75 TLMM block
++
++maintainers:
++  - Rohit Agarwal <quic_rohiagar@quicinc.com>
++
++description:
++  Top Level Mode Multiplexer pin controller in Qualcomm SDX75 SoC.
++
++allOf:
++  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
++
++properties:
++  compatible:
++    const: qcom,sdx75-tlmm
++
++  reg:
++    maxItems: 1
++
++  interrupts: true
++  interrupt-controller: true
++  "#interrupt-cells": true
++  gpio-controller: true
++
++  gpio-reserved-ranges:
++    minItems: 1
++    maxItems: 67
++
++  gpio-line-names:
++    maxItems: 133
++
++  "#gpio-cells": true
++  gpio-ranges: true
++  wakeup-parent: true
++
++patternProperties:
++  "-state$":
++    oneOf:
++      - $ref: "#/$defs/qcom-sdx75-tlmm-state"
++      - patternProperties:
++          "-pins$":
++            $ref: "#/$defs/qcom-sdx75-tlmm-state"
++        additionalProperties: false
++
++$defs:
++  qcom-sdx75-tlmm-state:
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
++    unevaluatedProperties: false
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          oneOf:
++            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-2][0-9]|13[0-2])$"
++            - enum: [ sdc1_clk, sdc1_cmd, sdc1_data, sdc1_rclk, sdc2_clk, sdc2_cmd, sdc2_data ]
++        minItems: 1
++        maxItems: 36
++
++      function:
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++        enum: [ gpio, eth0_mdc, eth0_mdio, eth1_mdc, eth1_mdio,
++                qlink0_wmss_reset, qlink1_wmss_reset, rgmii_rxc, rgmii_rxd0,
++                rgmii_rxd1, rgmii_rxd2, rgmii_rxd3, rgmii_rx_ctl, rgmii_txc,
++                rgmii_txd0, rgmii_txd1, rgmii_txd2, rgmii_txd3, rgmii_tx_ctl,
++                adsp_ext_vfr, atest_char_start, atest_char_status0,
++                atest_char_status1, atest_char_status2, atest_char_status3,
++                audio_ref_clk, bimc_dte_test0, bimc_dte_test1,
++                char_exec_pending, char_exec_release, coex_uart2_rx,
++                coex_uart2_tx, coex_uart_rx, coex_uart_tx, cri_trng_rosc,
++                cri_trng_rosc0, cri_trng_rosc1, dbg_out_clk, ddr_bist_complete,
++                ddr_bist_fail, ddr_bist_start, ddr_bist_stop, ddr_pxi0_test,
++                ebi0_wrcdc_dq2, ebi0_wrcdc_dq3, ebi2_a_d, ebi2_lcd_cs,
++                ebi2_lcd_reset, ebi2_lcd_te, emac0_mcg_pst0, emac0_mcg_pst1,
++                emac0_mcg_pst2, emac0_mcg_pst3, emac0_ptp_aux, emac0_ptp_pps,
++                emac1_mcg_pst0, emac1_mcg_pst1, emac1_mcg_pst2, emac1_mcg_pst3,
++                emac1_ptp_aux0, emac1_ptp_aux1, emac1_ptp_aux2, emac1_ptp_aux3,
++                emac1_ptp_pps0, emac1_ptp_pps1, emac1_ptp_pps2, emac1_ptp_pps3,
++                emac_cdc_dtest0, emac_cdc_dtest1, emac_pps_in, ext_dbg_uart,
++                gcc_125_clk, gcc_gp1_clk, gcc_gp2_clk, gcc_gp3_clk,
++                gcc_plltest_bypassnl, gcc_plltest_resetn, i2s_mclk,
++                jitter_bist_ref, ldo_en, ldo_update, m_voc_ext, mgpi_clk_req,
++                native0, native1, native2, native3, native_char_start,
++                native_tsens_osc, native_tsense_pwm1, nav_dr_sync, nav_gpio_0,
++                nav_gpio_1, nav_gpio_2, nav_gpio_3, pa_indicator_1, pci_e_rst,
++                pcie0_clkreq_n, pcie1_clkreq_n, pcie2_clkreq_n, pll_bist_sync,
++                pll_clk_aux, pll_ref_clk, pri_mi2s_data0, pri_mi2s_data1,
++                pri_mi2s_sck, pri_mi2s_ws, prng_rosc_test0, prng_rosc_test1,
++                prng_rosc_test2, prng_rosc_test3, qdss_cti_trig0,
++                qdss_cti_trig1, qdss_gpio_traceclk, qdss_gpio_tracectl,
++                qdss_gpio_tracedata0, qdss_gpio_tracedata1,
++                qdss_gpio_tracedata10, qdss_gpio_tracedata11,
++                qdss_gpio_tracedata12, qdss_gpio_tracedata13,
++                qdss_gpio_tracedata14, qdss_gpio_tracedata15,
++                qdss_gpio_tracedata2, qdss_gpio_tracedata3,
++                qdss_gpio_tracedata4, qdss_gpio_tracedata5,
++                qdss_gpio_tracedata6, qdss_gpio_tracedata7,
++                qdss_gpio_tracedata8, qdss_gpio_tracedata9, qlink0_b_en,
++                qlink0_b_req, qlink0_l_en, qlink0_l_req, qlink1_l_en,
++                qlink1_l_req, qup_se0_l0, qup_se0_l1, qup_se0_l2, qup_se0_l3,
++                qup_se1_l2, qup_se1_l3, qup_se2_l0, qup_se2_l1, qup_se2_l2,
++                qup_se2_l3, qup_se3_l0, qup_se3_l1, qup_se3_l2, qup_se3_l3,
++                qup_se4_l2, qup_se4_l3, qup_se5_l0, qup_se5_l1, qup_se6_l0,
++                qup_se6_l1, qup_se6_l2, qup_se6_l3, qup_se7_l0, qup_se7_l1,
++                qup_se7_l2, qup_se7_l3, qup_se8_l2, qup_se8_l3, qup_se1_l2_mira,
++                qup_se1_l2_mirb, qup_se1_l3_mira, qup_se1_l3_mirb, sdc1_tb_trig,
++                sdc2_tb_trig, sec_mi2s_data0, sec_mi2s_data1, sec_mi2s_sck,
++                sec_mi2s_ws, sgmii_phy_intr0, sgmii_phy_intr1, spmi_coex_clk,
++                spmi_coex_data, spmi_vgi_hwevent, tgu_ch0_trigout,
++                tri_mi2s_data0, tri_mi2s_data1, tri_mi2s_sck, tri_mi2s_ws,
++                uim1_clk, uim1_data, uim1_present, uim1_reset, uim2_clk,
++                uim2_data, uim2_present, uim2_reset, usb2phy_ac_en,
++                vsense_trigger_mirnat]
++
++    required:
++      - pins
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    tlmm: pinctrl@f100000 {
++        compatible = "qcom,sdx75-tlmm";
++        reg = <0x0f100000 0x300000>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        gpio-ranges = <&tlmm 0 0 133>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++
++        gpio-wo-state {
++            pins = "gpio1";
++            function = "gpio";
++        };
++
++        uart-w-state {
++            rx-pins {
++                pins = "gpio12";
++                function = "qup_se1_l2_mira";
++                bias-disable;
++            };
++
++            tx-pins {
++                pins = "gpio13";
++                function = "qup_se1_l3_mira";
++                bias-disable;
++            };
++        };
++    };
++...
+-- 
+2.7.4
 
-This includes changing node names to use - instead of _ while at it.
-I'll send out about 10 or so patches once Rob has the dts subdirectories
-created.
-
-Regards,
-
-Tony
