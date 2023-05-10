@@ -2,92 +2,94 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0197AC77B7D
-	for <linux-gpio@archiver.kernel.org>; Wed, 10 May 2023 07:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BCFC7EE24
+	for <linux-gpio@archiver.kernel.org>; Wed, 10 May 2023 07:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235999AbjEJHm2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 10 May 2023 03:42:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36060 "EHLO
+        id S235609AbjEJHro (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 10 May 2023 03:47:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230335AbjEJHm1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 May 2023 03:42:27 -0400
-Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09DC7E5D
-        for <linux-gpio@vger.kernel.org>; Wed, 10 May 2023 00:42:25 -0700 (PDT)
+        with ESMTP id S235904AbjEJHrn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 May 2023 03:47:43 -0400
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38B92184
+        for <linux-gpio@vger.kernel.org>; Wed, 10 May 2023 00:47:41 -0700 (PDT)
 Received: from localhost (88-113-26-95.elisa-laajakaista.fi [88.113.26.95])
-        by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-        id 321ea111-ef06-11ed-b3cf-005056bd6ce9;
-        Wed, 10 May 2023 10:42:21 +0300 (EEST)
+        by fgw22.mail.saunalahti.fi (Halon) with ESMTP
+        id eeae663e-ef06-11ed-a9de-005056bdf889;
+        Wed, 10 May 2023 10:47:38 +0300 (EEST)
 From:   andy.shevchenko@gmail.com
-Date:   Wed, 10 May 2023 10:42:20 +0300
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     linus.walleij@linaro.org, brgl@bgdev.pl, mkshah@codeaurora.org,
-        Ben Brown <ben.brown@alliedtelesis.co.nz>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: Don't implicitly disable irq when masking
-Message-ID: <ZFtK3DydE24Qijle@surfacebook>
-References: <20230510001151.3946931-1-chris.packham@alliedtelesis.co.nz>
+Date:   Wed, 10 May 2023 10:47:37 +0300
+To:     Jiawen Wu <jiawenwu@trustnetic.com>
+Cc:     'Piotr Raczynski' <piotr.raczynski@intel.com>,
+        netdev@vger.kernel.org, jarkko.nikula@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
+        jsd@semihalf.com, Jose.Abreu@synopsys.com, andrew@lunn.ch,
+        hkallweit1@gmail.com, linux@armlinux.org.uk,
+        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+        mengyuanlou@net-swift.com
+Subject: Re: [PATCH net-next v7 2/9] i2c: designware: Add driver support for
+ Wangxun 10Gb NIC
+Message-ID: <ZFtMGTLiivnlrN1e@surfacebook>
+References: <20230509022734.148970-1-jiawenwu@trustnetic.com>
+ <20230509022734.148970-3-jiawenwu@trustnetic.com>
+ <ZFpQF4hi0FciwQsj@nimitz>
+ <009d01d9830a$c7c6dab0$57549010$@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230510001151.3946931-1-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <009d01d9830a$c7c6dab0$57549010$@trustnetic.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Wed, May 10, 2023 at 12:11:51PM +1200, Chris Packham kirjoitti:
-> When preparing to kexec into a new kernel the kexec code will mask all
-> interrupts for all interrupt domains before disabling them. In the case
-> of a gpio chip which has a mix of gpio and irq pins a warning would be
-> triggered as follows
+Wed, May 10, 2023 at 02:43:50PM +0800, Jiawen Wu kirjoitti:
+> On Tuesday, May 9, 2023 9:52 PM, Piotr Raczynski wrote:
+> > On Tue, May 09, 2023 at 10:27:27AM +0800, Jiawen Wu wrote:
 
->   [root@localhost ~]# echo c >/proc/sysrq-trigger
+...
 
-Besides the very noisy traceback in the commit message (read
-https://kernel.org/doc/html/latest/process/submitting-patches.html#backtraces-in-commit-messages)
-see below.
-
-> This is because gpiochip_irq_mask was being used to mask all possible
-
-We refer to the functions in the form as follows gpiochip_irq_mask().
-
-
-> irqs in the domain but gpiochip_disable_irq will WARN if any of those
-
-IRQs
-gpiochip_disable_irq()
-
-> gpios haven't been requested as interrupts yet. Remove the call to
-
-GPIOs
-
-> gpiochip_disable_irq to stop the warning.
-
-gpiochip_disable_irq()
-
-> Fixes: a8173820f441 ("gpio: gpiolib: Allow GPIO IRQs to lazy disable")
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
->  drivers/gpio/gpiolib.c | 1 -
->  1 file changed, 1 deletion(-)
+> > >  	/*
+> > > -	 * Initiate I2C message transfer when AMD NAVI GPU card is enabled,
+> > > +	 * Initiate I2C message transfer when polling mode is enabled,
+> > >  	 * As it is polling based transfer mechanism, which does not support
+> > >  	 * interrupt based functionalities of existing DesignWare driver.
+> > >  	 */
+> > > -	if ((dev->flags & MODEL_MASK) == MODEL_AMD_NAVI_GPU) {
+> > > +	switch (dev->flags & MODEL_MASK) {
+> > > +	case MODEL_AMD_NAVI_GPU:
+> > >  		ret = amd_i2c_dw_xfer_quirk(adap, msgs, num);
+> > >  		goto done_nolock;
+> > > +	case MODEL_WANGXUN_SP:
+> > > +		ret = txgbe_i2c_dw_xfer_quirk(adap, msgs, num);
+> > > +		goto done_nolock;
+> > > +	default:
+> > > +		break;
+> > >  	}
+> > Nit pick, when I first saw above code it looked a little weird,
+> > maybe it would be a little clearer with:
+> > 
+> > 	if (i2c_dw_is_model_poll(dev)) {
+> > 		switch (dev->flags & MODEL_MASK) {
+> > 		case MODEL_AMD_NAVI_GPU:
+> > 			ret = amd_i2c_dw_xfer_quirk(adap, msgs, num);
+> > 			break;
+> > 		case MODEL_WANGXUN_SP:
+> > 			ret = txgbe_i2c_dw_xfer_quirk(adap, msgs, num);
+> > 			break;
+> > 		default:
+> > 			break;
+> > 		}
+> > 		goto done_nolock;
+> > 	}
+> > 
+> > I do not insist though.
 > 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 8c041a8dd9d8..903f5185ae55 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1451,7 +1451,6 @@ static void gpiochip_irq_mask(struct irq_data *d)
->  
->  	if (gc->irq.irq_mask)
->  		gc->irq.irq_mask(d);
-> -	gpiochip_disable_irq(gc, d->hwirq);
->  }
+> Sure, it looks more obvious as polling mode quirk.
 
-At the same time the gpiochip_irq_unmask() has the symmetrical call. Why?
+I don't think we need a double checks. The i2c_dw_is_model_poll() will repeat
+the switch. Please, leave it as is in your current version.
 
-Also it's obvious that you have used outdated repository. You need to rebase
-against subsystem tree for-next branch.
-
-P.S. It's also makes sense to Cc to Marc Zyngier <maz@kernel.org>.
 
 -- 
 With Best Regards,
