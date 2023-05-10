@@ -2,61 +2,59 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A036C7EE22
-	for <linux-gpio@archiver.kernel.org>; Wed, 10 May 2023 09:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B9EC7EE26
+	for <linux-gpio@archiver.kernel.org>; Wed, 10 May 2023 09:54:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236411AbjEJJhF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 10 May 2023 05:37:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47084 "EHLO
+        id S236041AbjEJJyJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 10 May 2023 05:54:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236359AbjEJJhE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 May 2023 05:37:04 -0400
-X-Greylist: delayed 90597 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 10 May 2023 02:37:03 PDT
-Received: from mail.rawlinsfis.com (mail.rawlinsfis.com [89.40.118.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA6E0422A
-        for <linux-gpio@vger.kernel.org>; Wed, 10 May 2023 02:37:03 -0700 (PDT)
-Received: by mail.rawlinsfis.com (Postfix, from userid 1001)
-        id 486C58235D; Tue,  9 May 2023 08:51:17 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rawlinsfis.com;
-        s=mail; t=1683618682;
-        bh=lDo1OjfzzJ3sOfR9tSDg5RMmT4aDyBP45hIVJCLtIrE=;
-        h=Date:From:To:Subject:From;
-        b=GQ7HaMVodUq1Q+JuZ0B+C3du4WJGtc6aFUo/vcrfJ3JOHs+6LC61NkNXfLwhWqELb
-         SCq/bboNRODPIDtj3xCoErySkF2Ue3cYRSda9vM6TFFVh/ZyCbtzkbGMGLpleI+ti5
-         hSu9YBgffFnlTMMTG0IVjoH2mbcv32kvVrUi+w2LxXfghXOGAzHuYBZ/kjMNC/XBPD
-         gf/Xnmqo6gO+k5ExRDpbQ+nX8X+C7oT4TWETy9J5G0ep5b4ryk+OjkcXzXl/JLq63E
-         Y3cJi0iYiCqZ/bawlXGRcycYTaC7/594MoEErp/z4cgblJZrl2KuagizsnhN3QhR1C
-         0KhTftACXwDEA==
-Received: by mail.rawlinsfis.com for <linux-gpio@vger.kernel.org>; Tue,  9 May 2023 07:51:09 GMT
-Message-ID: <20230509074500-0.1.3e.5ptn.0.1f8e757pg4@rawlinsfis.com>
-Date:   Tue,  9 May 2023 07:51:09 GMT
-From:   "Damian Hordych" <damian.hordych@rawlinsfis.com>
-To:     <linux-gpio@vger.kernel.org>
-Subject: =?UTF-8?Q?Pompy_ciep=C5=82a_-_nowe_warunki_?=
-X-Mailer: mail.rawlinsfis.com
+        with ESMTP id S236159AbjEJJxk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 May 2023 05:53:40 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 76F367EF1;
+        Wed, 10 May 2023 02:53:37 -0700 (PDT)
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id A2C9C8109;
+        Wed, 10 May 2023 09:53:35 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        =?UTF-8?q?=82ecki?= <rafal@milecki.pl>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v4 1/2] dt-bindings: pinctrl: Allow use of pinconf in addition to pinctrl and pinmux
+Date:   Wed, 10 May 2023 12:53:28 +0300
+Message-Id: <20230510095330.30742-1-tony@atomide.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Some controllers can be just pinconf controllers and we have dts
+files using pinconf for the node name already.
 
-w ramach nowej edycji programu Czyste Powietrze dla klient=C3=B3w indywid=
-ualnych mog=C4=85 otrzyma=C4=87 Pa=C5=84stwo do 135 tys. z=C5=82 wsparcia=
- na zakup pompy ciep=C5=82a.
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ Documentation/devicetree/bindings/pinctrl/pinctrl.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Pr=C3=B3cz wy=C5=BCszego dofinansowania program zak=C5=82ada m.in. podwy=C5=
-=BCszenie prog=C3=B3w dochodowych oraz mo=C5=BCliwo=C5=9B=C4=87 z=C5=82o=C5=
-=BCenia kolejnego wniosku o dofinansowanie dla tych, kt=C3=B3rzy ju=C5=BC=
- wcze=C5=9Bniej skorzystali z Programu.
-
-Jako firma specjalizuj=C4=85ca si=C4=99 w dostawie, monta=C5=BCu i serwis=
-ie pomp ciep=C5=82a pomo=C5=BCemy Pa=C5=84stwu w uzyskaniu dofinansowania=
- wraz z kompleksow=C4=85 realizacj=C4=85 ca=C5=82ego projektu.
-
-S=C4=85 Pa=C5=84stwo zainteresowani?
-
-Pozdrawiam
-Damian Hordych
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/pinctrl.yaml
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl.yaml
+@@ -27,7 +27,7 @@ description: |
+ 
+ properties:
+   $nodename:
+-    pattern: "^(pinctrl|pinmux)(@[0-9a-f]+)?$"
++    pattern: "^(pinctrl|pinmux|pinconf)(@[0-9a-f]+)?$"
+ 
+   "#pinctrl-cells":
+     description: >
+-- 
+2.40.1
