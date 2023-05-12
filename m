@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A74FC7EE31
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8278FC77B7F
 	for <linux-gpio@archiver.kernel.org>; Fri, 12 May 2023 12:30:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240776AbjELMaA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 12 May 2023 08:30:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59874 "EHLO
+        id S240756AbjELMaB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 12 May 2023 08:30:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240923AbjELM3z (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 May 2023 08:29:55 -0400
+        with ESMTP id S240942AbjELM34 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 May 2023 08:29:56 -0400
 Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D6B1386E;
-        Fri, 12 May 2023 05:29:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D62413C33;
+        Fri, 12 May 2023 05:29:19 -0700 (PDT)
 Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34CCOUor001858;
-        Fri, 12 May 2023 07:28:43 -0500
+        by mx0a-001ae601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34CCOUos001858;
+        Fri, 12 May 2023 07:28:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=PODMain02222019;
- bh=raLUE1r/+MZGwXGgjOqNmbbdT+5cBvFrw6NX5OKkxec=;
- b=GAo9EEBgVMuDcQMfR9hMzLBMQjN+GFpSUSGskbztVtCyd3fnJap6sDBvqBf3hdYPikY5
- bwsXrWuLFR9//1s6en4g7tmANEEWx8WanpafL11YG42PkOlzTL2lBrn1UVOGRNhVQ3dt
- C2wkvYjJTm+N6fGKcvUNUr6oaGmaoDFh+P6RNaqUZ895MwdDOp2O4T5yrxnI0e+NycWs
- sqrw+9+iK9R/AGA13qLzmVfKyFOJ14SuVKYAPdnM97Gz+EOheM+3L7hm0G2nE8MlBTK+
- POtKQCITXev37Cb8dKt+FkprdiGBoV8oI/iNeNgQWutaLJ+hM3KheOTLhjRpkvnowAnb Hw== 
+ bh=MGx4eUaVxTNxvKWUX/vY4Vu1QrON54xoiFztV1TPX+8=;
+ b=KlIhZMpRzHisxpPyRqExtk3fU+EQhANAIrl4fAjbWhNPx9MQoBbkDfI4RsQJx13FGhVU
+ GpWNzSxcJr6Jjw682LmLWtjIeDDxIlyle3Eu0DD1gkFyNtwmwStzRD19dqnvx3jSITz0
+ z0yxRQK0BYHGqgdVchvZ3AdHNGpjDiX3Akbly3k3Ly3GYOzZnx/CZ91YwrrrWTmN3Xfg
+ +k4GEaptRZh8NxE7w19AA4u1YKN9iv8w9q4VA06RP7kWSuaaGmD2DIjlhuvu6ByFQ6Vy
+ ewkpQl5RsFq+xGKaH3LP08S6YvWiCZ3zq/wWuw+PPFouh/A4cSyk+1B/abKnCsh60frn pw== 
 Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3qf7nb5dqx-4
+        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3qf7nb5dqx-5
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 12 May 2023 07:28:43 -0500
+        Fri, 12 May 2023 07:28:44 -0500
 Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
  (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.26; Fri, 12 May
- 2023 07:28:38 -0500
+ 2023 07:28:39 -0500
 Received: from ediswmail.ad.cirrus.com (198.61.86.93) by
  anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 12 May 2023 07:28:38 -0500
+ 15.2.1118.26 via Frontend Transport; Fri, 12 May 2023 07:28:39 -0500
 Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id DC3E845;
-        Fri, 12 May 2023 12:28:38 +0000 (UTC)
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 12CC915B4;
+        Fri, 12 May 2023 12:28:39 +0000 (UTC)
 From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     <broonie@kernel.org>, <lee@kernel.org>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
@@ -50,21 +50,23 @@ CC:     <lgirdwood@gmail.com>, <yung-chuan.liao@linux.intel.com>,
         <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
         <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
         <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 07/10] irqchip/cs42l43: Add support for the cs42l43 IRQs
-Date:   Fri, 12 May 2023 13:28:35 +0100
-Message-ID: <20230512122838.243002-8-ckeepax@opensource.cirrus.com>
+Subject: [PATCH 09/10] spi: cs42l43: Add SPI controller support
+Date:   Fri, 12 May 2023 13:28:37 +0100
+Message-ID: <20230512122838.243002-10-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230512122838.243002-1-ckeepax@opensource.cirrus.com>
 References: <20230512122838.243002-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Eor36xOpC61mpC-Gp0R8Hdn4XbpTUO8w
-X-Proofpoint-GUID: Eor36xOpC61mpC-Gp0R8Hdn4XbpTUO8w
+X-Proofpoint-ORIG-GUID: 90BCHgrTxoARai1VWpXIikn8oFJ3Srsv
+X-Proofpoint-GUID: 90BCHgrTxoARai1VWpXIikn8oFJ3Srsv
 X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
+
+From: Lucas Tanure <tanureal@opensource.cirrus.com>
 
 The CS42L43 is an audio CODEC with integrated MIPI SoundWire interface
 (Version 1.2.1 compliant), I2C, SPI, and I2S/TDM interfaces designed
@@ -73,310 +75,355 @@ DAC for headphone output, two integrated Class D amplifiers for
 loudspeakers, and two ADCs for wired headset microphone input or
 stereo line input. PDM inputs are provided for digital microphones.
 
-The IRQ chip provides IRQ functionality both to other parts of the
-cs42l43 device and to external devices that wish to use its IRQs.
+The SPI component incorporates a SPI controller interface for
+communication with other peripheral components.
 
+Signed-off-by: Lucas Tanure <tanureal@opensource.cirrus.com>
+Signed-off-by: Maciej Strozek <mstrozek@opensource.cirrus.com>
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- MAINTAINERS                     |   2 +
- drivers/irqchip/Kconfig         |   9 ++
- drivers/irqchip/Makefile        |   1 +
- drivers/irqchip/irq-cs42l43.c   | 170 ++++++++++++++++++++++++++++++++
- include/linux/irqchip/cs42l43.h |  61 ++++++++++++
- 5 files changed, 243 insertions(+)
- create mode 100644 drivers/irqchip/irq-cs42l43.c
- create mode 100644 include/linux/irqchip/cs42l43.h
+ MAINTAINERS               |   1 +
+ drivers/spi/Kconfig       |   7 +
+ drivers/spi/Makefile      |   1 +
+ drivers/spi/spi-cs42l43.c | 287 ++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 296 insertions(+)
+ create mode 100644 drivers/spi/spi-cs42l43.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 8d2076941ff36..13945ee6cdcfe 100644
+index 2890f54f70afc..ca4aa5cc43b7d 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -4928,8 +4928,10 @@ L:	patches@opensource.cirrus.com
- S:	Maintained
- F:	Documentation/devicetree/bindings/mfd/cirrus,cs*
- F:	Documentation/devicetree/bindings/sound/cirrus,cs*
-+F:	drivers/irqchip/irq-cs42l43*
+@@ -4931,6 +4931,7 @@ F:	Documentation/devicetree/bindings/sound/cirrus,cs*
+ F:	drivers/irqchip/irq-cs42l43*
  F:	drivers/mfd/cs42l43*
+ F:	drivers/pinctrl/cirrus/pinctrl-cs42l43*
++F:	drivers/spi/spi-cs42l43*
  F:	include/dt-bindings/sound/cs*
-+F:	include/linux/irqchip/cs42l43*
+ F:	include/linux/irqchip/cs42l43*
  F:	include/linux/mfd/cs42l43*
- F:	include/sound/cs*
- F:	sound/pci/hda/cs*
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 09e422da482ff..05f58015749e3 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -138,6 +138,15 @@ config BRCMSTB_L2_IRQ
- 	select GENERIC_IRQ_CHIP
- 	select IRQ_DOMAIN
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 3de2ebe8294aa..f6ce06de41051 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -281,6 +281,13 @@ config SPI_COLDFIRE_QSPI
+ 	  This enables support for the Coldfire QSPI controller in master
+ 	  mode.
  
-+config IRQ_CS42L43
-+	tristate "Cirrus Logic CS42L43 IRQ Controller"
-+	depends on MFD_CS42L43
-+	select REGMAP_IRQ
++config SPI_CS42L43
++	tristate "Cirrus Logic CS42L43 SPI controller"
++	depends on MFD_CS42L43 && PINCTRL_CS42L43
 +	help
-+	  Select this to support the IRQ functions of the Cirrus Logic
-+	  CS42L43 PC CODEC, note the IRQs are required for most other
-+	  functions of the device.
++	  This enables support for the SPI controller inside the Cirrus Logic
++	  CS42L43 audio codec.
 +
- config DAVINCI_CP_INTC
- 	bool
- 	select GENERIC_IRQ_CHIP
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index ffd945fe71aa2..d00330c1b0b95 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -66,6 +66,7 @@ obj-$(CONFIG_BCM6345_L1_IRQ)		+= irq-bcm6345-l1.o
- obj-$(CONFIG_BCM7038_L1_IRQ)		+= irq-bcm7038-l1.o
- obj-$(CONFIG_BCM7120_L2_IRQ)		+= irq-bcm7120-l2.o
- obj-$(CONFIG_BRCMSTB_L2_IRQ)		+= irq-brcmstb-l2.o
-+obj-$(CONFIG_IRQ_CS42L43)		+= irq-cs42l43.o
- obj-$(CONFIG_KEYSTONE_IRQ)		+= irq-keystone.o
- obj-$(CONFIG_MIPS_GIC)			+= irq-mips-gic.o
- obj-$(CONFIG_ARCH_MEDIATEK)		+= irq-mtk-sysirq.o irq-mtk-cirq.o
-diff --git a/drivers/irqchip/irq-cs42l43.c b/drivers/irqchip/irq-cs42l43.c
+ config SPI_DAVINCI
+ 	tristate "Texas Instruments DaVinci/DA8x/OMAP-L/AM1x SoC SPI controller"
+ 	depends on ARCH_DAVINCI || ARCH_KEYSTONE || COMPILE_TEST
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index 28c4817a8a74a..49937ea0d73d0 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -40,6 +40,7 @@ obj-$(CONFIG_SPI_CADENCE_QUADSPI)	+= spi-cadence-quadspi.o
+ obj-$(CONFIG_SPI_CADENCE_XSPI)		+= spi-cadence-xspi.o
+ obj-$(CONFIG_SPI_CLPS711X)		+= spi-clps711x.o
+ obj-$(CONFIG_SPI_COLDFIRE_QSPI)		+= spi-coldfire-qspi.o
++obj-$(CONFIG_SPI_CS42L43)		+= spi-cs42l43.o
+ obj-$(CONFIG_SPI_DAVINCI)		+= spi-davinci.o
+ obj-$(CONFIG_SPI_DLN2)			+= spi-dln2.o
+ obj-$(CONFIG_SPI_DESIGNWARE)		+= spi-dw.o
+diff --git a/drivers/spi/spi-cs42l43.c b/drivers/spi/spi-cs42l43.c
 new file mode 100644
-index 0000000000000..fc55cbdc08647
+index 0000000000000..f48999e1a74d9
 --- /dev/null
-+++ b/drivers/irqchip/irq-cs42l43.c
-@@ -0,0 +1,170 @@
++++ b/drivers/spi/spi-cs42l43.c
+@@ -0,0 +1,287 @@
 +// SPDX-License-Identifier: GPL-2.0
 +//
-+// CS42L43 IRQ driver
++// CS42L43 SPI Controller Driver
 +//
 +// Copyright (C) 2022-2023 Cirrus Logic, Inc. and
 +//                         Cirrus Logic International Semiconductor Ltd.
 +
 +#include <linux/device.h>
 +#include <linux/errno.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/irqchip/cs42l43.h>
 +#include <linux/mfd/cs42l43.h>
 +#include <linux/mfd/cs42l43-regs.h>
 +#include <linux/module.h>
 +#include <linux/platform_device.h>
 +#include <linux/pm_runtime.h>
 +#include <linux/regmap.h>
++#include <linux/spi/spi.h>
 +
-+#define CS42L43_IRQ_OFFSET(reg) ((CS42L43_##reg##_INT) - CS42L43_DECIM_INT)
++#define CS42L43_FIFO_SIZE		16
++#define CS42L43_SPI_ROOT_HZ		40000000
++#define CS42L43_SPI_MAX_LENGTH		65532
 +
-+#define CS42L43_IRQ_REG(name, reg) REGMAP_IRQ_REG(CS42L43_##name, \
-+						  CS42L43_IRQ_OFFSET(reg), \
-+						  CS42L43_##name##_INT_MASK)
-+
-+static const struct regmap_irq cs42l43_regmap_irqs[] = {
-+	CS42L43_IRQ_REG(PLL_LOST_LOCK,				PLL),
-+	CS42L43_IRQ_REG(PLL_READY,				PLL),
-+
-+	CS42L43_IRQ_REG(HP_STARTUP_DONE,			MSM),
-+	CS42L43_IRQ_REG(HP_SHUTDOWN_DONE,			MSM),
-+	CS42L43_IRQ_REG(HSDET_DONE,				MSM),
-+	CS42L43_IRQ_REG(TIPSENSE_UNPLUG_DB,			MSM),
-+	CS42L43_IRQ_REG(TIPSENSE_PLUG_DB,			MSM),
-+	CS42L43_IRQ_REG(RINGSENSE_UNPLUG_DB,			MSM),
-+	CS42L43_IRQ_REG(RINGSENSE_PLUG_DB,			MSM),
-+	CS42L43_IRQ_REG(TIPSENSE_UNPLUG_PDET,			MSM),
-+	CS42L43_IRQ_REG(TIPSENSE_PLUG_PDET,			MSM),
-+	CS42L43_IRQ_REG(RINGSENSE_UNPLUG_PDET,			MSM),
-+	CS42L43_IRQ_REG(RINGSENSE_PLUG_PDET,			MSM),
-+
-+	CS42L43_IRQ_REG(HS2_BIAS_SENSE,				ACC_DET),
-+	CS42L43_IRQ_REG(HS1_BIAS_SENSE,				ACC_DET),
-+	CS42L43_IRQ_REG(DC_DETECT1_FALSE,			ACC_DET),
-+	CS42L43_IRQ_REG(DC_DETECT1_TRUE,			ACC_DET),
-+	CS42L43_IRQ_REG(HSBIAS_CLAMPED,				ACC_DET),
-+	CS42L43_IRQ_REG(HS3_4_BIAS_SENSE,			ACC_DET),
-+
-+	CS42L43_IRQ_REG(AMP2_CLK_STOP_FAULT,			CLASS_D_AMP),
-+	CS42L43_IRQ_REG(AMP1_CLK_STOP_FAULT,			CLASS_D_AMP),
-+	CS42L43_IRQ_REG(AMP2_VDDSPK_FAULT,			CLASS_D_AMP),
-+	CS42L43_IRQ_REG(AMP1_VDDSPK_FAULT,			CLASS_D_AMP),
-+	CS42L43_IRQ_REG(AMP2_SHUTDOWN_DONE,			CLASS_D_AMP),
-+	CS42L43_IRQ_REG(AMP1_SHUTDOWN_DONE,			CLASS_D_AMP),
-+	CS42L43_IRQ_REG(AMP2_STARTUP_DONE,			CLASS_D_AMP),
-+	CS42L43_IRQ_REG(AMP1_STARTUP_DONE,			CLASS_D_AMP),
-+	CS42L43_IRQ_REG(AMP2_THERM_SHDN,			CLASS_D_AMP),
-+	CS42L43_IRQ_REG(AMP1_THERM_SHDN,			CLASS_D_AMP),
-+	CS42L43_IRQ_REG(AMP2_THERM_WARN,			CLASS_D_AMP),
-+	CS42L43_IRQ_REG(AMP1_THERM_WARN,			CLASS_D_AMP),
-+	CS42L43_IRQ_REG(AMP2_SCDET,				CLASS_D_AMP),
-+	CS42L43_IRQ_REG(AMP1_SCDET,				CLASS_D_AMP),
-+
-+	CS42L43_IRQ_REG(GPIO3_FALL,				GPIO),
-+	CS42L43_IRQ_REG(GPIO3_RISE,				GPIO),
-+	CS42L43_IRQ_REG(GPIO2_FALL,				GPIO),
-+	CS42L43_IRQ_REG(GPIO2_RISE,				GPIO),
-+	CS42L43_IRQ_REG(GPIO1_FALL,				GPIO),
-+	CS42L43_IRQ_REG(GPIO1_RISE,				GPIO),
-+
-+	CS42L43_IRQ_REG(HP_ILIMIT,				HPOUT),
-+	CS42L43_IRQ_REG(HP_LOADDET_DONE,			HPOUT),
++enum cs42l43_spi_cmd {
++	CS42L43_WRITE,
++	CS42L43_READ
 +};
 +
-+static const struct regmap_irq_chip cs42l43_irq_chip = {
-+	.name = "cs42l43",
-+
-+	.status_base = CS42L43_DECIM_INT,
-+	.mask_base = CS42L43_DECIM_MASK,
-+	.num_regs = 16,
-+
-+	.irqs = cs42l43_regmap_irqs,
-+	.num_irqs = ARRAY_SIZE(cs42l43_regmap_irqs),
-+
-+	.runtime_pm = true,
-+};
-+
-+struct cs42l43_irq {
++struct cs42l43_spi {
 +	struct device *dev;
-+
-+	struct regmap_irq_chip irq_chip;
-+	struct regmap_irq_chip_data *irq_data;
++	struct regmap *regmap;
++	struct spi_controller *ctlr;
 +};
 +
-+static int cs42l43_irq_probe(struct platform_device *pdev)
++static unsigned int cs42l43_clock_divs[16] = {
++	2, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30
++};
++
++static int cs42l43_spi_tx(struct regmap *regmap, const u8 *buf, unsigned int len)
++{
++	const u8 *end = buf + len;
++	u32 val;
++	int ret;
++
++	while (buf < end) {
++		const u8 *block = min_t(const u8 *, buf + CS42L43_FIFO_SIZE, end);
++
++		for (; buf < block - (sizeof(u32) - 1); buf += sizeof(u32))
++			regmap_write(regmap, CS42L43_TX_DATA, *(const u32 *)buf);
++
++		if (buf < block) {
++			unsigned int residue = end - buf;
++
++			memcpy(&val, buf, residue);
++			regmap_write(regmap, CS42L43_TX_DATA, val);
++			buf += residue;
++		}
++
++		regmap_write(regmap, CS42L43_TRAN_CONFIG8, CS42L43_SPI_TX_DONE_MASK);
++
++		ret = regmap_read_poll_timeout(regmap, CS42L43_TRAN_STATUS1,
++					       val, (val & CS42L43_SPI_TX_REQUEST_MASK),
++					       1000, 5000);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++static int cs42l43_spi_rx(struct regmap *regmap, u8 *buf, unsigned int len)
++{
++	const u8 *end = buf + len;
++	u32 val;
++	int ret;
++
++	while (buf < end) {
++		const u8 *block = min_t(const u8 *, buf + CS42L43_FIFO_SIZE, end);
++
++		ret = regmap_read_poll_timeout(regmap, CS42L43_TRAN_STATUS1,
++					       val, (val & CS42L43_SPI_RX_REQUEST_MASK),
++					       1000, 5000);
++		if (ret)
++			return ret;
++
++		for (; buf < block - (sizeof(u32) - 1); buf += sizeof(u32)) {
++			ret = regmap_read(regmap, CS42L43_RX_DATA, (u32 *)buf);
++			if (ret)
++				return ret;
++		}
++
++		if (buf < block) {
++			unsigned int residue = end - buf;
++
++			ret = regmap_read(regmap, CS42L43_RX_DATA, &val);
++			if (ret)
++				return ret;
++
++			memcpy(buf, &val, residue);
++			buf += residue;
++		}
++
++		regmap_write(regmap, CS42L43_TRAN_CONFIG8, CS42L43_SPI_RX_DONE_MASK);
++	}
++
++	return 0;
++}
++
++static int cs42l43_transfer_one(struct spi_controller *ctlr, struct spi_device *spi,
++				struct spi_transfer *tfr)
++{
++	struct cs42l43_spi *priv = spi_controller_get_devdata(spi->controller);
++	int i, ret = -EINVAL;
++
++	for (i = 0; i < ARRAY_SIZE(cs42l43_clock_divs); i++) {
++		if (CS42L43_SPI_ROOT_HZ / cs42l43_clock_divs[i] <= tfr->speed_hz)
++			break;
++	}
++
++	if (i == ARRAY_SIZE(cs42l43_clock_divs))
++		return -EINVAL;
++
++	regmap_write(priv->regmap, CS42L43_SPI_CLK_CONFIG1, i);
++
++	if (tfr->tx_buf) {
++		regmap_write(priv->regmap, CS42L43_TRAN_CONFIG3, CS42L43_WRITE);
++		regmap_write(priv->regmap, CS42L43_TRAN_CONFIG4, tfr->len - 1);
++	} else if (tfr->rx_buf) {
++		regmap_write(priv->regmap, CS42L43_TRAN_CONFIG3, CS42L43_READ);
++		regmap_write(priv->regmap, CS42L43_TRAN_CONFIG5, tfr->len - 1);
++	}
++
++	regmap_write(priv->regmap, CS42L43_TRAN_CONFIG1, CS42L43_SPI_START_MASK);
++
++	if (tfr->tx_buf)
++		ret = cs42l43_spi_tx(priv->regmap, (const u8 *)tfr->tx_buf, tfr->len);
++	else if (tfr->rx_buf)
++		ret = cs42l43_spi_rx(priv->regmap, (u8 *)tfr->rx_buf, tfr->len);
++
++	return ret;
++}
++
++static void cs42l43_set_cs(struct spi_device *spi, bool is_high)
++{
++	struct cs42l43_spi *priv = spi_controller_get_devdata(spi->controller);
++
++	if (spi->chip_select == 0)
++		regmap_write(priv->regmap, CS42L43_SPI_CONFIG2, !is_high);
++}
++
++static int cs42l43_prepare_message(struct spi_controller *ctlr, struct spi_message *msg)
++{
++	struct cs42l43_spi *priv = spi_controller_get_devdata(ctlr);
++	struct spi_device *spi = msg->spi;
++	unsigned int spi_config1 = 0;
++
++	/* select another internal CS, which doesn't exist, so CS 0 is not used */
++	if (spi->cs_gpiod)
++		spi_config1 |= 1 << CS42L43_SPI_SS_SEL_SHIFT;
++	if (spi->mode & SPI_CPOL)
++		spi_config1 |= CS42L43_SPI_CPOL_MASK;
++	if (spi->mode & SPI_CPHA)
++		spi_config1 |= CS42L43_SPI_CPHA_MASK;
++	if (spi->mode & SPI_3WIRE)
++		spi_config1 |= CS42L43_SPI_THREE_WIRE_MASK;
++
++	regmap_write(priv->regmap, CS42L43_SPI_CONFIG1, spi_config1);
++
++	return 0;
++}
++
++static int cs42l43_prepare_transfer_hardware(struct spi_controller *ctlr)
++{
++	struct cs42l43_spi *priv = spi_controller_get_devdata(ctlr);
++	int ret;
++
++	ret = regmap_write(priv->regmap, CS42L43_BLOCK_EN2, CS42L43_SPI_MSTR_EN_MASK);
++	if (ret) {
++		dev_err(priv->dev, "Failed to enable SPI controller: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int cs42l43_unprepare_transfer_hardware(struct spi_controller *ctlr)
++{
++	struct cs42l43_spi *priv = spi_controller_get_devdata(ctlr);
++	int ret;
++
++	ret = regmap_write(priv->regmap, CS42L43_BLOCK_EN2, 0);
++	if (ret) {
++		dev_err(priv->dev, "Failed to disable SPI controller: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static size_t cs42l43_spi_max_length(struct spi_device *spi)
++{
++	return CS42L43_SPI_MAX_LENGTH;
++}
++
++static int cs42l43_spi_probe(struct platform_device *pdev)
 +{
 +	struct cs42l43 *cs42l43 = dev_get_drvdata(pdev->dev.parent);
-+	struct cs42l43_irq *priv;
-+	struct irq_data *irq_data;
-+	unsigned long irq_flags;
++	struct cs42l43_spi *priv;
 +	int ret;
 +
 +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
 +	if (!priv)
 +		return -ENOMEM;
 +
++	priv->ctlr = devm_spi_alloc_master(&pdev->dev, sizeof(*priv->ctlr));
++	if (!priv->ctlr)
++		return -ENOMEM;
++
++	spi_controller_set_devdata(priv->ctlr, priv);
++
 +	priv->dev = &pdev->dev;
-+	priv->irq_chip = cs42l43_irq_chip;
-+	priv->irq_chip.irq_drv_data = priv;
++	priv->regmap = cs42l43->regmap;
 +
-+	irq_data = irq_get_irq_data(cs42l43->irq);
-+	if (!irq_data) {
-+		dev_err(priv->dev, "Invalid IRQ: %d\n", cs42l43->irq);
-+		return -EINVAL;
++	priv->ctlr->prepare_message = cs42l43_prepare_message;
++	priv->ctlr->prepare_transfer_hardware = cs42l43_prepare_transfer_hardware;
++	priv->ctlr->unprepare_transfer_hardware = cs42l43_unprepare_transfer_hardware;
++	priv->ctlr->transfer_one = cs42l43_transfer_one;
++	priv->ctlr->set_cs = cs42l43_set_cs;
++	priv->ctlr->max_transfer_size = cs42l43_spi_max_length;
++
++	if (is_of_node(dev_fwnode(cs42l43->dev))) {
++		priv->ctlr->dev.fwnode =
++			fwnode_get_named_child_node(dev_fwnode(cs42l43->dev), "spi");
++		priv->ctlr->dev.of_node = to_of_node(dev_fwnode(&priv->ctlr->dev));
++	} else {
++		priv->ctlr->dev.fwnode = dev_fwnode(priv->dev);
 +	}
 +
-+	irq_flags = irqd_get_trigger_type(irq_data);
-+	switch (irq_flags) {
-+	case IRQF_TRIGGER_LOW:
-+	case IRQF_TRIGGER_HIGH:
-+	case IRQF_TRIGGER_RISING:
-+	case IRQF_TRIGGER_FALLING:
-+		break;
-+	case IRQ_TYPE_NONE:
-+	default:
-+		irq_flags = IRQF_TRIGGER_LOW;
-+		break;
-+	}
-+
-+	irq_flags |= IRQF_ONESHOT;
++	priv->ctlr->mode_bits = SPI_3WIRE | SPI_CPHA | SPI_CPOL;
++	priv->ctlr->flags = SPI_CONTROLLER_HALF_DUPLEX;
++	priv->ctlr->bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16) |
++					 SPI_BPW_MASK(32);
++	priv->ctlr->min_speed_hz = CS42L43_SPI_ROOT_HZ /
++				   cs42l43_clock_divs[ARRAY_SIZE(cs42l43_clock_divs) - 1];
++	priv->ctlr->max_speed_hz = CS42L43_SPI_ROOT_HZ / cs42l43_clock_divs[0];
++	priv->ctlr->use_gpio_descriptors = true;
++	priv->ctlr->auto_runtime_pm = true;
 +
 +	pm_runtime_enable(priv->dev);
 +	pm_runtime_idle(priv->dev);
 +
-+	ret = devm_regmap_add_irq_chip(priv->dev, cs42l43->regmap,
-+				       cs42l43->irq, irq_flags, 0,
-+				       &priv->irq_chip, &priv->irq_data);
++	regmap_write(priv->regmap, CS42L43_TRAN_CONFIG6, CS42L43_FIFO_SIZE - 1);
++	regmap_write(priv->regmap, CS42L43_TRAN_CONFIG7, CS42L43_FIFO_SIZE - 1);
++
++	// Disable Watchdog timer and enable stall
++	regmap_write(priv->regmap, CS42L43_SPI_CONFIG3, 0);
++	regmap_write(priv->regmap, CS42L43_SPI_CONFIG4, CS42L43_SPI_STALL_ENA_MASK);
++
++	ret = devm_spi_register_controller(priv->dev, priv->ctlr);
 +	if (ret) {
-+		dev_err(priv->dev, "Failed to add IRQ chip: %d\n", ret);
 +		pm_runtime_disable(priv->dev);
-+		return ret;
++		dev_err(priv->dev, "Failed to register SPI controller: %d\n", ret);
 +	}
 +
-+	dev_dbg(priv->dev, "Configured IRQ %d with flags 0x%lx\n",
-+		cs42l43->irq, irq_flags);
-+
-+	return 0;
++	return ret;
 +}
 +
-+static int cs42l43_irq_remove(struct platform_device *pdev)
++static int cs42l43_spi_remove(struct platform_device *pdev)
 +{
 +	pm_runtime_disable(&pdev->dev);
 +
 +	return 0;
 +}
 +
-+static struct platform_driver cs42l43_irq_driver = {
++static struct platform_driver cs42l43_spi_driver = {
 +	.driver = {
-+		.name	= "cs42l43-irq",
++		.name	= "cs42l43-spi",
 +	},
 +
-+	.probe		= cs42l43_irq_probe,
-+	.remove		= cs42l43_irq_remove,
++	.probe		= cs42l43_spi_probe,
++	.remove		= cs42l43_spi_remove,
 +};
-+module_platform_driver(cs42l43_irq_driver);
++module_platform_driver(cs42l43_spi_driver);
 +
-+MODULE_DESCRIPTION("CS42L43 IRQ Driver");
-+MODULE_AUTHOR("Charles Keepax <ckeepax@opensource.cirrus.com>");
++MODULE_DESCRIPTION("CS42L43 SPI Driver");
++MODULE_AUTHOR("Lucas Tanure <tanureal@opensource.cirrus.com>");
++MODULE_AUTHOR("Maciej Strozek <mstrozek@opensource.cirrus.com>");
 +MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:cs42l43-irq");
-diff --git a/include/linux/irqchip/cs42l43.h b/include/linux/irqchip/cs42l43.h
-new file mode 100644
-index 0000000000000..99ce0dbc96a77
---- /dev/null
-+++ b/include/linux/irqchip/cs42l43.h
-@@ -0,0 +1,61 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * CS42L43 IRQ driver external data
-+ *
-+ * Copyright (C) 2022-2023 Cirrus Logic, Inc. and
-+ *                         Cirrus Logic International Semiconductor Ltd.
-+ */
-+
-+#ifndef CS42L43_IRQ_EXT_H
-+#define CS42L43_IRQ_EXT_H
-+
-+enum cs42l43_irq_numbers {
-+	CS42L43_PLL_LOST_LOCK,
-+	CS42L43_PLL_READY,
-+
-+	CS42L43_HP_STARTUP_DONE,
-+	CS42L43_HP_SHUTDOWN_DONE,
-+	CS42L43_HSDET_DONE,
-+	CS42L43_TIPSENSE_UNPLUG_DB,
-+	CS42L43_TIPSENSE_PLUG_DB,
-+	CS42L43_RINGSENSE_UNPLUG_DB,
-+	CS42L43_RINGSENSE_PLUG_DB,
-+	CS42L43_TIPSENSE_UNPLUG_PDET,
-+	CS42L43_TIPSENSE_PLUG_PDET,
-+	CS42L43_RINGSENSE_UNPLUG_PDET,
-+	CS42L43_RINGSENSE_PLUG_PDET,
-+
-+	CS42L43_HS2_BIAS_SENSE,
-+	CS42L43_HS1_BIAS_SENSE,
-+	CS42L43_DC_DETECT1_FALSE,
-+	CS42L43_DC_DETECT1_TRUE,
-+	CS42L43_HSBIAS_CLAMPED,
-+	CS42L43_HS3_4_BIAS_SENSE,
-+
-+	CS42L43_AMP2_CLK_STOP_FAULT,
-+	CS42L43_AMP1_CLK_STOP_FAULT,
-+	CS42L43_AMP2_VDDSPK_FAULT,
-+	CS42L43_AMP1_VDDSPK_FAULT,
-+	CS42L43_AMP2_SHUTDOWN_DONE,
-+	CS42L43_AMP1_SHUTDOWN_DONE,
-+	CS42L43_AMP2_STARTUP_DONE,
-+	CS42L43_AMP1_STARTUP_DONE,
-+	CS42L43_AMP2_THERM_SHDN,
-+	CS42L43_AMP1_THERM_SHDN,
-+	CS42L43_AMP2_THERM_WARN,
-+	CS42L43_AMP1_THERM_WARN,
-+	CS42L43_AMP2_SCDET,
-+	CS42L43_AMP1_SCDET,
-+
-+	CS42L43_GPIO3_FALL,
-+	CS42L43_GPIO3_RISE,
-+	CS42L43_GPIO2_FALL,
-+	CS42L43_GPIO2_RISE,
-+	CS42L43_GPIO1_FALL,
-+	CS42L43_GPIO1_RISE,
-+
-+	CS42L43_HP_ILIMIT,
-+	CS42L43_HP_LOADDET_DONE,
-+};
-+
-+#endif /* CS42L43_IRQ_EXT_H */
++MODULE_ALIAS("platform:cs42l43-spi");
 -- 
 2.30.2
 
