@@ -2,144 +2,184 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2318CC77B75
-	for <linux-gpio@archiver.kernel.org>; Fri, 12 May 2023 13:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03378C77B75
+	for <linux-gpio@archiver.kernel.org>; Fri, 12 May 2023 14:18:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231890AbjELNLw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 12 May 2023 09:11:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60850 "EHLO
+        id S241501AbjELOSN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 12 May 2023 10:18:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240404AbjELNLv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 May 2023 09:11:51 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 41A3210A11;
-        Fri, 12 May 2023 06:11:49 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 183A3FEC;
-        Fri, 12 May 2023 06:12:33 -0700 (PDT)
-Received: from e120937-lin (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3DB923F67D;
-        Fri, 12 May 2023 06:11:47 -0700 (PDT)
-Date:   Fri, 12 May 2023 14:11:45 +0100
-From:   Cristian Marussi <cristian.marussi@arm.com>
-To:     Oleksii Moisieiev <Oleksii_Moisieiev@epam.com>
-Cc:     "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Peng Fan <peng.fan@oss.nxp.com>,
-        Michal Simek <michal.simek@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: Re: [RFC v2 2/3] pinctrl: Implementation of the generic scmi-pinctrl
- driver
-Message-ID: <ZF47EYAH4DFl/yKE@e120937-lin>
-References: <cover.1682513390.git.oleksii_moisieiev@epam.com>
- <812ae71d017b115c55648dbf0a4c3502715b1955.1682513390.git.oleksii_moisieiev@epam.com>
- <ZFVoiWnvq7UXSBBw@surfacebook>
- <152bbad1-a759-df18-1efa-4e25c54847d9@epam.com>
- <ZF4BKZkbLr2mKN0s@e120937-lin>
- <20230512121801.GA3494263@EPUAKYIW0A6A>
+        with ESMTP id S241497AbjELOSN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 May 2023 10:18:13 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22F7413C02
+        for <linux-gpio@vger.kernel.org>; Fri, 12 May 2023 07:17:59 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-3063208beedso9557290f8f.1
+        for <linux-gpio@vger.kernel.org>; Fri, 12 May 2023 07:17:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1683901077; x=1686493077;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rrJxMU8vIMHm/TMwdpWrRCixZQfDd4ErxxMWxBnxsIw=;
+        b=xsWSJes1/LDFaZJmw5SGhHwYE3xlBrAEX7eqH6b8Gsbuof6UB2KjGVk1gNwLXvNMUZ
+         y757ReyoLYsWKwMnCITiGnkPSvyqXS9H3TG8rUxuOTR+2dI9goQdiiyVT32XZon2F8oG
+         AWpFJt8CfCw9DK9VGT1PXZVxijHEpGuxaqCpGmklOnA1bE49qNdjDRth5NbYp0kqyA21
+         eNm1/b68d0+wg96IClikVvcqJSwB6FTj0AaeSKdkwQO6sv1zqpemPIFNR7fmFBPr+NZi
+         tZqt8rlQEzqXtq6xfAIBfJFhFeLJIhcEJW6WVIOAU2EQrzemVvMyvHcbCxBgn35AKw9s
+         q7Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683901077; x=1686493077;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rrJxMU8vIMHm/TMwdpWrRCixZQfDd4ErxxMWxBnxsIw=;
+        b=Ftby/4XdOnxZc8Q5+hXNfIfkWgJ4K6hbxCJsVZejf/0i7LYCtPkkO7dD8TpbHgGX3O
+         2UwSy8THDd3giLdjRoAjcTS7Zkvp50H4McK8tF/yHeCcBrE3pDr4ys1SsfRaa/E1l/es
+         We3kBODj90iDeQfsb6GovKASCwRAIjrtaCWbkUK25Bw0shEhciShg9uB6mMyd8HN9HYH
+         uf92rmzvVl0qShs08057AyqvUoa6fZ2EqbeIGyc/P0RJTKQv1OMQffyqdhvYfwHw64a7
+         5bsHUGiV9Pt02y/jQJ9P+DAEYTBZKpPhNcoHjmVjG9kTvVEFhelgP2dv7cU9IOP57/yu
+         d5mQ==
+X-Gm-Message-State: AC+VfDxyOyWS+BkXiuInkA9PiKmhsooBRGlIHuYzrKQkeGQ4/PwZVYr8
+        XfvWH2iRuxXK8xfg8Wm6o7tcFQ==
+X-Google-Smtp-Source: ACHHUZ5Dam+p3j2mO7hOPDi7EwOapz3Q9dzuaFpo1CqgC96qPBKIszszLRwntx88jEu+00Gim4jxxA==
+X-Received: by 2002:a5d:6dce:0:b0:306:db7b:bb2d with SMTP id d14-20020a5d6dce000000b00306db7bbb2dmr17042012wrz.38.1683901077543;
+        Fri, 12 May 2023 07:17:57 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e0a:28d:66d0:c0c4:a67e:f152:1413])
+        by smtp.gmail.com with ESMTPSA id r12-20020a5d494c000000b003077f3dfcc8sm22819982wrs.32.2023.05.12.07.17.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 May 2023 07:17:57 -0700 (PDT)
+From:   Esteban Blanc <eblanc@baylibre.com>
+To:     linus.walleij@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+        a.zummo@towertech.it, alexandre.belloni@bootlin.com
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org, jpanis@baylibre.com,
+        jneanne@baylibre.com, aseketeli@baylibre.com, eblanc@baylibre.com,
+        sterzik@ti.com, u-kumar1@ti.com
+Subject: [PATCH v4 0/3] TI TPS6594 PMIC support (RTC, pinctrl, regulators)
+Date:   Fri, 12 May 2023 16:17:52 +0200
+Message-Id: <20230512141755.1712358-1-eblanc@baylibre.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230512121801.GA3494263@EPUAKYIW0A6A>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, May 12, 2023 at 12:18:03PM +0000, Oleksii Moisieiev wrote:
-> Hello Cristian,
-> 
-> On Fri, May 12, 2023 at 10:04:41AM +0100, Cristian Marussi wrote:
-> > On Thu, May 11, 2023 at 01:15:46PM +0000, Oleksii Moisieiev wrote:
-> > > Hello Andy,
-> > > 
-> > > On 05.05.23 23:35, andy.shevchenko@gmail.com wrote:
-> > > > Wed, Apr 26, 2023 at 01:26:37PM +0000, Oleksii Moisieiev kirjoitti:
-> > > >> scmi-pinctrl driver implements pinctrl driver interface and using
-> > > >> SCMI protocol to redirect messages from pinctrl subsystem SDK to
-> > > >> SCP firmware, which does the changes in HW.
-> > > >>
-> > > >> This setup expects SCP firmware (or similar system, such as ATF)
-> > > >> to be installed on the platform, which implements pinctrl driver
-> > > >> for the specific platform.
-> > > >>
-> > > >> SCMI-Pinctrl driver should be configured from the device-tree and uses
-> > > >> generic device-tree mappings for the configuration.
-> > > > 
-> > > > ...
-> > > > 
-> > > >> +#include <linux/device.h>
-> > > >> +#include <linux/err.h>
-> > > > 
-> > > >> +#include <linux/of.h>
-> > > > 
-> > > > I do not see any user of this header. Do you?
-> > > > 
-> > > Yes, thanks. Removing
-> > > 
-> > > >> +#include <linux/module.h>
-> > > >> +#include <linux/seq_file.h>
-> > > >> +
-> > > >> +#include <linux/pinctrl/machine.h>
-> > > >> +#include <linux/pinctrl/pinconf.h>
-> > > >> +#include <linux/pinctrl/pinconf-generic.h>
-> > > >> +#include <linux/pinctrl/pinctrl.h>
-> > > >> +#include <linux/pinctrl/pinmux.h>
-> > > > 
-> > > >> +#include <linux/scmi_protocol.h>
-> > > >> +#include <linux/slab.h>
-> > > > 
-> > > > Please, move these two to the upper group of the generic headers.
-> > > > 
-> > > Thanks, fixed.
-> > > 
-> > > >> +struct scmi_pinctrl_funcs {
-> > > >> +	unsigned int num_groups;
-> > > >> +	const char **groups;
-> > > >> +};
-> > > > 
-> > > > Please, use struct pinfunction.
-> > > >
-> > > I can't use pincfunction here because it has the following groups 
-> > > definition:
-> > > const char * const *groups;
-> > > 
-> > > Which is meant to be constantly allocated.
-> > > So I when I try to gather list of groups in 
-> > > pinctrl_scmi_get_function_groups I will receive compilation error.
-> > > 
-> > 
-> > Maybe this is a further signal that we should re-evaluate the benefits of
-> > the lazy allocations you now perform during protocol initialization
-> > instead of querying and allocating statically all the info structs about
-> > existing resources.
-> > 
-> > Not saying that is necessarily bad, I understood your points about reducing
-> > the number of SCMI queries during boot and let pinctrl subsystem trigger only
-> > the strictly needed one, just saying maybe good to reason a bit more about this
-> > once V3 is posted. (i.e. I could bother you more :P ..)
-> > 
-> > Thanks,
-> > Cristian
-> > 
-> > P.S. [off-topic]: remember to use get_maintainer.pl as advised elsewhere
-> > to include proper maintainers (and their bots)
-> 
-> That's a good point to think about. Actually, functions are the only
-> thing that should be cached on pinctrl side. And we need it specifically
-> because groups in each function are presented by names, not selectors.
-> Maybe It's better to move this caching to pinctrl scmi driver. But, from
-> the other side - storing group names for each function is Linux Kernel
-> specific implementation and we probably don't want to add some specific
-> case to the Generic protocol driver.
-> 
-> I think I would leave it as in V3 so we can continue discussion.
-> 
+TPS6594 is a Power Management IC which provides regulators and others
+features like GPIOs, RTC, watchdog, ESMs (Error Signal Monitor), and
+PFSM (Pre-configurable Finite State Machine). The SoC and the PMIC can
+communicate through the I2C or SPI interfaces.
+TPS6594 is the super-set device while TPS6593 and LP8764 are derivatives.
 
-Sure, let's review/rediscuss this on top V3.
+This series adds support to TI TPS6594 PMIC and its derivatives.
 
-Thanks,
-Cristian
+This should be applied on top of other patch series:
+- https://lore.kernel.org/all/20230406075622.8990-1-jpanis@baylibre.com/
+  For core MFD driver
+
+The features implemented in this series are:
+- RTC (child device)
+- Pinmux/GPIO (child device)
+- Regulator (child device)
+
+RTC description:
+The TPS6594 family has an RTC built-in, except for LP8764.
+It provides time and an alarm.
+
+Pinmux/GPIO:
+TPS6594 family has 11 GPIOs. Those GPIO can also serve different
+functions such as I2C or SPI interface, watchdog disable functions.
+The driver provides both pinmuxing for the functions and GPIO capability.
+
+Regulator:
+TPS6594/TPS6593: 5 BUCKs and 4LDOs
+LP8764: 4 BUCKs and no LDO
+Bucks can be used in multipahse mode.
+
+Changes since v1:
+https://lore.kernel.org/all/20230224133129.887203-1-eblanc@baylibre.com/
+Rtc:
+- Removed struct tps6594_rtc.
+- Removed some dev_err messages.
+- Removed some comments.
+- Remove some whitespaces in comments and error messages.
+- Check if RTC is running before reading a timestamp in read_rtc.
+- Stop RTC at the end of probe to wait for a timestamp to be set.
+- Add default MFD_TPS6594 to Kconfig.
+
+Pinctrl:
+- Removed #define DEBUG.
+- Add default MFD_TPS6594 to Kconfig.
+- Fix typo and reword help message of Kconfig.
+
+Regulators:
+Further to Mark Brown review:
+- File header whole block C++ style.
+- Configuring modes not supported: omit all mode operations
+- Log the error before notifying.
+- Request the interrupts while registering the regulators (then remove
+  the lookup function).
+Further to Matti review:
+- Postponed: devm_regulator_irq_helper() and
+  regulator_irq_map_event_simple() can probably be used but code.
+  refactoring is not so trivial. This can be done later as an enhancement
+  after this patch list is merged.
+Buck Multi phase management:
+- Multiphase property can take an array when 2 multi phase buck, buck12
+  and buck34.
+- Configuration multi phase buck34 without multiphase buck12 is not
+  supported (when only one multiphase, must be buck12). Not clear from the
+  spec but confirmed by TI.
+- Supported multiphase conficurations: buck12, buck123, buck1234,
+  buck12 + buck34.
+- All interrupts are attached to the multiphase buck (ie: for regulator
+  buck12, buck1 & buck2 interrupts are registered).
+
+Changes since v2:
+https://lore.kernel.org/all/20230328091448.648452-1-eblanc@baylibre.com/
+Rtc:
+- Add logic to avoid reinitializing a working clock.
+- Fix some multiline comments format.
+
+Regulators:
+Further to Mark Brown review:
+- Log the error before notifying.
+- Request the interrupts while registering the regulators.
+Further to Krzysztof Kozlowski:
+https://lore.kernel.org/all/75f0a18d-aed9-8610-2925-4e604b4b0241@baylibre.com/
+- Remove ti, multi-phase-id property which is redundant with buck dts naming
+  rules.
+
+Changes since v3:
+https://lore.kernel.org/lkml/20230414101217.1342891-1-eblanc@baylibre.com/
+RTC:
+- Add wakeup source
+
+Pinctrl:
+- Switch to GPIO_REGMAP framework
+
+Esteban Blanc (2):
+  rtc: tps6594: Add driver for TPS6594 RTC
+  pinctrl: tps6594: Add driver for TPS6594 pinctrl and GPIOs
+
+Jerome Neanne (1):
+  regulator: tps6594-regulator: Add driver for TI TPS6594 regulators
+
+ drivers/pinctrl/Kconfig               |  31 ++
+ drivers/pinctrl/Makefile              |   2 +
+ drivers/pinctrl/pinctrl-tps6594.c     | 301 +++++++++++++
+ drivers/regulator/Kconfig             |  13 +
+ drivers/regulator/Makefile            |   1 +
+ drivers/regulator/tps6594-regulator.c | 620 ++++++++++++++++++++++++++
+ drivers/rtc/Kconfig                   |   9 +
+ drivers/rtc/Makefile                  |   1 +
+ drivers/rtc/rtc-tps6594.c             | 479 ++++++++++++++++++++
+ include/linux/mfd/tps6594.h           |   3 +-
+ 10 files changed, 1459 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/pinctrl/pinctrl-tps6594.c
+ create mode 100644 drivers/regulator/tps6594-regulator.c
+ create mode 100644 drivers/rtc/rtc-tps6594.c
+
+-- 
+2.39.2
+
