@@ -2,106 +2,174 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 087EFC77B7C
-	for <linux-gpio@archiver.kernel.org>; Sat, 13 May 2023 11:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F1CC7EE24
+	for <linux-gpio@archiver.kernel.org>; Sat, 13 May 2023 18:06:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233804AbjEMLfS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 13 May 2023 07:35:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56538 "EHLO
+        id S236662AbjEMSGb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 13 May 2023 14:06:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232557AbjEMLfR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 13 May 2023 07:35:17 -0400
+        with ESMTP id S237169AbjEMSGL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 13 May 2023 14:06:11 -0400
 Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 645DA2D5A
-        for <linux-gpio@vger.kernel.org>; Sat, 13 May 2023 04:35:16 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-96622bca286so1645921366b.1
-        for <linux-gpio@vger.kernel.org>; Sat, 13 May 2023 04:35:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B65D159DA
+        for <linux-gpio@vger.kernel.org>; Sat, 13 May 2023 11:05:39 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-953343581a4so1747727466b.3
+        for <linux-gpio@vger.kernel.org>; Sat, 13 May 2023 11:05:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683977715; x=1686569715;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0gDDSj6C0iIDbdK2gCsgCH6oSrIVkgIPorcUz+pCF2M=;
-        b=DJCUrHtWoQlHbLsTckrqlgS3zL5vQPCjA4208XdyecCvZN+KBOIj8fbOC5whqqr4Y5
-         PQq8GIvilNdIU9GW0eqAQuskvvDKpaIj44E2QBHhcPivqz8wUB7D38F0nD8MBMSuyebf
-         VcQnxX4rLZzvYuDF2E8jrYbqD4rzndFcc1LBQ477Vdi6Bb38WRdBHgPU010T88QKgKr4
-         FGpbkMQ5ScMpbuxI5Z7YY+izVjQAfsEOCxRkolUS9Svre27x6ActHFNMt+7P13wlz/Ka
-         Fp2pS2an93fKt8cVpZIGPP1RK8XLOgqnhVJB3I37f4kvFACDPw+vW+hOmuIdy/1aYXvO
-         dLKg==
+        d=linaro.org; s=google; t=1684001137; x=1686593137;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VORmC64siVlBa/0lsts3YfZ0fyyp1pGdpaqv6LESwso=;
+        b=wEKkAyeWa52ws3iAGnzglLlKlS3zlbpBZ4QgIsfT3pJDn0B03VxbK080SEDVumngKN
+         Xdr9wix17dCRN5YoJMGYMo9kqgtQ2fzH6cI3wGX8OqNuDjaNMfijfLhE/b6Dn4BlVtAd
+         KBHNxbh78/fNEK4gw7Wme7nVqhR7+9muiraIOzH9ojNzoL6HSTuIpRbK9C+H6ivxaeou
+         J2tAWi2B644hS5Pr8BPft2de8uC2ffIWcP7T9KmksbbXtaQ8Q07Ud6vjttKqWNL8V2x1
+         8fhBBGRKKjTaegm/1Ns61Ea/dl93XMKRuTunMW/0vUBHFb5DFhnYIWQVu3Nk2Kt0fns+
+         4m/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683977715; x=1686569715;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0gDDSj6C0iIDbdK2gCsgCH6oSrIVkgIPorcUz+pCF2M=;
-        b=HvUc2USbI0MLprIPmrXM919LgffuI6N4k5QP1C8iOak9FKvQAm4kgZIVGvDy+GiYeZ
-         wGA/sc9eihMNR8qF17DjrVcX27k2oTfOhrqZNs98ljfEa5pDo/m7WyC5cWmSFefBLNOf
-         EKBMQ4hStgaijfO/FHRk3mDczL0yWXZK24Jbvj6kXhDNBzfrU5Hut7eo0ygA2/2EIqKe
-         DCm5JvTU30AqsgKN9b4TJFffmE6DoqldesN8cC3WW57/cRU4TJ8bnehMFebYrQG2BCJI
-         ZR1khsBcy8UIC0WehqN6G0ejPFVhyNRFI3a17/YVKSDxY4VH1VuQlbFi0mqITuDTXVpN
-         i+PQ==
-X-Gm-Message-State: AC+VfDx0kivUBeaWfIRDFJwds4PSwfvIirRwFcp6/RvVIUSprWqJaM6X
-        Z2MGUrwi9GhwxbJSP2JDjEANwbcGoaaBXkGisB5oGg==
-X-Google-Smtp-Source: ACHHUZ6D8HfzS/Rgo6Fy8omZ0KRIXeWqKhnd8YQKYPgn6ARSnxHxXzvt+Htcit348UpAH52nZzVqSA==
-X-Received: by 2002:a17:907:3e1b:b0:967:3963:dab8 with SMTP id hp27-20020a1709073e1b00b009673963dab8mr19583104ejc.7.1683977714867;
-        Sat, 13 May 2023 04:35:14 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:a3aa:fd4:f432:676b])
-        by smtp.gmail.com with ESMTPSA id z4-20020a17090655c400b009660449b9a3sm6681416ejp.25.2023.05.13.04.35.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 May 2023 04:35:14 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] pinctrl: qcom: sc8180x: gracefully handle missing IO memory resource
-Date:   Sat, 13 May 2023 13:35:10 +0200
-Message-Id: <20230513113510.177666-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20221208; t=1684001137; x=1686593137;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VORmC64siVlBa/0lsts3YfZ0fyyp1pGdpaqv6LESwso=;
+        b=V/nIY5vlTbzuU+/LY3TXSaUKt+31Fd1SGTkGJBVQZxI1skWpJL7fD4LDHyxP05r3km
+         HLum2lKzkisXPseCm98+MWf71ropsVEYcq73XcadpovY/VMFwTs5k/XZJW435lewyWbk
+         3wXZG+NeB8J53aTUWEnKSa59qPcE5/+9DlwJTqEy3xegQEAUKnZmRi5qPc8NgRW2BZod
+         nvRNhu4EVR8tWSWXttpLmqtpmSrxVTKnO6DGeMIsP2tTYdR9P003SnhYlq0m8ne5Odxc
+         tq94ZSvsCQKBGKH67VSKjZDbZyJ8xWihfOyedqQiPr/yRuIxTY6w6JI2wnApEPT+A17m
+         9ERQ==
+X-Gm-Message-State: AC+VfDygWvFp+NwWUS3m4Bb6oiA/fx1iQOPxAREEImQdB/sesCDgJWXA
+        iMgMItoZ5puUtmRvbV5xGDNUIA==
+X-Google-Smtp-Source: ACHHUZ456NqFDsI+SzfZLKpEWQ+eDqx16S3lEUJwP8MVzdzMH2X2yE1vj8bXjIo/Mqxrqh0ozu1OcA==
+X-Received: by 2002:a17:907:6295:b0:94e:cbfb:5fab with SMTP id nd21-20020a170907629500b0094ecbfb5fabmr27362822ejc.75.1684001137121;
+        Sat, 13 May 2023 11:05:37 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:ba68:e5c9:694e:c6e4? ([2a02:810d:15c0:828:ba68:e5c9:694e:c6e4])
+        by smtp.gmail.com with ESMTPSA id hx7-20020a170906846700b00965a4350411sm6962208ejc.9.2023.05.13.11.05.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 13 May 2023 11:05:36 -0700 (PDT)
+Message-ID: <015c5208-ac85-8a14-3455-c70781fd92f8@linaro.org>
+Date:   Sat, 13 May 2023 20:05:34 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 05/10] dt-bindings: mfd: cirrus,cs42l43: Add initial DT
+ binding
+Content-Language: en-US
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     broonie@kernel.org, lee@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        tglx@linutronix.de, maz@kernel.org, linus.walleij@linaro.org,
+        vkoul@kernel.org, lgirdwood@gmail.com,
+        yung-chuan.liao@linux.intel.com, sanyog.r.kale@intel.com,
+        pierre-louis.bossart@linux.intel.com, alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230512122838.243002-1-ckeepax@opensource.cirrus.com>
+ <20230512122838.243002-6-ckeepax@opensource.cirrus.com>
+ <25c92476-7bca-90c4-9130-cb765495a783@linaro.org>
+ <20230512161545.GL68926@ediswmail.ad.cirrus.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230512161545.GL68926@ediswmail.ad.cirrus.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-If device was probed with incorrect DT or ACPI tables, the IO memory
-resource would be missing and driver would derefernce NULL pointer in
-sc8180x_pinctrl_add_tile_resources().  Add simplep check if IO memory
-resource was provided to silence Smatch warning:
+On 12/05/2023 18:15, Charles Keepax wrote:
+> On Fri, May 12, 2023 at 05:23:22PM +0200, Krzysztof Kozlowski wrote:
+>> On 12/05/2023 14:28, Charles Keepax wrote:
+>>> +$id: http://devicetree.org/schemas/mfd/cirrus,cs42l43.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Cirrus Logic CS42L43 Audio CODEC
+>>
+>> That's audio codec, so it should be in sound, not MFD.
+>>
+> 
+> Is this true even despite the device being implemented as an MFD?
 
-  drivers/pinctrl/qcom/pinctrl-sc8180x.c:1664 sc8180x_pinctrl_add_tile_resources() error: potentially dereferencing uninitialized 'mres'.
+Implementation in Linux almost does not matter here. Bindings location
+match the device main purpose. We indeed stuff into MFD bindings things
+like PMIC, because PMIC is a bit more than just regulators, and we do
+not have here subsystem for PMICs. If you call it Audio Codec, then I
+vote for sound directory for bindings.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/pinctrl/qcom/pinctrl-sc8180x.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> I am happy to move it, and will do so unless I hear otherwise.
+> 
+>>> +  - VDD_P-supply
+>>> +  - VDD_A-supply
+>>> +  - VDD_D-supply
+>>> +  - VDD_IO-supply
+>>> +  - VDD_CP-supply
+>>
+>> lowercase, no underscores in all property names.
+> 
+> I guess we can rename all the regulators to lower case.
+> 
+>>> +additionalProperties: false
+>>
+>> This order is quite unexpected... please do not invent your own layout.
+>> Use example-schema as your starting point. I suspect there will be many
+>> things to fix, so limited review follows (not complete).
+>>
+>>
+>> Missing ref to dai-common
+> 
+> Apologies for that I was a little hesitant about this but this
+> order did make the binding document much more readable, the
+> intentation got really hard to follow in the traditional order. I
+> guess since I have things working now I can put it back, again I
+> will do so unless I hear otherwise.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-sc8180x.c b/drivers/pinctrl/qcom/pinctrl-sc8180x.c
-index 704a99d2f93c..2fabec096aae 100644
---- a/drivers/pinctrl/qcom/pinctrl-sc8180x.c
-+++ b/drivers/pinctrl/qcom/pinctrl-sc8180x.c
-@@ -1630,7 +1630,8 @@ static const struct msm_pinctrl_soc_data sc8180x_acpi_pinctrl = {
- static int sc8180x_pinctrl_add_tile_resources(struct platform_device *pdev)
- {
- 	int nres_num = pdev->num_resources + ARRAY_SIZE(sc8180x_tiles) - 1;
--	struct resource *mres, *nres, *res;
-+	struct resource *mres = NULL;
-+	struct resource *nres, *res;
- 	int i, ret;
- 
- 	/*
-@@ -1657,6 +1658,9 @@ static int sc8180x_pinctrl_add_tile_resources(struct platform_device *pdev)
- 			*res++ = *r;
- 	}
- 
-+	if (!mres)
-+		return -EINVAL;
-+
- 	/* Append tile memory resources */
- 	for (i = 0; i < ARRAY_SIZE(sc8180x_tiles); i++, res++) {
- 		const struct tile_info *info = &sc8180x_tile_info[i];
--- 
-2.34.1
+The additional/unevaluatedProperties from child nodes are indeed moved
+then up - following the property:
+   pinctrl:
+     type: object
+     additionalProperties: false
+
+but that's exception and for the rest I don't see any troubles with
+indentation. That would be the only binding... so what's here so special?
+
+> 
+>>> +  pinctrl:
+>>> +    type: object
+>>
+>> additionalProperties: false
+>>
+> 
+> Can do.
+> 
+>>> +
+>>> +    allOf:
+>>> +      - $ref: "../pinctrl/pinctrl.yaml#"
+>>
+>> No quotes, absolute path, so /schemas/pinctrl/....
+>>
+> 
+> Can do.
+> 
+>>> +
+>>> +    properties:
+>>> +      pin-settings:
+>>
+>> What's this node about? pinctrl/pinctrl/pins? One level too much.
+>>
+> 
+> codec/pinctrl/pins
+> 
+> The device is a codec, so the main node should be called codec,
+> then it has a subnode called pinctrl to satisfy the pinctrl DT
+> binding.
+
+Sure, but then you do not need pin-settings. Look at Qualcomm bindings
+for example:
+
+Documentation/devicetree/bindings/pinctrl/qcom,sm8550-tlmm.yaml
+
+Best regards,
+Krzysztof
 
