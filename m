@@ -2,60 +2,59 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E55EC77B7A
-	for <linux-gpio@archiver.kernel.org>; Sat, 13 May 2023 18:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E685C77B7F
+	for <linux-gpio@archiver.kernel.org>; Sat, 13 May 2023 18:12:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233142AbjEMSIW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 13 May 2023 14:08:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43492 "EHLO
+        id S229603AbjEMSMU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 13 May 2023 14:12:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231256AbjEMSIP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 13 May 2023 14:08:15 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B31E3C34
-        for <linux-gpio@vger.kernel.org>; Sat, 13 May 2023 11:08:08 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-965e4be7541so1911090466b.1
-        for <linux-gpio@vger.kernel.org>; Sat, 13 May 2023 11:08:08 -0700 (PDT)
+        with ESMTP id S229449AbjEMSMS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 13 May 2023 14:12:18 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BC5D359B
+        for <linux-gpio@vger.kernel.org>; Sat, 13 May 2023 11:11:53 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-50b9ef67f35so19769197a12.2
+        for <linux-gpio@vger.kernel.org>; Sat, 13 May 2023 11:11:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684001287; x=1686593287;
+        d=linaro.org; s=google; t=1684001507; x=1686593507;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Pz3pC3oD+mRQD2yh5jV0jp+d2wnh2+HWJqx/JQaPzB0=;
-        b=EVBWjh+d6IhLcfQHvnPqNtgl2kB1ZPchXw0HXjFU2qSUtuwNy0q6Sp0YZggQOXxfjz
-         oEcw/2Tl/2G+fh5jken5DOv1L2V0oQGBznQKAHYXr5FEYY+2rEcvHxbvLt9IC6T7d2pm
-         j+JUVuj+iQUbkEXes1F1CBctgEWYrWPuR7xLWrMjBF263X4+bzOn/pWNhcqVAypZKXAx
-         ikR1LxkTi5RNV8l0ufwPRld9j5r5vXg8+d6nfVq3ozPse6EdauUgXDDiXX8GGkzWphAd
-         OXs/uwKHfMDIkh+2EG5f+tVdc5Zs9rGtQ8K5jD4iljzDntk+BUytG4wJjg7lSp4gpCJp
-         o9CQ==
+        bh=SdRy69fIEsxIBR9NIDENofSkdxQv1jnZ0R7WuYlxvmg=;
+        b=uRA31wofWeSjIerYwYpJ0R8GceY1Tf6x6XT8YNiu68gmIZJJAvPgDmVIXjRbVB0Hc0
+         mYq/+ZUC8sftbBqnZiGdXPFxdbENH1Ru15127YuHpCUtqGUypeYgBZkwB//KhZudYvHH
+         Rq2iIDgbqkorgafQvM0ESYHSCtAflM1oF6p2CKgoC3X4TnKfY5x3s79FF3n/bR5CDJQA
+         T2XWiEEcf695PB+xg4wljBgdFZ+ZqMC9zoFsxEf29VUMyBOq0dEJGLYT/NcY28MluaXj
+         /SQNvnTVxMjaX55cLmXl7RaHKds225mp3A9vo0jNvHYPKpRPZLb/kBcFfcJ40sEVHZAT
+         38Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684001287; x=1686593287;
+        d=1e100.net; s=20221208; t=1684001507; x=1686593507;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pz3pC3oD+mRQD2yh5jV0jp+d2wnh2+HWJqx/JQaPzB0=;
-        b=Oe3RGanyY1HuyF9qMNUQar88k76ggOC7H7XqDLfXlUSIRP1YTI417z26clhtTSAbBE
-         vC3nTQky3p4wTAhfYWnH7mZA6fhQK5brntHUC9ERhMCHhbRxyRl+kH4Q1wBZOK6gMdUb
-         HC78Grt4TfJP18WYVfHWBwDM35imzBIYlPoMxpVUgrqYtGwILjlws5EgCBa0a/cmcA63
-         9hiTm2+Fpuw4Qd5p0fA0yxtJ0S89mBvNqnRH07M+0XGFN3SRrnSyBx7MeLDMgu2Epbp1
-         NSZXXpioE9yv9go2fxT3paUoA0dkwCU/KVEw1rNW5w5VJl5sszhKwpdpiGoRyG0Nxw8g
-         FpsA==
-X-Gm-Message-State: AC+VfDwT2RgUVeEWpsyFCc5UKVMlsEZSNS7lm4yQS8W53YCPBZZy7t14
-        lxlM1RzWFhfDw6S7+yLO1yquTg==
-X-Google-Smtp-Source: ACHHUZ7ZC5ghgGrfBuRI4KprxyOU5k85ez2jlpAKSpf+r5Q8qvL256LVhRrTCK365P5OAJhDuRHo/g==
-X-Received: by 2002:a17:907:9405:b0:957:12a6:a00f with SMTP id dk5-20020a170907940500b0095712a6a00fmr25591950ejc.21.1684001286843;
-        Sat, 13 May 2023 11:08:06 -0700 (PDT)
+        bh=SdRy69fIEsxIBR9NIDENofSkdxQv1jnZ0R7WuYlxvmg=;
+        b=U69Rrc7+FuxH2Ytx4I6Sy7Cd0ov4aBOW2wgY48JTnNyP08JEGTMjTOJge16dln7W+i
+         r+yXoHiAFiQfnXW7CH/XOYdcbm7lkIHjwbs+ZctnJhckJ0rnN3tU8I5Dn0l0LZ4Q6vMg
+         Q2yGPgFsBay2q8EpS7lUypBQmxPNO6ibc2C1qFHXEin0jEi9FvexGs2LXCloqZlnv6ox
+         j0WrH8JCmBhW0iEoRl0wNbJvMviv4mmrLD+YECLshI9z0j5e6R6nuWieS1TyfZa6LAjH
+         n0g6CjdFVGsYmgvopzCc5Pv1H6SeokDJA546VeQjX2jjBIqrL1VeBc1eK7zOmOI0mcrD
+         /Gtw==
+X-Gm-Message-State: AC+VfDyjKLrKe9ivobR6Kqe8L/8BU8UOHVIYhrVuc/g8Wv/x+o/HfY27
+        eK4g8718shOVwgJHUriyJelZZ/3G5t5M58JzQ/KQzA==
+X-Google-Smtp-Source: ACHHUZ4m7lCl8p2Q7EHaoUU/9iQg5m8GgeAPaGDj82d7+DhAw/jzqEtERboZRuZ59/7bEz4RKl+kkg==
+X-Received: by 2002:a17:907:7f94:b0:969:e9ec:9a0 with SMTP id qk20-20020a1709077f9400b00969e9ec09a0mr20377665ejc.77.1684000807359;
+        Sat, 13 May 2023 11:00:07 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:ba68:e5c9:694e:c6e4? ([2a02:810d:15c0:828:ba68:e5c9:694e:c6e4])
-        by smtp.gmail.com with ESMTPSA id ib10-20020a1709072c6a00b009531d9efcc4sm7023439ejc.133.2023.05.13.11.08.05
+        by smtp.gmail.com with ESMTPSA id u24-20020a056402111800b0050bc4eb9846sm5105168edv.1.2023.05.13.11.00.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 May 2023 11:08:06 -0700 (PDT)
-Message-ID: <db2dcafb-db14-96ab-87cc-88408f3bab4b@linaro.org>
-Date:   Sat, 13 May 2023 20:08:05 +0200
+        Sat, 13 May 2023 11:00:06 -0700 (PDT)
+Message-ID: <633b305e-a311-3334-3d4e-30d5d09ebb6a@linaro.org>
+Date:   Sat, 13 May 2023 20:00:05 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH 05/10] dt-bindings: mfd: cirrus,cs42l43: Add initial DT
- binding
+Subject: Re: [PATCH 08/10] pinctrl: cs42l43: Add support for the cs42l43
 Content-Language: en-US
 To:     Charles Keepax <ckeepax@opensource.cirrus.com>
 Cc:     broonie@kernel.org, lee@kernel.org, robh+dt@kernel.org,
@@ -68,50 +67,48 @@ Cc:     broonie@kernel.org, lee@kernel.org, robh+dt@kernel.org,
         linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20230512122838.243002-1-ckeepax@opensource.cirrus.com>
- <20230512122838.243002-6-ckeepax@opensource.cirrus.com>
- <5969fe82-69cd-34d6-edd1-d16ea741d9cb@linaro.org>
- <20230512161803.GM68926@ediswmail.ad.cirrus.com>
+ <20230512122838.243002-9-ckeepax@opensource.cirrus.com>
+ <9591999e-9d7f-2a4a-29df-d9c42dfa736b@linaro.org>
+ <20230512155426.GJ68926@ediswmail.ad.cirrus.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230512161803.GM68926@ediswmail.ad.cirrus.com>
+In-Reply-To: <20230512155426.GJ68926@ediswmail.ad.cirrus.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 12/05/2023 18:18, Charles Keepax wrote:
-> On Fri, May 12, 2023 at 05:25:52PM +0200, Krzysztof Kozlowski wrote:
+On 12/05/2023 17:54, Charles Keepax wrote:
+> On Fri, May 12, 2023 at 05:30:37PM +0200, Krzysztof Kozlowski wrote:
 >> On 12/05/2023 14:28, Charles Keepax wrote:
->>> The CS42L43 is an audio CODEC with integrated MIPI SoundWire interface
->>> (Version 1.2.1 compliant), I2C, SPI, and I2S/TDM interfaces designed
->>> for portable applications. It provides a high dynamic range, stereo
->>> DAC for headphone output, two integrated Class D amplifiers for
->>
->> ...
->>
+>>> +	priv->gpio_chip.fwnode = dev_fwnode(cs42l43->dev);
+
+What's also a bit confusing is that gpio_chip is the parent's node, but
+pinctrl is not...
+
 >>> +
->>> +  interrupt-controller: true
->>> +
->>> +  '#interrupt-cells':
->>> +    const: 2
+>>> +	if (is_of_node(dev_fwnode(cs42l43->dev))) {
+>>> +		device_set_node(priv->dev,
+>>> +				fwnode_get_named_child_node(dev_fwnode(cs42l43->dev),
+>>> +							    "pinctrl"));
 >>
->> Hm, are you sure? Who is the consumer/user of this interrupt controller?
+>> That's something unusual. It seems you want to bind to a DT node because
+>> you miss compatible in DT node?
 >>
 > 
-> Anyone who wants the device has GPIOs that can signal IRQs. Some
-> of the other IRQs could be more generally useful, such as some of
-> the jack detection ones.
+> Kinda, I don't really want to add multiple compatibles for the
+> device. This is just a CODEC device, even in device tree it
+> seems a little weird to have multiple compatibles for a single
+> I2C device. On ACPI I am pretty sure it would be considered flat
+> out right wrong. The fact Linux supports the device using multiple
+> drivers is seemed to be a Linux implementation detail, rather than
+> describing the hardware.
+> 
 
-
-OK, makes sense, but it is a bit odd then to have:
-codec {
-  which is GPIO and interrupt controller, but not pin controller
-  pinctrl {
-    pin controller, which is not GPIO and not interrupt controller
-  }
-}
-Maybe all the GPIO/pin/related interrupt properties should be moved to
-pinctrl node?
+I think if you do not have compatible, then the device node should be
+rather the parent (so the main node with compatible), not the child.
+Child is just a wrapper for pinctrls, but not something representing a
+device.
 
 Best regards,
 Krzysztof
