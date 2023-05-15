@@ -2,88 +2,136 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46AE5C7EE23
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 May 2023 15:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CFAC77B7D
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 May 2023 17:43:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242253AbjEOPuJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 May 2023 11:50:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53944 "EHLO
+        id S244607AbjEORnS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 May 2023 13:43:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242161AbjEOPuI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 May 2023 11:50:08 -0400
-Received: from mail-vk1-xa2c.google.com (mail-vk1-xa2c.google.com [IPv6:2607:f8b0:4864:20::a2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEBC61FE4
-        for <linux-gpio@vger.kernel.org>; Mon, 15 May 2023 08:50:07 -0700 (PDT)
-Received: by mail-vk1-xa2c.google.com with SMTP id 71dfb90a1353d-44ff6a049a7so4559062e0c.2
-        for <linux-gpio@vger.kernel.org>; Mon, 15 May 2023 08:50:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1684165807; x=1686757807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3uXwd7SkGWJ9529scZ7Lnjm/OI4iOYOHZ1+uN+qCB8o=;
-        b=BRGFiqvAymUeQVN0HIUkI4cDilaqFL8JwVUAQXqbK5Dly5MRpbNeE7wHPNesGhl/U/
-         UkkSAd0XKWTvdQtQ51iivKux1NvkipJUH1KT04Z+ThOCC68XGuV7tESffJ0ivIFshk9l
-         4fQ2BWkzqjoouDQVT9TDALhOI87Iur3/D5/Ye1uHcdpYEt/KJHtM47uR0YSXd+8VfWA5
-         oytyCyiIxZUovqSW/xvm5wrZvUbHmuEQj6o+TMsnjIEhtYoaHB5aY2QLVZY+12iGOn+a
-         plPO6KKj8WGl5MRLEP10QEdjhSgJoQW8brQ8SPTt/NO42WmVLpisrq+5yPq6+ONeJhcX
-         MXaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684165807; x=1686757807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3uXwd7SkGWJ9529scZ7Lnjm/OI4iOYOHZ1+uN+qCB8o=;
-        b=W+xXZq0IlQQQeBo7RK9BoaCF3Ol5PjTVTEeLoiXJEUhNe0s6s/g9CsJltKMWCpWlyp
-         Ugogw4vV961Gtl7usGvIF2nM3EKz2wVxky/iOShl9rEW9GBQcPmzj3Fm49alPabbx5qA
-         arz4LtArHzuad6CA/f1sQavvlX39FMdYybbRJqzkRS68CM+m0yyyyaCnJk7Plvhrj88v
-         LT8avYW0O9deVicXmrrCznw59G+VdcZ5C6O18WMjEoKFDcXZaruHaSSp8BYS6q8Pyy6M
-         yEGvyA7qCV3Hcnw/qxb882xOMaW7zK5cTV/HT6MwxM6fJIYNXV+Y1tx3+j/p3+asAK5X
-         YAFQ==
-X-Gm-Message-State: AC+VfDyRqzyEVlwXP8E1LpfRbbVONn8D+wzFB/ukswQhkBY8L513p9mr
-        SaRbmj6oh5HIxcr/71fAyg27EJyPyTMn90BeDfzWxQ==
-X-Google-Smtp-Source: ACHHUZ6aSG8aekPziwzEAgEVCJVbKN3TbOZcZmLa2Iu2jZW0AOUW4z09Kk/htLolRL0j1BYZPl7edgyr1z9rTkFtOGM=
-X-Received: by 2002:a1f:5343:0:b0:440:3b4e:9a31 with SMTP id
- h64-20020a1f5343000000b004403b4e9a31mr12233542vkb.2.1684165805899; Mon, 15
- May 2023 08:50:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230511175844.185070-1-xiang.ye@intel.com> <20230511175844.185070-5-xiang.ye@intel.com>
-In-Reply-To: <20230511175844.185070-5-xiang.ye@intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 15 May 2023 17:49:55 +0200
-Message-ID: <CAMRc=MeLyqLsgCbxA1jnz8r4kRoS6AvvOyUffuHg3ojVMTF-3A@mail.gmail.com>
-Subject: Re: [PATCH v8 4/6] gpio: Add support for Intel LJCA USB GPIO driver
-To:     Ye Xiang <xiang.ye@intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Lee Jones <lee@kernel.org>, Wolfram Sang <wsa@kernel.org>,
-        Tyrone Ting <kfting@nuvoton.com>,
-        Mark Brown <broonie@kernel.org>,
+        with ESMTP id S244493AbjEORm5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 May 2023 13:42:57 -0400
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0188B16902;
+        Mon, 15 May 2023 10:40:34 -0700 (PDT)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 34FHeSwc069276;
+        Mon, 15 May 2023 12:40:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1684172428;
+        bh=QFz3oTrA3pkyZzNa7g6DhNARu1SSRuQphy9OmLQk2ts=;
+        h=From:To:CC:Subject:Date;
+        b=xt1c9BRe1l1my7S1505Ze/JULJAqJG7MaJSz53kj9jC3miMxX4zXD5TFcMJZjXyRC
+         ncBYyU2xNLJfsDkBkcgGoHjCtehNl2oQPJ8VB80QMGOKYL421FnPAVNMMIGqu0mpNc
+         TETaF4sCTx9QsK6YLNTiBdU+u/vTFUHbizw/UQmE=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 34FHeSKw043913
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 15 May 2023 12:40:28 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 15
+ May 2023 12:40:27 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 15 May 2023 12:40:27 -0500
+Received: from lelv0327.itg.ti.com (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 34FHeRu1019475;
+        Mon, 15 May 2023 12:40:27 -0500
+From:   Andrew Davis <afd@ti.com>
+To:     Peter Tyser <ptyser@xes-inc.com>,
+        Andy Shevchenko <andy@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Marc Zyngier <maz@kernel.org>, linux-usb@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org,
-        srinivas.pandruvada@intel.com, heikki.krogerus@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, sakari.ailus@linux.intel.com,
-        zhifeng.wang@intel.com, wentong.wu@intel.com, lixu.zhang@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Andrew Davis <afd@ti.com>
+Subject: [PATCH v3] gpio: twl4030: Use devm_gpiochip_add_data() to simplify remove path
+Date:   Mon, 15 May 2023 12:40:26 -0500
+Message-ID: <20230515174026.494496-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, May 11, 2023 at 8:01=E2=80=AFPM Ye Xiang <xiang.ye@intel.com> wrote=
-:
->
-> Implements the GPIO function of Intel USB-I2C/GPIO/SPI adapter
-> device named "La Jolla Cove Adapter" (LJCA). It communicate with
-> LJCA GPIO module with specific protocol through interfaces exported
-> by LJCA USB driver.
->
-> Signed-off-by: Ye Xiang <xiang.ye@intel.com>
-> ---
+Use devm version of gpiochip add function to handle removal for us.
 
-With Linus' comment addressed, you can add:
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Changes from v2:
+ - Rebase on v6.4-rc2
+
+Changes from v1:
+ - Actually add the devm call
+
+ drivers/gpio/gpio-twl4030.c | 23 +++--------------------
+ 1 file changed, 3 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
+index c1bb2c3ca6f2..3708ed2314e8 100644
+--- a/drivers/gpio/gpio-twl4030.c
++++ b/drivers/gpio/gpio-twl4030.c
+@@ -492,18 +492,6 @@ static struct twl4030_gpio_platform_data *of_gpio_twl4030(struct device *dev,
+ 	return omap_twl_info;
+ }
+ 
+-/* Cannot use as gpio_twl4030_probe() calls us */
+-static int gpio_twl4030_remove(struct platform_device *pdev)
+-{
+-	struct gpio_twl4030_priv *priv = platform_get_drvdata(pdev);
+-
+-	gpiochip_remove(&priv->gpio_chip);
+-
+-	/* REVISIT no support yet for deregistering all the IRQs */
+-	WARN_ON(!is_module());
+-	return 0;
+-}
+-
+ static int gpio_twl4030_probe(struct platform_device *pdev)
+ {
+ 	struct twl4030_gpio_platform_data *pdata = dev_get_platdata(&pdev->dev);
+@@ -577,16 +565,13 @@ static int gpio_twl4030_probe(struct platform_device *pdev)
+ 	if (pdata->use_leds)
+ 		priv->gpio_chip.ngpio += 2;
+ 
+-	ret = gpiochip_add_data(&priv->gpio_chip, priv);
++	ret = devm_gpiochip_add_data(&pdev->dev, &priv->gpio_chip, priv);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "could not register gpiochip, %d\n", ret);
+ 		priv->gpio_chip.ngpio = 0;
+-		gpio_twl4030_remove(pdev);
+-		goto out;
++		return ret;
+ 	}
+ 
+-	platform_set_drvdata(pdev, priv);
+-
+ 	if (pdata->setup) {
+ 		int status;
+ 
+@@ -596,8 +581,7 @@ static int gpio_twl4030_probe(struct platform_device *pdev)
+ 			dev_dbg(&pdev->dev, "setup --> %d\n", status);
+ 	}
+ 
+-out:
+-	return ret;
++	return 0;
+ }
+ 
+ static const struct of_device_id twl_gpio_match[] = {
+@@ -615,7 +599,6 @@ static struct platform_driver gpio_twl4030_driver = {
+ 		.of_match_table = twl_gpio_match,
+ 	},
+ 	.probe		= gpio_twl4030_probe,
+-	.remove		= gpio_twl4030_remove,
+ };
+ 
+ static int __init gpio_twl4030_init(void)
+-- 
+2.39.2
+
