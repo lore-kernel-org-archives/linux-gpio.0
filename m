@@ -2,166 +2,68 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E441C7EE24
-	for <linux-gpio@archiver.kernel.org>; Mon, 15 May 2023 06:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5CDC77B75
+	for <linux-gpio@archiver.kernel.org>; Mon, 15 May 2023 06:43:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239419AbjEOGgp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 15 May 2023 02:36:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37462 "EHLO
+        id S238221AbjEOGnk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 15 May 2023 02:43:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236330AbjEOGgo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 May 2023 02:36:44 -0400
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 674FD114;
-        Sun, 14 May 2023 23:36:42 -0700 (PDT)
-X-QQ-mid: bizesmtp69t1684132432tr1dcqvs
-Received: from wxdbg.localdomain.com ( [115.200.228.151])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Mon, 15 May 2023 14:33:51 +0800 (CST)
-X-QQ-SSF: 01400000000000I0Z000000A0000000
-X-QQ-FEAT: 7jw2iSiCazoWCiV9ioWjrGO7P21aFSNocHguYDo5Ji+vDNmyew5b4wwguN3sj
-        6PwZLw1lCP+/8oBU+5pf94Ea+FjmVtCgKnWFCA6lYJxc+fOWw/VWRRacT95sQnh1v4ADfp6
-        DyYR4h4FucZXH30Fms0FHFCDC3zneju6SbmyaF/NkaIor/bRjZ6AI7+SjyflW0iPgey7Ike
-        fylDwTvANh55F//9AHK8p1rLO/GX/XLBghkOhB3clKZQGb5Plme2D6c+hV/D18RMSXRbQY7
-        X17pxl30N95GUta70+7gupedt1QnwQb2QlgKCx41XSPm/+HWxEpyH+WWKH6cNaPShN7l8C2
-        2ddfyJqZqDVwhGYTVPJzY7g0seBr2aLvdRnhjrwlwjqcbB6YzMK6GNv0x/UQcC0QW6FoDNL
-        o6NM1c+XEkY=
-X-QQ-GoodBg: 2
-X-BIZMAIL-ID: 6885424968939681113
-From:   Jiawen Wu <jiawenwu@trustnetic.com>
-To:     netdev@vger.kernel.org, jarkko.nikula@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
-        jsd@semihalf.com, Jose.Abreu@synopsys.com, andrew@lunn.ch,
-        hkallweit1@gmail.com, linux@armlinux.org.uk
-Cc:     linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-        mengyuanlou@net-swift.com, Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH net-next v8 7/9] net: pcs: Add 10GBASE-R mode for Synopsys Designware XPCS
-Date:   Mon, 15 May 2023 14:31:58 +0800
-Message-Id: <20230515063200.301026-8-jiawenwu@trustnetic.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20230515063200.301026-1-jiawenwu@trustnetic.com>
-References: <20230515063200.301026-1-jiawenwu@trustnetic.com>
+        with ESMTP id S238384AbjEOGnj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 May 2023 02:43:39 -0400
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBCC9187
+        for <linux-gpio@vger.kernel.org>; Sun, 14 May 2023 23:43:35 -0700 (PDT)
+Received: from localhost (88-113-26-95.elisa-laajakaista.fi [88.113.26.95])
+        by fgw22.mail.saunalahti.fi (Halon) with ESMTP
+        id cb35f6d5-f2eb-11ed-a9de-005056bdf889;
+        Mon, 15 May 2023 09:43:27 +0300 (EEST)
+From:   andy.shevchenko@gmail.com
+Date:   Mon, 15 May 2023 09:43:25 +0300
+To:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc:     Johan Hovold <johan@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "brgl@bgdev.pl" <brgl@bgdev.pl>,
+        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "maz@kernel.org" <maz@kernel.org>,
+        Ben Brown <Ben.Brown@alliedtelesis.co.nz>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] gpiolib: Avoid side effects in gpio_is_visible()
+Message-ID: <ZGHUjUpI-5JWNCAf@surfacebook>
+References: <20230512042806.3438373-1-chris.packham@alliedtelesis.co.nz>
+ <ZF3pqvOVv6eZl62y@hovoldconsulting.com>
+ <2265adee-e003-08ae-e66d-fb41bdd79122@alliedtelesis.co.nz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2265adee-e003-08ae-e66d-fb41bdd79122@alliedtelesis.co.nz>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add basic support for XPCS using 10GBASE-R interface. This mode will
-be extended to use interrupt, so set pcs.poll false. And avoid soft
-reset so that the device using this mode is in the default configuration.
+Sun, May 14, 2023 at 09:57:58PM +0000, Chris Packham kirjoitti:
+> On 12/05/23 19:24, Johan Hovold wrote:
+> > On Fri, May 12, 2023 at 04:28:06PM +1200, Chris Packham wrote:
 
-Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
- drivers/net/pcs/pcs-xpcs.c   | 30 ++++++++++++++++++++++++++++++
- include/linux/pcs/pcs-xpcs.h |  1 +
- 2 files changed, 31 insertions(+)
+...
 
-diff --git a/drivers/net/pcs/pcs-xpcs.c b/drivers/net/pcs/pcs-xpcs.c
-index 539cd43eae8d..c7c8b8d1311f 100644
---- a/drivers/net/pcs/pcs-xpcs.c
-+++ b/drivers/net/pcs/pcs-xpcs.c
-@@ -64,6 +64,16 @@ static const int xpcs_xlgmii_features[] = {
- 	__ETHTOOL_LINK_MODE_MASK_NBITS,
- };
- 
-+static const int xpcs_10gbaser_features[] = {
-+	ETHTOOL_LINK_MODE_Pause_BIT,
-+	ETHTOOL_LINK_MODE_Asym_Pause_BIT,
-+	ETHTOOL_LINK_MODE_10000baseSR_Full_BIT,
-+	ETHTOOL_LINK_MODE_10000baseLR_Full_BIT,
-+	ETHTOOL_LINK_MODE_10000baseLRM_Full_BIT,
-+	ETHTOOL_LINK_MODE_10000baseER_Full_BIT,
-+	__ETHTOOL_LINK_MODE_MASK_NBITS,
-+};
-+
- static const int xpcs_sgmii_features[] = {
- 	ETHTOOL_LINK_MODE_Pause_BIT,
- 	ETHTOOL_LINK_MODE_Asym_Pause_BIT,
-@@ -106,6 +116,10 @@ static const phy_interface_t xpcs_xlgmii_interfaces[] = {
- 	PHY_INTERFACE_MODE_XLGMII,
- };
- 
-+static const phy_interface_t xpcs_10gbaser_interfaces[] = {
-+	PHY_INTERFACE_MODE_10GBASER,
-+};
-+
- static const phy_interface_t xpcs_sgmii_interfaces[] = {
- 	PHY_INTERFACE_MODE_SGMII,
- };
-@@ -123,6 +137,7 @@ enum {
- 	DW_XPCS_USXGMII,
- 	DW_XPCS_10GKR,
- 	DW_XPCS_XLGMII,
-+	DW_XPCS_10GBASER,
- 	DW_XPCS_SGMII,
- 	DW_XPCS_1000BASEX,
- 	DW_XPCS_2500BASEX,
-@@ -246,6 +261,7 @@ static int xpcs_soft_reset(struct dw_xpcs *xpcs,
- 
- 	switch (compat->an_mode) {
- 	case DW_AN_C73:
-+	case DW_10GBASER:
- 		dev = MDIO_MMD_PCS;
- 		break;
- 	case DW_AN_C37_SGMII:
-@@ -872,6 +888,8 @@ int xpcs_do_config(struct dw_xpcs *xpcs, phy_interface_t interface,
- 		return -ENODEV;
- 
- 	switch (compat->an_mode) {
-+	case DW_10GBASER:
-+		break;
- 	case DW_AN_C73:
- 		if (phylink_autoneg_inband(mode)) {
- 			ret = xpcs_config_aneg_c73(xpcs, compat);
-@@ -1033,6 +1051,9 @@ static void xpcs_get_state(struct phylink_pcs *pcs,
- 		return;
- 
- 	switch (compat->an_mode) {
-+	case DW_10GBASER:
-+		phylink_mii_c45_pcs_get_state(xpcs->mdiodev, state);
-+		break;
- 	case DW_AN_C73:
- 		ret = xpcs_get_state_c73(xpcs, state, compat);
- 		if (ret) {
-@@ -1188,6 +1209,12 @@ static const struct xpcs_compat synopsys_xpcs_compat[DW_XPCS_INTERFACE_MAX] = {
- 		.num_interfaces = ARRAY_SIZE(xpcs_xlgmii_interfaces),
- 		.an_mode = DW_AN_C73,
- 	},
-+	[DW_XPCS_10GBASER] = {
-+		.supported = xpcs_10gbaser_features,
-+		.interface = xpcs_10gbaser_interfaces,
-+		.num_interfaces = ARRAY_SIZE(xpcs_10gbaser_interfaces),
-+		.an_mode = DW_10GBASER,
-+	},
- 	[DW_XPCS_SGMII] = {
- 		.supported = xpcs_sgmii_features,
- 		.interface = xpcs_sgmii_interfaces,
-@@ -1290,6 +1317,9 @@ struct dw_xpcs *xpcs_create(struct mdio_device *mdiodev,
- 		}
- 
- 		xpcs->pcs.ops = &xpcs_phylink_ops;
-+		if (compat->an_mode == DW_10GBASER)
-+			return xpcs;
-+
- 		xpcs->pcs.poll = true;
- 
- 		ret = xpcs_soft_reset(xpcs, compat);
-diff --git a/include/linux/pcs/pcs-xpcs.h b/include/linux/pcs/pcs-xpcs.h
-index d2da1e0b4a92..61df0c717a0e 100644
---- a/include/linux/pcs/pcs-xpcs.h
-+++ b/include/linux/pcs/pcs-xpcs.h
-@@ -18,6 +18,7 @@
- #define DW_AN_C37_SGMII			2
- #define DW_2500BASEX			3
- #define DW_AN_C37_1000BASEX		4
-+#define DW_10GBASER			5
- 
- struct xpcs_id;
- 
+> > You need a better explanation as to why this is an issue. What does the
+> > warning look like for example?
+> 
+> Ironically I had that in my first attempt to address the issue but was 
+> told it was too much detail. So now I've gone too far the other way. 
+> I'll include it in the response I'm about to send to LinusW.
+
+You have been (implicitly) told to reduce the scope of the details to have
+the only important ones, removing the traceback completely wasn't on the
+table.
+
+Citation: "Besides the very noisy traceback in the commit message (read
+https://kernel.org/doc/html/latest/process/submitting-patches.html#backtraces-in-commit-messages)"
+
 -- 
-2.27.0
+With Best Regards,
+Andy Shevchenko
+
 
