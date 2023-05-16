@@ -2,113 +2,143 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31ED6C77B7A
-	for <linux-gpio@archiver.kernel.org>; Tue, 16 May 2023 07:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D64FC7EE24
+	for <linux-gpio@archiver.kernel.org>; Tue, 16 May 2023 08:52:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231469AbjEPHuL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 16 May 2023 03:50:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47634 "EHLO
+        id S230477AbjEPIwE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 16 May 2023 04:52:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231468AbjEPHuH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 May 2023 03:50:07 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DAC13581;
-        Tue, 16 May 2023 00:50:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1684223401;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qKHuxejJ0gYscGISO/Lzq18vk4+b4iOzo6srIsttI8Q=;
-        b=DPG9ROIGCjLeyrplpljQ4YAX1l0ZnPhORRJ6fpBTYqXuRjfrN8DM4fxvjte0yqxnczjIre
-        2UoUOZOUT6GyFMCi49aKlcljzWX7TgGQh9b8fIVGaCwOA5NJG/CI+PCaI8981caXsONPm/
-        TkmO2iMhrGoY8qk+QXngBmMa2AAuLu0=
-Message-ID: <ba2c8adf84ed0ae7036873064871b7a17494f2e1.camel@crapouillou.net>
-Subject: Re: [PATCH v4 5/7] pinctrl: ingenic: relax return value check for
- IRQ get
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Andreas Klinger <ak@it-klinger.de>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jonathan =?ISO-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Akhil R <akhilrajeev@nvidia.com>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        netdev@vger.kernel.org, openbmc@lists.ozlabs.org,
-        linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org
-Date:   Tue, 16 May 2023 09:49:58 +0200
-In-Reply-To: <17d04e9b7d76fbc0804dde8e1c4a429d7f19de80.1684220962.git.mazziesaccount@gmail.com>
-References: <cover.1684220962.git.mazziesaccount@gmail.com>
-         <17d04e9b7d76fbc0804dde8e1c4a429d7f19de80.1684220962.git.mazziesaccount@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        with ESMTP id S231418AbjEPIwC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 May 2023 04:52:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8CB34C0E;
+        Tue, 16 May 2023 01:52:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3DFD063663;
+        Tue, 16 May 2023 08:52:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90387C433D2;
+        Tue, 16 May 2023 08:51:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684227119;
+        bh=5i87WjgwyMiViOIMguz296sht10SHl9HYvunIq8Fdz4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=QLNhcuAENyPWj8HBP1xQi92yQxaGrmxituQp8obI3cx7BjaPVB9+qsvvsvlI4Nqgf
+         u9K1wOfF+YfKEf4fhK3iI5ee+6qgGb8I9l8eonvaN4PeSuzlq+BzFeB/NuzdKw45tc
+         fn5rSwzJFYbqRvRD2T0Bike6LbN5JyhXXNm+dD+kZ3XAydlEsduQ9US8S7kqe35Cmi
+         nOjb9Wew+jxCiWaQv9ICqZTPNKMpaXCUsqk/2ytILmk5a7V6VPJtoIPI+sZblVbsoS
+         l7YSO3KKqTC7c5miN190ZnZXEcXB6xx43fCS6g99KF/COv9tKlP9rtCkDbmUVtCR1M
+         pCyqIxfYS9kmA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.95)
+        (envelope-from <maz@kernel.org>)
+        id 1pyqPV-00FTKi-5E;
+        Tue, 16 May 2023 09:51:57 +0100
+Date:   Tue, 16 May 2023 09:51:56 +0100
+Message-ID: <86h6scmzf7.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Lee Jones <lee@kernel.org>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>, broonie@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, tglx@linutronix.de, linus.walleij@linaro.org,
+        vkoul@kernel.org, lgirdwood@gmail.com,
+        yung-chuan.liao@linux.intel.com, sanyog.r.kale@intel.com,
+        pierre-louis.bossart@linux.intel.com, alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/10] irqchip/cs42l43: Add support for the cs42l43 IRQs
+In-Reply-To: <20230515112554.GA10825@google.com>
+References: <20230512122838.243002-1-ckeepax@opensource.cirrus.com>
+        <20230512122838.243002-8-ckeepax@opensource.cirrus.com>
+        <86o7mpmvqq.wl-maz@kernel.org>
+        <20230512153933.GH68926@ediswmail.ad.cirrus.com>
+        <86mt29mt2m.wl-maz@kernel.org>
+        <20230515112554.GA10825@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: lee@kernel.org, ckeepax@opensource.cirrus.com, broonie@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, tglx@linutronix.de, linus.walleij@linaro.org, vkoul@kernel.org, lgirdwood@gmail.com, yung-chuan.liao@linux.intel.com, sanyog.r.kale@intel.com, pierre-louis.bossart@linux.intel.com, alsa-devel@alsa-project.org, patches@opensource.cirrus.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Matti,
+On Mon, 15 May 2023 12:25:54 +0100,
+Lee Jones <lee@kernel.org> wrote:
+> 
+> On Fri, 12 May 2023, Marc Zyngier wrote:
+> 
+> > On Fri, 12 May 2023 16:39:33 +0100,
+> > Charles Keepax <ckeepax@opensource.cirrus.com> wrote:
+> > > 
+> > > On Fri, May 12, 2023 at 04:10:05PM +0100, Marc Zyngier wrote:
+> > > > On Fri, 12 May 2023 13:28:35 +0100,
+> > > > Charles Keepax <ckeepax@opensource.cirrus.com> wrote:
+> > > > > 
+> > > > > The CS42L43 is an audio CODEC with integrated MIPI SoundWire interface
+> > > > > (Version 1.2.1 compliant), I2C, SPI, and I2S/TDM interfaces designed
+> > > > > for portable applications. It provides a high dynamic range, stereo
+> > > > > DAC for headphone output, two integrated Class D amplifiers for
+> > > > > loudspeakers, and two ADCs for wired headset microphone input or
+> > > > > stereo line input. PDM inputs are provided for digital microphones.
+> > > > > 
+> > > > > The IRQ chip provides IRQ functionality both to other parts of the
+> > > > > cs42l43 device and to external devices that wish to use its IRQs.
+> > > > 
+> > > > Sorry, but this isn't much of an interrupt controller driver. A modern
+> > > > interrupt controller driver is firmware-driven (DT or ACPI, pick your
+> > > > poison), uses irq domains, and uses the irqchip API.
+> > > > 
+> > > 
+> > > Apologies but I really need a little help clarifying the issues
+> > > here. I am totally happy to fix things up but might need a couple
+> > > pointers.
+> > > 
+> > > 1) uses the irqchip API / uses irq domains
+> > > 
+> > > The driver does use both the irqchip API and domains, what
+> > > part of the IRQ API are we not using that we should be?
+> > > 
+> > > The driver registers an irq domain using
+> > > irq_domain_create_linear.  It requests its parent IRQ using
+> > > request_threaded_irq. It passes IRQs onto the devices requesting
+> > > IRQs from it using handle_nested_irq and irq_find_mapping.
+> > > 
+> > > Is the objection here that regmap is making these calls for us,
+> > > rather than them being hard coded into this driver?
+> > 
+> > That's one of the reasons. Look at the existing irqchip drivers: they
+> > have nothing in common with yours. The regmap irqchip abstraction may
+> > be convenient for what you are doing, but the result isn't really an
+> > irqchip driver. It is something that is a small bit of a larger device
+> > and not an interrupt controller driver on its own. The irqchip
+> > subsystem is there for "first class" interrupt controllers.
+> 
+> I'm not aware of another subsystem that deals with !IRQChip level IRQ
+> controllers.  Where do simple or "second class" interrupt controllers
+> go?
 
-Le mardi 16 mai 2023 =C3=A0 10:13 +0300, Matti Vaittinen a =C3=A9crit=C2=A0=
-:
-> fwnode_irq_get[_byname]() were changed to not return 0 anymore.
->=20
-> Drop check for return value 0.
->=20
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+This isn't an interrupt controller. This is internal signalling, local
+to a single component that has been artificially broken into discrete
+bits, including an interrupt controller. The only *real* interrupts
+here are the GPIOs.
 
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+I'm happy to see an interrupt controller for the GPIOs. But the rest
+is just internal muck that doesn't really belong here. Where should it
+go? Together with the rest of the stuff that manages the block as a
+whole. Which looks like the MFD subsystem to me.
 
-Cheers,
--Paul
+Thanks,
 
->=20
-> ---
->=20
-> The first patch of the series changes the fwnode_irq_get() so this
-> depends
-> on the first patch of the series and should not be applied alone.
-> ---
-> =C2=A0drivers/pinctrl/pinctrl-ingenic.c | 2 --
-> =C2=A01 file changed, 2 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/pinctrl-ingenic.c
-> b/drivers/pinctrl/pinctrl-ingenic.c
-> index 2f220a47b749..86e71ad703a5 100644
-> --- a/drivers/pinctrl/pinctrl-ingenic.c
-> +++ b/drivers/pinctrl/pinctrl-ingenic.c
-> @@ -4201,8 +4201,6 @@ static int __init ingenic_gpio_probe(struct
-> ingenic_pinctrl *jzpc,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0err =3D fwnode_irq_get(fw=
-node, 0);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (err < 0)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0return err;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!err)
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0return -EINVAL;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0jzgc->irq =3D err;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0girq =3D &jzgc->gc.irq;
-> --=20
-> 2.40.1
->=20
->=20
+	M.
 
+-- 
+Without deviation from the norm, progress is not possible.
