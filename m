@@ -2,191 +2,174 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2AC3C77B75
-	for <linux-gpio@archiver.kernel.org>; Wed, 17 May 2023 15:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA299C77B7D
+	for <linux-gpio@archiver.kernel.org>; Wed, 17 May 2023 16:47:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231389AbjEQPqi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 17 May 2023 11:46:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44858 "EHLO
+        id S229489AbjEQQrx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 17 May 2023 12:47:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231238AbjEQPqf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 May 2023 11:46:35 -0400
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B714558B;
-        Wed, 17 May 2023 08:46:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-        ; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:References:
-        In-Reply-To:Message-Id:Date:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=iYZEtg7pd8shIjXTbUZsXmOLd2eioSqHBYcaXseCGHM=; b=pA8xXVO8YNlITcRaUxTfPVrXlp
-        kwsY1TLAN8mrJTMjsi3L6fMVynx3eBwFr02/75gER+fw3W7dm0SX219XgTrrXuLbScJpxmTZLHi8b
-        1cQRiiBsdg/mxOIp8wmwJ41oL3zFBpkKUJm5rGkGrXi75XoM6msGU5Y2tDyjsonjIpdQ=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:45486 helo=pettiford.lan)
-        by mail.hugovil.com with esmtpa (Exim 4.92)
-        (envelope-from <hugo@hugovil.com>)
-        id 1pzIkz-0007IE-78; Wed, 17 May 2023 11:08:02 -0400
-From:   Hugo Villeneuve <hugo@hugovil.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Lech Perczak <l.perczak@camlintechnologies.com>,
-        =?UTF-8?q?Tomasz=20Mo=C5=84?= <tomasz.mon@camlingroup.com>
-Cc:     hugo@hugovil.com, linux-gpio@vger.kernel.org,
-        Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 17 May 2023 11:07:47 -0400
-Message-Id: <20230517150746.3823249-2-hugo@hugovil.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230517150746.3823249-1-hugo@hugovil.com>
-References: <20230517150746.3823249-1-hugo@hugovil.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-Subject: [PATCH 2/2] serial: sc16is7xx: fix regression with GPIO configuration
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+        with ESMTP id S229487AbjEQQrw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 May 2023 12:47:52 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DB904209
+        for <linux-gpio@vger.kernel.org>; Wed, 17 May 2023 09:47:50 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f41d087b24so7783455e9.1
+        for <linux-gpio@vger.kernel.org>; Wed, 17 May 2023 09:47:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1684342069; x=1686934069;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xemdrTLdrPZASEl7ie1XM2zNjPHq2033DBfX2S/R9zs=;
+        b=jleW3joMYjt0O0WZ2aUBXAV6frph5/PSVJjZIDZnGIZmbS6JadCF3TNjMEouenlDXo
+         oQrA8P+VyRJJexwgyveVymXBplBt8rAwEV+8Mci7ZdoLKnul2J4n/c7D162EF4eqJn2F
+         8GUGI3CKx+zqvqHLPCTQkAwy0aJSJirq+1A9Gc4coGwqW5LOzpBKYluAjG+w8MIjVXyF
+         S5PNsSePisWSytCGZQOg8N13Q+gD/efBtPglnqULhv66GfZr+NjWyJVJleN0l85Guiqc
+         PwGEFuO77h6szGyEnJ5g9OIyWovyuw6cAL/EHtfb/QsldbSy1HepUWJiwpyifd7ScFKs
+         dg5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684342069; x=1686934069;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xemdrTLdrPZASEl7ie1XM2zNjPHq2033DBfX2S/R9zs=;
+        b=EwXEaHje/uz0r2k8kijMNQNXjm4ZNi3uo116pKxXUar1yJ8fnBv4Xh5cc8c+1s2QDh
+         J9ZVHPG6Ski5vpsTo1RxXBcnkXvOPf/8+1NINPamY69ld+0fdBtF2E02VPllVH8Y1nmF
+         r8zyX9H9QxfE5oy70hPr+6gRjS4D3lztugGH6yJ0skFRxtTsXKnBe0D6EfXq095CEgTD
+         stfvl1U/loNJ0kdWWMDzBEXIH0kc5ohUoYHbE25n+C3g1+6qsqkH/V2AoEunRc0iI4G2
+         JO5xn7rUcA1roQ/j0P5CNJd750SM363+FLUq/cgtAq9hL8IF4/1FuLzCFvk67hxitBG9
+         KHEQ==
+X-Gm-Message-State: AC+VfDzeDYkZuUXBJytq/pWO2Y/Cz7150azbHKd+7Bwh/adysxvjM2Tl
+        LsVbHXOqAJE73DXzCLAYoYJV4g==
+X-Google-Smtp-Source: ACHHUZ7JJraEr8hdS86PhPKsZ4rWwU7b1s/JUe123j1z6YVL7y4EnH1askXJF4Y500r0AAocajgoOA==
+X-Received: by 2002:a05:600c:1149:b0:3f5:e7f:5327 with SMTP id z9-20020a05600c114900b003f50e7f5327mr6771248wmz.10.1684342069109;
+        Wed, 17 May 2023 09:47:49 -0700 (PDT)
+Received: from localhost ([2a01:e0a:28d:66d0:5b2e:1428:59f1:44a4])
+        by smtp.gmail.com with ESMTPSA id f6-20020a1c6a06000000b003f427cba193sm2682309wmc.41.2023.05.17.09.47.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 May 2023 09:47:48 -0700 (PDT)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Wed, 17 May 2023 18:47:47 +0200
+Message-Id: <CSOPFJOVLSS1.1XKI60F9TLBMN@burritosblues>
+From:   "Esteban Blanc" <eblanc@baylibre.com>
+To:     <andy.shevchenko@gmail.com>
+Cc:     <linus.walleij@linaro.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <a.zummo@towertech.it>,
+        <alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <jpanis@baylibre.com>, <jneanne@baylibre.com>,
+        <aseketeli@baylibre.com>, <sterzik@ti.com>, <u-kumar1@ti.com>
+Subject: Re: [PATCH v4 1/3] rtc: tps6594: Add driver for TPS6594 RTC
+X-Mailer: aerc 0.14.0
+References: <20230512141755.1712358-1-eblanc@baylibre.com>
+ <20230512141755.1712358-2-eblanc@baylibre.com>
+ <ZF514wvUt_xrU1gG@surfacebook>
+In-Reply-To: <ZF514wvUt_xrU1gG@surfacebook>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+On Fri May 12, 2023 at 7:22 PM CEST,  wrote:
+> Fri, May 12, 2023 at 04:17:53PM +0200, Esteban Blanc kirjoitti:
+> > +/* Multiplier for ppb conversions */
+> > +#define PPB_MULT (1000000000LL)
+>
+> We have something in units.h. Can you use generic macro?
 
-Commit 679875d1d880 ("sc16is7xx: Separate GPIOs from modem control lines")
-and commit 21144bab4f11 ("sc16is7xx: Handle modem status lines")
-changed the function of the GPIOs pins to act as modem control
-lines without any possibility of selecting GPIO function.
+I found GIGA, NANO and NANOHZ_PER_HZ that have the same value in
+units.h. However I'm not sure any of them have the correct meaning in
+this situation.
 
-As a consequence, applications that depends on GPIO lines configured
-by default as GPIO pins no longer work as expected.
+> > +	/*
+> > +	 * Set GET_TIME to 0. This way, next time we set GET_TIME to 1 we are=
+ sure to store an
+> > +	 * up-to-date timestamp
+> > +	 */
+>
+> Please, check all your multi-line comments for proper punctuation.
 
-Also, the change to select modem control lines function was done only
-for channel A of dual UART variants (752/762). This was not documented
-in the log message.
+Ok. I will do my best.
 
-This new patch allows to specify GPIO or modem control line function
-in the device tree, and for each of the ports (A or B).
+> > +	/* Check if RTC is running. */
+>
+> Please, keep a single style for the one-line comments (with or without pe=
+riod
+> at the end).
 
-This is done by using the new device-tree property named
-"modem-control-line-ports" (property added in separate patch).
+Sure.
 
-Boards that need to have GPIOS configured as modem control lines
-should add that property to their device tree. Here is a list of
-boards using the sc16is7xx driver in their device tree and that may
-need to be modified:
-    arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts
-    mips/boot/dts/ingenic/cu1830-neo.dts
-    mips/boot/dts/ingenic/cu1000-neo.dts
+> > +	return ret;
+>
+> Why not return 0 explicitly? Or do you return positive value?
 
-Fixes: 679875d1d880 ("sc16is7xx: Separate GPIOs from modem control lines")
-Fixes: 21144bab4f11 ("sc16is7xx: Handle modem status lines")
-Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
----
- drivers/tty/serial/sc16is7xx.c | 42 ++++++++++++++++++++--------------
- 1 file changed, 25 insertions(+), 17 deletions(-)
+I should return 0 here, you are right.
 
-diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-index a7c4da3cfd2b..1a3143331c1f 100644
---- a/drivers/tty/serial/sc16is7xx.c
-+++ b/drivers/tty/serial/sc16is7xx.c
-@@ -236,7 +236,8 @@
- 
- /* IOControl register bits (Only 75x/76x) */
- #define SC16IS7XX_IOCONTROL_LATCH_BIT	(1 << 0) /* Enable input latching */
--#define SC16IS7XX_IOCONTROL_MODEM_BIT	(1 << 1) /* Enable GPIO[7:4] as modem pins */
-+#define SC16IS7XX_IOCONTROL_MODEM_A_BIT	(1 << 1) /* Enable GPIO[7:4] as modem A pins */
-+#define SC16IS7XX_IOCONTROL_MODEM_B_BIT	(1 << 2) /* Enable GPIO[3:0] as modem B pins */
- #define SC16IS7XX_IOCONTROL_SRESET_BIT	(1 << 3) /* Software Reset */
- 
- /* EFCR register bits */
-@@ -306,7 +307,6 @@ struct sc16is7xx_devtype {
- 	char	name[10];
- 	int	nr_gpio;
- 	int	nr_uart;
--	int	has_mctrl;
- };
- 
- #define SC16IS7XX_RECONF_MD		(1 << 0)
-@@ -447,35 +447,30 @@ static const struct sc16is7xx_devtype sc16is74x_devtype = {
- 	.name		= "SC16IS74X",
- 	.nr_gpio	= 0,
- 	.nr_uart	= 1,
--	.has_mctrl	= 0,
- };
- 
- static const struct sc16is7xx_devtype sc16is750_devtype = {
- 	.name		= "SC16IS750",
--	.nr_gpio	= 4,
-+	.nr_gpio	= 8,
- 	.nr_uart	= 1,
--	.has_mctrl	= 1,
- };
- 
- static const struct sc16is7xx_devtype sc16is752_devtype = {
- 	.name		= "SC16IS752",
--	.nr_gpio	= 0,
-+	.nr_gpio	= 8,
- 	.nr_uart	= 2,
--	.has_mctrl	= 1,
- };
- 
- static const struct sc16is7xx_devtype sc16is760_devtype = {
- 	.name		= "SC16IS760",
--	.nr_gpio	= 4,
-+	.nr_gpio	= 8,
- 	.nr_uart	= 1,
--	.has_mctrl	= 1,
- };
- 
- static const struct sc16is7xx_devtype sc16is762_devtype = {
- 	.name		= "SC16IS762",
--	.nr_gpio	= 0,
-+	.nr_gpio	= 8,
- 	.nr_uart	= 2,
--	.has_mctrl	= 1,
- };
- 
- static bool sc16is7xx_regmap_volatile(struct device *dev, unsigned int reg)
-@@ -1457,12 +1452,6 @@ static int sc16is7xx_probe(struct device *dev,
- 				     SC16IS7XX_EFCR_RXDISABLE_BIT |
- 				     SC16IS7XX_EFCR_TXDISABLE_BIT);
- 
--		/* Use GPIO lines as modem status registers */
--		if (devtype->has_mctrl)
--			sc16is7xx_port_write(&s->p[i].port,
--					     SC16IS7XX_IOCONTROL_REG,
--					     SC16IS7XX_IOCONTROL_MODEM_BIT);
--
- 		/* Initialize kthread work structs */
- 		kthread_init_work(&s->p[i].tx_work, sc16is7xx_tx_proc);
- 		kthread_init_work(&s->p[i].reg_work, sc16is7xx_reg_proc);
-@@ -1498,6 +1487,25 @@ static int sc16is7xx_probe(struct device *dev,
- 					 prop, p, u)
- 			if (u < devtype->nr_uart)
- 				s->p[u].irda_mode = true;
-+
-+		val = 0;
-+
-+		of_property_for_each_u32(dev->of_node, "modem-control-line-ports",
-+					 prop, p, u)
-+			if (u < devtype->nr_uart) {
-+				/* Use GPIO lines as modem control lines */
-+				if (u == 0)
-+					val |= SC16IS7XX_IOCONTROL_MODEM_A_BIT;
-+				else if (u == 1)
-+					val |= SC16IS7XX_IOCONTROL_MODEM_B_BIT;
-+			}
-+
-+		if (val)
-+			regmap_update_bits(
-+				s->regmap,
-+				SC16IS7XX_IOCONTROL_REG << SC16IS7XX_REG_SHIFT,
-+				SC16IS7XX_IOCONTROL_MODEM_A_BIT |
-+				SC16IS7XX_IOCONTROL_MODEM_B_BIT, val);
- 	}
- 
- #ifdef CONFIG_GPIOLIB
--- 
-2.30.2
+> > +	comp_data[0] =3D (u16)value & 0xFF;
+> > +	comp_data[1] =3D ((u16)value >> 8) & 0xFF;
+>
+> Use proper bitwise type, i.e. __le16.
 
+I was not aware of theses kind of types. Thanks!
+
+> > +	/* Convert from RTC calibration register format to ppb format */
+> > +	tmp =3D calibration * (s64)PPB_MULT;
+>
+> Is casting really needed?
+
+No it's not. Thanks!
+
+> > +	if (tmp < 0)
+> > +		tmp -=3D TICKS_PER_HOUR / 2LL;
+> > +	else
+> > +		tmp +=3D TICKS_PER_HOUR / 2LL;
+>
+> Is it guaranteed to have no overflow here?
+
+We know from `tps6594_rtc_set_offset` that the loaded value can't be
+more than 277774 (register default value is 0), So `tmp` can't exceed
+277774000000000 which is lower than 2^63-1. No overflow here.
+
+TICK_PER_HOUR / 2LL =3D 117964800, so at the end of this computation,
+`tmp` can have a maximum value of 277774117964800 which is still
+inferior to 2^63-1.
+
+> > +	tmp =3D div_s64(tmp, TICKS_PER_HOUR);
+> > +
+> > +	/*
+> > +	 * Offset value operates in negative way, so swap sign.
+> > +	 * See 8.3.10.5, (32768 - COMP_REG)
+> > +	 */
+> > +	*offset =3D (long)-tmp;
+> > +
+> > +	return ret;
+>
+> ret?!
+
+That's a mistake. Thanks!
+
+> > +	/* RTC not running */
+> > +	if (ret =3D=3D 0) {
+> > +		/* Start rtc */
+>
+> RTC for the sake of consistency.
+>
+> But I think one of the comment is redundant.
+
+I will remove the second one
+
+> > +		mdelay(100);
+>
+> Such long delays have to be explicitly elaborated (in the comment on top)=
+.
+
+This should just not be there.
+
+
+Best regards,
+
+--=20
+Esteban Blanc
+BayLibre
