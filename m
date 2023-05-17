@@ -2,111 +2,110 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29AC9C77B7A
-	for <linux-gpio@archiver.kernel.org>; Wed, 17 May 2023 16:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3661C77B7F
+	for <linux-gpio@archiver.kernel.org>; Wed, 17 May 2023 16:54:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbjEQQr7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 17 May 2023 12:47:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38598 "EHLO
+        id S229508AbjEQQxk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 17 May 2023 12:53:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjEQQr5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 May 2023 12:47:57 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28CDE59DC;
-        Wed, 17 May 2023 09:47:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1684342076; x=1715878076;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3aGbiMN0V+5yc6Amt+Y7GgCQxqWtHVXzMieUoBpl1Y0=;
-  b=NwujApARbS7z1+LSFfGoME6jThv38EVEpbFbdRsSmpRq/iKKAQs2HeIZ
-   jJlEWubv7r4iGiwuTLAoRvQDvWLxJqRj7o/J9WXzngQy4EoBJsBFjI9fP
-   rjdNxavDWXW5CtSU2AU4CXvE46E1VGSbPUVKcaIhu2AllfO55IQEvDp/c
-   klRU9gK1V50fBPsHNXAkzXK9LcKuGS9MjHnNCNR+7Wku7Z6T6iqyuvMCF
-   kWe+DgG5JMjPI14pnwIsQ3G4My6eP10PKejM0RsYy3mD463l6zeQWwYre
-   5r1AdcPFAxjCiiWSiu3Qu9/g1ujYOThj1fqnHQWKXQuQni50baQfZV707
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10713"; a="351834340"
-X-IronPort-AV: E=Sophos;i="5.99,282,1677571200"; 
-   d="scan'208";a="351834340"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2023 09:47:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10713"; a="948338934"
-X-IronPort-AV: E=Sophos;i="5.99,282,1677571200"; 
-   d="scan'208";a="948338934"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga006.fm.intel.com with ESMTP; 17 May 2023 09:47:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1pzKJL-0008UB-36;
-        Wed, 17 May 2023 19:47:35 +0300
-Date:   Wed, 17 May 2023 19:47:35 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Matti Vaittinen <mazziesaccount@gmail.com>
-Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Andreas Klinger <ak@it-klinger.de>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Wolfram Sang <wsa@kernel.org>,
-        Akhil R <akhilrajeev@nvidia.com>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        netdev@vger.kernel.org, openbmc@lists.ozlabs.org,
-        linux-gpio@vger.kernel.org, linux-mips@vger.kernel.org
-Subject: Re: [PATCH v4 2/7] iio: mb1232: relax return value check for IRQ get
-Message-ID: <ZGUFJ5LRCzW2V0a1@smile.fi.intel.com>
-References: <cover.1684220962.git.mazziesaccount@gmail.com>
- <429804dac3b1ea55dd233d1e2fdf94240e2f2b93.1684220962.git.mazziesaccount@gmail.com>
+        with ESMTP id S229533AbjEQQxI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 May 2023 12:53:08 -0400
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE901A255;
+        Wed, 17 May 2023 09:52:43 -0700 (PDT)
+Received: by mail-qv1-xf2b.google.com with SMTP id 6a1803df08f44-61b19406102so1327656d6.1;
+        Wed, 17 May 2023 09:52:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684342362; x=1686934362;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pvyuk45qAwIZHtrdAvIYk8lq6oEJbOWM7TWmUfxEmXc=;
+        b=diNUrRiIcfwrHfCYK8S3a5dVoAnso/EVGvDEvCsURN9COJxCKfROWRtDZ1J3o2A5Tc
+         3n+TPqwKRH541c3ZdXz0vCsjAr7c52VCsHAMsmeMO3iI5On37wN2JqiLu2lJZtlI3bw2
+         pPjYyv91nCohYATMb0dbJEdbwAEZmGD42aDWAUIKRhwQiiEyFLXlcA1tH+42UWt8Srlr
+         3KSmJepx8fAyyibOdJEgQ3Qf92ql8Yg/+fZxVSa2QDemYChfoJDgWv7n2IvypaCuE7Np
+         trrkHqPtOG77pgt9pSarG81U80WzB5xjG+6+s8tuLTNSNQ7vwcRSc3Y8lP+HcemDg6Yq
+         Ta7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684342362; x=1686934362;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pvyuk45qAwIZHtrdAvIYk8lq6oEJbOWM7TWmUfxEmXc=;
+        b=JpRey+pq9QKA743v++Sqn7ybc5n9dsG8kdkeSsColrTSzDr2WYJF18Pyg1Gy94bQDK
+         pHNl9lZF8qR/uVDoRhPP55AevUmMihUmCm3xg5nSb1eKSM25XOodMWNKdWwisx2Vp32c
+         mAH3rT4Sqq/WDHvqrAreksC1s9lJZSC/gA9puucXVAaprqFOgcx4LmUxw/gisLywIKqN
+         34g5S8K6Yjioi1UmB+WyJoTIR9FFejGRpNdlY6DthRLTj2QCa98QN7eXb4v4BVSLL5Xq
+         1UMhkvo/wrIY5TinHlE/YcWnGq2n/TFGl2+INH5gibiwMLdh77slvrjikOLeOG6x8uqb
+         vAGA==
+X-Gm-Message-State: AC+VfDyr5/dxiEYqPBUJrwNNSdnzD2mwAp0CSn5EiQxQ1bE5guauCWAe
+        P9e9W8riz8BtQ1bqAxWWrOGL1gnhGllbJ62e27TNfL3TY+nXhA==
+X-Google-Smtp-Source: ACHHUZ6GfNaGFm2xtZWG1blndv3Mz+ujglmZyG7jXWpyaCYi94a28PlelYGaw4Sf1EYfzFhCXHUMrVih5wefdxhfzI8=
+X-Received: by 2002:a05:6214:1944:b0:5ef:4f83:f454 with SMTP id
+ q4-20020a056214194400b005ef4f83f454mr112213qvk.24.1684342362617; Wed, 17 May
+ 2023 09:52:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <429804dac3b1ea55dd233d1e2fdf94240e2f2b93.1684220962.git.mazziesaccount@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20230512141755.1712358-1-eblanc@baylibre.com> <20230512141755.1712358-2-eblanc@baylibre.com>
+ <ZF514wvUt_xrU1gG@surfacebook> <CSOPFJOVLSS1.1XKI60F9TLBMN@burritosblues>
+In-Reply-To: <CSOPFJOVLSS1.1XKI60F9TLBMN@burritosblues>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 17 May 2023 19:52:06 +0300
+Message-ID: <CAHp75Vfg+yAhJ58qt76GHqxWHD48hF-6ZnT=xEUh+1rzr7UvVg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] rtc: tps6594: Add driver for TPS6594 RTC
+To:     Esteban Blanc <eblanc@baylibre.com>
+Cc:     linus.walleij@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org, jpanis@baylibre.com,
+        jneanne@baylibre.com, aseketeli@baylibre.com, sterzik@ti.com,
+        u-kumar1@ti.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, May 16, 2023 at 10:12:41AM +0300, Matti Vaittinen wrote:
-> fwnode_irq_get() was changed to not return 0 anymore.
-> 
-> Drop check for return value 0.
+On Wed, May 17, 2023 at 7:47=E2=80=AFPM Esteban Blanc <eblanc@baylibre.com>=
+ wrote:
+> On Fri May 12, 2023 at 7:22 PM CEST,  wrote:
+> > Fri, May 12, 2023 at 04:17:53PM +0200, Esteban Blanc kirjoitti:
 
 ...
 
-> -	if (data->irqnr <= 0) {
-> +	if (data->irqnr < 0) {
->  		/* usage of interrupt is optional */
->  		data->irqnr = -1;
->  	} else {
+> > > +/* Multiplier for ppb conversions */
+> > > +#define PPB_MULT (1000000000LL)
+> >
+> > We have something in units.h. Can you use generic macro?
+>
+> I found GIGA, NANO and NANOHZ_PER_HZ that have the same value in
+> units.h. However I'm not sure any of them have the correct meaning in
+> this situation.
 
+MULT[IPLIER] has no units AFAIU, so SI macro can be used, no? NANO or
+GIGA depends on what the actual sign of the exponent of the multiplier
+is. Write it on paper and check the exponent in the equation(s) and
+hence decide which one to use.
 
-After this change I'm not sure we need this branch at all, I mean that -errn is
-equal to -1 in the code (but needs to be checked for silly checks like == -1).
+...
 
-Hence
+> > > +   if (tmp < 0)
+> > > +           tmp -=3D TICKS_PER_HOUR / 2LL;
+> > > +   else
+> > > +           tmp +=3D TICKS_PER_HOUR / 2LL;
+> >
+> > Is it guaranteed to have no overflow here?
+>
+> We know from `tps6594_rtc_set_offset` that the loaded value can't be
+> more than 277774 (register default value is 0), So `tmp` can't exceed
+> 277774000000000 which is lower than 2^63-1. No overflow here.
+>
+> TICK_PER_HOUR / 2LL =3D 117964800, so at the end of this computation,
+> `tmp` can have a maximum value of 277774117964800 which is still
+> inferior to 2^63-1.
 
-Entire excerpt can be replaced with
-
-	if (data->irqnr > 0) {
-
--- 
+Please add a respective comment.
+--=20
 With Best Regards,
 Andy Shevchenko
-
-
