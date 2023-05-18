@@ -2,194 +2,87 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B290C77B7D
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 May 2023 13:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66CE6C7EE23
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 May 2023 13:40:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231565AbjERNdL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 18 May 2023 09:33:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57288 "EHLO
+        id S231362AbjERNkD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 18 May 2023 09:40:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231495AbjERNdJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 May 2023 09:33:09 -0400
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1FA6136;
-        Thu, 18 May 2023 06:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-        ; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:References:
-        In-Reply-To:Message-Id:Date:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/SjU7VJHu8rs69xHjrWeUQDqa6nd3qZED99q96cmKQs=; b=tclMhemWYtVli5Zf46cKVlUmVv
-        mZIVvbTfvXFVxH2vndSfJHnimOZpJE/ab3Y/e2ZinuKyYz+X7bl+rhvhhj9tKcpi97t4qJq1Lo+ph
-        YxQ5tSrvpxndfOwGvmTfzJKUsUC+Eob8nfzhNix/7DcI64wMyqgZLOrOd0ARjwyp9tCE=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:36904 helo=pettiford.lan)
-        by mail.hugovil.com with esmtpa (Exim 4.92)
-        (envelope-from <hugo@hugovil.com>)
-        id 1pzdkU-0004WC-V3; Thu, 18 May 2023 09:32:55 -0400
-From:   Hugo Villeneuve <hugo@hugovil.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Lech Perczak <l.perczak@camlintechnologies.com>,
-        =?UTF-8?q?Tomasz=20Mo=C5=84?= <tomasz.mon@camlingroup.com>
-Cc:     hugo@hugovil.com, linux-gpio@vger.kernel.org,
-        Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 18 May 2023 09:29:08 -0400
-Message-Id: <20230518132905.4182265-2-hugo@hugovil.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230518132905.4182265-1-hugo@hugovil.com>
-References: <20230518132905.4182265-1-hugo@hugovil.com>
+        with ESMTP id S231228AbjERNjz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 May 2023 09:39:55 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0FD41B7
+        for <linux-gpio@vger.kernel.org>; Thu, 18 May 2023 06:39:53 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-96649b412easo321527866b.0
+        for <linux-gpio@vger.kernel.org>; Thu, 18 May 2023 06:39:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684417192; x=1687009192;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9TjZBlEcYTCCpYd0EWrlM/xAExh6zuB4ZIDwlVPxXTM=;
+        b=UtoOLaPCtVZiaeUG2eAR+BoX6XervPJ44kNitEkB2i8nE19OiPwe4WPG71xS9pCu1x
+         sArEfo/YPzCZZXlyjAVWSv9fIlagSo4a8k6kNho74FfM9XXGpzGQEcgLCu8w8ZMnnb4e
+         fnFrD1VfE8ksxCsbIbxMofGopGZ0wBoauS5ABMJnQjdKof/lo+ROYTs/DLGV56IsRO1k
+         SzkjlYnDFU0m9lpu1vDEBGXnDQf/5Gz9LoMDv7lVcUWFEUg/rrJhDYvdBp6b+i1XoRr6
+         /gKp4CLyot03bsSfuT3b8edrPbizU3BXXnxcR7JLjO9S17y4Z7N1hIEuuVkVcw7HnA36
+         guUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684417192; x=1687009192;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9TjZBlEcYTCCpYd0EWrlM/xAExh6zuB4ZIDwlVPxXTM=;
+        b=NVEpaTskG3Tl4FXv3nSrTLoz5Oi+D8Wo0ow9wNwirzSiJdn0EPsA72krbTFSGjzC4z
+         VBumzTg5WogUJcQOR2CxrlbFma84GfEtSaoO8CKogrr7Fz4HMntb8YHfdJVevHFrSJ/l
+         8Mf+r3lhnarAOXop3SXs3N/ANY8oefsUsRSh4kt45gBBDCaYK6+ic46yYfEgTOnBP2yw
+         OjvAA623VyietvBzK+KMRYhZQR3zIG8hAETTsN1OhAdybyOa3IpB1Uf1fx/kft3kju0c
+         GLUvXkl4/f31/7qXfLc0dH3qmsV7aIKJnWI0C3suUriqG6RTQ4NVNuwBTQ3cXJhOhl09
+         h5bg==
+X-Gm-Message-State: AC+VfDzbAEWvdS/BgGH+xow5bnDQM4v7+hmd+1PvXk/sqX98pJ1Vzy6d
+        8F2dAdBi+Kl80yKn9vjigTxylA==
+X-Google-Smtp-Source: ACHHUZ7BmIRiwtmUUF+QH7l8KYeBPlkWIy0PM9v8f7UFbcRNmiiSYH5CXMZJR3OovEEGm8cP3klyJQ==
+X-Received: by 2002:a17:906:7303:b0:965:6d21:48bc with SMTP id di3-20020a170906730300b009656d2148bcmr42875928ejc.75.1684417192268;
+        Thu, 18 May 2023 06:39:52 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:7e24:6d1b:6bf:4249? ([2a02:810d:15c0:828:7e24:6d1b:6bf:4249])
+        by smtp.gmail.com with ESMTPSA id i24-20020a1709063c5800b0096f0c21903bsm1003848ejg.31.2023.05.18.06.39.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 May 2023 06:39:51 -0700 (PDT)
+Message-ID: <b93a1717-acde-0df3-ab8d-7a3e33fdb1b3@linaro.org>
+Date:   Thu, 18 May 2023 15:39:50 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-Subject: [RFC PATCH v2 2/2] serial: sc16is7xx: fix regression with GPIO configuration
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 2/3] MAINTAINERS: Update the entry for pinctrl
+ maintainers
+Content-Language: en-US
+To:     Rohit Agarwal <quic_rohiagar@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        linus.walleij@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        richardcochran@gmail.com, manivannan.sadhasivam@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <1684413670-12901-1-git-send-email-quic_rohiagar@quicinc.com>
+ <1684413670-12901-3-git-send-email-quic_rohiagar@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1684413670-12901-3-git-send-email-quic_rohiagar@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+On 18/05/2023 14:41, Rohit Agarwal wrote:
+> Update the entry for pinctrl bindings maintainer as the
+> current one checks only in the .txt files.
+> 
+> Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
 
-Commit 679875d1d880 ("sc16is7xx: Separate GPIOs from modem control lines")
-and commit 21144bab4f11 ("sc16is7xx: Handle modem status lines")
-changed the function of the GPIOs pins to act as modem control
-lines without any possibility of selecting GPIO function.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-As a consequence, applications that depends on GPIO lines configured
-by default as GPIO pins no longer work as expected.
-
-Also, the change to select modem control lines function was done only
-for channel A of dual UART variants (752/762). This was not documented
-in the log message.
-
-This new patch allows to specify GPIO or modem control line function
-in the device tree, and for each of the ports (A or B).
-
-This is done by using the new device-tree property named
-"modem-control-line-ports" (property added in separate patch).
-
-Boards that need to have GPIOS configured as modem control lines
-should add that property to their device tree. Here is a list of
-boards using the sc16is7xx driver in their device tree and that may
-need to be modified:
-    arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts
-    mips/boot/dts/ingenic/cu1830-neo.dts
-    mips/boot/dts/ingenic/cu1000-neo.dts
-
-Fixes: 679875d1d880 ("sc16is7xx: Separate GPIOs from modem control lines")
-Fixes: 21144bab4f11 ("sc16is7xx: Handle modem status lines")
-Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
----
-v1 -> v2: Rebase because original patch did not apply properly
-          Add git base-commit
-
- drivers/tty/serial/sc16is7xx.c | 42 ++++++++++++++++++++--------------
- 1 file changed, 25 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-index abad091baeea..4e3d2325ef6e 100644
---- a/drivers/tty/serial/sc16is7xx.c
-+++ b/drivers/tty/serial/sc16is7xx.c
-@@ -236,7 +236,8 @@
- 
- /* IOControl register bits (Only 750/760) */
- #define SC16IS7XX_IOCONTROL_LATCH_BIT	(1 << 0) /* Enable input latching */
--#define SC16IS7XX_IOCONTROL_MODEM_BIT	(1 << 1) /* Enable GPIO[7:4] as modem pins */
-+#define SC16IS7XX_IOCONTROL_MODEM_A_BIT	(1 << 1) /* Enable GPIO[7:4] as modem A pins */
-+#define SC16IS7XX_IOCONTROL_MODEM_B_BIT	(1 << 2) /* Enable GPIO[3:0] as modem B pins */
- #define SC16IS7XX_IOCONTROL_SRESET_BIT	(1 << 3) /* Software Reset */
- 
- /* EFCR register bits */
-@@ -306,7 +307,6 @@ struct sc16is7xx_devtype {
- 	char	name[10];
- 	int	nr_gpio;
- 	int	nr_uart;
--	int	has_mctrl;
- };
- 
- #define SC16IS7XX_RECONF_MD		(1 << 0)
-@@ -447,35 +447,30 @@ static const struct sc16is7xx_devtype sc16is74x_devtype = {
- 	.name		= "SC16IS74X",
- 	.nr_gpio	= 0,
- 	.nr_uart	= 1,
--	.has_mctrl	= 0,
- };
- 
- static const struct sc16is7xx_devtype sc16is750_devtype = {
- 	.name		= "SC16IS750",
--	.nr_gpio	= 4,
-+	.nr_gpio	= 8,
- 	.nr_uart	= 1,
--	.has_mctrl	= 1,
- };
- 
- static const struct sc16is7xx_devtype sc16is752_devtype = {
- 	.name		= "SC16IS752",
--	.nr_gpio	= 0,
-+	.nr_gpio	= 8,
- 	.nr_uart	= 2,
--	.has_mctrl	= 1,
- };
- 
- static const struct sc16is7xx_devtype sc16is760_devtype = {
- 	.name		= "SC16IS760",
--	.nr_gpio	= 4,
-+	.nr_gpio	= 8,
- 	.nr_uart	= 1,
--	.has_mctrl	= 1,
- };
- 
- static const struct sc16is7xx_devtype sc16is762_devtype = {
- 	.name		= "SC16IS762",
--	.nr_gpio	= 0,
-+	.nr_gpio	= 8,
- 	.nr_uart	= 2,
--	.has_mctrl	= 1,
- };
- 
- static bool sc16is7xx_regmap_volatile(struct device *dev, unsigned int reg)
-@@ -1456,12 +1451,6 @@ static int sc16is7xx_probe(struct device *dev,
- 				     SC16IS7XX_EFCR_RXDISABLE_BIT |
- 				     SC16IS7XX_EFCR_TXDISABLE_BIT);
- 
--		/* Use GPIO lines as modem status registers */
--		if (devtype->has_mctrl)
--			sc16is7xx_port_write(&s->p[i].port,
--					     SC16IS7XX_IOCONTROL_REG,
--					     SC16IS7XX_IOCONTROL_MODEM_BIT);
--
- 		/* Initialize kthread work structs */
- 		kthread_init_work(&s->p[i].tx_work, sc16is7xx_tx_proc);
- 		kthread_init_work(&s->p[i].reg_work, sc16is7xx_reg_proc);
-@@ -1497,6 +1486,25 @@ static int sc16is7xx_probe(struct device *dev,
- 					 prop, p, u)
- 			if (u < devtype->nr_uart)
- 				s->p[u].irda_mode = true;
-+
-+		val = 0;
-+
-+		of_property_for_each_u32(dev->of_node, "nxp,modem-control-line-ports",
-+					 prop, p, u)
-+			if (u < devtype->nr_uart) {
-+				/* Use GPIO lines as modem control lines */
-+				if (u == 0)
-+					val |= SC16IS7XX_IOCONTROL_MODEM_A_BIT;
-+				else if (u == 1)
-+					val |= SC16IS7XX_IOCONTROL_MODEM_B_BIT;
-+			}
-+
-+		if (val)
-+			regmap_update_bits(
-+				s->regmap,
-+				SC16IS7XX_IOCONTROL_REG << SC16IS7XX_REG_SHIFT,
-+				SC16IS7XX_IOCONTROL_MODEM_A_BIT |
-+				SC16IS7XX_IOCONTROL_MODEM_B_BIT, val);
- 	}
- 
- #ifdef CONFIG_GPIOLIB
--- 
-2.30.2
+Best regards,
+Krzysztof
 
