@@ -2,98 +2,102 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEFEEC77B7A
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 May 2023 15:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74805C77B7A
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 May 2023 15:57:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230449AbjERPx2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 18 May 2023 11:53:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37134 "EHLO
+        id S231483AbjERP5Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 18 May 2023 11:57:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230211AbjERPx1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 May 2023 11:53:27 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5066B19B;
-        Thu, 18 May 2023 08:53:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1684425206; x=1715961206;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=yy5e77k3doOrxSyCFI2HBiEAmW7848CBCulkXIzrGcU=;
-  b=NRClt+o36ziN4WrPdqP0zeNJdi8bfcX5cqaPoQSLCpVsWDy+CoVFzVVl
-   jRWHLQXcL25/hWlwALbVJphYJMlRaz/r0ciN83YmcQmJXjQRGPuFZXz+N
-   dYmn3YjRCsiGWRYHTj83oGhjNsJnZ+HgCaV8CeGsPB+75QS/9mcGSfnye
-   0rE2UPsTccpmh7qzXN8n7cau4ilxmEBpXxL4TLRFjEBG1MW0C+WnZwNNk
-   j6Crxb1SJHOlxTB2vhJGV7n/3vkGNkZhhAa7ZsOeiW7iRIiBayLuTK9Ad
-   4ZK63L8jNG7d+g4QGxaw9vdLUZFThq8HucJDvKW2YHVDiFuQ6S8enG0l0
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10714"; a="336692208"
-X-IronPort-AV: E=Sophos;i="5.99,285,1677571200"; 
-   d="scan'208";a="336692208"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2023 08:53:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10714"; a="702172670"
-X-IronPort-AV: E=Sophos;i="5.99,285,1677571200"; 
-   d="scan'208";a="702172670"
-Received: from nithinks-mobl1.amr.corp.intel.com (HELO [10.209.80.104]) ([10.209.80.104])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2023 08:53:23 -0700
-Message-ID: <650012a3-b455-8be5-fd6d-d0775e718e6a@linux.intel.com>
-Date:   Thu, 18 May 2023 10:16:16 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.11.0
-Subject: Re: [PATCH 06/10] mfd: cs42l43: Add support for cs42l43 core driver
-Content-Language: en-US
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     broonie@kernel.org, lee@kernel.org, robh+dt@kernel.org,
+        with ESMTP id S230476AbjERP5Y (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 May 2023 11:57:24 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E0EEF7;
+        Thu, 18 May 2023 08:57:23 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34IAFkkp009866;
+        Thu, 18 May 2023 15:57:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=qcppdkim1;
+ bh=+tCLz5FSXrJNwmOm35IsT9l61ejUoWghqwHx9aBHloA=;
+ b=dsEjqK5Ja7urz67MudwK5DByqdgHnp4PwQafcamhdVHO8M8aqYLlQ18Hkxo29UUfP17O
+ Wf48vdytreGG7KTNdsQGeuYFS7LfVA8Q42kBRtmVSm84FysmoMH4TCDUtNvvdhDs7/QF
+ T5xS34O+PaetpYW0VCCMrOG935XXMyr3CkVr0ZjpXi29F0zh13bT/h5KnJYxm3mu0uht
+ 5HXr1wMoAIFxZvjfS/YMAJUNkMTwKk+JWy4R8Gi8XmtCfv1HdOdLkbt9DD1p1AiJPtV2
+ nqEFBZONPZAjbPpsBxZANEnBNA0N17MEOHAp7XAww3L69DHaZBT+nFXHArRAJItcsUXW 7g== 
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qncbhsgme-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 18 May 2023 15:57:19 +0000
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+        by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 34IFvFtH010718;
+        Thu, 18 May 2023 15:57:15 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 3qj3mkaaen-1;
+        Thu, 18 May 2023 15:57:15 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34IFvFv6010713;
+        Thu, 18 May 2023 15:57:15 GMT
+Received: from hu-sgudaval-hyd.qualcomm.com (hu-rohiagar-hyd.qualcomm.com [10.213.106.138])
+        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 34IFvFvn010701;
+        Thu, 18 May 2023 15:57:15 +0000
+Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3970568)
+        id BC3615EC0; Thu, 18 May 2023 21:27:14 +0530 (+0530)
+From:   Rohit Agarwal <quic_rohiagar@quicinc.com>
+To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        linus.walleij@linaro.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        tglx@linutronix.de, maz@kernel.org, linus.walleij@linaro.org,
-        vkoul@kernel.org, lgirdwood@gmail.com,
-        yung-chuan.liao@linux.intel.com, sanyog.r.kale@intel.com,
-        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230512122838.243002-1-ckeepax@opensource.cirrus.com>
- <20230512122838.243002-7-ckeepax@opensource.cirrus.com>
- <73438e58-bd96-818d-1f43-5681b0d1a1de@linaro.org>
- <20230518102442.GZ68926@ediswmail.ad.cirrus.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20230518102442.GZ68926@ediswmail.ad.cirrus.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        richardcochran@gmail.com, manivannan.sadhasivam@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Rohit Agarwal <quic_rohiagar@quicinc.com>
+Subject: [PATCH v3 2/3] MAINTAINERS: Update the entry for pinctrl maintainers
+Date:   Thu, 18 May 2023 21:27:11 +0530
+Message-Id: <1684425432-10072-3-git-send-email-quic_rohiagar@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1684425432-10072-1-git-send-email-quic_rohiagar@quicinc.com>
+References: <1684425432-10072-1-git-send-email-quic_rohiagar@quicinc.com>
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5Z38EE5szbSPvjjZc86S0EN0Yb2wETYJ
+X-Proofpoint-ORIG-GUID: 5Z38EE5szbSPvjjZc86S0EN0Yb2wETYJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-18_12,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 bulkscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 impostorscore=0 mlxscore=0
+ malwarescore=0 mlxlogscore=561 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2304280000 definitions=main-2305180129
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Update the entry for pinctrl bindings maintainer as the
+current one checks only in the .txt files.
 
->>> +	ret = regmap_register_patch(cs42l43->regmap, cs42l43_reva_patch,
->>> +				    ARRAY_SIZE(cs42l43_reva_patch));
->>> +	if (ret) {
->>> +		dev_err(cs42l43->dev, "Failed to apply register patch: %d\n", ret);
->>> +		goto err;
->>> +	}
->>> +
->>> +	pm_runtime_mark_last_busy(cs42l43->dev);
->>> +	pm_runtime_put_autosuspend(cs42l43->dev);
->>> +
->>> +	ret = devm_mfd_add_devices(cs42l43->dev, PLATFORM_DEVID_NONE,
->>> +				   cs42l43_devs, ARRAY_SIZE(cs42l43_devs),
->>
->> I don't why adding devices is not in probe. They use the same regmap
->> right? So there will be no problem in probing them from MFD probe.
-> 
-> Well except SoundWire is a bit of a special boy, the hardware is
-> not necessarily available in probe, the hardware is only available
-> at some point later when the device attaches. Doing it this way all
-> of the attaching (and various detach/attach cycles the device needs
-> during configuration) are over by the time the child drivers bind, so
-> they don't all need special code to handle that.
+Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-if the devices are added in the probe, then the regmap needs to be moved
-to cache-only and another special API would be needed to tell the MFD
-framework to turn the regmap cache-only off.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e0ad886..c030984 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16672,7 +16672,7 @@ PIN CONTROLLER - QUALCOMM
+ M:	Bjorn Andersson <andersson@kernel.org>
+ L:	linux-arm-msm@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/pinctrl/qcom,*.txt
++F:	Documentation/devicetree/bindings/pinctrl/qcom,*
+ F:	drivers/pinctrl/qcom/
+ 
+ PIN CONTROLLER - RENESAS
+-- 
+2.7.4
 
-But if it's the same regmap, the regmap cache is handled in the
-SoundWire update_status callback so maybe  Krzysztof's proposal does work?
