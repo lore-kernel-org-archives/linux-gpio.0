@@ -2,47 +2,47 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E52C7EE22
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 May 2023 12:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFEAC7EE2C
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 May 2023 12:41:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230223AbjERMlW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 18 May 2023 08:41:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33690 "EHLO
+        id S230402AbjERMlX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 18 May 2023 08:41:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230116AbjERMlV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 May 2023 08:41:21 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCBD210D0;
-        Thu, 18 May 2023 05:41:20 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34ICIjkE013750;
-        Thu, 18 May 2023 12:41:17 GMT
+        with ESMTP id S230169AbjERMlW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 May 2023 08:41:22 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D732D10E3;
+        Thu, 18 May 2023 05:41:21 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34ICUmQ5007852;
+        Thu, 18 May 2023 12:41:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id; s=qcppdkim1;
- bh=KpbdIVY+Eyw1nBwyubjGYOmLcLh5y69C4bam9uWLNvg=;
- b=Cd73iwDp7jQo6zPP0dXxt7gjVvkLMlXObNpmUcD+3WoN7GQDt8Ot00rg7DNALj2p/YBc
- fNcNoesmUPPcbhMjvSCoHkc3dTyg8TJFSpx8VQXt1et5yChxIdbU9KBuRVTdE2WHsEg/
- jSidTqFMXitFAt6FZXLKl2X+Q+WiHHG+iQgPWJvW5lJIVuUqs53QAkcL1zumR6ahwooL
- +HZ8wbvUbE1wQvnvJlXlrXeiXbQEHITEaZ3XefqzULN1lVowzZi/11FWlOUP8C8jy+Mp
- v4G9n8CqJx4lGIxCujc7BVKs5HB7qVbVW+5Q+Xizy4TZjpRb8HZJvcyQTnPFNWH61LM8 RA== 
+ subject : date : message-id : in-reply-to : references; s=qcppdkim1;
+ bh=tSjRr0Hx0FwSJ3yVXqizkgmb+v2ekmbHt/n/R2Drs9s=;
+ b=SXoAOUyqD68YOmTvClgjYtFRjS4QX7bUAXHcEXwjvYKMGzh8WQOcTSPNgSp6SQLYse+M
+ pX1a7TSGwgZeDiKndDEUcHgjR/C4EvDbsq9RbPtK5j4/bT7Z2wjj6/jlAaxJJmUKhJjV
+ 8qIYXmfeoIb5E1QW1gbXKrCReNNilJ2422XSN/anG2iPOC0Qd9rt7y8bYvDBargxpKEI
+ 8BwTWqaI8WUnklQB8k1Z3/nmvXlv9aBu+ib4uTmxlkCRJT/wr0EtvCvWBcpRuTJUuHIO
+ ECKb5OUNUabxO2ZV/9C0gPXsFt7NwVJejFfL6Kzm373ARJ13o6QHxGAjzBfCFlOZccpq AA== 
 Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qncbhrxdj-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qnbxqh041-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 May 2023 12:41:16 +0000
+        Thu, 18 May 2023 12:41:17 +0000
 Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-        by APBLRPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 34ICfDhH019476;
+        by APBLRPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 34ICfD5D019479;
         Thu, 18 May 2023 12:41:13 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 3qj3mkyxcy-1;
+        by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 3qj3mkyxd7-1;
         Thu, 18 May 2023 12:41:13 +0000
 Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34ICfDwP019466;
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 34ICfDwR019466;
         Thu, 18 May 2023 12:41:13 GMT
 Received: from hu-sgudaval-hyd.qualcomm.com (hu-rohiagar-hyd.qualcomm.com [10.213.106.138])
-        by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 34ICfCn5019464;
+        by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 34ICfDK2019477;
         Thu, 18 May 2023 12:41:13 +0000
 Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3970568)
-        id 217635EB5; Thu, 18 May 2023 18:11:12 +0530 (+0530)
+        id C04FB5EBE; Thu, 18 May 2023 18:11:12 +0530 (+0530)
 From:   Rohit Agarwal <quic_rohiagar@quicinc.com>
 To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
         linus.walleij@linaro.org, robh+dt@kernel.org,
@@ -51,57 +51,51 @@ To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
 Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, Rohit Agarwal <quic_rohiagar@quicinc.com>
-Subject: [PATCH v2 0/3] Add pinctrl support for SDX75
-Date:   Thu, 18 May 2023 18:11:07 +0530
-Message-Id: <1684413670-12901-1-git-send-email-quic_rohiagar@quicinc.com>
+Subject: [PATCH v2 2/3] MAINTAINERS: Update the entry for pinctrl maintainers
+Date:   Thu, 18 May 2023 18:11:09 +0530
+Message-Id: <1684413670-12901-3-git-send-email-quic_rohiagar@quicinc.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1684413670-12901-1-git-send-email-quic_rohiagar@quicinc.com>
+References: <1684413670-12901-1-git-send-email-quic_rohiagar@quicinc.com>
 X-QCInternal: smtphost
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HSE3rSczfwDrUHPY0EydK6whxBsymmDH
-X-Proofpoint-ORIG-GUID: HSE3rSczfwDrUHPY0EydK6whxBsymmDH
+X-Proofpoint-ORIG-GUID: gs-3jFwhmPqzFXXA2V0oSoNDrWlwiTEn
+X-Proofpoint-GUID: gs-3jFwhmPqzFXXA2V0oSoNDrWlwiTEn
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-05-18_09,2023-05-17_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 bulkscore=0 phishscore=0 adultscore=0
- priorityscore=1501 suspectscore=0 clxscore=1015 impostorscore=0 mlxscore=0
- malwarescore=0 mlxlogscore=698 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2304280000 definitions=main-2305180100
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 mlxscore=0 bulkscore=0 adultscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=530 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305180100
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Changes in v2:
- - Added a patch for updating the maintainers entry for pinctrl bindings.
- - Some formatting issue at the end of the driver change.
+Update the entry for pinctrl bindings maintainer as the
+current one checks only in the .txt files.
 
-This patch series adds pinctrl bindings and tlmm support for SDX75.
+Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The series is rebased on linux-next and based on all the review and
-comments from different versions of [1].
-
-[1] https://lore.kernel.org/linux-arm-msm/1681966915-15720-1-git-send-email-quic_rohiagar@quicinc.com/
-
-Thanks,
-Rohit.
-
-
-Rohit Agarwal (3):
-  dt-bindings: pinctrl: qcom: Add SDX75 pinctrl devicetree compatible
-  MAINTAINERS: Update the entry for pinctrl maintainers
-  pinctrl: qcom: Add SDX75 pincontrol driver
-
- .../bindings/pinctrl/qcom,sdx75-tlmm.yaml          |  137 +++
- MAINTAINERS                                        |    2 +-
- drivers/pinctrl/qcom/Kconfig                       |   30 +-
- drivers/pinctrl/qcom/Makefile                      |    3 +-
- drivers/pinctrl/qcom/pinctrl-sdx75.c               | 1145 ++++++++++++++++++++
- 5 files changed, 1305 insertions(+), 12 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdx75-tlmm.yaml
- create mode 100644 drivers/pinctrl/qcom/pinctrl-sdx75.c
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e0ad886..c030984 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16672,7 +16672,7 @@ PIN CONTROLLER - QUALCOMM
+ M:	Bjorn Andersson <andersson@kernel.org>
+ L:	linux-arm-msm@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/pinctrl/qcom,*.txt
++F:	Documentation/devicetree/bindings/pinctrl/qcom,*
+ F:	drivers/pinctrl/qcom/
+ 
+ PIN CONTROLLER - RENESAS
 -- 
 2.7.4
 
