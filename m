@@ -2,107 +2,94 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 749DDC7EE22
-	for <linux-gpio@archiver.kernel.org>; Thu, 18 May 2023 12:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE53C7EE24
+	for <linux-gpio@archiver.kernel.org>; Thu, 18 May 2023 13:31:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230299AbjERMtA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 18 May 2023 08:49:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37578 "EHLO
+        id S231146AbjERNa6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 18 May 2023 09:30:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229917AbjERMtA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 May 2023 08:49:00 -0400
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 531EAC9;
-        Thu, 18 May 2023 05:48:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=cySFAh0aYuQ0BuYGb6opRZ3asbMe8+yAKXpa7mS2iS0=; b=uyDXyyAi/lUd8mr98dvyu53n40
-        7HCejGP7ecw5aLyPIZ0rfauT0zJj1EdnhMrUSmPVBKOhufklwe7H8J2HCkM8a486Jl7biijALZ8Pw
-        ub+nL4sXGiSUpP+kRnvG+yPNhLzdGLL3isGsdiGJOO03jYvPw2H0dkAiOmxXI27zMoXk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1pzd3b-00DEBk-1q; Thu, 18 May 2023 14:48:35 +0200
-Date:   Thu, 18 May 2023 14:48:35 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Jiawen Wu <jiawenwu@trustnetic.com>
-Cc:     'Andy Shevchenko' <andy.shevchenko@gmail.com>,
-        netdev@vger.kernel.org, jarkko.nikula@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
-        jsd@semihalf.com, Jose.Abreu@synopsys.com, hkallweit1@gmail.com,
-        linux@armlinux.org.uk, linux-i2c@vger.kernel.org,
-        linux-gpio@vger.kernel.org, mengyuanlou@net-swift.com
-Subject: Re: [PATCH net-next v8 6/9] net: txgbe: Support GPIO to SFP socket
-Message-ID: <1e1615b3-566c-490c-8b1a-78f5521ca0b0@lunn.ch>
-References: <20230515063200.301026-1-jiawenwu@trustnetic.com>
- <20230515063200.301026-7-jiawenwu@trustnetic.com>
- <ZGH-fRzbGd_eCASk@surfacebook>
- <00cd01d9879f$8e444950$aaccdbf0$@trustnetic.com>
- <CAHp75VdthEZL6GvT5Q=f7rbcDfA5XX=7-VLfVz1kZmBFem_eCA@mail.gmail.com>
- <016701d9886a$f9b415a0$ed1c40e0$@trustnetic.com>
- <90ef7fb8-feac-4288-98e9-6e67cd38cdf1@lunn.ch>
- <025b01d9897e$d8894660$899bd320$@trustnetic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <025b01d9897e$d8894660$899bd320$@trustnetic.com>
+        with ESMTP id S231164AbjERNa6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 May 2023 09:30:58 -0400
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AB881A2;
+        Thu, 18 May 2023 06:30:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+        ; s=x; h=Subject:Content-Transfer-Encoding:Content-Type:Mime-Version:
+        References:In-Reply-To:Message-Id:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=fRqoAfEGrb69vxhTSyLB10x+JE5MQ4XwObAsHGXg2dw=; b=QT8cOkj6ZnwlK7KEFGou1i0Ims
+        a/OgxDUpB5KbydZR+HtiBc1t8bql/2eVlQ11ToWwMVibuBWJuOZz7IxC5jJ+6kZdkEyoGu3kIwOdc
+        wkKTzz3e4KrRVVQgo32dSpon6qaQcpPaMNyEKD65h0het0ZopPO8/72W31hn0FGrVnRY=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:55638 helo=pettiford)
+        by mail.hugovil.com with esmtpa (Exim 4.92)
+        (envelope-from <hugo@hugovil.com>)
+        id 1pzdiT-0004VO-SJ; Thu, 18 May 2023 09:30:50 -0400
+Date:   Thu, 18 May 2023 09:30:49 -0400
+From:   Hugo Villeneuve <hugo@hugovil.com>
+To:     Conor Dooley <conor@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+        Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-Id: <20230518093049.1e1cdf9561ea326f4655af02@hugovil.com>
+In-Reply-To: <20230517-argue-unbeaten-b07405fdd313@spud>
+References: <20230517150746.3823249-1-hugo@hugovil.com>
+        <20230517-argue-unbeaten-b07405fdd313@spud>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+Subject: Re: [PATCH 1/2] dt-bindings: sc16is7xx: Add property to change GPIO
+ function
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-> > I _think_ you are mixing upstream IRQs and downstream IRQs.
+On Wed, 17 May 2023 18:25:07 +0100
+Conor Dooley <conor@kernel.org> wrote:
+
+> On Wed, May 17, 2023 at 11:07:46AM -0400, Hugo Villeneuve wrote:
+> > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 > > 
-> > Interrupts are arranged in trees. The CPU itself only has one or two
-> > interrupts. e.g. for ARM you have FIQ and IRQ. When the CPU gets an
-> > interrupt, you look in the interrupt controller to see what external
-> > or internal interrupt triggered the CPU interrupt. And that interrupt
-> > controller might indicate the interrupt came from another interrupt
-> > controller. Hence the tree structure. And each node in the tree is
-> > considered an interrupt domain.
+> > Some variants in this series of uart controllers have GPIO pins that
+> > are shared between GPIO and modem control lines.
 > > 
-> > A GPIO controller can also be an interrupt controller. It has an
-> > upstream interrupt, going to the controller above it. And it has
-> > downstream interrupts, the GPIO lines coming into it which can cause
-> > an interrupt. And the GPIO interrupt controller is a domain.
+> > The pin mux mode (GPIO or modem control lines) can be set for each
+> > ports (channels) supported by the variant.
 > > 
-> > So what exactly does gpio_regmap_config.irq_domain mean? Is it the
-> > domain of the upstream interrupt controller? Is it an empty domain
-> > structure to be used by the GPIO interrupt controller? It is very
-> > unlikely to have anything to do with the SFP devices below it.
+> > This adds a property to the device tree to set the GPIO pin mux to
+> > modem control lines on selected ports if needed.
+> > 
+> > Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+> > ---
+> >  .../bindings/serial/nxp,sc16is7xx.txt         | 28 +++++++++++++++++++
+> >  1 file changed, 28 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/serial/nxp,sc16is7xx.txt b/Documentation/devicetree/bindings/serial/nxp,sc16is7xx.txt
+> > index 0fa8e3e43bf8..426b7285ad50 100644
+> > --- a/Documentation/devicetree/bindings/serial/nxp,sc16is7xx.txt
+> > +++ b/Documentation/devicetree/bindings/serial/nxp,sc16is7xx.txt
+> > @@ -23,6 +23,9 @@ Optional properties:
+> >      1 = active low.
+> >  - irda-mode-ports: An array that lists the indices of the port that
+> >  		   should operate in IrDA mode.
+> > +- modem-control-line-ports: An array that lists the indices of the port that
+> > +			    should have shared GPIO lines configured as modem
+> > +			    control lines.
 > 
-> Sorry, since I don't know much about interrupt,  it is difficult to understand
-> regmap-irq in a short time. There are many questions about regmap-irq.
-> 
-> When I want to add an IRQ chip for regmap, for the further irq_domain,
-> I need to pass a parameter of IRQ, and this IRQ will be requested with handler:
-> regmap_irq_thread(). Which IRQ does it mean?
+> If this is an NXP specific property, should it not have an nxp, vendor
+> prefix?
 
-That is your upstream IRQ, the interrupt indicating one of your GPIO
-lines has changed state.
+Yes, I will resubmit a V2 with nxp vendor prefix.
 
-> In the previous code of using
-> devm_gpiochip_add_data(), I set the MSI-X interrupt as gpio-irq's parent, but
-> it was used to set chained handler only. Should the parent be this IRQ? I found
-> the error with irq_free_descs and irq_domain_remove when I remove txgbe.ko.
-
-Do you have one MSI-X dedicated for GPIOs. Or is it your general MAC
-interrupt, and you need to read an interrupt controller register to
-determine it was GPIOs which triggered the interrupt?
-
-If you are getting errors when removing the driver it means you are
-missing some level of undoing what us done in probe. Are you sure
-regmap_del_irq_chip() is being called on unload?
-
-> As you said, the interrupt of each tree node has its domain. Can I understand
-> that there are two layer in the interrupt tree for MSI-X and GPIOs, and requesting
-> them separately is not conflicting? Although I thought so, but after I implement
-> gpio-regmap, SFP driver even could not find gpio_desc. Maybe I missed something
-> on registering gpio-regmap...
-
-That is probably some sort of naming issue. You might want to add some
-prints in swnode_find_gpio() and gpiochip_find() to see what it is
-looking for vs what the name actually is.
-
-	Andrew
+Hugo.
