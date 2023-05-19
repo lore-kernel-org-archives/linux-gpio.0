@@ -2,171 +2,148 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3891C7EE23
-	for <linux-gpio@archiver.kernel.org>; Fri, 19 May 2023 11:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3058BC77B7A
+	for <linux-gpio@archiver.kernel.org>; Fri, 19 May 2023 12:55:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232013AbjESLFo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 19 May 2023 07:05:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47438 "EHLO
+        id S230381AbjESMy7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 19 May 2023 08:54:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232014AbjESLFl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 19 May 2023 07:05:41 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D3EF1703;
-        Fri, 19 May 2023 04:05:11 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4f3a9ad31dbso1476735e87.0;
-        Fri, 19 May 2023 04:05:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684494309; x=1687086309;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P378hHq4N3JMZZ8BxEOLVTa4riUu6d9EihNhy7E+0is=;
-        b=k+2XNk0HnwQQAxOVF60+teE75k+Oj1fbP4St1f+fNi9cPlQvvAa1J7TqhcjTWlzH/g
-         XG9ZHc1K25RU1Z2jAthkQxW32TOA0r0VKqB1R89ErydtnGmfn1TwEiZmV84AHJ4K7DDc
-         wDGeF2AbWDX48vdZX0bmD3m5F/rdbWLfNAsLwQIE56SwX6i0RFbx2zs+UZZz1SFuh38/
-         fr+3saVisOrzNYmRaH3U0PKy2k77E7lSo8NzJDVVLlMroZh6e+45Kq3T8BGhgLV4Grqd
-         unY54kOrYcw1BRKjB2RlBovdHKyduBMVCznG7mi6Qb+1J/v8m4Xh7uVYgo8PUBejE2FS
-         VB+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684494309; x=1687086309;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P378hHq4N3JMZZ8BxEOLVTa4riUu6d9EihNhy7E+0is=;
-        b=TtpmUWK+DSteo2P2n32nSQusc6dm0DzsQc/Zq+Aq0pLKw6bIsPfDTI9P5U78XHGOFo
-         I7t8V7whfBZ5mg+S25SQaxzqiIGHFYEu3YMyvRYXVqnh+p7qRnmSKYr2fGMefpWOU6y0
-         JluA2A4OxR0rJh/hhzAmWdMdxCo/xHlMKsZeOAmTODfn+F6BeU7EHLmfEwC5y9YgRUXZ
-         u9SEpmDH5lf1IJO8y8rpRSoGrligczf9a9jEuFSAiFw6pJlhWTRVa0XPMfsucVw75tCi
-         NUB2pkRmfFCwbjfgyGIrm7SSkx4uJTbe31S2wY8OTEt7LlYs2Gqg+HSAs1YZkT4ZifHe
-         dx5Q==
-X-Gm-Message-State: AC+VfDxqnvzhcKYursM4JGiUdFvLSx4RUNKqesDxKHNEbD2fIte5KBJa
-        5tkf/R+gRGNlMBEXrkRoo7s=
-X-Google-Smtp-Source: ACHHUZ6P69UimKvAR1WNjNClNfxFP7Z3tLtNF+uAexpUlXkKrWsld8MAHgH7DY6ZI/YaQFwkfC3AQA==
-X-Received: by 2002:ac2:4f8a:0:b0:4ec:8853:136 with SMTP id z10-20020ac24f8a000000b004ec88530136mr648825lfs.12.1684494309113;
-        Fri, 19 May 2023 04:05:09 -0700 (PDT)
-Received: from fedora (62-78-225-252.bb.dnainternet.fi. [62.78.225.252])
-        by smtp.gmail.com with ESMTPSA id y3-20020a2e7d03000000b002ad988efd73sm783732ljc.14.2023.05.19.04.05.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 May 2023 04:05:08 -0700 (PDT)
-Date:   Fri, 19 May 2023 14:05:04 +0300
-From:   Matti Vaittinen <mazziesaccount@gmail.com>
-To:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Andreas Klinger <ak@it-klinger.de>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Akhil R <akhilrajeev@nvidia.com>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-iio@vger.kernel.org, netdev@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
-        linux-mips@vger.kernel.org
-Subject: [PATCH v5 8/8] i2c: i2c-smbus: fwnode_irq_get_byname() return value
- fix
-Message-ID: <d2749c8f5f2f3d99c2049d5652efc7c2318d8b09.1684493615.git.mazziesaccount@gmail.com>
-References: <cover.1684493615.git.mazziesaccount@gmail.com>
+        with ESMTP id S229675AbjESMy6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 19 May 2023 08:54:58 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A432BD2;
+        Fri, 19 May 2023 05:54:57 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34JCaAl5032129;
+        Fri, 19 May 2023 12:54:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=yFJblaR40t/9aaEAQPrCMDd4C9c19HeT/Ol5piOv1v4=;
+ b=HdEfNoTNwVsB1F0Gl2mMj+7iLJI01tSk+qF+Gkf1u2KF7MCMfdcAwl7jM/7mmBvfYDbK
+ FSbRlQ67K8SoApO3oddKv2YesKY0dD8N9qt5vwKCglW0bHUfmViQ3N8Cd+mrdvsidiCj
+ Rzlx60ytYXz6TgawXL+wLWG9hxgXoRJh6dS9e1cK2Q3OPFnorsyBKull1WzepuIN3HOr
+ dDd02tbS1Wogr0klrfDu9gWTtDK79Mjw/bUdxeJPuMJM64jtQs3iRhHlzZiYb8exESsU
+ 2Au9ws6CfyHu5fFWD8OfudNUYBXsxshrlI2Q8jPD7GRSRlSFxSEx+HvpWSESxf1rnhVP wg== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qp0kes2m3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 May 2023 12:54:42 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34JCseRc005455
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 May 2023 12:54:40 GMT
+Received: from win-platform-upstream01.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Fri, 19 May 2023 05:54:24 -0700
+From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <p.zabel@pengutronix.de>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <robimarko@gmail.com>,
+        <andy.shevchenko@gmail.com>, <quic_srichara@quicinc.com>
+Subject: [PATCH V7 0/8] Add minimal boot support for IPQ5018
+Date:   Fri, 19 May 2023 18:24:01 +0530
+Message-ID: <20230519125409.497439-1-quic_srichara@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cERw4jF3C6RL21eM"
-Content-Disposition: inline
-In-Reply-To: <cover.1684493615.git.mazziesaccount@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: pAiRPYZaZMBz8P4XMxJ3IVkmFAGtK5l-
+X-Proofpoint-ORIG-GUID: pAiRPYZaZMBz8P4XMxJ3IVkmFAGtK5l-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-19_08,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=883 malwarescore=0 bulkscore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1015 impostorscore=0 phishscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305190108
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+The IPQ5018 is Qualcomm's 802.11ax SoC for Routers,
+Gateways and Access Points.
 
---cERw4jF3C6RL21eM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series adds minimal board boot support for ipq5018-mp03.1-c2 board.
 
-The fwnode_irq_get_byname() was changed to not return 0 upon failure so
-return value check can be adjusted to reflect the change.
+[v7]   Fixed tz reserved region size in patch 7/8
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+[v6]   Fixed patch [4/8] pinctrl driver for rebase issue.
 
----
-Revision history:
-v4 =3D> v5:
- - Added back after this was accidentally dropped at v4.
+[v5]
+       Added Reviewed-by tags from Krzysztof Kozlowski.
+       Changed patch [6/8] with [1] since its already Acked
+       Rebased patch [4/8] on top of [2] and fixed other comments
+       Fixed commit log for patch [7/8]
+       Fixed comments for patch [2/8]
 
-Depends on the mentioned return value change which is in patch 1/2. The
-return value change does also cause a functional change here. Eg. when
-IRQ mapping fails, the fwnode_irq_get_byname() no longer returns zero.
-This will cause also the probe here to return nonzero failure. I guess
-this is desired behaviour - but I would appreciate any confirmation.
+[1] https://patchwork.kernel.org/project/linux-arm-msm/patch/1678164097-13247-4-git-send-email-quic_mmanikan@quicinc.com/
+[2] https://lore.kernel.org/r/1683718725-14869-1-git-send-email-quic_rohiagar@quicinc.com
+       
+[v4]
+       Fixed all comments for clocks, schema, dts
+       Added Reviewed-by tags.
 
-Please, see also previous discussion here:
-https://lore.kernel.org/all/fbd52f5f5253b382b8d7b3e8046134de29f965b8.166671=
-0197.git.mazziesaccount@gmail.com/
+[v3]
+	Fixed all comments for clocks, schema fixes
+        Picked up Reviewed-by from Bjorn for pinctrl driver
 
-Another suggestion has been to drop the check altogether. I am slightly
-reluctant on doing that unless it gets confirmed that is the "right
-thing to do".
----
- drivers/i2c/i2c-smbus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[v2]
+	Fixed all comments and rebased for TOT.
 
-diff --git a/drivers/i2c/i2c-smbus.c b/drivers/i2c/i2c-smbus.c
-index 138c3f5e0093..893fe7cd3e41 100644
---- a/drivers/i2c/i2c-smbus.c
-+++ b/drivers/i2c/i2c-smbus.c
-@@ -129,7 +129,7 @@ static int smbalert_probe(struct i2c_client *ara)
- 	} else {
- 		irq =3D fwnode_irq_get_byname(dev_fwnode(adapter->dev.parent),
- 					    "smbus_alert");
--		if (irq <=3D 0)
-+		if (irq < 0)
- 			return irq;
- 	}
-=20
---=20
-2.40.1
+Manikanta Mylavarapu (1):
+  dt-bindings: scm: Add compatible for IPQ5018
 
+Sricharan Ramabadhran (7):
+  dt-bindings: arm64: Add IPQ5018 clock and reset
+  clk: qcom: Add Global Clock controller (GCC) driver for IPQ5018
+  dt-bindings: pinctrl: qcom: Add support for ipq5018
+  pinctrl: qcom: Add IPQ5018 pinctrl driver
+  dt-bindings: qcom: Add ipq5018 bindings
+  arm64: dts: Add ipq5018 SoC and rdp432-c2 board support
+  arm64: defconfig: Enable IPQ5018 SoC base configs
 
---=20
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+ .../devicetree/bindings/arm/qcom.yaml         |    7 +
+ .../bindings/clock/qcom,ipq5018-gcc.yaml      |   63 +
+ .../bindings/firmware/qcom,scm.yaml           |    1 +
+ .../bindings/pinctrl/qcom,ipq5018-tlmm.yaml   |  127 +
+ arch/arm64/boot/dts/qcom/Makefile             |    1 +
+ .../arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts |   72 +
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi         |  250 ++
+ arch/arm64/configs/defconfig                  |    3 +
+ drivers/clk/qcom/Kconfig                      |   10 +-
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-ipq5018.c                | 3731 +++++++++++++++++
+ drivers/pinctrl/qcom/Kconfig                  |   10 +
+ drivers/pinctrl/qcom/Makefile                 |    1 +
+ drivers/pinctrl/qcom/pinctrl-ipq5018.c        |  783 ++++
+ include/dt-bindings/clock/qcom,gcc-ipq5018.h  |  183 +
+ include/dt-bindings/reset/qcom,gcc-ipq5018.h  |  122 +
+ 16 files changed, 5363 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5018-gcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-tlmm.yaml
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5018.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-ipq5018.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq5018.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq5018.h
+ create mode 100644 include/dt-bindings/reset/qcom,gcc-ipq5018.h
 
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =3D]=20
+-- 
+2.34.1
 
---cERw4jF3C6RL21eM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmRnV+AACgkQeFA3/03a
-ocVUPwf8CgYpr8uh/bwuPx1q9qIB850v05IJYNTncQ0NjKUkuWfwkJD9ycWFIIqD
-o+m2zsrcSf0nYdZczy6xJgWH0VrjZ1Klt7HW+NkNj7u6jsumWV9BdPAMOHHEQhKs
-6sdm+Bvxms7xfTV7HgZRlDfOONfNo0KRXDneniek+OhrEstbHI1qy3XFVWbyo+ay
-9xNgauhmaPbCVn+IX5hsgJIbvFDgYtF49TZBw9ZKOxAde21vYOGBn+cu4if/DAJv
-Gb23EgmFnee/eEiMCPYU4CbAOpNChMTSLpw3oJb4kGk6vkOH/8MYerQtHZdVebMn
-gTw43TKhczVIXtT/t2eUH2GUs/P9fg==
-=vcE+
------END PGP SIGNATURE-----
-
---cERw4jF3C6RL21eM--
