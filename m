@@ -2,122 +2,146 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7E6C7EE2A
-	for <linux-gpio@archiver.kernel.org>; Mon, 22 May 2023 11:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEDAC7EE2E
+	for <linux-gpio@archiver.kernel.org>; Mon, 22 May 2023 12:30:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233526AbjEVLu3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 22 May 2023 07:50:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56710 "EHLO
+        id S234019AbjEVMa3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 22 May 2023 08:30:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233567AbjEVLuL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 May 2023 07:50:11 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E14621B5
-        for <linux-gpio@vger.kernel.org>; Mon, 22 May 2023 04:50:01 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-30781184e78so2401276f8f.0
-        for <linux-gpio@vger.kernel.org>; Mon, 22 May 2023 04:50:01 -0700 (PDT)
+        with ESMTP id S234241AbjEVMaB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 May 2023 08:30:01 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF05E1989
+        for <linux-gpio@vger.kernel.org>; Mon, 22 May 2023 05:26:50 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-3093d10442aso3789678f8f.1
+        for <linux-gpio@vger.kernel.org>; Mon, 22 May 2023 05:26:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1684756200; x=1687348200;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sKgwbXDZ93PhOsZpMHYSuhMcEuh5tVlQ5GHAYoAXTTk=;
-        b=oXlZi6dQ+locvnwMb6tXz6Haerq4h2rmMsYNDuyKGsjCLrXuZZ1WoRXsul7Hmffq5V
-         BAL5Xy1fvZBlwHlGAT4Gt9cdnpFuUHC2JYFmRLtAE9y3lQmrh0C+vKG4mtkZbEBMn711
-         CKts6AS3KF5mRTiEiAI+P31FqY1psc+RKnBht4wKqqVdoaW+l7FwVq9KM4rxq6MEu5Fq
-         Io9rAmmmjXOOwWXFp2Xy8qeX1NwzTdOOwg3ScATZSQ8mzRVx61Q2314f4i1dos2r1GoA
-         cMt8ymh+xftxI78J0hkyTAuZvtfVhvhgUMELKVvy7asFaUmGTrJNEsNXE2Rowf+wWf42
-         dQww==
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1684758409; x=1687350409;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HEaX8WhwboBEc6UgbMSxe5Jo+RE1bpmPJglCuEjejv0=;
+        b=ZiyXi5mj46qZs5cRDwXSALxq2q6Wr34xjKFCdrL9RvSOo7jl1rLiH1FOJ7ScllRxN+
+         UpJVYoj++XLXJ7h2lvcouJWScoc6tL5ESZK9enz8ZRK7BnoHum4mOM09LtzPDUAcrIAQ
+         LTB9VtjdxoeoyweLvXMQH/UvhEfh49uUhG9GmUcHZeQuP8bX99Ta+DWmlpMbGe4dBjiW
+         nrZd91lQ2G9BSOCgpnn/Mhh7KHN/aGc82UFvFzraMUy5eXFydaI1COAQS5YogvEpAws7
+         0qryjlPxx+KqvL0suhQKoYMCnxkMCj6xjvxtXz5vFR1W5FQRWd3rpSuXVTnEEOJNyL1u
+         F9dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684756200; x=1687348200;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sKgwbXDZ93PhOsZpMHYSuhMcEuh5tVlQ5GHAYoAXTTk=;
-        b=VVuE5zY8CRA1npMVocI6WdxJW+CDw+7gw0K3+lKhioLP7ai5Lceo1nSutc22eV/PXg
-         KtNH6rtl3nGXU7LWGZs4cKbgpGdSKxfLJrprrJysPChpRMRv2QZDR26Zfxfbl78IXZG5
-         Vtlm+iMxg3Z4vNKxnRx0TAgk5SPOryf9JY1aNjnxIuc7t3RlT5VfuO1E30bPygpJiXet
-         PgO01RM44NJPmZqQGGSHzNGWVq5fP6F3FaC6KangrT9IVR6H8bf1CicM83Z2ulTsMSh0
-         R++Rrx4YwW1gZOes6b228Z0VxalWuJpG1VPSugghFBSnU3al/9YwL2TTnvThjcd+zEHR
-         1Cmg==
-X-Gm-Message-State: AC+VfDyE367Hwp0xiKJSFqugUaKzB3KYcRvOGCBP5tFXurqezEcgbKQK
-        vk1ekGjkwaC6le4zUtCNuSm3HA==
-X-Google-Smtp-Source: ACHHUZ4aNoH0wsH4IeJXzePZtSiXVMs1nKqN0mwAKpV4dgI33pkdm3OAwuaeuaJLSl4OQrhKVI7aag==
-X-Received: by 2002:adf:f48f:0:b0:307:5091:5b96 with SMTP id l15-20020adff48f000000b0030750915b96mr10113342wro.22.1684756200409;
-        Mon, 22 May 2023 04:50:00 -0700 (PDT)
-Received: from localhost ([2a01:e0a:28d:66d0:72d:52cc:8221:fcda])
-        by smtp.gmail.com with ESMTPSA id n16-20020a1c7210000000b003f6042d6d92sm3490280wmc.46.2023.05.22.04.49.59
+        d=1e100.net; s=20221208; t=1684758409; x=1687350409;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HEaX8WhwboBEc6UgbMSxe5Jo+RE1bpmPJglCuEjejv0=;
+        b=GBd7+X009NluuUwAOBejd6q1aZ8T8FHoP1hdW00A+od9RLZwDHkjs7NVk/9FjX1l/R
+         y7KM9f5w3bH1/FJJn9CnCyMFtIaSQNs4WoyMUIlhRNX0I4JfiEIc92vM3HqAXEVXejvn
+         BFXgMejq2K5pz9jnC8oy+IeVZ2yEtyL6IuCaS4bbCDTD75cM8RaP/0uwMACH9qXbXOkM
+         nGI4t/ZsiStXXBxwEuBlGHSJ5pl6sWKax7Vygnyr9Q5HBHuHwhWuYC1ZNXIECH4CHnDI
+         QjoAXLK7BpNpRKNRChVxHgXqWp8FbWk1QJoiXBN4JrpTUUFWk3Zg657tkAvb8rmNQK6F
+         w4hQ==
+X-Gm-Message-State: AC+VfDxBsFxVZmCidtUaqAXXtxkoNsib0Vpyz+r4lPAhNKf3odXADke7
+        1+oz4sywwJ07nM5CLC/ODnn5VQhXMaic8b3G3NS+hbxY
+X-Google-Smtp-Source: ACHHUZ6uVYGLu/k0kOcjRdUMY/5MGNk02xLAtvueCfV/L4V4MZRkiJlDvQ6zqI0ZqWE0IjHjks/low==
+X-Received: by 2002:a5d:594a:0:b0:2f7:c224:cd32 with SMTP id e10-20020a5d594a000000b002f7c224cd32mr7254934wri.10.1684758409343;
+        Mon, 22 May 2023 05:26:49 -0700 (PDT)
+Received: from [192.168.1.91] (192.201.68.85.rev.sfr.net. [85.68.201.192])
+        by smtp.gmail.com with ESMTPSA id o2-20020a056000010200b002ca864b807csm7766430wrx.0.2023.05.22.05.26.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 May 2023 04:49:59 -0700 (PDT)
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Mon, 22 May 2023 13:49:58 +0200
-Message-Id: <CSSS892QYLWK.3T71MRNHOH0IZ@burritosblues>
-Cc:     <linus.walleij@linaro.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <a.zummo@towertech.it>,
-        <alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-        <jpanis@baylibre.com>, <jneanne@baylibre.com>,
-        <aseketeli@baylibre.com>, <sterzik@ti.com>, <u-kumar1@ti.com>
-Subject: Re: [PATCH v4 1/3] rtc: tps6594: Add driver for TPS6594 RTC
-From:   "Esteban Blanc" <eblanc@baylibre.com>
-To:     "Andy Shevchenko" <andy.shevchenko@gmail.com>
-X-Mailer: aerc 0.14.0
-References: <20230512141755.1712358-1-eblanc@baylibre.com>
- <20230512141755.1712358-2-eblanc@baylibre.com>
- <ZF514wvUt_xrU1gG@surfacebook> <CSOPFJOVLSS1.1XKI60F9TLBMN@burritosblues>
- <CAHp75Vfg+yAhJ58qt76GHqxWHD48hF-6ZnT=xEUh+1rzr7UvVg@mail.gmail.com>
-In-Reply-To: <CAHp75Vfg+yAhJ58qt76GHqxWHD48hF-6ZnT=xEUh+1rzr7UvVg@mail.gmail.com>
+        Mon, 22 May 2023 05:26:48 -0700 (PDT)
+Message-ID: <071614c0-0f84-6087-47c6-385541c5733d@baylibre.com>
+Date:   Mon, 22 May 2023 14:26:48 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 1/2] gpio: tps65219: add GPIO support for TPS65219 PMIC
+Content-Language: en-US
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org,
+        Jonathan Cormier <jcormier@criticallink.com>
+References: <20230511-tps65219-add-gpio-support-v2-0-60feb64d649a@baylibre.com>
+ <20230511-tps65219-add-gpio-support-v2-1-60feb64d649a@baylibre.com>
+ <CACRpkdbjjoOoGeaqv9yQ4fTKqxt5eLDBjZCnNAYQnng3L+n8TQ@mail.gmail.com>
+ <2e5cae40-7040-a92f-3d11-ce68f1307049@baylibre.com>
+ <20230517063303.GO14287@atomide.com>
+From:   jerome Neanne <jneanne@baylibre.com>
+In-Reply-To: <20230517063303.GO14287@atomide.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed May 17, 2023 at 6:52 PM CEST, Andy Shevchenko wrote:
-> On Wed, May 17, 2023 at 7:47=E2=80=AFPM Esteban Blanc <eblanc@baylibre.co=
-m> wrote:
-> > On Fri May 12, 2023 at 7:22 PM CEST,  wrote:
-> > > Fri, May 12, 2023 at 04:17:53PM +0200, Esteban Blanc kirjoitti:
->
-> ...
->
-> > > > +/* Multiplier for ppb conversions */
-> > > > +#define PPB_MULT (1000000000LL)
-> > >
-> > > We have something in units.h. Can you use generic macro?
-> >
-> > I found GIGA, NANO and NANOHZ_PER_HZ that have the same value in
-> > units.h. However I'm not sure any of them have the correct meaning in
-> > this situation.
->
-> MULT[IPLIER] has no units AFAIU, so SI macro can be used, no? NANO or
-> GIGA depends on what the actual sign of the exponent of the multiplier
-> is. Write it on paper and check the exponent in the equation(s) and
-> hence decide which one to use.
 
-Thanks. I've checked and it should be NANO.
 
-> > > > +   if (tmp < 0)
-> > > > +           tmp -=3D TICKS_PER_HOUR / 2LL;
-> > > > +   else
-> > > > +           tmp +=3D TICKS_PER_HOUR / 2LL;
-> > >
-> > > Is it guaranteed to have no overflow here?
-> >
-> > We know from `tps6594_rtc_set_offset` that the loaded value can't be
-> > more than 277774 (register default value is 0), So `tmp` can't exceed
-> > 277774000000000 which is lower than 2^63-1. No overflow here.
-> >
-> > TICK_PER_HOUR / 2LL =3D 117964800, so at the end of this computation,
-> > `tmp` can have a maximum value of 277774117964800 which is still
-> > inferior to 2^63-1.
->
-> Please add a respective comment.
+On 17/05/2023 08:33, Tony Lindgren wrote:
+> * jerome Neanne <jneanne@baylibre.com> [230512 07:13]:
+>>
+>>
+>> On 11/05/2023 22:57, Linus Walleij wrote:
+>>>> +       /* Documentation is stating that GPIO0 direction must not be changed in Linux:
+>>>> +        * Table 8-34. MFP_1_CONFIG(3): MULTI_DEVICE_ENABLE,
+>>>> +        * Should only be changed in INITIALIZE state (prior to ON Request).
+>>>> +        * Set statically by NVM, changing direction in application can cause a hang.
+>>>> +        * Below can be used for test purpose only:
+>>>> +        */
+>>>> +
+>>>> +#if 0
+>>>> +       int ret = regmap_update_bits(gpio->tps->regmap, TPS65219_REG_MFP_1_CONFIG,
+>>>> +                                TPS65219_GPIO0_DIR_MASK, direction);
+>>>> +       if (ret)
+>>>> +               return ret;
+>>>> +#endif
+>>>> +       dev_err(gpio->tps->dev,
+>>>> +               "GPIO%d direction set by NVM, change to %u failed, not allowed by specification\n",
+>>>> +                offset, direction);
+>>>> +       return -EOPNOTSUPP;
+>>>> +}
+>>>
+>>> Normally people would complain about #if 0 code.
+>>>
+>>> But this is a special case!
+>>>
+>>> I definitely want the code to be in there somehow.
+>>>
+>>> What about:
+>>>
+>>> if (IS_ENABLED(DEBUG))?
+>>>
+>>> If someone enables debug with an explicit -DDEBUG to the compiler
+>>> this could be allowed.
+>> I'm fine with your proposal. Will wait few days just in case anyone wants to
+>> add any comment then go for this.
+> 
+> Just wondering.. Would it help for the driver probe to set gpio0 as a gpio
+> hog after reading the configured value?
+> 
+> Maybe the multi device enable just means the pin may be shared with no
+> specific hardware reason to not change it during the runtime?
 
-I've reformatted this and put it in a SAFETY comment.
+Your point looks valid. But I think we can't simply add a regular 
+"gpio-hog" as a property in the device tree because we don't have a one 
+to one mapping for GPIO consumer (theoretically we can have more than 2 
+PMICs).
 
-Thanks for your help,
+I think your suggestion is to read the multi-device value through regmap 
+then "kind of" hog gpio with devm_gpio_request_one
+So that gpio0 is preserved from being requested by other user.
+Is this correct understanding?
 
---=20
-Esteban Blanc
-BayLibre
+Practically the board I'm using for test currently only have one PMIC.
+I'm reluctant to implement additional logic that does not look so 
+"conventional" that I can't test.
+
+If maintainers agree, I'll postpone the implementation of your proposal 
+until a platform compatible with this implementation is available for 
+testing. So that we can check what is most accurate in real life.
+
+Side Note: wo this implementation use of the driver is less optimal in 
+multi-device configuration but still usable.
+
+Regards,
+Jerome.
