@@ -2,126 +2,134 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BB8C7EE26
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 May 2023 20:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CBDC7EE26
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 May 2023 20:41:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238509AbjEWUN0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 May 2023 16:13:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58524 "EHLO
+        id S232391AbjEWUlo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 May 2023 16:41:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230160AbjEWUNZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2023 16:13:25 -0400
-X-Greylist: delayed 450 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 23 May 2023 13:13:23 PDT
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CDCBF132
-        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2023 13:13:23 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 1YGTqQZli8SAU1YGUqtl2T; Tue, 23 May 2023 22:05:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1684872351;
-        bh=/qnVISKWAXZmn6jEXPdze5Xj6qd0T4Dgd6h8vC+mfcc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=t1dh+jmR482GRURFMLHX3TH45TMiVwJO/YRzPkTDZBW9mml9ATt7EUN01FeX4eOlM
-         Pzsznu124bZpiSGr8FwOmeXtcSvV5bxO1zjLQ7JyjfZixW0UNAouvatqe4VaGYJIhi
-         lzzeo+/OPIvnFSUytrqD0OiXa4EB0YG4nrE9ihdWTqkuQPOqaI4fzNWKNPkHgwC42w
-         I09+0uPof0sFrJJbggdkeeok57kvZLO2kL7x0kfpGg0m1pUGF/p6GFgPcashr9G23C
-         xIZzG3OGtcCdl+scHMt0SYzVTHhRFRzE7UiCka5tROJV8jG+BjWLagBsNd23kfMQB0
-         oj5GiiKHuCV2Q==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 23 May 2023 22:05:51 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <b9207257-b04f-ee2e-7025-015b0f22358a@wanadoo.fr>
-Date:   Tue, 23 May 2023 22:05:49 +0200
+        with ESMTP id S230031AbjEWUlo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2023 16:41:44 -0400
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21BFFCA;
+        Tue, 23 May 2023 13:41:43 -0700 (PDT)
+Received: from [192.168.122.1] (84-115-214-73.cable.dynamic.surfer.at [84.115.214.73])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id CC7EFCFBBC;
+        Tue, 23 May 2023 20:41:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1684874501; bh=TJ542YLeCftA/8fhg2JNrraJTBnWbaZkPbFnUwRol6g=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc;
+        b=R2/gMkK/PfFPy6GWRI1+HF3H+f1tCi0OIO/sVowniDPPouJuJwQ9Qg02BT4pFZNTQ
+         62RRBGYRz2pLtyJFGo+PBzLQRcF/MLppm9OenHSBXUgru6Tp7BE7Oj1xjko+vPGopx
+         /dpPFtqNduCw67zrz2vMp1t7+yuRcQ4/hPHDjisE=
+From:   Luca Weiss <luca@z3ntu.xyz>
+Date:   Tue, 23 May 2023 22:41:29 +0200
+Subject: [PATCH v3 2/3] arm64: dts: qcom: sdm632-fairphone-fp3: Add
+ notification LED
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] pinctrl:sunplus: Add check for kmalloc
-Content-Language: fr, en-US
-To:     andy.shevchenko@gmail.com,
-        =?UTF-8?B?V2VsbHMgTHUg5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>
-Cc:     Wells Lu <wellslutw@gmail.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1684836688-9204-1-git-send-email-wellslutw@gmail.com>
- <ZGztCHNr1jmpFq0A@surfacebook>
- <1560e9c0e5154802ab020b9da846d65f@sphcmbx02.sunplus.com.tw>
- <ZG0V6_bUaz3Thy0q@surfacebook>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <ZG0V6_bUaz3Thy0q@surfacebook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230414-pmi632-v3-2-079d2cada699@z3ntu.xyz>
+References: <20230414-pmi632-v3-0-079d2cada699@z3ntu.xyz>
+In-Reply-To: <20230414-pmi632-v3-0-079d2cada699@z3ntu.xyz>
+To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-doc@vger.kernel.org, Luca Weiss <luca@z3ntu.xyz>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1343; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=TJ542YLeCftA/8fhg2JNrraJTBnWbaZkPbFnUwRol6g=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkbSUAAyJdMMoOpSMaz9C3Sn99T7YCw8ToXq945
+ 4IsslXJObKJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZG0lAAAKCRBy2EO4nU3X
+ VkJVD/9YaYeyX9jGqe7/y/4fgdOOuMfD8EwIgbX9nwu5DF5ZjmGZB+zBdyGMWhQhLbw7PBh7QYb
+ qIUjbeCRp6yhQUDaQmx7dLIW8EkhYtFnWnpPuZoeJuathLOggZ1LelZn9yoIGSEKNurIL6ZmK9D
+ hg5lRqs5DAmrz7j9MJNLkXad/UoBWdZcyAxUrUOWd3UX2haujPhVkgg7K23qt+hpLKD0TyoBWvU
+ WnYHJ7QME34UHsR0CXpkmVTfIZAugH4gwBgY3joI3S4ejXy/LVU8ibpmMUGdAyG7kgymVqHYmzr
+ gRuW0FH44DHpcNL2ZYZUwbkfnZfHgQyC3gAhPkMvrnJI0Nw8H/DO9ZpqU77uKPsQ40sbKDBgCZ1
+ Y5D7pO1e4kNu9e5cgfK1NoL7GP7YotlpUtWghsrBwfTA9oUedPcKieCFpC2Tktu9jWNTCCA/3z5
+ 4bdNf6/SjiEpypd3+XcJsBuumnPgsjJRNS2qUvT6ebEO7QFiF8YoXad28bEdo1D7HbkA9MyceAr
+ DG3hujx4NyOiqcsG29b58fvG9HIscwL2U08/E3CRUPkMwg8sDsYsc3Mit31pRYxFo+4NIo2r7QK
+ qrdedQ6cMy9rL3rLtagFVgBf2UKuVNpAeDxhXINoG17ON54iHyAFXygKvT+bBNq5+g33ZzaoUmK
+ wjTL3OqBuLjqB1w==
+X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Le 23/05/2023 à 21:37, andy.shevchenko@gmail.com a écrit :
-> Tue, May 23, 2023 at 05:39:51PM +0000, Wells Lu 呂芳騰 kirjoitti:
->>>> Fix Smatch static checker warning:
->>>> potential null dereference 'configs'. (kmalloc returns null)
-> 
-> ...
-> 
->>>>   			configs = kmalloc(sizeof(*configs), GFP_KERNEL);
->>>> +			if (!configs)
->>>
->>>> +				return -ENOMEM;
->>>
->>> "Fixing" by adding a memory leak is not probably a good approach.
->>
->> Do you mean I need to free all memory which are allocated in this subroutine before
->> return -ENOMEM?
-> 
-> This is my understanding of the code. But as I said... (see below)
-> 
-> ...
-> 
->>>>   			configs = kmalloc(sizeof(*configs), GFP_KERNEL);
->>>> +			if (!configs)
->>>> +				return -ENOMEM;
->>>
->>> Ditto.
-> 
-> ...
-> 
->>> It might be that I'm mistaken. In this case please add an explanation why in the commit
->>> message.
-> 
-> ^^^
-> 
+The phone features a notification LED connected to the pmi632. Configure
+the RGB led found on it.
 
-Hmmm, not so sure.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+---
+ arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts | 29 +++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-Should be looked at more carefully, but
-   dt_to_map_one_config		(in /drivers/pinctrl/devicetree.c)
-     .dt_node_to_map
-       --> sppctl_dt_node_to_map
+diff --git a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
+index 70e683b7e4fc..301eca9a4f31 100644
+--- a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
++++ b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
+@@ -4,8 +4,10 @@
+  */
+ /dts-v1/;
+ 
++#include <dt-bindings/leds/common.h>
+ #include "sdm632.dtsi"
+ #include "pm8953.dtsi"
++#include "pmi632.dtsi"
+ 
+ / {
+ 	model = "Fairphone 3";
+@@ -83,6 +85,33 @@ &pm8953_resin {
+ 	linux,code = <KEY_VOLUMEDOWN>;
+ };
+ 
++&pmi632_lpg {
++	status = "okay";
++
++	multi-led {
++		color = <LED_COLOR_ID_RGB>;
++		function = LED_FUNCTION_STATUS;
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		led@1 {
++			reg = <1>;
++			color = <LED_COLOR_ID_RED>;
++		};
++
++		led@2 {
++			reg = <2>;
++			color = <LED_COLOR_ID_GREEN>;
++		};
++
++		led@3 {
++			reg = <3>;
++			color = <LED_COLOR_ID_BLUE>;
++		};
++	};
++};
++
+ &sdhc_1 {
+ 	status = "okay";
+ 	vmmc-supply = <&pm8953_l8>;
 
-Should dt_to_map_one_config() fail, pinctrl_dt_free_maps() is called
-(see 
-https://elixir.bootlin.com/linux/v6.4-rc1/source/drivers/pinctrl/devicetree.c#L281)
-
-pinctrl_dt_free_maps() calls dt_free_map(), which calls .dt_free_map, so 
-pinctrl_utils_free_map()
-(see 
-https://elixir.bootlin.com/linux/v6.4-rc1/source/drivers/pinctrl/sunplus/sppctl.c#L978)
-
-Finally the needed kfree seem to be called from here.
-(see 
-https://elixir.bootlin.com/linux/v6.4-rc1/source/drivers/pinctrl/pinctrl-utils.c#L119)
-
-
-*This should obviously be double checked*, but looks safe to me.
-
-
-BUT, in the same function, the of_get_parent() should be undone in case 
-of error, as done at the end of the function, in the normal path.
-This one seems to be missing, should a memory allocation error occur.
-
-
-Just my 2c,
-
-CJ
+-- 
+2.40.1
 
