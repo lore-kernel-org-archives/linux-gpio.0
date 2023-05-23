@@ -2,110 +2,80 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58929C77B75
-	for <linux-gpio@archiver.kernel.org>; Tue, 23 May 2023 08:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89108C7EE2A
+	for <linux-gpio@archiver.kernel.org>; Tue, 23 May 2023 08:12:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235259AbjEWIFm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 23 May 2023 04:05:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59132 "EHLO
+        id S236129AbjEWILl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 23 May 2023 04:11:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236267AbjEWIFV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2023 04:05:21 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E309B18F
-        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2023 01:04:48 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id 98e67ed59e1d1-253e0edc278so2559579a91.3
-        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2023 01:04:48 -0700 (PDT)
+        with ESMTP id S235332AbjEWIKw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2023 04:10:52 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC60AE53
+        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2023 01:09:49 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id ada2fe7eead31-439494cbfedso566178137.3
+        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2023 01:09:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684829028; x=1687421028;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uXxswV9F88lm9yuu4eGkfqqU6VA143P27jOssPy5N0E=;
-        b=oLMD/9JXTt1UFnytnZ/1CW9aVhkD9G3UJmKWTjXyIq04cpOWWIHCKbOTTW26bGzWrR
-         Ezfj1oVtcDUWSBjGLRKEyA1ttWNwa5zBOlumkeQd3kdAyUzAO9nNaJJWE/nYvgPU2oDV
-         XkBdBLp49cSs5hzt/LtkdN6nN8PePUZxoOHl7z95kFZDZJYMonuM7ytvvsmrRmLPsz01
-         DA7Bdd5/ahy7+589vKYyoNV/lgAAnAhNggLMLlHGP+rKZRtWwZdxbxkAP3aRuylAX45c
-         IoZfskXeFuT1WU1iaoWyiROe6ADwJBWqRYR1gQwsgOprM6tXB/cbsAVngPnKF//58dmM
-         +CXA==
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1684829388; x=1687421388;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+CNRl25Mpbn7lFd0EgMpSYuJMXBCVTWb8XFSUxuhk/w=;
+        b=iKu1Lk9TTHBk6ivWdWvne1Mat6Vn12uHBIYceW5hrzFawy0Xhh3u75jaTKBMUtiXUF
+         PJbMr175Hd436RjD4EqAiAxdNyDZisu19fL7pRbzybRGtBYnF5m9/Jxwq1dTso5XrZxV
+         hdF9Nb4zEtQ7mo/gU7sY9XPgpv/ktCjq3EIYI+w39AOUeKY2BKWZD6d2lKFPoiySfGAY
+         givG9+RuCWs5DJs8SEqENyBN2BKvbRctSNPcwyru+CEpr2RUfM+95bx+UoCH2hFJ80xR
+         T5eqpOPePGifBw0IDDGXzYPIvWIuuO/x/Fvo+6dkuvL2eXAgVkeW3jr93EZE1pL9bJgc
+         +KBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684829028; x=1687421028;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uXxswV9F88lm9yuu4eGkfqqU6VA143P27jOssPy5N0E=;
-        b=IOW0NCbEdXytpYUwv+/JvKZXFG82avJGcodgC7wDo6zzMRmltdhL5vmxE1g3SRLvS7
-         vTQsABoMYymZjRKjdwFF1xu4mk8RNhkjFGLPYUzfStH5TC0AErAdXB9oqHpw4ftaNUXF
-         BbJt12Sg4Q57pjb8F/KBnBB44vYJXq68mY2VD4nmDLTJWHEp2YqAwxDPDKBFh2Mde1QU
-         umI5nmCLRVDF0DVdpzMritkgu4AjFMfQW6TrsLUvvr5BMXwI5We4PycRc48YQZINObUK
-         UUzT4UBK33kfEYtOhDB51FcND6h9gRwz7f2xhtR9+dmX41nF7cRmVmHoiqIrPTaU6tBC
-         5azw==
-X-Gm-Message-State: AC+VfDw65NmOOsfQsWMtEdJ8L/jvYlT3VdbYkEEYhAaaGCRU4H9+bLdC
-        8hMMb/IlDD6Vf9Z+jfethwSGNRHZhaQ=
-X-Google-Smtp-Source: ACHHUZ6hvsgUsiPhyY3tMXfYn/IYTDjoadyYEniFvbA5D8U8Q85Hm0ChV8jnnCWyhNgUnpNP8RRgQQ==
-X-Received: by 2002:a17:90a:c912:b0:255:47fd:9ab4 with SMTP id v18-20020a17090ac91200b0025547fd9ab4mr7492682pjt.10.1684829028016;
-        Tue, 23 May 2023 01:03:48 -0700 (PDT)
-Received: from sol.home.arpa (194-223-178-180.tpgi.com.au. [194.223.178.180])
-        by smtp.gmail.com with ESMTPSA id 19-20020a631653000000b0050376cedb3asm5379470pgw.24.2023.05.23.01.03.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 May 2023 01:03:47 -0700 (PDT)
-From:   Kent Gibson <warthog618@gmail.com>
-To:     linux-gpio@vger.kernel.org, brgl@bgdev.pl
-Cc:     Kent Gibson <warthog618@gmail.com>
-Subject: [libgpiod][PATCH v2] README: provide more info in Contributing
-Date:   Tue, 23 May 2023 16:03:34 +0800
-Message-Id: <20230523080334.38971-1-warthog618@gmail.com>
-X-Mailer: git-send-email 2.40.1
+        d=1e100.net; s=20221208; t=1684829388; x=1687421388;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+CNRl25Mpbn7lFd0EgMpSYuJMXBCVTWb8XFSUxuhk/w=;
+        b=fKdogNOaS/bFhfsL4zRMhMIS8mVlMWcqbZJRRJKThLRuGMO53c+wZbz4XViygPabbI
+         S0I9n5vgwY06hzU2yvz3sYsBt9TiLpU4cXX7iEW+bWiV2jyejlcNq8e1UIi2lDCsaK1H
+         QVSeTUPD1cHXbLH6Y/51Ub3bFmMz1fWshYdi5shSOlZbBBDUmTWdIQtlm4Uy48F5gv0t
+         r29zuSZBQsCsDnRVZFz6WvF+3pquKKlE8iD62vKcoHsrvICMC85iNx2rWc8nu5BcpHa7
+         mV1ztcJsd2vumcILtnxfK3JmrF0JOdBoQqhuZebU7tpBTc7V4R9uBg8V2wBHGMIQzeEp
+         egpg==
+X-Gm-Message-State: AC+VfDwN+FlOxqmznFpqDS5tXmViNqJd5dp2j78hXMDFTosGeHGQF5bJ
+        TpjHCAmRSB9/gl4fOcbZ+lLQLyiwai0sLogvtIrhKA==
+X-Google-Smtp-Source: ACHHUZ5wVVYDtqJ5trI6DNyB8qj2EZ7BVAkHoxu4beE3+B6QVToBpQVNkBOU5iMCHzz6QKlBPr2CjpnRvb6HVnmmovs=
+X-Received: by 2002:a67:f5d2:0:b0:434:7757:f025 with SMTP id
+ t18-20020a67f5d2000000b004347757f025mr3355323vso.0.1684829388693; Tue, 23 May
+ 2023 01:09:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230520174735.364367-1-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20230520174735.364367-1-u.kleine-koenig@pengutronix.de>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 23 May 2023 10:09:37 +0200
+Message-ID: <CAMRc=McchJfNfcqW6e03JWXPv1wMkJcZ1GrvjVay5xCopD8JWg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: Switch i2c drivers back to use .probe()
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, kernel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add more detail to Contributing to make it easier for new users to
-contribute.
+On Sat, May 20, 2023 at 7:47=E2=80=AFPM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> After commit b8a1a4cd5a98 ("i2c: Provide a temporary .probe_new()
+> call-back type"), all drivers being converted to .probe_new() and then
+> 03c835f498b5 ("i2c: Switch .probe() to not take an id parameter") convert
+> back to (the new) .probe() to be able to eventually drop .probe_new() fro=
+m
+> struct i2c_driver.
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
 
-Signed-off-by: Kent Gibson <warthog618@gmail.com>
----
-Changes v1 -> v2:
- - add more info on the mailing list and archive.
+Applied, thanks!
 
- README | 24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
-
-diff --git a/README b/README
-index b71739e..85b6300 100644
---- a/README
-+++ b/README
-@@ -275,8 +275,26 @@ were selected and help2man is available in the system.
- CONTRIBUTING
- ------------
- 
--Contributions are welcome - please send patches and bug reports to
--linux-gpio@vger.kernel.org (add the [libgpiod] prefix to the e-mail subject
--line) and stick to the linux kernel coding style when submitting new code.
-+Contributions are welcome - please send questions, patches and bug reports
-+to the linux-gpio mailing list[2] by e-mailing to linux-gpio@vger.kernel.org
-+(add the [libgpiod] prefix to the e-mail subject line).
-+Note that the mailing list quietly drops HTML formatted e-mail, so be sure
-+to send plain text[3].
-+
-+Code submissions should stick to the linux kernel coding style[4] and
-+follow the kernel patch submission process[5] as applied to the libgpiod
-+source tree.
-+
-+The mailing list archive[6] contains all the historical mails to the list,
-+and is the place to check to ensure your e-mail has been received.
-+Search for "libgpiod" to filter the list down to relevant messages.
-+Those also provide examples of the expected formatting.
-+Allow some time for your e-mail to propagate to the list before retrying,
-+particularly if there are no e-mails in the list more recent than yours.
- 
- [1] https://github.com/bats-core/bats-core
-+[2] http://vger.kernel.org/vger-lists.html#linux-gpio
-+[3] https://docs.kernel.org/process/email-clients.html
-+[4] https://docs.kernel.org/process/coding-style.html
-+[5] https://docs.kernel.org/process/submitting-patches.html
-+[6] https://lore.kernel.org/linux-gpio/
--- 
-2.40.1
-
+Bartosz
