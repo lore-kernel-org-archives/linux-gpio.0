@@ -2,51 +2,71 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E4DC77B7E
-	for <linux-gpio@archiver.kernel.org>; Fri, 26 May 2023 02:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 351FFC77B7A
+	for <linux-gpio@archiver.kernel.org>; Fri, 26 May 2023 04:14:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232539AbjEZC6m (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 25 May 2023 22:58:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36224 "EHLO
+        id S229625AbjEZEOI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 26 May 2023 00:14:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229631AbjEZC6l (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 25 May 2023 22:58:41 -0400
-Received: from m12.mail.163.com (m12.mail.163.com [220.181.12.215])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 618709C;
-        Thu, 25 May 2023 19:58:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=BtQtD
-        QDNBc1rLN9VOsByZob5obbadHZQLbYhv5fqn90=; b=LQ5+5ltqbXpXc+gewuRff
-        8f1UqjmUtTXh0Jwfp8ZfmQzz2K47Fe3ztSEL/leHE5uCoZ8vUDTL2jJfSftGe4KB
-        x9JGffGRaAEYQp4QPE4RMBmhAtTyLLjmGXn/s3yaGlnBhafowYtOrXxZu18hk6Ha
-        eWHDKID8AA1ThKzzGNcPu4=
-Received: from localhost.localdomain (unknown [39.144.137.221])
-        by zwqz-smtp-mta-g0-4 (Coremail) with SMTP id _____wCnVm4ZIHBkyhCDAg--.50904S2;
-        Fri, 26 May 2023 10:57:30 +0800 (CST)
-From:   xingtong_wu@163.com
-To:     linus.walleij@linaro.org, brgl@bgdev.pl,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     xingtong.wu@siemens.com, henning.schild@siemens.com
-Subject: [PATCH 0/1] gpio-f7188x: fix base values conflicts with other gpio pins
-Date:   Tue, 30 Dec 2042 21:08:10 +0800
-Message-Id: <20421230130811.2542-1-xingtong_wu@163.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S229479AbjEZEOH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 May 2023 00:14:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2373C12F;
+        Thu, 25 May 2023 21:14:06 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ABE4864AFA;
+        Fri, 26 May 2023 04:14:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88201C433EF;
+        Fri, 26 May 2023 04:14:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685074445;
+        bh=XQQ+kgqkZ6yxlcPNw2kRtmV+gbrNBEpPhA9H44tfW8c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=P2NRcnEuC+CctA2+4Yluv5ThpN/mAKyz1+OT7psXtE3fIW0NkkeC54/mWPyuGYdzH
+         qOq8kCoM3q1Ljl6bqNy/a+uplX98WLSWfN/THyStwmOK0DWui25PMhSPoRqbrf6CV9
+         OP8j1ZkisGbrIMWN3k/fSfMKhqexNMMY3MXN88kHScJ0ZxMq7EbFjXULa0gWFrlsmL
+         llEbhvgWCMqi5m85lkPDnxXLOiRU3ux4mhiFZ1oFf/4zvPqaoM8WVm4qCC1YEWKLpB
+         Dt5CVtpGGPk7o1CvI45f+axCjVJAectLut93EnpPogJrHYrE7/Qq+ZhAxnRZO30/rH
+         nvwDlhGk3JIXQ==
+Date:   Thu, 25 May 2023 21:14:03 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Jiawen Wu <jiawenwu@trustnetic.com>
+Cc:     netdev@vger.kernel.org, jarkko.nikula@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
+        jsd@semihalf.com, Jose.Abreu@synopsys.com, andrew@lunn.ch,
+        hkallweit1@gmail.com, linux@armlinux.org.uk,
+        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+        mengyuanlou@net-swift.com
+Subject: Re: [PATCH net-next v9 8/9] net: txgbe: Implement phylink pcs
+Message-ID: <20230525211403.44b5f766@kernel.org>
+In-Reply-To: <20230524091722.522118-9-jiawenwu@trustnetic.com>
+References: <20230524091722.522118-1-jiawenwu@trustnetic.com>
+        <20230524091722.522118-9-jiawenwu@trustnetic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: _____wCnVm4ZIHBkyhCDAg--.50904S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUBjNtDUUUU
-X-Originating-IP: [39.144.137.221]
-X-CM-SenderInfo: p0lqw35rqjs4rx6rljoofrz/1tbiOwB70GC5lsNDawAAs0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Switch pin base from static to automatic allocation to avoid
-conflicts and align with other gpio chip drivers
+On Wed, 24 May 2023 17:17:21 +0800 Jiawen Wu wrote:
+> +	ret = devm_mdiobus_register(&pdev->dev, mii_bus);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mdiodev = mdio_device_create(mii_bus, 0);
+> +	if (IS_ERR(mdiodev))
+> +		return PTR_ERR(mdiodev);
+> +
+> +	xpcs = xpcs_create(mdiodev, PHY_INTERFACE_MODE_10GBASER);
+> +	if (IS_ERR(xpcs)) {
+> +		mdio_device_free(mdiodev);
+> +		return PTR_ERR(xpcs);
+> +	}
 
-Based on:
- [PATCH v2 1/1] gpio-f7188x: fix chip name and pin count on Nuvoton chip
- which was recently pulled by maintainer
-
-
+How does the mdiodev get destroyed in case of success?
+Seems like either freeing it in case of xpcs error is unnecessary 
+or it needs to also be freed when xpcs is destroyed?
