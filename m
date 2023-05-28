@@ -2,102 +2,151 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E22C7EE29
-	for <linux-gpio@archiver.kernel.org>; Sun, 28 May 2023 13:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B647CC77B7C
+	for <linux-gpio@archiver.kernel.org>; Sun, 28 May 2023 14:21:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229626AbjE1N4V (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 28 May 2023 09:56:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57054 "EHLO
+        id S229658AbjE1OVi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 28 May 2023 10:21:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229614AbjE1N4K (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 28 May 2023 09:56:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1187CB8;
-        Sun, 28 May 2023 06:56:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9AC1C60B09;
-        Sun, 28 May 2023 13:56:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CC10C433D2;
-        Sun, 28 May 2023 13:56:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1685282168;
-        bh=JT5y3bSqnJBtSO4Uhlu1HHm2FPspPmwBPjGg1IWW6HM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K4y0eD/VPD77aBerNR+9ZF+cx0epBIPX8NwlH8igpBL9qDhWgjSIyI3ae2tj8j4uh
-         RgqhQqhchTnEWgThs4DdC7zhTNmT30XImMiltRve4tVAs+AEZ0b1sAoyoHEihZwrrb
-         AOWj4Kfa/fHwwkipSW4mP5AsFFbikBAgz1q8p4rQ=
-Date:   Sun, 28 May 2023 12:56:31 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Hugo Villeneuve <hugo@hugovil.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, jirislaby@kernel.org, jringle@gridpoint.com,
-        tomasz.mon@camlingroup.com, l.perczak@camlintechnologies.com,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Subject: Re: [PATCH v3 11/11] serial: sc16is7xx: add dump registers function
-Message-ID: <2023052837-entree-broken-d7dd@gregkh>
-References: <20230525040324.3773741-1-hugo@hugovil.com>
- <20230525040324.3773741-12-hugo@hugovil.com>
+        with ESMTP id S229559AbjE1OVg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 28 May 2023 10:21:36 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F3EEC7;
+        Sun, 28 May 2023 07:21:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1685283692; x=1716819692;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ZTkM6DTM94DRGqgS0Z6YEGqsq7Toa2hLcyOuCPilzRU=;
+  b=E9jdJlVRUlgZcuqYvLWva6ubop3k2zh5sM5ynuri/8LSC9gVUEhS6y7r
+   hQkmGGmOQPNVVlR7pjRtKGPdEr0v0mVEchwpCZGw6zbGoXXbcTXqMBrU+
+   F+nyO8T9dyJY+IIduhD3/5d9Rq4jZ4x9Nq73N4ArzACtMhQQfiE4Awex2
+   M1TKKS6cr0H9qrGdES8sXEd+LwW4Ge2X4txDnt0PXznNxqANdOZl8Ayh3
+   HeVn9FC492bgLT3xD6ULIcpBpfKVwX4OwUSc79EwKAGpUpeR+XRgi1T00
+   7CyKMqrT3qtvigT5qseNzDBVgsNrQXLaziZcwKuJgF0CNZ2RDRcdMpTW/
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10724"; a="357767880"
+X-IronPort-AV: E=Sophos;i="6.00,198,1681196400"; 
+   d="scan'208";a="357767880"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2023 07:21:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10724"; a="1035915909"
+X-IronPort-AV: E=Sophos;i="6.00,198,1681196400"; 
+   d="scan'208";a="1035915909"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 28 May 2023 07:21:27 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id B4FEA24F; Sun, 28 May 2023 17:21:31 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc-tw-discuss@lists.sourceforge.net
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
+        Yanteng Si <siyanteng@loongson.cn>,
+        Hu Haowen <src.res@email.cn>
+Subject: [PATCH v1 1/1] gpiolib: Kill unused GPIOF_EXPORT and Co
+Date:   Sun, 28 May 2023 17:21:27 +0300
+Message-Id: <20230528142127.37330-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230525040324.3773741-12-hugo@hugovil.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, May 25, 2023 at 12:03:25AM -0400, Hugo Villeneuve wrote:
-> From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> 
-> With this driver, it is very hard to debug the registers using
-> the /sys/kernel/debug/regmap interface.
-> 
-> The main reason is that bits 0 and 1 of the register address
-> correspond to the channels bits, so the register address itself starts
-> at bit 2, so we must 'mentally' shift each register address by 2 bits
-> to get its offset.
-> 
-> Also, only channels 0 and 1 are supported, so combinations of bits
-> 0 and 1 being 10b and 11b are invalid, and the display of these
-> registers is useless.
-> 
-> For example:
-> 
-> cat /sys/kernel/debug/regmap/spi0.0/registers
-> 04: 10 -> Port 0, register offset 1
-> 05: 10 -> Port 1, register offset 1
-> 06: 00 -> Port 2, register offset 1 -> invalid
-> 07: 00 -> port 3, register offset 1 -> invalid
-> ...
-> 
-> Add a debug module parameter to call a custom dump function for each
-> port registers after the probe phase to help debug.
-> 
-> Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> ---
->  drivers/tty/serial/sc16is7xx.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-> index 03d00b144304..693b6cc371f8 100644
-> --- a/drivers/tty/serial/sc16is7xx.c
-> +++ b/drivers/tty/serial/sc16is7xx.c
-> @@ -347,6 +347,10 @@ struct sc16is7xx_port {
->  	struct sc16is7xx_one		p[];
->  };
->  
-> +static bool debug;
-> +module_param(debug, bool, 0644);
-> +MODULE_PARM_DESC(debug, "enable/disable debug messages");
+There is no use of the  GPIOF_EXPORT in the kernel. Kill it for good.
 
-Sorry, but no, use the normal dynamic debugging logic that the whole
-rest of the kernel uses.  Do not add random per-driver module parameters
-like this, that would be a regression from the existing infrastructure
-that we have in place already.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ Documentation/driver-api/gpio/legacy.rst                    | 3 ---
+ Documentation/translations/zh_CN/driver-api/gpio/legacy.rst | 3 ---
+ Documentation/translations/zh_TW/gpio.txt                   | 3 ---
+ drivers/gpio/gpiolib-legacy.c                               | 6 ------
+ include/linux/gpio.h                                        | 5 -----
+ 5 files changed, 20 deletions(-)
 
-thanks,
+diff --git a/Documentation/driver-api/gpio/legacy.rst b/Documentation/driver-api/gpio/legacy.rst
+index 78372853c6d4..c5f98a78499f 100644
+--- a/Documentation/driver-api/gpio/legacy.rst
++++ b/Documentation/driver-api/gpio/legacy.rst
+@@ -322,9 +322,6 @@ where 'flags' is currently defined to specify the following properties:
+ 	* GPIOF_OPEN_DRAIN	- gpio pin is open drain type.
+ 	* GPIOF_OPEN_SOURCE	- gpio pin is open source type.
+ 
+-	* GPIOF_EXPORT_DIR_FIXED	- export gpio to sysfs, keep direction
+-	* GPIOF_EXPORT_DIR_CHANGEABLE	- also export, allow changing direction
+-
+ since GPIOF_INIT_* are only valid when configured as output, so group valid
+ combinations as:
+ 
+diff --git a/Documentation/translations/zh_CN/driver-api/gpio/legacy.rst b/Documentation/translations/zh_CN/driver-api/gpio/legacy.rst
+index 84ce2322fdba..8720970393fb 100644
+--- a/Documentation/translations/zh_CN/driver-api/gpio/legacy.rst
++++ b/Documentation/translations/zh_CN/driver-api/gpio/legacy.rst
+@@ -297,9 +297,6 @@ gpio_request()前将这类细节配置好，例如使用引脚控制子系统的
+ 	* GPIOF_OPEN_DRAIN	- gpio引脚为开漏信号
+ 	* GPIOF_OPEN_SOURCE	- gpio引脚为源极开路信号
+ 
+-	* GPIOF_EXPORT_DIR_FIXED	- 将 gpio 导出到 sysfs，并保持方向
+-	* GPIOF_EXPORT_DIR_CHANGEABLE	- 同样是导出, 但允许改变方向
+-
+ 因为 GPIOF_INIT_* 仅有在配置为输出的时候才存在,所以有效的组合为:
+ 
+ 	* GPIOF_IN		- 配置为输入
+diff --git a/Documentation/translations/zh_TW/gpio.txt b/Documentation/translations/zh_TW/gpio.txt
+index 62e560ffe628..e0b96d897fa7 100644
+--- a/Documentation/translations/zh_TW/gpio.txt
++++ b/Documentation/translations/zh_TW/gpio.txt
+@@ -303,9 +303,6 @@ gpio_request()前將這類細節配置好，例如使用 pinctrl 子系統的映
+ 	* GPIOF_OPEN_DRAIN	- gpio引腳爲開漏信號
+ 	* GPIOF_OPEN_SOURCE	- gpio引腳爲源極開路信號
+ 
+-	* GPIOF_EXPORT_DIR_FIXED	- 將 gpio 導出到 sysfs，並保持方向
+-	* GPIOF_EXPORT_DIR_CHANGEABLE	- 同樣是導出, 但允許改變方向
+-
+ 因爲 GPIOF_INIT_* 僅有在配置爲輸出的時候才存在,所以有效的組合爲:
+ 
+ 	* GPIOF_IN		- 配置爲輸入
+diff --git a/drivers/gpio/gpiolib-legacy.c b/drivers/gpio/gpiolib-legacy.c
+index 028f7f504209..969f737012f6 100644
+--- a/drivers/gpio/gpiolib-legacy.c
++++ b/drivers/gpio/gpiolib-legacy.c
+@@ -50,12 +50,6 @@ int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
+ 	if (err)
+ 		goto free_gpio;
+ 
+-	if (flags & GPIOF_EXPORT) {
+-		err = gpiod_export(desc, flags & GPIOF_EXPORT_CHANGEABLE);
+-		if (err)
+-			goto free_gpio;
+-	}
+-
+ 	return 0;
+ 
+  free_gpio:
+diff --git a/include/linux/gpio.h b/include/linux/gpio.h
+index 8528353e073b..86963a00b018 100644
+--- a/include/linux/gpio.h
++++ b/include/linux/gpio.h
+@@ -38,11 +38,6 @@ struct device;
+ /* Gpio pin is open source */
+ #define GPIOF_OPEN_SOURCE	(1 << 4)
+ 
+-#define GPIOF_EXPORT		(1 << 5)
+-#define GPIOF_EXPORT_CHANGEABLE	(1 << 6)
+-#define GPIOF_EXPORT_DIR_FIXED	(GPIOF_EXPORT)
+-#define GPIOF_EXPORT_DIR_CHANGEABLE (GPIOF_EXPORT | GPIOF_EXPORT_CHANGEABLE)
+-
+ /**
+  * struct gpio - a structure describing a GPIO with configuration
+  * @gpio:	the GPIO number
+-- 
+2.40.0.1.gaa8946217a0b
 
-greg k-h
