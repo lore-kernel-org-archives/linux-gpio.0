@@ -2,99 +2,156 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 544FEC77B7A
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 May 2023 15:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC27C7EE2C
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 May 2023 15:37:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230353AbjE3PUF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 May 2023 11:20:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51300 "EHLO
+        id S230351AbjE3PhI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 May 2023 11:37:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229697AbjE3PUD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2023 11:20:03 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C312EC7
-        for <linux-gpio@vger.kernel.org>; Tue, 30 May 2023 08:20:02 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q418d-0007zm-KT; Tue, 30 May 2023 17:19:55 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q418c-003uGX-It; Tue, 30 May 2023 17:19:54 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q418b-009XZl-Lk; Tue, 30 May 2023 17:19:53 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        kernel@pengutronix.de, Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH v2 0/2] gpio: introduce hog properties with less ambiguity
-Date:   Tue, 30 May 2023 17:19:44 +0200
-Message-Id: <20230530151946.2317748-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1658; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=wiI74e46ToWHZc/6ArbrTrYVH4iGdfuKtXso1nG5FLs=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkdhQA++q78TcFbOUXN57P/8g0FuP9WF5sfuwzZ OEauF+GOLaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZHYUAAAKCRCPgPtYfRL+ TvX+B/913rRAOd36p3+tdaHmShzFshqd2HddX4VTqsprTW8wSjA4926VYIZfevmypYshVDt0kFx j0ZHuCKVjix64ioUR/xqigdOddTzMbt47eBlap1POLJ+8FgmTNyiFnbtzaTkziVnYms2V0WUm59 xYNbkmynuHH8OtW5UvtLijmsAu48ahEv4PfM15hHWQrxJeQHc/F/oiMmbGv7onTvqp3JCoYpTSb Psf9Yp8NNPiIELRt+skmO2tU9PGZhnYWZGwd1c0HYDWP6Fq7wXRYUm1WP49plEQKWWik9phmQgL PEvFu5tsGVQ+j5qzfl1HXw7v2RpxZTcX4Xb6NfjFjC6xL16t
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+        with ESMTP id S229524AbjE3PhH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2023 11:37:07 -0400
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBD7CC5;
+        Tue, 30 May 2023 08:37:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+        ; s=x; h=Subject:Content-Transfer-Encoding:Content-Type:Mime-Version:
+        References:In-Reply-To:Message-Id:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=7NYITIz6db6snx2MdjRgFoeMdJ74f0BhIRWjC9Mux08=; b=SQ6vmvCfXmyQcAkV4ntcK4044j
+        HWy6/JadIzeVstvBgVCgievGqOjYv6V3ZcaNoD/VFCwH8iQ5sXzBFciehla1WnBLQkVhaMGXHuR3W
+        HFYfJdyJcWst7NePb+JKsnmYGLHHRe0et5XYn6AY1L+6h2QcNfLwU7TwqnH6/Yfztae0=;
+Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:39366 helo=debian-acer)
+        by mail.hugovil.com with esmtpa (Exim 4.92)
+        (envelope-from <hugo@hugovil.com>)
+        id 1q41P0-0006ul-6l; Tue, 30 May 2023 11:36:50 -0400
+Date:   Tue, 30 May 2023 11:36:49 -0400
+From:   Hugo Villeneuve <hugo@hugovil.com>
+To:     andy.shevchenko@gmail.com
+Cc:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        jirislaby@kernel.org, jringle@gridpoint.com,
+        l.perczak@camlintechnologies.com, tomasz.mon@camlingroup.com,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Message-Id: <20230530113649.73f28b9f6ba91f17ace1e12f@hugovil.com>
+In-Reply-To: <ZHUpWQafRPHW1RJQ@surfacebook>
+References: <20230529140711.896830-1-hugo@hugovil.com>
+        <20230529140711.896830-8-hugo@hugovil.com>
+        <ZHUpWQafRPHW1RJQ@surfacebook>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 184.161.19.61
+X-SA-Exim-Mail-From: hugo@hugovil.com
+Subject: Re: [PATCH v4 7/9] serial: sc16is7xx: fix regression with GPIO
+ configuration
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+On Tue, 30 May 2023 01:38:17 +0300
+andy.shevchenko@gmail.com wrote:
 
-this is another approach after
-https://lore.kernel.org/linux-gpio/20210503210526.43455-1-u.kleine-koenig@pengutronix.de
-two years ago. I switched back to "active" and "inactive" from
-"asserted" and "deasserted". The poll about the naming is ambigous, but
-I think with a slight preference of active/inactive over
-asserted/deasserted (with my unbiased self preferring active/inactive,
-too :-)
-
-Rob Herring acked patch #1 and Linus Walleij acked patch #2 of the
-asserted/deasserted variant back then, I dropped these as the change is
-too relevant IMHO.
-
-In the previous post I had some inconsistencies that should be gone now.
-
-And Andy wrote:
-> I like the idea (with active-inactive terms), but...
+> Mon, May 29, 2023 at 10:07:09AM -0400, Hugo Villeneuve kirjoitti:
+> > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+> > 
+> > Commit 679875d1d880 ("sc16is7xx: Separate GPIOs from modem control lines")
+> > and commit 21144bab4f11 ("sc16is7xx: Handle modem status lines")
+> > changed the function of the GPIOs pins to act as modem control
+> > lines without any possibility of selecting GPIO function.
+> > 
+> > As a consequence, applications that depends on GPIO lines configured
+> > by default as GPIO pins no longer work as expected.
+> > 
+> > Also, the change to select modem control lines function was done only
+> > for channel A of dual UART variants (752/762). This was not documented
+> > in the log message.
+> > 
+> > Allow to specify GPIO or modem control line function in the device
+> > tree, and for each of the ports (A or B).
+> > 
+> > Do so by using the new device-tree property named
+> > "modem-control-line-ports" (property added in separate patch).
+> > 
+> > When registering GPIO chip controller, mask-out GPIO pins declared as
+> > modem control lines according to this new "modem-control-line-ports"
+> > DT property.
+> > 
+> > Boards that need to have GPIOS configured as modem control lines
+> > should add that property to their device tree. Here is a list of
+> > boards using the sc16is7xx driver in their device tree and that may
+> > need to be modified:
+> >     arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts
+> >     mips/boot/dts/ingenic/cu1830-neo.dts
+> >     mips/boot/dts/ingenic/cu1000-neo.dts
 > 
-> It’s a half baked solution. Please use fwnode to cover all possible
-> providers.
+> ...
+> 
+> > Fixes: 679875d1d880 ("sc16is7xx: Separate GPIOs from modem control lines")
+> > Fixes: 21144bab4f11 ("sc16is7xx: Handle modem status lines")
+> 
+> Don't forget to refer to the dependency patches form this series.
+> (I forgot how it should be done, IIRC the documentation about stable kernel
+> patches can shed a light on this.)
 
-which I didn't address because I want to change what is currently
-supported and not introduce new support. Adding fwnode is orthogonal to
-this renaming. I didn't find any other more general implementation that
-would affect more than "of" for output-high and output-low. Please tell me
-if I missed something.
-
-Best regards
-Uwe
-
-Uwe Kleine-König (2):
-  dt-bindings: gpio: introduce hog properties with less ambiguity
-  gpio: use "active" and "inactive" instead of "high" and "low" for output hogs
-
- Documentation/devicetree/bindings/gpio/gpio.txt | 16 +++++++++++-----
- drivers/gpio/gpiolib-of.c                       | 10 ++++++++--
- include/linux/gpio/consumer.h                   | 14 ++++++++++----
- 3 files changed, 29 insertions(+), 11 deletions(-)
+Hi,
+I will look into it.
 
 
-base-commit: 8c33787278ca8db73ad7d23f932c8c39b9f6e543
--- 
-2.39.2
+> ...
+> 
+> > +	switch (mctrl_mask) {
+> > +	case 0:
+> > +		s->gpio_valid_mask = 0xFF;
+> 
+> GENMASK()
+> 
+> > +		break;
+> > +	case SC16IS7XX_IOCONTROL_MODEM_A_BIT:
+> > +		s->gpio_valid_mask = 0x0F;
+> 
+> GENMASK()
+> 
+> > +		break;
+> > +	case SC16IS7XX_IOCONTROL_MODEM_B_BIT:
+> > +		s->gpio_valid_mask = 0xF0;
+> 
+> GENMASK()
 
+Ok done, altough even if in general I like the bit manipulation macros because they make the code easier to read/understand, I find it less obvious by using GENMASK in this case IMMO.
+
+
+> > +		break;
+> > +	default:
+> > +		break;
+> > +	}
+> 
+> ...
+> 
+> > +		of_property_for_each_u32(dev->of_node, "nxp,modem-control-line-ports",
+> > +					 prop, p, u) {
+> > +			if (u >= devtype->nr_uart)
+> > +				continue;
+> > +
+> > +			/* Use GPIO lines as modem control lines */
+> > +			if (u == 0)
+> > +				mctrl_mask |= SC16IS7XX_IOCONTROL_MODEM_A_BIT;
+> > +			else if (u == 1)
+> > +				mctrl_mask |= SC16IS7XX_IOCONTROL_MODEM_B_BIT;
+> > +		}
+> 
+> Can we use device properties, please?
+
+I have converted this section to use device_property_count_u32() and device_property_read_u32_array(). Is that Ok?
+
+> If you think about backporting to the earlier kernels (w/o properties in use in
+> this driver), perhaps an additional followup for that?
+
+I am not sure what you mean by this?
