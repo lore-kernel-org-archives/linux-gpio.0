@@ -2,100 +2,111 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 718FAC77B7A
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 May 2023 06:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F126C7EE31
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 May 2023 08:00:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229728AbjE3G1y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 May 2023 02:27:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56598 "EHLO
+        id S229473AbjE3IAa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 May 2023 04:00:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjE3G1x (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2023 02:27:53 -0400
-Received: from m12.mail.163.com (m12.mail.163.com [220.181.12.214])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3FD3DDC;
-        Mon, 29 May 2023 23:27:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-        Content-Type; bh=b7rmr1U6NpOP1rc+VsCmDNiHKzP9/EyA9LTy90O+r9w=;
-        b=l0nWpOUULxiYEK3NQkUQn4EL6e8tYHjOqojhWxpc91PZbplcGzSq/EwSKxzOPX
-        yomRrGSZnPziXmY3gavCJx2D3025DxwVFCNCz6xVurv0VregC364c0pHKJ6Gxb/Z
-        YGGaHmpMQa8725fixutlyJKt4kVe/4lq13vyxC3CJl158=
-Received: from [172.20.10.4] (unknown [39.144.137.62])
-        by zwqz-smtp-mta-g2-4 (Coremail) with SMTP id _____wCHRKI9l3VkwIjVAw--.26122S3;
-        Tue, 30 May 2023 14:27:11 +0800 (CST)
-Message-ID: <5428dcc3-bcaf-2fff-59db-62d3b3b45d17@163.com>
-Date:   Tue, 30 May 2023 14:27:09 +0800
+        with ESMTP id S229829AbjE3IA3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2023 04:00:29 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AA2EC7
+        for <linux-gpio@vger.kernel.org>; Tue, 30 May 2023 01:00:27 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-3063433fa66so2601190f8f.3
+        for <linux-gpio@vger.kernel.org>; Tue, 30 May 2023 01:00:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685433626; x=1688025626;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Oi5cyxzC3+NP4WFp104cxanaFNMsvwaBhA2yhJz87ao=;
+        b=FKNBr7ODLDGPyplbcdDyuqyYIbMDFMB91lgmUBE8Z8fIM1vdnWCRxK5t+4zSDAxOQe
+         +GysBXe8MItNFn54hUSvIyuORrnaVllTUP7SOPmdcJUz0AbYylXIdcOWX4qR0j+bunS+
+         DivOm121O8Cvb3kmjaeNcXzq1MgfL2Cm7AbasSRaO4rqhBr3+tUhWjO6ckUKBkbqynL2
+         +HQjTOXJYiPJzm9Q0saSZlOlObvXdAYwp9hHnHQoEBcDLKgdIkqXJeotu2nh0MkdTiUq
+         kQJKxflt0RMy21IV+jrA0l+uTuT0r8ylU+iB3IY9md8yKxjZOf9Vk0X+M9WFeS6RjJLB
+         2mAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685433626; x=1688025626;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Oi5cyxzC3+NP4WFp104cxanaFNMsvwaBhA2yhJz87ao=;
+        b=KiiHpfBGjVxSkSoQCFDjI8YYdlWiw/fhzzZamJOgOQ/qsnO9CnLj/hLNUywTG3eZ0D
+         EF1yeGCficXoWOTZY7pyIhjcSxcoFgOhzyzbeCoVOirm8OAQp3AHU8dr6qRPZiqXAZXp
+         /ul4ZjogPSppdSvzwhUkwfF3Ntm/DZ0dlMI6TD6CO7GImhZSeVd4WTjgljlvw4okhoxr
+         N+FAAm52IjUe0HgcrDl2bNheCJAEDdTsCBsLonStWSeu3hHD2utck+GMCgAfrmrTaJ9a
+         tnazFABGDHUOM5gy/3zVzjF1L4swWzhVHtonuYcdRzogjnVcGep8I0MTJl9QUZrwcAH9
+         a9ug==
+X-Gm-Message-State: AC+VfDzniG2aly3d8dm7mxGBp8ypQNG9g2/UCsijbADPBgZd6ky2HwYz
+        QET/nzcBSW7V4dkQPSKRpmVXWw==
+X-Google-Smtp-Source: ACHHUZ4sElmQNI9IoZcrEoP6bqPGFkS1UWyATZlwF9CbxAMaju6OiXJvlndUkxmSYQZqW4deOzhaAw==
+X-Received: by 2002:a5d:678f:0:b0:309:4a5b:508f with SMTP id v15-20020a5d678f000000b003094a5b508fmr826416wru.24.1685433626057;
+        Tue, 30 May 2023 01:00:26 -0700 (PDT)
+Received: from [127.0.1.1] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id m6-20020a7bce06000000b003f6050d35c9sm16409978wmc.20.2023.05.30.01.00.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 May 2023 01:00:25 -0700 (PDT)
+From:   Jerome Neanne <jneanne@baylibre.com>
+Date:   Tue, 30 May 2023 10:00:00 +0200
+Subject: [PATCH v4 2/2] mfd: tps65219: Add gpio cell instance
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2 1/1] gpio-f7188x: fix base values conflicts with other
- gpio pins
-Content-Language: en-US
-To:     andy.shevchenko@gmail.com, simon.guinot@sequanux.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>, brgl@bgdev.pl,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        henning.schild@siemens.com, xingtong.wu@siemens.com
-References: <20230529025011.2806-1-xingtong_wu@163.com>
- <20230529025011.2806-2-xingtong_wu@163.com> <ZHSZ9cK78qc5QeZD@localhost>
- <CACRpkdbiRsJqxVZPNLvLPK-MzEhyjSBGffuaTgP7tt40pGGoRw@mail.gmail.com>
- <ZHSunJyh2AU1eb0H@localhost> <ZHUmHkbM-l_pRaY3@surfacebook>
-From:   "xingtong.wu" <xingtong_wu@163.com>
-In-Reply-To: <ZHUmHkbM-l_pRaY3@surfacebook>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: _____wCHRKI9l3VkwIjVAw--.26122S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uryUWF43Kw4DGFyxur48WFg_yoW8CF17pF
-        W7CF42yF4kt3Z3Krn2kF4jvFyYvFZrtFs8WF1Fkr4UZry5ua48Xr4I9w45uFy3Xw4fGw4a
-        yF4qg347G3ZrZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jlfOrUUUUU=
-X-Originating-IP: [39.144.137.62]
-X-CM-SenderInfo: p0lqw35rqjs4rx6rljoofrz/1tbiOwJ-0GC5lvAeEAAAsn
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230511-tps65219-add-gpio-support-v4-2-b5d6a764d722@baylibre.com>
+References: <20230511-tps65219-add-gpio-support-v4-0-b5d6a764d722@baylibre.com>
+In-Reply-To: <20230511-tps65219-add-gpio-support-v4-0-b5d6a764d722@baylibre.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Tony Lindgren <tony@atomide.com>, Lee Jones <lee@kernel.org>
+Cc:     khilman@baylibre.com, msp@baylibre.com, francesco@dolcini.it,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-omap@vger.kernel.org,
+        Jonathan Cormier <jcormier@criticallink.com>,
+        Jerome Neanne <jneanne@baylibre.com>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1685433622; l=1009;
+ i=jneanne@baylibre.com; s=20230511; h=from:subject:message-id;
+ bh=nMeCcxVhE7+un5EdrNfRU6JWVC4UNE7togljBBNu77I=;
+ b=CpMbAoke2LTSOlEvyBOPwWQ/t8EJB7RkrlhYL58Ne/IDVV+v7WO9zYk1NSLbdr9YicrxGsimz
+ r+eqMMZrvTbD7u+p+JvcHOis13q1EkFHBL6e9+RWoJSeiXecH2qcWjE
+X-Developer-Key: i=jneanne@baylibre.com; a=ed25519;
+ pk=5rvbqNoG+28jQjC9/50ToY7TgKWf9rJukuCI8b6jkUo=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2023/5/30 06:24, andy.shevchenko@gmail.com wrote:
-> Mon, May 29, 2023 at 03:54:36PM +0200, simon.guinot@sequanux.org kirjoitti:
->> On Mon, May 29, 2023 at 03:03:28PM +0200, Linus Walleij wrote:
->>> On Mon, May 29, 2023 at 2:27 PM <simon.guinot@sequanux.org> wrote:
->>>
->>>> It would be nice if a pin number found in the device datasheet could
->>>> still be converted into a Linux GPIO number by adding the base of the
->>>> first bank.
->>>
->>> We actively discourage this kind of mapping because of reasons stated
->>> in drivers/gpio/TODO: we want dynamic number allocation to be the
->>> norm.
->>
->> Sure but it would be nice to have a dynamic base applied to a controller
->> (and not to each chip of this controller), and to respect the interval
->> between the chips (as stated in the controllers datasheets).
-> 
-> What you want is against the architecture. To fix this, you might change
-> the architecture of the driver to have one chip for the controller, but
-> it's quite questionable change. Also how can you guarantee ordering of
-> the enumeration? You probably need to *disable* SMP on the boot time.
-> This will still be fragile as long as GPIO chip can be unbound at run
-> time. Order can be changed.
-> 
-> So, the patch is good and the correct way to go.
-> 
-> P.S. The root cause is that hardware engineers and documentation writers
-> do not consider their hardware in the multi-tasking, multi-user general
-> purpose operating system, such as Linux. I believe the ideal fix is to fix the
-> documentation (datasheet).
-> 
+tps65219 PMIC GPIOs are exposed in a standard way:
+gpiodetect
+gpiochip0 [tps65219-gpio] (3 lines)
 
-Hi,
+tps65219-gpios is incorrect cell name (plural):
+Changed to tps65219-gpio (singular)
 
-Thanks for your review.
+Co-developed-by: Jonathan Cormier <jcormier@criticallink.com>
+Signed-off-by: Jonathan Cormier <jcormier@criticallink.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Jerome Neanne <jneanne@baylibre.com>
+---
+ drivers/mfd/tps65219.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The direct reason of this patch is that when "modprobe gpio-f7188x",
-it conflicts with INT34C6. I met this issue on an older kernel, but
-could not remember which version exactly.
+diff --git a/drivers/mfd/tps65219.c b/drivers/mfd/tps65219.c
+index 0e402fda206b..e1d090ba4258 100644
+--- a/drivers/mfd/tps65219.c
++++ b/drivers/mfd/tps65219.c
+@@ -106,7 +106,7 @@ static const struct mfd_cell tps65219_cells[] = {
+ 		.resources = tps65219_regulator_resources,
+ 		.num_resources = ARRAY_SIZE(tps65219_regulator_resources),
+ 	},
+-	{ .name = "tps65219-gpios", },
++	{ .name = "tps65219-gpio", },
+ };
+ 
+ static const struct mfd_cell tps65219_pwrbutton_cell = {
 
-The error message is as the link below:
-https://elixir.bootlin.com/linux/v6.3.2/source/drivers/gpio/gpiolib.c#L798
-
-- XingTong Wu
+-- 
+2.34.1
 
