@@ -2,345 +2,107 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 868F4C7EE33
-	for <linux-gpio@archiver.kernel.org>; Tue, 30 May 2023 08:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD18C77B73
+	for <linux-gpio@archiver.kernel.org>; Tue, 30 May 2023 08:38:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229849AbjE3IAc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 30 May 2023 04:00:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52816 "EHLO
+        id S229739AbjE3Ii7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 30 May 2023 04:38:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229815AbjE3IAa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2023 04:00:30 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DF20F9
-        for <linux-gpio@vger.kernel.org>; Tue, 30 May 2023 01:00:26 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f623adec61so43102285e9.0
-        for <linux-gpio@vger.kernel.org>; Tue, 30 May 2023 01:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685433625; x=1688025625;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T89fO1iX8dooBAHqyAxjAzopLWomNCu3kMntxjnKti8=;
-        b=DiPCoeIM64Gd9saJ1HkPXbYkIomeQl5CiKgkBA4c0LZdBNWGpd1RNXtMfOc+F+v9lA
-         xXFsYZlE5f8L62iVTNeRaARGO3aW2iYsB8WEzDu/V+s+8N/qE6EFmuKmsCCS2Y13Y1ZQ
-         XcTdx+4SoesTkJuCf9u7fpA6XcTc9LiteBusuYUie3BGtIKZJ5OzMYt8YZioc5arJNp1
-         vh9BCeIBRsnIHjKC2pOD7nUI06cckRN8bBynfrysnQvr0Okeq8lnuRYqBXwneuQhDkCf
-         n308sp8QqmJjjmKGXjbkLCMf8HjSyEp07ADJeBa8KY3EkPSvazz+Rg/xEWAruvFy7NHb
-         Gy7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685433625; x=1688025625;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T89fO1iX8dooBAHqyAxjAzopLWomNCu3kMntxjnKti8=;
-        b=fX4ZcrWGQeDUNIt70ND7tzmlL2YHh6HwIW653FGUnRs36eCD5BJQA+aTlafQxepChc
-         WuOOWO9U7/w9E1Gd0DnmB4v+nOJoNm0pKAlEUhfPRVityqolABMglxjTZZ9ZO/wrYHqY
-         Iofe4bJJuOBl/RjiwFVg1TX8jZ2CEWThglhNPPrf26ixi8OTNd2++gl40pwsK7Ip5XHb
-         t8YDVCg9nG/Vc/2Mu/9lmTa+v7VUC4IPf4Q6Oe8sdwF7CiEcZnxmsgH1XEQbspW6fjF6
-         RZddsVx1M2MmprTygdDPsJVBTzExfzZ9OJBjwS8U8vmr319+l81PkC9g4jY5WxlSSTPI
-         jMkA==
-X-Gm-Message-State: AC+VfDw4xETCAsbUxg9qK66kOG/C7W6xxXbT/keBwc/XBaN2rSf030C+
-        KUaSAzswhLaxHBzreIhFZDpO5w==
-X-Google-Smtp-Source: ACHHUZ5tYqYvpO5/2Mh84Xl9HPsN+wlX8jmrBi+E3rUSmNtLMVrzTytmxsTgkjZa4L7CaHGA/mgCqA==
-X-Received: by 2002:a1c:f710:0:b0:3f4:2bce:eef8 with SMTP id v16-20020a1cf710000000b003f42bceeef8mr926151wmh.16.1685433624958;
-        Tue, 30 May 2023 01:00:24 -0700 (PDT)
-Received: from [127.0.1.1] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id m6-20020a7bce06000000b003f6050d35c9sm16409978wmc.20.2023.05.30.01.00.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 May 2023 01:00:24 -0700 (PDT)
-From:   Jerome Neanne <jneanne@baylibre.com>
-Date:   Tue, 30 May 2023 09:59:59 +0200
-Subject: [PATCH v4 1/2] gpio: tps65219: add GPIO support for TPS65219 PMIC
+        with ESMTP id S229591AbjE3Ii5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2023 04:38:57 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C56FC9;
+        Tue, 30 May 2023 01:38:56 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34U8Ri1s011756;
+        Tue, 30 May 2023 10:38:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=6XRVWHAypnu32raoYPkLydBCpQf/QSqdlpI2jgGeJuM=;
+ b=DBIMMx4p7vAigngOucRzM3KQsG5V2Afxd+sxur5VrsCRnoUouWacwqtUPAuqGqLhori+
+ 8hjFtEaPLv4dHnRLT6mfnXoY3aKkhRBkVuM81MdaJoKiKHpjx8uR6eORwJdEUeykUWCh
+ ZmlKdQAV+x0q//GQTGYKzD1aPydi3EIQxlZYhtX5cb8iUX8SDM9eRJa00jQ7YNWbE8S6
+ /PdE2N6tEEhefOboTI50c+LwkEEu+1TfDal2Kg2SMoa6Gz9BT5+XiptWO+XlXh+Rh270
+ qyP8q6cdif2TYT9sUgezFixmSG9WybPXgGAFv+gr3oJHRzcjfGfSHT5qoV/OxmeCoVcv tw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qvsnnnx46-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 May 2023 10:38:34 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6266410002A;
+        Tue, 30 May 2023 10:38:31 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 39FF321683B;
+        Tue, 30 May 2023 10:38:31 +0200 (CEST)
+Received: from [10.201.21.93] (10.201.21.93) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Tue, 30 May
+ 2023 10:38:30 +0200
+Message-ID: <879b7689-5663-28b5-9431-2fdd243ffff2@foss.st.com>
+Date:   Tue, 30 May 2023 10:38:30 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 02/11] pinctrl: stm32: add stm32mp257 pinctrl support
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+CC:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>, <soc@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+References: <20230529162034.20481-1-alexandre.torgue@foss.st.com>
+ <20230529162034.20481-3-alexandre.torgue@foss.st.com>
+ <20230529-enrich-clammy-14b498baf09f@spud>
+From:   Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20230529-enrich-clammy-14b498baf09f@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230511-tps65219-add-gpio-support-v4-1-b5d6a764d722@baylibre.com>
-References: <20230511-tps65219-add-gpio-support-v4-0-b5d6a764d722@baylibre.com>
-In-Reply-To: <20230511-tps65219-add-gpio-support-v4-0-b5d6a764d722@baylibre.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Tony Lindgren <tony@atomide.com>, Lee Jones <lee@kernel.org>
-Cc:     khilman@baylibre.com, msp@baylibre.com, francesco@dolcini.it,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        Jonathan Cormier <jcormier@criticallink.com>,
-        Jerome Neanne <jneanne@baylibre.com>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1685433622; l=8728;
- i=jneanne@baylibre.com; s=20230511; h=from:subject:message-id;
- bh=8lkoF2Q6EcexrSLp/t/MhnTILTabGq5WU9fo1gYJj6U=;
- b=o6xvJEIXduMBNuzlMSbn/+ju+x0cpAqHGUOkn2bgKS0pRXudK1eTX321Mkh55Mw2NlOIZ6WwJ
- tiN4q176AJvB59LE0mPZYR+0wqI54SHOaSDs662Pg3OSZxnhOc9KlvI
-X-Developer-Key: i=jneanne@baylibre.com; a=ed25519;
- pk=5rvbqNoG+28jQjC9/50ToY7TgKWf9rJukuCI8b6jkUo=
+X-Originating-IP: [10.201.21.93]
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-30_05,2023-05-29_02,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add support for TPS65219 PMICs GPIO interface.
+Hi Conor
 
-3 GPIO pins:
-- GPIO0 only is IO but input mode reserved for MULTI_DEVICE_ENABLE usage
-- GPIO1 and GPIO2 are Output only and referred as GPO1 and GPO2 in spec
+On 5/29/23 20:04, Conor Dooley wrote:
+> On Mon, May 29, 2023 at 06:20:25PM +0200, Alexandre Torgue wrote:
+>> Add stm32mp257 pinctrl support.
+>> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.h b/drivers/pinctrl/stm32/pinctrl-stm32.h
+>> index e0c31c4c8bca..5e5de92ddd58 100644
+>> --- a/drivers/pinctrl/stm32/pinctrl-stm32.h
+>> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.h
+>> @@ -24,6 +24,9 @@
+>>   #define STM32MP_PKG_AB		BIT(1)
+>>   #define STM32MP_PKG_AC		BIT(2)
+>>   #define STM32MP_PKG_AD		BIT(3)
+>> +#define STM32MP_PKG_AI		BIT(8)
+>> +#define STM32MP_PKG_AK		BIT(10)
+>> +#define STM32MP_PKG_AL		BIT(11)
+> 
+> Mainly out of curiosity, why have you go duplicate defines for these?
 
-GPIO0 is statically configured as input or output prior to Linux boot.
-it is used for MULTI_DEVICE_ENABLE function.
-This setting is statically configured by NVM.
-GPIO0 can't be used as a generic GPIO (specification Table 8-34).
-It's either a GPO when MULTI_DEVICE_EN=0 or a GPI when MULTI_DEVICE_EN=1.
+Mainly to fit with available packages for various STM32 MPU. Currently 
+MP1 SoCs are available with packages AB/AC/AD and MP2 series with 
+AI/AK/AL but in the future we could have package AB/AC/AD/AI available 
+for a particular SoC and then I need to anticipate this case.
 
-Datasheet describes specific usage for non standard GPIO.
-Link: https://www.ti.com/lit/ds/symlink/tps65219.pdf
+Cheers
+Alex
 
-Co-developed-by: Jonathan Cormier <jcormier@criticallink.com>
-Signed-off-by: Jonathan Cormier <jcormier@criticallink.com>
-Signed-off-by: Jerome Neanne <jneanne@baylibre.com>
----
- MAINTAINERS                  |   1 +
- drivers/gpio/Kconfig         |  15 ++++
- drivers/gpio/Makefile        |   1 +
- drivers/gpio/gpio-tps65219.c | 181 +++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 198 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c0cde28c62c6..d912b7465e84 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15398,6 +15398,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git
- F:	arch/arm/configs/omap2plus_defconfig
- F:	arch/arm/mach-omap2/
- F:	drivers/bus/ti-sysc.c
-+F:	drivers/gpio/gpio-tps65219.c
- F:	drivers/i2c/busses/i2c-omap.c
- F:	drivers/irqchip/irq-omap-intc.c
- F:	drivers/mfd/*omap*.c
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 5521f060d58e..337803b3a022 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1440,6 +1440,21 @@ config GPIO_TPS65218
- 	  Select this option to enable GPIO driver for the TPS65218
- 	  chip family.
- 
-+config GPIO_TPS65219
-+	tristate "TPS65219 GPIO"
-+	depends on MFD_TPS65219
-+	default MFD_TPS65219
-+	help
-+	  Select this option to enable GPIO driver for the TPS65219 chip family.
-+	  GPIO0 is statically configured as input or output prior to Linux boot.
-+	  It is used for MULTI_DEVICE_ENABLE function.
-+	  This setting is statically configured by NVM.
-+	  GPIO0 can't be used as a generic GPIO.
-+	  It's either a GPO when MULTI_DEVICE_EN=0 or a GPI when MULTI_DEVICE_EN=1.
-+
-+	  This driver can also be built as a module.
-+	  If so, the module will be called gpio_tps65219.
-+
- config GPIO_TPS6586X
- 	bool "TPS6586X GPIO"
- 	depends on MFD_TPS6586X
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 20036af3acb1..7843b16f5d59 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -160,6 +160,7 @@ obj-$(CONFIG_GPIO_TN48M_CPLD)		+= gpio-tn48m.o
- obj-$(CONFIG_GPIO_TPIC2810)		+= gpio-tpic2810.o
- obj-$(CONFIG_GPIO_TPS65086)		+= gpio-tps65086.o
- obj-$(CONFIG_GPIO_TPS65218)		+= gpio-tps65218.o
-+obj-$(CONFIG_GPIO_TPS65219)		+= gpio-tps65219.o
- obj-$(CONFIG_GPIO_TPS6586X)		+= gpio-tps6586x.o
- obj-$(CONFIG_GPIO_TPS65910)		+= gpio-tps65910.o
- obj-$(CONFIG_GPIO_TPS65912)		+= gpio-tps65912.o
-diff --git a/drivers/gpio/gpio-tps65219.c b/drivers/gpio/gpio-tps65219.c
-new file mode 100644
-index 000000000000..0c6ba7021a26
---- /dev/null
-+++ b/drivers/gpio/gpio-tps65219.c
-@@ -0,0 +1,181 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * GPIO driver for TI TPS65219 PMICs
-+ *
-+ * Copyright (C) 2022 Texas Instruments Incorporated - http://www.ti.com/
-+ */
-+
-+#include <linux/bits.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/mfd/tps65219.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#define TPS65219_GPIO0_DIR_MASK		BIT(3)
-+#define TPS65219_GPIO0_OFFSET		2
-+#define TPS65219_GPIO0_IDX		0
-+#define TPS65219_GPIO_DIR_IN		1
-+#define TPS65219_GPIO_DIR_OUT		0
-+
-+struct tps65219_gpio {
-+	struct gpio_chip gpio_chip;
-+	struct tps65219 *tps;
-+};
-+
-+static int tps65219_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-+	int ret, val;
-+
-+	if (offset != TPS65219_GPIO0_IDX)
-+		return GPIO_LINE_DIRECTION_OUT;
-+
-+	ret = regmap_read(gpio->tps->regmap, TPS65219_REG_MFP_1_CONFIG, &val);
-+	if (ret)
-+		return ret;
-+
-+	return !!(val & TPS65219_GPIO0_DIR_MASK);
-+}
-+
-+static int tps65219_gpio_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-+	struct device *dev = gpio->tps->dev;
-+	int ret, val;
-+
-+	if (offset != TPS65219_GPIO0_IDX) {
-+		dev_err(dev, "GPIO%d is output only, cannot get\n", offset);
-+		return -EOPNOTSUPP;
-+	}
-+
-+	ret = regmap_read(gpio->tps->regmap, TPS65219_REG_MFP_CTRL, &val);
-+	if (ret)
-+		return ret;
-+
-+	ret = !!(val & BIT(TPS65219_MFP_GPIO_STATUS_MASK));
-+	dev_warn(dev, "GPIO%d = %d, MULTI_DEVICE_ENABLE, not a standard GPIO\n", offset, ret);
-+
-+	/* depends on NVM config return error if dir output else the GPIO0 status bit */
-+	if (tps65219_gpio_get_direction(gc, offset) == TPS65219_GPIO_DIR_OUT)
-+		return -EOPNOTSUPP;
-+
-+	return ret;
-+}
-+
-+static void tps65219_gpio_set(struct gpio_chip *gc, unsigned int offset, int value)
-+{
-+	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-+	struct device *dev = gpio->tps->dev;
-+	int v, mask, bit;
-+
-+	bit = (offset == TPS65219_GPIO0_IDX) ? TPS65219_GPIO0_OFFSET : offset - 1;
-+
-+	mask = BIT(bit);
-+	v = value ? mask : 0;
-+
-+	if (regmap_update_bits(gpio->tps->regmap, TPS65219_REG_GENERAL_CONFIG, mask, v))
-+		dev_err(dev, "GPIO%d, set to value %d failed.\n", offset, value);
-+}
-+
-+static int tps65219_gpio_change_direction(struct gpio_chip *gc, unsigned int offset,
-+					  unsigned int direction)
-+{
-+	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-+	struct device *dev = gpio->tps->dev;
-+
-+	/*
-+	 * Documentation is stating that GPIO0 direction must not be changed in Linux:
-+	 * Table 8-34. MFP_1_CONFIG(3): MULTI_DEVICE_ENABLE,
-+	 * Should only be changed in INITIALIZE state (prior to ON Request).
-+	 * Set statically by NVM, changing direction in application can cause a hang.
-+	 * Below can be used for test purpose only:
-+	 */
-+
-+	if (IS_ENABLED(CONFIG_DEBUG_GPIO)) {
-+		int ret = regmap_update_bits(gpio->tps->regmap, TPS65219_REG_MFP_1_CONFIG,
-+					     TPS65219_GPIO0_DIR_MASK, direction);
-+		if (ret) {
-+			dev_err(dev,
-+				"GPIO DEBUG enabled: Fail to change direction to %u for GPIO%d.\n",
-+				direction, offset);
-+			return ret;
-+		}
-+	}
-+
-+	dev_err(dev,
-+		"GPIO%d direction set by NVM, change to %u failed, not allowed by specification\n",
-+		 offset, direction);
-+
-+	return -EOPNOTSUPP;
-+}
-+
-+static int tps65219_gpio_direction_input(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-+	struct device *dev = gpio->tps->dev;
-+
-+	if (offset != TPS65219_GPIO0_IDX) {
-+		dev_err(dev, "GPIO%d is output only, cannot change to input\n", offset);
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (tps65219_gpio_get_direction(gc, offset) == TPS65219_GPIO_DIR_IN)
-+		return 0;
-+
-+	return tps65219_gpio_change_direction(gc, offset, TPS65219_GPIO_DIR_IN);
-+}
-+
-+static int tps65219_gpio_direction_output(struct gpio_chip *gc, unsigned int offset, int value)
-+{
-+	tps65219_gpio_set(gc, offset, value);
-+	if (offset != TPS65219_GPIO0_IDX)
-+		return 0;
-+
-+	if (tps65219_gpio_get_direction(gc, offset) == TPS65219_GPIO_DIR_OUT)
-+		return 0;
-+
-+	return tps65219_gpio_change_direction(gc, offset, TPS65219_GPIO_DIR_OUT);
-+}
-+
-+static const struct gpio_chip tps65219_template_chip = {
-+	.label			= "tps65219-gpio",
-+	.owner			= THIS_MODULE,
-+	.get_direction		= tps65219_gpio_get_direction,
-+	.direction_input	= tps65219_gpio_direction_input,
-+	.direction_output	= tps65219_gpio_direction_output,
-+	.get			= tps65219_gpio_get,
-+	.set			= tps65219_gpio_set,
-+	.base			= -1,
-+	.ngpio			= 3,
-+	.can_sleep		= true,
-+};
-+
-+static int tps65219_gpio_probe(struct platform_device *pdev)
-+{
-+	struct tps65219 *tps = dev_get_drvdata(pdev->dev.parent);
-+	struct tps65219_gpio *gpio;
-+
-+	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
-+	if (!gpio)
-+		return -ENOMEM;
-+
-+	gpio->tps = tps;
-+	gpio->gpio_chip = tps65219_template_chip;
-+	gpio->gpio_chip.parent = tps->dev;
-+
-+	return devm_gpiochip_add_data(&pdev->dev, &gpio->gpio_chip, gpio);
-+}
-+
-+static struct platform_driver tps65219_gpio_driver = {
-+	.driver = {
-+		.name = "tps65219-gpio",
-+	},
-+	.probe = tps65219_gpio_probe,
-+};
-+module_platform_driver(tps65219_gpio_driver);
-+
-+MODULE_ALIAS("platform:tps65219-gpio");
-+MODULE_AUTHOR("Jonathan Cormier <jcormier@criticallink.com>");
-+MODULE_DESCRIPTION("TPS65219 GPIO driver");
-+MODULE_LICENSE("GPL");
-
--- 
-2.34.1
+> 
+> Cheers,
+> Conor.
 
