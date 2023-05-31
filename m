@@ -2,42 +2,42 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCCEC7EE3A
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 May 2023 15:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D06BC83003
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 May 2023 15:23:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234486AbjEaPXv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 31 May 2023 11:23:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48264 "EHLO
+        id S234589AbjEaPXx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 31 May 2023 11:23:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231978AbjEaPXr (ORCPT
+        with ESMTP id S231536AbjEaPXr (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 May 2023 11:23:47 -0400
 Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9EDE124;
-        Wed, 31 May 2023 08:23:39 -0700 (PDT)
-Received: from pps.filterd (m0150241.ppops.net [127.0.0.1])
-        by mx0a-002e3701.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34VELxD3009600;
-        Wed, 31 May 2023 15:23:16 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5D0B12C;
+        Wed, 31 May 2023 08:23:43 -0700 (PDT)
+Received: from pps.filterd (m0150242.ppops.net [127.0.0.1])
+        by mx0a-002e3701.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34VE6miu013343;
+        Wed, 31 May 2023 15:23:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=pps0720;
- bh=jkoniqcaQ3QwA/dNTCAEkwMUccz2KwMfrVwhC5MWvFE=;
- b=e8DCK/1UjL4HAuY3VomQE+UxqKDfafSihfCkLwQRp6/bZKix+6xdakijyce28XLqQM6N
- QXq3vCo8tgTTMbNIpFi2/kjf/o3koNL3uz/JUIbBmkIlek0FtfKPnazaGzY/CVSUr7mp
- ppFmRc9gc7XwV9dyoEm/x5S2T2MJkWiDwmY7cQ3dn4bmhNc0VAhkeY3cTCEV9cHQxedQ
- LDmReM45XLmeEbzzs08gkSAN0eluWbQUvIxFDtx1fyGiNBgEJpaMI7jWUJ1zwhObQxpd
- nsZ1UmyC4Ld7t4A3gN3RZtT1cp2Wg2qPdo+dCvDiRWovPjeeczDsWR0Ko4lODJMSfxjQ 4Q== 
+ bh=CX8m3IafaZCWCyhKM430jhiPZ3NiZ8wGoz6WuA445Ls=;
+ b=ahP3adCDIxvbrd2017YbAXhKIx2NHwUbGZHRP8CTDlW/9NLPrd86Q3pIO34JUX612k/A
+ MqrPkzjGm8YPYLiZR06Mc5AehQeXPy0aBY9X6jGTbR0/snLiZKp35Suqu7oVxuRetNQ2
+ nbr33kEdhO/o6rHGLFKNvx+SAhGnflqgTQFu7fAEJ/ylNSpgV2K9ydkGQGUXdd1ZOHzN
+ U7IWseZ2XL+EHnDIYmUrHQQu88JL2cGqJ/taMHObpSnG6I1E1jJz2OKsugXtnY9fOB3Y
+ 3aMzFT6v6d9tbL0SaQpAQ7ss6i4r7/rf9clftiUQqMoSaGbdAXpgIyb4zIsYx8K66jYa 8A== 
 Received: from p1lg14879.it.hpe.com (p1lg14879.it.hpe.com [16.230.97.200])
-        by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 3qwne9stek-1
+        by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 3qx4qt2euy-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 31 May 2023 15:23:15 +0000
+        Wed, 31 May 2023 15:23:25 +0000
 Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by p1lg14879.it.hpe.com (Postfix) with ESMTPS id EC04514791;
-        Wed, 31 May 2023 15:23:14 +0000 (UTC)
+        by p1lg14879.it.hpe.com (Postfix) with ESMTPS id D2D0A130C9;
+        Wed, 31 May 2023 15:23:13 +0000 (UTC)
 Received: from hpe.com (unknown [16.231.227.36])
-        by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTP id 64CF9806B4C;
-        Wed, 31 May 2023 15:23:14 +0000 (UTC)
+        by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTP id 4D94B80BB23;
+        Wed, 31 May 2023 15:23:13 +0000 (UTC)
 From:   nick.hawkins@hpe.com
 To:     verdun@hpe.com, nick.hawkins@hpe.com, linus.walleij@linaro.org,
         brgl@bgdev.pl, robh+dt@kernel.org,
@@ -45,22 +45,22 @@ To:     verdun@hpe.com, nick.hawkins@hpe.com, linus.walleij@linaro.org,
         linux@roeck-us.net, andy.shevchenko@gmail.com,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: [PATCH v2 5/5] MAINTAINERS: hpe: Add GPIO
-Date:   Wed, 31 May 2023 10:19:18 -0500
-Message-Id: <20230531151918.105223-6-nick.hawkins@hpe.com>
+Subject: [PATCH v2 3/5] dt-bindings: hwmon: hpe,gxp-fanctrl: remove fn2 and pl regs
+Date:   Wed, 31 May 2023 10:19:16 -0500
+Message-Id: <20230531151918.105223-4-nick.hawkins@hpe.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230531151918.105223-1-nick.hawkins@hpe.com>
 References: <20230531151918.105223-1-nick.hawkins@hpe.com>
-X-Proofpoint-GUID: 2vS5v5J3RwbX9yq7goRn6V6fvxGKeCS3
-X-Proofpoint-ORIG-GUID: 2vS5v5J3RwbX9yq7goRn6V6fvxGKeCS3
+X-Proofpoint-GUID: _Y8_Z-6KBuduOcjSBagC6pmTjW5MknMG
+X-Proofpoint-ORIG-GUID: _Y8_Z-6KBuduOcjSBagC6pmTjW5MknMG
 X-HPE-SCL: -1
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
  definitions=2023-05-31_10,2023-05-31_03,2023-05-22_02
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 clxscore=1015 adultscore=0 spamscore=0 mlxlogscore=948
- priorityscore=1501 impostorscore=0 suspectscore=0 malwarescore=0
- phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ malwarescore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ mlxlogscore=999 impostorscore=0 mlxscore=0 bulkscore=0 suspectscore=0
+ spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2304280000 definitions=main-2305310131
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -68,38 +68,56 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Nick Hawkins <nick.hawkins@hpe.com>
 
-List the files added for GPIO.
+Remove the fn2 register and pl register references as these memory areas
+are now consumed by the GXP GPIO driver. The fan driver now gathers fan
+information from GPIO driver.
 
 Signed-off-by: Nick Hawkins <nick.hawkins@hpe.com>
 
 ---
 
 v2:
- *Removed reference to PSU changes as they have been discarded.
+ *Added more detailed subject and patch description
 ---
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+ .../bindings/hwmon/hpe,gxp-fan-ctrl.yaml         | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a3b14ec33830..6157d9466a58 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2239,6 +2239,7 @@ M:	Nick Hawkins <nick.hawkins@hpe.com>
- S:	Maintained
- F:	Documentation/hwmon/gxp-fan-ctrl.rst
- F:	Documentation/devicetree/bindings/arm/hpe,gxp.yaml
-+F:	Documentation/devicetree/bindings/gpio/hpe,gxp-gpio.yaml
- F:	Documentation/devicetree/bindings/hwmon/hpe,gxp-fan-ctrl.yaml
- F:	Documentation/devicetree/bindings/i2c/hpe,gxp-i2c.yaml
- F:	Documentation/devicetree/bindings/spi/hpe,gxp-spifi.yaml
-@@ -2247,6 +2248,7 @@ F:	arch/arm/boot/dts/hpe-bmc*
- F:	arch/arm/boot/dts/hpe-gxp*
- F:	arch/arm/mach-hpe/
- F:	drivers/clocksource/timer-gxp.c
-+F:	drivers/gpio/gpio-gxp.c
- F:	drivers/hwmon/gxp-fan-ctrl.c
- F:	drivers/i2c/busses/i2c-gxp.c
- F:	drivers/spi/spi-gxp.c
+diff --git a/Documentation/devicetree/bindings/hwmon/hpe,gxp-fan-ctrl.yaml b/Documentation/devicetree/bindings/hwmon/hpe,gxp-fan-ctrl.yaml
+index 4a52aac6be72..963aa640dc05 100644
+--- a/Documentation/devicetree/bindings/hwmon/hpe,gxp-fan-ctrl.yaml
++++ b/Documentation/devicetree/bindings/hwmon/hpe,gxp-fan-ctrl.yaml
+@@ -18,21 +18,12 @@ properties:
+     const: hpe,gxp-fan-ctrl
+ 
+   reg:
+-    items:
+-      - description: Fan controller PWM
+-      - description: Programmable logic
+-      - description: Function 2
+-
+-  reg-names:
+-    items:
+-      - const: base
+-      - const: pl
+-      - const: fn2
++    description: Fan controller PWM
++    maxItems: 1
+ 
+ required:
+   - compatible
+   - reg
+-  - reg-names
+ 
+ additionalProperties: false
+ 
+@@ -40,6 +31,5 @@ examples:
+   - |
+     fan-controller@1000c00 {
+       compatible = "hpe,gxp-fan-ctrl";
+-      reg = <0x1000c00 0x200>, <0xd1000000 0xff>, <0x80200000 0x100000>;
+-      reg-names = "base", "pl", "fn2";
++      reg = <0x1000c00 0x200>;
+     };
 -- 
 2.17.1
 
