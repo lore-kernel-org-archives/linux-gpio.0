@@ -2,112 +2,99 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF98C7EE31
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 May 2023 14:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A15C7EE2E
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 May 2023 14:38:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237541AbjEaOUt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 31 May 2023 10:20:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33086 "EHLO
+        id S236485AbjEaOia (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 31 May 2023 10:38:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237582AbjEaOUd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 May 2023 10:20:33 -0400
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 769CC1987;
-        Wed, 31 May 2023 07:19:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-        ; s=x; h=Subject:Content-Transfer-Encoding:Content-Type:Mime-Version:
-        References:In-Reply-To:Message-Id:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=WMBpRHwWtTgWaFnCUH7r3dh40eaL8Z8t/6W3Qgru8Bc=; b=BKAsBA9af9V7EjGyFevCIcvY1h
-        vKSLNRIBLYUFkrTZSIZSDm2q6sz7YMIJkpn7g0226maMn7fXNKYdLyZE8LETc/yrMd9kKSmrz/uhM
-        VovV2aa7Or04RVslfqZeQIBClbFzG2OFJGM2m7O+vM2heJrRJrr+Tki72/+zQN/RBSuk=;
-Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:46714 helo=debian-acer)
-        by mail.hugovil.com with esmtpa (Exim 4.92)
-        (envelope-from <hugo@hugovil.com>)
-        id 1q4MKB-0000Ek-DT; Wed, 31 May 2023 09:57:15 -0400
-Date:   Wed, 31 May 2023 09:57:14 -0400
-From:   Hugo Villeneuve <hugo@hugovil.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        jirislaby@kernel.org, jringle@gridpoint.com,
-        l.perczak@camlintechnologies.com, tomasz.mon@camlingroup.com,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Message-Id: <20230531095714.2428a41369cd7509bc321bf7@hugovil.com>
-In-Reply-To: <CAHp75Vf35rN93sXFBU0nRZQLpUgQHR2caGC8BmHkEgPZqF=dQg@mail.gmail.com>
-References: <20230529140711.896830-1-hugo@hugovil.com>
-        <20230529140711.896830-8-hugo@hugovil.com>
-        <ZHUpWQafRPHW1RJQ@surfacebook>
-        <20230530113649.73f28b9f6ba91f17ace1e12f@hugovil.com>
-        <CAHp75Vf35rN93sXFBU0nRZQLpUgQHR2caGC8BmHkEgPZqF=dQg@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 184.161.19.61
-X-SA-Exim-Mail-From: hugo@hugovil.com
-Subject: Re: [PATCH v4 7/9] serial: sc16is7xx: fix regression with GPIO
- configuration
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+        with ESMTP id S232182AbjEaOi3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 May 2023 10:38:29 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1631E124;
+        Wed, 31 May 2023 07:38:24 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-6261a25e9b6so23313156d6.0;
+        Wed, 31 May 2023 07:38:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685543903; x=1688135903;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qlshlRQWTJygtWaXLBl1OU6OTBUlCnjwtRx0FpTW0cM=;
+        b=nYXKG15/pTAhpydM4KU0beoOWmnzzPh2fJUexzJhmEtHZbOkMOzr0S4Kj19xaw+MZg
+         xfSGploDkjlu3aKLhihi7lUrT29TQs/7idxB8VX9wA27JqCzpenhItoEXEZTl4HYvXE/
+         P4qWLynBbgsFraWC/thmgB0uYMvl7sGVFzpYpRACjOzytDwT8YEPFRr7RQGzQDcc8+0s
+         u0Ps8P8db1hIkUEBV6oWJxtbt6cQ/FUyAGW/T+8DcxQ4V88X5/EmasLq0ybEr3f3enjp
+         9wvyUx96uyhlPkrPr6ilPOdkuxCSlMnGkFfwQGVmLdyrVjcYzp7MDO850N7Wh06/N9wy
+         DUsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685543903; x=1688135903;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qlshlRQWTJygtWaXLBl1OU6OTBUlCnjwtRx0FpTW0cM=;
+        b=ejAIi6zKfPByn6L9S5jj2fat8aJffsdavb3T5VOT/c1qLpHHwF9qNy/urfoJyRBZzz
+         4oKraaqPu/q2oEwLWQu5ySTgtXhcAi7FJeAkYV+ohUldAGVcabsp8YKx+/9LGS7WIUX6
+         prowy+AXbfejrWeRhFWDUPfyvH+drs7PVYp/RKX7Q3DQ0DkEPTcsfbaTPpqT+l0NUElk
+         FUhAgsc1/812xdfvgXZgloOi8+5hoGjYaQdbCF1J2aHd3WmqRwFohDODD4UR0abAI8lt
+         P+UmAR/IBERO793rGw7Qhu/Ycl4aNaTyN/GMttozZoEmqje2LW/FRZPCnc+d4bQhHwAU
+         7xkA==
+X-Gm-Message-State: AC+VfDzBtlUolvgqg/G80MtuyZmrJN4G4v6CHW594q/JtN9/iWSoBvOq
+        FiLo8dJB1rB7URQGAF0vbhEr+c21ZKLGLBPoMxB+d6F8
+X-Google-Smtp-Source: ACHHUZ5L7oZX1aXUn+RPnVDsXeyNFSrTxvzqZa/FJSacPrE/tvrG5TNipjQXS4e2xIFPV3TQIQVeg877EXOqq28jfDA=
+X-Received: by 2002:a05:6214:62f:b0:61b:6a44:5f03 with SMTP id
+ a15-20020a056214062f00b0061b6a445f03mr6685989qvx.33.1685543903178; Wed, 31
+ May 2023 07:38:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230406093344.917259-1-alexander.stein@ew.tq-group.com>
+ <a926837c-8773-1809-0bb3-34d449c5d7a5@linaro.org> <CAHp75VcJMwoG07-d86obSLuPNGRQuRo_oW2JJA50ps--3s0kJA@mail.gmail.com>
+ <4810610.GXAFRqVoOG@steina-w> <CACRpkda7CuiJ0=9+gw9G+mmBAOH+P2xmofb2dVANjqqrW78xfw@mail.gmail.com>
+In-Reply-To: <CACRpkda7CuiJ0=9+gw9G+mmBAOH+P2xmofb2dVANjqqrW78xfw@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 31 May 2023 17:37:46 +0300
+Message-ID: <CAHp75Vf43JJ0j-G4-1Nd4kWNO8-YeaCUCz7+6w7OSAie1HArSw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] gpio: Add gpio-delay support
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        Marek Vasut <marex@denx.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 31 May 2023 00:56:57 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On Wed, May 31, 2023 at 4:45=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
+> On Wed, May 31, 2023 at 8:53=E2=80=AFAM Alexander Stein
+> <alexander.stein@ew.tq-group.com> wrote:
+>
+> > What do I need to do to get progress on this topic? Without this kind o=
+f delay
+> > handling the DSI-LVDS bridge on our hardware cannot be used in mainline=
+.
+>
+> The DT binding maintainers (Rob, Krzysztof) need to ACK the approach to
+> how this is modeled in the DT bindings.
+>
+> For trivial-to-medium changes I am convenient to apply changes after 1-2
+> weeks of silence, but these are pretty fundamental issues so the binding
+> maintainers need to sign off on it.
+>
+> I think they are a bit offline for the moment, but I would read through t=
+he
+> feedback from the binding maintainers and draft a binding patch that they
+> can accept.
 
-> On Tue, May 30, 2023 at 6:36 PM Hugo Villeneuve <hugo@hugovil.com> wrote:
-> > On Tue, 30 May 2023 01:38:17 +0300
-> > andy.shevchenko@gmail.com wrote:
-> > > Mon, May 29, 2023 at 10:07:09AM -0400, Hugo Villeneuve kirjoitti:
-> 
-> ...
-> 
-> > > GENMASK()
-> >
-> > Ok done, altough even if in general I like the bit manipulation macros because they make the code easier to read/understand, I find it less obvious by using GENMASK in this case IMMO.
-> 
-> GENMASK() was introduced to increase code robustness:
-> 1) to make sure the bits mentioned are correct
-> 2) to check the bit boundary.
-> 
-> ...
-> 
-> > > > +           of_property_for_each_u32(dev->of_node, "nxp,modem-control-line-ports",
-> > > > +                                    prop, p, u) {
-> > > > +                   if (u >= devtype->nr_uart)
-> > > > +                           continue;
-> > > > +
-> > > > +                   /* Use GPIO lines as modem control lines */
-> > > > +                   if (u == 0)
-> > > > +                           mctrl_mask |= SC16IS7XX_IOCONTROL_MODEM_A_BIT;
-> > > > +                   else if (u == 1)
-> > > > +                           mctrl_mask |= SC16IS7XX_IOCONTROL_MODEM_B_BIT;
-> > > > +           }
-> > >
-> > > Can we use device properties, please?
-> >
-> > I have converted this section to use device_property_count_u32() and device_property_read_u32_array(). Is that Ok?
-> 
-> Yes, thank you!
-> 
-> > > If you think about backporting to the earlier kernels (w/o properties in use in
-> > > this driver), perhaps an additional followup for that?
-> >
-> > I am not sure what you mean by this?
-> 
-> If the device property API was not yet available for this fix being
-> backported to the old enough kernel we have to use old OF stuff. In
-> that case the device property conversion needs to be done in a
-> separate change.
+Are you okay with this to be the part of a GPIO controller rather than
+the platform stuff related to the consumer?
 
-Hi,.
-ok, now I see.
-
-Thank you,
-Hugo.
+--=20
+With Best Regards,
+Andy Shevchenko
