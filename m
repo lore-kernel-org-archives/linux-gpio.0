@@ -2,115 +2,136 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC17FC7EE31
-	for <linux-gpio@archiver.kernel.org>; Wed, 31 May 2023 17:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9186C7EE23
+	for <linux-gpio@archiver.kernel.org>; Wed, 31 May 2023 23:57:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229887AbjEaRZo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 31 May 2023 13:25:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58602 "EHLO
+        id S229604AbjEaX5n (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 31 May 2023 19:57:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbjEaRZl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 May 2023 13:25:41 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 864D2134
-        for <linux-gpio@vger.kernel.org>; Wed, 31 May 2023 10:25:39 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-514924b4f8cso7946318a12.3
-        for <linux-gpio@vger.kernel.org>; Wed, 31 May 2023 10:25:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685553938; x=1688145938;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xDAdO+T0fcwkBFLiVLpEDGkZ/hLxBO5xuKiK8nObQxU=;
-        b=aPS92F23GaCnop9+jYrkNTsLY/84c5iXVLIm8ERSDylewMFcBhKJeRkl6KIIc7s5bF
-         RzOqMzhGNUGkqhsQ5FPwY+SFqhngMfA1RowY1ZvT2jZy2o/3XHsDWj2hkpJ+jPATjDNQ
-         CxAq9EU5xQ/KvkkTLKCv0hVLgnHQi4SslrBUjGMYfkQU/hyX781PgqZytJ6GoowC0yF6
-         2g+DgWTo4rXFpmvjzCgkrvHepniOmRn6qn9ns6vjkrqGNcUcuVPmrC6QuEgnatMRZhP8
-         JFaqlQ4fnHC2ZIyIlMIrDNVqYycI3Z8Lf5uy0LWTUMMRO5lUbbKVkGnVk8F75Y77QYcW
-         SniQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685553938; x=1688145938;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xDAdO+T0fcwkBFLiVLpEDGkZ/hLxBO5xuKiK8nObQxU=;
-        b=XBR/Qz2qt5glwzafnZXAeC+vUk6IlRuCVgo08l4bxjmI/CheZ/bW13JcSAi3w/ClCA
-         22O3GXEOv3ENN9zB4XRdMa4eR+oNCxpzGvnSR7/12Ye7+tmUzXaG20AQ9YNbaXeDZnSJ
-         5ljo4ztlDYSu0cgEBD55sL4otVh+OgIhiU/SccyEnVv06S4dNIaNiC20WMkh0SmE+Tme
-         h0n9JLS9k5eioe1ZzU0RnP97/NKLtu4EvwZD5UcqpvAkcaOdXGRq3YunvMStTGXlduJf
-         fpwuwkB2OQ2hNBCkjUBk2y62/1LPY4E5lEP/j+qr48p3/xjYJHpsQv8hFcJM8pLP39D8
-         lTtg==
-X-Gm-Message-State: AC+VfDzP3meVsWZ0czelYhCspjHxdx2b95NIPtXkyYav07KR5B11SMdQ
-        khDuFsy425INDg8JR3O/Ajf+NkAakRn0sNiHCZg=
-X-Google-Smtp-Source: ACHHUZ4qJTQEsnhZhF2OWSWFGau3m/JAnhGY/kQooQy0FNgfiqKDD6Yzhoif6KS9BsZP5WI4N5JJqA==
-X-Received: by 2002:a17:907:36c6:b0:973:d751:840f with SMTP id bj6-20020a17090736c600b00973d751840fmr5895054ejc.77.1685553937996;
-        Wed, 31 May 2023 10:25:37 -0700 (PDT)
-Received: from localhost (i5C741499.versanet.de. [92.116.20.153])
-        by smtp.gmail.com with ESMTPSA id z9-20020a1709060f0900b0094e1344ddfdsm9276029eji.34.2023.05.31.10.25.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 May 2023 10:25:37 -0700 (PDT)
+        with ESMTP id S229459AbjEaX5m (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 May 2023 19:57:42 -0400
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D924E12F;
+        Wed, 31 May 2023 16:57:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+        ; s=x; h=Subject:Content-Transfer-Encoding:Content-Type:Mime-Version:
+        References:In-Reply-To:Message-Id:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=Y9DD1VKb4vaExY2foglvuHGof5QOUeerkLNIvVZGDEQ=; b=vvnO4y1/YdmDbe57+wazCVR5zN
+        feiztkittz+w93Cd9Epmz/7MBfMJu4mDj3ODNRMY+8POmBVIzR1QCyqmjnEHxy55+X6oAafyy5pHh
+        B3WpJU43jmEN7Z/B7HfAXfOkRbU1IIM8/Y48BqoMOIh7atKhjC15cM/r+ByMzooqa08Y=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:42554 helo=pettiford)
+        by mail.hugovil.com with esmtpa (Exim 4.92)
+        (envelope-from <hugo@hugovil.com>)
+        id 1q4Vgx-0007Zs-JL; Wed, 31 May 2023 19:57:24 -0400
+Date:   Wed, 31 May 2023 19:57:23 -0400
+From:   Hugo Villeneuve <hugo@hugovil.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        jirislaby@kernel.org, jringle@gridpoint.com,
+        l.perczak@camlintechnologies.com, tomasz.mon@camlingroup.com,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Message-Id: <20230531195723.462b140ac041b790711c1a7f@hugovil.com>
+In-Reply-To: <CAHp75Vf35rN93sXFBU0nRZQLpUgQHR2caGC8BmHkEgPZqF=dQg@mail.gmail.com>
+References: <20230529140711.896830-1-hugo@hugovil.com>
+        <20230529140711.896830-8-hugo@hugovil.com>
+        <ZHUpWQafRPHW1RJQ@surfacebook>
+        <20230530113649.73f28b9f6ba91f17ace1e12f@hugovil.com>
+        <CAHp75Vf35rN93sXFBU0nRZQLpUgQHR2caGC8BmHkEgPZqF=dQg@mail.gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Wed, 31 May 2023 19:25:36 +0200
-Message-Id: <CT0N04S607VA.3M9CI50HMNANO@fedora>
-Subject: Re: Publishing libgpiod-sys and libgpiod to crates.io
-Cc:     "Viresh Kumar" <viresh.kumar@linaro.org>,
-        =?utf-8?q?Alex_Benn=C3=A9_e?= <alex.bennee@linaro.org>
-To:     "Manos Pitsidianakis" <manos.pitsidianakis@linaro.org>,
-        "Linux-GPIO" <linux-gpio@vger.kernel.org>,
-        "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>
-From:   "Erik Schilling" <erik.schilling@linaro.org>
-X-Mailer: aerc 0.14.0
-References: <CT0CRWOTJIEO.20BGIDMLFM0E8@fedora>
- <visj7.k1t7273b5zpe@linaro.org>
-In-Reply-To: <visj7.k1t7273b5zpe@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+Subject: Re: [PATCH v4 7/9] serial: sc16is7xx: fix regression with GPIO
+ configuration
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed May 31, 2023 at 1:05 PM CEST, Manos Pitsidianakis wrote:
->
-> Breaking changes are inevitable. The libc crate follows a nonsemver=20
-> scheme (0.2.144 and bump the patch number by one for every release)=20
-> which breaks stuff all the time, or at least it used to when it was at=20
-> its early stages. There are ways to get around breakages in case of a=20
-> crate lib being a transitive dependency but has different versions:=20
->
-> https://github.com/dtolnay/semver-trick
->
-> I believe following libgpiod's version scheme directly is what would be=
-=20
-> best and intuitive. -sys crates are not usual crates and users know=20
-> this. It'd be cool to not have to bump the bindings crate version but I=
-=20
-> don't think it's a problem.
+On Wed, 31 May 2023 00:56:57 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-How would you deal with the libgpiod (Rust) -> libgpiod (C) dependency
-here? Should we request an exact match via pkg-config (or at least a
-lower floor that would equal the version of the C lib?).
+> On Tue, May 30, 2023 at 6:36 PM Hugo Villeneuve <hugo@hugovil.com> wrote:
+> > On Tue, 30 May 2023 01:38:17 +0300
+> > andy.shevchenko@gmail.com wrote:
+> > > Mon, May 29, 2023 at 10:07:09AM -0400, Hugo Villeneuve kirjoitti:
+> 
+> ...
+> 
+> > > GENMASK()
+> >
+> > Ok done, altough even if in general I like the bit manipulation macros because they make the code easier to read/understand, I find it less obvious by using GENMASK in this case IMMO.
+> 
+> GENMASK() was introduced to increase code robustness:
+> 1) to make sure the bits mentioned are correct
+> 2) to check the bit boundary.
+> 
+> ...
+> 
+> > > > +           of_property_for_each_u32(dev->of_node, "nxp,modem-control-line-ports",
+> > > > +                                    prop, p, u) {
+> > > > +                   if (u >= devtype->nr_uart)
+> > > > +                           continue;
+> > > > +
+> > > > +                   /* Use GPIO lines as modem control lines */
+> > > > +                   if (u == 0)
+> > > > +                           mctrl_mask |= SC16IS7XX_IOCONTROL_MODEM_A_BIT;
+> > > > +                   else if (u == 1)
+> > > > +                           mctrl_mask |= SC16IS7XX_IOCONTROL_MODEM_B_BIT;
+> > > > +           }
+> > >
+> > > Can we use device properties, please?
+> >
+> > I have converted this section to use device_property_count_u32() and device_property_read_u32_array(). Is that Ok?
+> 
+> Yes, thank you!
 
-I think that there would be no good reason not to support older versions
-of the C lib (at least as long as sensible!). But it may be a bit weird
-if the Rust crate has a matching version scheme but then automatically
-disables features when building against an older system library... A
-separate version scheme might make that a little more explicit. But I
-got no particularly strong feelings about this.
+Hi Andy,
+now that I am using the device property API, I think I no longer have the need to test for "if (dev->of_node)" before reading the new property "nxp,modem-control-line-ports"?
 
-> This is how openssl{,-sys} works, if I am  not mistaken.
+If that is the case, I will leave the test "if (dev->of_node)" only for the "irda-mode-ports" property.
 
-openssl does not seem to follow this for neither -sys, nor the main
-package. It would also probably be a weird thing to do since it supports
-other backends like boringssl.
+The pseudo code woulk look like this:
+
+	if (dev->of_node) {
+		struct property *prop;
+		const __be32 *p;
+		u32 u;
+
+		of_property_for_each_u32(dev->of_node, "irda-mode-ports",
+					 prop, p, u)
+			if (u < devtype->nr_uart)
+				s->p[u].irda_mode = true;
+	}
+
+        /* Read "nxp,modem-control-line-ports" using device property API. */
+	sc16is7xx_setup_mctrl_ports(dev);
+
+Thank you,
+Hugo.
 
 
-> All in all, in crates.io follow its conventions unless there's no way to=
-=20
-> do so.
-
-I think all of the options that I listed in my initial mail would follow
-the crates.io conventions and I strongly agree that we should follow the
-existing conventions. What to pick seems to mostly depend on how we want
-the release process to look like.
-
-- Erik
+> > > If you think about backporting to the earlier kernels (w/o properties in use in
+> > > this driver), perhaps an additional followup for that?
+> >
+> > I am not sure what you mean by this?
+> 
+> If the device property API was not yet available for this fix being
+> backported to the old enough kernel we have to use old OF stuff. In
+> that case the device property conversion needs to be done in a
+> separate change.
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
