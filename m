@@ -2,206 +2,320 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F03DCC7EE2E
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Jun 2023 03:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84FD4C77B7A
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Jun 2023 05:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231179AbjFADP6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 31 May 2023 23:15:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47172 "EHLO
+        id S231193AbjFAFgj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Jun 2023 01:36:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229781AbjFADPt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 May 2023 23:15:49 -0400
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C06A6D1;
-        Wed, 31 May 2023 20:15:43 -0700 (PDT)
-X-QQ-mid: bizesmtp86t1685588656tmp6o21f
-Received: from wxdbg.localdomain.com ( [183.159.96.128])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Thu, 01 Jun 2023 11:04:12 +0800 (CST)
-X-QQ-SSF: 01400000000000J0Z000000A0000000
-X-QQ-FEAT: iDzLjIm7mlYxVkhWRCuJ8so7Fnlcyj6Nk+cfswEV8q/++xRKNSgaEi7Z68Xvx
-        eilEsUjKtmx/gIHV3qM5l292rTopM7weKDghgS6hJVJFKothqhDLgrDp3HAoIlcYGoLCA5K
-        2FA6AXiXncUVY0WR+p2kUAufThBL0E5UxYQYyUEqGYSTkZmP/q7FP0SRgAlUeQ3UBDfTVmz
-        VxyK3oCKzCcl+NKrjsi3aNwv254x+XNEGprvWLPBc+VBJKs8/tq5oXieRCvvGnjbC5G8Ibc
-        tUV7S2piJLCpcekg8YvLPiHFK5u5OKNzWx2f+W2/RUbYzkSlfE4iZT17uZYY3GdQ+gAPTZ6
-        tbwqI30biXGKeYqiwOkDXY8kS/KWlh95Whc3jkN6RSko56VV6x/gfruF2aQ/RadPL6IiLzr
-        bqHv7xbeBXodwSvtHGErAQ==
-X-QQ-GoodBg: 2
-X-BIZMAIL-ID: 12059851608889778048
-From:   Jiawen Wu <jiawenwu@trustnetic.com>
-To:     netdev@vger.kernel.org, jarkko.nikula@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
-        jsd@semihalf.com, Jose.Abreu@synopsys.com, andrew@lunn.ch,
-        hkallweit1@gmail.com, linux@armlinux.org.uk
-Cc:     linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-        mengyuanlou@net-swift.com, Jiawen Wu <jiawenwu@trustnetic.com>,
-        Piotr Raczynski <piotr.raczynski@intel.com>
-Subject: [PATCH net-next v10 4/9] net: txgbe: Register I2C platform device
-Date:   Thu,  1 Jun 2023 11:01:35 +0800
-Message-Id: <20230601030140.687493-5-jiawenwu@trustnetic.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20230601030140.687493-1-jiawenwu@trustnetic.com>
-References: <20230601030140.687493-1-jiawenwu@trustnetic.com>
+        with ESMTP id S229553AbjFAFgi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Jun 2023 01:36:38 -0400
+Received: from forward103c.mail.yandex.net (forward103c.mail.yandex.net [178.154.239.214])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DA3B12C;
+        Wed, 31 May 2023 22:36:33 -0700 (PDT)
+Received: from mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net [IPv6:2a02:6b8:c14:c83:0:640:84f9:0])
+        by forward103c.mail.yandex.net (Yandex) with ESMTP id 876CE60034;
+        Thu,  1 Jun 2023 08:36:31 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id OaGNfZvWv8c0-rplx70Eu;
+        Thu, 01 Jun 2023 08:36:29 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1685597789;
+        bh=rKQamNImlHihihpCtMqa3NY6MH0zfAt9r9tz/gnwKhU=;
+        h=Message-Id:Date:Cc:Subject:To:From;
+        b=o7eo6GHX+CIkTm9XpERfV5KmgewSkfhAGjpH+qged8wI9HIvSeQK6CKQsunVh2WIS
+         3darRHyfPqrLqK1akxKMExkio1no9yS55iTd0E1JNR6uK3ykW0XZNimKJxx1Xo0JfL
+         qtH6YU9ygcZbO9L8bdSh8KaLkTD+keRMb44jcTrM=
+Authentication-Results: mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+From:   Nikita Shubin <nikita.shubin@maquefel.me>
+To:     Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Christophe Kerello <christophe.kerello@foss.st.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Hartley Sweeten <hsweeten@visionengravers.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
+        Jean Delvare <jdelvare@suse.de>, Joel Stanley <joel@jms.id.au>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Le Moal <dlemoal@kernel.org>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Mark Brown <broonie@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Nikita Shubin <nikita.shubin@maquefel.me>,
+        Richard Weinberger <richard@nod.at>,
+        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Walker Chen <walker.chen@starfivetech.com>,
+        Yinbo Zhu <zhuyinbo@loongson.cn>
+Cc:     Michael Peters <mpeters@embeddedTS.com>,
+        Kris Bahnsen <kris@embeddedTS.com>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH v1 00/43] ep93xx device tree conversion
+Date:   Thu,  1 Jun 2023 08:33:51 +0300
+Message-Id: <20230601053546.9574-1-nikita.shubin@maquefel.me>
+X-Mailer: git-send-email 2.37.4
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Register the platform device to use Designware I2C bus master driver.
-Use regmap to read/write I2C device region from given base offset.
+This series aims to convert ep93xx from platform to full device tree support.
 
-Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Piotr Raczynski <piotr.raczynski@intel.com>
----
- drivers/net/ethernet/wangxun/Kconfig          |  3 +
- .../net/ethernet/wangxun/txgbe/txgbe_phy.c    | 70 +++++++++++++++++++
- .../net/ethernet/wangxun/txgbe/txgbe_type.h   |  4 ++
- 3 files changed, 77 insertions(+)
+Alexander, Kris - there are some significant changes in clk and pinctrl so can i ask you to tests all once again.
 
-diff --git a/drivers/net/ethernet/wangxun/Kconfig b/drivers/net/ethernet/wangxun/Kconfig
-index 190d42a203b4..128cc1cb0605 100644
---- a/drivers/net/ethernet/wangxun/Kconfig
-+++ b/drivers/net/ethernet/wangxun/Kconfig
-@@ -41,6 +41,9 @@ config TXGBE
- 	tristate "Wangxun(R) 10GbE PCI Express adapters support"
- 	depends on PCI
- 	depends on COMMON_CLK
-+	select REGMAP
-+	select I2C
-+	select I2C_DESIGNWARE_PLATFORM
- 	select LIBWX
- 	help
- 	  This driver supports Wangxun(R) 10GbE PCI Express family of
-diff --git a/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c b/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c
-index 06506cfb8d06..24a729150e08 100644
---- a/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c
-+++ b/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c
-@@ -6,6 +6,8 @@
- #include <linux/clkdev.h>
- #include <linux/i2c.h>
- #include <linux/pci.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
+So i am not applying:
+
+Tested-by: Michael Peters <mpeters@embeddedTS.com>
+Reviewed-by: Kris Bahnsen <kris@embeddedTS.com>
+
+Tags yet.
+
+Major changes from v0 to v1:
+
+- I totally forgot to include dts bindings for USB, they are working, including in this version
+- retinkered ep93xx keypad, the stange thing about it that it always used zeroed 
+  platform data from the very beginning - my first impulse was to remove it entirely, espesially 
+  it's ep9307+ variant, which Alexander and me doesn't have
+- major YAML bindings overhaul according to Krzysztof comments
+- nand helper converted to LEGACY nand controller
+- cleanup clk
+- cleanup pinctrl
+
+Sorry if i missed something, first time handling such a big (at least for me) chunk of patches.
+
+Next version should be much faster spin.
+
+Alexandre Belloni:
+ st,m48t86 is totally trivial, but it has 2 regs instead of one, so dt_binding_check doesn't allow it in trivial.yaml,
+ regs should be increased to "maxItems: 2"
+
+Miquel Raynal:
+ Currently made it LEGACY as a more easier way for now, as this series will merge - it will be much 
+ easier to cleanup the rest one by one, i hope it's ok.
  
- #include "../libwx/wx_type.h"
- #include "txgbe_type.h"
-@@ -98,6 +100,64 @@ static int txgbe_clock_register(struct txgbe *txgbe)
- 	return 0;
- }
- 
-+static int txgbe_i2c_read(void *context, unsigned int reg, unsigned int *val)
-+{
-+	struct wx *wx = context;
-+
-+	*val = rd32(wx, reg + TXGBE_I2C_BASE);
-+
-+	return 0;
-+}
-+
-+static int txgbe_i2c_write(void *context, unsigned int reg, unsigned int val)
-+{
-+	struct wx *wx = context;
-+
-+	wr32(wx, reg + TXGBE_I2C_BASE, val);
-+
-+	return 0;
-+}
-+
-+static const struct regmap_config i2c_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_read = txgbe_i2c_read,
-+	.reg_write = txgbe_i2c_write,
-+	.fast_io = true,
-+};
-+
-+static int txgbe_i2c_register(struct txgbe *txgbe)
-+{
-+	struct platform_device_info info = {};
-+	struct platform_device *i2c_dev;
-+	struct regmap *i2c_regmap;
-+	struct pci_dev *pdev;
-+	struct wx *wx;
-+
-+	wx = txgbe->wx;
-+	pdev = wx->pdev;
-+	i2c_regmap = devm_regmap_init(&pdev->dev, NULL, wx, &i2c_regmap_config);
-+	if (IS_ERR(i2c_regmap)) {
-+		wx_err(wx, "failed to init I2C regmap\n");
-+		return PTR_ERR(i2c_regmap);
-+	}
-+
-+	info.parent = &pdev->dev;
-+	info.fwnode = software_node_fwnode(txgbe->nodes.group[SWNODE_I2C]);
-+	info.name = "i2c_designware";
-+	info.id = (pdev->bus->number << 8) | pdev->devfn;
-+
-+	info.res = &DEFINE_RES_IRQ(pdev->irq);
-+	info.num_res = 1;
-+	i2c_dev = platform_device_register_full(&info);
-+	if (IS_ERR(i2c_dev))
-+		return PTR_ERR(i2c_dev);
-+
-+	txgbe->i2c_dev = i2c_dev;
-+
-+	return 0;
-+}
-+
- int txgbe_init_phy(struct txgbe *txgbe)
- {
- 	int ret;
-@@ -114,8 +174,17 @@ int txgbe_init_phy(struct txgbe *txgbe)
- 		goto err_unregister_swnode;
- 	}
- 
-+	ret = txgbe_i2c_register(txgbe);
-+	if (ret) {
-+		wx_err(txgbe->wx, "failed to init i2c interface: %d\n", ret);
-+		goto err_unregister_clk;
-+	}
-+
- 	return 0;
- 
-+err_unregister_clk:
-+	clkdev_drop(txgbe->clock);
-+	clk_unregister(txgbe->clk);
- err_unregister_swnode:
- 	software_node_unregister_node_group(txgbe->nodes.group);
- 
-@@ -124,6 +193,7 @@ int txgbe_init_phy(struct txgbe *txgbe)
- 
- void txgbe_remove_phy(struct txgbe *txgbe)
- {
-+	platform_device_unregister(txgbe->i2c_dev);
- 	clkdev_drop(txgbe->clock);
- 	clk_unregister(txgbe->clk);
- 	software_node_unregister_node_group(txgbe->nodes.group);
-diff --git a/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h b/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h
-index cdbc4b37f832..55979abf01f2 100644
---- a/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h
-+++ b/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h
-@@ -55,6 +55,9 @@
- #define TXGBE_TS_CTL                            0x10300
- #define TXGBE_TS_CTL_EVAL_MD                    BIT(31)
- 
-+/* I2C registers */
-+#define TXGBE_I2C_BASE                          0x14900
-+
- /* Part Number String Length */
- #define TXGBE_PBANUM_LENGTH                     32
- 
-@@ -146,6 +149,7 @@ struct txgbe_nodes {
- struct txgbe {
- 	struct wx *wx;
- 	struct txgbe_nodes nodes;
-+	struct platform_device *i2c_dev;
- 	struct clk_lookup *clock;
- 	struct clk *clk;
- };
+Stephen Boyd:
+ Majory of issues fixed, but:
+     - removing dma from init section requires converting it from half dt/platform monstrosity 
+       into fully dt compatible
+     - i would like to have ep93xx_clk_data and ep93xx_map global for now - they can be removed 
+       once dma subsys_initcall removed
+
+Andrew Lunn:
+  I've tinkered with the preferred way, however this involves turning on
+     - CONFIG_PHYLIB
+     - CONFIG_MDIO_DEVICE
+
+  And maybe CONFIG_MICREL_PHY (at least for me, unless i can use some
+  common phy driver) which implies a kernel size increase - which is
+  undesirable for us.
+  
+  Can we slip by getting phyid directly from device tree in ep93xx_eth ?
+
+Link: https://lore.kernel.org/all/20230424123522.18302-1-nikita.shubin@maquefel.me/
+  
+Cc: kris@embeddedTS.com
+
+Alexander Sverdlin (3):
+  ARM: dts: ep93xx: Add I2S and AC97 nodes
+  ARM: dts: ep93xx: Add EDB9302 DT
+  ASoC: cirrus: edb93xx: Delete driver
+
+Nikita Shubin (40):
+  gpio: ep93xx: split device in multiple
+  dt-bindings: soc: Add Cirrus EP93xx
+  soc: Add SoC driver for Cirrus ep93xx
+  dt-bindings: clock: Add Cirrus EP93xx
+  clk: ep93xx: add DT support for Cirrus EP93xx
+  dt-bindings: pinctrl: Add Cirrus EP93xx
+  pinctrl: add a Cirrus ep93xx SoC pin controller
+  dt-bindings: timers: Add Cirrus EP93xx
+  clocksource: ep93xx: Add driver for Cirrus Logic EP93xx
+  dt-bindings: rtc: Add Cirrus EP93xx
+  rtc: ep93xx: add DT support for Cirrus EP93xx
+  dt-bindings: watchdog: Add Cirrus EP93x
+  watchdog: ep93xx: add DT support for Cirrus EP93xx
+  power: reset: Add a driver for the ep93xx reset
+  dt-bindings: pwm: Add Cirrus EP93xx
+  pwm: ep93xx: add DT support for Cirrus EP93xx
+  dt-bindings: spi: Add Cirrus EP93xx
+  spi: ep93xx: add DT support for Cirrus EP93xx
+  dt-bindings: net: Add Cirrus EP93xx
+  net: cirrus: add DT support for Cirrus EP93xx
+  dt-bindings: dma: Add Cirrus EP93xx
+  dma: cirrus: add DT support for Cirrus EP93xx
+  dt-bindings: mtd: Add ts7250 nand-controller
+  mtd: nand: add support for ts72xx
+  dt-bindings: ata: Add Cirrus EP93xx
+  pata: cirrus: add DT support for Cirrus EP93xx
+  dt-bindings: input: Add Cirrus EP93xx keypad
+  input: keypad: ep93xx: add DT support for Cirrus EP93xx
+  dt-bindings: rtc: Add ST M48T86
+  rtc: m48t86: add DT support for m48t86
+  dt-bindings: wdt: Add ts72xx
+  wdt: ts72xx: add DT support for ts72xx
+  dt-bindings: gpio: Add Cirrus EP93xx
+  gpio: ep93xx: add DT support for gpio-ep93xx
+  ARM: dts: add device tree for ep93xx Soc
+  ARM: ep93xx: DT for the Cirrus ep93xx SoC platforms
+  pwm: ep93xx: drop legacy pinctrl
+  pata: cirrus: drop legacy pinctrl
+  ARM: ep93xx: delete all boardfiles
+  ARM: ep93xx: soc: drop defines
+
+ .../devicetree/bindings/arm/ep93xx.yaml       |  107 ++
+ .../bindings/ata/cirrus,ep9312-pata.yaml      |   44 +
+ .../bindings/clock/cirrus,ep9301.yaml         |   64 +
+ .../bindings/dma/cirrus,ep9301-dma-m2m.yaml   |   72 +
+ .../bindings/dma/cirrus,ep9301-dma-m2p.yaml   |  124 ++
+ .../devicetree/bindings/gpio/gpio-ep9301.yaml |  154 ++
+ .../bindings/input/cirrus,ep9307-keypad.yaml  |   86 +
+ .../bindings/mtd/technologic,nand.yaml        |   47 +
+ .../bindings/net/cirrus,ep9301-eth.yaml       |   61 +
+ .../pinctrl/cirrus,ep9301-pinctrl.yaml        |   66 +
+ .../bindings/pwm/cirrus,ep9301-pwm.yaml       |   48 +
+ .../bindings/rtc/cirrus,ep9301-rtc.yaml       |   40 +
+ .../bindings/rtc/st,m48t86-rtc.yaml           |   38 +
+ .../devicetree/bindings/spi/spi-ep9301.yaml   |   69 +
+ .../bindings/timer/cirrus,ep9301-timer.yaml   |   49 +
+ .../bindings/watchdog/cirrus,ep9301-wdt.yaml  |   46 +
+ .../watchdog/technologic,ts7200-wdt.yaml      |   46 +
+ arch/arm/Makefile                             |    1 -
+ arch/arm/boot/dts/Makefile                    |    1 +
+ arch/arm/boot/dts/ep93xx-bk3.dts              |  119 ++
+ arch/arm/boot/dts/ep93xx-edb9302.dts          |  160 ++
+ arch/arm/boot/dts/ep93xx-ts7250.dts           |  132 ++
+ arch/arm/boot/dts/ep93xx.dtsi                 |  477 +++++
+ arch/arm/mach-ep93xx/Kconfig                  |   20 +-
+ arch/arm/mach-ep93xx/Makefile                 |   11 -
+ arch/arm/mach-ep93xx/clock.c                  |  733 --------
+ arch/arm/mach-ep93xx/core.c                   | 1017 ----------
+ arch/arm/mach-ep93xx/dma.c                    |  114 --
+ arch/arm/mach-ep93xx/edb93xx.c                |  344 ----
+ arch/arm/mach-ep93xx/ep93xx-regs.h            |   38 -
+ arch/arm/mach-ep93xx/gpio-ep93xx.h            |  111 --
+ arch/arm/mach-ep93xx/hardware.h               |   25 -
+ arch/arm/mach-ep93xx/irqs.h                   |   76 -
+ arch/arm/mach-ep93xx/platform.h               |   42 -
+ arch/arm/mach-ep93xx/soc.h                    |  212 ---
+ arch/arm/mach-ep93xx/ts72xx.c                 |  422 -----
+ arch/arm/mach-ep93xx/ts72xx.h                 |   94 -
+ arch/arm/mach-ep93xx/vision_ep9307.c          |  311 ---
+ drivers/ata/pata_ep93xx.c                     |   33 +-
+ drivers/clk/Kconfig                           |    8 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-ep93xx.c                      |  850 +++++++++
+ drivers/clocksource/Kconfig                   |   11 +
+ drivers/clocksource/Makefile                  |    1 +
+ .../clocksource}/timer-ep93xx.c               |  141 +-
+ drivers/dma/ep93xx_dma.c                      |  136 +-
+ drivers/gpio/gpio-ep93xx.c                    |  329 ++--
+ drivers/input/keyboard/ep93xx_keypad.c        |   78 +-
+ drivers/mtd/nand/raw/Kconfig                  |    7 +
+ drivers/mtd/nand/raw/Makefile                 |    1 +
+ .../nand/raw/technologic-nand-controller.c    |  151 ++
+ drivers/net/ethernet/cirrus/ep93xx_eth.c      |   67 +-
+ drivers/pinctrl/Kconfig                       |    7 +
+ drivers/pinctrl/Makefile                      |    1 +
+ drivers/pinctrl/pinctrl-ep93xx.c              | 1672 +++++++++++++++++
+ drivers/power/reset/Kconfig                   |   10 +
+ drivers/power/reset/Makefile                  |    1 +
+ drivers/power/reset/ep93xx-restart.c          |   65 +
+ drivers/pwm/pwm-ep93xx.c                      |   26 +-
+ drivers/rtc/rtc-ep93xx.c                      |    8 +
+ drivers/rtc/rtc-m48t86.c                      |    8 +
+ drivers/soc/Kconfig                           |    1 +
+ drivers/soc/Makefile                          |    1 +
+ drivers/soc/cirrus/Kconfig                    |   11 +
+ drivers/soc/cirrus/Makefile                   |    2 +
+ drivers/soc/cirrus/soc-ep93xx.c               |  134 ++
+ drivers/spi/spi-ep93xx.c                      |   31 +-
+ drivers/watchdog/ep93xx_wdt.c                 |    8 +
+ drivers/watchdog/ts72xx_wdt.c                 |    8 +
+ .../dt-bindings/clock/cirrus,ep93xx-clock.h   |   53 +
+ include/linux/platform_data/dma-ep93xx.h      |    3 +
+ include/linux/platform_data/eth-ep93xx.h      |   10 -
+ include/linux/platform_data/keypad-ep93xx.h   |   32 -
+ include/linux/soc/cirrus/ep93xx.h             |   40 +-
+ sound/soc/cirrus/Kconfig                      |    9 -
+ sound/soc/cirrus/Makefile                     |    4 -
+ sound/soc/cirrus/edb93xx.c                    |  117 --
+ 77 files changed, 5575 insertions(+), 4122 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/ep93xx.yaml
+ create mode 100644 Documentation/devicetree/bindings/ata/cirrus,ep9312-pata.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/cirrus,ep9301.yaml
+ create mode 100644 Documentation/devicetree/bindings/dma/cirrus,ep9301-dma-m2m.yaml
+ create mode 100644 Documentation/devicetree/bindings/dma/cirrus,ep9301-dma-m2p.yaml
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-ep9301.yaml
+ create mode 100644 Documentation/devicetree/bindings/input/cirrus,ep9307-keypad.yaml
+ create mode 100644 Documentation/devicetree/bindings/mtd/technologic,nand.yaml
+ create mode 100644 Documentation/devicetree/bindings/net/cirrus,ep9301-eth.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/cirrus,ep9301-pinctrl.yaml
+ create mode 100644 Documentation/devicetree/bindings/pwm/cirrus,ep9301-pwm.yaml
+ create mode 100644 Documentation/devicetree/bindings/rtc/cirrus,ep9301-rtc.yaml
+ create mode 100644 Documentation/devicetree/bindings/rtc/st,m48t86-rtc.yaml
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-ep9301.yaml
+ create mode 100644 Documentation/devicetree/bindings/timer/cirrus,ep9301-timer.yaml
+ create mode 100644 Documentation/devicetree/bindings/watchdog/cirrus,ep9301-wdt.yaml
+ create mode 100644 Documentation/devicetree/bindings/watchdog/technologic,ts7200-wdt.yaml
+ create mode 100644 arch/arm/boot/dts/ep93xx-bk3.dts
+ create mode 100644 arch/arm/boot/dts/ep93xx-edb9302.dts
+ create mode 100644 arch/arm/boot/dts/ep93xx-ts7250.dts
+ create mode 100644 arch/arm/boot/dts/ep93xx.dtsi
+ delete mode 100644 arch/arm/mach-ep93xx/Makefile
+ delete mode 100644 arch/arm/mach-ep93xx/clock.c
+ delete mode 100644 arch/arm/mach-ep93xx/core.c
+ delete mode 100644 arch/arm/mach-ep93xx/dma.c
+ delete mode 100644 arch/arm/mach-ep93xx/edb93xx.c
+ delete mode 100644 arch/arm/mach-ep93xx/ep93xx-regs.h
+ delete mode 100644 arch/arm/mach-ep93xx/gpio-ep93xx.h
+ delete mode 100644 arch/arm/mach-ep93xx/hardware.h
+ delete mode 100644 arch/arm/mach-ep93xx/irqs.h
+ delete mode 100644 arch/arm/mach-ep93xx/platform.h
+ delete mode 100644 arch/arm/mach-ep93xx/soc.h
+ delete mode 100644 arch/arm/mach-ep93xx/ts72xx.c
+ delete mode 100644 arch/arm/mach-ep93xx/ts72xx.h
+ delete mode 100644 arch/arm/mach-ep93xx/vision_ep9307.c
+ create mode 100644 drivers/clk/clk-ep93xx.c
+ rename {arch/arm/mach-ep93xx => drivers/clocksource}/timer-ep93xx.c (52%)
+ create mode 100644 drivers/mtd/nand/raw/technologic-nand-controller.c
+ create mode 100644 drivers/pinctrl/pinctrl-ep93xx.c
+ create mode 100644 drivers/power/reset/ep93xx-restart.c
+ create mode 100644 drivers/soc/cirrus/Kconfig
+ create mode 100644 drivers/soc/cirrus/Makefile
+ create mode 100644 drivers/soc/cirrus/soc-ep93xx.c
+ create mode 100644 include/dt-bindings/clock/cirrus,ep93xx-clock.h
+ delete mode 100644 include/linux/platform_data/eth-ep93xx.h
+ delete mode 100644 include/linux/platform_data/keypad-ep93xx.h
+ delete mode 100644 sound/soc/cirrus/edb93xx.c
+
 -- 
-2.27.0
+2.37.4
 
