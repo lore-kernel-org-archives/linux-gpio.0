@@ -2,111 +2,177 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA14C7EE2A
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Jun 2023 17:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC433C7EE23
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Jun 2023 17:38:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232364AbjFARL2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 1 Jun 2023 13:11:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51348 "EHLO
+        id S232909AbjFARiu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Jun 2023 13:38:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232185AbjFARL1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Jun 2023 13:11:27 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54459D1
-        for <linux-gpio@vger.kernel.org>; Thu,  1 Jun 2023 10:11:23 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-ba8374001abso1123670276.2
-        for <linux-gpio@vger.kernel.org>; Thu, 01 Jun 2023 10:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685639482; x=1688231482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2RYUgEYxXFi1ZF21Col8g6vBwno/bBmJUkRFch0DaQM=;
-        b=UVdnJ7BpN6sHBSdOMr7NGH8HcUdYjWOQtQqoEA1adtfZsyom8iNmq5UdedDkfDhRer
-         9b48g/Ii4kszW54ESZgZmO2/RpuYOW3IPzGNPBubY/a60iKbGmaafPracLZ48Gfws4bk
-         A+nQd1fxmjI1afLhCh9Df8fpTdmCXGx5WNdfGH67ftg5rJmtGJ3S6+nJfZBPpkp+L7P5
-         SsTvCWOfI7Si48vDoM0KkkDJ06V2IrimJr3gvaV81Sa5sRmQthRFwfcLD0dJfY1PoW4c
-         Add18Zi93boaWSz/M+ZWU9WO5Lg9CqElBiXJP+G2PNQggV3w45Xc6a+rkkJqMdQ8yE27
-         Ff1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685639482; x=1688231482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2RYUgEYxXFi1ZF21Col8g6vBwno/bBmJUkRFch0DaQM=;
-        b=cQLWMLqcH7JDU+LCZMRXnsTKMagW9m8eUauQqQONwGg7mw3f/EEWZZ86AOi1Ryw5Fh
-         Lo5MlfjKUbzfG7F5ZzoJeHHSRwIwW01DpEudTXy5CBmfrhK4KpjgHBLY1mQvnTdpIcHO
-         naxCHvZ/mwUM8x6TWRGhwXUkUsMBQ4lCBT3HEls9oIpBlZCT5EGi6yUtagU3njI2PaoY
-         DKr+5Mz4foBrc8KBpwvleitNfXkZIM0eDfYYk+I1xM2A/NDhj0Ac/YIP9AMep1UXsri1
-         Ow7y1nKW6HPrCEhZHT5LSAKBY1jdnKesUojwV1LSpfh7mRYFBLDHImI+YjTRqsxJxed4
-         6XNA==
-X-Gm-Message-State: AC+VfDy1k6GGddUWR8yj4baRkCRmUAjqAYTJ+WE6zjg1jgOjoP4VrPXn
-        Abew4hqs5il3OZwSldpGl55kT84sYgIKCAjNrV8c5w==
-X-Google-Smtp-Source: ACHHUZ4lFj0bWB6jMU3gvWBHimujzrWTdc7mbWeL3/S54GjekR5BYZtKjoQH7YngQMCdyLxjtsgfE3wU8mHqvj+RSKg=
-X-Received: by 2002:a25:b099:0:b0:b99:53e9:ba89 with SMTP id
- f25-20020a25b099000000b00b9953e9ba89mr459824ybj.50.1685639482511; Thu, 01 Jun
- 2023 10:11:22 -0700 (PDT)
+        with ESMTP id S232900AbjFARit (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Jun 2023 13:38:49 -0400
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B34C136;
+        Thu,  1 Jun 2023 10:38:48 -0700 (PDT)
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 351HcZSl080117;
+        Thu, 1 Jun 2023 12:38:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1685641115;
+        bh=eTqaoWdBnubYt8g2HfY5tipV6+UjftnHfJskSCfl15g=;
+        h=From:To:CC:Subject:Date;
+        b=GkeyLZ1jepVLvzXjeN5yswtJwkHfufw6//9Fb2DWbdw2S+7d2Yz+aE4XvKiTLpxTF
+         C7r+OqbCuLayey2j+vepWmhpY1HYWhhdVvMYlrBnkyMAue8LlGKhbxfhoTvHBtKD7a
+         L+NG1BHKwWcSqE17i+uF2K/ebv4Hur7v5sp/BBqI=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 351HcZf9007663
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 1 Jun 2023 12:38:35 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 1
+ Jun 2023 12:38:35 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 1 Jun 2023 12:38:35 -0500
+Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 351HcYIP016395;
+        Thu, 1 Jun 2023 12:38:34 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC:     <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: pinctrl: Drop k3
+Date:   Thu, 1 Jun 2023 12:38:31 -0500
+Message-ID: <20230601173831.982429-1-nm@ti.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-References: <20230531151918.105223-1-nick.hawkins@hpe.com> <20230531151918.105223-5-nick.hawkins@hpe.com>
- <07b2a2f7-5ddc-0f10-6b1f-184dc21fa580@roeck-us.net> <DM4PR84MB19274F575858CBCB2FA5C23E88489@DM4PR84MB1927.NAMPRD84.PROD.OUTLOOK.COM>
- <b1d8f851-4e87-333c-229c-b9dc37ea3c40@roeck-us.net> <DM4PR84MB19273A008BB11589CEEF697188499@DM4PR84MB1927.NAMPRD84.PROD.OUTLOOK.COM>
-In-Reply-To: <DM4PR84MB19273A008BB11589CEEF697188499@DM4PR84MB1927.NAMPRD84.PROD.OUTLOOK.COM>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 1 Jun 2023 19:11:10 +0200
-Message-ID: <CACRpkdarJCSCif+r1e_jXbbAgv03OgGAO6pkW9x-yiYZJxdGeQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] hwmon: (gxp_fan_ctrl) Provide fan info via gpio
-To:     "Hawkins, Nick" <nick.hawkins@hpe.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        "Verdun, Jean-Marie" <verdun@hpe.com>,
-        "brgl@bgdev.pl" <brgl@bgdev.pl>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "jdelvare@suse.com" <jdelvare@suse.com>,
-        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jun 1, 2023 at 5:48=E2=80=AFPM Hawkins, Nick <nick.hawkins@hpe.com>=
- wrote:
+For convenience (less code duplication), the pin controller pin
+configuration register values were defined in the bindings header.
+These are not some IDs or other abstraction layer but raw numbers used
+in the registers.
 
-> Thank you for your valuable feedback with the solutions you have provided=
-.
-> Before I proceed though I have a quick query about the fan driver.
-> If I were to let the user space "own" gpio pins, would it be permissible =
-for
-> the userspace to feed a kernel driver data via sysfs?
->
-> Ex:
-> GPIO Driver -> (OpenBMC) -> Fandriver (sysfs).
->
-> Here the GPIO driver would provide fan presence information to OpenBMC
-> and then OpenBMC would provide fan presence info to the fan driver.
+These constants do not fit the purpose of bindings. They do not
+provide any abstraction, any hardware and driver independent ID. In
+fact, the Linux pinctrl-single driver actually do not use the bindings
+header at all.
 
-But why? Don't be so obsessed about userspace doing stuff using
-sysfs, usually it is a better idea to let the kernel handle hardware.
+Commit f2de003e1426 ("dt-bindings: pinctrl: k3: Deprecate header with
+register constants") already moved users to the local header, so, drop
+the binding header. See background discussion in [1].
 
-I think this is a simple thermal zone you can define in the device
-tree as indicated in my previous comment.
+While at it, clean up the MAINTAINERS file which is the only reference
+left.
 
-> If it were permissible to provide data to the driver via this method I co=
-uld
-> apply it to the PSU driver as well. the PSU driver which requires presenc=
-e
-> info to verify a PSU is inserted / removed.
+[1]: https://lore.kernel.org/linux-arm-kernel/71c7feff-4189-f12f-7353-bce41a61119d@linaro.org/
+Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Nishanth Menon <nm@ti.com>
+---
+Linus,
 
-It feels like you are looking for a way for two drivers to communicate
-with each other.
+If you could pick this up for the next 6.5 kernel window now that we have kept the
+old header around for one cycle.
 
-This can be done several ways, the most straight-forward is notifiers.
-include/linux/notifier.h
+Ref: https://lore.kernel.org/linux-arm-kernel/20230313160019.vask6atfs6qwphml@twerp/
 
-Yours,
-Linus Walleij
+ MAINTAINERS                      |  1 -
+ include/dt-bindings/pinctrl/k3.h | 60 --------------------------------
+ 2 files changed, 61 deletions(-)
+ delete mode 100644 include/dt-bindings/pinctrl/k3.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 16ee982ce8cf..d25a463fd6a9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2948,7 +2948,6 @@ F:	Documentation/devicetree/bindings/arm/ti/k3.yaml
+ F:	Documentation/devicetree/bindings/hwinfo/ti,k3-socinfo.yaml
+ F:	arch/arm64/boot/dts/ti/Makefile
+ F:	arch/arm64/boot/dts/ti/k3-*
+-F:	include/dt-bindings/pinctrl/k3.h
+ 
+ ARM/TOSHIBA VISCONTI ARCHITECTURE
+ M:	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+diff --git a/include/dt-bindings/pinctrl/k3.h b/include/dt-bindings/pinctrl/k3.h
+deleted file mode 100644
+index b5aca149664e..000000000000
+--- a/include/dt-bindings/pinctrl/k3.h
++++ /dev/null
+@@ -1,60 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-/*
+- * This header provides constants for pinctrl bindings for TI's K3 SoC
+- * family.
+- *
+- * Copyright (C) 2018-2021 Texas Instruments Incorporated - https://www.ti.com/
+- */
+-#ifndef _DT_BINDINGS_PINCTRL_TI_K3_H
+-#define _DT_BINDINGS_PINCTRL_TI_K3_H
+-
+-/*
+- * These bindings are deprecated, because they do not match the actual
+- * concept of bindings but rather contain pure register values.
+- * Instead include the header in the DTS source directory.
+- */
+-#warning "These bindings are deprecated. Instead, use the header in the DTS source directory."
+-
+-#define PULLUDEN_SHIFT		(16)
+-#define PULLTYPESEL_SHIFT	(17)
+-#define RXACTIVE_SHIFT		(18)
+-
+-#define PULL_DISABLE		(1 << PULLUDEN_SHIFT)
+-#define PULL_ENABLE		(0 << PULLUDEN_SHIFT)
+-
+-#define PULL_UP			(1 << PULLTYPESEL_SHIFT | PULL_ENABLE)
+-#define PULL_DOWN		(0 << PULLTYPESEL_SHIFT | PULL_ENABLE)
+-
+-#define INPUT_EN		(1 << RXACTIVE_SHIFT)
+-#define INPUT_DISABLE		(0 << RXACTIVE_SHIFT)
+-
+-/* Only these macros are expected be used directly in device tree files */
+-#define PIN_OUTPUT		(INPUT_DISABLE | PULL_DISABLE)
+-#define PIN_OUTPUT_PULLUP	(INPUT_DISABLE | PULL_UP)
+-#define PIN_OUTPUT_PULLDOWN	(INPUT_DISABLE | PULL_DOWN)
+-#define PIN_INPUT		(INPUT_EN | PULL_DISABLE)
+-#define PIN_INPUT_PULLUP	(INPUT_EN | PULL_UP)
+-#define PIN_INPUT_PULLDOWN	(INPUT_EN | PULL_DOWN)
+-
+-#define AM62AX_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
+-#define AM62AX_MCU_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
+-
+-#define AM62X_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
+-#define AM62X_MCU_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
+-
+-#define AM64X_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
+-#define AM64X_MCU_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
+-
+-#define AM65X_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
+-#define AM65X_WKUP_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
+-
+-#define J721E_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
+-#define J721E_WKUP_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
+-
+-#define J721S2_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
+-#define J721S2_WKUP_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
+-
+-#define J784S4_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
+-#define J784S4_WKUP_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
+-
+-#endif
+-- 
+2.40.0
+
