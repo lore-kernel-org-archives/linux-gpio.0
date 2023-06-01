@@ -2,103 +2,134 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E110C7EE29
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Jun 2023 23:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4738DC7EE2F
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Jun 2023 23:29:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232430AbjFAXCI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 1 Jun 2023 19:02:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55836 "EHLO
+        id S230397AbjFAX3x (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Jun 2023 19:29:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232401AbjFAXCH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Jun 2023 19:02:07 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A873513D;
-        Thu,  1 Jun 2023 16:02:06 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id 98e67ed59e1d1-2565a9107d2so1168598a91.0;
-        Thu, 01 Jun 2023 16:02:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685660526; x=1688252526;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=akyKWVKyPkLNxMRzqWTgHJvGDhTUQ+cKpoqfMEuES1s=;
-        b=Z1TldImGdHh5WKKakOd8SqXgjXij3ti28t3rDoa98vhzDHwdekhc//euUT4Q++ou69
-         /IgEU2iq54entM15v7jvboFkHct1q+9uSj0IxduCSrPyHjNVR11oTn6lFwljfv96hZCA
-         46pEEJ2XFy1WCQt1YZh/R0lxdWF4Ok2bGb9lpqLoBUKVfBM065dSfMW5g7eeI8lJ5lUy
-         d7cHEolgX8zxiVjK7YJf/+1qS9kaCwMrI9IdnR0HLr8f6qvXCnNPZ3+qkxHRj1cm1kaa
-         PmanXr8QVTO/cZjvD2fMfI1wwSMyMte5Zqls7uAJIaM7uaQ05ATwHD3oudzAChbLTSuC
-         OzoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685660526; x=1688252526;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=akyKWVKyPkLNxMRzqWTgHJvGDhTUQ+cKpoqfMEuES1s=;
-        b=fbb69JgyCkDyL8wzCNADJnSCg5GJnGGi+pXHwD/6/TpP9Ai0gALjMpHFlOnpWtcuRn
-         5mLUoFdwzVx8Qym5jw4hOx+VOFYHLM5pybg8nah2558grmDCu8Vvv8g6EZQPgbrMmMZT
-         tKYBJC4CNQ38H6PJWeH+QQ+B4t+xd1N/4DShUe18kQFEQrtW+9xGtLPk7+h4iFHeJV2y
-         1qdTxqlp1PnUiJ8AKMPutbCoRmLMBAuUxEnfWaBg1kV1FKiJ01m+5vK6UNHjqmTnqltW
-         MMBh4i6qe7J3uJZEgTn4s68bMRDV1JkpTc0CoRm/++0Y95PM5dH5SRsgsUKcK39fxOo0
-         Bzhg==
-X-Gm-Message-State: AC+VfDybR84k/972HfmExSiKAkz8b1JmsiPBVvGGN0CNvghYY+M+v/rR
-        WFj3DXsFS0Y64MMiE31siZE=
-X-Google-Smtp-Source: ACHHUZ6/gnPmL2tIRTv+0dxsIHyj8zqa7pkfBP26gcDxqk6VPGK66clmxdjguCxUmn95SaPHfxRH8w==
-X-Received: by 2002:a17:90a:598b:b0:255:9038:fe0d with SMTP id l11-20020a17090a598b00b002559038fe0dmr624958pji.38.1685660526088;
-        Thu, 01 Jun 2023 16:02:06 -0700 (PDT)
-Received: from babbage.. (162-227-164-7.lightspeed.sntcca.sbcglobal.net. [162.227.164.7])
-        by smtp.gmail.com with ESMTPSA id lr4-20020a17090b4b8400b002467717fa60sm23957pjb.16.2023.06.01.16.02.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jun 2023 16:02:05 -0700 (PDT)
-From:   msmulski2@gmail.com
-To:     linus.walleij@linaro.org
-Cc:     brgl@bgdev.pl, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michal Smulski <michal.smulski@ooma.com>
-Subject: [PATCH v2 1/1] gpio: mpc8xxx: latch GPIOs state on module load when configured as output
-Date:   Thu,  1 Jun 2023 16:02:00 -0700
-Message-Id: <20230601230200.6128-2-msmulski2@gmail.com>
+        with ESMTP id S231863AbjFAX3q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Jun 2023 19:29:46 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2055.outbound.protection.outlook.com [40.107.244.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E42A136;
+        Thu,  1 Jun 2023 16:29:45 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dizkZMI5ZJVWcuf0tPAvS9K53vnBKc2o2yM9ellUiSkwpQuc00NfG2x3nC6z/EpccuCUmmhC90rlJ9SdhNzVtSPrGln0CL8XXfNWfiJ8hr9shzz1vSq6Xe4twOQi1V4G2j7xR6LiftGneaAf8XlDIZChgIDKqj780rnN5xomgpGQZ8I2OEcxKpGWsxoxIO3ZjJde5CGOy54Kw8TO+NGXrLDZS2/KyQ3u3nPDEJ22sh0jtf9P3/kWZLMtD3KUeu3knuIY4TbmAHQYck8Pov09OpWjFZSBJVCIAkV9Y//EKNBbv8mGcoIm59QqhRilaHLw7a3cTh6xZsNp4BkUaPlFzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HCtaCSh2xp3TLU3Jn9duTu+a0ilJ5rZJIXMRb1Vd+cU=;
+ b=Cxj1EkoTB5xr2Wt7gkGm1SaqMKlyGBWGMIhA7GJr7Qs4iSuSt7MXr0C41MWIiKRpWZa1bDQ4KDrLJAKt/OpfZXF2SR1coWZQd5CRQYHi27Ix30180+fPhJSiftQOuT+2qeLfs5yhh3ZIu2AkZUUCQN4UDbYtubLntYSCd0Rzaoar1tpefp5zFmfyaJZaBPM+8dhHvV26Pi2mXaULsgYeCvs7BOBSZ3k4kppYNMqZUiv/yn8T0I+z7MrQ2nXINlG6L7uCUDXC3F6/cTfx0UCn7/lU0R/cnPn3GCSprITbVrherMeOnN1Zf8HRtgAPi/29XXo8nqP20j3DL8Bt8I0EPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HCtaCSh2xp3TLU3Jn9duTu+a0ilJ5rZJIXMRb1Vd+cU=;
+ b=ORWt2kzztJm9REpBfs1fLP1Z5FkZhbG/qauYKzMhvoDvOn0/CMM1JVG7g9v9SFdjFT42lk2/gGvttCsH3hLDeKTSQccaSZ115RCSQG4YBL8HQtagp+4kiULy6jv2YPxP/PBrsxrpzTpy4ySgRPmrpVhZUyvXzPaYiHMNFVRhJxM=
+Received: from DM6PR21CA0010.namprd21.prod.outlook.com (2603:10b6:5:174::20)
+ by CY8PR12MB7337.namprd12.prod.outlook.com (2603:10b6:930:53::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.25; Thu, 1 Jun
+ 2023 23:29:43 +0000
+Received: from DM6NAM11FT053.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:174:cafe::4f) by DM6PR21CA0010.outlook.office365.com
+ (2603:10b6:5:174::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6477.9 via Frontend
+ Transport; Thu, 1 Jun 2023 23:29:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DM6NAM11FT053.mail.protection.outlook.com (10.13.173.74) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.6455.24 via Frontend Transport; Thu, 1 Jun 2023 23:29:43 +0000
+Received: from SITE-L-T34-2.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Thu, 1 Jun
+ 2023 18:29:42 -0500
+From:   Mario Limonciello <mario.limonciello@amd.com>
+To:     Rafael Wysocki <rafael@kernel.org>, <hdegoede@redhat.com>,
+        <linus.walleij@linaro.org>
+CC:     <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>,
+        <platform-driver-x86@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        S-k Shyam-sundar <Shyam-sundar.S-k@amd.com>,
+        Natikar Basavaraj <Basavaraj.Natikar@amd.com>,
+        Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v3 3/4] pinctrl: amd: Use pm_pr_dbg to show debugging messages
+Date:   Thu, 1 Jun 2023 18:29:22 -0500
+Message-ID: <20230601232923.1248-3-mario.limonciello@amd.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230601230200.6128-1-msmulski2@gmail.com>
-References: <20230601230200.6128-1-msmulski2@gmail.com>
+In-Reply-To: <20230601232923.1248-1-mario.limonciello@amd.com>
+References: <20230601232923.1248-1-mario.limonciello@amd.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT053:EE_|CY8PR12MB7337:EE_
+X-MS-Office365-Filtering-Correlation-Id: 77336892-228a-420d-972a-08db62f8141f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: RTMcIr/8bHc99V113LydJUuy0CiOT6Ii1qiI2Q9Oqc9NTGKfnhAb+d520z8wU7gmsxibgDccusa+w0qO0e6hnXO6SPnW1ky2JLsCLv9A7vLN/vb9adOxS4dXTkiCAz1Ad3+NdBeEi5/KIDjlf05U4A/vUfqaqNve1LZkBl+VeJ+loPMqApHKggfuXcaqsO1i7hEGXITmFjKLsHSJjnVdBKl8kzNajmrFMfmPYnCqx9mI9Pi9pX36CjF5ex8mS/X7fMDjNIpNQPTQb0F8gvwE3koyNdvPXKEr2jX5MZb2WsNxWomjtaMFKHLgzzHuQbmy4Q0KQr2Qqlx/1tlQCTYmkfnMpq9BbG5QGk0C7P1xlWHhJD/oArV/dgts56LSkDBCIPV3C5ld6j5I04Emaoj3vHbueagO1REpzS7F8BWjckmwQ3PnM6R9VK4uniqz/xz5dZeFliVNxhkTdQDXaLSGq1YNEFT9H6XGyyXYAnWISou2L/2cqtNt2WHWQfVnnOFVk4voOtaJ7bzezW7x8yazT+FTE3wzmSvlCZAz+Qptb3cnXN4nwTt9DuxInN1o1ms0crIvaXAVtyzyvniO9ILWTXUMIfpusieTvBIwoQcQkqfQwj6Q0DFQ7FnPcj921WrfEUMZnCJtULPbLAZThJ1yhMYO+NhpnxO8BgJMUgamb+gQnVurs5K3px/vpVhXXrXLHvJ2RoRPv+Aq51A0G0PPKwQym1b310prslxBK+iGLWMNCxStlhrRFJvAMaMeH6U7j2DqlMkF7asNfQno7l/xiA==
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(39860400002)(136003)(396003)(451199021)(40470700004)(36840700001)(46966006)(110136005)(186003)(4326008)(83380400001)(70586007)(47076005)(54906003)(36756003)(15650500001)(2906002)(70206006)(478600001)(16526019)(1076003)(2616005)(40460700003)(26005)(8936002)(336012)(356005)(82740400003)(8676002)(426003)(82310400005)(81166007)(316002)(44832011)(36860700001)(40480700001)(5660300002)(7696005)(6666004)(86362001)(41300700001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2023 23:29:43.1302
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77336892-228a-420d-972a-08db62f8141f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT053.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7337
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Michal Smulski <michal.smulski@ooma.com>
+To make the GPIO tracking around suspend easier for end users to
+use, link it with pm_debug_messages.  This will make discovering
+sources of spurious GPIOs around suspend easier.
 
-Qoriq and related devices allow reading out state of GPIO set as output.
-However, currently on driver's init, all outputs are configured as driven
-low. So, any changes to GPIO confiuration will drive all pins (configured
-as output) as output-low.
-This patch latches state of output GPIOs before any GPIO configuration
-takes place. This preserves any output settings done prior to loading
-the driver (for example, by u-boot).
-
-Signed-off-by: Michal Smulski <michal.smulski@ooma.com>
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 ---
- drivers/gpio/gpio-mpc8xxx.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-amd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index 3eb08cd1fdc0..6340e738c912 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -375,8 +375,12 @@ static int mpc8xxx_probe(struct platform_device *pdev)
- 	if (of_device_is_compatible(np, "fsl,qoriq-gpio") ||
- 	    of_device_is_compatible(np, "fsl,ls1028a-gpio") ||
- 	    of_device_is_compatible(np, "fsl,ls1088a-gpio") ||
--	    is_acpi_node(fwnode))
-+	    is_acpi_node(fwnode)) {
- 		gc->write_reg(mpc8xxx_gc->regs + GPIO_IBE, 0xffffffff);
-+		/* Also, latch state of GPIOs configured as output by bootloader. */
-+		gc->bgpio_data = gc->read_reg(mpc8xxx_gc->regs + GPIO_DAT) &
-+			gc->read_reg(mpc8xxx_gc->regs + GPIO_DIR);
-+	}
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index f279b360c20d..43d3530bab48 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -30,6 +30,7 @@
+ #include <linux/pinctrl/pinconf.h>
+ #include <linux/pinctrl/pinconf-generic.h>
+ #include <linux/pinctrl/pinmux.h>
++#include <linux/suspend.h>
  
- 	ret = devm_gpiochip_add_data(&pdev->dev, gc, mpc8xxx_gc);
- 	if (ret) {
+ #include "core.h"
+ #include "pinctrl-utils.h"
+@@ -636,9 +637,8 @@ static bool do_amd_gpio_irq_handler(int irq, void *dev_id)
+ 			regval = readl(regs + i);
+ 
+ 			if (regval & PIN_IRQ_PENDING)
+-				dev_dbg(&gpio_dev->pdev->dev,
+-					"GPIO %d is active: 0x%x",
+-					irqnr + i, regval);
++				pm_pr_dbg("GPIO %d is active: 0x%x",
++					  irqnr + i, regval);
+ 
+ 			/* caused wake on resume context for shared IRQ */
+ 			if (irq < 0 && (regval & BIT(WAKE_STS_OFF)))
 -- 
 2.34.1
 
