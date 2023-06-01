@@ -2,109 +2,103 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE789C7EE45
-	for <linux-gpio@archiver.kernel.org>; Thu,  1 Jun 2023 16:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4525C77B7E
+	for <linux-gpio@archiver.kernel.org>; Thu,  1 Jun 2023 16:58:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231899AbjFAQuK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 1 Jun 2023 12:50:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60854 "EHLO
+        id S231470AbjFAQ6y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 1 Jun 2023 12:58:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231439AbjFAQti (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Jun 2023 12:49:38 -0400
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E3D8E53;
-        Thu,  1 Jun 2023 09:49:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-        ; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:References:
-        In-Reply-To:Message-Id:Date:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ZiPCnMO76qB2BYRsvuFD+LhH0HMktcgnm3k8GmGktA0=; b=U5b5/XIstKLYENZYR/TX71aRRf
-        yLZ88yJnyKOS44fQJk5ChaDOxrFOnoOecHd+RIThmu1uhGE90VkqltF1RnZYehWDijnkNrRWLTBwZ
-        qGpOii/hQG14HeciG6hJgphqBTP8OWbB8F7RbE4eAzepIOyqyeX4QoBXc04l5NavNfVc=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:53588 helo=pettiford.lan)
-        by mail.hugovil.com with esmtpa (Exim 4.92)
-        (envelope-from <hugo@hugovil.com>)
-        id 1q4lCw-0003BU-P0; Thu, 01 Jun 2023 12:31:27 -0400
-From:   Hugo Villeneuve <hugo@hugovil.com>
-To:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        jirislaby@kernel.org, jringle@gridpoint.com,
-        l.perczak@camlintechnologies.com, tomasz.mon@camlingroup.com
-Cc:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hugo@hugovil.com,
+        with ESMTP id S229524AbjFAQ6x (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Jun 2023 12:58:53 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98DE410C0
+        for <linux-gpio@vger.kernel.org>; Thu,  1 Jun 2023 09:58:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1685638713; x=1717174713;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=u2xJYTi4T2rNoYi8R9Fd0VOCqgW2G/DBJCnnkFwUPzc=;
+  b=SyLuiLEKBfdIODCYpvWbBdAJRBAcJfHkwCJ6vFYTUgdV/fbGrRxkgXNz
+   emVZL2TpgRqyxO9cpLATwS7SVp53yj3gquW8hLK3t1562MOiU4fi4loZh
+   xWLZslrsUrHypgBqA4c9+M9FH3W9bwf91poE219XkUBOR3mpzFaAZ2pdy
+   uld1Yk+6RSNzY4eWXfIDytgVKx+MzzGRHfUpXY8oT5E8gZmX+BQUsACRk
+   tkN3FNrutpsA7/SVDG4k44ioL6o9MQQaGFqyrJkLg+E82TQeZ1/HK5GgC
+   O3bTfjz7v5yTafSSPrBJOf/HqEQMiQ5dgQnmkgVt2LecJmkAWa9dyl4tp
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10728"; a="358041547"
+X-IronPort-AV: E=Sophos;i="6.00,210,1681196400"; 
+   d="scan'208";a="358041547"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2023 09:58:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10728"; a="954115270"
+X-IronPort-AV: E=Sophos;i="6.00,210,1681196400"; 
+   d="scan'208";a="954115270"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga006.fm.intel.com with ESMTP; 01 Jun 2023 09:58:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1q4ld7-000Sss-26;
+        Thu, 01 Jun 2023 19:58:29 +0300
+Date:   Thu, 1 Jun 2023 19:58:29 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Kent Gibson <warthog618@gmail.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
         linux-gpio@vger.kernel.org,
-        Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-        stable@vger.kernel.org, Lech Perczak <lech.perczak@camlingroup.com>
-Date:   Thu,  1 Jun 2023 12:31:10 -0400
-Message-Id: <20230601163113.2785657-7-hugo@hugovil.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230601163113.2785657-1-hugo@hugovil.com>
-References: <20230601163113.2785657-1-hugo@hugovil.com>
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [libgpiod][PATCH] tools: tests: replace egrep with grep -E
+Message-ID: <ZHjONQW0qVMseySZ@smile.fi.intel.com>
+References: <20230601140950.779453-1-brgl@bgdev.pl>
+ <ZHirBqDkd99qWGX8@sol>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-Subject: [PATCH v5 6/9] serial: sc16is7xx: fix bug when first setting GPIO direction
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZHirBqDkd99qWGX8@sol>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+On Thu, Jun 01, 2023 at 10:28:22PM +0800, Kent Gibson wrote:
+> On Thu, Jun 01, 2023 at 04:09:50PM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > 
+> > Since version 3.11 egrep emits the following warning to stderr on startup:
+> > 
+> >   egrep: warning: egrep is obsolescent; using grep -E
+> > 
+> > This makes the tests fail (though that seems to depend on BATS version)
+> > so replace egrep with grep -E as suggested.
+> > 
+> 
+> That works for me, so I don't have any objections.
+> 
+> Though FWIW, my global sim cleanup script looks like:
+> 
+> find /sys/kernel/config/gpio-sim -type d -name hog -print0 2>/dev/null | xargs -0 -r rmdir
+> find /sys/kernel/config/gpio-sim -type d -name "line*" -print0  2>/dev/null | xargs -0 -r rmdir
+> find /sys/kernel/config/gpio-sim -type d -name "bank*" -print0 2>/dev/null | xargs -0 -r rmdir
+> rmdir /sys/kernel/config/gpio-sim/*
+> 
+> So no grep at all, just find and xargs.
 
-When configuring a pin as an output pin with a value of logic 0, we
-end up as having a value of logic 1 on the output pin. Setting a
-logic 0 a second time (or more) after that will correctly output a
-logic 0 on the output pin.
+Maybe you can even use -exec... :-)
+But I don't remember if it forks for each entry (and I don't remember by heart
+what -r does for xargs, which usually adds as many parameters as possible to
+the command line of the calling tool).
 
-By default, all GPIO pins are configured as inputs. When we enter
-sc16is7xx_gpio_direction_output() for the first time, we first set the
-desired value in IOSTATE, and then we configure the pin as an output.
-The datasheet states that writing to IOSTATE register will trigger a
-transfer of the value to the I/O pin configured as output, so if the
-pin is configured as an input, nothing will be transferred.
+> That is for all sims, but could easily be reduced to a particular sim,
+> given the sim name.
+> 
+> Setting live to 0 seems to be optional - deleting everything works fine
+> for me.
 
-Therefore, set the direction first in IODIR, and then set the desired
-value in IOSTATE.
-
-This is what is done in NXP application note AN10587.
-
-Fixes: dfeae619d781 ("serial: sc16is7xx")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Reviewed-by: Lech Perczak <lech.perczak@camlingroup.com>
-Tested-by: Lech Perczak <lech.perczak@camlingroup.com>
----
- drivers/tty/serial/sc16is7xx.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-index ad6b9d613b33..2fa09baf28e3 100644
---- a/drivers/tty/serial/sc16is7xx.c
-+++ b/drivers/tty/serial/sc16is7xx.c
-@@ -1340,9 +1340,18 @@ static int sc16is7xx_gpio_direction_output(struct gpio_chip *chip,
- 		state |= BIT(offset);
- 	else
- 		state &= ~BIT(offset);
--	sc16is7xx_port_write(port, SC16IS7XX_IOSTATE_REG, state);
-+
-+	/*
-+	 * If we write IOSTATE first, and then IODIR, the output value is not
-+	 * transferred to the corresponding I/O pin.
-+	 * The datasheet states that each register bit will be transferred to
-+	 * the corresponding I/O pin programmed as output when writing to
-+	 * IOSTATE. Therefore, configure direction first with IODIR, and then
-+	 * set value after with IOSTATE.
-+	 */
- 	sc16is7xx_port_update(port, SC16IS7XX_IODIR_REG, BIT(offset),
- 			      BIT(offset));
-+	sc16is7xx_port_write(port, SC16IS7XX_IOSTATE_REG, state);
- 
- 	return 0;
- }
 -- 
-2.30.2
+With Best Regards,
+Andy Shevchenko
+
 
