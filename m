@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F24C4C7EE2F
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Jun 2023 13:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F00E0C7EE24
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Jun 2023 13:29:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236101AbjFBN3Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S236136AbjFBN3Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 2 Jun 2023 09:29:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40854 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236071AbjFBN3Y (ORCPT
+        with ESMTP id S236079AbjFBN3Y (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Jun 2023 09:29:24 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 647901B9;
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 231E11B5;
         Fri,  2 Jun 2023 06:29:22 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 352Bxqhf001514;
-        Fri, 2 Jun 2023 15:29:07 +0200
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 352CEUrY023929;
+        Fri, 2 Jun 2023 15:29:05 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=AM1f4tJRimilxF3sdJas9PGFkZRJhM/VZR2iX7zQFb4=;
- b=TXDSsE2emHbj4tusgGl5fUiyMZ0RhNp/HzxUvNrHH19zaEbAbj0o9H3Ge2bDeu0S5qnn
- 41F3WsRlT+YoEm7rMzWxIF7blwt62yM6rKvstTfvJVoryKSLe69f8tnSY6/0WNH0QmbH
- +SVRx94j3oDu0DU/K5XLwoT8VDTbwgddnWii+wsP9CHX86rrezVmDuY5noyU2VxamEYz
- bb2jTZBX9EcoKDCh4O8KO/OPoeqzfFkUaQ5wVD7j+HekQOQcAepiAHtqH68DFspRLso2
- WGy/mZIWQrAhcEUVLUZn9Yybj1pMKuDJGwlTlRRl+ofH50NIei0lyM00f4sFtJjbYx+f 4w== 
+ bh=JXOkz1yMnYf3hSK6OQ9FOlo+6ogfqWnCLWQ9vPUkJP8=;
+ b=nxrD9qk5R+hp5P1V1ITwxK4MnVOEvJxlkwhOL0tjIiZctfE/YbqgtpIGAuLRkcFNPw4+
+ hxiHA8xabXvf54Q0icPv/MKWhCM8Abel9d24XwODbjHrO7/9gZH1dNGwj02yI530SjCD
+ /mYIqsfnekos7vYpoGFIa3/IN3iRgXuPb09lLev21IjrZjLZaIbIM7KYv+MyDtAvp90n
+ KxtyiZ89IrHPGasd6zk2AgOaDra6ao/nqAIz8VZo9+8lFFUy6PorP2QZGNUWon4jnJYf
+ OhXAzZAtLmKTvyWDEIUDKQMmGMt1Ugt2i7YdKdz6ISLi2hlSWfBSaeiHcLLAVa+f2MuS qw== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qweqepgut-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qyc08a1uu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 02 Jun 2023 15:29:07 +0200
+        Fri, 02 Jun 2023 15:29:05 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id ED02A100034;
-        Fri,  2 Jun 2023 15:29:06 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E1DA0100034;
+        Fri,  2 Jun 2023 15:29:04 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E5C2F236927;
-        Fri,  2 Jun 2023 15:29:06 +0200 (CEST)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D88E5236927;
+        Fri,  2 Jun 2023 15:29:04 +0200 (CEST)
 Received: from localhost (10.201.21.93) by SHFDAG1NODE1.st.com (10.75.129.69)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Fri, 2 Jun
- 2023 15:29:06 +0200
+ 2023 15:29:04 +0200
 From:   Alexandre Torgue <alexandre.torgue@foss.st.com>
 To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
@@ -52,9 +52,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-Subject: [PATCH v2 03/10] dt-bindings: stm32: add st,stm32mp25-syscfg compatible for syscon
-Date:   Fri, 2 Jun 2023 15:28:52 +0200
-Message-ID: <20230602132859.16442-4-alexandre.torgue@foss.st.com>
+Subject: [PATCH v2 01/10] dt-bindings: pinctrl: stm32: support for stm32mp257 and additional packages
+Date:   Fri, 2 Jun 2023 15:28:50 +0200
+Message-ID: <20230602132859.16442-2-alexandre.torgue@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230602132859.16442-1-alexandre.torgue@foss.st.com>
 References: <20230602132859.16442-1-alexandre.torgue@foss.st.com>
@@ -70,36 +70,48 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Patrick Delaunay <patrick.delaunay@foss.st.com>
+Add support for st,stm32mp257-pinctrl and st,stm32mp257-z-pinctrl.
+Add packages AI, AK and AL (values : 0x100, 0x400 and 0x800)
 
-Add the new syscon compatible for STM32MP25 syscfg = "st,stm32mp25-syscfg".
-Reorder enum following ASCII oredering.
-
-Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
 Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-diff --git a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-index ad8e51aa01b0..b63ff591ef8f 100644
---- a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-+++ b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-@@ -15,12 +15,13 @@ properties:
-     oneOf:
-       - items:
-           - enum:
--              - st,stm32mp157-syscfg
--              - st,stm32mp151-pwr-mcu
--              - st,stm32-syscfg
-               - st,stm32-power-config
-+              - st,stm32-syscfg
-               - st,stm32-tamp
-               - st,stm32f4-gcan
-+              - st,stm32mp151-pwr-mcu
-+              - st,stm32mp157-syscfg
-+              - st,stm32mp25-syscfg
-           - const: syscon
-       - items:
-           - const: st,stm32-tamp
+diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+index 1ab0f8dde477..2120ef71a78d 100644
+--- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+@@ -27,6 +27,8 @@ properties:
+       - st,stm32mp135-pinctrl
+       - st,stm32mp157-pinctrl
+       - st,stm32mp157-z-pinctrl
++      - st,stm32mp257-pinctrl
++      - st,stm32mp257-z-pinctrl
+ 
+   '#address-cells':
+     const: 1
+@@ -56,7 +58,7 @@ properties:
+       Indicates the SOC package used.
+       More details in include/dt-bindings/pinctrl/stm32-pinfunc.h
+     $ref: /schemas/types.yaml#/definitions/uint32
+-    enum: [1, 2, 4, 8]
++    enum: [0x1, 0x2, 0x4, 0x8, 0x100, 0x400, 0x800]
+ 
+ patternProperties:
+   '^gpio@[0-9a-f]*$':
+diff --git a/include/dt-bindings/pinctrl/stm32-pinfunc.h b/include/dt-bindings/pinctrl/stm32-pinfunc.h
+index e6fb8ada3f4d..28ad0235086a 100644
+--- a/include/dt-bindings/pinctrl/stm32-pinfunc.h
++++ b/include/dt-bindings/pinctrl/stm32-pinfunc.h
+@@ -37,6 +37,9 @@
+ #define STM32MP_PKG_AB	0x2
+ #define STM32MP_PKG_AC	0x4
+ #define STM32MP_PKG_AD	0x8
++#define STM32MP_PKG_AI	0x100
++#define STM32MP_PKG_AK	0x400
++#define STM32MP_PKG_AL	0x800
+ 
+ #endif /* _DT_BINDINGS_STM32_PINFUNC_H */
+ 
 -- 
 2.17.1
 
