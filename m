@@ -2,120 +2,107 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E855BC7EE29
-	for <linux-gpio@archiver.kernel.org>; Fri,  2 Jun 2023 13:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 932A4C7EE2F
+	for <linux-gpio@archiver.kernel.org>; Fri,  2 Jun 2023 13:15:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235097AbjFBNNE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 2 Jun 2023 09:13:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58096 "EHLO
+        id S235865AbjFBNPG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 2 Jun 2023 09:15:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234408AbjFBNNC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Jun 2023 09:13:02 -0400
-Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC3310E9;
-        Fri,  2 Jun 2023 06:12:26 -0700 (PDT)
-Received: by mail-qv1-xf32.google.com with SMTP id 6a1803df08f44-6260e771419so12441256d6.1;
-        Fri, 02 Jun 2023 06:12:26 -0700 (PDT)
+        with ESMTP id S236140AbjFBNO7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Jun 2023 09:14:59 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E573E49
+        for <linux-gpio@vger.kernel.org>; Fri,  2 Jun 2023 06:14:38 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9741caaf9d4so288812266b.0
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Jun 2023 06:14:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685711518; x=1688303518;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ry5f5ak9Sr/bZIbtzTWJKvf8qehHNybuYJDF5N8k3cI=;
-        b=QPHM+5/woE/dOdJELOIwis9yJBOUQoJlPPGRdP02SJqMqHI27rC5crLA6aJ+I+IAyk
-         g8SE/QLLi9KBFI6QVazJnlN1/A75T72fCkc2WD6qXVb+/iEFm8ghzYBFWz00iZ56auMH
-         +Lx304AoJRyE/RsOG8vlL+2XlxxJi8Avc8Gfhbm18Oys/Bbvx+OzVC0gKZo2Is5m1ErA
-         Wx2XlDL+Tn9j7p7GXzEg5NFb5U7eeWBs2cXHHnnWfkA7kTL79BUrztBei2k7C3oKS7Ey
-         3tCQabzh8T47rC/pmtQ45/Xnylb59gvgVMKGQdMLy2VoobHctDpkirlJTdouqsFKEhz4
-         MbRA==
+        d=linaro.org; s=google; t=1685711650; x=1688303650;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NM7E2bhPISEHbBlp1H32wp1Q4VWvkt2UL0EOlnHQmhw=;
+        b=EMRhYGqE0xvmt/e3UTWvucXGuihMx3qxy93kVgcdl0JaBC6zfPxxlaYtyG7CwUnPK2
+         IsW2bmeGb79p0HFI+crVf0iOrCWPNAhG9UOuCkjRL6BvZMYjr/Hb6lCCCG4v61L2/ewA
+         xb1is/o+4n4jOMiVzInw5czw6lMNOK3tQkbgv9IpldCx0bcp5AtRNXpC2l00j5Fu/1/e
+         EGbvr+JPC2XX+1gjobhAKXk1sIQW8c9CWk7dFN5jEWVCLQrDTF5BZOw5TUmxEYP9FbFv
+         7FN1w7pWbEwKqAebcSuJPJMmRFC5mN6YtIm0uKG95FNaYi5DuTPFC57WclQSrrJ2bh8H
+         fgJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685711518; x=1688303518;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ry5f5ak9Sr/bZIbtzTWJKvf8qehHNybuYJDF5N8k3cI=;
-        b=JEJ4S4m6yVSj4OvZcC0WAjiibqiIGCnqXmt9Kcj2LslpCaZQsn2G3ENnTZ1bJwkuL+
-         XDQ7VzoJDeanAQ5P3wO4Oo06waz7m/9sZk7FPJKEDVaoHWLyN1qknbObKGSXUw3jmD6K
-         edJwVR+/eP9ZjAAOBJemzWCvUD244BS1lvLlff6q6zIQEdFcQaXL73/PxzACkxCq1K03
-         apXGlcw1uPizLPPiRiVx8/QxLTjbjSUeZG3MZuqO5ba8L+Q3vdz0FWaOWEN3zqlR1wot
-         DPHeeIoUL2fhQL/Z7ONRhAYZHGl9hMpC7TO48cQaVQ4wV7SDTb8RKQ+atuedrY2oXdP5
-         2lcA==
-X-Gm-Message-State: AC+VfDym+2Kre7AsobAzAU1qWzefzhXq8fYdLz69XGkxjPFgKju59U2x
-        ctqI+Qi9w60dYPUFrW08qNMzE2Eat4sqY4jyCJe7IjqdIHabOg==
-X-Google-Smtp-Source: ACHHUZ7kMzvAHTkGGwT6hZfhgTh0gjVaS+Sg8f/2ZLTev7/1qspG/QCMLGRPbwovukpVvSzxyIhabkjHVr9LicCFB2s=
-X-Received: by 2002:a05:6214:411b:b0:628:7be8:97b7 with SMTP id
- kc27-20020a056214411b00b006287be897b7mr2694764qvb.23.1685711518207; Fri, 02
- Jun 2023 06:11:58 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1685711650; x=1688303650;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NM7E2bhPISEHbBlp1H32wp1Q4VWvkt2UL0EOlnHQmhw=;
+        b=K3k5j0hqW6NZ0rzhVzdtFoYoKSQUOhitmJPqGxvGkKiRDDK/B5OVbd6weZxttvJQEu
+         qbjYLRlgl66G2LYoOgMOUXDlwGaJ8APBO4mMunEasjMYaYFCuNwZ/xnpVDNyIIjKyMGk
+         0qA7NxyL4n1MEeekTJnfCJUsbE25HZe+3cH6crVmhFnLqkr0E4qWYPC3GVKEbWjVkRqG
+         AKSJK0lhiaX9k1AImRiJbaKyAs8UHEETduBFC9JylA2oGYLi20isQyzjo4X4NrdvzF2r
+         qGY9I/dmu+KgVfFS0AD+jzISvlgBK9+18/bOv8CvFMXS/HteNfQnSlz2ICGASSlaVqxd
+         jj7g==
+X-Gm-Message-State: AC+VfDw16grudZhVQQs3KtILkEWm7XiYddsF0pHkVyJ6EVB8/Jy6GxhB
+        UOXKi3AHvUBnvWLj60FsAP/Xjw==
+X-Google-Smtp-Source: ACHHUZ4uIIsfu5hfYvBBUXo02QYm4Gt9O+H37x3tBrXc8NtwSrPZ6PnJax9nm8arEBESNAAtPajQbQ==
+X-Received: by 2002:a17:906:fe43:b0:973:e69d:c720 with SMTP id wz3-20020a170906fe4300b00973e69dc720mr10021680ejb.51.1685711650410;
+        Fri, 02 Jun 2023 06:14:10 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.199.204])
+        by smtp.gmail.com with ESMTPSA id bi1-20020a170906a24100b009664cdb3fc5sm737006ejb.138.2023.06.02.06.14.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Jun 2023 06:14:09 -0700 (PDT)
+Message-ID: <de4aa846-c609-b0c3-a04a-2ad5ffaec815@linaro.org>
+Date:   Fri, 2 Jun 2023 15:14:07 +0200
 MIME-Version: 1.0
-References: <20230602082325.1445261-1-quic_srichara@quicinc.com> <20230602082325.1445261-3-quic_srichara@quicinc.com>
-In-Reply-To: <20230602082325.1445261-3-quic_srichara@quicinc.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 2 Jun 2023 16:11:21 +0300
-Message-ID: <CAHp75Vcfa2cbACEPROuOptPM7c9SOp_TudK-4Rx45OhWPf=iiw@mail.gmail.com>
-Subject: Re: [PATCH V8 2/8] clk: qcom: Add Global Clock controller (GCC)
- driver for IPQ5018
-To:     Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 03/11] dt-bindings: stm32: add st,stm32mp25-syscfg
+ compatible for syscon
+To:     Alexandre Torgue <alexandre.torgue@foss.st.com>,
         robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, ulf.hansson@linaro.org,
-        linus.walleij@linaro.org, catalin.marinas@arm.com, will@kernel.org,
-        p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, robimarko@gmail.com,
-        krzysztof.kozlowski@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Conor Dooley <conor+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>, soc@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20230529162034.20481-1-alexandre.torgue@foss.st.com>
+ <20230529162034.20481-4-alexandre.torgue@foss.st.com>
+Content-Language: en-US
+In-Reply-To: <20230529162034.20481-4-alexandre.torgue@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jun 2, 2023 at 11:24=E2=80=AFAM Sricharan Ramabadhran
-<quic_srichara@quicinc.com> wrote:
->
-> Add support for the global clock controller found on IPQ5018
-> based devices.
+Resending as my previous email probably got lost. If you got it twice,
+apologies.
 
-...
+On 29/05/2023 18:20, Alexandre Torgue wrote:
+> From: Patrick Delaunay <patrick.delaunay@foss.st.com>
+> 
+> Add the new syscon compatible for STM32MP25 syscfg = "st,stm32mp25-syscfg".
+> 
+> Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+> Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
+> index ad8e51aa01b0..9ed5b121cea9 100644
+> --- a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
+> +++ b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
+> @@ -16,6 +16,7 @@ properties:
+>        - items:
+>            - enum:
+>                - st,stm32mp157-syscfg
+> +              - st,stm32mp25-syscfg
 
->  config IPQ_GCC_5332
->         tristate "IPQ5332 Global Clock Controller"
->         depends on ARM64 || COMPILE_TEST
->         help
->           Support for the global clock controller on ipq5332 devices.
-> -         Say Y if you want to use peripheral devices such as UART, SPI,
-> -         i2c, USB, SD/eMMC, etc.
+You should rather keep some (alphabetical?) order.
 
-Nothing in the commit message about this. Please, elaborate.
 
-...
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> +#include <linux/kernel.h>
-> +#include <linux/err.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset-controller.h>
+Best regards,
+Krzysztof
 
-Why not keep this ordered?
-
-Missing bits.h and maybe others, but in an unordered list it's harder to ch=
-eck.
-
-...
-
-> +                       &gpll4_main.clkr.hw
-
-Can we keep trailing comma here and in similar cases, like
-
-> +                       &ubi32_pll_main.clkr.hw
-> +                       &gpll0_main.clkr.hw
-
-(and many others)?
-
---=20
-With Best Regards,
-Andy Shevchenko
