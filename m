@@ -2,324 +2,338 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 434F5C7EE32
-	for <linux-gpio@archiver.kernel.org>; Mon,  5 Jun 2023 02:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A18F5C7EE2C
+	for <linux-gpio@archiver.kernel.org>; Mon,  5 Jun 2023 02:55:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232606AbjFEC1y (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 4 Jun 2023 22:27:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51716 "EHLO
+        id S231764AbjFECzc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 4 Jun 2023 22:55:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjFEC1x (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 4 Jun 2023 22:27:53 -0400
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C979BB8;
-        Sun,  4 Jun 2023 19:27:50 -0700 (PDT)
-Received: from loongson.cn (unknown [223.106.25.146])
-        by gateway (Coremail) with SMTP id _____8CxqPElSH1kNogEAA--.9462S3;
-        Mon, 05 Jun 2023 10:27:49 +0800 (CST)
-Received: from [192.168.100.8] (unknown [223.106.25.146])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Axo8AgSH1kUzGKAA--.25676S3;
-        Mon, 05 Jun 2023 10:27:45 +0800 (CST)
-Message-ID: <2fad9d11-ecc6-aa3d-8c0b-14b1f196ce74@loongson.cn>
-Date:   Mon, 5 Jun 2023 10:27:44 +0800
+        with ESMTP id S229886AbjFECzb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 4 Jun 2023 22:55:31 -0400
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7B93C7;
+        Sun,  4 Jun 2023 19:55:25 -0700 (PDT)
+X-QQ-mid: bizesmtp91t1685933679tgkgr2hl
+Received: from wxdbg.localdomain.com ( [60.177.99.31])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Mon, 05 Jun 2023 10:54:37 +0800 (CST)
+X-QQ-SSF: 01400000000000J0Z000000A0000000
+X-QQ-FEAT: tJPajVdBfNJA/plFwIVF1V4Taj3vwmDGNKMIamQHXP2M0y6TvBOMiMODGYMMU
+        pbdfUbZnbS2BgVofT2REfM/1fjXIAc3x/kjNnV3Hq5JmRHJaF/U102ZpA0WLHkx3S6Z4tLK
+        uFcvfJckyUwRjLX/bkgbWmWbWyxJHgLxP3jRAuUw2I9cLKUTwtSxTH+/qpJPtnewgszC1tv
+        dXtjwp12/pRvHAzqm5YBKE88i4ssCpR4646Ae/P2yOGt8/rEC5xwEiRw/EoxqJKRPWrQVKj
+        1v0GL3j+tDSHGVTKTPYO85YUKU+g/PbKixY1E2mI8uTDx19kQnEwuQHfIAdJQU0eox3vioF
+        pEtUsH529r2DM1R27+0tOLEGEMsVTHmXd0uEYBDLQxUxjg6UoyU2DxTq2tj+Puy22ov6Y6Y
+        axk8XiSnJdNjpk8fY89cgA==
+X-QQ-GoodBg: 2
+X-BIZMAIL-ID: 10407025783392691638
+From:   Jiawen Wu <jiawenwu@trustnetic.com>
+To:     netdev@vger.kernel.org, jarkko.nikula@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com,
+        jsd@semihalf.com, Jose.Abreu@synopsys.com, andrew@lunn.ch,
+        hkallweit1@gmail.com, linux@armlinux.org.uk
+Cc:     linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+        mengyuanlou@net-swift.com, Jiawen Wu <jiawenwu@trustnetic.com>,
+        Piotr Raczynski <piotr.raczynski@intel.com>
+Subject: [PATCH net-next v11 1/9] net: txgbe: Add software nodes to support phylink
+Date:   Mon,  5 Jun 2023 10:52:03 +0800
+Message-Id: <20230605025211.743823-2-jiawenwu@trustnetic.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20230605025211.743823-1-jiawenwu@trustnetic.com>
+References: <20230605025211.743823-1-jiawenwu@trustnetic.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-From:   Yanteng Si <siyanteng@loongson.cn>
-Subject: Re: [PATCH v1 1/1] gpiolib: Remove unused gpio_cansleep()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc-tw-discuss@lists.sourceforge.net,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
-        Hu Haowen <src.res@email.cn>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-References: <20230602150106.47783-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <20230602150106.47783-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8Axo8AgSH1kUzGKAA--.25676S3
-X-CM-SenderInfo: pvl1t0pwhqwqxorr0wxvrqhubq/
-X-Coremail-Antispam: 1Uk129KBjvAXoWfGw4rZr1rKry3Cr4rAF43ZFb_yoW8JrW5Ko
-        W3Awsruwn7Ja13JrW5Ga1kWFnrursFkrZ5Za1kX3yrKry7tr93Xa18J3y3Ja4fJFyrG3Wf
-        GFyxuFWUWrZYyFyUn29KB7ZKAUJUUUUd529EdanIXcx71UUUUU7KY7ZEXasCq-sGcSsGvf
-        J3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnRJU
-        UUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG6rWj6s
-        0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-        Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l84
-        ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_Cr1U
-        M2kKe7AKxVWUtVW8ZwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zV
-        CFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2
-        z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2
-        IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E
-        4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxVWUJVWUGw
-        C20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48J
-        MIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMI
-        IF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E
-        87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUstxhDUUUU
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi andy,
+Register software nodes for GPIO, I2C, SFP and PHYLINK. Define the
+device properties.
 
-On 2023/6/2 23:01, Andy Shevchenko wrote:
-> There is not a single user in the entire kernel of this deprecated API,
-> kill it for good.
->
-> Signed-off-by: Andy Shevchenko<andriy.shevchenko@linux.intel.com>
-> ---
->   Documentation/driver-api/gpio/legacy.rst           | 12 +-----------
->   .../translations/zh_CN/driver-api/gpio/legacy.rst  | 14 +++-----------
->   Documentation/translations/zh_TW/gpio.txt          | 14 +++-----------
->   arch/m68k/include/asm/mcfgpio.h                    |  8 --------
->   arch/mips/include/asm/mach-au1x00/gpio-au1000.h    |  5 -----
->   arch/mips/include/asm/mach-au1x00/gpio-au1300.h    |  5 -----
->   include/linux/gpio.h                               | 12 ------------
->   7 files changed, 7 insertions(+), 63 deletions(-)
->
-> diff --git a/Documentation/driver-api/gpio/legacy.rst b/Documentation/driver-api/gpio/legacy.rst
-> index 9eda54811faa..b6505914791c 100644
-> --- a/Documentation/driver-api/gpio/legacy.rst
-> +++ b/Documentation/driver-api/gpio/legacy.rst
-> @@ -165,8 +165,7 @@ Most GPIO controllers can be accessed with memory read/write instructions.
->   Those don't need to sleep, and can safely be done from inside hard
->   (nonthreaded) IRQ handlers and similar contexts.
->   
-> -Use the following calls to access such GPIOs,
-> -for which gpio_cansleep() will always return false (see below)::
-> +Use the following calls to access such GPIOs::
->   
->   	/* GPIO INPUT:  return zero or nonzero */
->   	int gpio_get_value(unsigned gpio);
-> @@ -200,13 +199,6 @@ Some GPIO controllers must be accessed using message based busses like I2C
->   or SPI.  Commands to read or write those GPIO values require waiting to
->   get to the head of a queue to transmit a command and get its response.
->   This requires sleeping, which can't be done from inside IRQ handlers.
-> -
-> -Platforms that support this type of GPIO distinguish them from other GPIOs
-> -by returning nonzero from this call (which requires a valid GPIO number,
-> -which should have been previously allocated with gpio_request)::
-> -
-> -	int gpio_cansleep(unsigned gpio);
-> -
->   To access such GPIOs, a different set of accessors is defined::
->   
->   	/* GPIO INPUT:  return zero or nonzero, might sleep */
-> @@ -215,7 +207,6 @@ To access such GPIOs, a different set of accessors is defined::
->   	/* GPIO OUTPUT, might sleep */
->   	void gpio_set_value_cansleep(unsigned gpio, int value);
->   
-> -
->   Accessing such GPIOs requires a context which may sleep,  for example
->   a threaded IRQ handler, and those accessors must be used instead of
->   spinlock-safe accessors without the cansleep() name suffix.
-> @@ -537,7 +528,6 @@ code, which always dispatches through the gpio_chip::
->   
->     #define gpio_get_value	__gpio_get_value
->     #define gpio_set_value	__gpio_set_value
-> -  #define gpio_cansleep		__gpio_cansleep
->   
->   Fancier implementations could instead define those as inline functions with
->   logic optimizing access to specific SOC-based GPIOs.  For example, if the
-> diff --git a/Documentation/translations/zh_CN/driver-api/gpio/legacy.rst b/Documentation/translations/zh_CN/driver-api/gpio/legacy.rst
-> index 1bddecf73670..1c939e352129 100644
-> --- a/Documentation/translations/zh_CN/driver-api/gpio/legacy.rst
-> +++ b/Documentation/translations/zh_CN/driver-api/gpio/legacy.rst
-> @@ -153,8 +153,7 @@ get/set(获取/设置)函数调用没法返回错误,且有可能是配置错误
->   大多数 GPIO 控制器可以通过内存读/写指令来访问。这些指令不会休眠,可以
->   安全地在硬(非线程)中断例程和类似的上下文中完成。
->   
-> -对于那些用 gpio_cansleep()测试总是返回失败的 GPIO(见下文)，使用
-> -以下的函数访问::
-> +对于那些 GPIO，使用 以下的函数访问::
-对于那些 GPIO，使用以下的函数访问::
->   
->   	/* GPIO 输入:返回零或非零 */
->   	int gpio_get_value(unsigned gpio);
-> @@ -186,11 +185,6 @@ GPIO值是布尔值，零表示低电平，非零表示高电平。当读取一
->   GPIO 值的命令需要等待其信息排到队首才发送命令，再获得其反馈。期间需要
->   休眠，这不能在 IRQ 例程(中断上下文)中执行。
->   
-> -支持此类 GPIO 的平台通过以下函数返回非零值来区分出这种 GPIO。(此函数需要
-> -一个之前通过 gpio_request 分配到的有效 GPIO 编号)::
-> -
-> -	int gpio_cansleep(unsigned gpio);
-> -
->   为了访问这种 GPIO,内核定义了一套不同的函数::
->   
->   	/* GPIO 输入:返回零或非零 ,可能会休眠 */
-> @@ -199,7 +193,6 @@ GPIO 值的命令需要等待其信息排到队首才发送命令，再获得其
->   	/* GPIO 输出,可能会休眠 */
->   	void gpio_set_value_cansleep(unsigned gpio, int value);
->   
-> -
->   访问这样的 GPIO 需要一个允许休眠的上下文，例如线程 IRQ 处理例程，并用以上的
->   访问函数替换那些没有 cansleep()后缀的自旋锁安全访问函数。
->   
-> @@ -483,8 +476,8 @@ GPIO 实现者的框架（可选）
->   
->   为了支持这个框架，一个平台的 Kconfig 文件将会 "select"(选择)
->   ARCH_REQUIRE_GPIOLIB 或 ARCH_WANT_OPTIONAL_GPIOLIB，并让它的
-> -<asm/gpio.h> 包含 <asm-generic/gpio.h>，同时定义三个方法:
-> -gpio_get_value()、gpio_set_value()和 gpio_cansleep()。
-> +<asm/gpio.h> 包含 <asm-generic/gpio.h>，同时定义二个方法:
-<asm/gpio.h> 包含 <asm-generic/gpio.h>，同时定义两个方法:
-> +gpio_get_value()、gpio_set_value()。
->   
->   它也应提供一个 ARCH_NR_GPIOS 的定义值，这样可以更好地反映该平台 GPIO
->   的实际数量,节省静态表的空间。(这个定义值应该包含片上系统内建 GPIO 和
-> @@ -502,7 +495,6 @@ ARCH_WANT_OPTIONAL_GPIOLIB 意味着 gpiolib 核心默认关闭,且用户可以
->   
->     #define gpio_get_value	__gpio_get_value
->     #define gpio_set_value	__gpio_set_value
-> -  #define gpio_cansleep		__gpio_cansleep
->   
->   这些定义可以用更理想的实现方法替代，那就是使用经过逻辑优化的内联函数来访问
->   基于特定片上系统的 GPIO。例如,若引用的 GPIO (寄存器位偏移)是常量“12”，
-> diff --git a/Documentation/translations/zh_TW/gpio.txt b/Documentation/translations/zh_TW/gpio.txt
-> index 66bc7f2bbe53..6d5188109f9f 100644
-> --- a/Documentation/translations/zh_TW/gpio.txt
-> +++ b/Documentation/translations/zh_TW/gpio.txt
-> @@ -161,8 +161,7 @@ get/set(獲取/設置)函數調用沒法返回錯誤,且有可能是配置錯誤
->   大多數 GPIO 控制器可以通過內存讀/寫指令來訪問。這些指令不會休眠,可以
->   安全地在硬(非線程)中斷例程和類似的上下文中完成。
->   
-> -對於那些用 gpio_cansleep()測試總是返回失敗的 GPIO(見下文)，使用
-> -以下的函數訪問:
-> +對於那些 GPIO，使用 以下的函數訪問:
-對於那些 GPIO，使用以下的函數訪問:
->   
->   	/* GPIO 輸入:返回零或非零 */
->   	int gpio_get_value(unsigned gpio);
-> @@ -193,11 +192,6 @@ GPIO值是布爾值，零表示低電平，非零表示高電平。當讀取一
->   GPIO 值的命令需要等待其信息排到隊首才發送命令，再獲得其反饋。期間需要
->   休眠，這不能在 IRQ 例程(中斷上下文)中執行。
->   
-> -支持此類 GPIO 的平台通過以下函數返回非零值來區分出這種 GPIO。(此函數需要
-> -一個之前通過 gpio_request 分配到的有效 GPIO 編號):
-> -
-> -	int gpio_cansleep(unsigned gpio);
-> -
->   爲了訪問這種 GPIO,內核定義了一套不同的函數:
->   
->   	/* GPIO 輸入:返回零或非零 ,可能會休眠 */
-> @@ -206,7 +200,6 @@ GPIO 值的命令需要等待其信息排到隊首才發送命令，再獲得其
->   	/* GPIO 輸出,可能會休眠 */
->   	void gpio_set_value_cansleep(unsigned gpio, int value);
->   
-> -
->   訪問這樣的 GPIO 需要一個允許休眠的上下文，例如線程 IRQ 處理例程，並用以上的
->   訪問函數替換那些沒有 cansleep()後綴的自旋鎖安全訪問函數。
->   
-> @@ -449,8 +442,8 @@ GPIO 實現者的框架 (可選)
->   -------
->   爲了支持這個框架，一個平台的 Kconfig 文件將會 "select"(選擇)
->   ARCH_REQUIRE_GPIOLIB 或 ARCH_WANT_OPTIONAL_GPIOLIB，並讓它的
-> -<asm/gpio.h> 包含 <asm-generic/gpio.h>，同時定義三個方法:
-> -gpio_get_value()、gpio_set_value()和 gpio_cansleep()。
-> +<asm/gpio.h> 包含 <asm-generic/gpio.h>，同時定義兩個方法:
-> +gpio_get_value()、gpio_set_value()。
->   
->   它也應提供一個 ARCH_NR_GPIOS 的定義值，這樣可以更好地反映該平台 GPIO
->   的實際數量,節省靜態表的空間。(這個定義值應該包含片上系統內建 GPIO 和
-> @@ -468,7 +461,6 @@ ARCH_WANT_OPTIONAL_GPIOLIB 意味著 gpiolib 核心默認關閉,且用戶可以
->   
->     #define gpio_get_value	__gpio_get_value
->     #define gpio_set_value	__gpio_set_value
-> -  #define gpio_cansleep		__gpio_cansleep
->   
->   這些定義可以用更理想的實現方法替代，那就是使用經過邏輯優化的內聯函數來訪問
->   基於特定片上系統的 GPIO。例如,若引用的 GPIO (寄存器位偏移)是常量「12」，
->
-Thanks,
+Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Piotr Raczynski <piotr.raczynski@intel.com>
+---
+ drivers/net/ethernet/wangxun/libwx/wx_type.h  |  1 +
+ drivers/net/ethernet/wangxun/txgbe/Makefile   |  1 +
+ .../net/ethernet/wangxun/txgbe/txgbe_main.c   | 22 ++++-
+ .../net/ethernet/wangxun/txgbe/txgbe_phy.c    | 89 +++++++++++++++++++
+ .../net/ethernet/wangxun/txgbe/txgbe_phy.h    | 10 +++
+ .../net/ethernet/wangxun/txgbe/txgbe_type.h   | 49 ++++++++++
+ 6 files changed, 171 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c
+ create mode 100644 drivers/net/ethernet/wangxun/txgbe/txgbe_phy.h
 
-Yanteng
-
-> diff --git a/arch/m68k/include/asm/mcfgpio.h b/arch/m68k/include/asm/mcfgpio.h
-> index 2cefe8445980..7abd322c019f 100644
-> --- a/arch/m68k/include/asm/mcfgpio.h
-> +++ b/arch/m68k/include/asm/mcfgpio.h
-> @@ -34,14 +34,6 @@ static inline void __gpio_set_value(unsigned gpio, int value)
->   		__mcfgpio_set_value(gpio, value);
->   }
->   
-> -static inline int __gpio_cansleep(unsigned gpio)
-> -{
-> -	if (gpio < MCFGPIO_PIN_MAX)
-> -		return 0;
-> -	else
-> -		return -EINVAL;
-> -}
-> -
->   static inline int __gpio_to_irq(unsigned gpio)
->   {
->   	return -EINVAL;
-> diff --git a/arch/mips/include/asm/mach-au1x00/gpio-au1000.h b/arch/mips/include/asm/mach-au1x00/gpio-au1000.h
-> index adde1fa5097e..82bc2766e2ec 100644
-> --- a/arch/mips/include/asm/mach-au1x00/gpio-au1000.h
-> +++ b/arch/mips/include/asm/mach-au1x00/gpio-au1000.h
-> @@ -500,11 +500,6 @@ static inline int alchemy_gpio_is_valid(int gpio)
->   		alchemy_gpio1_is_valid(gpio);
->   }
->   
-> -static inline int alchemy_gpio_cansleep(int gpio)
-> -{
-> -	return 0;	/* Alchemy never gets tired */
-> -}
-> -
->   static inline int alchemy_gpio_to_irq(int gpio)
->   {
->   	return (gpio >= ALCHEMY_GPIO2_BASE) ?
-> diff --git a/arch/mips/include/asm/mach-au1x00/gpio-au1300.h b/arch/mips/include/asm/mach-au1x00/gpio-au1300.h
-> index d16add7ba49d..43d44f384f97 100644
-> --- a/arch/mips/include/asm/mach-au1x00/gpio-au1300.h
-> +++ b/arch/mips/include/asm/mach-au1x00/gpio-au1300.h
-> @@ -98,11 +98,6 @@ static inline int au1300_gpio_is_valid(unsigned int gpio)
->   	return ret;
->   }
->   
-> -static inline int au1300_gpio_cansleep(unsigned int gpio)
-> -{
-> -	return 0;
-> -}
-> -
->   /* hardware remembers gpio 0-63 levels on powerup */
->   static inline int au1300_gpio_getinitlvl(unsigned int gpio)
->   {
-> diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-> index 88efac969754..7ecc25c543ce 100644
-> --- a/include/linux/gpio.h
-> +++ b/include/linux/gpio.h
-> @@ -108,11 +108,6 @@ static inline void gpio_set_value(unsigned gpio, int value)
->   	return gpiod_set_raw_value(gpio_to_desc(gpio), value);
->   }
->   
-> -static inline int gpio_cansleep(unsigned gpio)
-> -{
-> -	return gpiod_cansleep(gpio_to_desc(gpio));
-> -}
-> -
->   static inline int gpio_to_irq(unsigned gpio)
->   {
->   	return gpiod_to_irq(gpio_to_desc(gpio));
-> @@ -195,13 +190,6 @@ static inline void gpio_set_value(unsigned gpio, int value)
->   	WARN_ON(1);
->   }
->   
-> -static inline int gpio_cansleep(unsigned gpio)
-> -{
-> -	/* GPIO can never have been requested or set as {in,out}put */
-> -	WARN_ON(1);
-> -	return 0;
-> -}
-> -
->   static inline int gpio_get_value_cansleep(unsigned gpio)
->   {
->   	/* GPIO can never have been requested or set as {in,out}put */
+diff --git a/drivers/net/ethernet/wangxun/libwx/wx_type.h b/drivers/net/ethernet/wangxun/libwx/wx_type.h
+index 5063846e1b52..c61c18a842c4 100644
+--- a/drivers/net/ethernet/wangxun/libwx/wx_type.h
++++ b/drivers/net/ethernet/wangxun/libwx/wx_type.h
+@@ -814,6 +814,7 @@ enum wx_isb_idx {
+ struct wx {
+ 	unsigned long active_vlans[BITS_TO_LONGS(VLAN_N_VID)];
+ 
++	void *priv;
+ 	u8 __iomem *hw_addr;
+ 	struct pci_dev *pdev;
+ 	struct net_device *netdev;
+diff --git a/drivers/net/ethernet/wangxun/txgbe/Makefile b/drivers/net/ethernet/wangxun/txgbe/Makefile
+index 6db14a2cb2d0..7507f762edfe 100644
+--- a/drivers/net/ethernet/wangxun/txgbe/Makefile
++++ b/drivers/net/ethernet/wangxun/txgbe/Makefile
+@@ -8,4 +8,5 @@ obj-$(CONFIG_TXGBE) += txgbe.o
+ 
+ txgbe-objs := txgbe_main.o \
+               txgbe_hw.o \
++              txgbe_phy.o \
+               txgbe_ethtool.o
+diff --git a/drivers/net/ethernet/wangxun/txgbe/txgbe_main.c b/drivers/net/ethernet/wangxun/txgbe/txgbe_main.c
+index 0f0d9fa1cde1..2335fa863fa5 100644
+--- a/drivers/net/ethernet/wangxun/txgbe/txgbe_main.c
++++ b/drivers/net/ethernet/wangxun/txgbe/txgbe_main.c
+@@ -15,6 +15,7 @@
+ #include "../libwx/wx_hw.h"
+ #include "txgbe_type.h"
+ #include "txgbe_hw.h"
++#include "txgbe_phy.h"
+ #include "txgbe_ethtool.h"
+ 
+ char txgbe_driver_name[] = "txgbe";
+@@ -518,6 +519,7 @@ static int txgbe_probe(struct pci_dev *pdev,
+ 	struct net_device *netdev;
+ 	int err, expected_gts;
+ 	struct wx *wx = NULL;
++	struct txgbe *txgbe;
+ 
+ 	u16 eeprom_verh = 0, eeprom_verl = 0, offset = 0;
+ 	u16 eeprom_cfg_blkh = 0, eeprom_cfg_blkl = 0;
+@@ -682,10 +684,23 @@ static int txgbe_probe(struct pci_dev *pdev,
+ 			 "0x%08x", etrack_id);
+ 	}
+ 
+-	err = register_netdev(netdev);
++	txgbe = devm_kzalloc(&pdev->dev, sizeof(*txgbe), GFP_KERNEL);
++	if (!txgbe) {
++		err = -ENOMEM;
++		goto err_release_hw;
++	}
++
++	txgbe->wx = wx;
++	wx->priv = txgbe;
++
++	err = txgbe_init_phy(txgbe);
+ 	if (err)
+ 		goto err_release_hw;
+ 
++	err = register_netdev(netdev);
++	if (err)
++		goto err_remove_phy;
++
+ 	pci_set_drvdata(pdev, wx);
+ 
+ 	netif_tx_stop_all_queues(netdev);
+@@ -713,6 +728,8 @@ static int txgbe_probe(struct pci_dev *pdev,
+ 
+ 	return 0;
+ 
++err_remove_phy:
++	txgbe_remove_phy(txgbe);
+ err_release_hw:
+ 	wx_clear_interrupt_scheme(wx);
+ 	wx_control_hw(wx, false);
+@@ -738,11 +755,14 @@ static int txgbe_probe(struct pci_dev *pdev,
+ static void txgbe_remove(struct pci_dev *pdev)
+ {
+ 	struct wx *wx = pci_get_drvdata(pdev);
++	struct txgbe *txgbe = wx->priv;
+ 	struct net_device *netdev;
+ 
+ 	netdev = wx->netdev;
+ 	unregister_netdev(netdev);
+ 
++	txgbe_remove_phy(txgbe);
++
+ 	pci_release_selected_regions(pdev,
+ 				     pci_select_bars(pdev, IORESOURCE_MEM));
+ 
+diff --git a/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c b/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c
+new file mode 100644
+index 000000000000..be4b5ad74a3c
+--- /dev/null
++++ b/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c
+@@ -0,0 +1,89 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2015 - 2023 Beijing WangXun Technology Co., Ltd. */
++
++#include <linux/gpio/property.h>
++#include <linux/i2c.h>
++#include <linux/pci.h>
++
++#include "../libwx/wx_type.h"
++#include "txgbe_type.h"
++#include "txgbe_phy.h"
++
++static int txgbe_swnodes_register(struct txgbe *txgbe)
++{
++	struct txgbe_nodes *nodes = &txgbe->nodes;
++	struct pci_dev *pdev = txgbe->wx->pdev;
++	struct software_node *swnodes;
++	u32 id;
++
++	id = (pdev->bus->number << 8) | pdev->devfn;
++
++	snprintf(nodes->gpio_name, sizeof(nodes->gpio_name), "txgbe_gpio-%x", id);
++	snprintf(nodes->i2c_name, sizeof(nodes->i2c_name), "txgbe_i2c-%x", id);
++	snprintf(nodes->sfp_name, sizeof(nodes->sfp_name), "txgbe_sfp-%x", id);
++	snprintf(nodes->phylink_name, sizeof(nodes->phylink_name), "txgbe_phylink-%x", id);
++
++	swnodes = nodes->swnodes;
++
++	/* GPIO 0: tx fault
++	 * GPIO 1: tx disable
++	 * GPIO 2: sfp module absent
++	 * GPIO 3: rx signal lost
++	 * GPIO 4: rate select, 1G(0) 10G(1)
++	 * GPIO 5: rate select, 1G(0) 10G(1)
++	 */
++	nodes->gpio_props[0] = PROPERTY_ENTRY_STRING("pinctrl-names", "default");
++	swnodes[SWNODE_GPIO] = NODE_PROP(nodes->gpio_name, nodes->gpio_props);
++	nodes->gpio0_ref[0] = SOFTWARE_NODE_REFERENCE(&swnodes[SWNODE_GPIO], 0, GPIO_ACTIVE_HIGH);
++	nodes->gpio1_ref[0] = SOFTWARE_NODE_REFERENCE(&swnodes[SWNODE_GPIO], 1, GPIO_ACTIVE_HIGH);
++	nodes->gpio2_ref[0] = SOFTWARE_NODE_REFERENCE(&swnodes[SWNODE_GPIO], 2, GPIO_ACTIVE_LOW);
++	nodes->gpio3_ref[0] = SOFTWARE_NODE_REFERENCE(&swnodes[SWNODE_GPIO], 3, GPIO_ACTIVE_HIGH);
++	nodes->gpio4_ref[0] = SOFTWARE_NODE_REFERENCE(&swnodes[SWNODE_GPIO], 4, GPIO_ACTIVE_HIGH);
++	nodes->gpio5_ref[0] = SOFTWARE_NODE_REFERENCE(&swnodes[SWNODE_GPIO], 5, GPIO_ACTIVE_HIGH);
++
++	nodes->i2c_props[0] = PROPERTY_ENTRY_STRING("compatible", "snps,designware-i2c");
++	nodes->i2c_props[1] = PROPERTY_ENTRY_BOOL("wx,i2c-snps-model");
++	nodes->i2c_props[2] = PROPERTY_ENTRY_U32("clock-frequency", I2C_MAX_STANDARD_MODE_FREQ);
++	swnodes[SWNODE_I2C] = NODE_PROP(nodes->i2c_name, nodes->i2c_props);
++	nodes->i2c_ref[0] = SOFTWARE_NODE_REFERENCE(&swnodes[SWNODE_I2C]);
++
++	nodes->sfp_props[0] = PROPERTY_ENTRY_STRING("compatible", "sff,sfp");
++	nodes->sfp_props[1] = PROPERTY_ENTRY_REF_ARRAY("i2c-bus", nodes->i2c_ref);
++	nodes->sfp_props[2] = PROPERTY_ENTRY_REF_ARRAY("tx-fault-gpios", nodes->gpio0_ref);
++	nodes->sfp_props[3] = PROPERTY_ENTRY_REF_ARRAY("tx-disable-gpios", nodes->gpio1_ref);
++	nodes->sfp_props[4] = PROPERTY_ENTRY_REF_ARRAY("mod-def0-gpios", nodes->gpio2_ref);
++	nodes->sfp_props[5] = PROPERTY_ENTRY_REF_ARRAY("los-gpios", nodes->gpio3_ref);
++	nodes->sfp_props[6] = PROPERTY_ENTRY_REF_ARRAY("rate-select1-gpios", nodes->gpio4_ref);
++	nodes->sfp_props[7] = PROPERTY_ENTRY_REF_ARRAY("rate-select0-gpios", nodes->gpio5_ref);
++	swnodes[SWNODE_SFP] = NODE_PROP(nodes->sfp_name, nodes->sfp_props);
++	nodes->sfp_ref[0] = SOFTWARE_NODE_REFERENCE(&swnodes[SWNODE_SFP]);
++
++	nodes->phylink_props[0] = PROPERTY_ENTRY_STRING("managed", "in-band-status");
++	nodes->phylink_props[1] = PROPERTY_ENTRY_REF_ARRAY("sfp", nodes->sfp_ref);
++	swnodes[SWNODE_PHYLINK] = NODE_PROP(nodes->phylink_name, nodes->phylink_props);
++
++	nodes->group[SWNODE_GPIO] = &swnodes[SWNODE_GPIO];
++	nodes->group[SWNODE_I2C] = &swnodes[SWNODE_I2C];
++	nodes->group[SWNODE_SFP] = &swnodes[SWNODE_SFP];
++	nodes->group[SWNODE_PHYLINK] = &swnodes[SWNODE_PHYLINK];
++
++	return software_node_register_node_group(nodes->group);
++}
++
++int txgbe_init_phy(struct txgbe *txgbe)
++{
++	int ret;
++
++	ret = txgbe_swnodes_register(txgbe);
++	if (ret) {
++		wx_err(txgbe->wx, "failed to register software nodes\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++void txgbe_remove_phy(struct txgbe *txgbe)
++{
++	software_node_unregister_node_group(txgbe->nodes.group);
++}
+diff --git a/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.h b/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.h
+new file mode 100644
+index 000000000000..1ab592124986
+--- /dev/null
++++ b/drivers/net/ethernet/wangxun/txgbe/txgbe_phy.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2015 - 2023 Beijing WangXun Technology Co., Ltd. */
++
++#ifndef _TXGBE_PHY_H_
++#define _TXGBE_PHY_H_
++
++int txgbe_init_phy(struct txgbe *txgbe);
++void txgbe_remove_phy(struct txgbe *txgbe);
++
++#endif /* _TXGBE_NODE_H_ */
+diff --git a/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h b/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h
+index 032972369965..9aa399acd9a0 100644
+--- a/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h
++++ b/drivers/net/ethernet/wangxun/txgbe/txgbe_type.h
+@@ -4,6 +4,8 @@
+ #ifndef _TXGBE_TYPE_H_
+ #define _TXGBE_TYPE_H_
+ 
++#include <linux/property.h>
++
+ /* Device IDs */
+ #define TXGBE_DEV_ID_SP1000                     0x1001
+ #define TXGBE_DEV_ID_WX1820                     0x2001
+@@ -100,4 +102,51 @@
+ 
+ extern char txgbe_driver_name[];
+ 
++static inline struct txgbe *netdev_to_txgbe(struct net_device *netdev)
++{
++	struct wx *wx = netdev_priv(netdev);
++
++	return wx->priv;
++}
++
++#define NODE_PROP(_NAME, _PROP)			\
++	(const struct software_node) {		\
++		.name = _NAME,			\
++		.properties = _PROP,		\
++	}
++
++enum txgbe_swnodes {
++	SWNODE_GPIO = 0,
++	SWNODE_I2C,
++	SWNODE_SFP,
++	SWNODE_PHYLINK,
++	SWNODE_MAX
++};
++
++struct txgbe_nodes {
++	char gpio_name[32];
++	char i2c_name[32];
++	char sfp_name[32];
++	char phylink_name[32];
++	struct property_entry gpio_props[1];
++	struct property_entry i2c_props[3];
++	struct property_entry sfp_props[8];
++	struct property_entry phylink_props[2];
++	struct software_node_ref_args i2c_ref[1];
++	struct software_node_ref_args gpio0_ref[1];
++	struct software_node_ref_args gpio1_ref[1];
++	struct software_node_ref_args gpio2_ref[1];
++	struct software_node_ref_args gpio3_ref[1];
++	struct software_node_ref_args gpio4_ref[1];
++	struct software_node_ref_args gpio5_ref[1];
++	struct software_node_ref_args sfp_ref[1];
++	struct software_node swnodes[SWNODE_MAX];
++	const struct software_node *group[SWNODE_MAX + 1];
++};
++
++struct txgbe {
++	struct wx *wx;
++	struct txgbe_nodes nodes;
++};
++
+ #endif /* _TXGBE_TYPE_H_ */
+-- 
+2.27.0
 
