@@ -2,177 +2,166 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58987C77B73
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jun 2023 12:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BBEEC77B7A
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jun 2023 13:08:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233317AbjFFMrK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Jun 2023 08:47:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44048 "EHLO
+        id S238017AbjFFNIT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Jun 2023 09:08:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237708AbjFFMq6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Jun 2023 08:46:58 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCC7C1733
-        for <linux-gpio@vger.kernel.org>; Tue,  6 Jun 2023 05:46:26 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-978345f3798so203676166b.3
-        for <linux-gpio@vger.kernel.org>; Tue, 06 Jun 2023 05:46:26 -0700 (PDT)
+        with ESMTP id S238028AbjFFNIQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Jun 2023 09:08:16 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB208198B;
+        Tue,  6 Jun 2023 06:07:56 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-51475e981f0so8949863a12.1;
+        Tue, 06 Jun 2023 06:07:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1686055553; x=1688647553;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YacwtbnUno0IGNzrMAEltE3NymQuYjNoVttmwVMJWAM=;
-        b=ZlqhXZ+5hvJZyt81cQ47SzdYh7TH5Bq/KejcuVjBkAQQd8xffF80kYVHwn0ym1SEgK
-         W7txtUblLRMywAwK4tjH6N0jvjFXskKYA2/02RudaMyqMM3Wtk5Iacyol7+QQHN5nZG1
-         mCFgHniUKLMyL6kYE57KeedzCsmTXQy4Azm1kn49BGpsyzO1KdvMJl8N/tn8HKTXNb4E
-         42rQwEktOQG1BCmKp8Q2ZqjGLO/irSD2Hn1H1gbQMKgF6Q2dtd7LT6z2MGPNUkz9zB2x
-         vr0WnaCpaqUoRdBCKiEy+UMOUmIYZXtHP3GlVvOtNaC0aEc5rLdoFANkaxteBnN5psVC
-         5QdQ==
+        d=gmail.com; s=20221208; t=1686056871; x=1688648871;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U2fbb8azWMwhLT2kLfdp06eGPdi0Pd4eejTK1A07kSw=;
+        b=p52hJwxlKJj7jrVAIRuK7sBpYvtPzg8ez597LxrtYWalz6FM4fa0rXKvA3SrKlYzCs
+         WRz2WOvcQlqw8GtB9MZqDUgcCn5lbJCr0p3jXqO8/MdxmqB17LVLumiU6K4qVAbVtfBR
+         wCQb5ZTerz66aYcbDBlzSByOszemZXKo9ErVYqycH9OGD5awSM8IQnpq+wtYwuRQvHQK
+         wMu31eFMEHYDDEwTM3tpmqZjeapbzhx3XX5foz8nbLu2f/t1EKOzvAWQNuIiEQRoVIpd
+         iuYdXQgQv8dtPey2FAfLHiSF9kGT9jaODvw2P7z9aN3qrPG6+g937d+jAUEdu2X4Vp1e
+         IT4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686055553; x=1688647553;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YacwtbnUno0IGNzrMAEltE3NymQuYjNoVttmwVMJWAM=;
-        b=Mg3LAX/CHwLY9PkMyJiHldZN7mQwWW0RB7PTzJWGZ5lUukUhsj7xwOmMwxMJvBYC42
-         ch1+y2Icgqr+kRYloHrQopTmQtb+gP4wWxlZHMalIrSIVFIFHYOnCkayQrC/yjmFUUmB
-         ffoW/2k8U1wkmJCVahSu+H40vRpV+hFKtn0/ww2hA94UBV/KoduyZS9eCqvFZ3cG1UjG
-         Hf7/xk9LylPk8ua4hu9fv+JVYpBaehIwfsS3vh0+mH6Q3Ndxj5glMEra4DLz8/5E0rKc
-         NhfC/EHZ0jKk2+pkvc5xxs4+SJhiyDhDvBJlgVsns9WnnZiqXolfoj4diZjlzRBuDuJ/
-         pG9g==
-X-Gm-Message-State: AC+VfDwOilq7dK/9W1LE3GM+gXkWjbNYijpeXdDMjHBrkYf90F4+jfZH
-        cYBqvwrfE8+mejAb1/fOOOB5hw==
-X-Google-Smtp-Source: ACHHUZ42tTvaNTNY9stNfznY3znrSbX7YjVIa6+KTc8of1bQ6mBRCp2PWliXxn95o6oyVMRqW8Qykw==
-X-Received: by 2002:a17:906:58d4:b0:977:d53e:4055 with SMTP id e20-20020a17090658d400b00977d53e4055mr2433962ejs.58.1686055553367;
-        Tue, 06 Jun 2023 05:45:53 -0700 (PDT)
-Received: from [10.2.5.28] (abordeaux-655-1-129-86.w90-5.abo.wanadoo.fr. [90.5.10.86])
-        by smtp.gmail.com with ESMTPSA id g19-20020a170906869300b0097461a7ebdcsm5500768ejx.82.2023.06.06.05.45.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Jun 2023 05:45:52 -0700 (PDT)
-Message-ID: <e487f966-aafb-7d21-935d-b1d0ac7c21ac@baylibre.com>
-Date:   Tue, 6 Jun 2023 14:45:51 +0200
+        d=1e100.net; s=20221208; t=1686056871; x=1688648871;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U2fbb8azWMwhLT2kLfdp06eGPdi0Pd4eejTK1A07kSw=;
+        b=ME0+iL8xoErvl9ip9MgSDLl63AEG8frWWjvoHClFJQzBcLLfVevjYnK6IGxE9xn+JB
+         KIdbvHxnV4zduv1/ZGuImjhj98xO9VQrfRJyuGuApO2HgmzMv3erGzrmUQ7UHBLRnoiE
+         b4VJQ4NQ/b/AQu9slTabMXxnIFioTR7Kpw9nHxwDA16QqEkTqmX1aw6wYsKxHBK0sEii
+         ThkFl2cSuwkxHVwEJ6drTcapaw0fC4+hiJa3tDOMRNCcl0PquyBBN66ZifTjBhVuHYxJ
+         tFpRV/8/H8Nazw031kZsorgjBcl7WjDj46XFcO2mLMITgvqWyiSqaKcAo78MdrMipSkN
+         5dbg==
+X-Gm-Message-State: AC+VfDw6VPNe1D3QL1H3gbe9OlQdrit1b2bFS3QaDOdQ0gDgzRRIjXeA
+        NZKRtQZtNJtdwL8Fxpf2gi4FC/HmZiA=
+X-Google-Smtp-Source: ACHHUZ7wTnp9Kwhh2GXBgRgIQ1o+XM7SMnM6xxZ2AxQjDogAYsb8Fn33Ra92zxSjTSNZJOOkB1ZDnA==
+X-Received: by 2002:a17:907:60d4:b0:974:1c90:643f with SMTP id hv20-20020a17090760d400b009741c90643fmr2632768ejc.18.1686056870432;
+        Tue, 06 Jun 2023 06:07:50 -0700 (PDT)
+Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ks9-20020a170906f84900b00965fdb90801sm5552014ejb.153.2023.06.06.06.07.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jun 2023 06:07:50 -0700 (PDT)
+Date:   Tue, 6 Jun 2023 15:07:48 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Prathamesh Shete <pshete@nvidia.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v5 0/3] pinctrl: tegra: Add Tegra234 pinmux driver
+Message-ID: <ZH8vpP-J30qThiDp@orome>
+References: <20230605154230.2910847-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v4 1/2] gpio: tps65219: add GPIO support for TPS65219 PMIC
-Content-Language: en-US
-To:     andy.shevchenko@gmail.com
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Tony Lindgren <tony@atomide.com>, Lee Jones <lee@kernel.org>,
-        khilman@baylibre.com, msp@baylibre.com, francesco@dolcini.it,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        Jonathan Cormier <jcormier@criticallink.com>
-References: <20230511-tps65219-add-gpio-support-v4-0-b5d6a764d722@baylibre.com>
- <20230511-tps65219-add-gpio-support-v4-1-b5d6a764d722@baylibre.com>
- <ZHXZBCwk6tTu8gjY@surfacebook>
-From:   jerome Neanne <jneanne@baylibre.com>
-In-Reply-To: <ZHXZBCwk6tTu8gjY@surfacebook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oZqmczWLljUjEOrw"
+Content-Disposition: inline
+In-Reply-To: <20230605154230.2910847-1-thierry.reding@gmail.com>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 
+--oZqmczWLljUjEOrw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 30/05/2023 13:07, andy.shevchenko@gmail.com wrote:
-> Tue, May 30, 2023 at 09:59:59AM +0200, Jerome Neanne kirjoitti:
-> 
-> First of all, I have a bit of déjà vu that I have given already some comments
-> that left neither answered nor addressed.
-Sorry for that. I did not realized that some comments on the cover 
-letter also apply to commit message.
-> 
->> Add support for TPS65219 PMICs GPIO interface.
->>
->> 3 GPIO pins:
->> - GPIO0 only is IO but input mode reserved for MULTI_DEVICE_ENABLE usage
->> - GPIO1 and GPIO2 are Output only and referred as GPO1 and GPO2 in spec
->>
->> GPIO0 is statically configured as input or output prior to Linux boot.
->> it is used for MULTI_DEVICE_ENABLE function.
->> This setting is statically configured by NVM.
->> GPIO0 can't be used as a generic GPIO (specification Table 8-34).
->> It's either a GPO when MULTI_DEVICE_EN=0 or a GPI when MULTI_DEVICE_EN=1.
->>
->> Datasheet describes specific usage for non standard GPIO.
->> Link: https://www.ti.com/lit/ds/symlink/tps65219.pdf
-> 
-> Can you convert this to be a Datasheet tag? Currently even Link is *not* a tag
-> because there must be no blank lines in the tag block.
-> 
->> Co-developed-by: Jonathan Cormier <jcormier@criticallink.com>
->> Signed-off-by: Jonathan Cormier <jcormier@criticallink.com>
->> Signed-off-by: Jerome Neanne <jneanne@baylibre.com>
-> 
-I misinterpreted this comment. I looked at wrong examples but I think I 
-understand now that the right usage is to have all the tags grouped 
-together into one block which is delimited by blank lines before and 
-after the whole block.
-I'll then do this and put all the Datasheet/Link into the tag block. 
-Stop putting Links inside the commit message right after I refer to it.
-https://www.kernel.org/doc/html/latest/process/5.Posting.html#patch-formatting-and-changelogs
+On Mon, Jun 05, 2023 at 05:42:27PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> Hi,
+>=20
+> this is an updated version of v4 of the series, which can be found here:
+>=20
+> 	http://patchwork.ozlabs.org/project/linux-tegra/list/?series=3D357888
+>=20
+> This adds the missing DT bindings example for the AON pinmux controller
+> and addresses some review comments from Andy that I had previously
+> missed.
+>=20
+> Changes in v5:
+> - add missing DT bindings example for AON controller
+> - use generic device_get_match_data() instead of OF-specific variant
+> - drop comma for of_device_id table sentinel entry
+> - drop unneeded .owner initialization
+> - drop redundant license text
+> - add missing includes
+>=20
+> Once accepted, patches 1 and 2 can go through the pinctrl tree and I can
+> pick up patch 3 into the Tegra tree. Alternatively I can also pick up
+> patch 1 into the Tegra tree to help with validation. We're not quite at
+> a point yet where the Tegra DTs fully validate, so it doesn't matter
+> much which way these get applied.
 
-> ...
-> 
->> +	help
->> +	  Select this option to enable GPIO driver for the TPS65219 chip family.
->> +	  GPIO0 is statically configured as input or output prior to Linux boot.
->> +	  It is used for MULTI_DEVICE_ENABLE function.
->> +	  This setting is statically configured by NVM.
->> +	  GPIO0 can't be used as a generic GPIO.
->> +	  It's either a GPO when MULTI_DEVICE_EN=0 or a GPI when MULTI_DEVICE_EN=1.
->> +
->> +	  This driver can also be built as a module.
->> +	  If so, the module will be called gpio_tps65219.
-> 
-> Random indentation. Can you use as much room as available on each line, please?
-Sure for next iteration, I choosed 80 columns here to stay consistent 
-with other configs. I kept a carriage return after the first sentence 
-like it is done for other descriptions.
-This driver can also be built as a module... is separated with a blank 
-line as it is done in all other configs.
-For all the other lines, I now keep the same line until last word 
-strictly exceed column 80.
+Linus,
 
-> 
->> @@ -0,0 +1,181 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * GPIO driver for TI TPS65219 PMICs
->> + *
->> + * Copyright (C) 2022 Texas Instruments Incorporated - http://www.ti.com/
->> + */
->> +
->> +#include <linux/bits.h>
->> +#include <linux/gpio/driver.h>
->> +#include <linux/mfd/tps65219.h>
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
-> 
-> ...
-> 
->> +static int tps65219_gpio_get(struct gpio_chip *gc, unsigned int offset)
->> +{
->> +	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
->> +	struct device *dev = gpio->tps->dev;
->> +	int ret, val;
->> +
->> +	if (offset != TPS65219_GPIO0_IDX) {
->> +		dev_err(dev, "GPIO%d is output only, cannot get\n", offset);
-> 
->> +		return -EOPNOTSUPP;
-> 
-> This seems blind following the checkpatch false warning. The checkpatch does
-> not know about subsystem details, i.e. GPIOLIB uses ENOTSUPP in the callbacks.
-> The userspace won't see that as GPIOLIB takes care of translating it when
-> needed.
-> 
-Thanks for explaining, I'm often in trouble for choosing the error code. 
-I'll replace here and all other places where it's used with EOPNOTSUPP.
+I've applied patches 1 and 3 to the Tegra tree. Let me know if you'd
+prefer to pick up patch 1 along with patch 2 and I can drop it.
 
-Regards,
-Jerome
+Thanks,
+Thierry
+
+>=20
+> Thanks,
+> Thierry
+>=20
+> Prathamesh Shete (3):
+>   dt-bindings: pinctrl: Document Tegra234 pin controllers
+>   pinctrl: tegra: Add Tegra234 pinmux driver
+>   arm64: tegra: Add Tegra234 pin controllers
+>=20
+>  .../pinctrl/nvidia,tegra234-pinmux-aon.yaml   |   78 +
+>  .../nvidia,tegra234-pinmux-common.yaml        |   66 +
+>  .../pinctrl/nvidia,tegra234-pinmux.yaml       |  139 ++
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi      |   12 +
+>  drivers/pinctrl/tegra/Kconfig                 |    4 +
+>  drivers/pinctrl/tegra/Makefile                |    1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra234.c      | 1961 +++++++++++++++++
+>  drivers/soc/tegra/Kconfig                     |    1 +
+>  8 files changed, 2262 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegr=
+a234-pinmux-aon.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegr=
+a234-pinmux-common.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegr=
+a234-pinmux.yaml
+>  create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra234.c
+>=20
+> --=20
+> 2.40.1
+>=20
+
+--oZqmczWLljUjEOrw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmR/L6QACgkQ3SOs138+
+s6EH/Q//e4lA58vLX1uB2T5RNI5NYedfmWmLmtrTPxlSHO4IGma4VR46NOw/5yVx
+QKjN6Uvx33uKL2rsN8Brg1owVnN4FIbQGIFG5Y1HOOOdq1TKfH4Q6m4O6Hfuo/oD
+8kg54Y+VKeY3o/vigQao3kFSDn5GYBor+eGDDpA8zpIndlcztuwL2VeLBOJL0jH8
+m9X4h1ucqLuTPLiObrDnlVnmytsmhVA1Ba7gM6zwuiJ/pDQAbtrtkChNyxSEHaDC
+YHspy9k1rPSBUGNWTcxHAe3SXvb7uet7VVTJh6FYBpH8AtmCtq87FlQD2nN8C72l
+eHFfaj0rh4Gj4r/hi2vwsozDfWJYQSZ3nayZu7PaU5dZSpi33EMOdUFgx+TBx5ix
+/nt/6ZC5jKsQXwQaIlBE2M2X3vuXtQLkUH2PO2DhPCz6i5BIzwMtdUI+G5wrWt5G
+Uesi5VQ/bn6DwJOHnwWVmNIA+Uu0IiYYsB7hyd5ALTgbo35idchd/CjTDAw5DJtc
+cFx37IIZrFfGx8kyCU4J40UZkhr/qOzSOgtZKMgRs8N6nC8clMDF0IGefAyAf8uq
+mA99VNxBJfBUWjdoM9/RJEZAa8YQOVpu7hMlX79AGpvIGp/YBVyiyZnKXXafz/xi
+QW2oYSUs9ZbovwuquZm0iCTHuPXz96Gv3OekYN2sJk1m84gPi/8=
+=B8Zj
+-----END PGP SIGNATURE-----
+
+--oZqmczWLljUjEOrw--
