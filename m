@@ -2,67 +2,67 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 949EEC77B73
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jun 2023 13:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA51C77B7A
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jun 2023 13:09:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237937AbjFFNIe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Jun 2023 09:08:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37354 "EHLO
+        id S237528AbjFFNJY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Jun 2023 09:09:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237768AbjFFNI3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Jun 2023 09:08:29 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B05D010F5;
-        Tue,  6 Jun 2023 06:08:13 -0700 (PDT)
+        with ESMTP id S238072AbjFFNJV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Jun 2023 09:09:21 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A46F510FA;
+        Tue,  6 Jun 2023 06:08:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686056893; x=1717592893;
+  t=1686056934; x=1717592934;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=ab3KlbnKediTOPcSqZkVfD1wTdlGFRKustedT15lhrA=;
-  b=bE8LX/JRig/w6bD3Mf5P6Nn2DnIrBXT3I194JQfS7P4NHV0M7W5smfJX
-   AmjyjvLW02VmVPsf8Tex2oG1JdrGTbgNWOYWfxGv/Wjl5o6o0Oozx7RQy
-   zVMUPOvgTWMrTtd9SAK+KOAd5eE4zve1XUvv00qvqzUQM2TX08pNssP9N
-   wSAbCrFsOLxQ26LZdqhh+UD41KlwVYJs0rIBpVSeGlKyUelXbknVk0MoK
-   zAdVIglEWrc1Qdm2HQaedRhGXVCVCrYqTqOyiXjHtkuQIZMVOee0NAt6K
-   7w2Z5Vx61uiTZnYATkJ0LwsjcvD9jiCj+91IV06LGpdhi/iuipTjrCh2m
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10732"; a="356671154"
+  bh=X1NJnHmrE0AdhXUtsefgU7cHGSvMR+7WVY1418vngQ8=;
+  b=Q20kRloraCnu/npuLWzHt1/YAIGOGmMLltojeg2ZWhnuRxX21CxpEkpG
+   k5JFzx8LnydWCeG6jnu7FXvy6p8m+RFHiFmCLaoTczLXPTKK2mYtydSSq
+   VCv4WPy+/6bLziTqeaZWUMU5hqga8ApmHdxI3QCl7B0EmezucNaCMDU4j
+   lym34e4BXy0Fy5tQL9tnSfJc/HiqMUZejsXrroBbqMlBGbS3dt2QLaq2U
+   qNYTziBsiZJJao1y7/wJyf3lhcxNK6IqqknGD6F04GBofO1645dCROX2i
+   qnmnRH6+VsLzz6qGunwfRN5f1VwdpLL3yzgAKBoBcx5oxxOdXE7KHxjZJ
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10732"; a="384976069"
 X-IronPort-AV: E=Sophos;i="6.00,221,1681196400"; 
-   d="scan'208";a="356671154"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2023 06:07:47 -0700
+   d="scan'208";a="384976069"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2023 06:08:38 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10732"; a="703152942"
+X-IronPort-AV: E=McAfee;i="6600,9927,10732"; a="774116908"
 X-IronPort-AV: E=Sophos;i="6.00,221,1681196400"; 
-   d="scan'208";a="703152942"
+   d="scan'208";a="774116908"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga007.jf.intel.com with ESMTP; 06 Jun 2023 06:07:45 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 06 Jun 2023 06:08:37 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.96)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1q6WPY-001dGg-27;
-        Tue, 06 Jun 2023 16:07:44 +0300
-Date:   Tue, 6 Jun 2023 16:07:44 +0300
+        id 1q6WQO-001dHB-1W;
+        Tue, 06 Jun 2023 16:08:36 +0300
+Date:   Tue, 6 Jun 2023 16:08:36 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/2] pinctrl: merrifield: Fix open-drain pin mode
+Subject: Re: [PATCH v1 1/2] pinctrl: moorefield: Fix open-drain pin mode
  configuration
-Message-ID: <ZH8voLL0RBgqmcYp@smile.fi.intel.com>
-References: <20230605154509.11616-1-andriy.shevchenko@linux.intel.com>
- <20230606051210.GV45886@black.fi.intel.com>
+Message-ID: <ZH8v1Fvm2TnoKm1r@smile.fi.intel.com>
+References: <20230605154523.11799-1-andriy.shevchenko@linux.intel.com>
+ <20230606051547.GX45886@black.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230606051210.GV45886@black.fi.intel.com>
+In-Reply-To: <20230606051547.GX45886@black.fi.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 08:12:10AM +0300, Mika Westerberg wrote:
-> On Mon, Jun 05, 2023 at 06:45:08PM +0300, Andy Shevchenko wrote:
+On Tue, Jun 06, 2023 at 08:15:47AM +0300, Mika Westerberg wrote:
+> On Mon, Jun 05, 2023 at 06:45:22PM +0300, Andy Shevchenko wrote:
 > > Currently the pin may not be configured as open-drain in some
 > > cases because the argument may be 0 for the boolean types of
 > > the pin configurations. Fix this by ignoring the argument.
