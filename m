@@ -2,80 +2,89 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 370B1C77B73
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jun 2023 13:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4223DC7EE31
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jun 2023 14:18:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237954AbjFFNQI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Jun 2023 09:16:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44014 "EHLO
+        id S237778AbjFFOSe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Jun 2023 10:18:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238087AbjFFNQG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Jun 2023 09:16:06 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC1D118;
-        Tue,  6 Jun 2023 06:16:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686057365; x=1717593365;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=v3p7uQcRR6XNTq+yMVmDqMHwxnP2B2IkM1YvBCLYXAQ=;
-  b=BQGesQURCgKjdfTs/Qi7bOtGrJY6Bbx7uRBJgMTgg8VJYXPNbE24TUpo
-   EyfkV8Qt+grzIdXdIvMVqzxdwGM0RRsmZKVZQSB528ruaE8FvCKEgk2zT
-   xliL+JpMP8ItY4dp6orxQ67IEtWwInxr2NswKaqRQ5fBsKwissyDkox3Y
-   1ElU1vBxzoaK6M21+DERGzuAIr8lbW4wm2xbA5WqoKB0es46aKKMMtlNW
-   fJDRvlJZqRfvRYzK6xD/gQKbuPQwdDmQpR+eRbTdhi4FU3HYlA7xVbhQf
-   vIzfr5SfSZeDpm9DuumZGlr6r8iDkw/8xM2sYU8NeYMbZzXXm5L3/Q+xm
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10732"; a="341309596"
-X-IronPort-AV: E=Sophos;i="6.00,221,1681196400"; 
-   d="scan'208";a="341309596"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2023 06:06:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10732"; a="659524655"
-X-IronPort-AV: E=Sophos;i="6.00,221,1681196400"; 
-   d="scan'208";a="659524655"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga003.jf.intel.com with ESMTP; 06 Jun 2023 06:06:50 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1q6WOe-001dFm-32;
-        Tue, 06 Jun 2023 16:06:48 +0300
-Date:   Tue, 6 Jun 2023 16:06:48 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] pinctrl: cherryview: Return correct value if pin
- in push-pull mode
-Message-ID: <ZH8vaEknLtT6q8AF@smile.fi.intel.com>
-References: <20230605143734.73434-1-andriy.shevchenko@linux.intel.com>
- <20230606051116.GU45886@black.fi.intel.com>
+        with ESMTP id S233365AbjFFOSe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Jun 2023 10:18:34 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A430E18B;
+        Tue,  6 Jun 2023 07:18:33 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1b02d0942caso28854185ad.1;
+        Tue, 06 Jun 2023 07:18:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686061113; x=1688653113;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+JU5bs373RCUOgXJLUDTSML0K5+ZCRMog9EmfC27Cho=;
+        b=TgULhQk1Qffs+vjFYJckFp6sI812uCDLS3xBoVRd+823Rwwpi8mxXSngSIqM1/Rrts
+         Rcdqu+pv8MeCxsLVZsDm5mQJ6aYN24vL2LMNIGRTo7Sds1IZxnNNOaErqHSImCJslcMx
+         zlBdkPLZfIlyc0Hrjal3QWcM5AtB4MAUZ7XndMvLWhKUFReX0qzqTdn0KZAPl/ZsryvT
+         foJQ6LejTAOIqtwmy7r8hdpCZGslzDWaGJkwyIIS9i+fSb0mhZhi6j2icU+CwpcQ1vKh
+         XHm+89z3ooeHKCFPhuenknZAiUoc4CyUUqLzk8kgiS0t/cFfCicDnIkkqroC0pPa5Me+
+         sGiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686061113; x=1688653113;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+JU5bs373RCUOgXJLUDTSML0K5+ZCRMog9EmfC27Cho=;
+        b=jNQYFtN93+qlQ0GCSTCOlE21QXeEjfpq7+QhQ2NrjbDzW1uxmdy//p+oTOcSmCE3+O
+         xNTv9XYVuzNmSbf4ueTESAs3FyYJL5e/wfCTQr4MVnzIJFGcdU/cS5f0p+tRbGujVgRx
+         33alg4r6dD8jxuVcVAItKnF3rjaL4tD9o1IENU7kRm4XATls8AEZ8YQ9o9CCF7LigwmJ
+         f1/byLnTpsv+TwzOrD1vB2PSTpevSQJ6GUXH41IU5/09PRoCps4l8IYSxCqi8y7yzrIJ
+         LxEgr8ghVTKZrPwuweJcL9d7tQCtyiJc18S6J17xHXv2NGOqtq1nsh8j4q2n3j1Xllim
+         6olw==
+X-Gm-Message-State: AC+VfDwO6u2hKohD/W9sTzx3NY74JxZ7k6I9clvqqg6jlctYvigV+h8L
+        LHD6KfmioZ/uNVEHLo+aG68=
+X-Google-Smtp-Source: ACHHUZ5UKJgO5MIyr1LCARXSsR3GdPMcC2rCTCQhTsMaHYFgMYIhNslpRd7axkM5nWnCaY7+s7D04g==
+X-Received: by 2002:a17:902:c412:b0:1b0:34c6:3be2 with SMTP id k18-20020a170902c41200b001b034c63be2mr1421801plk.1.1686061113033;
+        Tue, 06 Jun 2023 07:18:33 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id q1-20020a170902b10100b001a6a6169d45sm8596280plr.168.2023.06.06.07.18.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jun 2023 07:18:32 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Tue, 6 Jun 2023 07:18:31 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     nick.hawkins@hpe.com
+Cc:     verdun@hpe.com, linus.walleij@linaro.org, brgl@bgdev.pl,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        jdelvare@suse.com, andy.shevchenko@gmail.com,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] hwmon: (gxp_fan_ctrl) Provide fan info via gpio
+Message-ID: <22d5f12e-578b-4484-a90e-6e81289ed458@roeck-us.net>
+References: <20230606014234.29491-1-nick.hawkins@hpe.com>
+ <20230606014234.29491-5-nick.hawkins@hpe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230606051116.GU45886@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20230606014234.29491-5-nick.hawkins@hpe.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 08:11:16AM +0300, Mika Westerberg wrote:
-> On Mon, Jun 05, 2023 at 05:37:34PM +0300, Andy Shevchenko wrote:
-> > Currently the getter returns ENOTSUPP on pin configured in
-> > the push-pull mode. Fix this by adding the missed switch case.
-> > 
-> > Fixes: ccdf81d08dbe ("pinctrl: cherryview: add option to set open-drain pin config")
-> > Fixes: 6e08d6bbebeb ("pinctrl: Add Intel Cherryview/Braswell pin controller support")
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Mon, Jun 05, 2023 at 08:42:33PM -0500, nick.hawkins@hpe.com wrote:
+> From: Nick Hawkins <nick.hawkins@hpe.com>
 > 
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> The fan driver now is independent of the fan plreg GPIO information.
+> Therefore there will no longer be presence or fail information available
+> from the driver. Part of the changes includes removing a system power check
+> as the GPIO driver needs it to report power state to host.
+> 
+> Signed-off-by: Nick Hawkins <nick.hawkins@hpe.com>
 
-Pushed to my review and testing queue, thanks!
+For my reference:
 
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
+Let me know if you want me to apply this patch now or if I should wait
+for the gpio patches to be accepted.
 
+Guenter
