@@ -2,411 +2,152 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F33D7C7EE24
-	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jun 2023 09:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B8AC7EE24
+	for <linux-gpio@archiver.kernel.org>; Tue,  6 Jun 2023 09:24:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237438AbjFFJWa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 6 Jun 2023 05:22:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35230 "EHLO
+        id S237440AbjFFJX7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 6 Jun 2023 05:23:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237425AbjFFJWY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Jun 2023 05:22:24 -0400
-Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 459A3E6B
-        for <linux-gpio@vger.kernel.org>; Tue,  6 Jun 2023 02:22:20 -0700 (PDT)
-Received: from localhost (88-113-26-95.elisa-laajakaista.fi [88.113.26.95])
-        by fgw22.mail.saunalahti.fi (Halon) with ESMTP
-        id a061915a-044b-11ee-a9de-005056bdf889;
-        Tue, 06 Jun 2023 12:22:16 +0300 (EEST)
-From:   andy.shevchenko@gmail.com
-Date:   Tue, 6 Jun 2023 12:22:15 +0300
-To:     nick.hawkins@hpe.com
-Cc:     verdun@hpe.com, linus.walleij@linaro.org, brgl@bgdev.pl,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        jdelvare@suse.com, linux@roeck-us.net, andy.shevchenko@gmail.com,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] gpio: gxp: Add HPE GXP GPIO
-Message-ID: <ZH76x6E9cbfrJHeu@surfacebook>
-References: <20230606014234.29491-1-nick.hawkins@hpe.com>
- <20230606014234.29491-3-nick.hawkins@hpe.com>
+        with ESMTP id S229803AbjFFJX7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Jun 2023 05:23:59 -0400
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7BEE100;
+        Tue,  6 Jun 2023 02:23:51 -0700 (PDT)
+X-QQ-mid: bizesmtp69t1686043391tz9jdmvy
+Received: from wxdbg.localdomain.com ( [122.235.137.64])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Tue, 06 Jun 2023 17:23:02 +0800 (CST)
+X-QQ-SSF: 01400000000000J0Z000000A0000000
+X-QQ-FEAT: XBN7tc9DADKlwMYnxiwIIQSyflZ305poPhZlfJvauYEwbNpRMyObJonRNRs4X
+        ylNb0qjJFA9xvwES8KEt+BHv12kMVThfp9z2brAx3GLkPOFdhNep06ULtdgKBuSbxVsVOG3
+        49l9g/Qf3kADvr50CnAmgR5FaUhbFm4nDyYzipLJRKIymRxd6L+BqtD/NYtoJ+UjQW1NDaw
+        YmopcLfD8tOjGrPCIYs0eHDjxGGKXbeJNUGDoPNjW5y9ebxeH2HP4Eam9k7ivuOigbQFkEF
+        2WyY5awbTs0+CVdUe6lLwfILFX/c657f6GP+Ay2SSYPKM9UUQT4Lsbtt18JGgd+oaLhEtDW
+        2ftToX11aXPcRZglkC7FAbsdEptbswMRguIXUO+VCMsJQRANqMfIXzmtTp9bg==
+X-QQ-GoodBg: 2
+X-BIZMAIL-ID: 5152631644380312422
+From:   Jiawen Wu <jiawenwu@trustnetic.com>
+To:     netdev@vger.kernel.org, andriy.shevchenko@linux.intel.com,
+        Jose.Abreu@synopsys.com, andrew@lunn.ch, hkallweit1@gmail.com,
+        linux@armlinux.org.uk
+Cc:     linux-gpio@vger.kernel.org, mengyuanlou@net-swift.com,
+        Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH net-next v12 0/8] TXGBE PHYLINK support
+Date:   Tue,  6 Jun 2023 17:20:59 +0800
+Message-Id: <20230606092107.764621-1-jiawenwu@trustnetic.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230606014234.29491-3-nick.hawkins@hpe.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Mon, Jun 05, 2023 at 08:42:31PM -0500, nick.hawkins@hpe.com kirjoitti:
-> From: Nick Hawkins <nick.hawkins@hpe.com>
-> 
-> The GXP SoC supports GPIO on multiple interfaces. The interfaces are
-> CPLD and Host. The GPIOs is a combination of both physical and virtual
-> I/O across the interfaces. The gpio-gxp driver specifically covers the
-> CSM(physical), FN2(virtual), and VUHC(virtual) which are the host. The
-> gpio-gxp-pl driver covers the CPLD which takes physical I/O from the
-> board and shares it with GXP via a propriety interface that maps the I/O
-> onto a specific register area of the GXP. The drivers both support
-> interrupts but from different interrupt parents.
-
-Thank you.
-This needs some work to be done. See my comments below.
-
-...
-
-> +/* Remember last PSU config */
-
-Would be nice to add why this is a global variable.
-
-> +u8 psu_presence;
-
-...
-
-> +struct gxp_gpio_drvdata {
-> +	struct regmap *base;
-> +	struct regmap *interrupt;
-
-> +	struct gpio_chip chip;
-
-Making this the first member might save a few bytes of code.
-
-> +	int irq;
-> +};
-
-> +static struct regmap *gxp_gpio_init_regmap(struct platform_device *pdev,
-> +					   char *reg_name, u8 bits)
-> +{
-> +	struct regmap_config regmap_config = {
-> +		.reg_bits = 32,
-> +		.reg_stride = 4,
-> +		.val_bits = 32,
-> +	};
-
-Move it out and make static const.
-
-> +	void __iomem *base;
-
-> +	if (bits == 8) {
-> +		regmap_config.reg_bits = 8;
-> +		regmap_config.reg_stride = 1;
-> +		regmap_config.val_bits = 8;
-> +		regmap_config.max_register = 0xff;
-> +	}
-
-Just make two regmap configs and choose them based on the bits.
-
-> +	base = devm_platform_ioremap_resource_byname(pdev, reg_name);
-> +	if (IS_ERR(base))
-> +		return ERR_CAST(base);
-> +
-> +	regmap_config.name = reg_name;
-> +
-> +	return devm_regmap_init_mmio(&pdev->dev, base, &regmap_config);
-
-Why are you not using gpio-regmap?
-
-> +}
-
-...
-
-> +static int gxp_gpio_pl_get(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +	struct gxp_gpio_drvdata *drvdata = dev_get_drvdata(chip->parent);
-> +	unsigned int val;
-
-> +	int ret = 0;
-
-Unneeded.
-
-> +	switch (offset) {
-> +	case IOP_LED1 ... IOP_LED8:
-> +		regmap_read(drvdata->base, PLREG_IOP_LED, &val);
-> +		ret = (val & BIT(offset)) ? 1 : 0;
-> +		break;
-> +	case FAN1_INST ...FAN8_INST:
-> +		regmap_read(drvdata->base, PLREG_FAN_INST, &val);
-> +		ret = (val & BIT((offset - FAN1_INST))) ? 1 : 0;
-> +		break;
-> +	case FAN1_FAIL ... FAN8_FAIL:
-> +		regmap_read(drvdata->base, PLREG_FAN_FAIL, &val);
-> +		ret = (val & BIT((offset - FAN1_FAIL))) ? 1 : 0;
-> +		break;
-> +	case PWR_BTN_INT ... SLP_INT:
-> +		regmap_read(drvdata->base, PLREG_INT_GRP5_FLAG, &val);
-> +		/* Active low */
-> +		ret = (val & BIT((offset - PWR_BTN_INT) + 16)) ? 0 : 1;
-> +		break;
-> +	case  PSU1_INST ... PSU8_INST:
-> +		regmap_read(drvdata->base, PLREG_PSU_INST, &val);
-> +		psu_presence = (u8)val;
-> +		ret = (psu_presence & BIT((offset - PSU1_INST))) ? 1 : 0;
-> +		break;
-> +	case PSU1_AC ... PSU8_AC:
-> +		regmap_read(drvdata->base, PLREG_PSU_AC, &val);
-> +		ret = (val & BIT((offset - PSU1_AC))) ? 1 : 0;
-> +		break;
-> +	case PSU1_DC ... PSU8_DC:
-> +		regmap_read(drvdata->base, PLREG_PSU_DC, &val);
-> +		ret = (val & BIT((offset - PSU1_DC))) ? 1 : 0;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-
-Obviously what needs to be done in a switch case is to assing offset adjustment
-and register name. Then here you read and return the value based on that.
-
-Same approach may be used in other switch-cases in the driver.
-
-> +	return ret;
-> +}
-
-...
-
-> +static int gxp_gpio_pl_get_direction(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +	int ret = GXP_GPIO_DIR_IN;
-
-Useless variable. Return directly.
-
-> +	switch (offset) {
-> +	case IOP_LED1 ... IOP_LED8:
-> +	case LED_IDENTIFY ... LED_HEALTH_AMBER:
-> +	case ACM_FORCE_OFF:
-> +	case ACM_REQ_N:
-> +		ret = GXP_GPIO_DIR_OUT;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-
-...
-
-> +static int gxp_gpio_pl_direction_input(struct gpio_chip *chip,
-> +				       unsigned int offset)
-> +{
-> +	int ret = -EOPNOTSUPP;
-
-Ditto.
-Also note, GPIOLIB uses ENOTSUPP.
-
-> +	switch (offset) {
-> +	case 8 ... 55:
-> +		ret = GXP_GPIO_DIR_OUT;
-> +		break;
-> +	case 59 ... 65:
-> +		ret = GXP_GPIO_DIR_OUT;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-
-Same comments as above may be applied to other function implementations in the
-driver.
-
-...
-
-> +static irqreturn_t gxp_gpio_pl_irq_handle(int irq, void *_drvdata)
-> +{
-> +	struct gxp_gpio_drvdata *drvdata = (struct gxp_gpio_drvdata *)_drvdata;
-
-Redundant casting.
-
-> +	unsigned int val, girq, i;
-> +
-> +	/* Check group 5 interrupts */
-> +
-> +	regmap_read(drvdata->base, PLREG_INT_GRP5_FLAG, &val);
-
-No error check? So it will spit a spurious interrupts here and there?
-
-> +	if (val) {
-
-Redundant conditional.
-
-> +		for_each_set_bit(i, (unsigned long *)&val, 3) {
-
-This casting is red flag. It has 3 issues. So, no. Just make the copy in the
-unsigned long type.
-
-> +			girq = irq_find_mapping(drvdata->chip.irq.domain,
-> +						i + PWR_BTN_INT);
-> +			generic_handle_irq(girq);
-
-generic_handle_domain_irq()
-
-> +		}
-> +
-> +		/* Clear latched interrupt */
-> +		regmap_update_bits(drvdata->interrupt, PLREG_INT_GRP5_FLAG,
-> +				   0xFF, 0xFF);
-
-GENMASK()
-
-> +		regmap_update_bits(drvdata->interrupt, PLREG_INT_GRP5_BASE,
-> +				   BIT(0) | BIT(2), 0);
-> +	}
-> +
-> +	/* Check group 6 interrupts */
-> +
-> +	regmap_read(drvdata->base, PLREG_INT_GRP6_FLAG, &val);
-> +
-> +	if (val & BIT(2)) {
-> +		u8 old_psu = psu_presence;
-> +
-> +		regmap_read(drvdata->base, PLREG_PSU_INST, &val);
-> +		psu_presence = (u8)val;
-> +
-> +		if (old_psu != psu_presence) {
-> +			/* Identify all bits which differs */
-> +			u8 current_val = psu_presence;
-> +			u8 old_val = old_psu;
-
-> +			for (i = 0 ; i < 8 ; i++) {
-> +				if ((current_val & 0x1) != (old_val & 0x1)) {
-
-Make them unsigned long, use bitmap_xor() or just ^ followed by
-for_each_set_bit().
-
-> +				/* PSU state has changed */
-> +					girq = irq_find_mapping(drvdata->chip.irq.domain,
-> +								i + PSU1_INST);
-> +					if (girq)
-> +						generic_handle_irq(girq);
-
-See above.
-
-> +				}
-
-> +				current_val = current_val >> 1;
-> +				old_val = old_val >> 1;
-
-No need with the above suggestion.
-
-> +			}
-> +		}
-> +	}
-> +
-> +	/* Clear latched interrupt */
-> +	regmap_update_bits(drvdata->interrupt, PLREG_INT_GRP6_FLAG,
-> +			   0xFF, 0xFF);
-
-GENMASK()
-
-> +	regmap_update_bits(drvdata->interrupt, PLREG_INT_GRP6_BASE,
-> +			   BIT(2), 0);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static struct gpio_chip plreg_chip = {
-
-Make it const and mark as a template (in the name).
-
-> +	.label			= "gxp_gpio_plreg",
-> +	.owner			= THIS_MODULE,
-> +	.get			= gxp_gpio_pl_get,
-> +	.set			= gxp_gpio_pl_set,
-> +	.get_direction = gxp_gpio_pl_get_direction,
-> +	.direction_input = gxp_gpio_pl_direction_input,
-> +	.direction_output = gxp_gpio_pl_direction_output,
-> +	.base = -1,
-> +};
-> +
-> +static struct irq_chip gxp_plreg_irqchip = {
-
-Make it const and immutable.
-
-> +	.name		= "gxp_plreg",
-> +	.irq_ack	= gxp_gpio_pl_irq_ack,
-> +	.irq_mask	= gxp_gpio_pl_irq_mask,
-> +	.irq_unmask	= gxp_gpio_pl_irq_unmask,
-> +	.irq_set_type	= gxp_gpio_pl_set_type,
-> +};
-
-...
-
-> +	psu_presence = (u8)val;
-
-Why casting?
-
-...
-
-> +	ret = devm_gpiochip_add_data(&pdev->dev, &drvdata->chip, drvdata);
-> +	if (ret < 0)
-
-What is the meaning of positive returned value? Why do we not care about it?
-
-> +		dev_err_probe(&pdev->dev, ret, "Could not register gpiochip for plreg\n");
-
-...
-
-> +	ret = platform_get_irq(pdev, 0);
-> +	if (ret < 0)
-> +		return dev_err_probe(&pdev->dev, ret, "Get irq from platform fail\n");
-
-No need to repeat what the API already messages to the user.
-
-...
-
-> +	ret = devm_request_irq(&pdev->dev, drvdata->irq, gxp_gpio_pl_irq_handle,
-> +			       IRQF_SHARED, "gxp-pl", drvdata);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return 0;
-
-	return devm_request_irq(...);
-
-> +}
-
-
-...
-
-> +static int gxp_gpio_probe(struct platform_device *pdev)
-> +{
-> +	int ret;
-> +	struct gxp_gpio_drvdata *drvdata;
-> +
-> +	/* Initialize global vars */
-> +	psu_presence = 0;
-
-> +	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
-> +	if (!drvdata)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, drvdata);
-
-> +	ret = gxp_gpio_pl_init(pdev);
-> +
-> +	return ret;
-
-	return gxp_...;
-
-But why that function is separate?
-
-> +}
-
-...
-
-> +++ b/drivers/gpio/gpio-gxp.c
-
-Take all above comments and apply here as well.
-
-...
-
-Split this to two patches, one per driver. It makes easier reviews and flexible
-handling of the driver maintenance.
+Implement I2C, SFP, GPIO and PHYLINK to setup TXGBE link.
+
+Because our I2C and PCS are based on Synopsys Designware IP-core, extend
+the i2c-designware and pcs-xpcs driver to realize our functions.
+
+v11 -> v12:
+- split I2C designware patch (2/9) to I2C tree, repost remaining 8
+  patches
+
+v10 -> v11:
+- add gc->label NULL check
+- rebase on merging of wangxun patches
+
+v9 -> v10:
+- clear I2C device model flags
+- change the order of header files
+- use xpcs_create_mdiodev()
+- fix Kconfig warning
+
+v8 -> v9:
+- rename swnode property for specific I2C platform device
+- add ".fast_io = true" for I2C regmap
+- use raw_spinlock_t for GPIO reg lock and adjust its position
+- remove redundant txgbe->mdiodev
+- keep reverse x-mass tree order
+- other minor style changes
+
+v7 -> v8:
+- use macro defined I2C FIFO depth instead of magic number
+- fix return code of clock create failure
+- add spinlock for writing GPIO registers
+- implement triggering GPIO interrupts for both-edge type
+- remove the condition that enables interrupts
+- add mii bus check for PCS device
+- other minor style changes
+
+v6 -> v7:
+- change swnode property of I2C platform to be boolean
+- use device_property_present() to match I2C device data
+
+v5 -> v6:
+- fix to set error code if pointer of txgbe is NULL
+- change "if" to "switch" for *_i2c_dw_xfer_quirk()
+- rename property for I2C device flag
+- use regmap to access I2C mem region
+- use DEFINE_RES_IRQ()
+- use phylink_mii_c45_pcs_get_state() for DW_XPCS_10GBASER
+
+v4 -> v5:
+- add clock register
+- delete i2c-dw.h with platform data
+- introduce property "i2c-dw-flags" to match device flags
+- get resource from platform info to do ioremap
+- rename quirk functions in i2c-designware-*.c
+- fix calling txgbe_phylink_init()
+
+v3 -> v4:
+- modify I2C transfer to be generic implementation
+- avoid to read DW_IC_COMP_PARAM_1
+- remove redundant "if" statement
+- add specific labels to handle error in txgbe_init_phy(), and remove
+  "if" conditions in txgbe_remove_phy()
+
+v2 -> v3:
+- delete own I2C bus master driver, support it in i2c-designware
+- delete own PCS functions, remove pma configuration and 1000BASE-X mode
+- add basic function for 10GBASE-R interface in pcs-xpcs
+- add helper to get txgbe pointer from netdev
+
+v1 -> v2:
+- add comments to indicate GPIO lines
+- add I2C write operation support
+- modify GPIO direction functions
+- rename functions related to PHY interface
+- add condition on interface changing to re-config PCS
+- add to set advertise and fix to get status for 1000BASE-X mode
+- other redundant codes remove
+
+Jiawen Wu (8):
+  net: txgbe: Add software nodes to support phylink
+  net: txgbe: Register fixed rate clock
+  net: txgbe: Register I2C platform device
+  net: txgbe: Add SFP module identify
+  net: txgbe: Support GPIO to SFP socket
+  net: pcs: Add 10GBASE-R mode for Synopsys Designware XPCS
+  net: txgbe: Implement phylink pcs
+  net: txgbe: Support phylink MAC layer
+
+ drivers/net/ethernet/wangxun/Kconfig          |  10 +
+ drivers/net/ethernet/wangxun/libwx/wx_lib.c   |   3 +-
+ drivers/net/ethernet/wangxun/libwx/wx_type.h  |   4 +
+ drivers/net/ethernet/wangxun/txgbe/Makefile   |   1 +
+ .../ethernet/wangxun/txgbe/txgbe_ethtool.c    |  28 +
+ .../net/ethernet/wangxun/txgbe/txgbe_main.c   |  65 +-
+ .../net/ethernet/wangxun/txgbe/txgbe_phy.c    | 673 ++++++++++++++++++
+ .../net/ethernet/wangxun/txgbe/txgbe_phy.h    |  10 +
+ .../net/ethernet/wangxun/txgbe/txgbe_type.h   |  89 +++
+ drivers/net/pcs/pcs-xpcs.c                    |  30 +
+ include/linux/pcs/pcs-xpcs.h                  |   1 +
+ 11 files changed, 881 insertions(+), 33 deletions(-)
+ create mode 100644 drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c
+ create mode 100644 drivers/net/ethernet/wangxun/txgbe/txgbe_phy.h
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.27.0
 
