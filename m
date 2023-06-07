@@ -2,90 +2,113 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB539C7EE25
-	for <linux-gpio@archiver.kernel.org>; Wed,  7 Jun 2023 13:36:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B08DAC7EE29
+	for <linux-gpio@archiver.kernel.org>; Wed,  7 Jun 2023 14:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238787AbjFGNgW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 7 Jun 2023 09:36:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55174 "EHLO
+        id S235683AbjFGOFt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 7 Jun 2023 10:05:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240467AbjFGNgT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Jun 2023 09:36:19 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29FF41FE0
-        for <linux-gpio@vger.kernel.org>; Wed,  7 Jun 2023 06:36:11 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id d75a77b69052e-3f9baa69682so5243811cf.3
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Jun 2023 06:36:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1686144970; x=1688736970;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f4sf5qH8tH2f0lLXDyzC4ZbN3gKOaTXNp3tb8kTl5K8=;
-        b=EooWi7y4sBjLFetA5+uP0JX2xp9ku4bqRUaJAKbXPvq+mtBBwVjr1GtGLqOsKdUMtJ
-         rAYnwOue3AWuFKZvSp+WyVpJJZhQF0KWlBdH1GuXpBtDxj9ZFr2hb8p+4aqMBN676S7i
-         PmoVRvz03U9QknFpxpnAIa3n17TScErEnNUbNX65kSoy3ECsTp2/UJ+EcMHBK5wpTAf/
-         oCQyA0h9UwhSgclZXBC/n0F09JfK9BsIlNuiYzQyGPdFQ3kaSsjVkGJ1zTxpOUx6/Ruw
-         QmtsI6waWJujBbb1WjCL87KeWzO6wsQoehfOn2US/USupieI0b7lQNMdPGvHtH56PQHk
-         3qNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686144970; x=1688736970;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f4sf5qH8tH2f0lLXDyzC4ZbN3gKOaTXNp3tb8kTl5K8=;
-        b=SfIlNpolnkP8ZBBwfkdf5QFMmocNTM3midJmg4j5eQs6mb0eKkdmUrHU/IvsWRiXpX
-         u1FxBhZFe8Tf3fDqTBvesROwIH3YIsAJe7PZjOKk4u+imKJrkdaQ4LziHPYtGshFIVRp
-         GUES/jYvkajn2suCU4qI8V537Gfj/Kwki1MIzx/fBVwuTOxheAXx7m+sd/qyk1gCBL+h
-         LsRTnc1eYnQvC+7UEBn5zc33wgr4dT21imxTUw/fckNAakVuzBtzuqBpjPXKi7EQo0V0
-         6uIftfA+XbIejzosPshv2To2ZN5IE7K/U2VxxzbtqwVbzxbONqn/RlVZd3LjrShjTNaj
-         oTUA==
-X-Gm-Message-State: AC+VfDzeU+dcwcb+YfGC1rwJEUSpL5a7opeoMX778q/xBK97kYIdR7OA
-        XjBQhyOj+8NKXjbo3yfJ2TthPnpkCjI3g5/s+TrcKA==
-X-Google-Smtp-Source: ACHHUZ7dErdQjWWo/zzM+X1ukuNViiUc9NhOGiU+BR7hrkZ96r6EzX/r+/wFOKgqACIGCOV2UiccEqzeRVS65zHaJJA=
-X-Received: by 2002:a05:6214:d8a:b0:61b:5e9b:a15d with SMTP id
- e10-20020a0562140d8a00b0061b5e9ba15dmr2495870qve.36.1686144970243; Wed, 07
- Jun 2023 06:36:10 -0700 (PDT)
+        with ESMTP id S239775AbjFGOFs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Jun 2023 10:05:48 -0400
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A981BEA;
+        Wed,  7 Jun 2023 07:05:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+        ; s=x; h=Subject:Content-Transfer-Encoding:Content-Type:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Cc:To:From:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=vlvSfJ7BB6pGJBxrOhJ5IMJLf95UIyksZ/69U1YnCu4=; b=POv28Nirk2T60P1AKXilVsI0kC
+        1CorlBTZIC+XDqxREYAHHwno6iWiaw1hPK2Mmqc9TZzaMErcGYMnnTnQg9uHDsJs1tcckHWUwfbGy
+        IGx9qxL/2O/boR7xucvMdhJSlx93AmhfGZaLX84K8Q+EVhhnY7KDXuMIktYkHLHstEOk=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:57832 helo=pettiford.lan)
+        by mail.hugovil.com with esmtpa (Exim 4.92)
+        (envelope-from <hugo@hugovil.com>)
+        id 1q6tn2-0005dF-Fn; Wed, 07 Jun 2023 10:05:33 -0400
+From:   Hugo Villeneuve <hugo@hugovil.com>
+To:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        jirislaby@kernel.org, jringle@gridpoint.com,
+        jesse.sung@canonical.com, isaac.true@canonical.com,
+        l.perczak@camlintechnologies.com, tomasz.mon@camlingroup.com
+Cc:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hugo@hugovil.com,
+        linux-gpio@vger.kernel.org,
+        Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Lech Perczak <lech.perczak@camlingroup.com>
+Date:   Wed,  7 Jun 2023 10:05:15 -0400
+Message-Id: <20230607140525.833982-2-hugo@hugovil.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230607140525.833982-1-hugo@hugovil.com>
+References: <20230607140525.833982-1-hugo@hugovil.com>
 MIME-Version: 1.0
-References: <20230607065004.37112-1-warthog618@gmail.com> <CAMRc=Mf9K=_a=UzmazHF1Qc7XxWfP_qJH2gftPAT0Y=e_3FtyQ@mail.gmail.com>
- <ZIB+GUaa934A4sq6@sol>
-In-Reply-To: <ZIB+GUaa934A4sq6@sol>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 7 Jun 2023 15:35:59 +0200
-Message-ID: <CAMRc=Me_UKGtkJCfWx9DjyzmvTxRvbDBnZDRHCnFteg5gbgtgA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: sim: quietly ignore configured lines outside the bank
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+Subject: [PATCH v8 01/10] serial: sc16is7xx: fix broken port 0 uart init
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jun 7, 2023 at 2:54=E2=80=AFPM Kent Gibson <warthog618@gmail.com> w=
-rote:
->
-> On Wed, Jun 07, 2023 at 02:50:43PM +0200, Bartosz Golaszewski wrote:
-> > On Wed, Jun 7, 2023 at 8:50=E2=80=AFAM Kent Gibson <warthog618@gmail.co=
-m> wrote:
-> > >
-> > >
-> > > base-commit: ba65c79fbb813423e7d42d99375e2045b27958a6
-> > > prerequisite-patch-id: d89da2e3b7511c5b8132a379b12e4996256ac214
-> > > --
-> > > 2.40.1
-> > >
-> >
-> > I queued this for fixes, thanks!
-> >
->
-> Oh, ok.  I didn't think it was serious enough for fixes, or I would've
-> made the two patches a series.  And included a Fixes on this one.
->
-> Cheers,
-> Kent.
+From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-It fixes a problem and is fairly small. Works as a fix for me.
+The sc16is7xx_config_rs485() function is called only for the second
+port (index 1, channel B), causing initialization problems for the
+first port.
 
-Bart
+For the sc16is7xx driver, port->membase and port->mapbase are not set,
+and their default values are 0. And we set port->iobase to the device
+index. This means that when the first device is registered using the
+uart_add_one_port() function, the following values will be in the port
+structure:
+    port->membase = 0
+    port->mapbase = 0
+    port->iobase  = 0
+
+Therefore, the function uart_configure_port() in serial_core.c will
+exit early because of the following check:
+	/*
+	 * If there isn't a port here, don't do anything further.
+	 */
+	if (!port->iobase && !port->mapbase && !port->membase)
+		return;
+
+Typically, I2C and SPI drivers do not set port->membase and
+port->mapbase.
+
+The max310x driver sets port->membase to ~0 (all ones). By
+implementing the same change in this driver, uart_configure_port() is
+now correctly executed for all ports.
+
+Fixes: dfeae619d781 ("serial: sc16is7xx")
+Cc: <stable@vger.kernel.org> # 6.1.x
+Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Reviewed-by: Lech Perczak <lech.perczak@camlingroup.com>
+Tested-by: Lech Perczak <lech.perczak@camlingroup.com>
+---
+ drivers/tty/serial/sc16is7xx.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index abad091baeea..faa51a58671f 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -1436,6 +1436,7 @@ static int sc16is7xx_probe(struct device *dev,
+ 		s->p[i].port.fifosize	= SC16IS7XX_FIFO_SIZE;
+ 		s->p[i].port.flags	= UPF_FIXED_TYPE | UPF_LOW_LATENCY;
+ 		s->p[i].port.iobase	= i;
++		s->p[i].port.membase	= (void __iomem *)~0;
+ 		s->p[i].port.iotype	= UPIO_PORT;
+ 		s->p[i].port.uartclk	= freq;
+ 		s->p[i].port.rs485_config = sc16is7xx_config_rs485;
+-- 
+2.30.2
+
