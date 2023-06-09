@@ -2,81 +2,124 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 739A1C7EE29
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Jun 2023 07:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F0DC7EE2E
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Jun 2023 08:27:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239733AbjFIHwQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Jun 2023 03:52:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56240 "EHLO
+        id S240336AbjFII0j (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Jun 2023 04:26:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239791AbjFIHvc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2023 03:51:32 -0400
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBB174690
-        for <linux-gpio@vger.kernel.org>; Fri,  9 Jun 2023 00:50:49 -0700 (PDT)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-569386b7861so38497967b3.0
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2023 00:50:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686297048; x=1688889048;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D2cdBW2Mj+SXNwvwcmaMfvn9vGgTGDb3aldi7qM0FW4=;
-        b=QRfj1lAj6qrW35HA4Jbny7ps8mFhM+5OtqT/QQ3+fzPkcQ3jonOXAWsLO0bRStdrNp
-         JEFqjpnRS6mVxoUT6NcO41jGMJVdzSRDhz1eOpiOOwOaXNfYREtI8rUQqeYQZbXwTSUV
-         CKYIES3M5S2yh0UhSKElNYrzzi6hgRrmmFeE8rW9/xL6YTUpUF3eWeA7rSzZ65b9Dt/8
-         s+hEvAYXKfv8nVA9SCGpphZfnhwR4nz9MTltLxObf6bKhmBz+FNLrpdks6VvsgVA1R3E
-         66kqz85dbkRKbj3qeHi2P75myeZOiC6ZoaEWsb0WUpI1EUUjz6ivJ3F0JyZBeNA8Cg4r
-         4k1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686297048; x=1688889048;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D2cdBW2Mj+SXNwvwcmaMfvn9vGgTGDb3aldi7qM0FW4=;
-        b=YzIo+2v2tHYLl9ZV8XHsqNtujy+SIvr5KPixaD8cMhxEAFcnqvpfCj5jmLlagDmeXX
-         Qa4W1kgsaLUTzfu+py//52F72+gOi8jgF4H0p9Gi+tCmiF3H0lqCxO/OEVTM/y/9TJJa
-         TNE52/KpSEJaI2wZwn0V8tYbkkCbYjLndnhx4WgYIuTMOaGYUYlVJU1xx1QT/prD57Hl
-         HjL6b0TfpJ8ip1xOmNB1MdmJZBlrGtqFJat8EFacUVqYyWS0ovpdFWIZMAhWRlcTgQWl
-         YDRcw1C5S6+GrQ7pLRmOGFyC8343D7nKiwyWZ4mUauHX95qymkZf0NbQXgzw+uuGKnT/
-         CJGA==
-X-Gm-Message-State: AC+VfDx0aIZ98XO2/GqT3M+K/v0VdqDR02S7Ys2mkMdVgUIUJyz5JqKs
-        r+aB8ECvBOSHUZhi7vh+nz8ZnaZ8dBKuJOLiAICD2w==
-X-Google-Smtp-Source: ACHHUZ6VxExrksH/syijxzGAVPfotWL9Iavo6MOv8iMAl0+OtFlw9eEv+9fDhDiPQ33DN1/gnp2GtZrimvY635G7MjQ=
-X-Received: by 2002:a25:6008:0:b0:ba1:6bad:9270 with SMTP id
- u8-20020a256008000000b00ba16bad9270mr2587471ybb.27.1686297048725; Fri, 09 Jun
- 2023 00:50:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230608162130.55015-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20230608162130.55015-1-andriy.shevchenko@linux.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 9 Jun 2023 09:50:37 +0200
-Message-ID: <CACRpkdbaf3UzW+x6emER5J5KJUQoJmdipwY_RQp0Ovj2N6RnsA@mail.gmail.com>
-Subject: Re: [rfc, rft, PATCH v1 1/1] gpio: aggregator: Introduce delay
- support for individual output pins
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        with ESMTP id S241654AbjFII0S (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2023 04:26:18 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACE8930EC;
+        Fri,  9 Jun 2023 01:26:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686299163; x=1717835163;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=qAYVBXdl5GPI2VnNJdr1EfODyAMusq9BtjJGbz/NqZE=;
+  b=WEpz45GWGJvKb/5Qw+eTQipmYMCeK8Cvxsr/1ccAwwsmA+HzTbC/PBVd
+   wJphektzHAdhHtbXdleEWsQze2yswAEP3dhiIzEPOtXTLNkJ2WPZf2zds
+   o4q2EOHw4PKLwvY/7s3QesQu4UdZh7x3vpRFRp2nZ8cOTsiM9oTRO7fYT
+   H7R1s/kixWUQr239d/hi9GGB6ZucNcAkZ7JnSdpJFMDfqOYFUgtC+Xfwp
+   1EXkiGxF3ROE6WPCL8l996zRFy1mdnaXuBxWnRYcIzMOd0opbO7NtpCA7
+   XGCBpvPhVfcGULINXVk5jKE5Kza+9wcA8gAY/UDT3FMtkGTJOTDD+Z+NA
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10735"; a="342222298"
+X-IronPort-AV: E=Sophos;i="6.00,228,1681196400"; 
+   d="scan'208";a="342222298"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2023 01:26:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10735"; a="713424278"
+X-IronPort-AV: E=Sophos;i="6.00,228,1681196400"; 
+   d="scan'208";a="713424278"
+Received: from inesxmail01.iind.intel.com ([10.223.154.20])
+  by fmsmga007.fm.intel.com with ESMTP; 09 Jun 2023 01:25:59 -0700
+Received: from inlubt0316.iind.intel.com (inlubt0316.iind.intel.com [10.191.20.213])
+        by inesxmail01.iind.intel.com (Postfix) with ESMTP id 09A2918636;
+        Fri,  9 Jun 2023 13:55:59 +0530 (IST)
+Received: by inlubt0316.iind.intel.com (Postfix, from userid 12101951)
+        id 016C1B6; Fri,  9 Jun 2023 13:55:58 +0530 (IST)
+From:   Raag Jadav <raag.jadav@intel.com>
+To:     linus.walleij@linaro.org, mika.westerberg@linux.intel.com,
+        andriy.shevchenko@linux.intel.com
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Alexander Stein <linux@ew.tq-group.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        mallikarjunappa.sangannavar@intel.com, pandith.n@intel.com,
+        Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v2 2/4] pinctrl: intel: refine irq_set_type hook
+Date:   Fri,  9 Jun 2023 13:55:37 +0530
+Message-Id: <20230609082539.24311-3-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230609082539.24311-1-raag.jadav@intel.com>
+References: <20230609082539.24311-1-raag.jadav@intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jun 8, 2023 at 6:22=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+Utilize a temporary variable for common shift operation
+inside ->irq_set_type() hook and improve readability.
+While at it, simplify if-else-if chain and save a few bytes.
 
-> The aggregator mode can also handle properties of the platform, that
-> do not belong to the GPIO controller itself. One of such a property
-> is signal delay line. Intdoduce support of it.
-(...)
-> I don't like the idea of gpio-delay or similar. We have already GPIO
-> aggregator that incorporates the GPIO proxy / forwarder functionality.
+add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-16 (-16)
+Function                                     old     new   delta
+intel_gpio_irq_type                          317     301     -16
+Total: Before=10469, After=10453, chg -0.15%
 
-You are right. This is the right solution going forward IMO.
+Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index e8adf2580321..3f78066b1837 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1128,8 +1128,8 @@ static int intel_gpio_irq_type(struct irq_data *d, unsigned int type)
+ 	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
+ 	unsigned int pin = intel_gpio_to_pin(pctrl, irqd_to_hwirq(d), NULL, NULL);
+ 	unsigned long flags;
++	u32 value, rxevcfg;
+ 	void __iomem *reg;
+-	u32 value;
+ 
+ 	reg = intel_get_padcfg(pctrl, pin, PADCFG0);
+ 	if (!reg)
+@@ -1150,23 +1150,24 @@ static int intel_gpio_irq_type(struct irq_data *d, unsigned int type)
+ 	intel_gpio_set_gpio_mode(reg);
+ 
+ 	value = readl(reg);
+-
+ 	value &= ~(PADCFG0_RXEVCFG_MASK | PADCFG0_RXINV);
+ 
+ 	if ((type & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH) {
+-		value |= PADCFG0_RXEVCFG_EDGE_BOTH << PADCFG0_RXEVCFG_SHIFT;
++		rxevcfg = PADCFG0_RXEVCFG_EDGE_BOTH;
+ 	} else if (type & IRQ_TYPE_EDGE_FALLING) {
+-		value |= PADCFG0_RXEVCFG_EDGE << PADCFG0_RXEVCFG_SHIFT;
+-		value |= PADCFG0_RXINV;
++		rxevcfg = PADCFG0_RXEVCFG_EDGE;
+ 	} else if (type & IRQ_TYPE_EDGE_RISING) {
+-		value |= PADCFG0_RXEVCFG_EDGE << PADCFG0_RXEVCFG_SHIFT;
++		rxevcfg = PADCFG0_RXEVCFG_EDGE;
+ 	} else if (type & IRQ_TYPE_LEVEL_MASK) {
+-		if (type & IRQ_TYPE_LEVEL_LOW)
+-			value |= PADCFG0_RXINV;
++		rxevcfg = PADCFG0_RXEVCFG_LEVEL;
+ 	} else {
+-		value |= PADCFG0_RXEVCFG_DISABLED << PADCFG0_RXEVCFG_SHIFT;
++		rxevcfg = PADCFG0_RXEVCFG_DISABLED;
+ 	}
+ 
++	if (type == IRQ_TYPE_EDGE_FALLING || type == IRQ_TYPE_LEVEL_LOW)
++		value |= PADCFG0_RXINV;
++
++	value |= rxevcfg << PADCFG0_RXEVCFG_SHIFT;
+ 	writel(value, reg);
+ 
+ 	if (type & IRQ_TYPE_EDGE_BOTH)
+-- 
+2.17.1
+
