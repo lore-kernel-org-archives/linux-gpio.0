@@ -2,70 +2,73 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE453C7EE45
-	for <linux-gpio@archiver.kernel.org>; Fri,  9 Jun 2023 16:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA82C7EE45
+	for <linux-gpio@archiver.kernel.org>; Fri,  9 Jun 2023 16:41:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbjFIQkO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 9 Jun 2023 12:40:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44796 "EHLO
+        id S229454AbjFIQls (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 9 Jun 2023 12:41:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229665AbjFIQkL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2023 12:40:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE99835B6;
-        Fri,  9 Jun 2023 09:40:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5EFCC659F6;
-        Fri,  9 Jun 2023 16:40:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BCDEEC4339E;
-        Fri,  9 Jun 2023 16:40:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686328808;
-        bh=2yHtu/RRODLKLC7OUFw31aAR2keEMZcwuX6xDdga1s0=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=mCTe35YoipZqps7kv89e5FwdIQEZtU5MemxZbaB0PX88ado/DmDKGi+tbIErxjWRv
-         Zk7UC7YGpVCGs5LkSwTKugtyQ2mHKxcAeyga7jsfiWDgj8VIu0cDLP5Pg4YPQWJDlF
-         QjZ6RElIG8ReTj9q93Xz6tB0v+qeYT2MapShxC91HNHEePk6pc8RFfJOUgOe7uRQrP
-         EM068gd4VLAryF5YAte3wLNtmA1O1bFU+d+105pnQ8AyNGSRbRnl7gJFWqJPBC8Z/q
-         CVeORKR62m5k+a7Xx9daixBomwtulShOouHkaZEDThGsanheD5px8Wv6UpN4eqJHco
-         TwOm1LEBFrbWQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A7279C395F3;
-        Fri,  9 Jun 2023 16:40:08 +0000 (UTC)
-Subject: Re: [GIT PULL] gpio: fixes for v6.4-rc6
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20230609144613.210272-1-brgl@bgdev.pl>
-References: <20230609144613.210272-1-brgl@bgdev.pl>
-X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20230609144613.210272-1-brgl@bgdev.pl>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.4-rc6
-X-PR-Tracked-Commit-Id: d1f11f41eb746a33816695f1b6b6719826cc532c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 92d22212c090b4afbb7d7e8f91d72988c7586aa6
-Message-Id: <168632880867.22652.10987437416013616928.pr-tracker-bot@kernel.org>
-Date:   Fri, 09 Jun 2023 16:40:08 +0000
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        with ESMTP id S229597AbjFIQlp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2023 12:41:45 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B0A73AAC;
+        Fri,  9 Jun 2023 09:41:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686328900; x=1717864900;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dGHw0GIh6cheMahMfWCeEaMngP4Hko4mlOPZZvZpodw=;
+  b=cFXWIWpiVy9OniKhXmBne4qwHq8sAmUOcbYLCUQFiQKp9TAIokUSPHox
+   NJNtF4eRBQHHzjmdOUKq9AKVt9o5WiO+F39zFaE+iTxCVs2L/W+85KH4D
+   y/ch4hwdrgzuvWGaC+0zcmu8SQxXXlcg50WQqc5666CxU4fV1xvIuE4hV
+   dICiIgdCchwG0o5dIgx3Mvl9ADZwOXVbpmNvTAGXZF291N8mBPPBweZzm
+   sqYlSxe6yJ4B2rZSTBCX1ZpqLoixk49EPzrW8wPYTUf0/kJEo5ptkma85
+   X/J45OWDkQbuq6bWshX0nQbtoGxbAl7XmUNQiWafQsGEduCyKE46cvBk+
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10736"; a="342315858"
+X-IronPort-AV: E=Sophos;i="6.00,229,1681196400"; 
+   d="scan'208";a="342315858"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2023 09:41:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10736"; a="823126183"
+X-IronPort-AV: E=Sophos;i="6.00,229,1681196400"; 
+   d="scan'208";a="823126183"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002.fm.intel.com with ESMTP; 09 Jun 2023 09:41:31 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1q7fB4-002Rxv-0d;
+        Fri, 09 Jun 2023 19:41:30 +0300
+Date:   Fri, 9 Jun 2023 19:41:29 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Raag Jadav <raag.jadav@intel.com>
+Cc:     linus.walleij@linaro.org, mika.westerberg@linux.intel.com,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+        mallikarjunappa.sangannavar@intel.com, pandith.n@intel.com
+Subject: Re: [PATCH v2 1/4] pinctrl: intel: refine set_mux hook
+Message-ID: <ZINWOWLjyZk2Gj3j@smile.fi.intel.com>
+References: <20230609082539.24311-1-raag.jadav@intel.com>
+ <20230609082539.24311-2-raag.jadav@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230609082539.24311-2-raag.jadav@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The pull request you sent on Fri,  9 Jun 2023 16:46:13 +0200:
+On Fri, Jun 09, 2023 at 01:55:36PM +0530, Raag Jadav wrote:
+> Utilize a temporary variable for common shift operation
+> inside ->set_mux() hook and improve readability.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.4-rc6
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/92d22212c090b4afbb7d7e8f91d72988c7586aa6
-
-Thank you!
+Seems the bloat-o-meter statistics is missing here.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+With Best Regards,
+Andy Shevchenko
+
+
