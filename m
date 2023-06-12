@@ -2,62 +2,63 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978D9C83005
-	for <linux-gpio@archiver.kernel.org>; Mon, 12 Jun 2023 11:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DB2C7EE25
+	for <linux-gpio@archiver.kernel.org>; Mon, 12 Jun 2023 11:37:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234600AbjFLLhJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 12 Jun 2023 07:37:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52734 "EHLO
+        id S237518AbjFLLhK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 12 Jun 2023 07:37:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233407AbjFLLg3 (ORCPT
+        with ESMTP id S234230AbjFLLg3 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jun 2023 07:36:29 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E88CBB
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Jun 2023 04:15:01 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-5147f4bbfdaso5904398a12.0
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Jun 2023 04:15:01 -0700 (PDT)
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6964518B
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Jun 2023 04:15:04 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-977cc662f62so618219266b.3
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Jun 2023 04:15:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686568500; x=1689160500;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VrYp1jpD766hNu+JiRQDKuLK2kCjWhFpkBSPUhZV5cI=;
-        b=pIj03uw7eEX3e3rQ7Td/u1lFuv7SJUtTRfoHWBHFdtQGmJhFv0/XVCFPJLwUmKHDam
-         rf00USYQ7ChJTpo1ARh2Ih4LRe8Lei/T7Sngv6mY7W8Q5sCTYVIdCCUJylqYV+2WAisG
-         5KyboFoVUHuBEgKeVR7s3KjnXtN4ES48rgxZkedqXUdUI3oTytKo9Qktgjey+GGJpj2T
-         ZEnOGs0SsI10rT3d9HL4qS1po+pGOvFTXvMfeJKWek2JUHH0HNQW4jUFFvANK8kWzW1s
-         AhTQEMi2w3bGk0ti9lS04/hbfa6b08KDVU2P8IsnlXkCyWGfGA0H8TqXoXz3+6ZOMxW+
-         QErw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686568500; x=1689160500;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1686568503; x=1689160503;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VrYp1jpD766hNu+JiRQDKuLK2kCjWhFpkBSPUhZV5cI=;
-        b=dOYF4DiUQ7kOCsxLWytxJNgEbKvXKcG4IU1upVh6TcMRwqTF1UpStcLI3zmhNSSOjF
-         py0FSeWFFVxomiTd7P6i2jMIebwHZByeSmFvTomTzGr6eKHhoKKbEmSsaRt6SNX2mYnw
-         xXBed5AiBIUvWL3jhIJ1OVHyACev+MewEuJn+o/QvZuLxxJ/mU9jZ6WcsH3UuN7aqw7Y
-         CtYE4pE/MjPDPf9HPaJFcbJqbLFn/Vc6YqJVrIOXirXVMqTHBufcfeVYwF2oPNIq/JbW
-         qDRkoRmjXAh+zpE/Bt5gunwvhRtBSCfnSzTOD81JAC/3p9bnDMDuq5GCnXNTk4Vryb/A
-         rW+Q==
-X-Gm-Message-State: AC+VfDzdz7ULPNiWU8gmrmZdjKkN6umBFV7h2hJdD++4kijKU6PavU1/
-        BkxmsJqzHGF2zLpIcsVrI3gnU258k1J1BN6gzWk=
-X-Google-Smtp-Source: ACHHUZ5Nu99nrhUEB5uebIwvL1dRWpUQF6LURfWBD0FN7nGyQQV5EPKjExQu/AjMl+N53KwQ6L6Czw==
-X-Received: by 2002:a17:907:3688:b0:978:8d1b:3a24 with SMTP id bi8-20020a170907368800b009788d1b3a24mr9206492ejc.27.1686568499941;
-        Mon, 12 Jun 2023 04:14:59 -0700 (PDT)
+        bh=zJCE+1fuWVtMaz9EHfnAWHnNiUanDidN3rc+6SvJYoE=;
+        b=jXu8XXOgqJG1c/2BqwMLw86Ptg7hVbDxyNG0g1G0tO+pJ93tpMm3njhqQh6HwSSRt/
+         cmBl+UVI4sljrorJxRirIjqDEOKRH33tHfuOcSgSM5/mLqkJT621AZGCRF50N5M4dXhI
+         NxuN61qRJpVnWSzrJci7PoYZ5CYk1ioso+KWAV0wsEeXtC872DyJDtdhhhj39hsaTyEx
+         faUdINyn7WKAV4Jw0OKgDAsgwDpQTNfAA/O2fwW0q5if6Q+LVa/42N4CSKHJo5DbQ5Yd
+         8QfRd+Dz0p14Tsmluty+WqROH6zc5DkCjevfyzazJfFUuXlcJxaR0IOM+jhrApuxHHIY
+         lwIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686568503; x=1689160503;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zJCE+1fuWVtMaz9EHfnAWHnNiUanDidN3rc+6SvJYoE=;
+        b=WEm4fEWBX24oQt2A3fLknLCBQOtz/LmD9bRTJslI7owLwi+jAsv+kPoaDhC16549ui
+         E3Fa3Qju3rxZqTqTNtHiCNfKdCZ32yHa+0uMfCR5RsvxM45+mZ7yL91NnoKP/Ym3oyjd
+         Cq0eBizk6CfsqQVnElD5R3lwuWkzjB5XAntorp0mKljHjwp7HbcxDYAuuvrZqEB7hMYW
+         zXxeArKRPaPCFhRJ6KHLlNgEg+YVThqcJwU6oUNem1iwtiN9qc2dtdUmvcBn4Gq1LrUs
+         82q0Lhier6v/2ybouPNpVS4dqcXf657q9ZU52XnB8c1kDKxTsDfjE9cNdLyMmPWpZlkf
+         bZDQ==
+X-Gm-Message-State: AC+VfDwLOfOkOunl4ne4kqY07SPiQeB6mv5gdgExsY/itupaoGsBsiTr
+        u5g9Lm+GgejO3042qB/ur3PevtSawIoQ20aSyr0=
+X-Google-Smtp-Source: ACHHUZ47gyrJoZge2mlr2jmFuPxoz12hCkx3cc854GFgU74O8T/xqVtPoU/Xd/OevOGA6P2rDadXuQ==
+X-Received: by 2002:a17:907:9728:b0:97d:f8db:601 with SMTP id jg40-20020a170907972800b0097df8db0601mr6079097ejc.62.1686568502845;
+        Mon, 12 Jun 2023 04:15:02 -0700 (PDT)
 Received: from [192.168.1.149] (i5C74066A.versanet.de. [92.116.6.106])
-        by smtp.gmail.com with ESMTPSA id g12-20020a1709064e4c00b00965e1be3002sm3463054ejw.166.2023.06.12.04.14.59
+        by smtp.gmail.com with ESMTPSA id g12-20020a1709064e4c00b00965e1be3002sm3463054ejw.166.2023.06.12.04.15.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 04:14:59 -0700 (PDT)
+        Mon, 12 Jun 2023 04:15:02 -0700 (PDT)
 From:   Erik Schilling <erik.schilling@linaro.org>
-Subject: [PATCH libgpiod 0/3] bindings: rust: prepare for crates.io publish
-Date:   Mon, 12 Jun 2023 13:14:47 +0200
-Message-Id: <20230612-crates_io_publish-v1-0-70988ee9a655@linaro.org>
+Date:   Mon, 12 Jun 2023 13:14:50 +0200
+Subject: [PATCH libgpiod 3/3] bindings: rust: document build without
+ install
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIACf+hmQC/x2N0QrCMAwAf2Xk2UJX3XD+ishIu7gGZluSKcLYv
- 9v5eBzHbaAkTAq3ZgOhDyvnVKE9NRAippkMT5XBWXe2fetMEFxJR85jefuFNZrh0pO9doMNnYf
- aeVQyXjCFeJQv1JXkEEXoyd//7A4L+7lwnuCx7z95FedqhgAAAA==
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230612-crates_io_publish-v1-3-70988ee9a655@linaro.org>
+References: <20230612-crates_io_publish-v1-0-70988ee9a655@linaro.org>
+In-Reply-To: <20230612-crates_io_publish-v1-0-70988ee9a655@linaro.org>
 To:     Linux-GPIO <linux-gpio@vger.kernel.org>
 Cc:     Kent Gibson <warthog618@gmail.com>,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
@@ -66,45 +67,48 @@ Cc:     Kent Gibson <warthog618@gmail.com>,
         =?utf-8?q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
         Erik Schilling <erik.schilling@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1686568499; l=1093;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1686568499; l=1340;
  i=erik.schilling@linaro.org; s=20230523; h=from:subject:message-id;
- bh=HUG4kZGmEKN/dZZoFBwiTpys/xJ4AquBT8DQnaKYuYc=;
- b=tFAB2TYMo5xNxaJNuw2MeF9IM1Sp4t8EXUgBDMzeeyDdI7Yexjznne4y9Xu881RSTKFSdg8lY
- cSKaHQ2xPK4Ai0xPiFuGo7SLHBVTAtcZTL2aR3AXsdS4VFH9lgT/j/e
+ bh=9hj92/J4aEKe6yjLkwxtY/de6Oko13n5mW+Lz9nN/VU=;
+ b=2z6B877xz3/ypfjoRmABE7KGa+AdfftaE9DWUowe2Ii2wEsrG0bNMm/gQ2vF9y/4FwWgY9Ti/
+ KPvLPuDfDvLB15PdmUwZOk3clHGVEUPD4y9be+MT8caSANESdilf/BA
 X-Developer-Key: i=erik.schilling@linaro.org; a=ed25519;
  pk=/nNqy8/YOEdthj1epXl5FgwCTKEiVqTqqnVN1jVal7s=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-After libgpiod-sys is published [1]. This series does a little bit of
-cleanup and prepares libgpiod for publishing.
+While the Makefile does this automatically, a user may want to do
+something similar for other cargo commands.
 
-[1] https://crates.io/crates/libgpiod-sys
-
-To: Linux-GPIO <linux-gpio@vger.kernel.org>
-Cc: Kent Gibson <warthog618@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Manos Pitsidianakis <manos.pitsidianakis@linaro.org>
-Cc: Alex Bennée <alex.bennee@linaro.org>
-
+Reported-by: Kent Gibson <warthog618@gmail.com>
+Link: https://lore.kernel.org/r/ZIQJquwzNacp1Nuh@sol/
 Signed-off-by: Erik Schilling <erik.schilling@linaro.org>
 ---
-Erik Schilling (3):
-      bindings: rust: add version number to dependencies
-      bindings: rust: exclude Makefile.am from package
-      bindings: rust: document build without install
+ bindings/rust/libgpiod-sys/README.md | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
- bindings/rust/libgpiod-sys/Cargo.toml | 4 ++++
- bindings/rust/libgpiod-sys/README.md  | 9 +++++++++
- bindings/rust/libgpiod/Cargo.toml     | 6 +++++-
- 3 files changed, 18 insertions(+), 1 deletion(-)
----
-base-commit: 9788bdd3d6791205431e65366dcc518446f7ca6a
-change-id: 20230612-crates_io_publish-946e08590c5b
+diff --git a/bindings/rust/libgpiod-sys/README.md b/bindings/rust/libgpiod-sys/README.md
+index 90198d8..f9db496 100644
+--- a/bindings/rust/libgpiod-sys/README.md
++++ b/bindings/rust/libgpiod-sys/README.md
+@@ -16,6 +16,15 @@ libs and headers by setting environment variables. The mechanism for that is
+ documented in the
+ [system_deps crate documentation](https://docs.rs/system-deps/6.1.0/system_deps/#overriding-build-flags).
+ 
++If installing libgpiod is undesired, one can set the following environent
++variables in order to build against the intermediate build results of a `make`
++build of the C lib (paths are relative to the Cargo.toml):
++
++	export SYSTEM_DEPS_LIBGPIOD_NO_PKG_CONFIG=1
++	export SYSTEM_DEPS_LIBGPIOD_SEARCH_NATIVE="<PATH-TO-LIBGPIOD>/lib/.libs/"
++	export SYSTEM_DEPS_LIBGPIOD_LIB=gpiod
++	export SYSTEM_DEPS_LIBGPIOD_INCLUDE="<PATH-TO-LIBGPIOD>/include/"
++
+ ## License
+ 
+ This project is licensed under either of
 
-Best regards,
 -- 
-Erik Schilling <erik.schilling@linaro.org>
+2.40.1
 
