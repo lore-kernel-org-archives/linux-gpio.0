@@ -2,83 +2,93 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E574EB64D7
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Jun 2023 14:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8AFEB64D8
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Jun 2023 14:55:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237019AbjFMOxT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Jun 2023 10:53:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60848 "EHLO
+        id S241194AbjFMOzt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Jun 2023 10:55:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241182AbjFMOxR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jun 2023 10:53:17 -0400
-Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45D591984
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jun 2023 07:53:16 -0700 (PDT)
-Received: by mail-vs1-xe2f.google.com with SMTP id ada2fe7eead31-43f44f5f8f2so808137.0
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jun 2023 07:53:16 -0700 (PDT)
+        with ESMTP id S239870AbjFMOzs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jun 2023 10:55:48 -0400
+Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAEE310FC
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Jun 2023 07:55:47 -0700 (PDT)
+Received: by mail-vs1-xe2c.google.com with SMTP id ada2fe7eead31-43b4b5378ecso469322137.1
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Jun 2023 07:55:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1686667995; x=1689259995;
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1686668147; x=1689260147;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aj9On63tZGT4xZHZRbn4kNAEZXg6WSSzte0QQ5DFG5Y=;
-        b=3xz+2W3O1cEmUosWRClgJqLxl0RaLvVadqpzTPvT27Bjy1/yeTJfSOMsG0D7X0iH5o
-         KzX/+z8/VC+rShQubEE/VWKrIyoN8QvzBgqS0+P+gzuMDwG2uuiMKQNdJ2eTNqYu+MaU
-         P+wY2VwAJRMgCg+VbM31WFoOirbEbUKbIVp99SgYmsgjUjHp/9PlvRgETuYgt7l4pIrw
-         lpcgVQIqnHllPbvDsAbALV3GDuBLMOQT0rpRWdnghItx3SNqTwglIa2ZAFhANA6IrrAQ
-         HUA8KJNWZZ+7RJl7qtzwp22HsQazZ2H6FahZGeNmNAzxVORq2tbBkfFGiqOhiXscImN7
-         jHRQ==
+        bh=eUjBNQR3ayKs+c7PtNJMktv7NPrLUhbz12wWwvQ4mnE=;
+        b=zBmRFI3G1eexEjmXLDT7CdfJ8PPO20byDmYp9SBqqUFGFdsVzlotKgIwWK5JEYLN5h
+         LTX71RchE7A6EJ0cDhvVRxamsPqv9+FPOEtzIpvtyJ1j9xFT2kRDnjOGUTpT2TeUFj9a
+         3q7Lno/PlspWCdt04VG0dCZnmg/6r2NFiojbkc/J4EWU2GGLLlk83kxUY2XwZPiD4rF0
+         WOofcJdfGjbXdiVuvgye14FzFK8qrsO5oirRN2rp9bs6DjaNXKHvGSZhQfCvJpd6xtrp
+         Tbp8UtblfHOK0Gby+lnmksuCRgotre8zfyt2lGSs4zbabXR81ZgSHoXFLKu/lPLJwqAF
+         whSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686667995; x=1689259995;
+        d=1e100.net; s=20221208; t=1686668147; x=1689260147;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aj9On63tZGT4xZHZRbn4kNAEZXg6WSSzte0QQ5DFG5Y=;
-        b=NzixELzFsLZYFcJV36o8RyEyEsxqLl2O5jMlOzmL46QodBn7lDr+BObj9BOAobc+Ko
-         CVUs9HhKLXgFlvdcLuVwZGWPgTUazvCHo799C/WWWYGg6iLMY0bQhLC1EjSI7+hGgp+b
-         tQMZ7tADX1V0KKwvq5YZ5JzyLu4iovJxxbkSUad+6mMdc8alOOau/uZQJLUJ5GizgPo+
-         +PHcQ5qjThgCETKkw+maUC8aepNmK3ZST6jei2hm+OgwLtOtxHKFhs5smokzN9HqADSn
-         ABWRDnoD7hA4nG6L9N+i/YDmzI670mbw8GT3uJqgkXhpW7DUJnIsyMPwRxyVZev1V536
-         X2vA==
-X-Gm-Message-State: AC+VfDyzA7GUhIQAkvNtuLbHbVSnDp9VQ3hKDWp2TOgyEXbAX15vv1kQ
-        sk4CPRiGpl6eIVTq1R0YKmhlp+H9u5TI3kWu+5EGEQ==
-X-Google-Smtp-Source: ACHHUZ756bnFHTg62RATpM6wA8I/VVqR/uhiSiA71IFDFVJY4JyUcDi5z39sBzm7jpDc1KvVUBsrTNtF6uxgL2g4exY=
-X-Received: by 2002:a05:6102:3a71:b0:43b:3e78:9886 with SMTP id
- bf17-20020a0561023a7100b0043b3e789886mr4214600vsb.26.1686667995404; Tue, 13
- Jun 2023 07:53:15 -0700 (PDT)
+        bh=eUjBNQR3ayKs+c7PtNJMktv7NPrLUhbz12wWwvQ4mnE=;
+        b=ghcgV2EjPGfzOobCSDcAlP2FoSkMU8G6Jqy2Cm5MQVZvLvmqfjkREWT7Ttslsk0Zwa
+         heK13DeypmHz+ZMbF6WToXG3Y9kLCcPRO2ywGSluocpioV42LzM7s43sx5A7kHuQDWcZ
+         sqiY2pcYUcZaX7V3rhaJPOUWrzS08rR6t5rRjYYElHPd9qlgCCWWpzYKxGtU4rEct/H3
+         NovVA1cI86JaUscPQmewzcejZ7YSbecicDwXvrAb/3Z/2Pa9TT2Q1PH+ZBBrzh9t1OM9
+         G3I3P5c+PN7cgLude5QIRpuZUyvGTZcmw0l2bUrULkd69Zpj18qrMjxQdnDlrVsUPdBy
+         Q5Dg==
+X-Gm-Message-State: AC+VfDxlipWvWRUkpt40JX8UYHAbmlU541ckWwns/9Bx94nWQaFG3iTV
+        QO2hbwbyzVSOHjY1ndwTbRRBTbKqUTtwrCsZsE36yg==
+X-Google-Smtp-Source: ACHHUZ6zGp2wWUBczZ3EZNkyAM/WjSHCJx+x6suhmZczY/H+a7+tSuxScOYQkbuwQxm7A/Mg2w5Oem1IJtilPRj83Mg=
+X-Received: by 2002:a05:6102:e4b:b0:43b:431d:8d51 with SMTP id
+ p11-20020a0561020e4b00b0043b431d8d51mr6882544vst.8.1686668146887; Tue, 13 Jun
+ 2023 07:55:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230605125411.60378-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20230605125411.60378-1-andriy.shevchenko@linux.intel.com>
+References: <20230424123522.18302-1-nikita.shubin@maquefel.me>
+ <20230601054549.10843-15-nikita.shubin@maquefel.me> <cacd8ea8-f834-4983-20ff-a875fee8011a@linaro.org>
+ <CACRpkdZVhwsoHg3jOWuXtdL5kqbnbHjEYJOGsBCTcfLrVKbX3w@mail.gmail.com>
+In-Reply-To: <CACRpkdZVhwsoHg3jOWuXtdL5kqbnbHjEYJOGsBCTcfLrVKbX3w@mail.gmail.com>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 13 Jun 2023 16:53:04 +0200
-Message-ID: <CAMRc=Mcg62aoeiwG_3aUAGqL9MeoYjWvL4mxRTEPUPw3RbAUjw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] gpiolib: Remove unused gpio_cansleep()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc-tw-discuss@lists.sourceforge.net,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
-        Yanteng Si <siyanteng@loongson.cn>,
-        Hu Haowen <src.res@email.cn>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Date:   Tue, 13 Jun 2023 16:55:35 +0200
+Message-ID: <CAMRc=MfgBAnSwLTKuCZ9WgbX_oWoB2xLk=J86QCo9YkcfWaq_Q@mail.gmail.com>
+Subject: Re: [PATCH v1 33/43] dt-bindings: gpio: Add Cirrus EP93xx
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Nikita Shubin <nikita.shubin@maquefel.me>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Peters <mpeters@embeddedts.com>,
+        Kris Bahnsen <kris@embeddedts.com>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jun 5, 2023 at 2:54=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Fri, Jun 2, 2023 at 9:41=E2=80=AFAM Linus Walleij <linus.walleij@linaro.=
+org> wrote:
 >
-> There is not a single user in the entire kernel of this deprecated API,
-> kill it for good.
+> On Thu, Jun 1, 2023 at 10:20=E2=80=AFAM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
+> > > +title: EP93xx GPIO controller
+> > > +
+> > > +maintainers:
+> > > +  - Linus Walleij <linus.walleij@linaro.org>
+> > > +  - Bartosz Golaszewski <brgl@bgdev.pl>
+> >
+> > Did you choose correct maintainers? Bartosz, Linus, do you take care
+> > about EP93xx platform?
+>
+> I'm fine with it (I have a platform).
 
-Applied, thanks!
+I don't but I'm actually not sure how DT bindings maintainership works
+- do GPIO bindings all fall under the GPIO jurisdiction automatically?
 
 Bart
