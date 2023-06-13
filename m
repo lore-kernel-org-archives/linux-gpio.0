@@ -2,101 +2,128 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B97EFEB64D7
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Jun 2023 14:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4712FEB64D7
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Jun 2023 15:23:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234809AbjFMO4s (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Jun 2023 10:56:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33196 "EHLO
+        id S242664AbjFMPXj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Jun 2023 11:23:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242951AbjFMOyw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jun 2023 10:54:52 -0400
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6029E1BD0
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jun 2023 07:54:47 -0700 (PDT)
-Received: by mail-vs1-xe33.google.com with SMTP id ada2fe7eead31-43f40006c48so85385137.1
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jun 2023 07:54:47 -0700 (PDT)
+        with ESMTP id S240291AbjFMPXi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jun 2023 11:23:38 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 010581BE6
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Jun 2023 08:23:13 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4f62d93f38aso7132474e87.0
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Jun 2023 08:23:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1686668086; x=1689260086;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ujKpeDBf4dlsgCHpOAeVReymujxCrTOGm/9TDlUS9o8=;
-        b=4yz4ATvwH1tPmaTnf4zVg+ULGJd7OA2GjN6pjySEKg2LlPnbuAfWLgzRLxbOxLDFsy
-         t0zLz28hhGrpKT37Q/V6KNpTPpQqASBYD4vInsJa9X8GxiT3/JUMEMR4k3bOBrdAUFYX
-         PrAEH9xCmS+Ce5Tv9DKOybyWqaRnFij6oAJ89DSXxg4aW09/5YSg20GJHHXtDN+tJp71
-         oHOoLcJWWBAPh4u6UdiJnnL/5SMGmpqYC1SLV+pCUwc38ODvvxRy29maEWOx4AtzK5jY
-         JtqFKbDrmDmGXWPAzdPaIIqxxmR1FxwJPLDMyeYp0D0/rnPQp7j2mGuEfM5fu06QyaXQ
-         /drg==
+        d=linaro.org; s=google; t=1686669792; x=1689261792;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZObq3QdQreREeU4NfsEue/+eYyb1HX3Nq35VP0wnSHk=;
+        b=O5I1KTQM9ahis2CVWCWapMP4B1w+V782LooA28aPXu+f8RIsABsAEG6HoMaXraby7g
+         HdDN1qziUtNinucVrcJwTyTcagUZEjEtlexo+8OnfziVbDulrBUnbj57VWTQ4d+L5ock
+         oQWQTGvpQ45Mo6I0heqUBJee7CgGQKuWJcd21ToX04OGSr3pIsy5fFoJsrGIL4GlVH6B
+         jDKNaixXYaNX/BSg+6fNh0NUDzkhC5NRZ7mbGe+fZxJPb5JkvWT/wArUzro3LFWPjgeu
+         RRUrLjCF6+45XGPMzKXCQ0Who0jYHmOH0H5ZC6BRaoe0ZG4Spgrr53phfK1cSjPWEzAQ
+         JhIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686668086; x=1689260086;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ujKpeDBf4dlsgCHpOAeVReymujxCrTOGm/9TDlUS9o8=;
-        b=eSvpytYPYYnUJe1JWeYC0GGNaW304/sAA2cIhuNnP431jrT7QmtrvSJbGCWmKmGWMW
-         pJddvQlt7anFdpjngfIBWFYGgkWR5DS7Di/rHbTXW4VLDmV9hhHjpc6g4kbFfBTcZGW+
-         QQZgSzjXQcH39Q/VjAtPG/91pCTd8dOCsxDKEjPOWLOgfn7AvY09Y8cRwS+eW68kYXib
-         mXlSpDh5cs45WFrlwGUv8mlP5sRJEzTrNJtJphl4X26cq+bKzIF9Ox8l69MPCTCVwPW0
-         9oEF2ktSX/h+jsPM/ZVHOD1JFVzHZ4zj9Qq/nSLjGyRkv6iTu/VWvcx+aM05qbZSBDCr
-         yw/w==
-X-Gm-Message-State: AC+VfDw9rXiqbyn0ekxxoaGu6KvpdijdJNag15Ty8dmyV1mCaIJgOwRS
-        bfNtQwz3j/u7bFOfDE3NlYIJNewspwsYc+eTYF5+pQ==
-X-Google-Smtp-Source: ACHHUZ6F0BD0AfkU0XluXJjcMLWPntGpPl2nLiNPAiceu39hatrS3xE+Zp8rfKjyLrBOQhARtVcB0FhfuQlHNJxrDTA=
-X-Received: by 2002:a67:f9c7:0:b0:43d:cf39:456c with SMTP id
- c7-20020a67f9c7000000b0043dcf39456cmr4690712vsq.15.1686668086467; Tue, 13 Jun
- 2023 07:54:46 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686669792; x=1689261792;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZObq3QdQreREeU4NfsEue/+eYyb1HX3Nq35VP0wnSHk=;
+        b=QfVvwer1vmUO6hPx7dpu4MtiHeU6VUjf/X4Uj/iwZ5nH9eUObQMqbk8THmSV09Zj+n
+         RWqWyordpXzT/pE0Ig6i0h5Ck4zDEYz4VPywTwrhAWLicCKy5/0B3Qsn8kOoYltB0+05
+         BIrPTe0cAlgEICZDA2+Uzh5IbLgljVoFByLvSWXsOqmUHofpOa6CxXIlWR/TDWw7Kxq+
+         ojHT3rJoKTs6m7XFB/Jl1UWwY0rGeWsogEOSLO4yY3qt717TFfyIprZnRa7XVFWhO8XZ
+         Bj0QKWxiGnaj06J4CahGOLXfjsuF+YBO41c53ReERe5uAUS5YimBhN+UUIgCjLJCz0Dw
+         aXHg==
+X-Gm-Message-State: AC+VfDyKRSz/P48QmNctdGfRGD4OagjqSr5nYQMJWgEF09/fe/9UFAtB
+        xU9JaYjXC/d7k/d3mH6RJBb5iA==
+X-Google-Smtp-Source: ACHHUZ5MGoSPdfOcevVLsn6Xp9mNELJ81EH8SncxQ2LkVo3Gx9bg3gEgGWSOLoOA3+r4muPayrH13w==
+X-Received: by 2002:a19:6601:0:b0:4f6:5bf2:63bc with SMTP id a1-20020a196601000000b004f65bf263bcmr5593106lfc.3.1686669792155;
+        Tue, 13 Jun 2023 08:23:12 -0700 (PDT)
+Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
+        by smtp.gmail.com with ESMTPSA id 7-20020ac24847000000b004f60be0c685sm1809673lfy.123.2023.06.13.08.23.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Jun 2023 08:23:11 -0700 (PDT)
+Message-ID: <1631b3cd-dc24-0024-5291-fa9bdacc82bc@linaro.org>
+Date:   Tue, 13 Jun 2023 17:23:06 +0200
 MIME-Version: 1.0
-References: <20230607115508.2964574-1-l.goehrs@pengutronix.de> <20230607115508.2964574-3-l.goehrs@pengutronix.de>
-In-Reply-To: <20230607115508.2964574-3-l.goehrs@pengutronix.de>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 13 Jun 2023 16:54:35 +0200
-Message-ID: <CAMRc=Me5VJ5xfNSW2hu2EYwV2wkHJpd+dvx-iGsR70Dso3EX5w@mail.gmail.com>
-Subject: Re: [PATCH v1 3/8] dt-bindings: gpio: pca9570: add gpio-line-names property
-To:     =?UTF-8?Q?Leonard_G=C3=B6hrs?= <l.goehrs@pengutronix.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Sungbo Eo <mans0n@gorani.run>, kernel@pengutronix.de,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v4 2/8] clk: qcom: Add Global Clock controller (GCC)
+ driver for IPQ5018
+Content-Language: en-US
+To:     Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20230510134121.1232286-1-quic_srichara@quicinc.com>
+ <20230510134121.1232286-3-quic_srichara@quicinc.com>
+ <21a5642c-e6e5-9323-7db1-383a18616ac0@linaro.org>
+ <410b0991-30b6-c87d-9b25-5f51f6c08671@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <410b0991-30b6-c87d-9b25-5f51f6c08671@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jun 7, 2023 at 1:57=E2=80=AFPM Leonard G=C3=B6hrs <l.goehrs@pengutr=
-onix.de> wrote:
->
-> This patch allows giving each of the controller's pins a meaningful
-> name.
->
-> Signed-off-by: Leonard G=C3=B6hrs <l.goehrs@pengutronix.de>
-> ---
->  Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml b/D=
-ocumentation/devicetree/bindings/gpio/gpio-pca9570.yaml
-> index 5b0134304e51c..452f8972a9659 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca9570.yaml
-> @@ -24,6 +24,10 @@ properties:
->    '#gpio-cells':
->      const: 2
->
-> +  gpio-line-names:
-> +    minItems: 4
-> +    maxItems: 8
-> +
->  required:
->    - compatible
->    - reg
-> --
-> 2.39.2
->
 
-Applied, thanks!
 
-Bart
+On 13.06.2023 15:16, Sricharan Ramabadhran wrote:
+> Hi Konrad,
+> 
+> On 5/27/2023 12:47 AM, Konrad Dybcio wrote:
+>>
+>>
+>> On 10.05.2023 15:41, Sricharan Ramabadhran wrote:
+>>> Add support for the global clock controller found on IPQ5018
+>>> based devices.
+>>>
+>>> Co-developed-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+>>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+>>> Co-developed-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+>>> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+>>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>> ---
+>>>   [v4] Fixed to use ARRAY_SIZE() wherever parent_data was used
+>>>        Changed GPL v2 to GPL as per comments
+>>>
+>>>   drivers/clk/qcom/Kconfig       |   10 +-
+>>>   drivers/clk/qcom/Makefile      |    1 +
+>>>   drivers/clk/qcom/gcc-ipq5018.c | 3731 ++++++++++++++++++++++++++++++++
+>>>   3 files changed, 3740 insertions(+), 2 deletions(-)
+>>>   create mode 100644 drivers/clk/qcom/gcc-ipq5018.c
+>>>
+>> [...]
+>>
+>>> +struct clk_rcg2 lpass_axim_clk_src = {
+>>> +    .cmd_rcgr = 0x2E028,
+>> Please use lowercase hex for non-macro-defines, all throughout the file.
+>>
+> 
+>  ok. Will fix this in V10.
+> 
+>> [...]
+>>
+>>> +static struct clk_rcg2 system_noc_bfdcd_clk_src = {
+>> Drop clocks that are managed in RPM, they will conflict.
+>>
+> 
+>   IPQ5018 does not have RPM.
+Oh that's new. I suppose you'll be interested in clk-interconnect for
+voting on bus resources then.
+
+Konrad
+> 
+> Regards,
+>  Sricharan
