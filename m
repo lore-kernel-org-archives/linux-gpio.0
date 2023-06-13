@@ -2,99 +2,79 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7291DC88CB6
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Jun 2023 09:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A52C7EE29
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Jun 2023 09:50:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240289AbjFMJpm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Jun 2023 05:45:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58800 "EHLO
+        id S241519AbjFMJuZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Jun 2023 05:50:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240311AbjFMJpk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jun 2023 05:45:40 -0400
-Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72B4010D9
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jun 2023 02:45:39 -0700 (PDT)
-Received: by mail-ua1-x92f.google.com with SMTP id a1e0cc1a2514c-78a065548e3so332935241.0
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Jun 2023 02:45:39 -0700 (PDT)
+        with ESMTP id S241751AbjFMJuL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jun 2023 05:50:11 -0400
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 492D72708
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Jun 2023 02:49:35 -0700 (PDT)
+Received: by mail-ua1-x92d.google.com with SMTP id a1e0cc1a2514c-78cbc37c5b1so311115241.0
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Jun 2023 02:49:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1686649538; x=1689241538;
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1686649774; x=1689241774;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WNzEy8MVZ8x+tq8g5HpTGHyfMbdsero480OR63gtbqs=;
-        b=JqovgFXbuPli7l7dXgrvY2uK2toI88NT4EQUXx9xL277TDuDVuUsigZAlZym0kP1Gw
-         +Vkj3qFPQJLzYF01DNdbp/er3p7k41SuJbOh3djnkhtLbRYwUUEn0XtjZkEMlgGXyXvs
-         VG58Thb3QgKI+nNf0ESL9uzb49wcH63/TM03m3rCC6ah5eNsyZlPwsWIx0P4WbY9j5Qx
-         4T42NAx9ZyQhi1MTO+XnvaEIoBNST+XdJi968DSnAGkvAV++cHij8m98UJ4kL9Jjb3Tw
-         EmDkK4ftX07oljM16Nx1tC5scU9XmZBblhuBbBL+Adw/W3mNJ7XwexFexxjI32gne4xo
-         86pg==
+        bh=lHShPJI1ND84wlAQIXTdkKHqiP9kaIQnFJziQlEFXAg=;
+        b=W6V4ONuGe+cz/0uk/uN5Iqq0aT/OfJ6B9RiOB0CdGwIzS6c6ziD2B5nKU9nEklZFod
+         3ilSqxRl3pklQ5KRqx0j4ktIUbx25z2edb6WY294QkZsXfM2J/X+wug1aSX0NprsmZ5Y
+         KCQEca4HhEkM6S9qJsUkogsPU+JJ4q8bRDoVZmhq4y8wvWneOf6rl2vcBOPIiVMxQqOL
+         XklEO9/DYK6kBfs66OJ3+roaXwfEfqZi0331CzihEAbErEx9cXxlXmeWQFmqZzs2fJid
+         EtvIZkBReT9vSeUMj828rvEBXQ4SzgEXomPbmotCE3YkNpAYtPIw/eY1iJhEJ+NPb4Cy
+         ek7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686649538; x=1689241538;
+        d=1e100.net; s=20221208; t=1686649774; x=1689241774;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WNzEy8MVZ8x+tq8g5HpTGHyfMbdsero480OR63gtbqs=;
-        b=CJoQsWRjwtqw6INVeQeAiN8wJAeFY48Uvs195NKdevZk/DSbv8b94Ux5/9djc0ji5X
-         T0eOTD6Uz1Xyolfok44ZNmRXJQ+EvGIUFU+QnySruG2yjhN/v/dQWEwKLqXVvJbbkhFZ
-         AkZgf5OY6eyMunumDt9/O/Qfq86Rhbuwb7EKetcnZzYXToO7/PTVxiXsv1K1gMJb+luB
-         u5y212peNhyqFvtmJynEFSAspisiKKGwCIZeRebRypQ9bKxXXIZfcg3wwRl3df9l2r4O
-         BRHZPr+3orYwGaIGT6qQA/VFH24jGbxy/aGmBe6xI8eeuXdKxg3oKsTgBlt4K/Lje7Ot
-         u2Vg==
-X-Gm-Message-State: AC+VfDw8OYJFhdnYpZpToJrqnwMlsdSx95EAT66A9tiMLBrBsmyTb+Hg
-        kftNxEe64Fk3p0ceHhNo59SNk2VCl4zmtWbBFQ7opg==
-X-Google-Smtp-Source: ACHHUZ5BClJpHM+qfOHUCII/gtseIclhD5cLFyAvfZbs1pkdUKkye/6TFiKstlGZMdsqAlWSwJlGQlKreUgG3xlQcuQ=
-X-Received: by 2002:a67:fd52:0:b0:43c:8c56:14a9 with SMTP id
- g18-20020a67fd52000000b0043c8c5614a9mr5882483vsr.9.1686649538668; Tue, 13 Jun
- 2023 02:45:38 -0700 (PDT)
+        bh=lHShPJI1ND84wlAQIXTdkKHqiP9kaIQnFJziQlEFXAg=;
+        b=kOdiGncxApxIX7CUxNJLYNDmtOaK8sbyCVHiWGSW8Gwyh9StFKprYEJWpsBnczdUEd
+         1XruE3zK+/ti06UM5A7OOXQWvVZbUPACqQLDE/EnVOK2cdzp/QlvPid+4mIkqgUR2HOv
+         FJqLy4VUTkP7YLNTPpo4P11BwPdgWVqtKv8YTYU2lPtcpBiCJBesWMMV9FzIaZcRxgn2
+         5XqTuXVKNW0rMhoGf4IPSrqfg7uEEDfm5Wy+G4etF313gTe2hrvAYxVbZwhxVD4FO8h0
+         oqY52s39UUfugHMiTGrZ2xPZ0jBqtbDQ21gNMzcqLEataN8vAnJOQS6c8YTT6Ch6Po7S
+         Ob/w==
+X-Gm-Message-State: AC+VfDyA+A56MSPCz/YAetmV0w686GR57gomFNQOReqM0Id/xWa5sWTG
+        iVDZANsi4QZHA6Ny0Cs1VTTz7Cd5vjQqUrZlRosuJA==
+X-Google-Smtp-Source: ACHHUZ6d07s72MWiYVxCx5UTb5HEFEm5bhKysx4M+2vQ5aEkZntWDPGMGEALVUWuh8IGKijZ+Q5f8rP5+9BSaUl6N9s=
+X-Received: by 2002:a67:ff88:0:b0:439:3128:587d with SMTP id
+ v8-20020a67ff88000000b004393128587dmr5259878vsq.28.1686649774444; Tue, 13 Jun
+ 2023 02:49:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230609121649.88147-1-minhuadotchen@gmail.com>
-In-Reply-To: <20230609121649.88147-1-minhuadotchen@gmail.com>
+References: <1686249772-26231-1-git-send-email-manikanta.guntupalli@amd.com>
+In-Reply-To: <1686249772-26231-1-git-send-email-manikanta.guntupalli@amd.com>
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 13 Jun 2023 11:45:27 +0200
-Message-ID: <CAMRc=Md9utfFY3Uimnn7XTiHma7GBBmKLPAc9Y735Mxt1McBWw@mail.gmail.com>
-Subject: Re: [PATCH] gpio: davinci: make davinci_gpio_dev_pm_ops static
-To:     Min-Hua Chen <minhuadotchen@gmail.com>
-Cc:     Keerthy <j-keerthy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 13 Jun 2023 11:49:23 +0200
+Message-ID: <CAMRc=Mdv0+o6BLZS779yyvZayHy+8iTD7Oy71GR4mvPbn=_A-A@mail.gmail.com>
+Subject: Re: [PATCH V2] gpio: zynq: fix zynqmp_gpio not an immutable chip warning
+To:     Manikanta Guntupalli <manikanta.guntupalli@amd.com>
+Cc:     michal.simek@xilinx.com, michal.simek@amd.com, git@amd.com,
+        shubhrajyoti.datta@xilinx.com, srinivas.neeli@xilinx.com,
+        linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        srinivas.goud@amd.com, manion05gk@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jun 9, 2023 at 2:16=E2=80=AFPM Min-Hua Chen <minhuadotchen@gmail.co=
-m> wrote:
+On Thu, Jun 8, 2023 at 8:43=E2=80=AFPM Manikanta Guntupalli
+<manikanta.guntupalli@amd.com> wrote:
 >
-> This patch fixes the following sprse warnings:
+> Make the struct irq_chip const and flag it as IRQCHIP_IMMUTABLE,
+> call gpiochip_disable_irq() in the .irq_mask() callback and
+> gpiochip_enable_irq() in the .irq_unmask() callback to fix
+> "gpio gpiochip1: (zynqmp_gpio): not an immutable chip" warning.
 >
-> drivers/gpio/gpio-davinci.c:695:1: sparse: warning: symbol 'davinci_gpio_=
-dev_pm_ops' was not declared. Should it be static?
->
-> No functional change intended.
->
-> Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
+> Signed-off-by: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
 > ---
->  drivers/gpio/gpio-davinci.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index aaaf61dc2632..1aed3ace0240 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -692,7 +692,7 @@ static int davinci_gpio_resume(struct device *dev)
->         return 0;
->  }
->
-> -DEFINE_SIMPLE_DEV_PM_OPS(davinci_gpio_dev_pm_ops, davinci_gpio_suspend,
-> +static DEFINE_SIMPLE_DEV_PM_OPS(davinci_gpio_dev_pm_ops, davinci_gpio_su=
-spend,
->                          davinci_gpio_resume);
->
->  static const struct of_device_id davinci_gpio_ids[] =3D {
-> --
-> 2.34.1
->
 
 Applied, thanks!
 
