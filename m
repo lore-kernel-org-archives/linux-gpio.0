@@ -2,126 +2,97 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24367C83003
-	for <linux-gpio@archiver.kernel.org>; Tue, 13 Jun 2023 13:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18384EB64D0
+	for <linux-gpio@archiver.kernel.org>; Tue, 13 Jun 2023 13:46:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242381AbjFMNQy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Jun 2023 09:16:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34050 "EHLO
+        id S242492AbjFMNqW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Jun 2023 09:46:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241000AbjFMNQx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jun 2023 09:16:53 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CAFF196;
-        Tue, 13 Jun 2023 06:16:52 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35DAbVHs016390;
-        Tue, 13 Jun 2023 13:16:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=UhBYNPuW8adCTT9Igi1jCTMV9lLl1u6981Zie5OLaOI=;
- b=J2nX+Lo1BgT9z0OCqNCrbCoGaYJJjGStqn5/M5aJpPairm3BdCcGyEMeCW/+HHkIfZls
- s7OBMMlN9YEWtfulcg4TcX/xOKCreD51N0xydR2LmL6OAHFzpADpA83IO1Qkh2/MUOXF
- i6RVzBu5pWUJF72noLCr7+UvuhNtoBjzSvC7sfLASvDfRqK5D6ePMAWQQvVebPA46Vr9
- ItTlv7LXotFoSw/LGYq9c6lhU/4uGAkFn1JWwEtP/YLMr1Nrw1KTgNxR0gnAT+XZL5QS
- Xwcr4u+njWnnFHXZJ010SUrV1TiyA5P/wzQuR31fi267g1xJDT+m6DKAi+rQ0Yjv1sN9 1w== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r6n0cgjs2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Jun 2023 13:16:28 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35DDGRua031912
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Jun 2023 13:16:27 GMT
-Received: from [10.201.3.182] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 13 Jun
- 2023 06:16:22 -0700
-Message-ID: <410b0991-30b6-c87d-9b25-5f51f6c08671@quicinc.com>
-Date:   Tue, 13 Jun 2023 18:46:18 +0530
+        with ESMTP id S240124AbjFMNqV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jun 2023 09:46:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20CCBAC;
+        Tue, 13 Jun 2023 06:46:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 43DEC62E96;
+        Tue, 13 Jun 2023 13:46:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59D1C433F0;
+        Tue, 13 Jun 2023 13:46:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686663978;
+        bh=0rLyJ7Um8xHPNMu03OwaG3r7b8np6OjbkMb9kt0aihQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iM+rcbROLB5JB/ybOayIqTBFWRea5VRToEaYbL7v/gTfVtFBx+lzMIaSVUSe/fcml
+         mDgb6VM1iRjtbcjMLqXsnSVO9LkEZmDlmiC3YZ2W05mijUgwOCvovA4SjuQHwFKM3Y
+         Jv9yrcViXVcndpEEH8y2D5oByRKcU1Qju4ILu1rOw/dePVRdDfb0fj6QfIMzsQJMG+
+         xLrGpqTC2Zz2kFpnNFbAniPV6W8fqPA6q6c5gDMBsR5wV+Qh6MYLQxSQp6GKhBta8C
+         i2XbGrCRBn0+WJIDynCpUNjIZtsrhfTHUkUKePbADlUAsC1phPYqi/JHHe1Xq+5Xc2
+         Hhs2pnXa8zStA==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2b2f9f47256so42792081fa.1;
+        Tue, 13 Jun 2023 06:46:18 -0700 (PDT)
+X-Gm-Message-State: AC+VfDxicfrVknVkrozVwQvQvYdGmSruaz8wmpjRgpFK7ANpqeEw5jcK
+        VxBzbu23sz9f3nBEkVNubc7sBstWHpMl5OoXYg==
+X-Google-Smtp-Source: ACHHUZ6WmyAIhsvQmsDE0BVCAxrCpRVVRL5HwS87Mu9fv5OxAQFMDCIxNRznw/fOYZNggQvJaqHC522pRJwlOweV5/A=
+X-Received: by 2002:a2e:3c0c:0:b0:2af:25cf:92ae with SMTP id
+ j12-20020a2e3c0c000000b002af25cf92aemr5357006lja.22.1686663976708; Tue, 13
+ Jun 2023 06:46:16 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v4 2/8] clk: qcom: Add Global Clock controller (GCC)
- driver for IPQ5018
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
-        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <p.zabel@pengutronix.de>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20230510134121.1232286-1-quic_srichara@quicinc.com>
- <20230510134121.1232286-3-quic_srichara@quicinc.com>
- <21a5642c-e6e5-9323-7db1-383a18616ac0@linaro.org>
-From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <21a5642c-e6e5-9323-7db1-383a18616ac0@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: foWbv2MnEtUydER2G_D9pmII8xoZErGo
-X-Proofpoint-ORIG-GUID: foWbv2MnEtUydER2G_D9pmII8xoZErGo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-13_04,2023-06-12_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 phishscore=0 spamscore=0 bulkscore=0 suspectscore=0
- clxscore=1015 malwarescore=0 impostorscore=0 mlxscore=0 priorityscore=1501
- mlxlogscore=962 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306130116
+References: <20230418150606.1528107-1-robh@kernel.org> <b8a062a0-10e9-bf17-c109-f6986f9dd02c@linaro.org>
+In-Reply-To: <b8a062a0-10e9-bf17-c109-f6986f9dd02c@linaro.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 13 Jun 2023 07:46:04 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJvmN7824Q0vnWpnO3a_Fdo5Ybc2tcGnJZAfDLM=-1Apg@mail.gmail.com>
+Message-ID: <CAL_JsqJvmN7824Q0vnWpnO3a_Fdo5Ybc2tcGnJZAfDLM=-1Apg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: qcom,pmic-mpp: Fix schema for "qcom,paired"
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Konrad,
+On Tue, Jun 13, 2023 at 12:50=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 18/04/2023 17:06, Rob Herring wrote:
+> > The "qcom,paired" schema is all wrong. First, it's a list rather than a=
+n
+> > object(dictionary). Second, it is missing a required type. The meta-sch=
+ema
+> > normally catches this, but schemas under "$defs" was not getting checke=
+d.
+> > A fix for that is pending.
+> >
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+>
+> Linus,
+> Could you take it for current fixes? The code was wrong and dtschema is
+> warning now about this.
 
-On 5/27/2023 12:47 AM, Konrad Dybcio wrote:
-> 
-> 
-> On 10.05.2023 15:41, Sricharan Ramabadhran wrote:
->> Add support for the global clock controller found on IPQ5018
->> based devices.
->>
->> Co-developed-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->> Co-developed-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
->> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
->> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->> ---
->>   [v4] Fixed to use ARRAY_SIZE() wherever parent_data was used
->>        Changed GPL v2 to GPL as per comments
->>
->>   drivers/clk/qcom/Kconfig       |   10 +-
->>   drivers/clk/qcom/Makefile      |    1 +
->>   drivers/clk/qcom/gcc-ipq5018.c | 3731 ++++++++++++++++++++++++++++++++
->>   3 files changed, 3740 insertions(+), 2 deletions(-)
->>   create mode 100644 drivers/clk/qcom/gcc-ipq5018.c
->>
-> [...]
-> 
->> +struct clk_rcg2 lpass_axim_clk_src = {
->> +	.cmd_rcgr = 0x2E028,
-> Please use lowercase hex for non-macro-defines, all throughout the file.
-> 
+I have other things ready for 6.4, so I'll add this one.
 
-  ok. Will fix this in V10.
+Thanks,
+Rob
 
-> [...]
-> 
->> +static struct clk_rcg2 system_noc_bfdcd_clk_src = {
-> Drop clocks that are managed in RPM, they will conflict.
-> 
+>
+> Fixes: f9a06b810951 ("dt-bindings: pinctrl: qcom,pmic-mpp: Convert qcom
+> pmic mpp bindings to YAML")
+>
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-   IPQ5018 does not have RPM.
-
-Regards,
-  Sricharan
+>
+> Best regards,
+> Krzysztof
+>
