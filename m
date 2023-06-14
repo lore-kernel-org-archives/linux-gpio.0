@@ -2,153 +2,171 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EA1EB64D7
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Jun 2023 00:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A37BDEB64D7
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Jun 2023 03:00:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231420AbjFNAFH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 13 Jun 2023 20:05:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49098 "EHLO
+        id S233251AbjFNDAV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 13 Jun 2023 23:00:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230456AbjFNAFG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jun 2023 20:05:06 -0400
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28818A2;
-        Tue, 13 Jun 2023 17:05:05 -0700 (PDT)
-Received: by mail-qk1-x72d.google.com with SMTP id af79cd13be357-7608aae9355so133578585a.0;
-        Tue, 13 Jun 2023 17:05:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686701104; x=1689293104;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dCL3XYRA6hV3EWR4V1JDlEix34yrkwfocIMDu/RoAR8=;
-        b=KiZONNFZYFlTVr0nWCBS7P0vzIW9ATmQBz/P6TpWjuefA+ZvDDkupfbYvOszk2vpJN
-         iJmW5qaichMxC8CezgEdwJ+VNieP1LZeRfWKy9mDS+gPKwhPE8BbL8yTTacBK81LDiG7
-         YVqhJTChVMuVk6Zik/8kIVs4ox52jGhOM6SyKD9lAHqbM56NPoiCwYdyXFunG1X3u6fW
-         ubDkEwFQGRnVWdx0T+uyB/htD1i1/as42IMzuY4UnJTZ7fqnPMhqPwP2n7FMKdgLlasw
-         wKtAvfW6B2bfGvDc5WBP/v965Q+iZnXDANSVwjbaYVxoE2/tj94Jj04qQG5sMZKZJc52
-         WnMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686701104; x=1689293104;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dCL3XYRA6hV3EWR4V1JDlEix34yrkwfocIMDu/RoAR8=;
-        b=W17sHtTWfHjsOlKya5qmcz2GUMM2HVAng8knHtPuOn5dGBCV7VWzRi8OyzfJEeAm3Y
-         NhnmjDwh76ZQE81YCHTnwGnJm0gs7HBOv4qFz/gt+zFMikSQyYud5z+/ZfKU0yyFh24i
-         LoWpvwEiuc1qnLGVthZfgBg9Uz6wopt3bJS82KeUhRXw/Ay+72NSWEc+xsUYOk4GPDbL
-         KBllk5/7pimLJNJt0xin31/JsynkRjMESybiSRV8ZJtpwMZ+xZLMAvm4k37exShE3SMI
-         enawFebVeh25Di+1ID/oncooCiVJsKZjKE4/SsXVOQIqIV9w2AYUR90KQntjhywU14SL
-         P71w==
-X-Gm-Message-State: AC+VfDzzpHSpG6H7mnmRwvcHO0fpbDP9Rq2xYKZkHRkZSR3x67X46iRG
-        aisvOwuHA/1CwZwnoIW7PGQ=
-X-Google-Smtp-Source: ACHHUZ7LVzhC6fyBwKTgVUn+XqqH0Gbz8ZHm0pKEe1+DVGaN2EhTNFjMdB5SErcBNDnPokwsoKJSRA==
-X-Received: by 2002:a05:620a:8390:b0:75e:fda0:bb51 with SMTP id pb16-20020a05620a839000b0075efda0bb51mr14389604qkn.4.1686701104224;
-        Tue, 13 Jun 2023 17:05:04 -0700 (PDT)
-Received: from [10.1.97.4] (rrcs-24-39-76-222.nys.biz.rr.com. [24.39.76.222])
-        by smtp.gmail.com with ESMTPSA id t16-20020a05620a035000b00760951ebc09sm1324508qkm.98.2023.06.13.17.05.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Jun 2023 17:05:03 -0700 (PDT)
-Message-ID: <4566b922-c564-5847-facf-1a68ea6adcf4@gmail.com>
-Date:   Tue, 13 Jun 2023 19:04:59 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] gpiolib: demote the hogging log messages to debug
+        with ESMTP id S232600AbjFNC77 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Jun 2023 22:59:59 -0400
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6652CE;
+        Tue, 13 Jun 2023 19:59:58 -0700 (PDT)
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+        by mx0a-0064b401.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35E2kEQ7030644;
+        Wed, 14 Jun 2023 02:59:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com; h=subject : to : cc
+ : references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=PPS06212021;
+ bh=Zo+i6hHFRtmeiTuShCSXBvanGTeBagJWtN08D+ugjz0=;
+ b=b6W49B5waiAXb8ptjvrzzLdO4Sy/2rc9ehqY6rOY8mhJcjj9bR08UPdGd66KRDykzNJL
+ qyNcA/8kbocNnBEt87Opo07nOLJzi6laxk7dm3Zoy9LXm4xF6v22YSjmfAboxff6zR53
+ XGNJewb4hPEtSHTyq70pAelI69uBtzTn+S1weNmk4SX1mgxa0e2tLkvv/GvKR0Fir+ll
+ sU9Q/asqIBVF45OfA2lCmqRay5IFfcMHhKNbq6WgKDHfgx3RsaGu2bUtbJ2lCOXf73c0
+ eywukN9gJR5EiovMJWFo6Qt37kndHqbeXIi835KTr70Cf/s6mPUl5iu167fDbggo6zUX uw== 
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2168.outbound.protection.outlook.com [104.47.58.168])
+        by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3r4ed03dcn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Jun 2023 02:59:47 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QWg9NwsHb7B0K8fvnHHJB+dydrS5AyXSutzBJQo5LO19ZddGudMtOGSkjSyPkB3jAHgpaBsKGttLCrv1psdaU1BEDBX9IFngYHiuaQOSA/WhnMzWkF7+o25NYlgQHKSwV7xpXqqNiYLz5qnS+JEfF6PDl5ZQ7R9K8S8a9MouOqGP+XAfW8ExjzMDu8Rp4UKZBOFx7609cTZehlV+OSKnunnvRH4Kn/cTVeCFYVWAREV9C1IpLAEMC3wL0rBFl0JRjC6keAM+Eq526rLuQxgUFHnnHkNiG5FFb9FLL1SUMp4n3lpOMsYI/o7DcOTImyKBP3g8a68rqBlEfq1iioRLew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Zo+i6hHFRtmeiTuShCSXBvanGTeBagJWtN08D+ugjz0=;
+ b=K5+7zV/dFqkp6SzXMPHxvml6e6iHihXi02F+9vhYeZnVRYLvZouksfPKPxqC+WES/CnCyP6RK7iq76s9ZAuw9FkXwazW5UtXGGPPgRaCm7nUna/WE8ums8tABWG+1vDJsGxmRJ0jYDG8uGYGroMCrKNRa+px9WO3PhKWZMtUizWnXFzz9nwjjUnd9CGcz1NtWAjvFjkGAgL2L6TFCuh5MR1iPppYxnitqwTdoHuN0Y+honZm2mYKNzrVeszcAA6HakaOPYTvXmwvokDoStVpBXLQkNEMWI/3c71eTmmBYXgvqj2MYpmA9uJv0VGNqg6zXJ9iEZ7wG4UIqcXv0W9s+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
+ by DM4PR11MB8089.namprd11.prod.outlook.com (2603:10b6:8:17f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.38; Wed, 14 Jun
+ 2023 02:59:44 +0000
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::7024:8e67:fd05:3242]) by MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::7024:8e67:fd05:3242%4]) with mapi id 15.20.6455.030; Wed, 14 Jun 2023
+ 02:59:44 +0000
+Subject: Re: [v4][PATCH] pinctrl: freescale: Fix a memory out of bounds when
+ num_configs is 1
+To:     Peng Fan <peng.fan@nxp.com>, Aisheng Dong <aisheng.dong@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        Shenwei Wang <shenwei.wang@nxp.com>,
+        "bartosz.golaszewski@linaro.org" <bartosz.golaszewski@linaro.org>
+Cc:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20230504233736.3766296-1-xiaolei.wang@windriver.com>
+ <DU0PR04MB94177E959F6A18D4FABE8D8B88729@DU0PR04MB9417.eurprd04.prod.outlook.com>
+From:   wangxiaolei <xiaolei.wang@windriver.com>
+Message-ID: <980ecce9-b880-574d-12f9-9fe2167665f5@windriver.com>
+Date:   Wed, 14 Jun 2023 10:59:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
+In-Reply-To: <DU0PR04MB94177E959F6A18D4FABE8D8B88729@DU0PR04MB9417.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kent Gibson <warthog618@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20230605125248.279921-1-brgl@bgdev.pl>
- <CAL_JsqKczF9yYHWjqneBv-y+Qv+O7AkX4gwVG87+aPPazKxtDw@mail.gmail.com>
- <22a21176-f2e2-bce5-2223-97cb095162c5@gmail.com>
- <98a35030-6dd3-795c-4381-1db4e94a18e4@gmail.com>
- <CAL_JsqKDQy+tq7uDJ9impTr+uetkb7vz-K4BYX8bZBkpvZ=8uQ@mail.gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-In-Reply-To: <CAL_JsqKDQy+tq7uDJ9impTr+uetkb7vz-K4BYX8bZBkpvZ=8uQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TYAPR01CA0070.jpnprd01.prod.outlook.com
+ (2603:1096:404:2b::34) To MW5PR11MB5764.namprd11.prod.outlook.com
+ (2603:10b6:303:197::8)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW5PR11MB5764:EE_|DM4PR11MB8089:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4aa9b01d-5bf0-41d3-7f29-08db6c8367cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: btKS4DzVdjVNJPd63knyg36mNOxbd200Pm6GO+4VsK5jnHcoVbEBIXfxfNljY1/P1vqRfm2Kq2Pyxrtw5QEzfSzQC9md7EJPm+WjGi6ldXN+U01+npC6752C4dujp1f5mq2u4aD64kRVZWU96RsoN0ZmVowzJhZzNK8Th96h/JKPuw0E/RseK9WsO7QFzyHizLsCC0Qi3QHOwSC0uycsUiGI2JSkcgE2BExyUjOIiHQCXMOGcLK3BD0N9P1c1QL670iErGYB7Iim+4zjlRl1NOgMDwa56l39dZe/szNnbJVxatrf8c3gdlsJJiv9k6pYnUFCStlVRfluH/UIm6AwYKfj9tXvtSKI9rtivsDuJ4LmFZeQyXeEzqeF0wWWDcq633GNwFgj+fhTPsiy2G0KPgkT+Q7cQkgFoBV4m5wzr6r0H+MO7XZ6Bc9hMO4XsUPDK3R/woy+bL6E0R1u3IYUp0F5r/UNQoRzej+oyEOkYoO2zb8EmXu2Haea/8b3JzEneH+dC+1bVDdGO0pfqEmLBUBpbLVZG0pPQvAbykI4wIh54sxZ40W1DUjHIZoFGHDSOsLHwb3R1N8dAFEoX+S0XeWhT/a5BMTk5GS+8w2MD2eiy9K61GPPxrdul0khnUkDSIOaUbIoGW5JxwBcI2lpsLGEMsP/it47UGHFb3qYGtY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5764.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(366004)(376002)(136003)(39850400004)(396003)(451199021)(66476007)(110136005)(6506007)(66556008)(38100700002)(66946007)(4326008)(83380400001)(478600001)(6486002)(2616005)(6666004)(53546011)(4744005)(2906002)(316002)(6512007)(26005)(186003)(41300700001)(36756003)(54906003)(7416002)(31696002)(8936002)(8676002)(86362001)(31686004)(5660300002)(43062005)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?azJnc1NyNGRGVlJNeEdWZXRBU0FnSFQwVFR0ZlNqeHltaEcvUzRKN3ZIK1VD?=
+ =?utf-8?B?Qzl2ekNRaW5jNnkzRXEveEJKNk92alhaanAwQkY2K2E5Vmg3aUVyU0hkc3Zz?=
+ =?utf-8?B?Tmt1Q1dLVG9qVW5YbHhCejFmV21qWEp2UWljSnNka2crbmc3S3huY3V4MzJW?=
+ =?utf-8?B?ZXIzVktVdWFkRlp2L25VT2t6aUFaayt0eFhPZ0FVV2w5NTBNK1BBYXN1bGZR?=
+ =?utf-8?B?WGpucGNGazFlZzlFU3NUMVhnZ0ZSanVRTDFadVFueUV2NVorYVBRMHdVaVVx?=
+ =?utf-8?B?eThON3lnRmxKdVIxcDIxdnprZGZVby9uTVNwTXRmUXZlTHpzdmxSV09qd3dX?=
+ =?utf-8?B?UnZ0ZHdqTmhqblQ3c0RYK3NiWEJDRUMxUnBNWWltR2tMWmZFKzFyQk83VTF2?=
+ =?utf-8?B?RWdMQ0d1akNQakRlb1ZoT0lhRlBxZ0pvbkxjeFEyT1J6ckZwUW91WFdhRFFs?=
+ =?utf-8?B?eWVNUkxwYkpuQ2hMa0wwc2JhSVNmQjgxYzM0eHhJam4zak9zd1NFR3BqMXND?=
+ =?utf-8?B?ejQ2YzMza3Z4c29hMk8rc3owV2c1NlZZV0szNnhER0dzVTRuRVVJREQ4VDhZ?=
+ =?utf-8?B?c3lQRGE0Tm9QdDB1MmZSV3k4WVd1UXNsUmF5bmdHMjRPSkJJcDhjN0Y5bi9L?=
+ =?utf-8?B?cGJFNGJXaml3VjVlTTRjLzYva1VMc1pUN1JvU0kxeHBJdjA3UXBWTzcvMVVm?=
+ =?utf-8?B?UC8vR0lqM3gwd3hPd0wxcHBOZEpQL3R5bkUzdUtPaVNQZ1l6NE9yc01kS0lX?=
+ =?utf-8?B?cjNiZEpPUTF3d3I1V1ZnMzFKcmN6V0l3UTRGNTVWazNseS9JL0R1Y1FINm1Y?=
+ =?utf-8?B?N1duV2Yzb1kxMU0xdHdNVVZ6MzdzS1VsNHFpTTJJN1hTOEpTbGlyc05BZDN3?=
+ =?utf-8?B?RUg1bjlyR2doSEp5bEtoMmsyUEc3eTBJMktQV21IUXZJelVHREdZZnYxYU5N?=
+ =?utf-8?B?cUF5bk10dG1rZnM0UmFodkp2OTVsakxaUUpkUXdObVlRQlBvcWpIeTh5VXA0?=
+ =?utf-8?B?V1g0SVg5bUxvUGRCL0tyeUJ0SFpxcXZxUjhZSUdialBnN3ZBbHRnc1VBdUwy?=
+ =?utf-8?B?NjAvdmxaUEl6dWJYYjlZS3F6ck5qYWptNjgyVlgrK1lDVkJHeXRTbnRHUmVh?=
+ =?utf-8?B?SjQwZWtLUDBzMzh2M3VwL0g0Z21uaTNzSXhsMGV4TGdYSUNBRzFZSlYyeE5M?=
+ =?utf-8?B?RG9MazBDM1lsZWZQd3J5RVVrMmpwZVRhOWg0N2hBTTVxdHVCeE9ISnoyUmY3?=
+ =?utf-8?B?ZlI0cWtMaEhmNzhNdVZMU3NTU3d6R2JsUE1WeHFFR3A2ZWVYSXFzYVU4Uklt?=
+ =?utf-8?B?emdLNFFFdlRKZG5iNHRiMnBvc2pDbzlqU1dTVUpsck9ZZVovcUxHSVJSLzNC?=
+ =?utf-8?B?NTV2MWxUWUZlRktsRlVzZTZ4TnB3c3E5K1JMWlpLMnhXbXVBODNYblpNOUFr?=
+ =?utf-8?B?L2puOFZzNGIzNzZZd0l4bjI5WUdEUjVYUzVYZjRqeVdGR3FvTDVQclZOdTZU?=
+ =?utf-8?B?UUJQRndpYk9TSGNIRmtXcWtxRFVFT2dHTkFIcDVrdzhBOEprNlovNkVlZFdP?=
+ =?utf-8?B?b0Yyb3hldzdpdkxacXNETGNMSXZDaXYwTm52ZXpjdGM1aXFmdjZ5aURkUGR3?=
+ =?utf-8?B?Q29XeldWNzU3VHdjUWt4VDB3c2Y2ZmRIMWVPRHV0K2hHODNiamJ1ejF2Z1dG?=
+ =?utf-8?B?ZFhOalNlWE5UWjVzUWxFRWV6Y2RnVkNtYVliMHJka2t0dmMxT2taRTRWaGI5?=
+ =?utf-8?B?d0prSURyMC84MG9DZS92SjdGM3cyaDU5MkNYcEZ6eFI3ck1OTFJSTVMvVWxY?=
+ =?utf-8?B?UW16cWptdGtBQzVBbEU2UFVhb0ZLeXJsRDFXU1dabXpIWnZDcTFFQ2pBYXIw?=
+ =?utf-8?B?NThvQnRqNXZqZXhpanFGM3U3VVVzeHZIbk1jMlpTaEdSM1ByL2hiS1A3Nnll?=
+ =?utf-8?B?WGNuZGU3Z2hUU0dmanZETEFtbmFyaXNNUjRIUklIVmd3Nm5oOUhLNzMxVG5B?=
+ =?utf-8?B?R1Z0blhoc3Z4WFNWclRDSEpsVmVyUTA2QkRSM25nZkZiMWdWUEJrK3N0QTBq?=
+ =?utf-8?B?RDVGWkFHR1V0ckJ4eUdaREc1aUljMEx3U092RkpJa2dXWW9lQnU1ZkR2bFhG?=
+ =?utf-8?B?dHAvYjVBS1RTcHdDRjg3Z1FVSVgxM2hPMlpxOE1EYlpFUDFGcUt6R1k0bkNr?=
+ =?utf-8?B?SWc9PQ==?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4aa9b01d-5bf0-41d3-7f29-08db6c8367cd
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5764.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2023 02:59:44.2953
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8OS0VA7xEWrKGpReqh8kve3ByenITYOkrTW/fqrHcEvx2CSHHlUA2WeT1YdG1IHpk/eBiUPwjmgElZ533ZDkAtv2lMx8OkpWcKBDa1yGzZ8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8089
+X-Proofpoint-GUID: we3qUguQvgqapbF72vXV2lqMgDNeZcnu
+X-Proofpoint-ORIG-GUID: we3qUguQvgqapbF72vXV2lqMgDNeZcnu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-13_24,2023-06-12_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=922
+ adultscore=0 spamscore=0 malwarescore=0 phishscore=0 suspectscore=0
+ lowpriorityscore=0 impostorscore=0 bulkscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306140022
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 6/12/23 10:42, Rob Herring wrote:
-> On Sun, Jun 11, 2023 at 6:48 AM Frank Rowand <frowand.list@gmail.com> wrote:
->>
->> On 6/11/23 07:39, Frank Rowand wrote:
->>> On 6/9/23 08:47, Rob Herring wrote:
->>>> On Mon, Jun 5, 2023 at 6:53 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>>>
->>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>>
->>>>> Drivers should be silent when they work correctly. There's no reason to
->>>>> emit info messages when GPIO lines are hogged. Demote the message to
->>>>> debug.
->>>>>
->>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>> Suggested-by: Kent Gibson <warthog618@gmail.com>
->>>>> ---
->>>>>  drivers/gpio/gpiolib.c |  2 +-
->>>>>  drivers/of/unittest.c  | 16 ++++++++--------
->>>>>  2 files changed, 9 insertions(+), 9 deletions(-)
->>>>>
->>>>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
->>>>> index a7220e04a93e..e4515bda8915 100644
->>>>> --- a/drivers/gpio/gpiolib.c
->>>>> +++ b/drivers/gpio/gpiolib.c
->>>>> @@ -4243,7 +4243,7 @@ int gpiod_hog(struct gpio_desc *desc, const char *name,
->>>>>         /* Mark GPIO as hogged so it can be identified and removed later */
->>>>>         set_bit(FLAG_IS_HOGGED, &desc->flags);
->>>>>
->>>>> -       gpiod_info(desc, "hogged as %s%s\n",
->>>>> +       gpiod_dbg(desc, "hogged as %s%s\n",
->>>>>                 (dflags & GPIOD_FLAGS_BIT_DIR_OUT) ? "output" : "input",
->>>>>                 (dflags & GPIOD_FLAGS_BIT_DIR_OUT) ?
->>>>>                   (dflags & GPIOD_FLAGS_BIT_DIR_VAL) ? "/high" : "/low" : "");
->>>>> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
->>>>> index 2191c0136531..0060334a98a7 100644
->>>>> --- a/drivers/of/unittest.c
->>>>> +++ b/drivers/of/unittest.c
->>>>> @@ -1849,19 +1849,19 @@ static void __init of_unittest_overlay_gpio(void)
->>>>>          * driver is registered
->>>>>          */
->>>>>
->>>>> -       EXPECT_BEGIN(KERN_INFO,
->>>>> +       EXPECT_BEGIN(KERN_DEBUG,
->>>>>                      "gpio-<<int>> (line-B-input): hogged as input\n");
->>>>
->>>> As debug messages are normally off, I think you can just remove these.
->>>
->>> This patch is an example of exactly why the message level is the first parameter
->>> passed to EXPECT_*().  The test results are then _always_ valid, not just
->>> _normally_.
->>
->> One should never say never.  One should never say always. :-)
->>
->> Yes, there is still the exception where debug can be enabled independently
->> for drivers/gpio/gpiolib.c  vs for drivers/of/unittest.c.  And dynamic
->> debug can make things even more wonky.
-> 
-> If we turned on debug messages for drivers/of/, the unittest would be
-> hopelessly broken.
-> 
-> Debug messages are special compared to all the other levels as they
-> are normally off whereas the rest are always on. For the unittest we
-> should assume they are off.
 
-Sorry, I wasn't clear enough in my last email.  My intent in that email
-is to essentially agree with what you say here - if debug is enabled
-then we are in a special world where the person who enabled debug has
-to deal with all of the side effects and consequences of enabling
-debug.
+On 5/5/23 8:53 AM, Peng Fan wrote:
+> CAUTION: This email comes from a non Wind River email account!
+> Do not click links or open attachments unless you recognize the sender and know the content is safe.
+>
+>> Subject: [v4][PATCH] pinctrl: freescale: Fix a memory out of bounds when
+>> num_configs is 1
+>>
+>> The config passed in by pad wakeup is 1, when num_configs is 1,
+>> Configuration [1] should not be fetched, which will be detected by KASAN as
+>> a memory out of bounds condition. Modify to get configs[1] when
+>> num_configs is 2.
+>>
+>> Fixes: f60c9eac54af ("gpio: mxc: enable pad wakeup on i.MX8x platforms")
+>> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
--Frank
+Can someone help merge this patch?
 
-> 
-> Rob
+thanks
+
+xiaolei
 
