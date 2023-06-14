@@ -2,161 +2,146 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77417EB64D8
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Jun 2023 22:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34EABEB64DC
+	for <linux-gpio@archiver.kernel.org>; Wed, 14 Jun 2023 23:18:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232748AbjFNWgq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 14 Jun 2023 18:36:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37816 "EHLO
+        id S231801AbjFNXSS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 14 Jun 2023 19:18:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229864AbjFNWgp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jun 2023 18:36:45 -0400
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E24F1715;
-        Wed, 14 Jun 2023 15:36:44 -0700 (PDT)
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-33dae9244a1so554985ab.0;
-        Wed, 14 Jun 2023 15:36:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686782203; x=1689374203;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a8Zf94E7WQ/9wcsLl9Q+QIwfy+59Ul0REJcdYnckuKU=;
-        b=LKSRwJHFNOgKNBLdmm73cfTAN9FPD7FFI9hTl1mew1ZcgrXR6W6GWcefVTSUNzCSHO
-         NVMPj6vWJk/ytRC1uKLbXoq0KQQt0U01rLZJouLZNfniWcBz5SySU/l+4shsYyb9Ivh0
-         LigYNZW2CVgmnwmLnEDnmeDThEvpNLA/O/0OepMpxFPXQ9jUe/oInj3vL/I4ZsO0gSdB
-         JyzpbTFuBlPj3qP/40xGzlvnx+uQLnkomXCoBNSjq80L2ZZIb+wetxSqpcyYxUb8t2OQ
-         byAp8VPBY8GD34HckaikPaAF4XpDKY7AN4KqOBgInyPzijkX7HXijYCWrv6FhQPPI4Xh
-         K6CQ==
-X-Gm-Message-State: AC+VfDxDKpeXh3w5X1hD28p0tVizyNc2Qr1rOECGyax3G+GE3V+Y5lWX
-        yfTTT9QoPmD7c4vuUnW/hhzMH1GkKw==
-X-Google-Smtp-Source: ACHHUZ6JU7DCDYGAQ8/JWSyyuSrxrSNxeLDGbGaZcPHrcCorHY6KxNRpZMeRV9tKTmRrIK4JA7KNIg==
-X-Received: by 2002:a92:d6c8:0:b0:33f:c2f8:e503 with SMTP id z8-20020a92d6c8000000b0033fc2f8e503mr2224864ilp.5.1686782203533;
-        Wed, 14 Jun 2023 15:36:43 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id o27-20020a02c6bb000000b004186badba5esm5136264jan.36.2023.06.14.15.36.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 15:36:42 -0700 (PDT)
-Received: (nullmailer pid 2990560 invoked by uid 1000);
-        Wed, 14 Jun 2023 22:36:40 -0000
-Date:   Wed, 14 Jun 2023 16:36:40 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Oleksii Moisieiev <Oleksii_Moisieiev@epam.com>
-Cc:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v3 4/4] dt-bindings: firmware: arm,scmi: Add support for
- pinctrl protocol
-Message-ID: <20230614223640.GA2980828-robh@kernel.org>
-References: <cover.1686063941.git.oleksii_moisieiev@epam.com>
- <a2be28c0aec04fdc3684f56801c78bcc498c3471.1686063941.git.oleksii_moisieiev@epam.com>
+        with ESMTP id S233697AbjFNXSQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jun 2023 19:18:16 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78F0EAC;
+        Wed, 14 Jun 2023 16:17:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686784678; x=1718320678;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Vuq1lOeFuGO/J19m1cI+coKiG4lvz42SypGElO940fk=;
+  b=IrdoCveJAy1iLer1jbF9uTZd9NS6/Ac8X+dMFilMy79k0brm/ngZI5mi
+   fXpUBJ70jRZRgF86ycqMhrH+S2EukTo1W2tnYIF/dbgCQ9xMfuLaquxeN
+   eCfZrqZzi1EtecLUXc8bnJRQNZPN4n6iveFRBylqOpuy4Q9MoJVrinA8V
+   ZAzABqijX62omuYa2qXnMV8VuxSVdseJZ3FZRZSvBba/95XWAxgxE4ZK6
+   wNGWOZ6+8QteYDsrYhS4ISPmueXeL9bxVD1hhtGe6h83oj6svT7hWsbz5
+   tzDKUW39PUbYNuOl3+Iw/DfAwnUo1YjgHbN/tLBBPqVqd9md2LBCtQbal
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10741"; a="424648032"
+X-IronPort-AV: E=Sophos;i="6.00,243,1681196400"; 
+   d="scan'208";a="424648032"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2023 16:14:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10741"; a="715387935"
+X-IronPort-AV: E=Sophos;i="6.00,243,1681196400"; 
+   d="scan'208";a="715387935"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 14 Jun 2023 16:14:43 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id E558F35F; Thu, 15 Jun 2023 02:14:51 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/4] gpio: aggregator: Support delay for setting up individual GPIOs
+Date:   Thu, 15 Jun 2023 02:14:44 +0300
+Message-Id: <20230614231446.3687-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
+In-Reply-To: <20230614231446.3687-1-andriy.shevchenko@linux.intel.com>
+References: <20230614231446.3687-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a2be28c0aec04fdc3684f56801c78bcc498c3471.1686063941.git.oleksii_moisieiev@epam.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 04:22:28PM +0000, Oleksii Moisieiev wrote:
-> Add new SCMI v3.2 pinctrl protocol bindings definitions and example.
-> 
-> Signed-off-by: Oleksii Moisieiev <oleksii_moisieiev@epam.com>
-> ---
->  .../bindings/firmware/arm,scmi.yaml           | 53 +++++++++++++++++++
->  1 file changed, 53 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> index 5824c43e9893..a19aa184bbd1 100644
-> --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> @@ -233,6 +233,39 @@ properties:
->        reg:
->          const: 0x18
->  
-> +  protocol@19:
-> +    $ref: '#/$defs/protocol-node'
+In some cases the GPIO may require an additional delay after setting
+its value. Add support for that into the GPIO forwarder code.
 
-       unevaluatedProperties: false
+This will be fully enabled for use in the following changes.
 
-> +
-> +    properties:
-> +      reg:
-> +        const: 0x19
-> +
-> +      '#pinctrl-cells':
-> +        const: 0
-> +
-> +    allOf:
-> +      - $ref: /schemas/pinctrl/pinctrl.yaml#
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-aggregator.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-Group this and the '#/$defs/protocol-node' $ref under allOf.
+diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
+index 1aa7455672d3..a74a8d86caf3 100644
+--- a/drivers/gpio/gpio-aggregator.c
++++ b/drivers/gpio/gpio-aggregator.c
+@@ -10,6 +10,7 @@
+ #include <linux/bitmap.h>
+ #include <linux/bitops.h>
+ #include <linux/ctype.h>
++#include <linux/delay.h>
+ #include <linux/idr.h>
+ #include <linux/kernel.h>
+ #include <linux/mod_devicetable.h>
+@@ -240,6 +241,11 @@ static void __exit gpio_aggregator_remove_all(void)
+  *  GPIO Forwarder
+  */
+ 
++struct gpiochip_fwd_timing {
++	u32 ramp_up_us;
++	u32 ramp_down_us;
++};
++
+ struct gpiochip_fwd {
+ 	struct gpio_chip chip;
+ 	struct gpio_desc **descs;
+@@ -247,6 +253,7 @@ struct gpiochip_fwd {
+ 		struct mutex mlock;	/* protects tmp[] if can_sleep */
+ 		spinlock_t slock;	/* protects tmp[] if !can_sleep */
+ 	};
++	struct gpiochip_fwd_timing *delay_timings;
+ 	unsigned long tmp[];		/* values and descs for multiple ops */
+ };
+ 
+@@ -331,6 +338,28 @@ static int gpio_fwd_get_multiple_locked(struct gpio_chip *chip,
+ 	return error;
+ }
+ 
++static void gpio_fwd_delay(struct gpio_chip *chip, unsigned int offset, int value)
++{
++	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
++	const struct gpiochip_fwd_timing *delay_timings;
++	struct gpio_desc *desc = fwd->descs[offset];
++	bool is_active_low = gpiod_is_active_low(desc);
++	u32 delay_us;
++
++	delay_timings = &fwd->delay_timings[offset];
++	if ((!is_active_low && value) || (is_active_low && !value))
++		delay_us = delay_timings->ramp_up_us;
++	else
++		delay_us = delay_timings->ramp_down_us;
++	if (!delay_us)
++		return;
++
++	if (chip->can_sleep)
++		fsleep(delay_us);
++	else
++		udelay(delay_us);
++}
++
+ static void gpio_fwd_set(struct gpio_chip *chip, unsigned int offset, int value)
+ {
+ 	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
+@@ -339,6 +368,9 @@ static void gpio_fwd_set(struct gpio_chip *chip, unsigned int offset, int value)
+ 		gpiod_set_value_cansleep(fwd->descs[offset], value);
+ 	else
+ 		gpiod_set_value(fwd->descs[offset], value);
++
++	if (fwd->delay_timings)
++		gpio_fwd_delay(chip, offset, value);
+ }
+ 
+ static void gpio_fwd_set_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
+-- 
+2.40.0.1.gaa8946217a0b
 
-> +
-> +    required:
-> +      - reg
-> +
-> +    additionalProperties:
-> +      anyOf:
-
-Don't need anyOf with only 1 entry.
-
-But the use of additionalProperties is usually for existing cases where 
-the pin config nodes had no naming convention. For new bindings, define 
-a node name pattern (under patternProperties). I'd suggest '-pins$' as 
-used elsewhere.
-
-> +        - type: object
-> +          allOf:
-> +            - $ref: /schemas/pinctrl/pincfg-node.yaml#
-> +            - $ref: /schemas/pinctrl/pinmux-node.yaml#
-> +
-> +          description:
-> +            A pin multiplexing sub-node describe how to configure a
-> +            set of pins is some desired function.
-> +            A single sub-node may define several pin configurations.
-> +            This sub-node is using default pinctrl bindings to configure
-> +            pin multiplexing and using SCMI protocol to apply specified
-> +            configuration using SCMI protocol.
-> +
-> +          unevaluatedProperties: false
-> +
->  additionalProperties: false
->  
->  $defs:
-> @@ -384,6 +417,26 @@ examples:
->              scmi_powercap: protocol@18 {
->                  reg = <0x18>;
->              };
-> +
-> +            scmi_pinctrl: protocol@19 {
-> +                reg = <0x19>;
-> +                #pinctrl-cells = <0>;
-> +
-> +                i2c2 {
-> +                    groups = "i2c2_a", "i2c2_b";
-> +                    function = "i2c2";
-> +                };
-> +
-> +                pins_mdio {
-> +                    groups = "avb_mdio";
-> +                    drive-strength = <24>;
-> +                };
-> +
-> +                keys_pins: keys {
-> +                    pins = "GP_5_17", "GP_5_20", "GP_5_22", "GP_2_1";
-> +                    bias-pull-up;
-> +                };
-> +            };
->          };
->      };
->  
-> -- 
-> 2.25.1
