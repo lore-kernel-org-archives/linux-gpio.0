@@ -2,100 +2,82 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE3B9EB64DB
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jun 2023 15:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B59EB64D9
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jun 2023 16:25:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240937AbjFOPuL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Jun 2023 11:50:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42232 "EHLO
+        id S229629AbjFOQZq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Jun 2023 12:25:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344086AbjFOPtm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2023 11:49:42 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F9A1DF;
-        Thu, 15 Jun 2023 08:49:38 -0700 (PDT)
+        with ESMTP id S229530AbjFOQZP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2023 12:25:15 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B67211FE2;
+        Thu, 15 Jun 2023 09:25:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686844178; x=1718380178;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=PFBtTtmWe3T3OLLflnk8WWM5W5odQPoBX/I7JOJDbQE=;
-  b=dVXUZEjNZGynz3mqarh0IYhioTOFuJgFqzyHmguVsDgQ6e6ciik0g5CK
-   RbVBRgmS0VKiHJII5dsmmaag6o+VyLNUHHit3d4om7yGOOZxhNDRRMevq
-   pD/+ynPdrR67+SPxT47naStNAU2EihV7fDUgK9zGNbnGGlaQ9Tq0xSoHh
-   Ga/wwzhAktfTM6iJaHXYT9FS1WOH9lLmo4ZHpQuasrA49vM2WozfYJLhA
-   qDJ0/LFrVIWgvhPvxnBSvVqtcpPfAd756s+zLx8mLaOz+YoNeiB7jMF+w
-   nxbbbSlDpHDpjwMKGQ1w4dKAx3roTLERfnW27H7LCYeVAhmtVNh7xONIf
+  t=1686846314; x=1718382314;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gZVNHON66K092rebzdYLLooqv26SviVTgyudimDhcFU=;
+  b=BiSqYjMkST7QRtfdi7nHKSIeg0XwPha6KhS0KBCdrvTb8G3V2ohQcRnN
+   /bhcJBEPe3GB//5iZVUQQbRBlUhvaA3oB9XMdQlSziWi5S5fNySvA+AjC
+   IwCe/Ub+JrG15NrbTBVktuX7uba3FYM7qm6OMBGGrjSZmaMHm72oUeSOS
+   79byjNP0jTk10VohSvsgkTa3Txfyu1wYFiwoT/yJYU0ysNOsUbEnkE4/S
+   OL6HT0hF+hSCr36YDyzqOrnB6nQEKi7Isv83Gq5n3iS3NE/Ct/q8mzGAp
+   QSMjBY1+QmhBKFD+BrVhjnvvJzIHcO1WHExSYx9YFBrNKsYNDUt0VjKUH
    w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="424868043"
+X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="343696429"
 X-IronPort-AV: E=Sophos;i="6.00,245,1681196400"; 
-   d="scan'208";a="424868043"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2023 08:36:11 -0700
+   d="scan'208";a="343696429"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2023 09:25:13 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="857019779"
+X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="802469660"
 X-IronPort-AV: E=Sophos;i="6.00,245,1681196400"; 
-   d="scan'208";a="857019779"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga001.fm.intel.com with ESMTP; 15 Jun 2023 08:36:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1q9p15-003yU3-1z;
-        Thu, 15 Jun 2023 18:36:07 +0300
-Date:   Thu, 15 Jun 2023 18:36:07 +0300
+   d="scan'208";a="802469660"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by FMSMGA003.fm.intel.com with ESMTP; 15 Jun 2023 09:25:11 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 1D9D1403; Thu, 15 Jun 2023 19:25:20 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v3 3/5] gpio: aggregator: Prevent collisions between DT
- and user device IDs
-Message-ID: <ZIsv51766AXAiQ7E@smile.fi.intel.com>
-References: <20230615132023.13801-1-andriy.shevchenko@linux.intel.com>
- <20230615132023.13801-4-andriy.shevchenko@linux.intel.com>
- <CAMuHMdVAwKCUnOeuz_PE6ijtfTVf8a3rTQZ=JvThOmqytu5HCA@mail.gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH v1 1/1] gpio: lpc18xx: Remove unused of_gpio.h inclusion
+Date:   Thu, 15 Jun 2023 19:25:19 +0300
+Message-Id: <20230615162519.21244-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdVAwKCUnOeuz_PE6ijtfTVf8a3rTQZ=JvThOmqytu5HCA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jun 15, 2023 at 04:54:14PM +0200, Geert Uytterhoeven wrote:
-> On Thu, Jun 15, 2023 at 3:51 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > In case we have a device instantiated via DT or other means than
-> > via new_device sysfs node, the collision with the latter is possible.
-> > Prevent such collisions by allocating user instantiated devices with
-> > higher IDs, currently set to 1024.
-> 
-> Can you please elaborate? How exactly is this possible?
-> 
-> Aggregators instantiated through sysfs are named "gpio-aggregator.<n>",
-> and are IDR-based.
-> Aggregators instantiated from DT are named "<unit-address>.<node-name>".
-> How can this conflict? When instantiated from ACPI?
-> What am I missing?
+The of_gpio.h is not and shouldn't be used in the GPIO drivers.
+Remove it.
 
-Nothing. It's me who misunderstood how OF platform device naming schema works.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-lpc18xx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-So this patch can be discarded as we never will have gpio-delay available for
-removal via delete_device sysfs node.
-
-Bart, tell me if you need a new version w/o this patch (but note that b4 can
-handle this case with
-
-	b4 -slt -P1,2,4,5 ...
-
-).
-
+diff --git a/drivers/gpio/gpio-lpc18xx.c b/drivers/gpio/gpio-lpc18xx.c
+index d711ae06747e..ed3f653a1dfc 100644
+--- a/drivers/gpio/gpio-lpc18xx.c
++++ b/drivers/gpio/gpio-lpc18xx.c
+@@ -14,7 +14,6 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/of_gpio.h>
+ #include <linux/of_irq.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.40.0.1.gaa8946217a0b
 
