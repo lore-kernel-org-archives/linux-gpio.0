@@ -2,112 +2,81 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C763EB64D8
-	for <linux-gpio@archiver.kernel.org>; Wed, 14 Jun 2023 23:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A93EB64D9
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jun 2023 06:36:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233513AbjFNXS2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 14 Jun 2023 19:18:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54338 "EHLO
+        id S237966AbjFOGgU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Jun 2023 02:36:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234594AbjFNXSZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Jun 2023 19:18:25 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F307271C;
-        Wed, 14 Jun 2023 16:18:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686784693; x=1718320693;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=HZHl2n4pQk9SJY0+lqSTvrEjOmrphzRUODe48oQg0/w=;
-  b=BC48ERjpXXAUNTTLtd6W2kFGmDFTukZ4hrdw2BLBCmjlueqJauZFvJUp
-   asSHF3ZYiVw4BrQrZ0cJPtKe1O8XtdAiUYCNHvvrZmRvx5aAaPyyepnU3
-   0OUk3Fjm4RNGUDRAfHSn6bz8eo/mVqf0tYOjNOL33QeRu0wldNd89UyMc
-   k+/uo1xXRahJZeF7zEnrn+kZ/FRhcuCTalbusDeJmsvSZ9n5nM5ZScXlA
-   OaolWnLxwnKmOU9uWH3i5dNYwc1R3OliETYDQJgx4GYj5FRRlZagbQkkt
-   w7HBKkUo7OzG5DxUpvlaolkynwYF0Wawo7WYas7UlgPS2gdQyIC5rpwf+
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10741"; a="424648059"
-X-IronPort-AV: E=Sophos;i="6.00,243,1681196400"; 
-   d="scan'208";a="424648059"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2023 16:14:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10741"; a="715387936"
-X-IronPort-AV: E=Sophos;i="6.00,243,1681196400"; 
-   d="scan'208";a="715387936"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 14 Jun 2023 16:14:43 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id DB4E9133; Thu, 15 Jun 2023 02:14:51 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        with ESMTP id S243758AbjFOGfr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2023 02:35:47 -0400
+Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC5D22D62
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Jun 2023 23:34:59 -0700 (PDT)
+Received: by mail-qt1-x82c.google.com with SMTP id d75a77b69052e-3f9c1735984so26968061cf.1
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Jun 2023 23:34:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686810899; x=1689402899;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/Osb3NHaHcbl6NnPMZnsY5uVW1zjRONnhdL0JLfyutQ=;
+        b=gij5KXYx6V1YiXKkDtT40nStKeLM8ZaMp66xTuviaYT0jTvUfZAxKDvN+Q3IuVLaZQ
+         cGUBons3f8ve8XnCAA4gC3YVbdtn4G8NQT+dAoNpuQ1OxEdk6rkj8a4ENQ4VlzEPnWKF
+         yJqvyVbpX7vQbGx4pf76F08AnbS+LkCKdfj4uFwYSb4EChptSrZNb385LXneeAKnh1pC
+         vys1hiqghHgWz1XLLVS6bAM5DHxV2COapbslbZBgqiJu3pMEEbfS8NoNVtGlh1fjjCan
+         a+mQdAnioCdzgS6+hGeoUR69UHTmzniMM4kkNURXXrE5c8yVdv4mTHrT9GgvtmtdfcVo
+         N2tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686810899; x=1689402899;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/Osb3NHaHcbl6NnPMZnsY5uVW1zjRONnhdL0JLfyutQ=;
+        b=ij5VYzCVjejRYt2jTkDmTatKU6H3GjLh6zYI5TUUKjXjmDVw7cSzuPjxqdXpAgN+at
+         /w9Ejhg645dQhRf0WV5+TbXf3CmnBJ5QqKCs2fdnLieNow2m8uIjp+27ZgiyoBRyEff9
+         SsZw3vw0MXY6HXassWnF8YrXiFWwLrpb3E1CXmNsDeLg1SkTbQKR/A7odf/Eus+ydOcS
+         DmU3TYHyn+4KFTyungKJ2mr76Pmiml5RrefdB8FLZWdW3JTVjl2Y1lqH5+qsCKZnW9Lt
+         7hf4heoV495+4FMrasZKq7ClLmrah4lxhHM62/rrZMHa1ygfrP61tNTlGcywi0JfHKcQ
+         jq8g==
+X-Gm-Message-State: AC+VfDzvqu8JHp37J497uL75tQW7YtEPM7AYhq2i/u+Um4KQucjs0zhX
+        /obaIlkx+e/OCUzh9/yhvX0JmJqisigYmAr7LnZly2bPUlPgmuep
+X-Google-Smtp-Source: ACHHUZ5Ep9Fae9D4n4GrZmxZA7yjHbSLwyf9azOApm4uHNJsqlX2RKN8q8jkbu8hCC6kFi6EwWoLnxwifTxyOBBscXw=
+X-Received: by 2002:a05:622a:13:b0:3f8:6924:a0b6 with SMTP id
+ x19-20020a05622a001300b003f86924a0b6mr5128624qtw.50.1686810899049; Wed, 14
+ Jun 2023 23:34:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230614231446.3687-1-andriy.shevchenko@linux.intel.com> <20230614231446.3687-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20230614231446.3687-2-andriy.shevchenko@linux.intel.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 15 Jun 2023 08:34:48 +0200
+Message-ID: <CACRpkdZ3sEoN2_L+307ReEDGhNQgLknp6HNPpD0aVvzzrbOUiQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] gpio: aggregator: Remove CONFIG_OF and
+ of_match_ptr() protections
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
         Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Shevchenko <andy@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/4] gpio: aggregator: Remove CONFIG_OF and of_match_ptr() protections
-Date:   Thu, 15 Jun 2023 02:14:43 +0300
-Message-Id: <20230614231446.3687-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
-In-Reply-To: <20230614231446.3687-1-andriy.shevchenko@linux.intel.com>
-References: <20230614231446.3687-1-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-They stop the driver being used with ACPI PRP0001 and are something
-I want to avoid being cut and paste into new drivers. Also include
-mod_devicetable.h as we struct of_device_id is defined in there.
+On Thu, Jun 15, 2023 at 1:14=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-aggregator.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+> They stop the driver being used with ACPI PRP0001 and are something
+> I want to avoid being cut and paste into new drivers. Also include
+> mod_devicetable.h as we struct of_device_id is defined in there.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-index 20a686f12df7..1aa7455672d3 100644
---- a/drivers/gpio/gpio-aggregator.c
-+++ b/drivers/gpio/gpio-aggregator.c
-@@ -12,6 +12,7 @@
- #include <linux/ctype.h>
- #include <linux/idr.h>
- #include <linux/kernel.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/overflow.h>
-@@ -500,23 +501,21 @@ static int gpio_aggregator_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_OF
- static const struct of_device_id gpio_aggregator_dt_ids[] = {
- 	/*
- 	 * Add GPIO-operated devices controlled from userspace below,
--	 * or use "driver_override" in sysfs
-+	 * or use "driver_override" in sysfs.
- 	 */
- 	{}
- };
- MODULE_DEVICE_TABLE(of, gpio_aggregator_dt_ids);
--#endif
- 
- static struct platform_driver gpio_aggregator_driver = {
- 	.probe = gpio_aggregator_probe,
- 	.driver = {
- 		.name = DRV_NAME,
- 		.groups = gpio_aggregator_groups,
--		.of_match_table = of_match_ptr(gpio_aggregator_dt_ids),
-+		.of_match_table = gpio_aggregator_dt_ids,
- 	},
- };
- 
--- 
-2.40.0.1.gaa8946217a0b
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+Yours,
+Linus Walleij
