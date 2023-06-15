@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97758EB64DC
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jun 2023 13:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB2FEB64D9
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jun 2023 13:51:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343567AbjFONvY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Jun 2023 09:51:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57116 "EHLO
+        id S1344518AbjFONvc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Jun 2023 09:51:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344484AbjFONvX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2023 09:51:23 -0400
+        with ESMTP id S1344514AbjFONv0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2023 09:51:26 -0400
 Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1464C1BDB;
-        Thu, 15 Jun 2023 06:51:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 477471BDB;
+        Thu, 15 Jun 2023 06:51:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686837083; x=1718373083;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=05ajh+nMpM5e9Do3hT1hquzqCJRfHJXHSX3q930HuGo=;
-  b=cdQlKSKpBav0QUR3UdR7Ec8VDICodqQINEhDllUFtDN3EJ0gdjlckZ/9
-   wnfS0UmRk5x3r7Obhc2CMv4PZ0IO4cd9i6NMWUGbYOTTcpGlxPMa3brT6
-   VmsEnRCsLTg8EsML/93VTcPsxsxpFYONkct2jbYkkNJI6RJLTkPotjN84
-   lvv2B16iJirt/Q6KlBaiROzAYhw+TPa6U1JY0dFjY0FkBPFWQ5fEJ9U6N
-   k7CiMFWlmqcRVJvYuhA3vqGDbYbWKjjQCYWy7VA+s8wvTZfXRL0lulb/8
-   dkvC3xZgNpoRQys9otBX3haV+0uZ0rEL5jjMjjYiuL6zB3r1HcZ5GJ6Yg
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="361404890"
+  t=1686837085; x=1718373085;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=MIuQ8cWazJW6GW0lML8T2aU1uWp7mxrZSU8mCIOK4QI=;
+  b=WHOIEtU/bMCnojbca1zarmN02vFLkp6lePbfzzq1Q2OBraW+xzNvnSj2
+   5QKiGPqUmNfAU6vSOPKP89Q/s/VrT6GcR64lmi02fMacSfoAbUTUko3Fb
+   uisBvze9pltaMbOV8T3T6VBxgSircxechoOC/J9qbG4zl4sys5fJJOup4
+   xsV9M72ajq943gj68J+HwGhbXJVPxePeId5mO1ly+Uh3K71EDOFJIyie1
+   CNWvyXRAwvQvRX2Mx6UCqdYl0FOOggeT+sWHORVLOMIounfmIaFBZ79EX
+   YTMKEsfV9RgjFX2HoCjaNBC4Vg6yUZ7SYyjN+P6TJ/tB2rGyBQcPo+Qa9
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="361404907"
 X-IronPort-AV: E=Sophos;i="6.00,245,1681196400"; 
-   d="scan'208";a="361404890"
+   d="scan'208";a="361404907"
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
   by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2023 06:20:23 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="802338783"
+X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="802338786"
 X-IronPort-AV: E=Sophos;i="6.00,244,1681196400"; 
-   d="scan'208";a="802338783"
+   d="scan'208";a="802338786"
 Received: from black.fi.intel.com ([10.237.72.28])
   by FMSMGA003.fm.intel.com with ESMTP; 15 Jun 2023 06:20:19 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 5695866C; Thu, 15 Jun 2023 16:20:28 +0300 (EEST)
+        id 4093A379; Thu, 15 Jun 2023 16:20:28 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -49,100 +49,55 @@ To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH v3 2/5] gpio: aggregator: Support delay for setting up individual GPIOs
-Date:   Thu, 15 Jun 2023 16:20:20 +0300
-Message-Id: <20230615132023.13801-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 0/5] gpio: aggregator: Incorporate gpio-delay functionality
+Date:   Thu, 15 Jun 2023 16:20:18 +0300
+Message-Id: <20230615132023.13801-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
-In-Reply-To: <20230615132023.13801-1-andriy.shevchenko@linux.intel.com>
-References: <20230615132023.13801-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In some cases the GPIO may require an additional delay after setting
-its value. Add support for that into the GPIO forwarder code.
+The newly appeared gpio-delay module enables external signal delay lines
+that may be connected to the GPIOs. But at the same time it copies the
+GPIO forwarder functionality. Besides that the approach does not scale.
+If we would have another external component, we would need yet another
+driver. That's why I think, and seems others support me, better to
+enable such a functionality inside GPIO aggregator driver.
 
-This will be fully enabled for use in the following changes.
+Patch 1 is a cleanup that may be applied independently on the decision
+about the rest.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-aggregator.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Please, test and comment! Alexander, I would appreciate your tag.
 
-diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-index 1aa7455672d3..4a470dd8b75d 100644
---- a/drivers/gpio/gpio-aggregator.c
-+++ b/drivers/gpio/gpio-aggregator.c
-@@ -10,6 +10,7 @@
- #include <linux/bitmap.h>
- #include <linux/bitops.h>
- #include <linux/ctype.h>
-+#include <linux/delay.h>
- #include <linux/idr.h>
- #include <linux/kernel.h>
- #include <linux/mod_devicetable.h>
-@@ -240,6 +241,11 @@ static void __exit gpio_aggregator_remove_all(void)
-  *  GPIO Forwarder
-  */
- 
-+struct gpiochip_fwd_timing {
-+	u32 ramp_up_us;
-+	u32 ramp_down_us;
-+};
-+
- struct gpiochip_fwd {
- 	struct gpio_chip chip;
- 	struct gpio_desc **descs;
-@@ -247,6 +253,7 @@ struct gpiochip_fwd {
- 		struct mutex mlock;	/* protects tmp[] if can_sleep */
- 		spinlock_t slock;	/* protects tmp[] if !can_sleep */
- 	};
-+	struct gpiochip_fwd_timing *delay_timings;
- 	unsigned long tmp[];		/* values and descs for multiple ops */
- };
- 
-@@ -331,6 +338,27 @@ static int gpio_fwd_get_multiple_locked(struct gpio_chip *chip,
- 	return error;
- }
- 
-+static void gpio_fwd_delay(struct gpio_chip *chip, unsigned int offset, int value)
-+{
-+	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
-+	const struct gpiochip_fwd_timing *delay_timings;
-+	bool is_active_low = gpiod_is_active_low(fwd->descs[offset]);
-+	u32 delay_us;
-+
-+	delay_timings = &fwd->delay_timings[offset];
-+	if ((!is_active_low && value) || (is_active_low && !value))
-+		delay_us = delay_timings->ramp_up_us;
-+	else
-+		delay_us = delay_timings->ramp_down_us;
-+	if (!delay_us)
-+		return;
-+
-+	if (chip->can_sleep)
-+		fsleep(delay_us);
-+	else
-+		udelay(delay_us);
-+}
-+
- static void gpio_fwd_set(struct gpio_chip *chip, unsigned int offset, int value)
- {
- 	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
-@@ -339,6 +367,9 @@ static void gpio_fwd_set(struct gpio_chip *chip, unsigned int offset, int value)
- 		gpiod_set_value_cansleep(fwd->descs[offset], value);
- 	else
- 		gpiod_set_value(fwd->descs[offset], value);
-+
-+	if (fwd->delay_timings)
-+		gpio_fwd_delay(chip, offset, value);
- }
- 
- static void gpio_fwd_set_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
+In v3:
+- added new patch 3 to prevent device removal from sysfs
+- switched to feature in driver data instead of "compatible" (Geert)
+- applied tags (Geert, Linus)
+- left DT bindings untouched, can be amended later on
+
+In v2:
+- split as a series
+- covered CONFIG_OF_GPIO=n case
+- removed the gpio-delay
+- moved gpio-delay Kconfig help to the comment in the code
+- left udelay() call untouched as recommended by documentation
+
+Andy Shevchenko (5):
+  gpio: aggregator: Remove CONFIG_OF and of_match_ptr() protections
+  gpio: aggregator: Support delay for setting up individual GPIOs
+  gpio: aggregator: Prevent collisions between DT and user device IDs
+  gpio: aggregator: Set up a parser of delay line parameters
+  gpio: delay: Remove duplicative functionality
+
+ drivers/gpio/Kconfig           |   9 --
+ drivers/gpio/Makefile          |   1 -
+ drivers/gpio/gpio-aggregator.c | 113 +++++++++++++++++++++--
+ drivers/gpio/gpio-delay.c      | 164 ---------------------------------
+ 4 files changed, 106 insertions(+), 181 deletions(-)
+ delete mode 100644 drivers/gpio/gpio-delay.c
+
 -- 
 2.40.0.1.gaa8946217a0b
 
