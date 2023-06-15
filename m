@@ -2,56 +2,98 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56490EB64DB
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jun 2023 09:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 858B9EB64D9
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jun 2023 09:36:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239850AbjFOJ2R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Jun 2023 05:28:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58844 "EHLO
+        id S245636AbjFOJgw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Jun 2023 05:36:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240848AbjFOJ2K (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2023 05:28:10 -0400
-Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF40F1BD2
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jun 2023 02:28:09 -0700 (PDT)
-Received: by mail.lokoho.com (Postfix, from userid 1001)
-        id 9B9FA8645A; Thu, 15 Jun 2023 10:24:34 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
-        t=1686821079; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
-        h=Date:From:To:Subject:From;
-        b=h31/NLC12ha5Xp7dZjaqtdmm8LyJ1rrBIkxTxEoSxKU8s9AU7hVlUFeuju8hlpb7J
-         yQ3M2Si0fCjIf8PffkCKUBMcB2C7atzdnf1ejQPXVX1YdLsvT1AReahVQ5J6tga4wm
-         2JjMlDwMK0lEa6T1kxNWsmPlDQCuWawWdUiqlkVM6f4gPfNHJYFFZYYR1eFA9LLkgH
-         HbAxCc23cCchFhz7LnKw1AJSfaUwpcgCHokRxVulpy1wcnQxO4wM1spqH5eCZkqKNx
-         3xKN9AcvAWOKOfUUtNO/WQtpLQuAJMwgsBkxnj7R1zkGIa4neYV7rdG+0X0GtG2c0X
-         ndjZu7c0Futlw==
-Received: by mail.lokoho.com for <linux-gpio@vger.kernel.org>; Thu, 15 Jun 2023 09:21:26 GMT
-Message-ID: <20230615094301-0.1.6n.2mckr.0.5akocwo3mf@lokoho.com>
-Date:   Thu, 15 Jun 2023 09:21:26 GMT
-From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
-To:     <linux-gpio@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.lokoho.com
+        with ESMTP id S1343504AbjFOJgd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2023 05:36:33 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DB3D2943;
+        Thu, 15 Jun 2023 02:35:29 -0700 (PDT)
+Received: from [IPV6:2405:201:0:21ea:e49:10dd:40c0:e842] (unknown [IPv6:2405:201:0:21ea:e49:10dd:40c0:e842])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: shreeya)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2192F6606F5B;
+        Thu, 15 Jun 2023 10:34:41 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1686821683;
+        bh=2hM4ekbqC5QTsJaZ3P1qOS1Mh4ihLkLJSUAeTxsOFGc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Oll1uxJlXWEW4dCLhFcQPmwxTx6Qpo8TEwBRMQQcTmnWp+pUNKJ5uJB2QyoDCuwYV
+         ylxqvNnmsWJEOJGFs4Cqcvg/wTTw4GBfK6kej7+GKKQ2o0dD9AI0pV/WFBKAEw1DOY
+         NuRHJUwVH9hMvsUdBViiW3jqYv6NLel8gAOi98jF1+imwQxEji3jQbm5NR2N2CWnJd
+         ySPVhMvHp74uG8oJ4Ppixppe1ivfrmLioLkjUfVts6J2KL6T3CBQtmHFw4aE26fyQ8
+         apfkatmHLbIbNlFCzQoZODuK7VhWPRFvZlW7ScpkwgjU4lDtaqLDjMkmx79svcZCu7
+         7Mio0upqt8/Dw==
+Message-ID: <1ff6db73-926f-f4cb-958f-e72482fb0840@collabora.com>
+Date:   Thu, 15 Jun 2023 15:04:38 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v2] gpiolib: Fix GPIO chip IRQ initialization restriction
+Content-Language: en-US
+To:     Michael Walle <michael@walle.cc>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Jiawen Wu <jiawenwu@trustnetic.com>, linus.walleij@linaro.org,
+        brgl@bgdev.pl, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230607081803.778223-1-jiawenwu@trustnetic.com>
+ <CAHp75Vdbq3uHOyrfT-KFYRSj6v+s9GgOQjQ9a8mGn-4HSCpB9Q@mail.gmail.com>
+ <15e2fc098a1e63317368f4812290ca35@walle.cc>
+From:   Shreeya Patel <shreeya.patel@collabora.com>
+In-Reply-To: <15e2fc098a1e63317368f4812290ca35@walle.cc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Dzie=C5=84 dobry,
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+On 15/06/23 14:56, Michael Walle wrote:
+> Am 2023-06-07 16:12, schrieb Andy Shevchenko:
+>> +Cc: Michael
+>>
+>> On Wed, Jun 7, 2023 at 11:20 AM Jiawen Wu <jiawenwu@trustnetic.com> 
+>> wrote:
+>>>
+>>> In case of gpio-regmap, IRQ chip is added by regmap-irq and 
+>>> associated with
+>>> GPIO chip by gpiochip_irqchip_add_domain(). The initialization flag 
+>>> was not
+>>> added in gpiochip_irqchip_add_domain(), causing gpiochip_to_irq() to 
+>>> return
+>>> -EPROBE_DEFER.
+>>
+>> Makes sense to me.
+>> FWIW,
+>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>>
+>> But it would be nice to hear from Michael about this.
+>
+> Thanks for bringing this to my attention. In fact, currently
+> my sl28cpld is broken due to this. So:
+>
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
-
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
+Sorry about your sl28cpld.
+Seems like I ended up breaking other boards while fixing this issue for 
+steam deck :(
 
 
-Pozdrawiam
-Adam Charachuta
+Regards,
+Shreeya Patel
+
+
+> Reviewed-by: Michael Walle <michael@walle.cc>
+> Tested-by: Michael Walle <michael@walle.cc> # on kontron-sl28
+>
+>>> Fixes: 5467801f1fcb ("gpio: Restrict usage of GPIO chip irq members 
+>>> before initialization")
+>>> Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
+>
+> -michael
