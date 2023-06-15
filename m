@@ -2,116 +2,77 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED675EB64D9
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jun 2023 15:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0223BEB64D9
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jun 2023 15:42:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345209AbjFOPkW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Jun 2023 11:40:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37224 "EHLO
+        id S239165AbjFOPmZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Jun 2023 11:42:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231887AbjFOPjx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2023 11:39:53 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BE12B6
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jun 2023 08:39:53 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-25e7fe2fbc9so1089624a91.2
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Jun 2023 08:39:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686843592; x=1689435592;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IQx9qjKxxMNCHdwpW4UHPwR38ZIzlONqN+EUZwtFXYU=;
-        b=QUAVyWQeAv34sgznMfZjqMiDzslvZ7YPuirpmQhs6Tx9QJ4259ZXwi8yNMwotbzndG
-         TBAIJRWbBI5fpfBDihaz53d2Phi+IvPd9fgBEX2I27ndip2zVm8wMKMKt0ca2UI5U09/
-         SHPIQwulOH5YaBLjd7nq5sxM80BbBzjkrGNwEqgIu8yfjFRNXT4RfCNPHO3pdZxcs/Pn
-         HgQK3ZU/AVKKqf3ZX9k8AnbjrS8BSrLJvbXCVYmrNr/fy0B92HGxtT7eH9WRYFwg1S0r
-         DscC1CZjs2kFmP8C89sAzD338sYPDrZ0/6uzDz1O/NTXaLLhnJqybaRAdJ44+TXv702R
-         DEiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686843592; x=1689435592;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IQx9qjKxxMNCHdwpW4UHPwR38ZIzlONqN+EUZwtFXYU=;
-        b=VoW0QqnUkgT2lh0mm9tOdjP+GcPqPLszcUm4c9JMztj1Kxwvo55Vx/h55EH/fq58yr
-         OJlcnkDgAhnO6nqguOwnD1IdWvewShXNYrfpwUC2uOgXkvd6EOqqMAA+yQ1fGA+nNpR7
-         LOqWwTkRzA5D1NC/RyXeAE3U5A7J5U+zapwims1C7laAf1pCDBCVfDyHMn3vU7e5p7fX
-         8qGkXz8j6y50z1lUACuhddD06pvzNw3UvLtFmOsK7sqrNDMXLnEriWvZIVBWZqUqEx6J
-         q7zMgINw1Qu33cdmIcA5TK0Nizq4HZGth/4A07shHbWPuw4sGnzArO9VP238U/Yqs6qE
-         m/lA==
-X-Gm-Message-State: AC+VfDxelxRfPPAUMgAeUBC4P+D74ixr4EKkob5inWYmd00EED4S+N/P
-        R4rFk5uwms7uz/llrIH4r4gyq9vuMyA=
-X-Google-Smtp-Source: ACHHUZ6b8Py81nlsYnqE3AMo7FZyaVov1hgRxGfbamekt8EFYLETgW2KKtJaItnFfkBvXjxp6rpbaA==
-X-Received: by 2002:a17:90a:7342:b0:259:548b:d394 with SMTP id j2-20020a17090a734200b00259548bd394mr4281232pjs.28.1686843592088;
-        Thu, 15 Jun 2023 08:39:52 -0700 (PDT)
-Received: from sol (194-223-178-180.tpgi.com.au. [194.223.178.180])
-        by smtp.gmail.com with ESMTPSA id qe10-20020a17090b4f8a00b00259b53dccddsm12875146pjb.34.2023.06.15.08.39.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jun 2023 08:39:51 -0700 (PDT)
-Date:   Thu, 15 Jun 2023 23:39:47 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     linux-gpio@vger.kernel.org
-Subject: Re: [libgpiod][PATCH 0/4] dedicated examples
-Message-ID: <ZIsww5gkT0dVYvSb@sol>
-References: <20230614035426.15097-1-warthog618@gmail.com>
- <CAMRc=Mf3vtfUyprLcJ7g8Y_Jt0k4=FoKMjjxqRA__YNmqeCDLQ@mail.gmail.com>
- <ZIm+4qmSUgFrVzLc@sol>
- <CAMRc=Mc3-SfvYYYvocMyjLtbPk=f=EyAOHXcKj+eFWvVWrGurQ@mail.gmail.com>
- <ZInHSgsfALvbTmAX@sol>
- <CAMRc=McCKjU9NbarB-0awfUXwECMFna5aKi9yB68pwxHEebUhA@mail.gmail.com>
- <ZInkHSGf/HeBttPc@sol>
- <CAMRc=MdqZtqnBuMjGLKo6FOSfAAanGsYu9aAWiZuhnTgzEVaDA@mail.gmail.com>
+        with ESMTP id S238814AbjFOPmZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2023 11:42:25 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 712F6123;
+        Thu, 15 Jun 2023 08:42:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686843744; x=1718379744;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1esU+W96PtNXw+8kc/bDUrIBmwX+Wv8g4LjSnrvzNiM=;
+  b=DAtiTbCdFcr3Ha5tFNevmMnMClwecDlZciBepv2eEKubO6Ec2T6+4uzp
+   c/6TIqxMXFwtrxZdJzdoJzhmnDdhlZl4nxabE5+L13j+kscwmumWF3ST1
+   su2PNmpEhna/CX3ebYiJH9nWwwWkldwWfUOsQicy9M4DFmSZ4DgYHBI+Z
+   d0g37ZQ2nw9mgUjgR4w3vdtqp4fd4g1kNP8G7Wj93aex9goaVlYQyinm1
+   w0vZ5Swbn+cgPOCqtIvdjEdyhnGsN1GKcYlZW9WVzaKW8ufy1ke+NidVS
+   LlQ5SbLJ7LtKeUVFJQyvVgV9V4YF3ffJK5aHecFapyDy3/X60q4WIeBwI
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="361456083"
+X-IronPort-AV: E=Sophos;i="6.00,245,1681196400"; 
+   d="scan'208";a="361456083"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2023 08:28:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="959247177"
+X-IronPort-AV: E=Sophos;i="6.00,245,1681196400"; 
+   d="scan'208";a="959247177"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga006.fm.intel.com with ESMTP; 15 Jun 2023 08:28:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1q9otl-003yOe-0z;
+        Thu, 15 Jun 2023 18:28:33 +0300
+Date:   Thu, 15 Jun 2023 18:28:33 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Raag Jadav <raag.jadav@intel.com>
+Cc:     linus.walleij@linaro.org, mika.westerberg@linux.intel.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mallikarjunappa.sangannavar@intel.com, pandith.n@intel.com
+Subject: Re: [PATCH v4] pinctrl: intel: refine ->irq_set_type() hook
+Message-ID: <ZIsuIQ1OUffgSfqP@smile.fi.intel.com>
+References: <20230615125022.27421-1-raag.jadav@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdqZtqnBuMjGLKo6FOSfAAanGsYu9aAWiZuhnTgzEVaDA@mail.gmail.com>
+In-Reply-To: <20230615125022.27421-1-raag.jadav@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jun 15, 2023 at 05:16:04PM +0200, Bartosz Golaszewski wrote:
-> On Wed, Jun 14, 2023 at 6:00 PM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > The C ones are specifically for simple sysfs-like equivalence, as telling
-> > users they need to replace a single write to a file with ~100 lines of C
-> > is really hard to sell.
+On Thu, Jun 15, 2023 at 06:20:22PM +0530, Raag Jadav wrote:
+> Refine ->irq_set_type() hook and improve its readability by:
 > 
-> You don't really need 100 LOC for a trivial request in C (it's a bit
-> over-dramatic :) ) but my thinking is: whether it's 5 lines or 10 or
-> 100 - it doesn't change the fact that it is a fundamental change from
-> sysfs in that you need to write the code, compile it, link it against
-> the right libraries etc. etc. It will be so much more work no matter
-> how much you simplify the API and that is already enough to scare away
-> a lot of folks used to just writing to a bunch of files.
-> 
+> - Reducing scope of spinlock by moving unneeded operations out of it.
+> - Dropping redundant PADCFG0_RXEVCFG_SHIFT and including it directly
+>   into PADCFG0_RXEVCFG_* definitions.
+> - Utilizing temporary variables for common operations.
+> - Simplifying if-else-if chain.
 
-Sure - those using scripts would probably go for Python anyway.
-But no one in their right mind would elect to use the C API given the
-alternatives, which makes it basically pointless.
+Pushed to my review and testing queue, thanks!
 
-> This is why I'm proposing the DBus API as a way of replacing several
-> features of sysfs that are so beloved by users: central authority over
-> GPIOs, easy to use from shell scripts (just replace "echo 223 >
-> export; echo output > 223/direction" etc. with "gdbus call --system
-> --dest io.gpiod1 --object-path /io/gpiod1/gpiochip2 --method
-> io.gpiod1.Chip.RequestLines <args>" which is just a tiny bit more
-> verbose but achieves the same goal and exposes all uAPI v2 features)
-> and only requires including the dbus daemon in your system which would
-> be packaged by most distros shipping libgpiod eventually. DBus has the
-> advantage of being usable from any language you fancy and still being
-> relatively fast.
-> 
-> In other words, I'm thinking that packing a lot of "helper" features
-> into libgpiod will only lead to feature creep but not achieve the goal
-> of pulling people away from sysfs.
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
 
-And you think I'm exaggerating.
-Removing a few pain points is not "packing a lot of "helper" features".
-
-Cheers,
-Kent.
 
