@@ -2,54 +2,55 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C882EB64DB
-	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jun 2023 16:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A65EB64D9
+	for <linux-gpio@archiver.kernel.org>; Thu, 15 Jun 2023 16:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229781AbjFOQZr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 15 Jun 2023 12:25:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34016 "EHLO
+        id S229913AbjFOQ0R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 15 Jun 2023 12:26:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229913AbjFOQZZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2023 12:25:25 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6640D1BDB;
-        Thu, 15 Jun 2023 09:25:24 -0700 (PDT)
+        with ESMTP id S231366AbjFOQ0Q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2023 12:26:16 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE1B41FFA;
+        Thu, 15 Jun 2023 09:26:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686846324; x=1718382324;
+  t=1686846369; x=1718382369;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=XsJeHyM9PuN2tIHvCthEpU4ofv/DPS933pIxreJ5jeU=;
-  b=GLlayUG32eAPuFaeKejWq3K7cvfdyA9NcOvaoJ4swfNNTEMtcuS5zjET
-   EG4GcpOVdxepdrfiyOPsOFnkkslBjxYd6Ytrs18aqzZuhj5Hpy8TPgh79
-   3XQSXMu8hSIED/qJa85iVXHY0KT+rT+FB3pWo+89hJbw08pw6uGwMO4Fz
-   sJRT4iUuwxSOxjDrKp3uyocxdovodls/PhhYxtZIg8Kxk7B75quBHwE1W
-   +M3X3N/OjqY+iRLi/WYAmhcy20nn4TmkVDBEy+be3aUKvXvtZ0h3O2tQp
-   EUwT10SjRJw/4nDjT0/ot0rXYzy06XmBKmOT7jfYTLsBt6M1jUpp5uINB
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="356460456"
+  bh=ecnQLg0yyPJCrtYS69iDFhI+WnLwoqvUOIJ82r+8BfI=;
+  b=VgX+t6r6NiHUTS+pt8MmPOWUN9dTEwUxiV9pX2nI/VuRGQO+Thu2Vs4w
+   Tqs4CLAhxyfYDfIwgai7rc9cvaSJoYitVMuvUtOflnS8aUuQ1yomRRP+r
+   WqpPq+gvosxEDfmPGm8XdKsBD2x5NFnxnDXQnGJSjwKErGFTHiaxJNcqs
+   C6U2BlbYrvcid1Vg8o0TOmSU1o8CYdxAY4pMWMWuJm7PwfJKdPN1h3Gb1
+   LRpp3NP7bdFijWXt2EAArS5zKUuauUFTLEEqlRq7ol/bifVD27VY/QCvj
+   qG57q3vow7SXX9693/ctI5iTntPz8ok1zIyJtTHOB4U51aa8W9alBlKDK
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="338594185"
 X-IronPort-AV: E=Sophos;i="6.00,245,1681196400"; 
-   d="scan'208";a="356460456"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2023 09:25:23 -0700
+   d="scan'208";a="338594185"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2023 09:26:09 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="706730649"
+X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="777739556"
 X-IronPort-AV: E=Sophos;i="6.00,245,1681196400"; 
-   d="scan'208";a="706730649"
+   d="scan'208";a="777739556"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 15 Jun 2023 09:25:07 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 15 Jun 2023 09:26:07 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id BB3C6379; Thu, 15 Jun 2023 19:25:16 +0300 (EEST)
+        id 580B1379; Thu, 15 Jun 2023 19:26:16 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+Cc:     Nandor Han <nandor.han@ge.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH v1 1/1] gpio: mpc8xxx: Remove unused of_gpio.h inclusion
-Date:   Thu, 15 Jun 2023 19:25:14 +0300
-Message-Id: <20230615162514.21195-1-andriy.shevchenko@linux.intel.com>
+        Andy Shevchenko <andy@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] gpio: xra1403: Remove unused of_gpio.h inclusion
+Date:   Thu, 15 Jun 2023 19:26:12 +0300
+Message-Id: <20230615162612.21487-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -62,21 +63,21 @@ Remove it.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-mpc8xxx.c | 1 -
+ drivers/gpio/gpio-xra1403.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index 3eb08cd1fdc0..35214e9de4ce 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -12,7 +12,6 @@
- #include <linux/spinlock.h>
- #include <linux/io.h>
- #include <linux/of.h>
+diff --git a/drivers/gpio/gpio-xra1403.c b/drivers/gpio/gpio-xra1403.c
+index 51d6119e1bb4..bbc06cdd9634 100644
+--- a/drivers/gpio/gpio-xra1403.c
++++ b/drivers/gpio/gpio-xra1403.c
+@@ -11,7 +11,6 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of_device.h>
 -#include <linux/of_gpio.h>
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
- #include <linux/of_platform.h>
+ #include <linux/seq_file.h>
+ #include <linux/spi/spi.h>
+ #include <linux/regmap.h>
 -- 
 2.40.0.1.gaa8946217a0b
 
