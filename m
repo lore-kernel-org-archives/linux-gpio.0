@@ -2,94 +2,120 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 422B6EB64D9
-	for <linux-gpio@archiver.kernel.org>; Sat, 17 Jun 2023 14:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6CAEB64DA
+	for <linux-gpio@archiver.kernel.org>; Sat, 17 Jun 2023 20:42:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231374AbjFQOZ0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 17 Jun 2023 10:25:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53908 "EHLO
+        id S232284AbjFQUmf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 17 Jun 2023 16:42:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232091AbjFQOZY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 17 Jun 2023 10:25:24 -0400
-Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80BE21BF0;
-        Sat, 17 Jun 2023 07:25:23 -0700 (PDT)
-Received: by mail-qk1-x730.google.com with SMTP id af79cd13be357-76238f9fa19so123596285a.3;
-        Sat, 17 Jun 2023 07:25:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687011922; x=1689603922;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d/hW4KrzlulcIit7yOnqhzpsxVw/HtKrLUEkP+c5o+0=;
-        b=STZQ0UtUqsqcQoYRs5+e6p13UGsIcu4y9cnmZD9Cigc96PRDs4kQayzr0GGvEfP4Ak
-         uxuewRFMRN7OuvxNTEfXgXwD8k2mqozRkw6yEE/0/pivEVvecTwfcKkTkMM6GK0XXRaQ
-         XAl+GwYy3A7KAKIjg7gbfc7T4Rw67pxuzfqQpUrXoaZ0M1PzH7t4SkiSh/vhzgVvTsAV
-         CEsAP3gs0VhCMFp0oj10Vom0ETWoxiPxlLzyXwCJS3H9iNwDWexc5XmZ+F6vpfnAd+/7
-         x6QCbLvn7vk2iXKHDIM5aR6a4f1UjnsZm251pOCRiicx3KEd7fAPMG+Uj3FyZTYX7nev
-         x3eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687011922; x=1689603922;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d/hW4KrzlulcIit7yOnqhzpsxVw/HtKrLUEkP+c5o+0=;
-        b=Pm05UoJqgkeSyrNjoqPQGxgC14aY6nP0G02DhHFBkHelWLi91pwX1OuB+a40jsZRRO
-         Q7CmQRjISc4Y2YPaTVkxm7yXEETk+GGYD2ntSLk3jhF67iek86NXVcg/mR8e77J190lc
-         tYbcza4u0q8hXEnWZPRlOcWhAMc5x1jtKOyHVZumFFwbMNCsoNNP83POcGP0knz/EYFK
-         eat13YMwS0tie1Ht9QJCRd7yGM5+6j8mx876tFfbdF0q5JwQMCTdvlzbCHhfqT5MGJKi
-         vDedOEu9JfmO1XtroNISs4FUcbwBp+Syh5VTnEQssqZti3PVe8vtpVfb25VuiUMnt0lb
-         /pfw==
-X-Gm-Message-State: AC+VfDwyB/isxenhxlbZ/mIjAWDv8Gki/9L17g1qVx2ZzP+y37gvSOJN
-        yqM78K055deYMOYJk8Bujsl6JmkMZrCKgROPLgzfpI8BDqg=
-X-Google-Smtp-Source: ACHHUZ7fhx/qRuEbZx4DH9s3pO2OCJ7PMQcbZHGZ6W0bEjdi1+0whZNmPbHN1lBZ4l0jzT9MT9nqmQEb8ROE76mJMYs=
-X-Received: by 2002:ad4:5c68:0:b0:62f:fc16:4037 with SMTP id
- i8-20020ad45c68000000b0062ffc164037mr6628152qvh.14.1687011922617; Sat, 17 Jun
- 2023 07:25:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230616-fixes-gpiolib-irq-domain-v1-1-27fe870db961@kernel.org>
- <ZIxuExRypHsUejFI@smile.fi.intel.com> <4b55afe91d2a704c0229340c5ea4885e@walle.cc>
-In-Reply-To: <4b55afe91d2a704c0229340c5ea4885e@walle.cc>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 17 Jun 2023 17:24:46 +0300
-Message-ID: <CAHp75VfJ4vB2yWY6rFQrRh3Sbz9bg-fgKXXH-_-YFHMHuM=ZLw@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: Fix irq_domain resource tracking for gpiochip_irqchip_add_domain()
-To:     Michael Walle <michael@walle.cc>
-Cc:     Andy Shevchenko <andy@kernel.org>,
+        with ESMTP id S233644AbjFQUmd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 17 Jun 2023 16:42:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 603EA1717;
+        Sat, 17 Jun 2023 13:42:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D0CDE6130D;
+        Sat, 17 Jun 2023 20:42:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70350C433C8;
+        Sat, 17 Jun 2023 20:42:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687034532;
+        bh=WX/ny3bQSc/mSYEm1J1YzU7+UYxZ9RPhpjwAi58MXH4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MXVs55UrLapO907ehdg+amsoikUNM51FImBIRMT57u8WClBi6VnI4k3LFIt0docBw
+         xpmioIJbuGM5NBuzEsBmwTMD6Hmhi+dA8huMnn8vOgvhvMmO3PyM9WLAswHnCa5wQt
+         8ZqWWTckq1H5tkpqi8AiIRie83a7I/B6fYHEsf+9qWb1wfRr2iCixGziOaNJqto8H7
+         uf20rsugiFsAqBSBtsVur79sSxQwKpm6PcCGTNzL2W1hNIPIgVrR5L1E+XjpyWydks
+         qxfuOWcF3IxLQQBoyJz6IN2oFBoXkC5eo0TGOPHD08xszk4eMBGDed3K7YXUouK9jR
+         YnVTx8dSUtovQ==
+Date:   Sat, 17 Jun 2023 21:42:06 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiawen Wu <jiawenwu@trustnetic.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        krishna Lanka <quic_vamslank@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pinctrl: qcom,sdx65-tlmm: add pcie_clkreq
+ function
+Message-ID: <20230617-untimed-huskiness-fd212e6dca96@spud>
+References: <20230617111809.129232-1-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="itG2DWeY27fGdIw0"
+Content-Disposition: inline
+In-Reply-To: <20230617111809.129232-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jun 16, 2023 at 9:02=E2=80=AFPM Michael Walle <michael@walle.cc> wr=
-ote:
-> Am 2023-06-16 16:13, schrieb Andy Shevchenko:
-> > On Fri, Jun 16, 2023 at 09:30:06AM +0200, Michael Walle wrote:
 
-...
+--itG2DWeY27fGdIw0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >>      /* Remove all IRQ mappings and delete the domain */
-> >> -    if (gc->irq.domain) {
-> >> +    if (!gc->irq.domain_is_ext && gc->irq.domain) {
-> >
-> > Looking at this, perhaps positive about allocation?
-> >
-> >       domain_is_allocated?
->
-> I mean all domains are allocated ;)
->
-> domain_is_allocated_externally? I'm bad with short and concise
-> names..
+On Sat, Jun 17, 2023 at 01:18:09PM +0200, Krzysztof Kozlowski wrote:
+> DTS and driver already support pcie_clkreq function for a pin.  Add it
+> to fix dtbs_check warning:
+>=20
+>   qcom-sdx65-mtp.dtb: pinctrl@f100000: pcie-ep-clkreq-default-state: 'one=
+Of' conditional failed, one must be fixed:
+>     'bias-disable', 'drive-strength', 'function', 'pins' do not match any=
+ of the regexes: '-pins$', 'pinctrl-[0-9]+'
+>     'pcie_clkreq' is not one of ['blsp_uart1', 'blsp_spi1', ... 'gpio']
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Naming is one of the hardest problems in software...
-Your variant is long, but conscious. I dunno. Bart, Linus, do you have
-any ideas?
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---=20
-With Best Regards,
-Andy Shevchenko
+Cheers,
+Conor.
+
+> ---
+>  Documentation/devicetree/bindings/pinctrl/qcom,sdx65-tlmm.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdx65-tlmm.ya=
+ml b/Documentation/devicetree/bindings/pinctrl/qcom,sdx65-tlmm.yaml
+> index 2ef793ae4038..27319782d94b 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/qcom,sdx65-tlmm.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdx65-tlmm.yaml
+> @@ -85,7 +85,7 @@ $defs:
+>                  qdss_tracectl_a, dac_calib13, qdss_traceclk_a, dac_calib=
+14,
+>                  dac_calib15, hdmi_rcv, dac_calib16, hdmi_cec, pwr_modem,
+>                  dac_calib17, hdmi_ddc, pwr_nav, dac_calib18, pwr_crypto,
+> -                dac_calib19, hdmi_hot, dac_calib20, dac_calib21, pci_e0,
+> +                dac_calib19, hdmi_hot, dac_calib20, dac_calib21, pci_e0,=
+ pcie_clkreq,
+>                  dac_calib22, dac_calib23, dac_calib24, tsif1_sync, dac_c=
+alib25,
+>                  sd_write, tsif1_error, blsp_spi2, blsp_uart2, blsp_uim2,
+>                  qdss_cti, blsp_i2c2, blsp_spi3, blsp_uart3, blsp_uim3, b=
+lsp_i2c3,
+> --=20
+> 2.34.1
+>=20
+
+--itG2DWeY27fGdIw0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZI4angAKCRB4tDGHoIJi
+0g1gAQDv2kVJcPxiEhVhKgwUNwWJ7WdK+ExNYXrzNZTq/SemVgEAhdmDEE8h1h26
+TEL4XR+3KBwp/wYgJO0Ah1FoMCqT4g0=
+=UpIb
+-----END PGP SIGNATURE-----
+
+--itG2DWeY27fGdIw0--
