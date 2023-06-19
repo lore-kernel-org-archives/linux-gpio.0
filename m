@@ -2,86 +2,93 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB42FEB64DA
-	for <linux-gpio@archiver.kernel.org>; Mon, 19 Jun 2023 08:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9FEEB64DD
+	for <linux-gpio@archiver.kernel.org>; Mon, 19 Jun 2023 08:53:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231174AbjFSIwB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 19 Jun 2023 04:52:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53122 "EHLO
+        id S229640AbjFSIxd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 19 Jun 2023 04:53:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230394AbjFSIve (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Jun 2023 04:51:34 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CB831707
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Jun 2023 01:50:20 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5700b37da3fso28905297b3.1
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Jun 2023 01:50:20 -0700 (PDT)
+        with ESMTP id S229920AbjFSIxE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Jun 2023 04:53:04 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C352110EA
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Jun 2023 01:51:58 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-bc476bf5239so3489828276.2
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Jun 2023 01:51:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687164620; x=1689756620;
+        d=linaro.org; s=google; t=1687164718; x=1689756718;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2zyWJrr4bOnwjfecsiBUExh+hZgUIH4ItLQDiGLGyn4=;
-        b=YyPdqQASpuiyNJ2du2VDB51DjNpeoz0daaWpcy0vhAxz1FKl4Qq1Dtjrsv3f8XBKP+
-         fbRbhu8XO/xkCYgSId1M8jc3EbFqfUInpu5fyBwfyXoQb6b4V8ysrzsRTCcudUkiyoZ2
-         JqTxAqEBaNYkubqHXCsX7RLjz0S5YVVdf7hDtlceYfLEdi29GLI3Ut+rxLAdALVtj1Jm
-         QgMr59dwdYax89Ef8RZu/80XJ5z7ZGkizzkhf82/tRxyVd7z7qZv893Iswvo+mBtTOvM
-         94wLibhJu0echBUj44IIDNb4yqON9xpyXw5c9L7CXQnk+bfH160AEhPmpmj4KZKMdMzo
-         X9GA==
+        bh=bBwiRtnNLuDw3VW76KF3adxsJHja6pYQXr29NX53oxw=;
+        b=sIyaQSCUAwmh0dDgqwb4R4xc5wAhkIb1kTvhyuEA25zvuId4iaFZe9EIjgsXEz+H8y
+         /kSPU3Tw2nVhXa4bZiE2uLa9BV6yyLrAxMf/i/zx/AGjw303GWfvFN6ARfEHnSqDqBYS
+         c3wrtiGTv4P497aFwtYFEnWVOj1a78s+dsc5Z4kKR2fhHnrozmZjym6249i6Bhcj7Yoi
+         jj+2mbvafAT5hZ/8ffY6scH55Qe6cA43RXwQqKClko86UsXjWWba+W3z2KgjGhKvqnrZ
+         0jFMSWEXfqvmsdN8ds2FOoqUNSs/l212ZlPl4XK0MPi00TE4tWOo03yO1WYO6l9KKd6i
+         sqzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687164620; x=1689756620;
+        d=1e100.net; s=20221208; t=1687164718; x=1689756718;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2zyWJrr4bOnwjfecsiBUExh+hZgUIH4ItLQDiGLGyn4=;
-        b=gwslvqgLF7Ycf7MGoJqCDVin61IeBpq0IjxNodFAqGJba0S6JVYqlYwdQeSInZzEvJ
-         RbZ2NKe3K1aOlcnXkM3w9EPNh6+ZfJgUcAbbgayprbZEvnPg+/5c0wcZiqjCsU4D9OMz
-         HPe+RvoTljpkmGV6ulC9pHBkl0wLNYFmkV/nTy3Sq5Ctu2Ba/fxCSEmmbgf6rE5jnmiz
-         3av5ENBKHRhH7IRn85lyV664f2tdl2tRohN9ypcujc8Udwba8rIqAZolFRNO1OFMbCuX
-         udUuy1knyOIfn6ox1oFtAix78YE0mQad2I5cJM8099StU/Fg5+ChXWkFx0aN4Ny38qx4
-         BL/w==
-X-Gm-Message-State: AC+VfDwudHT4yPXM1ICFG4hd0Myo89uTJ+6IhRZD5ns1mCd0JPZLdkL5
-        pIBQ9vk1jp4n2YgfQYV75ayEkwATF3tDvaq+gNl+sg==
-X-Google-Smtp-Source: ACHHUZ56eKFtdORrbAWDJoCJWrUSwNPczrlUQUk8NIlVDo6yY9fGLFxs8tJDYUR9AtP6ZBQ+zrXHqb1L+DXrudLj9dM=
-X-Received: by 2002:a25:6982:0:b0:ba8:1c9e:c77f with SMTP id
- e124-20020a256982000000b00ba81c9ec77fmr364234ybc.22.1687164620200; Mon, 19
- Jun 2023 01:50:20 -0700 (PDT)
+        bh=bBwiRtnNLuDw3VW76KF3adxsJHja6pYQXr29NX53oxw=;
+        b=kZ1/ocB/YWWv0w1D9wESXafnDB4LhNXGlosx2pC0Pn7FOSmf1rR4vs6JuODU61vuK6
+         2G+1CFaRa9VZMZd7rjfYbKoutaElSeBQzy7maLMjJN546xzVjyowAazEpSOjIq18eHXR
+         eoUut3X4PAcC+c7jjmq6VQ8I1zsUr2tb0v2PBKg5ON/6HstIgG8FcvrUvGe7Z859diDk
+         Og8oZ3JVYrhzEGT1deYgc9GlsS579XEhBsSeGTax6BpiV3WoY05Tq2O32Pek1hRtH4qm
+         GugFU8tm+cg//W43CIDObUoNzIJk54nzcZKO5EejUp8OA7EpiDLL7qosDhUpWjdazUA6
+         4pWA==
+X-Gm-Message-State: AC+VfDxtvQzalWxljT4HlLaD4/qvPRU3GkYyHcrPDnQicyMrz7X60iLc
+        cJblLNuchDk6JJQWcmLr4p8X4J6eNi8m2VLIS2i7uw==
+X-Google-Smtp-Source: ACHHUZ5WH1oMGiYWP5bDrggvQiakiCRNxMMXJEFaSbH+xRAAZF/DZelyjUR9nPWup9sabQt9U+GmXs87B5zfYUFDN/0=
+X-Received: by 2002:a25:9112:0:b0:bc8:cd2c:2fb with SMTP id
+ v18-20020a259112000000b00bc8cd2c02fbmr5860163ybl.9.1687164717947; Mon, 19 Jun
+ 2023 01:51:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230616185742.2250452-1-krzysztof.kozlowski@linaro.org> <20230616185742.2250452-3-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230616185742.2250452-3-krzysztof.kozlowski@linaro.org>
+References: <20230619082104.699331-1-arnd@kernel.org>
+In-Reply-To: <20230619082104.699331-1-arnd@kernel.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 19 Jun 2023 10:50:08 +0200
-Message-ID: <CACRpkdYSnXDifczX-seegRdeW-6zwpxrz0cAeZaOPNcBpXYduw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: defconfig: enable Qualcomm SM8350 LPASS pinctrl
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
+Date:   Mon, 19 Jun 2023 10:51:46 +0200
+Message-ID: <CACRpkdY3S3f7CuegyZaS+QZcF6p7OG=PB-89cmdJkPnr4o6BYg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mlxbf3: remove broken Kconfig 'select'
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Colin Foster <colin.foster@in-advantage.com>,
+        Lee Jones <lee@kernel.org>,
+        Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jun 16, 2023 at 8:57=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+On Mon, Jun 19, 2023 at 10:21=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wr=
+ote:
 
-> Enable the Qualcomm SM8350 LPASS TLMM pin controller driver for
-> providing GPIOs/pins for audio block on SM8350 based boards (e.g.
-> HDK8350).
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> The new pinctrl driver selects GPIO_MLXBF3, but that can not be enabled y=
+et because
+> the MELLANOX_PLATFORM symbol does not exist in the tree:
+>
+> WARNING: unmet direct dependencies detected for GPIO_MLXBF3
+>   Depends on [n]: GPIOLIB [=3Dy] && PCI [=3Dn] && (MELLANOX_PLATFORM [=3D=
+n] && ARM64 [=3Dy] || COMPILE_TEST [=3Dy])
+>   Selected by [y]:
+>   - PINCTRL_MLXBF3 [=3Dy] && PINCTRL [=3Dy] && (MELLANOX_PLATFORM [=3Dn] =
+&& ARM64 [=3Dy] || COMPILE_TEST [=3Dy])
+>
+> As it turns out, the pinctlr driver still builds fine without this, so ju=
+st
+> remove the select statement.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Patch applied!
 
 Yours,
 Linus Walleij
