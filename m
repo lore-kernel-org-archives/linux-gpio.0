@@ -2,174 +2,87 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4D4EB64D7
-	for <linux-gpio@archiver.kernel.org>; Tue, 20 Jun 2023 14:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2114EB64D8
+	for <linux-gpio@archiver.kernel.org>; Tue, 20 Jun 2023 15:18:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233344AbjFTOkM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 20 Jun 2023 10:40:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47204 "EHLO
+        id S233205AbjFTPS4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 20 Jun 2023 11:18:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233376AbjFTOkB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2023 10:40:01 -0400
-Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 820711BD8
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2023 07:39:42 -0700 (PDT)
-Received: by mail-vk1-xa30.google.com with SMTP id 71dfb90a1353d-45a0ee1c411so1180203e0c.0
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2023 07:39:42 -0700 (PDT)
+        with ESMTP id S232978AbjFTPSw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2023 11:18:52 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40D6E1709;
+        Tue, 20 Jun 2023 08:18:50 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-51a5eec783cso2602166a12.3;
+        Tue, 20 Jun 2023 08:18:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687271980; x=1689863980;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+b4wcWVHeA19pd6y6fqWTIC5LoXJqCFk+0Tw0j4g+R4=;
-        b=WyVqURcKcIYpMyLO2NU//B5H951+Vn108apEVN+kctGGLNIejqck8XEXeekwBy6h+U
-         ZvHAMW0nujNWw+uOkX07IHxCGJgywLypQcF3XpU5kHSnplkCKegVQ7MElmzKxIp/Er3/
-         uGOlKcNdPNKcNncAMeQv9KOGta0bkhFEhfzBNQ0WlcJBY+zziAnJRFf+o3ET6EHoH+Dj
-         oUiKrLove5CHdNrPWzqdYTtZmGTaeG1beKHjmtjJVd3kbVoWkV9qpvSvFopEqMk7g+z7
-         xQHaXQpJY156xEesIaPnu9EmCJjH9ANqUj0cNnZupmlrQNNCcMWum1GZxZilvS/S0VCT
-         fj0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687271980; x=1689863980;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1687274329; x=1689866329;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+b4wcWVHeA19pd6y6fqWTIC5LoXJqCFk+0Tw0j4g+R4=;
-        b=FZiQCx3vNdEwYmMT30FZqC29xUOuH0oBJQJvJHdwy++A9alKPHjtThC04ekKhDpLhd
-         iPBX8R3fj/4nFV9Wax8qxB2jCaT1NfwCr1EXZnzbARgzWSVNTNL1d93e737Zo4IQ8CpV
-         Apnn7BL2UwFBDTXLNu3sMghofRYz2KWLUaWL6IAGDA08l+m8szAks+C9d1f45zOkxFDQ
-         gZTrv32w9UJqZahg6rI14bVsEiILMQ4gYvoiaELRwctpZ1yeAjHW5FBvx3kKXwWxKQES
-         AKf/n2pjd5Lw3mvd2JwV6w3EUKLMrvLSUmP6kpItzggxGE5mCJDSf9cKFKd0byipQ28O
-         dYQw==
-X-Gm-Message-State: AC+VfDygDKtRbkDVD5kTIcvYNwDzvVYXiLgTNl+Ra9ORGX1WGmCkSBAJ
-        mPzOGOz2wPnm96DBPwpR3ZqGlKZR6QVEvwx4iDFitQ==
-X-Google-Smtp-Source: ACHHUZ4mrGP6SAvz5CEBdiFvOJBKfyMRK5l9BvTXSU6LnVUYYPiIBH3lsx0FcRsMaKW0P/idAPRr2A==
-X-Received: by 2002:a1f:3f02:0:b0:471:2aa6:41f4 with SMTP id m2-20020a1f3f02000000b004712aa641f4mr2747781vka.7.1687271980303;
-        Tue, 20 Jun 2023 07:39:40 -0700 (PDT)
-Received: from fedora (072-189-067-006.res.spectrum.com. [72.189.67.6])
-        by smtp.gmail.com with ESMTPSA id h85-20020a1f9e58000000b0045ae1b37251sm335202vke.35.2023.06.20.07.39.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Jun 2023 07:39:39 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 01:14:03 -0400
-From:   William Breathitt Gray <william.gray@linaro.org>
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc:     William Breathitt Gray <wbg@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, andy.shevchenko@gmail.com
-Subject: Re: [PATCH 1/3] counter: i8254: Introduce the Intel 8254 interface
- library module
-Message-ID: <ZIapmzFJ0Bz7Bofj@fedora>
-References: <cover.1681665189.git.william.gray@linaro.org>
- <f6fe32c2db9525d816ab1a01f45abad56c081652.1681665189.git.william.gray@linaro.org>
- <ZIHpGUWZ8wE7tkJP@ishi>
- <32ddaa7b-53a8-d61f-d526-b545bd561337@linux.intel.com>
+        bh=6ZDKKOakvN05hpS3AjCZw+OdYDZU5cyEh1RFlcjf8m8=;
+        b=EGh2zndZ642Kg7kJIUKZ+qnpYZXT8OGe8Pi22E05jfCUVVpM3w68U1GGzySWBtBXDl
+         QHxwGbRhYPcimhS+IlKNc0KsdUPEF7XYr68jsjShLAWZgGEFfjuvmC/lq25uBxYFRxNs
+         lKpVyd4gnAICDFqnNVdTG7n38kZrkRjQUPMYZHGSN4x+1AvCDweoop0KCQyh7Gvv/O7A
+         Z+aJPb0htqwvQfE33h6GhSL8QWCDAzUw2Yvmal/cBgJo2uzNZTpRCgi818gStOUpuyAQ
+         H7wMw2g6GFLWt4wq5e8zOl11B0Tqp9cq5RJQ0oes0KqFt94iYI2gsO+82phW41ZVoV24
+         1ujg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687274329; x=1689866329;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6ZDKKOakvN05hpS3AjCZw+OdYDZU5cyEh1RFlcjf8m8=;
+        b=TvTKUzi2y15vozE/nDYTPGpZRdbHHn2iNNiztc+H6J/K1P72lr6claMNJSO3X9CaaM
+         TYMdZHrWrYdpn66E81C/wCGgYKOlL89fTGmmuF0LcQET6KgO+JEVHSJbfS7F5P6DS5vg
+         ZztWHEkgQBaHG0/9lS0uAMw+PlTWTjUlBP1N4HJQvFu3EZHa/fQl+42plfIJCWMzn/81
+         pXMTBAFC4QWRxmypJxiwx0GayWYCKlwVSzfjt1k1BJcqGvZ/p6AyY4nxfAlYcV7bNSDd
+         tcDPKlJfwBm7qiNM/nWgYdg2rqdomELPfjnpVWdltQcb4uZYflSgq9wtGwOosxfB9gBr
+         94gA==
+X-Gm-Message-State: AC+VfDxjQExlLFnj0vHUHLv8LybmhO26eZ95ebkXpRkAYyj5mnkrx95C
+        bOnHJNY3neOiQAiO4qjiiUgl+E5Yxh8TdSLSUjA=
+X-Google-Smtp-Source: ACHHUZ4K8IHLVxWGs/x+ckmsWQp/GKbNdQqaxI28mZt/qOXmQJkEfLWRBtVzuuFF77VTfWzYfGY7jOHN0P1FVgcZjYI=
+X-Received: by 2002:a17:907:728b:b0:988:e0cd:99c4 with SMTP id
+ dt11-20020a170907728b00b00988e0cd99c4mr3863115ejc.31.1687274328475; Tue, 20
+ Jun 2023 08:18:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="f1xoCXDbZXT2QnXa"
-Content-Disposition: inline
-In-Reply-To: <32ddaa7b-53a8-d61f-d526-b545bd561337@linux.intel.com>
+References: <20230602152626.284324-1-hugo@hugovil.com> <20230602152626.284324-6-hugo@hugovil.com>
+ <2023060454-cotton-paramount-e33e@gregkh> <CAHp75Ve6W-hcB4YAeKukgv-uOEzBY7Tx5Sdf3doTRYKzNPcVGw@mail.gmail.com>
+ <20230604134459.3c3844012e9714fa2a61e642@hugovil.com> <CAHp75VeWFPBmsD8zsSAaQGNNXtfgLtQuM9AMGfLPk-6p0VW=Pg@mail.gmail.com>
+ <20230620100846.d58436efc061fb91074fa7e5@hugovil.com>
+In-Reply-To: <20230620100846.d58436efc061fb91074fa7e5@hugovil.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 20 Jun 2023 18:18:12 +0300
+Message-ID: <CAHp75VcWSVgA8LFLo0-b5TfKWdHb2GfLpXV-V3PZvthTv1Xc4A@mail.gmail.com>
+Subject: Re: [PATCH v7 5/9] serial: sc16is7xx: fix regression with GPIO configuration
+To:     Hugo Villeneuve <hugo@hugovil.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        jirislaby@kernel.org, jringle@gridpoint.com,
+        tomasz.mon@camlingroup.com, l.perczak@camlintechnologies.com,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Tue, Jun 20, 2023 at 5:08=E2=80=AFPM Hugo Villeneuve <hugo@hugovil.com> =
+wrote:
+> On Sun, 4 Jun 2023 22:31:04 +0300
+> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
---f1xoCXDbZXT2QnXa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+...
 
-On Tue, Jun 20, 2023 at 05:03:53PM +0300, Jarkko Nikula wrote:
-> Hi
->=20
-> On 6/8/23 17:43, William Breathitt Gray wrote:
-> > On Sun, Apr 16, 2023 at 01:36:53PM -0400, William Breathitt Gray wrote:
-> > > Exposes consumer library functions providing support for interfaces
-> > > compatible with the venerable Intel 8254 Programmable Interval Timer
-> > > (PIT).
-> > >=20
-> > > The Intel 8254 PIT first appeared in the early 1980s and was used
-> > > initially in IBM PC compatibles. The popularity of the original Intel
-> > > 825x family of chips led to many subsequent variants and clones of the
-> > > interface in various chips and integrated circuits. Although still
-> > > popular, interfaces compatible with the Intel 8254 PIT are nowdays
-> > > typically found embedded in larger VLSI processing chips and FPGA
-> > > components rather than as discrete ICs.
-> > >=20
-> > > A CONFIG_I8254 Kconfig option is introduced by this patch. Modules
-> > > wanting access to these i8254 library functions should select this
-> > > Kconfig option, and import the I8254 symbol namespace.
-> > >=20
-> > > Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
-> >=20
-> > I've queued this patch to the counter-next branch of my Counter tree.
-> >=20
-> > Jonathan, Bart, I've created an immutable branch with just this patch
-> > for you to pull which should allow you each to merge the other patch in
-> > this patchset for your respective tree.
-> >=20
-> I noticed this patch cause in linux-next "Counter support" submenu to
-> disappear and its menu entries are listed directly in "Device Drivers" me=
-nu.
->=20
-> Then I wonder why the CONFIG_I8254 has the help text defined since drivers
-> should select it.
->=20
-> Or was the idea something like below?
->=20
-> diff --git a/drivers/counter/Kconfig b/drivers/counter/Kconfig
-> index bca21df51168..80631b5b0fc6 100644
-> --- a/drivers/counter/Kconfig
-> +++ b/drivers/counter/Kconfig
-> @@ -10,9 +10,10 @@ menuconfig COUNTER
->           interface. You only need to enable this, if you also want to
-> enable
->           one or more of the counter device drivers below.
->=20
-> +if COUNTER
-> +
->  config I8254
-> -       tristate
-> -       select COUNTER
-> +       tristate "i8254 interface library"
->         select REGMAP
->         help
->           Enables support for the i8254 interface library functions. The
-> i8254
-> @@ -25,8 +26,6 @@ config I8254
->=20
->           If built as a module its name will be i8254.
->=20
-> -if COUNTER
-> -
->  config 104_QUAD_8
->         tristate "ACCES 104-QUAD-8 driver"
->         depends on (PC104 && X86) || COMPILE_TEST
+> did you have a chance to look at V8 (sent two weks ago) which fixed all
+> of what we discussed?
 
-Hi Jarkko,
+The patch 6 already has my tag, anything specific you want me to do?
 
-Thank you for pointing that out, the config I8254 entry should have been
-added above the menuconfig COUNTER entry instead of below it; if you
-move it you should notice the "Counter support" submenu items go back to
-normal. The intention is for consumer drivers to select I8254 when they
-use the library. The I8254 module doesn't do anything on its own so
-that's why it's hidden in the menu (the help description is there for
-the sake of reviewers). I'll submit a patch soon fixing this.
-
-Thanks,
-
-William Breathitt Gray
-
---f1xoCXDbZXT2QnXa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZIapmwAKCRC1SFbKvhIj
-K1zWAQDgvHN1klZit98Ym3Y7KgZ+qH4fGB67KXhG98BdzqfzbQD6Aq8xOLSBhW5w
-jPLruPTNw6CugIkfrTtSbt09dOp19Ac=
-=4vwM
------END PGP SIGNATURE-----
-
---f1xoCXDbZXT2QnXa--
+--=20
+With Best Regards,
+Andy Shevchenko
