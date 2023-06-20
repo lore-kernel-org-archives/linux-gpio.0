@@ -2,159 +2,130 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C0AEB64D7
-	for <linux-gpio@archiver.kernel.org>; Tue, 20 Jun 2023 13:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CCFEB64D7
+	for <linux-gpio@archiver.kernel.org>; Tue, 20 Jun 2023 14:04:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230339AbjFTNqH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 20 Jun 2023 09:46:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44182 "EHLO
+        id S232919AbjFTOEP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 20 Jun 2023 10:04:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231144AbjFTNqG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2023 09:46:06 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86EEBFC
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2023 06:46:05 -0700 (PDT)
+        with ESMTP id S232894AbjFTOEP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2023 10:04:15 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF2BFA4;
+        Tue, 20 Jun 2023 07:04:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687268765; x=1718804765;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=hSTdMqRnqNTwFcR1kjO/MNdt/BxQObahksaFP1lJce8=;
-  b=GJWk2B19hbacrZ59U4Ba0YsCdrchyWHMHYlD8fYxfFSpCxnQQcq6zSGX
-   YTWDMd2e5dE/upfPUnoom0mIYxQyiNxhu28XktpIw8PmXjx86hUVYH7kI
-   RFw9Uq0jd3AwZw60ssrlZBbv0Kzq0xx9JMgqeKBy1zugaI9kOah7Y54IN
-   mkTNoBMkiRHNpXph/kHq544pJQVyrV5tMHhKp87ampf61sMN/pKdIVwxJ
-   o1mx2tjZgPzDkChcNa6rIH8VZ6w1Yvcf9z6W5Ma0e/r6ITmuuRLkfmjRQ
-   prP86jSMsrU8fVeJmFkZhcwEF+FsCIxiN+I+pM+3tcl1wUzY0OLTV3E+z
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10747"; a="363282807"
+  t=1687269854; x=1718805854;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ca7/yI4TqjzgeDR9K0z3MtWXnd6TYta8YQAkAFDWepg=;
+  b=S2icewdk8aOdfcL/GVg0Xvpx8VYG9nWKfDxbmAG+HBPq99L0ncoBuZdb
+   K/oxb/e/ojcQLKpb22aXztZhwhO21rYubkd7nuiX9G7LwaRURogj73CP1
+   2hQhmhTU/Kl1WoZuuOS/2pIs4ScE6nt/5KP5viyUfL/+u1y041bYfhdkP
+   Mml9Shm45dxUEDbG8sLw47/DOTFv2C/lFmdsFOmixHgoOO3QG4LDCLPg/
+   eavAvk9lFYsTQRf79VYswSmHUwY8ZANfszu+Esg7p7OmbTM3+wbKczoZm
+   U1DlQs98zeGx60x6wuh7FYHf6ivRbGJwykFnwdt2ikzTFlcJesjgTU9/y
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10747"; a="339478198"
 X-IronPort-AV: E=Sophos;i="6.00,257,1681196400"; 
-   d="scan'208";a="363282807"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2023 06:46:04 -0700
-X-IronPort-AV: E=McAfee;i="6600,9927,10747"; a="748110148"
+   d="scan'208";a="339478198"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2023 07:03:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10747"; a="784078298"
 X-IronPort-AV: E=Sophos;i="6.00,257,1681196400"; 
-   d="scan'208";a="748110148"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 20 Jun 2023 06:46:03 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 76F3C76C; Tue, 20 Jun 2023 16:46:13 +0300 (EEST)
-Date:   Tue, 20 Jun 2023 16:46:13 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linux pin control <linux-gpio@vger.kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [GIT PULL] intel-pinctrl for 6.5-1
-Message-ID: <ZJGtpU3049d0bnfU@black.fi.intel.com>
+   d="scan'208";a="784078298"
+Received: from mylly.fi.intel.com (HELO [10.237.72.161]) ([10.237.72.161])
+  by fmsmga004.fm.intel.com with ESMTP; 20 Jun 2023 07:03:54 -0700
+Message-ID: <32ddaa7b-53a8-d61f-d526-b545bd561337@linux.intel.com>
+Date:   Tue, 20 Jun 2023 17:03:53 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.12.0
+Subject: Re: [PATCH 1/3] counter: i8254: Introduce the Intel 8254 interface
+ library module
+Content-Language: en-US
+To:     William Breathitt Gray <wbg@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, andy.shevchenko@gmail.com,
+        William Breathitt Gray <william.gray@linaro.org>
+References: <cover.1681665189.git.william.gray@linaro.org>
+ <f6fe32c2db9525d816ab1a01f45abad56c081652.1681665189.git.william.gray@linaro.org>
+ <ZIHpGUWZ8wE7tkJP@ishi>
+From:   Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <ZIHpGUWZ8wE7tkJP@ishi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linux pin control  maintainers,
+Hi
 
-Traditional PR for Intel pin control drivers for v6.5-rc1. This time not so
-big with the most important part that fixes use of OPEN DRAIN pin mode in
-a few drivers. That was in Linux Next for several weeks. Please pull.
+On 6/8/23 17:43, William Breathitt Gray wrote:
+> On Sun, Apr 16, 2023 at 01:36:53PM -0400, William Breathitt Gray wrote:
+>> Exposes consumer library functions providing support for interfaces
+>> compatible with the venerable Intel 8254 Programmable Interval Timer
+>> (PIT).
+>>
+>> The Intel 8254 PIT first appeared in the early 1980s and was used
+>> initially in IBM PC compatibles. The popularity of the original Intel
+>> 825x family of chips led to many subsequent variants and clones of the
+>> interface in various chips and integrated circuits. Although still
+>> popular, interfaces compatible with the Intel 8254 PIT are nowdays
+>> typically found embedded in larger VLSI processing chips and FPGA
+>> components rather than as discrete ICs.
+>>
+>> A CONFIG_I8254 Kconfig option is introduced by this patch. Modules
+>> wanting access to these i8254 library functions should select this
+>> Kconfig option, and import the I8254 symbol namespace.
+>>
+>> Signed-off-by: William Breathitt Gray <william.gray@linaro.org>
+> 
+> I've queued this patch to the counter-next branch of my Counter tree.
+> 
+> Jonathan, Bart, I've created an immutable branch with just this patch
+> for you to pull which should allow you each to merge the other patch in
+> this patchset for your respective tree.
+> 
+I noticed this patch cause in linux-next "Counter support" submenu to 
+disappear and its menu entries are listed directly in "Device Drivers" menu.
 
-Thanks,
+Then I wonder why the CONFIG_I8254 has the help text defined since 
+drivers should select it.
 
-With Best Regards,
-Andy Shevchenko
+Or was the idea something like below?
 
-The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
+diff --git a/drivers/counter/Kconfig b/drivers/counter/Kconfig
+index bca21df51168..80631b5b0fc6 100644
+--- a/drivers/counter/Kconfig
++++ b/drivers/counter/Kconfig
+@@ -10,9 +10,10 @@ menuconfig COUNTER
+           interface. You only need to enable this, if you also want to 
+enable
+           one or more of the counter device drivers below.
 
-  Linux 6.4-rc1 (2023-05-07 13:34:35 -0700)
++if COUNTER
++
+  config I8254
+-       tristate
+-       select COUNTER
++       tristate "i8254 interface library"
+         select REGMAP
+         help
+           Enables support for the i8254 interface library functions. 
+The i8254
+@@ -25,8 +26,6 @@ config I8254
 
-are available in the Git repository at:
+           If built as a module its name will be i8254.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel.git tags/intel-pinctrl-v6.5-1
-
-for you to fetch changes up to 9314d0530276aba19fd7b1c62b04eccb8e5327bc:
-
-  pinctrl: cherryview: Drop goto label (2023-06-19 17:03:52 +0300)
-
-----------------------------------------------------------------
-intel-pinctrl for v6.5-1
-
-* Fix of OPEN DRAIN pin mode setting in a few drivers
-* Reduce a scope of spin lock in the Bay Trail driver
-* Decrease a code footprint by refactoring in a few drivers
-* Expand string choices and reuse that in the Bay Trail driver
-
-The following is an automated git shortlog grouped by driver:
-
-baytrail:
- -  invert if condition
- -  add warning for BYT_VAL_REG retrieval failure
- -  reduce scope of spinlock in ->dbg_show() hook
- -  Use str_hi_lo() helper
- -  Use BIT() in BYT_PULL_ASSIGN_* definitions
- -  Unify style of error and debug messages
-
-cherryview:
- -  Drop goto label
- -  Return correct value if pin in push-pull mode
- -  Don't use IRQ core constanst for invalid IRQ
-
-intel:
- -  refine ->irq_set_type() hook
- -  refine ->set_mux() hook
- -  Add Intel Meteor Lake-S pin controller support
-
-lib/string_helpers:
- -  Add str_high_low() helper
- -  Split out string_choices.h
- -  Add missing header files to MAINTAINERS database
-
-merrifield:
- -  Use BUFCFG_PINMODE_GPIO in ->pin_dbg_show()
- -  Fix open-drain pin mode configuration
-
-moorefield:
- -  Use BUFCFG_PINMODE_GPIO in ->pin_dbg_show()
- -  Fix open-drain pin mode configuration
-
-----------------------------------------------------------------
-Andy Shevchenko (14):
-      pinctrl: baytrail: Unify style of error and debug messages
-      pinctrl: baytrail: Use BIT() in BYT_PULL_ASSIGN_* definitions
-      pinctrl: cherryview: Don't use IRQ core constanst for invalid IRQ
-      pinctrl: cherryview: Return correct value if pin in push-pull mode
-      pinctrl: merrifield: Fix open-drain pin mode configuration
-      pinctrl: merrifield: Use BUFCFG_PINMODE_GPIO in ->pin_dbg_show()
-      pinctrl: moorefield: Fix open-drain pin mode configuration
-      pinctrl: moorefield: Use BUFCFG_PINMODE_GPIO in ->pin_dbg_show()
-      pinctrl: intel: Add Intel Meteor Lake-S pin controller support
-      lib/string_helpers: Add missing header files to MAINTAINERS database
-      lib/string_helpers: Split out string_choices.h
-      lib/string_choices: Add str_high_low() helper
-      pinctrl: baytrail: Use str_hi_lo() helper
-      pinctrl: cherryview: Drop goto label
-
-Raag Jadav (5):
-      pinctrl: intel: refine ->set_mux() hook
-      pinctrl: intel: refine ->irq_set_type() hook
-      pinctrl: baytrail: reduce scope of spinlock in ->dbg_show() hook
-      pinctrl: baytrail: add warning for BYT_VAL_REG retrieval failure
-      pinctrl: baytrail: invert if condition
-
- MAINTAINERS                                |   3 +
- drivers/pinctrl/intel/pinctrl-baytrail.c   | 104 +++++++-------
- drivers/pinctrl/intel/pinctrl-cherryview.c |  26 ++--
- drivers/pinctrl/intel/pinctrl-intel.c      |  54 ++++----
- drivers/pinctrl/intel/pinctrl-merrifield.c |  16 ++-
- drivers/pinctrl/intel/pinctrl-meteorlake.c | 212 ++++++++++++++++++++++++++++-
- drivers/pinctrl/intel/pinctrl-moorefield.c |  16 ++-
- include/linux/string_choices.h             |  44 ++++++
- include/linux/string_helpers.h             |  26 +---
- 9 files changed, 371 insertions(+), 130 deletions(-)
- create mode 100644 include/linux/string_choices.h
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+-if COUNTER
+-
+  config 104_QUAD_8
+         tristate "ACCES 104-QUAD-8 driver"
+         depends on (PC104 && X86) || COMPILE_TEST
