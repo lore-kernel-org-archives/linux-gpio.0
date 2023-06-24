@@ -2,60 +2,60 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16780C001DE
-	for <linux-gpio@archiver.kernel.org>; Sat, 24 Jun 2023 07:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B9BC04A94
+	for <linux-gpio@archiver.kernel.org>; Sat, 24 Jun 2023 08:00:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232380AbjFXH7F (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 24 Jun 2023 03:59:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51840 "EHLO
+        id S232521AbjFXH77 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 24 Jun 2023 03:59:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229781AbjFXH7D (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 24 Jun 2023 03:59:03 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED8E2735
-        for <linux-gpio@vger.kernel.org>; Sat, 24 Jun 2023 00:59:01 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-988883b0d8fso179542066b.1
-        for <linux-gpio@vger.kernel.org>; Sat, 24 Jun 2023 00:59:01 -0700 (PDT)
+        with ESMTP id S232514AbjFXH7w (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 24 Jun 2023 03:59:52 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD264295B
+        for <linux-gpio@vger.kernel.org>; Sat, 24 Jun 2023 00:59:44 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-98df6bc0048so24298266b.1
+        for <linux-gpio@vger.kernel.org>; Sat, 24 Jun 2023 00:59:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687593540; x=1690185540;
+        d=linaro.org; s=google; t=1687593583; x=1690185583;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2RPXidMTrzBctnlI68UKYA3FxvKEi+gyM/+eAniSxHU=;
-        b=biIFt0+5HLIeQJNObq9fw50IfGs4F5DFXzw8WQaXnv6Hdp3USYZJNL8PssYy6o2vEe
-         uTNazxcXxlW9nYoOgc1ECAXqLXI0Fy6OTpXxKHrO5KBGlvJvfFS0T1Yy1tTOfdnYqT7s
-         cMkaa3hPEAmXD6ANC4ih3z1UVMiivHFKHKNCNhNRtq9hQ7bMkaNVdI+n4Hlx2BE7yzQO
-         jx50D2lQ67d60SVIUDBnCbxdMAAwJOdFf8iKs6wYFG3VWtA2pwPKLl5H6eldXBBdXINm
-         rY7xzFgOPvVvf6qqwYEsEXTKFvEIRltIXoBmYft7pQBxV4w1cue28E4Voq0fdjydEvEn
-         MpcQ==
+        bh=FTjB3MUThuy0fH56tPu8r2SapKpsQyQgWZ4G2iu3Iz8=;
+        b=HEwevcjVQu+8yO3NUrkkTGxP0CcIpGsLiEQXCTRo3UkbkAEAAtNC0UlY9ftejwavbS
+         WPfQTRQVl1GcrgXT/jwnimlNGGTxk1BasUFrZ0+zaXN90t4zsCJHF8eP/rzPh9y7q75O
+         DrmxzN2V5bro/a7Yjn2JaR+shcHxeMnMBPEOsxKHS90sJWabsHm/pELi2kj5UnO7u9RD
+         LnX93Xk9EYFZE7c3mDCbNFjt6xfev1h30nRmSxtXhBhzhBmUqIahBD/KcUlZwriKT34w
+         oFkzPzPGaxAQxWKiI+DomOOYGd+hKHvLudnuiUccthDx082FzhV3uj+CPG6toFmF8/Bz
+         rhrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687593540; x=1690185540;
+        d=1e100.net; s=20221208; t=1687593583; x=1690185583;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2RPXidMTrzBctnlI68UKYA3FxvKEi+gyM/+eAniSxHU=;
-        b=V5hfHjMiPxNjPXk2o54tF81wpp3qHGMPG0GQlgvZWv87PK/f9So77nmeCg14onLuPg
-         CsWG3CuVYDXluvT47dog0a9H5Wg1VafKUwv8CBfRPOP2SAq8KGaS15xkbhKcCZChuG0h
-         Hna6UXn5lcF/3Os/0HKeOH03Ufd2lX8QZ/dC1ozW+/Qt7JFacXWW0+AutYXOEaKTy651
-         GivTzu48ygIob+wJWjBNb7osEEbW4eLA5+9FtOb2cJ4lwvcN7RedQ5Wch9UZg4d8FGkL
-         IR6RYkQ5Xiq/+h3GLBD0jhmCYiAJxZvQ+62urekZ/SF46Z1Khs1/o4VHM+7B/Wi9mZV3
-         6dOA==
-X-Gm-Message-State: AC+VfDxvhefawpG+01zxCHsfxEKUYETDeomZEkTKsCyFrdY5RVvDkCPf
-        KSd28Wrf/91f02MgFsZQyw9/3g==
-X-Google-Smtp-Source: ACHHUZ6KTEX3PoU0t4AzSkFJrRvYcc7s1C5vvyEb440YGE+szTSoYCbadoq/cw/0a/YYcc9DpVEdLg==
-X-Received: by 2002:a17:907:a06:b0:974:1e0e:9bd4 with SMTP id bb6-20020a1709070a0600b009741e0e9bd4mr20928031ejc.16.1687593539714;
-        Sat, 24 Jun 2023 00:58:59 -0700 (PDT)
+        bh=FTjB3MUThuy0fH56tPu8r2SapKpsQyQgWZ4G2iu3Iz8=;
+        b=hMW31y3xJpE9291vBQV5HM2/DkV2JTHZ0gp9z56aPRVeaPYFj/JPtHx1XUYLRykZZA
+         Te5Wqcaxjafl95QuTcE+RfIzZqKXdbSXQs0TdZn8nBPm60Iroac8TFP99lERUjIvlCwW
+         Aw1+RhnYcZkOAtO6b/NH6iEEfbhRJmgO1jNR11vWKts64o/IKa0Vrh3INAWCdbvys+VS
+         zAxjvnkmVX2eMJDz2blDSQBQPfADikYoTrnSZHNQMxEp/S8b7h3A9cCRVP4Ae1G9e7QS
+         6+KGr0GuxLWTcRj7ZpTh+sG/mafO3yqfTiXPxXn801NAvinfTO7b2lppjP0mUmbojT/s
+         dzvg==
+X-Gm-Message-State: AC+VfDyftWX0GL1acFHfrBWHFlch7jr6CI+USNUyFhhQ13cGfvFbRaqe
+        3d79WtUzJcz790qA1OUACYUiLQ==
+X-Google-Smtp-Source: ACHHUZ5pRd8UNSYc52Q0vkUp3nRCIrlMv+cEYLJxjAGxSYuFwmJusDkYkiVv0idqnJteffrCHMZ8Sg==
+X-Received: by 2002:a17:907:783:b0:988:dced:f339 with SMTP id xd3-20020a170907078300b00988dcedf339mr12750156ejb.31.1687593583035;
+        Sat, 24 Jun 2023 00:59:43 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id l24-20020a1709060e1800b009783791b1a1sm592525eji.121.2023.06.24.00.58.53
+        by smtp.gmail.com with ESMTPSA id t23-20020a170906179700b00987f64b84afsm597458eje.39.2023.06.24.00.59.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Jun 2023 00:58:59 -0700 (PDT)
-Message-ID: <28a5d2e7-d3bf-d373-10ad-73c7590924c4@linaro.org>
-Date:   Sat, 24 Jun 2023 09:58:52 +0200
+        Sat, 24 Jun 2023 00:59:42 -0700 (PDT)
+Message-ID: <7c0025cc-ed36-f4e1-d48d-d09326756d89@linaro.org>
+Date:   Sat, 24 Jun 2023 09:59:36 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH v2 14/45] dt-bindings: crypto: add bindings for sam9x7 in
- Atmel AES
+Subject: Re: [PATCH v2 16/45] dt-bindings: crypto: add bindings for sam9x7 in
+ Atmel TDES
 Content-Language: en-US
 To:     Varshini Rajendran <varshini.rajendran@microchip.com>,
         robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
@@ -92,9 +92,9 @@ Cc:     Hari.PrasathGE@microchip.com, cristian.birsan@microchip.com,
         manikandan.m@microchip.com, dharma.b@microchip.com,
         nayabbasha.sayed@microchip.com, balakrishnan.s@microchip.com
 References: <20230623203056.689705-1-varshini.rajendran@microchip.com>
- <20230623203056.689705-15-varshini.rajendran@microchip.com>
+ <20230623203056.689705-17-varshini.rajendran@microchip.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230623203056.689705-15-varshini.rajendran@microchip.com>
+In-Reply-To: <20230623203056.689705-17-varshini.rajendran@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -102,34 +102,29 @@ List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 On 23/06/2023 22:30, Varshini Rajendran wrote:
-> Add DT bindings for atmel AES.
+> Add DT bindings for atmel TDES.
 > 
 > Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
 > ---
->  .../devicetree/bindings/crypto/atmel,at91sam9g46-aes.yaml    | 5 ++++-
+>  .../devicetree/bindings/crypto/atmel,at91sam9g46-tdes.yaml   | 5 ++++-
 >  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/crypto/atmel,at91sam9g46-aes.yaml b/Documentation/devicetree/bindings/crypto/atmel,at91sam9g46-aes.yaml
-> index 0b7383b3106b..f0736696c883 100644
-> --- a/Documentation/devicetree/bindings/crypto/atmel,at91sam9g46-aes.yaml
-> +++ b/Documentation/devicetree/bindings/crypto/atmel,at91sam9g46-aes.yaml
+> diff --git a/Documentation/devicetree/bindings/crypto/atmel,at91sam9g46-tdes.yaml b/Documentation/devicetree/bindings/crypto/atmel,at91sam9g46-tdes.yaml
+> index 3d6ed24b1b00..0e71bfd32a1c 100644
+> --- a/Documentation/devicetree/bindings/crypto/atmel,at91sam9g46-tdes.yaml
+> +++ b/Documentation/devicetree/bindings/crypto/atmel,at91sam9g46-tdes.yaml
 > @@ -12,7 +12,10 @@ maintainers:
 >  
 >  properties:
 >    compatible:
-> -    const: atmel,at91sam9g46-aes
+> -    const: atmel,at91sam9g46-tdes
 > +    oneOf:
-
-This is not oneOf.
-
 > +      - items:
+> +          - const: atmel,at91sam9g46-tdes
+> +          - const: microchip,sam9x7-tdes
 
-And these are not items. You just broke existing users, which points to
-the fact that you did not test the bindings nor the DTS. You didn't test
-anything here.
-
-This comment applies for entire patchset - please test everything. I
-expect v3, after testing.
+Same as in other cases, so just to avoid applying by submaintainer: not
+tested, broken.
 
 
 Best regards,
