@@ -2,76 +2,78 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D74EB64DD
-	for <linux-gpio@archiver.kernel.org>; Sat, 24 Jun 2023 08:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A72EB64DD
+	for <linux-gpio@archiver.kernel.org>; Sat, 24 Jun 2023 08:23:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231467AbjFXINy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 24 Jun 2023 04:13:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60986 "EHLO
+        id S232414AbjFXIXn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 24 Jun 2023 04:23:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232593AbjFXINu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 24 Jun 2023 04:13:50 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E020A270B
-        for <linux-gpio@vger.kernel.org>; Sat, 24 Jun 2023 01:13:45 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51cb40f13f6so828522a12.2
-        for <linux-gpio@vger.kernel.org>; Sat, 24 Jun 2023 01:13:45 -0700 (PDT)
+        with ESMTP id S232574AbjFXIXe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 24 Jun 2023 04:23:34 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9635E270B
+        for <linux-gpio@vger.kernel.org>; Sat, 24 Jun 2023 01:23:29 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-51be61663c8so1371036a12.2
+        for <linux-gpio@vger.kernel.org>; Sat, 24 Jun 2023 01:23:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687594424; x=1690186424;
+        d=linaro.org; s=google; t=1687595008; x=1690187008;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wyAf4G6q0n2PHJw+sVmsc0zJMisJVlzy4zrXB7BC4qU=;
-        b=N0yNkrkaT0lZJJHQd249mGSUFugRidA55UQNPww7mymm7YUmhpvez15APqWj7OLck3
-         hPwQ/UOAcui6M0O0eeHCd4xYbhuGQ+uNSZOCntw+XSdoLr+NX0cNmKVOin0VdSbdpbm0
-         +RsTrfTZE3dyr0wo9SHYXCWmP5sIXXDm2c1cwj+JSyCjxigs+BY/L3t+XmlZ0ttz3yEC
-         /ziR1lP5xnUU0Pxtoq2zNlMoviD0AJw/nthnsuy6A8LQZ+y3K3inFsTOmyC8SQZ6g8Oh
-         dlMluCNpkomg8vcjslDbSWDIF9FB2LYaA84QpUVxh03DOYngbIJ1Vu0vc+as/2oBCX0x
-         P3VA==
+        bh=yGCuLOrcQg1CRlpQSfVcmvKebFGyaZsdxYX9CXcfLZM=;
+        b=xFKigBdV83Jd1qUsH05hPiIU1P7h6ll6on3yqFhMjrYPwiCXFC0e303zASaD1ZqqKd
+         Ndiy0iOYjUF8YhQxuAkR8Nx1s9PjpApJ0TyNtB1b5gwgsCvZs0iajX45ENiiPCQcPY96
+         g4S9zr1214rNmDdio/oKh2DCVClan9uYvQlB4qQl0yjuKnXTLTRyO6dOXqyvfX0Ge8of
+         8DruxxWJt1OJ2iHb05QqWeR0WDztLvfZd6ajx/RAVn5knbq8nIzSWIixJylIR/D0BwLR
+         irpLdb/TPiW3i6BbsRoMZNvBM8AZ4+ztRJOKNPudJyzZ1WNXldj3Z+N3OczkwWUKt0K3
+         5mrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687594424; x=1690186424;
+        d=1e100.net; s=20221208; t=1687595008; x=1690187008;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wyAf4G6q0n2PHJw+sVmsc0zJMisJVlzy4zrXB7BC4qU=;
-        b=HQfrqQtBM2BHLy2esOT0hxQHw5JJQ8r/VHkNRR18ldemo6yn6GpyVi6qXUoBSuKCCI
-         6c14gSZkg7Wl+DhpFZoyN9GOY5OB+7Zfu5eXt5oslU9R3/Ta2NLGQjxgDVMHQ1ayDCdI
-         Bn5IN0EfGxVrdcjDJankn0/iXh5A5UWpVEbMtVyH7iYB7tsbxxuDH+vXcG9GkTohrG0N
-         /hAxGXOsTZ6d2Aiex94yOXaynTupTesTbcQYXqig8vhaPQT/uzkeRVEfS2K0EXZ8sU2n
-         cUw6HzOtYFkFk7XAfiTmi7jxooXSRYVAei/gScslkPZGGL6u9isfOAcYmrA2i67KtcIa
-         PUQA==
-X-Gm-Message-State: AC+VfDw3IE3kGeOu65Y9nvo0TwCkbSh95zqmbUbbB6pQJXh3hpZyDToE
-        SafbdtfnJvuOaMEg+CGOopiAIg==
-X-Google-Smtp-Source: ACHHUZ7wIqMMYojMdNZ6XP81cXPipjYpeXBH/sJM48dNAapcZZL8Dl9TPX7i+V2Yl3xKdgGD7yihlg==
-X-Received: by 2002:a17:907:1c95:b0:987:15ee:4399 with SMTP id nb21-20020a1709071c9500b0098715ee4399mr21156322ejc.29.1687594424242;
-        Sat, 24 Jun 2023 01:13:44 -0700 (PDT)
+        bh=yGCuLOrcQg1CRlpQSfVcmvKebFGyaZsdxYX9CXcfLZM=;
+        b=jyNiC92h3zc3PieHqEsuUgZLo8gL+dx9OU+DITQGAib/CntzluqHzLIpPiTiMsDd6b
+         JfjlIQxRImzrKDSBOBw9jXYVapsuU17DdB8mOvM06DtsHFavuZvJXngd0zlLOpVwo4TX
+         VBw7Lf39glvsChhWArg3Tgw1yF+NqxTE08ed+NxMm21UI5d26hYLim+ZamP0q3mqFZK8
+         +lCzRUApPi1fWhgPWl7x4v87QKA5bEr4S88QcFKKez8JYtGDaC7qisc9GfDuDCr4iye7
+         bcj/CJrk3rpMQ2wBjQslVOFc4U5Rxvnp7i7AyMPYlkwxdboAUZs2JySszDKbQEWiUafc
+         LAGA==
+X-Gm-Message-State: AC+VfDy/DlYVJeDX/5/7yhtFcz7lqaXPnmUEX5fdhpuDGTtvzSkitgXr
+        sm4fgigcNLmMRQmyurkhqPbzig==
+X-Google-Smtp-Source: ACHHUZ5rxUhuZrDxVobS5SDmzvY5J2k9KNpHXKQzE6cA0gPVXDKAPA/JRUBn5KncILCak4yP/Iurig==
+X-Received: by 2002:aa7:d281:0:b0:51b:e89e:a848 with SMTP id w1-20020aa7d281000000b0051be89ea848mr4981862edq.17.1687595007953;
+        Sat, 24 Jun 2023 01:23:27 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id jo21-20020a170906f6d500b0098cc0eee805sm617235ejb.57.2023.06.24.01.13.39
+        by smtp.gmail.com with ESMTPSA id g19-20020a056402115300b0051873c201a0sm436026edw.26.2023.06.24.01.23.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Jun 2023 01:13:43 -0700 (PDT)
-Message-ID: <04c7e2f3-dd76-2e07-99cd-d77038f8124d@linaro.org>
-Date:   Sat, 24 Jun 2023 10:13:38 +0200
+        Sat, 24 Jun 2023 01:23:27 -0700 (PDT)
+Message-ID: <2b6ee66b-b2d1-23c3-9b26-d44fce7fd6bd@linaro.org>
+Date:   Sat, 24 Jun 2023 10:23:21 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: (subset) [PATCH v2 00/45] Add support for sam9x7 SoC family
+Subject: Re: [PATCH v2 35/45] dt-bindings: irqchip/atmel-aic5: Add support for
+ sam9x7 aic
 Content-Language: en-US
-To:     Mark Brown <broonie@kernel.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        claudiu.beznea@microchip.com, mturquette@baylibre.com,
-        sboyd@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
-        vkoul@kernel.org, tglx@linutronix.de, maz@kernel.org,
-        lee@kernel.org, ulf.hansson@linaro.org, tudor.ambarus@linaro.org,
+To:     Varshini Rajendran <varshini.rajendran@microchip.com>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
+        tglx@linutronix.de, maz@kernel.org, lee@kernel.org,
+        ulf.hansson@linaro.org, tudor.ambarus@linaro.org,
         miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
         edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
         linus.walleij@linaro.org, p.zabel@pengutronix.de,
         olivia@selenic.com, a.zummo@towertech.it,
         radu_nicolae.pirea@upb.ro, richard.genoud@gmail.com,
         gregkh@linuxfoundation.org, lgirdwood@gmail.com,
-        wim@linux-watchdog.org, linux@roeck-us.net, arnd@arndb.de,
-        olof@lixom.net, soc@kernel.org, linux@armlinux.org.uk,
-        sre@kernel.org, jerry.ray@microchip.com,
+        broonie@kernel.org, wim@linux-watchdog.org, linux@roeck-us.net,
+        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
+        linux@armlinux.org.uk, sre@kernel.org, jerry.ray@microchip.com,
         horatiu.vultur@microchip.com, durai.manickamkr@microchip.com,
         andrew@lunn.ch, alain.volmat@foss.st.com,
         neil.armstrong@linaro.org, mihai.sain@microchip.com,
@@ -84,47 +86,42 @@ To:     Mark Brown <broonie@kernel.org>, robh+dt@kernel.org,
         linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org,
         linux-serial@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Varshini Rajendran <varshini.rajendran@microchip.com>
+        linux-pm@vger.kernel.org
 Cc:     Hari.PrasathGE@microchip.com, cristian.birsan@microchip.com,
         balamanikandan.gunasundar@microchip.com,
         manikandan.m@microchip.com, dharma.b@microchip.com,
         nayabbasha.sayed@microchip.com, balakrishnan.s@microchip.com
 References: <20230623203056.689705-1-varshini.rajendran@microchip.com>
- <168756794811.1155588.11719780333735420720.b4-ty@kernel.org>
+ <20230623203056.689705-36-varshini.rajendran@microchip.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <168756794811.1155588.11719780333735420720.b4-ty@kernel.org>
+In-Reply-To: <20230623203056.689705-36-varshini.rajendran@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 24/06/2023 02:52, Mark Brown wrote:
-> On Sat, 24 Jun 2023 02:00:11 +0530, Varshini Rajendran wrote:
->> This patch series adds support for the new SoC family - sam9x7.
->>  - The device tree, configs and drivers are added
->>  - Clock driver for sam9x7 is added
->>  - Support for basic peripherals is added
->>  - Target board SAM9X75 Curiosity is added
->>
->>  Changes in v2:
->>  --------------
->>
->> [...]
+On 23/06/2023 22:30, Varshini Rajendran wrote:
+> Document the support added for the Advanced interrupt controller(AIC)
+> chip in the sam9x7 SoC family.
 > 
-> Applied to
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+> ---
+>  .../devicetree/bindings/interrupt-controller/atmel,aic.txt      | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-> 
-> Thanks!
-> 
-> [32/45] spi: dt-bindings: atmel,at91rm9200-spi: add sam9x7 compatible
->         commit: a3eb95484f276488e3d59cffa8eec29f79be416e
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.txt b/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.txt
+> index 7079d44bf3ba..2c267a66a3ea 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.txt
+> @@ -4,7 +4,7 @@ Required properties:
+>  - compatible: Should be:
+>      - "atmel,<chip>-aic" where  <chip> can be "at91rm9200", "sama5d2",
+>        "sama5d3" or "sama5d4"
+> -    - "microchip,<chip>-aic" where <chip> can be "sam9x60"
+> +    - "microchip,<chip>-aic" where <chip> can be "sam9x60", "sam9x7"
 
-Eh... the patch - like all the bindings patches in this patchset - is
-utterly broken. I don't even get its intention, but I will try to fix it
-with a followup based on DTS.
+That's not what your DTS is saying. NAK.
 
 Best regards,
 Krzysztof
