@@ -2,40 +2,40 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE81C001DB
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Jun 2023 12:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6286CEB64D7
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Jun 2023 12:38:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232238AbjF1MiB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Jun 2023 08:38:01 -0400
-Received: from mx0b-0031df01.pphosted.com ([205.220.180.131]:2428 "EHLO
-        mx0b-0031df01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231856AbjF1Mgk (ORCPT
+        id S231578AbjF1Mij (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Jun 2023 08:38:39 -0400
+Received: from mx0a-0031df01.pphosted.com ([205.220.168.131]:21442 "EHLO
+        mx0a-0031df01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231583AbjF1Mg6 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 28 Jun 2023 08:36:40 -0400
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35S7R01Z029236;
-        Wed, 28 Jun 2023 12:35:37 GMT
+        Wed, 28 Jun 2023 08:36:58 -0400
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35S5hCU6026329;
+        Wed, 28 Jun 2023 12:35:22 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=QmPTvnuCX9nTTcTKJzsrAxvtP/T8wK3/aBYs6dPtSDI=;
- b=Ierbl0LvulKXCI+Dz6XQC3UdYbrYlrZS0tR4q0MBlUktdtEqvx2n6tXi379tRuiLGqQs
- ZlaHvQ8KGcrwc9sKDX9vrqc3MJN54GOaLSY3C7LMcZXvXRzqaZXLNbz74Ee9VL5qdgLY
- fGdje59auLxBoEFaZtssqR9Xj/Hzylj0k3N3HmoVWxwc4xP7oIrDs6tUctq78RRSPk1d
- EGqL1ioVGw9FGMYiBSiS+x5KixChWZUJAE/z8cczyVTd8JN/oQG+8euPwE3BIsjTej88
- aXihprM1c18RE9J0k5Cl9RW5yOVD63DMK4V5ne5GoWuQlijZ/WjUOGb7Re05LtyA0O0S DA== 
+ bh=JSeJz6vmPXLz33wUlydFQ74f+iZyLf0EKLfg0q3PF5E=;
+ b=H27ML2s7GPpH7Ph8f7sdf1Yd6lB1Pqx+7YrDbHpoL4SUpBBctm+zujZgaDsTbHxQgGit
+ FpZJR3iPG8uYZYx0erRreuLM2vBw4wSTEnPxuVMS81OY9gaajGSmVMTKF2k5CBf6BkgD
+ qKVwBUy7J1Xo9XIt9gKWO5EtfjYBXxKdabDp5T557BJpfigOeitrBGvH3fKUWf6dVoTS
+ prSTeJL/VxS1JAv1bRnUMzp/sTFI+VB9/XmFGVeh49bPykWoAhtbgfMHzwaqxQknRaJ8
+ Ac7sdbe1NUgASHjGKUAuP165aVL7Ql0K7jGcxTUhSXW5y7auYilnJSLxd9QG8g4A6xW2 pQ== 
 Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rgbfss8d0-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rgextgwv3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Jun 2023 12:35:36 +0000
+        Wed, 28 Jun 2023 12:35:21 +0000
 Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35SCZZpe029190
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35SCZKKx029062
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Jun 2023 12:35:35 GMT
+        Wed, 28 Jun 2023 12:35:20 GMT
 Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
  nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 28 Jun 2023 05:35:27 -0700
+ 15.2.986.42; Wed, 28 Jun 2023 05:35:14 -0700
 From:   Mukesh Ojha <quic_mojha@quicinc.com>
 To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
@@ -51,9 +51,9 @@ CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-gpio@vger.kernel.org>,
         "Mukesh Ojha" <quic_mojha@quicinc.com>
-Subject: [PATCH v4 03/21] soc: qcom: Add qcom_minidump_smem module
-Date:   Wed, 28 Jun 2023 18:04:30 +0530
-Message-ID: <1687955688-20809-4-git-send-email-quic_mojha@quicinc.com>
+Subject: [PATCH v4 01/21] docs: qcom: Add qualcomm minidump guide
+Date:   Wed, 28 Jun 2023 18:04:28 +0530
+Message-ID: <1687955688-20809-2-git-send-email-quic_mojha@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
 References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
@@ -64,234 +64,342 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8vbZ3mHqD4PnjLNlGLMFmmrv47sJ7uZj
-X-Proofpoint-ORIG-GUID: 8vbZ3mHqD4PnjLNlGLMFmmrv47sJ7uZj
+X-Proofpoint-ORIG-GUID: hAb0oc_PLuXPEomLl0jYT4OvLrOJPJmz
+X-Proofpoint-GUID: hAb0oc_PLuXPEomLl0jYT4OvLrOJPJmz
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-06-28_08,2023-06-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 bulkscore=0 suspectscore=0 phishscore=0 mlxlogscore=999
- adultscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 mlxscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
+ bulkscore=0 clxscore=1015 adultscore=0 suspectscore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2305260000 definitions=main-2306280111
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add qcom_minidump_smem module in a preparation to remove smem
-based minidump specific code from driver/remoteproc/qcom_common.c
-and provide needed exported API, this abstract minidump specific
-data layout from qualcomm's remoteproc driver.
+Add the qualcomm minidump guide for the users which
+tries to cover the dependency and the way to test
+and collect minidump on Qualcomm supported platforms.
 
 Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 ---
- drivers/soc/qcom/Kconfig              |   8 ++
- drivers/soc/qcom/qcom_minidump_smem.c | 147 ++++++++++++++++++++++++++++++++++
- include/soc/qcom/qcom_minidump.h      |  24 ++++++
- 3 files changed, 179 insertions(+)
- create mode 100644 drivers/soc/qcom/qcom_minidump_smem.c
- create mode 100644 include/soc/qcom/qcom_minidump.h
+ Documentation/admin-guide/index.rst         |   1 +
+ Documentation/admin-guide/qcom_minidump.rst | 293 ++++++++++++++++++++++++++++
+ 2 files changed, 294 insertions(+)
+ create mode 100644 Documentation/admin-guide/qcom_minidump.rst
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index a491718f8064..982310b5a1cb 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -279,4 +279,12 @@ config QCOM_INLINE_CRYPTO_ENGINE
- 	tristate
- 	select QCOM_SCM
- 
-+config QCOM_MINIDUMP_SMEM
-+	tristate "QCOM Minidump SMEM (as backend) Support"
-+	depends on ARCH_QCOM
-+	depends on QCOM_SMEM
-+	help
-+	  Enablement of core minidump feature is controlled from boot firmware
-+	  side, and this config allow linux to query minidump segments associated
-+	  with the remote processor and check its validity.
- endmenu
-diff --git a/drivers/soc/qcom/qcom_minidump_smem.c b/drivers/soc/qcom/qcom_minidump_smem.c
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index 43ea35613dfc..251d070486c2 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -120,6 +120,7 @@ configure specific aspects of kernel behavior to your liking.
+    perf-security
+    pm/index
+    pnp
++   qcom_minidump
+    rapidio
+    ras
+    rtc
+diff --git a/Documentation/admin-guide/qcom_minidump.rst b/Documentation/admin-guide/qcom_minidump.rst
 new file mode 100644
-index 000000000000..b588833ea26e
+index 000000000000..a3a8cfee4555
 --- /dev/null
-+++ b/drivers/soc/qcom/qcom_minidump_smem.c
-@@ -0,0 +1,147 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/io.h>
-+#include <linux/soc/qcom/smem.h>
-+#include <soc/qcom/qcom_minidump.h>
++++ b/Documentation/admin-guide/qcom_minidump.rst
+@@ -0,0 +1,293 @@
++Qualcomm Minidump Feature
++=========================
 +
-+#define MAX_NUM_OF_SS           10
-+#define MAX_REGION_NAME_LENGTH  16
-+#define SBL_MINIDUMP_SMEM_ID	602
-+#define MINIDUMP_REGION_VALID	('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
-+#define MINIDUMP_SS_ENCR_DONE	('D' << 24 | 'O' << 16 | 'N' << 8 | 'E' << 0)
-+#define MINIDUMP_SS_ENABLED	('E' << 24 | 'N' << 16 | 'B' << 8 | 'L' << 0)
++Introduction
++------------
 +
-+/**
-+ * struct minidump_region - Minidump region
-+ * @name		: Name of the region to be dumped
-+ * @seq_num:		: Use to differentiate regions with same name.
-+ * @valid		: This entry to be dumped (if set to 1)
-+ * @address		: Physical address of region to be dumped
-+ * @size		: Size of the region
-+ */
-+struct minidump_region {
-+	char	name[MAX_REGION_NAME_LENGTH];
-+	__le32	seq_num;
-+	__le32	valid;
-+	__le64	address;
-+	__le64	size;
-+};
++Minidump is a best effort mechanism to collect useful and predefined
++data for first level of debugging on end user devices running on
++Qualcomm SoCs. It is built on the premise that System on Chip (SoC)
++or subsystem part of SoC crashes, due to a range of hardware and
++software bugs. Hence, the ability to collect accurate data is only
++a best-effort. The data collected could be invalid or corrupted, data
++collection itself could fail, and so on.
 +
-+/**
-+ * struct minidump_subsystem - Subsystem's SMEM Table of content
-+ * @status : Subsystem toc init status
-+ * @enabled : if set to 1, this region would be copied during coredump
-+ * @encryption_status: Encryption status for this subsystem
-+ * @encryption_required : Decides to encrypt the subsystem regions or not
-+ * @region_count : Number of regions added in this subsystem toc
-+ * @regions_baseptr : regions base pointer of the subsystem
-+ */
-+struct minidump_subsystem {
-+	__le32	status;
-+	__le32	enabled;
-+	__le32	encryption_status;
-+	__le32	encryption_required;
-+	__le32	region_count;
-+	__le64	regions_baseptr;
-+};
++Qualcomm devices in engineering mode provides a mechanism for generating
++full system RAM dumps for post-mortem debugging. But in some cases it's
++however not feasible to capture the entire content of RAM. The minidump
++mechanism provides the means for selecting region should be included in
++the ramdump.
 +
-+/**
-+ * struct minidump_global_toc - Global Table of Content
-+ * @status : Global Minidump init status
-+ * @md_revision : Minidump revision
-+ * @enabled : Minidump enable status
-+ * @subsystems : Array of subsystems toc
-+ */
-+struct minidump_global_toc {
-+	__le32				status;
-+	__le32				md_revision;
-+	__le32				enabled;
-+	struct minidump_subsystem	subsystems[MAX_NUM_OF_SS];
-+};
++::
 +
-+/**
-+ * qcom_ss_md_mapped_base() - For getting subsystem iomapped base segment address
-+ * for given minidump index.
-+ *
-+ * @minidump_id: Subsystem minidump index.
-+ * @seg_cnt:	 Segment count for a given minidump index
-+ *
-+ * Return: On success, it returns iomapped base segment address, otherwise NULL on error.
-+ */
-+void *qcom_ss_md_mapped_base(unsigned int minidump_id, int *seg_cnt)
-+{
-+	struct minidump_global_toc *toc;
-+	struct minidump_subsystem *subsystem;
++   +-----------------------------------------------+
++   |   DDR                       +-------------+   |
++   |                             |      SS0-ToC|   |
++   | +----------------+     +----------------+ |   |
++   | |Shared memory   |     |         SS1-ToC| |   |
++   | |(SMEM)          |     |                | |   |
++   | |                | +-->|--------+       | |   |
++   | |G-ToC           | |   | SS-ToC  \      | |   |
++   | |+-------------+ | |   | +-----------+  | |   |
++   | ||-------------| | |   | |-----------|  | |   |
++   | || SS0-ToC     | | | +-|<|SS1 region1|  | |   |
++   | ||-------------| | | | | |-----------|  | |   |
++   | || SS1-ToC     |-|>+ | | |SS1 region2|  | |   |
++   | ||-------------| |   | | |-----------|  | |   |
++   | || SS2-ToC     | |   | | |  ...      |  | |   |
++   | ||-------------| |   | | |-----------|  | |   |
++   | ||  ...        | |   |-|<|SS1 regionN|  | |   |
++   | ||-------------| |   | | |-----------|  | |   |
++   | || SSn-ToC     | |   | | +-----------+  | |   |
++   | |+-------------+ |   | |                | |   |
++   | |                |   | |----------------| |   |
++   | |                |   +>|  regionN       | |   |
++   | |                |   | |----------------| |   |
++   | +----------------+   | |                | |   |
++   |                      | |----------------| |   |
++   |                      +>|  region1       | |   |
++   |                        |----------------| |   |
++   |                        |                | |   |
++   |                        |----------------|-+   |
++   |                        |  region5       |     |
++   |                        |----------------|     |
++   |                        |                |     |
++   |  Region information    +----------------+     |
++   | +---------------+                             |
++   | |region name    |                             |
++   | |---------------|                             |
++   | |region address |                             |
++   | |---------------|                             |
++   | |region size    |                             |
++   | +---------------+                             |
++   +-----------------------------------------------+
++       G-ToC: Global table of contents
++       SS-ToC: Subsystem table of contents
++       SS0-SSn: Subsystem numbered from 0 to n
 +
-+	/*
-+	 * Get global minidump ToC and check if global table
-+	 * pointer exists and init is set.
-+	 */
-+	toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, NULL);
-+	if (IS_ERR(toc) || !toc->status)
-+		return NULL;
++It depends on targets how the underlying hardware taking care of the
++implementation part for minidump like above diagram is for shared
++memory and it is possible that this could be implemented via memory
++mapped regions but the general idea remain same.
 +
-+	/* Get subsystem table of contents using the minidump id */
-+	subsystem = &toc->subsystems[minidump_id];
++In this document, SMEM will be used as the backend implementation of
++minidump.
 +
-+	/**
-+	 * Collect minidump if SS ToC is valid and segment table
-+	 * is initialized in memory and encryption status is set.
-+	 */
-+	if (subsystem->regions_baseptr == 0 ||
-+	    le32_to_cpu(subsystem->status) != 1 ||
-+	    le32_to_cpu(subsystem->enabled) != MINIDUMP_SS_ENABLED ||
-+	    le32_to_cpu(subsystem->encryption_status) != MINIDUMP_SS_ENCR_DONE)
-+		return NULL;
++SMEM as backend
++----------------
 +
-+	*seg_cnt = le32_to_cpu(subsystem->region_count);
++The core of minidump feature is part of Qualcomm's boot firmware code.
++It initializes shared memory (SMEM), which is a part of DDR and
++allocates a small section of it to minidump table, i.e. also called
++global table of contents (G-ToC). Each subsystem (APSS, ADSP, ...) has
++its own table of segments to be included in the minidump, all
++references from a descriptor in SMEM (G-ToC). Each segment/region has
++some details like name, physical address and its size etc. and it
++could be anywhere scattered in the DDR.
 +
-+	return ioremap((unsigned long)le64_to_cpu(subsystem->regions_baseptr),
-+			*seg_cnt * sizeof(struct minidump_region));
-+}
-+EXPORT_SYMBOL_GPL(qcom_ss_md_mapped_base);
++Minidump kernel driver concept
++------------------------------
++::
 +
-+/**
-+ * qcom_ss_valid_segment_info() - Checks segment sanity and gets it's details
-+ *
-+ * @ptr:  Segment IO-mapped base address.
-+ * @i:	  Segment index.
-+ * @name: Segment name.
-+ * @da:	  Segment physical address.
-+ * @size: Segment size.
-+ *
-+ * Return: It returns 0 on success and 1 if the segment is invalid and negative
-+ *	   value on error.
-+ */
-+int qcom_ss_valid_segment_info(void *ptr, int i, char **name, dma_addr_t *da, size_t *size)
-+{
-+	struct minidump_region __iomem *tmp;
-+	struct minidump_region region;
++  Minidump Client-1     Client-2      Client-5    Client-n
++         |               |              |             |
++         |               |    ...       |   ...       |
++         |               |              |             |
++         |               |              |             |
++         |               |              |             |
++         |               |              |             |
++         |               |              |             |
++         |               |              |             |
++         |           +---+--------------+----+        |
++         +-----------+  qcom_minidump(core)  +--------+
++                     |                       |
++                     +------+-----+------+---+
++                            |     |      |
++                            |     |      |
++            +---------------+     |      +--------------------+
++            |                     |                           |
++            |                     |                           |
++            |                     |                           |
++            v                     v                           v
++ +-------------------+      +-------------------+     +------------------+
++ |qcom_minidump_smem |      |qcom_minidump_mmio |     | qcom_minidump_rm |
++ |                   |      |                   |     |                  |
++ +-------------------+      +-------------------+     +------------------+
++   Shared memory              Memory mapped IO           Resource manager
++    (backend)                   (backend)                   (backend)
 +
-+	if (!ptr)
-+		return -EINVAL;
 +
-+	tmp = ptr;
-+	memcpy_fromio(&region, tmp + i, sizeof(region));
++Kernel implementation of minidump driver is divided into two parts one is,
++the core implementation called frontend driver ``qcom_minidump.c`` and this
++is the driver will be exposing the API for clients and the other part is,
++backend driver and its depends whether it is based on SMEM, MMIO or some
++other way corressponding driver will be hooking itself up with the core
++driver to get itself working. As of now, at a time one and only one backend
++can be attached to the front-end either it is HOST or a guest VM.
 +
-+	/* If it is not valid region, skip it */
-+	if (le32_to_cpu(region.valid) != MINIDUMP_REGION_VALID)
-+		return 1;
++Qualcomm minidump kernel driver adds the capability to add Linux region
++to be dumped as part of RAM dump collection. At the moment, shared memory
++driver creates platform device for minidump driver and give a means to
++APSS minidump to initialize itself on probe.
 +
-+	*name = kstrndup(region.name, MAX_REGION_NAME_LENGTH - 1, GFP_KERNEL);
-+	if (!*name)
-+		return -ENOMEM;
++This driver provides ``qcom_minidump_region_register`` and
++``qcom_minidump_region_unregister`` API's to register and unregister
++APSS minidump region. It also gives a mechanism to update physical/virtual
++address for the client whose addresses keeps on changing, e.g., current stack
++address of task keeps on changing on context switch for each core. So these
++clients can update their addresses with ``qcom_minidump_update_region``
++API.
 +
-+	*da = le64_to_cpu(region.address);
-+	*size = le64_to_cpu(region.size);
++The driver also supports registration for the clients who came before
++minidump driver was initialized. It maintains pending list of clients
++who came before minidump and once minidump is initialized it registers
++them in one go.
 +
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(qcom_ss_valid_segment_info);
++To simplify post-mortem debugging, driver creates and maintain an ELF
++header as first region that gets updated each time a new region gets
++registered.
 +
-+MODULE_DESCRIPTION("Qualcomm Minidump SMEM as backend driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/soc/qcom/qcom_minidump.h b/include/soc/qcom/qcom_minidump.h
-new file mode 100644
-index 000000000000..d7747c27fd45
---- /dev/null
-+++ b/include/soc/qcom/qcom_minidump.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
++The solution supports extracting the RAM dump/minidump produced either
++over USB or stored to an attached storage device.
 +
-+#ifndef _QCOM_MINIDUMP_H_
-+#define _QCOM_MINIDUMP_H_
++Dependency of minidump kernel driver
++------------------------------------
 +
-+#if IS_ENABLED(CONFIG_QCOM_MINIDUMP_SMEM)
-+void *qcom_ss_md_mapped_base(unsigned int minidump_id, int *seg_cnt);
-+int qcom_ss_valid_segment_info(void *ptr, int i, char **name,
-+			       dma_addr_t *da, size_t *size);
-+#else
-+static inline void *qcom_ss_md_mapped_base(unsigned int minidump_id, int *seg_cnt)
-+{
-+	return NULL;
-+}
-+static inline int qcom_ss_valid_segment_info(void *ptr, int i, char **name,
-+					     dma_addr_t *da, size_t *size)
-+{
-+	return -EINVAL;
-+}
-+#endif /* CONFIG_QCOM_MINIDUMP_SMEM */
-+#endif /* _QCOM_MINIDUMP_H_ */
++It is to note that whole of minidump depends on Qualcomm boot
++firmware whether it supports minidump or not. So, if the minidump
++SMEM ID is present in shared memory, it indicates that minidump
++is supported from boot firmware and it is possible to dump Linux
++(APSS) region as part of minidump collection.
++
++How a kernel client driver can register region with minidump
++------------------------------------------------------------
++
++Client driver can use ``qcom_minidump_region_register`` API's to
++register and ``qcom_minidump_region_unregister`` to unregister
++their region from minidump driver.
++
++Client needs to fill their region by filling ``qcom_minidump_region``
++structure object which consists of the region name, region's
++virtual and physical address and its size.
++
++Below is one sample client driver snippet which tries to allocate
++a region from kernel heap of certain size and it writes a certain
++known pattern (that can help in verification after collection
++that we got the exact pattern, what we wrote) and registers it with
++minidump.
++
++ .. code-block:: c
++
++  #include <soc/qcom/qcom_minidump.h>
++  [...]
++
++
++  [... inside a function ...]
++  struct qcom_minidump_region region;
++
++  [...]
++
++  client_mem_region = kzalloc(region_size, GFP_KERNEL);
++  if (!client_mem_region)
++	return -ENOMEM;
++
++  [... Just write a pattern ...]
++  memset(client_mem_region, 0xAB, region_size);
++
++  [... Fill up the region object ...]
++  strlcpy(region.name, "REGION_A", sizeof(region.name));
++  region.virt_addr = client_mem_region;
++  region.phys_addr = virt_to_phys(client_mem_region);
++  region.size = region_size;
++
++  ret = qcom_minidump_region_register(&region);
++  if (ret < 0) {
++	pr_err("failed to add region in minidump: err: %d\n", ret);
++	return ret;
++  }
++
++  [...]
++
++
++Test
++----
++
++Existing Qualcomm devices already supports entire RAM dump (also called
++full dump) by writing appropriate value to Qualcomm's top control and
++status register (tcsr) in ``driver/firmware/qcom_scm.c`` .
++
++SCM device Tree bindings required to support download mode
++For example (sm8450) ::
++
++	/ {
++
++	[...]
++
++		firmware {
++			scm: scm {
++				compatible = "qcom,scm-sm8450", "qcom,scm";
++				[... tcsr register ... ]
++				qcom,dload-mode = <&tcsr 0x13000>;
++
++				[...]
++			};
++		};
++
++	[...]
++
++		soc: soc@0 {
++
++			[...]
++
++			tcsr: syscon@1fc0000 {
++				compatible = "qcom,sm8450-tcsr", "syscon";
++				reg = <0x0 0x1fc0000 0x0 0x30000>;
++			};
++
++			[...]
++		};
++	[...]
++
++	};
++
++User of minidump can pass ``qcom_scm.download_mode="mini"`` to kernel
++commandline to set the current download mode to minidump.
++Similarly, ``"full"`` is passed to set the download mode to full dump
++where entire RAM dump will be collected while setting it ``"full,mini"``
++will collect minidump along with fulldump.
++
++Writing to sysfs node can also be used to set the mode to minidump::
++
++	echo "mini" > /sys/module/qcom_scm/parameter/download_mode
++
++Once the download mode is set, any kind of crash will make the device collect
++respective dump as per set download mode.
++
++Dump collection
++---------------
++
++The solution supports extracting the minidump produced either over USB or
++stored to an attached storage device.
++
++By default, dumps are downloaded via USB to the attached x86_64 machine
++running PCAT (Qualcomm tool) software. Upon download, we will see
++a set of binary blobs starting with name ``md_*`` in PCAT configured directory
++in x86_64 machine, so for above example from the client it will be
++``md_REGION_A.BIN``. This binary blob depends on region content to determine
++whether it needs external parser support to get the content of the region,
++so for simple plain ASCII text we don't need any parsing and the content
++can be seen just opening the binary file.
++
++To collect the dump to attached storage type, one needs to write appropriate
++value to IMEM register, in that case dumps are collected in rawdump
++partition on the target device itself.
++
++One needs to read the entire rawdump partition and pull out content to
++save it onto the attached x86_64 machine over USB. Later, this rawdump
++can be passed to another tool (``dexter.exe`` [Qualcomm tool]) which converts
++this into the similar binary blobs which we have got it when download type
++was set to USB, i.e. a set of registered regions as blobs and their name
++starts with ``md_*``.
++
++Replacing the ``dexter.exe`` with some open source tool can be added as future
++scope of this document.
 -- 
 2.7.4
 
