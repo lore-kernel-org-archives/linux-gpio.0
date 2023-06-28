@@ -2,40 +2,40 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D274C001E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7A7C04A94
 	for <linux-gpio@archiver.kernel.org>; Wed, 28 Jun 2023 12:40:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232840AbjF1Mjz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Jun 2023 08:39:55 -0400
-Received: from mx0b-0031df01.pphosted.com ([205.220.180.131]:41794 "EHLO
+        id S232858AbjF1Mj5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Jun 2023 08:39:57 -0400
+Received: from mx0b-0031df01.pphosted.com ([205.220.180.131]:60112 "EHLO
         mx0b-0031df01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231190AbjF1MhY (ORCPT
+        by vger.kernel.org with ESMTP id S231810AbjF1Mho (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 28 Jun 2023 08:37:24 -0400
+        Wed, 28 Jun 2023 08:37:44 -0400
 Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35SCQhnK017176;
-        Wed, 28 Jun 2023 12:37:06 GMT
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35SCTnM0024262;
+        Wed, 28 Jun 2023 12:37:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=U9YcbtW13rSnb+eJW5/EwukE3syszirXrljsJPnuYiE=;
- b=pTs2+cqG0aIGf0MxNi1esLfl19T+FW5ol56Sidi7p3jNWkzG5slIz76M7qMVtJD91Ka9
- 9cW1s6dxmdzP9Hz1yYSkaRP2RKFy9p2kIhTDtyWwyus4KEPl4Y41ca+0hH0X28pZUTJz
- 2j4t47eCkxz3i1Lq+VCqs001YT40EMpHgkIsNt1cpzlZOEWbkS2l9VoiSYhdAAmlC83G
- /ptf7z8ZaCAw9XzQOomrECa4i/vYhtkYZDt1bxis9qunSiQZHO0Db5/fZZtwf67SV0M2
- nI0gdplNGGn58zdtxQUkC2+4R5fSwNHlnwzfvG7Q1OJnrXmFW+4pdxB4EYylAJsMdgxK iw== 
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rgemk0x7w-1
+ bh=nPaAz0ocSxAKTJs7RTIRBsUIrURO8wj1m2EtWn9n8x0=;
+ b=n0gbiQvzk0b/pg89AVjzh7Ia7Tpn59q5IKkwogaNPc1ImYWlze5VxD8CtMAoVP8VVIVo
+ /4fEuGOaCgWzEOnyFJK8biLaAgXpsiajWrdL1RvLL5W8nWDE9jlv/kNj46YUrHKgbLzH
+ z3pCVGQYoRnOM4y8q7YLxYSgsDoyS0jiMGRr4yFaVITibOTJIRF7A2bONHSJdfHdUKRQ
+ DfmvLmI23zZIL0c8VavgYj0mPrd7C6d4nEHH1HWJJit1X12Q5CWjUNvsk46DQMtE1lyW
+ Auq+yNGchg5zBlajqxPmSENF1zqiPdwuS+eFy+PIYi4VM8Kfj9XKXXw1Z60XLFbqSqm6 +g== 
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rgemk0x8a-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Jun 2023 12:37:06 +0000
+        Wed, 28 Jun 2023 12:37:27 +0000
 Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35SCb5Yl001788
+        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35SCbQ4m028510
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Jun 2023 12:37:05 GMT
+        Wed, 28 Jun 2023 12:37:26 GMT
 Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
  nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 28 Jun 2023 05:36:59 -0700
+ 15.2.986.42; Wed, 28 Jun 2023 05:37:19 -0700
 From:   Mukesh Ojha <quic_mojha@quicinc.com>
 To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
@@ -51,9 +51,9 @@ CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-gpio@vger.kernel.org>,
         "Mukesh Ojha" <quic_mojha@quicinc.com>
-Subject: [PATCH v4 16/21] arm64: dts: qcom: sm8450: Add Qualcomm ramoops minidump node
-Date:   Wed, 28 Jun 2023 18:04:43 +0530
-Message-ID: <1687955688-20809-17-git-send-email-quic_mojha@quicinc.com>
+Subject: [PATCH v4 19/21] firmware: scm: Modify only the download bits in TCSR register
+Date:   Wed, 28 Jun 2023 18:04:46 +0530
+Message-ID: <1687955688-20809-20-git-send-email-quic_mojha@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
 References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
@@ -64,60 +64,67 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Xxc5kBzwneapvXCcAtwYDi2X0zb4Fq1n
-X-Proofpoint-ORIG-GUID: Xxc5kBzwneapvXCcAtwYDi2X0zb4Fq1n
+X-Proofpoint-GUID: rZep0ltKHpRUsYbklWWZe3bUwLAa3_a2
+X-Proofpoint-ORIG-GUID: rZep0ltKHpRUsYbklWWZe3bUwLAa3_a2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-06-28_08,2023-06-27_01,2023-05-22_02
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
  phishscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- mlxlogscore=975 impostorscore=0 priorityscore=1501 mlxscore=0 spamscore=0
+ mlxlogscore=999 impostorscore=0 priorityscore=1501 mlxscore=0 spamscore=0
  malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2305260000 definitions=main-2306280111
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This enable dynamic reserve memory for Qualcomm ramoops device,
-which will be used to save ramoops frontend data and this region
-gets dumped on crash via Qualcomm's minidump infrastructure.
-qcom_pstore_minidump is the associated driver for this node.
+CrashDump collection is based on the DLOAD bit of TCSR register.
+To retain other bits, we read the register and modify only the
+DLOAD bit as the other bits have their own significance.
 
+Co-developed-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
 Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 ---
- arch/arm64/boot/dts/qcom/sm8450.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/firmware/qcom_scm.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-index d59ea8ee7111..0b1dedee606b 100644
---- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-@@ -390,6 +390,12 @@
- 		};
- 	};
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index 104d86e49b97..a9ff77d16c42 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -30,6 +30,11 @@ module_param(download_mode, bool, 0);
+ #define SCM_HAS_IFACE_CLK	BIT(1)
+ #define SCM_HAS_BUS_CLK		BIT(2)
  
-+	ramoops-minidump {
-+		compatible = "qcom,sm8450-ramoops", "qcom,ramoops";
-+		console-size = <0x200000>;
-+		memory-region = <&qcom_ramoops>;
-+	};
++#define QCOM_DOWNLOAD_FULLDUMP		 0x1
++#define QCOM_DOWNLOAD_NODUMP		 0x0
++#define QCOM_DOWNLOAD_MODE_SHIFT	   4
++#define QCOM_DOWNLOAD_MODE_MASK		0x30
 +
- 	reserved_memory: reserved-memory {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
-@@ -623,6 +629,12 @@
- 			reg = <0x0 0xed900000 0x0 0x3b00000>;
- 			no-map;
- 		};
-+
-+		qcom_ramoops: ramoops {
-+			alloc-ranges = <0x0 0x00000000 0xffffffff 0xffffffff>;
-+			size = <0x0 0x200000>;
-+			no-map;
-+		};
- 	};
+ struct qcom_scm {
+ 	struct device *dev;
+ 	struct clk *core_clk;
+@@ -440,6 +445,7 @@ static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
+ static void qcom_scm_set_download_mode(bool enable)
+ {
+ 	bool avail;
++	int val;
+ 	int ret = 0;
  
- 	smp2p-adsp {
+ 	avail = __qcom_scm_is_call_available(__scm->dev,
+@@ -448,8 +454,10 @@ static void qcom_scm_set_download_mode(bool enable)
+ 	if (avail) {
+ 		ret = __qcom_scm_set_dload_mode(__scm->dev, enable);
+ 	} else if (__scm->dload_mode_addr) {
+-		ret = qcom_scm_io_writel(__scm->dload_mode_addr,
+-				enable ? QCOM_SCM_BOOT_SET_DLOAD_MODE : 0);
++		val = (enable ? QCOM_DOWNLOAD_FULLDUMP : QCOM_DOWNLOAD_NODUMP);
++		val <<= QCOM_DOWNLOAD_MODE_SHIFT;
++		ret = qcom_scm_io_update_field(__scm->dload_mode_addr,
++				QCOM_DOWNLOAD_MODE_MASK, val);
+ 	} else {
+ 		dev_err(__scm->dev,
+ 			"No available mechanism for setting download mode\n");
 -- 
 2.7.4
 
