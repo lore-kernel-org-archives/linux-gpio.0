@@ -2,40 +2,40 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5783EB64DD
-	for <linux-gpio@archiver.kernel.org>; Wed, 28 Jun 2023 12:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18070EB64DA
+	for <linux-gpio@archiver.kernel.org>; Wed, 28 Jun 2023 12:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231990AbjF1MjR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 28 Jun 2023 08:39:17 -0400
-Received: from mx0b-0031df01.pphosted.com ([205.220.180.131]:35192 "EHLO
+        id S232789AbjF1Mjr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 28 Jun 2023 08:39:47 -0400
+Received: from mx0b-0031df01.pphosted.com ([205.220.180.131]:50678 "EHLO
         mx0b-0031df01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232001AbjF1MhP (ORCPT
+        by vger.kernel.org with ESMTP id S232100AbjF1Mhd (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 28 Jun 2023 08:37:15 -0400
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35SAmFnQ002193;
-        Wed, 28 Jun 2023 12:36:52 GMT
+        Wed, 28 Jun 2023 08:37:33 -0400
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35SCQcpx013316;
+        Wed, 28 Jun 2023 12:37:13 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=XLYT34qEjQ6HYGUoTlDKe0dodFK4dwkxLz1rB6s8Nxo=;
- b=ZGh7DURWPbXgzTB2X8Mo8jnHLKshi1d9e4v1QwvYltciCsgU7NIo5UidbwqNj4sjv7R3
- uMK2Fy/Xj2ZyiFyH6Pl8PFKMYLlPSqKRH9T5wUZxAfDHknD8qYNbbbF65lrwZVYml2cE
- egTvAH1rTGtH7dd9A3DSlNX1d+/Kmfhv2qJcjiWEcTWGABQEqsCBKXFBc/mAczIHmGDX
- Y/mkBKYOrU0Bbmw5HOceFBh246kUZa1C97PoWBht/onenvqlh2aYtq1MM/Tqh8FMnelL
- CfTP5I4EkqTU7yVYnjljgC8wKRWPC0BWbPyeX10fNGAgyI2FAIXsUXFgJyFYZHGQCFTA KA== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rgemk0x7m-1
+ bh=voO1wmpy58Dpce/ayyfsuuOHNRZFLt28O+ScPtTvxDU=;
+ b=U2rtcJ/ZAL/atIwFCGFN28JlUInAruvSQINjwU6cgKCnlNO/TkrNkoGv+VKQcpOHJJfv
+ RILmfmti9Y7TjfEhmV70HaMrg+QOa7IRDDccOX3afk/MT7sPAnw5oRy0HkqAjuOtxR9A
+ 5V24edg0RnlO7sWp/tmsackW0JgVYNklXdBW6amoEjHu1mYv2U0YCWY2z4OPGSr3s2/x
+ PQJOJFehWkWJEnUI3PiObxYO0z2qDeyGyUsOU/DppVptiEsOfz3KR7o79xZ9TlZBP3d5
+ lPZr3eEFRpW0vFpcVmZvxeof+dWcgTM3WjDKG2Uw0slxAtBtu+s+O1HAsWXRaF+FNTP1 Hg== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rfrdtbqa0-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Jun 2023 12:36:52 +0000
+        Wed, 28 Jun 2023 12:37:13 +0000
 Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35SCapLE025340
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35SCbCFL002061
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Jun 2023 12:36:51 GMT
+        Wed, 28 Jun 2023 12:37:12 GMT
 Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
  nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 28 Jun 2023 05:36:44 -0700
+ 15.2.986.42; Wed, 28 Jun 2023 05:37:05 -0700
 From:   Mukesh Ojha <quic_mojha@quicinc.com>
 To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
@@ -51,9 +51,9 @@ CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-gpio@vger.kernel.org>,
         "Mukesh Ojha" <quic_mojha@quicinc.com>
-Subject: [PATCH v4 14/21] MAINTAINERS: Add entry for minidump driver related support
-Date:   Wed, 28 Jun 2023 18:04:41 +0530
-Message-ID: <1687955688-20809-15-git-send-email-quic_mojha@quicinc.com>
+Subject: [PATCH v4 17/21] firmware: qcom_scm: provide a read-modify-write function
+Date:   Wed, 28 Jun 2023 18:04:44 +0530
+Message-ID: <1687955688-20809-18-git-send-email-quic_mojha@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
 References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
@@ -64,61 +64,74 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: K4JMMEe9pinGGLQoI6BjoAoext74H8Hs
-X-Proofpoint-ORIG-GUID: K4JMMEe9pinGGLQoI6BjoAoext74H8Hs
+X-Proofpoint-ORIG-GUID: vfaykQFcelw4SH3fZYkfHb4aTKdaVkU3
+X-Proofpoint-GUID: vfaykQFcelw4SH3fZYkfHb4aTKdaVkU3
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-06-28_08,2023-06-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- phishscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- mlxlogscore=977 impostorscore=0 priorityscore=1501 mlxscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 phishscore=0 mlxlogscore=797
+ lowpriorityscore=0 clxscore=1015 adultscore=0 mlxscore=0 bulkscore=0
+ spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2305260000 definitions=main-2306280111
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add the entries for all the files added as a part qualcomm
-minidump driver support.
+It was realized by Srinivas K. that there is a need of
+read-modify-write scm exported function so that it can
+be used by multiple clients.
 
+Let's introduce qcom_scm_io_update_field() which masks
+out the bits and write the passed value to that
+bit-offset. Subsequent patch will use this function.
+
+Suggested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 ---
- MAINTAINERS | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/firmware/qcom_scm.c            | 15 +++++++++++++++
+ include/linux/firmware/qcom/qcom_scm.h |  2 ++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a82795114ad4..8cbbe3e662e5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17551,6 +17551,14 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
- F:	drivers/regulator/vqmmc-ipq4019-regulator.c
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index fde33acd46b7..104d86e49b97 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -407,6 +407,21 @@ int qcom_scm_set_remote_state(u32 state, u32 id)
+ }
+ EXPORT_SYMBOL(qcom_scm_set_remote_state);
  
-+QUALCOMM MINIDUMP DRIVER
-+M:	Mukesh Ojha <quic_mojha@quicinc.com>
-+L:	linux-arm-msm@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/admin-guide/qcom_minidump.rst
-+F:	drivers/soc/qcom/qcom_minidump.c
-+F:	drivers/soc/qcom/qcom_minidump_smem.c
++int qcom_scm_io_update_field(phys_addr_t addr, unsigned int mask, unsigned int val)
++{
++	unsigned int old, new;
++	int ret;
 +
- QUALCOMM NAND CONTROLLER DRIVER
- M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
- L:	linux-mtd@lists.infradead.org
-@@ -17559,6 +17567,13 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/mtd/qcom,nandc.yaml
- F:	drivers/mtd/nand/raw/qcom_nandc.c
++	ret = qcom_scm_io_readl(addr, &old);
++	if (ret)
++		return ret;
++
++	new = (old & ~mask) | (val & mask);
++
++	return qcom_scm_io_writel(addr, new);
++}
++EXPORT_SYMBOL(qcom_scm_io_update_field);
++
+ static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
+ {
+ 	struct qcom_scm_desc desc = {
+diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+index 250ea4efb7cb..ca41e4eb33ad 100644
+--- a/include/linux/firmware/qcom/qcom_scm.h
++++ b/include/linux/firmware/qcom/qcom_scm.h
+@@ -84,6 +84,8 @@ extern bool qcom_scm_pas_supported(u32 peripheral);
  
-+QUALCOMM PSTORE MINIDUMP DRIVER
-+M:	Mukesh Ojha <quic_mojha@quicinc.com>
-+L:	linux-arm-msm@vger.kernel.org
-+S:	Maintained
-+F:	drivers/soc/qcom/qcom_pstore_minidump.c
-+F:	Documentation/devicetree/bindings/soc/qcom/qcom,ramoops.yaml
-+
- QUALCOMM RMNET DRIVER
- M:	Subash Abhinov Kasiviswanathan <quic_subashab@quicinc.com>
- M:	Sean Tranchetti <quic_stranche@quicinc.com>
+ extern int qcom_scm_io_readl(phys_addr_t addr, unsigned int *val);
+ extern int qcom_scm_io_writel(phys_addr_t addr, unsigned int val);
++extern int qcom_scm_io_update_field(phys_addr_t addr, unsigned int mask,
++				    unsigned int val);
+ 
+ extern bool qcom_scm_restore_sec_cfg_available(void);
+ extern int qcom_scm_restore_sec_cfg(u32 device_id, u32 spare);
 -- 
 2.7.4
 
