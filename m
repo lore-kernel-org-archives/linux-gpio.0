@@ -2,118 +2,118 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0419EC001B1
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Jun 2023 11:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D74EB64DD
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Jun 2023 11:10:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232212AbjF2LKF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Jun 2023 07:10:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37022 "EHLO
+        id S231363AbjF2LKH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Jun 2023 07:10:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232197AbjF2LJk (ORCPT
+        with ESMTP id S232180AbjF2LJk (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2023 07:09:40 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 968133593
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2023 04:09:14 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fa7512e599so5544105e9.2
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2023 04:09:14 -0700 (PDT)
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6080B2D4E
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2023 04:09:13 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-3110ab7110aso588085f8f.3
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2023 04:09:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688036953; x=1690628953;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N8RHvmB7ld/wK77znijVaEXaus1IN747vmI4vnxSxYM=;
-        b=CwskU3imi73Lan4d2vPIOrLgrAfztapxw4zTw0OHdv9j+JblCMxn+N3N/IIS9fu7S5
-         5kcPoOM/XB2GjerLArqJF0OHTC0lsx+vNOSBgu80TtasfKSs4U/I/IeMXgEi7vokSPRe
-         nS+spUpIjYwpnwJGXSdqK4EX0ZHqBRg4THQTrn6VQSVufGqtYm9Q/0qv85nINj8aUZ/P
-         sV2fax2Tue69syIoPwIXFbQLY2Ibw3tiVetliRr2FYerK4BOs+4IgPDsghoby14NU1BB
-         1fJA5F3uGWNPJk5tCdlvjTXBuCNAX7Lv012g1to7gzEdVtWCN5U/fbPnp6HRKFrOT0WX
-         Pjeg==
+        d=linaro.org; s=google; t=1688036952; x=1690628952;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4oCBhqPkRJg4uw3jm/pvDcqU3iJ2P+5ltcSO4A6rWgA=;
+        b=W2dwsQYpbviLfBGgfS3BUTV+DN0How0i7VYDgmu/2nmi4N1qCZlws0M2dH9biulA7Y
+         /zAMqhfHV1nFi4++MMSEYc4sXd1mp43gpIK15iOvupJHDMeWjnWbdNBiQHDlSDBUXpjk
+         mw5a+tJF4nx9J3AgRB5vWmXZdmom4Dgm2VZEyc6GRRMr9DcH62/Hj3SydYk/c1N1m3w4
+         97yntH9iidLukrfcqM9CfTkOMxlPyRo2wF15V6U/j88iFuh5sziOiSli5oaADjUx/P8H
+         KXPTvqT8cdTowoH9BvcZCwBQWVlj+51QdpXQRTsEs8uHVBIw66JP2f1TKD4DySeSu6VR
+         btSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688036953; x=1690628953;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N8RHvmB7ld/wK77znijVaEXaus1IN747vmI4vnxSxYM=;
-        b=Z/r4+oJaeX6lVm2aF7xcg3JBwJtGBtAOLSQZwqSNNs6pOgbAGvzirb2AKzH+aZaZ4T
-         4Z//HERmodJ/mjGLdRhHY8QvOpTAKrPPxE0Dd4cPd6AXX0SAsmXbX20gO5eUdKESYXef
-         mgJ9FZBof+RTR9azvw5R4y2xdrt1CrF7u/JIXUOby516s5ZYZw/H5xs41fNnHSafzATl
-         uCQlIuWWuq44U4JarURRHCJ/pApEV18EL2SFJXPwyBDRzB6qUD/4fkLtSUymiAeyMoP2
-         FDorsC9iJ5cV6Al4Q9DgU9aTAuqJaqyCw+AHQZF8VoX26uEMBUpXxE6yoWw4mQJa/is9
-         l0Mg==
-X-Gm-Message-State: AC+VfDyiC08olgG9BTPRQUQXc/qfWjCtYlUDGtr5jmp4Z9JIASJ7vUGk
-        a7HiIaiQ+e6DQluVJy/09eULMswZDjnbMeEuEXE=
-X-Google-Smtp-Source: ACHHUZ6NigSoMPK3SMVu2kD03BMATxyNjXqqN9h28kUKxz8GCb0RnS8VI/cv2RnNBvAcnb9ByfF9HA==
-X-Received: by 2002:a7b:cb8f:0:b0:3fa:973e:2995 with SMTP id m15-20020a7bcb8f000000b003fa973e2995mr8724842wmi.12.1688036953007;
-        Thu, 29 Jun 2023 04:09:13 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1688036952; x=1690628952;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4oCBhqPkRJg4uw3jm/pvDcqU3iJ2P+5ltcSO4A6rWgA=;
+        b=cKm4hKaVJHN8PKaLD3E5u4Bq76KQMe9QphD4/kxKKOi8po+HRFd1e/m99rzgFRPqcp
+         LQyNc5TN0SUILK3A7xab4nnSbvJgpyOWFXwgJ1/uu1etz1gn1ZwyJxC4Bd4WEV5uKxYa
+         aSRxAKJky6AI+L5RtNRhkK3RrayDHLvf09ZTvLadnBfSL8oI9XSuRx2Ty/wFEC7wmKAe
+         TtZ2tA5kSKz3o1hAIpz0Hd66+/N75jx5okzOX5AOznMjm7k5ruqGXnOmU5LnFiVYSZHy
+         yaMif5+x9ONEKiK26cU8Gmx7YFT6/Pr9RGMgexZugN3lpdnB0W+FsDJrPo+YzWpl+bH5
+         cqJg==
+X-Gm-Message-State: AC+VfDwJTqxjMPIF0E9zA8mjhexJcI90EB94/UBi7KNtu+8OpNFuiJqH
+        x17KN0wGtJSTwzUt/JqJaFqv3g==
+X-Google-Smtp-Source: ACHHUZ4bnnQmf7c6VJNssvQBfjwmBj/rluSp4Blwz7ztsOyCGWZB+ZAgZ+sk1nmA/4BIbwNt2RSfYQ==
+X-Received: by 2002:a5d:4ac8:0:b0:314:f88:4fea with SMTP id y8-20020a5d4ac8000000b003140f884feamr2827913wrs.8.1688036951737;
+        Thu, 29 Jun 2023 04:09:11 -0700 (PDT)
 Received: from [192.168.1.127] (i5C7438BA.versanet.de. [92.116.56.186])
-        by smtp.gmail.com with ESMTPSA id cw13-20020a056000090d00b003112f836d4esm15571197wrb.85.2023.06.29.04.09.12
+        by smtp.gmail.com with ESMTPSA id cw13-20020a056000090d00b003112f836d4esm15571197wrb.85.2023.06.29.04.09.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jun 2023 04:09:12 -0700 (PDT)
+        Thu, 29 Jun 2023 04:09:11 -0700 (PDT)
 From:   Erik Schilling <erik.schilling@linaro.org>
-Date:   Thu, 29 Jun 2023 13:09:00 +0200
-Subject: [PATCH libgpiod 2/4] bindings: rust: clippy: silence
- false-positives on casts
+Subject: [PATCH libgpiod 0/4] bindings: rust: clippy: fixed warnings
+Date:   Thu, 29 Jun 2023 13:08:58 +0200
+Message-Id: <20230629-clippy-v1-0-9ff088713c54@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230629-clippy-v1-2-9ff088713c54@linaro.org>
-References: <20230629-clippy-v1-0-9ff088713c54@linaro.org>
-In-Reply-To: <20230629-clippy-v1-0-9ff088713c54@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAEpmnWQC/x3MTQqAIBBA4avErBPMfsiuEi1qnGogVBSiEO+et
+ Pzg8RJECkwRpipBoJsjO1vQ1BXgudqDBJtiUFK1clBa4MXev2LUEvuuwcFIDSX2gXZ+/tEMF2+
+ HZ2dgyfkDncRunmIAAAA=
 To:     Linux-GPIO <linux-gpio@vger.kernel.org>
 Cc:     Kent Gibson <warthog618@gmail.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Erik Schilling <erik.schilling@linaro.org>
 X-Mailer: b4 0.13-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1688036951; l=1902;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1688036951; l=1822;
  i=erik.schilling@linaro.org; s=20230523; h=from:subject:message-id;
- bh=+Y9l9n+fPMuYUZfj7h/wwtWgGxBDe0fk5hZvkvpJF5o=;
- b=aRox3aiy2GpgYkS/A4NZyZgiCQ/NJz34yhSyF1W88xMJ6xIv7mBMXDlQiseVgBR7nA4E1oUfR
- MZpfHSL66VWCs2xw3I3gzsfDfH9SWkxbWTsB3lZISChTP9JP/uVulXT
+ bh=+z+EhYScf6UR/IcsGLnW32XLCvQx90uRaH+/sCvwW9k=;
+ b=2zE5Qp1CItepzR76XLtIp2KS8kaHHs/+ConiIL4uDWaayrdsD5G2AIc68Vig2s406cUmu3JA0
+ jQEtW2Ig01+AmXVVWjdXh6Bx1dEdT7RNTGTFSOvQnYvH5jIC1+EAmFp
 X-Developer-Key: i=erik.schilling@linaro.org; a=ed25519;
  pk=/nNqy8/YOEdthj1epXl5FgwCTKEiVqTqqnVN1jVal7s=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Tested build on x86_64, armv7hf, aarch64.
+This follows up on my promise on Kent's series [1] to look into whether
+these casts are needed or not. Most are not, a few are false-positives.
 
-Reported-by: Kent Gibson <warthog618@gmail.com>
-Link: https://lore.kernel.org/r/20230612154055.56556-1-warthog618@gmail.com
+I also explored some shunit2 based test-script to automate the testing,
+but that became ugly with linking issue and needs me to revisit it
+another time. So this only sends the fixes for now.
+
+[1] https://lore.kernel.org/r/20230612154055.56556-1-warthog618@gmail.com
+
+To: Linux-GPIO <linux-gpio@vger.kernel.org>
+Cc: Kent Gibson <warthog618@gmail.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+
 Signed-off-by: Erik Schilling <erik.schilling@linaro.org>
 ---
- bindings/rust/libgpiod/src/line_info.rs     | 3 +++
- bindings/rust/libgpiod/src/line_settings.rs | 3 +++
- 2 files changed, 6 insertions(+)
+Erik Schilling (4):
+      bindings: rust: clippy: drop unnecessary casts
+      bindings: rust: clippy: silence false-positives on casts
+      bindings: rust: clippy: drop unneeded conversions
+      bindings: rust: clippy: silence false-positive on iterator
 
-diff --git a/bindings/rust/libgpiod/src/line_info.rs b/bindings/rust/libgpiod/src/line_info.rs
-index 702f1b4..c4f488c 100644
---- a/bindings/rust/libgpiod/src/line_info.rs
-+++ b/bindings/rust/libgpiod/src/line_info.rs
-@@ -142,6 +142,9 @@ impl Info {
- 
-     /// Get the debounce period of the line.
-     pub fn debounce_period(&self) -> Duration {
-+        // c_ulong may be 32bit OR 64bit, clippy reports a false-positive here:
-+        // https://github.com/rust-lang/rust-clippy/issues/10555
-+        #[allow(clippy::unnecessary_cast)]
-         // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
-         Duration::from_micros(unsafe {
-             gpiod::gpiod_line_info_get_debounce_period_us(self.info) as u64
-diff --git a/bindings/rust/libgpiod/src/line_settings.rs b/bindings/rust/libgpiod/src/line_settings.rs
-index 79ee2f5..f0b3e9c 100644
---- a/bindings/rust/libgpiod/src/line_settings.rs
-+++ b/bindings/rust/libgpiod/src/line_settings.rs
-@@ -218,6 +218,9 @@ impl Settings {
- 
-     /// Get the debounce period.
-     pub fn debounce_period(&self) -> Result<Duration> {
-+        // c_ulong may be 32bit OR 64bit, clippy reports a false-positive here:
-+        // https://github.com/rust-lang/rust-clippy/issues/10555
-+        #[allow(clippy::unnecessary_cast)]
-         // SAFETY: `gpiod_line_settings` is guaranteed to be valid here.
-         Ok(Duration::from_micros(unsafe {
-             gpiod::gpiod_line_settings_get_debounce_period_us(self.settings) as u64
+ bindings/rust/gpiosim-sys/src/lib.rs         | 2 +-
+ bindings/rust/gpiosim-sys/src/sim.rs         | 4 ++--
+ bindings/rust/libgpiod/src/chip.rs           | 2 +-
+ bindings/rust/libgpiod/src/edge_event.rs     | 2 +-
+ bindings/rust/libgpiod/src/event_buffer.rs   | 7 +++++--
+ bindings/rust/libgpiod/src/info_event.rs     | 2 +-
+ bindings/rust/libgpiod/src/lib.rs            | 2 +-
+ bindings/rust/libgpiod/src/line_config.rs    | 4 ++--
+ bindings/rust/libgpiod/src/line_info.rs      | 3 +++
+ bindings/rust/libgpiod/src/line_request.rs   | 8 ++++----
+ bindings/rust/libgpiod/src/line_settings.rs  | 5 ++++-
+ bindings/rust/libgpiod/src/request_config.rs | 2 +-
+ bindings/rust/libgpiod/tests/chip.rs         | 2 +-
+ 13 files changed, 27 insertions(+), 18 deletions(-)
+---
+base-commit: 4510231c95a087f58a155cf74164e403e1e0584f
+change-id: 20230629-clippy-890c541c6d09
 
+Best regards,
 -- 
-2.40.1
+Erik Schilling <erik.schilling@linaro.org>
 
