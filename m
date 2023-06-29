@@ -2,118 +2,105 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D74EB64DD
-	for <linux-gpio@archiver.kernel.org>; Thu, 29 Jun 2023 11:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0AEC001B1
+	for <linux-gpio@archiver.kernel.org>; Thu, 29 Jun 2023 11:10:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231363AbjF2LKH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 29 Jun 2023 07:10:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36806 "EHLO
+        id S232324AbjF2LKM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 29 Jun 2023 07:10:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232180AbjF2LJk (ORCPT
+        with ESMTP id S232217AbjF2LJk (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2023 07:09:40 -0400
 Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6080B2D4E
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2023 04:09:13 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-3110ab7110aso588085f8f.3
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2023 04:09:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2826359A
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2023 04:09:15 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-3113dabc549so679133f8f.1
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2023 04:09:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688036952; x=1690628952;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4oCBhqPkRJg4uw3jm/pvDcqU3iJ2P+5ltcSO4A6rWgA=;
-        b=W2dwsQYpbviLfBGgfS3BUTV+DN0How0i7VYDgmu/2nmi4N1qCZlws0M2dH9biulA7Y
-         /zAMqhfHV1nFi4++MMSEYc4sXd1mp43gpIK15iOvupJHDMeWjnWbdNBiQHDlSDBUXpjk
-         mw5a+tJF4nx9J3AgRB5vWmXZdmom4Dgm2VZEyc6GRRMr9DcH62/Hj3SydYk/c1N1m3w4
-         97yntH9iidLukrfcqM9CfTkOMxlPyRo2wF15V6U/j88iFuh5sziOiSli5oaADjUx/P8H
-         KXPTvqT8cdTowoH9BvcZCwBQWVlj+51QdpXQRTsEs8uHVBIw66JP2f1TKD4DySeSu6VR
-         btSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688036952; x=1690628952;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1688036954; x=1690628954;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4oCBhqPkRJg4uw3jm/pvDcqU3iJ2P+5ltcSO4A6rWgA=;
-        b=cKm4hKaVJHN8PKaLD3E5u4Bq76KQMe9QphD4/kxKKOi8po+HRFd1e/m99rzgFRPqcp
-         LQyNc5TN0SUILK3A7xab4nnSbvJgpyOWFXwgJ1/uu1etz1gn1ZwyJxC4Bd4WEV5uKxYa
-         aSRxAKJky6AI+L5RtNRhkK3RrayDHLvf09ZTvLadnBfSL8oI9XSuRx2Ty/wFEC7wmKAe
-         TtZ2tA5kSKz3o1hAIpz0Hd66+/N75jx5okzOX5AOznMjm7k5ruqGXnOmU5LnFiVYSZHy
-         yaMif5+x9ONEKiK26cU8Gmx7YFT6/Pr9RGMgexZugN3lpdnB0W+FsDJrPo+YzWpl+bH5
-         cqJg==
-X-Gm-Message-State: AC+VfDwJTqxjMPIF0E9zA8mjhexJcI90EB94/UBi7KNtu+8OpNFuiJqH
-        x17KN0wGtJSTwzUt/JqJaFqv3g==
-X-Google-Smtp-Source: ACHHUZ4bnnQmf7c6VJNssvQBfjwmBj/rluSp4Blwz7ztsOyCGWZB+ZAgZ+sk1nmA/4BIbwNt2RSfYQ==
-X-Received: by 2002:a5d:4ac8:0:b0:314:f88:4fea with SMTP id y8-20020a5d4ac8000000b003140f884feamr2827913wrs.8.1688036951737;
-        Thu, 29 Jun 2023 04:09:11 -0700 (PDT)
+        bh=gjWAD3xgu1+4S9LVLxxSlciTYFK1Sbr5R+tn3bj2G0k=;
+        b=gVWClMK0LMEjCA+Cr66MLnP07kew3KsobGBHni4riMV5vplGsj8nWwxkIHYf3P9k3w
+         gzfMP9sop6jIPWPsos++orMAXmPGy0vEFJ7TJnNy4rb+08h2ljRax2E0vhoBbI1i6mNz
+         rcksmEUi43xhXZuOAmTJIK4l97IhnUGLkwUSKS5x7pEAO6Iz/y5qw+xf23hAxBBvFXQe
+         jNitli+KX7Q3SINOL8YSTJhUXBoJ0SHKZ8mnAddhH/paA9aMYwg7TNI2/bkJpOQNnkjU
+         A8aWO38fD3mUbHI43jEpbE7LcGhV5FW4xZyuFBY5i2LSz7Iyf230dn9K8T+7RDcFu4q5
+         EzYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688036954; x=1690628954;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gjWAD3xgu1+4S9LVLxxSlciTYFK1Sbr5R+tn3bj2G0k=;
+        b=FnGvce55dpTyDSJQLO53Py1QdWQuHoclJwqJdRarkmAsCT82nnxk3QJ0tOyxPHFnM6
+         9oQTo9TvUbirdEl//oUWYVkK1P1ILBTnrW4m3+0lZmkOPijqGmQoY0GnzfEk0R0qVZbn
+         K9F39/rKgsXT6h4mu5EydOuy5AGcBt010cP+aGX/SOsPQOFwA1QcMNnC6FZgPbT4pbfs
+         H2dNjUTZmjqH1DOFm35azqdHtX/4kpBRWNPDaStR5mA+zRWWV809A0VkkYwLrXvoEkrU
+         wkbZW9ZG1knYRUeiJpPquRae9eC3rEkg0291BNUU5A29FJF3gH8ZZ3TaMKyfT7MQT3WA
+         2bqw==
+X-Gm-Message-State: AC+VfDxWlWoha9rFJJPTzuV4B4o8bCqBWfzsXY0JwPPqqow0bt2yeHva
+        l4/MoNrgn9rKbNmxWOU5mvi88w==
+X-Google-Smtp-Source: ACHHUZ6Agms1izqZFq2ZEz4/xWdZhilG1zJqIP2O4Qko/5OhsErvaRZ21jXg362o2tmXb0YmL2EBpw==
+X-Received: by 2002:a5d:62d2:0:b0:313:e8f9:dbfa with SMTP id o18-20020a5d62d2000000b00313e8f9dbfamr16802417wrv.35.1688036954300;
+        Thu, 29 Jun 2023 04:09:14 -0700 (PDT)
 Received: from [192.168.1.127] (i5C7438BA.versanet.de. [92.116.56.186])
-        by smtp.gmail.com with ESMTPSA id cw13-20020a056000090d00b003112f836d4esm15571197wrb.85.2023.06.29.04.09.11
+        by smtp.gmail.com with ESMTPSA id cw13-20020a056000090d00b003112f836d4esm15571197wrb.85.2023.06.29.04.09.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jun 2023 04:09:11 -0700 (PDT)
+        Thu, 29 Jun 2023 04:09:14 -0700 (PDT)
 From:   Erik Schilling <erik.schilling@linaro.org>
-Subject: [PATCH libgpiod 0/4] bindings: rust: clippy: fixed warnings
-Date:   Thu, 29 Jun 2023 13:08:58 +0200
-Message-Id: <20230629-clippy-v1-0-9ff088713c54@linaro.org>
+Date:   Thu, 29 Jun 2023 13:09:02 +0200
+Subject: [PATCH libgpiod 4/4] bindings: rust: clippy: silence
+ false-positive on iterator
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEpmnWQC/x3MTQqAIBBA4avErBPMfsiuEi1qnGogVBSiEO+et
- Pzg8RJECkwRpipBoJsjO1vQ1BXgudqDBJtiUFK1clBa4MXev2LUEvuuwcFIDSX2gXZ+/tEMF2+
- HZ2dgyfkDncRunmIAAAA=
+Message-Id: <20230629-clippy-v1-4-9ff088713c54@linaro.org>
+References: <20230629-clippy-v1-0-9ff088713c54@linaro.org>
+In-Reply-To: <20230629-clippy-v1-0-9ff088713c54@linaro.org>
 To:     Linux-GPIO <linux-gpio@vger.kernel.org>
 Cc:     Kent Gibson <warthog618@gmail.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Erik Schilling <erik.schilling@linaro.org>
 X-Mailer: b4 0.13-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1688036951; l=1822;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1688036951; l=942;
  i=erik.schilling@linaro.org; s=20230523; h=from:subject:message-id;
- bh=+z+EhYScf6UR/IcsGLnW32XLCvQx90uRaH+/sCvwW9k=;
- b=2zE5Qp1CItepzR76XLtIp2KS8kaHHs/+ConiIL4uDWaayrdsD5G2AIc68Vig2s406cUmu3JA0
- jQEtW2Ig01+AmXVVWjdXh6Bx1dEdT7RNTGTFSOvQnYvH5jIC1+EAmFp
+ bh=9Ef2blUdIBqaRS/IvtnkKFRbjUV0UgyUroU9uhls5MA=;
+ b=7rBiZI2yUc3BFbljxJKD23EYBxc3RFIJSdb/gbUyqoSboDq/t5299DiitZ6pXDkl9s0wn8FwB
+ yp07eYcDXEpA8nCuVIJvXCYaZrOPutSBQdULkeSntvKOnP670pCPIBI
 X-Developer-Key: i=erik.schilling@linaro.org; a=ed25519;
  pk=/nNqy8/YOEdthj1epXl5FgwCTKEiVqTqqnVN1jVal7s=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This follows up on my promise on Kent's series [1] to look into whether
-these casts are needed or not. Most are not, a few are false-positives.
+This was fixed, but it is not in stable yet.
 
-I also explored some shunit2 based test-script to automate the testing,
-but that became ugly with linking issue and needs me to revisit it
-another time. So this only sends the fixes for now.
+Tested build on x86_64, armv7hf, aarch64.
 
-[1] https://lore.kernel.org/r/20230612154055.56556-1-warthog618@gmail.com
-
-To: Linux-GPIO <linux-gpio@vger.kernel.org>
-Cc: Kent Gibson <warthog618@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-
+Reported-by: Kent Gibson <warthog618@gmail.com>
+Link: https://lore.kernel.org/r/20230612154055.56556-1-warthog618@gmail.com
 Signed-off-by: Erik Schilling <erik.schilling@linaro.org>
 ---
-Erik Schilling (4):
-      bindings: rust: clippy: drop unnecessary casts
-      bindings: rust: clippy: silence false-positives on casts
-      bindings: rust: clippy: drop unneeded conversions
-      bindings: rust: clippy: silence false-positive on iterator
+ bindings/rust/libgpiod/src/event_buffer.rs | 3 +++
+ 1 file changed, 3 insertions(+)
 
- bindings/rust/gpiosim-sys/src/lib.rs         | 2 +-
- bindings/rust/gpiosim-sys/src/sim.rs         | 4 ++--
- bindings/rust/libgpiod/src/chip.rs           | 2 +-
- bindings/rust/libgpiod/src/edge_event.rs     | 2 +-
- bindings/rust/libgpiod/src/event_buffer.rs   | 7 +++++--
- bindings/rust/libgpiod/src/info_event.rs     | 2 +-
- bindings/rust/libgpiod/src/lib.rs            | 2 +-
- bindings/rust/libgpiod/src/line_config.rs    | 4 ++--
- bindings/rust/libgpiod/src/line_info.rs      | 3 +++
- bindings/rust/libgpiod/src/line_request.rs   | 8 ++++----
- bindings/rust/libgpiod/src/line_settings.rs  | 5 ++++-
- bindings/rust/libgpiod/src/request_config.rs | 2 +-
- bindings/rust/libgpiod/tests/chip.rs         | 2 +-
- 13 files changed, 27 insertions(+), 18 deletions(-)
----
-base-commit: 4510231c95a087f58a155cf74164e403e1e0584f
-change-id: 20230629-clippy-890c541c6d09
+diff --git a/bindings/rust/libgpiod/src/event_buffer.rs b/bindings/rust/libgpiod/src/event_buffer.rs
+index b79e9ea..2e4bfd3 100644
+--- a/bindings/rust/libgpiod/src/event_buffer.rs
++++ b/bindings/rust/libgpiod/src/event_buffer.rs
+@@ -54,6 +54,9 @@ impl<'a> Iterator for Events<'a> {
+     }
+ 
+     fn next(&mut self) -> Option<Self::Item> {
++        // clippy false-positive, fixed in next clippy release:
++        // https://github.com/rust-lang/rust-clippy/issues/9820
++        #[allow(clippy::iter_nth_zero)]
+         self.nth(0)
+     }
+ }
 
-Best regards,
 -- 
-Erik Schilling <erik.schilling@linaro.org>
+2.40.1
 
