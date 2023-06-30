@@ -2,138 +2,108 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9FAAEB64DD
-	for <linux-gpio@archiver.kernel.org>; Fri, 30 Jun 2023 11:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48477C001B1
+	for <linux-gpio@archiver.kernel.org>; Fri, 30 Jun 2023 11:19:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232740AbjF3LTI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 30 Jun 2023 07:19:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60808 "EHLO
+        id S231724AbjF3LTK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 30 Jun 2023 07:19:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231455AbjF3LTF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jun 2023 07:19:05 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D58312680
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Jun 2023 04:18:59 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4fb73ba3b5dso2877696e87.1
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Jun 2023 04:18:59 -0700 (PDT)
+        with ESMTP id S232449AbjF3LTG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jun 2023 07:19:06 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD424358A
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Jun 2023 04:19:02 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3fbc54cab6fso9066495e9.0
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Jun 2023 04:19:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688123938; x=1690715938;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DvA4OsqEt8uk7N1l5EhH+khjedF3qEoCfOHJJgV6XqE=;
-        b=l0zhNUF4gpLIFyCDMpdHXhfgB02RtaDdaaRDz7wRL4SFqBIPuEPP3nqBNF7zmkEL0I
-         VgMSmLKca1mJzjHcb1lV/lTIu47Z0X8eINcrgu51pFTXWlbim9qKEPv7ej9Y3+wcQpNc
-         r7h+8VSvlHsqFuAkkaXB3lcBI8qORCQ2ipikweuTFq9lo3ISnScb0d+M01PUjwiU0cgk
-         vzvSvVF9Gz/QVAFnNBYjSm2xibvELC/ywkYjCFbg8OCBIyn0upNnmotMXWk0Qf1PYYmm
-         0P3PTndmBgUWoG/sc+AsGFUjEJIKcMDjKMv0OMSRH22f/K5/btJ0FRqve4XyT4fpoEru
-         IORg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688123938; x=1690715938;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1688123941; x=1690715941;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DvA4OsqEt8uk7N1l5EhH+khjedF3qEoCfOHJJgV6XqE=;
-        b=SOTv+nhbp7E4WQZ4WsnqJAdTO97d+D6qsNEslZqwDHMnefv2WpZqNOrVASxV70SDoU
-         2FHizGWrU+9mh/a+Bg7PLwp/oBA1iWv3TS+jjYlS79xi74MEaqtbNce3QwTXE3dBTnwo
-         S31zNUDT+yLitgXJIIU9JT7o1Ugjm1tOKWLel/8jmIsNX6xhaz8e2KjZMxbV4G6SgmGC
-         WqPQMOon2yyIKc3Wfw3alvAQyoC4cqfI4ukOFcCbeUUhnAbyyn46EHYfE5KOGGcnQWei
-         2vg+eruht8yUbp8uPMjTiKrzCTeu8Bxup8v+n8EE3eHp5SbU8tsyyfeJjhEiklWjCr9k
-         dLFQ==
-X-Gm-Message-State: ABy/qLa3lORBXhhoEqDDavrg9WcfF/nHXG4US2a7bBKwXu7hcRSyqoVU
-        ks8pOmJyGDfTv6tpXeqvC2hGhygHU0MleKVtAOk=
-X-Google-Smtp-Source: APBJJlEl259vWPcmxvP6MQWUcxkLWjjSZIgX20AvabLfrnTl1XsWL8uGnR5UXBIPiOrsmUnz/c880Q==
-X-Received: by 2002:a05:6512:3b8b:b0:4fb:774f:9a84 with SMTP id g11-20020a0565123b8b00b004fb774f9a84mr2496004lfv.13.1688123938097;
-        Fri, 30 Jun 2023 04:18:58 -0700 (PDT)
+        bh=foDn46B+pZpT2Whbht946XgZWMtJblU3mUCYvT4/IJM=;
+        b=IszdtquCF5l84t6q4IKRsBzybSI1cba4qox1aR0rGAG4gLq3ZNV9wjQArpAp+4rQO3
+         8D15kUNb7VrY8zL/HzbA9F1WthgEIdm8eLux8lxS4fWZqNANaiW+d/QflirKhGnFwRnU
+         C72ki6cjtbCAyEC/F8+WVF/1LpEzzOxF7Gr6zp7KguhQLhhezhhWexVL1rIftlhKbgOm
+         TD3uLoGJI2OyrOfg8yTNDKYBUYlzqzO/2jTJhgwpag77OBPeKdPb9FKBbZIrSyum4C+S
+         KN5++nE64Jy9kG7gUMl/psiwBJKuIH0AUDP6EjsgyM3Zdcg2nfy2QIRfduDidomOSAEu
+         PuKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688123941; x=1690715941;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=foDn46B+pZpT2Whbht946XgZWMtJblU3mUCYvT4/IJM=;
+        b=gGshm+C6/NSSUM6gIHm0VJFtKUk5UXOrcAS4PQIGKc7JYWkjm0967YwqNjpaMvsFnc
+         xN8unNJkgjm03pnaNWgU016i701Kh52e1Hf560RGi3B0XH48OZeA+PpAEL+GrAzVWyer
+         rLIfMs/Kvba5m0ICZtDnGZEMA0ig8hVVKIHTsC8sMQ+vRijcPZ0Z5eDM/LGPowwrP7T2
+         tfBtOl9wpIRLbWRB6FmD3JNQZgda6O3dc9IH3mPrbZI20SKFBI2JJtAWmVKhoGeJgWUi
+         +yA91xeGY35Y14uSbD093YmyAv6qrJi8145j+9JX+L2GZblYRoObZm20FfkaaJziAk4K
+         ffZQ==
+X-Gm-Message-State: AC+VfDx6cxIROx8qOo/r/iop2btjsURT3nlMqxQovpLfuREhSxUrQ7hs
+        nSmRFlSabViM6ZGeXHZQpvC5b2IsfXvjVlD3pTw=
+X-Google-Smtp-Source: ACHHUZ5OWOF/wU7UFBllboMbEfVLqfZrY5eneE72kjbTj9nb1B2PSmFBaPACv6wPcqRSB9po36f+qg==
+X-Received: by 2002:a1c:4c08:0:b0:3fb:b287:b0ad with SMTP id z8-20020a1c4c08000000b003fbb287b0admr1957215wmf.13.1688123941392;
+        Fri, 30 Jun 2023 04:19:01 -0700 (PDT)
 Received: from [192.168.1.127] (i5C743877.versanet.de. [92.116.56.119])
-        by smtp.gmail.com with ESMTPSA id u20-20020a05600c211400b003fbb618f7adsm4621917wml.15.2023.06.30.04.18.57
+        by smtp.gmail.com with ESMTPSA id u20-20020a05600c211400b003fbb618f7adsm4621917wml.15.2023.06.30.04.19.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jun 2023 04:18:57 -0700 (PDT)
+        Fri, 30 Jun 2023 04:19:01 -0700 (PDT)
 From:   Erik Schilling <erik.schilling@linaro.org>
-Subject: [libgpiod][PATCH v2 0/4] bindings: rust: clippy: fix warnings
-Date:   Fri, 30 Jun 2023 13:18:43 +0200
-Message-Id: <20230630-clippy-v2-0-f44447925ad6@linaro.org>
+Date:   Fri, 30 Jun 2023 13:18:47 +0200
+Subject: [libgpiod][PATCH v2 4/4] bindings: rust: clippy: silence
+ false-positive on iterator
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABO6nmQC/12NywrDIBQFfyXcdS1q2lSz6n+ULFJfuSBRtEhD8
- N8rLrsc5jDnhGwSmgzzcEIyBTOGvQG/DKC2dXeGoG4MnPKRTlwS5THGgwhJ1f3G1KSphDaOyVj
- 89tALPL5dxKBhaWbD/Anp6A+Fdf8fK4xQIq2lQjzY2LpPj/uawjUkB0ut9QdHbUiHpwAAAA==
+Message-Id: <20230630-clippy-v2-4-f44447925ad6@linaro.org>
+References: <20230630-clippy-v2-0-f44447925ad6@linaro.org>
+In-Reply-To: <20230630-clippy-v2-0-f44447925ad6@linaro.org>
 To:     Linux-GPIO <linux-gpio@vger.kernel.org>
 Cc:     Kent Gibson <warthog618@gmail.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Erik Schilling <erik.schilling@linaro.org>
 X-Mailer: b4 0.13-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1688123937; l=2414;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1688123937; l=1136;
  i=erik.schilling@linaro.org; s=20230523; h=from:subject:message-id;
- bh=9d6GzmZa9rNBO4euD6w9rfxdQXv1zKo9gx9PUhqmtOE=;
- b=Oek1QqV10ZWXSFhTHuoZYhOlGwXG2stFq2qEgjBdh44+/H+pqCpH6+2ay7ht44XldsF47XBun
- T1KT6v04nhTCXC5oI+PMTws1HiZtSGAuVojvzoLRgjaYHpTeYfTvPGj
+ bh=c74vXxa4MAhI21WLFDLO8nb3tQLt/j3LlAIZ9/MOxpk=;
+ b=jo8yedh87k+2pDTwpnEkLgAqWo1Z2aEewmrX678/bCufOc2OkXl3dFxFrBJcIjuUiUaWkJbO3
+ n0000zki7PTC1g4fhFEEombvscGMpAYSL+V2t9au4yhFTFR/xOnVdi4
 X-Developer-Key: i=erik.schilling@linaro.org; a=ed25519;
  pk=/nNqy8/YOEdthj1epXl5FgwCTKEiVqTqqnVN1jVal7s=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This follows up on my promise on Kent's series [1] to look into whether
-these casts are needed or not. Most are not, a few are false-positives.
+This was fixed on clippy master [1], but it is still broken on 0.1.70. So
+lets silence it until the clippy fix is widely available.
 
-I also explored some shunit2 based test-script to automate the testing,
-but that became ugly with linking issue and needs me to revisit it
-another time. So this only sends the clippy fixes for now.
+clippy version: clippy 0.1.70 (90c5418 2023-05-31).
 
-Tested the build (lib + examples + test) and clippy report on:
-- Fedora 38 x86_64
-- Fedora 38 aarch64
-- Debian 12 armv7hf
+[1] https://github.com/rust-lang/rust-clippy/commit/9fa40894103e32364fdbade539d4ecb3d40f3d7f
 
-Test execution (cargo test) was tested on:
-- Fedora 38 x86_64
-- Fedora 38 aarch64
-
-Could not execute tests on armv7hf due to lack of suitable test
-environment.
-
-[1] https://lore.kernel.org/r/20230612154055.56556-1-warthog618@gmail.com
-
-To: Linux-GPIO <linux-gpio@vger.kernel.org>
-Cc: Kent Gibson <warthog618@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-
+Reported-by: Kent Gibson <warthog618@gmail.com>
+Link: https://lore.kernel.org/r/20230612154055.56556-1-warthog618@gmail.com
 Signed-off-by: Erik Schilling <erik.schilling@linaro.org>
 ---
-Changes in v2:
-- Changed cover letter title to active language
-- Improved commit messages (hopefully)
-- Elaborated what was built and tested
-- Resent with hacked b4 for proper [libgpiod] tag
-- Link to v1: https://lore.kernel.org/r/20230629-clippy-v1-0-9ff088713c54@linaro.org
+ bindings/rust/libgpiod/src/event_buffer.rs | 3 +++
+ 1 file changed, 3 insertions(+)
 
----
-Erik Schilling (4):
-      bindings: rust: clippy: drop unnecessary casts
-      bindings: rust: clippy: silence false-positives on casts
-      bindings: rust: clippy: drop unneeded conversions
-      bindings: rust: clippy: silence false-positive on iterator
+diff --git a/bindings/rust/libgpiod/src/event_buffer.rs b/bindings/rust/libgpiod/src/event_buffer.rs
+index b79e9ea..2e4bfd3 100644
+--- a/bindings/rust/libgpiod/src/event_buffer.rs
++++ b/bindings/rust/libgpiod/src/event_buffer.rs
+@@ -54,6 +54,9 @@ impl<'a> Iterator for Events<'a> {
+     }
+ 
+     fn next(&mut self) -> Option<Self::Item> {
++        // clippy false-positive, fixed in next clippy release:
++        // https://github.com/rust-lang/rust-clippy/issues/9820
++        #[allow(clippy::iter_nth_zero)]
+         self.nth(0)
+     }
+ }
 
- bindings/rust/gpiosim-sys/src/lib.rs         | 2 +-
- bindings/rust/gpiosim-sys/src/sim.rs         | 4 ++--
- bindings/rust/libgpiod/src/chip.rs           | 2 +-
- bindings/rust/libgpiod/src/edge_event.rs     | 2 +-
- bindings/rust/libgpiod/src/event_buffer.rs   | 7 +++++--
- bindings/rust/libgpiod/src/info_event.rs     | 2 +-
- bindings/rust/libgpiod/src/lib.rs            | 2 +-
- bindings/rust/libgpiod/src/line_config.rs    | 4 ++--
- bindings/rust/libgpiod/src/line_info.rs      | 3 +++
- bindings/rust/libgpiod/src/line_request.rs   | 8 ++++----
- bindings/rust/libgpiod/src/line_settings.rs  | 5 ++++-
- bindings/rust/libgpiod/src/request_config.rs | 2 +-
- bindings/rust/libgpiod/tests/chip.rs         | 2 +-
- 13 files changed, 27 insertions(+), 18 deletions(-)
----
-base-commit: 4510231c95a087f58a155cf74164e403e1e0584f
-change-id: 20230629-clippy-890c541c6d09
-
-Best regards,
 -- 
-Erik Schilling <erik.schilling@linaro.org>
+2.41.0
 
