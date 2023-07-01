@@ -2,85 +2,106 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2833EB64DC
-	for <linux-gpio@archiver.kernel.org>; Sat,  1 Jul 2023 07:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5D2C001B0
+	for <linux-gpio@archiver.kernel.org>; Sat,  1 Jul 2023 13:10:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229452AbjGAHSK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 1 Jul 2023 03:18:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58390 "EHLO
+        id S230013AbjGANKu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 1 Jul 2023 09:10:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbjGAHSJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 1 Jul 2023 03:18:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DDC5136;
-        Sat,  1 Jul 2023 00:18:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A8ED860FAA;
-        Sat,  1 Jul 2023 07:18:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB01DC433C7;
-        Sat,  1 Jul 2023 07:18:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1688195887;
-        bh=yvU1B9CzY4SoNHJbzm1vKiLG5Gv1vNDPYNbKeP43u5I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=P9sd+ds8NNXBaPzb97EyfMjwaWZSB7OX8TgcZAvmlU9S5E6OVU3GDLMWpVZ7/wH2Y
-         ySxNaRxGHUUJKG8zCQpPHX2B8PD301aXLkXDwpTP23gcap9/BodaMuITwI3LVaaGlI
-         ViPruNDtv+PvmwLQCIpRkW87GazGFUVGtVnkdujw=
-Date:   Sat, 1 Jul 2023 09:18:03 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     VaibhaavRam.TL@microchip.com
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        arnd@arndb.de, Kumaravel.Thiagarajan@microchip.com,
-        Tharunkumar.Pasumarthi@microchip.com, UNGLinuxDriver@microchip.com,
-        michael@walle.cc
-Subject: Re: [PATCH RESEND v13 char-misc-next 0/2] Add OTP/EEPROM
- functionality to the PCI1XXXX switch
-Message-ID: <2023070155-annually-abdominal-b61d@gregkh>
-References: <20230620143520.858-1-vaibhaavram.tl@microchip.com>
- <2023062354-rejoice-preschool-5251@gregkh>
- <DM4PR11MB623829DD125CA15D628FB4B0972BA@DM4PR11MB6238.namprd11.prod.outlook.com>
+        with ESMTP id S229480AbjGANKt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 1 Jul 2023 09:10:49 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F8763AA7
+        for <linux-gpio@vger.kernel.org>; Sat,  1 Jul 2023 06:10:48 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-55adfa61199so1980377a12.2
+        for <linux-gpio@vger.kernel.org>; Sat, 01 Jul 2023 06:10:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688217047; x=1690809047;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rdGjxVi6hGcaiTePb6IGBckROAI/ak+eaZkNFbvlzsc=;
+        b=j+97exHhFBBHUL5gajkyud98cCQ9qaARYx6tcaUqADPZ66B/rQZvJXQRgF+rx/CnfZ
+         5tpLztzeoTaADPM/6UmG/R2INJuKEwKKOW3iEknE+In9lN79oC+6yJwsoKu+irymksGn
+         pl9MMtIKPTeQsqvapR+RPJru9OdaQuzaXMgOEqczIi40DB/9DXuCTufcTDnkWniv7T7r
+         tYiiV//LmUvpyMiadmn/fsSIIvJIY4M6V1jVXn/mRkYox6+YLqgVMlFYpg+fTl6eIj0v
+         1Uf5fnqGbI2gd+lYXX/IBtlG21krBOS2G6NZqvDyshIzlSeaUNdIf8FKaeawhqEy/VZI
+         9f2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688217047; x=1690809047;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rdGjxVi6hGcaiTePb6IGBckROAI/ak+eaZkNFbvlzsc=;
+        b=X/L/hrWPVicW8cgw5t5fRsHdb8QPPPJOMuAD3tC9Ux8tJDV+XX4aeCK1aLlpbx09Vr
+         HMGhA7HbNTCZS99fzUEskhLroaZlVfqEMabBkzhIZWOPQ61jIPT0jm+Edxe53zVaLVdd
+         BqW1SvywYvZuIAgQar6cdInWINIYqOBgagOOKjoTTwmNPLhcGTleBli2hD8fA8cEBivu
+         7uhxqcXYGj1GQB+dGxP2J0qgxrSsJp6kO26nAl0vrRLvdLvOz1vAa6cYXpiTd7vDxIpc
+         AHDuIlVkYurqH8+GmSc0qwqEsMubukz04NLK+Dgd9dpa8gCdPp2dE2LRRsqaRZHjlTK/
+         bU0A==
+X-Gm-Message-State: AC+VfDzCx7egp0bxti39/dS/30deP9Ck84gQmiakh3sfEBd56NRDI6W+
+        Tc4UaXnBmozz+9TLggLXgZQ=
+X-Google-Smtp-Source: ACHHUZ5YIJAx2t1hL5ApLNC9JoeUP/8YLWgF/Ad5fu6OwRx6y0ggDpKq0D+bpYE3FDKVZTH4nHFX5w==
+X-Received: by 2002:a05:6a20:5499:b0:127:3c6e:fc83 with SMTP id i25-20020a056a20549900b001273c6efc83mr7164841pzk.42.1688217047557;
+        Sat, 01 Jul 2023 06:10:47 -0700 (PDT)
+Received: from sol (194-223-178-180.tpgi.com.au. [194.223.178.180])
+        by smtp.gmail.com with ESMTPSA id s12-20020a62e70c000000b00679a4b56e41sm8892854pfh.43.2023.07.01.06.10.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Jul 2023 06:10:46 -0700 (PDT)
+Date:   Sat, 1 Jul 2023 21:10:42 +0800
+From:   Kent Gibson <warthog618@gmail.com>
+To:     Erik Schilling <erik.schilling@linaro.org>
+Cc:     Linux-GPIO <linux-gpio@vger.kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH libgpiod 4/4] bindings: rust: clippy: silence
+ false-positive on iterator
+Message-ID: <ZKAl0pZ3UP7mRk4D@sol>
+References: <20230629-clippy-v1-0-9ff088713c54@linaro.org>
+ <20230629-clippy-v1-4-9ff088713c54@linaro.org>
+ <ZJ6bd8+oDbyX06rp@sol>
+ <CTPWFHFJNFFA.2SGA858S5QIJ5@fedora>
+ <ZJ6sQYctu9mHqQP5@sol>
+ <CTPXANU2HUHF.3UJIZX6CQV4UF@fedora>
+ <ZJ6zaq2JCQvMcnTh@sol>
+ <CTPXGBYT71JR.290ZDBVD3EMM7@fedora>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DM4PR11MB623829DD125CA15D628FB4B0972BA@DM4PR11MB6238.namprd11.prod.outlook.com>
+In-Reply-To: <CTPXGBYT71JR.290ZDBVD3EMM7@fedora>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Jul 01, 2023 at 07:08:44AM +0000, VaibhaavRam.TL@microchip.com wrote:
-> On Tue, Jun 20, 2023 at 08:05:18PM +0530, Vaibhaav Ram T.L wrote:
-> >> Microchip's pci1xxxx is an unmanaged PCIe3.1a switch for consumer, 
-> >> industrial, and automotive applications. This switch integrates OTP 
-> >> and EEPROM to enable customization of the part in the field. This 
-> >> patch adds OTP/EEPROM functionality to the pci1xxxx switch.
-> >> ---
-> >> v12 -> v13:
-> >> - Moved release_sys_lock() from patch#2 to patch#1
+On Fri, Jun 30, 2023 at 12:53:36PM +0200, Erik Schilling wrote:
+> On Fri Jun 30, 2023 at 12:50 PM CEST, Kent Gibson wrote:
+> > On Fri, Jun 30, 2023 at 12:46:11PM +0200, Erik Schilling wrote:
+> > > On Fri Jun 30, 2023 at 12:19 PM CEST, Kent Gibson wrote:
+> > > > > 
+> > > >
+> > > > That is the only test failing out of the whole suite, so gpiosim is not
+> > > > the problem.
+> > > >
+> > > > That is with the latest from the Raspberry Pi rpi-6.4.y branch[1]
+> > > > (a867309b7a55 so a few days old now), with CONFIG_GPIO_SIM so that I can
+> > > > run the tests.
+> > > > Happens to be running on a Pi ZeroW, but I don't think that test is speed
+> > > > sensitive.  I have done a complete rebuild - same result.
+> > > >
+> > > > Are there any distos enabling GPIO_SIM yet?
+> > > 
+> > > Fedora does now (after I asked for it [2]). But it does not support any
+> > > 32-bit ARM targets anymore :/. Can you try reproducing it without the
+> > > patches? I would be surprised if this was related to the patches.
+> > > 
 > >
-> >This series is not showing up on lore.kernel.org at all, are you sure it is getting to >the mailing lists properly?
-> >
-> >thanks,
-> >
-> >greg k-h
+> > Tried that - same result with libgpiod master.
+> > So it is not from your patches.
 > 
-> Hi Greg. I too can't find the root cause for this issue. 
+> Thanks for checking! Will try to reproduce it in the next weeks.
 > 
-> I have used get_maintainer.pl script to get the Maintainers list and it looks like this:
-> 
-> Arnd Bergmann <arnd@arndb.de> (supporter:CHAR and MISC DRIVERS) Greg Kroah-Hartman <gregkh@linuxfoundation.org> (supporter:CHAR and MISC DRIVERS,commit_signer:2/3=67%) "Vaibhaav Ram T.L" <vaibhaavram.tl@microchip.com> (supporter:MICROCHIP PCI1XXXX GP DRIVER,commit_signer:1/3=33%) Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com> (supporter:MICROCHIP PCI1XXXX GP DRIVER,commit_signer:3/3=100%,authored:3/3=100%,added_lines:15/15=100%,removed_lines:1/1=100%,added_lines:3/3=100%,removed_lines:2/2=100%)
-> Tharun Kumar P <tharunkumar.pasumarthi@microchip.com> (commit_signer:1/3=33%) linux-kernel@vger.kernel.org (open list) linux-gpio@vger.kernel.org (open list:MICROCHIP PCI1XXXX GP DRIVER)'
-> 
-> This is the command I have used: 
-> git send-email --to "linux-kernel@vger.kernel.org" --to "linux-gpio@vger.kernel.org" --cc "arnd@arndb.de" --cc "gregkh@linuxfoundation.org" --cc "kumaravel.thiagarajan@microchip.com" --cc "tharunkumar.pasumarthi@microchip.com" --cc "UNGLinuxDriver@microchip.com" --cc "michael@walle.cc" *.patch
-> 
-> Is there anything am I missing?
-> 
-> As of now, I have sent Patch V13 from Kumar's email id. Kindly check.
-> Sorry for inconvenience
 
-This email shows up fine, and so did your new resend, thanks!
+Seems there was something broken in my build.
+I did a clean slate rebuild and now all tests are passing.
 
-greg k-h
+Cheers,
+Kent.
