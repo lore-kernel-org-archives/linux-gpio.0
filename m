@@ -2,104 +2,105 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC5FEB64DD
-	for <linux-gpio@archiver.kernel.org>; Mon,  3 Jul 2023 07:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F25C001B0
+	for <linux-gpio@archiver.kernel.org>; Mon,  3 Jul 2023 07:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229914AbjGCHUT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 3 Jul 2023 03:20:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57010 "EHLO
+        id S229671AbjGCHUV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 3 Jul 2023 03:20:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbjGCHUS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2023 03:20:18 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEE6BCC
-        for <linux-gpio@vger.kernel.org>; Mon,  3 Jul 2023 00:20:15 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-51d91e9b533so4496388a12.3
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Jul 2023 00:20:15 -0700 (PDT)
+        with ESMTP id S229819AbjGCHUT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2023 03:20:19 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2BB4E42
+        for <linux-gpio@vger.kernel.org>; Mon,  3 Jul 2023 00:20:16 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-51d9128494cso3661392a12.0
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Jul 2023 00:20:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688368814; x=1690960814;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ze+Hizdk0P4QL6s55K2SSjg6J+ewFedq4CxMtAWpchA=;
-        b=J/agHN6IZI/Q9zVBtH+uAcaVUQr/n+/GqrotrD1koWI2CQzXeNd4+Rk4ubwpHJd6YY
-         y2O2cyBuu80Ulvf3cbyzyCsurswh6Bii2wAUstGRPt0RopsRobPkWvSJ9ktAAoeOsrYq
-         wHRopqipa4TPkZGgzcfmIr9hCbJMnk42LROcq9KcyFJBTvQ4szpwr1I11uiG8OuG4m1v
-         TSTlz0T+o9Yj1wdSv/ryg3s3/tGKdRE+JAKn7t52enfs/d4d40MubbmCHpz4xCuhKZuf
-         cyXeej4DK6djkcLBxoYq3BB40G5tOj3GyJlAqpBG6VE9xzSY4k6Kca+lMzQAXKUr7mMB
-         0Ong==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688368814; x=1690960814;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1688368815; x=1690960815;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ze+Hizdk0P4QL6s55K2SSjg6J+ewFedq4CxMtAWpchA=;
-        b=jFwds161dqKdWf5fX+KjiBTO5B86OFL401vCwHe/SNK1YJahs/KJpRJ+FP3aLVAoxY
-         0wPdSbklas1+QPSd/hHAZmKGRiRUiGtMiKdF2ehFTOLW8iM4rDGYMHVETc3tsS1JMTi9
-         f/DpVuCb4C7Gw2Z/rSSX52UK+/OctGKBKyc46pZmkC/I9Csa/yo22zp7qZSRq+BrgZj6
-         AffxfTxGky7yKnIOnsiZdygxYx/2jba+oRUTolQfatEMQnNsCSW2G+e0UHEjPpvu4msq
-         dZuEdwtCNPRxGjM2IlKqyb4qFkW3YwaWQyEuIq30g2HPJnsaJInRDXcUdrfyrOgjdEey
-         YR3g==
-X-Gm-Message-State: ABy/qLZrn6OcDytAz5MEYpM4+e2YJGDPHu+o1gJ7UTfzNvyxsmLzHrr8
-        e4LgzO/sdQlDrmCbdVL9YBaang==
-X-Google-Smtp-Source: APBJJlFqtztobSJLmNvlyI0i3LPSWP1UxE4SBZ0sTdqUD9CYU3V51xsjUPHfb17Mbm/J9aqOGaAYHA==
-X-Received: by 2002:aa7:c158:0:b0:51d:9ddf:f0f6 with SMTP id r24-20020aa7c158000000b0051d9ddff0f6mr6504358edp.36.1688368814449;
-        Mon, 03 Jul 2023 00:20:14 -0700 (PDT)
+        bh=S4QpraCEYGheli1JdGmJ9D56BwcMGJ15TekW1Vg71jw=;
+        b=yzazIzKgNHHv7woMkBTdocNmUMXZ+QkHnYWp/EUk1oF22zPdHNnmVpR7S0qSfJwClL
+         MNZWuprwtj/iYOALjXmyA85RXe8kn8ueUTyZvZl8+GnTOapRQZdtRkNnnOB55kiFLLAm
+         jn3X4FGAxqF7qTtsKGFhWfVj8s/zD/s4aB2CKUFHavHzuVd4oFvTNYJ0MADimuiYiOml
+         nW+W68qDE4cJWaKaZFBKMIxSN1UOm3HmC+w4Pj2tKkWv4J+wuN2DO09WQGhp2TxQ7F8f
+         JhktgsszG4oGdwTyrbOybI443A4BrMd3tOT2fHv1Vaw8R24Fd0l0yEyFBU+re4DHyxwe
+         MtPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688368815; x=1690960815;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S4QpraCEYGheli1JdGmJ9D56BwcMGJ15TekW1Vg71jw=;
+        b=hZZmAgSEROCkWHKe4yUzQ1JkH4L268Zt9D5IgILgX4iwtPThWn2681x0WyKVlDjBIj
+         b5SVEscT22Z0+NS9QOfDVDY/N1e7PAUH14y3Ue9Uy/dVzA7uN9rNrRXyLZr5sj3SgiaD
+         PPPsz57pYzzkJ920d4FgQPVV5ru2kl7wUIScKQ/598Br9JfTccmi1HeBOvCtcHJQeLEG
+         mCARoPTkUgpT+47Sqr35NgQrQ772NKu88u+O1lfGHLge5nuEKIey8HZWs7RHjNgH4YbJ
+         O59q9t2kekoZ86TLhVEQ0DunA1uZnWJIvnVoS5NzWe9owF2KY9qmZg85kJwUV7eHrsAc
+         UXqQ==
+X-Gm-Message-State: ABy/qLa+uiVNHS92NkmPaPnXCESa6n+wF+kD22CVRTaEhJR5HY9rpfLp
+        kNj52huP3LPYWjDKAPhOBme5Rw==
+X-Google-Smtp-Source: APBJJlEY1lrkzKLUJtmqG2mZN8Aa8n68Xsz4uj2Riu+bcwKyOUpgGrW68a6tiJzgI5Dsr0hL7Gw8eA==
+X-Received: by 2002:a05:6402:516a:b0:51a:468c:b46c with SMTP id d10-20020a056402516a00b0051a468cb46cmr6475773ede.30.1688368815590;
+        Mon, 03 Jul 2023 00:20:15 -0700 (PDT)
 Received: from [192.168.1.127] (i5C7438F8.versanet.de. [92.116.56.248])
-        by smtp.gmail.com with ESMTPSA id s13-20020aa7c54d000000b0051e1660a34esm391449edr.51.2023.07.03.00.20.13
+        by smtp.gmail.com with ESMTPSA id s13-20020aa7c54d000000b0051e1660a34esm391449edr.51.2023.07.03.00.20.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jul 2023 00:20:14 -0700 (PDT)
+        Mon, 03 Jul 2023 00:20:15 -0700 (PDT)
 From:   Erik Schilling <erik.schilling@linaro.org>
-Subject: [libgpiod][PATCH v2 0/2] bindings: rust: add README for crates.io
-Date:   Mon, 03 Jul 2023 09:19:58 +0200
-Message-Id: <20230703-rust-readme-v2-0-ba7d7f04bed6@linaro.org>
+Date:   Mon, 03 Jul 2023 09:20:00 +0200
+Subject: [libgpiod][PATCH v2 2/2] bindings: rust: mention the libgpiod
+ crate from libgpiod-sys
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJ52omQC/22NQQ6CMBBFr0JmbU1boAgr72FY1HYokyAlUyQaw
- t1tWLt8efnv75CQCRN0xQ6MGyWKcwZ9KcCNdg4oyGcGLXUpTSkFv9MqGK1/oTC1kbqqbKNKD3m
- xMA70OWsPmOgZFooe+mxGSmvk73mzqdP/LW5KSKEctmiGpr3V7j7RbDleIwfoj+P4AYmeZCixA
- AAA
+Message-Id: <20230703-rust-readme-v2-2-ba7d7f04bed6@linaro.org>
+References: <20230703-rust-readme-v2-0-ba7d7f04bed6@linaro.org>
+In-Reply-To: <20230703-rust-readme-v2-0-ba7d7f04bed6@linaro.org>
 To:     Linux-GPIO <linux-gpio@vger.kernel.org>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         Erik Schilling <erik.schilling@linaro.org>
 X-Mailer: b4 0.13-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1688368813; l=922;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1688368813; l=1040;
  i=erik.schilling@linaro.org; s=20230523; h=from:subject:message-id;
- bh=LDw3KnS6BRvXZ2FteyOsc1Wv3ewt4ytRc3x/nUvWsSo=;
- b=ck6f01hPQrqaNtL8i3IG775f3v8O83KUsXimcXgjrNQvcXL0dM1N3Ihy7DtIOsLLrah3rm0X5
- kFWYlN1PhuqCqFVy6eJhXM8sYIJW/qdkvtNdmzy0PaRIa+JPpUB7lkz
+ bh=I3Lvenf9ixcuPhSOgUdL4Ea92lnFRThego0waHda6bQ=;
+ b=qrsl6drfAckZOf38lS/M14UIN/UVFUbY7+xgpkMyHdkgrZTt+X7Kl6hsc945gWsP1v3OH0ePh
+ CUfdVRLmy6PCPt9rqLfZg0YAF5YOp5+NziWWYNg/Tw8bz+twSj0atj4
 X-Developer-Key: i=erik.schilling@linaro.org; a=ed25519;
  pk=/nNqy8/YOEdthj1epXl5FgwCTKEiVqTqqnVN1jVal7s=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The READMEs are displayed on crates.io for published crates. This tries
-to provide a little more context there.
+If people view this README.md on crates.io [1], they likely want to
+use the safe wrapper instead. So this hints the existence of that other
+crate.
 
-To: Linux-GPIO <linux-gpio@vger.kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
+[1] https://crates.io/crates/libgpiod-sys
 
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Erik Schilling <erik.schilling@linaro.org>
 ---
-Changes in v2:
-- Fixed typo (thanks Viresh!)
-- Added missing sign-off to 2/2
-- Link to v1: https://lore.kernel.org/r/20230630-rust-readme-v1-0-1ce9e6f7985c@linaro.org
+ bindings/rust/libgpiod-sys/README.md | 3 +++
+ 1 file changed, 3 insertions(+)
 
----
-Erik Schilling (2):
-      bindings: rust: add README.md for libgpiod crate
-      bindings: rust: mention the libgpiod crate from libgpiod-sys
+diff --git a/bindings/rust/libgpiod-sys/README.md b/bindings/rust/libgpiod-sys/README.md
+index f9db496..05acd9e 100644
+--- a/bindings/rust/libgpiod-sys/README.md
++++ b/bindings/rust/libgpiod-sys/README.md
+@@ -8,6 +8,9 @@ SPDX-FileCopyrightText: 2022 Viresh Kumar <viresh.kumar@linaro.org>
+ Automatically generated Rust FFI bindings via
+ 	[bindgen](https://github.com/rust-lang/rust-bindgen).
+ 
++Typically, you will want to use the safe `libgpiod` wrapper crate instead of
++these unsafe wrappers around the C lib.
++
+ ## Build requirements
+ 
+ A compatible variant of the C library needs to detectable using pkg-config.
 
- bindings/rust/libgpiod-sys/README.md |  3 +++
- bindings/rust/libgpiod/README.md     | 25 +++++++++++++++++++++++++
- 2 files changed, 28 insertions(+)
----
-base-commit: 37b3ac4bb5a35c0e84a98d95124f064ca038c4d1
-change-id: 20230630-rust-readme-6560244a713d
-
-Best regards,
 -- 
-Erik Schilling <erik.schilling@linaro.org>
+2.41.0
 
