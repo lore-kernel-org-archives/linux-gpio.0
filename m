@@ -2,113 +2,117 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D11C0015E
-	for <linux-gpio@archiver.kernel.org>; Mon,  3 Jul 2023 14:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF618EB64DC
+	for <linux-gpio@archiver.kernel.org>; Mon,  3 Jul 2023 14:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230032AbjGCOoc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 3 Jul 2023 10:44:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58876 "EHLO
+        id S230434AbjGCOox (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 3 Jul 2023 10:44:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229892AbjGCOob (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2023 10:44:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E367AE67
-        for <linux-gpio@vger.kernel.org>; Mon,  3 Jul 2023 07:43:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688395398;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tzP/Plg9Kd3biRQs2SODGsYGbG5ASH0tovc9ug5MNhw=;
-        b=LiOt07ow8xW+mzgT9xeckGNF1N5COhhiKZr6j9JLXNvu8V8Maa5ctH0vo3bJGnDWSvJrnV
-        FE4b734tUgfa1B60c1AkajbTQdGnBun6LGO+3wqsh15LO/ln5I/MKIC0r9AlYWi+9q3wGM
-        aZ7Jl1ap5xZU2jv6EbspUhMw1WE8n4k=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-121-qbKQAB3bNfevmMsjlkD83Q-1; Mon, 03 Jul 2023 10:43:17 -0400
-X-MC-Unique: qbKQAB3bNfevmMsjlkD83Q-1
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-c4cda9d3823so1212871276.1
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Jul 2023 07:43:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688395397; x=1690987397;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tzP/Plg9Kd3biRQs2SODGsYGbG5ASH0tovc9ug5MNhw=;
-        b=Atmv+aR6ZNh1si0eCxVgRA54B4uoMlzfPoQ79het6od7voy8fZpOLMNj/SDVrsvJg1
-         ERUdWHEqv8Mgfyv0ZY9UoRFRTRXAXhjGF6pPZHO7vvgTiK75PiiDmZ/sGNmsAI7b4Dal
-         4AUE4dQ4sVVoqPJGedGB5FPvve1cgXea+7HwfBQt47WO+nQU/GfT5ZYtWCZY6/VsNucg
-         jbKKE8AcQGdXHNtP5F1smZw/CO0/7mwLakYq+Gt+tV17RMRbmFv2mwb5rBoJ94ESfp6T
-         gE37YsVAJhoFgz8ViPqvtJup/h8MYF/zIH4Y0620XPdQZtcju2WYU6fQ9MK6kNuLpUFd
-         e8bw==
-X-Gm-Message-State: ABy/qLatDTwprhnEhHt7hc6THdWtNbvG0uvdNFkxgk6P13ZQx/nBFNpq
-        UnNmBzXyZdByE/B5CwLB2CSAlZLBTUAvv5WX0TNbpUs2U2s+LRXPV9xzcxE2mfZ3cTAnqkhLu9j
-        Zua3ZHF5TX96e4RhTUWBIfeHHNx/rLgkLvItkKA==
-X-Received: by 2002:a25:ad9f:0:b0:c1c:9285:64c2 with SMTP id z31-20020a25ad9f000000b00c1c928564c2mr9966293ybi.50.1688395397122;
-        Mon, 03 Jul 2023 07:43:17 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlGCQQpzfRWKboYAWmxpXD+LbZ09ETqoiyarcSt7iwOa5Mw6E+/3mX9L+rVpFYwf57ZUBogxHuQCd+q4fTcISvE=
-X-Received: by 2002:a25:ad9f:0:b0:c1c:9285:64c2 with SMTP id
- z31-20020a25ad9f000000b00c1c928564c2mr9966248ybi.50.1688395396315; Mon, 03
- Jul 2023 07:43:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230703142308.5772-1-andriy.shevchenko@linux.intel.com> <20230703142308.5772-3-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20230703142308.5772-3-andriy.shevchenko@linux.intel.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Mon, 3 Jul 2023 16:43:05 +0200
-Message-ID: <CAO-hwJ+HPLe3XQuGtbZT2wky4wMRpR2kVWj3-euCrrQRkpoVBg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] gpiolib: acpi: Don't use GPIO chip fwnode in acpi_gpiochip_find()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Benjamin Tissoires <bentiss@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S231297AbjGCOmw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2023 10:42:52 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D562010E7;
+        Mon,  3 Jul 2023 07:42:42 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 363B0j29023406;
+        Mon, 3 Jul 2023 14:42:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=qcppdkim1;
+ bh=koSVaN/m8jagg/fvKUF5HD38Lnhn6VOiATRB1qRoOyM=;
+ b=aBaF2pXiYBgRbymdjMiSzz6Xl/JloAfqPBsVKZwd90X/e8V70aJINx8DNMZYEGHtwbCb
+ MkwD5MrQwGyWbbGipUDMAxqqHlL2a03+rBwXsllJeMYZp99ZYsaUtW86NEzk+f7uHVVH
+ bKrHsExXqsIPPndNB6EhAeMlxGod/9hkhTZFshK+wvxcW/GZurzXXkPYfxX7vdR8Py0M
+ cL/utW0mSuYVZ0kOsjYDHeZ3O9YXFZxZob+flbqJ92O2Ctl2P3QXqM63HEOwiYRPXw0y
+ D0NdXHJfJEc2D0FZJe712raoGii4ezTZEaxHvF+P96oG+9B7ckLxGTSfi1OE98qlW7km lw== 
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rjb5dc9jk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Jul 2023 14:42:32 +0000
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+        by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 363EgUl3031920;
+        Mon, 3 Jul 2023 14:42:30 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 3rjd7k8get-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 03 Jul 2023 14:42:30 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 363EgRgP031491;
+        Mon, 3 Jul 2023 14:42:29 GMT
+Received: from hu-sgudaval-hyd.qualcomm.com (hu-rohiagar-hyd.qualcomm.com [10.213.106.138])
+        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 363EgTaF031748;
+        Mon, 03 Jul 2023 14:42:29 +0000
+Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3970568)
+        id EFA455025; Mon,  3 Jul 2023 20:12:28 +0530 (+0530)
+From:   Rohit Agarwal <quic_rohiagar@quicinc.com>
+To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        lee@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linus.walleij@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+        sboyd@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Rohit Agarwal <quic_rohiagar@quicinc.com>
+Subject: [PATCH 04/10] dt-bindings: pinctrl: qcom-pmic-gpio: Add pm7550ba support
+Date:   Mon,  3 Jul 2023 20:12:20 +0530
+Message-Id: <1688395346-3126-5-git-send-email-quic_rohiagar@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1688395346-3126-1-git-send-email-quic_rohiagar@quicinc.com>
+References: <1688395346-3126-1-git-send-email-quic_rohiagar@quicinc.com>
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: em8H7dHa_ZULdPwjzN4anNYrswcmO22b
+X-Proofpoint-GUID: em8H7dHa_ZULdPwjzN4anNYrswcmO22b
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-03_11,2023-06-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 mlxlogscore=736 spamscore=0
+ clxscore=1015 mlxscore=0 adultscore=0 phishscore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2307030132
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jul 3, 2023 at 4:29=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> GPIO library should rely only on the GPIO device's fwnode.
-> Hence, replace GPIO chip fwnode usage by respective handle
-> of the GPIO device.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Tested-by: Benjamin Tissoires <bentiss@kernel.org>
-> ---
->  drivers/gpio/gpiolib-acpi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index 97496c0f9133..fbda452fb4d6 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -128,7 +128,7 @@ static bool acpi_gpio_deferred_req_irqs_done;
->
->  static int acpi_gpiochip_find(struct gpio_chip *gc, void *data)
->  {
-> -       return ACPI_HANDLE_FWNODE(gc->fwnode) =3D=3D data;
-> +       return device_match_acpi_handle(&gc->gpiodev->dev, data);
+Add support for the pm7550ba GPIO support to the Qualcomm PMIC GPIO
+binding.
 
-Quick confirmation that using "device_match_acpi_handle" also works in
-v2 (was easy enough to test given that everything was already set up
-locally).
+Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
+---
+ Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Cheers,
-Benjamin
-
->  }
->
->  /**
-> --
-> 2.40.0.1.gaa8946217a0b
->
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+index eaadd5a..9470eb0 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+@@ -25,6 +25,7 @@ properties:
+           - qcom,pm6150l-gpio
+           - qcom,pm6350-gpio
+           - qcom,pm7250b-gpio
++          - qcom,pm7550ba-gpio
+           - qcom,pm7325-gpio
+           - qcom,pm8005-gpio
+           - qcom,pm8008-gpio
+@@ -171,6 +172,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - qcom,pm7550ba-gpio
+               - qcom,pm8226-gpio
+               - qcom,pm8350b-gpio
+               - qcom,pm8550ve-gpio
+@@ -411,6 +413,7 @@ $defs:
+                  - gpio1-gpio9 for pm6350
+                  - gpio1-gpio12 for pm7250b
+                  - gpio1-gpio10 for pm7325
++                 - gpio1-gpio8 for pm7550ba
+                  - gpio1-gpio4 for pm8005
+                  - gpio1-gpio2 for pm8008
+                  - gpio1-gpio6 for pm8018
+-- 
+2.7.4
 
