@@ -2,103 +2,109 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8598BEB64DD
-	for <linux-gpio@archiver.kernel.org>; Mon,  3 Jul 2023 14:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BA4EB64DC
+	for <linux-gpio@archiver.kernel.org>; Mon,  3 Jul 2023 14:42:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229454AbjGCOXO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 3 Jul 2023 10:23:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48176 "EHLO
+        id S231316AbjGCOmx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 3 Jul 2023 10:42:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230313AbjGCOXM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2023 10:23:12 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 668A0E5B;
-        Mon,  3 Jul 2023 07:23:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1688394191; x=1719930191;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=tQChtNbKGESPPW51x4K39nGYYp9RM7si+0oe9MCGHJo=;
-  b=E5FG1hNZ8kb9XJgqT6f4mVncKazYb4mk26aA62zlsnViptpCUi+gtkzM
-   sAf5RFQjwRTMxDSX9kupfBrLvXMRIGIR3rWxgrnYebC42+qvJYiQdYkBo
-   vWoLu1tJPQaEt4JWnNKiY2nB5wSUZ7Mi5QnFPZSgCZg+kfVZGqfiBH05n
-   uXqDKyOggx/2u4inFf52yXr2Ms3aX1Y1O7UL39qEwslx61Ik15nWDUQ0z
-   2ozX4c0anFFdhhW0JkxPh4O3V8maMQ5OSs+kvRZf2HWLtfkAW7uAQ11SK
-   Y4meI0S57cdBaIA/mxAXhNHBsNUl09KC4TxCBdgD2AQS0XKsA41tSWAvJ
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10760"; a="361752571"
-X-IronPort-AV: E=Sophos;i="6.01,178,1684825200"; 
-   d="scan'208";a="361752571"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2023 07:23:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10760"; a="808602022"
-X-IronPort-AV: E=Sophos;i="6.01,178,1684825200"; 
-   d="scan'208";a="808602022"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 03 Jul 2023 07:23:06 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id BFBB613C; Mon,  3 Jul 2023 17:23:09 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Benjamin Tissoires <bentiss@kernel.org>
-Subject: [PATCH v2 1/3] gpiolib: of: Don't use GPIO chip fwnode in of_gpiochip_*()
-Date:   Mon,  3 Jul 2023 17:23:06 +0300
-Message-Id: <20230703142308.5772-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
-In-Reply-To: <20230703142308.5772-1-andriy.shevchenko@linux.intel.com>
-References: <20230703142308.5772-1-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S231324AbjGCOmu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2023 10:42:50 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BA4B10D7;
+        Mon,  3 Jul 2023 07:42:41 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 363DGb7d014214;
+        Mon, 3 Jul 2023 14:42:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id; s=qcppdkim1;
+ bh=MZdnB0+YVKr0J+qNVmUklG4YkhW78DJg7w3EcyBWxy0=;
+ b=cdy1o0J/q8aAMFXrJwexGYZOSzrjaMm3F/3yZX6Yvwoa0CqRMrE2f1Bb+n8XtPYV10y6
+ Cxb3McQ9EB+t5yQCo/iGsvti5BM9yOdo3kH/ahwMSQ18WchLXS3aded5CdVNMbPMVN3C
+ FaMadGiQju2LoEETvfHTD1N7hMsGYEUBS///RB/Z2EtmDJTynPcEaGxN0aHUJLBRE02L
+ 5HD7T8dCCYtyewTnDUxJkzLGvJP0kLOhKnDn2yhV2ggWhnoDJT1WCVSOWQEgaskGYdxL
+ +cHXYrVO6vn3+5MaSHKNiTANaDCnGLU7PbtKe+CA7B7XGpaGN8Xwh7vku3LdjPtY6RqA hQ== 
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rjb5dc9je-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Jul 2023 14:42:31 +0000
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+        by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 363EgSDr031505;
+        Mon, 3 Jul 2023 14:42:28 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 3rjd7k8ge9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 03 Jul 2023 14:42:28 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 363EgRgL031491;
+        Mon, 3 Jul 2023 14:42:27 GMT
+Received: from hu-sgudaval-hyd.qualcomm.com (hu-rohiagar-hyd.qualcomm.com [10.213.106.138])
+        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 363EgRvp031478;
+        Mon, 03 Jul 2023 14:42:27 +0000
+Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3970568)
+        id F39BE5008; Mon,  3 Jul 2023 20:12:26 +0530 (+0530)
+From:   Rohit Agarwal <quic_rohiagar@quicinc.com>
+To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        lee@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linus.walleij@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+        sboyd@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Rohit Agarwal <quic_rohiagar@quicinc.com>
+Subject: [PATCH 00/10] Add Power Domains and Regulators in SDX75
+Date:   Mon,  3 Jul 2023 20:12:16 +0530
+Message-Id: <1688395346-3126-1-git-send-email-quic_rohiagar@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: EuYxm1tG7z7m0Ylh_Ta08J2TEPNZh-jB
+X-Proofpoint-GUID: EuYxm1tG7z7m0Ylh_Ta08J2TEPNZh-jB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-03_11,2023-06-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 mlxlogscore=683 spamscore=0
+ clxscore=1011 mlxscore=0 adultscore=0 phishscore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2307030132
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-GPIO library should rely only on the GPIO device's fwnode.
-Hence, replace GPIO chip fwnode usage by respective OF node
-of the GPIO device.
+Hello,
 
-JFYI, this is partial revert of 8afe82550240 ("gpiolib: of:
-Prepare of_gpiochip_add() / of_gpiochip_remove() for fwnode").
+This series adds driver and dt-bindings related changes
+in SDX75 to add power domains and regulators.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Benjamin Tissoires <bentiss@kernel.org>
----
- drivers/gpio/gpiolib-of.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks,
+Rohit.
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 1436cdb5fa26..5fde5a3f5118 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -1078,16 +1078,16 @@ int of_gpiochip_add(struct gpio_chip *chip)
- 	if (ret)
- 		return ret;
- 
--	fwnode_handle_get(chip->fwnode);
-+	of_node_get(np);
- 
- 	ret = of_gpiochip_scan_gpios(chip);
- 	if (ret)
--		fwnode_handle_put(chip->fwnode);
-+		of_node_put(np);
- 
- 	return ret;
- }
- 
- void of_gpiochip_remove(struct gpio_chip *chip)
- {
--	fwnode_handle_put(chip->fwnode);
-+	of_node_put(dev_of_node(&chip->gpiodev->dev));
- }
+Rohit Agarwal (10):
+  dt-bindings: regulator: Add PMX75 compatibles
+  dt-bindings: power: Add rpm power domains for SDX75
+  dt-bindings: mfd: Add compatible for pm7550ba
+  dt-bindings: pinctrl: qcom-pmic-gpio: Add pm7550ba support
+  dt-bindings: mfd: Add compatible for pmx75
+  dt-bindings: pinctrl: qcom-pmic-gpio: Add pmx75 support
+  soc: qcom: rpmhpd: Add SDX75 power domains
+  regulator: qcom-rpmh: Add support for SDX75
+  pinctrl: qcom-pmic-gpio: Add support for pm7550ba
+  pinctrl: qcom-pmic-gpio: Add support for pmx75
+
+ .../devicetree/bindings/mfd/qcom,spmi-pmic.yaml    |  2 ++
+ .../bindings/pinctrl/qcom,pmic-gpio.yaml           |  6 ++++
+ .../devicetree/bindings/power/qcom,rpmpd.yaml      |  1 +
+ .../bindings/regulator/qcom,rpmh-regulator.yaml    |  2 ++
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           |  2 ++
+ drivers/regulator/qcom-rpmh-regulator.c            | 38 ++++++++++++++++++++++
+ drivers/soc/qcom/rpmhpd.c                          | 16 +++++++++
+ include/dt-bindings/power/qcom-rpmpd.h             |  8 +++++
+ 8 files changed, 75 insertions(+)
+
 -- 
-2.40.0.1.gaa8946217a0b
+2.7.4
 
