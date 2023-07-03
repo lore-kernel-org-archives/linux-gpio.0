@@ -2,48 +2,48 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7974CEB64DC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C340DC00528
 	for <linux-gpio@archiver.kernel.org>; Mon,  3 Jul 2023 14:42:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231327AbjGCOm5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 3 Jul 2023 10:42:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57638 "EHLO
+        id S231336AbjGCOm6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 3 Jul 2023 10:42:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230357AbjGCOmu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2023 10:42:50 -0400
+        with ESMTP id S231298AbjGCOmw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2023 10:42:52 -0400
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 737E410C8;
-        Mon,  3 Jul 2023 07:42:42 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 363EU8oZ022523;
-        Mon, 3 Jul 2023 14:42:32 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EECCAE6A;
+        Mon,  3 Jul 2023 07:42:43 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 363ATNJI029141;
+        Mon, 3 Jul 2023 14:42:33 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=qcppdkim1;
- bh=HhTnUeC8g5S/fdoeDSGwt6wIIGc8WmwR+UDBAZDVPnU=;
- b=Xfvf6bJAqY7NaJa1zJZ+FNkPvWqD/vt8GE11ncfj8zsmuG3fJrVIURzwotHwV7/7XmeS
- WdqiTzncl269fY7UEeqR4AFxtVac5eH4KeDxXIj5GrdIsJIT8Az2hKjKYSPCQeo0Lzb8
- PU39Vce0niEtloNQTk4cQPKmh1LqRSXu/hMFdjaR1QqdFhdf21x/D4a/4ifnmUIzIrYu
- aZeVBTz8d1jB836FQOm+NQPjfB+jpefWqS/57uqI3pk/jhjAxUOk9zNc0ybWAwjtF2iG
- EvKG1aZRrmivZiX1YCJktu3vFmRudhWrUhNgdIFtGLzPYZB9CdtV1Z8ADkH1kaxSoSfN Bw== 
+ bh=CWK8UKx4XkxCunrxTWSxk3LjOWyhGUVt9Xx27Fhdonk=;
+ b=b/YY3n6ROZG1HEhwZwrjTLBpsPhmEcS7qaWzbM3ULVg8dZajNE6TVYTrVeiZs+adjDwp
+ YtIm92YY7wvyk2cj8TJ6G34cK59k9TM02xZHdR249oq12zAvpMJnVRlx1tVHV82whPSa
+ 2ZZgonGp31RrHQQNjm+r8NfiCvQJuBqt5RCqHq/0wZk9RntFVPBiBHmi9iatLVz/fF5G
+ QOvGlYIcw7/l1029sP8oJ3OJSZ9MjcLAVXSfalG+0W98mdD4x4D+bN38pe4bSD0qPKNP
+ U4A2jn322BepJPR+Ay3+b/EcXvFFIXIFsp3QeasrkLaazgYECZV1s0nI3Ilpa3sVJ07s LQ== 
 Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rkwepgddf-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rjb5dc9jn-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Jul 2023 14:42:32 +0000
+        Mon, 03 Jul 2023 14:42:33 +0000
 Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-        by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 363EgSrP031571;
-        Mon, 3 Jul 2023 14:42:29 GMT
+        by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 363EgUVf031931;
+        Mon, 3 Jul 2023 14:42:30 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 3rjd7k8geq-1
+        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 3rjd7k8gew-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 03 Jul 2023 14:42:29 +0000
+        Mon, 03 Jul 2023 14:42:30 +0000
 Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 363EgRgN031491;
-        Mon, 3 Jul 2023 14:42:29 GMT
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 363EgRgR031491;
+        Mon, 3 Jul 2023 14:42:30 GMT
 Received: from hu-sgudaval-hyd.qualcomm.com (hu-rohiagar-hyd.qualcomm.com [10.213.106.138])
-        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 363EgTaD031748;
-        Mon, 03 Jul 2023 14:42:29 +0000
+        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 363EgTaH031748;
+        Mon, 03 Jul 2023 14:42:30 +0000
 Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3970568)
-        id 719E35008; Mon,  3 Jul 2023 20:12:28 +0530 (+0530)
+        id 7A8045008; Mon,  3 Jul 2023 20:12:29 +0530 (+0530)
 From:   Rohit Agarwal <quic_rohiagar@quicinc.com>
 To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
         lee@kernel.org, robh+dt@kernel.org,
@@ -53,9 +53,9 @@ To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Rohit Agarwal <quic_rohiagar@quicinc.com>
-Subject: [PATCH 03/10] dt-bindings: mfd: Add compatible for pm7550ba
-Date:   Mon,  3 Jul 2023 20:12:19 +0530
-Message-Id: <1688395346-3126-4-git-send-email-quic_rohiagar@quicinc.com>
+Subject: [PATCH 05/10] dt-bindings: mfd: Add compatible for pmx75
+Date:   Mon,  3 Jul 2023 20:12:21 +0530
+Message-Id: <1688395346-3126-6-git-send-email-quic_rohiagar@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1688395346-3126-1-git-send-email-quic_rohiagar@quicinc.com>
 References: <1688395346-3126-1-git-send-email-quic_rohiagar@quicinc.com>
@@ -63,21 +63,21 @@ X-QCInternal: smtphost
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: M0niQZ8Zp7jdFdzXC5dXWr4UdtgKBmlN
-X-Proofpoint-GUID: M0niQZ8Zp7jdFdzXC5dXWr4UdtgKBmlN
+X-Proofpoint-ORIG-GUID: jvJuzRzJQPP3b_7NKKELEFathFzwwCTP
+X-Proofpoint-GUID: jvJuzRzJQPP3b_7NKKELEFathFzwwCTP
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-07-03_11,2023-06-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 impostorscore=0 clxscore=1015 mlxlogscore=769
- spamscore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 mlxlogscore=832 spamscore=0
+ clxscore=1015 mlxscore=0 adultscore=0 phishscore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2305260000 definitions=main-2307030132
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add compatible for pmic pm7550ba used in Snapdragon series.
+Add compatible for pmic pmx75 used in Snapdragon series.
 
 Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
 ---
@@ -85,17 +85,17 @@ Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
-index 36de335..3abb878 100644
+index 3abb878..a185a44 100644
 --- a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
 +++ b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
-@@ -41,6 +41,7 @@ properties:
-           - qcom,pm660
-           - qcom,pm660l
-           - qcom,pm7250b
-+          - qcom,pm7550ba
-           - qcom,pm7325
-           - qcom,pm8004
-           - qcom,pm8005
+@@ -88,6 +88,7 @@ properties:
+           - qcom,pms405
+           - qcom,pmx55
+           - qcom,pmx65
++          - qcom,pmx75
+           - qcom,smb2351
+       - const: qcom,spmi-pmic
+ 
 -- 
 2.7.4
 
