@@ -2,107 +2,150 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC5BC001DD
-	for <linux-gpio@archiver.kernel.org>; Wed,  5 Jul 2023 09:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD24C001B0
+	for <linux-gpio@archiver.kernel.org>; Wed,  5 Jul 2023 10:43:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231521AbjGEJpa convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 5 Jul 2023 05:45:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56796 "EHLO
+        id S232016AbjGEKnS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 5 Jul 2023 06:43:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229753AbjGEJpY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Jul 2023 05:45:24 -0400
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB6C71710;
-        Wed,  5 Jul 2023 02:45:23 -0700 (PDT)
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-bfe6ea01ff5so7208366276.3;
-        Wed, 05 Jul 2023 02:45:23 -0700 (PDT)
+        with ESMTP id S231545AbjGEKnS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Jul 2023 06:43:18 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE5C310CF
+        for <linux-gpio@vger.kernel.org>; Wed,  5 Jul 2023 03:43:14 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4f86e6e4038so754512e87.0
+        for <linux-gpio@vger.kernel.org>; Wed, 05 Jul 2023 03:43:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688553793; x=1691145793;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=12A9qcUVJY2HjTp99aSPBCbjL3RJ6iwTw28gJjZZd5I=;
+        b=maLNQ7kVki8KKtj9rXkDPl0YLHRDT2SzUZQxgQ04P6nRQTNf9aMfk59zaRwYRBZCG9
+         ni8rtwdFGDibilatQ4az5XJvPypiqCCCXGx8fRtqZinJ+3Oa6Gb8/hNwGkpCRLDTOXcO
+         Awbwkh5zMygJoh5wX+Y/FveBTHQBgSaBemz88mlaSWFhb5VBJZ0yzvfWKeVDF6a6YAgL
+         LNEx40Pwr3Ichr2pVfUOm13ReDYKnzGUP+O1zZbM756DqeEu+8FZYHDC/kH1jWdeiRqo
+         hq9Bkq+25oLHiEaKiKk9X6wn6nDNYYV7b3NeMbajI/a6hFO6jcM/v/Nw2aD/zHGTuBYz
+         Ga2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688550323; x=1691142323;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QcR5Z7bqdCoMamCzC507RnWuaeZOVS+4BY7fdjteDuw=;
-        b=YueQH3ygL/3FlI/0jL3KQX5+oHT2QjyRzqAyJ0SAUZ0gzfAqB1s+AStGBOjLUUZ5qn
-         +9oiZ9fH9dkya9GSh1TEowARdJVLjWyr9Ypfmxs7Gm9Cbu3w43ojX646thyV4uxdkI5n
-         nZ8FF7gzfY1uYO0JrWtPlbkjx6lVH4K6n/6XWCldZM5ALiXOS7J5OSbyDpQJh4HM3GB4
-         ehWPyNr9OSpUVykU2vQ21+aESAXF4zW9hxrUrIdHnXqUihV6I0DQHmG1QhhL3QOylTHQ
-         H/bxXzI66jgkn5M/8L0ze+QHFUH9CFRPWkQkhCdEQpmfHKWMp7AUxxQ9OHw3bEHXiouo
-         6suQ==
-X-Gm-Message-State: ABy/qLYL5MU3kxCyONhtcBkLI5f8QP82xd1JnS0uSSU8C2U/RkuohSKQ
-        YN0GK89ZOw3LUj7QR8PCY3kkK/mXhASM2A==
-X-Google-Smtp-Source: APBJJlFKqCRgYSBH4qLJTRwHBlKGAQM4TrOtFCWFLecDqYiz9RHnvrs7+C22gKBVbyX+OvfI7Jdx9A==
-X-Received: by 2002:a25:14d7:0:b0:bd6:8725:2258 with SMTP id 206-20020a2514d7000000b00bd687252258mr12775230ybu.60.1688550322805;
-        Wed, 05 Jul 2023 02:45:22 -0700 (PDT)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id ck8-20020a05690218c800b00c389676f3a2sm3142276ybb.40.2023.07.05.02.45.22
+        d=1e100.net; s=20221208; t=1688553793; x=1691145793;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=12A9qcUVJY2HjTp99aSPBCbjL3RJ6iwTw28gJjZZd5I=;
+        b=jUxHnwFCNOvNyZ83k5yODw++idZpiaCADW6eYSo/TaBzqhDIYOrJ5P6XjBe/wLgNeb
+         yVq/91JojvTyLxYVLvgY5DcqQ+IcqMsm/ob5U4qPT/JpuJzQFCvi+PhqdlOyFOWtXssA
+         J8WeRpVWljUyBPVQ1/fW9ffzIiR+9EgT3Y7J5cLMRnxF3Z0ukeMXACCp44jMLtdb/wVy
+         Z7Ksuf/z4uLJWcHiocaX7fCyzRy6MnDRrnZnXMqN9GpCkem52Sy2tXPJBNjr/qBUHmcq
+         F5WkuAUcn1DgxFmLSP3wOF3DwO0gbPu3CIJzxKc6ffz+8GPv+Mhcma+seZMAUw5Dm0x7
+         c7Ag==
+X-Gm-Message-State: ABy/qLaE1wZYp89nkTcHDXv/y1n3D/gdKPKpIDuD7cqmTf3mwuqQrcO1
+        oRrIBjSWl1LdYDqK1H5rVWeLbA==
+X-Google-Smtp-Source: APBJJlFl4J5Bz/jVEqr/boTDXtZr5d6EOFdZrFDRQJguSRxRTxcwf03MCbEG98IUqQVthdUKAZjqGg==
+X-Received: by 2002:a05:6512:e86:b0:4fb:7624:85a5 with SMTP id bi6-20020a0565120e8600b004fb762485a5mr799188lfb.0.1688553792793;
+        Wed, 05 Jul 2023 03:43:12 -0700 (PDT)
+Received: from [192.168.1.101] (abyj26.neoplus.adsl.tpnet.pl. [83.9.29.26])
+        by smtp.gmail.com with ESMTPSA id x8-20020ac24888000000b004fba4e27abesm2988053lfc.241.2023.07.05.03.43.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jul 2023 02:45:22 -0700 (PDT)
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-bff27026cb0so7204643276.1;
-        Wed, 05 Jul 2023 02:45:22 -0700 (PDT)
-X-Received: by 2002:a25:344f:0:b0:c64:5116:795 with SMTP id
- b76-20020a25344f000000b00c6451160795mr405835yba.65.1688550322104; Wed, 05 Jul
- 2023 02:45:22 -0700 (PDT)
+        Wed, 05 Jul 2023 03:43:12 -0700 (PDT)
+Message-ID: <553bd028-aaf3-b128-ae4c-7f938c23e889@linaro.org>
+Date:   Wed, 5 Jul 2023 12:43:10 +0200
 MIME-Version: 1.0
-References: <607bd6ab4905b0b1b119a06ef953fa1184505777.1688396717.git.geert+renesas@glider.be>
- <TYWPR01MB87755B1EEDEA676237009CF3C22EA@TYWPR01MB8775.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYWPR01MB87755B1EEDEA676237009CF3C22EA@TYWPR01MB8775.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 5 Jul 2023 11:45:11 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWmgvzYeHfiK6ZJ8Z2iYe0HOG7udPuAGQ6VCmEk9qJK8w@mail.gmail.com>
-Message-ID: <CAMuHMdWmgvzYeHfiK6ZJ8Z2iYe0HOG7udPuAGQ6VCmEk9qJK8w@mail.gmail.com>
-Subject: Re: [PATCH/RFT] pinctrl: renesas: rzv2m: Handle non-unique subnode names
-To:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 02/10] dt-bindings: power: Add rpm power domains for SDX75
+Content-Language: en-US
+To:     Rohit Agarwal <quic_rohiagar@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, lee@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linus.walleij@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+        sboyd@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <1688395346-3126-1-git-send-email-quic_rohiagar@quicinc.com>
+ <1688395346-3126-3-git-send-email-quic_rohiagar@quicinc.com>
+ <0d468d08-6410-e424-b4f3-5245cdb0334a@linaro.org>
+ <85456057-c4ef-68a6-4fc5-c9fd03b01b71@quicinc.com>
+ <06506ed7-f861-0bca-8b87-e2da6a6bc789@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <06506ed7-f861-0bca-8b87-e2da6a6bc789@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jul 4, 2023 at 5:48 PM Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
-> > From: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Subject: [PATCH/RFT] pinctrl: renesas: rzv2m: Handle non-unique subnode
-> > names
-> >
-> > The eMMC and SDHI pin control configuration nodes in DT have subnodes
-> > with the same names ("data" and "ctrl").  As the RZ/V2M pin control
-> > driver considers only the names of the subnodes, this leads to
-> > conflicts:
-> >
-> >     pinctrl-rzv2m b6250000.pinctrl: pin P8_2 already requested by
-> > 85000000.mmc; cannot claim for 85020000.mmc
-> >     pinctrl-rzv2m b6250000.pinctrl: pin-130 (85020000.mmc) status -22
-> >     renesas_sdhi_internal_dmac 85020000.mmc: Error applying setting, reverse
-> > things back
-> >
-> > Fix this by constructing unique names from the node names of both the
-> > pin control configuration node and its child node, where appropriate.
-> >
-> > Reported by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Fixes: 92a9b825257614af ("pinctrl: renesas: Add RZ/V2M pin and gpio
-> > controller driver")
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Tested-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+On 5.07.2023 10:54, Rohit Agarwal wrote:
+> 
+> On 7/4/2023 11:47 AM, Rohit Agarwal wrote:
+>>
+>> On 7/3/2023 8:29 PM, Konrad Dybcio wrote:
+>>> On 3.07.2023 16:42, Rohit Agarwal wrote:
+>>>> Add RPM power domain bindings for the SDX75 SoC.
+>>>>
+>>>> Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
+>>>> ---
+>>>>   Documentation/devicetree/bindings/power/qcom,rpmpd.yaml | 1 +
+>>>>   include/dt-bindings/power/qcom-rpmpd.h                  | 8 ++++++++
+>>>>   2 files changed, 9 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml b/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml
+>>>> index afad313..58e1be8 100644
+>>>> --- a/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml
+>>>> +++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml
+>>>> @@ -40,6 +40,7 @@ properties:
+>>>>         - qcom,sdm845-rpmhpd
+>>>>         - qcom,sdx55-rpmhpd
+>>>>         - qcom,sdx65-rpmhpd
+>>>> +      - qcom,sdx75-rpmhpd
+>>>>         - qcom,sm6115-rpmpd
+>>>>         - qcom,sm6125-rpmpd
+>>>>         - qcom,sm6350-rpmhpd
+>>>> diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
+>>>> index 1bf8e87..8092d0d 100644
+>>>> --- a/include/dt-bindings/power/qcom-rpmpd.h
+>>>> +++ b/include/dt-bindings/power/qcom-rpmpd.h
+>>>> @@ -57,6 +57,14 @@
+>>>>   #define SDX65_CX_AO    4
+>>>>   #define SDX65_MXC    5
+>>>>   +/* SDX75 Power Domain Indexes */
+>>>> +#define SDX75_CX    0
+>>>> +#define SDX75_CX_AO    1
+>>>> +#define SDX75_MSS    2
+>>>> +#define SDX75_MX    3
+>>>> +#define SDX75_MX_AO    4
+>>>> +#define SDX75_MXC    5
+>>> Please instead introduce a set of defines without the SoC prefix
+>>> (i.e. CX, CX_AO, MX etc.). We've been putting this off for too long
+>>> and you're the first unlucky guy that submitted new RPMhPD support after
+>>> we've concluded it'd be the way to go! :D Sadly, we can't replace the
+>>> existing ones retroactively..
+>> Surely No issues. Will update it.
+> 
+> I have a doubt here. Cant we completely omit the #defines here and directly index this as 0,1,...
+> because if the intention of this #defines is to understand the name of the pd then we can get
+> it from the .name attribute in rpmhpd as well, right?
+> 
+> The problems with a common set of #define would be, lets say if we define CX_AO as 1 and some platform
+> doesn't have CX_AO then wouldnt it leave a null entry in the driver entry of that platform?
+Yes.
 
-Thanks, will queue as a fix in renesas-pinctrl-for-v6.5.
+We already do this in the rpmh clock driver, as:
 
-Gr{oetje,eeting}s,
+1. there are domains that all chips share (like CX etc.)
+2. wasting a couple of bytes lets us massively save on convolution
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Konrad
+> 
+> Thanks,
+> Rohit.
+> 
+>>
+>> Thanks,
+>> Rohit.
+>>> Konrad
+>>>> +
+>>>>   /* SM6350 Power Domain Indexes */
+>>>>   #define SM6350_CX    0
+>>>>   #define SM6350_GFX    1
