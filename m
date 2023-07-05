@@ -2,124 +2,131 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5702C001B0
-	for <linux-gpio@archiver.kernel.org>; Wed,  5 Jul 2023 19:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96219EB64DA
+	for <linux-gpio@archiver.kernel.org>; Wed,  5 Jul 2023 19:50:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233719AbjGETHS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 5 Jul 2023 15:07:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43606 "EHLO
+        id S233637AbjGETuP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 5 Jul 2023 15:50:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233721AbjGETGS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Jul 2023 15:06:18 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06379273F
-        for <linux-gpio@vger.kernel.org>; Wed,  5 Jul 2023 12:04:24 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-51e00695e21so15191a12.1
-        for <linux-gpio@vger.kernel.org>; Wed, 05 Jul 2023 12:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688583859; x=1691175859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dlk6SrTMjIXxIPbw9fNdLHRvDWOQ6YKITV0aoNaBjc4=;
-        b=XYZNEMk83QxCPePjhwf6tfGfc1Q+Xkje1KPfa/CKqbGDlr9oSpVOsud+H+N135zb0j
-         l7RbAb+5TcGlTpzSiou/1KzCDCjs0tHWuzgsHXjAwY8rXuKJ2ZAvsqCCnhkzMfmHXB57
-         LC/fjK16TrOlZycqtDtsvLzGVxqTT/H1v7IbyjY9Ob6jNabhqrk+93dQUBaPNvm4qYKU
-         ibyaB2yanm4JKpD4ezp4gi3wa3rusrVTUL1u0kBqVwODFObRyyPenA8aFTp6jXPrFw3g
-         cdYOE9VTHwsvsmK312raqpAURPpqsvRWOdytZs4cmkUSNIgb3bhj1HqsXooBi2ZAA508
-         m1NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688583859; x=1691175859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dlk6SrTMjIXxIPbw9fNdLHRvDWOQ6YKITV0aoNaBjc4=;
-        b=KTtpezX5IRcFd+yiFRMULXIguMz/X9kCh5pX/bnRjzdKdyksFqN90dVpRm1E1RYU9x
-         WTN6LrmE8g9pmuuRUt2NGO73K3cM/fwevelBq7o4WZAI/bt/EgWyf+Ei/m/nRvPajWK4
-         npztMcoytTzlLgN32EY6GW77wmTRUjjspIkAReHUycmN4Kl3RMNgS5B8p0PflLg+SiwR
-         I/qcKevvE9nAckwK7YZDGL/0OHunMJgt9M7S05TCi7OJdjsk83E1Bz4e1VP6UG8/1NlW
-         SpN6HmUpCorRSetPxPO8YqEebtzV4MEM1UDtRPV79EOGQygUmlC16EZRCfmu72PzvGWx
-         CvQA==
-X-Gm-Message-State: ABy/qLbGWzoVPP4aofb5bQqwe601uTfdIJMuO9tp9fnUro68h5KsrVWk
-        znXhXEdZV6VXEhs94CNzraES+NRH4/67cVViXlk=
-X-Google-Smtp-Source: APBJJlH9hww3qfT9A5qO2+YHaxCkFDY6PqoU/anTr+1Ux0HQiV0wNHbefPdtv+rCC7qGgiXFosnvUupFKeFulWo01BM=
-X-Received: by 2002:aa7:cb52:0:b0:51b:eb5f:baf with SMTP id
- w18-20020aa7cb52000000b0051beb5f0bafmr34341edt.18.1688583859217; Wed, 05 Jul
- 2023 12:04:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230705153713.2511647-1-shenwei.wang@nxp.com> <CAHp75Vf+RovRT2rYJDnizeRUwwKE_Twfd+tF5pY3XEc_xOkXYg@mail.gmail.com>
-In-Reply-To: <CAHp75Vf+RovRT2rYJDnizeRUwwKE_Twfd+tF5pY3XEc_xOkXYg@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 5 Jul 2023 22:03:43 +0300
-Message-ID: <CAHp75VenYdKJv5=+gCuwPtBM0NEDJiHiyOd-1fDXZPuuXqyipw@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: mxc: add runtime pm support
-To:     Shenwei Wang <shenwei.wang@nxp.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
-        imx@lists.linux.dev, linux-imx@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S234101AbjGETuN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Jul 2023 15:50:13 -0400
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 551B9198B;
+        Wed,  5 Jul 2023 12:50:12 -0700 (PDT)
+Received: from pps.filterd (m0134420.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 365Grviv029556;
+        Wed, 5 Jul 2023 19:49:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=from : to : subject :
+ date : message-id : in-reply-to : references; s=pps0720;
+ bh=RFGJbbJ9Z1KBrXHQw/iOroFLKc8zoaTVse4jWTB2+kc=;
+ b=XvNupaB0d8Z5cCP0+gJr+sX5SFK1y/aYh2lH+7wvGZ4tE1iNfhvXN4Boj92Gc2/4gV+j
+ Rjl2l7YU0mY5pFLt3OimBxPeXmu8FXVOBi98fnTV4OTtX6gi1fqU7Ic1s6Gk+CUPkNz6
+ pw+IiiiAsFieaokKFddxYffxQuBzQbW2ORUOd0eUwpzd3kQEc2YYpmhsMFMDrfdhYNfZ
+ XK5gw6urSHuRCqhCz0EQnb7yV3P888niebqzDiYb6rb9dWNG8SdY7fkBuP+Dupal4sVg
+ 53wZCGF0sQqnMk8D7EDfeTv5AKhCFfS3MW7RdfXfKzxHdhb1m+BMPFCp96bkmgxIwXPa sA== 
+Received: from p1lg14879.it.hpe.com (p1lg14879.it.hpe.com [16.230.97.200])
+        by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 3rn9p8tggt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 Jul 2023 19:49:46 +0000
+Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by p1lg14879.it.hpe.com (Postfix) with ESMTPS id 682BD14797;
+        Wed,  5 Jul 2023 19:49:45 +0000 (UTC)
+Received: from hpe.com (unknown [16.231.227.36])
+        by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTP id C6313808DBD;
+        Wed,  5 Jul 2023 19:49:44 +0000 (UTC)
+From:   nick.hawkins@hpe.com
+To:     verdun@hpe.com, nick.hawkins@hpe.com, linus.walleij@linaro.org,
+        brgl@bgdev.pl, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, jdelvare@suse.com,
+        linux@roeck-us.net, andy.shevchenko@gmail.com,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
+Subject: [PATCH v5 3/5] dt-bindings: hwmon: hpe,gxp-fan-ctrl: remove fn2 and pl registers
+Date:   Wed,  5 Jul 2023 14:45:42 -0500
+Message-Id: <20230705194544.100370-4-nick.hawkins@hpe.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230705194544.100370-1-nick.hawkins@hpe.com>
+References: <20230705194544.100370-1-nick.hawkins@hpe.com>
+X-Proofpoint-GUID: hcceWkP8mfGTfBouyy6m2u-sqasAyNFi
+X-Proofpoint-ORIG-GUID: hcceWkP8mfGTfBouyy6m2u-sqasAyNFi
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-05_11,2023-07-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 impostorscore=0 priorityscore=1501 phishscore=0 clxscore=1015
+ mlxscore=0 suspectscore=0 malwarescore=0 spamscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2307050180
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Jul 5, 2023 at 10:01=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Wed, Jul 5, 2023 at 6:37=E2=80=AFPM Shenwei Wang <shenwei.wang@nxp.com=
-> wrote:
-> >
-> > Adds runtime PM support and allow the GPIO controller to enter
+From: Nick Hawkins <nick.hawkins@hpe.com>
 
-Add
+Reduce the hpe,gxp-fan-ctrl register references from 3 to 1. The
+function2 (fn2) and programmable logic (pl) references are removed.
+The purpose of removal being their functionality will be consumed by a
+new GPIO driver.
 
-> > into runtime suspend automatically when not in use to save power.
-> > However, it will automatically resume and enable clocks when a
-> > GPIO or IRQ is requested.
-> >
-> > While putting the GPIO module itself into power saving mode may not
-> > have an obvious impact on current dissipation, the function is necessar=
-y
-> > because the GPIO module disables its clock when idle. This enables the
-> > system an opportunity to power off the parent subsystem, and this conse=
-rves
-> > more power. The typical i.MX8 SoC features up to 8 GPIO controllers, bu=
-t
-> > most of the controllers often remain unused.
+Signed-off-by: Nick Hawkins <nick.hawkins@hpe.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-...
+---
+v5:
+ *No change
+v4:
+ *No change, added reviewed by
+v3:
+ *Modify the subject.
+ *Remove mention of fan driver receiving data from GPIO as it is no
+  longer applicable
+v2:
+ *Added more detailed subject and patch description
+---
+ .../bindings/hwmon/hpe,gxp-fan-ctrl.yaml         | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-> > +       pm_runtime_set_active(&pdev->dev);
-> > +       pm_runtime_enable(&pdev->dev);
-> > +       err =3D pm_runtime_resume_and_get(&pdev->dev);
-> > +       if (err < 0)
-> > +               goto out_pm_dis;
->
-> So, after this if an error happens, you will have PM left enabled and
-> the next probe won't work as expected, right?
+diff --git a/Documentation/devicetree/bindings/hwmon/hpe,gxp-fan-ctrl.yaml b/Documentation/devicetree/bindings/hwmon/hpe,gxp-fan-ctrl.yaml
+index 4a52aac6be72..963aa640dc05 100644
+--- a/Documentation/devicetree/bindings/hwmon/hpe,gxp-fan-ctrl.yaml
++++ b/Documentation/devicetree/bindings/hwmon/hpe,gxp-fan-ctrl.yaml
+@@ -18,21 +18,12 @@ properties:
+     const: hpe,gxp-fan-ctrl
+ 
+   reg:
+-    items:
+-      - description: Fan controller PWM
+-      - description: Programmable logic
+-      - description: Function 2
+-
+-  reg-names:
+-    items:
+-      - const: base
+-      - const: pl
+-      - const: fn2
++    description: Fan controller PWM
++    maxItems: 1
+ 
+ required:
+   - compatible
+   - reg
+-  - reg-names
+ 
+ additionalProperties: false
+ 
+@@ -40,6 +31,5 @@ examples:
+   - |
+     fan-controller@1000c00 {
+       compatible = "hpe,gxp-fan-ctrl";
+-      reg = <0x1000c00 0x200>, <0xd1000000 0xff>, <0x80200000 0x100000>;
+-      reg-names = "base", "pl", "fn2";
++      reg = <0x1000c00 0x200>;
+     };
+-- 
+2.17.1
 
-Just noticed that this patch completely screwed up the error handling
-WRT clock and PM.
-
-...
-
-> >         platform_set_drvdata(pdev, port);
-> > +       pm_runtime_put_autosuspend(&pdev->dev);
-> >
-> >         return 0;
->
-> ...something here is missing?
->
-> > +out_pm_dis:
-> > +       pm_runtime_disable(&pdev->dev);
-> > +       clk_disable_unprepare(port->clk);
-
-This is definitely in the wrong position to begin with.
-
-> >  out_irqdomain_remove:
-> >         irq_domain_remove(port->domain);
-> >  out_bgio:
-
---=20
-With Best Regards,
-Andy Shevchenko
