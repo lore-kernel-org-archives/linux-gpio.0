@@ -2,182 +2,81 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BCFEB64DA
-	for <linux-gpio@archiver.kernel.org>; Fri,  7 Jul 2023 08:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5370BEB64DA
+	for <linux-gpio@archiver.kernel.org>; Fri,  7 Jul 2023 13:50:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232849AbjGGIU4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 7 Jul 2023 04:20:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52488 "EHLO
+        id S232532AbjGGNuS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 7 Jul 2023 09:50:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232865AbjGGIUy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Jul 2023 04:20:54 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75F5B1FEC
-        for <linux-gpio@vger.kernel.org>; Fri,  7 Jul 2023 01:20:51 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3fbdfda88f4so16626495e9.1
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Jul 2023 01:20:51 -0700 (PDT)
+        with ESMTP id S230107AbjGGNuS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Jul 2023 09:50:18 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55FEC102
+        for <linux-gpio@vger.kernel.org>; Fri,  7 Jul 2023 06:50:17 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-577412111f0so24885397b3.0
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Jul 2023 06:50:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688718049; x=1691310049;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FOphSGoCqT9615GltEcFI+ATbigEMUQ3m4Ic264wJ18=;
-        b=Gew4k+V0z9BN5NjFkuzGK1x7pdLIB2nyR2uEd2h6l6ii86d6qE9DzAQnbJneLvL1C+
-         w0fX7+Dy1N47pfNcz0nl80hin+lhpP1KqURqs74dBq/4Wp8B9bA8Qwsw9qKD3pZ5yBqZ
-         wdzadJQNafUD6BRe41telXv73hytM1ZezSK/NHcUYZwCSG7H17rbmiyF0EDfSxj1gVox
-         sSbUcdoodLNCa+TmahFWvvh5XAIRhL4W2hh4+A1F5A5DC78ff2x9vk4/oRonP9HV/597
-         JTiQwr58yPClItu1g2C9o9+DyCNJ8tsEgiVGkaqX0aj3YImx7V1W0Q3cwEQ+rSz0meI8
-         nGXg==
+        d=linaro.org; s=google; t=1688737816; x=1691329816;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UM7C61X6juuUCk/Ywr8w7y2XGaloi1pllSZVLBWH7jg=;
+        b=qQ7IZOns6i5qXWdyFkLl2wKz+JIRsRx6nFQYq6Z/Y9MCdeqfZT/mEw0Tc/Je57xJRN
+         px0LBiHIbsQI7UpsVBvDN7Vu0SwnzB33StXjro0B27sboHojIPHoDoWVRq0ymCxHipfK
+         HMIiblkzCwbWdndM9eMieoBdKvS8AijUexdvjX/ebEDIT1G3WqPdiMHd1wvLuCyWnfGd
+         CfAvpxoejRdiBpI8NxbXPm9DJ+YEaGapzfy6OIDNkILFaKnwXjRa5fb5ZjWuP8Vxl85T
+         chDp4qRizPcvKa1zfkNF2NiXxKW8PGxy5Khsr+076Hx6dwmQt/UGOS50JGcJEiUNgu/3
+         qkSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688718049; x=1691310049;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1688737816; x=1691329816;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FOphSGoCqT9615GltEcFI+ATbigEMUQ3m4Ic264wJ18=;
-        b=jvBWNCQZbTpj4TSVTZrJZk4yInV9H9rYCGPVQJDlV69gxo9EEMMJ74f7u+K7J/z8l/
-         POosrW/no8XbeXEQE62R6ouNMchWaLvOZZDMfm7VUIoUX/9fV00Ij9KeUc70KqOr5/Um
-         pvtsmGgFKobgTKE+diOffT59skOfo6ZcvDP3MPqP0gJz4wffmqeNzdU3QKzfrJuUIY8F
-         cT0IFI9KjR3eH44s+KFeRTzJ6olz7lGeDlO+TZfWnF0jDx4CpHioLBghQIYQ5gEUYJYe
-         kJnNWxfu8cdo0auWUysNhv6/37vBxxNz5fM0sTL2ekVriHdnPu/F1qHghLIZTHBAL8tB
-         2XKA==
-X-Gm-Message-State: ABy/qLYWWH2KkerVHyW3z81ewsdeOrgLEJx+r8CfrQ/FvEHUIMpdnymO
-        J0g6m4xz/cObep8IOwn0NB+5hA==
-X-Google-Smtp-Source: APBJJlEDsfl+FZf6AgDHLFZ3DivOlzLtLq/U56dHHA8AvdbrFyq4W5RG2DSt1dLEruLN9tNeZw1DXw==
-X-Received: by 2002:a1c:7410:0:b0:3fa:984d:7e9f with SMTP id p16-20020a1c7410000000b003fa984d7e9fmr3425895wmc.6.1688718049549;
-        Fri, 07 Jul 2023 01:20:49 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id a5-20020adffb85000000b00313e4d02be8sm3824395wrr.55.2023.07.07.01.20.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 01:20:49 -0700 (PDT)
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Fri, 07 Jul 2023 10:20:44 +0200
-Subject: [PATCH v2 1/2] dt-bindings: pinctrl: amlogic,meson-pinctrl: allow
- gpio-line-names
+        bh=UM7C61X6juuUCk/Ywr8w7y2XGaloi1pllSZVLBWH7jg=;
+        b=Jg2QR7+FEMmAw4TrlGnJbgBEf8WiEqs5LorP4BSMMHT+bFcf3ODgFsbehUXCLpaXvC
+         06LgAOBHH0xHVBvPzPe7CnKMAEaxY+Pd6pZK61VbRcwQ7GfcwKMTTkld64YRccjdjPf8
+         grIcnXKaElZAmppVWbgQz52YZpM5jp66wjFZZDcimaLU0KfQAtxXke52+86DJyNmSxbz
+         JghCf/bIi1IbsR1RrVzaslubH1wYpgCMC4vv6IGOmX+VwNkTOJdEgoGsC/GcvjW6ACCB
+         cNd9PlcHVjQYTnQDIrebPfCVwzAy4ZwjfUwgsHqedzY+uxDJ4k+lAxjj+2Ti0Hh5dzAG
+         Ps/w==
+X-Gm-Message-State: ABy/qLZtrxWSxj/FgW9WZUTbQYSPCYaYru2dMf6Rgn4of4GZKB5ao/5b
+        HCDLtpYHPxArkSi6bC/7x25wdRSfUUY66VYjkwwDug==
+X-Google-Smtp-Source: APBJJlEh/n00m/fh5x+CN9n/27U/1jzzr4sdjLM69E2qxwVgOdI3TXV6Ntuhi4zkktqlgedf/YoV7JphNFNdbVwtGFI=
+X-Received: by 2002:a25:b7d3:0:b0:c4d:c258:7ad with SMTP id
+ u19-20020a25b7d3000000b00c4dc25807admr5619084ybj.64.1688737816531; Fri, 07
+ Jul 2023 06:50:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230707-topic-amlogic-upstream-pinctrl-fix-bindings-v2-1-2160060446d7@linaro.org>
-References: <20230707-topic-amlogic-upstream-pinctrl-fix-bindings-v2-0-2160060446d7@linaro.org>
-In-Reply-To: <20230707-topic-amlogic-upstream-pinctrl-fix-bindings-v2-0-2160060446d7@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3911;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=8cLAB23xsx5JAWFJT8tVpclgqbE6cQYK7di1wlZX13Y=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkp8reH9NWBf+ukHsmyNlskNR0cEku39S9jIRN44L0
- WYb9QLaJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZKfK3gAKCRB33NvayMhJ0RuKEA
- DJaMsgfIqACtdmvh4bGxTDGbuPyRKBO6MBJseIYkyvA9dtFpjULKm/KW/p8zVITCiuWqfIF/qbosBu
- KnYfxfwBYoeXxQtmHdkWq8TR0SsSFdktU7Mk4SUHtFA0xUVQNxG7jw2tbrDM/3oHgBghzYz3OvCW47
- 7j0T/vd3PtEWYgMAv/6Pm8930oXGDeICpfFRPuVt1XoP0MTSQOvRLk+Nj/dTFyqGo9c0BcB/Ei2Ftn
- Xd/t+8l79OgUfGWpskJy17J0YlfYBbbiZMMMYRpHkuRT30FSrYYobbP0VP/Y8WGMtW/jKrdqwNH6Af
- 6gGMR38+F/daLDtIRkuOxNdLEcTKdVx9jmSuyUE53WaLR3nRReDfIRu9LFDlguoOInkFLSXslrOD9h
- KnS8Dg5G/gw1YwgtDOQwjXPBPTXve+BbJcDFuCfFXFC/wAUdgkqgk66CGqYfNLiLmbEFiEFa4QZDUV
- v99z3/aSaZJVNItL9OxL3jr9+3VcW3hU3Q+Zl8k5lf+6mpHAhClLfQpQR8ahpeSKYkbbNnnJkPpHR2
- jEBF5YRxLQte8Y7lFmYFXoB8fqSoQFpRcu7Dmex/TFuGhW+cfsM3B7NvMFaGC9ulF+bSsYjrETiJyw
- D09dP9NwVYci8vgT2KbvgK5KrECFebn4BN7SbXakBBZU5kn6gPFy7y+WY9rA==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+References: <20230705133005.577-1-mario.limonciello@amd.com>
+In-Reply-To: <20230705133005.577-1-mario.limonciello@amd.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 7 Jul 2023 15:50:05 +0200
+Message-ID: <CACRpkdbrwg6wRbFKCfr0H766Z5bX5rANZ-YGAfM6P2q3Khk=bw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] Fix for interrupt storm on ASUS TUF A16
+To:     Mario Limonciello <mario.limonciello@amd.com>
+Cc:     Natikar Basavaraj <Basavaraj.Natikar@amd.com>,
+        S-k Shyam-sundar <Shyam-sundar.S-k@amd.com>,
+        andriy.shevchenko@linux.intel.com, npliashechnikov@gmail.com,
+        nmschulte@gmail.com, friedrich.vock@gmx.de, dridri85@gmail.com,
+        Hans de Goede <hdegoede@redhat.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        open list <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Allow gpio-line-names property for the gpio subnodes.
+On Wed, Jul 5, 2023 at 3:30=E2=80=AFPM Mario Limonciello
+<mario.limonciello@amd.com> wrote:
 
-Fixes: 94df03a45276 ("dt-bindings: pinctrl: Convert Amlogic Meson pinctrl binding")
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- .../devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml         | 4 ++++
- .../devicetree/bindings/pinctrl/amlogic,meson-pinctrl-g12a-aobus.yaml | 3 +++
- .../bindings/pinctrl/amlogic,meson-pinctrl-g12a-periphs.yaml          | 3 +++
- .../devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-aobus.yaml     | 4 ++++
- .../devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-cbus.yaml      | 4 ++++
- 5 files changed, 18 insertions(+)
+> An interrupt storm is reported for the GPIO controller on ASUS TUF A16
+> but only on Linux.  In comparing the GPIO registers from Windows and
+> Linux the configuration for several bits specified in _AEI() was never
+> actually loaded into the hardware on Linux.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml
-index 99080c9eaac3..4cee220ab652 100644
---- a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml
-@@ -36,6 +36,10 @@ patternProperties:
-           - const: mux
-           - const: gpio
- 
-+      gpio-line-names:
-+        minItems: 62 # A1
-+        maxItems: 82 # S4
-+
- unevaluatedProperties:
-   type: object
-   $ref: amlogic,meson-pinctrl-common.yaml#/$defs/meson-pins
-diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-g12a-aobus.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-g12a-aobus.yaml
-index 7c9c94ec5b7b..0942ea60c6cd 100644
---- a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-g12a-aobus.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-g12a-aobus.yaml
-@@ -36,6 +36,9 @@ patternProperties:
-           - const: ds
-           - const: gpio
- 
-+      gpio-line-names:
-+        maxItems: 15
-+
- unevaluatedProperties:
-   type: object
-   $ref: amlogic,meson-pinctrl-common.yaml#/$defs/meson-pins
-diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-g12a-periphs.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-g12a-periphs.yaml
-index 4bcb8b60420f..e3c8bde30559 100644
---- a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-g12a-periphs.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-g12a-periphs.yaml
-@@ -38,6 +38,9 @@ patternProperties:
-           - const: mux
-           - const: ds
- 
-+      gpio-line-names:
-+        maxItems: 85
-+
- unevaluatedProperties:
-   type: object
-   $ref: amlogic,meson-pinctrl-common.yaml#/$defs/meson-pins
-diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-aobus.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-aobus.yaml
-index 32d99c9b6afc..c1b03147e8ec 100644
---- a/Documentation/devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-aobus.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-aobus.yaml
-@@ -44,6 +44,10 @@ patternProperties:
-           - const: pull
-           - const: gpio
- 
-+      gpio-line-names:
-+        minItems: 11 # GXL
-+        maxItems: 16 # Meson8
-+
- unevaluatedProperties:
-   type: object
-   $ref: amlogic,meson-pinctrl-common.yaml#/$defs/meson-pins
-diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-cbus.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-cbus.yaml
-index d0441051f34a..4ec85b8248fa 100644
---- a/Documentation/devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-cbus.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-cbus.yaml
-@@ -45,6 +45,10 @@ patternProperties:
-           - const: pull-enable
-           - const: gpio
- 
-+      gpio-line-names:
-+        minItems: 86 # AXG
-+        maxItems: 120 # Meson8
-+
- unevaluatedProperties:
-   type: object
-   $ref: amlogic,meson-pinctrl-common.yaml#/$defs/meson-pins
+I queued this up for fixes as it looks pretty urgent, perhaps I will
+even send it to Torvalds before -rc1 if there is positive feedback.
 
--- 
-2.34.1
-
+Yours,
+Linus Walleij
