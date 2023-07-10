@@ -2,145 +2,80 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A09FEB64D9
-	for <linux-gpio@archiver.kernel.org>; Mon, 10 Jul 2023 04:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC62EB64D9
+	for <linux-gpio@archiver.kernel.org>; Mon, 10 Jul 2023 07:27:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230391AbjGJE3n (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 10 Jul 2023 00:29:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46180 "EHLO
+        id S229792AbjGJH1V (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 10 Jul 2023 03:27:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230110AbjGJE3j (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Jul 2023 00:29:39 -0400
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C22128;
-        Sun,  9 Jul 2023 21:28:46 -0700 (PDT)
-Received: from rd02-sz.amlogic.software (10.28.11.83) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.13; Mon, 10 Jul 2023
- 12:28:23 +0800
-From:   Huqiang Qin <huqiang.qin@amlogic.com>
-To:     <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <neil.armstrong@linaro.org>, <khilman@baylibre.com>,
-        <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
-        <brgl@bgdev.pl>, <andy@kernel.org>
-CC:     <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Huqiang Qin <huqiang.qin@amlogic.com>
-Subject: [PATCH V2 1/2] dt-bindings: gpio: Add a header file for Amlogic C3 SoCs
-Date:   Mon, 10 Jul 2023 12:28:11 +0800
-Message-ID: <20230710042812.2007928-2-huqiang.qin@amlogic.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20230710042812.2007928-1-huqiang.qin@amlogic.com>
-References: <20230710042812.2007928-1-huqiang.qin@amlogic.com>
+        with ESMTP id S230124AbjGJH1S (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Jul 2023 03:27:18 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55920127;
+        Mon, 10 Jul 2023 00:27:17 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-991ef0b464cso1039155866b.0;
+        Mon, 10 Jul 2023 00:27:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688974036; x=1691566036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=12SwgujBvNm5u6+5Cu/MHnSp3kLy9fw9popJaOP4K9Q=;
+        b=PJQD/wf5Fs/m/YMEnq5E9JP76DgiHcJ1H7b+cbPxL5uR+FHrHl7b4GCPqrkiapTaRC
+         J/Y/Th0wXawHmwDoBFij1OoWYzF6j8Bv/gI8QDaIer+GsUpOBrYSI+7A814pohqJpp7O
+         68R+i8cwuv5DbppV/y0qmOCYjxUT3nebMb/lBmtcQjqr3v2tnZAko7Zqj8lQMUs3TegK
+         1VsQcskWZohLsVDbytT6haoN9l2xD7nDIJixSTDmHGlxay46ExVAif/l9PWikv3CRem8
+         6axXdNPzp+hZT+XetQgTzlrEtmgbAaHxI2+LDMloQM6pyn2HfY0su1IbRfLVdq4RBc3Q
+         AQRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688974036; x=1691566036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=12SwgujBvNm5u6+5Cu/MHnSp3kLy9fw9popJaOP4K9Q=;
+        b=Eyenw6r58JP6ZCYPxcTLdffTHwZkqafPV8wWd8/4+Za4MXdthoWpc9pH86Jc8ugCuY
+         FjkBw2hZAZNjtARJ05gaVuG0MMkV/lIC9FKa1wsyN1qq/3v5DOJxr5w55QTm7d+r3r7G
+         krqK3ZOJVglReX2jXep7Zl03iE8z0xH8C4p5QoAYDrgMnNt3RSeOlwJNWEHDf9A1EobJ
+         jcmRRGYSZWwhoWXIRc1Jn+yxBDzJGL45sYNZgDny+0D8um6kuqCULOuZVkrktGFqlstE
+         81z2Kr5wMaRc+TQb2Qaq/aL2TVJuZdX8R1h7pm/+lV3o8aHI+LWO2pezjbzOThWANjWs
+         +4XA==
+X-Gm-Message-State: ABy/qLanE6dTwGH37C44oMrfJeZPJx/9rRu1YG6EVfjOGdgEX/W0YWV6
+        j//d0FB/WpTOkeBnVMDq8vBFAHoehByiV43FIuQ=
+X-Google-Smtp-Source: APBJJlELkCEdlXye8US5g/6R435+/ePCacMKC+8upB0zYkVGAIV+dy+ir9Yfy3SW1NAV08Y/UbPfQrhop57vhspWmxA=
+X-Received: by 2002:a17:907:6d1f:b0:993:22a2:9234 with SMTP id
+ sa31-20020a1709076d1f00b0099322a29234mr19989579ejc.31.1688974035627; Mon, 10
+ Jul 2023 00:27:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.28.11.83]
+References: <20230710042812.2007928-1-huqiang.qin@amlogic.com>
+In-Reply-To: <20230710042812.2007928-1-huqiang.qin@amlogic.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 10 Jul 2023 10:26:39 +0300
+Message-ID: <CAHp75VcEUre4RVAoMO0Tg1uRdeOBr-ZLeX9ppNx+Nc0ZdSrtiA@mail.gmail.com>
+Subject: Re: [PATCH V2 0/2] Add pinctrl driver support for Amlogic C3 SoCs
+To:     Huqiang Qin <huqiang.qin@amlogic.com>
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        neil.armstrong@linaro.org, khilman@baylibre.com,
+        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+        brgl@bgdev.pl, andy@kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add dt-binding and related header file for Amlogic C3 GPIO.
+On Mon, Jul 10, 2023 at 7:28=E2=80=AFAM Huqiang Qin <huqiang.qin@amlogic.co=
+m> wrote:
+>
+> This patch adds pinctrl driver support for Amloigc C3 SoC (C308L and C302=
+X)
 
-Signed-off-by: Huqiang Qin <huqiang.qin@amlogic.com>
----
- .../pinctrl/amlogic,meson-pinctrl-a1.yaml     |  1 +
- include/dt-bindings/gpio/amlogic-c3-gpio.h    | 72 +++++++++++++++++++
- 2 files changed, 73 insertions(+)
- create mode 100644 include/dt-bindings/gpio/amlogic-c3-gpio.h
+Neither here, nor in the patch I see the changelog. Can you elaborate, plea=
+se?
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml
-index 99080c9eaac3..e019b6aa6ca3 100644
---- a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml
-@@ -17,6 +17,7 @@ properties:
-     enum:
-       - amlogic,meson-a1-periphs-pinctrl
-       - amlogic,meson-s4-periphs-pinctrl
-+      - amlogic,c3-periphs-pinctrl
- 
- required:
-   - compatible
-diff --git a/include/dt-bindings/gpio/amlogic-c3-gpio.h b/include/dt-bindings/gpio/amlogic-c3-gpio.h
-new file mode 100644
-index 000000000000..75c8da6f505f
---- /dev/null
-+++ b/include/dt-bindings/gpio/amlogic-c3-gpio.h
-@@ -0,0 +1,72 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-+/*
-+ * Copyright (c) 2021 Amlogic, Inc. All rights reserved.
-+ * Author: Huqiang Qin <huqiang.qin@amlogic.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_AMLOGIC_C3_GPIO_H
-+#define _DT_BINDINGS_AMLOGIC_C3_GPIO_H
-+
-+#define	GPIOE_0		0
-+#define	GPIOE_1		1
-+#define	GPIOE_2		2
-+#define	GPIOE_3		3
-+#define	GPIOE_4		4
-+
-+#define	GPIOB_0		5
-+#define	GPIOB_1		6
-+#define	GPIOB_2		7
-+#define	GPIOB_3		8
-+#define	GPIOB_4		9
-+#define	GPIOB_5		10
-+#define	GPIOB_6		11
-+#define	GPIOB_7		12
-+#define	GPIOB_8		13
-+#define	GPIOB_9		14
-+#define	GPIOB_10	15
-+#define	GPIOB_11	16
-+#define	GPIOB_12	17
-+#define	GPIOB_13	18
-+#define	GPIOB_14	19
-+
-+#define	GPIOC_0		20
-+#define	GPIOC_1		21
-+#define	GPIOC_2		22
-+#define	GPIOC_3		23
-+#define	GPIOC_4		24
-+#define	GPIOC_5		25
-+#define	GPIOC_6		26
-+
-+#define	GPIOX_0		27
-+#define	GPIOX_1		28
-+#define	GPIOX_2		29
-+#define	GPIOX_3		30
-+#define	GPIOX_4		31
-+#define	GPIOX_5		32
-+#define	GPIOX_6		33
-+#define	GPIOX_7		34
-+#define	GPIOX_8		35
-+#define	GPIOX_9		36
-+#define	GPIOX_10	37
-+#define	GPIOX_11	38
-+#define	GPIOX_12	39
-+#define	GPIOX_13	40
-+
-+#define	GPIOD_0		41
-+#define	GPIOD_1		42
-+#define	GPIOD_2		43
-+#define	GPIOD_3		44
-+#define	GPIOD_4		45
-+#define	GPIOD_5		46
-+#define	GPIOD_6		47
-+
-+#define	GPIOA_0		48
-+#define	GPIOA_1		49
-+#define	GPIOA_2		50
-+#define	GPIOA_3		51
-+#define	GPIOA_4		52
-+#define	GPIOA_5		53
-+
-+#define	GPIO_TEST_N	54
-+
-+#endif /* _DT_BINDINGS_AMLOGIC_C3_GPIO_H */
--- 
-2.37.1
-
+--=20
+With Best Regards,
+Andy Shevchenko
