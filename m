@@ -2,127 +2,161 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3AEDC001B0
-	for <linux-gpio@archiver.kernel.org>; Wed, 12 Jul 2023 08:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E13EB64DD
+	for <linux-gpio@archiver.kernel.org>; Wed, 12 Jul 2023 09:36:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232633AbjGLIwp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 12 Jul 2023 04:52:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44956 "EHLO
+        id S231782AbjGLJg5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 12 Jul 2023 05:36:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232357AbjGLIwo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2023 04:52:44 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA3D2DC
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Jul 2023 01:52:42 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-3142860734aso277296f8f.1
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Jul 2023 01:52:42 -0700 (PDT)
+        with ESMTP id S231309AbjGLJgi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2023 05:36:38 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAF7C26B3;
+        Wed, 12 Jul 2023 02:35:40 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3159d75606dso3039332f8f.1;
+        Wed, 12 Jul 2023 02:35:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1689151961; x=1691743961;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3v4UNOf4OnfSq8XVP7LewFMWvi4W/OrdiQXVKL6e3Lc=;
-        b=gUfcmiPg4rS4fTc3XWbclJkCLK94142Yok+PgMSFvS9QoQ/dEWGV6ca5v3qfeDOnTf
-         8QBOHIZQReFJ+xq5u3vEznEihYKmvcNtwBFVTEtMZjKy/0/zM3ryGxSngIyiqn61cZz9
-         farTq0Xj6zruO7R5whaOzcQyDVI9nAE3c+Mx0eg9HbY7tRgCBAsid84zLeIbMbiZjuOB
-         cT8sWILoM3rdAK99M/3b+Rfuqf/J86czQr6XGh6ZL/SkypNPL6lZZ5D8aL2DdyG+cBMt
-         IcAGxdhY+DqUDUt2OCMy4YMIGQ4414JZ9sYO8l1qByzfyvRZSob6i29Pbrnvyqn3o0pj
-         sN7g==
+        d=gmail.com; s=20221208; t=1689154511; x=1691746511;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=vBqycqdNdKpz14Pbyqrq6OFOf+4Pct6fOpn39ZFo7ps=;
+        b=e/BwJ7H+6lYRsarWatoXwjH2z6jSppmrB0Kd9gpWYbB398QX9je+5K44f+oJE+Ga0e
+         jko5FJSrMikCULG5hqUyTiLNJwPuq7ua9f6bs2cJ7jFMCyPxVsgII3FRjwAbn5wyUVxT
+         UcGyC42hJkyU4cPrdw6+r5xhO270c5tcLguSWw0Oipt+ynQq1mRgHVe8FaaabfOCMRi3
+         K7sN3Uunjy2Qsr2JYT1CBCEnSqtSb9UZ3BxqaxYA86Jw4Jdw1yKDPFMlPqHY0efsfy8q
+         2LnxIZ6cfKhueEb0q3doHIbdgzr3LdsseLY+rRNYr5ttPzYmVtEPdUWVi33mUPU+cqYl
+         YC/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689151961; x=1691743961;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3v4UNOf4OnfSq8XVP7LewFMWvi4W/OrdiQXVKL6e3Lc=;
-        b=cWp4IWT1kUCkvQ7QmfWul6YPmtQaqEPUXItF/etcDPIpZ1RRpL+Q9hyEj/1WXAma3a
-         JcYyw72CJMibkRQNtUI34PZkBFXZX6Mo0RgPjvPqanoMtYDqN2k8m7OOidRPawuMKU1C
-         z6TgrE7AoS15PL0WZNoDAKpLY8Aum/7yhRzL+Jr7JqjGX+awk5D01zgKECoJjbycq9NZ
-         NCXareAS9UaV5ULBzHACkfcJCtC74INK2ZVRzJxq10Ds+Bka58bPCC1g9iD4Jw+pc5Lt
-         HL1JlEldgEE8j0czQaQSKnE9P+4NQ/DVIPG8VYBz++csoRINeVvRyDegpDP1f8vpNXfb
-         fFmA==
-X-Gm-Message-State: ABy/qLZsQURPofWQXhbSXGtjpNFVNeUcYrLItcGzEIVUPKm6607AIV5Q
-        K4/fuHBGdTyCIO4STaALub54Xw==
-X-Google-Smtp-Source: APBJJlGGeF9HoB77N7GwO+Hyr+ddV1M8ABtSNq/dkr/65Ht2wVGC7PINcIdawjEEC/C8z59wqiPM6Q==
-X-Received: by 2002:adf:e651:0:b0:312:849d:acc8 with SMTP id b17-20020adfe651000000b00312849dacc8mr1202100wrn.9.1689151961390;
-        Wed, 12 Jul 2023 01:52:41 -0700 (PDT)
-Received: from stroh80.sec.9e.network (ip-078-094-000-051.um19.pools.vodafone-ip.de. [78.94.0.51])
-        by smtp.gmail.com with ESMTPSA id t9-20020a5d5349000000b003143b7449ffsm4475140wrv.25.2023.07.12.01.52.40
+        d=1e100.net; s=20221208; t=1689154511; x=1691746511;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vBqycqdNdKpz14Pbyqrq6OFOf+4Pct6fOpn39ZFo7ps=;
+        b=O3VZdDOeeiEgCFqMG5WiGukkeGSKbEuvvKLewjQiUcSogE3bWJzI13TyR9h6aAR5ly
+         ckP0LcHRyatq4Vuky7I/r8u/+5ppw28p8FnmgZbKE9YF2o8ffny9YQflLecnXweMx05K
+         xElbaVYRScPJyzZVOrOef4x2lZO5xjg3pL4pmc4tPCrKfAOP8jpOhOEzZnHf0TrovDzP
+         Q/WOkJSI5gAL4Jm3XNtFJQGsS8vodDKzDwGapkZo7svPOTzsO/TZM46BYPtPH0XRxaa3
+         yIUVmjeeVqeA19TuuKIgoO6seviNn8UuWPammnvq1BvC7uV13cJe7HkyjT6mWTrMp2hE
+         MBpw==
+X-Gm-Message-State: ABy/qLaf/bp/coMK/YmUrgZOFfLi4cfZh5dw6pfz2DVUc6yaYQQCGIGi
+        Fw/1oO42eARSaXE+rGaSwpU=
+X-Google-Smtp-Source: APBJJlEx9oYNUwmPTQ7MzLLoCB7QFxl2/IctouLhRz+s1Xh6/Gry0pjzT5sJQzzPMOjfkp5Kv1K90A==
+X-Received: by 2002:a5d:68c6:0:b0:315:a043:5e0a with SMTP id p6-20020a5d68c6000000b00315a0435e0amr7048870wrw.56.1689154510696;
+        Wed, 12 Jul 2023 02:35:10 -0700 (PDT)
+Received: from Ansuel-xps. (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
+        by smtp.gmail.com with ESMTPSA id u23-20020a05600c00d700b003fc02219081sm4594539wmm.33.2023.07.12.02.35.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jul 2023 01:52:41 -0700 (PDT)
-From:   Naresh Solanki <naresh.solanki@9elements.com>
-X-Google-Original-From: Naresh Solanki <Naresh.Solanki@9elements.com>
-To:     Patrick Rudolph <patrick.rudolph@9elements.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Naresh Solanki <Naresh.Solanki@9elements.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] pinctrl: cy8c95x0: Add reset support
-Date:   Wed, 12 Jul 2023 10:52:35 +0200
-Message-ID: <20230712085236.2496651-2-Naresh.Solanki@9elements.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230712085236.2496651-1-Naresh.Solanki@9elements.com>
-References: <20230712085236.2496651-1-Naresh.Solanki@9elements.com>
+        Wed, 12 Jul 2023 02:35:10 -0700 (PDT)
+Message-ID: <64ae73ce.050a0220.fe1a6.4b8a@mx.google.com>
+X-Google-Original-Message-ID: <ZK4I7j3lWat/FaJa@Ansuel-xps.>
+Date:   Wed, 12 Jul 2023 03:59:10 +0200
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Colin Foster <colin.foster@in-advantage.com>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        UNGLinuxDriver@microchip.com,
+        Daniel Machon <daniel.machon@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>
+Subject: Re: [RFC RESEND v1 pinctrl-next 0/1] add blink and activity
+ functions to SGPIO
+References: <20230712022250.2319557-1-colin.foster@in-advantage.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230712022250.2319557-1-colin.foster@in-advantage.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
+On Tue, Jul 11, 2023 at 07:22:49PM -0700, Colin Foster wrote:
+> Preface (new for resend):
+> 
+> This is a resend of a patch I'd sent a couple years back. At that time,
+> I was told to wait for hardware-offloaded LEDS. It looks like that time
+> has finally come, so I've changed this from PATCH down to an RFC to make
+> sure this is the right approach for the framework.
+> 
+> Ocelot chips (VSC7511, VSC7512, VSC7513, VSC7514) have support for
+> hardware-offloaded LEDs based on network activity. This is currenty
+> managed by way of pinctrl-microchip-sgpio (and this current patch).
+> 
+> The purpose of this resend is two-fold. First, to come up with an idea
+> of how this pinctrl-microchip-sgpio module can fit in with the new
+> hardware-offloaded netdev triggers Christian Marangi recently added. Is
+> this something that should be in the pinctrl module itself? Or should
+> there be a drivers/net/ethernet/mscc/ocelot_leds.c module that I should
+> add?
+>
 
-This patch adds support for an optional "reset" GPIO pin in the cy8c95x0
-pinctrl driver. On probe, the reset pin is pulled low to bring chip out
-of reset. The reset pin has an internal pull-down and can be left
-floating if not required.
+I'm a bit out of the loop on what magic OEM did to make LED work on
+ocelot but I feel an ocelot_leds submodule is needed.
 
-The datasheet doesn't mention any timing related to the reset pin.
+To correctly supports the hw many API needs to be defined and for switch
+I would stick with how things are done with qca8k, codewise and DT wise
+(with how LEDs are defined in DT)
 
-Based on empirical tests, it was found that the chip requires a
-delay of 250 milliseconds before accepting I2C transfers after driving
-the reset pin low. Therefore, a delay of 250ms is added before
-proceeding with I2C transfers.
+Ideally the feature for MAC will be generilized and added to the DSA ops
+struct, so having things in the DSA driver would make the migration
+easier.
 
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-Signed-off-by: Naresh Solanki <Naresh.Solanki@9elements.com>
----
-Changes in V2:
-- None
----
- drivers/pinctrl/pinctrl-cy8c95x0.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> The second reason is maybe there's someone out there who might also be
+> considering implementing this. This might be a good starting point if
+> someone is eager to get coding. On my priority list, this is quite low
+> so I'll get to it eventually, but maybe not even in this dev cycle.
+> That's why I'm including the original patch.
+> 
+> 
+> Any suggestions on how to approach this problem are welcome.
+> 
+> 
+> 
+> 
+> (You can probably stop reading here)
+> 
+> 
+> Original Header:
+> 
+> Expose a debugfs / devicetree interface for Microsemi SGPIO controllers.
+> By writing values of 2-5, the SGPIO pins can be configured for either
+> automatic blinking or activity.
+> 
+> The implementation is modeled after the code in
+> /drivers/pinctrl/pinctrl-ocelot.c.
+> 
+> I have only tested this with currently out-of-tree patches for the
+> VSC7512 that I hope to get in soon. They are not needed for VSC7513 /
+> VSC7514, SPARX5, or LUTON - but I don't have any hardware to test.
+> 
+> Of note: the 7512 chip has a discrepancy between the datasheet and the
+> registers. The datahseet claims 20Hz blink default frequency, the
+> registers claim 5 Hz default frequency for BMODE_0. I override the
+> OCELOT registers to correct for this. I don't know if that is needed for
+> LUTON or SPARX, but having two blink modes at the same frequency isn't
+> beneficial. As such, I make the blink modes match the 5Hz / 20Hz for the
+> two modes.
+> 
+> Tested with VSC7512 by way of:
+> echo SGPIO_O_p1b0 {blink0,blink1,activity0,activity1} > 
+> /sys/kernel/debug/pinctrl/pinctrl-sgpio-pinctrl-sgpio-output/pinmux-select
+> 
+> LEDs blink!
+> 
+> 
+> Colin Foster (1):
+>   pinctrl: microchip-sgpio: add activity and blink functionality
+> 
+>  drivers/pinctrl/pinctrl-microchip-sgpio.c | 135 +++++++++++++++++++++-
+>  1 file changed, 130 insertions(+), 5 deletions(-)
+> 
+> -- 
+> 2.25.1
+> 
 
-diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 2ecc96691c55..58ca6fac7849 100644
---- a/drivers/pinctrl/pinctrl-cy8c95x0.c
-+++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -164,6 +164,7 @@ struct cy8c95x0_pinctrl {
- 	struct pinctrl_desc pinctrl_desc;
- 	char name[32];
- 	unsigned int tpin;
-+	struct gpio_desc *gpio_reset;
- };
- 
- static const struct pinctrl_pin_desc cy8c9560_pins[] = {
-@@ -1383,6 +1384,20 @@ static int cy8c95x0_probe(struct i2c_client *client)
- 		chip->regulator = reg;
- 	}
- 
-+	/* bring the chip out of reset if reset pin is provided */
-+	chip->gpio_reset = devm_gpiod_get_optional(&client->dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(chip->gpio_reset)) {
-+		ret = dev_err_probe(chip->dev, PTR_ERR(chip->gpio_reset),
-+				    "Failed to get GPIO 'reset'\n");
-+		goto err_exit;
-+	} else if (chip->gpio_reset) {
-+		usleep_range(1000, 2000);
-+		gpiod_set_value_cansleep(chip->gpio_reset, 0);
-+		usleep_range(250000, 300000);
-+
-+		gpiod_set_consumer_name(chip->gpio_reset, "CY8C95X0 RESET");
-+	}
-+
- 	chip->regmap = devm_regmap_init_i2c(client, &cy8c95x0_i2c_regmap);
- 	if (IS_ERR(chip->regmap)) {
- 		ret = PTR_ERR(chip->regmap);
 -- 
-2.41.0
-
+	Ansuel
