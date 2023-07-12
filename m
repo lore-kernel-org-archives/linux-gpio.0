@@ -2,98 +2,56 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B33DEB64DD
-	for <linux-gpio@archiver.kernel.org>; Wed, 12 Jul 2023 07:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06870EB64D9
+	for <linux-gpio@archiver.kernel.org>; Wed, 12 Jul 2023 08:09:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231179AbjGLHqD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 12 Jul 2023 03:46:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32972 "EHLO
+        id S229991AbjGLIJO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 12 Jul 2023 04:09:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230361AbjGLHqA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2023 03:46:00 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B32041987
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Jul 2023 00:45:58 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4fb8574a3a1so10338782e87.1
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Jul 2023 00:45:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689147957; x=1691739957;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pebAsfz/DVvDsj5RbKcteoVoBJD27FSwU5r3Wri7LCk=;
-        b=HL6YR07d/vOgm0OMRsUstV38BpDXG0hMCdU9gCh0P3Yyz4eLQA85StITyqM9W4tcM8
-         nO46ikXlottN694F81ETrKz7ojBsCP2xeSSgKg4XAo5OBnH0VxyjzkMmvz1VXgiVhcaZ
-         0gGbXBlmZVwlyvcUZEDM3QlYfI6IgM9n+/GqzWvJjWDEs5hVVf9bcUg99oGPdST/aI6X
-         U6o4vVRfWaFZpn/qCiUAEV8HkWhxuELCJAepAzw/mxDfmTO4pfpHKylApcbnMsR9yvcJ
-         OEIIevT7vjxTbT6YyL2ldHfj/kxUzqGn8rnNmYKtyJpypZ8BEjFz7RSoASE/OWnjTh+F
-         9zfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689147957; x=1691739957;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pebAsfz/DVvDsj5RbKcteoVoBJD27FSwU5r3Wri7LCk=;
-        b=hySHhAgToMSAZuvgJpbOp61A2pyna8P0cg1t3G7fYWXfi/El89xKW7ShoGe0IGM702
-         AgDgYxoQ8tT00bizgBbk2Yx3okzZprpilUaSBqAJorTbAVeF9aHVk4ua6K2M5gMdzEbj
-         vx57RJXmGyiCLm/VTYWAlu0NSoXVFj8a9U7YNLyRR3rQTY1bjQq1MotDPdd0oAxGKjJQ
-         FwZPeCAjZfj5HOhXek2A52Kv2MRq/gGInF1rdeqvUjLf1t/tnxJrwUA0YIU/yOBnYwZK
-         185wfnriF1hnNbZ3ab+8JNBTo3/1g9Yq5U/Trl1wxBfGlusGpQP/6XbLir/bpGrGg6jn
-         pVGA==
-X-Gm-Message-State: ABy/qLZLr5YWOaP2f+SKmhacap88jIN+HOActAw3KM5uYfgBx7kmpLOG
-        RiUip4r2OFACK7+WcEU6NzsuFw==
-X-Google-Smtp-Source: APBJJlGWq3lc5m7abWB+8YEqLMEFLf3rl5U2j6t71fkG4aRelp0lwjWFC5YDxhyyi9mcuDlTUIL5LA==
-X-Received: by 2002:a05:6512:3da6:b0:4f9:5933:8eea with SMTP id k38-20020a0565123da600b004f959338eeamr18436879lfv.3.1689147956959;
-        Wed, 12 Jul 2023 00:45:56 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id b22-20020aa7dc16000000b0051bed21a635sm2352706edu.74.2023.07.12.00.45.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jul 2023 00:45:56 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Hoan Tran <hoan@os.amperecomputing.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: gpio: snps,dw-apb: allow gpio-line-names
-Date:   Wed, 12 Jul 2023 09:45:53 +0200
-Message-Id: <20230712074553.35907-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S229470AbjGLIJN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2023 04:09:13 -0400
+Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2E8ACA
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Jul 2023 01:09:12 -0700 (PDT)
+Received: by mail.lokoho.com (Postfix, from userid 1002)
+        id 7835986DA4; Wed, 12 Jul 2023 10:05:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
+        t=1689149139; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
+        h=Date:From:To:Subject:From;
+        b=I1LX6Go/FefLJ2b2SWWwJVrYxRh57ixTGlJYvVpSFbR8Krmc+0JckaBPGjmaUX3Us
+         RDJtnp5v/Q/zpw8UayX7QZYpUV5dU8sA64mSyTEttFy1YpqLBdQK+keqqoxnOz28zd
+         mN6fD8IJPH1ZOVLj5NQ0FSbwZ0shjArvo3vprqvzAowdkJYjGNp5aJ7bi196cyq/ET
+         vxewxcF0Z17Jh1+9ymxlApZo9+VIp5/YTZDoJ5yc5kg72JkOtupqCCcVfFwpG2WGIB
+         Wm43aINv4zIJ+SLV0T/kJm1svORFRteOYlxpXn0xKcjqgt4nGZ9x63MyclQEMhFec7
+         akUtPsbPYVBPg==
+Received: by mail.lokoho.com for <linux-gpio@vger.kernel.org>; Wed, 12 Jul 2023 08:05:10 GMT
+Message-ID: <20230712084501-0.1.9.2isl.0.5f7yqqo7je@lokoho.com>
+Date:   Wed, 12 Jul 2023 08:05:10 GMT
+From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
+To:     <linux-gpio@vger.kernel.org>
+Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
+X-Mailer: mail.lokoho.com
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Allow the GPIO controller subnode to define GPIO names.  Already used in
-at least on DTS:
+Dzie=C5=84 dobry,
 
-  bitmain/bm1880-sophon-edge.dtb: gpio@50027000: gpio-controller@0: 'gpio-line-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
+=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
+o dalszych rozm=C3=B3w.=20
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
+=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
+=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
+strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
 
-diff --git a/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml b/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml
-index b391cc1b4590..209f03bba0a7 100644
---- a/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml
-@@ -61,6 +61,10 @@ patternProperties:
-       '#gpio-cells':
-         const: 2
- 
-+      gpio-line-names:
-+        minItems: 1
-+        maxItems: 32
-+
-       ngpios:
-         default: 32
-         minimum: 1
--- 
-2.34.1
+Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
 
+
+Pozdrawiam
+Adam Charachuta
