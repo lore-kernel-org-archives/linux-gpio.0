@@ -2,64 +2,95 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73098C001B0
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jul 2023 14:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D36EB64DC
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jul 2023 14:21:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbjGQOSZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jul 2023 10:18:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45672 "EHLO
+        id S229752AbjGQOVy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jul 2023 10:21:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229863AbjGQOSU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jul 2023 10:18:20 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8376E10DF;
-        Mon, 17 Jul 2023 07:18:18 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="365983707"
+        with ESMTP id S229621AbjGQOVw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jul 2023 10:21:52 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6B1B98;
+        Mon, 17 Jul 2023 07:21:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689603711; x=1721139711;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=tQ7zOf20oE8XNZm2qF5j348lP5D/2PnIX1KMRMac/Io=;
+  b=gijx0SPIkiQgYkp/numjuFB2PMj3TjHQsqbZn9rGkGAov+apYeuF7Fhq
+   6miY7pIM6FsXfupr7zZMyLMeYMvznKmBqlnMPbBgDT9lABE9lkacNPdj1
+   d87aAACEDN3DrBYDHk2vsJ7M4erakTOETOr/5/qoIqtVk7tEB2BoF+AaT
+   uZXMBkkyXtcXX4WDT328TsLuA8xJyF50dHdpaKKRVlY9oOKGTQC1Mej8U
+   4Y7PjB1arFHEaAd28Ivnp74vPa3X5GyKBfoY+lZaeoZ1h0zuVeQutkdfC
+   Lkvhqcg9HJLFa6zCZpSV6gpNkfIW4/jbbkdQvz8hkfU0NQKRJBXV9z6BX
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="432112879"
 X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="365983707"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2023 07:17:36 -0700
+   d="scan'208";a="432112879"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2023 07:18:52 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="788667913"
+X-IronPort-AV: E=McAfee;i="6600,9927,10774"; a="717257685"
 X-IronPort-AV: E=Sophos;i="6.01,211,1684825200"; 
-   d="scan'208";a="788667913"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga008.fm.intel.com with ESMTP; 17 Jul 2023 07:17:33 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andy@kernel.org>)
-        id 1qLP2a-000J8E-12;
-        Mon, 17 Jul 2023 17:17:32 +0300
-Date:   Mon, 17 Jul 2023 17:17:32 +0300
-From:   Andy Shevchenko <andy@kernel.org>
-To:     Andrei Coardos <aboutphysycs@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        florian.fainelli@broadcom.com, linus.walleij@linaro.org,
-        sbranden@broadcom.com, brgl@bgdev.pl,
-        Alexandru Ardelean <alex@shruggie.ro>
-Subject: Re: [PATCH] gpio: bcm-kona: remove unneeded platform_set_drvdata()
- call
-Message-ID: <ZLVNfGWyS4HHiJWz@smile.fi.intel.com>
-References: <20230717125521.6369-1-aboutphysycs@gmail.com>
+   d="scan'208";a="717257685"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga007.jf.intel.com with ESMTP; 17 Jul 2023 07:18:40 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 3B4A7370; Mon, 17 Jul 2023 17:18:47 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>, Ray Jui <rjui@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>
+Subject: [PATCH v2 3/3] gpio: bcm-kona: Drop unused pdev member in private data structure
+Date:   Mon, 17 Jul 2023 17:18:45 +0300
+Message-Id: <20230717141845.41415-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
+In-Reply-To: <20230717141845.41415-1-andriy.shevchenko@linux.intel.com>
+References: <20230717141845.41415-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230717125521.6369-1-aboutphysycs@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Jul 17, 2023 at 03:55:21PM +0300, Andrei Coardos wrote:
-> The platform_set_drvdata() call was never used, ever since the driver was
-> originally added.
-> It looks like this copy+paste left-over. Possibly the author copied from a
-> driver that had this line, but also had a remove hook.
+The pdev member is assigned and not used, drop it.
 
-Cool, I'll incorporate this into my series. I'll make it as v2 to avoid clashes
-with this one.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: new patch
+ drivers/gpio/gpio-bcm-kona.c | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index 9af1549ee0df..0e3fdb42b9ed 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -63,7 +63,6 @@ struct bcm_kona_gpio {
+ 	struct gpio_chip gpio_chip;
+ 	struct irq_domain *irq_domain;
+ 	struct bcm_kona_gpio_bank *banks;
+-	struct platform_device *pdev;
+ };
+ 
+ struct bcm_kona_gpio_bank {
+@@ -590,7 +589,6 @@ static int bcm_kona_gpio_probe(struct platform_device *pdev)
+ 	if (!kona_gpio->banks)
+ 		return -ENOMEM;
+ 
+-	kona_gpio->pdev = pdev;
+ 	chip->parent = dev;
+ 	chip->ngpio = kona_gpio->num_bank * GPIO_PER_BANK;
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.40.0.1.gaa8946217a0b
 
