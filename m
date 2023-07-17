@@ -2,64 +2,64 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B15A3EB64DC
-	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jul 2023 09:36:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44960EB64DC
+	for <linux-gpio@archiver.kernel.org>; Mon, 17 Jul 2023 09:36:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230422AbjGQJf7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 17 Jul 2023 05:35:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41582 "EHLO
+        id S230494AbjGQJgI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 17 Jul 2023 05:36:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230349AbjGQJfj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jul 2023 05:35:39 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2071.outbound.protection.outlook.com [40.107.244.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00C09173B;
-        Mon, 17 Jul 2023 02:34:41 -0700 (PDT)
+        with ESMTP id S230273AbjGQJfq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jul 2023 05:35:46 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2056.outbound.protection.outlook.com [40.107.243.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80A59173E;
+        Mon, 17 Jul 2023 02:34:48 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cgcTmZUjetwte3N1e5GKweCnoSSRPRXnA/GyWoYBxdxGii3NgaPRIqwQWlLLip3BAXog8ko0eJ8eB8lbqYlU3HKiXv4EVb/j7YFdA0ypRqEcCPcGDlCn8U5BLcANRrjPUSBYesuzn6gi22L8L9rVYJO8rp1/S3MsYpBHVtUV0X5MkaW2DTQYYnwnc3pW/wgdPlcC66vkGp8SsZT2qJtO3wJFXh2/ksfEmsQyCSLB8RkTJmkG6zCBdgaiQW+k/7l9kWQP67dJi3tHq0bE8gQRaYTCP0VwFZsmSdCnEAxiLqlZLuqi51MjCM2FiuGf5vtGS8J5oZlcKgisMeKhmFiZ0A==
+ b=V/2HFxZEuLPsbqPClX1QlhQNUUQkkw0LaQ7UMBmSitsUge9JIE5Cb9qz+RSTVeHjMSNLkE4T2x7nH1zEMVB+h0qtmEbZ6H++gPKkkxIDzOGVeuBBjvCs5iZhyZ3JastsLqqC/CNIqHWoizpCJLZ3jGQEua7y2p1tbLmmxPczBc1OS4v4Bjf1iHM6SST+RTjleth3FWFLdQREqVKa8heQbzopZjZ6V3B8KOauAMTM0qPahIp8oAaFtxd2CTEwN1lM1jYuFMhewvTjrrHJDJMcn0xZENsQwVIDShv8kDRMTqXCdtg0M/MEBEsY1RrVzF8EKekfIrpfy0GR6exuYX7E6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RHIItiCgk7GS9F3ClxxPTL+qbEQc4AbSiOApPMJFNYE=;
- b=HGCrISUoaZGbw5LKfiNTH2ecALMQklCjoVqIDMVTk6jyAqwGzn2SGipmCZHcpAeIxiV/9eAAF6VGX3BqGDvZzZJ3y9Fcfyjftg5k28Apo1Zl/FZSDOawgqDVfWsRTjst3FwqFLxFKbROzjwm9IzZSd3BNHpBQJlHw87XCMigOY+6V1kWSK1GR5h7ibzY4DGlglYT+vPl7nQMRKvpFgeWM6K/7I5XJHkGF7VJSQHNvI+dfU03kfKjxCAKIEutg39YmTXei4/7WuTvYDyErL5RfZJAf/kfVqClWE3/FoUxRNpb+KPwFF2nB+aVvInGn9LPxpmDt/RHb7ugJfHi/mQqeg==
+ bh=/7NIx3YEvI4JhXMyS4rCQc94cOw7NRSAWPI58l3C+fE=;
+ b=GWvhwQjuFmVymVOz8+S2bqCroW+RM7/PEQpafv91oECGKYDQfe3qBDjb7hkXoZCeInV65SE0WdbmtYl/tL2hRjJPyQGRpeAl6Y8jR0JGYXXSQA6/z2wbD8fbVsjYyNv1XYxYU6bM7MZsyc8AC/EBkEccpsXh1UPFriwL731SauIwyQtoWxpBYZhBm5bUtOqbgy0HqohAg+azmY7rXG3WxMKEUmOflR6wXTeynAm7t8ATCvAv7rWxJZhRD49uFqyBtTwIHlwo7kPAah1aYTgfS2/eRH7zKetOVl7glG6vRcAUHiFmWCtqAhawDcHNnAtmhBFxD7wJxtxpW5rqy6cHsQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RHIItiCgk7GS9F3ClxxPTL+qbEQc4AbSiOApPMJFNYE=;
- b=Oof3qFc4BoT6EJvikQTq5v8VCwLDczbp6QLu9O841V984iJ0QQrpt3LAvSIkm8v5T3Sauy7KzD3ztOtQW42iecLJjX4/bCNbPslVUwN1OSpSAjvE4gogHR5oy02ITyIZEO90EPAtQnvlAgpf83NZn5aX5BL9tjZMxkHmVmLAt1w=
-Received: from DS7PR03CA0201.namprd03.prod.outlook.com (2603:10b6:5:3b6::26)
- by CH3PR12MB8582.namprd12.prod.outlook.com (2603:10b6:610:163::16) with
+ bh=/7NIx3YEvI4JhXMyS4rCQc94cOw7NRSAWPI58l3C+fE=;
+ b=EC0gziFSYwwIkM2Vm6eG6UaPLOhlFGTlF+TLxj05mcdxBDD1ZDBltRtolVJySwDUBnAoP3OASXhoHGKOHkX523vEVVDJLdb/ec3f9f5RWmdy/WlGLYOQ2tEniMDgwhb4uYybukL2dck5VRVYXlp/Muaz3NtFgPClfQay4lbYfS4=
+Received: from DS7PR03CA0083.namprd03.prod.outlook.com (2603:10b6:5:3bb::28)
+ by DM4PR12MB6445.namprd12.prod.outlook.com (2603:10b6:8:bd::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.31; Mon, 17 Jul
- 2023 09:34:33 +0000
-Received: from DM6NAM11FT053.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3b6:cafe::22) by DS7PR03CA0201.outlook.office365.com
- (2603:10b6:5:3b6::26) with Microsoft SMTP Server (version=TLS1_2,
+ 2023 09:34:40 +0000
+Received: from DM6NAM11FT071.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3bb:cafe::a0) by DS7PR03CA0083.outlook.office365.com
+ (2603:10b6:5:3bb::28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.33 via Frontend
- Transport; Mon, 17 Jul 2023 09:34:33 +0000
+ Transport; Mon, 17 Jul 2023 09:34:40 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- DM6NAM11FT053.mail.protection.outlook.com (10.13.173.74) with Microsoft SMTP
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DM6NAM11FT071.mail.protection.outlook.com (10.13.173.48) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6588.32 via Frontend Transport; Mon, 17 Jul 2023 09:34:32 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.6588.33 via Frontend Transport; Mon, 17 Jul 2023 09:34:40 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.23; Mon, 17 Jul
- 2023 04:34:30 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ 2023 04:34:40 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.23; Mon, 17 Jul
- 2023 04:34:29 -0500
+ 2023 04:34:39 -0500
 Received: from xhdlakshmis40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.23 via Frontend
- Transport; Mon, 17 Jul 2023 04:34:01 -0500
+ Transport; Mon, 17 Jul 2023 04:34:35 -0500
 From:   Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Michal Simek <michal.simek@amd.com>,
@@ -76,9 +76,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <saikrishna12468@gmail.com>,
         <git@amd.com>, Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
-Subject: [PATCH 1/4] firmware: xilinx: Add support to get platform information
-Date:   Mon, 17 Jul 2023 15:03:44 +0530
-Message-ID: <20230717093347.3869167-2-sai.krishna.potthuri@amd.com>
+Subject: [PATCH 3/4] dt-bindings: pinctrl-zynqmp: Add output-enable configuration
+Date:   Mon, 17 Jul 2023 15:03:46 +0530
+Message-ID: <20230717093347.3869167-4-sai.krishna.potthuri@amd.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230717093347.3869167-1-sai.krishna.potthuri@amd.com>
 References: <20230717093347.3869167-1-sai.krishna.potthuri@amd.com>
@@ -87,132 +87,54 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT053:EE_|CH3PR12MB8582:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6479342e-8b16-4cae-b423-08db86a90723
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT071:EE_|DM4PR12MB6445:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b711fda-810b-439d-0bbd-08db86a90b9e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: or8Qyc2PvIn4i9vsUuXUOWbO/DzhW1khdK3aRkr6suhwm2QN/zeiRJxmPdci6gdbGeNW8KkvTw6yBywV61iPt5KOmZ1AnT75Q3+5LoTn6U9eBnuEyvJl3QcXntXhFF85WEzKVJKLrNrw/M5UxVfcwd9YJmt7hdzVHzb2xrajHHns7Equ0LYRqUGngXIqDYXSF506byNnDMWJMqeMOblrnnxoVIi9Dbl7Y0TfpIhy3k0sgQiz8x960G4RZB/3jJg+NL6f2c22lQtTof8h9mYF4YvGjxqRsx/LiqTFgCGcB25M/JMDI1QRxM/hJyKoZ7t8q2FmyN9qcvQM8KoraWtLowth+PYx9am9k61hjDT3l5F1mvBBM6o0ZPF4dJiDDmlv7QkVc2UKP1Kg5EizlOPWzaZIGDRqjvQCmkyCGJ+UFX8pTmlCAmH18ej2gOauX2MxJvKAGHX1RsWBgnSSfUZvBSa3JPS0dOPawlwbDb+3K7fcdNNFtWfFGXeozFOYUB8UiN7FuvYhctexoqOoYRLfV0Lampd5I8Fy1W7XNpFkSUurBUXcPBz8glM8ObL17YAxtuZ6RaAYGTDez7ENJKZNQ1NL57p0kmObyAAt3EBAlUX7rgJ8QXaSIbjEcR6X+bS7HJgoXcvpaJW5aj7L3sk++UGwfHA70v24e2hUw568E4jcqpt/zozo6rgz2fbHRRL7jGymJGwzuK4h/F2LazqDu0DRpqTWiJQy68wUDzZLoG/d77B4Mi1/QYwbYXPkFlTmYAyjMTlQTKkd5ELC6QF3sH7bjLqQQfRtQgPiCfVz2wo=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(39860400002)(346002)(376002)(82310400008)(451199021)(36840700001)(40470700004)(46966006)(2906002)(54906003)(110136005)(478600001)(6666004)(8936002)(36756003)(8676002)(7416002)(41300700001)(316002)(70206006)(70586007)(4326008)(82740400003)(426003)(336012)(47076005)(81166007)(86362001)(921005)(356005)(103116003)(40460700003)(5660300002)(1076003)(26005)(2616005)(186003)(36860700001)(40480700001)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: c81D39jSVgsvV8WWOOPuJbi4KBywabx/nNOpgu6St3GJKe3K+mSO/sQn+G3+2Z+jlIronsY5x6y2UvbUqcZoyhbasbgtWIQud+nie0pUqmKu3rkRNB1oDo+ILZ+ivUYzs2prWyl4v9SRJWRErcpq0mpQOIJTr8Nh73Lke8TRMalCjUKH4cZ9RnmP3AIWocgDs8nx5cnZtqGLN4ItLcbzGItW2JxV4WlxdaV/U7EfoMw2BuTPRcBXR1xXCoIOvLtcLug6tqTJDoFP2Za9soWBiyVKZN0BWMFu+W9AxAF0M/Cf6gtiERUhQCbLPH5kYv8VG0MJ542xzPbgmwiMp4DLT2qeJmOh8Fzf9mGcI6crcQltUNsuVK/7vwmofaCAdDq6Vwo3tqpl/dIvoxyC0tqoqIgxPU365SOqjA5mu1GuDLMZvVzNpA3h8+OgR0+vS/10lJazrZF24HUDI9McT/bE8HlYcyEAJs6OnNBMcBSVv9jo0WFppii0Uxw4Kv5eCnSrDDbQnXJHdDgjppWn8IUUfoyzmnDv7AHtmyLh6qU/zmONlgzrI+gI+/Hv/Qvwv1GmWHbv/zKw3EL5TEwjP+M/FX0QpWJneFLPwOUf+BQiCcXnteN4vI5Bqb43s0VJGRBbWgv9c28Yac5uFQnyKWHKnPrQwoN/uKbnveVrEGu/G2JBil29/+WcYM0hyI/9JUaNpBnnjjXpgNmyBUWSir4346LzD+3TWWdEIR5zM/ZMKAk6JiJB5qa8VXdV6wu9GPWYBNlL6qwGDQqNdFjDBcOMqfJzlL788YPH6uTY+M02ycg=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(376002)(39860400002)(346002)(82310400008)(451199021)(40470700004)(36840700001)(46966006)(2906002)(110136005)(54906003)(478600001)(6666004)(36756003)(8676002)(7416002)(41300700001)(316002)(70206006)(70586007)(4326008)(8936002)(82740400003)(426003)(336012)(47076005)(921005)(356005)(81166007)(103116003)(86362001)(5660300002)(40460700003)(26005)(1076003)(2616005)(186003)(40480700001)(36860700001)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2023 09:34:32.9807
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2023 09:34:40.4778
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6479342e-8b16-4cae-b423-08db86a90723
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b711fda-810b-439d-0bbd-08db86a90b9e
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT053.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT071.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8582
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6445
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Dhaval Shah <dhaval.r.shah@amd.com>
+Add 'output-enable' configuration parameter to the properties list.
 
-Add function to get family code and sub family code from the idcode. This
-family code and sub family code helps to identify the platform.
-Family code of any platform is on bits 21 to 27 and Sub family code is on
-bits 19 and 20.
+Using these pinctrl properties observed hang issues with older Xilinx
+ZynqMP Platform Management Firmware, hence reverted the patch previously.
+Commit ff8356060e3a5e126abb ("Revert "dt-bindings: pinctrl-zynqmp: Add
+output-enable configuration"").
 
-Signed-off-by: Dhaval Shah <dhaval.r.shah@amd.com>
 Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
 ---
- drivers/firmware/xilinx/zynqmp.c     | 42 ++++++++++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h | 13 +++++++++
- 2 files changed, 55 insertions(+)
+ .../devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml      | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index a736db4a5825..f9498e7ea694 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -339,6 +339,8 @@ int zynqmp_pm_invoke_fn(u32 pm_api_id, u32 arg0, u32 arg1,
+diff --git a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
+index 2722dc7bb03d..1e2b9b627b12 100644
+--- a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
+@@ -274,6 +274,10 @@ patternProperties:
+           slew-rate:
+             enum: [0, 1]
  
- static u32 pm_api_version;
- static u32 pm_tz_version;
-+static u32 pm_family_code;
-+static u32 pm_sub_family_code;
- 
- int zynqmp_pm_register_sgi(u32 sgi_num, u32 reset)
- {
-@@ -404,6 +406,41 @@ int zynqmp_pm_get_chipid(u32 *idcode, u32 *version)
- }
- EXPORT_SYMBOL_GPL(zynqmp_pm_get_chipid);
- 
-+/**
-+ * zynqmp_pm_get_family_info() - Get family info of platform
-+ * @family:	Returned family code value
-+ * @subfamily:	Returned sub-family code value
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_get_family_info(u32 *family, u32 *subfamily)
-+{
-+	u32 ret_payload[PAYLOAD_ARG_CNT];
-+	u32 idcode;
-+	int ret;
++          output-enable:
++            description:
++              This will internally disable the tri-state for MIO pins.
 +
-+	/* Check is family or sub-family code already received */
-+	if (pm_family_code && pm_sub_family_code) {
-+		*family = pm_family_code;
-+		*subfamily = pm_sub_family_code;
-+		return 0;
-+	}
-+
-+	ret = zynqmp_pm_invoke_fn(PM_GET_CHIPID, 0, 0, 0, 0, ret_payload);
-+	if (ret < 0)
-+		return ret;
-+
-+	idcode = ret_payload[1];
-+	pm_family_code = FIELD_GET(GENMASK(FAMILY_CODE_MSB, FAMILY_CODE_LSB),
-+				   idcode);
-+	pm_sub_family_code = FIELD_GET(GENMASK(SUB_FAMILY_CODE_MSB,
-+					       SUB_FAMILY_CODE_LSB), idcode);
-+	*family = pm_family_code;
-+	*subfamily = pm_sub_family_code;
-+
-+	return 0;
-+}
-+
- /**
-  * zynqmp_pm_get_trustzone_version() - Get secure trustzone firmware version
-  * @version:	Returned version value
-@@ -1911,6 +1948,11 @@ static int zynqmp_firmware_probe(struct platform_device *pdev)
- 	pr_info("%s Platform Management API v%d.%d\n", __func__,
- 		pm_api_version >> 16, pm_api_version & 0xFFFF);
- 
-+	/* Get the Family code and sub family code of platform */
-+	ret = zynqmp_pm_get_family_info(&pm_family_code, &pm_sub_family_code);
-+	if (ret < 0)
-+		return ret;
-+
- 	/* Check trustzone version number */
- 	ret = zynqmp_pm_get_trustzone_version(&pm_tz_version);
- 	if (ret)
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index f5da51677069..d7f94b42ad4c 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -34,6 +34,19 @@
- /* PM API versions */
- #define PM_API_VERSION_2	2
- 
-+#define ZYNQMP_FAMILY_CODE 0x23
-+#define VERSAL_FAMILY_CODE 0x26
-+
-+/* When all subfamily of platform need to support */
-+#define ALL_SUB_FAMILY_CODE		0x00
-+#define VERSAL_SUB_FAMILY_CODE		0x01
-+#define VERSALNET_SUB_FAMILY_CODE	0x03
-+
-+#define FAMILY_CODE_LSB	21
-+#define FAMILY_CODE_MSB	27
-+#define SUB_FAMILY_CODE_LSB	19
-+#define SUB_FAMILY_CODE_MSB	20
-+
- /* ATF only commands */
- #define TF_A_PM_REGISTER_SGI		0xa04
- #define PM_GET_TRUSTZONE_VERSION	0xa03
+           drive-strength:
+             description:
+               Selects the drive strength for MIO pins, in mA.
 -- 
 2.25.1
 
