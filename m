@@ -2,141 +2,96 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38486EB64DC
-	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jul 2023 19:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BB6EB64DC
+	for <linux-gpio@archiver.kernel.org>; Tue, 18 Jul 2023 22:30:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230124AbjGRTzN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 18 Jul 2023 15:55:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37092 "EHLO
+        id S231225AbjGRWa4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 18 Jul 2023 18:30:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229732AbjGRTzM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jul 2023 15:55:12 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5A339D;
-        Tue, 18 Jul 2023 12:55:11 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51e5d9e20ecso8719632a12.1;
-        Tue, 18 Jul 2023 12:55:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689710110; x=1692302110;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1UWnGFL06djDI18ZDxplYijmA/LhPZTehuJTXj64eeE=;
-        b=PYpqmIsHL0fQtrd3ph7eSnd7uh7yD9uygv+j89ny+cEFFuxF8fT2OyrWvyNsWiMDVC
-         yLoxBll87sLgXYvPT1/oyFUl+Bw1do9Je3tXlzniQirOU9vO4JMMuL+qS/1WHysh7jkx
-         Q8LFBhpX8JDD3wtW3RrNrMCSN1Zg8N8qoS4tF+A4hmHILx29w3nk1nrpa9TRJPEbazyv
-         ElCIuHfDYcyzpAkx5nfZqVWpamk1CiYmK1SHu2TcTrNmaY7e9Esvgq9T9unsM/z9UCtt
-         CBFfFlLeCitD6I3PTEtBWjOBXe9uljZ2+kH5HqI8H6B0VH0hXrmtEH862sflxLFmHllm
-         7OBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689710110; x=1692302110;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1UWnGFL06djDI18ZDxplYijmA/LhPZTehuJTXj64eeE=;
-        b=gYxh9mYkEgYKwyvKcRx2MilL6mS57UKIY3qkgcm9bfGdrkYdaXBNhpOkEur/Twtj4u
-         tkEQvLNSg1LWRtvEUeOOf73r5PnfDJhmFGAXR5pL/sbC4KvbGcKTN2QmhxAQslIS+QCi
-         VNqctRRi6dwN2WrM4xL9qb5WhcjCbjsS/LM8uMU9TdMs5rDLMQgKASN0SoIpW22hVJw6
-         wtEYMQFL2QUOuyIyNh+Mqlhb9V4olHaFveWPEEgBogO48ZN5TDPKgcBH2ryu7fi3K6OT
-         8c5HDUcUw1yMBTbgBITqUJIabJCppwK3hh8hrskZhPPV0tu0pBf3WUbv7zmW/GmqsXoL
-         cvsg==
-X-Gm-Message-State: ABy/qLbRE418uYzVxQLoSeDP9UZOmXND+DCeqbG9/naaE0/zoyWlEILF
-        e9quLMseOC1TBkCelQoMor2X9gKJaXGDMn/lKHU=
-X-Google-Smtp-Source: APBJJlG8StHVSbZUu7JD5afeJfPRR83rioPgDuZbd8H/UHy44fk9sV3w0CUiAi/0oYpNDxZConPQt3H/9iokbVHMQkM=
-X-Received: by 2002:a17:906:7a11:b0:994:56db:cb8d with SMTP id
- d17-20020a1709067a1100b0099456dbcb8dmr786213ejo.14.1689710110022; Tue, 18 Jul
- 2023 12:55:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230718193913.3578660-1-arnd@kernel.org>
-In-Reply-To: <20230718193913.3578660-1-arnd@kernel.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 18 Jul 2023 22:54:33 +0300
-Message-ID: <CAHp75Ve51WqLoPHnxLf_uAP8zEr=iK2e0s7uLM441gtOqPmQdg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mxc: fix unused function warnings
-To:     Arnd Bergmann <arnd@kernel.org>
+        with ESMTP id S229743AbjGRWaz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jul 2023 18:30:55 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4212B198E;
+        Tue, 18 Jul 2023 15:30:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689719455; x=1721255455;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=BiJCmzJbE53V+dnM+etuGHTrRreB4VKMv2OXfSndhuA=;
+  b=Waqpc+PnWO1j6itIkPLhxpul5Ae0A5Cz/J+w6f69iHxbhtepPyohnyOL
+   feVq0WMFxMekFGrPQojwGHfS19othXb5qAgs9HnYP72zai4aVTfZw+mWR
+   lm+rZr/P22D0pmoNhY2xoYAqe2DcLKQe3U32dC3augctAlanVL6UXrnZh
+   WRAVHoMWe084l+oXznjCKQUyscJSxqeVwrUANa02dvJNYgyEpYoU5ajdy
+   XC/0lxUK7EnNTuVv3y4GLrLmB9AD3TUhPICbkJPtPAnohJfnrZxXTg2w9
+   5BRBqHCun2q56FM2jrF5aX7c86cW86SyLyUpN2S9yBFdYAUM8KQ+K0Cw4
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="366369825"
+X-IronPort-AV: E=Sophos;i="6.01,215,1684825200"; 
+   d="scan'208";a="366369825"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2023 15:30:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="793791444"
+X-IronPort-AV: E=Sophos;i="6.01,215,1684825200"; 
+   d="scan'208";a="793791444"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga004.fm.intel.com with ESMTP; 18 Jul 2023 15:30:52 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 06A601A5; Wed, 19 Jul 2023 01:30:58 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Shenwei Wang <shenwei.wang@nxp.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andy@kernel.org>, Marek Vasut <marex@denx.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Dan Carpenter <error27@gmail.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Andy Shevchenko <andy@kernel.org>, Ray Jui <rjui@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>
+Subject: [PATCH v3 3/3] gpio: bcm-kona: Drop unused pdev member in private data structure
+Date:   Wed, 19 Jul 2023 01:30:55 +0300
+Message-Id: <20230718223055.2809-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
+In-Reply-To: <20230718223055.2809-1-andriy.shevchenko@linux.intel.com>
+References: <20230718223055.2809-1-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 10:39=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wr=
-ote:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> The new runtime PM support causes a harmless warning about
-> unused functions when runtime PM is disabled:
->
-> drivers/gpio/gpio-mxc.c:612:12: error: 'mxc_gpio_runtime_resume' defined =
-but not used [-Werror=3Dunused-function]
-> drivers/gpio/gpio-mxc.c:602:12: error: 'mxc_gpio_runtime_suspend' defined=
- but not used [-Werror=3Dunused-function]
->
-> Change the driver to use the more modern helper macros that avoid these
-> warnings, and remove the now unnecessary __maybe_unused annotations
+The pdev member is assigned and not used, drop it.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: new patch
+v3: no changes
+ drivers/gpio/gpio-bcm-kona.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-> Fixes: 3283d820dce64 ("gpio: mxc: add runtime pm support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpio/gpio-mxc.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-> index a9fb6bd9aa6f9..e03fc8d375fe1 100644
-> --- a/drivers/gpio/gpio-mxc.c
-> +++ b/drivers/gpio/gpio-mxc.c
-> @@ -623,7 +623,7 @@ static int mxc_gpio_runtime_resume(struct device *dev=
-)
->         return 0;
->  }
->
-> -static int __maybe_unused mxc_gpio_noirq_suspend(struct device *dev)
-> +static int mxc_gpio_noirq_suspend(struct device *dev)
->  {
->         struct platform_device *pdev =3D to_platform_device(dev);
->         struct mxc_gpio_port *port =3D platform_get_drvdata(pdev);
-> @@ -634,7 +634,7 @@ static int __maybe_unused mxc_gpio_noirq_suspend(stru=
-ct device *dev)
->         return 0;
->  }
->
-> -static int __maybe_unused mxc_gpio_noirq_resume(struct device *dev)
-> +static int mxc_gpio_noirq_resume(struct device *dev)
->  {
->         struct platform_device *pdev =3D to_platform_device(dev);
->         struct mxc_gpio_port *port =3D platform_get_drvdata(pdev);
-> @@ -647,8 +647,8 @@ static int __maybe_unused mxc_gpio_noirq_resume(struc=
-t device *dev)
->  }
->
->  static const struct dev_pm_ops mxc_gpio_dev_pm_ops =3D {
-> -       SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mxc_gpio_noirq_suspend, mxc_gpio_no=
-irq_resume)
-> -       SET_RUNTIME_PM_OPS(mxc_gpio_runtime_suspend, mxc_gpio_runtime_res=
-ume, NULL)
-> +       NOIRQ_SYSTEM_SLEEP_PM_OPS(mxc_gpio_noirq_suspend, mxc_gpio_noirq_=
-resume)
-> +       RUNTIME_PM_OPS(mxc_gpio_runtime_suspend, mxc_gpio_runtime_resume,=
- NULL)
->  };
->
->  static int mxc_gpio_syscore_suspend(void)
-> --
-> 2.39.2
->
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index f67c0f76a196..5321ef98f442 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -64,7 +64,6 @@ struct bcm_kona_gpio {
+ 	struct gpio_chip gpio_chip;
+ 	struct irq_domain *irq_domain;
+ 	struct bcm_kona_gpio_bank *banks;
+-	struct platform_device *pdev;
+ };
+ 
+ struct bcm_kona_gpio_bank {
+@@ -591,7 +590,6 @@ static int bcm_kona_gpio_probe(struct platform_device *pdev)
+ 	if (!kona_gpio->banks)
+ 		return -ENOMEM;
+ 
+-	kona_gpio->pdev = pdev;
+ 	chip->parent = dev;
+ 	chip->ngpio = kona_gpio->num_bank * GPIO_PER_BANK;
+ 
+-- 
+2.40.0.1.gaa8946217a0b
 
-
---=20
-With Best Regards,
-Andy Shevchenko
