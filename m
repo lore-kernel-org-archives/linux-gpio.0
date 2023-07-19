@@ -2,248 +2,106 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0F0C0015E
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Jul 2023 19:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9F9C001E0
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Jul 2023 19:21:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229813AbjGSTVH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Jul 2023 15:21:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49220 "EHLO
+        id S230509AbjGSTVJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Jul 2023 15:21:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229730AbjGSTVG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Jul 2023 15:21:06 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8139199A
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 12:21:04 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fd0f000f22so8341495e9.3
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 12:21:04 -0700 (PDT)
+        with ESMTP id S229730AbjGSTVI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Jul 2023 15:21:08 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BECC61FC8
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 12:21:06 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4fcd615d7d6so11356770e87.3
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 12:21:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689794463; x=1692386463;
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1689794465; x=1690399265;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=61Vthzi+jTZc0OfRE0feJj3h8OeCFS14mJvBksaJnnI=;
-        b=pzNtRS1B2p/uIypnjPAvtXVS4EPtglILWxAokj5oph/6BExIaa+o41LOomTOziP2nx
-         7PgfS3bMXFrJ3mC2uCDTmPQ+wfUKZVJryCitgfd295rOinv3xtx+2ShzS/rVCgRbZWTR
-         lUlv9WTsLyL6Y4Pr/5kTfHlTO/5dUsX8bd+SdKsWje43p4ciOfEh1Gw9/5gU5tgkikUc
-         uz3hT0N+/4bxOW9zlKmF4jnL3k/IO/LmFG8ZjmQPLKizvkKVb5NwyN6JAoTL38EgruL9
-         uFYvlVIhsOjgHSgpEjMzKq1o/kYkDqTlXVtxmJfS6cRUh2L+aH3g3RK2/m3GVdRcEglf
-         IbxQ==
+        bh=CqCq/WNW98PnxdDgHMZhstDk8/eyCF3J+cI1dZ+sk1A=;
+        b=uU4p/C+prg7OeBDg8DVEQrZU58bEB8yZ83nnPnjQtS+Pw8L4yd6omyUDs+uJcxgR6H
+         nctfXS+fT1sap0CGYViSLuT2nSCDfwFHOB2Sl7+7WiZ1GFTxdBtO+aMC/uykRxqz6I/3
+         iw4QqF02CyfHdg0BcFac28PpJ7hLyYramECX4Fe6JafGVq6n8dLEcNwAFTFIdm8uUYdz
+         5CG9gOSddMsctSZTuXxuzR/WKLG1xYqGjBj+5PpyQYGqAJknwdQsifI1+XcA1bpbZWAO
+         fpOvMqn5kYO6ZVYpK1eEZ3LLsshdBu4Ej0RXUhHQ1w232NIrKDtQBLKwTVeBrBZXKz7N
+         RM3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689794463; x=1692386463;
+        d=1e100.net; s=20221208; t=1689794465; x=1690399265;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=61Vthzi+jTZc0OfRE0feJj3h8OeCFS14mJvBksaJnnI=;
-        b=Y/S7KAntk98IVjc032bXh5Je05nexBRsZ36Gz3KT/MQW3EtqccwTFh81gTODSqaxL7
-         phED89AT12wfswOcl9qlR2jC1C6fAESLi2Fg9b27p2zs3FJrAzmgZVizIgzzchy3TptE
-         Z7grASz3GQT742eu9FX1bwvlpn5EP1/hMeXpN1UlfqRqNejh1m6rGF402flqSz/OidgT
-         4LralnYa/+YTsCrJAL/mPIG3xBAeEo6ItsAblFv0TSAt/ooh7BjsVgHPqAUsnepkIh+Z
-         kNEcf6JpP82hN9eQ2lWHZJ9PZ6IvXyQEkZiD6uZ0CkmIhzo6sDdcBKazLiVc0hHFIoJP
-         /MFA==
-X-Gm-Message-State: ABy/qLZsRv73Pke0SsUCQtzaDqJ5N6q9qIFkbrfdO7IkvIpZMxW11Bdp
-        5SpBLfzOAhuaWyOAbdqjUY4Axg==
-X-Google-Smtp-Source: APBJJlFTo/F6vaMjqhpOxlJ7TqFQaLas56ehOzImE5APBRmfbUaci/1k29Wg5tu9Q96UE2KmSKH1hA==
-X-Received: by 2002:a1c:7501:0:b0:3fc:10:b25f with SMTP id o1-20020a1c7501000000b003fc0010b25fmr5620160wmc.15.1689794463153;
-        Wed, 19 Jul 2023 12:21:03 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id r17-20020adfe691000000b0031444673643sm5991086wrm.57.2023.07.19.12.21.01
+        bh=CqCq/WNW98PnxdDgHMZhstDk8/eyCF3J+cI1dZ+sk1A=;
+        b=VM9FiRV4ufttWBEe4fIRL/jITArkD0txCC1ewF4o7LkjUd35Mhh+nyQaMVpTLfQx4B
+         pgZLKtHKAyL6lfTOWxrx5ZH+ZdWwoWYzUZyHjUtjkJ+5RUm3EwsyS3EtXU/Wjmuy2tWn
+         u/OJaYt5saiaSfcBLHsjLtQJ9bKDhII6OQBIh2Ax9bDiJkYW1eOaOl+HWCxijaolrF0Q
+         jqGins1aWKKmuIdlkvl9VuF3bk80QKawG9/mZMpPFMNdTYisK/N5Q03qU0J5yrOeAnua
+         /Ghy7TJiS/7G3o72BFcGunB36xHo0CDvKtUbRISDms0l6rc8c0wEiTThA6emSaUJaArS
+         vXyQ==
+X-Gm-Message-State: ABy/qLb/9R9c0zKdZ1lxlTqoZ0etq53IDyQbGpV7Zhk966t7Ktq9iyX5
+        r8oVLjkrVmngY4CZs6EYidKIElKxqUoBlaonpU4=
+X-Google-Smtp-Source: APBJJlFgK01c9/bqyecifkIgSzVhoX3rC+sofe2TnP/GJyQ9CLb+nn0NOb3IyuQbTy5vPkFxVWPUmg==
+X-Received: by 2002:a05:6512:ac4:b0:4fd:d4b4:faba with SMTP id n4-20020a0565120ac400b004fdd4b4fabamr683435lfu.51.1689794464619;
+        Wed, 19 Jul 2023 12:21:04 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:f884:f48d:2867:5c1d])
+        by smtp.gmail.com with ESMTPSA id b14-20020a05600c11ce00b003fbc0a49b57sm2373454wmi.6.2023.07.19.12.21.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jul 2023 12:21:02 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Wed, 19 Jul 2023 12:21:04 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 1/3] dt-bindings: pinctrl: qcom,sm8350-lpass-lpi: add SM8350 LPASS TLMM
-Date:   Wed, 19 Jul 2023 21:20:56 +0200
-Message-Id: <20230719192058.433517-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [libgpiod][PATCH 0/5] core: provide information about the parent chip in line requests
+Date:   Wed, 19 Jul 2023 21:20:52 +0200
+Message-Id: <20230719192057.172560-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add bindings for pin controller in SM8350 Low Power Audio SubSystem
-(LPASS).
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+While working on the DBus API, it occurred to me that while we can obtain
+the list of requested offsets from a line request, this information lacks
+context if we cannot get any information about the parent chip on which
+the request was made.
 
----
+We cannot reference the chip in any way as its lifetime is disconnected
+from the request but we can at least provide the path to the character
+device used to open it as a way of providing some context for the offsets.
 
-Changes in v3:
-1. Correct subject typo biding->bindings.
-2. Add Rb tag.
-3. Not dropping the label as Rob asked for, because it is actually used
-   in the example.
+This series adds a new getter for struct gpiod_line_request and wrappers
+for it for all bindings. This will be used in the upcoming DBus GPIO
+manager code.
 
-Changes in v2:
-1. None
----
- .../qcom,sm8350-lpass-lpi-pinctrl.yaml        | 143 ++++++++++++++++++
- 1 file changed, 143 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sm8350-lpass-lpi-pinctrl.yaml
+Bartosz Golaszewski (5):
+  core: provide gpiod_line_request_get_chip_path()
+  tests: add a test-case for gpiod_line_request_get_chip_path()
+  bindings: cxx: provide line_request::chip_path()
+  bindings: python: provide the chip_path property in line_request
+  bindings: rust: provide LineRequest::chip_path()
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-lpass-lpi-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-lpass-lpi-pinctrl.yaml
-new file mode 100644
-index 000000000000..2e65ae08dd21
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sm8350-lpass-lpi-pinctrl.yaml
-@@ -0,0 +1,143 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/qcom,sm8350-lpass-lpi-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm SM8350 SoC LPASS LPI TLMM
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-+
-+description:
-+  Top Level Mode Multiplexer pin controller in the Low Power Audio SubSystem
-+  (LPASS) Low Power Island (LPI) of Qualcomm SM8350 SoC.
-+
-+properties:
-+  compatible:
-+    const: qcom,sm8350-lpass-lpi-pinctrl
-+
-+  reg:
-+    items:
-+      - description: LPASS LPI TLMM Control and Status registers
-+      - description: LPASS LPI MCC registers
-+
-+  clocks:
-+    items:
-+      - description: LPASS Core voting clock
-+      - description: LPASS Audio voting clock
-+
-+  clock-names:
-+    items:
-+      - const: core
-+      - const: audio
-+
-+  gpio-controller: true
-+
-+  "#gpio-cells":
-+    description: Specifying the pin number and flags, as defined in
-+      include/dt-bindings/gpio/gpio.h
-+    const: 2
-+
-+  gpio-ranges:
-+    maxItems: 1
-+
-+patternProperties:
-+  "-state$":
-+    oneOf:
-+      - $ref: "#/$defs/qcom-sm8350-lpass-state"
-+      - patternProperties:
-+          "-pins$":
-+            $ref: "#/$defs/qcom-sm8350-lpass-state"
-+        additionalProperties: false
-+
-+$defs:
-+  qcom-sm8350-lpass-state:
-+    type: object
-+    description:
-+      Pinctrl node's client devices use subnodes for desired pin configuration.
-+      Client device subnodes use below standard properties.
-+    $ref: /schemas/pinctrl/pincfg-node.yaml
-+
-+    properties:
-+      pins:
-+        description:
-+          List of gpio pins affected by the properties specified in this
-+          subnode.
-+        items:
-+          pattern: "^gpio([0-9]|1[0-9]|2[0-2])$"
-+
-+      function:
-+        enum: [ dmic1_clk, dmic1_data, dmic2_clk, dmic2_data, dmic3_clk,
-+                dmic3_data, dmic4_clk, dmic4_data, ext_mclk1_a, ext_mclk1_b,
-+                ext_mclk1_c, ext_mclk1_d, ext_mclk1_e, gpio, i2s0_clk,
-+                i2s0_data, i2s0_ws, i2s1_clk, i2s1_data, i2s1_ws, i2s2_clk,
-+                i2s2_data, i2s2_ws, i2s3_clk, i2s3_data, i2s3_ws, i2s4_clk,
-+                i2s4_data, i2s4_ws, slimbus_clk, slimbus_data, swr_rx_clk,
-+                swr_rx_data, swr_tx_clk, swr_tx_data, wsa_swr_clk,
-+                wsa_swr_data, wsa2_swr_clk, wsa2_swr_data ]
-+        description:
-+          Specify the alternative function to be configured for the specified
-+          pins.
-+
-+      drive-strength:
-+        enum: [2, 4, 6, 8, 10, 12, 14, 16]
-+        default: 2
-+        description:
-+          Selects the drive strength for the specified pins, in mA.
-+
-+      slew-rate:
-+        enum: [0, 1, 2, 3]
-+        default: 0
-+        description: |
-+          0: No adjustments
-+          1: Higher Slew rate (faster edges)
-+          2: Lower Slew rate (slower edges)
-+          3: Reserved (No adjustments)
-+
-+      bias-bus-hold: true
-+      bias-pull-down: true
-+      bias-pull-up: true
-+      bias-disable: true
-+      input-enable: true
-+      output-high: true
-+      output-low: true
-+
-+    required:
-+      - pins
-+      - function
-+
-+    additionalProperties: false
-+
-+allOf:
-+  - $ref: pinctrl.yaml#
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - gpio-controller
-+  - "#gpio-cells"
-+  - gpio-ranges
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/sound/qcom,q6afe.h>
-+
-+    lpass_tlmm: pinctrl@33c0000 {
-+        compatible = "qcom,sm8350-lpass-lpi-pinctrl";
-+        reg = <0x033c0000 0x20000>,
-+              <0x03550000 0x10000>;
-+
-+        clocks = <&q6afecc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-+                 <&q6afecc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
-+        clock-names = "core", "audio";
-+
-+        gpio-controller;
-+        #gpio-cells = <2>;
-+        gpio-ranges = <&lpass_tlmm 0 0 15>;
-+    };
+ bindings/cxx/gpiodcxx/line-request.hpp       |  7 +++++++
+ bindings/cxx/line-request.cpp                | 10 +++++++++-
+ bindings/cxx/tests/tests-line-request.cpp    |  6 ++++--
+ bindings/python/gpiod/chip.py                |  1 +
+ bindings/python/gpiod/line_request.py        | 12 +++++++++--
+ bindings/python/tests/tests_line_request.py  | 13 +++++++-----
+ bindings/rust/libgpiod/src/line_request.rs   | 12 +++++++++++
+ bindings/rust/libgpiod/tests/line_request.rs | 13 ++++++++++++
+ include/gpiod.h                              |  9 +++++++++
+ lib/chip.c                                   |  2 +-
+ lib/internal.h                               |  3 ++-
+ lib/line-request.c                           | 20 ++++++++++++++++++-
+ tests/tests-line-request.c                   | 21 ++++++++++++++++++++
+ 13 files changed, 116 insertions(+), 13 deletions(-)
+
 -- 
-2.34.1
+2.39.2
 
