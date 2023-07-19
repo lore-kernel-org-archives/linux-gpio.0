@@ -2,91 +2,120 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97CB5C001B0
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Jul 2023 11:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 290FBEB64DA
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Jul 2023 11:22:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230426AbjGSLRq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Jul 2023 07:17:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46670 "EHLO
+        id S229613AbjGSLWo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Jul 2023 07:22:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229984AbjGSLRp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Jul 2023 07:17:45 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99EAA189
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 04:17:43 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4fdd515cebcso1087625e87.0
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 04:17:43 -0700 (PDT)
+        with ESMTP id S229447AbjGSLWn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Jul 2023 07:22:43 -0400
+Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CD7E189
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 04:22:42 -0700 (PDT)
+Received: by mail-vk1-xa2d.google.com with SMTP id 71dfb90a1353d-48133dc9820so1933998e0c.3
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 04:22:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689765462; x=1692357462;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dA4XBjNreRbs/RKP90hsuoW35QaS3sIYpUWqA3D9MVo=;
-        b=eib+6ZdSavk8Cc7sMu9UiLLoRzeurRV7U17SqJAdIFseBdo83QH88dnHOpILFO0Cln
-         0IsGbyvcRl9w1gqFMOXu6ygsn+ZNxcwzWfrTXb+x6bQwtDHOXXRdkQtSBFhgMsJ5YGLv
-         m6bv7v664SZsFyXtW9kOLlL2QlyBrdsLjGHQmCoEvj4vKzL3HnMDW3G0SVkadJlWUF1t
-         EoJBekxklR+oaT/Tayym1DlLl93ebF2f1gs0w3nVaL3QzdoKjUiG5ooM38p36cBDrDJ1
-         bgdBpngvJemNnogm2kWA1g2JyfP+Ni+xP1LyxHVRNFhGNoJeDS6JKqhyJmBAkHEy/gi4
-         gGzw==
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1689765761; x=1690370561;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qh2x+6Go7/GgsSJaAMKr9ut8qXTZ0+aIpVK4YlGb9HU=;
+        b=GSGUr//+2uLH3shUvgQ/vwO1OyLu9aDM5+mckYdSDMHPuwpMVq9JNcsBIAjtO6wuph
+         y9J9py+nmo2rFc6jgj115klJJKkbwbnhatWr6AVcRU9KQ6cq06SvKVGnpRJkH5INUxi6
+         8Zh04FlyPpX4ERGeDrH98pCqPog+BeGQHNdElgRKbofih8XyRHQMxrAMVLjdMrPkM/Mm
+         7p8x0uWZmqlwXhRAbsmJa9Fd9qgdY6FvUPyxPAv8aWbycw3tGMmteOC2Kh/phFrAJCXb
+         Il1xN1VgoGFUf9lU6aNiE60HLsohltSKIq+27QQvcjPjlN9UNaps+VTRg2aZOLy4Gb5d
+         cY3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689765462; x=1692357462;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dA4XBjNreRbs/RKP90hsuoW35QaS3sIYpUWqA3D9MVo=;
-        b=CopCn15pj/IlpIdjZq5wuDIZMdX8/CQHFlaBCVJVt4lDKx4MBeULXDc73nsBtgX0gR
-         FtU3t5wYSEbkEJ4cX0Q0neXQ4Xpd8obzuQtpE7Nux5T54aW4FgxJp7ozUHb3jdbyQ7q2
-         GvuowNSS6LIFsj42qemugnkUQt9UVSa+vrq+r/lnLWSHlFs4oT6aVIwSCVeb1m6KGsw4
-         D8blPozKnVYXVWp0KOcn0DEvP1DHLqKI/aheb5pX1PxS1S2va8aGNQsP6ACOgtmpgwW4
-         XuH18JdmuWVXJI7cq8iZ67hASMFk05zCpdSmcsbZpoTHbxsd35Xs+VlfKpomNbCBi67j
-         c4hQ==
-X-Gm-Message-State: ABy/qLaT11AziBQdTOkKxUM0MbrOTpwjpn0S9V3c+Jzqa3avQzO8BI3u
-        bLcKx5vMz0mKTJVcKJB/xURhag==
-X-Google-Smtp-Source: APBJJlEfuMb3x/pT172dL5k+uZlxwymyIEwasIcdDQtVo1m66C7A/ws6DIO7Zn/FYWiF+K/45DMeag==
-X-Received: by 2002:a05:6512:2394:b0:4f6:2b51:2f74 with SMTP id c20-20020a056512239400b004f62b512f74mr2003719lfv.52.1689765461798;
-        Wed, 19 Jul 2023 04:17:41 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id r21-20020aa7cb95000000b0051e28d315a2sm2570977edt.78.2023.07.19.04.17.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jul 2023 04:17:41 -0700 (PDT)
-Message-ID: <7c60b8b5-ce8b-c911-043f-f916430bacc9@linaro.org>
-Date:   Wed, 19 Jul 2023 13:17:40 +0200
+        d=1e100.net; s=20221208; t=1689765761; x=1690370561;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qh2x+6Go7/GgsSJaAMKr9ut8qXTZ0+aIpVK4YlGb9HU=;
+        b=G3a2otu/pyCssrrQyv0gzp/q6cBdEJv1rf+XVgn5KjFnpPzAKd7BUYOZX46DRhGsgz
+         iG20yfvU2J6eatCZsOLrliYYta0OZpw9ZDuNv6RyejCkx53ELwHaz5iKphmUwodqj3Nm
+         ExbHCh9ykrVvgBpJMigGliIWuWEEYOfORfpxXr8XqHQQ4UzuP+QqYT8jSYk2ee+LPws1
+         nAMvNLMftwdygcGU+tLBPlcw1uUgRxUJibw3djUh/K9seOnfWRU9ngeDhg7nGIK6Q/DQ
+         iq/+21u4j/DeTJ1428itRoWezxE11RSRB2NCyWaqtXxZJqKVMXPUI6HRFwvUXL2kr8j0
+         To7w==
+X-Gm-Message-State: ABy/qLbuF4tfyUcIo0T1Ep5jgoJ671jqs8LoBdemNbvNf2cDXSCrtt0u
+        VNc9wbQp537rEHcXfI/LUooJBxwGuumWbDZ8ry534A==
+X-Google-Smtp-Source: APBJJlHPqhIWuMmNxi6o+sZ8Aj9vBPt/ocFq8svTiF041bCt8UxgjnAZ7h43paB9j/VbqjzRs7GR0l5AgCsuQUA9T38=
+X-Received: by 2002:a1f:5ccb:0:b0:481:4cd1:d61e with SMTP id
+ q194-20020a1f5ccb000000b004814cd1d61emr786034vkb.13.1689765761191; Wed, 19
+ Jul 2023 04:22:41 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] dt-bindings: pinctrl: qcom,sa8775p-tlmm: add gpio
- function constant
-Content-Language: en-US
-To:     Shazad Hussain <quic_shazhuss@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc:     bartosz.golaszewski@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230719110344.19983-1-quic_shazhuss@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230719110344.19983-1-quic_shazhuss@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230710123425.316943-1-hdegoede@redhat.com>
+In-Reply-To: <20230710123425.316943-1-hdegoede@redhat.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 19 Jul 2023 13:22:30 +0200
+Message-ID: <CAMRc=MdkFsbyr+BMTPQ2EHwkSJ_5GNHaRMACM0T+efkmphoL-g@mail.gmail.com>
+Subject: Re: [PATCH resend v2] gpio: tps68470: Make tps68470_gpio_output()
+ always set the initial value
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Andy Shevchenko <andy@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Daniel Scally <dan.scally@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 19/07/2023 13:03, Shazad Hussain wrote:
-> Alternative function 'gpio' is not listed in the constants for pin
-> configuration, so adding this constant to the list.
-> 
-> Fixes: 9a2aaee23c79 ("dt-bindings: pinctrl: describe sa8775p-tlmm")
+On Mon, Jul 10, 2023 at 2:34=E2=80=AFPM Hans de Goede <hdegoede@redhat.com>=
+ wrote:
+>
+> Make tps68470_gpio_output() call tps68470_gpio_set() for output-only pins
+> too, so that the initial value passed to gpiod_direction_output() is
+> honored for these pins too.
+>
+> Fixes: 275b13a65547 ("gpio: Add support for TPS68470 GPIOs")
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+> Tested-by: Daniel Scally <dan.scally@ideasonboard.com>
+> Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+> Changes in v2:
+> - Add Fixes tag
+> - Add Andy's Reviewed-by
+> ---
+>  drivers/gpio/gpio-tps68470.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-tps68470.c b/drivers/gpio/gpio-tps68470.c
+> index aaddcabe9b35..532deaddfd4e 100644
+> --- a/drivers/gpio/gpio-tps68470.c
+> +++ b/drivers/gpio/gpio-tps68470.c
+> @@ -91,13 +91,13 @@ static int tps68470_gpio_output(struct gpio_chip *gc,=
+ unsigned int offset,
+>         struct tps68470_gpio_data *tps68470_gpio =3D gpiochip_get_data(gc=
+);
+>         struct regmap *regmap =3D tps68470_gpio->tps68470_regmap;
+>
+> +       /* Set the initial value */
+> +       tps68470_gpio_set(gc, offset, value);
+> +
+>         /* rest are always outputs */
+>         if (offset >=3D TPS68470_N_REGULAR_GPIO)
+>                 return 0;
+>
+> -       /* Set the initial value */
+> -       tps68470_gpio_set(gc, offset, value);
+> -
+>         return regmap_update_bits(regmap, TPS68470_GPIO_CTL_REG_A(offset)=
+,
+>                                  TPS68470_GPIO_MODE_MASK,
+>                                  TPS68470_GPIO_MODE_OUT_CMOS);
+> --
+> 2.41.0
+>
 
-Cc: <stable@vger.kernel.org>
+Applied, thanks!
 
-
-> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
-
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+Bart
