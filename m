@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E9AC0015E
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Jul 2023 19:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F14C00528
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Jul 2023 19:21:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231154AbjGSTVP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Jul 2023 15:21:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49318 "EHLO
+        id S231159AbjGSTVR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Jul 2023 15:21:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230515AbjGSTVL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Jul 2023 15:21:11 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4394F199A
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 12:21:10 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2b70bfc8db5so111691341fa.2
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 12:21:10 -0700 (PDT)
+        with ESMTP id S229819AbjGSTVM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Jul 2023 15:21:12 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47D601FC0
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 12:21:11 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3fbc656873eso76189595e9.1
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 12:21:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1689794468; x=1690399268;
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1689794470; x=1690399270;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3vePYdMZFJuQihmH3yi3T9i4hjCbxXtyqAjrUjGuTH8=;
-        b=SQQ5i+YVZGdqAbrvYRwdcSkj0ELEKiBC9Lp9A+2uUNnKfeFCraHc66HABKnwV3k45+
-         OpqOG2sApyQB8Xl5Tn3xpr0B12/wYD3JQ0tdgroCekXj3s2m+9ILX2UFnwZNKYamgSVw
-         8r4/TuqlETMZFnMJokBODAJBOrhw2m7RDCp8AKQjisR6miHsUKUIoPk2LAS0jgRWEybG
-         Q00MRhtII1Yy7MtMYvmmsonzLpaoRE0H+e/AfllcFdQPsFYS8RC+bhqjRwSwtyxBvpOr
-         xjUjGI0CgvoZyXUP1xH2iU2tBIRhI4Cl0JAtrhtnEhs+1pmsxVJC3BQht+jmvWeHq30T
-         ECIQ==
+        bh=T+gm+qYKa1L0/EhrRIjsdKa1RHDSkybsYzUsyDLPbEg=;
+        b=sG23YalEVK5/31K9p+iTP5UJWPHy353lMC4Ej0PK3wQd33+i+oVVGSkmb0Li7V8Ahw
+         nFn1SjOQhDgqRyHmJuZba3fgdZajJJ6dceTpX6+X79A1Xz3lXaaJDcLC/0LBl99rRMti
+         ziwGlBFKvjbovbkNmsORUFCBOXz/KFk9yV4fldhxj0J/0WDwQ4YPduEx3L93mqrZHAKM
+         iRzdmt4m/fis3+uwH62IM6L9UazSbkk9Mv0MJ+IiDYEvEO4feok88QIztuKjN8cLDeXd
+         5kGXCCcnIi58SCtBPfP7NdyO1pA/5LuSEUinwIcLRu7LpvZmxqxJ6wn1mS6/k9fiNtOm
+         04JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689794468; x=1690399268;
+        d=1e100.net; s=20221208; t=1689794470; x=1690399270;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3vePYdMZFJuQihmH3yi3T9i4hjCbxXtyqAjrUjGuTH8=;
-        b=AcxDG1teH1EIwqkXLBFp2Nak/OpajVXbSl115hjYu1USAUR9EWWLavEtvc/0b106LN
-         UuVOJpTnNquMCMqKQJf6xR8vDFek5bWHhgM08tiTsSiexN6AtShhppOLs+eY/E7vjc4U
-         Ha2A0/tbdfox2yIgnNMr0v9yifkNkU7tQrCFsqDi+wYPyLrXAb7sv2g77OzL/ogk1HCR
-         2gdoUQHjTSNbcQpvVbINc9brt1Ei+KhYlgcofoUAgvp94lF4ZbhaxTu9Jxe9biQTc4UI
-         bvZJIGSzWYBo9ulDf4/Ztt3HCyQ993JqLVmXYau/d0P0cpFOG9Fx6xTsFZAdaTUX3lc5
-         JRsQ==
-X-Gm-Message-State: ABy/qLZTRjPkUz04X6VDdwlZrG8GNr0/6yWSgYHUblraUFR0bqG/+GYo
-        B/4IG7cdchrHr6BXZAm5mBn0aA==
-X-Google-Smtp-Source: APBJJlFDzDTqI6Q5kKS3mpX17ESSsFj9HiLxAaG7SkKqS8uYy9ntQlcJAptCd7cf2fG9y3RMZC1Obw==
-X-Received: by 2002:a2e:3a09:0:b0:2b6:de52:357 with SMTP id h9-20020a2e3a09000000b002b6de520357mr570164lja.40.1689794468529;
-        Wed, 19 Jul 2023 12:21:08 -0700 (PDT)
+        bh=T+gm+qYKa1L0/EhrRIjsdKa1RHDSkybsYzUsyDLPbEg=;
+        b=EMxWxpWybmn4L21MDFdked3jy8v59JBVKu8Kwu3M2F4Pdp9TL5eLl8xtN0fF90Z+/u
+         zjKuXo1F/xJnmrhk6zWm1sqAWhw2M70aJOyCqE2m+OOCjJZAuAT//yElDDl6beAMI97n
+         oHzThVEf375K+/55A2nRCGcGDAfCvZ15ZD866V8XYGmvMFEEc2zVuFO8vYY2qWT01rPJ
+         /9/HYXR5ZPnivAC29X0qN/MofGtJ82hvCG+2RWo8G3RlfUl5OXQMeC9Kh5eFUOEB0tHY
+         XPuZD9NOVRp/tX4uX4+GlEkhEfNw4cKs17/gfzOwQs29DBIkQRVKZlthg4hqrcn18olP
+         lF9Q==
+X-Gm-Message-State: ABy/qLaFmPRKIkAsT9SOKegG5DdffTEcgmzcP6SfjOfQlMzxp/DBTFdZ
+        3fnWMF9X2DPHggFc31cbki1/pg==
+X-Google-Smtp-Source: APBJJlHFXYaP3OP9Onccee1mzjS7IwdZzRZv+JlGA0nG/N0LUhyfncUjQvLQc5hkcfvsJmev2TwLRQ==
+X-Received: by 2002:a7b:c3d0:0:b0:3fb:fef1:68b7 with SMTP id t16-20020a7bc3d0000000b003fbfef168b7mr6328072wmj.27.1689794469434;
+        Wed, 19 Jul 2023 12:21:09 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:f884:f48d:2867:5c1d])
-        by smtp.gmail.com with ESMTPSA id b14-20020a05600c11ce00b003fbc0a49b57sm2373454wmi.6.2023.07.19.12.21.07
+        by smtp.gmail.com with ESMTPSA id b14-20020a05600c11ce00b003fbc0a49b57sm2373454wmi.6.2023.07.19.12.21.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jul 2023 12:21:08 -0700 (PDT)
+        Wed, 19 Jul 2023 12:21:09 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -56,9 +56,9 @@ To:     Kent Gibson <warthog618@gmail.com>,
         Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [libgpiod][PATCH 4/5] bindings: python: provide the chip_path property in line_request
-Date:   Wed, 19 Jul 2023 21:20:56 +0200
-Message-Id: <20230719192057.172560-5-brgl@bgdev.pl>
+Subject: [libgpiod][PATCH 5/5] bindings: rust: provide LineRequest::chip_path()
+Date:   Wed, 19 Jul 2023 21:20:57 +0200
+Message-Id: <20230719192057.172560-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230719192057.172560-1-brgl@bgdev.pl>
 References: <20230719192057.172560-1-brgl@bgdev.pl>
@@ -70,77 +70,69 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Provide a wrapper around gpiod_line_request_get_chip_path() for Python
-bindings and update the tests.
+Provide a wrapper around gpiod_line_request_get_chip_path() for Rust
+bindings and add a test-case.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- bindings/python/gpiod/chip.py               |  1 +
- bindings/python/gpiod/line_request.py       | 12 ++++++++++--
- bindings/python/tests/tests_line_request.py | 13 ++++++++-----
- 3 files changed, 19 insertions(+), 7 deletions(-)
+ bindings/rust/libgpiod/src/line_request.rs   | 12 ++++++++++++
+ bindings/rust/libgpiod/tests/line_request.rs | 13 +++++++++++++
+ 2 files changed, 25 insertions(+)
 
-diff --git a/bindings/python/gpiod/chip.py b/bindings/python/gpiod/chip.py
-index da93370..0629db0 100644
---- a/bindings/python/gpiod/chip.py
-+++ b/bindings/python/gpiod/chip.py
-@@ -315,6 +315,7 @@ class Chip:
-         req_internal = self._chip.request_lines(line_cfg, consumer, event_buffer_size)
-         request = LineRequest(req_internal)
+diff --git a/bindings/rust/libgpiod/src/line_request.rs b/bindings/rust/libgpiod/src/line_request.rs
+index 1140aa9..2caab14 100644
+--- a/bindings/rust/libgpiod/src/line_request.rs
++++ b/bindings/rust/libgpiod/src/line_request.rs
+@@ -2,6 +2,7 @@
+ // SPDX-FileCopyrightText: 2022 Linaro Ltd.
+ // SPDX-FileCopyrightText: 2022 Viresh Kumar <viresh.kumar@linaro.org>
  
-+        request._chip_path = self.path
-         request._offsets = req_internal.offsets
-         request._name_map = name_map
-         request._offset_map = offset_map
-diff --git a/bindings/python/gpiod/line_request.py b/bindings/python/gpiod/line_request.py
-index 096bf18..aaae37c 100644
---- a/bindings/python/gpiod/line_request.py
-+++ b/bindings/python/gpiod/line_request.py
-@@ -212,10 +212,18 @@ class LineRequest:
-         if not self._req:
-             return "<LineRequest RELEASED>"
++use std::ffi::CStr;
+ use std::os::unix::prelude::AsRawFd;
+ use std::time::Duration;
  
--        return "<LineRequest num_lines={} offsets={} fd={}>".format(
--            self.num_lines, self.offsets, self.fd
-+        return '<LineRequest chip_path="{}" num_lines={} offsets={} fd={}>'.format(
-+            self.chip_path, self.num_lines, self.offsets, self.fd
-         )
+@@ -25,6 +26,17 @@ impl Request {
+         Ok(Self { request })
+     }
  
-+    @property
-+    def chip_path(self) -> str:
-+        """
-+        Path of the chip this request was made on.
-+        """
-+        self._check_released()
-+        return self._chip_path
++    pub fn chip_path(&self) -> Result<&str> {
++        // SAFETY: The string returned by libgpiod is guaranteed to live as long
++        // as the `struct LineRequest`.
++        let path = unsafe { gpiod::gpiod_line_request_get_chip_path(self.request) };
 +
-     @property
-     def num_lines(self) -> int:
-         """
-diff --git a/bindings/python/tests/tests_line_request.py b/bindings/python/tests/tests_line_request.py
-index aa84b9a..4ab3ea5 100644
---- a/bindings/python/tests/tests_line_request.py
-+++ b/bindings/python/tests/tests_line_request.py
-@@ -529,11 +529,14 @@ class LineRequestStringRepresentation(TestCase):
-         del self.sim
++        // SAFETY: The string is guaranteed to be valid here by the C API.
++        unsafe { CStr::from_ptr(path) }
++            .to_str()
++            .map_err(Error::StringNotUtf8)
++    }
++
+     /// Get the number of lines in the request.
+     pub fn num_lines(&self) -> usize {
+         // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
+diff --git a/bindings/rust/libgpiod/tests/line_request.rs b/bindings/rust/libgpiod/tests/line_request.rs
+index d49874f..e4ed9c2 100644
+--- a/bindings/rust/libgpiod/tests/line_request.rs
++++ b/bindings/rust/libgpiod/tests/line_request.rs
+@@ -59,6 +59,19 @@ mod line_request {
+     mod verify {
+         use super::*;
  
-     def test_str(self):
--        with gpiod.request_lines(self.sim.dev_path, config={(2, 6, 4, 1): None}) as req:
--            self.assertEqual(
--                str(req),
--                "<LineRequest num_lines=4 offsets=[2, 6, 4, 1] fd={}>".format(req.fd),
--            )
-+        with gpiod.Chip(self.sim.dev_path) as chip:
-+            with chip.request_lines(config={(2, 6, 4, 1): None}) as req:
-+                self.assertEqual(
-+                    str(req),
-+                    '<LineRequest chip_path="{}" num_lines=4 offsets=[2, 6, 4, 1] fd={}>'.format(
-+                        chip.path, req.fd
-+                    ),
-+                )
- 
-     def test_str_released(self):
-         req = gpiod.request_lines(self.sim.dev_path, config={(2, 6, 4, 1): None})
++        #[test]
++        fn chip_path() {
++            const GPIO: Offset = 2;
++            let mut config = TestConfig::new(NGPIO).unwrap();
++            config.lconfig_add_settings(&[GPIO]);
++            config.request_lines().unwrap();
++
++            let dev_path = config.sim().lock().unwrap().dev_path();
++            let s = dev_path.into_os_string().into_string().unwrap();
++
++            assert_eq!(config.request().chip_path().unwrap(), s);
++        }
++
+         #[test]
+         fn custom_consumer() {
+             const GPIO: Offset = 2;
 -- 
 2.39.2
 
