@@ -2,137 +2,94 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F14C00528
-	for <linux-gpio@archiver.kernel.org>; Wed, 19 Jul 2023 19:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D622C0015E
+	for <linux-gpio@archiver.kernel.org>; Wed, 19 Jul 2023 20:23:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231159AbjGSTVR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 19 Jul 2023 15:21:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49324 "EHLO
+        id S229722AbjGSUXL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 19 Jul 2023 16:23:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229819AbjGSTVM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Jul 2023 15:21:12 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47D601FC0
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 12:21:11 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3fbc656873eso76189595e9.1
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 12:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1689794470; x=1690399270;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T+gm+qYKa1L0/EhrRIjsdKa1RHDSkybsYzUsyDLPbEg=;
-        b=sG23YalEVK5/31K9p+iTP5UJWPHy353lMC4Ej0PK3wQd33+i+oVVGSkmb0Li7V8Ahw
-         nFn1SjOQhDgqRyHmJuZba3fgdZajJJ6dceTpX6+X79A1Xz3lXaaJDcLC/0LBl99rRMti
-         ziwGlBFKvjbovbkNmsORUFCBOXz/KFk9yV4fldhxj0J/0WDwQ4YPduEx3L93mqrZHAKM
-         iRzdmt4m/fis3+uwH62IM6L9UazSbkk9Mv0MJ+IiDYEvEO4feok88QIztuKjN8cLDeXd
-         5kGXCCcnIi58SCtBPfP7NdyO1pA/5LuSEUinwIcLRu7LpvZmxqxJ6wn1mS6/k9fiNtOm
-         04JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689794470; x=1690399270;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T+gm+qYKa1L0/EhrRIjsdKa1RHDSkybsYzUsyDLPbEg=;
-        b=EMxWxpWybmn4L21MDFdked3jy8v59JBVKu8Kwu3M2F4Pdp9TL5eLl8xtN0fF90Z+/u
-         zjKuXo1F/xJnmrhk6zWm1sqAWhw2M70aJOyCqE2m+OOCjJZAuAT//yElDDl6beAMI97n
-         oHzThVEf375K+/55A2nRCGcGDAfCvZ15ZD866V8XYGmvMFEEc2zVuFO8vYY2qWT01rPJ
-         /9/HYXR5ZPnivAC29X0qN/MofGtJ82hvCG+2RWo8G3RlfUl5OXQMeC9Kh5eFUOEB0tHY
-         XPuZD9NOVRp/tX4uX4+GlEkhEfNw4cKs17/gfzOwQs29DBIkQRVKZlthg4hqrcn18olP
-         lF9Q==
-X-Gm-Message-State: ABy/qLaFmPRKIkAsT9SOKegG5DdffTEcgmzcP6SfjOfQlMzxp/DBTFdZ
-        3fnWMF9X2DPHggFc31cbki1/pg==
-X-Google-Smtp-Source: APBJJlHFXYaP3OP9Onccee1mzjS7IwdZzRZv+JlGA0nG/N0LUhyfncUjQvLQc5hkcfvsJmev2TwLRQ==
-X-Received: by 2002:a7b:c3d0:0:b0:3fb:fef1:68b7 with SMTP id t16-20020a7bc3d0000000b003fbfef168b7mr6328072wmj.27.1689794469434;
-        Wed, 19 Jul 2023 12:21:09 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:f884:f48d:2867:5c1d])
-        by smtp.gmail.com with ESMTPSA id b14-20020a05600c11ce00b003fbc0a49b57sm2373454wmi.6.2023.07.19.12.21.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jul 2023 12:21:09 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [libgpiod][PATCH 5/5] bindings: rust: provide LineRequest::chip_path()
-Date:   Wed, 19 Jul 2023 21:20:57 +0200
-Message-Id: <20230719192057.172560-6-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230719192057.172560-1-brgl@bgdev.pl>
-References: <20230719192057.172560-1-brgl@bgdev.pl>
+        with ESMTP id S229714AbjGSUXK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Jul 2023 16:23:10 -0400
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 185FE135
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Jul 2023 13:23:09 -0700 (PDT)
+Received: from localhost.localdomain (178.176.79.158) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.986.14; Wed, 19 Jul
+ 2023 23:22:59 +0300
+From:   Sergey Shtylyov <s.shtylyov@omp.ru>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        <linux-gpio@vger.kernel.org>
+CC:     <lvc-patches@linuxtesting.org>
+Subject: [PATCH 0/3] Handle errors returned by radix_tree_insert() within drivers/pinctrl/
+Date:   Wed, 19 Jul 2023 23:22:50 +0300
+Message-ID: <20230719202253.13469-1-s.shtylyov@omp.ru>
+X-Mailer: git-send-email 2.26.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [178.176.79.158]
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 5.9.59, Database issued on: 07/19/2023 17:59:56
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 178730 [Jul 19 2023]
+X-KSE-AntiSpam-Info: Version: 5.9.59.0
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 524 524 9753033d6953787301affc41bead8ed49c47b39d
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.79.158 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;178.176.79.158:7.7.1,7.4.1,7.7.3,7.1.2;omp.ru:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: {iprep_blacklist}
+X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.79.158
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 07/19/2023 18:04:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 7/19/2023 5:01:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Here are 3  patches against the 'devel' branch of Linus W.'s 'linux-pinctrl.git'
+repo...
 
-Provide a wrapper around gpiod_line_request_get_chip_path() for Rust
-bindings and add a test-case.
+The code in drivers/pinctrl/ doesn't check the results of radix_tree_insert()
+calls, although it could propagate the errors from the callers upstream.
+(Linus Walleij said he has copied the radix tree code from kernel/irq/,
+where the functions calling radix_tree_insert() are *void* themselves.)
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- bindings/rust/libgpiod/src/line_request.rs   | 12 ++++++++++++
- bindings/rust/libgpiod/tests/line_request.rs | 13 +++++++++++++
- 2 files changed, 25 insertions(+)
+Sergey Shtylyov (3):
+  pinctrl: core: handle radix_tree_insert() errors in
+    pinctrl_generic_add_group()
+  pinctrl: core: handle radix_tree_insert() errors in
+    pinctrl_register_one_pin()
+  pinctrl: pinmux: handle radix_tree_insert() errors in
+    pinmux_generic_add_function()
 
-diff --git a/bindings/rust/libgpiod/src/line_request.rs b/bindings/rust/libgpiod/src/line_request.rs
-index 1140aa9..2caab14 100644
---- a/bindings/rust/libgpiod/src/line_request.rs
-+++ b/bindings/rust/libgpiod/src/line_request.rs
-@@ -2,6 +2,7 @@
- // SPDX-FileCopyrightText: 2022 Linaro Ltd.
- // SPDX-FileCopyrightText: 2022 Viresh Kumar <viresh.kumar@linaro.org>
- 
-+use std::ffi::CStr;
- use std::os::unix::prelude::AsRawFd;
- use std::time::Duration;
- 
-@@ -25,6 +26,17 @@ impl Request {
-         Ok(Self { request })
-     }
- 
-+    pub fn chip_path(&self) -> Result<&str> {
-+        // SAFETY: The string returned by libgpiod is guaranteed to live as long
-+        // as the `struct LineRequest`.
-+        let path = unsafe { gpiod::gpiod_line_request_get_chip_path(self.request) };
-+
-+        // SAFETY: The string is guaranteed to be valid here by the C API.
-+        unsafe { CStr::from_ptr(path) }
-+            .to_str()
-+            .map_err(Error::StringNotUtf8)
-+    }
-+
-     /// Get the number of lines in the request.
-     pub fn num_lines(&self) -> usize {
-         // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
-diff --git a/bindings/rust/libgpiod/tests/line_request.rs b/bindings/rust/libgpiod/tests/line_request.rs
-index d49874f..e4ed9c2 100644
---- a/bindings/rust/libgpiod/tests/line_request.rs
-+++ b/bindings/rust/libgpiod/tests/line_request.rs
-@@ -59,6 +59,19 @@ mod line_request {
-     mod verify {
-         use super::*;
- 
-+        #[test]
-+        fn chip_path() {
-+            const GPIO: Offset = 2;
-+            let mut config = TestConfig::new(NGPIO).unwrap();
-+            config.lconfig_add_settings(&[GPIO]);
-+            config.request_lines().unwrap();
-+
-+            let dev_path = config.sim().lock().unwrap().dev_path();
-+            let s = dev_path.into_os_string().into_string().unwrap();
-+
-+            assert_eq!(config.request().chip_path().unwrap(), s);
-+        }
-+
-         #[test]
-         fn custom_consumer() {
-             const GPIO: Offset = 2;
+ drivers/pinctrl/core.c   | 20 +++++++++++++++-----
+ drivers/pinctrl/pinmux.c |  6 ++++--
+ 2 files changed, 19 insertions(+), 7 deletions(-)
+
 -- 
-2.39.2
+2.26.3
 
