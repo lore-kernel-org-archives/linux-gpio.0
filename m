@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB45EB64DC
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jul 2023 14:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2B2EB64DD
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jul 2023 14:48:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbjGTOsC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 Jul 2023 10:48:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37628 "EHLO
+        id S230150AbjGTOsF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 Jul 2023 10:48:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230150AbjGTOsB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2023 10:48:01 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0BD010F5
-        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2023 07:48:00 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3159d75606dso715978f8f.1
-        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2023 07:48:00 -0700 (PDT)
+        with ESMTP id S230464AbjGTOsE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2023 10:48:04 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9104F171E
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2023 07:48:03 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fbc0609cd6so7122425e9.1
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2023 07:48:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1689864479; x=1690469279;
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1689864482; x=1690469282;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T990pQBICrhmrrL7XRpnEuELQVcO3YU9HP2mAzxkw9s=;
-        b=SIe5dCl3FOE9Dpg0DHlQ49yLGkl93TnoBlVILOpnVVXjKV9BnYRWDvHNKch0aysh8W
-         h+ie7oGdkes+lQfqsbPWcK7xkA19SCt6sxSwofUD7ibEBqn01Eheo6OH+lmHY1BttIVu
-         6tvDHe7AtcgR/NoEcp0lIEQlsd/0wRAPQWMc88kjRAG1uEelC5GvE7aD1Aa6tSlKCWPx
-         tsIV870OonUPoZslRGzbh6fZikOjGWBkoTIQleDSVC0NwwTzN5l0QkHQPMF3V862EHA8
-         PbU4UgfW28Qgh71H7QZNYLLrQxn3n0bRH26NUYY1E57LaJXJgSGwF1iy7dgPHHC5/lqW
-         37fQ==
+        bh=6vLZOYxnnvhagtudLBu9fBVf4KzmQKUtoa3RQs/0e9Q=;
+        b=prD+YoPul8UpF7S30KqtP9J+ySgIoFrvmaSL6BNMxntI59uczUgufY5he3nPEvfOvL
+         Joy0SMYKeN1hK34oZKhoFyGdq7bpuUZzE6qEQe3TxiGd2qYfPDk8NmshqwFl0Ws8ax4L
+         yHtET2GwomZSPoCWA9KyMeDhc++G3nv20UEbyoLkzc7EAZg/05B2zMy4+3DCSzyGnBmD
+         q3v6h9wT6ZuNP3vBEXWlXxxGINpG57XxsU3YZEbvvPL8/aZBqyG2E7NbS8j8cmi2rL3R
+         BKALIm7hnS5sMXI0v5f0eoETmhRk1Uh0/K5A5lt78H2ouaPsZGYljS01HLzkMAHNLyJ6
+         /JXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689864479; x=1690469279;
+        d=1e100.net; s=20221208; t=1689864482; x=1690469282;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T990pQBICrhmrrL7XRpnEuELQVcO3YU9HP2mAzxkw9s=;
-        b=ixN97oCtQ92+d5zCdgZ35Yd5ELT7BfSkt+T+33btb3xnDPluFozRIKh7AwZpUYMPq4
-         0PxMp55fQIPQqvqHBdOecD9prGKRJu5Jr7qyFeOjxdSG7PhsRL6KZMXJtNLGLPhvph7O
-         pQXOpuCshEm/jjcC4TJ2egdSWvP0LuJ3IBe4YuvVkFUBztEHZIPZ4P6cTpr3yhGxvd2s
-         eYN23bbUwGw6oeQ1TLUaD8qTZnD8mXtwj88IzlhtSC4hn/SyEINHgR8GkQUN+4DKBTF5
-         s3q8rcyUTiynd0TzefAT6cZ1mzf/om06VMsfnlinmzSxU5b/hHLYvKk6PYTcfvrel+Fg
-         IX4A==
-X-Gm-Message-State: ABy/qLbC8uzzsYFKj4gFCLQP61cRidmsyPVnxKmMKJU9K6DhsQWHLzKr
-        LOmr/eD7LmDG3/fuKw8xsjBGaQ==
-X-Google-Smtp-Source: APBJJlFQisOjt6IswGPmqVEKHz4oEox+lUiESqRw2F0eUZ9URzHy/TygYIMspuNrgzpLmAX7Hq8CiA==
-X-Received: by 2002:adf:e484:0:b0:314:1d7f:a69 with SMTP id i4-20020adfe484000000b003141d7f0a69mr2121327wrm.67.1689864479280;
-        Thu, 20 Jul 2023 07:47:59 -0700 (PDT)
+        bh=6vLZOYxnnvhagtudLBu9fBVf4KzmQKUtoa3RQs/0e9Q=;
+        b=K7cEgQP268o+1W6pbTdHJL/i/Oe29uA4HMBKW7dgjHyhifWLLdUtrLmWuo4NIinb5N
+         IFYCU7T22IDIvlRUVuDUViPDOdnxAJK8Yf4ezhWJHrdUQZ5VOdQyeg3M3xOEmWBGH2Vq
+         F5BHOFdIwThcBMAqCrnw7uIYNpsdoCSdtQLDAMbQ3jYxUahXpACPsjSgVSe4YomF1ySt
+         3lxxoFYetyWAslLdPD9jY4UOIeZ9Upf5nw2H3bnugYNlYYZmByd9MLuCSfizG/PqX9uk
+         LJAhUDd/mD1LgdiJgKkKiHx4prhpLYTaTjQjZORM6GfcF0WM0RCXj5GSSaez+GGIMq/4
+         5ZHQ==
+X-Gm-Message-State: ABy/qLa16bRqJVjK/mWrigXVIH43+HwvhTR9T3efqvBjU+7eAHyA4UQY
+        pWa9mv1d0V5xjvxGxXdQF9HnFw==
+X-Google-Smtp-Source: APBJJlEhGw96fTOcKAzNizZQi/ypWy1Xcyq7AjYpnl3fBqAkZl6GHPNQ/FHhxL2ozOJ2Mj0e9Ywo4Q==
+X-Received: by 2002:a05:600c:b41:b0:3fc:85c:5ed2 with SMTP id k1-20020a05600c0b4100b003fc085c5ed2mr4327861wmr.11.1689864482087;
+        Thu, 20 Jul 2023 07:48:02 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:bd83:c166:7e2d:3d74])
-        by smtp.gmail.com with ESMTPSA id r1-20020adfce81000000b0031128382ed0sm1550906wrn.83.2023.07.20.07.47.58
+        by smtp.gmail.com with ESMTPSA id r1-20020adfce81000000b0031128382ed0sm1550906wrn.83.2023.07.20.07.48.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 07:47:58 -0700 (PDT)
+        Thu, 20 Jul 2023 07:48:01 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -57,9 +57,9 @@ To:     Kent Gibson <warthog618@gmail.com>,
         Erik Schilling <erik.schilling@linaro.org>
 Cc:     linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [libgpiod][PATCH v2 1/5] core: provide gpiod_line_request_get_chip_name()
-Date:   Thu, 20 Jul 2023 16:47:43 +0200
-Message-Id: <20230720144747.73276-2-brgl@bgdev.pl>
+Subject: [libgpiod][PATCH v2 4/5] bindings: python: provide the chip_name property in line_request
+Date:   Thu, 20 Jul 2023 16:47:46 +0200
+Message-Id: <20230720144747.73276-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230720144747.73276-1-brgl@bgdev.pl>
 References: <20230720144747.73276-1-brgl@bgdev.pl>
@@ -71,136 +71,107 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-While we can get the list of requested offsets from a line-request object,
-this information lacks context if we don't provide any data about the GPIO
-chip the request was made on. Add a helper allowing users to get the name
-of the parent chip.
+Provide a wrapper around gpiod_line_request_get_chip_name() for Python
+bindings and update the tests.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- include/gpiod.h    |  9 +++++++++
- lib/chip.c         |  7 ++++++-
- lib/internal.h     |  3 ++-
- lib/line-request.c | 20 +++++++++++++++++++-
- 4 files changed, 36 insertions(+), 3 deletions(-)
+ bindings/python/gpiod/chip.py               |  1 +
+ bindings/python/gpiod/ext/request.c         | 11 +++++++++++
+ bindings/python/gpiod/line_request.py       | 12 ++++++++++--
+ bindings/python/tests/tests_line_request.py | 13 ++++++++-----
+ 4 files changed, 30 insertions(+), 7 deletions(-)
 
-diff --git a/include/gpiod.h b/include/gpiod.h
-index 3c13783..71ae798 100644
---- a/include/gpiod.h
-+++ b/include/gpiod.h
-@@ -1007,6 +1007,15 @@ gpiod_request_config_get_event_buffer_size(struct gpiod_request_config *config);
-  */
- void gpiod_line_request_release(struct gpiod_line_request *request);
+diff --git a/bindings/python/gpiod/chip.py b/bindings/python/gpiod/chip.py
+index da93370..b3d8e61 100644
+--- a/bindings/python/gpiod/chip.py
++++ b/bindings/python/gpiod/chip.py
+@@ -315,6 +315,7 @@ class Chip:
+         req_internal = self._chip.request_lines(line_cfg, consumer, event_buffer_size)
+         request = LineRequest(req_internal)
  
-+/**
-+ * @brief Get the name of the chip this request was made on.
-+ * @param request Line request object.
-+ * @return Name the GPIO chip device. The returned pointer is valid for the
-+ * lifetime of the request object and must not be freed by the caller.
-+ */
-+const char *
-+gpiod_line_request_get_chip_name(struct gpiod_line_request *request);
-+
- /**
-  * @brief Get the number of lines in the request.
-  * @param request Line request object.
-diff --git a/lib/chip.c b/lib/chip.c
-index 7d4d21e..7c05e53 100644
---- a/lib/chip.c
-+++ b/lib/chip.c
-@@ -215,6 +215,7 @@ gpiod_chip_request_lines(struct gpiod_chip *chip,
- {
- 	struct gpio_v2_line_request uapi_req;
- 	struct gpiod_line_request *request;
-+	struct gpiochip_info info;
- 	int ret;
- 
- 	assert(chip);
-@@ -233,11 +234,15 @@ gpiod_chip_request_lines(struct gpiod_chip *chip,
- 	if (ret)
- 		return NULL;
- 
-+	ret = read_chip_info(chip->fd, &info);
-+	if (ret < 0)
-+		return NULL;
-+
- 	ret = ioctl(chip->fd, GPIO_V2_GET_LINE_IOCTL, &uapi_req);
- 	if (ret < 0)
- 		return NULL;
- 
--	request = gpiod_line_request_from_uapi(&uapi_req);
-+	request = gpiod_line_request_from_uapi(&uapi_req, info.name);
- 	if (!request) {
- 		close(uapi_req.fd);
- 		return NULL;
-diff --git a/lib/internal.h b/lib/internal.h
-index ef9b17e..61d7aec 100644
---- a/lib/internal.h
-+++ b/lib/internal.h
-@@ -26,7 +26,8 @@ void gpiod_request_config_to_uapi(struct gpiod_request_config *config,
- int gpiod_line_config_to_uapi(struct gpiod_line_config *config,
- 			      struct gpio_v2_line_request *uapi_cfg);
- struct gpiod_line_request *
--gpiod_line_request_from_uapi(struct gpio_v2_line_request *uapi_req);
-+gpiod_line_request_from_uapi(struct gpio_v2_line_request *uapi_req,
-+			     const char *chip_name);
- int gpiod_edge_event_buffer_read_fd(int fd,
- 				    struct gpiod_edge_event_buffer *buffer,
- 				    size_t max_events);
-diff --git a/lib/line-request.c b/lib/line-request.c
-index e536355..e867d91 100644
---- a/lib/line-request.c
-+++ b/lib/line-request.c
-@@ -13,13 +13,15 @@
- #include "internal.h"
- 
- struct gpiod_line_request {
-+	char *chip_name;
- 	unsigned int offsets[GPIO_V2_LINES_MAX];
- 	size_t num_lines;
- 	int fd;
- };
- 
- struct gpiod_line_request *
--gpiod_line_request_from_uapi(struct gpio_v2_line_request *uapi_req)
-+gpiod_line_request_from_uapi(struct gpio_v2_line_request *uapi_req,
-+			     const char *chip_name)
- {
- 	struct gpiod_line_request *request;
- 
-@@ -28,6 +30,13 @@ gpiod_line_request_from_uapi(struct gpio_v2_line_request *uapi_req)
- 		return NULL;
- 
- 	memset(request, 0, sizeof(*request));
-+
-+	request->chip_name = strdup(chip_name);
-+	if (!request->chip_name) {
-+		free(request);
-+		return NULL;
-+	}
-+
- 	request->fd = uapi_req->fd;
- 	request->num_lines = uapi_req->num_lines;
- 	memcpy(request->offsets, uapi_req->offsets,
-@@ -42,9 +51,18 @@ GPIOD_API void gpiod_line_request_release(struct gpiod_line_request *request)
- 		return;
- 
- 	close(request->fd);
-+	free(request->chip_name);
- 	free(request);
++        request._chip_name = req_internal.chip_name
+         request._offsets = req_internal.offsets
+         request._name_map = name_map
+         request._offset_map = offset_map
+diff --git a/bindings/python/gpiod/ext/request.c b/bindings/python/gpiod/ext/request.c
+index a32ff8f..5db69fe 100644
+--- a/bindings/python/gpiod/ext/request.c
++++ b/bindings/python/gpiod/ext/request.c
+@@ -37,6 +37,13 @@ static void request_finalize(request_object *self)
+ 		gpiod_edge_event_buffer_free(self->buffer);
  }
  
-+GPIOD_API const char *
-+gpiod_line_request_get_chip_name(struct gpiod_line_request *request)
++static PyObject *
++request_chip_name(request_object *self, void *Py_UNUSED(ignored))
 +{
-+	assert(request);
-+
-+	return request->chip_name;
++	return PyUnicode_FromString(
++			gpiod_line_request_get_chip_name(self->request));
 +}
 +
- GPIOD_API size_t
- gpiod_line_request_get_num_requested_lines(struct gpiod_line_request *request)
+ static PyObject *
+ request_num_lines(request_object *self, void *Py_UNUSED(ignored))
  {
+@@ -92,6 +99,10 @@ static PyObject *request_fd(request_object *self, void *Py_UNUSED(ignored))
+ }
+ 
+ static PyGetSetDef request_getset[] = {
++	{
++		.name = "chip_name",
++		.get = (getter)request_chip_name,
++	},
+ 	{
+ 		.name = "num_lines",
+ 		.get = (getter)request_num_lines,
+diff --git a/bindings/python/gpiod/line_request.py b/bindings/python/gpiod/line_request.py
+index 096bf18..cde298f 100644
+--- a/bindings/python/gpiod/line_request.py
++++ b/bindings/python/gpiod/line_request.py
+@@ -212,10 +212,18 @@ class LineRequest:
+         if not self._req:
+             return "<LineRequest RELEASED>"
+ 
+-        return "<LineRequest num_lines={} offsets={} fd={}>".format(
+-            self.num_lines, self.offsets, self.fd
++        return '<LineRequest chip="{}" num_lines={} offsets={} fd={}>'.format(
++            self.chip_name, self.num_lines, self.offsets, self.fd
+         )
+ 
++    @property
++    def chip_name(self) -> str:
++        """
++        Name of the chip this request was made on.
++        """
++        self._check_released()
++        return self._chip_name
++
+     @property
+     def num_lines(self) -> int:
+         """
+diff --git a/bindings/python/tests/tests_line_request.py b/bindings/python/tests/tests_line_request.py
+index aa84b9a..f99b93d 100644
+--- a/bindings/python/tests/tests_line_request.py
++++ b/bindings/python/tests/tests_line_request.py
+@@ -529,11 +529,14 @@ class LineRequestStringRepresentation(TestCase):
+         del self.sim
+ 
+     def test_str(self):
+-        with gpiod.request_lines(self.sim.dev_path, config={(2, 6, 4, 1): None}) as req:
+-            self.assertEqual(
+-                str(req),
+-                "<LineRequest num_lines=4 offsets=[2, 6, 4, 1] fd={}>".format(req.fd),
+-            )
++        with gpiod.Chip(self.sim.dev_path) as chip:
++            with chip.request_lines(config={(2, 6, 4, 1): None}) as req:
++                self.assertEqual(
++                    str(req),
++                    '<LineRequest chip="{}" num_lines=4 offsets=[2, 6, 4, 1] fd={}>'.format(
++                        self.sim.name, req.fd
++                    ),
++                )
+ 
+     def test_str_released(self):
+         req = gpiod.request_lines(self.sim.dev_path, config={(2, 6, 4, 1): None})
 -- 
 2.39.2
 
