@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC67EB64DA
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jul 2023 14:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F08F8EB64DD
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jul 2023 14:48:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230464AbjGTOsI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 Jul 2023 10:48:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37672 "EHLO
+        id S231320AbjGTOsK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 Jul 2023 10:48:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231151AbjGTOsH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2023 10:48:07 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C70D71722
-        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2023 07:48:01 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3fbc54cab6fso7196555e9.0
-        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2023 07:48:01 -0700 (PDT)
+        with ESMTP id S231151AbjGTOsJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2023 10:48:09 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7116A1731
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2023 07:48:04 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3fd18b1d924so7057995e9.1
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2023 07:48:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1689864480; x=1690469280;
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1689864483; x=1690469283;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dTZVEED0n66JzC14z8Y1dyJsVAMPVbfXgo6SBVqhOmM=;
-        b=5JzdMHLXkyEhZYg7CUm1aleIZQcSL2nkKdFNAwDHqvxdZFgoVzkRTLOj9phUk2L4DK
-         kI17XlXM6MFievJpnpXc+w9csF0WfgzcyyHKcOMvqaUBAGGMcymcavx39cND1I15+BoE
-         ZIsqHxv+Y9XNC0JvYsxRfK1OB/U7lKQtbb37G20ia+JHD6aVNZHqhKMAhEqvHrcrBwbZ
-         hkb1tbLr8zof3wexOhiEYKN6QoPG+sFSMkzqrII9De15nSlzYBkJ2l/ipI5hIzXM4DVp
-         pHr1Ymqaot84VjIQ5cYitpZd5WPUwG67VLG1fZiu3XGqDcVxUE/DkoMQTiBbdSkaAHCK
-         7wnw==
+        bh=nEeTm4tgLAY/wxS6usZ00FvAJIkc2XjlANbsv7waCck=;
+        b=e1lDVxmlg7Al1vFARIq13fFIwaApdE++FHGu9d+2h1EtCGiwfw3i9gJ9AHTpvXc1ln
+         Z7YJAWRFoZ4M7vUbGQZBjv1RkxHTeosKN/4FF9hyyWr5r5YfUoiy6aoXGap0U1FOFDZc
+         dJLH+1q8rwQ4f9CaQT5gnoz3pUqLtRe/FR1LG77MdWE/2DGGu5/YbJCujRd2BfAq9vtg
+         ziebJPVbEMYhZR8LYHlUSyE9j46N/FySTtiwngSsSlDcT948PA/AD6Z4fFuRAzitDdH9
+         AE/6wUh8ykdn4dZNnzuIWiCQD4mu1XDJv1xtATNIGlj2xsikyy+kPiMB5fWdUSKi7crS
+         IkRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689864480; x=1690469280;
+        d=1e100.net; s=20221208; t=1689864483; x=1690469283;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dTZVEED0n66JzC14z8Y1dyJsVAMPVbfXgo6SBVqhOmM=;
-        b=bF5Tvpkwi7Jooa3NBlQJaWczf7fFkhY0EvT5QkN7UylpHZ8bFIZSrc+arrZlXkwL8D
-         u6ubuW2YtUQhGyPSn39j4VIEXrt2TwoVdGHR4L8oEM5vVt2C/BYnp1HM/sZXGTSk/GPg
-         Y/zHVTpcDWDn3pdCTVkgQzNZi/VYefzMsCuMIhvC+0B2cv/l9BYtPm4wsZB8vGFw4a6j
-         J51z7sRhwdKCsUFNusRbWbU5yj1R/f5LocqSLbQ3tFJnhd8/T7Cr68b08cJdjIcniBRb
-         3kb0W2kq8UCelxIg2wd+iakP7sjXo7qa5H4/oV3v4B1iKP4St65C0XZGRm8ENDXva14G
-         IDmw==
-X-Gm-Message-State: ABy/qLZy2/TVg3Iqg30KOc8pbCduIPvLhyahZ70jeff5Gq5EdlE4V3bj
-        ODCXtE+mWBicLvfLdfiigWHwjw==
-X-Google-Smtp-Source: APBJJlG96IaRTak/hUyKcVaF/fMszw4gQMjAsfQGailp5kkdylkrTs6by3wl71Q7gX9erq6P7MhrNw==
-X-Received: by 2002:a1c:ed16:0:b0:3fb:dd5d:76b with SMTP id l22-20020a1ced16000000b003fbdd5d076bmr1915049wmh.7.1689864480159;
-        Thu, 20 Jul 2023 07:48:00 -0700 (PDT)
+        bh=nEeTm4tgLAY/wxS6usZ00FvAJIkc2XjlANbsv7waCck=;
+        b=igT4myh2khQmXccD6dHfOoIx5irC1q9tvx7xzEoBu3C7WUdRnduXNL9dRuvHPpiHD6
+         SMVgZl5z5R+EmExgpsVQAa9G4cur6nESqiBpOXRBUkNDLgDzmZURBLi/oql6HGz8JIGb
+         81THrb1erN7hpuNmkqquV+h3KLlHORX9brp29+BBIwry+LJ+bKFogpMJVJVwXF84RjaH
+         RlxBwLp1StXimc8lEYYpeeNznOYRHBroAroS/5eGfwRT9iRkolytAgZpdej7iuWO8z2X
+         KF2i79c4LwsKZQxQNUcGg47PlSk46PtWgYiEXP1oX2QeCRuS+/pjvejZM9JA1KcFZ/aR
+         N/Iw==
+X-Gm-Message-State: ABy/qLae6w5m7AZZ80R5WdMjJKZmmc9s1HdODvHAxMIoYLz+vJuMM4ku
+        ma83+JRRZCn6liOVq0tgGKrO/A==
+X-Google-Smtp-Source: APBJJlHyW0fYMf6/3jZ0iIfNbyuS3mCUo8EDv3DLSZrlWHIzwJKCm41KtayPB7Ok0r0X0DpRQDE1IQ==
+X-Received: by 2002:a05:600c:213:b0:3f6:91c:4e86 with SMTP id 19-20020a05600c021300b003f6091c4e86mr2018313wmi.3.1689864482941;
+        Thu, 20 Jul 2023 07:48:02 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:bd83:c166:7e2d:3d74])
-        by smtp.gmail.com with ESMTPSA id r1-20020adfce81000000b0031128382ed0sm1550906wrn.83.2023.07.20.07.47.59
+        by smtp.gmail.com with ESMTPSA id r1-20020adfce81000000b0031128382ed0sm1550906wrn.83.2023.07.20.07.48.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 07:47:59 -0700 (PDT)
+        Thu, 20 Jul 2023 07:48:02 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -57,9 +57,9 @@ To:     Kent Gibson <warthog618@gmail.com>,
         Erik Schilling <erik.schilling@linaro.org>
 Cc:     linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [libgpiod][PATCH v2 2/5] tests: add a test-case for gpiod_line_request_get_chip_name()
-Date:   Thu, 20 Jul 2023 16:47:44 +0200
-Message-Id: <20230720144747.73276-3-brgl@bgdev.pl>
+Subject: [libgpiod][PATCH v2 5/5] bindings: rust: provide LineRequest::chip_name()
+Date:   Thu, 20 Jul 2023 16:47:47 +0200
+Message-Id: <20230720144747.73276-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230720144747.73276-1-brgl@bgdev.pl>
 References: <20230720144747.73276-1-brgl@bgdev.pl>
@@ -71,42 +71,74 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add a test case for the chip name getter on line-request objects.
+Provide a wrapper around gpiod_line_request_get_chip_name() for Rust
+bindings and add a test-case.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- tests/tests-line-request.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ bindings/rust/libgpiod/src/line_request.rs   | 16 ++++++++++++++++
+ bindings/rust/libgpiod/tests/line_request.rs | 14 ++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-diff --git a/tests/tests-line-request.c b/tests/tests-line-request.c
-index 0b985e2..1a58275 100644
---- a/tests/tests-line-request.c
-+++ b/tests/tests-line-request.c
-@@ -675,3 +675,24 @@ GPIOD_TEST_CASE(get_requested_offsets_less_and_more)
- 	g_assert_cmpuint(retrieved[2], ==, 2);
- 	g_assert_cmpuint(retrieved[3], ==, 3);
- }
+diff --git a/bindings/rust/libgpiod/src/line_request.rs b/bindings/rust/libgpiod/src/line_request.rs
+index 1140aa9..737c06f 100644
+--- a/bindings/rust/libgpiod/src/line_request.rs
++++ b/bindings/rust/libgpiod/src/line_request.rs
+@@ -2,6 +2,7 @@
+ // SPDX-FileCopyrightText: 2022 Linaro Ltd.
+ // SPDX-FileCopyrightText: 2022 Viresh Kumar <viresh.kumar@linaro.org>
+ 
++use std::ffi::CStr;
+ use std::os::unix::prelude::AsRawFd;
+ use std::time::Duration;
+ 
+@@ -25,6 +26,21 @@ impl Request {
+         Ok(Self { request })
+     }
+ 
++    /// Get the name of the chip this request was made on.
++    pub fn chip_name(&self) -> Result<&str> {
++        // SAFETY: The `gpiod_line_request` is guaranteed to be live as long
++        // as `&self`
++        let name = unsafe { gpiod::gpiod_line_request_get_chip_name(self.request) };
 +
-+GPIOD_TEST_CASE(get_chip_name)
-+{
-+	static const guint offset = 4;
++        // SAFETY: The string is guaranteed to be valid, non-null and immutable
++        // by the C API for the lifetime of the `gpiod_line_request`. The
++        // `gpiod_line_request` is living as long as `&self`. The string is
++        // returned read-only with a lifetime of `&self`.
++        unsafe { CStr::from_ptr(name) }
++            .to_str()
++            .map_err(Error::StringNotUtf8)
++    }
 +
-+	g_autoptr(GPIOSimChip) sim = g_gpiosim_chip_new("num-lines", 8, NULL);
-+	g_autoptr(struct_gpiod_chip) chip = NULL;
-+	g_autoptr(struct_gpiod_line_config) line_cfg = NULL;
-+	g_autoptr(struct_gpiod_line_request) request = NULL;
+     /// Get the number of lines in the request.
+     pub fn num_lines(&self) -> usize {
+         // SAFETY: `gpiod_line_request` is guaranteed to be valid here.
+diff --git a/bindings/rust/libgpiod/tests/line_request.rs b/bindings/rust/libgpiod/tests/line_request.rs
+index d49874f..9af5226 100644
+--- a/bindings/rust/libgpiod/tests/line_request.rs
++++ b/bindings/rust/libgpiod/tests/line_request.rs
+@@ -59,6 +59,20 @@ mod line_request {
+     mod verify {
+         use super::*;
+ 
++        #[test]
++        fn chip_name() {
++            const GPIO: Offset = 2;
++            let mut config = TestConfig::new(NGPIO).unwrap();
++            config.lconfig_add_settings(&[GPIO]);
++            config.request_lines().unwrap();
 +
-+	chip = gpiod_test_open_chip_or_fail(g_gpiosim_chip_get_dev_path(sim));
-+	line_cfg = gpiod_test_create_line_config_or_fail();
++            let arc = config.sim();
++            let sim = arc.lock().unwrap();
++            let chip_name = sim.chip_name().clone();
 +
-+	gpiod_test_line_config_add_line_settings_or_fail(line_cfg, &offset, 1,
-+							 NULL);
++            assert_eq!(config.request().chip_name().unwrap(), chip_name);
++        }
 +
-+	request = gpiod_test_chip_request_lines_or_fail(chip, NULL, line_cfg);
-+
-+	g_assert_cmpstr(g_gpiosim_chip_get_name(sim), ==,
-+			gpiod_line_request_get_chip_name(request));
-+}
+         #[test]
+         fn custom_consumer() {
+             const GPIO: Offset = 2;
 -- 
 2.39.2
 
