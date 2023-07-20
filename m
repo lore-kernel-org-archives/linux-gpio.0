@@ -2,42 +2,42 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4C6C001DE
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jul 2023 07:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A7F0EB64DA
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jul 2023 07:05:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231432AbjGTHEs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 20 Jul 2023 03:04:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39358 "EHLO
+        id S231478AbjGTHFB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 20 Jul 2023 03:05:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229907AbjGTHEn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2023 03:04:43 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 909C11723;
-        Thu, 20 Jul 2023 00:04:42 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36K4Gk1w020529;
-        Thu, 20 Jul 2023 07:04:33 GMT
+        with ESMTP id S231443AbjGTHEt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2023 03:04:49 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4157269E;
+        Thu, 20 Jul 2023 00:04:47 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36K5uBqS024037;
+        Thu, 20 Jul 2023 07:04:44 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=qcppdkim1;
- bh=rlnqwi6sqaXJr13Sd1wqlXyfhSC1e2jz6p+qlS6FkDk=;
- b=TvBwFfjZYPF33N7BekpP8LuN5DG04BfrqKFSGlObCeSASbNReBhan9szMZCzqZUzTBqY
- qLdk2a9yBMBj59ILeiu6EgZGrVm0nvVLuPe2vEbCROY0PNlXtSOuEezemes/EOelzegs
- xp8WTAe2T4gC+qXZ/ay7CAEySh5fph9ZTkmS8ziSg6NYbMwDJpeW14Z4mPkdNuxf6n6+
- Al6h9q/D7VwEkjaV13qTwq0x5vC54QyCBVhpwSg+DVzCJRHyLpgxGKvSjihpoNnXG69G
- OAfjyS65JfYSmS4Ve7R1q5z08uEshEj0ElH/gIBUH30L48iMtwSyJOZEmT90ILbHyt61 2Q== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rxt188kqm-1
+ bh=JCRlLyaALX/rXk8AiIWHO2CzHuqrO8zJFdqQXkQj7bA=;
+ b=K5a2q+MADzd/EG4Fk9Wzpfb0Jc2RIym+2gFg3bBwF4PW0rd7z57q2EIgnuml5jzaIWZN
+ oDWejbTriIrTy5EHTC4wEqZTHscncqClvEcDMskvLS+23KfTiC9f6S3fL/I2bg31Jjjn
+ kajadVnu5p5yzs+UrUSUgUfdJTMPtkP5hcXFz+1Cf6pQCM7OgPCuF7MaiQym26rFKbKP
+ k7NpFQBdlupZFetwBxkHc0tHtEjYyFq0Cd84pjJOffFRQNBcvAPeH2Yp8KISLxxhgIKe
+ 2fo+PAlQMc4z7kuhHmQrOI2nfrNZQbZoj2J1RNAZ4kHdqkqM8w2SHTfpLA8O3+lRZd+f MA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rxjtjscrc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Jul 2023 07:04:33 +0000
+        Thu, 20 Jul 2023 07:04:43 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36K74W01020273
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36K74g7x029488
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Jul 2023 07:04:32 GMT
+        Thu, 20 Jul 2023 07:04:42 GMT
 Received: from hu-kathirav-blr.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Thu, 20 Jul 2023 00:04:28 -0700
+ 15.2.1118.30; Thu, 20 Jul 2023 00:04:37 -0700
 From:   Kathiravan T <quic_kathirav@quicinc.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -51,11 +51,11 @@ To:     Andy Gross <agross@kernel.org>,
         <linux-gpio@vger.kernel.org>
 CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
         <quic_anusha@quicinc.com>, <quic_saahtoma@quicinc.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Poovendhan Selvaraj <quic_poovendh@quicinc.com>,
         Kathiravan T <quic_kathirav@quicinc.com>
-Subject: [PATCH V5 1/3] firmware: qcom_scm: provide a read-modify-write function
-Date:   Thu, 20 Jul 2023 12:34:06 +0530
-Message-ID: <20230720070408.1093698-2-quic_kathirav@quicinc.com>
+Subject: [PATCH V5 3/3] firmware: scm: Modify only the download bits in TCSR register
+Date:   Thu, 20 Jul 2023 12:34:08 +0530
+Message-ID: <20230720070408.1093698-4-quic_kathirav@quicinc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230720070408.1093698-1-quic_kathirav@quicinc.com>
 References: <20230720070408.1093698-1-quic_kathirav@quicinc.com>
@@ -67,78 +67,75 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: SFg7GbUsYJ3z3oknpmlr1L6_Ieow1fEQ
-X-Proofpoint-GUID: SFg7GbUsYJ3z3oknpmlr1L6_Ieow1fEQ
+X-Proofpoint-GUID: Vmt_JrVqa_Ko09e4moRsAiwNffYmUtmv
+X-Proofpoint-ORIG-GUID: Vmt_JrVqa_Ko09e4moRsAiwNffYmUtmv
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-07-19_16,2023-07-19_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 priorityscore=1501 mlxlogscore=657 adultscore=0
- impostorscore=0 malwarescore=0 clxscore=1015 bulkscore=0 mlxscore=0
- spamscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307200058
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 mlxlogscore=999 phishscore=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 mlxscore=0 spamscore=0 suspectscore=0
+ impostorscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2306200000 definitions=main-2307200058
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Mukesh Ojha <quic_mojha@quicinc.com>
 
-It was realized by Srinivas K. that there is a need of read-modify-write
-scm exported function so that it can be used by multiple clients.
+CrashDump collection is based on the DLOAD bit of TCSR register. To retain
+other bits, we read the register and modify only the DLOAD bit as the
+other bits have their own significance.
 
-Let's introduce qcom_scm_io_update_field() which masks out the bits and
-write the passed value to that bit-offset.
-
-Suggested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Co-developed-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
 Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
 ---
 Changes in V5:
-	- No changes
+	- Added the Signed-off-by tag for user Poovendhan
+	- Dropped the macro QCOM_DOWNLOAD_MODE_SHIFT in the favor of
+	  PREP_FIELD
 
- drivers/firmware/qcom_scm.c            | 15 +++++++++++++++
- include/linux/firmware/qcom/qcom_scm.h |  2 ++
- 2 files changed, 17 insertions(+)
+ drivers/firmware/qcom_scm.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
-index fde33acd46b7..104d86e49b97 100644
+index 104d86e49b97..3830dcf14326 100644
 --- a/drivers/firmware/qcom_scm.c
 +++ b/drivers/firmware/qcom_scm.c
-@@ -407,6 +407,21 @@ int qcom_scm_set_remote_state(u32 state, u32 id)
- }
- EXPORT_SYMBOL(qcom_scm_set_remote_state);
+@@ -30,6 +30,10 @@ module_param(download_mode, bool, 0);
+ #define SCM_HAS_IFACE_CLK	BIT(1)
+ #define SCM_HAS_BUS_CLK		BIT(2)
  
-+int qcom_scm_io_update_field(phys_addr_t addr, unsigned int mask, unsigned int val)
-+{
-+	unsigned int old, new;
-+	int ret;
++#define QCOM_DOWNLOAD_FULLDUMP		0x1
++#define QCOM_DOWNLOAD_NODUMP		0x0
++#define QCOM_DOWNLOAD_MODE_MASK		BIT(4)
 +
-+	ret = qcom_scm_io_readl(addr, &old);
-+	if (ret)
-+		return ret;
-+
-+	new = (old & ~mask) | (val & mask);
-+
-+	return qcom_scm_io_writel(addr, new);
-+}
-+EXPORT_SYMBOL(qcom_scm_io_update_field);
-+
- static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
+ struct qcom_scm {
+ 	struct device *dev;
+ 	struct clk *core_clk;
+@@ -440,6 +444,7 @@ static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
+ static void qcom_scm_set_download_mode(bool enable)
  {
- 	struct qcom_scm_desc desc = {
-diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
-index 250ea4efb7cb..ca41e4eb33ad 100644
---- a/include/linux/firmware/qcom/qcom_scm.h
-+++ b/include/linux/firmware/qcom/qcom_scm.h
-@@ -84,6 +84,8 @@ extern bool qcom_scm_pas_supported(u32 peripheral);
+ 	bool avail;
++	int val;
+ 	int ret = 0;
  
- extern int qcom_scm_io_readl(phys_addr_t addr, unsigned int *val);
- extern int qcom_scm_io_writel(phys_addr_t addr, unsigned int val);
-+extern int qcom_scm_io_update_field(phys_addr_t addr, unsigned int mask,
-+				    unsigned int val);
- 
- extern bool qcom_scm_restore_sec_cfg_available(void);
- extern int qcom_scm_restore_sec_cfg(u32 device_id, u32 spare);
+ 	avail = __qcom_scm_is_call_available(__scm->dev,
+@@ -448,8 +453,10 @@ static void qcom_scm_set_download_mode(bool enable)
+ 	if (avail) {
+ 		ret = __qcom_scm_set_dload_mode(__scm->dev, enable);
+ 	} else if (__scm->dload_mode_addr) {
+-		ret = qcom_scm_io_writel(__scm->dload_mode_addr,
+-				enable ? QCOM_SCM_BOOT_SET_DLOAD_MODE : 0);
++		val = enable ? QCOM_DOWNLOAD_FULLDUMP : QCOM_DOWNLOAD_NODUMP;
++		ret = qcom_scm_io_update_field(__scm->dload_mode_addr,
++					       QCOM_DOWNLOAD_MODE_MASK,
++					       FIELD_PREP(QCOM_DOWNLOAD_MODE_MASK, val));
+ 	} else {
+ 		dev_err(__scm->dev,
+ 			"No available mechanism for setting download mode\n");
 -- 
 2.34.1
 
