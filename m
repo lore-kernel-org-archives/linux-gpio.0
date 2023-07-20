@@ -2,135 +2,185 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 584CBC04FE0
-	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jul 2023 08:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E25C0015E
+	for <linux-gpio@archiver.kernel.org>; Thu, 20 Jul 2023 08:57:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230134AbjGTI5d (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S230191AbjGTI5d (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 20 Jul 2023 04:57:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36846 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230444AbjGTIjU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2023 04:39:20 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0D1A26B0
-        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2023 01:39:19 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1b9d80e33fbso3308885ad.0
-        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2023 01:39:19 -0700 (PDT)
+        with ESMTP id S231186AbjGTIt7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2023 04:49:59 -0400
+Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 473C4268F
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2023 01:49:58 -0700 (PDT)
+Received: by mail-ua1-x92a.google.com with SMTP id a1e0cc1a2514c-7996e265b4dso197538241.2
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2023 01:49:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689842359; x=1692434359;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=O1aNw6XCtnwwBXVGSb02eWVXMLe/UMnVFRJc7pZdGyQ=;
-        b=Z1DRlyRGbnsBe5D1ziqILbkuPw0TaDrRwBKzVh5PluXwkMPJxXkq+iepSitG9UZFOX
-         +MqYiftWz3FcKIG+U24xfTvwu/RvbDCz90X/aykE1ylHO3b9nkEQSifo3EEJ3e6iw3oF
-         8qNyjSrUdfN4n6cvBoKR/K8ryuhZa6y2KweDHnQJGB6z64WKOXx+VdRWTp2YrGcx81I/
-         R6Lw1g0UZApTzND27IMwh1j16Up8aJXJ2abmX+i0zuFPq4THruPqE//40lzzh7xzcLNY
-         KvfOml/lVhBg/LXa8eynHk+ZhdjEt1Y8Yi1mU09AzbpbTuv4vnj7xZ5pGTrYiyjYehbg
-         EEBA==
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1689842997; x=1690447797;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m0tWQuLZCPmXJ6nLynn9kYWkcYgXWEr6OUjvbN0VeMc=;
+        b=v9yCjKPjbTb79DwwMBskxwVe6PDo2hEfA3wDlKvBDNuOuaAucOBRRUbtv5T1VxHwXW
+         5YTf6OoHfxig39FNN2emyCvF/upZ3hLYKn00KAQnTgaI1lRU+oLhN/cpLwxn95uSSpKi
+         wUH07QAYhc64j7pmzCA12f/H8niO5VjpsCGlcVwHcQQnaxJThNJep95MoWxV86qAfHQK
+         JumAEbVqAnll+ZF1EOlwgoCYeQSyiy2NwIjtalENJf6D6fZVWFzuhQ1hOLmF9S33bY64
+         EQDrlzkOzgRFnM5G5S1W0pM2RYjGdXbQ0hT43kvBt7bevMQRc2n8/+kgxg4rGIXUpdIk
+         zfkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689842359; x=1692434359;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O1aNw6XCtnwwBXVGSb02eWVXMLe/UMnVFRJc7pZdGyQ=;
-        b=QokWLMncTqN8gCDGDojZdDqwaPSOJ5gKlqNRmQ+SMkD6j0uEg23+fRKh7299015xcF
-         QKGfKXRO0nW4TRv+cEfX3DBpT5uM4yS9Z5U5CfcFwivERxhUPxfXZg7OSGZWHbgha8nw
-         X17/OXh/USaTS5PQpooIkxmrKThZyBrFbasQ54jKSfOJcBWh/GadENZMFqYBJCVwC4DV
-         G8qJuipbRfhEJu2w1skzYzvAq2nPwCzrEudCPp5FtVe8yBLDFGQAdWS7aLrauff5Oo9A
-         KXCdOLi0A6i1/8J/wXK+hBCt1tdBVQS4XGExhqjIiMzNusbvkXg/z0VDlBOAJKYKZn4r
-         406w==
-X-Gm-Message-State: ABy/qLaMseim4N5eOHJBP1Bzfb9cLVj6h/oLxqLG9j3eI1w8dQihpv7T
-        op2xjl6CYFOuxC7kXoXdwYTf0JQwm1M=
-X-Google-Smtp-Source: APBJJlEAfIijj9CaWUlAUxROAfxsrug30Vpxz/zmMMz1X2aZZlCB+QnZUhIbuVZzvYu3jBzbkWvqjQ==
-X-Received: by 2002:a17:902:cecb:b0:1b8:b288:6274 with SMTP id d11-20020a170902cecb00b001b8b2886274mr4256727plg.18.1689842359102;
-        Thu, 20 Jul 2023 01:39:19 -0700 (PDT)
-Received: from sol (194-223-178-180.tpgi.com.au. [194.223.178.180])
-        by smtp.gmail.com with ESMTPSA id b17-20020a170902d51100b001ac741dfd29sm673572plg.295.2023.07.20.01.39.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 01:39:18 -0700 (PDT)
-Date:   Thu, 20 Jul 2023 16:39:13 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
+        d=1e100.net; s=20221208; t=1689842997; x=1690447797;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m0tWQuLZCPmXJ6nLynn9kYWkcYgXWEr6OUjvbN0VeMc=;
+        b=gkzBvotZke18Wugo9W4PAKTj2frKIuauHGbsZae52uH+wTVCHnkrI3VV9nxdZGSJhl
+         6V7tKqDiLHXMA4VfdCrpj2cXRM6oXmc9Ztb++/dajlNMIBDRX2LFGfaU9ypLCch9/CpL
+         gY4MalSsOP9Y9kXGFkqWTP+GfXxpR6/iVz1an1QioroFXlfo73sNF58Y1s8onKp8M3zb
+         gEcS4z43M/S3c33gq14HH9zksbMs+6f5+AtyKfISR3rNgo/wRfv0Kv8MH5QDUJ/ioQiz
+         Ztaxluw3lqruUJ33usimdCXrld9BzCtCZEfz6dr/n5zdUTn153Gz4P2bign8EVV8RVmE
+         RLtg==
+X-Gm-Message-State: ABy/qLaZWJrH7VykRYAVhbCK+qELkevqpBTYTBohh5O/5ZaEbG+hzzcY
+        AvkZLHmJ9u0UtQGT4dKi/wUB+8FmeOi+9JYjbCkNjiSF+Y4LQ7LENkQ=
+X-Google-Smtp-Source: APBJJlEI14de2Rg9a9Cx6Kb+4qKmks0WlVnC/Pt+sgv3GsqBko8s9j7nTu6aCNfblNNN9kI64+Ncezq+G9ukFvKDKfQ=
+X-Received: by 2002:a67:f60f:0:b0:440:a3db:2d84 with SMTP id
+ k15-20020a67f60f000000b00440a3db2d84mr3493072vso.15.1689842997382; Thu, 20
+ Jul 2023 01:49:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230719192057.172560-1-brgl@bgdev.pl> <ZLipqIJE1Mo4oK00@sol>
+ <CAMRc=Mf=Xf7KPP+9GPC6=1Gsp3XTfzrwjOK2jrqeP7QUVxtD+Q@mail.gmail.com>
+ <ZLjqtVcTCcStYac4@sol> <CAMRc=McjEPsYOm5ZcvbtfVkyF6uGk-4bYeKitJ0QKJcNGHrCSA@mail.gmail.com>
+ <ZLjyscgZM50A/PLb@sol>
+In-Reply-To: <ZLjyscgZM50A/PLb@sol>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 20 Jul 2023 10:49:46 +0200
+Message-ID: <CAMRc=MfGYoTmcV2DXiQtBRPu2K3J9H_CDoLXCcfu2dOjA0cEDg@mail.gmail.com>
+Subject: Re: [libgpiod][PATCH 0/5] core: provide information about the parent
+ chip in line requests
+To:     Kent Gibson <warthog618@gmail.com>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [libgpiod][PATCH 0/5] core: provide information about the parent
- chip in line requests
-Message-ID: <ZLjyscgZM50A/PLb@sol>
-References: <20230719192057.172560-1-brgl@bgdev.pl>
- <ZLipqIJE1Mo4oK00@sol>
- <CAMRc=Mf=Xf7KPP+9GPC6=1Gsp3XTfzrwjOK2jrqeP7QUVxtD+Q@mail.gmail.com>
- <ZLjqtVcTCcStYac4@sol>
- <CAMRc=McjEPsYOm5ZcvbtfVkyF6uGk-4bYeKitJ0QKJcNGHrCSA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=McjEPsYOm5ZcvbtfVkyF6uGk-4bYeKitJ0QKJcNGHrCSA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jul 20, 2023 at 10:25:14AM +0200, Bartosz Golaszewski wrote:
-> On Thu, Jul 20, 2023 at 10:05 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > On Thu, Jul 20, 2023 at 09:59:00AM +0200, Bartosz Golaszewski wrote:
-> > > On Thu, Jul 20, 2023 at 5:27 AM Kent Gibson <warthog618@gmail.com> wrote:
-> > > >
-> > > > On Wed, Jul 19, 2023 at 09:20:52PM +0200, Bartosz Golaszewski wrote:
-> > > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Jul 20, 2023 at 10:39=E2=80=AFAM Kent Gibson <warthog618@gmail.com>=
+ wrote:
+>
+> On Thu, Jul 20, 2023 at 10:25:14AM +0200, Bartosz Golaszewski wrote:
+> > On Thu, Jul 20, 2023 at 10:05=E2=80=AFAM Kent Gibson <warthog618@gmail.=
+com> wrote:
+> > >
+> > > On Thu, Jul 20, 2023 at 09:59:00AM +0200, Bartosz Golaszewski wrote:
+> > > > On Thu, Jul 20, 2023 at 5:27=E2=80=AFAM Kent Gibson <warthog618@gma=
+il.com> wrote:
 > > > > >
-> > > > > While working on the DBus API, it occurred to me that while we can obtain
-> > > > > the list of requested offsets from a line request, this information lacks
-> > > > > context if we cannot get any information about the parent chip on which
-> > > > > the request was made.
+> > > > > On Wed, Jul 19, 2023 at 09:20:52PM +0200, Bartosz Golaszewski wro=
+te:
+> > > > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > > > >
+> > > > > > While working on the DBus API, it occurred to me that while we =
+can obtain
+> > > > > > the list of requested offsets from a line request, this informa=
+tion lacks
+> > > > > > context if we cannot get any information about the parent chip =
+on which
+> > > > > > the request was made.
+> > > > > >
+> > > > > > We cannot reference the chip in any way as its lifetime is disc=
+onnected
+> > > > > > from the request but we can at least provide the path to the ch=
+aracter
+> > > > > > device used to open it as a way of providing some context for t=
+he offsets.
+> > > > > >
 > > > > >
-> > > > > We cannot reference the chip in any way as its lifetime is disconnected
-> > > > > from the request but we can at least provide the path to the character
-> > > > > device used to open it as a way of providing some context for the offsets.
+> > > > > No problem with this conceptually, the only question I have is wh=
+ich
+> > > > > one of these should be stored:
+> > > > >  - requested path e.g. 'a_symlink_to_my_favorite_chip'
+> > > > >  - canonicalised path e.g. '/dev/gpiochip0'
+> > > > >  - chip name e.g. 'gpiochip0'
+> > > > >  - chip number e.g. 0
+> > > > >
+> > > > > In this patch we get the requested path, right?
 > > > > >
 > > > >
-> > > > No problem with this conceptually, the only question I have is which
-> > > > one of these should be stored:
-> > > >  - requested path e.g. 'a_symlink_to_my_favorite_chip'
-> > > >  - canonicalised path e.g. '/dev/gpiochip0'
-> > > >  - chip name e.g. 'gpiochip0'
-> > > >  - chip number e.g. 0
-> > > >
-> > > > In this patch we get the requested path, right?
+> > > > Yes, I think we should just use whatever filesystem path was used t=
+o
+> > > > create the chip as it would be the one allowing the caller to reope=
+n
+> > > > the same chip.
 > > > >
 > > >
-> > > Yes, I think we should just use whatever filesystem path was used to
-> > > create the chip as it would be the one allowing the caller to reopen
-> > > the same chip.
+> > > So there are instances where those four don't map to the same thing?
 > > >
 > >
-> > So there are instances where those four don't map to the same thing?
+> > Not in a typical situation, it can happen if the chip was removed and
+> > another one took its place which is very unlikely.
 > >
-> 
-> Not in a typical situation, it can happen if the chip was removed and
-> another one took its place which is very unlikely.
-> 
+>
+> And a symlink could get changed as well.
+>
+> > I just think that we cannot have any "hard data" as in: a programmatic
+> > reference to the chip in the request (their lifetimes are not
+> > connected), so the next best thing is the filesystem path.
+> >
+>
+> Indeed - the chip fd used to request the line is out of scope.
+>
+> But the number of possible requested paths is many, whereas the other
+> three options produce a unique and comparable identifier, in a searching
+> sense.
+>
 
-And a symlink could get changed as well.
+So which one do you suggest?
 
-> I just think that we cannot have any "hard data" as in: a programmatic
-> reference to the chip in the request (their lifetimes are not
-> connected), so the next best thing is the filesystem path.
-> 
+> On a related point, does the DBus API allow a client to access lines
+> requested by another client?  And if so, how can they be sure they have
+> the right line?
+>
 
-Indeed - the chip fd used to request the line is out of scope.
+Sure they can but various user permissions as configured in the
+relevant .conf file may apply.
 
-But the number of possible requested paths is many, whereas the other
-three options produce a unique and comparable identifier, in a searching
-sense.
+So what I've got so far in dbus (and feel free to check out the WiP[1]) is =
+this:
 
-On a related point, does the DBus API allow a client to access lines
-requested by another client?  And if so, how can they be sure they have
-the right line?
+There's an /io/gpiod1/gpiochipX object per chip implementing the
+io.gpiod1.Chip interface. For each line there's a separate object as
+well:
 
-Cheers,
-Kent.
+/io/gpiod1/gpiochip0
+/io/gpiod1/gpiochip0/0
+/io/gpiod1/gpiochip0/1
+/io/gpiod1/gpiochip0/2
+/io/gpiod1/gpiochip0/3
+
+Line objects implement the io.gpiod1.Line interface and the daemon
+emits a PropertiesChanged signal for any status changes.
+
+You can call io.gpiod1.Chip.RequestLines() method on a chip object
+which will return the object path to the new request.
+
+/io/gpiod1/gpiochip0
+/io/gpiod1/gpiochip0/0
+/io/gpiod1/gpiochip0/1
+/io/gpiod1/gpiochip0/2
+/io/gpiod1/gpiochip0/3
+/io/gpiod1/request0
+
+The request will reference the chip object from which it was created
+as well as the lines it controls.
+
+Bart
+
+> Cheers,
+> Kent.
+
+[1] https://github.com/brgl/libgpiod-private/tree/topic/dbus/
