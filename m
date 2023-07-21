@@ -2,146 +2,65 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BED7DC001DC
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 Jul 2023 20:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CADC04E69
+	for <linux-gpio@archiver.kernel.org>; Fri, 21 Jul 2023 21:12:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbjGUU2b (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 21 Jul 2023 16:28:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47202 "EHLO
+        id S230470AbjGUVME (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 21 Jul 2023 17:12:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229867AbjGUU1u (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Jul 2023 16:27:50 -0400
-Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B19B3A84
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Jul 2023 13:27:20 -0700 (PDT)
-Received: by mail-oo1-xc31.google.com with SMTP id 006d021491bc7-5636ab8240cso1288920eaf.3
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Jul 2023 13:27:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689971237; x=1690576037;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7xPDzzCzi/QN7xILesfa0mVBVsGJvBpLORXGzKhvY7c=;
-        b=4XmoJAYz55NB/L3U+DEUVJ9ui979+6Vz0rqBHHDkliqQXOMi6F+/ITB9aD9iN37wqO
-         BgdGLtJssmT2r2CCaMdB6vTrlXmgl7CEI5eFL8Iy5qkECyULhvyVXE0OLtlJLWTWLWVe
-         ujy4f/mAiGRut+DHYbvmdkcQlKKfluhe809jNINb8G6MffFgabAZ4L8IZbqwDIs/Dzml
-         mrPigKZ7ueMy+J2wvjE1cevFAOpAnDkQ13SDfoATpvTQsVGhjDoy67xsuJDQ95pHpt0i
-         9bZdbaLpFIDoRxE4Uk1HMABabIBI7CYqt4kN1YtFNOWaLkAec3SHAFyTZ54eD0gzUJSK
-         atNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689971237; x=1690576037;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7xPDzzCzi/QN7xILesfa0mVBVsGJvBpLORXGzKhvY7c=;
-        b=DcdzgI/EyYJZUd4IRIFomKfkm+zYR7CXmYdrvAdxONmZYjQQi7ufpQprqyOQmTuhDW
-         B4f7KewB2s5MyVO49LloLerDBp5bN/f0wri8Md4Pzcwxh1rHRPtpUpaqz4Rya+SP16NP
-         Ew+Ru20rc3SmTY+YjiZl7nP11Nk4xsMYw0VCowZ8hUc2ozOvy6dvY24VQW9Paz0vtaYb
-         K4gxfChUB8o7o5v7UUZsH6VxDccRg8ulDjuOVewadRa86fkzrGoX3TtyUmoAXzLBXSdL
-         6iSUGhvjCZa2MxsCoz7zkQUHdY5w4d4lsLKQlmpzXGWK/gkPj8qysgvb8pwTWeZufDx/
-         gTvA==
-X-Gm-Message-State: ABy/qLYAloeAarY8adhJSeqD86SQVceJQL+qOJ3+ArYMoNzojupzr/OG
-        Y0PjCRFtlAuOppiaeZdDPz2J9Sh8+2sllQ6MdMrBFg==
-X-Google-Smtp-Source: APBJJlFV1pSwvieqS1OgnGFs6EJa3OMX3Q/AZhNSCm23Jd0179q/7NNdnOaSTeQWwXZbKc15/fFyeSnhcfBgqT1xvfc=
-X-Received: by 2002:a05:6870:ac2b:b0:1ba:c3a2:fb66 with SMTP id
- kw43-20020a056870ac2b00b001bac3a2fb66mr3041987oab.5.1689971236868; Fri, 21
- Jul 2023 13:27:16 -0700 (PDT)
+        with ESMTP id S230078AbjGUVMD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Jul 2023 17:12:03 -0400
+X-Greylist: delayed 344 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 21 Jul 2023 14:11:57 PDT
+Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D26E359C;
+        Fri, 21 Jul 2023 14:11:57 -0700 (PDT)
+Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+        by mx.skole.hr (mx.skole.hr) with ESMTP id 8B8B486D1B;
+        Fri, 21 Jul 2023 23:06:11 +0200 (CEST)
+From:   =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+To:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        afaerber@suse.com,
+        =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Subject: [PATCH 03/10] gpio: pxa: make pxa_gpio_has_pinctrl return false for MMP_GPIO
+Date:   Fri, 21 Jul 2023 22:37:45 +0200
+Message-ID: <20230721210042.21535-4-duje.mihanovic@skole.hr>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230721210042.21535-1-duje.mihanovic@skole.hr>
+References: <20230721210042.21535-1-duje.mihanovic@skole.hr>
 MIME-Version: 1.0
-References: <1689934361-32642-1-git-send-email-quic_srichara@quicinc.com>
-In-Reply-To: <1689934361-32642-1-git-send-email-quic_srichara@quicinc.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 21 Jul 2023 13:27:05 -0700
-Message-ID: <CAKwvOdmYC6WuapBkD+s6wYCBaUdiJxiLXwayoubTF0WCpdBoMg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: Remove the unused _groups variable build warning
-To:     Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        linus.walleij@linaro.org, quic_varada@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-        oe-kbuild-all@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jul 21, 2023 at 3:13=E2=80=AFAM Sricharan Ramabadhran
-<quic_srichara@quicinc.com> wrote:
->
-> When building with clang toolchain and arm64-randconfig-r015-20230712
-> kernel test robot reports the below warning.
->
->  drivers/pinctrl/qcom/pinctrl-ipq5018.c:244:27: warning: unused variable =
-'_groups' [-Wunused-const-variable]
->    static const char * const _groups[] =3D {
->                              ^
->    1 warning generated.
->
->      static const char * const _groups[] =3D {
->              "gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6=
-", "gpio7",
->              "gpio8", "gpio9", "gpio10", "gpio11", "gpio12", "gpio13", "g=
-pio14",
->              "gpio15", "gpio16", "gpio17", "gpio18", "gpio19", "gpio20", =
-"gpio21",
->              "gpio22", "gpio23", "gpio24", "gpio25", "gpio26", "gpio27", =
-"gpio28",
->              "gpio29", "gpio30", "gpio31", "gpio32", "gpio33", "gpio34", =
-"gpio35",
->              "gpio36", "gpio37", "gpio38", "gpio39", "gpio40", "gpio41", =
-"gpio42",
->              "gpio43", "gpio44", "gpio45", "gpio46",
->    };
->
-> Fixing it by removing the variable.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202307120814.vWPY6URk-lkp@i=
-ntel.com/
-> Fixes: 725d1c891658 ("pinctrl: qcom: Add IPQ5018 pinctrl driver")
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Fixes the incorrect assumption that mmp-gpio needs a pinctrl handle,
+causing devices consuming GPIO to be indefinitely deferred.
 
-Thanks for the patch!
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+---
+ drivers/gpio/gpio-pxa.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> ---
->  drivers/pinctrl/qcom/pinctrl-ipq5018.c | 10 ----------
->  1 file changed, 10 deletions(-)
->
-> diff --git a/drivers/pinctrl/qcom/pinctrl-ipq5018.c b/drivers/pinctrl/qco=
-m/pinctrl-ipq5018.c
-> index ed58f75..e2951f8 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-ipq5018.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-ipq5018.c
-> @@ -241,16 +241,6 @@ static const char * const atest_char_groups[] =3D {
->         "gpio0", "gpio1", "gpio2", "gpio3", "gpio37",
->  };
->
-> -static const char * const _groups[] =3D {
-> -       "gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6", "g=
-pio7",
-> -       "gpio8", "gpio9", "gpio10", "gpio11", "gpio12", "gpio13", "gpio14=
-",
-> -       "gpio15", "gpio16", "gpio17", "gpio18", "gpio19", "gpio20", "gpio=
-21",
-> -       "gpio22", "gpio23", "gpio24", "gpio25", "gpio26", "gpio27", "gpio=
-28",
-> -       "gpio29", "gpio30", "gpio31", "gpio32", "gpio33", "gpio34", "gpio=
-35",
-> -       "gpio36", "gpio37", "gpio38", "gpio39", "gpio40", "gpio41", "gpio=
-42",
-> -       "gpio43", "gpio44", "gpio45", "gpio46",
-> -};
-> -
->  static const char * const wci_txd_groups[] =3D {
->         "gpio0", "gpio1", "gpio2", "gpio3",
->         "gpio42", "gpio43", "gpio44", "gpio45",
-> --
-> 2.7.4
->
->
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index 076ee6dff4d5..b48d142b736d 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -238,6 +238,7 @@ static bool pxa_gpio_has_pinctrl(void)
+ 	switch (gpio_type) {
+ 	case PXA3XX_GPIO:
+ 	case MMP2_GPIO:
++	case MMP_GPIO:
+ 		return false;
+ 
+ 	default:
+-- 
+2.41.0
 
 
---=20
-Thanks,
-~Nick Desaulniers
