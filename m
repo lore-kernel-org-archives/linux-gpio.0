@@ -2,79 +2,76 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1395C04A94
-	for <linux-gpio@archiver.kernel.org>; Fri, 21 Jul 2023 07:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD57EB64DC
+	for <linux-gpio@archiver.kernel.org>; Fri, 21 Jul 2023 07:55:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230286AbjGUHfj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 21 Jul 2023 03:35:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57730 "EHLO
+        id S229610AbjGUHz5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 21 Jul 2023 03:55:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230193AbjGUHfe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Jul 2023 03:35:34 -0400
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5C7519A1;
-        Fri, 21 Jul 2023 00:34:46 -0700 (PDT)
-Received: from rd02-sz.amlogic.software (10.28.11.83) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.13; Fri, 21 Jul 2023
- 15:34:31 +0800
-From:   Huqiang Qin <huqiang.qin@amlogic.com>
-To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <neil.armstrong@linaro.org>,
-        <khilman@baylibre.com>, <jbrunet@baylibre.com>,
-        <martin.blumenstingl@googlemail.com>, <linus.walleij@linaro.org>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        Huqiang Qin <huqiang.qin@amlogic.com>
-Subject: [PATCH 0/3] Add binding header file for GPIO interrupt of Amlogic Meson-G12A
-Date:   Fri, 21 Jul 2023 15:32:11 +0800
-Message-ID: <20230721073214.1876417-1-huqiang.qin@amlogic.com>
-X-Mailer: git-send-email 2.37.1
+        with ESMTP id S229576AbjGUHz4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Jul 2023 03:55:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7096E0;
+        Fri, 21 Jul 2023 00:55:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C8E161575;
+        Fri, 21 Jul 2023 07:55:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DD3DC433CB;
+        Fri, 21 Jul 2023 07:55:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689926154;
+        bh=W/RkNM0LA5FIGb1qUz9Yr77W0ObcTph4orlH2jwmqyY=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=e+57HDZHTD0q/GUnjCakwBVBoc+qFkkhXjO3myoKj8mt7VlEBpr9veGJJlqhtofYN
+         XXs3rdUG5Xy1EHVmlcSlCkVGihhAoOitrpKUDcaxJyYxkm0EhtmHKgL4KYnbFCHvCz
+         bMhhDAJ5E1GCToR+vFk0vHL99MPim78UiOvv2Evt/FwRtDhd8xRjfl3gijXBA3b4mn
+         vUZjAXPshYhaWLWl49u6IsZmhMnDjnrk6MoH4WN5UipTsX7WmXd5RSCny7arzN4429
+         TBsm4TuZ1cANfF+00lhIH5cQ1ZGSxtkqL035SfvTvnW3Bnk1ZAUWUtPNXqJFqIB6V1
+         zVeBLZfaVOwfQ==
+From:   Lee Jones <lee@kernel.org>
+To:     broonie@kernel.org, lee@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linus.walleij@linaro.org,
+        vkoul@kernel.org, Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     robh+dt@kernel.org, conor+dt@kernel.org, lgirdwood@gmail.com,
+        yung-chuan.liao@linux.intel.com, sanyog.r.kale@intel.com,
+        pierre-louis.bossart@linux.intel.com, alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20230619095623.1987742-5-ckeepax@opensource.cirrus.com>
+References: <20230619095623.1987742-1-ckeepax@opensource.cirrus.com>
+ <20230619095623.1987742-5-ckeepax@opensource.cirrus.com>
+Subject: Re: (subset) [PATCH v5 4/6] pinctrl: cs42l43: Add support for the
+ cs42l43
+Message-Id: <168992615117.1924396.3669045288825154363.b4-ty@kernel.org>
+Date:   Fri, 21 Jul 2023 08:55:51 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.28.11.83]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-After adding this binding header file, you can intuitively find
-the interrupt number corresponding to each GPIO, and apply it
-in the format of IRQID_XXX where it needs to be used.
+On Mon, 19 Jun 2023 10:56:21 +0100, Charles Keepax wrote:
+> The CS42L43 is an audio CODEC with integrated MIPI SoundWire interface
+> (Version 1.2.1 compliant), I2C, SPI, and I2S/TDM interfaces designed
+> for portable applications. It provides a high dynamic range, stereo
+> DAC for headphone output, two integrated Class D amplifiers for
+> loudspeakers, and two ADCs for wired headset microphone input or
+> stereo line input. PDM inputs are provided for digital microphones.
+> 
+> [...]
 
-Associated platforms:
-- Amlogic Meson-G12A
-- Amlogic Meson-G12B
-- Amlogic Meson-SM1
+Applied, thanks!
 
-Huqiang Qin (3):
-  dt-bindings: interrupt-controller: Add header file for Amlogic
-    Meson-G12A SoCs
-  pinctrl: Replace the IRQ number in the driver with the IRQID macro
-    definition
-  arm64: dts: Replace the IRQ number with the IRQID macro definition
+[4/6] pinctrl: cs42l43: Add support for the cs42l43
+      commit: 85f034dd7ff0a66aded653cc91dbc406fba7cf1a
 
- .../boot/dts/amlogic/meson-g12-common.dtsi    |   1 +
- .../boot/dts/amlogic/meson-g12a-x96-max.dts   |   2 +-
- .../dts/amlogic/meson-g12b-bananapi-cm4.dtsi  |   2 +-
- .../boot/dts/amlogic/meson-g12b-bananapi.dtsi |   2 +-
- .../amlogic/meson-g12b-odroid-go-ultra.dts    |   4 +-
- .../dts/amlogic/meson-g12b-odroid-n2.dtsi     |   2 +-
- .../boot/dts/amlogic/meson-g12b-w400.dtsi     |   2 +-
- .../dts/amlogic/meson-sm1-a95xf3-air-gbit.dts |   2 +-
- .../boot/dts/amlogic/meson-sm1-bananapi.dtsi  |   4 +-
- .../boot/dts/amlogic/meson-sm1-h96-max.dts    |   2 +-
- .../boot/dts/amlogic/meson-sm1-odroid.dtsi    |   2 +-
- .../boot/dts/amlogic/meson-sm1-sei610.dts     |  12 +-
- .../dts/amlogic/meson-sm1-x96-air-gbit.dts    |   2 +-
- drivers/pinctrl/meson/pinctrl-meson-g12a.c    |  35 ++---
- .../irq-meson-g12a-gpio.h                     | 126 ++++++++++++++++++
- 15 files changed, 164 insertions(+), 36 deletions(-)
- create mode 100644 include/dt-bindings/interrupt-controller/irq-meson-g12a-gpio.h
-
-
-base-commit: c58c49dd89324b18a812762a2bfa5a0458e4f252
--- 
-2.37.1
+--
+Lee Jones [李琼斯]
 
