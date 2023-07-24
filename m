@@ -2,123 +2,106 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADF8C00528
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jul 2023 16:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B504C001B0
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jul 2023 16:13:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230064AbjGXQCq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Jul 2023 12:02:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37748 "EHLO
+        id S229661AbjGXQNS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Jul 2023 12:13:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230189AbjGXQCp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jul 2023 12:02:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 595A71A3;
-        Mon, 24 Jul 2023 09:02:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C882761237;
-        Mon, 24 Jul 2023 16:02:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0964FC433C8;
-        Mon, 24 Jul 2023 16:02:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690214563;
-        bh=Omsqe8+eInRgeTcrf+/2KtOeHqFHTNe9dlgLEqOlreo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S+hEY6sUhQAeEdGjeAOLds2fJ5fe2yDEMv3kgB5oipe5XFr5EzXtX3PWDyHi8RxvW
-         8xA4TBAxNtTzf1gdUSwDVzOwGQdETMM+EBfYLu8irLjMLpwSSO00xV3aUGjsdU7iYY
-         A8vLw9MGN+SYKEjK5MeXOS7ZC2oUrJgH8bWUsehqoiRcQhSMki1T9NPB3lp6awNFMn
-         CNUHqVpOVtDOBWCzv1yb9z2T9224npR/x2RGv//d77EPgzEcKk7pKV5iQUyQ+mzpBh
-         BIkph+R82P7qLP2pEDPBHh/2DmK4ftf0F2xfBt4RNZFBbkTP8WdTzrBJRr6O8OR2PX
-         KcK6N95XLdMGA==
-Received: (nullmailer pid 3622554 invoked by uid 1000);
-        Mon, 24 Jul 2023 16:02:40 -0000
-Date:   Mon, 24 Jul 2023 10:02:40 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Tony Lindgren <tony@atomide.com>
+        with ESMTP id S229558AbjGXQNR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jul 2023 12:13:17 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1DD010CB;
+        Mon, 24 Jul 2023 09:13:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1690215196; x=1721751196;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=OvpuSgu/bv4KjS8fI5f2MwtNglY+5tuG7uCAwPmElOg=;
+  b=KEgwWAPUnDd0G6xFTc70c5miJ7PG4AVLAts9g5LUHt9ljBt13L/R6faC
+   0iLW27eN875JDd70tPku3KtJ3pezuQTHF5duhk2MTPxid2h6FPEWy2tpz
+   xRZXAo9opBzwGQzdHWTiOqJRPEt12Ltvpi324xvECT3cyLk6LiPbiIKpF
+   ec0oFUlwOiMGcIFAtp3buAXcdVoNRCRoNH3mnXFNH1X+Zap/PUuCgdxgA
+   UejvILgWJ48/GFkzdsd+HDjvpCSarY1nJmxM67ruR3R80xgz2YmyI/EbD
+   p43lajsnabePDy9LakUQNsjgnycHX6hKYdu3KEDzWork7UCsNpOVI2PcY
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="364945368"
+X-IronPort-AV: E=Sophos;i="6.01,228,1684825200"; 
+   d="scan'208";a="364945368"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2023 09:13:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="702949233"
+X-IronPort-AV: E=Sophos;i="6.01,228,1684825200"; 
+   d="scan'208";a="702949233"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 24 Jul 2023 09:13:13 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 923692FF; Mon, 24 Jul 2023 19:13:21 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-gpio@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH v7 1/1] dt-bindings: pinctrl: Update pinctrl-single to
- use yaml
-Message-ID: <169021456020.3622493.10284534202541859578.robh@kernel.org>
-References: <20230721082654.27036-1-tony@atomide.com>
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>
+Subject: [PATCH v1 4/6] gpio: ge: Utilise temporary variable for struct device
+Date:   Mon, 24 Jul 2023 19:13:18 +0300
+Message-Id: <20230724161320.63876-5-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
+In-Reply-To: <20230724161320.63876-1-andriy.shevchenko@linux.intel.com>
+References: <20230724161320.63876-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230721082654.27036-1-tony@atomide.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+We have a temporary variable to keep pointer to struct device.
+Utilise it inside the ->probe() implementation.
 
-On Fri, 21 Jul 2023 11:26:49 +0300, Tony Lindgren wrote:
-> Update binding for yaml and remove the old related txt bindings. Note that
-> we are also adding the undocumented pinctrl-single,slew-rate property. And
-> we only use the first example from the old binding.
-> 
-> As we are mostly using a generic compatible across various SoCs, let's not
-> start adding matches for random pin group node naming. Let's standardize on
-> pin group node name ending in -pins with an optional instance number
-> suffix.
-> 
-> As a pin group may have additional pins added to it later on, let's always
-> use -pins rather than -pin for the gropu name.
-> 
-> Most of the dts files have been updated already for the pin group node
-> names with a few changes still pending.
-> 
-> Cc: Nishanth Menon <nm@ti.com>
-> Cc: Vignesh Raghavendra <vigneshr@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
-> 
-> Changes since v6:
-> - Avoid adding lots of matches and only accept nodes ending in -pins
->   with an optional suffix for instance number
-> 
-> - Update title to drop driver related stuff as noted by Krzysztof
-> 
-> Changes since v5:
-> - Fix issues noted by Krzysztof
-> 
-> Changes since v4:
-> - Removed legacy matching for pin group node names, let's fix the dts
->   files instead to use "pins" naming with dashes. This also fixed the
->   new warnings introduced for "not of type 'object'" for anything named
->   pin
-> 
-> Changes since v3:
-> - Fix issues noted by Rob for v2 version that I had missed
-> 
-> - Categorize patternProperties a bit to make fixing dts files easier
-> 
-> Changes since v2:
-> 
-> - Drop old ti,omap-pinctrl.txt in addition to old pinctrl-single.txt
-> 
-> - Replace reference to pinctrl-single.txt to point to the yaml in ctrl.txt
-> 
-> Changes since v1:
-> 
-> - The v1 version was a WIP patch posted as an example in thread
->   "dt binding check error with hash and comma"
-> 
-> ---
->  .../devicetree/bindings/arm/omap/ctrl.txt     |   2 +-
->  .../bindings/pinctrl/pinctrl-single.txt       | 262 ------------------
->  .../bindings/pinctrl/pinctrl-single.yaml      | 206 ++++++++++++++
->  .../bindings/pinctrl/ti,omap-pinctrl.txt      |  13 -
->  4 files changed, 207 insertions(+), 276 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/ti,omap-pinctrl.txt
-> 
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-ge.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+diff --git a/drivers/gpio/gpio-ge.c b/drivers/gpio/gpio-ge.c
+index d019669048e6..268de5496fcb 100644
+--- a/drivers/gpio/gpio-ge.c
++++ b/drivers/gpio/gpio-ge.c
+@@ -59,7 +59,7 @@ static int __init gef_gpio_probe(struct platform_device *pdev)
+ 	void __iomem *regs;
+ 	int ret;
+ 
+-	gc = devm_kzalloc(&pdev->dev, sizeof(*gc), GFP_KERNEL);
++	gc = devm_kzalloc(dev, sizeof(*gc), GFP_KERNEL);
+ 	if (!gc)
+ 		return -ENOMEM;
+ 
+@@ -67,9 +67,9 @@ static int __init gef_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
+ 
+-	ret = bgpio_init(gc, &pdev->dev, 4, regs + GEF_GPIO_IN,
+-			 regs + GEF_GPIO_OUT, NULL, NULL,
+-			 regs + GEF_GPIO_DIRECT, BGPIOF_BIG_ENDIAN_BYTE_ORDER);
++	ret = bgpio_init(gc, dev, 4, regs + GEF_GPIO_IN, regs + GEF_GPIO_OUT,
++			 NULL, NULL, regs + GEF_GPIO_DIRECT,
++			 BGPIOF_BIG_ENDIAN_BYTE_ORDER);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "bgpio_init failed\n");
+ 
+@@ -82,7 +82,7 @@ static int __init gef_gpio_probe(struct platform_device *pdev)
+ 	gc->ngpio = (uintptr_t)device_get_match_data(dev);
+ 
+ 	/* This function adds a memory mapped GPIO chip */
+-	ret = devm_gpiochip_add_data(&pdev->dev, gc, NULL);
++	ret = devm_gpiochip_add_data(dev, gc, NULL);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "GPIO chip registration failed\n");
+ 
+-- 
+2.40.0.1.gaa8946217a0b
 
