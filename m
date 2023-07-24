@@ -2,44 +2,125 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DEA9C0015E
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jul 2023 09:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0847C41513
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jul 2023 10:02:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231239AbjGXJoQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Jul 2023 05:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45506 "EHLO
+        id S232739AbjGXKCa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Jul 2023 06:02:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231874AbjGXJoL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jul 2023 05:44:11 -0400
-X-Greylist: delayed 622 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 24 Jul 2023 02:44:08 PDT
-Received: from fluorez-com.cfd (fluorez-com.cfd [107.174.244.118])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8B0DE5B
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Jul 2023 02:44:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=re1; d=fluorez-com.cfd;
- h=Reply-To:From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:
- Content-Transfer-Encoding; i=info@fluorez-com.cfd;
- bh=LqAKS0rQcqRhfS2AomqosmxOtHjI8TSd2DPxtKmN8Fo=;
- b=XG0q1sE+kgeIdGEh91ud+Movo2Lg4mwICQltLI813dwIEGsaphLasNuuIzQbheU1uvddsOiHQTab
-   egh4NE05ebDexeRHWAmrix/lXpVrWMYRMj+wP8O4z4h+WY9pGOLPTbPa4dCV9FyuTm+cEEj6JEQ5
-   WqiCWKAIBVnkE1xzvczHF1uc/SnwprDYcsjilJyJxJ1vP27ZgwTSeT4R5OK0Urf1W1JsjainB/8A
-   6mTkGLHGSe/miEFG66qb1uCwPe141gYu2QiYaR7T9BbETKAabjLK6sAAh2H7MFGW66rAHXdsFJte
-   +GCGSv+Z4aFjf6VIiFuw5x4HSNvYMDPeyo7myw==
-Reply-To: info@coinloansupport.online
-From:   Coinloan Support Center <info@fluorez-com.cfd>
-To:     linux-gpio@vger.kernel.org
-Subject: Don't miss out on our low Interest coinloan opportunity
-Date:   24 Jul 2023 10:47:00 +0200
-Message-ID: <20230724104700.E81CD4D0D04EAE22@fluorez-com.cfd>
+        with ESMTP id S232481AbjGXKBr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jul 2023 06:01:47 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB17D6E8D
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Jul 2023 02:55:04 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-977e0fbd742so671157166b.2
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Jul 2023 02:55:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690192455; x=1690797255;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=94dQO8LxQMdHUG+2c49m7yEu0QyNmeaEeNnaDcdEi50=;
+        b=C6upeyf13JVH1fJWFmxl5BfIVVJfySCtaefw1vI3x426/paosiVxJES5cj2CGWW2KS
+         Cr/m8HDwA0yaKDzQUno8Nq8tigb2vq0EXkwst84ddXYuKmFLmzEaRwboQ6TczmL3wAVv
+         UZ2GE+0c4ocQG69t1izN3t24OytyRFu5kErU9QUsF8Tdc94ZLAwmly6y6rFwbSczEVMy
+         AP4yR1Xe+rvzdZ91EjcwvRQFccLWdWPr2BBk6KNL0+cl4RY1xAUR1S9oB18B8ibq4vKy
+         wZgiFS7XsagNbsm/SvbcS9oHEySLYJJJXxjVOP9bxf4y5oWwItOWI2wLPuYFtIPtowp+
+         MxKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690192455; x=1690797255;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=94dQO8LxQMdHUG+2c49m7yEu0QyNmeaEeNnaDcdEi50=;
+        b=hu4xxkRCgmwFbNEF6BlfQdw60iCX3VQ8oWPO+CnmKerisyzWIUUmovXr/Ly0hZXujP
+         Ukagaz/mQifLFDFxAaL9St8MD2S16tKSMuOmBDMsqOA6NyibToLvHX8Favce+kJJMDmy
+         VSj+uwrRkLkpmDqK+nDyX3/7erUayj/pMicTn9yWhR2iUYWaK+106yADDnln6Fm74kIG
+         HatCQ/5KVqs9w8hBrt4afOk5rEOUUFKRuFXTBh10dUqND8jydaju5yoj+FKVXkAG6KKa
+         CVpf9ku4Xp/KlzYdTqfc7arprCwHIQxzB85zw4iZFZgbvcLPC/O+VWHaDWkiOEfeGi5M
+         /TmQ==
+X-Gm-Message-State: ABy/qLbqVd34YuwkpVVVsYjZ9YfkSHzfJ70CfM1W5bCYXCCYsqM8p712
+        TJeA6aNuec5GA0lU5VUnNbnKNg==
+X-Google-Smtp-Source: APBJJlFaYyJc7x+0ExqkM6W4yVmevNoyHsVyru+pCZlw6jseQKGHeO49Y942+w5FqL1ss44s207a2g==
+X-Received: by 2002:a17:906:778f:b0:982:45ca:ac06 with SMTP id s15-20020a170906778f00b0098245caac06mr8953749ejm.60.1690192455496;
+        Mon, 24 Jul 2023 02:54:15 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id e13-20020a170906248d00b0099307a5c564sm6473655ejb.55.2023.07.24.02.54.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jul 2023 02:54:15 -0700 (PDT)
+Message-ID: <29b62cc6-bc54-9a43-211b-b2d7579218b7@linaro.org>
+Date:   Mon, 24 Jul 2023 11:54:12 +0200
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: Add gpio-line-names to STMPE
+ GPIO
+Content-Language: en-US
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+References: <20230724063520.182888-1-alexander.stein@ew.tq-group.com>
+ <0f016242-2380-274e-c6a4-118a5872412e@linaro.org>
+ <21957396.EfDdHjke4D@steina-w>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <21957396.EfDdHjke4D@steina-w>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Are you looking for a loan to either increase your activity or to=20
-carry out a project.=20
-We offer Crypto Loans at 2-7% interest rate with or without a=20
-credit check.
-Please get back to us if you are interested in more details.
+On 24/07/2023 09:58, Alexander Stein wrote:
+> Hi,
+> 
+> Am Montag, 24. Juli 2023, 09:23:09 CEST schrieb Krzysztof Kozlowski:
+>> On 24/07/2023 08:35, Alexander Stein wrote:
+>>> This is a gpio-controller, so gpio-line-names should be allowed as well.
+>>> stmpe2403 supports up to 24 GPIOs.
+>>>
+>>> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+>>> ---
+>>> Changes in v2:
+>>> * Add min/maxItems
+>>>
+>>>  Documentation/devicetree/bindings/gpio/st,stmpe-gpio.yaml | 4 ++++
+>>>  1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/gpio/st,stmpe-gpio.yaml
+>>> b/Documentation/devicetree/bindings/gpio/st,stmpe-gpio.yaml index
+>>> 22c0cae73425..4555f1644a4d 100644
+>>> --- a/Documentation/devicetree/bindings/gpio/st,stmpe-gpio.yaml
+>>> +++ b/Documentation/devicetree/bindings/gpio/st,stmpe-gpio.yaml
+>>>
+>>> @@ -28,6 +28,10 @@ properties:
+>>>    gpio-controller: true
+>>>
+>>> +  gpio-line-names:
+>>> +    minItems: 1
+>>> +    maxItems: 24
+>>> +
+>>
+>> I am sure there is no variant with one GPIO.
+> 
+> That's true. But if only one GPIO is actually connected there is no use 
+> enforcing to add empty entries.
+> AFAIK it is also allowed to provide an incomplete array.
+
+Did you test it? Linux prints warning. Warning means "not allowed".
+
+The expectation is that the rest are named "NC".
+
+Best regards,
+Krzysztof
+
