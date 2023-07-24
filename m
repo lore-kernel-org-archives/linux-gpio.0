@@ -2,21 +2,21 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D61EB64DD
-	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jul 2023 06:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2952EEB64DD
+	for <linux-gpio@archiver.kernel.org>; Mon, 24 Jul 2023 06:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230151AbjGXGC5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 24 Jul 2023 02:02:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46054 "EHLO
+        id S230195AbjGXGDG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 24 Jul 2023 02:03:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230204AbjGXGC5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jul 2023 02:02:57 -0400
+        with ESMTP id S230177AbjGXGDD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jul 2023 02:03:03 -0400
 Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B5CDDE;
-        Sun, 23 Jul 2023 23:02:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54D7B1AD;
+        Sun, 23 Jul 2023 23:02:13 -0700 (PDT)
 Received: from rd02-sz.amlogic.software (10.28.11.83) by mail-sh.amlogic.com
  (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.13; Mon, 24 Jul 2023
- 14:01:53 +0800
+ 14:01:54 +0800
 From:   Huqiang Qin <huqiang.qin@amlogic.com>
 To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
         <conor+dt@kernel.org>, <neil.armstrong@linaro.org>,
@@ -27,10 +27,12 @@ CC:     <devicetree@vger.kernel.org>,
         <linux-amlogic@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
         Huqiang Qin <huqiang.qin@amlogic.com>
-Subject: [PATCH V2 0/3] Add binding header file for GPIO interrupt of Amlogic Meson-G12A
-Date:   Mon, 24 Jul 2023 14:01:05 +0800
-Message-ID: <20230724060108.1403662-1-huqiang.qin@amlogic.com>
+Subject: [PATCH V2 2/3] pinctrl: Replace the IRQ number in the driver with the IRQID macro definition
+Date:   Mon, 24 Jul 2023 14:01:07 +0800
+Message-ID: <20230724060108.1403662-3-huqiang.qin@amlogic.com>
 X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20230724060108.1403662-1-huqiang.qin@amlogic.com>
+References: <20230724060108.1403662-1-huqiang.qin@amlogic.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -39,51 +41,84 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-After adding this binding header file, you can intuitively find
-the interrupt number corresponding to each GPIO, and apply it
-in the format of IRQID_XXX where it needs to be used.
+Replacing IRQ numbers with IRQID macro definitions makes driver code
+easier to understand.
 
 Associated platforms:
 - Amlogic Meson-G12A
 - Amlogic Meson-G12B
 - Amlogic Meson-SM1
 
-[PATCH 1/3]: 
-  V1 -> V2: Rename irq-meson-g12a-gpio.h to amlogic,meson-g12a-gpio-intc.h
+Signed-off-by: Huqiang Qin <huqiang.qin@amlogic.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
 
-[PATCH 2/3]:
-  V1 -> V2: Include header file changed to amlogic,meson-g12a-gpio-intc.h
+V1 -> V2: Include header file changed to amlogic,meson-g12a-gpio-intc.h
 
-[PATCH 3/3]:
-  V1 -> V2: Include header file changed to amlogic,meson-g12a-gpio-intc.h
+ drivers/pinctrl/meson/pinctrl-meson-g12a.c | 35 +++++++++++-----------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
 
-Huqiang Qin (3):
-  dt-bindings: interrupt-controller: Add header file for Amlogic
-    Meson-G12A SoCs
-  pinctrl: Replace the IRQ number in the driver with the IRQID macro
-    definition
-  arm64: dts: Replace the IRQ number with the IRQID macro definition
-
- .../boot/dts/amlogic/meson-g12-common.dtsi    |   1 +
- .../boot/dts/amlogic/meson-g12a-x96-max.dts   |   2 +-
- .../dts/amlogic/meson-g12b-bananapi-cm4.dtsi  |   2 +-
- .../boot/dts/amlogic/meson-g12b-bananapi.dtsi |   2 +-
- .../amlogic/meson-g12b-odroid-go-ultra.dts    |   4 +-
- .../dts/amlogic/meson-g12b-odroid-n2.dtsi     |   2 +-
- .../boot/dts/amlogic/meson-g12b-w400.dtsi     |   2 +-
- .../dts/amlogic/meson-sm1-a95xf3-air-gbit.dts |   2 +-
- .../boot/dts/amlogic/meson-sm1-bananapi.dtsi  |   4 +-
- .../boot/dts/amlogic/meson-sm1-h96-max.dts    |   2 +-
- .../boot/dts/amlogic/meson-sm1-odroid.dtsi    |   2 +-
- .../boot/dts/amlogic/meson-sm1-sei610.dts     |  12 +-
- .../dts/amlogic/meson-sm1-x96-air-gbit.dts    |   2 +-
- drivers/pinctrl/meson/pinctrl-meson-g12a.c    |  35 ++---
- .../amlogic,meson-g12a-gpio-intc.h            | 126 ++++++++++++++++++
- 15 files changed, 164 insertions(+), 36 deletions(-)
- create mode 100644 include/dt-bindings/interrupt-controller/amlogic,meson-g12a-gpio-intc.h
-
-
-base-commit: c58c49dd89324b18a812762a2bfa5a0458e4f252
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
+index d182a575981e..3cd86d6a0a60 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-g12a.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include <dt-bindings/gpio/meson-g12a-gpio.h>
++#include <dt-bindings/interrupt-controller/amlogic,meson-g12a-gpio-intc.h>
+ #include "pinctrl-meson.h"
+ #include "pinctrl-meson-axg-pmx.h"
+ 
+@@ -1318,31 +1319,31 @@ static struct meson_pmx_func meson_g12a_aobus_functions[] = {
+ 
+ static struct meson_bank meson_g12a_periphs_banks[] = {
+ 	/* name  first  last  irq  pullen  pull  dir  out  in  ds */
+-	BANK_DS("Z",    GPIOZ_0,    GPIOZ_15, 12, 27,
+-		4,  0,  4,  0,  12,  0,  13, 0,  14, 0, 5, 0),
+-	BANK_DS("H",    GPIOH_0,    GPIOH_8, 28, 36,
+-		3,  0,  3,  0,  9,  0,  10,  0,  11,  0, 4, 0),
+-	BANK_DS("BOOT", BOOT_0,     BOOT_15,  37, 52,
+-		0,  0,  0,  0,  0, 0,  1, 0,  2, 0, 0, 0),
+-	BANK_DS("C",    GPIOC_0,    GPIOC_7,  53, 60,
+-		1,  0,  1,  0,  3, 0,  4, 0,  5, 0, 1, 0),
+-	BANK_DS("A",    GPIOA_0,    GPIOA_15,  61, 76,
+-		5,  0,  5,  0,  16,  0,  17,  0,  18,  0, 6, 0),
+-	BANK_DS("X",    GPIOX_0,    GPIOX_19,   77, 96,
+-		2,  0,  2,  0,  6,  0,  7,  0,  8,  0, 2, 0),
++	BANK_DS("Z",    GPIOZ_0,  GPIOZ_15,  IRQID_GPIOZ_0,  IRQID_GPIOZ_15,
++		4,  0,  4,  0,  12,  0, 13,  0,  14,  0,  5, 0),
++	BANK_DS("H",    GPIOH_0,  GPIOH_8,   IRQID_GPIOH_0,  IRQID_GPIOH_8,
++		3,  0,  3,  0,   9,  0, 10,  0,  11,  0,  4, 0),
++	BANK_DS("BOOT", BOOT_0,   BOOT_15,   IRQID_BOOT_0,   IRQID_BOOT_15,
++		0,  0,  0,  0,   0,  0,  1,  0,   2,  0,  0, 0),
++	BANK_DS("C",    GPIOC_0,  GPIOC_7,   IRQID_GPIOC_0,  IRQID_GPIOC_7,
++		1,  0,  1,  0,   3,  0,  4,  0,   5,  0,  1, 0),
++	BANK_DS("A",    GPIOA_0,  GPIOA_15,  IRQID_GPIOA_0,  IRQID_GPIOA_15,
++		5,  0,  5,  0,  16,  0, 17,  0,  18,  0,  6, 0),
++	BANK_DS("X",    GPIOX_0,  GPIOX_19,  IRQID_GPIOX_0,  IRQID_GPIOX_19,
++		2,  0,  2,  0,   6,  0,  7,  0,   8,  0,  2, 0),
+ };
+ 
+ static struct meson_bank meson_g12a_aobus_banks[] = {
+ 	/* name  first  last  irq  pullen  pull  dir  out  in  ds */
+-	BANK_DS("AO", GPIOAO_0, GPIOAO_11, 0, 11, 3, 0, 2, 0, 0, 0, 4, 0, 1, 0,
+-		0, 0),
++	BANK_DS("AO",   GPIOAO_0, GPIOAO_11, IRQID_GPIOAO_0, IRQID_GPIOAO_11,
++		3,  0,  2,  0,   0,  0,  4,  0,   1,  0,  0, 0),
+ 	/* GPIOE actually located in the AO bank */
+-	BANK_DS("E", GPIOE_0, GPIOE_2, 97, 99, 3, 16, 2, 16, 0, 16, 4, 16, 1,
+-		16, 1, 0),
++	BANK_DS("E",    GPIOE_0,  GPIOE_2,   IRQID_GPIOE_0,  IRQID_GPIOE_2,
++		3, 16,  2, 16,   0, 16,  4, 16,   1, 16,  1, 0),
+ };
+ 
+ static struct meson_pmx_bank meson_g12a_periphs_pmx_banks[] = {
+-	/*	 name	 first		lask	   reg	offset  */
++	/*	 name	 first	  last	    reg	 offset  */
+ 	BANK_PMX("Z",    GPIOZ_0, GPIOZ_15, 0x6, 0),
+ 	BANK_PMX("H",    GPIOH_0, GPIOH_8,  0xb, 0),
+ 	BANK_PMX("BOOT", BOOT_0,  BOOT_15,  0x0, 0),
 -- 
 2.37.1
 
