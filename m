@@ -2,75 +2,113 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D8CC001DE
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jul 2023 13:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1204DC001DE
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jul 2023 14:24:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230290AbjGYNZz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 25 Jul 2023 09:25:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55728 "EHLO
+        id S232160AbjGYOYM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 25 Jul 2023 10:24:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229788AbjGYNZy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jul 2023 09:25:54 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1559419AF;
-        Tue, 25 Jul 2023 06:25:44 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="398633744"
-X-IronPort-AV: E=Sophos;i="6.01,230,1684825200"; 
-   d="scan'208";a="398633744"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 06:25:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10782"; a="839864648"
-X-IronPort-AV: E=Sophos;i="6.01,230,1684825200"; 
-   d="scan'208";a="839864648"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP; 25 Jul 2023 06:25:41 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andy@kernel.org>)
-        id 1qOI2l-00BM3E-1h;
-        Tue, 25 Jul 2023 16:25:39 +0300
-Date:   Tue, 25 Jul 2023 16:25:39 +0300
-From:   Andy Shevchenko <andy@kernel.org>
-To:     Andrei Coardos <aboutphysycs@gmail.com>
-Cc:     linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        with ESMTP id S232478AbjGYOYH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jul 2023 10:24:07 -0400
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9310D2697;
+        Tue, 25 Jul 2023 07:23:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+        ; s=x; h=Subject:Content-Transfer-Encoding:Content-Type:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Cc:To:From:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=5nJGAa1uU81DK4gB/PIFJUn37k+YUGRc051pFa/OAlQ=; b=xsFBO3i1TLHsOEqAFt17vLy3Ch
+        LB0vgbhT6rKkFx0AZYV7s/uTCXXC3iUigoqqtaMyHHnV1B49aQ7rOPZnZxECfaej+AqImnN0rQDSq
+        HIvnwa8s6ZU74SzHwbDe6I0lE7+YMPTQpgDA/ImGNAVCaj1nt5mx+0nuNqSh92sQqU0U=;
+Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:34256 helo=localhost.localdomain)
+        by mail.hugovil.com with esmtpa (Exim 4.92)
+        (envelope-from <hugo@hugovil.com>)
+        id 1qOIx3-0003Kt-17; Tue, 25 Jul 2023 10:23:49 -0400
+From:   Hugo Villeneuve <hugo@hugovil.com>
+To:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        jirislaby@kernel.org, jringle@gridpoint.com,
+        isaac.true@canonical.com, jesse.sung@canonical.com,
+        l.perczak@camlintechnologies.com, tomasz.mon@camlingroup.com
+Cc:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hugo@hugovil.com,
         linux-gpio@vger.kernel.org,
-        angelogioacchino.delregno@collabora.com, matthias.bgg@gmail.com,
-        brgl@bgdev.pl, linus.walleij@linaro.org,
-        Alexandru Ardelean <alex@shruggie.ro>
-Subject: Re: [PATCH] gpio: mt7621: remove unnecessary call to
- platfrom_set_drvdata()
-Message-ID: <ZL/NUySYJnOrc5Qs@smile.fi.intel.com>
-References: <20230721130838.26616-1-aboutphysycs@gmail.com>
- <ZLqf6P22HC0Dd4G5@smile.fi.intel.com>
+        Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Lech Perczak <lech.perczak@camlingroup.com>
+Date:   Tue, 25 Jul 2023 10:23:33 -0400
+Message-Id: <20230725142343.1724130-2-hugo@hugovil.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230725142343.1724130-1-hugo@hugovil.com>
+References: <20230725142343.1724130-1-hugo@hugovil.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZLqf6P22HC0Dd4G5@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 184.161.19.61
+X-SA-Exim-Mail-From: hugo@hugovil.com
+Subject: [PATCH v9 01/10] serial: sc16is7xx: fix broken port 0 uart init
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Jul 21, 2023 at 06:10:32PM +0300, Andy Shevchenko wrote:
-> On Fri, Jul 21, 2023 at 04:08:38PM +0300, Andrei Coardos wrote:
-> > This function call was found to be unnecessary as there is no equivalent
-> > platform_get_drvdata() call to access the private data of the driver.
+From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-Not true.
+The sc16is7xx_config_rs485() function is called only for the second
+port (index 1, channel B), causing initialization problems for the
+first port.
 
-> > Also, the private data is defined in this driver, so there is no risk of
-> > it being accessed outside of this driver file.
-> 
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+For the sc16is7xx driver, port->membase and port->mapbase are not set,
+and their default values are 0. And we set port->iobase to the device
+index. This means that when the first device is registered using the
+uart_add_one_port() function, the following values will be in the port
+structure:
+    port->membase = 0
+    port->mapbase = 0
+    port->iobase  = 0
 
-I have to withdraw this, the patch is wrong.
-NAK.
+Therefore, the function uart_configure_port() in serial_core.c will
+exit early because of the following check:
+	/*
+	 * If there isn't a port here, don't do anything further.
+	 */
+	if (!port->iobase && !port->mapbase && !port->membase)
+		return;
 
-Sorry for the confusion (I have looked for the wrong pattern).
+Typically, I2C and SPI drivers do not set port->membase and
+port->mapbase.
 
+The max310x driver sets port->membase to ~0 (all ones). By
+implementing the same change in this driver, uart_configure_port() is
+now correctly executed for all ports.
+
+Fixes: dfeae619d781 ("serial: sc16is7xx")
+Cc: <stable@vger.kernel.org> # 6.1.x
+Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Reviewed-by: Lech Perczak <lech.perczak@camlingroup.com>
+Tested-by: Lech Perczak <lech.perczak@camlingroup.com>
+---
+ drivers/tty/serial/sc16is7xx.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index 2e7e7c409cf2..8ae2afc76a9b 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -1436,6 +1436,7 @@ static int sc16is7xx_probe(struct device *dev,
+ 		s->p[i].port.fifosize	= SC16IS7XX_FIFO_SIZE;
+ 		s->p[i].port.flags	= UPF_FIXED_TYPE | UPF_LOW_LATENCY;
+ 		s->p[i].port.iobase	= i;
++		s->p[i].port.membase	= (void __iomem *)~0;
+ 		s->p[i].port.iotype	= UPIO_PORT;
+ 		s->p[i].port.uartclk	= freq;
+ 		s->p[i].port.rs485_config = sc16is7xx_config_rs485;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.30.2
 
