@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32278C0015E
-	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jul 2023 09:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A230C001E0
+	for <linux-gpio@archiver.kernel.org>; Tue, 25 Jul 2023 09:26:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233145AbjGYJ0Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 25 Jul 2023 05:26:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33502 "EHLO
+        id S233176AbjGYJ0g (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 25 Jul 2023 05:26:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233150AbjGYJZn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jul 2023 05:25:43 -0400
+        with ESMTP id S233174AbjGYJZz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jul 2023 05:25:55 -0400
 Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E2F1FFA;
-        Tue, 25 Jul 2023 02:25:17 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 03A524000C;
-        Tue, 25 Jul 2023 09:25:13 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A76C92136;
+        Tue, 25 Jul 2023 02:25:22 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id C69BD40010;
+        Tue, 25 Jul 2023 09:25:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1690277116;
+        t=1690277120;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=46boTgJZmfS2jVvX4nqQC7ElhfUJIC3d3qlkx9PVD70=;
-        b=OCWkQ1XOaigdKx2jMPHrltDKlvriF9mcfEUQpWGUK9scixiJ/lwJe4j9+93dRKgyJPC06K
-        eSU4t/fnCRaB83aw4W04XSdDBK6icuE21ghxNoTjECVWWntaocq+uCS0ImWMsRk/ySDgmP
-        JfWeYZFvfBK2quCTTy17v5xtLJYzozqh26ZLPbneQtmKl4cm61A0FI8IX13VRjzeHHHag5
-        DE8zkf2jB36NK2NIbJNjFTHhzBAs3hGeEk01xy3eOiaauPLpAI0MkYl4x/fvyNYXFOSCBz
-        WODRwKLydUWTUQKuNW2+nhO00dtzMTRnhse9E7EOtbhb60jPCx3/aA16acGZ+Q==
+        bh=s7w3iKiIQQKpkTMMXXn0294Vp/dBJJ/qKhQwo2K5GQI=;
+        b=gMWe2QPxe48dfbhBHhTaeuwcCtg5sj21ma0MMuCrG6OjXUXR2fxuwZz6r6qDCmpQfFhETG
+        RFhoNS5V912y5UZqLqN1ourEFdYcQuDptcir+3o2PGuJ7Tvw6bY0Jae5x2cIdPpI6vb3L/
+        bE0QDA7XW30s92VP/mGVL4jC5ueurGHEVu+hwzaJjClFAmNbp5t4TjVnCBcefZdxa0vrF+
+        udg0ooSBRexi2/98fNNipRjZwJljOFsJLPEZdUA8HqEQNj2niUbpgkJQ0TBguNY0NQhBJP
+        6pESPkUT9pPI4AKHIYpn9myBCWtPfuN8aWEAwkyVNyn2r3cJ/rkWo7JSuTMXrA==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Herve Codina <herve.codina@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -53,9 +53,9 @@ Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         alsa-devel@alsa-project.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH 07/26] soc: fsl: cpm1: qmc: Rename qmc_setup_tsa* to qmc_init_tsa*
-Date:   Tue, 25 Jul 2023 11:23:43 +0200
-Message-ID: <20230725092417.43706-8-herve.codina@bootlin.com>
+Subject: [PATCH 09/26] soc: fsl: cpm1: qmc: Remove no more needed checks from qmc_check_chans()
+Date:   Tue, 25 Jul 2023 11:23:45 +0200
+Message-ID: <20230725092417.43706-10-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230725092417.43706-1-herve.codina@bootlin.com>
 References: <20230725092417.43706-1-herve.codina@bootlin.com>
@@ -66,73 +66,69 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-qmc_setup_tsa* are called once at initialisation.
-They initialize the QMC TSA table.
-In order to introduce setup function later on for dynamic timeslots
-management, rename the function to avoid later confusion.
+The newly introduced qmc_chan_setup_tsa* functions check that the
+channel entries are not already used.
+These checks are also performed by qmc_check_chans() and are no more
+needed.
+
+Remove them from qmc_check_chans().
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- drivers/soc/fsl/qe/qmc.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 20 --------------------
+ 1 file changed, 20 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index a30cff7d325a..0dbf9e33715f 100644
+index a9aba9943ab7..658aef63505e 100644
 --- a/drivers/soc/fsl/qe/qmc.c
 +++ b/drivers/soc/fsl/qe/qmc.c
-@@ -919,7 +919,7 @@ static int qmc_of_parse_chans(struct qmc *qmc, struct device_node *np)
- 	return qmc_check_chans(qmc);
- }
- 
--static int qmc_setup_tsa_64rxtx(struct qmc *qmc, const struct tsa_serial_info *info)
-+static int qmc_init_tsa_64rxtx(struct qmc *qmc, const struct tsa_serial_info *info)
- {
- 	struct qmc_chan *chan;
- 	unsigned int i;
-@@ -961,7 +961,7 @@ static int qmc_setup_tsa_64rxtx(struct qmc *qmc, const struct tsa_serial_info *i
- 	return 0;
- }
- 
--static int qmc_setup_tsa_32rx_32tx(struct qmc *qmc, const struct tsa_serial_info *info)
-+static int qmc_init_tsa_32rx_32tx(struct qmc *qmc, const struct tsa_serial_info *info)
- {
- 	struct qmc_chan *chan;
- 	unsigned int i;
-@@ -1019,7 +1019,7 @@ static int qmc_setup_tsa_32rx_32tx(struct qmc *qmc, const struct tsa_serial_info
- 	return 0;
- }
- 
--static int qmc_setup_tsa(struct qmc *qmc)
-+static int qmc_init_tsa(struct qmc *qmc)
+@@ -884,10 +884,7 @@ EXPORT_SYMBOL(qmc_chan_reset);
+ static int qmc_check_chans(struct qmc *qmc)
  {
  	struct tsa_serial_info info;
+-	bool is_one_table = false;
+ 	struct qmc_chan *chan;
+-	u64 tx_ts_mask = 0;
+-	u64 rx_ts_mask = 0;
+ 	u64 tx_ts_assigned_mask;
+ 	u64 rx_ts_assigned_mask;
  	int ret;
-@@ -1030,12 +1030,12 @@ static int qmc_setup_tsa(struct qmc *qmc)
- 		return ret;
+@@ -911,7 +908,6 @@ static int qmc_check_chans(struct qmc *qmc)
+ 			dev_err(qmc->dev, "Number of TSA Tx/Rx TS assigned are not equal\n");
+ 			return -EINVAL;
+ 		}
+-		is_one_table = true;
+ 	}
  
- 	/*
--	 * Setup one common 64 entries table or two 32 entries (one for Tx and
--	 * one for Tx) according to assigned TS numbers.
-+	 * Initialize one common 64 entries table or two 32 entries (one for Tx
-+	 * and one for Tx) according to assigned TS numbers.
- 	 */
- 	return ((info.nb_tx_ts > 32) || (info.nb_rx_ts > 32)) ?
--		qmc_setup_tsa_64rxtx(qmc, &info) :
--		qmc_setup_tsa_32rx_32tx(qmc, &info);
-+		qmc_init_tsa_64rxtx(qmc, &info) :
-+		qmc_init_tsa_32rx_32tx(qmc, &info);
- }
+ 	tx_ts_assigned_mask = info.nb_tx_ts == 64 ? U64_MAX : (((u64)1) << info.nb_tx_ts) - 1;
+@@ -922,27 +918,11 @@ static int qmc_check_chans(struct qmc *qmc)
+ 			dev_err(qmc->dev, "chan %u uses TSA unassigned Tx TS\n", chan->id);
+ 			return -EINVAL;
+ 		}
+-		if (tx_ts_mask & chan->tx_ts_mask) {
+-			dev_err(qmc->dev, "chan %u uses an already used Tx TS\n", chan->id);
+-			return -EINVAL;
+-		}
  
- static int qmc_setup_chan_trnsync(struct qmc *qmc, struct qmc_chan *chan)
-@@ -1391,7 +1391,7 @@ static int qmc_probe(struct platform_device *pdev)
- 	qmc_write32(qmc->scc_pram + QMC_GBL_C_MASK32, 0xDEBB20E3);
- 	qmc_write16(qmc->scc_pram + QMC_GBL_C_MASK16, 0xF0B8);
+ 		if (chan->rx_ts_mask > rx_ts_assigned_mask) {
+ 			dev_err(qmc->dev, "chan %u uses TSA unassigned Rx TS\n", chan->id);
+ 			return -EINVAL;
+ 		}
+-		if (rx_ts_mask & chan->rx_ts_mask) {
+-			dev_err(qmc->dev, "chan %u uses an already used Rx TS\n", chan->id);
+-			return -EINVAL;
+-		}
+-
+-		if (is_one_table && (chan->tx_ts_mask != chan->rx_ts_mask)) {
+-			dev_err(qmc->dev, "chan %u uses different Rx and Tx TS\n", chan->id);
+-			return -EINVAL;
+-		}
+-
+-		tx_ts_mask |= chan->tx_ts_mask;
+-		rx_ts_mask |= chan->rx_ts_mask;
+ 	}
  
--	ret = qmc_setup_tsa(qmc);
-+	ret = qmc_init_tsa(qmc);
- 	if (ret)
- 		goto err_tsa_serial_disconnect;
- 
+ 	return 0;
 -- 
 2.41.0
 
