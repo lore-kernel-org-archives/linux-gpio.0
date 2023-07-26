@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFC5C001DC
-	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jul 2023 15:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D10C2C001DF
+	for <linux-gpio@archiver.kernel.org>; Wed, 26 Jul 2023 15:06:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234839AbjGZPGD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 26 Jul 2023 11:06:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47172 "EHLO
+        id S234835AbjGZPGV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 26 Jul 2023 11:06:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234772AbjGZPFe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Jul 2023 11:05:34 -0400
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::225])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C832E3C04;
-        Wed, 26 Jul 2023 08:04:49 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 75CD31C0017;
-        Wed, 26 Jul 2023 15:03:51 +0000 (UTC)
+        with ESMTP id S234833AbjGZPFt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Jul 2023 11:05:49 -0400
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BF042136;
+        Wed, 26 Jul 2023 08:05:09 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 817911C0016;
+        Wed, 26 Jul 2023 15:04:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1690383834;
+        t=1690383845;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zPABo4aHL+ZB6I3VMV9kIBciiTmr+75llCns5EO9ajk=;
-        b=lUfuq7Ue94MMMoiDWz1TbNazY0gVTeA84auKgjQi6z3JP1hCMR7HX5+Zw/uFF8gAaoP0Ui
-        tExyl/boZ8afuVu/JKuclNGJpnj4ijr3rjCQtXxi1st0sOowR9JvW2pcbyxya1fkk97eUr
-        a1WGyWSM6PTQ1t4smCNTsie5jSI1QzTIybUV2gB6UootSUG27J7IqDoRDs5GvldzLg7EVw
-        2Wp5vAYiSWzSNXCG2I7wUNu46DgXbEBveZZSA0AJ74L95DzVGRMpaaITS+3+xmHS8MQdm6
-        pGyat5kl+Kko9TopPUVOT3qVbdIEM0MPWOX3hFJPOqRbg2xNA80O1VFlf9e1eQ==
+        bh=CaV8D3HLdNycBUgoYdC+8wAq0ZcMzaqeTPSo5VYHcVo=;
+        b=NnHnJyvJLYcNXhNcTyUlOslMcxSXrTVCvrHA5wFt3VddiUR42cZMI1r/OTPfsu2Y+3WdKz
+        om06n9UV2qlOgwX4WBpStLrg/frDitXSm2oJvN4FQ9KxKIT+Fvi8j2Kuky/A0M25E1G2W5
+        gfiWbu7jMtt8vpZ3FrBiEwK1RzGrbvpagaLbcAjIVX9Y0b9Yh6CM3tKIyjrY+2B1sp5jes
+        dsAT9rZXTykZWyKe5hpoXM4oMakDEYFQa1wFKbvnCVhnOxVwFr+gQ1cWQffGzzVJrftbAH
+        w6UQhG5BUSSnTNMT8mr/urhvkHGxlVDPoWeiAI3RhHucUA/BQfyCbZjLNU0GoA==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Herve Codina <herve.codina@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -54,9 +54,9 @@ Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         alsa-devel@alsa-project.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 21/28] dt-bindings: net: Add the Lantiq PEF2256 E1/T1/J1 framer
-Date:   Wed, 26 Jul 2023 17:02:17 +0200
-Message-ID: <20230726150225.483464-22-herve.codina@bootlin.com>
+Subject: [PATCH v2 24/28] pinctrl: Add support for the Lantic PEF2256 pinmux
+Date:   Wed, 26 Jul 2023 17:02:20 +0200
+Message-ID: <20230726150225.483464-25-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230726150225.483464-1-herve.codina@bootlin.com>
 References: <20230726150225.483464-1-herve.codina@bootlin.com>
@@ -71,244 +71,443 @@ The Lantiq PEF2256 is a framer and line interface component designed to
 fulfill all required interfacing between an analog E1/T1/J1 line and the
 digital PCM system highway/H.100 bus.
 
+This pinmux support handles the pin muxing part (pins RP(A..D) and pins
+XP(A..D)) of the PEF2256.
+
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- .../bindings/net/lantiq,pef2256.yaml          | 226 ++++++++++++++++++
- 1 file changed, 226 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/lantiq,pef2256.yaml
+ drivers/pinctrl/Kconfig                |  14 ++
+ drivers/pinctrl/Makefile               |   1 +
+ drivers/pinctrl/pinctrl-pef2256-regs.h |  65 ++++++
+ drivers/pinctrl/pinctrl-pef2256.c      | 310 +++++++++++++++++++++++++
+ 4 files changed, 390 insertions(+)
+ create mode 100644 drivers/pinctrl/pinctrl-pef2256-regs.h
+ create mode 100644 drivers/pinctrl/pinctrl-pef2256.c
 
-diff --git a/Documentation/devicetree/bindings/net/lantiq,pef2256.yaml b/Documentation/devicetree/bindings/net/lantiq,pef2256.yaml
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 57d57af1f624..a3aa96b59c97 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -377,6 +377,20 @@ config PINCTRL_PALMAS
+ 	  open drain configuration for the Palmas series devices like
+ 	  TPS65913, TPS80036 etc.
+ 
++config PINCTRL_PEF2256
++	tristate "Lantiq PEF2256 (FALC56) pin controller driver"
++	depends on OF && FRAMER_PEF2256
++	select PINMUX
++	select GENERIC_PINCONF
++	help
++	  This option enables the pin controller support for the Lantiq PEF2256
++	  framer, also known as FALC56.
++
++	  If unsure, say N.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called pinctrl-pef2256.
++
+ config PINCTRL_PIC32
+ 	bool "Microchip PIC32 pin controller driver"
+ 	depends on OF
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index 482b391b5deb..8f211f7671a8 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -40,6 +40,7 @@ obj-$(CONFIG_PINCTRL_MLXBF3)	+= pinctrl-mlxbf3.o
+ obj-$(CONFIG_PINCTRL_OCELOT)	+= pinctrl-ocelot.o
+ obj-$(CONFIG_PINCTRL_OXNAS)	+= pinctrl-oxnas.o
+ obj-$(CONFIG_PINCTRL_PALMAS)	+= pinctrl-palmas.o
++obj-$(CONFIG_PINCTRL_PEF2256)	+= pinctrl-pef2256.o
+ obj-$(CONFIG_PINCTRL_PIC32)	+= pinctrl-pic32.o
+ obj-$(CONFIG_PINCTRL_PISTACHIO)	+= pinctrl-pistachio.o
+ obj-$(CONFIG_PINCTRL_RK805)	+= pinctrl-rk805.o
+diff --git a/drivers/pinctrl/pinctrl-pef2256-regs.h b/drivers/pinctrl/pinctrl-pef2256-regs.h
 new file mode 100644
-index 000000000000..b369a20d61b1
+index 000000000000..586d94007e24
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/net/lantiq,pef2256.yaml
-@@ -0,0 +1,226 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/lantiq,pef2256.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/pinctrl/pinctrl-pef2256-regs.h
+@@ -0,0 +1,65 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * PEF2256 pinctrl registers definition
++ *
++ * Copyright 2023 CS GROUP France
++ *
++ * Author: Herve Codina <herve.codina@bootlin.com>
++ */
++#ifndef __PEF2256_PINCTRL_REGS_H__
++#define __PEF2256_PINCTRL_REGS_H__
 +
-+title: Lantiq PEF2256
++#include "linux/bitfield.h"
 +
-+maintainers:
-+  - Herve Codina <herve.codina@bootlin.com>
++/* Port Configuration 1..4 */
++#define PEF2256_PC1		  0x80
++#define PEF2256_PC2		  0x81
++#define PEF2256_PC3		  0x82
++#define PEF2256_PC4		  0x83
++#define PEF2256_12_PC_RPC_MASK	  GENMASK(6, 4)
++#define PEF2256_12_PC_RPC_SYPR	  FIELD_PREP_CONST(PEF2256_12_PC_RPC_MASK, 0x0)
++#define PEF2256_12_PC_RPC_RFM	  FIELD_PREP_CONST(PEF2256_12_PC_RPC_MASK, 0x1)
++#define PEF2256_12_PC_RPC_RFMB	  FIELD_PREP_CONST(PEF2256_12_PC_RPC_MASK, 0x2)
++#define PEF2256_12_PC_RPC_RSIGM	  FIELD_PREP_CONST(PEF2256_12_PC_RPC_MASK, 0x3)
++#define PEF2256_12_PC_RPC_RSIG	  FIELD_PREP_CONST(PEF2256_12_PC_RPC_MASK, 0x4)
++#define PEF2256_12_PC_RPC_DLR	  FIELD_PREP_CONST(PEF2256_12_PC_RPC_MASK, 0x5)
++#define PEF2256_12_PC_RPC_FREEZE  FIELD_PREP_CONST(PEF2256_12_PC_RPC_MASK, 0x6)
++#define PEF2256_12_PC_RPC_RFSP	  FIELD_PREP_CONST(PEF2256_12_PC_RPC_MASK, 0x7)
++#define PEF2256_12_PC_XPC_MASK    GENMASK(4, 0)
++#define PEF2256_12_PC_XPC_SYPX	  FIELD_PREP_CONST(PEF2256_12_PC_XPC_MASK, 0x0)
++#define PEF2256_12_PC_XPC_XFMS	  FIELD_PREP_CONST(PEF2256_12_PC_XPC_MASK, 0x1)
++#define PEF2256_12_PC_XPC_XSIG	  FIELD_PREP_CONST(PEF2256_12_PC_XPC_MASK, 0x2)
++#define PEF2256_12_PC_XPC_TCLK	  FIELD_PREP_CONST(PEF2256_12_PC_XPC_MASK, 0x3)
++#define PEF2256_12_PC_XPC_XMFB	  FIELD_PREP_CONST(PEF2256_12_PC_XPC_MASK, 0x4)
++#define PEF2256_12_PC_XPC_XSIGM	  FIELD_PREP_CONST(PEF2256_12_PC_XPC_MASK, 0x5)
++#define PEF2256_12_PC_XPC_DLX	  FIELD_PREP_CONST(PEF2256_12_PC_XPC_MASK, 0x6)
++#define PEF2256_12_PC_XPC_XCLK	  FIELD_PREP_CONST(PEF2256_12_PC_XPC_MASK, 0x7)
++#define PEF2256_12_PC_XPC_XLT	  FIELD_PREP_CONST(PEF2256_12_PC_XPC_MASK, 0x8)
++#define PEF2256_2X_PC_RPC_MASK	  GENMASK(7, 4)
++#define PEF2256_2X_PC_RPC_SYPR	  FIELD_PREP_CONST(PEF2256_2X_PC_RPC_MASK, 0x0)
++#define PEF2256_2X_PC_RPC_RFM	  FIELD_PREP_CONST(PEF2256_2X_PC_RPC_MASK, 0x1)
++#define PEF2256_2X_PC_RPC_RFMB	  FIELD_PREP_CONST(PEF2256_2X_PC_RPC_MASK, 0x2)
++#define PEF2256_2X_PC_RPC_RSIGM	  FIELD_PREP_CONST(PEF2256_2X_PC_RPC_MASK, 0x3)
++#define PEF2256_2X_PC_RPC_RSIG	  FIELD_PREP_CONST(PEF2256_2X_PC_RPC_MASK, 0x4)
++#define PEF2256_2X_PC_RPC_DLR	  FIELD_PREP_CONST(PEF2256_2X_PC_RPC_MASK, 0x5)
++#define PEF2256_2X_PC_RPC_FREEZE  FIELD_PREP_CONST(PEF2256_2X_PC_RPC_MASK, 0x6)
++#define PEF2256_2X_PC_RPC_RFSP	  FIELD_PREP_CONST(PEF2256_2X_PC_RPC_MASK, 0x7)
++#define PEF2256_2X_PC_RPC_GPI	  FIELD_PREP_CONST(PEF2256_2X_PC_RPC_MASK, 0x9)
++#define PEF2256_2X_PC_RPC_GPOH	  FIELD_PREP_CONST(PEF2256_2X_PC_RPC_MASK, 0xa)
++#define PEF2256_2X_PC_RPC_GPOL	  FIELD_PREP_CONST(PEF2256_2X_PC_RPC_MASK, 0xb)
++#define PEF2256_2X_PC_RPC_LOS	  FIELD_PREP_CONST(PEF2256_2X_PC_RPC_MASK, 0xc)
++#define PEF2256_2X_PC_XPC_MASK	  GENMASK(3, 0)
++#define PEF2256_2X_PC_XPC_SYPX	  FIELD_PREP_CONST(PEF2256_2X_PC_XPC_MASK, 0x0)
++#define PEF2256_2X_PC_XPC_XFMS	  FIELD_PREP_CONST(PEF2256_2X_PC_XPC_MASK, 0x1)
++#define PEF2256_2X_PC_XPC_XSIG	  FIELD_PREP_CONST(PEF2256_2X_PC_XPC_MASK, 0x2)
++#define PEF2256_2X_PC_XPC_TCLK	  FIELD_PREP_CONST(PEF2256_2X_PC_XPC_MASK, 0x3)
++#define PEF2256_2X_PC_XPC_XMFB	  FIELD_PREP_CONST(PEF2256_2X_PC_XPC_MASK, 0x4)
++#define PEF2256_2X_PC_XPC_XSIGM	  FIELD_PREP_CONST(PEF2256_2X_PC_XPC_MASK, 0x5)
++#define PEF2256_2X_PC_XPC_DLX	  FIELD_PREP_CONST(PEF2256_2X_PC_XPC_MASK, 0x6)
++#define PEF2256_2X_PC_XPC_XCLK	  FIELD_PREP_CONST(PEF2256_2X_PC_XPC_MASK, 0x7)
++#define PEF2256_2X_PC_XPC_XLT	  FIELD_PREP_CONST(PEF2256_2X_PC_XPC_MASK, 0x8)
++#define PEF2256_2X_PC_XPC_GPI	  FIELD_PREP_CONST(PEF2256_2X_PC_XPC_MASK, 0x9)
++#define PEF2256_2X_PC_XPC_GPOH	  FIELD_PREP_CONST(PEF2256_2X_PC_XPC_MASK, 0xa)
++#define PEF2256_2X_PC_XPC_GPOL	  FIELD_PREP_CONST(PEF2256_2X_PC_XPC_MASK, 0xb)
 +
-+description:
-+  The Lantiq PEF2256, also known as Infineon PEF2256 or FALC56, is a framer and
-+  line interface component designed to fulfill all required interfacing between
-+  an analog E1/T1/J1 line and the digital PCM system highway/H.100 bus.
++#endif /* __PEF2256_PINCTRL_REGS_H__ */
+diff --git a/drivers/pinctrl/pinctrl-pef2256.c b/drivers/pinctrl/pinctrl-pef2256.c
+new file mode 100644
+index 000000000000..90f611f6cc12
+--- /dev/null
++++ b/drivers/pinctrl/pinctrl-pef2256.c
+@@ -0,0 +1,310 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PEF2256 also known as FALC56 driver
++ *
++ * Copyright 2023 CS GROUP France
++ *
++ * Author: Herve Codina <herve.codina@bootlin.com>
++ */
 +
-+properties:
-+  compatible:
-+    items:
-+      - const: lantiq,pef2256
++#include <linux/framer/pef2256.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinconf-generic.h>
++#include <linux/pinctrl/pinmux.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++#include "pinctrl-pef2256-regs.h"
 +
-+  reg:
-+    maxItems: 1
++struct pef2256_pinreg_desc {
++	int offset;
++	u8 mask;
++};
 +
-+  clocks:
-+    items:
-+      - description: Master clock
-+      - description: Receive System Clock
-+      - description: Transmit System Clock
++struct pef2256_function_desc {
++	const char *name;
++	const char * const*groups;
++	unsigned int ngroups;
++	u8 func_val;
++};
 +
-+  clock-names:
-+    items:
-+      - const: mclk
-+      - const: sclkr
-+      - const: sclkx
++struct pef2256_pinctrl {
++	struct device *dev;
++	struct regmap *regmap;
++	enum pef2256_version version;
++	struct {
++		struct pinctrl_desc pctrl_desc;
++		const struct pef2256_function_desc *functions;
++		unsigned int nfunctions;
++	} pinctrl;
++};
 +
-+  interrupts:
-+    maxItems: 1
++static int pef2256_get_groups_count(struct pinctrl_dev *pctldev)
++{
++	struct pef2256_pinctrl *pef2256 = pinctrl_dev_get_drvdata(pctldev);
 +
-+  reset-gpios:
-+    description:
-+      GPIO used to reset the device.
-+    maxItems: 1
++	/* We map 1 group <-> 1 pin */
++	return pef2256->pinctrl.pctrl_desc.npins;
++}
 +
-+  '#framer-cells':
-+    const: 0
++static const char *pef2256_get_group_name(struct pinctrl_dev *pctldev,
++					  unsigned int selector)
++{
++	struct pef2256_pinctrl *pef2256 = pinctrl_dev_get_drvdata(pctldev);
 +
-+  pinctrl:
-+    $ref: /schemas/pinctrl/pinctrl.yaml#
-+    additionalProperties: false
++	/* We map 1 group <-> 1 pin */
++	return pef2256->pinctrl.pctrl_desc.pins[selector].name;
++}
 +
-+    patternProperties:
-+      '-pins$':
-+        type: object
-+        $ref: /schemas/pinctrl/pincfg-node.yaml#
-+        additionalProperties: false
++static int pef2256_get_group_pins(struct pinctrl_dev *pctldev, unsigned int selector,
++				  const unsigned int **pins,
++				  unsigned int *num_pins)
++{
++	struct pef2256_pinctrl *pef2256 = pinctrl_dev_get_drvdata(pctldev);
 +
-+        properties:
-+          pins:
-+            enum: [ RPA, RPB, RPC, RPD, XPA, XPB, XPC, XPD ]
++	/* We map 1 group <-> 1 pin */
++	*pins = &pef2256->pinctrl.pctrl_desc.pins[selector].number;
++	*num_pins = 1;
 +
-+          function:
-+            enum: [ SYPR, RFM, RFMB, RSIGM, RSIG, DLR, FREEZE, RFSP, LOS,
-+                    SYPX, XFMS, XSIG, TCLK, XMFB, XSIGM, DLX, XCLK, XLT,
-+                    GPI, GPOH, GPOL ]
++	return 0;
++}
 +
-+        required:
-+          - pins
-+          - function
++static const struct pinctrl_ops pef2256_pctlops = {
++	.get_groups_count	= pef2256_get_groups_count,
++	.get_group_name		= pef2256_get_group_name,
++	.get_group_pins		= pef2256_get_group_pins,
++	.dt_node_to_map		= pinconf_generic_dt_node_to_map_pin,
++	.dt_free_map		= pinconf_generic_dt_free_map,
++};
 +
-+  lantiq,data-rate-bps:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [2048000, 4096000, 8192000, 16384000]
-+    default: 2048000
-+    description:
-+      Data rate (bit per seconds) on the system highway.
++static int pef2256_get_functions_count(struct pinctrl_dev *pctldev)
++{
++	struct pef2256_pinctrl *pef2256 = pinctrl_dev_get_drvdata(pctldev);
 +
-+  lantiq,clock-falling-edge:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      Data is sent on falling edge of the clock (and received on the rising
-+      edge). If 'clock-falling-edge' is not present, data is sent on the
-+      rising edge (and received on the falling edge).
++	return pef2256->pinctrl.nfunctions;
++}
 +
-+  lantiq,channel-phase:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2, 3, 4, 5, 6, 7]
-+    default: 0
-+    description:
-+      The pef2256 delivers a full frame (32 8bit time-slots in E1 and 24 8bit
-+      time-slots 8 8bit signaling in E1/J1) every 125us. This lead to a data
-+      rate of 2048000 bit/s. When lantiq,data-rate-bps is more than 2048000
-+      bit/s, the data (all 32 8bit) present in the frame are interleave with
-+      unused time-slots. The lantiq,channel-phase property allows to set the
-+      correct alignment of the interleave mechanism.
-+      For instance, suppose lantiq,data-rate-bps = 8192000 (ie 4*2048000), and
-+      lantiq,channel-phase = 2, the interleave schema with unused time-slots
-+      (nu) and used time-slots (XX) for TSi is
-+        nu nu XX nu nu nu XX nu nu nu XX nu
-+        <-- TSi --> <- TSi+1 -> <- TSi+2 ->
-+      With lantiq,data-rate-bps = 8192000, and lantiq,channel-phase = 1, the
-+      interleave schema is
-+        nu XX nu nu nu XX nu nu nu XX nu nu
-+        <-- TSi --> <- TSi+1 -> <- TSi+2 ->
-+      With lantiq,data-rate-bps = 4096000 (ie 2*2048000), and
-+      lantiq,channel-phase = 1, the interleave schema is
-+        nu    XX    nu    XX    nu    XX
-+        <-- TSi --> <- TSi+1 -> <- TSi+2 ->
++static const char *pef2256_get_function_name(struct pinctrl_dev *pctldev,
++					     unsigned int selector)
++{
++	struct pef2256_pinctrl *pef2256 = pinctrl_dev_get_drvdata(pctldev);
 +
-+patternProperties:
-+  '^codec(-([0-9]|[1-2][0-9]|3[0-1]))?$':
-+    type: object
-+    $ref: /schemas/sound/dai-common.yaml
-+    unevaluatedProperties: false
-+    description:
-+      Codec provided by the pef2256. This codec allows to use some of the PCM
-+      system highway time-slots as audio channels to transport audio data over
-+      the E1/T1/J1 lines.
-+      The time-slots used by the codec must be set and so, the properties
-+      'dai-tdm-slot-num', 'dai-tdm-slot-width', 'dai-tdm-slot-tx-mask' and
-+      'dai-tdm-slot-rx-mask' must be present in the sound card node for
-+      sub-nodes that involve the codec. The codec uses 8bit time-slots.
-+      'dai-tdm-tdm-slot-with' must be set to 8.
-+      The tx and rx masks define the pef2256 time-slots assigned to the codec.
++	return pef2256->pinctrl.functions[selector].name;
++}
 +
-+    properties:
-+      compatible:
-+        const: lantiq,pef2256-codec
++static int pef2256_get_function_groups(struct pinctrl_dev *pctldev, unsigned int selector,
++				       const char * const **groups,
++				       unsigned * const num_groups)
++{
++	struct pef2256_pinctrl *pef2256 = pinctrl_dev_get_drvdata(pctldev);
 +
-+      '#sound-dai-cells':
-+        const: 0
++	*groups = pef2256->pinctrl.functions[selector].groups;
++	*num_groups = pef2256->pinctrl.functions[selector].ngroups;
++	return 0;
++}
 +
-+      framer:
-+        $ref: /schemas/types.yaml#/definitions/phandle
-+        description:
-+          phandle to the framer node
++static int pef2256_set_mux(struct pinctrl_dev *pctldev, unsigned int func_selector,
++			   unsigned int group_selector)
++{
++	struct pef2256_pinctrl *pef2256 = pinctrl_dev_get_drvdata(pctldev);
++	const struct pef2256_pinreg_desc *pinreg_desc;
++	u8 func_val;
 +
-+    required:
-+      - compatible
-+      - '#sound-dai-cells'
++	/* We map 1 group <-> 1 pin */
++	pinreg_desc = pef2256->pinctrl.pctrl_desc.pins[group_selector].drv_data;
++	func_val = pef2256->pinctrl.functions[func_selector].func_val;
 +
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - interrupts
-+  - '#framer-cells'
++	return regmap_update_bits(pef2256->regmap, pinreg_desc->offset,
++				  pinreg_desc->mask, func_val);
++}
 +
-+additionalProperties: false
++static const struct pinmux_ops pef2256_pmxops = {
++	.get_functions_count	= pef2256_get_functions_count,
++	.get_function_name	= pef2256_get_function_name,
++	.get_function_groups	= pef2256_get_function_groups,
++	.set_mux		= pef2256_set_mux,
++};
 +
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
++#define PEF2256_PINCTRL_PIN(_number, _name, _offset, _mask) { \
++	.number = _number, \
++	.name = _name, \
++	.drv_data = &(struct pef2256_pinreg_desc) { \
++		.offset = _offset, \
++		.mask = _mask, \
++	}, \
++}
 +
-+    pef2256: framer@2000000 {
-+      compatible = "lantiq,pef2256";
-+      reg = <0x2000000 0x100>;
-+      interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
-+      interrupt-parent = <&intc>;
-+      clocks = <&clk_mclk>, <&clk_sclkr>, <&clk_sclkx>;
-+      clock-names = "mclk", "sclkr", "sclkx";
-+      reset-gpios = <&gpio 11 GPIO_ACTIVE_LOW>;
-+      lantiq,data-rate-bps = <4096000>;
-+      #framer-cells = <0>;
++static const struct pinctrl_pin_desc pef2256_v12_pins[] = {
++	PEF2256_PINCTRL_PIN(0, "RPA", PEF2256_PC1, PEF2256_12_PC_RPC_MASK),
++	PEF2256_PINCTRL_PIN(1, "RPB", PEF2256_PC2, PEF2256_12_PC_RPC_MASK),
++	PEF2256_PINCTRL_PIN(2, "RPC", PEF2256_PC3, PEF2256_12_PC_RPC_MASK),
++	PEF2256_PINCTRL_PIN(3, "RPD", PEF2256_PC4, PEF2256_12_PC_RPC_MASK),
++	PEF2256_PINCTRL_PIN(4, "XPA", PEF2256_PC1, PEF2256_12_PC_XPC_MASK),
++	PEF2256_PINCTRL_PIN(5, "XPB", PEF2256_PC2, PEF2256_12_PC_XPC_MASK),
++	PEF2256_PINCTRL_PIN(6, "XPC", PEF2256_PC3, PEF2256_12_PC_XPC_MASK),
++	PEF2256_PINCTRL_PIN(7, "XPD", PEF2256_PC4, PEF2256_12_PC_XPC_MASK),
++};
 +
-+      pinctrl {
-+        pef2256_rpa_sypr: rpa-pins {
-+          pins = "RPA";
-+          function = "SYPR";
-+        };
-+        pef2256_xpa_sypx: xpa-pins {
-+          pins = "XPA";
-+          function = "SYPX";
-+        };
-+      };
++static const struct pinctrl_pin_desc pef2256_v2x_pins[] = {
++	PEF2256_PINCTRL_PIN(0, "RPA", PEF2256_PC1, PEF2256_2X_PC_RPC_MASK),
++	PEF2256_PINCTRL_PIN(1, "RPB", PEF2256_PC2, PEF2256_2X_PC_RPC_MASK),
++	PEF2256_PINCTRL_PIN(2, "RPC", PEF2256_PC3, PEF2256_2X_PC_RPC_MASK),
++	PEF2256_PINCTRL_PIN(3, "RPD", PEF2256_PC4, PEF2256_2X_PC_RPC_MASK),
++	PEF2256_PINCTRL_PIN(4, "XPA", PEF2256_PC1, PEF2256_2X_PC_XPC_MASK),
++	PEF2256_PINCTRL_PIN(5, "XPB", PEF2256_PC2, PEF2256_2X_PC_XPC_MASK),
++	PEF2256_PINCTRL_PIN(6, "XPC", PEF2256_PC3, PEF2256_2X_PC_XPC_MASK),
++	PEF2256_PINCTRL_PIN(7, "XPD", PEF2256_PC4, PEF2256_2X_PC_XPC_MASK),
++};
 +
-+      pef2256_codec0: codec-0 {
-+        compatible = "lantiq,pef2256-codec";
-+        framer = <&pef2256>;
-+        #sound-dai-cells = <0>;
-+        sound-name-prefix = "PEF2256_0";
-+      };
++static const char *const pef2256_rp_groups[] = { "RPA", "RPB", "RPC", "RPD" };
++static const char *const pef2256_xp_groups[] = { "XPA", "XPB", "XPC", "XPD" };
++static const char *const pef2256_all_groups[] = { "RPA", "RPB", "RPC", "RPD",
++						  "XPA", "XPB", "XPC", "XPD" };
 +
-+      pef2256_codec1: codec-1 {
-+        compatible = "lantiq,pef2256-codec";
-+        framer = <&pef2256>;
-+        #sound-dai-cells = <0>;
-+        sound-name-prefix = "PEF2256_1";
-+      };
-+    };
++#define PEF2256_FUNCTION(_name, _func_val, _groups) { \
++	.name = _name, \
++	.groups = _groups, \
++	.ngroups = ARRAY_SIZE(_groups), \
++	.func_val = _func_val, \
++}
 +
-+    sound {
-+      compatible = "simple-audio-card";
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      simple-audio-card,dai-link@0 { /* CPU DAI1 - pef2256 codec 1 */
-+        reg = <0>;
-+        cpu {
-+          sound-dai = <&cpu_dai1>;
-+        };
-+        codec {
-+          sound-dai = <&pef2256_codec0>;
-+          dai-tdm-slot-num = <4>;
-+          dai-tdm-slot-width = <8>;
-+          /* TS 1, 2, 3, 4 */
-+          dai-tdm-slot-tx-mask = <0 1 1 1 1>;
-+          dai-tdm-slot-rx-mask = <0 1 1 1 1>;
-+        };
-+      };
-+      simple-audio-card,dai-link@1 { /* CPU DAI2 - pef2256 codec 2 */
-+        reg = <1>;
-+        cpu {
-+          sound-dai = <&cpu_dai2>;
-+        };
-+        codec {
-+          sound-dai = <&pef2256_codec1>;
-+          dai-tdm-slot-num = <4>;
-+          dai-tdm-slot-width = <8>;
-+          /* TS 5, 6, 7, 8 */
-+          dai-tdm-slot-tx-mask = <0 0 0 0 0 1 1 1 1>;
-+          dai-tdm-slot-rx-mask = <0 0 0 0 0 1 1 1 1>;
-+        };
-+      };
-+    };
++static const struct pef2256_function_desc pef2256_v2x_functions[] = {
++	PEF2256_FUNCTION("SYPR",   PEF2256_2X_PC_RPC_SYPR,   pef2256_rp_groups),
++	PEF2256_FUNCTION("RFM",    PEF2256_2X_PC_RPC_RFM,    pef2256_rp_groups),
++	PEF2256_FUNCTION("RFMB",   PEF2256_2X_PC_RPC_RFMB,   pef2256_rp_groups),
++	PEF2256_FUNCTION("RSIGM",  PEF2256_2X_PC_RPC_RSIGM,  pef2256_rp_groups),
++	PEF2256_FUNCTION("RSIG",   PEF2256_2X_PC_RPC_RSIG,   pef2256_rp_groups),
++	PEF2256_FUNCTION("DLR",    PEF2256_2X_PC_RPC_DLR,    pef2256_rp_groups),
++	PEF2256_FUNCTION("FREEZE", PEF2256_2X_PC_RPC_FREEZE, pef2256_rp_groups),
++	PEF2256_FUNCTION("RFSP",   PEF2256_2X_PC_RPC_RFSP,   pef2256_rp_groups),
++	PEF2256_FUNCTION("LOS",    PEF2256_2X_PC_RPC_LOS,    pef2256_rp_groups),
++
++	PEF2256_FUNCTION("SYPX",  PEF2256_2X_PC_XPC_SYPX,  pef2256_xp_groups),
++	PEF2256_FUNCTION("XFMS",  PEF2256_2X_PC_XPC_XFMS,  pef2256_xp_groups),
++	PEF2256_FUNCTION("XSIG",  PEF2256_2X_PC_XPC_XSIG,  pef2256_xp_groups),
++	PEF2256_FUNCTION("TCLK",  PEF2256_2X_PC_XPC_TCLK,  pef2256_xp_groups),
++	PEF2256_FUNCTION("XMFB",  PEF2256_2X_PC_XPC_XMFB,  pef2256_xp_groups),
++	PEF2256_FUNCTION("XSIGM", PEF2256_2X_PC_XPC_XSIGM, pef2256_xp_groups),
++	PEF2256_FUNCTION("DLX",   PEF2256_2X_PC_XPC_DLX,   pef2256_xp_groups),
++	PEF2256_FUNCTION("XCLK",  PEF2256_2X_PC_XPC_XCLK,  pef2256_xp_groups),
++	PEF2256_FUNCTION("XLT",   PEF2256_2X_PC_XPC_XLT,   pef2256_xp_groups),
++
++	PEF2256_FUNCTION("GPI",  PEF2256_2X_PC_RPC_GPI | PEF2256_2X_PC_XPC_GPI,
++			 pef2256_all_groups),
++	PEF2256_FUNCTION("GPOH", PEF2256_2X_PC_RPC_GPOH | PEF2256_2X_PC_XPC_GPOH,
++			 pef2256_all_groups),
++	PEF2256_FUNCTION("GPOL", PEF2256_2X_PC_RPC_GPOL | PEF2256_2X_PC_XPC_GPOL,
++			 pef2256_all_groups),
++};
++
++static const struct pef2256_function_desc pef2256_v12_functions[] = {
++	PEF2256_FUNCTION("SYPR",   PEF2256_12_PC_RPC_SYPR,   pef2256_rp_groups),
++	PEF2256_FUNCTION("RFM",    PEF2256_12_PC_RPC_RFM,    pef2256_rp_groups),
++	PEF2256_FUNCTION("RFMB",   PEF2256_12_PC_RPC_RFMB,   pef2256_rp_groups),
++	PEF2256_FUNCTION("RSIGM",  PEF2256_12_PC_RPC_RSIGM,  pef2256_rp_groups),
++	PEF2256_FUNCTION("RSIG",   PEF2256_12_PC_RPC_RSIG,   pef2256_rp_groups),
++	PEF2256_FUNCTION("DLR",    PEF2256_12_PC_RPC_DLR,    pef2256_rp_groups),
++	PEF2256_FUNCTION("FREEZE", PEF2256_12_PC_RPC_FREEZE, pef2256_rp_groups),
++	PEF2256_FUNCTION("RFSP",   PEF2256_12_PC_RPC_RFSP,   pef2256_rp_groups),
++
++	PEF2256_FUNCTION("SYPX",  PEF2256_12_PC_XPC_SYPX,  pef2256_xp_groups),
++	PEF2256_FUNCTION("XFMS",  PEF2256_12_PC_XPC_XFMS,  pef2256_xp_groups),
++	PEF2256_FUNCTION("XSIG",  PEF2256_12_PC_XPC_XSIG,  pef2256_xp_groups),
++	PEF2256_FUNCTION("TCLK",  PEF2256_12_PC_XPC_TCLK,  pef2256_xp_groups),
++	PEF2256_FUNCTION("XMFB",  PEF2256_12_PC_XPC_XMFB,  pef2256_xp_groups),
++	PEF2256_FUNCTION("XSIGM", PEF2256_12_PC_XPC_XSIGM, pef2256_xp_groups),
++	PEF2256_FUNCTION("DLX",   PEF2256_12_PC_XPC_DLX,   pef2256_xp_groups),
++	PEF2256_FUNCTION("XCLK",  PEF2256_12_PC_XPC_XCLK,  pef2256_xp_groups),
++	PEF2256_FUNCTION("XLT",   PEF2256_12_PC_XPC_XLT,   pef2256_xp_groups),
++};
++
++static int pef2256_register_pinctrl(struct pef2256_pinctrl *pef2256)
++{
++	struct pinctrl_dev	*pctrl;
++
++	pef2256->pinctrl.pctrl_desc.name    = dev_name(pef2256->dev);
++	pef2256->pinctrl.pctrl_desc.owner   = THIS_MODULE;
++	pef2256->pinctrl.pctrl_desc.pctlops = &pef2256_pctlops;
++	pef2256->pinctrl.pctrl_desc.pmxops  = &pef2256_pmxops;
++	if (pef2256->version == PEF2256_VERSION_1_2) {
++		pef2256->pinctrl.pctrl_desc.pins  = pef2256_v12_pins;
++		pef2256->pinctrl.pctrl_desc.npins = ARRAY_SIZE(pef2256_v12_pins);
++		pef2256->pinctrl.functions  = pef2256_v12_functions;
++		pef2256->pinctrl.nfunctions = ARRAY_SIZE(pef2256_v12_functions);
++	} else {
++		pef2256->pinctrl.pctrl_desc.pins  = pef2256_v2x_pins;
++		pef2256->pinctrl.pctrl_desc.npins = ARRAY_SIZE(pef2256_v2x_pins);
++		pef2256->pinctrl.functions  = pef2256_v2x_functions;
++		pef2256->pinctrl.nfunctions = ARRAY_SIZE(pef2256_v2x_functions);
++	}
++
++	pctrl = devm_pinctrl_register(pef2256->dev, &pef2256->pinctrl.pctrl_desc, pef2256);
++	if (IS_ERR(pctrl)) {
++		dev_err(pef2256->dev, "pinctrl driver registration failed\n");
++		return PTR_ERR(pctrl);
++	}
++
++	return 0;
++}
++
++static void pef2256_reset_pinmux(struct pef2256_pinctrl *pef2256)
++{
++	u8 val;
++	/*
++	 * Reset values cannot be used.
++	 * They define the SYPR/SYPX pin mux for all the RPx and XPx pins and
++	 * Only one pin can be muxed to SYPR and one pin can be muxed to SYPX.
++	 * Choose here an other reset value.
++	 */
++	if (pef2256->version == PEF2256_VERSION_1_2)
++		val = PEF2256_12_PC_XPC_XCLK | PEF2256_12_PC_RPC_RFSP;
++	else
++		val = PEF2256_2X_PC_XPC_GPI | PEF2256_2X_PC_RPC_GPI;
++
++	regmap_write(pef2256->regmap, PEF2256_PC1, val);
++	regmap_write(pef2256->regmap, PEF2256_PC2, val);
++	regmap_write(pef2256->regmap, PEF2256_PC3, val);
++	regmap_write(pef2256->regmap, PEF2256_PC4, val);
++}
++
++static int pef2256_pinctrl_probe(struct platform_device *pdev)
++{
++	struct pef2256_pinctrl *pef2256_pinctrl;
++	struct pef2256 *pef2256;
++	int ret;
++
++	pef2256_pinctrl = devm_kzalloc(&pdev->dev, sizeof(*pef2256_pinctrl), GFP_KERNEL);
++	if (!pef2256_pinctrl)
++		return -ENOMEM;
++
++	device_set_node(&pdev->dev, dev_fwnode(pdev->dev.parent));
++
++	pef2256 = dev_get_drvdata(pdev->dev.parent);
++
++	pef2256_pinctrl->dev = &pdev->dev;
++	pef2256_pinctrl->regmap = pef2256_get_regmap(pef2256);
++	pef2256_pinctrl->version = pef2256_get_version(pef2256);
++
++	platform_set_drvdata(pdev, pef2256_pinctrl);
++
++	pef2256_reset_pinmux(pef2256_pinctrl);
++	ret = pef2256_register_pinctrl(pef2256_pinctrl);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static struct platform_driver pef2256_pinctrl_driver = {
++	.driver = {
++		.name = "lantiq-pef2256-pinctrl",
++	},
++	.probe = pef2256_pinctrl_probe,
++};
++module_platform_driver(pef2256_pinctrl_driver);
++
++MODULE_AUTHOR("Herve Codina <herve.codina@bootlin.com>");
++MODULE_DESCRIPTION("PEF2256 pin controller driver");
++MODULE_LICENSE("GPL");
 -- 
 2.41.0
 
