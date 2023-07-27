@@ -2,43 +2,39 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 762D9C00528
-	for <linux-gpio@archiver.kernel.org>; Thu, 27 Jul 2023 09:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC26C41513
+	for <linux-gpio@archiver.kernel.org>; Thu, 27 Jul 2023 09:10:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233629AbjG0JJz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 27 Jul 2023 05:09:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35088 "EHLO
+        id S233709AbjG0JJ5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 27 Jul 2023 05:09:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232783AbjG0JJU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Jul 2023 05:09:20 -0400
+        with ESMTP id S233077AbjG0JJV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Jul 2023 05:09:21 -0400
 Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A7C5BBE;
-        Thu, 27 Jul 2023 01:53:13 -0700 (PDT)
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36R7384k027025;
-        Thu, 27 Jul 2023 04:53:09 -0400
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3s36ahw6e2-1
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47F395FC6;
+        Thu, 27 Jul 2023 01:53:25 -0700 (PDT)
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36R74V6b027847;
+        Thu, 27 Jul 2023 04:53:21 -0400
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+        by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3s36afn5xq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Jul 2023 04:53:09 -0400
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 36R8r7kg025586
+        Thu, 27 Jul 2023 04:53:21 -0400
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 36R8rKE1005784
         (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 27 Jul 2023 04:53:07 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Thu, 27 Jul 2023 04:53:06 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Thu, 27 Jul 2023 04:53:06 -0400
+        Thu, 27 Jul 2023 04:53:20 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Thu, 27 Jul
+ 2023 04:53:19 -0400
 Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
  (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Thu, 27 Jul 2023 04:53:06 -0400
+ Transport; Thu, 27 Jul 2023 04:53:19 -0400
 Received: from okan.localdomain ([10.158.19.61])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 36R8qn6q026993;
-        Thu, 27 Jul 2023 04:52:52 -0400
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 36R8qn6s026993;
+        Thu, 27 Jul 2023 04:53:09 -0400
 From:   Okan Sahin <okan.sahin@analog.com>
 To:     <okan.sahin@analog.com>
 CC:     Linus Walleij <linus.walleij@linaro.org>,
@@ -47,67 +43,172 @@ CC:     Linus Walleij <linus.walleij@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 0/2] Add DS4520 GPIO Expander Support
-Date:   Thu, 27 Jul 2023 11:52:36 +0300
-Message-ID: <20230727085239.4326-1-okan.sahin@analog.com>
+Subject: [PATCH v4 2/2] gpio: ds4520: Add ADI DS4520 GPIO Expander Support
+Date:   Thu, 27 Jul 2023 11:52:38 +0300
+Message-ID: <20230727085239.4326-3-okan.sahin@analog.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230727085239.4326-1-okan.sahin@analog.com>
+References: <20230727085239.4326-1-okan.sahin@analog.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: Bb5uAowpODCL9bfVrVlzsbz1nwXQW-qt
-X-Proofpoint-GUID: Bb5uAowpODCL9bfVrVlzsbz1nwXQW-qt
+X-Proofpoint-GUID: O1KQoexNbEz6LG8CwH80BPxnLlffTZ1U
+X-Proofpoint-ORIG-GUID: O1KQoexNbEz6LG8CwH80BPxnLlffTZ1U
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-07-26_08,2023-07-26_01,2023-05-22_02
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 mlxscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
- adultscore=0 mlxlogscore=705 phishscore=0 malwarescore=0 impostorscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ malwarescore=0 phishscore=0 suspectscore=0 mlxscore=0 bulkscore=0
+ mlxlogscore=859 clxscore=1015 spamscore=0 impostorscore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2306200000 definitions=main-2307270078
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-GPIO expander driver and bindings for DS4520.
-The patches are required to be applied in sequence.
+The DS4520 is a 9-bit nonvolatile (NV) I/O expander.
+It offers users a digitally programmable alternative
+to hardware jumpers and mechanical switches that are
+being used to control digital logic node.
 
-Changes in v3:
-* Patch 1: "dt-bindings: gpio: ds4520: Add ADI DS4520"
-  * No change
-* Patch 2: "gpio: ds4520: Add ADI DS4520 GPIO Expander Support"
-  * Add, remove unnecessary new lines.
-
-Changes in v3:
-* Patch 1: "dt-bindings: gpio: ds4520: Add ADI DS4520"
-  * Add ngpios property.
-* Patch 2: "gpio: ds4520: Add ADI DS4520 GPIO Expander Support"
-  * Add namespace for MACROS
-  * Read ngpios from dt
-  * Add missing header file
-
-Changes in v2:
-* Patch 1: "dt-bindings: gpio: ds4520: Add ADI DS4520"
-  * Drop label for gpio node
-  * Use consistent quotes
-  * Fix filename matching compatible.
-* Patch 2: "gpio: ds4520: Add ADI DS4520 GPIO Expander Support"
-  * Use regmap_gpio framework
-  * Fix typo in Kconfig
-  * Fix commit message
-
-Okan Sahin (2):
-  dt-bindings: gpio: ds4520: Add ADI DS4520
-  gpio: ds4520: Add ADI DS4520 GPIO Expander Support
-
- .../bindings/gpio/adi,ds4520-gpio.yaml        | 51 +++++++++++
- drivers/gpio/Kconfig                          | 11 +++
- drivers/gpio/Makefile                         |  1 +
- drivers/gpio/gpio-ds4520.c                    | 89 +++++++++++++++++++
- 4 files changed, 152 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/adi,ds4520-gpio.yaml
+Signed-off-by: Okan Sahin <okan.sahin@analog.com>
+---
+ drivers/gpio/Kconfig       | 11 +++++
+ drivers/gpio/Makefile      |  1 +
+ drivers/gpio/gpio-ds4520.c | 89 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 101 insertions(+)
  create mode 100644 drivers/gpio/gpio-ds4520.c
 
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 13be729710f2..5f89e46d6411 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1000,6 +1000,17 @@ config GPIO_ADNP
+ 	  enough to represent all pins, but the driver will assume a
+ 	  register layout for 64 pins (8 registers).
+ 
++config GPIO_DS4520
++	tristate "DS4520 I2C GPIO expander"
++	select REGMAP_I2C
++	select GPIO_REGMAP
++	help
++	  GPIO driver for ADI DS4520 I2C-based GPIO expander.
++	  Say yes here to enable the GPIO driver for the ADI DS4520 chip.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called gpio-ds4520.
++
+ config GPIO_GW_PLD
+ 	tristate "Gateworks PLD GPIO Expander"
+ 	depends on OF_GPIO
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index c048ba003367..6f8656d5d617 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -52,6 +52,7 @@ obj-$(CONFIG_GPIO_DA9052)		+= gpio-da9052.o
+ obj-$(CONFIG_GPIO_DA9055)		+= gpio-da9055.o
+ obj-$(CONFIG_GPIO_DAVINCI)		+= gpio-davinci.o
+ obj-$(CONFIG_GPIO_DLN2)			+= gpio-dln2.o
++obj-$(CONFIG_GPIO_DS4520)		+= gpio-ds4520.o
+ obj-$(CONFIG_GPIO_DWAPB)		+= gpio-dwapb.o
+ obj-$(CONFIG_GPIO_EIC_SPRD)		+= gpio-eic-sprd.o
+ obj-$(CONFIG_GPIO_EM)			+= gpio-em.o
+diff --git a/drivers/gpio/gpio-ds4520.c b/drivers/gpio/gpio-ds4520.c
+new file mode 100644
+index 000000000000..0a9fdbfed6ee
+--- /dev/null
++++ b/drivers/gpio/gpio-ds4520.c
+@@ -0,0 +1,89 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (c) 2023 Analog Devices, Inc.
++ * Driver for the DS4520 I/O Expander
++ */
++
++#include <linux/device.h>
++#include <linux/gpio/driver.h>
++#include <linux/gpio/regmap.h>
++#include <linux/i2c.h>
++#include <linux/property.h>
++#include <linux/regmap.h>
++
++#define DS4520_PULLUP0		0xF0
++#define DS4520_IO_CONTROL0	0xF2
++#define DS4520_IO_STATUS0	0xF8
++
++static const struct regmap_config ds4520_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++};
++
++static int ds4520_gpio_probe(struct i2c_client *client)
++{
++	struct gpio_regmap_config config = { };
++	struct device *dev = &client->dev;
++	struct regmap *regmap;
++	u32 ngpio;
++	u32 base;
++	int ret;
++
++	ret = device_property_read_u32(dev, "reg", &base);
++	if (ret) {
++		dev_err_probe(dev, ret,
++			  "Missing 'reg' property.\n");
++		return -EINVAL;
++	}
++
++	ret = device_property_read_u32(dev, "ngpios", &ngpio);
++	if (ret) {
++		dev_err_probe(dev, ret,
++			  "Missing 'ngpios' property.\n");
++		return -EINVAL;
++	}
++
++	regmap = devm_regmap_init_i2c(client, &ds4520_regmap_config);
++	if (IS_ERR(regmap)) {
++		ret = PTR_ERR(regmap);
++		dev_err_probe(dev, ret,
++			      "Failed to allocate register map\n");
++		return ret;
++	}
++
++	config.regmap = regmap;
++	config.parent = dev;
++	config.ngpio = ngpio;
++
++	config.reg_dat_base = base + DS4520_IO_STATUS0;
++	config.reg_set_base = base + DS4520_PULLUP0;
++	config.reg_dir_out_base = base + DS4520_IO_CONTROL0;
++
++	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &config));
++}
++
++static const struct of_device_id ds4520_gpio_of_match_table[] = {
++	{ .compatible = "adi,ds4520-gpio" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, ds4520_gpio_of_match_table);
++
++static const struct i2c_device_id ds4520_gpio_id_table[] = {
++	{ "ds4520-gpio" },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, ds4520_gpio_id_table);
++
++static struct i2c_driver ds4520_gpio_driver = {
++	.driver = {
++		.name = "ds4520-gpio",
++		.of_match_table = ds4520_gpio_of_match_table,
++	},
++	.probe_new = ds4520_gpio_probe,
++	.id_table = ds4520_gpio_id_table,
++};
++module_i2c_driver(ds4520_gpio_driver);
++
++MODULE_DESCRIPTION("DS4520 I/O Expander");
++MODULE_AUTHOR("Okan Sahin <okan.sahin@analog.com>");
++MODULE_LICENSE("GPL");
 -- 
 2.30.2
 
