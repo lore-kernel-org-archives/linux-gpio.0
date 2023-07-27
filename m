@@ -2,225 +2,82 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C84EC0015E
-	for <linux-gpio@archiver.kernel.org>; Thu, 27 Jul 2023 09:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8196C001DC
+	for <linux-gpio@archiver.kernel.org>; Thu, 27 Jul 2023 09:26:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233339AbjG0JTi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 27 Jul 2023 05:19:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44398 "EHLO
+        id S232705AbjG0J0Z (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 27 Jul 2023 05:26:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234721AbjG0JS6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Jul 2023 05:18:58 -0400
-Received: from mail-vk1-xa31.google.com (mail-vk1-xa31.google.com [IPv6:2607:f8b0:4864:20::a31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41E955BB9
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Jul 2023 02:09:59 -0700 (PDT)
-Received: by mail-vk1-xa31.google.com with SMTP id 71dfb90a1353d-4866be648ffso75296e0c.2
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Jul 2023 02:09:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1690448998; x=1691053798;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pqdE/vVG5BBYKcmFfE3ql5vjVbA9g47bxLZaTPKHyA4=;
-        b=bsTtLkrSwWOkKTuEtrxBpbny2YpwZtQ2WfN+56m3s4qHVZZStQJssQz9FwVRRXTuOF
-         mIloaqvX3UXvsBw+ajaVAsT8ypKcKXYcQmQM3qQtYdadcer6fioBnDriWJFPOEpqAUT1
-         tlKjjDkMAEEIMkN5wDfY0n1FTFPcBWdCEIfrmIXW/CyIetkszjQBkO6pE5wSVVvAeTAU
-         U+P9U8g3MUYEe/RRmtClI5ZecIAgWV6w3moLARXeM8nYM16mktdS8wbuDqiHnK5jvP98
-         gwXqlwpPxu+zqefUS9d4jYrN/4qSuKsOLZsSZID633SDPghR83PUVR7rsrtJllMmDjtT
-         ewKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690448998; x=1691053798;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pqdE/vVG5BBYKcmFfE3ql5vjVbA9g47bxLZaTPKHyA4=;
-        b=dca3z0E9c/L5fOFlq3IJoGCRR9v6NngVNbkR7GPADHkRb2RztlCqCt9Y8KK50AJIXq
-         1G+rjElBkLh6zcLhGs9x+cZiVRcL9QuPGpfL+1ZQJf3r3FhrS1+m1Q3/d1A7RKymYM/a
-         z6YtB6aphsY+xDQ2DrIE+UgME+GhKyAN+XyrsdVyyDq2R0dIXuQBo7iyhS3r/Y+gZHPh
-         JcJbcruYMRGSKagBH1bFz14rlKb+q1gjJ1wDGtxbZeetI3n+cLSHunu4XmfSrV/LSrk3
-         68WuwxKUAje+WXEvP9twoOTDW720DkjdmKPQRanz0shz7X7ju2xaxPHS514HgIBQwjth
-         61Rg==
-X-Gm-Message-State: ABy/qLZTdKG0lXeSK3hlEQHxDn2N7UXWM5X/ctIa0CCwbNX3IbjKWsxG
-        cRPBkcX46z8Ldzvf3FgvNF5/EklFO9watWJK8KXV/PYqo59/Qz8N8NQ=
-X-Google-Smtp-Source: APBJJlFAvsVUz+v5A3EEk9tC92nTgnX8n+qgaIW+T65Xi0glecx84ACNaM1QyZ3v9giu0adouiWkSbiVdY6E5GJ35Vw=
-X-Received: by 2002:a1f:5e47:0:b0:453:b080:632d with SMTP id
- s68-20020a1f5e47000000b00453b080632dmr812140vkb.0.1690448998241; Thu, 27 Jul
- 2023 02:09:58 -0700 (PDT)
+        with ESMTP id S232856AbjG0JZ6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Jul 2023 05:25:58 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D59E5241;
+        Thu, 27 Jul 2023 02:15:41 -0700 (PDT)
+Received: from kwepemi500008.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4RBQ7q6X5GzrRqy;
+        Thu, 27 Jul 2023 17:14:31 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
+ (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 27 Jul
+ 2023 17:15:26 +0800
+From:   Ruan Jinjie <ruanjinjie@huawei.com>
+To:     <j-keerthy@ti.com>, <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
+        <andy@kernel.org>, <grygorii.strashko@ti.com>,
+        <ssantosh@kernel.org>, <khilman@kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-omap@vger.kernel.org>
+CC:     <ruanjinjie@huawei.com>
+Subject: [PATCH -next] gpio: Remove redundant dev_err_probe()
+Date:   Thu, 27 Jul 2023 17:14:46 +0800
+Message-ID: <20230727091446.859984-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230727085239.4326-1-okan.sahin@analog.com> <20230727085239.4326-3-okan.sahin@analog.com>
-In-Reply-To: <20230727085239.4326-3-okan.sahin@analog.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 27 Jul 2023 11:09:47 +0200
-Message-ID: <CAMRc=MfY+kmBt6nmkPJC=E6u0GP7gSfORkTi8LcaD10+RNp1MQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] gpio: ds4520: Add ADI DS4520 GPIO Expander Support
-To:     Okan Sahin <okan.sahin@analog.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.90.53.73]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemi500008.china.huawei.com (7.221.188.139)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Jul 27, 2023 at 10:53=E2=80=AFAM Okan Sahin <okan.sahin@analog.com>=
- wrote:
->
-> The DS4520 is a 9-bit nonvolatile (NV) I/O expander.
-> It offers users a digitally programmable alternative
-> to hardware jumpers and mechanical switches that are
-> being used to control digital logic node.
->
-> Signed-off-by: Okan Sahin <okan.sahin@analog.com>
-> ---
->  drivers/gpio/Kconfig       | 11 +++++
->  drivers/gpio/Makefile      |  1 +
->  drivers/gpio/gpio-ds4520.c | 89 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 101 insertions(+)
->  create mode 100644 drivers/gpio/gpio-ds4520.c
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 13be729710f2..5f89e46d6411 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -1000,6 +1000,17 @@ config GPIO_ADNP
->           enough to represent all pins, but the driver will assume a
->           register layout for 64 pins (8 registers).
->
-> +config GPIO_DS4520
-> +       tristate "DS4520 I2C GPIO expander"
-> +       select REGMAP_I2C
-> +       select GPIO_REGMAP
-> +       help
-> +         GPIO driver for ADI DS4520 I2C-based GPIO expander.
-> +         Say yes here to enable the GPIO driver for the ADI DS4520 chip.
-> +
-> +         To compile this driver as a module, choose M here: the module w=
-ill
-> +         be called gpio-ds4520.
-> +
->  config GPIO_GW_PLD
->         tristate "Gateworks PLD GPIO Expander"
->         depends on OF_GPIO
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index c048ba003367..6f8656d5d617 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -52,6 +52,7 @@ obj-$(CONFIG_GPIO_DA9052)             +=3D gpio-da9052.=
-o
->  obj-$(CONFIG_GPIO_DA9055)              +=3D gpio-da9055.o
->  obj-$(CONFIG_GPIO_DAVINCI)             +=3D gpio-davinci.o
->  obj-$(CONFIG_GPIO_DLN2)                        +=3D gpio-dln2.o
-> +obj-$(CONFIG_GPIO_DS4520)              +=3D gpio-ds4520.o
->  obj-$(CONFIG_GPIO_DWAPB)               +=3D gpio-dwapb.o
->  obj-$(CONFIG_GPIO_EIC_SPRD)            +=3D gpio-eic-sprd.o
->  obj-$(CONFIG_GPIO_EM)                  +=3D gpio-em.o
-> diff --git a/drivers/gpio/gpio-ds4520.c b/drivers/gpio/gpio-ds4520.c
-> new file mode 100644
-> index 000000000000..0a9fdbfed6ee
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-ds4520.c
-> @@ -0,0 +1,89 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (c) 2023 Analog Devices, Inc.
-> + * Driver for the DS4520 I/O Expander
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/gpio/regmap.h>
-> +#include <linux/i2c.h>
-> +#include <linux/property.h>
-> +#include <linux/regmap.h>
-> +
-> +#define DS4520_PULLUP0         0xF0
-> +#define DS4520_IO_CONTROL0     0xF2
-> +#define DS4520_IO_STATUS0      0xF8
-> +
-> +static const struct regmap_config ds4520_regmap_config =3D {
-> +       .reg_bits =3D 8,
-> +       .val_bits =3D 8,
-> +};
-> +
-> +static int ds4520_gpio_probe(struct i2c_client *client)
-> +{
-> +       struct gpio_regmap_config config =3D { };
-> +       struct device *dev =3D &client->dev;
-> +       struct regmap *regmap;
-> +       u32 ngpio;
-> +       u32 base;
-> +       int ret;
-> +
-> +       ret =3D device_property_read_u32(dev, "reg", &base);
-> +       if (ret) {
-> +               dev_err_probe(dev, ret,
-> +                         "Missing 'reg' property.\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       ret =3D device_property_read_u32(dev, "ngpios", &ngpio);
-> +       if (ret) {
-> +               dev_err_probe(dev, ret,
-> +                         "Missing 'ngpios' property.\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       regmap =3D devm_regmap_init_i2c(client, &ds4520_regmap_config);
-> +       if (IS_ERR(regmap)) {
-> +               ret =3D PTR_ERR(regmap);
-> +               dev_err_probe(dev, ret,
-> +                             "Failed to allocate register map\n");
-> +               return ret;
-> +       }
-> +
-> +       config.regmap =3D regmap;
-> +       config.parent =3D dev;
-> +       config.ngpio =3D ngpio;
-> +
-> +       config.reg_dat_base =3D base + DS4520_IO_STATUS0;
-> +       config.reg_set_base =3D base + DS4520_PULLUP0;
-> +       config.reg_dir_out_base =3D base + DS4520_IO_CONTROL0;
-> +
-> +       return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &config));
-> +}
-> +
-> +static const struct of_device_id ds4520_gpio_of_match_table[] =3D {
-> +       { .compatible =3D "adi,ds4520-gpio" },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(of, ds4520_gpio_of_match_table);
-> +
-> +static const struct i2c_device_id ds4520_gpio_id_table[] =3D {
-> +       { "ds4520-gpio" },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, ds4520_gpio_id_table);
-> +
-> +static struct i2c_driver ds4520_gpio_driver =3D {
-> +       .driver =3D {
-> +               .name =3D "ds4520-gpio",
-> +               .of_match_table =3D ds4520_gpio_of_match_table,
-> +       },
-> +       .probe_new =3D ds4520_gpio_probe,
+There is no need to call the dev_err_probe() function directly to print
+a custom message when handling an error from platform_get_irq() function as
+it is going to display an appropriate error message in case of a failure.
 
-I missed this previously but i2c drivers have completed the conversion
-to the new probe syntax, so please use regular probe.
+Signed-off-by: Ruan Jinjie <ruanjinjie@huawei.com>
+---
+ drivers/gpio/gpio-davinci.c | 2 +-
+ drivers/gpio/gpio-omap.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-And please address Krzysztof's comments as well.
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index fff510d86e31..8db5717bdabe 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -236,7 +236,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	for (i = 0; i < nirq; i++) {
+ 		chips->irqs[i] = platform_get_irq(pdev, i);
+ 		if (chips->irqs[i] < 0)
+-			return dev_err_probe(dev, chips->irqs[i], "IRQ not populated\n");
++			return chips->irqs[i];
+ 	}
+ 
+ 	chips->chip.label = dev_name(dev);
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 2b78fde74e30..21c8cfedfd64 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1415,7 +1415,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 	if (bank->irq <= 0) {
+ 		if (!bank->irq)
+ 			bank->irq = -ENXIO;
+-		return dev_err_probe(dev, bank->irq, "can't get irq resource\n");
++		return bank->irq;
+ 	}
+ 
+ 	bank->chip.parent = dev;
+-- 
+2.34.1
 
-Thanks,
-Bart
-
-> +       .id_table =3D ds4520_gpio_id_table,
-> +};
-> +module_i2c_driver(ds4520_gpio_driver);
-> +
-> +MODULE_DESCRIPTION("DS4520 I/O Expander");
-> +MODULE_AUTHOR("Okan Sahin <okan.sahin@analog.com>");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.30.2
->
