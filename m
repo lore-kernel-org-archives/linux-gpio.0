@@ -2,82 +2,162 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 579DCC00528
-	for <linux-gpio@archiver.kernel.org>; Mon, 31 Jul 2023 15:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7077BC00528
+	for <linux-gpio@archiver.kernel.org>; Mon, 31 Jul 2023 15:56:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231204AbjGaPxP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 31 Jul 2023 11:53:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59442 "EHLO
+        id S233174AbjGaP4N (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 31 Jul 2023 11:56:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230382AbjGaPxO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jul 2023 11:53:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A9D61BB;
-        Mon, 31 Jul 2023 08:53:14 -0700 (PDT)
+        with ESMTP id S233061AbjGaP4A (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jul 2023 11:56:00 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A65B61BC9;
+        Mon, 31 Jul 2023 08:55:49 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 938FD611CD;
-        Mon, 31 Jul 2023 15:53:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71AB1C433C8;
-        Mon, 31 Jul 2023 15:53:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1690818793;
-        bh=L2tZXZmD+sXdaCCAuGFE2vWovGgLcHM5kSykAonNNRU=;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 06237611E6;
+        Mon, 31 Jul 2023 15:55:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3887C433C7;
+        Mon, 31 Jul 2023 15:55:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690818948;
+        bh=90WbJ1aIX+bQI29zN6TkQtMuxnBz2JmjcxoCOrV3oyw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Pmf1rBhcf2IvuO1HRVVazeKI85pL2NAawrpMNiTlOnq4vloDO3GiOKfezq+ghBcX4
-         X9w/xZMsXvTOgL9Hc/p72KdqRzwZ7m/m66c0T5BxRUCmD2MDS5ltLjxQ+uffTzmt18
-         NEC+EZ1hGciytwGGDO+wBsU5VApeZzIsDEWUdwhI=
-Date:   Mon, 31 Jul 2023 17:53:10 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Hugo Villeneuve <hugo@hugovil.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, jirislaby@kernel.org, jringle@gridpoint.com,
-        isaac.true@canonical.com, jesse.sung@canonical.com,
-        l.perczak@camlintechnologies.com, tomasz.mon@camlingroup.com,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-        Lech Perczak <lech.perczak@camlingroup.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v9 03/10] serial: sc16is7xx: remove obsolete out_thread
- label
-Message-ID: <2023073135-puppy-reflected-700d@gregkh>
-References: <20230725142343.1724130-1-hugo@hugovil.com>
- <20230725142343.1724130-4-hugo@hugovil.com>
+        b=Qe7Mf9AxF9u2J0S4FGC3WlvZ+yVQEVyjmcfwEnRPEJly+WeTrm9eS/yDVrRO01psp
+         NNuQB5U/W9mnMAUEjbRsfPL8slVBW8lanzkV0Z24XRwA4O9eEh2h7nLYLaV5pTNvjw
+         l3aPawFvsUtSKz+XYG6m0BfZ12F9j2aFDZBL4UOuzNssqv+cdSSuQ9sRRTRf8ITnVn
+         DnJyt6zfFirvZTWLlGNYXAbkxSUyN8IIbqeH0t7dG8dpuNJKEnwG2S4H//lVfPSph+
+         3RClweGwOzEbIwM6a3ydo+eCvIv+GX3t22ZLExvIrv9aXAeNBpX0w1KCzl4wPXoEgu
+         +sEHNC7QJa24w==
+Date:   Mon, 31 Jul 2023 16:55:43 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Yinbo Zhu <zhuyinbo@loongson.cn>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jianmin Lv <lvjianmin@loongson.cn>, wanghongliang@loongson.cn,
+        Liu Peibao <liupeibao@loongson.cn>,
+        loongson-kernel@lists.loongnix.cn
+Subject: Re: [PATCH v2 1/2] gpio: dt-bindings: add parsing of loongson gpio
+ offset
+Message-ID: <20230731-setback-such-61815ee3ef51@spud>
+References: <20230731091059.17323-1-zhuyinbo@loongson.cn>
+ <20230731091059.17323-2-zhuyinbo@loongson.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gEWADMEw6odxIIUX"
 Content-Disposition: inline
-In-Reply-To: <20230725142343.1724130-4-hugo@hugovil.com>
+In-Reply-To: <20230731091059.17323-2-zhuyinbo@loongson.cn>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Jul 25, 2023 at 10:23:35AM -0400, Hugo Villeneuve wrote:
-> From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> 
-> Commit c8f71b49ee4d ("serial: sc16is7xx: setup GPIO controller later
-> in probe") moved GPIO setup code later in probe function. Doing so
-> also required to move ports cleanup code (out_ports label) after the
-> GPIO cleanup code.
-> 
-> After these moves, the out_thread label becomes misplaced and makes
-> part of the cleanup code illogical.
-> 
-> This patch remove the now obsolete out_thread label and make GPIO
-> setup code jump to out_ports label if it fails.
-> 
-> Fixes: c8f71b49ee4d ("serial: sc16is7xx: setup GPIO controller later in probe")
-> Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> Reviewed-by: Lech Perczak <lech.perczak@camlingroup.com>
-> Tested-by: Lech Perczak <lech.perczak@camlingroup.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Why is this not ok for stable kernels yet it has a Fixes: tag?
+--gEWADMEw6odxIIUX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please fix.
+On Mon, Jul 31, 2023 at 05:10:58PM +0800, Yinbo Zhu wrote:
+> Add parsing GPIO configure, input, output, interrupt register offset
+> address and GPIO control mode support.
 
-thanks,
+This reeks of insufficient use of SoC specific compatibles. Do GPIO
+controllers on the same SoC have different register offsets?
+Where are the users for this?
 
-greg k-h
+Cheers,
+Conor.
+
+>=20
+> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+> ---
+>  .../bindings/gpio/loongson,ls-gpio.yaml       | 37 +++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml=
+ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> index fb86e8ce6349..cad67f8bfe6e 100644
+> --- a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> @@ -29,6 +29,33 @@ properties:
+> =20
+>    gpio-ranges: true
+> =20
+> +  loongson,gpio-conf-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      This option indicate this GPIO configuration register offset addre=
+ss.
+> +
+> +  loongson,gpio-out-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      This option indicate this GPIO output register offset address.
+> +
+> +  loongson,gpio-in-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      This option indicate this GPIO input register offset address.
+> +
+> +  loongson,gpio-ctrl-mode:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      This option indicate this GPIO control mode, where '0' represents
+> +      bit control mode and '1' represents byte control mode.
+> +
+> +  loongson,gpio-inten-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      This option indicate this GPIO interrupt enable register offset
+> +      address.
+> +
+>    interrupts:
+>      minItems: 1
+>      maxItems: 64
+> @@ -39,6 +66,11 @@ required:
+>    - ngpios
+>    - "#gpio-cells"
+>    - gpio-controller
+> +  - loongson,gpio-conf-offset
+> +  - loongson,gpio-in-offset
+> +  - loongson,gpio-out-offset
+> +  - loongson,gpio-ctrl-mode
+> +  - loongson,gpio-inten-offset
+>    - gpio-ranges
+>    - interrupts
+> =20
+> @@ -54,6 +86,11 @@ examples:
+>        ngpios =3D <64>;
+>        #gpio-cells =3D <2>;
+>        gpio-controller;
+> +      loongson,gpio-conf-offset =3D <0>;
+> +      loongson,gpio-in-offset =3D <0x20>;
+> +      loongson,gpio-out-offset =3D <0x10>;
+> +      loongson,gpio-ctrl-mode =3D <0>;
+> +      loongson,gpio-inten-offset =3D <0x30>;
+>        gpio-ranges =3D <&pctrl 0 0 15>,
+>                      <&pctrl 16 16 15>,
+>                      <&pctrl 32 32 10>,
+> --=20
+> 2.20.1
+>=20
+
+--gEWADMEw6odxIIUX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZMfZfwAKCRB4tDGHoIJi
+0pD0AQCpsCmyYqC+KCb9tJxSGEy6oeKZsVocCUw1uLHe6Q5xIAEA1CrBVW2zV/q8
+zo0cMvfK8r6iCT6xypfwHgpsiV6T7AA=
+=LlSr
+-----END PGP SIGNATURE-----
+
+--gEWADMEw6odxIIUX--
