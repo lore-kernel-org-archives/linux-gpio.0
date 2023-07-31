@@ -2,85 +2,61 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5E8C0015E
-	for <linux-gpio@archiver.kernel.org>; Tue,  1 Aug 2023 11:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D03C04FDF
+	for <linux-gpio@archiver.kernel.org>; Tue,  1 Aug 2023 11:55:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231936AbjHALh0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 1 Aug 2023 07:37:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37480 "EHLO
+        id S232129AbjHALzf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 1 Aug 2023 07:55:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231391AbjHALhZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2023 07:37:25 -0400
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EF1CD3;
-        Tue,  1 Aug 2023 04:37:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=BbIqX++u7tFTSva0KCFAR2Y+7S4v0rtzgJGAQYO1KzM=; b=rsR/yOJL9SkjbpT5u7oTNnltlY
-        yg9FUDUbGrezFAR7Ac/0PjGnwTNyoJAamuIjhPGujcC7XwpW9ndx6q4orSPtvEd6YYtcTw8Hsd4+i
-        uYtEQc/x7XyLZwul+/LOF9QPQoitYKTVSCm5coM9br7dxcY5DTTy+gl1PfpjFeab3HqM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1qQmzN-002nH2-Hd; Tue, 01 Aug 2023 12:52:29 +0200
-Date:   Tue, 1 Aug 2023 12:52:29 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Herve Codina <herve.codina@bootlin.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Randy Dunlap <rdunlap@infradead.org>, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 23/28] net: wan: framer: Add support for the Lantiq
- PEF2256 framer
-Message-ID: <c27fa438-0885-4e02-a957-ee40b8ef6da1@lunn.ch>
-References: <20230726150225.483464-1-herve.codina@bootlin.com>
- <20230726150225.483464-24-herve.codina@bootlin.com>
- <4adae593-c428-4910-882e-7247727cf501@lunn.ch>
- <20230801124401.3883d16c@bootlin.com>
+        with ESMTP id S230301AbjHALze (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2023 07:55:34 -0400
+Received: from mail.cothiafon.pl (mail.cothiafon.pl [217.61.106.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 478951728
+        for <linux-gpio@vger.kernel.org>; Tue,  1 Aug 2023 04:55:28 -0700 (PDT)
+Received: by mail.cothiafon.pl (Postfix, from userid 1002)
+        id 54B038309A; Mon, 31 Jul 2023 10:35:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cothiafon.pl; s=mail;
+        t=1690792573; bh=dwoca0X6C9VXklO/zRgFQCPapTk5LFz4tKaENdvy6Po=;
+        h=Date:From:To:Subject:From;
+        b=FUvHCg5IaZEiRodNhihSVqfu0QV2OYCSRLQ1Yfy0Z78aQ3f6TJq8eOjPDGbT6bP8L
+         Z+U7esAmQR0UzI6RRr1bnsI6LV+5lLZwbwu3g+3qrVf/aSqvC0MkmX3hctYxyCTwd3
+         r79y74uW387qpH5RcumZgh9uDF8iiUhmKy5wpFOPVIBCHQC6/rY6q5mus/HBpPJaMa
+         JlIRqdAJZpWT8GjHI68HS44JExoiNPNgsaBnoSUWPSUWqlcZZd3lpOVURD96w6qKIj
+         M8fW1uqmH+O7iWkrz1K+50MsZKMNjX9jAatg+R0sLW04JM9YEm60G3s7H37HkqBsJu
+         l2vdWwuJc8VNQ==
+Received: by mail.cothiafon.pl for <linux-gpio@vger.kernel.org>; Mon, 31 Jul 2023 08:35:48 GMT
+Message-ID: <20230731095940-0.1.28.omoc.0.hce709qevv@cothiafon.pl>
+Date:   Mon, 31 Jul 2023 08:35:48 GMT
+From:   =?UTF-8?Q? "Rados=C5=82aw_Grabowski" ?= 
+        <radoslaw.grabowski@cothiafon.pl>
+To:     <linux-gpio@vger.kernel.org>
+Subject: W sprawie samochodu
+X-Mailer: mail.cothiafon.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230801124401.3883d16c@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-> > > +static void pef2256_isr_default_handler(struct pef2256 *pef2256, u8 nbr, u8 isr)
-> > > +{
-> > > +	dev_warn(pef2256->dev, "ISR%u: 0x%02x not handled\n", nbr, isr);
-> > > +}  
-> > 
-> > Should this be rate limited? It is going to be very noise if it gets
-> > called once per frame time.
-> 
-> This function should not be called.
-> It is wired on some interrupts and these interrupts should not be triggered.
-> It they fired, something was wrong.
-> 
-> I would prefer to keep this dev_warn() to keep the user informed about the
-> problem.
+Dzie=C5=84 dobry,
 
-I would definitely keep it, but rate limit it. dev_warn_ratelimited().
+chcieliby=C5=9Bmy zapewni=C4=87 Pa=C5=84stwu kompleksowe rozwi=C4=85zania=
+, je=C5=9Bli chodzi o system monitoringu GPS.
 
-	Andrew
+Precyzyjne monitorowanie pojazd=C3=B3w na mapach cyfrowych, =C5=9Bledzeni=
+e ich parametr=C3=B3w eksploatacyjnych w czasie rzeczywistym oraz kontrol=
+a paliwa to kluczowe funkcjonalno=C5=9Bci naszego systemu.=20
+
+Organizowanie pracy pracownik=C3=B3w jest dzi=C4=99ki temu prostsze i bar=
+dziej efektywne, a oszcz=C4=99dno=C5=9Bci i optymalizacja w zakresie pono=
+szonych koszt=C3=B3w, maj=C4=85 dla ka=C5=BCdego przedsi=C4=99biorcy ogro=
+mne znaczenie.
+
+Dopasujemy nasz=C4=85 ofert=C4=99 do Pa=C5=84stwa oczekiwa=C5=84 i potrze=
+b organizacji. Czy mogliby=C5=9Bmy porozmawia=C4=87 o naszej propozycji?
+
+
+Pozdrawiam
+Rados=C5=82aw Grabowski
