@@ -2,91 +2,63 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4F7C04A94
-	for <linux-gpio@archiver.kernel.org>; Tue,  1 Aug 2023 19:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0E3C00528
+	for <linux-gpio@archiver.kernel.org>; Tue,  1 Aug 2023 19:10:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232289AbjHATKT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 1 Aug 2023 15:10:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44704 "EHLO
+        id S231475AbjHATKw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 1 Aug 2023 15:10:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232222AbjHATKL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2023 15:10:11 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA7D31BF6
-        for <linux-gpio@vger.kernel.org>; Tue,  1 Aug 2023 12:10:07 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id 38308e7fff4ca-2b9cd6a554cso74414741fa.3
-        for <linux-gpio@vger.kernel.org>; Tue, 01 Aug 2023 12:10:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1690917006; x=1691521806;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EmKT/3Oo08LVt2NMcE4zYHICX9fi+Y9rB10UuqFHh6o=;
-        b=3XmUC0Q8brIbSP5QuPUb5aCeMXEYVuPPHRsqiVwfMw7t0L0vSOAtXNu/IpKQWrgZcp
-         XdAZIrwx251SEbk2Gs228dtggMwI2b6Wbqlga3hBpQZ690/YjN+nLvCFQ91Ji/6NjAMM
-         GkOAguMx8smqBM5ca1oGT3YvIzfTuE20vpU/PECgVBNFDcrV+Xkky0iaZgh6T8jvftqi
-         yM2Vt1bZ1ZjKwoU9OUQ6SRU40tU9D4ORF+kuHQGJrv2fv/sxcaFeuMKqRFL6sTdDVKZC
-         EoBerXZWbyZ8GOiLWCmLEycttWfScXxFqyAHEj9E/R1JvZYa8XjwWCXRZemEoHoC+esM
-         IPxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690917006; x=1691521806;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EmKT/3Oo08LVt2NMcE4zYHICX9fi+Y9rB10UuqFHh6o=;
-        b=EwvscOXRilFwcU+Oc8BXBPtQXN/JYxOMv+Pf1F7btZzUHQuIgLCJdddBmmvEULyZq+
-         ux5S+mQNpAFbWiFBvEN3xTHS6glpA6iJHUPPtICgVxTEWqMilRxM8oXksA0a2ABWYIGR
-         LoVthlx33UFd/FCxsnYA4GBl0Bi2LKGzfC29UO4rU3JcC0XTqymwFXTNvV4hJCV2kymg
-         nO3XzN9OHLTvcf2IiHBxNTUcyrCPJdu/2Pv6EtdfXtWGe88v3FD8OhraMV2DytAQ06Cv
-         W8V3Gpp/2+YmKPTGiiGKg9TcZqEB6sCK+v6ZsoZaZWKbwGqkFDS9iGVXJrGrG8C2ZUQM
-         7aEA==
-X-Gm-Message-State: ABy/qLa2Hj4ZGHj42wiMP4Hw7khQ4wkv4WpQ3c2TO6cAWaWn2Oj/xi0J
-        aASfeZ7X9Rm3gh1qcAhfnekHyZnQ/wvfCvwg99GmtQ==
-X-Google-Smtp-Source: APBJJlFqFMHkbgbmCMnEeP4fKpt0dYgMXseu9Xgaa++cHob1JnYsrGPuHwa9soFKdMCcSi/iBBxPcg==
-X-Received: by 2002:a2e:9903:0:b0:2b9:b904:74d7 with SMTP id v3-20020a2e9903000000b002b9b90474d7mr3219510lji.18.1690917006011;
-        Tue, 01 Aug 2023 12:10:06 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:f283:106b:b69e:b5a])
-        by smtp.gmail.com with ESMTPSA id l27-20020a05600c1d1b00b003fe1b3e0852sm5075713wms.0.2023.08.01.12.10.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Aug 2023 12:10:05 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] gpio: sim: mark the GPIO chip as a one that can sleep
-Date:   Tue,  1 Aug 2023 21:09:51 +0200
-Message-Id: <20230801190951.51818-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S229698AbjHATKs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2023 15:10:48 -0400
+Received: from mgamail.intel.com (unknown [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 273E71BF5;
+        Tue,  1 Aug 2023 12:10:47 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10789"; a="349697461"
+X-IronPort-AV: E=Sophos;i="6.01,248,1684825200"; 
+   d="scan'208";a="349697461"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2023 12:10:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10789"; a="705892471"
+X-IronPort-AV: E=Sophos;i="6.01,248,1684825200"; 
+   d="scan'208";a="705892471"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga006.jf.intel.com with ESMTP; 01 Aug 2023 12:10:43 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andy@kernel.org>)
+        id 1qQulV-00G0N6-1J;
+        Tue, 01 Aug 2023 22:10:41 +0300
+Date:   Tue, 1 Aug 2023 22:10:41 +0300
+From:   Andy Shevchenko <andy@kernel.org>
+To:     Andrei Coardos <aboutphysycs@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-gpio@vger.kernel.org, paul.walmsley@sifive.com,
+        palmer@dabbelt.com, brgl@bgdev.pl, linus.walleij@linaro.org,
+        Alexandru Ardelean <alex@shruggie.ro>
+Subject: Re: [PATCH] gpio: sifive: remove unneeded call to
+ platform_set_drvdata()
+Message-ID: <ZMlYsexmCbUR+nYD@smile.fi.intel.com>
+References: <20230801074430.5179-1-aboutphysycs@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230801074430.5179-1-aboutphysycs@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Aug 01, 2023 at 10:44:30AM +0300, Andrei Coardos wrote:
+> This function call was found to be unnecessary as there is no equivalent
+> platform_get_drvdata() call to access the private data of the driver. Also,
+> the private data is defined in this driver, so there is no risk of it being
+> accessed outside of this driver file.
 
-Simulated chips use a mutex for synchronization in driver callbacks so
-they must not be called from interrupt context. Set the can_sleep field
-of the GPIO chip to true to force users to only use threaded irqs.
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-sim.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
-index cfbdade841e8..5f8723ad0048 100644
---- a/drivers/gpio/gpio-sim.c
-+++ b/drivers/gpio/gpio-sim.c
-@@ -429,6 +429,7 @@ static int gpio_sim_add_bank(struct fwnode_handle *swnode, struct device *dev)
- 	gc->set_config = gpio_sim_set_config;
- 	gc->to_irq = gpio_sim_to_irq;
- 	gc->free = gpio_sim_free;
-+	gc->can_sleep = true;
- 
- 	ret = devm_gpiochip_add_data(dev, gc, chip);
- 	if (ret)
 -- 
-2.39.2
+With Best Regards,
+Andy Shevchenko
+
 
