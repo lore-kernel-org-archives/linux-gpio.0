@@ -2,32 +2,35 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA77C001E0
-	for <linux-gpio@archiver.kernel.org>; Tue,  1 Aug 2023 10:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C359EB64DD
+	for <linux-gpio@archiver.kernel.org>; Tue,  1 Aug 2023 10:07:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232557AbjHAKF0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 1 Aug 2023 06:05:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60838 "EHLO
+        id S233812AbjHAKHk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 1 Aug 2023 06:07:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232718AbjHAKFZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2023 06:05:25 -0400
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23F9892;
-        Tue,  1 Aug 2023 03:05:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=q+X3WCccFUeGIsOhlOlB9RAX5Dw3QmtY3X/0JwwsmSw=; b=fTXrG7XZDYijp/oK67zpTYJNOu
-        21yO8JAjmKqbe8n1C0lJBnSmyu+tcZDut3qwcSQel0tKTpDPKkBHbDcFCIZo1VBYP8/F3qFY3SwVv
-        Q+ozdrXiyFR8IEKG9XCcyFO4FcBraXRaKk7I1X5jRn2zbGKvoOdmDzyV70LYCS5xZxr4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1qQmFX-002mrF-NH; Tue, 01 Aug 2023 12:05:07 +0200
-Date:   Tue, 1 Aug 2023 12:05:07 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Herve Codina <herve.codina@bootlin.com>
+        with ESMTP id S233824AbjHAKHi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2023 06:07:38 -0400
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14AA0CF;
+        Tue,  1 Aug 2023 03:07:36 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 67785C0007;
+        Tue,  1 Aug 2023 10:07:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1690884455;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QWt1iHAsmrfK3BwrkrMdjb6oetsmwYgFvyU2cU/2Gk8=;
+        b=j0ab26/LBkhJu/rDBUgxTxpfUHsrUu+mfwFrtSgmX9T5+Pk0LuHAPLV/9JflTk/bXN78Iw
+        GxNpsOf5oXmOU1WefL+SDb12OMzJALhot9d8BpXmrOJkwqiKU9u+qM4F6K1E5nj0lBfb7+
+        gLCrL+TlVu1b+Du7sMnHz75yki1Sho1tzxFptk2CFoK+gEUyxpzLNZKbZLUIg8VILRvTNC
+        jA293aUHVMzqAS7Ih35p4vP9mjBeznj8kVMegn7AU6mm6wBKKsHMvIdoaGgWGc0lnAr6VS
+        XUP/Egyc8NGdUCrdAPow0ErAFNIpObFqtVsobYB9grq6Ebj8meCevmKJMnRnDw==
+Date:   Tue, 1 Aug 2023 12:07:30 +0200
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>
 Cc:     "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
@@ -51,32 +54,33 @@ Cc:     "David S. Miller" <davem@davemloft.net>,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 21/28] dt-bindings: net: Add the Lantiq PEF2256
- E1/T1/J1 framer
-Message-ID: <1f5fbf0a-90fe-491a-91c6-31fefd4b786f@lunn.ch>
+Subject: Re: [PATCH v2 06/28] net: wan: Add support for QMC HDLC
+Message-ID: <20230801120730.64e5b58e@bootlin.com>
+In-Reply-To: <80341a96-c40f-4a45-9bad-359a890edfc4@lunn.ch>
 References: <20230726150225.483464-1-herve.codina@bootlin.com>
- <20230726150225.483464-22-herve.codina@bootlin.com>
+        <20230726150225.483464-7-herve.codina@bootlin.com>
+        <80341a96-c40f-4a45-9bad-359a890edfc4@lunn.ch>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230726150225.483464-22-herve.codina@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-> +  clocks:
-> +    items:
-> +      - description: Master clock
-> +      - description: Receive System Clock
-> +      - description: Transmit System Clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: mclk
-> +      - const: sclkr
-> +      - const: sclkx
+On Tue, 1 Aug 2023 11:31:32 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-Nit pick, but "Receive System Clock", but "sclkr'. Maybe "System Clock
-Receive" so you have the same word order?
+> > +static inline struct qmc_hdlc *netdev_to_qmc_hdlc(struct net_device *netdev)
+> > +{
+> > +	return (struct qmc_hdlc *)dev_to_hdlc(netdev)->priv;  
+> 
+> priv is a void *, so you don't need the cast.
+> 
 
-	 Andrew
+Right, I will change in the next iteration.
+
+Regards,
+Hervé
