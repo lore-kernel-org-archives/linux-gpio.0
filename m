@@ -2,33 +2,33 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C359EB64DD
-	for <linux-gpio@archiver.kernel.org>; Tue,  1 Aug 2023 10:07:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E941EEB64DD
+	for <linux-gpio@archiver.kernel.org>; Tue,  1 Aug 2023 10:26:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233812AbjHAKHk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 1 Aug 2023 06:07:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34316 "EHLO
+        id S231777AbjHAK0n (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 1 Aug 2023 06:26:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233824AbjHAKHi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2023 06:07:38 -0400
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14AA0CF;
-        Tue,  1 Aug 2023 03:07:36 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 67785C0007;
-        Tue,  1 Aug 2023 10:07:31 +0000 (UTC)
+        with ESMTP id S234006AbjHAK00 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2023 06:26:26 -0400
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 213871706;
+        Tue,  1 Aug 2023 03:24:04 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7C9AFC0003;
+        Tue,  1 Aug 2023 10:24:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1690884455;
+        t=1690885443;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QWt1iHAsmrfK3BwrkrMdjb6oetsmwYgFvyU2cU/2Gk8=;
-        b=j0ab26/LBkhJu/rDBUgxTxpfUHsrUu+mfwFrtSgmX9T5+Pk0LuHAPLV/9JflTk/bXN78Iw
-        GxNpsOf5oXmOU1WefL+SDb12OMzJALhot9d8BpXmrOJkwqiKU9u+qM4F6K1E5nj0lBfb7+
-        gLCrL+TlVu1b+Du7sMnHz75yki1Sho1tzxFptk2CFoK+gEUyxpzLNZKbZLUIg8VILRvTNC
-        jA293aUHVMzqAS7Ih35p4vP9mjBeznj8kVMegn7AU6mm6wBKKsHMvIdoaGgWGc0lnAr6VS
-        XUP/Egyc8NGdUCrdAPow0ErAFNIpObFqtVsobYB9grq6Ebj8meCevmKJMnRnDw==
-Date:   Tue, 1 Aug 2023 12:07:30 +0200
+        bh=Rh049SisoIWliG3uyLlXHzxD5wRc/J6bqr8r19ynpGo=;
+        b=f9mqi/1Oxj+4XOaIlU22+7chRim64bLbHC89dhnq9NrYZHmPLGlNes8J8KY24lP6ZgYAlD
+        eD6x5iT8jEr2zsXSVJJPvtYx5/BCSTIVTF4upPsbtDnfanTrKZzsr/NZcmTGpMMRPsbiwu
+        MfI8n7wdawYwlc8X3XOv1bqEp5cuwBk81jBVGgET6qkiT/ubH6LAoCaSPNevEy1yMF9GlQ
+        BgQ3xYH3kfMmnr/GZ5pgzGZmS4ZwoDWBx5Za0/Ne59WHOdLeHgCl4tpOQtBywFMYlG7Rki
+        nuJbeHCb5FilfHYhV0dpg93ttgFZRXaEugYAZsyN24ghg5tiOBCl9ltTL4+hNA==
+Date:   Tue, 1 Aug 2023 12:23:59 +0200
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Andrew Lunn <andrew@lunn.ch>
 Cc:     "David S. Miller" <davem@davemloft.net>,
@@ -54,12 +54,13 @@ Cc:     "David S. Miller" <davem@davemloft.net>,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 06/28] net: wan: Add support for QMC HDLC
-Message-ID: <20230801120730.64e5b58e@bootlin.com>
-In-Reply-To: <80341a96-c40f-4a45-9bad-359a890edfc4@lunn.ch>
+Subject: Re: [PATCH v2 10/28] soc: fsl: cpm1: qmc: Introduce
+ qmc_chan_setup_tsa*
+Message-ID: <20230801122359.6b22784c@bootlin.com>
+In-Reply-To: <252d6a49-4a97-4ecc-844e-f23bda55debf@lunn.ch>
 References: <20230726150225.483464-1-herve.codina@bootlin.com>
-        <20230726150225.483464-7-herve.codina@bootlin.com>
-        <80341a96-c40f-4a45-9bad-359a890edfc4@lunn.ch>
+        <20230726150225.483464-11-herve.codina@bootlin.com>
+        <252d6a49-4a97-4ecc-844e-f23bda55debf@lunn.ch>
 Organization: Bootlin
 X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
@@ -70,17 +71,22 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 1 Aug 2023 11:31:32 +0200
+On Tue, 1 Aug 2023 11:36:43 +0200
 Andrew Lunn <andrew@lunn.ch> wrote:
 
-> > +static inline struct qmc_hdlc *netdev_to_qmc_hdlc(struct net_device *netdev)
+> > +static inline void qmc_clrsetbits16(void __iomem *addr, u16 clr, u16 set)
 > > +{
-> > +	return (struct qmc_hdlc *)dev_to_hdlc(netdev)->priv;  
+> > +	qmc_write16(addr, (qmc_read16(addr) & ~clr) | set);
+> > +}
+> > +  
 > 
-> priv is a void *, so you don't need the cast.
+> Please don't use inline in .c files. Let the compiler decide.
 > 
+>        Andrew
 
-Right, I will change in the next iteration.
+Ok, I will remove the inline in the next iteration.
+I will also remove the inline of all other similar functions (probably a
+separate patch in the series).
 
 Regards,
 Hervé
