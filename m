@@ -2,138 +2,178 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E6FC04A6A
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Aug 2023 17:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F6DC001B0
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Aug 2023 17:22:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234379AbjHHRUf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Aug 2023 13:20:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33346 "EHLO
+        id S234479AbjHHRWn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Aug 2023 13:22:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234389AbjHHRUM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Aug 2023 13:20:12 -0400
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C19A21DD3A;
-        Tue,  8 Aug 2023 09:08:07 -0700 (PDT)
-Received: from relay5-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::225])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id E5694C6AB4;
-        Tue,  8 Aug 2023 09:06:22 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 167A31C000E;
-        Tue,  8 Aug 2023 09:06:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1691485578;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yV4jZ6QrskrDU/HVotl7NEUNo5CW4ftnk7BIqgEB1+w=;
-        b=flZfpRXqaC4cOa0lUVXQGmj6OEssvWZubCe2w5MHqI8U2vWQwtOj0FQFAqgAJBxJ8I75XZ
-        I0TZlmNSRmqSWR5xLTIKJ/1FDCZ4stZY0pIriPzLH17o1+eZR+fqsAFgkHhfKw1IeHA6F/
-        BRImFTSpS5Rv0R1y0afDagZYKTek8UGg0TZs9w8hjDyqKGA3Umv42FjNTa+dNkNUSu3Gue
-        Tx2D6FfesdOvac81rHxEHFQ6xKJfocvJHBN0OnBZAPqs83Owy9ptNTQG7K7UjxPB67/rcA
-        8c/v/aUZh+TVfJDMed/1Ph30nJadiv+LXoAjitpDUEWw4zjs+hG26YAH/4HjPQ==
-Date:   Tue, 8 Aug 2023 11:06:13 +0200
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        with ESMTP id S234642AbjHHRWO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Aug 2023 13:22:14 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 243477C718
+        for <linux-gpio@vger.kernel.org>; Tue,  8 Aug 2023 09:09:12 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-51cff235226so4046a12.0
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Aug 2023 09:09:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691510912; x=1692115712;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vQN2WrIQDnKqqepfQOzswIPO1pOEXGaui58WV1ZpQ54=;
+        b=IU30p0ZPJ2bxhCWnwkvBRTtLkOmMHW8mWODWbAsN3qfnyZnYyBkBUHFa8G7C43yfFK
+         3pxwkABm6NCfxw9qk+krrpWeJeT0ypxOdoLHYZcQq8yZ9zMSBpwd2/8mkLR1eRsk8P71
+         yn9h55DCcT/os1bz9a4Viw0rFuZ08ZX4/D5XgozZN3e2cYFD7kYmtlvkY5iGuiTCYSzD
+         b5A1h4VsJMPU0SYhsOGkCpN8At3+ADuW06RWQI2P2Ey2DAGFDzifsogw57asEbPduPAy
+         gw184dnYiGTLJ2XAexMlfQBet2VSbMeB/OMPHuiJhukQquK1ctQg5KSj6BaNKjTTvBh3
+         itrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691510912; x=1692115712;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vQN2WrIQDnKqqepfQOzswIPO1pOEXGaui58WV1ZpQ54=;
+        b=fYdTeOrw06OBy4wtHud99bbSy+pMbBDF9kWY9niLRH4KXZk9jWPjscy83FnFhjztLv
+         Pu8anRREegNBKlWo90ROrouQpFNJEsx04a0JrfNb1D7AqBtZL2dI+BHvusgPGRyztore
+         oEHI9cKyMCsDOx6TvjuIPZtbhF2xV2vhuCbmz+udsI7umxiedlmDB0kemAwsfJ+KhMNN
+         dqJw3gS8Z5LJSdTAVNDTJrwZYz0UMq49cI3NgtUWGPhwcP8lb9JYPx9Nur3XNyv579GI
+         wSmP1aHibgDsSKwkLGk1QHt0z+SVWXTRtqgE9afB/PakqpWdNs6ioYyDBXkCRsrm44vo
+         dmNA==
+X-Gm-Message-State: AOJu0Yx7hK7cxgczxhpShcHOhr4UWgWNBnG0um5y+vU+ypcPPAI3Cspr
+        w4u2vorjS/9Zzz/ydfqzd2W9YR7B6ji2kkqnqjI=
+X-Google-Smtp-Source: AGHT+IFjcCWkNLtd9+huFXphMmx84LzMQOGNVdG/8yC7bNAWF+WydiqZ3qQOP21ujscxDIahjIMkBA==
+X-Received: by 2002:a17:907:2cea:b0:993:f127:2391 with SMTP id hz10-20020a1709072cea00b00993f1272391mr90854ejc.32.1691507137196;
+        Tue, 08 Aug 2023 08:05:37 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.113])
+        by smtp.gmail.com with ESMTPSA id m17-20020a170906235100b00985bdb7dd5fsm6659807eja.201.2023.08.08.08.05.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Aug 2023 08:05:36 -0700 (PDT)
+Message-ID: <91f57b0d-a6e9-c039-40b6-0a1a9af5f7a0@linaro.org>
+Date:   Tue, 8 Aug 2023 17:05:34 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v3 1/2] gpio: dt-bindings: add parsing of loongson gpio
+ offset
+Content-Language: en-US
+To:     Yinbo Zhu <zhuyinbo@loongson.cn>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 26/28] ASoC: codecs: Add support for the framer codec
-Message-ID: <20230808110613.07e222a3@bootlin.com>
-In-Reply-To: <a1b5120b-feb0-5c87-0605-e1e170d9268d@csgroup.eu>
-References: <20230726150225.483464-1-herve.codina@bootlin.com>
-        <20230726150225.483464-27-herve.codina@bootlin.com>
-        <a1b5120b-feb0-5c87-0605-e1e170d9268d@csgroup.eu>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
+        Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jianmin Lv <lvjianmin@loongson.cn>, wanghongliang@loongson.cn,
+        loongson-kernel@lists.loongnix.cn
+References: <20230807074043.31288-1-zhuyinbo@loongson.cn>
+ <20230807074043.31288-2-zhuyinbo@loongson.cn>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230807074043.31288-2-zhuyinbo@loongson.cn>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 8 Aug 2023 08:26:16 +0000
-Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
+On 07/08/2023 09:40, Yinbo Zhu wrote:
+> Loongson GPIO controllers come in multiple variants that are compatible
+> except for certain register offset values. Add support in yaml file for
+> device properties allowing to specify them in DT.
+> 
+> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+> ---
+>  .../bindings/gpio/loongson,ls-gpio.yaml       | 40 ++++++++++++++++++-
+>  1 file changed, 39 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> index fb86e8ce6349..fc51cf40fccd 100644
+> --- a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> @@ -14,6 +14,7 @@ properties:
+>      enum:
+>        - loongson,ls2k-gpio
+>        - loongson,ls7a-gpio
+> +      - loongson,ls2k1000-gpio
+>  
+>    reg:
+>      maxItems: 1
+> @@ -29,6 +30,33 @@ properties:
+>  
+>    gpio-ranges: true
+>  
+> +  loongson,gpio-conf-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      This option indicate this GPIO configuration register offset address.
+> +
+> +  loongson,gpio-out-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      This option indicate this GPIO output register offset address.
+> +
+> +  loongson,gpio-in-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      This option indicate this GPIO input register offset address.
+> +
+> +  loongson,gpio-ctrl-mode:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      This option indicate this GPIO control mode, where '0' represents
+> +      bit control mode and '1' represents byte control mode.
 
-> Le 26/07/2023 à 17:02, Herve Codina a écrit :
-> > The framer codec interracts with a framer.
-> > It allows to use some of the framer timeslots as audio channels to
-> > transport audio data over the framer E1/T1/J1 lines.
-> > It also reports line carrier detection events through the ALSA jack
-> > detection feature.
-> > 
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>  
-> 
-> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> 
-> See below
-> 
-> > +static int framer_dai_hw_rule_channels_by_format(struct snd_soc_dai *dai,
-> > +						 struct snd_pcm_hw_params *params,
-> > +						 unsigned int nb_ts)
-> > +{
-> > +	struct snd_interval *c = hw_param_interval(params, SNDRV_PCM_HW_PARAM_CHANNELS);
-> > +	snd_pcm_format_t format = params_format(params);
-> > +	struct snd_interval ch = {0};
-> > +
-> > +	switch (snd_pcm_format_physical_width(format)) {
-> > +	case 8:
-> > +		ch.max = nb_ts;
-> > +		break;
-> > +	case 16:
-> > +		ch.max = nb_ts / 2;
-> > +		break;
-> > +	case 32:
-> > +		ch.max = nb_ts / 4;
-> > +		break;
-> > +	case 64:
-> > +		ch.max = nb_ts / 8;
-> > +		break;
-> > +	default:
-> > +		dev_err(dai->dev, "format physical width %u not supported\n",
-> > +			snd_pcm_format_physical_width(format));
-> > +		return -EINVAL;
-> > +	}  
-> 
-> What about
-> 
-> 	width = snd_pcm_format_physical_width(format);
-> 
-> 	if (width == 8 || width == 16 || width == 32 || width == 64) {
-> 		ch.max = nb_ts * 8 / width;
-> 	} else {
-> 		dev_err(dai->dev, "format physical width %u not supported\n", width);
-> 		return -EINVAL;
-> 	}
-> 
+I have no clue what does it mean. Is it only 0 or 1? Then it should be
+enum or even bool.
 
-Yes, indeed.
-Will be changed in the next iteration.
+> +
+> +  loongson,gpio-inten-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      This option indicate this GPIO interrupt enable register offset
+> +      address.
+> +
+>    interrupts:
+>      minItems: 1
+>      maxItems: 64
+> @@ -39,6 +67,11 @@ required:
+>    - ngpios
+>    - "#gpio-cells"
+>    - gpio-controller
+> +  - loongson,gpio-conf-offset
+> +  - loongson,gpio-in-offset
+> +  - loongson,gpio-out-offset
+> +  - loongson,gpio-ctrl-mode
+> +  - loongson,gpio-inten-offset
 
-Regards,
-Hervé
+No, you cannot add them as required to every other device. First, there
+is no single need. Second, it breaks the ABI.
+
+>    - gpio-ranges
+>    - interrupts
+>  
+> @@ -49,11 +82,16 @@ examples:
+>      #include <dt-bindings/interrupt-controller/irq.h>
+>  
+>      gpio0: gpio@1fe00500 {
+> -      compatible = "loongson,ls2k-gpio";
+> +      compatible = "loongson,ls2k1000-gpio";
+>        reg = <0x1fe00500 0x38>;
+>        ngpios = <64>;
+>        #gpio-cells = <2>;
+>        gpio-controller;
+> +      loongson,gpio-conf-offset = <0>;
+> +      loongson,gpio-in-offset = <0x20>;
+> +      loongson,gpio-out-offset = <0x10>;
+> +      loongson,gpio-ctrl-mode = <0>;
+> +      loongson,gpio-inten-offset = <0x30>;
+
+I still think that you just embed the programming model into properties,
+instead of using dedicated compatible for different blocks. It could be
+fine, although I would prefer to check it with your DTS.
+
+Where is your DTS?
+
+Best regards,
+Krzysztof
+
