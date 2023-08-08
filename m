@@ -2,46 +2,90 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 174D4C001DE
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Aug 2023 17:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A79C04A6A
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Aug 2023 18:03:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234763AbjHHRuo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Aug 2023 13:50:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45126 "EHLO
+        id S235071AbjHHSD0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Aug 2023 14:03:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233941AbjHHRuP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Aug 2023 13:50:15 -0400
-Received: from muru.com (muru.com [72.249.23.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C653E93EF;
-        Tue,  8 Aug 2023 09:22:22 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 7E8D08176;
-        Tue,  8 Aug 2023 10:26:16 +0000 (UTC)
-Date:   Tue, 8 Aug 2023 13:26:15 +0300
-From:   Tony Lindgren <tony@atomide.com>
-To:     Dhruva Gole <d-gole@ti.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: pinctrl-single: add
- ti,am654-padconf compatible
-Message-ID: <20230808102615.GS14799@atomide.com>
-References: <20230808102207.130177-1-d-gole@ti.com>
- <20230808102207.130177-2-d-gole@ti.com>
+        with ESMTP id S232960AbjHHSDS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Aug 2023 14:03:18 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0024ED9282;
+        Tue,  8 Aug 2023 09:31:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1691512280; x=1723048280;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vdeuurTFaZQKhbFyW+6Tv/hjCwIufVCn/vBK6Sa8C78=;
+  b=IgZAhqXGoho8BxksK9QQJyEWebG+ahF5C+z4PNoYnQDaopDzbjg8ZghD
+   ++bGyqguC74AXc9nOsfqj0Th6xo92MClTDIlahA+s5wON0NucNPEplGA0
+   8bmS2ANG14tLU71hcPs6gyKBnQr659DPB1SjXgObHoaRrAJab3ovohHOb
+   QfL750RoGwVCgv4xTdRMEXIRFVqduc3XQlzk4EFFufF1WNhk4Vwwg2qEX
+   89xi72yOfLY6YbiPgNuVEqDBDT5ezMCnsB9gFmdvd5/cwv8VXmCuht5Q7
+   x3MaMFiMo5yg0XohEa+gyX4pr6pDXShXGyi4LlTahVfDiHNG+lvRalu75
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="401778704"
+X-IronPort-AV: E=Sophos;i="6.01,156,1684825200"; 
+   d="scan'208";a="401778704"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2023 06:09:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="1062012375"
+X-IronPort-AV: E=Sophos;i="6.01,156,1684825200"; 
+   d="scan'208";a="1062012375"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Aug 2023 06:09:26 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qTMSi-0097P4-1E;
+        Tue, 08 Aug 2023 16:09:24 +0300
+Date:   Tue, 8 Aug 2023 16:09:24 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Florian Fainelli <florian.fainelli@broadcom.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "moderated list:BROADCOM IPROC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] pinctrl: iproc-gpio: Silence probe deferral messages
+Message-ID: <ZNI+hLy4jYgctYXX@smile.fi.intel.com>
+References: <20230807213022.1862903-1-florian.fainelli@broadcom.com>
+ <20230807213022.1862903-2-florian.fainelli@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230808102207.130177-2-d-gole@ti.com>
+In-Reply-To: <20230807213022.1862903-2-florian.fainelli@broadcom.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-* Dhruva Gole <d-gole@ti.com> [230808 10:24]:
-> Add the "ti,am654-padconf" compatible to support the new wakeup enable and
-> status bits positions on K3 family SOCs that support the IO daisychain
-> feature.
+On Mon, Aug 07, 2023 at 02:30:21PM -0700, Florian Fainelli wrote:
+> We can have gpiochip_add_data() return -EPROBE_DEFER which will make us
+> produce the "unable to add GPIO chip" message which is confusing. Use
+> dev_err_probe() to silence probe deferral messages.
 
-This one too:
+...
 
-Reviewed-by: Tony Lindgren <tony@atomide.com>
+>  	ret = gpiochip_add_data(gc, chip);
+>  	if (ret < 0) {
+> -		dev_err(dev, "unable to add GPIO chip\n");
+> +		dev_err_probe(dev, ret, "unable to add GPIO chip\n");
+>  		return ret;
+
+	return dev_err_probe(...);
+
+>  	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
