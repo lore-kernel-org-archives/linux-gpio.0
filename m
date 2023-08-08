@@ -2,91 +2,138 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 467E0C001B0
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Aug 2023 17:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E6FC04A6A
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Aug 2023 17:20:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234260AbjHHRQv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Aug 2023 13:16:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56010 "EHLO
+        id S234379AbjHHRUf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Aug 2023 13:20:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234239AbjHHRQW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Aug 2023 13:16:22 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8128A30C1
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Aug 2023 09:06:41 -0700 (PDT)
-Received: from dggpemm100005.china.huawei.com (unknown [172.30.72.57])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4RKsqw0nZcz1L93H;
-        Tue,  8 Aug 2023 20:26:36 +0800 (CST)
-Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm100005.china.huawei.com (7.185.36.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Tue, 8 Aug 2023 20:27:45 +0800
-Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
- (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Tue, 8 Aug
- 2023 20:27:45 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <linux-gpio@vger.kernel.org>
-CC:     <vaibhaavram.tl@microchip.com>,
-        <kumaravel.thiagarajan@microchip.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>,
-        <tharunkumar.pasumarthi@microchip.com>, <yangyingliang@huawei.com>
-Subject: [PATCH -next v2] misc: microchip: pci1xxxx: fix return value in pci1xxxx_otp_eeprom_probe()
-Date:   Tue, 8 Aug 2023 20:24:53 +0800
-Message-ID: <20230808122453.556632-1-yangyingliang@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S234389AbjHHRUM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Aug 2023 13:20:12 -0400
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C19A21DD3A;
+        Tue,  8 Aug 2023 09:08:07 -0700 (PDT)
+Received: from relay5-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::225])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id E5694C6AB4;
+        Tue,  8 Aug 2023 09:06:22 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 167A31C000E;
+        Tue,  8 Aug 2023 09:06:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1691485578;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yV4jZ6QrskrDU/HVotl7NEUNo5CW4ftnk7BIqgEB1+w=;
+        b=flZfpRXqaC4cOa0lUVXQGmj6OEssvWZubCe2w5MHqI8U2vWQwtOj0FQFAqgAJBxJ8I75XZ
+        I0TZlmNSRmqSWR5xLTIKJ/1FDCZ4stZY0pIriPzLH17o1+eZR+fqsAFgkHhfKw1IeHA6F/
+        BRImFTSpS5Rv0R1y0afDagZYKTek8UGg0TZs9w8hjDyqKGA3Umv42FjNTa+dNkNUSu3Gue
+        Tx2D6FfesdOvac81rHxEHFQ6xKJfocvJHBN0OnBZAPqs83Owy9ptNTQG7K7UjxPB67/rcA
+        8c/v/aUZh+TVfJDMed/1Ph30nJadiv+LXoAjitpDUEWw4zjs+hG26YAH/4HjPQ==
+Date:   Tue, 8 Aug 2023 11:06:13 +0200
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 26/28] ASoC: codecs: Add support for the framer codec
+Message-ID: <20230808110613.07e222a3@bootlin.com>
+In-Reply-To: <a1b5120b-feb0-5c87-0605-e1e170d9268d@csgroup.eu>
+References: <20230726150225.483464-1-herve.codina@bootlin.com>
+        <20230726150225.483464-27-herve.codina@bootlin.com>
+        <a1b5120b-feb0-5c87-0605-e1e170d9268d@csgroup.eu>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-devm_nvmem_register() never returns NULL pointer, it will return
-ERR_PTR() when it fails, so replace the check with IS_ERR() and
-use PTR_ERR() as return code.
+On Tue, 8 Aug 2023 08:26:16 +0000
+Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
 
-Fixes: 9ab5465349c0 ("misc: microchip: pci1xxxx: Add support to read and write into PCI1XXXX EEPROM via NVMEM sysfs")
-Fixes: 0969001569e4 ("misc: microchip: pci1xxxx: Add support to read and write into PCI1XXXX OTP via NVMEM sysfs")
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
-v1 -> v2:
-  Use PTR_ERR_OR_ZERO().
----
- drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+> Le 26/07/2023 à 17:02, Herve Codina a écrit :
+> > The framer codec interracts with a framer.
+> > It allows to use some of the framer timeslots as audio channels to
+> > transport audio data over the framer E1/T1/J1 lines.
+> > It also reports line carrier detection events through the ALSA jack
+> > detection feature.
+> > 
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>  
+> 
+> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> 
+> See below
+> 
+> > +static int framer_dai_hw_rule_channels_by_format(struct snd_soc_dai *dai,
+> > +						 struct snd_pcm_hw_params *params,
+> > +						 unsigned int nb_ts)
+> > +{
+> > +	struct snd_interval *c = hw_param_interval(params, SNDRV_PCM_HW_PARAM_CHANNELS);
+> > +	snd_pcm_format_t format = params_format(params);
+> > +	struct snd_interval ch = {0};
+> > +
+> > +	switch (snd_pcm_format_physical_width(format)) {
+> > +	case 8:
+> > +		ch.max = nb_ts;
+> > +		break;
+> > +	case 16:
+> > +		ch.max = nb_ts / 2;
+> > +		break;
+> > +	case 32:
+> > +		ch.max = nb_ts / 4;
+> > +		break;
+> > +	case 64:
+> > +		ch.max = nb_ts / 8;
+> > +		break;
+> > +	default:
+> > +		dev_err(dai->dev, "format physical width %u not supported\n",
+> > +			snd_pcm_format_physical_width(format));
+> > +		return -EINVAL;
+> > +	}  
+> 
+> What about
+> 
+> 	width = snd_pcm_format_physical_width(format);
+> 
+> 	if (width == 8 || width == 16 || width == 32 || width == 64) {
+> 		ch.max = nb_ts * 8 / width;
+> 	} else {
+> 		dev_err(dai->dev, "format physical width %u not supported\n", width);
+> 		return -EINVAL;
+> 	}
+> 
 
-diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-index 3d3d1578119a..1b5b61cdacde 100644
---- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-+++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-@@ -379,8 +379,8 @@ static int pci1xxxx_otp_eeprom_probe(struct auxiliary_device *aux_dev,
- 
- 		priv->nvmem_eeprom = devm_nvmem_register(&aux_dev->dev,
- 							 &priv->nvmem_config_eeprom);
--		if (!priv->nvmem_eeprom)
--			return -ENOMEM;
-+		if (IS_ERR(priv->nvmem_eeprom))
-+			return PTR_ERR(priv->nvmem_eeprom);
- 	}
- 
- 	release_sys_lock(priv);
-@@ -398,10 +398,8 @@ static int pci1xxxx_otp_eeprom_probe(struct auxiliary_device *aux_dev,
- 
- 	priv->nvmem_otp = devm_nvmem_register(&aux_dev->dev,
- 					      &priv->nvmem_config_otp);
--	if (!priv->nvmem_otp)
--		return -ENOMEM;
- 
--	return ret;
-+	return PTR_ERR_OR_ZERO(priv->nvmem_otp);
- }
- 
- static void pci1xxxx_otp_eeprom_remove(struct auxiliary_device *aux_dev)
--- 
-2.25.1
+Yes, indeed.
+Will be changed in the next iteration.
 
+Regards,
+Hervé
