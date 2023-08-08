@@ -2,104 +2,108 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D90C001B0
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Aug 2023 19:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2011BC41513
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Aug 2023 19:33:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236367AbjHHTbz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Aug 2023 15:31:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52910 "EHLO
+        id S236408AbjHHTdD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Aug 2023 15:33:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236181AbjHHTbi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Aug 2023 15:31:38 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 732D6769A
-        for <linux-gpio@vger.kernel.org>; Tue,  8 Aug 2023 10:27:48 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fe5c0e587eso21993545e9.0
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Aug 2023 10:27:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691515667; x=1692120467;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hRMNIql4h6i50DoW9rO+SQKBVq3u6OMyHVjggvsaHiY=;
-        b=rEmXX/yBFxCI+QQpZaTNK4qDhcqUhjVgq5DwkxzN+ep8pcnkBZYMoNQxUL8LbrrBgh
-         4W3A4hULgP+MHh+meul/EKYclweepPF53uB8LzvoIIQlNyGU5NaqRzYVnK1StrDzoT24
-         tHO2mzQdVkycALFDPM/lQVMF7PgnLBVNlP5HNa58hG4LbAEt2BbQfAvj0pjeYtZh3JbX
-         9uWU2L9ZmEq1rCdHKzvw/S+SM77cThnrfxFLBcHNF/XvQRUxARUJmR0RCDy+bs3Ez5hd
-         HOjJn+cdlPf4csiFlSOmpplqkUC9W+gKkCpL6FXZJqO2QvBYDj33v9bdsHOlrLBhTvJV
-         LfsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691515667; x=1692120467;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hRMNIql4h6i50DoW9rO+SQKBVq3u6OMyHVjggvsaHiY=;
-        b=GptYFtGuw/wBOJ0rdpDuqbHTo4mA2dbcDKW02Nw0G3mVRdxwg+XMRV2TsrDUkBVgOx
-         D8Dko3IXm6PliVrG0SNT0OR//neBgioTZoahgJck4hM6FN71NYrVVDFaWMPEbrOrjxA0
-         ELErM5ry3FNRgEUw/Byq0Oxfsk0LBf7RtyMOzCvnvraULUztRov6z3D2GUPOEvfzlM6Z
-         Y436aI/x4htpzIyUAZW7I7ebMF+MQcU2rSkwCXQe4n7LbScpM/qxyvlDb9K4cYRXLgVz
-         3ZqEDcxFIHxsyg/0Fm892dCGlZipMVItGDbbt6w8EAjyyFCw6gpBEl7KtSVvDCOBMUaU
-         +Lhg==
-X-Gm-Message-State: AOJu0YzUMJABM160rirZeIn+icWePnnk0nlufRHcz93Cy4FTGKSrVX0p
-        2LELjdqLYKBuPWFYnKcY3OBYS1060VQu6iaTfOA=
-X-Google-Smtp-Source: AGHT+IG+xa/G0KUFOC99116SrrI42b1Qeto1ZUGnZKL3zxEPkqVqherNWGnAP7AYkTuw2scsVZ/Dtg==
-X-Received: by 2002:a1c:f216:0:b0:3fe:1fdb:cf5 with SMTP id s22-20020a1cf216000000b003fe1fdb0cf5mr9645023wmc.1.1691483293856;
-        Tue, 08 Aug 2023 01:28:13 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id h20-20020a05600c261400b003fe2ebf479fsm12982952wma.36.2023.08.08.01.28.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 01:28:13 -0700 (PDT)
-Date:   Tue, 8 Aug 2023 11:28:09 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>
-Cc:     "Vaibhaav Ram T.L" <vaibhaavram.tl@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
-        linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] misc: microchip: pci1xxxx: Fix some NULL vs IS_ERR() bugs
-Message-ID: <043df330-222b-4c2c-ae19-ed2f731bfe0b@moroto.mountain>
+        with ESMTP id S236403AbjHHTcf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Aug 2023 15:32:35 -0400
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC124AB6B8;
+        Tue,  8 Aug 2023 12:04:42 -0700 (PDT)
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 378AP5Xg049566;
+        Tue, 8 Aug 2023 05:25:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1691490305;
+        bh=wsH0cpHRqqTFMyRbmu2p89xDZgzCEPqmNhQL+OnduLo=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=iNjRil2TLKn19kG5FTr/PDfQOAbEnUBu1ljvS7NqSpw4QQe6iqkoEuTdo9eLxGfBz
+         GJZEsIkUNG2HB9/5c0nQ6wqxk60C0DT+ZQK51ldg3gVkHOOE6Ul9TiAkTGFIaESWEo
+         P9ayMlHT9PUdSjlx7Mcn0ncvZB1bO1kggWhTtC0s=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 378AP4Zb005467
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 8 Aug 2023 05:25:05 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 8
+ Aug 2023 05:25:04 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 8 Aug 2023 05:25:04 -0500
+Received: from dhruva.dhcp.ti.com (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 378AO6oC022340;
+        Tue, 8 Aug 2023 05:25:02 -0500
+From:   Dhruva Gole <d-gole@ti.com>
+To:     Tony Lindgren <tony@atomide.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC:     <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-omap@vger.kernel.org>, Dhruva Gole <d-gole@ti.com>
+Subject: [PATCH 2/2] pinctrl: single: Add compatible for ti,am654-padconf
+Date:   Tue, 8 Aug 2023 15:52:08 +0530
+Message-ID: <20230808102207.130177-3-d-gole@ti.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230808102207.130177-1-d-gole@ti.com>
+References: <20230808102207.130177-1-d-gole@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
+Message-ID: <20230808102208.20zPd5D0W1VMXr9i4kbUZmQCUqBZwMVODkdco4MjaLI@z>
 
-The devm_nvmem_register() function returns error pointers.  It never
-returns NULL.  Update the checks accordingly.
+From: Tony Lindgren <tony@atomide.com>
 
-Fixes: 0969001569e4 ("misc: microchip: pci1xxxx: Add support to read and write into PCI1XXXX OTP via NVMEM sysfs")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Use the "ti,am654-padconf" compatible to enable the use of wake-up enable
+and event bits on K3 SOCs that support the daisychain feature
+
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Dhruva Gole <d-gole@ti.com>
 ---
- drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-index 3d3d1578119a..16695cb5e69c 100644
---- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-+++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-@@ -379,8 +379,8 @@ static int pci1xxxx_otp_eeprom_probe(struct auxiliary_device *aux_dev,
+The previous version of this patch was posted stand alone here:
+https://lore.kernel.org/all/20230805045554.786092-1-d-gole@ti.com/
+
+changelog: the compatible name has been changed in this series.
+
+ drivers/pinctrl/pinctrl-single.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index f056923ecc98..92e495d13b9b 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -1954,6 +1954,12 @@ static const struct pcs_soc_data pinctrl_single_am437x = {
+ 	.irq_status_mask = (1 << 30),   /* OMAP_WAKEUP_EVENT */
+ };
  
- 		priv->nvmem_eeprom = devm_nvmem_register(&aux_dev->dev,
- 							 &priv->nvmem_config_eeprom);
--		if (!priv->nvmem_eeprom)
--			return -ENOMEM;
-+		if (IS_ERR(priv->nvmem_eeprom))
-+			return PTR_ERR(priv->nvmem_eeprom);
- 	}
++static const struct pcs_soc_data pinctrl_single_am654 = {
++	.flags = PCS_QUIRK_SHARED_IRQ | PCS_CONTEXT_LOSS_OFF,
++	.irq_enable_mask = (1 << 29),   /* WKUP_EN */
++	.irq_status_mask = (1 << 30),   /* WKUP_EVT */
++};
++
+ static const struct pcs_soc_data pinctrl_single = {
+ };
  
- 	release_sys_lock(priv);
-@@ -398,8 +398,8 @@ static int pci1xxxx_otp_eeprom_probe(struct auxiliary_device *aux_dev,
+@@ -1962,6 +1968,7 @@ static const struct pcs_soc_data pinconf_single = {
+ };
  
- 	priv->nvmem_otp = devm_nvmem_register(&aux_dev->dev,
- 					      &priv->nvmem_config_otp);
--	if (!priv->nvmem_otp)
--		return -ENOMEM;
-+	if (IS_ERR(priv->nvmem_otp))
-+		return PTR_ERR(priv->nvmem_otp);
- 
- 	return ret;
- }
+ static const struct of_device_id pcs_of_match[] = {
++	{ .compatible = "ti,am654-padconf", .data = &pinctrl_single_am654 },
+ 	{ .compatible = "ti,omap3-padconf", .data = &pinctrl_single_omap_wkup },
+ 	{ .compatible = "ti,omap4-padconf", .data = &pinctrl_single_omap_wkup },
+ 	{ .compatible = "ti,omap5-padconf", .data = &pinctrl_single_omap_wkup },
 -- 
-2.39.2
+2.34.1
 
