@@ -2,103 +2,94 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B12C41513
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Aug 2023 19:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8483AC41513
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Aug 2023 19:52:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233713AbjHHTrb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Aug 2023 15:47:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40762 "EHLO
+        id S229641AbjHHTwp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Aug 2023 15:52:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235939AbjHHTrN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Aug 2023 15:47:13 -0400
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C92712260B;
-        Tue,  8 Aug 2023 09:51:09 -0700 (PDT)
-Received: from relay6-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::226])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id 457BBD4C69;
-        Tue,  8 Aug 2023 08:44:47 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CDBB0C0011;
-        Tue,  8 Aug 2023 08:44:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1691484284;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9nUiw4hJK7/Sk678dMlTFdsFNk9UZV8JT6mDURM0k34=;
-        b=QZBb0EFgqssUT+yAxk29eDTjBMqFKHe4zPB1Smvyc+r9fR/tpmYpbax2btHCBtrJ0JveOQ
-        SLfeDDBlE9c33fmD8j8hb0+2e4T0kQOwo4HkFuefiM4/FTN3Qixx+U9a0Lr46Zpybcvhk/
-        pzfqXkJVEK6u6AuwEp9In8Fri7fCoasFyYBjwMbGHW2x81o0rcjV7vfIV/7OGspbkZCXS2
-        UrlV5ZcAPgDJe2OMs4EUsIvewgY6Zd2BHitCnMItMwzgzOZ5eNl6yKxTIuUZMuMRIDLoYX
-        ZPFdIRfr4+fIGi+NiAyTBb1Q6Kip8TN6o7JB9xQlS463pwiOEXmyVfbepPKRoA==
-Date:   Tue, 8 Aug 2023 10:44:39 +0200
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        with ESMTP id S233314AbjHHTvm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Aug 2023 15:51:42 -0400
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C17949C3;
+        Tue,  8 Aug 2023 09:58:11 -0700 (PDT)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 378AOl3h042018;
+        Tue, 8 Aug 2023 05:24:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1691490287;
+        bh=On/A6IE/yzAzBME7Kc1ZCU6P273S61ERfKqfgq7acKU=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=UagzfyMHXtD+PK8e8jJe5TnN6UcbyJabyejrF33ShOdKWFOJki8urKhrf5oI+Clz3
+         NdKKvDivpSu+BiPzKEmzPL44LjZn0P37WF943ljFYnVcCvxYSCY1tMjw1HU9ZuGZxp
+         lROUGTfioc3bnnOEx64HfriPwobqTY9i1ppqfXgs=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 378AOlrj024779
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 8 Aug 2023 05:24:47 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 8
+ Aug 2023 05:24:47 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 8 Aug 2023 05:24:47 -0500
+Received: from dhruva.dhcp.ti.com (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 378AO6oB022340;
+        Tue, 8 Aug 2023 05:24:45 -0500
+From:   Dhruva Gole <d-gole@ti.com>
+To:     Tony Lindgren <tony@atomide.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        Conor Dooley <conor+dt@kernel.org>
+CC:     <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 22/28] mfd: core: Ensure disabled devices are skiped
- without aborting
-Message-ID: <20230808104439.6265cd01@bootlin.com>
-In-Reply-To: <651ad095-8753-762e-d3f0-aec74c5794c2@csgroup.eu>
-References: <20230726150225.483464-1-herve.codina@bootlin.com>
-        <20230726150225.483464-23-herve.codina@bootlin.com>
-        <651ad095-8753-762e-d3f0-aec74c5794c2@csgroup.eu>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-redhat-linux-gnu)
+        <linux-omap@vger.kernel.org>, Dhruva Gole <d-gole@ti.com>
+Subject: [PATCH 1/2] dt-bindings: pinctrl: pinctrl-single: add ti,am654-padconf compatible
+Date:   Tue, 8 Aug 2023 15:52:07 +0530
+Message-ID: <20230808102207.130177-2-d-gole@ti.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230808102207.130177-1-d-gole@ti.com>
+References: <20230808102207.130177-1-d-gole@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, 8 Aug 2023 08:13:27 +0000
-Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
+Add the "ti,am654-padconf" compatible to support the new wakeup enable and
+status bits positions on K3 family SOCs that support the IO daisychain
+feature.
 
-> Le 26/07/2023 à 17:02, Herve Codina a écrit :
-> > The loop searching for a matching device based on its compatible
-> > string is aborted when a matching disabled device is found.
-> > This abort avoid to add devices as soon as one disabled device
-> > is found.  
-> 
-> s/avoid/prevents/
+Signed-off-by: Dhruva Gole <d-gole@ti.com>
+---
 
-Yes, will be changed.
+Previously, this was posted here:
+https://lore.kernel.org/all/20230804050737.635186-1-d-gole@ti.com/
 
-> 
-> > 
-> > Continue searching for an other device instead of aborting on the
-> > first disabled one fixes the issue.
-> > 
-> > Fixes: 22380b65dc70 ("mfd: mfd-core: Ensure disabled devices are ignored without error")
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>  
-> 
-> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> 
+However since then I have tweaked the commit message and also the name
+of compatible. Hence didn't pickup the Acked-by: Conor and Tony's R-by:
+https://lore.kernel.org/all/20230807144323.GP14799@atomide.com/
+
+ Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
+index b6b6bcd7074b..45a307d3ce16 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
+@@ -24,6 +24,7 @@ properties:
+       - items:
+           - enum:
+               - ti,am437-padconf
++              - ti,am654-padconf
+               - ti,dra7-padconf
+               - ti,omap2420-padconf
+               - ti,omap2430-padconf
+-- 
+2.34.1
 
