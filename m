@@ -2,80 +2,142 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AF9C001B0
-	for <linux-gpio@archiver.kernel.org>; Tue,  8 Aug 2023 20:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E401AC001DB
+	for <linux-gpio@archiver.kernel.org>; Tue,  8 Aug 2023 20:43:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234457AbjHHUnQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 8 Aug 2023 16:43:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37262 "EHLO
+        id S233958AbjHHUnp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 8 Aug 2023 16:43:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236181AbjHHUmo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Aug 2023 16:42:44 -0400
+        with ESMTP id S233994AbjHHUn3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Aug 2023 16:43:29 -0400
 Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27B6F30649;
-        Tue,  8 Aug 2023 09:31:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A03443208B;
+        Tue,  8 Aug 2023 09:30:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1691512295; x=1723048295;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3kMxtGAvDPkK4F3TpfsG8UCh09kcYntOEJTiDXbHYrs=;
-  b=PXJIoTOyp0tkdAjaq7sdDUtXLR3OzHC5hKL8ygeHxVPEypDz6JRiKxKr
-   psAyCD3E6FxGfw82DpAJE8fEMVPA/hAuu2t1WPvgp8ykT4BYxcvtH7jG5
-   du8gkXLjop1rlS+qhHROhBuADNnLd5bv1PtHbiGNmvZP9hn2fwn/R1zjO
-   8RGkX8odhDyAg9aqe5V1Kk2IOPgEbORQoMjmG6F53cCkebY8sFEXCc13G
-   +YDR3JNyCFaq4/k/cbuBSri6tpqNAicZqbCOgRHB/yhQqcEt8li8ijkg4
-   mflbhY4nQezcYZq8SSgH5nrfTmRZEhezVLt01GTbp0X3FBnv77ujAGiln
+  t=1691512248; x=1723048248;
+  h=from:to:cc:subject:date:message-id;
+  bh=FHiTNDUCzaH3CxhFl0M+eCf/lVRDrPXo5yOGv54eeZQ=;
+  b=YH6Zi0bGvGGNQyhYAnDp66gA22iieQyeNuwt1WxGB4kdYkpaeIbt25Hc
+   Qmwn4ubKsKuIIfEkwTNe/RHElPVU9A0uxWzOUvRVLpoTQni4z7f1hxyaJ
+   7VNqahDHPl0D/HZCiyD17sDp+cb4lhF2ZaJgUHtyynztM8AmGTsxyU8Ll
+   7zuWErGjNKS+qsSsVPEfeBa/0udgRrQcnoPbOmeeI9dA82T8g8cKOs+t5
+   /q+cVR2K9fas2Flif+qxiHhEsjjmwgV/eIWGxATcYHvBFd/bf7elKK3l3
+   Z6OtLnp+ouLeOfT0jmXJTMppu2E0DXV+nUt7kQNqZ7fsdu9RyHPxBdLfF
    w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="401778751"
-X-IronPort-AV: E=Sophos;i="6.01,156,1684825200"; 
-   d="scan'208";a="401778751"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2023 06:09:41 -0700
+X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="401725840"
+X-IronPort-AV: E=Sophos;i="6.01,263,1684825200"; 
+   d="scan'208";a="401725840"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2023 01:49:24 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="1062012420"
-X-IronPort-AV: E=Sophos;i="6.01,156,1684825200"; 
-   d="scan'208";a="1062012420"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga005.fm.intel.com with ESMTP; 08 Aug 2023 06:09:39 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qTMSv-0097tU-2f;
-        Tue, 08 Aug 2023 16:09:37 +0300
-Date:   Tue, 8 Aug 2023 16:09:37 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Florian Fainelli <florian.fainelli@broadcom.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "moderated list:BROADCOM IPROC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/2] pinctrl: nsp-gpio:  Silence probe deferral messages
-Message-ID: <ZNI+kdwRpeFLOQVq@smile.fi.intel.com>
-References: <20230807213022.1862903-1-florian.fainelli@broadcom.com>
- <20230807213022.1862903-3-florian.fainelli@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230807213022.1862903-3-florian.fainelli@broadcom.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="760827832"
+X-IronPort-AV: E=Sophos;i="6.01,263,1684825200"; 
+   d="scan'208";a="760827832"
+Received: from inlubt0316.iind.intel.com ([10.191.20.213])
+  by orsmga008.jf.intel.com with ESMTP; 08 Aug 2023 01:49:10 -0700
+From:   Raag Jadav <raag.jadav@intel.com>
+To:     linus.walleij@linaro.org, mika.westerberg@linux.intel.com,
+        andriy.shevchenko@linux.intel.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mallikarjunappa.sangannavar@intel.com, pandith.n@intel.com,
+        Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v1] pinctrl: baytrail: consolidate common mask operation
+Date:   Tue,  8 Aug 2023 14:19:01 +0530
+Message-Id: <20230808084901.18927-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Aug 07, 2023 at 02:30:22PM -0700, Florian Fainelli wrote:
-> We can have gpiochip_add_data() return -EPROBE_DEFER which will make
-> us produce the "unable to add GPIO chip" message which is confusing.
-> Use dev_err_probe() to silence probe deferral messages.
+Consolidate common mask operation outside of switch cases and
+limit IO operations to positive cases.
 
-The same.
+Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 34 +++++++++++-------------
+ 1 file changed, 15 insertions(+), 19 deletions(-)
 
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index 27aef62fc7c0..02ab5fd7cbd5 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -995,8 +995,8 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
+ 	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
+ 	void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
+ 	void __iomem *db_reg = byt_gpio_reg(vg, offset, BYT_DEBOUNCE_REG);
++	u32 conf, val, db_pulse, debounce;
+ 	unsigned long flags;
+-	u32 conf, val, debounce;
+ 	int i, ret = 0;
+ 
+ 	raw_spin_lock_irqsave(&byt_lock, flags);
+@@ -1053,8 +1053,6 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
+ 
+ 			break;
+ 		case PIN_CONFIG_INPUT_DEBOUNCE:
+-			debounce = readl(db_reg);
+-
+ 			if (arg)
+ 				conf |= BYT_DEBOUNCE_EN;
+ 			else
+@@ -1062,32 +1060,25 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
+ 
+ 			switch (arg) {
+ 			case 375:
+-				debounce &= ~BYT_DEBOUNCE_PULSE_MASK;
+-				debounce |= BYT_DEBOUNCE_PULSE_375US;
++				db_pulse = BYT_DEBOUNCE_PULSE_375US;
+ 				break;
+ 			case 750:
+-				debounce &= ~BYT_DEBOUNCE_PULSE_MASK;
+-				debounce |= BYT_DEBOUNCE_PULSE_750US;
++				db_pulse = BYT_DEBOUNCE_PULSE_750US;
+ 				break;
+ 			case 1500:
+-				debounce &= ~BYT_DEBOUNCE_PULSE_MASK;
+-				debounce |= BYT_DEBOUNCE_PULSE_1500US;
++				db_pulse = BYT_DEBOUNCE_PULSE_1500US;
+ 				break;
+ 			case 3000:
+-				debounce &= ~BYT_DEBOUNCE_PULSE_MASK;
+-				debounce |= BYT_DEBOUNCE_PULSE_3MS;
++				db_pulse = BYT_DEBOUNCE_PULSE_3MS;
+ 				break;
+ 			case 6000:
+-				debounce &= ~BYT_DEBOUNCE_PULSE_MASK;
+-				debounce |= BYT_DEBOUNCE_PULSE_6MS;
++				db_pulse = BYT_DEBOUNCE_PULSE_6MS;
+ 				break;
+ 			case 12000:
+-				debounce &= ~BYT_DEBOUNCE_PULSE_MASK;
+-				debounce |= BYT_DEBOUNCE_PULSE_12MS;
++				db_pulse = BYT_DEBOUNCE_PULSE_12MS;
+ 				break;
+ 			case 24000:
+-				debounce &= ~BYT_DEBOUNCE_PULSE_MASK;
+-				debounce |= BYT_DEBOUNCE_PULSE_24MS;
++				db_pulse = BYT_DEBOUNCE_PULSE_24MS;
+ 				break;
+ 			default:
+ 				if (arg)
+@@ -1095,8 +1086,13 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
+ 				break;
+ 			}
+ 
+-			if (!ret)
+-				writel(debounce, db_reg);
++			if (ret)
++				break;
++
++			debounce = readl(db_reg);
++			debounce = (debounce & ~BYT_DEBOUNCE_PULSE_MASK) | db_pulse;
++			writel(debounce, db_reg);
++
+ 			break;
+ 		default:
+ 			ret = -ENOTSUPP;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.1
 
