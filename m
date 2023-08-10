@@ -2,144 +2,99 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 412DFC001B0
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Aug 2023 07:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B77C001DB
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Aug 2023 07:46:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbjHJHUR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Aug 2023 03:20:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43916 "EHLO
+        id S232243AbjHJHqk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Aug 2023 03:46:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbjHJHUQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Aug 2023 03:20:16 -0400
-X-Greylist: delayed 364 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 10 Aug 2023 00:20:15 PDT
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.165])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61130E40
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Aug 2023 00:20:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1691651649; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=j4iF7159JBK0Qxy+Zq2tnvVcKJvETauSU9xd37uteFitN+UkgYyKOOqFmmjOK2nemm
-    gmlzdZv/64GKvU+YAbYJkzSPQTSqBM8+Lj4JJeGy2f65QakPHhbjPlzmNmOUQzQ1o0hc
-    5emODtN1nXVCfBv8b3s0cnRMtweuTL8RAYFqDOn4+lN6leBaxO+9kJLlvq986nRLGA4H
-    2U5c+tAa+I5Dp1/TtM7fHKyQSZa6aBRwZgufETgzC2j0yTlsGL3O9h/GsCag60O0/5of
-    0uXK60hVMln+Xcb2yNbdRHzjmofWtNaabJuhjv6Xe+sPRP4TIpzjrVUMhlxh81Jh2H1K
-    szng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1691651649;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=dSXNIfeUu6tEetm+yGqUwYCnWcvobbztyheAV6JgLVc=;
-    b=fahcJ0yI+6oQA+pvxgLpioWUzTyHz8mcWZKu2rU1nuzFTTxUJJ6tyvbHFT2VzEA4US
-    9NWsBmluNatjHhZt3dNOPz0m97HGapidpm3aNaynd/aR/NbNhhthsYDYTG7txXpzRiGU
-    hse+lRhVnO9HCbJla1mkhR/GjXXieyceG+OecXvBiUcfza+aSSq7GOPj1VjIM+glXkVE
-    KxoEVgGam22HkG3+UrG4zQ7+/t9bIZMI9bTEi82Ec0GIebZjlw2qVBPpFgIxLERfiwYA
-    DtZYoWTSiUeiJkoi4gumPiIGE7DuGUcF9ZMMdZCnCBMGSLjXr3vRtyuOhqrulVg5rTlE
-    p+zQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1691651648;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=dSXNIfeUu6tEetm+yGqUwYCnWcvobbztyheAV6JgLVc=;
-    b=hguuSdyKzKP2jUaQkBqtRgVUcZpVoKTaUMujJgvRpG6pjNIFeQMt+smur3a7J/p8+6
-    oAJNFWrFXpHjtlNcyGIfqq4h4HCoQtUweoAW5vibzsY0ecZCwQHuSMFBxzMS/cpX97ha
-    rXNJ7GDBoNV0ox4np6xfJB3O7XaFCkZz0qX+BCXfCe4Sy7U6ZM8tYhe4Ivn8i4kxVDJC
-    Vkj2mXVx1t+MfTWjXnbD6LIciuOkGRqByausml27ODFxT7hgjMPHfFmKBXtz2FfJ372t
-    Ns8aiYSryDwHy5c8Wibtnz6Kp6hZu030BgZkkmcAWFpwrjgMSBbFejGYRRUPxHPqydLs
-    9Yrw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1691651648;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=dSXNIfeUu6tEetm+yGqUwYCnWcvobbztyheAV6JgLVc=;
-    b=c7buaa7bNriFdiCwe8iCz6S5t8Z1Js/t1e82EL9hFRxKi4oGfG6o0bznWsIUaP6BZa
-    6RLQvif8lXiA+JNZVDDQ==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4peA8p+L1A=="
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 49.6.6 DYNA|AUTH)
-    with ESMTPSA id k61817z7A7E8pRE
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Thu, 10 Aug 2023 09:14:08 +0200 (CEST)
-Date:   Thu, 10 Aug 2023 09:14:03 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] pinctrl: qcom: msm8998: Fix MPM mappings
-Message-ID: <ZNSOO47C5N88FpUz@gerhold.net>
-References: <20230809-topic-mpm_mappings-v1-0-5e17dd76b3c8@linaro.org>
- <20230809-topic-mpm_mappings-v1-1-5e17dd76b3c8@linaro.org>
+        with ESMTP id S232651AbjHJHqj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Aug 2023 03:46:39 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F8EC1702;
+        Thu, 10 Aug 2023 00:46:39 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1bc65360648so5969705ad.1;
+        Thu, 10 Aug 2023 00:46:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691653599; x=1692258399;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6gTz6hcoAzVZcSGAehaR348Fo/uyOm0OL4hmIYIrZZA=;
+        b=h+7tOucTOdOz8TQvOUT0sabcTzCnlSOWbL7VcjubyhRJs+QRtvKFAzzRM9L9nIdS1P
+         nNqSVk11YEy+loiPRdPtrDsxc70BDIN/FdnI/Gv++3cDOqT+dy2jNySYJHJSn74O76VA
+         8O++XVsIB+8Am+HaqWRxb46ZiM3DX4Xdt92RorosZGzSSzsjbQqETzrV/kziY0D9qqGY
+         Kyi9t12RhX+pLWrsHLReJJRmDedo44LaAn/d07J61w5mgYvc9qqfkOPirZXn1pDuGzJa
+         tcqt0dAzZofras8bhHuFKI6PVblJz64hhuhZUeBblGaP4bd8MYWSPLmkBaLMlnLp96NR
+         yVPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691653599; x=1692258399;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6gTz6hcoAzVZcSGAehaR348Fo/uyOm0OL4hmIYIrZZA=;
+        b=N6DQaY3NnLOpWuW35W/Jgi+jpGGfAHQoiw1Nsu0GPFZVh0xME/Hkwotu1mdthHPvLa
+         SlIf2yn+ZoLakIHMBEG52wZ3CJlzLUyR52AkXxk8R+miiZDKG9r7+v6g9uWR1pFoEta4
+         1ntRCjsS4kTSt5aUyso/lLnzc+NR44Wa5YFQFTEOP7XhN7ccJ7UDv2P+XlM0qfY8qIlM
+         ZJW7wEryjrx0kOjGM2sjoucN+hhwEA/+YlccIeEnflzcgCu3UGJsGgR8IO0VbeNIxkn6
+         ysdMXsFw2oDFhi8fXkM4pOkxg3Gr/dGBBgc8EqP2Kf035TDcI5kY4EptDTnMOrNsRFv0
+         UIwg==
+X-Gm-Message-State: AOJu0Yz5TXMkxWgdC6ZspCt00zFCcoXnn+gVcFOSAz8Y8FpWo3zkm4Sb
+        6NtEZ7BFKRQvevctoiUMdDI=
+X-Google-Smtp-Source: AGHT+IEdVgZI7BPbqizq8DoWCJq/ZmRAIgZoKv81fEAzLLFHRJbKGVmqf2OVRsvfxWzC9SRZcQGVeQ==
+X-Received: by 2002:a17:902:ba86:b0:1b9:ebe9:5f01 with SMTP id k6-20020a170902ba8600b001b9ebe95f01mr1637726pls.19.1691653598860;
+        Thu, 10 Aug 2023 00:46:38 -0700 (PDT)
+Received: from localhost.localdomain ([2409:40c2:103c:968b:4dc8:d063:71b0:bea])
+        by smtp.gmail.com with ESMTPSA id a15-20020a170902710f00b001bd99fd1114sm948570pll.288.2023.08.10.00.46.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Aug 2023 00:46:38 -0700 (PDT)
+From:   coolrrsh@gmail.com
+To:     linus.walleij@linaro.org, brgl@bgdev.pl, andy@kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     linux-kernel-mentees@lists.linuxfoundation.org,
+        Rajeshwar R Shinde <coolrrsh@gmail.com>
+Subject: [PATCH v2] gpio: gpio-imx-scu: Use ARRAY_SIZE for array length
+Date:   Thu, 10 Aug 2023 13:16:33 +0530
+Message-Id: <20230810074633.13111-1-coolrrsh@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230809-topic-mpm_mappings-v1-1-5e17dd76b3c8@linaro.org>
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Aug 09, 2023 at 09:38:54PM +0200, Konrad Dybcio wrote:
-> Commit 29f6e7e379fd ("pinctrl: qcom: msm8998: Add MPM pin mappings")
-> added a map of pins <-> wakeirqs. The values in each tuple were swapped
-> and the last one was missing. Fix that.
-> 
-> Fixes: 29f6e7e379fd ("pinctrl: qcom: msm8998: Add MPM pin mappings")
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-msm8998.c | 19 ++++++++++---------
->  1 file changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm8998.c b/drivers/pinctrl/qcom/pinctrl-msm8998.c
-> index b7cbf32b3125..08d6e555652a 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm8998.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm8998.c
-> @@ -1496,15 +1496,16 @@ static const struct msm_pingroup msm8998_groups[] = {
->  };
->  
->  static const struct msm_gpio_wakeirq_map msm8998_mpm_map[] = {
-> -	{ 1, 3 }, { 5, 4 }, { 9, 5 }, { 11, 6 }, { 22, 8 }, { 24, 9 }, { 26, 10 },
-> -	{ 34, 11 }, { 36, 12 }, { 37, 13 }, { 38, 14 }, { 40, 15 }, { 42, 16 }, { 46, 17 },
-> -	{ 50, 18 }, { 53, 19 }, { 54, 20 }, { 56, 21 }, { 57, 22 }, { 58, 23 }, { 59, 24 },
-> -	{ 60, 25 }, { 61, 26 }, { 62, 27 }, { 63, 28 }, { 64, 29 }, { 66, 7 }, { 71, 30 },
-> -	{ 73, 31 }, { 77, 32 }, { 78, 33 }, { 79, 34 }, { 80, 35 }, { 82, 36 }, { 86, 37 },
-> -	{ 91, 38 }, { 92, 39 }, { 95, 40 }, { 97, 41 }, { 101, 42 }, { 104, 43 }, { 106, 44 },
-> -	{ 108, 45 }, { 110, 48 }, { 112, 46 }, { 113, 47 }, { 115, 51 }, { 116, 54 }, { 117, 55 },
-> -	{ 118, 56 }, { 119, 57 }, { 120, 58 }, { 121, 59 }, { 122, 60 }, { 123, 61 }, { 124, 62 },
-> -	{ 125, 63 }, { 126, 64 }, { 127, 50 }, { 129, 65 }, { 131, 66 }, { 132, 67 }, { 133, 68 },
-> +	{ 3, 1 }, { 4, 5 }, { 5, 9 }, { 6, 11 }, { 8, 22 }, { 9, 24 }, { 10, 26 },
-> +	{ 11, 34 }, { 12, 36 }, { 13, 37 }, { 14, 38 }, { 15, 40 }, { 16, 42 }, { 17, 46 },
-> +	{ 18, 50 }, { 19, 53 }, { 20, 54 }, { 21, 56 }, { 22, 57 }, { 23, 58 }, { 24, 59 },
-> +	{ 25, 60 }, { 26, 61 }, { 27, 62 }, { 28, 63 }, { 29, 64 }, { 7, 66 }, { 30, 71 },
-> +	{ 31, 73 }, { 32, 77 }, { 33, 78 }, { 34, 79 }, { 35, 80 }, { 36, 82 }, { 37, 86 },
-> +	{ 38, 91 }, { 39, 92 }, { 40, 95 }, { 41, 97 }, { 42, 101 }, { 43, 104 }, { 44, 106 },
-> +	{ 45, 108 }, { 48, 110 }, { 46, 112 }, { 47, 113 }, { 51, 115 }, { 54, 116 }, { 55, 117 },
-> +	{ 56, 118 }, { 57, 119 }, { 58, 120 }, { 59, 121 }, { 60, 122 }, { 61, 123 }, { 62, 124 },
-> +	{ 63, 125 }, { 64, 126 }, { 50, 127 }, { 65, 129 }, { 66, 131 }, { 67, 132 }, { 68, 133 },
-> +	{ 69, 145 },
->  };
+From: Rajeshwar R Shinde <coolrrsh@gmail.com>
 
-Are you sure this is correct?
+Use of macro ARRAY_SIZE to calculate array size minimizes
+the redundant code and improves code reusability.
+This fixes warnings reported by Coccinelle:
+drivers/gpio/gpio-imx-scu.c:106:32-33: WARNING: Use ARRAY_SIZE
 
-/**
- * struct msm_gpio_wakeirq_map - Map of GPIOs and their wakeup pins
- * @gpio:          The GPIOs that are wakeup capable
- * @wakeirq:       The interrupt at the always-on interrupt controller
- */
-struct msm_gpio_wakeirq_map {
-	unsigned int gpio;
-	unsigned int wakeirq;
-};
+Signed-off-by: Rajeshwar R Shinde <coolrrsh@gmail.com>
 
-MSM8998 has 150 GPIOs and 96 MPM IRQs. The tuple { 69, 145 } can't be
-right because 145 is not a valid MPM pin. It's a valid GPIO though so
-the original order was correct. Maybe replace "Fixes:" with "Breaks:"? :D
+---
+v1->v2
+ARRAY_SIZE calculates array length, so changed 
+gc->ngpio = ARRAY_SIZE(scu_rsrc_arr)/sizeof(unsigned int) to
+gc->ngpio = ARRAY_SIZE(scu_rsrc_arr)
 
-Thanks,
-Stephan
+---
+ drivers/gpio/gpio-imx-scu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-imx-scu.c b/drivers/gpio/gpio-imx-scu.c
+index e190bde5397d..fb05a53c9712 100644
+--- a/drivers/gpio/gpio-imx-scu.c
++++ b/drivers/gpio/gpio-imx-scu.c
+@@ -103,7 +103,7 @@ static int imx_scu_gpio_probe(struct platform_device *pdev)
+ 	gc = &priv->chip;
+ 	gc->base = -1;
+ 	gc->parent = dev;
+-	gc->ngpio = sizeof(scu_rsrc_arr)/sizeof(unsigned int);
++	gc->ngpio = ARRAY_SIZE(scu_rsrc_arr);
+ 	gc->label = dev_name(dev);
+ 	gc->get = imx_scu_gpio_get;
+ 	gc->set = imx_scu_gpio_set;
+-- 
+2.25.1
+
