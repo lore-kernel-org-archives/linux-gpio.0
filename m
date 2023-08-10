@@ -2,85 +2,115 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63701C001DE
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Aug 2023 10:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 599C5C001B0
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Aug 2023 10:05:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235215AbjHJKB2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Aug 2023 06:01:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58728 "EHLO
+        id S235321AbjHJKF6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Aug 2023 06:05:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235212AbjHJKAq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Aug 2023 06:00:46 -0400
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23D053AA4
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Aug 2023 02:59:55 -0700 (PDT)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1bfc2b68090so598683fac.3
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Aug 2023 02:59:55 -0700 (PDT)
+        with ESMTP id S235301AbjHJKF0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Aug 2023 06:05:26 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BE3435A6
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Aug 2023 03:03:42 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-307d20548adso698703f8f.0
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Aug 2023 03:03:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691661594; x=1692266394;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5JGWiMZs7afpHNba/9KEQj3tEokgpEuSpBv4LeBPKa4=;
-        b=Lm1JCMFGUbo0kBsVApqK1y00PydiuWA/U5/leDQ5VnC3BZPEcITpqhLwyrBdQsn+GR
-         F+n+z+iRK1CGjqC4lVc0fVWXJP8OfQ4C0R9gGsBtWyfKtP1dqnrPn55I00ew6ERcmCD7
-         q8j3DQwsBCTPSF26HTmQ3nc45eu1aANNNTzvouwftWY1PNpz2ob4yG87A2dyKjl9FYWZ
-         8JlCB0tflDsBWH8xQJjuiV3Bdlfjo0c0k/mpxkosocc+o3n/GGGp1b8PLTb5GWTRdiRK
-         hHjNA7nGh+lw/A1g5rrlMCEa89ZZjr7DTeOwa3tjp0wEuja+zRg8n6FsKbmzWOfI1FcE
-         j19g==
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1691661821; x=1692266621;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YLNyJJxImTMb77ahFur8tDBev0QNJcAaI7522FZEALk=;
+        b=PlIAOobjw8RO1syhEZGreHmiYYCyih1N4G+s7Dj7XxyEwxEQ8eexmopxNiWGDzxPbA
+         +IWcGLpL0TdnAkaki91WK84gRTvILCv2p9lUNwAKONjMdTg7HrYo+L9CadlW45FDm661
+         AqTa4Q9no8Nq7qxXsOxVa8yHPgCjia8ZN1PQuZKMS+6Ka5V6aMyFY1miCutGkY/TNv4c
+         jcLbvWQGkTkjqUi+A+wuQymMm2w2nIxeav0jpNcnb7GoB7Z0PW135LF8lFxigpVssDr/
+         wMuONd0rUh//AuaTsgLF+NCubgHKSEGOCNUDVmzhHqa1Lspcu1mOm7O4rWnRZXaifvA1
+         u1EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691661594; x=1692266394;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5JGWiMZs7afpHNba/9KEQj3tEokgpEuSpBv4LeBPKa4=;
-        b=KRbLbDXEStuxKw6SyW0xmI2vxQ10ldGdwEewpr+hIBSaP11XobsUe9N6w0xeEgmvPt
-         YRri1JLtivzH+iVQwhuSCm0ak7pntkPBTyzmpPDhlh1t9Q/AfaeVMGzxg1UhBMfL4N8M
-         5JxftvyGgilwPGHN3zI3uT3/IqjbOLw6Vw0JeoMzGmrwlQGFqQJMn8USDfUOSfJwAo/I
-         1r5BHr4PP1kAwc8LDqfMmGr871ptzjMlkupS9zcicb4D4Zs41LLh1FkNuldH5nuuKMk4
-         YYuPbi/o7OZ2JxDAn5Wr0zcecc3fODRQGX1hFUEoi+j1O+e600GnzRCx6h9mphmJ5MeW
-         lgkQ==
-X-Gm-Message-State: AOJu0Yw40/NVvcDUWrP/zcMcGwA5N+VnosIC+G1ARIA0ZUDjqStzofbr
-        yG2Lkp5NlPiVZRK8MWoJU0/t+CPNTHzzIWdSofw=
-X-Google-Smtp-Source: AGHT+IH3hMflAx0JByKHk0Nmor/tcbKdqITi4L9TTc3sTk8X0lRLX3LQYjMVL6z51ZZH6H72rreI4O38LghoYxXQCVs=
-X-Received: by 2002:a05:6870:239e:b0:1be:f23f:99b with SMTP id
- e30-20020a056870239e00b001bef23f099bmr2289939oap.42.1691661594389; Thu, 10
- Aug 2023 02:59:54 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1691661821; x=1692266621;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YLNyJJxImTMb77ahFur8tDBev0QNJcAaI7522FZEALk=;
+        b=PMw68W3EQp2GQUzN0ffnwcb+sQT8+k5sUOEC4OA21nuIbbvmDwmm3W8z84DldcIJ/g
+         ZrXoxYNhNyuBB67cZ1XAi1EcXnavsgcYVEtwLOVlWPHJPvp23Y1cOeH2r4YsUQmzz422
+         v4OKlqXU/6WsX1jvCrgQu5SYDRR8wC1IACIIuLhEtsYpzf+uQThA5wNgQCbXsY4xTyMu
+         rUp1IyMvScevkfkPGahtIkSLMLtRN+jcGox3gk1dSu0OUhoII6XH6ihL0jKulG9OCIPO
+         TRsBgTQuH1iM+sVeC0DzZGiGwy2CxAglNy5tfWcXSSdz6Ui0CDI3IncrPsBe88weerrT
+         vtCw==
+X-Gm-Message-State: AOJu0YwAWHFsn3ZcUEcdX75DDGCHgWViNcEudwpMQFLNBanNdTel/fWu
+        0EHfcJYac9NftT3F5MeGlJoHWE40fst3jA51dN67Mg==
+X-Google-Smtp-Source: AGHT+IFP3dkfs5TTjEQlwRat/KlFvZxnefHBn0Av+woaGf4/4Jq6wLVZl0GlRBSaVAPXhsZZh8t9Ng==
+X-Received: by 2002:a5d:6584:0:b0:307:8c47:a266 with SMTP id q4-20020a5d6584000000b003078c47a266mr1322416wru.61.1691661820693;
+        Thu, 10 Aug 2023 03:03:40 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:74d3:226a:31b3:454c])
+        by smtp.gmail.com with ESMTPSA id s7-20020adfecc7000000b0031912c0ffebsm891135wro.23.2023.08.10.03.03.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Aug 2023 03:03:40 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpiolib: fix reference leaks when removing GPIO chips still in use
+Date:   Thu, 10 Aug 2023 12:03:34 +0200
+Message-Id: <20230810100335.9330-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-References: <20230809141324.400448-1-shenwei.wang@nxp.com>
-In-Reply-To: <20230809141324.400448-1-shenwei.wang@nxp.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 10 Aug 2023 12:59:18 +0300
-Message-ID: <CAHp75VfB_fHD-h3Tdu=oB90Y7UC1RG2U3ECX4pymMCRFTux0Mg@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: mxc: release the parent IRQ in runtime suspend
-To:     Shenwei Wang <shenwei.wang@nxp.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
-        imx@lists.linux.dev, linux-imx@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Aug 9, 2023 at 5:13=E2=80=AFPM Shenwei Wang <shenwei.wang@nxp.com> =
-wrote:
->
-> Release the parent interrupt request during runtime suspend, allowing
-> the parent interrupt controller to enter runtime suspend if there are
-> no active users.
->
-> This change may not have a visible impact if the parent controller is
-> the GIC, but it can enable significant power savings for parent IRQ
-> controllers like IRQSteer inside a subsystem on i.MX8 SoCs. Releasing
-> the parent IRQ provides an opportunity for the subsystem to enter suspend
-> states if there are no active users.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Assumed that this change has been tested (esp. when an IRQ is wakeup
-source), I'm fine with it,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+After we remove a GPIO chip that still has some requested descriptors,
+gpiod_free_commit() will fail and we will never put the references to the
+GPIO device and the owning module in gpiod_free().
 
---=20
-With Best Regards,
-Andy Shevchenko
+Rework this function to:
+- not warn on desc == NULL as this is a use-case on which most free
+  functions silently return
+- put the references to desc->gdev and desc->gdev->owner unconditionally
+  so that the release callback actually gets called when the remaining
+  references are dropped by external GPIO users
+
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+I'm going through the resource management issues one-by-one using the
+new virtual consumer module. This is something I found when I noticed
+that IDA numbers never get freed for a chip that was removed with descs
+still in use.
+
+ drivers/gpio/gpiolib.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 251c875b5c34..7408e2561b2d 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2167,12 +2167,14 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
+ 
+ void gpiod_free(struct gpio_desc *desc)
+ {
+-	if (desc && desc->gdev && gpiod_free_commit(desc)) {
+-		module_put(desc->gdev->owner);
+-		gpio_device_put(desc->gdev);
+-	} else {
++	if (!desc)
++		return;
++
++	if (!gpiod_free_commit(desc))
+ 		WARN_ON(extra_checks);
+-	}
++
++	gpio_device_put(desc->gdev);
++	module_put(desc->gdev->owner);
+ }
+ 
+ /**
+-- 
+2.39.2
+
