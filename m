@@ -2,104 +2,119 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C0F5C001DB
-	for <linux-gpio@archiver.kernel.org>; Thu, 10 Aug 2023 06:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CA6C001B0
+	for <linux-gpio@archiver.kernel.org>; Thu, 10 Aug 2023 07:19:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232102AbjHJGrB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 10 Aug 2023 02:47:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60024 "EHLO
+        id S231739AbjHJHTo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 10 Aug 2023 03:19:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229677AbjHJGqz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Aug 2023 02:46:55 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 568CCED;
-        Wed,  9 Aug 2023 23:46:54 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-5237365f3a6so658193a12.2;
-        Wed, 09 Aug 2023 23:46:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691650013; x=1692254813;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d97DNxVWndRKqy+GYLUUwTxQ5wSEsSYDcK7bljZp6nM=;
-        b=fShcXfPyq5qTLCY/hQVnKm0r+Fz1cWZbRI6whRrplxAtEaOAvSNl/QW55WZ4OWIVUQ
-         nkM3mryRvhgEptszJeJvJTLwPW6pDtlbZDRSQmQSIHGPHSaCe++dzkz948vwpEvv22wQ
-         7hrCdpMjaYC+s/dofUAUWnwBy5125U/oushoyb+K/W8oExKlQwjn0SIVcX/MPN2epsn1
-         J3dc0NtrnbzUge744OmpfaYD33NwztV5USXEsk3oWu72Yx/In4wy6u2STE7kM96i6mGk
-         w/yFRaGe4xTmHbC775KZ0lUZVoBBtqESIjss+7LGjwngnYcbKNacPFyCISmKniBjerAh
-         7/oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691650013; x=1692254813;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d97DNxVWndRKqy+GYLUUwTxQ5wSEsSYDcK7bljZp6nM=;
-        b=gSdYBXh6i2jXzvBdGk2ByEObOmw0CUFYl+UZUINPUTHlR1gWKA+asxc8C5BD0HY7Hh
-         0jmag4WgJhFugR5NwcoGJ5smOqKDlBOqgpYLjA2dhfOLQRIcFC4V/t74mJVamce63DDI
-         Jq/TrED9yK1aLSG0gsQfISP3sBcyjHKXKS4yOCHMMyLNl+6vkDCcwB5/GLuchxbtxqjg
-         8efzBg+VH1MzYPFuW7HS66bDhB0lt1P/CciEb86y12mqG1rlBkiGEpEuDSw+rhuboEjM
-         eKMNQXRSMq01m4qtneKov1GabU3+MmO0RdwGaIrUsY1V9ESH30VUeY61Xkam/yECpQjR
-         zQ/A==
-X-Gm-Message-State: AOJu0YzBVjN6uasKP28nvJ7nH5iuRJaRBOiJZ8DHK5129Dek8mQpRRw1
-        powkCOBZkMkMDZZQs/XwkM8ZcunJTRr2O9zC4UrPLYp9QaY=
-X-Google-Smtp-Source: AGHT+IEwWVlBeLryVc/eVOBBpMdYCkROMbaNhtiRKBVmwPQPhVZYoNNJyQh4qTwTplR/yAaIor0VgaZyup3j8VKzHP4=
-X-Received: by 2002:a05:6402:184d:b0:522:41b8:3dad with SMTP id
- v13-20020a056402184d00b0052241b83dadmr1303993edy.15.1691650012582; Wed, 09
- Aug 2023 23:46:52 -0700 (PDT)
+        with ESMTP id S229934AbjHJHTo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Aug 2023 03:19:44 -0400
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEC2410C;
+        Thu, 10 Aug 2023 00:19:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1691651981; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=RqlqJ1Kw8h3wcJyiyw9pg1k1rB/3C2+5Wke3f3dbz9Y5m3BhlM4+22vBcJjthQJ9F8
+    t9iXKbZ+9+zRUSJOpTwB5t8Ue72E3M23t2MdD2UNsYNbKlArkZUlPC9pKGUfFXWz6Ly8
+    pfkarTSoSxak75tl5uP7iZ8Y8UZjY9B1cS/dn0sn/1wtdNd9O8BwffKlt7bM8ee/AwqY
+    ItMrRwdYwn4pMbQ2SWtROgHfeXWuDer9xqT/8kQlgwvn5h3khfLeGJbxHXmuWAlv7ztS
+    +3x+us4iM13Y/KPiDqcnKdopRAIqBqZJUNpXpe/PjQwnBM3F5e3EiWhz/KnjDNp+tvq/
+    hqzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1691651981;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=O2PDmOcbHjPei4x7y9EfiO+A5zdOesrXbRmidgnJo5Y=;
+    b=iqOEGZ70Z2N6GO57dxflFGfZH6lPMthlyC2FEeGQsJ8oQ8bJ143uosSf+3WsStuRNM
+    1EWtM+AfnQpw8MphPLdh62c74GbeW/+pMjQwwtaiv/lKdzvmCxUAvFSZB/0IVaPznRFL
+    x05c4cJClXOnFVq2El9G48un660YdRVe8LpQ5YmTIcRKO8KsYhq/C6LenSG+1ctVGwyL
+    noips4QrGsrREcxth4PvSOPu5CpETPCl3Es6pF3/Wx7NQxB0ukrhQpfsHr8cAWDNSC5T
+    aLTDkRBY9XSpCjU6ENxZEscB0rBEY3MM1nywnXC7TPassOOkPP/d5uVe4eegEVfUY7S6
+    YlLA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1691651981;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=O2PDmOcbHjPei4x7y9EfiO+A5zdOesrXbRmidgnJo5Y=;
+    b=LFYalGSvuZkn+Ln264GyL4BUIpHdZ/uI2d8VGfU1ReCKuL7yxcLx8HIWWiFraAVxbX
+    OXUFhFGShJRD5950MtWyq26fOjZlWDjCUSe43ipVnDfH79VC88uiNxq5tE1CDKVDyFbv
+    gZhMWUeYUgIJMlGXBpmaIXnByAmeJ36z6dtQ7ijjEWtuKJYN8d+suYuO0D0bOzzawVf+
+    EEqoosQC/fqxqcdTim0zVhTPBK4TYKmFdWnbt9Zg2qTFqxA6FtOG8z57/eh1I2I5jPlw
+    mlznAA7Cmw+NQglLyrqBH2dYMLTP8os4ryjyibNIpMPKGHzTjXeOYT4DEOH60Q4Chfh+
+    DyDA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1691651981;
+    s=strato-dkim-0003; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=O2PDmOcbHjPei4x7y9EfiO+A5zdOesrXbRmidgnJo5Y=;
+    b=KBoxmHsM6lS2b3Hxf2/DuuqEkIx+YMFhb6RCZeSPmqNIaW+byRCf0mQxk+0SXqbkJ/
+    n/9flLjhhQ09gyEu71Aw==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4peA8p+L1A=="
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 49.6.6 DYNA|AUTH)
+    with ESMTPSA id k61817z7A7JepSg
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Thu, 10 Aug 2023 09:19:40 +0200 (CEST)
+Date:   Thu, 10 Aug 2023 09:19:39 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] pinctrl: qcom: sm6115: Add MPM pin mappings
+Message-ID: <ZNSPi3mDScn9ZMNJ@gerhold.net>
+References: <20230809-topic-mpm_mappings-v1-0-5e17dd76b3c8@linaro.org>
+ <20230809-topic-mpm_mappings-v1-3-5e17dd76b3c8@linaro.org>
 MIME-Version: 1.0
-References: <20230809171245.92081-1-coolrrsh@gmail.com>
-In-Reply-To: <20230809171245.92081-1-coolrrsh@gmail.com>
-From:   Khalid Masum <khalid.masum.92@gmail.com>
-Date:   Thu, 10 Aug 2023 12:46:41 +0600
-Message-ID: <CAABMjtECX_p=G_Vwedxn3xuxm+WDy7hnyuSVc_rTNDr9yXKrYA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: gpio-imx-scu: Use ARRAY_SIZE for array length
-To:     coolrrsh@gmail.com
-Cc:     linus.walleij@linaro.org, brgl@bgdev.pl, andy@kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230809-topic-mpm_mappings-v1-3-5e17dd76b3c8@linaro.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Aug 9, 2023 at 11:12=E2=80=AFPM <coolrrsh@gmail.com> wrote:
->
-> From: Rajeshwar R Shinde <coolrrsh@gmail.com>
->
-> Use of macro ARRAY_SIZE to calculate array size minimizes
-> the redundant code and improves code reusability.
-> This fixes warnings reported by Coccinelle:
-> drivers/gpio/gpio-imx-scu.c:106:32-33: WARNING: Use ARRAY_SIZE
->
-> Signed-off-by: Rajeshwar R Shinde <coolrrsh@gmail.com>
+On Wed, Aug 09, 2023 at 09:38:56PM +0200, Konrad Dybcio wrote:
+> Add pin <-> wakeirq mappings to allow for waking up the AP from sleep
+> through MPM-connected pins.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 > ---
->  drivers/gpio/gpio-imx-scu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-imx-scu.c b/drivers/gpio/gpio-imx-scu.c
-> index e190bde5397d..fb05a53c9712 100644
-> --- a/drivers/gpio/gpio-imx-scu.c
-> +++ b/drivers/gpio/gpio-imx-scu.c
-> @@ -103,7 +103,7 @@ static int imx_scu_gpio_probe(struct platform_device =
-*pdev)
->         gc =3D &priv->chip;
->         gc->base =3D -1;
->         gc->parent =3D dev;
-> -       gc->ngpio =3D sizeof(scu_rsrc_arr)/sizeof(unsigned int);
-> +       gc->ngpio =3D ARRAY_SIZE(scu_rsrc_arr)/sizeof(unsigned int);
-Since ARRAY_SIZE is being used, no need to divide it with sizeof unsigned i=
-nt
-again.
-...
- gc->ngpio =3D ARRAY_SIZE(scu_rsrc_arr);
-...
+>  drivers/pinctrl/qcom/pinctrl-sm6115.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-sm6115.c b/drivers/pinctrl/qcom/pinctrl-sm6115.c
+> index 2a06025f4885..4e91c75ad952 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-sm6115.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-sm6115.c
+> @@ -867,6 +867,16 @@ static const struct msm_pingroup sm6115_groups[] = {
+>  	[120] = SDC_QDSD_PINGROUP(sdc2_data, SOUTH, 0x73000, 9, 0),
+>  };
+>  
+> +static const struct msm_gpio_wakeirq_map sm6115_mpm_map[] = {
+> +	{ 0, 84 }, { 3, 75 }, { 4, 16 }, { 6, 59 }, { 8, 63 }, { 11, 17 }, { 13, 18 },
+> +	{ 14, 51 }, { 17, 20 }, { 18, 52 }, { 19, 53 }, { 24, 6 }, { 25, 71 }, { 27, 73 },
+> +	{ 28, 41 }, { 31, 27 }, { 32, 54 }, { 33, 55 }, { 34, 56 }, { 35, 57 }, { 36, 58 },
+> +	{ 39, 28 }, { 46, 29 }, { 62, 60 }, { 63, 61 }, { 64, 62 }, { 65, 30 }, { 66, 31 },
+> +	{ 67, 32 }, { 69, 33 }, { 70, 34 }, { 72, 72 }, { 75, 35 }, { 79, 36 }, { 80, 21 },
+> +	{ 81, 38 }, { 83, 9 }, { 84, 39 }, { 85, 40 }, { 86, 19 }, { 87, 42 }, { 88, 43 },
+> +	{ 89, 45 }, { 91, 74 }, { 93, 46 }, { 94, 47 }, { 95, 48 }, { 96, 49 }, { 97, 50 },
+> +};
 
->         gc->label =3D dev_name(dev);
->         gc->get =3D imx_scu_gpio_get;
->         gc->set =3D imx_scu_gpio_set;
-> --
-> 2.25.1
+Did you omit the mappings for GPIO 99-112 here on purpose?
 
-thanks,
-  -- Khalid Masum
+The order here looks fine BTW. Maybe downstream changed the order and
+you got confused? :)
+
+Thanks,
+Stephan
