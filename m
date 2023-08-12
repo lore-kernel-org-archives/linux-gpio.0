@@ -2,86 +2,98 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B32CC41513
-	for <linux-gpio@archiver.kernel.org>; Sat, 12 Aug 2023 07:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09539C001DB
+	for <linux-gpio@archiver.kernel.org>; Sat, 12 Aug 2023 10:26:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbjHLHPB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 12 Aug 2023 03:15:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44178 "EHLO
+        id S233345AbjHLK0G (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 12 Aug 2023 06:26:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229511AbjHLHPA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Aug 2023 03:15:00 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67A6B30D2;
-        Sat, 12 Aug 2023 00:14:58 -0700 (PDT)
-Received: from kwepemi500008.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RNBh86g8bzTmN8;
-        Sat, 12 Aug 2023 15:12:56 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
- (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Sat, 12 Aug
- 2023 15:14:55 +0800
-From:   Ruan Jinjie <ruanjinjie@huawei.com>
-To:     <linux-gpio@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC:     <ruanjinjie@huawei.com>
-Subject: [PATCH -next] gpiolib: acpi: Use LIST_HEAD() to initialize the list_head
-Date:   Sat, 12 Aug 2023 15:14:23 +0800
-Message-ID: <20230812071423.3481790-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S229727AbjHLK0F (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Aug 2023 06:26:05 -0400
+Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3CED170D;
+        Sat, 12 Aug 2023 03:26:08 -0700 (PDT)
+Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+        by mx.skole.hr (mx.skole.hr) with ESMTP id 293A182A9B;
+        Sat, 12 Aug 2023 12:26:07 +0200 (CEST)
+From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Date:   Sat, 12 Aug 2023 12:25:05 +0200
+Subject: [PATCH v5 1/8] gpio: pxa: disable pinctrl calls for MMP_GPIO
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.90.53.73]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemi500008.china.huawei.com (7.221.188.139)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20230812-pxa1908-lkml-v5-1-a5d51937ee34@skole.hr>
+References: <20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr>
+In-Reply-To: <20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr>
+To:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hardening@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        afaerber@suse.de
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=717;
+ i=duje.mihanovic@skole.hr; h=from:subject:message-id;
+ bh=KpHlcLrUY59P26MylBMaHpzA91WHfXQj5w9V31CEE9k=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBk114Ejn0o+sJ9R66MpkeqR5THvpE/2hx19CFsu
+ I+erCRU2huJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZNdeBAAKCRCaEZ6wQi2W
+ 4U+wD/4rCSSTNj8ky6MrA4t2w8MZUprN7nQFoRNWTzeT1k/JBeLJD232B4AWHVBaN8s645nc8zZ
+ t/uLIrN77JlBAzm9+qTc97mF3MPZ3bmrxlRLgnqnLWxg+l+B+PmA4GzmoIw7QN1qW6F3De+LPkl
+ yfIMQX653+tM16G8/P4FTzM/jcc4QvVmjuWEjLfv/Ocz0+5BuQxuqODvOVaMFZIsqimCp2ocYdB
+ Uf6Br+DO06FPqtJ1+SEH2fUR8W/D6sR0K0D0dA3syjHqbN1tiUNlc74zJB6zFeZqciFt2f28OoP
+ 27sT3lXuTCuj2CrUvF+Zs7YpfUge+P/fEyubSiAX0yvqfPfb/R5O+xFhGZhqzUwFsQ0r+nFw5UX
+ qg9N5idsmwbelsRjz5UVoBgXymjaq8ehv0k8JkC/iRKAJF6Xe4JLuPSor5s+P4CskhKHBxGz7fR
+ lwE/VpOFmjErezbJtr77NHhla7OGyTqcvkbb08q5AnWX4+Uy8nsBqs3CHEUXKNg60o8xY4PNl4k
+ zCjYDqU7WX2C3rUC/n9iJTKYlCgiproqDqGQ/kq7JgptLm+qYKuD5GctY7ilirzgUm5a32VVenv
+ BOWkAtwezBuJpuJnb0rHbaM5aXDVAuWn5lyetOgXqetp4br3+/PDSRd1BDDieLQsxybkM4N/XRu
+ TXEKM5RqVOxT1oQ==
+X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
+ fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Use LIST_HEAD() to initialize the list_head instead of open-coding it.
+Similarly to PXA3xx and MMP2, pinctrl-single isn't capable of setting
+pin direction on MMP either.
 
-Signed-off-by: Ruan Jinjie <ruanjinjie@huawei.com>
+Fixes: a770d946371e ("gpio: pxa: add pin control gpio direction and request")
+Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 ---
- drivers/gpio/gpiolib-acpi.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-pxa.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index fbda452fb4d6..db8e8e967bda 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -809,11 +809,9 @@ static int acpi_gpio_resource_lookup(struct acpi_gpio_lookup *lookup,
- 				     struct acpi_gpio_info *info)
- {
- 	struct acpi_device *adev = lookup->info.adev;
--	struct list_head res_list;
-+	LIST_HEAD(res_list);
- 	int ret;
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index a1630ed4b741..d92650aecb06 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -238,6 +238,7 @@ static bool pxa_gpio_has_pinctrl(void)
+ 	switch (gpio_type) {
+ 	case PXA3XX_GPIO:
+ 	case MMP2_GPIO:
++	case MMP_GPIO:
+ 		return false;
  
--	INIT_LIST_HEAD(&res_list);
--
- 	ret = acpi_dev_get_resources(adev, &res_list,
- 				     acpi_populate_gpio_lookup,
- 				     lookup);
-@@ -1472,13 +1470,12 @@ int acpi_gpio_count(struct device *dev, const char *con_id)
- 
- 	/* Then from plain _CRS GPIOs */
- 	if (count < 0) {
--		struct list_head resource_list;
-+		LIST_HEAD(resource_list);
- 		unsigned int crs_count = 0;
- 
- 		if (!acpi_can_fallback_to_crs(adev, con_id))
- 			return count;
- 
--		INIT_LIST_HEAD(&resource_list);
- 		acpi_dev_get_resources(adev, &resource_list,
- 				       acpi_find_gpio_count, &crs_count);
- 		acpi_dev_free_resource_list(&resource_list);
+ 	default:
+
 -- 
-2.34.1
+2.41.0
+
 
