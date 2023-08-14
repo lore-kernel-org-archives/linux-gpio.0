@@ -2,51 +2,51 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36805C04E69
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A91C001E0
 	for <linux-gpio@archiver.kernel.org>; Mon, 14 Aug 2023 06:04:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233398AbjHNGEQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 14 Aug 2023 02:04:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41842 "EHLO
+        id S233454AbjHNGER (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 14 Aug 2023 02:04:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233294AbjHNGEK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Aug 2023 02:04:10 -0400
+        with ESMTP id S233343AbjHNGEO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Aug 2023 02:04:14 -0400
 Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E678E129;
-        Sun, 13 Aug 2023 23:04:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF851129;
+        Sun, 13 Aug 2023 23:04:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1691993049; x=1723529049;
+  t=1691993053; x=1723529053;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=WcdGtChIm1EcfRxknsGqjMYwaa75wWP0SVoFIOs0nSI=;
-  b=k4SiMj6lkVCqQoowyNLmbVjWTuN2TO2DmWY6CUETYfJDERqMsqKYnsJm
-   aw6AXg1ng5W0f5ts6dIHWjWdW9eN1LNsZW8t7mzAck2qgumJ/wbgR1Jy8
-   OjAFpbSF6YbQXQvdIHx6r+nOlDxbAtzRztK30B83c2H8R4dpXYYESjKS6
-   YqiKxhBF4ctjSk9yL2VbmPqWrpapRYS9Xo25PMwqsVemovuYNBPT0BvEg
-   eSYsKTD5zJkwdIDCK5B7kWjn+G+3Hqx2wRt/HQMGQadIKsVmHZkLtwbUU
-   TMfi7Jb0xwUYZEpVhZiSN0yWIvDHlDC5p0uhuPXxRO+KHxI6rCqmDFd2F
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10801"; a="371970755"
+  bh=BPpmaoshcMt6goKsPUPVpZaxcfTUVVBLgBqsePBBad0=;
+  b=je8x6t67Y7ZBiwxk70ZgHjUC83FhQKqo7jfSGuOm6ThXy8+FxB99JkU4
+   GRfBtRKjR1t10o9pxHlrJ+/tVP9B5Wnie81Em0lgfHg7L2KFE/3arP+mF
+   R25wnCa8ug19KAN+ZdnMF1jcTrzMeAgWOLMF66rCWnjn4pQFW7EZ2wHKS
+   Fgo7e1C3aqKXEonMqnWdPKQ3AtHbAMKnXZk7qD5Q8Rh/ASof7Wq0RMKZR
+   kiryM+19UzWvQTjjqzWmRMBL+qfhZIdbXEActQEqxlgHAG9ZNkYOMJdjE
+   CaJaxyMbRxy2BPwKMPpzkWy7EwjNQz5JOEihTyrVoukC6kANsunjGKJ8I
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10801"; a="371970764"
 X-IronPort-AV: E=Sophos;i="6.01,171,1684825200"; 
-   d="scan'208";a="371970755"
+   d="scan'208";a="371970764"
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2023 23:04:08 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2023 23:04:13 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10801"; a="798702943"
+X-IronPort-AV: E=McAfee;i="6600,9927,10801"; a="798702983"
 X-IronPort-AV: E=Sophos;i="6.01,171,1684825200"; 
-   d="scan'208";a="798702943"
+   d="scan'208";a="798702983"
 Received: from inlubt0316.iind.intel.com ([10.191.20.213])
-  by fmsmga008.fm.intel.com with ESMTP; 13 Aug 2023 23:04:05 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 13 Aug 2023 23:04:11 -0700
 From:   Raag Jadav <raag.jadav@intel.com>
 To:     linus.walleij@linaro.org, mika.westerberg@linux.intel.com,
         andriy.shevchenko@linux.intel.com
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         mallikarjunappa.sangannavar@intel.com, pandith.n@intel.com,
         Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v1 2/4] pinctrl: baytrail: reuse common functions from pinctrl-intel
-Date:   Mon, 14 Aug 2023 11:33:09 +0530
-Message-Id: <20230814060311.15945-3-raag.jadav@intel.com>
+Subject: [PATCH v1 4/4] pinctrl: lynxpoint: reuse common functions from pinctrl-intel
+Date:   Mon, 14 Aug 2023 11:33:11 +0530
+Message-Id: <20230814060311.15945-5-raag.jadav@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230814060311.15945-1-raag.jadav@intel.com>
 References: <20230814060311.15945-1-raag.jadav@intel.com>
@@ -55,36 +55,47 @@ List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 Reuse common functions from pinctrl-intel driver.
+While at it, select pinctrl-intel for Intel Lynxpoint driver.
 
 Signed-off-by: Raag Jadav <raag.jadav@intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-baytrail.c | 90 +++---------------------
- 1 file changed, 11 insertions(+), 79 deletions(-)
+ drivers/pinctrl/intel/Kconfig             |  6 +-
+ drivers/pinctrl/intel/pinctrl-lynxpoint.c | 86 +++--------------------
+ 2 files changed, 9 insertions(+), 83 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 02ab5fd7cbd5..85f1aea2ca89 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -13,6 +13,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
-+#include <linux/module.h>
- #include <linux/types.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -551,25 +552,10 @@ static const struct intel_pinctrl_soc_data *byt_soc_data[] = {
+diff --git a/drivers/pinctrl/intel/Kconfig b/drivers/pinctrl/intel/Kconfig
+index eaa45ebfd1c1..f42a83e29b8b 100644
+--- a/drivers/pinctrl/intel/Kconfig
++++ b/drivers/pinctrl/intel/Kconfig
+@@ -26,11 +26,7 @@ config PINCTRL_CHERRYVIEW
+ config PINCTRL_LYNXPOINT
+ 	tristate "Intel Lynxpoint pinctrl and GPIO driver"
+ 	depends on ACPI
+-	select PINMUX
+-	select PINCONF
+-	select GENERIC_PINCONF
+-	select GPIOLIB
+-	select GPIOLIB_IRQCHIP
++	select PINCTRL_INTEL
+ 	help
+ 	  Lynxpoint is the PCH of Intel Haswell. This pinctrl driver
+ 	  provides an interface that allows configuring of PCH pins and
+diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+index cdace55aaeac..780c9ab79d85 100644
+--- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
++++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
+@@ -206,21 +206,6 @@ static const struct intel_pinctrl_soc_data lptlp_soc_data = {
+  * IOxAPIC redirection map applies only for gpio 8-10, 13-14, 45-55.
+  */
  
- static DEFINE_RAW_SPINLOCK(byt_lock);
- 
--static struct intel_community *byt_get_community(struct intel_pinctrl *vg,
--						 unsigned int pin)
+-static struct intel_community *lp_get_community(struct intel_pinctrl *lg,
+-						unsigned int pin)
 -{
 -	struct intel_community *comm;
 -	int i;
 -
--	for (i = 0; i < vg->ncommunities; i++) {
--		comm = vg->communities + i;
+-	for (i = 0; i < lg->ncommunities; i++) {
+-		comm = &lg->communities[i];
 -		if (pin < comm->pin_base + comm->npins && pin >= comm->pin_base)
 -			return comm;
 -	}
@@ -92,113 +103,114 @@ index 02ab5fd7cbd5..85f1aea2ca89 100644
 -	return NULL;
 -}
 -
- static void __iomem *byt_gpio_reg(struct intel_pinctrl *vg, unsigned int offset,
- 				  int reg)
+ static void __iomem *lp_gpio_reg(struct gpio_chip *chip, unsigned int offset,
+ 				 int reg)
  {
--	struct intel_community *comm = byt_get_community(vg, offset);
-+	struct intel_community *comm = intel_get_community(vg, offset);
- 	u32 reg_offset;
+@@ -228,7 +213,7 @@ static void __iomem *lp_gpio_reg(struct gpio_chip *chip, unsigned int offset,
+ 	struct intel_community *comm;
+ 	int reg_offset;
  
+-	comm = lp_get_community(lg, offset);
++	comm = intel_get_community(lg, offset);
  	if (!comm)
-@@ -591,68 +577,12 @@ static void __iomem *byt_gpio_reg(struct intel_pinctrl *vg, unsigned int offset,
- 	return comm->pad_regs + reg_offset + reg;
+ 		return NULL;
+ 
+@@ -272,34 +257,6 @@ static bool lp_gpio_ioxapic_use(struct gpio_chip *chip, unsigned int offset)
+ 	return false;
  }
  
--static int byt_get_groups_count(struct pinctrl_dev *pctldev)
+-static int lp_get_groups_count(struct pinctrl_dev *pctldev)
 -{
--	struct intel_pinctrl *vg = pinctrl_dev_get_drvdata(pctldev);
+-	struct intel_pinctrl *lg = pinctrl_dev_get_drvdata(pctldev);
 -
--	return vg->soc->ngroups;
+-	return lg->soc->ngroups;
 -}
 -
--static const char *byt_get_group_name(struct pinctrl_dev *pctldev,
--				      unsigned int selector)
+-static const char *lp_get_group_name(struct pinctrl_dev *pctldev,
+-				     unsigned int selector)
 -{
--	struct intel_pinctrl *vg = pinctrl_dev_get_drvdata(pctldev);
+-	struct intel_pinctrl *lg = pinctrl_dev_get_drvdata(pctldev);
 -
--	return vg->soc->groups[selector].grp.name;
+-	return lg->soc->groups[selector].grp.name;
 -}
 -
--static int byt_get_group_pins(struct pinctrl_dev *pctldev,
--			      unsigned int selector,
--			      const unsigned int **pins,
--			      unsigned int *num_pins)
+-static int lp_get_group_pins(struct pinctrl_dev *pctldev,
+-			     unsigned int selector,
+-			     const unsigned int **pins,
+-			     unsigned int *num_pins)
 -{
--	struct intel_pinctrl *vg = pinctrl_dev_get_drvdata(pctldev);
+-	struct intel_pinctrl *lg = pinctrl_dev_get_drvdata(pctldev);
 -
--	*pins		= vg->soc->groups[selector].grp.pins;
--	*num_pins	= vg->soc->groups[selector].grp.npins;
+-	*pins		= lg->soc->groups[selector].grp.pins;
+-	*num_pins	= lg->soc->groups[selector].grp.npins;
 -
 -	return 0;
 -}
 -
- static const struct pinctrl_ops byt_pinctrl_ops = {
--	.get_groups_count	= byt_get_groups_count,
--	.get_group_name		= byt_get_group_name,
--	.get_group_pins		= byt_get_group_pins,
+ static void lp_pin_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
+ 			    unsigned int pin)
+ {
+@@ -323,40 +280,12 @@ static void lp_pin_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
+ }
+ 
+ static const struct pinctrl_ops lptlp_pinctrl_ops = {
+-	.get_groups_count	= lp_get_groups_count,
+-	.get_group_name		= lp_get_group_name,
+-	.get_group_pins		= lp_get_group_pins,
 +	.get_groups_count	= intel_get_groups_count,
 +	.get_group_name		= intel_get_group_name,
 +	.get_group_pins		= intel_get_group_pins,
+ 	.pin_dbg_show		= lp_pin_dbg_show,
  };
  
--static int byt_get_functions_count(struct pinctrl_dev *pctldev)
+-static int lp_get_functions_count(struct pinctrl_dev *pctldev)
 -{
--	struct intel_pinctrl *vg = pinctrl_dev_get_drvdata(pctldev);
+-	struct intel_pinctrl *lg = pinctrl_dev_get_drvdata(pctldev);
 -
--	return vg->soc->nfunctions;
+-	return lg->soc->nfunctions;
 -}
 -
--static const char *byt_get_function_name(struct pinctrl_dev *pctldev,
--					 unsigned int selector)
+-static const char *lp_get_function_name(struct pinctrl_dev *pctldev,
+-					unsigned int selector)
 -{
--	struct intel_pinctrl *vg = pinctrl_dev_get_drvdata(pctldev);
+-	struct intel_pinctrl *lg = pinctrl_dev_get_drvdata(pctldev);
 -
--	return vg->soc->functions[selector].func.name;
+-	return lg->soc->functions[selector].func.name;
 -}
 -
--static int byt_get_function_groups(struct pinctrl_dev *pctldev,
--				   unsigned int selector,
--				   const char * const **groups,
--				   unsigned int *ngroups)
+-static int lp_get_function_groups(struct pinctrl_dev *pctldev,
+-				  unsigned int selector,
+-				  const char * const **groups,
+-				  unsigned int *ngroups)
 -{
--	struct intel_pinctrl *vg = pinctrl_dev_get_drvdata(pctldev);
+-	struct intel_pinctrl *lg = pinctrl_dev_get_drvdata(pctldev);
 -
--	*groups		= vg->soc->functions[selector].func.groups;
--	*ngroups	= vg->soc->functions[selector].func.ngroups;
+-	*groups		= lg->soc->functions[selector].func.groups;
+-	*ngroups	= lg->soc->functions[selector].func.ngroups;
 -
 -	return 0;
 -}
 -
- static void byt_set_group_simple_mux(struct intel_pinctrl *vg,
- 				     const struct intel_pingroup group,
- 				     unsigned int func)
-@@ -851,9 +781,9 @@ static int byt_gpio_set_direction(struct pinctrl_dev *pctl_dev,
+ static int lp_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 			     unsigned int function, unsigned int group)
+ {
+@@ -481,9 +410,9 @@ static int lp_gpio_set_direction(struct pinctrl_dev *pctldev,
  }
  
- static const struct pinmux_ops byt_pinmux_ops = {
--	.get_functions_count	= byt_get_functions_count,
--	.get_function_name	= byt_get_function_name,
--	.get_function_groups	= byt_get_function_groups,
+ static const struct pinmux_ops lptlp_pinmux_ops = {
+-	.get_functions_count	= lp_get_functions_count,
+-	.get_function_name	= lp_get_function_name,
+-	.get_function_groups	= lp_get_function_groups,
 +	.get_functions_count	= intel_get_functions_count,
 +	.get_function_name	= intel_get_function_name,
 +	.get_function_groups	= intel_get_function_groups,
- 	.set_mux		= byt_set_mux,
- 	.gpio_request_enable	= byt_gpio_request_enable,
- 	.gpio_disable_free	= byt_gpio_disable_free,
-@@ -1261,7 +1191,7 @@ static void byt_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 		val = readl(val_reg);
- 		raw_spin_unlock_irqrestore(&byt_lock, flags);
- 
--		comm = byt_get_community(vg, pin);
-+		comm = intel_get_community(vg, pin);
- 		if (!comm) {
- 			seq_printf(s, "Pin %i: can't retrieve community\n", pin);
- 			continue;
-@@ -1848,3 +1778,5 @@ static int __init byt_gpio_init(void)
- 	return platform_driver_register(&byt_gpio_driver);
- }
- subsys_initcall(byt_gpio_init);
-+
+ 	.set_mux		= lp_pinmux_set_mux,
+ 	.gpio_request_enable	= lp_gpio_request_enable,
+ 	.gpio_disable_free	= lp_gpio_disable_free,
+@@ -987,3 +916,4 @@ MODULE_AUTHOR("Andy Shevchenko (Intel)");
+ MODULE_DESCRIPTION("Intel Lynxpoint pinctrl driver");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS("platform:lp_gpio");
 +MODULE_IMPORT_NS(PINCTRL_INTEL);
 -- 
 2.17.1
