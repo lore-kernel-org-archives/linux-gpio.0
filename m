@@ -2,63 +2,63 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06797C04A94
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 757F7C04FE2
 	for <linux-gpio@archiver.kernel.org>; Mon, 14 Aug 2023 08:17:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233717AbjHNIRL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S233833AbjHNIRL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Mon, 14 Aug 2023 04:17:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42098 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234496AbjHNIQz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Aug 2023 04:16:55 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C9C2E60
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Aug 2023 01:16:50 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fe4ad22e36so37427795e9.2
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Aug 2023 01:16:50 -0700 (PDT)
+        with ESMTP id S234222AbjHNIQs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Aug 2023 04:16:48 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6FC5E5C
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Aug 2023 01:16:46 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3fe2fb9b4d7so36528035e9.1
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Aug 2023 01:16:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1692001009; x=1692605809;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2Pe1G74CKDr0t/c1R/w4mEAZ9khtDQBENUlvIvkgD0Y=;
-        b=AlsIJ3Hli4koRHVo52AcOzcNnCXIWjQM425mlvpdhezGEMAvL2WOVDVfnz0GbdwguD
-         slNTc8BpKMYe9aETDR8Gsq+9hVOg16dvGjCdsOgJILRqSdwHxNBkTDGSEZYFHcrBYg4Q
-         MMjJVZQjSm5cbYDgA10Tn//NrYfa8VtJA4kl5zfOunBe2UCryxwW0jqKTWfZUo1VibUj
-         kD8kg+6pcxGH+kqoikv2bBl/DFLkMX8CCXROpGp5fugNmf+nTpzMs3RKz1Rv6bw3VUof
-         a5Ln5S3ah8//ts7AUyLGHrcbl77zahiKqDGvgJwC/rR+C1l4+eyEteRmSSgEwrXwDBN2
-         HWag==
+        d=linaro.org; s=google; t=1692001005; x=1692605805;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1P+7jhSSNcltObBqcyP3huFreuMp7RiZ1kKqWA9BdTU=;
+        b=QNHpiT7CaXxRuYW7wplRo1hM0BIwfS/5U3VNJMClXwpDK49QfOCqp11ER/vTMWkJqP
+         tVGRpr+vxyYS0/3BfhIE43SYUv2gyH/LYjRu+FsuLccS7otPdjMNrZj+EsKIif8a3MWE
+         3c1hRee5MeSgQ/gOpGq7YwUXOGBfG4PETsB0ER9zOifFMX6XUEF/a+FZB+GK3A8T11lI
+         l8Npq5fgiX700a9rtgke8nbGM8DpSQd6ffAgWRAum0JD6rJdUgMHmwj8fnA0QAh4HlSl
+         SiQnr8rsCg+vQ4jwwbq5CHIEJpcBSIOWI3HJNnW1e6t3Kn1gdWsUIhZK441Pj8ZSyloQ
+         D67Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692001009; x=1692605809;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Pe1G74CKDr0t/c1R/w4mEAZ9khtDQBENUlvIvkgD0Y=;
-        b=cPBRLxyWQJsLcdPFRslNpTvCDg071P1MxyrNC/6KHSm+fz/MNJwDH0h0vgeAsoQkR8
-         2WXEEPqgdHpnByt+G3zSrRky/No2QAPaunMig2hKTwR7D2dgdXwDa892zx6o07x9UDSr
-         XpkAlU8cGUMIgh1IZSUjViTNvjp/RPO82ccndqz3JFcWvgpJsywQsZX7MUUNaMvZC7LA
-         1WOkV+VEW73SQZop5iI/IctWaq2gzvrf4cfMWBxyy+yy+eEnipB1Tf59DkXOlGJ+unWQ
-         H9pajjLxguV4zdt/NEvOLG/4MEgvANGfl6KO2R43vtphxvB5sbMVUKZQJXxPivMB/ZtM
-         R0QQ==
-X-Gm-Message-State: AOJu0Yx57aPO49IJg5WXjW3VIKbCO1Ujmjgp37sGozB8JQkwylME1grF
-        6qbCbpw/5IgpJdA8YVXFqyOOJA==
-X-Google-Smtp-Source: AGHT+IFxoZYypMWMApyftvpZB+eRWVc7nLZT8b8RmwQysm55SPF8kxFmUC8yXR5M66sqVwKCaSHESw==
-X-Received: by 2002:a1c:ed15:0:b0:3fb:e206:ca5f with SMTP id l21-20020a1ced15000000b003fbe206ca5fmr7168108wmh.31.1692001008961;
-        Mon, 14 Aug 2023 01:16:48 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1692001005; x=1692605805;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1P+7jhSSNcltObBqcyP3huFreuMp7RiZ1kKqWA9BdTU=;
+        b=arCIwl1mMxJLqr+lq0a7V0IEzCXzdTESELnrzeI/Aby+A7blq/UOVkoZW3HBhr5dHo
+         giHWPqMYjYVzyHGOvieuHjv5/wPhoep6yL6dR0OM74NF6ghoIcR1Kj5rkcemHQLvk6uS
+         qrebu04iERDbkol+zMqLMOTmtFGJOGNjCxWAAFz2jGhbhg6Lpejs8I1V7hCros+PcCm5
+         yjkHC18Lf4ag80dyECaBgZVOcAVcGuYx2v5uFlR0lOqAj14DCy3dfLGIeilxBG0cq7qO
+         Bf0VLww15hnqg3Qr7SxzJUK8F7wSqjbhK00miFVVl+OcLEkIs/4Gk+lyGU9Poi2slVcr
+         Tp4A==
+X-Gm-Message-State: AOJu0YxDAdgdokNPU7xCU+Yy4EXQsVyl/Wm/SsPNDmCFkzclqcL18hkt
+        LBza/Ou6QDpkvcCDEw0GJT1BEg==
+X-Google-Smtp-Source: AGHT+IHtsrQFTxvyDoKJq0zJhTadqcM+XG7I+k33MHdMnKAw7Jjir0xPCJuUc09N6AgAGh0jgp8xRQ==
+X-Received: by 2002:a5d:4448:0:b0:317:f537:748d with SMTP id x8-20020a5d4448000000b00317f537748dmr5220459wrr.64.1692001005329;
+        Mon, 14 Aug 2023 01:16:45 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id k1-20020a5d4281000000b00317a29af4b2sm13542994wrq.68.2023.08.14.01.16.47
+        by smtp.gmail.com with ESMTPSA id k1-20020a5d4281000000b00317a29af4b2sm13542994wrq.68.2023.08.14.01.16.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Aug 2023 01:16:48 -0700 (PDT)
+        Mon, 14 Aug 2023 01:16:44 -0700 (PDT)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Mon, 14 Aug 2023 10:16:39 +0200
-Subject: [PATCH v3 3/3] dt-bindings: gpio: gpio_oxnas: remove obsolete
- bindings
+Subject: [PATCH v3 0/3] pinctrl: oxnas support removal
+Date:   Mon, 14 Aug 2023 10:16:36 +0200
+Message-Id: <20230814-topic-oxnas-upstream-remove-v3-0-04a0c5cdda52@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230814-topic-oxnas-upstream-remove-v3-3-04a0c5cdda52@linaro.org>
-References: <20230814-topic-oxnas-upstream-remove-v3-0-04a0c5cdda52@linaro.org>
-In-Reply-To: <20230814-topic-oxnas-upstream-remove-v3-0-04a0c5cdda52@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAOTi2WQC/43OwQ7CIBAE0F8xnF1TIFbryf8wHpayWJIWmqUSj
+ em/S3sxXozHmcObeYlE7CmJ0+YlmLJPPoYS9HYj2g7DjcDbkoWqlK60ljDF0bcQHwET3Mc0MeE
+ ATEPMBFgramxTOyISRTCYCAxjaLtihHvfl3Jkcv6xTl6uJXc+TZGf64Msl/a/sSyhgr2x+6Oz0
+ lrpzr0PyHEX+SYWOKsPVuvqN6YK5kyNRlvC46H9wuZ5fgMPKRwuKQEAAA==
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Neil Armstrong <neil.armstrong@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -68,100 +68,85 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andy@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-oxnas@groups.io,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+        devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Daniel Golle <daniel@makrotopia.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2444;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2278;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=jE6ByQZPyn94kajLMkmmnkKqcK01TK88XsXfpl+GUMQ=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBk2eLrjDbTfAEmzdlc5+OVy72+nkloYG/jlpD4hbXa
- p3OXVuyJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZNni6wAKCRB33NvayMhJ0XR6EA
- CgJ78xhOK89ymzp6lmIQDll16C4q2KKUwZpYLi19PkP5CHYpod1KfImzp6DZMipWgeNV5BXID4vbFc
- QmdNIQkTjkK9dA8Hf5Qz5Eg4OEOBW5AtBRZqaYxTEZY7lAAx10WH6ykM9DJ1JsvrjqvefO1PunTVKo
- ebeaG0C7j/zmILuEyedPLzWe9pRbSJ0YAeitBmOl2m7NzBdEo9T5foRIK2tp7tWfOrsagovPAiE2cq
- LQeNLBsZuhVYSmoeexUC9oTAq8A0DJBD03OtYj7ypPFc0SKyxvsZ7VDXpj07abZAvv7X1tHKyPfBoD
- KL09HCmsLKWO8qqR0F3JjoVv8L9T7MpfdXbbxtWJWCjVYghU4gN4g9M9yoez6+cz9mB9YFmwlrhDJz
- 0SY3yGvAWAi2GGQeJRPWzs4bm7a3LTsQpvi/w1F9/6vdoTdbdf4DbWNpnxa3/0R9j4X8Nn6ZBkh0b/
- TyDymJbacbClLxEvtE4KyVzDjEbbLXYZK9DhhQ3v/5jQetF6u1P0Cq00antay22GdXUDJu4tpo8kg6
- OAs+/3tH4J6VdE7bVpxEobtPrbVIvRn3Rf7CYOJsFlb53iKgcTQwe7sMQa9r94rRtZgWBnlHhdSzfA
- 6qH0uQAbjStD4KwG92omB0aHYoteiIuTHrJOW/JCQcTtwvbIgmtNltRr1vGQ==
+ bh=svL6aI+Ivh8BepAtDKpiDrwHSHdF9+dU0wkSJh9amZ0=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBk2eLqbnzULI5saow0fVSkLtRpOAARsRIwaipWDhVx
+ lsLLaj6JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZNni6gAKCRB33NvayMhJ0cmvEA
+ CvB0XkWPo2+wZVpZSUMFe6ciE43WkhMmHVwX30myPEwI4x0DUu81GxN1KDeMCIIf6gvbSNQhf4jhux
+ Pa5rErjAnLfNSMU2x8B/RJ/ENNjzU8RALcgV5Pl915uoCHTOwxw3JqDhQ6SYtA2rGcQpCCoyHVrghj
+ JRvWtnJbE5gSRtA2nnFyiUyTVQZnLl2BdBkxXVTW8cvgi/oXnVxbKvVdJSelWpMfSbwkwBde+3PBvm
+ DadHl6Z35P/rZzQhPwMQmQg4u8mxvRpQKfvpdkdOq7L40qJZq8zQXp3S93+POeFcSgkRy/E6kZecU5
+ plgKiyRUXDl/PgGSzECnCAAVqXJfPD4elh9ukb0YgdKRdLo0KVWUZoBXh5/mmBmQp7x3upVF9RJeg+
+ NobaW8Z5h1OLSi2NpYMatz/qAtm551wWVTWn0YEncwE7dC2v6F3MzL19mbxxoj6vFdwYwmnbNXDDaW
+ 4VbxNV2r6utPtXxaB7FWngH5ugU1hn3ufZbojuKukVVepzsFmcIJmJqWc2Xsw2IrYEIvi8YRSF2Dwd
+ Hedc0ksfNGBKzoOt5SOr+H2ckOYss+L8j09/iZmtLBQICJcsLH5bwrswVKmRno59Pq/vaR/6wxWb5g
+ 5yhQWrzswT9b4eb3zaomgEryjl0Tbrme0H4Mgmim+a5NKx+OKQRbCgL63iwg==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Due to lack of maintenance and stall of development for a few years now,
-and since no new features will ever be added upstream, remove the
-OX810 and OX820 gpio bindings.
+With [1] removing MPCore SMP support, this makes the OX820 barely usable,
+associated with a clear lack of maintainance, development and migration to
+dt-schema it's clear that Linux support for OX810 and OX820 should be removed.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Daniel Golle <daniel@makrotopia.org>
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+In addition, the OX810 hasn't been booted for years and isn't even present
+in an ARM config file.
+
+For the OX820, lack of USB and SATA support makes the platform not usable
+in the current Linux support and relies on off-tree drivers hacked from the
+vendor (defunct for years) sources.
+
+The last users are in the OpenWRT distribution, and today's removal means
+support will still be in stable 6.1 LTS kernel until end of 2026.
+
+If someone wants to take over the development even with lack of SMP, I'll
+be happy to hand off maintainance.
+
+It has been a fun time adding support for this architecture, but it's time
+to get over!
+
+This patchset only removes pinctrl/gpio code, and is derived from:
+https://lore.kernel.org/r/20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org
+
 ---
- .../devicetree/bindings/gpio/gpio_oxnas.txt        | 47 ----------------------
- 1 file changed, 47 deletions(-)
+Changes in v3:
+- Removed applied patches
+- Added Andy's tags
+- Reduced for pinctrl, rebased on pinctrl devel branch
+- Link to v2: https://lore.kernel.org/r/20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt b/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
-deleted file mode 100644
-index 966514744df4..000000000000
---- a/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
-+++ /dev/null
-@@ -1,47 +0,0 @@
--* Oxford Semiconductor OXNAS SoC GPIO Controller
--
--Please refer to gpio.txt for generic information regarding GPIO bindings.
--
--Required properties:
-- - compatible: "oxsemi,ox810se-gpio" or "oxsemi,ox820-gpio"
-- - reg: Base address and length for the device.
-- - interrupts: The port interrupt shared by all pins.
-- - gpio-controller: Marks the port as GPIO controller.
-- - #gpio-cells: Two. The first cell is the pin number and
--   the second cell is used to specify the gpio polarity as defined in
--   defined in <dt-bindings/gpio/gpio.h>:
--      0 = GPIO_ACTIVE_HIGH
--      1 = GPIO_ACTIVE_LOW
-- - interrupt-controller: Marks the device node as an interrupt controller.
-- - #interrupt-cells: Two. The first cell is the GPIO number and second cell
--   is used to specify the trigger type as defined in
--   <dt-bindings/interrupt-controller/irq.h>:
--      IRQ_TYPE_EDGE_RISING
--      IRQ_TYPE_EDGE_FALLING
--      IRQ_TYPE_EDGE_BOTH
-- - gpio-ranges: Interaction with the PINCTRL subsystem, it also specifies the
--   gpio base and count, should be in the format of numeric-gpio-range as
--   specified in the gpio.txt file.
--
--Example:
--
--gpio0: gpio@0 {
--	compatible = "oxsemi,ox810se-gpio";
--	reg = <0x000000 0x100000>;
--	interrupts = <21>;
--	#gpio-cells = <2>;
--	gpio-controller;
--	interrupt-controller;
--	#interrupt-cells = <2>;
--	gpio-ranges = <&pinctrl 0 0 32>;
--};
--
--keys {
--	...
--
--	button-esc {
--		label = "ESC";
--		linux,code = <1>;
--		gpios = <&gpio0 12 0>;
--	};
--};
+Changes in v2:
+- s/maintainance/maintenance/
+- added acked/review tags
+- dropped already applied patches
+- drop RFC
+- Link to v1: https://lore.kernel.org/r/20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org
 
+---
+Neil Armstrong (3):
+      pinctrl: pinctrl-oxnas: remove obsolete pinctrl driver
+      dt-bindings: pinctrl: oxnas,pinctrl: remove obsolete bindings
+      dt-bindings: gpio: gpio_oxnas: remove obsolete bindings
+
+ .../devicetree/bindings/gpio/gpio_oxnas.txt        |   47 -
+ .../devicetree/bindings/pinctrl/oxnas,pinctrl.txt  |   56 -
+ drivers/pinctrl/Kconfig                            |   11 -
+ drivers/pinctrl/Makefile                           |    1 -
+ drivers/pinctrl/pinctrl-oxnas.c                    | 1291 --------------------
+ 5 files changed, 1406 deletions(-)
+---
+base-commit: c9b2572f488c3ed3974a0ff6885bb059b1751c86
+change-id: 20230331-topic-oxnas-upstream-remove-a62e9d96feee
+
+Best regards,
 -- 
-2.34.1
+Neil Armstrong <neil.armstrong@linaro.org>
 
