@@ -2,66 +2,128 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61763C41513
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F46BC001B0
 	for <linux-gpio@archiver.kernel.org>; Tue, 15 Aug 2023 07:57:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235483AbjHOH4m (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 15 Aug 2023 03:56:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47542 "EHLO
+        id S235106AbjHOH4o (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 15 Aug 2023 03:56:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235465AbjHOH4K (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Aug 2023 03:56:10 -0400
+        with ESMTP id S235489AbjHOH4P (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Aug 2023 03:56:15 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 85B76DD;
-        Tue, 15 Aug 2023 00:56:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A3C48110;
+        Tue, 15 Aug 2023 00:56:14 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="6.01,174,1684767600"; 
-   d="scan'208";a="176670067"
+   d="scan'208";a="176670078"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 15 Aug 2023 16:56:07 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 15 Aug 2023 16:56:14 +0900
 Received: from localhost.localdomain (unknown [10.226.92.136])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2ACFF4182314;
-        Tue, 15 Aug 2023 16:56:04 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id DA5834182314;
+        Tue, 15 Aug 2023 16:56:11 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v2 0/3] Fix NULL pointer dereference in RZ/{G2L,V2M,A2} pinctrl driver
-Date:   Tue, 15 Aug 2023 08:55:59 +0100
-Message-Id: <20230815075602.10473-1-biju.das.jz@bp.renesas.com>
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        stable@kernel.org
+Subject: [PATCH v2 2/3] pinctrl: renesas: rzv2m: Fix NULL pointer dereference in rzv2m_dt_subnode_to_map()
+Date:   Tue, 15 Aug 2023 08:56:01 +0100
+Message-Id: <20230815075602.10473-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230815075602.10473-1-biju.das.jz@bp.renesas.com>
+References: <20230815075602.10473-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fix NULL pointer dereference in RZ/{G2L,V2M,A2M} pinctrl driver due to
-a race condition during boot. We have seen issues with RZ/{G2L,V2M} boards.
-Based on the code, RZ/A2 will also hit this issue. So fixing RZ/A2 aswell.
+Fix the below random NULL pointer crash during boot by serializing
+groups and functions creation in rzv2m_dt_subnode_to_map() with
+mutex lock.
 
-This issue is reproducible with 1/200 reboots.
+Crash logs:
+ pc : __pi_strcmp+0x20/0x140
+ lr : pinmux_func_name_to_selector+0x68/0xa4
+ Call trace:
+ __pi_strcmp+0x20/0x140
+ pinmux_generic_add_function+0x34/0xcc
+ rzv2m_dt_subnode_to_map+0x2e4/0x418
+ rzv2m_dt_node_to_map+0x15c/0x18c
+ pinctrl_dt_to_map+0x218/0x37c
+ create_pinctrl+0x70/0x3d8
 
+Fixes: 92a9b8252576 ("pinctrl: renesas: Add RZ/V2M pin and gpio controller driver")
+Cc: stable@kernel.org
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
 v1->v2:
  * Updated crash logs as per submitting patches doc.
+---
+ drivers/pinctrl/renesas/pinctrl-rzv2m.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Biju Das (3):
-  pinctrl: renesas: rzg2l: Fix NULL pointer dereference in
-    rzg2l_dt_subnode_to_map()
-  pinctrl: renesas: rzv2m: Fix NULL pointer dereference in
-    rzv2m_dt_subnode_to_map()
-  pinctrl: renesas: rza2: Add lock around
-    pinctrl_generic{{add,remove}_group,{add,remove}_function}
-
- drivers/pinctrl/renesas/pinctrl-rza2.c  | 11 ++++++++++-
- drivers/pinctrl/renesas/pinctrl-rzg2l.c |  8 ++++++++
- drivers/pinctrl/renesas/pinctrl-rzv2m.c |  8 ++++++++
- 3 files changed, 26 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzv2m.c b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
+index c73784b8b4ba..65718c9bfc0c 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzv2m.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
+@@ -14,6 +14,7 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
++#include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
+@@ -124,6 +125,7 @@ struct rzv2m_pinctrl {
+ 	struct pinctrl_gpio_range	gpio_range;
+ 
+ 	spinlock_t			lock;
++	struct mutex			mutex; /* serialize adding groups and functions */
+ };
+ 
+ static const unsigned int drv_1_8V_group2_uA[] = { 1800, 3800, 7800, 11000 };
+@@ -322,10 +324,12 @@ static int rzv2m_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		name = np->name;
+ 	}
+ 
++	mutex_lock(&pctrl->mutex);
+ 	/* Register a single pin group listing all the pins we read from DT */
+ 	gsel = pinctrl_generic_add_group(pctldev, name, pins, num_pinmux, NULL);
+ 	if (gsel < 0) {
+ 		ret = gsel;
++		mutex_unlock(&pctrl->mutex);
+ 		goto done;
+ 	}
+ 
+@@ -340,6 +344,8 @@ static int rzv2m_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		goto remove_group;
+ 	}
+ 
++	mutex_unlock(&pctrl->mutex);
++
+ 	maps[idx].type = PIN_MAP_TYPE_MUX_GROUP;
+ 	maps[idx].data.mux.group = name;
+ 	maps[idx].data.mux.function = name;
+@@ -351,6 +357,7 @@ static int rzv2m_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 
+ remove_group:
+ 	pinctrl_generic_remove_group(pctldev, gsel);
++	mutex_unlock(&pctrl->mutex);
+ done:
+ 	*index = idx;
+ 	kfree(configs);
+@@ -1065,6 +1072,7 @@ static int rzv2m_pinctrl_probe(struct platform_device *pdev)
+ 				     "failed to enable GPIO clk\n");
+ 
+ 	spin_lock_init(&pctrl->lock);
++	mutex_init(&pctrl->mutex);
+ 
+ 	platform_set_drvdata(pdev, pctrl);
+ 
 -- 
 2.25.1
 
