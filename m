@@ -2,196 +2,122 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03926C07E8A
-	for <linux-gpio@archiver.kernel.org>; Tue, 15 Aug 2023 13:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD186C001DB
+	for <linux-gpio@archiver.kernel.org>; Tue, 15 Aug 2023 14:44:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237418AbjHONQ1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 15 Aug 2023 09:16:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59330 "EHLO
+        id S233851AbjHOOoQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 15 Aug 2023 10:44:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237412AbjHONQJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Aug 2023 09:16:09 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 796001987;
-        Tue, 15 Aug 2023 06:16:08 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.01,174,1684767600"; 
-   d="scan'208";a="173003478"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 15 Aug 2023 22:16:07 +0900
-Received: from localhost.localdomain (unknown [10.226.92.136])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2BAD740029AC;
-        Tue, 15 Aug 2023 22:16:04 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
+        with ESMTP id S237814AbjHOOoM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Aug 2023 10:44:12 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4514F93;
+        Tue, 15 Aug 2023 07:43:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1692110637; x=1723646637;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=K+XM/YPnqQG07J4G7CaYNxO2TfKVYZQtv1XEdM//278=;
+  b=EfYk88o2u4wm+2ldwdGo3c87vuy0yuGZexJ98vw5hJtAGi90yw8UN9E1
+   j4hB8+ZNMXsVDYIP9x1OMeu6V+akUKMFG8LFaoLUorm29g1azhC72Rok6
+   JEBGg9RLg6pRBpLchhZ2lwcz3TPswgDGb/3j2l7CmNn2mH9IOVkabmBce
+   UTE1cn/4Btuwdn/it5Wmj4XORbioYza5AvHOrD+ZtVUFjCJ9s9NyK5AW3
+   iVgAcCJdt4HDcq7/1aJkUKy94+vdOd2FalM8p6e/IBsZRXsxW1/pfCaTU
+   MtKZVduJ9sGOjHg0aYPYGBL0NtuZFD57TzilhJugKCKG+36KfK4xJveN2
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10803"; a="403273027"
+X-IronPort-AV: E=Sophos;i="6.01,174,1684825200"; 
+   d="scan'208";a="403273027"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2023 07:43:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10803"; a="768838595"
+X-IronPort-AV: E=Sophos;i="6.01,174,1684825200"; 
+   d="scan'208";a="768838595"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga001.jf.intel.com with ESMTP; 15 Aug 2023 07:43:54 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qVvGz-005kMp-1W;
+        Tue, 15 Aug 2023 17:43:53 +0300
+Date:   Tue, 15 Aug 2023 17:43:53 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        stable@kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: [PATCH v3 1/3] pinctrl: renesas: rzg2l: Fix NULL pointer dereference in rzg2l_dt_subnode_to_map()
-Date:   Tue, 15 Aug 2023 14:15:56 +0100
-Message-Id: <20230815131558.33787-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230815131558.33787-1-biju.das.jz@bp.renesas.com>
-References: <20230815131558.33787-1-biju.das.jz@bp.renesas.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3] gpiolib: fix reference leaks when removing GPIO chips
+ still in use
+Message-ID: <ZNuPKf8NqcgcuGSd@smile.fi.intel.com>
+References: <20230811193034.59124-1-brgl@bgdev.pl>
+ <ZNtKQlnQxFediB0J@smile.fi.intel.com>
+ <CACRpkdZ32gW3YgQKPbWTnoRwxjXkViendGMhrAxfyp+W4NbqkA@mail.gmail.com>
+ <ZNt2KQMtpMdK9TyY@smile.fi.intel.com>
+ <CACRpkdbij=8NMVodezEXG-rtiBzp1q_fecizYtda4HbDXheu8Q@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdbij=8NMVodezEXG-rtiBzp1q_fecizYtda4HbDXheu8Q@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Fix the below random NULL pointer crash during boot by serializing
-pinctrl group and function creation/remove calls in
-rzg2l_dt_subnode_to_map() with mutex lock.
+On Tue, Aug 15, 2023 at 03:07:50PM +0200, Linus Walleij wrote:
+> On Tue, Aug 15, 2023 at 2:57 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Tue, Aug 15, 2023 at 01:40:22PM +0200, Linus Walleij wrote:
+> > > On Tue, Aug 15, 2023 at 11:50 AM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > On Fri, Aug 11, 2023 at 09:30:34PM +0200, Bartosz Golaszewski wrote:
 
-Crash logs:
- pc : __pi_strcmp+0x20/0x140
- lr : pinmux_func_name_to_selector+0x68/0xa4
- Call trace:
- __pi_strcmp+0x20/0x140
- pinmux_generic_add_function+0x34/0xcc
- rzg2l_dt_subnode_to_map+0x314/0x44c
- rzg2l_dt_node_to_map+0x164/0x194
- pinctrl_dt_to_map+0x218/0x37c
- create_pinctrl+0x70/0x3d8
+...
 
-While at it, add comments for bitmap_lock and lock.
+> > > > > +     module_put(desc->gdev->owner);
+> > > > > +     gpio_device_put(desc->gdev);
+> > > >
+> > > > So, if gdev can be NULL, you will get an Oops with new code.
+> > >
+> > > I read it such that gdev->chip can be NULL, but not gdev,
+> > > and desc->gdev->owner is fine to reference?
+> >
+> > Basically the Q is
+> > "if desc is non-NULL, does it guarantee that gdev is non-NULL either?"
+> 
+> gdev->desc is assigned in one single spot, which is in
+> gpiochip_add_data_with_key():
+> 
+>        for (i = 0; i < gc->ngpio; i++)
+>                 gdev->descs[i].gdev = gdev;
+> 
+> It is never assigned anywhere else, so I guess yes.
+> 
+> We may also ask if it is ever invalid (i.e. if desc->gdev can point to
+> junk).
+> 
+> A gdev turns to junk when its reference count goes down to zero
+> and gpiodev_release() is called effectively calling kfree() on the
+> struct gpio_device *.
+> 
+> But that can only happen as a result of module_put() getting
+> called, pulling the references down to zero. Which is what we
+> are discussing. The line after module_put(), desc->gdev
+> *could* be NULL.
 
-Fixes: c4c4637eb57f ("pinctrl: renesas: Add RZ/G2L pin and gpio controller driver")
-Cc: stable@kernel.org
-Tested-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v2->v3:
- * Added comment for bitmap_lock and lock.
- * Moved map allocation down to reduce lock section.
- * Added locks for maps and pinctrl group and function creation/remove
-   calls
- * Added unlock_and_done label for lock error path.
-v1->v2:
- * Updated crash logs as per submitting patches doc.
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 58 ++++++++++++++-----------
- 1 file changed, 33 insertions(+), 25 deletions(-)
+Yes.
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 4f34f8f24bde..571a32d2f697 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -11,6 +11,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/of_irq.h>
- #include <linux/platform_device.h>
-@@ -149,10 +150,11 @@ struct rzg2l_pinctrl {
- 	struct gpio_chip		gpio_chip;
- 	struct pinctrl_gpio_range	gpio_range;
- 	DECLARE_BITMAP(tint_slot, RZG2L_TINT_MAX_INTERRUPT);
--	spinlock_t			bitmap_lock;
-+	spinlock_t			bitmap_lock; /* protect tint_slot bitmap */
- 	unsigned int			hwirq[RZG2L_TINT_MAX_INTERRUPT];
- 
--	spinlock_t			lock;
-+	spinlock_t			lock; /* lock read/write registers */
-+	struct mutex			mutex; /* serialize adding groups and functions */
- };
- 
- static const unsigned int iolh_groupa_mA[] = { 2, 4, 8, 12 };
-@@ -309,28 +311,6 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	if (num_pins)
- 		nmaps += num_pins;
- 
--	maps = krealloc_array(maps, nmaps, sizeof(*maps), GFP_KERNEL);
--	if (!maps) {
--		ret = -ENOMEM;
--		goto done;
--	}
--
--	*map = maps;
--	*num_maps = nmaps;
--	if (num_pins) {
--		of_property_for_each_string(np, "pins", prop, pin) {
--			ret = rzg2l_map_add_config(&maps[idx], pin,
--						   PIN_MAP_TYPE_CONFIGS_PIN,
--						   configs, num_configs);
--			if (ret < 0)
--				goto done;
--
--			idx++;
--		}
--		ret = 0;
--		goto done;
--	}
--
- 	pins = devm_kcalloc(pctrl->dev, num_pinmux, sizeof(*pins), GFP_KERNEL);
- 	psel_val = devm_kcalloc(pctrl->dev, num_pinmux, sizeof(*psel_val),
- 				GFP_KERNEL);
-@@ -362,11 +342,34 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		name = np->name;
- 	}
- 
-+	mutex_lock(&pctrl->mutex);
-+	maps = krealloc_array(maps, nmaps, sizeof(*maps), GFP_KERNEL);
-+	if (!maps) {
-+		ret = -ENOMEM;
-+		goto unlock_and_done;
-+	}
-+
-+	*map = maps;
-+	*num_maps = nmaps;
-+	if (num_pins) {
-+		of_property_for_each_string(np, "pins", prop, pin) {
-+			ret = rzg2l_map_add_config(&maps[idx], pin,
-+						   PIN_MAP_TYPE_CONFIGS_PIN,
-+						   configs, num_configs);
-+			if (ret < 0)
-+				goto unlock_and_done;
-+
-+			idx++;
-+		}
-+		ret = 0;
-+		goto unlock_and_done;
-+	}
-+
- 	/* Register a single pin group listing all the pins we read from DT */
- 	gsel = pinctrl_generic_add_group(pctldev, name, pins, num_pinmux, NULL);
- 	if (gsel < 0) {
- 		ret = gsel;
--		goto done;
-+		goto unlock_and_done;
- 	}
- 
- 	/*
-@@ -380,6 +383,8 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		goto remove_group;
- 	}
- 
-+	mutex_unlock(&pctrl->mutex);
-+
- 	maps[idx].type = PIN_MAP_TYPE_MUX_GROUP;
- 	maps[idx].data.mux.group = name;
- 	maps[idx].data.mux.function = name;
-@@ -391,6 +396,8 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 
- remove_group:
- 	pinctrl_generic_remove_group(pctldev, gsel);
-+unlock_and_done:
-+	mutex_unlock(&pctrl->mutex);
- done:
- 	*index = idx;
- 	kfree(configs);
-@@ -1503,6 +1510,7 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
- 
- 	spin_lock_init(&pctrl->lock);
- 	spin_lock_init(&pctrl->bitmap_lock);
-+	mutex_init(&pctrl->mutex);
- 
- 	platform_set_drvdata(pdev, pctrl);
- 
+> But then we just call gpio_device_put(desc->gdev) which is
+> just a call to device_put(), which is NULL-tolerant.
+
+But gpio_device_put() does not NULL tolerant.
+So, oops in this line then.
+
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
