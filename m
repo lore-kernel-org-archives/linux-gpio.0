@@ -2,132 +2,119 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72393C001B0
-	for <linux-gpio@archiver.kernel.org>; Wed, 16 Aug 2023 11:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C42C001E0
+	for <linux-gpio@archiver.kernel.org>; Wed, 16 Aug 2023 12:21:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235034AbjHPLiJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 16 Aug 2023 07:38:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42306 "EHLO
+        id S236656AbjHPMVC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 16 Aug 2023 08:21:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244692AbjHPLhp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Aug 2023 07:37:45 -0400
-Received: from mail-vk1-xa2c.google.com (mail-vk1-xa2c.google.com [IPv6:2607:f8b0:4864:20::a2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1FE4198E
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Aug 2023 04:37:43 -0700 (PDT)
-Received: by mail-vk1-xa2c.google.com with SMTP id 71dfb90a1353d-48719771d3fso4677842e0c.0
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Aug 2023 04:37:43 -0700 (PDT)
+        with ESMTP id S245080AbjHPMUl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Aug 2023 08:20:41 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA21626AD
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Aug 2023 05:20:39 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3fe2d218eedso60889985e9.0
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Aug 2023 05:20:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1692185863; x=1692790663;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1692188438; x=1692793238;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gkniGw8X60dZGG0/2QwYml0OEv6BpB8eq/BnoakL6l8=;
-        b=KCefl4EeF0bE09011/E1zvYnnZv31+reSVQfTbVywg473EQH9YWm/LbD929FyieFdh
-         1HNKB9dztsgryIF+NPzK3ZZNNYW+5bFPZpJwA7dJg6AtLmnwY5ZWoFDpgvL8cFwH72ju
-         hB0Q/8VrJUhJXBt17KIhYUN6fKuC2rLlv/Nb4IICv1vANvz0QSCFsPPIdHVsGtv//nmF
-         ITy9aghDGb8SVe8udkPAETFFX3qBGAorg40kra7QFbT0/FIdnltQWYYzIQfR1Alvm0QL
-         CxjmhAE5ZtpSMsF3F1vKjUDpu9kCnyjQFTKSjCjryuF0ZljGP6YlJqRD7AjCvnxJpkfK
-         78rQ==
+        bh=yc+T77NE6nVI9PLsQkqlrr/xBBkFkUhqwF3/jEMdIPg=;
+        b=Y/ihd289nZXKIxyoTl17TgP7aQSTwe8RkeUix/vGZxejIeeD90O9aXAMaaLoZqpaac
+         HcZ3xiPoE4uRN+essCNgN7+tZIC4MiyUOtgfNI97sNNRZfgXpT5njdMiVV0TGx1WstN1
+         8AKMqMaxGU9X1Yq6k6O9ZJ8qCTJZ3o10pQJreea0WqsGGa961/VRl+sBoliccF5IYjeW
+         7HV4F1MuA93c7rN4giB5MK3p7phz/qWBDDwbjIw5SpjHXyLcILimvFY2GDaeLWExD9KH
+         /zH56Ir3WIiJCNzq+y1XfixOQWbt3WuyPadBKM8djazEi/FhNDxOa2X0dC1JTuIPBTLo
+         Nv6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692185863; x=1692790663;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1692188438; x=1692793238;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gkniGw8X60dZGG0/2QwYml0OEv6BpB8eq/BnoakL6l8=;
-        b=PcIdVh38PdRRvL/pOJqPdXq/YIvAyBT5zh7sCsxrh3RVlKuXcD9W4uuhJHt/P8pLTh
-         +5eO+LxMGk255oy6+VwfX3ToEHjsg4Wm/5AGzCEnpVQnID0/FKaQZeSrHugNZhDxTX0T
-         xNXSNXdAV4g6KQ1wpodkUizMMbXmYVSX7N5NTevmQq6B/OzLDHqMkX8WBEGl6B/KAkDi
-         I3EarzcshJPorT7/d+2a6SJSZJEgTtsjEtgN13tR46aMtA+BXqB1lnpvsQ/7gM+cIheY
-         RvCgtJgH96fzzDx1CRzNu/1WOgC6x2QdoIwdW7Qopmsj1hoKecm10tuCVnM6rOUVz1g6
-         CsEA==
-X-Gm-Message-State: AOJu0Yy/183EvRwNv7YSOwMa+tRmqxaVxb9EgafVPRRgaZaWn4JKF7p+
-        RIIeBH3ED1xMRKNJZsQ2Snrim1iBYt0il+tFgfnoiQ==
-X-Google-Smtp-Source: AGHT+IFDwRo5f/VSRlfWrbcO2BNZxwsIUB6eqolmB8bXeSu+qTy0BzDKtb+TQUJi1yzWVPIKFOsaPkl3DiOc0yAqx8E=
-X-Received: by 2002:a1f:a4c1:0:b0:481:5218:ad27 with SMTP id
- n184-20020a1fa4c1000000b004815218ad27mr2568426vke.3.1692185862866; Wed, 16
- Aug 2023 04:37:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230811193034.59124-1-brgl@bgdev.pl>
-In-Reply-To: <20230811193034.59124-1-brgl@bgdev.pl>
+        bh=yc+T77NE6nVI9PLsQkqlrr/xBBkFkUhqwF3/jEMdIPg=;
+        b=b0K2jmYWgQSeSgJyXRsVEdKcB2EVEBFA5qjBTtirI0whXV7nRC6whH92GcK1rLIezG
+         GYcjYV3kPNABNH/AFyn6GBsckHOcv7BWcRTjYWxcX0q8aYcqRSQyl4tTY068qUTwPimd
+         /yPtKhzQddGTxJ5h/voURQLi77MF9znxwkLDa6HFqMsI6xQZRV724t4lRhrp4KRRe1M9
+         /wT1f81eVTEKoD/Bkm0AJ4jAGTDgPYA831gMdIabQVBaOj4BYOAdYbv27GIMOafnzSid
+         gLTOv7yc0EoyM0lgKqzMQQkKcy2T1wVtE66hR0nZENC9gYABiIpj73buf4nQ9F4YzCm2
+         HA8g==
+X-Gm-Message-State: AOJu0YwR/sd9UTMdmVwSidG7T1DqRITRnPdsQqu0JvffRP0Dt4FCG3e6
+        A64zhmULfCfEgT/MumWcQlaE1dKmgU1jqx/NgDouCQ==
+X-Google-Smtp-Source: AGHT+IFEJKQoq2tV1RnY7W0jsL0DzfdsoPDjKqgbbV9zKHFRDerYe1M182sG4pkSRUTPPLCYg90rtw==
+X-Received: by 2002:a05:600c:1c17:b0:3fe:485f:ed1b with SMTP id j23-20020a05600c1c1700b003fe485fed1bmr1241928wms.28.1692188438347;
+        Wed, 16 Aug 2023 05:20:38 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:55ba:c083:817:86f])
+        by smtp.gmail.com with ESMTPSA id e6-20020adffd06000000b003196b1bb528sm14566112wrr.64.2023.08.16.05.20.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Aug 2023 05:20:37 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 16 Aug 2023 13:37:32 +0200
-Message-ID: <CAMRc=MdeG2S=HSc0TY03nXX_hSnBLp7ywTSa2=xwTXWDTZqb=Q@mail.gmail.com>
-Subject: Re: [PATCH v3] gpiolib: fix reference leaks when removing GPIO chips
- still in use
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Kent Gibson <warthog618@gmail.com>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: [PATCH 3/5] gpio: cdev: wake up chardev poll() on device unbind
+Date:   Wed, 16 Aug 2023 14:20:30 +0200
+Message-Id: <20230816122032.15548-4-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230816122032.15548-1-brgl@bgdev.pl>
+References: <20230816122032.15548-1-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Aug 11, 2023 at 9:30=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> After we remove a GPIO chip that still has some requested descriptors,
-> gpiod_free_commit() will fail and we will never put the references to the
-> GPIO device and the owning module in gpiod_free().
->
-> Rework this function to:
-> - not warn on desc =3D=3D NULL as this is a use-case on which most free
->   functions silently return
-> - put the references to desc->gdev and desc->gdev->owner unconditionally
->   so that the release callback actually gets called when the remaining
->   references are dropped by external GPIO users
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
-> v1 -> v2:
-> - add a comment about why we can't use VALIDATE_DESC_VOID()
->
-> v2 -> v3:
-> - we must drop the reference to the owner module before we drop the one
->   to the gpio_device as the latter may be removed if this is the last
->   reference and we'll end up calling module_put() on freed memory
->
->  drivers/gpio/gpiolib.c | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 251c875b5c34..76e0c38026c3 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -2167,12 +2167,18 @@ static bool gpiod_free_commit(struct gpio_desc *d=
-esc)
->
->  void gpiod_free(struct gpio_desc *desc)
->  {
-> -       if (desc && desc->gdev && gpiod_free_commit(desc)) {
-> -               module_put(desc->gdev->owner);
-> -               gpio_device_put(desc->gdev);
-> -       } else {
-> +       /*
-> +        * We must not use VALIDATE_DESC_VOID() as the underlying gdev->c=
-hip
-> +        * may already be NULL but we still want to put the references.
-> +        */
-> +       if (!desc)
-> +               return;
-> +
-> +       if (!gpiod_free_commit(desc))
->                 WARN_ON(extra_checks);
-> -       }
-> +
-> +       module_put(desc->gdev->owner);
-> +       gpio_device_put(desc->gdev);
->  }
->
->  /**
-> --
-> 2.39.2
->
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Queued for fixes.
+Emit a new notifier event right after the character device was
+unregistered and receive it in the notifier owned by the descriptor
+associated with the character device file. Upon reception, wake up the
+wait queue so that the user-space be forced out of poll() and need to
+go into a new system call which will then fail due to the chip being
+gone.
 
-Bart
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpiolib-cdev.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+index 660d2e057451..eb8c0cb71da4 100644
+--- a/drivers/gpio/gpiolib-cdev.c
++++ b/drivers/gpio/gpiolib-cdev.c
+@@ -32,6 +32,12 @@
+ #include "gpiolib.h"
+ #include "gpiolib-cdev.h"
+ 
++/*
++ * Let's use a higher value for gpio_device notifications to not conflict with
++ * UAPI defines that can also serve as notifier action arguments.
++ */
++#define GPIO_CDEV_UNREGISTERED	1000
++
+ /*
+  * Array sizes must ensure 64-bit alignment and not create holes in the
+  * struct packing.
+@@ -2526,6 +2532,9 @@ static int gpio_chardev_notify(struct notifier_block *nb, unsigned long action,
+ 		else
+ 			pr_debug_ratelimited("lineinfo event FIFO is full - event dropped\n");
+ 		break;
++	case GPIO_CDEV_UNREGISTERED:
++		wake_up_poll(&cdev->wait, EPOLLIN | EPOLLERR);
++		break;
+ 	default:
+ 		return NOTIFY_DONE;
+ 	}
+@@ -2761,4 +2770,6 @@ int gpiolib_cdev_register(struct gpio_device *gdev, dev_t devt)
+ void gpiolib_cdev_unregister(struct gpio_device *gdev)
+ {
+ 	cdev_device_del(&gdev->chrdev, &gdev->dev);
++	blocking_notifier_call_chain(&gdev->notifier,
++				     GPIO_CDEV_UNREGISTERED, NULL);
+ }
+-- 
+2.39.2
+
