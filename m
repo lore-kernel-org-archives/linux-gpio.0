@@ -2,62 +2,62 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA996C3DA70
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D347CC52CDC
 	for <linux-gpio@archiver.kernel.org>; Thu, 17 Aug 2023 18:51:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354563AbjHQSue (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1354566AbjHQSue (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 17 Aug 2023 14:50:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41112 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354567AbjHQSuM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Aug 2023 14:50:12 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 555B72727
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Aug 2023 11:50:11 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fe2d218eedso1878015e9.0
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Aug 2023 11:50:11 -0700 (PDT)
+        with ESMTP id S1354558AbjHQSuL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Aug 2023 14:50:11 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BB082D59
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Aug 2023 11:50:09 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3fe426b8583so1683865e9.2
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Aug 2023 11:50:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1692298210; x=1692903010;
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1692298208; x=1692903008;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0xjFbKJBDBiBFY+aycvUJbh13JjRxLaBnyPofJylkh8=;
-        b=oLsg3/sOQZMmhARANNVu9DA/4a1GJa2yVTbOqFkstZ+qh3hMta52sfZC32MJZffNLo
-         PzGgRckYbKjsqQ2UJ+R0vUsswARErk0XLgdSvMiFbwMDIWL0+onda9b8l/DILKvGxZZh
-         welcaKpIimSIXHVPvLywgiYataXRNy+D4JVoa9JCD4jTQxIbE5vWtR+79MBVZpHr3wog
-         uylZ/PoVr/6d7TwfLCMgOZ/N+j0J3ka57S9lZWCIjeEAv0MkQlVCcEzD2HXxDFfAqT53
-         WrefbmfiGPnNxebLwMj3UIwRnAoonhlNwxjgEtqKGaC73ppj+fW+LAbhsAnmllvkWFHi
-         QluQ==
+        bh=PekFEtrOYZxrIpSwnRFffcXubMgkAQwr8swW+ILwpfg=;
+        b=IjBKcNqkZ4YPS5JZ5HtdtiCT+pNDh3PfOoIW246n5IIh3ntKzN+YMtsxh9uZNa40dL
+         5mc+RvqNedtLOpH9L7GKIoinBm1cpn3eVhJT4jKoNXRcLHfeZGjIvHwAjY6SaCFaOrSD
+         NKmYpgXIYcWZyW4j6zQSQFrEzC55PXEB5z3l8vUAFs3LBd7hi8wC9ukxYzhVuEv7gZtR
+         OfzYyMDrPf66xEkwWOwpXFcELPyN2HSecFY08JwCb71g+rkuNnH4nGxJmfo6gVEhze/s
+         J5hWz2yNuhFGXtbw2M/Z9JsQaikVsBfkRJCzX8pua5spNz7payeSjz2kESdpRWaBKZy+
+         tNQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692298210; x=1692903010;
+        d=1e100.net; s=20221208; t=1692298208; x=1692903008;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0xjFbKJBDBiBFY+aycvUJbh13JjRxLaBnyPofJylkh8=;
-        b=dpTBAtn92XoQWybpK5HlbB7uqQl6mTiPnFu5sZe9TyTwnCV3QGhl0L9pfJiKLeU3si
-         e3K+yp0ngM5wQ4eVrgZkYB80A9kDIk2CUH/htSIQRdcfTXE68X1ecqnbNn84coXOYO7B
-         OsvUhsNH/VLXNIiNxQa/386ryEEKwATZuW0B1v+XVMzZKvVyt8G/DA0lxocLWtgNiI2l
-         FeqrUp0nCh4APdrWVdc7RRp+1TeAyRYe5p515R+IUhlrD0ukHQ53ya7mvT7wAiVadolT
-         XPxukt1AozJZWqKFaDl9PcNBj9EhdKR41WnXar7h2kGfsWL174kIVf5rR9X+lp7LGO8S
-         o/BQ==
-X-Gm-Message-State: AOJu0YzpI2AqlJLUOQYCIAy3JP+OiS5ILmw9ELEfpuwYN78Ml4NbVW4J
-        ITBnsLOhJIM2JlE61bUiguUd+A==
-X-Google-Smtp-Source: AGHT+IFnKrGwy2wg7vBEDHiNNdtTnpnDVZuMTc5dfF3B5Kr/iaOuiSby3ZWQkJE9UxwLAvPQ3n7jeA==
-X-Received: by 2002:a05:600c:2299:b0:3fe:ba7:f200 with SMTP id 25-20020a05600c229900b003fe0ba7f200mr481524wmf.20.1692298209949;
-        Thu, 17 Aug 2023 11:50:09 -0700 (PDT)
+        bh=PekFEtrOYZxrIpSwnRFffcXubMgkAQwr8swW+ILwpfg=;
+        b=QY9WogueHOcFBhArQC07tGxitFxOv369RuE+hT7zQBJDAMlVDu7yj4uoutSjQLqjas
+         erFswyDhBarEcK3Q64pAGbUwebXMtja7s7s/Elqlnen7t9VMQEhn2j5hqal1DhQfM4l6
+         CVsm9VJPkweW9obISZnjXMtVXDisN0rcbawaeMh1Y67MJ/8f4SDgp9H5PM5ynDh1mZT2
+         5i/UeG4t2VNiJp3/PcFnIU6wYCZc1M2xURF8jTp77xfEeH2YSqXKYQ/0SIyZPanzHRwy
+         VQHtzg79rEEImEzkDGsiMCSIV4OpBxLGE1eSM4qmvsBSmP19rFILdSjUIQTXLo4xsfEq
+         fhbg==
+X-Gm-Message-State: AOJu0YyIstdGfvVwD+Jyojy0NeVJSXU5iXpXrmseSyTUCRgOHb/GefTk
+        vMs85TfBm9YtPPR7et+MUFX4hw==
+X-Google-Smtp-Source: AGHT+IH5WbcaWSn5QIWPOiMc7sNvzhoPyDrUanyCOyoTBOzTeoJvf4Crgt8aMBUGe/OhxLfXVTplQw==
+X-Received: by 2002:a05:600c:2805:b0:3fc:3f31:4233 with SMTP id m5-20020a05600c280500b003fc3f314233mr401739wmb.38.1692298207922;
+        Thu, 17 Aug 2023 11:50:07 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:2f99:c690:b4da:e3d2])
-        by smtp.gmail.com with ESMTPSA id a23-20020a05600c225700b003fe1cdbc33dsm3963020wmm.9.2023.08.17.11.50.08
+        by smtp.gmail.com with ESMTPSA id a23-20020a05600c225700b003fe1cdbc33dsm3963020wmm.9.2023.08.17.11.50.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Aug 2023 11:50:09 -0700 (PDT)
+        Thu, 17 Aug 2023 11:50:07 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Kent Gibson <warthog618@gmail.com>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 3/6] gpiolib: add a second blocking notifier to struct gpio_device
-Date:   Thu, 17 Aug 2023 20:49:55 +0200
-Message-Id: <20230817184958.25349-4-brgl@bgdev.pl>
+Subject: [PATCH v2 1/6] gpiolib: rename the gpio_device notifier
+Date:   Thu, 17 Aug 2023 20:49:53 +0200
+Message-Id: <20230817184958.25349-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230817184958.25349-1-brgl@bgdev.pl>
 References: <20230817184958.25349-1-brgl@bgdev.pl>
@@ -69,57 +69,145 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add a new blocking notifier to struct gpio_device and use it to notify
-subscribers about the GPIO device being unregistered from the device
-model.
+Change the generic "notifier" name to "line_state_notifier" in order to
+reflect its purpose in preparation for adding a second notifier which
+will be used to notify wait queues about device unregistering.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpiolib-cdev.c | 1 +
- drivers/gpio/gpiolib.c      | 1 +
- drivers/gpio/gpiolib.h      | 3 +++
- 3 files changed, 5 insertions(+)
+ drivers/gpio/gpiolib-cdev.c | 16 ++++++++--------
+ drivers/gpio/gpiolib.c      |  6 +++---
+ drivers/gpio/gpiolib.h      |  6 +++---
+ 3 files changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index df30d17f9e29..f95e1b110311 100644
+index 0a33971c964c..9ee8604f32e1 100644
 --- a/drivers/gpio/gpiolib-cdev.c
 +++ b/drivers/gpio/gpiolib-cdev.c
-@@ -2749,4 +2749,5 @@ int gpiolib_cdev_register(struct gpio_device *gdev, dev_t devt)
- void gpiolib_cdev_unregister(struct gpio_device *gdev)
- {
- 	cdev_device_del(&gdev->chrdev, &gdev->dev);
-+	blocking_notifier_call_chain(&gdev->device_notifier, 0, NULL);
- }
+@@ -230,7 +230,7 @@ static long linehandle_set_config(struct linehandle_state *lh,
+ 				return ret;
+ 		}
+ 
+-		blocking_notifier_call_chain(&desc->gdev->notifier,
++		blocking_notifier_call_chain(&desc->gdev->line_state_notifier,
+ 					     GPIO_V2_LINE_CHANGED_CONFIG,
+ 					     desc);
+ 	}
+@@ -414,7 +414,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
+ 				goto out_free_lh;
+ 		}
+ 
+-		blocking_notifier_call_chain(&desc->gdev->notifier,
++		blocking_notifier_call_chain(&desc->gdev->line_state_notifier,
+ 					     GPIO_V2_LINE_CHANGED_REQUESTED, desc);
+ 
+ 		dev_dbg(&gdev->dev, "registered chardev handle for line %d\n",
+@@ -1407,7 +1407,7 @@ static long linereq_set_config_unlocked(struct linereq *lr,
+ 
+ 		WRITE_ONCE(line->edflags, edflags);
+ 
+-		blocking_notifier_call_chain(&desc->gdev->notifier,
++		blocking_notifier_call_chain(&desc->gdev->line_state_notifier,
+ 					     GPIO_V2_LINE_CHANGED_CONFIG,
+ 					     desc);
+ 	}
+@@ -1720,7 +1720,7 @@ static int linereq_create(struct gpio_device *gdev, void __user *ip)
+ 
+ 		lr->lines[i].edflags = edflags;
+ 
+-		blocking_notifier_call_chain(&desc->gdev->notifier,
++		blocking_notifier_call_chain(&desc->gdev->line_state_notifier,
+ 					     GPIO_V2_LINE_CHANGED_REQUESTED, desc);
+ 
+ 		dev_dbg(&gdev->dev, "registered chardev handle for line %d\n",
+@@ -2117,7 +2117,7 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
+ 	if (ret)
+ 		goto out_free_le;
+ 
+-	blocking_notifier_call_chain(&desc->gdev->notifier,
++	blocking_notifier_call_chain(&desc->gdev->line_state_notifier,
+ 				     GPIO_V2_LINE_CHANGED_REQUESTED, desc);
+ 
+ 	irq = gpiod_to_irq(desc);
+@@ -2671,7 +2671,7 @@ static int gpio_chrdev_open(struct inode *inode, struct file *file)
+ 	cdev->gdev = gpio_device_get(gdev);
+ 
+ 	cdev->lineinfo_changed_nb.notifier_call = lineinfo_changed_notify;
+-	ret = blocking_notifier_chain_register(&gdev->notifier,
++	ret = blocking_notifier_chain_register(&gdev->line_state_notifier,
+ 					       &cdev->lineinfo_changed_nb);
+ 	if (ret)
+ 		goto out_free_bitmap;
+@@ -2687,7 +2687,7 @@ static int gpio_chrdev_open(struct inode *inode, struct file *file)
+ 	return ret;
+ 
+ out_unregister_notifier:
+-	blocking_notifier_chain_unregister(&gdev->notifier,
++	blocking_notifier_chain_unregister(&gdev->line_state_notifier,
+ 					   &cdev->lineinfo_changed_nb);
+ out_free_bitmap:
+ 	gpio_device_put(gdev);
+@@ -2711,7 +2711,7 @@ static int gpio_chrdev_release(struct inode *inode, struct file *file)
+ 	struct gpio_device *gdev = cdev->gdev;
+ 
+ 	bitmap_free(cdev->watched_lines);
+-	blocking_notifier_chain_unregister(&gdev->notifier,
++	blocking_notifier_chain_unregister(&gdev->line_state_notifier,
+ 					   &cdev->lineinfo_changed_nb);
+ 	gpio_device_put(gdev);
+ 	kfree(cdev);
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 769ca2333b7a..0737952882cd 100644
+index 76e0c38026c3..769ca2333b7a 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -842,6 +842,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+@@ -841,7 +841,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 
  	spin_unlock_irqrestore(&gpio_lock, flags);
  
- 	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
-+	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->device_notifier);
+-	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->notifier);
++	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
  	init_rwsem(&gdev->sem);
  
  #ifdef CONFIG_PINCTRL
+@@ -2159,7 +2159,7 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
+ 	}
+ 
+ 	spin_unlock_irqrestore(&gpio_lock, flags);
+-	blocking_notifier_call_chain(&desc->gdev->notifier,
++	blocking_notifier_call_chain(&desc->gdev->line_state_notifier,
+ 				     GPIOLINE_CHANGED_RELEASED, desc);
+ 
+ 	return ret;
+@@ -3995,7 +3995,7 @@ static struct gpio_desc *gpiod_find_and_request(struct device *consumer,
+ 		return ERR_PTR(ret);
+ 	}
+ 
+-	blocking_notifier_call_chain(&desc->gdev->notifier,
++	blocking_notifier_call_chain(&desc->gdev->line_state_notifier,
+ 				     GPIOLINE_CHANGED_REQUESTED, desc);
+ 
+ 	return desc;
 diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 7dd06ef45d44..54012605b4a4 100644
+index cca81375f127..7dd06ef45d44 100644
 --- a/drivers/gpio/gpiolib.h
 +++ b/drivers/gpio/gpiolib.h
-@@ -40,6 +40,8 @@
+@@ -38,8 +38,8 @@
+  * or name of the IP component in a System on Chip.
+  * @data: per-instance data assigned by the driver
   * @list: links gpio_device:s together for traversal
-  * @line_state_notifier: used to notify subscribers about lines being
-  *                       requested, released or reconfigured
-+ * @device_notifier: used to notify character device wait queues about the GPIO
-+ *                   device being unregistered
+- * @notifier: used to notify subscribers about lines being requested, released
+- *            or reconfigured
++ * @line_state_notifier: used to notify subscribers about lines being
++ *                       requested, released or reconfigured
   * @sem: protects the structure from a NULL-pointer dereference of @chip by
   *       user-space operations when the device gets unregistered during
   *       a hot-unplug event
-@@ -64,6 +66,7 @@ struct gpio_device {
+@@ -63,7 +63,7 @@ struct gpio_device {
+ 	const char		*label;
  	void			*data;
  	struct list_head        list;
- 	struct blocking_notifier_head line_state_notifier;
-+	struct blocking_notifier_head device_notifier;
+-	struct blocking_notifier_head notifier;
++	struct blocking_notifier_head line_state_notifier;
  	struct rw_semaphore	sem;
  
  #ifdef CONFIG_PINCTRL
