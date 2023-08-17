@@ -2,65 +2,62 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575F6C531DC
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Aug 2023 18:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 487F6C2FC22
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Aug 2023 19:45:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354578AbjHQSug (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Aug 2023 14:50:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41172 "EHLO
+        id S1354735AbjHQTpI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Aug 2023 15:45:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354586AbjHQSuP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Aug 2023 14:50:15 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D0F62D65
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Aug 2023 11:50:13 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3fe4b95c371so851075e9.1
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Aug 2023 11:50:13 -0700 (PDT)
+        with ESMTP id S1354732AbjHQToz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Aug 2023 15:44:55 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9DF8359C
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Aug 2023 12:44:53 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id 5b1f17b1804b1-3fe4cdb72b9so2317465e9.0
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Aug 2023 12:44:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1692298212; x=1692903012;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8kVt4UaEckj/OVSUq+AY8VPPJo4yqLEpGjl9otmnnyg=;
-        b=ie4buCgMtbVu3kOFSWsnDYS8jBNS8e9g6vpCbKP8e2rDg8wTzklwY+VbgFsx6vX4t8
-         hvfnQ6lGuYHl+lGuCTDTGYcLX/2wpO37OGyve7s6L9Ugpo6otpVQMYU9NvAwiJdax9Vc
-         OW3/fPEk85VbPhcks0aLcjac9Z/PGLIvpmsZzZa/pM1w6cpDLjoiYpa3wF6TwJ2N66aD
-         3Yb4oZGITDyZz2ABoD3ryiSA7oVw9nX/eqDlDb8VQtA5MnPXewjJVr0nRtv6sa9fs0mm
-         EpaGVKrO+LXshyF4B9GnK4rSxP3H28CheAt3lHtPh3wIXmLrGKs6m7IUrlLgXHDfh9pg
-         kxbQ==
+        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1692301492; x=1692906292;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UZLCso6zuPoBhdzbDgAWu843pgchVyTms6QlPoq9Bew=;
+        b=khPTLfujzns+b+B00amG6wdlyOi2e0rA84cAx9nGVy9MDxDdeB+o/RlxXHQJcVT/kR
+         oE2JrffnSldIsYD7G+USOFl05lYpIovbs0B2nmHgrGk46DwA1yCb+RO1C9Qmjp36dGVq
+         bC2o8fGLftdEdaGKo9MlKSfxna3I9M3KLqScwCLv8MkrgcJ13afZ/Z4KEAsv6ELm3VlE
+         44mEaU0LlY8RFm44YRsn55nAD/9B/4DoKtRZCseS0dWsGvl+rak1TnqGwB0DPL5PaslW
+         3JZ2cCS3GSJWkbXiqRiPzZQTqDv4XTpmO2Lfl2Zgb6GAyNArytHdYwUmixYlIw9BufmT
+         UKfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692298212; x=1692903012;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8kVt4UaEckj/OVSUq+AY8VPPJo4yqLEpGjl9otmnnyg=;
-        b=Dlt7dUGAEtkkATecny69/KZHSg2GIVR50oap7fIAA5M9reDtsuUYosb041TjVHOGuf
-         E9JOEJxTZYaNH6SjqHk1Um7aw0bYLPn21jG4i7EdS5DmnFfc1ZdL6tGlfXvDIaSdcuzL
-         frb8PeVwIafNJ8+A2KgJlkLNhc7oD69K7I92QJ3UsNja0rv43hNCgyBylqyoKgTADMPG
-         DoIAnjwx46cA5YkeYBKm8y+VzjN/sHNbwl8E8nkdR7JfD6IigHszYuGvkHeQuoX2JS9N
-         w0KiLk8miptSmOdS9gkTjXzlwTsvu+k5yNobtoaSCz9Z3CRNgjY5sE7q0AzAah0rE/g3
-         fx5w==
-X-Gm-Message-State: AOJu0Yz4S9o14fRMaPkzTf4VFVVASbKJj6Iga/lHyBljRbQ7Ky2T0oB9
-        wW5RfP52AMlEwkS61bE9Bhy1sg==
-X-Google-Smtp-Source: AGHT+IGa0mywF2NM0O4rN+E+N22z2zGoSyswdtJ2cOuvxwj301QyVM3fuuFhUWCLMCbxcN5eybT61Q==
-X-Received: by 2002:a1c:4c12:0:b0:3fb:af9a:bf30 with SMTP id z18-20020a1c4c12000000b003fbaf9abf30mr195111wmf.2.1692298211708;
-        Thu, 17 Aug 2023 11:50:11 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1692301492; x=1692906292;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UZLCso6zuPoBhdzbDgAWu843pgchVyTms6QlPoq9Bew=;
+        b=crx8yIOLL4XqC/hqrlVhFENhggatL0Q0aJuvr5VuWXgVnUhFDgqwR+wGJC4w8Dj6H0
+         46RU1YCG2ecklFFPkDoBXS9jRZ3A/ln9M694eeYf5PV5s7DSQMKQOzXqrPgkivYfs7ok
+         h+OrxerKsxBsHG3NtgwWx1M+9uiHlhzjMIsjDdH4EVgaz+AUidNOKFP2HqIGyvCLHOs/
+         Dqk7Pi0wuvk1qrnxH37wRjT1l7wPMEIK/qFN1yP6tlRKtg7qB7a9HjAKOP64pUs+TL3N
+         kHvFCmYi36+IOT5IkjurOd8PN1hdeWH5cAbaQ5JopiSQ6O+mwAdipCV+FKuA67s7dCXe
+         kimA==
+X-Gm-Message-State: AOJu0Yw/n6uOsXAalmLD2LdDqHVBND0uHDQ4HpSGu5bYhVFBqLdYe3su
+        UbV2vcJbCZTbYvIy6YAd/ICkKQ==
+X-Google-Smtp-Source: AGHT+IFoUrSyiPFnBh/EUK3V+/gt+gh2TJExw7tuToDOynOmdOg2AXMCLK21J35oNYeN+qqA3M2ZHw==
+X-Received: by 2002:a7b:cd0c:0:b0:3fe:14af:ea21 with SMTP id f12-20020a7bcd0c000000b003fe14afea21mr577743wmj.21.1692301492396;
+        Thu, 17 Aug 2023 12:44:52 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:2f99:c690:b4da:e3d2])
-        by smtp.gmail.com with ESMTPSA id a23-20020a05600c225700b003fe1cdbc33dsm3963020wmm.9.2023.08.17.11.50.11
+        by smtp.gmail.com with ESMTPSA id t12-20020a5d6a4c000000b003179d5aee63sm197177wrw.91.2023.08.17.12.44.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Aug 2023 11:50:11 -0700 (PDT)
+        Thu, 17 Aug 2023 12:44:52 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 5/6] gpio: cdev: wake up linereq poll() on device unbind
-Date:   Thu, 17 Aug 2023 20:49:57 +0200
-Message-Id: <20230817184958.25349-6-brgl@bgdev.pl>
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH] gpio: pca9570: fix kerneldoc
+Date:   Thu, 17 Aug 2023 21:44:49 +0200
+Message-Id: <20230817194449.26447-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230817184958.25349-1-brgl@bgdev.pl>
-References: <20230817184958.25349-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -69,78 +66,30 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add a notifier block to the linereq structure and register it with the
-gpio_device's device notifier. Upon reception of an event, wake up the
-wait queue so that the user-space be forced out of poll() and need to go
-into a new system call which will then fail due to the chip being gone.
+While renaming one of the fields in the driver data struct, the kerneldoc
+was not updated which apparently angers the test robot now.
 
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202308171538.nKKUOtbg-lkp@intel.com/
+Fixes: a3f7c1d6ddcb ("gpio: pca9570: rename platform_data to chip_data")
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpiolib-cdev.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/gpio/gpio-pca9570.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index 8b081c9b8d27..4c3b186bc638 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -555,6 +555,7 @@ struct line {
-  * @label: consumer label used to tag GPIO descriptors
-  * @num_lines: the number of lines in the lines array
-  * @wait: wait queue that handles blocking reads of events
-+ * @device_unregistered_nb: notifier block for receiving gdev unregister events
-  * @event_buffer_size: the number of elements allocated in @events
-  * @events: KFIFO for the GPIO events
-  * @seqno: the sequence number for edge events generated on all lines in
-@@ -569,6 +570,7 @@ struct linereq {
- 	const char *label;
- 	u32 num_lines;
- 	wait_queue_head_t wait;
-+	struct notifier_block device_unregistered_nb;
- 	u32 event_buffer_size;
- 	DECLARE_KFIFO_PTR(events, struct gpio_v2_line_event);
- 	atomic_t seqno;
-@@ -610,6 +612,17 @@ struct linereq {
- 	 GPIO_V2_LINE_FLAG_EVENT_CLOCK_HTE | \
- 	 GPIO_V2_LINE_EDGE_FLAGS)
- 
-+static int linereq_unregistered_notify(struct notifier_block *nb,
-+				       unsigned long action, void *data)
-+{
-+	struct linereq *lr = container_of(nb, struct linereq,
-+					  device_unregistered_nb);
-+
-+	wake_up_poll(&lr->wait, EPOLLIN | EPOLLERR);
-+
-+	return NOTIFY_OK;
-+}
-+
- static void linereq_put_event(struct linereq *lr,
- 			      struct gpio_v2_line_event *le)
- {
-@@ -1567,6 +1580,10 @@ static void linereq_free(struct linereq *lr)
- {
- 	unsigned int i;
- 
-+	if (lr->device_unregistered_nb.notifier_call)
-+		blocking_notifier_chain_unregister(&lr->gdev->device_notifier,
-+						   &lr->device_unregistered_nb);
-+
- 	for (i = 0; i < lr->num_lines; i++) {
- 		if (lr->lines[i].desc) {
- 			edge_detector_stop(&lr->lines[i]);
-@@ -1727,6 +1744,12 @@ static int linereq_create(struct gpio_device *gdev, void __user *ip)
- 			offset);
- 	}
- 
-+	lr->device_unregistered_nb.notifier_call = linereq_unregistered_notify;
-+	ret = blocking_notifier_chain_register(&gdev->device_notifier,
-+					       &lr->device_unregistered_nb);
-+	if (ret)
-+		goto out_free_linereq;
-+
- 	fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
- 	if (fd < 0) {
- 		ret = fd;
+diff --git a/drivers/gpio/gpio-pca9570.c b/drivers/gpio/gpio-pca9570.c
+index d8db80ef1293..d37ba4049368 100644
+--- a/drivers/gpio/gpio-pca9570.c
++++ b/drivers/gpio/gpio-pca9570.c
+@@ -30,7 +30,7 @@ struct pca9570_chip_data {
+ /**
+  * struct pca9570 - GPIO driver data
+  * @chip: GPIO controller chip
+- * @p_data: GPIO controller platform data
++ * @chip_data: GPIO controller platform data
+  * @lock: Protects write sequences
+  * @out: Buffer for device register
+  */
 -- 
 2.39.2
 
