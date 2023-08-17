@@ -2,95 +2,103 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23283C2FC2F
-	for <linux-gpio@archiver.kernel.org>; Thu, 17 Aug 2023 13:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D918C41513
+	for <linux-gpio@archiver.kernel.org>; Thu, 17 Aug 2023 15:01:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351542AbjHQNzA convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 17 Aug 2023 09:55:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43794 "EHLO
+        id S1352568AbjHQPBV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 17 Aug 2023 11:01:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351590AbjHQNy3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Aug 2023 09:54:29 -0400
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF9302710;
-        Thu, 17 Aug 2023 06:54:27 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-584034c706dso83282327b3.1;
-        Thu, 17 Aug 2023 06:54:27 -0700 (PDT)
+        with ESMTP id S1352723AbjHQPBP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Aug 2023 11:01:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A6822713
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Aug 2023 08:00:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1692284415;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=U3UGQVuqNmJTUHQlyY57PaFZsT3ZmRuMFTjsLhZtXBo=;
+        b=DigEsDjaoz5UzSZyzrE7yOfiHnUtGABWzK7ueqCrFVPSV0nTP71vpwFw5SiOIAh/yg0Oy7
+        NqeBVy4IMrVflARlKFTFuCG+VeUHcq5maW9cBiBLyjGqwfRNTmzH0VDdvHeHCkA3kNu3FB
+        QBFqxRGRP/7o4rx5t40L1xJtJh8tVJE=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-122-pR-zlBJGP5a2BkEqRU860w-1; Thu, 17 Aug 2023 11:00:14 -0400
+X-MC-Unique: pR-zlBJGP5a2BkEqRU860w-1
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-589ac93bc6eso98673557b3.0
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Aug 2023 08:00:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692280466; x=1692885266;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Od0Qzw7CBtiU5ngMSqBwpqgivet5MGRtCFcKtapRUzU=;
-        b=CNpGmdu6PfvvTwK0nwxwCA7N/jPJubFezL5lEi1byTnLs5zjykcOhtdHOQLvRu6bYw
-         Tls6HiFMmU+Fn4/VWJuFyG+nr2ybEaiHJ24puH2qhUj8NWpASAUFVFAFPfTcoB/sMadw
-         J1Vd1OEMV6QTRyWT7wQ4KfEZ22Xyeklu+du7RxvFLFgTMMXhe51z46j7cMeudnvkGkeu
-         EcrouapjYWv6zzcVkP9auvNEByncw7LWICttxVZbpUmSX+WhVVNLkIx/UWNbRsPgjJs8
-         n/c4Kh+sa0vY/8peNVKK+p59WKfjYkLPkZ/Oyg3rvAYjutVu+Ss3ZC5RadWA1QPdcVMQ
-         62vQ==
-X-Gm-Message-State: AOJu0Yxzq81BYMIel3/m/RV2DZpwc4QmA+Cjj88lTg2lfUd24u/cC5uo
-        vCNwms8j0027HRPIMrZ5/gkN/BMudyaeHQ==
-X-Google-Smtp-Source: AGHT+IHRucCAYbZP7w2ww/R3DvuD/QjArZu+W3O00dzdcSndGXvFCWwvPz2/crOPkTHt54Nh2LLrLw==
-X-Received: by 2002:a25:408a:0:b0:d47:3d16:4afc with SMTP id n132-20020a25408a000000b00d473d164afcmr4659553yba.22.1692280466579;
-        Thu, 17 Aug 2023 06:54:26 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id l16-20020a25ad50000000b00d4fc4132653sm3999650ybe.11.2023.08.17.06.54.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Aug 2023 06:54:26 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-d7225259f52so1393539276.0;
-        Thu, 17 Aug 2023 06:54:25 -0700 (PDT)
-X-Received: by 2002:a25:e691:0:b0:d4a:e40f:d446 with SMTP id
- d139-20020a25e691000000b00d4ae40fd446mr4367322ybh.36.1692280465668; Thu, 17
- Aug 2023 06:54:25 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1692284413; x=1692889213;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U3UGQVuqNmJTUHQlyY57PaFZsT3ZmRuMFTjsLhZtXBo=;
+        b=OsUkkPpGI7W7188qipIVAEMbcaQp3mjMXppl6/q9fWpzv4j4BA1ZB2iUuv2IsC/fi5
+         MDjrAKNo2OFFcGaOUISVJcC5iR+q1T5SPD/GD9C7VVsAIXlfBprpPg5kRVudmTD3VZNo
+         02iq9dCPUF/sqfa+oc72v1I62Fft7R7+3wVUY++IXHHerJJ9fcyNQsC3u3uuZNDseY0w
+         dxM0XQxGuiHg4tNAQ9wbr6B8KnIxJZnmkMq65yqzXCvj+6hRxBvrSS+PnhfoWbDQMBcf
+         AYPXy/FtAHIoEE4RqPp57kOWk3kW35rhMaDo0L6u5NrLDPwFIweMY+iEnkHN9cO74GYo
+         8ubw==
+X-Gm-Message-State: AOJu0YzIru15oPPDfj9myMdSvh4deKG6414MjiO9y8JGMK82NwuIlla0
+        hHBCS6ukrEHVeTWUlILOrA0St8ybnyWN4vUFNgPNmhmMJ+lGPNBlv4mAgH+nKMmYRx1eASz8WOs
+        KSsR56Rwhu97T9ajcgLDznw==
+X-Received: by 2002:a81:77d5:0:b0:583:6839:755 with SMTP id s204-20020a8177d5000000b0058368390755mr6771906ywc.14.1692284413609;
+        Thu, 17 Aug 2023 08:00:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFmUDpXT1QSPSf3Fo21wGonusb0vkgfDhCpLsORG+TcghEbu5NJEptHkrNpgpnMM0ltvan0g==
+X-Received: by 2002:a81:77d5:0:b0:583:6839:755 with SMTP id s204-20020a8177d5000000b0058368390755mr6771880ywc.14.1692284413374;
+        Thu, 17 Aug 2023 08:00:13 -0700 (PDT)
+Received: from brian-x1.redhat.com (c-73-214-169-22.hsd1.pa.comcast.net. [73.214.169.22])
+        by smtp.gmail.com with ESMTPSA id g193-20020a8152ca000000b00582fae92aa7sm4654788ywb.93.2023.08.17.08.00.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Aug 2023 08:00:12 -0700 (PDT)
+From:   Brian Masney <bmasney@redhat.com>
+To:     andersson@kernel.org, linus.walleij@linaro.org
+Cc:     agross@kernel.org, konrad.dybcio@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: qcom-pmic-gpio: silence -EPROBE_DEFER message on probe
+Date:   Thu, 17 Aug 2023 10:59:41 -0400
+Message-ID: <20230817145941.1091418-1-bmasney@redhat.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-References: <20230815131558.33787-1-biju.das.jz@bp.renesas.com>
- <20230815131558.33787-2-biju.das.jz@bp.renesas.com> <CAMuHMdV852knZ6UoGO-_B=xir=uUJZx2O1CHL+nsK0_BB_hStg@mail.gmail.com>
- <CACRpkdbWT333HNgSc0HMUvgDBkJdEvb23ZSHsQd-yfCOu3N=Ng@mail.gmail.com>
-In-Reply-To: <CACRpkdbWT333HNgSc0HMUvgDBkJdEvb23ZSHsQd-yfCOu3N=Ng@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 17 Aug 2023 15:54:12 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW658cXSAHow3FoZU1DvXioktP68fBK2nQaGGFw0DDmtg@mail.gmail.com>
-Message-ID: <CAMuHMdW658cXSAHow3FoZU1DvXioktP68fBK2nQaGGFw0DDmtg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] pinctrl: renesas: rzg2l: Fix NULL pointer
- dereference in rzg2l_dt_subnode_to_map()
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        stable@kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Linus,
+The following message shows up one or more times when booting a Qualcomm
+SA8775 Development board:
 
-On Thu, Aug 17, 2023 at 3:38 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Aug 17, 2023 at 2:44 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > need protection by a lock.  If no one objects, I will back out that
-> > change myself, queue this patch in renesas-pinctrl-for-v6.6, and send
-> > a PR tomorrow.
->
-> Shouldn't this even go in for v6.5?
-> Or is it non-urgent?
->
-> (Maybe I already asked, I have teflon-memory.)
+    qcom-spmi-gpio c440000.spmi:pmic@2:gpio@8800: can't add gpio chip
 
-If you're still taking fixes for v6.5, I can do that.
-Else, it will have to wait for a stable backport after v6.6-rc1.
+Convert this over to use dev_err_probe() to silence this message.
 
-Thanks!
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index deded9c6fd7d..d7576fa14935 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -1154,10 +1154,8 @@ static int pmic_gpio_probe(struct platform_device *pdev)
+ 	girq->child_irq_domain_ops.translate = pmic_gpio_domain_translate;
+ 
+ 	ret = gpiochip_add_data(&state->chip, state);
+-	if (ret) {
+-		dev_err(state->dev, "can't add gpio chip\n");
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(state->dev, ret, "can't add gpio chip\n");
+ 
+ 	/*
+ 	 * For DeviceTree-supported systems, the gpio core checks the
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.41.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
