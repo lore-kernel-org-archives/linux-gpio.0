@@ -2,98 +2,50 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9969C001DE
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 09:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E2BC7112B
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 09:02:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348996AbjHRJAq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Aug 2023 05:00:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38484 "EHLO
+        id S238112AbjHRJCW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Aug 2023 05:02:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358873AbjHRJAh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 05:00:37 -0400
-Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A08C73C16;
-        Fri, 18 Aug 2023 02:00:20 -0700 (PDT)
-Received: by mail-ot1-x331.google.com with SMTP id 46e09a7af769-6bcade59b24so619842a34.0;
-        Fri, 18 Aug 2023 02:00:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692349220; x=1692954020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Y5Zjf4Br8l/yI83N5VEcoQEhKvn7JUFC0W/m6x6V5Y=;
-        b=Y0uxcIRoCGwlTtD/IvhVUbI2rSWmFAWE92NgHSeLQaFHlW1EcyZ7gCXvLo4IV/jF4t
-         ZKS3dP5xIlr8YE/KCy396GjUzMFf/A9ohfDvTPqR2Y4xRyHE8WTmIKzcsZFPAJ5t3L9K
-         D+AC4w405D+8GDalmiKlfSXXv/WDN7H2lQJG7UHT/N8GeJgq93MWZPPKw9GsiTUivQD6
-         bXXNfoF9aJezIoFEdiw/0bCpHDZgfZwzYzVRpDi1p0A2CQA188kEC7VtjmpmxE9kGv3c
-         mlGrlb2umy8UT+U0VZQEOSokmOpfCqSi84f+yFQuOsDEffCTOPS8uE8scJw8t5TkdwPU
-         GIgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692349220; x=1692954020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9Y5Zjf4Br8l/yI83N5VEcoQEhKvn7JUFC0W/m6x6V5Y=;
-        b=D4lT/0EpIX6OP2Mcm/sY7c9fM9lPn01QUHF9lSyX7XogF48ALBu4iy+acL7ksTLhhD
-         JqOQOCw+/yJH13X5XhAhnmgBkneKYGaz2NjNSSjlseoganc7M7G/lfwryOrJYI6L+2dC
-         Faz8eT85t/uk7lBuO+EbruOFhI4mh3FqJgXl59uFSf7rTjp8iBWVwbej4ZZ5GS/ROkiJ
-         tPJMvBMa16wwedknC9XLiPZtS1wy4QFlDimbaV3gWBdEe91nOOntpqHtD/jYQLkF4mbp
-         9tq+L4paV9IaSUoztjDCd5GHgMmx1ir9v5Lf8BPKmW1Z1HZjrD3gxTnGsz3T+meX142H
-         2mZA==
-X-Gm-Message-State: AOJu0YyaUlQNNf51YpDouGy6vZbiqA4crDHJ4yHxzc68X/JIGwGwrPe8
-        9RzyoIovwa/ENaa7MGfTaBAQPFUvdLytkqK9JiM=
-X-Google-Smtp-Source: AGHT+IHO5of0Xf3dIaJovpBYbVdfni5HT9nb9RZ2UCgHSkLXgxgPEOIp3svCEVUC0/IIfTwto6gnlz1FTvAMpmt8tHs=
-X-Received: by 2002:a05:6870:15d5:b0:1c0:1424:5e79 with SMTP id
- k21-20020a05687015d500b001c014245e79mr1885968oad.42.1692349219840; Fri, 18
- Aug 2023 02:00:19 -0700 (PDT)
+        with ESMTP id S1358901AbjHRJBz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 05:01:55 -0400
+X-Greylist: delayed 1507 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 18 Aug 2023 02:01:32 PDT
+Received: from mail.leachkin.pl (mail.leachkin.pl [217.61.97.203])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45DC2422D
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Aug 2023 02:01:32 -0700 (PDT)
+Received: by mail.leachkin.pl (Postfix, from userid 1001)
+        id 5847F84026; Fri, 18 Aug 2023 09:16:04 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leachkin.pl; s=mail;
+        t=1692346566; bh=elHzctRz/z3PfTIhGYJKd0TeBTmca98Y+JNgX4gfsPI=;
+        h=Date:From:To:Subject:From;
+        b=CTzKedcBgyWb32TYAtuQVdiO1hQqlEQ08XQ6Aich2UJQMtiB4TlphACMPQRa7fWUd
+         FmdTLZIsdrCjaHKi6/ONyIRq8PZADjnbLmgsVSngwJpy3pR40vf52oosTTPdks3pUo
+         u6euoH3ses8WOOdVzrGx5h1sV5IVjq8nMJFpsLhgd8fO+y71uUfsn5gbKPzBL1fkEC
+         B0lr4L2GVUpIhbVxcRbK51WCGuHupCgYeZdLXpUxGUs4RD1BpltEsclmIG8DVL8mad
+         we3nDMhw8VX7VLubRaWXrFfJ3Ck+WV2qKUhV5jN8YWvMca256rYA9oZTZVVblqeH6F
+         EBvceFJ8aTlhw==
+Received: by mail.leachkin.pl for <linux-gpio@vger.kernel.org>; Fri, 18 Aug 2023 08:15:51 GMT
+Message-ID: <20230818074501-0.1.4u.ctus.0.xkfka77nal@leachkin.pl>
+Date:   Fri, 18 Aug 2023 08:15:51 GMT
+From:   "Jakub Lemczak" <jakub.lemczak@leachkin.pl>
+To:     <linux-gpio@vger.kernel.org>
+Subject: =?UTF-8?Q?Pytanie_o_samoch=C3=B3d?=
+X-Mailer: mail.leachkin.pl
 MIME-Version: 1.0
-References: <20230818012111.22947-1-asmaa@nvidia.com> <20230818012111.22947-3-asmaa@nvidia.com>
-In-Reply-To: <20230818012111.22947-3-asmaa@nvidia.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 18 Aug 2023 11:59:43 +0300
-Message-ID: <CAHp75VehagLZLTb4hC5J+w8JVUu-zYBDb+npeS8ZgadfF9MheA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] gpio: mlxbf3: Support add_pin_ranges()
-To:     Asmaa Mnebhi <asmaa@nvidia.com>
-Cc:     linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, brgl@bgdev.pl,
-        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Aug 18, 2023 at 4:21=E2=80=AFAM Asmaa Mnebhi <asmaa@nvidia.com> wro=
-te:
->
-> Support add_pin_ranges() so that pinctrl_gpio_request() can be called.
-> The GPIO value is not modified when the user runs the "gpioset" tool.
-> This is because when gpiochip_generic_request is invoked by the gpio-mlxb=
-f3
-> driver, "pin_ranges" is empty so it skips "pinctrl_gpio_request()".
-> pinctrl_gpio_request() is essential in the code flow because it changes t=
-he
-> mux value so that software has control over modifying the GPIO value.
-> Adding add_pin_ranges() creates a dependency on the pinctrl-mlxbf3.c driv=
-er.
+Dzie=C5=84 dobry,
 
-Better now,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Czy interesuje Pa=C5=84stwa rozwi=C4=85zanie umo=C5=BCliwiaj=C4=85ce moni=
+torowanie samochod=C3=B3w firmowych oraz optymalizacj=C4=99 koszt=C3=B3w =
+ich utrzymania?=20
 
-...
 
->  #define MLXBF3_GPIO_MAX_PINS_PER_BLOCK 32
-> +#define MLXBF3_GPIO_MAX_PINS_BLOCK0    MLXBF3_GPIO_MAX_PINS_PER_BLOCK
-> +#define MLXBF3_GPIO_MAX_PINS_BLOCK1    24
-
-Since it's a fix for backporting, I'm not insisting to amend it now,
-but can we actually drop the common define and use
-
-#define MLXBF3_GPIO_MAX_PINS_BLOCK0    32
-#define MLXBF3_GPIO_MAX_PINS_BLOCK1    24
-
-and modify code accordingly, please?
-
---=20
-With Best Regards,
-Andy Shevchenko
+Pozdrawiam,
+Jakub Lemczak
