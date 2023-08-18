@@ -2,45 +2,45 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDBFEE4982
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 027F1EE4985
 	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 17:21:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378916AbjHRRUg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Aug 2023 13:20:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41444 "EHLO
+        id S1378923AbjHRRUh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Aug 2023 13:20:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378991AbjHRRU3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 13:20:29 -0400
+        with ESMTP id S1378980AbjHRRUZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 13:20:25 -0400
 Received: from pegase1.c-s.fr (unknown [90.115.179.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F603C2F;
-        Fri, 18 Aug 2023 10:20:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D2173C2F;
+        Fri, 18 Aug 2023 10:20:21 -0700 (PDT)
 Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-        by localhost (Postfix) with ESMTP id 4RS6zy13R7z9vjC;
-        Fri, 18 Aug 2023 18:40:14 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 4RS7060ztwz9vjf;
+        Fri, 18 Aug 2023 18:40:22 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 4U7RhbHWPQT8; Fri, 18 Aug 2023 18:40:14 +0200 (CEST)
+        with ESMTP id Ppn1n9uuWSiV; Fri, 18 Aug 2023 18:40:22 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4RS6zl44p9z9vhW;
-        Fri, 18 Aug 2023 18:40:03 +0200 (CEST)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4RS6zp2ryfz9vhl;
+        Fri, 18 Aug 2023 18:40:06 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 815098B76D;
-        Fri, 18 Aug 2023 18:40:03 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 581038B778;
+        Fri, 18 Aug 2023 18:40:06 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id cQvcVEpSSBcJ; Fri, 18 Aug 2023 18:40:03 +0200 (CEST)
+        with ESMTP id NVmsYWnylAQZ; Fri, 18 Aug 2023 18:40:06 +0200 (CEST)
 Received: from PO20335.IDSI0.si.c-s.fr (PO17626.IDSI0.si.c-s.fr [172.19.54.29])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8DC028B77C;
-        Fri, 18 Aug 2023 18:40:01 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id DA81D8B775;
+        Fri, 18 Aug 2023 18:40:04 +0200 (CEST)
 Received: from PO20335.IDSI0.si.c-s.fr (localhost [127.0.0.1])
-        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.16.1) with ESMTPS id 37IGduno141957
+        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.16.1) with ESMTPS id 37IGe0qF142035
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Fri, 18 Aug 2023 18:39:56 +0200
+        Fri, 18 Aug 2023 18:40:00 +0200
 Received: (from chleroy@localhost)
-        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.17.1/Submit) id 37IGdu5A141956;
-        Fri, 18 Aug 2023 18:39:56 +0200
+        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.17.1/Submit) id 37IGe0xK142034;
+        Fri, 18 Aug 2023 18:40:00 +0200
 X-Authentication-Warning: PO20335.IDSI0.si.c-s.fr: chleroy set sender to christophe.leroy@csgroup.eu using -f
 From:   Christophe Leroy <christophe.leroy@csgroup.eu>
 To:     Herve Codina <herve.codina@bootlin.com>,
@@ -68,14 +68,14 @@ Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         alsa-devel@alsa-project.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v4 04/28] soc: fsl: cpm1: qmc: Extend the API to provide Rx status
-Date:   Fri, 18 Aug 2023 18:38:58 +0200
-Message-ID: <c9f7966da27455390848846a30e34f3c059427f9.1692376361.git.christophe.leroy@csgroup.eu>
+Subject: [PATCH v4 23/28] mfd: core: Ensure disabled devices are skiped without aborting
+Date:   Fri, 18 Aug 2023 18:39:17 +0200
+Message-ID: <528425d6472176bb1d02d79596b51f8c28a551cc.1692376361.git.christophe.leroy@csgroup.eu>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <cover.1692376360.git.christophe.leroy@csgroup.eu>
 References: <cover.1692376360.git.christophe.leroy@csgroup.eu>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1692376734; l=5458; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=NLobTtZwmX6+TiWRgTbk0b6G1wgEpGh/t2FaZYMhZLs=; b=31GwyewAkhJBnFz8bfeoy3PPfhugRG03/u3bJHd03c2Rb9ym1AZo3atjcAHYUlxNHwyRwxd4B 796HpaTjo9tCsgzHvVtoi/lQDyl1uU7j9XrNj69Wjvm1qMPCT6eSuat
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1692376735; l=2101; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=hAkFOA9R8r8JmUyKnLgaEreJkNGYzPTwTAaZA8K8KA4=; b=YeZOkU1flwAP6HFasxcc+kTmXgQb5aqLnFHmBhQGqdqq+bhR8cxXtiH2m0yGrTbC5qzh5/Ok6 SXKqp7mwxKtD2wGLbjITvC+WW+jVpAlvefMfI7R+cLvZ1Yv0L2m6/wO
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -84,141 +84,68 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Herve Codina <herve.codina@bootlin.com>
 
-In HDLC mode, some status flags related to the data read transfer can be
-set by the hardware and need to be known by a QMC consumer for further
-analysis.
+The loop searching for a matching device based on its compatible
+string is aborted when a matching disabled device is found.
+This abort prevents to add devices as soon as one disabled device
+is found.
 
-Extend the API in order to provide these transfer status flags at the
-read complete() call.
+Continue searching for an other device instead of aborting on the
+first disabled one fixes the issue.
 
-In TRANSPARENT mode, these flags have no meaning. Keep only one read
-complete() API and update the consumers working in transparent mode.
-In this case, the newly introduced flags parameter is simply unused.
-
+Fixes: 22380b65dc70 ("mfd: mfd-core: Ensure disabled devices are ignored without error")
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/soc/fsl/qe/qmc.c      | 29 +++++++++++++++++++++++++----
- include/soc/fsl/qe/qmc.h      | 15 ++++++++++++++-
- sound/soc/fsl/fsl_qmc_audio.c |  2 +-
- 3 files changed, 40 insertions(+), 6 deletions(-)
+ drivers/mfd/mfd-core.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 8dc73cc1a83b..2d2a9d88ba6c 100644
---- a/drivers/soc/fsl/qe/qmc.c
-+++ b/drivers/soc/fsl/qe/qmc.c
-@@ -166,7 +166,7 @@
- struct qmc_xfer_desc {
- 	union {
- 		void (*tx_complete)(void *context);
--		void (*rx_complete)(void *context, size_t length);
-+		void (*rx_complete)(void *context, size_t length, unsigned int flags);
- 	};
- 	void *context;
- };
-@@ -421,7 +421,8 @@ static void qmc_chan_write_done(struct qmc_chan *chan)
- }
+diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+index 0ed7c0d7784e..2b85509a90fc 100644
+--- a/drivers/mfd/mfd-core.c
++++ b/drivers/mfd/mfd-core.c
+@@ -146,6 +146,7 @@ static int mfd_add_device(struct device *parent, int id,
+ 	struct platform_device *pdev;
+ 	struct device_node *np = NULL;
+ 	struct mfd_of_node_entry *of_entry, *tmp;
++	bool disabled = false;
+ 	int ret = -ENOMEM;
+ 	int platform_id;
+ 	int r;
+@@ -183,11 +184,10 @@ static int mfd_add_device(struct device *parent, int id,
+ 	if (IS_ENABLED(CONFIG_OF) && parent->of_node && cell->of_compatible) {
+ 		for_each_child_of_node(parent->of_node, np) {
+ 			if (of_device_is_compatible(np, cell->of_compatible)) {
+-				/* Ignore 'disabled' devices error free */
++				/* Skip 'disabled' devices */
+ 				if (!of_device_is_available(np)) {
+-					of_node_put(np);
+-					ret = 0;
+-					goto fail_alias;
++					disabled = true;
++					continue;
+ 				}
  
- int qmc_chan_read_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
--			 void (*complete)(void *context, size_t length), void *context)
-+			 void (*complete)(void *context, size_t length, unsigned int flags),
-+			 void *context)
- {
- 	struct qmc_xfer_desc *xfer_desc;
- 	unsigned long flags;
-@@ -454,6 +455,10 @@ int qmc_chan_read_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
- 	xfer_desc->rx_complete = complete;
- 	xfer_desc->context = context;
+ 				ret = mfd_match_of_node_to_dev(pdev, np, cell);
+@@ -197,10 +197,17 @@ static int mfd_add_device(struct device *parent, int id,
+ 				if (ret)
+ 					goto fail_alias;
  
-+	/* Clear previous status flags */
-+	ctrl &= ~(QMC_BD_RX_L | QMC_BD_RX_F | QMC_BD_RX_LG | QMC_BD_RX_NO |
-+		  QMC_BD_RX_AB | QMC_BD_RX_CR);
-+
- 	/* Activate the descriptor */
- 	ctrl |= (QMC_BD_RX_E | QMC_BD_RX_UB);
- 	wmb(); /* Be sure to flush data before descriptor activation */
-@@ -485,7 +490,7 @@ EXPORT_SYMBOL(qmc_chan_read_submit);
- 
- static void qmc_chan_read_done(struct qmc_chan *chan)
- {
--	void (*complete)(void *context, size_t size);
-+	void (*complete)(void *context, size_t size, unsigned int flags);
- 	struct qmc_xfer_desc *xfer_desc;
- 	unsigned long flags;
- 	cbd_t __iomem *bd;
-@@ -527,7 +532,23 @@ static void qmc_chan_read_done(struct qmc_chan *chan)
- 
- 		if (complete) {
- 			spin_unlock_irqrestore(&chan->rx_lock, flags);
--			complete(context, datalen);
-+
-+			/*
-+			 * Avoid conversion between internal hardware flags and
-+			 * the software API flags.
-+			 * -> Be sure that the software API flags are consistent
-+			 *    with the hardware flags
-+			 */
-+			BUILD_BUG_ON(QMC_RX_FLAG_HDLC_LAST  != QMC_BD_RX_L);
-+			BUILD_BUG_ON(QMC_RX_FLAG_HDLC_FIRST != QMC_BD_RX_F);
-+			BUILD_BUG_ON(QMC_RX_FLAG_HDLC_OVF   != QMC_BD_RX_LG);
-+			BUILD_BUG_ON(QMC_RX_FLAG_HDLC_UNA   != QMC_BD_RX_NO);
-+			BUILD_BUG_ON(QMC_RX_FLAG_HDLC_ABORT != QMC_BD_RX_AB);
-+			BUILD_BUG_ON(QMC_RX_FLAG_HDLC_CRC   != QMC_BD_RX_CR);
-+
-+			complete(context, datalen,
-+				 ctrl & (QMC_BD_RX_L | QMC_BD_RX_F | QMC_BD_RX_LG |
-+					 QMC_BD_RX_NO | QMC_BD_RX_AB | QMC_BD_RX_CR));
- 			spin_lock_irqsave(&chan->rx_lock, flags);
+-				break;
++				goto match;
+ 			}
  		}
  
-diff --git a/include/soc/fsl/qe/qmc.h b/include/soc/fsl/qe/qmc.h
-index 3c61a50d2ae2..6f1d6cebc9fe 100644
---- a/include/soc/fsl/qe/qmc.h
-+++ b/include/soc/fsl/qe/qmc.h
-@@ -9,6 +9,7 @@
- #ifndef __SOC_FSL_QMC_H__
- #define __SOC_FSL_QMC_H__
- 
-+#include <linux/bits.h>
- #include <linux/types.h>
- 
- struct device_node;
-@@ -56,8 +57,20 @@ int qmc_chan_set_param(struct qmc_chan *chan, const struct qmc_chan_param *param
- int qmc_chan_write_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
- 			  void (*complete)(void *context), void *context);
- 
-+/* Flags available (ORed) for read complete() flags parameter in HDLC mode.
-+ * No flags are available in transparent mode and the read complete() flags
-+ * parameter has no meaning in transparent mode.
-+ */
-+#define QMC_RX_FLAG_HDLC_LAST	BIT(11) /* Last in frame */
-+#define QMC_RX_FLAG_HDLC_FIRST	BIT(10) /* First in frame */
-+#define QMC_RX_FLAG_HDLC_OVF	BIT(5)  /* Data overflow */
-+#define QMC_RX_FLAG_HDLC_UNA	BIT(4)  /* Unaligned (ie. bits received not multiple of 8) */
-+#define QMC_RX_FLAG_HDLC_ABORT	BIT(3)  /* Received an abort sequence (seven consecutive ones) */
-+#define QMC_RX_FLAG_HDLC_CRC	BIT(2)  /* CRC error */
++		if (disabled) {
++			/* Ignore 'disabled' devices error free */
++			ret = 0;
++			goto fail_alias;
++		}
 +
- int qmc_chan_read_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
--			 void (*complete)(void *context, size_t length),
-+			 void (*complete)(void *context, size_t length,
-+					  unsigned int flags),
- 			 void *context);
- 
- #define QMC_CHAN_READ  (1<<0)
-diff --git a/sound/soc/fsl/fsl_qmc_audio.c b/sound/soc/fsl/fsl_qmc_audio.c
-index 7cbb8e4758cc..5d745aae17a8 100644
---- a/sound/soc/fsl/fsl_qmc_audio.c
-+++ b/sound/soc/fsl/fsl_qmc_audio.c
-@@ -99,7 +99,7 @@ static void qmc_audio_pcm_write_complete(void *context)
- 	snd_pcm_period_elapsed(prtd->substream);
- }
- 
--static void qmc_audio_pcm_read_complete(void *context, size_t length)
-+static void qmc_audio_pcm_read_complete(void *context, size_t length, unsigned int flags)
- {
- 	struct qmc_dai_prtd *prtd = context;
- 	int ret;
++match:
+ 		if (!pdev->dev.of_node)
+ 			pr_warn("%s: Failed to locate of_node [id: %d]\n",
+ 				cell->name, platform_id);
 -- 
 2.41.0
 
