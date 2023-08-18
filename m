@@ -2,45 +2,45 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1262EEE4982
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A98EE4986
 	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 17:24:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379049AbjHRRXt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Aug 2023 13:23:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32856 "EHLO
+        id S1379047AbjHRRXs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Aug 2023 13:23:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379239AbjHRRXZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 13:23:25 -0400
+        with ESMTP id S1379180AbjHRRXO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 13:23:14 -0400
 Received: from pegase1.c-s.fr (unknown [90.115.179.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5988B4C37;
-        Fri, 18 Aug 2023 10:22:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D51CC49CC;
+        Fri, 18 Aug 2023 10:22:00 -0700 (PDT)
 Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-        by localhost (Postfix) with ESMTP id 4RS6zc0vxzz9vh4;
-        Fri, 18 Aug 2023 18:39:56 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 4RS6zv0pwcz9vj0;
+        Fri, 18 Aug 2023 18:40:11 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Bjavs_ntN8Dt; Fri, 18 Aug 2023 18:39:56 +0200 (CEST)
+        with ESMTP id axONG-mlx7_u; Fri, 18 Aug 2023 18:40:11 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4RS6zb5qkjz9vh1;
-        Fri, 18 Aug 2023 18:39:55 +0200 (CEST)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4RS6zl3NNRz9vhP;
+        Fri, 18 Aug 2023 18:40:03 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BACF58B770;
-        Fri, 18 Aug 2023 18:39:55 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 670528B763;
+        Fri, 18 Aug 2023 18:40:03 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id UimrfuHr5_g6; Fri, 18 Aug 2023 18:39:55 +0200 (CEST)
+        with ESMTP id 02pNESDStCWP; Fri, 18 Aug 2023 18:40:03 +0200 (CEST)
 Received: from PO20335.IDSI0.si.c-s.fr (PO17626.IDSI0.si.c-s.fr [172.19.54.29])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1D6278B763;
-        Fri, 18 Aug 2023 18:39:55 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9B88A8B780;
+        Fri, 18 Aug 2023 18:40:01 +0200 (CEST)
 Received: from PO20335.IDSI0.si.c-s.fr (localhost [127.0.0.1])
-        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.16.1) with ESMTPS id 37IGdnO5141943
+        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.16.1) with ESMTPS id 37IGdxXm142019
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Fri, 18 Aug 2023 18:39:49 +0200
+        Fri, 18 Aug 2023 18:39:59 +0200
 Received: (from chleroy@localhost)
-        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.17.1/Submit) id 37IGdnLq141942;
-        Fri, 18 Aug 2023 18:39:49 +0200
+        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.17.1/Submit) id 37IGdx5n142018;
+        Fri, 18 Aug 2023 18:39:59 +0200
 X-Authentication-Warning: PO20335.IDSI0.si.c-s.fr: chleroy set sender to christophe.leroy@csgroup.eu using -f
 From:   Christophe Leroy <christophe.leroy@csgroup.eu>
 To:     Herve Codina <herve.codina@bootlin.com>,
@@ -68,14 +68,14 @@ Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         alsa-devel@alsa-project.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v4 02/28] soc: fsl: cpm1: qmc: Fix __iomem addresses declaration
-Date:   Fri, 18 Aug 2023 18:38:56 +0200
-Message-ID: <b67b813393650579ceb7a6025b9281524b2bee16.1692376360.git.christophe.leroy@csgroup.eu>
+Subject: [PATCH v4 19/28] soc: fsl: cpm1: qmc: Introduce functions to change timeslots at runtime
+Date:   Fri, 18 Aug 2023 18:39:13 +0200
+Message-ID: <a18f6c9b11a358d4cce7f4c096a85fa5e1729633.1692376361.git.christophe.leroy@csgroup.eu>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <cover.1692376360.git.christophe.leroy@csgroup.eu>
 References: <cover.1692376360.git.christophe.leroy@csgroup.eu>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1692376733; l=4245; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=VaHcnf0Oe94R1ui0OjR9HSdn/INV9sf104dQNcD0py8=; b=tKGn81RtSSlMcIQajCPXdoiDq1sf2du59SOBWY7dIbH3ybCipHexVrRVZVLiimIUra0+FuSpF mdpnUvVS0uMC836VAMXInMnEgc/vbkmEC+J5OnPqduw4jCMhAfup0ab
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1692376735; l=3289; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=78wehWlqMiFqYxFZMxpjqZHHmzC9lp2SLom1hHjHEc0=; b=EH7Ypvhs7z/Y3OrSfBqFh17QEyqVrp0buZQDOR7eq0JQ1x67x/X1kUy7/Q+pHJwHVuZbuk79e XYTA/MXLFvZDQldKEezNeOYlhhMZAKzOjqczr1Ixz8QYRkMZcU/xiYt
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -84,151 +84,105 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Herve Codina <herve.codina@bootlin.com>
 
-Running sparse (make C=1) on qmc.c raises a lot of warning such as:
-  ...
-  warning: incorrect type in assignment (different address spaces)
-     expected struct cpm_buf_desc [usertype] *[noderef] __iomem bd
-     got struct cpm_buf_desc [noderef] [usertype] __iomem *txbd_free
-  ...
+Introduce qmc_chan_{get,set}_ts_info() function to allow timeslots
+modification at runtime.
 
-Indeed, some variable were declared 'type *__iomem var' instead of
-'type __iomem *var'.
+The modification is provided using qmc_chan_set_ts_info() and will be
+applied on next qmc_chan_start().
+qmc_chan_set_ts_info() must be called with the channel rx and/or tx
+stopped.
 
-Use the correct declaration to remove these warnings.
-
-Fixes: 3178d58e0b97 ("soc: fsl: cpm1: Add support for QMC")
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/soc/fsl/qe/qmc.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 51 ++++++++++++++++++++++++++++++++++++++++
+ include/soc/fsl/qe/qmc.h | 10 ++++++++
+ 2 files changed, 61 insertions(+)
 
 diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index b3c292c9a14e..7ad0d77f1740 100644
+index b67e73ad7c1a..2ab21a0023a7 100644
 --- a/drivers/soc/fsl/qe/qmc.c
 +++ b/drivers/soc/fsl/qe/qmc.c
-@@ -175,7 +175,7 @@ struct qmc_chan {
- 	struct list_head list;
- 	unsigned int id;
- 	struct qmc *qmc;
--	void *__iomem s_param;
-+	void __iomem *s_param;
+@@ -290,6 +290,57 @@ int qmc_chan_get_info(struct qmc_chan *chan, struct qmc_chan_info *info)
+ }
+ EXPORT_SYMBOL(qmc_chan_get_info);
+ 
++int qmc_chan_get_ts_info(struct qmc_chan *chan, struct qmc_chan_ts_info *ts_info)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&chan->ts_lock, flags);
++
++	ts_info->rx_ts_mask_avail = chan->rx_ts_mask_avail;
++	ts_info->tx_ts_mask_avail = chan->tx_ts_mask_avail;
++	ts_info->rx_ts_mask = chan->rx_ts_mask;
++	ts_info->tx_ts_mask = chan->tx_ts_mask;
++
++	spin_unlock_irqrestore(&chan->ts_lock, flags);
++
++	return 0;
++}
++EXPORT_SYMBOL(qmc_chan_get_ts_info);
++
++int qmc_chan_set_ts_info(struct qmc_chan *chan, const struct qmc_chan_ts_info *ts_info)
++{
++	unsigned long flags;
++	int ret;
++
++	/* Only a subset of available timeslots is allowed */
++	if ((ts_info->rx_ts_mask & chan->rx_ts_mask_avail) != ts_info->rx_ts_mask)
++		return -EINVAL;
++	if ((ts_info->tx_ts_mask & chan->tx_ts_mask_avail) != ts_info->tx_ts_mask)
++		return -EINVAL;
++
++	/* In case of common rx/tx table, rx/tx masks must be identical */
++	if (chan->qmc->is_tsa_64rxtx) {
++		if (ts_info->rx_ts_mask != ts_info->tx_ts_mask)
++			return -EINVAL;
++	}
++
++	spin_lock_irqsave(&chan->ts_lock, flags);
++
++	if ((chan->tx_ts_mask != ts_info->tx_ts_mask && !chan->is_tx_stopped) ||
++	    (chan->rx_ts_mask != ts_info->rx_ts_mask && !chan->is_rx_stopped)) {
++		dev_err(chan->qmc->dev, "Channel rx and/or tx not stopped\n");
++		ret = -EBUSY;
++	} else {
++		chan->tx_ts_mask = ts_info->tx_ts_mask;
++		chan->rx_ts_mask = ts_info->rx_ts_mask;
++		ret = 0;
++	}
++	spin_unlock_irqrestore(&chan->ts_lock, flags);
++
++	return ret;
++}
++EXPORT_SYMBOL(qmc_chan_set_ts_info);
++
+ int qmc_chan_set_param(struct qmc_chan *chan, const struct qmc_chan_param *param)
+ {
+ 	if (param->mode != chan->mode)
+diff --git a/include/soc/fsl/qe/qmc.h b/include/soc/fsl/qe/qmc.h
+index 6f1d6cebc9fe..802c161636bd 100644
+--- a/include/soc/fsl/qe/qmc.h
++++ b/include/soc/fsl/qe/qmc.h
+@@ -38,6 +38,16 @@ struct qmc_chan_info {
+ 
+ int qmc_chan_get_info(struct qmc_chan *chan, struct qmc_chan_info *info);
+ 
++struct qmc_chan_ts_info {
++	u64 rx_ts_mask_avail;
++	u64 tx_ts_mask_avail;
++	u64 rx_ts_mask;
++	u64 tx_ts_mask;
++};
++
++int qmc_chan_get_ts_info(struct qmc_chan *chan, struct qmc_chan_ts_info *ts_info);
++int qmc_chan_set_ts_info(struct qmc_chan *chan, const struct qmc_chan_ts_info *ts_info);
++
+ struct qmc_chan_param {
  	enum qmc_mode mode;
- 	u64	tx_ts_mask;
- 	u64	rx_ts_mask;
-@@ -203,9 +203,9 @@ struct qmc_chan {
- struct qmc {
- 	struct device *dev;
- 	struct tsa_serial *tsa_serial;
--	void *__iomem scc_regs;
--	void *__iomem scc_pram;
--	void *__iomem dpram;
-+	void __iomem *scc_regs;
-+	void __iomem *scc_pram;
-+	void __iomem *dpram;
- 	u16 scc_pram_offset;
- 	cbd_t __iomem *bd_table;
- 	dma_addr_t bd_dma_addr;
-@@ -218,37 +218,37 @@ struct qmc {
- 	struct qmc_chan *chans[64];
- };
- 
--static inline void qmc_write16(void *__iomem addr, u16 val)
-+static inline void qmc_write16(void __iomem *addr, u16 val)
- {
- 	iowrite16be(val, addr);
- }
- 
--static inline u16 qmc_read16(void *__iomem addr)
-+static inline u16 qmc_read16(void __iomem *addr)
- {
- 	return ioread16be(addr);
- }
- 
--static inline void qmc_setbits16(void *__iomem addr, u16 set)
-+static inline void qmc_setbits16(void __iomem *addr, u16 set)
- {
- 	qmc_write16(addr, qmc_read16(addr) | set);
- }
- 
--static inline void qmc_clrbits16(void *__iomem addr, u16 clr)
-+static inline void qmc_clrbits16(void __iomem *addr, u16 clr)
- {
- 	qmc_write16(addr, qmc_read16(addr) & ~clr);
- }
- 
--static inline void qmc_write32(void *__iomem addr, u32 val)
-+static inline void qmc_write32(void __iomem *addr, u32 val)
- {
- 	iowrite32be(val, addr);
- }
- 
--static inline u32 qmc_read32(void *__iomem addr)
-+static inline u32 qmc_read32(void __iomem *addr)
- {
- 	return ioread32be(addr);
- }
- 
--static inline void qmc_setbits32(void *__iomem addr, u32 set)
-+static inline void qmc_setbits32(void __iomem *addr, u32 set)
- {
- 	qmc_write32(addr, qmc_read32(addr) | set);
- }
-@@ -318,7 +318,7 @@ int qmc_chan_write_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
- {
- 	struct qmc_xfer_desc *xfer_desc;
- 	unsigned long flags;
--	cbd_t *__iomem bd;
-+	cbd_t __iomem *bd;
- 	u16 ctrl;
- 	int ret;
- 
-@@ -374,7 +374,7 @@ static void qmc_chan_write_done(struct qmc_chan *chan)
- 	void (*complete)(void *context);
- 	unsigned long flags;
- 	void *context;
--	cbd_t *__iomem bd;
-+	cbd_t __iomem *bd;
- 	u16 ctrl;
- 
- 	/*
-@@ -425,7 +425,7 @@ int qmc_chan_read_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
- {
- 	struct qmc_xfer_desc *xfer_desc;
- 	unsigned long flags;
--	cbd_t *__iomem bd;
-+	cbd_t __iomem *bd;
- 	u16 ctrl;
- 	int ret;
- 
-@@ -488,7 +488,7 @@ static void qmc_chan_read_done(struct qmc_chan *chan)
- 	void (*complete)(void *context, size_t size);
- 	struct qmc_xfer_desc *xfer_desc;
- 	unsigned long flags;
--	cbd_t *__iomem bd;
-+	cbd_t __iomem *bd;
- 	void *context;
- 	u16 datalen;
- 	u16 ctrl;
-@@ -663,7 +663,7 @@ static void qmc_chan_reset_rx(struct qmc_chan *chan)
- {
- 	struct qmc_xfer_desc *xfer_desc;
- 	unsigned long flags;
--	cbd_t *__iomem bd;
-+	cbd_t __iomem *bd;
- 	u16 ctrl;
- 
- 	spin_lock_irqsave(&chan->rx_lock, flags);
-@@ -694,7 +694,7 @@ static void qmc_chan_reset_tx(struct qmc_chan *chan)
- {
- 	struct qmc_xfer_desc *xfer_desc;
- 	unsigned long flags;
--	cbd_t *__iomem bd;
-+	cbd_t __iomem *bd;
- 	u16 ctrl;
- 
- 	spin_lock_irqsave(&chan->tx_lock, flags);
+ 	union {
 -- 
 2.41.0
 
