@@ -2,45 +2,45 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD91EE498F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B0DEE4990
 	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 17:21:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378969AbjHRRVL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1378965AbjHRRVL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 18 Aug 2023 13:21:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33418 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379005AbjHRRVF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 13:21:05 -0400
+        with ESMTP id S1379000AbjHRRVB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 13:21:01 -0400
 Received: from pegase1.c-s.fr (unknown [90.115.179.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C2184210;
-        Fri, 18 Aug 2023 10:21:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D0EF3C2F;
+        Fri, 18 Aug 2023 10:21:00 -0700 (PDT)
 Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-        by localhost (Postfix) with ESMTP id 4RS7021YcDz9vjN;
-        Fri, 18 Aug 2023 18:40:18 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 4RS6zr19Mhz9vhw;
+        Fri, 18 Aug 2023 18:40:08 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 0u5EQwH0IHfw; Fri, 18 Aug 2023 18:40:18 +0200 (CEST)
+        with ESMTP id 8sy9kcu9lE8D; Fri, 18 Aug 2023 18:40:08 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4RS6zl4Q41z9vhZ;
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4RS6zl1cfcz9vhM;
         Fri, 18 Aug 2023 18:40:03 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8D1908B770;
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2C8ED8B76C;
         Fri, 18 Aug 2023 18:40:03 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id VAf92wOyAjq3; Fri, 18 Aug 2023 18:40:03 +0200 (CEST)
+        with ESMTP id 55B--0WhkOYu; Fri, 18 Aug 2023 18:40:03 +0200 (CEST)
 Received: from PO20335.IDSI0.si.c-s.fr (PO17626.IDSI0.si.c-s.fr [172.19.54.29])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8179B8B77A;
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7074A8B775;
         Fri, 18 Aug 2023 18:40:01 +0200 (CEST)
 Received: from PO20335.IDSI0.si.c-s.fr (localhost [127.0.0.1])
-        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.16.1) with ESMTPS id 37IGdwGP141995
+        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.16.1) with ESMTPS id 37IGdv2E141978
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Fri, 18 Aug 2023 18:39:58 +0200
+        Fri, 18 Aug 2023 18:39:57 +0200
 Received: (from chleroy@localhost)
-        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.17.1/Submit) id 37IGdw6p141994;
-        Fri, 18 Aug 2023 18:39:58 +0200
+        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.17.1/Submit) id 37IGdvvD141977;
+        Fri, 18 Aug 2023 18:39:57 +0200
 X-Authentication-Warning: PO20335.IDSI0.si.c-s.fr: chleroy set sender to christophe.leroy@csgroup.eu using -f
 From:   Christophe Leroy <christophe.leroy@csgroup.eu>
 To:     Herve Codina <herve.codina@bootlin.com>,
@@ -68,14 +68,14 @@ Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         alsa-devel@alsa-project.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v4 13/28] soc: fsl: cpm1: qmc: Check available timeslots in qmc_check_chans()
-Date:   Fri, 18 Aug 2023 18:39:07 +0200
-Message-ID: <c8da00bdb9c53b4c5d4978beb52bb714d893917c.1692376361.git.christophe.leroy@csgroup.eu>
+Subject: [PATCH v4 09/28] soc: fsl: cpm1: qmc: Introduce available timeslots masks
+Date:   Fri, 18 Aug 2023 18:39:03 +0200
+Message-ID: <778806cad713d7c975a8bf02384ee7b200359a6c.1692376361.git.christophe.leroy@csgroup.eu>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <cover.1692376360.git.christophe.leroy@csgroup.eu>
 References: <cover.1692376360.git.christophe.leroy@csgroup.eu>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1692376734; l=1620; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=3oCJWknCD0kV9dRpPXFldERVHfu7NKNt3fpqhyftA/U=; b=77KndESlUNFNW5cO4EqUGfYYsJIKJmYxBZvehK626i2v2j/9pacL7BO71YTB4BlMZuHRHbtz3 5E7BGXaSL3vCICkXlZ0Bkjk52XNwarG/F0Q3lf6pLxBwGjktnylJFm7
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1692376734; l=1712; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=3LicTgfMUbXUrQ+y4QfDER9n8SKLy3AuN3dxv7yNc5I=; b=m5WWLYRdD9rdm60QUK8RRcBGmS9OQk3vYQCwizMISmJsYOqZgfvEgDruh2b/4ThMX+GCDMDzt v4RV5yGdyYiBO8o64OQQAe/vTFkpFz0UzwSiC1NLSTAr5q4Kdpnk3zI
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -84,43 +84,55 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Herve Codina <herve.codina@bootlin.com>
 
-The timeslots checked in qmc_check_chans() are the timeslots used.
-With the introduction of the available timeslots, the used timeslots
-are a subset of the available timeslots. The timeslots checked during
-the qmc_check_chans() call should be the available ones.
+Available timeslots masks define timeslots available for the related
+channel. These timeslots are defined by the QMC binding.
 
-Simply update and check the available timeslots instead of the used
-timeslots in qmc_check_chans().
+Timeslots used are initialized to available timeslots but can be a
+subset of available timeslots.
+This prepares the dynamic timeslots management (ie. changing timeslots
+at runtime).
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/soc/fsl/qe/qmc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 2416408bb7e7..07fa3c265858 100644
+index 459e0bbd723d..1bc2af58e829 100644
 --- a/drivers/soc/fsl/qe/qmc.c
 +++ b/drivers/soc/fsl/qe/qmc.c
-@@ -914,13 +914,13 @@ static int qmc_check_chans(struct qmc *qmc)
- 	rx_ts_assigned_mask = info.nb_rx_ts == 64 ? U64_MAX : (((u64)1) << info.nb_rx_ts) - 1;
+@@ -177,7 +177,9 @@ struct qmc_chan {
+ 	struct qmc *qmc;
+ 	void __iomem *s_param;
+ 	enum qmc_mode mode;
++	u64	tx_ts_mask_avail;
+ 	u64	tx_ts_mask;
++	u64	rx_ts_mask_avail;
+ 	u64	rx_ts_mask;
+ 	bool is_reverse_data;
  
- 	list_for_each_entry(chan, &qmc->chan_head, list) {
--		if (chan->tx_ts_mask > tx_ts_assigned_mask) {
--			dev_err(qmc->dev, "chan %u uses TSA unassigned Tx TS\n", chan->id);
-+		if (chan->tx_ts_mask_avail > tx_ts_assigned_mask) {
-+			dev_err(qmc->dev, "chan %u can use TSA unassigned Tx TS\n", chan->id);
- 			return -EINVAL;
+@@ -875,7 +877,8 @@ static int qmc_of_parse_chans(struct qmc *qmc, struct device_node *np)
+ 			of_node_put(chan_np);
+ 			return ret;
  		}
+-		chan->tx_ts_mask = ts_mask;
++		chan->tx_ts_mask_avail = ts_mask;
++		chan->tx_ts_mask = chan->tx_ts_mask_avail;
  
--		if (chan->rx_ts_mask > rx_ts_assigned_mask) {
--			dev_err(qmc->dev, "chan %u uses TSA unassigned Rx TS\n", chan->id);
-+		if (chan->rx_ts_mask_avail > rx_ts_assigned_mask) {
-+			dev_err(qmc->dev, "chan %u can use TSA unassigned Rx TS\n", chan->id);
- 			return -EINVAL;
+ 		ret = of_property_read_u64(chan_np, "fsl,rx-ts-mask", &ts_mask);
+ 		if (ret) {
+@@ -884,7 +887,8 @@ static int qmc_of_parse_chans(struct qmc *qmc, struct device_node *np)
+ 			of_node_put(chan_np);
+ 			return ret;
  		}
- 	}
+-		chan->rx_ts_mask = ts_mask;
++		chan->rx_ts_mask_avail = ts_mask;
++		chan->rx_ts_mask = chan->rx_ts_mask_avail;
+ 
+ 		mode = "transparent";
+ 		ret = of_property_read_string(chan_np, "fsl,operational-mode", &mode);
 -- 
 2.41.0
 
