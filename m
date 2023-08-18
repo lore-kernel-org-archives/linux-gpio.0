@@ -2,25 +2,25 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 343A6C71150
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83805C71157
 	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 09:31:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359127AbjHRJbF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Aug 2023 05:31:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53510 "EHLO
+        id S1359146AbjHRJbI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Aug 2023 05:31:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359142AbjHRJal (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 05:30:41 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEBCD3ABE;
-        Fri, 18 Aug 2023 02:30:37 -0700 (PDT)
+        with ESMTP id S1359166AbjHRJam (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 05:30:42 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4656C3C21;
+        Fri, 18 Aug 2023 02:30:39 -0700 (PDT)
 Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.55])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4RRxNl6JhJzFqld;
-        Fri, 18 Aug 2023 17:27:35 +0800 (CST)
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4RRxN22v5mztSDJ;
+        Fri, 18 Aug 2023 17:26:58 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemi500012.china.huawei.com
  (7.221.188.12) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Fri, 18 Aug
- 2023 17:30:34 +0800
+ 2023 17:30:36 +0800
 From:   Li Zetao <lizetao1@huawei.com>
 To:     <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <andy@kernel.org>,
         <j-keerthy@ti.com>, <vz@mleia.com>, <thierry.reding@gmail.com>,
@@ -31,9 +31,9 @@ To:     <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <andy@kernel.org>,
 CC:     <lizetao1@huawei.com>, <linux-gpio@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-pwm@vger.kernel.org>, <linux-omap@vger.kernel.org>
-Subject: [PATCH -next 03/11] gpio: ftgpio010: Use helper function devm_clk_get_enabled()
-Date:   Fri, 18 Aug 2023 17:30:10 +0800
-Message-ID: <20230818093018.1051434-4-lizetao1@huawei.com>
+Subject: [PATCH -next 06/11] gpio: mvebu: Use helper function devm_clk_get_enabled()
+Date:   Fri, 18 Aug 2023 17:30:13 +0800
+Message-ID: <20230818093018.1051434-7-lizetao1@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230818093018.1051434-1-lizetao1@huawei.com>
 References: <20230818093018.1051434-1-lizetao1@huawei.com>
@@ -57,84 +57,25 @@ explicitly.
 
 Signed-off-by: Li Zetao <lizetao1@huawei.com>
 ---
- drivers/gpio/gpio-ftgpio010.c | 29 +++++++----------------------
- 1 file changed, 7 insertions(+), 22 deletions(-)
+ drivers/gpio/gpio-mvebu.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ftgpio010.c b/drivers/gpio/gpio-ftgpio010.c
-index 5ce59dcf02e3..51724adf237a 100644
---- a/drivers/gpio/gpio-ftgpio010.c
-+++ b/drivers/gpio/gpio-ftgpio010.c
-@@ -253,18 +253,13 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
- 	if (irq < 0)
- 		return irq;
- 
--	g->clk = devm_clk_get(dev, NULL);
--	if (!IS_ERR(g->clk)) {
--		ret = clk_prepare_enable(g->clk);
--		if (ret)
--			return ret;
--	} else if (PTR_ERR(g->clk) == -EPROBE_DEFER) {
-+	g->clk = devm_clk_get_enabled(dev, NULL);
-+	if (PTR_ERR_OR_ZERO(g->clk) == -EPROBE_DEFER)
- 		/*
- 		 * Percolate deferrals, for anything else,
- 		 * just live without the clocking.
- 		 */
- 		return PTR_ERR(g->clk);
--	}
- 
- 	ret = bgpio_init(&g->gc, dev, 4,
- 			 g->base + GPIO_DATA_IN,
-@@ -275,7 +270,7 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
- 			 0);
- 	if (ret) {
- 		dev_err(dev, "unable to init generic GPIO\n");
--		goto dis_clk;
-+		return ret;
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 67497116ce27..e0c9b2976705 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -1163,10 +1163,8 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
+ 		return id;
  	}
- 	g->gc.label = dev_name(dev);
- 	g->gc.base = -1;
-@@ -293,10 +288,9 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
- 	girq->num_parents = 1;
- 	girq->parents = devm_kcalloc(dev, 1, sizeof(*girq->parents),
- 				     GFP_KERNEL);
--	if (!girq->parents) {
--		ret = -ENOMEM;
--		goto dis_clk;
--	}
-+	if (!girq->parents)
-+		return -ENOMEM;
-+
- 	girq->default_type = IRQ_TYPE_NONE;
- 	girq->handler = handle_bad_irq;
- 	girq->parents[0] = irq;
-@@ -311,25 +305,16 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
  
- 	ret = devm_gpiochip_add_data(dev, &g->gc, g);
- 	if (ret)
--		goto dis_clk;
-+		return ret;
+-	mvchip->clk = devm_clk_get(&pdev->dev, NULL);
+ 	/* Not all SoCs require a clock.*/
+-	if (!IS_ERR(mvchip->clk))
+-		clk_prepare_enable(mvchip->clk);
++	mvchip->clk = devm_clk_get_enabled(&pdev->dev, NULL);
  
- 	platform_set_drvdata(pdev, g);
- 	dev_info(dev, "FTGPIO010 @%p registered\n", g->base);
- 
- 	return 0;
--
--dis_clk:
--	clk_disable_unprepare(g->clk);
--
--	return ret;
- }
- 
- static int ftgpio_gpio_remove(struct platform_device *pdev)
- {
--	struct ftgpio_gpio *g = platform_get_drvdata(pdev);
--
--	clk_disable_unprepare(g->clk);
--
- 	return 0;
- }
- 
+ 	mvchip->soc_variant = soc_variant;
+ 	mvchip->chip.label = dev_name(&pdev->dev);
 -- 
 2.34.1
 
