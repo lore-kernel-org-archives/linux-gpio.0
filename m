@@ -2,209 +2,119 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 011C4C05052
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 09:17:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7B9C001DE
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 09:31:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358990AbjHRJRA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Aug 2023 05:17:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36802 "EHLO
+        id S1359109AbjHRJbD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Aug 2023 05:31:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358993AbjHRJQc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 05:16:32 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4944D3AA3;
-        Fri, 18 Aug 2023 02:16:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692350190; x=1723886190;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0wHf4VrQH/L2Yv1AiBtq3AKNfxAlp1F/0fQlCPokzfg=;
-  b=VVYG3oI3JqBEREQ6QJWGxdS22juko09lsnPYjGWreDBshBllLglPglnz
-   v/CDhs7HTcNzpbRC/frAwX/1CE3yGQZn1vvY9BmHUQ2Nh9eXKVveDbjj9
-   wGxuMwSX8JMzdSfUK+Crm3wX15UFbR5eYKbbAK72kBDmcWm4vijdVQIgq
-   YujmA+kICNWh0XW78B2G6+LbUlj+nUXge6qFdKDOqA0C1QykbYvfAPH3A
-   R+ycSciGxayy0ShEuWkJb5XNFWonVOb4jJf8klMlpzfXZMmf7reyh6Glh
-   at8J7bwAa9Pwy5/ZCuJKYpQs2ReRkkgH1V1r6DG+cpmuKr2LdURxhAw5n
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="404041190"
-X-IronPort-AV: E=Sophos;i="6.01,182,1684825200"; 
-   d="scan'208";a="404041190"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2023 02:16:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="1065667475"
-X-IronPort-AV: E=Sophos;i="6.01,182,1684825200"; 
-   d="scan'208";a="1065667475"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga005.fm.intel.com with ESMTP; 18 Aug 2023 02:16:28 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qWvak-001Ek9-15;
-        Fri, 18 Aug 2023 12:16:26 +0300
-Date:   Fri, 18 Aug 2023 12:16:25 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v6] gpio: consumer: new virtual driver
-Message-ID: <ZN826UBEktlq42bE@smile.fi.intel.com>
-References: <20230817184356.25020-1-brgl@bgdev.pl>
+        with ESMTP id S1359133AbjHRJal (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 05:30:41 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 718333AAC;
+        Fri, 18 Aug 2023 02:30:37 -0700 (PDT)
+Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.57])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4RRxQc0sgZz1GF9c;
+        Fri, 18 Aug 2023 17:29:12 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi500012.china.huawei.com
+ (7.221.188.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Fri, 18 Aug
+ 2023 17:30:34 +0800
+From:   Li Zetao <lizetao1@huawei.com>
+To:     <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <andy@kernel.org>,
+        <j-keerthy@ti.com>, <vz@mleia.com>, <thierry.reding@gmail.com>,
+        <u.kleine-koenig@pengutronix.de>, <grygorii.strashko@ti.com>,
+        <ssantosh@kernel.org>, <khilman@kernel.org>,
+        <shubhrajyoti.datta@amd.com>, <srinivas.neeli@amd.com>,
+        <michal.simek@amd.com>
+CC:     <lizetao1@huawei.com>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-pwm@vger.kernel.org>, <linux-omap@vger.kernel.org>
+Subject: [PATCH -next 02/11] gpio: davinci: Use helper function devm_clk_get_enabled()
+Date:   Fri, 18 Aug 2023 17:30:09 +0800
+Message-ID: <20230818093018.1051434-3-lizetao1@huawei.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230818093018.1051434-1-lizetao1@huawei.com>
+References: <20230818093018.1051434-1-lizetao1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230817184356.25020-1-brgl@bgdev.pl>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.90.53.73]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemi500012.china.huawei.com (7.221.188.12)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Aug 17, 2023 at 08:43:56PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> The GPIO subsystem has a serious problem with undefined behavior and
-> use-after-free bugs on hot-unplug of GPIO chips. This can be considered a
-> corner-case by some as most GPIO controllers are enabled early in the
-> boot process and live until the system goes down but most GPIO drivers
-> do allow unbind over sysfs, many are loadable modules that can be (force)
-> unloaded and there are also GPIO devices that can be dynamically detached,
-> for instance CP2112 which is a USB GPIO expender.
-> 
-> Bugs can be triggered both from user-space as well as by in-kernel users.
-> We have the means of testing it from user-space via the character device
-> but the issues manifest themselves differently in the kernel.
-> 
-> This is a proposition of adding a new virtual driver - a configurable
-> GPIO consumer that can be configured over configfs (similarly to
-> gpio-sim).
-> 
-> The configfs interface allows users to create dynamic GPIO lookup tables
-> that are registered with the GPIO subsystem. Every config group
-> represents a consumer device. Every sub-group represents a single GPIO
-> lookup. The device can work in three modes: just keeping the line
-> active, toggling it every second or requesting its interrupt and
-> reporting edges. Every lookup allows to specify the key, offset and
-> flags as per the lookup struct defined in linux/gpio/machine.h.
-> 
-> The module together with gpio-sim allows to easily trigger kernel
-> hot-unplug errors. A simple use-case is to create a simulated chip,
-> setup the consumer to lookup one of its lines in 'monitor' mode, unbind
-> the simulator, unbind the consumer and observe the fireworks in dmesg.
-> 
-> This driver is aimed as a helper in tackling the hot-unplug problem in
-> GPIO as well as basis for future regression testing once the fixes are
-> upstream.
+Since commit 7ef9651e9792 ("clk: Provide new devm_clk helpers for
+prepared and enabled clocks"), devm_clk_get() and clk_prepare_enable()
+can now be replaced by devm_clk_get_enabled() when the driver enables
+(and possibly prepares) the clocks for the whole lifetime of the device.
+Moreover, it is no longer necessary to unprepare and disable the clocks
+explicitly.
 
-...
+Signed-off-by: Li Zetao <lizetao1@huawei.com>
+---
+ drivers/gpio/gpio-davinci.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-> @@ -46,6 +46,7 @@ obj-$(CONFIG_GPIO_BT8XX)		+= gpio-bt8xx.o
->  obj-$(CONFIG_GPIO_CADENCE)		+= gpio-cadence.o
->  obj-$(CONFIG_GPIO_CLPS711X)		+= gpio-clps711x.o
->  obj-$(CONFIG_GPIO_SNPS_CREG)		+= gpio-creg-snps.o
-> +obj-$(CONFIG_GPIO_CONSUMER)		+= gpio-consumer.o
-
-Order?
-
->  obj-$(CONFIG_GPIO_CRYSTAL_COVE)		+= gpio-crystalcove.o
->  obj-$(CONFIG_GPIO_CS5535)		+= gpio-cs5535.o
->  obj-$(CONFIG_GPIO_DA9052)		+= gpio-da9052.o
-
-...
-
-> +		return dev_err_probe(dev, ret,
-> +				     "Failed to read GPIO line names\n");
-
-With one line it takes 83 characters (and note, that long before checkpatch
-went for 100, the string literals at the end of a long line were accepted)...
-
-...
-
-> +				return dev_err_probe(dev, ret,
-> +						"Failed to request GPIO line interrupt\n");
-
-And here with broken indentation you got 91.
-Can you be consistent?
-
-(I prefer as you know less LoCs)
-
-...
-
-> +static ssize_t
-> +gpio_consumer_lookup_config_drive_store(struct config_item *item,
-> +					const char *page, size_t count)
-> +{
-> +	struct gpio_consumer_lookup *lookup = to_gpio_consumer_lookup(item);
-> +	struct gpio_consumer_device *dev = lookup->parent;
-> +
-> +	guard(mutex)(&dev->lock);
-> +
-> +	if (gpio_consumer_device_is_live_unlocked(dev))
-> +		return -EBUSY;
-> +
-> +	if (sysfs_streq(page, "push-pull")) {
-> +		lookup->flags &= ~(GPIO_OPEN_DRAIN | GPIO_OPEN_SOURCE);
-> +	} else if (sysfs_streq(page, "open-drain")) {
-> +		lookup->flags &= ~GPIO_OPEN_SOURCE;
-> +		lookup->flags |= GPIO_OPEN_DRAIN;
-> +	} else if (sysfs_streq(page, "open-source")) {
-> +		lookup->flags &= ~GPIO_OPEN_DRAIN;
-> +		lookup->flags |= GPIO_OPEN_SOURCE;
-> +	} else {
-
-> +		count = -EINVAL;
-
-Strictly speaking this is incorrect.
-You need
-
-	ssize_t ret;
-	...
-	ret = count;
-	if (...)
-		ret = -EINVAL;
-
-> +	}
-> +
-> +	return count;
-> +}
-
-> +static ssize_t
-> +gpio_consumer_lookup_config_pull_store(struct config_item *item,
-> +				       const char *page, size_t count)
-> +{
-
-As per above.
-
-> +}
-
-...
-
-> +		curr->chip_hwnum = lookup->offset < 0 ?
-> +					U16_MAX : lookup->offset;
-
-I found this way better
-
-		curr->chip_hwnum =
-			lookup->offset < 0 ? U16_MAX : lookup->offset;
-
-
-...
-
-> +	return ret ?: count;
-
-Also possible way in the above mentioned cases.
-
-...
-
-
-I'm not going to bikeshed, I believe you can fix above accordingly,
-either way
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 8db5717bdabe..23b5ae8cf2aa 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -477,7 +477,6 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ {
+ 	unsigned	gpio, bank;
+ 	int		irq;
+-	int		ret;
+ 	struct clk	*clk;
+ 	u32		binten = 0;
+ 	unsigned	ngpio;
+@@ -502,21 +501,16 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 
+ 	ngpio = pdata->ngpio;
+ 
+-	clk = devm_clk_get(dev, "gpio");
++	clk = devm_clk_get_enabled(dev, "gpio");
+ 	if (IS_ERR(clk)) {
+ 		dev_err(dev, "Error %ld getting gpio clock\n", PTR_ERR(clk));
+ 		return PTR_ERR(clk);
+ 	}
+ 
+-	ret = clk_prepare_enable(clk);
+-	if (ret)
+-		return ret;
+-
+ 	if (!pdata->gpio_unbanked) {
+ 		irq = devm_irq_alloc_descs(dev, -1, 0, ngpio, 0);
+ 		if (irq < 0) {
+ 			dev_err(dev, "Couldn't allocate IRQ numbers\n");
+-			clk_disable_unprepare(clk);
+ 			return irq;
+ 		}
+ 
+@@ -525,7 +519,6 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 							chips);
+ 		if (!irq_domain) {
+ 			dev_err(dev, "Couldn't register an IRQ domain\n");
+-			clk_disable_unprepare(clk);
+ 			return -ENODEV;
+ 		}
+ 	}
+@@ -594,10 +587,8 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 				       sizeof(struct
+ 					      davinci_gpio_irq_data),
+ 					      GFP_KERNEL);
+-		if (!irqdata) {
+-			clk_disable_unprepare(clk);
++		if (!irqdata)
+ 			return -ENOMEM;
+-		}
+ 
+ 		irqdata->regs = g;
+ 		irqdata->bank_num = bank;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
