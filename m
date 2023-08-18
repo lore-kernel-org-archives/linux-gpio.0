@@ -2,181 +2,122 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ECA0C7112B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2183C71143
 	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 12:30:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376914AbjHRM3u (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Aug 2023 08:29:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57910 "EHLO
+        id S245353AbjHRM3t (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Aug 2023 08:29:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376920AbjHRM3l (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 08:29:41 -0400
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2044.outbound.protection.outlook.com [40.107.102.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F75DE7C;
-        Fri, 18 Aug 2023 05:29:40 -0700 (PDT)
+        with ESMTP id S1376912AbjHRM30 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 08:29:26 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2087.outbound.protection.outlook.com [40.107.220.87])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0BFD103;
+        Fri, 18 Aug 2023 05:29:24 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=M+oXsxnvJN7e3+YFSKiYKoZl8e9EjeNfEmXf5GpsNYdoAtEtyY6+m70KL/9aqZ4oJQVD20V8MYzs0XKSQhzTZWMMej2qiOicfz0D0pDVDIqXEPfkiKciAGwpgZp1ZJo7+vnTc/eNJT2fpJJQw4Lfp4eQ+1m7TBshVToiIGaDEWaDyauXYFO4eQPpXoLT/AzhomssuRLWCE7u04C7eq+AathBxp05X8tILwxD2tPjpiCEb3kTltuPiEYqkRQcnKzxiMFUePc/EpShgzD8YvoLjj8vTxL3j/0uiqvRmt+v8jc4rYk3m+xtNdwKk2poQQSXFO+1krRv7dpvqbzVIcI8DQ==
+ b=BPSj20XsnvcHfQVS3fnGXSuCuP9Mbxbc+ZqVc9F4CchLZjGnXBwujNb3kjn5ISsBUo2jtp9TWpVIEwz2SDZI0QE9I+9K1Wo+fxEOyFpDpMgHuwrBPh4KtZRoqhNJecCX4WDI1BbEBltHSRjjTiznPeX6qTbF909ulf1w5qxv/k6TFXBcgKlwiuopyp9sSJBDgu6nI/SSb6lSD7pUaHkysR/eSl9O/pAU33UetiJteUPRXRtS2DOOOn77I1cr73T2XG6N8zEKlflmP51MBYAIA1JDLtwlnVR7VGuf4KTF/CDxt9xq9HF1Bwf0KmDwRcF3689X+oAJxb9vRQwyxILRVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cseW6TYr8yjAHcNDcsyHCTCQjfA4v5VRStqp+uI1syQ=;
- b=gv9Pa1YoCeBBaY8oj14UU4OrEgsO+ZMVL08q2XRUZk+PdGLbypN13Iw+MHy9XkuZZ1VUSD34xVARgyS+40LP7C+V7w3iSNi+ShV0IzYlhLy4NgCrFG771gbAs/olneRah2aUoYstYdsfBeY+MCGEo/rm89l/UzJNuaa3CD/R7C7MQL2pKi+T85IzGNUhU/gPZ3KzcBh7a05n9q4RUr2ywWCypKCQFsr/Zb3r2socRvLrYzFZBmUrjuJOwIhDQ8YAhuavmWsSr3JPZv7eNVlwt5cm43yqKYp7Rnw0mkN/sPhqQl65CE7vEGlgg6n8vKeIrvgEMOt7mcjkNUhbOghQPg==
+ bh=Y/iZaryNLztfTGt3qzPitwcZQLRQn1x+idkmw0Ip8Ks=;
+ b=lsmBjA86qSz606zhGlCZjPODMh651bCF3pfT3MJGpsndhbfyaEYlAn7moQyYVdOfgQHq0aRo5klsmg7wdi5Sh04saC8trzj9J9ZCUt1u6k5Jz4MCm2YHre8/39hpOJjZgX0SA6fB/UTwCncmn39ET5Wfo4RpT6WGMo9Nyy82NqAa1MxsRswLPMC1EyR0uKrcGgZE9x8DQiY0J2nbTl9O2ZbUUtn6sbJJeT/tofv31I0531eameK833wA8ivWMuErFDM/WjZZmcixrByYvJw3oWiPQotRRNInh74AbelejjnuIAfkdrec0yEKIdpg463uPjmhYIpEAqP8X3pA4MBEGQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cseW6TYr8yjAHcNDcsyHCTCQjfA4v5VRStqp+uI1syQ=;
- b=l94JrAnb94UoKIETkKO27JZKSV7hwCTs5OeAa84pqXTq0lSk3EtqvcIBHaGux7n3s9Ca0GqAv5BTMTrOxPINPB/TJP8bE3ubCmGOJDofMp0I9a1cT1QSVYGn08/2td+Dq7rfaNbF98Ly2PEv8pV5rU32/y66rprF7pCrQtDbA5reBaoMu37I5qBN6tXGLiTssgv1p+Sd/Nh0NaiDVMawBQnrjxICfl1Q40p/31vAa5HVdiweuHGXVWwti16ejrVz+zQJJM+hq5yozwFzTcCHmifeWM8e9k9W9r/nwHhUgRa+wg3jehskir97G6sCN7Arc5IBD/70hltvHW3zszfdCQ==
-Received: from MW4PR04CA0367.namprd04.prod.outlook.com (2603:10b6:303:81::12)
- by LV3PR12MB9187.namprd12.prod.outlook.com (2603:10b6:408:194::20) with
+ bh=Y/iZaryNLztfTGt3qzPitwcZQLRQn1x+idkmw0Ip8Ks=;
+ b=pmkwI26Zd2kXoZaw3a4GAne4dTuGOhxzKQOdacYL4YxMi9GW05kNRpgAGEQztUNI3lh9vwZgi4dEu7vuuu3vINdNv6pHNc98wKeFNYzYL1fsLfVdVISPK1VOp8+NqBdLHFg2TBSIxZnkaWWu/gb0Y2Ld3ty/vCX7EaKvGY0416CIKYH1MOy0L6GQkBKTLpQDCrzITVluAiCPn+zqhMRfEym6cW/N1uOLEwqsDsoq6op/62sNkwdrbTyny8Gkg/DirFt7vWLJugFVV6eK1iKsskFnOa/CtJeEVLShJGBe4r4//+f5+wXk7ogCtWZjCGXCG5YE+zFvOXWMPoMrypq6tA==
+Received: from CY5PR15CA0222.namprd15.prod.outlook.com (2603:10b6:930:88::17)
+ by IA1PR12MB7543.namprd12.prod.outlook.com (2603:10b6:208:42d::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.20; Fri, 18 Aug
- 2023 12:29:37 +0000
-Received: from CO1PEPF000042AC.namprd03.prod.outlook.com
- (2603:10b6:303:81:cafe::7) by MW4PR04CA0367.outlook.office365.com
- (2603:10b6:303:81::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.31; Fri, 18 Aug
+ 2023 12:29:22 +0000
+Received: from CY4PEPF0000E9CE.namprd03.prod.outlook.com
+ (2603:10b6:930:88:cafe::35) by CY5PR15CA0222.outlook.office365.com
+ (2603:10b6:930:88::17) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.20 via Frontend
- Transport; Fri, 18 Aug 2023 12:29:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ Transport; Fri, 18 Aug 2023 12:29:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF000042AC.mail.protection.outlook.com (10.167.243.41) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000E9CE.mail.protection.outlook.com (10.167.241.141) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6699.14 via Frontend Transport; Fri, 18 Aug 2023 12:29:37 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.6699.14 via Frontend Transport; Fri, 18 Aug 2023 12:29:22 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 18 Aug 2023
- 05:29:17 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ 05:29:12 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Fri, 18 Aug
- 2023 05:29:16 -0700
+ 2023 05:29:11 -0700
 Received: from vdi.nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.10)
  with Microsoft SMTP Server id 15.2.986.37 via Frontend Transport; Fri, 18 Aug
- 2023 05:29:15 -0700
+ 2023 05:29:11 -0700
 From:   Asmaa Mnebhi <asmaa@nvidia.com>
 To:     <andy.shevchenko@gmail.com>, <linux-gpio@vger.kernel.org>,
         <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
         <brgl@bgdev.pl>, <linux-kernel@vger.kernel.org>
 CC:     Asmaa Mnebhi <asmaa@nvidia.com>
-Subject: [PATCH v4 2/2] gpio: mlxbf3: Support add_pin_ranges()
-Date:   Fri, 18 Aug 2023 08:29:09 -0400
-Message-ID: <20230818122909.7122-3-asmaa@nvidia.com>
+Subject: [PATCH v4 0/2] Fix Nvidia BlueField-3 GPIO access
+Date:   Fri, 18 Aug 2023 08:29:07 -0400
+Message-ID: <20230818122909.7122-1-asmaa@nvidia.com>
 X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20230818122909.7122-1-asmaa@nvidia.com>
-References: <20230818122909.7122-1-asmaa@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042AC:EE_|LV3PR12MB9187:EE_
-X-MS-Office365-Filtering-Correlation-Id: 53e4324e-668b-4cff-d9ff-08db9fe6c95b
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9CE:EE_|IA1PR12MB7543:EE_
+X-MS-Office365-Filtering-Correlation-Id: c7885ee7-f9c5-41b8-ed74-08db9fe6c0a8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: JgVu/ypDgXQ5uh5iWaW4Y3qcqBTCW2l0g0Nw42Zie1sCflRkgoEFwBCwV8oW8xLDqXQdH3ZgNc9CxHl+xbVk1RJVyDaXWITsD4szftxxaDlXGTONkJ31EW+EFlbe8F6/pCB0GDSr7ATJMzyOypgDHVBFxJrfk0DqZxKiy+uK62dB6hHnWd17Crz7ZDEshyZ2g0ytLKtQtP82PxRvxteGM/D05YU08rzVlaxTPvDGrQI8LaL/LxyDzVnYPNr/HuACI/1CkXCcmKem63GcSHLaWO3OhyvOlwj9kYT9Mp5974KmsfunjoOswVMB4e/1qEvAYcyrA/B2iQWKAuts0Q/ulg+d4iXQ6AUkMRd1bjbJtAZv1bf79rsIf8xXEJ3AO2OUdxM1MQXCLdAt2pQ9FqhYc6GH0GxPiH+v4z9Vp0aQqstM7rKfUK5qG2ByIRsFxxtun7zGB9HL49PakLkdXK52t3Kv7Gc3LhWYnQNEBMFxxJpXW7SxC/bqoQbNUp444Xh9QViw70OOcI2ClzDzjT6kCT+/6uNLuTyumSma8ZbFvAtLQvL4zKVwCCtdv7aBrnZaokxKIebEmpqlbNUoZGzdcfE+xtX+LRRmYZJszoQggV+08NBs/gKdGjVTC90rnUPs4p6mnswhE4L5nFyOslkWbGWz3+H4h7IA+P76VVzyIavRi7jT/sfjsSJHwX/oRzGPC+ol3nD+lIzsBDiieKlYl6YZcm3XlKEH6uklkeI5WzKkzmcJ7e4nfdssLuzFMZd9jmqgoqY9H2MtdkeNzuvTrQ==
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(376002)(346002)(396003)(39860400002)(136003)(451199024)(82310400011)(1800799009)(186009)(36840700001)(40470700004)(46966006)(356005)(40460700003)(316002)(2616005)(36860700001)(107886003)(426003)(1076003)(336012)(6666004)(26005)(7696005)(47076005)(83380400001)(4326008)(5660300002)(8936002)(8676002)(2906002)(478600001)(41300700001)(70586007)(110136005)(70206006)(82740400003)(36756003)(40480700001)(86362001)(7636003)(2101003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: fIsdEZRtLWWd24HGM+ScZ8Tfooi9QNYFQqNCNmrvUFXcTe6WgrQwlt1UR0IHW21qSPrVUzogg44l6EbaN2TfGNmqeDR5Mu/K4NHdevFvxeop+PZx/D21wmWokyXDD3cMPuk28F3ANKYR27oRNyXRDTrvcjZZFf6iA+4kOB+I9nqUx4tVyJAJqOuSDRfUJXxFgu2Mpy9X0+q5j53JIChdWynIKtchw6NbQIBUq4novMZ5nHM391rSxBaxlbx2upaCAGtjV4cblt4nOHgDDdRnsLilGwsIvskFIGS6mA1j/dJIS0Oc2yJMDmsT/OSwdGRojTxLeBbg4C5AudeQ8aJyGTFLS6gp2GisdL0q23NCYzgQm2rpNvZi/3KX5GdTc2FHR7SRD1liKvW4Mob0jwb91LU7Fl0Ct3nQLXPogUbcj7nG92p6tlm21OL4EIEHoWB9QBxQgZODXTapJGKYL86ZvUo0eACxTKGxM1i5Z94WZXPVHe2LZDkciSD/vs5DIv2iYOZgTt7hAFGJ2l7fxSMChYsJGJ/XfPSUgekfHXOoxD8zYTy/x6ITsE6JwXbdZ9KwvmusDTVhNoiuJ1J0XDf/8EHYlSWKyKgP/UO7qhJqY3gJS1WYk9o3XNXlnulue1GKA0v3sixEO2tbXOSdPShmt845eHZdXslA0VWLNlw/zMsy1zG1Dt+jc9oKkZ0k7WzYZtydgY+cRMUh6PXDiGzoLc+tdLfJt5ZLp2MhfNZrL39L8+emmDoZbJsRliqBzBu/JQOR2I6+5ksajLIT3K1N0w==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(396003)(136003)(346002)(376002)(451199024)(1800799009)(82310400011)(186009)(46966006)(40470700004)(36840700001)(7636003)(40480700001)(83380400001)(40460700003)(70206006)(70586007)(316002)(478600001)(110136005)(356005)(82740400003)(2906002)(41300700001)(8676002)(4326008)(5660300002)(8936002)(36860700001)(426003)(2616005)(47076005)(7696005)(6666004)(107886003)(1076003)(26005)(336012)(86362001)(36756003)(2101003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2023 12:29:37.1185
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2023 12:29:22.5241
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53e4324e-668b-4cff-d9ff-08db9fe6c95b
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7885ee7-f9c5-41b8-ed74-08db9fe6c0a8
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000042AC.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9CE.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9187
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7543
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Support add_pin_ranges() so that pinctrl_gpio_request() can be called.
-The GPIO value is not modified when the user runs the "gpioset" tool.
-This is because when gpiochip_generic_request is invoked by the gpio-mlxbf3
-driver, "pin_ranges" is empty so it skips "pinctrl_gpio_request()".
-pinctrl_gpio_request() is essential in the code flow because it changes the
-mux value so that software has control over modifying the GPIO value.
-Adding add_pin_ranges() creates a dependency on the pinctrl-mlxbf3.c driver.
+Fix Nvidia BlueField-3 GPIO access via libgpiod gpioset tool.
+gpioset tool fails to modify the GPIO value due to the following:
+1) the pinctrl-mlxbf3 driver defines mlxbf3_gpio_request_enable()
+   to enable software to take control over a gpio. Only then can
+   the gpio-mlxbf3 driver modify the direction and value of the
+   gpio. mlxbf3_gpio_disable_free() gives control back to hardware
+   and is called when the "gpioset" command is invoked.
+   This cancels out the effort to change the GPIO value and
+   direction. So mlxbf3_gpio_disable_free() needs to be removed.
+2) the gpio-mlxbf3 driver calls gpiochip_generic_request() which
+   calls mlxbf3_gpio_request_enable(). "pin_ranges" needs not to be
+   empty for mlxbf3_gpio_request_enable() to be invoked. So
+   gpio-mlxbf3 needs to populate "pin_ranges".
 
-Fixes: cd33f216d24 ("gpio: mlxbf3: Add gpio driver support")
-Signed-off-by: Asmaa Mnebhi <asmaa@nvidia.com>
----
-v3->v4:
-- Drop the common define for MLXBF3_GPIO_MAX_PINS_BLOCK0
-v2->v3:
-- Replace boolean logic by clear switch statement logic in
-  mlxbf3_gpio_add_pin_ranges()
-v1->v2:
-- Cleanup mlxbf3_gpio_add_pin_ranges()
+Asmaa Mnebhi (2):
+  pinctrl: mlxbf3: Remove gpio_disable_free()
+  gpio: mlxbf3: Support add_pin_ranges()
 
- drivers/gpio/gpio-mlxbf3.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/gpio/gpio-mlxbf3.c       | 24 ++++++++++++++++++++++++
+ drivers/pinctrl/pinctrl-mlxbf3.c | 14 --------------
+ 2 files changed, 24 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mlxbf3.c b/drivers/gpio/gpio-mlxbf3.c
-index e30cee108986..0a5f241a8352 100644
---- a/drivers/gpio/gpio-mlxbf3.c
-+++ b/drivers/gpio/gpio-mlxbf3.c
-@@ -19,6 +19,8 @@
-  * gpio[1]: HOST_GPIO32->HOST_GPIO55
-  */
- #define MLXBF3_GPIO_MAX_PINS_PER_BLOCK 32
-+#define MLXBF3_GPIO_MAX_PINS_BLOCK0    32
-+#define MLXBF3_GPIO_MAX_PINS_BLOCK1    24
- 
- /*
-  * fw_gpio[x] block registers and their offset
-@@ -158,6 +160,26 @@ static const struct irq_chip gpio_mlxbf3_irqchip = {
- 	GPIOCHIP_IRQ_RESOURCE_HELPERS,
- };
- 
-+static int mlxbf3_gpio_add_pin_ranges(struct gpio_chip *chip)
-+{
-+	unsigned int id;
-+
-+	switch(chip->ngpio) {
-+	case MLXBF3_GPIO_MAX_PINS_BLOCK0:
-+		id = 0;
-+		break;
-+	case MLXBF3_GPIO_MAX_PINS_BLOCK1:
-+		id = 1;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return gpiochip_add_pin_range(chip, "MLNXBF34:00",
-+			chip->base, id * MLXBF3_GPIO_MAX_PINS_PER_BLOCK,
-+			chip->ngpio);
-+}
-+
- static int mlxbf3_gpio_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -197,6 +219,7 @@ static int mlxbf3_gpio_probe(struct platform_device *pdev)
- 	gc->request = gpiochip_generic_request;
- 	gc->free = gpiochip_generic_free;
- 	gc->owner = THIS_MODULE;
-+	gc->add_pin_ranges = mlxbf3_gpio_add_pin_ranges;
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq >= 0) {
-@@ -243,6 +266,7 @@ static struct platform_driver mlxbf3_gpio_driver = {
- };
- module_platform_driver(mlxbf3_gpio_driver);
- 
-+MODULE_SOFTDEP("pre: pinctrl-mlxbf3");
- MODULE_DESCRIPTION("NVIDIA BlueField-3 GPIO Driver");
- MODULE_AUTHOR("Asmaa Mnebhi <asmaa@nvidia.com>");
- MODULE_LICENSE("Dual BSD/GPL");
 -- 
 2.30.1
-
