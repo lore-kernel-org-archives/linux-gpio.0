@@ -2,21 +2,21 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8ECDC001DE
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 09:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D38CEC7EE30
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 09:31:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359142AbjHRJbK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Aug 2023 05:31:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53550 "EHLO
+        id S1359174AbjHRJbM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Aug 2023 05:31:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359180AbjHRJao (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 05:30:44 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DFE53A89;
-        Fri, 18 Aug 2023 02:30:41 -0700 (PDT)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4RRxQg33gqzkXDb;
-        Fri, 18 Aug 2023 17:29:15 +0800 (CST)
+        with ESMTP id S1359192AbjHRJat (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 05:30:49 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 845B93AA6;
+        Fri, 18 Aug 2023 02:30:42 -0700 (PDT)
+Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.56])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RRxPq0hvVzVkYK;
+        Fri, 18 Aug 2023 17:28:31 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemi500012.china.huawei.com
  (7.221.188.12) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Fri, 18 Aug
@@ -31,9 +31,9 @@ To:     <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <andy@kernel.org>,
 CC:     <lizetao1@huawei.com>, <linux-gpio@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-pwm@vger.kernel.org>, <linux-omap@vger.kernel.org>
-Subject: [PATCH -next 09/11] gpio: stp-xway: Use helper function devm_clk_get_enabled()
-Date:   Fri, 18 Aug 2023 17:30:16 +0800
-Message-ID: <20230818093018.1051434-10-lizetao1@huawei.com>
+Subject: [PATCH -next 10/11] gpio: xilinx: Use helper function devm_clk_get_optional_enabled()
+Date:   Fri, 18 Aug 2023 17:30:17 +0800
+Message-ID: <20230818093018.1051434-11-lizetao1@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230818093018.1051434-1-lizetao1@huawei.com>
 References: <20230818093018.1051434-1-lizetao1@huawei.com>
@@ -49,46 +49,60 @@ List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 Since commit 7ef9651e9792 ("clk: Provide new devm_clk helpers for
-prepared and enabled clocks"), devm_clk_get() and clk_prepare_enable()
-can now be replaced by devm_clk_get_enabled() when the driver enables
-(and possibly prepares) the clocks for the whole lifetime of the device.
-Moreover, it is no longer necessary to unprepare and disable the clocks
-explicitly.
+prepared and enabled clocks"), devm_clk_get_optional() and
+clk_prepare_enable() can now be replaced by
+devm_clk_get_optional_enabled() when the driver enables (and possibly
+prepares) the clocks for the whole lifetime of the device. Moreover,
+it is no longer necessary to unprepare and disable the clocks explicitly.
 
 Signed-off-by: Li Zetao <lizetao1@huawei.com>
 ---
- drivers/gpio/gpio-stp-xway.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/gpio/gpio-xilinx.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpio/gpio-stp-xway.c b/drivers/gpio/gpio-stp-xway.c
-index 053d616f2e02..5a6406d1f03a 100644
---- a/drivers/gpio/gpio-stp-xway.c
-+++ b/drivers/gpio/gpio-stp-xway.c
-@@ -296,23 +296,17 @@ static int xway_stp_probe(struct platform_device *pdev)
- 	if (!of_property_read_bool(pdev->dev.of_node, "lantiq,rising"))
- 		chip->edge = XWAY_STP_FALLING;
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index a16945e8319e..4e4da07bf8a2 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -334,12 +334,9 @@ static int __maybe_unused xgpio_suspend(struct device *dev)
+  */
+ static int xgpio_remove(struct platform_device *pdev)
+ {
+-	struct xgpio_instance *gpio = platform_get_drvdata(pdev);
+-
+ 	pm_runtime_get_sync(&pdev->dev);
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+-	clk_disable_unprepare(gpio->clk);
  
--	clk = devm_clk_get(&pdev->dev, NULL);
-+	clk = devm_clk_get_enabled(&pdev->dev, NULL);
- 	if (IS_ERR(clk)) {
- 		dev_err(&pdev->dev, "Failed to get clock\n");
- 		return PTR_ERR(clk);
+ 	return 0;
+ }
+@@ -647,15 +644,11 @@ static int xgpio_probe(struct platform_device *pdev)
+ 		return PTR_ERR(chip->regs);
  	}
  
--	ret = clk_prepare_enable(clk);
--	if (ret)
--		return ret;
--
- 	xway_stp_hw_init(chip);
+-	chip->clk = devm_clk_get_optional(&pdev->dev, NULL);
++	chip->clk = devm_clk_get_optional_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(chip->clk))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(chip->clk), "input clock not found.\n");
++		return dev_err_probe(&pdev->dev, PTR_ERR(chip->clk),
++				     "input clock not found or failed to prepare clk\n");
  
- 	ret = devm_gpiochip_add_data(&pdev->dev, &chip->gc, chip);
--	if (ret) {
--		clk_disable_unprepare(clk);
-+	if (ret)
- 		return ret;
+-	status = clk_prepare_enable(chip->clk);
+-	if (status < 0) {
+-		dev_err(&pdev->dev, "Failed to prepare clk\n");
+-		return status;
 -	}
- 
- 	dev_info(&pdev->dev, "Init done\n");
+ 	pm_runtime_get_noresume(&pdev->dev);
+ 	pm_runtime_set_active(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+@@ -702,7 +695,6 @@ static int xgpio_probe(struct platform_device *pdev)
+ err_pm_put:
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_put_noidle(&pdev->dev);
+-	clk_disable_unprepare(chip->clk);
+ 	return status;
+ }
  
 -- 
 2.34.1
