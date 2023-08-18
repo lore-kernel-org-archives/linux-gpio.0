@@ -2,184 +2,223 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBCDC7EE2C
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 16:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDBFEE4982
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 17:21:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378720AbjHRQoi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Aug 2023 12:44:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44678 "EHLO
+        id S1378916AbjHRRUg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Aug 2023 13:20:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378776AbjHRQoV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 12:44:21 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2064.outbound.protection.outlook.com [40.107.223.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AA1644AC;
-        Fri, 18 Aug 2023 09:43:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ENyWAfsHZbdP+ZNUEPQ78xIU88q9TJQ2eQ5PK4ymA311tHrI9PTRZIlA9f5s4LzGcp4MaeygjpyyOrMHN4+yPNrNT5E+8y959rMTozET9x17kQHPsgNyRVNATp8MEBw2Psj66Pv5fE9VhKDUPmAe79TZp7ds24+HPnVFCs1ZFl4Sjwx0hnKL/eUtOgj3qPkcqB/ytgW7lQFkJYKnj2AufqVnK3iW1yuNtjube+7YSARAQLZQnfP5NpSsQKWcOjCI3HNfkFgPvTbmGM5vnKQx+rx49zvsUACO3tYDgYbtuLUMrx2pfARcodX0nAhEud4Gc19rJkDvg9ri3kTY8i/W1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=73CXLqmtumSMwo/EvnPe9QfD0RBLp6OunUQqzto1Dmc=;
- b=lXey+2k00qrY0Reep8aSMBcylYxuVvJQb+ppNsOBJvzy6ckGhz/V1lV3bbmdY6rDaOHDjW1i+GS4bY3gzO2Il55cxbFDZFc7ixvteQb8CorqArnT4LLZNwFoSc4Sz2Ab6xeYvXk7d60b+D/qO4646bf16/lRsLx4REF6KHe/pgrtft1AhJsb8NJ5hV6hQm5NsqOTjcyRIbJ9hf2eoNZ79RZY58cz3cC7MyRnnGPD+RUSa509y6bMJ3LxVG4DKygY8so/pvCCeWL8A7h9CbHFG1vzIUDOp7khKJ/yEeQNeiVq1W44htKf0UrI7UI8S2PChl7JpJR5XzAUm77EfHfjSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=73CXLqmtumSMwo/EvnPe9QfD0RBLp6OunUQqzto1Dmc=;
- b=aGl896ZFpaOLKiuB6PvaMXomZER542nBMzmymQygydgJDeEeWdYkpIFwAUEkqU20B1DiLGRhJU5ubrebLxEEB+Se9MwasERr+pBGn3innQ34cMyCEM0728IDrq2yErOvAzFOviwnezPp1MaS3HaeCGdtpU4tAO+1Wto7nnOHy43iA2Vrr3f93FiZWA7gfNJ+qSDvI19ZMiLtDHHIjMcZKHSOB4X88BK2SPo+cOZA73m4GAXFi9ir+tY14oU/gekrIf4WVyzRR9GqlDTTxGIAP9eGztACgp3LweUql3k+qAG/8mo5BqOty/Vt19h/mXR3hny+1qSLdfRg6i4sw7DhFQ==
-Received: from CYXPR02CA0076.namprd02.prod.outlook.com (2603:10b6:930:ce::14)
- by DM6PR12MB4388.namprd12.prod.outlook.com (2603:10b6:5:2a9::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.20; Fri, 18 Aug
- 2023 16:43:32 +0000
-Received: from CY4PEPF0000E9DC.namprd05.prod.outlook.com
- (2603:10b6:930:ce:cafe::c0) by CYXPR02CA0076.outlook.office365.com
- (2603:10b6:930:ce::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.20 via Frontend
- Transport; Fri, 18 Aug 2023 16:43:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CY4PEPF0000E9DC.mail.protection.outlook.com (10.167.241.82) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6699.14 via Frontend Transport; Fri, 18 Aug 2023 16:43:32 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Fri, 18 Aug 2023
- 09:43:22 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.37; Fri, 18 Aug 2023 09:43:21 -0700
-Received: from vdi.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server id 15.2.986.37 via Frontend
- Transport; Fri, 18 Aug 2023 09:43:20 -0700
-From:   Asmaa Mnebhi <asmaa@nvidia.com>
-To:     <andy.shevchenko@gmail.com>, <linux-gpio@vger.kernel.org>,
-        <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
-        <brgl@bgdev.pl>, <linux-kernel@vger.kernel.org>
-CC:     Asmaa Mnebhi <asmaa@nvidia.com>
-Subject: [PATCH v5 2/2] gpio: mlxbf3: Support add_pin_ranges()
-Date:   Fri, 18 Aug 2023 12:43:14 -0400
-Message-ID: <20230818164314.8505-3-asmaa@nvidia.com>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20230818164314.8505-1-asmaa@nvidia.com>
-References: <20230818164314.8505-1-asmaa@nvidia.com>
+        with ESMTP id S1378991AbjHRRU3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 13:20:29 -0400
+Received: from pegase1.c-s.fr (unknown [90.115.179.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F603C2F;
+        Fri, 18 Aug 2023 10:20:26 -0700 (PDT)
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+        by localhost (Postfix) with ESMTP id 4RS6zy13R7z9vjC;
+        Fri, 18 Aug 2023 18:40:14 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 4U7RhbHWPQT8; Fri, 18 Aug 2023 18:40:14 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4RS6zl44p9z9vhW;
+        Fri, 18 Aug 2023 18:40:03 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 815098B76D;
+        Fri, 18 Aug 2023 18:40:03 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id cQvcVEpSSBcJ; Fri, 18 Aug 2023 18:40:03 +0200 (CEST)
+Received: from PO20335.IDSI0.si.c-s.fr (PO17626.IDSI0.si.c-s.fr [172.19.54.29])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8DC028B77C;
+        Fri, 18 Aug 2023 18:40:01 +0200 (CEST)
+Received: from PO20335.IDSI0.si.c-s.fr (localhost [127.0.0.1])
+        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.16.1) with ESMTPS id 37IGduno141957
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Fri, 18 Aug 2023 18:39:56 +0200
+Received: (from chleroy@localhost)
+        by PO20335.IDSI0.si.c-s.fr (8.17.1/8.17.1/Submit) id 37IGdu5A141956;
+        Fri, 18 Aug 2023 18:39:56 +0200
+X-Authentication-Warning: PO20335.IDSI0.si.c-s.fr: chleroy set sender to christophe.leroy@csgroup.eu using -f
+From:   Christophe Leroy <christophe.leroy@csgroup.eu>
+To:     Herve Codina <herve.codina@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v4 04/28] soc: fsl: cpm1: qmc: Extend the API to provide Rx status
+Date:   Fri, 18 Aug 2023 18:38:58 +0200
+Message-ID: <c9f7966da27455390848846a30e34f3c059427f9.1692376361.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <cover.1692376360.git.christophe.leroy@csgroup.eu>
+References: <cover.1692376360.git.christophe.leroy@csgroup.eu>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1692376734; l=5458; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=NLobTtZwmX6+TiWRgTbk0b6G1wgEpGh/t2FaZYMhZLs=; b=31GwyewAkhJBnFz8bfeoy3PPfhugRG03/u3bJHd03c2Rb9ym1AZo3atjcAHYUlxNHwyRwxd4B 796HpaTjo9tCsgzHvVtoi/lQDyl1uU7j9XrNj69Wjvm1qMPCT6eSuat
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9DC:EE_|DM6PR12MB4388:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0ef31c9d-890f-47dc-f5f0-08dba00a4221
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: rdwal9YxxMh7R8QKBmEWGYHnXLNdPUAHxqIFkWOuCgziKhSGd3x8pP+IbF41C3PC4YEjQxtufATBvvZi2DBAB1mmN3iPk09Xe63e5XCnQbucX+iWBcWmj+AsML8q6FlPR+wDaiTOKtbZuRx/6mK5kzJertfckK34AcXuPl/+r+vyOO6ysSFetNlM76Mqzg3omJrYg0HB6l0e+K/jjoPkCN0Mp7oc3FUNZ+0zj7S2zGOFP8fL1Io9CeFIUgNKjVSxZ0sv1B0PuPqEcKeta642qwz1Fwl/deZgJsTQ8Nl9jXH0YZUWK8tDoeX5pZzI8TncpfVac4KOUSo6pZpwrRjo6fFWIrETzLiCvK6slsJPKtFZN4MX9dGk1yGD32HHiuZEoiC4036tz1pOPbs/f5usdtA3JDFPA4XTw/bFocYLdMR8GdBPgpilH5tXwOaVTUhrn2VNdUfps7eccszcfbtokYHRUPgD4pGJpnAZYtNqeDTY5XIp8Q2TSoUGmS+WGKLXKKmIXAeQG9HPaS+xweShm7UuKtKmHqg6/7885DrYNh2GvSVl3asv4sifMJHE3HCCdC4c9KI0d/ykMbZAtgkpOgd3RU8fMOyTvA1lxLfiDCmDczmJTyqnLf/AzTrcT2qrGy7Y1hvDgXTum7TUwb6A0AzC8l+6VLNLnrK4bzbuDAsuGtDjs6KiF/iL9JqcShB7NWSLx+q42gto/noISsVB86BiqpPpB3wNQGwX4BArWDA7+0+rl7niCHkcGROVBG7uMwbdgJHfwOuwmkVq7yAyzw==
-X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(136003)(396003)(39860400002)(346002)(376002)(186009)(1800799009)(82310400011)(451199024)(36840700001)(40470700004)(46966006)(36756003)(40480700001)(86362001)(7636003)(40460700003)(356005)(316002)(70206006)(478600001)(110136005)(70586007)(41300700001)(82740400003)(6666004)(47076005)(36860700001)(7696005)(26005)(426003)(1076003)(336012)(2616005)(107886003)(8676002)(5660300002)(4326008)(8936002)(2906002)(83380400001)(2101003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2023 16:43:32.1602
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ef31c9d-890f-47dc-f5f0-08dba00a4221
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9DC.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4388
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Support add_pin_ranges() so that pinctrl_gpio_request() can be called.
-The GPIO value is not modified when the user runs the "gpioset" tool.
-This is because when gpiochip_generic_request is invoked by the gpio-mlxbf3
-driver, "pin_ranges" is empty so it skips "pinctrl_gpio_request()".
-pinctrl_gpio_request() is essential in the code flow because it changes the
-mux value so that software has control over modifying the GPIO value.
-Adding add_pin_ranges() creates a dependency on the pinctrl-mlxbf3.c driver.
+From: Herve Codina <herve.codina@bootlin.com>
 
-Fixes: cd33f216d24 ("gpio: mlxbf3: Add gpio driver support")
-Signed-off-by: Asmaa Mnebhi <asmaa@nvidia.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+In HDLC mode, some status flags related to the data read transfer can be
+set by the hardware and need to be known by a QMC consumer for further
+analysis.
+
+Extend the API in order to provide these transfer status flags at the
+read complete() call.
+
+In TRANSPARENT mode, these flags have no meaning. Keep only one read
+complete() API and update the consumers working in transparent mode.
+In this case, the newly introduced flags parameter is simply unused.
+
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
-v4->v5:
-- Add "Reviewed-By" Tag
-v3->v4:
-- Drop the common define for MLXBF3_GPIO_MAX_PINS_BLOCK0
-v2->v3:
-- Replace boolean logic by clear switch statement logic in
-  mlxbf3_gpio_add_pin_ranges()
-v1->v2:
-- Cleanup mlxbf3_gpio_add_pin_ranges()
+ drivers/soc/fsl/qe/qmc.c      | 29 +++++++++++++++++++++++++----
+ include/soc/fsl/qe/qmc.h      | 15 ++++++++++++++-
+ sound/soc/fsl/fsl_qmc_audio.c |  2 +-
+ 3 files changed, 40 insertions(+), 6 deletions(-)
 
- drivers/gpio/gpio-mlxbf3.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/drivers/gpio/gpio-mlxbf3.c b/drivers/gpio/gpio-mlxbf3.c
-index e30cee108986..0a5f241a8352 100644
---- a/drivers/gpio/gpio-mlxbf3.c
-+++ b/drivers/gpio/gpio-mlxbf3.c
-@@ -19,6 +19,8 @@
-  * gpio[1]: HOST_GPIO32->HOST_GPIO55
-  */
- #define MLXBF3_GPIO_MAX_PINS_PER_BLOCK 32
-+#define MLXBF3_GPIO_MAX_PINS_BLOCK0    32
-+#define MLXBF3_GPIO_MAX_PINS_BLOCK1    24
- 
- /*
-  * fw_gpio[x] block registers and their offset
-@@ -158,6 +160,26 @@ static const struct irq_chip gpio_mlxbf3_irqchip = {
- 	GPIOCHIP_IRQ_RESOURCE_HELPERS,
+diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+index 8dc73cc1a83b..2d2a9d88ba6c 100644
+--- a/drivers/soc/fsl/qe/qmc.c
++++ b/drivers/soc/fsl/qe/qmc.c
+@@ -166,7 +166,7 @@
+ struct qmc_xfer_desc {
+ 	union {
+ 		void (*tx_complete)(void *context);
+-		void (*rx_complete)(void *context, size_t length);
++		void (*rx_complete)(void *context, size_t length, unsigned int flags);
+ 	};
+ 	void *context;
  };
+@@ -421,7 +421,8 @@ static void qmc_chan_write_done(struct qmc_chan *chan)
+ }
  
-+static int mlxbf3_gpio_add_pin_ranges(struct gpio_chip *chip)
-+{
-+	unsigned int id;
-+
-+	switch(chip->ngpio) {
-+	case MLXBF3_GPIO_MAX_PINS_BLOCK0:
-+		id = 0;
-+		break;
-+	case MLXBF3_GPIO_MAX_PINS_BLOCK1:
-+		id = 1;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return gpiochip_add_pin_range(chip, "MLNXBF34:00",
-+			chip->base, id * MLXBF3_GPIO_MAX_PINS_PER_BLOCK,
-+			chip->ngpio);
-+}
-+
- static int mlxbf3_gpio_probe(struct platform_device *pdev)
+ int qmc_chan_read_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
+-			 void (*complete)(void *context, size_t length), void *context)
++			 void (*complete)(void *context, size_t length, unsigned int flags),
++			 void *context)
  {
- 	struct device *dev = &pdev->dev;
-@@ -197,6 +219,7 @@ static int mlxbf3_gpio_probe(struct platform_device *pdev)
- 	gc->request = gpiochip_generic_request;
- 	gc->free = gpiochip_generic_free;
- 	gc->owner = THIS_MODULE;
-+	gc->add_pin_ranges = mlxbf3_gpio_add_pin_ranges;
+ 	struct qmc_xfer_desc *xfer_desc;
+ 	unsigned long flags;
+@@ -454,6 +455,10 @@ int qmc_chan_read_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
+ 	xfer_desc->rx_complete = complete;
+ 	xfer_desc->context = context;
  
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq >= 0) {
-@@ -243,6 +266,7 @@ static struct platform_driver mlxbf3_gpio_driver = {
- };
- module_platform_driver(mlxbf3_gpio_driver);
++	/* Clear previous status flags */
++	ctrl &= ~(QMC_BD_RX_L | QMC_BD_RX_F | QMC_BD_RX_LG | QMC_BD_RX_NO |
++		  QMC_BD_RX_AB | QMC_BD_RX_CR);
++
+ 	/* Activate the descriptor */
+ 	ctrl |= (QMC_BD_RX_E | QMC_BD_RX_UB);
+ 	wmb(); /* Be sure to flush data before descriptor activation */
+@@ -485,7 +490,7 @@ EXPORT_SYMBOL(qmc_chan_read_submit);
  
-+MODULE_SOFTDEP("pre: pinctrl-mlxbf3");
- MODULE_DESCRIPTION("NVIDIA BlueField-3 GPIO Driver");
- MODULE_AUTHOR("Asmaa Mnebhi <asmaa@nvidia.com>");
- MODULE_LICENSE("Dual BSD/GPL");
+ static void qmc_chan_read_done(struct qmc_chan *chan)
+ {
+-	void (*complete)(void *context, size_t size);
++	void (*complete)(void *context, size_t size, unsigned int flags);
+ 	struct qmc_xfer_desc *xfer_desc;
+ 	unsigned long flags;
+ 	cbd_t __iomem *bd;
+@@ -527,7 +532,23 @@ static void qmc_chan_read_done(struct qmc_chan *chan)
+ 
+ 		if (complete) {
+ 			spin_unlock_irqrestore(&chan->rx_lock, flags);
+-			complete(context, datalen);
++
++			/*
++			 * Avoid conversion between internal hardware flags and
++			 * the software API flags.
++			 * -> Be sure that the software API flags are consistent
++			 *    with the hardware flags
++			 */
++			BUILD_BUG_ON(QMC_RX_FLAG_HDLC_LAST  != QMC_BD_RX_L);
++			BUILD_BUG_ON(QMC_RX_FLAG_HDLC_FIRST != QMC_BD_RX_F);
++			BUILD_BUG_ON(QMC_RX_FLAG_HDLC_OVF   != QMC_BD_RX_LG);
++			BUILD_BUG_ON(QMC_RX_FLAG_HDLC_UNA   != QMC_BD_RX_NO);
++			BUILD_BUG_ON(QMC_RX_FLAG_HDLC_ABORT != QMC_BD_RX_AB);
++			BUILD_BUG_ON(QMC_RX_FLAG_HDLC_CRC   != QMC_BD_RX_CR);
++
++			complete(context, datalen,
++				 ctrl & (QMC_BD_RX_L | QMC_BD_RX_F | QMC_BD_RX_LG |
++					 QMC_BD_RX_NO | QMC_BD_RX_AB | QMC_BD_RX_CR));
+ 			spin_lock_irqsave(&chan->rx_lock, flags);
+ 		}
+ 
+diff --git a/include/soc/fsl/qe/qmc.h b/include/soc/fsl/qe/qmc.h
+index 3c61a50d2ae2..6f1d6cebc9fe 100644
+--- a/include/soc/fsl/qe/qmc.h
++++ b/include/soc/fsl/qe/qmc.h
+@@ -9,6 +9,7 @@
+ #ifndef __SOC_FSL_QMC_H__
+ #define __SOC_FSL_QMC_H__
+ 
++#include <linux/bits.h>
+ #include <linux/types.h>
+ 
+ struct device_node;
+@@ -56,8 +57,20 @@ int qmc_chan_set_param(struct qmc_chan *chan, const struct qmc_chan_param *param
+ int qmc_chan_write_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
+ 			  void (*complete)(void *context), void *context);
+ 
++/* Flags available (ORed) for read complete() flags parameter in HDLC mode.
++ * No flags are available in transparent mode and the read complete() flags
++ * parameter has no meaning in transparent mode.
++ */
++#define QMC_RX_FLAG_HDLC_LAST	BIT(11) /* Last in frame */
++#define QMC_RX_FLAG_HDLC_FIRST	BIT(10) /* First in frame */
++#define QMC_RX_FLAG_HDLC_OVF	BIT(5)  /* Data overflow */
++#define QMC_RX_FLAG_HDLC_UNA	BIT(4)  /* Unaligned (ie. bits received not multiple of 8) */
++#define QMC_RX_FLAG_HDLC_ABORT	BIT(3)  /* Received an abort sequence (seven consecutive ones) */
++#define QMC_RX_FLAG_HDLC_CRC	BIT(2)  /* CRC error */
++
+ int qmc_chan_read_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
+-			 void (*complete)(void *context, size_t length),
++			 void (*complete)(void *context, size_t length,
++					  unsigned int flags),
+ 			 void *context);
+ 
+ #define QMC_CHAN_READ  (1<<0)
+diff --git a/sound/soc/fsl/fsl_qmc_audio.c b/sound/soc/fsl/fsl_qmc_audio.c
+index 7cbb8e4758cc..5d745aae17a8 100644
+--- a/sound/soc/fsl/fsl_qmc_audio.c
++++ b/sound/soc/fsl/fsl_qmc_audio.c
+@@ -99,7 +99,7 @@ static void qmc_audio_pcm_write_complete(void *context)
+ 	snd_pcm_period_elapsed(prtd->substream);
+ }
+ 
+-static void qmc_audio_pcm_read_complete(void *context, size_t length)
++static void qmc_audio_pcm_read_complete(void *context, size_t length, unsigned int flags)
+ {
+ 	struct qmc_dai_prtd *prtd = context;
+ 	int ret;
 -- 
-2.30.1
+2.41.0
 
