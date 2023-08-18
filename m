@@ -2,79 +2,110 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD5DC7112B
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 07:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1D5C001DE
+	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 08:17:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358281AbjHRHwB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Aug 2023 03:52:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34018 "EHLO
+        id S1358495AbjHRIQu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Aug 2023 04:16:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358350AbjHRHvY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 03:51:24 -0400
-Received: from mail-vk1-xa29.google.com (mail-vk1-xa29.google.com [IPv6:2607:f8b0:4864:20::a29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CAB83C27
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Aug 2023 00:51:08 -0700 (PDT)
-Received: by mail-vk1-xa29.google.com with SMTP id 71dfb90a1353d-48a6164cccdso182151e0c.3
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Aug 2023 00:51:08 -0700 (PDT)
+        with ESMTP id S1358537AbjHRIQi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 04:16:38 -0400
+Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D1202D79
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Aug 2023 01:16:37 -0700 (PDT)
+Received: by mail-oi1-x235.google.com with SMTP id 5614622812f47-3a3efebcc24so450301b6e.1
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Aug 2023 01:16:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1692345067; x=1692949867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x9DA4IDcpAmXOv7d2oJD3d3UaFajAPi9XbDwAsxLsm4=;
-        b=H/If5wZ5hyuUbDm3DCwvLp4uS1ViBbkr6yYyQD0+EBvELt+ZAAwzlpjmPVtXmxEd6B
-         b4BBan/5ld6yIVhgIOIAUfE5Yl4Lzjk/cL+UvBYmzCyTry6IiF5pzugOTEPS25yBf3jY
-         zLC7XzfdYrM0KmXNG9mG6pOi8dRTIqk8c+W9GECXd25JOzn4VAUbuyjC86nYrigq2qdU
-         F/3kMdJ2JtKi597QwzCI1RGEIz6lDsQ5w1k7G7L/X16cYNuRmJgrIPjwOYJJYpDtzAio
-         icPfT8tVk2bi2cgl6+KtyC6X8fDI/E0B3rfCKA2GrOzBc7qvNpqcRcpBe0yTQVsYuU7X
-         qB/g==
+        d=linaro.org; s=google; t=1692346596; x=1692951396;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lbM1VAOmIuDwNg7wfQxXA0nJWjB0nVU1MmLI6jlwhto=;
+        b=aX3GdRrN5u7986hkYft5jqQU/slDJdT/0j/IvJALAV9ap/XB6ty/U4nbGhNRK4V6NR
+         YU9oGKYVRV52pW422iHWmKyq/FLd8GyEgzHt7ZmzUk//yIGg4WjkZVO2UXwatwed1eIw
+         j3lWhYw3Mh+kVuQgRtwIoqb1XRFuBa+rOUgyUbXKwNoliK0V/mert/Tpekb6SWz62Fgd
+         pjeQ1+zN0nsyM5+J8UbewxhHbtDDVwm44HF31FpK3qInoHkSkHCRzAXDNM1riqhsrs4E
+         A1dxFwo8R7wx9wHj8nlhzU47nDJAlULDEVluwGgnHIvvfjoF7xzThu+IED+jYsztcmkz
+         rNzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692345067; x=1692949867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x9DA4IDcpAmXOv7d2oJD3d3UaFajAPi9XbDwAsxLsm4=;
-        b=g2hUfJN1BlrYizT02y5zI+Rvz55jb2BxpT0L8Kh89mtvI0PSG0y3LixO/pIZmdCGsC
-         MvTnnLtU77B8uANJkgeBci9WGvKFgT4YpQ1ulf26a8ExGfB18k//pZnKOI/HB+jX2gXN
-         02ifpgG1MPDjrZAO5+8tVT9CGjYH8CXBEOiO0rsbBYJKljSKZ9XBMd678fuiD2OxHL7n
-         LItQEIkdvRQ+pXi1vxg+TNBRbHKeenwhZ0YgwrC6BtId+hxSQ4x8Olpqj1qYHnHun6Pg
-         KrNkt1c4q75kLp1IvDtTi7hL1aF4kV0vGlp5xLEX9Y/A+Ckn+YewVVFL14eNfYbKgx7d
-         Cl2w==
-X-Gm-Message-State: AOJu0YxVrHep2ecNPKNYXwaYkKx4AvLKhX2L6lerhQLda7GutYjcUoQS
-        ljtX6OQs81VbO4Y8kQm8qIurIC/SbB+lFbPKldeqJw==
-X-Google-Smtp-Source: AGHT+IFdpboaxI+SV82u7O4mzVAkPe1ey6AP6pmPdhnAvT1jjSLLINrEjIFAIeiqJzJFdhi1y7bc2mHcxN6SJePxphY=
-X-Received: by 2002:a1f:bfc6:0:b0:481:36b0:aa01 with SMTP id
- p189-20020a1fbfc6000000b0048136b0aa01mr1869663vkf.6.1692345067644; Fri, 18
- Aug 2023 00:51:07 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1692346596; x=1692951396;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lbM1VAOmIuDwNg7wfQxXA0nJWjB0nVU1MmLI6jlwhto=;
+        b=VbZKJrGpbTha9aQsSITYW84XOcy2B0D1eAKrjkWZUwWX3b/HrykmP364NmG06MYV+S
+         JevOvYr8rB2+SQY/06N8gTPoYXZZE6od0DaXAiTvJM1TYQO/Am3Koy8FKf9tgg7H4Gsi
+         dlhlvnvizVrpAF0d9m3gb+8YwRtGPEF/siBMt7IZne44HRbG0s3RmDXaD40o+3aPAuSB
+         WUAxAIPgu+TMxJmtBdCnj5D15eJMPAl2/v8NCI2JFOx+Wj6fc2vsCv+cNvgbjvr6AnRx
+         pYhxGvDX+FZdFZWjIx62RFuy9/xayzSN1L8wwfEoGRtiddWlWHvXg6hS+zEejiGpQ4Wz
+         TMcg==
+X-Gm-Message-State: AOJu0YzQYK83FioDwWvcky3KTYPNMMtYedy0lxDBlRfMfYBn6QsDdJj2
+        HGCFY+yL9E+J79cou/mcKnKk7edIY+IR0kwH18cfsg==
+X-Google-Smtp-Source: AGHT+IF1apv76gbFlJez+VjwnL+TeCwg2GIpqX0la41LXsM1MAZ9V7pc4isaw9XO0kdt5vFUXBPptO4eji4e3eotnFE=
+X-Received: by 2002:a05:6358:9318:b0:13a:a85b:cdc2 with SMTP id
+ x24-20020a056358931800b0013aa85bcdc2mr2071609rwa.15.1692346596390; Fri, 18
+ Aug 2023 01:16:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230812183635.5478-1-brgl@bgdev.pl>
-In-Reply-To: <20230812183635.5478-1-brgl@bgdev.pl>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 18 Aug 2023 09:50:56 +0200
-Message-ID: <CAMRc=Me=WPRGRhGcNVpVUnYvU8T=-C82QYVHhTffLcJaFq7rnw@mail.gmail.com>
-Subject: Re: [PATCH v3] gpio: sim: simplify code with cleanup helpers
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 18 Aug 2023 10:16:25 +0200
+Message-ID: <CACRpkdYq=Ep4ji=Vy9k8X8cXE9_9gTS5T6eK_uP1M58v21sWbQ@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for v6.5
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Ninad Naik <quic_ninanaik@quicinc.com>,
+        Shazad Hussain <quic_shazhuss@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Aug 12, 2023 at 8:36=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Use macros defined in linux/cleanup.h to automate resource lifetime
-> control in gpio-sim.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+Hi Linus,
 
-I queued v3.
+here are some late fixes for v6.5 it's just two patches related
+to a Qualcomm SoC but I think they put it into significant
+devices so let's get the fixes out there.
 
-Bart
+Please pull it in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit fdf0eaf11452d72945af31804e2a1048ee1b574c:
+
+  Linux 6.5-rc2 (2023-07-16 15:10:37 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v6.5-3
+
+for you to fetch changes up to 9757300d2750ef76f139aa6f5f7eadd61a0de0d3:
+
+  pinctrl: qcom: Add intr_target_width field to support increased
+number of interrupt targets (2023-08-10 10:48:15 +0200)
+
+----------------------------------------------------------------
+Some pin control fixes for v6.5, fixes two issues with the
+Qualcomm SA8775P platform:
+
+- Some minor device tree binding flunky that is nice to iron
+  out but more importantly:
+
+- Support the increased interrupt targets mask from 3 to 4
+  bits, making interrupts with higher (hardware) numbers
+  work.
+
+----------------------------------------------------------------
+Ninad Naik (1):
+      pinctrl: qcom: Add intr_target_width field to support increased
+number of interrupt targets
+
+Shazad Hussain (1):
+      dt-bindings: pinctrl: qcom,sa8775p-tlmm: add gpio function constant
+
+ Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml | 2 +-
+ drivers/pinctrl/qcom/pinctrl-msm.c                               | 9 ++++++---
+ drivers/pinctrl/qcom/pinctrl-msm.h                               | 2 ++
+ drivers/pinctrl/qcom/pinctrl-sa8775p.c                           | 1 +
+ 4 files changed, 10 insertions(+), 4 deletions(-)
