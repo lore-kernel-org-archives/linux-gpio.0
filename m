@@ -2,92 +2,101 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C64EEEE49A0
-	for <linux-gpio@archiver.kernel.org>; Sat, 19 Aug 2023 02:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 425D1EE49AA
+	for <linux-gpio@archiver.kernel.org>; Sat, 19 Aug 2023 08:02:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244342AbjHSCrf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Aug 2023 22:47:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51668 "EHLO
+        id S1344591AbjHSICI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 19 Aug 2023 04:02:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244326AbjHSCrD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 22:47:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 092193C00;
-        Fri, 18 Aug 2023 19:47:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BC88163AFF;
-        Sat, 19 Aug 2023 02:47:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE3ADC433C7;
-        Sat, 19 Aug 2023 02:46:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692413221;
-        bh=oU+6WMg6c2UrnTMLgklxjc7ykpSmhNqopEee8qwkVPk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UA/UNvXwmLrhSEAhg7lPYmOjNAVVkUkN9pybSImmVxT+0lHuWrCcaZDmCSoYrvjyf
-         YhhI8bWGwgB+/99XZjtcruhpCWdBrpxn6MzuLWby7GqJRFG8rl8Cp+0RQ1VUqQk3jF
-         mEoMvMZpzs2YDyofEWA2JeQE+79wztJn67eSs7aVEPegNN3LeoWHQEXUhIZblTGeku
-         CuQQZAb6wJZuVe6I1lmEZcIgOQSfklhXfzmvPyJ2w9ky5Jtg3bfDWdjkqgDwrb5fbq
-         HkwvaKBtm+RCRcUr1M0AFhFV57+Nb9oY7HsEgtMxvTIkF/G+3ZTn+MWUggMWo2BOeq
-         9NRqhAAGGxXfw==
-Date:   Fri, 18 Aug 2023 19:46:58 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc:     Herve Codina <herve.codina@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 21/28] net: wan: Add framer framework support
-Message-ID: <20230818194658.369da77a@kernel.org>
-In-Reply-To: <5f671caf19be0a9bb7ea7b96a6c86381e243ca4c.1692376361.git.christophe.leroy@csgroup.eu>
-References: <cover.1692376360.git.christophe.leroy@csgroup.eu>
-        <5f671caf19be0a9bb7ea7b96a6c86381e243ca4c.1692376361.git.christophe.leroy@csgroup.eu>
+        with ESMTP id S1344456AbjHSIB5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 19 Aug 2023 04:01:57 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 313FC3C3E
+        for <linux-gpio@vger.kernel.org>; Sat, 19 Aug 2023 01:01:55 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4ff933f9ca8so2426549e87.1
+        for <linux-gpio@vger.kernel.org>; Sat, 19 Aug 2023 01:01:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1692432113; x=1693036913;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w3tAtsLI5s7m9t2MiJZTTVjgQTSIULjZIhCpwhV7cIA=;
+        b=XNHfAfYmCzvVRA8YoZrkhI7yXULzKeAGwu3fpaguHZWgbvPjej1avmavJvxX0Q5wOM
+         gE+sZbSIHp4L9fgUdsSHLOeQoIYvzZXQv6CNczaRF+VYcv6UG/NrZ7zu0dgrHyTW02Qi
+         TYCglKP6b8xz8lwC3KE8NB1mi7/QGHdbthwZYKE37w6Hsz/qFdlLSEsWa8W0Vs01L/LA
+         rP9GCp+p1xOy2l+6wSUoMoYbCIZl0BJngpdDatoXtZSByobg0TDM05l8z61vt1B/I2aC
+         bVTwKGZ8a3c1i6nMJo2m73jwc8JBlcqNaXYrblneTuTIf+lEfg2XGNDAOyzSx+s76Lu5
+         IQxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692432113; x=1693036913;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w3tAtsLI5s7m9t2MiJZTTVjgQTSIULjZIhCpwhV7cIA=;
+        b=A2ZUYIqbzk0sui1+7yMAzohuAyBkNhsI3z2IerufLBgUQWNwPL1WKQ9hA62hT7bEmh
+         0FZ0bqdJrZwPY2vVl7bgFeInthTzUeRE7FQjL5CkRt8oIOLjaHfkoNLmKmCW998FEmop
+         F5CTlYvzjoH3yUhn9xE1f5bMWKUkCR4u+MUq+gB5ihrVDWLHNLnEJPprIRDRlxYfRRV8
+         merMBhdfqxRyjDLRmwXDEBHgDlB9YM4Vw/0PKpQM2b4FiHqx/AWeXzG+Ebm+/Ik+9dac
+         PbXz9MtbbyHj3JkBoPY2e09ivsGWoQTjNt/G/nojtt/GmlCfZObORc8WmLJcVEvlgSLI
+         OgQw==
+X-Gm-Message-State: AOJu0YxMKYBODxvcTCESo4oLzA+UsnNEgkRsTIvPvqV66D9yueyODmwW
+        /WgiMPniMlGpdKSNBjBhA7W+Tg==
+X-Google-Smtp-Source: AGHT+IEsr2eSWNVpGQ7n93iLTcHZOT5L/UgXbAMJ9cTee7SCL/mCY004HJsoEq4z92AdNcbqyPGMyw==
+X-Received: by 2002:a05:6512:128c:b0:4ff:9aaa:6e3e with SMTP id u12-20020a056512128c00b004ff9aaa6e3emr1260440lfs.41.1692432113351;
+        Sat, 19 Aug 2023 01:01:53 -0700 (PDT)
+Received: from [192.168.0.22] ([77.252.47.198])
+        by smtp.gmail.com with ESMTPSA id s11-20020a056402164b00b00528922bb53bsm1654511edx.76.2023.08.19.01.01.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 19 Aug 2023 01:01:52 -0700 (PDT)
+Message-ID: <952dd160-b913-1484-c682-b5ad0f1a3743@linaro.org>
+Date:   Sat, 19 Aug 2023 10:01:51 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH] dt-bindings: pinctrl: Drop 'phandle' properties
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20230819010946.916772-1-robh@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230819010946.916772-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, 18 Aug 2023 18:39:15 +0200 Christophe Leroy wrote:
-> From: Herve Codina <herve.codina@bootlin.com>
+On 19/08/2023 03:09, Rob Herring wrote:
+> 'phandle' properties are implicitly supported on all nodes, so it
+> shouldn't be listed in schemas.
 > 
-> A framer is a component in charge of an E1/T1 line interface.
-> Connected usually to a TDM bus, it converts TDM frames to/from E1/T1
-> frames. It also provides information related to the E1/T1 line.
+> dtschema had a bug where 'phandle' and other implicit properties weren't
+> being added under 'additionalProperties' schemas. That was fixed in
+> v2023.07 release.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
 
-Okay, progress is being made, now it builds patch by patch.
-Still some kdoc warnings remain (W=1 build only catches
-kdoc warnings in sources, you gotta run ./scripts/kernel-doc -none
-explicitly on the headers):
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-include/linux/framer/framer.h:27: warning: Enum value 'FRAMER_IFACE_E1' not described in enum 'framer_iface'
-include/linux/framer/framer.h:27: warning: Enum value 'FRAMER_IFACE_T1' not described in enum 'framer_iface'
-include/linux/framer/framer.h:35: warning: expecting prototype for enum framer_clock_mode. Prototype was for enum framer_clock_type instead
-include/linux/framer/framer.h:47: warning: expecting prototype for struct framer_configuration. Prototype was for struct framer_config instead
-include/linux/framer/framer.h:60: warning: cannot understand function prototype: 'enum framer_event '
-include/linux/framer/framer.h:89: warning: Function parameter or member 'notify_status_work' not described in 'framer'
-include/linux/framer/framer.h:89: warning: Function parameter or member 'notifier_list' not described in 'framer'
-include/linux/framer/framer.h:89: warning: Function parameter or member 'polling_work' not described in 'framer'
--- 
-pw-bot: cr
+Best regards,
+Krzysztof
+
