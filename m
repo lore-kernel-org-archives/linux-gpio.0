@@ -2,93 +2,151 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 897EAEE4992
-	for <linux-gpio@archiver.kernel.org>; Fri, 18 Aug 2023 23:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4820EE49A2
+	for <linux-gpio@archiver.kernel.org>; Sat, 19 Aug 2023 01:10:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242367AbjHRXSs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 18 Aug 2023 19:18:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49662 "EHLO
+        id S243302AbjHSBJs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 18 Aug 2023 21:09:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242393AbjHRXSf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 19:18:35 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E117B4205;
-        Fri, 18 Aug 2023 16:18:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=LRQRZPdrv4QI8bQQoUTKBOoMNyJa1LbrbkfjcCc8uZw=; b=vkl51uAgZ2coNgQgP/P4b8/ozl
-        CFZbSnec4ohA+rkE1H92ceFU7AiniNCuavWVyoH+RyBPtjuVUujA6tVAn0aKhzlJk5cRfdds56VFv
-        yyMQXQO0bhc7s3zU31cE4b8FwZSyl2wQSdKL0PeJhOs/X4xKGhiQcWiWslcEMhB89CeaPQ0bF6qIx
-        NOpTOoT34ekpDhGPB/jkuU5NCH9HH0vAdwT13mclegA8ucop3r+npiuv4n5YQ7mb53OC6ld6DFrZ0
-        a0d8CX0NKx6XMbylqHUv7n+TK5Df613wD3hawMRTVHw7ALG868QMRyGCCLxRXRAtPH8xLhJ2pZUBC
-        ef7BHUKA==;
-Received: from [2601:1c2:980:9ec0::2764]
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qX8jS-00A9bg-1P;
-        Fri, 18 Aug 2023 23:18:18 +0000
-Message-ID: <e1ca6c2f-92e4-6dad-79ec-71cf66e9a385@infradead.org>
-Date:   Fri, 18 Aug 2023 16:18:15 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v4 27/28] ASoC: codecs: Add support for the framer codec
-Content-Language: en-US
-To:     Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Herve Codina <herve.codina@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        with ESMTP id S243275AbjHSBJg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Aug 2023 21:09:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33C0310F1;
+        Fri, 18 Aug 2023 18:09:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B6D696142D;
+        Sat, 19 Aug 2023 01:09:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46580C433C7;
+        Sat, 19 Aug 2023 01:09:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692407374;
+        bh=GgoHcra9ObNeUpMqTTIFhI0O8hWFNszRalZ/9DjEEpY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YtHu/QrehUfHn+7eu9li7sSBi3C8cH3oLD+Pk8q+XvFEA0BH4SwjDKr8RQqvLtrpW
+         uUhQVPidC1TU7kKHnczgnvIpEjZT5Kx5oa1GksQp3UNauNQkfrc3FZiTk+6p8znoO3
+         K6Rmg+vCpQDbmWDQWzjAsEHm2fbVAxQ+69n4YaxDPiMW3gbG7IUgAuHbsdR9PIQHUf
+         eFLJqB8iycd0tM7sE8IyUslw8aeARXq1L1pNURJ2dRcLu+malGOYae7OOpoFJBFEls
+         Kg2JnQh0dv3F/Y05JOoQZzclAfroRc+trbw2jnlwuC92csX1eKcVL+GSyEmc3UEyTk
+         gZaySZXpFUYXA==
+Received: (nullmailer pid 916541 invoked by uid 1000);
+        Sat, 19 Aug 2023 01:09:32 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        alsa-devel@alsa-project.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <cover.1692376360.git.christophe.leroy@csgroup.eu>
- <cb734efe2eeb89cb1afbf01d3625181537e2850f.1692376361.git.christophe.leroy@csgroup.eu>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <cb734efe2eeb89cb1afbf01d3625181537e2850f.1692376361.git.christophe.leroy@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: pinctrl: renesas,rza2: Use 'additionalProperties' for child nodes
+Date:   Fri, 18 Aug 2023 20:09:27 -0500
+Message-Id: <20230819010928.916438-1-robh@kernel.org>
+X-Mailer: git-send-email 2.40.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi,
+A schema under 'additionalProperties' works better for matching any
+property/node other than the ones explicitly listed. Convert the schema
+to use that rather than the wildcard and if/then schema.
 
-On 8/18/23 09:39, Christophe Leroy wrote:
-> +config SND_SOC_FRAMER
-> +	tristate "Framer codec"
-> +	depends on GENERIC_FRAMER
-> +	help
-> +	  Enable support for the framer codec.
-> +	  The framer codec uses the generic framer infrastructure to transport
-> +	  some audio data over an analog E1/T1/J1 line.
-> +	  This codec allows to use some of the time slots available on the TDM
-> +	  bus on which the framer is connected to transport the audio data.
-> +
+Drop 'phandle' properties which never need to be explicitly listed while
+we're here.
 
-Just curious: what controls the slot allocations/usages?
-Is that done in userspace?
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../pinctrl/renesas,rza2-pinctrl.yaml         | 61 +++++++++----------
+ 1 file changed, 28 insertions(+), 33 deletions(-)
 
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called snd-soc-framer.
-
-thanks.
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml
+index 37173a64fed2..8271e7b2c162 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml
+@@ -37,40 +37,37 @@ properties:
+   gpio-ranges:
+     maxItems: 1
+ 
+-patternProperties:
+-  "^.*$":
+-    if:
+-      type: object
+-    then:
+-      allOf:
+-        - $ref: pincfg-node.yaml#
+-        - $ref: pinmux-node.yaml#
++additionalProperties:
++  type: object
++
++  allOf:
++    - $ref: pincfg-node.yaml#
++    - $ref: pinmux-node.yaml#
++
++  description:
++    The child nodes of the pin controller designate pins to be used for
++    specific peripheral functions or as GPIO.
++
++    A pin multiplexing sub-node describes how to configure a set of
++    (or a single) pin in some desired alternate function mode.
++    The values for the pinmux properties are a combination of port name,
++    pin number and the desired function index. Use the RZA2_PINMUX macro
++    located in include/dt-bindings/pinctrl/r7s9210-pinctrl.h to easily
++    define these.
++    For assigning GPIO pins, use the macro RZA2_PIN also in
++    to express the desired port pin.
++
++  properties:
++    pinmux:
+       description:
+-        The child nodes of the pin controller designate pins to be used for
+-        specific peripheral functions or as GPIO.
++        Values are constructed from GPIO port number, pin number, and
++        alternate function configuration number using the RZA2_PINMUX()
++        helper macro in r7s9210-pinctrl.h.
+ 
+-        A pin multiplexing sub-node describes how to configure a set of
+-        (or a single) pin in some desired alternate function mode.
+-        The values for the pinmux properties are a combination of port name,
+-        pin number and the desired function index. Use the RZA2_PINMUX macro
+-        located in include/dt-bindings/pinctrl/r7s9210-pinctrl.h to easily
+-        define these.
+-        For assigning GPIO pins, use the macro RZA2_PIN also in
+-        to express the desired port pin.
++  required:
++    - pinmux
+ 
+-      properties:
+-        phandle: true
+-
+-        pinmux:
+-          description:
+-            Values are constructed from GPIO port number, pin number, and
+-            alternate function configuration number using the RZA2_PINMUX()
+-            helper macro in r7s9210-pinctrl.h.
+-
+-      required:
+-        - pinmux
+-
+-      additionalProperties: false
++  additionalProperties: false
+ 
+ allOf:
+   - $ref: pinctrl.yaml#
+@@ -82,8 +79,6 @@ required:
+   - '#gpio-cells'
+   - gpio-ranges
+ 
+-additionalProperties: false
+-
+ examples:
+   - |
+     #include <dt-bindings/pinctrl/r7s9210-pinctrl.h>
 -- 
-~Randy
+2.40.1
+
