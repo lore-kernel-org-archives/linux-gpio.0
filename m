@@ -2,72 +2,98 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6907C6FA8F
-	for <linux-gpio@archiver.kernel.org>; Wed, 23 Aug 2023 18:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAC2C27C40
+	for <linux-gpio@archiver.kernel.org>; Wed, 23 Aug 2023 18:33:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237501AbjHWSGS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 23 Aug 2023 14:06:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45146 "EHLO
+        id S238172AbjHWSdZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 23 Aug 2023 14:33:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238009AbjHWSGN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Aug 2023 14:06:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D288A1AD;
-        Wed, 23 Aug 2023 11:06:11 -0700 (PDT)
+        with ESMTP id S232847AbjHWSdZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Aug 2023 14:33:25 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75687CC7;
+        Wed, 23 Aug 2023 11:33:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6532763A12;
-        Wed, 23 Aug 2023 18:06:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FEE4C433C8;
-        Wed, 23 Aug 2023 18:06:10 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0471161853;
+        Wed, 23 Aug 2023 18:33:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3613DC433C8;
+        Wed, 23 Aug 2023 18:33:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692813970;
-        bh=fjXSLSy3WEZTv3uqwqTkRVnSzz6Rn81OEXWWbM6LqtI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=mfHvotbp3o0f8VJBONDvCHYEm8vU/iwT12Fkgt6d69nj9IumERsQ1TZ4vxTcy5UcQ
-         pF1WcDfv0ZHz/el5vPdmiUitFyzNlzRp8VElq7ftUVlYwqSA74RhKry+lldch9HSgh
-         kIq9ZN2+I9DznTkwmPf1DnnVykoVICVFtbAiHyTQN1QO+svDTaqN8BWiUYq8B45HGi
-         V1CYm4FicnSvRAedMnnn93O5Az63/zmRZ+a3Ra1XnXTaibEO6LaybF3ETpaaWn5ZjY
-         9A7ElWRcQ5iyEUf8bUOivvgc9IGX9q6ckUPwlsACqLYEBPe8nC2vX2UoPOJY0XcVKC
-         ZYp+jbqqUaFTw==
-Message-ID: <8c918dc8f68feb92519e5b327b5c5c3c.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        s=k20201202; t=1692815602;
+        bh=YMUP09NkDGPcfFSVMGM1j/fJoS+bPlF5trnx5ae/XkI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=e22fW/UqWCEcdNkbx3phPjrKEdVoz1Vj2h/95vNY1Bjeq5ZWKz8HWCFkHYCNNI2dQ
+         pQ28bhBRElPHEffkKElDbm1xLGmHOiNnfoDlSr/4D6BvCTXMrIo2b1l2gtbfr8UY1T
+         zefUFaMubRPUqrcA9jV8pM3PhHB/S07kiVB+pQLrnDggZTm0jJnZ6X3CgVyaQCtpoh
+         QmxZpS53tqSN5Vy6b2vtHntxQd0kJPDgBBW40tEsLsJcmSEd30DtjarQCtg/LtKHQt
+         YzFwgBhY1UJVAeeKD9YOYPr+firBhWbr6UE3MAkEolwZwZIx7JAmG/xpugeEU/jN2U
+         hOeuiVcd2bPlQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.95)
+        (envelope-from <maz@kernel.org>)
+        id 1qYsfP-007Rb8-L6;
+        Wed, 23 Aug 2023 19:33:19 +0100
+Date:   Wed, 23 Aug 2023 19:33:19 +0100
+Message-ID: <86fs49fw28.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] HID: cp2112: make the irqchip immutable
+In-Reply-To: <CACRpkdZWKDsHtYHqWSqz6QYp4TKT4OskWO7v6w=2v3NhvYWc4w@mail.gmail.com>
+References: <20230822152244.214394-1-brgl@bgdev.pl>
+        <CACRpkdZWKDsHtYHqWSqz6QYp4TKT4OskWO7v6w=2v3NhvYWc4w@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230823084540.112602-1-krzysztof.kozlowski@linaro.org>
-References: <20230823084540.112602-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] dt-bindings: use capital "OR" for multiple licenses in SPDX
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Date:   Wed, 23 Aug 2023 11:06:08 -0700
-User-Agent: alot/0.10
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linus.walleij@linaro.org, brgl@bgdev.pl, andriy.shevchenko@linux.intel.com, jikos@kernel.org, benjamin.tissoires@redhat.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, bartosz.golaszewski@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2023-08-23 01:45:40)
-> Documentation/process/license-rules.rst and checkpatch expect the SPDX
-> identifier syntax for multiple licenses to use capital "OR".  Correct it
-> to keep consistent format and avoid copy-paste issues.
+On Wed, 23 Aug 2023 13:14:59 +0100,
+Linus Walleij <linus.walleij@linaro.org> wrote:
 >=20
-> Correct also the format // -> .* in few Allwinner binding headers as
-> pointed out by checkpatch:
+> On Tue, Aug 22, 2023 at 5:22=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
 >=20
->   WARNING: Improper SPDX comment style for 'include/dt-bindings/reset/sun=
-50i-h6-ccu.h', please use '/*' instead
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > This make the GPIO irqchip exposed by the CP2112 driver use an immutable
+> > irq_chip struct thus addressing the following warning on probe:
+> >
+> >   (cp2112_gpio): not an immutable chip, please consider fixing it!
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Thanks for fixing this. FWIW:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 >=20
-> ---
+> Marc Z, have you checked how we stand with immutable GPIO
+> irqchips? We should be able to smoke it out to default behaviour
+> soon I think.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+I haven't recently checked, but I'm still in favour of actively
+make the new behaviour the only one supported. The sooner we break
+things, the better...
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
