@@ -2,143 +2,116 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55924C6FA8F
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Aug 2023 08:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D81C27C40
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Aug 2023 09:06:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231282AbjHXI4A (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 24 Aug 2023 04:56:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50374 "EHLO
+        id S234292AbjHXJFp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 24 Aug 2023 05:05:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236581AbjHXIzw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Aug 2023 04:55:52 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41DE210E4
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Aug 2023 01:55:50 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4ff88239785so10030997e87.0
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Aug 2023 01:55:50 -0700 (PDT)
+        with ESMTP id S240615AbjHXJF1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Aug 2023 05:05:27 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44DC2199E
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Aug 2023 02:05:22 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-ccc462deca6so6282371276.0
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Aug 2023 02:05:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1692867348; x=1693472148;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+6GA2aSSzjMIpYzS9IyphBftmr15QYQINEEJHnRuPlg=;
-        b=HK5OHNsjOXmSg54H0vmXIKUU7xtCKB+PI5mVI5O/uyeRX63OQyA+8DPXQZ+FNNAwzA
-         gtWVJ7avEWjCii8rWu6w6setTlOCjfrSm/whPNgMQ4Ruo2tpODLw38yjDX5KICc2nclg
-         vlYreC/HHRndRHqcMimZ5VDXNhtvOaZ6sDfgkssWiVC41F8+inal5xt0ksEjWC7LcGlF
-         NJyrNo0hSat6YaS9FeoVMOUcaolrpZQNqLJaLSeXCxb4iPkcCWGtIgZXmKnkHtkproWY
-         bxDEyGRy6XJclv9PaSohpDMXu/+jONicNtjGSNyC9s+IlLTqL6II3UfnSom7vUTML6D4
-         t+1Q==
+        d=linaro.org; s=google; t=1692867921; x=1693472721;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fYgryWvnPj7R+xwNudgLtbOsnBLGlcOU0tzJHrsK2Lo=;
+        b=Hdfa7++EHZToHiaS9oXnu3yB/Y1FuEoR4bZ/LWSALP2mQHfQ2DNUL7DjuXGLCrTsYC
+         RPKjwPn8kelv/DTPqNP3BiqA1iNpwbV+s0jlDAJ6LbiWG6vMQeasuY9i5M2ZEzygOZ/N
+         zzk1MWcCUA2s0DEb8IoSHw6i04Wm6mRUrzN9sD9PJGvot7+dBPf50q2SfSQ619jDMIVW
+         fozYafszeFdHmWaiVmaOTsI7QOOjARDzg95WhmitiXVeg0L4tZKmVUHjqNOGrqrXxXjQ
+         ZC36JR7rleMJur738qBvBJOIC0rmduWmw1r52A6VygEAX7qKuh4OmsXhWnbD5DP8quXD
+         8cwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692867348; x=1693472148;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+6GA2aSSzjMIpYzS9IyphBftmr15QYQINEEJHnRuPlg=;
-        b=VDc3hLBtlDMMTi0zK0MyZEUVTUvnpbAGSaakO2W9M+8oHVcc0r8XRBZ8Y3nsdaW/mU
-         nboMKHz+kzk10a6GUaMPNpKr1JBy3m2DeUT4nJyqzx4ZgLVH+f/zV6qS3NSNViZK49TE
-         NONwZtUDdbUEY1pi7tufcnhDH6SoQBG9HtBZTiduwJQy0I+RLelgCtyyHWxiF5Kv01u0
-         Y4hUkLpHUa6O0VIPY1iChpRR3ik2o4M4U/Z2OUZhxDawd2Y1mVEBEpHyJGlHCH0D82yg
-         yAnRBuynWYekkzsiRVgj3FO167vzzUi/3Zxj6Q9u9u7hUQ4DUwkZNVuhrOqMbFlPY+KF
-         969Q==
-X-Gm-Message-State: AOJu0Ywk6o4hkexL9XyDYzYFYod5FIgekhzb9lFggcuKMocYW7SjeJRI
-        dwETJZ1L6GEW/+esoYaWOFReFGlTINr7KvfFVOY=
-X-Google-Smtp-Source: AGHT+IFWXDT3TqF+psIqd+hSiyZ6asUmU93AmVQQUGQ0Oc5a8zhMSy2rP+ao4X3JpENaKqIPqsym/w==
-X-Received: by 2002:a05:6512:3e9:b0:4ff:95c:e158 with SMTP id n9-20020a05651203e900b004ff095ce158mr8804640lfq.64.1692867347584;
-        Thu, 24 Aug 2023 01:55:47 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:2a30:8709:b99d:e2bd])
-        by smtp.gmail.com with ESMTPSA id o10-20020a1c750a000000b003fe29dc0ff2sm2021347wmc.21.2023.08.24.01.55.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Aug 2023 01:55:47 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2] gpiolib: notify user-space about line state changes triggered by kernel
-Date:   Thu, 24 Aug 2023 10:55:44 +0200
-Message-Id: <20230824085544.110417-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20221208; t=1692867921; x=1693472721;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fYgryWvnPj7R+xwNudgLtbOsnBLGlcOU0tzJHrsK2Lo=;
+        b=MHOXRpR6uMLmaPuFO7+BVvzHZAapCIR+i+ZOG7oZyoIBP2QuGZU69+reIAGUKSaptF
+         KU2WKSUcw6NFBDU9NkRD2Er76DiSz3Sz73SczMhSci/kCubCGY6k3FKJs/zbCdwOdOuK
+         VqCUMZ8+kX7lr/qBlrLgDyOomtzRN5gbhRpBCjdURd8rOkWv2dLtQW91xCUm9LP9dvup
+         6+KiLbf8uPwOC+beSsHPkDDSCtCXdkT8YVO+rSdEBAYaqW8wU96XxjknJWxMvmsresxA
+         D3UAfDz//D53moqeJNbztbxG73WShDQEXdv42HPfTrMFCTxkWvJTzAYfooQm3YEG5NDq
+         /Ggg==
+X-Gm-Message-State: AOJu0YxeEnPlCTppSlHl4vvZqcDHxuAOJOCLiD03zF8Z2S446I3wck8C
+        wg1DVaqF4Xe3mJxHVNZ0Rq00ZrgU2lSuxYCLmIzffg==
+X-Google-Smtp-Source: AGHT+IH/X3LEeujnl74Jaat/Xaeae5WCCGO9DUWfsTTjnvKwhypih3sk2anUMCtADPvVHi1I04HgNKSi/+J5+auW6B0=
+X-Received: by 2002:a25:418a:0:b0:d49:5d3c:b04a with SMTP id
+ o132-20020a25418a000000b00d495d3cb04amr14826250yba.11.1692867921416; Thu, 24
+ Aug 2023 02:05:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230824070611.3335107-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20230824070611.3335107-1-peng.fan@oss.nxp.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 24 Aug 2023 10:43:20 +0200
+Message-ID: <CACRpkdYU7MRXRV3Uw1w300sdxv=9XT=P1vFFarHfpSM6BT20Hg@mail.gmail.com>
+Subject: Re: [RFC] scmi: pinctrl: support i.MX9
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     oleksii_moisieiev@epam.com, sudeep.holla@arm.com,
+        aisheng.dong@nxp.com, festevam@gmail.com, ping.bai@nxp.com,
+        s.hauer@pengutronix.de, shawnguo@kernel.org, kernel@pengutronix.de,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Aug 24, 2023 at 9:01=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.co=
+m> wrote:
 
-We currently only emit CHANGED_CONFIG events when the user-space changes
-GPIO config. We won't be notified if changes come from in-kernel. Let's
-call the notifier chain whenever kernel users change direction or any of
-the active-low, debounce or consumer name settings. We don't notify the
-user-space about the persistence as the uAPI has no notion of it.
+> This patch is just to introduce i.MX support to see whether people have
+> comments for the design.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-v1 -> v2:
-- use the gpiod_line_state_notify() helper
-- reorder the code in gpiod_set_debounce() for better readability
+Very interesting!
 
- drivers/gpio/gpiolib.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+> The binding format:
+> <mux_reg conf_reg input_reg mux_mode input_val>
+> dts:
+>         pinctrl_uart1: uart1grp {
+>                 fsl,pins =3D <
+>                         MX93_PAD_UART1_RXD__LPUART1_RX                  0=
+x31e
+>                         MX93_PAD_UART1_TXD__LPUART1_TX                  0=
+x31e
+>                 >;
+>         };
+>
+> i.MX pinctrl not use generic pinconf, this has been agreeed by
+> maintainers before.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 40a0022ea719..1cb7731550ca 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2439,6 +2439,7 @@ int gpiod_direction_input(struct gpio_desc *desc)
- 	}
- 	if (ret == 0) {
- 		clear_bit(FLAG_IS_OUT, &desc->flags);
-+		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
- 		ret = gpio_set_bias(desc);
- 	}
- 
-@@ -2484,8 +2485,10 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
- 		gc->set(gc, gpio_chip_hwgpio(desc), val);
- 	}
- 
--	if (!ret)
-+	if (!ret) {
- 		set_bit(FLAG_IS_OUT, &desc->flags);
-+		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-+	}
- 	trace_gpio_value(desc_to_gpio(desc), 0, val);
- 	trace_gpio_direction(desc_to_gpio(desc), 0, ret);
- 	return ret;
-@@ -2672,9 +2675,16 @@ EXPORT_SYMBOL_GPL(gpiod_set_config);
- int gpiod_set_debounce(struct gpio_desc *desc, unsigned int debounce)
- {
- 	unsigned long config;
-+	int ret;
- 
- 	config = pinconf_to_config_packed(PIN_CONFIG_INPUT_DEBOUNCE, debounce);
--	return gpiod_set_config(desc, config);
-+	ret = gpiod_set_config(desc, config);
-+	if (ret)
-+		return ret;
-+
-+	gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-+
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(gpiod_set_debounce);
- 
-@@ -2723,6 +2733,7 @@ void gpiod_toggle_active_low(struct gpio_desc *desc)
- {
- 	VALIDATE_DESC_VOID(desc);
- 	change_bit(FLAG_ACTIVE_LOW, &desc->flags);
-+	gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
- }
- EXPORT_SYMBOL_GPL(gpiod_toggle_active_low);
- 
-@@ -3330,6 +3341,7 @@ int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
- 
- 	kfree_const(desc->label);
- 	desc_set_label(desc, name);
-+	gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
- 
- 	return 0;
- }
--- 
-2.39.2
+Yes, it has historical reasons.
 
+> So after moving to SCMI, we will still
+> keep the same binding format, and i.MX SCMI firmware also use same
+> format when configure registers. So we need to use i.MX specific
+> dt_node_to_map function.
+
+I thought the idea with SCMI was to abstract and hide the characteristics o=
+f
+the underlying hardware. I.e. the firmware is to present groups and
+functions and generic config options and then the driver will use these.
+
+This patch, it seems, creates a hybrid between the old freescale driver
+and the SCMI firmware communication link where the SCMI is just a
+transport mechanism to something inside SCMI that poke the same
+registers that userspace could poke, if it could only access these
+registers.
+
+I.e using SCMI on this platform isn't creating any abstraction of the
+pin control hardware, it is merely making things more complex and
+also slower bymaking the registers only accessible from this SCMI link.
+
+But I could have misunderstood it, so please correct me!
+
+Yours,
+Linus Walleij
