@@ -2,179 +2,135 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E4EC6FA8F
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Aug 2023 09:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9D2C7113B
+	for <linux-gpio@archiver.kernel.org>; Thu, 24 Aug 2023 09:28:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229974AbjHXJMH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 24 Aug 2023 05:12:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57590 "EHLO
+        id S234715AbjHXJ1q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 24 Aug 2023 05:27:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236836AbjHXJLg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Aug 2023 05:11:36 -0400
-Received: from mail-vk1-xa31.google.com (mail-vk1-xa31.google.com [IPv6:2607:f8b0:4864:20::a31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C293C19A2
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Aug 2023 02:11:30 -0700 (PDT)
-Received: by mail-vk1-xa31.google.com with SMTP id 71dfb90a1353d-48d0ff94bc0so1598514e0c.2
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Aug 2023 02:11:30 -0700 (PDT)
+        with ESMTP id S240586AbjHXJ1Q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Aug 2023 05:27:16 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2160EE7F;
+        Thu, 24 Aug 2023 02:27:14 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-5650ef42f6dso3788689a12.0;
+        Thu, 24 Aug 2023 02:27:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1692868290; x=1693473090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VKDQmEavV9r7yC0aswW0EHwjQsHDSNxrluX3ZRmyHbc=;
-        b=QUtazsd0FFtGG3fYA77/a2id7ds4aYIPEQJFcikZuHiwpPK3BeHPe5j3qJtkdHcga+
-         c2Q43nugAizYKtxGHFDV+5WBl7DH9bS6YElnZ+S/uswaybM/IZv3zD4Xnfa23oalx8Ee
-         etJ03XvFJglMefL9PZOcYdBZyV4SvrWXJvLJ/7Dv5afu1raPVksbX7adeBi+I/r878tt
-         3pGL2iCgxWJ9Arez3tsmzvEcghxVNBC6ETmrsamQgdp3jRWZedPHVuhP4Rtixf25ABaV
-         RZwc9hEnFu4ZpwgqxXALgAV8RbqVDfx9yEjYKcsb0zsvs8AjvNqLYIZ71JkPPfxKErtC
-         gTZg==
+        d=gmail.com; s=20221208; t=1692869233; x=1693474033;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YCJxx8nS8psFBLHIQzPylAv2ndtj0TQX7xYwOgZPKtc=;
+        b=ocSBofdYuOj90ym2+Q+zmx8fd/drVOxVJGaOq9ClLnkqzJw0DhRKgRTPp05Db9X2a7
+         VAVubO48ctNfiTEAECa5punamDsG60rNKn4fLgOqbhlUufNKaKa+MSr26oesjbT1urUy
+         7AXwT8rRpYb3faSy9yTDy6P0AwsU/yQDS9dNEWYAI+8i8aWdgv5hqPCFNlEo9Y3HlOkV
+         oLHNch4SwosC+1h9hjcL2FZTVZTZqByRISGZ42ElSNigNR/5P+vQikem2XkolRLWudi5
+         bx5gk5QCXnhP/rfiHpffCqsaDy+DZfSRSwg4KMpw1AFTjHUoR/Btv5o140q6dU5ciZms
+         6/aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692868290; x=1693473090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VKDQmEavV9r7yC0aswW0EHwjQsHDSNxrluX3ZRmyHbc=;
-        b=Ce7iA81N5jUnaNYGOl2DKalYnblf96QOulWlz/vB4Xf8z/B3WEXiZuhVaNGByg302B
-         ao3BVkhfYgcktYr6lR5A5fAMQeh7RPKwC4vmUyluWh9SzJzsD3VSrjw0lLACY1Z4I0iC
-         GRjhp3OWSWRjD9ojl0TJRCJfPuXpzlCjlTKoiA3Q4i1v0WFI2hpQ7OA7tDSSZsGtywQ0
-         k0QGpn2208xk5W4llPP9AGq0+5G7QXDhumYBAJNSHLLrSXHNBxzDY74nQFzf7aE3Dzb+
-         /LiOPtSPHXq/u8rACx6zWyUyKOVEhqPMeMKinms9Ybz9yHRzdLXrggIbZI6ZDZKuD3Z8
-         wCkQ==
-X-Gm-Message-State: AOJu0YztEU4wgDFtLZMK8p4OAAROu64TtqoGlU2mqDh7LRAs5THWwxZv
-        wFZ36z6agxrgpOUlIto6dLyQerX/irRv+HNibKvsUw==
-X-Google-Smtp-Source: AGHT+IF45+Hlo2+p4IBs/zgdGxtt/0SZserNbdGTZJ/5bN7n/JfLZ0cA0pBZ1fD2k75NVf8SFD+yzeNuG+ia2NXtFRg=
-X-Received: by 2002:a1f:ddc3:0:b0:48f:b24d:21d3 with SMTP id
- u186-20020a1fddc3000000b0048fb24d21d3mr3351570vkg.15.1692868289740; Thu, 24
- Aug 2023 02:11:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230824085544.110417-1-brgl@bgdev.pl> <ZOceEeBuX+Nh7DJo@sol>
-In-Reply-To: <ZOceEeBuX+Nh7DJo@sol>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 24 Aug 2023 11:11:18 +0200
-Message-ID: <CAMRc=MdEqm2U9AfPiw5kerJpB1hXyvEQ1_m7EhgoFZ+G3UyDAA@mail.gmail.com>
-Subject: Re: [PATCH v2] gpiolib: notify user-space about line state changes
- triggered by kernel
-To:     Kent Gibson <warthog618@gmail.com>
+        d=1e100.net; s=20221208; t=1692869233; x=1693474033;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YCJxx8nS8psFBLHIQzPylAv2ndtj0TQX7xYwOgZPKtc=;
+        b=A86oipBF1U03pM7J1ytTqQKoOuI3w8BxVl5agDA/3E71KI+Kfl+PyUMDaHOW+RGaxr
+         uo/oGE93tYBfuSXZbEyEtx+l0URauwW1r8Ef+PhEJ5TNGv9eERdsUL4PmRs38fmuDfdC
+         YIEmm6k9DZwzMnAqG0Ow7p+r4sGzeEB+jwyJr7vMChxowmkHx0wBbLlOW5eFEx8a01Xw
+         7mEzK9g1LYZyoRCMiccB8k9SC1yOvEqKUgJSTGCaNR93/87VsjVCw+D8/nmzTPO0s18t
+         hEKD3OlsRsYA8ViFMJeVsjSP7SzCc1wVxZdXMFOZiDAYJHmJJexXYzCgEX8Ua3HsguGk
+         io8w==
+X-Gm-Message-State: AOJu0Yxz1AsZx9ooFTl3KL24gfiGoGYaMGPNk3pOv9mCRByV9QG5x8Vw
+        lFzWOCFfd5/NRMr1EVpya3U=
+X-Google-Smtp-Source: AGHT+IHWsEA0kSxvIM4rigneafEk0G4/sToXQ5h9CDArPSfz5uv7pAB128eZqyAdMgPy6pCQo6pF+A==
+X-Received: by 2002:a05:6a21:7906:b0:13e:e450:f4c9 with SMTP id bg6-20020a056a21790600b0013ee450f4c9mr12203280pzc.44.1692869233468;
+        Thu, 24 Aug 2023 02:27:13 -0700 (PDT)
+Received: from sol (14-203-61-235.static.tpgi.com.au. [14.203.61.235])
+        by smtp.gmail.com with ESMTPSA id z12-20020aa791cc000000b00682c864f35bsm11019794pfa.140.2023.08.24.02.27.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Aug 2023 02:27:13 -0700 (PDT)
+Date:   Thu, 24 Aug 2023 17:27:07 +0800
+From:   Kent Gibson <warthog618@gmail.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] gpiolib: notify user-space about line state changes
+ triggered by kernel
+Message-ID: <ZOcia3Nt+SzypTGm@sol>
+References: <20230824085544.110417-1-brgl@bgdev.pl>
+ <ZOceEeBuX+Nh7DJo@sol>
+ <CAMRc=MdEqm2U9AfPiw5kerJpB1hXyvEQ1_m7EhgoFZ+G3UyDAA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MdEqm2U9AfPiw5kerJpB1hXyvEQ1_m7EhgoFZ+G3UyDAA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 11:08=E2=80=AFAM Kent Gibson <warthog618@gmail.com>=
- wrote:
->
-> On Thu, Aug 24, 2023 at 10:55:44AM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Aug 24, 2023 at 11:11:18AM +0200, Bartosz Golaszewski wrote:
+> On Thu, Aug 24, 2023 at 11:08 AM Kent Gibson <warthog618@gmail.com> wrote:
 > >
-> > We currently only emit CHANGED_CONFIG events when the user-space change=
-s
-> > GPIO config. We won't be notified if changes come from in-kernel. Let's
-> > call the notifier chain whenever kernel users change direction or any o=
-f
-> > the active-low, debounce or consumer name settings. We don't notify the
-> > user-space about the persistence as the uAPI has no notion of it.
+> > On Thu, Aug 24, 2023 at 10:55:44AM +0200, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > We currently only emit CHANGED_CONFIG events when the user-space changes
+> > > GPIO config. We won't be notified if changes come from in-kernel. Let's
+> > > call the notifier chain whenever kernel users change direction or any of
+> > > the active-low, debounce or consumer name settings. We don't notify the
+> > > user-space about the persistence as the uAPI has no notion of it.
+> > >
+> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > ---
+> > > v1 -> v2:
+> > > - use the gpiod_line_state_notify() helper
+> > > - reorder the code in gpiod_set_debounce() for better readability
+> > >
+> > >  drivers/gpio/gpiolib.c | 16 ++++++++++++++--
+> > >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > > index 40a0022ea719..1cb7731550ca 100644
+> > > --- a/drivers/gpio/gpiolib.c
+> > > +++ b/drivers/gpio/gpiolib.c
+> > > @@ -2439,6 +2439,7 @@ int gpiod_direction_input(struct gpio_desc *desc)
+> > >       }
+> > >       if (ret == 0) {
+> > >               clear_bit(FLAG_IS_OUT, &desc->flags);
+> > > +             gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> > >               ret = gpio_set_bias(desc);
+> > >       }
+> > >
 > >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> > v1 -> v2:
-> > - use the gpiod_line_state_notify() helper
-> > - reorder the code in gpiod_set_debounce() for better readability
+> > gpiod_direction_input() is called by cdev when a line is requested.
+> > So requesting a line now creates two events - REQUESTED and
+> > HANGED_CONFIG? Even worse - it calls gpiod_direction_input() first, so we
+> > will get CHANGED_CONFIG then REQUESTED??
 > >
-> >  drivers/gpio/gpiolib.c | 16 ++++++++++++++--
-> >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > And a config change from cdev can call this and then generate a
+> > CHANGED_CONFIG event itself, so again double events.
 > >
-> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > index 40a0022ea719..1cb7731550ca 100644
-> > --- a/drivers/gpio/gpiolib.c
-> > +++ b/drivers/gpio/gpiolib.c
-> > @@ -2439,6 +2439,7 @@ int gpiod_direction_input(struct gpio_desc *desc)
-> >       }
-> >       if (ret =3D=3D 0) {
-> >               clear_bit(FLAG_IS_OUT, &desc->flags);
-> > +             gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG=
-);
-> >               ret =3D gpio_set_bias(desc);
-> >       }
-> >
->
-> gpiod_direction_input() is called by cdev when a line is requested.
-> So requesting a line now creates two events - REQUESTED and
-> HANGED_CONFIG? Even worse - it calls gpiod_direction_input() first, so we
-> will get CHANGED_CONFIG then REQUESTED??
->
-> And a config change from cdev can call this and then generate a
-> CHANGED_CONFIG event itself, so again double events.
->
-> Same for output and probably debounce too (that one is a bit more
-> convoluted).
+> > Same for output and probably debounce too (that one is a bit more
+> > convoluted).
+> 
+> Ah, should have tested it with user-space too...
+> 
+> Back to the drawing board I guess. May be the reason why we're not
+> doing it in the first place yet.
+> 
 
-Ah, should have tested it with user-space too...
+I think we were only looking at it from the userspace PoV, so what
+constitutes a "change" is only well defined when driven from userspace.
+This might be difficult to generalise without redefining what
+"changed" means, or providing cdev with a separate gpiolib API so you
+can tell whether the change is actually part of a cdev request, or ...
 
-Back to the drawing board I guess. May be the reason why we're not
-doing it in the first place yet.
+So, yeah - more thought required.
 
-Bart
+Got a use case that requires this, or just a nice to have?
 
->
-> Cheers,
-> Kent.
->
-> > @@ -2484,8 +2485,10 @@ static int gpiod_direction_output_raw_commit(str=
-uct gpio_desc *desc, int value)
-> >               gc->set(gc, gpio_chip_hwgpio(desc), val);
-> >       }
-> >
-> > -     if (!ret)
-> > +     if (!ret) {
-> >               set_bit(FLAG_IS_OUT, &desc->flags);
-> > +             gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG=
-);
-> > +     }
-> >       trace_gpio_value(desc_to_gpio(desc), 0, val);
-> >       trace_gpio_direction(desc_to_gpio(desc), 0, ret);
-> >       return ret;
-> > @@ -2672,9 +2675,16 @@ EXPORT_SYMBOL_GPL(gpiod_set_config);
-> >  int gpiod_set_debounce(struct gpio_desc *desc, unsigned int debounce)
-> >  {
-> >       unsigned long config;
-> > +     int ret;
-> >
-> >       config =3D pinconf_to_config_packed(PIN_CONFIG_INPUT_DEBOUNCE, de=
-bounce);
-> > -     return gpiod_set_config(desc, config);
-> > +     ret =3D gpiod_set_config(desc, config);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-> > +
-> > +     return 0;
-> >  }
-> >  EXPORT_SYMBOL_GPL(gpiod_set_debounce);
-> >
-> > @@ -2723,6 +2733,7 @@ void gpiod_toggle_active_low(struct gpio_desc *de=
-sc)
-> >  {
-> >       VALIDATE_DESC_VOID(desc);
-> >       change_bit(FLAG_ACTIVE_LOW, &desc->flags);
-> > +     gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-> >  }
-> >  EXPORT_SYMBOL_GPL(gpiod_toggle_active_low);
-> >
-> > @@ -3330,6 +3341,7 @@ int gpiod_set_consumer_name(struct gpio_desc *des=
-c, const char *name)
-> >
-> >       kfree_const(desc->label);
-> >       desc_set_label(desc, name);
-> > +     gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-> >
-> >       return 0;
-> >  }
-> > --
-> > 2.39.2
-> >
+Cheers,
+Kent.
