@@ -2,112 +2,203 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D086CC88CB2
-	for <linux-gpio@archiver.kernel.org>; Thu, 24 Aug 2023 23:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEB7EE49A0
+	for <linux-gpio@archiver.kernel.org>; Fri, 25 Aug 2023 01:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbjHXXQt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 24 Aug 2023 19:16:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46888 "EHLO
+        id S229928AbjHYBEX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 24 Aug 2023 21:04:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244104AbjHXXQp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Aug 2023 19:16:45 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE5B01BFE;
-        Thu, 24 Aug 2023 16:16:34 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id 3f1490d57ef6-d780bca9275so366617276.1;
-        Thu, 24 Aug 2023 16:16:34 -0700 (PDT)
+        with ESMTP id S233809AbjHYBEG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Aug 2023 21:04:06 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AB841BC2
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Aug 2023 18:04:04 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-68a56ed12c0so76991b3a.0
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Aug 2023 18:04:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692918994; x=1693523794;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xg2yByo1Np1P/TgXsSLJ4r1IwzSnzgvjX/HFW4qum3M=;
-        b=CRX/tpIytqSV1B07mimvyiICfKt1eM4Z9PpqAmOS4EIp+x+6dI0WI6IE2x+ha5OyCB
-         KguHdfoa8q0WU+W90VxSnFRf53BevugM2Xsj4PyjY2zhPpoR6spAHaFSNk7LUfltarHk
-         KIpQWzBQJ+C0q92J1aeIMFhB1SHN5TvYzbbfKG9yRk4TFQI3xhQXgPZMccdcKsaLk0Ak
-         uNelEMhfasus1yNtMG3JtAXXUDgsvCiuXBYbnT38LGIzHKpSe/oHBtljmNpFLQYuyg8E
-         cHvoGgnILWIbTyhync53HIsv59b1P3EYetLdTqt+TRC9voCrWWL3+cOyQFjqaSEaRmjZ
-         4qCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692918994; x=1693523794;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=linaro.org; s=google; t=1692925443; x=1693530243;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xg2yByo1Np1P/TgXsSLJ4r1IwzSnzgvjX/HFW4qum3M=;
-        b=EYBBGzX3/KDVo1liYnY3SYQRxrdzZnwHXE1uoDhLoHqNTKMvXz/N1B9z6ZjFiMCgR6
-         BPaYYqu6qTAMg7oHkrSnhAIE0UMJqIlYqm0Peyc3R0HCuuEX666HPsXDYoiRtYEY/0o1
-         qW83IpIB+4uAW+PzZInOjJcSpTet2Wutblm2a0u8Bkfnntwn5zAc1bNx/qf5oOwcMif3
-         +6g7/hJGswf0+9hfH7Wmmj+SzQFwMacnUkJrMCOKEzXP+v5zM/hUGwd17AXvaV7584uE
-         LsYAXG1Tz+jCbucjXeyUekI+t5KHa2ZC7/mVFu68bzqJP+NbrWxk4bvQRVrWkX+nFsp5
-         ni8A==
-X-Gm-Message-State: AOJu0YyL3CmPB/ttZOj6RMYcDlF+3kdIvYuBUSdyrqxoBJJTX4LGWmJx
-        UhnFZl4q5yWSwLeEpMZrwF+VaZUBCGjOsF07
-X-Google-Smtp-Source: AGHT+IGm+eHmb+iUEWTGCl7YBR4AjlPwd/TfuZeHI7kAGMpwIhfQk2suAHg4ZzMMV6Mt+gJ2f5renw==
-X-Received: by 2002:a25:b0a1:0:b0:d39:5e6a:9e6c with SMTP id f33-20020a25b0a1000000b00d395e6a9e6cmr18311113ybj.24.1692918993940;
-        Thu, 24 Aug 2023 16:16:33 -0700 (PDT)
-Received: from [192.168.0.16] (modemcable063.135-226-192.mc.videotron.ca. [192.226.135.63])
-        by smtp.gmail.com with ESMTPSA id eo9-20020a05622a544900b004054b435f8csm151322qtb.65.2023.08.24.16.16.33
+        bh=O78US63FfsQzmACvTjZMokzlCsmaMM4h32+Wp3IzgcU=;
+        b=h/OlHopVZqV0ui3E+m+IdDYT58/fes7lwYYaK/DEj//H9Wh7UqxCKfcYzGZ+ekMJ7f
+         qMPYNqWprGuGccHYWpsbSAU3ToS1t+y84N/nh29EwvJVTmAuBKcdxUePTY99d9xKPPBo
+         p/w6//TXZkPAz83UFrvdmxzoCkPtpuwRYV99jEAB2OnmMCWS+pXSMiQJPQFuVFk4yekP
+         YxWaTdH62vFrGbOZMz7i75GqPS40X50Q0IWJl3LltLg78563BJKSMm305AFnnvYacwjE
+         wKBLEKxnbnzIoqDS1LxK5oNxLIf/O6kqlsT8dCA9GT9AuU1z8wyXU82z4sMpHrrkXy+W
+         XGSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692925443; x=1693530243;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O78US63FfsQzmACvTjZMokzlCsmaMM4h32+Wp3IzgcU=;
+        b=I1N9X4xCkP3feTTCDfbcs9tGbdLwv44S3N5BBMwmhtY1kwMqRqIci67DviH2MO/4Bo
+         jhG4DaFnfUi0w8kzekt6qK/WF1KQl/GfL2oBOiH5Ff/xjGFy4rEj/MeUPII8K8t5BvFp
+         GrQtP8/t1jg53axZLygfSmz7ZFANVbnGJIPfR8VXkpjUgi8NzlKrwkWYiBIh170KzcCJ
+         S1D6mcjuxY2Xqguu4ALgiUVNFShiYd92mw6mygFG5iL7O5XOs0eWSnNTpRjez4ZQ/30e
+         ZWpbTAK/TdHcdYlyJeE14cb1iOIfmsRHu7Ao0mlICw8V0hI5XlBC4uqBs9e7nDsl20iS
+         D7NA==
+X-Gm-Message-State: AOJu0Yy5nvmc/73oAbhc/bd8MmxrBJVEI3ZhiQW0iwV+PoE+fUDcvO59
+        FPMWlkZi5YnbSjbaVRK4BsPMjw==
+X-Google-Smtp-Source: AGHT+IFADa9to1oIspLe0Sh5Ftf307VsJJzQgb6brQ/sYjhq0w4KfW8P3TPfT//dHMboCCp5MQcUcQ==
+X-Received: by 2002:a05:6a21:6da5:b0:137:3eba:b81f with SMTP id wl37-20020a056a216da500b001373ebab81fmr22106910pzb.3.1692925443476;
+        Thu, 24 Aug 2023 18:04:03 -0700 (PDT)
+Received: from octopus ([2400:4050:c3e1:100:ebbb:f01b:5bbb:8d77])
+        by smtp.gmail.com with ESMTPSA id g15-20020a1709029f8f00b001b898595be7sm300108plq.291.2023.08.24.18.04.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Aug 2023 16:16:33 -0700 (PDT)
-From:   Liam Beguin <liambeguin@gmail.com>
-Date:   Thu, 24 Aug 2023 19:16:25 -0400
-Subject: [PATCH 1/2] gpio: pca953x: add support for TCA9538
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230824-tca9538-v1-1-ee3bf2065065@gmail.com>
-References: <20230824-tca9538-v1-0-ee3bf2065065@gmail.com>
-In-Reply-To: <20230824-tca9538-v1-0-ee3bf2065065@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
+        Thu, 24 Aug 2023 18:04:03 -0700 (PDT)
+Date:   Fri, 25 Aug 2023 10:03:59 +0900
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     Oleksii Moisieiev <Oleksii_Moisieiev@epam.com>
+Cc:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, Liam Beguin <liambeguin@gmail.com>
-X-Mailer: b4 0.13-dev-83828
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1692918991; l=1310;
- i=liambeguin@gmail.com; s=20230824; h=from:subject:message-id;
- bh=4pZdGZb0hr9FM4cnbOhlG8yyvGORbp6I/pW1OFwRl18=;
- b=TJUWuN7T7lylXzpyw+c0699x+mwvLwCHp8vuxvkgndqxNrfyvE2IYT8cGRi+hcZlNkCHzc4Qw
- 53lZTl3tbKKBeFGX4kOXHccWd+oiIZL7+pNIXpQGxwp5OAZVD/50m2a
-X-Developer-Key: i=liambeguin@gmail.com; a=ed25519;
- pk=x+XyGOzOACLmUQ7jTEZhMy+lL3K5nhtUH6Oxt+tHkUQ=
+        Conor Dooley <conor+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v4 4/4] dt-bindings: firmware: arm,scmi: Add support for
+ pinctrl protocol
+Message-ID: <ZOf9/z5iPMUX3Ocu@octopus>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Oleksii Moisieiev <Oleksii_Moisieiev@epam.com>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+References: <cover.1691518313.git.oleksii_moisieiev@epam.com>
+ <1dcf25b5c6b16b7138534e3c13827287f7c644cf.1691518314.git.oleksii_moisieiev@epam.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1dcf25b5c6b16b7138534e3c13827287f7c644cf.1691518314.git.oleksii_moisieiev@epam.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The TCA9538 is an 8 bit version of the already supported TCA9539.
-This chip also has interrupt support.
+On Tue, Aug 08, 2023 at 06:25:36PM +0000, Oleksii Moisieiev wrote:
+> Add new SCMI v3.2 pinctrl protocol bindings definitions and example.
+> 
+> Signed-off-by: Oleksii Moisieiev <oleksii_moisieiev@epam.com>
+> 
+> ---
+> Changes v3 -> v4
+>   - reworked protocol@19 format
+> ---
+>  .../bindings/firmware/arm,scmi.yaml           | 53 +++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> index 5824c43e9893..5318fe72354e 100644
+> --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> @@ -233,6 +233,39 @@ properties:
+>        reg:
+>          const: 0x18
+>  
+> +  protocol@19:
+> +    type: object
+> +    allOf:
+> +      - $ref: "#/$defs/protocol-node"
+> +      - $ref: "../pinctrl/pinctrl.yaml"
 
-Signed-off-by: Liam Beguin <liambeguin@gmail.com>
----
- drivers/gpio/gpio-pca953x.c | 2 ++
- 1 file changed, 2 insertions(+)
+Does this rule require that the node name start with "pinctrl" or "pinmux"?
+If so, it doesn't match with "protocol@19".
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index a806a3c1b801..71a750363738 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -108,6 +108,7 @@ static const struct i2c_device_id pca953x_id[] = {
- 	{ "tca6408", 8  | PCA953X_TYPE | PCA_INT, },
- 	{ "tca6416", 16 | PCA953X_TYPE | PCA_INT, },
- 	{ "tca6424", 24 | PCA953X_TYPE | PCA_INT, },
-+	{ "tca9538", 8  | PCA953X_TYPE | PCA_INT, },
- 	{ "tca9539", 16 | PCA953X_TYPE | PCA_INT, },
- 	{ "tca9554", 8  | PCA953X_TYPE | PCA_INT, },
- 	{ "xra1202", 8  | PCA953X_TYPE },
-@@ -1354,6 +1355,7 @@ static const struct of_device_id pca953x_dt_ids[] = {
- 	{ .compatible = "ti,tca6408", .data = OF_953X( 8, PCA_INT), },
- 	{ .compatible = "ti,tca6416", .data = OF_953X(16, PCA_INT), },
- 	{ .compatible = "ti,tca6424", .data = OF_953X(24, PCA_INT), },
-+	{ .compatible = "ti,tca9538", .data = OF_953X( 8, PCA_INT), },
- 	{ .compatible = "ti,tca9539", .data = OF_953X(16, PCA_INT), },
- 
- 	{ .compatible = "onnn,cat9554", .data = OF_953X( 8, PCA_INT), },
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        const: 0x19
+> +
+> +      '#pinctrl-cells':
+> +        const: 0
+> +
+> +    patternProperties:
+> +      '-pins$':
 
--- 
-2.39.0
+Is this restriction necessary?
+(Most pinctrl's do so, though.)
 
+> +        type: object
+> +        allOf:
+> +          - $ref: "../pinctrl/pincfg-node.yaml#"
+> +          - $ref: "../pinctrl/pinmux-node.yaml#"
+> +        unevaluatedProperties: false
+> +
+> +        description:
+
+I think the description may be a bit ambiguous.
+
+> +          A pin multiplexing sub-node describe how to configure a
+> +          set of pins is some desired function.
+
+Even a sub-node that has pin multiplexing definitions may have
+pin property/parameter definitions. Right?
+
+> +          A single sub-node may define several pin configurations.
+
+Do you not allow for having a sub-node under a sub-node?
+
+> +          This sub-node is using default pinctrl bindings to configure
+
+Does "default pinctrl bindings" refer to "pinctrl-bindings.txt"?
+Is it necessary to specifically mention it here as it is for client devices?
+
+
+> +          pin multiplexing and using SCMI protocol to apply specified
+
+Again, not only multiplexing but also pin property/parameters.
+
+Thanks,
+-Takahiro Akashi
+
+> +          configuration using SCMI protocol.
+> +
+> +    required:
+> +      - reg
+> +
+>  additionalProperties: false
+>  
+>  $defs:
+> @@ -384,6 +417,26 @@ examples:
+>              scmi_powercap: protocol@18 {
+>                  reg = <0x18>;
+>              };
+> +
+> +            scmi_pinctrl: protocol@19 {
+> +                reg = <0x19>;
+> +                #pinctrl-cells = <0>;
+> +
+> +                i2c2-pins {
+> +                    groups = "i2c2_a", "i2c2_b";
+> +                    function = "i2c2";
+> +                };
+> +
+> +                mdio-pins {
+> +                    groups = "avb_mdio";
+> +                    drive-strength = <24>;
+> +                };
+> +
+> +                keys_pins: keys-pins {
+> +                    pins = "GP_5_17", "GP_5_20", "GP_5_22", "GP_2_1";
+> +                    bias-pull-up;
+> +                };
+> +            };
+>          };
+>      };
+>  
+> -- 
+> 2.25.1
