@@ -2,28 +2,28 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6078EE49A0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D0EC3DA66
 	for <linux-gpio@archiver.kernel.org>; Fri, 25 Aug 2023 03:38:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239431AbjHYDiS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S239477AbjHYDiS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 24 Aug 2023 23:38:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38598 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239251AbjHYDht (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Aug 2023 23:37:49 -0400
+        with ESMTP id S239399AbjHYDhw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Aug 2023 23:37:52 -0400
 Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2C1EE54
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Aug 2023 20:37:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49D501BC2
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Aug 2023 20:37:50 -0700 (PDT)
 Received: from dlp.unisoc.com ([10.29.3.86])
-        by SHSQR01.spreadtrum.com with ESMTP id 37P3bCa7075675;
-        Fri, 25 Aug 2023 11:37:12 +0800 (+08)
+        by SHSQR01.spreadtrum.com with ESMTP id 37P3bDZO075933;
+        Fri, 25 Aug 2023 11:37:13 +0800 (+08)
         (envelope-from linhua.xu@unisoc.com)
 Received: from SHDLP.spreadtrum.com (shmbx04.spreadtrum.com [10.0.1.214])
-        by dlp.unisoc.com (SkyGuard) with ESMTPS id 4RX5DN6l09z2QTWgH;
-        Fri, 25 Aug 2023 11:34:44 +0800 (CST)
+        by dlp.unisoc.com (SkyGuard) with ESMTPS id 4RX5DQ3gD9z2QTWgH;
+        Fri, 25 Aug 2023 11:34:46 +0800 (CST)
 Received: from xm9614pcu.spreadtrum.com (10.13.2.29) by shmbx04.spreadtrum.com
  (10.0.1.214) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Fri, 25 Aug
- 2023 11:37:10 +0800
+ 2023 11:37:12 +0800
 From:   Linhua Xu <Linhua.xu@unisoc.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 CC:     Orson Zhai <orsonzhai@gmail.com>,
@@ -33,9 +33,9 @@ CC:     Orson Zhai <orsonzhai@gmail.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         lh xu <xulh0829@gmail.com>, Linhua Xu <Linhua.Xu@unisoc.com>,
         Xiongpeng Wu <xiongpeng.wu@unisoc.com>
-Subject: [PATCH 3/6] pinctrl: sprd: Modify pull-up parameters
-Date:   Fri, 25 Aug 2023 11:18:23 +0800
-Message-ID: <20230825031826.31599-4-Linhua.xu@unisoc.com>
+Subject: [PATCH 5/6] pinctrl: sprd: Increase the range of register values
+Date:   Fri, 25 Aug 2023 11:18:25 +0800
+Message-ID: <20230825031826.31599-6-Linhua.xu@unisoc.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230825031826.31599-1-Linhua.xu@unisoc.com>
 References: <20230825031826.31599-1-Linhua.xu@unisoc.com>
@@ -44,80 +44,57 @@ Content-Type: text/plain
 X-Originating-IP: [10.13.2.29]
 X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
  shmbx04.spreadtrum.com (10.0.1.214)
-X-MAIL: SHSQR01.spreadtrum.com 37P3bCa7075675
+X-MAIL: SHSQR01.spreadtrum.com 37P3bDZO075933
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Linhua Xu <Linhua.Xu@unisoc.com>
 
-For UNISOC pin controller, there are three different configurations of
-pull-up drive current: 1 for pull-up resistor is 20K, 2 for pull-up
-resistor is 4.7K and 3 for pull-up resistor is 1.8K. Thus modify them.
+As the UNISOC pin controller version iterates, more registers are required
+to meet new functional requirements. Thus modify them.
 
 Signed-off-by: Linhua Xu <Linhua.Xu@unisoc.com>
 ---
- drivers/pinctrl/sprd/pinctrl-sprd.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/pinctrl/sprd/pinctrl-sprd.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
-index 6464999aaebe..6d16209a4846 100644
---- a/drivers/pinctrl/sprd/pinctrl-sprd.c
-+++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
-@@ -69,8 +69,9 @@
- #define SLEEP_PULL_UP_MASK		0x3
- #define SLEEP_PULL_UP_SHIFT		2
+diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.h b/drivers/pinctrl/sprd/pinctrl-sprd.h
+index a696f81ce663..43b920f27bf9 100644
+--- a/drivers/pinctrl/sprd/pinctrl-sprd.h
++++ b/drivers/pinctrl/sprd/pinctrl-sprd.h
+@@ -9,17 +9,17 @@
  
--#define PULL_UP_4_7K			(BIT(12) | BIT(7))
--#define PULL_UP_20K			BIT(7)
-+#define PULL_UP_WPUSP			(BIT(12) | BIT(7))
-+#define PULL_UP_WPUS			BIT(12)
-+#define PULL_UP_WPU			BIT(7)
- #define PULL_UP_MASK			0x43
- #define PULL_UP_SHIFT			6
+ struct platform_device;
  
-@@ -497,7 +498,7 @@ static int sprd_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin_id,
- 			break;
- 		case PIN_CONFIG_BIAS_DISABLE:
- 			if ((reg & (SLEEP_PULL_DOWN | SLEEP_PULL_UP)) ||
--			    (reg & (PULL_DOWN | PULL_UP_4_7K | PULL_UP_20K)))
-+			    (reg & (PULL_DOWN | PULL_UP_WPUSP)))
- 				return -EINVAL;
+-#define NUM_OFFSET	(20)
+-#define TYPE_OFFSET	(16)
+-#define BIT_OFFSET	(8)
+-#define WIDTH_OFFSET	(4)
++#define NUM_OFFSET	(22)
++#define TYPE_OFFSET	(18)
++#define BIT_OFFSET	(10)
++#define WIDTH_OFFSET	(6)
  
- 			arg = 1;
-@@ -690,15 +691,17 @@ static int sprd_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin_id,
- 				shift = INPUT_SCHMITT_SHIFT;
- 				break;
- 			case PIN_CONFIG_BIAS_PULL_UP:
--				if (is_sleep_config) {
-+				if (is_sleep_config == true) {
- 					val |= SLEEP_PULL_UP;
- 					mask = SLEEP_PULL_UP_MASK;
- 					shift = SLEEP_PULL_UP_SHIFT;
- 				} else {
--					if (arg == 20000)
--						val |= PULL_UP_20K;
--					else if (arg == 4700)
--						val |= PULL_UP_4_7K;
-+					if (arg == 3)
-+						val |= PULL_UP_WPUSP;
-+					else if (arg == 2)
-+						val |= PULL_UP_WPUS;
-+					else if (arg == 1)
-+						val |= PULL_UP_WPU;
+ #define SPRD_PIN_INFO(num, type, offset, width, reg)	\
+ 		(((num) & 0xFFF) << NUM_OFFSET |	\
+ 		 ((type) & 0xF) << TYPE_OFFSET |	\
+ 		 ((offset) & 0xFF) << BIT_OFFSET |	\
+ 		 ((width) & 0xF) << WIDTH_OFFSET |	\
+-		 ((reg) & 0xF))
++		 ((reg) & 0x1F))
  
- 					mask = PULL_UP_MASK;
- 					shift = PULL_UP_SHIFT;
-@@ -710,8 +713,7 @@ static int sprd_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin_id,
- 					mask = SLEEP_PULL_DOWN | SLEEP_PULL_UP;
- 				} else {
- 					val = shift = 0;
--					mask = PULL_DOWN | PULL_UP_20K |
--						PULL_UP_4_7K;
-+					mask = PULL_DOWN | PULL_UP_WPUSP;
- 				}
- 				break;
- 			case PIN_CONFIG_SLEEP_HARDWARE_STATE:
+ #define SPRD_PINCTRL_PIN(pin)	SPRD_PINCTRL_PIN_DATA(pin, #pin)
+ 
+@@ -30,7 +30,7 @@ struct platform_device;
+ 		.type = (((a) >> TYPE_OFFSET) & 0xf),		\
+ 		.bit_offset = (((a) >> BIT_OFFSET) & 0xff),	\
+ 		.bit_width = ((a) >> WIDTH_OFFSET & 0xf),	\
+-		.reg = ((a) & 0xf)				\
++		.reg = ((a) & 0x1f)				\
+ 	}
+ 
+ enum pin_type {
 -- 
 2.17.1
 
