@@ -2,41 +2,42 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D89EAC83F01
-	for <linux-gpio@archiver.kernel.org>; Sat, 26 Aug 2023 23:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A0EC83F19
+	for <linux-gpio@archiver.kernel.org>; Sat, 26 Aug 2023 23:15:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbjHZXPC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 26 Aug 2023 19:15:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55566 "EHLO
+        id S229909AbjHZXPD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 26 Aug 2023 19:15:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229588AbjHZXOd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Aug 2023 19:14:33 -0400
+        with ESMTP id S229695AbjHZXOw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Aug 2023 19:14:52 -0400
 Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22984100;
-        Sat, 26 Aug 2023 16:14:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57484DE;
+        Sat, 26 Aug 2023 16:14:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693091671; x=1724627671;
-  h=from:to:cc:subject:date:message-id;
-  bh=ofq7kvPSmVmBs3RP9yhV1HHd3N3h9v8sDQXmLdiV/LU=;
-  b=gQomBhpUhoRSi0dO9DIty/ep8PWAFidQ3Yzbdh/MsTis08UXqtIJyAF6
-   9N6iCacXrBOpCx6zv1JosT3zWZ1Xb9sh2TIrqJ4Tlr4LszLPxa9DvhG1N
-   7jdCRckKYqeRCWvtV3L+oMkMOaNOEwKZMp+Ig64zBgbQ1agnnJPGlhRUw
-   XRgF6uNYkkqq1o9OuJ5yoqeBddHSkpbxMYuKVKfP5sscgFxIAIoBpBbnT
-   K3yD821WoU1w6UCwua3+sG2B7/gzDkFXzEMaVKojwionEmTpDP3/qMMh7
-   ouU164jMjN7/6Pc7Pez8LG6cFOgc8cw8dvsBXrsN6IehC0dX81NYHaJsF
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10814"; a="438851458"
+  t=1693091689; x=1724627689;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=FO7qJvq9h3QDQIl7939Aajv5Lew0fp881NXOb0I4kyc=;
+  b=Qw17/B8fMdKOvi4cBPDVrWg5+EviHTYc30EN+uNi2yaaudJpxsAt/q2F
+   mn+D2L0rSn1Af+5uwsWQO1JsaMMelyfOft7W86ziZR8Axi9F6r/1RQGoW
+   /m0YpYGKnm2QylgkEU/bW+zyYzKtf4AQFgc/Sch7RJHV/Q9V3rNhgaG4P
+   +1G1jCAXh/lxt7x9XNNdA82jclMx5dF1y/id9EUDg9+4JPhRdu62PuuE+
+   I3lCzO3tBgdZ0ELZLcj0OA9VQ/vAhwNla3dZ1BKgZ7DKOIjZim19Y5Fm+
+   Mck0lNVFMrkerUldmJV48zGBIGq0HGN0lUiDVGTCTA3c/06SfxBAPNSkI
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10814"; a="438851485"
 X-IronPort-AV: E=Sophos;i="6.02,204,1688454000"; 
-   d="scan'208";a="438851458"
+   d="scan'208";a="438851485"
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2023 16:14:30 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2023 16:14:48 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10814"; a="911642688"
+X-IronPort-AV: E=McAfee;i="6600,9927,10814"; a="911642712"
 X-IronPort-AV: E=Sophos;i="6.02,204,1688454000"; 
-   d="scan'208";a="911642688"
+   d="scan'208";a="911642712"
 Received: from shsensorbuild2.sh.intel.com ([10.239.134.197])
-  by orsmga005.jf.intel.com with ESMTP; 26 Aug 2023 16:14:25 -0700
+  by orsmga005.jf.intel.com with ESMTP; 26 Aug 2023 16:14:43 -0700
 From:   Wentong Wu <wentong.wu@intel.com>
 To:     gregkh@linuxfoundation.org, arnd@arndb.de, mka@chromium.org,
         oneukum@suse.com, lee@kernel.org, wsa@kernel.org,
@@ -47,60 +48,403 @@ To:     gregkh@linuxfoundation.org, arnd@arndb.de, mka@chromium.org,
         heikki.krogerus@linux.intel.com, andi.shyti@linux.intel.com,
         sakari.ailus@linux.intel.com, srinivas.pandruvada@intel.com
 Cc:     zhifeng.wang@intel.com, Wentong Wu <wentong.wu@intel.com>
-Subject: [PATCH v10 0/4] Add Intel LJCA device driver
-Date:   Sun, 27 Aug 2023 07:13:59 +0800
-Message-Id: <1693091643-20867-1-git-send-email-wentong.wu@intel.com>
+Subject: [PATCH v10 2/4] i2c: Add support for Intel LJCA USB I2C driver
+Date:   Sun, 27 Aug 2023 07:14:01 +0800
+Message-Id: <1693091643-20867-3-git-send-email-wentong.wu@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1693091643-20867-1-git-send-email-wentong.wu@intel.com>
+References: <1693091643-20867-1-git-send-email-wentong.wu@intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add driver for Intel La Jolla Cove Adapter (LJCA) device. This is a
-USB-GPIO, USB-I2C and USB-SPI device. We add 4 drivers to support this
-device: a USB driver, a GPIO chip driver, a I2C controller driver and
-a SPI controller driver.
+Implements the I2C function of Intel USB-I2C/GPIO/SPI adapter device
+named "La Jolla Cove Adapter" (LJCA). It communicate with LJCA I2C
+module with specific protocol through interfaces exported by LJCA
+USB driver.
 
+Signed-off-by: Wentong Wu <wentong.wu@intel.com>
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
 ---
-v10:
- - remove ljca_i2c_format_slave_addr
- - remove memset before write write w_packet
- - make ljca_i2c_stop void and print err message in case failure
- - use dev_err_probe in ljca_i2c_probe function
-
-v9:
- - overhaul usb-ljca driver to make it more structured and easy understand
- - fix memory leak issue for usb-ljca driver
- - add spinlock to protect tx_buf and ex_buf
- - change exported APIs for usb-ljca driver
- - unify prefix for structures and functions for i2c-ljca driver
- - unify prefix for structures and functions for spi-ljca driver
- - unify prefix for structures and functions for gpio-ljca driver
- - update gpio-ljca, i2c-ljca and spi-ljca drivers according to usb-ljca's changes
-
-Wentong Wu (4):
-  usb: Add support for Intel LJCA device
-  i2c: Add support for Intel LJCA USB I2C driver
-  spi: Add support for Intel LJCA USB SPI driver
-  gpio: update Intel LJCA USB GPIO driver
-
- drivers/gpio/Kconfig          |   4 +-
- drivers/gpio/gpio-ljca.c      | 242 +++++++------
- drivers/i2c/busses/Kconfig    |  11 +
+ drivers/i2c/busses/Kconfig    |  11 ++
  drivers/i2c/busses/Makefile   |   1 +
- drivers/i2c/busses/i2c-ljca.c | 332 +++++++++++++++++
- drivers/spi/Kconfig           |  11 +
- drivers/spi/Makefile          |   1 +
- drivers/spi/spi-ljca.c        | 297 +++++++++++++++
- drivers/usb/misc/Kconfig      |  14 +
- drivers/usb/misc/Makefile     |   1 +
- drivers/usb/misc/usb-ljca.c   | 817 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/usb/ljca.h      | 113 ++++++
- 12 files changed, 1741 insertions(+), 103 deletions(-)
+ drivers/i2c/busses/i2c-ljca.c | 332 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 344 insertions(+)
  create mode 100644 drivers/i2c/busses/i2c-ljca.c
- create mode 100644 drivers/spi/spi-ljca.c
- create mode 100644 drivers/usb/misc/usb-ljca.c
- create mode 100644 include/linux/usb/ljca.h
 
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 9cfe8fc..7e2c52d 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -1264,6 +1264,17 @@ config I2C_DLN2
+ 	 This driver can also be built as a module.  If so, the module
+ 	 will be called i2c-dln2.
+ 
++config I2C_LJCA
++	tristate "I2C functionality of Intel La Jolla Cove Adapter"
++	depends on USB_LJCA
++	default USB_LJCA
++	help
++	  If you say yes to this option, I2C functionality support of Intel
++	  La Jolla Cove Adapter (LJCA) will be included.
++
++	  This driver can also be built as a module.  If so, the module
++	  will be called i2c-ljca.
++
+ config I2C_CP2615
+ 	tristate "Silicon Labs CP2615 USB sound card and I2C adapter"
+ 	depends on USB
+diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+index af56fe2..3757b93 100644
+--- a/drivers/i2c/busses/Makefile
++++ b/drivers/i2c/busses/Makefile
+@@ -133,6 +133,7 @@ obj-$(CONFIG_I2C_GXP)		+= i2c-gxp.o
+ # External I2C/SMBus adapter drivers
+ obj-$(CONFIG_I2C_DIOLAN_U2C)	+= i2c-diolan-u2c.o
+ obj-$(CONFIG_I2C_DLN2)		+= i2c-dln2.o
++obj-$(CONFIG_I2C_LJCA)		+= i2c-ljca.o
+ obj-$(CONFIG_I2C_CP2615) += i2c-cp2615.o
+ obj-$(CONFIG_I2C_PARPORT)	+= i2c-parport.o
+ obj-$(CONFIG_I2C_PCI1XXXX)	+= i2c-mchp-pci1xxxx.o
+diff --git a/drivers/i2c/busses/i2c-ljca.c b/drivers/i2c/busses/i2c-ljca.c
+new file mode 100644
+index 0000000..045a693
+--- /dev/null
++++ b/drivers/i2c/busses/i2c-ljca.c
+@@ -0,0 +1,332 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Intel La Jolla Cove Adapter USB-I2C driver
++ *
++ * Copyright (c) 2023, Intel Corporation.
++ */
++
++#include <linux/auxiliary_bus.h>
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++#include <linux/dev_printk.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/usb/ljca.h>
++
++/* I2C init flags */
++#define LJCA_I2C_INIT_FLAG_MODE			BIT(0)
++#define LJCA_I2C_INIT_FLAG_MODE_POLLING		FIELD_PREP(LJCA_I2C_INIT_FLAG_MODE, 0)
++#define LJCA_I2C_INIT_FLAG_MODE_INTERRUPT	FIELD_PREP(LJCA_I2C_INIT_FLAG_MODE, 1)
++
++#define LJCA_I2C_INIT_FLAG_ADDR_16BIT		BIT(0)
++
++#define LJCA_I2C_INIT_FLAG_FREQ			GENMASK(2, 1)
++#define LJCA_I2C_INIT_FLAG_FREQ_100K		FIELD_PREP(LJCA_I2C_INIT_FLAG_FREQ, 0)
++#define LJCA_I2C_INIT_FLAG_FREQ_400K		FIELD_PREP(LJCA_I2C_INIT_FLAG_FREQ, 1)
++#define LJCA_I2C_INIT_FLAG_FREQ_1M		FIELD_PREP(LJCA_I2C_INIT_FLAG_FREQ, 2)
++
++#define LJCA_I2C_BUF_SIZE			60u
++#define LJCA_I2C_MAX_XFER_SIZE			(LJCA_I2C_BUF_SIZE - sizeof(struct ljca_i2c_rw_packet))
++
++/* I2C commands */
++enum ljca_i2c_cmd {
++	LJCA_I2C_INIT = 1,
++	LJCA_I2C_XFER,
++	LJCA_I2C_START,
++	LJCA_I2C_STOP,
++	LJCA_I2C_READ,
++	LJCA_I2C_WRITE,
++};
++
++enum ljca_xfer_type {
++	LJCA_I2C_WRITE_XFER_TYPE,
++	LJCA_I2C_READ_XFER_TYPE,
++};
++
++/* I2C raw commands: Init/Start/Read/Write/Stop */
++struct ljca_i2c_rw_packet {
++	u8 id;
++	__le16 len;
++	u8 data[];
++} __packed;
++
++struct ljca_i2c_dev {
++	struct ljca_client *ljca;
++	struct ljca_i2c_info *i2c_info;
++	struct i2c_adapter adap;
++
++	u8 obuf[LJCA_I2C_BUF_SIZE];
++	u8 ibuf[LJCA_I2C_BUF_SIZE];
++};
++
++static int ljca_i2c_init(struct ljca_i2c_dev *ljca_i2c, u8 id)
++{
++	struct ljca_i2c_rw_packet *w_packet =
++			(struct ljca_i2c_rw_packet *)ljca_i2c->obuf;
++	int ret;
++
++	w_packet->id = id;
++	w_packet->len = cpu_to_le16(sizeof(*w_packet->data));
++	w_packet->data[0] = LJCA_I2C_INIT_FLAG_FREQ_400K;
++
++	ret = ljca_transfer(ljca_i2c->ljca, LJCA_I2C_INIT, w_packet,
++			    struct_size(w_packet, data, 1), NULL, 0);
++
++	return ret < 0 ? ret : 0;
++}
++
++static int ljca_i2c_start(struct ljca_i2c_dev *ljca_i2c, u8 slave_addr,
++			  enum ljca_xfer_type type)
++{
++	struct ljca_i2c_rw_packet *w_packet =
++			(struct ljca_i2c_rw_packet *)ljca_i2c->obuf;
++	struct ljca_i2c_rw_packet *r_packet =
++			(struct ljca_i2c_rw_packet *)ljca_i2c->ibuf;
++	s16 rp_len;
++	int ret;
++
++	w_packet->id = ljca_i2c->i2c_info->id;
++	w_packet->len = cpu_to_le16(sizeof(*w_packet->data));
++	w_packet->data[0] = (slave_addr << 1) | type;
++
++	ret = ljca_transfer(ljca_i2c->ljca, LJCA_I2C_START, w_packet,
++			    struct_size(w_packet, data, 1), r_packet,
++			    LJCA_I2C_BUF_SIZE);
++	if (ret < 0 || ret < sizeof(*r_packet))
++		return ret < 0 ? ret : -EIO;
++
++	rp_len = le16_to_cpu(r_packet->len);
++	if (rp_len < 0 || r_packet->id != w_packet->id) {
++		dev_err(&ljca_i2c->adap.dev,
++			"i2c start failed len: %d id: %d %d\n",
++			rp_len, r_packet->id, w_packet->id);
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static void ljca_i2c_stop(struct ljca_i2c_dev *ljca_i2c, u8 slave_addr)
++{
++	struct ljca_i2c_rw_packet *w_packet =
++			(struct ljca_i2c_rw_packet *)ljca_i2c->obuf;
++	struct ljca_i2c_rw_packet *r_packet =
++			(struct ljca_i2c_rw_packet *)ljca_i2c->ibuf;
++	s16 rp_len;
++	int ret;
++
++	w_packet->id = ljca_i2c->i2c_info->id;
++	w_packet->len = cpu_to_le16(sizeof(*w_packet->data));
++	w_packet->data[0] = 0;
++
++	ret = ljca_transfer(ljca_i2c->ljca, LJCA_I2C_STOP, w_packet,
++			    struct_size(w_packet, data, 1), r_packet,
++			    LJCA_I2C_BUF_SIZE);
++	if (ret < 0 || ret < sizeof(*r_packet)) {
++		dev_err(&ljca_i2c->adap.dev,
++			"i2c stop failed ret: %d id: %d\n",
++			ret, w_packet->id);
++		return;
++	}
++
++	rp_len = le16_to_cpu(r_packet->len);
++	if (rp_len < 0 || r_packet->id != w_packet->id)
++		dev_err(&ljca_i2c->adap.dev,
++			"i2c stop failed len: %d id: %d %d\n",
++			rp_len, r_packet->id, w_packet->id);
++}
++
++static int ljca_i2c_pure_read(struct ljca_i2c_dev *ljca_i2c, u8 *data, u8 len)
++{
++	struct ljca_i2c_rw_packet *w_packet =
++			(struct ljca_i2c_rw_packet *)ljca_i2c->obuf;
++	struct ljca_i2c_rw_packet *r_packet =
++			(struct ljca_i2c_rw_packet *)ljca_i2c->ibuf;
++	s16 rp_len;
++	int ret;
++
++	if (len > LJCA_I2C_MAX_XFER_SIZE)
++		return -EINVAL;
++
++	w_packet->id = ljca_i2c->i2c_info->id;
++	w_packet->len = cpu_to_le16(len);
++	w_packet->data[0] = 0;
++
++	ret = ljca_transfer(ljca_i2c->ljca, LJCA_I2C_READ, w_packet,
++			    struct_size(w_packet, data, 1), r_packet,
++			    LJCA_I2C_BUF_SIZE);
++	if (ret < 0 || ret < sizeof(*r_packet))
++		return ret < 0 ? ret : -EIO;
++
++	rp_len = le16_to_cpu(r_packet->len);
++	if (rp_len != len || r_packet->id != w_packet->id) {
++		dev_err(&ljca_i2c->adap.dev,
++			"i2c raw read failed len: %d id: %d %d\n",
++			rp_len, r_packet->id, w_packet->id);
++		return -EIO;
++	}
++
++	memcpy(data, r_packet->data, len);
++
++	return 0;
++}
++
++static int ljca_i2c_read(struct ljca_i2c_dev *ljca_i2c, u8 slave_addr, u8 *data,
++			 u8 len)
++{
++	int ret;
++
++	ret = ljca_i2c_start(ljca_i2c, slave_addr, LJCA_I2C_READ_XFER_TYPE);
++	if (!ret)
++		ret = ljca_i2c_pure_read(ljca_i2c, data, len);
++
++	ljca_i2c_stop(ljca_i2c, slave_addr);
++
++	return ret;
++}
++
++static int ljca_i2c_pure_write(struct ljca_i2c_dev *ljca_i2c, u8 *data, u8 len)
++{
++	struct ljca_i2c_rw_packet *w_packet =
++			(struct ljca_i2c_rw_packet *)ljca_i2c->obuf;
++	struct ljca_i2c_rw_packet *r_packet =
++			(struct ljca_i2c_rw_packet *)ljca_i2c->ibuf;
++	s16 rplen;
++	int ret;
++
++	if (len > LJCA_I2C_MAX_XFER_SIZE)
++		return -EINVAL;
++
++	w_packet->id = ljca_i2c->i2c_info->id;
++	w_packet->len = cpu_to_le16(len);
++	memcpy(w_packet->data, data, len);
++
++	ret = ljca_transfer(ljca_i2c->ljca, LJCA_I2C_WRITE, w_packet,
++			    struct_size(w_packet, data, len), r_packet,
++			    LJCA_I2C_BUF_SIZE);
++	if (ret < 0 || ret < sizeof(*r_packet))
++		return ret < 0 ? ret : -EIO;
++
++	rplen = le16_to_cpu(r_packet->len);
++	if (rplen != len || r_packet->id != w_packet->id) {
++		dev_err(&ljca_i2c->adap.dev,
++			"i2c write failed len: %d id: %d/%d\n",
++			rplen, r_packet->id, w_packet->id);
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static int ljca_i2c_write(struct ljca_i2c_dev *ljca_i2c, u8 slave_addr,
++			  u8 *data, u8 len)
++{
++	int ret;
++
++	ret = ljca_i2c_start(ljca_i2c, slave_addr, LJCA_I2C_WRITE_XFER_TYPE);
++	if (!ret)
++		ret = ljca_i2c_pure_write(ljca_i2c, data, len);
++
++	ljca_i2c_stop(ljca_i2c, slave_addr);
++
++	return ret;
++}
++
++static int ljca_i2c_xfer(struct i2c_adapter *adapter, struct i2c_msg *msg,
++			 int num)
++{
++	struct ljca_i2c_dev *ljca_i2c;
++	struct i2c_msg *cur_msg;
++	int i, ret;
++
++	ljca_i2c = i2c_get_adapdata(adapter);
++	if (!ljca_i2c)
++		return -EINVAL;
++
++	for (i = 0; i < num; i++) {
++		cur_msg = &msg[i];
++		if (cur_msg->flags & I2C_M_RD)
++			ret = ljca_i2c_read(ljca_i2c, cur_msg->addr,
++					    cur_msg->buf, cur_msg->len);
++		else
++			ret = ljca_i2c_write(ljca_i2c, cur_msg->addr,
++					     cur_msg->buf, cur_msg->len);
++
++		if (ret)
++			return ret;
++	}
++
++	return num;
++}
++
++static u32 ljca_i2c_func(struct i2c_adapter *adap)
++{
++	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
++}
++
++static const struct i2c_adapter_quirks ljca_i2c_quirks = {
++	.max_read_len = LJCA_I2C_MAX_XFER_SIZE,
++	.max_write_len = LJCA_I2C_MAX_XFER_SIZE,
++};
++
++static const struct i2c_algorithm ljca_i2c_algo = {
++	.master_xfer = ljca_i2c_xfer,
++	.functionality = ljca_i2c_func,
++};
++
++static int ljca_i2c_probe(struct auxiliary_device *auxdev,
++			  const struct auxiliary_device_id *aux_dev_id)
++{
++	struct ljca_client *ljca = auxiliary_dev_to_ljca_client(auxdev);
++	struct ljca_i2c_dev *ljca_i2c;
++	int ret;
++
++	ljca_i2c = devm_kzalloc(&auxdev->dev, sizeof(*ljca_i2c), GFP_KERNEL);
++	if (!ljca_i2c)
++		return -ENOMEM;
++
++	ljca_i2c->ljca = ljca;
++	ljca_i2c->i2c_info = dev_get_platdata(&auxdev->dev);
++
++	ljca_i2c->adap.owner = THIS_MODULE;
++	ljca_i2c->adap.class = I2C_CLASS_HWMON;
++	ljca_i2c->adap.algo = &ljca_i2c_algo;
++	ljca_i2c->adap.quirks = &ljca_i2c_quirks;
++	ljca_i2c->adap.dev.parent = &auxdev->dev;
++
++	snprintf(ljca_i2c->adap.name, sizeof(ljca_i2c->adap.name), "%s-%s-%d",
++		 dev_name(&auxdev->dev), dev_name(auxdev->dev.parent),
++		 ljca_i2c->i2c_info->id);
++
++	device_set_node(&ljca_i2c->adap.dev, dev_fwnode(&auxdev->dev));
++
++	i2c_set_adapdata(&ljca_i2c->adap, ljca_i2c);
++	auxiliary_set_drvdata(auxdev, ljca_i2c);
++
++	ret = ljca_i2c_init(ljca_i2c, ljca_i2c->i2c_info->id);
++	if (ret)
++		return dev_err_probe(&auxdev->dev, -EIO,
++				     "i2c init failed id: %d\n",
++				     ljca_i2c->i2c_info->id);
++
++	return devm_i2c_add_adapter(&auxdev->dev, &ljca_i2c->adap);
++}
++
++static const struct auxiliary_device_id ljca_i2c_id_table[] = {
++	{ "usb_ljca.ljca-i2c", 0 },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(auxiliary, ljca_i2c_id_table);
++
++static struct auxiliary_driver ljca_i2c_driver = {
++	.probe = ljca_i2c_probe,
++	.id_table = ljca_i2c_id_table,
++};
++module_auxiliary_driver(ljca_i2c_driver);
++
++MODULE_AUTHOR("Wentong Wu <wentong.wu@intel.com>");
++MODULE_AUTHOR("Zhifeng Wang <zhifeng.wang@intel.com>");
++MODULE_AUTHOR("Lixu Zhang <lixu.zhang@intel.com>");
++MODULE_DESCRIPTION("Intel La Jolla Cove Adapter USB-I2C driver");
++MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS(LJCA);
 -- 
 2.7.4
 
