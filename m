@@ -2,105 +2,71 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC19C83F14
-	for <linux-gpio@archiver.kernel.org>; Tue, 29 Aug 2023 16:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FD4C83F19
+	for <linux-gpio@archiver.kernel.org>; Tue, 29 Aug 2023 18:09:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237516AbjH2QXk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 29 Aug 2023 12:23:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40330 "EHLO
+        id S238364AbjH2SIl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 29 Aug 2023 14:08:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237457AbjH2QXN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Aug 2023 12:23:13 -0400
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 922AED2;
-        Tue, 29 Aug 2023 09:23:10 -0700 (PDT)
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.17.1.22/8.17.1.22) with ESMTP id 37TB7M6Z016651;
-        Tue, 29 Aug 2023 11:22:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=PODMain02222019; bh=ptBbO/ikbUCOzPa
-        qVepOxQ9ReSRotYR0A66tqyou2FU=; b=I+L5I4qBF50L9rYiRIaQlhWB4sV3RnQ
-        OGVpQwlf2Xo0digGObeI2dtMsDZQlKuuYeFjmholLLT/vDN1GOwElY7Bzp12+RuU
-        luWeMHYFh2i0VAca2nNK6nrJBwRnu+U/lUTjOGQuNY75kUBNMlUFfOxfaMpTu8cW
-        gdGSyaxRmHjPaj86fsoMAo94ERa9drjuBnqQfnTGnN/FCxCaYdLMG4Lz3gSaX5P0
-        sjxgZ09gT61sk1+pMBbkRgIaul55VXjyqt+prHO6UZKxD67CCLeYiE+bC1pOJelC
-        d6QWuSffHuwrW2Q2MwrCL9AUBJ+S8y+uKrzGsd5zUs71CWljNEq22SA==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3sqdtj360r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Aug 2023 11:22:45 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.37; Tue, 29 Aug
- 2023 17:22:43 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1118.37 via Frontend Transport; Tue, 29 Aug 2023 17:22:43 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 93CA615B6;
-        Tue, 29 Aug 2023 16:22:43 +0000 (UTC)
-Date:   Tue, 29 Aug 2023 16:22:43 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-CC:     <broonie@kernel.org>, <lee@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <linus.walleij@linaro.org>, <vkoul@kernel.org>,
-        <lgirdwood@gmail.com>, <yung-chuan.liao@linux.intel.com>,
-        <sanyog.r.kale@intel.com>, <pierre-louis.bossart@linux.intel.com>,
-        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
-        <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 3/6] mfd: cs42l43: Add support for cs42l43 core driver
-Message-ID: <20230829162243.GV103419@ediswmail.ad.cirrus.com>
-References: <20230804104602.395892-1-ckeepax@opensource.cirrus.com>
- <20230804104602.395892-4-ckeepax@opensource.cirrus.com>
- <b122a788-acee-4747-be6d-a7456ee110dc@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <b122a788-acee-4747-be6d-a7456ee110dc@roeck-us.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-ORIG-GUID: mADtkyurD_gKlPgW1ZYY9RFipjVdnnX5
-X-Proofpoint-GUID: mADtkyurD_gKlPgW1ZYY9RFipjVdnnX5
-X-Proofpoint-Spam-Reason: safe
+        with ESMTP id S238249AbjH2SIK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Aug 2023 14:08:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E506B184;
+        Tue, 29 Aug 2023 11:08:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C6D8761575;
+        Tue, 29 Aug 2023 18:08:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3A1A9C433CC;
+        Tue, 29 Aug 2023 18:08:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693332487;
+        bh=kbQBM2pbYznnsfE7KCAOIXngnWWAeGey9eZKwzyyfFY=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=LO+KNMAsuy2vPztjkojInrYD74WzMbmpj0LgSVElfHi73pLreZnFvPilvf4yUDhgz
+         SEJ9VWZXSGGQ3wgAWPtUZgIP1K31LtpuAX+/W7WzIDVx6HA8IjaYRyMdYiZHKxwQ8h
+         Q68GR0xFAoK5E1FB16+bpeyPC9IaqAbgFo+/YqGm345LmqhUgSQ0G9WDNgBmqKiDSK
+         NMLvufAY2nDbzDOqvgPHpgD3h8mCQxQlRXSi3s0WRaAXvD8d7iOti8DpbK30FyIG+7
+         Sen4n1F7M8A0u7QWIgPb4fbTso/Akqlbm3MTGVrW5fejwmhhV/HiSvMQaOuyYQ7csS
+         rqioNSpcuNrAQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 25FCBC3959E;
+        Tue, 29 Aug 2023 18:08:07 +0000 (UTC)
+Subject: Re: [GIT PULL] gpio: updates for v6.6
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20230829114301.10450-1-brgl@bgdev.pl>
+References: <20230829114301.10450-1-brgl@bgdev.pl>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20230829114301.10450-1-brgl@bgdev.pl>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-updates-for-v6.6
+X-PR-Tracked-Commit-Id: 3d0957b07e27abd3237b1fe0c7f06485ba80852f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f97e18a3f2fb78a4ed0d25e427535d9f853b9e9e
+Message-Id: <169333248715.16601.3923044857684477231.pr-tracker-bot@kernel.org>
+Date:   Tue, 29 Aug 2023 18:08:07 +0000
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Aug 29, 2023 at 07:06:28AM -0700, Guenter Roeck wrote:
-> On Fri, Aug 04, 2023 at 11:45:59AM +0100, Charles Keepax wrote:
-> > The CS42L43 is an audio CODEC with integrated MIPI SoundWire interface
-> > (Version 1.2.1 compliant), I2C, SPI, and I2S/TDM interfaces designed
-> > for portable applications. It provides a high dynamic range, stereo
-> > DAC for headphone output, two integrated Class D amplifiers for
-> > loudspeakers, and two ADCs for wired headset microphone input or
-> > stereo line input. PDM inputs are provided for digital microphones.
-> > 
-> > The MFD component registers and initialises the device and provides
-> > PM/system power management.
-> > 
-> Unfortunately, on systems without pm support:
-> 
-> Building s390:allmodconfig ... failed
-> --------------
-> Error log:
-> drivers/mfd/cs42l43.c:1138:12: error: 'cs42l43_runtime_resume' defined but not used [-Werror=unused-function]
->  1138 | static int cs42l43_runtime_resume(struct device *dev)
->       |            ^~~~~~~~~~~~~~~~~~~~~~
-> drivers/mfd/cs42l43.c:1124:12: error: 'cs42l43_runtime_suspend' defined but not used [-Werror=unused-function]
->  1124 | static int cs42l43_runtime_suspend(struct device *dev)
->       |            ^~~~~~~~~~~~~~~~~~~~~~~
-> drivers/mfd/cs42l43.c:1106:12: error: 'cs42l43_resume' defined but not used [-Werror=unused-function]
->  1106 | static int cs42l43_resume(struct device *dev)
->       |            ^~~~~~~~~~~~~~
-> drivers/mfd/cs42l43.c:1076:12: error: 'cs42l43_suspend' defined but not used [-Werror=unused-function]
->  1076 | static int cs42l43_suspend(struct device *dev)
-> 
+The pull request you sent on Tue, 29 Aug 2023 13:43:01 +0200:
 
-Apologies for this one, a fix is already awaiting review here:
+> git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-updates-for-v6.6
 
-https://lore.kernel.org/lkml/20230822114914.340359-1-ckeepax@opensource.cirrus.com/
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f97e18a3f2fb78a4ed0d25e427535d9f853b9e9e
 
-Thanks,
-Charles
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
