@@ -2,333 +2,243 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F6FC83F18
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFD0C83F1C
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:48:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243295AbjH3Srf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:47:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44802 "EHLO
+        id S243299AbjH3Srg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Aug 2023 14:47:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243334AbjH3KpW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 06:45:22 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B7DBCC2
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 03:45:19 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-500aed06ffcso6908556e87.0
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 03:45:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693392317; x=1693997117; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yXrmFSc5DvtKQwplkdMyHW9pMnpsWmyWrqSLE5MlrIE=;
-        b=UXawE5igQfDnP9Kg2O1Y9MNow2oAyrd+dCUx+bDlftaExBOzl+mIoVzGsMTd+miBJ+
-         TCT8nkj//Xdk1TvwcHks1PpJFUMPoh9PakzV6CUjPkOjO3hF7zpkypMAa+ANLj45cp6e
-         jvXfovC0xuwD446pzBFtESyjQn/rvXS7Kd7M8Kr43nOwsM09b3N4jUpKJLeA/cIA8BUY
-         BksF/mvNADzsgeMK6V15/zc6T0Iahu+4JzSmpvdUhVjk4fiYjgMpiP2eHebE6HXwD8Et
-         VnpfkLGjP0l+2lzshc03rZyyvm7k9F8gU6mlt701W3XOgvxfPT9GR9hbpgf5jCi3sriv
-         FOUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693392317; x=1693997117;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yXrmFSc5DvtKQwplkdMyHW9pMnpsWmyWrqSLE5MlrIE=;
-        b=B9DcvauQ9uEVJV2DS/tbkmuk9bVO1sQitUHHEoZ9445cJMIY/NkrhyPtlxZu0bpv79
-         iWSICyB8SItaDG+ql0A8k+7iMDKo1hIFfS9QTWe80SH1aO1RcI5gFrF1jj/gtTzXIqko
-         HWdsME/uBowSE8eO2xCVuh62ZIPJTiYZWepRmc8YpFo5xK7sXn8PGg9MgKnt2lY7j0rt
-         MfhIERQSIp0ucrzJCWMNlZoLnxMauxO4/vBF37C2Ss+YsWxo5ieyvlFvh30eTDMNdWHr
-         qWt1VO2d6JEdPnKUNpxEvVn8TcGHVy0rX7im7/HzIX2UyQYElIV+3OZIIe1/cSWgJBnm
-         V6fg==
-X-Gm-Message-State: AOJu0Yx1pW5XaqFjtfPaDz/a0ZlR4gHfes2OWsQgojNcFXBWMNRQ9ha1
-        Evzh/ENghLoG3eTQMJyUNLyUCw==
-X-Google-Smtp-Source: AGHT+IEIBTX67B4U3Kx8acXRvk5tJixSnsBIFI4vYjn84H8gWbTM8Nf/ZI8sQkkfwDxkK91FgFiYSA==
-X-Received: by 2002:a05:6512:ba4:b0:500:9031:bb1b with SMTP id b36-20020a0565120ba400b005009031bb1bmr1361380lfv.41.1693392317539;
-        Wed, 30 Aug 2023 03:45:17 -0700 (PDT)
-Received: from [192.168.1.101] (abyl195.neoplus.adsl.tpnet.pl. [83.9.31.195])
-        by smtp.gmail.com with ESMTPSA id j17-20020a19f511000000b004ff6fa3f038sm2316808lfb.144.2023.08.30.03.45.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Aug 2023 03:45:17 -0700 (PDT)
-Message-ID: <72c2fd33-613b-49be-b394-0663f459f0c5@linaro.org>
-Date:   Wed, 30 Aug 2023 12:45:15 +0200
+        with ESMTP id S244645AbjH3Nh6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 09:37:58 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8047011B;
+        Wed, 30 Aug 2023 06:37:54 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5ACE52F4;
+        Wed, 30 Aug 2023 06:38:33 -0700 (PDT)
+Received: from pluto (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6BC093F738;
+        Wed, 30 Aug 2023 06:37:51 -0700 (PDT)
+Date:   Wed, 30 Aug 2023 14:37:48 +0100
+From:   Cristian Marussi <cristian.marussi@arm.com>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        "oleksii_moisieiev@epam.com" <oleksii_moisieiev@epam.com>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: Re: [RFC] scmi: pinctrl: support i.MX9
+Message-ID: <ZO9GLG5tQynYyAvR@pluto>
+References: <20230824070611.3335107-1-peng.fan@oss.nxp.com>
+ <CACRpkdYU7MRXRV3Uw1w300sdxv=9XT=P1vFFarHfpSM6BT20Hg@mail.gmail.com>
+ <DU0PR04MB9417B3CB9638F936DF19C523881DA@DU0PR04MB9417.eurprd04.prod.outlook.com>
+ <CACRpkdZKMsC1Wyi+nOf7idAWMTUe8w2XbtpWnbDKrCLD75ND1g@mail.gmail.com>
+ <DU0PR04MB94178923DFC8E71287E560E888E3A@DU0PR04MB9417.eurprd04.prod.outlook.com>
+ <ZO8sRknW-6vdKoDd@pluto>
+ <DU0PR04MB941726AF86EEB0BBB55B9A2A88E6A@DU0PR04MB9417.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/11] arm64: dts: qcom: qcm6490: Add device-tree for
- Fairphone 5
-Content-Language: en-US
-To:     Luca Weiss <luca.weiss@fairphone.com>,
-        cros-qcom-dts-watchers@chromium.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
- <20230830-fp5-initial-v1-11-5a954519bbad@fairphone.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20230830-fp5-initial-v1-11-5a954519bbad@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DU0PR04MB941726AF86EEB0BBB55B9A2A88E6A@DU0PR04MB9417.eurprd04.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 30.08.2023 11:58, Luca Weiss wrote:
-> Add device tree for the Fairphone 5 smartphone which is based on
-> the QCM6490 SoC.
+On Wed, Aug 30, 2023 at 12:48:37PM +0000, Peng Fan wrote:
+> Hi Cristian,
 > 
-> Supported features are, as of now:
-> * Bluetooth
-> * Debug UART
-> * Display via simplefb
-> * Flash/torch LED
-> * Flip cover sensor
-> * Power & volume buttons
-> * RTC
-> * SD card
-> * USB
-> * Various plumbing like regulators, i2c, spi, etc
+
+Hi,
+
+> > Subject: Re: [RFC] scmi: pinctrl: support i.MX9
+> > 
+> > On Fri, Aug 25, 2023 at 08:43:38AM +0000, Peng Fan wrote:
+> > > > Subject: Re: [RFC] scmi: pinctrl: support i.MX9
+> > > >
+> > > > On Thu, Aug 24, 2023 at 2:47 PM Peng Fan <peng.fan@nxp.com> wrote:
+> > > > > Me:
+> > 
+> > Hi Peng,
+> > 
+> > > >
+> > > > >> it is merely making things more complex and also slower
+> > > > > > bymaking the registers only accessible from this SCMI link.
+> > > > >
+> > > > > This is for safety reason, the pinctrl hardware must be handled by
+> > > > > a system manager entity. So mmio direct access not allowed from
+> > > > > Cortex-A side.
+> > > >
+> > > > Yeah I understood as much. But I don't think that the firmware is
+> > > > really filtering any of the access, it will just poke into any
+> > > > pinctrl register as instructed anyway so what's the point. Just looks like a
+> > layer of indirection.
+> > >
+> > > No, the firmware has a check on whether a pin is allowed to be
+> > > configured by the agent that wanna to configure the pin.
+> > >
+> > > > But I'm not your system manager, so it's not my decision.
+> > > >
+> > > > > The SCMI firmware is very straightforward, there is no group or
+> > > > > function.
+> > > > >
+> > > > > It just accepts the format as this:
+> > > > > MUX_TYPE, MUX VALUE, CONF_TYPE, CONF_VAL, DAISY_TYPE, DAISY
+> > ID,
+> > > > > DAISY_CFG, DAISY_VALUE.
+> > > > >
+> > > > > Similar as linux MMIO format.
+> > > > >
+> > > > > Our i.MX95 platform will support two settings, one with SCMI
+> > > > > firmware, one without SCMI. These two settings will share the same
+> > > > > pinctrl header file.
+> > > > >
+> > > > > And to simplify the scmi firmware design(anyway I am not owner of
+> > > > > the firmware), to make pinctrl header shared w/o scmi, we take the
+> > > > > current in-upstream freescale imx binding format.
+> > > >
+> > > > The SCMI people will have to state their position on this.
+> > > > Like what they consider conformance and what extensions are allowed.
+> > > > This is more a standardization question than an implementation
+> > > > question so it's not really my turf.
+> > >
+> > > The i.MX95 SCMI firmware uses OEM extension type. So I just follow
+> > > what the firmware did and support it in linux. Anyway let's wait
+> > > Sudeep's reply.
+> > >
+> > 
+> > So my unsderstanding on this matter as of now is that:
+> > 
+> > 1. the current SCMI Pinctrl specification can support your usecase by using
+> >    OEM Types and multiple pins/values CONFIG_GET/SET commands
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
->  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 659 +++++++++++++++++++++
->  2 files changed, 660 insertions(+)
+> Yes, based on the Oleksii patchset with my local multiple configs support.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 2cca20563a1d..73c3be0f8872 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -81,6 +81,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-sony-xperia-yoshino-lilac.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-sony-xperia-yoshino-maple.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-sony-xperia-yoshino-poplar.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-xiaomi-sagit.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-fairphone-fp5.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> new file mode 100644
-> index 000000000000..572b254d3af2
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> @@ -0,0 +1,659 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2023, Luca Weiss <luca.weiss@fairphone.com>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +/* PM7250B is configured to use SID8/9 instead of SID2/3 */
-> +#define PM7250B_SID 8
-> +#define PM7250B_SID1 9
-> +
-> +#include <dt-bindings/arm/qcom,ids.h>
-> +#include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-> +#include "sc7280.dtsi"
-> +#include "pm7250b.dtsi"
-> +#include "pm7325.dtsi"
-> +#include "pm8350c.dtsi" /* PM7350C */
-> +#include "pmk8350.dtsi" /* PMK7325 */
-> +
-> +/ {
-> +	model = "Fairphone 5";
-> +	compatible = "fairphone,fp5", "qcom,qcm6490";
-> +	chassis-type = "handset";
-> +
-> +	/* required for bootloader to select correct board */
-> +	qcom,msm-id = <QCOM_ID_QCM6490 0x10000>;
-> +	qcom,board-id = <34 0>;
-Try [1], it worked for me on a picky device.
 
-> +
-> +	aliases {
-> +		serial0 = &uart5;
-> +		serial1 = &uart7;
-> +	};
-> +
-> +	chosen {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		framebuffer0: framebuffer@a000000 {
-> +			compatible = "simple-framebuffer";
-> +			reg = <0 0xe1000000 0 (2700 * 1224 * 4)>;
-0x0?
+Yes, I know, I pointed out on his series that the protocol has still to
+be fixed to be aligned with the latest BETA2 spec (we changed the spec
+on the fly while he was already posting indeed..)
 
-> +			width = <1224>;
-> +			height = <2700>;
-> +			stride = <(1224 * 4)>;
-> +			format = "a8r8g8b8";
-> +			panel = <&panel>;
-> +			clocks = <&gcc GCC_DISP_HF_AXI_CLK>;
-> +		};
-> +	};
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +
-> +		pinctrl-0 = <&volume_down_default>, <&hall_sensor_default>;
-> +		pinctrl-names = "default";
-> +
-> +		key-volume-up {
-> +			label = "Volume up";
-> +			gpios = <&pm7325_gpios 6 GPIO_ACTIVE_LOW>;
-> +			linux,code = <KEY_VOLUMEUP>;
-> +		};
-> +
-> +		/* Hall sensor uses vreg_l8c as VDD, it's being enabled using
-> +		 * always-on on the regulator
-> +		 */
-/* Powered by the always-on vreg_l8c */ - fits in a single line
+> > 
+> > 2. the Kernel SCMI protocol layer (driver/firmware/arm_scmi/pinctrl.c)
+> >    is equally fine and can support your usecase, AFTER Oleksii fixes it to
+> >    align it to the latest v3.2-BETA2 specification changes.
+> >    IOW, this means that, using the SCMI Pinctrl protocol operations
+> >    exposed in scmi_protocol.h, from somewhere, you are able to properly
+> >    configure multiple pins/values with your specific OEM types.
+> 
+> Yes.
 
-> +		event-hall-sensor {
-> +			label = "Hall Effect Sensor";
-> +			gpios = <&tlmm 155 GPIO_ACTIVE_LOW>;
-> +			linux,input-type = <EV_SW>;
-> +			linux,code = <SW_LID>;
-> +			linux,can-disable;
-> +			wakeup-source;
-> +		};
-> +	};
-> +
-> +	panel: panel {
-> +		compatible = "boe,rm692e5";
-Undocumented compatbile
+Good.
 
-> +
-> +		width-mm = <68>;
-> +		height-mm = <150>;
-> +	};
-> +
-> +	reserved-memory {
-> +		cont_splash_mem: cont-splash@e1000000 {
-> +			reg = <0 0xe1000000 0 0x2300000>;
-0x0
+> 
+> > 
+> > 3. The SCMI Pinctrl driver (by Oleksii) built on top of the pinctrl protocol
+> >    operations is instead NOT suitable for your usecase since it uses the Linux
+> >    Generic Pinconf and IMX does not make use of it, and instead IMX has
+> >    its own bindings and related parsing logic.
+> 
+> Yes.
+> 
+> > 
+> > Am I right ?
+> 
+> You are right.
+> 
+> > 
+> > If this is the case, I would NOT try to abuse the current SCMI Pinctrl Generic
+> > driver (by Oleksii) by throwing into it a bunch of IMX specific DT parsing,
+> > also because you'll end-up NOT using most of the generic SCMI Pinctrl driver
+> > but just reusing a bit of the probe (customized with your own DT maps
+> > parsing)
+> 
+> Only DT map to parse the dts and map to config array. Others are same,
+> so need to export some symbols for pinctrl-scmi-imx.c driver if build imx
+> scmi driver.
+>
 
-[...]
+Yes, but you are basically using some exported symbol to parse the DT in
+your way and then you do not use anything of the various
+functions/groups stuff...you just leverage some of the probing stuff and
+then issue you OEM Type configs....I mean most of the picntrl-scmi
+driver would be unused anyway in this scenario.
 
-> +		vreg_s1b: smps1 {
-> +			regulator-min-microvolt = <1840000>;
-> +			regulator-max-microvolt = <2040000>;
-No regulator-initial-mode on this pmic?
+> > 
+> > Instead, given that the spec[1.] and the protocol layer[2.] are fine for your
+> > use case and you indeed have already a custom way to parse your DT
+> > mappings, I would say that you could just write your own custom SCMI
+> > driver ( ? pinctrl-imx-scmi), distinct and much more simple than the generic
+> > one, that does its own IMX DT parsing and calls just the SCMI protocol
+> > operations that it needs in the way that your platform expects: so basically
+> > another Pinctrl SCMI driver that does not use the generic pinconf DT
+> > configuration BUT DO USE the underlying SCMI Pinctrl protocol (via its
+> > exposed protocol operations...)
+> 
+> I am ok with this approach, but I need use the other ID, saying 0x99, not 0x19,
+> because 0x19 will bind with the pinctrl-scmi.c driver, I could not reuse
+> this ID for i.MX pinctrl-scmi-imx driver. Otherwise there will be issue if both
+> driver are built in kernel image.
+> 
 
-[...]
+Ok here I lost you.
 
-> +
-> +	/* PM8008 PMIC @ 8 and 9 */
-> +	/* Pixelworks @ 26 */
-> +	/* FSA4480 USB audio switch @ 42 */
-There's a driver for the fsa4480, you may wanna include a node here
+The protocol ID 0x19 is bound to the protocol layer and identifies the
+standard Pinctrl protocol: usually you use a 0x99 to define and describe
+you own specific NEW vendor protocol, BUT here you are saying you are fine to
+use std Pinctrl spec AND the protocol operations as exposed in pinctrl.c, so
+I dont see why you should use a new vendor protocol_id to basically
+expose the same operations. (and I also dont see how you can do that
+without hacks in the current codebase)
 
-> +	/* AW86927FCR haptics @ 5a */
-> +};
-[...]
+You CAN have multiple SCMI drivers using the same protocol at the same
+time (even more than one protocol at the same time), even though we try
+to avoid it if there are no good reason to have more than one driver, there
+is nothing in the spec or in the current SCMI platform or agent stacks that
+inhibits such scenario (and I use iot heavily for my offline testing
+indeed.)
 
-> +
-> +	led-0 {
-> +		function = LED_FUNCTION_FLASH;
-No dual-tone stuff?
+Look at:
 
-> +		color = <LED_COLOR_ID_WHITE>;
-> +		led-sources = <1>, <4>;
-> +		led-max-microamp = <500000>;
-> +		flash-max-microamp = <1500000>;
-> +		flash-max-timeout-us = <1280000>;
-> +	};
-> +};
-> +
-> +&pmk8350_rtc {
-> +	status = "okay";
-> +};
-> +
-> +&pon_pwrkey {
-> +	status = "okay";
-> +};
-> +
-> +&pon_resin {
-> +	status = "okay";
-> +	linux,code = <KEY_VOLUMEDOWN>;
-status last
+ - drivers/hwmon/scmi-hwmon 
+ - drivers/iio/common/scmi_sensors/scmi_iio.c
 
-[...]
+and you'll see that these 2 drivers uses the same SENSOR protocol, just for
+different sensor types so they do not interfere one with each other.
 
-> +&rmtfs_mem {
-> +	qcom,vmid = <QCOM_SCM_VMID_MSS_MSA>, <QCOM_SCM_VMID_NAV>;
-> +	reg = <0x0 0xf8500000 0x0 0x600000>;
-> +};
-/delete-node/ + redefinition would probably be cleaner-looking
+What happens is that the first driver using a protocol causes its
+protocol_init to be called once for all.
 
-[...]
+This should work flawlessly like this, if this is not the case for some
+reason, this will have to be fixed in the protocol implementation: you
+are supposed to be able to grab the same protocol from different
+drivers without any issue.
 
-> +&uart7 {
-> +	/delete-property/interrupts;
-> +	interrupts-extended = <&intc GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH>,
-> +			      <&tlmm 31 IRQ_TYPE_EDGE_FALLING>;
-> +
-> +	pinctrl-names = "default", "sleep";
-> +	pinctrl-1 = <&qup_uart7_sleep_cts>, <&qup_uart7_sleep_rts>, <&qup_uart7_sleep_tx>, <&qup_uart7_sleep_rx>;
-property-n
-property-names
+I agree that you have to be careful not to share the same pins across 2
+different drivers using the same Pinctrl driver, but even if both driver
+are compiled in, nothing is really happening until the related DT
+binding are parsed, and so unless you mismatch your DT and assign same
+pins to both the Generic SCMI Pinctrl and to the IMX SCMI Pinctrl I dont
+see how they can interfere. You could indeed, have a set of pins managed
+by your custom IMX driver and one distinct other set of pins handled by
+the SCMI Generic driver by Oleksii, both magically handled by the same
+SCMI Server backend :P !
 
-> +
-> +	status = "okay";
-> +
-> +	bluetooth: bluetooth {
-> +		compatible = "qcom,wcn6750-bt";
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&bluetooth_enable_default>, <&sw_ctrl_default>;
-property-n
-property-names
+BUT to be on the safe side you could anyway force a conflict in Kconfig
+to mutually exclude one driver when the other is built and vice-versa.
 
-Konrad
+Am I missing something ? Why would you need a new vendor ID to define a
+new protocol without not really having any new protocol ?
 
-[1] https://lore.kernel.org/linux-arm-msm/9db02015-2c41-40d6-bf35-69ef277e9ce4@linaro.org/
+Thanks,
+Cristian
