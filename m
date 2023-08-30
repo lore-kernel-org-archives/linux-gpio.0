@@ -2,105 +2,105 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5883BC83F1F
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AA7C83F1B
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:48:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239276AbjH3Sry (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:47:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58138 "EHLO
+        id S243354AbjH3Sr7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Aug 2023 14:47:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243825AbjH3Lsy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 07:48:54 -0400
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB6BC1B0
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 04:48:50 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id ada2fe7eead31-44d38d91885so2323216137.1
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 04:48:50 -0700 (PDT)
+        with ESMTP id S242919AbjH3J6w (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 05:58:52 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DB25CE4
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:47 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-99bc9e3cbf1so147741466b.0
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20221208.gappssmtp.com; s=20221208; t=1693396130; x=1694000930; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BUEjMt/8gQISEBJ9n8m7X9z7I5hN+ItDdhTAq683G6c=;
-        b=DvOkbKRsSbb0wfQeyPAZukyIGi30OVQ3Ah9ST1Ho1ugOcm+HfcTTqpHhTYknwaJ635
-         bjZxtn7XolTtTCdTtESZ2ih+bC8kkOZAHdbu6L0ZzF5NKextXE60hS+oOwqGD3DnynTX
-         mWO3sk56h3xmx8IIRgOY5ZXJF8eVkc4wV6Bex2U/IxRi/EO1PL1hsepeGiIhxIvZYIAj
-         bW9jrNCTI3KtlhwMAbmuXjBOEkwcADGIilvb1QD4TlcV4aWnK9Hf/bBKbU1TNOK2iTI/
-         tEKQh9xcMuaGxch0fKItMgvxstdRyHtrsSWRCIxyLRXnjsen/oqY3zhncjA3ii6WH+n7
-         s7Mg==
+        d=fairphone.com; s=fair; t=1693389525; x=1693994325; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gKtgdDeh3KGEuNDRaZoZ19ZkmrfCqDJYBlZVW0lWVIw=;
+        b=oRgKORGQ4IjGWo5kvSfaotzAPwxitDtK0ILXoqAtV2gfr4yjFH41ndOaRTCeHPmit1
+         Cuhhcy9mVbhbwe9YwSxd66AcinmBEaAYLACkuydS29uNg0OosW6EHkdjNYAvgxsMAr6e
+         1Z2HI+Y8hxZAVUOmPyTljmWX3GF1cc34lfSiYgV/cXbYn2Wt3Fnwcqsiz26NWA69lolC
+         H786Dy1vBwayvVf8B8nBjiedA6NE0NCgQlO+XfYIboc02SHNIxCguqpdcZaVPiz29Hq0
+         9OxJ9zu7B9/JQlsOCnZqfNUto3SYXu9dkXN87Ao3+C+tyniEIBVjCPZYqOlm2qOxYJll
+         zh4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693396130; x=1694000930;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1693389525; x=1693994325;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BUEjMt/8gQISEBJ9n8m7X9z7I5hN+ItDdhTAq683G6c=;
-        b=KwlGXGLINNmemvUYKSY4otHy4chPoNhF0oKV8Etcv+ogoVcohQkJcaw3T8c416F9ZA
-         85OVVcycyTs0JfdSgkeRC0+cEmJ8aesBNsUOdjpwyUXwDZRhd3O7Bzzle3m7llVr4Ojv
-         toJE9/5jJHQPzjmpk2OXXm6M+8006PDwmfkI4Y1wg6OUbeLyaKWeJLh9nzZxSxfq2a8r
-         JIxcj+lSPreyaUh7tcRz8vs0GmoMisO6ktYHG6qslaG99sHbhl7f4x/fxI2N/MY0/RIg
-         9bylGPVRNvBYzO6HfasRb52fBk7KM3NnoAPW2dRShqRZsLDc863DlfEKlf3NHXiUFUne
-         9MHA==
-X-Gm-Message-State: AOJu0YxlHqu0FsIi/3f3dxHy4pIaTV/kYknu/0Nz1rmGR56HdRJAQsU/
-        KMPmArhoimZVqlABFWOvzgUi8f9JqNEkzEKE7unFxg==
-X-Google-Smtp-Source: AGHT+IFV9dQcsM+38+/FNEpB96SHGugYRFcvM44VlQQUJLvoNTgY8bbVDzAm2LXi5GhcwqyuMmb+KG704wzn8csJ22U=
-X-Received: by 2002:a67:eeda:0:b0:44d:3bc0:f0bf with SMTP id
- o26-20020a67eeda000000b0044d3bc0f0bfmr1577013vsp.8.1693396129942; Wed, 30 Aug
- 2023 04:48:49 -0700 (PDT)
+        bh=gKtgdDeh3KGEuNDRaZoZ19ZkmrfCqDJYBlZVW0lWVIw=;
+        b=MqM/KgBJvoL9uKnpKwkDfqUt0FHy2U/bMwavsuEo8UJpGLC6KQ+XWE/wj0J8wAWXaL
+         I3bvB1l5Gn+NUpB8590hRMUfGXHqu72ndPGLCwVN+5NoJBxrQBN79R2J/fWIY7Lf8i1w
+         AtDlgYxCi0+733svVHjamqqZahfMBazWQHAMRMtrr8evDqJRkvxcGyJe0GN8CU7efFWk
+         UVgQOOGPjlJWAy/zSUIrxE4vcTcXSc6Z77COO6CPOKhUXe615N5WvJXSodh6DrEmAOx9
+         2oyZXWtfA8fi6I0m7qSqphfCGwUoh5tDd9MooevHnrHZtFFpTOsuDu0hUHEmlgMs1Hkz
+         SdHA==
+X-Gm-Message-State: AOJu0YziG11RMpUS+K5hc2xPzrROPhK3+kxvJeiYDXci0mdPbBhPIcZ4
+        na1moXF5UXKy45uQ1GjaXLj+/A==
+X-Google-Smtp-Source: AGHT+IFvaPiFN9nageuHk31s1vdZkno6Ubq7GZhPBE0O982W9QQGDgTFFzP8fTeAc7MFi4EBvubAIw==
+X-Received: by 2002:a17:906:9bde:b0:9a2:1e14:86b9 with SMTP id de30-20020a1709069bde00b009a21e1486b9mr1942919ejc.0.1693389525352;
+        Wed, 30 Aug 2023 02:58:45 -0700 (PDT)
+Received: from otso.luca.vpn.lucaweiss.eu (5073ED84.static.ziggozakelijk.nl. [80.115.237.132])
+        by smtp.gmail.com with ESMTPSA id i15-20020a1709064ecf00b009a2202bfce5sm6957130ejv.118.2023.08.30.02.58.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Aug 2023 02:58:44 -0700 (PDT)
+From:   Luca Weiss <luca.weiss@fairphone.com>
+Date:   Wed, 30 Aug 2023 11:58:27 +0200
+Subject: [PATCH 02/11] nvmem: qfprom: Mark core clk as optional
 MIME-Version: 1.0
-References: <20230829114301.10450-1-brgl@bgdev.pl> <CAHk-=wigZt6kVkY0HU1j_LJ5H1KzwPiYnwwk6CbqXqT=sGenjg@mail.gmail.com>
-In-Reply-To: <CAHk-=wigZt6kVkY0HU1j_LJ5H1KzwPiYnwwk6CbqXqT=sGenjg@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 30 Aug 2023 13:48:39 +0200
-Message-ID: <CAMRc=Mcbaw9A1sdU3VtPvuThaCm6woPtGaCp0xRT6AcK2UzDkA@mail.gmail.com>
-Subject: Re: [GIT PULL] gpio: updates for v6.6
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230830-fp5-initial-v1-2-5a954519bbad@fairphone.com>
+References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
+In-Reply-To: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
+To:     cros-qcom-dts-watchers@chromium.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Aug 29, 2023 at 10:29=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Tue, 29 Aug 2023 at 04:43, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >
-> > Driver improvements:
-> > - use autopointers and guards from cleanup.h in gpio-sim
->
-> So I've pulled this, but I'm not entirely convinced some of this was a cl=
-eanup.
->
-> That gpio_sim_config_make_device_group() change is "interesting". Doing
->
->         return &no_free_ptr(dev)->group;
->
-> looks a bit crazy. My first reaction to it was 'that can't be right".
-> It _is_ right, but I'm not convinced that getting rid of one kfree()
-> call in the error path above it is worth that kind of semantic
-> complexity.
->
-> I guess we'll get more used to this - and it will look a bit less
-> crazy in the process - but I did want to just note that I'm not
-> entirely convinced we should encourage things like this.
->
->               Linus
+On some platforms like sc7280 on non-ChromeOS devices the core clock
+cannot be touched by Linux so we cannot provide it. Mark it as optional
+as accessing qfprom works without it.
 
-I on the other hand absolutely love SBRM in C. I have been using
-autopointers a lot in user-space when coding in GLib/GObject and it
-quickly becomes second nature with no_free_ptr() not being much
-different from g_steal_pointer(). It's an even better pattern when
-used with reference counted objects where the cleanup function just
-drops the reference so you can do a less "crazy" return
-object_ref(obj);
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+ drivers/nvmem/qfprom.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Maybe this particular example doesn't save a lot of code but I think
-it's worth using SBRM consistently across a given file, otherwise
-mixing both styles will lead to an unreadable mess.
+diff --git a/drivers/nvmem/qfprom.c b/drivers/nvmem/qfprom.c
+index 14814cba2dd6..739dc502b39e 100644
+--- a/drivers/nvmem/qfprom.c
++++ b/drivers/nvmem/qfprom.c
+@@ -423,7 +423,7 @@ static int qfprom_probe(struct platform_device *pdev)
+ 		if (IS_ERR(priv->vcc))
+ 			return PTR_ERR(priv->vcc);
+ 
+-		priv->secclk = devm_clk_get(dev, "core");
++		priv->secclk = devm_clk_get_optional(dev, "core");
+ 		if (IS_ERR(priv->secclk))
+ 			return dev_err_probe(dev, PTR_ERR(priv->secclk), "Error getting clock\n");
+ 
 
-Bartosz
+-- 
+2.42.0
+
