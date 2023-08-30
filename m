@@ -2,57 +2,64 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1809C83F01
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE21C83F19
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:52:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243443AbjH3SsY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:48:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52014 "EHLO
+        id S243451AbjH3Ss2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Aug 2023 14:48:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243819AbjH3Lrm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 07:47:42 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77583CD6
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 04:47:37 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-59234aaca15so61816367b3.3
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 04:47:37 -0700 (PDT)
+        with ESMTP id S245125AbjH3ObC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 10:31:02 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D3E1A1
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 07:30:58 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9a5dff9d2d9so106189966b.3
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 07:30:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693396056; x=1694000856; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1693405855; x=1694010655; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E6qY7mr1if4mjzl6N/X/QNgn05V4Hq/iGd+Okpb2gPA=;
-        b=dsEnzXEJxuqidSDS1+aIt0UnyaZ+/EWIFdvkiJhxfISwuVGlAcWx3VrTIeZPKeB5LW
-         yW5/4H3QF+tl2/s6NcJ8R99D339/D0MhsH9gXKPZ9VuRXV+0QHTQVUxSFGVU7sePaQwZ
-         PQ/Fp2NtoM8SsfSlJYqVNwXUWCBwPn9ZEd8+elAXRWJ42cmgd5/n0qhQuB9rYpvL6X1P
-         7DXS3vn91YZBZbzxhu+sMfhW3ouH687I7Xr6ql0DYsPOM7svNo6Axdt7o9V+V0qhxFVj
-         o8v5qq0SUPVXyNoBG+azlRArycP0T+ArxuqvsWLEmA26t3stwcJpBytTr7PCRd/zqhfw
-         4jlw==
+        bh=5Z1Z9G4G/KVFZhr9R3sGbutXUCNsEgKocPQNRqGJxWY=;
+        b=CQdKIkaLl/QEMaQQAghV3Eo0qUT1QT2VAmg6iQ1K2utQxi5eQjCnlJMWqFVdNIuIrm
+         8bGLH87ZwUX/N/Fz5jJlqnz5Kv/mYuAD85ek2Zs/jB9zVi2KgLMY+a+CCfm5TVeP45xo
+         SjfC43jpee9/0x6uehLKJobGo6in5iB5oOe0E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693396056; x=1694000856;
+        d=1e100.net; s=20221208; t=1693405855; x=1694010655;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E6qY7mr1if4mjzl6N/X/QNgn05V4Hq/iGd+Okpb2gPA=;
-        b=KRp+eogfb2qTgzvQi4T+XXlNrJu/CHXmUULYkBy3WqQWU70kkos5Y26KWJdTngupdP
-         8MkSHlBkgQ8TuOWEYgdUDqRLkHc/xWY1y949MqCboTaaMrALyM+Vvp8FNsP+oidP7fr7
-         R5V04q4rh7KAcuhdgt5xB6c7J1RfSD1PvuB3RkOJTxysI7+KJnIMrDTe3vnIDM3D7eM4
-         gl24nwDVR3TV8WEffWrmiI+5oQw7mMZbklfkM+22ruCEf9X6kfXoqICKws0M1zW5D+fG
-         SxnEC6qy1EGIcdCHQDzRL7MKTPnWEZbI0G56Yfr6GIE0pd5aL4SatyDfCW3+UJmtjycI
-         CHuQ==
-X-Gm-Message-State: AOJu0YwBxddsPlrGXzZjB4eNrkYNbo41/O7LNqLGgZFKVBO+libDImBh
-        Ml6iAXdvBmb3nkw782UwURWsxP5iOhv2WYKpkctnrQ==
-X-Google-Smtp-Source: AGHT+IG+cDfVhvedCJoh1MydyK7VKRA/KVbr4a7x5p2hLIqH/Y7y+yfFDrrjPE8FE1bGRWGIDiLivpaB3dJHFKPBchA=
-X-Received: by 2002:a5b:889:0:b0:d32:cd49:2469 with SMTP id
- e9-20020a5b0889000000b00d32cd492469mr2006211ybq.24.1693396056658; Wed, 30 Aug
- 2023 04:47:36 -0700 (PDT)
+        bh=5Z1Z9G4G/KVFZhr9R3sGbutXUCNsEgKocPQNRqGJxWY=;
+        b=LEdFHZFZDBLtgazRpYefPKiOynOTRAMvJHUPNQ9a4YQ8ismaUzMrgN0VPERKQI9JsZ
+         aNrVilzQbMHnrfYdAVwyLB/XSVTGbruisLV9b/Ce9ExCcjduAcsZzpEjUEZkAiPC1sZy
+         c1zPp2MxnB/+imP3eSNPI1S9JyaNq3d8zsRfqIOCyUNKYDH2p7E/PPQTAeWN4rtPUZcb
+         WNFVf78gr+2+4MOefwlh1Y8CcIIRn7oXu0cge0jsP6kLEksUq9tw8La2C4Xus0p8zql1
+         oQ69GLlIyyDU1vje+bpOcgada+sZSMZAUzUn8sdVOLEp5TcUbwe2lsfXYaO2R93NtVQB
+         0RwA==
+X-Gm-Message-State: AOJu0YwZ8iSfFvOO3n7exm1NdXIqHNfHjxkYXBe3DOBLFa7BIYIz2EQT
+        TMl5QNYryAPmIbbOAJXZSGfw6aL3T1Q3v7pO3tJbYNzf
+X-Google-Smtp-Source: AGHT+IF5lODKCtDQwf/J0kI9+eDAbHWMTqxgBE4OKyGbV/u1XUhhjXK2lpOUfkXM92l62ueDBOKGhA==
+X-Received: by 2002:a17:906:2d6:b0:9a5:d095:a8e1 with SMTP id 22-20020a17090602d600b009a5d095a8e1mr1455281ejk.11.1693405854280;
+        Wed, 30 Aug 2023 07:30:54 -0700 (PDT)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com. [209.85.128.45])
+        by smtp.gmail.com with ESMTPSA id bn24-20020a170906c0d800b00997d7aa59fasm7403714ejb.14.2023.08.30.07.30.53
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Aug 2023 07:30:53 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-3fe2d620d17so97035e9.0
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 07:30:53 -0700 (PDT)
+X-Received: by 2002:a05:600c:4f93:b0:3f4:fb7:48d4 with SMTP id
+ n19-20020a05600c4f9300b003f40fb748d4mr325936wmq.3.1693405853267; Wed, 30 Aug
+ 2023 07:30:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com> <20230830-fp5-initial-v1-6-5a954519bbad@fairphone.com>
-In-Reply-To: <20230830-fp5-initial-v1-6-5a954519bbad@fairphone.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 30 Aug 2023 13:47:25 +0200
-Message-ID: <CACRpkdarpxAS21is7mOeSjqh0_teQcNYf2-WPd5BuLQSjFVF8g@mail.gmail.com>
-Subject: Re: [PATCH 06/11] dt-bindings: pinctrl: qcom,sc7280: Allow gpio-reserved-ranges
+References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com> <20230830-fp5-initial-v1-2-5a954519bbad@fairphone.com>
+In-Reply-To: <20230830-fp5-initial-v1-2-5a954519bbad@fairphone.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 30 Aug 2023 07:30:41 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WS2hgY=bQjLOs3Fdp8pbZyMsaS-0BpoxPq90Etfi+Xuw@mail.gmail.com>
+Message-ID: <CAD=FV=WS2hgY=bQjLOs3Fdp8pbZyMsaS-0BpoxPq90Etfi+Xuw@mail.gmail.com>
+Subject: Re: [PATCH 02/11] nvmem: qfprom: Mark core clk as optional
 To:     Luca Weiss <luca.weiss@fairphone.com>
 Cc:     cros-qcom-dts-watchers@chromium.org,
         Andy Gross <agross@kernel.org>,
@@ -62,6 +69,7 @@ Cc:     cros-qcom-dts-watchers@chromium.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
@@ -74,17 +82,33 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Aug 30, 2023 at 11:58=E2=80=AFAM Luca Weiss <luca.weiss@fairphone.c=
-om> wrote:
+Hi,
 
-> Allow the gpio-reserved-ranges property on SC7280 TLMM.
+On Wed, Aug 30, 2023 at 2:58=E2=80=AFAM Luca Weiss <luca.weiss@fairphone.co=
+m> wrote:
+>
+> On some platforms like sc7280 on non-ChromeOS devices the core clock
+> cannot be touched by Linux so we cannot provide it. Mark it as optional
+> as accessing qfprom works without it.
 >
 > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  drivers/nvmem/qfprom.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Are you actually testing burning fuses from the OS, or are you just
+using the nvmem in "read-only" mode? From comments in the bindings, if
+you're trying to burn the fuses then the clock is required. If things
+are in read-only mode then the clock isn't required.
 
-I assume this will be merged with the rest of the patches, poke me
-after v6.6-rc1 if you want me to apply it to the pinctrl tree.
+When I compare to the driver, it seems like the driver assumes that if
+more than one memory region is provided then you must be supporting
+burning fuses. The bindings agree that having 4 memory regions
+specified means that the nvmem supports burning and 1 memory region
+specified means read-only. The extra 3 memory regions in the nvmem are
+all about fuse burning, I believe.
 
-Yours,
-Linus Walleij
+So maybe the right fix here is to just change your dts to specify one
+memory region?
+
+-Doug
