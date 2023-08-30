@@ -2,158 +2,197 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DEAC83F1A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B9EC83F1D
 	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:53:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243592AbjH3StD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45036 "EHLO
+        id S243164AbjH3StF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Aug 2023 14:49:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242914AbjH3J6w (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 05:58:52 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65CFACDA
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:45 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-99bed101b70so675877266b.3
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1693389524; x=1693994324; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xX0/yXPE7aSISxZJn2hMtArfZI0yA7qiHLxVlnkrZys=;
-        b=Y9hZ7+A5HiT8beas78k26hVgAAx9719kCV2QlhX19KYdRzG9zrKvsU19WL/ynr8dIE
-         U1mAOwqVauz8S1QiuPXTRb+njFq4RA6N2kB0EdhQDcDQgjDtf9BooH+BQVH+glzIQwsn
-         n0ozbiUvrHusuS9jfrfumr3wcG9ZatSBoTPrTuBu89QLdFtWGknzGHhsJ3NyaE80HHhX
-         4S9BshQ5aIAddvff+/JNz/4akqpbWGW9o0WYzrisx8L55rFsx7TFYnkeP8rVjnLI7Hrb
-         MA5eghZQ3AOlx1QFyzwzPsH6N4gj3UUotdSS4AjbCVqZi09valZCVLrLLUwiE0D2iME9
-         PsaQ==
+        with ESMTP id S1343625AbjH3QTw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 12:19:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6316F19A
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 09:19:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1693412344;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=sGn9Fwe3ebvb2amdc5cegj/0/WNStRYvxlTjUfacLtM=;
+        b=Onrhil5TLrEbXG6AVIAuDI8an5WL5JgQ84jGEWdTlUX0nc+U9fAc0nQIApeUGMwasLF0Zm
+        HO7la4XC98mP0Yl1Imdn/xl8XdiX/6/ma13I0GJ+VIU67Pkcqg8izexyH3dqdct/U7yEzr
+        4ZGoxHEIFyOfPm6YAXHOUG2HD6T6a4M=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-8-GfJ67p3KMK-R9QIAxJI9RA-1; Wed, 30 Aug 2023 12:19:02 -0400
+X-MC-Unique: GfJ67p3KMK-R9QIAxJI9RA-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2b961c3af8fso320881fa.0
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 09:19:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693389524; x=1693994324;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xX0/yXPE7aSISxZJn2hMtArfZI0yA7qiHLxVlnkrZys=;
-        b=GQg1/KaQO6QJ088rmohOpxR4vYa2VlJF7QkhdbXqphJj56PTmDMfhkMsH+uZVfkl77
-         whmXpdQtjQGgVwQACsHeM8i0cc77J956f6eYmqpSzhMCvyj3/VWEmItZNQZ2Qzb6BmaU
-         K4dZ2jJhVtHHf505RS+H+H9Jath3qZHdOkiGZ5dZ4gFSCLVGMwuQncq7GNGQvg1/5WaG
-         AtFJk1iWya5IpAAs4E8SIgpQM/6fb1BK0pFYTwy4luLb7FbMmWDWI63XDpq/6ttcyAYO
-         dRj83Kwp3Mo0yEBf+XMTtoxlaVMgy5xKXnYz2hkJocfev3V14N15qWOfBl25QT+d4FN/
-         MDWw==
-X-Gm-Message-State: AOJu0YzdBIhIXHa1eGBlmVFJK4LNdb9NhReG2BOeQkwhDcTHlsdJtl6z
-        oBJ3USmpp0hwsC4t9u/CPRmEdrydSHlVeGnjdQYn3w==
-X-Google-Smtp-Source: AGHT+IHE2oNPr8YGDecm3++Y/fHkgaWwsbjkXdc3triMzGQUW4D74YTAwBQ4M0EqJPBcxNRdKwGq0Q==
-X-Received: by 2002:a17:907:78d1:b0:9a5:eedb:ee1d with SMTP id kv17-20020a17090778d100b009a5eedbee1dmr560880ejc.46.1693389523821;
-        Wed, 30 Aug 2023 02:58:43 -0700 (PDT)
-Received: from otso.luca.vpn.lucaweiss.eu (5073ED84.static.ziggozakelijk.nl. [80.115.237.132])
-        by smtp.gmail.com with ESMTPSA id i15-20020a1709064ecf00b009a2202bfce5sm6957130ejv.118.2023.08.30.02.58.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Aug 2023 02:58:43 -0700 (PDT)
-From:   Luca Weiss <luca.weiss@fairphone.com>
-Date:   Wed, 30 Aug 2023 11:58:26 +0200
-Subject: [PATCH 01/11] arm64: dts: qcom: sc7280: Mark some nodes as
- 'reserved'
+        d=1e100.net; s=20221208; t=1693412339; x=1694017139;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sGn9Fwe3ebvb2amdc5cegj/0/WNStRYvxlTjUfacLtM=;
+        b=gcUG865Fh9W9RMhX3Kw3YX0PjLYrGpUdBjkZggCutwj/OYFgBwTrkGn8yh1dvl6N3L
+         nKRq2dFAdruC1eT21NPd/9HIQ5fEdjPfZUXFqtAL5egnE/EWnU5TiYv4fHKCTpBohlE8
+         n7WWf4RafwngOmn9GaJHwhFrjQvvK+dy4eDB8awHeJ4HppszDXRIpguhH4fVWmAE+vqp
+         tcNq7BsTtBNBJc9UKkwuzNcc3dZWej8WeG1+uubrTfMNaBnQcB70DkZN/c9NeAqElk/S
+         LDn2rOxKFPK/zyqmKqe+XVLNPyc3xm3VXCdF/fHDWsoJrvtZO7tZ/CRxRmRdnqdDVPRs
+         iP4g==
+X-Gm-Message-State: AOJu0YzkfSh0qf02EGKp58K36pFkK5eS1oxEoJboQ8WjMr9fewObRPCo
+        7/Y6RUnxNY4IkXJBkDVdaZhKDLIpyDvoOYWU01bzMbWfS1BC/qRiVWoMxKoP5R6giY7Dy8KJvPT
+        PO+vQCdSL+iDcynTXg2YsLg==
+X-Received: by 2002:a2e:910e:0:b0:2bc:ed80:46e with SMTP id m14-20020a2e910e000000b002bced80046emr2239840ljg.31.1693412339311;
+        Wed, 30 Aug 2023 09:18:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEsgTspLT1jaKbifI4HxlpoF5oFgJluee3aU1mr+htbVSJGoAuR/2Gksu5nEhTIXq8D7sLRjQ==
+X-Received: by 2002:a2e:910e:0:b0:2bc:ed80:46e with SMTP id m14-20020a2e910e000000b002bced80046emr2239801ljg.31.1693412338443;
+        Wed, 30 Aug 2023 09:18:58 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id k11-20020a1709063e0b00b009a1a653770bsm7300061eji.87.2023.08.30.09.18.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Aug 2023 09:18:57 -0700 (PDT)
+Message-ID: <6734c409-89f1-89a1-3096-4054be29faf1@redhat.com>
+Date:   Wed, 30 Aug 2023 18:18:56 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230830-fp5-initial-v1-1-5a954519bbad@fairphone.com>
-References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
-In-Reply-To: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
-To:     cros-qcom-dts-watchers@chromium.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.12.3
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 3/3] pinctrl: amd: Add a quirk for Lenovo Ideapad 5
+To:     Mario Limonciello <mario.limonciello@amd.com>,
+        linus.walleij@linaro.org
+Cc:     Shyam-sundar.S-k@amd.com, Basavaraj.Natikar@amd.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        regressions@lists.linux.dev, lucapgl2001@gmail.com
+References: <20230829165627.156542-1-mario.limonciello@amd.com>
+ <20230829165627.156542-4-mario.limonciello@amd.com>
+ <1d891d34-053a-368d-cf47-bcaf35284c79@redhat.com>
+ <07353676-bad0-44f8-a15a-4877f1898b6b@amd.com>
+ <811225f8-c505-7344-ac18-882472ee0348@redhat.com>
+ <d232c11d-901f-4ebc-b408-bed042ed8da9@amd.com>
+Content-Language: en-US, nl
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <d232c11d-901f-4ebc-b408-bed042ed8da9@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-With the standard Qualcomm TrustZone setup, components such as lpasscc,
-pdc_reset and watchdog shouldn't be touched by Linux. Mark them with
-the status 'reserved' and reeable them in the chrome-common dtsi.
+Hi,
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi | 12 ++++++++++++
- arch/arm64/boot/dts/qcom/sc7280.dtsi               |  5 ++++-
- 2 files changed, 16 insertions(+), 1 deletion(-)
+On 8/30/23 17:47, Mario Limonciello wrote:
+> On 8/30/2023 10:37, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 8/29/23 23:37, Mario Limonciello wrote:
+>>> On 8/29/2023 14:54, Hans de Goede wrote:
+>>>> Hi Mario,
+>>>>
+>>>> On 8/29/23 18:56, Mario Limonciello wrote:
+>>>>> Lenovo ideapad 5 doesn't use interrupts for GPIO 0, and so internally
+>>>>> debouncing with WinBlue debounce behavior means that the GPIO doesn't
+>>>>> clear until a separate GPIO is used (such as touchpad).
+>>>>>
+>>>>> Prefer to use legacy debouncing to avoid problems.
+>>>>>
+>>>>> Reported-by: Luca Pigliacampo <lucapgl2001@gmail.com>
+>>>>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217833
+>>>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>>>
+>>>> I'm not happy to see yet another DMI quirk solution here.
+>>>>
+>>>> and I guess you're not happy with this either...
+>>>
+>>> Yeah I was really hoping the first patch was enough for the issue.
+>>>
+>>> If we can't come up with anything else we can potentially drop patches 2 and 3. Even patch 1 alone will "significantly" improve the situation.
+>>>
+>>> The other option I considered is to hardcode WinBlue debounce behavior "off" in Linux.
+>>>
+>>> I don't think this is a good idea though though because we will likely trade bugs because the debounce values in the AML for systems using _AEI aren't actually used in Windows and might not have good values.
+>>
+>> What if we turn off the WinBlue debounce behavior for GPIO0 and then just hardcode some sane debounce values for it, overriding whatever the DSDT _AEI entries contain ?
+>>
+> 
+> I don't think this is a good idea.
+> 
+> Some vendors GPIO0 doesn't connect to the power button but instead to the EC.  If it's connected to the EC, the EC might instead trigger GPIO0 for lid or power button or whatever they decided for a design specific way.
+> 
+> I'd worry that we're going to end up with inconsistent results if they have their own debouncing put in place in the EC *because* they were relying upon the Winblue debounce behavior.
+> 
+> After all - this was fixed because of https://bugzilla.kernel.org/show_bug.cgi?id=217315
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-index 2e1cd219fc18..8eb30aa226a2 100644
---- a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-@@ -46,6 +46,14 @@ wpss_mem: memory@9ae00000 {
- 	};
- };
- 
-+&lpasscc {
-+	status = "okay";
-+};
-+
-+&pdc_reset {
-+	status = "okay";
-+};
-+
- /* The PMIC PON code isn't compatible w/ how Chrome EC/BIOS handle things. */
- &pmk8350_pon {
- 	status = "disabled";
-@@ -84,6 +92,10 @@ &scm {
- 	dma-coherent;
- };
- 
-+&watchdog {
-+	status = "okay";
-+};
-+
- &wifi {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-index 042908048d09..98a8d627a348 100644
---- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-@@ -2267,6 +2267,7 @@ lpasscc: lpasscc@3000000 {
- 			clocks = <&gcc GCC_CFG_NOC_LPASS_CLK>;
- 			clock-names = "iface";
- 			#clock-cells = <1>;
-+			status = "reserved";
- 		};
- 
- 		lpass_rx_macro: codec@3200000 {
-@@ -4216,6 +4217,7 @@ pdc_reset: reset-controller@b5e0000 {
- 			compatible = "qcom,sc7280-pdc-global";
- 			reg = <0 0x0b5e0000 0 0x20000>;
- 			#reset-cells = <1>;
-+			status = "reserved";
- 		};
- 
- 		tsens0: thermal-sensor@c263000 {
-@@ -5212,11 +5214,12 @@ msi-controller@17a40000 {
- 			};
- 		};
- 
--		watchdog@17c10000 {
-+		watchdog: watchdog@17c10000 {
- 			compatible = "qcom,apss-wdt-sc7280", "qcom,kpss-wdt";
- 			reg = <0 0x17c10000 0 0x1000>;
- 			clocks = <&sleep_clk>;
- 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "reserved";
- 		};
- 
- 		timer@17c20000 {
+Ok, that is fair.
 
--- 
-2.42.0
+
+>>>> Are we sure there is no other way? Did you check an acpidump
+>>>> for the laptop and specifically for its ACPI powerbutton handling?
+>>>
+>>> I'm not sure there is another way or not, but yes there is an acpidump attached to the bug in case you or anyone else has some ideas.
+>>>
+>>>>
+>>>> I would expect the ACPI powerbutton handler to somehow clear
+>>>> the bit, like how patch 1/3 clears it from the GPIO chip's
+>>>> own IRQ handler.
+>>>>
+>>>> I see that drivers/acpi/button.c does:
+>>>>
+>>>> static u32 acpi_button_event(void *data)
+>>>> {
+>>>>           acpi_os_execute(OSL_NOTIFY_HANDLER, acpi_button_notify_run, data);
+>>>>           return ACPI_INTERRUPT_HANDLED;
+>>>> }
+>>>>
+>>>> So unless I'm misreading something here, there is some AML being
+>>>> executed on power-button events. So maybe there is something wrong
+>>>> with how Linux interprets that AML ?
+>>>>
+>>> The relevant ACPI spec section is here:
+>>>
+>>> https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/04_ACPI_Hardware_Specification/ACPI_Hardware_Specification.html#control-method-power-button
+>>>
+>>> I did look at the acpidump.  GPE 08 notifies \_SB.PWRB (a PNP0C0C device) with 0x2.  According to the spec this is specifically for letting the system know the power button is waking up the system from G1.
+>>
+>> Sorry, the acpi_os_execute() function name gave me the impression that this would actually call some ACPI defined function, since normally in acpi speak execute refers to an ACPI table defined method.
+>>
+>> But that is not the case here it is just a wrapper to deferred-exec the passed in function pointer.
+>>
+>> To be clear I was hoping that there was an ACPI defined (AML code) function which would maybe clear the GPIO for us and that that was maybe not working due to e.g. some opregion not being implemented by Linux. But no AML code is being executed at all, so this is all a red herring.
+>>
+>> Regards,
+>>
+>> Hans
+>>
+>>
+> 
+> Something we could do is add an extra callback for ACPI button driver to call the GPIO controller IRQ handler.  Worst case the IRQ handler does nothing, best case it fixes this issue.
+> I'm not sure how we'd tie it to something spec compliant.
+
+I was actually thinking the same thing. I think we should discuss going this route
+(ACPI button driver to call the GPIO controller IRQ handler) with Rafael.
+
+We can use the existing acpi_notifier_call_chain() mechanism and:
+
+1. Have the button code call acpi_notifier_call_chain() on the PNP0C0C
+event on button presses.
+
+2. Have the AMD pinctrl driver register a notifier_block with
+register_acpi_notifier() and then check if the source is a PNP0C0C
+device based on the device_class of the acpi_bus_event struct
+passed to the notifier and if it is check if GPIO0 needs
+clearing.
+
+I think this is preferable over the DMI quirk route, because this should
+fix the same issue also on other affected models which we don't know
+about.
+
+Regards,
+
+Hans
+
+
+
 
