@@ -2,105 +2,158 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AA7C83F1B
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE24C83F1C
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:48:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243354AbjH3Sr7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:47:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45058 "EHLO
+        id S242927AbjH3SsB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Aug 2023 14:48:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242919AbjH3J6w (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 05:58:52 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DB25CE4
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:47 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-99bc9e3cbf1so147741466b.0
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1693389525; x=1693994325; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gKtgdDeh3KGEuNDRaZoZ19ZkmrfCqDJYBlZVW0lWVIw=;
-        b=oRgKORGQ4IjGWo5kvSfaotzAPwxitDtK0ILXoqAtV2gfr4yjFH41ndOaRTCeHPmit1
-         Cuhhcy9mVbhbwe9YwSxd66AcinmBEaAYLACkuydS29uNg0OosW6EHkdjNYAvgxsMAr6e
-         1Z2HI+Y8hxZAVUOmPyTljmWX3GF1cc34lfSiYgV/cXbYn2Wt3Fnwcqsiz26NWA69lolC
-         H786Dy1vBwayvVf8B8nBjiedA6NE0NCgQlO+XfYIboc02SHNIxCguqpdcZaVPiz29Hq0
-         9OxJ9zu7B9/JQlsOCnZqfNUto3SYXu9dkXN87Ao3+C+tyniEIBVjCPZYqOlm2qOxYJll
-         zh4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693389525; x=1693994325;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gKtgdDeh3KGEuNDRaZoZ19ZkmrfCqDJYBlZVW0lWVIw=;
-        b=MqM/KgBJvoL9uKnpKwkDfqUt0FHy2U/bMwavsuEo8UJpGLC6KQ+XWE/wj0J8wAWXaL
-         I3bvB1l5Gn+NUpB8590hRMUfGXHqu72ndPGLCwVN+5NoJBxrQBN79R2J/fWIY7Lf8i1w
-         AtDlgYxCi0+733svVHjamqqZahfMBazWQHAMRMtrr8evDqJRkvxcGyJe0GN8CU7efFWk
-         UVgQOOGPjlJWAy/zSUIrxE4vcTcXSc6Z77COO6CPOKhUXe615N5WvJXSodh6DrEmAOx9
-         2oyZXWtfA8fi6I0m7qSqphfCGwUoh5tDd9MooevHnrHZtFFpTOsuDu0hUHEmlgMs1Hkz
-         SdHA==
-X-Gm-Message-State: AOJu0YziG11RMpUS+K5hc2xPzrROPhK3+kxvJeiYDXci0mdPbBhPIcZ4
-        na1moXF5UXKy45uQ1GjaXLj+/A==
-X-Google-Smtp-Source: AGHT+IFvaPiFN9nageuHk31s1vdZkno6Ubq7GZhPBE0O982W9QQGDgTFFzP8fTeAc7MFi4EBvubAIw==
-X-Received: by 2002:a17:906:9bde:b0:9a2:1e14:86b9 with SMTP id de30-20020a1709069bde00b009a21e1486b9mr1942919ejc.0.1693389525352;
-        Wed, 30 Aug 2023 02:58:45 -0700 (PDT)
-Received: from otso.luca.vpn.lucaweiss.eu (5073ED84.static.ziggozakelijk.nl. [80.115.237.132])
-        by smtp.gmail.com with ESMTPSA id i15-20020a1709064ecf00b009a2202bfce5sm6957130ejv.118.2023.08.30.02.58.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Aug 2023 02:58:44 -0700 (PDT)
-From:   Luca Weiss <luca.weiss@fairphone.com>
-Date:   Wed, 30 Aug 2023 11:58:27 +0200
-Subject: [PATCH 02/11] nvmem: qfprom: Mark core clk as optional
+        with ESMTP id S243812AbjH3Lr0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 07:47:26 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 957051B0;
+        Wed, 30 Aug 2023 04:47:23 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BEE552F4;
+        Wed, 30 Aug 2023 04:48:02 -0700 (PDT)
+Received: from pluto (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AD9893F64C;
+        Wed, 30 Aug 2023 04:47:20 -0700 (PDT)
+Date:   Wed, 30 Aug 2023 12:47:18 +0100
+From:   Cristian Marussi <cristian.marussi@arm.com>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        "oleksii_moisieiev@epam.com" <oleksii_moisieiev@epam.com>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        cristian.marussi@arm.com, Aisheng Dong <aisheng.dong@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: Re: [RFC] scmi: pinctrl: support i.MX9
+Message-ID: <ZO8sRknW-6vdKoDd@pluto>
+References: <20230824070611.3335107-1-peng.fan@oss.nxp.com>
+ <CACRpkdYU7MRXRV3Uw1w300sdxv=9XT=P1vFFarHfpSM6BT20Hg@mail.gmail.com>
+ <DU0PR04MB9417B3CB9638F936DF19C523881DA@DU0PR04MB9417.eurprd04.prod.outlook.com>
+ <CACRpkdZKMsC1Wyi+nOf7idAWMTUe8w2XbtpWnbDKrCLD75ND1g@mail.gmail.com>
+ <DU0PR04MB94178923DFC8E71287E560E888E3A@DU0PR04MB9417.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230830-fp5-initial-v1-2-5a954519bbad@fairphone.com>
-References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
-In-Reply-To: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
-To:     cros-qcom-dts-watchers@chromium.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.12.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DU0PR04MB94178923DFC8E71287E560E888E3A@DU0PR04MB9417.eurprd04.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On some platforms like sc7280 on non-ChromeOS devices the core clock
-cannot be touched by Linux so we cannot provide it. Mark it as optional
-as accessing qfprom works without it.
+On Fri, Aug 25, 2023 at 08:43:38AM +0000, Peng Fan wrote:
+> > Subject: Re: [RFC] scmi: pinctrl: support i.MX9
+> > 
+> > On Thu, Aug 24, 2023 at 2:47 PM Peng Fan <peng.fan@nxp.com> wrote:
+> > > Me:
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/nvmem/qfprom.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Peng,
 
-diff --git a/drivers/nvmem/qfprom.c b/drivers/nvmem/qfprom.c
-index 14814cba2dd6..739dc502b39e 100644
---- a/drivers/nvmem/qfprom.c
-+++ b/drivers/nvmem/qfprom.c
-@@ -423,7 +423,7 @@ static int qfprom_probe(struct platform_device *pdev)
- 		if (IS_ERR(priv->vcc))
- 			return PTR_ERR(priv->vcc);
- 
--		priv->secclk = devm_clk_get(dev, "core");
-+		priv->secclk = devm_clk_get_optional(dev, "core");
- 		if (IS_ERR(priv->secclk))
- 			return dev_err_probe(dev, PTR_ERR(priv->secclk), "Error getting clock\n");
- 
+> > 
+> > >> it is merely making things more complex and also slower
+> > > > bymaking the registers only accessible from this SCMI link.
+> > >
+> > > This is for safety reason, the pinctrl hardware must be handled by a
+> > > system manager entity. So mmio direct access not allowed from Cortex-A
+> > > side.
+> > 
+> > Yeah I understood as much. But I don't think that the firmware is really
+> > filtering any of the access, it will just poke into any pinctrl register as
+> > instructed anyway so what's the point. Just looks like a layer of indirection.
+> 
+> No, the firmware has a check on whether a pin is allowed to be configured
+> by the agent that wanna to configure the pin. 
+> 
+> > But I'm not your system manager, so it's not my decision.
+> > 
+> > > The SCMI firmware is very straightforward, there is no group or
+> > > function.
+> > >
+> > > It just accepts the format as this:
+> > > MUX_TYPE, MUX VALUE, CONF_TYPE, CONF_VAL, DAISY_TYPE, DAISY ID,
+> > > DAISY_CFG, DAISY_VALUE.
+> > >
+> > > Similar as linux MMIO format.
+> > >
+> > > Our i.MX95 platform will support two settings, one with SCMI firmware,
+> > > one without SCMI. These two settings will share the same pinctrl
+> > > header file.
+> > >
+> > > And to simplify the scmi firmware design(anyway I am not owner of the
+> > > firmware), to make pinctrl header shared w/o scmi, we take the current
+> > > in-upstream freescale imx binding format.
+> > 
+> > The SCMI people will have to state their position on this.
+> > Like what they consider conformance and what extensions are allowed. This
+> > is more a standardization question than an implementation question so it's
+> > not really my turf.
+> 
+> The i.MX95 SCMI firmware uses OEM extension type. So I just follow
+> what the firmware did and support it in linux. Anyway let's
+> wait Sudeep's reply.
+> 
 
--- 
-2.42.0
+So my unsderstanding on this matter as of now is that:
+
+1. the current SCMI Pinctrl specification can support your usecase by using
+   OEM Types and multiple pins/values CONFIG_GET/SET commands
+
+2. the Kernel SCMI protocol layer (driver/firmware/arm_scmi/pinctrl.c)
+   is equally fine and can support your usecase, AFTER Oleksii fixes it to
+   align it to the latest v3.2-BETA2 specification changes.
+   IOW, this means that, using the SCMI Pinctrl protocol operations
+   exposed in scmi_protocol.h, from somewhere, you are able to properly
+   configure multiple pins/values with your specific OEM types.
+
+3. The SCMI Pinctrl driver (by Oleksii) built on top of the pinctrl protocol
+   operations is instead NOT suitable for your usecase since it uses the Linux
+   Generic Pinconf and IMX does not make use of it, and instead IMX has
+   its own bindings and related parsing logic.
+
+Am I right ?
+
+If this is the case, I would NOT try to abuse the current SCMI Pinctrl
+Generic driver (by Oleksii) by throwing into it a bunch of IMX specific DT
+parsing, also because you'll end-up NOT using most of the generic SCMI
+Pinctrl driver but just reusing a bit of the probe (customized with your
+own DT maps parsing)
+
+Instead, given that the spec[1.] and the protocol layer[2.] are fine for
+your use case and you indeed have already a custom way to parse your DT
+mappings, I would say that you could just write your own custom SCMI
+driver ( ? pinctrl-imx-scmi), distinct and much more simple than the generic one,
+that does its own IMX DT parsing and calls just the SCMI protocol operations
+that it needs in the way that your platform expects: so basically another
+Pinctrl SCMI driver that does not use the generic pinconf DT
+configuration BUT DO USE the underlying SCMI Pinctrl protocol (via its
+exposed protocol operations...)
+
+Not sure what Sudeep thinks about supporting multiple SCMI driver for the
+same protocol (we did it already for Sensors hwmon && iio), and if this
+approach won't need some sort of mutual exclusion mechanism in Kconfig to
+avoid loading both the generic and the custom IMX (even though they should
+be able to co-exist from the SCMI kernel/fw stack pint of view, as long as
+you dont mess-up the DTs and mixup generic pins with custom IMX pins...)
+
+Instead, adding an IMX-custom extension to what it was supposed to be a generic
+driver (as you propose) seems to me like a stretch of the generic Pinctrl driver
+that is not really worth, since you'll end up polluting the generic driver with
+some highly custom and specific IMX bits. while really NOT reusing so much of
+the generic driver at all.
+
+Thanks,
+Cristian
 
