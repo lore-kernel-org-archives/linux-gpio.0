@@ -2,63 +2,62 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5B3C83F17
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF434C83F1B
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:48:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243401AbjH3SsI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:48:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45230 "EHLO
+        id S242945AbjH3SsN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Aug 2023 14:48:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242945AbjH3J64 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 05:58:56 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3862D1B7
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:51 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-52683b68c2fso7037665a12.0
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:51 -0700 (PDT)
+        with ESMTP id S243015AbjH3KHF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 06:07:05 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F8D1B0
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 03:07:02 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-986d8332f50so699788566b.0
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 03:07:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1693389529; x=1693994329; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WMuJsymgFdsKAjrQm0VavHQLfVQtcng3/FrcyEkfn3s=;
-        b=E9KAugekmsfrO9WLBe3T4gGJeEPAMlwjS7sUMSiq+jRcLCkdaxU0N7KKILdF3nCO/N
-         saNuH6ylHpVjjbe8auwQpqMC5RwLB1ePIENd0C2Vwevl+5tjf42EffvmnBAQ6s6jqGk1
-         vl8zIPW/9wx/tCSrjKiq5lOTM5kGCXBpAMIZ9RtsWrmXYZq8WmR4Bl1ObZ6XDPs9pvIt
-         8euWTgSX2yKXV7FXefCaw2RedaIq8VC0NUhF2d8mRInp3CaCI6GeiEP/xUCBvmlLd2Ki
-         YbTsz20Jo6q5z1/gDLXYAAqXj/Y+RV9qDGBezKxXmiATTS6wY0ojl0COMJcvDk1LPghy
-         sNCg==
+        d=linaro.org; s=google; t=1693390021; x=1693994821; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z0QDt8EBpEbkK9eM1eqblOra9xMFCfCG0zgEGNvO4kk=;
+        b=iknhdr+RtT51/E9pRpCGXYg8VKSsjn8eD6bbYy5EPLyBxYubJoc/ADhuQVfG8xjwdy
+         jBnl2TSrnrGB3ir9o9I5/aJUJRSHYqt2n6cZ2N1pW0/XMHC5usD7CWN27MuJT9ND6tBV
+         ob6lZjCu7fOefUDIhPQtU7waXbLAZhCClABdkXQQD5C0XxHwyvHiZF+QKiknZnZ4hHFI
+         nozbAycdbnrCu4dh38u3YdPHJKs/pU+DZOfG0zZvMMYbi21TBQsIJGc88TyTULI6mPw0
+         HHgAHTtHBevZZRUE6sXO0bzvJu9rcpVoVIuHrPnxEoX46mSYoWLVcqiNq0Eyk/Ys+gM9
+         1kYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693389529; x=1693994329;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WMuJsymgFdsKAjrQm0VavHQLfVQtcng3/FrcyEkfn3s=;
-        b=A2BT40JiN6A6dV548ldDqFfE6EkdnHfcO293UvB2ms/l2G4QG0ZIZbLDY3R/PBSn/C
-         kijcTB5/ojU7ULKUJfWKGjqpI54g5I6kX/LvXQEgpunlBk3+xpUHEgWR9uQvKMZJQZQk
-         hLxzPPNQfFZNMS4tXnflYz8jPELlv6j7SY/dnMiTmOCd1yQXovrN340Vv4O+5aq/lKKM
-         6erR1ijax0c5FJZwvXSstVD+8EFWP+YKNeg3OtpRLzrevJYkFMLTrtCGvRzNzvUO6Mp3
-         iE4Oc5A3TJWSdhg9kyO+GYiWxqP1piFnQmPTRfIRNfv2bp8Vb/1+z0SKXlX1YiVKd3tV
-         JkTg==
-X-Gm-Message-State: AOJu0YxPAOAIy50tt9pc4hC/lxMd3u39wer/JB/6OOdwNtsBKbviIHxW
-        SqsRUBr0NHULZRacyuTh1ECSHQ==
-X-Google-Smtp-Source: AGHT+IEf8KL+ACn7JaRgtK1OVzWD45Pz7Q/Rp6ixSdbBEUiDBLjrnNxNNLgw3xdnQkN85h/UEJPDEg==
-X-Received: by 2002:a17:906:208:b0:9a4:dd49:da3e with SMTP id 8-20020a170906020800b009a4dd49da3emr1337672ejd.68.1693389529786;
-        Wed, 30 Aug 2023 02:58:49 -0700 (PDT)
-Received: from otso.luca.vpn.lucaweiss.eu (5073ED84.static.ziggozakelijk.nl. [80.115.237.132])
-        by smtp.gmail.com with ESMTPSA id i15-20020a1709064ecf00b009a2202bfce5sm6957130ejv.118.2023.08.30.02.58.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Aug 2023 02:58:48 -0700 (PDT)
-From:   Luca Weiss <luca.weiss@fairphone.com>
-Date:   Wed, 30 Aug 2023 11:58:30 +0200
-Subject: [PATCH 05/11] arm64: dts: qcom: pm8350c: Add flash led node
+        d=1e100.net; s=20221208; t=1693390021; x=1693994821;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z0QDt8EBpEbkK9eM1eqblOra9xMFCfCG0zgEGNvO4kk=;
+        b=d92orEAxu/F+rszHJXj35ME4+ewdsPhl4mvx4YDXcXbwJgagrPMSB6XoWeQfisCwmw
+         UqPfkUE+BCy7ekrHz8sA6eiqlHZvFDJO+JCcamH/bZTlBzzIHZpgKx7c5Nm6vjOzjmWt
+         7PyWueoFqsx2vrk7Liaw3qlwmnQzq1BkriEb4/8zGoR0qu9cYEoH/4j6kpLA7nrXYSaI
+         w1jfLhLLrqbfulT9kcSBXQXaX28dqbu8yfCtxMO3+kUITJUqyXxPVtKx2nJOUbik+3Bd
+         KMu2zW9i193KPnSY11IBn+aMZurdukGHfqEkeCWILZbVya9Tus/jv6T1rndnokWxMkJ0
+         zgjw==
+X-Gm-Message-State: AOJu0YxhrchG2JFZJbz8LVSkrXt6fQmtUOCtJIWCMLPq4R/JNzp/93OD
+        cigKzjhVCOA25y7IhD1HZXHxZw==
+X-Google-Smtp-Source: AGHT+IFv/0eMRaF8EMn6yKSAU640SOXFjwBHm7nT9hJcJOrflNyyJnp5etXNA0N+OfyvOIj+/VbXmw==
+X-Received: by 2002:a17:907:9719:b0:99d:f5dd:6b3 with SMTP id jg25-20020a170907971900b0099df5dd06b3mr1572959ejc.76.1693390021173;
+        Wed, 30 Aug 2023 03:07:01 -0700 (PDT)
+Received: from [192.168.0.22] (77-252-46-238.static.ip.netia.com.pl. [77.252.46.238])
+        by smtp.gmail.com with ESMTPSA id cl7-20020a170906c4c700b009a5f1d15642sm228320ejb.158.2023.08.30.03.06.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Aug 2023 03:07:00 -0700 (PDT)
+Message-ID: <b82f4683-e8b5-b424-8f7a-6d2ba1cab61f@linaro.org>
+Date:   Wed, 30 Aug 2023 12:06:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230830-fp5-initial-v1-5-5a954519bbad@fairphone.com>
-References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
-In-Reply-To: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
-To:     cros-qcom-dts-watchers@chromium.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH 04/11] arm64: dts: qcom: pm7250b: make SID configurable
+Content-Language: en-US
+To:     Luca Weiss <luca.weiss@fairphone.com>,
+        cros-qcom-dts-watchers@chromium.org,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -72,38 +71,47 @@ To:     cros-qcom-dts-watchers@chromium.org,
 Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.12.3
+        linux-pm@vger.kernel.org
+References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
+ <20230830-fp5-initial-v1-4-5a954519bbad@fairphone.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230830-fp5-initial-v1-4-5a954519bbad@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a node for the led controller found on PM8350C, used for flash and
-torch purposes.
+On 30/08/2023 11:58, Luca Weiss wrote:
+> Like other Qualcomm PMICs the PM7250B can be used on different addresses
+> on the SPMI bus. Use similar defines like the PMK8350 to make this
+> possible.
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  arch/arm64/boot/dts/qcom/pm7250b.dtsi | 23 ++++++++++++++++-------
+>  1 file changed, 16 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/pm7250b.dtsi b/arch/arm64/boot/dts/qcom/pm7250b.dtsi
+> index e8540c36bd99..3514de536baa 100644
+> --- a/arch/arm64/boot/dts/qcom/pm7250b.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/pm7250b.dtsi
+> @@ -7,6 +7,15 @@
+>  #include <dt-bindings/interrupt-controller/irq.h>
+>  #include <dt-bindings/spmi/spmi.h>
+>  
+> +/* This PMIC can be configured to be at different SIDs */
+> +#ifndef PM7250B_SID
+> +	#define PM7250B_SID 2
+> +#endif
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- arch/arm64/boot/dts/qcom/pm8350c.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Why do you send the same patch as v1, without any reference to previous
+discussions?
 
-diff --git a/arch/arm64/boot/dts/qcom/pm8350c.dtsi b/arch/arm64/boot/dts/qcom/pm8350c.dtsi
-index f28e71487d5c..aa74e21fe0dc 100644
---- a/arch/arm64/boot/dts/qcom/pm8350c.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pm8350c.dtsi
-@@ -30,6 +30,12 @@ pm8350c_gpios: gpio@8800 {
- 			#interrupt-cells = <2>;
- 		};
- 
-+		pm8350c_flash: led-controller@ee00 {
-+			compatible = "qcom,pm8350c-flash-led", "qcom,spmi-flash-led";
-+			reg = <0xee00>;
-+			status = "disabled";
-+		};
-+
- 		pm8350c_pwm: pwm {
- 			compatible = "qcom,pm8350c-pwm";
- 			#pwm-cells = <2>;
+You got here feedback already.
 
--- 
-2.42.0
+https://lore.kernel.org/linux-arm-msm/f52524da-719b-790f-ad2c-0c3f313d9fe9@linaro.org/
+
+Best regards,
+Krzysztof
 
