@@ -2,132 +2,135 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11AD1C83F17
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D2EC6FA8F
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:52:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243561AbjH3Sss (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:48:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53114 "EHLO
+        id S243485AbjH3Ssj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Aug 2023 14:48:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245185AbjH3OoB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 10:44:01 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39DBFD1
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 07:43:57 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4fe15bfb1adso8872631e87.0
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 07:43:57 -0700 (PDT)
+        with ESMTP id S242909AbjH3J6s (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 05:58:48 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36A5A1BE
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:44 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-50087d47d4dso8577831e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1693406635; x=1694011435; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7y1PTlMIpI19ndr06GdGR/gezHXVIuarLmJLhteMMeY=;
-        b=LYzzjbHgvGqKeGAc0j1Jmdyyz6FO1+DODQ4KJ9WUt6w2aRG++2plKYtoEyWxDiX8en
-         lHIkhRnCXgg9AJdb2BHPr5i1HXPeYojczAsnVzbWKiQgsSqlkT6VcV6QoT3xyGm92WGP
-         n5LhkCdaqb9m5AK9vgcTV1mWYC1HQy9F1DxjIkiF3zrEE8d5yy1jNscF8ER54RpbOkRb
-         hqD0Hsu/kkelpidCNm5Zpe4GU/tK9JrNiInNtl16JLxRkvwcU2PSzwkn7bE/57iOKCWA
-         J4Js6VPp5/baHjwIzrLzIsNWRTdMhRSG/CMSeVqmUfApjrXFRNKqQzx+TZcwj9qEUWec
-         N5/g==
+        d=fairphone.com; s=fair; t=1693389522; x=1693994322; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ImC06/+tS7Twj3eQRRUsuycUqqVXH052q1hemh/ikWU=;
+        b=r8GAC4lMHUa5I2T/ySPKd0cIPPQWidpqX97LzVX/TOy2IDuwivuTKw8Iqz6DA1VQa/
+         OhFvUiDvaCIz0TNirzmBBK15++Vh0P+RiGU2RZfYPIPTR3zqJCoL242WasZCd3Jf4ggt
+         fYi+QCfjcNwHIWoAvP48Fnl5foc1u4ZK0KJuTuHxxwiaipK+AFmotyUc3xkom+RpsL+V
+         njQA0ZTUlUhBDurGXIM8dqBq7pZfioWaNfD6VjN/QnbQOquX/9vlivBZ77/Bs7tHF7dc
+         1/vlbj454uSNwRyAIPqc3hRzyCrEiCoCKBXWVU+P4sYVqoAEeF4quaM1zoncUfiJREG6
+         GvhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693406635; x=1694011435;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7y1PTlMIpI19ndr06GdGR/gezHXVIuarLmJLhteMMeY=;
-        b=JAVYjD6BLW90Cp6vF4JV6JSKyv+bj3TJtk70lFtw+aqHQaumvbI4G1KKFTovM3aQQN
-         1vFhNw6e6s9YR9DChLdN8N2vM8pZNOmKUAETvzgrZSE6jwfK2daphKB9DI9bneYuX7ao
-         lhGb/x9ZSidJNtXDYk2+qF7n4n0SFGE4sRbBPFRhDbry8TKY8TuM0DpJhriN5OvMzXC9
-         juoknu6ueHuJY4Vkv67dmGOo1Xq2QqSzc1JaBhp/cRFK5yA64noFG7IARvWGZNnLXoBi
-         DGdGMaQECOWUv2rprSubTrTvCPUonpQqAJS2nShD1098wfPdrn+p7f53GpROCnv0NLdJ
-         HLeg==
-X-Gm-Message-State: AOJu0Yx2IqNjDApwrZ9Hehw8hxIbSIxhwFo4crWsIYiS5oxbrb8ZTqUV
-        XtCGDZiRZuhulkX8vuyTBtn2CA==
-X-Google-Smtp-Source: AGHT+IHeygykVFMcBkeCr9Jim8Aiw37Bu4dqw61S/Zwn8g9GABuB2bPsegjI40haOVmM0BZ3MWr+/Q==
-X-Received: by 2002:a19:5e18:0:b0:500:95f7:c416 with SMTP id s24-20020a195e18000000b0050095f7c416mr1823828lfb.7.1693406634763;
-        Wed, 30 Aug 2023 07:43:54 -0700 (PDT)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id l15-20020aa7d94f000000b0052568bf9411sm6787493eds.68.2023.08.30.07.43.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Aug 2023 07:43:54 -0700 (PDT)
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Wed, 30 Aug 2023 16:43:53 +0200
-Message-Id: <CV5YJVXIL8OT.1ZWW3KVCHPTA5@otso>
-Cc:     <cros-qcom-dts-watchers@chromium.org>,
-        "Andy Gross" <agross@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>,
-        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        "Conor Dooley" <conor+dt@kernel.org>,
-        "Srinivas Kandagatla" <srinivas.kandagatla@linaro.org>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
+        d=1e100.net; s=20221208; t=1693389522; x=1693994322;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ImC06/+tS7Twj3eQRRUsuycUqqVXH052q1hemh/ikWU=;
+        b=ixb6HQ2U5mX1PDVWoEsmXjz3uYRSERIDO2G3L40hxdOwtSs5/BkdIGHuBMgFitkUmN
+         P0s+aWosJWZKNCD7Omo3tyHM8c0Oi6Cmzo7iwGb+g8RYaux0oJzICns37X71ejF0oYaI
+         JUzlvfF0EHItlhm7xweg7UUo2N/Ugjkmw/1bKKgu++dc9pOCuDQ1sIXk+9TaJWzhq2Iz
+         EIgGxOwFxb9M4o3ZpjN6LLf7XLjKuqhgXUghNkzLM3keVBLE37uHXALVnfL9pBr603N8
+         AhlVSS2FRvwv4nm2RkMfblfJ2iPSpJs0TQml5/wN/BeriW0tSJVKqd/Kbflp5akN1S8A
+         Flag==
+X-Gm-Message-State: AOJu0YyhFauJ97oX+L0+Of6yunKUEQWqJMKHZ3GD0aprTHo5gLS8cEv8
+        ak82gQT3yC6cGSXRQ0SjOq1FWA==
+X-Google-Smtp-Source: AGHT+IHhkgd47WHbYn3fJiBbQlVzHfchnV6Zhz/9BP+uHBaTqzKkkSmXoZ5vGmgUP4lJA5UX0lAuqQ==
+X-Received: by 2002:a05:6512:224c:b0:4fe:cc2:247a with SMTP id i12-20020a056512224c00b004fe0cc2247amr1121093lfu.49.1693389522330;
+        Wed, 30 Aug 2023 02:58:42 -0700 (PDT)
+Received: from otso.luca.vpn.lucaweiss.eu (5073ED84.static.ziggozakelijk.nl. [80.115.237.132])
+        by smtp.gmail.com with ESMTPSA id i15-20020a1709064ecf00b009a2202bfce5sm6957130ejv.118.2023.08.30.02.58.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Aug 2023 02:58:41 -0700 (PDT)
+From:   Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH 00/11] Initial support for the Fairphone 5 smartphone
+Date:   Wed, 30 Aug 2023 11:58:25 +0200
+Message-Id: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMES72QC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI2MDC0ML3bQCU93MvMySzMQc3SSzZAsjQ4OkRMtkCyWgjoKi1LTMCrBp0bG
+ 1tQCNAZuXXQAAAA==
+To:     cros-qcom-dts-watchers@chromium.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Viresh Kumar" <viresh.kumar@linaro.org>,
-        <~postmarketos/upstreaming@lists.sr.ht>,
-        <phone-devel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 02/11] nvmem: qfprom: Mark core clk as optional
-From:   "Luca Weiss" <luca.weiss@fairphone.com>
-To:     "Doug Anderson" <dianders@chromium.org>
-X-Mailer: aerc 0.15.2
-References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
- <20230830-fp5-initial-v1-2-5a954519bbad@fairphone.com>
- <CAD=FV=WS2hgY=bQjLOs3Fdp8pbZyMsaS-0BpoxPq90Etfi+Xuw@mail.gmail.com>
-In-Reply-To: <CAD=FV=WS2hgY=bQjLOs3Fdp8pbZyMsaS-0BpoxPq90Etfi+Xuw@mail.gmail.com>
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed Aug 30, 2023 at 4:30 PM CEST, Doug Anderson wrote:
-> Hi,
->
-> On Wed, Aug 30, 2023 at 2:58=E2=80=AFAM Luca Weiss <luca.weiss@fairphone.=
-com> wrote:
-> >
-> > On some platforms like sc7280 on non-ChromeOS devices the core clock
-> > cannot be touched by Linux so we cannot provide it. Mark it as optional
-> > as accessing qfprom works without it.
-> >
-> > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> > ---
-> >  drivers/nvmem/qfprom.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> Are you actually testing burning fuses from the OS, or are you just
-> using the nvmem in "read-only" mode? From comments in the bindings, if
-> you're trying to burn the fuses then the clock is required. If things
-> are in read-only mode then the clock isn't required.
+Add support to boot up mainline kernel on the QCM6490-based Fairphone 5
+smartphone.
 
-Hi Doug,
+These patches only cover a part of the functionality brought up on
+mainline so far, with the rest needing larger dts and driver changes or
+depend on patches that are not yet merged. I will work on sending those
+once these base patches here have settled.
 
-I definitely don't plan on burning any fuses on this phone. Not even
-sure that's allowed by the TZ / boot stack.
+Since QCM6490, like SC7280 are 'yupik' in the vendor-provided kernel, we
+can base the dts on it and leverage existing support. Though current
+sc7280 support mostly assumes ChromeOS devices which have a different
+TrustZone setup, so we need to move some ChromeOS-specific bits to the
+sc7280-chrome-common.dtsi file to make it boot on a standard TZ board.
 
->
-> When I compare to the driver, it seems like the driver assumes that if
-> more than one memory region is provided then you must be supporting
-> burning fuses. The bindings agree that having 4 memory regions
-> specified means that the nvmem supports burning and 1 memory region
-> specified means read-only. The extra 3 memory regions in the nvmem are
-> all about fuse burning, I believe.
->
-> So maybe the right fix here is to just change your dts to specify one
-> memory region?
+Depends on (just for the #include in sc7280.dtsi):
+https://lore.kernel.org/linux-arm-msm/20230818-qcom-vmid-defines-v1-1-45b610c96b13@fairphone.com/
 
-I got feedback from Konrad that this here would be the preferred
-approach compared to having a different dts for ChromeOS vs non-ChromeOS
-devices. I don't feel strongly to either, for me it's also okay to
-remove the extra memory regions and only have the main one used on
-regular qcom devices.
+The pm7250b patch has been picked up from this series:
+https://lore.kernel.org/linux-arm-msm/20230407-pm7250b-sid-v1-2-fc648478cc25@fairphone.com/
 
-Let me know what you think.
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+Luca Weiss (11):
+      arm64: dts: qcom: sc7280: Mark some nodes as 'reserved'
+      nvmem: qfprom: Mark core clk as optional
+      arm64: dts: qcom: sc7280: Move qfprom clock to chrome-common
+      arm64: dts: qcom: pm7250b: make SID configurable
+      arm64: dts: qcom: pm8350c: Add flash led node
+      dt-bindings: pinctrl: qcom,sc7280: Allow gpio-reserved-ranges
+      dt-bindings: arm: qcom,ids: Add SoC ID for QCM6490
+      soc: qcom: socinfo: Add SoC ID for QCM6490
+      cpufreq: Add QCM6490 to cpufreq-dt-platdev blocklist
+      dt-bindings: arm: qcom: Add QCM6490 Fairphone 5
+      arm64: dts: qcom: qcm6490: Add device-tree for Fairphone 5
 
-Regards
-Luca
+ Documentation/devicetree/bindings/arm/qcom.yaml    |   6 +
+ .../bindings/pinctrl/qcom,sc7280-pinctrl.yaml      |   4 +
+ arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+ arch/arm64/boot/dts/qcom/pm7250b.dtsi              |  23 +-
+ arch/arm64/boot/dts/qcom/pm8350c.dtsi              |   6 +
+ arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 659 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi |  17 +
+ arch/arm64/boot/dts/qcom/sc7280.dtsi               |   7 +-
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   1 +
+ drivers/nvmem/qfprom.c                             |   2 +-
+ drivers/soc/qcom/socinfo.c                         |   1 +
+ include/dt-bindings/arm/qcom,ids.h                 |   1 +
+ 12 files changed, 717 insertions(+), 11 deletions(-)
+---
+base-commit: 0255bba921438ea1e45d3f0873c3e8c5a1e03876
+change-id: 20230818-fp5-initial-b6c8210ba9c8
 
->
-> -Doug
+Best regards,
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
 
