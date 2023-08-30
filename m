@@ -2,124 +2,150 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1CEC6FA8F
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F74C83F19
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:53:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243580AbjH3Ss6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:48:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37852 "EHLO
+        id S233456AbjH3StC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Aug 2023 14:49:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243164AbjH3KN4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 06:13:56 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64BDA1BF
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 03:13:52 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2bcc846fed0so81947211fa.2
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 03:13:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693390430; x=1693995230; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YdAPmJ+gUCFqNSlanjBx/+9HxsVUQV3sb8g3UYCYJfk=;
-        b=jkV3xeRJlewnXct52aNYJpzjmw4cFDi4p3oTYRvEzt3bXDuNVwla4ZejY9sda/iYdk
-         o1TP9xeNodUiAv/U3LajLR7ClWDryeyTowfrSLhSWd6HgsMZDLWByisxrHU0XEki2izH
-         bsWhPXhQxaEdWKVE2mzT6iIKzFQp1Dk0nnm1pToi1GU6H4MIWURhkz/jCnthcKem2AvL
-         4fiXUdmaVAMmswQ8b8smlj0G5wMzK259KOnOlty1V1Mn4Pr10mAMK2JJn6s/tqJ+G272
-         6EtdBwwRSxUyt9Zw6qE0JBmb1P+Pul8u2b+XHbCclg78uxBinDVfxQwRlxPcY0YLOei7
-         oFDA==
+        with ESMTP id S245588AbjH3PiR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 11:38:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5D0B122
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 08:37:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1693409847;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iYwaBfh6sscVjiErhjaJgNSKOVZZxtHF3M2zAzhYOOw=;
+        b=bk7z8t6In56+bGuFVkLeT2zMm2+cvywUg+rkU1sw/Ej4zpHJO3Agjy8OWr8qkcBWGcrQ94
+        lA+MNDEs6c1M+u4x2PqbbZmJWbU1q1J/Nl+c2Xg0ukJ+z4AaGSkOq8gVTzdwQnF6/vGu7f
+        pQV7YzVl9xiQBU5U6NSs7tHMU+z7Ttg=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-607-pVqjwFNwNPKrn5_qGuLEFg-1; Wed, 30 Aug 2023 11:37:25 -0400
+X-MC-Unique: pVqjwFNwNPKrn5_qGuLEFg-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-99cc32f2ec5so416602766b.1
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 08:37:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693390430; x=1693995230;
+        d=1e100.net; s=20221208; t=1693409844; x=1694014644;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YdAPmJ+gUCFqNSlanjBx/+9HxsVUQV3sb8g3UYCYJfk=;
-        b=GR4yQ+vX1bJr4akyA5nR+O4E3WLbYCxH6Vj7CGzN7i1ZyNGF8bhqyPEP+n2QM501uu
-         gUrZT/AnlJv0JDrAsACi3r9ePxyaZ4pEV9LqpaFQ1ccFWZbWr2fL3ZGHeDme5ca1YyoH
-         T+lMBqSrzYMca0ze+cjGFz6dPSZZLKjTQgsWbmH64BepI8GevGfQgxXruO/WP/XBe3WA
-         X21wAZCI87IQzVx9EsBIzr+IO/q178iqR2/Vq1h7WaX4qH+GxrmJbkdGxqj2m5ibhf1v
-         ifLorQODWsv8c+t/GorYmDyWuPhfO7HGZYLaMyZ1VOExOzrNVcagVvKMjKMHihBvnyEx
-         20gw==
-X-Gm-Message-State: AOJu0Yyn8bL87xqv2Eft8lLRzKM5A32IgHjo/yUF0Gk9yV+68FY56cMr
-        XTNzI/T1D8YmkVBB5s6BRlwjog==
-X-Google-Smtp-Source: AGHT+IFJtk5Io3NBnwgkN84+Cks6hSjcbc5Vmyu0QUtojJEiaUDOob7VHlmB1I3uo77civ/lNb4vcw==
-X-Received: by 2002:a05:6512:3eb:b0:4fe:1f27:8856 with SMTP id n11-20020a05651203eb00b004fe1f278856mr1028718lfq.7.1693390430643;
-        Wed, 30 Aug 2023 03:13:50 -0700 (PDT)
-Received: from [192.168.0.22] (77-252-46-238.static.ip.netia.com.pl. [77.252.46.238])
-        by smtp.gmail.com with ESMTPSA id v18-20020aa7cd52000000b0052545dbfdbasm6594172edw.48.2023.08.30.03.13.49
+        bh=iYwaBfh6sscVjiErhjaJgNSKOVZZxtHF3M2zAzhYOOw=;
+        b=dEATU6inH0S/iKBNCgZ50uI02TLM+H2A52IBvI98AqEeknFpFqzvRS0cnHJKyloUDF
+         RIrzxqDZItFlBkoPY7ejxNWmE/pN0WAPPkOZQLF7+f8NH6iPJBspQyhHQHCykkMtH7/k
+         vhL4vT4lFNcbqfVG8WoodIlcFL3yl94hOnfbf/9ed8Lnzx4snyjO8huc14hpFRWdnl3Z
+         Jma9XGJIFCrtrSdY6TGdh29oe6qmO4pWGiI5HGIm5uGLUbHP/9K3JcqzdIlxBX0C+My5
+         x3ss2vSB0wTowKsrbQvnu+EKPFf4bbuhUHKRt87ETyghF4r+QZlbF8/lppTGyXU344Cu
+         Ok/A==
+X-Gm-Message-State: AOJu0YyPLntV0onjC0istuTWiaTRZzzgltREUnWkonf5px3ozh+N4Eig
+        KFJS0MfOuf+Krwx3B23wwMSXErwl4Z2msAUAiTR+yaDoWcMxyk1pITHVBCEUXNUfgHeU5Bq7tkv
+        aXPb/1rhaHuKYf9xEvEMWjA==
+X-Received: by 2002:a17:906:3015:b0:9a2:256a:65cd with SMTP id 21-20020a170906301500b009a2256a65cdmr1927896ejz.4.1693409843784;
+        Wed, 30 Aug 2023 08:37:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9cnAwvraUnaJMwV3BLLN/i+/KDdw+7I7E1kIl3M59eUSFKr9WPGS1l2wZxe7D1GJv4GZ/Bg==
+X-Received: by 2002:a17:906:3015:b0:9a2:256a:65cd with SMTP id 21-20020a170906301500b009a2256a65cdmr1927884ejz.4.1693409843446;
+        Wed, 30 Aug 2023 08:37:23 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id i15-20020a1709064ecf00b009a2202bfce5sm7275283ejv.118.2023.08.30.08.37.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Aug 2023 03:13:50 -0700 (PDT)
-Message-ID: <b1c1b06c-7d7a-e4a9-0fb9-9ba1d0cf8346@linaro.org>
-Date:   Wed, 30 Aug 2023 12:13:48 +0200
+        Wed, 30 Aug 2023 08:37:22 -0700 (PDT)
+Message-ID: <811225f8-c505-7344-ac18-882472ee0348@redhat.com>
+Date:   Wed, 30 Aug 2023 17:37:21 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH 10/11] dt-bindings: arm: qcom: Add QCM6490 Fairphone 5
-Content-Language: en-US
-To:     Luca Weiss <luca.weiss@fairphone.com>,
-        cros-qcom-dts-watchers@chromium.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
- <20230830-fp5-initial-v1-10-5a954519bbad@fairphone.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230830-fp5-initial-v1-10-5a954519bbad@fairphone.com>
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 3/3] pinctrl: amd: Add a quirk for Lenovo Ideapad 5
+Content-Language: en-US, nl
+To:     Mario Limonciello <mario.limonciello@amd.com>,
+        linus.walleij@linaro.org
+Cc:     Shyam-sundar.S-k@amd.com, Basavaraj.Natikar@amd.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        regressions@lists.linux.dev, lucapgl2001@gmail.com
+References: <20230829165627.156542-1-mario.limonciello@amd.com>
+ <20230829165627.156542-4-mario.limonciello@amd.com>
+ <1d891d34-053a-368d-cf47-bcaf35284c79@redhat.com>
+ <07353676-bad0-44f8-a15a-4877f1898b6b@amd.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <07353676-bad0-44f8-a15a-4877f1898b6b@amd.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 30/08/2023 11:58, Luca Weiss wrote:
-> Fairphone 5 is a smartphone based on the QCM6490 SoC.
+Hi,
+
+On 8/29/23 23:37, Mario Limonciello wrote:
+> On 8/29/2023 14:54, Hans de Goede wrote:
+>> Hi Mario,
+>>
+>> On 8/29/23 18:56, Mario Limonciello wrote:
+>>> Lenovo ideapad 5 doesn't use interrupts for GPIO 0, and so internally
+>>> debouncing with WinBlue debounce behavior means that the GPIO doesn't
+>>> clear until a separate GPIO is used (such as touchpad).
+>>>
+>>> Prefer to use legacy debouncing to avoid problems.
+>>>
+>>> Reported-by: Luca Pigliacampo <lucapgl2001@gmail.com>
+>>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217833
+>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> I'm not happy to see yet another DMI quirk solution here.
+>>
+>> and I guess you're not happy with this either...
 > 
-> Also allow qcom,board-id and qcom,msm-id for QCM6490 since it's required
-> by the bootloader.
+> Yeah I was really hoping the first patch was enough for the issue.
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+> If we can't come up with anything else we can potentially drop patches 2 and 3. Even patch 1 alone will "significantly" improve the situation.
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-> index adbfaea32343..b09a41812cf0 100644
-> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
-> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-> @@ -391,6 +391,11 @@ properties:
->            - const: qcom,qrb2210
->            - const: qcom,qcm2290
->  
-> +      - items:
-> +          - enum:
-> +              - fairphone,fp5
-> +          - const: qcom,qcm6490
+> The other option I considered is to hardcode WinBlue debounce behavior "off" in Linux.
+> 
+> I don't think this is a good idea though though because we will likely trade bugs because the debounce values in the AML for systems using _AEI aren't actually used in Windows and might not have good values.
 
-You miss update to first list of SoCs for bootloader.
+What if we turn off the WinBlue debounce behavior for GPIO0 and then just hardcode some sane debounce values for it, overriding whatever the DSDT _AEI entries contain ?
 
-> +
->        - description: Qualcomm Technologies, Inc. Distributed Unit 1000 platform
->          items:
->            - enum:
-> @@ -1074,6 +1079,7 @@ allOf:
->                - qcom,msm8994
->                - qcom,msm8996
->                - qcom,msm8998
-> +              - qcom,qcm6490
+>> Are we sure there is no other way? Did you check an acpidump
+>> for the laptop and specifically for its ACPI powerbutton handling?
+> 
+> I'm not sure there is another way or not, but yes there is an acpidump attached to the bug in case you or anyone else has some ideas.
+> 
+>>
+>> I would expect the ACPI powerbutton handler to somehow clear
+>> the bit, like how patch 1/3 clears it from the GPIO chip's
+>> own IRQ handler.
+>>
+>> I see that drivers/acpi/button.c does:
+>>
+>> static u32 acpi_button_event(void *data)
+>> {
+>>          acpi_os_execute(OSL_NOTIFY_HANDLER, acpi_button_notify_run, data);
+>>          return ACPI_INTERRUPT_HANDLED;
+>> }
+>>
+>> So unless I'm misreading something here, there is some AML being
+>> executed on power-button events. So maybe there is something wrong
+>> with how Linux interprets that AML ?
+>>
+> The relevant ACPI spec section is here:
+> 
+> https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/04_ACPI_Hardware_Specification/ACPI_Hardware_Specification.html#control-method-power-button
+> 
+> I did look at the acpidump.  GPE 08 notifies \_SB.PWRB (a PNP0C0C device) with 0x2.  According to the spec this is specifically for letting the system know the power button is waking up the system from G1.
 
-This is not a legacy SoC (released in 2022). Not allowed.
+Sorry, the acpi_os_execute() function name gave me the impression that this would actually call some ACPI defined function, since normally in acpi speak execute refers to an ACPI table defined method.
 
-Best regards,
-Krzysztof
+But that is not the case here it is just a wrapper to deferred-exec the passed in function pointer.
+
+To be clear I was hoping that there was an ACPI defined (AML code) function which would maybe clear the GPIO for us and that that was maybe not working due to e.g. some opregion not being implemented by Linux. But no AML code is being executed at all, so this is all a red herring.
+
+Regards,
+
+Hans
+
 
