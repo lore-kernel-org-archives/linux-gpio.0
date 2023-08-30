@@ -2,103 +2,66 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2153BC83F17
-	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D6FC83F1D
+	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:52:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243463AbjH3Ssb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:48:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45418 "EHLO
+        id S243494AbjH3Ssm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Aug 2023 14:48:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242964AbjH3J67 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 05:58:59 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5A701BE
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:55 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99bed101b70so675894966b.3
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1693389534; x=1693994334; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NMaT33TMEcSdAqEfjzHnfiZm0MHlTu0tg8DNCHLNy/4=;
-        b=HBV0EOKdS+6uEzk0jhmP4YwUyavmqI+ctdqAq583d3cTi2Q+Th15NIUXDqyct9quqa
-         9DxMt2cfdeGsCNqfRmjY8t/TRlgycmD2mJVi1Af9vWfusDSZamFkPidxgLd7bbsPziwn
-         dWDVoVIiSXOYCW4HAwCh8jAd67gTLXl+NR2ybhHIxQH4XKW1zkFY5PVXhXA9zjlpE+db
-         kkzlt3dFT8uW4Kem2lICOB/moVgQERsQPy/7C879ou1ZGJvjF+NEWlms8zZD9f8ihiz0
-         u1KK8yDsm+aXe08FZq+WPFy01p0pfpPI8G3k/7ATYDJEfpu/z2T4fU5NDEyw/QulgT/e
-         2rwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693389534; x=1693994334;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NMaT33TMEcSdAqEfjzHnfiZm0MHlTu0tg8DNCHLNy/4=;
-        b=F5QQsMf1OQG9YGR8GWUac7+9b1+ImbzwwWBAZOYGzeKiKXp5uHcG+8k9oTgVvLsTh7
-         uT6Tr9gjVhfhnjGxrnyZQdT4C4ov4ja1iZ7WtVdzWb9zTy1iTvqUy0YxSUqf8pBN3NlM
-         HxvdOXHWrNJlHdKYF05QvfJD8kjlV8hLoL+s56jQCqAtcx9kVxeOU3SU+UifDTurIOSQ
-         keL9d7wSoAFe0x88PIZ4qK37uFY9tVS37/Ur4TyV53ewMNBfenp/kgnWPfdMjcGTVeKQ
-         o00jWms5ZFmRBzfYDhsAzozBef+lqg77QoRflVm3OpAddjiK2pawacoxASAg/XFzovKu
-         8nyg==
-X-Gm-Message-State: AOJu0YzhEhErt52Yc6M1PKkhUIFQvsNwLiAVck8dVFAhPKf3jaV3mHPo
-        Mlvr+2dAbVS0wl4X5dRyZBaFAg==
-X-Google-Smtp-Source: AGHT+IEsayzgtGNMlFizdpOnfPYW6WrLF+nLZTrAoohOtQ7FLTkln95jhDk+INqp8xVX4Gj4B65n1A==
-X-Received: by 2002:a17:906:20dd:b0:9a1:c89a:9260 with SMTP id c29-20020a17090620dd00b009a1c89a9260mr1229467ejc.51.1693389534562;
-        Wed, 30 Aug 2023 02:58:54 -0700 (PDT)
-Received: from otso.luca.vpn.lucaweiss.eu (5073ED84.static.ziggozakelijk.nl. [80.115.237.132])
-        by smtp.gmail.com with ESMTPSA id i15-20020a1709064ecf00b009a2202bfce5sm6957130ejv.118.2023.08.30.02.58.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Aug 2023 02:58:54 -0700 (PDT)
-From:   Luca Weiss <luca.weiss@fairphone.com>
-Date:   Wed, 30 Aug 2023 11:58:34 +0200
-Subject: [PATCH 09/11] cpufreq: Add QCM6490 to cpufreq-dt-platdev blocklist
+        with ESMTP id S245520AbjH3P0B (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 11:26:01 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6572D83
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 08:25:58 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:6c13:6b1b:7366:87c0])
+        by michel.telenet-ops.be with bizsmtp
+        id frRw2A00Q3874jb06rRwk5; Wed, 30 Aug 2023 17:25:57 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qbN4i-0023rx-Rp;
+        Wed, 30 Aug 2023 17:25:56 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qbN4u-005M0f-OE;
+        Wed, 30 Aug 2023 17:25:56 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: renesas: r8a7779: s/LSBC/LBSC/
+Date:   Wed, 30 Aug 2023 17:25:55 +0200
+Message-Id: <129f08c4246f88fd5a25ca5b82c255919b71ca6c.1693409115.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230830-fp5-initial-v1-9-5a954519bbad@fairphone.com>
-References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
-In-Reply-To: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
-To:     cros-qcom-dts-watchers@chromium.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.12.3
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Qualcomm QCM6490 platform uses the qcom-cpufreq-hw driver, so add it
-to the cpufreq-dt-platdev driver's blocklist.
+Fix a misspelling of "LBSC" (Local Bus State Controller).
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
- 1 file changed, 1 insertion(+)
+To be queued in renesas-pinctrl for v6.7.
 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index fb2875ce1fdd..02ec58a8603b 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -145,6 +145,7 @@ static const struct of_device_id blocklist[] __initconst = {
- 	{ .compatible = "qcom,msm8996", },
- 	{ .compatible = "qcom,msm8998", },
- 	{ .compatible = "qcom,qcm2290", },
-+	{ .compatible = "qcom,qcm6490", },
- 	{ .compatible = "qcom,qcs404", },
- 	{ .compatible = "qcom,qdu1000", },
- 	{ .compatible = "qcom,sa8155p" },
+ drivers/pinctrl/renesas/pfc-r8a7779.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7779.c b/drivers/pinctrl/renesas/pfc-r8a7779.c
+index 1172a359384d5799..e1a8cb6691201ce0 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7779.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7779.c
+@@ -1942,7 +1942,7 @@ static const unsigned int intc_irq3_b_pins[] = {
+ static const unsigned int intc_irq3_b_mux[] = {
+ 	IRQ3_B_MARK,
+ };
+-/* - LSBC ------------------------------------------------------------------- */
++/* - LBSC ------------------------------------------------------------------- */
+ static const unsigned int lbsc_cs0_pins[] = {
+ 	/* CS */
+ 	RCAR_GP_PIN(0, 13),
 -- 
-2.42.0
+2.34.1
 
