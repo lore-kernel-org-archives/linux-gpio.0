@@ -2,64 +2,63 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D5BC83F24
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33E1C83F25
 	for <linux-gpio@archiver.kernel.org>; Wed, 30 Aug 2023 18:48:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243363AbjH3SsD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:48:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45254 "EHLO
+        id S243373AbjH3SsF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 30 Aug 2023 14:48:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242940AbjH3J64 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 05:58:56 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6378ACC2
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:52 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-99bcf2de59cso712461366b.0
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 02:58:52 -0700 (PDT)
+        with ESMTP id S243191AbjH3KRk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2023 06:17:40 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E32691B3
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 03:17:36 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-5298e43bb67so1543712a12.1
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2023 03:17:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1693389531; x=1693994331; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YGoqMS3E9hTzuAlLYY6w0VLAfh40RFv1IavK9K8DmYI=;
-        b=CjGFqdJfOF8HLg2x3svVkHLT1/f3rtrUo4CK7HQSGxhoVy20LmBAEj1L9Po+E3yu4n
-         bi3IZ0cH3MEjXmQSsjkkAfmwagl6MH8sSwrwpPldrxYmzZudD5xz7PT0FXGIrMamye3N
-         /U7rBjo/uQQyilCVC8cZOsiRlxkIo7wsKI0XCdANbVdncNhSI9vct5hraMG5elhCWADM
-         4hNZGG3oiY5K8mn+YqjdtqILKHv719r91HgKOdHYg0iDiFQfIfEez69/cj4c6O1AsK6g
-         tjy/PWkoG7jT3A5Kedvj72XTGWEoYjBiGF5P2z4PfJdcA5Zq0dp5dZExBJYLcISnYJBx
-         TT8w==
+        d=linaro.org; s=google; t=1693390655; x=1693995455; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bR584vZGW9FaOIQWQ+XKrXzGeqeN359N18ISef2diZA=;
+        b=HNGF5Nb1Pp1wVN2xELCSsu+JG5Em2ZID0mYpaQ7dRMr5dO6L/k7OtkAyrLX0dq8NFN
+         j6nb4qeA3uH+3sJClnNDeeoarubmCy6bDjN1ZzMSgiIpP+kPXCOB2vsJGCoxRlCTJudq
+         nTWPjy0XAObdZjJFNKYGMGg7AgB1wW49H8TtoBhs1J0MDpghy1oV0TIDDV2IO3mTaUuF
+         0QfzO01PPXzvctalm6/BXpgzhNzr7K57xyge2ysQy9dDxY+W164mDfJM1VEuAWL5kvng
+         Lq1EZjFQgGQI5AzDWwF+zw/lorVrj4gSecFGVqZ1+v41c9Y2CaE0kDKsxhOZFBxzlrzt
+         Xe5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693389531; x=1693994331;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YGoqMS3E9hTzuAlLYY6w0VLAfh40RFv1IavK9K8DmYI=;
-        b=WhSQbPwhqfCtJ4BzDbnpCORMBdZu1I33quS/sS1OowEq9+vZ999Sl5Kx+WAjpG7Hl1
-         Rh36W1Xk4Ox3GUIe/0EAWmpHqovDryTGRrTvk/+GrSjfZ6mawVXd9cbMManav0v6W1gs
-         F7FuqRUSbvffG0tF5BObOLKeIK8eJ+fJ7w0NOXOdL2pxRMVRK8ZiHkMKifvKJsydHI+e
-         Knm7+Z7FaJsfYdrCtRYVrrDewkIdlO+6kti3L0+hZIb0uUIPs6FHFz+InfQx4zmzzTPy
-         ODZaaRz0KZ3UGo2E47gH6g4l/Ar7hc1ygoLk375PbvpHvv7Mz+v3Hc2CYUCN6G/rbZu2
-         5XyQ==
-X-Gm-Message-State: AOJu0YybFF5/wNm+CzyVNulDG12H5/h/vd2n9A9iYQdVqiJnjA8t2X/k
-        S13nvzT8fLpK2VW9ZzVO6N/jpQ==
-X-Google-Smtp-Source: AGHT+IGEi+xlIOcDOFaLVY6bYdh1pBTkM7v6Adr6xHtbqgnNFa13d99vlQbglBCKCVSoJg9wbvFyPg==
-X-Received: by 2002:a17:906:74d4:b0:9a5:d657:47ee with SMTP id z20-20020a17090674d400b009a5d65747eemr1227676ejl.58.1693389530986;
-        Wed, 30 Aug 2023 02:58:50 -0700 (PDT)
-Received: from otso.luca.vpn.lucaweiss.eu (5073ED84.static.ziggozakelijk.nl. [80.115.237.132])
-        by smtp.gmail.com with ESMTPSA id i15-20020a1709064ecf00b009a2202bfce5sm6957130ejv.118.2023.08.30.02.58.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Aug 2023 02:58:50 -0700 (PDT)
-From:   Luca Weiss <luca.weiss@fairphone.com>
-Date:   Wed, 30 Aug 2023 11:58:31 +0200
-Subject: [PATCH 06/11] dt-bindings: pinctrl: qcom,sc7280: Allow
- gpio-reserved-ranges
+        d=1e100.net; s=20221208; t=1693390655; x=1693995455;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bR584vZGW9FaOIQWQ+XKrXzGeqeN359N18ISef2diZA=;
+        b=jcYFbQBCxBl31KlabOSZpbxIVd7H4O10whJ9adzC+PhmiwqHo3ic8VF3xCZ8oubvmq
+         pMHOYcnDRiIaXryAENasgeUUJ+NvKuuAn3XdGF7ufiBM+EJf7CLAagftMut0GD1n/tpE
+         3NG70wf55mfpv5unJ8nLWDg1nBPTV2ax3Vi6pr0MeNAW3/xkLcSz+dt8D5OZHSLv32xU
+         ToY7qw+ilnhSOeyLZAOteKoLsVtjyuo9XFarQrcatoAMSRXWw2gC7bL+0DVRWQzz9Yn9
+         Njs/liXH36zf/+IrkK6kOrdt48MOxsQG4UVQw2lIWBthfgdADmY7g3Ojb9UDsjaNEdck
+         o7CA==
+X-Gm-Message-State: AOJu0Yxw6m2u772oUoUub41XT1Yx1sVtPtrT1AmjSG96HkudI7VLbWuT
+        Prkt+mJpdwmMZt9dze32BVKHHg==
+X-Google-Smtp-Source: AGHT+IGsSEQ6TsVj9ioIFZ01EjPzA/5K6fZ+jDcjoLBrxP8iGnn6aeLftGsqJWjeoVwfFBCT3KItuA==
+X-Received: by 2002:a05:6402:27d1:b0:51e:4218:b91b with SMTP id c17-20020a05640227d100b0051e4218b91bmr5539774ede.1.1693390655399;
+        Wed, 30 Aug 2023 03:17:35 -0700 (PDT)
+Received: from [192.168.0.22] (77-252-46-238.static.ip.netia.com.pl. [77.252.46.238])
+        by smtp.gmail.com with ESMTPSA id a26-20020aa7d91a000000b005256d4d58a6sm6620866edr.18.2023.08.30.03.17.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Aug 2023 03:17:34 -0700 (PDT)
+Message-ID: <70372afc-9dad-813b-f69b-7278d3371053@linaro.org>
+Date:   Wed, 30 Aug 2023 12:17:33 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230830-fp5-initial-v1-6-5a954519bbad@fairphone.com>
-References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
-In-Reply-To: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
-To:     cros-qcom-dts-watchers@chromium.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH 11/11] arm64: dts: qcom: qcm6490: Add device-tree for
+ Fairphone 5
+Content-Language: en-US
+To:     Luca Weiss <luca.weiss@fairphone.com>,
+        cros-qcom-dts-watchers@chromium.org,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -73,35 +72,112 @@ To:     cros-qcom-dts-watchers@chromium.org,
 Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.12.3
+        linux-pm@vger.kernel.org
+References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
+ <20230830-fp5-initial-v1-11-5a954519bbad@fairphone.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230830-fp5-initial-v1-11-5a954519bbad@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Allow the gpio-reserved-ranges property on SC7280 TLMM.
+On 30/08/2023 11:58, Luca Weiss wrote:
+> Add device tree for the Fairphone 5 smartphone which is based on
+> the QCM6490 SoC.
+> 
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+...
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
-index 368d44ff5468..c8735ab97e40 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sc7280-pinctrl.yaml
-@@ -41,6 +41,10 @@ properties:
-   gpio-ranges:
-     maxItems: 1
- 
-+  gpio-reserved-ranges:
-+    minItems: 1
-+    maxItems: 88
-+
-   gpio-line-names:
-     maxItems: 175
- 
+> +
+> +#include <dt-bindings/arm/qcom,ids.h>
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> +#include "sc7280.dtsi"
+> +#include "pm7250b.dtsi"
+> +#include "pm7325.dtsi"
+> +#include "pm8350c.dtsi" /* PM7350C */
+> +#include "pmk8350.dtsi" /* PMK7325 */
+> +
+> +/ {
+> +	model = "Fairphone 5";
+> +	compatible = "fairphone,fp5", "qcom,qcm6490";
+> +	chassis-type = "handset";
+> +
+> +	/* required for bootloader to select correct board */
+> +	qcom,msm-id = <QCOM_ID_QCM6490 0x10000>;
+> +	qcom,board-id = <34 0>;
 
--- 
-2.42.0
+Sorry, not allowed. This is not an old, legacy platform.
+
+> +
+> +	aliases {
+> +		serial0 = &uart5;
+> +		serial1 = &uart7;
+> +	};
+> +
+> +	chosen {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		framebuffer0: framebuffer@a000000 {
+> +			compatible = "simple-framebuffer";
+> +			reg = <0 0xe1000000 0 (2700 * 1224 * 4)>;
+> +			width = <1224>;
+> +			height = <2700>;
+> +			stride = <(1224 * 4)>;
+> +			format = "a8r8g8b8";
+> +			panel = <&panel>;
+> +			clocks = <&gcc GCC_DISP_HF_AXI_CLK>;
+> +		};
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +
+> +		pinctrl-0 = <&volume_down_default>, <&hall_sensor_default>;
+> +		pinctrl-names = "default";
+> +
+> +		key-volume-up {
+> +			label = "Volume up";
+> +			gpios = <&pm7325_gpios 6 GPIO_ACTIVE_LOW>;
+> +			linux,code = <KEY_VOLUMEUP>;
+> +		};
+> +
+> +		/* Hall sensor uses vreg_l8c as VDD, it's being enabled using
+
+Use Linux style comments:
+/*
+ * foo
+ * bar...
+
+
+> +		 * always-on on the regulator
+> +		 */
+> +		event-hall-sensor {
+> +			label = "Hall Effect Sensor";
+> +			gpios = <&tlmm 155 GPIO_ACTIVE_LOW>;
+> +			linux,input-type = <EV_SW>;
+> +			linux,code = <SW_LID>;
+> +			linux,can-disable;
+> +			wakeup-source;
+> +		};
+> +	};
+> +
+> +	panel: panel {
+> +		compatible = "boe,rm692e5";
+
+Undocumented. You cannot add nodes with undocumented compatibles. Drop.
+
+> +
+> +		width-mm = <68>;
+> +		height-mm = <150>;
+> +	};
+
+
+Best regards,
+Krzysztof
 
