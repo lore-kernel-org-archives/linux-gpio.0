@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CF9CA0FE8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C2BCA0FE6
 	for <linux-gpio@archiver.kernel.org>; Fri,  1 Sep 2023 13:40:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343633AbjIANkz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1349802AbjIANkz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 1 Sep 2023 09:40:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37326 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235745AbjIANkx (ORCPT
+        with ESMTP id S1349788AbjIANkx (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Sep 2023 09:40:53 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8549E77;
-        Fri,  1 Sep 2023 06:40:50 -0700 (PDT)
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07F0EE7E;
+        Fri,  1 Sep 2023 06:40:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693575650; x=1725111650;
+  t=1693575651; x=1725111651;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=h89JL8MROH1TsXqD+O8VwXHzswGkoxREgQCkA7hcAz8=;
-  b=XRWciBCy7oGdAaT1ttYO15tH6pAZP5Q1hG+Mw+AbCl72poQZW4M0T8X3
-   1yirhWu4B3wDNJGdMjpSbgKOllc2kOvmnA+kbYqg50y0JAnL/XN0UphdT
-   8gkQap0v3ejwPKYsJzrmP3l7cO90OeKvPEOW3cMlXXPDjJh1vyzch3mnu
-   iWURualrHdXL32lfVrKIe2YXa4tKRC2ioVwvrocVyfyIV3SghbqEjGoW0
-   Jvi2mJnT0jxD++57FTY8feGFnvrzaDhskCqHDkZiXgYh4nqSMII3/KFJ5
-   9CwKGF3j9M2YJbmHsQewoUSAKjAmDN+4TPrbnAhaaD9EsPctlScnoqdYa
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="355718603"
+  bh=352rupwp0v18APS/064zEU6rKG+0wRf5vuEg+1M9N+w=;
+  b=ClQGSaoEHsh55chbP9snHsIgQ9W4pq5DjVkXwh5ulokmJKkmYXud7VtU
+   5nfr9szOzghH/vgv6WhAEgKpumxLL3utSkusW+B6o9DOzhF6RElRuGUo5
+   hUhlSmGovs4ea+eegbEta0cwAFVJttJiZbtqSTmqRTLg+NWaeMwRPRS8+
+   GagWcVadGMk/DxiV091SI3+itBuTzegOWWKTQ9EYziyVQwUd3RzYCWycC
+   au9g0oc4sQwbfBjJUhygk4xv9qnMpiZE0uKd2Xg0FwwqEwduRN2SM2Nky
+   2Uf6Anb7GPyceBEUzzkQaSEPhXtcx+OJi+bMnIchM+wo5CD+8yryYet0D
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="373617950"
 X-IronPort-AV: E=Sophos;i="6.02,219,1688454000"; 
-   d="scan'208";a="355718603"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2023 06:40:50 -0700
+   d="scan'208";a="373617950"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2023 06:40:50 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="854711317"
+X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="986684302"
 X-IronPort-AV: E=Sophos;i="6.02,219,1688454000"; 
-   d="scan'208";a="854711317"
+   d="scan'208";a="986684302"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 01 Sep 2023 06:40:48 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 01 Sep 2023 06:40:48 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 534A581C; Fri,  1 Sep 2023 16:40:44 +0300 (EEST)
+        id 636B2899; Fri,  1 Sep 2023 16:40:44 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH v1 08/10] gpio: pca953x: Switch to DEFINE_SIMPLE_DEV_PM_OPS()
-Date:   Fri,  1 Sep 2023 16:40:39 +0300
-Message-Id: <20230901134041.1165562-8-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 10/10] gpio: pca953x: Revisit header inclusions
+Date:   Fri,  1 Sep 2023 16:40:41 +0300
+Message-Id: <20230901134041.1165562-10-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
 In-Reply-To: <20230901134041.1165562-1-andriy.shevchenko@linux.intel.com>
 References: <20230901134041.1165562-1-andriy.shevchenko@linux.intel.com>
@@ -58,52 +58,62 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-SIMPLE_DEV_PM_OPS() is deprecated, replace it with pm_sleep_ptr()
-and DEFINE_SIMPLE_DEV_PM_OPS() for setting the driver's PM routines.
-We can now remove the ifdeffery surrounding the suspend and resume
-functions.
+Some of the headers are not use, some are missing. Fix that.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-pca953x.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index fe113c74b7b2..bf27e2d920f7 100644
+index 16f5e3043bf0..b0d768ebf21d 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -1164,7 +1164,6 @@ static int pca953x_probe(struct i2c_client *client)
- 	return devm_gpiochip_add_data(dev, &chip->gpio_chip, chip);
- }
+@@ -8,23 +8,30 @@
+  *  Derived from drivers/i2c/chips/pca9539.c
+  */
  
--#ifdef CONFIG_PM_SLEEP
- static int pca953x_regcache_sync(struct pca953x_chip *chip)
- {
- 	struct device *dev = &chip->client->dev;
-@@ -1270,7 +1269,8 @@ static int pca953x_resume(struct device *dev)
+-#include <linux/acpi.h>
++#include <linux/atomic.h>
+ #include <linux/bitmap.h>
+ #include <linux/cleanup.h>
+-#include <linux/gpio/consumer.h>
+-#include <linux/gpio/driver.h>
++#include <linux/device.h>
++#include <linux/errno.h>
+ #include <linux/i2c.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+-#include <linux/of_platform.h>
+-#include <linux/platform_data/pca953x.h>
++#include <linux/mutex.h>
++#include <linux/pm.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
  
- 	return 0;
- }
--#endif
+-#include <asm/unaligned.h>
++#include <linux/gpio/consumer.h>
++#include <linux/gpio/driver.h>
 +
-+static DEFINE_SIMPLE_DEV_PM_OPS(pca953x_pm_ops, pca953x_suspend, pca953x_resume);
++#include <linux/pinctrl/pinconf-generic.h>
++
++#include <linux/platform_data/pca953x.h>
  
- /* convenience to stop overlong match-table lines */
- #define OF_653X(__nrgpio, __int) ((void *)(__nrgpio | PCAL653X_TYPE | __int))
-@@ -1328,12 +1328,10 @@ static const struct of_device_id pca953x_dt_ids[] = {
+ #define PCA953X_INPUT		0x00
+ #define PCA953X_OUTPUT		0x01
+@@ -119,6 +126,7 @@ MODULE_DEVICE_TABLE(i2c, pca953x_id);
  
- MODULE_DEVICE_TABLE(of, pca953x_dt_ids);
+ #ifdef CONFIG_GPIO_PCA953X_IRQ
  
--static SIMPLE_DEV_PM_OPS(pca953x_pm_ops, pca953x_suspend, pca953x_resume);
--
- static struct i2c_driver pca953x_driver = {
- 	.driver = {
- 		.name	= "pca953x",
--		.pm	= &pca953x_pm_ops,
-+		.pm	= pm_sleep_ptr(&pca953x_pm_ops),
- 		.of_match_table = pca953x_dt_ids,
- 		.acpi_match_table = pca953x_acpi_ids,
- 	},
++#include <linux/acpi.h>
+ #include <linux/dmi.h>
+ 
+ static const struct acpi_gpio_params pca953x_irq_gpios = { 0, 0, true };
 -- 
 2.40.0.1.gaa8946217a0b
 
