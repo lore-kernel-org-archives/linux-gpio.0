@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D942DCA0FE1
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 Sep 2023 13:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D64CA0FE8
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Sep 2023 13:41:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349788AbjIANlB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 1 Sep 2023 09:41:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37344 "EHLO
+        id S1349830AbjIANlC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 1 Sep 2023 09:41:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349792AbjIANky (ORCPT
+        with ESMTP id S1349796AbjIANky (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Sep 2023 09:40:54 -0400
 Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A841DE4C;
-        Fri,  1 Sep 2023 06:40:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49705E77;
+        Fri,  1 Sep 2023 06:40:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693575651; x=1725111651;
+  t=1693575652; x=1725111652;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=+33bqCDF5uOYXY98UJQ56l828bdx6zq0e0aD3aeaQRg=;
-  b=bc9xVI2AUttv2M+ncoX1ufKmUHbtwLE2EZFNYpAVoviau6R1+Wjg/U4/
-   14a3XhbQweICh0vWghITEdXGhN0RfZYt6Oj47GKLcblCNPcr8wOVzbk4D
-   8cIW8V+CwHutOutGQEhIMdxqxLds2JjtxshJHh+K6iUOEOz1MT+7zkjGb
-   ysbvdTKX3nZ/biA1FWrXQycZ4I8IRCneIW1oZ3O+uyHUlhe0lUTRXjxHZ
-   eB6W3vk9QM74ga76HdobwQUtMigJrGtLpak0z4IFLyCFzdXiumYDS346l
-   jW5cnsPbOlHLnPavNxmt1VM1a5YVJfYkpPsgv7ROKFA34GQ8MGCs0n5Ua
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="373617942"
+  bh=HMwGS+8lGtRWIaPNiZ03JumXEZIRADTdH+9Q2up/8o0=;
+  b=PuxT5Y7wvA7d4UpmKryOGa+RgZhs6vGAcp7XknxMdpZ4SSAKc4a0iiCJ
+   dAGGDeHV6vIUD6bRiTm34iRGjiVWPske5tUiV/0qf+7KjJaghx+HSLjed
+   PJqZRq2bOs+GQdnbBauIovVnv3pOPeXEVW9mrT0MRiM4vzoQiwGEvwD47
+   H151o4+TfqIf4v7ZjP1Tb/GUUnqNLdABJ+dZNdk7QQ/GGStStjUuC2kYL
+   sfs19kRmv8KKd6MumE934hKbAYV/DKaR1sr/REtH0+fSAcp9JxkM35Lky
+   YGeAbZpIyfDsJsshLmXhOFJE9xyaAmKu4GVdMCIwr5BjVdpv4/pSCGGSo
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="373617954"
 X-IronPort-AV: E=Sophos;i="6.02,219,1688454000"; 
-   d="scan'208";a="373617942"
+   d="scan'208";a="373617954"
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
   by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2023 06:40:50 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="986684300"
+X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="986684301"
 X-IronPort-AV: E=Sophos;i="6.02,219,1688454000"; 
-   d="scan'208";a="986684300"
+   d="scan'208";a="986684301"
 Received: from black.fi.intel.com ([10.237.72.28])
   by fmsmga006.fm.intel.com with ESMTP; 01 Sep 2023 06:40:48 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 5B9A4892; Fri,  1 Sep 2023 16:40:44 +0300 (EEST)
+        id 3E36B7A4; Fri,  1 Sep 2023 16:40:44 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH v1 09/10] gpio: pca953x: Get rid of useless goto label
-Date:   Fri,  1 Sep 2023 16:40:40 +0300
-Message-Id: <20230901134041.1165562-9-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 06/10] gpio: pca953x: Utilise temporary variable for struct device
+Date:   Fri,  1 Sep 2023 16:40:37 +0300
+Message-Id: <20230901134041.1165562-6-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
 In-Reply-To: <20230901134041.1165562-1-andriy.shevchenko@linux.intel.com>
 References: <20230901134041.1165562-1-andriy.shevchenko@linux.intel.com>
@@ -58,79 +58,109 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-In a few functions goto label is useless as there are no locking,
-no nothing that may justify its usage. Get rid of it.
+We have a temporary variable to keep pointer to struct device.
+Utilise it where it makes sense.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-pca953x.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index bf27e2d920f7..16f5e3043bf0 100644
+index 99379ee98749..4aa15128c91f 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -988,20 +988,18 @@ static int device_pca95xx_init(struct pca953x_chip *chip)
- 	ret = regcache_sync_region(chip->regmap, regaddr,
- 				   regaddr + NBANK(chip) - 1);
- 	if (ret)
--		goto out;
-+		return ret;
+@@ -779,11 +779,11 @@ static int pca953x_irq_set_type(struct irq_data *d, unsigned int type)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct pca953x_chip *chip = gpiochip_get_data(gc);
++	struct device *dev = &chip->client->dev;
+ 	irq_hw_number_t hwirq = irqd_to_hwirq(d);
  
- 	regaddr = chip->recalc_addr(chip, chip->regs->direction, 0);
- 	ret = regcache_sync_region(chip->regmap, regaddr,
- 				   regaddr + NBANK(chip) - 1);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	/* clear polarity inversion */
- 	bitmap_zero(val, MAX_LINE);
- 
--	ret = pca953x_write_regs(chip, chip->regs->invert, val);
--out:
--	return ret;
-+	return pca953x_write_regs(chip, chip->regs->invert, val);
- }
- 
- static int device_pca957x_init(struct pca953x_chip *chip)
-@@ -1012,19 +1010,13 @@ static int device_pca957x_init(struct pca953x_chip *chip)
- 
- 	ret = device_pca95xx_init(chip);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	/* To enable register 6, 7 to control pull up and pull down */
- 	for (i = 0; i < NBANK(chip); i++)
- 		bitmap_set_value8(val, 0x02, i * BANK_SZ);
- 
--	ret = pca953x_write_regs(chip, PCA957X_BKEN, val);
--	if (ret)
--		goto out;
--
--	return 0;
--out:
--	return ret;
-+	return pca953x_write_regs(chip, PCA957X_BKEN, val);
- }
- 
- static void pca953x_disable_regulator(void *reg)
-@@ -1262,12 +1254,10 @@ static int pca953x_resume(struct device *dev)
+ 	if (!(type & IRQ_TYPE_EDGE_BOTH)) {
+-		dev_err(&chip->client->dev, "irq %d: unsupported type %d\n",
+-			d->irq, type);
++		dev_err(dev, "irq %d: unsupported type %d\n", d->irq, type);
+ 		return -EINVAL;
  	}
  
- 	ret = pca953x_restore_context(chip);
--	if (ret) {
-+	if (ret)
- 		dev_err(dev, "Failed to restore register map: %d\n", ret);
--		return ret;
--	}
+@@ -919,7 +919,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chip, int irq_base)
+ 	int ret;
  
--	return 0;
-+	return ret;
+ 	if (dmi_first_match(pca953x_dmi_acpi_irq_info)) {
+-		ret = pca953x_acpi_get_irq(&client->dev);
++		ret = pca953x_acpi_get_irq(dev);
+ 		if (ret > 0)
+ 			client->irq = ret;
+ 	}
+@@ -957,10 +957,9 @@ static int pca953x_irq_setup(struct pca953x_chip *chip, int irq_base)
+ 	girq->threaded = true;
+ 	girq->first = irq_base; /* FIXME: get rid of this */
+ 
+-	ret = devm_request_threaded_irq(&client->dev, client->irq,
+-					NULL, pca953x_irq_handler,
+-					IRQF_ONESHOT | IRQF_SHARED,
+-					dev_name(&client->dev), chip);
++	ret = devm_request_threaded_irq(dev, client->irq, NULL, pca953x_irq_handler,
++					IRQF_ONESHOT | IRQF_SHARED, dev_name(dev),
++					chip);
+ 	if (ret)
+ 		return dev_err_probe(dev, client->irq, "failed to request irq\n");
+ 
+@@ -968,13 +967,13 @@ static int pca953x_irq_setup(struct pca953x_chip *chip, int irq_base)
  }
  
- static DEFINE_SIMPLE_DEV_PM_OPS(pca953x_pm_ops, pca953x_suspend, pca953x_resume);
+ #else /* CONFIG_GPIO_PCA953X_IRQ */
+-static int pca953x_irq_setup(struct pca953x_chip *chip,
+-			     int irq_base)
++static int pca953x_irq_setup(struct pca953x_chip *chip, int irq_base)
+ {
+ 	struct i2c_client *client = chip->client;
++	struct device *dev = &client->dev;
+ 
+ 	if (client->irq && irq_base != -1 && (chip->driver_data & PCA_INT))
+-		dev_warn(&client->dev, "interrupt support not compiled in\n");
++		dev_warn(dev, "interrupt support not compiled in\n");
+ 
+ 	return 0;
+ }
+@@ -1065,11 +1064,11 @@ static int pca953x_probe(struct i2c_client *client)
+ 	int ret;
+ 	const struct regmap_config *regmap_config;
+ 
+-	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
++	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+ 	if (chip == NULL)
+ 		return -ENOMEM;
+ 
+-	pdata = dev_get_platdata(&client->dev);
++	pdata = dev_get_platdata(dev);
+ 	if (pdata) {
+ 		irq_base = pdata->irq_base;
+ 		chip->gpio_start = pdata->gpio_base;
+@@ -1086,8 +1085,7 @@ static int pca953x_probe(struct i2c_client *client)
+ 		 * using "reset" GPIO. Otherwise any of those platform
+ 		 * must use _DSD method with corresponding property.
+ 		 */
+-		reset_gpio = devm_gpiod_get_optional(&client->dev, "reset",
+-						     GPIOD_OUT_LOW);
++		reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
+ 		if (IS_ERR(reset_gpio))
+ 			return PTR_ERR(reset_gpio);
+ 	}
+@@ -1106,10 +1104,10 @@ static int pca953x_probe(struct i2c_client *client)
+ 	pca953x_setup_gpio(chip, chip->driver_data & PCA_GPIO_MASK);
+ 
+ 	if (NBANK(chip) > 2 || PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) {
+-		dev_info(&client->dev, "using AI\n");
++		dev_info(dev, "using AI\n");
+ 		regmap_config = &pca953x_ai_i2c_regmap;
+ 	} else {
+-		dev_info(&client->dev, "using no AI\n");
++		dev_info(dev, "using no AI\n");
+ 		regmap_config = &pca953x_i2c_regmap;
+ 	}
+ 
 -- 
 2.40.0.1.gaa8946217a0b
 
