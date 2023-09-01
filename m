@@ -2,215 +2,95 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4552CCA0FE8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EBB9CA0FE6
 	for <linux-gpio@archiver.kernel.org>; Fri,  1 Sep 2023 13:40:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349782AbjIANkw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S1344386AbjIANkw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 1 Sep 2023 09:40:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60596 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231204AbjIANkv (ORCPT
+        with ESMTP id S235745AbjIANkv (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Sep 2023 09:40:51 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 138A9E4C;
-        Fri,  1 Sep 2023 06:40:47 -0700 (PDT)
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7F27E77;
+        Fri,  1 Sep 2023 06:40:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1693575648; x=1725111648;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=X802rapkkzG+OIN/1IPRinaaVSGUEdf+mOn5B1PZ3jw=;
-  b=PaL6oHuaQfXVOi59wv4DQb8dysb2RSSCRpeEzK8ZihsN5UseUJ7co3Xb
-   x8iVn/KlsH01AcRZ5zIRpiCAXE4NSRHEfHsdwE1mJbVomgMrwDHHcJPA0
-   92rU8laXNmP6G/7UqxeiXo1ZlPAMbTLCT4JsSLOLcOVa3VTlD3yYMCv4z
-   7qyn28SEkVws9P9DjGpXbi3QUpNh0J9212hkaGI/DTjSHx/XnSzwzyzir
-   ckHYts/WsgsJdLwrzW+M7RSFLrnC0qqdEOPAsb4jgBAEIWFALehB6JeZD
-   iTAKLPCtE723pkWMtGYarMtJ2BR7/w69sMD3MZqN6sHJ5xXHj/Hz1DTCi
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="355718594"
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=YM6VolMq4j0Tz9WOWCpxMyapirzvCFmEiZiMxNSvb8Y=;
+  b=a99cW9lCkd34/n/NX2Jh3ktZRaGxphuNTPNekCT3M4Oox5yKBDCABjkN
+   ySPkbQgx52WqUdcCx50UhA/ic6P9LFOwEnLc6nZAvK60YXTzewqGbX6cX
+   E3iGGrdeCLGeF+cj8tF/+gWCGmu+QotwW7EsbeTEnXW0GcIHZkpIMjNkF
+   adqcKMj7DP1zpYoPcYlUUj1bPPA74GbxVzzQnXmT8eoFGPZ02Pk/5Oezf
+   gvooAvcXYhLcNaWPav+GDEvohM/iMDcDRweOzQV4cnfeiUmr3V49f4und
+   RpU9d0s54RKoXwuGsVE8p6UaOZ4n2qrkJh5VUqd6+iQTPmehuXE/Pazqg
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="366447070"
 X-IronPort-AV: E=Sophos;i="6.02,219,1688454000"; 
-   d="scan'208";a="355718594"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2023 06:40:47 -0700
+   d="scan'208";a="366447070"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2023 06:40:48 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="854711311"
+X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="1070754507"
 X-IronPort-AV: E=Sophos;i="6.02,219,1688454000"; 
-   d="scan'208";a="854711311"
+   d="scan'208";a="1070754507"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 01 Sep 2023 06:40:45 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 01 Sep 2023 06:40:45 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 00200761; Fri,  1 Sep 2023 16:40:43 +0300 (EEST)
+        id 1B82E76A; Fri,  1 Sep 2023 16:40:44 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH v1 01/10] gpio: pca953x: Drop unused fields in struct pca953x_platform_data
-Date:   Fri,  1 Sep 2023 16:40:32 +0300
-Message-Id: <20230901134041.1165562-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 03/10] gpio: pca953x: Utilise dev_err_probe() where it makes sense
+Date:   Fri,  1 Sep 2023 16:40:34 +0300
+Message-Id: <20230901134041.1165562-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
+In-Reply-To: <20230901134041.1165562-1-andriy.shevchenko@linux.intel.com>
+References: <20230901134041.1165562-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-New code should solely use firmware nodes for the specifics and
-not any callbacks.
+At least in pca953x_irq_setup() we may use dev_err_probe().
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-pca953x.c           | 37 ++++++---------------------
- include/linux/platform_data/pca953x.h | 13 ----------
- 2 files changed, 8 insertions(+), 42 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index bdd50a78e414..02695abd0eb1 100644
+index 0dedb2265744..4249ec350ace 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -211,7 +211,6 @@ struct pca953x_chip {
- 
- 	struct i2c_client *client;
- 	struct gpio_chip gpio_chip;
--	const char *const *names;
- 	unsigned long driver_data;
- 	struct regulator *regulator;
- 
-@@ -712,7 +711,6 @@ static void pca953x_setup_gpio(struct pca953x_chip *chip, int gpios)
- 	gc->label = dev_name(&chip->client->dev);
- 	gc->parent = &chip->client->dev;
- 	gc->owner = THIS_MODULE;
--	gc->names = chip->names;
- }
- 
- #ifdef CONFIG_GPIO_PCA953X_IRQ
-@@ -998,7 +996,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
- }
- #endif
- 
--static int device_pca95xx_init(struct pca953x_chip *chip, u32 invert)
-+static int device_pca95xx_init(struct pca953x_chip *chip)
+@@ -926,6 +926,7 @@ static irqreturn_t pca953x_irq_handler(int irq, void *devid)
+ static int pca953x_irq_setup(struct pca953x_chip *chip, int irq_base)
  {
- 	DECLARE_BITMAP(val, MAX_LINE);
- 	u8 regaddr;
-@@ -1016,24 +1014,21 @@ static int device_pca95xx_init(struct pca953x_chip *chip, u32 invert)
- 	if (ret)
- 		goto out;
- 
--	/* set platform specific polarity inversion */
--	if (invert)
--		bitmap_fill(val, MAX_LINE);
--	else
--		bitmap_zero(val, MAX_LINE);
-+	/* clear polarity inversion */
-+	bitmap_zero(val, MAX_LINE);
- 
- 	ret = pca953x_write_regs(chip, chip->regs->invert, val);
- out:
- 	return ret;
- }
- 
--static int device_pca957x_init(struct pca953x_chip *chip, u32 invert)
-+static int device_pca957x_init(struct pca953x_chip *chip)
- {
- 	DECLARE_BITMAP(val, MAX_LINE);
- 	unsigned int i;
- 	int ret;
- 
--	ret = device_pca95xx_init(chip, invert);
-+	ret = device_pca95xx_init(chip);
- 	if (ret)
- 		goto out;
- 
-@@ -1054,9 +1049,8 @@ static int pca953x_probe(struct i2c_client *client)
- {
- 	struct pca953x_platform_data *pdata;
- 	struct pca953x_chip *chip;
--	int irq_base = 0;
-+	int irq_base;
- 	int ret;
--	u32 invert = 0;
- 	struct regulator *reg;
- 	const struct regmap_config *regmap_config;
- 
-@@ -1068,8 +1062,6 @@ static int pca953x_probe(struct i2c_client *client)
- 	if (pdata) {
- 		irq_base = pdata->irq_base;
- 		chip->gpio_start = pdata->gpio_base;
--		invert = pdata->invert;
--		chip->names = pdata->names;
- 	} else {
- 		struct gpio_desc *reset_gpio;
- 
-@@ -1158,10 +1150,10 @@ static int pca953x_probe(struct i2c_client *client)
- 	 */
- 	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) {
- 		chip->regs = &pca957x_regs;
--		ret = device_pca957x_init(chip, invert);
-+		ret = device_pca957x_init(chip);
- 	} else {
- 		chip->regs = &pca953x_regs;
--		ret = device_pca95xx_init(chip, invert);
-+		ret = device_pca95xx_init(chip);
- 	}
- 	if (ret)
- 		goto err_exit;
-@@ -1174,13 +1166,6 @@ static int pca953x_probe(struct i2c_client *client)
- 	if (ret)
- 		goto err_exit;
- 
--	if (pdata && pdata->setup) {
--		ret = pdata->setup(client, chip->gpio_chip.base,
--				   chip->gpio_chip.ngpio, pdata->context);
--		if (ret < 0)
--			dev_warn(&client->dev, "setup failed, %d\n", ret);
+ 	struct i2c_client *client = chip->client;
++	struct device *dev = &client->dev;
+ 	DECLARE_BITMAP(reg_direction, MAX_LINE);
+ 	DECLARE_BITMAP(irq_stat, MAX_LINE);
+ 	struct gpio_irq_chip *girq;
+@@ -974,11 +975,8 @@ static int pca953x_irq_setup(struct pca953x_chip *chip, int irq_base)
+ 					NULL, pca953x_irq_handler,
+ 					IRQF_ONESHOT | IRQF_SHARED,
+ 					dev_name(&client->dev), chip);
+-	if (ret) {
+-		dev_err(&client->dev, "failed to request irq %d\n",
+-			client->irq);
+-		return ret;
 -	}
--
++	if (ret)
++		return dev_err_probe(dev, client->irq, "failed to request irq\n");
+ 
  	return 0;
- 
- err_exit:
-@@ -1190,14 +1175,8 @@ static int pca953x_probe(struct i2c_client *client)
- 
- static void pca953x_remove(struct i2c_client *client)
- {
--	struct pca953x_platform_data *pdata = dev_get_platdata(&client->dev);
- 	struct pca953x_chip *chip = i2c_get_clientdata(client);
- 
--	if (pdata && pdata->teardown) {
--		pdata->teardown(client, chip->gpio_chip.base,
--				chip->gpio_chip.ngpio, pdata->context);
--	}
--
- 	regulator_disable(chip->regulator);
  }
- 
-diff --git a/include/linux/platform_data/pca953x.h b/include/linux/platform_data/pca953x.h
-index 96c1a14ab365..3c3787c4d96c 100644
---- a/include/linux/platform_data/pca953x.h
-+++ b/include/linux/platform_data/pca953x.h
-@@ -11,21 +11,8 @@ struct pca953x_platform_data {
- 	/* number of the first GPIO */
- 	unsigned	gpio_base;
- 
--	/* initial polarity inversion setting */
--	u32		invert;
--
- 	/* interrupt base */
- 	int		irq_base;
--
--	void		*context;	/* param to setup/teardown */
--
--	int		(*setup)(struct i2c_client *client,
--				unsigned gpio, unsigned ngpio,
--				void *context);
--	void		(*teardown)(struct i2c_client *client,
--				unsigned gpio, unsigned ngpio,
--				void *context);
--	const char	*const *names;
- };
- 
- #endif /* _LINUX_PCA953X_H */
 -- 
 2.40.0.1.gaa8946217a0b
 
