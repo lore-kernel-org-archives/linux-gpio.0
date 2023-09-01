@@ -2,109 +2,150 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03715CA0FE6
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 Sep 2023 12:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85503CA0FE1
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Sep 2023 12:29:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232645AbjIAMP5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 1 Sep 2023 08:15:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43972 "EHLO
+        id S1345412AbjIAM3F (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 1 Sep 2023 08:29:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349372AbjIAMP5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Sep 2023 08:15:57 -0400
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F449E7B
-        for <linux-gpio@vger.kernel.org>; Fri,  1 Sep 2023 05:15:52 -0700 (PDT)
-Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-d7bb34576b9so1482583276.3
-        for <linux-gpio@vger.kernel.org>; Fri, 01 Sep 2023 05:15:52 -0700 (PDT)
+        with ESMTP id S1349434AbjIAM3F (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Sep 2023 08:29:05 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B2E310E2
+        for <linux-gpio@vger.kernel.org>; Fri,  1 Sep 2023 05:29:01 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-500760b296aso2246251e87.0
+        for <linux-gpio@vger.kernel.org>; Fri, 01 Sep 2023 05:29:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693570551; x=1694175351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZKQJzdrwVynBj+i/KLrgcZw6v08VJmYn3Jbn1ugOea4=;
-        b=u4EYzcj7WRCe50N1iDyZxN1+j8HWYEA1RrcN6w9eoFyNnmbVGTvEvd63hNKMboft0p
-         nRiQEFE4KO7xe/namXhRgqKyLqw2llMj6c7bbb+XHwvMk0PAR+5zrDIqqv4p+WAuL3/O
-         Qmg2A+D9EIbr5ywgTxQKeMTML4zcODtw5XZrI6kPAks96jdv2XUoQuZ3ZNEuerGnoVPY
-         H3DdCXmZdtE+8fZowzyJae761VODdyoesU4rj85ytlXLQ20gDRetVLUgo4tDUYJUQ6Ll
-         gziVu6kAKIuEW/0NJGESVXoyXLCKjZxRgzVscPv3fONI0coxOn60mUFOS3JH/gPXKA5n
-         Gd2A==
+        d=linaro.org; s=google; t=1693571339; x=1694176139; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2rXyBxVHzh14H4lsJtqZsMfSNqjUOUgjpNJoum6M9uk=;
+        b=lgTw8BRu+5UbgfzDdVF5bLOgb4/rUW/+nKwSk1J7fIDGKUxolGFts2mePxZ5MiQkEM
+         xRhOkCxNRI6f/VRYSb6DErDckaZ5RLl53EKtDsaI1CScOiYTrp0wrFpSKm/nbD9I4+aQ
+         HF0n1cu7k9tsksMFhgxaQIeYhC41mLh0xdm+furzT63YOu3zDy6XCcnQ2cYa+74SfLle
+         yQWsgr+QEa4yrqALrH6g/GLQVVQeQHGpg3uWZqH+/hDWGfRtQrSy0fGQLdr9yk/YmcwB
+         2tJX1QFbBN7GPJLVMugaE/Zno8IatTylu5vJ7jQ1RWl+UK8ifLueVi5KXSNWINuu/z7y
+         FL0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693570551; x=1694175351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZKQJzdrwVynBj+i/KLrgcZw6v08VJmYn3Jbn1ugOea4=;
-        b=IzjuCZtLpCP75dhsh425zyfXtbh1H2nfuoFb47ihMQfjG9cILSLQNUKYAJNQLE+cta
-         29CkqIAYhUTHW5+rtUzFZC6lO2gCI+C+E/DzuUEmA2Bf0GiG5TctUt5Ars0O1vF5T9KC
-         jAadRlgb6OdI5BPSKAEvK+AS+ucXrLIFtLn79+uzTP5KrX8escIhkPnKqOjnnn2eKukE
-         /7VSgp6HzdBhegSW9IINCUDkVQyfLFdf6MjQkAu6DFdqNMFxFe7Y3oU9H7J25h3VXMcy
-         4yLPRsOKl+NxYLt6+JzXdxMttvPA7AGNqbmyVwugGPyVBibJ8Mq5y7rBeJMRGLv/8f1Y
-         HwAQ==
-X-Gm-Message-State: AOJu0YyzFBFpMoGgn8/CA6MDaIZfNxpUukp1cs7znprWU0BWga1rMpse
-        R7w63iXWp6mTNXPd/P83q3DwrD8IBy+fADhc6RQbpQ==
-X-Google-Smtp-Source: AGHT+IEGIJ2ghvCH0Ox2nia398Yqxzna/6LWbQzpvZgwZKocqcwbT3A7SbPs9h3C7RVL5XV/nxF1X5cIH7DZCApTsGU=
-X-Received: by 2002:a05:6902:120e:b0:d77:e463:7c0e with SMTP id
- s14-20020a056902120e00b00d77e4637c0emr2955849ybu.50.1693570551371; Fri, 01
- Sep 2023 05:15:51 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1693571339; x=1694176139;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2rXyBxVHzh14H4lsJtqZsMfSNqjUOUgjpNJoum6M9uk=;
+        b=Ngp+KvY2aIH4/1HTrkoj3JtkNPWnNOKL5vArVQDa5bsrtx+qwA6h5hR8C7LIEO7Bbd
+         37GrKnF0m2bGyAKcrZhJ01dqjOsVvZfl5AjbZOjiF3Ggo4Cb6gmmlhiVJUKqXYtHppV2
+         XM2oSQf7+1hbGF7WjnDZyc3i1WFcSQRjQpCXH7mXs4DK4w9LL8TN4GQUJqwNf5zTTV5k
+         MVFbmrxMJZzduspLF/dSo5MGlFa3mM7o4LAAJNpXYUcp+KW9wn5VtB0lBYIWY0SjpK+B
+         ZLUR1B5pNsET0wQyJ/IMfRw826lDxrsTU8LikYQm3eo2+GuyidgZA9M/RHq1TCvCz5Cq
+         /Evg==
+X-Gm-Message-State: AOJu0YzbcDSQkJsAsD+XoDLU6JBa45YcD2b0ydL92jPRg4yHV7v9oXhv
+        eI3tZLKwgZCHkUB+8y79jp1oYQ==
+X-Google-Smtp-Source: AGHT+IFKBVmf1Jrha0rdIrsWwiaj+lLI0uFYIFXXTas+Mbfuzwe1HTdf8ZaFhvxMbnEG93i0WxChFA==
+X-Received: by 2002:a05:6512:159c:b0:500:b102:d1c9 with SMTP id bp28-20020a056512159c00b00500b102d1c9mr1833843lfb.29.1693571339234;
+        Fri, 01 Sep 2023 05:28:59 -0700 (PDT)
+Received: from [192.168.1.101] (abxh154.neoplus.adsl.tpnet.pl. [83.9.1.154])
+        by smtp.gmail.com with ESMTPSA id o10-20020ac2434a000000b004fe20d1b288sm632572lfl.159.2023.09.01.05.28.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Sep 2023 05:28:58 -0700 (PDT)
+Message-ID: <08a10dc1-bb8e-48b1-8d86-5ee513835196@linaro.org>
+Date:   Fri, 1 Sep 2023 14:28:57 +0200
 MIME-Version: 1.0
-References: <20230901111548.12733-1-brgl@bgdev.pl>
-In-Reply-To: <20230901111548.12733-1-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 1 Sep 2023 14:15:39 +0200
-Message-ID: <CACRpkdYLcOZQ9r46aBwesh-H392C_0AWC8n2ikuwUknfEhoNNA@mail.gmail.com>
-Subject: Re: [RFT PATCH v2] spi: bcm2835: reduce the abuse of the GPIO API
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>, linux-spi@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] pinctrl: qcom: lpass-lpi: allow slew rate bit in main
+ pin config register
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230901090224.27770-1-krzysztof.kozlowski@linaro.org>
+ <20230901090224.27770-3-krzysztof.kozlowski@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20230901090224.27770-3-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 1, 2023 at 1:15=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
+On 1.09.2023 11:02, Krzysztof Kozlowski wrote:
+> Existing Qualcomm SoCs have the LPASS pin controller slew rate control
+> in separate register, however this will change with upcoming Qualcomm
+> SoCs.  The slew rate will be part of the main register for pin
+> configuration, thus second device IO address space is not needed.
+> 
+> Prepare for supporting new SoCs by adding flag customizing the driver
+> behavior for slew rate.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/pinctrl/qcom/pinctrl-lpass-lpi.c | 20 ++++++++++++++------
+>  drivers/pinctrl/qcom/pinctrl-lpass-lpi.h |  7 +++++++
+>  2 files changed, 21 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+> index e2df2193a802..40eb58a3a8cd 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
+> @@ -190,6 +190,7 @@ static int lpi_config_set_slew_rate(struct lpi_pinctrl *pctrl,
+>  				    const struct lpi_pingroup *g,
+>  				    unsigned int group, unsigned int slew)
+>  {
+> +	void __iomem *reg;
+Aaalmost reverse-Christmas-tree!
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Currently the bcm2835 SPI driver uses functions that are available
-> exclusively to GPIO providers as a way to handle a platform quirk. Let's
-> use a slightly better alternative that avoids poking around in GPIOLIB's
-> internals and use GPIO lookup tables.
->
-> Link: https://www.spinics.net/lists/linux-gpio/msg36218.html
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>  	unsigned long sval;
+>  	int slew_offset;
+>  
+> @@ -203,12 +204,17 @@ static int lpi_config_set_slew_rate(struct lpi_pinctrl *pctrl,
+>  	if (slew_offset == LPI_NO_SLEW)
+>  		return 0;
+>  
+> +	if (pctrl->data->flags & LPI_FLAG_SLEW_RATE_SAME_REG)
+> +		reg = pctrl->tlmm_base + LPI_TLMM_REG_OFFSET * group + LPI_GPIO_CFG_REG;
+> +	else
+> +		reg = pctrl->slew_base + LPI_SLEW_RATE_CTL_REG;
+Perhaps lpi_gpio_read/write could be used here?
 
-> +#include <linux/cleanup.h>
-(...)
-> -       struct gpio_chip *chip;
-> +       struct gpiod_lookup_table *lookup __free(kfree) =3D NULL;
+I guess both ways work though
 
-Whoa!
-This is really neat.
-As noted, it will confuse static checkers at no end, but they just have
-to adopt. (CC to Dan C if he now runs into this.)
-
-> +       gpiod_add_lookup_table(lookup);
-
-Maybe we should mention the obvious advantage to the previous
-hack: if there is a "cs-gpios" in the device tree, it will take precedence,
-because gpiod_find_and_request() will try gpiod_find_by_fwnode()
-*first* and only if this fails it will fall back to gpiod_find().
-
-Hm, maybe we should go and fix these device trees? :P
-
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+Konrad
