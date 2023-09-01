@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C2BCA0FE6
-	for <linux-gpio@archiver.kernel.org>; Fri,  1 Sep 2023 13:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D942DCA0FE1
+	for <linux-gpio@archiver.kernel.org>; Fri,  1 Sep 2023 13:41:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349802AbjIANkz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 1 Sep 2023 09:40:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37332 "EHLO
+        id S1349788AbjIANlB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 1 Sep 2023 09:41:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349788AbjIANkx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Sep 2023 09:40:53 -0400
+        with ESMTP id S1349792AbjIANky (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Sep 2023 09:40:54 -0400
 Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07F0EE7E;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A841DE4C;
         Fri,  1 Sep 2023 06:40:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1693575651; x=1725111651;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=352rupwp0v18APS/064zEU6rKG+0wRf5vuEg+1M9N+w=;
-  b=ClQGSaoEHsh55chbP9snHsIgQ9W4pq5DjVkXwh5ulokmJKkmYXud7VtU
-   5nfr9szOzghH/vgv6WhAEgKpumxLL3utSkusW+B6o9DOzhF6RElRuGUo5
-   hUhlSmGovs4ea+eegbEta0cwAFVJttJiZbtqSTmqRTLg+NWaeMwRPRS8+
-   GagWcVadGMk/DxiV091SI3+itBuTzegOWWKTQ9EYziyVQwUd3RzYCWycC
-   au9g0oc4sQwbfBjJUhygk4xv9qnMpiZE0uKd2Xg0FwwqEwduRN2SM2Nky
-   2Uf6Anb7GPyceBEUzzkQaSEPhXtcx+OJi+bMnIchM+wo5CD+8yryYet0D
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="373617950"
+  bh=+33bqCDF5uOYXY98UJQ56l828bdx6zq0e0aD3aeaQRg=;
+  b=bc9xVI2AUttv2M+ncoX1ufKmUHbtwLE2EZFNYpAVoviau6R1+Wjg/U4/
+   14a3XhbQweICh0vWghITEdXGhN0RfZYt6Oj47GKLcblCNPcr8wOVzbk4D
+   8cIW8V+CwHutOutGQEhIMdxqxLds2JjtxshJHh+K6iUOEOz1MT+7zkjGb
+   ysbvdTKX3nZ/biA1FWrXQycZ4I8IRCneIW1oZ3O+uyHUlhe0lUTRXjxHZ
+   eB6W3vk9QM74ga76HdobwQUtMigJrGtLpak0z4IFLyCFzdXiumYDS346l
+   jW5cnsPbOlHLnPavNxmt1VM1a5YVJfYkpPsgv7ROKFA34GQ8MGCs0n5Ua
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="373617942"
 X-IronPort-AV: E=Sophos;i="6.02,219,1688454000"; 
-   d="scan'208";a="373617950"
+   d="scan'208";a="373617942"
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
   by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2023 06:40:50 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="986684302"
+X-IronPort-AV: E=McAfee;i="6600,9927,10819"; a="986684300"
 X-IronPort-AV: E=Sophos;i="6.02,219,1688454000"; 
-   d="scan'208";a="986684302"
+   d="scan'208";a="986684300"
 Received: from black.fi.intel.com ([10.237.72.28])
   by fmsmga006.fm.intel.com with ESMTP; 01 Sep 2023 06:40:48 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 636B2899; Fri,  1 Sep 2023 16:40:44 +0300 (EEST)
+        id 5B9A4892; Fri,  1 Sep 2023 16:40:44 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH v1 10/10] gpio: pca953x: Revisit header inclusions
-Date:   Fri,  1 Sep 2023 16:40:41 +0300
-Message-Id: <20230901134041.1165562-10-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 09/10] gpio: pca953x: Get rid of useless goto label
+Date:   Fri,  1 Sep 2023 16:40:40 +0300
+Message-Id: <20230901134041.1165562-9-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
 In-Reply-To: <20230901134041.1165562-1-andriy.shevchenko@linux.intel.com>
 References: <20230901134041.1165562-1-andriy.shevchenko@linux.intel.com>
@@ -58,62 +58,79 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Some of the headers are not use, some are missing. Fix that.
+In a few functions goto label is useless as there are no locking,
+no nothing that may justify its usage. Get rid of it.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-pca953x.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 24 +++++++-----------------
+ 1 file changed, 7 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 16f5e3043bf0..b0d768ebf21d 100644
+index bf27e2d920f7..16f5e3043bf0 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -8,23 +8,30 @@
-  *  Derived from drivers/i2c/chips/pca9539.c
-  */
+@@ -988,20 +988,18 @@ static int device_pca95xx_init(struct pca953x_chip *chip)
+ 	ret = regcache_sync_region(chip->regmap, regaddr,
+ 				   regaddr + NBANK(chip) - 1);
+ 	if (ret)
+-		goto out;
++		return ret;
  
--#include <linux/acpi.h>
-+#include <linux/atomic.h>
- #include <linux/bitmap.h>
- #include <linux/cleanup.h>
--#include <linux/gpio/consumer.h>
--#include <linux/gpio/driver.h>
-+#include <linux/device.h>
-+#include <linux/errno.h>
- #include <linux/i2c.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
--#include <linux/of_platform.h>
--#include <linux/platform_data/pca953x.h>
-+#include <linux/mutex.h>
-+#include <linux/pm.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
+ 	regaddr = chip->recalc_addr(chip, chip->regs->direction, 0);
+ 	ret = regcache_sync_region(chip->regmap, regaddr,
+ 				   regaddr + NBANK(chip) - 1);
+ 	if (ret)
+-		goto out;
++		return ret;
  
--#include <asm/unaligned.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/gpio/driver.h>
-+
-+#include <linux/pinctrl/pinconf-generic.h>
-+
-+#include <linux/platform_data/pca953x.h>
+ 	/* clear polarity inversion */
+ 	bitmap_zero(val, MAX_LINE);
  
- #define PCA953X_INPUT		0x00
- #define PCA953X_OUTPUT		0x01
-@@ -119,6 +126,7 @@ MODULE_DEVICE_TABLE(i2c, pca953x_id);
+-	ret = pca953x_write_regs(chip, chip->regs->invert, val);
+-out:
+-	return ret;
++	return pca953x_write_regs(chip, chip->regs->invert, val);
+ }
  
- #ifdef CONFIG_GPIO_PCA953X_IRQ
+ static int device_pca957x_init(struct pca953x_chip *chip)
+@@ -1012,19 +1010,13 @@ static int device_pca957x_init(struct pca953x_chip *chip)
  
-+#include <linux/acpi.h>
- #include <linux/dmi.h>
+ 	ret = device_pca95xx_init(chip);
+ 	if (ret)
+-		goto out;
++		return ret;
  
- static const struct acpi_gpio_params pca953x_irq_gpios = { 0, 0, true };
+ 	/* To enable register 6, 7 to control pull up and pull down */
+ 	for (i = 0; i < NBANK(chip); i++)
+ 		bitmap_set_value8(val, 0x02, i * BANK_SZ);
+ 
+-	ret = pca953x_write_regs(chip, PCA957X_BKEN, val);
+-	if (ret)
+-		goto out;
+-
+-	return 0;
+-out:
+-	return ret;
++	return pca953x_write_regs(chip, PCA957X_BKEN, val);
+ }
+ 
+ static void pca953x_disable_regulator(void *reg)
+@@ -1262,12 +1254,10 @@ static int pca953x_resume(struct device *dev)
+ 	}
+ 
+ 	ret = pca953x_restore_context(chip);
+-	if (ret) {
++	if (ret)
+ 		dev_err(dev, "Failed to restore register map: %d\n", ret);
+-		return ret;
+-	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static DEFINE_SIMPLE_DEV_PM_OPS(pca953x_pm_ops, pca953x_suspend, pca953x_resume);
 -- 
 2.40.0.1.gaa8946217a0b
 
