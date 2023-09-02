@@ -2,37 +2,37 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CCCFC83F3F
-	for <linux-gpio@archiver.kernel.org>; Sat,  2 Sep 2023 17:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE078CA0FF6
+	for <linux-gpio@archiver.kernel.org>; Sat,  2 Sep 2023 17:33:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229839AbjIBRdX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 2 Sep 2023 13:33:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35354 "EHLO
+        id S229723AbjIBRdY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 2 Sep 2023 13:33:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjIBRdR (ORCPT
+        with ESMTP id S229804AbjIBRdR (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Sat, 2 Sep 2023 13:33:17 -0400
 Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4FD0130;
-        Sat,  2 Sep 2023 10:33:11 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49B0AA4;
+        Sat,  2 Sep 2023 10:33:12 -0700 (PDT)
 Received: from [192.168.178.23] (k10064.upc-k.chello.nl [62.108.10.64])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id A1E1ED074A;
-        Sat,  2 Sep 2023 17:32:39 +0000 (UTC)
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 8DAA1D0765;
+        Sat,  2 Sep 2023 17:32:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1693675959; bh=MIfk0rla9KfQTZEjEKwE98+NrQUedgBa/nUkrZnJh1E=;
-        h=From:Subject:Date:To:Cc;
-        b=NmcejQ9HYgXVepN9sGzwVgKxPQgzvOenD1at0u6maZsjN9xfZy1FjZoVoipXdFgo/
-         OAzV6UnS1YpXrTns6uD7eqAk30Fz/0wkfe11RVLqYY0B038EE1vRKmirgf4PLvP22/
-         3kxkV5lv2uBH6WhZxYez0OfQiDKlFW/UizujxRr4=
+        t=1693675960; bh=G4bv/044FBMyHyk8YKL12LUcdZXw2wbi25M7HJWmSFg=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc;
+        b=OUHdblhBKl0J+Hq+80CLIyJwob2kBvtCXtzBZ+ijhM92C9m6FpZbguHnPadTLNk1M
+         N+f0DqODnm7o53sfhXJKsjiY0tfcTnSvNrOJRUWFSBX6Ilq/88UnGzV1Cko+hlMGe9
+         JF8V4mJsZa/G0k6OJMTFgID44UKIdHTrmNgW3AwE=
 From:   Luca Weiss <luca@z3ntu.xyz>
-Subject: [PATCH 0/2] Add blsp1_i2c6 and blsp1_uart2 to MSM8226 SoC
-Date:   Sat, 02 Sep 2023 19:32:23 +0200
-Message-Id: <20230902-msm8226-i2c6-v1-0-9632b8916789@z3ntu.xyz>
+Date:   Sat, 02 Sep 2023 19:32:25 +0200
+Subject: [PATCH 2/2] ARM: dts: qcom: msm8226: Add blsp1_i2c6 and
+ blsp1_uart2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKdx82QC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI2MDSwMj3dziXAsjIzPdTKNkM12DNPMUc5OUxLREiyQloJaCotS0zAqwcdG
- xtbUANu7RHF4AAAA=
+Message-Id: <20230902-msm8226-i2c6-v1-2-9632b8916789@z3ntu.xyz>
+References: <20230902-msm8226-i2c6-v1-0-9632b8916789@z3ntu.xyz>
+In-Reply-To: <20230902-msm8226-i2c6-v1-0-9632b8916789@z3ntu.xyz>
 To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -45,43 +45,88 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Luca Weiss <luca@z3ntu.xyz>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=669; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=MIfk0rla9KfQTZEjEKwE98+NrQUedgBa/nUkrZnJh1E=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBk83GxgyY3Ma4897J4Cidfz0V3l6kb9UcChVj3k
- G313YhOKKeJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZPNxsQAKCRBy2EO4nU3X
- VohgEAC1SnpotLH+kqVNteXXhdKopKrL+aP54oMaNqapdrg9tPKco3VwAkElpp3y0aO4cJaqPd8
- sbrIPGVYxaCRsM48ip49yqhp9zgJOa0p2kGdnK2K5N8Js/+peJD3sJaqyG8h3RvodQDtFLzdlEP
- mj3cbSEkxGVNOP9o9qaFZ/JnXKUrmfLgXD6oxm6CJQiYul1fWPOclQrNEG+7digy0u8TraKAnsS
- Mb4OxD2xns2SravIumC5zU1YIYur+H7aUuJS7l+6hOJd4OrXaJpkSHmp2UIlrk/h5mTkCaUn9Rs
- 1z+TAxhbZuDoipnC8Kuq2hGJRHxsO3oWEN0RDOe4tuuBkPuqPl59DbQEBXN7kZLVO0XzsOdOzsF
- ncgP2qDK/yJ02FDnmrApgxiuLUWmMqjXG90wu/J0C8mV8do7SM4+M+Q9hO7bPF5m/szk7EL/bH5
- 34OZGHZ8qAxzyNVJhBU5GS4P9gJgg9Wwa/5o4rN2NPfVoWwgfLvKXTG50F4DZm+/xTEzRxrNaPx
- /KK78LaHoZB1biYkJ7RGjdpQMA+9Uw9y4ba/xIS2uknsqwHPU9f/TJy5PCEJp2/dUAO+ddRhbcK
- 1cZBN74X30J5zwR0B/fQxat5/se0qULW9LpXhvhQFB0nPJEkOM2fXsxulg79zzzUJcNC1SpCm0u
- hI6LwcyoR7YIOLw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1947; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=G4bv/044FBMyHyk8YKL12LUcdZXw2wbi25M7HJWmSFg=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBk83G2DhWrNqjFx3CXw3XnCTRHFRK3VDIXBT3XW
+ /dKsn9sG12JAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZPNxtgAKCRBy2EO4nU3X
+ VlIVD/4vwLTbuMhonqEjzU0Xzyl8fEVjlBFQ8/kRU+CjiTf4+1i3qRJwnb7ZRRBWg/7usSZUF2r
+ xw13/iCEP8k8wswrKGSCoRYqQSF10S0BzHrsNH1cVC9T9tcn4bB15eKk7kQKHl/aKCderzLWX50
+ 6h6fipNgQvS+b7BwWt8iA4SzwRb6lhEVLhiLMED2z1Ps/2osU7o4vfFutV7IoaQCin9njf8ZnwC
+ kqWjDSJ1d9dmSJrymIq70GF016b1LvHX3AZobiB+MNosiMcT4wReNTcBIPBfKgSk41liiuYzThB
+ pO4+27xRDqNQFVXe0w9MiNz0fkhUUNj5uDS8ZL9TkBocVaMbTWMh07/hbIsLMsaKKVnlNeNhamr
+ p84SnrSmO0drxkIpkI6w3m97pdySMVEibZWvpDQh1dGA0CH8fntkN6B0Vehmke16PjYV0Jl8iso
+ UmZBtG8XYfUjm2FJNBrsXJbiOaOkv6Ck4rQmtcSs5ziVjcjJX6XxKegaC8nAzdts5BIFLQykQyO
+ NpaGcttPI5adGXxeShTIIndTd4286xg6N69oSATRGTOc9L3KfOwt8URbldLrFDibio6wbf+wykR
+ v4X4zDJnDifyg5L6cT+1ssZfcH//LxduZG8KO2BgJlWsQNC/Tkh+WIHhwG/X1pQ1j4y72mTgNAv
+ ZSjtdj34q/wUilA==
 X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
  fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add the I2C bus and UART interface found on the MSM8226. For the I2C bus
-we also first need to add the pinctrl function in the driver.
+Add more busses found on msm8226 SoC.
 
 Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
 ---
-Luca Weiss (2):
-      pinctrl: qcom: msm8226: Add blsp_i2c6 function
-      ARM: dts: qcom: msm8226: Add blsp1_i2c6 and blsp1_uart2
-
  arch/arm/boot/dts/qcom/qcom-msm8226.dtsi | 29 +++++++++++++++++++++++++++++
- drivers/pinctrl/qcom/pinctrl-msm8226.c   |  8 ++++++--
- 2 files changed, 35 insertions(+), 2 deletions(-)
----
-base-commit: 7c2878be573282a9961c359b806ccf70afe1a6b6
-change-id: 20230902-msm8226-i2c6-0f7d74dafa8b
+ 1 file changed, 29 insertions(+)
 
-Best regards,
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
+index b6ae4b7936e3..3b6114049e61 100644
+--- a/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
++++ b/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
+@@ -230,6 +230,15 @@ blsp1_uart1: serial@f991d000 {
+ 			status = "disabled";
+ 		};
+ 
++		blsp1_uart2: serial@f991e000 {
++			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
++			reg = <0xf991e000 0x1000>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>, <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			status = "disabled";
++		};
++
+ 		blsp1_uart3: serial@f991f000 {
+ 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+ 			reg = <0xf991f000 0x1000>;
+@@ -313,6 +322,19 @@ blsp1_i2c5: i2c@f9927000 {
+ 			#size-cells = <0>;
+ 		};
+ 
++		blsp1_i2c6: i2c@f9928000 {
++			status = "disabled";
++			compatible = "qcom,i2c-qup-v2.1.1";
++			reg = <0xf9928000 0x1000>;
++			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_QUP6_I2C_APPS_CLK>, <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			pinctrl-names = "default";
++			pinctrl-0 = <&blsp1_i2c6_pins>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		cci: cci@fda0c000 {
+ 			compatible = "qcom,msm8226-cci";
+ 			#address-cells = <1>;
+@@ -460,6 +482,13 @@ blsp1_i2c5_pins: blsp1-i2c5-state {
+ 				bias-disable;
+ 			};
+ 
++			blsp1_i2c6_pins: blsp1-i2c6-state {
++				pins = "gpio22", "gpio23";
++				function = "blsp_i2c6";
++				drive-strength = <2>;
++				bias-disable;
++			};
++
+ 			cci_default: cci-default-state {
+ 				pins = "gpio29", "gpio30";
+ 				function = "cci_i2c0";
+
 -- 
-Luca Weiss <luca@z3ntu.xyz>
+2.42.0
 
