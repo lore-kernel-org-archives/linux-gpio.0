@@ -2,30 +2,30 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25253C83F3F
-	for <linux-gpio@archiver.kernel.org>; Mon,  4 Sep 2023 11:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6E7CA0FF3
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 Sep 2023 11:58:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352884AbjIDL6k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 4 Sep 2023 07:58:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39738 "EHLO
+        id S1351464AbjIDL6l (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 4 Sep 2023 07:58:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351464AbjIDL6g (ORCPT
+        with ESMTP id S1352869AbjIDL6g (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Sep 2023 07:58:36 -0400
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BE331BE
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6284195
         for <linux-gpio@vger.kernel.org>; Mon,  4 Sep 2023 04:58:33 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <sha@pengutronix.de>)
-        id 1qd8Dk-0003r1-RS; Mon, 04 Sep 2023 13:58:20 +0200
+        id 1qd8Dl-0003r4-2P; Mon, 04 Sep 2023 13:58:21 +0200
 Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <sha@pengutronix.de>)
-        id 1qd8Dk-003s40-0N; Mon, 04 Sep 2023 13:58:20 +0200
+        id 1qd8Dk-003s49-Jh; Mon, 04 Sep 2023 13:58:20 +0200
 Received: from sha by dude02.red.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <sha@pengutronix.de>)
-        id 1qd8Dj-005pOk-Ey; Mon, 04 Sep 2023 13:58:19 +0200
+        id 1qd8Dj-005pOr-HB; Mon, 04 Sep 2023 13:58:19 +0200
 From:   Sascha Hauer <s.hauer@pengutronix.de>
 To:     linux-rockchip@lists.infradead.org
 Cc:     Heiko Stuebner <heiko@sntech.de>,
@@ -39,10 +39,12 @@ Cc:     Heiko Stuebner <heiko@sntech.de>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 0/3] Make Rockchip IO domains dependency from other devices explicit
-Date:   Mon,  4 Sep 2023 13:58:13 +0200
-Message-Id: <20230904115816.1237684-1-s.hauer@pengutronix.de>
+Subject: [PATCH 2/3] dt-bindings: pinctrl: rockchip: Add io domain properties
+Date:   Mon,  4 Sep 2023 13:58:15 +0200
+Message-Id: <20230904115816.1237684-3-s.hauer@pengutronix.de>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230904115816.1237684-1-s.hauer@pengutronix.de>
+References: <20230904115816.1237684-1-s.hauer@pengutronix.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -53,68 +55,50 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This is a continuation of the patch posted by Quentin Schulz here [1]
+Add rockchip,io-domains property to the Rockchip pinctrl driver. This
+list of phandles points to the IO domain device(s) the pins of the
+pinctrl driver are supplied from.
 
-This series aims to solve a problem with Rockchip IO domains. On many
-Rockchip SoCs the pins are driven by external supplies normally
-controlled by regulators of a PMIC. There are multiple voltages allowed
-for the regulators; additionally the chosen voltage has to be programmed
-into SoC registers. There already is a driver [2] handling setting these
-registers. The driver works by registering a notifier on the regulators.
-Whenever a regulator is about to change its voltage then the notifier will
-program the IO domain registers suitably for the new voltage.
+Also a rockchip,io-domain-boot-on property is added to pin groups
+which can be used for pin groups which themselves are needed to access
+the regulators an IO domain is driven from.
 
-The problem is that there is no dependency between pins and the IO
-domain driver which means that it can happen that a pin is used before
-the IO domain driver has been probed. In that case the pin can end up
-being non functional as neither the regulator has been configured
-correctly nor the SoC registers have been adjusted to the regulators
-voltage.
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+ .../bindings/pinctrl/rockchip,pinctrl.yaml          | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-One way to ensure correct probing order is to defer probing of devices
-in the pinctrl driver until the IO domain driver has been probed. We
-can't do this for all devices though, as that would introduce a cyclic
-dependency when for example the I2C port needed to access the PMIC for
-the regulators is part of a IO domain itself.
-
-This series solves these problems similarly to Quentins patch. With
-Quentins patch we would have to add rockchip,io-domain properties for
-all pin group nodes we wish to honor the IO domain dependency for. We
-could put these properties into the board dts files which would mean
-that we either only add the properties to nodes which actually byte us,
-or that we would have to add the properties to all possible pin groups
-except the ones needed to access the PMIC. We could also put these
-properties into the dtsi files, but that would mean a board has to add a
-/delete-property/ rockchip,io-domain to the pin groups needed to access
-the PMIC to avoid circular dependencies.
-
-The approach chosen here is slightly different. First of all this series
-doesn't change the current behaviour without board specific dts changes.
-To activate the IO domain dependency handling, a board has to add a
-rockchip,io-domains property to the pinctrl node. When this property is
-present all pins are assumed to need the IO domain driver. Pin groups
-needed to access the PMIC can then be given a rockchip,io-domain-boot-on
-property. When this property is given then the IO domain is assumed to
-be correctly configured by the boot loader. It should be added to all
-pin groups needed to access the PMIC to avoid cyclic dependencies. Patch
-3/3 contains a usage example for the Radxa Rock-3a.
-
-Sascha
-
-[1] https://lore.kernel.org/lkml/20220802095252.2486591-1-foss+kernel@0leil.net/
-[2] drivers/soc/rockchip/io-domain.c
-
-Sascha Hauer (3):
-  pinctrl: rockchip: add support for io-domain dependency
-  dt-bindings: pinctrl: rockchip: Add io domain properties
-  arm64: dts: rockchip: rock-3a: add io domain properties
-
- .../bindings/pinctrl/rockchip,pinctrl.yaml    | 13 +++-
- .../boot/dts/rockchip/rk3568-rock-3a.dts      | 11 ++++
- drivers/pinctrl/pinctrl-rockchip.c            | 64 +++++++++++++++++++
- drivers/pinctrl/pinctrl-rockchip.h            |  3 +
- 4 files changed, 90 insertions(+), 1 deletion(-)
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+index 10c335efe619e..92075419d29cf 100644
+--- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+@@ -62,6 +62,11 @@ properties:
+       Required for at least rk3188 and rk3288. On the rk3368 this should
+       point to the PMUGRF syscon.
+ 
++  rockchip,io-domains:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description:
++      Phandles to io domains
++
+   "#address-cells":
+     enum: [1, 2]
+ 
+@@ -137,7 +142,13 @@ additionalProperties:
+             - description:
+                 The phandle of a node contains the generic pinconfig options
+                 to use as described in pinctrl-bindings.txt.
+-
++      rockchip,io-domain-boot-on:
++        type: boolean
++        description:
++          If true assume that the io domain needed for this pin group has been
++          configured correctly by the bootloader. This is needed to break cyclic
++          dependencies introduced when a io domain needs a regulator that can be
++          accessed through pins configured here.
+ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
 -- 
 2.39.2
 
