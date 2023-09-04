@@ -2,231 +2,195 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E64CACA0FFA
-	for <linux-gpio@archiver.kernel.org>; Mon,  4 Sep 2023 11:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E45CC83F2C
+	for <linux-gpio@archiver.kernel.org>; Mon,  4 Sep 2023 12:33:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352867AbjIDL6m (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 4 Sep 2023 07:58:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39772 "EHLO
+        id S242468AbjIDMdd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 4 Sep 2023 08:33:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352877AbjIDL6k (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Sep 2023 07:58:40 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF849CC6
-        for <linux-gpio@vger.kernel.org>; Mon,  4 Sep 2023 04:58:34 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1qd8Dk-0003r2-RT; Mon, 04 Sep 2023 13:58:20 +0200
-Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <sha@pengutronix.de>)
-        id 1qd8Dk-003s43-5M; Mon, 04 Sep 2023 13:58:20 +0200
-Received: from sha by dude02.red.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <sha@pengutronix.de>)
-        id 1qd8Dj-005pOo-GB; Mon, 04 Sep 2023 13:58:19 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     linux-rockchip@lists.infradead.org
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        kernel@pengutronix.de,
-        Quentin Schulz <quentin.schulz@theobroma-systems.com>,
-        Michael Riesch <michael.riesch@wolfvision.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 1/3] pinctrl: rockchip: add support for io-domain dependency
-Date:   Mon,  4 Sep 2023 13:58:14 +0200
-Message-Id: <20230904115816.1237684-2-s.hauer@pengutronix.de>
+        with ESMTP id S242403AbjIDMdd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Sep 2023 08:33:33 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89DCD1AD
+        for <linux-gpio@vger.kernel.org>; Mon,  4 Sep 2023 05:33:29 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-40061928e5aso13641615e9.3
+        for <linux-gpio@vger.kernel.org>; Mon, 04 Sep 2023 05:33:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693830808; x=1694435608; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AQvLgCuAgqbziPJyI5AF10Ce3IdzqK5TyvrPpNOUCxQ=;
+        b=pmh0iM6Ic7wbAnHbGU8j1qoZT9v0l8/4CsqZGSN3SdHPuSeP/r1hcDSTxvvpd60ibz
+         9dr2H61GT0/FNb+hLdOI/Kl+fo4N6djej0lreu8eqrTi2ZpCEacPD/ugEwo+Ktddey71
+         W3zyLlLGv3cXNpm4XhYHB7WgzyEj1jYE+AObxv8A8jUDrrvjI7Bg6lulUsRK6exYJ1fc
+         FXMViW33G5NdAx7wvM2RcR148/2PuTIUMTAserXFSwl7KwrcoP89N6P/7cX6H8R2yE+w
+         naFHxAfMVSn/+CAIxVHtgyxp3qkEwnbja/7wwTsmykkEk81jyV92UmStt6kJYYc6QC7W
+         b9lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693830808; x=1694435608;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AQvLgCuAgqbziPJyI5AF10Ce3IdzqK5TyvrPpNOUCxQ=;
+        b=OtNTMWnsLZNhm+QYveHMRqDy5lp/XbDIaICPUsQLBhQkFP7tJW4uuduidEvZs/RKNT
+         83JI+pqGyiBvqF3YU4zpqPUMct3BcUF+2jhhlWgSOCiwwammp/QiZ0BcNs4z6XGXrnuD
+         TQ9rTid+o4Dxf8KCK0Lm60ZRUfmLYYNEzSTXvP6epl5OZ70Ydhj21gwnurnRPxuLX5K6
+         z8I5rtmi27g/NhS1YsPyx7cSAJcUnf+QeXeVxvTdriD+r2avaizy9QlBa0NjqAf0mY33
+         2yEHEt+OoEoZ8MhsVOPujsn2jQTfzJAeGPkUedcSQL4gWLM77ZZx8EOdd45QHJ1fhsui
+         6gog==
+X-Gm-Message-State: AOJu0YzxiW7rsEYUpzE9H3X7WgMhuKT710bIY500EUd71nq05nsRWyhe
+        45O1tQiRMggLlLScoSx/SwTDog==
+X-Google-Smtp-Source: AGHT+IHVLkQLsjuX/lX2Jwzd6g9At3xYqiksd0MFKCcLfVDOApuXdlhZ2xpyZm74o48zpFztMZp+7w==
+X-Received: by 2002:adf:f144:0:b0:31a:d6cb:7f9d with SMTP id y4-20020adff144000000b0031ad6cb7f9dmr6793726wro.24.1693830807807;
+        Mon, 04 Sep 2023 05:33:27 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:7663:60b7:3a19:b5c4])
+        by smtp.gmail.com with ESMTPSA id q12-20020adffecc000000b00316eb7770b8sm14518255wrs.5.2023.09.04.05.33.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Sep 2023 05:33:27 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [RFT PATCH] gpio: eic-sprd: use atomic notifiers to notify all chips about irqs
+Date:   Mon,  4 Sep 2023 14:33:20 +0200
+Message-Id: <20230904123320.93980-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230904115816.1237684-1-s.hauer@pengutronix.de>
-References: <20230904115816.1237684-1-s.hauer@pengutronix.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On some Rockchip SoCs, some SoC pins are split in what are called IO
-domains.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-An IO domain is supplied power externally, by regulators from a PMIC for
-example. This external power supply is then used by the IO domain as
-"supply" for the IO pins if they are outputs.
+Calling gpiochip_find() from interrupt handler in this driver is an
+abuse of the GPIO API. It only happens to work because nobody added a
+might_sleep() to it and the lock used by GPIOLIB is a spinlock.
 
-Each IO domain can configure which voltage the IO pins will be operating
-on (1.8V or 3.3V).
+Both will soon be changed as we're limiting both the number of
+interfaces allowed to be called from atomic context as well as making
+struct gpio_chip private to the GPIO code that owns it. We'll also
+switch to protecting the global GPIO device list with a mutex as there
+is no reason to allow changes to it from interrupt handlers.
 
-There already exists an IO domain driver for Rockchip SoCs[1]. This
-driver allows to explicit the relationship between the external power
-supplies and IO domains[2]. This makes sure the regulators are enabled
-by the Linux kernel so the IO domains are supplied with power and
-correctly configured as per the supplied voltage.
-This driver is a regulator consumer and does not offer any other
-interface for device dependency.
+Instead of iterating over all SPRD chips and looking up each
+corresponding GPIO chip, let's make each SPRD GPIO controller register
+with a notifier chain. The chain will be called at interrupt so that
+every chip that already probed will be notified. The rest of the
+interrupt handling remains the same. This should result in faster code as
+we're avoiding iterating over the list of all GPIO devices.
 
-However, IO pins belonging to an IO domain need to have this IO domain
-configured correctly before they are being used otherwise they do not
-operate correctly.
-
-We currently do not have any knowledge about which pin is on which IO
-domain, so we assume that all pins are on some IO domain and defer
-probing of the pin consumers until the IO domain driver has been probed.
-Some pins however are needed to access the regulators driving an IO
-domain. Deferring probe for them as well would introduce a cyclic
-dependency. To break out of this dependency a pin group can be supplied
-a rockchip,io-domain-boot-on property. Probe won't be deferred for pin
-groups with this property. rockchip,io-domain-boot-on should be added
-to all pin groups needed to access the PMIC driving the IO domains.
-
-[1] drivers/soc/rockchip/io-domain.c
-[2] Documentation/devicetree/bindings/power/rockchip-io-domain.yaml
-
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/pinctrl/pinctrl-rockchip.c | 64 ++++++++++++++++++++++++++++++
- drivers/pinctrl/pinctrl-rockchip.h |  3 ++
- 2 files changed, 67 insertions(+)
+I only build-tested it. Please take it for a ride, I hope this works.
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 0276b52f37168..663bd9d6840a5 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -24,6 +24,8 @@
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/of_irq.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
- #include <linux/pinctrl/machine.h>
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinctrl.h>
-@@ -2678,6 +2680,43 @@ static int rockchip_pmx_get_groups(struct pinctrl_dev *pctldev,
- 	return 0;
- }
+ drivers/gpio/gpio-eic-sprd.c | 44 ++++++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+index 5320cf1de89c..21a1afe358d6 100644
+--- a/drivers/gpio/gpio-eic-sprd.c
++++ b/drivers/gpio/gpio-eic-sprd.c
+@@ -9,6 +9,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/notifier.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
+@@ -91,12 +92,20 @@ enum sprd_eic_type {
  
-+static int rockchip_pmx_check_io_domain(struct rockchip_pinctrl *info, unsigned group)
+ struct sprd_eic {
+ 	struct gpio_chip chip;
++	struct notifier_block irq_nb;
+ 	void __iomem *base[SPRD_EIC_MAX_BANK];
+ 	enum sprd_eic_type type;
+ 	spinlock_t lock;
+ 	int irq;
+ };
+ 
++static ATOMIC_NOTIFIER_HEAD(sprd_eic_irq_notifier);
++
++static struct sprd_eic *to_sprd_eic(struct notifier_block *nb)
 +{
-+	struct platform_device *pdev;
-+	int i;
-+
-+	if (!info->io_domains)
-+		return 0;
-+
-+	if (info->groups[group].io_domain_skip)
-+		return 0;
-+
-+	for (i = 0; i < info->num_io_domains; i++) {
-+		if (!info->io_domains[i])
-+			continue;
-+
-+		pdev = of_find_device_by_node(info->io_domains[i]);
-+		if (!pdev) {
-+			dev_err(info->dev, "couldn't find IO domain device\n");
-+			return -ENODEV;
-+		}
-+
-+		if (!platform_get_drvdata(pdev)) {
-+			dev_err(info->dev, "IO domain device is not probed yet, deferring...(%s)",
-+				info->groups[group].name);
-+			return -EPROBE_DEFER;
-+		}
-+
-+		of_node_put(info->io_domains[i]);
-+		info->io_domains[i] = NULL;
-+	}
-+
-+	devm_kfree(info->dev, info->io_domains);
-+	info->io_domains = NULL;
-+
-+	return 0;
++	return container_of(nb, struct sprd_eic, irq_nb);
 +}
 +
- static int rockchip_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
- 			    unsigned group)
+ struct sprd_eic_variant_data {
+ 	enum sprd_eic_type type;
+ 	u32 num_eics;
+@@ -494,13 +503,6 @@ static void sprd_eic_toggle_trigger(struct gpio_chip *chip, unsigned int irq,
+ 	sprd_eic_irq_unmask(data);
+ }
+ 
+-static int sprd_eic_match_chip_by_type(struct gpio_chip *chip, void *data)
+-{
+-	enum sprd_eic_type type = *(enum sprd_eic_type *)data;
+-
+-	return !strcmp(chip->label, sprd_eic_label_name[type]);
+-}
+-
+ static void sprd_eic_handle_one_type(struct gpio_chip *chip)
  {
-@@ -2691,6 +2730,10 @@ static int rockchip_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
- 	dev_dbg(dev, "enable function %s group %s\n",
- 		info->functions[selector].name, info->groups[group].name);
+ 	struct sprd_eic *sprd_eic = gpiochip_get_data(chip);
+@@ -546,27 +548,29 @@ static void sprd_eic_handle_one_type(struct gpio_chip *chip)
+ static void sprd_eic_irq_handler(struct irq_desc *desc)
+ {
+ 	struct irq_chip *ic = irq_desc_get_chip(desc);
+-	struct gpio_chip *chip;
+-	enum sprd_eic_type type;
  
-+	ret = rockchip_pmx_check_io_domain(info, group);
-+	if (ret)
-+		return ret;
-+
+ 	chained_irq_enter(ic, desc);
+ 
  	/*
- 	 * for each pin in the pin group selected, program the corresponding
- 	 * pin function number in the config register.
-@@ -3019,6 +3062,8 @@ static int rockchip_pinctrl_parse_groups(struct device_node *np,
- 	if (!size || size % 4)
- 		return dev_err_probe(dev, -EINVAL, "wrong pins number or pins and configs should be by 4\n");
+ 	 * Since the digital-chip EIC 4 sub-modules (debounce, latch, async
+-	 * and sync) share one same interrupt line, we should iterate each
+-	 * EIC module to check if there are EIC interrupts were triggered.
++	 * and sync) share one same interrupt line, we should notify all of
++	 * them to let them check if there are EIC interrupts were triggered.
+ 	 */
+-	for (type = SPRD_EIC_DEBOUNCE; type < SPRD_EIC_MAX; type++) {
+-		chip = gpiochip_find(&type, sprd_eic_match_chip_by_type);
+-		if (!chip)
+-			continue;
+-
+-		sprd_eic_handle_one_type(chip);
+-	}
++	atomic_notifier_call_chain(&sprd_eic_irq_notifier, 0, NULL);
  
-+	grp->io_domain_skip = of_property_read_bool(np, "rockchip,io-domain-boot-on");
+ 	chained_irq_exit(ic, desc);
+ }
+ 
++static int sprd_eic_irq_notify(struct notifier_block *nb, unsigned long action,
++			       void *data)
++{
++	struct sprd_eic *sprd_eic = to_sprd_eic(nb);
 +
- 	grp->npins = size / 4;
- 
- 	grp->pins = devm_kcalloc(dev, grp->npins, sizeof(*grp->pins), GFP_KERNEL);
-@@ -3417,6 +3462,22 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 			return PTR_ERR(info->regmap_pmu);
++	sprd_eic_handle_one_type(&sprd_eic->chip);
++
++	return NOTIFY_OK;
++}
++
+ static const struct irq_chip sprd_eic_irq = {
+ 	.name		= "sprd-eic",
+ 	.irq_ack	= sprd_eic_irq_ack,
+@@ -653,7 +657,9 @@ static int sprd_eic_probe(struct platform_device *pdev)
+ 		return ret;
  	}
  
-+	info->num_io_domains = of_property_count_u32_elems(np, "rockchip,io-domains");
-+	if (info->num_io_domains) {
-+		int i;
-+
-+		info->io_domains = devm_kmalloc_array(dev, info->num_io_domains,
-+						      sizeof(*info->io_domains), GFP_KERNEL);
-+		if (!info->io_domains)
-+			return -ENOMEM;
-+
-+		for (i = 0; i < info->num_io_domains; i++) {
-+			info->io_domains[i] = of_parse_phandle(np, "rockchip,io-domains", 0);
-+			if (!info->io_domains[i])
-+				return -EINVAL;
-+		}
-+	}
-+
- 	ret = rockchip_pinctrl_register(pdev, info);
- 	if (ret)
- 		return ret;
-@@ -3439,6 +3500,9 @@ static int rockchip_pinctrl_remove(struct platform_device *pdev)
+-	return 0;
++	sprd_eic->irq_nb.notifier_call = sprd_eic_irq_notify;
++	return atomic_notifier_chain_register(&sprd_eic_irq_notifier,
++					      &sprd_eic->irq_nb);
+ }
  
- 	of_platform_depopulate(&pdev->dev);
- 
-+	for (i = 0; i < info->num_io_domains; i++)
-+		of_node_put(info->io_domains[i]);
-+
- 	for (i = 0; i < info->ctrl->nr_banks; i++) {
- 		bank = &info->ctrl->pin_banks[i];
- 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.h b/drivers/pinctrl/pinctrl-rockchip.h
-index 4759f336941ef..d2ac79b0a7bc4 100644
---- a/drivers/pinctrl/pinctrl-rockchip.h
-+++ b/drivers/pinctrl/pinctrl-rockchip.h
-@@ -435,6 +435,7 @@ struct rockchip_pin_group {
- 	unsigned int			npins;
- 	unsigned int			*pins;
- 	struct rockchip_pin_config	*data;
-+	bool				io_domain_skip;
- };
- 
- /**
-@@ -462,6 +463,8 @@ struct rockchip_pinctrl {
- 	unsigned int			ngroups;
- 	struct rockchip_pmx_func	*functions;
- 	unsigned int			nfunctions;
-+	struct device_node		**io_domains;
-+	int				num_io_domains;
- };
- 
- #endif
+ static const struct of_device_id sprd_eic_of_match[] = {
 -- 
 2.39.2
 
