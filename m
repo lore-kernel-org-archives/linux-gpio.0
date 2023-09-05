@@ -2,133 +2,109 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E36CA0FFB
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 19:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D004CA100A
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 20:14:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234895AbjIET33 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Sep 2023 15:29:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46542 "EHLO
+        id S240862AbjIEUNf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Sep 2023 16:13:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236362AbjIET33 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 15:29:29 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04972E5B
-        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 12:29:08 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-31f2f43d5a0so2552213f8f.1
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Sep 2023 12:29:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693942141; x=1694546941; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2+MC7OlTYjYmYcid9pUzzxXRyDGKxkUAmb4nz8uCexs=;
-        b=LUlGmE9ze2mX9dKalpYOpyXcOd5gVfYBHh3QyxF6x6jKiCHyFbbdOS+BwwmJlExl+g
-         hTh5q0ssAiYQGAKYsrBuhRaaqg5rtysUX5Y/DRluezLM9GvSi+HdgbEWkkofSvv/NygV
-         +RnIt+dV+jxzs65wEu8JrqABElNLXcgd+PR1wZU010SiodQNt2ElH0pVkTKJxgz53w5A
-         61ZV5TmtGObEmA9tOhKsQ3JDkDFLDmXqvFiqg8il7Coysk0++VgMnNi+QU+quZJlxS94
-         DRrqSu6TuKnNEdAMoOMIjOkBARLaFdmSwSWW+d/1OLZmg4XYEK6I7+A0hxQohr6gn0QC
-         M1ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693942141; x=1694546941;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2+MC7OlTYjYmYcid9pUzzxXRyDGKxkUAmb4nz8uCexs=;
-        b=b2/rBPrxrmwYJ0s3bQbb+rsaHuUL/HiYvEmWie6PA0T+lUV3zJ/dMwJ/kgMsqZwLeR
-         Ka8oJgesEkpVcNADvNMhBgFLoY/gwrLD2hpzJ7kQQWVBekCyojGJ91w+dJxkkMnJRps6
-         HTblepYhJxuw6OOfeaZdB4nnzj9a/wbDe/UOFDGLDaaisiwbkBQtJtX08SXpNf0ornap
-         orc+d8tXbgFXKZ0Eaxo0CHO2M7aIgh/F4CDLuPvaKLxZziGX8bQF2OVRTbK/tc/eA2dj
-         eH35GYe8grnYOnrpnywhaKM+KGONo5hEs2kpt2zF+mFRFgmdKYHWZSDFZIywmZhqI464
-         lPbA==
-X-Gm-Message-State: AOJu0YwhuZZW/NJA5Lx5N+PkwNI5gBa5peFeVPtBFjtscXHdXCi/US6a
-        lR4ofz3lp5ivtKBbAURod2cefstqX7My60AIQyE=
-X-Google-Smtp-Source: AGHT+IGj2EuAvHtXRXD8rdSvHdyQNmCzp7/4dD7j6aPqgw+n/kXSu9aLQQjPpRIFRE646UdFzsOLag==
-X-Received: by 2002:adf:e0c5:0:b0:319:6b6c:dd01 with SMTP id m5-20020adfe0c5000000b003196b6cdd01mr477303wri.17.1693940014702;
-        Tue, 05 Sep 2023 11:53:34 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:7a54:5dbc:6d09:48b7])
-        by smtp.gmail.com with ESMTPSA id 17-20020a05600c249100b003fbc30825fbsm17550010wms.39.2023.09.05.11.53.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Sep 2023 11:53:34 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        with ESMTP id S243373AbjIEUNO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 16:13:14 -0400
+X-Greylist: delayed 255 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Sep 2023 13:12:51 PDT
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52394F4
+        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 13:12:51 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8772EC433A9;
+        Tue,  5 Sep 2023 18:14:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693937644;
+        bh=EukprGs63gcH1dkK4J6/kt9pRzUKb0FoRiSL62w+Z4Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BQBHuJ/0XILzBQfiFc0erYNxhwXt0bRPrbRayhVpe9tFS5jPAHw6euTjUapt1QZr0
+         s+lbPe1OqLlGHh+oDRtNNmhkmppsvJCiT80SiIrhUF3IQ455OtcTcXaCLJNUT8y9HS
+         a2m4JQpE4+f+y7XieUiHU33xO295Wtj957ahgX4xbViGCRA9rP5G/9POuQXyggElFy
+         OjyN9lC38dv1QP4EX/LNx7Q3AgIwusoXpjQgauCiop4Gb4l+lyJvh5ipkOhA77gi5E
+         kcWa2Q2zacJTRY4HxA2MPOhmU97AOBwaujrR8ZDzwD/o1n70tLmGSmYtHhbZFsnkWd
+         Gd+sQMphnu1Ww==
+Received: (nullmailer pid 3741008 invoked by uid 1000);
+        Tue, 05 Sep 2023 18:14:02 -0000
+Date:   Tue, 5 Sep 2023 13:14:02 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     linux-rockchip@lists.infradead.org,
+        Heiko Stuebner <heiko@sntech.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        kernel@pengutronix.de,
+        Quentin Schulz <quentin.schulz@theobroma-systems.com>,
+        Michael Riesch <michael.riesch@wolfvision.net>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
-        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 07/21] gpiolib: provide gpio_device_get_base()
-Date:   Tue,  5 Sep 2023 20:52:55 +0200
-Message-Id: <20230905185309.131295-8-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230905185309.131295-1-brgl@bgdev.pl>
-References: <20230905185309.131295-1-brgl@bgdev.pl>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: rockchip: Add io domain
+ properties
+Message-ID: <20230905181402.GA3673113-robh@kernel.org>
+References: <20230904115816.1237684-1-s.hauer@pengutronix.de>
+ <20230904115816.1237684-3-s.hauer@pengutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230904115816.1237684-3-s.hauer@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, Sep 04, 2023 at 01:58:15PM +0200, Sascha Hauer wrote:
+> Add rockchip,io-domains property to the Rockchip pinctrl driver. This
+> list of phandles points to the IO domain device(s) the pins of the
+> pinctrl driver are supplied from.
 
-Let's start adding getters for the opaque struct gpio_device. Start with
-a function allowing to retrieve the base GPIO number.
+Is there an actual need for multiple IO devices with multiple pinctrl 
+blocks? If not, you don't need a property, just lookup the IO domain 
+node by compatible.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpiolib.c      | 13 +++++++++++++
- include/linux/gpio/driver.h |  3 +++
- 2 files changed, 16 insertions(+)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 9637a79a9a60..9715bbc698e9 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -233,6 +233,19 @@ struct gpio_device *gpiod_to_device(struct gpio_desc *desc)
- }
- EXPORT_SYMBOL_GPL(gpiod_to_device);
- 
-+/**
-+ * gpio_device_get_base() - Get the base GPIO number allocated by this device
-+ * @gdev: GPIO device
-+ *
-+ * Returns:
-+ * First GPIO number in the global GPIO numberspace for this device.
-+ */
-+int gpio_device_get_base(struct gpio_device *gdev)
-+{
-+	return gdev->base;
-+}
-+EXPORT_SYMBOL_GPL(gpio_device_get_base);
-+
- /* dynamic allocation of GPIOs, e.g. on a hotplugged device */
- static int gpiochip_find_base(int ngpio)
- {
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index e3747e730ed1..b68b3493b29d 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -780,6 +780,9 @@ void gpiochip_unlock_as_irq(struct gpio_chip *gc, unsigned int offset);
- struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc);
- struct gpio_device *gpiod_to_device(struct gpio_desc *desc);
- 
-+/* struct gpio_device getters */
-+int gpio_device_get_base(struct gpio_device *gdev);
-+
- #else /* CONFIG_GPIOLIB */
- 
- #include <linux/err.h>
--- 
-2.39.2
-
+> 
+> Also a rockchip,io-domain-boot-on property is added to pin groups
+> which can be used for pin groups which themselves are needed to access
+> the regulators an IO domain is driven from.
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  .../bindings/pinctrl/rockchip,pinctrl.yaml          | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> index 10c335efe619e..92075419d29cf 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> @@ -62,6 +62,11 @@ properties:
+>        Required for at least rk3188 and rk3288. On the rk3368 this should
+>        point to the PMUGRF syscon.
+>  
+> +  rockchip,io-domains:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description:
+> +      Phandles to io domains
+> +
+>    "#address-cells":
+>      enum: [1, 2]
+>  
+> @@ -137,7 +142,13 @@ additionalProperties:
+>              - description:
+>                  The phandle of a node contains the generic pinconfig options
+>                  to use as described in pinctrl-bindings.txt.
+> -
+> +      rockchip,io-domain-boot-on:
+> +        type: boolean
+> +        description:
+> +          If true assume that the io domain needed for this pin group has been
+> +          configured correctly by the bootloader. This is needed to break cyclic
+> +          dependencies introduced when a io domain needs a regulator that can be
+> +          accessed through pins configured here.
+>  examples:
+>    - |
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+> -- 
+> 2.39.2
+> 
