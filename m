@@ -2,125 +2,119 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E4ACA0FF8
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93272C83F2C
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242702AbjIEQUG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:20:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38954 "EHLO
+        id S243072AbjIEQUP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Sep 2023 12:20:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354171AbjIEKEU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 06:04:20 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67F1E198;
-        Tue,  5 Sep 2023 03:04:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E6B0FB81104;
-        Tue,  5 Sep 2023 10:04:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 134C4C433C8;
-        Tue,  5 Sep 2023 10:04:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1693908253;
-        bh=cQTnkMhDRy5JwEJ7hQwW45cTKaEjXmpkptxk9UnTN9c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gX2uxS5VVjeEKiCCpQxqG55A1d6tr08FU879bG5+NXYZLFyFaMPppX3z5yy4yLqod
-         dNwYiKnW4TFGr/ImkTHkmpe/bve7rwiugwIiFQfqwrKvi/9HkBUuW6mmPCH3GfZ6Tf
-         q5pVNKTsBUkwS9aQg+3O3Ii2W/CsulKJysn/CMDM=
-Date:   Tue, 5 Sep 2023 11:04:10 +0100
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     "Wu, Wentong" <wentong.wu@intel.com>
-Cc:     Oliver Neukum <oneukum@suse.com>, "arnd@arndb.de" <arnd@arndb.de>,
-        "mka@chromium.org" <mka@chromium.org>,
-        "lee@kernel.org" <lee@kernel.org>,
-        "wsa@kernel.org" <wsa@kernel.org>,
-        "kfting@nuvoton.com" <kfting@nuvoton.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>,
-        "maz@kernel.org" <maz@kernel.org>, "brgl@bgdev.pl" <brgl@bgdev.pl>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
-        "andi.shyti@linux.intel.com" <andi.shyti@linux.intel.com>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "bartosz.golaszewski@linaro.org" <bartosz.golaszewski@linaro.org>,
-        "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>,
-        "Wang, Zhifeng" <zhifeng.wang@intel.com>
-Subject: Re: [PATCH v14 1/4] usb: Add support for Intel LJCA device
-Message-ID: <2023090530-cleft-chivalry-b59f@gregkh>
-References: <1693806261-12958-1-git-send-email-wentong.wu@intel.com>
- <1693806261-12958-2-git-send-email-wentong.wu@intel.com>
- <a8c8af1b-9399-6ca9-ea3d-b71e6ee68cad@suse.com>
- <DM6PR11MB43166D27FB15905CB02DBC5B8DE9A@DM6PR11MB4316.namprd11.prod.outlook.com>
- <7755c3ee-9d7e-8ae5-1cf7-a5247cc4e6e5@suse.com>
- <DM6PR11MB4316C70D7C14B56ED349F01F8DE8A@DM6PR11MB4316.namprd11.prod.outlook.com>
- <f6f8a9c4-faf1-f9da-e688-a29eb267fabc@suse.com>
- <DM6PR11MB4316F903C524668BA35707398DE8A@DM6PR11MB4316.namprd11.prod.outlook.com>
+        with ESMTP id S1354423AbjIELbo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 07:31:44 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 323D11AD
+        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 04:31:40 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-401f68602a8so23476735e9.3
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Sep 2023 04:31:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693913498; x=1694518298; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ucSMS6f1i4AJkmKZWAiTc8WB+F0d5XaASaMmBm7ZJv0=;
+        b=vLBeAy8m9T9JIfk/d47cB5i8zfi83j9+DjUBWeHNpYmKa1wDd5/ldv32HD9TeFoP+i
+         3X60O5xuVzq+0CXfSsjl8PXLmbDYHk2jUmuvBkKYzHWnX4cpejmOQY42hRv6qZ88ycXB
+         jQxxVP36Ye6VbhmHlWTf0/9KLmx7ymd0m9/cyKhLFVIVqlFHnhQZKVHZ0pkPIXgP5w1E
+         nj9A+pBxn4B0vcjijqZ3DRbgAgRdfpiJzDRzm5o6VZUZhld++tWv7X6FJbql7FIL0UHp
+         /znsReTvQePi1kXcxj5Y99VnNIlJS9B6Cawq4xWe5QOIgWodGDkxBhlhcjJQULirTiax
+         gjQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693913498; x=1694518298;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ucSMS6f1i4AJkmKZWAiTc8WB+F0d5XaASaMmBm7ZJv0=;
+        b=DGaKetUF8xm9ilIXZmr+oDpzFxhAIOczb5On4ioYbJY1wM8XqEmsXrJHvGvLdOrNfk
+         rjFkJqglG7jDv77uLQsO6oJBpDKxxq2GOEtjPAtgDwIfzUy6dpMM83EPGdDZnbB3A7IF
+         jv/4ohN38kf1AFdGeuqG3Auo9WYgD8rYwIvB+BdNBeJ/YFncVsJ1qO7FRtEKTq8NTdh2
+         PkREMcqzs/ydGt5BFAtetmK9s8k66MT4MVZ6OxB+9uDMzCVp5z4JFKPKIg2CWiv/0QP/
+         UW6LZlv59BWb3uAiGvsXQbU11ywhuJ/R7o/DoXQmPo+reOgVyYfsKNHPg7kU8GByjBuB
+         J49g==
+X-Gm-Message-State: AOJu0YxRfWq7xFyqsMAh42sy9X28nny8MHBLLajDehLLmgo1eou37Ilm
+        tMhruQPBezJ/o1uVYf5qScyLfA==
+X-Google-Smtp-Source: AGHT+IEpJmilH9Tppz6BKD/gVURbvbPERFqtmnEdu+ZGNvg+ETGDXFXfFdgWvlIP9ozV8luG9EA7aA==
+X-Received: by 2002:a1c:4b08:0:b0:3fe:d1b9:7ea9 with SMTP id y8-20020a1c4b08000000b003fed1b97ea9mr9575348wma.36.1693913498664;
+        Tue, 05 Sep 2023 04:31:38 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id m9-20020a7bcb89000000b003fe26244858sm19823929wmi.46.2023.09.05.04.31.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Sep 2023 04:31:38 -0700 (PDT)
+Date:   Tue, 5 Sep 2023 14:31:35 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     oe-kbuild@lists.linux.dev, Biju Das <biju.das.jz@bp.renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 2/2] pinctrl: mcp23s08: Simplify probe()
+Message-ID: <2ce09856-244a-4e3f-89ff-d9439ea06af9@kadam.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <DM6PR11MB4316F903C524668BA35707398DE8A@DM6PR11MB4316.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230902090937.32195-3-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 05, 2023 at 08:53:43AM +0000, Wu, Wentong wrote:
-> > From: Oliver Neukum <oneukum@suse.com>
-> > 
-> > On 05.09.23 04:20, Wu, Wentong wrote:
-> > 
-> > Hi,
-> > 
-> > >> That is that you will hang arbitrarily long in disconnect?
-> > > This routine isn't called in an interrupt context, and it allows sleep
-> > > or wait something before the real shutdown like many drivers' remove()
-> > > or
-> > > disconnect() do.
-> > 
-> > It is, however, in the context of a kernel thread. We can wait, but not for
-> > arbitrary periods.
-> 
-> AFAIK, this is very common.
-> 
-> > 
-> > > If we want to speed up the disconnect(), below changes is to complete
-> > > the cmd_completion if usb_kill_urb() has been called, but there is
-> > > still possibility ljca client init one more transfer before
-> > > auxiliary_device_delete()
-> > >
-> > > @@ -206,7 +206,11 @@ static void ljca_recv(struct urb *urb)
-> > >
-> > >          if (urb->status) {
-> > >                  /* sync/async unlink faults aren't errors */
-> > > -               if (urb->status == -ENOENT || urb->status == -ECONNRESET ||
-> > > +               if (urb->status == -ENOENT) {
-> > > +                       complete(&adap->cmd_completion);
-> > > +                       return;
-> > 
-> > I'd say you'd break suspend() by such a change.
-> > You cannot complete in the interrupt handler, unless you can determine why the
-> > URB is killed.
-> 
-> With below status field in ljca_adapter to determine if it's killed by disconnect().
-> 
-> If this is preferred, I could cook the patch for review.
-> 
-> If this is fixed, could you please help merge this usb-ljca driver so that it won't
-> block others which depends on this driver?
+Hi Biju,
 
-Please relax, we can't do anything until after -rc1 is out, and for me,
-that includes reviewing the code.
+kernel test robot noticed the following build warnings:
 
-There is no rush, or deadline, here at all.  It will be merged when it
-is acceptable.
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-thanks,
+url:    https://github.com/intel-lab-lkp/linux/commits/Biju-Das/pinctrl-mcp23s08-Extend-match-support-for-OF-tables/20230902-171023
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+patch link:    https://lore.kernel.org/r/20230902090937.32195-3-biju.das.jz%40bp.renesas.com
+patch subject: [PATCH 2/2] pinctrl: mcp23s08: Simplify probe()
+config: i386-randconfig-141-20230902 (https://download.01.org/0day-ci/archive/20230903/202309030751.GQvtrZnS-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20230903/202309030751.GQvtrZnS-lkp@intel.com/reproduce)
 
-greg k-h
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202309030751.GQvtrZnS-lkp@intel.com/
+
+smatch warnings:
+drivers/pinctrl/pinctrl-mcp23s08_i2c.c:33 mcp230xx_probe() error: we previously assumed 'info' could be null (see line 31)
+
+vim +/info +33 drivers/pinctrl/pinctrl-mcp23s08_i2c.c
+
+8bb5811129f9e4 Uwe Kleine-König 2022-11-18  19  static int mcp230xx_probe(struct i2c_client *client)
+0f04a81784fe3d Andy Shevchenko  2020-04-07  20  {
+b5f259f6fc5912 Biju Das         2023-09-02  21  	const struct mcp23s08_i2c_info *info;
+0f04a81784fe3d Andy Shevchenko  2020-04-07  22  	struct device *dev = &client->dev;
+0f04a81784fe3d Andy Shevchenko  2020-04-07  23  	struct mcp23s08 *mcp;
+0f04a81784fe3d Andy Shevchenko  2020-04-07  24  	int ret;
+0f04a81784fe3d Andy Shevchenko  2020-04-07  25  
+0f04a81784fe3d Andy Shevchenko  2020-04-07  26  	mcp = devm_kzalloc(dev, sizeof(*mcp), GFP_KERNEL);
+0f04a81784fe3d Andy Shevchenko  2020-04-07  27  	if (!mcp)
+0f04a81784fe3d Andy Shevchenko  2020-04-07  28  		return -ENOMEM;
+0f04a81784fe3d Andy Shevchenko  2020-04-07  29  
+b5f259f6fc5912 Biju Das         2023-09-02  30  	info = i2c_get_match_data(client);
+b5f259f6fc5912 Biju Das         2023-09-02 @31  	if (!info)
+b5f259f6fc5912 Biju Das         2023-09-02  32  		return dev_err_probe(dev, -EINVAL, "invalid device type (%d)\n",
+b5f259f6fc5912 Biju Das         2023-09-02 @33  				     info->type);
+                                                                                     ^^^^^^^^^^
+info is NULL.
+
+0f04a81784fe3d Andy Shevchenko  2020-04-07  34  
+b5f259f6fc5912 Biju Das         2023-09-02  35  	mcp->reg_shift = info->reg_shift;
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
