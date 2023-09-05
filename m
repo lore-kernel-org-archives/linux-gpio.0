@@ -2,94 +2,131 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0600BCA0FE2
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 16:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3494C83F2C
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 16:19:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237725AbjIEQTW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:19:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47672 "EHLO
+        id S229685AbjIEQTZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Sep 2023 12:19:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354287AbjIEKeJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 06:34:09 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3105CE8;
-        Tue,  5 Sep 2023 03:34:06 -0700 (PDT)
+        with ESMTP id S1354507AbjIEMF0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 08:05:26 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00214AC;
+        Tue,  5 Sep 2023 05:05:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693910046; x=1725446046;
+  t=1693915522; x=1725451522;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=y11ZHa+JZmvOm6gwUSg6E263+YzQF1w25u/4Vg0K8mI=;
-  b=TvnYY4/xY6l6wbMqVkKIypZ6EfRlTmaGWrQKQOFKwJxK1YMukbeX3ukf
-   7V3bHrZCRiR77VptkBG/vCmTJTvOrUbWltEDHaRsenmmM2o8+JHA02B8b
-   8GCoOxtdJuLsUJmVP+UnWNwfQr9IoZrd2lTh0N4ZKmVWQYAk4Lc4fOwnv
-   of5UbEuBifsfGsLZuwTBe89mAKn9W0jtouzzUhudLRHdrTpcxFv9m95DQ
-   bRPQ0MmCIbYIUBhnYajI/XJwBZzQfcfDwCihSryoI6dFzs/ZXKnKXmHED
-   1tI1kDe16purxmn68qrZ+KpuMJix15sc5fsJOL0Hw5B89GHsL0xeUM9id
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="356255368"
+   mime-version:in-reply-to;
+  bh=JZkQmLtsdvjeiIiR+qBnIuO3R7CEPwo2RofTy+2Ty9Y=;
+  b=cnHrd8VDYAxnFM3bumRT+khy8lEy3JWbf8dY4GG2/c8TBmYFtSxUSNt7
+   xD2qRxomlztiX2mofE6CkdSfe76t+r9wlmkEIWEsGzgAeuzbCXtbBn4M0
+   1Rr79b/jIn6DgB4BCKoo1bN1QeEfBqAYiJvm62acnNJ89LGDw5J4rS0IQ
+   jTpzLhhCYTjUuW0/PxfLcoKzgHucgr51+u6ieCqoP7Fmk7VW2bw07ZbtI
+   EHw5MiT6KJP6lC9AaKVI6wA3QwHHYlnbhUzE9eK9LlNcl881q9QGnm3yU
+   CJ18uy58DQBQPtmhCtngKQMTfAhJOxRKiQwqdqS+Ec/3Q2/qa6+qG6un0
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="374167122"
 X-IronPort-AV: E=Sophos;i="6.02,229,1688454000"; 
-   d="scan'208";a="356255368"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2023 03:34:05 -0700
+   d="scan'208";a="374167122"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2023 05:05:22 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="734606064"
+X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="914817844"
 X-IronPort-AV: E=Sophos;i="6.02,229,1688454000"; 
-   d="scan'208";a="734606064"
+   d="scan'208";a="914817844"
 Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.54])
-  by orsmga007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2023 03:34:02 -0700
+  by orsmga005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2023 05:05:20 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.96)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qdTNd-006eig-3A;
-        Tue, 05 Sep 2023 13:33:57 +0300
-Date:   Tue, 5 Sep 2023 13:33:57 +0300
+        id 1qdUo1-006g4r-11;
+        Tue, 05 Sep 2023 15:05:17 +0300
+Date:   Tue, 5 Sep 2023 15:05:17 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 2/2] gpiolib: rename gpio_chip_hwgpio() for consistency
-Message-ID: <ZPcEFXF9Fz762kzK@smile.fi.intel.com>
-References: <20230904073410.5880-1-brgl@bgdev.pl>
- <20230904073410.5880-2-brgl@bgdev.pl>
- <ZPWjAUzqeAwF1wro@smile.fi.intel.com>
- <CAMRc=MeMYi0KbK=1RYGX2zbUjVZyQp-Y_aXfy6+EZcEtUSEU0A@mail.gmail.com>
+Subject: Re: [PATCH v3] gpio: sim: don't fiddle with GPIOLIB private members
+Message-ID: <ZPcZfd5UtzMmIUvm@smile.fi.intel.com>
+References: <20230905082413.21954-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MeMYi0KbK=1RYGX2zbUjVZyQp-Y_aXfy6+EZcEtUSEU0A@mail.gmail.com>
+In-Reply-To: <20230905082413.21954-1-brgl@bgdev.pl>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 05, 2023 at 10:37:32AM +0200, Bartosz Golaszewski wrote:
-> On Mon, Sep 4, 2023 at 11:27 AM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Mon, Sep 04, 2023 at 09:34:10AM +0200, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > All other functions that manipulate a struct gpio_desc use the gpiod_
-> > > prefix. Follow this convention and rename gpio_chip_hwgpio() to
-> > > gpiod_get_hwgpio().
-> >
-> > Same comment. Also, I don't think it's good idea as it steps on the exported
-> > API's toes. I.o.w. I won't mix those two.
+On Tue, Sep 05, 2023 at 10:24:13AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Even if I agreed with your other comment, gpio_chip_hwgpio() is a
-> terrible name and if I didn't know, I couldn't tell you what it does
-> just from looking at the name.
+> We access internals of struct gpio_device and struct gpio_desc because
+> it's easier but it can actually be avoided and we're working towards a
+> better encapsulation of GPIO data structures across the kernel so let's
+> start at home.
+> 
+> Instead of checking gpio_desc flags, let's just track the requests of
+> GPIOs in the driver. We also already store the information about
+> direction of simulated lines.
+> 
+> For kobjects needed by sysfs callbacks: we can iterate over the children
+> devices of the top-level platform device and compare their fwnodes
+> against the one passed to the init function from probe.
+> 
+> While at it: fix one line break and remove the untrue part about
+> configfs callbacks using dev_get_drvdata() from a comment.
 
-That's can be improved, my previous comments were basically to avoid
-mixing prefixes for internal and external APIs, let's say prefix them
-similarly, but for internal with space and/or more verbose naming
+...
 
-	gpiod_		gpio_desc_
-	gpiochip_	gpio_chip_
-	gdev_		gpio_device_
+> v2 -> v3:
+> - don't use fwnode internal fields, instead: iterate over the platform
+>   device's children and locate the GPIO device
 
-(as an example).
+Thank you!
+
+...
+
+> @@ -181,7 +178,7 @@ static int gpio_sim_get_direction(struct gpio_chip *gc, unsigned int offset)
+
+>  static int gpio_sim_set_config(struct gpio_chip *gc,
+> -				  unsigned int offset, unsigned long config)
+> +			       unsigned int offset, unsigned long config)
+
+Looking at other prototypes, it can be
+
+static int gpio_sim_set_config(struct gpio_chip *gc, unsigned int offset,
+			       unsigned long config)
+
+...
+
+> +static int gpio_sim_chip_set_device(struct device *dev, void *data)
+> +{
+> +	struct gpio_sim_chip *chip = data;
+
+> +	if (chip->swnode == dev->fwnode) {
+
+Please do not dereference fwnode from the struct device, we have an API!
+device_match_fwnode()
+
+> +		chip->dev = dev;
+> +		return 1;
+> +	}
+> +
+> +	return 0;
+> +}
+
+...
+
+> +	chip->swnode = swnode;
+> +	ret = device_for_each_child(dev, chip, gpio_sim_chip_set_device);
+> +	if (!ret)
+> +		return -ENODEV;
+
+Can bus_find_device_by_fwnode() be used here?
 
 -- 
 With Best Regards,
