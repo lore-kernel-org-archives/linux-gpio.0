@@ -2,63 +2,85 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 267FBCA1002
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EAFCA1003
 	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238922AbjIEQTl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:19:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36326 "EHLO
+        id S234406AbjIEQTn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Sep 2023 12:19:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354076AbjIEJfC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 05:35:02 -0400
-X-Greylist: delayed 4132 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Sep 2023 02:34:59 PDT
-Received: from mail.equinoxrise.pl (mail.equinoxrise.pl [217.61.112.157])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 409901A7
-        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 02:34:59 -0700 (PDT)
-Received: by mail.equinoxrise.pl (Postfix, from userid 1002)
-        id 36CC882DE7; Mon,  4 Sep 2023 09:41:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=equinoxrise.pl;
-        s=mail; t=1693813273;
-        bh=v6OgBfK5dN7P5dQ0wCu59rOfZaiqziJeLNblJ8dOcGI=;
-        h=Date:From:To:Subject:From;
-        b=M9x2fkCuIAzYROh6TA6NmEEXpAP/zrYacMrt7T8C/Q5GT1vKjewA/CDCZEadCacgG
-         gxqQGc8yVdFcC0kfSP0SK9ZoBeuamu6HB7l3w5f63NCxVTF+xMchO9eWeoxQEgH5Ox
-         GFv7dsFuP4JqSgubVML1ZJ0qyVRbklZsluzwzG+fak2uwAfM6KRS1N9B5ryajuF326
-         ueGAlf33fuWkPeWkthN40PV45OTTa8D5LadohDw+v7sD4PU6UX6Z2402yoGncLRgO9
-         Nkw7vzyGyAy2cU5MhuAHu6OZRhAIvmtg+GR9ey5QwpbetS1KnIIslzmS8sJuavvSgy
-         CIgVInWj8xguA==
-Received: by mail.equinoxrise.pl for <linux-gpio@vger.kernel.org>; Mon,  4 Sep 2023 07:40:34 GMT
-Message-ID: <20230904084500-0.1.7.qte.0.619j2av4fy@equinoxrise.pl>
-Date:   Mon,  4 Sep 2023 07:40:34 GMT
-From:   "Mateusz Talaga" <mateusz.talaga@equinoxrise.pl>
-To:     <linux-gpio@vger.kernel.org>
-Subject: Prezentacja
-X-Mailer: mail.equinoxrise.pl
+        with ESMTP id S1353922AbjIEIht (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 04:37:49 -0400
+Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA627CC7
+        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 01:37:43 -0700 (PDT)
+Received: by mail-ua1-x92c.google.com with SMTP id a1e0cc1a2514c-7a4d05eaea8so790843241.2
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Sep 2023 01:37:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693903063; x=1694507863; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mpHFtm2THaSdixGrwHLfve5bKSsogpNgznR46/rAI8Q=;
+        b=LK355mLUVlYWcVLJYzOKbCwA/c6MjFh6VpoiGz6b2DnKuzyefwo1Wv5cRvK8e75/kI
+         AwHxuDc0jw+yBfN+AowhfneCMSigF1XX9y87d2PAgcLq6MOA4RtZtfwPMNamcPZxRmmJ
+         xpizx0/J/D1pWZl89n7bkbixNq6A73lvoPeN0S18+zXGVTX0oGuFPTMaFKjHq5QkKks+
+         xau5dvJ6U3DGa8Nm+JNmoLVvHvjinnRabyhVuGv2w1ZJWSJKUjd6ZLFNwopjNYvHpTQV
+         DmeV2ZkThHXCfB9Ge8RCYvulwYy62+vP8sh0e58YgHOMjFoevG7CPWd0Lm5lOZ8+SAzs
+         qSng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693903063; x=1694507863;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mpHFtm2THaSdixGrwHLfve5bKSsogpNgznR46/rAI8Q=;
+        b=EvidMo/vcrLkXI+lU1SUfR4cu7UkN4aEbjDv+Ab3FiW1ghXmL0ZwemKim0Q/+nQ9bf
+         0woW/VkbUU+Q4udvKKWHG1srNqVfq25wmrB9K4qJYDX43+qx4Z2aWQ92ok4O6Yr9p54s
+         HUh5wSuSzi3sjH0GHpPjTj8OhBIoDVd3vlZk6AXgeeaDnPfoAXj+ONHvkwKEjYQ1yyTx
+         wM9Zna2QWaipmIhp3JA2lrXnX7vfWCE2wo56wwNYE/2kA/vmzzPxQ8gvrLqPViqbPYMr
+         FJ1MRhaBdaVpIRprRTysCuBpCm5Uw+EiYymT0ZhDXoQ6r60mzVKw5Xg/pIVtvsBuHhui
+         uiRw==
+X-Gm-Message-State: AOJu0Yx9yNzX+cR/Ednqk8p3hEEV4ll89XsSJ8BqDG7ZdFr92vwidwWx
+        OTmXisR8tNQstcRuhSlkMkduiuxS7mJmgk1eEaVudg==
+X-Google-Smtp-Source: AGHT+IFZqQ6NUVEHdjCmDa5Gac5UutlTevVj90aTgLVjwaCXFeHZRN+XSXCgpz0qM5EyEULv6okfGE7VoUrVAqweOQE=
+X-Received: by 2002:a67:e294:0:b0:44e:ac98:c65f with SMTP id
+ g20-20020a67e294000000b0044eac98c65fmr12293123vsf.21.1693903062895; Tue, 05
+ Sep 2023 01:37:42 -0700 (PDT)
 MIME-Version: 1.0
+References: <20230904073410.5880-1-brgl@bgdev.pl> <20230904073410.5880-2-brgl@bgdev.pl>
+ <ZPWjAUzqeAwF1wro@smile.fi.intel.com>
+In-Reply-To: <ZPWjAUzqeAwF1wro@smile.fi.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 5 Sep 2023 10:37:32 +0200
+Message-ID: <CAMRc=MeMYi0KbK=1RYGX2zbUjVZyQp-Y_aXfy6+EZcEtUSEU0A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpiolib: rename gpio_chip_hwgpio() for consistency
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Dzie=C5=84 dobry!
+On Mon, Sep 4, 2023 at 11:27=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Mon, Sep 04, 2023 at 09:34:10AM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > All other functions that manipulate a struct gpio_desc use the gpiod_
+> > prefix. Follow this convention and rename gpio_chip_hwgpio() to
+> > gpiod_get_hwgpio().
+>
+> Same comment. Also, I don't think it's good idea as it steps on the expor=
+ted
+> API's toes. I.o.w. I won't mix those two.
+>
 
-Czy m=C3=B3g=C5=82bym przedstawi=C4=87 rozwi=C4=85zanie, kt=C3=B3re umo=C5=
-=BCliwia monitoring ka=C5=BCdego auta w czasie rzeczywistym w tym jego po=
-zycj=C4=99, zu=C5=BCycie paliwa i przebieg?
+Even if I agreed with your other comment, gpio_chip_hwgpio() is a
+terrible name and if I didn't know, I couldn't tell you what it does
+just from looking at the name.
 
-Dodatkowo nasze narz=C4=99dzie minimalizuje koszty utrzymania samochod=C3=
-=B3w, skraca czas przejazd=C3=B3w, a tak=C5=BCe tworzenie planu tras czy =
-dostaw.
-
-Z naszej wiedzy i do=C5=9Bwiadczenia korzysta ju=C5=BC ponad 49 tys. Klie=
-nt=C3=B3w. Monitorujemy 809 000 pojazd=C3=B3w na ca=C5=82ym =C5=9Bwiecie,=
- co jest nasz=C4=85 najlepsz=C4=85 wizyt=C3=B3wk=C4=85.
-
-Bardzo prosz=C4=99 o e-maila zwrotnego, je=C5=9Bli mogliby=C5=9Bmy wsp=C3=
-=B3lnie om=C3=B3wi=C4=87 potencja=C5=82 wykorzystania takiego rozwi=C4=85=
-zania w Pa=C5=84stwa firmie.
-
-
-Pozdrawiam
-Mateusz Talaga
+Bart
