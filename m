@@ -2,61 +2,74 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD61CA0FFD
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 779F6CA0FFA
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 18:54:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245176AbjIEQUc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:20:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52302 "EHLO
+        id S238927AbjIESy4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Sep 2023 14:54:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353863AbjIEIYX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 04:24:23 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE8FCC7
-        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 01:24:18 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-401b3ea0656so20956235e9.0
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Sep 2023 01:24:18 -0700 (PDT)
+        with ESMTP id S229529AbjIESyz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 14:54:55 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 597CECE5
+        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 11:54:24 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-402c46c49f4so28185175e9.1
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Sep 2023 11:54:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693902257; x=1694507057; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693940006; x=1694544806; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=37Wb46QRhLkfUy6mtabtEvmTwG7hQsrkGmqZbmLQDlI=;
-        b=05/IFVFHvEkk7PR9lXevsR6rIXXlqSjhy5iesXuVsKDfUFZBE6TgLaTD781GDbkDDO
-         cB072bJb9ttdxL3xLHlyI+ctNGYNm/r8LjoeCSCQgy2N7VNI3/x1oLyZbZHQeamZqo3w
-         FtA8QTnOeiJBIN20Jti5Y4F6EjQlIGwFZctVN6wVdEHbihl4OzvqSFeGh6yJvezGoxbz
-         1CstwaopQTQxKsWYqvKwpYpdy9pE6a+69IOsMZTcvwSvyzMmvxizjw0OptEOxNqIsMwm
-         QMTnAXKpIMzvr9RTfwPb4+SArnu7Mdsi301PAfLVikmvAGrU9lbgitV28bSWGSNwearI
-         tC4w==
+        bh=Zm8uw+f5LvxPs16TrhkfvENCN1+QZz7s8rxXSoottC8=;
+        b=A7UpjwfdbJKhRaEWbwhKYlgzouLcNfgEEMmEJ1LGo0vRVMyAmNFuvr77wNzIKJfI8A
+         zATRShOgFPIRzZgChhys5vhQQ6/NndEmYZB19RGfcA6IH8d+RHmmb3PjJv/Vd7uscdtS
+         /iYAui9lJcOUzAxnsPdv1HoW7GouEnyuVIv3Xr5japB+GUySazZG+e90Wncqu0qqFCuG
+         YAqfDT5o9OIe4ZIq8Y0nvq4hYPQ2RN8KLeoTK7UbAgIk5RXAaszQ6WgQ6mB/yHCcKV/x
+         GU55rAldx9EQL3hDnxRWafrWv5RlgA2nQUWKMcL22gdkjxqPrRDnQuOp0U3iixUJnxAn
+         qEDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693902257; x=1694507057;
+        d=1e100.net; s=20221208; t=1693940006; x=1694544806;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=37Wb46QRhLkfUy6mtabtEvmTwG7hQsrkGmqZbmLQDlI=;
-        b=lovtxcWq15qo7XVjTKO6AIVxSYWU/neMJVAsuiQD22T2AYajkb7HsNbx/p/VBzY2IX
-         1OYCYGGRyJfYEHRCUFvaJcHGWP/NsbsJil8uTbJqlGh/VeMV4UNI+dNtrZqFIK55JzaQ
-         3bMoRqfb0T1d2mLxe+EdtIPjB00nJ3yl/l4Z31XKrUEwZzo+eGm62GHoV5atqqMjE9vt
-         kKTCvLXB6vi4lim7Von0fmHxsm1qgUqZNOP9yrbQx09VPue0IK8VTyiTiqz5V5KttP1U
-         PQYtRvGq9d58urvcIaN00f3P5HNJ7viSdNKseu3wyKCld+L4gukHC5LonVs52mH4sVvJ
-         4Izg==
-X-Gm-Message-State: AOJu0YxOPujqrMQ4PX6EBcD+GVcsH+osFxdRTKw6EQ8fDMrND2sE6Eo2
-        YUJy8BSRVzpWdMo7UuST9atn8g==
-X-Google-Smtp-Source: AGHT+IF5SvEjWYDh2J+BFnMqc4SxlIIJLgWa+aZl+0IXDpS8lOM00piRsWsEBPfQzh0wVDVsHB5pWg==
-X-Received: by 2002:a5d:4b87:0:b0:319:6f0e:fc0e with SMTP id b7-20020a5d4b87000000b003196f0efc0emr10134767wrt.30.1693902256866;
-        Tue, 05 Sep 2023 01:24:16 -0700 (PDT)
+        bh=Zm8uw+f5LvxPs16TrhkfvENCN1+QZz7s8rxXSoottC8=;
+        b=GKkmB+Hop0u9uCSb4ddGiqoDWYTgbrRbd+36jaGvVZyaKa+b8SblNak+yVc+CTct0P
+         ePAO5RlGS+ekdsESJ7tUIqrdjRCktp++WNhbegnZn8GxtLzHLGTvR1KpVSm2EJEJI34b
+         Q7J8RMZIMT35MN2ILy5eCe1rrNO3SGWoNrUQOagW3BOdL9zjC/tn2SF2i3ryRmKU+Vj7
+         bRiQ20yWWk5CXPpRGq4nGblVoaMoJltoYs2cMyQfomVOFnDGkYcD93Oj0J7FD/ZBDxeE
+         Y/3ejMHOKlsTubb0utFw0N4DCvHNaJ+Hd1xplQHjDz8/jUlfxZNnvlkP91nxOzYWA4I1
+         gkvA==
+X-Gm-Message-State: AOJu0YyMpbVTA1e0cb8P1A+2MvajKYBODUrCxC9MWtodtfNMZ6VfuA15
+        DSwC7J6qUO8hQsdY5yjVN913ng==
+X-Google-Smtp-Source: AGHT+IFg7Vm2Cmqv15Sqv5calroUVFxizFJ5aDOZ0cNR6d+rt5FAt8Ucbl9e61HcahWOBMsw3jlYSQ==
+X-Received: by 2002:a7b:cb8a:0:b0:401:bf62:9456 with SMTP id m10-20020a7bcb8a000000b00401bf629456mr490236wmi.8.1693940006065;
+        Tue, 05 Sep 2023 11:53:26 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:7a54:5dbc:6d09:48b7])
-        by smtp.gmail.com with ESMTPSA id s12-20020a5d4ecc000000b0031423a8f4f7sm16860750wrv.56.2023.09.05.01.24.15
+        by smtp.gmail.com with ESMTPSA id 17-20020a05600c249100b003fbc30825fbsm17550010wms.39.2023.09.05.11.53.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Sep 2023 01:24:16 -0700 (PDT)
+        Tue, 05 Sep 2023 11:53:25 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kent Gibson <warthog618@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v3] gpio: sim: don't fiddle with GPIOLIB private members
-Date:   Tue,  5 Sep 2023 10:24:13 +0200
-Message-Id: <20230905082413.21954-1-brgl@bgdev.pl>
+Subject: [PATCH 00/21] gpio: convert users to gpio_device_find() and remove gpiochip_find()
+Date:   Tue,  5 Sep 2023 20:52:48 +0200
+Message-Id: <20230905185309.131295-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -66,203 +79,78 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-We access internals of struct gpio_device and struct gpio_desc because
-it's easier but it can actually be avoided and we're working towards a
-better encapsulation of GPIO data structures across the kernel so let's
-start at home.
+The GPIO subsystem does not handle hot-unplug events very well. We have
+recently patched the user-space part of it so that at least a rouge user
+cannot crash the kernel but in-kernel users are still affected by a lot of
+issues: from incorrect locking or lack thereof to using structures that are
+private to GPIO drivers. Since almost all GPIO controllers can be unbound,
+not to mention that we have USB devices registering GPIO expanders as well as
+I2C-on-USB HID devices on which I2C GPIO expanders can live, various media
+gadgets etc., we really need to make GPIO hotplug/unplug friendly.
 
-Instead of checking gpio_desc flags, let's just track the requests of
-GPIOs in the driver. We also already store the information about
-direction of simulated lines.
+Before we can even get to fixing the locking, we need to address a serious
+abuse of the GPIO driver API - accessing struct gpio_chip by anyone who isn't
+the driver owning this object. This structure is owned by the GPIO provider
+and its lifetime is tied to that of that provider. It is destroyed when the
+device is unregistered and this may happen at any moment. struct gpio_device
+is the opaque, reference counted interface to struct gpio_chip (which is the
+low-level implementation) and all access should pass through it.
 
-For kobjects needed by sysfs callbacks: we can iterate over the children
-devices of the top-level platform device and compare their fwnodes
-against the one passed to the init function from probe.
+The end-goal is to make all gpio_device manipulators check the existence of
+gdev->chip and then lock it for the duration of any of the calls using SRCU.
+Before we can get there, we need to first provide a set of functions that will
+replace any gpio_chip functions and convert all in-kernel users.
 
-While at it: fix one line break and remove the untrue part about
-configfs callbacks using dev_get_drvdata() from a comment.
+This series starts the process by replacing gpiochip_find() with
+gpio_device_find(). This is in line with other device_find type interfaces and
+returns a reference to the GPIO device that is guaranteed to remain valid
+until it is put.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-v1 -> v2:
-- use get_dev_from_fwnode() instead of dereferencing fwnode directly
+Note that this does not make everything correct just yet. Especially the
+GPIOLIB internal users release the reference returned by the lookup function
+after getting the descriptor of interest but before requesting it. This will
+eventually be addressed. This is not a regression either.
 
-v2 -> v3:
-- don't use fwnode internal fields, instead: iterate over the platform
-  device's children and locate the GPIO device
+First we add a bunch of new APIs that are needed to start replacing calls
+to gpiochip_find. We then use them first in external users and then locally in
+GPIOLIB core. Finally we remove gpiochip_find().
 
- drivers/gpio/gpio-sim.c | 66 ++++++++++++++++++++++++++++++-----------
- 1 file changed, 48 insertions(+), 18 deletions(-)
+Bartosz Golaszewski (21):
+  gpiolib: make gpio_device_get() and gpio_device_put() public
+  gpiolib: provide gpio_device_find()
+  gpiolib: provide gpio_device_find_by_label()
+  gpiolib: provide gpio_device_get_desc()
+  gpiolib: add support for scope-based management to gpio_device
+  gpiolib: provide gpiod_to_device()
+  gpiolib: provide gpio_device_get_base()
+  gpio: acpi: provide acpi_gpio_device_free_interrupts()
+  gpiolib: reluctantly provide gpio_device_get_chip()
+  gpiolib: replace find_chip_by_name() with gpio_device_find_by_label()
+  platform: x86: android-tablets: don't access GPIOLIB private members
+  hte: allow building modules with COMPILE_TEST enabled
+  hte: tegra194: improve the GPIO-related comment
+  hte: tegra194: don't access struct gpio_chip
+  arm: omap1: ams-delta: stop using gpiochip_find()
+  gpio: of: correct notifier return codes
+  gpio: of: replace gpiochip_find_* with gpio_device_find_*
+  gpio: acpi: replace gpiochip_find() with gpio_device_find()
+  gpio: swnode: replace gpiochip_find() with gpio_device_find_by_label()
+  gpio: sysfs: drop the mention of gpiochip_find() from sysfs code
+  gpiolib: remove gpiochip_find()
 
-diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
-index 271db3639a78..16a865e79559 100644
---- a/drivers/gpio/gpio-sim.c
-+++ b/drivers/gpio/gpio-sim.c
-@@ -12,6 +12,7 @@
- #include <linux/completion.h>
- #include <linux/configfs.h>
- #include <linux/device.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/gpio/driver.h>
- #include <linux/gpio/machine.h>
- #include <linux/idr.h>
-@@ -30,8 +31,6 @@
- #include <linux/string_helpers.h>
- #include <linux/sysfs.h>
- 
--#include "gpiolib.h"
--
- #define GPIO_SIM_NGPIO_MAX	1024
- #define GPIO_SIM_PROP_MAX	4 /* Max 3 properties + sentinel. */
- #define GPIO_SIM_NUM_ATTRS	3 /* value, pull and sentinel */
-@@ -40,6 +39,9 @@ static DEFINE_IDA(gpio_sim_ida);
- 
- struct gpio_sim_chip {
- 	struct gpio_chip gc;
-+	struct fwnode_handle *swnode;
-+	struct device *dev;
-+	unsigned long *request_map;
- 	unsigned long *direction_map;
- 	unsigned long *value_map;
- 	unsigned long *pull_map;
-@@ -63,16 +65,11 @@ static int gpio_sim_apply_pull(struct gpio_sim_chip *chip,
- 			       unsigned int offset, int value)
- {
- 	int irq, irq_type, ret;
--	struct gpio_desc *desc;
--	struct gpio_chip *gc;
--
--	gc = &chip->gc;
--	desc = &gc->gpiodev->descs[offset];
- 
- 	guard(mutex)(&chip->lock);
- 
--	if (test_bit(FLAG_REQUESTED, &desc->flags) &&
--	    !test_bit(FLAG_IS_OUT, &desc->flags)) {
-+	if (test_bit(offset, chip->request_map) &&
-+	    test_bit(offset, chip->direction_map)) {
- 		if (value == !!test_bit(offset, chip->value_map))
- 			goto set_pull;
- 
-@@ -99,8 +96,8 @@ static int gpio_sim_apply_pull(struct gpio_sim_chip *chip,
- 
- set_value:
- 	/* Change the value unless we're actively driving the line. */
--	if (!test_bit(FLAG_REQUESTED, &desc->flags) ||
--	    !test_bit(FLAG_IS_OUT, &desc->flags))
-+	if (!test_bit(offset, chip->request_map) ||
-+	    test_bit(offset, chip->direction_map))
- 		__assign_bit(offset, chip->value_map, value);
- 
- set_pull:
-@@ -181,7 +178,7 @@ static int gpio_sim_get_direction(struct gpio_chip *gc, unsigned int offset)
- }
- 
- static int gpio_sim_set_config(struct gpio_chip *gc,
--				  unsigned int offset, unsigned long config)
-+			       unsigned int offset, unsigned long config)
- {
- 	struct gpio_sim_chip *chip = gpiochip_get_data(gc);
- 
-@@ -204,13 +201,25 @@ static int gpio_sim_to_irq(struct gpio_chip *gc, unsigned int offset)
- 	return irq_create_mapping(chip->irq_sim, offset);
- }
- 
-+static int gpio_sim_request(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct gpio_sim_chip *chip = gpiochip_get_data(gc);
-+
-+	scoped_guard(mutex, &chip->lock)
-+		__set_bit(offset, chip->request_map);
-+
-+	return 0;
-+}
-+
- static void gpio_sim_free(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_sim_chip *chip = gpiochip_get_data(gc);
- 
--	scoped_guard(mutex, &chip->lock)
-+	scoped_guard(mutex, &chip->lock) {
- 		__assign_bit(offset, chip->value_map,
- 			     !!test_bit(offset, chip->pull_map));
-+		__clear_bit(offset, chip->request_map);
-+	}
- }
- 
- static ssize_t gpio_sim_sysfs_val_show(struct device *dev,
-@@ -295,7 +304,7 @@ static void gpio_sim_sysfs_remove(void *data)
- {
- 	struct gpio_sim_chip *chip = data;
- 
--	sysfs_remove_groups(&chip->gc.gpiodev->dev.kobj, chip->attr_groups);
-+	sysfs_remove_groups(&chip->dev->kobj, chip->attr_groups);
- }
- 
- static int gpio_sim_setup_sysfs(struct gpio_sim_chip *chip)
-@@ -352,14 +361,25 @@ static int gpio_sim_setup_sysfs(struct gpio_sim_chip *chip)
- 		chip->attr_groups[i] = attr_group;
- 	}
- 
--	ret = sysfs_create_groups(&chip->gc.gpiodev->dev.kobj,
--				  chip->attr_groups);
-+	ret = sysfs_create_groups(&chip->dev->kobj, chip->attr_groups);
- 	if (ret)
- 		return ret;
- 
- 	return devm_add_action_or_reset(dev, gpio_sim_sysfs_remove, chip);
- }
- 
-+static int gpio_sim_chip_set_device(struct device *dev, void *data)
-+{
-+	struct gpio_sim_chip *chip = data;
-+
-+	if (chip->swnode == dev->fwnode) {
-+		chip->dev = dev;
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
- static int gpio_sim_add_bank(struct fwnode_handle *swnode, struct device *dev)
- {
- 	struct gpio_sim_chip *chip;
-@@ -387,6 +407,10 @@ static int gpio_sim_add_bank(struct fwnode_handle *swnode, struct device *dev)
- 	if (!chip)
- 		return -ENOMEM;
- 
-+	chip->request_map = devm_bitmap_zalloc(dev, num_lines, GFP_KERNEL);
-+	if (!chip->request_map)
-+		return -ENOMEM;
-+
- 	chip->direction_map = devm_bitmap_alloc(dev, num_lines, GFP_KERNEL);
- 	if (!chip->direction_map)
- 		return -ENOMEM;
-@@ -432,6 +456,7 @@ static int gpio_sim_add_bank(struct fwnode_handle *swnode, struct device *dev)
- 	gc->get_direction = gpio_sim_get_direction;
- 	gc->set_config = gpio_sim_set_config;
- 	gc->to_irq = gpio_sim_to_irq;
-+	gc->request = gpio_sim_request;
- 	gc->free = gpio_sim_free;
- 	gc->can_sleep = true;
- 
-@@ -439,8 +464,13 @@ static int gpio_sim_add_bank(struct fwnode_handle *swnode, struct device *dev)
- 	if (ret)
- 		return ret;
- 
--	/* Used by sysfs and configfs callbacks. */
--	dev_set_drvdata(&gc->gpiodev->dev, chip);
-+	chip->swnode = swnode;
-+	ret = device_for_each_child(dev, chip, gpio_sim_chip_set_device);
-+	if (!ret)
-+		return -ENODEV;
-+
-+	/* Used by sysfs callbacks. */
-+	dev_set_drvdata(chip->dev, chip);
- 
- 	return gpio_sim_setup_sysfs(chip);
- }
+ arch/arm/mach-omap1/board-ams-delta.c         |  36 ++--
+ drivers/gpio/gpiolib-acpi.c                   |  37 +++-
+ drivers/gpio/gpiolib-of.c                     |  48 ++---
+ drivers/gpio/gpiolib-swnode.c                 |  29 ++-
+ drivers/gpio/gpiolib-sysfs.c                  |   2 +-
+ drivers/gpio/gpiolib.c                        | 203 +++++++++++++-----
+ drivers/gpio/gpiolib.h                        |  10 -
+ drivers/hte/Kconfig                           |   4 +-
+ drivers/hte/hte-tegra194.c                    |  49 +++--
+ .../platform/x86/x86-android-tablets/core.c   |  38 ++--
+ include/linux/gpio/driver.h                   |  30 ++-
+ 11 files changed, 316 insertions(+), 170 deletions(-)
+
 -- 
 2.39.2
 
