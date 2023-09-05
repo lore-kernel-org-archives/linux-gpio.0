@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44029CA0FF7
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 18:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A72CA1002
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 19:00:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234663AbjIES41 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Sep 2023 14:56:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41310 "EHLO
+        id S240536AbjIETA1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Sep 2023 15:00:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235244AbjIES4Q (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 14:56:16 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2742AEB
-        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 11:55:48 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-401f503b529so28407155e9.0
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Sep 2023 11:55:48 -0700 (PDT)
+        with ESMTP id S240978AbjIETAP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 15:00:15 -0400
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 591061986
+        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 11:59:47 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-402c46c49f4so28187525e9.1
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Sep 2023 11:59:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693940028; x=1694544828; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693940023; x=1694544823; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v8EoAIqFLJCxUpfLhsvBV4jgy9F1vQzmq/NZ2XWmhPM=;
-        b=irz10VKbMLeng4ZixyOOnJHEJAzNeWz1hov/KxB8mF+k6rj/LQ4LAwTJXFhhjVRS+v
-         itGQh4ai1wChP2p+/8C9JtUg02LiGYOfDxcdW5O3LioyfITZUYuSuAM4wGSdy+m9aHWe
-         OJ0DMDGxzizoIA3TQmIH8RPQJbNYAe07CptoIisJrARNxlWdRSmlWDiIQKqCXv4ki4TX
-         UizmzI3ALpp0DyF2NBMebnW73rdXk+BLG+JhHrDFs6YUrUgvQfj/MHaN8T0IAKv2NCHS
-         mloZENvz5tLe34I78lRzZwlzbxe6zzsBL9TBGG05EkDn+iuybKcqTwTqhnhLRUTWjxdC
-         m0rw==
+        bh=Xc0dHDvz9aPHwfkkXEcmr6XeU35JNlu/HGwkvzCIguI=;
+        b=jgba23tDyDaBizdlESw6+ZhI02MDzp2owkav2DyQHWbYhkAhVpT2gTTcKCs2YCe352
+         yiHakqDElTI/HWUuPyYO9cFN+xnMAFSlwwS1nF63kia5rba5KGmZWEGKsq6ZPHXZpaum
+         J3e6jNiWdxVDS+Gezc0ML8qYqmBK2fEI2zZC0E48sBfGCFPnOyARsr01/bJvhBA/JGko
+         kGsaFqyH8r8//x7I+DZZyAFK5Z/fT0Epf6YJk7yiZG3QEyv1MjCZO/TeoPdZJC30Zli8
+         4tzpRprk1v4RD/bMGM3hUZ8r9f1SH4yp52SavxcexO63f6LsKGvLc1KRleK81VSSvVSd
+         tKVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693940028; x=1694544828;
+        d=1e100.net; s=20221208; t=1693940023; x=1694544823;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v8EoAIqFLJCxUpfLhsvBV4jgy9F1vQzmq/NZ2XWmhPM=;
-        b=i8y4YangLBD7GsmWEccfgjnZj5sIcM2BTe7Q4n/+GKEGn1mrVedGtnZgsYsCfh32Rq
-         3W1F//+o+9tlQZ3sX9qqehIna2VKRLL+Z7/KWeAEfy/ucwIc9ueEmdT5FQ45XcYJw7bW
-         hB/qhOfXqPy6K6+eZw0G0RUjezJCPlmYSHbtr+pfyCX6ou+4kGt6Yi6gYCxV0bPuBxqa
-         T3bDIMHhYmDa06VOSKfJpoyqlsTk4plz9dmwd9eLRJaFjh1baqZ8HhYfu57u+YIGu/LA
-         64sN24qNDWbsmWqsizQf9xNfHtpi9kRTsrAEsLGl11u2Rtkb43xBJW+8T/r/rBFmMj4x
-         mrTg==
-X-Gm-Message-State: AOJu0Yx0kGNEu5C/ngk/P7YQOQYHsJO/QDtTuQmk1fHTiDYMtlulvKmb
-        +dBdzX+Cn+NuL+0owF43kgQF1g==
-X-Google-Smtp-Source: AGHT+IGdmweLsvxMkviAD6X4Rb7LNMdeCjqz2Ypd3y+SG6ZL6d4+T9L7pYZxfgxQTgv+RGIUJmtJEw==
-X-Received: by 2002:a05:600c:2809:b0:3fe:dcd0:2e10 with SMTP id m9-20020a05600c280900b003fedcd02e10mr472155wmb.17.1693940027944;
-        Tue, 05 Sep 2023 11:53:47 -0700 (PDT)
+        bh=Xc0dHDvz9aPHwfkkXEcmr6XeU35JNlu/HGwkvzCIguI=;
+        b=cRb+DzNaivyn448vCR/2ID2e3V9j2s6t4JNrOpmhmQlcHPKKLNXPon3ek66WklfGMT
+         E0522W8cAQw2tLH+blTG+gNjE5pmke+nVuRhKBkVoSigBKVc9ZxwM9Q97Nse+6W5lw7b
+         IeGw48AavZP1LbUEaWPzmNqRphDGJ75u0NeXuBfxXVn1k0GeF/69T8feeSzfbD/+5PW+
+         /wFs5yPiBCd0pdJPm8zzMzEc7apLdf6Oe/cLS90BuhTQXicz6Eyfc/A4z2y+RJAOjfH9
+         LGEadaKUN9zcIq9l98BwmFC3O38ztNeGNm8t5ADIiIISIca7Iy5T7HVhyBVyE/fW7/9A
+         kjCg==
+X-Gm-Message-State: AOJu0YwtwG2URtEMHAfKUQmIQpjCaUW/4ahY6G+1V2+aOqsvrlYurSCW
+        c5T5KGv/MA6fI+VRu1GgrXq9aw==
+X-Google-Smtp-Source: AGHT+IHuUeDvZm0XqMGiNP8BC9POVIvbxw89mmcaJKbgfsfvBj7DplEY4g0IVdJg6twQF2wl+B7cWQ==
+X-Received: by 2002:a1c:4c0a:0:b0:400:419c:bbe2 with SMTP id z10-20020a1c4c0a000000b00400419cbbe2mr502889wmf.24.1693940023108;
+        Tue, 05 Sep 2023 11:53:43 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:7a54:5dbc:6d09:48b7])
-        by smtp.gmail.com with ESMTPSA id 17-20020a05600c249100b003fbc30825fbsm17550010wms.39.2023.09.05.11.53.46
+        by smtp.gmail.com with ESMTPSA id 17-20020a05600c249100b003fbc30825fbsm17550010wms.39.2023.09.05.11.53.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Sep 2023 11:53:47 -0700 (PDT)
+        Tue, 05 Sep 2023 11:53:42 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>,
@@ -68,9 +68,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
         linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 18/21] gpio: acpi: replace gpiochip_find() with gpio_device_find()
-Date:   Tue,  5 Sep 2023 20:53:06 +0200
-Message-Id: <20230905185309.131295-19-brgl@bgdev.pl>
+Subject: [RFT PATCH 14/21] hte: tegra194: don't access struct gpio_chip
+Date:   Tue,  5 Sep 2023 20:53:02 +0200
+Message-Id: <20230905185309.131295-15-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230905185309.131295-1-brgl@bgdev.pl>
 References: <20230905185309.131295-1-brgl@bgdev.pl>
@@ -82,42 +82,112 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-We're porting all users of gpiochip_find() to using gpio_device_find().
-Update the ACPI GPIO code.
+Using struct gpio_chip is not safe as it will disappear if the
+underlying driver is unbound for any reason. Switch to using reference
+counted struct gpio_device and its dedicated accessors.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpiolib-acpi.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/hte/hte-tegra194.c | 36 +++++++++++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 5633e39396bc..15d3350123d9 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -143,7 +143,7 @@ static int acpi_gpiochip_find(struct gpio_chip *gc, void *data)
-  */
- static struct gpio_desc *acpi_get_gpiod(char *path, unsigned int pin)
+diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.c
+index 9fd3c00ff695..d83ef30c9588 100644
+--- a/drivers/hte/hte-tegra194.c
++++ b/drivers/hte/hte-tegra194.c
+@@ -132,7 +132,7 @@ struct tegra_hte_soc {
+ 	const struct tegra_hte_data *prov_data;
+ 	struct tegra_hte_line_data *line_data;
+ 	struct hte_chip *chip;
+-	struct gpio_chip *c;
++	struct gpio_device *gdev;
+ 	void __iomem *regs;
+ };
+ 
+@@ -421,7 +421,7 @@ static int tegra_hte_line_xlate(struct hte_chip *gc,
+ 	 * HTE/GTE namespace.
+ 	 */
+ 	if (gs->prov_data->type == HTE_TEGRA_TYPE_GPIO && !args) {
+-		line_id = desc->attr.line_id - gs->c->base;
++		line_id = desc->attr.line_id - gpio_device_get_base(gs->gdev);
+ 		map = gs->prov_data->map;
+ 		map_sz = gs->prov_data->map_sz;
+ 	} else if (gs->prov_data->type == HTE_TEGRA_TYPE_GPIO && args) {
+@@ -643,12 +643,15 @@ static irqreturn_t tegra_hte_isr(int irq, void *dev_id)
+ static bool tegra_hte_match_from_linedata(const struct hte_chip *chip,
+ 					  const struct hte_ts_desc *hdesc)
  {
--	struct gpio_chip *chip;
 +	struct gpio_device *gdev __free(gpio_device_put) = NULL;
- 	acpi_handle handle;
- 	acpi_status status;
+ 	struct tegra_hte_soc *hte_dev = chip->data;
  
-@@ -151,11 +151,11 @@ static struct gpio_desc *acpi_get_gpiod(char *path, unsigned int pin)
- 	if (ACPI_FAILURE(status))
- 		return ERR_PTR(-ENODEV);
+ 	if (!hte_dev || (hte_dev->prov_data->type != HTE_TEGRA_TYPE_GPIO))
+ 		return false;
  
--	chip = gpiochip_find(handle, acpi_gpiochip_find);
--	if (!chip)
-+	gdev = gpio_device_find(handle, acpi_gpiochip_find);
-+	if (!gdev)
- 		return ERR_PTR(-EPROBE_DEFER);
- 
--	return gpiochip_get_desc(chip, pin);
-+	return gpiochip_get_desc(gdev->chip, pin);
+-	return hte_dev->c == gpiod_to_chip(hdesc->attr.line_data);
++	gdev = gpiod_to_device(hdesc->attr.line_data);
++
++	return hte_dev->gdev == gdev;
  }
  
- /**
+ static const struct of_device_id tegra_hte_of_match[] = {
+@@ -676,16 +679,18 @@ static void tegra_gte_disable(void *data)
+ 	tegra_hte_writel(gs, HTE_TECTRL, 0);
+ }
+ 
+-static int tegra_get_gpiochip_from_name(struct gpio_chip *chip, void *data)
+-{
+-	return !strcmp(chip->label, data);
+-}
+-
+ static int tegra_gpiochip_match(struct gpio_chip *chip, void *data)
+ {
+ 	return chip->fwnode == of_node_to_fwnode(data);
+ }
+ 
++static void tegra_hte_put_gpio_device(void *data)
++{
++	struct gpio_device *gdev = data;
++
++	gpio_device_put(gdev);
++}
++
+ static int tegra_hte_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+@@ -763,8 +768,8 @@ static int tegra_hte_probe(struct platform_device *pdev)
+ 
+ 		if (of_device_is_compatible(dev->of_node,
+ 					    "nvidia,tegra194-gte-aon")) {
+-			hte_dev->c = gpiochip_find("tegra194-gpio-aon",
+-						tegra_get_gpiochip_from_name);
++			hte_dev->gdev =
++				gpio_device_find_by_label("tegra194-gpio-aon");
+ 		} else {
+ 			gpio_ctrl = of_parse_phandle(dev->of_node,
+ 						     "nvidia,gpio-controller",
+@@ -775,14 +780,19 @@ static int tegra_hte_probe(struct platform_device *pdev)
+ 				return -ENODEV;
+ 			}
+ 
+-			hte_dev->c = gpiochip_find(gpio_ctrl,
+-						   tegra_gpiochip_match);
++			hte_dev->gdev = gpio_device_find(gpio_ctrl,
++							 tegra_gpiochip_match);
+ 			of_node_put(gpio_ctrl);
+ 		}
+ 
+-		if (!hte_dev->c)
++		if (!hte_dev->gdev)
+ 			return dev_err_probe(dev, -EPROBE_DEFER,
+ 					     "wait for gpio controller\n");
++
++		ret = devm_add_action_or_reset(dev, tegra_hte_put_gpio_device,
++					       hte_dev->gdev);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	hte_dev->chip = gc;
 -- 
 2.39.2
 
