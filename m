@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7DDCA0FFF
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 19:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D17BCA0FFE
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 19:00:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236690AbjIETAn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Sep 2023 15:00:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43122 "EHLO
+        id S239007AbjIETAv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Sep 2023 15:00:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239115AbjIETAg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 15:00:36 -0400
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 020C31A3
-        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 12:00:09 -0700 (PDT)
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-402cc6b8bedso24890555e9.1
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Sep 2023 12:00:08 -0700 (PDT)
+        with ESMTP id S239968AbjIETAq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 15:00:46 -0400
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EAFCE78
+        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 12:00:17 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-40078c4855fso28208905e9.3
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Sep 2023 12:00:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693940016; x=1694544816; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1693940022; x=1694544822; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gD8mhbYtSpsp4MugkXhi33yXQT05nfWNxdtLBId4RL8=;
-        b=ilV5yCdeRzZ+G5yIoeldAMeJvdL6TejWCwd6BDF10srY/hFvyug/k5w/DpbABu2kuB
-         esKaZbpatQxH4BV8YUHRoJfnEZ8iZml3r8QocdOmnTXpd5EbarxqhB+KAPBs8RFJFbpk
-         FkqXYWuo7hfzKH0NpOXh6toJVQFtFAgoulvWzpPj1Bd9V7D7JRe40+idqmCj2vU4GvfN
-         7C4O3LXRHOKpk9pt8C9JOmogDWJt7fgmcaOUGg/zuQ+LckXuUGahGsMKQWkoLslh2Z8e
-         WW2ri+AaMwI+sQbAmlEmxl8D7DuUfWBNLtC3pQRVELrcGofDc9GVqdFIZIHr+0UOzKzU
-         rSXg==
+        bh=vPYbcmhlviFwWzuYOu9Z0ne7hiPspJP6iTCWdpKZ06M=;
+        b=JQt+WzsZ/fnvDidYGADRhY3EvXZ2ja2JbU7t5ziFg7kF9Y3cfrb63L+eGekuF/Su8a
+         739QfhBKS4580mO4uyL/CmNWcv15dv4o+7zTMzrENPZDwgd/pF+O5lEWYMip8+v76JKL
+         7TUq46aFRNv7ik1mAE7J/b3H7eML55axcurEdKoiwI4FhrBi3VNzzvD62e8lGePMa9SQ
+         Nu7/npFQaQBnJKhtJRNsTinKJW3t0Tv1oJoWaIaLUz6ZA1saC9z88Nv9VZ2fz41uAe7r
+         XNmIfkOs/qAb+ChwkBzc4mbSo2oLI2fU+YBVf6sVk6RJWPMMaCgh4Ho3nvZAD8j1+poZ
+         wLZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693940016; x=1694544816;
+        d=1e100.net; s=20221208; t=1693940022; x=1694544822;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gD8mhbYtSpsp4MugkXhi33yXQT05nfWNxdtLBId4RL8=;
-        b=Ou4KzPKM5mYao47sWdS9kvY3CyD/12yF49j0Q+AKB1axNURdQHC7bQMOoDluuw77tc
-         6Aa9aHNnyho70Lsa7ZgF4FTJZC/0O/Ee4kSDkbKiMFBiT8X74RVsmcAnAIrIqmLUZlyX
-         iWcR8RRWYjq1JpwMbwFP3LmKetV9uon2jqLaegMigDwEU1q8v7+E2+jRFi1KZmYag+Yl
-         VIsGEUI2/RXdh1GONNtXsIwkpf/6Yp5q0KwpXEZrvPrwtbxJ/DfW64VFP3iG04VSYiuP
-         DCbWgXPs5e6qp0SXinne0LHGPPv9WgXWimXVmlZ6y4h/JVGubG9PTZjVqtQjul2xoM+4
-         KMpw==
-X-Gm-Message-State: AOJu0Yz6h75enElZ4BcQVeGiriA4GN4LM3eDRYG5eMhkqvdxbfkpjK5p
-        tpahHtTCcVVqq99juN5BvZW4Fw==
-X-Google-Smtp-Source: AGHT+IFIMVvhNg464qJima4kezuYWuRmRs+hpxgOQnc+URZYC5BvtqpinR7GN44km7chTJtWGj8fDQ==
-X-Received: by 2002:a7b:c390:0:b0:401:38dc:8918 with SMTP id s16-20020a7bc390000000b0040138dc8918mr481515wmj.24.1693940015869;
-        Tue, 05 Sep 2023 11:53:35 -0700 (PDT)
+        bh=vPYbcmhlviFwWzuYOu9Z0ne7hiPspJP6iTCWdpKZ06M=;
+        b=AvY2fVbn68lR+Im8aGMwt5Qu3qUod0k9VzaSaEVkoag7YDQHpzPrsqxwCFV5uS1idT
+         Ow1K6SQt0952HDqqpaE3slFtXbPf177hcupC1W7iBZUqzLKha5YwsmxV0RF2s/mfGz9Z
+         1RNw4po+yZwOlsmEx+EjCvf0AEzET6HaqMO8ma+iWyrXQYAi0+6OoIUVSUv1DVTMAUhS
+         6TNyNVHvIT4k6qsggYN1PTwkJlG2dUozbvzyjl+1gD5QXDIx5DotD6Rs8k8vMFjHIEdG
+         o/Wq5NQvmARb6TzBqAGSeATPvlGevISpa5/SB8WctIty1Ik1Sfzwu2Ky6YcArGzK5uE8
+         tyFA==
+X-Gm-Message-State: AOJu0Yx6czeDan8ZGwT1d7xbEd2h15CoUKfe/mpwIg9GiZXP0iuGYL1c
+        gXjC4HijpIUM7s9tUjUBj8vadw==
+X-Google-Smtp-Source: AGHT+IH7bFhmwhJkbEP09mNLLK4toqHl75c1c56y8lKZfC2ULSFpMzvdc2De5dyozg7UIqDbZnvopw==
+X-Received: by 2002:a7b:cb96:0:b0:3fe:d6bf:f314 with SMTP id m22-20020a7bcb96000000b003fed6bff314mr414148wmi.39.1693940021910;
+        Tue, 05 Sep 2023 11:53:41 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:7a54:5dbc:6d09:48b7])
-        by smtp.gmail.com with ESMTPSA id 17-20020a05600c249100b003fbc30825fbsm17550010wms.39.2023.09.05.11.53.34
+        by smtp.gmail.com with ESMTPSA id 17-20020a05600c249100b003fbc30825fbsm17550010wms.39.2023.09.05.11.53.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Sep 2023 11:53:35 -0700 (PDT)
+        Tue, 05 Sep 2023 11:53:41 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>,
@@ -68,9 +68,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
         linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 08/21] gpio: acpi: provide acpi_gpio_device_free_interrupts()
-Date:   Tue,  5 Sep 2023 20:52:56 +0200
-Message-Id: <20230905185309.131295-9-brgl@bgdev.pl>
+Subject: [PATCH 13/21] hte: tegra194: improve the GPIO-related comment
+Date:   Tue,  5 Sep 2023 20:53:01 +0200
+Message-Id: <20230905185309.131295-14-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230905185309.131295-1-brgl@bgdev.pl>
 References: <20230905185309.131295-1-brgl@bgdev.pl>
@@ -82,86 +82,39 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-We're moving away from public functions that take struct gpio_chip as
-argument as the chip - unlike struct gpio_device - is owned by its
-provider and tied to its lifetime.
-
-Provide an alternative to acpi_gpiochip_free_interrupts().
+Using any of the GPIO interfaces using the global numberspace is
+deprecated. Make it clear in the comment.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpiolib-acpi.c | 29 +++++++++++++++++++++++------
- include/linux/gpio/driver.h | 12 ++++++++++++
- 2 files changed, 35 insertions(+), 6 deletions(-)
+ drivers/hte/hte-tegra194.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index fbda452fb4d6..5633e39396bc 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -558,12 +558,9 @@ void acpi_gpiochip_request_interrupts(struct gpio_chip *chip)
- }
- EXPORT_SYMBOL_GPL(acpi_gpiochip_request_interrupts);
+diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.c
+index 6fe6897047ac..9fd3c00ff695 100644
+--- a/drivers/hte/hte-tegra194.c
++++ b/drivers/hte/hte-tegra194.c
+@@ -407,12 +407,15 @@ static int tegra_hte_line_xlate(struct hte_chip *gc,
+ 		return -EINVAL;
  
--/**
-- * acpi_gpiochip_free_interrupts() - Free GPIO ACPI event interrupts.
-- * @chip:      GPIO chip
-- *
-- * Free interrupts associated with GPIO ACPI event method for the given
-- * GPIO chip.
-+/*
-+ * This function is deprecated, use acpi_gpio_device_free_interrupts()
-+ * instead.
-  */
- void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
- {
-@@ -604,6 +601,26 @@ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
- }
- EXPORT_SYMBOL_GPL(acpi_gpiochip_free_interrupts);
- 
-+/**
-+ * acpi_gpio_device_free_interrupts() - Free GPIO ACPI event interrupts.
-+ * @chip	GPIO device
-+ *
-+ * Free interrupts associated with GPIO ACPI event method for the given
-+ * GPIO device.
-+ */
-+void acpi_gpio_device_free_interrupts(struct gpio_device *gdev)
-+{
-+	struct gpio_chip *gc;
-+
-+	/* TODO: protect gdev->chip once SRCU is in place in GPIOLIB. */
-+	gc = gdev->chip;
-+	if (!gc)
-+		return;
-+
-+	acpi_gpiochip_free_interrupts(gc);
-+}
-+EXPORT_SYMBOL_GPL(acpi_gpio_device_free_interrupts);
-+
- int acpi_dev_add_driver_gpios(struct acpi_device *adev,
- 			      const struct acpi_gpio_mapping *gpios)
- {
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index b68b3493b29d..47906bc56b3d 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -835,4 +835,16 @@ static inline struct fwnode_handle *gpiochip_node_get_first(struct device *dev)
- 	return NULL;
- }
- 
-+/*
-+ * FIXME: Remove this once the only driver that uses it - android tablets -
-+ * becomes a good citizen and stops abusing GPIOLIB.
-+ */
-+#ifdef CONFIG_ACPI
-+void acpi_gpio_device_free_interrupts(struct gpio_device *gdev);
-+#else
-+static inline void acpi_gpio_device_free_interrupts(struct gpio_device *gdev)
-+{
-+}
-+#endif
-+
- #endif /* __LINUX_GPIO_DRIVER_H */
+ 	/*
++	 * GPIO consumers can access GPIOs in two ways:
+ 	 *
+-	 * There are two paths GPIO consumers can take as follows:
+-	 * 1) The consumer (gpiolib-cdev for example) which uses GPIO global
+-	 * number which gets assigned run time.
+-	 * 2) The consumer passing GPIO from the DT which is assigned
+-	 * statically for example by using TEGRA194_AON_GPIO gpio DT binding.
++	 * 1) Using the global GPIO numberspace.
++	 *
++	 * This is the old, now DEPRECATED method and should not be used in
++	 * new code. TODO: Check if tegra is even concerned by this.
++	 *
++	 * 2) Using GPIO descriptors that can be assigned to consumer devices
++	 * using device-tree, ACPI or lookup tables.
+ 	 *
+ 	 * The code below addresses both the consumer use cases and maps into
+ 	 * HTE/GTE namespace.
 -- 
 2.39.2
 
