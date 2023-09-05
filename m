@@ -2,119 +2,186 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93272C83F2C
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEAA0CA0FF8
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243072AbjIEQUP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:20:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36134 "EHLO
+        id S243304AbjIEQUU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Sep 2023 12:20:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354423AbjIELbo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 07:31:44 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 323D11AD
-        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 04:31:40 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-401f68602a8so23476735e9.3
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Sep 2023 04:31:40 -0700 (PDT)
+        with ESMTP id S1353888AbjIEIaw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 04:30:52 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5FE5CDB
+        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 01:30:47 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-501bd164fbfso876157e87.0
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Sep 2023 01:30:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693913498; x=1694518298; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ucSMS6f1i4AJkmKZWAiTc8WB+F0d5XaASaMmBm7ZJv0=;
-        b=vLBeAy8m9T9JIfk/d47cB5i8zfi83j9+DjUBWeHNpYmKa1wDd5/ldv32HD9TeFoP+i
-         3X60O5xuVzq+0CXfSsjl8PXLmbDYHk2jUmuvBkKYzHWnX4cpejmOQY42hRv6qZ88ycXB
-         jQxxVP36Ye6VbhmHlWTf0/9KLmx7ymd0m9/cyKhLFVIVqlFHnhQZKVHZ0pkPIXgP5w1E
-         nj9A+pBxn4B0vcjijqZ3DRbgAgRdfpiJzDRzm5o6VZUZhld++tWv7X6FJbql7FIL0UHp
-         /znsReTvQePi1kXcxj5Y99VnNIlJS9B6Cawq4xWe5QOIgWodGDkxBhlhcjJQULirTiax
-         gjQw==
+        d=fairphone.com; s=fair; t=1693902646; x=1694507446; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LWq30L/k6esO2m+8xJQ6plHCzdQIEU3cixCgpzG9F48=;
+        b=PXUS5OrCIr0hfIiE/RYFGI+eTfixlts42tgW5wCnRf0opXHzFIjtsXr6JyebIdn9tg
+         FBhI3Rqqee/Gl3C0da6tAxI6dCCXEQsjsVtuSr2n/p5xZGLu0vi5//ZskgqBM4Z53AdP
+         UBTfWJ35XhHIySddhkdM0qcNF8soWEqoGeFPw5Iak5/0zLUjsAMolwGVNsRdWCB6lpQY
+         p9RMVuACmnr0R14z8k1RuV8DV64dwrMxOQJtwxVyMP7nPkwp7feR04nkhRtKqX8gStDl
+         GALyse9Jh2L6M/GNvl34rZ5PAUGvFj0cIQx4fhKE/1joHr20rZDln+eGo2ZC8Slye1rm
+         1/iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693913498; x=1694518298;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ucSMS6f1i4AJkmKZWAiTc8WB+F0d5XaASaMmBm7ZJv0=;
-        b=DGaKetUF8xm9ilIXZmr+oDpzFxhAIOczb5On4ioYbJY1wM8XqEmsXrJHvGvLdOrNfk
-         rjFkJqglG7jDv77uLQsO6oJBpDKxxq2GOEtjPAtgDwIfzUy6dpMM83EPGdDZnbB3A7IF
-         jv/4ohN38kf1AFdGeuqG3Auo9WYgD8rYwIvB+BdNBeJ/YFncVsJ1qO7FRtEKTq8NTdh2
-         PkREMcqzs/ydGt5BFAtetmK9s8k66MT4MVZ6OxB+9uDMzCVp5z4JFKPKIg2CWiv/0QP/
-         UW6LZlv59BWb3uAiGvsXQbU11ywhuJ/R7o/DoXQmPo+reOgVyYfsKNHPg7kU8GByjBuB
-         J49g==
-X-Gm-Message-State: AOJu0YxRfWq7xFyqsMAh42sy9X28nny8MHBLLajDehLLmgo1eou37Ilm
-        tMhruQPBezJ/o1uVYf5qScyLfA==
-X-Google-Smtp-Source: AGHT+IEpJmilH9Tppz6BKD/gVURbvbPERFqtmnEdu+ZGNvg+ETGDXFXfFdgWvlIP9ozV8luG9EA7aA==
-X-Received: by 2002:a1c:4b08:0:b0:3fe:d1b9:7ea9 with SMTP id y8-20020a1c4b08000000b003fed1b97ea9mr9575348wma.36.1693913498664;
-        Tue, 05 Sep 2023 04:31:38 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id m9-20020a7bcb89000000b003fe26244858sm19823929wmi.46.2023.09.05.04.31.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Sep 2023 04:31:38 -0700 (PDT)
-Date:   Tue, 5 Sep 2023 14:31:35 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     oe-kbuild@lists.linux.dev, Biju Das <biju.das.jz@bp.renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 2/2] pinctrl: mcp23s08: Simplify probe()
-Message-ID: <2ce09856-244a-4e3f-89ff-d9439ea06af9@kadam.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230902090937.32195-3-biju.das.jz@bp.renesas.com>
+        d=1e100.net; s=20221208; t=1693902646; x=1694507446;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LWq30L/k6esO2m+8xJQ6plHCzdQIEU3cixCgpzG9F48=;
+        b=FPK0z1oVf6eEOrhaaKn3hXpUy7l1vyO725JtEzZOlOJZK5GKIrS4q+vA5d0DeFnIrJ
+         0Rdtsp14VQYNnoPvtmJpQVEJTsikPBp1l2QSAo2z+SADwjuRpREd8p8Ujjtb2cdqQ2lj
+         o+lqEU5LKEmE4ojLVzNNheVkCZiy+KZkfMwWBtK425w93RYHUPgdmQnHin1kmol5PQhv
+         ooCBfOPCASHsK7rizjgIf5kN3ixpoNyPyBRxj+oP2GSyIe5SZaQcfwFzcajA2pl9spI0
+         Bn4HIjYXBgFjeMsCod1Z/HIgOj+EKvLgRLKauIFUjw1xD0CQhZpjv/l4PLMIxUGRF3hT
+         SXbw==
+X-Gm-Message-State: AOJu0YwwzzBe6eckqlFgv7hTNGgTqsGNjr5btqk8aZ4kZ3rDRmWOrxAh
+        ImxZ3oV+y/geTKa3uEjwZcdqrQ==
+X-Google-Smtp-Source: AGHT+IHnW0XedN1vSaHx1JHDD4mFf80P5Zlb6gBn9z9f8KVQh7bwaME+VxnDiJKWubHNVVg3SjkedQ==
+X-Received: by 2002:a05:6512:ea6:b0:4fe:e50:422d with SMTP id bi38-20020a0565120ea600b004fe0e50422dmr9421046lfb.25.1693902645843;
+        Tue, 05 Sep 2023 01:30:45 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id fj22-20020a0564022b9600b005256aaa6e7asm667460edb.78.2023.09.05.01.30.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Sep 2023 01:30:45 -0700 (PDT)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 05 Sep 2023 10:30:44 +0200
+Message-Id: <CVAUDGBO4S08.1F0O66ZE6I4IG@otso>
+To:     "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
+Cc:     <cros-qcom-dts-watchers@chromium.org>,
+        "Andy Gross" <agross@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        "Srinivas Kandagatla" <srinivas.kandagatla@linaro.org>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Viresh Kumar" <viresh.kumar@linaro.org>,
+        <~postmarketos/upstreaming@lists.sr.ht>,
+        <phone-devel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH 04/11] arm64: dts: qcom: pm7250b: make SID configurable
+From:   "Luca Weiss" <luca.weiss@fairphone.com>
+X-Mailer: aerc 0.15.2
+References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
+ <20230830-fp5-initial-v1-4-5a954519bbad@fairphone.com>
+ <b82f4683-e8b5-b424-8f7a-6d2ba1cab61f@linaro.org>
+ <CV6NF0466658.20DGU7QKF2UBR@otso>
+ <CAA8EJpr1+W3f08X-FpiiVrJ98kg52HaMwbbKn=fG15Whm4C8aQ@mail.gmail.com>
+ <728003b9-db27-fdc0-e761-197a02a38c24@linaro.org>
+ <CAA8EJpoXreHpxZQ2G10n0OiQzUX4ffk=gvo87dAU4-r+Svqpeg@mail.gmail.com>
+In-Reply-To: <CAA8EJpoXreHpxZQ2G10n0OiQzUX4ffk=gvo87dAU4-r+Svqpeg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Biju,
+On Thu Aug 31, 2023 at 2:27 PM CEST, Dmitry Baryshkov wrote:
+> On Thu, 31 Aug 2023 at 14:54, Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+> >
+> > On 31/08/2023 13:33, Dmitry Baryshkov wrote:
+> > > On Thu, 31 Aug 2023 at 13:13, Luca Weiss <luca.weiss@fairphone.com> w=
+rote:
+> > >>
+> > >> On Wed Aug 30, 2023 at 12:06 PM CEST, Krzysztof Kozlowski wrote:
+> > >>> On 30/08/2023 11:58, Luca Weiss wrote:
+> > >>>> Like other Qualcomm PMICs the PM7250B can be used on different add=
+resses
+> > >>>> on the SPMI bus. Use similar defines like the PMK8350 to make this
+> > >>>> possible.
+> > >>>>
+> > >>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> > >>>> ---
+> > >>>>  arch/arm64/boot/dts/qcom/pm7250b.dtsi | 23 ++++++++++++++++------=
+-
+> > >>>>  1 file changed, 16 insertions(+), 7 deletions(-)
+> > >>>>
+> > >>>> diff --git a/arch/arm64/boot/dts/qcom/pm7250b.dtsi b/arch/arm64/bo=
+ot/dts/qcom/pm7250b.dtsi
+> > >>>> index e8540c36bd99..3514de536baa 100644
+> > >>>> --- a/arch/arm64/boot/dts/qcom/pm7250b.dtsi
+> > >>>> +++ b/arch/arm64/boot/dts/qcom/pm7250b.dtsi
+> > >>>> @@ -7,6 +7,15 @@
+> > >>>>  #include <dt-bindings/interrupt-controller/irq.h>
+> > >>>>  #include <dt-bindings/spmi/spmi.h>
+> > >>>>
+> > >>>> +/* This PMIC can be configured to be at different SIDs */
+> > >>>> +#ifndef PM7250B_SID
+> > >>>> +   #define PM7250B_SID 2
+> > >>>> +#endif
+> > >>>
+> > >>> Why do you send the same patch as v1, without any reference to prev=
+ious
+> > >>> discussions?
+> > >>>
+> > >>> You got here feedback already.
+> > >>>
+> > >>> https://lore.kernel.org/linux-arm-msm/f52524da-719b-790f-ad2c-0c3f3=
+13d9fe9@linaro.org/
+> > >>
+> > >> Hi Krzysztof,
+> > >>
+> > >> I did mention that original patch in the cover letter of this series=
+.
+> > >> I'm definitely aware of the discussion earlier this year there but a=
+lso
+> > >> tried to get an update lately if there's any update with no response=
+.
+> > >
+> > > I think the overall consensus was that my proposal is too complicated
+> > > for the DT files.
+> >
+> > I proposed to duplicate the entries. Do you keep QUP nodes in DTSI and
+> > customize per address? No.
+>
+> At the same time, we do keep SoC files separate from the board files.
+> Yes, I'm slightly exaggerating here.
+>
+> I think that for PMIC files it makes sense to extract common parts if
+> that eases reuse of the common parts.
 
-kernel test robot noticed the following build warnings:
+Hi all,
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+what can I do for v2 now?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Biju-Das/pinctrl-mcp23s08-Extend-match-support-for-OF-tables/20230902-171023
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20230902090937.32195-3-biju.das.jz%40bp.renesas.com
-patch subject: [PATCH 2/2] pinctrl: mcp23s08: Simplify probe()
-config: i386-randconfig-141-20230902 (https://download.01.org/0day-ci/archive/20230903/202309030751.GQvtrZnS-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20230903/202309030751.GQvtrZnS-lkp@intel.com/reproduce)
+1. Keep this patch as-is, and keep pm7250b in device dts.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202309030751.GQvtrZnS-lkp@intel.com/
+2. Drop pm7250b patch and drop from device dts, until _someone_ figures
+out a solution talking to the PMIC on different SID.
 
-smatch warnings:
-drivers/pinctrl/pinctrl-mcp23s08_i2c.c:33 mcp230xx_probe() error: we previously assumed 'info' could be null (see line 31)
+3. Something else like copy-pasting pm7250b.dtsi to pm7250-8.dtsi and
+changing the SID there, and using that in device dts.
 
-vim +/info +33 drivers/pinctrl/pinctrl-mcp23s08_i2c.c
+Please let me know what to do.
 
-8bb5811129f9e4 Uwe Kleine-König 2022-11-18  19  static int mcp230xx_probe(struct i2c_client *client)
-0f04a81784fe3d Andy Shevchenko  2020-04-07  20  {
-b5f259f6fc5912 Biju Das         2023-09-02  21  	const struct mcp23s08_i2c_info *info;
-0f04a81784fe3d Andy Shevchenko  2020-04-07  22  	struct device *dev = &client->dev;
-0f04a81784fe3d Andy Shevchenko  2020-04-07  23  	struct mcp23s08 *mcp;
-0f04a81784fe3d Andy Shevchenko  2020-04-07  24  	int ret;
-0f04a81784fe3d Andy Shevchenko  2020-04-07  25  
-0f04a81784fe3d Andy Shevchenko  2020-04-07  26  	mcp = devm_kzalloc(dev, sizeof(*mcp), GFP_KERNEL);
-0f04a81784fe3d Andy Shevchenko  2020-04-07  27  	if (!mcp)
-0f04a81784fe3d Andy Shevchenko  2020-04-07  28  		return -ENOMEM;
-0f04a81784fe3d Andy Shevchenko  2020-04-07  29  
-b5f259f6fc5912 Biju Das         2023-09-02  30  	info = i2c_get_match_data(client);
-b5f259f6fc5912 Biju Das         2023-09-02 @31  	if (!info)
-b5f259f6fc5912 Biju Das         2023-09-02  32  		return dev_err_probe(dev, -EINVAL, "invalid device type (%d)\n",
-b5f259f6fc5912 Biju Das         2023-09-02 @33  				     info->type);
-                                                                                     ^^^^^^^^^^
-info is NULL.
+Regards
+Luca
 
-0f04a81784fe3d Andy Shevchenko  2020-04-07  34  
-b5f259f6fc5912 Biju Das         2023-09-02  35  	mcp->reg_shift = info->reg_shift;
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> >
+> > I definitely do not agree to these ifndef->define. Maybe using just
+> > define would work (so drop ifndef->define), because this makes it
+> > obvious and fail-safe if included in wrong place... except that it is
+> > still not the define we expect. This is not the coding style present in
+> > other DTSes.
+> >
+> > The true problem how these SPMI bindings were created. Requiring SID
+> > address in every child is clearly redundant and I think we do not follo=
+w
+> > such approach anywhere else.
+> >
+> > Best regards,
+> > Krzysztof
+> >
 
