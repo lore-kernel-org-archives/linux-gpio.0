@@ -2,223 +2,212 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F40E3CA0FF3
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 16:19:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 208FBC83F2C
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236787AbjIEQT2 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:19:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47836 "EHLO
+        id S239260AbjIEQT3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Sep 2023 12:19:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354527AbjIEMVR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 08:21:17 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC7961AE;
-        Tue,  5 Sep 2023 05:21:10 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id D68BB80B2;
-        Tue,  5 Sep 2023 20:21:07 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 5 Sep
- 2023 20:21:07 +0800
-Received: from ubuntu.localdomain (113.72.144.73) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 5 Sep
- 2023 20:21:06 +0800
-From:   Hal Feng <hal.feng@starfivetech.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andreas Schwab <schwab@suse.de>,
-        Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Jianlong Huang <jianlong.huang@starfivetech.com>,
-        Hal Feng <hal.feng@starfivetech.com>
-CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 2/2] pinctrl: starfive: jh7110: Add system pm ops to save and restore context
-Date:   Tue, 5 Sep 2023 20:21:05 +0800
-Message-ID: <20230905122105.117000-3-hal.feng@starfivetech.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20230905122105.117000-1-hal.feng@starfivetech.com>
-References: <20230905122105.117000-1-hal.feng@starfivetech.com>
+        with ESMTP id S1353963AbjIEIxw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 04:53:52 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 944A0BF;
+        Tue,  5 Sep 2023 01:53:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1693904028; x=1725440028;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Qy+fLHGhxoRO9WkARntRemPAL3dnpsf54Dcy0IlrbJg=;
+  b=U2PA7OJlITMU5+i9EOj8SdT7RPRuHxpR+x7/70GTOzTr0pXxzK6fH0/F
+   BBy4QG1xrARgNqFNiLENC9lfBtV1clPwBxKCnjGu9sSC0kMgY6tfeP5bj
+   JHl9dFw6Y7H4mQ276OsPUtAeFQQHp/QBrMURcuCmNXWvYuFp2RZqYlgpQ
+   61F7Xg1yM+Hof84uSohEsF9u2O+4rxGVCgZ153gzQlAwvpjA0Yrre4fbU
+   OEgi18H86zRj+qxCUNhxzmiWvLkvyf+B3sGTXEzx1jD3fbobxH20UIsm3
+   72Py8H2cjrBQLuvCJg/D4qAwvi6MxdRCE7CAafiAjI6LGPlsQgukEN3eg
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="357053998"
+X-IronPort-AV: E=Sophos;i="6.02,229,1688454000"; 
+   d="scan'208";a="357053998"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2023 01:53:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="914755404"
+X-IronPort-AV: E=Sophos;i="6.02,229,1688454000"; 
+   d="scan'208";a="914755404"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orsmga005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 Sep 2023 01:53:46 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Tue, 5 Sep 2023 01:53:46 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27 via Frontend Transport; Tue, 5 Sep 2023 01:53:46 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.104)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.27; Tue, 5 Sep 2023 01:53:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gc5Xu+IcmCxkS2Qilh5lYmsbi92ubAxtuHrXtFfWGKqwZlnjKNGUJN3pq2hdbXAIPHScPLJmQidMyQ70K7UPE/c7fkHqZYTMyTO7IQxQhoHrvBr4liL6rLO7GNSaoS/kn9U8FR+UYe/o9i8ReQ1wNOLdWJk3bWBINA5LJ4J+2wTeEHHQ9kl2rcrqEZlHWijd9k9Ay35mp7vb8n1CFgX6191sW6yJTWHuJR99XXq3MCNVb58GrOhbaXjwOIDppnTva+t4QEDOUtsxbrp5gMZRJKqNMEkI5gkUFk8UhaTPSO3RqlFdZBED1DLirBlRr2MFq/b1OdPlbWealwrisyuAxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Qy+fLHGhxoRO9WkARntRemPAL3dnpsf54Dcy0IlrbJg=;
+ b=l+0PxplF3qQr0rI+/BG9mohAu0Dj2DiOU1pijiFG7I6UH6/uXwdSKW1Xvboak6pNrN9whiYNVaakbkmUnMlkUao46U2Mbe2lUUtnyUXNDi7l7OKhtz19oAaPve9ziArQRFM8fSLYj/buUD1ZrMOIJ0aJ/gbafysYxwtYVcsFLVRw+8XNIUdlJ+gHegchDj3yjvuvOLl4JOU2QgT/ZAg+RBT1QCfxhxkbIFscZ1kWMHYp8RFwG3/TMDHIcyVWtPqXx20Ecz1alRK0v8A97TwYBDGcUXSmSpgc23ob8I+a/vuMDyneMAr8Ud1mbd4f4XbNU7UwCFheGkG4xuJl7QxYkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4316.namprd11.prod.outlook.com (2603:10b6:5:205::16)
+ by DS0PR11MB7624.namprd11.prod.outlook.com (2603:10b6:8:141::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.33; Tue, 5 Sep
+ 2023 08:53:44 +0000
+Received: from DM6PR11MB4316.namprd11.prod.outlook.com
+ ([fe80::e836:4003:6244:2466]) by DM6PR11MB4316.namprd11.prod.outlook.com
+ ([fe80::e836:4003:6244:2466%7]) with mapi id 15.20.6745.030; Tue, 5 Sep 2023
+ 08:53:44 +0000
+From:   "Wu, Wentong" <wentong.wu@intel.com>
+To:     Oliver Neukum <oneukum@suse.com>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "mka@chromium.org" <mka@chromium.org>,
+        "lee@kernel.org" <lee@kernel.org>,
+        "wsa@kernel.org" <wsa@kernel.org>,
+        "kfting@nuvoton.com" <kfting@nuvoton.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "maz@kernel.org" <maz@kernel.org>, "brgl@bgdev.pl" <brgl@bgdev.pl>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
+        "andi.shyti@linux.intel.com" <andi.shyti@linux.intel.com>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "bartosz.golaszewski@linaro.org" <bartosz.golaszewski@linaro.org>,
+        "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>,
+        "Wang, Zhifeng" <zhifeng.wang@intel.com>
+Subject: RE: [PATCH v14 1/4] usb: Add support for Intel LJCA device
+Thread-Topic: [PATCH v14 1/4] usb: Add support for Intel LJCA device
+Thread-Index: AQHZ3vLqt0FUDCDFkU6MTx3mqLWspbAKeKEAgAAuthCAAAzNAIAAxW/ggABzcACAAAC/YA==
+Date:   Tue, 5 Sep 2023 08:53:43 +0000
+Message-ID: <DM6PR11MB4316F903C524668BA35707398DE8A@DM6PR11MB4316.namprd11.prod.outlook.com>
+References: <1693806261-12958-1-git-send-email-wentong.wu@intel.com>
+ <1693806261-12958-2-git-send-email-wentong.wu@intel.com>
+ <a8c8af1b-9399-6ca9-ea3d-b71e6ee68cad@suse.com>
+ <DM6PR11MB43166D27FB15905CB02DBC5B8DE9A@DM6PR11MB4316.namprd11.prod.outlook.com>
+ <7755c3ee-9d7e-8ae5-1cf7-a5247cc4e6e5@suse.com>
+ <DM6PR11MB4316C70D7C14B56ED349F01F8DE8A@DM6PR11MB4316.namprd11.prod.outlook.com>
+ <f6f8a9c4-faf1-f9da-e688-a29eb267fabc@suse.com>
+In-Reply-To: <f6f8a9c4-faf1-f9da-e688-a29eb267fabc@suse.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4316:EE_|DS0PR11MB7624:EE_
+x-ms-office365-filtering-correlation-id: db3b2075-559d-4298-f3ef-08dbaded9c16
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: HFrWn2sTZN1fklpKc1m16qKdMr+4a5Hz/fYpLJ5k4lOKKDedcrDYA8V+hMumQobGvxrFKCWl9fzY5tHZMTLhjbiNt4qLOJ4tztlJTCe1TWFRLkxZ7OC7PFkKMwseRJmShtLL3ZIPpq04Jd5C0tQhy8ZMRCPIx9ezUR3jBYK+F+SByrtgEooayAKyNQ3YRCc0TawVNkeDd0oxkkmMHszLj9MvKtdQZoLbRYIazCZ5Bw+I1OAZ7kHL/l7pNsLE+I4jfEhRebVritTB3gaDV+4QrE32336fcbfqNywKNJVScZzO/KLKZ3o9F1Buuna8wQhkYHKSwrhGlXWCHgD7v/LrO4cKNCEB5lOhyvd0cHkHxruIQ/b2Z2LkrstspPGj8p4hqDWa7Zor0WutWczOYNgFPcDDwwLs6wvTpi8oh9RimFFRhny13pl5bh2sR3wHneZfpNLeZHryvdGHSourBR//Si2kqci4Gbjr7jJts7GtTRddTkez8scSmv9/Fyq1IG+/rt4u+EOfRF5/kv0ExxVkZY9QNzCNEGF2r1xEzmIvmaqNdHB+FwCP2yDUy/risAmw+ck7IofzKnGMqO9CP3aXff5FERxudNVvYsEEXTrqceE/UvqHcuHS2+xkDAXdMLD0
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4316.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(39860400002)(346002)(376002)(136003)(366004)(186009)(1800799009)(451199024)(38100700002)(5660300002)(122000001)(38070700005)(478600001)(71200400001)(82960400001)(316002)(6916009)(76116006)(64756008)(54906003)(66476007)(66556008)(66446008)(66946007)(55016003)(41300700001)(52536014)(4326008)(8936002)(8676002)(83380400001)(2906002)(26005)(33656002)(86362001)(7416002)(53546011)(9686003)(7696005)(6506007);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?VWg4c1VVSk5EQkdLQUJxWk92WDArSVQrM2pYZXY4NEg0b2FnQUoxUVoyZCtp?=
+ =?utf-8?B?cFVVYm9ab0NwVnZiWUtkS203MXdrVlNDd284ZFo3SkR2VkpMOWxTN2xXc3ZG?=
+ =?utf-8?B?Y3EyWHlxT0xJOFZFWnFDRWFOOVlmWlJIbG1sNEE0bnRwYjRCUjU3QmhnN1Y2?=
+ =?utf-8?B?U0hXQjBVWmNGQWlSNHIzZHpZdUc4NVh3ckdXeWNUN2NOWHFpVittYzA1bFlj?=
+ =?utf-8?B?eUJhamZ6QytSYjFVdTVYaTM5SXpvZ0E0Sm1kamJwWmZBbjgva0FBS0U5bUJP?=
+ =?utf-8?B?SnB0MDZQVGNBeWR6Qi9xMVN2TmxQeUNLWjgvVTVzZWdDM1JyMVhWWUxZejdK?=
+ =?utf-8?B?WEw4aEhKaWE0a2I0WDBYZ25kN2o0eERsdWZCQVZIU2V3Nno4K2liWHhmcTd2?=
+ =?utf-8?B?a2hZN0FkSkQ4V2FKd1hINExTVnJTYXFpajJOR05mMmE0MVpDZkZPUjZjaGpt?=
+ =?utf-8?B?d2dDMkpNa0ZCMWFBMnQxUmJyaGRpbGZxQmlrSjhYUllxdXEwdEhDREc0d3VH?=
+ =?utf-8?B?TnlwUkM4Ylh2V3EzNmJyVXMrV1lPT1dETUx0VnA4dmpDNXZ5MUlXLytiZW9W?=
+ =?utf-8?B?dnM1WmZPSXJTSWRxVHFUNU1tbnJSellZN1k4TVRKUXZLM3pCK0RRdlU4ZzNQ?=
+ =?utf-8?B?RzBZdlhyNlVPeXRNcG5ybXRVRHRVbGtnV2tQVm11M1hNNmFta2JpSFZSQ2JE?=
+ =?utf-8?B?b2M5U3U4dzd5Tk1vVStTYnd1bW5ndm1xaEw2bHhzbXJ5aDVxSVhPMEpYekxK?=
+ =?utf-8?B?STlHTld1VU0vWm1mV1ltVlVEcTlVV1d6WVRncTB6ajM0TEtCR3lITFk2c3RX?=
+ =?utf-8?B?OTEzSzZSS3o3R2NUNUh1cStxbVN1enhuQ2pEcnNKSDJXaGg4dDNaaVVVYlN0?=
+ =?utf-8?B?WFllUXlBcmxsNVNHSW4yMXhGSVZOQ0MrOENFdGgwaitWRzIxYlYrYU5seHFn?=
+ =?utf-8?B?ZEJBZTRBVmhPUDhGU2l0ZkhPVnpvRnpvY3JXMm5GaTRnNWJvNnhLeEVmQUdz?=
+ =?utf-8?B?YkMwUHQzSGx6QlRZMGg2cUVUVGxlMnpaSVRMTEprUEVkQ2VRLy92ZWpXZzRu?=
+ =?utf-8?B?K0c0ZjM1dXNwQ3lhTDljRVFadXRDWlhNRE9NeG1yYWIxQ0pZcDZ2QXRzc0tJ?=
+ =?utf-8?B?bTU3QXJjRXprZVlFRnlvVFNxd0ErSGxXUnNuQTB6c3FqaEpqUVJGM1M5Zzd1?=
+ =?utf-8?B?aURSMVpOYWg3WjZ0anR5STExODJ3T2ZxTXd0L3dCTVU4YS9yeHRBcUpxVURJ?=
+ =?utf-8?B?ayt2VXhobllyRGNrWm5PQ0VDdVFrdnBaUVFIVlZhNitXNHV2WWlueVZZZUFp?=
+ =?utf-8?B?SmlYSHNKQzZGc1EwVHVsYi9LSkRTKzZBRzJpeHAvQU1scGFIQXdaR0FOS3NI?=
+ =?utf-8?B?OUZxVWhKOWtCUStlbUFCVmgxODNXNXFUYk1RR000dHc3TTRuL1dMWnJCN0ll?=
+ =?utf-8?B?TVc5WGZlOFVpOVdkUXpKTWd5dE41L2ZsUENSZkFMYldlb2o3RFBMNVR5VUJh?=
+ =?utf-8?B?QWNQSkpmWW9Ma2h6M1VLSnY4WHZxMWpjekI3ZmlKa2dRS3ZkZUpLaEVyMFND?=
+ =?utf-8?B?SWNHenRPa1JaWkVUWDBNL1BZNEsreTIrTkcrcU1BVURVeUFWZFlxanR5UFVD?=
+ =?utf-8?B?eVUvWVY4cTljcVIxZUtUTWx5NW16dlJYMDFVSXYwU2tGWU5BRlNPaXJHVkt3?=
+ =?utf-8?B?NU85Ukt1bGxGT3JPeGQ1U2ZYYjNFcjIyd1FuSDI1R1N0NmN3QmxOaExVOGFB?=
+ =?utf-8?B?QkZsZXdKbVZOL1M1SXpXSGhJNXl3TXhqQ1pydHFtQnJnMWVKOWlCWUlhb1Fk?=
+ =?utf-8?B?Y05xSlRMZnBZQzIrM1NQdEdpQVVtTUVJck9RMmYrd2xaTTNmYythek5xT29x?=
+ =?utf-8?B?cjJ2Z21ycXc2VFdHbmlVR2YzR0w5Ymk3WExuMlNBaGxoTGdSN09VcTFJQkRC?=
+ =?utf-8?B?SDVHK0hoSXV1Q1JyMHVXODh5dnU2U3ZOcWVrdnREcTk2YmtOM2lkMHFCQ0Vu?=
+ =?utf-8?B?UFQzTGxFTHFaSnRWRWJESFM4WFhnTzlhR0JpRUlnbFRaWXNXcGxXbzgwK29x?=
+ =?utf-8?B?MU44UG1zNU9UekZIa3BONGl0c3loeE9ZTU1NcmM0ZVR5ZWJZcE1YZEpVSjhC?=
+ =?utf-8?Q?IfSng3PabPU/QV5OYAfJgHnSX?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [113.72.144.73]
-X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
-Content-Transfer-Encoding: 8BIT
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4316.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db3b2075-559d-4298-f3ef-08dbaded9c16
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2023 08:53:44.0465
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: nMt+XAG61/U8E/aHAb8TIjIZRccOweClpMhS2V6qR9z1BYc2L5gisyL1Brq0i5oalNlLDAjop5vn6bvQFylMoQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7624
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add system pm ops to save and restore pinctrl registers
-when suspending and resuming the driver, respectively.
-
-Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
----
- MAINTAINERS                                   |  1 +
- .../starfive/pinctrl-starfive-jh7110-aon.c    |  4 ++
- .../starfive/pinctrl-starfive-jh7110-sys.c    |  4 ++
- .../starfive/pinctrl-starfive-jh7110.c        | 40 +++++++++++++++++++
- .../starfive/pinctrl-starfive-jh7110.h        |  4 ++
- 5 files changed, 53 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4cc6bf79fdd8..6c7eabeef28f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20302,6 +20302,7 @@ F:	include/dt-bindings/clock/starfive?jh71*.h
- STARFIVE JH71X0 PINCTRL DRIVERS
- M:	Emil Renner Berthing <kernel@esmil.dk>
- M:	Jianlong Huang <jianlong.huang@starfivetech.com>
-+M:	Hal Feng <hal.feng@starfivetech.com>
- L:	linux-gpio@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/pinctrl/starfive,jh71*.yaml
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c
-index 8cf28aaed254..8691fd55594a 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c
-@@ -34,6 +34,8 @@
- #define JH7110_AON_NGPIO		4
- #define JH7110_AON_GC_BASE		64
- 
-+#define JH7110_AON_REGS_NUM		37
-+
- /* registers */
- #define JH7110_AON_DOEN			0x0
- #define JH7110_AON_DOUT			0x4
-@@ -148,6 +150,7 @@ static const struct jh7110_pinctrl_soc_info jh7110_aon_pinctrl_info = {
- 	.gpi_mask	= GENMASK(3, 0),
- 	.gpioin_reg_base	   = JH7110_AON_GPIOIN,
- 	.irq_reg		   = &jh7110_aon_irq_reg,
-+	.nsaved_regs		   = JH7110_AON_REGS_NUM,
- 	.jh7110_set_one_pin_mux  = jh7110_aon_set_one_pin_mux,
- 	.jh7110_get_padcfg_base  = jh7110_aon_get_padcfg_base,
- 	.jh7110_gpio_irq_handler = jh7110_aon_irq_handler,
-@@ -168,6 +171,7 @@ static struct platform_driver jh7110_aon_pinctrl_driver = {
- 	.driver = {
- 		.name = "starfive-jh7110-aon-pinctrl",
- 		.of_match_table = jh7110_aon_pinctrl_of_match,
-+		.pm = pm_sleep_ptr(&jh7110_pinctrl_pm_ops),
- 	},
- };
- module_platform_driver(jh7110_aon_pinctrl_driver);
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c
-index bc279a39613f..0654731d5c27 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c
-@@ -33,6 +33,8 @@
- #define JH7110_SYS_NGPIO		64
- #define JH7110_SYS_GC_BASE		0
- 
-+#define JH7110_SYS_REGS_NUM		174
-+
- /* registers */
- #define JH7110_SYS_DOEN			0x000
- #define JH7110_SYS_DOUT			0x040
-@@ -419,6 +421,7 @@ static const struct jh7110_pinctrl_soc_info jh7110_sys_pinctrl_info = {
- 	.gpi_mask	= GENMASK(6, 0),
- 	.gpioin_reg_base	   = JH7110_SYS_GPIOIN,
- 	.irq_reg		   = &jh7110_sys_irq_reg,
-+	.nsaved_regs		   = JH7110_SYS_REGS_NUM,
- 	.jh7110_set_one_pin_mux  = jh7110_sys_set_one_pin_mux,
- 	.jh7110_get_padcfg_base  = jh7110_sys_get_padcfg_base,
- 	.jh7110_gpio_irq_handler = jh7110_sys_irq_handler,
-@@ -439,6 +442,7 @@ static struct platform_driver jh7110_sys_pinctrl_driver = {
- 	.driver = {
- 		.name = "starfive-jh7110-sys-pinctrl",
- 		.of_match_table = jh7110_sys_pinctrl_of_match,
-+		.pm = pm_sleep_ptr(&jh7110_pinctrl_pm_ops),
- 	},
- };
- module_platform_driver(jh7110_sys_pinctrl_driver);
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-index 72747ad497b5..813b5c2f11b6 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-@@ -873,6 +873,13 @@ int jh7110_pinctrl_probe(struct platform_device *pdev)
- 	if (!sfp)
- 		return -ENOMEM;
- 
-+#if IS_ENABLED(CONFIG_PM_SLEEP)
-+	sfp->saved_regs = devm_kcalloc(dev, info->nsaved_regs,
-+				       sizeof(*sfp->saved_regs), GFP_KERNEL);
-+	if (!sfp->saved_regs)
-+		return -ENOMEM;
-+#endif
-+
- 	sfp->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(sfp->base))
- 		return PTR_ERR(sfp->base);
-@@ -974,6 +981,39 @@ int jh7110_pinctrl_probe(struct platform_device *pdev)
- }
- EXPORT_SYMBOL_GPL(jh7110_pinctrl_probe);
- 
-+static int jh7110_pinctrl_suspend(struct device *dev)
-+{
-+	struct jh7110_pinctrl *sfp = dev_get_drvdata(dev);
-+	unsigned long flags;
-+	unsigned int i;
-+
-+	raw_spin_lock_irqsave(&sfp->lock, flags);
-+	for (i = 0 ; i < sfp->info->nsaved_regs ; i++)
-+		sfp->saved_regs[i] = readl_relaxed(sfp->base + 4 * i);
-+
-+	raw_spin_unlock_irqrestore(&sfp->lock, flags);
-+	return 0;
-+}
-+
-+static int jh7110_pinctrl_resume(struct device *dev)
-+{
-+	struct jh7110_pinctrl *sfp = dev_get_drvdata(dev);
-+	unsigned long flags;
-+	unsigned int i;
-+
-+	raw_spin_lock_irqsave(&sfp->lock, flags);
-+	for (i = 0 ; i < sfp->info->nsaved_regs ; i++)
-+		writel_relaxed(sfp->saved_regs[i], sfp->base + 4 * i);
-+
-+	raw_spin_unlock_irqrestore(&sfp->lock, flags);
-+	return 0;
-+}
-+
-+const struct dev_pm_ops jh7110_pinctrl_pm_ops = {
-+	LATE_SYSTEM_SLEEP_PM_OPS(jh7110_pinctrl_suspend, jh7110_pinctrl_resume)
-+};
-+EXPORT_SYMBOL_GPL(jh7110_pinctrl_pm_ops);
-+
- MODULE_DESCRIPTION("Pinctrl driver for the StarFive JH7110 SoC");
- MODULE_AUTHOR("Emil Renner Berthing <kernel@esmil.dk>");
- MODULE_AUTHOR("Jianlong Huang <jianlong.huang@starfivetech.com>");
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h
-index 3f20b7ff96dd..a33d0d4e1382 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h
-@@ -21,6 +21,7 @@ struct jh7110_pinctrl {
- 	/* register read/write mutex */
- 	struct mutex mutex;
- 	const struct jh7110_pinctrl_soc_info *info;
-+	u32 *saved_regs;
- };
- 
- struct jh7110_gpio_irq_reg {
-@@ -50,6 +51,8 @@ struct jh7110_pinctrl_soc_info {
- 
- 	const struct jh7110_gpio_irq_reg *irq_reg;
- 
-+	unsigned int nsaved_regs;
-+
- 	/* generic pinmux */
- 	int (*jh7110_set_one_pin_mux)(struct jh7110_pinctrl *sfp,
- 				      unsigned int pin,
-@@ -66,5 +69,6 @@ void jh7110_set_gpiomux(struct jh7110_pinctrl *sfp, unsigned int pin,
- 			unsigned int din, u32 dout, u32 doen);
- int jh7110_pinctrl_probe(struct platform_device *pdev);
- struct jh7110_pinctrl *jh7110_from_irq_desc(struct irq_desc *desc);
-+extern const struct dev_pm_ops jh7110_pinctrl_pm_ops;
- 
- #endif /* __PINCTRL_STARFIVE_JH7110_H__ */
--- 
-2.38.1
-
+PiBGcm9tOiBPbGl2ZXIgTmV1a3VtIDxvbmV1a3VtQHN1c2UuY29tPg0KPiANCj4gT24gMDUuMDku
+MjMgMDQ6MjAsIFd1LCBXZW50b25nIHdyb3RlOg0KPiANCj4gSGksDQo+IA0KPiA+PiBUaGF0IGlz
+IHRoYXQgeW91IHdpbGwgaGFuZyBhcmJpdHJhcmlseSBsb25nIGluIGRpc2Nvbm5lY3Q/DQo+ID4g
+VGhpcyByb3V0aW5lIGlzbid0IGNhbGxlZCBpbiBhbiBpbnRlcnJ1cHQgY29udGV4dCwgYW5kIGl0
+IGFsbG93cyBzbGVlcA0KPiA+IG9yIHdhaXQgc29tZXRoaW5nIGJlZm9yZSB0aGUgcmVhbCBzaHV0
+ZG93biBsaWtlIG1hbnkgZHJpdmVycycgcmVtb3ZlKCkNCj4gPiBvcg0KPiA+IGRpc2Nvbm5lY3Qo
+KSBkby4NCj4gDQo+IEl0IGlzLCBob3dldmVyLCBpbiB0aGUgY29udGV4dCBvZiBhIGtlcm5lbCB0
+aHJlYWQuIFdlIGNhbiB3YWl0LCBidXQgbm90IGZvcg0KPiBhcmJpdHJhcnkgcGVyaW9kcy4NCg0K
+QUZBSUssIHRoaXMgaXMgdmVyeSBjb21tb24uDQoNCj4gDQo+ID4gSWYgd2Ugd2FudCB0byBzcGVl
+ZCB1cCB0aGUgZGlzY29ubmVjdCgpLCBiZWxvdyBjaGFuZ2VzIGlzIHRvIGNvbXBsZXRlDQo+ID4g
+dGhlIGNtZF9jb21wbGV0aW9uIGlmIHVzYl9raWxsX3VyYigpIGhhcyBiZWVuIGNhbGxlZCwgYnV0
+IHRoZXJlIGlzDQo+ID4gc3RpbGwgcG9zc2liaWxpdHkgbGpjYSBjbGllbnQgaW5pdCBvbmUgbW9y
+ZSB0cmFuc2ZlciBiZWZvcmUNCj4gPiBhdXhpbGlhcnlfZGV2aWNlX2RlbGV0ZSgpDQo+ID4NCj4g
+PiBAQCAtMjA2LDcgKzIwNiwxMSBAQCBzdGF0aWMgdm9pZCBsamNhX3JlY3Yoc3RydWN0IHVyYiAq
+dXJiKQ0KPiA+DQo+ID4gICAgICAgICAgaWYgKHVyYi0+c3RhdHVzKSB7DQo+ID4gICAgICAgICAg
+ICAgICAgICAvKiBzeW5jL2FzeW5jIHVubGluayBmYXVsdHMgYXJlbid0IGVycm9ycyAqLw0KPiA+
+IC0gICAgICAgICAgICAgICBpZiAodXJiLT5zdGF0dXMgPT0gLUVOT0VOVCB8fCB1cmItPnN0YXR1
+cyA9PSAtRUNPTk5SRVNFVCB8fA0KPiA+ICsgICAgICAgICAgICAgICBpZiAodXJiLT5zdGF0dXMg
+PT0gLUVOT0VOVCkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGNvbXBsZXRlKCZhZGFw
+LT5jbWRfY29tcGxldGlvbik7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuOw0K
+PiANCj4gSSdkIHNheSB5b3UnZCBicmVhayBzdXNwZW5kKCkgYnkgc3VjaCBhIGNoYW5nZS4NCj4g
+WW91IGNhbm5vdCBjb21wbGV0ZSBpbiB0aGUgaW50ZXJydXB0IGhhbmRsZXIsIHVubGVzcyB5b3Ug
+Y2FuIGRldGVybWluZSB3aHkgdGhlDQo+IFVSQiBpcyBraWxsZWQuDQoNCldpdGggYmVsb3cgc3Rh
+dHVzIGZpZWxkIGluIGxqY2FfYWRhcHRlciB0byBkZXRlcm1pbmUgaWYgaXQncyBraWxsZWQgYnkg
+ZGlzY29ubmVjdCgpLg0KDQpJZiB0aGlzIGlzIHByZWZlcnJlZCwgSSBjb3VsZCBjb29rIHRoZSBw
+YXRjaCBmb3IgcmV2aWV3Lg0KDQpJZiB0aGlzIGlzIGZpeGVkLCBjb3VsZCB5b3UgcGxlYXNlIGhl
+bHAgbWVyZ2UgdGhpcyB1c2ItbGpjYSBkcml2ZXIgc28gdGhhdCBpdCB3b24ndA0KYmxvY2sgb3Ro
+ZXJzIHdoaWNoIGRlcGVuZHMgb24gdGhpcyBkcml2ZXI/DQoNCkJSLA0KV2VudG9uZw0KPiANCj4g
+PiArICAgICAgICAgICAgICAgfQ0KPiA+ICsgICAgICAgICAgICAgICBpZiAodXJiLT5zdGF0dXMg
+PT0gLUVDT05OUkVTRVQgfHwNCj4gPiAgICAgICAgICAgICAgICAgICAgICB1cmItPnN0YXR1cyA9
+PSAtRVNIVVRET1dOKQ0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm47DQo+ID4N
+Cj4gPiBwZXJoYXBzIHdlIGNvdWxkIGFkZCBvbmUgbW9yZSAnc3RhdHVzJyBmaWVsZCBpbiBsamNh
+X2FkYXB0ZXIgdG8NCj4gPiByZXByZXNlbnQNCj4gPiBkaXNjb25uZWN0KCkgaGFwcGVuIG9yIG5v
+dCwgYW5kIGl0IHdpbGwgYmUgY2hlY2tlZCBpbiB0aGUgYmVnaW5uaW5nIG9mDQo+ID4gbGpjYV9z
+ZW5kKCkgdG8gYXZvaWQgYW55IG5ldyB0cmFuc2Zlci4NCj4gDQo+IFRoYXQgd291bGQgYmUgYSBz
+b2x1dGlvbi4NCj4gDQo+IA0KPiAJUmVnYXJkcw0KPiAJCU9saXZlcg0K
