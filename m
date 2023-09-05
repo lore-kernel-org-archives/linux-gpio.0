@@ -2,112 +2,97 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B795ECA0FF3
-	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 16:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0600BCA0FE2
+	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 16:19:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231779AbjIEQTV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:19:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58388 "EHLO
+        id S237725AbjIEQTW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Sep 2023 12:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353877AbjIEI2C (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 04:28:02 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E90D6CCB
-        for <linux-gpio@vger.kernel.org>; Tue,  5 Sep 2023 01:27:55 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-4018af103bcso14249555e9.1
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Sep 2023 01:27:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693902474; x=1694507274; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yZOJVeABpFpne+4zxTVbLhiPldIS4DZuhrgZSQO5xhg=;
-        b=C7jRPpvPWdKNofhdUtxIkmuetQa24LV+ISujOD1s0qovUmBNySN/gzmGe7K50ny1EO
-         dMqdwWj3WkwqwPHF9Q9HS1osrF2/whi54U9+wviKwCRqYRMFUL2vOBq2bk0/JWUNUppb
-         JVDL8WbeCxGgO2VclnkxO1yXxQ57ve+5ASmo7o2haJBuLp1kIRt9l3DMZCpJcsqv38If
-         Ivf5BwtycJQzfh9qPqug81e+x064j/ARInbhzd8nW87vMel7Deg+na53fa5Nec8INQL9
-         bMBNNUmCPK1s5GOBERoMYnh3yZ2fnq6P3kaYXJPIYD0pNJnYWj/q2Fpgv6S/I4x0q4pf
-         aylQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693902474; x=1694507274;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yZOJVeABpFpne+4zxTVbLhiPldIS4DZuhrgZSQO5xhg=;
-        b=J0zXOn3XWp61IDYtZwUzIujv/DKiX3EpX5pPPCSsbHlWsp4w1Jfu+kBVVy1PjWPJKh
-         2Wl125Lhsm+aeefkhGgN7rUV0T9U126+MKFl4Ob/CgskmcPJ3MFeXAGYzrlKCKDgiKH1
-         i92annMfoQkqkyVNQoektdRM1SFJvUaX/9FtdDYUMVAD/h2zL6LKjjEKLKJuQihpTnoU
-         WvB1RT3X9KzuvEQiHJid2tG4oQ07S2yvP76gSToScxeXT55xcRewoh2ZNBBnRcwcYWyn
-         2JhVLy/pR8nsk9MVwf6CrT3FqmYtjL+dFYVlKwXjhzXkKaKtguro/XsoyJX4L4PldBjt
-         I10Q==
-X-Gm-Message-State: AOJu0YzUAZk1p34ro9ijKCANBAUYp2dGCs9oXUUvHRRf/MrFBzKxL4Xd
-        3zYzJURlYouib9atSTl+zGgrrg==
-X-Google-Smtp-Source: AGHT+IG/8oMolQYl3peTlkwkusxIIAHFH1Y84dqOJM5uxINZi5NFn9P2rlDqHiO5pvuSl/HD1+tYoQ==
-X-Received: by 2002:a05:600c:4656:b0:401:b24b:8279 with SMTP id n22-20020a05600c465600b00401b24b8279mr12036182wmo.1.1693902474406;
-        Tue, 05 Sep 2023 01:27:54 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id n9-20020a05600c294900b003feff926fc5sm16206338wmd.17.2023.09.05.01.27.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Sep 2023 01:27:53 -0700 (PDT)
-Date:   Tue, 5 Sep 2023 11:27:50 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Mark Brown <broonie@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>, linux-spi@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
+        with ESMTP id S1354287AbjIEKeJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 06:34:09 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3105CE8;
+        Tue,  5 Sep 2023 03:34:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1693910046; x=1725446046;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=y11ZHa+JZmvOm6gwUSg6E263+YzQF1w25u/4Vg0K8mI=;
+  b=TvnYY4/xY6l6wbMqVkKIypZ6EfRlTmaGWrQKQOFKwJxK1YMukbeX3ukf
+   7V3bHrZCRiR77VptkBG/vCmTJTvOrUbWltEDHaRsenmmM2o8+JHA02B8b
+   8GCoOxtdJuLsUJmVP+UnWNwfQr9IoZrd2lTh0N4ZKmVWQYAk4Lc4fOwnv
+   of5UbEuBifsfGsLZuwTBe89mAKn9W0jtouzzUhudLRHdrTpcxFv9m95DQ
+   bRPQ0MmCIbYIUBhnYajI/XJwBZzQfcfDwCihSryoI6dFzs/ZXKnKXmHED
+   1tI1kDe16purxmn68qrZ+KpuMJix15sc5fsJOL0Hw5B89GHsL0xeUM9id
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="356255368"
+X-IronPort-AV: E=Sophos;i="6.02,229,1688454000"; 
+   d="scan'208";a="356255368"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2023 03:34:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="734606064"
+X-IronPort-AV: E=Sophos;i="6.02,229,1688454000"; 
+   d="scan'208";a="734606064"
+Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.54])
+  by orsmga007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2023 03:34:02 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qdTNd-006eig-3A;
+        Tue, 05 Sep 2023 13:33:57 +0300
+Date:   Tue, 5 Sep 2023 13:33:57 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [RFT PATCH v2] spi: bcm2835: reduce the abuse of the GPIO API
-Message-ID: <527c52aa-e9c6-41d5-a60d-60d79ab94439@kadam.mountain>
-References: <20230901111548.12733-1-brgl@bgdev.pl>
- <CACRpkdYLcOZQ9r46aBwesh-H392C_0AWC8n2ikuwUknfEhoNNA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpiolib: rename gpio_chip_hwgpio() for consistency
+Message-ID: <ZPcEFXF9Fz762kzK@smile.fi.intel.com>
+References: <20230904073410.5880-1-brgl@bgdev.pl>
+ <20230904073410.5880-2-brgl@bgdev.pl>
+ <ZPWjAUzqeAwF1wro@smile.fi.intel.com>
+ <CAMRc=MeMYi0KbK=1RYGX2zbUjVZyQp-Y_aXfy6+EZcEtUSEU0A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdYLcOZQ9r46aBwesh-H392C_0AWC8n2ikuwUknfEhoNNA@mail.gmail.com>
+In-Reply-To: <CAMRc=MeMYi0KbK=1RYGX2zbUjVZyQp-Y_aXfy6+EZcEtUSEU0A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 01, 2023 at 02:15:39PM +0200, Linus Walleij wrote:
-> On Fri, Sep 1, 2023 at 1:15 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> 
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Sep 05, 2023 at 10:37:32AM +0200, Bartosz Golaszewski wrote:
+> On Mon, Sep 4, 2023 at 11:27 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Mon, Sep 04, 2023 at 09:34:10AM +0200, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > All other functions that manipulate a struct gpio_desc use the gpiod_
+> > > prefix. Follow this convention and rename gpio_chip_hwgpio() to
+> > > gpiod_get_hwgpio().
 > >
-> > Currently the bcm2835 SPI driver uses functions that are available
-> > exclusively to GPIO providers as a way to handle a platform quirk. Let's
-> > use a slightly better alternative that avoids poking around in GPIOLIB's
-> > internals and use GPIO lookup tables.
-> >
-> > Link: https://www.spinics.net/lists/linux-gpio/msg36218.html
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > Same comment. Also, I don't think it's good idea as it steps on the exported
+> > API's toes. I.o.w. I won't mix those two.
 > 
-> > +#include <linux/cleanup.h>
-> (...)
-> > -       struct gpio_chip *chip;
-> > +       struct gpiod_lookup_table *lookup __free(kfree) = NULL;
-> 
-> Whoa!
-> This is really neat.
+> Even if I agreed with your other comment, gpio_chip_hwgpio() is a
+> terrible name and if I didn't know, I couldn't tell you what it does
+> just from looking at the name.
 
-Yeah.  I like this stuff.  It should fix a lot of issues.  In some ways
-I prefer this kind of clean up to devm_ managed resources.
+That's can be improved, my previous comments were basically to avoid
+mixing prefixes for internal and external APIs, let's say prefix them
+similarly, but for internal with space and/or more verbose naming
 
-> As noted, it will confuse static checkers at no end, but they just have
-> to adopt. (CC to Dan C if he now runs into this.)
+	gpiod_		gpio_desc_
+	gpiochip_	gpio_chip_
+	gdev_		gpio_device_
 
-I think I updated Smatch to parse this correctly.  I've tested on this
-patch and it seems to work okay.  There probably will be some fall out
-in weird corners of Smatch.  Let me know if you see any problems.
+(as an example).
 
-regards,
-dan carpenter
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
