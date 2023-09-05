@@ -2,127 +2,125 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90608CA0FFD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E4ACA0FF8
 	for <linux-gpio@archiver.kernel.org>; Tue,  5 Sep 2023 16:20:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233253AbjIEQUI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:20:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57540 "EHLO
+        id S242702AbjIEQUG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 5 Sep 2023 12:20:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354475AbjIEL7Y (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 07:59:24 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BC7F1AB;
-        Tue,  5 Sep 2023 04:59:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1693915161; x=1725451161;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=TcBkexx1ijuD6/7qzSOMMmTOOVh0jXXDYPWa8+VyVY4=;
-  b=RKlXh3U0vw4fy6pE/3/82fyF0IQD15hvIZA7hne3ZUb/+CqL3l+ufJ/t
-   E+KaT6IZnWiy+sZp0K9/FJMGt4dCpBvl4lDsKdbYyf8PY7NJCmB5kMkRG
-   b4Iu+efmni5wrQyc/0CDI75MJVmOv0cT6HO3PCpme58Xl17Bg0buOVyc9
-   //2yASEAJHIRl2RXnQXrLYMT8ZldHCIh5KOY0gK0wLaH/rPkX7gOYOwfK
-   VkZP0FzoIhqGCe2Uez4/s3V80xvVgTvkZ3kEg9uacDEa2Yi6UkQJQjR51
-   zA7uH25tGh7ugnB2BQfLdMDfLz/1mdtIzl2zsgTrF23DNXCpIhQUbSyi8
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="407764460"
-X-IronPort-AV: E=Sophos;i="6.02,229,1688454000"; 
-   d="scan'208";a="407764460"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2023 04:59:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10823"; a="806575589"
-X-IronPort-AV: E=Sophos;i="6.02,229,1688454000"; 
-   d="scan'208";a="806575589"
-Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.54])
-  by fmsmga008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2023 04:59:19 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qdUiD-006g0F-06;
-        Tue, 05 Sep 2023 14:59:17 +0300
-Date:   Tue, 5 Sep 2023 14:59:16 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 2/2] gpiolib: rename gpio_chip_hwgpio() for consistency
-Message-ID: <ZPcYFF7sSrriFYqV@smile.fi.intel.com>
-References: <20230904073410.5880-1-brgl@bgdev.pl>
- <20230904073410.5880-2-brgl@bgdev.pl>
- <ZPWjAUzqeAwF1wro@smile.fi.intel.com>
- <CAMRc=MeMYi0KbK=1RYGX2zbUjVZyQp-Y_aXfy6+EZcEtUSEU0A@mail.gmail.com>
- <ZPcEFXF9Fz762kzK@smile.fi.intel.com>
- <CAMRc=MctTGNe2v8bBKQp6Dh3EuhP+OmO8yxrMgrHT3+m2AGjnQ@mail.gmail.com>
+        with ESMTP id S1354171AbjIEKEU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2023 06:04:20 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67F1E198;
+        Tue,  5 Sep 2023 03:04:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E6B0FB81104;
+        Tue,  5 Sep 2023 10:04:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 134C4C433C8;
+        Tue,  5 Sep 2023 10:04:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1693908253;
+        bh=cQTnkMhDRy5JwEJ7hQwW45cTKaEjXmpkptxk9UnTN9c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gX2uxS5VVjeEKiCCpQxqG55A1d6tr08FU879bG5+NXYZLFyFaMPppX3z5yy4yLqod
+         dNwYiKnW4TFGr/ImkTHkmpe/bve7rwiugwIiFQfqwrKvi/9HkBUuW6mmPCH3GfZ6Tf
+         q5pVNKTsBUkwS9aQg+3O3Ii2W/CsulKJysn/CMDM=
+Date:   Tue, 5 Sep 2023 11:04:10 +0100
+From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To:     "Wu, Wentong" <wentong.wu@intel.com>
+Cc:     Oliver Neukum <oneukum@suse.com>, "arnd@arndb.de" <arnd@arndb.de>,
+        "mka@chromium.org" <mka@chromium.org>,
+        "lee@kernel.org" <lee@kernel.org>,
+        "wsa@kernel.org" <wsa@kernel.org>,
+        "kfting@nuvoton.com" <kfting@nuvoton.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "maz@kernel.org" <maz@kernel.org>, "brgl@bgdev.pl" <brgl@bgdev.pl>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
+        "andi.shyti@linux.intel.com" <andi.shyti@linux.intel.com>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "bartosz.golaszewski@linaro.org" <bartosz.golaszewski@linaro.org>,
+        "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>,
+        "Wang, Zhifeng" <zhifeng.wang@intel.com>
+Subject: Re: [PATCH v14 1/4] usb: Add support for Intel LJCA device
+Message-ID: <2023090530-cleft-chivalry-b59f@gregkh>
+References: <1693806261-12958-1-git-send-email-wentong.wu@intel.com>
+ <1693806261-12958-2-git-send-email-wentong.wu@intel.com>
+ <a8c8af1b-9399-6ca9-ea3d-b71e6ee68cad@suse.com>
+ <DM6PR11MB43166D27FB15905CB02DBC5B8DE9A@DM6PR11MB4316.namprd11.prod.outlook.com>
+ <7755c3ee-9d7e-8ae5-1cf7-a5247cc4e6e5@suse.com>
+ <DM6PR11MB4316C70D7C14B56ED349F01F8DE8A@DM6PR11MB4316.namprd11.prod.outlook.com>
+ <f6f8a9c4-faf1-f9da-e688-a29eb267fabc@suse.com>
+ <DM6PR11MB4316F903C524668BA35707398DE8A@DM6PR11MB4316.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MctTGNe2v8bBKQp6Dh3EuhP+OmO8yxrMgrHT3+m2AGjnQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <DM6PR11MB4316F903C524668BA35707398DE8A@DM6PR11MB4316.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 05, 2023 at 01:26:34PM +0200, Bartosz Golaszewski wrote:
-> On Tue, Sep 5, 2023 at 12:34 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > On Tue, Sep 05, 2023 at 10:37:32AM +0200, Bartosz Golaszewski wrote:
-> > > On Mon, Sep 4, 2023 at 11:27 AM Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > On Mon, Sep 04, 2023 at 09:34:10AM +0200, Bartosz Golaszewski wrote:
-> > > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > > >
-> > > > > All other functions that manipulate a struct gpio_desc use the gpiod_
-> > > > > prefix. Follow this convention and rename gpio_chip_hwgpio() to
-> > > > > gpiod_get_hwgpio().
-> > > >
-> > > > Same comment. Also, I don't think it's good idea as it steps on the exported
-> > > > API's toes. I.o.w. I won't mix those two.
+On Tue, Sep 05, 2023 at 08:53:43AM +0000, Wu, Wentong wrote:
+> > From: Oliver Neukum <oneukum@suse.com>
+> > 
+> > On 05.09.23 04:20, Wu, Wentong wrote:
+> > 
+> > Hi,
+> > 
+> > >> That is that you will hang arbitrarily long in disconnect?
+> > > This routine isn't called in an interrupt context, and it allows sleep
+> > > or wait something before the real shutdown like many drivers' remove()
+> > > or
+> > > disconnect() do.
+> > 
+> > It is, however, in the context of a kernel thread. We can wait, but not for
+> > arbitrary periods.
+> 
+> AFAIK, this is very common.
+> 
+> > 
+> > > If we want to speed up the disconnect(), below changes is to complete
+> > > the cmd_completion if usb_kill_urb() has been called, but there is
+> > > still possibility ljca client init one more transfer before
+> > > auxiliary_device_delete()
 > > >
-> > > Even if I agreed with your other comment, gpio_chip_hwgpio() is a
-> > > terrible name and if I didn't know, I couldn't tell you what it does
-> > > just from looking at the name.
-> >
-> > That's can be improved, my previous comments were basically to avoid
-> > mixing prefixes for internal and external APIs, let's say prefix them
-> > similarly, but for internal with space and/or more verbose naming
-> >
-> >         gpiod_          gpio_desc_
-> >         gpiochip_       gpio_chip_
-> >         gdev_           gpio_device_
+> > > @@ -206,7 +206,11 @@ static void ljca_recv(struct urb *urb)
+> > >
+> > >          if (urb->status) {
+> > >                  /* sync/async unlink faults aren't errors */
+> > > -               if (urb->status == -ENOENT || urb->status == -ECONNRESET ||
+> > > +               if (urb->status == -ENOENT) {
+> > > +                       complete(&adap->cmd_completion);
+> > > +                       return;
+> > 
+> > I'd say you'd break suspend() by such a change.
+> > You cannot complete in the interrupt handler, unless you can determine why the
+> > URB is killed.
 > 
-> There's one more possibility. Have all exported symbols be prefixed
-> with gpiod in one way or another and the internal symbols just drop
-> the prefix so it would be like:
+> With below status field in ljca_adapter to determine if it's killed by disconnect().
 > 
-> gpiod_
-> gpiochip_
-> gpio_device_
+> If this is preferred, I could cook the patch for review.
 > 
-> and
-> 
-> desc_
-> chip_
-> device_
-> 
-> Because for internal symbols we already know they refer to gpiolib.
+> If this is fixed, could you please help merge this usb-ljca driver so that it won't
+> block others which depends on this driver?
 
-With the above schema we have two caveats, one is not significant
-(as we have desc_to_gpio() and complimentary API). And another one
-is device/dev, which is conflicting with global. That's why I still
-prefer gpio_desc_ and so on.
+Please relax, we can't do anything until after -rc1 is out, and for me,
+that includes reviewing the code.
 
-> Anyway, I'll drop the patches for now and let's revisit in the future
-> when the consensus is reached.
+There is no rush, or deadline, here at all.  It will be merged when it
+is acceptable.
 
-Yes, let's focus on something more important now.
+thanks,
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+greg k-h
