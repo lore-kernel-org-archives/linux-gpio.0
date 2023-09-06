@@ -2,94 +2,89 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83368CA0FF6
-	for <linux-gpio@archiver.kernel.org>; Wed,  6 Sep 2023 14:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E15C83F17
+	for <linux-gpio@archiver.kernel.org>; Wed,  6 Sep 2023 14:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241920AbjIFOu5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 6 Sep 2023 10:50:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49974 "EHLO
+        id S233833AbjIFOvl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 6 Sep 2023 10:51:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229564AbjIFOu4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Sep 2023 10:50:56 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9759610D0;
-        Wed,  6 Sep 2023 07:50:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694011853; x=1725547853;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HjAh8SMqCXR1Rjl9aKlTDFEP6jadc3qGb5loq/FNe5w=;
-  b=nV2Ae7tMzwJ0UFkb8VXzx4aLELs4XcFC8Tx6esfxmJnKju5I8HCIwGPQ
-   Zh2Pb73DYK9LepwQeEuxE60nANVte35K4BvnyoN0QT4IPsM8kjcq+Yaqw
-   EUuE4vgSFB98ydqIXgNUVs2TQebEoZAhTcJ6Jb89ieQspuXQTd172ZziI
-   fhjvWS4DVcbyhDrgYhHYrWA180MzcXlDflagOdM6+64QMKvubHDnh7/5o
-   F+A015cRogv3hxKWI8fTgg4r239ajwPyOzstDlFHijzru4UAeA7vlCsOU
-   7zj1qQrvzoqTY1U+kVlZsZmmLaTuGGHW9VVXtl/KaNrNzP6T5jGk5PJnV
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="375986346"
-X-IronPort-AV: E=Sophos;i="6.02,232,1688454000"; 
-   d="scan'208";a="375986346"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 07:50:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10825"; a="831691131"
-X-IronPort-AV: E=Sophos;i="6.02,232,1688454000"; 
-   d="scan'208";a="831691131"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by FMSMGA003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2023 07:50:48 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qdtrg-006y3r-0f;
-        Wed, 06 Sep 2023 17:50:44 +0300
-Date:   Wed, 6 Sep 2023 17:50:43 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
-        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        with ESMTP id S236968AbjIFOvl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Sep 2023 10:51:41 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C76D5173F
+        for <linux-gpio@vger.kernel.org>; Wed,  6 Sep 2023 07:51:23 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-401b5516104so36917535e9.2
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Sep 2023 07:51:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694011882; x=1694616682; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KDOVmtH5V5na1fD7fuYCzll8sgI6SU6vTPQBBFOI8xU=;
+        b=bdVzi54ySHHaM+iJlyTGSvlM8M1eMKO8W4K+/Q6JrQyNS9ggfwOXHJiiXTKhiniDDp
+         KLjoVSMEIVbz4jIyF+gvV6nRhlgmvLWlBS1fsAgZI9itGwgaeREYvbCjFOuJKM31VMku
+         MHWvIIGBFP8AsvSNGK0Aszd9WvpZnMUaZZfTHRM65GDyWHY/8IOMOYJf1L4/qtstxyeI
+         YmrAP8/2mAJqCoWLfd9iTAu18FTTCxNDVnztU+7NsBNyFU9BxcfypNKFDI/Fx5xo291j
+         HK2pz/Qb/IhZIc32STS/LtQH0q2wkySYfTUUZ+s75z553t9c7PkDchVvxgdbxelLafis
+         NECg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694011882; x=1694616682;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KDOVmtH5V5na1fD7fuYCzll8sgI6SU6vTPQBBFOI8xU=;
+        b=NkaWZ4vTTqS9tuN3s7XL50baQisU8LkA5Kg/sqGcK9ehrLVRXWw/hGDGJ7qwD993jJ
+         4J/09kZetYnH9SSfZlUb6iPJ0B2PIjO3/nnTPOiiM8vrUFCkbDspmhYxirC+Zg9WyFTB
+         UWZ6GDavDzt/ABwjNstwibD9muMz8Uzry03oQ3sZIU0PqK2MbldyYeQ5qau0oCJk77Sg
+         Dxp2vdy6324iMsFvoiUAPDLYsWh4HBFNnre+PVHgdck+bSHYHMd5DPBKolXSoG/zOGrE
+         84Rdlx2zX7v5vHD6yB3z+P2+XM9fnK7o31RAstpCZ8sg6QAJ/oK2S9un8EK9Dn0VFKwf
+         l96A==
+X-Gm-Message-State: AOJu0YxLoPTvE/BofJZ2Pbho4K7R27Fo8xmygrmOswNONljm+DM+3wy6
+        a51Lv2kI10cbPIXlCBbUbEsiUQ==
+X-Google-Smtp-Source: AGHT+IFwBB/UwPs+Fde43SNlv+WtDjxYU8FeOqKMZS6eOUypfkOHxWPTUmVAImNI/wSgof9CMLfKpg==
+X-Received: by 2002:a05:600c:a388:b0:402:95a0:b2ae with SMTP id hn8-20020a05600ca38800b0040295a0b2aemr2672775wmb.32.1694011882079;
+        Wed, 06 Sep 2023 07:51:22 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:9866:d0f3:fca8:33c9])
+        by smtp.gmail.com with ESMTPSA id x12-20020a5d54cc000000b00315af025098sm20696485wrv.46.2023.09.06.07.51.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Sep 2023 07:51:21 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 18/21] gpio: acpi: replace gpiochip_find() with
- gpio_device_find()
-Message-ID: <ZPiRw5fyx3iZQMDx@smile.fi.intel.com>
-References: <20230905185309.131295-1-brgl@bgdev.pl>
- <20230905185309.131295-19-brgl@bgdev.pl>
+Subject: [PATCH] gpio: mb86s7x: don't include gpiolib.h
+Date:   Wed,  6 Sep 2023 16:51:18 +0200
+Message-Id: <20230906145118.139678-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230905185309.131295-19-brgl@bgdev.pl>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 05, 2023 at 08:53:06PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> We're porting all users of gpiochip_find() to using gpio_device_find().
-> Update the ACPI GPIO code.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-...
+The gpiolib.h is unnecessarily included in the driver. None of its
+symbols are used so drop it.
 
-> -	return gpiochip_get_desc(chip, pin);
-> +	return gpiochip_get_desc(gdev->chip, pin);
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpio-mb86s7x.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-gpio_device_get_desc() ?
-
+diff --git a/drivers/gpio/gpio-mb86s7x.c b/drivers/gpio/gpio-mb86s7x.c
+index ca7eb5e8bfaa..248df657c38e 100644
+--- a/drivers/gpio/gpio-mb86s7x.c
++++ b/drivers/gpio/gpio-mb86s7x.c
+@@ -20,7 +20,6 @@
+ #include <linux/spinlock.h>
+ #include <linux/slab.h>
+ 
+-#include "gpiolib.h"
+ #include "gpiolib-acpi.h"
+ 
+ /*
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.39.2
 
