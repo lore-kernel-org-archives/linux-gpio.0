@@ -2,112 +2,94 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B59EC873E
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Sep 2023 16:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A2EEC8743
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Sep 2023 16:18:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231331AbjIGQMP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Sep 2023 12:12:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46982 "EHLO
+        id S238843AbjIGQSx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Sep 2023 12:18:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236598AbjIGQLs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2023 12:11:48 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9774B46B9;
-        Thu,  7 Sep 2023 09:08:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694102918; x=1725638918;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gRENciT8jBMpxnPJqxQEyKj0ZSurw8NkK4neNf8ZT2I=;
-  b=X55WUztJ/vKr8HaFbN/W4CrrLjjPi+gmnacWYRzvCspWyACKN2P6MWUG
-   0BFY54xn97aa+RgD+2LeUeVQ+stRTGclDxzuo430NtdMj6Dieq3X3tnqa
-   ho6V7EapV7TB2g1AjLf2e1Q1+RMjElI+R65pBWmvD9XBjRzIziTICQefJ
-   gKSwtViasBPzm3XZ72moYO0kxSeCG2p5reB2DwG+tBLnhnzFLe4nr0i8l
-   p9JURhfkfSLfmaaJYYujBUA+1hbhDVM0H+FyohLcRT6b0jOBi+85xJAfb
-   gBA9gKmFUJ0QEtTY73NMoyx6PSHFBDG98x0JnSAdJA0I1N/eNwR3Uxr/8
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10826"; a="380099915"
-X-IronPort-AV: E=Sophos;i="6.02,235,1688454000"; 
-   d="scan'208";a="380099915"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2023 07:13:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10826"; a="865666292"
-X-IronPort-AV: E=Sophos;i="6.02,235,1688454000"; 
-   d="scan'208";a="865666292"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2023 07:13:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qeFlY-007KM0-2S;
-        Thu, 07 Sep 2023 17:13:52 +0300
-Date:   Thu, 7 Sep 2023 17:13:52 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v4] gpio: sim: don't fiddle with GPIOLIB private members
-Message-ID: <ZPnaoOUiYDR3yqGu@smile.fi.intel.com>
-References: <20230907082751.22996-1-brgl@bgdev.pl>
+        with ESMTP id S242772AbjIGQSL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2023 12:18:11 -0400
+Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A50E3A256
+        for <linux-gpio@vger.kernel.org>; Thu,  7 Sep 2023 08:57:40 -0700 (PDT)
+Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-5924093a9b2so11460537b3.2
+        for <linux-gpio@vger.kernel.org>; Thu, 07 Sep 2023 08:57:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694102192; x=1694706992; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I18DoVxRqFJaTqip4HKub/TPXgj9WnWp7a45EaJWvuM=;
+        b=KIspldjjOyJZT9fLTXXGGJqN2Dt8j8PS1GEinwjbnJNU2pGYHKUOiicYM0nDVeEs+Z
+         VGik7uyVz6vyBNAnoYGS8TosiakCaxDgn3QRmmsNnTHFJ0X2HKrf+n67gjj3f9W+od3d
+         stLf9GoeY1Jw6JdiXeevL/C9rGOFusSoFt6bQZNqhaMDT/VBurkse7Orz14aFNtWHwB/
+         EWS3cUiZPHC4eGpq2aZinbFcjz58nYOx+yc1ylquhugSMUZOSVddXdmxUIJrPPQE00s9
+         H3Dzb06KEoM81/d78tNQXSy/jCnkQweegnpk9yn5Mha8CJrLXbQZUoee35a77e+9hSdc
+         NvSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1694102192; x=1694706992;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I18DoVxRqFJaTqip4HKub/TPXgj9WnWp7a45EaJWvuM=;
+        b=XH5565+D/FfRo354kcaj6J51qaV52RkvLGVu/eGIZ2uj1YLC40djiiEHSVBNYPIgAb
+         3MixzZTlYcieUuOJQ3ynap+LF6HjClDIsP+k93nMB9u4TLQDjWrNj51+JDjsN81pcIDm
+         ST/Ji8wKjK2OfHVPLJTO3XGk3y9K0x5iTTSDEWQApm6u+8kB7e7yQ0WK2f0ZaQGmx5yK
+         WooYm8Wj5NWqeufXISFA2gLWa8kvYn1edSodVhT7e86iC5KxrSWkoO4JhHrBljH6iz0u
+         vKoqYWwvIyZMXEEIBk+HKmtAeRYtqo32mHaRosRxS+zNadL2jXsXePPB28h60FyVeWHd
+         5PWA==
+X-Gm-Message-State: AOJu0YyOz0r8y+/hmbvkz6tAaJuyNCm9vTv2bodHFhy9ES9NhkEk5JSS
+        /xSnszC++7ac/z+60h7Gdw9lwDKeCRHpFCRnfZR/mfXIYoc3GbHlHsg=
+X-Google-Smtp-Source: AGHT+IH52ZmMDQle74d5+xBv94alRH/CYtL/TIhLKM9b7HFrce/j3cJJJRCz5BcoTZ3hxH+Wxp8LvqydUyq2rr0UgjU=
+X-Received: by 2002:a25:5f0d:0:b0:d7b:90c6:683c with SMTP id
+ t13-20020a255f0d000000b00d7b90c6683cmr17866183ybb.26.1694070426178; Thu, 07
+ Sep 2023 00:07:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230907082751.22996-1-brgl@bgdev.pl>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-4-brgl@bgdev.pl>
+In-Reply-To: <20230905185309.131295-4-brgl@bgdev.pl>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 7 Sep 2023 09:06:55 +0200
+Message-ID: <CACRpkdbE5AJHiGan_oj4_kBSOh7okfwM0u9qDcEyTBr+NCO=wA@mail.gmail.com>
+Subject: Re: [PATCH 03/21] gpiolib: provide gpio_device_find_by_label()
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Sep 07, 2023 at 10:27:51AM +0200, Bartosz Golaszewski wrote:
+On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
+
 > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> We access internals of struct gpio_device and struct gpio_desc because
-> it's easier but it can actually be avoided and we're working towards a
-> better encapsulation of GPIO data structures across the kernel so let's
-> start at home.
-> 
-> Instead of checking gpio_desc flags, let's just track the requests of
-> GPIOs in the driver. We also already store the information about
-> direction of simulated lines.
-> 
-> For kobjects needed by sysfs callbacks: we can iterate over the children
-> devices of the top-level platform device and compare their fwnodes
-> against the one passed to the init function from probe.
-> 
-> While at it: fix one line break and remove the untrue part about
-> configfs callbacks using dev_get_drvdata() from a comment.
+>
+> By far the most common way of looking up GPIO devices is using their
+> label. Provide a helpers for that to avoid every user implementing their
+> own matching function.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Will LGTM with the couple of remarks being addressed.
+Yeah this is what everyone and their dog reimplements.
+Good to centralize this.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-...
-
->  #include <linux/completion.h>
->  #include <linux/configfs.h>
->  #include <linux/device.h>
-
-> +#include <linux/device/bus.h>
-
-No need, the device.h guarantees that.
-
-...
-
-> +static int gpio_sim_dev_match_fwnode(struct device *dev, void *data)
-> +{
-> +	/*
-> +	 * We can't pass this directly to device_find_child() due to pointer
-> +	 * type mismatch.
-> +	 */
-
-Not sure if this comment adds any value.
-
-> +	return device_match_fwnode(dev, data);
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Yours,
+Linus Walleij
