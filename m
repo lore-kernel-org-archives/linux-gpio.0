@@ -2,62 +2,62 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B63EC8740
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Sep 2023 15:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C4FEC873A
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Sep 2023 15:46:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232801AbjIGPqN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Sep 2023 11:46:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33290 "EHLO
+        id S232783AbjIGPqO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Sep 2023 11:46:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245435AbjIGP3a (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2023 11:29:30 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4305B1FE9
-        for <linux-gpio@vger.kernel.org>; Thu,  7 Sep 2023 08:29:02 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-401bbfc05fcso12350065e9.3
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Sep 2023 08:29:02 -0700 (PDT)
+        with ESMTP id S245149AbjIGP3U (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2023 11:29:20 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC4401BFA
+        for <linux-gpio@vger.kernel.org>; Thu,  7 Sep 2023 08:28:48 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-402d499580dso12295835e9.1
+        for <linux-gpio@vger.kernel.org>; Thu, 07 Sep 2023 08:28:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694100490; x=1694705290; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694100477; x=1694705277; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NzpZWHat+ptY4i8T7d70uw7fEAXlmofiE9gJ/p0X22U=;
-        b=lLFmQhX/6PTdTS5/V36fzyf4K8v/UUBciFnZZ6moSwWJHFMzMri0SGVDsxkeH+SmQa
-         76cwT8vOfJWWRWkyB8GL8kIL1qEv7tm5g64huvaNi7qpDy3i+okE8nhDNmHxve70E7Ts
-         rO+nahpyr5vt+croe0OfraOS2tE6LKb4hLoFynjmdlfs1XZRj/72DzteF57WsHOfDgsO
-         +ZvbbVVcxs5pO15ABOlfNBXnOJ8CaHl3ak02GGooB58hBca2qBOqjGZbN6BWHqPj3gwf
-         3nDNxRiRRmlNP5CAMxn9cd5r2O/95cOeihQrbWEt5nqYw5wIB0V0gbiv2Dl1ZdKZram8
-         S34g==
+        bh=2ADDhL3Y9ChksGd5FuRK3cdw+MrzNNwwXAMmsBve8eY=;
+        b=dt7li3pggFFC3EGjs1qK30kJrmwN0MKXFcHaZO3XthbniG/9SoNKH2Expe6zPhmPjf
+         eXo0xq6p93XShe+ON7YxdolbRk1q2fRpuc3VL1YL4M3Yqo19J/2nwRX4YL78Z3j6k3zS
+         HpP6HVXark72rB/HOT1UH0e0qdTz7mm9dnuejdNkCv3bKkms3VKJqjNq3JdUqHJoji3B
+         ViP9T2ksnKubYt+SfhVjXCRkS907GdbZ4l5nfvkz+WyT1hHb0KoE1qzwWpQAk/lncSbt
+         7qTL5mLyaHkfiVJ0OoGqug/g8N7NsfCGiyDEI96bhE1qpQwzLeYHmDKtwkxO28Xn8k1b
+         4Ggw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694100490; x=1694705290;
+        d=1e100.net; s=20221208; t=1694100477; x=1694705277;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NzpZWHat+ptY4i8T7d70uw7fEAXlmofiE9gJ/p0X22U=;
-        b=l9nM4cnKQLkuYKGlAvAMCtG+bvEoqjXZv6E9D1Dvp8izHlyAL+DO6nZa2JQAuUPccF
-         ljrQbQfJc7gu7rDNlEvZeRbwft2EhO0/PoifGZC5KGBfhqyrTRo0xzFqIQbJFZkGYNh7
-         /mj4UaMa8y0QbHdAS4VlT1A6/Ro4A6rVecFxImdbWVd5G4Y4JJW7LNFHQbKoNfCkMGvE
-         Zi0k8X3GXKSXlHW+FY7thlqv/G/GU2/65dFxDQgvjjiUnGy10wXLqBn8+SkjWxQMLxut
-         aF71KjJUse3T0V1a05u9jcYlhCtO1bR3xUZdNp1TTPDcdjBLaeGUTBGkPoLAioOucD5e
-         ReJA==
-X-Gm-Message-State: AOJu0Yyn0ZTDxwiITpa/IsTHbLNDXY30lXpgjQ7qU8y4XjmEcYmKA6rL
-        Dss5uFdBG8C9vFHJ44iTni3loQ==
-X-Google-Smtp-Source: AGHT+IEMrWqCe5xMabRBv863fM0ihgw8yV+E02Os/rx4rFHyiXrXdvVxp9K8Xsp3/xkyjEuBAAYEFQ==
-X-Received: by 2002:a05:600c:2a41:b0:401:be70:53b6 with SMTP id x1-20020a05600c2a4100b00401be7053b6mr4884675wme.15.1694098353959;
-        Thu, 07 Sep 2023 07:52:33 -0700 (PDT)
+        bh=2ADDhL3Y9ChksGd5FuRK3cdw+MrzNNwwXAMmsBve8eY=;
+        b=aOR30dBZ3cycRiB7P4xsWpr9hA26WBsafXukg1VKqV253Wrnwtgu0g/L6bZ4TxnRZT
+         b2I9DBHVSfBrX1MQr9eQUH1UwJ3PIC1NOjqrEDy1b2YjS/+1HM4qrYeJdzsxmXt5wwZh
+         ygiqkXj+fgPSqKACi/ZnB4YJN2gQViURFmiB7TyP5yN3ziaQLIav/xzUZBw76Yilhrai
+         vY5ucCrx+3f0ULA7tUBio3aTB0CKVYur3EcWP6o/2e65gQhkaWpt5wDT+vGP9jQK3iOm
+         F52mluhIYZeI4uMRDtexqSLradtQ77KDXp3FMpi7OjUbGlDi68NsIwCL6Qci+MzPv02o
+         tc0g==
+X-Gm-Message-State: AOJu0YzYvNnYhEclBQB0qqEXCJN+djvpMJTgsC0jiFmT2vbzugUKh34d
+        GXXlx43QI/N91av1q1JfN1/pUTaC3hflFU/4rWU=
+X-Google-Smtp-Source: AGHT+IGYRLf7GpXbSfX9yL4OLNbiYEdnhHMAnQCxOV6DjnXOpS1Z/JCpHYk+r7prOvveef7RE/lcMg==
+X-Received: by 2002:a05:600c:2809:b0:3fe:dcd0:2e10 with SMTP id m9-20020a05600c280900b003fedcd02e10mr5150331wmb.17.1694098355761;
+        Thu, 07 Sep 2023 07:52:35 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:56f5:e2d4:1e04:b28e])
-        by smtp.gmail.com with ESMTPSA id 2-20020a05600c020200b003feef82bbefsm2757588wmi.29.2023.09.07.07.52.33
+        by smtp.gmail.com with ESMTPSA id 2-20020a05600c020200b003feef82bbefsm2757588wmi.29.2023.09.07.07.52.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Sep 2023 07:52:33 -0700 (PDT)
+        Thu, 07 Sep 2023 07:52:35 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Kent Gibson <warthog618@gmail.com>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 2/5] gpio: mockup: remove unused field
-Date:   Thu,  7 Sep 2023 16:52:27 +0200
-Message-Id: <20230907145230.44085-2-brgl@bgdev.pl>
+Subject: [PATCH 4/5] gpio: mockup: simplify code by using cleanup helpers
+Date:   Thu,  7 Sep 2023 16:52:29 +0200
+Message-Id: <20230907145230.44085-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230907145230.44085-1-brgl@bgdev.pl>
 References: <20230907145230.44085-1-brgl@bgdev.pl>
@@ -69,34 +69,136 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-The desc assigned to debugfs private structure is unused so remove it.
+Use lock from linux/cleanup.h and simplify locking paths.
 
-Fixes: 9202ba2397d1 ("gpio: mockup: implement event injecting over debugfs")
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/gpio-mockup.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpio/gpio-mockup.c | 45 ++++++++++++++++++--------------------
+ 1 file changed, 21 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 17d4d48524b7..ff1a263f1b05 100644
+index ff1a263f1b05..44684ff4462f 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -58,7 +58,6 @@ struct gpio_mockup_chip {
+@@ -9,6 +9,7 @@
  
- struct gpio_mockup_dbgfs_private {
- 	struct gpio_mockup_chip *chip;
--	struct gpio_desc *desc;
- 	unsigned int offset;
- };
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
-@@ -369,7 +368,6 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
++#include <linux/cleanup.h>
+ #include <linux/debugfs.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/interrupt.h>
+@@ -92,9 +93,8 @@ static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 	int val;
  
- 		priv->chip = chip;
- 		priv->offset = i;
--		priv->desc = gpiochip_get_desc(gc, i);
+-	mutex_lock(&chip->lock);
+-	val = __gpio_mockup_get(chip, offset);
+-	mutex_unlock(&chip->lock);
++	scoped_guard(mutex, &chip->lock)
++		val = __gpio_mockup_get(chip, offset);
  
- 		debugfs_create_file(name, 0600, chip->dbg_dir, priv,
- 				    &gpio_mockup_debugfs_ops);
+ 	return val;
+ }
+@@ -105,12 +105,12 @@ static int gpio_mockup_get_multiple(struct gpio_chip *gc,
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 	unsigned int bit, val;
+ 
+-	mutex_lock(&chip->lock);
+-	for_each_set_bit(bit, mask, gc->ngpio) {
+-		val = __gpio_mockup_get(chip, bit);
+-		__assign_bit(bit, bits, val);
++	scoped_guard(mutex, &chip->lock) {
++		for_each_set_bit(bit, mask, gc->ngpio) {
++			val = __gpio_mockup_get(chip, bit);
++			__assign_bit(bit, bits, val);
++		}
+ 	}
+-	mutex_unlock(&chip->lock);
+ 
+ 	return 0;
+ }
+@@ -126,9 +126,9 @@ static void gpio_mockup_set(struct gpio_chip *gc,
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+-	mutex_lock(&chip->lock);
++	guard(mutex)(&chip->lock);
++
+ 	__gpio_mockup_set(chip, offset, value);
+-	mutex_unlock(&chip->lock);
+ }
+ 
+ static void gpio_mockup_set_multiple(struct gpio_chip *gc,
+@@ -137,10 +137,10 @@ static void gpio_mockup_set_multiple(struct gpio_chip *gc,
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 	unsigned int bit;
+ 
+-	mutex_lock(&chip->lock);
++	guard(mutex)(&chip->lock);
++
+ 	for_each_set_bit(bit, mask, gc->ngpio)
+ 		__gpio_mockup_set(chip, bit, test_bit(bit, bits));
+-	mutex_unlock(&chip->lock);
+ }
+ 
+ static int gpio_mockup_apply_pull(struct gpio_mockup_chip *chip,
+@@ -150,7 +150,7 @@ static int gpio_mockup_apply_pull(struct gpio_mockup_chip *chip,
+ 	struct gpio_desc *desc = gpiochip_get_desc(gc, offset);
+ 	int curr, irq, irq_type, ret = 0;
+ 
+-	mutex_lock(&chip->lock);
++	guard(mutex)(&chip->lock);
+ 
+ 	if (test_bit(FLAG_REQUESTED, &desc->flags) &&
+ 	    !test_bit(FLAG_IS_OUT, &desc->flags)) {
+@@ -187,7 +187,6 @@ static int gpio_mockup_apply_pull(struct gpio_mockup_chip *chip,
+ 
+ out:
+ 	chip->lines[offset].pull = value;
+-	mutex_unlock(&chip->lock);
+ 	return ret;
+ }
+ 
+@@ -212,10 +211,10 @@ static int gpio_mockup_dirout(struct gpio_chip *gc,
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+-	mutex_lock(&chip->lock);
+-	chip->lines[offset].dir = GPIO_LINE_DIRECTION_OUT;
+-	__gpio_mockup_set(chip, offset, value);
+-	mutex_unlock(&chip->lock);
++	scoped_guard(mutex, &chip->lock) {
++		chip->lines[offset].dir = GPIO_LINE_DIRECTION_OUT;
++		__gpio_mockup_set(chip, offset, value);
++	}
+ 
+ 	return 0;
+ }
+@@ -224,9 +223,8 @@ static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+-	mutex_lock(&chip->lock);
+-	chip->lines[offset].dir = GPIO_LINE_DIRECTION_IN;
+-	mutex_unlock(&chip->lock);
++	scoped_guard(mutex, &chip->lock)
++		chip->lines[offset].dir = GPIO_LINE_DIRECTION_IN;
+ 
+ 	return 0;
+ }
+@@ -236,9 +234,8 @@ static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 	int direction;
+ 
+-	mutex_lock(&chip->lock);
+-	direction = chip->lines[offset].dir;
+-	mutex_unlock(&chip->lock);
++	scoped_guard(mutex, &chip->lock)
++		direction = chip->lines[offset].dir;
+ 
+ 	return direction;
+ }
 -- 
 2.39.2
 
