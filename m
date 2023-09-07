@@ -2,92 +2,129 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79905EC8743
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Sep 2023 16:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFF1EC873E
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Sep 2023 16:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233843AbjIGQnS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Sep 2023 12:43:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54422 "EHLO
+        id S242912AbjIGQs7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Sep 2023 12:48:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244050AbjIGQnG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2023 12:43:06 -0400
-Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01656420C
-        for <linux-gpio@vger.kernel.org>; Thu,  7 Sep 2023 09:42:08 -0700 (PDT)
-Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-1c504386370so811564fac.1
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Sep 2023 09:42:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694104869; x=1694709669; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KDyS14lOc9gIdV8qqpJN7dVOi7FiXE2O1crBwgTrNhg=;
-        b=J3Q/jkTdEhestzhD7CGAm2XNF4sLhnmLogSETyUdTgrSYSleo9LdXW0sMc/c8MoH15
-         kGxt+LGvbAffFOPHgQxHCiFNiuTa3hk+pZhN/FoEupBBfjIGL+eb0gCVPcy4voywuHqM
-         NwtnmNE/RURDrb7BUqq+fW10UPjBP7Dlakdc7HyMtQkYgUb8Ap8j+CJyko3QMbshVtwu
-         fSmcHb7MUCfH0st4m8Hbmy2zOILaUTQLkyw3ZlE5ywXyCFfX/spO841VniOii/CBSbrr
-         tOH2RJUnG2iTvXePftBmZVvbR34lJCuBrmS+FnJLbCNsiAaCWZIBa80tDo6+Ebi7N+lC
-         NzFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694104869; x=1694709669;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KDyS14lOc9gIdV8qqpJN7dVOi7FiXE2O1crBwgTrNhg=;
-        b=uayXpQT5mw+4LoZ5Q0g5n7lJACFSpIg5PYA7cFkTQ30VR8sOdA6WjrXcGoQckgg2jX
-         To/SLE7vZ+bO6crB/72YY3P0LTnRlfCdr7DgmTcyI45G58OrB+Ms+pAohZvemmz25gss
-         OSPDZm3+xgoxOR5kqvul94C3kEk3SZWrrrNe0n2nEyKQ3nsTyoT+X0olVuffWbRVA8Av
-         XqWcFbfVEyPG4uQ40ou1Urdia58ufPwFtSbTMwWwwNZhzIBkNUmteffPHMDiPnM/tBX6
-         kWyQ94Y3BIk1UH1OeIwq3WfnblEZOJPg6vPOYEllYA+JmG+AxI9QmcF1+uf58AwyqZm6
-         eBdg==
-X-Gm-Message-State: AOJu0YxvhJALDyJg7/x4TfAe9r2LeQtPE6F4EXkEYZp/lMNbWWqVLNvW
-        fCi7k1Elw2DkfObXQgPCeieiwpmoFNsXjZtCgjHoSeAKekKuIsEp
-X-Google-Smtp-Source: AGHT+IGJ2fOJYbfgZwCYkGOqpBoV8zRdwms0YQyjwmM812KoO4CG3kmEhKK7s/PjKGQeVe41+y3pVjBhSp9/fdWja/U=
-X-Received: by 2002:a25:408a:0:b0:d06:49e9:a29c with SMTP id
- n132-20020a25408a000000b00d0649e9a29cmr19754022yba.34.1694071374753; Thu, 07
- Sep 2023 00:22:54 -0700 (PDT)
+        with ESMTP id S242173AbjIGQs6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2023 12:48:58 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C03DF1BFD;
+        Thu,  7 Sep 2023 09:48:34 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECB891042;
+        Thu,  7 Sep 2023 09:48:17 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2540E3F67D;
+        Thu,  7 Sep 2023 09:47:38 -0700 (PDT)
+Message-ID: <b34a6196-6c24-a664-611b-6055480880ee@arm.com>
+Date:   Thu, 7 Sep 2023 17:47:33 +0100
 MIME-Version: 1.0
-References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-13-brgl@bgdev.pl>
-In-Reply-To: <20230905185309.131295-13-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 7 Sep 2023 09:22:43 +0200
-Message-ID: <CACRpkdYJhP5otaFXbn49sK_33GJMy85MszyD9rqoQT1-fqd9dA@mail.gmail.com>
-Subject: Re: [PATCH 12/21] hte: allow building modules with COMPILE_TEST enabled
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
-        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: rockchip: Add io domain
+ properties
+Content-Language: en-GB
+To:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Quentin Schulz <quentin.schulz@theobroma-systems.com>
+Cc:     linux-rockchip@lists.infradead.org,
+        Heiko Stuebner <heiko@sntech.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        kernel@pengutronix.de,
+        Michael Riesch <michael.riesch@wolfvision.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+References: <20230904115816.1237684-1-s.hauer@pengutronix.de>
+ <20230904115816.1237684-3-s.hauer@pengutronix.de>
+ <b4017947-9e16-7d97-a7b1-3e6964a1f7a9@arm.com>
+ <5166ca75-5454-8f64-4f61-fcc0f7a4c235@theobroma-systems.com>
+ <20230906101909.GB492117@pengutronix.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <20230906101909.GB492117@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
+On 06/09/2023 11:19 am, Sascha Hauer wrote:
+> On Wed, Sep 06, 2023 at 10:20:26AM +0200, Quentin Schulz wrote:
+>> Sascha, Robin,
+>>
+>> On 9/5/23 11:03, Robin Murphy wrote:
+>>> [You don't often get email from robin.murphy@arm.com. Learn why this is
+>>> important at https://aka.ms/LearnAboutSenderIdentification ]
+>>>
+>>>> +ï¿œï¿œï¿œï¿œï¿œï¿œï¿œ type: boolean
+>>>> +ï¿œï¿œï¿œï¿œï¿œï¿œï¿œ description:
+>>>> +ï¿œï¿œï¿œï¿œï¿œï¿œï¿œï¿œï¿œ If true assume that the io domain needed for this pin
+>>>> group has been
+>>>> +ï¿œï¿œï¿œï¿œï¿œï¿œï¿œï¿œï¿œ configured correctly by the bootloader. This is needed to
+>>>> break cyclic
+>>>> +ï¿œï¿œï¿œï¿œï¿œï¿œï¿œï¿œï¿œ dependencies introduced when a io domain needs a
+>>>> regulator that can be
+>>>> +ï¿œï¿œï¿œï¿œï¿œï¿œï¿œï¿œï¿œ accessed through pins configured here.
+>>>
+>>> This is describing a Linux implementation detail, not the binding
+>>> itself. There's no technical reason a DT consumer couldn't already
+>>> figure this much out from the existing topology (by observing that the
+>>> pinctrl consumer is a grandparent of the I/O domain's supply).
+>>>
+>>
+>> I am guessing you're suggesting to have some complex handling in the driver
+>> to detect those cyclic dependencies and ignore the IO domain dependency for
+>> the pinctrl pins where this happens?
+> 
+> I haven't read this as a suggestion, but only as an argument to make it
+> clear that I should describe the binding rather than anticipating
+> how it should be used.
+> 
+> I may have misunderstood it though.
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Allow building all HTE modules with COMPILE_TEST Kconfig option enabled.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Indeed it was more about the definition itself - an extra property isn't 
+*needed* to break the cycle since the cycle is already fully described 
+in DT, so anyone who can parse parents and phandles already has 
+sufficient information to detect it and break it at any point they 
+choose. However, as mentioned subsequently, breaking the cycle alone 
+isn't enough to guarantee that things will actually work in general.
 
-This should be a separate patch should it not?
-Just send it separately to Dipen so he can merge it.
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+AFAICS what we fundamentally need to know is the initial voltage of the 
+supply regulator, to be able to short-circuit requiring the I/O domain 
+in order to query it from the regulator itself, and instead just 
+initialise the I/O domain directly. However that would still represent a 
+bunch of fiddly extra DT parsing, so for practical purposes it seems 
+reasonable to then short-cut that into directly describing the initial 
+setting of the I/O domain on the node itself, such that the consumer of 
+the binding can easily handle it all in a self-contained manner.
 
-Yours,
-Linus Walleij
+Cheers,
+Robin
+
+>> One of the issues we're having here too is that we lose granularity. There
+>> are multiple domains inside an IO domain device and here we make the whole
+>> pinctrl device depend on all domains from one IO domain device (there can be
+>> multiple ones) while it is factually (on the HW level) only dependent on one
+>> domain. Considering (if I remember correctly) Heiko highly suggested we
+>> think about adding child nodes to the IO domain devices to have a DT node
+>> per domain in the IO domain device, how would this work with the suggested
+>> DT binding?
+> 
+> I started implementing that. I have moved the IO domains into subnodes
+> of the IO domain controller and started adding phandles from the pin
+> groups in rk3568-pinctrl.dtsi to the corresponding IO domains. After a
+> couple of hours I had phandles for around a quarter of the existing
+> groups of only one SoC, so doing this for all SoCs would really be a
+> cumbersome job.
+> 
+> In the end I realized this doesn't solve any problem. Also adding the
+> properties I suggested doesn't prevent us from adding the more specific
+> dependencies from the pins to their actual IO domains later.
+> 
+> Sascha
+> 
