@@ -2,57 +2,57 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55EE7EC8743
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Sep 2023 17:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6AC5EC8743
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Sep 2023 17:20:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239894AbjIGRFt (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Sep 2023 13:05:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41934 "EHLO
+        id S243166AbjIGRUQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Sep 2023 13:20:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239915AbjIGRFs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2023 13:05:48 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A214135
-        for <linux-gpio@vger.kernel.org>; Thu,  7 Sep 2023 10:05:14 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1c09673b006so8936805ad.1
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Sep 2023 10:05:14 -0700 (PDT)
+        with ESMTP id S243007AbjIGRT7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2023 13:19:59 -0400
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DCA31FD5
+        for <linux-gpio@vger.kernel.org>; Thu,  7 Sep 2023 10:19:39 -0700 (PDT)
+Received: by mail-qt1-x835.google.com with SMTP id d75a77b69052e-41479b9b4f1so8301831cf.3
+        for <linux-gpio@vger.kernel.org>; Thu, 07 Sep 2023 10:19:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694106261; x=1694711061; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694107123; x=1694711923; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UdWsNUufxYU54d2v+3Wxi5MrfQGJIJLOBq5vhtohyVg=;
-        b=yRlj5COWnDefMqz4RwG2zsnUC2DCYwavy3CKeZPU6lgKaIB6/NGBO921FKu2f/GTKa
-         fxQRx837JNMtY7waKzL1vRWlDUlD/zrQJD0jhCTL0p316rU/v4w7Z+wG3WNIwZwgoBMD
-         YqtvBzlCaHEBCoFxMvqROZ3ct9S9AppDBCRsALuG/lymM9DwX10043pEC4K0TjKLbXZo
-         1i0Dh3ErZLVeX4GsfKGrN66sfHooswwILhLYl+oUsDpbk49GgroW9dSTQqSh/WdzdOKk
-         bxxFNpLe4Bwy/j8wg3/lXgpX7ZfufSI/I3wYT0Yq+TyStRIksRZV6LDwuyuK8t6Tw8QV
-         pQmg==
+        bh=wBdELFiF0kNq2P4ovxPr1G/v1B3B5Z0Pa4x1EdUn7xY=;
+        b=sMLv2+XSkU01giKVuGoarP1iSfu/t/iBvqNAYzC3QH7JP1Cq4uBq93vPxAeiTe7sKF
+         b9WBxw0QuJxLEc1ZIeHnSZUSm/lkB3VCpsLz7BZjVkb6wduv39UqNFTOLJlENQ06V34f
+         28E+8/Plnez5tcHwSdxb+pOEfV69FaLttfUZQqrSAiCuAJmUNj94pMuuDouF3jdlU5HC
+         6DAOuCaRLsHVNrWL2K+dPtwDUv52WQKlnWMgrpthRGlTQAa+XynyGmZQiaRaXE4GrDd6
+         fyShycomd1tyOlvTgeoBQMTu4Y9ndj6GEaVINUovObUQPGktkm357ZZLthaE1IlzeKY1
+         j3RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694106261; x=1694711061;
+        d=1e100.net; s=20221208; t=1694107123; x=1694711923;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UdWsNUufxYU54d2v+3Wxi5MrfQGJIJLOBq5vhtohyVg=;
-        b=Np1bVr09VrCMW1+LM9ody0YUvhcuJVxpgRafcdVEZvN8YVSJAAaE3nUhX6HtjClmy/
-         hZTx+aECE088vgU6a3s8PZ3eEiJ4HOybaoA16A4IHa1Mb26dOF0CGI5q2Zlrs5bWOE+C
-         SBj1RRtXQdXvMBfAAyN6huAQX3mZOp3wWHA0ri8fSQsPGzp5dGM8Rez+TDh6O10dwUJP
-         bSIqJLOqqkYhBifqD1rjo28G7nyEQGlIPrCmk3fp19OBck55mrFz80FPz1bd5rHtrb0+
-         MVcVPNK5CWyYsFui94kRx4Llzs9hEmqnQQMtiD+ngsEt8hAgkQ69NjkDxpUKXB1Vdscy
-         kSNQ==
-X-Gm-Message-State: AOJu0YyfCGiCbXgiOiblsgwDQgq6HcOydWvWsc7ebXi2ZQba0XhZiyvL
-        r9VK0TVUsXveMuTwO4PBInIVHiv3LeWKNu6nRPHfkAJtVOiR3d00FJ4=
-X-Google-Smtp-Source: AGHT+IGMY/aPJYeBu1Pp0IzmGxqtgA0g7tRf3VGot5Pdq6hh1Y77T4EpHI+nXikBBcDxY/Os4mlIAHH2bnKyBxN7wMo=
-X-Received: by 2002:a25:258f:0:b0:d7a:edf3:f0a9 with SMTP id
- l137-20020a25258f000000b00d7aedf3f0a9mr17868648ybl.50.1694070333187; Thu, 07
- Sep 2023 00:05:33 -0700 (PDT)
+        bh=wBdELFiF0kNq2P4ovxPr1G/v1B3B5Z0Pa4x1EdUn7xY=;
+        b=A1c//CMkPtFVtiv8JlFNmQCegVCCkdPO4z211Y2x9WAQq1phMBkQupNKCubP6CicUe
+         zHN6R/GEpv/Ak4LiPo4nFEY+xqCgl7iH0WmyjJOM1MCYhhCeRquLFjqvE/NnFUn3QBLK
+         BckM57/Q/eMYMoNlAtVZ4ZoWqjEQ8S+y3MnAW/z7RKFQ8CzN5UFV3t5X4YKfeArBRrxb
+         hnSbp2VjaGi08I9UL6CM4Qu/4HZiRrsZu0KkckVnrTOKAEjwIT1RdHSdg+AxVrmX33Vb
+         8GOlHZcWzec/USTSde6Cau2sSxbRO4PA+dNH0+z4J2qKshwfimZM/xRzRAl3CjvcoD1a
+         EIKA==
+X-Gm-Message-State: AOJu0YzdBDzv0PtN1CrKMCmSnr0JPGCX30Va3NMVJVgOeHVuyrpHsxoN
+        IrtUJBWkrp6+2dscY6+m2qW9zDc48w6PrSIs9ClbxXF+OiT6u6UhGnI=
+X-Google-Smtp-Source: AGHT+IGquAMmj4BV1IgcH+0hlmwrCPO8RvK5dDPIHBFPHMvw3mBi9yKQYdiyjPsOt1CRLSecOSiNHyNGSnbycipPFpA=
+X-Received: by 2002:a25:4057:0:b0:d7f:1ef3:66a9 with SMTP id
+ n84-20020a254057000000b00d7f1ef366a9mr10826771yba.15.1694071032928; Thu, 07
+ Sep 2023 00:17:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-3-brgl@bgdev.pl>
-In-Reply-To: <20230905185309.131295-3-brgl@bgdev.pl>
+References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-8-brgl@bgdev.pl>
+In-Reply-To: <20230905185309.131295-8-brgl@bgdev.pl>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 7 Sep 2023 09:05:22 +0200
-Message-ID: <CACRpkdZEphqvwpid7QzXuYX79q2==58eKT7wg9Cmr8m1FLOuRA@mail.gmail.com>
-Subject: Re: [PATCH 02/21] gpiolib: provide gpio_device_find()
+Date:   Thu, 7 Sep 2023 09:17:01 +0200
+Message-ID: <CACRpkdbdcPv1LHL2W-enKBJ2OARpduoOJkQ64oL6GSOfmmD3qQ@mail.gmail.com>
+Subject: Re: [PATCH 07/21] gpiolib: provide gpio_device_get_base()
 To:     Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>,
@@ -81,20 +81,28 @@ wrote:
 
 > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >
-> gpiochip_find() is wrong and its kernel doc is misleading as the
-> function doesn't return a reference to the gpio_chip but just a raw
-> pointer. The chip itself is not guaranteed to stay alive, in fact it can
-> be deleted at any point. Also: other than GPIO drivers themselves,
-> nobody else has any business accessing gpio_chip structs.
->
-> Provide a new gpio_device_find() function that returns a real reference
-> to the opaque gpio_device structure that is guaranteed to stay alive for
-> as long as there are active users of it.
+> Let's start adding getters for the opaque struct gpio_device. Start with
+> a function allowing to retrieve the base GPIO number.
 >
 > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+I guess you have a solid usecase for drivers needing to do this
+crazy thing, because I suppose you feel as much as me that
+this should rather be gpiolib-internal and confined to
+drivers/gpio/gpiolib.h?
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+If you add a valid reason for making this globally visible outside
+of drivers/[gpio|pinctrl] to the commit message I guess I can live
+with it because we need to think of the bigger picture:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+It brings to mind the now confusing "base" inside of
+struct gpio_chip. We all know it should go away, but since it
+is never used during the lifetime of the gpio_chip - or SHOULD
+never be used - it should rather be an argument to
+[devm_]gpiochip_add_data( .... int base);...
+
+Maybe something we should add to our TODO file.
 
 Yours,
 Linus Walleij
