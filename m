@@ -2,129 +2,94 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F34AEC874D
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Sep 2023 18:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD7FCEC8750
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Sep 2023 18:54:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344257AbjIGSmC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Sep 2023 14:42:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50266 "EHLO
+        id S231603AbjIGSyI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Sep 2023 14:54:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344278AbjIGSmA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2023 14:42:00 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5B2E41703;
-        Thu,  7 Sep 2023 11:41:55 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E310F1007;
-        Thu,  7 Sep 2023 09:36:12 -0700 (PDT)
-Received: from [10.1.26.33] (010265703453.arm.com [10.1.26.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B2EA3F67D;
-        Thu,  7 Sep 2023 09:35:32 -0700 (PDT)
-Message-ID: <5165d26f-d5fe-13e9-7940-b73e27b2bea7@arm.com>
-Date:   Thu, 7 Sep 2023 17:35:26 +0100
+        with ESMTP id S233206AbjIGSyH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2023 14:54:07 -0400
+Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E842791
+        for <linux-gpio@vger.kernel.org>; Thu,  7 Sep 2023 11:53:20 -0700 (PDT)
+Received: by mail-vs1-xe30.google.com with SMTP id ada2fe7eead31-44ee1123667so1447680137.0
+        for <linux-gpio@vger.kernel.org>; Thu, 07 Sep 2023 11:53:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694112798; x=1694717598; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f20OVJZsVkvgr12m2GLQpGE6nkKLjOApm9F1D76ZYu4=;
+        b=Sqfe55zWj+2EJ/YMECZg/lapiNxBpHO35etVKA5/lYELZDZ9bVMFUH8yUT8xuw5nnw
+         Q5YrNLdMR/7O7g340D3P58vA117n9/P0YN9PnS4jUzwuh4Im1sNWI7nCn6GNFPON2ZYy
+         ZvXJy9L9fNM2XZJrS193cofXt2hXP6FvXQHwFBhHw1dFp6WHmRSjhLM5yaMrRAMqbMwZ
+         rxP33MNraUA7PnIS8/j5LVSm5agA+4ny81VfiG/EbmcgnXTmRtFlt/I84YugbZt0SVPz
+         5u2x1/cZAmfmOtCp9M4f7/tXAPqDoEnb9tKZP/noTKdRJ9LtX0VwejQyYrdqs4+vOa1+
+         9/oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694112798; x=1694717598;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f20OVJZsVkvgr12m2GLQpGE6nkKLjOApm9F1D76ZYu4=;
+        b=DrQp7UzDeUqL6eznSWmoD5wDl77b8pFPWkk0B7FHsKH6tz/mPc4F9/+K/gkOJSoTwX
+         KTJGpY8QRpqjGwjHyGRr0X1T4++8r3nlmgUErybQk08eorrLJkTd6z7/xX/jm7k6KMz8
+         FjEiw6px32xpmrkspJP88/z9gbzFFu/b38XFuMFNpxS6SPe0ZIHyIHR8rZ+mvb8g9EUx
+         M2QHJr5V4EkQtgW7eT6RpLnKWsoHxDDRT72Mbr0wFwUBM68V93rSDkQJp3+LxUx/1iVx
+         5BSzHetlaUm10shAllaBypYDr0PR4w5Bk5rGX90yal4QLIvK54mpNAFQrs673PdQaRP8
+         WaUQ==
+X-Gm-Message-State: AOJu0YxyX2LtlepXp24HGKfBcC/V8QaWpXu2I+kd9ieb00N4BxFu3fTQ
+        7cCLxqVTIekXsUjgfPThmIa1KAFGctRneZjTC0bbsjl1+WFHrAAZlCc=
+X-Google-Smtp-Source: AGHT+IHeVaENuEkywllarylsoaxFtkX8+wcxLmOt1RC5WvBdIS3BKktFFG9wSU0jnwmUX/wjU0B+ttekv3ZROcdPEGQ=
+X-Received: by 2002:a25:f414:0:b0:d73:ed30:1162 with SMTP id
+ q20-20020a25f414000000b00d73ed301162mr1939775ybd.28.1694072320536; Thu, 07
+ Sep 2023 00:38:40 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: rockchip: Add io domain
- properties
-Content-Language: en-GB
-To:     Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     linux-rockchip@lists.infradead.org,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        kernel@pengutronix.de,
-        Quentin Schulz <quentin.schulz@theobroma-systems.com>,
-        Michael Riesch <michael.riesch@wolfvision.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-References: <20230904115816.1237684-1-s.hauer@pengutronix.de>
- <20230904115816.1237684-3-s.hauer@pengutronix.de>
- <b4017947-9e16-7d97-a7b1-3e6964a1f7a9@arm.com>
- <20230906072121.GA492117@pengutronix.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20230906072121.GA492117@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-18-brgl@bgdev.pl>
+In-Reply-To: <20230905185309.131295-18-brgl@bgdev.pl>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 7 Sep 2023 09:38:29 +0200
+Message-ID: <CACRpkdZbCjFMytzsF6Sb-6V54J+owk+zJ3oB9ZGCzAdsGwcFOQ@mail.gmail.com>
+Subject: Re: [PATCH 17/21] gpio: of: replace gpiochip_find_* with gpio_device_find_*
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 2023-09-06 08:21, Sascha Hauer wrote:
-> On Tue, Sep 05, 2023 at 10:03:20AM +0100, Robin Murphy wrote:
->> On 2023-09-04 12:58, Sascha Hauer wrote:
->>> Add rockchip,io-domains property to the Rockchip pinctrl driver. This
->>> list of phandles points to the IO domain device(s) the pins of the
->>> pinctrl driver are supplied from.
->>>
->>> Also a rockchip,io-domain-boot-on property is added to pin groups
->>> which can be used for pin groups which themselves are needed to access
->>> the regulators an IO domain is driven from.
->>>
->>> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
->>> ---
->>>    .../bindings/pinctrl/rockchip,pinctrl.yaml          | 13 ++++++++++++-
->>>    1 file changed, 12 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
->>> index 10c335efe619e..92075419d29cf 100644
->>> --- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
->>> +++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
->>> @@ -62,6 +62,11 @@ properties:
->>>          Required for at least rk3188 and rk3288. On the rk3368 this should
->>>          point to the PMUGRF syscon.
->>> +  rockchip,io-domains:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->>> +    description:
->>> +      Phandles to io domains
->>> +
->>>      "#address-cells":
->>>        enum: [1, 2]
->>> @@ -137,7 +142,13 @@ additionalProperties:
->>>                - description:
->>>                    The phandle of a node contains the generic pinconfig options
->>>                    to use as described in pinctrl-bindings.txt.
->>> -
->>> +      rockchip,io-domain-boot-on:
->>
->> I don't think "on" is a particularly descriptive or useful property name for
->> something that has no "off" state.
-> 
-> In fact it has an "off" state. A IO Domain can be disabled in the SoC
-> registers
+(Sorry for fatfinger reply)
 
-Oh, is that a thing on newer SoCs? At least in the RK3399 TRM the only 
-I/O-domain-related control I can find is the 1.8V/3.0V logic level 
-threshold in GRF_IO_VSEL (plus the one outlier in PMUGRF_SOC_CON0).
+On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
 
-> and also the corresponding regulator can be disabled.
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> We're porting all users of gpiochip_find() to using gpio_device_find().
+> Update the OF GPIO code.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-...which is clearly a property of the regulator, not of its consumers ;)
+Scoped guards, nice!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-However it's also not a meaningful state in this context anyway, since 
-if the supply was actually off, and thus we were unable to communicate 
-with the PMIC to turn it on... oh dear.
-
-Cheers,
-Robin.
-
->> Furthermore it's no help at all if the DT
->> consumer *is* the bootloader that's expected to configure this in the first
->> place. IMO it would seem a lot more sensible to have an integer (or enum)
->> property which describes the actual value for the initial I/O domain
->> setting.
-> 
-> I agree though that a particular setting instead of a boolean is better
-> and could help the bootloader.
-> 
->> Then Linux can choose to assume the presence of the property at all
->> implies that the bootloader should have set it up already, but also has the
->> option of actively enforcing it as well if we want to.
-> 
-> Ok.
-> 
-> Thanks,
->   Sascha
-> 
+Yours,
+Linus Walleij
