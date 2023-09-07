@@ -2,201 +2,110 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9DDEC8750
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Sep 2023 19:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B697EC875B
+	for <linux-gpio@archiver.kernel.org>; Thu,  7 Sep 2023 19:31:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236182AbjIGTEB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Sep 2023 15:04:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59300 "EHLO
+        id S236295AbjIGTba (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 7 Sep 2023 15:31:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230487AbjIGTEA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2023 15:04:00 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BF089D
-        for <linux-gpio@vger.kernel.org>; Thu,  7 Sep 2023 12:03:56 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-401bbfc05fcso14534355e9.3
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Sep 2023 12:03:56 -0700 (PDT)
+        with ESMTP id S243228AbjIGRR5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2023 13:17:57 -0400
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7561119A5
+        for <linux-gpio@vger.kernel.org>; Thu,  7 Sep 2023 10:17:30 -0700 (PDT)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-1c8c44053e8so606498fac.1
+        for <linux-gpio@vger.kernel.org>; Thu, 07 Sep 2023 10:17:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694113435; x=1694718235; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lh5w3MxPE+alnGfs9hmhKOYGJqh9e2xBJbpyNGgCkrU=;
-        b=l/8Fo9+DClwvCTFbNSx+9nK56/ANqf6eumjg9we2PpPfGLReOW1dJXiFBpX+4ZBuKn
-         6yWy5MU6/UVpVFdUEHkytbrwpKAS2+V1ZkodzhcnAwPHfhsq+6Y7luexSoUD+ilhihEh
-         8hGUyrOTD3aLhGJcI/qOSd809NFS7Hph+IQ98S+aFysHtlH2QlH5p9H9yI3l8RMLdT1l
-         6JwlrGLlgwf1VpwsCLUTbgRp2zFwIPxoOHWycwtsBBGKnMUVJzl1kmtGwbcLfYo8KC8K
-         lFsLvIEndFtvGCcWKGuQBQmOGQ2/Uz2eX3vNlc0prwWkfn7U3YgvkSiVgEnO707wwowR
-         IVsw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694106980; x=1694711780; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EM9vERMeF0RyymslElMGVcmFN1ITJOkS0HhbR6rj4eY=;
+        b=fqtn4eWdbJARqMUNz3un/rAJXmSa4qyGvxeiLqOBQUkg/u8OfqcBA1K4mlU4GLgHRv
+         bCNUKeKeVYF+JZDr0yVCwuCgI37pRFob9bBW8bCw9kWrFzzSw8R2j/9uU3merBk5W9/+
+         nJz+K2gE7TpyKKvxekBsxO8P0jt/ooKSP62RZ2CYK3fosVGLVSaATSpwtP/4Xyd0HZf2
+         xvJqbJqtJkr+U/jqhZ7ZbJniwM2IxXjU6ogL5fWqVi28y6CPPXXt4Og299ieYVxsgRTY
+         /0zo6IwvcjLbLPLqxnlVDC3lYh8pSWxlvJPio75XGirQ752qL9p5o9RodbJKoLvO4JFG
+         sDGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694113435; x=1694718235;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lh5w3MxPE+alnGfs9hmhKOYGJqh9e2xBJbpyNGgCkrU=;
-        b=DuYsTJnWDLuHIElTnAI7kgFRlw8/chjguJMnnfswghmNlQ2UHqK5vn6JPoau0fHLoC
-         oBNxObYHPezXDAFtARHVOPEE0/pECHtmQdx4kGuTBUKjuaMCutXU3At2w377GQK2SxPc
-         3J8prMcU3YkWc7n/0cBVJLjxawkyrv5H38zVCh3ho7j/pXI7tY+K1nN04X5zRGC7hVVb
-         mkmAnTUAwIq9vaxKGycCjkQ1EspmMduKfurLKpXj7pQkRqnkoBp3sV1KFYo5puZhJ4yd
-         GtBi4kA1bcXFE9a6/YsTnIqE7rVwDZXo0rswqzwTBHWmlxaSXUMIf5hYdFvajYS5g4v4
-         Eeeg==
-X-Gm-Message-State: AOJu0Yztp2uNYlZd97+YdfGk6uWTt+QM/E82TmuG2r032BLFDf+S3VQm
-        o7kNmmEO0lnL5hTlBuH+oCcexy7xd9UIRXjkh5o=
-X-Google-Smtp-Source: AGHT+IFNy6bkfFeC1oZYCCYNRcSXW9KT4JmTkjuxMK/5wZaA3rwvDo41I+2JUgUCunyAW/aj5xGAZQ==
-X-Received: by 2002:a7b:ce8a:0:b0:401:b0f2:88b4 with SMTP id q10-20020a7bce8a000000b00401b0f288b4mr4060288wmj.26.1694080438540;
-        Thu, 07 Sep 2023 02:53:58 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id 3-20020a05600c020300b003fc04d13242sm2027176wmi.0.2023.09.07.02.53.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Sep 2023 02:53:58 -0700 (PDT)
-Date:   Thu, 7 Sep 2023 12:53:54 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     raag.jadav@intel.com
-Cc:     linux-gpio@vger.kernel.org
-Subject: [bug report] pinctrl: baytrail: consolidate common mask operation
-Message-ID: <d164d471-5432-4c3c-afdb-33dc8f53d043@moroto.mountain>
+        d=1e100.net; s=20221208; t=1694106980; x=1694711780;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EM9vERMeF0RyymslElMGVcmFN1ITJOkS0HhbR6rj4eY=;
+        b=SEdnJashJ3eLcusRQPRfKS0v6ZELYvTo1Z2kkGmfZCX3SX3qDeuOPrzaLnKKLHasyj
+         +DhJGYU99kiugdvs5bbo+HVDhnpsGlixDIKyarntQAcYq6xo8YInbrU9b5EfCoQfcBHj
+         k+RahbHSoVFF6oj/5SFhwJ5wtti4TxNJ+vtllpQbPrGKsd4ocUvQzr5TQiSOjt6LMm2P
+         lgba3U5BtnTgavp29OdiOpFAN7MSQKmvKnL86SGs+GAN89ZVYavnt9XZZBc5mK/k092R
+         KGEWzA9FIez0mTEGIcMhUpI/GuP75vxEXcMzuLu1wrJXJNbvqT8swjXlWgIzUO/jkPio
+         5Pww==
+X-Gm-Message-State: AOJu0YwVbUAwM19lhKftUCerviy3pYol4K/SE9dUppmEHYD5r1FDepE1
+        x1wU/GlBwnkq9GjDJ/xRkOxB2xVBCMv7jSdlsvywQSct5oe7Fay6
+X-Google-Smtp-Source: AGHT+IE8anPJZAGlVEtdUDBvfZSj/6PcDMAuKXqvs+G37inCYN9bOlMGcS0/NNLAQtkZM5qKA1KbbaOuVnGUeMyCl78=
+X-Received: by 2002:a05:6102:2408:b0:447:9339:a5f with SMTP id
+ j8-20020a056102240800b0044793390a5fmr1416739vsi.0.1694073488292; Thu, 07 Sep
+ 2023 00:58:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-16-brgl@bgdev.pl>
+ <CACRpkdaLKqNM1xMCo9jz1Pe_18A=GJodbaTHL+VmoRZa5jJbjQ@mail.gmail.com>
+In-Reply-To: <CACRpkdaLKqNM1xMCo9jz1Pe_18A=GJodbaTHL+VmoRZa5jJbjQ@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 7 Sep 2023 09:57:57 +0200
+Message-ID: <CAMRc=McBMTrcVpjWr2Qo2N5Z6+BEAWr6kLG_bPDmmuO=OFTtfg@mail.gmail.com>
+Subject: Re: [RFT PATCH 15/21] arm: omap1: ams-delta: stop using gpiochip_find()
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello Raag Jadav,
+On Thu, Sep 7, 2023 at 9:35=E2=80=AFAM Linus Walleij <linus.walleij@linaro.=
+org> wrote:
+>
+> Oops one more note:
+>
+> On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
+>
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > gpiochip_find() is going away as it's not hot-unplug safe. This platfor=
+m
+> > is not affected by any of the related problems as this GPIO controller
+> > cannot really go away but in order to finally remove this function, we
+> > need to convert it to using gpio_device_find() as well.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> (...)
+> > +       struct gpio_device *gdev;
+> (...)
+> > +       gdev =3D gpio_device_find_by_label(OMAP_GPIO_LABEL);
+>
+> This leaves a reference to the gdev right? No scoped guard?
+>
+> If you leave a dangling reference intentionally I think it warrants
+> a comment ("leaving a ref here so the device will never be
+> free:ed").
+>
 
-The patch 4cfff5b7af8b: "pinctrl: baytrail: consolidate common mask
-operation" from Aug 8, 2023 (linux-next), leads to the following
-Smatch static checker warning:
+It's right there in the comment. :)
 
-	drivers/pinctrl/intel/pinctrl-baytrail.c:1023 byt_pin_config_set()
-	error: uninitialized symbol 'db_pulse'.
-
-drivers/pinctrl/intel/pinctrl-baytrail.c
-    918 static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
-    919                               unsigned int offset,
-    920                               unsigned long *configs,
-    921                               unsigned int num_configs)
-    922 {
-    923         struct intel_pinctrl *vg = pinctrl_dev_get_drvdata(pctl_dev);
-    924         unsigned int param, arg;
-    925         void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
-    926         void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
-    927         void __iomem *db_reg = byt_gpio_reg(vg, offset, BYT_DEBOUNCE_REG);
-    928         u32 conf, val, db_pulse, debounce;
-    929         unsigned long flags;
-    930         int i, ret = 0;
-    931 
-    932         raw_spin_lock_irqsave(&byt_lock, flags);
-    933 
-    934         conf = readl(conf_reg);
-    935         val = readl(val_reg);
-    936 
-    937         for (i = 0; i < num_configs; i++) {
-    938                 param = pinconf_to_config_param(configs[i]);
-    939                 arg = pinconf_to_config_argument(configs[i]);
-    940 
-    941                 switch (param) {
-    942                 case PIN_CONFIG_BIAS_DISABLE:
-    943                         conf &= ~BYT_PULL_ASSIGN_MASK;
-    944                         break;
-    945                 case PIN_CONFIG_BIAS_PULL_DOWN:
-    946                         /* Set default strength value in case none is given */
-    947                         if (arg == 1)
-    948                                 arg = 2000;
-    949 
-    950                         /*
-    951                          * Pull assignment is only applicable in input mode. If
-    952                          * chip is not in input mode, set it and warn about it.
-    953                          */
-    954                         if (val & BYT_INPUT_EN) {
-    955                                 val &= ~BYT_INPUT_EN;
-    956                                 writel(val, val_reg);
-    957                                 dev_warn(vg->dev, "Pin %i: forcibly set to input mode\n", offset);
-    958                         }
-    959 
-    960                         conf &= ~BYT_PULL_ASSIGN_MASK;
-    961                         conf |= BYT_PULL_ASSIGN_DOWN;
-    962                         ret = byt_set_pull_strength(&conf, arg);
-    963 
-    964                         break;
-    965                 case PIN_CONFIG_BIAS_PULL_UP:
-    966                         /* Set default strength value in case none is given */
-    967                         if (arg == 1)
-    968                                 arg = 2000;
-    969 
-    970                         /*
-    971                          * Pull assignment is only applicable in input mode. If
-    972                          * chip is not in input mode, set it and warn about it.
-    973                          */
-    974                         if (val & BYT_INPUT_EN) {
-    975                                 val &= ~BYT_INPUT_EN;
-    976                                 writel(val, val_reg);
-    977                                 dev_warn(vg->dev, "Pin %i: forcibly set to input mode\n", offset);
-    978                         }
-    979 
-    980                         conf &= ~BYT_PULL_ASSIGN_MASK;
-    981                         conf |= BYT_PULL_ASSIGN_UP;
-    982                         ret = byt_set_pull_strength(&conf, arg);
-    983 
-    984                         break;
-    985                 case PIN_CONFIG_INPUT_DEBOUNCE:
-    986                         if (arg)
-    987                                 conf |= BYT_DEBOUNCE_EN;
-    988                         else
-    989                                 conf &= ~BYT_DEBOUNCE_EN;
-    990 
-    991                         switch (arg) {
-    992                         case 375:
-    993                                 db_pulse = BYT_DEBOUNCE_PULSE_375US;
-    994                                 break;
-    995                         case 750:
-    996                                 db_pulse = BYT_DEBOUNCE_PULSE_750US;
-    997                                 break;
-    998                         case 1500:
-    999                                 db_pulse = BYT_DEBOUNCE_PULSE_1500US;
-    1000                                 break;
-    1001                         case 3000:
-    1002                                 db_pulse = BYT_DEBOUNCE_PULSE_3MS;
-    1003                                 break;
-    1004                         case 6000:
-    1005                                 db_pulse = BYT_DEBOUNCE_PULSE_6MS;
-    1006                                 break;
-    1007                         case 12000:
-    1008                                 db_pulse = BYT_DEBOUNCE_PULSE_12MS;
-    1009                                 break;
-    1010                         case 24000:
-    1011                                 db_pulse = BYT_DEBOUNCE_PULSE_24MS;
-    1012                                 break;
-    1013                         default:
-    1014                                 if (arg)
-    1015                                         ret = -EINVAL;
-
-db_pulse is uninitialized if arg is zero.
-
-    1016                                 break;
-    1017                         }
-    1018 
-    1019                         if (ret)
-    1020                                 break;
-    1021 
-    1022                         debounce = readl(db_reg);
---> 1023                         debounce = (debounce & ~BYT_DEBOUNCE_PULSE_MASK) | db_pulse;
-    1024                         writel(debounce, db_reg);
-    1025 
-    1026                         break;
-    1027                 default:
-    1028                         ret = -ENOTSUPP;
-    1029                 }
-    1030 
-    1031                 if (ret)
-    1032                         break;
-    1033         }
-    1034 
-    1035         if (!ret)
-    1036                 writel(conf, conf_reg);
-    1037 
-    1038         raw_spin_unlock_irqrestore(&byt_lock, flags);
-    1039 
-    1040         return ret;
-    1041 }
-
-regards,
-dan carpenter
+Bart
