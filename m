@@ -2,110 +2,91 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B697EC875B
-	for <linux-gpio@archiver.kernel.org>; Thu,  7 Sep 2023 19:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E2CEE57CB
+	for <linux-gpio@archiver.kernel.org>; Fri,  8 Sep 2023 05:52:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236295AbjIGTba (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 7 Sep 2023 15:31:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50658 "EHLO
+        id S233305AbjIHFwT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 8 Sep 2023 01:52:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243228AbjIGRR5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2023 13:17:57 -0400
-Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7561119A5
-        for <linux-gpio@vger.kernel.org>; Thu,  7 Sep 2023 10:17:30 -0700 (PDT)
-Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-1c8c44053e8so606498fac.1
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Sep 2023 10:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694106980; x=1694711780; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EM9vERMeF0RyymslElMGVcmFN1ITJOkS0HhbR6rj4eY=;
-        b=fqtn4eWdbJARqMUNz3un/rAJXmSa4qyGvxeiLqOBQUkg/u8OfqcBA1K4mlU4GLgHRv
-         bCNUKeKeVYF+JZDr0yVCwuCgI37pRFob9bBW8bCw9kWrFzzSw8R2j/9uU3merBk5W9/+
-         nJz+K2gE7TpyKKvxekBsxO8P0jt/ooKSP62RZ2CYK3fosVGLVSaATSpwtP/4Xyd0HZf2
-         xvJqbJqtJkr+U/jqhZ7ZbJniwM2IxXjU6ogL5fWqVi28y6CPPXXt4Og299ieYVxsgRTY
-         /0zo6IwvcjLbLPLqxnlVDC3lYh8pSWxlvJPio75XGirQ752qL9p5o9RodbJKoLvO4JFG
-         sDGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1694106980; x=1694711780;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EM9vERMeF0RyymslElMGVcmFN1ITJOkS0HhbR6rj4eY=;
-        b=SEdnJashJ3eLcusRQPRfKS0v6ZELYvTo1Z2kkGmfZCX3SX3qDeuOPrzaLnKKLHasyj
-         +DhJGYU99kiugdvs5bbo+HVDhnpsGlixDIKyarntQAcYq6xo8YInbrU9b5EfCoQfcBHj
-         k+RahbHSoVFF6oj/5SFhwJ5wtti4TxNJ+vtllpQbPrGKsd4ocUvQzr5TQiSOjt6LMm2P
-         lgba3U5BtnTgavp29OdiOpFAN7MSQKmvKnL86SGs+GAN89ZVYavnt9XZZBc5mK/k092R
-         KGEWzA9FIez0mTEGIcMhUpI/GuP75vxEXcMzuLu1wrJXJNbvqT8swjXlWgIzUO/jkPio
-         5Pww==
-X-Gm-Message-State: AOJu0YwVbUAwM19lhKftUCerviy3pYol4K/SE9dUppmEHYD5r1FDepE1
-        x1wU/GlBwnkq9GjDJ/xRkOxB2xVBCMv7jSdlsvywQSct5oe7Fay6
-X-Google-Smtp-Source: AGHT+IE8anPJZAGlVEtdUDBvfZSj/6PcDMAuKXqvs+G37inCYN9bOlMGcS0/NNLAQtkZM5qKA1KbbaOuVnGUeMyCl78=
-X-Received: by 2002:a05:6102:2408:b0:447:9339:a5f with SMTP id
- j8-20020a056102240800b0044793390a5fmr1416739vsi.0.1694073488292; Thu, 07 Sep
- 2023 00:58:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-16-brgl@bgdev.pl>
- <CACRpkdaLKqNM1xMCo9jz1Pe_18A=GJodbaTHL+VmoRZa5jJbjQ@mail.gmail.com>
-In-Reply-To: <CACRpkdaLKqNM1xMCo9jz1Pe_18A=GJodbaTHL+VmoRZa5jJbjQ@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 7 Sep 2023 09:57:57 +0200
-Message-ID: <CAMRc=McBMTrcVpjWr2Qo2N5Z6+BEAWr6kLG_bPDmmuO=OFTtfg@mail.gmail.com>
-Subject: Re: [RFT PATCH 15/21] arm: omap1: ams-delta: stop using gpiochip_find()
+        with ESMTP id S230208AbjIHFwS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Sep 2023 01:52:18 -0400
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CECF71BC5
+        for <linux-gpio@vger.kernel.org>; Thu,  7 Sep 2023 22:52:12 -0700 (PDT)
+Received: from dlp.unisoc.com ([10.29.3.86])
+        by SHSQR01.spreadtrum.com with ESMTP id 3885q0fb009890;
+        Fri, 8 Sep 2023 13:52:00 +0800 (+08)
+        (envelope-from linhua.xu@unisoc.com)
+Received: from SHDLP.spreadtrum.com (shmbx04.spreadtrum.com [10.0.1.214])
+        by dlp.unisoc.com (SkyGuard) with ESMTPS id 4RhlXx5j1rz2Rb6KB;
+        Fri,  8 Sep 2023 13:49:05 +0800 (CST)
+Received: from xm9614pcu.spreadtrum.com (10.13.2.29) by shmbx04.spreadtrum.com
+ (10.0.1.214) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Fri, 8 Sep
+ 2023 13:51:58 +0800
+From:   Linhua Xu <Linhua.xu@unisoc.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+CC:     Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
-        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        lh xu <xulh0829@gmail.com>, Linhua Xu <Linhua.Xu@unisoc.com>,
+        Zhirong Qiu <zhirong.qiu@unisoc.com>,
+        Xiongpeng Wu <xiongpeng.wu@unisoc.com>
+Subject: [PATCH V2 0/6] pinctrl: sprd: Modification of UNIOC Platform pinctrl Driver
+Date:   Fri, 8 Sep 2023 13:51:40 +0800
+Message-ID: <20230908055146.18347-1-Linhua.xu@unisoc.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.13.2.29]
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ shmbx04.spreadtrum.com (10.0.1.214)
+X-MAIL: SHSQR01.spreadtrum.com 3885q0fb009890
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Sep 7, 2023 at 9:35=E2=80=AFAM Linus Walleij <linus.walleij@linaro.=
-org> wrote:
->
-> Oops one more note:
->
-> On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > gpiochip_find() is going away as it's not hot-unplug safe. This platfor=
-m
-> > is not affected by any of the related problems as this GPIO controller
-> > cannot really go away but in order to finally remove this function, we
-> > need to convert it to using gpio_device_find() as well.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> (...)
-> > +       struct gpio_device *gdev;
-> (...)
-> > +       gdev =3D gpio_device_find_by_label(OMAP_GPIO_LABEL);
->
-> This leaves a reference to the gdev right? No scoped guard?
->
-> If you leave a dangling reference intentionally I think it warrants
-> a comment ("leaving a ref here so the device will never be
-> free:ed").
->
+From: Linhua Xu <Linhua.Xu@unisoc.com>
 
-It's right there in the comment. :)
+Recently, some bugs have been discovered during use, and patch2 and patch3
+are bug fixes. Also, this patchset add new features: patch1 is for
+compatibility with more platforms, patch4 add pinctrl support for UMS512,
+patch5 Increase the range of register values, patch6 add pinctrl support
+for UMS9621.
 
-Bart
+change in V2
+-Add comment for common_pin_offset and misc_pin_offset
+-Remove cast commits
+-Modify the mask definition into GENMASK form
+-Delete the three-speed configuration that modifies the original parameters
+-Add 1.8K resistor configuration
+-Delete depends on OF
+-Modify the format of sprd_pinctrl_of_match
+-Drop trailing comma in the terminator entry
+-Add bits.h header file
+-Add kernel.h header file
+
+Linhua Xu (6):
+  pinctrl: sprd: Modify the probe function parameters
+  pinctrl: sprd: Fix the incorrect mask and shift definition
+  pinctrl: sprd: Modify pull-up parameters
+  pinctrl: sprd: Add pinctrl support for UMS512
+  pinctrl: sprd: Increase the range of register values
+  pinctrl: sprd: Add pinctrl support for UMS9621
+
+ drivers/pinctrl/sprd/Kconfig                |   22 +
+ drivers/pinctrl/sprd/Makefile               |    2 +
+ drivers/pinctrl/sprd/pinctrl-sprd-sc9860.c  |    7 +-
+ drivers/pinctrl/sprd/pinctrl-sprd-ums512.c  |  878 +++++++++++++++
+ drivers/pinctrl/sprd/pinctrl-sprd-ums9621.c | 1117 +++++++++++++++++++
+ drivers/pinctrl/sprd/pinctrl-sprd.c         |   49 +-
+ drivers/pinctrl/sprd/pinctrl-sprd.h         |   33 +-
+ 7 files changed, 2071 insertions(+), 37 deletions(-)
+ create mode 100644 drivers/pinctrl/sprd/pinctrl-sprd-ums512.c
+ create mode 100644 drivers/pinctrl/sprd/pinctrl-sprd-ums9621.c
+
+-- 
+2.17.1
+
