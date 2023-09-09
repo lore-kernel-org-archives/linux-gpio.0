@@ -2,165 +2,134 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F81EEB59B
-	for <linux-gpio@archiver.kernel.org>; Sat,  9 Sep 2023 16:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CF9EE14AA
+	for <linux-gpio@archiver.kernel.org>; Sat,  9 Sep 2023 20:18:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230252AbjIIQZP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 9 Sep 2023 12:25:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51456 "EHLO
+        id S245237AbjIIUSP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 9 Sep 2023 16:18:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346306AbjIIONe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Sep 2023 10:13:34 -0400
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD7DDCCA;
-        Sat,  9 Sep 2023 07:13:29 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 4217532008FD;
-        Sat,  9 Sep 2023 10:13:28 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Sat, 09 Sep 2023 10:13:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1694268807; x=1694355207; bh=nbOp7enOV3UefizK0seUV09PDl3g1xgVtOM
-        4dP2WEA0=; b=YHv+kCaKh+wWZ/Y2/qhZkJBLYkbrsXUkscQJnUIDy/TAAd7AvB1
-        3Wuyxw3z11/LeWAUWXCqwQ6lAX+ziNXMpbLnLHsvbjDd9zd8J13G8EiFpbQ49o+v
-        VI5xsLPCnyFx17savFhk7LhmT97GN6mMx19V6eBJBCZgCTlwMbDSEbz1uC185xlZ
-        oiufYMzFPvbN+/s6xckc0o2jFpaDMklvHiTEBl+d9nwqrBG2taTr2zLy0t1eqTPx
-        /POKw1QNQo++a6uWF5y6hs735yd0vsg9N98YoMsRGlCn4z0VoDHIZZxGEZlRF7v3
-        fdofrMrLVkQQ+wFnD5VPnBxcIU2ZFRPNoxA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1694268807; x=1694355207; bh=nbOp7enOV3UefizK0seUV09PDl3g1xgVtOM
-        4dP2WEA0=; b=q1YSKHpK1FVP33uiOek4PJX+L3XjjfUMOSGg6HjMM4+9J9IX41y
-        EsKS+NUvJEH08bQ/mKV02ZU34E7XGLc8AqQv41xVdf4NxcsltlVZeLdHdvjAoF1b
-        oK5inPFoRiZQWoWZlDFYPeeLNJO11Z4tyuWJiqV63fsd4uMQ0koOKT/Xtm6bha46
-        wsBkHWuQNbo6OptXxjUOFeu6Qd6VGgA+znzn2yoPdEUFAA75rlNKmBFEwf9KvoyR
-        LxSEhjGwwVitud/MPvuf2L/+eU2gWHNXNk/7QddSn+ORYhe6csTZEcJV0ZQ+hcqO
-        NT4BlJyfLEXhNzlpu3scn90kqY+pjWYg5pw==
-X-ME-Sender: <xms:h338ZHhwDVGrKf9f_hroAaYucF07sPPn6u3L4F03KYVwrvTYQ4SlIg>
-    <xme:h338ZEDPWpxc1u6I97qNU3Fipxu3LEUUteez4cr-DSXVePK_iuEwGm83c6yRn4t9X
-    _-BqU9tCP29qlH73A>
-X-ME-Received: <xmr:h338ZHEWPq9LW8EJaz1L38HentIWBlFd6GV-mJ778sc1zalncz4NFAWV9C8yQyJNIzX6e39XFnT-xGIn2wMkMLgduLZVPYocIAeL3gskcebgAVol9H5vdvIW_g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudehledgjeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghm
-    uhgvlhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenuc
-    ggtffrrghtthgvrhhnpeduhffffefhffduudetvdffkeetveeiueegfeelleffiedtuddt
-    ffduhefgtdefgfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhl
-    rghnugdrohhrgh
-X-ME-Proxy: <xmx:h338ZESAqFizQBY1AXNc8PCLrn5pKBFvybU-9g7pXKikURJgHQE8tg>
-    <xmx:h338ZEx575UiyHPImvVYDcH6BA0hemUZv6NKAOGKKvyKexHdrrYRag>
-    <xmx:h338ZK6J5zj-A97KCNM1L_MMqa5vAtHtV9gbc37rgk2dkOuVJYa8fQ>
-    <xmx:h338ZHypFkRg7uxvQBPMRMFk9d82SL5xb0_y8Tbqtx3QKGjzenhS0Q>
-Feedback-ID: i0ad843c9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 9 Sep 2023 10:13:26 -0400 (EDT)
-Message-ID: <a16e8863-7b8c-9a73-b93f-c55f1bf6c792@sholland.org>
-Date:   Sat, 9 Sep 2023 09:13:25 -0500
+        with ESMTP id S239931AbjIIUSO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Sep 2023 16:18:14 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63DBB1703;
+        Sat,  9 Sep 2023 13:17:48 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 389KHEMY017573;
+        Sat, 9 Sep 2023 20:17:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=YhC6K0gMeRrD1/JeZ045dfEa3H4vunv2V0WhUcWwUKc=;
+ b=QgKInVLLeM+8Yk03WRPzJsTbVevQDSySXMclZNVMC2pnRSNjZPm33pItIGzM1vG4eDnp
+ sJw1hY18ckLDrpIH50AjKVEvamVLMn+blV1tp/lnuvCsRw6M9wrsKyYjEPyQo/65Ju7j
+ H75balRhNmuGXdURl3MjTunnoRdxncGoLLCRBSWsoW4VMQIj1SBh4zT1dBpguqrHtJes
+ +nmR+/rMTmSr+JBSmuLBAOAm9+I+ekQ3Dndpwa1RxHvHBkMPAbAsJnZKiikz5V1xSIa3
+ qKj8zqhhcCDG05lVg0u5rmwC3pcwHxEViOk4B4xTwudgm3wd3LNkStfTTdb0RijVuSCM zg== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0g1rgyyf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 09 Sep 2023 20:17:13 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 389KHCLM014267
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 9 Sep 2023 20:17:12 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Sat, 9 Sep 2023 13:17:01 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_mojha@quicinc.com>
+Subject: [PATCH v5 03/17] remoteproc: qcom_q6v5_pas: Use qcom_rproc_minidump()
+Date:   Sun, 10 Sep 2023 01:46:04 +0530
+Message-ID: <1694290578-17733-4-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
+References: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux ppc64le; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v2] pinctrl: sunxi: h616: add extra gpio banks
-Content-Language: en-US
-To:     Mikhail Kalashnikov <iuncuim@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Andre Przywara <andre.przywara@arm.com>
-References: <20230909094529.6083-1-iuncuim@gmail.com>
-From:   Samuel Holland <samuel@sholland.org>
-In-Reply-To: <20230909094529.6083-1-iuncuim@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4SMnR0pxCUSDU0trLO4rKWMHlL7ufbEb
+X-Proofpoint-ORIG-GUID: 4SMnR0pxCUSDU0trLO4rKWMHlL7ufbEb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-09_19,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ malwarescore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1015
+ phishscore=0 spamscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
+ definitions=main-2309090187
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 9/9/23 04:45, Mikhail Kalashnikov wrote:
-> From: iuncuim <iuncuim@gmail.com>
-> 
-> Some SoCs from the H616 family (such as the T507) have the same die but
-> more output pins that are used for additional peripherals. The T507 SoC
-> don't have a built-in multiphy like the AC200 or AC300 connected ti the
+Now, as all the minidump specific data structure is moved to
+minidump specific files and implementation wise qcom_rproc_minidump()
+and qcom_minidump() exactly same and the name qcom_rproc_minidump
+make more sense as it happen to collect the minidump for the
+remoteproc processors. So, let's use qcom_rproc_minidump() and
+we will be removing qcom_minidump() and minidump related stuff
+from driver/remoteproc/qcom_common.c .
 
-typo: to
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+ drivers/remoteproc/Kconfig         | 1 +
+ drivers/remoteproc/qcom_q6v5_pas.c | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-> bank A. With the T507 these pins can be freely used for any other application.
-> This patch adds the missing muxes on banks A, D and E.
-> 
-> Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
-> ---
->  drivers/pinctrl/sunxi/pinctrl-sun50i-h616.c | 380 +++++++++++++++++++-
->  1 file changed, 366 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun50i-h616.c b/drivers/pinctrl/sunxi/pinctrl-sun50i-h616.c
-> index d6ca720ee..10d4e1ef1 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun50i-h616.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-h616.c
-> @@ -16,33 +16,81 @@
->  #include "pinctrl-sunxi.h"
->  
->  static const struct sunxi_desc_pin h616_pins[] = {
-> -	/* Internal connection to the AC200 part */
-> +	/* Internally connected to the AC200 part in the H616 SoC */
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(A, 0),
-> -		  SUNXI_FUNCTION(0x2, "emac1")),	/* ERXD1 */
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "emac1"),		/* ERXD1 */
-> +		  SUNXI_FUNCTION(0x4, "i2c0"),		/* SCK */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PA_EINT0 */
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(A, 1),
-> -		  SUNXI_FUNCTION(0x2, "emac1")),	/* ERXD0 */
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "emac1"),		/* ERXD0 */
-> +		  SUNXI_FUNCTION(0x4, "i2c0"),		/* SDA */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),	/* PA_EINT1 */
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(A, 2),
-> -		  SUNXI_FUNCTION(0x2, "emac1")),	/* ECRS_DV */
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "emac1"),		/* ECRS_DV */
-> +		  SUNXI_FUNCTION(0x4, "i2c1"),		/* SCK */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),	/* PA_EINT2 */
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(A, 3),
-> -		  SUNXI_FUNCTION(0x2, "emac1")),	/* ERXERR */
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "emac1"),		/* ERXERR */
-> +		  SUNXI_FUNCTION(0x4, "i2c1"),		/* SDA */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),	/* PA_EINT3 */
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(A, 4),
-> -		  SUNXI_FUNCTION(0x2, "emac1")),	/* ETXD1 */
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "emac1"),		/* ETXD1 */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),	/* PA_EINT4 */
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(A, 5),
-> -		  SUNXI_FUNCTION(0x2, "emac1")),	/* ETXD0 */
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "emac1"),		/* ETXD0 */
-> +		  SUNXI_FUNCTION(0x3, "h_i2s0"),	/* DOUT0 */
-
-For H616 we chose[1] to remove the "h_" prefix from the I2S function
-names, even though the interfaces are part of the audio hub and not
-discrete devices. Please remove it here as well for consistency.
-
-Regards,
-Samuel
-
-[1]:
-https://lore.kernel.org/linux-arm-kernel/20201214094430.m6h3pzhkm3kjl2cl@gilmour/
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 48845dc8fa85..cea960749e2c 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -166,6 +166,7 @@ config QCOM_PIL_INFO
+ 
+ config QCOM_RPROC_COMMON
+ 	tristate
++	select QCOM_RPROC_MINIDUMP
+ 
+ config QCOM_Q6V5_COMMON
+ 	tristate
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 3153d82037e7..f235daae84ff 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -24,6 +24,7 @@
+ #include <linux/soc/qcom/mdt_loader.h>
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/soc/qcom/smem_state.h>
++#include <soc/qcom/qcom_minidump.h>
+ 
+ #include "qcom_common.h"
+ #include "qcom_pil_info.h"
+@@ -130,7 +131,7 @@ static void adsp_minidump(struct rproc *rproc)
+ 	if (rproc->dump_conf == RPROC_COREDUMP_DISABLED)
+ 		return;
+ 
+-	qcom_minidump(rproc, adsp->minidump_id, adsp_segment_dump);
++	qcom_rproc_minidump(rproc, adsp->minidump_id, adsp_segment_dump);
+ }
+ 
+ static int adsp_pds_enable(struct qcom_adsp *adsp, struct device **pds,
+-- 
+2.7.4
 
