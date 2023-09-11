@@ -2,216 +2,235 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1F2CA0EC6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA9CCA0EC4
 	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:06:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240248AbjIKU4V (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:56:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35576 "EHLO
+        id S240134AbjIKU4Q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:56:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236764AbjIKLWl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 07:22:41 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 470BECEB
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:22:36 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2bcc4347d2dso71211281fa.0
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:22:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694431354; x=1695036154; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JWYEp19+kxLH9ilfKCkarl8GOyU5SYDVfZv3MA5eqe4=;
-        b=mz1Oanf70aSQ1YkqlAtxjvUhIoGj7+/02AxiZlh+CkXaXVyhwjjVoq0buzAdb8gD92
-         oP1rx0YIOmKtVnl+A3Jy7mezxIHes54Mka7zPatQM8lrxgbj5Ere217D8JB0t+yiJ3K1
-         Q1Isztdrs7Y7egeh6PDW36XUwBqiABG0JBsg1btdYO5c+cHA2WTltZbNQ3pv1tgAVRzt
-         YElDcUnsJSNKiCCLklNE+2ugivTZ7QH4Wq02KYWJp4DXKB1nsQl7W8mf03urUM/85Jot
-         offUfgLJUn+VQiTDBAsUeygrsxYIAIwtH515oMEnhbfAsu51WXB6Wfp3vr3s0x3iid5b
-         GWKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694431354; x=1695036154;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JWYEp19+kxLH9ilfKCkarl8GOyU5SYDVfZv3MA5eqe4=;
-        b=iZL9Nfq8/x+f3S9WUXOXSp/O2X6JfemOPma/+tPMqPTsHlzdM0gBHTxwSRGtl8nAyS
-         0WksZX7uSDhsMvMS8Qd+5RIwnwTNwJTvebr5KuGfkOM+kH04cuaoUwDTchCI+EpTv76h
-         TYNbAJ0eqq3so/duhkEIpbYckudYJ+e30fNdFRuKYsXX/9s1Xhv0nl7NZ+QcTRLoldde
-         81vzSftp0VEGaxTjcQpxj2xL4TfmM0shwe72VYwQAa7z66znyGJGA07b0yIhZkS/ii5J
-         5Nhy7Jnk41VQgycZ5TBXLs1IsaMfgy48eyuikl2fue9dy/i0AJnb8VkNQYi5Y7sxYcny
-         pDXg==
-X-Gm-Message-State: AOJu0YwPz4MzjH9aEcYAyBtS+xnu1t8UFtKlzCIhEqbhMom6QSaUXZRm
-        BXPKxLWs5/YgrGyIFwnLYBDaOg==
-X-Google-Smtp-Source: AGHT+IHRLMhGsK6RsT9iyCrETaJpm/vgcvBoo5IaCQ506Q9GN4EWNfwfYVLjJBE5Ml1DRyCm7I/IFA==
-X-Received: by 2002:a2e:9e45:0:b0:2bc:dba0:60f9 with SMTP id g5-20020a2e9e45000000b002bcdba060f9mr6734230ljk.44.1694431354467;
-        Mon, 11 Sep 2023 04:22:34 -0700 (PDT)
-Received: from [192.168.37.232] (178235177061.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.61])
-        by smtp.gmail.com with ESMTPSA id ov27-20020a170906fc1b00b00992c92af6f4sm5207739ejb.144.2023.09.11.04.22.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Sep 2023 04:22:33 -0700 (PDT)
-Message-ID: <924aa48f-5c23-4e17-8bc0-256887971ba9@linaro.org>
-Date:   Mon, 11 Sep 2023 13:22:30 +0200
+        with ESMTP id S236557AbjIKK5H (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:57:07 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6C91F3;
+        Mon, 11 Sep 2023 03:57:02 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38BAoP0T025337;
+        Mon, 11 Sep 2023 10:56:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=uaoggU+O059yy0NtlBEpDD3gw5NIJW0KcsRpeOQKyIM=;
+ b=Yc12rM0pRN8woQeor+feNqt2nL8u34Eh332DR5OlFjq+6OBndHlVyt20qWOcTWUIBm44
+ eYutRWDpKX4pQqHFx7RQEJx63ZiUNOMiDHw42UbV1NIogIIGNijbfAXLhAQ7D2bnVgbA
+ 3U//Dw9wpN3XLpmzI2OTEGQfp5ZEB4Cp5Br4eJYxtxOIbbVa/TJjfiL2i96xe50h6BN0
+ RaXLo7WIUfhVnB48aKCJ/AN6U6CVlefXoQiR4TJHU9zsl3GSzuXeF4aAhHMieEWAYIds
+ 0WuoA4Fa6BzI0OHI63d6iJ8LsVLb22UUmCG3RKoi93aMZdCFIGvuqRV7wjAQYWriXI3G Lg== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t1xjmrefd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:40 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAudcw006749
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:39 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Mon, 11 Sep 2023 03:56:29 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_mojha@quicinc.com>
+Subject: [REBASE PATCH v5 16/17] firmware: qcom_scm: Refactor code to support multiple download mode
+Date:   Mon, 11 Sep 2023 16:23:58 +0530
+Message-ID: <1694429639-21484-17-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/11] arm64: dts: qcom: pm7250b: make SID configurable
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc:     cros-qcom-dts-watchers@chromium.org,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
- <20230830-fp5-initial-v1-4-5a954519bbad@fairphone.com>
- <b82f4683-e8b5-b424-8f7a-6d2ba1cab61f@linaro.org>
- <CV6NF0466658.20DGU7QKF2UBR@otso>
- <CAA8EJpr1+W3f08X-FpiiVrJ98kg52HaMwbbKn=fG15Whm4C8aQ@mail.gmail.com>
- <728003b9-db27-fdc0-e761-197a02a38c24@linaro.org>
- <CAA8EJpoXreHpxZQ2G10n0OiQzUX4ffk=gvo87dAU4-r+Svqpeg@mail.gmail.com>
- <CVAUDGBO4S08.1F0O66ZE6I4IG@otso> <CVFY7D7ND3WS.2B2EYB4ZO86P@otso>
- <cae7261a-6727-6163-1420-01039bfb8396@linaro.org>
- <CVFZZ0YSWQ6J.2AKRML6LWRMUH@otso>
- <bd418fae-accc-bd79-969a-b3b5791efd35@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <bd418fae-accc-bd79-969a-b3b5791efd35@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Yu3TMLFHfI0m0rNQlxh7FXtuDai56q4W
+X-Proofpoint-GUID: Yu3TMLFHfI0m0rNQlxh7FXtuDai56q4W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ phishscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=999
+ malwarescore=0 adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309110099
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 11.09.2023 13:15, Krzysztof Kozlowski wrote:
-> On 11/09/2023 11:59, Luca Weiss wrote:
->> On Mon Sep 11, 2023 at 11:44 AM CEST, Krzysztof Kozlowski wrote:
->>> On 11/09/2023 10:34, Luca Weiss wrote:
->>>> On Tue Sep 5, 2023 at 10:30 AM CEST, Luca Weiss wrote:
->>>>> On Thu Aug 31, 2023 at 2:27 PM CEST, Dmitry Baryshkov wrote:
->>>>>> On Thu, 31 Aug 2023 at 14:54, Krzysztof Kozlowski
->>>>>> <krzysztof.kozlowski@linaro.org> wrote:
->>>>>>>
->>>>>>> On 31/08/2023 13:33, Dmitry Baryshkov wrote:
->>>>>>>> On Thu, 31 Aug 2023 at 13:13, Luca Weiss <luca.weiss@fairphone.com> wrote:
->>>>>>>>>
->>>>>>>>> On Wed Aug 30, 2023 at 12:06 PM CEST, Krzysztof Kozlowski wrote:
->>>>>>>>>> On 30/08/2023 11:58, Luca Weiss wrote:
->>>>>>>>>>> Like other Qualcomm PMICs the PM7250B can be used on different addresses
->>>>>>>>>>> on the SPMI bus. Use similar defines like the PMK8350 to make this
->>>>>>>>>>> possible.
->>>>>>>>>>>
->>>>>>>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->>>>>>>>>>> ---
->>>>>>>>>>>  arch/arm64/boot/dts/qcom/pm7250b.dtsi | 23 ++++++++++++++++-------
->>>>>>>>>>>  1 file changed, 16 insertions(+), 7 deletions(-)
->>>>>>>>>>>
->>>>>>>>>>> diff --git a/arch/arm64/boot/dts/qcom/pm7250b.dtsi b/arch/arm64/boot/dts/qcom/pm7250b.dtsi
->>>>>>>>>>> index e8540c36bd99..3514de536baa 100644
->>>>>>>>>>> --- a/arch/arm64/boot/dts/qcom/pm7250b.dtsi
->>>>>>>>>>> +++ b/arch/arm64/boot/dts/qcom/pm7250b.dtsi
->>>>>>>>>>> @@ -7,6 +7,15 @@
->>>>>>>>>>>  #include <dt-bindings/interrupt-controller/irq.h>
->>>>>>>>>>>  #include <dt-bindings/spmi/spmi.h>
->>>>>>>>>>>
->>>>>>>>>>> +/* This PMIC can be configured to be at different SIDs */
->>>>>>>>>>> +#ifndef PM7250B_SID
->>>>>>>>>>> +   #define PM7250B_SID 2
->>>>>>>>>>> +#endif
->>>>>>>>>>
->>>>>>>>>> Why do you send the same patch as v1, without any reference to previous
->>>>>>>>>> discussions?
->>>>>>>>>>
->>>>>>>>>> You got here feedback already.
->>>>>>>>>>
->>>>>>>>>> https://lore.kernel.org/linux-arm-msm/f52524da-719b-790f-ad2c-0c3f313d9fe9@linaro.org/
->>>>>>>>>
->>>>>>>>> Hi Krzysztof,
->>>>>>>>>
->>>>>>>>> I did mention that original patch in the cover letter of this series.
->>>>>>>>> I'm definitely aware of the discussion earlier this year there but also
->>>>>>>>> tried to get an update lately if there's any update with no response.
->>>>>>>>
->>>>>>>> I think the overall consensus was that my proposal is too complicated
->>>>>>>> for the DT files.
->>>>>>>
->>>>>>> I proposed to duplicate the entries. Do you keep QUP nodes in DTSI and
->>>>>>> customize per address? No.
->>>>>>
->>>>>> At the same time, we do keep SoC files separate from the board files.
->>>>>> Yes, I'm slightly exaggerating here.
->>>>>>
->>>>>> I think that for PMIC files it makes sense to extract common parts if
->>>>>> that eases reuse of the common parts.
->>>>>
->>>>> Hi all,
->>>>>
->>>>> what can I do for v2 now?
->>>>>
->>>>> 1. Keep this patch as-is, and keep pm7250b in device dts.
->>>
->>> This was NAKed by me. What Qualcomm SoC maintainers decide (or not
->>> decide) about other options, should not cause the wrong solution to be
->>> re-posted...
->>>
->>>>>
->>>>> 2. Drop pm7250b patch and drop from device dts, until _someone_ figures
->>>>> out a solution talking to the PMIC on different SID.
->>>>>
->>>>> 3. Something else like copy-pasting pm7250b.dtsi to pm7250-8.dtsi and
->>>>> changing the SID there, and using that in device dts.
->>
->> @Konrad, @Bjorn: Can you give any feedback here what's preferable?
->> Otherwise I'm just blocked on this series.
-I'm sure Krzysztof will disagree, but all of the solutions (which are
-either duplicate the dt, add ifdefs or skip adding this pmic) are
-equally band-aid-class.. A bright future where this PMIC thing is
-handled on the driver side that will hopefully come soon(tm) should
-resolve such problems..
+Currently on Qualcomm SoC, download_mode is enabled if
+CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT is selected.
 
-From my side, ifdef is the least burdensome, even if ugly..
+Refactor the code such that it supports multiple download
+modes and drop CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT config
+instead, give interface to set the download mode from
+module parameter.
 
-Konrad
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+ drivers/firmware/Kconfig    | 11 ---------
+ drivers/firmware/qcom_scm.c | 56 +++++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 49 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index b59e3041fd62..ff7e9f330559 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -215,17 +215,6 @@ config MTK_ADSP_IPC
+ config QCOM_SCM
+ 	tristate
+ 
+-config QCOM_SCM_DOWNLOAD_MODE_DEFAULT
+-	bool "Qualcomm download mode enabled by default"
+-	depends on QCOM_SCM
+-	help
+-	  A device with "download mode" enabled will upon an unexpected
+-	  warm-restart enter a special debug mode that allows the user to
+-	  "download" memory content over USB for offline postmortem analysis.
+-	  The feature can be enabled/disabled on the kernel command line.
+-
+-	  Say Y here to enable "download mode" by default.
+-
+ config SYSFB
+ 	bool
+ 	select BOOT_VESA_SUPPORT
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index 5cacae63ee2a..4ecdb0d025a4 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -20,13 +20,13 @@
+ #include <linux/of_irq.h>
+ #include <linux/of_platform.h>
+ #include <linux/clk.h>
++#include <linux/kstrtox.h>
+ #include <linux/reset-controller.h>
+ #include <linux/arm-smccc.h>
+ 
+ #include "qcom_scm.h"
+ 
+-static bool download_mode = IS_ENABLED(CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT);
+-module_param(download_mode, bool, 0);
++static u32 download_mode;
+ 
+ #define SCM_HAS_CORE_CLK	BIT(0)
+ #define SCM_HAS_IFACE_CLK	BIT(1)
+@@ -83,6 +83,11 @@ static const char * const qcom_scm_convention_names[] = {
+ 	[SMC_CONVENTION_LEGACY] = "smc legacy",
+ };
+ 
++static const char * const download_mode_name[] = {
++	[QCOM_DLOAD_NODUMP]	= "off",
++	[QCOM_DLOAD_FULLDUMP]	= "full",
++};
++
+ static struct qcom_scm *__scm;
+ static DEFINE_SPINLOCK(lock);
+ 
+@@ -448,9 +453,10 @@ static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
+ 	return qcom_scm_call_atomic(__scm->dev, &desc, NULL);
+ }
+ 
+-static void qcom_scm_set_download_mode(bool enable)
++static void qcom_scm_set_download_mode(u32 download_mode)
+ {
+-	u32 val = enable ? QCOM_DLOAD_FULLDUMP : QCOM_DLOAD_NODUMP;
++	bool enable = !!download_mode;
++	u32 val = download_mode;
+ 	bool avail;
+ 	int ret = 0;
+ 
+@@ -1430,6 +1436,42 @@ static irqreturn_t qcom_scm_irq_handler(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++static int get_download_mode(char *buffer, const struct kernel_param *kp)
++{
++	if (download_mode >= ARRAY_SIZE(download_mode_name))
++		return sysfs_emit(buffer, "unknown mode\n");
++
++	return sysfs_emit(buffer, "%s\n", download_mode_name[download_mode]);
++}
++
++static int set_download_mode(const char *val, const struct kernel_param *kp)
++{
++	u32 old = download_mode;
++	int ret;
++
++	ret = sysfs_match_string(download_mode_name, val);
++	if (ret < 0) {
++		download_mode = old;
++		pr_err("qcom_scm: unknown download mode: %s\n", val);
++		return -EINVAL;
++	}
++
++	download_mode = ret;
++	if (__scm)
++		qcom_scm_set_download_mode(download_mode);
++
++	return 0;
++}
++
++static const struct kernel_param_ops download_mode_param_ops = {
++	.get = get_download_mode,
++	.set = set_download_mode,
++};
++
++module_param_cb(download_mode, &download_mode_param_ops, NULL, 0644);
++MODULE_PARM_DESC(download_mode,
++		"download mode: off/full are acceptable values");
++
+ static int qcom_scm_probe(struct platform_device *pdev)
+ {
+ 	struct qcom_scm *scm;
+@@ -1493,12 +1535,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
+ 	__get_convention();
+ 
+ 	/*
+-	 * If requested enable "download mode", from this point on warmboot
++	 * If "download mode" is requested, from this point on warmboot
+ 	 * will cause the boot stages to enter download mode, unless
+ 	 * disabled below by a clean shutdown/reboot.
+ 	 */
+ 	if (download_mode)
+-		qcom_scm_set_download_mode(true);
++		qcom_scm_set_download_mode(download_mode);
+ 
+ 	return 0;
+ }
+@@ -1506,7 +1548,7 @@ static int qcom_scm_probe(struct platform_device *pdev)
+ static void qcom_scm_shutdown(struct platform_device *pdev)
+ {
+ 	/* Clean shutdown, disable download mode to allow normal restart */
+-	qcom_scm_set_download_mode(false);
++	qcom_scm_set_download_mode(QCOM_DLOAD_NODUMP);
+ }
+ 
+ static const struct of_device_id qcom_scm_dt_match[] = {
+-- 
+2.7.4
+
