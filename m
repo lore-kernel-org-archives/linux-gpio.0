@@ -2,76 +2,119 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F0BCA0EC6
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E31FCA0EC0
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:05:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240529AbjIKU4b (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:56:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60346 "EHLO
+        id S240422AbjIKU42 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:56:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238188AbjIKNp7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 09:45:59 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CF32CD7
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 06:45:55 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-d7b91422da8so3894039276.2
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 06:45:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694439954; x=1695044754; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=abR3VaGNrRHsdwyHrrQpJiXZlzgarJ3lOwO59sLmP30=;
-        b=Anr84nNaDf5SDUmlzcS3izOQDFwGyQGNlWpDSr1xnWSHrbXA83Zu9CIQCI0w0UQFl4
-         TPNCyqZu0SApQUm/l5+p5g51P5ZdUEpAnxucTCTW9bZOpDgCYJIDBYibBlHf5+U3W8am
-         Rh8+DH7QiAng+uM+fh/sglCGnUny/KA7Of2uZ3T4vzNYd8Z457qlXnuk33lzT+dgKF1C
-         c4wktkWxhNR71HiBqpYLxO+LZuss+4fhLWqChetnLdVuDVfOR0Ldw+bIC6Bo6XxCZGtB
-         Sqhe89lvozG3z6q9joXTJFeB5JBrKptDl52/oKQYCEm49DeVyFHdAWbNvLr3IyMErmIl
-         oNzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694439954; x=1695044754;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=abR3VaGNrRHsdwyHrrQpJiXZlzgarJ3lOwO59sLmP30=;
-        b=poqlY8KUT/72nMbcYsRzQ0fKS/sGsvaQ7GvluhPRtjQ1H2M1nlWL37Tc557VXLRBkU
-         e6rtHJnXzkWt0yhn6clf4qyItpcPR3+ZXxKJZ2i94wBbOvK53CTrYAyfbKcMZZLkfu86
-         7pLPDhp/yKl3Wr50SDo6MrazkhrlggtlktMlRX+0TXQ3WQKj3gvGHSDMoWbPVdXwzZae
-         dv4x7MPRqXAaOF54xemLbad8ak2+akXpZ76Gxl3CeoXcr2zs9Zx7Z+jjU0xpcrv5v7gt
-         3+9flKSUYQkV+QsOBTCHlgRJkFgUl3VUO5K+OSP+pPUp1c3fDfEUSuWVtBfb/2zr1q8a
-         K1oQ==
-X-Gm-Message-State: AOJu0YzZ1PacVi2VsNIGVaBGHs5GseqXH0qCHJrA7htc3Jecjkmpoyhc
-        s4xy25r3vvohLwqB5XO7L+LqZ/P1BO8zDm3C1Y4bcg==
-X-Google-Smtp-Source: AGHT+IHSmmS4us5sCBMBcWYUwI3gk4Nef2vfeWu7sD/aTdMDmtbPS37oafhhcEFKXl6M7fvbFEjCFVJosncHlPqhv+M=
-X-Received: by 2002:a25:b11c:0:b0:d78:1f87:d6f1 with SMTP id
- g28-20020a25b11c000000b00d781f87d6f1mr8323772ybj.33.1694439954285; Mon, 11
- Sep 2023 06:45:54 -0700 (PDT)
+        with ESMTP id S236104AbjIKJu4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 05:50:56 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB710ED;
+        Mon, 11 Sep 2023 02:50:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694425851; x=1725961851;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iCAgKyq7VgwAnxmQkRS3Ccgm7XbsQwNb7q495NUM0tI=;
+  b=iMD5Xaup317khdy3ciyod3WW8ZQjJo0fk6q7fRF6A1HEfdOsE1koHiHi
+   bdSKboZDqPCwVWW1Pg/oFeiIKRtkkg18+DH/XlwzoNWCbQL95WA34JrzA
+   98+uawDb3BE1skHV1Y8GMfMrwVeLckfCzWrXkLJ8jKj2ABXeQ5/T/T4Bi
+   uoJy7d0jQHK5wxl9UNVwoIrGJaUCd+KEdmOFK6gXSDpBPRJJcVKqPsxmG
+   RMukfqLLtowagvLkvNIDKxMd5M+0FZuI9ftk95oOp4H/u4aVp9flydoSb
+   xZKiq9A+rNdcRxBtiJQHB/nFwSC159JeEHXOldMMx78wzs9ZxP9taqmvk
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="377957116"
+X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
+   d="scan'208";a="377957116"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:50:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="693032158"
+X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
+   d="scan'208";a="693032158"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:50:41 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qfdZ0-008Hb0-2A;
+        Mon, 11 Sep 2023 12:50:38 +0300
+Date:   Mon, 11 Sep 2023 12:50:38 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linhua Xu <Linhua.xu@unisoc.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        lh xu <xulh0829@gmail.com>,
+        Zhirong Qiu <zhirong.qiu@unisoc.com>,
+        Xiongpeng Wu <xiongpeng.wu@unisoc.com>
+Subject: Re: [PATCH V2 2/6] pinctrl: sprd: Fix the incorrect mask and shift
+ definition
+Message-ID: <ZP7i7oSthp9YHeXh@smile.fi.intel.com>
+References: <20230908055146.18347-1-Linhua.xu@unisoc.com>
+ <20230908055146.18347-3-Linhua.xu@unisoc.com>
 MIME-Version: 1.0
-References: <0ff17be9b31c9fcf03481c0665293b98ced741f7.1692871243.git.geert+renesas@glider.be>
-In-Reply-To: <0ff17be9b31c9fcf03481c0665293b98ced741f7.1692871243.git.geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 11 Sep 2023 15:45:43 +0200
-Message-ID: <CACRpkdbS8XMuSrEVVcCGWpySnUjew+hRyX4S468iFRp0_g_U-Q@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: berlin: Drop superfluous ampersands
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Jisheng Zhang <jszhang@kernel.org>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230908055146.18347-3-Linhua.xu@unisoc.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 12:05=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Fri, Sep 08, 2023 at 01:51:42PM +0800, Linhua Xu wrote:
+> From: Linhua Xu <Linhua.Xu@unisoc.com>
+> 
+> Pull-up and pull-down are mutually exclusive. When setting one of them,
+> the bit of the other needs to be clear. Now, there are cases where pull-up
+> and pull-down are set at the same time in the code, thus fix them.
 
-> There is no need to use an ampersand to take the address of a function.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+...
 
-Patch applied as nonurgent fix.
+>  #define SLEEP_PULL_DOWN			BIT(2)
+> -#define SLEEP_PULL_DOWN_MASK		0x1
+> +#define SLEEP_PULL_DOWN_MASK		GENMASK(1, 0)
+>  #define SLEEP_PULL_DOWN_SHIFT		2
+>  
+>  #define PULL_DOWN			BIT(6)
+> -#define PULL_DOWN_MASK			0x1
+> +#define PULL_DOWN_MASK			(GENMASK(1, 0) | BIT(6))
+>  #define PULL_DOWN_SHIFT			6
+>  
+>  #define SLEEP_PULL_UP			BIT(3)
+> -#define SLEEP_PULL_UP_MASK		0x1
+> -#define SLEEP_PULL_UP_SHIFT		3
+> +#define SLEEP_PULL_UP_MASK		GENMASK(1, 0)
+> +#define SLEEP_PULL_UP_SHIFT		2
+>  
+>  #define PULL_UP_4_7K			(BIT(12) | BIT(7))
+>  #define PULL_UP_20K			BIT(7)
+> -#define PULL_UP_MASK			0x21
+> -#define PULL_UP_SHIFT			7
+> +#define PULL_UP_MASK			(GENMASK(1, 0) | BIT(6))
+> +#define PULL_UP_SHIFT			6
 
-Yours,
-Linus Walleij
+These look strange now.
+
+So, SLEEP MASK doesn't cover bits 2 and 3.
+I believe you should have
+
+#define SLEEP_PULL_UP_DOWN_MASK		GENMASK(3, 2)
+
+The other even weirder with this BIT(6) there.
+
+In the similar way:
+
+#define PULL_UP_DOWN_MASK		GENMASK(7, 6)
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
