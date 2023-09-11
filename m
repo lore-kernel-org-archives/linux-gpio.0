@@ -2,163 +2,281 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0B8CA0EC3
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F34D7CA0EC1
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239389AbjIKUyw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:54:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52346 "EHLO
+        id S236251AbjIKUyz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:54:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236251AbjIKKEU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:04:20 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49710E68
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 03:04:16 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1bc0d39b52cso29378975ad.2
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 03:04:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1694426655; x=1695031455; darn=vger.kernel.org;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=G3qwr0R6vu0Sv+hGJJsy7nNmrkJ957bGK+GM2ibVgnM=;
-        b=Po/zz9mevalh6diqT3+F7I/z6pch6SoXiWGslydU8GX2IJyEo6dFQO9EJbCBw0+xra
-         p+BmLXKk2PpXnyX3ojqtzx8+xa51gEbEimVCv54/n0Cq8MQI5jLg4iZtWjIANnZOxdIS
-         g9XcGf7bke6IbvC9uAjn2uBTi7XRGITFfXRGsIQswXjKX5Zejm9ogkw3LRcPjp/miA0r
-         Wo+aEhVm3YZ88i9If2zsbN2yb9bQclMgM48cKH7nFobN7h7sgsV8gy320IINjebuK9Ih
-         jSFxGbRZ3st4IQDgG5VNwNvuEPKrbcNuqEVilNRz5hJZefhQ1kvdKC9XAzsSavUt+xVg
-         1gcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694426655; x=1695031455;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G3qwr0R6vu0Sv+hGJJsy7nNmrkJ957bGK+GM2ibVgnM=;
-        b=i4XY6ezZLR40TEjEjA12f4ZQEYoOK0TqWJ06rARs1xZIqFe4GPf8EfsjSQPQpZcZHh
-         8yf+1nK9F5FWHzWvVUrm86K+7AM2rPR+BzK4yUqXFr8+Gj/weR37pMgWm8vEC1wCjq8F
-         RtfzSXx19gqZ5jmIDxOfAEk5qAmXVEqXxzO8Hna8N+Zint5kukgnSkCUqG9PNRMZwGfr
-         ugNHnX0+Y4oxfQeF2EK8b+FtDRFDSWZizDnM5ZYFJTpT/IhSmt+rqx+2DLrUJJcTnQlL
-         LQ7SLL0quY0INQBsZJ86AGE78adQnItT2cc6nlIMvh1ouzxtg5VLwIdLDfTSUN+p9iFQ
-         e9ow==
-X-Gm-Message-State: AOJu0YxYl+6El8CyZKbs5wEYMfwI9OKdkkEcQ8ODShSpvfgO8UIEZ1qK
-        wEiSt32HL9wYHLiF8GqLbh3nR76q1JO0BRjgLIA=
-X-Google-Smtp-Source: AGHT+IEb+pPeey2ZRVNSLoSPbdI2wsUGZrHxhCH2s1GdRT+41zwwU0ybZWwjBgUPG5jz82NHu3dpOQ==
-X-Received: by 2002:a17:903:18e:b0:1b5:1467:c4e8 with SMTP id z14-20020a170903018e00b001b51467c4e8mr10670788plg.15.1694426655278;
-        Mon, 11 Sep 2023 03:04:15 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id x12-20020a1709028ecc00b001ae0152d280sm5991015plo.193.2023.09.11.03.04.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 03:04:14 -0700 (PDT)
-Message-ID: <64fee61e.170a0220.2142e.dfb1@mx.google.com>
-Date:   Mon, 11 Sep 2023 03:04:14 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S236532AbjIKKzc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:55:32 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0D81F1;
+        Mon, 11 Sep 2023 03:55:27 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38B9fmxc007832;
+        Mon, 11 Sep 2023 10:55:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=t03UP7q891F/c5g/2wfXb+TlibZKK7FwWRcbw5U5eKA=;
+ b=Ho4hFkEokMgmCBaW03nkJmxZDwRVhB9HufpTQa42iWofQmsFDaxDVr+dBA8RPXgEvp11
+ zOBvKg+gwvLaIo2gnqlqWeUVvjm8TeWs9urt+C1MpYjfL+wfDtpLhbPNZV4ZPgvd/zG7
+ Gq7B95RsuuGt4PzpOYqNS1urVCN7ufeKXUdN5UfqOEycb+Y7IQ/nsG6DNYjty+oPlKB4
+ cy1KxXI9dUSuyK0qw8Pw4R0/Ju5vrs1GA6qXr7+NI3dreTY4TPiVIBxYwXp43YCmaGBi
+ 5q1N8UotK7P7FY/SwWwHfb3+zMX7ExbGKZq/opTe/PBT6r3ySC+QZ7Eq6RWeGw1lev51 Nw== 
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t1u3yrs88-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:55:02 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAt1uO032425
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:55:01 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Mon, 11 Sep 2023 03:54:44 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_mojha@quicinc.com>
+Subject: [REBASE PATCH v5 04/17] remoteproc: qcom: Remove minidump related data from qcom_common.c
+Date:   Mon, 11 Sep 2023 16:23:46 +0530
+Message-ID: <1694429639-21484-5-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: for-next
-X-Kernelci-Tree: linusw
-X-Kernelci-Report-Type: build
-X-Kernelci-Kernel: v6.6-rc1
-Subject: linusw/for-next build: 8 builds: 0 failed, 8 passed,
- 4 warnings (v6.6-rc1)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tjFQUm_2yuDC0uqVCtc9PxTbx7sDBJRy
+X-Proofpoint-ORIG-GUID: tjFQUm_2yuDC0uqVCtc9PxTbx7sDBJRy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ clxscore=1015 phishscore=0 impostorscore=0 suspectscore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309110099
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/for-next build: 8 builds: 0 failed, 8 passed, 4 warnings (v6.6-rc1)
+As minidump specific data structure and functions move under
+config QCOM_RPROC_MINIDUMP, so remove minidump specific data
+from driver/remoteproc/qcom_common.c .
 
-Full Build Summary: https://kernelci.org/build/linusw/branch/for-next/kerne=
-l/v6.6-rc1/
-
-Tree: linusw
-Branch: for-next
-Git Describe: v6.6-rc1
-Git Commit: 0bb80ecc33a8fb5a682236443c1e740d5c917d1d
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
-git/
-Built: 8 unique architectures
-
-Warnings Detected:
-
-arc:
-
-arm64:
-
-arm:
-
-i386:
-
-mips:
-
-riscv:
-
-sparc:
-    sparc64_defconfig (gcc-10): 4 warnings
-
-x86_64:
-
-
-Warnings summary:
-
-    2    WARNING: modpost: EXPORT symbol "_mcount" [vmlinux] version genera=
-tion failed, symbol will not be versioned.
-    2    <stdin>:1519:2: warning: #warning syscall clone3 not implemented [=
--Wcpp]
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-32r2el_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-haps_hs_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-i386_defconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-sparc64_defconfig (sparc, gcc-10) =E2=80=94 PASS, 0 errors, 4 warnings, 0 s=
-ection mismatches
-
-Warnings:
-    <stdin>:1519:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    WARNING: modpost: EXPORT symbol "_mcount" [vmlinux] version generation =
-failed, symbol will not be versioned.
-    <stdin>:1519:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    WARNING: modpost: EXPORT symbol "_mcount" [vmlinux] version generation =
-failed, symbol will not be versioned.
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 ---
-For more info write to <info@kernelci.org>
+ drivers/remoteproc/qcom_common.c | 160 ---------------------------------------
+ 1 file changed, 160 deletions(-)
+
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 03e5f5d533eb..085fd73fa23a 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -17,7 +17,6 @@
+ #include <linux/rpmsg/qcom_smd.h>
+ #include <linux/slab.h>
+ #include <linux/soc/qcom/mdt_loader.h>
+-#include <linux/soc/qcom/smem.h>
+ 
+ #include "remoteproc_internal.h"
+ #include "qcom_common.h"
+@@ -26,61 +25,6 @@
+ #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
+ #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
+ 
+-#define MAX_NUM_OF_SS           10
+-#define MAX_REGION_NAME_LENGTH  16
+-#define SBL_MINIDUMP_SMEM_ID	602
+-#define MINIDUMP_REGION_VALID		('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
+-#define MINIDUMP_SS_ENCR_DONE		('D' << 24 | 'O' << 16 | 'N' << 8 | 'E' << 0)
+-#define MINIDUMP_SS_ENABLED		('E' << 24 | 'N' << 16 | 'B' << 8 | 'L' << 0)
+-
+-/**
+- * struct minidump_region - Minidump region
+- * @name		: Name of the region to be dumped
+- * @seq_num:		: Use to differentiate regions with same name.
+- * @valid		: This entry to be dumped (if set to 1)
+- * @address		: Physical address of region to be dumped
+- * @size		: Size of the region
+- */
+-struct minidump_region {
+-	char	name[MAX_REGION_NAME_LENGTH];
+-	__le32	seq_num;
+-	__le32	valid;
+-	__le64	address;
+-	__le64	size;
+-};
+-
+-/**
+- * struct minidump_subsystem - Subsystem's SMEM Table of content
+- * @status : Subsystem toc init status
+- * @enabled : if set to 1, this region would be copied during coredump
+- * @encryption_status: Encryption status for this subsystem
+- * @encryption_required : Decides to encrypt the subsystem regions or not
+- * @region_count : Number of regions added in this subsystem toc
+- * @regions_baseptr : regions base pointer of the subsystem
+- */
+-struct minidump_subsystem {
+-	__le32	status;
+-	__le32	enabled;
+-	__le32	encryption_status;
+-	__le32	encryption_required;
+-	__le32	region_count;
+-	__le64	regions_baseptr;
+-};
+-
+-/**
+- * struct minidump_global_toc - Global Table of Content
+- * @status : Global Minidump init status
+- * @md_revision : Minidump revision
+- * @enabled : Minidump enable status
+- * @subsystems : Array of subsystems toc
+- */
+-struct minidump_global_toc {
+-	__le32				status;
+-	__le32				md_revision;
+-	__le32				enabled;
+-	struct minidump_subsystem	subsystems[MAX_NUM_OF_SS];
+-};
+-
+ struct qcom_ssr_subsystem {
+ 	const char *name;
+ 	struct srcu_notifier_head notifier_list;
+@@ -90,110 +34,6 @@ struct qcom_ssr_subsystem {
+ static LIST_HEAD(qcom_ssr_subsystem_list);
+ static DEFINE_MUTEX(qcom_ssr_subsys_lock);
+ 
+-static void qcom_minidump_cleanup(struct rproc *rproc)
+-{
+-	struct rproc_dump_segment *entry, *tmp;
+-
+-	list_for_each_entry_safe(entry, tmp, &rproc->dump_segments, node) {
+-		list_del(&entry->node);
+-		kfree(entry->priv);
+-		kfree(entry);
+-	}
+-}
+-
+-static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsystem *subsystem,
+-			void (*rproc_dumpfn_t)(struct rproc *rproc, struct rproc_dump_segment *segment,
+-				void *dest, size_t offset, size_t size))
+-{
+-	struct minidump_region __iomem *ptr;
+-	struct minidump_region region;
+-	int seg_cnt, i;
+-	dma_addr_t da;
+-	size_t size;
+-	char *name;
+-
+-	if (WARN_ON(!list_empty(&rproc->dump_segments))) {
+-		dev_err(&rproc->dev, "dump segment list already populated\n");
+-		return -EUCLEAN;
+-	}
+-
+-	seg_cnt = le32_to_cpu(subsystem->region_count);
+-	ptr = ioremap((unsigned long)le64_to_cpu(subsystem->regions_baseptr),
+-		      seg_cnt * sizeof(struct minidump_region));
+-	if (!ptr)
+-		return -EFAULT;
+-
+-	for (i = 0; i < seg_cnt; i++) {
+-		memcpy_fromio(&region, ptr + i, sizeof(region));
+-		if (le32_to_cpu(region.valid) == MINIDUMP_REGION_VALID) {
+-			name = kstrndup(region.name, MAX_REGION_NAME_LENGTH - 1, GFP_KERNEL);
+-			if (!name) {
+-				iounmap(ptr);
+-				return -ENOMEM;
+-			}
+-			da = le64_to_cpu(region.address);
+-			size = le64_to_cpu(region.size);
+-			rproc_coredump_add_custom_segment(rproc, da, size, rproc_dumpfn_t, name);
+-		}
+-	}
+-
+-	iounmap(ptr);
+-	return 0;
+-}
+-
+-void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
+-		void (*rproc_dumpfn_t)(struct rproc *rproc,
+-		struct rproc_dump_segment *segment, void *dest, size_t offset,
+-		size_t size))
+-{
+-	int ret;
+-	struct minidump_subsystem *subsystem;
+-	struct minidump_global_toc *toc;
+-
+-	/* Get Global minidump ToC*/
+-	toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, NULL);
+-
+-	/* check if global table pointer exists and init is set */
+-	if (IS_ERR(toc) || !toc->status) {
+-		dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
+-		return;
+-	}
+-
+-	/* Get subsystem table of contents using the minidump id */
+-	subsystem = &toc->subsystems[minidump_id];
+-
+-	/**
+-	 * Collect minidump if SS ToC is valid and segment table
+-	 * is initialized in memory and encryption status is set.
+-	 */
+-	if (subsystem->regions_baseptr == 0 ||
+-	    le32_to_cpu(subsystem->status) != 1 ||
+-	    le32_to_cpu(subsystem->enabled) != MINIDUMP_SS_ENABLED) {
+-		return rproc_coredump(rproc);
+-	}
+-
+-	if (le32_to_cpu(subsystem->encryption_status) != MINIDUMP_SS_ENCR_DONE) {
+-		dev_err(&rproc->dev, "Minidump not ready, skipping\n");
+-		return;
+-	}
+-
+-	/**
+-	 * Clear out the dump segments populated by parse_fw before
+-	 * re-populating them with minidump segments.
+-	 */
+-	rproc_coredump_cleanup(rproc);
+-
+-	ret = qcom_add_minidump_segments(rproc, subsystem, rproc_dumpfn_t);
+-	if (ret) {
+-		dev_err(&rproc->dev, "Failed with error: %d while adding minidump entries\n", ret);
+-		goto clean_minidump;
+-	}
+-	rproc_coredump_using_sections(rproc);
+-clean_minidump:
+-	qcom_minidump_cleanup(rproc);
+-}
+-EXPORT_SYMBOL_GPL(qcom_minidump);
+-
+ static int glink_subdev_start(struct rproc_subdev *subdev)
+ {
+ 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
+-- 
+2.7.4
+
