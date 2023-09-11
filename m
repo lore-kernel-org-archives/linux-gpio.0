@@ -2,304 +2,288 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD33CA0EC3
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11EE2CA0EC0
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:54:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239087AbjIKUyg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:54:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51654 "EHLO
+        id S238895AbjIKUyc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:54:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235532AbjIKIwX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 04:52:23 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD57A1A1;
-        Mon, 11 Sep 2023 01:52:18 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-68fb2e9ebcdso764353b3a.2;
-        Mon, 11 Sep 2023 01:52:18 -0700 (PDT)
+        with ESMTP id S236641AbjIKLHx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 07:07:53 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAB50CC3
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:07:45 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-401bbfc05fcso47764245e9.3
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:07:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694422338; x=1695027138; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b6ojjoj528580DYzIEP6XgoOL7aePsN/TYuceJeg3YE=;
-        b=EWaL/fbzRC/P2JYWjsEpRPKHxsQBmEY9Ngt0JJqQlk5pDLT1BV7yHK8vPK9OyZ3sUe
-         IQTxNYBFAWspBt9liEkRI+iS3C0EXtTrkCYI9g9Kora9pyayplcAHf5l4mJYYRWzrbWv
-         jBVnc8ouj5vqymrbVucyxuehWqSdckBcIWTZX0FyJtbPLZoJDK2lmln26v7euDbLY7xl
-         YkclZAlBsEs0aEZghbzAbhXF1WcWMIbk1DzQTYReQCYXlp2ySErgoAJtc/e+Z/V4y1kT
-         BLXKd2/ou/qXQUSLTYpzWMv5PSsWbXwyhEShiUvSmCPS9lPJIEaJAWLskdObP91SuBAj
-         E/6g==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694430464; x=1695035264; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xm/XvHIaXfTZZB2GeDKFP8ttNrQxIuqNDAWSLgDUamU=;
+        b=tChjVYOplOSs2pKiZh9At1aFH5TAuSabtJgHKB2wK+wS+4mhlEtR/2HKVjZfoATAg0
+         ie1s0wRfEBFY8FOx7batNCs2d3MOhii4/D+EVZX6Vf81LK1UVkvJCMffqibn7a72dMKD
+         o9l32qoZknfY1pLQ9gopMhbiqObH49u8mZGhQpfp7q/ai4iwKDXt2qHmaH8jrO0RewGk
+         nuQuq0NOXIHusoeCz7Qkz/1vkatDyufINNgMwZIs1pdjMC0fpMPQ0nXo+uiYW5aErfWH
+         YMalxm3Rzqrq5z0tQqCutmwH2OE1jYPIGSFhqhoYVcZTz4iychdxfyLqs10sEnJ5Izgv
+         9W9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694422338; x=1695027138;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b6ojjoj528580DYzIEP6XgoOL7aePsN/TYuceJeg3YE=;
-        b=wz+gtZt6B1kMuJMa4I3H9GeAzLbtqEs4e7MO2Uh2hI15z1Mauty7Po+2MSW2b0YFa0
-         gZG5kUoYo1NILBz2k8lpSgjSVaX+lk+Vzliur+4fW+/krF7ZtxoPD37KzHfmBLi69H1O
-         zxoNWUGq6OKwbBETzBojPDYv1atD2b6rrjwrC40xBTxTkzJHWsC7U1dASBOr6CyoGQ53
-         OzCIKpP2ZmH/A19FWKpDuzxW2j80Ve3oA2c0xs2x5Byv1/DjpPt/eWr3/EIW1n+N5RhH
-         Z5OXEs1I7kgI/EObiLx8k2PCZEQUUtCdxneReRLwNEVU40xfRaZu67GyazIA4hqlCkCM
-         7Q8w==
-X-Gm-Message-State: AOJu0YyyCG0bWnPyVgSlZcfTiNqRvq1mnwEjfYHHL0rm+RSt07BtNIdj
-        qptkLJaRrPAxosqzSrAGAoo=
-X-Google-Smtp-Source: AGHT+IGhmEWHLAYl0FOfBIxHzSVzPNiLLqpuyRPizVofbJudX36mjRJtfMF93gr9pzcoQUhJS9Y29Q==
-X-Received: by 2002:a05:6300:8005:b0:14b:f9e2:e16c with SMTP id an5-20020a056300800500b0014bf9e2e16cmr6459218pzc.62.1694422338167;
-        Mon, 11 Sep 2023 01:52:18 -0700 (PDT)
-Received: from debian.me ([103.124.138.83])
-        by smtp.gmail.com with ESMTPSA id 5-20020a170902e9c500b001bb04755212sm5853976plk.228.2023.09.11.01.52.17
+        d=1e100.net; s=20230601; t=1694430464; x=1695035264;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xm/XvHIaXfTZZB2GeDKFP8ttNrQxIuqNDAWSLgDUamU=;
+        b=tS19slZT+uRsnPIrgDDs4VZzy/VRi97xHFP81y+9995IOb8USWgHr2ArPz1WRDQVEp
+         63R0vlDETrBihwdV605WmGEW9Z3Zq8dq0HdtCLifJkWjNyD8BgljA3pKPZG7CItfzqzj
+         nG4l5zxDVVUQu5TWpsQCLvOcR+v0707DOXebxX7ogVqpPZjmkdJ21f+o0Ys99cei8PKt
+         A2wfbP+ZPvphzb6HMwaArRY6g/gR2wa9+s4DCSUAO+MzHD0rxmR+AfOwIyN3WyawA5VQ
+         C3Gle6eeHahTVsu6TOYWVAzEqS0N/tuc64jmldE+OlWvtySe5tqjAX9SB2z6RxhPJMQJ
+         lz5g==
+X-Gm-Message-State: AOJu0YwHNVneBIQyepbY2U1yuGRJRTZ7oKh5ewgTqHHy+soi0CQJa4Y0
+        zmi7B+pm0GjMZpQs0MO8Vgsdpg==
+X-Google-Smtp-Source: AGHT+IFKnQ3ehacxh8x5sp0+cO9MVpN1I81oxpW9TVLRWQV8nh0/kBCB1vz6i5OZ2JrCdjU9LYBLDA==
+X-Received: by 2002:a5d:6acc:0:b0:314:327:2edb with SMTP id u12-20020a5d6acc000000b0031403272edbmr8302489wrw.0.1694430463702;
+        Mon, 11 Sep 2023 04:07:43 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:c2b1:675e:119e:2497])
+        by smtp.gmail.com with ESMTPSA id y13-20020adffa4d000000b0031f5f0d0be0sm9693736wrr.31.2023.09.11.04.07.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 01:52:17 -0700 (PDT)
-Received: by debian.me (Postfix, from userid 1000)
-        id D1703830618D; Mon, 11 Sep 2023 15:52:13 +0700 (WIB)
-Date:   Mon, 11 Sep 2023 15:52:13 +0700
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-To:     Mukesh Ojha <quic_mojha@quicinc.com>, <corbet@lwn.net>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
-Cc:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-Subject: Re: [PATCH v5 00/17] Add Qualcomm Minidump kernel driver related
- support
-Message-ID: <ZP7VPfVtvbmB5aQf@debian.me>
-References: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
+        Mon, 11 Sep 2023 04:07:43 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v5] gpio: sim: don't fiddle with GPIOLIB private members
+Date:   Mon, 11 Sep 2023 13:07:40 +0200
+Message-Id: <20230911110740.16284-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ypI1W5o4Aub9n7jF"
-Content-Disposition: inline
-In-Reply-To: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
---ypI1W5o4Aub9n7jF
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We access internals of struct gpio_device and struct gpio_desc because
+it's easier but it can actually be avoided and we're working towards a
+better encapsulation of GPIO data structures across the kernel so let's
+start at home.
 
-On Sun, Sep 10, 2023 at 01:46:01AM +0530, Mukesh Ojha wrote:
-> Hi All,
->=20
-> This is to continuation from the conversation happened at v4
->=20
-> https://lore.kernel.org/lkml/632c5b97-4a91-c3e8-1e6c-33d6c4f6454f@quicinc=
-=2Ecom/
->=20
-> https://lore.kernel.org/lkml/695133e6-105f-de2a-5559-555cea0a0462@quicinc=
-=2Ecom/
->=20
-> We have put abstract on LPC on this topic as well as initiated a mail thr=
-ead
-> with other SoC vendors but did not get much traction on it.
->=20
-> https://lore.kernel.org/lkml/0199db00-1b1d-0c63-58ff-03efae02cb21@quicinc=
-=2Ecom/
->=20
-> We explored most of possiblity present in kernel to address this issue[1]=
- but
-> solution like kdump/fadump does not seems safe/secure/performant from our
-> perspective.
->=20
-> Hence, with this series we tried to make the minidump kernel driver, simp=
-le
-> and tied with pstore frontends, so that it collects the present available
-> frontends data like dmesg, ftrace, pmsg, ftrace., Also, we will be working
-> towards enhancing generic pstore to capture more debug data which will be
-> helpful for first hand of debugging that can benefit both other pstore us=
-ers
-> as well as us as minidump users.
->=20
-> One of the proposal made here,
-> https://lore.kernel.org/lkml/1683561060-2197-1-git-send-email-quic_mojha@=
-quicinc.com/
->=20
-> Looking forward for your comments.
->=20
-> Thanks,
-> Mukesh
->=20
-> [1]
-> Minidump is a best effort mechanism to collect useful and predefined data
-> for first level of debugging on end user devices running on Qualcomm SoCs.
-> It is built on the premise that System on Chip (SoC) or subsystem part of
-> SoC crashes, due to a range of hardware and software bugs. Hence, the
-> ability to collect accurate data is only a best-effort. The data collected
-> could be invalid or corrupted, data collection itself could fail, and so =
-on.
->=20
-> Qualcomm devices in engineering mode provides a mechanism for generating
-> full system ramdumps for post mortem debugging. But in some cases it's
-> however not feasible to capture the entire content of RAM. The minidump
-> mechanism provides the means for selecting which snippets should be
-> included in the ramdump.
->=20
-> The core of SMEM based minidump feature is part of Qualcomm's boot
-> firmware code. It initializes shared memory (SMEM), which is a part of
-> DDR and allocates a small section of SMEM to minidump table i.e also
-> called global table of content (G-ToC). Each subsystem (APSS, ADSP, ...)
-> has their own table of segments to be included in the minidump and all
-> get their reference from G-ToC. Each segment/region has some details
-> like name, physical address and it's size etc. and it could be anywhere
-> scattered in the DDR.
->=20
-> Existing upstream Qualcomm remoteproc driver[1] already supports SMEM
-> based minidump feature for remoteproc instances like ADSP, MODEM, ...
-> where predefined selective segments of subsystem region can be dumped
-> as part of coredump collection which generates smaller size artifacts
-> compared to complete coredump of subsystem on crash.
->=20
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/dri=
-vers/remoteproc/qcom_common.c#n142
->=20
-> In addition to managing and querying the APSS minidump description,
-> the Linux driver maintains a ELF header in a segment. This segment
-> gets updated with section/program header whenever a new entry gets
-> registered.
->=20
-> Changes in v5:
->  - On suggestion from Pavan.k, to have single function call for minidump =
-collection
->    from remoteproc driver, separated the logic to have separate minidump =
-file called
->    qcom_rproc_minidump.c and also renamed the function from qcom_minidump=
-() to=20
->    qcom_rproc_minidump(); however, dropped his suggestion about rework on=
- lazy deletion
->    during region unregister in this series, will pursue it in next series.
->=20
->  - To simplify the minidump driver, removed the complication for frontend=
- and different
->    backend from Greg suggestion, will pursue this once main driver gets m=
-ainlined.
->=20
->  - Move the dynamic ramoops region allocation from Device tree approach t=
-o command line
->    approch with the introduction command line parsing and memblock reserv=
-ation during
->    early boot up; Not added documentation about it yet, will add if it ge=
-ts positive
->    response.
->=20
->  - Exporting linux banner from kernel to make minidump build also as modu=
-le, however,
->    minidump is a debug module and should be kernel built to get most debu=
-g information
->    from kernel.
->=20
->  - Tried to address comments given on dload patch series.=20
->=20
-> Changes in v4: https://lore.kernel.org/lkml/1687955688-20809-1-git-send-e=
-mail-quic_mojha@quicinc.com/
->  - Redesigned the driver and divided the driver into front end and backen=
-d (smem) so
->    that any new backend can be attached easily to avoid code duplication.
->  - Patch reordering as per the driver and subsystem to easier review of t=
-he code.
->  - Removed minidump specific code from remoteproc to minidump smem based =
-driver.
->  - Enabled the all the driver as modules.
->  - Address comments made on documentation and yaml and Device tree file [=
-Krzysztof/Konrad]
->  - Address comments made qcom_pstore_minidump driver and given its Device=
- tree
->    same set of properties as ramoops. [Luca/Kees]
->  - Added patch for MAINTAINER file.
->  - Include defconfig change as one patch as per [Krzysztof] suggestion.
->  - Tried to remove the redundant file scope variables from the module as =
-per [Krzysztof] suggestion.
->  - Addressed comments made on dload mode patch v6 version
->    https://lore.kernel.org/lkml/1680076012-10785-1-git-send-email-quic_mo=
-jha@quicinc.com/
->=20
-> Changes in v3: https://lore.kernel.org/lkml/1683133352-10046-1-git-send-e=
-mail-quic_mojha@quicinc.com/
->  - Addressed most of the comments by Srini on v2 and refactored the minid=
-ump driver.
->     - Added platform device support
->     - Unregister region support.
->  - Added update region for clients.
->  - Added pending region support.
->  - Modified the documentation guide accordingly.
->  - Added qcom_pstore_ramdump client driver which happen to add ramoops pl=
-atform
->    device and also registers ramoops region with minidump.
->  - Added download mode patch series with this minidump series.
->     https://lore.kernel.org/lkml/1680076012-10785-1-git-send-email-quic_m=
-ojha@quicinc.com/
->=20
-> Changes in v2: https://lore.kernel.org/lkml/1679491817-2498-1-git-send-em=
-ail-quic_mojha@quicinc.com/
->  - Addressed review comment made by [quic_tsoni/bmasney] to add documenta=
-tion.
->  - Addressed comments made by [srinivas.kandagatla]
->  - Dropped pstore 6/6 from the last series, till i get conclusion to get =
-pstore
->    region in minidump.
->  - Fixed issue reported by kernel test robot.
->=20
-> Changes in v1: https://lore.kernel.org/lkml/1676978713-7394-1-git-send-em=
-ail-quic_mojha@quicinc.com/
->=20
-> Testing of the patches has been done on sm8450 target after enabling conf=
-ig like
-> CONFIG_PSTORE_RAM and CONFIG_PSTORE_CONSOLE and once the device boots up.
->=20
->  echo mini > /sys/module/qcom_scm/parameters/download_mode
->=20
-> Try crashing it via devmem2 0xf11c000(this is known to create xpu violati=
-on and
-> and put the device in download mode) on command prompt.
->=20
-> Default storage type is set to via USB, so minidump would be downloaded w=
-ith the
-> help of x86_64 machine (running PCAT tool) attached to Qualcomm device wh=
-ich has
-> backed minidump boot firmware support.
->=20
-> This will make the device go to download mode and collect the minidump on=
- to the
-> attached x86 machine running the Qualcomm PCAT tool(This comes as part Qu=
-alcomm
-> package manager kit).
->=20
-> After that we will see a bunch of predefined registered region as binary =
-blobs files
-> starts with md_* downloaded on the x86 machine on given location in PCAT =
-tool from
-> the target device, more about this can be found in qualcomm minidump guid=
-e patch.
->=20
+Instead of checking gpio_desc flags, let's just track the requests of
+GPIOs in the driver. We also already store the information about
+direction of simulated lines.
 
-I tried to apply this series on top of 535a265d7f0dd50 (as suggested by
-`b4 am -l -g`), but it conflicts on patch [04/17]. Please specify the
-exact base commit or another series for which this series is based on.
+For kobjects needed by sysfs callbacks: we can iterate over the children
+devices of the top-level platform device and compare their fwnodes
+against the one passed to the init function from probe.
 
-Thanks.
+While at it: fix one line break and remove the untrue part about
+configfs callbacks using dev_get_drvdata() from a comment.
 
---=20
-An old man doll... just what I always wanted! - Clara
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+v1 -> v2:
+- use get_dev_from_fwnode() instead of dereferencing fwnode directly
 
---ypI1W5o4Aub9n7jF
-Content-Type: application/pgp-signature; name="signature.asc"
+v2 -> v3:
+- don't use fwnode internal fields, instead: iterate over the platform
+  device's children and locate the GPIO device
 
------BEGIN PGP SIGNATURE-----
+v3 -> v4:
+- use device_find_child() (not bus_device_find_by_fwnode() as it's
+  pointless to iterate over all platform devices)
+- use device_match_fwnode() for matching the device by fwnode
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZP7VOQAKCRD2uYlJVVFO
-o7CQAP9vjj875+yfOt9mTMP/2aP+Bk2gV8aoKpSZbVrr0OHt+wEAsUPrYs7dB28e
-9vo5VB+FpC5Y8n97acr+wNXUrD6klAk=
-=WCfb
------END PGP SIGNATURE-----
+v4 -> v5:
+- don't include linux/device/bus.h, rely on device.h already pulling it
+- drop a comment about pointer mismatch for the callback function pointer
+  in device_find_child
 
---ypI1W5o4Aub9n7jF--
+ drivers/gpio/gpio-sim.c | 70 ++++++++++++++++++++++++++++++-----------
+ 1 file changed, 51 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
+index 271db3639a78..2b9d9e172d5d 100644
+--- a/drivers/gpio/gpio-sim.c
++++ b/drivers/gpio/gpio-sim.c
+@@ -12,6 +12,7 @@
+ #include <linux/completion.h>
+ #include <linux/configfs.h>
+ #include <linux/device.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/gpio/machine.h>
+ #include <linux/idr.h>
+@@ -30,8 +31,6 @@
+ #include <linux/string_helpers.h>
+ #include <linux/sysfs.h>
+ 
+-#include "gpiolib.h"
+-
+ #define GPIO_SIM_NGPIO_MAX	1024
+ #define GPIO_SIM_PROP_MAX	4 /* Max 3 properties + sentinel. */
+ #define GPIO_SIM_NUM_ATTRS	3 /* value, pull and sentinel */
+@@ -40,6 +39,8 @@ static DEFINE_IDA(gpio_sim_ida);
+ 
+ struct gpio_sim_chip {
+ 	struct gpio_chip gc;
++	struct device *dev;
++	unsigned long *request_map;
+ 	unsigned long *direction_map;
+ 	unsigned long *value_map;
+ 	unsigned long *pull_map;
+@@ -63,16 +64,11 @@ static int gpio_sim_apply_pull(struct gpio_sim_chip *chip,
+ 			       unsigned int offset, int value)
+ {
+ 	int irq, irq_type, ret;
+-	struct gpio_desc *desc;
+-	struct gpio_chip *gc;
+-
+-	gc = &chip->gc;
+-	desc = &gc->gpiodev->descs[offset];
+ 
+ 	guard(mutex)(&chip->lock);
+ 
+-	if (test_bit(FLAG_REQUESTED, &desc->flags) &&
+-	    !test_bit(FLAG_IS_OUT, &desc->flags)) {
++	if (test_bit(offset, chip->request_map) &&
++	    test_bit(offset, chip->direction_map)) {
+ 		if (value == !!test_bit(offset, chip->value_map))
+ 			goto set_pull;
+ 
+@@ -99,8 +95,8 @@ static int gpio_sim_apply_pull(struct gpio_sim_chip *chip,
+ 
+ set_value:
+ 	/* Change the value unless we're actively driving the line. */
+-	if (!test_bit(FLAG_REQUESTED, &desc->flags) ||
+-	    !test_bit(FLAG_IS_OUT, &desc->flags))
++	if (!test_bit(offset, chip->request_map) ||
++	    test_bit(offset, chip->direction_map))
+ 		__assign_bit(offset, chip->value_map, value);
+ 
+ set_pull:
+@@ -180,8 +176,8 @@ static int gpio_sim_get_direction(struct gpio_chip *gc, unsigned int offset)
+ 	return direction ? GPIO_LINE_DIRECTION_IN : GPIO_LINE_DIRECTION_OUT;
+ }
+ 
+-static int gpio_sim_set_config(struct gpio_chip *gc,
+-				  unsigned int offset, unsigned long config)
++static int gpio_sim_set_config(struct gpio_chip *gc, unsigned int offset,
++			       unsigned long config)
+ {
+ 	struct gpio_sim_chip *chip = gpiochip_get_data(gc);
+ 
+@@ -204,13 +200,25 @@ static int gpio_sim_to_irq(struct gpio_chip *gc, unsigned int offset)
+ 	return irq_create_mapping(chip->irq_sim, offset);
+ }
+ 
+-static void gpio_sim_free(struct gpio_chip *gc, unsigned int offset)
++static int gpio_sim_request(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct gpio_sim_chip *chip = gpiochip_get_data(gc);
+ 
+ 	scoped_guard(mutex, &chip->lock)
++		__set_bit(offset, chip->request_map);
++
++	return 0;
++}
++
++static void gpio_sim_free(struct gpio_chip *gc, unsigned int offset)
++{
++	struct gpio_sim_chip *chip = gpiochip_get_data(gc);
++
++	scoped_guard(mutex, &chip->lock) {
+ 		__assign_bit(offset, chip->value_map,
+ 			     !!test_bit(offset, chip->pull_map));
++		__clear_bit(offset, chip->request_map);
++	}
+ }
+ 
+ static ssize_t gpio_sim_sysfs_val_show(struct device *dev,
+@@ -282,6 +290,13 @@ static void gpio_sim_mutex_destroy(void *data)
+ 	mutex_destroy(lock);
+ }
+ 
++static void gpio_sim_put_device(void *data)
++{
++	struct device *dev = data;
++
++	put_device(dev);
++}
++
+ static void gpio_sim_dispose_mappings(void *data)
+ {
+ 	struct gpio_sim_chip *chip = data;
+@@ -295,7 +310,7 @@ static void gpio_sim_sysfs_remove(void *data)
+ {
+ 	struct gpio_sim_chip *chip = data;
+ 
+-	sysfs_remove_groups(&chip->gc.gpiodev->dev.kobj, chip->attr_groups);
++	sysfs_remove_groups(&chip->dev->kobj, chip->attr_groups);
+ }
+ 
+ static int gpio_sim_setup_sysfs(struct gpio_sim_chip *chip)
+@@ -352,14 +367,18 @@ static int gpio_sim_setup_sysfs(struct gpio_sim_chip *chip)
+ 		chip->attr_groups[i] = attr_group;
+ 	}
+ 
+-	ret = sysfs_create_groups(&chip->gc.gpiodev->dev.kobj,
+-				  chip->attr_groups);
++	ret = sysfs_create_groups(&chip->dev->kobj, chip->attr_groups);
+ 	if (ret)
+ 		return ret;
+ 
+ 	return devm_add_action_or_reset(dev, gpio_sim_sysfs_remove, chip);
+ }
+ 
++static int gpio_sim_dev_match_fwnode(struct device *dev, void *data)
++{
++	return device_match_fwnode(dev, data);
++}
++
+ static int gpio_sim_add_bank(struct fwnode_handle *swnode, struct device *dev)
+ {
+ 	struct gpio_sim_chip *chip;
+@@ -387,6 +406,10 @@ static int gpio_sim_add_bank(struct fwnode_handle *swnode, struct device *dev)
+ 	if (!chip)
+ 		return -ENOMEM;
+ 
++	chip->request_map = devm_bitmap_zalloc(dev, num_lines, GFP_KERNEL);
++	if (!chip->request_map)
++		return -ENOMEM;
++
+ 	chip->direction_map = devm_bitmap_alloc(dev, num_lines, GFP_KERNEL);
+ 	if (!chip->direction_map)
+ 		return -ENOMEM;
+@@ -432,6 +455,7 @@ static int gpio_sim_add_bank(struct fwnode_handle *swnode, struct device *dev)
+ 	gc->get_direction = gpio_sim_get_direction;
+ 	gc->set_config = gpio_sim_set_config;
+ 	gc->to_irq = gpio_sim_to_irq;
++	gc->request = gpio_sim_request;
+ 	gc->free = gpio_sim_free;
+ 	gc->can_sleep = true;
+ 
+@@ -439,8 +463,16 @@ static int gpio_sim_add_bank(struct fwnode_handle *swnode, struct device *dev)
+ 	if (ret)
+ 		return ret;
+ 
+-	/* Used by sysfs and configfs callbacks. */
+-	dev_set_drvdata(&gc->gpiodev->dev, chip);
++	chip->dev = device_find_child(dev, swnode, gpio_sim_dev_match_fwnode);
++	if (!chip->dev)
++		return -ENODEV;
++
++	ret = devm_add_action_or_reset(dev, gpio_sim_put_device, chip->dev);
++	if (ret)
++		return ret;
++
++	/* Used by sysfs callbacks. */
++	dev_set_drvdata(chip->dev, chip);
+ 
+ 	return gpio_sim_setup_sysfs(chip);
+ }
+-- 
+2.39.2
+
