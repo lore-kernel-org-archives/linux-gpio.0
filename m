@@ -2,235 +2,241 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D05BCA0EC7
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B68CA0ECB
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:56:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239579AbjIKUz7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:55:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36756 "EHLO
+        id S239992AbjIKUz5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:55:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242753AbjIKQQD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 12:16:03 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E526CC3
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 09:15:58 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-402c46c49f4so49910775e9.1
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 09:15:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694448957; x=1695053757; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HV5y47B9k2tibzGJFcIzC3Wh2s45fqlwzyzXAYAyLZU=;
-        b=z8y66fNgAKCrE8HM53F80h2KHSbY1gumOB3bzhz6J59gV1adggHukPtDk7hUH3bQ3M
-         +JTuyhyZbJD4DorNMYMaE1ZJ7F2xvroixDHqmNzT9g7wzhZc+pz3eY+AXdFtM4Upo429
-         fY6kZk1FBc20n4X3w+O06oo9WOFm7c/Wq467OgkuuQMvL9Q51IdSEF6g67kq8QkQL1Bt
-         QeutQ3/KZ0I61lzYjJC9p2KF2OA2soxXelNBhNaRe2Og17gxc5/ZIh3uCtTmSHoxia/A
-         a6WdhM+2J1gjP6KejY9SKlOhNNrpOFYg17kgTpUUX+hduXsY5g9CWcFFoXRBxlwaIujn
-         R4XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694448957; x=1695053757;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HV5y47B9k2tibzGJFcIzC3Wh2s45fqlwzyzXAYAyLZU=;
-        b=jBAhJD+5ZHckyDpZLydS5DKLB7ViGbon4k6YfB1o0u4Emb4EU/VcmfYNx5CS8AtuyH
-         hP5rwNPbqVX7v24Se3knD16LxJm7NqMqkXrM0oTLHQc7E8TQoEyepSMWCyEUxNRPY8Uv
-         yHclr4PfKTbFm2FQU18ustw/PqJkuA6m5ZHmX+6soi4qGrzJYoub4ooJkLRsA1c4uFyf
-         6UN36e8Xzr58GvhQgNCIh0Mu4scF0bpG4tzUrlwYlt//0WIM8KcM5Dha5wbAXe75NfI3
-         36zzFjG0W/7kRtIgY4f6OOLiwR+lMhrD6iHQy74a35Jaijcz17s+kH9Amnoe5y6M8M1t
-         y13A==
-X-Gm-Message-State: AOJu0YwR5RsRb4ajVa7u/hphHhdoi7cfRh8PBBGdL/ST26pcwAWAgAho
-        G5meO0PV80FUmXGIeUYXk2ON8Q==
-X-Google-Smtp-Source: AGHT+IH4VJSvvSxbVOwJYo159Cuu4FuAwlQeRg83/jubmlshB8+C2StDaNviQOqqFhUF8K4JCTIomg==
-X-Received: by 2002:a05:600c:2257:b0:3fe:ef11:d79f with SMTP id a23-20020a05600c225700b003feef11d79fmr8329151wmm.36.1694448956816;
-        Mon, 11 Sep 2023 09:15:56 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:c2b1:675e:119e:2497])
-        by smtp.gmail.com with ESMTPSA id u5-20020a05600c00c500b003fe2de3f94fsm10397693wmm.12.2023.09.11.09.15.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 09:15:56 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Mark Brown <broonie@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>, linux-spi@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v3] spi: bcm2835: reduce the abuse of the GPIO API
-Date:   Mon, 11 Sep 2023 18:15:53 +0200
-Message-Id: <20230911161553.24313-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S236539AbjIKK4v (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:56:51 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBA09127;
+        Mon, 11 Sep 2023 03:56:46 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38B8eBlD007844;
+        Mon, 11 Sep 2023 10:56:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=NKMHFIzgNDvTMejnjOR6kwDOnmpfUj34ZTlTQsO29Hg=;
+ b=KoVO7sdBJS0she7hPmr4/t1yUhTGgxueqxfq0T1eZxgraPLGrp0cActMnGTzUDg99Jtk
+ BxnOLzKd3EVlQ2z03YbA8feoytur2YXujEFaTdZmoal0WVWbv52OH2LbKvp+AS8KZj7a
+ rpDrftwtIr4JdSfrBdxbqz9/izdj3rzMu1bCkLJgFi+CTrFbgawnwRLWxo4mOc9EPof/
+ qB3+SfFUntkO0IRr4Sa5Pb0c2SwbwKeSjkXgtlthAAUmTXcyXj2CYP4N/WDuWJ0djdSp
+ jsmUvadwxlrd/Mj1SqEYo1oH/iN/nhl8FfpJWyl8yc4peCIScbj3FacS+f2NkoA8z0Yk ZQ== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0hvyke07-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:13 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAuCVr006051
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:12 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Mon, 11 Sep 2023 03:55:19 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_mojha@quicinc.com>
+Subject: [REBASE PATCH v5 08/17] arm64: mm: Add dynamic ramoops region support through command line
+Date:   Mon, 11 Sep 2023 16:23:50 +0530
+Message-ID: <1694429639-21484-9-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: D7aQZe1nCAe-0oMdraPzGcnkv8bF0XPZ
+X-Proofpoint-GUID: D7aQZe1nCAe-0oMdraPzGcnkv8bF0XPZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ clxscore=1015 mlxscore=0 malwarescore=0 impostorscore=0 adultscore=0
+ priorityscore=1501 mlxlogscore=999 spamscore=0 lowpriorityscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309110099
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The reserved memory region for ramoops is assumed to be at a fixed
+and known location when read from the devicetree. This may not be
+required for something like Qualcomm's minidump which is interested
+in knowing addresses of ramoops region but it does not put hard
+requirement of address being fixed as most of it's SoC does not
+support warm reset and does not use pstorefs at all instead it has
+firmware way of collecting ramoops region if it gets to know the
+address and register it with apss minidump table which is sitting
+in shared memory region in DDR and firmware will have access to
+these table during reset and collects it on crash of SoC.
 
-Currently the bcm2835 SPI driver uses functions that are available
-exclusively to GPIO providers as a way to handle a platform quirk. Let's
-use a slightly better alternative that avoids poking around in GPIOLIB's
-internals and use GPIO lookup tables.
+So, add the support of reserving ramoops region to be dynamically
+allocated early during boot if it is request through command line
+via 'dyn_ramoops_size=' and fill up reserved resource structure and
+export the structure, so that it can be read by ramoops driver.
 
-Link: https://www.spinics.net/lists/linux-gpio/msg36218.html
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 ---
-This is only build-tested. It should work, but it would be great if
-someone from broadcom could test this.
+ arch/arm64/mm/init.c       | 94 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/pstore_ram.h |  2 +
+ 2 files changed, 96 insertions(+)
 
-Andy pointed out elsewhere that we can use GPIO_LOOKUP() even in
-dynamically allocated tables, hence v3.
-
-v1 -> v2:
-- don't use devres for managing the GPIO but put it manually in .cleanup()
-- add a mailing list link explaining the background of the bug
-- fix kerneldoc
-
-v2 -> v3:
-- use GPIO_LOOKUP() macro for creating the lookup entry as it looks
-  better and results in less LOC
-
- drivers/spi/spi-bcm2835.c | 60 +++++++++++++++++++++++----------------
- 1 file changed, 35 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/spi/spi-bcm2835.c b/drivers/spi/spi-bcm2835.c
-index e7bb2714678a..dfd9c4997052 100644
---- a/drivers/spi/spi-bcm2835.c
-+++ b/drivers/spi/spi-bcm2835.c
-@@ -11,6 +11,7 @@
-  * spi-atmel.c, Copyright (C) 2006 Atmel Corporation
-  */
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 8a0f8604348b..680c1ce18fbe 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -31,6 +31,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/acpi_iort.h>
+ #include <linux/kmemleak.h>
++#include <linux/pstore_ram.h>
  
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/completion.h>
- #include <linux/debugfs.h>
-@@ -26,9 +27,10 @@
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/gpio/consumer.h>
--#include <linux/gpio/machine.h> /* FIXME: using chip internals */
--#include <linux/gpio/driver.h> /* FIXME: using chip internals */
-+#include <linux/gpio/machine.h> /* FIXME: using GPIO lookup tables */
- #include <linux/of_irq.h>
-+#include <linux/overflow.h>
-+#include <linux/slab.h>
- #include <linux/spi/spi.h>
+ #include <asm/boot.h>
+ #include <asm/fixmap.h>
+@@ -100,6 +101,93 @@ phys_addr_t __ro_after_init arm64_dma_phys_limit;
+ #define ARM64_MEMSTART_ALIGN	(1UL << ARM64_MEMSTART_SHIFT)
+ #endif
  
- /* SPI register offsets */
-@@ -83,6 +85,7 @@ MODULE_PARM_DESC(polling_limit_us,
-  * struct bcm2835_spi - BCM2835 SPI controller
-  * @regs: base address of register map
-  * @clk: core clock, divided to calculate serial clock
-+ * @cs_gpio: chip-select GPIO descriptor
-  * @clk_hz: core clock cached speed
-  * @irq: interrupt, signals TX FIFO empty or RX FIFO ¾ full
-  * @tfr: SPI transfer currently processed
-@@ -117,6 +120,7 @@ MODULE_PARM_DESC(polling_limit_us,
- struct bcm2835_spi {
- 	void __iomem *regs;
- 	struct clk *clk;
-+	struct gpio_desc *cs_gpio;
- 	unsigned long clk_hz;
- 	int irq;
- 	struct spi_transfer *tfr;
-@@ -1156,15 +1160,11 @@ static void bcm2835_spi_handle_err(struct spi_controller *ctlr,
- 	bcm2835_spi_reset_hw(bs);
- }
- 
--static int chip_match_name(struct gpio_chip *chip, void *data)
--{
--	return !strcmp(chip->label, data);
--}
--
- static void bcm2835_spi_cleanup(struct spi_device *spi)
- {
- 	struct bcm2835_spidev *target = spi_get_ctldata(spi);
- 	struct spi_controller *ctlr = spi->controller;
-+	struct bcm2835_spi *bs = spi_controller_get_devdata(ctlr);
- 
- 	if (target->clear_rx_desc)
- 		dmaengine_desc_free(target->clear_rx_desc);
-@@ -1175,6 +1175,9 @@ static void bcm2835_spi_cleanup(struct spi_device *spi)
- 				 sizeof(u32),
- 				 DMA_TO_DEVICE);
- 
-+	gpiod_put(bs->cs_gpio);
-+	spi_set_csgpiod(spi, 0, NULL);
++#define RAMOOPS_ADDR_HIGH_MAX		(PHYS_MASK + 1)
 +
- 	kfree(target);
- }
- 
-@@ -1221,7 +1224,7 @@ static int bcm2835_spi_setup(struct spi_device *spi)
- 	struct spi_controller *ctlr = spi->controller;
- 	struct bcm2835_spi *bs = spi_controller_get_devdata(ctlr);
- 	struct bcm2835_spidev *target = spi_get_ctldata(spi);
--	struct gpio_chip *chip;
-+	struct gpiod_lookup_table *lookup __free(kfree) = NULL;
- 	int ret;
- 	u32 cs;
- 
-@@ -1288,29 +1291,36 @@ static int bcm2835_spi_setup(struct spi_device *spi)
- 	}
- 
- 	/*
--	 * Translate native CS to GPIO
-+	 * TODO: The code below is a slightly better alternative to the utter
-+	 * abuse of the GPIO API that I found here before. It creates a
-+	 * temporary lookup table, assigns it to the SPI device, gets the GPIO
-+	 * descriptor and then releases the lookup table.
- 	 *
--	 * FIXME: poking around in the gpiolib internals like this is
--	 * not very good practice. Find a way to locate the real problem
--	 * and fix it. Why is the GPIO descriptor in spi->cs_gpiod
--	 * sometimes not assigned correctly? Erroneous device trees?
-+	 * More on the problem that it addresses:
-+	 *   https://www.spinics.net/lists/linux-gpio/msg36218.html
- 	 */
-+	lookup = kzalloc(struct_size(lookup, table, 1), GFP_KERNEL);
-+	if (!lookup) {
-+		ret = -ENOMEM;
-+		goto err_cleanup;
++/* Location of the reserved area for the dynamic ramoops */
++struct resource dyn_ramoops_res = {
++	.name  = "ramoops",
++	.start = 0,
++	.end   = 0,
++	.flags = IORESOURCE_BUSY | IORESOURCE_SYSTEM_RAM,
++	.desc  = IORES_DESC_NONE,
++};
++EXPORT_SYMBOL(dyn_ramoops_res);
++
++static int __init parse_dynamic_ramoops(char *cmdline, unsigned long long *size)
++{
++	const char *name = "dyn_ramoops_size=";
++	char *p = NULL;
++	char *q = NULL;
++	char *tmp;
++
++	if (!cmdline)
++		return -ENOENT;
++
++	/* Check for "dyn_ramoops_size" and use the later if there are more */
++	p = strstr(cmdline, name);
++	while (p) {
++		q = p;
++		p = strchr(p, ' ');
++		if (!p)
++			break;
++
++		p = strstr(p + 1, name);
 +	}
 +
-+	lookup->dev_id = dev_name(&spi->dev);
-+	lookup->table[0] = GPIO_LOOKUP("pinctrl-bcm2835",
-+				       8 - (spi_get_chipselect(spi, 0)),
-+				       "cs", GPIO_LOOKUP_FLAGS_DEFAULT);
- 
--	/* get the gpio chip for the base */
--	chip = gpiochip_find("pinctrl-bcm2835", chip_match_name);
--	if (!chip)
--		return 0;
--
--	spi_set_csgpiod(spi, 0, gpiochip_request_own_desc(chip,
--							  8 - (spi_get_chipselect(spi, 0)),
--							  DRV_NAME,
--							  GPIO_LOOKUP_FLAGS_DEFAULT,
--							  GPIOD_OUT_LOW));
--	if (IS_ERR(spi_get_csgpiod(spi, 0))) {
--		ret = PTR_ERR(spi_get_csgpiod(spi, 0));
-+	gpiod_add_lookup_table(lookup);
++	if (!q) {
++		pr_err("ramoops: No entry found for %s\n", name);
++		return -ENOENT;
++	}
 +
-+	bs->cs_gpio = gpiod_get(&spi->dev, "cs", GPIOD_OUT_LOW);
-+	gpiod_remove_lookup_table(lookup);
-+	if (IS_ERR(bs->cs_gpio)) {
-+		ret = PTR_ERR(bs->cs_gpio);
- 		goto err_cleanup;
- 	}
- 
-+	spi_set_csgpiod(spi, 0, bs->cs_gpio);
++	p = q + strlen(name);
++	*size = memparse(p, &tmp);
++	if (p == tmp) {
++		pr_err("ramoops: memory value expected\n");
++		return -EINVAL;
++	}
 +
- 	/* and set up the "mode" and level */
- 	dev_info(&spi->dev, "setting up native-CS%i to use GPIO\n",
- 		 spi_get_chipselect(spi, 0));
++	return 0;
++}
++
++static int __init parse_dyn_ramoops_size_dummy(char *arg)
++{
++	return 0;
++}
++early_param("dyn_ramoops_size", parse_dyn_ramoops_size_dummy);
++
++/*
++ * reserve_dynamic_ramoops() - reserves memory for dynamic ramoops
++ *
++ * This enable dynamic reserve memory support for ramoops through
++ * command line.
++ */
++static void __init reserve_dynamic_ramoops(void)
++{
++	char *cmdline = boot_command_line;
++	unsigned long long ramoops_base;
++	unsigned long long ramoops_size;
++
++	if (!IS_ENABLED(CONFIG_PSTORE_RAM))
++		return;
++
++	if (parse_dynamic_ramoops(cmdline, &ramoops_size))
++		return;
++
++	ramoops_base = memblock_phys_alloc_range(ramoops_size, SMP_CACHE_BYTES,
++						 0, RAMOOPS_ADDR_HIGH_MAX);
++	if (!ramoops_base) {
++		pr_err("cannot allocate ramoops dynamic memory (size:0x%llx).\n",
++			ramoops_size);
++		return;
++	}
++
++	kmemleak_ignore_phys(ramoops_base);
++
++	dyn_ramoops_res.start = ramoops_base;
++	dyn_ramoops_res.end = ramoops_base + ramoops_size - 1;
++	insert_resource(&iomem_resource, &dyn_ramoops_res);
++}
++
+ static int __init reserve_crashkernel_low(unsigned long long low_size)
+ {
+ 	unsigned long long low_base;
+@@ -481,6 +569,12 @@ void __init bootmem_init(void)
+ 	 */
+ 	reserve_crashkernel();
+ 
++	/*
++	 * Reserving ramoops region resource dynamically in case it is
++	 * requested from command line.
++	 */
++	reserve_dynamic_ramoops();
++
+ 	memblock_dump_all();
+ }
+ 
+diff --git a/include/linux/pstore_ram.h b/include/linux/pstore_ram.h
+index 9d65ff94e216..07d700b7649d 100644
+--- a/include/linux/pstore_ram.h
++++ b/include/linux/pstore_ram.h
+@@ -10,6 +10,8 @@
+ 
+ #include <linux/pstore.h>
+ 
++extern struct resource dyn_ramoops_res;
++
+ struct persistent_ram_ecc_info {
+ 	int block_size;
+ 	int ecc_size;
 -- 
-2.39.2
+2.7.4
 
