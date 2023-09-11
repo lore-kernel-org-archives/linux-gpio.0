@@ -2,112 +2,95 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8A5CA0EC5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC44CA0EC1
 	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239509AbjIKUy7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:54:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46306 "EHLO
+        id S233921AbjIKUzC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:55:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237877AbjIKNRc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 09:17:32 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85E7BEB;
-        Mon, 11 Sep 2023 06:17:28 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-401bbfc05fcso49214365e9.3;
-        Mon, 11 Sep 2023 06:17:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694438247; x=1695043047; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VlerAEPk5ZbRg5PAlIL60EpQx7Cq2EyqtsP8OX4iUb0=;
-        b=luLfubuqD9dno+nlaYd5BmXcLyl4KlzfBQHqFIb1DkzAAUuZAeEj8b7Q+GlGt48LB/
-         X8L9xqWoaRdvGYuzqs+yMy+UtfOkVjV2vUohOteiMc7KXSIbSDxOwZqhg9eQJhl5O/vM
-         w8hSVdlIm/47Qr3ZrhGqox/fHkSFdbuCXcg++yd0jLm7ZCtikGDlCWuU4c6Tiux3ETiE
-         rz458p+ld32wjf3hriUjil5GnebNmzzVVlky8gjlqJI+uuShf5k/zwE9vsXZxP/C9FAn
-         bRaeWhq8e33AHEumkZRrnX8YCY7IyrK2kVzdFN82QUNNt9JqxfCXRc7qc4lAUgZzRzgT
-         94Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694438247; x=1695043047;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VlerAEPk5ZbRg5PAlIL60EpQx7Cq2EyqtsP8OX4iUb0=;
-        b=gNSD59TosZgqxJcrJtyDLLKbgsSn4JMEJ/Mmlv197LcGWrLgWqL8xxJHV71tqjYaBh
-         ZCMLgVxrHJYMUotMV7ups33SZZB+yHhSJWDm4tnHgqZNI51eC28noS1vy/jQf8IMU9rg
-         yxaEdkcn7lRYqetv7qPUE8sZMFtvJXzZxlKCrJ9Ekpc6hjOas3ruJVae9fh4tMzqvrLV
-         23EvRO/6cMZ9L5cbr/aSeJm/R67rmdK9gb93Q/HhSDEXVuMBM7bAgTiNS3pQllEam5W2
-         JzBWVnpePeDwPbYNRH/wdLD/8cOXVXBwp8SY4ZY4ijJZqWAMd9qstlEev2zTyz06NKs3
-         lzCQ==
-X-Gm-Message-State: AOJu0YxKLKlvgXkGh7VE+uURVdWnVBr68t/8xGLEsnR4jm7J68W2rPqP
-        DWVHZnJIC0+1QqDSfMiDL5scyk8+z41tWA==
-X-Google-Smtp-Source: AGHT+IEPI6QFXgxg449sbeQSA4HtBFOyu5itUrch2mlFiWIh68Lx1OCYtTJqQqRdsjLm00GVmiQudQ==
-X-Received: by 2002:a1c:7912:0:b0:401:bf56:8baf with SMTP id l18-20020a1c7912000000b00401bf568bafmr7934172wme.8.1694438246711;
-        Mon, 11 Sep 2023 06:17:26 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2501:c701:6716:11bf:1bf:eca1])
-        by smtp.gmail.com with ESMTPSA id l10-20020a1c790a000000b003fed70fb09dsm10057913wme.26.2023.09.11.06.17.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 06:17:26 -0700 (PDT)
-From:   Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2] pinctrl: renesas: pinctrl-rzg2l: Add validation of GPIO pin in rzg2l_gpio_request()
-Date:   Mon, 11 Sep 2023 14:16:38 +0100
-Message-Id: <20230911131638.443055-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S236178AbjIKJyA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 05:54:00 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E91CE6;
+        Mon, 11 Sep 2023 02:53:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694426036; x=1725962036;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SEOfbDIoCiImT7fNzulI3X+NzV6QoBIYFDXBTyvM/zw=;
+  b=etAPPbPhIC9O1BrcWJ+xa6J4d0Mj35Q7AS91BdjAgezlPQSCUCkc5OuY
+   +pP8242y7zgl3yw0tGhvvYUzmWhwx1LU9pxuzTMGM6aeJ2+x+hyt4kC8c
+   ZsV6CC5RV/ou48WFoSI8YzowteukNUWzZKXSkUqcxrLhkB+tLAwKiGxC2
+   IOPy01yGN5z0Ls6vBPxUcg3zcYfOWN3X6NFtd2/DmXQ0kygStoI01tQCM
+   8Eq55twW35quOA/6iL2FMdp5KvG3ZRF9l2fPtpLbtpAjye79p7xANqUZd
+   n57K5+k2a/1kwmzO0DuPFXzEbgbT8P7oUWM6rmfQiUDGxEPQb24m9fF6H
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="444458013"
+X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
+   d="scan'208";a="444458013"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:53:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="833444760"
+X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
+   d="scan'208";a="833444760"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by FMSMGA003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:53:52 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qfdc6-008Hdd-0E;
+        Mon, 11 Sep 2023 12:53:50 +0300
+Date:   Mon, 11 Sep 2023 12:53:49 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linhua Xu <Linhua.xu@unisoc.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        lh xu <xulh0829@gmail.com>,
+        Zhirong Qiu <zhirong.qiu@unisoc.com>,
+        Xiongpeng Wu <xiongpeng.wu@unisoc.com>
+Subject: Re: [PATCH V2 4/6] pinctrl: sprd: Add pinctrl support for UMS512
+Message-ID: <ZP7jratkdqCGg35I@smile.fi.intel.com>
+References: <20230908055146.18347-1-Linhua.xu@unisoc.com>
+ <20230908055146.18347-5-Linhua.xu@unisoc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230908055146.18347-5-Linhua.xu@unisoc.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Fri, Sep 08, 2023 at 01:51:44PM +0800, Linhua Xu wrote:
+> From: Linhua Xu <Linhua.Xu@unisoc.com>
+> 
+> Add the pin control driver for UNISOC UMS512 platform.
 
-Validate the GPIO pin request in rzg2l_gpio_request() callback using
-rzg2l_validate_gpio_pin() function. This stops any accidental usage
-of GPIO pins which are not supported by the SoCs.
+...
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
-v1->v2
-* Maintained reverse christmas tree order.
-* Included RB/TB tags from Claudiu.
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> +#define	PINCTRL_REG_OFFSET		0x34
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 37cdfe4b04f9..cc52a154d201 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -795,12 +795,18 @@ static const struct pinconf_ops rzg2l_pinctrl_confops = {
- static int rzg2l_gpio_request(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct rzg2l_pinctrl *pctrl = gpiochip_get_data(chip);
-+	const struct pinctrl_pin_desc *pin = &pctrl->desc.pins[offset];
- 	u32 port = RZG2L_PIN_ID_TO_PORT(offset);
- 	u8 bit = RZG2L_PIN_ID_TO_PIN(offset);
-+	u64 *pin_data = pin->drv_data;
- 	unsigned long flags;
- 	u8 reg8;
- 	int ret;
- 
-+	ret = rzg2l_validate_gpio_pin(pctrl, *pin_data, port, bit);
-+	if (ret)
-+		return ret;
-+
- 	ret = pinctrl_gpio_request(chip->base + offset);
- 	if (ret)
- 		return ret;
+0x0034
+
+> +#define	PINCTRL_REG_MISC_OFFSET		0x434
+
+...
+
+> +static const struct of_device_id sprd_pinctrl_of_match[] = {
+> +	{ .compatible = "sprd,ums512-pinctrl", },
+
+Inner comma is not needed.
+
+> +	{ }
+> +};
+
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
