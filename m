@@ -2,110 +2,83 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CC3CA0EC0
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F256CA0EC1
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:03:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240286AbjIKU4W (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:56:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51382 "EHLO
+        id S240369AbjIKU40 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:56:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236272AbjIKKFb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:05:31 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85003E68;
-        Mon, 11 Sep 2023 03:05:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694426726; x=1725962726;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=00fLvhiMtv2ZiGvbKRwC5xfsj2n/I3VRQoCUrYTyoPk=;
-  b=jl2GuVQ0iTI0oRz0MkQVdaxATSUIUcHK+EK6YhVdHvcJgr9/D9jaWFjr
-   A0ptRbNEC0ApBO+JtBVMiFnMSCCOsTOZTdk5UD+iQDxVvje4Lqpz5pB08
-   rbtxdHxQWRuoF1DydnelJ+U8SGeQgSrVK5TlZKQNAvEsOZdiVitA0n+9N
-   BCZ7zruRf/ZgTd/SQDmUs9JWYzlhegseMge/UkDSffachRH+IbnEiEuQH
-   rA314T4LTrq4x7K8//h2yN56JKIA85KdDhjqiT+YNGNkrS8mFamlnHS9R
-   oItCnMlJ7jzIoTx5ZmUSpt/lEp46bwjfGZUqYm3xLfnbb5S7XemKSouiq
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="363065949"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="363065949"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 03:05:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="866884962"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="866884962"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 03:05:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qfdn9-008HnB-00;
-        Mon, 11 Sep 2023 13:05:15 +0300
-Date:   Mon, 11 Sep 2023 13:05:14 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Gross <markgross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
-        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [RFT PATCH 11/21] platform: x86: android-tablets: don't access
- GPIOLIB private members
-Message-ID: <ZP7mWk/jx3FZjMih@smile.fi.intel.com>
-References: <20230905185309.131295-1-brgl@bgdev.pl>
- <20230905185309.131295-12-brgl@bgdev.pl>
- <8f51b4a8-bb9c-4918-61a8-4ab402da1ed0@redhat.com>
- <CAMRc=Mfmp3Nd5jwNWr=kc8RFO-arFDwEvLxj5Qu9_1OOXR2gHQ@mail.gmail.com>
- <173bdafa-08da-7473-6711-61131986eb3c@redhat.com>
+        with ESMTP id S238198AbjIKNsB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 09:48:01 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 806BAF5
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 06:47:57 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id 3f1490d57ef6-d7f0048b042so3793041276.2
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 06:47:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694440076; x=1695044876; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fp2twria2YbePMccZx/Qu0y72QIVLYKgrTH3il7drNE=;
+        b=jbl/zttMy1rM95JEIKLzYmmKhSZVzUyeLkvHzSIAzudm2GTq2PGFT7i9dB2122ezvX
+         CiKsQ+132OhWw+qmWvubwz/axQc6VCHmlc3AWsLXMzxIJjiaPNCQAtw4ZwfV9tNJIa7K
+         +rcLCe+nvE1dGpnO8KDrQbZN+DcuirUe0oc5Gf1K6MQS0W+yDPJeCxrVeqJ6ZiI1DzwG
+         8/ZYL3ZuJ/ac4px6/e+jSMUloQkPAmZe0OWP+2Ik5OXu+fHtHocM5YqklHAyc0cCyMz5
+         edPCwKwGNMCzhPsyxOlp/JIFMdKBTwordLb+p7wKM2Mc2XkoKpC9kOWzFjZx/NomKmfv
+         FG0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694440076; x=1695044876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fp2twria2YbePMccZx/Qu0y72QIVLYKgrTH3il7drNE=;
+        b=r7vyHvYu3kyLryY1xH+AUkNYBLDgOrzNES+s+raXyFDyXrSCsycwF2yLJGnu+rCpn7
+         81mRJmX+Ag4ewb52fnNZZ/VPI3+61ZOjXjRjXahhNQZ4a2/cNUUx9z1Ecsd5asp+fnrn
+         EUYRo5FSmbWGPsHPWLVoaIqGLy1LKVXqN7McmeN4YjxSVielz+YQUVZ1Zc6YiXYKzva8
+         D5+c1q5ina3ueDL2KVQWkYdWNSITttw1/jPNBRo0MlaK56MerhwYHQQR0My7x+DqXlSf
+         nAkF4S3Nb7BxXdX5FA4s+YEROZA2ECL2ZrZUE1ZpnrkNzq6ciFpLv/N4GfbBaTxusMsa
+         zyZQ==
+X-Gm-Message-State: AOJu0YxIEG4eyJJpHmBwT+OlofSdmcBXWIr4dAh50PpytcDbIRW9TYs0
+        caBEpvUq9GWQgjl65yp8Ky4TWy5rWb0s8Aj1HPzBUQ==
+X-Google-Smtp-Source: AGHT+IHVt+3ZnchikFhFDRdBa/VQCJqjPO8/HkZfwGGvKceMtyovgD2bEwrTwVvQ8oiPu7q9EPztaRlWLDT5bTx7a5M=
+X-Received: by 2002:a25:1342:0:b0:d64:6cd9:29a4 with SMTP id
+ 63-20020a251342000000b00d646cd929a4mr7430147ybt.61.1694440076690; Mon, 11 Sep
+ 2023 06:47:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <173bdafa-08da-7473-6711-61131986eb3c@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <81e9ab48f78d63153b23a163b3349b3059d2b7fc.1692871558.git.geert+renesas@glider.be>
+In-Reply-To: <81e9ab48f78d63153b23a163b3349b3059d2b7fc.1692871558.git.geert+renesas@glider.be>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 11 Sep 2023 15:47:45 +0200
+Message-ID: <CACRpkdYyBg3WKaTWy+xHmA4Bp-r0tWWNj8T+VrvST9h0oWeVOQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: nuvoton: Use pinconf_generic_dt_node_to_map_all()
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Sep 09, 2023 at 04:17:53PM +0200, Hans de Goede wrote:
-> On 9/6/23 16:27, Bartosz Golaszewski wrote:
-> > On Wed, Sep 6, 2023 at 3:01 PM Hans de Goede <hdegoede@redhat.com> wrote:
+On Thu, Aug 24, 2023 at 12:07=E2=80=AFPM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-...
+> Use the pinconf_generic_dt_node_to_map_all() helper instead of
+> open-coding the same operation, to avoid having to provide custom
+> pinctrl_ops.dt_node_to_map() callbacks.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> > This makes sense! Maybe we'd need a good-old board file setting up all
-> > non-described devices using the driver model?
-> 
-> Right, this is pretty much exactly what the x86-android-tablets
-> code does. Except that it does it for a bunch of boards in a single
-> .ko / driver. There is a lot of commonality between these boards,
-> so this allows sharing most of the code.
-> 
-> The driver uses DMI matching, with the match's driver_data pointing
-> to a description of which devices to instantiate and then the shared
-> code takes care of instantiating those.
-> 
-> About 90% of the data / code is __init or __initdata so both
-> the code to instantiate the devices as well as the per board
-> data is free-ed after module_init() has run.
+Patch applied, I hope this doesn't disturb Tomers ongoing work
+too much.
 
-...which is nicely looked and isolated hack (or quirk if you prefer)
-that I like! Thanks, Hans, for maintaining that!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Yours,
+Linus Walleij
