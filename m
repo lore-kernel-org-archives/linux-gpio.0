@@ -2,328 +2,172 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB7FCA0EC8
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:04:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BA9CA0ECA
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:04:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241257AbjIKU5E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:57:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58420 "EHLO
+        id S241446AbjIKU5H (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:57:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236510AbjIKKrt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:47:49 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FD02E9
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 03:47:45 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1c364fb8a4cso38930085ad.1
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 03:47:45 -0700 (PDT)
+        with ESMTP id S237845AbjIKNPA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 09:15:00 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E352EE
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 06:14:54 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id ada2fe7eead31-44d4d997dcfso1733738137.0
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 06:14:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1694429264; x=1695034064; darn=vger.kernel.org;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=/FAsTlBYaZvu0Ff/WAhJEZH8l0jVn7O3CKewPsQR4DE=;
-        b=H3g/rjB0H8DgQsYcCou2320+rWT4rJbbldsmHGV2yVENNwQ0lqX4PYuS+57XpCornb
-         StVANaedNwNqoIu9lKUzKiCsigFYGsiLLUyJB1/Fu8hJi6NNMuVn8PgboT2YrUgWd+92
-         48DlKiRohneuQZBGeNB3LcmjpvC8xgTNRyt+uyNgKCOQWlATUKiYwF1JrELNnULsKGUQ
-         vRQhsqavQ0ebkO/mr0eVy9hG3iViCjieGitfiE5+6/4EeTzJlReJEGKHKpKrzxKQVuc7
-         SmCKXTke0Kg7LOsJxF7uW4isWPgi8equBA6eWlZPbUXMw8bjqU8JdB/1Fx8POtfM/aP2
-         CIwg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694438093; x=1695042893; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RmHlHXBKieO1ptu2ldznM8ZuZhTbj+/naN6JcvAFLCM=;
+        b=wMbspLXnU4SWJPP2pyiFS+UPFCNPGYLSf7ttzlXYAlHzDhVZW7HVGa2l9NwlellZJE
+         njOC3G16h+joZnmK7I9iIFB+fNBIjy4gsffff7BLFLKycGVnAhDL9SNDPFOKQVtPIyKL
+         KgvKxOKEeCpMKUx+LLmH4Kve69knsX4HPJjf0h5QaVBII8vQBPS4tD0JkrVZaqxhJisA
+         jnYS2/kGs69torDAx8w+jn0ySA4fIvj3s8mGyhCjeMldRAFv4+DiDllCXiYLIuZIky1Y
+         bi34YIU6PyRFd+MPjR5QGvsk+pqn/ffJoDFP2AXXlp/Bu18d3f+Mqsa5qSk/HAHiD5Mj
+         ZPEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694429264; x=1695034064;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/FAsTlBYaZvu0Ff/WAhJEZH8l0jVn7O3CKewPsQR4DE=;
-        b=cPv4YTi0nwMEGvuHa3ia4fztdsQS0Hl2P0MGMVPcCvhtPvCkK6MdivI1NKIE4tHVal
-         a/41JZ3pHD+3FK1UWHHcdXE9utoKEnZzRhEU+yL1blAUP/8CIsgJCRy7APDwkQVpB2Jk
-         gIbStGanEVLAXAJ29B9xlD3nnUuGRu/mjNthDq6sRk8LR225KFjJU4AU8p78DtG+mQqO
-         s+bVmdqTFiaTdUcg4woFMBBiAOG9CTe1nUSnv6IuFXKUN+1GJkBwDqHtrk9az/qifE81
-         flr9ecLKiS3fZe5PoLlyUTn1GUT5DjeAQsk5e7Dc9+0pNY3mR48O6DZvyK8jq2bbad2/
-         PJZQ==
-X-Gm-Message-State: AOJu0YzZq8+4FFp2gO1TpjWgg+u2U1E5txLzqIkuXWc1pa5yqJbhwmFg
-        T+5bBgOkSU3qxHzWc1gBCgecYsZuU0ageQlnK9g=
-X-Google-Smtp-Source: AGHT+IHiyNBjszsZYu4IlXLVHwb3M+lVlCrYzF3XQYD+C3aYw/aAiTMklPe1kJpupHdhRM10Jm3zDg==
-X-Received: by 2002:a17:902:c412:b0:1c3:394a:8660 with SMTP id k18-20020a170902c41200b001c3394a8660mr14036801plk.62.1694429264169;
-        Mon, 11 Sep 2023 03:47:44 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id ix7-20020a170902f80700b001bf3bdbceb5sm6147102plb.134.2023.09.11.03.47.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 03:47:43 -0700 (PDT)
-Message-ID: <64fef04f.170a0220.f34e7.e6cc@mx.google.com>
-Date:   Mon, 11 Sep 2023 03:47:43 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        d=1e100.net; s=20230601; t=1694438093; x=1695042893;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RmHlHXBKieO1ptu2ldznM8ZuZhTbj+/naN6JcvAFLCM=;
+        b=Tez1tWF8NY2VtjPVFS34vi7WTLognPDt5hE65Xjf7XkNHlAjeO1fNR9cch1YCFarFl
+         y6+m2pVu6Tv/scqfZjUdwW2uTGFwjjdPK3+L5SNIKutkK7YOuvrOnigFolBWk9BydW4o
+         tsRB4goRRJypRPsPiO+miuHguG7aBX/JEcnq/pffhRrPYb6t9qlpRjcmwCeDvckkSG1E
+         kXRxzTIoQbYYWIoE5fn/6Zf/KFc+ysDktBNWevX6w/Ywz3U8lAKZOSLaf5KsGZOWF/4I
+         jWhwZSsOJ4H9swr0rtlu9MYQ8Rj295Wq1GFvuSWUubvPZ3KPihT1Ffl3bD8zFy7wVkUV
+         pJzA==
+X-Gm-Message-State: AOJu0YwTHtcHx4PWGtUz9Nyomj/GSi2yW3+Cbv3xkunftkHFKO4CK2no
+        j+EZaTQ8K1s+SY0tEixlG1WEyNOCJifvdH2PqZiPbg==
+X-Google-Smtp-Source: AGHT+IGbBUp7apcBf0Wo94rPuei/uMCOLdfymAUYtbXkWV6tuJHuzpKRqe3xeH+LKJOYB5mMHTLfbCwIf2IHKGe4l8I=
+X-Received: by 2002:a67:fe92:0:b0:44d:5a92:ec45 with SMTP id
+ b18-20020a67fe92000000b0044d5a92ec45mr8588355vsr.23.1694438093755; Mon, 11
+ Sep 2023 06:14:53 -0700 (PDT)
 MIME-Version: 1.0
+References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-3-brgl@bgdev.pl>
+ <ZPiISpLoVx35PuYc@smile.fi.intel.com>
+In-Reply-To: <ZPiISpLoVx35PuYc@smile.fi.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 11 Sep 2023 15:14:42 +0200
+Message-ID: <CAMRc=MfLGZNmQT55dtrLuqsKbfXjTn7kqOm029oJrOnH002wBw@mail.gmail.com>
+Subject: Re: [PATCH 02/21] gpiolib: provide gpio_device_find()
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: devel
-X-Kernelci-Tree: linusw
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v6.6-rc1
-Subject: linusw/devel baseline: 48 runs, 4 regressions (v6.6-rc1)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/devel baseline: 48 runs, 4 regressions (v6.6-rc1)
-
-Regressions Summary
--------------------
-
-platform           | arch  | lab           | compiler | defconfig | regress=
-ions
--------------------+-------+---------------+----------+-----------+--------=
-----
-juno-uboot         | arm64 | lab-broonie   | gcc-10   | defconfig | 1      =
-    =
-
-r8a77960-ulcb      | arm64 | lab-collabora | gcc-10   | defconfig | 1      =
-    =
-
-rk3399-rock-pi-4b  | arm64 | lab-collabora | gcc-10   | defconfig | 1      =
-    =
-
-sun50i-h6-pine-h64 | arm64 | lab-collabora | gcc-10   | defconfig | 1      =
-    =
-
-
-  Details:  https://kernelci.org/test/job/linusw/branch/devel/kernel/v6.6-r=
-c1/plan/baseline/
-
-  Test:     baseline
-  Tree:     linusw
-  Branch:   devel
-  Describe: v6.6-rc1
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gp=
-io.git/
-  SHA:      0bb80ecc33a8fb5a682236443c1e740d5c917d1d =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform           | arch  | lab           | compiler | defconfig | regress=
-ions
--------------------+-------+---------------+----------+-----------+--------=
-----
-juno-uboot         | arm64 | lab-broonie   | gcc-10   | defconfig | 1      =
-    =
-
-
-  Details:     https://kernelci.org/test/plan/id/64fee6ab0441b1f0b2286daa
-
-  Results:     60 PASS, 1 FAIL, 1 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
-fconfig/gcc-10/lab-broonie/baseline-juno-uboot.txt
-  HTML log:    https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
-fconfig/gcc-10/lab-broonie/baseline-juno-uboot.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/64fee6ab0441b1f0b2286dea
-        new failure (last pass: v6.1-rc1)
-
-    2023-09-11T10:06:14.737690  <8>[   28.281401] <LAVA_SIGNAL_ENDRUN 0_dme=
-sg 98896_1.5.2.4.1>
-    2023-09-11T10:06:14.840446  / # #
-    2023-09-11T10:06:14.942339  export SHELL=3D/bin/sh
-    2023-09-11T10:06:14.942820  #
-    2023-09-11T10:06:15.044218  / # export SHELL=3D/bin/sh. /lava-98896/env=
-ironment
-    2023-09-11T10:06:15.044718  =
-
-    2023-09-11T10:06:15.146062  / # . /lava-98896/environment/lava-98896/bi=
-n/lava-test-runner /lava-98896/1
-    2023-09-11T10:06:15.146863  =
-
-    2023-09-11T10:06:15.153015  / # /lava-98896/bin/lava-test-runner /lava-=
-98896/1
-    2023-09-11T10:06:15.227614  + export 'TESTRUN_ID=3D1_bootrr' =
-
-    ... (41 line(s) more)  =
-
- =
-
-
-
-platform           | arch  | lab           | compiler | defconfig | regress=
-ions
--------------------+-------+---------------+----------+-----------+--------=
-----
-r8a77960-ulcb      | arm64 | lab-collabora | gcc-10   | defconfig | 1      =
-    =
-
-
-  Details:     https://kernelci.org/test/plan/id/64fee611dc6a48a214286dd6
-
-  Results:     4 PASS, 2 FAIL, 1 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
-fconfig/gcc-10/lab-collabora/baseline-r8a77960-ulcb.txt
-  HTML log:    https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
-fconfig/gcc-10/lab-collabora/baseline-r8a77960-ulcb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/64fee611dc6a48a214286ddf
-        new failure (last pass: v6.2-rc1)
-
-    2023-09-11T10:08:07.965195  / # #
-
-    2023-09-11T10:08:08.067393  export SHELL=3D/bin/sh
-
-    2023-09-11T10:08:08.068153  #
-
-    2023-09-11T10:08:08.169632  / # export SHELL=3D/bin/sh. /lava-11493738/=
-environment
-
-    2023-09-11T10:08:08.170369  =
-
-
-    2023-09-11T10:08:08.271861  / # . /lava-11493738/environment/lava-11493=
-738/bin/lava-test-runner /lava-11493738/1
-
-    2023-09-11T10:08:08.272980  =
-
-
-    2023-09-11T10:08:08.289845  / # /lava-11493738/bin/lava-test-runner /la=
-va-11493738/1
-
-    2023-09-11T10:08:08.339024  + export 'TESTRUN_ID=3D1_bootrr'
-
-    2023-09-11T10:08:08.339215  + cd /lava<8>[   20.379204] <LAVA_SIGNAL_ST=
-ARTRUN 1_bootrr 11493738_1.5.2.4.5>
- =
-
-    ... (28 line(s) more)  =
-
- =
-
-
-
-platform           | arch  | lab           | compiler | defconfig | regress=
-ions
--------------------+-------+---------------+----------+-----------+--------=
-----
-rk3399-rock-pi-4b  | arm64 | lab-collabora | gcc-10   | defconfig | 1      =
-    =
-
-
-  Details:     https://kernelci.org/test/plan/id/64fee6401172b06492286de4
-
-  Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
-fconfig/gcc-10/lab-collabora/baseline-rk3399-rock-pi-4b.txt
-  HTML log:    https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
-fconfig/gcc-10/lab-collabora/baseline-rk3399-rock-pi-4b.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/64fee6401172b06492286ded
-        failing since 120 days (last pass: v6.1-rc1, first fail: v6.2-rc1)
-
-    2023-09-11T10:04:38.698253  / # #
-
-    2023-09-11T10:04:39.958949  export SHELL=3D/bin/sh
-
-    2023-09-11T10:04:39.969885  #
-
-    2023-09-11T10:04:39.970337  / # export SHELL=3D/bin/sh
-
-    2023-09-11T10:04:41.714014  / # . /lava-11493724/environment
-
-    2023-09-11T10:04:44.918226  /lava-11493724/bin/lava-test-runner /lava-1=
-1493724/1
-
-    2023-09-11T10:04:44.929467  . /lava-11493724/environment
-
-    2023-09-11T10:04:44.933665  / # /lava-11493724/bin/lava-test-runner /la=
-va-11493724/1
-
-    2023-09-11T10:04:44.988648  + export 'TESTRUN_ID=3D1_bootrr'
-
-    2023-09-11T10:04:44.989093  + cd /lava-11493724/1/tests/1_bootrr
- =
-
-    ... (10 line(s) more)  =
-
- =
-
-
-
-platform           | arch  | lab           | compiler | defconfig | regress=
-ions
--------------------+-------+---------------+----------+-----------+--------=
-----
-sun50i-h6-pine-h64 | arm64 | lab-collabora | gcc-10   | defconfig | 1      =
-    =
-
-
-  Details:     https://kernelci.org/test/plan/id/64fee6241172b06492286d8c
-
-  Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
-fconfig/gcc-10/lab-collabora/baseline-sun50i-h6-pine-h64.txt
-  HTML log:    https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
-fconfig/gcc-10/lab-collabora/baseline-sun50i-h6-pine-h64.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/64fee6241172b06492286d95
-        new failure (last pass: v6.2-rc1)
-
-    2023-09-11T10:08:16.525657  / # #
-
-    2023-09-11T10:08:16.627899  export SHELL=3D/bin/sh
-
-    2023-09-11T10:08:16.628570  #
-
-    2023-09-11T10:08:16.730011  / # export SHELL=3D/bin/sh. /lava-11493727/=
-environment
-
-    2023-09-11T10:08:16.730765  =
-
-
-    2023-09-11T10:08:16.832264  / # . /lava-11493727/environment/lava-11493=
-727/bin/lava-test-runner /lava-11493727/1
-
-    2023-09-11T10:08:16.833491  =
-
-
-    2023-09-11T10:08:16.848732  / # /lava-11493727/bin/lava-test-runner /la=
-va-11493727/1
-
-    2023-09-11T10:08:16.917926  + export 'TESTRUN_ID=3D1_bootrr'
-
-    2023-09-11T10:08:16.918432  + cd /lava-1149372<8>[   17.161170] <LAVA_S=
-IGNAL_STARTRUN 1_bootrr 11493727_1.5.2.4.5>
- =
-
-    ... (11 line(s) more)  =
-
- =20
+On Wed, Sep 6, 2023 at 4:10=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Tue, Sep 05, 2023 at 08:52:50PM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > gpiochip_find() is wrong and its kernel doc is misleading as the
+> > function doesn't return a reference to the gpio_chip but just a raw
+> > pointer. The chip itself is not guaranteed to stay alive, in fact it ca=
+n
+> > be deleted at any point. Also: other than GPIO drivers themselves,
+> > nobody else has any business accessing gpio_chip structs.
+> >
+> > Provide a new gpio_device_find() function that returns a real reference
+> > to the opaque gpio_device structure that is guaranteed to stay alive fo=
+r
+> > as long as there are active users of it.
+>
+> ...
+>
+> > +/**
+> > + * gpio_device_find() - find a specific GPIO device
+> > + * @data: data to pass to match function
+> > + * @match: Callback function to check gpio_chip
+>
+> > + * Returns:
+> > + * New reference to struct gpio_device.
+>
+> I believe this is wrong location of the Return section.
+> AFAIU how kernel doc uses section markers, this entire description become=
+s
+> a Return(s) section. Have you tried to render man/html/pdf and see this?
+>
+
+Yes, it works just fine. Try for yourself: scripts/kernel-doc -rst
+drivers/gpio/gpiolib.c
+
+Bart
+
+> > + * Similar to bus_find_device(). It returns a reference to a gpio_devi=
+ce as
+> > + * determined by a user supplied @match callback. The callback should =
+return
+> > + * 0 if the device doesn't match and non-zero if it does. If the callb=
+ack
+> > + * returns non-zero, this function will return to the caller and not i=
+terate
+> > + * over any more gpio_devices.
+> > + *
+> > + * The callback takes the GPIO chip structure as argument. During the =
+execution
+> > + * of the callback function the chip is protected from being freed. TO=
+DO: This
+> > + * actually has yet to be implemented.
+> > + *
+> > + * If the function returns non-NULL, the returned reference must be fr=
+eed by
+> > + * the caller using gpio_device_put().
+> > + */
+> > +struct gpio_device *gpio_device_find(void *data,
+>
+> > +                                  int (*match)(struct gpio_chip *gc,
+> > +                                               void *data))
+>
+> One line?
+> Or maybe a type for it? (gpio_match_fn, for example)
+>
+> > +{
+> > +     struct gpio_device *gdev;
+> > +
+> > +     guard(spinlock_irqsave)(&gpio_lock);
+> > +
+> > +     list_for_each_entry(gdev, &gpio_devices, list) {
+> > +             if (gdev->chip && match(gdev->chip, data))
+> > +                     return gpio_device_get(gdev);
+> > +     }
+> > +
+> > +     return NULL;
+> > +}
+>
+> ...
+>
+> > +struct gpio_device *gpio_device_find(void *data,
+> > +                                  int (*match)(struct gpio_chip *gc,
+> > +                                               void *data));
+>
+> Ditto.
+>
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
