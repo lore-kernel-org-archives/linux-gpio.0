@@ -2,88 +2,147 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 067FECA0EC0
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3147CCA0EC4
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239877AbjIKUzc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:55:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45976 "EHLO
+        id S238224AbjIKUzi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:55:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236166AbjIKJwD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 05:52:03 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6143FE4E;
-        Mon, 11 Sep 2023 02:51:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694425919; x=1725961919;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6VFTFuruN2uSMZ2HAV5yoTE1QyK+PLotHbOXUJ4WTbA=;
-  b=YcXbmYM1Dk5P5E/UUv+pm1Yv4923qV3/5gI/le4znCn51oY+AZrqo0J9
-   Dfllj0TjUb4d4fflgE67aV9Y40vIwfTm3FPhKB2uhydD5vyNvBy63wKNa
-   8AmtIc86k1PNSYMhVjKsXPss+BkzwNBNWiCB48cZnl4qHSAWbT7fdKIQW
-   BA3UXivNGIBFCZ9sKUZszKK7DhqhQbtzwqelsYSIHZHUN2xRf8s7tgKO3
-   peUsreRywuEK/sQh+41lVpxuuoo+6xHBAFfczY+jEa9wz3i6qma6URmbu
-   x9cm6VcV3752sdypvrXyBqsjSDetegWKSdwuNaWRfvWpyPurcYsBZFtnY
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="444457583"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="444457583"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:51:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="833443698"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="833443698"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by FMSMGA003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:51:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qfdaD-008Hbv-0b;
-        Mon, 11 Sep 2023 12:51:53 +0300
-Date:   Mon, 11 Sep 2023 12:51:52 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linhua Xu <Linhua.xu@unisoc.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        lh xu <xulh0829@gmail.com>,
-        Zhirong Qiu <zhirong.qiu@unisoc.com>,
-        Xiongpeng Wu <xiongpeng.wu@unisoc.com>
-Subject: Re: [PATCH V2 3/6] pinctrl: sprd: Modify pull-up parameters
-Message-ID: <ZP7jOJ2sPJIU3ka6@smile.fi.intel.com>
-References: <20230908055146.18347-1-Linhua.xu@unisoc.com>
- <20230908055146.18347-4-Linhua.xu@unisoc.com>
+        with ESMTP id S236515AbjIKKs0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:48:26 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E202BE9
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 03:48:21 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1c1e128135aso33925125ad.3
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 03:48:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1694429301; x=1695034101; darn=vger.kernel.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bh/3bvXJjkdWA9eQWfgm7bqC0vWTa9YQq+q8pnZr/e0=;
+        b=ib2CgQJRXMpe8/k1zFdM2JsLagqd8sgAT72dXy/tNQijikUz4zth9B0d6tYVCTHKuL
+         FD8jipmkjkLNyGkoPVLNz9ldkAcic7T5vp5GDXtA2MIi/ni333J9mMPc/YftuDqv36tc
+         OZlpxJywaZHjk/7aWsjk33RrPg7GHOQDhtFUKvzrEjcwZNs2NxzL2f90WB5No3IbZlR2
+         3kvephpLIgGv+XoVCBnzLJe7qNpG5ZtkRZhzVP11fW+9LeD8xYcfkNFtaVAVo6yv8xQX
+         1nqK+yvwNJo6ugpkcmJZfvin/yIOUPWKo1cwOlCUkfkTPoDQgxjZQ+n5zfs34EYtvYUn
+         x0lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694429301; x=1695034101;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bh/3bvXJjkdWA9eQWfgm7bqC0vWTa9YQq+q8pnZr/e0=;
+        b=akSKsdTKLa9wMpJHZOvJV5YqJnXwouUfkpLMnyJnkMEF5CKCZGoO4bIgMtSzWdC7qp
+         FUVgogxy9Ae42fa6WgcQ2K4lPzUhLgoL6/Dn6iT3tV38/z6IsAjZSXtq0wE2UnWCXOzn
+         toHyfIp+FzmLwQwUVhXkekr12fYa4zOxB6FnQ3nrplMtzSqac9CduFY65nh1ftBcL92/
+         q0p6AL6B2/DJ0QRdHNOB9/suKcRe8vYyD8fJYFqmM4MiJLo/9Phtzs+WMMjg6qmkHfd1
+         dEfZ3t79zTN/2JaUFMMwQYc5MAzgcJATeSLXyd39Xf2EMN3DjsDhJ0dmXCfSNPoXyssS
+         9ypw==
+X-Gm-Message-State: AOJu0Yx/Q4PVWS6gTt0cNe2YoO2vxsLOhHngphUzAym8/P9fvwb+HRvh
+        lHrDOVof2OqPVB9DO4SM7C3RiS96XT1BZIFut8I=
+X-Google-Smtp-Source: AGHT+IG0rPGpX6TS+tRFnSKPKoWw6pqe4H7zOpp+XEdYAF/tHtOSSwWgHig/yKtWz2HlsNtSVmmdAQ==
+X-Received: by 2002:a17:903:2291:b0:1c0:8bf3:eb15 with SMTP id b17-20020a170903229100b001c08bf3eb15mr9185568plh.30.1694429300738;
+        Mon, 11 Sep 2023 03:48:20 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id y7-20020a1709029b8700b001bdbe6c86a9sm6115084plp.225.2023.09.11.03.48.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Sep 2023 03:48:20 -0700 (PDT)
+Message-ID: <64fef074.170a0220.8bb85.e3c7@mx.google.com>
+Date:   Mon, 11 Sep 2023 03:48:20 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230908055146.18347-4-Linhua.xu@unisoc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: for-next
+X-Kernelci-Tree: linusw
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: v6.6-rc1
+Subject: linusw/for-next baseline: 47 runs, 1 regressions (v6.6-rc1)
+To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 08, 2023 at 01:51:43PM +0800, Linhua Xu wrote:
-> From: Linhua Xu <Linhua.Xu@unisoc.com>
-> 
-> For UNISOC pin controller, there are three different configurations of
-> pull-up drive current. Modify the 20K pull-up resistor configuration and
-> add the 1.8K pull-up resistor configuration.
+linusw/for-next baseline: 47 runs, 1 regressions (v6.6-rc1)
 
-...
+Regressions Summary
+-------------------
 
-> -#define PULL_UP_4_7K			(BIT(12) | BIT(7))
-> +#define PULL_UP_1_8K			(BIT(12) | BIT(7))
-> +#define PULL_UP_4_7K			BIT(12)
-
-This looks like a real fix, please add Fixes tag and move the patch to be the
-first in the series.
-
--- 
-With Best Regards,
-Andy Shevchenko
+platform      | arch  | lab           | compiler | defconfig | regressions
+--------------+-------+---------------+----------+-----------+------------
+r8a77960-ulcb | arm64 | lab-collabora | gcc-10   | defconfig | 1          =
 
 
+  Details:  https://kernelci.org/test/job/linusw/branch/for-next/kernel/v6.=
+6-rc1/plan/baseline/
+
+  Test:     baseline
+  Tree:     linusw
+  Branch:   for-next
+  Describe: v6.6-rc1
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gp=
+io.git/
+  SHA:      0bb80ecc33a8fb5a682236443c1e740d5c917d1d =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform      | arch  | lab           | compiler | defconfig | regressions
+--------------+-------+---------------+----------+-----------+------------
+r8a77960-ulcb | arm64 | lab-collabora | gcc-10   | defconfig | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/64fee612dc6a48a214286de3
+
+  Results:     4 PASS, 2 FAIL, 1 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//linusw/for-next/v6.6-rc1/arm64=
+/defconfig/gcc-10/lab-collabora/baseline-r8a77960-ulcb.txt
+  HTML log:    https://storage.kernelci.org//linusw/for-next/v6.6-rc1/arm64=
+/defconfig/gcc-10/lab-collabora/baseline-r8a77960-ulcb.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/64fee612dc6a48a214286dec
+        new failure (last pass: v6.4-rc1)
+
+    2023-09-11T10:08:04.598904  / # #
+
+    2023-09-11T10:08:04.701027  export SHELL=3D/bin/sh
+
+    2023-09-11T10:08:04.701461  #
+
+    2023-09-11T10:08:04.802475  / # export SHELL=3D/bin/sh. /lava-11493746/=
+environment
+
+    2023-09-11T10:08:04.803176  =
+
+
+    2023-09-11T10:08:04.904655  / # . /lava-11493746/environment/lava-11493=
+746/bin/lava-test-runner /lava-11493746/1
+
+    2023-09-11T10:08:04.905780  =
+
+
+    2023-09-11T10:08:04.922887  / # /lava-11493746/bin/lava-test-runner /la=
+va-11493746/1
+
+    2023-09-11T10:08:04.971933  + export 'TESTRUN_ID=3D1_bootrr'
+
+    2023-09-11T10:08:04.972435  + cd /lava-114937<8>[   19.194846] <LAVA_SI=
+GNAL_STARTRUN 1_bootrr 11493746_1.5.2.4.5>
+ =
+
+    ... (28 line(s) more)  =
+
+ =20
