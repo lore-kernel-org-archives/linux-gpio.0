@@ -2,121 +2,79 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 583E6CA0EC3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D57CA0EC5
 	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:56:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240073AbjIKU4D (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:56:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51040 "EHLO
+        id S240088AbjIKU4F (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:56:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236535AbjIKK4u (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:56:50 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2857F3;
-        Mon, 11 Sep 2023 03:56:45 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38BAHUGk005010;
-        Mon, 11 Sep 2023 10:56:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=Ulb6ivCBYfJxHUM4YBEtsEJoOnSrk2SMWeoI7ndeucs=;
- b=PMVy+DkuMntEMbC6E3AaypPc6J9MF6sKEejS5SF4eIQSNVSFrmhXAPTRcddOmNDRtS+y
- XBwgCr78Vw0oH9FlMM2ELswZh7cIbka+q5Un9HtRgSz61u0g8J9xtSCG3Maflg4du5XG
- QN/OQN6J0dZ5gE4stSdDACe+nNVNVC18By+VvtxgZxyGcPB2Ehq/8NhkSoMnTTADQ03A
- H/TqrLJl25Amd8ejof0lM4LyGMqfKv/PY2D3S0UCBc+0isIpJk4tI3yGmOlOtvQeR/MU
- oqIg5cY+vJy/WEj16vLShRAANt6ILj4pEcYIC5J3bMu0/vzx02WPiHPBXXyXx3NN0bkE 5g== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0hfqkenc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:13 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAuCVs006051
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:12 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Mon, 11 Sep 2023 03:55:28 -0700
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
-CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_mojha@quicinc.com>
-Subject: [REBASE PATCH v5 09/17] pstore/ram: Use dynamic ramoops reserve resource
-Date:   Mon, 11 Sep 2023 16:23:51 +0530
-Message-ID: <1694429639-21484-10-git-send-email-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+        with ESMTP id S238164AbjIKNor (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 09:44:47 -0400
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCBA3CD7
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 06:44:42 -0700 (PDT)
+Received: by mail-ot1-x333.google.com with SMTP id 46e09a7af769-6c09f1f4610so2929380a34.0
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 06:44:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694439882; x=1695044682; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lR+yotPL2JhFpXqTuMpqA2jqZRBoBG3MioUG07FwcZI=;
+        b=CmwRBCepjECn2eQKwQodlX2OylwQAld0Hb6CWZnEiKP7Bv3EzpfmbJzTaFjyH1nwLe
+         Xupf46RybbrWX9ZBz793o8GOQSuzwJ1PesPHGkyQ6V8Lyma7yfuggOCsDWUbDOV4YDUi
+         Sx5R8zWPAg4wadWT9zpQTY3dB3b6EDV0BOzk7zeFShkIMbLS2rQD1YuIFinHwrhMEG17
+         85xDzbvSJQQEWSQWctVsLQE39WrIMfGwlF94JRBDNVwNSm4gAwlK9X9wIP2mDIDeTT9q
+         +rbL8ofPrDaBdoCv5iRNPBdLqGvXE+JY1aN8qiPkq6sRlzp15R2QymkiOznDQpgq1HWM
+         0s+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694439882; x=1695044682;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lR+yotPL2JhFpXqTuMpqA2jqZRBoBG3MioUG07FwcZI=;
+        b=Ra0CZHl9vb2T6/3pODZgip+I+v/Johla0sXV9oNz6xT0GRDVQrqhtv6Ux3OffUyz+a
+         C2e2ereJ0hLuLdq2c5wXyFEe5S4PG1BE6r+yECb3NBVF3aJzsgvhUTV27j2MMSt1a8fn
+         2SlWwyf/kZwmTxPkED0mXSTYaMu3hl9YfcfrXOwOkZzWLQypaRRnxXJLK4hw4X1bDhbi
+         X1aqcelIlEBVQGeuRMh6HeQipnZ7gdhvjZMQoTG/PudG8Wo8Oy+KPpuAREHtaZlcQcNS
+         IhgRy/Ezwnfb63G34sezQQjzWGfV+cKOzlqqmJZfVMbmOhwCb9mwb07NVpQzArrt2SHu
+         dfuQ==
+X-Gm-Message-State: AOJu0YwObn6EssBViQyq8HZWbUJQFllvwWdmCeaUdCA7V9Ysb3h1GJJh
+        dM3dTDVltgRpFvVHhDj2lrCZTbZdej/EYcffQ0JtOrz3loPQQoLh
+X-Google-Smtp-Source: AGHT+IEYfLWIjZooHKmo4/urW6qtpQKHB2aG2wO78WtU7f8Rs4H4GXzdDaRKYxYBxo9eS+FIgiRJub17e48PFxbtaHg=
+X-Received: by 2002:a05:6830:2048:b0:6b9:c41f:ede9 with SMTP id
+ f8-20020a056830204800b006b9c41fede9mr8513487otp.16.1694439882074; Mon, 11 Sep
+ 2023 06:44:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VlpMUntWdgjbfQBbSQt02UT2ECOTiSRG
-X-Proofpoint-GUID: VlpMUntWdgjbfQBbSQt02UT2ECOTiSRG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- suspectscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
- priorityscore=1501 lowpriorityscore=0 impostorscore=0 clxscore=1015
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309110099
+References: <11db447f257231e08065989100311df57b7f1f1c.1693082594.git.daniel@makrotopia.org>
+In-Reply-To: <11db447f257231e08065989100311df57b7f1f1c.1693082594.git.daniel@makrotopia.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 11 Sep 2023 15:44:31 +0200
+Message-ID: <CACRpkdYd-yo5+aHnD1H3HxmW6wO55NzfxeUq8Tq=ws1WMa4Euw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mediatek: mt7981: add additional uart groups
+To:     Daniel Golle <daniel@makrotopia.org>
+Cc:     Sean Wang <sean.wang@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-As dynamic ramoops command line parsing is now added, so
-lets add the support in ramoops driver to get the resource
-structure and add it during platform device registration.
+On Sat, Aug 26, 2023 at 10:44=E2=80=AFPM Daniel Golle <daniel@makrotopia.or=
+g> wrote:
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
- fs/pstore/ram.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+> Add uart2_0_tx_rx (pin 4, 5) and uart1_2 (pins 9, 10) groups to the
+> pinctrl driver for the MediaTek MT7981 SoC.
+>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index d36702c7ab3c..ab551caa1d2a 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -914,13 +914,17 @@ static void __init ramoops_register_dummy(void)
- 
- 	/*
- 	 * Prepare a dummy platform data structure to carry the module
--	 * parameters. If mem_size isn't set, then there are no module
--	 * parameters, and we can skip this.
-+	 * parameters. If mem_size isn't set, check for dynamic ramoops
-+	 * size and extract the information if it is set.
- 	 */
--	if (!mem_size)
-+	if (!mem_size && !dyn_ramoops_res.end)
- 		return;
- 
- 	pr_info("using module parameters\n");
-+	if (dyn_ramoops_res.end) {
-+		mem_size = resource_size(&dyn_ramoops_res);
-+		mem_address = dyn_ramoops_res.start;
-+	}
- 
- 	memset(&pdata, 0, sizeof(pdata));
- 	pdata.mem_size = mem_size;
--- 
-2.7.4
+No comment for over two weeks so patch applied.
 
+Yours,
+Linus Walleij
