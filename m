@@ -2,102 +2,89 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCC4CA0EC6
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D63FCA0ECB
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:54:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236284AbjIKUyl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:54:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47070 "EHLO
+        id S231317AbjIKUyp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:54:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237531AbjIKM4j (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 08:56:39 -0400
-Received: from mail-vk1-xa31.google.com (mail-vk1-xa31.google.com [IPv6:2607:f8b0:4864:20::a31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 489CBE40
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 05:56:35 -0700 (PDT)
-Received: by mail-vk1-xa31.google.com with SMTP id 71dfb90a1353d-493639d6173so1610371e0c.3
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 05:56:35 -0700 (PDT)
+        with ESMTP id S244204AbjIKThJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 15:37:09 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E1DB12A;
+        Mon, 11 Sep 2023 12:37:04 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2bcc14ea414so79331141fa.0;
+        Mon, 11 Sep 2023 12:37:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694436994; x=1695041794; darn=vger.kernel.org;
+        d=gmail.com; s=20221208; t=1694461022; x=1695065822; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xkfaITpjzvoowVVfws6abpFf+2OELZsAD/wJz25EPkk=;
-        b=BqT1CXdK08i+zxeQsmuWeUwDX1+zvvX3SigN0N26Qqcouinq+d/W2ukdCylg9DRYwj
-         GVXL3tq7lGoDgTJuhv48CUEXskpwa24dWxiDrjpmXrABltM5PeKATRjKFtz8gW81PtLu
-         eTlBaML8h/yceBVSxZ3M7aehNoqlOXI6/V2WJ8A6GxMLeJQ/sSPCBcLK78pRR+SrzJ2O
-         Q2/XI4rkrl4N6W2FpBb8SEkyafQbr/zaMgOZT/OFwKZLarXU/5k77l5SPyGM3QF9HIeH
-         TmeTzo2Kz1jUmBxPmqlhfQ7PO/pqxsgf62TPHZdhz5iBJApt0YR43Ah3nKaX1gl4AQH7
-         bM4w==
+        bh=TtHFkIB4HjNpruap74rc4M+x6RD0lNjgWaeMc48DnVQ=;
+        b=RYAdqzSwjA0vXLzI3rZNNLL4KCYHTAHIeYRfpWdCJu63dUoVm6o3krh88pduVUNn61
+         y1IwaQ+okTDekJQ6k+cTQfuHS/vokebki+R3dLwSTBnRoDEmg1CHaNGNf5NQRyJQ2mJo
+         FZaa8OsklGbHt82x9/m7asFqgSP19t8buxTkTmXQ5jpftTS6EpCoyNPKTwB/KWX0DgYY
+         QGzMtHUfGtb2UtqEIFZnAX19CIZxE+DqHfDTMrXa3+Qc8mTj7OrmhBUNy1QVXpaY1cVZ
+         EUPZNjpwJaVKiPmXyYvYPUSnvWc9L63prLf2+v4JvaC7vk7kMmVYzPls6SlZ2F7zFgO3
+         puZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694436994; x=1695041794;
+        d=1e100.net; s=20230601; t=1694461022; x=1695065822;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xkfaITpjzvoowVVfws6abpFf+2OELZsAD/wJz25EPkk=;
-        b=fsNtdLmByACDAhRzlijR0Acbw7+bv95dfWRNWvMrAUJnmBZ6x4G26vHzxiWtKgygFC
-         OmNtG7K3nFwEiL+4pXSUS0KlyWN1GyEq0pofWqR/7/JkitJx95e0bK3YrNM7GWqta1HU
-         Hwx5ha+nFyhnyihBi4iGD3YBJ3YM+FuHwH8oQyqI+4b9+KejRXPxk/qykk9VWucSoFw+
-         JotjCkwuOAnh33VqSYMUaWY+NLDcXsVLX968dnVOpbmAsnIE8MSNrnxY4cwCIb/Omg8M
-         NIwAS1XpbUwAiEyppOZ0HUwJswjpkiwY9/qsfpoFrBJL5Q4uoR7XKgupvJuLZpH8/Tmm
-         VaCw==
-X-Gm-Message-State: AOJu0YwQPonCj+hvM+PRM6UY2TA2INJYaFfbutI++PhrmeYjPs0jb8PI
-        DNt9nujRmE6ymOzvSTSyUb/I4flSxVPIv0bEt22A9w==
-X-Google-Smtp-Source: AGHT+IHewLB3FfSioBycs718X0V3D3Aiy2lRD0SXx55qRkB6Sbz0u8Ef0VHW6xOiSEMCmY4pWDMF6vFkJSzeT/+Fe+k=
-X-Received: by 2002:a05:6122:2ab:b0:48f:c07e:433a with SMTP id
- 11-20020a05612202ab00b0048fc07e433amr8172421vkq.11.1694436994319; Mon, 11 Sep
- 2023 05:56:34 -0700 (PDT)
+        bh=TtHFkIB4HjNpruap74rc4M+x6RD0lNjgWaeMc48DnVQ=;
+        b=mFg343KDZOAIWdS+XegH3w6JWq+wO4ObzLpabNoCg++S0cMBCUPgLS/Z2pUma8Roaz
+         x/gcJegtI6WXzwzebzIJ8qnPFQ+Oabm6vylyCmlSILVk2Zxr3VO7vy0088G8QRdTMpGQ
+         78AnPKPoZhEc2PabJ0Q5ZYz3hah/+4cimc9L3vQnlUajJmAeS7zppze0Sv1FAcz9R64N
+         UNm6lKnD11wqL25an6q92YJxl5KzxNQP1LcT3NOeuEtvmZ8IAmv8rhFGj3501HVgZnj/
+         nxdDxrKMGZ3MW0vCteEWdIPggX8R+WLQEixEm0DryRtVYKiwaY8Pj85e5tSsrWIkSkPW
+         r0xQ==
+X-Gm-Message-State: AOJu0Yz+L9sonq7qoqrZtUv5X3h00O/PrTKI1PdIufZ8SN8pgBoOzJb2
+        X0V7+y4xwMvt1MScjVMT2G9aqAbM+iMAr8qyotk=
+X-Google-Smtp-Source: AGHT+IEHONmFCXlIl8CtsQ1p//AgYvzN0oFymF5kb+m/A+LqIbbN2JHzQ3n/Wj2UhSy7rLEgh8So+tK68vdnGyP+3QY=
+X-Received: by 2002:a2e:8297:0:b0:2bc:e330:660b with SMTP id
+ y23-20020a2e8297000000b002bce330660bmr9020360ljg.9.1694461022242; Mon, 11 Sep
+ 2023 12:37:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230911110740.16284-1-brgl@bgdev.pl> <ZP8N4M6cqyP9rS3W@smile.fi.intel.com>
-In-Reply-To: <ZP8N4M6cqyP9rS3W@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 11 Sep 2023 14:56:23 +0200
-Message-ID: <CAMRc=Mf8zhmMaMSoO_cceG9meCHr1AbZMMRJE7Qms8qEt047Cg@mail.gmail.com>
-Subject: Re: [PATCH v5] gpio: sim: don't fiddle with GPIOLIB private members
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20230828140849.21724-1-tmaimon77@gmail.com> <CACRpkdY0C7S_VjZ8CKxj9MOv401jUPesvwKwHyCfHM+p8jRSOg@mail.gmail.com>
+In-Reply-To: <CACRpkdY0C7S_VjZ8CKxj9MOv401jUPesvwKwHyCfHM+p8jRSOg@mail.gmail.com>
+From:   Tomer Maimon <tmaimon77@gmail.com>
+Date:   Mon, 11 Sep 2023 22:36:50 +0300
+Message-ID: <CAP6Zq1gd7j7c3RuB+E4S65JNhOmEEZOMgn2AqXwO29f=BRKXzA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/2] pinctrl: nuvoton: add pinmux and GPIO driver for NPCM8XX
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, avifishman70@gmail.com, tali.perry1@gmail.com,
+        joel@jms.id.au, venture@google.com, yuenn@google.com,
+        benjaminfair@google.com, j.neuschaefer@gmx.net,
+        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Sep 11, 2023 at 2:54=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Mon, Sep 11, 2023 at 01:07:40PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > We access internals of struct gpio_device and struct gpio_desc because
-> > it's easier but it can actually be avoided and we're working towards a
-> > better encapsulation of GPIO data structures across the kernel so let's
-> > start at home.
-> >
-> > Instead of checking gpio_desc flags, let's just track the requests of
-> > GPIOs in the driver. We also already store the information about
-> > direction of simulated lines.
-> >
-> > For kobjects needed by sysfs callbacks: we can iterate over the childre=
-n
-> > devices of the top-level platform device and compare their fwnodes
-> > against the one passed to the init function from probe.
-> >
-> > While at it: fix one line break and remove the untrue part about
-> > configfs callbacks using dev_get_drvdata() from a comment.
->
-> (Just wondering if you used --patience)
->
+Thanks a lot Linus
+appreciate it :-)
 
-I may have forgotten this one time. I need to add an alias.
-
-Bart
-
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Mon, 11 Sept 2023 at 16:53, Linus Walleij <linus.walleij@linaro.org> wro=
+te:
 >
-> --
-> With Best Regards,
-> Andy Shevchenko
+> On Mon, Aug 28, 2023 at 4:08=E2=80=AFPM Tomer Maimon <tmaimon77@gmail.com=
+> wrote:
 >
+> > This patch set adds pinmux and GPIO controller for the Arbel NPCM8XX
+> > Baseboard Management Controller (BMC).
 >
+> Patches applied. I can send some more nitpicky comments about
+> patch 2/2 but they are not serious enough to warrant a resend of the
+> patches, it is better to touch it up in-tree, if at all.
+>
+> Good work with this driver, and also good patience since you
+> iterated 7 versions and polished everything up so it's really nice
+> and shiny now!
+>
+> Yours,
+> Linus Walleij
