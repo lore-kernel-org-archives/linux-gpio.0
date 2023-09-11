@@ -2,165 +2,148 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2CD6CA0ED1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E07CA0ECF
 	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:03:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240969AbjIKU4n (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:56:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33154 "EHLO
+        id S240879AbjIKU4m (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:56:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243529AbjIKRR2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 13:17:28 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9692F1AD;
-        Mon, 11 Sep 2023 10:17:23 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-502153ae36cso7506619e87.3;
-        Mon, 11 Sep 2023 10:17:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694452642; x=1695057442; darn=vger.kernel.org;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SI5vlgRKYRNHM1C+DkX5FIATlpw7hyOP/MciW4qezs4=;
-        b=CEG/GNZEFcoigcN1/Kzcm/xxVTvQTJ6YQIALk5DtwB/w/ZC7GjMaHXHBQb3jvYgdAJ
-         19LsGJaWP38DQYGHjRgcOdm1Biwcvkdm4PgRfHwzZQNEDCXI7T6vFK3OTdpGlhwx7qHw
-         MaNlrzZxHGBEZ/0FX1Wz5JpIXkHaAzwELbdOKgASxwfTlNwqI2h3p83QnOQi2fHVvs8d
-         1l/EvaFum7f74bcC2zJy8BECdumI4LfJ7xPhI6X9XqaiKlSP5R/davcWPbWTNhlfyVKF
-         GEgeJXFQZf9DJ28L8ozEYoCLGrpeJ/pzT2NdT0BaUIVv2SlNuoHtkeZ9JhZvO2r0gOSr
-         /oag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694452642; x=1695057442;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SI5vlgRKYRNHM1C+DkX5FIATlpw7hyOP/MciW4qezs4=;
-        b=k9+wLAlyboTMEMFzMVC1Fhw+TMdGmjAmgvlfJwvbDH+m1mFCDeBuZ74ZCFLh0C3ou3
-         GBZ6mOeeEqijviTQ/UNpSdy/hE5F1RbtQrGju2iiMZDh0XYmh8ikp97e94fOXjx6Wuny
-         /3JB8MqabhZCYETuaxUYcrPwRdWcuZQNBAt7hVmNYNuR9zQvg/UqHRivZIs8a+D1xmt3
-         7788tsZiSrpueMeuWpbqlZAHtSBC+0p3i9MwZ+TuiQeiIjZmq2ayG2eqt09LyaRWSkVV
-         MJLKew/nFRPXubFlS5RGhb0sdt5OqmpSvHUbnNtVp1T77EkVq56fiYt4uVtMeeOVSDLR
-         ThEw==
-X-Gm-Message-State: AOJu0Yz4Lxy8HsQqqxO99KU/mboIShSoxlL17mbV0agY6L4o23VzmKDO
-        XBIiYplsdp0uFzXV15nwKjc=
-X-Google-Smtp-Source: AGHT+IGQJHojqhRwH0OQBhk3JhUu00YPa6S2W1S/m1cP6oA0/UCR4y1XMC4AB9LxZ3CXkImsKxpW4Q==
-X-Received: by 2002:a05:6512:108d:b0:500:97e4:587e with SMTP id j13-20020a056512108d00b0050097e4587emr9273543lfg.44.1694452641413;
-        Mon, 11 Sep 2023 10:17:21 -0700 (PDT)
-Received: from dell.localnet (77-255-201-154.dynamic.inetia.pl. [77.255.201.154])
-        by smtp.gmail.com with ESMTPSA id kj13-20020a170907764d00b009a1b857e3a5sm5622150ejc.54.2023.09.11.10.17.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 10:17:20 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
-        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [RFT PATCH 15/21] arm: omap1: ams-delta: stop using gpiochip_find()
-Date:   Mon, 11 Sep 2023 19:17:18 +0200
-Message-ID: <4001581.3daJWjYHZt@dell>
-In-Reply-To: <CAMRc=Mfrk9q6fJyEAuxDXYPpbjVHeLJaTjHEcKiYHzrE3r+_7A@mail.gmail.com>
-References: <20230905185309.131295-1-brgl@bgdev.pl> <6555932.G0QQBjFxQf@dell>
- <CAMRc=Mfrk9q6fJyEAuxDXYPpbjVHeLJaTjHEcKiYHzrE3r+_7A@mail.gmail.com>
+        with ESMTP id S236556AbjIKK5G (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:57:06 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0A95F3;
+        Mon, 11 Sep 2023 03:57:01 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38BAov3n011117;
+        Mon, 11 Sep 2023 10:56:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=BciqlRm1IXuJGPGGFANUuS6+s1Ocn2xvnDLrENlUd70=;
+ b=YOtpL6iC9R4FChfnR4PXO2BcTiAkfs+JSz7WDX7bdwxDujJAOaPVpwCdzEskI2iNeE3/
+ BB/jO0srmLAimGgKHXC0C3m4ojxb2/n9WVo6XSyPHBVjcTHd6f00y/mKRRgmsDTbnCir
+ lexC1x0EK0yGaMW8do3vRBO9kLxY5Vg4AR/J5oK8RT/nf0zTbIDeNCqw93Yj/jjcN8Pp
+ k8fYTPhmq8Qtu2L+BZeU/2LDvDngm3nK8OxEVfJcuLU9sp5EzP7CiqrlBmMx78nFmrpl
+ JlWlk3PMlDgQQ5Vr326ubiX89FLXNGZwpySvgiPLru6HZm2jwKgiYTQffYDCOo2cokgj Cw== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0edmkqab-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:31 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAuUpG006543
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:30 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Mon, 11 Sep 2023 03:56:20 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_mojha@quicinc.com>,
+        Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+Subject: [REBASE PATCH v5 15/17] firmware: scm: Modify only the download bits in TCSR register
+Date:   Mon, 11 Sep 2023 16:23:57 +0530
+Message-ID: <1694429639-21484-16-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart6408794.j6PcuT4dK6";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vE-OmmTlA0fMtTl4BcpSQY1pdiC7iSC8
+X-Proofpoint-GUID: vE-OmmTlA0fMtTl4BcpSQY1pdiC7iSC8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ priorityscore=1501 mlxlogscore=999 malwarescore=0 spamscore=0
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 phishscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309110099
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
---nextPart6408794.j6PcuT4dK6
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"; protected-headers="v1"
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 11 Sep 2023 19:17:18 +0200
-Message-ID: <4001581.3daJWjYHZt@dell>
-MIME-Version: 1.0
+Crashdump collection is based on the DLOAD bit of TCSR register.
+To retain other bits, we read the register and modify only the
+DLOAD bit as the other bits have their own significance.
 
-Hi Bartosz,
+Co-developed-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+Tested-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com> # IPQ9574 and IPQ5332
+---
+ drivers/firmware/qcom_scm.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-Dnia poniedzia=C5=82ek, 11 wrze=C5=9Bnia 2023 13:09:56 CEST Bartosz Golasze=
-wski pisze:
-> On Fri, Sep 8, 2023 at 8:07=E2=80=AFPM Janusz Krzysztofik <jmkrzyszt@gmai=
-l.com> wrote:
-> >
-> > Dnia czwartek, 7 wrze=C5=9Bnia 2023 09:31:01 CEST Linus Walleij pisze:
-> > > On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgde=
-v.pl> wrote:
-> > >
-> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > >
-> > > > gpiochip_find() is going away as it's not hot-unplug safe. This pla=
-tform
-> > > > is not affected by any of the related problems as this GPIO control=
-ler
-> > > > cannot really go away but in order to finally remove this function,=
- we
-> > > > need to convert it to using gpio_device_find() as well.
-> > > >
-> > > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > I was cleaning this one just some merge cycle ago, now it
-> > > looks even better!
-> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >
-> > Acked-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> >
->=20
-> Janusz,
->=20
-> Is it fine if I take it through the GPIO tree?
-
-Yes, should be fine, I believe.  Tony, Aaro, any doubts?
-
-Thanks,
-Janusz
-
->=20
-> Bartosz
->=20
-> > Thanks,
-> > Janusz
-> >
-> > >
-> > > Yours,
-> > > Linus Walleij
-> > >
-> >
-> >
-> >
-> >
->=20
-
-
---nextPart6408794.j6PcuT4dK6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEnyr6IsGnTYAeAkHJ2WqSnltsjBoFAmT/S54ACgkQ2WqSnlts
-jBqfwggAkqeTBmvDijSA5oujmDfSsAwfI3pBy3VlWvEHNLW4jys50C18KyynuMPa
-QyvA9s4AZQjeusGTcGaGzSJ7KtMFCmTba/RuaP1mHrH/D9aXB0QlAhdaSoKEWpFl
-2ClWbPt6nnGyMQ17eFTpip9HD4ylxRY/wT748JaWqWBQPsOaSDsq1ghsuQy/6Dy2
-aos/iIizgrK5rhgxxBYmxHi7mm0Pa0sMkr6h8nqash55cMpCEMQeZmSV+GpDZ+vz
-BevtWk7pY+j5WGhOYJNulyih6cdVOVU8J6LqpUCkvKDwK2DzjKFsPSxJ2g1qA7/C
-B/sE4gkeNsH/dCnyiX/Rv1Kd3ak3YA==
-=/Mjl
------END PGP SIGNATURE-----
-
---nextPart6408794.j6PcuT4dK6--
-
-
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index 321133f0950d..5cacae63ee2a 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -5,6 +5,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
++#include <linux/bitfield.h>
++#include <linux/bits.h>
+ #include <linux/completion.h>
+ #include <linux/cpumask.h>
+ #include <linux/export.h>
+@@ -26,6 +28,14 @@
+ static bool download_mode = IS_ENABLED(CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT);
+ module_param(download_mode, bool, 0);
+ 
++#define SCM_HAS_CORE_CLK	BIT(0)
++#define SCM_HAS_IFACE_CLK	BIT(1)
++#define SCM_HAS_BUS_CLK		BIT(2)
++
++#define QCOM_DLOAD_MASK		GENMASK(5, 4)
++#define QCOM_DLOAD_FULLDUMP	0x1
++#define QCOM_DLOAD_NODUMP	0x0
++
+ struct qcom_scm {
+ 	struct device *dev;
+ 	struct clk *core_clk;
+@@ -440,6 +450,7 @@ static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
+ 
+ static void qcom_scm_set_download_mode(bool enable)
+ {
++	u32 val = enable ? QCOM_DLOAD_FULLDUMP : QCOM_DLOAD_NODUMP;
+ 	bool avail;
+ 	int ret = 0;
+ 
+@@ -449,8 +460,9 @@ static void qcom_scm_set_download_mode(bool enable)
+ 	if (avail) {
+ 		ret = __qcom_scm_set_dload_mode(__scm->dev, enable);
+ 	} else if (__scm->dload_mode_addr) {
+-		ret = qcom_scm_io_writel(__scm->dload_mode_addr,
+-				enable ? QCOM_SCM_BOOT_SET_DLOAD_MODE : 0);
++		ret = qcom_scm_io_update_field(__scm->dload_mode_addr,
++					       QCOM_DLOAD_MASK,
++					       FIELD_PREP(QCOM_DLOAD_MASK, val));
+ 	} else {
+ 		dev_err(__scm->dev,
+ 			"No available mechanism for setting download mode\n");
+-- 
+2.7.4
 
