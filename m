@@ -2,163 +2,112 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75826CA0EC4
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8A5CA0EC5
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239495AbjIKUy6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:54:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56078 "EHLO
+        id S239509AbjIKUy7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:54:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236429AbjIKKhB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:37:01 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1CD6E5F
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 03:36:57 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1c1e3a4a06fso28793505ad.3
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 03:36:57 -0700 (PDT)
+        with ESMTP id S237877AbjIKNRc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 09:17:32 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85E7BEB;
+        Mon, 11 Sep 2023 06:17:28 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-401bbfc05fcso49214365e9.3;
+        Mon, 11 Sep 2023 06:17:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1694428617; x=1695033417; darn=vger.kernel.org;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=keT4MqaHmIVfApX/zhqzwe+zUWa4rdaB48d/io9xXzs=;
-        b=Ii+Uq/FkjtaGYf5uJkOCs1FWfVmgJne5w41pPZFj4X32d7kUUOxHOo+SPDnYS4T/el
-         xOVDXxlgWDvoLUwSzQJRnOKrQ0ATNQHtWdU2T3KKqsdzBZsoPB2S7XDGksuGSCDCizOp
-         KGeObvmIes+KY4d2p+z5JLQUMy9i9ZZ8BMcjGuNCbJVrGt8dVgepJdcn5GjuVFpfVHS3
-         PN16iLtqDihJHcRLxOEiG2RVnP3apk3LsPX/1lCOskthwhmoyCXdMURocPIcOCBDqURK
-         AK/y1tYX6QcxS9xWRqvRIYmXGU/1d20y3CLqx2/jyVZXLutWpuU86FUrCbNEMyIyA8da
-         8ZqA==
+        d=gmail.com; s=20221208; t=1694438247; x=1695043047; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VlerAEPk5ZbRg5PAlIL60EpQx7Cq2EyqtsP8OX4iUb0=;
+        b=luLfubuqD9dno+nlaYd5BmXcLyl4KlzfBQHqFIb1DkzAAUuZAeEj8b7Q+GlGt48LB/
+         X8L9xqWoaRdvGYuzqs+yMy+UtfOkVjV2vUohOteiMc7KXSIbSDxOwZqhg9eQJhl5O/vM
+         w8hSVdlIm/47Qr3ZrhGqox/fHkSFdbuCXcg++yd0jLm7ZCtikGDlCWuU4c6Tiux3ETiE
+         rz458p+ld32wjf3hriUjil5GnebNmzzVVlky8gjlqJI+uuShf5k/zwE9vsXZxP/C9FAn
+         bRaeWhq8e33AHEumkZRrnX8YCY7IyrK2kVzdFN82QUNNt9JqxfCXRc7qc4lAUgZzRzgT
+         94Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694428617; x=1695033417;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1694438247; x=1695043047;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=keT4MqaHmIVfApX/zhqzwe+zUWa4rdaB48d/io9xXzs=;
-        b=gw6kzq72t6x1UIt6lpr6moyaaX1paHr5KYsi5cMj8H0OrK85Y33l830OgsNqw160oi
-         9/91odhg+e4c7gCG7aU64mvvRLaKQRfogpM2hMaJWHpg7V3gUqoSSr/eUrHL45vkrJbr
-         LvsD+UlCRzp6AlikszYB5o0au2Yd7DDtnvYgvQHMeicSKDmHUWdr/3g/OgtrpJNdcQHf
-         tnuv0yNWkMy8AVk10wA8g8GwkKjy5ovdhcWeE2C5jiG6VVknc4L36txWl9khdWqXofRw
-         GnNjbtCcMshAnNEYaE4O9CqgeJlzDeLpJcaOYajKE65fYxPDLXll0WHHQ1rM+dp+SbDI
-         /ELA==
-X-Gm-Message-State: AOJu0YwKmqK7TSDqTKcJE5vaXAinElmEjOyOZCFgqj8/m2yvOJiLwKTA
-        CcDTykvB9ZRJ8u8aFgoPibv2uL7x+70RI3l+6T0=
-X-Google-Smtp-Source: AGHT+IFk59CujkggETyjw7PyOlBesavfghwTMDGQSTF5NnE5Ed/LEs7RJUWfERYCbx+q6xCrw/pfpg==
-X-Received: by 2002:a17:902:e811:b0:1c3:2df4:8791 with SMTP id u17-20020a170902e81100b001c32df48791mr8576591plg.27.1694428616760;
-        Mon, 11 Sep 2023 03:36:56 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id i7-20020a1709026ac700b001c3a8b135ebsm2692920plt.282.2023.09.11.03.36.55
+        bh=VlerAEPk5ZbRg5PAlIL60EpQx7Cq2EyqtsP8OX4iUb0=;
+        b=gNSD59TosZgqxJcrJtyDLLKbgsSn4JMEJ/Mmlv197LcGWrLgWqL8xxJHV71tqjYaBh
+         ZCMLgVxrHJYMUotMV7ups33SZZB+yHhSJWDm4tnHgqZNI51eC28noS1vy/jQf8IMU9rg
+         yxaEdkcn7lRYqetv7qPUE8sZMFtvJXzZxlKCrJ9Ekpc6hjOas3ruJVae9fh4tMzqvrLV
+         23EvRO/6cMZ9L5cbr/aSeJm/R67rmdK9gb93Q/HhSDEXVuMBM7bAgTiNS3pQllEam5W2
+         JzBWVnpePeDwPbYNRH/wdLD/8cOXVXBwp8SY4ZY4ijJZqWAMd9qstlEev2zTyz06NKs3
+         lzCQ==
+X-Gm-Message-State: AOJu0YxKLKlvgXkGh7VE+uURVdWnVBr68t/8xGLEsnR4jm7J68W2rPqP
+        DWVHZnJIC0+1QqDSfMiDL5scyk8+z41tWA==
+X-Google-Smtp-Source: AGHT+IEPI6QFXgxg449sbeQSA4HtBFOyu5itUrch2mlFiWIh68Lx1OCYtTJqQqRdsjLm00GVmiQudQ==
+X-Received: by 2002:a1c:7912:0:b0:401:bf56:8baf with SMTP id l18-20020a1c7912000000b00401bf568bafmr7934172wme.8.1694438246711;
+        Mon, 11 Sep 2023 06:17:26 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2501:c701:6716:11bf:1bf:eca1])
+        by smtp.gmail.com with ESMTPSA id l10-20020a1c790a000000b003fed70fb09dsm10057913wme.26.2023.09.11.06.17.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 03:36:56 -0700 (PDT)
-Message-ID: <64feedc8.170a0220.4cbd2.616e@mx.google.com>
-Date:   Mon, 11 Sep 2023 03:36:56 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 11 Sep 2023 06:17:26 -0700 (PDT)
+From:   Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2] pinctrl: renesas: pinctrl-rzg2l: Add validation of GPIO pin in rzg2l_gpio_request()
+Date:   Mon, 11 Sep 2023 14:16:38 +0100
+Message-Id: <20230911131638.443055-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: fixes
-X-Kernelci-Tree: linusw
-X-Kernelci-Report-Type: build
-X-Kernelci-Kernel: v6.6-rc1
-Subject: linusw/fixes build: 8 builds: 0 failed, 8 passed,
- 4 warnings (v6.6-rc1)
-To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-linusw/fixes build: 8 builds: 0 failed, 8 passed, 4 warnings (v6.6-rc1)
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Full Build Summary: https://kernelci.org/build/linusw/branch/fixes/kernel/v=
-6.6-rc1/
+Validate the GPIO pin request in rzg2l_gpio_request() callback using
+rzg2l_validate_gpio_pin() function. This stops any accidental usage
+of GPIO pins which are not supported by the SoCs.
 
-Tree: linusw
-Branch: fixes
-Git Describe: v6.6-rc1
-Git Commit: 0bb80ecc33a8fb5a682236443c1e740d5c917d1d
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.=
-git/
-Built: 8 unique architectures
-
-Warnings Detected:
-
-arc:
-
-arm64:
-
-arm:
-
-i386:
-
-mips:
-
-riscv:
-
-sparc:
-    sparc64_defconfig (gcc-10): 4 warnings
-
-x86_64:
-
-
-Warnings summary:
-
-    2    WARNING: modpost: EXPORT symbol "_mcount" [vmlinux] version genera=
-tion failed, symbol will not be versioned.
-    2    <stdin>:1519:2: warning: #warning syscall clone3 not implemented [=
--Wcpp]
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-32r2el_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-haps_hs_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-i386_defconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-sparc64_defconfig (sparc, gcc-10) =E2=80=94 PASS, 0 errors, 4 warnings, 0 s=
-ection mismatches
-
-Warnings:
-    <stdin>:1519:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    WARNING: modpost: EXPORT symbol "_mcount" [vmlinux] version generation =
-failed, symbol will not be versioned.
-    <stdin>:1519:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-    WARNING: modpost: EXPORT symbol "_mcount" [vmlinux] version generation =
-failed, symbol will not be versioned.
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
-For more info write to <info@kernelci.org>
+v1->v2
+* Maintained reverse christmas tree order.
+* Included RB/TB tags from Claudiu.
+---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 37cdfe4b04f9..cc52a154d201 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -795,12 +795,18 @@ static const struct pinconf_ops rzg2l_pinctrl_confops = {
+ static int rzg2l_gpio_request(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	struct rzg2l_pinctrl *pctrl = gpiochip_get_data(chip);
++	const struct pinctrl_pin_desc *pin = &pctrl->desc.pins[offset];
+ 	u32 port = RZG2L_PIN_ID_TO_PORT(offset);
+ 	u8 bit = RZG2L_PIN_ID_TO_PIN(offset);
++	u64 *pin_data = pin->drv_data;
+ 	unsigned long flags;
+ 	u8 reg8;
+ 	int ret;
+ 
++	ret = rzg2l_validate_gpio_pin(pctrl, *pin_data, port, bit);
++	if (ret)
++		return ret;
++
+ 	ret = pinctrl_gpio_request(chip->base + offset);
+ 	if (ret)
+ 		return ret;
+-- 
+2.34.1
+
