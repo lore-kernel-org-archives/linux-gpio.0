@@ -2,98 +2,154 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9E6CA0EC2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE2ECA0EC8
 	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239634AbjIKUzP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:55:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40876 "EHLO
+        id S239675AbjIKUzS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:55:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235562AbjIKI7R (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 04:59:17 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54A191BE
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 01:59:10 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-58df8cab1f2so42609277b3.3
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 01:59:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694422749; x=1695027549; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5j7bzaXTGQxBwdqsbxqml+pJHHm9UN8WsX9mKBjvcIw=;
-        b=Deao1VjAsVhk7tD7KBbWFq3JhmweOLLjzn4VQJg1m2vy6kMAq5PppNa/UFICjkcygW
-         ETiYjKYjW00ykr2HFlDnNV2C7eGVaEbI66bAddlsbiR+Q1/lzaTGwpzbIgPe9LM0s8D9
-         id0RO8+ircRAS77X0EwzdMdetMMbYRqgFNHr1zzlWBtrY484OzrzNGN8/VDSU3102yqY
-         Dc17l5orVjCdMOl5fbg2nAtfLpIh6GyMdP2Np5hOFL2Fp2SxOpdx7Lx12tYsUHjn9GHk
-         UOO3dFBKr1SVx/Zh2In1Sq1xDa8kxZJvF1cO11hbDq8TNurhelf9LFmXgfhIJdXJGVfL
-         U++Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694422749; x=1695027549;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5j7bzaXTGQxBwdqsbxqml+pJHHm9UN8WsX9mKBjvcIw=;
-        b=smV1fdyxdxNdxxYkO8utf3xMiAkf3d/FLQbHTCYgYv2knw+bIe2/ng0a+9kqPTP/wE
-         gTAykZ30cku9/a1Gz7fsH7u6vWBxwq4zKDGrEfsn1j9Fb0xu2mRO8a01IK2XHkKnrWfA
-         TTPiRHMA4lRSEBz5lNCKkSJ7MmK3acoNQsVcSfYKh3fOgEv6z0rg6ul1mYBUoyB2wi1t
-         ZsbtZ+jB/JVjVMA2iwOUBi3aowruFKCWjthz97YRxAONUanqqeTKT27LMqJAUlT4KtSD
-         be03M1qahog9m6H30pJouqZoGZkdSqCv+gXw/Zg3h5VE52IsR+JcwbBG7FlFGhVVXRq4
-         9Enw==
-X-Gm-Message-State: AOJu0Yxg8CCUJ4aof/ojCLiInEzBju3/0Bmmtgeb/xfWlJeE+QdZaZEx
-        h+9q9a6Sy8VSDGdeUJLuBqbvzq+utj433T+eC7nsTkZ4IhF16//KpgY=
-X-Google-Smtp-Source: AGHT+IFrDkhIuonhGPWsSr/0CsH5jkyOknouXdFhWw74YYsKqzq8F0T7V5nmyx3QoBDjukDUHRvrrhaHI0NsT4T/4vs=
-X-Received: by 2002:a25:2e07:0:b0:bcb:9b43:5a89 with SMTP id
- u7-20020a252e07000000b00bcb9b435a89mr8407423ybu.61.1694422749580; Mon, 11 Sep
- 2023 01:59:09 -0700 (PDT)
+        with ESMTP id S236546AbjIKK4x (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:56:53 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25000127;
+        Mon, 11 Sep 2023 03:56:48 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38BAuEgF017396;
+        Mon, 11 Sep 2023 10:56:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=VuS5BngeDMoGs7HCNFTyrS6m+gpdRhA4rXrczTHM1kY=;
+ b=EC8/+GRvaoPLT8rKSCl+rmvF4UjTXLgwaj3cd8sN2AcFuY5QU1Yl7Eo/oeJavi+TXiu0
+ 9oJigAmM/kAtDJBv/8BmmSOhjKNtRnZBoIHTyw62V824olEd0slQntnM1UDmyqq1lAb+
+ YFJeInJwLCxid5TP8Cok6UVA2nnWSSZ3KH4l/qSD317qxDWt5svCNeGHhUGQN13K5ixy
+ RToHtIRIRHBs9I7e6EO6tQfZAlIw43lI0ExCUkN6Jk9pklXk4JaMcAvq93rM3QZ6EkIt
+ mgqjwNp2edXmJfAz87VotieQfhG/BjW8uxAgPx1OKWVSBuu+SAI0TrQ7jEdmj/4yd7DI kw== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0hfqkend-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:14 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAuCVw006051
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:13 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Mon, 11 Sep 2023 03:56:02 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_mojha@quicinc.com>
+Subject: [REBASE PATCH v5 13/17] firmware: qcom_scm: provide a read-modify-write function
+Date:   Mon, 11 Sep 2023 16:23:55 +0530
+Message-ID: <1694429639-21484-14-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-References: <20230824105703.19612-1-tychang@realtek.com> <20230824105703.19612-2-tychang@realtek.com>
-In-Reply-To: <20230824105703.19612-2-tychang@realtek.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 11 Sep 2023 10:58:58 +0200
-Message-ID: <CACRpkda8_nV1UiDO0_qvcc_z8ODQqckwaCGg6A5-Qm0NADi_Ng@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] pinctrl: realtek: Add common pinctrl driver for
- Realtek DHC RTD SoCs
-To:     Tzuyi Chang <tychang@realtek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Vye1cCKDmzVPC6zrq9JQEZLYUW6sLD-J
+X-Proofpoint-GUID: Vye1cCKDmzVPC6zrq9JQEZLYUW6sLD-J
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ suspectscore=0 phishscore=0 mlxlogscore=854 malwarescore=0
+ priorityscore=1501 lowpriorityscore=0 impostorscore=0 clxscore=1015
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309110099
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Tzuyi,
+It was realized by Srinivas K. that there is a need of
+read-modify-write scm exported function so that it can
+be used by multiple clients.
 
-thanks for the new version! This is starting to look really good.
+Let's introduce qcom_scm_io_update_field() which masks
+out the bits and write the passed value to that
+bit-offset. Subsequent patch will use this function.
 
-On Thu, Aug 24, 2023 at 12:57=E2=80=AFPM Tzuyi Chang <tychang@realtek.com> =
-wrote:
+Suggested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+Tested-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com> # IPQ9574 and IPQ5332
+---
+ drivers/firmware/qcom_scm.c            | 20 ++++++++++++++++++++
+ include/linux/firmware/qcom/qcom_scm.h |  2 ++
+ 2 files changed, 22 insertions(+)
 
-> The RTD SoCs share a similar design for pinmux and pinconfig.
-> This common pinctrl driver supports different variants within the RTD
-> SoCs.
->
-> Signed-off-by: Tzuyi Chang <tychang@realtek.com>
-(...)
-> +static void rtd_pinctrl_update_bits(struct rtd_pinctrl *data, unsigned i=
-nt offset,
-> +                                   unsigned int mask, unsigned int val)
-> +{
-> +       unsigned int reg =3D readl_relaxed(data->base + offset);
-> +
-> +       reg &=3D ~mask;
-> +       reg |=3D (mask & val);
-> +       writel_relaxed(reg, data->base + offset);
-> +}
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index 06fe8aca870d..321133f0950d 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -74,6 +74,7 @@ static const char * const qcom_scm_convention_names[] = {
+ };
+ 
+ static struct qcom_scm *__scm;
++static DEFINE_SPINLOCK(lock);
+ 
+ static int qcom_scm_clk_enable(void)
+ {
+@@ -403,6 +404,25 @@ int qcom_scm_set_remote_state(u32 state, u32 id)
+ }
+ EXPORT_SYMBOL_GPL(qcom_scm_set_remote_state);
+ 
++int qcom_scm_io_update_field(phys_addr_t addr, unsigned int mask, unsigned int val)
++{
++	unsigned int old, new;
++	int ret;
++
++	spin_lock(&lock);
++	ret = qcom_scm_io_readl(addr, &old);
++	if (ret)
++		goto unlock;
++
++	new = (old & ~mask) | (val & mask);
++
++	ret = qcom_scm_io_writel(addr, new);
++unlock:
++	spin_unlock(&lock);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(qcom_scm_io_update_field);
++
+ static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
+ {
+ 	struct qcom_scm_desc desc = {
+diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+index 0c091a3f6d49..eb750286abb6 100644
+--- a/include/linux/firmware/qcom/qcom_scm.h
++++ b/include/linux/firmware/qcom/qcom_scm.h
+@@ -84,6 +84,8 @@ extern bool qcom_scm_pas_supported(u32 peripheral);
+ 
+ extern int qcom_scm_io_readl(phys_addr_t addr, unsigned int *val);
+ extern int qcom_scm_io_writel(phys_addr_t addr, unsigned int val);
++extern int qcom_scm_io_update_field(phys_addr_t addr, unsigned int mask,
++				    unsigned int val);
+ 
+ extern bool qcom_scm_restore_sec_cfg_available(void);
+ extern int qcom_scm_restore_sec_cfg(u32 device_id, u32 spare);
+-- 
+2.7.4
 
-This function is essentially a reimplementation of regmap_update_bits()
-using regmap_mmio with .user_relaxed_mmio property set in the
-config.
-
-Have you considered just using regmap-mmio for this?
-
-Yours,
-Linus Walleij
