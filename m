@@ -2,172 +2,158 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BA9CA0ECA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3641CA0ECD
 	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:04:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241446AbjIKU5H (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:57:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56690 "EHLO
+        id S241663AbjIKU5Q (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:57:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237845AbjIKNPA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 09:15:00 -0400
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E352EE
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 06:14:54 -0700 (PDT)
-Received: by mail-vs1-xe34.google.com with SMTP id ada2fe7eead31-44d4d997dcfso1733738137.0
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 06:14:54 -0700 (PDT)
+        with ESMTP id S238699AbjIKODK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 10:03:10 -0400
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DBB4CD7
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 07:03:05 -0700 (PDT)
+Received: by mail-ot1-x333.google.com with SMTP id 46e09a7af769-6beff322a97so3112426a34.3
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 07:03:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694438093; x=1695042893; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694440985; x=1695045785; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RmHlHXBKieO1ptu2ldznM8ZuZhTbj+/naN6JcvAFLCM=;
-        b=wMbspLXnU4SWJPP2pyiFS+UPFCNPGYLSf7ttzlXYAlHzDhVZW7HVGa2l9NwlellZJE
-         njOC3G16h+joZnmK7I9iIFB+fNBIjy4gsffff7BLFLKycGVnAhDL9SNDPFOKQVtPIyKL
-         KgvKxOKEeCpMKUx+LLmH4Kve69knsX4HPJjf0h5QaVBII8vQBPS4tD0JkrVZaqxhJisA
-         jnYS2/kGs69torDAx8w+jn0ySA4fIvj3s8mGyhCjeMldRAFv4+DiDllCXiYLIuZIky1Y
-         bi34YIU6PyRFd+MPjR5QGvsk+pqn/ffJoDFP2AXXlp/Bu18d3f+Mqsa5qSk/HAHiD5Mj
-         ZPEQ==
+        bh=htSTLHjXjD8vt5EAYXqSVCO6HargxzSV7gX/AB30oB8=;
+        b=pQ8DucXuZEPvnGjYPK6Xp6eHioid+dT2sQzVmKr7+vDnV6OsM7bPZeg4uE8b79zsv5
+         obCWZrboJP2tNwW+xt6Si608UY1uBJcTAqIK7QtpmwX429uEytiJ2w1JSEUMGBR+bQxn
+         DUL8oyRp6vGnqKKJ33js55BqS2bOVPgd24IcsZrHBAkZU92ZFT/mMYkfNktvPLnM3i5H
+         sxkme+ZYw2zigoIehhygpTpYSsxcKOvIs1UKzxKzUMiVd71Fq4cb9XTDmMlPVdtNU4im
+         D0LQchJyidfyTyJKQkLWt87DLb3EZ8oTy+YpobA2Uv3IYGpj+J71umZgbfZncoRxwPBL
+         V3cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694438093; x=1695042893;
+        d=1e100.net; s=20230601; t=1694440985; x=1695045785;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RmHlHXBKieO1ptu2ldznM8ZuZhTbj+/naN6JcvAFLCM=;
-        b=Tez1tWF8NY2VtjPVFS34vi7WTLognPDt5hE65Xjf7XkNHlAjeO1fNR9cch1YCFarFl
-         y6+m2pVu6Tv/scqfZjUdwW2uTGFwjjdPK3+L5SNIKutkK7YOuvrOnigFolBWk9BydW4o
-         tsRB4goRRJypRPsPiO+miuHguG7aBX/JEcnq/pffhRrPYb6t9qlpRjcmwCeDvckkSG1E
-         kXRxzTIoQbYYWIoE5fn/6Zf/KFc+ysDktBNWevX6w/Ywz3U8lAKZOSLaf5KsGZOWF/4I
-         jWhwZSsOJ4H9swr0rtlu9MYQ8Rj295Wq1GFvuSWUubvPZ3KPihT1Ffl3bD8zFy7wVkUV
-         pJzA==
-X-Gm-Message-State: AOJu0YwTHtcHx4PWGtUz9Nyomj/GSi2yW3+Cbv3xkunftkHFKO4CK2no
-        j+EZaTQ8K1s+SY0tEixlG1WEyNOCJifvdH2PqZiPbg==
-X-Google-Smtp-Source: AGHT+IGbBUp7apcBf0Wo94rPuei/uMCOLdfymAUYtbXkWV6tuJHuzpKRqe3xeH+LKJOYB5mMHTLfbCwIf2IHKGe4l8I=
-X-Received: by 2002:a67:fe92:0:b0:44d:5a92:ec45 with SMTP id
- b18-20020a67fe92000000b0044d5a92ec45mr8588355vsr.23.1694438093755; Mon, 11
- Sep 2023 06:14:53 -0700 (PDT)
+        bh=htSTLHjXjD8vt5EAYXqSVCO6HargxzSV7gX/AB30oB8=;
+        b=rM9ygur9oh8A5CnzdTbVBD2Zpi70ObQ75sAglqKZgIkCZkwsNpV2+0GHk6mjyBtv6w
+         AQ9nRaynhpSVYgYX+6d6I1BRjD5WMhInWoCcqLA4/fhSWPtUU5ps1waC8MxJMY/hFjXx
+         WOgww1tJjBf83t2ZzNdqtE2w0FwlhoRkwHDvqTRVVelxXNpz9n5GELQjbfswuS2uHl2U
+         tLvGI9A7dAfqoGyOULGnD07kyBw51bRrJJ08uooGeGDWxiMz1nUc2mb2+Yf3cnONBoKT
+         /cOB4aE+uizgcUWqu9jSVuYjUeeWXdOW0/Ew0PZgnzkzjzF7UsxEL0JniT5FZberFxr9
+         hTGg==
+X-Gm-Message-State: AOJu0YxKZPPNyKARXpLMx6mOKorT5eb7B8WAtX4mZZ17eyReOXwhBzyc
+        zDmHRzWVTtpvOUHXq60NgPUUGPXiLlzt4AyfCbJ+gA==
+X-Google-Smtp-Source: AGHT+IE9jU1FIU4/f7jfsz9Rxe7QJ58u0dK8sOWYKbT++bpDZ1zCqq2z618I6/2zgrXrXtGljoG5HE5wpdQJfoU3BhM=
+X-Received: by 2002:a05:6830:457:b0:6b9:9e4f:5f4c with SMTP id
+ d23-20020a056830045700b006b99e4f5f4cmr9593916otc.29.1694440984758; Mon, 11
+ Sep 2023 07:03:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-3-brgl@bgdev.pl>
- <ZPiISpLoVx35PuYc@smile.fi.intel.com>
-In-Reply-To: <ZPiISpLoVx35PuYc@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 11 Sep 2023 15:14:42 +0200
-Message-ID: <CAMRc=MfLGZNmQT55dtrLuqsKbfXjTn7kqOm029oJrOnH002wBw@mail.gmail.com>
-Subject: Re: [PATCH 02/21] gpiolib: provide gpio_device_find()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
-        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20230828140849.21724-1-tmaimon77@gmail.com> <20230828140849.21724-3-tmaimon77@gmail.com>
+In-Reply-To: <20230828140849.21724-3-tmaimon77@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 11 Sep 2023 16:02:53 +0200
+Message-ID: <CACRpkdZk8dKGx2HUoRhkRo6DBkycKh5EkYiGWcFot3OOZnvdpg@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] pinctrl: nuvoton: add NPCM8XX pinctrl and GPIO driver
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, avifishman70@gmail.com, tali.perry1@gmail.com,
+        joel@jms.id.au, venture@google.com, yuenn@google.com,
+        benjaminfair@google.com, j.neuschaefer@gmx.net,
+        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Sep 6, 2023 at 4:10=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Tue, Sep 05, 2023 at 08:52:50PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > gpiochip_find() is wrong and its kernel doc is misleading as the
-> > function doesn't return a reference to the gpio_chip but just a raw
-> > pointer. The chip itself is not guaranteed to stay alive, in fact it ca=
-n
-> > be deleted at any point. Also: other than GPIO drivers themselves,
-> > nobody else has any business accessing gpio_chip structs.
-> >
-> > Provide a new gpio_device_find() function that returns a real reference
-> > to the opaque gpio_device structure that is guaranteed to stay alive fo=
-r
-> > as long as there are active users of it.
->
-> ...
->
-> > +/**
-> > + * gpio_device_find() - find a specific GPIO device
-> > + * @data: data to pass to match function
-> > + * @match: Callback function to check gpio_chip
->
-> > + * Returns:
-> > + * New reference to struct gpio_device.
->
-> I believe this is wrong location of the Return section.
-> AFAIU how kernel doc uses section markers, this entire description become=
-s
-> a Return(s) section. Have you tried to render man/html/pdf and see this?
->
+On Mon, Aug 28, 2023 at 4:09=E2=80=AFPM Tomer Maimon <tmaimon77@gmail.com> =
+wrote:
 
-Yes, it works just fine. Try for yourself: scripts/kernel-doc -rst
-drivers/gpio/gpiolib.c
+> Add pinctrl and GPIO controller driver support to Arbel BMC NPCM8XX SoC.
+>
+> Arbel BMC NPCM8XX pinctrl driver based on Poleg NPCM7XX, except the
+> pin mux mapping difference the NPCM8XX GPIO supports adjust debounce
+> period time.
+>
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 
-Bart
+As mentioned the patch is already applied, consider the following
+as nitpicks you can address in followup patches.
 
-> > + * Similar to bus_find_device(). It returns a reference to a gpio_devi=
-ce as
-> > + * determined by a user supplied @match callback. The callback should =
-return
-> > + * 0 if the device doesn't match and non-zero if it does. If the callb=
-ack
-> > + * returns non-zero, this function will return to the caller and not i=
-terate
-> > + * over any more gpio_devices.
-> > + *
-> > + * The callback takes the GPIO chip structure as argument. During the =
-execution
-> > + * of the callback function the chip is protected from being freed. TO=
-DO: This
-> > + * actually has yet to be implemented.
-> > + *
-> > + * If the function returns non-NULL, the returned reference must be fr=
-eed by
-> > + * the caller using gpio_device_put().
-> > + */
-> > +struct gpio_device *gpio_device_find(void *data,
->
-> > +                                  int (*match)(struct gpio_chip *gc,
-> > +                                               void *data))
->
-> One line?
-> Or maybe a type for it? (gpio_match_fn, for example)
->
-> > +{
-> > +     struct gpio_device *gdev;
-> > +
-> > +     guard(spinlock_irqsave)(&gpio_lock);
-> > +
-> > +     list_for_each_entry(gdev, &gpio_devices, list) {
-> > +             if (gdev->chip && match(gdev->chip, data))
-> > +                     return gpio_device_get(gdev);
-> > +     }
-> > +
-> > +     return NULL;
-> > +}
->
-> ...
->
-> > +struct gpio_device *gpio_device_find(void *data,
-> > +                                  int (*match)(struct gpio_chip *gc,
-> > +                                               void *data));
->
-> Ditto.
->
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+> +struct npcm8xx_gpio {
+> +       struct gpio_chip        gc;
+> +       void __iomem            *base;
+> +       struct debounce_time    debounce;
+> +       int                     irqbase;
+
+You're not really using this are you? Delete it.
+Also the assignment further down: you do not use it I think.
+
+> +       int                     irq;
+
+You're not using this either. Delete it.
+
+> +       struct irq_chip         irq_chip;
+
+Not this either. Delete it.
+
+> +static int npcm8xx_dt_node_to_map(struct pinctrl_dev *pctldev,
+> +                                 struct device_node *np_config,
+> +                                 struct pinctrl_map **map,
+> +                                 u32 *num_maps)
+> +{
+> +       return pinconf_generic_dt_node_to_map(pctldev, np_config,
+> +                                             map, num_maps,
+> +                                             PIN_MAP_TYPE_INVALID);
+> +}
+> +
+> +static void npcm8xx_dt_free_map(struct pinctrl_dev *pctldev,
+> +                               struct pinctrl_map *map, u32 num_maps)
+> +{
+> +       kfree(map);
+> +}
+
+Can't you just call the generic functions directly?
+
+> +static const struct pinctrl_ops npcm8xx_pinctrl_ops =3D {
+> +       .get_groups_count =3D npcm8xx_get_groups_count,
+> +       .get_group_name =3D npcm8xx_get_group_name,
+> +       .get_group_pins =3D npcm8xx_get_group_pins,
+> +       .dt_node_to_map =3D npcm8xx_dt_node_to_map,
+> +       .dt_free_map =3D npcm8xx_dt_free_map,
+
+Here?
+
+(...)
+> +static int npcm8xx_gpio_request_enable(struct pinctrl_dev *pctldev,
+> +                                      struct pinctrl_gpio_range *range,
+> +                                      unsigned int offset)
+> +{
+> +       struct npcm8xx_pinctrl *npcm =3D pinctrl_dev_get_drvdata(pctldev)=
+;
+> +       const unsigned int *pin =3D &offset;
+> +       int mode =3D fn_gpio;
+> +
+> +       if (pin[0] >=3D 183 && pin[0] <=3D 189)
+> +               mode =3D pincfg[pin[0]].fn0;
+
+These magic numbers should really be definies.
+
+> +static void npcm8xx_gpio_request_free(struct pinctrl_dev *pctldev,
+> +                                     struct pinctrl_gpio_range *range,
+> +                                     unsigned int offset)
+> +{
+> +       struct npcm8xx_pinctrl *npcm =3D pinctrl_dev_get_drvdata(pctldev)=
+;
+> +       int virq;
+> +
+> +       virq =3D irq_find_mapping(npcm->domain, offset);
+> +       if (virq)
+> +               irq_dispose_mapping(virq);
+> +}
+
+I would just rename "virq" to "irq", it is a Linux IRQ, not really
+"virtual" which is what the "v" sometimes stand for.
+
+Yours,
+Linus Walleij
