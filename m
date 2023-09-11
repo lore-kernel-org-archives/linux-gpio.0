@@ -2,153 +2,131 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6EBCA0EC7
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFEEDCA0EC8
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239830AbjIKUz2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:55:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47252 "EHLO
+        id S233005AbjIKUza (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:55:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235661AbjIKJSN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 05:18:13 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2E5FCD5
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 02:18:07 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-d776e1f181bso3665936276.3
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 02:18:07 -0700 (PDT)
+        with ESMTP id S236653AbjIKLJ4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 07:09:56 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D326CE5
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:09:51 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b962c226ceso71483311fa.3
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:09:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694423887; x=1695028687; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tW6YKdiguD7VHOKXxQu1gxDdGm/d8SqD6g51/GtMMmg=;
-        b=Oaeecpxs5IJ3SpxewW/SElSm4NIO3XZrNiZpdO0bdpocU+sNdUfGbXNCNFTn+hpnZ8
-         LnTKQ+mVlRJRlbtC1h6QBA1UQZg0QfQeUbJRITU3v/78uVC/woMrmQdl1uM2Unpho07v
-         rkPCqv4bVWnxkCnZiLZRn0yw7gtrAFGNdzWTjKCay4ZjdIiABsUAOOyU0ASGbTKXH2TQ
-         2TIpnzLQcE5bQe/7LoK58UJnX9LAm5n5/Fjbafc5Roc4KJzaBTYIFxUwdZ2A/3rbQzHP
-         h3ZjWW7UflTs48jSKxn2WluEqkO6dZaQj7O0+BL9Kl8uVQPp0B3MRzBqNXZ4Ph38T664
-         Qoeg==
+        d=linaro.org; s=google; t=1694430590; x=1695035390; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ItV/PafZYbRtZG+3EH6sRu97i9Pet4QO+NBJ8/y2iuI=;
+        b=tg4h2AL9gT7/qUV0jFTrvkPJl9a/skFZyfbwb9lpcls46kdOpKy/0zULUF05nAJKrw
+         ITd7nMPZiaS5PsZzg1uTs9LpnOIGc5IQoXbM6B0QK8XpMLmTWz7Uvoa0s4ZTgz5Jq9t4
+         v0U5o8trLtrjzW4IH2vQo4mpKEbOiin4b62jWutcLNlCqZmZsOvN5+FxgDlk21bHCJDq
+         AGy8mFU5AJj5nVJ+LxeMb8183iNYaxF1hzP/jM4wDcZfI50R1cg8CQ5wa0RSetIfcJDN
+         Epx6SgrPMDqtOePCk98hrz6ZZ1pRWPxrXpWGXqxYXtz71fRYbYppSVB44eXGFYlNXoj4
+         UTNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694423887; x=1695028687;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tW6YKdiguD7VHOKXxQu1gxDdGm/d8SqD6g51/GtMMmg=;
-        b=e/iYBaHYIFnm9QktOO5r2wjshrm1jZ+lDOXu1YZz44loVyWwu9E7Y7bbsPEyJCZ/DA
-         y8ASAVxz4K0O5HxFPevZi5DWpLxSdYnNKIBTxN4FaeLQTaecKbQ0PNhUTKBOE5bV4nfJ
-         GZL46chY+jypr4TANcze+xn4gWlRh1/D7MO1eOQAAGRL5NfurdNn3X8FbDS9BiVOiVfd
-         N0zmvClP9ddxnWjlbuN1IbwzurfmgZYWwsjO/kuyvjGnVANgWnbI68VMSm6THVFN6jMt
-         tQXB9N0CYpKIR98SpJWicLY4G4Bo502wyPrtC39JHC7tis74wnuj5+c63XYgcFehTqWC
-         /TQQ==
-X-Gm-Message-State: AOJu0YxjeEtA9Xkr4l7HABNGPItNb7wLyAg7ezawQ/Lsf4bHKxiv02dV
-        XhrDutmw7Fbu/CwHLW2IY5VZajFollwXXcnmz6fvlA==
-X-Google-Smtp-Source: AGHT+IGOdtTO3nq2CqOS8Fe/BVRV113m66vWiq1vxCAykGrR7V7ezGwZ0RvYBUzLau7Cmu+4Z78LgVVp6+SUT6E2A0k=
-X-Received: by 2002:a25:29c2:0:b0:d44:351c:8ac2 with SMTP id
- p185-20020a2529c2000000b00d44351c8ac2mr8693867ybp.35.1694423887130; Mon, 11
- Sep 2023 02:18:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1694430590; x=1695035390;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ItV/PafZYbRtZG+3EH6sRu97i9Pet4QO+NBJ8/y2iuI=;
+        b=EYSChS+gOOXaTDiEvW9nZpbHsgYfcOmOKhPjRWV8q0vVMIuOmjPXKMsLK5cWagarfK
+         oaRUluiq6FT8GYc89MbcOwiPo3v1/8taJqnutPXIPlOMbO9svsnF5rTSGEuakLh0eOQ8
+         RDYSHJn2qA8FmNHR9uO2WS57jigZ711xrFEXqxjXKNxF39JZKWNJv9PU2ILgJxy+TAg+
+         8nCIxoJ3n0fhYAPCYYzaRZEViQpH2fLet29UPywhcf4DY7fVyqI1f2ZBZHS367k7+uyg
+         nu66SoCLZRHbGP4MOSkjd6PqwN7NV362F1i33ov+cb+rkWsbiC7R06FxIpB+zZxkrwOH
+         Vrpg==
+X-Gm-Message-State: AOJu0Yz37yg13/3SUeT+tv58k5pSwKUGvTV5sUrHc+RzMFVk/edzT7Jl
+        tsJL/AGMg/Eo1k2Bxw6SAv3m1A==
+X-Google-Smtp-Source: AGHT+IEA9FyfM8rXa+3k+u+doQWaGigDrU1zuRRVi1v3E2XELPt5LPr2HsZJRl0XxMdT23XFarwUrQ==
+X-Received: by 2002:a2e:8543:0:b0:2bd:180d:67b7 with SMTP id u3-20020a2e8543000000b002bd180d67b7mr6601812ljj.40.1694430589764;
+        Mon, 11 Sep 2023 04:09:49 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id lw7-20020a170906bcc700b009a168ab6ee2sm5129780ejb.164.2023.09.11.04.09.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Sep 2023 04:09:48 -0700 (PDT)
+Message-ID: <0041a391-12ba-2e1b-0954-fbc0e00be631@linaro.org>
+Date:   Mon, 11 Sep 2023 13:09:46 +0200
 MIME-Version: 1.0
-References: <20230314210059.419159-1-linus.walleij@linaro.org> <1d11e190-df52-4941-946e-209238dd3e99@cesnet.cz>
-In-Reply-To: <1d11e190-df52-4941-946e-209238dd3e99@cesnet.cz>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 11 Sep 2023 11:17:55 +0200
-Message-ID: <CACRpkdZAvE5ZwVN=G57t_+aMMZ25OBKTgsf9=rRnk3-LnNEqUg@mail.gmail.com>
-Subject: Re: [PATCH v2] leds: Mark GPIO LED trigger broken
-To:     =?UTF-8?B?SmFuIEt1bmRyw6F0?= <jan.kundrat@cesnet.cz>
-Cc:     Lee Jones <lee@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        linux-leds@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Tony Lindgren <tony@atomide.com>,
-        Felipe Balbi <balbi@kernel.org>, linux-omap@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [PATCH v5 11/17] qcom_minidump: Register ramoops region with
+ minidump
+Content-Language: en-US
+To:     Mukesh Ojha <quic_mojha@quicinc.com>, corbet@lwn.net,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, keescook@chromium.org, tony.luck@intel.com,
+        gpiccoli@igalia.com, mathieu.poirier@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, linus.walleij@linaro.org,
+        andy.shevchenko@gmail.com, vigneshr@ti.com, nm@ti.com,
+        matthias.bgg@gmail.com, kgene@kernel.org, alim.akhtar@samsung.com,
+        bmasney@redhat.com, quic_tsoni@quicinc.com
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, kernel@quicinc.com
+References: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
+ <1694290578-17733-12-git-send-email-quic_mojha@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1694290578-17733-12-git-send-email-quic_mojha@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 8:32=E2=80=AFPM Jan Kundr=C3=A1t <jan.kundrat@cesne=
-t.cz> wrote:
+On 09/09/2023 22:16, Mukesh Ojha wrote:
+> Register all the pstore frontend with minidump, so that they can
+> be dumped as default Linux minidump region to be collected on
+> SoC where minidump is enabled.
+> 
 
-> > I want to know that this trigger has active users that
-> > cannot live without it if we are to continue to support it.
->
-> We're using this feature. Our use case is a LED at the front panel which
-> shows whether a signal is present at an input LC optical connector (DWDM
-> network stuff). Here's how we're setting it up:
->
-> https://gerrit.cesnet.cz/plugins/gitiles/CzechLight/br2-external/+/6570b5=
-71bbf3f53cf24ef2be3079bc282c445b9e/package/czechlight-clearfog-leds/init-le=
-ds-edfa.sh
+...
 
-Interesting!
+> +
+> +	record.type = type;
+> +	record.id = 0;
+> +	max_dump_cnt = 0;
+> +	name = pstore_type_to_name(record.type);
+> +	do {
+> +		ret = pstore_region_defined(&record, &virt, &phys, &size, &max_dump_cnt);
+> +		if (ret < 0)
+> +			break;
+> +
+> +		mdr_list = devm_kzalloc(dev, sizeof(struct md_region_list), GFP_KERNEL);
 
-> I understand that the GPIO numeric namespace is racy, but it's never been=
- a
-> problem for us in the past 5 years since this script runs much later duri=
-ng
-> boot than any driver probing.
+sizeof(*)
 
-Hm OK that does make sequential sense in a way.
+Please fix it everywhere in your code.
 
-> > Option if this is really needed: I can develop a new trigger
-> > that can associate GPIOs with LEDs as triggers using device
-> > tree, which should also remove the use of userspace custom
-> > scripts to achieve this and be much more trustworthy, if
-> > someone with the Nokia n810 or a device with a similar need
-> > is willing to test it.
->
-> I'll be happy to test a patch like that.
+> +		if (!mdr_list)
+> +			return -ENOMEM;
+> +
+> +		md_region = &mdr_list->md_region;
+> +		scnprintf(md_region->name, sizeof(md_region->name) - 1, "K%s%llu", name, record.id);
+> +		md_region->virt_addr = virt;
+> +		md_region->phys_addr = phys;
+> +		md_region->size = size;
+> +		ret = qcom_minidump_region_register(md_region);
+> +		if (ret) {
+> +			pr_err("failed to register minidump region\n");
+> +			break;
+> +		}
+> +
+> +		list_add(&mdr_list->list, &ramoops_region_list);
+> +	} while (record.id < max_dump_cnt && ++record.id);
+> +
+> +	return ret;
+> +}
 
-OK let's just do it. I'll cook something up.
 
-> However, the GPIO in question on our board is connected to a MCP23S18, an=
-d
-> we have a pair of these. When used in this configuration (two chips at th=
-e
-> same SPI CS, differing by a chip-specific "HW address" on a HW level),
-> there are some impedance mismatches because it's essentially two
-> independent pinctrl instances on the same SPI address. This causes
-> problems, e.g. the debugfs pinctrl instance won't be created for the seco=
-nd
-> chip because of a naming conflict. We also carry this out-of-tree patch t=
-o
-> make the GPIO labels work when set from DTS:
->
-> https://patchwork.ozlabs.org/project/linux-gpio/patch/517dcdda21ea0b0df88=
-4bc6adcba1dadb78b66b1.1551966077.git.jan.kundrat@cesnet.cz/
->
-> (Feedback on how to solve that problem is welcome, btw.)
+Best regards,
+Krzysztof
 
-Instead of using the of_* prefixed device tree traversal
-functions, use the fwnode API because we have Intel ACPI
-users of this driver, so we need to use the right abstraction.
-Just use the similar functions from include/linux/property.h
-and grep around for some example that does this already.
-
-Use the bits in spi-present-mask =3D <0x05>; to iterate perhaps?
-Like use for_each_set_bit() from <linux/bitmap.h> and
-then we should in theory make the YAML description warn
-if that bitmask and the nodes don't match up (yeah...)
-since the kernel is not a device tree (or other HW description)
-validator.
-
-Then I think you should just split up that patch in one DT binding patch
-and one patch for the driver and send it out in a series
-"support line names on MCP23S18" or somthing, the MCP
-expander is really popular so this is highly desired.
-
-I hope the DT people don't randomly ask you to rewrite the
-bindings in YAML. It could happen that they do.
-
-> Since I am not that much familiar with pinctrl/gpio stuff in kernel, I
-> wanted to bring this up to make sure that your future trigger works even =
-on
-> a setup like ours. Here's how it's used via DTS in case it's relevant:
->
-> https://gerrit.cesnet.cz/plugins/gitiles/CzechLight/br2-external/+/6570b5=
-71bbf3f53cf24ef2be3079bc282c445b9e/board/czechlight/clearfog/sdn-roadm-clea=
-rfog.dtsi#151
-
-Looks reasonable to me.
-
-Yours,
-Linus Walleij
