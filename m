@@ -2,82 +2,77 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E7F5CA0ECE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFB5CA0ED3
 	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:04:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241601AbjIKU5N (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:57:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47826 "EHLO
+        id S241749AbjIKU5R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:57:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236202AbjIKJzl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 05:55:41 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799B0E67;
-        Mon, 11 Sep 2023 02:55:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694426137; x=1725962137;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0JcFDOUw0C238xlJbCbweIkrVkXKg1zh7PJyy8AyPxY=;
-  b=Gufs04b97kcySToqEwElpDD6IW5QH7ki6WKiCR2cPNhUOoMjjnGgTuhz
-   LlOgKCBfkV0F5WyfvuMuEdBC06z0H5CwYnmxTtvmWBPql+bNq5InAj3Jc
-   6yoY8dTeTUT+vrZkdw8qd5/Buj+BeZAMltHVKx/2f1Ztodmt8/neyT+aN
-   jCeMT1pQcOhb5vAdAVsxnmDYDruvefJIddMCSp7fa6I7O2b0XBaIznSkk
-   LY6QM+KQs56Q4oR3VDBH5eo/0QtOLOcpDV6p7ygRgbtY6InkMJR3JVH/Z
-   vr2IbSuG8Vc0CffFN758cPkXeCNUkSzcwMbL+lZwLUXRUlHSMqZKQCLBw
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="444458285"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="444458285"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:55:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="808781738"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="808781738"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:55:33 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qfddi-008HfF-2S;
-        Mon, 11 Sep 2023 12:55:30 +0300
-Date:   Mon, 11 Sep 2023 12:55:30 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linhua Xu <Linhua.xu@unisoc.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        lh xu <xulh0829@gmail.com>,
-        Zhirong Qiu <zhirong.qiu@unisoc.com>,
-        Xiongpeng Wu <xiongpeng.wu@unisoc.com>
-Subject: Re: [PATCH V2 5/6] pinctrl: sprd: Increase the range of register
- values
-Message-ID: <ZP7kErjprsXbe7wv@smile.fi.intel.com>
-References: <20230908055146.18347-1-Linhua.xu@unisoc.com>
- <20230908055146.18347-6-Linhua.xu@unisoc.com>
+        with ESMTP id S235539AbjIKIxa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 04:53:30 -0400
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED8881A1
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 01:53:25 -0700 (PDT)
+Received: by mail-yb1-xb35.google.com with SMTP id 3f1490d57ef6-d7bae413275so7381687276.0
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 01:53:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694422405; x=1695027205; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+uSuFkePcllXheKKrDKtEzRTd0oahV94Bg0tqz8sFvE=;
+        b=EbMFixh28wQ4GZwVv4qxTXqipReLUX44kj/GBs9Y3Kx1i/SQvQn3OJj1Zl59gX52Lx
+         Hjy/2uuPdX/VAXD3fIhJRcwEvlOHQdP1CI2fPCqKa/jFAHbA9a3a57XrYNjB1+6osOzX
+         Z0J3wHkunK4a6WvJJg6v5L9H332DAyi5Djbxk4VBKdyJyFgLgrJV9KQP9TCAhTh+Hx2V
+         jdP+hFcA5/M1YZ4oFC4llgfNgMx0XWWw8rLOWg6VVlas28Km3XQFsu9Fip8MU0xfMheH
+         hUossyIQORJQLlN6Oq5b/+8YZWwonak9Jc6fBJvN8lP13RX/GxYts/iDUpr2eaDKWvZu
+         BeSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694422405; x=1695027205;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+uSuFkePcllXheKKrDKtEzRTd0oahV94Bg0tqz8sFvE=;
+        b=olzB12DwOkaj/5RRPiSCUHn++I4Q5ZxxAp9NneWZkelafOSHSmLRH4fM0V9LV98tIY
+         mKa6S6DfdmW1yBFkfflbmJS40iKBDQzZ+uO1vIaAt9+uwplK7ndy3rNgq8NrVUbLbDNQ
+         /7LQi8ygvZ56S1+DjSx6iAHPRdsJh2/JGAAkELn2m1Hzn2tN8h9cWt4mNHMXRcMTCwAN
+         ZuwKIGaAzM/n4+HDseVdeybyUnn66ifrikD493vCxv772iAekfBVK7lCDJWwI/E96hPd
+         EUpngZda3VNir3TKeFZchOplxBy8UoxrM4adCMP2U5vM+UeahxwNz94rpsmi1Wjhj9Fc
+         xmSA==
+X-Gm-Message-State: AOJu0YwFUqh4VRZCmr/FNpwol2hCRifC9vxHAKBsMST5KDusikhtB4dV
+        qiOPiJAaPmG4u74ves+vz/Z3gYdAcncYphaPC1Od7g==
+X-Google-Smtp-Source: AGHT+IEpUVQ6pAi/5PvV7lvoYO9nqoagoZuqIl8EkSZivs/K/vJ4a0Wlk0i5y7BwzCtKeUmkF3ktqnt3UTq/4vNP5sA=
+X-Received: by 2002:a25:db0f:0:b0:d71:c79c:86c1 with SMTP id
+ g15-20020a25db0f000000b00d71c79c86c1mr12790563ybf.32.1694422404707; Mon, 11
+ Sep 2023 01:53:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230908055146.18347-6-Linhua.xu@unisoc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20230824105703.19612-1-tychang@realtek.com> <20230824105703.19612-8-tychang@realtek.com>
+In-Reply-To: <20230824105703.19612-8-tychang@realtek.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 11 Sep 2023 10:53:13 +0200
+Message-ID: <CACRpkdbSwF-9kuz4dLbRZiAFUB9qXvxAUXyin2BxLtq=hrzwSw@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] dt-bindings: pinctrl: realtek: add RTD1619B
+ pinctrl binding
+To:     Tzuyi Chang <tychang@realtek.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 08, 2023 at 01:51:45PM +0800, Linhua Xu wrote:
-> From: Linhua Xu <Linhua.Xu@unisoc.com>
-> 
-> As the UNISOC pin controller version iterates, more registers are required
-> to meet new functional requirements. Thus modify them.
+On Thu, Aug 24, 2023 at 12:57=E2=80=AFPM Tzuyi Chang <tychang@realtek.com> =
+wrote:
 
-LGTM,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Add device tree bindings for RTD1619B.
+>
+> Signed-off-by: Tzuyi Chang <tychang@realtek.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-
+Yours,
+Linus Walleij
