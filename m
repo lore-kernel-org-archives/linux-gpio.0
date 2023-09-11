@@ -2,121 +2,126 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B51F8CA0EC7
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C99CA0EC9
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239586AbjIKUzL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:55:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35008 "EHLO
+        id S239569AbjIKUzG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:55:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236227AbjIKKAm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:00:42 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 901C5E67;
-        Mon, 11 Sep 2023 03:00:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694426437; x=1725962437;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=/H0b/R+uNUqfiQLQRnj4GrCx/gkBli1h0d0agleOMDc=;
-  b=hIq1yAl6qvUQftrgIG0snElvkRvj5xggYmL60LNUm8NeVMTiD6eZ8bMZ
-   jR0jh/zo31bfwzg1ZKwfkm4s1OZcRiHajgB1j8t37o5ZkOfkuPVhGAvn8
-   xZtgMcM4l3obP6VN28GotsAh0RdqTgcIuRPOeZJhn9lN+jZnDy4XtyEp/
-   2jBLRNYP/zlAYDMC2W/wdgI3qv+lQsssFGnzG61YOEnbLrc0xJeBGsjak
-   /5nh9pdbW4HF872z0HdOZ9oL651nc36cizXdZTTBZzcuNeXqsF/UsnOT2
-   8/BL7WrLKEqDZZklbERAmgKJEYBe7cHqjwUvnx+5gUcPd7KuQlsU5x7Ux
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="380741891"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="380741891"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 03:00:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="990043201"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="990043201"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 03:00:34 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qfdiZ-008Hjf-0p;
-        Mon, 11 Sep 2023 13:00:31 +0300
-Date:   Mon, 11 Sep 2023 13:00:30 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v4] gpio: sim: don't fiddle with GPIOLIB private members
-Message-ID: <ZP7lPn5BfAJj+soP@smile.fi.intel.com>
-References: <20230907082751.22996-1-brgl@bgdev.pl>
- <ZPnaoOUiYDR3yqGu@smile.fi.intel.com>
- <CAMRc=MfDOaRbgCH4OH8roLorRNYEscg1WhNFN_nDGyz9xRVWiQ@mail.gmail.com>
+        with ESMTP id S236939AbjIKLn7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 07:43:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 37ACECEB
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:43:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1694432588;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=iKdjkytRW1RKARIy7Ovk3eIg/sQI4Dyr5qqVf3qxKz0=;
+        b=c98mYypFrNPajZyehVS0iHDPU5cjzaZYbStCbQTp0NWGUlTuVSWGGJ0EKxRv50j2X88pMU
+        YYcbm8ufNs6uo5qOa0jwFMpxB3VNHdqQeDvjdBxZqKdaQCp9QLmup4HCSi66LSXIHbterF
+        VNMUd9+S+QGkL+OBk80WVNw6fMDA95k=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-173-bSCDCwIpOUqnn6zHq1OJ6A-1; Mon, 11 Sep 2023 07:43:06 -0400
+X-MC-Unique: bSCDCwIpOUqnn6zHq1OJ6A-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-99388334de6so285455966b.0
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:43:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694432585; x=1695037385;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iKdjkytRW1RKARIy7Ovk3eIg/sQI4Dyr5qqVf3qxKz0=;
+        b=eqWk6cjRsFUS0DU2waStz7mRWYYr6ID5/LuvYew5TihtVCZ9rtqa+5u58kM+VIQgjj
+         H8N7W5Vz3ON2Hje0qZsqXTSRlixljQh8C+iuiV1gElLbdtasotwLmM/TYJhSKs+gs0k0
+         Zfjtuao8FKKJd92xzRZY9dl6x+G20YmxQtP/GhzZCpIVGmaYXwCHCKRTfzY1DnNKQzLo
+         BAKoTzRRFFCZlMC8wclhcvxXIp0cha4hEdfBSLsEYlDM1erB+pUYbD9PjAcBd+p0Xn6r
+         PBtfYD3f81X/UdWQjSLwJ3bz8NsKjcaMS0QWbJkyqVRk992RzsUU6IggisywlEBuwT/3
+         60JQ==
+X-Gm-Message-State: AOJu0YxvzApzzer+88RSE0K2cx1i8Oxntx8IQmPAwRDQB2OElrVHiMZY
+        AKqgPIZVHTi/MJZ4QC72j5TcE4Bg3BqdatD2+M8+aWt3T/J1NjsbPAFUQUy7RiZ21DRpPi72a3T
+        9qZuEcf2KuaZQs6Fk+pk6MQ==
+X-Received: by 2002:a17:906:3112:b0:9a1:914e:490e with SMTP id 18-20020a170906311200b009a1914e490emr7302017ejx.53.1694432585399;
+        Mon, 11 Sep 2023 04:43:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEF6L5QiZIF0AMsl3073IFMxcJiS8zc6zqEssMd1l9qYLyrRfhHjHEXeCPy7+HjFRkrdhI3EQ==
+X-Received: by 2002:a17:906:3112:b0:9a1:914e:490e with SMTP id 18-20020a170906311200b009a1914e490emr7302004ejx.53.1694432585103;
+        Mon, 11 Sep 2023 04:43:05 -0700 (PDT)
+Received: from [10.40.98.142] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id va17-20020a17090711d100b009929ab17be0sm5187708ejb.162.2023.09.11.04.43.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Sep 2023 04:43:04 -0700 (PDT)
+Message-ID: <cc9f31c3-ad0a-a688-c202-ce432dc71daa@redhat.com>
+Date:   Mon, 11 Sep 2023 13:43:03 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MfDOaRbgCH4OH8roLorRNYEscg1WhNFN_nDGyz9xRVWiQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Content-Language: en-US
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Subject: [GIT PULL] Immutable branch between pdx86 android tablets branch and
+ GPIO due for the v6.7 merge window
+Cc:     linux-gpio@vger.kernel.org,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 08, 2023 at 02:39:28PM +0200, Bartosz Golaszewski wrote:
-> On Thu, Sep 7, 2023 at 4:13 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, Sep 07, 2023 at 10:27:51AM +0200, Bartosz Golaszewski wrote:
+Hi Bart, Linus, et. al.,
 
-...
+As promised here is a pull-req for merging into the GPIO tree
+this makes the x86-android-tablets code stop using gpiolib
+private APIs (to provide a cleaner basis for Bart's gpiolib work).
 
-> > >  #include <linux/completion.h>
-> > >  #include <linux/configfs.h>
-> > >  #include <linux/device.h>
-> >
-> > > +#include <linux/device/bus.h>
-> >
-> > No need, the device.h guarantees that.
-> 
-> Wait, wasn't you the one who always suggests including headers
-> directly if we're using any symbols defined in them? Like when I said
-> that we don't need to include linux/notifier.h because it's already
-> included in gpiolib.h and you argued the opposite? :)
-> 
-> device_match_fwnode() is defined in linux/device/bus.h so I thought
-> it's in order to include it.
+Regards,
 
-Yes, but I am not radical with it, I am for a compromise when some headers
-guarantee to include some others. That is the case I believe, I don't think
-device.h ever will be broken to the parts that are not include each other
-(too many things to change right now, if it happens, not in the feasible
- future).
+Hans
 
-...
 
-> > > +static int gpio_sim_dev_match_fwnode(struct device *dev, void *data)
-> > > +{
-> > > +     /*
-> > > +      * We can't pass this directly to device_find_child() due to pointer
-> > > +      * type mismatch.
-> > > +      */
-> >
-> > Not sure if this comment adds any value.
-> 
-> I disagree - I would have used device_match_fwnode() as argument
-> passed directly to device_find_child() but I cannot due to pointer
-> type mismatch error so we need this wrapper and it's useful to say
-> why.
+The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
 
-Yes, and we have dozen(s ?) of the similar wrappers without a comment.
-So, I'm still for removing it.
+  Linux 6.6-rc1 (2023-09-10 16:28:41 -0700)
 
-> > > +     return device_match_fwnode(dev, data);
-> > > +}
+are available in the Git repository at:
 
--- 
-With Best Regards,
-Andy Shevchenko
+  git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-ib-x86-android-tablets-v6.7
 
+for you to fetch changes up to 9578db7939fcfa0bdfa6ab767fd0386adf2302eb:
+
+  platform/x86: x86-android-tablets: Drop "linux,power-supply-name" from lenovo_yt3_bq25892_0_props[] (2023-09-11 13:28:59 +0200)
+
+----------------------------------------------------------------
+Immutable branch between pdx86 android tablets branch and GPIO due for the v6.7 merge window
+
+ib-x86-android-tablets-v6.7: v6.6-rc1 + ib-pdx86-android-tablets
+for merging into the GPIO subsystem for v6.7.
+
+----------------------------------------------------------------
+Hans de Goede (8):
+      gpiolib: acpi: Check if a GPIO is listed in ignore_interrupt earlier
+      gpiolib: acpi: Add a ignore interrupt quirk for Peaq C1010
+      platform/x86: x86-android-tablets: Remove invalid_aei_gpiochip from Peaq C1010
+      platform/x86: x86-android-tablets: Remove invalid_aei_gpiochip support
+      platform/x86: x86-android-tablets: Create a platform_device from module_init()
+      platform/x86: x86-android-tablets: Stop using gpiolib private APIs
+      platform/x86: x86-android-tablets: Use platform-device as gpio-keys parent
+      platform/x86: x86-android-tablets: Drop "linux,power-supply-name" from lenovo_yt3_bq25892_0_props[]
+
+ drivers/gpio/gpiolib-acpi.c                        |  30 +++++-
+ drivers/platform/x86/x86-android-tablets/asus.c    |   1 +
+ drivers/platform/x86/x86-android-tablets/core.c    | 117 ++++++++++++---------
+ drivers/platform/x86/x86-android-tablets/lenovo.c  |  29 +++--
+ drivers/platform/x86/x86-android-tablets/other.c   |  11 +-
+ .../x86/x86-android-tablets/x86-android-tablets.h  |   7 +-
+ 6 files changed, 118 insertions(+), 77 deletions(-)
 
