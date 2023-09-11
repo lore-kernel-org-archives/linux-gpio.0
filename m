@@ -2,116 +2,125 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 565F9CA0EC2
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49813CA0EC2
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239539AbjIKUzF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:55:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41502 "EHLO
+        id S239581AbjIKUzI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:55:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236548AbjIKK4x (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:56:53 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AAF712A;
-        Mon, 11 Sep 2023 03:56:48 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38B59mU6027733;
-        Mon, 11 Sep 2023 10:56:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=DbnYX27WPooqna/K4n9yFhv6DuoLktOiurg8+HW7UGI=;
- b=G5lc/d51iVzsvPmXr7CNYQykOHM5hwP78PWa00A2V5HVsZ21mRvhpjfBIeJE87HTWCXc
- LpLD+88as51FWYpjaWAwzd2V9ubNo/8h0gFRWogr0AOJV7+fyxMa/xm4WcHJ/YygxVOH
- NW7vFbmruU7CUB1+1xYqcRloluySgFL9GQKwMv8sIqkBzKEH/pRe4g7k2rVhNCH8TFV6
- my0IYw/tqYm3Oj9wSNMi7WHbQvRhEuXs6e1Oa3MjJplo7YHNRcNjUDUW3JIN6SQbhWhn
- MHpiOC8rnmXp+lPqBX0ECaQ/alyQrYihmhWUm6wGa+KzGWnL4fYNNlT3W5VmQpzpgQRl GA== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0gx9uj8e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:13 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAuCVv006051
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:56:13 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Mon, 11 Sep 2023 03:55:54 -0700
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
-CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_mojha@quicinc.com>
-Subject: [REBASE PATCH v5 12/17] MAINTAINERS: Add entry for minidump related files
-Date:   Mon, 11 Sep 2023 16:23:54 +0530
-Message-ID: <1694429639-21484-13-git-send-email-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+        with ESMTP id S236519AbjIKKsl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:48:41 -0400
+Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B0D5EB
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 03:48:36 -0700 (PDT)
+Received: by mail-vk1-xa2a.google.com with SMTP id 71dfb90a1353d-495e3d1edb4so668669e0c.0
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 03:48:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694429315; x=1695034115; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2W58yDzB9ApQ3ehdScVXN8upAm7VuvxcXWQWmiIa7E8=;
+        b=vbmJyjyH7WIRAhPcn79K78KWUy7JCXMl7QhzxybMdBSM7KEbbEdWX7ddYege7OgUaW
+         rXOAEL6zbWb4Dpl7lGntIxP9zMOl7kJ8gpY83Mb6Z7iAaOLzye9T0bvjxEN0CnjCDhGG
+         KVtOK9ed7N/dCU3DNQK1nw8slW3zUxuUo63J6mgR1R/tQZJMG5yfRbgWz4XCjNjMZ4ne
+         bBhZB63YFfOGMgjtgUD8NdLukfelmukauxD23zM4PfhzHzRrGpbfkRHbqE7E8T9tYDS5
+         EfmnfLRA45RI1FHqVwVEH6ilwa0SIqcHi/cVkUX3N6d8+KvDcSVJdmPTG96jBMyMCTbr
+         9UMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694429315; x=1695034115;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2W58yDzB9ApQ3ehdScVXN8upAm7VuvxcXWQWmiIa7E8=;
+        b=uQ11393ag48s+w8z5JIPa0ONXP093YJs3USyqDWGB6EVTAS6K6+CeGwqSWWjuNqht6
+         8GBIjkbmS1voOqon0GkEStfVLxp0CLpkzit5UYQe73iJVyB+GYGqOwAGR5wsMnpA4aoy
+         aFu0SeicnkW72FfBraaW6RzdWHjt2XXuXWO7pHtZke3l3r8/fP5FdRkSPSPsA1dgYY7a
+         wdxa+kTEZ/H8qc2DdtjqVhJtoSK0mMDI7dSvoKvg2IQD9TvTkg1rpRDuqMQuwJhjKWo9
+         SFhzTfWsjPTvioyguU/U3VmOj5oXY/Bxo3GFpII57ezoFvCYzOmT2pnhAxHamJ0XmNpq
+         S1WQ==
+X-Gm-Message-State: AOJu0YzmVNaqXME39YuxuMlVpmIvxDK5IDu5+IeSRvfxi5PdCZ1MSjJf
+        4trgq5OmPN8tRqwk+aQmSGCMM/rySWXXls6Z4E/7//k4fQ7iTCmI
+X-Google-Smtp-Source: AGHT+IESQqYlvpx9o62WbrEPxO+OhV/gkv08dv7NBq9ahTs61O6b3M9evZiOXqQPoVqg/OxPT88hxKWQdDZ1ZREMzQU=
+X-Received: by 2002:a1f:c743:0:b0:495:e688:72b7 with SMTP id
+ x64-20020a1fc743000000b00495e68872b7mr1120879vkf.4.1694429315320; Mon, 11 Sep
+ 2023 03:48:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YRrNlut77-pfb0Q7VO8KlYt01oytLrjs
-X-Proofpoint-GUID: YRrNlut77-pfb0Q7VO8KlYt01oytLrjs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=896 malwarescore=0
- suspectscore=0 adultscore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309110099
+References: <20230907082751.22996-1-brgl@bgdev.pl> <ZPnaoOUiYDR3yqGu@smile.fi.intel.com>
+ <CAMRc=MfDOaRbgCH4OH8roLorRNYEscg1WhNFN_nDGyz9xRVWiQ@mail.gmail.com> <ZP7lPn5BfAJj+soP@smile.fi.intel.com>
+In-Reply-To: <ZP7lPn5BfAJj+soP@smile.fi.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 11 Sep 2023 12:48:24 +0200
+Message-ID: <CAMRc=MdOHzXp8AT7CWOM0SK4RfK9AMLEv8UmTiG4qGsqHFxA+g@mail.gmail.com>
+Subject: Re: [PATCH v4] gpio: sim: don't fiddle with GPIOLIB private members
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add the entries into maintainer file for all the minidump related
-modules.
+On Mon, Sep 11, 2023 at 12:00=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Fri, Sep 08, 2023 at 02:39:28PM +0200, Bartosz Golaszewski wrote:
+> > On Thu, Sep 7, 2023 at 4:13=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Thu, Sep 07, 2023 at 10:27:51AM +0200, Bartosz Golaszewski wrote:
+>
+> ...
+>
+> > > >  #include <linux/completion.h>
+> > > >  #include <linux/configfs.h>
+> > > >  #include <linux/device.h>
+> > >
+> > > > +#include <linux/device/bus.h>
+> > >
+> > > No need, the device.h guarantees that.
+> >
+> > Wait, wasn't you the one who always suggests including headers
+> > directly if we're using any symbols defined in them? Like when I said
+> > that we don't need to include linux/notifier.h because it's already
+> > included in gpiolib.h and you argued the opposite? :)
+> >
+> > device_match_fwnode() is defined in linux/device/bus.h so I thought
+> > it's in order to include it.
+>
+> Yes, but I am not radical with it, I am for a compromise when some header=
+s
+> guarantee to include some others. That is the case I believe, I don't thi=
+nk
+> device.h ever will be broken to the parts that are not include each other
+> (too many things to change right now, if it happens, not in the feasible
+>  future).
+>
+> ...
+>
+> > > > +static int gpio_sim_dev_match_fwnode(struct device *dev, void *dat=
+a)
+> > > > +{
+> > > > +     /*
+> > > > +      * We can't pass this directly to device_find_child() due to =
+pointer
+> > > > +      * type mismatch.
+> > > > +      */
+> > >
+> > > Not sure if this comment adds any value.
+> >
+> > I disagree - I would have used device_match_fwnode() as argument
+> > passed directly to device_find_child() but I cannot due to pointer
+> > type mismatch error so we need this wrapper and it's useful to say
+> > why.
+>
+> Yes, and we have dozen(s ?) of the similar wrappers without a comment.
+> So, I'm still for removing it.
+>
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Meh, fair enough.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2833e2da63e0..2ec5fafe7060 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17787,6 +17787,16 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
- F:	drivers/regulator/vqmmc-ipq4019-regulator.c
- 
-+QUALCOMM MINIDUMP DRIVER
-+M:	Mukesh Ojha <quic_mojha@quicinc.com>
-+L:	linux-arm-msm@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/admin-guide/qcom_minidump.rst
-+F:	drivers/soc/qcom/qcom_rproc_minidump.c
-+F:	drivers/soc/qcom/qcom_minidump.c
-+F:	drivers/soc/qcom/qcom_ramoops_minidump.c
-+
-+
- QUALCOMM NAND CONTROLLER DRIVER
- M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
- L:	linux-mtd@lists.infradead.org
--- 
-2.7.4
-
+Bart
