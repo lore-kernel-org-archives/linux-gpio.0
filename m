@@ -2,90 +2,81 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE88CA0EC1
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFD9CA0EC6
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:03:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231889AbjIKU4K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:56:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35760 "EHLO
+        id S240114AbjIKU4N (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:56:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242769AbjIKQRg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 12:17:36 -0400
-Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 378DACCD
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 09:17:32 -0700 (PDT)
-Received: by mail-ua1-x931.google.com with SMTP id a1e0cc1a2514c-7a803afa8c5so578255241.0
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 09:17:32 -0700 (PDT)
+        with ESMTP id S235511AbjIKIt5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 04:49:57 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A65DF1A2
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 01:49:53 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-d7b89ae27d3so3601700276.3
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 01:49:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694449051; x=1695053851; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694422193; x=1695026993; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=c818/2C7MImQNvV0QhVeq9ZOfTZd4ebInAc4aI9fMIs=;
-        b=vzc3Ql7/YUBRak/Qonqr2xLPxTvgoEamrAVr/R4Y07Wef7hiScIwrtSLdCiAvwEXeD
-         3nKKsugIf6p8MRtzh23IZY+FwaWmAm2chwdiO8s/tM8AqvjZpyAjhIGvZnPi7yEs7Do8
-         TwsnUcYkEsw1lzQdrivt2B8rDzz9hnejdXo2IB5R+3ul+hNObllaJWBj5s98gFWBF6U/
-         vw/fStodZOeFSReyrCrsxTRZC6svBSUk/MPnGEVixJFaQcHyFKZFXAJIOCtos4rEiwwP
-         qhN4WGsZKRZc70hBCF0mcowhVSwlYfT41asLtdKXA+vB08G/AdVdhj7TMaHY1IsymtTF
-         pvCg==
+        bh=1XeVTw6l9wEw/TS4Pji090kAEBOAUIe1JhBKyS65/GM=;
+        b=WAEgihlJWBXiKO4E9FJQd/opFTODCuvfqZwsk95t66AAG5UTQH14iOItVj1gSd4/fH
+         i8wRJIUALpWNmrI2Vs9eaJuwZYHACV3YzMyys+0EMVqBcfgRKARCRw9cLOxcBaP9tqH9
+         p+wwVwQgJ3LNECtByxxVWZZDaTmLNdyGReIrDHiadQTdxkmfvRqGLEyjBiqKarLZ1t5L
+         oQfR/gTUnJvz5/5Kt8SCuz9lQZ1z/TNbwbKcaXQq5i3bwuAW10sJMaS4NKUQAhWOi6gf
+         q+JdWkNxX84MAwV6DZjdikzIdniOXDFP8xGVEO9kXI+1euKRQyHBGCaQ/pt+T7gkpOxv
+         gBFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694449051; x=1695053851;
+        d=1e100.net; s=20230601; t=1694422193; x=1695026993;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=c818/2C7MImQNvV0QhVeq9ZOfTZd4ebInAc4aI9fMIs=;
-        b=SrOrYWeDegFOqXvvW5wcPz8GDrluwdL+4CKLabVRpjYRh05vw4Iw3ju6b5WatLqQfR
-         VTc+kaIncT+2LyNOjc53flKHCk/YaUH78bKtodiG2K6DweixOaDWRFH0YmNgH9SF2bvr
-         XEIEdE+LGMw4UxjfvJMxcGrA47xx5ZA2WZuA6rEbxw7dBsiokN+Q3YEr8dPnI/T2McpH
-         GLspn5/kfE+9ZVvzoVCBbJbozGtZpSDO9igzC49GQTaOLjS15peFtZ4PbQoFIlPLhS47
-         dOzhsi5zEs3BfhdHsjudNxxw1/LTUyQrXXgn5HCmS/7kheajlw5lbKbf1npYMPCQnDqe
-         U1Sw==
-X-Gm-Message-State: AOJu0YyjrCtuD6vjrdPWnyrbB6KAb6LQ1L9RmRF7zcMiUEJkiVx4yNu1
-        bSlLSPomXY5f+RkecHczqaaZvyOwBKK/u3Q9K8o+Rw==
-X-Google-Smtp-Source: AGHT+IFc6pJKCBeZqQGC2/ZX20MffBbxyMuqcPrSrWXFs3wy5taaZhH15QHwzOytsUmVCe297HU7fV6JlmZm6xl/oQ8=
-X-Received: by 2002:a1f:738f:0:b0:495:cac2:2532 with SMTP id
- o137-20020a1f738f000000b00495cac22532mr6055491vkc.8.1694449051263; Mon, 11
- Sep 2023 09:17:31 -0700 (PDT)
+        bh=1XeVTw6l9wEw/TS4Pji090kAEBOAUIe1JhBKyS65/GM=;
+        b=DwWVE+w4G5LOsgYBF5xN7I0hIkVSmVdVYyccZbDgIA0pa5g0vk77x+PpW+mkZlviz7
+         sP/XgHzf13xCQ368AAYfNHn4K3tLmb7JqKuJF6KC0kzi/BrYrCnUmeldtcjDZ7WSMsMH
+         YUnUlo8vmluIi94v6vEzrrD5KroEk+UAhLLEON4RGM5cWjcLFedTXC+8C2r6Up/B8gnc
+         3kja2p8DEwEqQnCHzg74d4tS68SF4xsGl/s+sBxybARfUN6BQcggyCC+/hdZvumuyrpp
+         /YTmerJtGYg4ofrJtOSF4ThIGyDJCaf7ndItVVcrJzTQMep+Ot7ItlHsxqy9+a90Eszh
+         l+yw==
+X-Gm-Message-State: AOJu0YwuCDuNwK+LgI/fmZX3I3nDDUAUK8srq7DbgynPSExjeRtXFa/F
+        Rfmpnl0Idw5uXurSz2Yn7Ox3EXKmn01pTXH6o+scgw==
+X-Google-Smtp-Source: AGHT+IGbpV2m4yKh+I0fgDw24ZWEJ6x0/MOD946fI6agF+0cD3UaHguS6LgmwKLsHoRPmftj975mmYdj+r++S5ll+V8=
+X-Received: by 2002:a25:d695:0:b0:d62:6514:45b7 with SMTP id
+ n143-20020a25d695000000b00d62651445b7mr7997320ybg.37.1694422192875; Mon, 11
+ Sep 2023 01:49:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230911161553.24313-1-brgl@bgdev.pl>
-In-Reply-To: <20230911161553.24313-1-brgl@bgdev.pl>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 11 Sep 2023 18:17:20 +0200
-Message-ID: <CAMRc=Mddoto8x6ydgo-kryGO+CHWYon_68662VEJ8sn05UAU+g@mail.gmail.com>
-Subject: Re: [PATCH v3] spi: bcm2835: reduce the abuse of the GPIO API
-To:     Mark Brown <broonie@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>, linux-spi@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20230824064508.968142-1-masahiroy@kernel.org>
+In-Reply-To: <20230824064508.968142-1-masahiroy@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 11 Sep 2023 10:49:41 +0200
+Message-ID: <CACRpkdbu8eYYTwpVr2-AS7qxGRPkXp9gVgBzkcoDvxV7o4p6MA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: single: remove get rid of __maybe_unused
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Sep 11, 2023 at 6:15=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Currently the bcm2835 SPI driver uses functions that are available
-> exclusively to GPIO providers as a way to handle a platform quirk. Let's
-> use a slightly better alternative that avoids poking around in GPIOLIB's
-> internals and use GPIO lookup tables.
->
-> Link: https://www.spinics.net/lists/linux-gpio/msg36218.html
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+On Thu, Aug 24, 2023 at 8:45=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
 
-Gah, Linus already left his review tag.
+> These are always used in pcs_probe().
+>
+> While I was here, I also changed 'unsigned' in the same line to
+> 'unsigned int' to address the checkpatch warnings:
+>
+>   WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-For the record:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Patch applied.
+
+Yours,
+Linus Walleij
