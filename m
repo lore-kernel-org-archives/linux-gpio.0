@@ -2,224 +2,102 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C46CA0EC1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF67CCA0EC2
 	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:54:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238952AbjIKUye (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:54:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52850 "EHLO
+        id S232341AbjIKUyj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:54:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236585AbjIKLBz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 07:01:55 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FE0ACDD
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:01:49 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-500a398cda5so7109072e87.0
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:01:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694430107; x=1695034907; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6D6uZQx0A7zu9HZThgkhNF6gppfDzg14ZGsi8FUaY4Q=;
-        b=GOSoTT4UaccjQcJnHUj1GeXqRlrNKXB4d25DwVPYJKxntS9nhJJNn1WSq6r1ePDHNM
-         sWFeeWxUuGPmO3IAqiFCte0rME8/AAv4w444Tg/1OI7KzGUphVg9kJ8x9wKwqs+tjE3s
-         4A8nI4rEZa96jRO/0mqlPbRnkef19ToR6L1RzHtIKsvTpaXv3XBDZY3CmrCTTGRhPtEZ
-         FRsnsLVKFFPTPn3vkpC2Ypvi4CYQnw7/rprROjDOmdd9dgcY6HGsPjFuCjOs/wqIzDQ7
-         6TUhAU2zJ8r1kh1pIesiHL/xfm82X/q0h/nHMLjyR82LlFTdSUp4OGmtjLM+zGC68z4+
-         gnfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694430107; x=1695034907;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6D6uZQx0A7zu9HZThgkhNF6gppfDzg14ZGsi8FUaY4Q=;
-        b=LShe5YoFkrzoobRN4fSJrLtA/31KkIxQ9b/j8bXPAjwZX8jEozyILziJlllEYSdnMi
-         Cgi4sRy6cc2M5aZk9C0Hw8hSlHRn1lQdQpMQsHb+q0pYo8UZR/lIt52RWlAEgm6fuTE1
-         mbwEjoefqjjuXwKMGPP1UdCtCTThtOWxGa1dxvL4s1OmU15N0M50Ax90tjlxIfhbFzkt
-         OqM98NSxuoUo+I8O4d5ki0VRjbFljB9ScW2pPHHqAKblrLLLc7os9ke7iseIfGybMUjI
-         8nFvoBm5bCtNJ7iU0B3Mt94areIewS8jrGr9V7vPsfR6gK/PRKVRqXLAFllrMGpGatp1
-         N6lA==
-X-Gm-Message-State: AOJu0Yw4eCrLnM57CTYW8HIkRkM8SgD+F0BNOHGJF2jlbRAjRyUeWJAD
-        Ahcgy9tNwRa1100/OqDTDEPC+w==
-X-Google-Smtp-Source: AGHT+IGuUFRIM5BpeluBoo5NEliARLhu4KUj73ZJ5zv60HnO5TW4G54nipJsf0t1IIjq2gfhWbu1wg==
-X-Received: by 2002:a05:6512:3d1c:b0:4ff:8c9e:eb0d with SMTP id d28-20020a0565123d1c00b004ff8c9eeb0dmr9569849lfv.0.1694430107080;
-        Mon, 11 Sep 2023 04:01:47 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.214.188])
-        by smtp.gmail.com with ESMTPSA id r16-20020a170906351000b0099bd86f9248sm5175514eja.63.2023.09.11.04.01.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Sep 2023 04:01:43 -0700 (PDT)
-Message-ID: <3bb1e84f-3b65-0596-1b6b-6decb0ff53cc@linaro.org>
-Date:   Mon, 11 Sep 2023 13:01:39 +0200
+        with ESMTP id S236206AbjIKJ5E (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 05:57:04 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B663E67;
+        Mon, 11 Sep 2023 02:56:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694426219; x=1725962219;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ccQZ6EnQu6CIa4qQy8IVpBeF7c/wK9EQzEgUbK0W49o=;
+  b=dZrlgsMSh0TpyU355X8TOEnys/BiZwbTIQZZgbryD7p94/ae/NPAyG+3
+   yunQwMDXHYFtQI6V1rhghUfhhu9I8U1BVzxZA/LzdMijCERUcrI2XcY3P
+   UVc+swih/50JEIEPKCFA6u7Lpoersr0PRa+UMqzu0ahACSXliskUB4jxD
+   Min+NXyekbaOWnO7Qx5FRXvMmW1ZZwEqI5eMLDw66/6dgXJRiLEb4L1cz
+   3Z8PpFSOFE6wpaqf7AS4Tv+997LvPF2zVgsZI7fnFBxlm4a9raWgA7vBS
+   udtyDCZXlm361j6VPN4zHHEwqNV1MmFE9AwwyCksQ1vfU7aeH1WLZwo0J
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="363064646"
+X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
+   d="scan'208";a="363064646"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:56:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="866883398"
+X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
+   d="scan'208";a="866883398"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:56:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qfdf3-008HgA-19;
+        Mon, 11 Sep 2023 12:56:53 +0300
+Date:   Mon, 11 Sep 2023 12:56:53 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linhua Xu <Linhua.xu@unisoc.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        lh xu <xulh0829@gmail.com>,
+        Zhirong Qiu <zhirong.qiu@unisoc.com>,
+        Xiongpeng Wu <xiongpeng.wu@unisoc.com>
+Subject: Re: [PATCH V2 6/6] pinctrl: sprd: Add pinctrl support for UMS9621
+Message-ID: <ZP7kZUV2MQPYLZwM@smile.fi.intel.com>
+References: <20230908055146.18347-1-Linhua.xu@unisoc.com>
+ <20230908055146.18347-7-Linhua.xu@unisoc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v5 06/17] soc: qcom: Add Qualcomm APSS minidump kernel
- driver
-Content-Language: en-US
-To:     Mukesh Ojha <quic_mojha@quicinc.com>, corbet@lwn.net,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, keescook@chromium.org, tony.luck@intel.com,
-        gpiccoli@igalia.com, mathieu.poirier@linaro.org,
-        catalin.marinas@arm.com, will@kernel.org, linus.walleij@linaro.org,
-        andy.shevchenko@gmail.com, vigneshr@ti.com, nm@ti.com,
-        matthias.bgg@gmail.com, kgene@kernel.org, alim.akhtar@samsung.com,
-        bmasney@redhat.com, quic_tsoni@quicinc.com
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel@quicinc.com
-References: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
- <1694290578-17733-7-git-send-email-quic_mojha@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1694290578-17733-7-git-send-email-quic_mojha@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230908055146.18347-7-Linhua.xu@unisoc.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 09/09/2023 22:16, Mukesh Ojha wrote:
-> Minidump is a best effort mechanism to collect useful and predefined
-> data for first level of debugging on end user devices running on
-> Qualcomm SoCs. It is built on the premise that System on Chip (SoC)
-> or subsystem part of SoC crashes, due to a range of hardware and
-> software bugs. Hence, the ability to collect accurate data is only
-> a best-effort. The data collected could be invalid or corrupted,
-> data collection itself could fail, and so on.
+On Fri, Sep 08, 2023 at 01:51:46PM +0800, Linhua Xu wrote:
+> From: Linhua Xu <Linhua.Xu@unisoc.com>
+> 
+> Add the pin control driver for UNISOC UMS9621 platform.
+
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/platform_device.h>
+> +
 
 ...
 
-> +static int qcom_apss_md_table_init(struct minidump *md,
-> +				   struct minidump_subsystem *mdss_toc)
-> +{
-> +	struct minidump_ss_data *mdss_data;
-> +
-> +	mdss_data = devm_kzalloc(md->dev, sizeof(*mdss_data), GFP_KERNEL);
-> +	if (!mdss_data)
-> +		return -ENOMEM;
-> +
-> +	mdss_data->md_ss_toc = mdss_toc;
-> +	mdss_data->md_regions = devm_kcalloc(md->dev, MAX_NUM_ENTRIES,
-> +					     sizeof(struct minidump_region),
-> +					     GFP_KERNEL);
-> +	if (!mdss_data->md_regions)
-> +		return -ENOMEM;
-> +
-> +	mdss_toc = mdss_data->md_ss_toc;
-> +	mdss_toc->regions_baseptr = cpu_to_le64(virt_to_phys(mdss_data->md_regions));
-> +	mdss_toc->enabled = cpu_to_le32(MINIDUMP_SS_ENABLED);
-> +	mdss_toc->status = cpu_to_le32(1);
-> +	mdss_toc->region_count = cpu_to_le32(0);
-> +
-> +	/* Tell bootloader not to encrypt the regions of this subsystem */
-> +	mdss_toc->encryption_status = cpu_to_le32(MINIDUMP_SS_ENCR_DONE);
-> +	mdss_toc->encryption_required = cpu_to_le32(MINIDUMP_SS_ENCR_NOTREQ);
-> +
-> +	md->apss_data = mdss_data;
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_apss_minidump_probe(struct platform_device *pdev)
-> +{
-> +	struct minidump_global_toc *mdgtoc;
-> +	struct minidump *md;
-> +	size_t size;
-> +	int ret;
-> +
-> +	md = devm_kzalloc(&pdev->dev, sizeof(struct minidump), GFP_KERNEL);
+> +#define	PINCTRL_REG_OFFSET		0x44
 
-sizeof(*)
+0x0044
 
-Didn't you get such comments already?
+> +#define	PINCTRL_REG_MISC_OFFSET		0x444
 
+...
 
-> +	if (!md)
-> +		return -ENOMEM;
-> +
-> +	md->dev = &pdev->dev;
-> +	mdgtoc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, &size);
-> +	if (IS_ERR(mdgtoc)) {
-> +		ret = PTR_ERR(mdgtoc);
-> +		dev_err(md->dev, "Couldn't find minidump smem item: %d\n", ret);
-> +		return ret;
+> +static const struct of_device_id sprd_pinctrl_of_match[] = {
+> +	{ .compatible = "sprd,ums9621-pinctrl", },
 
-The syntax is:
-return dev_err_probe
+Inner comma is not needed.
 
-> +	}
-> +
-> +	if (size < sizeof(*mdgtoc) || !mdgtoc->status) {
-> +		dev_err(md->dev, "minidump table is not initialized: %d\n", ret);
-
-ret is uninitialized here. Please use automated tools for checking your
-code:
-coccinelle, smatch and sparse
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	mutex_init(&md->md_lock);
-> +	ret = qcom_apss_md_table_init(md, &mdgtoc->subsystems[MINIDUMP_APSS_DESC]);
-> +	if (ret) {
-> +		dev_err(md->dev, "apss minidump initialization failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/* First entry would be ELF header */
-> +	ret = qcom_md_add_elfheader(md);
-> +	if (ret) {
-> +		dev_err(md->dev, "Failed to add elf header: %d\n", ret);
-> +		memset(md->apss_data->md_ss_toc, 0, sizeof(struct minidump_subsystem));
-
-Why do you need it?
-
-> +		return ret;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, md);
-> +
-> +	return ret;
-> +}
-> +
-> +static int qcom_apss_minidump_remove(struct platform_device *pdev)
-> +{
-> +	struct minidump *md = platform_get_drvdata(pdev);
-> +	struct minidump_ss_data *mdss_data;
-> +
-> +	mdss_data = md->apss_data;
-> +	memset(mdss_data->md_ss_toc, cpu_to_le32(0), sizeof(struct minidump_subsystem));
-
-Why do you need it?
-
-> +	md = NULL;
-
-That's useless assignment.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver qcom_minidump_driver = {
-> +	.probe = qcom_apss_minidump_probe,
-> +	.remove = qcom_apss_minidump_remove,
-> +	.driver  = {
-> +		.name = "qcom-minidump-smem",
-> +	},
+> +	{ }
 > +};
-> +
-> +module_platform_driver(qcom_minidump_driver);
-> +
-> +MODULE_DESCRIPTION("Qualcomm APSS minidump driver");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:qcom-minidump-smem");
 
-Add a proper ID table instead of re-inventing it with module aliases.
 
-Best regards,
-Krzysztof
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
