@@ -2,146 +2,328 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C1ECA0EC4
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB7FCA0EC8
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:04:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241098AbjIKU44 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:56:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38666 "EHLO
+        id S241257AbjIKU5E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:57:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236527AbjIKKzA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:55:00 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A741F1;
-        Mon, 11 Sep 2023 03:54:56 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38B9gROX030546;
-        Mon, 11 Sep 2023 10:54:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=zGnItAZ5Y73mezR2PoXBSScT3FaAj2yQZBN9eCn9dGI=;
- b=TrQX8p7O3qTnIyzoqf8Ht7HvBmpZMckGWmJdM0AvxMQKWE+BR8zajcgelEOYg3AT3C9k
- odK7xicFvsfiqM/Jre7Lqp8jLKws4COrFo77ecGG+1F6Oh3jNHnNgtCQw7uJ+AMeFMrQ
- jU8LJGv5QzyL7dSgDueQ0XXuskiDlDqAJrkLb6dRbBtTM1DqXgAdyyH65HxHo4UVcQMX
- KLlVT6zmVVxLe7ihH/GE5yEw1EkAo4PGJTa8s2rc0ynPQdZp2LZf3iaRG64voxAmYzPH
- K7PBb44zySVdFd7TxKfpKDFvMqEu/nhwDEuNYUBFw0myjQNrZ/fkCVV7XE4YL5Gq9JDP uA== 
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t1xkjre8d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:54:25 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BArNJc014747
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Sep 2023 10:54:21 GMT
-Received: from [10.214.66.81] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Mon, 11 Sep
- 2023 03:51:47 -0700
-Message-ID: <35c9d1b1-0f48-b873-d703-c880f3b91422@quicinc.com>
-Date:   Mon, 11 Sep 2023 16:21:44 +0530
+        with ESMTP id S236510AbjIKKrt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:47:49 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FD02E9
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 03:47:45 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1c364fb8a4cso38930085ad.1
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 03:47:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1694429264; x=1695034064; darn=vger.kernel.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/FAsTlBYaZvu0Ff/WAhJEZH8l0jVn7O3CKewPsQR4DE=;
+        b=H3g/rjB0H8DgQsYcCou2320+rWT4rJbbldsmHGV2yVENNwQ0lqX4PYuS+57XpCornb
+         StVANaedNwNqoIu9lKUzKiCsigFYGsiLLUyJB1/Fu8hJi6NNMuVn8PgboT2YrUgWd+92
+         48DlKiRohneuQZBGeNB3LcmjpvC8xgTNRyt+uyNgKCOQWlATUKiYwF1JrELNnULsKGUQ
+         vRQhsqavQ0ebkO/mr0eVy9hG3iViCjieGitfiE5+6/4EeTzJlReJEGKHKpKrzxKQVuc7
+         SmCKXTke0Kg7LOsJxF7uW4isWPgi8equBA6eWlZPbUXMw8bjqU8JdB/1Fx8POtfM/aP2
+         CIwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694429264; x=1695034064;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/FAsTlBYaZvu0Ff/WAhJEZH8l0jVn7O3CKewPsQR4DE=;
+        b=cPv4YTi0nwMEGvuHa3ia4fztdsQS0Hl2P0MGMVPcCvhtPvCkK6MdivI1NKIE4tHVal
+         a/41JZ3pHD+3FK1UWHHcdXE9utoKEnZzRhEU+yL1blAUP/8CIsgJCRy7APDwkQVpB2Jk
+         gIbStGanEVLAXAJ29B9xlD3nnUuGRu/mjNthDq6sRk8LR225KFjJU4AU8p78DtG+mQqO
+         s+bVmdqTFiaTdUcg4woFMBBiAOG9CTe1nUSnv6IuFXKUN+1GJkBwDqHtrk9az/qifE81
+         flr9ecLKiS3fZe5PoLlyUTn1GUT5DjeAQsk5e7Dc9+0pNY3mR48O6DZvyK8jq2bbad2/
+         PJZQ==
+X-Gm-Message-State: AOJu0YzZq8+4FFp2gO1TpjWgg+u2U1E5txLzqIkuXWc1pa5yqJbhwmFg
+        T+5bBgOkSU3qxHzWc1gBCgecYsZuU0ageQlnK9g=
+X-Google-Smtp-Source: AGHT+IHiyNBjszsZYu4IlXLVHwb3M+lVlCrYzF3XQYD+C3aYw/aAiTMklPe1kJpupHdhRM10Jm3zDg==
+X-Received: by 2002:a17:902:c412:b0:1c3:394a:8660 with SMTP id k18-20020a170902c41200b001c3394a8660mr14036801plk.62.1694429264169;
+        Mon, 11 Sep 2023 03:47:44 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id ix7-20020a170902f80700b001bf3bdbceb5sm6147102plb.134.2023.09.11.03.47.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Sep 2023 03:47:43 -0700 (PDT)
+Message-ID: <64fef04f.170a0220.f34e7.e6cc@mx.google.com>
+Date:   Mon, 11 Sep 2023 03:47:43 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v5 09/17] pstore/ram: Use dynamic ramoops reserve resource
-Content-Language: en-US
-To:     Pavan Kondeti <quic_pkondeti@quicinc.com>
-CC:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-References: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
- <1694290578-17733-10-git-send-email-quic_mojha@quicinc.com>
- <20425ace-3ef5-4eaf-8319-999bafa34a07@quicinc.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20425ace-3ef5-4eaf-8319-999bafa34a07@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Wi2REeSTnAgDa98w0pTipeomyJ0cJ4JQ
-X-Proofpoint-ORIG-GUID: Wi2REeSTnAgDa98w0pTipeomyJ0cJ4JQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- suspectscore=0 phishscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0
- adultscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
- definitions=main-2309110099
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: devel
+X-Kernelci-Tree: linusw
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: v6.6-rc1
+Subject: linusw/devel baseline: 48 runs, 4 regressions (v6.6-rc1)
+To:     linux-gpio@vger.kernel.org, fellows@kernelci.org
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+linusw/devel baseline: 48 runs, 4 regressions (v6.6-rc1)
+
+Regressions Summary
+-------------------
+
+platform           | arch  | lab           | compiler | defconfig | regress=
+ions
+-------------------+-------+---------------+----------+-----------+--------=
+----
+juno-uboot         | arm64 | lab-broonie   | gcc-10   | defconfig | 1      =
+    =
+
+r8a77960-ulcb      | arm64 | lab-collabora | gcc-10   | defconfig | 1      =
+    =
+
+rk3399-rock-pi-4b  | arm64 | lab-collabora | gcc-10   | defconfig | 1      =
+    =
+
+sun50i-h6-pine-h64 | arm64 | lab-collabora | gcc-10   | defconfig | 1      =
+    =
 
 
-On 9/11/2023 11:03 AM, Pavan Kondeti wrote:
-> On Sun, Sep 10, 2023 at 01:46:10AM +0530, Mukesh Ojha wrote:
->> As dynamic ramoops command line parsing is now added, so
->> lets add the support in ramoops driver to get the resource
->> structure and add it during platform device registration.
->>
->> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
->> ---
->>   fs/pstore/ram.c | 10 +++++++---
->>   1 file changed, 7 insertions(+), 3 deletions(-)
->>
-> 
-> Documentation/admin-guide/ramoops.rst might need an update as well.
+  Details:  https://kernelci.org/test/job/linusw/branch/devel/kernel/v6.6-r=
+c1/plan/baseline/
 
-I have said in the cover-letter under changes in v5, it is open for
-comment and not yet documented it yet.
+  Test:     baseline
+  Tree:     linusw
+  Branch:   devel
+  Describe: v6.6-rc1
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gp=
+io.git/
+  SHA:      0bb80ecc33a8fb5a682236443c1e740d5c917d1d =
 
-> 
->> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
->> index 2f625e1fa8d8..e73fbbc1b5b5 100644
->> --- a/fs/pstore/ram.c
->> +++ b/fs/pstore/ram.c
->> @@ -913,13 +913,17 @@ static void __init ramoops_register_dummy(void)
->>   
->>   	/*
->>   	 * Prepare a dummy platform data structure to carry the module
->> -	 * parameters. If mem_size isn't set, then there are no module
->> -	 * parameters, and we can skip this.
->> +	 * parameters. If mem_size isn't set, check for dynamic ramoops
->> +	 * size and extract the information if it is set.
->>   	 */
->> -	if (!mem_size)
->> +	if (!mem_size && !dyn_ramoops_res.end)
->>   		return;
->>   
->>   	pr_info("using module parameters\n");
->> +	if (dyn_ramoops_res.end) {
->> +		mem_size = resource_size(&dyn_ramoops_res);
->> +		mem_address = dyn_ramoops_res.start;
->> +	}
->>   
->>   	memset(&pdata, 0, sizeof(pdata));
->>   	pdata.mem_size = mem_size;
-> 
-> You might want to add "arch_" prefix to dyn_ramoops resource so that it
-> would be clear that it is coming from arch code. This code needs to
-> guard against arch not supplying this.
 
-Sure, thanks for pointing this.
-Agree, if we finally decide to keep it in arch/arm64 .
 
--Mukesh
-> 
-> Thanks,
-> Pavan
+Test Regressions
+---------------- =
+
+
+
+platform           | arch  | lab           | compiler | defconfig | regress=
+ions
+-------------------+-------+---------------+----------+-----------+--------=
+----
+juno-uboot         | arm64 | lab-broonie   | gcc-10   | defconfig | 1      =
+    =
+
+
+  Details:     https://kernelci.org/test/plan/id/64fee6ab0441b1f0b2286daa
+
+  Results:     60 PASS, 1 FAIL, 1 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
+fconfig/gcc-10/lab-broonie/baseline-juno-uboot.txt
+  HTML log:    https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
+fconfig/gcc-10/lab-broonie/baseline-juno-uboot.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/64fee6ab0441b1f0b2286dea
+        new failure (last pass: v6.1-rc1)
+
+    2023-09-11T10:06:14.737690  <8>[   28.281401] <LAVA_SIGNAL_ENDRUN 0_dme=
+sg 98896_1.5.2.4.1>
+    2023-09-11T10:06:14.840446  / # #
+    2023-09-11T10:06:14.942339  export SHELL=3D/bin/sh
+    2023-09-11T10:06:14.942820  #
+    2023-09-11T10:06:15.044218  / # export SHELL=3D/bin/sh. /lava-98896/env=
+ironment
+    2023-09-11T10:06:15.044718  =
+
+    2023-09-11T10:06:15.146062  / # . /lava-98896/environment/lava-98896/bi=
+n/lava-test-runner /lava-98896/1
+    2023-09-11T10:06:15.146863  =
+
+    2023-09-11T10:06:15.153015  / # /lava-98896/bin/lava-test-runner /lava-=
+98896/1
+    2023-09-11T10:06:15.227614  + export 'TESTRUN_ID=3D1_bootrr' =
+
+    ... (41 line(s) more)  =
+
+ =
+
+
+
+platform           | arch  | lab           | compiler | defconfig | regress=
+ions
+-------------------+-------+---------------+----------+-----------+--------=
+----
+r8a77960-ulcb      | arm64 | lab-collabora | gcc-10   | defconfig | 1      =
+    =
+
+
+  Details:     https://kernelci.org/test/plan/id/64fee611dc6a48a214286dd6
+
+  Results:     4 PASS, 2 FAIL, 1 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
+fconfig/gcc-10/lab-collabora/baseline-r8a77960-ulcb.txt
+  HTML log:    https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
+fconfig/gcc-10/lab-collabora/baseline-r8a77960-ulcb.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/64fee611dc6a48a214286ddf
+        new failure (last pass: v6.2-rc1)
+
+    2023-09-11T10:08:07.965195  / # #
+
+    2023-09-11T10:08:08.067393  export SHELL=3D/bin/sh
+
+    2023-09-11T10:08:08.068153  #
+
+    2023-09-11T10:08:08.169632  / # export SHELL=3D/bin/sh. /lava-11493738/=
+environment
+
+    2023-09-11T10:08:08.170369  =
+
+
+    2023-09-11T10:08:08.271861  / # . /lava-11493738/environment/lava-11493=
+738/bin/lava-test-runner /lava-11493738/1
+
+    2023-09-11T10:08:08.272980  =
+
+
+    2023-09-11T10:08:08.289845  / # /lava-11493738/bin/lava-test-runner /la=
+va-11493738/1
+
+    2023-09-11T10:08:08.339024  + export 'TESTRUN_ID=3D1_bootrr'
+
+    2023-09-11T10:08:08.339215  + cd /lava<8>[   20.379204] <LAVA_SIGNAL_ST=
+ARTRUN 1_bootrr 11493738_1.5.2.4.5>
+ =
+
+    ... (28 line(s) more)  =
+
+ =
+
+
+
+platform           | arch  | lab           | compiler | defconfig | regress=
+ions
+-------------------+-------+---------------+----------+-----------+--------=
+----
+rk3399-rock-pi-4b  | arm64 | lab-collabora | gcc-10   | defconfig | 1      =
+    =
+
+
+  Details:     https://kernelci.org/test/plan/id/64fee6401172b06492286de4
+
+  Results:     5 PASS, 1 FAIL, 1 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
+fconfig/gcc-10/lab-collabora/baseline-rk3399-rock-pi-4b.txt
+  HTML log:    https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
+fconfig/gcc-10/lab-collabora/baseline-rk3399-rock-pi-4b.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/64fee6401172b06492286ded
+        failing since 120 days (last pass: v6.1-rc1, first fail: v6.2-rc1)
+
+    2023-09-11T10:04:38.698253  / # #
+
+    2023-09-11T10:04:39.958949  export SHELL=3D/bin/sh
+
+    2023-09-11T10:04:39.969885  #
+
+    2023-09-11T10:04:39.970337  / # export SHELL=3D/bin/sh
+
+    2023-09-11T10:04:41.714014  / # . /lava-11493724/environment
+
+    2023-09-11T10:04:44.918226  /lava-11493724/bin/lava-test-runner /lava-1=
+1493724/1
+
+    2023-09-11T10:04:44.929467  . /lava-11493724/environment
+
+    2023-09-11T10:04:44.933665  / # /lava-11493724/bin/lava-test-runner /la=
+va-11493724/1
+
+    2023-09-11T10:04:44.988648  + export 'TESTRUN_ID=3D1_bootrr'
+
+    2023-09-11T10:04:44.989093  + cd /lava-11493724/1/tests/1_bootrr
+ =
+
+    ... (10 line(s) more)  =
+
+ =
+
+
+
+platform           | arch  | lab           | compiler | defconfig | regress=
+ions
+-------------------+-------+---------------+----------+-----------+--------=
+----
+sun50i-h6-pine-h64 | arm64 | lab-collabora | gcc-10   | defconfig | 1      =
+    =
+
+
+  Details:     https://kernelci.org/test/plan/id/64fee6241172b06492286d8c
+
+  Results:     5 PASS, 1 FAIL, 1 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
+fconfig/gcc-10/lab-collabora/baseline-sun50i-h6-pine-h64.txt
+  HTML log:    https://storage.kernelci.org//linusw/devel/v6.6-rc1/arm64/de=
+fconfig/gcc-10/lab-collabora/baseline-sun50i-h6-pine-h64.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/64fee6241172b06492286d95
+        new failure (last pass: v6.2-rc1)
+
+    2023-09-11T10:08:16.525657  / # #
+
+    2023-09-11T10:08:16.627899  export SHELL=3D/bin/sh
+
+    2023-09-11T10:08:16.628570  #
+
+    2023-09-11T10:08:16.730011  / # export SHELL=3D/bin/sh. /lava-11493727/=
+environment
+
+    2023-09-11T10:08:16.730765  =
+
+
+    2023-09-11T10:08:16.832264  / # . /lava-11493727/environment/lava-11493=
+727/bin/lava-test-runner /lava-11493727/1
+
+    2023-09-11T10:08:16.833491  =
+
+
+    2023-09-11T10:08:16.848732  / # /lava-11493727/bin/lava-test-runner /la=
+va-11493727/1
+
+    2023-09-11T10:08:16.917926  + export 'TESTRUN_ID=3D1_bootrr'
+
+    2023-09-11T10:08:16.918432  + cd /lava-1149372<8>[   17.161170] <LAVA_S=
+IGNAL_STARTRUN 1_bootrr 11493727_1.5.2.4.5>
+ =
+
+    ... (11 line(s) more)  =
+
+ =20
