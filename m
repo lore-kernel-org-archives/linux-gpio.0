@@ -2,119 +2,216 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E31FCA0EC0
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1F2CA0EC6
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:06:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240422AbjIKU42 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:56:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38316 "EHLO
+        id S240248AbjIKU4V (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:56:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236104AbjIKJu4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 05:50:56 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB710ED;
-        Mon, 11 Sep 2023 02:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694425851; x=1725961851;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iCAgKyq7VgwAnxmQkRS3Ccgm7XbsQwNb7q495NUM0tI=;
-  b=iMD5Xaup317khdy3ciyod3WW8ZQjJo0fk6q7fRF6A1HEfdOsE1koHiHi
-   bdSKboZDqPCwVWW1Pg/oFeiIKRtkkg18+DH/XlwzoNWCbQL95WA34JrzA
-   98+uawDb3BE1skHV1Y8GMfMrwVeLckfCzWrXkLJ8jKj2ABXeQ5/T/T4Bi
-   uoJy7d0jQHK5wxl9UNVwoIrGJaUCd+KEdmOFK6gXSDpBPRJJcVKqPsxmG
-   RMukfqLLtowagvLkvNIDKxMd5M+0FZuI9ftk95oOp4H/u4aVp9flydoSb
-   xZKiq9A+rNdcRxBtiJQHB/nFwSC159JeEHXOldMMx78wzs9ZxP9taqmvk
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="377957116"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="377957116"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:50:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="693032158"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="693032158"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:50:41 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qfdZ0-008Hb0-2A;
-        Mon, 11 Sep 2023 12:50:38 +0300
-Date:   Mon, 11 Sep 2023 12:50:38 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linhua Xu <Linhua.xu@unisoc.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        lh xu <xulh0829@gmail.com>,
-        Zhirong Qiu <zhirong.qiu@unisoc.com>,
-        Xiongpeng Wu <xiongpeng.wu@unisoc.com>
-Subject: Re: [PATCH V2 2/6] pinctrl: sprd: Fix the incorrect mask and shift
- definition
-Message-ID: <ZP7i7oSthp9YHeXh@smile.fi.intel.com>
-References: <20230908055146.18347-1-Linhua.xu@unisoc.com>
- <20230908055146.18347-3-Linhua.xu@unisoc.com>
+        with ESMTP id S236764AbjIKLWl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 07:22:41 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 470BECEB
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:22:36 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2bcc4347d2dso71211281fa.0
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:22:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694431354; x=1695036154; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JWYEp19+kxLH9ilfKCkarl8GOyU5SYDVfZv3MA5eqe4=;
+        b=mz1Oanf70aSQ1YkqlAtxjvUhIoGj7+/02AxiZlh+CkXaXVyhwjjVoq0buzAdb8gD92
+         oP1rx0YIOmKtVnl+A3Jy7mezxIHes54Mka7zPatQM8lrxgbj5Ere217D8JB0t+yiJ3K1
+         Q1Isztdrs7Y7egeh6PDW36XUwBqiABG0JBsg1btdYO5c+cHA2WTltZbNQ3pv1tgAVRzt
+         YElDcUnsJSNKiCCLklNE+2ugivTZ7QH4Wq02KYWJp4DXKB1nsQl7W8mf03urUM/85Jot
+         offUfgLJUn+VQiTDBAsUeygrsxYIAIwtH515oMEnhbfAsu51WXB6Wfp3vr3s0x3iid5b
+         GWKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694431354; x=1695036154;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JWYEp19+kxLH9ilfKCkarl8GOyU5SYDVfZv3MA5eqe4=;
+        b=iZL9Nfq8/x+f3S9WUXOXSp/O2X6JfemOPma/+tPMqPTsHlzdM0gBHTxwSRGtl8nAyS
+         0WksZX7uSDhsMvMS8Qd+5RIwnwTNwJTvebr5KuGfkOM+kH04cuaoUwDTchCI+EpTv76h
+         TYNbAJ0eqq3so/duhkEIpbYckudYJ+e30fNdFRuKYsXX/9s1Xhv0nl7NZ+QcTRLoldde
+         81vzSftp0VEGaxTjcQpxj2xL4TfmM0shwe72VYwQAa7z66znyGJGA07b0yIhZkS/ii5J
+         5Nhy7Jnk41VQgycZ5TBXLs1IsaMfgy48eyuikl2fue9dy/i0AJnb8VkNQYi5Y7sxYcny
+         pDXg==
+X-Gm-Message-State: AOJu0YwPz4MzjH9aEcYAyBtS+xnu1t8UFtKlzCIhEqbhMom6QSaUXZRm
+        BXPKxLWs5/YgrGyIFwnLYBDaOg==
+X-Google-Smtp-Source: AGHT+IHRLMhGsK6RsT9iyCrETaJpm/vgcvBoo5IaCQ506Q9GN4EWNfwfYVLjJBE5Ml1DRyCm7I/IFA==
+X-Received: by 2002:a2e:9e45:0:b0:2bc:dba0:60f9 with SMTP id g5-20020a2e9e45000000b002bcdba060f9mr6734230ljk.44.1694431354467;
+        Mon, 11 Sep 2023 04:22:34 -0700 (PDT)
+Received: from [192.168.37.232] (178235177061.dynamic-4-waw-k-1-1-0.vectranet.pl. [178.235.177.61])
+        by smtp.gmail.com with ESMTPSA id ov27-20020a170906fc1b00b00992c92af6f4sm5207739ejb.144.2023.09.11.04.22.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Sep 2023 04:22:33 -0700 (PDT)
+Message-ID: <924aa48f-5c23-4e17-8bc0-256887971ba9@linaro.org>
+Date:   Mon, 11 Sep 2023 13:22:30 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230908055146.18347-3-Linhua.xu@unisoc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/11] arm64: dts: qcom: pm7250b: make SID configurable
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc:     cros-qcom-dts-watchers@chromium.org,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <20230830-fp5-initial-v1-0-5a954519bbad@fairphone.com>
+ <20230830-fp5-initial-v1-4-5a954519bbad@fairphone.com>
+ <b82f4683-e8b5-b424-8f7a-6d2ba1cab61f@linaro.org>
+ <CV6NF0466658.20DGU7QKF2UBR@otso>
+ <CAA8EJpr1+W3f08X-FpiiVrJ98kg52HaMwbbKn=fG15Whm4C8aQ@mail.gmail.com>
+ <728003b9-db27-fdc0-e761-197a02a38c24@linaro.org>
+ <CAA8EJpoXreHpxZQ2G10n0OiQzUX4ffk=gvo87dAU4-r+Svqpeg@mail.gmail.com>
+ <CVAUDGBO4S08.1F0O66ZE6I4IG@otso> <CVFY7D7ND3WS.2B2EYB4ZO86P@otso>
+ <cae7261a-6727-6163-1420-01039bfb8396@linaro.org>
+ <CVFZZ0YSWQ6J.2AKRML6LWRMUH@otso>
+ <bd418fae-accc-bd79-969a-b3b5791efd35@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <bd418fae-accc-bd79-969a-b3b5791efd35@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 08, 2023 at 01:51:42PM +0800, Linhua Xu wrote:
-> From: Linhua Xu <Linhua.Xu@unisoc.com>
-> 
-> Pull-up and pull-down are mutually exclusive. When setting one of them,
-> the bit of the other needs to be clear. Now, there are cases where pull-up
-> and pull-down are set at the same time in the code, thus fix them.
+On 11.09.2023 13:15, Krzysztof Kozlowski wrote:
+> On 11/09/2023 11:59, Luca Weiss wrote:
+>> On Mon Sep 11, 2023 at 11:44 AM CEST, Krzysztof Kozlowski wrote:
+>>> On 11/09/2023 10:34, Luca Weiss wrote:
+>>>> On Tue Sep 5, 2023 at 10:30 AM CEST, Luca Weiss wrote:
+>>>>> On Thu Aug 31, 2023 at 2:27 PM CEST, Dmitry Baryshkov wrote:
+>>>>>> On Thu, 31 Aug 2023 at 14:54, Krzysztof Kozlowski
+>>>>>> <krzysztof.kozlowski@linaro.org> wrote:
+>>>>>>>
+>>>>>>> On 31/08/2023 13:33, Dmitry Baryshkov wrote:
+>>>>>>>> On Thu, 31 Aug 2023 at 13:13, Luca Weiss <luca.weiss@fairphone.com> wrote:
+>>>>>>>>>
+>>>>>>>>> On Wed Aug 30, 2023 at 12:06 PM CEST, Krzysztof Kozlowski wrote:
+>>>>>>>>>> On 30/08/2023 11:58, Luca Weiss wrote:
+>>>>>>>>>>> Like other Qualcomm PMICs the PM7250B can be used on different addresses
+>>>>>>>>>>> on the SPMI bus. Use similar defines like the PMK8350 to make this
+>>>>>>>>>>> possible.
+>>>>>>>>>>>
+>>>>>>>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>>>>>>>>>>> ---
+>>>>>>>>>>>  arch/arm64/boot/dts/qcom/pm7250b.dtsi | 23 ++++++++++++++++-------
+>>>>>>>>>>>  1 file changed, 16 insertions(+), 7 deletions(-)
+>>>>>>>>>>>
+>>>>>>>>>>> diff --git a/arch/arm64/boot/dts/qcom/pm7250b.dtsi b/arch/arm64/boot/dts/qcom/pm7250b.dtsi
+>>>>>>>>>>> index e8540c36bd99..3514de536baa 100644
+>>>>>>>>>>> --- a/arch/arm64/boot/dts/qcom/pm7250b.dtsi
+>>>>>>>>>>> +++ b/arch/arm64/boot/dts/qcom/pm7250b.dtsi
+>>>>>>>>>>> @@ -7,6 +7,15 @@
+>>>>>>>>>>>  #include <dt-bindings/interrupt-controller/irq.h>
+>>>>>>>>>>>  #include <dt-bindings/spmi/spmi.h>
+>>>>>>>>>>>
+>>>>>>>>>>> +/* This PMIC can be configured to be at different SIDs */
+>>>>>>>>>>> +#ifndef PM7250B_SID
+>>>>>>>>>>> +   #define PM7250B_SID 2
+>>>>>>>>>>> +#endif
+>>>>>>>>>>
+>>>>>>>>>> Why do you send the same patch as v1, without any reference to previous
+>>>>>>>>>> discussions?
+>>>>>>>>>>
+>>>>>>>>>> You got here feedback already.
+>>>>>>>>>>
+>>>>>>>>>> https://lore.kernel.org/linux-arm-msm/f52524da-719b-790f-ad2c-0c3f313d9fe9@linaro.org/
+>>>>>>>>>
+>>>>>>>>> Hi Krzysztof,
+>>>>>>>>>
+>>>>>>>>> I did mention that original patch in the cover letter of this series.
+>>>>>>>>> I'm definitely aware of the discussion earlier this year there but also
+>>>>>>>>> tried to get an update lately if there's any update with no response.
+>>>>>>>>
+>>>>>>>> I think the overall consensus was that my proposal is too complicated
+>>>>>>>> for the DT files.
+>>>>>>>
+>>>>>>> I proposed to duplicate the entries. Do you keep QUP nodes in DTSI and
+>>>>>>> customize per address? No.
+>>>>>>
+>>>>>> At the same time, we do keep SoC files separate from the board files.
+>>>>>> Yes, I'm slightly exaggerating here.
+>>>>>>
+>>>>>> I think that for PMIC files it makes sense to extract common parts if
+>>>>>> that eases reuse of the common parts.
+>>>>>
+>>>>> Hi all,
+>>>>>
+>>>>> what can I do for v2 now?
+>>>>>
+>>>>> 1. Keep this patch as-is, and keep pm7250b in device dts.
+>>>
+>>> This was NAKed by me. What Qualcomm SoC maintainers decide (or not
+>>> decide) about other options, should not cause the wrong solution to be
+>>> re-posted...
+>>>
+>>>>>
+>>>>> 2. Drop pm7250b patch and drop from device dts, until _someone_ figures
+>>>>> out a solution talking to the PMIC on different SID.
+>>>>>
+>>>>> 3. Something else like copy-pasting pm7250b.dtsi to pm7250-8.dtsi and
+>>>>> changing the SID there, and using that in device dts.
+>>
+>> @Konrad, @Bjorn: Can you give any feedback here what's preferable?
+>> Otherwise I'm just blocked on this series.
+I'm sure Krzysztof will disagree, but all of the solutions (which are
+either duplicate the dt, add ifdefs or skip adding this pmic) are
+equally band-aid-class.. A bright future where this PMIC thing is
+handled on the driver side that will hopefully come soon(tm) should
+resolve such problems..
 
-...
+From my side, ifdef is the least burdensome, even if ugly..
 
->  #define SLEEP_PULL_DOWN			BIT(2)
-> -#define SLEEP_PULL_DOWN_MASK		0x1
-> +#define SLEEP_PULL_DOWN_MASK		GENMASK(1, 0)
->  #define SLEEP_PULL_DOWN_SHIFT		2
->  
->  #define PULL_DOWN			BIT(6)
-> -#define PULL_DOWN_MASK			0x1
-> +#define PULL_DOWN_MASK			(GENMASK(1, 0) | BIT(6))
->  #define PULL_DOWN_SHIFT			6
->  
->  #define SLEEP_PULL_UP			BIT(3)
-> -#define SLEEP_PULL_UP_MASK		0x1
-> -#define SLEEP_PULL_UP_SHIFT		3
-> +#define SLEEP_PULL_UP_MASK		GENMASK(1, 0)
-> +#define SLEEP_PULL_UP_SHIFT		2
->  
->  #define PULL_UP_4_7K			(BIT(12) | BIT(7))
->  #define PULL_UP_20K			BIT(7)
-> -#define PULL_UP_MASK			0x21
-> -#define PULL_UP_SHIFT			7
-> +#define PULL_UP_MASK			(GENMASK(1, 0) | BIT(6))
-> +#define PULL_UP_SHIFT			6
-
-These look strange now.
-
-So, SLEEP MASK doesn't cover bits 2 and 3.
-I believe you should have
-
-#define SLEEP_PULL_UP_DOWN_MASK		GENMASK(3, 2)
-
-The other even weirder with this BIT(6) there.
-
-In the similar way:
-
-#define PULL_UP_DOWN_MASK		GENMASK(7, 6)
-
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Konrad
