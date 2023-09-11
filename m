@@ -2,126 +2,209 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C99CA0EC9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDC0CA0ECA
 	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:55:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239569AbjIKUzG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:55:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59772 "EHLO
+        id S239589AbjIKUzN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:55:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236939AbjIKLn7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 07:43:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 37ACECEB
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:43:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1694432588;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=iKdjkytRW1RKARIy7Ovk3eIg/sQI4Dyr5qqVf3qxKz0=;
-        b=c98mYypFrNPajZyehVS0iHDPU5cjzaZYbStCbQTp0NWGUlTuVSWGGJ0EKxRv50j2X88pMU
-        YYcbm8ufNs6uo5qOa0jwFMpxB3VNHdqQeDvjdBxZqKdaQCp9QLmup4HCSi66LSXIHbterF
-        VNMUd9+S+QGkL+OBk80WVNw6fMDA95k=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-173-bSCDCwIpOUqnn6zHq1OJ6A-1; Mon, 11 Sep 2023 07:43:06 -0400
-X-MC-Unique: bSCDCwIpOUqnn6zHq1OJ6A-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-99388334de6so285455966b.0
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 04:43:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694432585; x=1695037385;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iKdjkytRW1RKARIy7Ovk3eIg/sQI4Dyr5qqVf3qxKz0=;
-        b=eqWk6cjRsFUS0DU2waStz7mRWYYr6ID5/LuvYew5TihtVCZ9rtqa+5u58kM+VIQgjj
-         H8N7W5Vz3ON2Hje0qZsqXTSRlixljQh8C+iuiV1gElLbdtasotwLmM/TYJhSKs+gs0k0
-         Zfjtuao8FKKJd92xzRZY9dl6x+G20YmxQtP/GhzZCpIVGmaYXwCHCKRTfzY1DnNKQzLo
-         BAKoTzRRFFCZlMC8wclhcvxXIp0cha4hEdfBSLsEYlDM1erB+pUYbD9PjAcBd+p0Xn6r
-         PBtfYD3f81X/UdWQjSLwJ3bz8NsKjcaMS0QWbJkyqVRk992RzsUU6IggisywlEBuwT/3
-         60JQ==
-X-Gm-Message-State: AOJu0YxvzApzzer+88RSE0K2cx1i8Oxntx8IQmPAwRDQB2OElrVHiMZY
-        AKqgPIZVHTi/MJZ4QC72j5TcE4Bg3BqdatD2+M8+aWt3T/J1NjsbPAFUQUy7RiZ21DRpPi72a3T
-        9qZuEcf2KuaZQs6Fk+pk6MQ==
-X-Received: by 2002:a17:906:3112:b0:9a1:914e:490e with SMTP id 18-20020a170906311200b009a1914e490emr7302017ejx.53.1694432585399;
-        Mon, 11 Sep 2023 04:43:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEF6L5QiZIF0AMsl3073IFMxcJiS8zc6zqEssMd1l9qYLyrRfhHjHEXeCPy7+HjFRkrdhI3EQ==
-X-Received: by 2002:a17:906:3112:b0:9a1:914e:490e with SMTP id 18-20020a170906311200b009a1914e490emr7302004ejx.53.1694432585103;
-        Mon, 11 Sep 2023 04:43:05 -0700 (PDT)
-Received: from [10.40.98.142] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id va17-20020a17090711d100b009929ab17be0sm5187708ejb.162.2023.09.11.04.43.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Sep 2023 04:43:04 -0700 (PDT)
-Message-ID: <cc9f31c3-ad0a-a688-c202-ce432dc71daa@redhat.com>
-Date:   Mon, 11 Sep 2023 13:43:03 +0200
+        with ESMTP id S236549AbjIKK4x (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 06:56:53 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D4BF3;
+        Mon, 11 Sep 2023 03:56:49 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38BAmZOB029187;
+        Mon, 11 Sep 2023 10:56:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=4gOSVhCipTQhqe7KQujCKS59XbGovpmGhKA4BrqGRG4=;
+ b=EoobLeUT13AVt3PTwJqXJwFoFY711k/p9kBdt8sNyDx2SYQiL2+AlkP3xxwlsm4ADRKL
+ +CzLEZHmHgE2tbzMTwJIg01wXHipHedMIRBYX64gw0cpiwnoQ0m8KJZ+30IWYBj7ls68
+ O4B6FJ6tr5X16QUK15HuMSBPqsZyVw+PPXXXx6cjegZDhcGpXAU4QQc+yJDv9VxJVABk
+ uHmq+CbUt6d/izNUgnDhZT4krttKpKCPF18dXXSMYOK9dEqV1UCY1RdxDgpFJh4tWW5v
+ csaOh3NHadUqNs2Wdu7Rg2hP7Q3vXSKunSAhJqi/948dEUQt0c7M/c9lIo0ipGPJSY7i lQ== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t0j0fkfm0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:13 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BAuCVt006051
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 10:56:13 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Mon, 11 Sep 2023 03:55:37 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_mojha@quicinc.com>
+Subject: [REBASE PATCH v5 10/17] pstore: Add pstore_region_defined() helper and export it
+Date:   Mon, 11 Sep 2023 16:23:52 +0530
+Message-ID: <1694429639-21484-11-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Content-Language: en-US
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Subject: [GIT PULL] Immutable branch between pdx86 android tablets branch and
- GPIO due for the v6.7 merge window
-Cc:     linux-gpio@vger.kernel.org,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: XyQCjwjHOG0scL4SF1euCldLbQ6NjV_y
+X-Proofpoint-GUID: XyQCjwjHOG0scL4SF1euCldLbQ6NjV_y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-11_06,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ malwarescore=0 clxscore=1015 impostorscore=0 mlxlogscore=999 bulkscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2308100000
+ definitions=main-2309110099
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Bart, Linus, et. al.,
+There are users like Qualcomm minidump which is interested in
+knowing the pstore frontend addresses and sizes from the backend
+(ram) to be able to register it with firmware to finally collect
+them during crash for debugging.
 
-As promised here is a pull-req for merging into the GPIO tree
-this makes the x86-android-tablets code stop using gpiolib
-private APIs (to provide a cleaner basis for Bart's gpiolib work).
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+ fs/pstore/platform.c   | 15 +++++++++++++++
+ fs/pstore/ram.c        | 42 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/pstore.h |  6 ++++++
+ 3 files changed, 63 insertions(+)
 
-Regards,
-
-Hans
-
-
-The following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
-
-  Linux 6.6-rc1 (2023-09-10 16:28:41 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-ib-x86-android-tablets-v6.7
-
-for you to fetch changes up to 9578db7939fcfa0bdfa6ab767fd0386adf2302eb:
-
-  platform/x86: x86-android-tablets: Drop "linux,power-supply-name" from lenovo_yt3_bq25892_0_props[] (2023-09-11 13:28:59 +0200)
-
-----------------------------------------------------------------
-Immutable branch between pdx86 android tablets branch and GPIO due for the v6.7 merge window
-
-ib-x86-android-tablets-v6.7: v6.6-rc1 + ib-pdx86-android-tablets
-for merging into the GPIO subsystem for v6.7.
-
-----------------------------------------------------------------
-Hans de Goede (8):
-      gpiolib: acpi: Check if a GPIO is listed in ignore_interrupt earlier
-      gpiolib: acpi: Add a ignore interrupt quirk for Peaq C1010
-      platform/x86: x86-android-tablets: Remove invalid_aei_gpiochip from Peaq C1010
-      platform/x86: x86-android-tablets: Remove invalid_aei_gpiochip support
-      platform/x86: x86-android-tablets: Create a platform_device from module_init()
-      platform/x86: x86-android-tablets: Stop using gpiolib private APIs
-      platform/x86: x86-android-tablets: Use platform-device as gpio-keys parent
-      platform/x86: x86-android-tablets: Drop "linux,power-supply-name" from lenovo_yt3_bq25892_0_props[]
-
- drivers/gpio/gpiolib-acpi.c                        |  30 +++++-
- drivers/platform/x86/x86-android-tablets/asus.c    |   1 +
- drivers/platform/x86/x86-android-tablets/core.c    | 117 ++++++++++++---------
- drivers/platform/x86/x86-android-tablets/lenovo.c  |  29 +++--
- drivers/platform/x86/x86-android-tablets/other.c   |  11 +-
- .../x86/x86-android-tablets/x86-android-tablets.h  |   7 +-
- 6 files changed, 118 insertions(+), 77 deletions(-)
+diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+index e5bca9a004cc..fdac951059c1 100644
+--- a/fs/pstore/platform.c
++++ b/fs/pstore/platform.c
+@@ -139,6 +139,21 @@ enum pstore_type_id pstore_name_to_type(const char *name)
+ }
+ EXPORT_SYMBOL_GPL(pstore_name_to_type);
+ 
++int pstore_region_defined(struct pstore_record *record,
++			  void **virt, phys_addr_t *phys,
++			  size_t *size, unsigned int *max_dump_cnt)
++{
++	if (!psinfo)
++		return -EINVAL;
++
++	record->psi = psinfo;
++
++	return psinfo->region_info ?
++	       psinfo->region_info(record, virt, phys, size, max_dump_cnt) :
++	       -EINVAL;
++}
++EXPORT_SYMBOL_GPL(pstore_region_defined);
++
+ static void pstore_timer_kick(void)
+ {
+ 	if (pstore_update_ms < 0)
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index ab551caa1d2a..62202f3ddf63 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -437,6 +437,47 @@ static int ramoops_pstore_erase(struct pstore_record *record)
+ 	return 0;
+ }
+ 
++static int ramoops_region_info(struct pstore_record *record,
++			       void **virt, phys_addr_t *phys,
++			       size_t *size, unsigned int *max_dump_cnt)
++{
++	struct ramoops_context *cxt = record->psi->data;
++	struct persistent_ram_zone *prz;
++
++	switch (record->type) {
++	case PSTORE_TYPE_DMESG:
++		if (record->id >= cxt->max_dump_cnt)
++			return -EINVAL;
++		prz = cxt->dprzs[record->id];
++		*max_dump_cnt = cxt->max_dump_cnt;
++		break;
++	case PSTORE_TYPE_CONSOLE:
++		if (!cxt->console_size)
++			return -EINVAL;
++		prz = cxt->cprz;
++		break;
++	case PSTORE_TYPE_FTRACE:
++		if (record->id >= cxt->max_ftrace_cnt)
++			return -EINVAL;
++		prz = cxt->fprzs[record->id];
++		*max_dump_cnt = cxt->max_ftrace_cnt;
++		break;
++	case PSTORE_TYPE_PMSG:
++		if (!cxt->pmsg_size)
++			return -EINVAL;
++		prz = cxt->mprz;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	*virt = prz->vaddr;
++	*phys = prz->paddr;
++	*size = prz->size;
++
++	return 0;
++}
++
+ static struct ramoops_context oops_cxt = {
+ 	.pstore = {
+ 		.owner	= THIS_MODULE,
+@@ -446,6 +487,7 @@ static struct ramoops_context oops_cxt = {
+ 		.write	= ramoops_pstore_write,
+ 		.write_user	= ramoops_pstore_write_user,
+ 		.erase	= ramoops_pstore_erase,
++		.region_info = ramoops_region_info,
+ 	},
+ };
+ 
+diff --git a/include/linux/pstore.h b/include/linux/pstore.h
+index 638507a3c8ff..a64d866e8711 100644
+--- a/include/linux/pstore.h
++++ b/include/linux/pstore.h
+@@ -199,6 +199,9 @@ struct pstore_info {
+ 	int		(*write_user)(struct pstore_record *record,
+ 				      const char __user *buf);
+ 	int		(*erase)(struct pstore_record *record);
++	int		(*region_info)(struct pstore_record *record,
++				       void **virt, phys_addr_t *phys,
++				       size_t *size, unsigned int *max_dump_cnt);
+ };
+ 
+ /* Supported frontends */
+@@ -230,6 +233,9 @@ struct pstore_ftrace_record {
+ #define TS_CPU_SHIFT 8
+ #define TS_CPU_MASK (BIT(TS_CPU_SHIFT) - 1)
+ 
++int pstore_region_defined(struct pstore_record *record,
++			  void **virt, phys_addr_t *phys,
++			  size_t *size, unsigned int *max_dump_cnt);
+ /*
+  * If CPU number can be stored in IP, store it there, otherwise store it in
+  * the time stamp. This means more timestamp resolution is available when
+-- 
+2.7.4
 
