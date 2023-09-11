@@ -2,102 +2,102 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF67CCA0EC2
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCC4CA0EC6
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 20:54:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232341AbjIKUyj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:54:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47958 "EHLO
+        id S236284AbjIKUyl (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:54:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236206AbjIKJ5E (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 05:57:04 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B663E67;
-        Mon, 11 Sep 2023 02:56:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1694426219; x=1725962219;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ccQZ6EnQu6CIa4qQy8IVpBeF7c/wK9EQzEgUbK0W49o=;
-  b=dZrlgsMSh0TpyU355X8TOEnys/BiZwbTIQZZgbryD7p94/ae/NPAyG+3
-   yunQwMDXHYFtQI6V1rhghUfhhu9I8U1BVzxZA/LzdMijCERUcrI2XcY3P
-   UVc+swih/50JEIEPKCFA6u7Lpoersr0PRa+UMqzu0ahACSXliskUB4jxD
-   Min+NXyekbaOWnO7Qx5FRXvMmW1ZZwEqI5eMLDw66/6dgXJRiLEb4L1cz
-   3Z8PpFSOFE6wpaqf7AS4Tv+997LvPF2zVgsZI7fnFBxlm4a9raWgA7vBS
-   udtyDCZXlm361j6VPN4zHHEwqNV1MmFE9AwwyCksQ1vfU7aeH1WLZwo0J
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="363064646"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="363064646"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:56:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10829"; a="866883398"
-X-IronPort-AV: E=Sophos;i="6.02,243,1688454000"; 
-   d="scan'208";a="866883398"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2023 02:56:56 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qfdf3-008HgA-19;
-        Mon, 11 Sep 2023 12:56:53 +0300
-Date:   Mon, 11 Sep 2023 12:56:53 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linhua Xu <Linhua.xu@unisoc.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        lh xu <xulh0829@gmail.com>,
-        Zhirong Qiu <zhirong.qiu@unisoc.com>,
-        Xiongpeng Wu <xiongpeng.wu@unisoc.com>
-Subject: Re: [PATCH V2 6/6] pinctrl: sprd: Add pinctrl support for UMS9621
-Message-ID: <ZP7kZUV2MQPYLZwM@smile.fi.intel.com>
-References: <20230908055146.18347-1-Linhua.xu@unisoc.com>
- <20230908055146.18347-7-Linhua.xu@unisoc.com>
+        with ESMTP id S237531AbjIKM4j (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 08:56:39 -0400
+Received: from mail-vk1-xa31.google.com (mail-vk1-xa31.google.com [IPv6:2607:f8b0:4864:20::a31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 489CBE40
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 05:56:35 -0700 (PDT)
+Received: by mail-vk1-xa31.google.com with SMTP id 71dfb90a1353d-493639d6173so1610371e0c.3
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 05:56:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694436994; x=1695041794; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xkfaITpjzvoowVVfws6abpFf+2OELZsAD/wJz25EPkk=;
+        b=BqT1CXdK08i+zxeQsmuWeUwDX1+zvvX3SigN0N26Qqcouinq+d/W2ukdCylg9DRYwj
+         GVXL3tq7lGoDgTJuhv48CUEXskpwa24dWxiDrjpmXrABltM5PeKATRjKFtz8gW81PtLu
+         eTlBaML8h/yceBVSxZ3M7aehNoqlOXI6/V2WJ8A6GxMLeJQ/sSPCBcLK78pRR+SrzJ2O
+         Q2/XI4rkrl4N6W2FpBb8SEkyafQbr/zaMgOZT/OFwKZLarXU/5k77l5SPyGM3QF9HIeH
+         TmeTzo2Kz1jUmBxPmqlhfQ7PO/pqxsgf62TPHZdhz5iBJApt0YR43Ah3nKaX1gl4AQH7
+         bM4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694436994; x=1695041794;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xkfaITpjzvoowVVfws6abpFf+2OELZsAD/wJz25EPkk=;
+        b=fsNtdLmByACDAhRzlijR0Acbw7+bv95dfWRNWvMrAUJnmBZ6x4G26vHzxiWtKgygFC
+         OmNtG7K3nFwEiL+4pXSUS0KlyWN1GyEq0pofWqR/7/JkitJx95e0bK3YrNM7GWqta1HU
+         Hwx5ha+nFyhnyihBi4iGD3YBJ3YM+FuHwH8oQyqI+4b9+KejRXPxk/qykk9VWucSoFw+
+         JotjCkwuOAnh33VqSYMUaWY+NLDcXsVLX968dnVOpbmAsnIE8MSNrnxY4cwCIb/Omg8M
+         NIwAS1XpbUwAiEyppOZ0HUwJswjpkiwY9/qsfpoFrBJL5Q4uoR7XKgupvJuLZpH8/Tmm
+         VaCw==
+X-Gm-Message-State: AOJu0YwQPonCj+hvM+PRM6UY2TA2INJYaFfbutI++PhrmeYjPs0jb8PI
+        DNt9nujRmE6ymOzvSTSyUb/I4flSxVPIv0bEt22A9w==
+X-Google-Smtp-Source: AGHT+IHewLB3FfSioBycs718X0V3D3Aiy2lRD0SXx55qRkB6Sbz0u8Ef0VHW6xOiSEMCmY4pWDMF6vFkJSzeT/+Fe+k=
+X-Received: by 2002:a05:6122:2ab:b0:48f:c07e:433a with SMTP id
+ 11-20020a05612202ab00b0048fc07e433amr8172421vkq.11.1694436994319; Mon, 11 Sep
+ 2023 05:56:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230908055146.18347-7-Linhua.xu@unisoc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20230911110740.16284-1-brgl@bgdev.pl> <ZP8N4M6cqyP9rS3W@smile.fi.intel.com>
+In-Reply-To: <ZP8N4M6cqyP9rS3W@smile.fi.intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 11 Sep 2023 14:56:23 +0200
+Message-ID: <CAMRc=Mf8zhmMaMSoO_cceG9meCHr1AbZMMRJE7Qms8qEt047Cg@mail.gmail.com>
+Subject: Re: [PATCH v5] gpio: sim: don't fiddle with GPIOLIB private members
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 08, 2023 at 01:51:46PM +0800, Linhua Xu wrote:
-> From: Linhua Xu <Linhua.Xu@unisoc.com>
-> 
-> Add the pin control driver for UNISOC UMS9621 platform.
+On Mon, Sep 11, 2023 at 2:54=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Mon, Sep 11, 2023 at 01:07:40PM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > We access internals of struct gpio_device and struct gpio_desc because
+> > it's easier but it can actually be avoided and we're working towards a
+> > better encapsulation of GPIO data structures across the kernel so let's
+> > start at home.
+> >
+> > Instead of checking gpio_desc flags, let's just track the requests of
+> > GPIOs in the driver. We also already store the information about
+> > direction of simulated lines.
+> >
+> > For kobjects needed by sysfs callbacks: we can iterate over the childre=
+n
+> > devices of the top-level platform device and compare their fwnodes
+> > against the one passed to the init function from probe.
+> >
+> > While at it: fix one line break and remove the untrue part about
+> > configfs callbacks using dev_get_drvdata() from a comment.
+>
+> (Just wondering if you used --patience)
+>
 
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/platform_device.h>
-> +
+I may have forgotten this one time. I need to add an alias.
 
-...
+Bart
 
-> +#define	PINCTRL_REG_OFFSET		0x44
-
-0x0044
-
-> +#define	PINCTRL_REG_MISC_OFFSET		0x444
-
-...
-
-> +static const struct of_device_id sprd_pinctrl_of_match[] = {
-> +	{ .compatible = "sprd,ums9621-pinctrl", },
-
-Inner comma is not needed.
-
-> +	{ }
-> +};
-
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
