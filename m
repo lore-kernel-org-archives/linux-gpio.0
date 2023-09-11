@@ -2,82 +2,99 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8F9CA0EC3
-	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54480CA0EC8
+	for <linux-gpio@archiver.kernel.org>; Mon, 11 Sep 2023 21:03:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240706AbjIKU4e (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 11 Sep 2023 16:56:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39504 "EHLO
+        id S240815AbjIKU4k (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 11 Sep 2023 16:56:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238315AbjIKNx4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 09:53:56 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 186ADE40
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 06:53:52 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-d80211e8df8so2818081276.3
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 06:53:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694440431; x=1695045231; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mLvWZ52i+dyCSAmh4Y03SqBKrmy28LwkDvJNO6anitE=;
-        b=MvHG5vX14o4i5NGt/nQqLnCm1YkFABsbQAx/8kX+mZjyKehzpB1ENwYPKw0tQ9sKbA
-         O9deuTjEwYtO8kqzzHGN+fAnGtytiJmIzZkVOqEEqV/AuIdijqul0pr4swVu6UehNIn7
-         mxrvC8ShDIjp9lQk4sH09Ygf5zz++yEv3OKWhSnsJ6LIOYjCbzqoGRUdfXnJWh/Ehct/
-         OsgEiFtrQlpAYyRh4yWcRVcY2kq4Ln4l9WpPP2YVABsmcKHZ6W88UxaLbdos6ZDRIMsO
-         ey+dUOMcx2MpY0oWkJJA8e4bYE4pU9JTSc9Ys6U1tKCr0o9Hi0FaOVnv3X+g9CxW4jf+
-         Zl2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694440431; x=1695045231;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mLvWZ52i+dyCSAmh4Y03SqBKrmy28LwkDvJNO6anitE=;
-        b=QIdHHoY4uiZO4Ip38r2taCTPtpknF8pedhHvwij1vKJ4Ft4Xh4Oh20a3Vm/Hdkid43
-         lXC+mLlrWX6Z+DWC05QfeNbEKDNIxMr9hmDvPRYh9qytgfOGALmbN7ZGo7gy9ceACOkK
-         tJTsVjUvvEHh1x3wpHVRp3IIsQX53wD8j0Qyv7xEKO4cvslsIhNbI1HeeF1h/lOem3PN
-         j5t5q4Dp1ykiGgpyZYW9i3+YuQHV07K3ojZ9D1rjv9FwqENlsUnQtIxAdnUpXjgBXhBk
-         2EOllm5dn5CKqbstf8VrE3vsoZcguWOXiYIAQ7w14KGTcT5YdGDH0w7xBX3oKqavzSWf
-         PXyg==
-X-Gm-Message-State: AOJu0YwcPd8Cn0HvAuf1BKxYOf6UZE863sqHSLGO1cKjaivjXgUxe9o4
-        F1YrccpXgdrT3d32qivE95d2QvANF/S6qenFSY6W/Q==
-X-Google-Smtp-Source: AGHT+IHp45MYsPkvvvVaXHQ4k98NIkrWPaOBthFZdZy9COqTKpRoYFrEK1u6n2IGbrTU5QDj2PG6u+wrSp/eBuXoh44=
-X-Received: by 2002:a25:502:0:b0:d12:ab1:d88a with SMTP id 2-20020a250502000000b00d120ab1d88amr9001432ybf.40.1694440431348;
- Mon, 11 Sep 2023 06:53:51 -0700 (PDT)
+        with ESMTP id S244059AbjIKTAQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2023 15:00:16 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68E261B6;
+        Mon, 11 Sep 2023 12:00:11 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38BGVEEt014128;
+        Mon, 11 Sep 2023 18:59:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=dUU7osbkw61qj+RvTLN9W0ZCzWjH8hArh+5ZtdeNY0g=;
+ b=dKCGXtTA552bIp5b6zR+Rz2fNHf4yQ2GCT4MR59ptCHqB3zpGUnvydZL3gMlUTle5X/E
+ 7thIKoPjeE0IpMRm36gZ212OHgkmx/6H/z484qyL7ubo9KqMkv+POHxfjdacRBEKkOKA
+ PeYH0tj2E9BMC+ONZt5FTuLL9XKvqT5CVzFPl7cajAxkrRuVPgfZrVUVAKuykxlhWcOH
+ hXADZvlp/a/nfVD7Mig8XU7/xSpFRnn9DMCvf5oHlbZ30tdk1ZvQCTXhZP/DhC3Gwjbp
+ c7Wum/2yFUhnz1xcstJGizGwlkDf3SAR9vxYHpmrQ+16DmXSVE+IEsDIue7Ww0Obpf4q LQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t22hygywu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 18:59:33 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38BIxK6L032545
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Sep 2023 18:59:20 GMT
+Received: from [10.111.183.71] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Mon, 11 Sep
+ 2023 11:59:16 -0700
+Message-ID: <8fa1a316-13d7-4ed0-8737-d8124a0bb25e@quicinc.com>
+Date:   Mon, 11 Sep 2023 11:59:16 -0700
 MIME-Version: 1.0
-References: <20230828140849.21724-1-tmaimon77@gmail.com>
-In-Reply-To: <20230828140849.21724-1-tmaimon77@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 11 Sep 2023 15:53:40 +0200
-Message-ID: <CACRpkdY0C7S_VjZ8CKxj9MOv401jUPesvwKwHyCfHM+p8jRSOg@mail.gmail.com>
-Subject: Re: [PATCH v7 0/2] pinctrl: nuvoton: add pinmux and GPIO driver for NPCM8XX
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, avifishman70@gmail.com, tali.perry1@gmail.com,
-        joel@jms.id.au, venture@google.com, yuenn@google.com,
-        benjaminfair@google.com, j.neuschaefer@gmx.net,
-        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 07/17] soc: qcom: minidump: Add pending region
+ registration
+Content-Language: en-US
+To:     Mukesh Ojha <quic_mojha@quicinc.com>, <corbet@lwn.net>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
+References: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
+ <1694290578-17733-8-git-send-email-quic_mojha@quicinc.com>
+From:   Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <1694290578-17733-8-git-send-email-quic_mojha@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: lsVEyNvjBNS1dXQMGMGRjbo3HPUvt27b
+X-Proofpoint-GUID: lsVEyNvjBNS1dXQMGMGRjbo3HPUvt27b
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-11_14,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 mlxlogscore=629 phishscore=0 spamscore=0
+ impostorscore=0 mlxscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ bulkscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2308100000 definitions=main-2309110174
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Aug 28, 2023 at 4:08=E2=80=AFPM Tomer Maimon <tmaimon77@gmail.com> =
-wrote:
+On 9/9/2023 1:16 PM, Mukesh Ojha wrote:
+> +/**
+> + * struct minidump_pregion - Minidump pending region
+> + * @list       : Pending region list pointer
+> + * @region     : APSS minidump client region
 
-> This patch set adds pinmux and GPIO controller for the Arbel NPCM8XX
-> Baseboard Management Controller (BMC).
+does kernel-doc parse this correctly? should not be whitespace between 
+@ID and ":"
 
-Patches applied. I can send some more nitpicky comments about
-patch 2/2 but they are not serious enough to warrant a resend of the
-patches, it is better to touch it up in-tree, if at all.
-
-Good work with this driver, and also good patience since you
-iterated 7 versions and polished everything up so it's really nice
-and shiny now!
-
-Yours,
-Linus Walleij
+refer to 
+<https://static.lwn.net/kerneldoc/doc-guide/kernel-doc.html#structure-union-and-enumeration-documentation>
