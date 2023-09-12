@@ -2,76 +2,83 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E8ECA0ECA
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 07:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E6BCA0ECA
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 08:10:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232021AbjILH6T (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 03:58:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48172 "EHLO
+        id S232038AbjILIKa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 04:10:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231822AbjILH6H (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 03:58:07 -0400
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4DD510D7
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 00:57:55 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id 3f1490d57ef6-d7f0a60a159so4633285276.0
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 00:57:55 -0700 (PDT)
+        with ESMTP id S232022AbjILIK3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 04:10:29 -0400
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07656E78
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 01:10:26 -0700 (PDT)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-59234aaca15so54550137b3.3
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 01:10:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694505475; x=1695110275; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694506225; x=1695111025; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/x62Yf/b2lTNFGVnKtwIfJ+Tr4eCzomfebj2BdADTlM=;
-        b=qrTt5QVxtr4RgIIKN9YInndFXWOEijtZmSR+A7EP3aqBXRJDLjzJDUL147VWuAk6uE
-         9o2vMax/beqEKQ2VPd1z2RYVfM0EG5nhh3xhF4A9kO/ncnyUi6PAoDUd6aJ/CclejSgG
-         X0vY6HKsl63r2i+MLlHTgdh0qt4GZPvIMrQbs7rUbW7sbFCNCEJTFw4nU3svAQSobPv9
-         1G1jcgWsZIX3mrlFKybLFKO9XRs1mUbeepAUX++zlcecFWBhzyfQYOIIV1Yj6m/ckYSQ
-         Badd5ONXtgZJ+xCM0PGg1TPYXFeRwYJFYn0vHrXOgwrRfMUQMswVD1QjpSp8hUvaVnNo
-         4NYg==
+        bh=D23QCFFdVljslwRPpscICFpYkj6MKZK1qKf0WOOnjMw=;
+        b=Zm/izVhX4Uq1hjjaoZlnPvIw0wCrR1Y+pA2KUPqoIwXQ+5jZSn609zfXJGez2pb6IE
+         Hrd9BNuYqu9MjnQuR9ynlTmu6+GEKyWMmtdJx+PJTP3tyAkcSD2Uig44PO157nE8+4qh
+         lSN0Ai07nO6o2CEu55vVwNoXqFZaDkgs6CthJ/jcOb83hOdMgnWRxLQhe0a+fWAZTjYo
+         TEGLZBChaxLOZYfxN5ac+wIinLaWXe/G0DKRb8PsKUxhyK0LLmSMfvqfh374rL4aZljG
+         hcnOmV1SvxVk9X+iv5A0tWj7tljbm2zQKEJf+rxmuhofQR5zPSj4CooXPerH4M80LxY9
+         PP0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694505475; x=1695110275;
+        d=1e100.net; s=20230601; t=1694506225; x=1695111025;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/x62Yf/b2lTNFGVnKtwIfJ+Tr4eCzomfebj2BdADTlM=;
-        b=lr1rsOcsNjggjWmJlZh9qc456+00iggEXOZUmOtHsJBQtw46qZwP+PHcmAVk7v+awT
-         oiZQKDqrS9n+MJ8ZHPWg6RuUBvzxhX28iLTgbd2V4PEUvo/YePZ9juTo+tqhAa6pFfWs
-         VZHSeVDPY12pKrBbEhWmISv+BGBsn5SSlUaoXQMgBfMGdiDvzNcm1AlZ9A8FG3xCAfLl
-         jR60YkLd59T93NgSOnUDZ27dngZyTWT8kSq4RIWX2bDuSqTRT3nm4lY/ieP38NVSD2Kg
-         vLIZSs89b54N0ZYLSmi650Elt+pJN0VIiH3VIWCr1I9t22tEUzvDOaxvzB06aJMPmYp2
-         CPrg==
-X-Gm-Message-State: AOJu0YyE7EoiessVmAAPbUCG/QDF0PXVpQwSJQzNKfv9IXav850VH327
-        IGM9TU5DuPo59C4M5OcDcsnThXxEDvy4y4Rz5Bhg0Q==
-X-Google-Smtp-Source: AGHT+IHlEbdZt3fCOWUCFDFrDpV6dKHhuLYf95jAXOMIgCbDIYpDroZioJNmZUpW/Dgx0kdvEz0kMpUF47SqKPIvBHE=
-X-Received: by 2002:a25:3a87:0:b0:d3c:ccb:2c8 with SMTP id h129-20020a253a87000000b00d3c0ccb02c8mr11062909yba.29.1694505475127;
- Tue, 12 Sep 2023 00:57:55 -0700 (PDT)
+        bh=D23QCFFdVljslwRPpscICFpYkj6MKZK1qKf0WOOnjMw=;
+        b=wIcO8jvc/TP0Dr91thf1O7d/dv+ZuXwCv/ZPyTRmEWebBLjB1F2l4nf1EckfvYnouP
+         ExeTfo0qurcFEy8BEw5hcNltQsCcbqKdEWwrFryP32vSmmHasqHeWx3u+Y28ja/+QT1T
+         acw2tTvB7bJcMzmKckI7qg6m6IqAorGOUXWnjVb4Q5Yn9yjmoXhjU+rsOZtqZOf4oul7
+         yaO+utF+Bfg/4rHCUs37n/1af9SPe7RoOQDICrb+0ZXc+9fngXXUGL4yCNckkzzSfkmo
+         XKc8Nzs3Xtp4f+EVfKpxf1k4+gfK63MG3ZDHzbSYhWuZWlDTCKnI2XdcxNueVWuIZwM0
+         tmpw==
+X-Gm-Message-State: AOJu0YyJ95TJMPubDBfNwya2aiJU231WkS1mNcdw/mrl2YWSe00qn5XH
+        uCxeyC4I/pSx7Tm7tZus3BKDvY2q2fnJeSBR1ID/BksogLKWZQZX
+X-Google-Smtp-Source: AGHT+IFUaI+x8sTgAhtsHEXehUsOGuNAlMUyXBI2fE5fjfuw8ZkM7Ny4FixFpCjeoF3FXKTZXWmOTSFch31+D42wVa4=
+X-Received: by 2002:a25:8051:0:b0:d78:538:8017 with SMTP id
+ a17-20020a258051000000b00d7805388017mr10943065ybn.61.1694506225296; Tue, 12
+ Sep 2023 01:10:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230902082225.8777-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20230902082225.8777-1-biju.das.jz@bp.renesas.com>
+References: <20230905122105.117000-1-hal.feng@starfivetech.com>
+In-Reply-To: <20230905122105.117000-1-hal.feng@starfivetech.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 12 Sep 2023 09:57:44 +0200
-Message-ID: <CACRpkdZWHy4VmB+tGTdu5pTrnsGDJPULuLnp6aFnffB9N9cqEg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: cy8c95x0: Simplify probe()
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Patrick Rudolph <patrick.rudolph@9elements.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Biju Das <biju.das.au@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date:   Tue, 12 Sep 2023 10:10:14 +0200
+Message-ID: <CACRpkdaKYvs9Gc11Zx+Ev7ygNnpPOpe1G4fdMzyEmUO2-bAzvA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] Fix an irq issue and add system pm ops for
+ StarFive JH7110 pinctrl drivers
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     Andreas Schwab <schwab@suse.de>, Conor Dooley <conor@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Jianlong Huang <jianlong.huang@starfivetech.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Sat, Sep 2, 2023 at 10:22=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
+On Tue, Sep 5, 2023 at 2:22=E2=80=AFPM Hal Feng <hal.feng@starfivetech.com>=
+ wrote:
 
-> Simpilfy probe() by replacing device_get_match_data() and id lookup for
-> retrieving match data by i2c_get_match_data().
+> This patchset fixes some issues arising when CONFIG_PM is enabled
+> or suspending to disk.
 >
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> The first patch fixes failure to set irq after CONFIG_PM is enabled.
+>
+> The second patch adds system pm ops to save and restore context. So it ca=
+n
+> ensure that the pins configuration keep consistent with the one before
+> suspending.
 
-Patch applied with the small spelling fix suggested by Andy.
+Patches applied for fixes!
 
 Yours,
 Linus Walleij
