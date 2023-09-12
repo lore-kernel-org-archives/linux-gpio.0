@@ -2,97 +2,119 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3E0CA0ECA
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 11:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81536CA0ECF
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 11:06:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233901AbjILLDY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 07:03:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54488 "EHLO
+        id S232408AbjILLG4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 07:06:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234593AbjILLCy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 07:02:54 -0400
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF9731717;
-        Tue, 12 Sep 2023 04:02:34 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VrwdiHG_1694516551;
-Received: from 30.97.48.71(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0VrwdiHG_1694516551)
-          by smtp.aliyun-inc.com;
-          Tue, 12 Sep 2023 19:02:31 +0800
-Message-ID: <5877cd0d-7a39-806a-e8f8-ef0c3c22dae3@linux.alibaba.com>
-Date:   Tue, 12 Sep 2023 19:02:37 +0800
+        with ESMTP id S234698AbjILLGY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 07:06:24 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03A17F1
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 04:06:09 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5922380064bso54575537b3.2
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 04:06:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694516768; x=1695121568; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nxeKap40n9N0Jct85TnQoxJYlNgRlyoVOdviavwIIv8=;
+        b=hxq6TJF8HMyjqFW1Zxj5wQy1nlsOBDVUSQnjCPAO0BVV49/32UolcLMMwgtEfQWxyv
+         h4KosWWVPrmcXDdlZOUVS+2dCFfDhBd6Em++i+z2reqCPZrd0ImmfnuMmnfKN6zIvugq
+         2KTPCzv5M24UwOzFIOZx4yi1NQlTPeMw62b7O8oTRekmb/y+bYtpInRDkDnaMlfayAyI
+         neLIU1iQKoa9CjJzkM0Yn0yqAc8Zo2ZeT1aCIRbGTx70HMWniIL08xkUs74lAjyCEAYU
+         z2CnZW5bBcTDJjce7yw4JLl7STtIHtp5lb5ZOvZe6pCnSJwlymassacuIIjo37MwyAJ0
+         rvbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694516768; x=1695121568;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nxeKap40n9N0Jct85TnQoxJYlNgRlyoVOdviavwIIv8=;
+        b=dczIyCdHdV2TuyeJynPjc9NiaY6kTG0FRqYDjXSukAR8lmIAPiGtiufWDaCkyEbUfa
+         4pNUNRXHLbT9e2RSGnioQcdWUqRXhRENrVoL73NoOKYqjqGMQONHwYXm65mlg9dMlOYN
+         k0vQ9j45CgqAc/Ite0J+CG5K7+p8Eyy89cIZCRzR5zbHRAVvQ9abISePU9ztiNXWNoYJ
+         cV5R2AvYDx/YM3y3yLazsULY5vZtV0NegQ604Sygvyt5rOPcB8RTXrxAxlVM0H2bD64h
+         eDhTLKugjjXQ8I6EjVgKqa7hV3r8jtAuXSC7XMstsRI2JA3hQCESKJJ1+ThMJLj5dSsZ
+         Giiw==
+X-Gm-Message-State: AOJu0Yzqzzys908IfpAwkXtQ10haraIxf61K/JVSaTeHWozZrtSB/4AF
+        13Rnl0hXUfcOXu3e8LpjQLc6frbWKquzoy0f/AgrBQ==
+X-Google-Smtp-Source: AGHT+IGyZPp4TVH1sBukbcNRmYX2EySx2o/za6wxn39EVFdbUk9RivbE+m6qOSfkNS/rkWMpLDTgnTAoDhF0TgN1JVo=
+X-Received: by 2002:a5b:743:0:b0:d79:d23f:b49c with SMTP id
+ s3-20020a5b0743000000b00d79d23fb49cmr10905306ybq.35.1694516768133; Tue, 12
+ Sep 2023 04:06:08 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [RFT PATCH 1/3] gpio: eic-sprd: unregister from the irq notifier
- on remove()
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20230912094519.22769-1-brgl@bgdev.pl>
-From:   Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20230912094519.22769-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20230912081527.208499-1-herve.codina@bootlin.com> <20230912101510.225920-1-herve.codina@bootlin.com>
+In-Reply-To: <20230912101510.225920-1-herve.codina@bootlin.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 12 Sep 2023 13:05:57 +0200
+Message-ID: <CACRpkdZ2svQJVG4wiJu90X6HhKudMuAerz12zw2nd84ekLaEJA@mail.gmail.com>
+Subject: Re: [PATCH v5 29/31] MAINTAINERS: Add the Lantiq PEF2256 driver entry
+To:     Herve Codina <herve.codina@bootlin.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Randy Dunlap <rdunlap@infradead.org>, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+        Simon Horman <horms@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+On Tue, Sep 12, 2023 at 12:15=E2=80=AFPM Herve Codina <herve.codina@bootlin=
+.com> wrote:
 
-
-On 9/12/2023 5:45 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> This is a tristate module, it can be unloaded. We need to cleanup properly
-> and unregister from the interrupt notifier on driver detach.
-> 
-> Fixes: b32415652a4d ("gpio: eic-sprd: use atomic notifiers to notify all chips about irqs")
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-LGTM.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
+> After contributing the driver, add myself as the maintainer for the
+> Lantiq PEF2256 driver.
+>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 > ---
->   drivers/gpio/gpio-eic-sprd.c | 19 +++++++++++++++++--
->   1 file changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
-> index 21a1afe358d6..9b2f9ccf8d77 100644
-> --- a/drivers/gpio/gpio-eic-sprd.c
-> +++ b/drivers/gpio/gpio-eic-sprd.c
-> @@ -580,6 +580,14 @@ static const struct irq_chip sprd_eic_irq = {
->   	.flags		= IRQCHIP_SKIP_SET_WAKE | IRQCHIP_IMMUTABLE,
->   	GPIOCHIP_IRQ_RESOURCE_HELPERS,
->   };
-> +
-> +static void sprd_eic_unregister_notifier(void *data)
-> +{
-> +	struct notifier_block *nb = data;
-> +
-> +	atomic_notifier_chain_unregister(&sprd_eic_irq_notifier, nb);
-> +}
-> +
->   static int sprd_eic_probe(struct platform_device *pdev)
->   {
->   	const struct sprd_eic_variant_data *pdata;
-> @@ -658,8 +666,15 @@ static int sprd_eic_probe(struct platform_device *pdev)
->   	}
->   
->   	sprd_eic->irq_nb.notifier_call = sprd_eic_irq_notify;
-> -	return atomic_notifier_chain_register(&sprd_eic_irq_notifier,
-> -					      &sprd_eic->irq_nb);
-> +	ret = atomic_notifier_chain_register(&sprd_eic_irq_notifier,
-> +					     &sprd_eic->irq_nb);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				     "Failed to register with the interrupt notifier");
-> +
-> +	return devm_add_action_or_reset(&pdev->dev,
-> +					sprd_eic_unregister_notifier,
-> +					&sprd_eic->irq_nb);
->   }
->   
->   static const struct of_device_id sprd_eic_of_match[] = {
+>  MAINTAINERS | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8b987f2c8633..dbc5867016bc 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11876,6 +11876,15 @@ S:     Maintained
+>  F:     arch/mips/lantiq
+>  F:     drivers/soc/lantiq
+>
+> +LANTIQ PEF2256 DRIVER
+> +M:     Herve Codina <herve.codina@bootlin.com>
+> +S:     Maintained
+> +F:     Documentation/devicetree/bindings/net/lantiq,pef2256.yaml
+> +F:     drivers/net/wan/framer/pef2256/
+> +F:     drivers/pinctrl/pinctrl-pef2256-regs.h
+> +F:     drivers/pinctrl/pinctrl-pef2256.c
+
+Just use a glob expression:
+F:     drivers/pinctrl/pinctrl-pef2256-*
+
+Yours,
+Linus Walleij
