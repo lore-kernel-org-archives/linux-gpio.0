@@ -2,148 +2,122 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CF4CA0EC3
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 10:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA83CA0ECA
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 10:10:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234045AbjILKIq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 06:08:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35840 "EHLO
+        id S233993AbjILKKv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 06:10:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234074AbjILKHt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 06:07:49 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD7121994
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 03:07:45 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-31fa15f4cc6so2158519f8f.2
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 03:07:45 -0700 (PDT)
+        with ESMTP id S233981AbjILKKi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 06:10:38 -0400
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 591811FEB
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 03:09:35 -0700 (PDT)
+Received: by mail-ua1-x92b.google.com with SMTP id a1e0cc1a2514c-7a2ab581cb1so2495627241.1
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 03:09:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694513264; x=1695118064; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694513374; x=1695118174; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MflPL+QKb28SLjr67nvfLFxWVRN50mSzldVQJo+IR1w=;
-        b=iEP3Lt9EyU3b2KrO+GJiN3Yb+RnNRx9ciCxuP8MsS0SLIwrXRgZReq+a+AI0zrL9V7
-         0LBWGMbRNHMxTXkfQnwT017RVqEdKmc/0AmjGU7L0SAOsZoKUxzHxqjxwt+KA39kZ9pv
-         oYPIXhmZ7+tnEopx5gT4xFuixVS/ZrCGmmN+i5VaAtC01rQ5M+/xBve8WRvAuRPVAdwr
-         wNYLVvFjkRo0htsKHWWmO8YTSb09vxMcsTjd10qQ8/QOHo8plK6gn6qWZTZsjwJKGOEl
-         jXLRkelujB/imquKTyodR6+wGMdpCSQlVA4bVnIFjbK7GSTUpKgso8izMW6B7hVA1PNU
-         Knbw==
+        bh=nmVQQDfuX/j76DUm++ev24Gh9ttqt0+2IKJM2QX7OSE=;
+        b=HFglwU7Cb0vP34PvfqgkXzzet0UVEfDnSfMcMz/bpj4HGMQdJfeO0Y34V/5iMKm19a
+         lrhlyISKrhaOpMHcyh/n+4GaDle6h/z8H/BLCLwq8onm7tIwWHs9TzhYh/VygAsKhUEa
+         N7F57IzQ2M1JXe7JX6rYn+rkFAGXE0kxIUX908lEdWfoNOYkx6my6gS9YPQUrT7Dqtak
+         4usQ0JEg3dVJDXdmc/lb8fv8ve2WY4VaiMnfu14pTtFPRUpR7oiLXF1aJP77uKrw80K1
+         45SsuKusSODd/xYqzZQ3nK3hbAuywC99qguacHhHKscrWCvElRTSkZeeDO+FveX3RaVC
+         n4vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694513264; x=1695118064;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1694513374; x=1695118174;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MflPL+QKb28SLjr67nvfLFxWVRN50mSzldVQJo+IR1w=;
-        b=WMeMYcKOElSXWz/kARHK3KmxGtrTi03OMRo1x02szErC+yk5xyhXIL+bHkDQe9zACg
-         p2UTdaQtAu+wlEbVC71Z4aDuW/s03I3XJ+ahomm6CrxpWaAZCaiyUo8sGpgM8M2RGJwT
-         D26StyysWmpw+w92TNhRUjMXqY1nwpn4BbrbsHNVTeoNyfwczzBcFMDA7XH4LMSQ92xH
-         QcEuBBVgSVsFHzTRIdPTPe9IRLfl9yP2tfctHRovpX2GQtd4kOVDg04QlIl20zmWEuk/
-         j6+MaoDLwBEISGEa2if5IRFQ4wUu5u8uCvgtGD9xsltEeUm22omV4Rgp06SMmmegEqMz
-         hEMA==
-X-Gm-Message-State: AOJu0Yx4uKBgfW1CGhpdAH8dwyt45mvuFD5scE8I+OW0YjZ/HhW8Wjt2
-        SWEm5SeXrsKPWTF1Cj5ooFL4aA==
-X-Google-Smtp-Source: AGHT+IF6appF+Bc1SNs12WHBJet/EEUF/e9LtN/Bq72htXDMX5lzxciYf3JqP47+0WwTHb5z1IuJEA==
-X-Received: by 2002:adf:eb46:0:b0:317:5a99:4549 with SMTP id u6-20020adfeb46000000b003175a994549mr9000560wrn.0.1694513264267;
-        Tue, 12 Sep 2023 03:07:44 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:907f:4cd7:f0ae:6b2a])
-        by smtp.gmail.com with ESMTPSA id h5-20020adfe985000000b0031ae8d86af4sm12351417wrm.103.2023.09.12.03.07.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Sep 2023 03:07:43 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 10/11] gpio: swnode: replace gpiochip_find() with gpio_device_find_by_label()
-Date:   Tue, 12 Sep 2023 12:07:26 +0200
-Message-Id: <20230912100727.23197-11-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230912100727.23197-1-brgl@bgdev.pl>
-References: <20230912100727.23197-1-brgl@bgdev.pl>
+        bh=nmVQQDfuX/j76DUm++ev24Gh9ttqt0+2IKJM2QX7OSE=;
+        b=NiqJeVn20/cGKYFtX6oWUwssmGVoIvFfXHfxNG8PueZ5qm1+Qsb3gWFD7hI330+4Rq
+         ubXQS4cjYdGKHji7NyBxgrLltN+Q5DdDll/wreQy55o5XmR0EQC37wlhi+tz8qbuxs2V
+         p9flzv3/JVqFMXwlC+DSIaSosqRoqHExgfCh9xOJLF6b7CxpDKVFi62DDHrvSD4bB9GD
+         fxbduYzaVbzyAYgqqKmVmzbdVNhiGM0E1R3HYd8ZbQbswrpYvqwgI+XvZ4B4eSUXJYhG
+         b0pfoqqBF7sIjwSoyq2xKlpU1KbhW0HzKJw5NFmRhR7ML5KJq5DryCJRUPMThfIfDE3T
+         8FsA==
+X-Gm-Message-State: AOJu0YziPuzNF/Y7tUuebU3H37zNQWSjXK8X4Zx8VMa6Ep715dkG/kWj
+        U+maBVYu5RPKdxntKatVam3hikqwYsjHl52cRu5Uez559GZ13uef
+X-Google-Smtp-Source: AGHT+IGZ60lRPEbVSHt6DeyFJ9ULYeQIvv5Z64eOq55b6CG24sCbp0lLHEVPsajyXrw6r7m0v8GYNjRP9XJCWvyk0Ws=
+X-Received: by 2002:a67:f557:0:b0:44d:5b62:bcd5 with SMTP id
+ z23-20020a67f557000000b0044d5b62bcd5mr11766196vsn.23.1694513374192; Tue, 12
+ Sep 2023 03:09:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230912094519.22769-1-brgl@bgdev.pl> <20230912094519.22769-3-brgl@bgdev.pl>
+ <80d7b0ad-026d-6ba9-7c1f-7f0c3b5af588@linux.alibaba.com>
+In-Reply-To: <80d7b0ad-026d-6ba9-7c1f-7f0c3b5af588@linux.alibaba.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 12 Sep 2023 12:09:23 +0200
+Message-ID: <CAMRc=Mf4YvHVparOOPjDAVeMs5Oby4tjkaVYt4hoqLP4rKKbmg@mail.gmail.com>
+Subject: Re: [RFT PATCH 3/3] gpio: eic-sprd: use devm_platform_ioremap_resource()
+To:     Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Sep 12, 2023 at 12:05=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+>
+>
+> On 9/12/2023 5:45 PM, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Make two calls into one by using devm_platform_ioremap_resource().
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Please don't do this. See the previous commit:
+> 4ed7d7dd4890bb8120a3e77c16191a695fdfcc5a ("Revert "gpio: eic-sprd: Use
+> devm_platform_ioremap_resource()"")
+>
 
-We're porting all users of gpiochip_find() to using gpio_device_find().
-Update the swnode GPIO code.
+Ah, I see. Dropped. Could use a comment describing the problem though.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib-swnode.c | 33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+Bart
 
-diff --git a/drivers/gpio/gpiolib-swnode.c b/drivers/gpio/gpiolib-swnode.c
-index b5a6eaf3729b..33c4b1a6c3c1 100644
---- a/drivers/gpio/gpiolib-swnode.c
-+++ b/drivers/gpio/gpiolib-swnode.c
-@@ -31,31 +31,26 @@ static void swnode_format_propname(const char *con_id, char *propname,
- 		strscpy(propname, "gpios", max_size);
- }
- 
--static int swnode_gpiochip_match_name(struct gpio_chip *chip, void *data)
-+static struct gpio_device *swnode_get_gpio_device(struct fwnode_handle *fwnode)
- {
--	return !strcmp(chip->label, data);
--}
-+	const struct software_node *gdev_node;
-+	struct gpio_device *gdev;
- 
--static struct gpio_chip *swnode_get_chip(struct fwnode_handle *fwnode)
--{
--	const struct software_node *chip_node;
--	struct gpio_chip *chip;
--
--	chip_node = to_software_node(fwnode);
--	if (!chip_node || !chip_node->name)
-+	gdev_node = to_software_node(fwnode);
-+	if (!gdev_node || !gdev_node->name)
- 		return ERR_PTR(-EINVAL);
- 
--	chip = gpiochip_find((void *)chip_node->name, swnode_gpiochip_match_name);
--	return chip ?: ERR_PTR(-EPROBE_DEFER);
-+	gdev = gpio_device_find_by_label((void *)gdev_node->name);
-+	return gdev ?: ERR_PTR(-EPROBE_DEFER);
- }
- 
- struct gpio_desc *swnode_find_gpio(struct fwnode_handle *fwnode,
- 				   const char *con_id, unsigned int idx,
- 				   unsigned long *flags)
- {
-+	struct gpio_device *gdev __free(gpio_device_put) = NULL;
- 	const struct software_node *swnode;
- 	struct fwnode_reference_args args;
--	struct gpio_chip *chip;
- 	struct gpio_desc *desc;
- 	char propname[32]; /* 32 is max size of property name */
- 	int error;
-@@ -77,12 +72,16 @@ struct gpio_desc *swnode_find_gpio(struct fwnode_handle *fwnode,
- 		return ERR_PTR(error);
- 	}
- 
--	chip = swnode_get_chip(args.fwnode);
-+	gdev = swnode_get_gpio_device(args.fwnode);
- 	fwnode_handle_put(args.fwnode);
--	if (IS_ERR(chip))
--		return ERR_CAST(chip);
-+	if (IS_ERR(gdev))
-+		return ERR_CAST(gdev);
- 
--	desc = gpiochip_get_desc(chip, args.args[0]);
-+	/*
-+	 * FIXME: The GPIO device reference is put at return but the descriptor
-+	 * is passed on. Find a proper solution.
-+	 */
-+	desc = gpio_device_get_desc(gdev, args.args[0]);
- 	*flags = args.args[1]; /* We expect native GPIO flags */
- 
- 	pr_debug("%s: parsed '%s' property of node '%pfwP[%d]' - status (%d)\n",
--- 
-2.39.2
-
+> > ---
+> >   drivers/gpio/gpio-eic-sprd.c | 7 +------
+> >   1 file changed, 1 insertion(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.=
+c
+> > index be7f2fa5aa7b..1e548e4e4cb8 100644
+> > --- a/drivers/gpio/gpio-eic-sprd.c
+> > +++ b/drivers/gpio/gpio-eic-sprd.c
+> > @@ -594,7 +594,6 @@ static int sprd_eic_probe(struct platform_device *p=
+dev)
+> >       struct device *dev =3D &pdev->dev;
+> >       struct gpio_irq_chip *irq;
+> >       struct sprd_eic *sprd_eic;
+> > -     struct resource *res;
+> >       int ret, i;
+> >
+> >       pdata =3D of_device_get_match_data(dev);
+> > @@ -621,11 +620,7 @@ static int sprd_eic_probe(struct platform_device *=
+pdev)
+> >                * have one bank EIC, thus base[1] and base[2] can be
+> >                * optional.
+> >                */
+> > -             res =3D platform_get_resource(pdev, IORESOURCE_MEM, i);
+> > -             if (!res)
+> > -                     break;
+> > -
+> > -             sprd_eic->base[i] =3D devm_ioremap_resource(dev, res);
+> > +             sprd_eic->base[i] =3D devm_platform_ioremap_resource(pdev=
+, i);
+> >               if (IS_ERR(sprd_eic->base[i]))
+> >                       return PTR_ERR(sprd_eic->base[i]);
+> >       }
