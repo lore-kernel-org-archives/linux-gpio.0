@@ -2,88 +2,374 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FAA6CA0ED3
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 08:24:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56150CA0ECE
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 08:27:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232543AbjILIYM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 04:24:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53298 "EHLO
+        id S232574AbjILI1o (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 04:27:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232634AbjILIYJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 04:24:09 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FC5B10CE
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 01:24:05 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id 3f1490d57ef6-d7eed15ad69so5020525276.1
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 01:24:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694507044; x=1695111844; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JTDlvFYbsx79XjnXV/v1eS2oK868sA5+g3OCAFf6938=;
-        b=FBhB4z6HcF6EizL+/lwxRnvBPsnUBCZNCJdmUZqMhF2t8tNtnTGFF+JCUzlHUG9Exo
-         EggToZqBJppvlFyjEBigx34yWBARuEWqMz4yka52D9EM9UM1QrISxBRPtWDZ29WUYe9q
-         d2krkdkVjxK27mY+IVp4h5OuRfx8EOC24+q01oOZ9zVKap5Gn+pmjs1tgIAXdxIMWl2s
-         hlUypNi+ZXFlGreD6ZHACbQH+jnwcETJOh0eM2WKZkO86QxIoS8ndf9uFvCult8qmb5z
-         WmJNShM2s+Z914AefMurd58mLEBMQpCYyRNyQgzLfOJXMC6Jyztx8eDTmu+++2h4nbhP
-         glxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694507044; x=1695111844;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JTDlvFYbsx79XjnXV/v1eS2oK868sA5+g3OCAFf6938=;
-        b=uLI3GK3LP1qJ/B7IXUzEjJpjeXtMXoIMLtFMlxFZakSzhu7YEt1GyIkIbdM7tzfZQp
-         t69USg9NCsDF9VcVUVHqJxcgoOtH/89cDmWC1DL7ra6v/INr/EeIfEaVtMzk5hWzKykn
-         KT/O3Vewz2qgvqyQvQMu8qXMaQDLD6fkKTvcPnqIEtshb07LEgTDd2jFC7BQJ/ajmBhM
-         Jlacv+ZGq6V44rbTgOiiqiEZ2ZybVrmtKcghIlogRvvh7kzDTvohW64EPq1CgXMgWGai
-         46/dKSIc6GNMvlxLGt8USBCQVViogm8mha6cd0XfGpMFYZ0yuzS1vHYVQghnN3hgTKjp
-         9FVg==
-X-Gm-Message-State: AOJu0YxaH2KjcnrvYBtnjPrlnaxR8K0oI+GEar1DkkBU0Ceht5XxnlNJ
-        DxWdMvE3gcg4rGJtUrnhXKxs4pqiZsgI+W/WOISVUg==
-X-Google-Smtp-Source: AGHT+IFd+7FzVpzIXwF6eF0XM98eCqwGR8vQyKfh9Y2GKm2qYYnTSN7eR9A+5PvS2Qu/0xw3IHJQEnNJumvhS4CTpxY=
-X-Received: by 2002:a25:d4c6:0:b0:d7b:95ff:14f with SMTP id
- m189-20020a25d4c6000000b00d7b95ff014fmr13092370ybf.61.1694507044304; Tue, 12
- Sep 2023 01:24:04 -0700 (PDT)
+        with ESMTP id S231509AbjILI1n (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 04:27:43 -0400
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7F06B9;
+        Tue, 12 Sep 2023 01:27:38 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id AF29F240016;
+        Tue, 12 Sep 2023 08:15:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1694507256;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=NNWFLazESxtDfZ0O18bgdLpVRYNM1p8Orh6JoHPD9OQ=;
+        b=YKngppwdh40YfWiGLJAS/KGVy3lcyyimFa5IhNF2BFpY76MQv7PcAngjWD5emB/NpPdZVs
+        XuFHa7GDsZeCDN4VtR1DBdOhhQMg7F0sKFJAb1MDA7SiI1aMS1uljTxpDobJ34HUMqgBjt
+        FHOxQNRcNFQVzbTLPwBJsz8bn9G8RLA4WP+TyyXemwpqd4wrtR0zPRPD7LXQ8thvcbVeuZ
+        ExcT1Fcq50Uh6D73l3yfs6AqzdGcuV9dXnjY+Tgn2jvV+Rk9i1RjFps/RP9BqIFKYwuwfR
+        kO8gTvwFMC5ooqNP3G2Onc78ybIs69RViNXNP4dTCVaFKEEPSvcfTmBa6iIIVg==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Herve Codina <herve.codina@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v5 00/31] Add support for QMC HDLC, framer infrastructure and PEF2256 framer
+Date:   Tue, 12 Sep 2023 10:14:51 +0200
+Message-ID: <20230912081527.208499-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com> <1694429639-21484-15-git-send-email-quic_mojha@quicinc.com>
-In-Reply-To: <1694429639-21484-15-git-send-email-quic_mojha@quicinc.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 12 Sep 2023 10:23:53 +0200
-Message-ID: <CACRpkdYBH09emydQPaRUgEJuHdV0tk3=xeMXxD9UVP0GH2XZEw@mail.gmail.com>
-Subject: Re: [REBASE PATCH v5 14/17] pinctrl: qcom: Use qcom_scm_io_update_field()
-To:     Mukesh Ojha <quic_mojha@quicinc.com>
-Cc:     corbet@lwn.net, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        mathieu.poirier@linaro.org, catalin.marinas@arm.com,
-        will@kernel.org, andy.shevchenko@gmail.com, vigneshr@ti.com,
-        nm@ti.com, matthias.bgg@gmail.com, kgene@kernel.org,
-        alim.akhtar@samsung.com, bmasney@redhat.com,
-        quic_tsoni@quicinc.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Sep 11, 2023 at 12:56=E2=80=AFPM Mukesh Ojha <quic_mojha@quicinc.co=
-m> wrote:
+Hi,
 
-> Use qcom_scm_io_update_field() exported function in
-> pinctrl-msm driver.
->
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+I have a system where I need to handle an HDLC interface and some audio
+data.
 
-As long as the qcom maintainers agree on the rest of the patches:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+The HDLC data are transferred using a TDM bus on which a PEF2256
+(E1/T1 framer) is present. The PEF2256 transfers data from/to the TDM
+bus to/from the E1 line. This PEF2256 is connected to a PowerQUICC SoC
+for the control path and the TDM is connected to the SoC (QMC component)
+for the data path.
 
-Yours,
-Linus Walleij
+From the QMC HDLC driver, I need to handle HDLC data using the QMC,
+carrier detection using the PEF2256 (E1 line carrier) and set/get some
+PEF2256 configuration.
+
+The QMC HDLC driver considers the PEF2256 as a generic framer.
+It performs operations that involve the PEF2256 through the generic
+framer API.
+
+The audio data are exchanged with the PEF2256 using a CPU DAI connected
+to the TDM bus through the QMC and the PEF2256 needs to be seen as a
+codec in order to be linked to the CPU DAI.
+The codec handles the carrier detection using the PEF2256 and reports
+the carrier state to the ALSA subsystem using the ASoC jack detection.
+
+The codec, even if instantiated by the PEF2256 driver, considers the
+PEF2256 as a generic framer.
+
+The generic framer has:
+ - 2 consumers (QMC HDLC drv and codec)
+ - 1 provider (PEF2256)
+
+So, the design is the following:
+                        +------------------+           +---------+
+                        | QMC              | <- TDM -> | PEF2256 | <-> E1
+     +---------+        |  +-------------+ |           |         |
+     | CPU DAI | <-data--> | QMC channel | |           |         |
+     +---------+        |  +-------------+ |           |         |
++--------------+        |  +-------------+ |           |         |
+| QMC HDLC drv | <-data--> | QMC channel | |           |         |
++--------------+        |  +-------------+ |           |         |
+     ^                  +------------------+           |         |
+     |   +--------+     +-------------+                |         |
+     +-> | framer | <-> | PEF2256 drv | <- local bus ->|         |
+         |        |     |             |                +---------+
+     +-> |        |     |             |
+     |   +--------+     |  +-------+  |
+     +-------------------> | codec |  |
+                        |  +-------+  |
+                        +-------------+
+
+Further more, the TDM timeslots used by the QMC HDLC driver need to be
+configured at runtime (QMC dynamic timeslots).
+
+Several weeks ago, I sent two series related to this topic:
+ - Add the Lantiq PEF2256 audio support [1]
+ - RFC Add support for QMC HDLC and PHY [2]
+This current series is a rework of these two series taking into account
+feedbacks previously received.
+
+In order to implement all of this, I do the following:
+ 1) Perform some fixes (patches 1, 2, 3, 4, 5, 6, 7)
+ 2) Introduce the QMC HDLC driver (patches 8, 9, 10, 11)
+ 3) Add QMC dynamic timeslot support (patches 12 - 22)
+ 4) Add timeslots change support in QMC HDLC (patch 23)
+ 5) Introduce framer infrastructure (patch 24)
+ 6) Add PEF2256 framer provider (patches 25, 26, 27, 28, 29)
+ 7) Add framer codec as a framer consumer (patch 30)
+ 8) Add framer support as a framer consumer in QMC HDLC (patch 31)
+
+The series contains the full story and detailed modifications.
+If needed, the series can be split and/or commits can be squashed.
+Let me know.
+
+Compare to the previous iteration
+  https://lore.kernel.org/linux-kernel/cover.1692376360.git.christophe.leroy@csgroup.eu/
+This v5 series mainly:
+ - Fixes the DT bindings
+ - Adds QMC child devices support
+ - Fixes typos and documentation
+
+Best regards,
+Hervé
+
+[1]: https://lore.kernel.org/all/20230417171601.74656-1-herve.codina@bootlin.com/
+[2]: https://lore.kernel.org/all/20230323103154.264546-1-herve.codina@bootlin.com/
+
+Changes v4 -> v5
+
+  - Patches 1 to 5
+    No changes
+
+  - Patch 6 (new in v5)
+    Fix QMC binding example
+
+  - Patch 7 (new in v5)
+    Add missing 'additionalProperties: false'
+
+  - Patch 8 (new in v5, replace v4 patch 6)
+    Add QMC HDLC properties in the QMC channel node
+    Renamed the 'framer' property to 'fsl,framer'
+
+  - Patch 9 (new in v5)
+    Add support for QMC child devices
+
+  - Patch 10 (patch 7 in v4)
+    No changes
+
+  - Patch 11 (patch 8 in v4)
+    Remove fsl,qmc-hdlc.yaml (no more existing file)
+
+  - Patches 12 to 22 (patches 9 to 19 in v4)
+    No changes
+
+  - Patch 23 (patch 20 in v4)
+    Remove unused variable initializations
+    Remove extra space
+
+  - Patch 24 (patch 21 in v4)
+    Improve Kconfig help text
+    Fix variable declaration (reverse xmas tree)
+    Fix typos and extra spaces
+    Fix documentation issues raised by 'kernel-doc -none'
+    Move of_node_put() and kfree() out of the mutex
+    Replace ida_simple_{get,remove}() by ida_{alloc,free}()
+    Support framer device-tree nodes without '#framer-cells' property
+
+  - Patch 25 (patch 22 in v4)
+    Fix $ref in the pinctrl subnode
+    Remove '#framer-cells' property
+    Add needed '|'
+
+  - Patch 26 (patch 23 in v4)
+    Fix a typo in the commit subject
+
+  - Patches 27, 28, 29 (patch 24, 25, 26 in v4)
+    No changes
+
+  - Patch 30 (patch 27 in v4)
+    Fix a typo in the commit log
+
+  - Patch 31 (patch 28 in v4)
+    Used 'fsl,framer' property name instead of 'framer'
+
+Changes v3 -> v4
+
+  - Patch 21
+    Fixes build failure with CONFIG_MODULES
+
+Changes v2 -> v3
+
+  - Patches 1, 2, 3, 4
+    Add 'Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>'
+
+  - New patch
+    Remove inline keyword from the existing registers accessors helpers
+
+  - Patch 6 (patches 5, 27 in v2)
+    Update the binding title
+    Squash patch 27
+
+  - Patch 7 (patch 6 in v2)
+    Remove the cast in netdev_to_qmc_hdlc()
+    Add 'Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>'
+
+  - Patch 8 (patch 7 in v2): No change
+
+  - Patches 9, 10 (patches 8, 9 in v2)
+    Add 'Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>'
+
+  - Patch 11 (patch 10 in v2)
+    Remove inline keyword from the introduced qmc_clrsetbits16() helper
+    Add 'Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>'
+
+  - Patches 12, 13, 14, 15, 16, 17, 18, 19, 20
+    Add 'Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>'
+
+  - Patch 21 (patch 20 in v2)
+    Remove unneeded framer NULL pointer check
+    Add 'Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>'
+
+  - Patch 22 (patch 21 in v2)
+    Change sclkr and sclkx clocks description
+    Remove the framer phandle property from the framer subnodes
+    (ie. from framer-codec nodes)
+
+  - Patch 23 (patch 22 in v2)
+    Initialize 'disabled' variable at declaration
+    Fix commit log
+    Add 'Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>'
+
+  - Patch 24 (patch 23 in v2)
+    Remove inline keyword from the existing registers accessors helpers
+    Use dev_warn_ratelimited() in default interrupt handler
+    Add 'Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>'
+
+  - Patch 25 (patch 24 in v2)
+    Replace #include "linux/bitfield.h" by #include <linux/bitfield.h>
+    Fold the pinctrl anonymous struct into the struct pef2256_pinctrl
+    Update commit log
+    Add 'Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>'
+
+  - Patch 26 (patch 25 in v2)
+    Add 'Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>'
+
+  - Patch 27 (patch 26 in v2)
+    Fix error message
+    Changed the ch.max computation in framer_dai_hw_rule_channels_by_format()
+    Add 'Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>'
+
+  - Patch 28
+    Add 'Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>'
+
+Changes v1 -> v2
+  - Patches 1, 2 (New in v2)
+    Fix __iomem addresses declaration
+
+  - Patch 19 (17 in v1)
+    Fix a compilation warning
+
+  - Patch 26 (24 in v1)
+    Fix a typo in Kconfig file
+    Fix issues raised by sparse (make C=1)
+
+Herve Codina (31):
+  soc: fsl: cpm1: tsa: Fix __iomem addresses declaration
+  soc: fsl: cpm1: qmc: Fix __iomem addresses declaration
+  soc: fsl: cpm1: qmc: Fix rx channel reset
+  soc: fsl: cpm1: qmc: Extend the API to provide Rx status
+  soc: fsl: cpm1: qmc: Remove inline function specifiers
+  dt-bindings: soc: fsl: cpm_qe: cpm1-scc-qmc: Fix example property name
+  dt-bindings: soc: fsl: cpm_qe: cpm1-scc-qmc: Add
+    'additionalProperties: false' in child nodes
+  dt-bindings: soc: fsl: cpm_qe: cpm1-scc-qmc: Add support for QMC HDLC
+  soc: fsl: cpm1: qmc: Add support for child devices
+  net: wan: Add support for QMC HDLC
+  MAINTAINERS: Add the Freescale QMC HDLC driver entry
+  soc: fsl: cpm1: qmc: Introduce available timeslots masks
+  soc: fsl: cpm1: qmc: Rename qmc_setup_tsa* to qmc_init_tsa*
+  soc: fsl: cpm1: qmc: Introduce qmc_chan_setup_tsa*
+  soc: fsl: cpm1: qmc: Remove no more needed checks from
+    qmc_check_chans()
+  soc: fsl: cpm1: qmc: Check available timeslots in qmc_check_chans()
+  soc: fsl: cpm1: qmc: Add support for disabling channel TSA entries
+  soc: fsl: cpm1: qmc: Split Tx and Rx TSA entries setup
+  soc: fsl: cpm1: qmc: Introduce is_tsa_64rxtx flag
+  soc: fsl: cpm1: qmc: Handle timeslot entries at channel start() and
+    stop()
+  soc: fsl: cpm1: qmc: Remove timeslots handling from setup_chan()
+  soc: fsl: cpm1: qmc: Introduce functions to change timeslots at
+    runtime
+  wan: qmc_hdlc: Add runtime timeslots changes support
+  net: wan: Add framer framework support
+  dt-bindings: net: Add the Lantiq PEF2256 E1/T1/J1 framer
+  mfd: core: Ensure disabled devices are skipped without aborting
+  net: wan: framer: Add support for the Lantiq PEF2256 framer
+  pinctrl: Add support for the Lantic PEF2256 pinmux
+  MAINTAINERS: Add the Lantiq PEF2256 driver entry
+  ASoC: codecs: Add support for the framer codec
+  net: wan: fsl_qmc_hdlc: Add framer support
+
+ .../bindings/net/lantiq,pef2256.yaml          | 214 +++++
+ .../soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml      |  20 +-
+ MAINTAINERS                                   |  16 +
+ drivers/mfd/mfd-core.c                        |  17 +-
+ drivers/net/wan/Kconfig                       |  14 +
+ drivers/net/wan/Makefile                      |   3 +
+ drivers/net/wan/framer/Kconfig                |  39 +
+ drivers/net/wan/framer/Makefile               |   7 +
+ drivers/net/wan/framer/framer-core.c          | 887 ++++++++++++++++++
+ drivers/net/wan/framer/pef2256/Makefile       |   8 +
+ drivers/net/wan/framer/pef2256/pef2256-regs.h | 250 +++++
+ drivers/net/wan/framer/pef2256/pef2256.c      | 880 +++++++++++++++++
+ drivers/net/wan/fsl_qmc_hdlc.c                | 820 ++++++++++++++++
+ drivers/pinctrl/Kconfig                       |  14 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-pef2256-regs.h        |  65 ++
+ drivers/pinctrl/pinctrl-pef2256.c             | 308 ++++++
+ drivers/soc/fsl/qe/qmc.c                      | 592 +++++++++---
+ drivers/soc/fsl/qe/tsa.c                      |  22 +-
+ include/linux/framer/framer-provider.h        | 194 ++++
+ include/linux/framer/framer.h                 | 205 ++++
+ include/linux/framer/pef2256.h                |  31 +
+ include/soc/fsl/qe/qmc.h                      |  27 +-
+ sound/soc/codecs/Kconfig                      |  15 +
+ sound/soc/codecs/Makefile                     |   2 +
+ sound/soc/codecs/framer-codec.c               | 413 ++++++++
+ sound/soc/fsl/fsl_qmc_audio.c                 |   2 +-
+ 27 files changed, 4921 insertions(+), 145 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/lantiq,pef2256.yaml
+ create mode 100644 drivers/net/wan/framer/Kconfig
+ create mode 100644 drivers/net/wan/framer/Makefile
+ create mode 100644 drivers/net/wan/framer/framer-core.c
+ create mode 100644 drivers/net/wan/framer/pef2256/Makefile
+ create mode 100644 drivers/net/wan/framer/pef2256/pef2256-regs.h
+ create mode 100644 drivers/net/wan/framer/pef2256/pef2256.c
+ create mode 100644 drivers/net/wan/fsl_qmc_hdlc.c
+ create mode 100644 drivers/pinctrl/pinctrl-pef2256-regs.h
+ create mode 100644 drivers/pinctrl/pinctrl-pef2256.c
+ create mode 100644 include/linux/framer/framer-provider.h
+ create mode 100644 include/linux/framer/framer.h
+ create mode 100644 include/linux/framer/pef2256.h
+ create mode 100644 sound/soc/codecs/framer-codec.c
+
+-- 
+2.41.0
+
