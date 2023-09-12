@@ -2,94 +2,93 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D5A9CA0EC3
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 09:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70353CA0EC3
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 09:52:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232638AbjILJsn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 05:48:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46150 "EHLO
+        id S232584AbjILJwI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 05:52:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231274AbjILJsn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 05:48:43 -0400
-Received: from mail-ua1-x929.google.com (mail-ua1-x929.google.com [IPv6:2607:f8b0:4864:20::929])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DB401BE
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 02:48:39 -0700 (PDT)
-Received: by mail-ua1-x929.google.com with SMTP id a1e0cc1a2514c-7870821d9a1so3248433241.1
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 02:48:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694512118; x=1695116918; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XegseyGbBhwk1GzmJtqKu3s4esIjMwTsj/hm4IRRIfo=;
-        b=qoKR+jaOCiFSEeZ/9seWwqcpiKb7omlqsCgSrFOCrRHVPJhbUneIa8dt1W2WXMzs7l
-         cT0YgDquNWwf58QVohDygdh0mLQleI1Cpxm/xnn1ftu08HBbD+YXXEuToUasxLYI39VI
-         MXWUf55leSztRDwXpUClsIPrDF39eRDkJHQ5nC+l1d3e5Za6L3VgyhU8g0xRA1yw2I6m
-         nNcm5GwgUP7j85nrXt3AbryTSSbBtytpcLpMILV+bZngvU1Jh4I/NuDn+NtoRtWTdduO
-         9aa19yhjtBl0+/MmvCSOEX+Fde1rcvqclbA0LVBqH3ikwv1VfLo1D9ZLUGuKURWu8FOn
-         vJ6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694512118; x=1695116918;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XegseyGbBhwk1GzmJtqKu3s4esIjMwTsj/hm4IRRIfo=;
-        b=jYzvffbGYmul/StN9vmYuu2r1Qt+BPyCyEZhgCg8JLGNh/eOtb33OwtbaWtPykGsJh
-         kabQHh7kmBsMRQYtacgyesYEFMRPZvgbcsVj9dktc+lru1tHBqA2UGfEyGN72ykkEBWT
-         967ApwOf81obCetyit2tCceHy8ioONlIe2YCST52gR7E6YssTHXjF4nDcvTR7hZx17cA
-         DFDlY4blrfTXBRl8Pov05Rx0bo3+KotY9qBCcpOo3ddQj53FZPlRhG7OWYs/71FNaOhG
-         pHNowRPH98MZ4k5qHpK0cM8nx5zOQHJW1Ls4tpXMwqyphKT+YOmOWA6RMTfIVQo2k/eg
-         YS1Q==
-X-Gm-Message-State: AOJu0YztuOQ4pIVN9K2+PyMO/u/bB3C1O6ZIgs5G7tvSeK6fY6cr3q4P
-        hJrbmLkSG9MU4CZpDP9uozEGDSmsSntYukcfimynYg==
-X-Google-Smtp-Source: AGHT+IEJwf3nugnFKEbsWlJdXzncq+YA9WBmt/gWJIffz95iuIU5iY+aqvxZEgfxykDF3xkesvO+tHW+zDPuL+uP6Xc=
-X-Received: by 2002:a67:ea87:0:b0:44d:5c17:d065 with SMTP id
- f7-20020a67ea87000000b0044d5c17d065mr1033528vso.13.1694512118510; Tue, 12 Sep
- 2023 02:48:38 -0700 (PDT)
+        with ESMTP id S233077AbjILJwH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 05:52:07 -0400
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D66DE6A;
+        Tue, 12 Sep 2023 02:52:02 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 5A722240009;
+        Tue, 12 Sep 2023 09:39:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1694512320;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ScPjzuZaLLYh2lcosF7mjC3LbbKogbqWDUhQ8RkAceU=;
+        b=K+nnYXVgVTeIYLV1BYZk8yVPM7a2nPu/2JA6GWMyyv0Za8enlurHjBH7plSt2lkrUaQgFx
+        0f+eic3JBBgKxtWXmU15F2NOL2ZoHFXm8dROGgnxxRWdTKbO53xzFHJjRrH2cKPixxWiIQ
+        X0H50mqA/O7gee/qxhpcScSAQrz6oC5amb4tHHTsy3EQ30w3liig4hh60CmVmm0cSjrsOm
+        3+A4lbr4FIsGWAyRl0hBgn4ip8FNO3Untij7ggUFAU3Q5C3z+B+ux/Tq3eCFHsmlxJXwfW
+        EQItj5FZbLmxsodLOd0QDPWT6RUBUWUp7yQWKgN05HapEUcrPwoojI25LbtKJQ==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Herve Codina <herve.codina@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v5 07/31] dt-bindings: soc: fsl: cpm_qe: cpm1-scc-qmc: Add 'additionalProperties: false' in child nodes
+Date:   Tue, 12 Sep 2023 10:14:58 +0200
+Message-ID: <20230912081527.208499-8-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230912081527.208499-1-herve.codina@bootlin.com>
+References: <20230912081527.208499-1-herve.codina@bootlin.com>
 MIME-Version: 1.0
-References: <20230901134041.1165562-1-andriy.shevchenko@linux.intel.com>
- <CACRpkdboT46oadZJZTde=ze2vEvC9aUGjO5-MjDdVwCNijFqDw@mail.gmail.com> <ZQAv8wJuS7t0RV+m@smile.fi.intel.com>
-In-Reply-To: <ZQAv8wJuS7t0RV+m@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 12 Sep 2023 11:48:27 +0200
-Message-ID: <CAMRc=MdgNxt4wobVLU5kqcnyW6J-=bMRLBk5cAmaEmucV-t0Pw@mail.gmail.com>
-Subject: Re: [PATCH v1 01/10] gpio: pca953x: Drop unused fields in struct pca953x_platform_data
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 12, 2023 at 11:31=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Tue, Sep 12, 2023 at 09:50:06AM +0200, Linus Walleij wrote:
-> > On Fri, Sep 1, 2023 at 3:40=E2=80=AFPM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > > New code should solely use firmware nodes for the specifics and
-> > > not any callbacks.
-> > >
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >
-> > Patches look good to me:
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > for all patches.
->
-> Thank you!
->
-> > Patch 8 looks HTML on my gmail but I guess the problem
-> > is on my side.
->
-> The entire series has been sent in the same way, it's quite unlikely that
-> the only patch got mangled while others are okay.
->
+Additional properties in child node should not be allowed.
 
-I'm using cmdg - a command-line interface to gmail - and all patches
-look fine. Surprisingly, the web interface indeed does mangle patch 8
-for some reason.
+Prevent them adding 'additionalProperties: false'
 
-Bart
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+---
+ .../devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml     | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
+index 450a0354cb1d..82d9beb48e00 100644
+--- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
++++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
+@@ -64,6 +64,7 @@ patternProperties:
+     description:
+       A channel managed by this controller
+     type: object
++    additionalProperties: false
+ 
+     properties:
+       reg:
+-- 
+2.41.0
+
