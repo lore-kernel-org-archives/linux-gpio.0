@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EAFCA0ECA
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 04:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A8DCA0EC3
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 04:55:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230076AbjILEzi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 00:55:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41174 "EHLO
+        id S230030AbjILEzw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 00:55:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230054AbjILEyg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 00:54:36 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24118211C
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 21:53:03 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-52f33659d09so3133284a12.1
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 21:53:03 -0700 (PDT)
+        with ESMTP id S229535AbjILEyp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 00:54:45 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 372B62136
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 21:53:07 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-31dca134c83so5205541f8f.3
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 21:53:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1694494381; x=1695099181; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1694494385; x=1695099185; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EEvHY4LlJiB+slFSaFymkBp9RrnjPiethhPGh1sMgZE=;
-        b=hkV9OluKDWDBSimBlwHw6UPdgBYNC9R1d8askC5sH0hGh0OWlm7Na0gYr9Y+s71wfK
-         l9/8927OYyOcFt44ohWm25MXjXsaXoLysbHkN0Gen+cWjDWL82Xa/qEl+4z5qrrO/gwp
-         JG1VxCemK/6FTqDIC+gIy1mUtmctIa7ucslxNMA78foMJPntcngsPPUYk00HjnkTZYqE
-         Fm/aiJ2GJyvBlzfJjGJak42XOJeWHlPwEZ6bREoneQ2b/tDDK+6o2K1PZy4ELCTZsQCU
-         jmZeLhPcQCNTsLVqsDQCmaPCC44GBaaxbHJi05r9kIUKZsWHXFU1l4V6oPB7uJ9uKLkI
-         R+zQ==
+        bh=3UpewQv8gV1w2PM2MY4PJic7WTCQhdfeCuutZ7ZY/fE=;
+        b=Vl4aKSaXdedeFSmt1Co1XENMTlc8dEyQBhHT1kMgaNbZlnBxM4XbfOk774kK4thl4g
+         9EI2TYSOTpXboEbr+kSGjmI9sb0dFG1sQokL3mfQmgXqkgYsE+r22QOendr4BUAQ5lQq
+         OgmATe8ACXYExjVdBVdjehIso8gWvley5xII6NZAifYnKHvYoD6wnTh+/8B+fITooxQO
+         XbGbwboOuedH8qHQCtZvkLhesbNfDAvpkeZaSnjY6sI836Std8laIIM1s3JsMO4CsPOt
+         +X2Lcs0GRDHHP0VoiQS2chYnECtjwbOamAYLSZ/6DLi8KHKD9GGjqXWFMMxx/FTupt26
+         7Pyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694494381; x=1695099181;
+        d=1e100.net; s=20230601; t=1694494385; x=1695099185;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EEvHY4LlJiB+slFSaFymkBp9RrnjPiethhPGh1sMgZE=;
-        b=MILlms2Yxq57la2OKJMiiWEf91TwpBNEgTuzVDRCiNkMZem5O7bZx/9g9m4ZaaihNj
-         gLIfX4P7xEpNOZ3pPQjdjAIa/HaA3x973guBO73oqFf0eat6rXiaZizCYoCCWgwOKuid
-         QZpvaIsWN3iXPn8d3l8LP0iioZIGgA1Uv9Wfyi0v4286NJjwxLhs0G1XtFORlra4pazl
-         TamP/inNCJrf0stcgtLGmi1bTwU82LaWok6cJzdqD+8o6I4t91nUoqscrqZpAoJDzmfd
-         jgPOOtTfLyhZIqsgq8Bp6E67rguu0icDku9tP0WaLTEJgB4CK7Vg9bvthg64hxX/WpNK
-         osvA==
-X-Gm-Message-State: AOJu0YwQcdhSuC3j9Voq3CDwf8RoEM+kLZXpiqSifSMXgEhb/pCdRzSH
-        rwrG8dgEaQ/Yfd+qi2AKm0tncw==
-X-Google-Smtp-Source: AGHT+IGTzfKZ/s13UT22YzvHPGoFZRHQVm9gqjZcRz8l83m7oy54PnwFTzf3E2R7urtyXPjpp9n53g==
-X-Received: by 2002:a05:6402:31e6:b0:52a:10b3:3cc2 with SMTP id dy6-20020a05640231e600b0052a10b33cc2mr9591344edb.30.1694494381687;
-        Mon, 11 Sep 2023 21:53:01 -0700 (PDT)
+        bh=3UpewQv8gV1w2PM2MY4PJic7WTCQhdfeCuutZ7ZY/fE=;
+        b=Vge5zQz2hfoI2WRp2/RITtQSHhwSI9j1CmPKDnf26+bZgw2YKKX6+1tQ3sCVmH9ovA
+         JNy1UJcULszH0CjsAM7VZMycBvRN8qbU2QiFfXUlVkrfKZ5ZedZUJNFOolbsGNSR79eR
+         +sxxOHGfocTfDkxMNOI+sKQu0EZ7AX30LQnjzuLKhoOj/SBc6loQooaWkRwREGX22hFk
+         QDaMT26MeYquhgmeGuIKEXepKk1F2PTPx+A6B9yXhN+mnTEQ9ZHWySWISj8yQkrGsi7u
+         cEI614OFG8qbcTjm2VFVCClzVz2FxXr+e/74E/9lv6mMoAlsipDQqiqpv8njl6dYWcGx
+         Ij8g==
+X-Gm-Message-State: AOJu0YwvMIiXRrcaAUfavcOSAZiY+7pCMno8VN+aXIfd7kSTR1nDH4tu
+        eXdXbYuffFfKCdq66MlQR6eejw==
+X-Google-Smtp-Source: AGHT+IEm6GWWZIJjg9WOhiUHX2cVZOIO11JV+VkBUtdYWsJUl3tyg+xTicUAbnvbBa4L7Y8Zr1qqCg==
+X-Received: by 2002:a5d:6302:0:b0:316:f3cf:6f12 with SMTP id i2-20020a5d6302000000b00316f3cf6f12mr8619597wru.48.1694494385696;
+        Mon, 11 Sep 2023 21:53:05 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.145])
-        by smtp.gmail.com with ESMTPSA id f21-20020a05640214d500b0051e22660835sm5422415edx.46.2023.09.11.21.52.59
+        by smtp.gmail.com with ESMTPSA id f21-20020a05640214d500b0051e22660835sm5422415edx.46.2023.09.11.21.53.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 21:53:01 -0700 (PDT)
+        Mon, 11 Sep 2023 21:53:05 -0700 (PDT)
 From:   Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
@@ -67,9 +67,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 22/37] clk: renesas: add minimal boot support for RZ/G3S SoC
-Date:   Tue, 12 Sep 2023 07:51:42 +0300
-Message-Id: <20230912045157.177966-23-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 24/37] pinctrl: renesas: rzg2l: adapt for different SD, PWPR register offsets
+Date:   Tue, 12 Sep 2023 07:51:44 +0300
+Message-Id: <20230912045157.177966-25-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
@@ -81,316 +81,165 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add minimal clock and reset support for RZ/G3S SoC to be able to boot
-Linux from SD Card/eMMC. This includes necessary core clocks for booting
-and GIC, SCIF, GPIO, SD0 mod clocks and resets.
+SD, PWPR power registers have different offsets b/w RZ/G2L and RZ/G3S.
+Commit adds a per SoC configuration data structure that is initialized with
+proper register offset for individual SoCs. The struct rzg2l_hwcfg will be
+further extended in next commits.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/Kconfig         |   7 +-
- drivers/clk/renesas/Makefile        |   1 +
- drivers/clk/renesas/r9a08g045-cpg.c | 217 ++++++++++++++++++++++++++++
- drivers/clk/renesas/rzg2l-cpg.c     |   6 +
- drivers/clk/renesas/rzg2l-cpg.h     |   1 +
- 5 files changed, 231 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/renesas/r9a08g045-cpg.c
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 52 ++++++++++++++++++++-----
+ 1 file changed, 42 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index 37632a0659d8..69396e197959 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -37,6 +37,7 @@ config CLK_RENESAS
- 	select CLK_R9A07G043 if ARCH_R9A07G043
- 	select CLK_R9A07G044 if ARCH_R9A07G044
- 	select CLK_R9A07G054 if ARCH_R9A07G054
-+	select CLK_R9A08G045 if ARCH_R9A08G045
- 	select CLK_R9A09G011 if ARCH_R9A09G011
- 	select CLK_SH73A0 if ARCH_SH73A0
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 6efdf4a424fd..8bdf065aa85b 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -98,8 +98,7 @@
+ #define IOLH(off)		(0x1000 + (off) * 8)
+ #define IEN(off)		(0x1800 + (off) * 8)
+ #define ISEL(off)		(0x2C00 + (off) * 8)
+-#define PWPR			(0x3014)
+-#define SD_CH(n)		(0x3000 + (n) * 4)
++#define SD_CH(off, ch)		((off) + (ch) * 4)
+ #define QSPI			(0x3008)
  
-@@ -179,6 +180,10 @@ config CLK_R9A07G054
- 	bool "RZ/V2L clock support" if COMPILE_TEST
- 	select CLK_RZG2L
+ #define PVDD_1800		1	/* I/O domain voltage <= 1.8V */
+@@ -124,6 +123,24 @@
+ #define RZG2L_TINT_IRQ_START_INDEX	9
+ #define RZG2L_PACK_HWIRQ(t, i)		(((t) << 16) | (i))
  
-+config CLK_R9A08G045
-+	bool "RZ/G3S clock support" if COMPILE_TEST
-+	select CLK_RZG2L
-+
- config CLK_R9A09G011
- 	bool "RZ/V2M clock support" if COMPILE_TEST
- 	select CLK_RZG2L
-@@ -215,7 +220,7 @@ config CLK_RCAR_USB2_CLOCK_SEL
- 	  This is a driver for R-Car USB2 clock selector
- 
- config CLK_RZG2L
--	bool "Renesas RZ/{G2L,G2UL,V2L} family clock support" if COMPILE_TEST
-+	bool "Renesas RZ/{G2L,G2UL,G3S,V2L} family clock support" if COMPILE_TEST
- 	select RESET_CONTROLLER
- 
- # Generic
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index de907623fe3f..879a07d445f9 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -34,6 +34,7 @@ obj-$(CONFIG_CLK_R9A06G032)		+= r9a06g032-clocks.o
- obj-$(CONFIG_CLK_R9A07G043)		+= r9a07g043-cpg.o
- obj-$(CONFIG_CLK_R9A07G044)		+= r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A07G054)		+= r9a07g044-cpg.o
-+obj-$(CONFIG_CLK_R9A08G045)		+= r9a08g045-cpg.o
- obj-$(CONFIG_CLK_R9A09G011)		+= r9a09g011-cpg.o
- obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
- 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-new file mode 100644
-index 000000000000..ff0718a03c74
---- /dev/null
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -0,0 +1,217 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RZ/G3S CPG driver
-+ *
-+ * Copyright (C) 2023 Renesas Electronics Corp.
++/**
++ * struct rzg2l_register_offsets - specific register offsets
++ * @pwpr: PWPR register offset
++ * @sd_ch: SD_CH register offset
 + */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/clock/r9a08g045-cpg.h>
-+
-+#include "rzg2l-cpg.h"
-+
-+/* RZ/G3S Specific registers. */
-+#define G3S_CPG_PL2_DDIV		(0x204)
-+#define G3S_CPG_SDHI_DDIV		(0x218)
-+#define G3S_CPG_PLL_DSEL		(0x240)
-+#define G3S_CPG_SDHI_DSEL		(0x244)
-+#define G3S_CLKSELSTATUS		(0x284)
-+
-+/* RZ/G3S Specific division configuration.  */
-+#define G3S_DIVPL2B		DDIV_PACK(G3S_CPG_PL2_DDIV, 4, 3)
-+#define G3S_DIV_SDHI0		DDIV_PACK(G3S_CPG_SDHI_DDIV, 0, 1)
-+
-+/* RZ/G3S Clock status configuration. */
-+#define G3S_DIVPL1A_STS		DDIV_PACK(CPG_CLKSTATUS, 0, 1)
-+#define G3S_DIVPL2B_STS		DDIV_PACK(CPG_CLKSTATUS, 5, 1)
-+#define G3S_DIVPL3A_STS		DDIV_PACK(CPG_CLKSTATUS, 8, 1)
-+#define G3S_DIVPL3B_STS		DDIV_PACK(CPG_CLKSTATUS, 9, 1)
-+#define G3S_DIVPL3C_STS		DDIV_PACK(CPG_CLKSTATUS, 10, 1)
-+#define G3S_DIV_SDHI0_STS	DDIV_PACK(CPG_CLKSTATUS, 24, 1)
-+
-+#define G3S_SEL_PLL4_STS	SEL_PLL_PACK(G3S_CLKSELSTATUS, 6, 1)
-+#define G3S_SEL_SDHI0_STS	SEL_PLL_PACK(G3S_CLKSELSTATUS, 16, 1)
-+
-+/* RZ/G3S Specific clocks select. */
-+#define G3S_SEL_PLL4		SEL_PLL_PACK(G3S_CPG_PLL_DSEL, 6, 1)
-+#define G3S_SEL_SDHI0		SEL_PLL_PACK(G3S_CPG_SDHI_DSEL, 0, 2)
-+
-+/* PLL 1/4/6 configuration registers macro. */
-+#define G3S_PLL146_CONF(clk1, clk2)	((clk1) << 22 | (clk2) << 12)
-+
-+#define DEF_G3S_MUX(_name, _id, _conf, _parent_names, _mux_flags, _clk_flags) \
-+	DEF_TYPE(_name, _id, CLK_TYPE_MUX, .conf = (_conf), \
-+		 .parent_names = (_parent_names), \
-+		 .num_parents = ARRAY_SIZE((_parent_names)), \
-+		 .mux_flags = CLK_MUX_HIWORD_MASK | (_mux_flags), \
-+		 .flag = (_clk_flags))
-+
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK = R9A08G045_SWD,
-+
-+	/* External Input Clocks */
-+	CLK_EXTAL,
-+
-+	/* Internal Core Clocks */
-+	CLK_OSC_DIV1000,
-+	CLK_PLL1,
-+	CLK_PLL2,
-+	CLK_PLL2_DIV2,
-+	CLK_PLL2_DIV2_8,
-+	CLK_PLL2_DIV6,
-+	CLK_PLL3,
-+	CLK_PLL3_DIV2,
-+	CLK_PLL3_DIV2_2,
-+	CLK_PLL3_DIV2_4,
-+	CLK_PLL3_DIV2_8,
-+	CLK_PLL3_DIV6,
-+	CLK_PLL4,
-+	CLK_PLL6,
-+	CLK_PLL6_DIV2,
-+	CLK_SEL_SDHI0,
-+	CLK_SEL_PLL4,
-+	CLK_P1_DIV2,
-+	CLK_P3_DIV2,
-+	CLK_SD0_DIV,
-+	CLK_SD0_DIV4,
-+	CLK_S0_DIV2,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE,
++struct rzg2l_register_offsets {
++	u16 pwpr;
++	u16 sd_ch;
 +};
 +
-+/* Divider tables */
-+static const struct clk_div_table dtable_1_2[] = {
-+	{0, 1},
-+	{1, 2},
-+	{0, 0},
++/**
++ * struct rzg2l_hwcfg - hardware configuration data structure
++ * @regs: hardware specific register offsets
++ */
++struct rzg2l_hwcfg {
++	const struct rzg2l_register_offsets regs;
 +};
 +
-+static const struct clk_div_table dtable_1_8[] = {
-+	{0, 1},
-+	{1, 2},
-+	{2, 4},
-+	{3, 8},
-+	{0, 0},
-+};
-+
-+static const struct clk_div_table dtable_1_32[] = {
-+	{0, 1},
-+	{1, 2},
-+	{2, 4},
-+	{3, 8},
-+	{4, 32},
-+	{0, 0},
-+};
-+
-+/* Mux clock names tables. */
-+static const char * const sel_sdhi[] = { ".pll2_div2", ".pll6", ".pll2_div6" };
-+static const char * const sel_pll4[] = { ".osc_div1000", ".pll4" };
-+
-+/* Mux clock indexes tables. */
-+static const u32 mtable_sd[] = { 0, 2, 3 };
-+static const u32 mtable_pll4[] = { 0, 1 };
-+
-+static const struct cpg_core_clk r9a08g045_core_clks[] __initconst = {
-+	/* External Clock Inputs */
-+	DEF_INPUT("extal", CLK_EXTAL),
-+
-+	/* Internal Core Clocks */
-+	DEF_FIXED(".osc", R9A08G045_OSCCLK, CLK_EXTAL, 1, 1),
-+	DEF_FIXED(".osc2", R9A08G045_OSCCLK2, CLK_EXTAL, 1, 3),
-+	DEF_FIXED(".osc_div1000", CLK_OSC_DIV1000, CLK_EXTAL, 1, 1000),
-+	DEF_G3S_SAMPLL(".pll1", CLK_PLL1, CLK_EXTAL, G3S_PLL146_CONF(0x4, 0x8)),
-+	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 200, 3),
-+	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 200, 3),
-+	DEF_FIXED(".pll4", CLK_PLL4, CLK_EXTAL, 100, 3),
-+	DEF_FIXED(".pll6", CLK_PLL6, CLK_EXTAL, 125, 6),
-+	DEF_FIXED(".pll2_div2", CLK_PLL2_DIV2, CLK_PLL2, 1, 2),
-+	DEF_FIXED(".pll2_div2_8", CLK_PLL2_DIV2_8, CLK_PLL2_DIV2, 1, 8),
-+	DEF_FIXED(".pll2_div6", CLK_PLL2_DIV6, CLK_PLL2, 1, 6),
-+	DEF_FIXED(".pll3_div2", CLK_PLL3_DIV2, CLK_PLL3, 1, 2),
-+	DEF_FIXED(".pll3_div2_2", CLK_PLL3_DIV2_2, CLK_PLL3_DIV2, 1, 2),
-+	DEF_FIXED(".pll3_div2_4", CLK_PLL3_DIV2_4, CLK_PLL3_DIV2, 1, 4),
-+	DEF_FIXED(".pll3_div2_8", CLK_PLL3_DIV2_8, CLK_PLL3_DIV2, 1, 8),
-+	DEF_FIXED(".pll3_div6", CLK_PLL3_DIV6, CLK_PLL3, 1, 6),
-+	DEF_FIXED(".pll6_div2", CLK_PLL6_DIV2, CLK_PLL6, 1, 2),
-+	DEF_SD_MUX(".sel_sd0", CLK_SEL_SDHI0, G3S_SEL_SDHI0, G3S_SEL_SDHI0_STS, sel_sdhi,
-+		   mtable_sd, 0, NULL),
-+	DEF_SD_MUX(".sel_pll4", CLK_SEL_PLL4, G3S_SEL_PLL4, G3S_SEL_PLL4_STS, sel_pll4,
-+		   mtable_pll4, CLK_SET_PARENT_GATE, NULL),
-+
-+	/* Core output clk */
-+	DEF_G3S_DIV("I", R9A08G045_CLK_I, CLK_PLL1, DIVPL1A, G3S_DIVPL1A_STS, dtable_1_8,
-+		    0, 0, NULL),
-+	DEF_G3S_DIV("P0", R9A08G045_CLK_P0, CLK_PLL2_DIV2_8, G3S_DIVPL2B, G3S_DIVPL2B_STS,
-+		    dtable_1_32, 0, 0, NULL),
-+	DEF_G3S_DIV("SD0", R9A08G045_CLK_SD0, CLK_SEL_SDHI0, G3S_DIV_SDHI0, G3S_DIV_SDHI0_STS,
-+		    dtable_1_2, 800000000UL, CLK_SET_RATE_PARENT, DIV_NOTIF),
-+	DEF_FIXED("SD0_DIV4", CLK_SD0_DIV4, R9A08G045_CLK_SD0, 1, 4),
-+	DEF_FIXED("M0", R9A08G045_CLK_M0, CLK_PLL3_DIV2_4, 1, 1),
-+	DEF_G3S_DIV("P1", R9A08G045_CLK_P1, CLK_PLL3_DIV2_4, DIVPL3A, G3S_DIVPL3A_STS,
-+		    dtable_1_32, 0, 0, NULL),
-+	DEF_FIXED("P1_DIV2", CLK_P1_DIV2, R9A08G045_CLK_P1, 1, 2),
-+	DEF_G3S_DIV("P2", R9A08G045_CLK_P2, CLK_PLL3_DIV2_8, DIVPL3B, G3S_DIVPL3B_STS,
-+		    dtable_1_32, 0, 0, NULL),
-+	DEF_G3S_DIV("P3", R9A08G045_CLK_P3, CLK_PLL3_DIV2_4, DIVPL3C, G3S_DIVPL3C_STS,
-+		    dtable_1_32, 0, 0, NULL),
-+	DEF_FIXED("P3_DIV2", CLK_P3_DIV2, R9A08G045_CLK_P3, 1, 2),
-+	DEF_FIXED("S0", R9A08G045_CLK_S0, CLK_SEL_PLL4, 1, 2),
-+	DEF_FIXED("S0_DIV2", CLK_S0_DIV2, R9A08G045_CLK_S0, 1, 2),
-+};
-+
-+static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
-+	DEF_MOD("gic_gicclk",		R9A08G045_GIC600_GICCLK, R9A08G045_CLK_P1, 0x514, 0),
-+	DEF_MOD("ia55_clk",		R9A08G045_IA55_CLK, R9A08G045_CLK_P1, 0x518, 1),
-+	DEF_MOD("dmac_aclk",		R9A08G045_DMAC_ACLK, R9A08G045_CLK_P3, 0x52c, 0),
-+	DEF_MOD("sdhi0_imclk",		R9A08G045_SDHI0_IMCLK, CLK_SD0_DIV4, 0x554, 0),
-+	DEF_MOD("sdhi0_imclk2",		R9A08G045_SDHI0_IMCLK2, CLK_SD0_DIV4, 0x554, 1),
-+	DEF_MOD("sdhi0_clk_hs",		R9A08G045_SDHI0_CLK_HS, R9A08G045_CLK_SD0, 0x554, 2),
-+	DEF_MOD("sdhi0_aclk",		R9A08G045_SDHI0_ACLK, R9A08G045_CLK_P1, 0x554, 3),
-+	DEF_MOD("scif0_clk_pck",	R9A08G045_SCIF0_CLK_PCK, R9A08G045_CLK_P0, 0x584, 0),
-+	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0),
-+};
-+
-+static const struct rzg2l_reset r9a08g045_resets[] = {
-+	DEF_RST(R9A08G045_GIC600_GICRESET_N, 0x814, 0),
-+	DEF_RST(R9A08G045_GIC600_DBG_GICRESET_N, 0x814, 1),
-+	DEF_RST(R9A08G045_SDHI0_IXRST, 0x854, 0),
-+	DEF_RST(R9A08G045_SCIF0_RST_SYSTEM_N, 0x884, 0),
-+	DEF_RST(R9A08G045_GPIO_RSTN, 0x898, 0),
-+	DEF_RST(R9A08G045_GPIO_PORT_RESETN, 0x898, 1),
-+	DEF_RST(R9A08G045_GPIO_SPARE_RESETN, 0x898, 2),
-+};
-+
-+static const unsigned int r9a08g045_crit_mod_clks[] __initconst = {
-+	MOD_CLK_BASE + R9A08G045_GIC600_GICCLK,
-+	MOD_CLK_BASE + R9A08G045_IA55_CLK,
-+	MOD_CLK_BASE + R9A08G045_DMAC_ACLK,
-+};
-+
-+const struct rzg2l_cpg_info r9a08g045_cpg_info = {
-+	/* Core Clocks */
-+	.core_clks = r9a08g045_core_clks,
-+	.num_core_clks = ARRAY_SIZE(r9a08g045_core_clks),
-+	.last_dt_core_clk = LAST_DT_CORE_CLK,
-+	.num_total_core_clks = MOD_CLK_BASE,
-+
-+	/* Critical Module Clocks */
-+	.crit_mod_clks = r9a08g045_crit_mod_clks,
-+	.num_crit_mod_clks = ARRAY_SIZE(r9a08g045_crit_mod_clks),
-+
-+	/* Module Clocks */
-+	.mod_clks = r9a08g045_mod_clks,
-+	.num_mod_clks = ARRAY_SIZE(r9a08g045_mod_clks),
-+	.num_hw_mod_clks = R9A08G045_VBAT_BCLK + 1,
-+
-+	/* Resets */
-+	.resets = r9a08g045_resets,
-+	.num_resets = R9A08G045_VBAT_BRESETN + 1, /* Last reset ID + 1 */
-+
-+	.has_clk_mon_regs = true,
-+};
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index c8a8833650ee..41c9b5ce23e9 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1730,6 +1730,12 @@ static const struct of_device_id rzg2l_cpg_match[] = {
- 		.data = &r9a07g054_cpg_info,
- 	},
- #endif
-+#ifdef CONFIG_CLK_R9A08G045
-+	{
-+		.compatible = "renesas,r9a08g045-cpg",
-+		.data = &r9a08g045_cpg_info,
-+	},
-+#endif
- #ifdef CONFIG_CLK_R9A09G011
- 	{
- 		.compatible = "renesas,r9a09g011-cpg",
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 164da1dd7212..a97edcdd96fa 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -284,6 +284,7 @@ struct rzg2l_cpg_info {
- extern const struct rzg2l_cpg_info r9a07g043_cpg_info;
- extern const struct rzg2l_cpg_info r9a07g044_cpg_info;
- extern const struct rzg2l_cpg_info r9a07g054_cpg_info;
-+extern const struct rzg2l_cpg_info r9a08g045_cpg_info;
- extern const struct rzg2l_cpg_info r9a09g011_cpg_info;
+ struct rzg2l_dedicated_configs {
+ 	const char *name;
+ 	u32 config;
+@@ -136,6 +153,7 @@ struct rzg2l_pinctrl_data {
+ 	struct rzg2l_dedicated_configs *dedicated_pins;
+ 	unsigned int n_port_pins;
+ 	unsigned int n_dedicated_pins;
++	const struct rzg2l_hwcfg *hwcfg;
+ };
  
- int rzg2l_cpg_sd_mux_clk_notifier(struct notifier_block *nb, unsigned long event, void *data);
+ struct rzg2l_pinctrl {
+@@ -163,6 +181,7 @@ static const unsigned int iolh_groupb_oi[] = { 100, 66, 50, 33 };
+ static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
+ 				       u8 pin, u8 off, u8 func)
+ {
++	const struct rzg2l_register_offsets *regs = &pctrl->data->hwcfg->regs;
+ 	unsigned long flags;
+ 	u32 reg;
+ 
+@@ -178,8 +197,8 @@ static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
+ 	writeb(reg & ~BIT(pin), pctrl->base + PMC(off));
+ 
+ 	/* Set the PWPR register to allow PFC register to write */
+-	writel(0x0, pctrl->base + PWPR);        /* B0WI=0, PFCWE=0 */
+-	writel(PWPR_PFCWE, pctrl->base + PWPR);  /* B0WI=0, PFCWE=1 */
++	writel(0x0, pctrl->base + regs->pwpr);		/* B0WI=0, PFCWE=0 */
++	writel(PWPR_PFCWE, pctrl->base + regs->pwpr);	/* B0WI=0, PFCWE=1 */
+ 
+ 	/* Select Pin function mode with PFC register */
+ 	reg = readl(pctrl->base + PFC(off));
+@@ -187,8 +206,8 @@ static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
+ 	writel(reg | (func << (pin * 4)), pctrl->base + PFC(off));
+ 
+ 	/* Set the PWPR register to be write-protected */
+-	writel(0x0, pctrl->base + PWPR);        /* B0WI=0, PFCWE=0 */
+-	writel(PWPR_B0WI, pctrl->base + PWPR);  /* B0WI=1, PFCWE=0 */
++	writel(0x0, pctrl->base + regs->pwpr);		/* B0WI=0, PFCWE=0 */
++	writel(PWPR_B0WI, pctrl->base + regs->pwpr);	/* B0WI=1, PFCWE=0 */
+ 
+ 	/* Switch to Peripheral pin function with PMC register */
+ 	reg = readb(pctrl->base + PMC(off));
+@@ -528,6 +547,8 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
+ {
+ 	struct rzg2l_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 	enum pin_config_param param = pinconf_to_config_param(*config);
++	const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
++	const struct rzg2l_register_offsets *regs = &hwcfg->regs;
+ 	const struct pinctrl_pin_desc *pin = &pctrl->desc.pins[_pin];
+ 	unsigned int *pin_data = pin->drv_data;
+ 	unsigned int arg = 0;
+@@ -563,9 +584,9 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
+ 		u32 pwr_reg = 0x0;
+ 
+ 		if (cfg & PIN_CFG_IO_VMC_SD0)
+-			pwr_reg = SD_CH(0);
++			pwr_reg = SD_CH(regs->sd_ch, 0);
+ 		else if (cfg & PIN_CFG_IO_VMC_SD1)
+-			pwr_reg = SD_CH(1);
++			pwr_reg = SD_CH(regs->sd_ch, 1);
+ 		else if (cfg & PIN_CFG_IO_VMC_QSPI)
+ 			pwr_reg = QSPI;
+ 		else
+@@ -617,6 +638,8 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+ 	struct rzg2l_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct pinctrl_pin_desc *pin = &pctrl->desc.pins[_pin];
+ 	unsigned int *pin_data = pin->drv_data;
++	const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
++	const struct rzg2l_register_offsets *regs = &hwcfg->regs;
+ 	enum pin_config_param param;
+ 	unsigned long flags;
+ 	void __iomem *addr;
+@@ -660,9 +683,9 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+ 				return -EINVAL;
+ 
+ 			if (cfg & PIN_CFG_IO_VMC_SD0)
+-				pwr_reg = SD_CH(0);
++				pwr_reg = SD_CH(regs->sd_ch, 0);
+ 			else if (cfg & PIN_CFG_IO_VMC_SD1)
+-				pwr_reg = SD_CH(1);
++				pwr_reg = SD_CH(regs->sd_ch, 1);
+ 			else if (cfg & PIN_CFG_IO_VMC_QSPI)
+ 				pwr_reg = QSPI;
+ 			else
+@@ -1531,6 +1554,13 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct rzg2l_hwcfg rzg2l_hwcfg = {
++	.regs = {
++		.pwpr = 0x3014,
++		.sd_ch = 0x3000,
++	},
++};
++
+ static struct rzg2l_pinctrl_data r9a07g043_data = {
+ 	.port_pins = rzg2l_gpio_names,
+ 	.port_pin_configs = r9a07g043_gpio_configs,
+@@ -1538,6 +1568,7 @@ static struct rzg2l_pinctrl_data r9a07g043_data = {
+ 	.dedicated_pins = rzg2l_dedicated_pins.common,
+ 	.n_port_pins = ARRAY_SIZE(r9a07g043_gpio_configs) * RZG2L_PINS_PER_PORT,
+ 	.n_dedicated_pins = ARRAY_SIZE(rzg2l_dedicated_pins.common),
++	.hwcfg = &rzg2l_hwcfg,
+ };
+ 
+ static struct rzg2l_pinctrl_data r9a07g044_data = {
+@@ -1548,6 +1579,7 @@ static struct rzg2l_pinctrl_data r9a07g044_data = {
+ 	.n_port_pins = ARRAY_SIZE(rzg2l_gpio_configs) * RZG2L_PINS_PER_PORT,
+ 	.n_dedicated_pins = ARRAY_SIZE(rzg2l_dedicated_pins.common) +
+ 		ARRAY_SIZE(rzg2l_dedicated_pins.rzg2l_pins),
++	.hwcfg = &rzg2l_hwcfg,
+ };
+ 
+ static const struct of_device_id rzg2l_pinctrl_of_table[] = {
 -- 
 2.39.2
 
