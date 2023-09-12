@@ -2,282 +2,114 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1ABECA0ECE
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 09:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 661E0CA0ECA
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 09:40:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232026AbjILJbv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 05:31:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48568 "EHLO
+        id S232502AbjILJkE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 05:40:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233289AbjILIHE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 04:07:04 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05B2D10DB
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 01:06:46 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-59b5484fbe6so41201357b3.1
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 01:06:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694506005; x=1695110805; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FtWP+e9BEXC7w+RUyN/G8YnHnlnT3vcX+sG9NK3ox/I=;
-        b=DEysX5LeZ/jYfjHDe2Zq6Uqme5ZHaJLzJe8GsYbgSLZbibMrlTmxNzRfFyBaj/0P1c
-         cz9czjQDVLaKktuMv0NIneO+Q0tse058LJ2G4Cbt3lYz1mmRS5syYjBs3So/91pNuEdE
-         EnLb2tayuxYxJ1fQn830xtXp8iQSfLlw2zpjvoVlucCVZ6x48nuEE+Dg4hKKZIzukjTG
-         9pyA7Grj6URtH18ua+i4dWXVf9Gqup9/x7gB7quj0EoXrP+wpQy2H0gr/s7hnr+5Dc9X
-         zh3QV30whKIpjsHIJ+dChCSNO7t3WYfPeYRZxmzBlktOq0gyFmTbx4aTAMXlTa8Xxk5Q
-         wIPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694506005; x=1695110805;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FtWP+e9BEXC7w+RUyN/G8YnHnlnT3vcX+sG9NK3ox/I=;
-        b=S5OG9tMQWYekd7Cuoyn8TqKVPnxkUyS0kH+76rxtsqBS9KfAVJO89YqawIiAT42s+w
-         6yBAK/bcRZCA9VL6NMh8Vc6i93flF02lx6BdZuHK1Xkgt/T1oHPs4+eArMwE7CKcAvCd
-         7oEvMNQ8w4jnNztAO5v/tbLkdkH1GZ46WurbRRTCxWkln5pAjUw8EDVFtzNJzA0gAn/j
-         G2oC7v5hM0CTI6aLaOGrSV5hBqebqRqk05dkyKRpzAXMIFcXv+Mw3YZwzcK0Hgoh/7P6
-         TLHWEnKvHGlyNzYYhhkRF/fAazLx0wE+oU/4HMovUKsVQcHTKczsIZ6OipLW6AEErGsv
-         /Rgw==
-X-Gm-Message-State: AOJu0YxCALZkjkBag2oVQkT2e9aXvsTntMxDMf4ZgfY+//AkNHTP+7mF
-        r9QSsfGGFDpVhYTLABzLc6ACwC7/fexOeYllZ8o0Aw==
-X-Google-Smtp-Source: AGHT+IEHrf6SFndkCb20FJCAo20fAKD8jp+yhf85lxl1eNtTsw7mK+na3Y1LgXrzLJhEEtRUNOqoM1uj91TQOZkad/w=
-X-Received: by 2002:a25:844c:0:b0:d09:377a:7bf7 with SMTP id
- r12-20020a25844c000000b00d09377a7bf7mr11592083ybm.16.1694506005187; Tue, 12
- Sep 2023 01:06:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230904115816.1237684-1-s.hauer@pengutronix.de> <20230904115816.1237684-2-s.hauer@pengutronix.de>
-In-Reply-To: <20230904115816.1237684-2-s.hauer@pengutronix.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 12 Sep 2023 10:06:34 +0200
-Message-ID: <CACRpkdYxRdToUM3JcEeNK_K87D5WDzzSLvVEbtqqdQEhz3k_Ow@mail.gmail.com>
-Subject: Re: [PATCH 1/3] pinctrl: rockchip: add support for io-domain dependency
-To:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Saravana Kannan <saravanak@google.com>
-Cc:     linux-rockchip@lists.infradead.org,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        kernel@pengutronix.de,
-        Quentin Schulz <quentin.schulz@theobroma-systems.com>,
-        Michael Riesch <michael.riesch@wolfvision.net>,
+        with ESMTP id S230335AbjILJkE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 05:40:04 -0400
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F760116;
+        Tue, 12 Sep 2023 02:39:58 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id C1FAE240082;
+        Tue, 12 Sep 2023 09:27:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1694511597;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YiX9aOtaC+6K2XdrRqRYZkRlaV8Okxw4XwCIYaNdukw=;
+        b=bI7lpfAfWtU7Q8ViyDs1nq0+U9EuyVWula6gYSA2xoQBxxiPKuUfPHwf0kFXX4/rKOiDjy
+        7YHWUW2sqrIHCt4LcolKyHfopgkS/HC2eAlX5zl6S55NTVbWr880OpKkWoujJ5an3pOb5b
+        +oUAJAV47RPTT624Dlxkebtw+4W2NJQfjYRBSZqpokaCEm5dflZEn/dksvX42jlQN2m6hX
+        gD9FP8Z0CYaY0ZYoJUpfFkzYQ5vK10sVMOropkSPxdmx0Qj0RYqZjQxdk+2ochGuenl0Ex
+        WEct+LKOA6aV4VWVRH2k+p+rShJagQqsPaaKXfmXj2oYkVpjRMU/Wed8vOOdKg==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Herve Codina <herve.codina@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v5 06/31] dt-bindings: soc: fsl: cpm_qe: cpm1-scc-qmc: Fix example property name
+Date:   Tue, 12 Sep 2023 10:14:57 +0200
+Message-ID: <20230912081527.208499-7-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230912081527.208499-1-herve.codina@bootlin.com>
+References: <20230912081527.208499-1-herve.codina@bootlin.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Top posting to bring Saravana Kannan into this discussion.
+The given example mentions the 'fsl,mode' property whereas the
+correct property name, the one described, is 'fsl,operational-mode'.
 
-This looks like a big hack to me, Saravana has been working
-tirelessly to make the device tree probe order "sort itself out"
-and I am pretty sure this issue needs to be fixed at the DT
-core level and not in a driver.
+Fix the example to use the correct property name.
 
-Saravana, can you advice how we should handle this properly?
+Fixes: a9b121327c93 ("dt-bindings: soc: fsl: cpm_qe: Add QMC controller")
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+---
+ .../bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml           | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
+index ec888f48cac8..450a0354cb1d 100644
+--- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
++++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
+@@ -137,7 +137,7 @@ examples:
+         channel@16 {
+             /* Ch16 : First 4 even TS from all routed from TSA */
+             reg = <16>;
+-            fsl,mode = "transparent";
++            fsl,operational-mode = "transparent";
+             fsl,reverse-data;
+             fsl,tx-ts-mask = <0x00000000 0x000000aa>;
+             fsl,rx-ts-mask = <0x00000000 0x000000aa>;
+@@ -146,7 +146,7 @@ examples:
+         channel@17 {
+             /* Ch17 : First 4 odd TS from all routed from TSA */
+             reg = <17>;
+-            fsl,mode = "transparent";
++            fsl,operational-mode = "transparent";
+             fsl,reverse-data;
+             fsl,tx-ts-mask = <0x00000000 0x00000055>;
+             fsl,rx-ts-mask = <0x00000000 0x00000055>;
+@@ -155,7 +155,7 @@ examples:
+         channel@19 {
+             /* Ch19 : 8 TS (TS 8..15) from all routed from TSA */
+             reg = <19>;
+-            fsl,mode = "hdlc";
++            fsl,operational-mode = "hdlc";
+             fsl,tx-ts-mask = <0x00000000 0x0000ff00>;
+             fsl,rx-ts-mask = <0x00000000 0x0000ff00>;
+         };
+-- 
+2.41.0
 
-On Mon, Sep 4, 2023 at 1:58=E2=80=AFPM Sascha Hauer <s.hauer@pengutronix.de=
-> wrote:
->
-> On some Rockchip SoCs, some SoC pins are split in what are called IO
-> domains.
->
-> An IO domain is supplied power externally, by regulators from a PMIC for
-> example. This external power supply is then used by the IO domain as
-> "supply" for the IO pins if they are outputs.
->
-> Each IO domain can configure which voltage the IO pins will be operating
-> on (1.8V or 3.3V).
->
-> There already exists an IO domain driver for Rockchip SoCs[1]. This
-> driver allows to explicit the relationship between the external power
-> supplies and IO domains[2]. This makes sure the regulators are enabled
-> by the Linux kernel so the IO domains are supplied with power and
-> correctly configured as per the supplied voltage.
-> This driver is a regulator consumer and does not offer any other
-> interface for device dependency.
->
-> However, IO pins belonging to an IO domain need to have this IO domain
-> configured correctly before they are being used otherwise they do not
-> operate correctly.
->
-> We currently do not have any knowledge about which pin is on which IO
-> domain, so we assume that all pins are on some IO domain and defer
-> probing of the pin consumers until the IO domain driver has been probed.
-> Some pins however are needed to access the regulators driving an IO
-> domain. Deferring probe for them as well would introduce a cyclic
-> dependency. To break out of this dependency a pin group can be supplied
-> a rockchip,io-domain-boot-on property. Probe won't be deferred for pin
-> groups with this property. rockchip,io-domain-boot-on should be added
-> to all pin groups needed to access the PMIC driving the IO domains.
->
-> [1] drivers/soc/rockchip/io-domain.c
-> [2] Documentation/devicetree/bindings/power/rockchip-io-domain.yaml
->
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
->  drivers/pinctrl/pinctrl-rockchip.c | 64 ++++++++++++++++++++++++++++++
->  drivers/pinctrl/pinctrl-rockchip.h |  3 ++
->  2 files changed, 67 insertions(+)
->
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl=
--rockchip.c
-> index 0276b52f37168..663bd9d6840a5 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -24,6 +24,8 @@
->  #include <linux/of_address.h>
->  #include <linux/of_device.h>
->  #include <linux/of_irq.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
->  #include <linux/pinctrl/machine.h>
->  #include <linux/pinctrl/pinconf.h>
->  #include <linux/pinctrl/pinctrl.h>
-> @@ -2678,6 +2680,43 @@ static int rockchip_pmx_get_groups(struct pinctrl_=
-dev *pctldev,
->         return 0;
->  }
->
-> +static int rockchip_pmx_check_io_domain(struct rockchip_pinctrl *info, u=
-nsigned group)
-> +{
-> +       struct platform_device *pdev;
-> +       int i;
-> +
-> +       if (!info->io_domains)
-> +               return 0;
-> +
-> +       if (info->groups[group].io_domain_skip)
-> +               return 0;
-> +
-> +       for (i =3D 0; i < info->num_io_domains; i++) {
-> +               if (!info->io_domains[i])
-> +                       continue;
-> +
-> +               pdev =3D of_find_device_by_node(info->io_domains[i]);
-> +               if (!pdev) {
-> +                       dev_err(info->dev, "couldn't find IO domain devic=
-e\n");
-> +                       return -ENODEV;
-> +               }
-> +
-> +               if (!platform_get_drvdata(pdev)) {
-> +                       dev_err(info->dev, "IO domain device is not probe=
-d yet, deferring...(%s)",
-> +                               info->groups[group].name);
-> +                       return -EPROBE_DEFER;
-> +               }
-> +
-> +               of_node_put(info->io_domains[i]);
-> +               info->io_domains[i] =3D NULL;
-> +       }
-> +
-> +       devm_kfree(info->dev, info->io_domains);
-> +       info->io_domains =3D NULL;
-> +
-> +       return 0;
-> +}
-> +
->  static int rockchip_pmx_set(struct pinctrl_dev *pctldev, unsigned select=
-or,
->                             unsigned group)
->  {
-> @@ -2691,6 +2730,10 @@ static int rockchip_pmx_set(struct pinctrl_dev *pc=
-tldev, unsigned selector,
->         dev_dbg(dev, "enable function %s group %s\n",
->                 info->functions[selector].name, info->groups[group].name)=
-;
->
-> +       ret =3D rockchip_pmx_check_io_domain(info, group);
-> +       if (ret)
-> +               return ret;
-> +
->         /*
->          * for each pin in the pin group selected, program the correspond=
-ing
->          * pin function number in the config register.
-> @@ -3019,6 +3062,8 @@ static int rockchip_pinctrl_parse_groups(struct dev=
-ice_node *np,
->         if (!size || size % 4)
->                 return dev_err_probe(dev, -EINVAL, "wrong pins number or =
-pins and configs should be by 4\n");
->
-> +       grp->io_domain_skip =3D of_property_read_bool(np, "rockchip,io-do=
-main-boot-on");
-> +
->         grp->npins =3D size / 4;
->
->         grp->pins =3D devm_kcalloc(dev, grp->npins, sizeof(*grp->pins), G=
-FP_KERNEL);
-> @@ -3417,6 +3462,22 @@ static int rockchip_pinctrl_probe(struct platform_=
-device *pdev)
->                         return PTR_ERR(info->regmap_pmu);
->         }
->
-> +       info->num_io_domains =3D of_property_count_u32_elems(np, "rockchi=
-p,io-domains");
-> +       if (info->num_io_domains) {
-> +               int i;
-> +
-> +               info->io_domains =3D devm_kmalloc_array(dev, info->num_io=
-_domains,
-> +                                                     sizeof(*info->io_do=
-mains), GFP_KERNEL);
-> +               if (!info->io_domains)
-> +                       return -ENOMEM;
-> +
-> +               for (i =3D 0; i < info->num_io_domains; i++) {
-> +                       info->io_domains[i] =3D of_parse_phandle(np, "roc=
-kchip,io-domains", 0);
-> +                       if (!info->io_domains[i])
-> +                               return -EINVAL;
-> +               }
-> +       }
-> +
->         ret =3D rockchip_pinctrl_register(pdev, info);
->         if (ret)
->                 return ret;
-> @@ -3439,6 +3500,9 @@ static int rockchip_pinctrl_remove(struct platform_=
-device *pdev)
->
->         of_platform_depopulate(&pdev->dev);
->
-> +       for (i =3D 0; i < info->num_io_domains; i++)
-> +               of_node_put(info->io_domains[i]);
-> +
->         for (i =3D 0; i < info->ctrl->nr_banks; i++) {
->                 bank =3D &info->ctrl->pin_banks[i];
->
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.h b/drivers/pinctrl/pinctrl=
--rockchip.h
-> index 4759f336941ef..d2ac79b0a7bc4 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.h
-> +++ b/drivers/pinctrl/pinctrl-rockchip.h
-> @@ -435,6 +435,7 @@ struct rockchip_pin_group {
->         unsigned int                    npins;
->         unsigned int                    *pins;
->         struct rockchip_pin_config      *data;
-> +       bool                            io_domain_skip;
->  };
->
->  /**
-> @@ -462,6 +463,8 @@ struct rockchip_pinctrl {
->         unsigned int                    ngroups;
->         struct rockchip_pmx_func        *functions;
->         unsigned int                    nfunctions;
-> +       struct device_node              **io_domains;
-> +       int                             num_io_domains;
->  };
->
->  #endif
-> --
-> 2.39.2
->
