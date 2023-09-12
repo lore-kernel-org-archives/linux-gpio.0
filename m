@@ -2,83 +2,117 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F51CA0ED3
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 10:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E53CA0ECF
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 10:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233027AbjILKSf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 06:18:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49598 "EHLO
+        id S234234AbjILKTP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 06:19:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233902AbjILKSe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 06:18:34 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EB491726;
-        Tue, 12 Sep 2023 03:18:30 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90C03C433B9;
-        Tue, 12 Sep 2023 10:18:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694513909;
-        bh=uKvPIfnxCoZtHrrIPaG9nNRcDJHXgQGDDHfQe/MWQZY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AQYFILSsh4WNbTikyKtzLokfkY+RYdnG+CMwUDOF4KBxYbpQhedujXf88J52hQ7aF
-         LXdcFlB8e4yXzo/E1ZbP7gDQtTpVc9e3uNGD5t5AtILSNFV+dbdpLboAIf/QHuBeLz
-         JiQraaMpvFZr2mErtyQgWb9r0muXGjyqtOz2zoGnOThZlJw2epVIxJHTSlwPl03P17
-         NromokDPjkkgDl0Js/Aeksn6886MU//9WG5coE3g1sT9569WQKU4lMr4OPhtEOviKI
-         LMcRZ9OWgtXWG3+vpdMNGDuSb4bV6yKGvsYlTSKdz8lMnVUrEpt5WmB5XqBVdrcUSq
-         zcq5/G+WvKQDw==
-Date:   Tue, 12 Sep 2023 11:18:20 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Mukesh Ojha <quic_mojha@quicinc.com>
-Cc:     corbet@lwn.net, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        mathieu.poirier@linaro.org, catalin.marinas@arm.com,
-        linus.walleij@linaro.org, andy.shevchenko@gmail.com,
-        vigneshr@ti.com, nm@ti.com, matthias.bgg@gmail.com,
-        kgene@kernel.org, alim.akhtar@samsung.com, bmasney@redhat.com,
-        quic_tsoni@quicinc.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel@quicinc.com
-Subject: Re: [REBASE PATCH v5 08/17] arm64: mm: Add dynamic ramoops region
- support through command line
-Message-ID: <20230912101820.GA10884@willie-the-truck>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
- <1694429639-21484-9-git-send-email-quic_mojha@quicinc.com>
+        with ESMTP id S234263AbjILKTF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 06:19:05 -0400
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A97F1715;
+        Tue, 12 Sep 2023 03:10:32 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id E1B7040003;
+        Tue, 12 Sep 2023 10:10:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1694513431;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=e9HcidEq+A9xaDn4cDf1UskGOrMSLdgPTMn8dmPNgNc=;
+        b=ORpXVav/8v2nGgIh1dhRskAUabjXdDfQkWSO1dPfulthcfojOC1x3Se99trJUjBUSLjazj
+        cZXt26HWVi8pA5p3xDR83S9/uTZzIcqKh66BH98cuE5TBUpTPboObIHEgt3e8m/ztRcZ+f
+        /zB4fS+cnSvIs3mDXIbEoIeHW2UGP7h5v/ZSpOD87nOMzEqoSgxdEKEY6qdUGSC0neU5eb
+        9tiYOYBGCBTReAwTV4JDfrYAaEIHACZqzjKK9zeeXeOsj9HoPQ4sAXzZYi7F9xzo9LxMyu
+        1t1ygsOzh0UTT1ABmjnoE/Yi9M/KRTvWe2VmQXD2MrlYNbvRnzyqCsnqK6E/Cg==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Herve Codina <herve.codina@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v5 08/31] dt-bindings: soc: fsl: cpm_qe: cpm1-scc-qmc: Add support for QMC HDLC
+Date:   Tue, 12 Sep 2023 12:10:18 +0200
+Message-ID: <20230912101018.225246-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230912081527.208499-1-herve.codina@bootlin.com>
+References: <20230912081527.208499-1-herve.codina@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1694429639-21484-9-git-send-email-quic_mojha@quicinc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Sep 11, 2023 at 04:23:50PM +0530, Mukesh Ojha wrote:
-> The reserved memory region for ramoops is assumed to be at a fixed
-> and known location when read from the devicetree. This may not be
-> required for something like Qualcomm's minidump which is interested
-> in knowing addresses of ramoops region but it does not put hard
-> requirement of address being fixed as most of it's SoC does not
-> support warm reset and does not use pstorefs at all instead it has
-> firmware way of collecting ramoops region if it gets to know the
-> address and register it with apss minidump table which is sitting
-> in shared memory region in DDR and firmware will have access to
-> these table during reset and collects it on crash of SoC.
-> 
-> So, add the support of reserving ramoops region to be dynamically
-> allocated early during boot if it is request through command line
-> via 'dyn_ramoops_size=' and fill up reserved resource structure and
-> export the structure, so that it can be read by ramoops driver.
-> 
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> ---
->  arch/arm64/mm/init.c       | 94 ++++++++++++++++++++++++++++++++++++++++++++++
+The QMC (QUICC mutichannel controller) is a controller present in some
+PowerQUICC SoC such as MPC885.
+The QMC HDLC uses the QMC controller to transfer HDLC data.
 
-Why does this need to be in the arch code? There's absolutely nothing
-arm64-specific here.
+Additionally, a framer can be connected to the QMC HDLC.
+If present, this framer is the interface between the TDM bus used by the
+QMC HDLC and the E1/T1 line.
+The QMC HDLC can use this framer to get information about the E1/T1 line
+and configure the E1/T1 line.
 
-Will
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+---
+ .../bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml   | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
+index 82d9beb48e00..b5073531f3f1 100644
+--- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
++++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
+@@ -101,6 +101,16 @@ patternProperties:
+           Channel assigned Rx time-slots within the Rx time-slots routed by the
+           TSA to this cell.
+ 
++      compatible:
++        const: fsl,qmc-hdlc
++
++      fsl,framer:
++        $ref: /schemas/types.yaml#/definitions/phandle
++        description:
++          phandle to the framer node. The framer is in charge of an E1/T1 line
++          interface connected to the TDM bus. It can be used to get the E1/T1 line
++          status such as link up/down.
++
+     required:
+       - reg
+       - fsl,tx-ts-mask
+@@ -159,5 +169,8 @@ examples:
+             fsl,operational-mode = "hdlc";
+             fsl,tx-ts-mask = <0x00000000 0x0000ff00>;
+             fsl,rx-ts-mask = <0x00000000 0x0000ff00>;
++
++            compatible = "fsl,qmc-hdlc";
++            fsl,framer = <&framer>;
+         };
+     };
+-- 
+2.41.0
+
