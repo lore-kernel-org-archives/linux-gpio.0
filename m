@@ -2,135 +2,89 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 896A8CA0ECA
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 09:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB53CA0EC3
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 09:31:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233543AbjILJ2C (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 05:28:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37894 "EHLO
+        id S233779AbjILJbp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 05:31:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233694AbjILJ2A (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 05:28:00 -0400
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38A4710E4;
-        Tue, 12 Sep 2023 02:27:55 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 59A0D24003C;
-        Tue, 12 Sep 2023 09:15:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1694510873;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cUE18U4/Xtk+Bz69IO+G24gbXSJeiWM3VkIeXZKQwc8=;
-        b=AmkY2XaxgcY6QOmK4Vu3ND2+M5lBx/VGcwNfkWl6KiVxTlWOsAiZrqpXDr6tqxp9GQkO6v
-        GB9DXcADiDaj7U4rfYbxgEyshWOf1IEJO4dAvEbk6WwZ3wmzxHmzSJzLSrE1u0NftPyh/T
-        RaP500KDZR6tztzj6dwr6ezn+4+j41zAXDU7MlcFa7NM63ty123vq/MOeK38g+8O8tdb6z
-        EWknV7fCCcBohSs6tT+ym3EfF9t1TC7SVe5b9U+afF1St3fT1Z7ZzL13E3EwTukNm1vFHa
-        2UFNLhcSqlzBbvYIXmUn5iBGSbrfhhWE+mTgU2kHwVkye03XPflZeMc21FTm5A==
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Herve Codina <herve.codina@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v5 05/31] soc: fsl: cpm1: qmc: Remove inline function specifiers
-Date:   Tue, 12 Sep 2023 10:14:56 +0200
-Message-ID: <20230912081527.208499-6-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230912081527.208499-1-herve.codina@bootlin.com>
-References: <20230912081527.208499-1-herve.codina@bootlin.com>
+        with ESMTP id S233752AbjILJbk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 05:31:40 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F11B123;
+        Tue, 12 Sep 2023 02:31:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694511096; x=1726047096;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=KAbjzoM9A507xCYTGkBxWAfT/6us+iLQDYfKZxIiLqM=;
+  b=SomspT2sQgJQF5t82fg7aeolHu7lleGHp/AXWKWv5bFQ5sCDu7ZRiTCO
+   XEuqUPDWH5ICfrxSA9LyEG3msbIyugrPkMueig11vSC0vBYEZn+TJtxni
+   HAmberY+68uor/NBkh+evBtRmnK4eORDYjrGw5NugkplsJHK1kInzoGDh
+   FTOpxiw0/EmntYILjT7b9Wzf3K1igFboYDGBEOff416Y6Xm14bqnyw5MT
+   fmX/wp3XWk+k2iCUtag+Jdpj12TBlnjDJSnSLjuauUDISUpwuygiDjHJz
+   nTfWLlz76Ub8d4I/8vIMvBb0Op5ju+3H9R21NfA/Ii78kNHlgzh4bNhK9
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10830"; a="368581969"
+X-IronPort-AV: E=Sophos;i="6.02,245,1688454000"; 
+   d="scan'208";a="368581969"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2023 02:31:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10830"; a="743658827"
+X-IronPort-AV: E=Sophos;i="6.02,245,1688454000"; 
+   d="scan'208";a="743658827"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2023 02:31:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qfzk3-008Y5a-3B;
+        Tue, 12 Sep 2023 12:31:31 +0300
+Date:   Tue, 12 Sep 2023 12:31:31 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v1 01/10] gpio: pca953x: Drop unused fields in struct
+ pca953x_platform_data
+Message-ID: <ZQAv8wJuS7t0RV+m@smile.fi.intel.com>
+References: <20230901134041.1165562-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdboT46oadZJZTde=ze2vEvC9aUGjO5-MjDdVwCNijFqDw@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+In-Reply-To: <CACRpkdboT46oadZJZTde=ze2vEvC9aUGjO5-MjDdVwCNijFqDw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The inline function specifier is present on some functions but it is
-better to let the compiler decide inlining or not these functions.
+On Tue, Sep 12, 2023 at 09:50:06AM +0200, Linus Walleij wrote:
+> On Fri, Sep 1, 2023 at 3:40 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > New code should solely use firmware nodes for the specifics and
+> > not any callbacks.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Patches look good to me:
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> for all patches.
 
-Remove inline specifiers.
+Thank you!
 
-Fixes: 3178d58e0b97 ("soc: fsl: cpm1: Add support for QMC")
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- drivers/soc/fsl/qe/qmc.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+> Patch 8 looks HTML on my gmail but I guess the problem
+> is on my side.
 
-diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 2d2a9d88ba6c..459e0bbd723d 100644
---- a/drivers/soc/fsl/qe/qmc.c
-+++ b/drivers/soc/fsl/qe/qmc.c
-@@ -218,37 +218,37 @@ struct qmc {
- 	struct qmc_chan *chans[64];
- };
- 
--static inline void qmc_write16(void __iomem *addr, u16 val)
-+static void qmc_write16(void __iomem *addr, u16 val)
- {
- 	iowrite16be(val, addr);
- }
- 
--static inline u16 qmc_read16(void __iomem *addr)
-+static u16 qmc_read16(void __iomem *addr)
- {
- 	return ioread16be(addr);
- }
- 
--static inline void qmc_setbits16(void __iomem *addr, u16 set)
-+static void qmc_setbits16(void __iomem *addr, u16 set)
- {
- 	qmc_write16(addr, qmc_read16(addr) | set);
- }
- 
--static inline void qmc_clrbits16(void __iomem *addr, u16 clr)
-+static void qmc_clrbits16(void __iomem *addr, u16 clr)
- {
- 	qmc_write16(addr, qmc_read16(addr) & ~clr);
- }
- 
--static inline void qmc_write32(void __iomem *addr, u32 val)
-+static void qmc_write32(void __iomem *addr, u32 val)
- {
- 	iowrite32be(val, addr);
- }
- 
--static inline u32 qmc_read32(void __iomem *addr)
-+static u32 qmc_read32(void __iomem *addr)
- {
- 	return ioread32be(addr);
- }
- 
--static inline void qmc_setbits32(void __iomem *addr, u32 set)
-+static void qmc_setbits32(void __iomem *addr, u32 set)
- {
- 	qmc_write32(addr, qmc_read32(addr) | set);
- }
+The entire series has been sent in the same way, it's quite unlikely that
+the only patch got mangled while others are okay.
+
 -- 
-2.41.0
+With Best Regards,
+Andy Shevchenko
+
 
