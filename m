@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3FCCA0EC3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 849E5CA0EE1
 	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 04:53:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229799AbjILExK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 00:53:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51504 "EHLO
+        id S229736AbjILExM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 00:53:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229811AbjILEwa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 00:52:30 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C02BDE70
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 21:52:26 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-52f3ba561d9so5123340a12.1
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 21:52:26 -0700 (PDT)
+        with ESMTP id S229898AbjILEwl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 00:52:41 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B429F10CB
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 21:52:32 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-52e297c7c39so6478273a12.2
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Sep 2023 21:52:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1694494345; x=1695099145; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1694494351; x=1695099151; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CWV9f2XGMGZ1osmL6Dmo7EcLISauRJpn6Qrd8fgNooo=;
-        b=IDY/MvQXmCwdQaxZowq326AODqP5jDcnKI50MylXYv2f6wVY5NyQTSNmuwblNtfmbV
-         62qM1t9v27sUyQp630EYuOcRkbMqCo+/4EIKZzig43rAecnBkDjwxkZba7KlmCrZLdQW
-         u1aHFpQN+KXxyASj1iZHsSMMtc4yhIDpEc05uwxMsqEC32R8gTBepFoxdxG880tooVjH
-         J64jwhkmXyk8zFUd9E5PwV0g62KPFiF/WdAhz1RZlBfqzbnVybxE/TGMAfylq1IqP/sY
-         h6sX4GIKW2jaCwuMQx9/eBeoenEx13FLAAucb5kyV4l8USOhPNTwdQnTnhjz+eW/LrQI
-         ySMg==
+        bh=mFiTlxos31mZKN8Uh6c4oVvz/fRV7ovmoFQ3Pg95qP4=;
+        b=a8Genb1MMo9qnGJ4Ia2WF9rrOMdGv0Y8euUsUcaWXO8u/1QnMH/XreECwc2fn5cCPm
+         altGNez9WJo8c3oexiPJfaqw9v9YiFUU4QsQwLDxDG7NnhjvKu7GqEnKsboEJiElmZ2Z
+         TwfZc6gnfHKtJdsoMgq4V2fmsv2bSJVmZHGbbtYwIm0W3GIOu0GGBKugDTttmFmCjltI
+         jPIUqYeafaOVQFf1oj5llZnM/xgMxZU1/1ArM9dwnQbldPk1to08sUA84Mrr7P4dQ3vp
+         Loe1oGDHSeRrvYN/xvzMdjTXoLlDob1mkqmfuQrzB5Zei5DgCXxczMbHZldiQFfrjNT+
+         4XpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694494345; x=1695099145;
+        d=1e100.net; s=20230601; t=1694494351; x=1695099151;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CWV9f2XGMGZ1osmL6Dmo7EcLISauRJpn6Qrd8fgNooo=;
-        b=BdC2WtqBucJsi1OY8AGNpU67COzUtagSB/geqQb8X7EEr46JfCCSvFlLk8EWXYBz5g
-         mB7iMV2Jid1mD3iySNuDcqRG0fK2KFxEQpugJn3vvvS+XKkhsN3kRGhnLO1DK8XjQimH
-         th81HZCApbf8gh4BVBj1dS5uLDBvqGAoTqp3/Zlx32JSdyEoBK6gHEx1QBxfrx7TRjIn
-         CPXre31eQgIonnvbqimuZ/Vdp2tCT++EwKRAe6uucnjutFWgjQoiZZYy0Oaccd4T31il
-         8PP7Xl9oo/8sc2p01ycbSp6yAPwWrDwkkzAQGJmKtYV+MwdNHZSQwHOlMhvhiblVOKax
-         znIg==
-X-Gm-Message-State: AOJu0Ywk+U707pOn685Oj8d6OKVVi6ZtcyFIpchALAdS9AZv8cojtAbo
-        gSguU88UTy/DIx+ffwxDJml2uA==
-X-Google-Smtp-Source: AGHT+IEXMvJ54B9tDieb/iBxe6vR9tpU1fSuBhk/VIriKpr9bHjIDviE+4AXLRRYhM0H6Kg7n9NlkA==
-X-Received: by 2002:aa7:d28a:0:b0:522:d801:7d07 with SMTP id w10-20020aa7d28a000000b00522d8017d07mr1984738edq.10.1694494345199;
-        Mon, 11 Sep 2023 21:52:25 -0700 (PDT)
+        bh=mFiTlxos31mZKN8Uh6c4oVvz/fRV7ovmoFQ3Pg95qP4=;
+        b=dlC2n/ReU+kMJ9sdUJ0go8I0nP+29+DTrGOdOFgomckDJkOxZGkCKOW/gcXE2Jph43
+         GqCZFDi06SX5Fo7rNSgpCOZ6Ea6J4QYde59a4JExz99GRv89zvUTsTj6sNyHAtCRPp+F
+         KjU9BlHYpi44j5HVA31XvzfGrBqlK381oRKk9+XCdJUAO6KFBryeq0u8l1/JiSaDXo8R
+         jQR0jPCIn+jtirc7vc0paZ0ZxxSyOc+3fur5qMXJrwrmyYRJdqgJqz6ZVq8QKuzHwfmS
+         bPlu4jPwrFnHtUIAqla6Nz14k8uA1hCA230PU4+KaKn4LhxaL3YqobwqJFIZtXhpBTh4
+         aeaw==
+X-Gm-Message-State: AOJu0YyCFLVrkFxNBBTesUTHwuStnWuZZYpssP99TIGOZ7zHaAVvdBiY
+        gg3iODLa2hI1QBD0mlJLlDm7dQ==
+X-Google-Smtp-Source: AGHT+IHvXYlpSeIl2bJTyCpJyr22692xyTHOLLmpYrZKXA9nSCycNWCzrlEZbFMAFY3iFGTOCaQSgw==
+X-Received: by 2002:a05:6402:1619:b0:523:3e5d:8aa2 with SMTP id f25-20020a056402161900b005233e5d8aa2mr8652712edv.14.1694494351322;
+        Mon, 11 Sep 2023 21:52:31 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.145])
-        by smtp.gmail.com with ESMTPSA id f21-20020a05640214d500b0051e22660835sm5422415edx.46.2023.09.11.21.52.23
+        by smtp.gmail.com with ESMTPSA id f21-20020a05640214d500b0051e22660835sm5422415edx.46.2023.09.11.21.52.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Sep 2023 21:52:24 -0700 (PDT)
+        Mon, 11 Sep 2023 21:52:31 -0700 (PDT)
 From:   Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
@@ -67,9 +67,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 04/37] soc: renesas: identify RZ/G3S SoC
-Date:   Tue, 12 Sep 2023 07:51:24 +0300
-Message-Id: <20230912045157.177966-5-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 07/37] clk: renesas: rzg2l: lock around writes to mux register
+Date:   Tue, 12 Sep 2023 07:51:27 +0300
+Message-Id: <20230912045157.177966-8-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
@@ -81,76 +81,69 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add support to identify the RZ/G3S (R9A08G045) SoC.
+SD MUX output (SD0) is further divided by 4 in G2{L, UL}. The divided
+clock is SD0_DIV4. SD0_DIV4 is registered with CLK_SET_RATE_PARENT which
+means a rate request for it is propagated to the MUX and could reach
+rzg2l_cpg_sd_clk_mux_set_parent() concurrently with the users of SD0.
+Add proper locking to avoid concurrent access on SD MUX set rate
+registers.
 
+Fixes: eaff33646f4cb ("clk: renesas: rzg2l: Add SDHI clk mux support")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/soc/renesas/Kconfig       |  6 ++++++
- drivers/soc/renesas/renesas-soc.c | 13 +++++++++++++
- 2 files changed, 19 insertions(+)
+ drivers/clk/renesas/rzg2l-cpg.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 5a75ab64d1ed..631b17c627a8 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -319,6 +319,12 @@ config ARCH_R9A07G054
- 	help
- 	  This enables support for the Renesas RZ/V2L SoC variants.
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 70d1c28ba088..1195d4b1f545 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -189,6 +189,7 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	u32 shift = GET_SHIFT(hwdata->conf);
+ 	const u32 clk_src_266 = 2;
+ 	u32 msk, val, bitmask;
++	unsigned long flags;
+ 	int ret;
  
-+config ARCH_R9A08G045
-+	bool "ARM64 Platform support for RZ/G3S"
-+	select ARCH_RZG2L
-+	help
-+	  This enables support for the Renesas RZ/G3S SoC variants.
-+
- config ARCH_R9A09G011
- 	bool "ARM64 Platform support for RZ/V2M"
- 	select PM
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index 42af7c09f743..1598b66ffb51 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -72,6 +72,10 @@ static const struct renesas_family fam_rzg2ul __initconst __maybe_unused = {
- 	.name	= "RZ/G2UL",
- };
+ 	/*
+@@ -203,25 +204,27 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	 * the index to value mapping is done by adding 1 to the index.
+ 	 */
+ 	bitmask = (GENMASK(GET_WIDTH(hwdata->conf) - 1, 0) << shift) << 16;
++	spin_lock_irqsave(&priv->rmw_lock, flags);
+ 	if (index != clk_src_266) {
+ 		writel(bitmask | ((clk_src_266 + 1) << shift), priv->base + off);
  
-+static const struct renesas_family fam_rzg3s __initconst __maybe_unused = {
-+	.name	= "RZ/G3S",
-+};
-+
- static const struct renesas_family fam_rzv2l __initconst __maybe_unused = {
- 	.name	= "RZ/V2L",
- };
-@@ -170,6 +174,11 @@ static const struct renesas_soc soc_rz_g2ul __initconst __maybe_unused = {
- 	.id     = 0x8450447,
- };
+ 		msk = off ? CPG_CLKSTATUS_SELSDHI1_STS : CPG_CLKSTATUS_SELSDHI0_STS;
  
-+static const struct renesas_soc soc_rz_g3s __initconst __maybe_unused = {
-+	.family = &fam_rzg3s,
-+	.id	= 0x85e0447,
-+};
+-		ret = readl_poll_timeout(priv->base + CPG_CLKSTATUS, val,
+-					 !(val & msk), 100,
+-					 CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US);
+-		if (ret) {
+-			dev_err(priv->dev, "failed to switch clk source\n");
+-			return ret;
+-		}
++		ret = readl_poll_timeout_atomic(priv->base + CPG_CLKSTATUS, val,
++						!(val & msk), 100,
++						CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US);
++		if (ret)
++			goto unlock;
+ 	}
+ 
+ 	writel(bitmask | ((index + 1) << shift), priv->base + off);
+ 
+-	ret = readl_poll_timeout(priv->base + CPG_CLKSTATUS, val,
+-				 !(val & msk), 100,
+-				 CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US);
++	ret = readl_poll_timeout_atomic(priv->base + CPG_CLKSTATUS, val,
++					!(val & msk), 100,
++					CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US);
++unlock:
++	spin_unlock_irqrestore(&priv->rmw_lock, flags);
 +
- static const struct renesas_soc soc_rz_v2l __initconst __maybe_unused = {
- 	.family = &fam_rzv2l,
- 	.id     = 0x8447447,
-@@ -386,6 +395,9 @@ static const struct of_device_id renesas_socs[] __initconst __maybe_unused = {
- #ifdef CONFIG_ARCH_R9A07G054
- 	{ .compatible = "renesas,r9a07g054",	.data = &soc_rz_v2l },
- #endif
-+#ifdef CONFIG_ARCH_R9A08G045
-+	{ .compatible = "renesas,r9a08g045",	.data = &soc_rz_g3s },
-+#endif
- #ifdef CONFIG_ARCH_R9A09G011
- 	{ .compatible = "renesas,r9a09g011",	.data = &soc_rz_v2m },
- #endif
-@@ -429,6 +441,7 @@ static const struct of_device_id renesas_ids[] __initconst = {
- 	{ .compatible = "renesas,r9a07g043-sysc",	.data = &id_rzg2l },
- 	{ .compatible = "renesas,r9a07g044-sysc",	.data = &id_rzg2l },
- 	{ .compatible = "renesas,r9a07g054-sysc",	.data = &id_rzg2l },
-+	{ .compatible = "renesas,r9a08g045-sysc",	.data = &id_rzg2l },
- 	{ .compatible = "renesas,r9a09g011-sys",	.data = &id_rzv2m },
- 	{ .compatible = "renesas,prr",			.data = &id_prr },
- 	{ /* sentinel */ }
+ 	if (ret)
+ 		dev_err(priv->dev, "failed to switch clk source\n");
+ 
 -- 
 2.39.2
 
