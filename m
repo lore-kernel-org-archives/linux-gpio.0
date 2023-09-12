@@ -2,102 +2,86 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2050CA0EC3
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 10:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7EE5CA0ECA
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 10:58:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233315AbjILKwH (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 06:52:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39858 "EHLO
+        id S234330AbjILK6L (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 06:58:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234022AbjILKPt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 06:15:49 -0400
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 772CB3A8C;
-        Tue, 12 Sep 2023 03:15:18 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 72C5820009;
-        Tue, 12 Sep 2023 10:15:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1694513716;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gp0DZdJZ57bJSLR9QPunme3eaV+da1RSlU2iRHeM664=;
-        b=Qw7kU4INLgZO9mLe/aOW1raLUqZbjj0I7NzVU3whmIYQC10F/vks1TmNfonp/LrBiewbnL
-        Cf8fRH+3biM0lKr7GqtUAufYXyz5g7AjJu1mOOY0LdmEWtb0udTe82TejFs6/gHMU1JpPh
-        29BVfboeDAwO8STLzTMOUxuBtmp3lehlBJvw5lhc4fZqN57WRMEO5KC6x7xnwr+1IQDQCd
-        B6x7Sxrm39gURsnZ04wwhiGSH6z7Et7twBaS4oF+QzMhjEExnwKmcX916BeqnlkZICF0+L
-        8zwqTvmJQMVFSIX6ungwxlbiuHg1XkJIPfI26LSQK3A1DT6d56tDYevrL7oYLQ==
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Herve Codina <herve.codina@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v5 29/31] MAINTAINERS: Add the Lantiq PEF2256 driver entry
-Date:   Tue, 12 Sep 2023 12:15:10 +0200
-Message-ID: <20230912101510.225920-1-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230912081527.208499-1-herve.codina@bootlin.com>
-References: <20230912081527.208499-1-herve.codina@bootlin.com>
+        with ESMTP id S234368AbjILK55 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 06:57:57 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03D81173D;
+        Tue, 12 Sep 2023 03:57:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1694516247; x=1726052247;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/TcDrQ6ZA804X+FGceYvm4xySIxcsUNJZtVj4ZCuNFE=;
+  b=LxTyGSplO1f1/VJWFnXVzvEvw0pEItV+65RLRRHyjBKZ9+SVzSg/AHkB
+   dfrVv0RrlcMaalDpVQgCx4uGqoOdMbwfASISDbXYa3VO5wiyDwV94wcjB
+   jvqetmqNxIqHfIUpA3Rtyfa2kQkDD0LtKVw8hl17mtQcFfFSOBudMTZQg
+   FcR4uqkYki0VLrT6IUldYQbttZu5kcDOJu5SgWHoIBYylJbiswhERNCI+
+   Es/AONQ3sXBoJhXOwH/JNZB/g8XAj8EvoQl+MFE71zk1mKKhThe6ozaMI
+   ujqCVoraj2v6OPqMPqntA+kc1/5bZfXYBk8j3rzDcmkr17VqujuhFGDtH
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10830"; a="358615708"
+X-IronPort-AV: E=Sophos;i="6.02,139,1688454000"; 
+   d="scan'208";a="358615708"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2023 03:57:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10830"; a="693455911"
+X-IronPort-AV: E=Sophos;i="6.02,139,1688454000"; 
+   d="scan'208";a="693455911"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2023 03:57:17 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qg150-008ZAi-1Z;
+        Tue, 12 Sep 2023 13:57:14 +0300
+Date:   Tue, 12 Sep 2023 13:57:14 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 04/11] gpiolib: provide gpio_device_find_by_label()
+Message-ID: <ZQBECsLHhuNRYr20@smile.fi.intel.com>
+References: <20230912100727.23197-1-brgl@bgdev.pl>
+ <20230912100727.23197-5-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230912100727.23197-5-brgl@bgdev.pl>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-After contributing the driver, add myself as the maintainer for the
-Lantiq PEF2256 driver.
+On Tue, Sep 12, 2023 at 12:07:20PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> By far the most common way of looking up GPIO devices is using their
+> label. Provide a helpers for that to avoid every user implementing their
+> own matching function.
 
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+...
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8b987f2c8633..dbc5867016bc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11876,6 +11876,15 @@ S:	Maintained
- F:	arch/mips/lantiq
- F:	drivers/soc/lantiq
- 
-+LANTIQ PEF2256 DRIVER
-+M:	Herve Codina <herve.codina@bootlin.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/net/lantiq,pef2256.yaml
-+F:	drivers/net/wan/framer/pef2256/
-+F:	drivers/pinctrl/pinctrl-pef2256-regs.h
-+F:	drivers/pinctrl/pinctrl-pef2256.c
-+F:	include/linux/framer/pef2256.h
-+
- LASI 53c700 driver for PARISC
- M:	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
- L:	linux-scsi@vger.kernel.org
+> +static int gpio_chip_match_by_label(struct gpio_chip *gc, void *label)
+> +{
+> +	return gc->label && !strcmp(gc->label, label);
+
+When gc->label can be NULL?
+
+> +}
+
 -- 
-2.41.0
+With Best Regards,
+Andy Shevchenko
+
 
