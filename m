@@ -2,154 +2,217 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 500D8CA0ECE
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 08:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1942CCA0ECE
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 08:51:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232908AbjILIpw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 04:45:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54184 "EHLO
+        id S230077AbjILIvv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 04:51:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233043AbjILIpg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 04:45:36 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D0E2172D
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 01:45:01 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-5008d16cc36so9092432e87.2
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 01:45:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694508299; x=1695113099; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=A9cYVknfBAeu75UVlteP6kQhTPhNkOUCF7HIJ1iSBek=;
-        b=BHJcFJQj+7Gi989PrwVufeL0/jVprTH/C98ODqnBmTKUQyrDmVeS+gmDEvvFTUqLHk
-         sG5Ed5/6iCkbaYGnip1T5A9NAijo/m82GAy6AH/e+NBYIbeJmy6setNWtHNLS4I4Lxjv
-         SdLkWow07BnWbycPOJKQtgv52o30B2WFCbmOBbunrbAiXM84Gf+GyEuEirm8/SKVPju9
-         CHuutqLjF/pR5TgcEJzHrvbM4re0JS8xiXTl2E5ZO243h+7yrDaUvbZv8vSQdiaC5Ogc
-         lOeCsKqZ5D6Rt5GfN7QHyJ39juUp68mRF7gPeQihI40u/Ms6YuiFeAOdbnD00hy1YQKL
-         6B7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694508299; x=1695113099;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A9cYVknfBAeu75UVlteP6kQhTPhNkOUCF7HIJ1iSBek=;
-        b=bh/Yc7ib70rMRytao7YazGM6DE8EYf9531/W4xhuNMM6unxZ9MWk9cslhHyM6l+hTp
-         j+kT3d41iVzxAhFn8bnXTgfpBCQTbaAPD2HmRFSMBvdS2yPvXYrNkYPdBcfy0jR2u2wE
-         X9yS+1w0wyBVSY3EahmZ9u6xkygbiwbUY3RnDhCGGFDBJXDno0Mz9/Dz7miTYircbn8V
-         HiR4srrC2V3goCxvEETjpRRh2PB5R6O1oMCLqcNhpgdQrUHJf+5eZnjBCBKSAWrMw6JS
-         xCwI0Ri44dNrys2PU+f0Lk0HcoAXRN+nApty5JlV6gLSoQueL1k75qI5JoI7FSYcwOql
-         V9wA==
-X-Gm-Message-State: AOJu0Yx9714DlEdkSoy0kG29Q8Uh/FKuMpCHJN7CbQQquBlwdTI8YHBa
-        AEJ7bsnYhI3oiWpr8TxHDiBnkg==
-X-Google-Smtp-Source: AGHT+IGSOMHXkbKBRndy/P+lUWb4Fd6BypQox95rPMLgRNO93FsXEf3VhT1aIAsksiNcS/whalhFWg==
-X-Received: by 2002:ac2:498f:0:b0:500:d960:8b6f with SMTP id f15-20020ac2498f000000b00500d9608b6fmr8976952lfl.67.1694508299373;
-        Tue, 12 Sep 2023 01:44:59 -0700 (PDT)
-Received: from [127.0.1.1] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id u4-20020a056512040400b004fdc0f2caafsm1671525lfk.48.2023.09.12.01.44.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Sep 2023 01:44:58 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 12 Sep 2023 10:44:52 +0200
-Subject: [PATCH] OMAP/gpio: drop MPUIO static base
+        with ESMTP id S231637AbjILIvv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 04:51:51 -0400
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 104DBE79;
+        Tue, 12 Sep 2023 01:51:45 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 7054024005D;
+        Tue, 12 Sep 2023 08:39:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1694508704;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fnhlmyV9uqfQHa6AlRpMQCfiW/NfQzJB6OlaQ/hT7HQ=;
+        b=mx341KceJaUgBDsgVG30vUrWpWZD65gedAPbcxO0PrGlNZ5/L1PKGa/q/iThrJ6Srt6x5B
+        dM3M4ydgc4GlL0/87qKFiUdu9wpcx3iIivvTxv2K6R910LfJHFUOxkd3iI8vLNwDiYzMOK
+        4rWMmEmKsVhx7/+pIpePRcuB+4ZQgCiG2AGrK69CGT2cnfmkutn5MUKcHP8vrnlLe2FZNb
+        JzmmbzK8q9Q6rGATjYPV1mWMfY55wLVv7PNrvOOYvdPS3oM2gGtER6y5da9b9UciFezkT9
+        4RsanBUFuLvLk+o1JqunSBk6KlZmlRrsqWVSwEFGc46nWLZZSZL/MfeXq+vlyQ==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Herve Codina <herve.codina@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v5 02/31] soc: fsl: cpm1: qmc: Fix __iomem addresses declaration
+Date:   Tue, 12 Sep 2023 10:14:53 +0200
+Message-ID: <20230912081527.208499-3-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230912081527.208499-1-herve.codina@bootlin.com>
+References: <20230912081527.208499-1-herve.codina@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230912-omap-mpuio-base-v1-1-290d9bd24b23@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAAMlAGUC/x3MMQqAMAxA0atIZgO2CqJXEYdUU81gWxoUQby7x
- fEN/z+gnIUVxuqBzJeoxFBg6gqWncLGKGsx2Ma2zWAsxoMSHumUiI6UcaDV0eL7znoHpUqZvdz
- /cZrf9wPfdjC1YQAAAA==
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: b4 0.12.3
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The OMAP GPIO driver hardcodes the MPIO chip base, but there
-is no point: we have already moved all consumers over to using
-descriptor look-ups.
+Running sparse (make C=1) on qmc.c raises a lot of warning such as:
+  ...
+  warning: incorrect type in assignment (different address spaces)
+     expected struct cpm_buf_desc [usertype] *[noderef] __iomem bd
+     got struct cpm_buf_desc [noderef] [usertype] __iomem *txbd_free
+  ...
 
-Drop the MPUIO GPIO base and use dynamic assignment.
+Indeed, some variable were declared 'type *__iomem var' instead of
+'type __iomem *var'.
 
-Root out the unused instances of the OMAP_MPUIO() macro and
-delete the unused OMAP_GPIO_IS_MPUIO() macro.
+Use the correct declaration to remove these warnings.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 3178d58e0b97 ("soc: fsl: cpm1: Add support for QMC")
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
-Maybe Bartosz can merge this into the GPIO tree with Tony's
-et al blessing?
----
- arch/arm/mach-omap1/board-palmte.c      | 5 -----
- drivers/gpio/gpio-omap.c                | 3 +--
- include/linux/platform_data/gpio-omap.h | 3 ---
- 3 files changed, 1 insertion(+), 10 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/arch/arm/mach-omap1/board-palmte.c b/arch/arm/mach-omap1/board-palmte.c
-index 7e061d671fde..c917cb2c6e17 100644
---- a/arch/arm/mach-omap1/board-palmte.c
-+++ b/arch/arm/mach-omap1/board-palmte.c
-@@ -51,11 +51,6 @@
- #define PALMTE_HDQ_GPIO		11
- #define PALMTE_HEADPHONES_GPIO	14
- #define PALMTE_SPEAKER_GPIO	15
--#define PALMTE_DC_GPIO		OMAP_MPUIO(2)
--#define PALMTE_MMC_SWITCH_GPIO	OMAP_MPUIO(4)
--#define PALMTE_MMC1_GPIO	OMAP_MPUIO(6)
--#define PALMTE_MMC2_GPIO	OMAP_MPUIO(7)
--#define PALMTE_MMC3_GPIO	OMAP_MPUIO(11)
+diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+index b3c292c9a14e..7ad0d77f1740 100644
+--- a/drivers/soc/fsl/qe/qmc.c
++++ b/drivers/soc/fsl/qe/qmc.c
+@@ -175,7 +175,7 @@ struct qmc_chan {
+ 	struct list_head list;
+ 	unsigned int id;
+ 	struct qmc *qmc;
+-	void *__iomem s_param;
++	void __iomem *s_param;
+ 	enum qmc_mode mode;
+ 	u64	tx_ts_mask;
+ 	u64	rx_ts_mask;
+@@ -203,9 +203,9 @@ struct qmc_chan {
+ struct qmc {
+ 	struct device *dev;
+ 	struct tsa_serial *tsa_serial;
+-	void *__iomem scc_regs;
+-	void *__iomem scc_pram;
+-	void *__iomem dpram;
++	void __iomem *scc_regs;
++	void __iomem *scc_pram;
++	void __iomem *dpram;
+ 	u16 scc_pram_offset;
+ 	cbd_t __iomem *bd_table;
+ 	dma_addr_t bd_dma_addr;
+@@ -218,37 +218,37 @@ struct qmc {
+ 	struct qmc_chan *chans[64];
+ };
  
- static const unsigned int palmte_keymap[] = {
- 	KEY(0, 0, KEY_F1),		/* Calendar */
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index a927680c66f8..262ec0c1c658 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1048,15 +1048,14 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct device *pm_dev)
- 		bank->chip.label = "mpuio";
- 		if (bank->regs->wkup_en)
- 			bank->chip.parent = &omap_mpuio_device.dev;
--		bank->chip.base = OMAP_MPUIO(0);
- 	} else {
- 		label = devm_kasprintf(bank->chip.parent, GFP_KERNEL, "gpio-%d-%d",
- 				       gpio, gpio + bank->width - 1);
- 		if (!label)
- 			return -ENOMEM;
- 		bank->chip.label = label;
--		bank->chip.base = -1;
- 	}
-+	bank->chip.base = -1;
- 	bank->chip.ngpio = bank->width;
+-static inline void qmc_write16(void *__iomem addr, u16 val)
++static inline void qmc_write16(void __iomem *addr, u16 val)
+ {
+ 	iowrite16be(val, addr);
+ }
  
- 	irq = &bank->chip.irq;
-diff --git a/include/linux/platform_data/gpio-omap.h b/include/linux/platform_data/gpio-omap.h
-index f377817ce75c..cdd8cfb424f5 100644
---- a/include/linux/platform_data/gpio-omap.h
-+++ b/include/linux/platform_data/gpio-omap.h
-@@ -144,9 +144,6 @@
+-static inline u16 qmc_read16(void *__iomem addr)
++static inline u16 qmc_read16(void __iomem *addr)
+ {
+ 	return ioread16be(addr);
+ }
  
- #define OMAP_MAX_GPIO_LINES		192
+-static inline void qmc_setbits16(void *__iomem addr, u16 set)
++static inline void qmc_setbits16(void __iomem *addr, u16 set)
+ {
+ 	qmc_write16(addr, qmc_read16(addr) | set);
+ }
  
--#define OMAP_MPUIO(nr)		(OMAP_MAX_GPIO_LINES + (nr))
--#define OMAP_GPIO_IS_MPUIO(nr)	((nr) >= OMAP_MAX_GPIO_LINES)
--
- #ifndef __ASSEMBLER__
- struct omap_gpio_reg_offs {
- 	u16 revision;
-
----
-base-commit: 0bb80ecc33a8fb5a682236443c1e740d5c917d1d
-change-id: 20230912-omap-mpuio-base-9adbacf742fb
-
-Best regards,
+-static inline void qmc_clrbits16(void *__iomem addr, u16 clr)
++static inline void qmc_clrbits16(void __iomem *addr, u16 clr)
+ {
+ 	qmc_write16(addr, qmc_read16(addr) & ~clr);
+ }
+ 
+-static inline void qmc_write32(void *__iomem addr, u32 val)
++static inline void qmc_write32(void __iomem *addr, u32 val)
+ {
+ 	iowrite32be(val, addr);
+ }
+ 
+-static inline u32 qmc_read32(void *__iomem addr)
++static inline u32 qmc_read32(void __iomem *addr)
+ {
+ 	return ioread32be(addr);
+ }
+ 
+-static inline void qmc_setbits32(void *__iomem addr, u32 set)
++static inline void qmc_setbits32(void __iomem *addr, u32 set)
+ {
+ 	qmc_write32(addr, qmc_read32(addr) | set);
+ }
+@@ -318,7 +318,7 @@ int qmc_chan_write_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
+ {
+ 	struct qmc_xfer_desc *xfer_desc;
+ 	unsigned long flags;
+-	cbd_t *__iomem bd;
++	cbd_t __iomem *bd;
+ 	u16 ctrl;
+ 	int ret;
+ 
+@@ -374,7 +374,7 @@ static void qmc_chan_write_done(struct qmc_chan *chan)
+ 	void (*complete)(void *context);
+ 	unsigned long flags;
+ 	void *context;
+-	cbd_t *__iomem bd;
++	cbd_t __iomem *bd;
+ 	u16 ctrl;
+ 
+ 	/*
+@@ -425,7 +425,7 @@ int qmc_chan_read_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
+ {
+ 	struct qmc_xfer_desc *xfer_desc;
+ 	unsigned long flags;
+-	cbd_t *__iomem bd;
++	cbd_t __iomem *bd;
+ 	u16 ctrl;
+ 	int ret;
+ 
+@@ -488,7 +488,7 @@ static void qmc_chan_read_done(struct qmc_chan *chan)
+ 	void (*complete)(void *context, size_t size);
+ 	struct qmc_xfer_desc *xfer_desc;
+ 	unsigned long flags;
+-	cbd_t *__iomem bd;
++	cbd_t __iomem *bd;
+ 	void *context;
+ 	u16 datalen;
+ 	u16 ctrl;
+@@ -663,7 +663,7 @@ static void qmc_chan_reset_rx(struct qmc_chan *chan)
+ {
+ 	struct qmc_xfer_desc *xfer_desc;
+ 	unsigned long flags;
+-	cbd_t *__iomem bd;
++	cbd_t __iomem *bd;
+ 	u16 ctrl;
+ 
+ 	spin_lock_irqsave(&chan->rx_lock, flags);
+@@ -694,7 +694,7 @@ static void qmc_chan_reset_tx(struct qmc_chan *chan)
+ {
+ 	struct qmc_xfer_desc *xfer_desc;
+ 	unsigned long flags;
+-	cbd_t *__iomem bd;
++	cbd_t __iomem *bd;
+ 	u16 ctrl;
+ 
+ 	spin_lock_irqsave(&chan->tx_lock, flags);
 -- 
-Linus Walleij <linus.walleij@linaro.org>
+2.41.0
 
