@@ -2,188 +2,98 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB7ACA0ED3
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 11:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CFECA0EC3
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 11:08:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234116AbjILLG7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 07:06:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47022 "EHLO
+        id S234450AbjILLIN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 07:08:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234403AbjILLGF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 07:06:05 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FD2E19AA
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 04:05:08 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-d7b9de8139fso4755627276.1
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 04:05:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694516708; x=1695121508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8FMoBWtmvLq6bgdekThyp6v4fhBAV0YiqC8BS8aCPcE=;
-        b=iLR0n9msF80qSSX64CsTjmtDEbEVqWCqg6NehBvvHfXb1Aq89f394kl3CACzlkipkf
-         ENLUWyY5nYtPLe+nrl2Pva6OrMMVsAdFpIUZ4CF6bQYTz4Pu3Z0Z3GscWO4Kbg+cpgYN
-         rXV12aWnx0sn7NHbMnBdtoJsP53wF88Byx7C7kCYXJ7x6oVfr6nD7WTmBpZn1Lz4EPx3
-         iuoQ4Foiuf38imGpcERI+3dcc8qm/ueL2fmHGZZNrDVBnSqJoTEWRKnhqDfOR8WRSHW8
-         E56W/a5cfo/4ghQvCfcyHbZ9xHWMyl8ss94fP52qtUboWFJLwhk13SNdjYKCNe3EuTG6
-         H3bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694516708; x=1695121508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8FMoBWtmvLq6bgdekThyp6v4fhBAV0YiqC8BS8aCPcE=;
-        b=iKR1bTRglgT6u7ENqHIjaz2xzgvvQQzjgzxbk/SsyFdffA5kiRLaCxjY5vphdWJNIh
-         fTMpJLxImsVxS7O5oE4/4NnaCS+8a4MECYgVY7xGgwAV6C5hPOPECw3gEMGmmLLRncz1
-         QDJuKPtW2sMgAKQbsebIk5uvhTp5hf+2i+m3h3rcsdqptzNCSqUrlOz3ETUIhMpS90oV
-         xyMGlZiAqShiYE7IjiafXOeUMNw1bENAP26jLBDt5XyOUqYSANmLKy39JbBZWekRN99c
-         5MQKFmH+KTmkKthZCFXV7SiMf4eqCqbrgyIpPTKwfPyDuCTokrfqlzy8IyODR7Fv2Jd+
-         mmNA==
-X-Gm-Message-State: AOJu0Yw41JIXJsesu8btWoDqteLQ/IDeEOVuTgsQVniEhLQugzdERFzd
-        /QZfflfQwyXWqqqjHgK1BWGFbpZnudedYuW59WIFEA==
-X-Google-Smtp-Source: AGHT+IHWFG9XShCR9EYCQbjpGN6Qxg22q5tUHNLhGUJSf212PqAwCH8zHTtn0AYfPfJADbtFAnVTC3aGLAvqi8JMMgU=
-X-Received: by 2002:a25:d695:0:b0:d62:6514:45b7 with SMTP id
- n143-20020a25d695000000b00d62651445b7mr11205815ybg.37.1694516708153; Tue, 12
- Sep 2023 04:05:08 -0700 (PDT)
+        with ESMTP id S234463AbjILLHS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 07:07:18 -0400
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 187921708;
+        Tue, 12 Sep 2023 04:07:12 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R511e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VrwdjfR_1694516829;
+Received: from 30.97.48.71(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0VrwdjfR_1694516829)
+          by smtp.aliyun-inc.com;
+          Tue, 12 Sep 2023 19:07:10 +0800
+Message-ID: <0d45564d-bceb-2fb5-67e4-50c6139de992@linux.alibaba.com>
+Date:   Tue, 12 Sep 2023 19:07:16 +0800
 MIME-Version: 1.0
-References: <20230912081527.208499-1-herve.codina@bootlin.com> <20230912101505.225899-1-herve.codina@bootlin.com>
-In-Reply-To: <20230912101505.225899-1-herve.codina@bootlin.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 12 Sep 2023 13:04:56 +0200
-Message-ID: <CACRpkdbxdMZt4E1SF1v9as-jw=TpvS1mk2TQqAgywMBLbKaNoA@mail.gmail.com>
-Subject: Re: [PATCH v5 28/31] pinctrl: Add support for the Lantic PEF2256 pinmux
-To:     Herve Codina <herve.codina@bootlin.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Randy Dunlap <rdunlap@infradead.org>, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        Simon Horman <horms@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [RFT PATCH 3/3] gpio: eic-sprd: use
+ devm_platform_ioremap_resource()
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20230912094519.22769-1-brgl@bgdev.pl>
+ <20230912094519.22769-3-brgl@bgdev.pl>
+ <80d7b0ad-026d-6ba9-7c1f-7f0c3b5af588@linux.alibaba.com>
+ <CAMRc=Mf4YvHVparOOPjDAVeMs5Oby4tjkaVYt4hoqLP4rKKbmg@mail.gmail.com>
+From:   Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAMRc=Mf4YvHVparOOPjDAVeMs5Oby4tjkaVYt4hoqLP4rKKbmg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Herve,
 
-thanks for your patch!
 
-On Tue, Sep 12, 2023 at 12:15=E2=80=AFPM Herve Codina <herve.codina@bootlin=
-.com> wrote:
+On 9/12/2023 6:09 PM, Bartosz Golaszewski wrote:
+> On Tue, Sep 12, 2023 at 12:05 PM Baolin Wang
+> <baolin.wang@linux.alibaba.com> wrote:
+>>
+>>
+>>
+>> On 9/12/2023 5:45 PM, Bartosz Golaszewski wrote:
+>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>
+>>> Make two calls into one by using devm_platform_ioremap_resource().
+>>>
+>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>
+>> Please don't do this. See the previous commit:
+>> 4ed7d7dd4890bb8120a3e77c16191a695fdfcc5a ("Revert "gpio: eic-sprd: Use
+>> devm_platform_ioremap_resource()"")
+>>
+> 
+> Ah, I see. Dropped. Could use a comment describing the problem though.
 
-> The Lantiq PEF2256 is a framer and line interface component designed to
-> fulfill all required interfacing between an analog E1/T1/J1 line and the
-> digital PCM system highway/H.100 bus.
->
-> This kind of component can be found in old telecommunication system.
-> It was used to digital transmission of many simultaneous telephone calls
-> by time-division multiplexing. Also using HDLC protocol, WAN networks
-> can be reached through the framer.
->
-> This pinmux support handles the pin muxing part (pins RP(A..D) and pins
-> XP(A..D)) of the PEF2256.
->
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Yes, I think so, in case someone does the same thing in the future.
 
-Nice to see this as a proper pin control driver!
-
->  drivers/pinctrl/pinctrl-pef2256-regs.h |  65 ++++++
->  drivers/pinctrl/pinctrl-pef2256.c      | 308 +++++++++++++++++++++++++
-
-Do you really need a separate header just for some registers?
-But it's a matter of taste so I'm not gonna complain if you want
-it this way.
-
-> +config PINCTRL_PEF2256
-> +       tristate "Lantiq PEF2256 (FALC56) pin controller driver"
-> +       depends on OF && FRAMER_PEF2256
-> +       select PINMUX
-
-select PINCONF
-
-> +       select GENERIC_PINCONF
-
-This brings it in implicitly but I prefer that you just select it.
-
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-
-I think SPDX mandates that you start the tag with C99 comments
-
-// SPDX-License-Identifier: GPL-2.0-only
-
-> +       /* We map 1 group <-> 1 pin */
-
-Also known as "the qualcomm trick", but hey: it's fine.
-
-> +static int pef2256_register_pinctrl(struct pef2256_pinctrl *pef2256)
-> +{
-> +       struct pinctrl_dev      *pctrl;
-> +
-> +       pef2256->pctrl_desc.name    =3D dev_name(pef2256->dev);
-> +       pef2256->pctrl_desc.owner   =3D THIS_MODULE;
-> +       pef2256->pctrl_desc.pctlops =3D &pef2256_pctlops;
-> +       pef2256->pctrl_desc.pmxops  =3D &pef2256_pmxops;
-> +       if (pef2256->version =3D=3D PEF2256_VERSION_1_2) {
-> +               pef2256->pctrl_desc.pins  =3D pef2256_v12_pins;
-> +               pef2256->pctrl_desc.npins =3D ARRAY_SIZE(pef2256_v12_pins=
-);
-> +               pef2256->functions  =3D pef2256_v12_functions;
-> +               pef2256->nfunctions =3D ARRAY_SIZE(pef2256_v12_functions)=
-;
-> +       } else {
-> +               pef2256->pctrl_desc.pins  =3D pef2256_v2x_pins;
-> +               pef2256->pctrl_desc.npins =3D ARRAY_SIZE(pef2256_v2x_pins=
-);
-> +               pef2256->functions  =3D pef2256_v2x_functions;
-> +               pef2256->nfunctions =3D ARRAY_SIZE(pef2256_v2x_functions)=
-;
-> +       }
-> +
-> +       pctrl =3D devm_pinctrl_register(pef2256->dev, &pef2256->pctrl_des=
-c, pef2256);
-> +       if (IS_ERR(pctrl)) {
-> +               dev_err(pef2256->dev, "pinctrl driver registration failed=
-\n");
-> +               return PTR_ERR(pctrl);
-> +       }
-> +
-> +       return 0;
-
-You could use
-return dev_err_probe(...);
-
-> +       pef2256_reset_pinmux(pef2256_pinctrl);
-> +       ret =3D pef2256_register_pinctrl(pef2256_pinctrl);
-> +       if (ret)
-> +               return ret;
-
-Or you could use it down here.
-
-With or without these changes (because they are nitpicks)
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+>>> ---
+>>>    drivers/gpio/gpio-eic-sprd.c | 7 +------
+>>>    1 file changed, 1 insertion(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+>>> index be7f2fa5aa7b..1e548e4e4cb8 100644
+>>> --- a/drivers/gpio/gpio-eic-sprd.c
+>>> +++ b/drivers/gpio/gpio-eic-sprd.c
+>>> @@ -594,7 +594,6 @@ static int sprd_eic_probe(struct platform_device *pdev)
+>>>        struct device *dev = &pdev->dev;
+>>>        struct gpio_irq_chip *irq;
+>>>        struct sprd_eic *sprd_eic;
+>>> -     struct resource *res;
+>>>        int ret, i;
+>>>
+>>>        pdata = of_device_get_match_data(dev);
+>>> @@ -621,11 +620,7 @@ static int sprd_eic_probe(struct platform_device *pdev)
+>>>                 * have one bank EIC, thus base[1] and base[2] can be
+>>>                 * optional.
+>>>                 */
+>>> -             res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+>>> -             if (!res)
+>>> -                     break;
+>>> -
+>>> -             sprd_eic->base[i] = devm_ioremap_resource(dev, res);
+>>> +             sprd_eic->base[i] = devm_platform_ioremap_resource(pdev, i);
+>>>                if (IS_ERR(sprd_eic->base[i]))
+>>>                        return PTR_ERR(sprd_eic->base[i]);
+>>>        }
