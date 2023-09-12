@@ -2,217 +2,95 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1942CCA0ECE
-	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 08:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA33CA0ED5
+	for <linux-gpio@archiver.kernel.org>; Tue, 12 Sep 2023 08:55:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230077AbjILIvv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 12 Sep 2023 04:51:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55460 "EHLO
+        id S233035AbjILIz2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 12 Sep 2023 04:55:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231637AbjILIvv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 04:51:51 -0400
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 104DBE79;
-        Tue, 12 Sep 2023 01:51:45 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 7054024005D;
-        Tue, 12 Sep 2023 08:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1694508704;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fnhlmyV9uqfQHa6AlRpMQCfiW/NfQzJB6OlaQ/hT7HQ=;
-        b=mx341KceJaUgBDsgVG30vUrWpWZD65gedAPbcxO0PrGlNZ5/L1PKGa/q/iThrJ6Srt6x5B
-        dM3M4ydgc4GlL0/87qKFiUdu9wpcx3iIivvTxv2K6R910LfJHFUOxkd3iI8vLNwDiYzMOK
-        4rWMmEmKsVhx7/+pIpePRcuB+4ZQgCiG2AGrK69CGT2cnfmkutn5MUKcHP8vrnlLe2FZNb
-        JzmmbzK8q9Q6rGATjYPV1mWMfY55wLVv7PNrvOOYvdPS3oM2gGtER6y5da9b9UciFezkT9
-        4RsanBUFuLvLk+o1JqunSBk6KlZmlRrsqWVSwEFGc46nWLZZSZL/MfeXq+vlyQ==
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Herve Codina <herve.codina@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Randy Dunlap <rdunlap@infradead.org>
-Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v5 02/31] soc: fsl: cpm1: qmc: Fix __iomem addresses declaration
-Date:   Tue, 12 Sep 2023 10:14:53 +0200
-Message-ID: <20230912081527.208499-3-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230912081527.208499-1-herve.codina@bootlin.com>
-References: <20230912081527.208499-1-herve.codina@bootlin.com>
+        with ESMTP id S233030AbjILIzZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2023 04:55:25 -0400
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9136410CE
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 01:55:21 -0700 (PDT)
+Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-d801c83325fso3612369276.0
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2023 01:55:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1694508921; x=1695113721; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5cpNRcFT9dpKDqYIUxrODvQWj8t0YOkYRZZPM52uQ0k=;
+        b=e4vPvNjo8Yg1JafwyMjaSddkk4B9L0SSXbjWOy3mLdqW0fjGQPyVn+WXJS9YquNBZ7
+         FUaWRD/99pHA3Z2OUxVelTITZTe3dWDuiKf+YMTBVMwO2CmrFV7Uzunl05H3K02qScTn
+         JHBKZq1qWh63SeQZ2anyiIEFO82hyB+PIIvY7SEPq0gCHCocGqRvJFAB1son/hP3Xb2v
+         PCsNByLiGYeAOOPQNcR1bm2txL+cCXG+13lf9PfXGrn+jcn1TmYoBOzDguvQ4t/js/Qu
+         OCVYrr7Mr47HSEOPT7PAQLgGov/wUC+xBU2kwkh6KMhtPV/g2DXYh6dDVno6kxrRh/oQ
+         fdpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694508921; x=1695113721;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5cpNRcFT9dpKDqYIUxrODvQWj8t0YOkYRZZPM52uQ0k=;
+        b=Nc+hzOoPvlzzQZVBjcbBcqEt5RRKfvPqT9TKHeNTjE2ocRu0dSc8ym7FsvOQ+y4uNK
+         EgVwDJIYRpYsPE8JH9Lx3GNciLdJXgCdF3kNLxlOEmywGB8vsGganDjH6jXH83Idq/Te
+         Lrv3/X3WrJqf3lqc0jw9aagICgEApbGDDaNX1ByPxbAfnY0w9SWiVsaP+OXfX3k06re3
+         YTx0/V7YBIXpvPmoSzJxQyBkH60P585AtBZDDb8m8VpZDyrGh3jR86XbUDOtaTgzyxeH
+         b9qiE30kGpU1uFPk07dQ3qpiNOqj6zENKm0vkRnn4p2iJfFrwxn5RKqvn8hthP6PEhNf
+         0pxQ==
+X-Gm-Message-State: AOJu0YynR8fA0AIuroLjWa/78pVKtQ6DKtkb0XFZuZ+a63ADuVFM50x2
+        t/v/JgSqQ9QfYwG7Xt8kbxfnDp9qPowwL4941vgKBQ==
+X-Google-Smtp-Source: AGHT+IEGS3TFambdJO6EdNSaKvuN7uKr3gK0rinQYZQudCv8F8e445q/O/vPsuhqGcFuGeBnFL3BaIyBwDUyNvoDYZc=
+X-Received: by 2002:a5b:8:0:b0:d78:341d:e475 with SMTP id a8-20020a5b0008000000b00d78341de475mr10595508ybp.44.1694508920728;
+ Tue, 12 Sep 2023 01:55:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 12 Sep 2023 10:55:08 +0200
+Message-ID: <CACRpkdYL46wY_4dm2w45kdPqOJ8zU9X=SSAXv_K=9wfBZFqyDQ@mail.gmail.com>
+Subject: Re: [PATCH 00/37] Add new Renesas RZ/G3S SoC and RZ/G3S SMARC EVK
+To:     Claudiu <claudiu.beznea@tuxon.dev>
+Cc:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, ulf.hansson@linaro.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
+        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
+        nfraprado@collabora.com, rafal@milecki.pl,
+        wsa+renesas@sang-engineering.com,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Running sparse (make C=1) on qmc.c raises a lot of warning such as:
-  ...
-  warning: incorrect type in assignment (different address spaces)
-     expected struct cpm_buf_desc [usertype] *[noderef] __iomem bd
-     got struct cpm_buf_desc [noderef] [usertype] __iomem *txbd_free
-  ...
+On Tue, Sep 12, 2023 at 6:52=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
 
-Indeed, some variable were declared 'type *__iomem var' instead of
-'type __iomem *var'.
+> This patch series adds initial support for The Renesas RZ/G3S (R9A08G045{=
+S33})
+> SoC. The RZ/G3S device is a general-purpose microprocessor with a
+> single-core Arm=C2=AE Cortex=C2=AE-A55 (1.1GHz) and a dual-core Arm=C2=AE=
+ Cortex=C2=AE-M33 (250MHz),
+> perfect for an IOT gateway controller.
 
-Use the correct declaration to remove these warnings.
+I saw some of the patches are fixes. I expect that you and Geert
+figure these out so I can get a separate pull request for those
+ASAP. (Unless they are nonurgent.)
 
-Fixes: 3178d58e0b97 ("soc: fsl: cpm1: Add support for QMC")
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- drivers/soc/fsl/qe/qmc.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+For new code try to use <linux/cleanup.h>.
+Or if you prefer take a sweep and introduce scoped guards
+everywhere (for spinlocks, mutexes..).
 
-diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index b3c292c9a14e..7ad0d77f1740 100644
---- a/drivers/soc/fsl/qe/qmc.c
-+++ b/drivers/soc/fsl/qe/qmc.c
-@@ -175,7 +175,7 @@ struct qmc_chan {
- 	struct list_head list;
- 	unsigned int id;
- 	struct qmc *qmc;
--	void *__iomem s_param;
-+	void __iomem *s_param;
- 	enum qmc_mode mode;
- 	u64	tx_ts_mask;
- 	u64	rx_ts_mask;
-@@ -203,9 +203,9 @@ struct qmc_chan {
- struct qmc {
- 	struct device *dev;
- 	struct tsa_serial *tsa_serial;
--	void *__iomem scc_regs;
--	void *__iomem scc_pram;
--	void *__iomem dpram;
-+	void __iomem *scc_regs;
-+	void __iomem *scc_pram;
-+	void __iomem *dpram;
- 	u16 scc_pram_offset;
- 	cbd_t __iomem *bd_table;
- 	dma_addr_t bd_dma_addr;
-@@ -218,37 +218,37 @@ struct qmc {
- 	struct qmc_chan *chans[64];
- };
- 
--static inline void qmc_write16(void *__iomem addr, u16 val)
-+static inline void qmc_write16(void __iomem *addr, u16 val)
- {
- 	iowrite16be(val, addr);
- }
- 
--static inline u16 qmc_read16(void *__iomem addr)
-+static inline u16 qmc_read16(void __iomem *addr)
- {
- 	return ioread16be(addr);
- }
- 
--static inline void qmc_setbits16(void *__iomem addr, u16 set)
-+static inline void qmc_setbits16(void __iomem *addr, u16 set)
- {
- 	qmc_write16(addr, qmc_read16(addr) | set);
- }
- 
--static inline void qmc_clrbits16(void *__iomem addr, u16 clr)
-+static inline void qmc_clrbits16(void __iomem *addr, u16 clr)
- {
- 	qmc_write16(addr, qmc_read16(addr) & ~clr);
- }
- 
--static inline void qmc_write32(void *__iomem addr, u32 val)
-+static inline void qmc_write32(void __iomem *addr, u32 val)
- {
- 	iowrite32be(val, addr);
- }
- 
--static inline u32 qmc_read32(void *__iomem addr)
-+static inline u32 qmc_read32(void __iomem *addr)
- {
- 	return ioread32be(addr);
- }
- 
--static inline void qmc_setbits32(void *__iomem addr, u32 set)
-+static inline void qmc_setbits32(void __iomem *addr, u32 set)
- {
- 	qmc_write32(addr, qmc_read32(addr) | set);
- }
-@@ -318,7 +318,7 @@ int qmc_chan_write_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
- {
- 	struct qmc_xfer_desc *xfer_desc;
- 	unsigned long flags;
--	cbd_t *__iomem bd;
-+	cbd_t __iomem *bd;
- 	u16 ctrl;
- 	int ret;
- 
-@@ -374,7 +374,7 @@ static void qmc_chan_write_done(struct qmc_chan *chan)
- 	void (*complete)(void *context);
- 	unsigned long flags;
- 	void *context;
--	cbd_t *__iomem bd;
-+	cbd_t __iomem *bd;
- 	u16 ctrl;
- 
- 	/*
-@@ -425,7 +425,7 @@ int qmc_chan_read_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
- {
- 	struct qmc_xfer_desc *xfer_desc;
- 	unsigned long flags;
--	cbd_t *__iomem bd;
-+	cbd_t __iomem *bd;
- 	u16 ctrl;
- 	int ret;
- 
-@@ -488,7 +488,7 @@ static void qmc_chan_read_done(struct qmc_chan *chan)
- 	void (*complete)(void *context, size_t size);
- 	struct qmc_xfer_desc *xfer_desc;
- 	unsigned long flags;
--	cbd_t *__iomem bd;
-+	cbd_t __iomem *bd;
- 	void *context;
- 	u16 datalen;
- 	u16 ctrl;
-@@ -663,7 +663,7 @@ static void qmc_chan_reset_rx(struct qmc_chan *chan)
- {
- 	struct qmc_xfer_desc *xfer_desc;
- 	unsigned long flags;
--	cbd_t *__iomem bd;
-+	cbd_t __iomem *bd;
- 	u16 ctrl;
- 
- 	spin_lock_irqsave(&chan->rx_lock, flags);
-@@ -694,7 +694,7 @@ static void qmc_chan_reset_tx(struct qmc_chan *chan)
- {
- 	struct qmc_xfer_desc *xfer_desc;
- 	unsigned long flags;
--	cbd_t *__iomem bd;
-+	cbd_t __iomem *bd;
- 	u16 ctrl;
- 
- 	spin_lock_irqsave(&chan->tx_lock, flags);
--- 
-2.41.0
-
+Yours,
+Linus Walleij
