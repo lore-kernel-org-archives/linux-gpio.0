@@ -2,135 +2,146 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 368FCEDEC74
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Sep 2023 15:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C5F4EDEC73
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Sep 2023 15:27:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233676AbjIMPW2 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Sep 2023 11:22:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49060 "EHLO
+        id S229446AbjIMP1s (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Sep 2023 11:27:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230188AbjIMPW1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Sep 2023 11:22:27 -0400
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDED7CE;
-        Wed, 13 Sep 2023 08:22:23 -0700 (PDT)
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-770ef353b8fso326351585a.0;
-        Wed, 13 Sep 2023 08:22:23 -0700 (PDT)
+        with ESMTP id S229450AbjIMP1r (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Sep 2023 11:27:47 -0400
+Received: from mail-vk1-xa34.google.com (mail-vk1-xa34.google.com [IPv6:2607:f8b0:4864:20::a34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92257CCD
+        for <linux-gpio@vger.kernel.org>; Wed, 13 Sep 2023 08:27:43 -0700 (PDT)
+Received: by mail-vk1-xa34.google.com with SMTP id 71dfb90a1353d-493a661d7b6so696456e0c.1
+        for <linux-gpio@vger.kernel.org>; Wed, 13 Sep 2023 08:27:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694618862; x=1695223662; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZSmC0s21CEToS8tT8/hcVHG8zlJnCs3gFSAowj5TofQ=;
+        b=O/YQl8YeczH8YccBwr2fU3w7x515nnv5UNEkKB8hk9zGCI3Bf158GNNwrptLS7DNOb
+         mddGay6+YLPz2U1bvb0vUZwq+KJA2lDx4ueueNv/b+ip3dPZSa8pgRsun99tzGAzIKh1
+         GcaMTC4IVynVkO79NWqxfBANR6PFgZFheYEQofQ0xeu9GY/n4IslpxoUkiYATjLsYhIT
+         zJoqi/oyE0hka2WbKN/t5H81MRzjCNOWgvnO+gJ+ZdbnyBMpHMV+vB13YxThnqSjvst6
+         Vyq5CROWiZ6QWdR0yPWc2LXgh0bFvQ/Kba8E0Vxicxws+x2jy8ysumibYoj8/WkmjtAa
+         15pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694618543; x=1695223343;
+        d=1e100.net; s=20230601; t=1694618862; x=1695223662;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7YO1tPkDOEwQyc/Dv+HaOfcjogh4Es5EpVUGisTZOW4=;
-        b=sHTB26XNZ8teze6yZ9Ixw9kqdAyYVWnLlDSTGSBflM3o/T8d/XnR0ltTMjN15mwhMe
-         vAch7EnHtODeg9nb4fnZvSlCSxj0nMzfH0NA6iQn2K/AKhZHCUpd1uu4/cBDRMt4/Hx2
-         zw4Rp7dEaHm5T8mKrygsErZOCXUBcHeq0m/IHBMUuapBhjadQoptgQYqi3Se4dpyxn1D
-         ZkN7TiLaUjfZCH9dJUpSCuT0K33qCgrcPNjE1suEoU2X6PpWnp0VAUfraAy9RcfsQL/h
-         5eHFyugAlBv5blCIvJp9geqtNvPX5Usbjh8YdTWKlDqYvTqCfqS6Yc0aP3DE74SNi0u1
-         JIpQ==
-X-Gm-Message-State: AOJu0YwYWS6hYq5QxE0zM8N8KayeOi75z2kpba2NetgULvXQ8O36SDxe
-        QUiFn5RQiBCW5EYYAhW9sPfNcX2Pe5D5KQ==
-X-Google-Smtp-Source: AGHT+IEWLMHZWuUElViNkfPsqVJNkVnRs/obn/xLwb7A1rORq0QfqkXdEdSkStvIeU9CQexjOYe1kg==
-X-Received: by 2002:a0c:e147:0:b0:64a:131f:b214 with SMTP id c7-20020a0ce147000000b0064a131fb214mr2907571qvl.12.1694618542767;
-        Wed, 13 Sep 2023 08:22:22 -0700 (PDT)
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com. [209.85.222.171])
-        by smtp.gmail.com with ESMTPSA id a17-20020a05620a125100b0076f039d87c6sm3966650qkl.82.2023.09.13.08.22.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Sep 2023 08:22:22 -0700 (PDT)
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-76dc77fd01fso436119885a.3;
-        Wed, 13 Sep 2023 08:22:22 -0700 (PDT)
-X-Received: by 2002:a25:ad08:0:b0:d7f:8e1e:a95f with SMTP id
- y8-20020a25ad08000000b00d7f8e1ea95fmr2686664ybi.6.1694618224901; Wed, 13 Sep
- 2023 08:17:04 -0700 (PDT)
+        bh=ZSmC0s21CEToS8tT8/hcVHG8zlJnCs3gFSAowj5TofQ=;
+        b=mBE2IzOdXHSlJUmi5IFfRYxCA26/MhyfKeXXGLufRh3CXn5FDiRFIs5PFldFaqfVje
+         0nNLX6i8sVyLtEk80m+kDXWsassQg/7FxciPd7wtl5asU/7CqI3WfkXtXsgqMN50ZdRn
+         NLjaXq6OKCgOZI4CzyMfClvCV0TNyynclFeC5hDmBD+t1bMCsLUnfhmQppcKLQ9xD+hZ
+         SAh4KyMHk6NJsZNMn8R+5R7Dl/xbzyN2JDaEoes+Ry8wBgsALrNWb6378WymTmWp5g4A
+         xO7j0jNjwG+I0d8dCz0wj8rwDn6zfztlY5lNd3Qx8zzZmL3waCnh+XImrcGmlUtvLZ3C
+         2Q1g==
+X-Gm-Message-State: AOJu0Ywkc7JBMVnOdTX9C3W8iv8GlwYsI/Jzcc5bYmEvrjn7fkOKH4Tv
+        d7wrOOXTX4DFvBQ5/awYWa8E/HT12+yyCMDdz0NAUQ==
+X-Google-Smtp-Source: AGHT+IGJvSLa8C0RY/pr1gb/IZEvzflaY24bVdWemEE/cCm0VktS9dQ2lxieIG0IxGCKKXQOFQUu8JrCk0IMybi8d6g=
+X-Received: by 2002:a1f:c743:0:b0:490:1723:a491 with SMTP id
+ x64-20020a1fc743000000b004901723a491mr1488004vkf.5.1694618862617; Wed, 13 Sep
+ 2023 08:27:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
- <20230912045157.177966-36-claudiu.beznea.uj@bp.renesas.com>
- <20230912161635.GA877089-robh@kernel.org> <56cf08f2-5d8e-6098-6218-081d8f620abe@tuxon.dev>
-In-Reply-To: <56cf08f2-5d8e-6098-6218-081d8f620abe@tuxon.dev>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 13 Sep 2023 17:16:52 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWntLTk9ZmAF1voE-tdB+4vVzE804h=qsfaoN-8_6RN_Q@mail.gmail.com>
-Message-ID: <CAMuHMdWntLTk9ZmAF1voE-tdB+4vVzE804h=qsfaoN-8_6RN_Q@mail.gmail.com>
-Subject: Re: [PATCH 35/37] dt-bindings: arm: renesas: document SMARC
- Carrier-II EVK
-To:     claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc:     Rob Herring <robh@kernel.org>, mturquette@baylibre.com,
-        sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, ulf.hansson@linaro.org,
-        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, magnus.damm@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
-        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
-        nfraprado@collabora.com, rafal@milecki.pl,
-        wsa+renesas@sang-engineering.com,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20230901134041.1165562-1-andriy.shevchenko@linux.intel.com>
+ <20230901134041.1165562-5-andriy.shevchenko@linux.intel.com> <71232fcf-98c4-373a-805-141a349fd25@linux-m68k.org>
+In-Reply-To: <71232fcf-98c4-373a-805-141a349fd25@linux-m68k.org>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 13 Sep 2023 17:27:31 +0200
+Message-ID: <CAMRc=Merdmv_gFm58y1iHWmYmT=t_OmXyQgOXCxqwr7wsmjjYQ@mail.gmail.com>
+Subject: Re: [PATCH v1 05/10] gpio: pca953x: Simplify code with cleanup helpers
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Claudiu,
-
-On Wed, Sep 13, 2023 at 7:32 AM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
-> On 12.09.2023 19:16, Rob Herring wrote:
-> > On Tue, Sep 12, 2023 at 07:51:55AM +0300, Claudiu wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> Document Renesas SMARC Carrier-II EVK board which is based on RZ/G3S
-> >> (R9A08G045) SoC. The SMARC Carrier-II EVK consists of RZ/G3S SoM module and
-> >> SMARC Carrier-II carrier board, the SoM module sits on top of carrier
-> >> board.
-> >>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-Thanks for your patch!
-
-> >> --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> >> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> >> @@ -476,6 +476,8 @@ properties:
-> >>
-> >>        - description: RZ/G3S (R9A08G045)
-> >>          items:
-> >> +          - enum:
-> >> +              - renesas,smarc2-evk # SMARC Carrier-II EVK
-> >
-> > You just changed the existing binding...
-> >
-> >>            - enum:
-> >>                - renesas,r9a08g045s33 # PCIe support
-> >
-> > This is the SoM module?
+On Wed, Sep 13, 2023 at 4:35=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
 >
-> No, this is a SoC variant which supports PCIe.
+>         Hi Andy,
+>
+> On Fri, 1 Sep 2023, Andy Shevchenko wrote:
+> > Use macros defined in linux/cleanup.h to automate resource lifetime
+> > control in gpio-pca953x.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> Thanks for your patch, which is now commit 8e471b784a720f6f
+> ("gpio: pca953x: Simplify code with cleanup helpers") in
+> gpio/gpio/for-next.
+>
+> > --- a/drivers/gpio/gpio-pca953x.c
+> > +++ b/drivers/gpio/gpio-pca953x.c
+> > @@ -557,9 +554,8 @@ static int pca953x_gpio_get_value(struct gpio_chip =
+*gc, unsigned off)
+> >       u32 reg_val;
+> >       int ret;
+> >
+> > -     mutex_lock(&chip->i2c_lock);
+> > -     ret =3D regmap_read(chip->regmap, inreg, &reg_val);
+> > -     mutex_unlock(&chip->i2c_lock);
+> > +     scoped_guard(mutex, &chip->i2c_lock)
+> > +             ret =3D regmap_read(chip->regmap, inreg, &reg_val);
+>
+> I can't say I'm thrilled about the lack of curly braces.  I was also
+> surprised to discover that checkpatch nor gcc W=3D1 complain about the
+> indentation change.
+> I know we don't use curly braces in single-statement for_each_*() loops,
+> but at least these have the familiar "for"-prefix.  And having the scope
+> is very important here, so using braces, this would stand out more.
+>
+> Hence can we please get curly braces, like
+>
+>      scoped_guard(mutex, &chip->i2c_lock) {
+>             ret =3D regmap_read(chip->regmap, inreg, &reg_val);
+>      }
+>
+> ?
+>
+> Thanks! ;-)
 
-Ideally, we need a compatible value for the SoM as well, as the SoM
-can be used stand-alone, or plugged in a different carrier board.
+I strongly disagree. The scope here is very clear - just like it is in
+a for loop, in a while loop or in an if block:
 
-For iWave Systems RZ/G1E SODIMM, we have that.
-For the existing RZ/G2L variants, we forgot, but it can still be added...
+if (foo)
+    bar()
+
+if (foo) {
+    bar();
+    baz();
+}
+
+Only compound statements need curly braces in the kernel and it has
+been like this forever. I don't really see a need to make it an
+exception.
+
+That being said - I don't think the coding style for guard has ever
+been addressed yet, so maybe bring it up with Peter Zijlstra?
+
+Bart
 
 >
-> > You either need to squash this change or add
-> > another case with 3 entries and maintain the 2 entry case. (there's no
-> > way to express any entry at the beginning or middle can be optional)
-> >
-> >>            - const: renesas,r9a08g045
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Gr{oetje,eeting}s,
+>
+>                                                 Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                                             -- Linus Torv=
+alds
