@@ -2,161 +2,135 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9BFEDEC73
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Sep 2023 15:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 368FCEDEC74
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Sep 2023 15:22:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231579AbjIMPV6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Sep 2023 11:21:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50724 "EHLO
+        id S233676AbjIMPW2 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Sep 2023 11:22:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229804AbjIMPV5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Sep 2023 11:21:57 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 671A0C1;
-        Wed, 13 Sep 2023 08:21:53 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38DEv7D2000527;
-        Wed, 13 Sep 2023 15:21:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=Hhvs/8xK+JuOLpQApokzSBRuLPc6gpd16QdQyq90tXo=;
- b=inpRhqRQ9iyqoDLb+SCeLj3L80j0aaxA65DOSL7deucsFrMyWVH6lBgERO3aaUWgcYQT
- 2112QHLgeuGawvyqX+Js7tdyjT7BWofiU0vCQdw/Vnk/pmwQx0p7scH6qqpdv1m60g7Q
- K1ddfsd7ApfcSXfvWhMLMEgZMEywsAXFDpVQ1E7ldVmrMdQz+F5OqYF+agVOUT+yjYrR
- XTytpQcjhOwrUEfYAf0PaFgk/CDf2twRg7CfIG/lmmHXs1vIIlRvf9Njbdw9e5l/7FvR
- fp4z0UxPfifYXOCrFhroXwvlKnBQVUhqltoHKkqlw4+lruXoRAXvlIZvhfjRwi5o1ikL Rg== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t2y7qa59j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Sep 2023 15:21:03 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38DFL2bc031246
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Sep 2023 15:21:02 GMT
-Received: from [10.216.62.56] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Wed, 13 Sep
- 2023 08:20:49 -0700
-Message-ID: <56c0328c-9744-4c69-b0a3-c36cc497fe31@quicinc.com>
-Date:   Wed, 13 Sep 2023 20:50:45 +0530
+        with ESMTP id S230188AbjIMPW1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Sep 2023 11:22:27 -0400
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDED7CE;
+        Wed, 13 Sep 2023 08:22:23 -0700 (PDT)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-770ef353b8fso326351585a.0;
+        Wed, 13 Sep 2023 08:22:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1694618543; x=1695223343;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7YO1tPkDOEwQyc/Dv+HaOfcjogh4Es5EpVUGisTZOW4=;
+        b=sHTB26XNZ8teze6yZ9Ixw9kqdAyYVWnLlDSTGSBflM3o/T8d/XnR0ltTMjN15mwhMe
+         vAch7EnHtODeg9nb4fnZvSlCSxj0nMzfH0NA6iQn2K/AKhZHCUpd1uu4/cBDRMt4/Hx2
+         zw4Rp7dEaHm5T8mKrygsErZOCXUBcHeq0m/IHBMUuapBhjadQoptgQYqi3Se4dpyxn1D
+         ZkN7TiLaUjfZCH9dJUpSCuT0K33qCgrcPNjE1suEoU2X6PpWnp0VAUfraAy9RcfsQL/h
+         5eHFyugAlBv5blCIvJp9geqtNvPX5Usbjh8YdTWKlDqYvTqCfqS6Yc0aP3DE74SNi0u1
+         JIpQ==
+X-Gm-Message-State: AOJu0YwYWS6hYq5QxE0zM8N8KayeOi75z2kpba2NetgULvXQ8O36SDxe
+        QUiFn5RQiBCW5EYYAhW9sPfNcX2Pe5D5KQ==
+X-Google-Smtp-Source: AGHT+IEWLMHZWuUElViNkfPsqVJNkVnRs/obn/xLwb7A1rORq0QfqkXdEdSkStvIeU9CQexjOYe1kg==
+X-Received: by 2002:a0c:e147:0:b0:64a:131f:b214 with SMTP id c7-20020a0ce147000000b0064a131fb214mr2907571qvl.12.1694618542767;
+        Wed, 13 Sep 2023 08:22:22 -0700 (PDT)
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com. [209.85.222.171])
+        by smtp.gmail.com with ESMTPSA id a17-20020a05620a125100b0076f039d87c6sm3966650qkl.82.2023.09.13.08.22.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Sep 2023 08:22:22 -0700 (PDT)
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-76dc77fd01fso436119885a.3;
+        Wed, 13 Sep 2023 08:22:22 -0700 (PDT)
+X-Received: by 2002:a25:ad08:0:b0:d7f:8e1e:a95f with SMTP id
+ y8-20020a25ad08000000b00d7f8e1ea95fmr2686664ybi.6.1694618224901; Wed, 13 Sep
+ 2023 08:17:04 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [REBASE PATCH v5 01/17] docs: qcom: Add qualcomm minidump guide
-Content-Language: en-US
-To:     Bagas Sanjaya <bagasdotme@gmail.com>, <corbet@lwn.net>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
-CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
- <1694429639-21484-2-git-send-email-quic_mojha@quicinc.com>
- <ZQF_9-nX47QUCycO@debian.me>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <ZQF_9-nX47QUCycO@debian.me>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 2gAwxDuhuJ3-P7vtmlbV-ftKdk4OelF4
-X-Proofpoint-ORIG-GUID: 2gAwxDuhuJ3-P7vtmlbV-ftKdk4OelF4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-13_09,2023-09-13_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- malwarescore=0 clxscore=1015 spamscore=0 priorityscore=1501
- mlxlogscore=977 phishscore=0 bulkscore=0 suspectscore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2309130126
+References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
+ <20230912045157.177966-36-claudiu.beznea.uj@bp.renesas.com>
+ <20230912161635.GA877089-robh@kernel.org> <56cf08f2-5d8e-6098-6218-081d8f620abe@tuxon.dev>
+In-Reply-To: <56cf08f2-5d8e-6098-6218-081d8f620abe@tuxon.dev>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 13 Sep 2023 17:16:52 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWntLTk9ZmAF1voE-tdB+4vVzE804h=qsfaoN-8_6RN_Q@mail.gmail.com>
+Message-ID: <CAMuHMdWntLTk9ZmAF1voE-tdB+4vVzE804h=qsfaoN-8_6RN_Q@mail.gmail.com>
+Subject: Re: [PATCH 35/37] dt-bindings: arm: renesas: document SMARC
+ Carrier-II EVK
+To:     claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc:     Rob Herring <robh@kernel.org>, mturquette@baylibre.com,
+        sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, ulf.hansson@linaro.org,
+        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, magnus.damm@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
+        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
+        nfraprado@collabora.com, rafal@milecki.pl,
+        wsa+renesas@sang-engineering.com,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Hi Claudiu,
 
+On Wed, Sep 13, 2023 at 7:32 AM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
+> On 12.09.2023 19:16, Rob Herring wrote:
+> > On Tue, Sep 12, 2023 at 07:51:55AM +0300, Claudiu wrote:
+> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>
+> >> Document Renesas SMARC Carrier-II EVK board which is based on RZ/G3S
+> >> (R9A08G045) SoC. The SMARC Carrier-II EVK consists of RZ/G3S SoM module and
+> >> SMARC Carrier-II carrier board, the SoM module sits on top of carrier
+> >> board.
+> >>
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-On 9/13/2023 2:55 PM, Bagas Sanjaya wrote:
-> On Mon, Sep 11, 2023 at 04:23:43PM +0530, Mukesh Ojha wrote:
->> +Qualcomm APSS Minidump kernel driver concept
->> +--------------------------------------------
->> +::
->> +
->> <snipped>...
->> +Dump collection
->> +---------------
->> +
->> +	+-----------+
->> +	|           |
->> +	|           |         +------+
->> +	|           |         |      |
->> +	|           |         +--+---+ Product(Qualcomm SoC)
->> +	+-----------+             |
->> +	|+++++++++++|<------------+
->> +	|+++++++++++|    usb cable
->> +	+-----------+
->> +            x86_64 PC
->> +
-> 
-> Sphinx reports htmldocs warnings:
-> 
-> /home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:100: WARNING: Literal block expected; none found.
-> /home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:243: WARNING: Unexpected indentation.
-> /home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:234: WARNING: Malformed table.
-> 
-> +-----------+
-> |           |
-> |           |         +------+
-> |           |         |      |
-> |           |         +--+---+ Product(Qualcomm SoC)
-> +-----------+             |
-> |+++++++++++|<------------+
-> |+++++++++++|    usb cable
-> +-----------+
-> /home/bagas/repo/linux-kernel/Documentation/admin-guide/qcom_minidump.rst:243: WARNING: Blank line required after table.
-> 
-> I have to apply the fixup:
-> 
-> ---- >8 ----
-> diff --git a/Documentation/admin-guide/qcom_minidump.rst b/Documentation/admin-guide/qcom_minidump.rst
-> index 20202da8ca40b9..5709a3853ae7ea 100644
-> --- a/Documentation/admin-guide/qcom_minidump.rst
-> +++ b/Documentation/admin-guide/qcom_minidump.rst
-> @@ -95,7 +95,6 @@ could be anywhere scattered in the DDR.
->   
->   Qualcomm APSS Minidump kernel driver concept
->   --------------------------------------------
-> -::
->   
->   Qualcomm APSS minidump kernel driver adds the capability to add Linux
->   region to be dumped as part of RAM dump collection. At the moment,
-> @@ -231,6 +230,8 @@ respective dump as per set download mode.
->   Dump collection
->   ---------------
->   
-> +::
-> +
->   	+-----------+
->   	|           |
->   	|           |         +------+
-> 
+Thanks for your patch!
 
-Thanks, will take care.
+> >> --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> >> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> >> @@ -476,6 +476,8 @@ properties:
+> >>
+> >>        - description: RZ/G3S (R9A08G045)
+> >>          items:
+> >> +          - enum:
+> >> +              - renesas,smarc2-evk # SMARC Carrier-II EVK
+> >
+> > You just changed the existing binding...
+> >
+> >>            - enum:
+> >>                - renesas,r9a08g045s33 # PCIe support
+> >
+> > This is the SoM module?
+>
+> No, this is a SoC variant which supports PCIe.
 
+Ideally, we need a compatible value for the SoM as well, as the SoM
+can be used stand-alone, or plugged in a different carrier board.
 
-> Thanks.
-> 
+For iWave Systems RZ/G1E SODIMM, we have that.
+For the existing RZ/G2L variants, we forgot, but it can still be added...
+
+>
+> > You either need to squash this change or add
+> > another case with 3 entries and maintain the 2 entry case. (there's no
+> > way to express any entry at the beginning or middle can be optional)
+> >
+> >>            - const: renesas,r9a08g045
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
