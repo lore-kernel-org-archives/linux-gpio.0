@@ -2,141 +2,164 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B426CA5504
-	for <linux-gpio@archiver.kernel.org>; Wed, 13 Sep 2023 07:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA943CA5501
+	for <linux-gpio@archiver.kernel.org>; Wed, 13 Sep 2023 07:26:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238479AbjIMHKc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 13 Sep 2023 03:10:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45522 "EHLO
+        id S238572AbjIMH0x (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 13 Sep 2023 03:26:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238367AbjIMHKb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Sep 2023 03:10:31 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D921726;
-        Wed, 13 Sep 2023 00:10:27 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38D6Ld4e032251;
-        Wed, 13 Sep 2023 07:10:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=qqRVKtn6/zyJ17CeKnTMdnuTgtPxVETYhHbBrmlREPw=;
- b=ghG+PRtO5O0X6vZ4Xh3f9VBp8PMbtP+X2XnBsyoSIejQ5qwoEjmEda6/oSz54D5DG3uN
- s1O3DpdB1bng3T6r1l5K6GC3o9e9z8S7IL+2JEaiEhSAoJ+8WjRQJigGmb521gO3I1+B
- IGv2AM/0tE15ueO7oTqybrCgW3N3kwvogrJ+gxe+QUjN7+ZXYwyBlG3BMXpKFmnIUOua
- nX/gwKLrMpXwhw0nMdtAUiwGwFnPOBzcpC1Vt6LOsHxVmOyNR5JSFLYXSwIz+ncgdYJu
- NymOt6ejVAMxMI8OSarMc0QY6NKnk+jlwdGVJ6OtiKkny3MaH69SSRhPHKUP4Y2y8pPH bQ== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3t2y8jrxe8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Sep 2023 07:10:01 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 38D7A0vs000953
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Sep 2023 07:10:00 GMT
-Received: from [10.214.66.81] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Wed, 13 Sep
- 2023 00:09:48 -0700
-Message-ID: <fe7d618d-ca22-0fd4-efc0-cad52cb984bc@quicinc.com>
-Date:   Wed, 13 Sep 2023 12:39:45 +0530
+        with ESMTP id S229884AbjIMH0x (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Sep 2023 03:26:53 -0400
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70ACA1986;
+        Wed, 13 Sep 2023 00:26:48 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 26012E000C;
+        Wed, 13 Sep 2023 07:26:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1694590007;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=O+j8CLkeQqfE/jh3KUACTiWhEVCfAwwkGv+CICyZc1E=;
+        b=id5wBw+5IoW5nrGIWPBxMOPgujgtR6RcLR+FMdrunmLvgVotlzLE4P7GYyysXkHSpptRua
+        AUfDx7XqGPnc1pFdO+2bGGISGvLbBCzyXlMgzpVW7v7AYC53V4Eaa7Giqyjg+JY6+zA/6X
+        ae1i0V0aWjGLBf6bo0hPvjiAFVEw+x3XTs3VCD8PXidN9bityZlJLHPojdkWvSYwfW1nil
+        jAHS1xzlhg0SXt7dGRnbvV2Qsa4Q1uRXGy564WEw0irLFiw0glEyZRzK5O1GQJ3au0virI
+        6//y6UwVKL0i+itAqUc3X0+fgIxkEkCePNW0m4OkaNXvPS+DkPuU9xPTWVApzw==
+Date:   Wed, 13 Sep 2023 09:26:40 +0200
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Conor Dooley <conor@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Randy Dunlap <rdunlap@infradead.org>, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+        Simon Horman <horms@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 08/31] dt-bindings: soc: fsl: cpm_qe: cpm1-scc-qmc:
+ Add support for QMC HDLC
+Message-ID: <20230913092640.76934b31@bootlin.com>
+In-Reply-To: <20230912-capable-stash-c7a3e33078ac@spud>
+References: <20230912081527.208499-1-herve.codina@bootlin.com>
+        <20230912101018.225246-1-herve.codina@bootlin.com>
+        <20230912-capable-stash-c7a3e33078ac@spud>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v5 06/17] soc: qcom: Add Qualcomm APSS minidump kernel
- driver
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>
-CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-References: <1694290578-17733-1-git-send-email-quic_mojha@quicinc.com>
- <1694290578-17733-7-git-send-email-quic_mojha@quicinc.com>
- <3bb1e84f-3b65-0596-1b6b-6decb0ff53cc@linaro.org>
- <0eeef9c4-14c0-8283-803b-4684854d4be6@quicinc.com>
- <94770fc6-7d72-8283-5858-786685620d5c@linaro.org>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <94770fc6-7d72-8283-5858-786685620d5c@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0R0xqRb59Cba6lgs1UtXK0Q91VYNBJeX
-X-Proofpoint-GUID: 0R0xqRb59Cba6lgs1UtXK0Q91VYNBJeX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-09-12_24,2023-09-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- impostorscore=0 spamscore=0 mlxlogscore=929 malwarescore=0
- priorityscore=1501 clxscore=1015 mlxscore=0 suspectscore=0
- lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2308100000 definitions=main-2309130059
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Hi Conor,
 
+On Tue, 12 Sep 2023 18:21:58 +0100
+Conor Dooley <conor@kernel.org> wrote:
 
-On 9/12/2023 3:24 PM, Krzysztof Kozlowski wrote:
-> On 12/09/2023 11:26, Mukesh Ojha wrote:
->>>
->>>> +		return -EINVAL;
->>>> +	}
->>>> +
->>>> +	mutex_init(&md->md_lock);
->>>> +	ret = qcom_apss_md_table_init(md, &mdgtoc->subsystems[MINIDUMP_APSS_DESC]);
->>>> +	if (ret) {
->>>> +		dev_err(md->dev, "apss minidump initialization failed: %d\n", ret);
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	/* First entry would be ELF header */
->>>> +	ret = qcom_md_add_elfheader(md);
->>>> +	if (ret) {
->>>> +		dev_err(md->dev, "Failed to add elf header: %d\n", ret);
->>>> +		memset(md->apss_data->md_ss_toc, 0, sizeof(struct minidump_subsystem));
->>>
->>> Why do you need it?
->>
->> Earlier, i got comment about clearing the SS TOC(subsystem table of
->> content) which is shared with other SS and it will have stale values.
-> 
-> OK, but then the entire code is poorly readable. First, any cleanup of
-> qcom_apss_md_table_init() should be named similarly, e.g.
-> qcom_apss_md_table_clean() or qcom_apss_md_table_exit() or whatever
-> seems feasible.
+> On Tue, Sep 12, 2023 at 12:10:18PM +0200, Herve Codina wrote:
+> > The QMC (QUICC mutichannel controller) is a controller present in some
+> > PowerQUICC SoC such as MPC885.
+> > The QMC HDLC uses the QMC controller to transfer HDLC data.
+> >=20
+> > Additionally, a framer can be connected to the QMC HDLC.
+> > If present, this framer is the interface between the TDM bus used by the
+> > QMC HDLC and the E1/T1 line.
+> > The QMC HDLC can use this framer to get information about the E1/T1 line
+> > and configure the E1/T1 line.
+> >=20
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > ---
+> >  .../bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml   | 13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-=
+scc-qmc.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-sc=
+c-qmc.yaml
+> > index 82d9beb48e00..b5073531f3f1 100644
+> > --- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc=
+.yaml
+> > +++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc=
+.yaml
+> > @@ -101,6 +101,16 @@ patternProperties:
+> >            Channel assigned Rx time-slots within the Rx time-slots rout=
+ed by the
+> >            TSA to this cell.
+> > =20
+> > +      compatible:
+> > +        const: fsl,qmc-hdlc
+> > +
+> > +      fsl,framer:
+> > +        $ref: /schemas/types.yaml#/definitions/phandle
+> > +        description:
+> > +          phandle to the framer node. The framer is in charge of an E1=
+/T1 line
+> > +          interface connected to the TDM bus. It can be used to get th=
+e E1/T1 line
+> > +          status such as link up/down. =20
+>=20
+> Sounds like this fsl,framer property should depend on the compatible
+> being present, no?
 
-ACK on this.
+Well from the implementation point of view, only the QMC HDLC driver uses t=
+his
+property.
 
-> 
-> Second, shouldn't writing to shared memory be the last step? Step which
-> cannot fail and there is no cleanup afterwards (like
-> platform_set_drvdata)? I don't enjoy looking at this interface...
+=46rom the hardware description point of view, this property means that the t=
+ime slots
+handled by this channel are connected to the framer. So I think it makes se=
+nse for
+any channel no matter the compatible (even if compatible is not present).
 
-It can be done, if i shift adding elf header as first thing to first
-caller of qcom_minidump_region_register() but then i would have to 
-remove qcom_ramoops_minidump() from this probe in 11/17 patch.
+Should I change and constraint the fsl,framer property to the compatible pr=
+esence ?
+If so, is the following correct for this contraint ?
+   --- 8< ---
+   dependencies:
+     - fsl,framer: [ compatible ];
+   --- 8< ---
 
--Mukesh
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+Regards,
+Herv=C3=A9
+
+>=20
+> Thanks,
+> Conor.
+>=20
+> > +
+> >      required:
+> >        - reg
+> >        - fsl,tx-ts-mask
+> > @@ -159,5 +169,8 @@ examples:
+> >              fsl,operational-mode =3D "hdlc";
+> >              fsl,tx-ts-mask =3D <0x00000000 0x0000ff00>;
+> >              fsl,rx-ts-mask =3D <0x00000000 0x0000ff00>;
+> > +
+> > +            compatible =3D "fsl,qmc-hdlc";
+> > +            fsl,framer =3D <&framer>;
+> >          };
+> >      };
+> > --=20
+> > 2.41.0
+> >  =20
