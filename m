@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D76EED605
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF9DEED600
 	for <linux-gpio@archiver.kernel.org>; Fri, 15 Sep 2023 15:03:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235867AbjIOPDx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S235902AbjIOPDx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Fri, 15 Sep 2023 11:03:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48830 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235878AbjIOPDr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Sep 2023 11:03:47 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 541061FE0
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Sep 2023 08:03:42 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-404573e6c8fso21087395e9.1
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Sep 2023 08:03:42 -0700 (PDT)
+        with ESMTP id S235867AbjIOPDp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Sep 2023 11:03:45 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A85D2130
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Sep 2023 08:03:40 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-404732a0700so20030625e9.0
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Sep 2023 08:03:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694790221; x=1695395021; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694790219; x=1695395019; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MflPL+QKb28SLjr67nvfLFxWVRN50mSzldVQJo+IR1w=;
-        b=encZS12jQ1cC0ojsy04xKusqHk6btwsxQ2hEzufqDORTkaBdHRvgWU1Q/wQ9Q95DKG
-         ae8KsmwjRMVn3YtC0DCf2M2N3iZsakSTdI0eipA54PV/GPojrZ2LZ/ANiYbrUjZCQYY/
-         gTnY3jcBigmA4nBv06hNYLOxpXorK+AbSDTyaomQlnrhNO33Tptn57kA1/lUgXLfcs76
-         Ffn78A4I6gLC+kcjbDCje+yCrwui+AUQhNUXI+gzenHGKzu5XhRIPfVgpxS5Cyib8Sig
-         KVvtxPMyBQrq/+0JfcqPZRlHu7jnd6R+UYji1jOWNyBSkWGQA0v4dYQ4xEjthbDKLCWB
-         jdHw==
+        bh=edxEV8lZNyeIe2fc1/ECdrZnvrBbNnxqjxV4vEQlZ6k=;
+        b=unxbODZv3/+gtWrSmauo07/beObjoMjXb5TxV71xYoUxGuCX1r8D2dTjXGFOmai2/Y
+         DOnutSJkiccs2oWUcwtSnECWrNglBuV825scuvj8Dy0Qz/fd2woRrsCTXgUxhxKwui/J
+         F/uxsbtzS39+xFRONRemEwYPLBajBym1iKAtshzTm4myf7dgcr85WT62tearrfM3VseN
+         k1N2vxSOha7c4S5GL2/cbHhzklKMI3NUvEsWQ7MKN4IJ4HJeSzSQUvNL5RE74eSMu6vg
+         m6ehkAPo3//DVlZRqJORrI3X39IiTo8aIGrbmsYLOSE4SZfj4fKlzx+pq5cCqlUU4K+D
+         x/jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694790221; x=1695395021;
+        d=1e100.net; s=20230601; t=1694790219; x=1695395019;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MflPL+QKb28SLjr67nvfLFxWVRN50mSzldVQJo+IR1w=;
-        b=jwM63G635SWaP//3m3kCcSPyzUpfCUIYagQpaDICqCMNMzjoYwNkm8pX7mUbi/90Or
-         svaONiaordqP5ItROlyPcL2Nf/nl6Yga26RlAniLBXJi/wa5YFsUsLnWm+dHxDxkr4Ux
-         StnHSeyxw1vNBxEnfgTn2o9w1qh5XWS6Br2mQTZA8ML2x9Kgs8FSRdwFAAPUAB8nhMfQ
-         WAClgtd/jUEgatGpVYRq3LzhMSTNqQBziipdM0aS9YEnSfJiFNlkM8YglwxAOytw1gtD
-         DT8lLA3GsUk6gNWGInSb+jApE0D4LdOWeswQ+wAfNno/aXbfDJyx4C7eKVhYRSmivjZD
-         zJ6g==
-X-Gm-Message-State: AOJu0YzHDcGXFAG5lhDHP9SdrE1nq9+ccZ1XC0+fxks0wKHl6l29CIPa
-        h7P9akSLl4vAkJjGmqoreTHFrg==
-X-Google-Smtp-Source: AGHT+IEKyYIrqckgcNgCNpRrNcCOY404saMM9pRyUHnyyBwWyqo+egV/Ccr/VlfwOLClomvrOLLT2g==
-X-Received: by 2002:a05:600c:b59:b0:3fc:dd9:91fd with SMTP id k25-20020a05600c0b5900b003fc0dd991fdmr1616601wmr.40.1694790220840;
-        Fri, 15 Sep 2023 08:03:40 -0700 (PDT)
+        bh=edxEV8lZNyeIe2fc1/ECdrZnvrBbNnxqjxV4vEQlZ6k=;
+        b=XKxviV34/NvpKFUzXMw+LFfU6msq2MUt+1T6Ry0A8b6d3bxqmmVBwvDgS1AkW3cMuB
+         nGW4nHnDQwAJOyCZn7Rz8mYU8t/nZoi9FTTRX8jnlgFlZbWLIF4Y8RJ+Ns5FOIXUzN3K
+         AM7w4zDQpIWFU3/f3F8U42gXDGz1yhPpKswvv8wDCCjdOyPrsiybT+7Ms4flzbZmAuCN
+         g+RWxa6ZvuenGJPyXr4bfQs8GsXPq/a1W8B7yopdamKsahgIBx/BGqB7m68xWPk43Dcv
+         gWi5fNMDo1H4Cu0cETa6Zxa2NJiUyiVY7LIh6KI2FLe9jQBBpRMho8oOXWHLXuM0fVfO
+         9dqA==
+X-Gm-Message-State: AOJu0YzNUazgGL6X4rPxPE8QnK1hELecOChHda9NYqMCk4Lt55sYMus7
+        ltI6dvwjcn9A40jgxvPUSxy5gQ==
+X-Google-Smtp-Source: AGHT+IFfx4Vw8sI1KX54ZioumUficY0QqHvfFD61SdTbqEY3pEZjyIrAbN/Jg/gNRG5WmOBJUQ8CHg==
+X-Received: by 2002:a7b:cc9a:0:b0:404:2dbb:8943 with SMTP id p26-20020a7bcc9a000000b004042dbb8943mr1889146wma.2.1694790218883;
+        Fri, 15 Sep 2023 08:03:38 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:aa19:4569:aeeb:c0d3])
-        by smtp.gmail.com with ESMTPSA id hn40-20020a05600ca3a800b003fef19bb55csm4853369wmb.34.2023.09.15.08.03.39
+        by smtp.gmail.com with ESMTPSA id hn40-20020a05600ca3a800b003fef19bb55csm4853369wmb.34.2023.09.15.08.03.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Sep 2023 08:03:40 -0700 (PDT)
+        Fri, 15 Sep 2023 08:03:38 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -56,9 +56,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-acpi@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v3 10/11] gpio: swnode: replace gpiochip_find() with gpio_device_find_by_label()
-Date:   Fri, 15 Sep 2023 17:03:25 +0200
-Message-Id: <20230915150327.81918-11-brgl@bgdev.pl>
+Subject: [PATCH v3 08/11] gpio: of: replace gpiochip_find_* with gpio_device_find_*
+Date:   Fri, 15 Sep 2023 17:03:23 +0200
+Message-Id: <20230915150327.81918-9-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230915150327.81918-1-brgl@bgdev.pl>
 References: <20230915150327.81918-1-brgl@bgdev.pl>
@@ -71,79 +71,110 @@ X-Mailing-List: linux-gpio@vger.kernel.org
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 We're porting all users of gpiochip_find() to using gpio_device_find().
-Update the swnode GPIO code.
+Update the OF GPIO code.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpiolib-swnode.c | 33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+ drivers/gpio/gpiolib-of.c | 33 +++++++++++++++++----------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-swnode.c b/drivers/gpio/gpiolib-swnode.c
-index b5a6eaf3729b..33c4b1a6c3c1 100644
---- a/drivers/gpio/gpiolib-swnode.c
-+++ b/drivers/gpio/gpiolib-swnode.c
-@@ -31,31 +31,26 @@ static void swnode_format_propname(const char *con_id, char *propname,
- 		strscpy(propname, "gpios", max_size);
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 5515f32cf19b..4987c86010c1 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -127,10 +127,10 @@ static int of_gpiochip_match_node_and_xlate(struct gpio_chip *chip, void *data)
+ 				chip->of_xlate(chip, gpiospec, NULL) >= 0;
  }
  
--static int swnode_gpiochip_match_name(struct gpio_chip *chip, void *data)
-+static struct gpio_device *swnode_get_gpio_device(struct fwnode_handle *fwnode)
+-static struct gpio_chip *of_find_gpiochip_by_xlate(
+-					struct of_phandle_args *gpiospec)
++static struct gpio_device *
++of_find_gpio_device_by_xlate(struct of_phandle_args *gpiospec)
  {
--	return !strcmp(chip->label, data);
--}
-+	const struct software_node *gdev_node;
-+	struct gpio_device *gdev;
- 
--static struct gpio_chip *swnode_get_chip(struct fwnode_handle *fwnode)
--{
--	const struct software_node *chip_node;
--	struct gpio_chip *chip;
--
--	chip_node = to_software_node(fwnode);
--	if (!chip_node || !chip_node->name)
-+	gdev_node = to_software_node(fwnode);
-+	if (!gdev_node || !gdev_node->name)
- 		return ERR_PTR(-EINVAL);
- 
--	chip = gpiochip_find((void *)chip_node->name, swnode_gpiochip_match_name);
--	return chip ?: ERR_PTR(-EPROBE_DEFER);
-+	gdev = gpio_device_find_by_label((void *)gdev_node->name);
-+	return gdev ?: ERR_PTR(-EPROBE_DEFER);
+-	return gpiochip_find(gpiospec, of_gpiochip_match_node_and_xlate);
++	return gpio_device_find(gpiospec, of_gpiochip_match_node_and_xlate);
  }
  
- struct gpio_desc *swnode_find_gpio(struct fwnode_handle *fwnode,
- 				   const char *con_id, unsigned int idx,
- 				   unsigned long *flags)
+ static struct gpio_desc *of_xlate_and_get_gpiod_flags(struct gpio_chip *chip,
+@@ -362,8 +362,8 @@ static void of_gpio_flags_quirks(const struct device_node *np,
+ static struct gpio_desc *of_get_named_gpiod_flags(const struct device_node *np,
+ 		     const char *propname, int index, enum of_gpio_flags *flags)
  {
 +	struct gpio_device *gdev __free(gpio_device_put) = NULL;
- 	const struct software_node *swnode;
- 	struct fwnode_reference_args args;
+ 	struct of_phandle_args gpiospec;
 -	struct gpio_chip *chip;
  	struct gpio_desc *desc;
- 	char propname[32]; /* 32 is max size of property name */
- 	int error;
-@@ -77,12 +72,16 @@ struct gpio_desc *swnode_find_gpio(struct fwnode_handle *fwnode,
- 		return ERR_PTR(error);
+ 	int ret;
+ 
+@@ -375,13 +375,14 @@ static struct gpio_desc *of_get_named_gpiod_flags(const struct device_node *np,
+ 		return ERR_PTR(ret);
  	}
  
--	chip = swnode_get_chip(args.fwnode);
-+	gdev = swnode_get_gpio_device(args.fwnode);
- 	fwnode_handle_put(args.fwnode);
--	if (IS_ERR(chip))
--		return ERR_CAST(chip);
-+	if (IS_ERR(gdev))
-+		return ERR_CAST(gdev);
+-	chip = of_find_gpiochip_by_xlate(&gpiospec);
+-	if (!chip) {
++	gdev = of_find_gpio_device_by_xlate(&gpiospec);
++	if (!gdev) {
+ 		desc = ERR_PTR(-EPROBE_DEFER);
+ 		goto out;
+ 	}
  
--	desc = gpiochip_get_desc(chip, args.args[0]);
-+	/*
-+	 * FIXME: The GPIO device reference is put at return but the descriptor
-+	 * is passed on. Find a proper solution.
-+	 */
-+	desc = gpio_device_get_desc(gdev, args.args[0]);
- 	*flags = args.args[1]; /* We expect native GPIO flags */
+-	desc = of_xlate_and_get_gpiod_flags(chip, &gpiospec, flags);
++	desc = of_xlate_and_get_gpiod_flags(gpio_device_get_chip(gdev),
++					    &gpiospec, flags);
+ 	if (IS_ERR(desc))
+ 		goto out;
  
- 	pr_debug("%s: parsed '%s' property of node '%pfwP[%d]' - status (%d)\n",
+@@ -813,16 +814,16 @@ static int of_gpiochip_match_node(struct gpio_chip *chip, void *data)
+ 	return device_match_of_node(&chip->gpiodev->dev, data);
+ }
+ 
+-static struct gpio_chip *of_find_gpiochip_by_node(struct device_node *np)
++static struct gpio_device *of_find_gpio_device_by_node(struct device_node *np)
+ {
+-	return gpiochip_find(np, of_gpiochip_match_node);
++	return gpio_device_find(np, of_gpiochip_match_node);
+ }
+ 
+ static int of_gpio_notify(struct notifier_block *nb, unsigned long action,
+ 			  void *arg)
+ {
++	struct gpio_device *gdev __free(gpio_device_put) = NULL;
+ 	struct of_reconfig_data *rd = arg;
+-	struct gpio_chip *chip;
+ 	int ret;
+ 
+ 	/*
+@@ -839,11 +840,11 @@ static int of_gpio_notify(struct notifier_block *nb, unsigned long action,
+ 		if (of_node_test_and_set_flag(rd->dn, OF_POPULATED))
+ 			return NOTIFY_DONE;
+ 
+-		chip = of_find_gpiochip_by_node(rd->dn->parent);
+-		if (chip == NULL)
++		gdev = of_find_gpio_device_by_node(rd->dn->parent);
++		if (!gdev)
+ 			return NOTIFY_DONE;	/* not for us */
+ 
+-		ret = of_gpiochip_add_hog(chip, rd->dn);
++		ret = of_gpiochip_add_hog(gpio_device_get_chip(gdev), rd->dn);
+ 		if (ret < 0) {
+ 			pr_err("%s: failed to add hogs for %pOF\n", __func__,
+ 			       rd->dn);
+@@ -856,11 +857,11 @@ static int of_gpio_notify(struct notifier_block *nb, unsigned long action,
+ 		if (!of_node_check_flag(rd->dn, OF_POPULATED))
+ 			return NOTIFY_DONE;	/* already depopulated */
+ 
+-		chip = of_find_gpiochip_by_node(rd->dn->parent);
+-		if (chip == NULL)
++		gdev = of_find_gpio_device_by_node(rd->dn->parent);
++		if (!gdev)
+ 			return NOTIFY_DONE;	/* not for us */
+ 
+-		of_gpiochip_remove_hog(chip, rd->dn);
++		of_gpiochip_remove_hog(gpio_device_get_chip(gdev), rd->dn);
+ 		of_node_clear_flag(rd->dn, OF_POPULATED);
+ 		return NOTIFY_OK;
+ 	}
 -- 
 2.39.2
 
