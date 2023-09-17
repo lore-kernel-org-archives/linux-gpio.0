@@ -2,59 +2,59 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 673E2CD37B3
-	for <linux-gpio@archiver.kernel.org>; Sun, 17 Sep 2023 07:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78115CD37B4
+	for <linux-gpio@archiver.kernel.org>; Sun, 17 Sep 2023 07:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230337AbjIQHse (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 17 Sep 2023 03:48:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45808 "EHLO
+        id S231676AbjIQHwu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 17 Sep 2023 03:52:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230230AbjIQHsc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 17 Sep 2023 03:48:32 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BA5B18B
-        for <linux-gpio@vger.kernel.org>; Sun, 17 Sep 2023 00:48:26 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-530bc7c5bc3so1291783a12.1
-        for <linux-gpio@vger.kernel.org>; Sun, 17 Sep 2023 00:48:26 -0700 (PDT)
+        with ESMTP id S234085AbjIQHws (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 17 Sep 2023 03:52:48 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5B00191
+        for <linux-gpio@vger.kernel.org>; Sun, 17 Sep 2023 00:52:42 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-99c3c8adb27so452807066b.1
+        for <linux-gpio@vger.kernel.org>; Sun, 17 Sep 2023 00:52:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694936905; x=1695541705; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1694937161; x=1695541961; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GVPsYlLWrWkecJahmm8glLPlUmggcjlQlykoHTahPBs=;
-        b=RN/bt+EsomRqiB9xWzz3SMs04X366PgKHRMTPVD3H0ZpHn4IUO2RP4d7muKgjhAsex
-         VSKwLZELXwMsaIaG9LTVA/dxJ8Ap2byowHViWkenqaBhpIckL39/jOyxplFflfU4aNd2
-         D3uQm4duDJKlJNaPp6wLntqVmAhQcFIS6NLd2N07ONbHzJ1Qc95FJ/QJAB8AiZxVtOVs
-         h7M9W65VGPs88vnUs5kIguZNTPSrX5/rtkOB3Y/oPeWwiH5d7WbqqqkA7rjE66KWA4Cj
-         74yczqv5bqql1xKUpZA0jka10LkW7qklbiIlNESgOGYPsp/HuP+8RtIwSzxM7CqR80i1
-         jk1g==
+        bh=7eo0rPZzuvMX1hueccHEBwOS160FHpuSftGVntb1qxg=;
+        b=abqMaPOX5yqE89p8X3eNAO2piHJKqwg+2vR6FtQpneBsnBncvW8F+OVifhYlGx0L9+
+         e6El4Cwwua4U/Y/atX6qdF7W+EWGXl3oe3jN5UoQhnE1Q6Vw+uJgAMoMX0mLRTOjMpTC
+         MWC7AATpwJ3yc6rSowiRegV3VGT9LOTuf+g9zkLhKzsnwF3EKlG+NxBbO13OZ2r8q1tz
+         G8GSHXjkwApbjWB34mxyex/+Pim/jaiVLRnslpJeCWlZZyOC7oFUsocqNAz/VqIJflXM
+         o8nCWc/IfAUHIugEhs636gwwmM4f9vvdmNxEA5kK6WzuKTGSh9ihbAEOyMKskI7XNpgb
+         fnyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694936905; x=1695541705;
+        d=1e100.net; s=20230601; t=1694937161; x=1695541961;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GVPsYlLWrWkecJahmm8glLPlUmggcjlQlykoHTahPBs=;
-        b=miYBVZrU6M9Pzn8W8meMUosPL30k3QVKQcCYI5Ecb4aHEhASVKLbu+jt5yVexNqsXA
-         a1nfZqvoFwdlR3ikpiRhqPzVgqptQaO17ImzUuFKGLGNgce4WdKWp2I1uKiweR+AMCsY
-         xGx+LOj+tRgLpfmdl6S4WYbXTKf7V+9ODzk9CVLhxCiXOeAcGH+ZG7tMFl4u02Ud4sty
-         gvj0ekynhmVT5roCwHAJCygIjJWcv28G+40s51MXZZBtG4uesgKgtMZuSrTXtHv7tRKm
-         ghOCqJekWZd6FYsDdlFDP6Tgpcelel7fvNMJ3cN8dBwjdSE42Jnt3fJtSqUmcGn6NMGd
-         MCxA==
-X-Gm-Message-State: AOJu0YxCu7B9ru8IF9LxCNkSzSxyUbIt7nyE473J4RCkqpHqk5rlyZUu
-        RzUkm2p55ufXubSMqXcOXqhmpQ==
-X-Google-Smtp-Source: AGHT+IEmjAsO4U5DH1/SUqLBxFViS6gZtzW/Gz0PYU4pDtjJ+T01gRVgwYJdAGxdBcBSE/ulzwTU1w==
-X-Received: by 2002:aa7:cfd9:0:b0:523:38f5:c5ad with SMTP id r25-20020aa7cfd9000000b0052338f5c5admr5300840edy.20.1694936905043;
-        Sun, 17 Sep 2023 00:48:25 -0700 (PDT)
+        bh=7eo0rPZzuvMX1hueccHEBwOS160FHpuSftGVntb1qxg=;
+        b=of1/F9mJb98cTszi0kLiGNdWL0y1qjrP1KL0mETCN63oD+dWrQ18drdZr69vZvAxIh
+         VhPfNHcPAa1XPGr91JkvBArm4R4cglX/VwcPMVIT6qnjUsGpuAqD3UdCg4msd0IjQ4eA
+         e218a4v8e4IEaZhGCtlNK5mSK1+jL625m+hyy+znA2VbIZWY2FC/dI2QikUZ9Qj/z4km
+         Bw7TTg6PkVj46C8uAW0Li6YofhvKTqOB1VqYERlW7mRmMQ+aB2e616H+FfBrxMUsiVBZ
+         ruOMSoSp9kcf0zNI7FPTYHWiZMJchEZc/Yfj83S72pAYE0rQSuLNvdYdqu23u7l8Abj4
+         ZeKA==
+X-Gm-Message-State: AOJu0YzxJFtCNnBGwMEQyh7DrYIHIi9n2L/mTLp7Rs+968FwfvyA2Mvw
+        MownYk7S1Eis2ZyGAuk1onUfZw==
+X-Google-Smtp-Source: AGHT+IEVjWE53AChtQwuTyXoGTpdIYaK3RL4LJS2V6aENqPfqKoxFhW4kzRLVZ20h4kWVResksGkcg==
+X-Received: by 2002:a17:906:cd1:b0:9a1:c00e:60c5 with SMTP id l17-20020a1709060cd100b009a1c00e60c5mr5039237ejh.48.1694937161408;
+        Sun, 17 Sep 2023 00:52:41 -0700 (PDT)
 Received: from [192.168.1.77] (150-140-187-31.ftth.glasoperator.nl. [31.187.140.150])
-        by smtp.gmail.com with ESMTPSA id i8-20020a0564020f0800b005309eb7544fsm2636443eda.45.2023.09.17.00.48.23
+        by smtp.gmail.com with ESMTPSA id i23-20020a1709061cd700b009ad8796a6aesm4660614ejh.56.2023.09.17.00.52.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Sep 2023 00:48:24 -0700 (PDT)
-Message-ID: <4ff26ffd-2574-af16-d950-7f1b544528ef@linaro.org>
-Date:   Sun, 17 Sep 2023 09:48:23 +0200
+        Sun, 17 Sep 2023 00:52:40 -0700 (PDT)
+Message-ID: <00d40f2f-df8e-1bc3-1619-c25a7d3149d5@linaro.org>
+Date:   Sun, 17 Sep 2023 09:52:39 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.0
-Subject: Re: [PATCH v2 5/6] arm64: dts: imx8ulp: update gpio node
+Subject: Re: [PATCH v2 3/6] dt-bindings: gpio: vf610: add i.MX95 compatible
 Content-Language: en-US
 To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -73,24 +73,23 @@ Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Peng Fan <peng.fan@nxp.com>
 References: <20230916-vf610-gpio-v2-0-40823da788d7@nxp.com>
- <20230916-vf610-gpio-v2-5-40823da788d7@nxp.com>
+ <20230916-vf610-gpio-v2-3-40823da788d7@nxp.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230916-vf610-gpio-v2-5-40823da788d7@nxp.com>
+In-Reply-To: <20230916-vf610-gpio-v2-3-40823da788d7@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 16/09/2023 04:04, Peng Fan (OSS) wrote:
+On 16/09/2023 04:03, Peng Fan (OSS) wrote:
 > From: Peng Fan <peng.fan@nxp.com>
 > 
-> The i.MX8ULP GPIO supports two interrupts and one register base, and not
-> compatible with i.MX7ULP. Update the node following dt-binding doc.
+> Add i.MX95 compatible string which is compatible with i.MX8ULP
 > 
-I think last email thread concluded they are compatible. Otherwise, how
-did it work so far? You break users, which might be ok, but commit does
-no say that anything was broken here.
+
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
