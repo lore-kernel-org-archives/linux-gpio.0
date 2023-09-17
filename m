@@ -2,196 +2,130 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4A8CD37B3
-	for <linux-gpio@archiver.kernel.org>; Sun, 17 Sep 2023 07:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F588CD37B4
+	for <linux-gpio@archiver.kernel.org>; Sun, 17 Sep 2023 08:59:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230230AbjIQHwu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sun, 17 Sep 2023 03:52:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46614 "EHLO
+        id S235009AbjIQI7J (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sun, 17 Sep 2023 04:59:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233820AbjIQHwk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 17 Sep 2023 03:52:40 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2378218C
-        for <linux-gpio@vger.kernel.org>; Sun, 17 Sep 2023 00:52:35 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-99c136ee106so459387666b.1
-        for <linux-gpio@vger.kernel.org>; Sun, 17 Sep 2023 00:52:35 -0700 (PDT)
+        with ESMTP id S234547AbjIQI64 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 17 Sep 2023 04:58:56 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38E15AC
+        for <linux-gpio@vger.kernel.org>; Sun, 17 Sep 2023 01:58:50 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-401da71b85eso38736005e9.1
+        for <linux-gpio@vger.kernel.org>; Sun, 17 Sep 2023 01:58:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694937153; x=1695541953; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nWdqqGRpAgOkTLyvsD05R8Bq7nexhnixhUs0t/ev9zM=;
-        b=mYVyrYoMDtr1+kRawR6eJW+4S6ugehukaOOk8gP9zVuoIdpdZn+EzTXinQq5Tf72VR
-         ieYSbBHZpYrDz2KThSCb7l+E59cJz4qBaO48Y80gTDTkVvmiA3u5WNXdo3JjTPSLahLr
-         7iJFhB3LADSQ7m3vUJNn2E+U8Y+Xy+XgH133cFW20cAcQcHqCHlxZt78uow4ZfxcSzAD
-         QacLfU7SrMVo6ZVFyLBpDWO1VWLSyXucQzbCY5YqIKyDiH4NxMhppEOiiEDcnaVzzGBG
-         QylDlGdvJZVzYdSh1HPwEOfkcIx4ARoD25ccSOX0ML7ZC1pfVHCJmfjda9maodPxvE3X
-         75SA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1694941128; x=1695545928; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aff0MNJXBJPd+CpLrhOQG/QAxEWELeCnZkX74TkfiBk=;
+        b=ym9L/BR0wG4jXklo7kGOsYUTjNY84CQmitkIBUZUQUprtdCKXtM0F5RMRIAzZpymKv
+         fagbC7IY03nWCcedoa5jR96rXK8v4nskCjS3ONIWFNfHf7KZLm67ItClveBM28puxCAC
+         HjWkpMFTET+f8uQrPfdffJuBEiBVYzKYp9QwLKucht787cEGZ6l6/LhpNQfWxGIkWoH3
+         YWA0+ChFaPea7bgcDaKdybJou6KBIiHAdvKgfJIBgOsX4TmEld0C6mCYxIC1d7gZkthf
+         3e9FrjmIV9ZEdsWNkkwSBLMC63rw5C19zm4GOf0E7VjfyHVUofiYk4tpHdQOPDZ1k5/u
+         lADQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694937153; x=1695541953;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWdqqGRpAgOkTLyvsD05R8Bq7nexhnixhUs0t/ev9zM=;
-        b=eHTmchv83ZIbDNp5Kw8Gdpiot8VLu5QS356kGc8uZDRgLukfqRmhlwFzIIO5gZWMra
-         DPtoitdW4OpG6GNqwWEGWKWujd4P6qSAEXa806CO2xsN/pYFiws+c5V/klVQONX1R1Bz
-         N2acBKkuNViHM4UgJNCucLmo9HBnFhCxesjtozL/yPEWfVYFXV9C0exl/pz4Lm6uXq0q
-         G9uZNw5O1pwGYK1X+1yQobZaH1WR2di3rSFreT+U1BgplsjEv98LGb5bLRGKWLd9QV6J
-         5SW3V3FUTp1PB+msxGSpFjOhX/R2AnGeDC4uJhxU2cwGnE25EJxAQLLr0Bz0RtGdPsB5
-         TJIw==
-X-Gm-Message-State: AOJu0YxT9F8YB/tpAC3TkkoeZgbWfpHe9WXC9L8FZcmqIta8SgJj/QCb
-        y8ofGuFrb7KmQnlyYg23JT28gQ==
-X-Google-Smtp-Source: AGHT+IF5RIVwt4hk66LUepLEOgIR+mheKG73oWYXEJom7gBEA9V47ZkZ9eeF3807hhnrMrtacAD7Sw==
-X-Received: by 2002:a17:906:1c:b0:9ad:e0cc:902a with SMTP id 28-20020a170906001c00b009ade0cc902amr4173352eja.56.1694937153483;
-        Sun, 17 Sep 2023 00:52:33 -0700 (PDT)
-Received: from [192.168.1.77] (150-140-187-31.ftth.glasoperator.nl. [31.187.140.150])
-        by smtp.gmail.com with ESMTPSA id jl6-20020a17090775c600b009ade1a4f795sm2372439ejc.168.2023.09.17.00.52.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Sep 2023 00:52:32 -0700 (PDT)
-Message-ID: <7ec16938-53fa-24dc-8443-ed6428697558@linaro.org>
-Date:   Sun, 17 Sep 2023 09:52:31 +0200
+        d=1e100.net; s=20230601; t=1694941128; x=1695545928;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aff0MNJXBJPd+CpLrhOQG/QAxEWELeCnZkX74TkfiBk=;
+        b=qtkpRRnBf2uJFleRUhHhlommEN6bdLU3Hl6TB24pE2S4h7ha1GI0rU7w7vfCGXdb5/
+         LlNtFJ1aOzv/xBlKzcjW/enhbd/PYZ6/G8YseOkLdf96cRElY4/rpszQhDBKmhNfOdP/
+         x0Ht1Kt1Y5fyj+txho9eMeiPdkbVj+MeT8U/xn7ms1HRNmlxh7ipca16GyM+iMsRqiKp
+         7/eQAPGnvaiNOTHblEKS0sa7v0U/yW/gn39oS22wijaqQnnlKUwqBTE0glYmgZn9Zc1n
+         OI4Id/XydcAlIBLUsnxrJApR7PAvEnT2Bx0JEU2ryi4afrzpzuea1dU5rAzqghQeRjBt
+         T01Q==
+X-Gm-Message-State: AOJu0Yxy+hr1fLWnzihsFDP2mlO8lqDvZlQ2N7rRQQW2OK16pNNS1dhR
+        QKwL+Om9tg/opLI2egJoq+msEg==
+X-Google-Smtp-Source: AGHT+IFC9VfIsN/vUHR46sCDiKLAUlf0a04wAI7lPLDwSRPeu3eejH3RswwgYYca+bAN7X2kON2Taw==
+X-Received: by 2002:a1c:f204:0:b0:3fe:d57e:d933 with SMTP id s4-20020a1cf204000000b003fed57ed933mr5612790wmc.15.1694941128515;
+        Sun, 17 Sep 2023 01:58:48 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:4ea0:9945:6800:8739])
+        by smtp.gmail.com with ESMTPSA id r10-20020adfdc8a000000b0031aeca90e1fsm9240971wrj.70.2023.09.17.01.58.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Sep 2023 01:58:47 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        akpm@linux-foundation.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v2 0/2] gpio: sim: improve the usage of __free()
+Date:   Sun, 17 Sep 2023 10:58:35 +0200
+Message-Id: <20230917085837.6199-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [PATCH v2 2/6] dt-bindings: gpio: vf610: correct i.MX8ULP and
- i.MX93
-Content-Language: en-US
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Peng Fan <peng.fan@nxp.com>
-References: <20230916-vf610-gpio-v2-0-40823da788d7@nxp.com>
- <20230916-vf610-gpio-v2-2-40823da788d7@nxp.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230916-vf610-gpio-v2-2-40823da788d7@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 16/09/2023 04:03, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> i.MX8ULP and i.MX93 actually has two interrupts for each gpio
-> controller, one for Trustzone non-secure world, one for secure world.
-> 
-> And they has one register based, not two as i.MX7ULP or VF610.
-> 
-> Although the Linux Kernel driver gpio-vf610.c could work with
-> fsl,imx7ulp-gpio compatible, it is based on some tricks did in
-> device tree with some offset added to base address.
-> 
-> So actually i.MX8ULP/i.MX93 is not compatible with i.MX7ULP.
-> 
-> Last, i.MX93 is directly derived from i.MX8ULP, so make i.MX93 GPIO
-> compatible with i.MX8ULP
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  .../devicetree/bindings/gpio/gpio-vf610.yaml       | 41 +++++++++++++++++++---
->  1 file changed, 37 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
-> index 59427d97adf5..8c1f87a1a393 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
-> @@ -20,6 +20,7 @@ description: |
->  properties:
->    compatible:
->      oneOf:
-> +      - const: fsl,imx8ulp-gpio
->        - const: fsl,vf610-gpio
->        - items:
->            - const: fsl,imx7ulp-gpio
-> @@ -27,16 +28,21 @@ properties:
->        - items:
->            - enum:
->                - fsl,imx93-gpio
-> -              - fsl,imx8ulp-gpio
-> -          - const: fsl,imx7ulp-gpio
-> +          - const: fsl,imx8ulp-gpio
->  
->    reg:
->      description: The first reg tuple represents the PORT module, the second tuple
->        represents the GPIO module.
-> -    maxItems: 2
-> +    items:
-> +      - description: PORT register base address
-> +      - description: GPIO register base address
-> +    minItems: 1
->  
->    interrupts:
-> -    maxItems: 1
-> +    items:
-> +      - description: GPIO Trustzone non-secure interrupt number
-> +      - description: GPIO Trustzone secure interrupt number
-> +    minItems: 1
->  
->    interrupt-controller: true
->  
-> @@ -78,6 +84,33 @@ required:
->    - "#gpio-cells"
->    - gpio-controller
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - fsl,vf610-gpio
-> +              - fsl,imx7ulp-gpio
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          items:
-> +            - description: GPIO interrupt number
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-So this is different than first interrupt mentioned in top-level?
+Hi Linus et al,
 
+As discussed here's an improved fix for the invalid usage of __free() in
+gpio-sim. I based it on your "maybe-sane" suggestion but unfortunately it
+missed a couple details that make it impossible to avoid a conditional
+initialization of the managed pointer without repeating the call to
+fwnode_create_software_node().
 
-> +        reg:
-> +          items:
-> +            - description: PORT register base address
-> +            - description: GPIO register base address
+What we're doing here is: we're creating the string array for the standard
+"gpio-line-names" device property. It can look like this:
 
-You have the description in top-level, no need to repeat it. Just
-minItems: 2... although it depends whether top-level property will stay.
+    { "foo", "bar", "baz" }
+    
+In which case lines 0, 1 and 2 are named but it can also look like this:
 
+    { "foo", NULL, NULL, "bar", NULL, "baz" }
+    
+Where only lines 0, 3 and 5 have assigned names.
 
-> +    else:
-> +      properties:
-> +        interrupts:
-> +          items:
-> +            - description: GPIO Trustzone non-secure interrupt number
-> +            - description: GPIO Trustzone secure interrupt number
-> +        reg:
-> +          items:
-> +            - description: GPIO register base address
+So the `has_line_names` boolean set when encountering the first line with a
+name is there for a reason, namely: it's possible that only the line at
+offset 0 will have a name, leaving max_offset at 0 but we still need to
+create an array of size 1 in this case.
 
-So the first entry is different between variants? Then top-level should
-be just min/maxItems.
+If the array is created and filled, then it needs to live until a deep
+copy is completed in fwnode_create_software_node() so it has to be defined
+at the top of the function.
 
-> +
->  additionalProperties: false
->  
->  examples:
-> 
+I think this still results in clearer code then if we called
+`return fwnode_create_software_node();` twice with the same arguments.
+
+I also changed the naming to reflect the purpose of the array: it can be
+sparse so it's not really "number of lines", it's the "size of the array
+holding the names". The array can be of size 10 but we can only have 3
+named lines.
+
+To atone for the above, I've added a second patch which changes the other
+instance of __free() in this driver to be initialized in place.
+
+If this is alright for you, please consider applying it directly to your
+tree for v6.6-rc2.
 
 Best regards,
-Krzysztof
+Bartosz Golaszewski
+
+v1 -> v2:
+- split the line name setting into two parts
+- add a patch improving the second instance of using __free()
+
+Bartosz Golaszewski (2):
+  gpio: sim: fix an invalid __free() usage
+  gpio: sim: initialize a managed pointer when declaring it
+
+ drivers/gpio/gpio-sim.c | 68 +++++++++++++++++++----------------------
+ 1 file changed, 32 insertions(+), 36 deletions(-)
+
+-- 
+2.39.2
 
