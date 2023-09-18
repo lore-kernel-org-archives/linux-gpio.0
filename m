@@ -2,123 +2,197 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7136BCD3421
-	for <linux-gpio@archiver.kernel.org>; Mon, 18 Sep 2023 08:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3414CD37B0
+	for <linux-gpio@archiver.kernel.org>; Mon, 18 Sep 2023 08:13:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240584AbjIRIKv convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 18 Sep 2023 04:10:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52966 "EHLO
+        id S240288AbjIRIMh (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 18 Sep 2023 04:12:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240564AbjIRIKr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Sep 2023 04:10:47 -0400
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6573E91;
-        Mon, 18 Sep 2023 01:10:42 -0700 (PDT)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-65642ade0easo12524116d6.1;
-        Mon, 18 Sep 2023 01:10:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695024641; x=1695629441;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LX+6XiZ9i9bduvS7LsPDJJ/qIaDd1B/wTxi5s+/d5gs=;
-        b=gLQe+fp4gNihvquT5rZUYAslzC0hDLrDAWD5jjhkHvnBeaO2uu3f3h+aU1LC8/xKvZ
-         RKYj7h9T1qR2iyfHaAxr5zkz2Me7v9d21PscfG1wci0KHJFOvheYKzNIfJKCJHbC97/+
-         W/1GtCm+x55PDjX178BPuPfsiB4j/q0ESHKUh3Ra/q5/1E+q7Zc31ldQY4NWLpWeKKo6
-         AdoKWcwMRQdQna5X1M4rCwmtFZaJfNsTSCco7wJ1nMc87A6zHR0nGk1gb2/iZ1HsAoeY
-         asdozON9i86aGTXqCdEcDPaGpAPOUaOjdTIZPfE6Vzo0wZMASTnq7THOLBYtU7zq3uCL
-         xHpg==
-X-Gm-Message-State: AOJu0Yw1O1KjXXtnbClHolvj8duyPGwzTZhbFhzuvW+IltAEWUQPaw3n
-        kNs8U1GnXjEB+rwxzhd7glMgrtBWO2aE/w==
-X-Google-Smtp-Source: AGHT+IEssz/h2MzmVPfY/xAB1BaTSjOhI/Bwq5sx6gVrWw2l9kRGzoEy1ex5EvPT1YRDd3dVZtTFBQ==
-X-Received: by 2002:a05:6214:4b12:b0:656:1c7b:5aa1 with SMTP id pj18-20020a0562144b1200b006561c7b5aa1mr9485316qvb.29.1695024641328;
-        Mon, 18 Sep 2023 01:10:41 -0700 (PDT)
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com. [209.85.219.47])
-        by smtp.gmail.com with ESMTPSA id mu7-20020a056214328700b0064f42b1ab05sm3179770qvb.39.2023.09.18.01.10.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Sep 2023 01:10:41 -0700 (PDT)
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-65631aa8b93so18948376d6.3;
-        Mon, 18 Sep 2023 01:10:41 -0700 (PDT)
-X-Received: by 2002:a81:6d84:0:b0:58f:c452:74da with SMTP id
- i126-20020a816d84000000b0058fc45274damr9139447ywc.42.1695024249288; Mon, 18
- Sep 2023 01:04:09 -0700 (PDT)
+        with ESMTP id S240699AbjIRIMK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Sep 2023 04:12:10 -0400
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2072.outbound.protection.outlook.com [40.107.6.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1E7A114;
+        Mon, 18 Sep 2023 01:11:45 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j+/0WR14RbxSa42c+m550G/L2UTwb5W+tkgNmtybhDkVouS/9eIENd/XfHiTaGoE4qFpduBKCsTkmNqSRwAC///NsR75eJ9oy2tek+6/q6Ftft/tItThl7QCekEPls+tTyqEPPJkPqx19Cqdmkj9DH1RFtolcpX/hR8iGLCm7DOsMrR93so7ISHPYAaLv+zxNvddkVnP8qj5RT3+1XZ2H7bt6abzWXsnHPfLXiztbuGdk2TlS6SO11eW5MgibU/kELixjs0ZF6VCHm96rHvC3XnytoOA66kv5Erf2KbiYCHMLFDDP5xuR2qQSZdFND2kGJPhWXPIDKNZVKoSFIe6Ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B7kt5GqVNgkKPMfO/ZrK0zFOvDpKeARkxYuEhrS5Z1g=;
+ b=aCLDpbj3LyJh1v17KlmF/GxrCgxfm2j7d9PKeFhuFByuwwmyyXNahpIiUNMhMOqtw2J5UqE2ehEkSv4q09tn1EKZ8voW4p21sWDe0zoy5ny5clB/Sfof2YaKX6B/fiG5QhD+pjj6E/ejHkX/Gr6lqxDGJ3XOgfRLxlHJxNYheDcth6gZKrRPj6PdZ77qTqbej3VI2j2bj7E4xoZIgSrBv+ZwhpdsdlFi4MYQH6nwSH6z5jgsseu8UIsKF0kIgvwJuPr8lXQ0R5Oo0TdoBF4I5w0OyQiTN3ULE4PQuadZGRVorAeuR3CaRalYTmp0MFcRelZV5FuuWLddhmZ4Kot5bA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B7kt5GqVNgkKPMfO/ZrK0zFOvDpKeARkxYuEhrS5Z1g=;
+ b=T8321xfenQRR/FTqMF89v5aL0wi4zFXZLWBMoPfcFq28tum/Ob5glDFIKCVn9XOpMigBPP97KuUIhZ4bADPcIyXE9Xi9OozJ9B28i89R7lAu7PIoVEj7p6UOjHo5xymapm8ft9l3tDhSLg9rIYqobSGgdI+mKwwcU/j5b/z1ARU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by AS8PR04MB8706.eurprd04.prod.outlook.com (2603:10a6:20b:429::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.26; Mon, 18 Sep
+ 2023 08:11:43 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::2b3:d8de:95c8:b28b]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::2b3:d8de:95c8:b28b%3]) with mapi id 15.20.6792.026; Mon, 18 Sep 2023
+ 08:11:43 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: [PATCH v3 0/6] gpio: update i.MX93/8ULP and support i.MX95
+Date:   Mon, 18 Sep 2023 16:16:04 +0800
+Message-Id: <20230918-vf610-gpio-v3-0-ada82a17adc5@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEQHCGUC/23MQQ7CIBCF4as0sxYDA1LsynsYF1imLQtLA4bUN
+ L27tBs1cfle8v0LJIqeEjTVApGyTz6MZchDBe1gx56Yd2UDcpT8LBTLnRac9ZMPTGlytnV4Pwk
+ JBUyROj/vseut7MGnZ4ivvZ3F9v7NZME4k+SUMMKg1fYyztOxDQ/YIhm/of6BWKDiBqWztTGu/
+ sB1Xd/Y+UUm2wAAAA==
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Peng Fan <peng.fan@nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1695024993; l=2208;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=sxgXILD2ARPemFAsJUEMj+cbKFrRm3cKMX1Bs0wa14o=;
+ b=iZR4Jw0HMrltQfVOtaScWmttrJMjyVFPaXajCefukRDA9ll6xUix5Ho0DHiqY/mWUaPkiF8Xa
+ 65rXLUFNVXxCcoG3IzT2Wn6etvaw+MBXEVpJ7ITwpW39P86j/N347O0
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SG3P274CA0010.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::22)
+ To DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
 MIME-Version: 1.0
-References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com>
- <20230912045157.177966-15-claudiu.beznea.uj@bp.renesas.com> <CAMuHMdWRxaBsPAn0OR15WFua_5HZVPTmWabFnnex5gDLKjE9Cw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWRxaBsPAn0OR15WFua_5HZVPTmWabFnnex5gDLKjE9Cw@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Sep 2023 10:03:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV1_Hyqzkf73k2-Vou_qJX8eUzEG+hJ-yP+9TYErWjyGg@mail.gmail.com>
-Message-ID: <CAMuHMdV1_Hyqzkf73k2-Vou_qJX8eUzEG+hJ-yP+9TYErWjyGg@mail.gmail.com>
-Subject: Re: [PATCH 14/37] clk: renesas: rzg2l: use u32 for flag and mux_flags
-To:     Claudiu <claudiu.beznea@tuxon.dev>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
-        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
-        nfraprado@collabora.com, rafal@milecki.pl,
-        wsa+renesas@sang-engineering.com,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|AS8PR04MB8706:EE_
+X-MS-Office365-Filtering-Correlation-Id: f268b00b-be63-4537-594e-08dbb81ee498
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: NOxscuC1+mOuP42bnazfT/glu8m57tkcECVPjKb/47L8xUtvZ8FlZ25fh3hh6pNxPbuM1zFHdccMWKDGq9Yc0vDH6YGVO/ZL+hz6cNn/05Wb1Y3mtBF9viJum+IkxjvYll0XdqW/WxPBoQwPzr965znz6xpqKGO3wyOxCrxpPrsBrgzL/qbv6R77caS2N9vLO3rTmoTAUsEleE90XxaKCuceoCzmrSuP6pPd8KIIqoDdI74ntOwB/QuveFrOJjeaIO17fPyKmx1PPGfEFfkpe6tWI1/3uHOy2D4g6pwk0BV/AdVKV9Bx9wRrVjxHXi6bHWP6blWmV2QWwEsqTx4Zsbzu0oNLN6wbk9K644XYAnvvqfX1qIdJODqh7XAOkz6aJfj5WZd0DXiv1sA23nOFkIJh3k2Dbr6Ba7MsHjXIbfArs2wVmQo9pmkQvG4SkIIJ9qczDvsNjsMulNggzibr/qYwd8Kp+r4K4w7ZaQ7cYDllr+PCbX//UtsdGz2wmUaaeEjyBa0E5DvosjHH9cVKzHT8C1kSJcf1Tl/USe42pH6o/YpPhF6n5Q9x0KQLu21nDbr2FaXvSoUMWr0NkG9+CNlO6xB+BpBRQRyH4qx5d1U2hV68gr7B9raYIGAify0XA0kKTyVOnAxwHk5o8BEF2tnPKMtfsMEamAWxukbcPFg=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(39860400002)(346002)(376002)(366004)(136003)(1800799009)(186009)(451199024)(6666004)(6486002)(6506007)(478600001)(966005)(8936002)(8676002)(4326008)(921005)(86362001)(26005)(38100700002)(7416002)(15650500001)(38350700002)(5660300002)(66556008)(66946007)(66476007)(54906003)(83380400001)(110136005)(2906002)(316002)(6512007)(9686003)(41300700001)(52116002)(36756003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cjBCMnRrT29Tc1FPakxwcDJtODBOYUQyY0xOS0F2cmFQNmRVV3VxSE1seXB6?=
+ =?utf-8?B?K25pN0R6eGdWTDY4dWxLVHVpeHd5WUdLcTZPTmlKcyt1dGNOMDRoQmxFeGw3?=
+ =?utf-8?B?ZnRPd2JpYm8yWXU1SWRKVUJyZ1BlWGxKOEp1a0ZSMW5lQVFjaWw5QkMvWDBQ?=
+ =?utf-8?B?bm5uTTlIU3cvV3NFTHJpTFg0WXJkYnVaS1JueUtqT0kyd2hia3VpQWY5d2w1?=
+ =?utf-8?B?ZnFZOVdkMzJ5MFNyM1V1d0tsMGsvWkJkWWlPdE5scFc3OW9iN1lkWUp3M0hF?=
+ =?utf-8?B?a1IvYnhWditabWVEN1ZJLzBuL0dycFphZjIwY3N5UHBFNG45M3hlQmVXRXIy?=
+ =?utf-8?B?TUJDMWYxdG9RZ2lrL0lFWXJqK2NBVWhmaDZ5ZTlWTWZjbEtTYlo5eTBuMEg3?=
+ =?utf-8?B?dUdOdjl0cTBBcm9SR2RiVGFQZHNSL3U2SUtPMkhQZDE0QmhSOFltVkRJZHlh?=
+ =?utf-8?B?eFVpYkxaMUJPZzk0aFFXYThDN21kVGliT3dXay9zd0hlR1pZWERIL2xiWk8w?=
+ =?utf-8?B?K3dteEZKQkpxdm9CVUxBL1pIUUc4ZFAweEcyMWt5STZvaUVTZUlHOVdYSThw?=
+ =?utf-8?B?VEpZbTFYeEppMzMrSWRtcXRydU9hbzJhRUNhZHBRZXhibFY0azFmRUo1dkJP?=
+ =?utf-8?B?SFkyMTJhZzF2OFB0UUROaHRMTVd6dlE0Q0VzZ1JiWmQyMEN2ZVA1WWp1N09m?=
+ =?utf-8?B?WExSdTFOK0tuQ2NreEVWV0xsWHFLTUE2YVc2UFBoenRJaHhtbEppNW9naTZ5?=
+ =?utf-8?B?ZmFqZk1odXJyMUVCUi9Kcjg3UUcvR0xWTm9qTmVoUEFucVpHWHZyU29qU096?=
+ =?utf-8?B?cmJjek5wS2tGTWltM0REWXo0TVIzVHBhdW1tSTBFSDN6YkNzY1VJemtrRTVh?=
+ =?utf-8?B?L1lVNGF6Mnh5Umo0WXcrTVFVd0ZUeFY1MUduTjc1bXFBMVVneHJHbmxwY21M?=
+ =?utf-8?B?SU1lWU1HQnIwemtNcy9vekVaYUY3NmF1VXJ1eEZqN1FMYVVna2VXWVRqRFZ6?=
+ =?utf-8?B?VG8yQmtUL21tUE1OU1Foc1Z3ZzhNa0F5UVcwS0xOZS83SVk4MDUzQm03T0FU?=
+ =?utf-8?B?RXY5TTZzN1B3aUVzbGNlRE5DcUhCdEUzcEVhbU5WVUt3bnR3eGhrOWROL0xE?=
+ =?utf-8?B?Z1VpODJzWWVabHc1NUlNZGhhYUZUKzQvTVNZWXZ2dmljUjVkZitjbkFwNTVm?=
+ =?utf-8?B?cG1sVXI4R2pvZUJTajdNUVY5QzVyTFpLZy9BaW9QTGZKVURSbDRZRlE4SG1r?=
+ =?utf-8?B?bFFQMjBsZ0ZIVXpvNHdta01reXpCUWFsR1ppbTRJVTdhMHhQc20yN3BLOWRx?=
+ =?utf-8?B?SDZmVlcvdTFaNXlaNm9EMTZJZVVybEwyd3lBVW91OVNZaWNkYmRlbDV2aVhK?=
+ =?utf-8?B?UHdEQVlZOGY2VWZGeDd6MmtTREtzbUYzNWRlbk9vWWNoTUY5VXgzVEJOeThz?=
+ =?utf-8?B?YUlvZllTZU5CcW9jNUR1WURLRXIzemFkL2hFTVYvblN5VzBxbUhnL05CSFBD?=
+ =?utf-8?B?Y1Q5c3Vqcnk0Vm1xV0ZiQWpPc1RXSTNKTmZtL1lISzdoSVpTMFNrQlBqVnNn?=
+ =?utf-8?B?SUFENTVReVIwOW9qM2FQSlhJOTVPUEtPeEV0OFgxWmVCd1RnR1pmOXUyOTdt?=
+ =?utf-8?B?bXVaTitpZi9SQzlRZlRnaG40VnBxbCs3MTJhT3kxNjg1a0F5L1VPcnJESnky?=
+ =?utf-8?B?UEc3dlVHRDdZNVZxYUhFdmFhQlN1SDB6eXBqbW5sakVscVJoUTJqSTZxQWJm?=
+ =?utf-8?B?bGh4RndHeEoxeUg4dGFRZEZMM3krRFhERW9nQmRaTmpMcjArZWxRdjhMOXhI?=
+ =?utf-8?B?TGxpSnJkcDBkSHZwelFmMkFGcjN5eWQyaXVoVXpmeTFWdVZreWRkUmFsNVRv?=
+ =?utf-8?B?dWhlb2FNVVJyK0ZuTzI1K1hxNXlCbExveGtxQ3hnMHZPYlZvSzBrQi8ySVk3?=
+ =?utf-8?B?RWNJeENIckJiVCtZbEFNTk1VQzR1Mk9yaHpwU2hENXFIb1Bpd1BNcnMyLzZo?=
+ =?utf-8?B?c0Z5c21jamd2aFVVME5wQkJHQ2o5NlQvQjhhaXp4VUU2OUVDSTJuYXlQNGNl?=
+ =?utf-8?B?R0NpQ3Z0M0p0ZXhwcTFjMjcwemJabWdWM2U3WHJzVHhJRmV6ZlZmUlJXOVdI?=
+ =?utf-8?Q?VxmwvJDGt+YEEebmNiWCf84fv?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f268b00b-be63-4537-594e-08dbb81ee498
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2023 08:11:42.9682
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0EZP7C+QZSLklGRxPXnuUpoIvZXCEQhy930uQiioehTuUH7n5TraHxq4GqovKK9eZDQW+nDwnyHoF+Prqc22pA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8706
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Sep 14, 2023 at 3:29 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Tue, Sep 12, 2023 at 6:52 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > flag and mux_flags are intended to keep bit masks. Use u32 type for it.
-> >
-> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/clk/renesas/rzg2l-cpg.h
-> > +++ b/drivers/clk/renesas/rzg2l-cpg.h
-> > @@ -92,8 +92,8 @@ struct cpg_core_clk {
-> >         unsigned int conf;
-> >         const struct clk_div_table *dtable;
-> >         const char * const *parent_names;
-> > -       int flag;
-> > -       int mux_flags;
-> > +       u32 flag;
->
-> "flag" is used for several purposes, which expected different types:
->     - clk_init_data.flags is unsigned long,
->     - The clk_divider_flags parameter of clk_hw_register_divider_table() is u8,
->     - The clk_divider_flags parameter of __clk_hw_register_divider() is u8,
->     - The flags parameter of __devm_clk_hw_register_mux() is unsigned long.
->
-> > +       u32 mux_flags;
->
-> Actually the clk_mux_flags parameter of __devm_clk_hw_register_mux() is u8.
->
-> >         int num_parents;
-> >  };
->
-> I guess u32 is fine for all.
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+From hardware perspective:
+- i.MX8ULP/93 GPIO supports two interrupts, 1st for Trustzone non-secure irq,
+  2nd for Trustzone secure irq.
+- i.MX8ULP/93 only has one register base
 
-Thx, will queue in renesas-clk-for-v6.7.
+The current linux gpio-vf610.c could work with i.MX8ULP/i.MX93, it is
+because some trick did in device tree node with offset added to base:
+  reg = <0x2d010080 0x1000>, <0x2d010040 0x40>;
+But actually the register base should be 0x2d010000.
 
-Gr{oetje,eeting}s,
+So i.MX8ULP/93 is not HW compatible with i.MX7ULP.
 
-                        Geert
+i.MX93 GPIO is directly derived from i.MX8ULP, so make i.MX93 compatible
+with i.MX8ULP. i.MX95 GPIO is same as i.MX93, so also compatible with
+i.MX8ULP
 
+There maybe dtbs_check failure if only test the 1st patch. After
+the patchset applied, no failure.
+
+To make avoid break old bindings from work, update the driver
+to support both old/new bindings.
+
+---
+Changes in v3:
+Update patch v2 2/6
+Update commit log in patch v2 5/6
+Add A-b from DT maintainer for patch v2 1/6, 3/6
+- Link to v2: https://lore.kernel.org/r/20230916-vf610-gpio-v2-0-40823da788d7@nxp.com
+
+Changes in v2:
+- Update bindings with describe items, add one reg base for i.MX8ULP/93
+- Update driver to support one reg base, support both new/old bindings
+- Add a new patch 1 to update gpio-ranges found in dtbs_check
+- Link to v1: https://lore.kernel.org/r/20230914-vf610-gpio-v1-0-3ed418182a6a@nxp.com
+
+---
+Peng Fan (6):
+      dt-bindings: gpio: vf610: update gpio-ranges
+      dt-bindings: gpio: vf610: correct i.MX8ULP and i.MX93
+      dt-bindings: gpio: vf610: add i.MX95 compatible
+      gpio: vf610: add i.MX8ULP of_device_id entry
+      arm64: dts: imx8ulp: update gpio node
+      arm64: dts: imx93: update gpio node
+
+ .../devicetree/bindings/gpio/gpio-vf610.yaml       | 40 +++++++++++++---
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi         | 21 +++++----
+ arch/arm64/boot/dts/freescale/imx93.dtsi           | 28 ++++++-----
+ drivers/gpio/gpio-vf610.c                          | 55 +++++++++++++++++++---
+ 4 files changed, 111 insertions(+), 33 deletions(-)
+---
+base-commit: e143016b56ecb0fcda5bb6026b0a25fe55274f56
+change-id: 20230914-vf610-gpio-46edacd2b513
+
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Peng Fan <peng.fan@nxp.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
