@@ -2,60 +2,60 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A90CD5BB1
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Sep 2023 12:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E7FCD5BB5
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Sep 2023 12:46:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232107AbjISMqU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Sep 2023 08:46:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55934 "EHLO
+        id S232145AbjISMqS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Sep 2023 08:46:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232095AbjISMqS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Sep 2023 08:46:18 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED950133
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Sep 2023 05:46:08 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-53136a13cd4so2130924a12.1
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Sep 2023 05:46:08 -0700 (PDT)
+        with ESMTP id S232106AbjISMqQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Sep 2023 08:46:16 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BC5A125
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Sep 2023 05:46:07 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-52f3ba561d9so12244629a12.1
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Sep 2023 05:46:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1695127567; x=1695732367; darn=vger.kernel.org;
+        d=fairphone.com; s=fair; t=1695127565; x=1695732365; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WMuJsymgFdsKAjrQm0VavHQLfVQtcng3/FrcyEkfn3s=;
-        b=QthGcJwZLcU4Owdd9tmIeYu+cw4+qDAmK8Dkn+KhTbAeTDfawtgh4Pd6fTFbIAjxMw
-         UvzcvQ2+y3vy3JjNcOBKl9q4oIy8wzUCu5E22mtX1XOcEKVC1QYlRScxlYsJdT9aTdeH
-         kxvWdKIXcoqI6be1m27GvgUKN4SprlGSAATCfdfDSNmu6IQk2qgpnbPqcTBXa2YK1WCE
-         eOfkrVsg/G7X1ZdmsfxyN28/S8q0n6mloPBmp8WuqhsqiwZjlhKYw3LG4/HDkl0BOCkR
-         qjrlZs6MvafszOlZ/U0Ntsfi3sFzehz4cpE3kA2Cu1hAcVTx10dZ+YseolZ4hHc6kZvE
-         MjZg==
+        bh=kA0NToIbWuR6d6alRKXkP3KfjrWVM/I6SsyvDthzTxU=;
+        b=CwS/cyREVeEVLjvlCgp1qJoyrdqn3ckGQeuCVT7k803ktVJdi99D8nGB4rCroWlSH6
+         Z8VEdaVRvV/2JjQ+d8twp+AoEZfAzUMOMoSbq5FXjhkeIyMRYPKRQfUo6zwQ/EcjaMJd
+         5lbL4f5MQvC9fo0IpzWO3Fs+K6rlyUQg2acbjEuiTAv+hSrT56vYc/9hzb5nUXPjItae
+         SY3sKi+zVCnO5oPtRDC9zHBBPUZMVIutka6hlo1TyaMGzQQGth0WxF50pOVvf6ATNTOF
+         N5JpqylEJnqXK5oAlZFGIwEQS/bfjwgDK/jsn3y5f1Ih+4RE0CXRIdHwIlvjMitcfDTb
+         CG9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695127567; x=1695732367;
+        d=1e100.net; s=20230601; t=1695127565; x=1695732365;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WMuJsymgFdsKAjrQm0VavHQLfVQtcng3/FrcyEkfn3s=;
-        b=NAMotnIz9/RR8XheeMaoAIEG+TC0/CrXwJle4HgiJogeaYZ2mJmmNGxGbxDty3Znmc
-         GTeWDJ3Tya8e+L5KbeTQHdRXhPT8CvnhTNZLQoamJ3hy9Jc7BQg7GPDlZXSper2htJ6p
-         AFO5Psmu4lF96nPEifJPO7r+EEJCZK/VuBZUnWvR0p855qQDrPCGj9bBu5JqcMYGZT2u
-         Usfma28FTEW7uNxv+MIzmQfDDIIZS23VmVlXQI4zX9R9LlXYYlFB6W/6dBPvq6/mJ5Wq
-         oDBf4nUz3BhbDJ2Z+8FCFMv3NGKx8clPP23Ed1N21L+9Kf6SDyf3t9YsXccWJ0XD3TlB
-         C1nw==
-X-Gm-Message-State: AOJu0YxbU2h00Qufa83FfXcsmlILW26mEWqWu3XFRQ/FDJXfce+xbI6Q
-        t23Rrn7GK4cPbvGN1uV0E3swAQ==
-X-Google-Smtp-Source: AGHT+IESN3P4tFPFTmoegpAyu0985VeUnYTtETuttZ8u4RCYd1u27yyNjPxim8n3sd0Ww2U2wL5r/g==
-X-Received: by 2002:a05:6402:5165:b0:530:8a59:a01d with SMTP id d5-20020a056402516500b005308a59a01dmr9886341ede.27.1695127567136;
-        Tue, 19 Sep 2023 05:46:07 -0700 (PDT)
+        bh=kA0NToIbWuR6d6alRKXkP3KfjrWVM/I6SsyvDthzTxU=;
+        b=CmZRvYfnPTjWg73JgGt1ehPWd0nqZdXizk5hxHVW0LsmNcA/IKtkRt2BbA7K+6NbP4
+         fZAEVuZnDob5qL9ANWQJxCcZSXJEQo7UGavvUs/rZZNc19V9s72lMIBFcUe8WjgN8kMN
+         2HR+mjAgaO1lGTYsT1EatEvU4OBHtkqv8Kh1iV95bKBTGKOj2yxFDUiN/ZEDJ25MrY7G
+         /bvxS8DCg99prn8tZ1tZhHKBL0bwlVwENOqTivZv1ka8bQ7xb6U8DblfEJDaz1K6Fxp1
+         97vXSrGpFT5ApHtDjKSsMG2o4z6G+UUM7zrX/48hRMEjbUWzuj5NUg4fhDcItS5kQX2i
+         rOjg==
+X-Gm-Message-State: AOJu0Yx1KFbwblzcOfrWJYuFp1COAMWddELPseUQ3sPo0MjGgXpmxj7v
+        oEroFcAca9sWRZP+JkOlhZHfOA==
+X-Google-Smtp-Source: AGHT+IFrtYCZSQ5shL6KQpW4yzOiSjutPhoOz2W7aPnHTf+JUa1mxqdR6aoD/M8rkYHlMxdTQEDweg==
+X-Received: by 2002:a05:6402:43c3:b0:531:157d:ba2d with SMTP id p3-20020a05640243c300b00531157dba2dmr3611058edc.4.1695127565674;
+        Tue, 19 Sep 2023 05:46:05 -0700 (PDT)
 Received: from otso.luca.vpn.lucaweiss.eu (static-212-193-78-212.thenetworkfactory.nl. [212.78.193.212])
-        by smtp.gmail.com with ESMTPSA id dn22-20020a05640222f600b00532c1dfe8ecsm635878edb.66.2023.09.19.05.46.06
+        by smtp.gmail.com with ESMTPSA id dn22-20020a05640222f600b00532c1dfe8ecsm635878edb.66.2023.09.19.05.46.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Sep 2023 05:46:06 -0700 (PDT)
+        Tue, 19 Sep 2023 05:46:05 -0700 (PDT)
 From:   Luca Weiss <luca.weiss@fairphone.com>
-Date:   Tue, 19 Sep 2023 14:45:58 +0200
-Subject: [PATCH v2 4/7] arm64: dts: qcom: pm8350c: Add flash led node
+Date:   Tue, 19 Sep 2023 14:45:56 +0200
+Subject: [PATCH v2 2/7] nvmem: qfprom: Mark core clk as optional
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230919-fp5-initial-v2-4-14bb7cedadf5@fairphone.com>
+Message-Id: <20230919-fp5-initial-v2-2-14bb7cedadf5@fairphone.com>
 References: <20230919-fp5-initial-v2-0-14bb7cedadf5@fairphone.com>
 In-Reply-To: <20230919-fp5-initial-v2-0-14bb7cedadf5@fairphone.com>
 To:     cros-qcom-dts-watchers@chromium.org,
@@ -78,31 +78,36 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add a node for the led controller found on PM8350C, used for flash and
-torch purposes.
+On some platforms like sc7280 on non-ChromeOS devices the core clock
+cannot be touched by Linux so we cannot provide it. Mark it as optional
+as accessing qfprom for reading works without it but we still prohibit
+writing if we cannot provide the clock.
 
 Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
- arch/arm64/boot/dts/qcom/pm8350c.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/nvmem/qfprom.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/pm8350c.dtsi b/arch/arm64/boot/dts/qcom/pm8350c.dtsi
-index f28e71487d5c..aa74e21fe0dc 100644
---- a/arch/arm64/boot/dts/qcom/pm8350c.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pm8350c.dtsi
-@@ -30,6 +30,12 @@ pm8350c_gpios: gpio@8800 {
- 			#interrupt-cells = <2>;
- 		};
+diff --git a/drivers/nvmem/qfprom.c b/drivers/nvmem/qfprom.c
+index 14814cba2dd6..525be03b7bba 100644
+--- a/drivers/nvmem/qfprom.c
++++ b/drivers/nvmem/qfprom.c
+@@ -423,12 +423,12 @@ static int qfprom_probe(struct platform_device *pdev)
+ 		if (IS_ERR(priv->vcc))
+ 			return PTR_ERR(priv->vcc);
  
-+		pm8350c_flash: led-controller@ee00 {
-+			compatible = "qcom,pm8350c-flash-led", "qcom,spmi-flash-led";
-+			reg = <0xee00>;
-+			status = "disabled";
-+		};
-+
- 		pm8350c_pwm: pwm {
- 			compatible = "qcom,pm8350c-pwm";
- 			#pwm-cells = <2>;
+-		priv->secclk = devm_clk_get(dev, "core");
++		priv->secclk = devm_clk_get_optional(dev, "core");
+ 		if (IS_ERR(priv->secclk))
+ 			return dev_err_probe(dev, PTR_ERR(priv->secclk), "Error getting clock\n");
+ 
+-		/* Only enable writing if we have SoC data. */
+-		if (priv->soc_data)
++		/* Only enable writing if we have SoC data and a valid clock */
++		if (priv->soc_data && priv->secclk)
+ 			econfig.reg_write = qfprom_reg_write;
+ 	}
+ 
 
 -- 
 2.42.0
