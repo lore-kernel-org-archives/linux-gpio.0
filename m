@@ -2,121 +2,50 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FD2CD5484
-	for <linux-gpio@archiver.kernel.org>; Tue, 19 Sep 2023 07:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E61CD548B
+	for <linux-gpio@archiver.kernel.org>; Tue, 19 Sep 2023 07:38:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231808AbjISHhf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 19 Sep 2023 03:37:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49328 "EHLO
+        id S231784AbjISHiP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 19 Sep 2023 03:38:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231797AbjISHhe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Sep 2023 03:37:34 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF624128;
-        Tue, 19 Sep 2023 00:37:25 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id 41be03b00d2f7-517ab9a4a13so4468258a12.1;
-        Tue, 19 Sep 2023 00:37:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695109044; x=1695713844; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B5Q+PIUsVT07rv58SrL1HUGBcimCQz1X9byNoTtq1Ic=;
-        b=MW78N5ym5TpFYA2W/diCfF7ucDPiIANQ9LMGeFswrEEtyiIE3EYGfh3HV/3wQxYzM9
-         M3GfYup6Bk5xeVvKQKTWSYVgasQTA8dS0LoY0TWE/gjnNK3fKB/Zj04XqO6QWCzZCJas
-         Ev1ulcpScXGR6b5nv5gzmWBwrvoZb74ZFajZW8ZEWE4HJQYkzCN6t9Rs+JHnl3HWzXjK
-         yKoL59qDBLDZqS8LyGuOFrgRBPw1EZKjo1RzKiDOXWe/PNXtfKiyIDu/Jb9EZGQTfVIX
-         9u+AYInFNfGWcjRHp3VIexC8GPUgq1OSJq1V0QOYuI63VGLiwFiThniX6AmGD2+wU31G
-         ZXOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695109044; x=1695713844;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B5Q+PIUsVT07rv58SrL1HUGBcimCQz1X9byNoTtq1Ic=;
-        b=DzW+luMYFh/t//fkbmHwa8BKBzzeF1pGHiQeNXAbTIVMQzxdWtrmkMNPZT4TheVtxx
-         tl10tqChMBnrpr8fLD3YjaW5jToh8sg7tg6x2wI1S9OTSjQqhkaSxu3MDhVAq5e9z2+w
-         gLv6Owq/UB25a9RM5HRv6AUP6cIPccSO8XBcGObSpP94b/WlJS1Si++XUgvdhkuAINmq
-         2tnra2p+XiT9Bd/FUjzysZuMv1Mb+ONVA9luuKO1NdusKvE7HchsGeZjYfBkIlhjB66v
-         2VLl8y7h44ixit1eHD6QFg/iif9r8Y4/6jCS3Fu7ZYniNB0vzD2aBSgk0b5s49CVOpOd
-         sCHg==
-X-Gm-Message-State: AOJu0YxuwrGe58MSOvbPeDzpC6dEemPnXse4FyS1jbry2kvEdoeij2Wz
-        MbMmTaquOdh5jc5mcJ3BPTJ5H5TXirbnYg==
-X-Google-Smtp-Source: AGHT+IFcEMyiCEcPXR+JeTg/wf2LOitaa8tmyj1qD8SIcaUMPMWpnCsN1cO7mSwaf67EG7nyYBMTqg==
-X-Received: by 2002:a05:6a20:d405:b0:13a:6bca:7a84 with SMTP id il5-20020a056a20d40500b0013a6bca7a84mr11755987pzb.44.1695109044242;
-        Tue, 19 Sep 2023 00:37:24 -0700 (PDT)
-Received: from sol (14-203-18-151.tpgi.com.au. [14.203.18.151])
-        by smtp.gmail.com with ESMTPSA id c12-20020a170903234c00b001bbfa86ca3bsm5272367plh.78.2023.09.19.00.37.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Sep 2023 00:37:23 -0700 (PDT)
-Date:   Tue, 19 Sep 2023 15:37:17 +0800
-From:   Kent Gibson <warthog618@gmail.com>
-To:     brgl@bgdev.pl
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        akpm@linux-foundation.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v4] gpio: sim: fix an invalid __free() usage
-Message-ID: <ZQlPre4nnydZyDAm@sol>
-References: <20230918145533.14642-1-brgl@bgdev.pl>
- <ZQhtWNaCiHVu5yzL@smile.fi.intel.com>
- <CAMRc=MfkzdFgwEuNGJYgxyCA_b__Ds-jA4S+jVT1ULJ9DTRhOw@mail.gmail.com>
+        with ESMTP id S231898AbjISHiB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Sep 2023 03:38:01 -0400
+X-Greylist: delayed 443 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 19 Sep 2023 00:37:55 PDT
+Received: from mail.leeswilly.pl (mail.leeswilly.pl [89.116.26.225])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BDC1192
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Sep 2023 00:37:55 -0700 (PDT)
+Received: by mail.leeswilly.pl (Postfix, from userid 1001)
+        id A1D047600F7; Tue, 19 Sep 2023 09:30:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leeswilly.pl; s=mail;
+        t=1695108631; bh=qCQG4c3C0tvkuSSy6okg6Td4OKi9mrw7rI9pE9SwJ9g=;
+        h=Date:From:To:Subject:From;
+        b=0813CrM8mUvr5WPVFhbsyYLJbCVpxrzqrblkQb0+sp3zfC5hw2yRus3ulu05GTWSj
+         VcYnecppQwBD0eUWw5gIC5ZxAIHWGIJkFYakZ4a/2hgPbwYv62WpdSSVU5S/9H8gfC
+         LHTkxkHNDlyKpCeuIX+3Px/g8SdTa/GQp6z3bZOwZwM5BdNwt9g9x1vrL5UCTDOsXk
+         t+mR8ebF7xYljEgNFu7JdqDovQAMWCa8+T05p2HGjUmdqdO3jT6PXs5bViqhVBn9U0
+         pO7HPKsuooyZS/CJN2LS6Z78IZ2m0wsQ6FW8UHsWO0liNBZ19iPaWJQE0wO25csNfR
+         trmbjl2VIioYw==
+Received: by mail.leeswilly.pl for <linux-gpio@vger.kernel.org>; Tue, 19 Sep 2023 07:30:18 GMT
+Message-ID: <20230919084500-0.1.3z.bbeh.0.nqs5o5a4fo@leeswilly.pl>
+Date:   Tue, 19 Sep 2023 07:30:18 GMT
+From:   "Jakub Lemczak" <jakub.lemczak@leeswilly.pl>
+To:     <linux-gpio@vger.kernel.org>
+Subject: =?UTF-8?Q?Pytanie_o_samoch=C3=B3d?=
+X-Mailer: mail.leeswilly.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MfkzdFgwEuNGJYgxyCA_b__Ds-jA4S+jVT1ULJ9DTRhOw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 12:31:36AM -0700, brgl@bgdev.pl wrote:
-> On Mon, 18 Sep 2023 17:31:36 +0200, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> said:
-> > On Mon, Sep 18, 2023 at 04:55:33PM +0200, Bartosz Golaszewski wrote:
-> >> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>
-> >> gpio_sim_make_line_names() returns NULL or ERR_PTR() so we must not use
-> >> __free(kfree) on the returned address. Split this function into two, one
-> >> that determines the size of the "gpio-line-names" array to allocate and
-> >> one that actually sets the names at correct offsets. The allocation and
-> >> assignment of the managed pointer happens in between.
-> >
-> > ...
-> >
-> >> +	unsigned int size = 0;
-> >>
-> >>  	list_for_each_entry(line, &bank->line_list, siblings) {
-> >> +		if (!line->name || (line->offset >= bank->num_lines))
-> >>  			continue;
-> >>
-> >> +		size = line->offset + 1;
-> >>  	}
-> >>
-> >> +	return size;
-> >
-> > So, now the function iterates over all lines and returns the size of the last
-> > match, correct?
-> >
-> > Why not
-> >
-> > 	list_for_each_entry_reversed() {
-> > 		if (line->name && ())
-> > 			break;
-> > 	}
-> >
-> > 	return size;
-> >
-> > ?
-> 
-> Because the line objects are not sorted by offset. They are added at the end
-> of the list in the order the user creates their corresponding configfs groups.
-> 
+Dzie=C5=84 dobry,
 
-Then your patch is also broken as it uses the last named entry,
-not the named entry with the greatest offset??
+Czy interesuje Pa=C5=84stwa rozwi=C4=85zanie umo=C5=BCliwiaj=C4=85ce moni=
+torowanie samochod=C3=B3w firmowych oraz optymalizacj=C4=99 koszt=C3=B3w =
+ich utrzymania?=20
 
-Cheers,
-Kent.
+
+Pozdrawiam
+Jakub Lemczak
