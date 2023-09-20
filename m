@@ -2,112 +2,216 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E45BCCE79AF
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 Sep 2023 07:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BF3CE79AB
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 Sep 2023 07:33:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233638AbjITH0K (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 20 Sep 2023 03:26:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42428 "EHLO
+        id S233769AbjITHdK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 20 Sep 2023 03:33:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233602AbjITH0J (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Sep 2023 03:26:09 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12229CA;
-        Wed, 20 Sep 2023 00:26:02 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B7C2C433C7;
-        Wed, 20 Sep 2023 07:26:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695194761;
-        bh=X9yOJUrjbWjEiTh3oxcVWNpA9x66namZO18j2DCtN20=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H+kD+g2qcMwNqpfEO7M07AvF7mj0L2bWq9J+lhxLXC5Zv1dIeob7kY1rrVuRwy2wn
-         akDNc2Q9cWeWeMjfXM2O72qeESctR/xVOIH9600vNp05V0VFuT01QEtxIe7envji46
-         Kug1Ox3t1DdD8ceidkDfa4WPtmuXz/G7qafrk9KhIoTDo/pQ51gpdXIMupjA4bRPk0
-         RbClZGqhXy4LyHl20I5dugCOoGsgH/YclPT5NHpxUQmhUN7ls21L9qwrzYjxJlqyDT
-         zDn3aaeJNv5rti4DuNoC/ED3BhxOTptixs4LOs9xMlszJrOSbinRxnAQlR2o33qmuR
-         4Ed7283WVi2KQ==
-Received: from johan by xi.lan with local (Exim 4.96)
-        (envelope-from <johan@kernel.org>)
-        id 1qirbE-0002wI-2Q;
-        Wed, 20 Sep 2023 09:26:17 +0200
-Date:   Wed, 20 Sep 2023 09:26:16 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Johan Hovold <johan+linaro@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Maxime Ripard <mripard@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        LinusW <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH] HID: i2c-hid: fix handling of unpopulated devices
-Message-ID: <ZQqemN8P2VKgxhsV@hovoldconsulting.com>
-References: <20230918125851.310-1-johan+linaro@kernel.org>
- <CAD=FV=Wfwvp-SbGrdO5VJcjG42njkApJPB7wnY-YYa1_-O0JWQ@mail.gmail.com>
- <ZQlIveJVdvyV2Ygy@hovoldconsulting.com>
- <CAD=FV=XBG7auVVyHn5uvahSZZxp5qBfp4+A9NwFqahdN6XrbZA@mail.gmail.com>
+        with ESMTP id S233755AbjITHdK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Sep 2023 03:33:10 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE90CA
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Sep 2023 00:32:58 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-9ae22bf33a0so133221866b.0
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Sep 2023 00:32:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1695195177; x=1695799977; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KYrvQbB0FGaR2TMUy/U/vm4+WSiYScO9+N5v6KBchuQ=;
+        b=KyREYUWECj3Z3ZaSBcaCno4kMnCH+FoyB3F+tjhrBOV47Cgd5d+ncxxjKQc/eHMGlh
+         NVNF8KWyyf2dsMzOIlsdw97BcRvU//NUosTjIzvw77RJYSSeiv5e4mqOBnkXEfnNNrLb
+         3vWH97fvIcBLuCbJSuHgJ3qNb4yEb53xouxCXWLPiftIeGsUKFwq/jgY3DX11JdZdh3E
+         XKIxHQR55UnVdMQHSuEMI0YMjAzEe5hLv7S1c3LpisGuJXtI2iPcuydo3OnMoY98Klfu
+         duuBxfl5bSiTXyxqFimbXC4FGaOxLRqlPoiFWU4Pc5nFkcqb/ZF/oueI0e14k1xW1K7M
+         0qsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695195177; x=1695799977;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KYrvQbB0FGaR2TMUy/U/vm4+WSiYScO9+N5v6KBchuQ=;
+        b=iIQgGjlJOpjezTskaA+NN4EUPFq6r2obNAhKorAJS/GumBy2bcrIyCqF2O8IUDzx+6
+         y5IJeFalTeU69q65NijEc1qnzba7XxLe0qBWw1p1JBh7xNFYUefGPZkDI7kHb8Qxhh6D
+         NvIEqqb0Z4nemv2l+qmFSEkZdW+qIFXuO5cyp6wywL5YsSttrM4jIlyhDPiqEgL3PJEI
+         JKA08XvHG6Ew4kCl4VTbkdrvYJHFxeUYBQw9cUjOuKFfNDFOqmmH+uGvMjmveaVeF+Yu
+         UC5854MEyosJ1SSxL0Ctd+TBTBkDltcoEWiIleO2Pr8Wda3/KMmJbsfx/pYkRJ3MZluu
+         suOg==
+X-Gm-Message-State: AOJu0Yxj+i4y5Zw0/BlEcYPHSw0hZWcy4feQEQ97XfwbAjFs5xE5RKnT
+        qgo9iaxJWSvnaeS0xpsZI96DCQ==
+X-Google-Smtp-Source: AGHT+IEvhe9pe7VdZSVff4gaCxhLQJggy4NQX7Vf2TOirfbE1fFyTlC1aU0PsDzOCSFOLtx7UXvBYA==
+X-Received: by 2002:a17:907:3ad1:b0:9ae:513f:a4f3 with SMTP id fi17-20020a1709073ad100b009ae513fa4f3mr196156ejc.32.1695195177081;
+        Wed, 20 Sep 2023 00:32:57 -0700 (PDT)
+Received: from brgl-uxlite.. (static-212-193-78-212.thenetworkfactory.nl. [212.78.193.212])
+        by smtp.gmail.com with ESMTPSA id x26-20020a1709064a9a00b009a13fdc139fsm8819453eju.183.2023.09.20.00.32.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Sep 2023 00:32:56 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kent Gibson <warthog618@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        akpm@linux-foundation.org
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v5] gpio: sim: fix an invalid __free() usage
+Date:   Wed, 20 Sep 2023 09:32:53 +0200
+Message-Id: <20230920073253.51742-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=XBG7auVVyHn5uvahSZZxp5qBfp4+A9NwFqahdN6XrbZA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 19, 2023 at 11:15:46AM -0700, Doug Anderson wrote:
-> On Tue, Sep 19, 2023 at 12:07 AM Johan Hovold <johan@kernel.org> wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> > But regardless of what a long-term proper solution to this may look
-> > like, we need to fix the regression in 6.6-rc1 by restoring the old
-> > behaviour.
-> 
-> OK, fair enough. I'll take a look at your patch, though I think the
-> person that really needs to approve it is Benjamin...
-> 
-> Style-wise, I will say that Benjamin really wanted to keep the "panel
-> follower" code out of the main probe routine. Some of my initial
-> patches adding "panel follower" looked more like the results after
-> your patch but Benjamin really wasn't happy until there were no
-> special cases for panel-followers in the main probe routine. This is
-> why the code is structured as it is.
+gpio_sim_make_line_names() returns NULL or ERR_PTR() so we must not use
+__free(kfree) on the returned address. Split this function into two, one
+that determines the size of the "gpio-line-names" array to allocate and
+one that actually sets the names at correct offsets. The allocation and
+assignment of the managed pointer happens in between.
 
-Ok, I prefer not hiding away things like that as it obscures what's
-really going on, for example, in this case, that you register a device
-without really having probed it.
+Fixes: 3faf89f27aab ("gpio: sim: simplify code with cleanup helpers")
+Reported-by: Alexey Dobriyan <adobriyan@gmail.com>
+Closes: https://lore.kernel.org/all/07c32bf1-6c1a-49d9-b97d-f0ae4a2b42ab@p183/
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Hopefully this is the last version of this patch. I restored the max()
+assignment from v3 but kept the code simpler than v2. Tested most corner
+cases that occurred to me.
 
-As I alluded to in the commit message, you probably want to be able to
-support second-source touchscreen panel followers as well at some point
-and then deferring checking whether device is populated until the panel
-is powered on is not going to work.
+v4 -> v5:
+- restore checking for the higher offset in each iteration when counting
+  named lines
 
-I skimmed the thread were you added this, but I'm not sure I saw any
-reason for why powering on the panel follower temporarily during probe
-would not work?
+v3 -> v4:
+- simplify the line counting logic
 
-> Thinking that way, is there any reason you can't just move the
-> i2c_hid_init_irq() into __do_i2c_hid_core_initial_power_up()? You
-> could replace the call to enable_irq() with it and then remove the
-> `IRQF_NO_AUTOEN` flag? I think that would also solve the issue if you
-> wanted to use a 2nd source + the panel follower concept? Both devices
-> would probe, but only one of them would actually grab the interrupt
-> and only one of them would actually create real HID devices. We might
-> need to do some work to keep from trying again at every poweron of the
-> panel, but it would probably be workable? I think this would also be a
-> smaller change...
+v2 -> v3:
+- restore the offset out-of-bounds checks
 
-That was my first idea as well, but conceptually it is more correct to
-request resources at probe time and not at some later point when you can
-no longer fail probe.
+v1 -> v2:
+- split the line name setting into two parts
 
-You'd also need to handle the fact that the interrupt may never have
-been requested when remove() is called, which adds unnecessary
-complexity.
+ drivers/gpio/gpio-sim.c | 60 ++++++++++++++++-------------------------
+ 1 file changed, 23 insertions(+), 37 deletions(-)
 
-Johan
+diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
+index 460389bb8e3f..3b7cdf44eb38 100644
+--- a/drivers/gpio/gpio-sim.c
++++ b/drivers/gpio/gpio-sim.c
+@@ -21,6 +21,7 @@
+ #include <linux/irq.h>
+ #include <linux/irq_sim.h>
+ #include <linux/list.h>
++#include <linux/minmax.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+@@ -718,52 +719,32 @@ gpio_sim_device_config_live_show(struct config_item *item, char *page)
+ 	return sprintf(page, "%c\n", live ? '1' : '0');
+ }
+ 
+-static char **gpio_sim_make_line_names(struct gpio_sim_bank *bank,
+-				       unsigned int *line_names_size)
++static unsigned int gpio_sim_get_line_names_size(struct gpio_sim_bank *bank)
+ {
+-	unsigned int max_offset = 0;
+-	bool has_line_names = false;
+ 	struct gpio_sim_line *line;
+-	char **line_names;
++	unsigned int size = 0;
+ 
+ 	list_for_each_entry(line, &bank->line_list, siblings) {
+-		if (line->offset >= bank->num_lines)
++		if (!line->name || (line->offset >= bank->num_lines))
+ 			continue;
+ 
+-		if (line->name) {
+-			if (line->offset > max_offset)
+-				max_offset = line->offset;
+-
+-			/*
+-			 * max_offset can stay at 0 so it's not an indicator
+-			 * of whether line names were configured at all.
+-			 */
+-			has_line_names = true;
+-		}
++		size = max(size, line->offset + 1);
+ 	}
+ 
+-	if (!has_line_names)
+-		/*
+-		 * This is not an error - NULL means, there are no line
+-		 * names configured.
+-		 */
+-		return NULL;
+-
+-	*line_names_size = max_offset + 1;
++	return size;
++}
+ 
+-	line_names = kcalloc(*line_names_size, sizeof(*line_names), GFP_KERNEL);
+-	if (!line_names)
+-		return ERR_PTR(-ENOMEM);
++static void
++gpio_sim_set_line_names(struct gpio_sim_bank *bank, char **line_names)
++{
++	struct gpio_sim_line *line;
+ 
+ 	list_for_each_entry(line, &bank->line_list, siblings) {
+-		if (line->offset >= bank->num_lines)
++		if (!line->name || (line->offset >= bank->num_lines))
+ 			continue;
+ 
+-		if (line->name && (line->offset <= max_offset))
+-			line_names[line->offset] = line->name;
++		line_names[line->offset] = line->name;
+ 	}
+-
+-	return line_names;
+ }
+ 
+ static void gpio_sim_remove_hogs(struct gpio_sim_device *dev)
+@@ -867,7 +848,7 @@ gpio_sim_make_bank_swnode(struct gpio_sim_bank *bank,
+ 			  struct fwnode_handle *parent)
+ {
+ 	struct property_entry properties[GPIO_SIM_PROP_MAX];
+-	unsigned int prop_idx = 0, line_names_size = 0;
++	unsigned int prop_idx = 0, line_names_size;
+ 	char **line_names __free(kfree) = NULL;
+ 
+ 	memset(properties, 0, sizeof(properties));
+@@ -878,14 +859,19 @@ gpio_sim_make_bank_swnode(struct gpio_sim_bank *bank,
+ 		properties[prop_idx++] = PROPERTY_ENTRY_STRING("gpio-sim,label",
+ 							       bank->label);
+ 
+-	line_names = gpio_sim_make_line_names(bank, &line_names_size);
+-	if (IS_ERR(line_names))
+-		return ERR_CAST(line_names);
++	line_names_size = gpio_sim_get_line_names_size(bank);
++	if (line_names_size) {
++		line_names = kcalloc(line_names_size, sizeof(*line_names),
++				     GFP_KERNEL);
++		if (!line_names)
++			return ERR_PTR(-ENOMEM);
++
++		gpio_sim_set_line_names(bank, line_names);
+ 
+-	if (line_names)
+ 		properties[prop_idx++] = PROPERTY_ENTRY_STRING_ARRAY_LEN(
+ 						"gpio-line-names",
+ 						line_names, line_names_size);
++	}
+ 
+ 	return fwnode_create_software_node(properties, parent);
+ }
+-- 
+2.39.2
+
