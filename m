@@ -2,58 +2,92 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56A7ECE79B2
-	for <linux-gpio@archiver.kernel.org>; Wed, 20 Sep 2023 07:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CADCCE79AC
+	for <linux-gpio@archiver.kernel.org>; Wed, 20 Sep 2023 07:56:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233866AbjITHiO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 20 Sep 2023 03:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45894 "EHLO
+        id S233853AbjITH4l (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 20 Sep 2023 03:56:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233893AbjITHhy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Sep 2023 03:37:54 -0400
-X-Greylist: delayed 381 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 20 Sep 2023 00:37:48 PDT
-Received: from mail.venturelinkage.com (mail.venturelinkage.com [80.211.143.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A748133
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Sep 2023 00:37:48 -0700 (PDT)
-Received: by mail.venturelinkage.com (Postfix, from userid 1002)
-        id 9078F825E6; Wed, 20 Sep 2023 09:31:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=venturelinkage.com;
-        s=mail; t=1695195085;
-        bh=7iowqdzve/IIiUUjcEwx8j3uMrVqqiE7R9zbOCKRV9Q=;
-        h=Date:From:To:Subject:From;
-        b=t40+QTxHjAfVNwopCTb2ytymziKGidGp4fUiJcj25srLL9IUE0sAmkKOe/W4s3Mwy
-         k8bd15KylwkVvF7GO90KL6W1tUngnBBqS7agBkUowIWL5xtRaveD3Ooqb25UG3Pa17
-         io2Qr+SQ6LyU3aqjbZcLMlyo1Kg/rVR1TjIDjfx2yxf7F/uvEhJgZx+OlGPbyOpNbb
-         PpCmUT1pixPvOGgmhVob/WjRU+XletttigSKYUx4XIkd0UJ8jAc5oFAWKEMIOBH7tp
-         hOLO7Xh9yI7QI3wd8uwAhhEGD658zIv7tBwm0Lw5k04Hw9+U+nb8DuQHbKkBzMZLhj
-         TiUzsIL6RSStw==
-Received: by mail.venturelinkage.com for <linux-gpio@vger.kernel.org>; Wed, 20 Sep 2023 07:31:20 GMT
-Message-ID: <20230920084500-0.1.l.113j.0.q69c54hdik@venturelinkage.com>
-Date:   Wed, 20 Sep 2023 07:31:20 GMT
-From:   "Lukas Varga" <lukas.varga@venturelinkage.com>
-To:     <linux-gpio@vger.kernel.org>
-Subject: =?UTF-8?Q?Popt=C3=A1vka?=
-X-Mailer: mail.venturelinkage.com
+        with ESMTP id S233867AbjITH4P (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Sep 2023 03:56:15 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B642138
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Sep 2023 00:56:02 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-59e88a28b98so9058087b3.1
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Sep 2023 00:56:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1695196562; x=1695801362; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0W2F0GXbbtqn7CRR5nnsH3NJIOvd/wi06m4wX+wnCSk=;
+        b=C3GN6J2+s9vi6NkInIZVTPJHhsLeNTnqqkADfsy10nKvVQDi2kRM7Dw3gxbGHd9Jqj
+         i3nYoma+O4jBNi2Iqei9KbEQWwvK5qxdD418E13y/gZlv07xPr3hSZPPhjCFrqCGf1mH
+         aEFKITaePrrMlmSm1KwB2L/+V64SqprAjTVBuYdC4MkuabbxY41wWYom7AW6SVC1mX+5
+         TxbERl56q2jQpswFf03gBUasUY3Tm5/sXC0QoWRVzfpEVmU+3J2xaMwhiiYR08GQU1qg
+         /I+k4hSoiT9GYK1RN539hHZZxxI9jqnaAu4Fg8E4KjjjBw0HmejD58ED2iwqhJHxh2UT
+         BoTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695196562; x=1695801362;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0W2F0GXbbtqn7CRR5nnsH3NJIOvd/wi06m4wX+wnCSk=;
+        b=LGpy6Dyz8bYdu6HwxaTxq5uAhNsBp2ddEFy7gouXZae6I89p+1g8HcFr6sruiN/s9U
+         AoWoCLz0Vd/cOP4NtuO3ilh+Ai8Z86/bkHNTgHGNnGsv6enOxQpr28ExkuCVEiJAc73f
+         7Fmk1/HnsEvIGvHg9CL5IVQIZtfukCpXWN/JOSim53LV/j8cUZO+Iu8CgugJn8ybWJ8e
+         6cfDMy08LXsDB++uMKcwOcxFN8A/phollR2oXm47RT+TE1GyAKvoL72/50fZHhUtysWw
+         VW8F5ERxPR3TO6R4V5fdTAT/TTBNvcb+DcfZVSOhuBa8nrAuVGFjeZLo9uGLRUNmEeF8
+         B0hA==
+X-Gm-Message-State: AOJu0Yzly6sXz0fhaMQy+xL53zYLKb76DvGbuJMwFBR2KRZY7+2BfmpX
+        gUMrJjJZR2eTsp4xD+4HHm3gvJWnjzuucoXr9TDPHA==
+X-Google-Smtp-Source: AGHT+IE8ZqLABHkmB1AmVdyVdn+zBjcBgUb4lYtT3ybz6pYiTkDfaC6C0g3wu5g0PMG3zmMsCIys38gLD8uinlOnnuw=
+X-Received: by 2002:a81:6dd1:0:b0:59b:cf74:ee8d with SMTP id
+ i200-20020a816dd1000000b0059bcf74ee8dmr5249310ywc.10.1695196561782; Wed, 20
+ Sep 2023 00:56:01 -0700 (PDT)
 MIME-Version: 1.0
+References: <20230916081615.4237-1-iuncuim@gmail.com>
+In-Reply-To: <20230916081615.4237-1-iuncuim@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 20 Sep 2023 09:55:49 +0200
+Message-ID: <CACRpkdYPtxAZrf4=btbF53U3CGgSMOZ_39eJDWjBTwBU21XYaQ@mail.gmail.com>
+Subject: Re: [PATCH v3] pinctrl: sunxi: h616: add extra gpio banks
+To:     Mikhail Kalashnikov <iuncuim@gmail.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Dobr=C3=A9 r=C3=A1no,
+On Sat, Sep 16, 2023 at 10:16=E2=80=AFAM Mikhail Kalashnikov <iuncuim@gmail=
+.com> wrote:
 
-Dovolil jsem si V=C3=A1s kontaktovat, proto=C5=BEe m=C3=A1m z=C3=A1jem ov=
-=C4=9B=C5=99it mo=C5=BEnost nav=C3=A1z=C3=A1n=C3=AD spolupr=C3=A1ce.
+> From: iuncuim <iuncuim@gmail.com>
+>
+> Some SoCs from the H616 family (such as the T507) have the same die but
+> more output pins that are used for additional peripherals. The T507 SoC
+> don't have a built-in multiphy like the AC200 or AC300 connected to the
+> bank A. With the T507 these pins can be freely used for any other applica=
+tion.
+> This patch adds the missing muxes on banks A, D and E.
+>
+> Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
+>
+> Changes from v2:
+>  * replaced gpio alt functions from "h_i2s0" to "i2s0"
+> https://lore.kernel.org/linux-sunxi/20230909094529.6083-1-iuncuim@gmail.c=
+om/
 
-Podporujeme firmy p=C5=99i z=C3=ADsk=C3=A1v=C3=A1n=C3=AD nov=C3=BDch obch=
-odn=C3=ADch z=C3=A1kazn=C3=ADk=C5=AF.
+No review on this yet, but I think Neil Armstrong is familiar with
+the AMLogic stuff so paging him!
 
-M=C5=AF=C5=BEeme si promluvit a poskytnout podrobnosti?
-
-V p=C5=99=C3=ADpad=C4=9B z=C3=A1jmu V=C3=A1s bude kontaktovat n=C3=A1=C5=A1=
- anglicky mluv=C3=ADc=C3=AD z=C3=A1stupce.
-
-
-Pozdravy
-Lukas Varga
+Yours,
+Linus Walleij
