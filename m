@@ -2,118 +2,96 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 201F4E7D0A2
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 17:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 424F5E7D0A4
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 18:16:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbjIURwW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Sep 2023 13:52:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51310 "EHLO
+        id S230387AbjIUSQm convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Sep 2023 14:16:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229865AbjIURvp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 13:51:45 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA1F946E48
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 10:26:18 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-59c215f2f4aso15757067b3.1
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 10:26:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1695317173; x=1695921973; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2yMALxVMz8eu5uuCFT9jsKazczGt2OLOMSS4WKXUPfs=;
-        b=TxCTmEjHuT1pFEY7VuAnJVHLH/HACk4c2gOxUDW31XsZ/qsDq91QcLGwXRVw1HYtC+
-         mDmH/Kdifr5R3R+pkBj1lrfR20CwRU/xrapmEZrphS76WckBDs6LJ4sv0lw6YW6Nu0OO
-         5e8o1hOG1dgF7LUMVJFLnu3TVP8zvbTHC8YJaVfEabOZ5oF2pWgtwhyzXJViVS19+tZt
-         KMZHC0Fy/3NNB+tistv92xDVTizVt2s58mCjGRkjt7ne0cdFhZDkPEprl1Wn2SmPA6yd
-         09stksgUkcAeCf+i3VFGDXpNSKbhX0f6rQJHIDj4zZuua6CSp/9FrD32Jlq/uBanEcsy
-         OBKA==
+        with ESMTP id S230301AbjIUSQ1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 14:16:27 -0400
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A17CE5AE2E;
+        Thu, 21 Sep 2023 10:21:40 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-52f9a45b4bdso1423259a12.3;
+        Thu, 21 Sep 2023 10:21:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695317173; x=1695921973;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2yMALxVMz8eu5uuCFT9jsKazczGt2OLOMSS4WKXUPfs=;
-        b=LiWDgZfoxaUuT2zcxyUchT4eoGkeodQnYAerTK+aH/2mQN/+uH9CtDDWoPg68wQMe8
-         jtqrL9N+vezwK2pZzLoTwZG3adyyOOKO+FbWOWWPkV06j9JMwUHQ5upIyAH0IkeIAqYC
-         yHsMlsQa+wft5Jf+SdrA/nZxW8oWHpu4I5A1ZTFp66dFtgwfQ90hdqD5gCVKoiDlqz0e
-         JybL75KfRp5BeNX6/l9GDPqoANHyT7W+bsWIEtaWaopkugMIFivPy+fYC+b8NM+rhRH8
-         IpeEqEQAH6hnuua3huc6O1hN7IeMW5S8uM11OxSHxZBKI92sSTyINvAAD14yt/3+MTAQ
-         k/xg==
-X-Gm-Message-State: AOJu0Yw6Uv9i0hG8yBwYMWoamssKjbzlIu7J5lyE2DnOnyrX7zhXu9f2
-        iUqOaX1v/JZ/VQzc79eQ8gzkFeqwz77d1LBQjwZSSddWJP5YnNzvD1E=
-X-Google-Smtp-Source: AGHT+IG2MD5sh61wBj+qCb/GndH+IXTfCKZ2fjrPeCIUS4IVd/M7asl1O3/m4e4yOmvEJ6GOztcpu0F6OSG4Kp/sp4E=
-X-Received: by 2002:a1f:ca03:0:b0:490:aa9b:4809 with SMTP id
- a3-20020a1fca03000000b00490aa9b4809mr4281527vkg.4.1695283936991; Thu, 21 Sep
- 2023 01:12:16 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 21 Sep 2023 01:12:16 -0700
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <ZQr3E/7crMrVxMp9@smile.fi.intel.com>
+        d=1e100.net; s=20230601; t=1695316899; x=1695921699;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=78TMJJFlsLVACVaST0yD4fr1cOAvW144T6j75QycuXg=;
+        b=BAV30hJkYC7gDJg8tJ5MgmwgAeTItbBEzWUcixCeM/pAGaCgaQ8iMiyn0XLG6VH9AG
+         ATLhbdtVyCC4KBdQdSsCTH0JJXuR7XVOSpV3URxP7TbirqHqYFRHRbBWD7+I3DjzCUZ0
+         iu65ni8UHH5hJfVmugdCvjEeqTP4zFi4RxIie6MPXhe9eTmsLORXD/5wosNIUBMifG9j
+         lSBCLxcxr0nbNY41dJQU3tqmp4sKBbaCaM27tuidbCQzJUwFo7JleTbtt8kmem84QoDV
+         zKqJa3Leqv9IUbhA64LQUI3GFTuCZ4samvzOPMyY2jFjLR5XbI/opUALhieLgtJd7xXY
+         YUKA==
+X-Gm-Message-State: AOJu0Yy11+ifoLtQMj0zsVqtcJIIdGl/qpKcTULNtlXmQqyT9qQ/0DL6
+        JbaLbcnQYqAHQbj57DOkw4bWirx05e9jlYr9
+X-Google-Smtp-Source: AGHT+IH+uBVw292r+sxaKfU8NLmvm5e2Jkc2m0Sb1GJILXn42+85/1qKFwBKoGAB4t0PUKVC9cnpbw==
+X-Received: by 2002:a2e:8098:0:b0:2c0:c6a:eb2f with SMTP id i24-20020a2e8098000000b002c00c6aeb2fmr5027753ljg.1.1695302182923;
+        Thu, 21 Sep 2023 06:16:22 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id p2-20020a2e9a82000000b002c001e57e1asm337469lji.73.2023.09.21.06.16.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Sep 2023 06:16:22 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2c007d6159aso15303351fa.3;
+        Thu, 21 Sep 2023 06:16:22 -0700 (PDT)
+X-Received: by 2002:a05:6512:3987:b0:500:bb99:69a7 with SMTP id
+ j7-20020a056512398700b00500bb9969a7mr6201266lfu.14.1695301737311; Thu, 21 Sep
+ 2023 06:08:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230920073253.51742-1-brgl@bgdev.pl> <ZQr3E/7crMrVxMp9@smile.fi.intel.com>
-Date:   Thu, 21 Sep 2023 01:12:16 -0700
-Message-ID: <CAMRc=MfvOL-ovQ89i7FASg=RoWHQPARGsc5Pxu9kC+roGqaE4g@mail.gmail.com>
-Subject: Re: [PATCH v5] gpio: sim: fix an invalid __free() usage
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Kent Gibson <warthog618@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        akpm@linux-foundation.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
+References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com> <20230912045157.177966-29-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20230912045157.177966-29-claudiu.beznea.uj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 21 Sep 2023 15:08:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV5BuPPLkZUDfhjXzq_aQ+LFfEM=eXGT-XjmpxSjSqeJg@mail.gmail.com>
+Message-ID: <CAMuHMdV5BuPPLkZUDfhjXzq_aQ+LFfEM=eXGT-XjmpxSjSqeJg@mail.gmail.com>
+Subject: Re: [PATCH 28/37] pinctrl: renesas: rzg2l: make struct
+ rzg2l_pinctrl_data::dedicated_pins constant
+To:     Claudiu <claudiu.beznea@tuxon.dev>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        prabhakar.mahadev-lad.rj@bp.renesas.com,
+        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
+        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
+        nfraprado@collabora.com, rafal@milecki.pl,
+        wsa+renesas@sang-engineering.com,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 20 Sep 2023 15:43:47 +0200, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> said:
-> On Wed, Sep 20, 2023 at 09:32:53AM +0200, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>
->> gpio_sim_make_line_names() returns NULL or ERR_PTR() so we must not use
->> __free(kfree) on the returned address. Split this function into two, one
->> that determines the size of the "gpio-line-names" array to allocate and
->> one that actually sets the names at correct offsets. The allocation and
->> assignment of the managed pointer happens in between.
+On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> ...
+> struct rzg2l_pinctrl_data::dedicated_pins is constant thus mark it so.
 >
->>  	list_for_each_entry(line, &bank->line_list, siblings) {
->> -		if (line->offset >= bank->num_lines)
->> +		if (!line->name || (line->offset >= bank->num_lines))
->>  			continue;
->>
->> -		if (line->name) {
->> -			if (line->offset > max_offset)
->> -				max_offset = line->offset;
->> -
->> -			/*
->> -			 * max_offset can stay at 0 so it's not an indicator
->> -			 * of whether line names were configured at all.
->> -			 */
->> -			has_line_names = true;
->> -		}
->> +		size = max(size, line->offset + 1);
->>  	}
->
-> As for the material to be backported it's fine, but I'm wondering if we
-> actually can add the entries in a sorted manner, so we would need the exact
-> what I mentioned in previous review round, just search backwards to the first
-> satisfying entry. I don't believe the adding an entry to the list is a
-> hot-path, so would be fine to call list_sort().
->
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Given the need for the callback function, this would result in bigger code.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl-for-v6.7.
 
-Also calling:
+Gr{oetje,eeting}s,
 
-    list_add_tail();
-    list_sort();
+                        Geert
 
-is not very elegant. I would possibly go for adding list_add_sorted() but
-that's a separate change for the future.
 
-Bart
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
