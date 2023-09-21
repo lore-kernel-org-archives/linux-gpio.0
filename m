@@ -2,148 +2,144 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B13E7D0A7
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 19:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C152E7D0A2
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 19:59:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230073AbjIUTbR (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Sep 2023 15:31:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48816 "EHLO
+        id S231231AbjIUT7P (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Sep 2023 15:59:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230303AbjIUTaV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 15:30:21 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE178ADC55
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 11:04:29 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2c007d6159aso22364201fa.3
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 11:04:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695319468; x=1695924268; darn=vger.kernel.org;
-        h=in-reply-to:references:to:cc:subject:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RLu1kFzMi5OTWpSvCFb1Jh2IvtJRIUlkrOolz/Jszqk=;
-        b=xmkfbqkApFBrsnhJnxNmIvUvo66kHw4sAmtSs9FT1fekuoH/goQ4sIP9ft2mDsKQjA
-         RRvsGL1QSc3fKG6KJgdd3ewFVJpcUEI/wkM12a6MqxO+jUdeSon7h68XkZP1YCLqlgZ7
-         Kj4D7RzU7xbHsFy1Yw340Qz37Yl1Lt63YUb+XMIeOz1TLaQ3M9aiu5qG5fbdPAGw0Vj0
-         7k7vmPLchxFxHjaorXOeTAzAKNKxzXlm4g+b8s015o75ERxPtr86eaXvS5LgdOprmT60
-         xlXab2rXqibMUFMTK0nqWKdiqfSZGPYg+PvoIcoe9HXc8xQ5g7Gmk/zQmNMqA2efB/PV
-         8aCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695319468; x=1695924268;
-        h=in-reply-to:references:to:cc:subject:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RLu1kFzMi5OTWpSvCFb1Jh2IvtJRIUlkrOolz/Jszqk=;
-        b=AWDNpouYXzNsehKBAt/NS5NSxWqcT2saV/RE22/sr1hWaLKOROmxtkmaWp8Ff3dl1r
-         vPxwwr6+MeMvViQ7a5BIY/twZDBwbfssFMDf09mo0i+eHFLCTIz6GevLkC04IYmIizZ0
-         pUtnc4UwyYLAJln7OlRX2ue1Qjv0r33kC7DqSfXID7E9x1m9yZVhMCG0kDcOWfe3gqnD
-         To+1qOljEQKALZlx51sSrK4K7UQ9qfIh4iS5Gg7Y7utVtZ0rkOsILXs0YsgzHQ22hLff
-         J53isOVWfjDyrmB7Yda0B+LDiBHG5Qkbyt56RiHpswgrm9ikRPQVtq3pInk11+hp9OuT
-         JGqQ==
-X-Gm-Message-State: AOJu0YygcZ/wAR/Ebi18zXhBBD0F8FhKYFDC0e2e8ADWVTbfsR6SB1lY
-        gYItoN2MnYKLPKo7nYRHrckUkDMhujeQ3ccHRqfjqw==
-X-Google-Smtp-Source: AGHT+IGfFevDnb2l/HaENbVpr0ZWm22+55I05LmJOSLeIIEJVJQspbCgHX9JeAg2WZsUYSXhoNEfHg==
-X-Received: by 2002:a05:6512:3a82:b0:500:b872:7899 with SMTP id q2-20020a0565123a8200b00500b8727899mr6122035lfu.62.1695301584541;
-        Thu, 21 Sep 2023 06:06:24 -0700 (PDT)
-Received: from localhost (static-212-193-78-212.thenetworkfactory.nl. [212.78.193.212])
-        by smtp.gmail.com with ESMTPSA id r22-20020aa7da16000000b00532c84e6997sm813474eds.23.2023.09.21.06.06.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Sep 2023 06:06:24 -0700 (PDT)
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Thu, 21 Sep 2023 15:06:23 +0200
-Message-Id: <CVOM97T49C5Z.1XA78Z7SPY16O@ablu-work>
-From:   "Erik Schilling" <erik.schilling@linaro.org>
-Subject: Re: [libgpiod] Thread safety API contract
-Cc:     <linux-gpio@vger.kernel.org>,
-        "Viresh Kumar" <viresh.kumar@linaro.org>,
-        =?utf-8?q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
-To:     "Erik Schilling" <erik.schilling@linaro.org>,
-        "Bartosz Golaszewski" <brgl@bgdev.pl>
-X-Mailer: aerc 0.15.2
-References: <CVHO091CC80Y.3KUOSLSOBVL0T@ablu-work>
- <CAMRc=MdMKd+6-P-ma0E0f5yBTOGS_zVaBJD6wEywyjZ7JVE2YA@mail.gmail.com>
- <CVHTW377HBYV.1CKNHXYC75Q5N@ablu-work>
- <CAMRc=MdR1coB9p1gvG2razQUeuwUJCaeDrTTm5o1ND+LJZ1SOg@mail.gmail.com>
- <CVHULP4LSR1M.U8ZIY7UL0OU5@ablu-work>
- <CAMRc=Mc4F_PKk3doS-MQUE0_=iRdQtJoWXO+mkhWcMBcudh--w@mail.gmail.com>
- <CVI29A6AMQRU.37OB8UWFQNINW@ablu-work>
-In-Reply-To: <CVI29A6AMQRU.37OB8UWFQNINW@ablu-work>
+        with ESMTP id S231328AbjIUT6v (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 15:58:51 -0400
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E57A58097
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 10:19:04 -0700 (PDT)
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+        by SHSQR01.spreadtrum.com with ESMTP id 38L928FZ066903
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 17:02:08 +0800 (+08)
+        (envelope-from Wenhua.Lin@unisoc.com)
+Received: from dlp.unisoc.com ([10.29.3.86])
+        by SHSQR01.spreadtrum.com with ESMTP id 38L90jGx061777;
+        Thu, 21 Sep 2023 17:00:45 +0800 (+08)
+        (envelope-from Wenhua.Lin@unisoc.com)
+Received: from SHDLP.spreadtrum.com (shmbx06.spreadtrum.com [10.0.1.11])
+        by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Rrq6F44Nxz2Sb3tf;
+        Thu, 21 Sep 2023 16:57:25 +0800 (CST)
+Received: from xm9614pcu.spreadtrum.com (10.13.2.29) by shmbx06.spreadtrum.com
+ (10.0.1.11) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Thu, 21 Sep
+ 2023 17:00:44 +0800
+From:   Wenhua Lin <Wenhua.Lin@unisoc.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC:     Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        wenhua lin <wenhua.lin1994@gmail.com>,
+        Wenhua Lin <Wenhua.Lin@unisoc.com>,
+        Xiongpeng Wu <xiongpeng.wu@unisoc.com>
+Subject: [PATCH V2 2/4] gpio: sprd: Clear interrupt after set the interrupt type
+Date:   Thu, 21 Sep 2023 17:00:25 +0800
+Message-ID: <20230921090027.11136-3-Wenhua.Lin@unisoc.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230921090027.11136-1-Wenhua.Lin@unisoc.com>
+References: <20230921090027.11136-1-Wenhua.Lin@unisoc.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.13.2.29]
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ shmbx06.spreadtrum.com (10.0.1.11)
+X-MAIL: SHSQR01.spreadtrum.com 38L90jGx061777
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed Sep 13, 2023 at 10:10 PM CEST, Erik Schilling wrote:
-> On Wed Sep 13, 2023 at 5:17 PM CEST, Bartosz Golaszewski wrote:
-> > On Wed, Sep 13, 2023 at 4:10=E2=80=AFPM Erik Schilling
-> > <erik.schilling@linaro.org> wrote:
-> > >
-> > > On Wed Sep 13, 2023 at 3:45 PM CEST, Bartosz Golaszewski wrote:
-> > > > On Wed, Sep 13, 2023 at 3:36=E2=80=AFPM Erik Schilling
-> > > > <erik.schilling@linaro.org> wrote:
-> > > > >
-> > > > > On Wed Sep 13, 2023 at 2:03 PM CEST, Bartosz Golaszewski wrote:
-> > > > > > On Wed, Sep 13, 2023 at 11:47=E2=80=AFAM Erik Schilling
-> > > > > > <erik.schilling@linaro.org> wrote:
-> > > > > > >
-> > > > > > > Hi all!
-> > > > > > >
-> > > > > > > Currently it looks like libgpiod does not document any kind o=
-f thread
-> > > > > > > safety gurantee. However, the Python bindings tests
-> > > > > >
-> > > > > > Indeed, the library is thread-aware but not thread-safe. Just l=
-ike
-> > > > > > what is recommended for low-level system libraries.
-> > > > >
-> > > > > Just to confirm:
-> > > > >
-> > > > > I assume this means: thread-aware in the sense that all created o=
-bjects
-> > > > > (chips, line_requests, ...) together may only be used by a single=
- thread
-> > > > > at once? So line_requests of a same chip may not be used across t=
-hreads?
-> > > > >
-> > > >
-> > > > They can be used across threads alright. Thread-aware means: no glo=
-bal
-> > > > state in the library, IOW two functions won't get in each other's w=
-ay
-> > > > unless they work on the same object.
-> > >
-> > > Sorry, I did not phrase that question super well. A (hopefully) bette=
-r
-> > > try:
-> > >
-> > > If I create a chip and then open two line_requests from that single
-> > > chip. Can I use these two line_requests concurrently on different
-> > > threads? Or do both of them (and the chip) have to share a single loc=
-k?
-> > >
-> > > My assumption was that everything derived from the same chip instance
-> > > must not run concurrently.
-> > >
-> >
-> > Ah sorry, I didn't understand your question. Actually using requests
-> > from a chip concurrently in a different thread is perfectly fine. The
-> > two structures are independent from each other in user-space and their
-> > work is synchronized in the kernel.
->
-> Ah. That makes things a lot simpler. I think then we only need some
-> Send traits on the Rust structs. Does the same guarantee apply to all
-> structs that are "created" from a chip? Then I would look into whether I
-> can extend the docs while fixing the Rust bindings.
+The initialization state of the EIC module is a high level trigger.
+If it is currently a high level, the interrupt condition is met at
+this time, and the EIC interrupt has a latch capability, which will
+cause an interrupt to occur after booting. To avoid this, When setting
+the EIC interrupt trigger type, clear the interrupt once.
 
-Summarizing a short discussion between Bart an me:
+Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
+---
+ drivers/gpio/gpio-eic-sprd.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-- objects created from chips are standalone and different instances can
-  be used concurrently
-- exception: edge_events from buffers are tied to the buffer unless one
-  copies them (as stated in the docs).
+diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+index bfa8a4c7515a..96f1c7fd3988 100644
+--- a/drivers/gpio/gpio-eic-sprd.c
++++ b/drivers/gpio/gpio-eic-sprd.c
+@@ -375,29 +375,34 @@ static int sprd_eic_irq_set_type(struct irq_data *data, unsigned int flow_type)
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTBOTH, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTMODE, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTPOL, 1);
++			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTCLR, 1);
+ 			irq_set_handler_locked(data, handle_edge_irq);
+ 			break;
+ 		case IRQ_TYPE_EDGE_FALLING:
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTBOTH, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTMODE, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTPOL, 0);
++			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTCLR, 1);
+ 			irq_set_handler_locked(data, handle_edge_irq);
+ 			break;
+ 		case IRQ_TYPE_EDGE_BOTH:
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTMODE, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTBOTH, 1);
++			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTCLR, 1);
+ 			irq_set_handler_locked(data, handle_edge_irq);
+ 			break;
+ 		case IRQ_TYPE_LEVEL_HIGH:
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTBOTH, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTMODE, 1);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTPOL, 1);
++			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTCLR, 1);
+ 			irq_set_handler_locked(data, handle_level_irq);
+ 			break;
+ 		case IRQ_TYPE_LEVEL_LOW:
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTBOTH, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTMODE, 1);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTPOL, 0);
++			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTCLR, 1);
+ 			irq_set_handler_locked(data, handle_level_irq);
+ 			break;
+ 		default:
+@@ -410,29 +415,34 @@ static int sprd_eic_irq_set_type(struct irq_data *data, unsigned int flow_type)
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTBOTH, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTMODE, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTPOL, 1);
++			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTCLR, 1);
+ 			irq_set_handler_locked(data, handle_edge_irq);
+ 			break;
+ 		case IRQ_TYPE_EDGE_FALLING:
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTBOTH, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTMODE, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTPOL, 0);
++			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTCLR, 1);
+ 			irq_set_handler_locked(data, handle_edge_irq);
+ 			break;
+ 		case IRQ_TYPE_EDGE_BOTH:
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTMODE, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTBOTH, 1);
++			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTCLR, 1);
+ 			irq_set_handler_locked(data, handle_edge_irq);
+ 			break;
+ 		case IRQ_TYPE_LEVEL_HIGH:
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTBOTH, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTMODE, 1);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTPOL, 1);
++			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTCLR, 1);
+ 			irq_set_handler_locked(data, handle_level_irq);
+ 			break;
+ 		case IRQ_TYPE_LEVEL_LOW:
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTBOTH, 0);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTMODE, 1);
+ 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTPOL, 0);
++			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTCLR, 1);
+ 			irq_set_handler_locked(data, handle_level_irq);
+ 			break;
+ 		default:
+-- 
+2.17.1
 
-Will send a patch mentioning this in the docs and adjusting the Rust
-bindings.
-
-- Erik
