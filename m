@@ -2,183 +2,89 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7097E7D0A0
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 17:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C57FCE7D0A2
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 17:50:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230354AbjIURcD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Sep 2023 13:32:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55068 "EHLO
+        id S229572AbjIURuL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Sep 2023 13:50:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230256AbjIURcA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 13:32:00 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C59609009
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 10:05:40 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1qjKBp-0003Gb-Ij; Thu, 21 Sep 2023 15:57:57 +0200
-Received: from [2a0a:edc0:2:b01:1d::c0] (helo=ptx.whiteo.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <sha@pengutronix.de>)
-        id 1qjKBo-007wRQ-7M; Thu, 21 Sep 2023 15:57:56 +0200
-Received: from sha by ptx.whiteo.stw.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1qjKBo-00Ao2Z-3V; Thu, 21 Sep 2023 15:57:56 +0200
-Date:   Thu, 21 Sep 2023 15:57:56 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Chen-Yu Tsai <wens@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-rockchip@lists.infradead.org,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        kernel@pengutronix.de,
-        Quentin Schulz <quentin.schulz@theobroma-systems.com>,
-        Michael Riesch <michael.riesch@wolfvision.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH 1/3] pinctrl: rockchip: add support for io-domain
- dependency
-Message-ID: <20230921135756.GT637806@pengutronix.de>
-References: <20230904115816.1237684-1-s.hauer@pengutronix.de>
- <20230904115816.1237684-2-s.hauer@pengutronix.de>
- <CACRpkdYxRdToUM3JcEeNK_K87D5WDzzSLvVEbtqqdQEhz3k_Ow@mail.gmail.com>
- <CAGb2v65G-8EECNjqnpKCxqAD5nATAb0S7AA_WMiGXYOR1avrvg@mail.gmail.com>
- <20230913065843.GF637806@pengutronix.de>
- <CAGETcx8rO=aykjb6=5k0wpOyscqokNwSL6w-AHnodY7pNXyzGQ@mail.gmail.com>
- <20230915065120.GQ637806@pengutronix.de>
- <CAGETcx-stUfkVmkwGhj7iBWfCRsY5uZ=CxJdX9pPY6OO6oGUhg@mail.gmail.com>
+        with ESMTP id S229593AbjIURuA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 13:50:00 -0400
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DCEE58083
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 10:18:59 -0700 (PDT)
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+        by SHSQR01.spreadtrum.com with ESMTP id 38L926bY066757
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 17:02:06 +0800 (+08)
+        (envelope-from Wenhua.Lin@unisoc.com)
+Received: from dlp.unisoc.com ([10.29.3.86])
+        by SHSQR01.spreadtrum.com with ESMTP id 38L90iOc061737;
+        Thu, 21 Sep 2023 17:00:44 +0800 (+08)
+        (envelope-from Wenhua.Lin@unisoc.com)
+Received: from SHDLP.spreadtrum.com (shmbx06.spreadtrum.com [10.0.1.11])
+        by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Rrq6D4FsMz2SZykd;
+        Thu, 21 Sep 2023 16:57:24 +0800 (CST)
+Received: from xm9614pcu.spreadtrum.com (10.13.2.29) by shmbx06.spreadtrum.com
+ (10.0.1.11) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Thu, 21 Sep
+ 2023 17:00:43 +0800
+From:   Wenhua Lin <Wenhua.Lin@unisoc.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC:     Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        wenhua lin <wenhua.lin1994@gmail.com>,
+        Wenhua Lin <Wenhua.Lin@unisoc.com>,
+        Xiongpeng Wu <xiongpeng.wu@unisoc.com>
+Subject: [PATCH V2 1/4] gpio: sprd: In the sleep state, the eic debounce clk must be forced open
+Date:   Thu, 21 Sep 2023 17:00:24 +0800
+Message-ID: <20230921090027.11136-2-Wenhua.Lin@unisoc.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230921090027.11136-1-Wenhua.Lin@unisoc.com>
+References: <20230921090027.11136-1-Wenhua.Lin@unisoc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGETcx-stUfkVmkwGhj7iBWfCRsY5uZ=CxJdX9pPY6OO6oGUhg@mail.gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+Content-Type: text/plain
+X-Originating-IP: [10.13.2.29]
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ shmbx06.spreadtrum.com (10.0.1.11)
+X-MAIL: SHSQR01.spreadtrum.com 38L90iOc061737
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Sep 20, 2023 at 03:00:28PM -0700, Saravana Kannan wrote:
-> On Thu, Sep 14, 2023 at 11:51 PM Sascha Hauer <s.hauer@pengutronix.de> wrote:
-> >
-> > On Wed, Sep 13, 2023 at 01:48:12PM -0700, Saravana Kannan wrote:
-> > > On Tue, Sep 12, 2023 at 11:58 PM Sascha Hauer <s.hauer@pengutronix.de> wrote:
-> > > >
-> > > > On Wed, Sep 13, 2023 at 12:37:54PM +0800, Chen-Yu Tsai wrote:
-> > > > > On Tue, Sep 12, 2023 at 4:07 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> > > > > >
-> > > > > > Top posting to bring Saravana Kannan into this discussion.
-> > > > > >
-> > > > > > This looks like a big hack to me, Saravana has been working
-> > > > > > tirelessly to make the device tree probe order "sort itself out"
-> > > > > > and I am pretty sure this issue needs to be fixed at the DT
-> > > > > > core level and not in a driver.
-> > > > >
-> > > > > We could merge all the IO domain stuff into the pinctrl node/driver,
-> > > > > like is done for Allwinner? Maybe that would simplify things a bit?
-> > > >
-> > > > I thought about this as well. On Rockchip the pinctrl driver and the IO
-> > > > domain driver even work on the same register space, so putting these
-> > > > into a single node/driver would even feel more natural than what we have
-> > > > now.
-> > >
-> > > Then we should try to do this and fix any issues blocking us.
-> > >
-> > > > However, with that the pinctrl node would get the supplies that the IO
-> > > > domain node now has and we would never get into the probe of the pinctrl
-> > > > driver due to the circular dependencies.
-> > >
-> > > From a fw_devlink perspective, the circular dependency shouldn't be a
-> > > problem. It's smart enough to recognize all cycle possibilities (since
-> > > 6.3) and not enforce ordering between nodes in a cycle.
-> > >
-> > > So, this is really only a matter of pinctrl not trying to do
-> > > regulator_get() in its probe function. You need to do the
-> > > regulator_get() when the pins that depend on the io-domain are
-> > > requested. And if the regulator isn't ready yet, return -EPROBE_DEFER?
-> >
-> > That's basically what my series does already, I return -EPROBE_DEFER
-> > from the pinctrl driver when a pin is requested and the IO domain is not
-> > yet ready.
-> >
-> > >
-> > > Is there something that prevents us from doing that?
-> >
-> > No. We could do that, but it wouldn't buy us anthing. I am glad to hear
-> > that fw_devlink can break the circular dependencies. With this we could
-> > add the supplies to the pinctrl node and the pinctrl driver would still
-> > be probed.
-> >
-> > With the IO domain supplies added to the pinctrl node our binding would
-> > be cleaner, but still we would have to defer probe of many requested
-> > pins until finally the I2C driver providing access to the PMIC comes
-> > along. We also still need a "Do not defer probe for these pins" property
-> > in the pingrp needed for the I2C driver.
-> 
-> Sorry about the slow reply. Been a bit busy.
-> 
-> Oh, this is not true though. With the example binding I gave,
-> fw_devlink will automatically defer the probe of devices that depend
-> on pins that need an iodomain/regulator.
-> 
-> pinctrl {
->     compatible = "rockchip,rk3568-pinctrl";
->     i2c0 {
->                 /omit-if-no-ref/
->                 i2c0_xfer: i2c0-xfer {
->                         rockchip,pins =
->                                 /* i2c0_scl */
->                                 <0 RK_PB1 1 &pcfg_pull_none_smt>,
->                                 /* i2c0_sda */
->                                 <0 RK_PB2 1 &pcfg_pull_none_smt>;
->                 };
->     }
->     ...
->     ...
->     pinctrl-io {
->         compatible = "rockchip,rk3568-pinctrl-io";
->         pmuio1-supply = <&vcc3v3_pmu>;
->         cam {
->             ....
->         }
->         ....
->         ....
-> }
-> 
-> consumerA {
->    pinctrl-0 = <&cam>;
-> }
-> 
-> With this model above, there are no cycles anymore.
+In the sleep state, Eic debounce has no clock and the clk of
+debounce needs to be forced open, so that eic can wake up normally.
 
-The cycles are gone because you skipped the problematic case in your
-example.
+Fixes: 2788938b7946 ("gpio: eic-sprd: Make the irqchip immutable")
 
-Replace consumerA in your example with the I2C node providing access to
-the PMIC which provides &vcc3v3_pmu and then you have the cycles back.
+Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
+---
+ drivers/gpio/gpio-eic-sprd.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-The I2C master device needs the IO domain which needs a regulator
-provided by a client on the very same I2C master. The cycles are
-actually there in hardware, you can't define them away ;)
-
-Sascha
-
-
+diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+index 84352a6f4973..bfa8a4c7515a 100644
+--- a/drivers/gpio/gpio-eic-sprd.c
++++ b/drivers/gpio/gpio-eic-sprd.c
+@@ -23,6 +23,7 @@
+ #define SPRD_EIC_DBNC_IC		0x24
+ #define SPRD_EIC_DBNC_TRIG		0x28
+ #define SPRD_EIC_DBNC_CTRL0		0x40
++#define SPRD_EIC_DBNC_FORCE_CLK		0x8000
+ 
+ #define SPRD_EIC_LATCH_INTEN		0x0
+ #define SPRD_EIC_LATCH_INTRAW		0x4
+@@ -214,6 +215,7 @@ static int sprd_eic_set_debounce(struct gpio_chip *chip, unsigned int offset,
+ 	u32 value = readl_relaxed(base + reg) & ~SPRD_EIC_DBNC_MASK;
+ 
+ 	value |= (debounce / 1000) & SPRD_EIC_DBNC_MASK;
++	value |= SPRD_EIC_DBNC_FORCE_CLK;
+ 	writel_relaxed(value, base + reg);
+ 
+ 	return 0;
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.17.1
+
