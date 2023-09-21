@@ -2,99 +2,102 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD3AE7D0AB
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 20:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BFFE7D0A2
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 20:48:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232005AbjIUUdL convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Sep 2023 16:33:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57536 "EHLO
+        id S232471AbjIUUsm (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Sep 2023 16:48:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232010AbjIUUcv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 16:32:51 -0400
-Received: from mail-ot1-f65.google.com (mail-ot1-f65.google.com [209.85.210.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 906E78922E;
-        Thu, 21 Sep 2023 10:39:46 -0700 (PDT)
-Received: by mail-ot1-f65.google.com with SMTP id 46e09a7af769-6c0b8f42409so743807a34.0;
-        Thu, 21 Sep 2023 10:39:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695317986; x=1695922786;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+FnksNosVt+Hax24mR+RoN0eh3COVsIdIWx2BS+xejg=;
-        b=rEkx3pMMnIU7MUJ9vcnx/DCHNMC/mOb17XNiDHTnHAIovYhOvhE/8768ey7Fg50mWi
-         a2sDCOSJrJDSp+eWKsYJ5NQ49buCM5LBWumFy7qeSfPz8m4IsMHFmt3saylMWva5OgXd
-         MPpfmb7HSMg9XHCNDPBXvyxfKy/IUud0pMwOwAk5sySBHiN0nOSEOK2hJV1YmTU0DIJn
-         z/Jn7fjglrRBkWa8ZxUsPHae7XaTzGML++/2yKa8LKlTcjK3bAOfu4Flptr5wNE9EgEI
-         HClm3bJbT1aWwetKW4CoKK2jPTvCLldfSb6vgAw4oUC7eYOg1rJS7+yx2IhuUFGhYMpl
-         p0UA==
-X-Gm-Message-State: AOJu0YxAOJnUnrAX9ZKwf9iDhnavooLEUzzrZqejmwa8GLOU/h4eim+A
-        J8SqKKXgzvjdm/b0Nx9TamI2QQfinX0TFqO0qac=
-X-Google-Smtp-Source: AGHT+IEkfGDj8wYGohG9vtgfxj2bFMU98AQDYeQGae+2uTcjv+ZyzSZBMyN3zQhcBm3QftLUqtmlQQ==
-X-Received: by 2002:a81:83c1:0:b0:58d:7ec3:16c4 with SMTP id t184-20020a8183c1000000b0058d7ec316c4mr6054718ywf.34.1695308457056;
-        Thu, 21 Sep 2023 08:00:57 -0700 (PDT)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id e1-20020a0dc201000000b0057a8de72338sm364072ywd.68.2023.09.21.08.00.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Sep 2023 08:00:57 -0700 (PDT)
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-d81afd5273eso1309619276.3;
-        Thu, 21 Sep 2023 08:00:56 -0700 (PDT)
-X-Received: by 2002:a5b:78d:0:b0:d81:bfbf:dd3 with SMTP id b13-20020a5b078d000000b00d81bfbf0dd3mr5437539ybq.51.1695308456709;
- Thu, 21 Sep 2023 08:00:56 -0700 (PDT)
+        with ESMTP id S232328AbjIUUs0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 16:48:26 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E73E790F13;
+        Thu, 21 Sep 2023 10:47:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1695318443; x=1726854443;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/bI3SZUJj1sK0d5AIlLR9Jsr77qgx3aGIqY4S44vdwo=;
+  b=h8Bbgud3rW/qm7NMi6jEenNM+SfAs/0mP51HHTd9w9dWZdz/iC9Nhtdw
+   Nv/OjvRoh44ez1znxThFfde5bs0yQJdH6bjOE5h+qhNTw8rDtCxqU/J5L
+   2DybNjQWlcxx3aKswvWIWGuGWfZFMfNqXOOFiwuBYqGciHs8Meuhxhn8G
+   DoVb+Nl7gLBqoDUMTOOwgnZNwLu0NA+ZIIMrSVpot8NU6ncis2tqwwqdE
+   GVh6LE63qKxJO8GETQnewy9PZF+Z57CwooptgfluvfEZoiPKOcbuns9ic
+   Y6b3fnxXl1eO1+Cw/uEUdR7+esdtlSrlk64I9lOBmx9WwqHfcZFABh0NE
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10839"; a="377764188"
+X-IronPort-AV: E=Sophos;i="6.03,165,1694761200"; 
+   d="scan'208";a="377764188"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2023 02:45:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10839"; a="994014933"
+X-IronPort-AV: E=Sophos;i="6.03,165,1694761200"; 
+   d="scan'208";a="994014933"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2023 02:45:03 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC0)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qjGF2-0000000GqzG-1y2X;
+        Thu, 21 Sep 2023 12:45:00 +0300
+Date:   Thu, 21 Sep 2023 12:45:00 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Kent Gibson <warthog618@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        akpm@linux-foundation.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v5] gpio: sim: fix an invalid __free() usage
+Message-ID: <ZQwQnA/W1TZDJivM@smile.fi.intel.com>
+References: <20230920073253.51742-1-brgl@bgdev.pl>
+ <ZQr3E/7crMrVxMp9@smile.fi.intel.com>
+ <CAMRc=MfvOL-ovQ89i7FASg=RoWHQPARGsc5Pxu9kC+roGqaE4g@mail.gmail.com>
 MIME-Version: 1.0
-References: <20230912045157.177966-1-claudiu.beznea.uj@bp.renesas.com> <20230912045157.177966-30-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20230912045157.177966-30-claudiu.beznea.uj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Sep 2023 17:00:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWC8W9+a+8mewin5irujsEeVnSQfaoaNpD1GLHES54rCQ@mail.gmail.com>
-Message-ID: <CAMuHMdWC8W9+a+8mewin5irujsEeVnSQfaoaNpD1GLHES54rCQ@mail.gmail.com>
-Subject: Re: [PATCH 29/37] dt-bindings: pinctrl: renesas: document RZ/G3S SoC
-To:     Claudiu <claudiu.beznea@tuxon.dev>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, quic_bjorande@quicinc.com,
-        arnd@arndb.de, konrad.dybcio@linaro.org, neil.armstrong@linaro.org,
-        nfraprado@collabora.com, rafal@milecki.pl,
-        wsa+renesas@sang-engineering.com,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MfvOL-ovQ89i7FASg=RoWHQPARGsc5Pxu9kC+roGqaE4g@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Claudiu,
+On Thu, Sep 21, 2023 at 01:12:16AM -0700, Bartosz Golaszewski wrote:
+> On Wed, 20 Sep 2023 15:43:47 +0200, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> said:
+> > On Wed, Sep 20, 2023 at 09:32:53AM +0200, Bartosz Golaszewski wrote:
 
-On Tue, Sep 12, 2023 at 6:53 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add documentation for pin controller found on RZ/G3S (R9A08G045) SoC.
-> Compared with RZ/G2{L,UL} RZ/G3S has 82 general-purpose IOs, no slew
-> rate and output impedance support and more values for drive strength
-> which needs to be expressed in microamp.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+...
 
-Thanks for your patch!
+> > As for the material to be backported it's fine, but I'm wondering if we
+> > actually can add the entries in a sorted manner, so we would need the exact
+> > what I mentioned in previous review round, just search backwards to the first
+> > satisfying entry. I don't believe the adding an entry to the list is a
+> > hot-path, so would be fine to call list_sort().
+> 
+> Given the need for the callback function, this would result in bigger code.
 
-LGTM, once you have taken Rob's comments into account.
+Is it a problem?
 
-Gr{oetje,eeting}s,
+On the below I kinda agree.
 
-                        Geert
+> Also calling:
+> 
+>     list_add_tail();
+>     list_sort();
+> 
+> is not very elegant. I would possibly go for adding list_add_sorted() but
+> that's a separate change for the future.
+
+Note, we do this for the GPIO bases already.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+With Best Regards,
+Andy Shevchenko
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
