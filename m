@@ -2,100 +2,299 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F39E7D0AA
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 20:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C260E7D0A2
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 21:01:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231993AbjIUU7B (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Sep 2023 16:59:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60364 "EHLO
+        id S231446AbjIUVBE (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Sep 2023 17:01:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232182AbjIUU6i (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 16:58:38 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AF64AFC06
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 11:07:44 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id ca18e2360f4ac-792707f78b5so49372739f.1
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 11:07:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695319663; x=1695924463; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fBhNwxRW2TiFrElAif7iI6ZafZNTH+8pl3WgNjQm1nI=;
-        b=lb58c4kCJYuI4fG9uFWQhwnZ/Q0q5eb4Ep872R6xf6JdTMmS1ACq52vfMOcGhIHCRH
-         VCmfFHnWFS1Y+giku/iAPquMknXS61ZmcfMNVkRRzyI1bEKKZpzkgUa/m8IWygPboWx6
-         EvOE8Z8EWzNpzGSiX/dmtw3I64AkwOeeT1nlfkZYyeKTB4Kd7z021kmJLV4Zi0SqFCHl
-         qBnEVyzbPxvknnOHSGhSHO+SOs74S7m/KL62wwsmm3/fnZXSFAqU9koGeHS7guTf/uoV
-         V6yOzNJpmIQRcxV6GzCtpC0862ZGkyIog4aoSADMAZzn3HO2TJWZKfLtFCW7f2CRc87I
-         fMww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695319663; x=1695924463;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fBhNwxRW2TiFrElAif7iI6ZafZNTH+8pl3WgNjQm1nI=;
-        b=ud2w1L5SYqXBianzmutSe4/HIkxzZjCx1yBWlIhkCSMtSy9O86jZ3prIpD5nkJ/IyS
-         0gSyEnjzcAgtZS+OVqBY0REnPlzFBQzlwoPWyss2WwoBnLPJxpq92PuT8PKf444bZMJ4
-         oAnVbEbUcYYNLONU+mjKrFBIXY2GXZvSD3w50fln9gNIaETTn2xcBoNefOhi+rhgJ8qe
-         /Qg2FHDwc0/lQ+zTmdKImDu7bWSxDiwBa0epoNt8+cQhA9TtCvJolrdU38L5MoNXBPCb
-         0DQHw4xoXtY2Yf8BKEQ7sNN9TFnHf9gi+24EkXWVTBGSsXHVhoPXuxyH5KKsgLWSc/8n
-         MWRQ==
-X-Gm-Message-State: AOJu0YzpvHPFPHETeJIbfPy5TBteJskIsFu6U6Sd0Xxenm8s0ifLNNih
-        mbtYMVsyx7GGTY9QgTShhG2EokWKY3ld35ix56lEECC7y9iqw4mS
-X-Google-Smtp-Source: AGHT+IFvn2xj3bCzCzglyhTLZ+/0AMj6N+3hw5k/GAMytQtun5T0UTI9xu+zqnMzKuqsF39WZXpX1QhtPlsDG/KwFrs=
-X-Received: by 2002:a81:a041:0:b0:586:a2f9:648e with SMTP id
- x62-20020a81a041000000b00586a2f9648emr6026906ywg.4.1695299654629; Thu, 21 Sep
- 2023 05:34:14 -0700 (PDT)
+        with ESMTP id S232299AbjIUVAf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 17:00:35 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 834DB84600;
+        Thu, 21 Sep 2023 10:37:29 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34F1AC32779;
+        Thu, 21 Sep 2023 09:19:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695287983;
+        bh=tRdODTYdCa3qwizncqDlOn0z0rZz4zzat0BX1MymMGk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qDNnUbEbN16PrijkO7YnenFiE+E80OdN+7S3pX7hNhhVrips+T+oSwT6lJJKKPALm
+         news/Q8wmMCsH0XTnRNw7UzP6gl61utdby173cC+WyZsO+wI8Jg0pha5Dvk9gBmF7H
+         8n96w6sWpHx1KZflnWtL6eCHf13PX10GDaALNZEL9WACvv9AT1cIx2ILBqcVXf83xX
+         7z8UueVsTnQH35Qg847AUOcZThopRppTmMj8rm80qepaMr63gtitPjEtBn1DNyu4wA
+         tbqi/cJ0EjAoir5RDKiZ28QUda7t6+o3STpdTNxy4ti7Z1w9hM7sd0VkX+ZEShFcbA
+         yG6W1P4zcww7w==
+Date:   Thu, 21 Sep 2023 10:19:37 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Huqiang Qin <huqiang.qin@amlogic.com>
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        neil.armstrong@linaro.org, khilman@baylibre.com,
+        jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+        brgl@bgdev.pl, andy@kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 1/3] dt-bindings: pinctrl: Add compatibles for Amlogic
+ T7 SoCs
+Message-ID: <20230921-fa16f2f1f118091489708226@fedora>
+References: <20230921083407.1167510-2-huqiang.qin@amlogic.com>
+ <20230921083407.1167510-3-huqiang.qin@amlogic.com>
 MIME-Version: 1.0
-References: <20230921-ixp4xx-gpio-clocks-v1-0-574942bf944a@linaro.org>
- <20230921-ixp4xx-gpio-clocks-v1-2-574942bf944a@linaro.org> <ZQwngrU9fxdSGSKs@smile.fi.intel.com>
-In-Reply-To: <ZQwngrU9fxdSGSKs@smile.fi.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 21 Sep 2023 14:34:02 +0200
-Message-ID: <CACRpkdadMCXyWYycMHZ0m7ZscTayJs=378e8DPJDkEEyTOeLUA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: ixp4xx: Handle clock output on pin 14 and 15
-To:     Andy Shevchenko <andy@kernel.org>
-Cc:     Linus Walleij <linusw@kernel.org>, Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="EF4bGMNfXkk0lW1z"
+Content-Disposition: inline
+In-Reply-To: <20230921083407.1167510-3-huqiang.qin@amlogic.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Sep 21, 2023 at 1:23=E2=80=AFPM Andy Shevchenko <andy@kernel.org> w=
-rote:
 
-> Maybe
->
->         if (...)
->                 val =3D 0;
->         else
->                 val =3D readl();
->
-> ?
+--EF4bGMNfXkk0lW1z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Neat, I'll do this!
+On Thu, Sep 21, 2023 at 04:34:06PM +0800, Huqiang Qin wrote:
+> Add a new compatible name for Amlogic T7 pin controller, and add
+> a new dt-binding header file which document the detail pin names.
+>=20
+> Signed-off-by: Huqiang Qin <huqiang.qin@amlogic.com>
 
-> > +     /*
-> > +      * Enable clock outputs with default timings of requested clock.
-> > +      * If you need control over TC and DC, add these to the device
-> > +      * tree bindings and use them here.
-> > +      */
->
-> Shouldn't this be integrated into PPS subsystem?
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-PPS is for GPS, we *could* integrate it into the clk subsystem (with
-configuration cells and all hoopla) but as I state in the cover letter
-I think it becomes overengineered for this legacy system, there are
-no users or benefit of that added complexity as compared to these
-few-liners.
+I'd argue that "Add support for" would be a better $subject for the
+changes here though given that there is only one compatible and you've
+added a bunch of new definitions.
 
-Yours,
-Linus Walleij
+Thanks,
+Conor.
+
+> ---
+>=20
+> V1 -> V2: Rename amlogic-t7-gpio.h to amlogic,t7-periphs-pinctrl.h
+>=20
+>  .../pinctrl/amlogic,meson-pinctrl-a1.yaml     |   1 +
+>  .../gpio/amlogic,t7-periphs-pinctrl.h         | 179 ++++++++++++++++++
+>  2 files changed, 180 insertions(+)
+>  create mode 100644 include/dt-bindings/gpio/amlogic,t7-periphs-pinctrl.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinc=
+trl-a1.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinct=
+rl-a1.yaml
+> index 4e7a456ea4cc..c7df4cd34197 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.=
+yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.=
+yaml
+> @@ -16,6 +16,7 @@ properties:
+>    compatible:
+>      enum:
+>        - amlogic,c3-periphs-pinctrl
+> +      - amlogic,t7-periphs-pinctrl
+>        - amlogic,meson-a1-periphs-pinctrl
+>        - amlogic,meson-s4-periphs-pinctrl
+> =20
+> diff --git a/include/dt-bindings/gpio/amlogic,t7-periphs-pinctrl.h b/incl=
+ude/dt-bindings/gpio/amlogic,t7-periphs-pinctrl.h
+> new file mode 100644
+> index 000000000000..4e16d31a71c9
+> --- /dev/null
+> +++ b/include/dt-bindings/gpio/amlogic,t7-periphs-pinctrl.h
+> @@ -0,0 +1,179 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> +/*
+> + * Copyright (c) 2023 Amlogic, Inc. All rights reserved.
+> + * Author: Huqiang Qin <huqiang.qin@amlogic.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_AMLOGIC_T7_GPIO_H
+> +#define _DT_BINDINGS_AMLOGIC_T7_GPIO_H
+> +
+> +#define GPIOB_0		0
+> +#define GPIOB_1		1
+> +#define GPIOB_2		2
+> +#define GPIOB_3		3
+> +#define GPIOB_4		4
+> +#define GPIOB_5		5
+> +#define GPIOB_6		6
+> +#define GPIOB_7		7
+> +#define GPIOB_8		8
+> +#define GPIOB_9		9
+> +#define GPIOB_10	10
+> +#define GPIOB_11	11
+> +#define GPIOB_12	12
+> +
+> +#define GPIOC_0		13
+> +#define GPIOC_1		14
+> +#define GPIOC_2		15
+> +#define GPIOC_3		16
+> +#define GPIOC_4		17
+> +#define GPIOC_5		18
+> +#define GPIOC_6		19
+> +
+> +#define GPIOX_0		20
+> +#define GPIOX_1		21
+> +#define GPIOX_2		22
+> +#define GPIOX_3		23
+> +#define GPIOX_4		24
+> +#define GPIOX_5		25
+> +#define GPIOX_6		26
+> +#define GPIOX_7		27
+> +#define GPIOX_8		28
+> +#define GPIOX_9		29
+> +#define GPIOX_10	30
+> +#define GPIOX_11	31
+> +#define GPIOX_12	32
+> +#define GPIOX_13	33
+> +#define GPIOX_14	34
+> +#define GPIOX_15	35
+> +#define GPIOX_16	36
+> +#define GPIOX_17	37
+> +#define GPIOX_18	38
+> +#define GPIOX_19	39
+> +
+> +#define GPIOW_0		40
+> +#define GPIOW_1		41
+> +#define GPIOW_2		42
+> +#define GPIOW_3		43
+> +#define GPIOW_4		44
+> +#define GPIOW_5		45
+> +#define GPIOW_6		46
+> +#define GPIOW_7		47
+> +#define GPIOW_8		48
+> +#define GPIOW_9		49
+> +#define GPIOW_10	50
+> +#define GPIOW_11	51
+> +#define GPIOW_12	52
+> +#define GPIOW_13	53
+> +#define GPIOW_14	54
+> +#define GPIOW_15	55
+> +#define GPIOW_16	56
+> +
+> +#define GPIOD_0		57
+> +#define GPIOD_1		58
+> +#define GPIOD_2		59
+> +#define GPIOD_3		60
+> +#define GPIOD_4		61
+> +#define GPIOD_5		62
+> +#define GPIOD_6		63
+> +#define GPIOD_7		64
+> +#define GPIOD_8		65
+> +#define GPIOD_9		66
+> +#define GPIOD_10	67
+> +#define GPIOD_11	68
+> +#define GPIOD_12	69
+> +
+> +#define GPIOE_0		70
+> +#define GPIOE_1		71
+> +#define GPIOE_2		72
+> +#define GPIOE_3		73
+> +#define GPIOE_4		74
+> +#define GPIOE_5		75
+> +#define GPIOE_6		76
+> +
+> +#define GPIOZ_0		77
+> +#define GPIOZ_1		78
+> +#define GPIOZ_2		79
+> +#define GPIOZ_3		80
+> +#define GPIOZ_4		81
+> +#define GPIOZ_5		82
+> +#define GPIOZ_6		83
+> +#define GPIOZ_7		84
+> +#define GPIOZ_8		85
+> +#define GPIOZ_9		86
+> +#define GPIOZ_10	87
+> +#define GPIOZ_11	88
+> +#define GPIOZ_12	89
+> +#define GPIOZ_13	90
+> +
+> +#define GPIOT_0		91
+> +#define GPIOT_1		92
+> +#define GPIOT_2		93
+> +#define GPIOT_3		94
+> +#define GPIOT_4		95
+> +#define GPIOT_5		96
+> +#define GPIOT_6		97
+> +#define GPIOT_7		98
+> +#define GPIOT_8		99
+> +#define GPIOT_9		100
+> +#define GPIOT_10	101
+> +#define GPIOT_11	102
+> +#define GPIOT_12	103
+> +#define GPIOT_13	104
+> +#define GPIOT_14	105
+> +#define GPIOT_15	106
+> +#define GPIOT_16	107
+> +#define GPIOT_17	108
+> +#define GPIOT_18	109
+> +#define GPIOT_19	110
+> +#define GPIOT_20	111
+> +#define GPIOT_21	112
+> +#define GPIOT_22	113
+> +#define GPIOT_23	114
+> +
+> +#define GPIOM_0		115
+> +#define GPIOM_1		116
+> +#define GPIOM_2		117
+> +#define GPIOM_3		118
+> +#define GPIOM_4		119
+> +#define GPIOM_5		120
+> +#define GPIOM_6		121
+> +#define GPIOM_7		122
+> +#define GPIOM_8		123
+> +#define GPIOM_9		124
+> +#define GPIOM_10	125
+> +#define GPIOM_11	126
+> +#define GPIOM_12	127
+> +#define GPIOM_13	128
+> +
+> +#define GPIOY_0		129
+> +#define GPIOY_1		130
+> +#define GPIOY_2		131
+> +#define GPIOY_3		132
+> +#define GPIOY_4		133
+> +#define GPIOY_5		134
+> +#define GPIOY_6		135
+> +#define GPIOY_7		136
+> +#define GPIOY_8		137
+> +#define GPIOY_9		138
+> +#define GPIOY_10	139
+> +#define GPIOY_11	140
+> +#define GPIOY_12	141
+> +#define GPIOY_13	142
+> +#define GPIOY_14	143
+> +#define GPIOY_15	144
+> +#define GPIOY_16	145
+> +#define GPIOY_17	146
+> +#define GPIOY_18	147
+> +
+> +#define GPIOH_0		148
+> +#define GPIOH_1		149
+> +#define GPIOH_2		150
+> +#define GPIOH_3		151
+> +#define GPIOH_4		152
+> +#define GPIOH_5		153
+> +#define GPIOH_6		154
+> +#define GPIOH_7		155
+> +
+> +#define GPIO_TEST_N	156
+> +
+> +#endif /* _DT_BINDINGS_AMLOGIC_T7_GPIO_H */
+> --=20
+> 2.42.0
+>=20
+
+--EF4bGMNfXkk0lW1z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZQwKpgAKCRB4tDGHoIJi
+0tUgAQC67+DeMiB7hDUnCGZxPcUXqM4TeI7a4KwUj8RjY4AmFwEAoDPWtsRmTaJe
+CmgEfijQJLEPKjx4nbqlOh8wqFyvbAM=
+=Wae3
+-----END PGP SIGNATURE-----
+
+--EF4bGMNfXkk0lW1z--
