@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C152E7D0A2
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 19:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75234E7D0A7
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 19:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231231AbjIUT7P (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Sep 2023 15:59:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42890 "EHLO
+        id S229716AbjIUT75 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Sep 2023 15:59:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231328AbjIUT6v (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 15:58:51 -0400
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E57A58097
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 10:19:04 -0700 (PDT)
+        with ESMTP id S231204AbjIUT7g (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 15:59:36 -0400
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33C30448D
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 10:26:05 -0700 (PDT)
 Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
-        by SHSQR01.spreadtrum.com with ESMTP id 38L928FZ066903
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 17:02:08 +0800 (+08)
+        by SHSQR01.spreadtrum.com with ESMTP id 38LCQuwj003667
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 20:26:56 +0800 (+08)
         (envelope-from Wenhua.Lin@unisoc.com)
 Received: from dlp.unisoc.com ([10.29.3.86])
-        by SHSQR01.spreadtrum.com with ESMTP id 38L90jGx061777;
-        Thu, 21 Sep 2023 17:00:45 +0800 (+08)
+        by SHSQR01.spreadtrum.com with ESMTP id 38LCPa1G001486;
+        Thu, 21 Sep 2023 20:25:36 +0800 (+08)
         (envelope-from Wenhua.Lin@unisoc.com)
 Received: from SHDLP.spreadtrum.com (shmbx06.spreadtrum.com [10.0.1.11])
-        by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Rrq6F44Nxz2Sb3tf;
-        Thu, 21 Sep 2023 16:57:25 +0800 (CST)
+        by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Rrvfc1SN8z2SbDtc;
+        Thu, 21 Sep 2023 20:22:16 +0800 (CST)
 Received: from xm9614pcu.spreadtrum.com (10.13.2.29) by shmbx06.spreadtrum.com
  (10.0.1.11) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Thu, 21 Sep
- 2023 17:00:44 +0800
+ 2023 20:25:35 +0800
 From:   Wenhua Lin <Wenhua.Lin@unisoc.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andy@kernel.org>,
@@ -39,107 +39,36 @@ CC:     Orson Zhai <orsonzhai@gmail.com>,
         wenhua lin <wenhua.lin1994@gmail.com>,
         Wenhua Lin <Wenhua.Lin@unisoc.com>,
         Xiongpeng Wu <xiongpeng.wu@unisoc.com>
-Subject: [PATCH V2 2/4] gpio: sprd: Clear interrupt after set the interrupt type
-Date:   Thu, 21 Sep 2023 17:00:25 +0800
-Message-ID: <20230921090027.11136-3-Wenhua.Lin@unisoc.com>
+Subject: [PATCH V2 0/2] gpio: pmic-eic-sprd: Modification of UNISOC Platform PMIC EIC Driver
+Date:   Thu, 21 Sep 2023 20:25:25 +0800
+Message-ID: <20230921122527.15261-1-Wenhua.Lin@unisoc.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230921090027.11136-1-Wenhua.Lin@unisoc.com>
-References: <20230921090027.11136-1-Wenhua.Lin@unisoc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.13.2.29]
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
  shmbx06.spreadtrum.com (10.0.1.11)
-X-MAIL: SHSQR01.spreadtrum.com 38L90jGx061777
+X-MAIL: SHSQR01.spreadtrum.com 38LCPa1G001486
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The initialization state of the EIC module is a high level trigger.
-If it is currently a high level, the interrupt condition is met at
-this time, and the EIC interrupt has a latch capability, which will
-cause an interrupt to occur after booting. To avoid this, When setting
-the EIC interrupt trigger type, clear the interrupt once.
+Recently, some bugs have been discovered during use, and patch1
+and patch2 are bug fixes.
 
-Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
----
- drivers/gpio/gpio-eic-sprd.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Change in V2:
+-Change commit message and title in PATCH 1/2.
+-PATCH 2/2 add can_sleep flag for PMIC EIC chip 
+split into a separate patch in PATCH 1/2.
+-Delete the modification of IRQF_TRIGGER_LOW.
 
-diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
-index bfa8a4c7515a..96f1c7fd3988 100644
---- a/drivers/gpio/gpio-eic-sprd.c
-+++ b/drivers/gpio/gpio-eic-sprd.c
-@@ -375,29 +375,34 @@ static int sprd_eic_irq_set_type(struct irq_data *data, unsigned int flow_type)
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTBOTH, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTMODE, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTPOL, 1);
-+			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTCLR, 1);
- 			irq_set_handler_locked(data, handle_edge_irq);
- 			break;
- 		case IRQ_TYPE_EDGE_FALLING:
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTBOTH, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTMODE, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTPOL, 0);
-+			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTCLR, 1);
- 			irq_set_handler_locked(data, handle_edge_irq);
- 			break;
- 		case IRQ_TYPE_EDGE_BOTH:
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTMODE, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTBOTH, 1);
-+			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTCLR, 1);
- 			irq_set_handler_locked(data, handle_edge_irq);
- 			break;
- 		case IRQ_TYPE_LEVEL_HIGH:
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTBOTH, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTMODE, 1);
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTPOL, 1);
-+			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTCLR, 1);
- 			irq_set_handler_locked(data, handle_level_irq);
- 			break;
- 		case IRQ_TYPE_LEVEL_LOW:
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTBOTH, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTMODE, 1);
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTPOL, 0);
-+			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTCLR, 1);
- 			irq_set_handler_locked(data, handle_level_irq);
- 			break;
- 		default:
-@@ -410,29 +415,34 @@ static int sprd_eic_irq_set_type(struct irq_data *data, unsigned int flow_type)
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTBOTH, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTMODE, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTPOL, 1);
-+			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTCLR, 1);
- 			irq_set_handler_locked(data, handle_edge_irq);
- 			break;
- 		case IRQ_TYPE_EDGE_FALLING:
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTBOTH, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTMODE, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTPOL, 0);
-+			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTCLR, 1);
- 			irq_set_handler_locked(data, handle_edge_irq);
- 			break;
- 		case IRQ_TYPE_EDGE_BOTH:
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTMODE, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTBOTH, 1);
-+			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTCLR, 1);
- 			irq_set_handler_locked(data, handle_edge_irq);
- 			break;
- 		case IRQ_TYPE_LEVEL_HIGH:
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTBOTH, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTMODE, 1);
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTPOL, 1);
-+			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTCLR, 1);
- 			irq_set_handler_locked(data, handle_level_irq);
- 			break;
- 		case IRQ_TYPE_LEVEL_LOW:
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTBOTH, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTMODE, 1);
- 			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTPOL, 0);
-+			sprd_eic_update(chip, offset, SPRD_EIC_SYNC_INTCLR, 1);
- 			irq_set_handler_locked(data, handle_level_irq);
- 			break;
- 		default:
+Wenhua Lin (2):
+  gpio: pmic-eic-sprd: Two-dimensional arrays maintain pmic eic
+  gpio: pmic-eic-sprd: Add can_sleep flag for PMIC EIC chip
+
+ drivers/gpio/gpio-pmic-eic-sprd.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
+
 -- 
 2.17.1
 
