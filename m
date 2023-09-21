@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 808FAE7D0A7
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 20:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63778E7D0A6
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 20:13:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229619AbjIUUNU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Sep 2023 16:13:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52038 "EHLO
+        id S230441AbjIUUNb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Sep 2023 16:13:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230358AbjIUUMl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 16:12:41 -0400
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76760580B7
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 10:19:12 -0700 (PDT)
+        with ESMTP id S230469AbjIUUNJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 16:13:09 -0400
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60FD159970
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 10:28:45 -0700 (PDT)
 Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
-        by SHSQR01.spreadtrum.com with ESMTP id 38L92EtV067194
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 17:02:14 +0800 (+08)
+        by SHSQR01.spreadtrum.com with ESMTP id 38LCR3PI005468
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 20:27:03 +0800 (+08)
         (envelope-from Wenhua.Lin@unisoc.com)
 Received: from dlp.unisoc.com ([10.29.3.86])
-        by SHSQR01.spreadtrum.com with ESMTP id 38L90k9T061807;
-        Thu, 21 Sep 2023 17:00:46 +0800 (+08)
+        by SHSQR01.spreadtrum.com with ESMTP id 38LCPc0P001541;
+        Thu, 21 Sep 2023 20:25:38 +0800 (+08)
         (envelope-from Wenhua.Lin@unisoc.com)
 Received: from SHDLP.spreadtrum.com (shmbx06.spreadtrum.com [10.0.1.11])
-        by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Rrq6G2Ngqz2SZykd;
-        Thu, 21 Sep 2023 16:57:26 +0800 (CST)
+        by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Rrvff0yg8z2SbDtc;
+        Thu, 21 Sep 2023 20:22:18 +0800 (CST)
 Received: from xm9614pcu.spreadtrum.com (10.13.2.29) by shmbx06.spreadtrum.com
  (10.0.1.11) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Thu, 21 Sep
- 2023 17:00:45 +0800
+ 2023 20:25:36 +0800
 From:   Wenhua Lin <Wenhua.Lin@unisoc.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andy@kernel.org>,
@@ -39,115 +39,46 @@ CC:     Orson Zhai <orsonzhai@gmail.com>,
         wenhua lin <wenhua.lin1994@gmail.com>,
         Wenhua Lin <Wenhua.Lin@unisoc.com>,
         Xiongpeng Wu <xiongpeng.wu@unisoc.com>
-Subject: [PATCH V2 3/4] gpio: sprd: Modify the calculation method of eic number
-Date:   Thu, 21 Sep 2023 17:00:26 +0800
-Message-ID: <20230921090027.11136-4-Wenhua.Lin@unisoc.com>
+Subject: [PATCH V2 2/2] gpio: pmic-eic-sprd: Add can_sleep flag for PMIC EIC chip
+Date:   Thu, 21 Sep 2023 20:25:27 +0800
+Message-ID: <20230921122527.15261-3-Wenhua.Lin@unisoc.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230921090027.11136-1-Wenhua.Lin@unisoc.com>
-References: <20230921090027.11136-1-Wenhua.Lin@unisoc.com>
+In-Reply-To: <20230921122527.15261-1-Wenhua.Lin@unisoc.com>
+References: <20230921122527.15261-1-Wenhua.Lin@unisoc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.13.2.29]
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
  shmbx06.spreadtrum.com (10.0.1.11)
-X-MAIL: SHSQR01.spreadtrum.com 38L90k9T061807
+X-MAIL: SHSQR01.spreadtrum.com 38LCPc0P001541
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-When the soc changes, the corresponding gpio-eic-sprd.c
-code needs to be modified, and the corresponding
-Document must also be modified, which is quite troublesome.
-To avoid modifying the driver file, the number of EICs
-is automatically calculated by matching dts nodes.
+The drivers uses a mutex and I2C bus access in its PMIC EIC chip
+get implementation. This means these functions can sleep and the PMIC EIC
+chip should set the can_sleep property to true.
 
-Fixes: 2788938b7946 ("gpio: eic-sprd: Make the irqchip immutable")
+This will ensure that a warning is printed when trying to get the
+value from a context that potentially can't sleep.
 
 Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
 ---
- drivers/gpio/gpio-eic-sprd.c | 43 ++++++++++++++++++------------------
- 1 file changed, 22 insertions(+), 21 deletions(-)
+ drivers/gpio/gpio-pmic-eic-sprd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
-index 96f1c7fd3988..e85addbdf8aa 100644
---- a/drivers/gpio/gpio-eic-sprd.c
-+++ b/drivers/gpio/gpio-eic-sprd.c
-@@ -100,33 +100,32 @@ struct sprd_eic {
+diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
+index 442968bb2490..f04a40288638 100644
+--- a/drivers/gpio/gpio-pmic-eic-sprd.c
++++ b/drivers/gpio/gpio-pmic-eic-sprd.c
+@@ -353,6 +353,7 @@ static int sprd_pmic_eic_probe(struct platform_device *pdev)
+ 	pmic_eic->chip.set_config = sprd_pmic_eic_set_config;
+ 	pmic_eic->chip.set = sprd_pmic_eic_set;
+ 	pmic_eic->chip.get = sprd_pmic_eic_get;
++	pmic_eic->chip.can_sleep = true;
  
- struct sprd_eic_variant_data {
- 	enum sprd_eic_type type;
--	u32 num_eics;
- };
- 
-+#define SPRD_EIC_VAR_DATA(soc_name)				\
-+static const struct sprd_eic_variant_data soc_name##_eic_dbnc_data = {	\
-+	.type = SPRD_EIC_DEBOUNCE,					\
-+};									\
-+									\
-+static const struct sprd_eic_variant_data soc_name##_eic_latch_data = {	\
-+	.type = SPRD_EIC_LATCH,						\
-+};									\
-+									\
-+static const struct sprd_eic_variant_data soc_name##_eic_async_data = {	\
-+	.type = SPRD_EIC_ASYNC,						\
-+};									\
-+									\
-+static const struct sprd_eic_variant_data soc_name##_eic_sync_data = {	\
-+	.type = SPRD_EIC_SYNC,						\
-+}
-+
-+SPRD_EIC_VAR_DATA(sc9860);
-+
- static const char *sprd_eic_label_name[SPRD_EIC_MAX] = {
- 	"eic-debounce", "eic-latch", "eic-async",
- 	"eic-sync",
- };
- 
--static const struct sprd_eic_variant_data sc9860_eic_dbnc_data = {
--	.type = SPRD_EIC_DEBOUNCE,
--	.num_eics = 8,
--};
--
--static const struct sprd_eic_variant_data sc9860_eic_latch_data = {
--	.type = SPRD_EIC_LATCH,
--	.num_eics = 8,
--};
--
--static const struct sprd_eic_variant_data sc9860_eic_async_data = {
--	.type = SPRD_EIC_ASYNC,
--	.num_eics = 8,
--};
--
--static const struct sprd_eic_variant_data sc9860_eic_sync_data = {
--	.type = SPRD_EIC_SYNC,
--	.num_eics = 8,
--};
- 
- static inline void __iomem *sprd_eic_offset_base(struct sprd_eic *sprd_eic,
- 						 unsigned int bank)
-@@ -595,6 +594,7 @@ static int sprd_eic_probe(struct platform_device *pdev)
- 	struct sprd_eic *sprd_eic;
- 	struct resource *res;
- 	int ret, i;
-+	u16 num_banks = 0;
- 
- 	pdata = of_device_get_match_data(&pdev->dev);
- 	if (!pdata) {
-@@ -625,12 +625,13 @@ static int sprd_eic_probe(struct platform_device *pdev)
- 			break;
- 
- 		sprd_eic->base[i] = devm_ioremap_resource(&pdev->dev, res);
-+		num_banks++;
- 		if (IS_ERR(sprd_eic->base[i]))
- 			return PTR_ERR(sprd_eic->base[i]);
- 	}
- 
- 	sprd_eic->chip.label = sprd_eic_label_name[sprd_eic->type];
--	sprd_eic->chip.ngpio = pdata->num_eics;
-+	sprd_eic->chip.ngpio = num_banks * SPRD_EIC_PER_BANK_NR;
- 	sprd_eic->chip.base = -1;
- 	sprd_eic->chip.parent = &pdev->dev;
- 	sprd_eic->chip.direction_input = sprd_eic_direction_input;
+ 	irq = &pmic_eic->chip.irq;
+ 	gpio_irq_chip_set_chip(irq, &pmic_eic_irq_chip);
 -- 
 2.17.1
 
