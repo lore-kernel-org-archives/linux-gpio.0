@@ -2,209 +2,100 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F4DE7D0A2
-	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 20:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F39E7D0AA
+	for <linux-gpio@archiver.kernel.org>; Thu, 21 Sep 2023 20:58:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232176AbjIUUt0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 21 Sep 2023 16:49:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48548 "EHLO
+        id S231993AbjIUU7B (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 21 Sep 2023 16:59:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232442AbjIUUsg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 16:48:36 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2F04561FF
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 10:49:52 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10839"; a="446947501"
-X-IronPort-AV: E=Sophos;i="6.03,165,1694761200"; 
-   d="scan'208";a="446947501"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2023 02:55:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10839"; a="723676393"
-X-IronPort-AV: E=Sophos;i="6.03,165,1694761200"; 
-   d="scan'208";a="723676393"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2023 02:55:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC0)
-        (envelope-from <andy@kernel.org>)
-        id 1qjGOr-0000000Gr7S-1QmO;
-        Thu, 21 Sep 2023 12:55:09 +0300
-Date:   Thu, 21 Sep 2023 12:55:08 +0300
-From:   Andy Shevchenko <andy@kernel.org>
-To:     Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
-Cc:     Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Arnd Bergmann <arnd@arndb.de>, soc@kernel.org, arm@kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] platform: cznic: turris-omnia-mcu: Add support
- for MCU connected GPIOs
-Message-ID: <ZQwS/DXBt/kyyU5r@smile.fi.intel.com>
-References: <20230919103815.16818-1-kabel@kernel.org>
- <20230919103815.16818-4-kabel@kernel.org>
- <ZQmbd211FzPjA97r@smile.fi.intel.com>
- <20230920190818.50b2018b@dellmb>
+        with ESMTP id S232182AbjIUU6i (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2023 16:58:38 -0400
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AF64AFC06
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 11:07:44 -0700 (PDT)
+Received: by mail-io1-xd2e.google.com with SMTP id ca18e2360f4ac-792707f78b5so49372739f.1
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2023 11:07:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1695319663; x=1695924463; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fBhNwxRW2TiFrElAif7iI6ZafZNTH+8pl3WgNjQm1nI=;
+        b=lb58c4kCJYuI4fG9uFWQhwnZ/Q0q5eb4Ep872R6xf6JdTMmS1ACq52vfMOcGhIHCRH
+         VCmfFHnWFS1Y+giku/iAPquMknXS61ZmcfMNVkRRzyI1bEKKZpzkgUa/m8IWygPboWx6
+         EvOE8Z8EWzNpzGSiX/dmtw3I64AkwOeeT1nlfkZYyeKTB4Kd7z021kmJLV4Zi0SqFCHl
+         qBnEVyzbPxvknnOHSGhSHO+SOs74S7m/KL62wwsmm3/fnZXSFAqU9koGeHS7guTf/uoV
+         V6yOzNJpmIQRcxV6GzCtpC0862ZGkyIog4aoSADMAZzn3HO2TJWZKfLtFCW7f2CRc87I
+         fMww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695319663; x=1695924463;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fBhNwxRW2TiFrElAif7iI6ZafZNTH+8pl3WgNjQm1nI=;
+        b=ud2w1L5SYqXBianzmutSe4/HIkxzZjCx1yBWlIhkCSMtSy9O86jZ3prIpD5nkJ/IyS
+         0gSyEnjzcAgtZS+OVqBY0REnPlzFBQzlwoPWyss2WwoBnLPJxpq92PuT8PKf444bZMJ4
+         oAnVbEbUcYYNLONU+mjKrFBIXY2GXZvSD3w50fln9gNIaETTn2xcBoNefOhi+rhgJ8qe
+         /Qg2FHDwc0/lQ+zTmdKImDu7bWSxDiwBa0epoNt8+cQhA9TtCvJolrdU38L5MoNXBPCb
+         0DQHw4xoXtY2Yf8BKEQ7sNN9TFnHf9gi+24EkXWVTBGSsXHVhoPXuxyH5KKsgLWSc/8n
+         MWRQ==
+X-Gm-Message-State: AOJu0YzpvHPFPHETeJIbfPy5TBteJskIsFu6U6Sd0Xxenm8s0ifLNNih
+        mbtYMVsyx7GGTY9QgTShhG2EokWKY3ld35ix56lEECC7y9iqw4mS
+X-Google-Smtp-Source: AGHT+IFvn2xj3bCzCzglyhTLZ+/0AMj6N+3hw5k/GAMytQtun5T0UTI9xu+zqnMzKuqsF39WZXpX1QhtPlsDG/KwFrs=
+X-Received: by 2002:a81:a041:0:b0:586:a2f9:648e with SMTP id
+ x62-20020a81a041000000b00586a2f9648emr6026906ywg.4.1695299654629; Thu, 21 Sep
+ 2023 05:34:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230920190818.50b2018b@dellmb>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20230921-ixp4xx-gpio-clocks-v1-0-574942bf944a@linaro.org>
+ <20230921-ixp4xx-gpio-clocks-v1-2-574942bf944a@linaro.org> <ZQwngrU9fxdSGSKs@smile.fi.intel.com>
+In-Reply-To: <ZQwngrU9fxdSGSKs@smile.fi.intel.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 21 Sep 2023 14:34:02 +0200
+Message-ID: <CACRpkdadMCXyWYycMHZ0m7ZscTayJs=378e8DPJDkEEyTOeLUA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: ixp4xx: Handle clock output on pin 14 and 15
+To:     Andy Shevchenko <andy@kernel.org>
+Cc:     Linus Walleij <linusw@kernel.org>, Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Sep 20, 2023 at 07:08:18PM +0200, Marek Behún wrote:
-> On Tue, 19 Sep 2023 16:00:39 +0300
-> Andy Shevchenko <andy@kernel.org> wrote:
-> > On Tue, Sep 19, 2023 at 12:38:11PM +0200, Marek Behún wrote:
+On Thu, Sep 21, 2023 at 1:23=E2=80=AFPM Andy Shevchenko <andy@kernel.org> w=
+rote:
 
-...
-
-> > Ditto for all cases like this.
-> 
-> checkpatch warns: 
->   ENOTSUPP is not a SUSV4 error code, prefer EOPNOTSUPP
-
-So, fix checkpatch then. It has false positives, because it doesn't know
-if the actual error code will sneak outside the kernel or not. But in
-the subsystem we internally use ENOTSUPP.
-
-...
-
-> Linus suggested using guards, so I will refactor this away.
-
-Even better.
-
-...
-
-> > > +		dev_err(&mcu->client->dev, "Cannot set GPIOs:
-> > >   %d\n", err);  
-> > 
-> > How is useful this one?
-> 
-> The function does not return, this way we will know something has gone
-> wrong. I am used to do this from the networking subsystem, where people
-> at least from mv88e6xxx wanted such behavior. Do you want me to drop
-> this?
-
-You are the developer and owner of the specific hardware, if you have a good
-justification for this message _in production_, then leave it, otherwise drop.
-
-...
-
-> > > +	bitmap_zero(valid_mask, ngpios);  
-> > 
-> > No need.
-> > 
-> > Also do you have bitops.h included?
-> 
-> bitmap.h actually for this
-
-Right, but I already thought a step forward, when you drop bitmap APIs,
-the bitops are still in place.
-
-...
-
-> > > +	rising = reply[0] | (reply[2] << 8) | (reply[4] << 16) |
-> > > +		 (reply[6] << 24);
-> > > +	falling = reply[1] | (reply[3] << 8) | (reply[5] << 16) |
-> > > +		  (reply[7] << 24);  
-> > 
-> > With a help of two masks, you can access to the both edges as to
-> >   64-bit value and simplify the code.
-> 
-> Huh? As in
->   rising = reply & 0x00ff00ff00ff00ff;
->   falling = reply & 0xff00ff00ff00ff00;
+> Maybe
+>
+>         if (...)
+>                 val =3D 0;
+>         else
+>                 val =3D readl();
+>
 > ?
-> But then I can't or the rising bit with the corresponding falling bit
-> to get pending...
-> Or I guess i can with:
->   pending = rising & (pending >> 8);
-> 
-> Am I understanding you correctly?
-> 
-> But then I would need to store the mask in driver data as a 64-bit
-> value with half the data not used. Also the CPU is 32-bit.
 
-If you use proper bitmaps, perhaps this will be easier. You can use one for
-each and merge them whenever you want (with bitmap_or() call) or split (with
-bitmap_and() respectively):
+Neat, I'll do this!
 
-	bitmap_or(full, raising, failing); // merge
-	bitmap_and(raising, full, rasing_mask); // split
+> > +     /*
+> > +      * Enable clock outputs with default timings of requested clock.
+> > +      * If you need control over TC and DC, add these to the device
+> > +      * tree bindings and use them here.
+> > +      */
+>
+> Shouldn't this be integrated into PPS subsystem?
 
-...
+PPS is for GPS, we *could* integrate it into the clk subsystem (with
+configuration cells and all hoopla) but as I state in the cover letter
+I think it becomes overengineered for this legacy system, there are
+no users or benefit of that added complexity as compared to these
+few-liners.
 
-> > ATTRIBUTE_GROUPS() ?
-> 
-> I only want to create ane attribute_group. (I am using
-> devm_device_add_group(), not devm_device_add_groups()).
-
-...and you should not use that APIs.
-
-> > > +	err = devm_device_add_group(dev, &omnia_mcu_gpio_group);  
-> > 
-> > No way, no-one should use the API scheduled for removal.
-> > What's wrong with .dev_groups ?
-> 
-> Can I add them conditionally? GPIO chip is always created, but the
-> patch 4/7 only adds the attributes conditionally. Is it possible via
-> .dev_groups?
-
-Yes. You use __ATTRIBUTE_GROUPS() and .is_visible callback.
-
-...
-
-> > > +void omnia_mcu_unregister_gpiochip(struct omnia_mcu *mcu)
-> > > +{
-> > > +	if (!(mcu->features & FEAT_NEW_INT_API))
-> > > +
-> > >   cancel_delayed_work_sync(&mcu->button_release_emul_work); +
-> > > +	mutex_destroy(&mcu->lock);  
-> > 
-> > Wrong order?
-> 
-> No, the mutex may be used in the work. Can't destroy it first. Or am I
-> misunderstanding something?
-
-I mean you are using a lot of devm(), can mutex be used in IRQ or whatever
-that can be triggered after this call?
-
-...
-
-> > >  	struct i2c_client *client;
-> > >  	const char *type;
-> > >  	u16 features;
-> > > +
-> > > +	/* GPIO chip */
-> > > +	struct gpio_chip gc;  
-> > 
-> > Making this a first member may lead to the better code. Check with
-> >   bloat-o-meter.
-> 
-> kabel@dellmb ~/linux $ ./scripts/bloat-o-meter \
->   turris-omnia-mcu.o turris-omnia-mcu-gpiochip-first.o
-> add/remove: 0/0 grow/shrink: 9/0 up/down: 52/0 (52)
-> Function                                     old     new   delta
-> omnia_mcu_register_gpiochip                  840     852     +12
-> omnia_mcu_probe                              696     708     +12
-> omnia_mcu_unregister_gpiochip                 20      24      +4
-> omnia_irq_bus_sync_unlock                    256     260      +4
-> omnia_irq_bus_lock                            36      40      +4
-> omnia_gpio_get_multiple                      872     876      +4
-> omnia_gpio_get                               372     376      +4
-> fw_features_show                              28      32      +4
-> front_button_mode_show                       260     264      +4
-> Total: Before=10468, After=10520, chg +0.50%
-> 
-> Seems the code grew when I swapped it.
-
-Thanks for checking! It means that access to client pointer is needed
-more often.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Yours,
+Linus Walleij
