@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 089C2CD4F2E
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Sep 2023 08:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7133CD4F2E
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Sep 2023 08:02:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232207AbjIVICQ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Sep 2023 04:02:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44736 "EHLO
+        id S232333AbjIVICW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Sep 2023 04:02:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232280AbjIVIBp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2023 04:01:45 -0400
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 093841A7;
-        Fri, 22 Sep 2023 01:00:48 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 1B16E1BF210;
-        Fri, 22 Sep 2023 08:00:44 +0000 (UTC)
+        with ESMTP id S232047AbjIVIBr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2023 04:01:47 -0400
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F249CE3;
+        Fri, 22 Sep 2023 01:00:57 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 5AFCC1BF21F;
+        Fri, 22 Sep 2023 08:00:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1695369647;
+        t=1695369656;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=6uqdKgSiDG4ViV4ixZAwBWMC5+BSFyshQvmKaykUU3o=;
-        b=n6RYVylW9RwbxEqr/ODDkqMhTKxitspYSg5+usU6ePO9+bSQtuusVQswoXi1IMxCLsbqrm
-        O1Ht/rBsicQY7vD/0sFfA85+xncfm4JYjIBZG2pa4hLsEvqDwUnLKwCuFpuYVzij5cyXbz
-        dnF1vdCtBZ5x802Th4oBl/o1borNuBw9SjV3rAHIc7gJo+L37+eA+4pSi0rCxQEtx8TVfm
-        sz7RKCH1k+hHMKli7Bc864HlCQqmV9LxCNcy/hNWrDkelKA6ZCq+oBUCuPd991LDKcDYcl
-        NMvz9MJveBT7oAtremxd5f6Vlbs/W4t5FcRoakDsX+lz0LZ3TSqZ6oIY92c3+Q==
+        bh=ac4atphcQFxCnsMf7+TyvECndYt2jyLCvyys/qHOQBU=;
+        b=SkR71eEcQvUn00tByQvXh7KQBU1lcVR+PHao33TFLPdsecvThYiXu3jebmD8Oj816hv1jz
+        2zuI0SUMUAXB4R/SU9IEr5yTekaTipyvP+AiGoyAefjrHq5dxElBDEbS/bJdJNVHyPJVsW
+        Z2Jh+ShuVYPrTCu2T/v74omYMMRAaUp5Ztrw9bF5maMJXOc/h5veDSjjrtNWp9b9YAjYd5
+        4jqqlg/wKqCuk0/YdB1QO1J+Z8TqGFcFFTmc3XYnVa9JZPnuqFyu2e0sh1m4WdQCrhLpfB
+        G4IJW2aiatFmkA/2/4+oFyRQbQfdNb94oEeg2zYoe90QKtoAkwxHvgcyGf8wPg==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Herve Codina <herve.codina@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -55,9 +55,9 @@ Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v6 21/30] soc: fsl: cpm1: qmc: Remove timeslots handling from setup_chan()
-Date:   Fri, 22 Sep 2023 09:58:56 +0200
-Message-ID: <20230922075913.422435-22-herve.codina@bootlin.com>
+Subject: [PATCH v6 23/30] wan: qmc_hdlc: Add runtime timeslots changes support
+Date:   Fri, 22 Sep 2023 09:58:58 +0200
+Message-ID: <20230922075913.422435-24-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230922075913.422435-1-herve.codina@bootlin.com>
 References: <20230922075913.422435-1-herve.codina@bootlin.com>
@@ -68,63 +68,224 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Timeslots setting is done at channel start() and stop().
-There is no more need to do that during setup_chan().
+QMC channels support runtime timeslots changes but nothing is done at
+the QMC HDLC driver to handle these changes.
 
-Simply remove timeslot setting from setup_chan().
+Use existing IFACE ioctl in order to configure the timeslots to use.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/soc/fsl/qe/qmc.c | 28 ----------------------------
- 1 file changed, 28 deletions(-)
+ drivers/net/wan/fsl_qmc_hdlc.c | 169 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 168 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 185e6e87a83f..b63b54ec0a3a 100644
---- a/drivers/soc/fsl/qe/qmc.c
-+++ b/drivers/soc/fsl/qe/qmc.c
-@@ -723,30 +723,6 @@ static int qmc_chan_setup_tsa_rx(struct qmc_chan *chan, bool enable)
- 	return qmc_chan_setup_tsa_32rx(chan, &info, enable);
+diff --git a/drivers/net/wan/fsl_qmc_hdlc.c b/drivers/net/wan/fsl_qmc_hdlc.c
+index 15e102547ff2..24f466fa48b1 100644
+--- a/drivers/net/wan/fsl_qmc_hdlc.c
++++ b/drivers/net/wan/fsl_qmc_hdlc.c
+@@ -32,6 +32,7 @@ struct qmc_hdlc {
+ 	struct qmc_hdlc_desc tx_descs[8];
+ 	unsigned int tx_out;
+ 	struct qmc_hdlc_desc rx_descs[4];
++	u32 slot_map;
+ };
+ 
+ static inline struct qmc_hdlc *netdev_to_qmc_hdlc(struct net_device *netdev)
+@@ -202,6 +203,162 @@ static netdev_tx_t qmc_hdlc_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 	return NETDEV_TX_OK;
  }
  
--static int qmc_chan_setup_tsa(struct qmc_chan *chan, bool enable)
--{
--	struct tsa_serial_info info;
--	int ret;
--
--	/* Retrieve info from the TSA related serial */
--	ret = tsa_serial_get_info(chan->qmc->tsa_serial, &info);
--	if (ret)
--		return ret;
--
--	/*
--	 * Setup one common 64 entries table or two 32 entries (one for Tx
--	 * and one for Tx) according to assigned TS numbers.
--	 */
--	if (chan->qmc->is_tsa_64rxtx)
--		return qmc_chan_setup_tsa_64rxtx(chan, &info, enable);
--
--	ret = qmc_chan_setup_tsa_32rx(chan, &info, enable);
--	if (ret)
--		return ret;
--
--	return qmc_chan_setup_tsa_32tx(chan, &info, enable);
--}
--
- static int qmc_chan_command(struct qmc_chan *chan, u8 qmc_opcode)
++static int qmc_hdlc_xlate_slot_map(struct qmc_hdlc *qmc_hdlc,
++				   u32 slot_map, struct qmc_chan_ts_info *ts_info)
++{
++	u64 ts_mask_avail;
++	unsigned int bit;
++	unsigned int i;
++	u64 ts_mask;
++	u64 map;
++
++	/* Tx and Rx masks must be identical */
++	if (ts_info->rx_ts_mask_avail != ts_info->tx_ts_mask_avail) {
++		dev_err(qmc_hdlc->dev, "tx and rx available timeslots mismatch (0x%llx, 0x%llx)\n",
++			ts_info->rx_ts_mask_avail, ts_info->tx_ts_mask_avail);
++		return -EINVAL;
++	}
++
++	ts_mask_avail = ts_info->rx_ts_mask_avail;
++	ts_mask = 0;
++	map = slot_map;
++	bit = 0;
++	for (i = 0; i < 64; i++) {
++		if (ts_mask_avail & BIT_ULL(i)) {
++			if (map & BIT_ULL(bit))
++				ts_mask |= BIT_ULL(i);
++			bit++;
++		}
++	}
++
++	if (hweight64(ts_mask) != hweight64(map)) {
++		dev_err(qmc_hdlc->dev, "Cannot translate timeslots 0x%llx -> (0x%llx,0x%llx)\n",
++			map, ts_mask_avail, ts_mask);
++		return -EINVAL;
++	}
++
++	ts_info->tx_ts_mask = ts_mask;
++	ts_info->rx_ts_mask = ts_mask;
++	return 0;
++}
++
++static int qmc_hdlc_xlate_ts_info(struct qmc_hdlc *qmc_hdlc,
++				  const struct qmc_chan_ts_info *ts_info, u32 *slot_map)
++{
++	u64 ts_mask_avail;
++	unsigned int bit;
++	unsigned int i;
++	u64 ts_mask;
++	u64 map;
++
++	/* Tx and Rx masks must be identical */
++	if (ts_info->rx_ts_mask_avail != ts_info->tx_ts_mask_avail) {
++		dev_err(qmc_hdlc->dev, "tx and rx available timeslots mismatch (0x%llx, 0x%llx)\n",
++			ts_info->rx_ts_mask_avail, ts_info->tx_ts_mask_avail);
++		return -EINVAL;
++	}
++	if (ts_info->rx_ts_mask != ts_info->tx_ts_mask) {
++		dev_err(qmc_hdlc->dev, "tx and rx timeslots mismatch (0x%llx, 0x%llx)\n",
++			ts_info->rx_ts_mask, ts_info->tx_ts_mask);
++		return -EINVAL;
++	}
++
++	ts_mask_avail = ts_info->rx_ts_mask_avail;
++	ts_mask = ts_info->rx_ts_mask;
++	map = 0;
++	bit = 0;
++	for (i = 0; i < 64; i++) {
++		if (ts_mask_avail & BIT_ULL(i)) {
++			if (ts_mask & BIT_ULL(i))
++				map |= BIT_ULL(bit);
++			bit++;
++		}
++	}
++
++	if (hweight64(ts_mask) != hweight64(map)) {
++		dev_err(qmc_hdlc->dev, "Cannot translate timeslots (0x%llx,0x%llx) -> 0x%llx\n",
++			ts_mask_avail, ts_mask, map);
++		return -EINVAL;
++	}
++
++	if (map >= BIT_ULL(32)) {
++		dev_err(qmc_hdlc->dev, "Slot map out of 32bit (0x%llx,0x%llx) -> 0x%llx\n",
++			ts_mask_avail, ts_mask, map);
++		return -EINVAL;
++	}
++
++	*slot_map = map;
++	return 0;
++}
++
++static int qmc_hdlc_set_iface(struct qmc_hdlc *qmc_hdlc, int if_iface, const te1_settings *te1)
++{
++	struct qmc_chan_ts_info ts_info;
++	int ret;
++
++	ret = qmc_chan_get_ts_info(qmc_hdlc->qmc_chan, &ts_info);
++	if (ret) {
++		dev_err(qmc_hdlc->dev, "get QMC channel ts info failed %d\n", ret);
++		return ret;
++	}
++	ret = qmc_hdlc_xlate_slot_map(qmc_hdlc, te1->slot_map, &ts_info);
++	if (ret)
++		return ret;
++
++	ret = qmc_chan_set_ts_info(qmc_hdlc->qmc_chan, &ts_info);
++	if (ret) {
++		dev_err(qmc_hdlc->dev, "set QMC channel ts info failed %d\n", ret);
++		return ret;
++	}
++
++	qmc_hdlc->slot_map = te1->slot_map;
++
++	return 0;
++}
++
++static int qmc_hdlc_ioctl(struct net_device *netdev, struct if_settings *ifs)
++{
++	struct qmc_hdlc *qmc_hdlc = netdev_to_qmc_hdlc(netdev);
++	te1_settings te1;
++
++	switch (ifs->type) {
++	case IF_GET_IFACE:
++		ifs->type = IF_IFACE_E1;
++		if (ifs->size < sizeof(te1)) {
++			if (!ifs->size)
++				return 0; /* only type requested */
++
++			ifs->size = sizeof(te1); /* data size wanted */
++			return -ENOBUFS;
++		}
++
++		memset(&te1, 0, sizeof(te1));
++
++		/* Update slot_map */
++		te1.slot_map = qmc_hdlc->slot_map;
++
++		if (copy_to_user(ifs->ifs_ifsu.te1, &te1, sizeof(te1)))
++			return -EFAULT;
++		return 0;
++
++	case IF_IFACE_E1:
++	case IF_IFACE_T1:
++		if (!capable(CAP_NET_ADMIN))
++			return -EPERM;
++
++		if (netdev->flags & IFF_UP)
++			return -EBUSY;
++
++		if (copy_from_user(&te1, ifs->ifs_ifsu.te1, sizeof(te1)))
++			return -EFAULT;
++
++		return qmc_hdlc_set_iface(qmc_hdlc, ifs->type, &te1);
++
++	default:
++		return hdlc_ioctl(netdev, ifs);
++	}
++}
++
+ static int qmc_hdlc_open(struct net_device *netdev)
  {
- 	return cpm_command(chan->id << 2, (qmc_opcode << 4) | 0x0E);
-@@ -1323,10 +1299,6 @@ static int qmc_setup_chan(struct qmc *qmc, struct qmc_chan *chan)
+ 	struct qmc_hdlc *qmc_hdlc = netdev_to_qmc_hdlc(netdev);
+@@ -328,13 +485,14 @@ static const struct net_device_ops qmc_hdlc_netdev_ops = {
+ 	.ndo_open       = qmc_hdlc_open,
+ 	.ndo_stop       = qmc_hdlc_close,
+ 	.ndo_start_xmit = hdlc_start_xmit,
+-	.ndo_siocwandev	= hdlc_ioctl,
++	.ndo_siocwandev = qmc_hdlc_ioctl,
+ };
  
- 	chan->qmc = qmc;
+ static int qmc_hdlc_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct qmc_hdlc *qmc_hdlc;
++	struct qmc_chan_ts_info ts_info;
+ 	struct qmc_chan_info info;
+ 	hdlc_device *hdlc;
+ 	int ret;
+@@ -364,6 +522,15 @@ static int qmc_hdlc_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
  
--	ret = qmc_chan_setup_tsa(chan, true);
--	if (ret)
--		return ret;
--
- 	/* Set channel specific parameter base address */
- 	chan->s_param = qmc->dpram + (chan->id * 64);
- 	/* 16 bd per channel (8 rx and 8 tx) */
++	ret = qmc_chan_get_ts_info(qmc_hdlc->qmc_chan, &ts_info);
++	if (ret) {
++		dev_err(qmc_hdlc->dev, "get QMC channel ts info failed %d\n", ret);
++		return ret;
++	}
++	ret = qmc_hdlc_xlate_ts_info(qmc_hdlc, &ts_info, &qmc_hdlc->slot_map);
++	if (ret)
++		return ret;
++
+ 	qmc_hdlc->netdev = alloc_hdlcdev(qmc_hdlc);
+ 	if (!qmc_hdlc->netdev) {
+ 		dev_err(qmc_hdlc->dev, "failed to alloc hdlc dev\n");
 -- 
 2.41.0
 
