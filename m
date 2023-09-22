@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1B1CD4F2E
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Sep 2023 08:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55ED5CD4F2B
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Sep 2023 08:02:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232041AbjIVICg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Sep 2023 04:02:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51042 "EHLO
+        id S232030AbjIVICi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Sep 2023 04:02:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232378AbjIVICD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2023 04:02:03 -0400
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E4B11BF;
-        Fri, 22 Sep 2023 01:01:05 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 5B67F1BF225;
-        Fri, 22 Sep 2023 08:01:00 +0000 (UTC)
+        with ESMTP id S232310AbjIVICA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2023 04:02:00 -0400
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E54710CB;
+        Fri, 22 Sep 2023 01:00:45 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 648141BF206;
+        Fri, 22 Sep 2023 08:00:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1695369664;
+        t=1695369643;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=MSvbXygYAh+RODIBOh2pAtxN+DZ+xbbPMsxkxDyfCO4=;
-        b=dbxArdFoPp+PpdSumrkgyt5eH/0uv+iI1cG8O0AIr61KOCp3TsZPqFpKDxjUiDbzbiMzKw
-        pwIIn+Kv7MIMxn7UsKBjRAYSu6mMtpdZrUN5X+6DrqlfM27Dz78g+zfdKAVHGKqV9FHKYs
-        y/fO2XSZjplWaP6V5Flgod+085jZ9YRXyrf4eNVf3JOOgLg6BkBOQ+7R0UnVu4FTRXsbEg
-        2rmYaFx3Z59LVgocuRnoS2jJ6km0KP2P6vmiZ5OuXAY+clpNbRMs06EC8kJCrfzDa/EvuB
-        a4jmkgK6Fh7bvjQhypSqHEpMeJHYvzKPoZDQJRcP2ZZTofQEWyrQpMzeVxA6rg==
+        bh=zGcSaCyNE/18lBMIHRrhhDp+Ho+XhgEDMn/we3ltxic=;
+        b=Zif8Jw0LCDZy0BBfcR5n4D2+QgCMI6Q5zF1UQvvA8ztnd9fWaK7WvK1FsVl1kS5aB4fJxq
+        GOR14ktt+xu8ufdp7xQHJb58X5DdXMr/wpJo5F07EXP4E5apCWNpPtYSRa/neH94SkbT6g
+        GGDC/FgDwCscYytRZsCBSiAIHkHTWMmmIVVwqkkVuZE1g+0z95paTNOZv1QM2KRpny5heC
+        qtv/ZK8qrhzCYSCTDKV6EywX/952uqMT3J2DVayW0jVJ3ZSxfR072mmKcfQTtxlW2+Pnbo
+        iqR0IG/DzyxPpJWSKsKbBxaDMbNv55TQqWDIBi9QReHV/iM+LimFpg5xlZaJaw==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Herve Codina <herve.codina@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -55,9 +55,9 @@ Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v6 25/30] dt-bindings: net: Add the Lantiq PEF2256 E1/T1/J1 framer
-Date:   Fri, 22 Sep 2023 09:59:00 +0200
-Message-ID: <20230922075913.422435-26-herve.codina@bootlin.com>
+Subject: [PATCH v6 20/30] soc: fsl: cpm1: qmc: Handle timeslot entries at channel start() and stop()
+Date:   Fri, 22 Sep 2023 09:58:55 +0200
+Message-ID: <20230922075913.422435-21-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230922075913.422435-1-herve.codina@bootlin.com>
 References: <20230922075913.422435-1-herve.codina@bootlin.com>
@@ -68,237 +68,319 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Lantiq PEF2256 is a framer and line interface component designed to
-fulfill all required interfacing between an analog E1/T1/J1 line and the
-digital PCM system highway/H.100 bus.
+In order to support runtime timeslot route changes, enable the
+channel timeslot entries at channel start() and disable them at
+channel stop().
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- .../bindings/net/lantiq,pef2256.yaml          | 214 ++++++++++++++++++
- 1 file changed, 214 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/lantiq,pef2256.yaml
+ drivers/soc/fsl/qe/qmc.c | 175 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 163 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/lantiq,pef2256.yaml b/Documentation/devicetree/bindings/net/lantiq,pef2256.yaml
-new file mode 100644
-index 000000000000..fecb03855155
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/lantiq,pef2256.yaml
-@@ -0,0 +1,214 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/lantiq,pef2256.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+index 19acfcded9bc..185e6e87a83f 100644
+--- a/drivers/soc/fsl/qe/qmc.c
++++ b/drivers/soc/fsl/qe/qmc.c
+@@ -177,6 +177,7 @@ struct qmc_chan {
+ 	struct qmc *qmc;
+ 	void __iomem *s_param;
+ 	enum qmc_mode mode;
++	spinlock_t	ts_lock; /* Protect timeslots */
+ 	u64	tx_ts_mask_avail;
+ 	u64	tx_ts_mask;
+ 	u64	rx_ts_mask_avail;
+@@ -265,6 +266,7 @@ static void qmc_setbits32(void __iomem *addr, u32 set)
+ int qmc_chan_get_info(struct qmc_chan *chan, struct qmc_chan_info *info)
+ {
+ 	struct tsa_serial_info tsa_info;
++	unsigned long flags;
+ 	int ret;
+ 
+ 	/* Retrieve info from the TSA related serial */
+@@ -272,6 +274,8 @@ int qmc_chan_get_info(struct qmc_chan *chan, struct qmc_chan_info *info)
+ 	if (ret)
+ 		return ret;
+ 
++	spin_lock_irqsave(&chan->ts_lock, flags);
 +
-+title: Lantiq PEF2256
+ 	info->mode = chan->mode;
+ 	info->rx_fs_rate = tsa_info.rx_fs_rate;
+ 	info->rx_bit_rate = tsa_info.rx_bit_rate;
+@@ -280,6 +284,8 @@ int qmc_chan_get_info(struct qmc_chan *chan, struct qmc_chan_info *info)
+ 	info->tx_bit_rate = tsa_info.tx_bit_rate;
+ 	info->nb_rx_ts = hweight64(chan->rx_ts_mask);
+ 
++	spin_unlock_irqrestore(&chan->ts_lock, flags);
 +
-+maintainers:
-+  - Herve Codina <herve.codina@bootlin.com>
+ 	return 0;
+ }
+ EXPORT_SYMBOL(qmc_chan_get_info);
+@@ -683,6 +689,40 @@ static int qmc_chan_setup_tsa_32tx(struct qmc_chan *chan, const struct tsa_seria
+ 	return 0;
+ }
+ 
++static int qmc_chan_setup_tsa_tx(struct qmc_chan *chan, bool enable)
++{
++	struct tsa_serial_info info;
++	int ret;
 +
-+description:
-+  The Lantiq PEF2256, also known as Infineon PEF2256 or FALC56, is a framer and
-+  line interface component designed to fulfill all required interfacing between
-+  an analog E1/T1/J1 line and the digital PCM system highway/H.100 bus.
++	/* Retrieve info from the TSA related serial */
++	ret = tsa_serial_get_info(chan->qmc->tsa_serial, &info);
++	if (ret)
++		return ret;
 +
-+properties:
-+  compatible:
-+    items:
-+      - const: lantiq,pef2256
++	/* Setup entries */
++	if (chan->qmc->is_tsa_64rxtx)
++		return qmc_chan_setup_tsa_64rxtx(chan, &info, enable);
 +
-+  reg:
-+    maxItems: 1
++	return qmc_chan_setup_tsa_32tx(chan, &info, enable);
++}
 +
-+  clocks:
-+    items:
-+      - description: Master Clock
-+      - description: System Clock Receive
-+      - description: System Clock Transmit
++static int qmc_chan_setup_tsa_rx(struct qmc_chan *chan, bool enable)
++{
++	struct tsa_serial_info info;
++	int ret;
 +
-+  clock-names:
-+    items:
-+      - const: mclk
-+      - const: sclkr
-+      - const: sclkx
++	/* Retrieve info from the TSA related serial */
++	ret = tsa_serial_get_info(chan->qmc->tsa_serial, &info);
++	if (ret)
++		return ret;
 +
-+  interrupts:
-+    maxItems: 1
++	/* Setup entries */
++	if (chan->qmc->is_tsa_64rxtx)
++		return qmc_chan_setup_tsa_64rxtx(chan, &info, enable);
 +
-+  reset-gpios:
-+    description:
-+      GPIO used to reset the device.
-+    maxItems: 1
++	return qmc_chan_setup_tsa_32rx(chan, &info, enable);
++}
 +
-+  pinctrl:
-+    $ref: /schemas/pinctrl/pinctrl.yaml#
-+    additionalProperties: false
+ static int qmc_chan_setup_tsa(struct qmc_chan *chan, bool enable)
+ {
+ 	struct tsa_serial_info info;
+@@ -719,6 +759,12 @@ static int qmc_chan_stop_rx(struct qmc_chan *chan)
+ 
+ 	spin_lock_irqsave(&chan->rx_lock, flags);
+ 
++	if (chan->is_rx_stopped) {
++		/* The channel is already stopped -> simply return ok */
++		ret = 0;
++		goto end;
++	}
 +
-+    patternProperties:
-+      '-pins$':
-+        type: object
-+        $ref: /schemas/pinctrl/pinmux-node.yaml#
-+        additionalProperties: false
+ 	/* Send STOP RECEIVE command */
+ 	ret = qmc_chan_command(chan, 0x0);
+ 	if (ret) {
+@@ -729,6 +775,15 @@ static int qmc_chan_stop_rx(struct qmc_chan *chan)
+ 
+ 	chan->is_rx_stopped = true;
+ 
++	if (!chan->qmc->is_tsa_64rxtx || chan->is_tx_stopped) {
++		ret = qmc_chan_setup_tsa_rx(chan, false);
++		if (ret) {
++			dev_err(chan->qmc->dev, "chan %u: Disable tsa entries failed (%d)\n",
++				chan->id, ret);
++			goto end;
++		}
++	}
 +
-+        properties:
-+          pins:
-+            enum: [ RPA, RPB, RPC, RPD, XPA, XPB, XPC, XPD ]
+ end:
+ 	spin_unlock_irqrestore(&chan->rx_lock, flags);
+ 	return ret;
+@@ -741,6 +796,12 @@ static int qmc_chan_stop_tx(struct qmc_chan *chan)
+ 
+ 	spin_lock_irqsave(&chan->tx_lock, flags);
+ 
++	if (chan->is_tx_stopped) {
++		/* The channel is already stopped -> simply return ok */
++		ret = 0;
++		goto end;
++	}
 +
-+          function:
-+            enum: [ SYPR, RFM, RFMB, RSIGM, RSIG, DLR, FREEZE, RFSP, LOS,
-+                    SYPX, XFMS, XSIG, TCLK, XMFB, XSIGM, DLX, XCLK, XLT,
-+                    GPI, GPOH, GPOL ]
+ 	/* Send STOP TRANSMIT command */
+ 	ret = qmc_chan_command(chan, 0x1);
+ 	if (ret) {
+@@ -751,37 +812,82 @@ static int qmc_chan_stop_tx(struct qmc_chan *chan)
+ 
+ 	chan->is_tx_stopped = true;
+ 
++	if (!chan->qmc->is_tsa_64rxtx || chan->is_rx_stopped) {
++		ret = qmc_chan_setup_tsa_tx(chan, false);
++		if (ret) {
++			dev_err(chan->qmc->dev, "chan %u: Disable tsa entries failed (%d)\n",
++				chan->id, ret);
++			goto end;
++		}
++	}
 +
-+        required:
-+          - pins
-+          - function
+ end:
+ 	spin_unlock_irqrestore(&chan->tx_lock, flags);
+ 	return ret;
+ }
+ 
++static int qmc_chan_start_rx(struct qmc_chan *chan);
 +
-+  lantiq,data-rate-bps:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [2048000, 4096000, 8192000, 16384000]
-+    default: 2048000
-+    description:
-+      Data rate (bit per seconds) on the system highway.
+ int qmc_chan_stop(struct qmc_chan *chan, int direction)
+ {
+-	int ret;
++	bool is_rx_rollback_needed = false;
++	unsigned long flags;
++	int ret = 0;
 +
-+  lantiq,clock-falling-edge:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      Data is sent on falling edge of the clock (and received on the rising
-+      edge). If 'clock-falling-edge' is not present, data is sent on the
-+      rising edge (and received on the falling edge).
++	spin_lock_irqsave(&chan->ts_lock, flags);
+ 
+ 	if (direction & QMC_CHAN_READ) {
++		is_rx_rollback_needed = !chan->is_rx_stopped;
+ 		ret = qmc_chan_stop_rx(chan);
+ 		if (ret)
+-			return ret;
++			goto end;
+ 	}
+ 
+ 	if (direction & QMC_CHAN_WRITE) {
+ 		ret = qmc_chan_stop_tx(chan);
+-		if (ret)
+-			return ret;
++		if (ret) {
++			/* Restart rx if needed */
++			if (is_rx_rollback_needed)
++				qmc_chan_start_rx(chan);
++			goto end;
++		}
+ 	}
+ 
+-	return 0;
++end:
++	spin_unlock_irqrestore(&chan->ts_lock, flags);
++	return ret;
+ }
+ EXPORT_SYMBOL(qmc_chan_stop);
+ 
+-static void qmc_chan_start_rx(struct qmc_chan *chan)
++static int qmc_setup_chan_trnsync(struct qmc *qmc, struct qmc_chan *chan);
 +
-+  lantiq,channel-phase:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2, 3, 4, 5, 6, 7]
-+    default: 0
-+    description: |
-+      The pef2256 delivers a full frame (32 8-bit time-slots in E1 and 24 8-bit
-+      time-slots 8 8-bit signaling in E1/J1) every 125us. This lead to a data
-+      rate of 2048000 bit/s. When lantiq,data-rate-bps is more than 2048000
-+      bit/s, the data (all 32 8-bit) present in the frame are interleave with
-+      unused time-slots. The lantiq,channel-phase property allows to set the
-+      correct alignment of the interleave mechanism.
-+      For instance, suppose lantiq,data-rate-bps = 8192000 (ie 4*2048000), and
-+      lantiq,channel-phase = 2, the interleave schema with unused time-slots
-+      (nu) and used time-slots (XX) for TSi is
-+        nu nu XX nu nu nu XX nu nu nu XX nu
-+        <-- TSi --> <- TSi+1 -> <- TSi+2 ->
-+      With lantiq,data-rate-bps = 8192000, and lantiq,channel-phase = 1, the
-+      interleave schema is
-+        nu XX nu nu nu XX nu nu nu XX nu nu
-+        <-- TSi --> <- TSi+1 -> <- TSi+2 ->
-+      With lantiq,data-rate-bps = 4096000 (ie 2*2048000), and
-+      lantiq,channel-phase = 1, the interleave schema is
-+        nu    XX    nu    XX    nu    XX
-+        <-- TSi --> <- TSi+1 -> <- TSi+2 ->
++static int qmc_chan_start_rx(struct qmc_chan *chan)
+ {
+ 	unsigned long flags;
++	int ret;
+ 
+ 	spin_lock_irqsave(&chan->rx_lock, flags);
+ 
++	if (!chan->is_rx_stopped) {
++		/* The channel is already started -> simply return ok */
++		ret = 0;
++		goto end;
++	}
 +
-+patternProperties:
-+  '^codec(-([0-9]|[1-2][0-9]|3[0-1]))?$':
-+    type: object
-+    $ref: /schemas/sound/dai-common.yaml
-+    unevaluatedProperties: false
-+    description:
-+      Codec provided by the pef2256. This codec allows to use some of the PCM
-+      system highway time-slots as audio channels to transport audio data over
-+      the E1/T1/J1 lines.
-+      The time-slots used by the codec must be set and so, the properties
-+      'dai-tdm-slot-num', 'dai-tdm-slot-width', 'dai-tdm-slot-tx-mask' and
-+      'dai-tdm-slot-rx-mask' must be present in the sound card node for
-+      sub-nodes that involve the codec. The codec uses 8-bit time-slots.
-+      'dai-tdm-tdm-slot-with' must be set to 8.
-+      The tx and rx masks define the pef2256 time-slots assigned to the codec.
++	ret = qmc_chan_setup_tsa_rx(chan, true);
++	if (ret) {
++		dev_err(chan->qmc->dev, "chan %u: Enable tsa entries failed (%d)\n",
++			chan->id, ret);
++		goto end;
++	}
 +
-+    properties:
-+      compatible:
-+        const: lantiq,pef2256-codec
++	ret = qmc_setup_chan_trnsync(chan->qmc, chan);
++	if (ret) {
++		dev_err(chan->qmc->dev, "chan %u: setup TRNSYNC failed (%d)\n",
++			chan->id, ret);
++		goto end;
++	}
 +
-+      '#sound-dai-cells':
-+        const: 0
+ 	/* Restart the receiver */
+ 	if (chan->mode == QMC_TRANSPARENT)
+ 		qmc_write32(chan->s_param + QMC_SPE_ZDSTATE, 0x18000080);
+@@ -792,15 +898,38 @@ static void qmc_chan_start_rx(struct qmc_chan *chan)
+ 
+ 	chan->is_rx_stopped = false;
+ 
++end:
+ 	spin_unlock_irqrestore(&chan->rx_lock, flags);
++	return ret;
+ }
+ 
+-static void qmc_chan_start_tx(struct qmc_chan *chan)
++static int qmc_chan_start_tx(struct qmc_chan *chan)
+ {
+ 	unsigned long flags;
++	int ret;
+ 
+ 	spin_lock_irqsave(&chan->tx_lock, flags);
+ 
++	if (!chan->is_tx_stopped) {
++		/* The channel is already started -> simply return ok */
++		ret = 0;
++		goto end;
++	}
 +
-+    required:
-+      - compatible
-+      - '#sound-dai-cells'
++	ret = qmc_chan_setup_tsa_tx(chan, true);
++	if (ret) {
++		dev_err(chan->qmc->dev, "chan %u: Enable tsa entries failed (%d)\n",
++			chan->id, ret);
++		goto end;
++	}
 +
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - interrupts
++	ret = qmc_setup_chan_trnsync(chan->qmc, chan);
++	if (ret) {
++		dev_err(chan->qmc->dev, "chan %u: setup TRNSYNC failed (%d)\n",
++			chan->id, ret);
++		goto end;
++	}
 +
-+additionalProperties: false
+ 	/*
+ 	 * Enable channel transmitter as it could be disabled if
+ 	 * qmc_chan_reset() was called.
+@@ -812,18 +941,39 @@ static void qmc_chan_start_tx(struct qmc_chan *chan)
+ 
+ 	chan->is_tx_stopped = false;
+ 
++end:
+ 	spin_unlock_irqrestore(&chan->tx_lock, flags);
++	return ret;
+ }
+ 
+ int qmc_chan_start(struct qmc_chan *chan, int direction)
+ {
+-	if (direction & QMC_CHAN_READ)
+-		qmc_chan_start_rx(chan);
++	bool is_rx_rollback_needed = false;
++	unsigned long flags;
++	int ret = 0;
+ 
+-	if (direction & QMC_CHAN_WRITE)
+-		qmc_chan_start_tx(chan);
++	spin_lock_irqsave(&chan->ts_lock, flags);
+ 
+-	return 0;
++	if (direction & QMC_CHAN_READ) {
++		is_rx_rollback_needed = chan->is_rx_stopped;
++		ret = qmc_chan_start_rx(chan);
++		if (ret)
++			goto end;
++	}
 +
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
++	if (direction & QMC_CHAN_WRITE) {
++		ret = qmc_chan_start_tx(chan);
++		if (ret) {
++			/* Restop rx if needed */
++			if (is_rx_rollback_needed)
++				qmc_chan_stop_rx(chan);
++			goto end;
++		}
++	}
 +
-+    pef2256: framer@2000000 {
-+      compatible = "lantiq,pef2256";
-+      reg = <0x2000000 0x100>;
-+      interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
-+      interrupt-parent = <&intc>;
-+      clocks = <&clk_mclk>, <&clk_sclkr>, <&clk_sclkx>;
-+      clock-names = "mclk", "sclkr", "sclkx";
-+      reset-gpios = <&gpio 11 GPIO_ACTIVE_LOW>;
-+      lantiq,data-rate-bps = <4096000>;
-+
-+      pinctrl {
-+        pef2256_rpa_sypr: rpa-pins {
-+          pins = "RPA";
-+          function = "SYPR";
-+        };
-+        pef2256_xpa_sypx: xpa-pins {
-+          pins = "XPA";
-+          function = "SYPX";
-+        };
-+      };
-+
-+      pef2256_codec0: codec-0 {
-+        compatible = "lantiq,pef2256-codec";
-+        #sound-dai-cells = <0>;
-+        sound-name-prefix = "PEF2256_0";
-+      };
-+
-+      pef2256_codec1: codec-1 {
-+        compatible = "lantiq,pef2256-codec";
-+        #sound-dai-cells = <0>;
-+        sound-name-prefix = "PEF2256_1";
-+      };
-+    };
-+
-+    sound {
-+      compatible = "simple-audio-card";
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      simple-audio-card,dai-link@0 { /* CPU DAI1 - pef2256 codec 1 */
-+        reg = <0>;
-+        cpu {
-+          sound-dai = <&cpu_dai1>;
-+        };
-+        codec {
-+          sound-dai = <&pef2256_codec0>;
-+          dai-tdm-slot-num = <4>;
-+          dai-tdm-slot-width = <8>;
-+          /* TS 1, 2, 3, 4 */
-+          dai-tdm-slot-tx-mask = <0 1 1 1 1>;
-+          dai-tdm-slot-rx-mask = <0 1 1 1 1>;
-+        };
-+      };
-+      simple-audio-card,dai-link@1 { /* CPU DAI2 - pef2256 codec 2 */
-+        reg = <1>;
-+        cpu {
-+          sound-dai = <&cpu_dai2>;
-+        };
-+        codec {
-+          sound-dai = <&pef2256_codec1>;
-+          dai-tdm-slot-num = <4>;
-+          dai-tdm-slot-width = <8>;
-+          /* TS 5, 6, 7, 8 */
-+          dai-tdm-slot-tx-mask = <0 0 0 0 0 1 1 1 1>;
-+          dai-tdm-slot-rx-mask = <0 0 0 0 0 1 1 1 1>;
-+        };
-+      };
-+    };
++end:
++	spin_unlock_irqrestore(&chan->ts_lock, flags);
++	return ret;
+ }
+ EXPORT_SYMBOL(qmc_chan_start);
+ 
+@@ -992,6 +1142,7 @@ static int qmc_of_parse_chans(struct qmc *qmc, struct device_node *np)
+ 		}
+ 
+ 		chan->id = chan_id;
++		spin_lock_init(&chan->ts_lock);
+ 		spin_lock_init(&chan->rx_lock);
+ 		spin_lock_init(&chan->tx_lock);
+ 
 -- 
 2.41.0
 
