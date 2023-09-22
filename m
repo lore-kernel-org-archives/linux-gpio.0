@@ -2,21 +2,21 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37847CD4F43
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Sep 2023 09:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7991CD4F42
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Sep 2023 09:44:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230127AbjIVJoF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Sep 2023 05:44:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33010 "EHLO
+        id S232916AbjIVJo0 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Sep 2023 05:44:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230071AbjIVJoE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2023 05:44:04 -0400
+        with ESMTP id S231827AbjIVJoS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2023 05:44:18 -0400
 Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD8D094;
-        Fri, 22 Sep 2023 02:43:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77C471AC;
+        Fri, 22 Sep 2023 02:44:07 -0700 (PDT)
 Received: from rd02-sz.amlogic.software (10.28.11.83) by mail-sh.amlogic.com
  (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.13; Fri, 22 Sep 2023
- 17:43:50 +0800
+ 17:43:52 +0800
 From:   Huqiang Qin <huqiang.qin@amlogic.com>
 To:     <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
@@ -28,10 +28,12 @@ CC:     <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-amlogic@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Huqiang Qin <huqiang.qin@amlogic.com>
-Subject: [PATCH V3 0/3] Add pinctrl driver support for Amlogic T7 SoCs
-Date:   Fri, 22 Sep 2023 17:43:39 +0800
-Message-ID: <20230922094342.637251-1-huqiang.qin@amlogic.com>
+Subject: [PATCH V3 3/3] arm64: dts: Add pinctrl node for Amlogic T7 SoCs
+Date:   Fri, 22 Sep 2023 17:43:42 +0800
+Message-ID: <20230922094342.637251-4-huqiang.qin@amlogic.com>
 X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20230922094342.637251-1-huqiang.qin@amlogic.com>
+References: <20230922094342.637251-1-huqiang.qin@amlogic.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -40,38 +42,45 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This patch adds pinctrl driver support for Amloigc T7 SoC (A311D2)
+Add pinctrl device.
 
-[PATCH 1/3]: 
-  V1 -> V2: Rename amlogic-t7-gpio.h to amlogic,t7-periphs-pinctrl.h
-            Corrected indentation format.
-  V2 -> V3: Updated subject.
+Signed-off-by: Huqiang Qin <huqiang.qin@amlogic.com>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
 
-[PATCH 2/3]:
-  V1 -> V2: Include header file changed to amlogic,t7-periphs-pinctrl.h
-  V2 -> V3: Removed redundant blank line.
+V1 -> V2: Unchanged.
+V2 -> V3: Unchanged.
 
-[PATCH 3/3]:
-  V1 -> V2: Unchanged.
-  V2 -> V3: Unchanged.
+ arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Huqiang Qin (3):
-  dt-bindings: pinctrl: Add support for Amlogic T7 SoCs
-  pinctrl: Add driver support for Amlogic T7 SoCs
-  arm64: dts: Add pinctrl node for Amlogic T7 SoCs
-
- .../pinctrl/amlogic,meson-pinctrl-a1.yaml     |    1 +
- arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi   |   16 +
- drivers/pinctrl/meson/Kconfig                 |    6 +
- drivers/pinctrl/meson/Makefile                |    1 +
- drivers/pinctrl/meson/pinctrl-amlogic-t7.c    | 1611 +++++++++++++++++
- .../gpio/amlogic,t7-periphs-pinctrl.h         |  179 ++
- 6 files changed, 1814 insertions(+)
- create mode 100644 drivers/pinctrl/meson/pinctrl-amlogic-t7.c
- create mode 100644 include/dt-bindings/gpio/amlogic,t7-periphs-pinctrl.h
-
-
-base-commit: e143016b56ecb0fcda5bb6026b0a25fe55274f56
+diff --git a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
+index dae3465bd39b..a03c7667d2b6 100644
+--- a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
++++ b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
+@@ -155,6 +155,22 @@ watchdog@2100 {
+ 				clocks = <&xtal>;
+ 			};
+ 
++			periphs_pinctrl: pinctrl@4000 {
++				compatible = "amlogic,t7-periphs-pinctrl";
++				#address-cells = <2>;
++				#size-cells = <2>;
++				ranges;
++
++				gpio: bank@4000 {
++					reg = <0x0 0x4000 0x0 0x0064>,
++					      <0x0 0x40c0 0x0 0x0220>;
++					reg-names = "mux", "gpio";
++					gpio-controller;
++					#gpio-cells = <2>;
++					gpio-ranges = <&periphs_pinctrl 0 0 157>;
++				};
++			};
++
+ 			uart_a: serial@78000 {
+ 				compatible = "amlogic,t7-uart", "amlogic,meson-s4-uart";
+ 				reg = <0x0 0x78000 0x0 0x18>;
 -- 
 2.42.0
 
