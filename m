@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEF8CD4F30
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Sep 2023 07:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BCBCD4F2E
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Sep 2023 07:59:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231980AbjIVH7s (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Sep 2023 03:59:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50932 "EHLO
+        id S232007AbjIVH7t (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Sep 2023 03:59:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232011AbjIVH7m (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2023 03:59:42 -0400
+        with ESMTP id S231902AbjIVH7s (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2023 03:59:48 -0400
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA1F91A2;
-        Fri, 22 Sep 2023 00:59:35 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 2CA961BF204;
-        Fri, 22 Sep 2023 07:59:31 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F12D0198;
+        Fri, 22 Sep 2023 00:59:41 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id DBA7A1BF209;
+        Fri, 22 Sep 2023 07:59:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1695369574;
+        t=1695369580;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Vsq3fcsRQ92trwLtB4WXIyAHgTZzHeLSP3hrA+1+hQo=;
-        b=brWhaUKDSbig4ktuGNsS484EtfqQIqiYqnqlmpBDR8pHhzg5vuZzE47H35cNElYC3opvFk
-        8CB1mL3KPOXaJx3FxxUj353hC/AB5aTKANJPoEsmeaNqt5ESz4yyd7hoThwR/zjpA+TR36
-        eIo8LW5cuwrMfwvpCOvWC5plGSG50LZdEMaIZtlTiyFXrcPhDAs17JRLoDspJpslior/sK
-        /trwa6igM1lh086S7xgWXdTjYSs/riVG90MFdIoyDlHQXawBwYtNdMXRr9h4naRQBmI0wC
-        d9yZre35IRamn5XJc4WIMIAWTxzgNonE4HK6dv9e/X58MkZ0rJnHfVvRH4gjpA==
+        bh=47AJJX9nKRaseqWZw0zOFwaVtfIj/ZlHaGyGR6Dcxfk=;
+        b=aVa/IbEhLcUVHtev73ra9qChSwDgiMaBWbUZQjrha8d9W2mM2x+NAui/0JyxwPIYoOAOk3
+        /CagIAQhbsRvIFYfYojZWl5ZsjMmGRSw+yZYTBePuef6MzbEpebbYKlmTW0jXEkG4JMtVM
+        MTQOO6Cj+s0U16KY1MBe92+Qj5W6KfbcqXNANtYOOLN3Xj4iza+IFbz6XeR4zwmrkxXxfZ
+        IfB468Y1LeUJVLIOlOSnqjrOJ+4fL2nD2zfM9s5GJ8HFQAsHqrUig4WgphKyyF1AAaVb2F
+        kz4xa1NEaT2CdfNeweAZDmh5ESlfLuO+IK3IjGPi9XkrGTqBgZKFBVehxbzEGQ==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Herve Codina <herve.codina@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -55,9 +55,9 @@ Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v6 03/30] soc: fsl: cpm1: qmc: Fix rx channel reset
-Date:   Fri, 22 Sep 2023 09:58:38 +0200
-Message-ID: <20230922075913.422435-4-herve.codina@bootlin.com>
+Subject: [PATCH v6 05/30] soc: fsl: cpm1: qmc: Remove inline function specifiers
+Date:   Fri, 22 Sep 2023 09:58:40 +0200
+Message-ID: <20230922075913.422435-6-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230922075913.422435-1-herve.codina@bootlin.com>
 References: <20230922075913.422435-1-herve.codina@bootlin.com>
@@ -68,35 +68,67 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The qmc_chan_reset_rx() set the is_rx_stopped flag. This leads to an
-inconsistent state in the following sequence.
-    qmc_chan_stop()
-    qmc_chan_reset()
-Indeed, after the qmc_chan_reset() call, the channel must still be
-stopped. Only a qmc_chan_start() call can move the channel from stopped
-state to started state.
+The inline function specifier is present on some functions but it is
+better to let the compiler decide inlining or not these functions.
 
-Fix the issue removing the is_rx_stopped flag setting from
-qmc_chan_reset()
+Remove inline specifiers.
 
 Fixes: 3178d58e0b97 ("soc: fsl: cpm1: Add support for QMC")
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
 Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/soc/fsl/qe/qmc.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/soc/fsl/qe/qmc.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 7ad0d77f1740..8dc73cc1a83b 100644
+index 2d2a9d88ba6c..459e0bbd723d 100644
 --- a/drivers/soc/fsl/qe/qmc.c
 +++ b/drivers/soc/fsl/qe/qmc.c
-@@ -685,7 +685,6 @@ static void qmc_chan_reset_rx(struct qmc_chan *chan)
- 		    qmc_read16(chan->s_param + QMC_SPE_RBASE));
+@@ -218,37 +218,37 @@ struct qmc {
+ 	struct qmc_chan *chans[64];
+ };
  
- 	chan->rx_pending = 0;
--	chan->is_rx_stopped = false;
+-static inline void qmc_write16(void __iomem *addr, u16 val)
++static void qmc_write16(void __iomem *addr, u16 val)
+ {
+ 	iowrite16be(val, addr);
+ }
  
- 	spin_unlock_irqrestore(&chan->rx_lock, flags);
+-static inline u16 qmc_read16(void __iomem *addr)
++static u16 qmc_read16(void __iomem *addr)
+ {
+ 	return ioread16be(addr);
+ }
+ 
+-static inline void qmc_setbits16(void __iomem *addr, u16 set)
++static void qmc_setbits16(void __iomem *addr, u16 set)
+ {
+ 	qmc_write16(addr, qmc_read16(addr) | set);
+ }
+ 
+-static inline void qmc_clrbits16(void __iomem *addr, u16 clr)
++static void qmc_clrbits16(void __iomem *addr, u16 clr)
+ {
+ 	qmc_write16(addr, qmc_read16(addr) & ~clr);
+ }
+ 
+-static inline void qmc_write32(void __iomem *addr, u32 val)
++static void qmc_write32(void __iomem *addr, u32 val)
+ {
+ 	iowrite32be(val, addr);
+ }
+ 
+-static inline u32 qmc_read32(void __iomem *addr)
++static u32 qmc_read32(void __iomem *addr)
+ {
+ 	return ioread32be(addr);
+ }
+ 
+-static inline void qmc_setbits32(void __iomem *addr, u32 set)
++static void qmc_setbits32(void __iomem *addr, u32 set)
+ {
+ 	qmc_write32(addr, qmc_read32(addr) | set);
  }
 -- 
 2.41.0
