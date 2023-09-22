@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E17CD4F32
-	for <linux-gpio@archiver.kernel.org>; Fri, 22 Sep 2023 08:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 519BFCD4F2E
+	for <linux-gpio@archiver.kernel.org>; Fri, 22 Sep 2023 08:01:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232290AbjIVIA4 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Sep 2023 04:00:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50934 "EHLO
+        id S231837AbjIVIBN (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 22 Sep 2023 04:01:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232062AbjIVIAg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2023 04:00:36 -0400
+        with ESMTP id S232214AbjIVIAt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2023 04:00:49 -0400
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FDB710F5;
-        Fri, 22 Sep 2023 01:00:03 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 236671BF209;
-        Fri, 22 Sep 2023 07:59:58 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3178B171C;
+        Fri, 22 Sep 2023 01:00:15 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 939351BF217;
+        Fri, 22 Sep 2023 08:00:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1695369602;
+        t=1695369613;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=T1VpXEDiEEj03z0lZbsi0RjHlrslWbdm5Y0c+1pg5eg=;
-        b=S6L4P4KzWl94NDpFSvPQ2HGhfgpUI9EyPwpr0b1fJhI6l/A3bS5x0+zVHomuVHfR/q510K
-        ulSU6l3mW65nqObc9g0fTy2e7gx229fotv5T+fEyEBAYpz5x5fspnND/WazzRBQiq9w3IU
-        p0fHEtOiQK+uTV11ImWc0l5ODd4j+fpVe7ugyrCmHoEjS9qMNXErt8B4TmXsf3WTuro48r
-        S1STL7+dlI3sGcgAM5ohUCYX0Gy5TgRuQuEQ02j5ighALS+vCPbhUg7gnTWZ/+ELFQpQA2
-        X/gi8YMgh4Rj/YTU0DTmtBFsVrUkn+u+90sUsRzjDx5syMndKjCn1ItUeHnwCA==
+        bh=rzUuWhRDgVHjZPWx1zQHs1eer0WBNpuWBkiimoMaxFw=;
+        b=YY8q3tbTHusqkO5Tp7dhqdsPMLPnOU/CGtlgBnGKt7BLxihHk7BFPZEJkUGSY+netSE+6A
+        UlpnZmr9ULw1WPoe4J7BynlYgQqotb0TP4JvDtP/VGLVkKD5d/1tTYq4+9RMqx7tPGYwV3
+        o1/Ya6QbHm99t0ToUm9VYiFfCbHxaI3rkyXOm9jw+Qh0q9BRMW10TjS0Zor//bgY/plwlm
+        b+742DlV5QEJ8VgrP/ljdklFzuTuPKcyJr1ByhtZzEI2Co5N4KvHYUevXdk9IHIpTLK8ph
+        zZ3FkNNK51qOBXzrXVlLlAe1KK3wj8f6QMOw6YtIiCZdQWr17kHmv+oX6TOmQA==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Herve Codina <herve.codina@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -55,9 +55,9 @@ Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v6 11/30] MAINTAINERS: Add the Freescale QMC HDLC driver entry
-Date:   Fri, 22 Sep 2023 09:58:46 +0200
-Message-ID: <20230922075913.422435-12-herve.codina@bootlin.com>
+Subject: [PATCH v6 13/30] soc: fsl: cpm1: qmc: Rename qmc_setup_tsa* to qmc_init_tsa*
+Date:   Fri, 22 Sep 2023 09:58:48 +0200
+Message-ID: <20230922075913.422435-14-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230922075913.422435-1-herve.codina@bootlin.com>
 References: <20230922075913.422435-1-herve.codina@bootlin.com>
@@ -68,32 +68,74 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-After contributing the driver, add myself as the maintainer for the
-Freescale QMC HDLC driver.
+qmc_setup_tsa* are called once at initialisation.
+They initialize the QMC TSA table.
+In order to introduce setup function later on for dynamic timeslots
+management, rename the function to avoid later confusion.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/soc/fsl/qe/qmc.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 90f13281d297..8b987f2c8633 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8364,6 +8364,13 @@ F:	Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
- F:	drivers/soc/fsl/qe/qmc.c
- F:	include/soc/fsl/qe/qmc.h
+diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+index 653d458b84b6..28acf4c8a141 100644
+--- a/drivers/soc/fsl/qe/qmc.c
++++ b/drivers/soc/fsl/qe/qmc.c
+@@ -919,7 +919,7 @@ static int qmc_of_parse_chans(struct qmc *qmc, struct device_node *np)
+ 	return qmc_check_chans(qmc);
+ }
  
-+FREESCALE QUICC ENGINE QMC HDLC DRIVER
-+M:	Herve Codina <herve.codina@bootlin.com>
-+L:	netdev@vger.kernel.org
-+L:	linuxppc-dev@lists.ozlabs.org
-+S:	Maintained
-+F:	drivers/net/wan/fsl_qmc_hdlc.c
-+
- FREESCALE QUICC ENGINE TSA DRIVER
- M:	Herve Codina <herve.codina@bootlin.com>
- L:	linuxppc-dev@lists.ozlabs.org
+-static int qmc_setup_tsa_64rxtx(struct qmc *qmc, const struct tsa_serial_info *info)
++static int qmc_init_tsa_64rxtx(struct qmc *qmc, const struct tsa_serial_info *info)
+ {
+ 	struct qmc_chan *chan;
+ 	unsigned int i;
+@@ -961,7 +961,7 @@ static int qmc_setup_tsa_64rxtx(struct qmc *qmc, const struct tsa_serial_info *i
+ 	return 0;
+ }
+ 
+-static int qmc_setup_tsa_32rx_32tx(struct qmc *qmc, const struct tsa_serial_info *info)
++static int qmc_init_tsa_32rx_32tx(struct qmc *qmc, const struct tsa_serial_info *info)
+ {
+ 	struct qmc_chan *chan;
+ 	unsigned int i;
+@@ -1019,7 +1019,7 @@ static int qmc_setup_tsa_32rx_32tx(struct qmc *qmc, const struct tsa_serial_info
+ 	return 0;
+ }
+ 
+-static int qmc_setup_tsa(struct qmc *qmc)
++static int qmc_init_tsa(struct qmc *qmc)
+ {
+ 	struct tsa_serial_info info;
+ 	int ret;
+@@ -1030,12 +1030,12 @@ static int qmc_setup_tsa(struct qmc *qmc)
+ 		return ret;
+ 
+ 	/*
+-	 * Setup one common 64 entries table or two 32 entries (one for Tx and
+-	 * one for Tx) according to assigned TS numbers.
++	 * Initialize one common 64 entries table or two 32 entries (one for Tx
++	 * and one for Tx) according to assigned TS numbers.
+ 	 */
+ 	return ((info.nb_tx_ts > 32) || (info.nb_rx_ts > 32)) ?
+-		qmc_setup_tsa_64rxtx(qmc, &info) :
+-		qmc_setup_tsa_32rx_32tx(qmc, &info);
++		qmc_init_tsa_64rxtx(qmc, &info) :
++		qmc_init_tsa_32rx_32tx(qmc, &info);
+ }
+ 
+ static int qmc_setup_chan_trnsync(struct qmc *qmc, struct qmc_chan *chan)
+@@ -1391,7 +1391,7 @@ static int qmc_probe(struct platform_device *pdev)
+ 	qmc_write32(qmc->scc_pram + QMC_GBL_C_MASK32, 0xDEBB20E3);
+ 	qmc_write16(qmc->scc_pram + QMC_GBL_C_MASK16, 0xF0B8);
+ 
+-	ret = qmc_setup_tsa(qmc);
++	ret = qmc_init_tsa(qmc);
+ 	if (ret)
+ 		goto err_tsa_serial_disconnect;
+ 
 -- 
 2.41.0
 
