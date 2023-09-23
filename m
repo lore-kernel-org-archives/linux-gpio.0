@@ -2,61 +2,69 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA97CE7A88
-	for <linux-gpio@archiver.kernel.org>; Sat, 23 Sep 2023 13:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB09CE7A90
+	for <linux-gpio@archiver.kernel.org>; Sat, 23 Sep 2023 13:14:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231638AbjIWNOu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 23 Sep 2023 09:14:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50002 "EHLO
+        id S231740AbjIWNOv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 23 Sep 2023 09:14:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231494AbjIWNOt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Sep 2023 09:14:49 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B99F3199;
-        Sat, 23 Sep 2023 06:14:38 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2c008d8fd07so60244531fa.1;
-        Sat, 23 Sep 2023 06:14:38 -0700 (PDT)
+        with ESMTP id S231616AbjIWNOu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Sep 2023 09:14:50 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 672C119E;
+        Sat, 23 Sep 2023 06:14:42 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-5031426b626so5623390e87.3;
+        Sat, 23 Sep 2023 06:14:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695474877; x=1696079677; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2O84Olrgji0dplUaih9FZ5HqCL+isSXoo5opIqSD9tk=;
-        b=aeXcKcUqqFOfRLigQsDSTBXW0Kd+wFNKu94poy2Cng8QPnE1Ff5Y3e8D7QLob4tjC/
-         o4Zr3xi8BlnGRQobm35bsst6U80U7G5EqINOvXYmm7c4vsAnf3OUORRk/PId+wiKfNRB
-         J/AXswpfzHiXcWfUECtE7dRS7b47139bDBBWsJJ05nMFVFSvU6K7SUE2isaV3INTTZwI
-         6S6VJY2hGqfVQVsPeImsRFMBP42ZqQQzKm04FL0MaliM4+0G9bUbvYxf2VDk8JcS1Ldp
-         JcpKwvwwSCD6BgCZ6CteQpiVFI3aoOCuLtSw5g0L/AwElg8TFzaksu5oCmC5i50OQ6Tx
-         Jrog==
+        d=gmail.com; s=20230601; t=1695474880; x=1696079680; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zyl55hSrpI/NQRmZG4XXfiof657r7srtbLcJb/TnH6E=;
+        b=hbdztxRtPDg2txL4tU8i0StJt1iKDKl/kc80SlTNd83vZhFRYQhDEVNMuqUYsYMY4C
+         gN23ublyGCoVfbdMkaMfRUR6CicLkIFj5nLvuoYRGDYt2GZo9wZ2/7orF9ikGjQjeIkx
+         YjDjJtxRr5L1pdqk6VRHq4THOV4tIj4E1mLjrsPF2/5qrL1gsDX+JQvD+nbjt15Q0LYi
+         Jgoxs7jg1kJqoqQMeeyHVVH3Gd8iLzyJzdk0Eva2xqkh84nYOhhoFMRn8bD6Cx/OMxbZ
+         Js6ca8yEaZu77n6R+R3IvlsO7Z3khgxhI2BqZufRJ5J1btCuPTA0+ye9eCWYl8LbzAVp
+         u8+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695474877; x=1696079677;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2O84Olrgji0dplUaih9FZ5HqCL+isSXoo5opIqSD9tk=;
-        b=N7at0p4kQcpDOLedV+im4VNQGDVsWUPegNEyjQCPFUPDZGLOBIrm+3Uxp8yWhWJEIR
-         ZGqXQdffSKogQPCsrEvOYnl9mepfZiYk7MfI0BlX2AW7cC1udOiXDeciBVvFyqDULV3j
-         reNy1RLwh014nKSkUM1WVLcWxpqSeisahS4PbqmKWty1REo6L+xl3kAb8QUJT4nkOf+/
-         +XMbY79Rlej0Spo/lF0yKVr7D0yFCXnsjb/DaK880EcpQvbYowIaghltG51ZndkKVtqH
-         g/EbUZScYjeffdMSTqV2YqeD5bbbeqDR4ATiBdHzpDVyq0LhEYwvhmfvnmPCDv48+cqm
-         S9aA==
-X-Gm-Message-State: AOJu0YxBePsnFcJ7JJPeEvJ5R81FmDJ8FcXngGxb7+YeeyXaztOIv2qV
-        o75Y7+Eu7FCCOjwpUXSE8n1rgMw1QVY=
-X-Google-Smtp-Source: AGHT+IHg+zM0GJOc24XFRIaA7ONZWbhpFwyDvcz8TPb20uWJE2B2ifW0ySLiYIjSPTbF9PFcXykb7w==
-X-Received: by 2002:a05:6512:238f:b0:503:1992:4d63 with SMTP id c15-20020a056512238f00b0050319924d63mr2295747lfv.19.1695474876726;
-        Sat, 23 Sep 2023 06:14:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695474880; x=1696079680;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zyl55hSrpI/NQRmZG4XXfiof657r7srtbLcJb/TnH6E=;
+        b=HyFhbO9njBcFi+CGBwA2zahGApQuFYuRYIfMNq/95HpVAr8ph1zYWb6Kp/N1VIKHrc
+         ZMkqq3HbUDC3dbqR0EGszpm4HWhcYZf5p8GVZBJ4LsUWufT8ZHrvFnHEg7KHZi7Zguuo
+         qDrt73G9538AL3UH4GhPK7sghthgSuE/WgD/2oE+Ox5CpGPxKZ0PNy6xREoM90Ev2c6o
+         txUW9LL6ahAND+89wNsiEWP25cR1Un3hnHMwTelT6/5cuEg9LAy5zBE1RplO7On34WCr
+         cAdbG2Cd6hsrN+6stsyzRPMgnSQlbq76bKWxVgOyjqdG6taYp8ttV6b4Ys4f5q3+HX2W
+         RFzg==
+X-Gm-Message-State: AOJu0YxQVBOzO9RQLQfZ2iEKD+PDhQXPsBZfAd7Bk65lS6N2YAq4mfz/
+        kTZeZr7AjChZ6BMTRJqoWE//qNaWGPEMZg==
+X-Google-Smtp-Source: AGHT+IE8fCQ6pTHZZKuMgFbVuTjTce+bjedi3Ta8ahQThqNd5RNcuOTSR0Wx3PAau+eUGwrZdX+2og==
+X-Received: by 2002:a05:6512:2246:b0:4fe:db6:cb41 with SMTP id i6-20020a056512224600b004fe0db6cb41mr2494966lfu.39.1695474880457;
+        Sat, 23 Sep 2023 06:14:40 -0700 (PDT)
 Received: from i-vetokaappi.home.lan (dsl-hkibng42-56733b-36.dhcp.inet.fi. [86.115.59.36])
-        by smtp.gmail.com with ESMTPSA id m1-20020ac24281000000b004ff96c09b47sm1080847lfh.260.2023.09.23.06.14.35
+        by smtp.gmail.com with ESMTPSA id m1-20020ac24281000000b004ff96c09b47sm1080847lfh.260.2023.09.23.06.14.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Sep 2023 06:14:36 -0700 (PDT)
+        Sat, 23 Sep 2023 06:14:40 -0700 (PDT)
 From:   =?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         =?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] MPM pin mappings for MSM8226 and MSM8974
-Date:   Sat, 23 Sep 2023 16:14:30 +0300
-Message-Id: <20230923131432.21721-1-matti.lehtimaki@gmail.com>
+Subject: [PATCH v2 2/2] pinctrl: qcom: msm8974: Add MPM pin mappings
+Date:   Sat, 23 Sep 2023 16:14:32 +0300
+Message-Id: <20230923131432.21721-3-matti.lehtimaki@gmail.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230923131432.21721-1-matti.lehtimaki@gmail.com>
+References: <20230923131432.21721-1-matti.lehtimaki@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -64,20 +72,48 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This series adds the MPM wakeirq mappings for MSM8226 and MSM8974.
+Add pin <-> wakeirq mappings to allow for waking up the AP from sleep
+through MPM-connected pins.
 
+Signed-off-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
+Reviewed-by: Luca Weiss <luca@z3ntu.xyz>
+---
 Changes in v2:
-  - Add missing entry to MSM8226 mapping
-  - Add Reviewed-by tag to MSM8974 patch
-
-Matti Lehtimäki (2):
-  pinctrl: qcom: msm8226: Add MPM pin mappings
-  pinctrl: qcom: msm8974: Add MPM pin mappings
-
- drivers/pinctrl/qcom/pinctrl-msm8226.c | 12 ++++++++++++
+  - Add Reviewed-by tag
+---
  drivers/pinctrl/qcom/pinctrl-msm8x74.c | 12 ++++++++++++
- 2 files changed, 24 insertions(+)
+ 1 file changed, 12 insertions(+)
 
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm8x74.c b/drivers/pinctrl/qcom/pinctrl-msm8x74.c
+index d5fe62992849..238c83f6ec4f 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm8x74.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm8x74.c
+@@ -1045,6 +1045,16 @@ static const struct msm_pingroup msm8x74_groups[] = {
+ 
+ #define NUM_GPIO_PINGROUPS 146
+ 
++static const struct msm_gpio_wakeirq_map msm8x74_mpm_map[] = {
++	{ 1, 4 }, { 5, 5 }, { 9, 6 }, { 18, 7 }, { 20, 8 }, { 24, 9 },
++	{ 27, 10 }, { 28, 11 }, { 34, 12 }, { 35, 13 }, { 37, 14 }, { 42, 15 },
++	{ 44, 16 }, { 46, 17 }, { 50, 18 }, { 54, 19 }, { 59, 20 }, { 61, 21 },
++	{ 62, 22 }, { 64, 23 }, { 65, 24 }, { 66, 25 }, { 67, 26 }, { 68, 27 },
++	{ 71, 28 }, { 72, 29 }, { 73, 30 }, { 74, 31 }, { 75, 32 }, { 77, 33 },
++	{ 79, 34 }, { 80, 35 }, { 82, 36 }, { 86, 37 }, { 92, 38 }, { 93, 39 },
++	{ 95, 40 }, { 102, 3 }, { 144, 41 },
++};
++
+ static const struct msm_pinctrl_soc_data msm8x74_pinctrl = {
+ 	.pins = msm8x74_pins,
+ 	.npins = ARRAY_SIZE(msm8x74_pins),
+@@ -1053,6 +1063,8 @@ static const struct msm_pinctrl_soc_data msm8x74_pinctrl = {
+ 	.groups = msm8x74_groups,
+ 	.ngroups = ARRAY_SIZE(msm8x74_groups),
+ 	.ngpios = NUM_GPIO_PINGROUPS,
++	.wakeirq_map = msm8x74_mpm_map,
++	.nwakeirq_map = ARRAY_SIZE(msm8x74_mpm_map),
+ };
+ 
+ static int msm8x74_pinctrl_probe(struct platform_device *pdev)
 -- 
 2.39.2
 
