@@ -2,116 +2,106 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AEACE7A91
-	for <linux-gpio@archiver.kernel.org>; Sat, 23 Sep 2023 13:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22916CE7A89
+	for <linux-gpio@archiver.kernel.org>; Sat, 23 Sep 2023 13:21:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231768AbjIWNOv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 23 Sep 2023 09:14:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50006 "EHLO
+        id S229643AbjIWNVb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 23 Sep 2023 09:21:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231622AbjIWNOu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Sep 2023 09:14:50 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9906C11D;
-        Sat, 23 Sep 2023 06:14:40 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-503397ee920so5768392e87.1;
-        Sat, 23 Sep 2023 06:14:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695474879; x=1696079679; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pi1nMZ5Qx+Hd3+Zg0OLpMqTtfkM7eJhwwI+OqM4wPA8=;
-        b=PDVAAicv89X0Sxn9lP1z2Z8m67+DE8PIcGoHFSrn+k0QzSOj3BwJ4gmYWO58U8VA57
-         SXztz49ZesKOShzDHEsvThLzUmZ5J68cj4py3jYgx+Uk5G4PximjchhowP+3GDlT9ec2
-         WX2fcU0U5axYY7FLiMDAE/kPbm/f6rUgf/iKJjCPGBtDQnWAbCQ/Ha5OTvVldK9u5iuN
-         stL5+GV4NaaAjoZ3SU9ZVTMHBMwyN34eI+VzyhxxPGedrR+w9B1Bg89faAkzGCbyOG42
-         X7+YG3uj/Y+9VRZKRFNHVzCjtGe3nhLFSIGhTj83k3fZhKwMOGzIGkbSCXx2cdsKPp3U
-         wvEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695474879; x=1696079679;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pi1nMZ5Qx+Hd3+Zg0OLpMqTtfkM7eJhwwI+OqM4wPA8=;
-        b=bsy9EVqOuIihF1KQTtYO6Lgs8n6NZC9sn0AYKrEm4tR3Dxh4LcPnPtuwbT151SPFKA
-         BDRItWwPSUn7fBGS4J3k9N24Odir6VHpNVzt2WHRcOaqZnv+VT6F09/3iMOn9flFu7cN
-         7Eg+XYQSdLOGw9JFHWJHMExx1/9sQpEbF8tJU6danUEQ0AQ3LJyw/5gzgIAmOmGiAyT2
-         UxZ/akBfeXag+6lQkmm8CDuiirskCpgNn4rePSnBXyrNptSK7C49s6EF+ldPSQjYFWud
-         DGkklTa5vR8TR+MOOu1mkXMrfHEKSOtQvG4HimiV1cs7JLjOI88YrWrvc75uptewKquJ
-         8ung==
-X-Gm-Message-State: AOJu0YxecFzbJ84OI6kIbNG3CoQFsxkaHTRrlAJRY/9SwejyL9Cm8lfV
-        5n6HkLg9x462fVKwuCgE4IUn5kt0yTAScg==
-X-Google-Smtp-Source: AGHT+IHBKU41RrGfr51ITbEELFc5CKdYQ4Y4zrMrbdaGV8gRriIIepYoaaEubDywXIo447FPCVLDqg==
-X-Received: by 2002:ac2:5932:0:b0:503:1875:5ae5 with SMTP id v18-20020ac25932000000b0050318755ae5mr1872523lfi.38.1695474878630;
-        Sat, 23 Sep 2023 06:14:38 -0700 (PDT)
-Received: from i-vetokaappi.home.lan (dsl-hkibng42-56733b-36.dhcp.inet.fi. [86.115.59.36])
-        by smtp.gmail.com with ESMTPSA id m1-20020ac24281000000b004ff96c09b47sm1080847lfh.260.2023.09.23.06.14.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Sep 2023 06:14:38 -0700 (PDT)
-From:   =?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>
-To:     linux-arm-msm@vger.kernel.org
+        with ESMTP id S229616AbjIWNVa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Sep 2023 09:21:30 -0400
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EDFE11D;
+        Sat, 23 Sep 2023 06:21:24 -0700 (PDT)
+Received: from g550jk.localnet (k10064.upc-k.chello.nl [62.108.10.64])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 504B8D0F49;
+        Sat, 23 Sep 2023 13:20:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1695475252; bh=iHvBiQzorU0EG6kr/U8qttUZDmGPcm76uY0tqu2HcNo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=ebZzoxdWLbWYX/Or2eyq2ZhgXvDatM9iwHqwO2K0KhZMXy77gGYA6bPNcij9tTraY
+         hyZ7MVaTnCemeQcnYgJ9TFtuuHz9MPvE5ZSll6zxlUNFQw91wwlkJBy3LZ82HS9STJ
+         WuoFvJ1l+t4UVlfHtV8UsSV6XovH8sKTOLFm098Q=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
 Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        =?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
+        Matti =?ISO-8859-1?Q?Lehtim=E4ki?= <matti.lehtimaki@gmail.com>,
         Bjorn Andersson <andersson@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] pinctrl: qcom: msm8226: Add MPM pin mappings
-Date:   Sat, 23 Sep 2023 16:14:31 +0300
-Message-Id: <20230923131432.21721-2-matti.lehtimaki@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230923131432.21721-1-matti.lehtimaki@gmail.com>
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matti =?ISO-8859-1?Q?Lehtim=E4ki?= <matti.lehtimaki@gmail.com>
+Subject: Re: [PATCH v2 1/2] pinctrl: qcom: msm8226: Add MPM pin mappings
+Date:   Sat, 23 Sep 2023 15:20:51 +0200
+Message-ID: <1866740.CQOukoFCf9@z3ntu.xyz>
+In-Reply-To: <20230923131432.21721-2-matti.lehtimaki@gmail.com>
 References: <20230923131432.21721-1-matti.lehtimaki@gmail.com>
+ <20230923131432.21721-2-matti.lehtimaki@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add pin <-> wakeirq mappings to allow for waking up the AP from sleep
-through MPM-connected pins.
+On Samstag, 23. September 2023 15:14:31 CEST Matti Lehtim=E4ki wrote:
+> Add pin <-> wakeirq mappings to allow for waking up the AP from sleep
+> through MPM-connected pins.
+>=20
+> Signed-off-by: Matti Lehtim=E4ki <matti.lehtimaki@gmail.com>
 
-Signed-off-by: Matti Lehtimäki <matti.lehtimaki@gmail.com>
----
-Changes in v2:
-  - Add missing entry to mapping
----
- drivers/pinctrl/qcom/pinctrl-msm8226.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Looks good now :)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm8226.c b/drivers/pinctrl/qcom/pinctrl-msm8226.c
-index 994619840a70..4030baa3715f 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm8226.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm8226.c
-@@ -612,6 +612,16 @@ static const struct msm_pingroup msm8226_groups[] = {
- 
- #define NUM_GPIO_PINGROUPS 117
- 
-+static const struct msm_gpio_wakeirq_map msm8226_mpm_map[] = {
-+	{ 1, 3 }, { 4, 4 }, { 5, 5 }, { 9, 6 }, { 13, 7 }, { 17, 8 },
-+	{ 21, 9 }, { 27, 10 }, { 29, 11 }, { 31, 12 }, { 33, 13 }, { 35, 14 },
-+	{ 37, 15 }, { 38, 16 }, { 39, 17 }, { 41, 18 }, { 46, 19 }, { 48, 20 },
-+	{ 49, 21 }, { 50, 22 }, { 51, 23 }, { 52, 24 }, { 54, 25 }, { 62, 26 },
-+	{ 63, 27 }, { 64, 28 }, { 65, 29 }, { 66, 30 }, { 67, 31 }, { 68, 32 },
-+	{ 69, 33 }, { 71, 34 }, { 72, 35 }, { 106, 36 }, { 107, 37 }, { 108, 38 },
-+	{ 109, 39 }, { 110, 40 }, { 111, 54 }, { 113, 55 }, { 115, 41 },
-+};
-+
- static const struct msm_pinctrl_soc_data msm8226_pinctrl = {
- 	.pins = msm8226_pins,
- 	.npins = ARRAY_SIZE(msm8226_pins),
-@@ -620,6 +630,8 @@ static const struct msm_pinctrl_soc_data msm8226_pinctrl = {
- 	.groups = msm8226_groups,
- 	.ngroups = ARRAY_SIZE(msm8226_groups),
- 	.ngpios = NUM_GPIO_PINGROUPS,
-+	.wakeirq_map = msm8226_mpm_map,
-+	.nwakeirq_map = ARRAY_SIZE(msm8226_mpm_map),
- };
- 
- static int msm8226_pinctrl_probe(struct platform_device *pdev)
--- 
-2.39.2
+Reviewed-by: Luca Weiss <luca@z3ntu.xyz>
+
+> ---
+> Changes in v2:
+>   - Add missing entry to mapping
+> ---
+>  drivers/pinctrl/qcom/pinctrl-msm8226.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>=20
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm8226.c
+> b/drivers/pinctrl/qcom/pinctrl-msm8226.c index 994619840a70..4030baa3715f
+> 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm8226.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm8226.c
+> @@ -612,6 +612,16 @@ static const struct msm_pingroup msm8226_groups[] =
+=3D {
+>=20
+>  #define NUM_GPIO_PINGROUPS 117
+>=20
+> +static const struct msm_gpio_wakeirq_map msm8226_mpm_map[] =3D {
+> +	{ 1, 3 }, { 4, 4 }, { 5, 5 }, { 9, 6 }, { 13, 7 }, { 17, 8 },
+> +	{ 21, 9 }, { 27, 10 }, { 29, 11 }, { 31, 12 }, { 33, 13 }, { 35, 14=20
+},
+> +	{ 37, 15 }, { 38, 16 }, { 39, 17 }, { 41, 18 }, { 46, 19 }, { 48, 20=20
+},
+> +	{ 49, 21 }, { 50, 22 }, { 51, 23 }, { 52, 24 }, { 54, 25 }, { 62, 26=20
+},
+> +	{ 63, 27 }, { 64, 28 }, { 65, 29 }, { 66, 30 }, { 67, 31 }, { 68, 32=20
+},
+> +	{ 69, 33 }, { 71, 34 }, { 72, 35 }, { 106, 36 }, { 107, 37 }, { 108,=20
+38 },
+> +	{ 109, 39 }, { 110, 40 }, { 111, 54 }, { 113, 55 }, { 115, 41 }, +};
+> +
+>  static const struct msm_pinctrl_soc_data msm8226_pinctrl =3D {
+>  	.pins =3D msm8226_pins,
+>  	.npins =3D ARRAY_SIZE(msm8226_pins),
+> @@ -620,6 +630,8 @@ static const struct msm_pinctrl_soc_data msm8226_pinc=
+trl
+> =3D { .groups =3D msm8226_groups,
+>  	.ngroups =3D ARRAY_SIZE(msm8226_groups),
+>  	.ngpios =3D NUM_GPIO_PINGROUPS,
+> +	.wakeirq_map =3D msm8226_mpm_map,
+> +	.nwakeirq_map =3D ARRAY_SIZE(msm8226_mpm_map),
+>  };
+>=20
+>  static int msm8226_pinctrl_probe(struct platform_device *pdev)
+
+
+
 
