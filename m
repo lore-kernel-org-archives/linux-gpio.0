@@ -2,265 +2,136 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35986CE7A88
-	for <linux-gpio@archiver.kernel.org>; Sat, 23 Sep 2023 01:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC66ACE7A88
+	for <linux-gpio@archiver.kernel.org>; Sat, 23 Sep 2023 08:27:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230162AbjIWBrJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 22 Sep 2023 21:47:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53488 "EHLO
+        id S230242AbjIWI1f (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 23 Sep 2023 04:27:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230047AbjIWBrI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2023 21:47:08 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48FD71AC
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Sep 2023 18:47:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695433622; x=1726969622;
-  h=date:from:to:cc:subject:message-id;
-  bh=jHD6aTc3fdIZbJNDPNaQeRC0vqIfzi0AGFHnICMY2GY=;
-  b=EAno9o1md7l4OTPQpgPCwFI2ZDkeXPdoescf0N4xwVAQdbiutOmUl7+i
-   MbbqO/IGduFUILnVWh0+N+dQ+NTOJEhlb1LmToKo6nKG9lHa3YDQ7Px97
-   6Lq+4cYRpwvtYLmsKFl9+vbWE1u85rklYm2thr9lGfhqZuMkOufIME+T3
-   NI9LeTpMNcnW778xMFOMrfloyibvlmwHBWdoRf+pfU5YejzLVt0e1YseG
-   bUcpdRWrPZDGLtlDc4IUi3sWOF7UOMXGKCdFBL+dq9NApI9riucOsgUnc
-   PPkDGAJq9hM/UMNXDFOXTp4oDCBNbsKuMD1wactuOp7oEvT1TF1IHkr6h
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10841"; a="383737245"
-X-IronPort-AV: E=Sophos;i="6.03,169,1694761200"; 
-   d="scan'208";a="383737245"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2023 18:47:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10841"; a="741304948"
-X-IronPort-AV: E=Sophos;i="6.03,169,1694761200"; 
-   d="scan'208";a="741304948"
-Received: from lkp-server02.sh.intel.com (HELO 493f6c7fed5d) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 22 Sep 2023 18:47:00 -0700
-Received: from kbuild by 493f6c7fed5d with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qjrjW-0001Zh-0v;
-        Sat, 23 Sep 2023 01:46:58 +0000
-Date:   Sat, 23 Sep 2023 09:46:29 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [brgl:gpio/for-current] BUILD SUCCESS
- 5cb9606a901a41f2ffe37fb8528bb6fbfb5d90e2
-Message-ID: <202309230926.oihrUnFZ-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+        with ESMTP id S230284AbjIWI1e (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Sep 2023 04:27:34 -0400
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 234B919A
+        for <linux-gpio@vger.kernel.org>; Sat, 23 Sep 2023 01:27:27 -0700 (PDT)
+Received: from eig-obgw-6002a.ext.cloudfilter.net ([10.0.30.222])
+        by cmsmtp with ESMTP
+        id jx8hqJ7k4bK1Vjxz4qkGvE; Sat, 23 Sep 2023 08:27:26 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with ESMTPS
+        id jxz4qTI8SjsHGjxz4q4qv8; Sat, 23 Sep 2023 08:27:26 +0000
+X-Authority-Analysis: v=2.4 cv=FtoWQknq c=1 sm=1 tr=0 ts=650ea16e
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=P7XfKmiOJ4/qXqHZrN7ymg==:17
+ a=OWjo9vPv0XrRhIrVQ50Ab3nP57M=:19 a=dLZJa+xiwSxG16/P+YVxDGlgEgI=:19
+ a=IkcTkHD0fZMA:10 a=zNV7Rl7Rt7sA:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
+ a=KKAkSRfTAAAA:8 a=c-n4J4-pAAAA:8 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8
+ a=cm27Pg_UAAAA:8 a=HvF037n1xESchLcPDVoA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=L0NDqeB7ZLmQzAogN4cw:22 a=AjGcO6oz07-iQ99wixmX:22
+ a=1CNFftbPRP8L7MoqJWF3:22 a=xmb-EsYY8bH0VWELuYED:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=08UecPEuAbG0l+x/YFl55F1N++K/4bmSxvCFHQB9S5g=; b=WZJsv7aLhUeUqdRKWMwr7Z/VBe
+        aw0zDu/2rwadgrRSu0C/OBrB2VFYO2VZo3Do6d2eMPb+cmHrF1NbrhQ+Ohct4/llYYmk5CpHs2EOS
+        sK/fC43uSRgN3uPeTnLZdyxX32SNxvC/5BcrhuJA2ihoGDpkFVNh5P1DsTms5MLT+Ipd9M56sL8+K
+        WRPYkL8Xip6fib/rJUbCmkLhW49oZcLigaZ/WqRnHVEt8PsitJcnPpLfDUyvyqlvFTdhLO/afX6bD
+        5lE7D3uh0zA4l2p1hKkpxV9DA20Z+N/1Gc6j4KAaeH7Ym4rkDKSKp4KvJqCYpwbKEz1+2NLNUgMn6
+        7wShJruw==;
+Received: from [94.239.20.48] (port=39284 helo=[192.168.1.98])
+        by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.96)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1qjxz3-003WvM-11;
+        Sat, 23 Sep 2023 03:27:25 -0500
+Message-ID: <49eab142-35ba-bc75-9af8-9dfed8b96f00@embeddedor.com>
+Date:   Sat, 23 Sep 2023 10:28:29 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] pinctrl: uniphier: Annotate struct
+ uniphier_pinctrl_reg_region with __counted_by
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, linux-hardening@vger.kernel.org
+References: <20230922175006.work.421-kees@kernel.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20230922175006.work.421-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 94.239.20.48
+X-Source-L: No
+X-Exim-ID: 1qjxz3-003WvM-11
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.98]) [94.239.20.48]:39284
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 51
+X-Org:  HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfHUMpaVG2cem1I2yYNmBAs4k+x++9wj8dwea1wkiwB1iVz+WIJ1axIUiPDPjzUC2In4t7BksdMyUinpeoBV9Y33b0AkhgzUI+kH+hNucLiSFp+ClVaNx
+ 9E9xM2iq0WKxA0+e5adod3P9VbtTg/QjbE2rI9Lu/xTcudmR1foqajJfmFajAvBVLypbyoOPSfqVt4qDK5nqEEe1lH8te/eJB9t2CIWBFdNWcnzpWdCBBR3s
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
-branch HEAD: 5cb9606a901a41f2ffe37fb8528bb6fbfb5d90e2  gpio: sim: fix an invalid __free() usage
 
-elapsed time: 942m
 
-configs tested: 194
-configs skipped: 2
+On 9/22/23 11:50, Kees Cook wrote:
+> Prepare for the coming implementation by GCC and Clang of the __counted_by
+> attribute. Flexible array members annotated with __counted_by can have
+> their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
+> (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
+> functions).
+> 
+> As found with Coccinelle[1], add __counted_by for struct uniphier_pinctrl_reg_region.
+> 
+> [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
+> 
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arc                        nsim_700_defconfig   gcc  
-arc                   randconfig-001-20230922   gcc  
-arc                   randconfig-001-20230923   gcc  
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   gcc  
-arm                              allyesconfig   gcc  
-arm                                 defconfig   gcc  
-arm                   randconfig-001-20230922   gcc  
-arm                   randconfig-001-20230923   gcc  
-arm                        shmobile_defconfig   gcc  
-arm64                            allmodconfig   gcc  
-arm64                             allnoconfig   gcc  
-arm64                            allyesconfig   gcc  
-arm64                               defconfig   gcc  
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20230922   gcc  
-i386         buildonly-randconfig-001-20230923   gcc  
-i386         buildonly-randconfig-002-20230922   gcc  
-i386         buildonly-randconfig-002-20230923   gcc  
-i386         buildonly-randconfig-003-20230922   gcc  
-i386         buildonly-randconfig-003-20230923   gcc  
-i386         buildonly-randconfig-004-20230922   gcc  
-i386         buildonly-randconfig-004-20230923   gcc  
-i386         buildonly-randconfig-005-20230922   gcc  
-i386         buildonly-randconfig-005-20230923   gcc  
-i386         buildonly-randconfig-006-20230922   gcc  
-i386         buildonly-randconfig-006-20230923   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                  randconfig-001-20230922   gcc  
-i386                  randconfig-001-20230923   gcc  
-i386                  randconfig-002-20230922   gcc  
-i386                  randconfig-002-20230923   gcc  
-i386                  randconfig-003-20230922   gcc  
-i386                  randconfig-003-20230923   gcc  
-i386                  randconfig-004-20230922   gcc  
-i386                  randconfig-004-20230923   gcc  
-i386                  randconfig-005-20230922   gcc  
-i386                  randconfig-005-20230923   gcc  
-i386                  randconfig-006-20230922   gcc  
-i386                  randconfig-006-20230923   gcc  
-i386                  randconfig-011-20230922   gcc  
-i386                  randconfig-011-20230923   gcc  
-i386                  randconfig-012-20230922   gcc  
-i386                  randconfig-012-20230923   gcc  
-i386                  randconfig-013-20230922   gcc  
-i386                  randconfig-013-20230923   gcc  
-i386                  randconfig-014-20230922   gcc  
-i386                  randconfig-014-20230923   gcc  
-i386                  randconfig-015-20230922   gcc  
-i386                  randconfig-015-20230923   gcc  
-i386                  randconfig-016-20230922   gcc  
-i386                  randconfig-016-20230923   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                        allyesconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20230922   gcc  
-loongarch             randconfig-001-20230923   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-m68k                       m5249evb_defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                             allmodconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                            ar7_defconfig   gcc  
-mips                  cavium_octeon_defconfig   clang
-mips                     cu1000-neo_defconfig   clang
-mips                           ip27_defconfig   clang
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-openrisc                         allmodconfig   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                           allmodconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   gcc  
-powerpc                     asp8347_defconfig   gcc  
-powerpc                        cell_defconfig   gcc  
-powerpc                       maple_defconfig   gcc  
-powerpc64                           defconfig   gcc  
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   gcc  
-riscv                               defconfig   gcc  
-riscv                 randconfig-001-20230922   gcc  
-riscv                 randconfig-001-20230923   gcc  
-riscv                          rv32_defconfig   clang
-riscv                          rv32_defconfig   gcc  
-s390                             allmodconfig   gcc  
-s390                              allnoconfig   gcc  
-s390                             allyesconfig   gcc  
-s390                                defconfig   gcc  
-s390                  randconfig-001-20230922   gcc  
-s390                  randconfig-001-20230923   gcc  
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                           se7724_defconfig   gcc  
-sh                  sh7785lcr_32bit_defconfig   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                            allyesconfig   gcc  
-sparc                               defconfig   gcc  
-sparc                 randconfig-001-20230922   gcc  
-sparc                 randconfig-001-20230923   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   clang
-um                                  defconfig   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64       buildonly-randconfig-001-20230922   gcc  
-x86_64       buildonly-randconfig-001-20230923   gcc  
-x86_64       buildonly-randconfig-002-20230922   gcc  
-x86_64       buildonly-randconfig-002-20230923   gcc  
-x86_64       buildonly-randconfig-003-20230922   gcc  
-x86_64       buildonly-randconfig-003-20230923   gcc  
-x86_64       buildonly-randconfig-004-20230922   gcc  
-x86_64       buildonly-randconfig-004-20230923   gcc  
-x86_64       buildonly-randconfig-005-20230922   gcc  
-x86_64       buildonly-randconfig-005-20230923   gcc  
-x86_64       buildonly-randconfig-006-20230922   gcc  
-x86_64       buildonly-randconfig-006-20230923   gcc  
-x86_64                              defconfig   gcc  
-x86_64                randconfig-001-20230922   gcc  
-x86_64                randconfig-001-20230923   gcc  
-x86_64                randconfig-002-20230922   gcc  
-x86_64                randconfig-002-20230923   gcc  
-x86_64                randconfig-003-20230922   gcc  
-x86_64                randconfig-003-20230923   gcc  
-x86_64                randconfig-004-20230922   gcc  
-x86_64                randconfig-004-20230923   gcc  
-x86_64                randconfig-005-20230922   gcc  
-x86_64                randconfig-005-20230923   gcc  
-x86_64                randconfig-006-20230922   gcc  
-x86_64                randconfig-006-20230923   gcc  
-x86_64                randconfig-011-20230923   gcc  
-x86_64                randconfig-012-20230923   gcc  
-x86_64                randconfig-013-20230923   gcc  
-x86_64                randconfig-014-20230923   gcc  
-x86_64                randconfig-015-20230923   gcc  
-x86_64                randconfig-016-20230923   gcc  
-x86_64                randconfig-071-20230922   gcc  
-x86_64                randconfig-071-20230923   gcc  
-x86_64                randconfig-072-20230922   gcc  
-x86_64                randconfig-072-20230923   gcc  
-x86_64                randconfig-073-20230922   gcc  
-x86_64                randconfig-073-20230923   gcc  
-x86_64                randconfig-074-20230922   gcc  
-x86_64                randconfig-074-20230923   gcc  
-x86_64                randconfig-075-20230922   gcc  
-x86_64                randconfig-075-20230923   gcc  
-x86_64                randconfig-076-20230922   gcc  
-x86_64                randconfig-076-20230923   gcc  
-x86_64                          rhel-8.3-func   gcc  
-x86_64                    rhel-8.3-kselftests   gcc  
-x86_64                           rhel-8.3-ltp   gcc  
-x86_64                          rhel-8.3-rust   clang
-x86_64                               rhel-8.3   gcc  
-xtensa                            allnoconfig   gcc  
-xtensa                           allyesconfig   gcc  
-
+Thanks
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Gustavo
+
+> ---
+>   drivers/pinctrl/uniphier/pinctrl-uniphier-core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
+> index 18d3a4f69e63..fbd0fcdb42c8 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
+> @@ -31,7 +31,7 @@ struct uniphier_pinctrl_reg_region {
+>   	struct list_head node;
+>   	unsigned int base;
+>   	unsigned int nregs;
+> -	u32 vals[];
+> +	u32 vals[] __counted_by(nregs);
+>   };
+>   
+>   struct uniphier_pinctrl_priv {
