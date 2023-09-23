@@ -2,136 +2,143 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC66ACE7A88
-	for <linux-gpio@archiver.kernel.org>; Sat, 23 Sep 2023 08:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B563ECE7A8B
+	for <linux-gpio@archiver.kernel.org>; Sat, 23 Sep 2023 09:33:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230242AbjIWI1f (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 23 Sep 2023 04:27:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57846 "EHLO
+        id S231277AbjIWJdp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 23 Sep 2023 05:33:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230284AbjIWI1e (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Sep 2023 04:27:34 -0400
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 234B919A
-        for <linux-gpio@vger.kernel.org>; Sat, 23 Sep 2023 01:27:27 -0700 (PDT)
-Received: from eig-obgw-6002a.ext.cloudfilter.net ([10.0.30.222])
-        by cmsmtp with ESMTP
-        id jx8hqJ7k4bK1Vjxz4qkGvE; Sat, 23 Sep 2023 08:27:26 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with ESMTPS
-        id jxz4qTI8SjsHGjxz4q4qv8; Sat, 23 Sep 2023 08:27:26 +0000
-X-Authority-Analysis: v=2.4 cv=FtoWQknq c=1 sm=1 tr=0 ts=650ea16e
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=P7XfKmiOJ4/qXqHZrN7ymg==:17
- a=OWjo9vPv0XrRhIrVQ50Ab3nP57M=:19 a=dLZJa+xiwSxG16/P+YVxDGlgEgI=:19
- a=IkcTkHD0fZMA:10 a=zNV7Rl7Rt7sA:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
- a=KKAkSRfTAAAA:8 a=c-n4J4-pAAAA:8 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8
- a=cm27Pg_UAAAA:8 a=HvF037n1xESchLcPDVoA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22 a=L0NDqeB7ZLmQzAogN4cw:22 a=AjGcO6oz07-iQ99wixmX:22
- a=1CNFftbPRP8L7MoqJWF3:22 a=xmb-EsYY8bH0VWELuYED:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=08UecPEuAbG0l+x/YFl55F1N++K/4bmSxvCFHQB9S5g=; b=WZJsv7aLhUeUqdRKWMwr7Z/VBe
-        aw0zDu/2rwadgrRSu0C/OBrB2VFYO2VZo3Do6d2eMPb+cmHrF1NbrhQ+Ohct4/llYYmk5CpHs2EOS
-        sK/fC43uSRgN3uPeTnLZdyxX32SNxvC/5BcrhuJA2ihoGDpkFVNh5P1DsTms5MLT+Ipd9M56sL8+K
-        WRPYkL8Xip6fib/rJUbCmkLhW49oZcLigaZ/WqRnHVEt8PsitJcnPpLfDUyvyqlvFTdhLO/afX6bD
-        5lE7D3uh0zA4l2p1hKkpxV9DA20Z+N/1Gc6j4KAaeH7Ym4rkDKSKp4KvJqCYpwbKEz1+2NLNUgMn6
-        7wShJruw==;
-Received: from [94.239.20.48] (port=39284 helo=[192.168.1.98])
-        by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.96)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1qjxz3-003WvM-11;
-        Sat, 23 Sep 2023 03:27:25 -0500
-Message-ID: <49eab142-35ba-bc75-9af8-9dfed8b96f00@embeddedor.com>
-Date:   Sat, 23 Sep 2023 10:28:29 -0600
+        with ESMTP id S231255AbjIWJdb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Sep 2023 05:33:31 -0400
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8201F1A6;
+        Sat, 23 Sep 2023 02:33:20 -0700 (PDT)
+Received: from g550jk.localnet (k10064.upc-k.chello.nl [62.108.10.64])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 8FCC9D0F4B;
+        Sat, 23 Sep 2023 09:32:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1695461568; bh=qtF8rK3zTiN2N092gDgKMwaqzb1vmROqLxC+bL23f3k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=WhGhanFsA9HVICbckx6VJX3a1hl1DaBYbJJz9vGxfG11xRmoG8Rsei+yz2JHNjQYz
+         WphJqbTejdyILZoQUjTh/WOktZTepsXXlGj1TMCIbYNQptGnp/64FJZkD413Biux8v
+         KL/lgS855QqktfdrF4b5ZeJhJm4Fu2CbGZzmVRcM=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Matti =?ISO-8859-1?Q?Lehtim=E4ki?= <matti.lehtimaki@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matti =?ISO-8859-1?Q?Lehtim=E4ki?= <matti.lehtimaki@gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: qcom: msm8226: Add MPM pin mappings
+Date:   Sat, 23 Sep 2023 11:32:47 +0200
+Message-ID: <10339711.nUPlyArG6x@z3ntu.xyz>
+In-Reply-To: <20230922224027.85291-2-matti.lehtimaki@gmail.com>
+References: <20230922224027.85291-1-matti.lehtimaki@gmail.com>
+ <20230922224027.85291-2-matti.lehtimaki@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] pinctrl: uniphier: Annotate struct
- uniphier_pinctrl_reg_region with __counted_by
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-References: <20230922175006.work.421-kees@kernel.org>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20230922175006.work.421-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 94.239.20.48
-X-Source-L: No
-X-Exim-ID: 1qjxz3-003WvM-11
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.98]) [94.239.20.48]:39284
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 51
-X-Org:  HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfHUMpaVG2cem1I2yYNmBAs4k+x++9wj8dwea1wkiwB1iVz+WIJ1axIUiPDPjzUC2In4t7BksdMyUinpeoBV9Y33b0AkhgzUI+kH+hNucLiSFp+ClVaNx
- 9E9xM2iq0WKxA0+e5adod3P9VbtTg/QjbE2rI9Lu/xTcudmR1foqajJfmFajAvBVLypbyoOPSfqVt4qDK5nqEEe1lH8te/eJB9t2CIWBFdNWcnzpWdCBBR3s
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
+Hi Matti,
 
-
-On 9/22/23 11:50, Kees Cook wrote:
-> Prepare for the coming implementation by GCC and Clang of the __counted_by
-> attribute. Flexible array members annotated with __counted_by can have
-> their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
-> (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
-> functions).
-> 
-> As found with Coccinelle[1], add __counted_by for struct uniphier_pinctrl_reg_region.
-> 
-> [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
-> 
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-
-Thanks
--- 
-Gustavo
-
+On Samstag, 23. September 2023 00:40:26 CEST Matti Lehtim=E4ki wrote:
+> Add pin <-> wakeirq mappings to allow for waking up the AP from sleep
+> through MPM-connected pins.
+>=20
+> Signed-off-by: Matti Lehtim=E4ki <matti.lehtimaki@gmail.com>
 > ---
->   drivers/pinctrl/uniphier/pinctrl-uniphier-core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-> index 18d3a4f69e63..fbd0fcdb42c8 100644
-> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-> @@ -31,7 +31,7 @@ struct uniphier_pinctrl_reg_region {
->   	struct list_head node;
->   	unsigned int base;
->   	unsigned int nregs;
-> -	u32 vals[];
-> +	u32 vals[] __counted_by(nregs);
->   };
->   
->   struct uniphier_pinctrl_priv {
+>  drivers/pinctrl/qcom/pinctrl-msm8226.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>=20
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm8226.c
+> b/drivers/pinctrl/qcom/pinctrl-msm8226.c index 994619840a70..1e46a9ab382f
+> 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm8226.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm8226.c
+> @@ -612,6 +612,16 @@ static const struct msm_pingroup msm8226_groups[] =
+=3D {
+>=20
+>  #define NUM_GPIO_PINGROUPS 117
+>=20
+> +static const struct msm_gpio_wakeirq_map msm8226_mpm_map[] =3D {
+> +	{ 1, 3 }, { 4, 4 }, { 5, 5 }, { 9, 6 }, { 13, 7 }, { 17, 8 },
+
+I'm not really convinced this is the correct order of values...
+
+Let's look at downstream:
+
+  qcom,gpio-map =3D <3  1>,
+                  <4  4 >,
+                  <5  5 >,
+                  <6  9 >,
+                  [...]
+
+=46rom Documentation/devicetree/bindings/arm/msm/mpm.txt downstream:
+
+  Each tuple represents a MPM pin and which GIC interrupt is routed to it.
+
+So first is pin number, second is interrupt number.
+
+And check mainline:=20
+
+  /**
+   * struct msm_gpio_wakeirq_map - Map of GPIOs and their wakeup pins
+   * @gpio:          The GPIOs that are wakeup capable
+   * @wakeirq:       The interrupt at the always-on interrupt controller
+   */
+  struct msm_gpio_wakeirq_map {
+  	unsigned int gpio;
+  	unsigned int wakeirq;
+  };
+
+So here we also have the order pin-interrupt, not the reverse order.
+
+Therefore I believe the order in this patch is incorrect, and it should rat=
+her=20
+be:
+
+  { 3, 1 }, { 4, 4 }, { 5, 5 }, { 6, 9 }, { 7, 13 }, { 8, 17 },
+  [...]
+
+Or do you think I'm missing something?
+
+Regards
+Luca
+
+> +	{ 21, 9 }, { 27, 10 }, { 29, 11 }, { 31, 12 }, { 33, 13 }, { 35, 14=20
+},
+> +	{ 37, 15 }, { 38, 16 }, { 39, 17 }, { 41, 18 }, { 46, 19 }, { 48, 20=20
+},
+> +	{ 49, 21 }, { 50, 22 }, { 51, 23 }, { 52, 24 }, { 54, 25 }, { 62, 26=20
+},
+> +	{ 63, 27 }, { 64, 28 }, { 65, 29 }, { 66, 30 }, { 67, 31 }, { 68, 32=20
+},
+> +	{ 69, 33 }, { 71, 34 }, { 72, 35 }, { 106, 36 }, { 107, 37 },
+> +	{ 108, 38 }, { 109, 39 }, { 110, 40 }, { 111, 54 }, { 113, 55 },
+> +};
+> +
+>  static const struct msm_pinctrl_soc_data msm8226_pinctrl =3D {
+>  	.pins =3D msm8226_pins,
+>  	.npins =3D ARRAY_SIZE(msm8226_pins),
+> @@ -620,6 +630,8 @@ static const struct msm_pinctrl_soc_data msm8226_pinc=
+trl
+> =3D { .groups =3D msm8226_groups,
+>  	.ngroups =3D ARRAY_SIZE(msm8226_groups),
+>  	.ngpios =3D NUM_GPIO_PINGROUPS,
+> +	.wakeirq_map =3D msm8226_mpm_map,
+> +	.nwakeirq_map =3D ARRAY_SIZE(msm8226_mpm_map),
+>  };
+>=20
+>  static int msm8226_pinctrl_probe(struct platform_device *pdev)
+
+
+
+
