@@ -2,29 +2,29 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B6DCE7A8E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2D1CE7A88
 	for <linux-gpio@archiver.kernel.org>; Sun, 24 Sep 2023 17:17:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230024AbjIXRR1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S229710AbjIXRR1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Sun, 24 Sep 2023 13:17:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34526 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230029AbjIXRR0 (ORCPT
+        with ESMTP id S230024AbjIXRR0 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Sep 2023 13:17:26 -0400
-X-Greylist: delayed 350 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 24 Sep 2023 10:17:18 PDT
 Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBC9CFD;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC008FE;
         Sun, 24 Sep 2023 10:17:18 -0700 (PDT)
 Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id 9ED6481FF1;
-        Sun, 24 Sep 2023 19:11:28 +0200 (CEST)
+        by mx.skole.hr (mx.skole.hr) with ESMTP id 95E8482085;
+        Sun, 24 Sep 2023 19:11:33 +0200 (CEST)
 From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Sun, 24 Sep 2023 18:42:55 +0200
-Subject: [PATCH RFC 2/6] ARM: pxa: Convert Spitz LEDs to GPIO descriptors
+Date:   Sun, 24 Sep 2023 18:42:59 +0200
+Subject: [PATCH RFC 6/6] ARM: pxa: Convert gumstix Bluetooth to GPIO
+ descriptors
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20230924-pxa-gpio-v1-2-2805b87d8894@skole.hr>
+Message-Id: <20230924-pxa-gpio-v1-6-2805b87d8894@skole.hr>
 References: <20230924-pxa-gpio-v1-0-2805b87d8894@skole.hr>
 In-Reply-To: <20230924-pxa-gpio-v1-0-2805b87d8894@skole.hr>
 To:     Daniel Mack <daniel@zonque.org>,
@@ -40,81 +40,95 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org,
         =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1768;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2065;
  i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=02fLXHNo6SZtYq4sldyjzMDb6JVfWPhjgCG5UTkdTdY=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlEG274zYOOseY07wrIpLw55JpPY81b1O+DhHDw
- c1vQQZ2XxSJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRBtuwAKCRCaEZ6wQi2W
- 4TqnD/4uQ6H9fKBhLDhKBRQmqOzNMF4vOaBCehGJ48w/HQ7SfRvR3zHESYgomDYWFePuKZ3gXlT
- Q7GErR6GxXh4Elgj4CqfwXfxS8mbYTfDagbLfH9zbfMIMN2Idz6GABC3NvPx3ikHb1F22tx+Cnd
- tek2dvcJAGVkWIFm983EQbkoFvgVrv5Qnf5ZdOPWLx7sinqxDLuVAzKxiY1nnOQNlgrECI+OEbm
- sqIOTGDa5VEu1/VzR7P8QcnzOz66Tu7+WU5iGgBHpeBXIKq/vMT9UCIerfMOadQMRUs1kjRrVOU
- NRV+DlpabQB+BXEN6+3a5AGHf9u87eevHHcNGDvUnOtf69mSg/pY+c+LtT2IPJfBjHBNPmWbfat
- LaasG70IQ+84KcMaTo0YGouUTutjCIvEn5Na/JewpnceClczrDLJtVk22jzDIrzVdQHKQL2f0t0
- AfyGggn27642yT943m+oLOCoSAxbAFhxV1+o532IS/Wktb01NpdrC4T3+3EhwAYOBMbFAy5K91P
- TOI5waIYQyOFnYBEyFrjL+51Ins5LjZz2VrPlsalW6+Ace1OLZ2kV/o9MiEXzeuP1EuFAicVPsS
- Ylt23QHqnv2Xyjj/XEMzWt1DrkXLIKUXnteuH96bBXwHRsvxXruvJgv5z/3RTt2+zavpIVsmnch
- eCX3yZVlysu31Gw==
+ bh=H9m5GKPOjDqHvnoQunanjp8s8qAFx4LJD9KoCMZ/UEw=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlEG28X5NLVBm4Qm0+u6B6FKoxQly/0Ciuq8Dwq
+ QSFwx5tDyiJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRBtvAAKCRCaEZ6wQi2W
+ 4WIQEACd3lw4SAlg1f15xp4lmNLT7RcoKchhGt8EYTWfn55MAR/JinvBIGpVqMdgxB8EAXj+y6U
+ 8K9GsDCvTXhFBwvCJzt6noLutTilUD1CzM3CJOXfS7ADUZur+AenZ9ueyN7iv4SbJYOZ5eGbEhS
+ RR+wxCLltnrtnTdj7CYCbEbGVXp5Onahvon6xS1TMjaiIKJt4gT61wrXMjyHSHh69icqlMT5LKD
+ +EfLU128BhOFkif3M4gkRXpKZPqn3NFKlTEfIXV6fWSR05NCWIhatqDbjJBJO/abPamHMBRr87Y
+ a9FZ9Su3ElS2ePbsM7HDRChmg/WIukHYudItJYEIo1X1GfZIt8ob6NHL8BtDYwgC7BSID6s/M2O
+ ngF+atGZtLGG+DMpSDqD0Db62Dor7IPgGE1GVFIV8bTQQdOWtriOa6ZS+swQnNY6Av9xV2UtBQd
+ KBP7ZNp/E7wJwqUzoxOxO08Pp3b2Fqz4YoRQKSAB/pwoUCyZUaz8rEsX/YBU4yo1eRZsQhsF2o/
+ zixUHhAyOSPxOyY5bh438obvqYCtMSK8TgMeAyXIFLpLnkh4796NuwLF6XS9wv7AbXB52mS1Saw
+ w5Oa0t5wLzMITGy17grLQ8wf1N9W3c5XSK4CbkyH9SmHlCkcc5A7eCyWIvysZ11il4X20lF02Aa
+ Rfxtr3YB8cD6uWg==
 X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
  fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Sharp's Spitz board still uses the legacy GPIO interface for configuring
-its two onboard LEDs.
+Gumstix still uses the legacy GPIO interface for resetting the Bluetooth
+device.
 
-Convert them to use the GPIO descriptor interface.
+Convert it to use the GPIO descriptor interface.
 
 Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 ---
- arch/arm/mach-pxa/spitz.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ arch/arm/mach-pxa/gumstix.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
-index 535e2b2e997b..91c4b208973c 100644
---- a/arch/arm/mach-pxa/spitz.c
-+++ b/arch/arm/mach-pxa/spitz.c
-@@ -452,16 +452,25 @@ static inline void spitz_keys_init(void) {}
-  * LEDs
-  ******************************************************************************/
- #if defined(CONFIG_LEDS_GPIO) || defined(CONFIG_LEDS_GPIO_MODULE)
-+static struct gpiod_lookup_table spitz_led_gpio_table = {
-+	.dev_id = "leds-gpio",
-+	.table = {
-+		GPIO_LOOKUP("pxa-gpio", SPITZ_GPIO_LED_ORANGE, "led_orange",
-+				GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("pxa-gpio", SPITZ_GPIO_LED_GREEN, "led_green",
-+				GPIO_ACTIVE_HIGH),
-+		{ }
-+	}
-+};
+diff --git a/arch/arm/mach-pxa/gumstix.c b/arch/arm/mach-pxa/gumstix.c
+index c9f0f62187bd..14e1b9274d7a 100644
+--- a/arch/arm/mach-pxa/gumstix.c
++++ b/arch/arm/mach-pxa/gumstix.c
+@@ -20,8 +20,8 @@
+ #include <linux/delay.h>
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/partitions.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/gpio/machine.h>
+-#include <linux/gpio.h>
+ #include <linux/err.h>
+ #include <linux/clk.h>
+ 
+@@ -129,6 +129,9 @@ static void gumstix_udc_init(void)
+ #endif
+ 
+ #ifdef CONFIG_BT
++GPIO_LOOKUP_SINGLE(gumstix_bt_gpio_table, "pxa2xx-uart.1", "pxa-gpio",
++		GPIO_GUMSTIX_BTRESET, "BTRST", GPIO_ACTIVE_LOW);
 +
- static struct gpio_led spitz_gpio_leds[] = {
- 	{
- 		.name			= "spitz:amber:charge",
- 		.default_trigger	= "sharpsl-charge",
--		.gpio			= SPITZ_GPIO_LED_ORANGE,
- 	},
- 	{
- 		.name			= "spitz:green:hddactivity",
- 		.default_trigger	= "disk-activity",
--		.gpio			= SPITZ_GPIO_LED_GREEN,
- 	},
- };
+ /* Normally, the bootloader would have enabled this 32kHz clock but many
+ ** boards still have u-boot 1.1.4 so we check if it has been turned on and
+ ** if not, we turn it on with a warning message. */
+@@ -153,24 +156,23 @@ static void gumstix_setup_bt_clock(void)
  
-@@ -480,6 +489,11 @@ static struct platform_device spitz_led_device = {
- 
- static void __init spitz_leds_init(void)
+ static void __init gumstix_bluetooth_init(void)
  {
-+	gpiod_add_lookup_table(&spitz_led_gpio_table);
-+	spitz_gpio_leds[0].gpiod = gpiod_get(&spitz_led_device.dev,
-+			"led_orange", GPIOD_ASIS);
-+	spitz_gpio_leds[1].gpiod = gpiod_get(&spitz_led_device.dev,
-+			"led_green", GPIOD_ASIS);
- 	platform_device_register(&spitz_led_device);
+-	int err;
++	struct gpio_desc *desc;
++
++	gpiod_add_lookup_table(&gumstix_bt_gpio_table);
+ 
+ 	gumstix_setup_bt_clock();
+ 
+-	err = gpio_request(GPIO_GUMSTIX_BTRESET, "BTRST");
+-	if (err) {
++	desc = gpiod_get(&pxa_device_btuart.dev, "BTRST", GPIOD_OUT_HIGH);
++	if (IS_ERR(desc)) {
+ 		pr_err("gumstix: failed request gpio for bluetooth reset\n");
+ 		return;
+ 	}
+ 
+-	err = gpio_direction_output(GPIO_GUMSTIX_BTRESET, 1);
+-	if (err) {
+-		pr_err("gumstix: can't reset bluetooth\n");
+-		return;
+-	}
+-	gpio_set_value(GPIO_GUMSTIX_BTRESET, 0);
++	gpiod_set_value(desc, 0);
+ 	udelay(100);
+-	gpio_set_value(GPIO_GUMSTIX_BTRESET, 1);
++	gpiod_set_value(desc, 1);
++
++	gpiod_put(desc);
  }
  #else
+ static void gumstix_bluetooth_init(void)
 
 -- 
 2.42.0
