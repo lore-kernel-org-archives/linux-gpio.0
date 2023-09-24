@@ -2,28 +2,28 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1682CE7A88
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A10E4CE7A8A
 	for <linux-gpio@archiver.kernel.org>; Sun, 24 Sep 2023 17:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230136AbjIXRRy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S230146AbjIXRRy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Sun, 24 Sep 2023 13:17:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52196 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229993AbjIXRRx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Sep 2023 13:17:53 -0400
+        with ESMTP id S230136AbjIXRRy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Sep 2023 13:17:54 -0400
 Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0086FC;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B013FFE;
         Sun, 24 Sep 2023 10:17:47 -0700 (PDT)
 Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id 404C683220;
-        Sun, 24 Sep 2023 19:11:27 +0200 (CEST)
+        by mx.skole.hr (mx.skole.hr) with ESMTP id F0497832A1;
+        Sun, 24 Sep 2023 19:11:30 +0200 (CEST)
 From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Sun, 24 Sep 2023 18:42:54 +0200
-Subject: [PATCH RFC 1/6] ARM: pxa: Convert Spitz OHCI to GPIO descriptors
+Date:   Sun, 24 Sep 2023 18:42:57 +0200
+Subject: [PATCH RFC 4/6] ARM: pxa: Convert reset driver to GPIO descriptors
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20230924-pxa-gpio-v1-1-2805b87d8894@skole.hr>
+Message-Id: <20230924-pxa-gpio-v1-4-2805b87d8894@skole.hr>
 References: <20230924-pxa-gpio-v1-0-2805b87d8894@skole.hr>
 In-Reply-To: <20230924-pxa-gpio-v1-0-2805b87d8894@skole.hr>
 To:     Daniel Mack <daniel@zonque.org>,
@@ -39,107 +39,151 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org,
         =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2818;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3634;
  i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=+Sz/awoB80RmbtvdOIvdB1I17dA4iaXaSLREife8PXw=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlEG270ggGazGspMk88lLMCw46u4STUHtpeT+Ie
- qd9ziPqrVuJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRBtuwAKCRCaEZ6wQi2W
- 4etcD/9D7l6HUQH9mdjzDPU6tTfkLANQhPadZnhVUxfkp0t6FveMEeAUPBB49XrI9De9Pv5iz+8
- dXDH9DG7ch/kaAsgPtv/tcpcE/UTm76BMlm/n0AUXt1m10olIuN84mSxp7dTfEUE2EPVd7UVs7/
- hmuHXBO9wh2QffllcDNH02daRbqQFMgqKHtejR8LTvG7WcYgbTSQ0ZV9BjwhWgHXM5rfo7UPncB
- nVPCr5VE0v7XCoJHxF+mYXUcSNIMp7qDMzdvfISvi+swTqYAL5A5dxMmuDBL5Nh4msvbGtuRAvb
- bnVfBHRRa1BMSlKLwMopCV3WMxAfcicJI7YFelvJrvQqY8xzcL+larydFbnYrGZZa+RBePHY1oT
- 6Fh6XUO+xJRtwjYqdtr/9WltW6Mrk6cKl+HqdROiJsY9oPBcuqKTWaEUIwjeh0gz7OEjj0nbywg
- rbbb7u5e7TYiNi2AGb1dFOk/kCfddW2fMZvwD3VOThXMmxxkT2bcPF3cvFmh1LESlmFnT1RVd/D
- d7AJh7W1xJMtUVacCs8pd511R87vF730jvw2+BpBBVSA5FfmRUg3tbT/YEtu14Zv3/lr6fP7YPf
- ahr83Pel17Ec1biQ0nYr2VSr0dBSMZoPiFSaJvSxb4PiJ+FWOA0WM5g1RvEVVdo06ViNV5tN71b
- tDQ/fWIRF6wbtew==
+ bh=GrFT9JmOR1zAt3MyVJMcvKbA7dX5Lm6oYSMpmtciw8U=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlEG27USpK03fIklpgxoF4r7AZErPkzYxfE6IT/
+ 2tZaPhU9wuJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRBtuwAKCRCaEZ6wQi2W
+ 4RW3EACZMFf0i4zxCdnAKuLp1hs1yPKmYp3h7kd0qSwnkc5Wyc4iZrewxVNd73XebGxBHD0bB+B
+ FgVhUpY/lt4LFRN6uCkuZefuj8q7nUX/3ljkbljlYKdvaag656rJ6FCoU7vLMXTB/xK3TP3mqD/
+ UnfPjlgn0KhGiKYBz6HcZPPPS3NtACDt44XUspRwqzNIRpGpBUnKlxWQMdkqxWsQoZZ/F5iBb3I
+ VMWyJHWtU5twki0kx+YLV8zpD3cmG5GGEudZXp70cc4DCZbAMorZuynp+8eq9aZIAvXV59dw5uf
+ z/iv9KQInSqIBBFuNAnU1kWJhKQuQA0VwXWX1q9zhodz7b7aOCIlsOhKdgemSHRgKWUcrVhHi0L
+ GX717ffWtMUsJ5rcRGLaG5yzf4CKqptqEKbBkAdqmn5G2Zr7o8SA9HYjhYFN2z/lLI6wkI/hYh9
+ +Mu1CAHh151ALWrgX9JUanBZZaVdza8LhPFed6ty03fyjcbAsPcHLcIPHjp0oqUYnbkKla1t+2U
+ RSG2N4fuXIQd979OYQ1iJqdJLgV+/DHEV1zEG/cZLefke+TMgyhsniuW/ydSV99zobKlEmQKVMz
+ URrogilsBtjA+RIunY+HF+Cu6Ukr78/O/IhmDxYkLsO1GDh3DZF5t055yDNrd2B9m1IHn0A7fVE
+ 8ymjg3RhjEGjoeQ==
 X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
  fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Sharp's Spitz board still uses the legacy GPIO interface for controlling
-a GPIO pin related to the USB host controller.
+The PXA reset driver still uses the legacy GPIO interface for
+configuring and asserting the reset pin.
 
-Convert this function to use the new GPIO descriptor interface.
+Convert it to use the GPIO descriptor interface.
 
 Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 ---
- arch/arm/mach-pxa/spitz.c      | 13 ++++++-------
- drivers/usb/host/ohci-pxa27x.c | 10 ++++++++++
- 2 files changed, 16 insertions(+), 7 deletions(-)
+ arch/arm/mach-pxa/reset.c | 40 ++++++++++++++--------------------------
+ arch/arm/mach-pxa/reset.h |  3 +--
+ arch/arm/mach-pxa/spitz.c |  6 +++++-
+ 3 files changed, 20 insertions(+), 29 deletions(-)
 
+diff --git a/arch/arm/mach-pxa/reset.c b/arch/arm/mach-pxa/reset.c
+index 27293549f8ad..1484dce1383c 100644
+--- a/arch/arm/mach-pxa/reset.c
++++ b/arch/arm/mach-pxa/reset.c
+@@ -2,7 +2,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/delay.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/io.h>
+ #include <asm/proc-fns.h>
+ #include <asm/system_misc.h>
+@@ -14,33 +14,21 @@
+ 
+ static void do_hw_reset(void);
+ 
+-static int reset_gpio = -1;
++static struct gpio_desc *reset_gpio = NULL;
+ 
+-int init_gpio_reset(int gpio, int output, int level)
++int init_gpio_reset(int output, int level)
+ {
+-	int rc;
+-
+-	rc = gpio_request(gpio, "reset generator");
+-	if (rc) {
+-		printk(KERN_ERR "Can't request reset_gpio\n");
+-		goto out;
++	reset_gpio = gpiod_get(NULL, "reset generator", GPIOD_ASIS);
++	if (IS_ERR(reset_gpio)) {
++		printk(KERN_ERR "Can't request reset_gpio: %ld\n",
++				PTR_ERR(reset_gpio));
++		return PTR_ERR(reset_gpio);
+ 	}
+ 
+ 	if (output)
+-		rc = gpio_direction_output(gpio, level);
++		return gpiod_direction_output(reset_gpio, level);
+ 	else
+-		rc = gpio_direction_input(gpio);
+-	if (rc) {
+-		printk(KERN_ERR "Can't configure reset_gpio\n");
+-		gpio_free(gpio);
+-		goto out;
+-	}
+-
+-out:
+-	if (!rc)
+-		reset_gpio = gpio;
+-
+-	return rc;
++		return gpiod_direction_input(reset_gpio);
+ }
+ 
+ /*
+@@ -50,16 +38,16 @@ int init_gpio_reset(int gpio, int output, int level)
+  */
+ static void do_gpio_reset(void)
+ {
+-	BUG_ON(reset_gpio == -1);
++	BUG_ON(IS_ERR(reset_gpio));
+ 
+ 	/* drive it low */
+-	gpio_direction_output(reset_gpio, 0);
++	gpiod_direction_output(reset_gpio, 0);
+ 	mdelay(2);
+ 	/* rising edge or drive high */
+-	gpio_set_value(reset_gpio, 1);
++	gpiod_set_value(reset_gpio, 1);
+ 	mdelay(2);
+ 	/* falling edge */
+-	gpio_set_value(reset_gpio, 0);
++	gpiod_set_value(reset_gpio, 0);
+ 
+ 	/* give it some time */
+ 	mdelay(10);
+diff --git a/arch/arm/mach-pxa/reset.h b/arch/arm/mach-pxa/reset.h
+index 963dd190bc13..5864f61a0e94 100644
+--- a/arch/arm/mach-pxa/reset.h
++++ b/arch/arm/mach-pxa/reset.h
+@@ -13,10 +13,9 @@ extern void pxa_register_wdt(unsigned int reset_status);
+ 
+ /**
+  * init_gpio_reset() - register GPIO as reset generator
+- * @gpio: gpio nr
+  * @output: set gpio as output instead of input during normal work
+  * @level: output level
+  */
+-extern int init_gpio_reset(int gpio, int output, int level);
++extern int init_gpio_reset(int output, int level);
+ 
+ #endif /* __ASM_ARCH_RESET_H */
 diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
-index cc691b199429..535e2b2e997b 100644
+index 616305978727..94bcb187713b 100644
 --- a/arch/arm/mach-pxa/spitz.c
 +++ b/arch/arm/mach-pxa/spitz.c
-@@ -649,23 +649,22 @@ static inline void spitz_mmc_init(void) {}
-  * USB Host
-  ******************************************************************************/
- #if defined(CONFIG_USB_OHCI_HCD) || defined(CONFIG_USB_OHCI_HCD_MODULE)
-+GPIO_LOOKUP_SINGLE(spitz_usb_host_gpio_table, "pxa27x-ohci", "gpio-pxa",
-+		SPITZ_GPIO_USB_HOST, "usb-host", GPIO_ACTIVE_LOW);
+@@ -1024,9 +1024,13 @@ static void spitz_restart(enum reboot_mode mode, const char *cmd)
+ 	spitz_poweroff();
+ }
+ 
++GPIO_LOOKUP_SINGLE(spitz_reset_gpio_table, NULL, "pxa-gpio",
++		SPITZ_GPIO_ON_RESET, "reset generator", GPIO_ACTIVE_HIGH);
 +
- static int spitz_ohci_init(struct device *dev)
+ static void __init spitz_init(void)
  {
--	int err;
--
--	err = gpio_request(SPITZ_GPIO_USB_HOST, "USB_HOST");
--	if (err)
--		return err;
-+	gpiod_add_lookup_table(&spitz_usb_host_gpio_table);
+-	init_gpio_reset(SPITZ_GPIO_ON_RESET, 1, 0);
++	gpiod_add_lookup_table(&spitz_reset_gpio_table);
++	init_gpio_reset(1, 0);
+ 	pm_power_off = spitz_poweroff;
  
- 	/* Only Port 2 is connected, setup USB Port 2 Output Control Register */
- 	UP2OCR = UP2OCR_HXS | UP2OCR_HXOE | UP2OCR_DPPDE | UP2OCR_DMPDE;
- 
--	return gpio_direction_output(SPITZ_GPIO_USB_HOST, 1);
-+	return 0;
- }
- 
- static void spitz_ohci_exit(struct device *dev)
- {
--	gpio_free(SPITZ_GPIO_USB_HOST);
-+	gpiod_remove_lookup_table(&spitz_usb_host_gpio_table);
- }
- 
- static struct pxaohci_platform_data spitz_ohci_platform_data = {
-diff --git a/drivers/usb/host/ohci-pxa27x.c b/drivers/usb/host/ohci-pxa27x.c
-index 357d9aee38a3..0cf222f9d64b 100644
---- a/drivers/usb/host/ohci-pxa27x.c
-+++ b/drivers/usb/host/ohci-pxa27x.c
-@@ -121,6 +121,7 @@ struct pxa27x_ohci {
- 	void __iomem	*mmio_base;
- 	struct regulator *vbus[3];
- 	bool		vbus_enabled[3];
-+	struct gpio_desc *usb_host;
- };
- 
- #define to_pxa27x_ohci(hcd)	(struct pxa27x_ohci *)(hcd_to_ohci(hcd)->priv)
-@@ -447,6 +448,12 @@ static int ohci_hcd_pxa27x_probe(struct platform_device *pdev)
- 	pxa_ohci = to_pxa27x_ohci(hcd);
- 	pxa_ohci->clk = usb_clk;
- 	pxa_ohci->mmio_base = (void __iomem *)hcd->regs;
-+	pxa_ohci->usb_host = gpiod_get(&pdev->dev, "usb-host", GPIOD_OUT_LOW);
-+	if (IS_ERR(pxa_ohci->usb_host)) {
-+		dev_warn(&pdev->dev, "failed to get USB host GPIO with %d\n",
-+				(int) pxa_ohci->usb_host);
-+		pxa_ohci->usb_host = NULL;
-+	}
- 
- 	for (i = 0; i < 3; ++i) {
- 		char name[6];
-@@ -512,6 +519,9 @@ static void ohci_hcd_pxa27x_remove(struct platform_device *pdev)
- 	for (i = 0; i < 3; ++i)
- 		pxa27x_ohci_set_vbus_power(pxa_ohci, i, false);
- 
-+	if (pxa_ohci->usb_host)
-+		gpiod_put(pxa_ohci->usb_host);
-+
- 	usb_put_hcd(hcd);
- }
- 
+ 	PMCR = 0x00;
 
 -- 
 2.42.0
