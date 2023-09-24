@@ -2,31 +2,31 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F1DFCE7A90
-	for <linux-gpio@archiver.kernel.org>; Sun, 24 Sep 2023 17:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B6DCE7A8E
+	for <linux-gpio@archiver.kernel.org>; Sun, 24 Sep 2023 17:17:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230029AbjIXRR1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S230024AbjIXRR1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Sun, 24 Sep 2023 13:17:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34538 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230100AbjIXRR0 (ORCPT
+        with ESMTP id S230029AbjIXRR0 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Sep 2023 13:17:26 -0400
+X-Greylist: delayed 350 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 24 Sep 2023 10:17:18 PDT
 Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC306FF;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBC9CFD;
         Sun, 24 Sep 2023 10:17:18 -0700 (PDT)
 Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id BBAE082064;
-        Sun, 24 Sep 2023 19:11:25 +0200 (CEST)
+        by mx.skole.hr (mx.skole.hr) with ESMTP id 9ED6481FF1;
+        Sun, 24 Sep 2023 19:11:28 +0200 (CEST)
 From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Subject: [PATCH RFC 0/6] ARM: pxa: GPIO descriptor conversions
-Date:   Sun, 24 Sep 2023 18:42:53 +0200
-Message-Id: <20230924-pxa-gpio-v1-0-2805b87d8894@skole.hr>
+Date:   Sun, 24 Sep 2023 18:42:55 +0200
+Subject: [PATCH RFC 2/6] ARM: pxa: Convert Spitz LEDs to GPIO descriptors
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAA1nEGUC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI2MDCwNz3YKKRN30gsx8XePkVCPTFFNzEwtDEyWg8oKi1LTMCrBR0UpBbs5
- KsbW1AHrYMDBfAAAA
+Message-Id: <20230924-pxa-gpio-v1-2-2805b87d8894@skole.hr>
+References: <20230924-pxa-gpio-v1-0-2805b87d8894@skole.hr>
+In-Reply-To: <20230924-pxa-gpio-v1-0-2805b87d8894@skole.hr>
 To:     Daniel Mack <daniel@zonque.org>,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
         Robert Jarzmik <robert.jarzmik@free.fr>,
@@ -40,57 +40,83 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org,
         =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1194;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1768;
  i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=B9DP0CxfWMcnVFBkaCnG2gUKEhrfXwj6FqG5mvPhN24=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlEG27bNYu4Fa4414ypkowuQ+gQAtFotUwZOv2q
- d1cTD9kvnCJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRBtuwAKCRCaEZ6wQi2W
- 4ZjQEACo4c4VxqU5rJUdrlr21h4lHp2LcaxM93RzM0JC/NtD2NhGy0N78D0zdx014gLbvRFYIAA
- bZfzf8MOK5SZLUJacCUt2kfxb+wUD3AjCEuS4zjfqhTtGbmR3GFWNun3v4IWmbg1f2h/1wUCMhU
- 6nuEx0mtnZlQGwEC8AecRbC1LEcby7IG6Jpj251OYz4xOj+KOZdS1zGpWXQj4D4GASTuTrxqwx2
- uF4+iOkIcE/4zwB4EjYnPtLA6uJIUknSjvedyTZoJ7rD5Hx9T4NWfMl93gzKVnxztoh5di4RGb3
- Ky+tp/JDFU3kQzn0kWbg7CqJNcu3rMF3aUbdvcwKv7qSnCiUWJwhfyElAXChEtJG2latdW2P382
- aMVDogpHYPteq/D1rsyygF2Wi/RlyvBt1OpuQ7oNp5shyrcMigNI5KBvblMWxQRXPfH9FLeVmsU
- aiiM+33n4pZxl2uQaEzpsV/nP1kJuiZ0i664df1bfhllpd47n0vO8b5nmKt6TR8Lb+b/Qo2skUG
- WklpXKEHAbyPFyrrar2UeObzm7s9/1r7Kt4FWuat/+7nBA85QB1rqly/Da4LtO7LE9FnY5AYjTJ
- VT1UfzHTr2l8XIQl/G5onxdXjlkWrYNVrO2xgiFOsCSYnyIOazi2pTb5JejNJB/En1I3rQ4Xw7g
- FunsLXRK7+2dlbA==
+ bh=02fLXHNo6SZtYq4sldyjzMDb6JVfWPhjgCG5UTkdTdY=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlEG274zYOOseY07wrIpLw55JpPY81b1O+DhHDw
+ c1vQQZ2XxSJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRBtuwAKCRCaEZ6wQi2W
+ 4TqnD/4uQ6H9fKBhLDhKBRQmqOzNMF4vOaBCehGJ48w/HQ7SfRvR3zHESYgomDYWFePuKZ3gXlT
+ Q7GErR6GxXh4Elgj4CqfwXfxS8mbYTfDagbLfH9zbfMIMN2Idz6GABC3NvPx3ikHb1F22tx+Cnd
+ tek2dvcJAGVkWIFm983EQbkoFvgVrv5Qnf5ZdOPWLx7sinqxDLuVAzKxiY1nnOQNlgrECI+OEbm
+ sqIOTGDa5VEu1/VzR7P8QcnzOz66Tu7+WU5iGgBHpeBXIKq/vMT9UCIerfMOadQMRUs1kjRrVOU
+ NRV+DlpabQB+BXEN6+3a5AGHf9u87eevHHcNGDvUnOtf69mSg/pY+c+LtT2IPJfBjHBNPmWbfat
+ LaasG70IQ+84KcMaTo0YGouUTutjCIvEn5Na/JewpnceClczrDLJtVk22jzDIrzVdQHKQL2f0t0
+ AfyGggn27642yT943m+oLOCoSAxbAFhxV1+o532IS/Wktb01NpdrC4T3+3EhwAYOBMbFAy5K91P
+ TOI5waIYQyOFnYBEyFrjL+51Ins5LjZz2VrPlsalW6+Ace1OLZ2kV/o9MiEXzeuP1EuFAicVPsS
+ Ylt23QHqnv2Xyjj/XEMzWt1DrkXLIKUXnteuH96bBXwHRsvxXruvJgv5z/3RTt2+zavpIVsmnch
+ eCX3yZVlysu31Gw==
 X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
  fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hello,
+Sharp's Spitz board still uses the legacy GPIO interface for configuring
+its two onboard LEDs.
 
-Small series to convert some of the board files in the mach-pxa directory
-to use the new GPIO descriptor interface.
-
-Most notably, the am200epd, am300epd and Spitz matrix keypad among
-others are not converted in this series.
+Convert them to use the GPIO descriptor interface.
 
 Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 ---
-Duje Mihanović (6):
-      ARM: pxa: Convert Spitz OHCI to GPIO descriptors
-      ARM: pxa: Convert Spitz LEDs to GPIO descriptors
-      ARM: pxa: Convert Spitz CF power control to GPIO descriptors
-      ARM: pxa: Convert reset driver to GPIO descriptors
-      ARM: pxa: Convert Spitz hsync to GPIO descriptors
-      ARM: pxa: Convert gumstix Bluetooth to GPIO descriptors
+ arch/arm/mach-pxa/spitz.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
- arch/arm/mach-pxa/gumstix.c    | 24 ++++++++-------
- arch/arm/mach-pxa/reset.c      | 40 +++++++++----------------
- arch/arm/mach-pxa/reset.h      |  3 +-
- arch/arm/mach-pxa/spitz.c      | 68 +++++++++++++++++++++++++++++++++---------
- drivers/usb/host/ohci-pxa27x.c | 10 +++++++
- 5 files changed, 92 insertions(+), 53 deletions(-)
----
-base-commit: ce9ecca0238b140b88f43859b211c9fdfd8e5b70
-change-id: 20230807-pxa-gpio-3ce25d574814
+diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
+index 535e2b2e997b..91c4b208973c 100644
+--- a/arch/arm/mach-pxa/spitz.c
++++ b/arch/arm/mach-pxa/spitz.c
+@@ -452,16 +452,25 @@ static inline void spitz_keys_init(void) {}
+  * LEDs
+  ******************************************************************************/
+ #if defined(CONFIG_LEDS_GPIO) || defined(CONFIG_LEDS_GPIO_MODULE)
++static struct gpiod_lookup_table spitz_led_gpio_table = {
++	.dev_id = "leds-gpio",
++	.table = {
++		GPIO_LOOKUP("pxa-gpio", SPITZ_GPIO_LED_ORANGE, "led_orange",
++				GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("pxa-gpio", SPITZ_GPIO_LED_GREEN, "led_green",
++				GPIO_ACTIVE_HIGH),
++		{ }
++	}
++};
++
+ static struct gpio_led spitz_gpio_leds[] = {
+ 	{
+ 		.name			= "spitz:amber:charge",
+ 		.default_trigger	= "sharpsl-charge",
+-		.gpio			= SPITZ_GPIO_LED_ORANGE,
+ 	},
+ 	{
+ 		.name			= "spitz:green:hddactivity",
+ 		.default_trigger	= "disk-activity",
+-		.gpio			= SPITZ_GPIO_LED_GREEN,
+ 	},
+ };
+ 
+@@ -480,6 +489,11 @@ static struct platform_device spitz_led_device = {
+ 
+ static void __init spitz_leds_init(void)
+ {
++	gpiod_add_lookup_table(&spitz_led_gpio_table);
++	spitz_gpio_leds[0].gpiod = gpiod_get(&spitz_led_device.dev,
++			"led_orange", GPIOD_ASIS);
++	spitz_gpio_leds[1].gpiod = gpiod_get(&spitz_led_device.dev,
++			"led_green", GPIOD_ASIS);
+ 	platform_device_register(&spitz_led_device);
+ }
+ #else
 
-Best regards,
 -- 
-Duje Mihanović <duje.mihanovic@skole.hr>
+2.42.0
 
 
