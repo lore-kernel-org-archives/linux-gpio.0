@@ -2,340 +2,121 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A35E7F140
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Sep 2023 22:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFA2E7F148
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Sep 2023 00:07:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230197AbjIZWpz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Sep 2023 18:45:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40992 "EHLO
+        id S230508AbjI0AHG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Sep 2023 20:07:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230525AbjIZWny (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2023 18:43:54 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8180218E83
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Sep 2023 14:48:19 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2c12ae20a5cso159623261fa.2
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Sep 2023 14:48:19 -0700 (PDT)
+        with ESMTP id S231449AbjI0AFF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2023 20:05:05 -0400
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 472E99011;
+        Tue, 26 Sep 2023 16:22:23 -0700 (PDT)
+Received: from [192.168.68.112] (ppp118-210-175-231.adl-adc-lon-bras34.tpg.internode.on.net [118.210.175.231])
+        by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 6B2562017B;
+        Wed, 27 Sep 2023 07:22:14 +0800 (AWST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695764897; x=1696369697; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xCuTZhEJPz8ZqCyb/xY7ocE2o3PkqDSRE/J2TdY26/o=;
-        b=EwC4MXuFj2KrB2CN2IakXRhv5gAh+jzTrViJkl4faVqa7/m+CPj2MsgMeoYlfFg3Qi
-         Z/2oI2zSMem1yHL/Jl9EyPTjQ7Od0aGyjNcFNIP85BuO9CqUDh54hBLaJKg6H5cp9nY/
-         PUdSuVqYxewnn9KlRtU/M1niG5mLWe+CI2hVdqK5NtEu1znrl12OMzk7FZTo0L1esxRq
-         JRVCnXFkJTBprlSdbbOypOSCmPkMlEuqrhGwnqr3XhOrIuYSb0A1Vx7hE+DSYhLYBBjV
-         wwN4ucX+T8qngUMQt87HlTOwkp4BVoPJ9pCHCg4O/k2KZGrShpjOHaXzlh9XQugO59Rq
-         G8Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695764897; x=1696369697;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xCuTZhEJPz8ZqCyb/xY7ocE2o3PkqDSRE/J2TdY26/o=;
-        b=TkUV2lcM7c528Sr8hJBUFegu1CX738pZW48nkEWNOUci3ocNwOklCAr2s/lpGUAlcu
-         7HT8Jt+PxXPFO5uH83TAo9a7HpopbNES195LcPIZrA1l3Bjis/K8MbYQFSjGGM21JB8w
-         qXS3didgPHxBDBjo//3xW9IV2Ea8MHOMdcNb7ILGS0MNRNkJoNJ2Aiv/ceU3m9PatIpp
-         dkGzV2B/QmNcgp9e7PMzG8gY79knIfbF8o1768xrmzcwnWyjaCFQPI3g0egI6GwzDJMX
-         WhJPc3XMv3LwszXuvApTQxcR0NGm99znHk0uTpnOHG4bs3KFcaLMF6xlmEiOzqneQvF7
-         htHw==
-X-Gm-Message-State: AOJu0YyYK4UeoDYMRjeYKZNJxgbdzj64/4aPRLxvyg7WaG/Ceb2uKo+a
-        tZXpDXqcYpJhECxt0kgh2AfGMg==
-X-Google-Smtp-Source: AGHT+IGBrC0bECecJjFp+EqYLonAlaFQLJT/bnX6STpQt3TRBoCa+su9DN31qD3xXpVwLjbs+7PzsA==
-X-Received: by 2002:ac2:58ef:0:b0:503:9c2:e44e with SMTP id v15-20020ac258ef000000b0050309c2e44emr16458lfo.55.1695764897557;
-        Tue, 26 Sep 2023 14:48:17 -0700 (PDT)
-Received: from [127.0.1.1] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id f10-20020a19ae0a000000b0050334e5f5a8sm2299982lfc.271.2023.09.26.14.48.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Sep 2023 14:48:17 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 26 Sep 2023 23:48:13 +0200
-Subject: [PATCH v2 3/3] leds: triggers: gpio: Rewrite to use
- trigger-sources
+        d=codeconstruct.com.au; s=2022a; t=1695770536;
+        bh=3xy3oYvGG7Rgvu7rXIPqMIaHFUEefO32BL/5JeivFsM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References;
+        b=Nc1pzZmuL8BIfPa9WmVMAMK3q2oPyV6epmFy5ihSOS5smQ+L7+AvhVpWriHV8/ZLh
+         uwSAqCUSfyLQ0xjfIj+vnu82oGAWij+2M3B2+zL1W/seZW/cqQHT6ST4I1+8hPC4XX
+         Mdh6X04rt5eSwtTilUak5akhIQdszckz7bT2nTcbGco+CTlM1GBDShPol1EvR0ujCT
+         tQY6fR69A9K80khCkl/Sl/e02bi+59zFMnyMllUCSmiNtqNSPEiNicMBTjSPerc4Xa
+         erf4KHlO8DG2rj61hMoz2nnTmU3GdAci354zUOMDSndkpfgRveeh5GE7MUA2FWxBsd
+         I3MhVR3d7j5tg==
+Message-ID: <7a7d5a7f19fc793f157508fec7fbc09ca8c4cc4b.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] MAINTAINERS: aspeed: Update Andrew's email address
+From:   Andrew Jeffery <andrew@codeconstruct.com.au>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     joel@jms.id.au, andrew@aj.id.au, linux-aspeed@lists.ozlabs.org,
+        linux-gpio@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+Date:   Wed, 27 Sep 2023 08:52:09 +0930
+In-Reply-To: <CAPDyKFrFxYxSTa=z2VnCk4m_d-wEgd17wBokzyNCCRLtSUnFKw@mail.gmail.com>
+References: <20230925030647.40283-1-andrew@codeconstruct.com.au>
+         <CAPDyKFrFxYxSTa=z2VnCk4m_d-wEgd17wBokzyNCCRLtSUnFKw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230926-gpio-led-trigger-dt-v2-3-e06e458b788e@linaro.org>
-References: <20230926-gpio-led-trigger-dt-v2-0-e06e458b788e@linaro.org>
-In-Reply-To: <20230926-gpio-led-trigger-dt-v2-0-e06e458b788e@linaro.org>
-To:     =?utf-8?q?Jan_Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-By providing a GPIO line as "trigger-sources" in the FWNODE
-(such as from the device tree) and combining with the
-GPIO trigger, we can support a GPIO LED trigger in a natural
-way from the hardware description instead of using the
-custom sysfs and deprecated global GPIO numberspace.
+On Tue, 2023-09-26 at 17:03 +0200, Ulf Hansson wrote:
+> On Mon, 25 Sept 2023 at 05:07, Andrew Jeffery
+> <andrew@codeconstruct.com.au> wrote:
+> >=20
+> > I've changed employers, have company email that deals with patch-based
+> > workflows without too much of a headache, and am trying to steer some
+> > content out of my personal mail.
+> >=20
+> > Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+>=20
+> I guess it doesn't really matter what tree this gets funneled through,
+> so I decided to pick this up via my mmc tree.
+>=20
+> So, applied for next, thanks!
 
-Example:
+Ah, thanks for being so prompt! However, Joel has sent a PR to Arnd
+with the patch:
 
-gpio: gpio@0 {
-    compatible "my-gpio";
-    gpio-controller;
-    #gpio-cells = <2>;
-    interrupt-controller;
-    #interrupt-cells = <2>;
-    #trigger-source-cells = <2>;
-};
+https://lore.kernel.org/all/CACPK8Xc+D=3DYBc2Dhk-6-gOuvKN0xGgZYNop6oJVa=3DV=
+NgaEYOHw@mail.gmail.com/
 
-leds {
-    compatible = "gpio-leds";
-    led-my-gpio {
-        label = "device:blue:myled";
-        gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
-        default-state = "off";
-        linux,default-trigger = "gpio";
-        trigger-sources = <&gpio 1 GPIO_ACTIVE_HIGH>;
-    };
-};
+I thought I'd left a note under the fold asking Joel to do that so
+people knew how it would get into the tree, but that clearly isn't the
+case. Sorry about that, I must have rolled the patch off again after I
+put the note into the original.
 
-Make this the norm, unmark the driver as broken.
+Andrew
 
-Delete the sysfs handling of GPIOs.
-
-Since GPIO descriptors inherently can describe inversion,
-the inversion handling can just be deleted.
-
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Fix a use-after-free bug found by Dan Carpenter
----
- drivers/leds/trigger/Kconfig        |   5 +-
- drivers/leds/trigger/ledtrig-gpio.c | 137 +++++++++++-------------------------
- 2 files changed, 41 insertions(+), 101 deletions(-)
-
-diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
-index 2a57328eca20..d11d80176fc0 100644
---- a/drivers/leds/trigger/Kconfig
-+++ b/drivers/leds/trigger/Kconfig
-@@ -83,13 +83,10 @@ config LEDS_TRIGGER_ACTIVITY
- config LEDS_TRIGGER_GPIO
- 	tristate "LED GPIO Trigger"
- 	depends on GPIOLIB || COMPILE_TEST
--	depends on BROKEN
- 	help
- 	  This allows LEDs to be controlled by gpio events. It's good
- 	  when using gpios as switches and triggering the needed LEDs
--	  from there. One use case is n810's keypad LEDs that could
--	  be triggered by this trigger when user slides up to show
--	  keypad.
-+	  from there. Triggers are defined as device properties.
- 
- 	  If unsure, say N.
- 
-diff --git a/drivers/leds/trigger/ledtrig-gpio.c b/drivers/leds/trigger/ledtrig-gpio.c
-index 0120faa3dafa..9b7fe5dd5208 100644
---- a/drivers/leds/trigger/ledtrig-gpio.c
-+++ b/drivers/leds/trigger/ledtrig-gpio.c
-@@ -3,12 +3,13 @@
-  * ledtrig-gio.c - LED Trigger Based on GPIO events
-  *
-  * Copyright 2009 Felipe Balbi <me@felipebalbi.com>
-+ * Copyright 2023 Linus Walleij <linus.walleij@linaro.org>
-  */
- 
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
- #include <linux/leds.h>
- #include <linux/slab.h>
-@@ -16,10 +17,8 @@
- 
- struct gpio_trig_data {
- 	struct led_classdev *led;
--
- 	unsigned desired_brightness;	/* desired brightness when led is on */
--	unsigned inverted;		/* true when gpio is inverted */
--	unsigned gpio;			/* gpio that triggers the leds */
-+	struct gpio_desc *gpiod;	/* gpio that triggers the led */
- };
- 
- static irqreturn_t gpio_trig_irq(int irq, void *_led)
-@@ -28,10 +27,7 @@ static irqreturn_t gpio_trig_irq(int irq, void *_led)
- 	struct gpio_trig_data *gpio_data = led_get_trigger_data(led);
- 	int tmp;
- 
--	tmp = gpio_get_value_cansleep(gpio_data->gpio);
--	if (gpio_data->inverted)
--		tmp = !tmp;
--
-+	tmp = gpiod_get_value_cansleep(gpio_data->gpiod);
- 	if (tmp) {
- 		if (gpio_data->desired_brightness)
- 			led_set_brightness_nosleep(gpio_data->led,
-@@ -73,93 +69,8 @@ static ssize_t gpio_trig_brightness_store(struct device *dev,
- static DEVICE_ATTR(desired_brightness, 0644, gpio_trig_brightness_show,
- 		gpio_trig_brightness_store);
- 
--static ssize_t gpio_trig_inverted_show(struct device *dev,
--		struct device_attribute *attr, char *buf)
--{
--	struct gpio_trig_data *gpio_data = led_trigger_get_drvdata(dev);
--
--	return sprintf(buf, "%u\n", gpio_data->inverted);
--}
--
--static ssize_t gpio_trig_inverted_store(struct device *dev,
--		struct device_attribute *attr, const char *buf, size_t n)
--{
--	struct led_classdev *led = led_trigger_get_led(dev);
--	struct gpio_trig_data *gpio_data = led_trigger_get_drvdata(dev);
--	unsigned long inverted;
--	int ret;
--
--	ret = kstrtoul(buf, 10, &inverted);
--	if (ret < 0)
--		return ret;
--
--	if (inverted > 1)
--		return -EINVAL;
--
--	gpio_data->inverted = inverted;
--
--	/* After inverting, we need to update the LED. */
--	if (gpio_is_valid(gpio_data->gpio))
--		gpio_trig_irq(0, led);
--
--	return n;
--}
--static DEVICE_ATTR(inverted, 0644, gpio_trig_inverted_show,
--		gpio_trig_inverted_store);
--
--static ssize_t gpio_trig_gpio_show(struct device *dev,
--		struct device_attribute *attr, char *buf)
--{
--	struct gpio_trig_data *gpio_data = led_trigger_get_drvdata(dev);
--
--	return sprintf(buf, "%u\n", gpio_data->gpio);
--}
--
--static ssize_t gpio_trig_gpio_store(struct device *dev,
--		struct device_attribute *attr, const char *buf, size_t n)
--{
--	struct led_classdev *led = led_trigger_get_led(dev);
--	struct gpio_trig_data *gpio_data = led_trigger_get_drvdata(dev);
--	unsigned gpio;
--	int ret;
--
--	ret = sscanf(buf, "%u", &gpio);
--	if (ret < 1) {
--		dev_err(dev, "couldn't read gpio number\n");
--		return -EINVAL;
--	}
--
--	if (gpio_data->gpio == gpio)
--		return n;
--
--	if (!gpio_is_valid(gpio)) {
--		if (gpio_is_valid(gpio_data->gpio))
--			free_irq(gpio_to_irq(gpio_data->gpio), led);
--		gpio_data->gpio = gpio;
--		return n;
--	}
--
--	ret = request_threaded_irq(gpio_to_irq(gpio), NULL, gpio_trig_irq,
--			IRQF_ONESHOT | IRQF_SHARED | IRQF_TRIGGER_RISING
--			| IRQF_TRIGGER_FALLING, "ledtrig-gpio", led);
--	if (ret) {
--		dev_err(dev, "request_irq failed with error %d\n", ret);
--	} else {
--		if (gpio_is_valid(gpio_data->gpio))
--			free_irq(gpio_to_irq(gpio_data->gpio), led);
--		gpio_data->gpio = gpio;
--		/* After changing the GPIO, we need to update the LED. */
--		gpio_trig_irq(0, led);
--	}
--
--	return ret ? ret : n;
--}
--static DEVICE_ATTR(gpio, 0644, gpio_trig_gpio_show, gpio_trig_gpio_store);
--
- static struct attribute *gpio_trig_attrs[] = {
- 	&dev_attr_desired_brightness.attr,
--	&dev_attr_inverted.attr,
--	&dev_attr_gpio.attr,
- 	NULL
- };
- ATTRIBUTE_GROUPS(gpio_trig);
-@@ -167,16 +78,48 @@ ATTRIBUTE_GROUPS(gpio_trig);
- static int gpio_trig_activate(struct led_classdev *led)
- {
- 	struct gpio_trig_data *gpio_data;
-+	struct device *dev = led->dev;
-+	int ret;
- 
- 	gpio_data = kzalloc(sizeof(*gpio_data), GFP_KERNEL);
- 	if (!gpio_data)
- 		return -ENOMEM;
- 
--	gpio_data->led = led;
--	gpio_data->gpio = -ENOENT;
-+	/*
-+	 * The generic property "trigger-sources" is followed,
-+	 * and we hope that this is a GPIO.
-+	 */
-+	gpio_data->gpiod = fwnode_gpiod_get_index(dev->fwnode,
-+						  "trigger-sources",
-+						  0, GPIOD_IN,
-+						  "led-trigger");
-+	if (IS_ERR(gpio_data->gpiod)) {
-+		ret = PTR_ERR(gpio_data->gpiod);
-+		kfree(gpio_data);
-+		return ret;
-+	}
-+	if (!gpio_data->gpiod) {
-+		dev_err(dev, "no valid GPIO for the trigger\n");
-+		kfree(gpio_data);
-+		return -EINVAL;
-+	}
- 
-+	gpio_data->led = led;
- 	led_set_trigger_data(led, gpio_data);
- 
-+	ret = request_threaded_irq(gpiod_to_irq(gpio_data->gpiod), NULL, gpio_trig_irq,
-+			IRQF_ONESHOT | IRQF_SHARED | IRQF_TRIGGER_RISING
-+			| IRQF_TRIGGER_FALLING, "ledtrig-gpio", led);
-+	if (ret) {
-+		dev_err(dev, "request_irq failed with error %d\n", ret);
-+		gpiod_put(gpio_data->gpiod);
-+		kfree(gpio_data);
-+		return ret;
-+	}
-+
-+	/* Finally update the LED to initial status */
-+	gpio_trig_irq(0, led);
-+
- 	return 0;
- }
- 
-@@ -184,8 +127,8 @@ static void gpio_trig_deactivate(struct led_classdev *led)
- {
- 	struct gpio_trig_data *gpio_data = led_get_trigger_data(led);
- 
--	if (gpio_is_valid(gpio_data->gpio))
--		free_irq(gpio_to_irq(gpio_data->gpio), led);
-+	free_irq(gpiod_to_irq(gpio_data->gpiod), led);
-+	gpiod_put(gpio_data->gpiod);
- 	kfree(gpio_data);
- }
- 
-
--- 
-2.34.1
+>=20
+> Kind regards
+> Uffe
+>=20
+>=20
+> > ---
+> >  MAINTAINERS | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index b19995690904..1965cee433b0 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -1963,7 +1963,7 @@ F:        drivers/irqchip/irq-aspeed-i2c-ic.c
+> >=20
+> >  ARM/ASPEED MACHINE SUPPORT
+> >  M:     Joel Stanley <joel@jms.id.au>
+> > -R:     Andrew Jeffery <andrew@aj.id.au>
+> > +R:     Andrew Jeffery <andrew@codeconstruct.com.au>
+> >  L:     linux-arm-kernel@lists.infradead.org (moderated for non-subscri=
+bers)
+> >  L:     linux-aspeed@lists.ozlabs.org (moderated for non-subscribers)
+> >  S:     Supported
+> > @@ -3058,7 +3058,7 @@ F:        Documentation/devicetree/bindings/peci/=
+peci-aspeed.yaml
+> >  F:     drivers/peci/controller/peci-aspeed.c
+> >=20
+> >  ASPEED PINCTRL DRIVERS
+> > -M:     Andrew Jeffery <andrew@aj.id.au>
+> > +M:     Andrew Jeffery <andrew@codeconstruct.com.au>
+> >  L:     linux-aspeed@lists.ozlabs.org (moderated for non-subscribers)
+> >  L:     openbmc@lists.ozlabs.org (moderated for non-subscribers)
+> >  L:     linux-gpio@vger.kernel.org
+> > @@ -3075,7 +3075,7 @@ F:        drivers/irqchip/irq-aspeed-scu-ic.c
+> >  F:     include/dt-bindings/interrupt-controller/aspeed-scu-ic.h
+> >=20
+> >  ASPEED SD/MMC DRIVER
+> > -M:     Andrew Jeffery <andrew@aj.id.au>
+> > +M:     Andrew Jeffery <andrew@codeconstruct.com.au>
+> >  L:     linux-aspeed@lists.ozlabs.org (moderated for non-subscribers)
+> >  L:     openbmc@lists.ozlabs.org (moderated for non-subscribers)
+> >  L:     linux-mmc@vger.kernel.org
+> > --
+> > 2.39.2
+> >=20
 
