@@ -2,215 +2,122 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A21E7F140
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Sep 2023 22:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D9EE7F140
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Sep 2023 22:41:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229456AbjIZWiI (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Sep 2023 18:38:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49964 "EHLO
+        id S229485AbjIZWlv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Sep 2023 18:41:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231781AbjIZWgI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2023 18:36:08 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D52619AF
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Sep 2023 13:59:19 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-532c81b9adbso11747912a12.1
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Sep 2023 13:59:19 -0700 (PDT)
+        with ESMTP id S231597AbjIZWju (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2023 18:39:50 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 769D91856E
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Sep 2023 14:48:18 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-5031426b626so15522226e87.3
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Sep 2023 14:48:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695761958; x=1696366758; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nbm0fl6t7js3aniuoVoiV7uhTyT8SoKhMhmvTfEHKF0=;
-        b=W5eRTqGUHYRciSsKpzlaqpaBB6xXZUH34WS7vYCduqPlqRkZsQuLy+aake7oJ50f7R
-         oOS+jscmDiEDu6lq8RZt7kEk/HRjvhtOFLhhXAJ0AhucjtggdzJTXNT01bra2VrgfqDt
-         YLVTt7IMsC4FONdT1/XlA/V87sOUhrAshhNhRCn5JAplNQuzO3fPrDj75p5s4lodjbyb
-         AhkPO1I7XixIOSWDROP4YB+zbEwjQvmnTG4pqSqgFgjFxqrW9S1toA5KWsLQD8uyRKlK
-         AeKJOQKO2uvB+xoUpH+IOtQMGCAmK1/B6vcv7Y2pmT1S+WVbqyLdKzIBqvbWDrUdlyk+
-         nzNA==
+        d=linaro.org; s=google; t=1695764896; x=1696369696; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kgLC0yegwN9YtWotfp/L618EWCW38wnqoTZssZI78wo=;
+        b=hpdLunO6fT4qa5/0wHi90PLH70CTyjaZMgu2KDeHYt9goNOHmyTiL7N1eg2XQuwyi+
+         x8kFeOKBSsYLeKaBEEBpwFgwt3p6i6t1xy7ogHv1GL39GThvb5IW+UeJxylD8NcQdiJr
+         ZBwZ4cnqk34uPKDR43BzxC64SNufEGzlu5fO+UX9ZR4q1GtMZwYQutwxQWvxjeAbkmJ6
+         LtDb28izmhHrooNTNnyYyGxfFY1JsPK+rizHKOT5pYXwxZqoCd4rk7BPWfxZn6K6M8Xs
+         Qc19TFFfQDf6neLf/VAAKvozFpRtczgxyGeMhf8Z+kcbYrNs5tqaDQHyyXLdNasK5ZUO
+         MfRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695761958; x=1696366758;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nbm0fl6t7js3aniuoVoiV7uhTyT8SoKhMhmvTfEHKF0=;
-        b=k1T/kEFq0u7MxoIwT1WhaGYszhNfU2Nh+sJLFK+npek5NF2NEBOjCPzZUyX7pWHtfk
-         noPMh5oKwNOBmppQRLOxyHFp0X886moKDp0tTFk+Seztgp5qUNAPiRTmW6ZfqSsIE9ja
-         gkeAnoRxF8rkcsW9QjyuBzMeRtB5FoB77lLUNBOzG9de3j4bnISPhWSw6ubcd39UQUtV
-         izC8z1glWW5ycHe2NGad7y0FRDcHTua/E6KIu1UP+Rm+cHV0k7CL3tXId8PL4Q6LEVx4
-         1CdyxBHB/Gy/9n2MPEDfkG3MRLoow0tCwKEJHI8R3AfaZN+7OqoI01Hkb5PjTfHLapk0
-         mYGg==
-X-Gm-Message-State: AOJu0Yw4MITjvEvaZrxlhzrjFa5uvuzVqsf53d6Jv9Chj6y3oKjuicHp
-        QCUAe4qRjzEaDkE7sDxeQ3r+rw==
-X-Google-Smtp-Source: AGHT+IENJ0xPYi4uzaeTJwwedZ+8tWUxG3QlM6olVDYu5bRBD5Pc+AxjzgEP0mdOv30vPgdF5uo+og==
-X-Received: by 2002:a17:906:8457:b0:9b2:89ec:7fca with SMTP id e23-20020a170906845700b009b289ec7fcamr5558979ejy.34.1695761957945;
-        Tue, 26 Sep 2023 13:59:17 -0700 (PDT)
-Received: from [192.168.1.145] (host-87-4-82-94.retail.telecomitalia.it. [87.4.82.94])
-        by smtp.gmail.com with ESMTPSA id gu20-20020a170906f29400b009ad8796a6aesm8202912ejb.56.2023.09.26.13.59.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Sep 2023 13:59:17 -0700 (PDT)
-Message-ID: <e8ee6529-b194-4588-96c0-1459f214d005@linaro.org>
-Date:   Tue, 26 Sep 2023 22:59:14 +0200
+        d=1e100.net; s=20230601; t=1695764896; x=1696369696;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kgLC0yegwN9YtWotfp/L618EWCW38wnqoTZssZI78wo=;
+        b=g3TH3zjUisXm9y36e0mnl+RICEecccMuUQGntwXXkegIhCpjw1K1DXwuT6noe73Lcl
+         blTgNbu0avr0fNHWm6amldDqEIjP4RhdwabI98G4AqvOSf5QDZdLvnL1VrCqNnQLitVc
+         mOe4URIg1e3sSIinggsy7Uh3K0wPLeFzuwMmwT/NZHb5nLXJJzJvF9TfRiS3WMNxgVJb
+         pQTlqJ8G+i2GoWxQMDiWzhdtPPrXp4jX/BYzBt3UvKbeRnG6gF2Ud5kFkLtFYbYTEiWD
+         hRLBVd258zsixRL3W3k6+ECFTae8GiIksFRXQAiax4JTAqLns2Sj0igqyD60t+zakQSg
+         RvJw==
+X-Gm-Message-State: AOJu0YzDSGOeXMTCyOelHI+/jwc1aYfd3YVN6R4OueX3ftW1XQ35ojdI
+        xedwzuSPuKGHTEtM1O7Rubraiw==
+X-Google-Smtp-Source: AGHT+IH5jMp1la/wAsctQFsK6FsN53AbjwItO8UhW5YsVBunUbQGovUk+oVdorH/Gl1+UnnAluZfoQ==
+X-Received: by 2002:a05:6512:3e10:b0:503:446:b468 with SMTP id i16-20020a0565123e1000b005030446b468mr16652lfv.67.1695764896685;
+        Tue, 26 Sep 2023 14:48:16 -0700 (PDT)
+Received: from [127.0.1.1] ([85.235.12.238])
+        by smtp.gmail.com with ESMTPSA id f10-20020a19ae0a000000b0050334e5f5a8sm2299982lfc.271.2023.09.26.14.48.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Sep 2023 14:48:16 -0700 (PDT)
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 26 Sep 2023 23:48:12 +0200
+Subject: [PATCH v2 2/3] dt-bindings: leds: Mention GPIO triggers
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 08/30] dt-bindings: soc: fsl: cpm_qe: cpm1-scc-qmc: Add
- support for QMC HDLC
-Content-Language: en-US
-To:     Herve Codina <herve.codina@bootlin.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230926-gpio-led-trigger-dt-v2-2-e06e458b788e@linaro.org>
+References: <20230926-gpio-led-trigger-dt-v2-0-e06e458b788e@linaro.org>
+In-Reply-To: <20230926-gpio-led-trigger-dt-v2-0-e06e458b788e@linaro.org>
+To:     =?utf-8?q?Jan_Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Randy Dunlap <rdunlap@infradead.org>, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        Simon Horman <horms@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20230922075913.422435-1-herve.codina@bootlin.com>
- <20230922075913.422435-9-herve.codina@bootlin.com>
- <5efae150-3d92-81b8-5c25-68846d27132e@linaro.org>
- <20230925101703.1bf083f1@bootlin.com>
- <5b804a1a-6bfd-429d-ad84-696b7ecef72d@linaro.org>
- <20230925122758.43963736@bootlin.com>
- <e02ebde7-f208-40a4-bb10-aa5962ee9864@linaro.org>
- <20230925154929.2b6a9cab@bootlin.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20230925154929.2b6a9cab@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 25/09/2023 15:50, Herve Codina wrote:
->>>>> With these details, do you still think I need to change the child (channel)
->>>>> compatible ?    
->>>>
->>>> From OS point of view, you have a driver binding to this child-level
->>>> compatible. How do you enforce Linux driver binding based on parent
->>>> compatible? I looked at your next patch and I did not see it.  
->>>
->>> We do not need to have the child driver binding based on parent.  
->>
->> Exactly, that's what I said.
->>
->>> We have to ensure that the child handles a QMC channel and the parent provides
->>> a QMC channel.
->>>
->>> A QMC controller (parent) has to implement the QMC API (include/soc/fsl/qe/qmc.h)
->>> and a QMC channel driver (child) has to use the QMC API.  
->>
->> How does this solve my concerns? Sorry, I do not understand. Your driver
->> is a platform driver and binds to the generic compatible. How do you
->> solve regular compatibility issues (need for quirks) if parent
->> compatible is not used?
->>
->> How does being QMC compliant affects driver binding and
->> compatibility/quirks?
->>
->> We are back to my original question and I don't think you answered to
->> any of the concerns.
-> 
-> Well, to be sure that I understand correctly, do you mean that I should
-> provide a compatible for the child (HDLC) with something like this:
-> --- 8< ---
->   compatible:
->     items:
->       - enum:
->           - fsl,mpc885-qmc-hdlc
->           - fsl,mpc866-qmc-hdlc
->       - const: fsl,cpm1-qmc-hdlc
->       - const: fsl,qmc-hdlc
-> --- 8< ---
+We reuse the trigger-sources phandle to just point to
+GPIOs we may want to use as LED triggers.
 
-Yes, more or less, depending on actual compatibility and SoC-family.
-Maybe "fsl,cpm1-qmc-hdlc" item in the middle is not needed.
+Example:
 
-> 
-> If so, I didn't do that because a QMC channel consumer (driver matching
-> fsl,qmc-hdlc) doesn't contains any SoC specific part.
+gpio: gpio@0 {
+    compatible "my-gpio";
+    gpio-controller;
+    #gpio-cells = <2>;
+    interrupt-controller;
+    #interrupt-cells = <2>;
+    #trigger-source-cells = <2>;
+};
 
-Just like hundreds of other drivers. :)
+leds {
+    compatible = "gpio-leds";
+    led-my-gpio {
+        label = "device:blue:myled";
+        gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
+        default-state = "off";
+        linux,default-trigger = "gpio";
+        trigger-sources = <&gpio 1 GPIO_ACTIVE_HIGH>;
+    };
+};
 
-There is a paragraph about specific compatibles here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/writing-schema.html
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ Documentation/devicetree/bindings/leds/common.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
+index 5fb7007f3618..b42950643b9d 100644
+--- a/Documentation/devicetree/bindings/leds/common.yaml
++++ b/Documentation/devicetree/bindings/leds/common.yaml
+@@ -191,6 +191,8 @@ properties:
+       each of them having its own LED assigned (assuming they are not
+       hardwired). In such cases this property should contain phandle(s) of
+       related source device(s).
++      Another example is a GPIO line that will be monitored and mirror the
++      state of the line (with or without inversion flags) to the LED.
+       In many cases LED can be related to more than one device (e.g. one USB LED
+       vs. multiple USB ports). Each source should be represented by a node in
+       the device tree and be referenced by a phandle and a set of phandle
 
-> It uses the channel as a communication channel to send/receive HDLC frames
-> to/from this communication channel.
-> All the specific SoC part is handled by the QMC controller (parent) itself and
-> not by any consumer (child).
-
-OK, so you guarantee in 100% for this hardware and all future (including
-designs unknown currently), that they will be 100% compatible with
-existing QMC channel consumer (child, matching fsl,qmc-hdlc) driver,
-thus there will be no need for any quirk. Specifically, there will be no
-chances that it would be reasonable to re-use the same driver for child
-(currently fsl,qmc-hdlc) in different parent.
-
-P.S. If you received this email twice, apologies, I have here troubles
-with internet.
-
-Best regards,
-Krzysztof
+-- 
+2.34.1
 
