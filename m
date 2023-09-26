@@ -2,90 +2,86 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D9DE7E64D
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Sep 2023 16:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8580CE7E654
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Sep 2023 18:23:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234564AbjIZQc7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Sep 2023 12:32:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34268 "EHLO
+        id S229621AbjIZSXM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Sep 2023 14:23:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbjIZQc6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2023 12:32:58 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C584B3;
-        Tue, 26 Sep 2023 09:32:52 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10845"; a="384389707"
-X-IronPort-AV: E=Sophos;i="6.03,178,1694761200"; 
-   d="scan'208";a="384389707"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2023 09:32:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10845"; a="778188774"
-X-IronPort-AV: E=Sophos;i="6.03,178,1694761200"; 
-   d="scan'208";a="778188774"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2023 09:32:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC0)
-        (envelope-from <andy@kernel.org>)
-        id 1qlAmR-00000000f0W-3RkJ;
-        Tue, 26 Sep 2023 19:19:23 +0300
-Date:   Tue, 26 Sep 2023 19:19:23 +0300
-From:   Andy Shevchenko <andy@kernel.org>
-To:     Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Russell King <linux@armlinux.org.uk>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH RFC v2 5/6] ARM: pxa: Convert Spitz hsync to GPIO
- descriptors
-Message-ID: <ZRMEi6pACEx5HQZ/@smile.fi.intel.com>
-References: <20230926-pxa-gpio-v2-0-984464d165dd@skole.hr>
- <20230926-pxa-gpio-v2-5-984464d165dd@skole.hr>
+        with ESMTP id S229519AbjIZSXJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2023 14:23:09 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82BA4BF
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Sep 2023 11:23:03 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-5a1d0fee86aso44260317b3.2
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Sep 2023 11:23:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1695752582; x=1696357382; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sI3UkHqqf5WmbgSUGSm/14gRHcG/M3RotLOAmkRjLvo=;
+        b=OFvQWgIcbTGASZICkY/Qt14NYxXBk9XsM6Q5o5grXFWDKk9n10eTWBYIJEeDYsfbz7
+         6uQpfI7voVHvrCsMt26oOIjiERbznX2Rwr2yVSLxhitq7mA4Vfh5ItGSKMUWIUPJGB2v
+         P0PcBNvnJKFUrj3NM7UkAlqP0eM1MtRiMWm5lr518R07m8u1j2JB/JK1AZEANdqxFiGs
+         TIYGWhscnn8+LxHklyf3SymjrAr6G42H9dgZwXPVkgYoyQIgOiYiaQD5mK5OP51i9SkC
+         +ZHlQ2KyA6QZVtwDjDk/JpG1h/lx4h3vFYkeN6v0FOtYENocc0sHdKlKy/jF38RxLtbX
+         g06w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695752582; x=1696357382;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sI3UkHqqf5WmbgSUGSm/14gRHcG/M3RotLOAmkRjLvo=;
+        b=Si9/ROjB0ueCvFSNbMDcxUey4BbXljM+hYuNCwy4FmFpApkr701nzPMEo5TdUWITKo
+         3IGGeo3Fzk7xAHU9JMzSWxikAdT+PnYo5yharyZorr4pIQEqdHzWK1id1QgltEdQwdIZ
+         1Zlkj8d3RZeulJsMKTsHiD1xKr7yum4SvK1eL552s2Rbqc54K54yIxdRzN9U9iMcRuKl
+         RK1gn/ZWrh4f5CLJyJu73E3TrMauAW4FTZVOFiQRIoAcionOAOr0cUyecXMVL02dtmKN
+         4nKtroEPyLoEs1aWg/xcxuQ+2jXhZ1TV21zB7nuz0GV51pWO8TU5u7FszJ+GWz7jYiHd
+         1aOA==
+X-Gm-Message-State: AOJu0Yzlo0jX8nk/Ne5XNLEhHnXFBjVnN5U8rajKuFwMBZfuk2TcQxpB
+        WfRYWLoUjMW11FFbHOQXG4pXs0/m0krUjP8OSxoPEbMMrvyQuqgX
+X-Google-Smtp-Source: AGHT+IE0yNG+tx7WImPxoj9f0KRcQ53cWmJ0g3FEAxxLPaxWmKXC5eVpm9tXntm6ZtPdG8k3kmVG86uNIr+Y8eKDWDg=
+X-Received: by 2002:a0d:c7c3:0:b0:59b:ce0b:7829 with SMTP id
+ j186-20020a0dc7c3000000b0059bce0b7829mr10211941ywd.35.1695752582691; Tue, 26
+ Sep 2023 11:23:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230926-pxa-gpio-v2-5-984464d165dd@skole.hr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20230926132336.416612-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20230926132336.416612-1-andriy.shevchenko@linux.intel.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 26 Sep 2023 20:22:50 +0200
+Message-ID: <CACRpkdZ2P7zeoRMwR=u84L_aysK2VOwVLNjFnTxvGNswd6DArw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] pinctrl: intel: Simplify code with cleanup helpers
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy@kernel.org>,
+        Raag Jadav <raag.jadav@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Sep 26, 2023 at 05:46:26PM +0200, Duje Mihanović wrote:
-> Sharp's Spitz still uses the legacy GPIO interface in its
-> wait_for_hsync() function.
-> 
-> Convert it to use the GPIO descriptor interface.
+On Tue, Sep 26, 2023 at 3:23=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-...
+> Use macros defined in linux/cleanup.h to automate resource lifetime
+> control in the driver.
+>
+> While at it, unify the variables and approach in intel_gpio_irq_*().
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> +static struct gpio_desc *hsync = NULL;
+Actually this is the best part:
 
-Assignment is redundant.
+>  drivers/pinctrl/intel/pinctrl-intel.c | 136 ++++++++++----------------
+>  1 file changed, 50 insertions(+), 86 deletions(-)
 
-...
+So much easier to read the code, and lesser risk to do mistakes.
 
->  	gpiod_add_lookup_table(&spitz_ads7846_gpio_table);
->  	gpiod_add_lookup_table(&spitz_spi_gpio_table);
-> +	hsync = gpiod_get(NULL, "hsync", GPIOD_IN);
-> +	if (IS_ERR(hsync)) {
-> +		pr_err("Failed to get hsync GPIO: %ld\n", PTR_ERR(hsync));
-> +		return;
-> +	}
->  	pxa2xx_set_spi_info(2, &spitz_spi_info);
->  	spi_register_board_info(ARRAY_AND_SIZE(spitz_spi_devices));
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Yeah, but the question is, if GPIO request fails, can we instantiate at least
-one device and move on?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Yours,
+Linus Walleij
