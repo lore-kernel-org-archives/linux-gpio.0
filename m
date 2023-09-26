@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DFE2E8181E
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Sep 2023 05:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D32E8181B
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Sep 2023 05:20:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232790AbjIZFUg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Sep 2023 01:20:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45752 "EHLO
+        id S233043AbjIZFUk (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Sep 2023 01:20:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229722AbjIZFUc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2023 01:20:32 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EFB9D7;
-        Mon, 25 Sep 2023 22:20:25 -0700 (PDT)
+        with ESMTP id S232239AbjIZFUg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2023 01:20:36 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 279EEF2;
+        Mon, 25 Sep 2023 22:20:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695705625; x=1727241625;
+  t=1695705629; x=1727241629;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=JNhOP0h4Wmvb7AtoOm+qvjG9Eh0xhQGc8R2E+oO+zNM=;
-  b=HYrP7gRNwuPuH2loLskcgJ1okqzq4Dp1u93tOPg0J6hexFP6+Ga9MK2r
-   T8eXZuPGT4nnbXqyJRKs6cMWi5+kHkWGBTKIT+1s8xy0j7aZzfdB5i3So
-   WG0KKdMGyWO0KYnKZv/VW027QVl5ABrOGAl1D3s/FvdrC8DvMwpry3Eff
-   WmxUjMdN9xuM7IIJkf5w46c4axnDw2n9yd0bTNmA+Aa+RQ11Z5xigdCNA
-   QqyHMp1z0pKoCZJ8R2+R3gWo4K5ekOXd0Ud36vKnf9zjzQ6E/SKxdjE3i
-   BtnDKFPT+PffaGIY3PzHqWvz4l9gZ/j6/c04QQWgCBI8YdDVRsaTTvOEQ
+  bh=2HOZ+oim+zNWe8lFVHeNEs80ZdHaUduFZXUMLCdW3No=;
+  b=bqkT8gDq5l9vXOhCHEgLdaTSreExf3hLjWetfKuF5mDvlLkMjzhjBDvg
+   AIMYx2wJJMbAk2JE/8R2pey70Yl3Fgtq90qDT8Su8ov8f/CaGJuSVgxPT
+   810FWwAgcTLuQnr6P0MBwIHQKfhqfO8EFKuHPSz5cEfKLDCub1TbrMsti
+   eg6EknMbrt5BE4zHo745ZXI+t0du5YUZBREMECiDeNlOOssrCM28jd4xp
+   +3b7F+2RRrXUiV4Kkr+7EucffQXyrewKB2POEPrOnn9gQvK9mg3Croqz6
+   hbom/b3fvi+0NgoR+Dh0grVl2zfLYNnRmikv5uw9gNB2kSRZygzYvMp0x
    g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10843"; a="371820573"
+X-IronPort-AV: E=McAfee;i="6600,9927,10843"; a="360865705"
 X-IronPort-AV: E=Sophos;i="6.03,177,1694761200"; 
-   d="scan'208";a="371820573"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2023 22:20:24 -0700
+   d="scan'208";a="360865705"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2023 22:20:28 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10843"; a="783824216"
+X-IronPort-AV: E=McAfee;i="6600,9927,10843"; a="748689685"
 X-IronPort-AV: E=Sophos;i="6.03,177,1694761200"; 
-   d="scan'208";a="783824216"
+   d="scan'208";a="748689685"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 25 Sep 2023 22:20:20 -0700
+  by orsmga002.jf.intel.com with ESMTP; 25 Sep 2023 22:20:24 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E7E8117D; Tue, 26 Sep 2023 08:20:18 +0300 (EEST)
+        id 162DB133D; Tue, 26 Sep 2023 08:20:19 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -53,9 +53,9 @@ Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
         Andy Shevchenko <andy@kernel.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
-Subject: [PATCH v1 2/5] lib/bitmap: Introduce bitmap_scatter() and bitmap_gather() helpers
-Date:   Tue, 26 Sep 2023 08:20:04 +0300
-Message-Id: <20230926052007.3917389-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 5/5] gpiolib: cdev: Utilize more bitmap APIs
+Date:   Tue, 26 Sep 2023 08:20:07 +0300
+Message-Id: <20230926052007.3917389-6-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
 In-Reply-To: <20230926052007.3917389-1-andriy.shevchenko@linux.intel.com>
 References: <20230926052007.3917389-1-andriy.shevchenko@linux.intel.com>
@@ -65,181 +65,146 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-These helpers are the optimized versions of the bitmap_remap()
-where one of the bitmaps (source or destination) is of sequential bits.
-
-See more in the kernel documentation of the helpers.
+Currently we have a few bitmap calls that are open coded in the library
+module. Let's convert them to use generic bitmap APIs instead.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- include/linux/bitmap.h |  9 ++++++
- lib/bitmap.c           | 70 ++++++++++++++++++++++++++++++++++++++++++
- lib/test_bitmap.c      | 23 ++++++++++++++
- 3 files changed, 102 insertions(+)
+ drivers/gpio/gpiolib-cdev.c | 79 +++++++++++++++++--------------------
+ 1 file changed, 36 insertions(+), 43 deletions(-)
 
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 1516ff979315..87013b9a7dd8 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -60,6 +60,8 @@ struct device;
-  *  bitmap_shift_left(dst, src, n, nbits)       *dst = *src << n
-  *  bitmap_cut(dst, src, first, n, nbits)       Cut n bits from first, copy rest
-  *  bitmap_replace(dst, old, new, mask, nbits)  *dst = (*old & ~(*mask)) | (*new & *mask)
-+ *  bitmap_scatter(dst, src, mask, nbits)	*dst = map(dense, sparse)(src)
-+ *  bitmap_gather(dst, src, mask, nbits)	*dst = map(sparse, dense)(src)
-  *  bitmap_remap(dst, src, old, new, nbits)     *dst = map(old, new)(src)
-  *  bitmap_bitremap(oldbit, old, new, nbits)    newbit = map(old, new)(oldbit)
-  *  bitmap_onto(dst, orig, relmap, nbits)       *dst = orig relative to relmap
-@@ -208,6 +210,12 @@ int bitmap_parselist(const char *buf, unsigned long *maskp,
- 			int nmaskbits);
- int bitmap_parselist_user(const char __user *ubuf, unsigned int ulen,
- 			unsigned long *dst, int nbits);
-+
-+unsigned int bitmap_scatter(unsigned long *dst, const unsigned long *src,
-+		const unsigned long *mask, unsigned int nbits);
-+unsigned int bitmap_gather(unsigned long *dst, const unsigned long *src,
-+		const unsigned long *mask, unsigned int nbits);
-+
- void bitmap_remap(unsigned long *dst, const unsigned long *src,
- 		const unsigned long *old, const unsigned long *new, unsigned int nbits);
- int bitmap_bitremap(int oldbit,
-@@ -216,6 +224,7 @@ void bitmap_onto(unsigned long *dst, const unsigned long *orig,
- 		const unsigned long *relmap, unsigned int bits);
- void bitmap_fold(unsigned long *dst, const unsigned long *orig,
- 		unsigned int sz, unsigned int nbits);
-+
- int bitmap_find_free_region(unsigned long *bitmap, unsigned int bits, int order);
- void bitmap_release_region(unsigned long *bitmap, unsigned int pos, int order);
- int bitmap_allocate_region(unsigned long *bitmap, unsigned int pos, int order);
-diff --git a/lib/bitmap.c b/lib/bitmap.c
-index 935e0f96e785..31cfc7846aae 100644
---- a/lib/bitmap.c
-+++ b/lib/bitmap.c
-@@ -942,6 +942,76 @@ int bitmap_parse(const char *start, unsigned int buflen,
- }
- EXPORT_SYMBOL(bitmap_parse);
+diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+index e39d344feb28..a5bbbd44531f 100644
+--- a/drivers/gpio/gpiolib-cdev.c
++++ b/drivers/gpio/gpiolib-cdev.c
+@@ -1263,35 +1263,32 @@ static long linereq_get_values(struct linereq *lr, void __user *ip)
+ {
+ 	struct gpio_v2_line_values lv;
+ 	DECLARE_BITMAP(vals, GPIO_V2_LINES_MAX);
++	DECLARE_BITMAP(mask, GPIO_V2_LINES_MAX);
++	DECLARE_BITMAP(bits, GPIO_V2_LINES_MAX);
+ 	struct gpio_desc **descs;
+ 	unsigned int i, didx, num_get;
+-	bool val;
+ 	int ret;
  
-+/**
-+ * bitmap_scatter - Scatter a bitmap according to the given mask
-+ * @dst: scattered bitmap
-+ * @src: gathered bitmap
-+ * @mask: bits to assign to in the scattered bitmap
-+ * @nbits: number of bits in each of these bitmaps
-+ *
-+ * Scatters bitmap with sequential bits according to the given @mask.
-+ *
-+ * Example:
-+ * If @src bitmap = 0x005a, with @mask = 0x1313, @dst will be 0x0302.
-+ *
-+ * Or in binary form
-+ * @src			@mask			@dst
-+ * 0000000001011010	0001001100010011	0000001100000010
-+ *
-+ * (Bits 0, 1, 2, 3, 4, 5 are copied to the bits 0, 1, 4, 8, 9, 12)
-+ *
-+ * Returns: the weight of the @mask.
-+ */
-+unsigned int bitmap_scatter(unsigned long *dst, const unsigned long *src,
-+			    const unsigned long *mask, unsigned int nbits)
-+{
-+	unsigned int bit;
-+	int n = 0;
-+
-+	bitmap_zero(dst, nbits);
-+
-+	for_each_set_bit(bit, mask, nbits)
-+		__assign_bit(bit, dst, test_bit(n++, src));
-+
-+	return n;
-+}
-+EXPORT_SYMBOL(bitmap_scatter);
-+
-+/**
-+ * bitmap_gather - Gather a bitmap according to given mask
-+ * @dst: gathered bitmap
-+ * @src: scattered bitmap
-+ * @mask: bits to extract from in the scattered bitmap
-+ * @nbits: number of bits in each of these bitmaps
-+ *
-+ * Gathers bitmap with sparse bits according to the given @mask.
-+ *
-+ * Example:
-+ * If @src bitmap = 0x0302, with @mask = 0x1313, @dst will be 0x001a.
-+ *
-+ * Or in binary form
-+ * @src			@mask			@dst
-+ * 0000001100000010	0001001100010011	0000000000011010
-+ *
-+ * (Bits 0, 1, 4, 8, 9, 12 are copied to the bits 0, 1, 2, 3, 4, 5)
-+ *
-+ * Returns: the weight of the @mask.
-+ */
-+unsigned int bitmap_gather(unsigned long *dst, const unsigned long *src,
-+			   const unsigned long *mask, unsigned int nbits)
-+{
-+	unsigned int bit;
-+	int n = 0;
-+
-+	bitmap_zero(dst, nbits);
-+
-+	for_each_set_bit(bit, mask, nbits)
-+		__assign_bit(n++, dst, test_bit(bit, src));
-+
-+	return n;
-+}
-+EXPORT_SYMBOL(bitmap_gather);
-+
- /**
-  * bitmap_pos_to_ord - find ordinal of set bit at given position in bitmap
-  *	@buf: pointer to a bitmap
-diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
-index 1f2dc7fef17f..f43a07679998 100644
---- a/lib/test_bitmap.c
-+++ b/lib/test_bitmap.c
-@@ -50,6 +50,9 @@ static const unsigned long exp2[] __initconst = {
- static const unsigned long exp2_to_exp3_mask[] __initconst = {
- 	BITMAP_FROM_U64(0x008000020020212eULL),
- };
-+static const unsigned long exp2_to_exp3_maskg[] __initconst = {
-+	BITMAP_FROM_U64(0x00000000000001ffULL),
-+};
- /* exp3_0_1 = (exp2[0] & ~exp2_to_exp3_mask) | (exp2[1] & exp2_to_exp3_mask) */
- static const unsigned long exp3_0_1[] __initconst = {
- 	BITMAP_FROM_U64(0x33b3333311313137ULL),
-@@ -357,6 +360,25 @@ static void __init test_replace(void)
- 	expect_eq_bitmap(bmap, exp3_1_0, nbits);
- }
+ 	/* NOTE: It's ok to read values of output lines. */
+ 	if (copy_from_user(&lv, ip, sizeof(lv)))
+ 		return -EFAULT;
  
-+static void __init test_bitmap_sg(void)
-+{
-+	unsigned int nbits = 64;
-+	DECLARE_BITMAP(bmap, 1024);
-+	unsigned int w;
-+
-+	bitmap_zero(bmap, 1024);
-+	w = bitmap_gather(bmap, exp2_to_exp3_mask, exp2_to_exp3_mask, nbits);
-+	expect_eq_uint(bitmap_weight(exp2_to_exp3_mask, nbits), w);
-+	expect_eq_uint(bitmap_weight(bmap, 1024), w);
-+	expect_eq_bitmap(bmap, exp2_to_exp3_maskg, nbits);
-+
-+	bitmap_zero(bmap, 1024);
-+	w = bitmap_scatter(bmap, exp2_to_exp3_maskg, exp2_to_exp3_mask, nbits);
-+	expect_eq_uint(bitmap_weight(exp2_to_exp3_maskg, nbits), w);
-+	expect_eq_uint(bitmap_weight(bmap, 1024), w);
-+	expect_eq_bitmap(bmap, exp2_to_exp3_mask, nbits);
-+}
-+
- #define PARSE_TIME	0x1
- #define NO_LEN		0x2
+-	for (num_get = 0, i = 0; i < lr->num_lines; i++) {
+-		if (lv.mask & BIT_ULL(i)) {
+-			num_get++;
+-			descs = &lr->lines[i].desc;
+-		}
+-	}
++	bitmap_from_arr64(mask, &lv.mask, GPIO_V2_LINES_MAX);
  
-@@ -1228,6 +1250,7 @@ static void __init selftest(void)
- 	test_fill_set();
- 	test_copy();
- 	test_replace();
-+	test_bitmap_sg();
- 	test_bitmap_arr32();
- 	test_bitmap_arr64();
- 	test_bitmap_parse();
++	num_get = bitmap_weight(mask, lr->num_lines);
+ 	if (num_get == 0)
+ 		return -EINVAL;
+ 
+-	if (num_get != 1) {
++	if (num_get == 1) {
++		descs = &lr->lines[find_first_bit(mask, lr->num_lines)].desc;
++	} else {
+ 		descs = kmalloc_array(num_get, sizeof(*descs), GFP_KERNEL);
+ 		if (!descs)
+ 			return -ENOMEM;
+-		for (didx = 0, i = 0; i < lr->num_lines; i++) {
+-			if (lv.mask & BIT_ULL(i)) {
+-				descs[didx] = lr->lines[i].desc;
+-				didx++;
+-			}
+-		}
++
++		didx = 0;
++		for_each_set_bit(i, mask, lr->num_lines)
++			descs[didx++] = lr->lines[i].desc;
+ 	}
+ 	ret = gpiod_get_array_value_complex(false, true, num_get,
+ 					    descs, NULL, vals);
+@@ -1301,19 +1298,15 @@ static long linereq_get_values(struct linereq *lr, void __user *ip)
+ 	if (ret)
+ 		return ret;
+ 
+-	lv.bits = 0;
+-	for (didx = 0, i = 0; i < lr->num_lines; i++) {
+-		if (lv.mask & BIT_ULL(i)) {
+-			if (lr->lines[i].sw_debounced)
+-				val = debounced_value(&lr->lines[i]);
+-			else
+-				val = test_bit(didx, vals);
+-			if (val)
+-				lv.bits |= BIT_ULL(i);
+-			didx++;
+-		}
++	bitmap_scatter(bits, vals, mask, lr->num_lines);
++
++	for_each_set_bit(i, mask, lr->num_lines) {
++		if (lr->lines[i].sw_debounced)
++			__assign_bit(i, bits, debounced_value(&lr->lines[i]));
+ 	}
+ 
++	bitmap_to_arr64(&lv.bits, bits, GPIO_V2_LINES_MAX);
++
+ 	if (copy_to_user(ip, &lv, sizeof(lv)))
+ 		return -EFAULT;
+ 
+@@ -1324,35 +1317,35 @@ static long linereq_set_values_unlocked(struct linereq *lr,
+ 					struct gpio_v2_line_values *lv)
+ {
+ 	DECLARE_BITMAP(vals, GPIO_V2_LINES_MAX);
++	DECLARE_BITMAP(mask, GPIO_V2_LINES_MAX);
++	DECLARE_BITMAP(bits, GPIO_V2_LINES_MAX);
+ 	struct gpio_desc **descs;
+ 	unsigned int i, didx, num_set;
+ 	int ret;
+ 
+-	bitmap_zero(vals, GPIO_V2_LINES_MAX);
+-	for (num_set = 0, i = 0; i < lr->num_lines; i++) {
+-		if (lv->mask & BIT_ULL(i)) {
+-			if (!test_bit(FLAG_IS_OUT, &lr->lines[i].desc->flags))
+-				return -EPERM;
+-			if (lv->bits & BIT_ULL(i))
+-				__set_bit(num_set, vals);
+-			num_set++;
+-			descs = &lr->lines[i].desc;
+-		}
+-	}
++	bitmap_from_arr64(mask, &lv->mask, GPIO_V2_LINES_MAX);
++	bitmap_from_arr64(bits, &lv->bits, GPIO_V2_LINES_MAX);
++
++	num_set = bitmap_gather(vals, bits, mask, lr->num_lines);
+ 	if (num_set == 0)
+ 		return -EINVAL;
+ 
+-	if (num_set != 1) {
++	for_each_set_bit(i, mask, lr->num_lines) {
++		if (!test_bit(FLAG_IS_OUT, &lr->lines[i].desc->flags))
++			return -EPERM;
++	}
++
++	if (num_set == 1) {
++		descs = &lr->lines[find_first_bit(mask, lr->num_lines)].desc;
++	} else {
+ 		/* build compacted desc array and values */
+ 		descs = kmalloc_array(num_set, sizeof(*descs), GFP_KERNEL);
+ 		if (!descs)
+ 			return -ENOMEM;
+-		for (didx = 0, i = 0; i < lr->num_lines; i++) {
+-			if (lv->mask & BIT_ULL(i)) {
+-				descs[didx] = lr->lines[i].desc;
+-				didx++;
+-			}
+-		}
++
++		didx = 0;
++		for_each_set_bit(i, mask, lr->num_lines)
++			descs[didx++] = lr->lines[i].desc;
+ 	}
+ 	ret = gpiod_set_array_value_complex(false, true, num_set,
+ 					    descs, NULL, vals);
 -- 
 2.40.0.1.gaa8946217a0b
 
