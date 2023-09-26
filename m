@@ -2,31 +2,32 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C61FE7E644
-	for <linux-gpio@archiver.kernel.org>; Tue, 26 Sep 2023 15:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D409DE7E64A
+	for <linux-gpio@archiver.kernel.org>; Tue, 26 Sep 2023 15:46:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235095AbjIZPqy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Sep 2023 11:46:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43404 "EHLO
+        id S235126AbjIZPqz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Sep 2023 11:46:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229807AbjIZPqx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2023 11:46:53 -0400
+        with ESMTP id S235114AbjIZPqy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2023 11:46:54 -0400
 Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A624FEB;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6D56127;
         Tue, 26 Sep 2023 08:46:46 -0700 (PDT)
 Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id 792648369A;
-        Tue, 26 Sep 2023 17:46:35 +0200 (CEST)
+        by mx.skole.hr (mx.skole.hr) with ESMTP id 3D67E833AA;
+        Tue, 26 Sep 2023 17:46:33 +0200 (CEST)
 From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Tue, 26 Sep 2023 17:46:25 +0200
-Subject: [PATCH RFC v2 4/6] ARM: pxa: Convert reset driver to GPIO
- descriptors
+Subject: [PATCH RFC v2 0/6] ARM: pxa: GPIO descriptor conversions
+Date:   Tue, 26 Sep 2023 17:46:21 +0200
+Message-Id: <20230926-pxa-gpio-v2-0-984464d165dd@skole.hr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20230926-pxa-gpio-v2-4-984464d165dd@skole.hr>
-References: <20230926-pxa-gpio-v2-0-984464d165dd@skole.hr>
-In-Reply-To: <20230926-pxa-gpio-v2-0-984464d165dd@skole.hr>
+X-B4-Tracking: v=1; b=H4sIAM38EmUC/0XM3QrCIBQH8FcZ5zpDnaLrKgh6gG5jF2ue5qGYQ
+ 0MWY++eeNPl/4PfBgkjYYJTs0HETInCXII8NDD6YZ6QkSsZJJctt9ywZR3YtFBg7YhSO22UFQr
+ KfYn4pLVSd7hdL9CX0lP6hPitfBZ1qlIn1V/KgnEmLdcPa5y1nTqnV3jj0Ufo933/AWgyee6kA
+ AAA
 To:     Daniel Mack <daniel@zonque.org>,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
         Robert Jarzmik <robert.jarzmik@free.fr>,
@@ -40,152 +41,69 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org,
         =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3609;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1636;
  i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=AHxB1OpKYRVa4xCGIARryQkz4h6Z/eDJMO/mv2k3OZ4=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlEvzWugFrB9Kmuw2EXyDUX+5J0fCtKGeWNbwrK
- yhkhbWRbbeJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRL81gAKCRCaEZ6wQi2W
- 4ZIGD/9xGXp2+i77FgWrIAnEBuV5D7waxV2SRys2Wd+2gaWNjopdSV19fiXlAbTJs/UjxWlglUI
- tHMutzwABC/prGL/EgSDTUJZCaGAeX/q65mpqB9HXTmEJ3RjvSTbyzeJ6ijvFShHNP4t+eJ6I+y
- okcrEWlmO/FHVU6GCemaDpkVJq1On7bqfichD5ZUfqV2MhzbixPGWbww7sBXkDn27LPokR2osmY
- HaTFQuFS1RfbPn7tjVLATZWT1sDhXMH2+TaBp1hE1XJdJgPnR5ytNz0XXdvLLNWeL0bkUFgSMhX
- /9Z29jfTOy2IkJbGsFtTYexL+ZThMr9wn44RESUTwAsK4SP/9GnVcy5XD8Sv1wvXsEH1oEidcAn
- ATb9RM1zOARe8fUxaWkzBEFBvPajb8y2JeN8ry1MZb0TVAHFzsXjkoTdVWqJgPjvVENTpsbJTIV
- CZqUKi8pj7Kv03pVEb3dAyE3hS3jkapsK2qMQV/RD2NXjAajC0tvtkiI7KEpcNyHtUYgkuL8eLs
- g65eoa+1q9SCely42M15FEU2uaeuIc/zbTSRbB2ksWZGe6AUsZF9sjYCdea+z8d1G48FUBzrnaV
- taUfpTEgtMAe/iirDKfkVsdY8RcFX/PwhniZH5jpHKhuzEqtkXlFR7uruUieM1NU+1cAwMyNYxO
- DvORHCX3/s+nQLw==
+ bh=kqhcIgA+c1p20ruAULqaoqV6whyH4z56OXFjmXMMryE=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlEvzWBQEqqKBPaHb7u5f9p6t5jZu+JSmFjLYIP
+ ESkLEzJC66JAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRL81gAKCRCaEZ6wQi2W
+ 4frvEACSdmt58LurhpjyINqYLP8c6F4nNjDdEdaKG+h2Iha5JQ0BIbtr3evh7ZH/m0EI4uBKvok
+ AsEb5gcypshbuCiTBY3bF5sOupIgiNlFtoAEyXNAbXXgjYap1GV2CXc0RUJQF5J5AJB1V6MafFB
+ ZOBnwXBpvCGqTCiVFYE0d9Wp3RDR7tYbvQ2shDvXFxyg+Mw3ky2ho7jCFH10PZNh9TgJkyHA5Rz
+ QZ9Q5euqdKl5XEeRT7ro1aDO65kIvrNiMTrDo0QwA3UtGdI18sPHWFSmemw5lafrUE2OMJZVE0H
+ 0b5nu4qzI574hm7u7n/YqbBqdUO5h8d9EBr5inb+jcFl0hJ5hnF8S3fisUEKwdtC3q9DFghI3ZJ
+ Ctrij4pjKquiz/O3W12WWe2NcN1KRKOHMVTfaHt1H3qCkXMPL5ZUQDfNNOSY+NBEtujfHOUqKh1
+ YmyqXeAMjRpUyc+kjwbnNLN44+Z4SKBhnH2X4spBpvWyJOjPITU+PH3KAJV7+vlxwBdZDrMZlT3
+ duwowZQHKf7IMx+jZQ+CdrK5msKFSKnYad/ebSyYwSmyLchW8euXUwMm/jEADNZrWXdvhZ7yvXk
+ YeZXKMR8Rctwi/uo9iP0brtT9cG7bVV6Y2pIq6AVq7Vq8mMHUlu8kBmKle75+cWZKQTvaoN68ni
+ 1UdyUM3845LLdgA==
 X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
  fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The PXA reset driver still uses the legacy GPIO interface for
-configuring and asserting the reset pin.
+Hello,
 
-Convert it to use the GPIO descriptor interface.
+Small series to convert some of the board files in the mach-pxa directory
+to use the new GPIO descriptor interface.
+
+Most notably, the am200epd, am300epd and Spitz matrix keypad among
+others are not converted in this series.
 
 Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 ---
- arch/arm/mach-pxa/reset.c | 39 +++++++++++++--------------------------
- arch/arm/mach-pxa/reset.h |  3 +--
- arch/arm/mach-pxa/spitz.c |  6 +++++-
- 3 files changed, 19 insertions(+), 29 deletions(-)
+Changes in v2:
+- Address maintainer comments:
+  - Change mentions of function to function()
+  - Drop cast in OHCI driver dev_warn() call
+  - Use %pe in OHCI and reset drivers
+  - Use GPIO _optional() API in OHCI driver
+  - Drop unnecessary not-null check in OHCI driver
+  - Use pr_err() instead of printk() in reset driver
+- Rebase on v6.6-rc3
+- Link to v1: https://lore.kernel.org/r/20230924-pxa-gpio-v1-0-2805b87d8894@skole.hr
 
-diff --git a/arch/arm/mach-pxa/reset.c b/arch/arm/mach-pxa/reset.c
-index 27293549f8ad..dfcd6c45398d 100644
---- a/arch/arm/mach-pxa/reset.c
-+++ b/arch/arm/mach-pxa/reset.c
-@@ -2,7 +2,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/delay.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/io.h>
- #include <asm/proc-fns.h>
- #include <asm/system_misc.h>
-@@ -14,33 +14,20 @@
- 
- static void do_hw_reset(void);
- 
--static int reset_gpio = -1;
-+static struct gpio_desc *reset_gpio = NULL;
- 
--int init_gpio_reset(int gpio, int output, int level)
-+int init_gpio_reset(int output, int level)
- {
--	int rc;
--
--	rc = gpio_request(gpio, "reset generator");
--	if (rc) {
--		printk(KERN_ERR "Can't request reset_gpio\n");
--		goto out;
-+	reset_gpio = gpiod_get(NULL, "reset generator", GPIOD_ASIS);
-+	if (IS_ERR(reset_gpio)) {
-+		pr_err("Can't request reset_gpio: %pe\n", reset_gpio);
-+		return PTR_ERR(reset_gpio);
- 	}
- 
- 	if (output)
--		rc = gpio_direction_output(gpio, level);
-+		return gpiod_direction_output(reset_gpio, level);
- 	else
--		rc = gpio_direction_input(gpio);
--	if (rc) {
--		printk(KERN_ERR "Can't configure reset_gpio\n");
--		gpio_free(gpio);
--		goto out;
--	}
--
--out:
--	if (!rc)
--		reset_gpio = gpio;
--
--	return rc;
-+		return gpiod_direction_input(reset_gpio);
- }
- 
- /*
-@@ -50,16 +37,16 @@ int init_gpio_reset(int gpio, int output, int level)
-  */
- static void do_gpio_reset(void)
- {
--	BUG_ON(reset_gpio == -1);
-+	BUG_ON(IS_ERR(reset_gpio));
- 
- 	/* drive it low */
--	gpio_direction_output(reset_gpio, 0);
-+	gpiod_direction_output(reset_gpio, 0);
- 	mdelay(2);
- 	/* rising edge or drive high */
--	gpio_set_value(reset_gpio, 1);
-+	gpiod_set_value(reset_gpio, 1);
- 	mdelay(2);
- 	/* falling edge */
--	gpio_set_value(reset_gpio, 0);
-+	gpiod_set_value(reset_gpio, 0);
- 
- 	/* give it some time */
- 	mdelay(10);
-diff --git a/arch/arm/mach-pxa/reset.h b/arch/arm/mach-pxa/reset.h
-index 963dd190bc13..5864f61a0e94 100644
---- a/arch/arm/mach-pxa/reset.h
-+++ b/arch/arm/mach-pxa/reset.h
-@@ -13,10 +13,9 @@ extern void pxa_register_wdt(unsigned int reset_status);
- 
- /**
-  * init_gpio_reset() - register GPIO as reset generator
-- * @gpio: gpio nr
-  * @output: set gpio as output instead of input during normal work
-  * @level: output level
-  */
--extern int init_gpio_reset(int gpio, int output, int level);
-+extern int init_gpio_reset(int output, int level);
- 
- #endif /* __ASM_ARCH_RESET_H */
-diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
-index 616305978727..94bcb187713b 100644
---- a/arch/arm/mach-pxa/spitz.c
-+++ b/arch/arm/mach-pxa/spitz.c
-@@ -1024,9 +1024,13 @@ static void spitz_restart(enum reboot_mode mode, const char *cmd)
- 	spitz_poweroff();
- }
- 
-+GPIO_LOOKUP_SINGLE(spitz_reset_gpio_table, NULL, "pxa-gpio",
-+		SPITZ_GPIO_ON_RESET, "reset generator", GPIO_ACTIVE_HIGH);
-+
- static void __init spitz_init(void)
- {
--	init_gpio_reset(SPITZ_GPIO_ON_RESET, 1, 0);
-+	gpiod_add_lookup_table(&spitz_reset_gpio_table);
-+	init_gpio_reset(1, 0);
- 	pm_power_off = spitz_poweroff;
- 
- 	PMCR = 0x00;
+---
+Duje Mihanović (6):
+      ARM: pxa: Convert Spitz OHCI to GPIO descriptors
+      ARM: pxa: Convert Spitz LEDs to GPIO descriptors
+      ARM: pxa: Convert Spitz CF power control to GPIO descriptors
+      ARM: pxa: Convert reset driver to GPIO descriptors
+      ARM: pxa: Convert Spitz hsync to GPIO descriptors
+      ARM: pxa: Convert gumstix Bluetooth to GPIO descriptors
 
+ arch/arm/mach-pxa/gumstix.c    | 24 ++++++++-------
+ arch/arm/mach-pxa/reset.c      | 39 ++++++++---------------
+ arch/arm/mach-pxa/reset.h      |  3 +-
+ arch/arm/mach-pxa/spitz.c      | 70 +++++++++++++++++++++++++++++++++---------
+ drivers/usb/host/ohci-pxa27x.c |  7 +++++
+ 5 files changed, 90 insertions(+), 53 deletions(-)
+---
+base-commit: 6465e260f48790807eef06b583b38ca9789b6072
+change-id: 20230807-pxa-gpio-3ce25d574814
+
+Best regards,
 -- 
-2.42.0
+Duje Mihanović <duje.mihanovic@skole.hr>
 
 
