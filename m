@@ -2,343 +2,159 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 638F6E810B3
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Sep 2023 09:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 573C3E810B1
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Sep 2023 09:49:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbjI0Jlu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Sep 2023 05:41:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37776 "EHLO
+        id S231232AbjI0Jti (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Sep 2023 05:49:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230448AbjI0Jl1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Sep 2023 05:41:27 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A7EE10E
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Sep 2023 02:41:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695807685; x=1727343685;
-  h=date:from:to:cc:subject:message-id;
-  bh=3amCUpFRv4qL9jNEFUnEE8IB1dv22eW268Ugyg9tjVk=;
-  b=fDHOgNIuXohqe7hMfgghRubsq2XOG/CK8Pu1gzvmtbWwlnEvYRsN/vKS
-   hLUrZ2xbYPdA4Mo7v8ECoiFYWOaoSikQPOd9h2oKS7pSDZH83C8VlJuWi
-   ujpjQzvn90rLEyDfGX7APzqR/6MYuUSU3xNbhITV9Xd7OgHMVQGvoU5Ej
-   CQPtDUwYrXZVCKWn8Srxne0/BiP/Edb+rtWEfBR2vDOV2gI2E0qqHdwHT
-   n8RurvC+RqYKoNISeKqqCUCgIRGMSTxT8foLcJd4wfwhNMEwhfr4x56P/
-   nzLxw21DZl1hzhZDHblIJ7GEPKPjkysR8/53KnJKPGuERvUqMlP0CSvOr
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10845"; a="362031815"
-X-IronPort-AV: E=Sophos;i="6.03,179,1694761200"; 
-   d="scan'208";a="362031815"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2023 02:41:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10845"; a="742647606"
-X-IronPort-AV: E=Sophos;i="6.03,179,1694761200"; 
-   d="scan'208";a="742647606"
-Received: from lkp-server02.sh.intel.com (HELO c3b01524d57c) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 27 Sep 2023 02:41:18 -0700
-Received: from kbuild by c3b01524d57c with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qlR2i-00003X-1w;
-        Wed, 27 Sep 2023 09:41:16 +0000
-Date:   Wed, 27 Sep 2023 17:40:22 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS WITH WARNING
- caaeb8c551123e26e86270c8dec99a78f1f6fe0f
-Message-ID: <202309271715.kfku4Q1o-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+        with ESMTP id S231254AbjI0JtR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Sep 2023 05:49:17 -0400
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88F2910FD;
+        Wed, 27 Sep 2023 02:49:07 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0VszxC8b_1695808144;
+Received: from 30.97.48.70(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0VszxC8b_1695808144)
+          by smtp.aliyun-inc.com;
+          Wed, 27 Sep 2023 17:49:05 +0800
+Message-ID: <99dc2f99-cb03-bec8-b538-3ad21750adff@linux.alibaba.com>
+Date:   Wed, 27 Sep 2023 17:49:11 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH V2 1/2] gpio: pmic-eic-sprd: Two-dimensional arrays
+ maintain pmic eic
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Wenhua Lin <Wenhua.Lin@unisoc.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Orson Zhai <orsonzhai@gmail.com>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        wenhua lin <wenhua.lin1994@gmail.com>,
+        Xiongpeng Wu <xiongpeng.wu@unisoc.com>
+References: <20230921122527.15261-1-Wenhua.Lin@unisoc.com>
+ <20230921122527.15261-2-Wenhua.Lin@unisoc.com>
+ <9dd68b0e-e36a-b87c-e66d-586f2442da6c@linux.alibaba.com>
+ <CAAfSe-tDFJtq77zw2vHsHAvrwXSy4KFwAEPnVJ6fP8e4PgRF6A@mail.gmail.com>
+From:   Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAAfSe-tDFJtq77zw2vHsHAvrwXSy4KFwAEPnVJ6fP8e4PgRF6A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: caaeb8c551123e26e86270c8dec99a78f1f6fe0f  dt-bindings: pinctrl: Add missing additionalProperties on child node schemas
 
-Warning reports:
 
-https://lore.kernel.org/oe-kbuild-all/202309270234.aJGlDE0P-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202309270313.mBEc9o1A-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202309270448.7Aen3Sgx-lkp@intel.com
+On 9/27/2023 5:24 PM, Chunyan Zhang wrote:
+> On Wed, 27 Sept 2023 at 17:04, Baolin Wang
+> <baolin.wang@linux.alibaba.com> wrote:
+>>
+>>
+>>
+>> On 9/21/2023 8:25 PM, Wenhua Lin wrote:
+>>> A bank PMIC EIC contains 16 EICs, and the operating registers
+>>> are BIT0-BIT15, such as BIT0 of the register operated by EIC0.
+>>> Using the one-dimensional array reg[CACHE_NR_REGS] for maintenance
+>>> will cause the configuration of other EICs to be affected when
+>>> operating a certain EIC. In order to solve this problem, the register
+>>> operation bits of each PMIC EIC are maintained through the two-dimensional
+>>> array reg[SPRD_PMIC_EIC_NR][CACHE_NR_REGS] to avoid mutual interference.
+>>
+>> LGTM. And this also deserves a Fixes tag.
+> 
+> Do we really need a two-dimensional array to save 16-bit value?
 
-Warning: (recently discovered and may have been fixed)
+I also considering this, but after more thinking, I think this patch is 
+a simple fix.
 
-drivers/pinctrl/realtek/pinctrl-rtd.c:180:29: warning: '%s' directive argument is null [-Wformat-overflow=]
-drivers/pinctrl/realtek/pinctrl-rtd1315e.c:231:35: warning: 'rtd1315e_boot_sel_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1315e.c:231:35: warning: 'rtd1315e_reset_n_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1315e.c:231:35: warning: 'rtd1315e_scan_switch_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1315e.c:231:35: warning: 'rtd1315e_testmode_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1315e.c:231:35: warning: 'rtd1315e_wd_rset_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1319d.c:237:35: warning: 'rtd1319d_boot_sel_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1319d.c:237:35: warning: 'rtd1319d_reset_n_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1319d.c:237:35: warning: 'rtd1319d_scan_switch_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1319d.c:237:35: warning: 'rtd1319d_testmode_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1319d.c:237:35: warning: 'rtd1319d_wd_rset_pins' defined but not used [-Wunused-const-variable=]
+Now I realized the problem is that, if we use one array to cache a bank 
+of EICs' status, the pmic_eic->reg[] array can contain incorrect 
+configuration for other EICs in the same bank.
 
-Warning ids grouped by kconfigs:
+Yes, we can have another fix, for example, setting the pmic_eic->reg[] 
+to some invalid values (maybe -1) in sprd_pmic_eic_bus_sync_unlock() 
+after setting one EIC. Thus when setting another EIC, we can validate if 
+the cached reg is a valid value, if not, we do not need to set the 
+register. But like I said above, this seems more complicated.
 
-gcc_recent_errors
-|-- arm-allmodconfig
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd.c:warning:s-directive-argument-is-null
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_testmode_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_wd_rset_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_testmode_pins-defined-but-not-used
-|   `-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_wd_rset_pins-defined-but-not-used
-|-- arm-allyesconfig
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd.c:warning:s-directive-argument-is-null
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_testmode_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_wd_rset_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_testmode_pins-defined-but-not-used
-|   `-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_wd_rset_pins-defined-but-not-used
-|-- arm-randconfig-001-20230926
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd.c:warning:s-directive-argument-is-null
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_testmode_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_wd_rset_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_testmode_pins-defined-but-not-used
-|   `-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_wd_rset_pins-defined-but-not-used
-|-- arm64-allmodconfig
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd.c:warning:s-directive-argument-is-null
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_testmode_pins-defined-but-not-used
-|   `-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_wd_rset_pins-defined-but-not-used
-|-- arm64-allyesconfig
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd.c:warning:s-directive-argument-is-null
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_testmode_pins-defined-but-not-used
-|   `-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_wd_rset_pins-defined-but-not-used
-|-- arm64-defconfig
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd.c:warning:s-directive-argument-is-null
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_testmode_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_wd_rset_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_testmode_pins-defined-but-not-used
-|   `-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_wd_rset_pins-defined-but-not-used
-`-- arm64-randconfig-004-20230927
-    `-- drivers-pinctrl-realtek-pinctrl-rtd.c:warning:s-directive-argument-is-null
-
-elapsed time: 1463m
-
-configs tested: 188
-configs skipped: 2
-
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arc                   randconfig-001-20230926   gcc  
-arc                   randconfig-001-20230927   gcc  
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   gcc  
-arm                              allyesconfig   gcc  
-arm                                 defconfig   gcc  
-arm                   randconfig-001-20230926   gcc  
-arm                   randconfig-001-20230927   gcc  
-arm                           sama5_defconfig   gcc  
-arm64                            allmodconfig   gcc  
-arm64                             allnoconfig   gcc  
-arm64                            allyesconfig   gcc  
-arm64                               defconfig   gcc  
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20230926   gcc  
-i386         buildonly-randconfig-001-20230927   gcc  
-i386         buildonly-randconfig-002-20230926   gcc  
-i386         buildonly-randconfig-002-20230927   gcc  
-i386         buildonly-randconfig-003-20230926   gcc  
-i386         buildonly-randconfig-003-20230927   gcc  
-i386         buildonly-randconfig-004-20230926   gcc  
-i386         buildonly-randconfig-004-20230927   gcc  
-i386         buildonly-randconfig-005-20230926   gcc  
-i386         buildonly-randconfig-005-20230927   gcc  
-i386         buildonly-randconfig-006-20230926   gcc  
-i386         buildonly-randconfig-006-20230927   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                  randconfig-001-20230927   gcc  
-i386                  randconfig-002-20230927   gcc  
-i386                  randconfig-003-20230927   gcc  
-i386                  randconfig-004-20230927   gcc  
-i386                  randconfig-005-20230927   gcc  
-i386                  randconfig-006-20230927   gcc  
-i386                  randconfig-011-20230926   gcc  
-i386                  randconfig-011-20230927   gcc  
-i386                  randconfig-012-20230926   gcc  
-i386                  randconfig-012-20230927   gcc  
-i386                  randconfig-013-20230926   gcc  
-i386                  randconfig-013-20230927   gcc  
-i386                  randconfig-014-20230926   gcc  
-i386                  randconfig-014-20230927   gcc  
-i386                  randconfig-015-20230926   gcc  
-i386                  randconfig-015-20230927   gcc  
-i386                  randconfig-016-20230926   gcc  
-i386                  randconfig-016-20230927   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                        allyesconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20230926   gcc  
-loongarch             randconfig-001-20230927   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                         apollo_defconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                             allmodconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                       lemote2f_defconfig   clang
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-openrisc                         allmodconfig   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                           allmodconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   gcc  
-powerpc                      ppc44x_defconfig   clang
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   gcc  
-riscv                               defconfig   gcc  
-riscv                 randconfig-001-20230926   gcc  
-riscv                          rv32_defconfig   gcc  
-s390                             allmodconfig   gcc  
-s390                              allnoconfig   gcc  
-s390                             allyesconfig   gcc  
-s390                                defconfig   gcc  
-s390                  randconfig-001-20230926   gcc  
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                         microdev_defconfig   gcc  
-sh                          rsk7203_defconfig   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                            allyesconfig   gcc  
-sparc                               defconfig   gcc  
-sparc                 randconfig-001-20230926   gcc  
-sparc                 randconfig-001-20230927   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   clang
-um                                  defconfig   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64       buildonly-randconfig-001-20230926   gcc  
-x86_64       buildonly-randconfig-001-20230927   gcc  
-x86_64       buildonly-randconfig-002-20230926   gcc  
-x86_64       buildonly-randconfig-002-20230927   gcc  
-x86_64       buildonly-randconfig-003-20230926   gcc  
-x86_64       buildonly-randconfig-003-20230927   gcc  
-x86_64       buildonly-randconfig-004-20230926   gcc  
-x86_64       buildonly-randconfig-004-20230927   gcc  
-x86_64       buildonly-randconfig-005-20230926   gcc  
-x86_64       buildonly-randconfig-005-20230927   gcc  
-x86_64       buildonly-randconfig-006-20230926   gcc  
-x86_64       buildonly-randconfig-006-20230927   gcc  
-x86_64                              defconfig   gcc  
-x86_64                                  kexec   gcc  
-x86_64                randconfig-001-20230926   gcc  
-x86_64                randconfig-001-20230927   gcc  
-x86_64                randconfig-002-20230926   gcc  
-x86_64                randconfig-002-20230927   gcc  
-x86_64                randconfig-003-20230926   gcc  
-x86_64                randconfig-003-20230927   gcc  
-x86_64                randconfig-004-20230926   gcc  
-x86_64                randconfig-004-20230927   gcc  
-x86_64                randconfig-005-20230926   gcc  
-x86_64                randconfig-005-20230927   gcc  
-x86_64                randconfig-006-20230926   gcc  
-x86_64                randconfig-006-20230927   gcc  
-x86_64                randconfig-011-20230926   gcc  
-x86_64                randconfig-011-20230927   gcc  
-x86_64                randconfig-012-20230926   gcc  
-x86_64                randconfig-012-20230927   gcc  
-x86_64                randconfig-013-20230926   gcc  
-x86_64                randconfig-013-20230927   gcc  
-x86_64                randconfig-014-20230926   gcc  
-x86_64                randconfig-014-20230927   gcc  
-x86_64                randconfig-015-20230926   gcc  
-x86_64                randconfig-015-20230927   gcc  
-x86_64                randconfig-016-20230926   gcc  
-x86_64                randconfig-016-20230927   gcc  
-x86_64                randconfig-071-20230926   gcc  
-x86_64                randconfig-071-20230927   gcc  
-x86_64                randconfig-072-20230926   gcc  
-x86_64                randconfig-072-20230927   gcc  
-x86_64                randconfig-073-20230926   gcc  
-x86_64                randconfig-073-20230927   gcc  
-x86_64                randconfig-074-20230926   gcc  
-x86_64                randconfig-074-20230927   gcc  
-x86_64                randconfig-075-20230926   gcc  
-x86_64                randconfig-075-20230927   gcc  
-x86_64                randconfig-076-20230926   gcc  
-x86_64                randconfig-076-20230927   gcc  
-x86_64                           rhel-8.3-bpf   gcc  
-x86_64                          rhel-8.3-func   gcc  
-x86_64                    rhel-8.3-kselftests   gcc  
-x86_64                         rhel-8.3-kunit   gcc  
-x86_64                           rhel-8.3-ltp   gcc  
-x86_64                          rhel-8.3-rust   clang
-x86_64                               rhel-8.3   gcc  
-xtensa                            allnoconfig   gcc  
-xtensa                           allyesconfig   gcc  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>
+>>> Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
+>>> ---
+>>>    drivers/gpio/gpio-pmic-eic-sprd.c | 21 +++++++++++----------
+>>>    1 file changed, 11 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
+>>> index c3e4d90f6b18..442968bb2490 100644
+>>> --- a/drivers/gpio/gpio-pmic-eic-sprd.c
+>>> +++ b/drivers/gpio/gpio-pmic-eic-sprd.c
+>>> @@ -57,7 +57,7 @@ struct sprd_pmic_eic {
+>>>        struct gpio_chip chip;
+>>>        struct regmap *map;
+>>>        u32 offset;
+>>> -     u8 reg[CACHE_NR_REGS];
+>>> +     u8 reg[SPRD_PMIC_EIC_NR][CACHE_NR_REGS];
+>>>        struct mutex buslock;
+>>>        int irq;
+>>>    };
+>>> @@ -151,8 +151,8 @@ static void sprd_pmic_eic_irq_mask(struct irq_data *data)
+>>>        struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
+>>>        u32 offset = irqd_to_hwirq(data);
+>>>
+>>> -     pmic_eic->reg[REG_IE] = 0;
+>>> -     pmic_eic->reg[REG_TRIG] = 0;
+>>> +     pmic_eic->reg[offset][REG_IE] = 0;
+>>> +     pmic_eic->reg[offset][REG_TRIG] = 0;
+>>>
+>>>        gpiochip_disable_irq(chip, offset);
+>>>    }
+>>> @@ -165,8 +165,8 @@ static void sprd_pmic_eic_irq_unmask(struct irq_data *data)
+>>>
+>>>        gpiochip_enable_irq(chip, offset);
+>>>
+>>> -     pmic_eic->reg[REG_IE] = 1;
+>>> -     pmic_eic->reg[REG_TRIG] = 1;
+>>> +     pmic_eic->reg[offset][REG_IE] = 1;
+>>> +     pmic_eic->reg[offset][REG_TRIG] = 1;
+>>>    }
+>>>
+>>>    static int sprd_pmic_eic_irq_set_type(struct irq_data *data,
+>>> @@ -174,13 +174,14 @@ static int sprd_pmic_eic_irq_set_type(struct irq_data *data,
+>>>    {
+>>>        struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
+>>>        struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
+>>> +     u32 offset = irqd_to_hwirq(data);
+>>>
+>>>        switch (flow_type) {
+>>>        case IRQ_TYPE_LEVEL_HIGH:
+>>> -             pmic_eic->reg[REG_IEV] = 1;
+>>> +             pmic_eic->reg[offset][REG_IEV] = 1;
+>>>                break;
+>>>        case IRQ_TYPE_LEVEL_LOW:
+>>> -             pmic_eic->reg[REG_IEV] = 0;
+>>> +             pmic_eic->reg[offset][REG_IEV] = 0;
+>>>                break;
+>>>        case IRQ_TYPE_EDGE_RISING:
+>>>        case IRQ_TYPE_EDGE_FALLING:
+>>> @@ -222,15 +223,15 @@ static void sprd_pmic_eic_bus_sync_unlock(struct irq_data *data)
+>>>                        sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IEV, 1);
+>>>        } else {
+>>>                sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IEV,
+>>> -                                  pmic_eic->reg[REG_IEV]);
+>>> +                                  pmic_eic->reg[offset][REG_IEV]);
+>>>        }
+>>>
+>>>        /* Set irq unmask */
+>>>        sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IE,
+>>> -                          pmic_eic->reg[REG_IE]);
+>>> +                          pmic_eic->reg[offset][REG_IE]);
+>>>        /* Generate trigger start pulse for debounce EIC */
+>>>        sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_TRIG,
+>>> -                          pmic_eic->reg[REG_TRIG]);
+>>> +                          pmic_eic->reg[offset][REG_TRIG]);
+>>>
+>>>        mutex_unlock(&pmic_eic->buslock);
+>>>    }
