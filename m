@@ -2,109 +2,210 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB3DE82CAF
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Sep 2023 16:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D428DE82CAF
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Sep 2023 16:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231391AbjI0Q3p (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Sep 2023 12:29:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56700 "EHLO
+        id S231784AbjI0Q3s (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Sep 2023 12:29:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231256AbjI0Q3o (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Sep 2023 12:29:44 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5062195
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Sep 2023 09:29:42 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-50325ce89e9so19241530e87.0
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Sep 2023 09:29:42 -0700 (PDT)
+        with ESMTP id S231659AbjI0Q3q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Sep 2023 12:29:46 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86076DE
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Sep 2023 09:29:43 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-533d6a8d6b6so10407434a12.2
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Sep 2023 09:29:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695832180; x=1696436980; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JtXuatjclu4yaOr/xjyNWCRhmX1krqQhyJNlwId1XwA=;
-        b=MSIOOz9OSSHnKK9jW3KVaFfI2zqzkn888joQfePOKk6uTcDJ6dbZIb7rsKhP5wXPxW
-         yIh4OWms0aIktV4x4QBMmbRhZVyCedbClqQpJ4u2WQxQ94L70oudtmAr9BZHyCXsu9Fx
-         e0tQQoMWZIHZ3s9Jf4aPaQbGGKRmOXh4IyaNQTyFoO6kPd1/uK87AldLo8pcQCqOMp7S
-         FA8hhu74hyskvYmoG105PTqpf0JTLzpqcJFfrgEHfquyzQPqRCUCrL0ywE6qgtKD2cxQ
-         SMLm505Hc0DiLApf961Atvec46ZgjIt4RvrvfN9s9s/g89EuqKrpXCWYSa9QoBzpeOxR
-         9bXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695832180; x=1696436980;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1695832182; x=1696436982; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JtXuatjclu4yaOr/xjyNWCRhmX1krqQhyJNlwId1XwA=;
-        b=Y+x2xIeRnQuiXIzO5HDUCklI4dFMNvG/GaAdiyKtU4Vw+6X5NBAhqO91U2Km/cSp0i
-         kellHF2gp0OJYI1tu/bhsuiqSCVmiKzefmxt1pdJqO57NUizkahHaZm387FT4ZXyiRZ/
-         L4GNwTlBSy2KQuAJ5hCi+ECOtLWs35zToza57TcVCs4sGFvgZud60YnYy089yoTP3YbB
-         wjIReh3wDlQKwK1KOnlX7jts5YdYS+R2D4QrB1a73ISW0c5EQNQtG+ZgGBtJzH1pTQG1
-         EGUa28p/qL9SGDPyxGtaUzEYOY7uXVgC3ccP6B7n5qFsVnaQYCFuDnadzuqAJkNQaZBn
-         v8qg==
-X-Gm-Message-State: AOJu0YxK9VBvx1IAWOzmGQZCCMm0ORiHLKKit9zHaxvFHZRIP5hexbx1
-        Mb0NjDqzN6GTRasyAODpktWthQ==
-X-Google-Smtp-Source: AGHT+IG4Praiw6FASxephb+fdU9CE2iC24dFEOkC7D36Zv9A2wYkMwZc0n9P5YWPPUy+cpKvM2dO0Q==
-X-Received: by 2002:a05:6512:3ea:b0:500:b8bc:bd9a with SMTP id n10-20020a05651203ea00b00500b8bcbd9amr2015558lfq.49.1695832180474;
-        Wed, 27 Sep 2023 09:29:40 -0700 (PDT)
+        bh=AAuKYtZA2AkFMpgcdmfty2Sc0tQUPcoGpybNVArcQqU=;
+        b=xHtTW225Fb1FR1TPqCCux+TrM/xI0itIeav/TuGfVIeoMkB8jWzFH9DDPZMmeyiGAz
+         6Wr24DRDq6E1xx0FIrsMA0jm1J702aHdS1X7L6qOiHAKAGsWdYnwMAmBQBYuTXvpxOgh
+         qOZKf5WdelhNOuYAZCX1f+h31a1Rj6C399HQuR57xz4/PBKPSuTOmpRolV3xF9fZbYFy
+         BIi+sG90yuHjmJhPtAJh2ywtDsqgC35Uoso/pYBtRWwCKhpZOICdLyxP7EwoMyAwCB48
+         T3Kck1CZT80TtDf2GZuRjudpb7vp9Byv9D5MO6WF7rp7JK3c97njCxJgznOcq7leTYgy
+         8cIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695832182; x=1696436982;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AAuKYtZA2AkFMpgcdmfty2Sc0tQUPcoGpybNVArcQqU=;
+        b=L46i8y3idsWkBYZdD+DWb0h+V/3HDLs37C1NsR/p3hEwqPqrg7ytfJNQOz1fOOx+5O
+         EiinaaUSs5OtcM7XTSaHjU2CtLUcyUrQF1Dkx+Cn1rEs9u1YHr1jKmjoJkmfcFDLPz2u
+         8YLHTwlTftkrptZKoF+QcQl4RmypWaTL1uxg0h0kJnaELDy9ll1XPA453MS2sgMIJq4j
+         YNPR/ColDCO3Y98VOSgJIRVV/MzWrq6KPZfjw9LM8TCK/1IzyAsHFEQh3Ky9hi3ttwGE
+         89UqquL2euIKx6zx+7XwsIqTD59JiG/k/mWreYeGlmICz1+jv/1XrwLjws2wYQdeCks+
+         qmvQ==
+X-Gm-Message-State: AOJu0YzsJvBIel1K2l8fWcRhD+kS8B3rFDw7xsdfTLmQYSgcFeZBSlsz
+        1UBJDWpd8gtfaREnt4YJPRtlVA==
+X-Google-Smtp-Source: AGHT+IE5Vg+Dyz/bKbjOzlL3IhVdCKmEQ4+B0ZJog4XAHOE3jOi5ifn8BwFCXivW5nM8DHHe2ehqDg==
+X-Received: by 2002:aa7:df86:0:b0:52b:db31:3c48 with SMTP id b6-20020aa7df86000000b0052bdb313c48mr2505539edy.0.1695832181907;
+        Wed, 27 Sep 2023 09:29:41 -0700 (PDT)
 Received: from [192.168.1.127] (i5C7438B3.versanet.de. [92.116.56.179])
-        by smtp.gmail.com with ESMTPSA id q8-20020a056402032800b00522828d438csm8384685edw.7.2023.09.27.09.29.39
+        by smtp.gmail.com with ESMTPSA id q8-20020a056402032800b00522828d438csm8384685edw.7.2023.09.27.09.29.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Sep 2023 09:29:40 -0700 (PDT)
+        Wed, 27 Sep 2023 09:29:41 -0700 (PDT)
 From:   Erik Schilling <erik.schilling@linaro.org>
-Subject: [libgpiod][PATCH 0/3] bindings: rust: fix modeling of line_info
- lifetimes
-Date:   Wed, 27 Sep 2023 18:29:36 +0200
-Message-Id: <20230927-rust-line-info-soundness-v1-0-990dce6f18ab@linaro.org>
+Date:   Wed, 27 Sep 2023 18:29:38 +0200
+Subject: [libgpiod][PATCH 2/3] bindings: rust: allow cloning line::Info ->
+ line::OwnedInfo
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHBYFGUC/x2M2wpAQBBAf0XzbGotuf2KPGAHU5rVDlLy7zaPp
- 9M5DygFJoU2eSDQxcpeImRpAtM6yELILjJYY3PT2ArDqQduLFHI7FH9KU5IFbNiMjUZZ0tqIOZ
- 7oJnvf93BxuOys3fQv+8HMR4s2XQAAAA=
+Message-Id: <20230927-rust-line-info-soundness-v1-2-990dce6f18ab@linaro.org>
+References: <20230927-rust-line-info-soundness-v1-0-990dce6f18ab@linaro.org>
+In-Reply-To: <20230927-rust-line-info-soundness-v1-0-990dce6f18ab@linaro.org>
 To:     Linux-GPIO <linux-gpio@vger.kernel.org>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
         Erik Schilling <erik.schilling@linaro.org>
 X-Mailer: b4 0.13-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1695832179; l=1279;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1695832179; l=4959;
  i=erik.schilling@linaro.org; s=20230523; h=from:subject:message-id;
- bh=QwxVV9UAsjUKwJFjjTawZFgIflb4fWsGUoQQlbZX+VE=;
- b=YzVD+QACLLbuEL8rsrfcCeBwGAGspkoMMBCNozYqEdZRUPloShVDusBU0djmHbJ25pW2HGLjs
- hWWXdy5jAvOC0qZCWIbCyiAw6VR/xhrRNbELBNRFrc3gdhj1VglX2wE
+ bh=wQpB0yQ8o4YDV6o9oiQRDwi7P1a+31s2CDhZtZJBIjM=;
+ b=1DsvWKZUO+7dZ6A4qN0TVt45CBiPVHyhOS64O5J5R0LPk0q7TGWXS8Z9cWOWnVG7do67TpdpA
+ UpEvCS+CSRVD1yvbuX48bpYfym955Gd2ix2xea59Qv3cUAjrPGOx2hC
 X-Developer-Key: i=erik.schilling@linaro.org; a=ed25519;
  pk=/nNqy8/YOEdthj1epXl5FgwCTKEiVqTqqnVN1jVal7s=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-While reviewing the bindings for thread-safety, I realized that the
-bindings did not properly model the lifetimes of non-owned line_info
-instances.
+While one would usually use the ToOwned [1] contract in rust, libgpipd's
+API only allows copying that may fail.
 
-This fixes that. It might be a bit might bending. I tried to provide
-lengthy comments to clarify what happens.
+Thus, we cannot implement the existing trait and roll our own method. I
+went with `try_clone` since that seems to be used in similar cases across
+the `std` crate [2].
 
-To: Linux-GPIO <linux-gpio@vger.kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Manos Pitsidianakis <manos.pitsidianakis@linaro.org>
+It also closes the gap of not having any way to clone owned instances.
+Though - again - not through the Clone trait which may not fail [3].
+
+[1] https://doc.rust-lang.org/std/borrow/trait.ToOwned.html
+[2] https://doc.rust-lang.org/std/index.html?search=try_clone
+[3] https://doc.rust-lang.org/std/clone/trait.Clone.html
 
 Signed-off-by: Erik Schilling <erik.schilling@linaro.org>
 ---
-Erik Schilling (3):
-      bindings: rust: fix soundness of line_info modeling
-      bindings: rust: allow cloning line::Info -> line::OwnedInfo
-      bindings: rust: bump major for libgpiod crate
+ bindings/rust/libgpiod/src/lib.rs         |  1 +
+ bindings/rust/libgpiod/src/line_info.rs   | 16 ++++++++++
+ bindings/rust/libgpiod/tests/line_info.rs | 53 +++++++++++++++++++++++++++++++
+ 3 files changed, 70 insertions(+)
 
- bindings/rust/libgpiod/Cargo.toml         |   2 +-
- bindings/rust/libgpiod/src/chip.rs        |  16 +++-
- bindings/rust/libgpiod/src/info_event.rs  |   6 +-
- bindings/rust/libgpiod/src/lib.rs         |   1 +
- bindings/rust/libgpiod/src/line_info.rs   | 138 ++++++++++++++++++++++--------
- bindings/rust/libgpiod/tests/line_info.rs |  53 ++++++++++++
- 6 files changed, 171 insertions(+), 45 deletions(-)
----
-base-commit: ced90e79217793957b11414f47f8aa8a77c7a2d5
-change-id: 20230927-rust-line-info-soundness-14c08e0d26e9
+diff --git a/bindings/rust/libgpiod/src/lib.rs b/bindings/rust/libgpiod/src/lib.rs
+index 3acc98c..fd95ed2 100644
+--- a/bindings/rust/libgpiod/src/lib.rs
++++ b/bindings/rust/libgpiod/src/lib.rs
+@@ -74,6 +74,7 @@ pub enum OperationType {
+     LineConfigSetOutputValues,
+     LineConfigGetOffsets,
+     LineConfigGetSettings,
++    LineInfoCopy,
+     LineRequestReconfigLines,
+     LineRequestGetVal,
+     LineRequestGetValSubset,
+diff --git a/bindings/rust/libgpiod/src/line_info.rs b/bindings/rust/libgpiod/src/line_info.rs
+index 32c4bb2..fe01a14 100644
+--- a/bindings/rust/libgpiod/src/line_info.rs
++++ b/bindings/rust/libgpiod/src/line_info.rs
+@@ -58,6 +58,22 @@ impl Info {
+         self as *const _ as *mut _
+     }
+ 
++    /// Clones the [gpiod::gpiod_line_info] instance to an [InfoOwned]
++    pub fn try_clone(&self) -> Result<InfoOwned> {
++        // SAFETY: `gpiod_line_info` is guaranteed to be valid here.
++        let copy = unsafe { gpiod::gpiod_line_info_copy(self.as_raw_ptr()) };
++        if copy.is_null() {
++            return Err(Error::OperationFailed(
++                crate::OperationType::LineInfoCopy,
++                errno::errno(),
++            ));
++        }
++
++        // SAFETY: The copy succeeded, we are the owner and stop using the
++        // pointer after this.
++        Ok(unsafe { InfoOwned::from_raw_owned(copy) })
++    }
++
+     /// Get the offset of the line within the GPIO chip.
+     ///
+     /// The offset uniquely identifies the line on the chip. The combination of the chip and offset
+diff --git a/bindings/rust/libgpiod/tests/line_info.rs b/bindings/rust/libgpiod/tests/line_info.rs
+index ce66a60..d02c9ea 100644
+--- a/bindings/rust/libgpiod/tests/line_info.rs
++++ b/bindings/rust/libgpiod/tests/line_info.rs
+@@ -19,6 +19,10 @@ mod line_info {
+     const NGPIO: usize = 8;
+ 
+     mod properties {
++        use std::thread;
++
++        use libgpiod::{line, request};
++
+         use super::*;
+ 
+         #[test]
+@@ -271,5 +275,54 @@ mod line_info {
+             assert!(info.is_debounced());
+             assert_eq!(info.debounce_period(), Duration::from_millis(100));
+         }
++
++        fn generate_line_event(chip: &Chip) {
++            let mut line_config = line::Config::new().unwrap();
++            line_config
++                .add_line_settings(&[0], line::Settings::new().unwrap())
++                .unwrap();
++
++            let mut request = chip
++                .request_lines(Some(&request::Config::new().unwrap()), &line_config)
++                .unwrap();
++
++            let mut new_line_config = line::Config::new().unwrap();
++            let mut settings = line::Settings::new().unwrap();
++            settings.set_direction(Direction::Output).unwrap();
++            new_line_config.add_line_settings(&[0], settings).unwrap();
++            request.reconfigure_lines(&new_line_config).unwrap();
++        }
++
++        #[test]
++        fn ownership() {
++            let sim = Sim::new(Some(1), None, false).unwrap();
++            sim.set_line_name(0, "Test line").unwrap();
++            sim.enable().unwrap();
++
++            let chip = Chip::open(&sim.dev_path()).unwrap();
++
++            // start watching line
++            chip.watch_line_info(0).unwrap();
++
++            generate_line_event(&chip);
++
++            // read generated event
++            let event = chip.read_info_event().unwrap();
++            let info = event.line_info().unwrap();
++            assert_eq!(info.name().unwrap(), "Test line");
++
++            // clone info and move to separate thread
++            let info = info.try_clone().unwrap();
++
++            // drop the original event with the associated line_info
++            drop(event);
++
++            // assert that we can still read the name
++            thread::scope(|s| {
++                s.spawn(move || {
++                    assert_eq!(info.name().unwrap(), "Test line");
++                });
++            });
++        }
+     }
+ }
 
-Best regards,
 -- 
-Erik Schilling <erik.schilling@linaro.org>
+2.41.0
 
