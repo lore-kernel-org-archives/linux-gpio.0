@@ -2,165 +2,97 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD852E810B1
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Sep 2023 09:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE90E810AD
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Sep 2023 09:25:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229750AbjI0JY5 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Sep 2023 05:24:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60602 "EHLO
+        id S229539AbjI0JZf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Sep 2023 05:25:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230146AbjI0JY4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Sep 2023 05:24:56 -0400
-Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B301792;
-        Wed, 27 Sep 2023 02:24:55 -0700 (PDT)
-Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-1dc863efb61so5639607fac.0;
-        Wed, 27 Sep 2023 02:24:55 -0700 (PDT)
+        with ESMTP id S229800AbjI0JZe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Sep 2023 05:25:34 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1901E6
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Sep 2023 02:25:32 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-50307acd445so16942730e87.0
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Sep 2023 02:25:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695806695; x=1696411495; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JZHfUTnIi/+tYMD4CQDLq6wn6RnNFZ3TBrKVNMLL2a0=;
-        b=NDqKIxaVxokp6ySLmgEFP7mxhuv6TbdvxX/1FL9bwGsr6XxZnJWG+Z3zMPFaDmrKa9
-         lffZhmPcsbd2YotZNxCvOAh05stm/llPg50M8viYrH8GL8VWFLVrvPfnBMPCbtFGkKj+
-         BV4Vr7JX0eU1Gxebo9RB6j+ewhfipso4KwdTZdTG5caCQk6xHnnP+zZEATl044p2TnQR
-         q6UETkqq34lhNn5vct7pskr/2U5qSWsQQfg8uVvtA+XkpF7kTxMu6eUUx2/JcIdUhQjw
-         ntbkz1i5xMZ6f+oiwXhsAvo5IWiybaY7LzMALR9e415GK8Jqb5/KjO3NWhwVxxh9S3uF
-         09TA==
+        d=linaro.org; s=google; t=1695806731; x=1696411531; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FL11vn92JSW/gte6QMDYC4P24LGOKiHH3kNcL8OX/Lc=;
+        b=iEo5PnqTiY6/0I7HMzBNpiS665/QujPpFY6eXmBfQzS8WErj0MaRsLAHdVJUS2OikN
+         F/3+yUBmThvVTW4hCv8HNP6/6eNYDFHu5UJ3y8HoyspljZbk+k+g+iNeTQJ9NLdtBQTF
+         j9cVENLbNSvcemp0lNt04BTqwpwhJMCi20WN4awmcsF6+hl7bFF0Y7Q2oF27mddbrrPV
+         6S299DGiQstZySngvDLNf1rrjv59uiZmPdLlxsBIEB9q08JKb5+jlA5LEJLEo63Yfb5S
+         Gr4H+R3PrAqXjJhPJib3Ks9sFBUOHQ8dBe8NEQIkk0toBTrDlhwhMCYUWiQS2+c1w4Np
+         y49Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695806695; x=1696411495;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1695806731; x=1696411531;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JZHfUTnIi/+tYMD4CQDLq6wn6RnNFZ3TBrKVNMLL2a0=;
-        b=Gg3y3D0UEC9usau9xzghKKdvtC7Fkpio+FjMIBTBvVi/6NgeLfCOJRh1umoeiJy9SB
-         XK+O2guZVli4/mrnXkExgl51yEkSoXCmo0aWkGnZKDjwe+m9NoCTVQGnwlTlLAI/KFW7
-         w+9zTXfks8776gSzvjweJiZdCooHN8ACZduL1AmOF1ZjJ2NjRS0ffkKB3neVBKhxcOLp
-         4lf3gPNne2np1UlZI7pEgZxxLTcm47ssg1z4r4adQeVouXGrHDGmuHI5NHm2D7UXumUb
-         RyxO0vl024j5gG/9BJ1D2r+3je9QKx/DLwHSZ/Q/geMXruzxUr09oiE45lIgZ5zw3IDV
-         CGQQ==
-X-Gm-Message-State: AOJu0YxWfJbQR5fF2+5nQzlzrsEm3gHuag6+6gW3uhfSyP9esuUG1vYO
-        pLLfeDqV27zIW35jlSmSBss+1JEDpl6MHKxr6sU=
-X-Google-Smtp-Source: AGHT+IF6+ObcwAKEOqCd1hbcguKkAGio2VFRSCNIAEwoldqXnQlfohF2oZPfMjpC4cgkx33MdTLlzPCe110tg27Q9PU=
-X-Received: by 2002:a05:6870:5609:b0:1d5:af57:e916 with SMTP id
- m9-20020a056870560900b001d5af57e916mr1914039oao.16.1695806694787; Wed, 27 Sep
- 2023 02:24:54 -0700 (PDT)
+        bh=FL11vn92JSW/gte6QMDYC4P24LGOKiHH3kNcL8OX/Lc=;
+        b=pCLyIre5PIOHHtJI2PMaMMeLXJ3MRxGIHwxZzNVP5vq0Yyn7PHnwqeryEc7+RcGmdz
+         jE0rwwpbxsf5A2yD1OAVRp4IFiql8Sqm1kgBi9MN2YUz11hkMTvJWCs9AtRqnRYMuqEN
+         kc6jqrJJtfbatDgfQPzlfmyGaojCCze8mIY9BmGH1XUQi0WhAAzNatfkwCu7/WmeSnm9
+         adMItN2JHo9JPOpp1XoKFjRfgzmgPMxl3FpXENUfkImXktwdyQ2+CAbQR4sU6eapwXaF
+         PWwfDO69CQDNclDEBLMUZW4Dj6gGa+WLVHVZm6EZipPUKqA4Z6kNcJ8Ho86ymaH1l7RG
+         FkAg==
+X-Gm-Message-State: AOJu0Yywl5+wjhWzZ7hmgnHGEInjldMtCnq7icRdwBtHwdRYb+3RoNC7
+        wwKN7JavTjz3A8WNj+PJYzKARt8qxgb8Nh3epBk=
+X-Google-Smtp-Source: AGHT+IHgD+F9jlZslj4a8Fg8dXvO7enrGDI9/eF6FYruTBvYvHYEx/BvqLp3EZlvUeFvcB2JcpjLYA==
+X-Received: by 2002:ac2:5449:0:b0:503:2e6:6862 with SMTP id d9-20020ac25449000000b0050302e66862mr1096028lfn.32.1695806730664;
+        Wed, 27 Sep 2023 02:25:30 -0700 (PDT)
+Received: from [192.168.1.127] (i5C7438B3.versanet.de. [92.116.56.179])
+        by smtp.gmail.com with ESMTPSA id c9-20020a05600c0ac900b0040646cf9fa7sm667861wmr.42.2023.09.27.02.25.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Sep 2023 02:25:30 -0700 (PDT)
+From:   Erik Schilling <erik.schilling@linaro.org>
+Subject: [libgpiod][PATCH 0/2] rust: bindings: drop unneeded Arc within
+ Chip
+Date:   Wed, 27 Sep 2023 11:25:22 +0200
+Message-Id: <20230927-chip-drop-arc-v1-0-28013bf95948@linaro.org>
 MIME-Version: 1.0
-References: <20230921122527.15261-1-Wenhua.Lin@unisoc.com> <20230921122527.15261-2-Wenhua.Lin@unisoc.com>
- <9dd68b0e-e36a-b87c-e66d-586f2442da6c@linux.alibaba.com>
-In-Reply-To: <9dd68b0e-e36a-b87c-e66d-586f2442da6c@linux.alibaba.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Wed, 27 Sep 2023 17:24:17 +0800
-Message-ID: <CAAfSe-tDFJtq77zw2vHsHAvrwXSy4KFwAEPnVJ6fP8e4PgRF6A@mail.gmail.com>
-Subject: Re: [PATCH V2 1/2] gpio: pmic-eic-sprd: Two-dimensional arrays
- maintain pmic eic
-To:     Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc:     Wenhua Lin <Wenhua.Lin@unisoc.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Orson Zhai <orsonzhai@gmail.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        wenhua lin <wenhua.lin1994@gmail.com>,
-        Xiongpeng Wu <xiongpeng.wu@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAL1E2UC/x3MTQqAIBBA4avErBswI6KuEi38mWogVEaIQLx70
+ vJbvFcgkzBlWLsCQg9njqFh6DtwlwknIftm0EqPatEzuosTeokJjTicZk/W0kCTNtCaJHTw+/8
+ 2uNmeiaOHvdYPoyJq2GkAAAA=
+To:     Linux-GPIO <linux-gpio@vger.kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Erik Schilling <erik.schilling@linaro.org>
+X-Mailer: b4 0.13-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1695806730; l=714;
+ i=erik.schilling@linaro.org; s=20230523; h=from:subject:message-id;
+ bh=DY8BYFtHcSdqhkdS7zQ/17zmYVW40/XHIRq9mQ9Vz8A=;
+ b=7sXytZfKKbreeCrwbSOzpnnY5nz9xcESP19igsjfMIRJtKJ9im5OCzGw0emioqjLKtBLv9+qL
+ c0zmx5Ypl0eC617ASBO6/ecLtod51GND1gq00+U7ZtaHeF/L6rulFiY
+X-Developer-Key: i=erik.schilling@linaro.org; a=ed25519;
+ pk=/nNqy8/YOEdthj1epXl5FgwCTKEiVqTqqnVN1jVal7s=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 27 Sept 2023 at 17:04, Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
->
->
->
-> On 9/21/2023 8:25 PM, Wenhua Lin wrote:
-> > A bank PMIC EIC contains 16 EICs, and the operating registers
-> > are BIT0-BIT15, such as BIT0 of the register operated by EIC0.
-> > Using the one-dimensional array reg[CACHE_NR_REGS] for maintenance
-> > will cause the configuration of other EICs to be affected when
-> > operating a certain EIC. In order to solve this problem, the register
-> > operation bits of each PMIC EIC are maintained through the two-dimensional
-> > array reg[SPRD_PMIC_EIC_NR][CACHE_NR_REGS] to avoid mutual interference.
->
-> LGTM. And this also deserves a Fixes tag.
+While reviewing code for thread-safety. I realized that this structure
+was a bit more complex than it should be...
 
-Do we really need a two-dimensional array to save 16-bit value?
+To: Linux-GPIO <linux-gpio@vger.kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
 
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->
-> > Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
-> > ---
-> >   drivers/gpio/gpio-pmic-eic-sprd.c | 21 +++++++++++----------
-> >   1 file changed, 11 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
-> > index c3e4d90f6b18..442968bb2490 100644
-> > --- a/drivers/gpio/gpio-pmic-eic-sprd.c
-> > +++ b/drivers/gpio/gpio-pmic-eic-sprd.c
-> > @@ -57,7 +57,7 @@ struct sprd_pmic_eic {
-> >       struct gpio_chip chip;
-> >       struct regmap *map;
-> >       u32 offset;
-> > -     u8 reg[CACHE_NR_REGS];
-> > +     u8 reg[SPRD_PMIC_EIC_NR][CACHE_NR_REGS];
-> >       struct mutex buslock;
-> >       int irq;
-> >   };
-> > @@ -151,8 +151,8 @@ static void sprd_pmic_eic_irq_mask(struct irq_data *data)
-> >       struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-> >       u32 offset = irqd_to_hwirq(data);
-> >
-> > -     pmic_eic->reg[REG_IE] = 0;
-> > -     pmic_eic->reg[REG_TRIG] = 0;
-> > +     pmic_eic->reg[offset][REG_IE] = 0;
-> > +     pmic_eic->reg[offset][REG_TRIG] = 0;
-> >
-> >       gpiochip_disable_irq(chip, offset);
-> >   }
-> > @@ -165,8 +165,8 @@ static void sprd_pmic_eic_irq_unmask(struct irq_data *data)
-> >
-> >       gpiochip_enable_irq(chip, offset);
-> >
-> > -     pmic_eic->reg[REG_IE] = 1;
-> > -     pmic_eic->reg[REG_TRIG] = 1;
-> > +     pmic_eic->reg[offset][REG_IE] = 1;
-> > +     pmic_eic->reg[offset][REG_TRIG] = 1;
-> >   }
-> >
-> >   static int sprd_pmic_eic_irq_set_type(struct irq_data *data,
-> > @@ -174,13 +174,14 @@ static int sprd_pmic_eic_irq_set_type(struct irq_data *data,
-> >   {
-> >       struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-> >       struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-> > +     u32 offset = irqd_to_hwirq(data);
-> >
-> >       switch (flow_type) {
-> >       case IRQ_TYPE_LEVEL_HIGH:
-> > -             pmic_eic->reg[REG_IEV] = 1;
-> > +             pmic_eic->reg[offset][REG_IEV] = 1;
-> >               break;
-> >       case IRQ_TYPE_LEVEL_LOW:
-> > -             pmic_eic->reg[REG_IEV] = 0;
-> > +             pmic_eic->reg[offset][REG_IEV] = 0;
-> >               break;
-> >       case IRQ_TYPE_EDGE_RISING:
-> >       case IRQ_TYPE_EDGE_FALLING:
-> > @@ -222,15 +223,15 @@ static void sprd_pmic_eic_bus_sync_unlock(struct irq_data *data)
-> >                       sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IEV, 1);
-> >       } else {
-> >               sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IEV,
-> > -                                  pmic_eic->reg[REG_IEV]);
-> > +                                  pmic_eic->reg[offset][REG_IEV]);
-> >       }
-> >
-> >       /* Set irq unmask */
-> >       sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IE,
-> > -                          pmic_eic->reg[REG_IE]);
-> > +                          pmic_eic->reg[offset][REG_IE]);
-> >       /* Generate trigger start pulse for debounce EIC */
-> >       sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_TRIG,
-> > -                          pmic_eic->reg[REG_TRIG]);
-> > +                          pmic_eic->reg[offset][REG_TRIG]);
-> >
-> >       mutex_unlock(&pmic_eic->buslock);
-> >   }
+Signed-off-by: Erik Schilling <erik.schilling@linaro.org>
+---
+Erik Schilling (2):
+      bindings: rust: construct chip infos by reference
+      bindings: rust: drop unneeded Arc within Chip
+
+ bindings/rust/libgpiod/src/chip.rs | 83 +++++++++++++++-----------------------
+ 1 file changed, 33 insertions(+), 50 deletions(-)
+---
+base-commit: ced90e79217793957b11414f47f8aa8a77c7a2d5
+change-id: 20230927-chip-drop-arc-57debbe1e52a
+
+Best regards,
+-- 
+Erik Schilling <erik.schilling@linaro.org>
+
