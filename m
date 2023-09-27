@@ -2,149 +2,147 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C11E810B2
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Sep 2023 09:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E28E810B1
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Sep 2023 09:24:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229583AbjI0JTJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 27 Sep 2023 05:19:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35004 "EHLO
+        id S230298AbjI0JYg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 27 Sep 2023 05:24:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230318AbjI0JTI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Sep 2023 05:19:08 -0400
-Received: from mail-vk1-xa31.google.com (mail-vk1-xa31.google.com [IPv6:2607:f8b0:4864:20::a31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A15B0A3
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Sep 2023 02:19:05 -0700 (PDT)
-Received: by mail-vk1-xa31.google.com with SMTP id 71dfb90a1353d-49618e09f16so3716488e0c.2
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Sep 2023 02:19:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1695806344; x=1696411144; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+oxXoE551jD1Vp4hrRaFI77nAKLuOgm5/lU4CohMTWs=;
-        b=OgA6B6jGQjN5kjxjiC7WDGyOX6Y0Kg+5Z2tWVTaPi3p8Uz5EDtJu0UHgXmHTNjYUNp
-         ZqUoGXzjRpPoYivb4drZSClBRbXQbsGYC8EQbPlGTedDmWVNZ0URs14/cRxKtxYbvSOT
-         mQF4Ia3W8GZgBZsLlSes/HkSzaI/C29emcsggOIIZuvpTaLmr248QS2memGppfK3ha6m
-         gJlcvdIytkTQfNoJj6uBUvxPp5Oa4rNJ24tJvY1VxNhf6aVMfEuOVLGkamW16cKfWopa
-         0U3aZU6xkCkAyh+Sx8p/+1QF8mVb5i6oNavN6nl+hjqDQUyHlEvKcGdWR+xKW8kPBRQj
-         3+TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695806344; x=1696411144;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+oxXoE551jD1Vp4hrRaFI77nAKLuOgm5/lU4CohMTWs=;
-        b=UVb8fGmmnkc3CNriAjvDQWXNt+xStw3znDKs4+dRD6FyHW2QvorbyvFt9udBWIIBA5
-         nw6/3g0j5LvhqtGMUsFLRK+OLwGtPBkuFi9qrLXRAotngWVd4pGi+e1ZYgPXI/Tft3Sk
-         t1khBiQYbXh172cYYxUVsL5aSwtkKo8UuPMv+9pNP97jMMqFVHCQshlSGw4KHlQNSF5P
-         VROzXZHyyggiYc97aPiOrN2zYupDmJwZLXXw8WobHjsV6dEMKDRern6TaElh0UxzGThY
-         HbhHTYEm+j/3dZQnHe7sRfBbZwe+HroZeC9TmOpiCVz+SxA5VkXEQLc5KS8fLucDKJc4
-         5Ptw==
-X-Gm-Message-State: AOJu0Yx794DS+gAzmvxjE7eCqFRH6gXFg43LcIaMUp2/GP/JdasGgCpQ
-        dSOKDwumgDC8BGg869bwcwl77Nlkx2JgjEwyDykt7A==
-X-Google-Smtp-Source: AGHT+IF6M3tOfTHL3XxyE+L48RNem3W4+F+j0auKA4FqmctObb8Tp1rG43ef/qTf18NK+lStH5ynfhstqZcuddkecoI=
-X-Received: by 2002:a1f:e182:0:b0:495:d846:ebc0 with SMTP id
- y124-20020a1fe182000000b00495d846ebc0mr1126427vkg.16.1695806344676; Wed, 27
- Sep 2023 02:19:04 -0700 (PDT)
+        with ESMTP id S230146AbjI0JYe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Sep 2023 05:24:34 -0400
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2AB192;
+        Wed, 27 Sep 2023 02:24:32 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0Vszx4j5_1695806669;
+Received: from 30.97.48.70(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Vszx4j5_1695806669)
+          by smtp.aliyun-inc.com;
+          Wed, 27 Sep 2023 17:24:30 +0800
+Message-ID: <07a9e3c1-0ed4-6f30-81c9-4eabcc11a18b@linux.alibaba.com>
+Date:   Wed, 27 Sep 2023 17:24:36 +0800
 MIME-Version: 1.0
-References: <20230926145943.42814-1-brgl@bgdev.pl> <ffb5b1a8-a4fa-f794-afc8-52eed4420a5c@redhat.com>
- <CAMRc=MeoRRzc+JHCSyOqYb2t5p6GMLdA5wX_-uq15O3tdzC1mQ@mail.gmail.com> <181dd873-90eb-0db2-03a6-0809c9e3d835@redhat.com>
-In-Reply-To: <181dd873-90eb-0db2-03a6-0809c9e3d835@redhat.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 27 Sep 2023 11:18:53 +0200
-Message-ID: <CAMRc=McGTizah7fPjWEer4mioQnOPZeFm-eBsrLxP0=7bM1-UQ@mail.gmail.com>
-Subject: Re: [RFT PATCH 0/4] platform/x86: int3472: don't use gpiod_toggle_active_low()
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH V2 3/4] gpio: sprd: Modify the calculation method of eic
+ number
+To:     Wenhua Lin <Wenhua.Lin@unisoc.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Mark Gross <markgross@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Andy Shevchenko <andy@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wenhua lin <wenhua.lin1994@gmail.com>,
+        Xiongpeng Wu <xiongpeng.wu@unisoc.com>
+References: <20230921090027.11136-1-Wenhua.Lin@unisoc.com>
+ <20230921090027.11136-4-Wenhua.Lin@unisoc.com>
+From:   Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20230921090027.11136-4-Wenhua.Lin@unisoc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 11:02=E2=80=AFAM Hans de Goede <hdegoede@redhat.com=
-> wrote:
->
-> Hi Bartosz,
->
-> On 9/27/23 10:48, Bartosz Golaszewski wrote:
-> > On Wed, Sep 27, 2023 at 10:38=E2=80=AFAM Hans de Goede <hdegoede@redhat=
-.com> wrote:
-> >>
-> >> Hi Bartosz,
-> >>
-> >> On 9/26/23 16:59, Bartosz Golaszewski wrote:
-> >>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>>
-> >>> gpiod_toggle_active_low() is a badly designed API that should have ne=
-ver
-> >>> been used elsewhere then in the MMC code. And even there we should fi=
-nd
-> >>> a better solution.
-> >>>
-> >>> Replace the uses of it in the int3472 driver with the good old tempor=
-ary
-> >>> lookup table trick. This is not very pretty either but it's the lesse=
-r
-> >>> evil.
-> >>
-> >> I saw your previous proposal which added a new api to directly set
-> >> the active_low flag, rather then toggle it.
-> >>
-> >> I intended to reply to that thread to say that I liked that approach,
-> >> but I don't remember if I actually did reply.
-> >>
-> >> I wonder what made you abandon the new function to directly set
-> >> the active-low flag on a gpio_desc?
-> >>
-> >> For the int3472 code that would work pretty well and it would
-> >> be much cleaner then the temp gpio-lookup approach.
-> >>
-> >
-> > You did reply, yes. Under one of the other patches Linus W stated that
-> > first: adding the ability for consumers to toggle the polarity was
-> > added to handle the MMC slot quirk, then it was used unknowingly to
-> > GPIO maintainers in other places (including this driver). I then
-> > acknowledged the fact that it should have never existed in the first
-> > place as this is HW description and should be defined in ACPI, DT or
-> > lookup flags.
->
-> I see and I understand.
->
-> > I'm not sure why this information needs to be hard-coded in the driver
-> > in int3472_get_func_and_polarity() but maybe it could be pulled into
-> > gpiolib-acpi.c with other quirks?
->
-> The problem is that for camera sensors Intel uses this special
-> INT3472 ACPI device with a custom _DSM to list GPIOs, with the _DSM
-> returning an u32 and one of the bits in the u32 is the polarity.
->
-> We really do not want to deal with this Intel camera team hack
-> inside gpiolib-acpi and I can understand why you and Linus W
-> want to get rid of functions which allow drivers to meddle
-> with a gpio_desc's active-low flag.
->
-> So using a temporary gpio-lookup in the int3472 code as
-> you are proposing is the best (least bad) thing to do
-> here then.
->
-> I'll try to make some time to test this sometime
-> the coming days.
->
-> Other then the discussion we just had is there any specific
-> reason why this should be considered a RFC / why this would
-> not be ready for merging?  (I still need to review these,
-> but lets assume that goes well)
->
 
-This is not an RFC but rather RFT - Request For Testing. I don't have
-any HW to test those with so I only built it.
 
-Bart
+On 9/21/2023 5:00 PM, Wenhua Lin wrote:
+> When the soc changes, the corresponding gpio-eic-sprd.c
+> code needs to be modified, and the corresponding
+> Document must also be modified, which is quite troublesome.
+> To avoid modifying the driver file, the number of EICs
+> is automatically calculated by matching dts nodes.
+> 
+> Fixes: 2788938b7946 ("gpio: eic-sprd: Make the irqchip immutable")
+
+This is not a bugfix and you still use an incorrect Fixes tag.
+
+> 
+> Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
+> ---
+>   drivers/gpio/gpio-eic-sprd.c | 43 ++++++++++++++++++------------------
+>   1 file changed, 22 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+> index 96f1c7fd3988..e85addbdf8aa 100644
+> --- a/drivers/gpio/gpio-eic-sprd.c
+> +++ b/drivers/gpio/gpio-eic-sprd.c
+> @@ -100,33 +100,32 @@ struct sprd_eic {
+>   
+>   struct sprd_eic_variant_data {
+>   	enum sprd_eic_type type;
+> -	u32 num_eics;
+>   };
+>   
+> +#define SPRD_EIC_VAR_DATA(soc_name)				\
+> +static const struct sprd_eic_variant_data soc_name##_eic_dbnc_data = {	\
+> +	.type = SPRD_EIC_DEBOUNCE,					\
+> +};									\
+> +									\
+> +static const struct sprd_eic_variant_data soc_name##_eic_latch_data = {	\
+> +	.type = SPRD_EIC_LATCH,						\
+> +};									\
+> +									\
+> +static const struct sprd_eic_variant_data soc_name##_eic_async_data = {	\
+> +	.type = SPRD_EIC_ASYNC,						\
+> +};									\
+> +									\
+> +static const struct sprd_eic_variant_data soc_name##_eic_sync_data = {	\
+> +	.type = SPRD_EIC_SYNC,						\
+> +}
+> +
+> +SPRD_EIC_VAR_DATA(sc9860);
+> +
+>   static const char *sprd_eic_label_name[SPRD_EIC_MAX] = {
+>   	"eic-debounce", "eic-latch", "eic-async",
+>   	"eic-sync",
+>   };
+>   
+> -static const struct sprd_eic_variant_data sc9860_eic_dbnc_data = {
+> -	.type = SPRD_EIC_DEBOUNCE,
+> -	.num_eics = 8,
+> -};
+> -
+> -static const struct sprd_eic_variant_data sc9860_eic_latch_data = {
+> -	.type = SPRD_EIC_LATCH,
+> -	.num_eics = 8,
+> -};
+> -
+> -static const struct sprd_eic_variant_data sc9860_eic_async_data = {
+> -	.type = SPRD_EIC_ASYNC,
+> -	.num_eics = 8,
+> -};
+> -
+> -static const struct sprd_eic_variant_data sc9860_eic_sync_data = {
+> -	.type = SPRD_EIC_SYNC,
+> -	.num_eics = 8,
+> -};
+>   
+>   static inline void __iomem *sprd_eic_offset_base(struct sprd_eic *sprd_eic,
+>   						 unsigned int bank)
+> @@ -595,6 +594,7 @@ static int sprd_eic_probe(struct platform_device *pdev)
+>   	struct sprd_eic *sprd_eic;
+>   	struct resource *res;
+>   	int ret, i;
+> +	u16 num_banks = 0;
+>   
+>   	pdata = of_device_get_match_data(&pdev->dev);
+>   	if (!pdata) {
+> @@ -625,12 +625,13 @@ static int sprd_eic_probe(struct platform_device *pdev)
+>   			break;
+>   
+>   		sprd_eic->base[i] = devm_ioremap_resource(&pdev->dev, res);
+> +		num_banks++;
+
+Please move this after the validation of the sprd_eic->base.
+
+>   		if (IS_ERR(sprd_eic->base[i]))
+>   			return PTR_ERR(sprd_eic->base[i]);
+>   	}
+>   
+>   	sprd_eic->chip.label = sprd_eic_label_name[sprd_eic->type];
+> -	sprd_eic->chip.ngpio = pdata->num_eics;
+> +	sprd_eic->chip.ngpio = num_banks * SPRD_EIC_PER_BANK_NR;
+>   	sprd_eic->chip.base = -1;
+>   	sprd_eic->chip.parent = &pdev->dev;
+>   	sprd_eic->chip.direction_input = sprd_eic_direction_input;
