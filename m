@@ -2,117 +2,299 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F966E7F150
-	for <linux-gpio@archiver.kernel.org>; Wed, 27 Sep 2023 00:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C76B2E7F150
+	for <linux-gpio@archiver.kernel.org>; Wed, 27 Sep 2023 01:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232262AbjI0AqB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 26 Sep 2023 20:46:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35358 "EHLO
+        id S229817AbjI0BT7 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 26 Sep 2023 21:19:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbjI0AoB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2023 20:44:01 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF5097EDF
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Sep 2023 14:48:16 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-502e7d66c1eso15868319e87.1
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Sep 2023 14:48:16 -0700 (PDT)
+        with ESMTP id S234536AbjI0BR6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2023 21:17:58 -0400
+Received: from mail-vk1-xa2e.google.com (mail-vk1-xa2e.google.com [IPv6:2607:f8b0:4864:20::a2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AACE33C1D;
+        Tue, 26 Sep 2023 17:25:16 -0700 (PDT)
+Received: by mail-vk1-xa2e.google.com with SMTP id 71dfb90a1353d-4908d8f7263so3844803e0c.2;
+        Tue, 26 Sep 2023 17:25:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695764895; x=1696369695; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XtIGAJAIn5DFyAAok8KJTgELmOKMBX9AjGhOfdYwP9U=;
-        b=lsTrmsIPu0gmn8AcD60ok0KEm1Hg/8coLlGwBA4bCQN/ZCAzNgtj6zXpZUEN1Q0e/S
-         ZmIt4HSagXgR59rsCtpRrbJIOECxGJ1WmYzU6z0XT9qiNjz2OUOX4viNs70806Tli21s
-         vG6YBqXBP4KHzGhAwS7ioHianYwlD1guOZYi6/fr1SF1ZnBMDKyPmpzSMNNbsmSiBtvp
-         ij75kfDitb3p/wRv6vm4sJgwROJoqir3uE+apqB3giHrQrCHw8bwgrfDudk6hS1AWua8
-         8GpUcai+VMu2P7kzIBfpQLB4MRyzMzpD7c3LoPTyxgnVMmF2Ey/uHpN/6bgEt0tsWqpQ
-         qCWg==
+        d=gmail.com; s=20230601; t=1695774316; x=1696379116; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uk4VYbPx9jokzwBQ6bgqMLV+wRcgMMw+2UWxIJDIgis=;
+        b=gpwoFPdwXcWjA2OEGq3T1sY7JwM9/RY2bOk1yMWNWZuUIGWGKYYJZmvwoW78L57km4
+         +9/39DIe7Nq2UFuPMSwpcakiaSrwX306LH8uziBNsQe064Ax5D6zroQxyXcE/GNxjnae
+         NYhonHEX5LCsf8LJBTbhAT592kGuKhg7vzZAntlhMoQq4vD5O50UPill1GS3WbOfmo+t
+         8EXw/DKkvalQ+CelMGQXMpe03qax8mcHJl8CDTyVL3fA+2illNGWBF+zCNN8m9iwtvYi
+         4kk8GmSKSYVYbG2xa1P9FVrhp/xy37hjEgxHEXr31Zp4kDkIjTI50xSZjpjQXr81djkW
+         Mbqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695764895; x=1696369695;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XtIGAJAIn5DFyAAok8KJTgELmOKMBX9AjGhOfdYwP9U=;
-        b=ZsZwNBnVBW/SyTLgbXQXMtDsOMuI8DmCAX096w0UrIwoP+tHey9+CyuFfk2O7VdOZG
-         LGcvnRPeMTpxzJDe8ohDBeE+0Lq8JuxKloLAnRcGkigR0yXCpiTkhFdhK2ZufiqGRadb
-         N9rGBPaZbUPi9rfWe8yUpLnkhKG1/WCDNzRfb9CNT/vqKawaO5GXxdK8YYHRfZLcUM0I
-         nz28dC7+PpAKuAIqvJaPmAMIfQyyukXsb9BMvHvW/l0y2rnvp8ZLCfdGmbsxuZqVi8LX
-         yeIlAJIknzSucagpGRyiLj0MCJXTYh4XYuV4qlf4YuwU/dGaIaKKzvRdFayfE7noBUei
-         W9vw==
-X-Gm-Message-State: AOJu0YxCf3EbbYku10btIEIaYCiys8nBYs/IzV2cx27xE/5u5UgB/fhP
-        Sc2Xa7I3Ld6VvFW//oxA5IXFoQ==
-X-Google-Smtp-Source: AGHT+IGZJN6D1LppUajBIqaDv5vMWuxw8Tz7SHNssCZTCzblqzQErVamJzS0AJFKZ15Ta+fT3NcmDg==
-X-Received: by 2002:ac2:4c31:0:b0:500:d8d6:fc5a with SMTP id u17-20020ac24c31000000b00500d8d6fc5amr33695lfq.37.1695764894943;
-        Tue, 26 Sep 2023 14:48:14 -0700 (PDT)
-Received: from [127.0.1.1] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id f10-20020a19ae0a000000b0050334e5f5a8sm2299982lfc.271.2023.09.26.14.48.14
+        d=1e100.net; s=20230601; t=1695774316; x=1696379116;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uk4VYbPx9jokzwBQ6bgqMLV+wRcgMMw+2UWxIJDIgis=;
+        b=UgmePZ6wfvOC0Dy/NY9EsFf2fVJwculPX+So0StPvk8tQrgsS1cJwoc17JMKwGwW9W
+         XukipqrYdFdMOy7f+oC+aaCj9jLdvib3FTfuifp+XD8QHIXC7jB5E45bpk+8jDaqkQoW
+         JdRSP2vQEZZbT2s01WedRddM0xCuezfpEVkSbP15jl6Zdm+V5kJI2L2FlK7EzxmplUIw
+         UtZKisjPCeapRPm+Mv3mspqOT6w0NCgna21/Y9wFcE/H+ECEoCmplzb0JwEVhBXKDl1h
+         XH7dyEs/e8qwD4ml4XwC1dX1cEI6gtHzJ35hWa6OFx9pJ1l3k31ILkidyAxOBeukQCox
+         EVhw==
+X-Gm-Message-State: AOJu0Yz7SvvjdqEl9njd9dpjAGd8p6fGemrQxwEq/vPoXWXBilDUW8Aa
+        mb/2xbJR6I0m/a3ZAR3Z20U=
+X-Google-Smtp-Source: AGHT+IHCOwV68ennnAuDVUGDcfDOSWvRLMXwly5VBOf38pUVwDh8Z3MZ1z6r0bXvKaLaosgT19lWog==
+X-Received: by 2002:a1f:c981:0:b0:495:db2f:f4e7 with SMTP id z123-20020a1fc981000000b00495db2ff4e7mr634719vkf.1.1695774315450;
+        Tue, 26 Sep 2023 17:25:15 -0700 (PDT)
+Received: from localhost ([2607:fb90:be31:4195:f17f:b5d0:e0df:d9ab])
+        by smtp.gmail.com with ESMTPSA id y15-20020ac5c80f000000b0048fa7f8dc89sm2180781vkl.31.2023.09.26.17.25.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Sep 2023 14:48:14 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 0/3] Rewrite GPIO LED trigger to use trigger-sources
-Date:   Tue, 26 Sep 2023 23:48:10 +0200
-Message-Id: <20230926-gpio-led-trigger-dt-v2-0-e06e458b788e@linaro.org>
+        Tue, 26 Sep 2023 17:25:14 -0700 (PDT)
+Date:   Tue, 26 Sep 2023 17:25:13 -0700
+From:   Yury Norov <yury.norov@gmail.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+        Srinivas Neeli <srinivas.neeli@amd.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
+Subject: Re: [PATCH v1 2/5] lib/bitmap: Introduce bitmap_scatter() and
+ bitmap_gather() helpers
+Message-ID: <ZRN2adZZaGeqWNlY@yury-ThinkPad>
+References: <20230926052007.3917389-1-andriy.shevchenko@linux.intel.com>
+ <20230926052007.3917389-3-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJpRE2UC/22NQQqDMBBFryKz7pRkxBa76j2Ki9iMcUCMTIK0i
- HdvKnTX5Xvw398gsQonuFUbKK+SJM4F6FTBc3RzYBRfGMhQbVprMSwScWKPWSUEVvQZW6K+Z7K
- DI4KyXJQHeR3VR1d4lJSjvo+T1X7tr0d/e6tFg7ZvDNfX5uK9u08yO43nqAG6fd8/I9dZIbcAA
- AA=
-To:     =?utf-8?q?Jan_Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Conor Dooley <conor.dooley@microchip.com>
-X-Mailer: b4 0.12.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230926052007.3917389-3-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-This rewrites the platform-data GPIO LED trigger to instead
-use fwnode trigger-sources to describe the LED used.
+On Tue, Sep 26, 2023 at 08:20:04AM +0300, Andy Shevchenko wrote:
+> These helpers are the optimized versions of the bitmap_remap()
+> where one of the bitmaps (source or destination) is of sequential bits.
 
-This will work out-of-the-box with e.g. device tree.
+If so, can you add a test that makes sure that new API is consistent
+with the old bitmap_remap? And also provide numbers how well are they
+optimized, comparing to bitmap_remap.
+ 
+> See more in the kernel documentation of the helpers.
 
-Tested with real hardware by modifying a device tree adding
-trigger-sources to a LED and trigger-source-cells to
-a gpio chip, setting the trigger to a pushbutton. It works
-like a charm, once the trigger is set to "gpio".
+I grepped the whole kernel, not only Documentation directory, and found
+nothing...
 
-Adding trigger-sources to GPIO chips in a simple way requires
-this patch to be merged to the generic dtschema:
-https://lore.kernel.org/linux-devicetree/20230916-gpio-triggers-v1-1-6e5052bead9a@linaro.org/
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  include/linux/bitmap.h |  9 ++++++
+>  lib/bitmap.c           | 70 ++++++++++++++++++++++++++++++++++++++++++
+>  lib/test_bitmap.c      | 23 ++++++++++++++
+>  3 files changed, 102 insertions(+)
+> 
+> diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+> index 1516ff979315..87013b9a7dd8 100644
+> --- a/include/linux/bitmap.h
+> +++ b/include/linux/bitmap.h
+> @@ -60,6 +60,8 @@ struct device;
+>   *  bitmap_shift_left(dst, src, n, nbits)       *dst = *src << n
+>   *  bitmap_cut(dst, src, first, n, nbits)       Cut n bits from first, copy rest
+>   *  bitmap_replace(dst, old, new, mask, nbits)  *dst = (*old & ~(*mask)) | (*new & *mask)
+> + *  bitmap_scatter(dst, src, mask, nbits)	*dst = map(dense, sparse)(src)
+> + *  bitmap_gather(dst, src, mask, nbits)	*dst = map(sparse, dense)(src)
+>   *  bitmap_remap(dst, src, old, new, nbits)     *dst = map(old, new)(src)
+>   *  bitmap_bitremap(oldbit, old, new, nbits)    newbit = map(old, new)(oldbit)
+>   *  bitmap_onto(dst, orig, relmap, nbits)       *dst = orig relative to relmap
+> @@ -208,6 +210,12 @@ int bitmap_parselist(const char *buf, unsigned long *maskp,
+>  			int nmaskbits);
+>  int bitmap_parselist_user(const char __user *ubuf, unsigned int ulen,
+>  			unsigned long *dst, int nbits);
+> +
+> +unsigned int bitmap_scatter(unsigned long *dst, const unsigned long *src,
+> +		const unsigned long *mask, unsigned int nbits);
+> +unsigned int bitmap_gather(unsigned long *dst, const unsigned long *src,
+> +		const unsigned long *mask, unsigned int nbits);
+> +
+>  void bitmap_remap(unsigned long *dst, const unsigned long *src,
+>  		const unsigned long *old, const unsigned long *new, unsigned int nbits);
+>  int bitmap_bitremap(int oldbit,
+> @@ -216,6 +224,7 @@ void bitmap_onto(unsigned long *dst, const unsigned long *orig,
+>  		const unsigned long *relmap, unsigned int bits);
+>  void bitmap_fold(unsigned long *dst, const unsigned long *orig,
+>  		unsigned int sz, unsigned int nbits);
+> +
+>  int bitmap_find_free_region(unsigned long *bitmap, unsigned int bits, int order);
+>  void bitmap_release_region(unsigned long *bitmap, unsigned int pos, int order);
+>  int bitmap_allocate_region(unsigned long *bitmap, unsigned int pos, int order);
+> diff --git a/lib/bitmap.c b/lib/bitmap.c
+> index 935e0f96e785..31cfc7846aae 100644
+> --- a/lib/bitmap.c
+> +++ b/lib/bitmap.c
+> @@ -942,6 +942,76 @@ int bitmap_parse(const char *start, unsigned int buflen,
+>  }
+>  EXPORT_SYMBOL(bitmap_parse);
+>  
+> +/**
+> + * bitmap_scatter - Scatter a bitmap according to the given mask
+> + * @dst: scattered bitmap
+> + * @src: gathered bitmap
+> + * @mask: bits to assign to in the scattered bitmap
+> + * @nbits: number of bits in each of these bitmaps
+> + *
+> + * Scatters bitmap with sequential bits according to the given @mask.
+> + *
+> + * Example:
+> + * If @src bitmap = 0x005a, with @mask = 0x1313, @dst will be 0x0302.
+> + *
+> + * Or in binary form
+> + * @src			@mask			@dst
+> + * 0000000001011010	0001001100010011	0000001100000010
+> + *
+> + * (Bits 0, 1, 2, 3, 4, 5 are copied to the bits 0, 1, 4, 8, 9, 12)
+> + *
+> + * Returns: the weight of the @mask.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-Changes in v2:
-- Add a quirk to gpiolib-of to allow to read out trigger-sources as
-  any regular GPIO.
-- Fix a use-after-free bug found by Dan Carpenter.
-- Tested on hardware.
-- Link to v1: https://lore.kernel.org/r/20230912-gpio-led-trigger-dt-v1-0-1b50e3756dda@linaro.org
+Returning a weight of the mask is somewhat non-trivial... To me it
+would be logical to return a weight of destination, for example...
 
----
-Linus Walleij (3):
-      gpiolib: of: Allow "trigger-sources" to reference a GPIO
-      dt-bindings: leds: Mention GPIO triggers
-      leds: triggers: gpio: Rewrite to use trigger-sources
+But I see that in the following patch you're using the returned value.
+Maybe add a few words to advocate that?
 
- Documentation/devicetree/bindings/leds/common.yaml |   2 +
- drivers/gpio/gpiolib-of.c                          |  28 +++++
- drivers/leds/trigger/Kconfig                       |   5 +-
- drivers/leds/trigger/ledtrig-gpio.c                | 137 ++++++---------------
- 4 files changed, 71 insertions(+), 101 deletions(-)
----
-base-commit: 8eb1c4d9b44873d30efc1846148944534f4a017d
-change-id: 20230911-gpio-led-trigger-dt-922bbe21fa22
+> + */
+> +unsigned int bitmap_scatter(unsigned long *dst, const unsigned long *src,
+> +			    const unsigned long *mask, unsigned int nbits)
+> +{
+> +	unsigned int bit;
+> +	int n = 0;
 
-Best regards,
--- 
-Linus Walleij <linus.walleij@linaro.org>
+Is n signed for purpose? I think it should be consistent with
+return value.
 
+> +
+> +	bitmap_zero(dst, nbits);
+> +
+> +	for_each_set_bit(bit, mask, nbits)
+> +		__assign_bit(bit, dst, test_bit(n++, src));
+> +
+> +	return n;
+> +}
+> +EXPORT_SYMBOL(bitmap_scatter);
+> +
+> +/**
+> + * bitmap_gather - Gather a bitmap according to given mask
+> + * @dst: gathered bitmap
+> + * @src: scattered bitmap
+> + * @mask: bits to extract from in the scattered bitmap
+> + * @nbits: number of bits in each of these bitmaps
+> + *
+> + * Gathers bitmap with sparse bits according to the given @mask.
+> + *
+> + * Example:
+> + * If @src bitmap = 0x0302, with @mask = 0x1313, @dst will be 0x001a.
+
+Not sure about others, but to me hex representation is quite useless,
+moreover it's followed by binary one.
+
+> + * Or in binary form
+> + * @src			@mask			@dst
+> + * 0000001100000010	0001001100010011	0000000000011010
+> + *
+> + * (Bits 0, 1, 4, 8, 9, 12 are copied to the bits 0, 1, 2, 3, 4, 5)
+> + *
+> + * Returns: the weight of the @mask.
+> + */
+
+It looks like those are designed complement to each other. Is that
+true? If so, can you make your example showing that
+        scatter -> gather -> scatter
+would restore the original bitmap?
+
+If I'm wrong, can you please underline that they are not complement,
+and why?
+
+> +unsigned int bitmap_gather(unsigned long *dst, const unsigned long *src,
+> +			   const unsigned long *mask, unsigned int nbits)
+> +{
+> +	unsigned int bit;
+> +	int n = 0;
+> +
+> +	bitmap_zero(dst, nbits);
+> +
+> +	for_each_set_bit(bit, mask, nbits)
+> +		__assign_bit(n++, dst, test_bit(bit, src));
+> +
+> +	return n;
+> +}
+> +EXPORT_SYMBOL(bitmap_gather);
+
+I feel like they should reside in header, because they are quite a small
+functions indeed, and they would benefit from compile-time optimizations
+without bloating the kernel.
+
+Moreover, you are using them in patch #3 on 64-bit bitmaps, which
+would benefit from small_const_nbits() optimization.
+
+> +
+>  /**
+>   * bitmap_pos_to_ord - find ordinal of set bit at given position in bitmap
+>   *	@buf: pointer to a bitmap
+> diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
+> index 1f2dc7fef17f..f43a07679998 100644
+> --- a/lib/test_bitmap.c
+> +++ b/lib/test_bitmap.c
+> @@ -50,6 +50,9 @@ static const unsigned long exp2[] __initconst = {
+>  static const unsigned long exp2_to_exp3_mask[] __initconst = {
+>  	BITMAP_FROM_U64(0x008000020020212eULL),
+>  };
+> +static const unsigned long exp2_to_exp3_maskg[] __initconst = {
+> +	BITMAP_FROM_U64(0x00000000000001ffULL),
+> +};
+>  /* exp3_0_1 = (exp2[0] & ~exp2_to_exp3_mask) | (exp2[1] & exp2_to_exp3_mask) */
+>  static const unsigned long exp3_0_1[] __initconst = {
+>  	BITMAP_FROM_U64(0x33b3333311313137ULL),
+> @@ -357,6 +360,25 @@ static void __init test_replace(void)
+>  	expect_eq_bitmap(bmap, exp3_1_0, nbits);
+>  }
+>  
+> +static void __init test_bitmap_sg(void)
+> +{
+> +	unsigned int nbits = 64;
+> +	DECLARE_BITMAP(bmap, 1024);
+
+Can you make it 1000? That way we'll test non-aligned case.
+
+> +	unsigned int w;
+> +
+> +	bitmap_zero(bmap, 1024);
+> +	w = bitmap_gather(bmap, exp2_to_exp3_mask, exp2_to_exp3_mask, nbits);
+> +	expect_eq_uint(bitmap_weight(exp2_to_exp3_mask, nbits), w);
+> +	expect_eq_uint(bitmap_weight(bmap, 1024), w);
+> +	expect_eq_bitmap(bmap, exp2_to_exp3_maskg, nbits);
+> +
+> +	bitmap_zero(bmap, 1024);
+> +	w = bitmap_scatter(bmap, exp2_to_exp3_maskg, exp2_to_exp3_mask, nbits);
+> +	expect_eq_uint(bitmap_weight(exp2_to_exp3_maskg, nbits), w);
+> +	expect_eq_uint(bitmap_weight(bmap, 1024), w);
+> +	expect_eq_bitmap(bmap, exp2_to_exp3_mask, nbits);
+
+Would be interesting to compare bitmap scatter/gather performance
+against bitmap_remap.
+
+> +}
+> +
+>  #define PARSE_TIME	0x1
+>  #define NO_LEN		0x2
+>  
+> @@ -1228,6 +1250,7 @@ static void __init selftest(void)
+>  	test_fill_set();
+>  	test_copy();
+>  	test_replace();
+> +	test_bitmap_sg();
+>  	test_bitmap_arr32();
+>  	test_bitmap_arr64();
+>  	test_bitmap_parse();
+> -- 
+> 2.40.0.1.gaa8946217a0b
