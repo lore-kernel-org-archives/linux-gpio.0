@@ -2,104 +2,216 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7755BCE7B07
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:07:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDF0CE7B04
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:07:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231148AbjI1HHa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Sep 2023 03:07:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48134 "EHLO
+        id S231160AbjI1HHb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Sep 2023 03:07:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231160AbjI1HHS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:07:18 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 715A41AE
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 00:07:14 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qll7A-0002Ri-Dh; Thu, 28 Sep 2023 09:07:12 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qll7A-009WCZ-0Y; Thu, 28 Sep 2023 09:07:12 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qll79-005ZY9-Nn; Thu, 28 Sep 2023 09:07:11 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 20/23] gpio: xgene-sb: Convert to platform remove callback returning void
-Date:   Thu, 28 Sep 2023 09:07:03 +0200
-Message-Id: <20230928070706.2290137-21-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
-References: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S230439AbjI1HHT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:07:19 -0400
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFCEC121;
+        Thu, 28 Sep 2023 00:07:13 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id C482120002;
+        Thu, 28 Sep 2023 07:07:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1695884831;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=e0ujzdffAJjksGlWhIAmGsiTFnivZ4Pu6Zkj+KUCbPE=;
+        b=Oog4bDR2zfpSWeVE/FTU/dBape48LwD+wyv5A4IhWSEHPUgiry1nWlSSmfNV5FCvXPpxK7
+        CmaUbHyl5y+34Lgqk09eLhPdTmoFvf/O71b3UU1rM+G7gcwoMKj9RflmwJGvYFUCQZLR0D
+        iWqusWTUAKTRqTFOYTDlWV3mhDVIvvwavaksCB/f/Bt1LEcNy9H2xckbZ09yGdvt/57ojH
+        KmqaAQglwnh6kCjsMe4y6SdFB/iowI21OyCkqOZw2+sAM6uiLjSueiyh7gqv3e1MIP0TXP
+        gYGkZrj54isHhJHu19S+q77kAKQNlrzQN+edE+dyS4Jmp8xz93OE671Z95k18A==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Herve Codina <herve.codina@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v7 02/30] soc: fsl: cpm1: qmc: Fix __iomem addresses declaration
+Date:   Thu, 28 Sep 2023 09:06:20 +0200
+Message-ID: <20230928070652.330429-3-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230928070652.330429-1-herve.codina@bootlin.com>
+References: <20230928070652.330429-1-herve.codina@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1834; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=zztpnxsZEJDFZIm9qSZPjBEfzvjHiZRS9y3gnRLWgew=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlFSR1nubBXr+coH9eBOJNEo6aa+yPeQ4YMVMX0 ZDw574HLTiJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRUkdQAKCRCPgPtYfRL+ TiI2B/oDOUHb6ePdR5VqbUCgMJZxnP2/lZT7ygDZ/Mk5rREx7XWdA4p48ExDku2v8O99ZhRT8LV ro1ex9HnLOUhOV1fnXUal5mJpd1cKZ1sSphE28nBtiGGb/kfc5ICJUS3uIb579J7LJFhMzIfn/h W+5xj1dW+8cwJc2ZFilC7jOaY+Eh5Rgs9JjwYm1Jp9SljkPqhYRpM6B2kBeLiTPdcVnillrR+Qy 3IiAa2cahJbwOPaS3OOOpQyUs5LXfr6CjnmYXFNVzZAipoiIfVO0ubzXeyfde+2CJhLO2Z4ocvI DK9B/ptJuv8oqaFwM2WaNOBS47iGDwy/97cr8oC9/d+0jXtr
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is ignored (apart
-from emitting a warning) and this typically results in resource leaks.
+Running sparse (make C=1) on qmc.c raises a lot of warning such as:
+  ...
+  warning: incorrect type in assignment (different address spaces)
+     expected struct cpm_buf_desc [usertype] *[noderef] __iomem bd
+     got struct cpm_buf_desc [noderef] [usertype] __iomem *txbd_free
+  ...
 
-To improve here there is a quest to make the remove callback return
-void. In the first step of this quest all drivers are converted to
-.remove_new(), which already returns void. Eventually after all drivers
-are converted, .remove_new() will be renamed to .remove().
+Indeed, some variable were declared 'type *__iomem var' instead of
+'type __iomem *var'.
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
+Use the correct declaration to remove these warnings.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Fixes: 3178d58e0b97 ("soc: fsl: cpm1: Add support for QMC")
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/gpio/gpio-xgene-sb.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
-index 453bf9338ac4..bd5befa807c3 100644
---- a/drivers/gpio/gpio-xgene-sb.c
-+++ b/drivers/gpio/gpio-xgene-sb.c
-@@ -295,15 +295,13 @@ static int xgene_gpio_sb_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int xgene_gpio_sb_remove(struct platform_device *pdev)
-+static void xgene_gpio_sb_remove(struct platform_device *pdev)
- {
- 	struct xgene_gpio_sb *priv = platform_get_drvdata(pdev);
- 
- 	acpi_gpiochip_free_interrupts(&priv->gc);
- 
- 	irq_domain_remove(priv->irq_domain);
--
--	return 0;
- }
- 
- static const struct of_device_id xgene_gpio_sb_of_match[] = {
-@@ -327,7 +325,7 @@ static struct platform_driver xgene_gpio_sb_driver = {
- 		   .acpi_match_table = ACPI_PTR(xgene_gpio_sb_acpi_match),
- 		   },
- 	.probe = xgene_gpio_sb_probe,
--	.remove = xgene_gpio_sb_remove,
-+	.remove_new = xgene_gpio_sb_remove,
+diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+index b3c292c9a14e..7ad0d77f1740 100644
+--- a/drivers/soc/fsl/qe/qmc.c
++++ b/drivers/soc/fsl/qe/qmc.c
+@@ -175,7 +175,7 @@ struct qmc_chan {
+ 	struct list_head list;
+ 	unsigned int id;
+ 	struct qmc *qmc;
+-	void *__iomem s_param;
++	void __iomem *s_param;
+ 	enum qmc_mode mode;
+ 	u64	tx_ts_mask;
+ 	u64	rx_ts_mask;
+@@ -203,9 +203,9 @@ struct qmc_chan {
+ struct qmc {
+ 	struct device *dev;
+ 	struct tsa_serial *tsa_serial;
+-	void *__iomem scc_regs;
+-	void *__iomem scc_pram;
+-	void *__iomem dpram;
++	void __iomem *scc_regs;
++	void __iomem *scc_pram;
++	void __iomem *dpram;
+ 	u16 scc_pram_offset;
+ 	cbd_t __iomem *bd_table;
+ 	dma_addr_t bd_dma_addr;
+@@ -218,37 +218,37 @@ struct qmc {
+ 	struct qmc_chan *chans[64];
  };
- module_platform_driver(xgene_gpio_sb_driver);
  
+-static inline void qmc_write16(void *__iomem addr, u16 val)
++static inline void qmc_write16(void __iomem *addr, u16 val)
+ {
+ 	iowrite16be(val, addr);
+ }
+ 
+-static inline u16 qmc_read16(void *__iomem addr)
++static inline u16 qmc_read16(void __iomem *addr)
+ {
+ 	return ioread16be(addr);
+ }
+ 
+-static inline void qmc_setbits16(void *__iomem addr, u16 set)
++static inline void qmc_setbits16(void __iomem *addr, u16 set)
+ {
+ 	qmc_write16(addr, qmc_read16(addr) | set);
+ }
+ 
+-static inline void qmc_clrbits16(void *__iomem addr, u16 clr)
++static inline void qmc_clrbits16(void __iomem *addr, u16 clr)
+ {
+ 	qmc_write16(addr, qmc_read16(addr) & ~clr);
+ }
+ 
+-static inline void qmc_write32(void *__iomem addr, u32 val)
++static inline void qmc_write32(void __iomem *addr, u32 val)
+ {
+ 	iowrite32be(val, addr);
+ }
+ 
+-static inline u32 qmc_read32(void *__iomem addr)
++static inline u32 qmc_read32(void __iomem *addr)
+ {
+ 	return ioread32be(addr);
+ }
+ 
+-static inline void qmc_setbits32(void *__iomem addr, u32 set)
++static inline void qmc_setbits32(void __iomem *addr, u32 set)
+ {
+ 	qmc_write32(addr, qmc_read32(addr) | set);
+ }
+@@ -318,7 +318,7 @@ int qmc_chan_write_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
+ {
+ 	struct qmc_xfer_desc *xfer_desc;
+ 	unsigned long flags;
+-	cbd_t *__iomem bd;
++	cbd_t __iomem *bd;
+ 	u16 ctrl;
+ 	int ret;
+ 
+@@ -374,7 +374,7 @@ static void qmc_chan_write_done(struct qmc_chan *chan)
+ 	void (*complete)(void *context);
+ 	unsigned long flags;
+ 	void *context;
+-	cbd_t *__iomem bd;
++	cbd_t __iomem *bd;
+ 	u16 ctrl;
+ 
+ 	/*
+@@ -425,7 +425,7 @@ int qmc_chan_read_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
+ {
+ 	struct qmc_xfer_desc *xfer_desc;
+ 	unsigned long flags;
+-	cbd_t *__iomem bd;
++	cbd_t __iomem *bd;
+ 	u16 ctrl;
+ 	int ret;
+ 
+@@ -488,7 +488,7 @@ static void qmc_chan_read_done(struct qmc_chan *chan)
+ 	void (*complete)(void *context, size_t size);
+ 	struct qmc_xfer_desc *xfer_desc;
+ 	unsigned long flags;
+-	cbd_t *__iomem bd;
++	cbd_t __iomem *bd;
+ 	void *context;
+ 	u16 datalen;
+ 	u16 ctrl;
+@@ -663,7 +663,7 @@ static void qmc_chan_reset_rx(struct qmc_chan *chan)
+ {
+ 	struct qmc_xfer_desc *xfer_desc;
+ 	unsigned long flags;
+-	cbd_t *__iomem bd;
++	cbd_t __iomem *bd;
+ 	u16 ctrl;
+ 
+ 	spin_lock_irqsave(&chan->rx_lock, flags);
+@@ -694,7 +694,7 @@ static void qmc_chan_reset_tx(struct qmc_chan *chan)
+ {
+ 	struct qmc_xfer_desc *xfer_desc;
+ 	unsigned long flags;
+-	cbd_t *__iomem bd;
++	cbd_t __iomem *bd;
+ 	u16 ctrl;
+ 
+ 	spin_lock_irqsave(&chan->tx_lock, flags);
 -- 
-2.40.1
+2.41.0
 
