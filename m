@@ -2,63 +2,62 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8AEE743C9
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 22:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B5B7E743CA
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 22:13:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230325AbjI1WNA (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Sep 2023 18:13:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47264 "EHLO
+        id S232052AbjI1WNC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Sep 2023 18:13:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231446AbjI1WNA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 18:13:00 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2903319E
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 15:12:58 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-503397ee920so21115019e87.1
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 15:12:58 -0700 (PDT)
+        with ESMTP id S231446AbjI1WNB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 18:13:01 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA9719E
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 15:13:00 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-50435ad51bbso19381722e87.2
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 15:13:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1695939176; x=1696543976; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=O6rklr6oFZBRP3XLshOSG7uTOA1JIwCF+2vk+UW3dq0=;
-        b=S5DnzMy/8EsJhPaAd3+UVVm0WvXzMEFHYYZiuamsQVMqGDdzOP+mqeykAHqXOTTS4l
-         prEDhOmO4pJXpdQqBdPU9RiAqHxlfPGivk1NWNyu5ISWGHpuaJBSM+tyrjx361DadTvG
-         f8LB/k3PJjiWmqMJL3aq3+xsw9eYGN1iEeVQZ5Y7Iv2yOZT8uevXqSi94VIdYhO5w4+y
-         TdetX/qVEtI1EG403OwE1qeLaRwhmyvr9daz8HTv104V6gD+bkMUdP/XS5Q8nKa8dAef
-         ByniP/7rGWsNR0Q8biV/spJyNpyEsbxfCMHxRJLhsnBIG4iW5vXGN3ZNaky5oxY0L92m
-         k4lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695939176; x=1696543976;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1695939178; x=1696543978; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=O6rklr6oFZBRP3XLshOSG7uTOA1JIwCF+2vk+UW3dq0=;
-        b=jDEJb5NVcW9qySMAPiwjMiNRyaJutEEtU96luW+G286XhccH4hSC5IqFmuT2zlQd4M
-         Vz8NJGLKxeaeEEFgF28R8qtrVTWGX0ak/qHgcDTC+So/xfdx19JEG5B22J7VwZ/hxFHR
-         RrROAIgk2tjuZrD3E79TsC6DFiOZCeYiOtmX0J0dLz7U8I3pPXucjFT8S30QseBOwvVz
-         EUtS/mDdyzUSFmCGyFwwaiDoXo0L9JUK4NDYh9LsTY5ozBJ3KSuaQhiYLKrQGayxlJsw
-         7wdKjjjYKgzcPP6sZVqyY8G2aiMbdFv5/FEFyhKoTwxNsNaRmzL1DEHVr30vOoYaEy6c
-         GGoA==
-X-Gm-Message-State: AOJu0YzfPEX1yztIv61elMJqQ6+dakrHkX+eZ8X1SEHqM+fVWTvwuHvA
-        N/Dz6Yov1/7w5LuDprldjexG1gqsAruB20aWCGE=
-X-Google-Smtp-Source: AGHT+IGS4laI4UHVLnIkjLSrMRmia+rD8yaRDC1PhmkavvJYotFSmpNaF2s2LDwJ/U3xrGw2O5pC9A==
-X-Received: by 2002:a05:6512:3095:b0:500:94c5:6e06 with SMTP id z21-20020a056512309500b0050094c56e06mr2394386lfd.56.1695939176271;
-        Thu, 28 Sep 2023 15:12:56 -0700 (PDT)
+        bh=dq20wAX7KyYyuxOCj/4NvQoVluqusmWSS2hLsMjGcCE=;
+        b=z3mOPKber0l99I6ExoX9QhHj6wUFnmjRING6Ok7VWq2b2KYtWcGvZ2u5cuzx6jKKA4
+         XI5hB5pFDxxKa3hBMVJdNt6PHpDkc2fauDgem97k2p53Eo/jirWzz29ehw4EbXte3IAS
+         NhtPueZU3MNfFYB6uOi/pLpa4Ev9/A+HknTsD53+7qtdohCUoy1t0ESrB+SnRDvtmzai
+         IkA0HtR6w7Av7Gb21akFUtxX0r8ZGU0ffznwFr29uSs85tgAOPjTbWCmd8MpiTR9BNGU
+         pAE42dKox1bWBUfxWGdJ34vGu/tVAuDHFo4ePhfY2tlV3b1yPf/N44xIvgc4ynJ0rnC3
+         4gJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695939178; x=1696543978;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dq20wAX7KyYyuxOCj/4NvQoVluqusmWSS2hLsMjGcCE=;
+        b=AG4XJr8vwghUFjIoS8CSUW/5SqjQdUmS8JkMKGsYCd62OTvKOgk4ANl2duognNrn5x
+         G+jo2mBYBN7WsvD/EOHA7eebojehwf1Bn9tJ3YjKKjsTXJvtSlWGiQ/VCuA9kOHSHgbM
+         3AbkaHFggH12OOqvlE51MrGdfZIViHsqlrBdVbILN4v/JWaf/o1HDm1vxIfHA0Np3+dP
+         yRlnNNrLV/bPKB3hoLyKx8266ZFcaE83TjC1wvRcyIX11qcueJbTGzFA022YVTKnoT8j
+         YzBXlzbCXn/5nooxzO5MPXXtnWGBzs0J5EuWN4bO7ffwmcJtCSgOctMbrY0eJq+7X8zF
+         VhQw==
+X-Gm-Message-State: AOJu0YzwCBn025jKnBUIkoj/eyNUoVTxiPPeglNkqlfsUmKHBa/1rLeN
+        OEBCjjnaCweLYHW9EmetmzQb3w==
+X-Google-Smtp-Source: AGHT+IH/mmM0nd0grFY56HkYk7pYC0txYkyCfW1BZfmsMKcj26i8WAbOvsdeSjB0ZgiMBG2REuwJsA==
+X-Received: by 2002:a05:6512:4011:b0:500:9d6c:913e with SMTP id br17-20020a056512401100b005009d6c913emr2625253lfb.52.1695939178506;
+        Thu, 28 Sep 2023 15:12:58 -0700 (PDT)
 Received: from [127.0.1.1] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id r27-20020ac25a5b000000b005030cef433esm3271964lfn.94.2023.09.28.15.12.55
+        by smtp.gmail.com with ESMTPSA id r27-20020ac25a5b000000b005030cef433esm3271964lfn.94.2023.09.28.15.12.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Sep 2023 15:12:55 -0700 (PDT)
+        Thu, 28 Sep 2023 15:12:58 -0700 (PDT)
 From:   Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 0/4] Convert Rockchip ASoC drivers to GPIO descriptors
-Date:   Fri, 29 Sep 2023 00:12:53 +0200
-Message-Id: <20230929-descriptors-asoc-rockchip-v2-0-2d2c0e043aab@linaro.org>
+Date:   Fri, 29 Sep 2023 00:12:55 +0200
+Subject: [PATCH v2 2/4] ASoC: rockchip: Drop includes from RK3399
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGX6FWUC/32NQQ6CMBBFr0Jm7RhaGkFX3MOwqEOBiYY2M4ZoC
- He3krh1+X7y3l9Bg3BQuBQrSFhYOc4Z7KEAmvw8BuQ+M9jSVuXZnrAPSsLpGUXRaySUSHeaOGF
- TVd4NN6rJDJD9JGHg196+dpkn1my996vFfNdftflTXQyW6I2z3tne1U3dPnj2Eo9RRui2bfsAI
- fpisMMAAAA=
+Message-Id: <20230929-descriptors-asoc-rockchip-v2-2-2d2c0e043aab@linaro.org>
+References: <20230929-descriptors-asoc-rockchip-v2-0-2d2c0e043aab@linaro.org>
+In-Reply-To: <20230929-descriptors-asoc-rockchip-v2-0-2d2c0e043aab@linaro.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
@@ -71,33 +70,28 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Rockchip drivers are pretty straight-forward to convert
-over to using GPIO descriptors.
+The RK3399 ASoC driver includes two legacy GPIO headers but
+doesn't use symbols from any of them. Delete the includes.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Changes in v2:
-- Make the GPIOs properly optional in the first patch, preserving the
-  old semantics of the driver.
-- Link to v1: https://lore.kernel.org/r/20230928-descriptors-asoc-rockchip-v1-0-a142a42d4787@linaro.org
+ sound/soc/rockchip/rk3399_gru_sound.c | 2 --
+ 1 file changed, 2 deletions(-)
 
----
-Linus Walleij (4):
-      ASoC: rockchip: Convert RK3288 HDMI to GPIO descriptors
-      ASoC: rockchip: Drop includes from RK3399
-      ASoC: rockchip: Drop includes from Rockchip MAX98090
-      ASoC: rockchip: Drop includes from Rockchip RT5645
+diff --git a/sound/soc/rockchip/rk3399_gru_sound.c b/sound/soc/rockchip/rk3399_gru_sound.c
+index 0f704d22d21b..a178fcd94d88 100644
+--- a/sound/soc/rockchip/rk3399_gru_sound.c
++++ b/sound/soc/rockchip/rk3399_gru_sound.c
+@@ -8,8 +8,6 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+-#include <linux/gpio.h>
+-#include <linux/of_gpio.h>
+ #include <linux/delay.h>
+ #include <linux/spi/spi.h>
+ #include <linux/i2c.h>
 
- sound/soc/rockchip/rk3288_hdmi_analog.c | 46 ++++++++++-----------------------
- sound/soc/rockchip/rk3399_gru_sound.c   |  2 --
- sound/soc/rockchip/rockchip_max98090.c  |  2 --
- sound/soc/rockchip/rockchip_rt5645.c    |  2 --
- 4 files changed, 14 insertions(+), 38 deletions(-)
----
-base-commit: 0bb80ecc33a8fb5a682236443c1e740d5c917d1d
-change-id: 20230926-descriptors-asoc-rockchip-833a4fbc7c1f
-
-Best regards,
 -- 
-Linus Walleij <linus.walleij@linaro.org>
+2.34.1
 
