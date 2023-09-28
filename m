@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCA8CE7B04
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB01CE7B07
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:09:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231263AbjI1HJU (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Sep 2023 03:09:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34096 "EHLO
+        id S231368AbjI1HJd (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Sep 2023 03:09:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231439AbjI1HIh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:08:37 -0400
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61E91CCE;
-        Thu, 28 Sep 2023 00:07:42 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 1FBB02000D;
-        Thu, 28 Sep 2023 07:07:38 +0000 (UTC)
+        with ESMTP id S231309AbjI1HJa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:09:30 -0400
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED6871FC7;
+        Thu, 28 Sep 2023 00:07:56 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id E2D2820015;
+        Thu, 28 Sep 2023 07:07:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1695884861;
+        t=1695884875;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=k9NqSOYILPZgbeylDC10IPY//ple7zsTiiFeeN2By68=;
-        b=RiZJJF2RCJqVsImc6J6Yr99KuAsMW/9VXvySiaG+c1twRQZHaG5u1bWgkE/fpMZSACJC0b
-        qVt0ev+susJu/d4IrPqaU30MtzK54w9Uz5Ydixb0FqbeLK2D13xl34yXbh05ZHxa4FbQPP
-        wa52qV8VKsVYeGO1ed/XX3JADCeMeexSBmc6v3jRBdU37z0v6rvBDIE9Q4V5BCE6YsI1N2
-        ytqIs4xcJ+bIOg5aDGHoH4kyjdIeHIMt7l504NQ4ZA+2RoFm4pf70c31RTk/r6ltLeAIfJ
-        V9ope3FLFM5rXf6ynYWET29xzAH+Wx+isQUnAI4Ib41yDPGt9FrcI8yURLRa5g==
+        bh=BnfLJOmcIlZtdPTfQSCGu7hbf9EJc9MdEBjwblFr2LE=;
+        b=a7jAOkQd6rQxtre1qfhp5VoSas6CLaIloKCMxYnqelwCSOiKN88Y44D2wjMUjD9uP11LzO
+        9Ao5O+KLLGPau7luhjAWAX1OUun64GPt0MMD47oNo+eszeJGYQLIWDFNZsCRxDww+tJM0s
+        o09G+rstHZGTuo96V6t8E2NKWMIBigZ10+9EPQ8uiccgNFvhXwOms+OdOyNVSdfo2bM5FP
+        bDc7jrAYsgbJLBWYnny0CuLTHsWaMCyY/Me+Z8o0sfYxoCOywEUoALNR+erltLoDeWGzSh
+        8PHJIAIW+IKHFhfNvTaTzZzVJWHh7fgGL9Ja1dN7CweDQ1ZvVPEmZ4FzJUJ7zA==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Herve Codina <herve.codina@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -55,9 +55,9 @@ Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v7 10/30] net: wan: Add support for QMC HDLC
-Date:   Thu, 28 Sep 2023 09:06:28 +0200
-Message-ID: <20230928070652.330429-11-herve.codina@bootlin.com>
+Subject: [PATCH v7 14/30] soc: fsl: cpm1: qmc: Introduce qmc_chan_setup_tsa*
+Date:   Thu, 28 Sep 2023 09:06:32 +0200
+Message-ID: <20230928070652.330429-15-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230928070652.330429-1-herve.codina@bootlin.com>
 References: <20230928070652.330429-1-herve.codina@bootlin.com>
@@ -68,481 +68,230 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The QMC HDLC driver provides support for HDLC using the QMC (QUICC
-Multichannel Controller) to transfer the HDLC data.
+Introduce the qmc_chan_setup_tsa* functions to setup entries related
+to the given channel.
+Use them during QMC channels setup.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/net/wan/Kconfig        |  12 +
- drivers/net/wan/Makefile       |   1 +
- drivers/net/wan/fsl_qmc_hdlc.c | 422 +++++++++++++++++++++++++++++++++
- 3 files changed, 435 insertions(+)
- create mode 100644 drivers/net/wan/fsl_qmc_hdlc.c
+ drivers/soc/fsl/qe/qmc.c | 161 ++++++++++++++++++++++++++++++---------
+ 1 file changed, 125 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/net/wan/Kconfig b/drivers/net/wan/Kconfig
-index dcb069dde66b..8de99f4b647b 100644
---- a/drivers/net/wan/Kconfig
-+++ b/drivers/net/wan/Kconfig
-@@ -195,6 +195,18 @@ config FARSYNC
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called farsync.
+diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+index 28acf4c8a141..8e8bd1942c08 100644
+--- a/drivers/soc/fsl/qe/qmc.c
++++ b/drivers/soc/fsl/qe/qmc.c
+@@ -240,6 +240,11 @@ static void qmc_clrbits16(void __iomem *addr, u16 clr)
+ 	qmc_write16(addr, qmc_read16(addr) & ~clr);
+ }
  
-+config FSL_QMC_HDLC
-+	tristate "Freescale QMC HDLC support"
-+	depends on HDLC
-+	depends on CPM_QMC
-+	help
-+	  HDLC support using the Freescale QUICC Multichannel Controller (QMC).
++static void qmc_clrsetbits16(void __iomem *addr, u16 clr, u16 set)
++{
++	qmc_write16(addr, (qmc_read16(addr) & ~clr) | set);
++}
 +
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called fsl_qmc_hdlc.
-+
-+	  If unsure, say N.
-+
- config FSL_UCC_HDLC
- 	tristate "Freescale QUICC Engine HDLC support"
- 	depends on HDLC
-diff --git a/drivers/net/wan/Makefile b/drivers/net/wan/Makefile
-index 5bec8fae47f8..f338f4830626 100644
---- a/drivers/net/wan/Makefile
-+++ b/drivers/net/wan/Makefile
-@@ -23,6 +23,7 @@ obj-$(CONFIG_WANXL)		+= wanxl.o
- obj-$(CONFIG_PCI200SYN)		+= pci200syn.o
- obj-$(CONFIG_PC300TOO)		+= pc300too.o
- obj-$(CONFIG_IXP4XX_HSS)	+= ixp4xx_hss.o
-+obj-$(CONFIG_FSL_QMC_HDLC)	+= fsl_qmc_hdlc.o
- obj-$(CONFIG_FSL_UCC_HDLC)	+= fsl_ucc_hdlc.o
- obj-$(CONFIG_SLIC_DS26522)	+= slic_ds26522.o
+ static void qmc_write32(void __iomem *addr, u32 val)
+ {
+ 	iowrite32be(val, addr);
+@@ -562,6 +567,122 @@ static void qmc_chan_read_done(struct qmc_chan *chan)
+ 	spin_unlock_irqrestore(&chan->rx_lock, flags);
+ }
  
-diff --git a/drivers/net/wan/fsl_qmc_hdlc.c b/drivers/net/wan/fsl_qmc_hdlc.c
-new file mode 100644
-index 000000000000..15e102547ff2
---- /dev/null
-+++ b/drivers/net/wan/fsl_qmc_hdlc.c
-@@ -0,0 +1,422 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Freescale QMC HDLC Device Driver
-+ *
-+ * Copyright 2023 CS GROUP France
-+ *
-+ * Author: Herve Codina <herve.codina@bootlin.com>
-+ */
-+
-+#include <linux/dma-mapping.h>
-+#include <linux/hdlc.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <soc/fsl/qe/qmc.h>
-+
-+struct qmc_hdlc_desc {
-+	struct net_device *netdev;
-+	struct sk_buff *skb; /* NULL if the descriptor is not in use */
-+	dma_addr_t dma_addr;
-+	size_t dma_size;
-+};
-+
-+struct qmc_hdlc {
-+	struct device *dev;
-+	struct qmc_chan *qmc_chan;
-+	struct net_device *netdev;
-+	bool is_crc32;
-+	spinlock_t tx_lock; /* Protect tx descriptors */
-+	struct qmc_hdlc_desc tx_descs[8];
-+	unsigned int tx_out;
-+	struct qmc_hdlc_desc rx_descs[4];
-+};
-+
-+static inline struct qmc_hdlc *netdev_to_qmc_hdlc(struct net_device *netdev)
++static int qmc_chan_setup_tsa_64rxtx(struct qmc_chan *chan, const struct tsa_serial_info *info)
 +{
-+	return dev_to_hdlc(netdev)->priv;
-+}
++	unsigned int i;
++	u16 curr;
++	u16 val;
 +
-+static int qmc_hdlc_recv_queue(struct qmc_hdlc *qmc_hdlc, struct qmc_hdlc_desc *desc, size_t size);
-+
-+#define QMC_HDLC_RX_ERROR_FLAGS (QMC_RX_FLAG_HDLC_OVF | \
-+				 QMC_RX_FLAG_HDLC_UNA | \
-+				 QMC_RX_FLAG_HDLC_ABORT | \
-+				 QMC_RX_FLAG_HDLC_CRC)
-+
-+static void qmc_hcld_recv_complete(void *context, size_t length, unsigned int flags)
-+{
-+	struct qmc_hdlc_desc *desc = context;
-+	struct net_device *netdev = desc->netdev;
-+	struct qmc_hdlc *qmc_hdlc = netdev_to_qmc_hdlc(desc->netdev);
-+	int ret;
-+
-+	dma_unmap_single(qmc_hdlc->dev, desc->dma_addr, desc->dma_size, DMA_FROM_DEVICE);
-+
-+	if (flags & QMC_HDLC_RX_ERROR_FLAGS) {
-+		netdev->stats.rx_errors++;
-+		if (flags & QMC_RX_FLAG_HDLC_OVF) /* Data overflow */
-+			netdev->stats.rx_over_errors++;
-+		if (flags & QMC_RX_FLAG_HDLC_UNA) /* bits received not multiple of 8 */
-+			netdev->stats.rx_frame_errors++;
-+		if (flags & QMC_RX_FLAG_HDLC_ABORT) /* Received an abort sequence */
-+			netdev->stats.rx_frame_errors++;
-+		if (flags & QMC_RX_FLAG_HDLC_CRC) /* CRC error */
-+			netdev->stats.rx_crc_errors++;
-+		kfree_skb(desc->skb);
-+	} else {
-+		netdev->stats.rx_packets++;
-+		netdev->stats.rx_bytes += length;
-+
-+		skb_put(desc->skb, length);
-+		desc->skb->protocol = hdlc_type_trans(desc->skb, netdev);
-+		netif_rx(desc->skb);
-+	}
-+
-+	/* Re-queue a transfer using the same descriptor */
-+	ret = qmc_hdlc_recv_queue(qmc_hdlc, desc, desc->dma_size);
-+	if (ret) {
-+		dev_err(qmc_hdlc->dev, "queue recv desc failed (%d)\n", ret);
-+		netdev->stats.rx_errors++;
-+	}
-+}
-+
-+static int qmc_hdlc_recv_queue(struct qmc_hdlc *qmc_hdlc, struct qmc_hdlc_desc *desc, size_t size)
-+{
-+	int ret;
-+
-+	desc->skb = dev_alloc_skb(size);
-+	if (!desc->skb)
-+		return -ENOMEM;
-+
-+	desc->dma_size = size;
-+	desc->dma_addr = dma_map_single(qmc_hdlc->dev, desc->skb->data,
-+					desc->dma_size, DMA_FROM_DEVICE);
-+	ret = dma_mapping_error(qmc_hdlc->dev, desc->dma_addr);
-+	if (ret)
-+		goto free_skb;
-+
-+	ret = qmc_chan_read_submit(qmc_hdlc->qmc_chan, desc->dma_addr, desc->dma_size,
-+				   qmc_hcld_recv_complete, desc);
-+	if (ret)
-+		goto dma_unmap;
-+
-+	return 0;
-+
-+dma_unmap:
-+	dma_unmap_single(qmc_hdlc->dev, desc->dma_addr, desc->dma_size, DMA_FROM_DEVICE);
-+free_skb:
-+	kfree_skb(desc->skb);
-+	desc->skb = NULL;
-+	return ret;
-+}
-+
-+static void qmc_hdlc_xmit_complete(void *context)
-+{
-+	struct qmc_hdlc_desc *desc = context;
-+	struct net_device *netdev = desc->netdev;
-+	struct qmc_hdlc *qmc_hdlc = netdev_to_qmc_hdlc(netdev);
-+	struct sk_buff *skb;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&qmc_hdlc->tx_lock, flags);
-+	dma_unmap_single(qmc_hdlc->dev, desc->dma_addr, desc->dma_size, DMA_TO_DEVICE);
-+	skb = desc->skb;
-+	desc->skb = NULL; /* Release the descriptor */
-+	if (netif_queue_stopped(netdev))
-+		netif_wake_queue(netdev);
-+	spin_unlock_irqrestore(&qmc_hdlc->tx_lock, flags);
-+
-+	netdev->stats.tx_packets++;
-+	netdev->stats.tx_bytes += skb->len;
-+
-+	dev_consume_skb_any(skb);
-+}
-+
-+static int qmc_hdlc_xmit_queue(struct qmc_hdlc *qmc_hdlc, struct qmc_hdlc_desc *desc)
-+{
-+	int ret;
-+
-+	desc->dma_addr = dma_map_single(qmc_hdlc->dev, desc->skb->data,
-+					desc->dma_size, DMA_TO_DEVICE);
-+	ret = dma_mapping_error(qmc_hdlc->dev, desc->dma_addr);
-+	if (ret) {
-+		dev_err(qmc_hdlc->dev, "failed to map skb\n");
-+		return ret;
-+	}
-+
-+	ret = qmc_chan_write_submit(qmc_hdlc->qmc_chan, desc->dma_addr, desc->dma_size,
-+				    qmc_hdlc_xmit_complete, desc);
-+	if (ret) {
-+		dev_err(qmc_hdlc->dev, "qmc chan write returns %d\n", ret);
-+		dma_unmap_single(qmc_hdlc->dev, desc->dma_addr, desc->dma_size, DMA_TO_DEVICE);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static netdev_tx_t qmc_hdlc_xmit(struct sk_buff *skb, struct net_device *netdev)
-+{
-+	struct qmc_hdlc *qmc_hdlc = netdev_to_qmc_hdlc(netdev);
-+	struct qmc_hdlc_desc *desc;
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&qmc_hdlc->tx_lock, flags);
-+	desc = &qmc_hdlc->tx_descs[qmc_hdlc->tx_out];
-+	if (desc->skb) {
-+		/* Should never happen.
-+		 * Previous xmit should have already stopped the queue.
-+		 */
-+		netif_stop_queue(netdev);
-+		spin_unlock_irqrestore(&qmc_hdlc->tx_lock, flags);
-+		return NETDEV_TX_BUSY;
-+	}
-+	spin_unlock_irqrestore(&qmc_hdlc->tx_lock, flags);
-+
-+	desc->netdev = netdev;
-+	desc->dma_size = skb->len;
-+	desc->skb = skb;
-+	ret = qmc_hdlc_xmit_queue(qmc_hdlc, desc);
-+	if (ret) {
-+		desc->skb = NULL; /* Release the descriptor */
-+		if (ret == -EBUSY) {
-+			netif_stop_queue(netdev);
-+			return NETDEV_TX_BUSY;
-+		}
-+		dev_kfree_skb(skb);
-+		netdev->stats.tx_dropped++;
-+		return NETDEV_TX_OK;
-+	}
-+
-+	qmc_hdlc->tx_out = (qmc_hdlc->tx_out + 1) % ARRAY_SIZE(qmc_hdlc->tx_descs);
-+
-+	spin_lock_irqsave(&qmc_hdlc->tx_lock, flags);
-+	if (qmc_hdlc->tx_descs[qmc_hdlc->tx_out].skb)
-+		netif_stop_queue(netdev);
-+	spin_unlock_irqrestore(&qmc_hdlc->tx_lock, flags);
-+
-+	return NETDEV_TX_OK;
-+}
-+
-+static int qmc_hdlc_open(struct net_device *netdev)
-+{
-+	struct qmc_hdlc *qmc_hdlc = netdev_to_qmc_hdlc(netdev);
-+	struct qmc_chan_param chan_param;
-+	struct qmc_hdlc_desc *desc;
-+	int ret;
-+	int i;
-+
-+	ret = hdlc_open(netdev);
-+	if (ret)
-+		return ret;
-+
-+	chan_param.mode = QMC_HDLC;
-+	/* HDLC_MAX_MRU + 4 for the CRC
-+	 * HDLC_MAX_MRU + 4 + 8 for the CRC and some extraspace needed by the QMC
++	/*
++	 * Use a common Tx/Rx 64 entries table.
++	 * Tx and Rx related stuffs must be identical
 +	 */
-+	chan_param.hdlc.max_rx_buf_size = HDLC_MAX_MRU + 4 + 8;
-+	chan_param.hdlc.max_rx_frame_size = HDLC_MAX_MRU + 4;
-+	chan_param.hdlc.is_crc32 = qmc_hdlc->is_crc32;
-+	ret = qmc_chan_set_param(qmc_hdlc->qmc_chan, &chan_param);
-+	if (ret) {
-+		dev_err(qmc_hdlc->dev, "failed to set param (%d)\n", ret);
-+		goto hdlc_close;
++	if (chan->tx_ts_mask != chan->rx_ts_mask) {
++		dev_err(chan->qmc->dev, "chan %u uses different Rx and Tx TS\n", chan->id);
++		return -EINVAL;
 +	}
 +
-+	/* Queue as many recv descriptors as possible */
-+	for (i = 0; i < ARRAY_SIZE(qmc_hdlc->rx_descs); i++) {
-+		desc = &qmc_hdlc->rx_descs[i];
++	val = QMC_TSA_VALID | QMC_TSA_MASK | QMC_TSA_CHANNEL(chan->id);
 +
-+		desc->netdev = netdev;
-+		ret = qmc_hdlc_recv_queue(qmc_hdlc, desc, chan_param.hdlc.max_rx_buf_size);
-+		if (ret) {
-+			if (ret == -EBUSY && i != 0)
-+				break; /* We use all the QMC chan capability */
-+			goto free_desc;
++	/* Check entries based on Rx stuff*/
++	for (i = 0; i < info->nb_rx_ts; i++) {
++		if (!(chan->rx_ts_mask & (((u64)1) << i)))
++			continue;
++
++		curr = qmc_read16(chan->qmc->scc_pram + QMC_GBL_TSATRX + (i * 2));
++		if (curr & QMC_TSA_VALID && (curr & ~QMC_TSA_WRAP) != val) {
++			dev_err(chan->qmc->dev, "chan %u TxRx entry %d already used\n",
++				chan->id, i);
++			return -EBUSY;
 +		}
 +	}
 +
-+	ret = qmc_chan_start(qmc_hdlc->qmc_chan, QMC_CHAN_ALL);
-+	if (ret) {
-+		dev_err(qmc_hdlc->dev, "qmc chan start failed (%d)\n", ret);
-+		goto free_desc;
-+	}
-+
-+	netif_start_queue(netdev);
-+
-+	return 0;
-+
-+free_desc:
-+	qmc_chan_reset(qmc_hdlc->qmc_chan, QMC_CHAN_ALL);
-+	for (i = 0; i < ARRAY_SIZE(qmc_hdlc->rx_descs); i++) {
-+		desc = &qmc_hdlc->rx_descs[i];
-+		if (!desc->skb)
++	/* Set entries based on Rx stuff*/
++	for (i = 0; i < info->nb_rx_ts; i++) {
++		if (!(chan->rx_ts_mask & (((u64)1) << i)))
 +			continue;
-+		dma_unmap_single(qmc_hdlc->dev, desc->dma_addr, desc->dma_size,
-+				 DMA_FROM_DEVICE);
-+		kfree_skb(desc->skb);
-+		desc->skb = NULL;
-+	}
-+hdlc_close:
-+	hdlc_close(netdev);
-+	return ret;
-+}
 +
-+static int qmc_hdlc_close(struct net_device *netdev)
-+{
-+	struct qmc_hdlc *qmc_hdlc = netdev_to_qmc_hdlc(netdev);
-+	struct qmc_hdlc_desc *desc;
-+	int i;
-+
-+	netif_stop_queue(netdev);
-+
-+	qmc_chan_stop(qmc_hdlc->qmc_chan, QMC_CHAN_ALL);
-+	qmc_chan_reset(qmc_hdlc->qmc_chan, QMC_CHAN_ALL);
-+
-+	for (i = 0; i < ARRAY_SIZE(qmc_hdlc->tx_descs); i++) {
-+		desc = &qmc_hdlc->tx_descs[i];
-+		if (!desc->skb)
-+			continue;
-+		dma_unmap_single(qmc_hdlc->dev, desc->dma_addr, desc->dma_size,
-+				 DMA_TO_DEVICE);
-+		kfree_skb(desc->skb);
-+		desc->skb = NULL;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(qmc_hdlc->rx_descs); i++) {
-+		desc = &qmc_hdlc->rx_descs[i];
-+		if (!desc->skb)
-+			continue;
-+		dma_unmap_single(qmc_hdlc->dev, desc->dma_addr, desc->dma_size,
-+				 DMA_FROM_DEVICE);
-+		kfree_skb(desc->skb);
-+		desc->skb = NULL;
-+	}
-+
-+	hdlc_close(netdev);
-+	return 0;
-+}
-+
-+static int qmc_hdlc_attach(struct net_device *netdev, unsigned short encoding,
-+			   unsigned short parity)
-+{
-+	struct qmc_hdlc *qmc_hdlc = netdev_to_qmc_hdlc(netdev);
-+
-+	if (encoding != ENCODING_NRZ)
-+		return -EINVAL;
-+
-+	switch (parity) {
-+	case PARITY_CRC16_PR1_CCITT:
-+		qmc_hdlc->is_crc32 = false;
-+		break;
-+	case PARITY_CRC32_PR1_CCITT:
-+		qmc_hdlc->is_crc32 = true;
-+		break;
-+	default:
-+		dev_err(qmc_hdlc->dev, "unsupported parity %u\n", parity);
-+		return -EINVAL;
++		qmc_clrsetbits16(chan->qmc->scc_pram + QMC_GBL_TSATRX + (i * 2),
++				 ~QMC_TSA_WRAP, val);
 +	}
 +
 +	return 0;
 +}
 +
-+static const struct net_device_ops qmc_hdlc_netdev_ops = {
-+	.ndo_open       = qmc_hdlc_open,
-+	.ndo_stop       = qmc_hdlc_close,
-+	.ndo_start_xmit = hdlc_start_xmit,
-+	.ndo_siocwandev	= hdlc_ioctl,
-+};
-+
-+static int qmc_hdlc_probe(struct platform_device *pdev)
++static int qmc_chan_setup_tsa_32rx_32tx(struct qmc_chan *chan, const struct tsa_serial_info *info)
 +{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct qmc_hdlc *qmc_hdlc;
-+	struct qmc_chan_info info;
-+	hdlc_device *hdlc;
++	unsigned int i;
++	u16 curr;
++	u16 val;
++
++	/* Use a Tx 32 entries table and a Rx 32 entries table */
++
++	val = QMC_TSA_VALID | QMC_TSA_MASK | QMC_TSA_CHANNEL(chan->id);
++
++	/* Check entries based on Rx stuff */
++	for (i = 0; i < info->nb_rx_ts; i++) {
++		if (!(chan->rx_ts_mask & (((u64)1) << i)))
++			continue;
++
++		curr = qmc_read16(chan->qmc->scc_pram + QMC_GBL_TSATRX + (i * 2));
++		if (curr & QMC_TSA_VALID && (curr & ~QMC_TSA_WRAP) != val) {
++			dev_err(chan->qmc->dev, "chan %u Rx entry %d already used\n",
++				chan->id, i);
++			return -EBUSY;
++		}
++	}
++	/* Check entries based on Tx stuff */
++	for (i = 0; i < info->nb_tx_ts; i++) {
++		if (!(chan->tx_ts_mask & (((u64)1) << i)))
++			continue;
++
++		curr = qmc_read16(chan->qmc->scc_pram + QMC_GBL_TSATTX + (i * 2));
++		if (curr & QMC_TSA_VALID && (curr & ~QMC_TSA_WRAP) != val) {
++			dev_err(chan->qmc->dev, "chan %u Tx entry %d already used\n",
++				chan->id, i);
++			return -EBUSY;
++		}
++	}
++
++	/* Set entries based on Rx stuff */
++	for (i = 0; i < info->nb_rx_ts; i++) {
++		if (!(chan->rx_ts_mask & (((u64)1) << i)))
++			continue;
++
++		qmc_clrsetbits16(chan->qmc->scc_pram + QMC_GBL_TSATRX + (i * 2),
++				 ~QMC_TSA_WRAP, val);
++	}
++	/* Set entries based on Tx stuff */
++	for (i = 0; i < info->nb_tx_ts; i++) {
++		if (!(chan->tx_ts_mask & (((u64)1) << i)))
++			continue;
++
++		qmc_clrsetbits16(chan->qmc->scc_pram + QMC_GBL_TSATTX + (i * 2),
++				 ~QMC_TSA_WRAP, val);
++	}
++
++	return 0;
++}
++
++static int qmc_chan_setup_tsa(struct qmc_chan *chan)
++{
++	struct tsa_serial_info info;
 +	int ret;
 +
-+	qmc_hdlc = devm_kzalloc(&pdev->dev, sizeof(*qmc_hdlc), GFP_KERNEL);
-+	if (!qmc_hdlc)
-+		return -ENOMEM;
-+
-+	qmc_hdlc->dev = &pdev->dev;
-+	spin_lock_init(&qmc_hdlc->tx_lock);
-+
-+	qmc_hdlc->qmc_chan = devm_qmc_chan_get_bychild(qmc_hdlc->dev, np);
-+	if (IS_ERR(qmc_hdlc->qmc_chan)) {
-+		ret = PTR_ERR(qmc_hdlc->qmc_chan);
-+		return dev_err_probe(qmc_hdlc->dev, ret, "get QMC channel failed\n");
-+	}
-+
-+	ret = qmc_chan_get_info(qmc_hdlc->qmc_chan, &info);
-+	if (ret) {
-+		dev_err(qmc_hdlc->dev, "get QMC channel info failed %d\n", ret);
++	/* Retrieve info from the TSA related serial */
++	ret = tsa_serial_get_info(chan->qmc->tsa_serial, &info);
++	if (ret)
 +		return ret;
-+	}
 +
-+	if (info.mode != QMC_HDLC) {
-+		dev_err(qmc_hdlc->dev, "QMC chan mode %d is not QMC_HDLC\n",
-+			info.mode);
-+		return -EINVAL;
-+	}
-+
-+	qmc_hdlc->netdev = alloc_hdlcdev(qmc_hdlc);
-+	if (!qmc_hdlc->netdev) {
-+		dev_err(qmc_hdlc->dev, "failed to alloc hdlc dev\n");
-+		return -ENOMEM;
-+	}
-+
-+	hdlc = dev_to_hdlc(qmc_hdlc->netdev);
-+	hdlc->attach = qmc_hdlc_attach;
-+	hdlc->xmit = qmc_hdlc_xmit;
-+	SET_NETDEV_DEV(qmc_hdlc->netdev, qmc_hdlc->dev);
-+	qmc_hdlc->netdev->tx_queue_len = ARRAY_SIZE(qmc_hdlc->tx_descs);
-+	qmc_hdlc->netdev->netdev_ops = &qmc_hdlc_netdev_ops;
-+	ret = register_hdlc_device(qmc_hdlc->netdev);
-+	if (ret) {
-+		dev_err(qmc_hdlc->dev, "failed to register hdlc device (%d)\n", ret);
-+		goto free_netdev;
-+	}
-+
-+	platform_set_drvdata(pdev, qmc_hdlc);
-+
-+	return 0;
-+
-+free_netdev:
-+	free_netdev(qmc_hdlc->netdev);
-+	return ret;
++	/*
++	 * Setup one common 64 entries table or two 32 entries (one for Tx
++	 * and one for Tx) according to assigned TS numbers.
++	 */
++	return ((info.nb_tx_ts > 32) || (info.nb_rx_ts > 32)) ?
++		qmc_chan_setup_tsa_64rxtx(chan, &info) :
++		qmc_chan_setup_tsa_32rx_32tx(chan, &info);
 +}
 +
-+static int qmc_hdlc_remove(struct platform_device *pdev)
-+{
-+	struct qmc_hdlc *qmc_hdlc = platform_get_drvdata(pdev);
+ static int qmc_chan_command(struct qmc_chan *chan, u8 qmc_opcode)
+ {
+ 	return cpm_command(chan->id << 2, (qmc_opcode << 4) | 0x0E);
+@@ -921,7 +1042,6 @@ static int qmc_of_parse_chans(struct qmc *qmc, struct device_node *np)
+ 
+ static int qmc_init_tsa_64rxtx(struct qmc *qmc, const struct tsa_serial_info *info)
+ {
+-	struct qmc_chan *chan;
+ 	unsigned int i;
+ 	u16 val;
+ 
+@@ -935,18 +1055,6 @@ static int qmc_init_tsa_64rxtx(struct qmc *qmc, const struct tsa_serial_info *in
+ 	for (i = 0; i < 64; i++)
+ 		qmc_write16(qmc->scc_pram + QMC_GBL_TSATRX + (i * 2), 0x0000);
+ 
+-	/* Set entries based on Rx stuff*/
+-	list_for_each_entry(chan, &qmc->chan_head, list) {
+-		for (i = 0; i < info->nb_rx_ts; i++) {
+-			if (!(chan->rx_ts_mask & (((u64)1) << i)))
+-				continue;
+-
+-			val = QMC_TSA_VALID | QMC_TSA_MASK |
+-			      QMC_TSA_CHANNEL(chan->id);
+-			qmc_write16(qmc->scc_pram + QMC_GBL_TSATRX + (i * 2), val);
+-		}
+-	}
+-
+ 	/* Set Wrap bit on last entry */
+ 	qmc_setbits16(qmc->scc_pram + QMC_GBL_TSATRX + ((info->nb_rx_ts - 1) * 2),
+ 		      QMC_TSA_WRAP);
+@@ -963,7 +1071,6 @@ static int qmc_init_tsa_64rxtx(struct qmc *qmc, const struct tsa_serial_info *in
+ 
+ static int qmc_init_tsa_32rx_32tx(struct qmc *qmc, const struct tsa_serial_info *info)
+ {
+-	struct qmc_chan *chan;
+ 	unsigned int i;
+ 	u16 val;
+ 
+@@ -978,28 +1085,6 @@ static int qmc_init_tsa_32rx_32tx(struct qmc *qmc, const struct tsa_serial_info
+ 		qmc_write16(qmc->scc_pram + QMC_GBL_TSATTX + (i * 2), 0x0000);
+ 	}
+ 
+-	/* Set entries based on Rx and Tx stuff*/
+-	list_for_each_entry(chan, &qmc->chan_head, list) {
+-		/* Rx part */
+-		for (i = 0; i < info->nb_rx_ts; i++) {
+-			if (!(chan->rx_ts_mask & (((u64)1) << i)))
+-				continue;
+-
+-			val = QMC_TSA_VALID | QMC_TSA_MASK |
+-			      QMC_TSA_CHANNEL(chan->id);
+-			qmc_write16(qmc->scc_pram + QMC_GBL_TSATRX + (i * 2), val);
+-		}
+-		/* Tx part */
+-		for (i = 0; i < info->nb_tx_ts; i++) {
+-			if (!(chan->tx_ts_mask & (((u64)1) << i)))
+-				continue;
+-
+-			val = QMC_TSA_VALID | QMC_TSA_MASK |
+-			      QMC_TSA_CHANNEL(chan->id);
+-			qmc_write16(qmc->scc_pram + QMC_GBL_TSATTX + (i * 2), val);
+-		}
+-	}
+-
+ 	/* Set Wrap bit on last entries */
+ 	qmc_setbits16(qmc->scc_pram + QMC_GBL_TSATRX + ((info->nb_rx_ts - 1) * 2),
+ 		      QMC_TSA_WRAP);
+@@ -1081,6 +1166,10 @@ static int qmc_setup_chan(struct qmc *qmc, struct qmc_chan *chan)
+ 
+ 	chan->qmc = qmc;
+ 
++	ret = qmc_chan_setup_tsa(chan);
++	if (ret)
++		return ret;
 +
-+	unregister_hdlc_device(qmc_hdlc->netdev);
-+	free_netdev(qmc_hdlc->netdev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id qmc_hdlc_id_table[] = {
-+	{ .compatible = "fsl,qmc-hdlc" },
-+	{} /* sentinel */
-+};
-+MODULE_DEVICE_TABLE(of, qmc_hdlc_driver);
-+
-+static struct platform_driver qmc_hdlc_driver = {
-+	.driver = {
-+		.name = "fsl-qmc-hdlc",
-+		.of_match_table = qmc_hdlc_id_table,
-+	},
-+	.probe = qmc_hdlc_probe,
-+	.remove = qmc_hdlc_remove,
-+};
-+module_platform_driver(qmc_hdlc_driver);
-+
-+MODULE_AUTHOR("Herve Codina <herve.codina@bootlin.com>");
-+MODULE_DESCRIPTION("QMC HDLC driver");
-+MODULE_LICENSE("GPL");
+ 	/* Set channel specific parameter base address */
+ 	chan->s_param = qmc->dpram + (chan->id * 64);
+ 	/* 16 bd per channel (8 rx and 8 tx) */
 -- 
 2.41.0
 
