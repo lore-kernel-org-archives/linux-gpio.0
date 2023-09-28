@@ -2,108 +2,134 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2720DCE7B04
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC07CE7B04
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:08:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231545AbjI1HIO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Sep 2023 03:08:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48178 "EHLO
+        id S231253AbjI1HIS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Sep 2023 03:08:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231296AbjI1HH2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:07:28 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59DE91AD
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 00:07:22 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qll7B-0002SH-4M; Thu, 28 Sep 2023 09:07:13 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qll7A-009WCi-Mf; Thu, 28 Sep 2023 09:07:12 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qll7A-005ZYI-DN; Thu, 28 Sep 2023 09:07:12 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-        Srinivas Neeli <srinivas.neeli@amd.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 22/23] gpio: xilinx: Convert to platform remove callback returning void
-Date:   Thu, 28 Sep 2023 09:07:05 +0200
-Message-Id: <20230928070706.2290137-23-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
-References: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S231321AbjI1HH3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:07:29 -0400
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F89CE1;
+        Thu, 28 Sep 2023 00:07:24 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 8A68820005;
+        Thu, 28 Sep 2023 07:07:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1695884842;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=47AJJX9nKRaseqWZw0zOFwaVtfIj/ZlHaGyGR6Dcxfk=;
+        b=Vfmm5pwR4HIUH2yGwUIRgXjmfrlQAhyaPiD2vPPFvp8av61ZO4Q7OiurBI7vkw/qqhOrOM
+        nrU5bJw2KI9xbMWkIK4bpL5AYO6PG9P7h3qVzNKWrLJJg7Up/0fBbM3aTPet38P5DLMT+B
+        SI792MUXhsLThbnQOrYxMQhzeP5XoQbwdHT2hz1nGhtfAz8V0ErcK+bLVKL7vBCNU9RrkP
+        sJSx5LA7NdEnqumPcT9sK0En+6HW5UXatyYuyC6y2uy5GFEAo69dbVoT1huBpBfTVFYxm2
+        NGp3ZzfvHd/h1lgrBto1dgWxb89tEvtCpMepGhHwxV0hDMfD10zrm1OJ9XU2sg==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Herve Codina <herve.codina@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v7 05/30] soc: fsl: cpm1: qmc: Remove inline function specifiers
+Date:   Thu, 28 Sep 2023 09:06:23 +0200
+Message-ID: <20230928070652.330429-6-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230928070652.330429-1-herve.codina@bootlin.com>
+References: <20230928070652.330429-1-herve.codina@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1831; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=OCUSDDDlpZowRKqn3i2KYETfeDiSoQ+fcaqhgCGW9E4=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlFSR3juZR4QyyPw/qwux7zvp19nI7Skn/j7o6l tjat0CcGDyJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRUkdwAKCRCPgPtYfRL+ TnvSCACTk10j0dDCUwbMK8QsXCHKp6qMtMBfB69H00zn5h7bKfGDtOapxGbJmv0Vn9Prjfu+7Ua a6nKdghGiNXaYoeXGsL9g/fJVk4oWOnhXJ50bd3Hy+vNaCYRn/5WhvoXcajvyxLEjlQONXcddF/ YrMo75AayD4Bi0GED4bj4At8pU0UYawkjPjF63IgENPmHrYXvmFIoPn+WmU7hPO1i6IMbtoWRix DSdLPtF59wHjXS+7j1o9vYadzthGsZ0Q2rqhcxz3+f59FaPAnM2mqv3HMEUtTKPPLOPZXP6eHOu lEi0VbqeosVGRbsPmWgGUwBVP04FqZCUGjQSzCqtcVesEBpt
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is ignored (apart
-from emitting a warning) and this typically results in resource leaks.
+The inline function specifier is present on some functions but it is
+better to let the compiler decide inlining or not these functions.
 
-To improve here there is a quest to make the remove callback return
-void. In the first step of this quest all drivers are converted to
-.remove_new(), which already returns void. Eventually after all drivers
-are converted, .remove_new() will be renamed to .remove().
+Remove inline specifiers.
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Fixes: 3178d58e0b97 ("soc: fsl: cpm1: Add support for QMC")
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/gpio/gpio-xilinx.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-index a16945e8319e..823198368250 100644
---- a/drivers/gpio/gpio-xilinx.c
-+++ b/drivers/gpio/gpio-xilinx.c
-@@ -332,7 +332,7 @@ static int __maybe_unused xgpio_suspend(struct device *dev)
-  *
-  * Return: 0 always
-  */
--static int xgpio_remove(struct platform_device *pdev)
-+static void xgpio_remove(struct platform_device *pdev)
- {
- 	struct xgpio_instance *gpio = platform_get_drvdata(pdev);
+diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+index 2d2a9d88ba6c..459e0bbd723d 100644
+--- a/drivers/soc/fsl/qe/qmc.c
++++ b/drivers/soc/fsl/qe/qmc.c
+@@ -218,37 +218,37 @@ struct qmc {
+ 	struct qmc_chan *chans[64];
+ };
  
-@@ -340,8 +340,6 @@ static int xgpio_remove(struct platform_device *pdev)
- 	pm_runtime_put_noidle(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 	clk_disable_unprepare(gpio->clk);
--
--	return 0;
+-static inline void qmc_write16(void __iomem *addr, u16 val)
++static void qmc_write16(void __iomem *addr, u16 val)
+ {
+ 	iowrite16be(val, addr);
  }
  
- /**
-@@ -715,7 +713,7 @@ MODULE_DEVICE_TABLE(of, xgpio_of_match);
+-static inline u16 qmc_read16(void __iomem *addr)
++static u16 qmc_read16(void __iomem *addr)
+ {
+ 	return ioread16be(addr);
+ }
  
- static struct platform_driver xgpio_plat_driver = {
- 	.probe		= xgpio_probe,
--	.remove		= xgpio_remove,
-+	.remove_new	= xgpio_remove,
- 	.driver		= {
- 			.name = "gpio-xilinx",
- 			.of_match_table	= xgpio_of_match,
+-static inline void qmc_setbits16(void __iomem *addr, u16 set)
++static void qmc_setbits16(void __iomem *addr, u16 set)
+ {
+ 	qmc_write16(addr, qmc_read16(addr) | set);
+ }
+ 
+-static inline void qmc_clrbits16(void __iomem *addr, u16 clr)
++static void qmc_clrbits16(void __iomem *addr, u16 clr)
+ {
+ 	qmc_write16(addr, qmc_read16(addr) & ~clr);
+ }
+ 
+-static inline void qmc_write32(void __iomem *addr, u32 val)
++static void qmc_write32(void __iomem *addr, u32 val)
+ {
+ 	iowrite32be(val, addr);
+ }
+ 
+-static inline u32 qmc_read32(void __iomem *addr)
++static u32 qmc_read32(void __iomem *addr)
+ {
+ 	return ioread32be(addr);
+ }
+ 
+-static inline void qmc_setbits32(void __iomem *addr, u32 set)
++static void qmc_setbits32(void __iomem *addr, u32 set)
+ {
+ 	qmc_write32(addr, qmc_read32(addr) | set);
+ }
 -- 
-2.40.1
+2.41.0
 
