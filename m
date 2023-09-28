@@ -2,105 +2,161 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E27CE7B0A
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8537CE7B07
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:07:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231243AbjI1HHW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Sep 2023 03:07:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48144 "EHLO
+        id S231267AbjI1HHX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Sep 2023 03:07:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230487AbjI1HHN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:07:13 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D04B1A4
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 00:07:12 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qll78-0002PF-4w; Thu, 28 Sep 2023 09:07:10 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qll77-009WBh-O2; Thu, 28 Sep 2023 09:07:09 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qll77-005ZXJ-Eq; Thu, 28 Sep 2023 09:07:09 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 07/23] gpio: grgpio: Convert to platform remove callback returning void
-Date:   Thu, 28 Sep 2023 09:06:50 +0200
-Message-Id: <20230928070706.2290137-8-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
-References: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S230495AbjI1HHO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:07:14 -0400
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 225EBB7;
+        Thu, 28 Sep 2023 00:07:08 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 2B2272000A;
+        Thu, 28 Sep 2023 07:07:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1695884827;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=x+RB2ITbfqKP6mO7lXP9MlFfW3RztOHoR8uJSPHnXIA=;
+        b=kBn8KKVWRt6Su9WLKqr7PygD7rtl5q9DnOvm52upIFF1kzZSvOUo21kTOPgSX+vR+irwl1
+        f9pe1jdzcypO7aNuY+AYlDIL6xwgfx+N/N08VR+qNd/1fkpUJpwuUdi1phBS3toHzU0y+b
+        2kd1TPjzrfeOeTWBDXDZpSWZpF9eR7iyp6gmwISbPbQ0nCyCcY3GEnX0kc0TwT3hsgPds1
+        tmv70GoSpCOBRMNG0VFATDvLxWmA7Ok06N7hdisCg0iQS1nwuKiYXhVcVCjNzFNgqsxbvB
+        bMPKKDGY7TIL0vSJHYhIQpdixzUgR0WEsZR67oPxkYNvYDREbZuNA9URXQrKgw==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Herve Codina <herve.codina@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v7 01/30] soc: fsl: cpm1: tsa: Fix __iomem addresses declaration
+Date:   Thu, 28 Sep 2023 09:06:19 +0200
+Message-ID: <20230928070652.330429-2-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230928070652.330429-1-herve.codina@bootlin.com>
+References: <20230928070652.330429-1-herve.codina@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1775; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=CBRa5uc4jxkn5sVY8frORfw+bQVQ0W6ZrDl2ytRwOVw=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlFSRmrR74n8YeidQDHng8LSxFjhMKe5ULUsUQf I8LtTIQNkuJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRUkZgAKCRCPgPtYfRL+ Tg8OB/9Qmd8kmBwuNsJEQXn/z5BtpNMLdsh9EGEmxP7/6REtWKdCuqTOYdzJt9tQKw6jand0WJh //zdsKChP3Xca/hv5CgORW2ACPrAZKhb7o0pOB6aVtakBCxuEtpwIs1PnAQ/2kI0Lk+rfakzy3a 6mAZf+x8e3UZJdXjzRwkhJFRFIcF0sA9mjyYut2RcBYMe3VbDcqKWys8R4UcwsuySUXb+HBNglM oZ3qM2vANqw9wqNHDxkFPXJ499LSt8i9VlNkAIXFcdJ7liuCg/W+h0Ng9Y6GHX/LTyPcEwVzmld 7MTAzYJ8T855BORoU9K+SVr4Oc+dFuPwtK+L3YVMzzaTI+C+
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is ignored (apart
-from emitting a warning) and this typically results in resource leaks.
+Running sparse (make C=1) on tsa.c raises a lot of warning such as:
+  --- 8< ---
+  warning: incorrect type in assignment (different address spaces)
+     expected void *[noderef] si_regs
+     got void [noderef] __iomem *
+  --- 8< ---
 
-To improve here there is a quest to make the remove callback return
-void. In the first step of this quest all drivers are converted to
-.remove_new(), which already returns void. Eventually after all drivers
-are converted, .remove_new() will be renamed to .remove().
+Indeed, some variable were declared 'type *__iomem var' instead of
+'type __iomem *var'.
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
+Use the correct declaration to remove these warnings.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Fixes: 1d4ba0b81c1c ("soc: fsl: cpm1: Add support for TSA")
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/gpio/gpio-grgpio.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/soc/fsl/qe/tsa.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
-index 0163c95f6dd7..017c7170eb57 100644
---- a/drivers/gpio/gpio-grgpio.c
-+++ b/drivers/gpio/gpio-grgpio.c
-@@ -431,7 +431,7 @@ static int grgpio_probe(struct platform_device *ofdev)
- 	return 0;
- }
+diff --git a/drivers/soc/fsl/qe/tsa.c b/drivers/soc/fsl/qe/tsa.c
+index 3646153117b3..e0527b9efd05 100644
+--- a/drivers/soc/fsl/qe/tsa.c
++++ b/drivers/soc/fsl/qe/tsa.c
+@@ -98,9 +98,9 @@
+ #define TSA_SIRP	0x10
  
--static int grgpio_remove(struct platform_device *ofdev)
-+static void grgpio_remove(struct platform_device *ofdev)
- {
- 	struct grgpio_priv *priv = platform_get_drvdata(ofdev);
- 
-@@ -439,8 +439,6 @@ static int grgpio_remove(struct platform_device *ofdev)
- 
- 	if (priv->domain)
- 		irq_domain_remove(priv->domain);
--
--	return 0;
- }
- 
- static const struct of_device_id grgpio_match[] = {
-@@ -457,7 +455,7 @@ static struct platform_driver grgpio_driver = {
- 		.of_match_table = grgpio_match,
- 	},
- 	.probe = grgpio_probe,
--	.remove = grgpio_remove,
-+	.remove_new = grgpio_remove,
+ struct tsa_entries_area {
+-	void *__iomem entries_start;
+-	void *__iomem entries_next;
+-	void *__iomem last_entry;
++	void __iomem *entries_start;
++	void __iomem *entries_next;
++	void __iomem *last_entry;
  };
- module_platform_driver(grgpio_driver);
  
+ struct tsa_tdm {
+@@ -117,8 +117,8 @@ struct tsa_tdm {
+ 
+ struct tsa {
+ 	struct device *dev;
+-	void *__iomem si_regs;
+-	void *__iomem si_ram;
++	void __iomem *si_regs;
++	void __iomem *si_ram;
+ 	resource_size_t si_ram_sz;
+ 	spinlock_t	lock;
+ 	int tdms; /* TSA_TDMx ORed */
+@@ -135,27 +135,27 @@ static inline struct tsa *tsa_serial_get_tsa(struct tsa_serial *tsa_serial)
+ 	return container_of(tsa_serial, struct tsa, serials[tsa_serial->id]);
+ }
+ 
+-static inline void tsa_write32(void *__iomem addr, u32 val)
++static inline void tsa_write32(void __iomem *addr, u32 val)
+ {
+ 	iowrite32be(val, addr);
+ }
+ 
+-static inline void tsa_write8(void *__iomem addr, u32 val)
++static inline void tsa_write8(void __iomem *addr, u32 val)
+ {
+ 	iowrite8(val, addr);
+ }
+ 
+-static inline u32 tsa_read32(void *__iomem addr)
++static inline u32 tsa_read32(void __iomem *addr)
+ {
+ 	return ioread32be(addr);
+ }
+ 
+-static inline void tsa_clrbits32(void *__iomem addr, u32 clr)
++static inline void tsa_clrbits32(void __iomem *addr, u32 clr)
+ {
+ 	tsa_write32(addr, tsa_read32(addr) & ~clr);
+ }
+ 
+-static inline void tsa_clrsetbits32(void *__iomem addr, u32 clr, u32 set)
++static inline void tsa_clrsetbits32(void __iomem *addr, u32 clr, u32 set)
+ {
+ 	tsa_write32(addr, (tsa_read32(addr) & ~clr) | set);
+ }
+@@ -313,7 +313,7 @@ static u32 tsa_serial_id2csel(struct tsa *tsa, u32 serial_id)
+ static int tsa_add_entry(struct tsa *tsa, struct tsa_entries_area *area,
+ 			 u32 count, u32 serial_id)
+ {
+-	void *__iomem addr;
++	void __iomem *addr;
+ 	u32 left;
+ 	u32 val;
+ 	u32 cnt;
 -- 
-2.40.1
+2.41.0
 
