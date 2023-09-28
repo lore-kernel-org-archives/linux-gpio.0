@@ -2,47 +2,49 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E78ECE7B04
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B562CE7B0A
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:07:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231261AbjI1HHu (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Sep 2023 03:07:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34056 "EHLO
+        id S231437AbjI1HHz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Sep 2023 03:07:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231161AbjI1HHW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:07:22 -0400
+        with ESMTP id S231270AbjI1HHY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:07:24 -0400
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0002CCD8
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 00:07:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B8A8199
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 00:07:20 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qll78-0002Pi-IO; Thu, 28 Sep 2023 09:07:10 +0200
+        id 1qll7A-0002RU-9D; Thu, 28 Sep 2023 09:07:12 +0200
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qll78-009WBq-5A; Thu, 28 Sep 2023 09:07:10 +0200
+        id 1qll79-009WCV-Rf; Thu, 28 Sep 2023 09:07:11 +0200
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qll77-005ZXR-S4; Thu, 28 Sep 2023 09:07:09 +0200
+        id 1qll79-005ZY5-IM; Thu, 28 Sep 2023 09:07:11 +0200
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Andy Shevchenko <andy@kernel.org>,
-        Vladimir Zapolskiy <vz@mleia.com>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/23] gpio: lpc18xx: Convert to platform remove callback returning void
-Date:   Thu, 28 Sep 2023 09:06:52 +0200
-Message-Id: <20230928070706.2290137-10-u.kleine-koenig@pengutronix.de>
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 19/23] gpio: uniphier: Convert to platform remove callback returning void
+Date:   Thu, 28 Sep 2023 09:07:02 +0200
+Message-Id: <20230928070706.2290137-20-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
 References: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1898; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=r6gSrBD5louss3Pb3GEhi8iDF5ZJsJp/xHMLIjEPUXI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlFSRoPPwhAHeunrGSHzBaqKYVPL7fpeFT8pED+ BnfUsDk0tmJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRUkaAAKCRCPgPtYfRL+ TheCB/95/GzZjoA8Q8L9sPtKA+hptDBPpeF5lihSAoaiMRz/uH3/D+E8LgTG4QzrMkHqT7w8RP6 t9giJS2C73ja7I/bnZOTKYdBAnr8ES9SBPKI9vrnTsTOa4k9L7PBGTDrkUoPkSAqlXJUv09s6H5 V8At5Qfsf60TBp2xjXqosU/a7iv2MCfjF2ETHgIuBZ4DVWx9vv44tFvQpG883c3P3edp74ZUuRE 6UQwnhielvT+qJC0rSw7g9ewBtBA40Xr6x5aGlYHmXh4WiV9jClrEo8vUKXt0f7zC3+AKa7KP3r /IKK8HgIuZMZY+oHw1JzvIrYkHR7ab1a9OHmfhyK1xroJgeu
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1800; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=bkApXA01tGfNfpgysiyQC1mURMZijlgXCXcOlH9/CzU=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlFSR01UED8lLvKL6iw0a22cHMHwxZe73TV5XEy qPw1w8wUVGJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRUkdAAKCRCPgPtYfRL+ TjaUB/oDdhtr2klL8tb2/jjDA3Phmu8XHMX0ezozOjCI3s+9jWvfkcwPhUwYfhKNwP2AIpgOpgl 9mryeO06YcomQz75MNGhiJiuRvwwZRysefF1qIWxxQagBKmsMqnlvRS71vfZvrqfko4NJeh3mJI jkSLhF+l4L/Nhdzqy5i1pv3aWi43CRXrwi5aS3d9F5EdagiEruSHHA73y0pM1HVjlNd9StccwII 77pCaJ2HmlwiZkrsAqjB2oaY9MiRNdApl+vLlB6PHX6YX5v7pV7RAHBekHtjAV8tqgXXbDOhuRW BzbehJClDmrpiRJQGK7BtJK6hwV2YB89aVMHgGV781FS9h6Q
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -68,40 +70,37 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/gpio/gpio-lpc18xx.c | 6 ++----
+ drivers/gpio/gpio-uniphier.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpio-lpc18xx.c b/drivers/gpio/gpio-lpc18xx.c
-index ed3f653a1dfc..5c6bb57a8c99 100644
---- a/drivers/gpio/gpio-lpc18xx.c
-+++ b/drivers/gpio/gpio-lpc18xx.c
-@@ -381,7 +381,7 @@ static int lpc18xx_gpio_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
+index 9725b7aa18a7..1f440707f8f4 100644
+--- a/drivers/gpio/gpio-uniphier.c
++++ b/drivers/gpio/gpio-uniphier.c
+@@ -414,13 +414,11 @@ static int uniphier_gpio_probe(struct platform_device *pdev)
  	return 0;
  }
  
--static int lpc18xx_gpio_remove(struct platform_device *pdev)
-+static void lpc18xx_gpio_remove(struct platform_device *pdev)
+-static int uniphier_gpio_remove(struct platform_device *pdev)
++static void uniphier_gpio_remove(struct platform_device *pdev)
  {
- 	struct lpc18xx_gpio_chip *gc = platform_get_drvdata(pdev);
+ 	struct uniphier_gpio_priv *priv = platform_get_drvdata(pdev);
  
-@@ -389,8 +389,6 @@ static int lpc18xx_gpio_remove(struct platform_device *pdev)
- 		irq_domain_remove(gc->pin_ic->domain);
- 
- 	clk_disable_unprepare(gc->clk);
+ 	irq_domain_remove(priv->domain);
 -
 -	return 0;
  }
  
- static const struct of_device_id lpc18xx_gpio_match[] = {
-@@ -401,7 +399,7 @@ MODULE_DEVICE_TABLE(of, lpc18xx_gpio_match);
+ static int __maybe_unused uniphier_gpio_suspend(struct device *dev)
+@@ -482,7 +480,7 @@ MODULE_DEVICE_TABLE(of, uniphier_gpio_match);
  
- static struct platform_driver lpc18xx_gpio_driver = {
- 	.probe	= lpc18xx_gpio_probe,
--	.remove	= lpc18xx_gpio_remove,
-+	.remove_new = lpc18xx_gpio_remove,
- 	.driver	= {
- 		.name		= "lpc18xx-gpio",
- 		.of_match_table	= lpc18xx_gpio_match,
+ static struct platform_driver uniphier_gpio_driver = {
+ 	.probe = uniphier_gpio_probe,
+-	.remove = uniphier_gpio_remove,
++	.remove_new = uniphier_gpio_remove,
+ 	.driver = {
+ 		.name = "uniphier-gpio",
+ 		.of_match_table = uniphier_gpio_match,
 -- 
 2.40.1
 
