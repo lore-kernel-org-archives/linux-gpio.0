@@ -2,46 +2,46 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3FACE7B08
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB83CE7B04
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:07:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230401AbjI1HHO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        id S230498AbjI1HHO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
         Thu, 28 Sep 2023 03:07:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48096 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230384AbjI1HHN (ORCPT
+        with ESMTP id S230450AbjI1HHN (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:07:13 -0400
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CAB319C
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D2521A3
         for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 00:07:11 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qll77-0002OH-7C; Thu, 28 Sep 2023 09:07:09 +0200
+        id 1qll77-0002OW-L2; Thu, 28 Sep 2023 09:07:09 +0200
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qll76-009WBP-Qd; Thu, 28 Sep 2023 09:07:08 +0200
+        id 1qll77-009WBW-7v; Thu, 28 Sep 2023 09:07:09 +0200
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qll76-005ZWz-HM; Thu, 28 Sep 2023 09:07:08 +0200
+        id 1qll76-005ZX8-Ue; Thu, 28 Sep 2023 09:07:08 +0200
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 02/23] gpio: amdpt: Convert to platform remove callback returning void
-Date:   Thu, 28 Sep 2023 09:06:45 +0200
-Message-Id: <20230928070706.2290137-3-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 04/23] gpio: cadence: Convert to platform remove callback returning void
+Date:   Thu, 28 Sep 2023 09:06:47 +0200
+Message-Id: <20230928070706.2290137-5-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
 References: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1704; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=pmBQ7x4NlnXZMn9aA/nAoCKl01g7jBU9/A19/uOU6ts=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlFSRgGcmEwGahH1iTqFL7RNhqMJ9vePhEwX8cN fgjDAG+mw+JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRUkYAAKCRCPgPtYfRL+ TsGnB/oCwnKuHDTBqxM0td9Y3sbgKQ0IHV+CxG1zN/bLO54cAS+c+2Reqy6DB3VeHXJvZRqPQcz q6LubKG/DWDnO5vXsXIKhZkKC84nvwYylxX3BzzWB6GVSxeWxlWz8p3Hzcv4ZzJZCYDaC5TZ1+r 9hf8Q/vSN5zGhW3CSP2ZFFpC6+hDofGbTXaf/NGhODjMe5XOoQmUKB1DUh+dUvFxFG2Wo9EG+Yt IdyOgx/a7XCgitedepWM4eLfSCtBhM0/pfKhdgaidDdcQrSsg+3Qr5ODJGJwWITwTZOMi1nMHPj 0wvHk+Dd4ercHPeAVJcxYoQGv/c7d/C4JYe5Pj7NrlFx73Ld
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1778; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=oKB2MvZnK5i5YvDvXExUfueCuB3cMnfUrlLE9KkO6PE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlFSRjE6GHo6kiT+SPmfCopcirXBDOR5xosW2WD KoSz0Gby6SJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRUkYwAKCRCPgPtYfRL+ TleQB/9U5RlRSkPYnDK+Vo6oCiJ690SIuygN0YVI2ElazMOwPo+aNMdwzGyb53qEJEXnKbwK5I6 ZhDa+emBITxnKTeLPeE+JwFqMfRRdKGVfgU/36ZRVAB+JcVKzqVnFcF3PJtDfHlicY1PAXD/+uC +N+Q3K+3vK2L7ED9usX3Zn+mGBoq5ckrCaO3rTVFPLCzKAVhOj76Jzz04/s26OsDMTv34mnga4v SmTsiVc7t09Xj4e1MXcjUtJkVM+2fJuxCBXZAutTyevjew3Jb8XSRjqPvijSTpvWtJOnkAQ0GDT DRB+4GVV5ve9kG77b6koWiUCQOtWShiAmQNlcF6IFHECEoBX
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -67,37 +67,38 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/gpio/gpio-amdpt.c | 6 ++----
+ drivers/gpio/gpio-cadence.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpio-amdpt.c b/drivers/gpio/gpio-amdpt.c
-index 07c6d090058d..0a2ea9db4682 100644
---- a/drivers/gpio/gpio-amdpt.c
-+++ b/drivers/gpio/gpio-amdpt.c
-@@ -122,13 +122,11 @@ static int pt_gpio_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-cadence.c b/drivers/gpio/gpio-cadence.c
+index 3720b90cad10..6a439cf78459 100644
+--- a/drivers/gpio/gpio-cadence.c
++++ b/drivers/gpio/gpio-cadence.c
+@@ -268,14 +268,12 @@ static int cdns_gpio_probe(struct platform_device *pdev)
  	return ret;
  }
  
--static int pt_gpio_remove(struct platform_device *pdev)
-+static void pt_gpio_remove(struct platform_device *pdev)
+-static int cdns_gpio_remove(struct platform_device *pdev)
++static void cdns_gpio_remove(struct platform_device *pdev)
  {
- 	struct pt_gpio_chip *pt_gpio = platform_get_drvdata(pdev);
+ 	struct cdns_gpio_chip *cgpio = platform_get_drvdata(pdev);
  
- 	gpiochip_remove(&pt_gpio->gc);
+ 	iowrite32(cgpio->bypass_orig, cgpio->regs + CDNS_GPIO_BYPASS_MODE);
+ 	clk_disable_unprepare(cgpio->pclk);
 -
 -	return 0;
  }
  
- static const struct acpi_device_id pt_gpio_acpi_match[] = {
-@@ -145,7 +143,7 @@ static struct platform_driver pt_gpio_driver = {
- 		.acpi_match_table = ACPI_PTR(pt_gpio_acpi_match),
+ static const struct of_device_id cdns_of_ids[] = {
+@@ -290,7 +288,7 @@ static struct platform_driver cdns_gpio_driver = {
+ 		.of_match_table = cdns_of_ids,
  	},
- 	.probe = pt_gpio_probe,
--	.remove = pt_gpio_remove,
-+	.remove_new = pt_gpio_remove,
+ 	.probe = cdns_gpio_probe,
+-	.remove = cdns_gpio_remove,
++	.remove_new = cdns_gpio_remove,
  };
+ module_platform_driver(cdns_gpio_driver);
  
- module_platform_driver(pt_gpio_driver);
 -- 
 2.40.1
 
