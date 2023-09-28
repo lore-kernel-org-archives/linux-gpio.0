@@ -2,46 +2,46 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D7ACE7B09
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E27CE7B0A
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:07:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231231AbjI1HHV (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Sep 2023 03:07:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48126 "EHLO
+        id S231243AbjI1HHW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Sep 2023 03:07:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230490AbjI1HHO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:07:14 -0400
+        with ESMTP id S230487AbjI1HHN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:07:13 -0400
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A080FBF
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D04B1A4
         for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 00:07:12 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qll78-0002Pr-NZ; Thu, 28 Sep 2023 09:07:10 +0200
+        id 1qll78-0002PF-4w; Thu, 28 Sep 2023 09:07:10 +0200
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qll78-009WBu-AS; Thu, 28 Sep 2023 09:07:10 +0200
+        id 1qll77-009WBh-O2; Thu, 28 Sep 2023 09:07:09 +0200
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qll78-005ZXW-1M; Thu, 28 Sep 2023 09:07:10 +0200
+        id 1qll77-005ZXJ-Eq; Thu, 28 Sep 2023 09:07:09 +0200
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 10/23] gpio: mb86s7x: Convert to platform remove callback returning void
-Date:   Thu, 28 Sep 2023 09:06:53 +0200
-Message-Id: <20230928070706.2290137-11-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 07/23] gpio: grgpio: Convert to platform remove callback returning void
+Date:   Thu, 28 Sep 2023 09:06:50 +0200
+Message-Id: <20230928070706.2290137-8-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
 References: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1839; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=WPcDIjpmyzu/jlqFKeLdgoc1fiE6YSUTS+0IHvir+Ow=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlFSRqf4S9RdTk3Q3vhF0e9LUO0JOBOrWkbuHhq 9c0as1k9giJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRUkagAKCRCPgPtYfRL+ TnoiB/928vsCsni4kOWZ4UadomEZI2aY26oH+s3dV0sdTV9DHAnFCdL/a+GIkr1oedvp5QZLdSz 1UxVEN5smKMWfOzv2kA2hWxbg6FqPiiYb3n4fkmrLdAxDk6cVBDzd08U6vLmPDcZU0utTZsVSnd J36y+MKsrAvFo3IUboLzCh6ECrRd7+em1NqdmdQlHWYT02bganpFFKufwUhujSizfwz+va/hjTE oXePogmzX1VMBv9Ccex4LoaRrB4Y0LC8/l2oVVU5zQuebK+E5TbLj2AWiDMUmVjC0/ipU/3LOFC WNoq4czfd7HrBKXwXZjRWL/atX5fh7kX9tR/T/w4BOpn2KWZ
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1775; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=CBRa5uc4jxkn5sVY8frORfw+bQVQ0W6ZrDl2ytRwOVw=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlFSRmrR74n8YeidQDHng8LSxFjhMKe5ULUsUQf I8LtTIQNkuJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRUkZgAKCRCPgPtYfRL+ Tg8OB/9Qmd8kmBwuNsJEQXn/z5BtpNMLdsh9EGEmxP7/6REtWKdCuqTOYdzJt9tQKw6jand0WJh //zdsKChP3Xca/hv5CgORW2ACPrAZKhb7o0pOB6aVtakBCxuEtpwIs1PnAQ/2kI0Lk+rfakzy3a 6mAZf+x8e3UZJdXjzRwkhJFRFIcF0sA9mjyYut2RcBYMe3VbDcqKWys8R4UcwsuySUXb+HBNglM oZ3qM2vANqw9wqNHDxkFPXJ499LSt8i9VlNkAIXFcdJ7liuCg/W+h0Ng9Y6GHX/LTyPcEwVzmld 7MTAzYJ8T855BORoU9K+SVr4Oc+dFuPwtK+L3YVMzzaTI+C+
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -67,38 +67,39 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/gpio/gpio-mb86s7x.c | 6 ++----
+ drivers/gpio/gpio-grgpio.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mb86s7x.c b/drivers/gpio/gpio-mb86s7x.c
-index 248df657c38e..7fb298b4571b 100644
---- a/drivers/gpio/gpio-mb86s7x.c
-+++ b/drivers/gpio/gpio-mb86s7x.c
-@@ -204,15 +204,13 @@ static int mb86s70_gpio_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
+index 0163c95f6dd7..017c7170eb57 100644
+--- a/drivers/gpio/gpio-grgpio.c
++++ b/drivers/gpio/gpio-grgpio.c
+@@ -431,7 +431,7 @@ static int grgpio_probe(struct platform_device *ofdev)
  	return 0;
  }
  
--static int mb86s70_gpio_remove(struct platform_device *pdev)
-+static void mb86s70_gpio_remove(struct platform_device *pdev)
+-static int grgpio_remove(struct platform_device *ofdev)
++static void grgpio_remove(struct platform_device *ofdev)
  {
- 	struct mb86s70_gpio_chip *gchip = platform_get_drvdata(pdev);
+ 	struct grgpio_priv *priv = platform_get_drvdata(ofdev);
  
- 	acpi_gpiochip_free_interrupts(&gchip->gc);
- 	gpiochip_remove(&gchip->gc);
- 	clk_disable_unprepare(gchip->clk);
+@@ -439,8 +439,6 @@ static int grgpio_remove(struct platform_device *ofdev)
+ 
+ 	if (priv->domain)
+ 		irq_domain_remove(priv->domain);
 -
 -	return 0;
  }
  
- static const struct of_device_id mb86s70_gpio_dt_ids[] = {
-@@ -236,7 +234,7 @@ static struct platform_driver mb86s70_gpio_driver = {
- 		.acpi_match_table = ACPI_PTR(mb86s70_gpio_acpi_ids),
+ static const struct of_device_id grgpio_match[] = {
+@@ -457,7 +455,7 @@ static struct platform_driver grgpio_driver = {
+ 		.of_match_table = grgpio_match,
  	},
- 	.probe = mb86s70_gpio_probe,
--	.remove = mb86s70_gpio_remove,
-+	.remove_new = mb86s70_gpio_remove,
+ 	.probe = grgpio_probe,
+-	.remove = grgpio_remove,
++	.remove_new = grgpio_remove,
  };
- module_platform_driver(mb86s70_gpio_driver);
+ module_platform_driver(grgpio_driver);
  
 -- 
 2.40.1
