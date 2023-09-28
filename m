@@ -2,32 +2,32 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 915A8CE7B07
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E97CE7B07
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:12:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230207AbjI1HKz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Sep 2023 03:10:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53956 "EHLO
+        id S231432AbjI1HMw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Sep 2023 03:12:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231540AbjI1HKs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:10:48 -0400
+        with ESMTP id S231516AbjI1HMm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:12:42 -0400
 Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F942699;
-        Thu, 28 Sep 2023 00:08:11 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPA id 0F73F2000F;
-        Thu, 28 Sep 2023 07:08:05 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A57823C1D;
+        Thu, 28 Sep 2023 00:08:52 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 59ADB20002;
+        Thu, 28 Sep 2023 07:08:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1695884889;
+        t=1695884925;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8VNINkLFfha4Th+iIY5tUoXJZhImwUnHfix4Wn4Cn9s=;
-        b=E+LYRtqSBU9mbG8UnheJN5oohUxQZPcT5DNCY5pnmN0Aj3NcOAh0NEOJ7AaUQxtHDoQcbv
-        sm+CM7IJ4hMaNhzuWc+R48q0nHrJZgF4uOIsAMWw5d2tQ3/Kh/YzW6TwCXR/hidwnZjSfQ
-        OZghr7uekujeYsQRqB2/bAO8ZuQTNlKKmSJ+x29pgR9OOdRWE5bn5SNIsa6ENsk/YQ2i8S
-        XIEMWy7/9M1r2h69SJQ7/pUGqleyaRPRGJxvRwWSlMYu9E5/MRRQ4KdXCsdMmii6pT2z2J
-        2sibS+ZHFTZQ3iDBu7sc947ZC0A5mfIggEZ48IsnNc5U8kW649MdZ7ZnnzWjQw==
+        bh=eP8so5+40OVF0V/I6f05agR/9uxTfpFGxdMPV+noKD8=;
+        b=jQi9v6mUi4dxXf7xwT8QBgTHjeypQ609xJPuT69fFnyVAlW89SyVYt1S6BsVU+8qqeu8wv
+        y5b/LSN1TvHpUnZOO4s6j/7ueN/Dp4x0UoDO4Q2OOeRDoLjg7dLjuorzf9CmgtZtyJoN1W
+        k5BzcmzRhRz3ZPZx+JEIdag7eUqsX7YqpTJHqTIdtgblna53KyRKB3EOPZU35Wyfx+JIe5
+        v2D21pFqySYvnpIzcNamDer3gGSq5X3TTlXG4lpb1nOQ2tiSUmglWH/VAVvTzV+9KlCXh5
+        NJdifhZgQY3nDwy1ls3LXrME6tYoRIa92285ajtJWCaE3xDGdVBuazDRtlBc9Q==
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Herve Codina <herve.codina@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -55,9 +55,9 @@ Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v7 18/30] soc: fsl: cpm1: qmc: Split Tx and Rx TSA entries setup
-Date:   Thu, 28 Sep 2023 09:06:36 +0200
-Message-ID: <20230928070652.330429-19-herve.codina@bootlin.com>
+Subject: [PATCH v7 28/30] MAINTAINERS: Add the Lantiq PEF2256 driver entry
+Date:   Thu, 28 Sep 2023 09:06:46 +0200
+Message-ID: <20230928070652.330429-29-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230928070652.330429-1-herve.codina@bootlin.com>
 References: <20230928070652.330429-1-herve.codina@bootlin.com>
@@ -68,103 +68,34 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The Tx and Rx entries for a given channel are set in one function.
-
-In order to modify Rx entries and Tx entries independently of one other,
-split this function in one for the Rx part and one for the Tx part.
+After contributing the driver, add myself as the maintainer for the
+Lantiq PEF2256 driver.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/soc/fsl/qe/qmc.c | 49 ++++++++++++++++++++++++++++------------
- 1 file changed, 35 insertions(+), 14 deletions(-)
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 26cd7e1ccafc..eeceb81bf107 100644
---- a/drivers/soc/fsl/qe/qmc.c
-+++ b/drivers/soc/fsl/qe/qmc.c
-@@ -610,14 +610,14 @@ static int qmc_chan_setup_tsa_64rxtx(struct qmc_chan *chan, const struct tsa_ser
- 	return 0;
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8b987f2c8633..d8f2433e326e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11876,6 +11876,14 @@ S:	Maintained
+ F:	arch/mips/lantiq
+ F:	drivers/soc/lantiq
  
--static int qmc_chan_setup_tsa_32rx_32tx(struct qmc_chan *chan, const struct tsa_serial_info *info,
--					bool enable)
-+static int qmc_chan_setup_tsa_32rx(struct qmc_chan *chan, const struct tsa_serial_info *info,
-+				   bool enable)
- {
- 	unsigned int i;
- 	u16 curr;
- 	u16 val;
- 
--	/* Use a Tx 32 entries table and a Rx 32 entries table */
-+	/* Use a Rx 32 entries table */
- 
- 	val = QMC_TSA_VALID | QMC_TSA_MASK | QMC_TSA_CHANNEL(chan->id);
- 
-@@ -633,6 +633,30 @@ static int qmc_chan_setup_tsa_32rx_32tx(struct qmc_chan *chan, const struct tsa_
- 			return -EBUSY;
- 		}
- 	}
++LANTIQ PEF2256 DRIVER
++M:	Herve Codina <herve.codina@bootlin.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/net/lantiq,pef2256.yaml
++F:	drivers/net/wan/framer/pef2256/
++F:	drivers/pinctrl/pinctrl-pef2256.c
++F:	include/linux/framer/pef2256.h
 +
-+	/* Set entries based on Rx stuff */
-+	for (i = 0; i < info->nb_rx_ts; i++) {
-+		if (!(chan->rx_ts_mask & (((u64)1) << i)))
-+			continue;
-+
-+		qmc_clrsetbits16(chan->qmc->scc_pram + QMC_GBL_TSATRX + (i * 2),
-+				 ~QMC_TSA_WRAP, enable ? val : 0x0000);
-+	}
-+
-+	return 0;
-+}
-+
-+static int qmc_chan_setup_tsa_32tx(struct qmc_chan *chan, const struct tsa_serial_info *info,
-+				   bool enable)
-+{
-+	unsigned int i;
-+	u16 curr;
-+	u16 val;
-+
-+	/* Use a Tx 32 entries table */
-+
-+	val = QMC_TSA_VALID | QMC_TSA_MASK | QMC_TSA_CHANNEL(chan->id);
-+
- 	/* Check entries based on Tx stuff */
- 	for (i = 0; i < info->nb_tx_ts; i++) {
- 		if (!(chan->tx_ts_mask & (((u64)1) << i)))
-@@ -646,14 +670,6 @@ static int qmc_chan_setup_tsa_32rx_32tx(struct qmc_chan *chan, const struct tsa_
- 		}
- 	}
- 
--	/* Set entries based on Rx stuff */
--	for (i = 0; i < info->nb_rx_ts; i++) {
--		if (!(chan->rx_ts_mask & (((u64)1) << i)))
--			continue;
--
--		qmc_clrsetbits16(chan->qmc->scc_pram + QMC_GBL_TSATRX + (i * 2),
--				 ~QMC_TSA_WRAP, enable ? val : 0x0000);
--	}
- 	/* Set entries based on Tx stuff */
- 	for (i = 0; i < info->nb_tx_ts; i++) {
- 		if (!(chan->tx_ts_mask & (((u64)1) << i)))
-@@ -680,9 +696,14 @@ static int qmc_chan_setup_tsa(struct qmc_chan *chan, bool enable)
- 	 * Setup one common 64 entries table or two 32 entries (one for Tx
- 	 * and one for Tx) according to assigned TS numbers.
- 	 */
--	return ((info.nb_tx_ts > 32) || (info.nb_rx_ts > 32)) ?
--		qmc_chan_setup_tsa_64rxtx(chan, &info, enable) :
--		qmc_chan_setup_tsa_32rx_32tx(chan, &info, enable);
-+	if (info.nb_tx_ts > 32 || info.nb_rx_ts > 32)
-+		return qmc_chan_setup_tsa_64rxtx(chan, &info, enable);
-+
-+	ret = qmc_chan_setup_tsa_32rx(chan, &info, enable);
-+	if (ret)
-+		return ret;
-+
-+	return qmc_chan_setup_tsa_32tx(chan, &info, enable);
- }
- 
- static int qmc_chan_command(struct qmc_chan *chan, u8 qmc_opcode)
+ LASI 53c700 driver for PARISC
+ M:	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+ L:	linux-scsi@vger.kernel.org
 -- 
 2.41.0
 
