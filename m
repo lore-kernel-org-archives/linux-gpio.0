@@ -2,109 +2,102 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 923B0CE7B09
-	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E732ACE7B08
+	for <linux-gpio@archiver.kernel.org>; Thu, 28 Sep 2023 07:07:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231194AbjI1HHe (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 28 Sep 2023 03:07:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33786 "EHLO
+        id S231383AbjI1HHr (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 28 Sep 2023 03:07:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230384AbjI1HHU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:07:20 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A18A61BB
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 00:07:15 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qll77-0002OQ-ET; Thu, 28 Sep 2023 09:07:09 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qll77-009WBS-17; Thu, 28 Sep 2023 09:07:09 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qll76-005ZX3-Np; Thu, 28 Sep 2023 09:07:08 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Doug Berger <opendmb@gmail.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 03/23] gpio: brcmstb: Convert to platform remove callback returning void
-Date:   Thu, 28 Sep 2023 09:06:46 +0200
-Message-Id: <20230928070706.2290137-4-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
-References: <20230928070706.2290137-1-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S231144AbjI1HHV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2023 03:07:21 -0400
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0AA6CCF;
+        Thu, 28 Sep 2023 00:07:16 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 1654A20008;
+        Thu, 28 Sep 2023 07:07:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1695884835;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Vsq3fcsRQ92trwLtB4WXIyAHgTZzHeLSP3hrA+1+hQo=;
+        b=n3T18kcCISxek/R3VhYZWIoJH2e9PChOnLVmExmd8R3u/Qt911xTDLpETy0D77k1EXiVzS
+        HbzxHrLquzaNMHDZ7W/NRHBOMiuuyMPQU5Lg8JII/FAqoPqWPmX1Hf1wr1TPs8o6Aa5Ebp
+        HKvJELhogSf4BM/8sBw2fQeqAW8FMCq+Xs1D6i0Q7+OPW/l5YVXEVzQ8/TtwZuziSJ61yh
+        ow9ESlLrMK3hw7fYiuZLe4APkHHpVbYN9MgGcE9wIyFswTwH8P4Zvtivzub3xB4lh/dTNi
+        TwACeNuJHz0znnM42Q+kSqIOo/h8BSxpywKaOlAcMuDGKCYtO/rnrMHvUc5rcA==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Herve Codina <herve.codina@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org, Simon Horman <horms@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v7 03/30] soc: fsl: cpm1: qmc: Fix rx channel reset
+Date:   Thu, 28 Sep 2023 09:06:21 +0200
+Message-ID: <20230928070652.330429-4-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230928070652.330429-1-herve.codina@bootlin.com>
+References: <20230928070652.330429-1-herve.codina@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1927; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=L+YuiCv+iiMESLsUmp6IhUmqUktxmuMzPNS/HWpaLWs=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlFSRiwnkuoSq9wBB88Trgo/gTM6hWPAwSqR+L/ XF912idvtKJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZRUkYgAKCRCPgPtYfRL+ ThKzB/94/Ax3Aq+EhF1eAa0+/BxZXi3JwBr2XRoweGi9T1083yVRzfoS8tFl1Q23Ez69e/Z8sYD 7KiLZ5tprjeU0utGcs1jon7+ysvoD7Kzm6RaL6cSiCJPCQ7wjrlemFvfUsTViE5Ev3RCoubib2V bfE9sB4y4qPFJTHdm5fm1zoT0cCFvFaOR4ic0KSnxnq9ZwxjbC1Ylg160+bFvOr9sEBlp9x8P3l ZKdWePxLPgScwk7Un7vsRCad3LILqv3zZMG/qZ5oKYmSJlRg6sCNH/xuVfXR+Kfywy8U0a1AzGK twvQttfSz4m5vuTXI87y7HItA2L0iwS52sAfoT1vjfbnvkyT
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+X-GND-Sasl: herve.codina@bootlin.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is ignored (apart
-from emitting a warning) and this typically results in resource leaks.
+The qmc_chan_reset_rx() set the is_rx_stopped flag. This leads to an
+inconsistent state in the following sequence.
+    qmc_chan_stop()
+    qmc_chan_reset()
+Indeed, after the qmc_chan_reset() call, the channel must still be
+stopped. Only a qmc_chan_start() call can move the channel from stopped
+state to started state.
 
-To improve here there is a quest to make the remove callback return
-void. In the first step of this quest all drivers are converted to
-.remove_new(), which already returns void. Eventually after all drivers
-are converted, .remove_new() will be renamed to .remove().
+Fix the issue removing the is_rx_stopped flag setting from
+qmc_chan_reset()
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Fixes: 3178d58e0b97 ("soc: fsl: cpm1: Add support for QMC")
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/gpio/gpio-brcmstb.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index bccdbfd5ec80..a789af4a5c85 100644
---- a/drivers/gpio/gpio-brcmstb.c
-+++ b/drivers/gpio/gpio-brcmstb.c
-@@ -371,7 +371,7 @@ static int brcmstb_gpio_sanity_check_banks(struct device *dev,
- 	}
- }
+diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+index 7ad0d77f1740..8dc73cc1a83b 100644
+--- a/drivers/soc/fsl/qe/qmc.c
++++ b/drivers/soc/fsl/qe/qmc.c
+@@ -685,7 +685,6 @@ static void qmc_chan_reset_rx(struct qmc_chan *chan)
+ 		    qmc_read16(chan->s_param + QMC_SPE_RBASE));
  
--static int brcmstb_gpio_remove(struct platform_device *pdev)
-+static void brcmstb_gpio_remove(struct platform_device *pdev)
- {
- 	struct brcmstb_gpio_priv *priv = platform_get_drvdata(pdev);
- 	struct brcmstb_gpio_bank *bank;
-@@ -395,8 +395,6 @@ static int brcmstb_gpio_remove(struct platform_device *pdev)
- 	 */
- 	list_for_each_entry(bank, &priv->bank_list, node)
- 		gpiochip_remove(&bank->gc);
--
--	return 0;
- }
+ 	chan->rx_pending = 0;
+-	chan->is_rx_stopped = false;
  
- static int brcmstb_gpio_of_xlate(struct gpio_chip *gc,
-@@ -757,7 +755,7 @@ static struct platform_driver brcmstb_gpio_driver = {
- 		.pm = &brcmstb_gpio_pm_ops,
- 	},
- 	.probe = brcmstb_gpio_probe,
--	.remove = brcmstb_gpio_remove,
-+	.remove_new = brcmstb_gpio_remove,
- 	.shutdown = brcmstb_gpio_shutdown,
- };
- module_platform_driver(brcmstb_gpio_driver);
+ 	spin_unlock_irqrestore(&chan->rx_lock, flags);
+ }
 -- 
-2.40.1
+2.41.0
 
