@@ -2,131 +2,144 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 055CAE71D21
-	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 13:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26852E71D30
+	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 13:15:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232997AbjI2NIG (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 29 Sep 2023 09:08:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34848 "EHLO
+        id S233311AbjI2NPP (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 29 Sep 2023 09:15:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232803AbjI2NIF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 09:08:05 -0400
-Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A47F0B7
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Sep 2023 06:08:03 -0700 (PDT)
-Received: by mail-vs1-xe30.google.com with SMTP id ada2fe7eead31-4526ae5b0b3so6147369137.2
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Sep 2023 06:08:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1695992883; x=1696597683; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cxf0/FyTTukPZaR6SdHjgImiVLVk6/MUUSQkTxW8+KU=;
-        b=iRLXMPBN0pRIwZDVR591iCU2kMjwUF6LgjSsBdkAJXU8rzaKnBXjzHnulSSU8S+Vv/
-         30d20CV1p2VKPVGP0c5O+84pjrkQBo2uF8I64G3a+X49sDM/uRjvN/xuVsez4l53ELia
-         2HXUA2kGNLlTrtvilhrErurOWmv848hYH0vg2eOIcr1JBOr1pD5HLvCsr9tAxI7EFPY5
-         nn2eQSPiypFibsqy/XweRxMjkdjJsSak/9ykOV3KxXusghxMI4lr1huo8+7dKCBsrQhM
-         pMAbd7M212i99Ybtz2+/s4JxZozI4qQBCHlwnIMx3MyKso73qqLMR3Z/swWZDX20kCZ/
-         gxGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695992883; x=1696597683;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cxf0/FyTTukPZaR6SdHjgImiVLVk6/MUUSQkTxW8+KU=;
-        b=OBOu6mABGU7CzHhqxLbF8IfFG7dCHVprjKZKEfyfSyV20o7bikCUf/qQS5Vm7GVo5a
-         IvS2kN8RtXu7xBMQCBt0PMp8LdvER2Y8+K41XA/yuT06eJMWLvQrDPEGP+OlwdnYaVgR
-         ccEbPS8x1Mwg4ACjx8/cEybpX7Nf+icn+sGXkAGQWTrr7Id3n6UWC3sreiKZjATS8b16
-         eOO5nvQTg5FBz5PfGreDwi/av15tUgzrYhxwf6U5JSKe0QQ7Cg+wEJpUTVOhVZmVPD96
-         umq9IV28uk4tOHH2vBc6WXZmjUSuH2fFknFhtmh/n+kiUMa57Bg7uttFcXFcYIuln2uG
-         zvoA==
-X-Gm-Message-State: AOJu0YwgUyXE9qq52dqvVVELeRB+keX+GXGALtU2Hvtdzg24Kty+Sox4
-        ypd8MWQ9f6VVOzTGKC9wVLGbG5rVQFKueioEl6AK7Q==
-X-Google-Smtp-Source: AGHT+IFucZCo8279H51n3/tmS/YO6dD0AvhFbS6fpKa1lhTxaDjzXKhPWSNK12VWIBjTL/LzXSRDg9l/h3uoHBsGxzE=
-X-Received: by 2002:a05:6102:7a4:b0:452:d5f6:cf5d with SMTP id
- x4-20020a05610207a400b00452d5f6cf5dmr3655845vsg.32.1695992882701; Fri, 29 Sep
- 2023 06:08:02 -0700 (PDT)
+        with ESMTP id S233257AbjI2NPN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 09:15:13 -0400
+Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE7731B0;
+        Fri, 29 Sep 2023 06:15:09 -0700 (PDT)
+Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+        by mx.skole.hr (mx.skole.hr) with ESMTP id 2BB078475B;
+        Fri, 29 Sep 2023 15:15:07 +0200 (CEST)
+From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Date:   Fri, 29 Sep 2023 15:13:59 +0200
+Subject: [PATCH RFC v3 1/6] ARM: pxa: Convert Spitz OHCI to GPIO
+ descriptors
 MIME-Version: 1.0
-References: <20230928-rust-send-trait-v1-0-30b4f59d13cb@linaro.org>
- <20230928-rust-send-trait-v1-3-30b4f59d13cb@linaro.org> <20230929105829.vm7ed3unydb5rrh4@vireshk-i7>
- <CAMRc=MeU+yS7L_HguALjoYiw8NHqTWQ1=X5s4OmqnNiqAZmOOQ@mail.gmail.com> <CVVEV9GFLWN5.1AB912RVJSYUC@ablu-work>
-In-Reply-To: <CVVEV9GFLWN5.1AB912RVJSYUC@ablu-work>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 29 Sep 2023 15:07:52 +0200
-Message-ID: <CAMRc=MfxCUYw_X_gVeRbX1m2KC-VBJgfQ1B2cE=kyF6FKy94+g@mail.gmail.com>
-Subject: Re: [libgpiod][PATCH 3/3] bindings: rust: mark all owning types as `Send`
-To:     Erik Schilling <erik.schilling@linaro.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux-GPIO <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20230929-pxa-gpio-v3-1-af8d5e5d1f34@skole.hr>
+References: <20230929-pxa-gpio-v3-0-af8d5e5d1f34@skole.hr>
+In-Reply-To: <20230929-pxa-gpio-v3-0-af8d5e5d1f34@skole.hr>
+To:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Russell King <linux@armlinux.org.uk>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org,
+        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2753;
+ i=duje.mihanovic@skole.hr; h=from:subject:message-id;
+ bh=aaS8kMiqneoLRyB8TsJKCzQAPSmGaArXhTx/CbQd1hc=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlFs3Xj5wQjN90ornCql3PBgX73OCYrRwlY64sA
+ JgAdNDzRkSJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRbN1wAKCRCaEZ6wQi2W
+ 4UCQD/9PeMpCFeB3z6+1NqdH4dYyQyrN7iGz1UNh3982GFr/W2vEZcum/j1/2eikIo5UNE3MA8S
+ hA6SwiXEHkjc7e5tW2dueGqGLnk5W3jOXYfbuanl+AQj0rqq90b3wyxJIO7kwO6q2kqtFILq2Te
+ hbJz0Q7B4prkPxoBx40cIrJpCpVFkA2cHHNpkqvRfQbVecWzJWqyeHYZ07KSYhF9ubOUZW67DH4
+ aFmftqZdmXEMeFlXO/ZkGHDxvS5BZ/BE3GVX50wJOab2EK67gAkWIrD+QFPcb1vU5uHCpMX57mX
+ towbsYYAldZC6i7kvGjr0hdoacTS9WbjL76T2t+Cx8l6Oo89mSxocx9bgreaYu9jRP09EL1SmL5
+ Vjr/HFlI4dsZcl4NO2bCCGc1ZaYBpNn+N2nZ/SklIgNwBBoVFFgiwzQscDb+qnDMFeyo+BcPpAl
+ 1ysir8KsDuST0M+ZfdxfiMn3gr6351+eCH+Bve2l0PIMOSNnYcZEgNpc3n0iI4ijv2iIu23idR3
+ A9v6lgtLAzRhof0N6w6QaDJr36MsxTd1c7Zm0HhlYCG3+zWYg1gDJYNp7DZOmfrwRsnJzFTGCkK
+ aybLXf6zA/HHILGjioAT21ZdFL5HAV8nCQi3n2idvtVAysqFV7hZfnSKKDwRrJZh4I0EPDwT2ZI
+ Li5nsUHMgv8UH+A==
+X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
+ fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Fri, Sep 29, 2023 at 2:47=E2=80=AFPM Erik Schilling
-<erik.schilling@linaro.org> wrote:
->
-> On Fri Sep 29, 2023 at 2:45 PM CEST, Bartosz Golaszewski wrote:
-> > On Fri, Sep 29, 2023 at 12:58=E2=80=AFPM Viresh Kumar <viresh.kumar@lin=
-aro.org> wrote:
-> > >
-> > > On 28-09-23, 16:37, Erik Schilling wrote:
-> > > > The thread-safety rules of libgpiod allow individual object instanc=
-es to
-> > > > be used from different threads. So far, this was not actually possi=
-ble
-> > > > with the Rust bindings. Not being `Send` disallowed the user to tra=
-nsfer
-> > > > the ownership to different threads.
-> > > >
-> > > > Rust also has a `Sync` marker. That one would even allow sending
-> > > > references of objects to other threads. Since we wrap a lot of C
-> > > > functions with `fn foo(&self)` signatures, that would not be safe.
-> > > > libgpiod does not allow concurrent API calls to the same object ins=
-tance
-> > > > - which Rust would allow for read-only references. Thus, we do not
-> > > > define that one.
-> > > >
-> > > > Chip was already modeled correctly.
-> > > >
-> > > > line::Info is not marked as Send since it may either be owning or n=
-on-
-> > > > owning. That problem is fixed as part of a separate pull request [1=
-].
-> > > >
-> > > > [1] https://lore.kernel.org/r/20230927-rust-line-info-soundness-v1-=
-0-990dce6f18ab@linaro.org
-> > > >
-> > > > Link: https://lore.kernel.org/r/CVHO091CC80Y.3KUOSLSOBVL0T@ablu-wor=
-k
-> > > > Signed-off-by: Erik Schilling <erik.schilling@linaro.org>
-> > > > ---
-> > > >  bindings/rust/libgpiod/src/edge_event.rs     | 4 ++++
-> > > >  bindings/rust/libgpiod/src/event_buffer.rs   | 8 ++++++++
-> > > >  bindings/rust/libgpiod/src/info_event.rs     | 4 ++++
-> > > >  bindings/rust/libgpiod/src/line_config.rs    | 4 ++++
-> > > >  bindings/rust/libgpiod/src/line_request.rs   | 4 ++++
-> > > >  bindings/rust/libgpiod/src/line_settings.rs  | 4 ++++
-> > > >  bindings/rust/libgpiod/src/request_config.rs | 4 ++++
-> > > >  7 files changed, 32 insertions(+)
-> > >
-> > > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > >
-> >
-> > Thanks, do you have any comments about the other patches in this series=
-?
->
-> Hm. The others are not Rust-related and mostly try to document our
-> discussion about thread-safety of the C lib. It would probably be good
-> if you could double-check that I summarized everything correctly.
->
-> - Erik
->
+Sharp's Spitz board still uses the legacy GPIO interface for controlling
+a GPIO pin related to the USB host controller.
 
-Of course they aren't and I should have read them before assuming the
-entire series is for rust bindings. :)
+Convert this function to use the new GPIO descriptor interface.
 
-Thanks.
+Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+---
+ arch/arm/mach-pxa/spitz.c      | 13 ++++++-------
+ drivers/usb/host/ohci-pxa27x.c |  7 +++++++
+ 2 files changed, 13 insertions(+), 7 deletions(-)
 
-Bart
+diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
+index cc691b199429..535e2b2e997b 100644
+--- a/arch/arm/mach-pxa/spitz.c
++++ b/arch/arm/mach-pxa/spitz.c
+@@ -649,23 +649,22 @@ static inline void spitz_mmc_init(void) {}
+  * USB Host
+  ******************************************************************************/
+ #if defined(CONFIG_USB_OHCI_HCD) || defined(CONFIG_USB_OHCI_HCD_MODULE)
++GPIO_LOOKUP_SINGLE(spitz_usb_host_gpio_table, "pxa27x-ohci", "gpio-pxa",
++		SPITZ_GPIO_USB_HOST, "usb-host", GPIO_ACTIVE_LOW);
++
+ static int spitz_ohci_init(struct device *dev)
+ {
+-	int err;
+-
+-	err = gpio_request(SPITZ_GPIO_USB_HOST, "USB_HOST");
+-	if (err)
+-		return err;
++	gpiod_add_lookup_table(&spitz_usb_host_gpio_table);
+ 
+ 	/* Only Port 2 is connected, setup USB Port 2 Output Control Register */
+ 	UP2OCR = UP2OCR_HXS | UP2OCR_HXOE | UP2OCR_DPPDE | UP2OCR_DMPDE;
+ 
+-	return gpio_direction_output(SPITZ_GPIO_USB_HOST, 1);
++	return 0;
+ }
+ 
+ static void spitz_ohci_exit(struct device *dev)
+ {
+-	gpio_free(SPITZ_GPIO_USB_HOST);
++	gpiod_remove_lookup_table(&spitz_usb_host_gpio_table);
+ }
+ 
+ static struct pxaohci_platform_data spitz_ohci_platform_data = {
+diff --git a/drivers/usb/host/ohci-pxa27x.c b/drivers/usb/host/ohci-pxa27x.c
+index 357d9aee38a3..b70d452ca7c2 100644
+--- a/drivers/usb/host/ohci-pxa27x.c
++++ b/drivers/usb/host/ohci-pxa27x.c
+@@ -121,6 +121,7 @@ struct pxa27x_ohci {
+ 	void __iomem	*mmio_base;
+ 	struct regulator *vbus[3];
+ 	bool		vbus_enabled[3];
++	struct gpio_desc *usb_host;
+ };
+ 
+ #define to_pxa27x_ohci(hcd)	(struct pxa27x_ohci *)(hcd_to_ohci(hcd)->priv)
+@@ -447,6 +448,10 @@ static int ohci_hcd_pxa27x_probe(struct platform_device *pdev)
+ 	pxa_ohci = to_pxa27x_ohci(hcd);
+ 	pxa_ohci->clk = usb_clk;
+ 	pxa_ohci->mmio_base = (void __iomem *)hcd->regs;
++	pxa_ohci->usb_host = gpiod_get_optional(&pdev->dev, "usb-host", GPIOD_OUT_LOW);
++	if (IS_ERR(pxa_ohci->usb_host))
++		dev_warn(&pdev->dev, "failed to get USB host GPIO with %pe\n",
++				pxa_ohci->usb_host);
+ 
+ 	for (i = 0; i < 3; ++i) {
+ 		char name[6];
+@@ -512,6 +517,8 @@ static void ohci_hcd_pxa27x_remove(struct platform_device *pdev)
+ 	for (i = 0; i < 3; ++i)
+ 		pxa27x_ohci_set_vbus_power(pxa_ohci, i, false);
+ 
++	gpiod_put(pxa_ohci->usb_host);
++
+ 	usb_put_hcd(hcd);
+ }
+ 
+
+-- 
+2.42.0
+
+
