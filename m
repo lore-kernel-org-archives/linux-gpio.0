@@ -2,89 +2,99 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60489E71D3D
-	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 14:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE93E728C0
+	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 15:42:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232995AbjI2OLj (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 29 Sep 2023 10:11:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42736 "EHLO
+        id S233257AbjI2Pmx (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 29 Sep 2023 11:42:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233081AbjI2OLi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 10:11:38 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45BEE1B7;
-        Fri, 29 Sep 2023 07:11:35 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A94B3C433CA;
-        Fri, 29 Sep 2023 14:11:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695996694;
-        bh=QDzwivM9waT9P3iQApji1MwpmtdWkdeTyx0Uagh5Pj4=;
-        h=From:Date:Subject:To:Cc:From;
-        b=pP9LARu977UQoMcfnHW7o4VD1t3C1SIf/NcQ+ClVo18vpixPGKC1XCplMj6uP9akF
-         2W0YfmAtqG3BAIPG0GLfMAvjGTZD7LntYjudfB5Zla/1zf441vSURxY90beZJbXZW5
-         pxmKyCwpWjs7OWZpHQx6Zrvthe3EPBqT1AFyxdo5Fwn0yGrEpQW3VPCC7mCyFfvq6u
-         hf06eHqBAl8peOcONEmYTbxxgPwCX0ForXG7v9itF9mj0D5d95JI1V3UzaFEbAaTRB
-         0763v0GHf+eUOfb64ECd8wr+RYWwSXvni7uc/USWlZ4/iuUVrX3AvTU+XNH89eB777
-         qLyQkl/qxaqpw==
-From:   Mark Brown <broonie@kernel.org>
-Date:   Fri, 29 Sep 2023 16:11:24 +0200
-Subject: [PATCH] gpio: fx6408: Convert to use maple tree register cache
+        with ESMTP id S233141AbjI2Pmx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 11:42:53 -0400
+Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10D5FDD;
+        Fri, 29 Sep 2023 08:42:48 -0700 (PDT)
+Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+        by mx.skole.hr (mx.skole.hr) with ESMTP id 0A9F482388;
+        Fri, 29 Sep 2023 17:42:47 +0200 (CEST)
+From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Date:   Fri, 29 Sep 2023 17:41:57 +0200
+Subject: [PATCH RESEND v5 1/8] gpio: pxa: disable pinctrl calls for
+ MMP_GPIO
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230929-gpio-fx16408-v1-1-7fdd3218f7d6@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAvbFmUC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI2MDSyNL3fSCzHzdtApDMxMDC10Tc7MkQxMTcxOzpGQloJaCotS0zAqwcdG
- xtbUAebgutV4AAAA=
-To:     Linus Walleij <linus.walleij@linaro.org>,
+Content-Transfer-Encoding: 8bit
+Message-Id: <20230929-pxa1908-lkml-v5-1-5aa5a1109c5f@skole.hr>
+References: <20230929-pxa1908-lkml-v5-0-5aa5a1109c5f@skole.hr>
+In-Reply-To: <20230929-pxa1908-lkml-v5-0-5aa5a1109c5f@skole.hr>
+To:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>
+        Andy Shevchenko <andy@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=971; i=broonie@kernel.org;
- h=from:subject:message-id; bh=QDzwivM9waT9P3iQApji1MwpmtdWkdeTyx0Uagh5Pj4=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFtsVtRqMuMLDGIsqZL/rf92AgoNUdo2rro3rl
- HectEvnM12JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRbbFQAKCRAk1otyXVSH
- 0BzpB/9LSosAdCA5uHVpkR1EbHufGrxMKwZe0zPvXZF57Rz5eSvSbenexUt0nxqKMU+QsDE2E8n
- 6DLAscury3Ka21ZYrnvcxL5EjcmX6/n6vwZUZ0gkE/fgzm5CldLCYDuqey96dIJ8i8pw1OJZNq0
- LCH/4PiCzV7JSvX+MfuNQbZRipwVLbn131skSrxDXB/qoJLq5m/SMd+oAP5c51YpNqc6GXPPmRg
- oWLN/y3PUszaacLwqElnv6dRqoeoNH8MUx3cUUAkgMBfxmZfJVm08stzQ6DbMeY9cSW8F9vCrWL
- YQDluy0vn4xRkLwhyWaVFrFR/lBBnSVjFBtizB2CFXuoQVm9
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hardening@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        afaerber@suse.de, balejk@matfyz.cz
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=717;
+ i=duje.mihanovic@skole.hr; h=from:subject:message-id;
+ bh=yNr4Eqx9Bi0YeNPlA8O02XTVqPtmRaJFN4LA8s4bBdA=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlFvByWVc9E8OD4qhhAbUIxeBnSccOKCeOL4dds
+ BFOjRd1vQSJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRbwcgAKCRCaEZ6wQi2W
+ 4Xt+D/0TkYMy0YcQtgCw1tS6bwfNQts/LWwksqUegyHiR+8ItFU8dUPsHHhVUyUETy+QZnZ9yFe
+ fdDylRoUvEPfTKXyX1aba+iNDXCNtiRslTIq10o3WgqjhYn7xiZap6MNQw2/npQLRrEv83R2vGN
+ BCWApSlXUs3+XcCxU2IJeM1zh6wtZtpwHi+ibfA3DK6e5BW1npgmhlZ+agh8eIwWg8oN/LB6l+x
+ H0rBmWO1tykmEqLGz1DoWulk60a94q6PbDUzYVrC1cSjiCLMfIG3lp6cc/Y/Z3TyF/rhLxipy3O
+ Q34V5ttDxgT4JRmG4Xw7fQODVW1A9nGsT1KIXRSR17ElB+DtvgA3ySHXSMTrgK+Wgpu9XgraUn2
+ 9LfmdNeBPeLfiQqkZLbyEagThieqKEhH/o6yDal+VKtFXOXGUPmQPadERGaW27Z0Ecd8mvwW9a4
+ TF/sWvOK3xwfzmVehdYNbpnmxUUsSHWYaCfWmhsxW3s4bBB1ZDTdFba11tBR2Uq89fX3XMc3M3g
+ bUbLNE8hrGfkQqklQJokC5iqgpM37srWx3bM49TvzinFl0qr7ljxxwxqkbeUJa5mGSXNSWcuVXs
+ 53Qpht9sYMVXc+0oNC06dEs+XGnqgq85xBEGmo2m8AvoiwF5pAh8+Z59UrvM0P4CgWAjZp7CQbt
+ oTYCARrGmyFRdVQ==
+X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
+ fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-The maple tree register cache is based on a much more modern data structure
-than the rbtree cache and makes optimisation choices which are probably
-more appropriate for modern systems than those made by the rbtree cache.
+Similarly to PXA3xx and MMP2, pinctrl-single isn't capable of setting
+pin direction on MMP either.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: a770d946371e ("gpio: pxa: add pin control gpio direction and request")
+Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 ---
- drivers/gpio/gpio-fxl6408.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-pxa.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpio-fxl6408.c b/drivers/gpio/gpio-fxl6408.c
-index c14b5cc5e519..991549888904 100644
---- a/drivers/gpio/gpio-fxl6408.c
-+++ b/drivers/gpio/gpio-fxl6408.c
-@@ -84,7 +84,7 @@ static const struct regmap_config regmap = {
- 	.rd_table = &rd_table,
- 	.volatile_table = &volatile_table,
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index a1630ed4b741..d92650aecb06 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -238,6 +238,7 @@ static bool pxa_gpio_has_pinctrl(void)
+ 	switch (gpio_type) {
+ 	case PXA3XX_GPIO:
+ 	case MMP2_GPIO:
++	case MMP_GPIO:
+ 		return false;
  
--	.cache_type = REGCACHE_RBTREE,
-+	.cache_type = REGCACHE_MAPLE,
- 	.num_reg_defaults_raw = FXL6408_REG_INT_STS + 1,
- };
- 
+ 	default:
 
----
-base-commit: 6465e260f48790807eef06b583b38ca9789b6072
-change-id: 20230929-gpio-fx16408-476b144746bc
-
-Best regards,
 -- 
-Mark Brown <broonie@kernel.org>
+2.42.0
+
 
