@@ -2,29 +2,28 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03DB5E728C5
-	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 15:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A5AE728C0
+	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 15:43:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233141AbjI2Pmz (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 29 Sep 2023 11:42:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40412 "EHLO
+        id S233732AbjI2PnC (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 29 Sep 2023 11:43:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233505AbjI2Pmy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 11:42:54 -0400
+        with ESMTP id S233701AbjI2Pm5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 11:42:57 -0400
 Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30198DB;
-        Fri, 29 Sep 2023 08:42:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36DAAB4;
+        Fri, 29 Sep 2023 08:42:54 -0700 (PDT)
 Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id AE4EF82788;
-        Fri, 29 Sep 2023 17:42:49 +0200 (CEST)
+        by mx.skole.hr (mx.skole.hr) with ESMTP id A0C55834CD;
+        Fri, 29 Sep 2023 17:42:52 +0200 (CEST)
 From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Fri, 29 Sep 2023 17:41:59 +0200
-Subject: [PATCH RESEND v5 3/8] dt-bindings: clock: Add Marvell PXA1908
- clock bindings
+Date:   Fri, 29 Sep 2023 17:42:01 +0200
+Subject: [PATCH RESEND v5 5/8] dt-bindings: marvell: Document PXA1908 SoC
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20230929-pxa1908-lkml-v5-3-5aa5a1109c5f@skole.hr>
+Message-Id: <20230929-pxa1908-lkml-v5-5-5aa5a1109c5f@skole.hr>
 References: <20230929-pxa1908-lkml-v5-0-5aa5a1109c5f@skole.hr>
 In-Reply-To: <20230929-pxa1908-lkml-v5-0-5aa5a1109c5f@skole.hr>
 To:     Robert Jarzmik <robert.jarzmik@free.fr>,
@@ -48,186 +47,54 @@ Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-hardening@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        afaerber@suse.de, balejk@matfyz.cz
+        afaerber@suse.de, balejk@matfyz.cz,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4871;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=890;
  i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=AUK3ojXv/weyVgsG0fonV+dY76THzUXLtJhekj7l2Zk=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlFvByKEZwnLbjtEnIKan+33G1Pzg3xbjIK0UlI
- qXVNR8eZDSJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRbwcgAKCRCaEZ6wQi2W
- 4RqBD/9HnLK1rF9UZJRyKLHyF70/u9liG90KnVAii0wNo2NKIm56y930OGoHX7CdvSd9YC9763M
- Vu3xu1OvijxB6cTjBckway8JMdy5tP+deLJc63w5W1sgcSpD4K1HKznA3ouaJVRM5dMg0ERTFRO
- vBAv4aswfyY92Ptvgoaubj3Z3hbaakF0n5QLmf5lFcbWo8FBE4EzVLHttxAyhwHj/EJSr0fjjPp
- K+Y/sWcPS8zGQm3mSzSDLpyr8XZLk2LtSMGuX4J1FMuhAsyoTtqJOZIc5zKSaE+rZTHl53Mi8u8
- JF8eddgkVi3V9Fehi2KRcOFcrGZRx5hjN70KvvFEql3w/X4I5cikV6++ygyxdBpW8t3vd/dmpkn
- xV9/bY1WF+HdavTnmxWIlLY8/zjo2O0wQwJtSMa17GWyCZproxaEGgzCZNO+fo5aD89aAWYhWUG
- GfYhUCepC1Mw2qqGqWbZx8glhTScCFdGCz9wytfNOZeanq8wOYSBj0B6Qxyh78PfAa548luccGN
- UvQ16Pu0Kq5NayWPLO50vZXES4q7yrTYFMrGPSNNLzhTpYOB34z3MZLuMJp/GboObHcfCYQTyCp
- 3KN2es7HRiqPIh1t8qlxXKgfa8hAWWUoPXYVKuxZjR4O6AwX+ueF2ZCuW0UDmUc/r9PK2zD1f6J
- 3kl2J6zUo2tGKIQ==
+ bh=68SP0psZM8Sot29iAM52aLi+c+3JVnNIUMMY8bC0VIc=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlFvBykbMfnls1yGf4fnlrBhT+2giyUpNMrmngY
+ NrnBlnuSCWJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRbwcgAKCRCaEZ6wQi2W
+ 4Q1UD/0a2+plywFrZfoPOUGfUG21u20/lq32w+NkuuOqs0DPmluvGJ5lXnub50JGVHmZDhS/mW6
+ Ln47gQ/55U0zv6SOIqHXJiR7tw8yZ/fZeny9n5orx7vRUa2GlER2xH9X8Ml8eRjU8mfR1ynopjW
+ PXRSyNCqQeGaBChiK8V0bvZ2pKoLjuJV5iZUaRPGUnHvuy1R68ogDAtiwgPrPs8OS4hmCJVZSdS
+ 9rUuN9TeXaNhIHr5ZRaShmFR1fv4vCgBthvyedVJCrOBJF3ebbvpFCwWdGf72TA5hYnwur2QMZv
+ dKCyFntK5EmICsXlS3L/X8rN154ze0TcbuWZI98hLw9R1GExT1RsbkcNa3Wy6r2wx7KApqGHzRX
+ bB1uGp8haqSOhURcbeAZ8WTszBaJIExB1Jms6SkeDBo1nq4zNPgDGgnKF4E8SH5tLB4DZXy/sf7
+ zjmqXpvZ0ZoFQh5XbRQG0SL3sIzO2SNNprqd6TkbdE7lJiDmB/3TJ4U++EeVzPZ+31WJFPTTT9D
+ ExNtFFTVNBRtHNkIBhxKU5yxFy2s2yvPr+9bWFFV/LEM+Q5XVoVEGPahC7Bxd0FwCTdaTGdKOKi
+ XZw0n8lHbSbB8bQ8Q0ODp36k2nUc3k8oUkk7IztLMv2pAxjEJb+vU8o7nQ26EDnKh55BYtUepuS
+ AewQLy2gKT+t58A==
 X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
  fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add dt bindings and documentation for the Marvell PXA1908 clock
-controller.
+Add dt binding for the Marvell PXA1908 SoC.
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 ---
- .../devicetree/bindings/clock/marvell,pxa1908.yaml | 48 ++++++++++++
- include/dt-bindings/clock/marvell,pxa1908.h        | 88 ++++++++++++++++++++++
- 2 files changed, 136 insertions(+)
+ Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml b/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
-new file mode 100644
-index 000000000000..4e78933232b6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
-@@ -0,0 +1,48 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/marvell,pxa1908.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Marvell PXA1908 Clock Controllers
-+
-+maintainers:
-+  - Duje Mihanović <duje.mihanovic@skole.hr>
-+
-+description: |
-+  The PXA1908 clock subsystem generates and supplies clock to various
-+  controllers within the PXA1908 SoC. The PXA1908 contains numerous clock
-+  controller blocks, with the ones currently supported being APBC, APBCP, MPMU
-+  and APMU roughly corresponding to internal buses.
-+
-+  All these clock identifiers could be found in <include/dt-bindings/marvell,pxa1908.h>.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - marvell,pxa1908-apbc
-+      - marvell,pxa1908-apbcp
-+      - marvell,pxa1908-mpmu
-+      - marvell,pxa1908-apmu
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  # APMU block:
-+  - |
-+    clock-controller@d4282800 {
-+      compatible = "marvell,pxa1908-apmu";
-+      reg = <0xd4282800 0x400>;
-+      #clock-cells = <1>;
-+    };
-diff --git a/include/dt-bindings/clock/marvell,pxa1908.h b/include/dt-bindings/clock/marvell,pxa1908.h
-new file mode 100644
-index 000000000000..fb15b0d0cd4c
---- /dev/null
-+++ b/include/dt-bindings/clock/marvell,pxa1908.h
-@@ -0,0 +1,88 @@
-+/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-+#ifndef __DTS_MARVELL_PXA1908_CLOCK_H
-+#define __DTS_MARVELL_PXA1908_CLOCK_H
-+
-+/* plls */
-+#define PXA1908_CLK_CLK32		1
-+#define PXA1908_CLK_VCTCXO		2
-+#define PXA1908_CLK_PLL1_624		3
-+#define PXA1908_CLK_PLL1_416		4
-+#define PXA1908_CLK_PLL1_499		5
-+#define PXA1908_CLK_PLL1_832		6
-+#define PXA1908_CLK_PLL1_1248		7
-+#define PXA1908_CLK_PLL1_D2		8
-+#define PXA1908_CLK_PLL1_D4		9
-+#define PXA1908_CLK_PLL1_D8		10
-+#define PXA1908_CLK_PLL1_D16		11
-+#define PXA1908_CLK_PLL1_D6		12
-+#define PXA1908_CLK_PLL1_D12		13
-+#define PXA1908_CLK_PLL1_D24		14
-+#define PXA1908_CLK_PLL1_D48		15
-+#define PXA1908_CLK_PLL1_D96		16
-+#define PXA1908_CLK_PLL1_D13		17
-+#define PXA1908_CLK_PLL1_32		18
-+#define PXA1908_CLK_PLL1_208		19
-+#define PXA1908_CLK_PLL1_117		20
-+#define PXA1908_CLK_PLL1_416_GATE	21
-+#define PXA1908_CLK_PLL1_624_GATE	22
-+#define PXA1908_CLK_PLL1_832_GATE	23
-+#define PXA1908_CLK_PLL1_1248_GATE	24
-+#define PXA1908_CLK_PLL1_D2_GATE	25
-+#define PXA1908_CLK_PLL1_499_EN		26
-+#define PXA1908_CLK_PLL2VCO		27
-+#define PXA1908_CLK_PLL2		28
-+#define PXA1908_CLK_PLL2P		29
-+#define PXA1908_CLK_PLL2VCODIV3		30
-+#define PXA1908_CLK_PLL3VCO		31
-+#define PXA1908_CLK_PLL3		32
-+#define PXA1908_CLK_PLL3P		33
-+#define PXA1908_CLK_PLL3VCODIV3		34
-+#define PXA1908_CLK_PLL4VCO		35
-+#define PXA1908_CLK_PLL4		36
-+#define PXA1908_CLK_PLL4P		37
-+#define PXA1908_CLK_PLL4VCODIV3		38
-+
-+/* apb (apbc) peripherals */
-+#define PXA1908_CLK_UART0		1
-+#define PXA1908_CLK_UART1		2
-+#define PXA1908_CLK_GPIO		3
-+#define PXA1908_CLK_PWM0		4
-+#define PXA1908_CLK_PWM1		5
-+#define PXA1908_CLK_PWM2		6
-+#define PXA1908_CLK_PWM3		7
-+#define PXA1908_CLK_SSP0		8
-+#define PXA1908_CLK_SSP1		9
-+#define PXA1908_CLK_IPC_RST		10
-+#define PXA1908_CLK_RTC			11
-+#define PXA1908_CLK_TWSI0		12
-+#define PXA1908_CLK_KPC			13
-+#define PXA1908_CLK_SWJTAG		14
-+#define PXA1908_CLK_SSP2		15
-+#define PXA1908_CLK_TWSI1		16
-+#define PXA1908_CLK_THERMAL		17
-+#define PXA1908_CLK_TWSI3		18
-+
-+/* apb (apbcp) peripherals */
-+#define PXA1908_CLK_UART2		1
-+#define PXA1908_CLK_TWSI2		2
-+#define PXA1908_CLK_AICER		3
-+
-+/* axi (apmu) peripherals */
-+#define PXA1908_CLK_CCIC1		1
-+#define PXA1908_CLK_ISP			2
-+#define PXA1908_CLK_DSI1		3
-+#define PXA1908_CLK_DISP1		4
-+#define PXA1908_CLK_CCIC0		5
-+#define PXA1908_CLK_SDH0		6
-+#define PXA1908_CLK_SDH1		7
-+#define PXA1908_CLK_USB			8
-+#define PXA1908_CLK_NF			9
-+#define PXA1908_CLK_CORE_DEBUG		10
-+#define PXA1908_CLK_VPU			11
-+#define PXA1908_CLK_GC			12
-+#define PXA1908_CLK_SDH2		13
-+#define PXA1908_CLK_GC2D		14
-+#define PXA1908_CLK_TRACE		15
-+#define PXA1908_CLK_DVC_DFC_DEBUG	16
-+
-+#endif
+diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+index 4c43eaf3632e..f73bb8ec3a1a 100644
+--- a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
++++ b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+@@ -35,6 +35,11 @@ properties:
+           - enum:
+               - dell,wyse-ariel
+           - const: marvell,mmp3
++      - description: PXA1908 based boards
++        items:
++          - enum:
++              - samsung,coreprimevelte
++          - const: marvell,pxa1908
+ 
+ additionalProperties: true
+ 
 
 -- 
 2.42.0
