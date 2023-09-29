@@ -2,122 +2,127 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50215E71D30
-	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 13:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA875E71D32
+	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 13:18:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233326AbjI2NPS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 29 Sep 2023 09:15:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40950 "EHLO
+        id S233217AbjI2NSX (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 29 Sep 2023 09:18:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233306AbjI2NPO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 09:15:14 -0400
-Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C75861B5;
-        Fri, 29 Sep 2023 06:15:11 -0700 (PDT)
-Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id 53D598348A;
-        Fri, 29 Sep 2023 15:15:10 +0200 (CEST)
-From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Fri, 29 Sep 2023 15:14:03 +0200
-Subject: [PATCH RFC v3 5/6] ARM: pxa: Convert Spitz hsync to GPIO
- descriptors
+        with ESMTP id S233163AbjI2NSX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 09:18:23 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C56351AA
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Sep 2023 06:18:20 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-99c3c8adb27so1916162166b.1
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Sep 2023 06:18:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1695993499; x=1696598299; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lV0ibgwQX5PkhCO9aOZFrfHjhu055OsuavQde+3bh9c=;
+        b=JjerD9jsBoP1wfNCp1VN+ceo/GZUYcplBLuAqHqzW2Bw9HyxDv1VPQ+vpUd406ZSIA
+         E211d+GKvJ5uVaBMxIEmn6so9T6BFeRwzJqF62UWMUKLAcBMhmD/YYFd99g1AnT0JwvI
+         r7s9DxM8S9cG/v+i/Vrdgpkd1uKp7o373FtKApu1ut/uYKeNqkosHNPvNPrylc2XA3sn
+         iMqqI6Q5NVnO9ZgQFOjBbHn2PTP2xsk/v6iiuZeTBNk3tbpQjZoCnkzmRT9Wy3w5pHjy
+         lRaMN+HDIqgZB/JqHOQWSRpDZPxgHfu3uXqIigVujlY2OvR/RVdN2nvnq9QDUgmQBnDv
+         470w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695993499; x=1696598299;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lV0ibgwQX5PkhCO9aOZFrfHjhu055OsuavQde+3bh9c=;
+        b=rBiBVNGthQb6yl7pFEdGiA/+ranUw2Y+f+0WfhKLSV5A+CibyRCLjDa8g+eAbb7f/8
+         7IenjxYoUxKAYnOS4ksefQVzUmYEBkWlf7tBx8Ed2KdhMEQMSuGqRnDhoNLo/7VpthAv
+         TTvmnVteUVeMamSURvyQ5KV3l3mao8X+W0fSSyS9/HZ8XrGKHP/eVwKor95OeE7ZVqzU
+         AGoLGuhF8cRSiGu08u6Gi8oa8Yjw6r7UHg6ST7VbtskKnNdn7x0p4J6da+rBbjawUbgT
+         jTJXlX7hZTrxhJN7GhlTbO++uZBxP1kQo76QrhgTPcjo9kiW6gGXNsveBzaj/RBeZw7o
+         2fqw==
+X-Gm-Message-State: AOJu0YyJP39+afgSGivqJWoPNpU4tdwI/Wu92mt4T/UdKWQpKp5LbORf
+        WMZ8Y5JBQXM0HXK8vBmEes2cxavWXWBGmzQ+QDM=
+X-Google-Smtp-Source: AGHT+IGUqD+SkcKXHm8WIQcG8zB3dNBTmTqkBkt0ykFtEdWVGfoOx0GDsmc1egeNFNTBecWcG3cCiA==
+X-Received: by 2002:a17:906:5384:b0:9b2:b119:4909 with SMTP id g4-20020a170906538400b009b2b1194909mr4097015ejo.75.1695993499165;
+        Fri, 29 Sep 2023 06:18:19 -0700 (PDT)
+Received: from [192.168.1.149] (i5C7438D4.versanet.de. [92.116.56.212])
+        by smtp.gmail.com with ESMTPSA id ck17-20020a170906c45100b00992e14af9c3sm12510086ejb.143.2023.09.29.06.18.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Sep 2023 06:18:18 -0700 (PDT)
+From:   Erik Schilling <erik.schilling@linaro.org>
+Subject: [libgpiod][PATCH v2 0/3] bindings: rust: fix modeling of line_info
+ lifetimes
+Date:   Fri, 29 Sep 2023 15:18:14 +0200
+Message-Id: <20230929-rust-line-info-soundness-v2-0-9782b7f20f26@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20230929-pxa-gpio-v3-5-af8d5e5d1f34@skole.hr>
-References: <20230929-pxa-gpio-v3-0-af8d5e5d1f34@skole.hr>
-In-Reply-To: <20230929-pxa-gpio-v3-0-af8d5e5d1f34@skole.hr>
-To:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Russell King <linux@armlinux.org.uk>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org,
-        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1917;
- i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=NMVwZ6uSKQb1sBoOjO7it3qE3OIABseOJrIHnJKgy24=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlFs3X897QJzOUWADVn5rHWt6cyl1VYEt1hVHDp
- jUFeQYRlyKJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRbN1wAKCRCaEZ6wQi2W
- 4U8uD/9dFJ8dmhfP4EqRksHodrWdwnA2hLySE6WMagwcZgKqbDHUExpZh9hpG8UlqtnKk61Iqa+
- wVNRXlqd6xeO/UoF87brssvsOQupZKjaftwsXqlHWkBUxVgDXo894Jqp5yXNyxqORU8em15lrnB
- wD1t4c+0MGHjKhQP2yeAFPfk57Vaxov0ATbotwG7dNswh/1EgXikHgVRebJuX7C1Bd5095ZHSou
- v9EV1HvdewXVQMyYgcxBn6yFG3Pr9huhfDn+IGvncSbIMGNDGHQkJ8NrrhfdjO7SVHUCKhr26Oe
- wBQ/ZUxQ5Oa+abZLWExcTErbXBGUJlI8CgkJfO5CBR8wrQaGLbp6OatL47Ke3mbjrCY7foDYbcG
- Z//oz8734x17BEFvPJ3Q9BknHg++5Dycc5pVBcyCvLxiBAAAndKo7Sr5jYLLthSUwCcpnla6j1F
- CmnN8eQPe7+Fi5Ar4qDBRRkhElu0eM6aBOknoOZo4UVprmfE7yoTEHyD8Vyfs37Pfs7cc26lxyh
- U+dTdCxBuGgwz8a7JfZDhLqg4VpNhRiLSLZ8CVPHJTpU7z1k33Rs1B9eBLm3ojkUttKDZAgnrmi
- 5B48oJVIVxT+DhOoJRw5zreFKBcW6p36IrJ4ZFflX6Z559CSq4LQbrTTDbvDOU3sveo9bG1j2v4
- A1TciqL+9UD/g5w==
-X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
- fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJbOFmUC/4WNQQqDMBBFryKz7pQkLdZ01XsUF2pGHZCMZFRax
+ Ls3eIEuP+//93dQSkwKz2KHRBsrS8zBXQroxiYOhBxyBmfczXj3wLTqghPHDGIvqLLGEEkV7b0
+ zFZngSvKQ53Oinj+n+g0Tt8PMEqDOZGRdJH3Pz82e/L9+s2jQexM6KntbNe0rt5okV0kD1Mdx/
+ ABW/aJxywAAAA==
+To:     Linux-GPIO <linux-gpio@vger.kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+        Kent Gibson <warthog618@gmail.com>,
+        Erik Schilling <erik.schilling@linaro.org>
+X-Mailer: b4 0.13-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1695993498; l=2027;
+ i=erik.schilling@linaro.org; s=20230523; h=from:subject:message-id;
+ bh=rXXZsIsQsq0JgQjZU1HO1QZjkVvuQHpcrxOis9K3324=;
+ b=q+YBdmy8Jeo4LI+zlQj21wcNJKkavt8ono+5NseUu06zZBE/glfYxvxybxIORPBTBPg4OBgVj
+ TGPYVyogdv9A8rPh7xIH+BG6rZ81wj8Bap0E5CCB649CQETehdINrfu
+X-Developer-Key: i=erik.schilling@linaro.org; a=ed25519;
+ pk=/nNqy8/YOEdthj1epXl5FgwCTKEiVqTqqnVN1jVal7s=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Sharp's Spitz still uses the legacy GPIO interface in its
-wait_for_hsync() function.
+While reviewing the bindings for thread-safety, I realized that the
+bindings did not properly model the lifetimes of non-owned line_info
+instances.
 
-Convert it to use the GPIO descriptor interface.
+This fixes that. It might be a bit mind bending. I tried to provide
+lengthy comments to clarify what happens.
 
-Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+To: Linux-GPIO <linux-gpio@vger.kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Manos Pitsidianakis <manos.pitsidianakis@linaro.org>
+Cc: Kent Gibson <warthog618@gmail.com>
+
+Signed-off-by: Erik Schilling <erik.schilling@linaro.org>
 ---
- arch/arm/mach-pxa/spitz.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Changes in v2:
+- Removed unneeded temporary variables
+- Added missing SAFETY comment
+- Renamed owning wrapper to `Event`, non-owning to `EventRef`
+- Renamed existing clone methods to try_clone()
+- Slightly tweaked try_clone() documentation
+- Dropped version bump commit
+- Added Fixes tag
+- CC'd Kent - suggested by vireshk since he reviewed his commits
+- Link to v1: https://lore.kernel.org/r/20230927-rust-line-info-soundness-v1-0-990dce6f18ab@linaro.org
 
-diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
-index c789eeaf3c2c..25878daec986 100644
---- a/arch/arm/mach-pxa/spitz.c
-+++ b/arch/arm/mach-pxa/spitz.c
-@@ -520,12 +520,14 @@ static inline void spitz_leds_init(void) {}
-  * SSP Devices
-  ******************************************************************************/
- #if defined(CONFIG_SPI_PXA2XX) || defined(CONFIG_SPI_PXA2XX_MODULE)
-+static struct gpio_desc *hsync;
-+
- static void spitz_ads7846_wait_for_hsync(void)
- {
--	while (gpio_get_value(SPITZ_GPIO_HSYNC))
-+	while (gpiod_get_value(hsync))
- 		cpu_relax();
- 
--	while (!gpio_get_value(SPITZ_GPIO_HSYNC))
-+	while (!gpiod_get_value(hsync))
- 		cpu_relax();
- }
- 
-@@ -543,6 +545,8 @@ static struct gpiod_lookup_table spitz_ads7846_gpio_table = {
- 	.table = {
- 		GPIO_LOOKUP("gpio-pxa", SPITZ_GPIO_TP_INT,
- 			    "pendown", GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP("gpio-pxa", SPITZ_GPIO_HSYNC,
-+			    "hsync", GPIO_ACTIVE_LOW),
- 		{ }
- 	},
- };
-@@ -622,8 +626,13 @@ static void __init spitz_spi_init(void)
- 
- 	gpiod_add_lookup_table(&spitz_ads7846_gpio_table);
- 	gpiod_add_lookup_table(&spitz_spi_gpio_table);
-+	hsync = gpiod_get(NULL, "hsync", GPIOD_IN);
- 	pxa2xx_set_spi_info(2, &spitz_spi_info);
--	spi_register_board_info(ARRAY_AND_SIZE(spitz_spi_devices));
-+	if (IS_ERR(hsync)) {
-+		pr_err("Failed to get hsync GPIO: %ld\n", PTR_ERR(hsync));
-+		spi_register_board_info(ARRAY_AND_SIZE(&spitz_spi_devices[1]));
-+	} else
-+		spi_register_board_info(ARRAY_AND_SIZE(spitz_spi_devices));
- }
- #else
- static inline void spitz_spi_init(void) {}
+---
+Erik Schilling (3):
+      bindings: rust: fix soundness of line_info modeling
+      bindings: rust: rename {event,settings}_clone to try_clone
+      bindings: rust: allow cloning line::InfoRef -> line::Info
 
+ .../libgpiod/examples/buffered_event_lifetimes.rs  |   2 +-
+ bindings/rust/libgpiod/src/chip.rs                 |   8 +-
+ bindings/rust/libgpiod/src/edge_event.rs           |   3 +-
+ bindings/rust/libgpiod/src/info_event.rs           |   8 +-
+ bindings/rust/libgpiod/src/lib.rs                  |   1 +
+ bindings/rust/libgpiod/src/line_info.rs            | 140 +++++++++++++++------
+ bindings/rust/libgpiod/src/line_settings.rs        |   4 +-
+ bindings/rust/libgpiod/tests/line_info.rs          |  53 ++++++++
+ bindings/rust/libgpiod/tests/line_request.rs       |   2 +-
+ 9 files changed, 173 insertions(+), 48 deletions(-)
+---
+base-commit: ced90e79217793957b11414f47f8aa8a77c7a2d5
+change-id: 20230927-rust-line-info-soundness-14c08e0d26e9
+
+Best regards,
 -- 
-2.42.0
-
+Erik Schilling <erik.schilling@linaro.org>
 
