@@ -2,122 +2,67 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E981E743F3
-	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 08:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B44E743F4
+	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 08:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232613AbjI2IEg (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 29 Sep 2023 04:04:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43854 "EHLO
+        id S229754AbjI2IEi (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 29 Sep 2023 04:04:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229754AbjI2IEf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 04:04:35 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B375F1A7
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Sep 2023 01:04:32 -0700 (PDT)
+        with ESMTP id S232663AbjI2IEi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 04:04:38 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5232E1A5
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Sep 2023 01:04:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1695974672; x=1727510672;
+  t=1695974676; x=1727510676;
   h=date:from:to:cc:subject:message-id;
-  bh=6HAq1LYFkQGtr6skRJfP1d2RKF5IxdCBZ/3NIwn9Kus=;
-  b=bAmeaNB/x22BV3KDOwfz2g2uyROFUpVuhB1uBBYKX/Rur8ag+8wz1ZgK
-   LzpZYwBoZMFAR3nvivIhJS/dphEJd5V3LeK159h6ySyfCf+EMnJAwyJZX
-   OZH290WSmb6nROLwYqQ2dYo4WSwNo+7EI7LP1rvEcjHlxb3qDWLEq+fpC
-   lTByIJ77n4SykhUnIbYg7vlwBtN+THPCReTdcREjbJq3KA2AGdqWQHGWY
-   QN4ywIqOPvYRPrfzIiPzWipAjqcj2yC6HBjWwG3KFH9027/nf+fEZei0k
-   aDv258P+72r6/+DIQaJ2ZgVRzzfMClCiAAeoFqpc974kOnhTD2jMk/Hwo
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10847"; a="379519564"
+  bh=zCaWEaNs9Y62tIVUxDJ4YRcuNAc1OBSyf37qzdGxzx0=;
+  b=hLnuDfgUbzCx18MQw016pLg0PnPS0WEqJbCrY1/5rakEbkpsdvJltmyo
+   szRmVY1uJOBIY2n8aWLJOaDarwYOwlkdX4VEWraj2nhMwtNQnVAJIcvfu
+   8HyhBQl6WtmqIUFpq+zhnXzvHChXrHt/U1ySuLAy3GmG7yye0BegB0/5F
+   kh8wmo9pUuXVHSqX9j51Xs3dxsZq5mduWPk4flzJf0IqlFFOujL3M4RGr
+   G/COr8QFJb3NhP28LCpZ97XzLD3YADJFdtC7D0A/y883wB6vkqdTE247u
+   aJmQfzbbmtDlp/zUPX3YMoQYiLguKISGfiNdKvfcgKBDokqjEYzgiekuP
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10847"; a="382150058"
 X-IronPort-AV: E=Sophos;i="6.03,186,1694761200"; 
-   d="scan'208";a="379519564"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2023 00:14:33 -0700
+   d="scan'208";a="382150058"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2023 00:13:26 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10847"; a="815516595"
+X-IronPort-AV: E=McAfee;i="6600,9927,10847"; a="753285127"
 X-IronPort-AV: E=Sophos;i="6.03,186,1694761200"; 
-   d="scan'208";a="815516595"
+   d="scan'208";a="753285127"
 Received: from lkp-server02.sh.intel.com (HELO c3b01524d57c) ([10.239.97.151])
-  by fmsmga008.fm.intel.com with ESMTP; 29 Sep 2023 00:14:32 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 29 Sep 2023 00:13:25 -0700
 Received: from kbuild by c3b01524d57c with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1qm7hk-0002Zm-1s;
-        Fri, 29 Sep 2023 07:14:28 +0000
-Date:   Fri, 29 Sep 2023 15:13:35 +0800
+        id 1qm7gf-0002ZO-2y;
+        Fri, 29 Sep 2023 07:13:22 +0000
+Date:   Fri, 29 Sep 2023 15:12:41 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS WITH WARNING
- e8b4ff6a856d02ee64a6023edf45e11827badeef
-Message-ID: <202309291530.qDP0N7ET-lkp@intel.com>
+Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
+ 8be586f78dfd2aebbcd06d855e2d6f23402bbc58
+Message-ID: <202309291539.HKa06lgA-lkp@intel.com>
 User-Agent: s-nail v14.9.24
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: e8b4ff6a856d02ee64a6023edf45e11827badeef  pinctrl: uniphier: Annotate struct uniphier_pinctrl_reg_region with __counted_by
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
+branch HEAD: 8be586f78dfd2aebbcd06d855e2d6f23402bbc58  Revert "pinctrl: tegra: Add support to display pin function"
 
-Warning reports:
+elapsed time: 1454m
 
-https://lore.kernel.org/oe-kbuild-all/202309270234.aJGlDE0P-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202309270313.mBEc9o1A-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202309270448.7Aen3Sgx-lkp@intel.com
-
-Warning: (recently discovered and may have been fixed)
-
-drivers/pinctrl/realtek/pinctrl-rtd.c:180:29: warning: '%s' directive argument is null [-Wformat-overflow=]
-drivers/pinctrl/realtek/pinctrl-rtd1315e.c:231:35: warning: 'rtd1315e_boot_sel_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1315e.c:231:35: warning: 'rtd1315e_reset_n_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1315e.c:231:35: warning: 'rtd1315e_scan_switch_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1315e.c:231:35: warning: 'rtd1315e_testmode_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1315e.c:231:35: warning: 'rtd1315e_wd_rset_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1319d.c:237:35: warning: 'rtd1319d_boot_sel_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1319d.c:237:35: warning: 'rtd1319d_reset_n_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1319d.c:237:35: warning: 'rtd1319d_scan_switch_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1319d.c:237:35: warning: 'rtd1319d_testmode_pins' defined but not used [-Wunused-const-variable=]
-drivers/pinctrl/realtek/pinctrl-rtd1319d.c:237:35: warning: 'rtd1319d_wd_rset_pins' defined but not used [-Wunused-const-variable=]
-
-Warning ids grouped by kconfigs:
-
-gcc_recent_errors
-|-- arm-randconfig-002-20230929
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd.c:warning:s-directive-argument-is-null
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_testmode_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_wd_rset_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_testmode_pins-defined-but-not-used
-|   `-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_wd_rset_pins-defined-but-not-used
-|-- arm-randconfig-004-20230929
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_testmode_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_wd_rset_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_boot_sel_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_reset_n_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_scan_switch_pins-defined-but-not-used
-|   |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_testmode_pins-defined-but-not-used
-|   `-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_wd_rset_pins-defined-but-not-used
-`-- arm64-randconfig-001-20230929
-    |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_boot_sel_pins-defined-but-not-used
-    |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_reset_n_pins-defined-but-not-used
-    |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_scan_switch_pins-defined-but-not-used
-    |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_testmode_pins-defined-but-not-used
-    |-- drivers-pinctrl-realtek-pinctrl-rtd1315e.c:warning:rtd1315e_wd_rset_pins-defined-but-not-used
-    |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_boot_sel_pins-defined-but-not-used
-    |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_reset_n_pins-defined-but-not-used
-    |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_scan_switch_pins-defined-but-not-used
-    |-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_testmode_pins-defined-but-not-used
-    `-- drivers-pinctrl-realtek-pinctrl-rtd1319d.c:warning:rtd1319d_wd_rset_pins-defined-but-not-used
-
-elapsed time: 1455m
-
-configs tested: 167
+configs tested: 164
 configs skipped: 2
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
 tested configs:
 alpha                             allnoconfig   gcc  
@@ -151,8 +96,11 @@ i386         buildonly-randconfig-002-20230928   gcc
 i386         buildonly-randconfig-002-20230929   gcc  
 i386         buildonly-randconfig-003-20230928   gcc  
 i386         buildonly-randconfig-003-20230929   gcc  
+i386         buildonly-randconfig-004-20230928   gcc  
 i386         buildonly-randconfig-004-20230929   gcc  
+i386         buildonly-randconfig-005-20230928   gcc  
 i386         buildonly-randconfig-005-20230929   gcc  
+i386         buildonly-randconfig-006-20230928   gcc  
 i386         buildonly-randconfig-006-20230929   gcc  
 i386                              debian-10.3   gcc  
 i386                                defconfig   gcc  
@@ -162,17 +110,11 @@ i386                  randconfig-003-20230929   gcc
 i386                  randconfig-004-20230929   gcc  
 i386                  randconfig-005-20230929   gcc  
 i386                  randconfig-006-20230929   gcc  
-i386                  randconfig-011-20230928   gcc  
 i386                  randconfig-011-20230929   gcc  
-i386                  randconfig-012-20230928   gcc  
 i386                  randconfig-012-20230929   gcc  
-i386                  randconfig-013-20230928   gcc  
 i386                  randconfig-013-20230929   gcc  
-i386                  randconfig-014-20230928   gcc  
 i386                  randconfig-014-20230929   gcc  
-i386                  randconfig-015-20230928   gcc  
 i386                  randconfig-015-20230929   gcc  
-i386                  randconfig-016-20230928   gcc  
 i386                  randconfig-016-20230929   gcc  
 loongarch                        allmodconfig   gcc  
 loongarch                         allnoconfig   gcc  
