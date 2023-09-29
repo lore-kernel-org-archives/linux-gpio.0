@@ -2,132 +2,109 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEFFEE743ED
-	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 05:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 592BFE743F2
+	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 07:51:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232988AbjI2Fnp (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 29 Sep 2023 01:43:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45908 "EHLO
+        id S232613AbjI2Hvv (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 29 Sep 2023 03:51:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232793AbjI2Fnd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 01:43:33 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4EFA2101
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 22:40:15 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-99c136ee106so1797135866b.1
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Sep 2023 22:40:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1695966014; x=1696570814; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/cPgz6zkkuP/QvbsAnjGs89IXSWE24BO+d6az/jrPNY=;
-        b=N/fYhnvRLb36lt1eapguKiqxqVYNlsqrv+Ui3l5CPTtLJ7m3pLF6ZOuQnZay2XCm2C
-         QP60ou75tAJXPncyqANmlJBMWwQcRiSHrWsfOMSR5/0/z47BAnxnCGjVmQ4aohQg0yad
-         BAeL2dOfyNn+c3ppwIcDQ0ERlSjRHOyDa+K+ziuTZjb1MY/2AZ15l2abLRJXc0FM1V7x
-         t58L5FiJSUSMU45CQJTwp2+KD+vJIuy24zxFLiclNNmXGibLBhhmEQviuxd5oE4/xUWp
-         v2kw8KWsKJuwmq11vP4u+ACZrQEZjKmwXEXT9adm+pUhbVmDQ5r2cPkBoiJ+0BU+qfAk
-         Eczg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695966014; x=1696570814;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/cPgz6zkkuP/QvbsAnjGs89IXSWE24BO+d6az/jrPNY=;
-        b=mHwT1ReO6GRdci01bE6KdvcKKlxRx6+GLwGmHW9FACgujyyB09IXFrum9G/UhzYpXa
-         ZAkvC7791bW3Ihivov5svnHHfb6+4XleTH5G1wyZ2HvQ+0DM5O/NkZmn8UVSZsYElDwY
-         LbtlzT4ad7HwtEAtzI0rX9z8fW84WIy773pNov1wgPwiIQIlz0Exxb6/ddMgCyT8cGds
-         EJYUoJRCz2y9gSoLII3nseUPaeEZFwL9ecrS6Bmhtw5azCQ1jByu7Rh51+nvfdCE/+Na
-         4AX0ooWLJpS2Eagdf/CNiivq6L4ZIQZgWqsPzQhNTnipGcsZVGDVqAgpwmf1L/C/B4Go
-         8XfQ==
-X-Gm-Message-State: AOJu0YzgIluiwIe+FRo6xVvuFKXr1/QYwvmvjR/15H60qqsf0gGANiHC
-        shqqAO/YoNBRawjyCI2AGkjPAQ==
-X-Google-Smtp-Source: AGHT+IFpSPh8yayTTchhgUGo5UVhQZBeySgfo2JdyqmupZ/CM1UnRoYelTOunDOQMI3TLbCEj6KiTg==
-X-Received: by 2002:a17:906:10dc:b0:9b2:bb02:a543 with SMTP id v28-20020a17090610dc00b009b2bb02a543mr3227213ejv.74.1695966014250;
-        Thu, 28 Sep 2023 22:40:14 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.177])
-        by smtp.gmail.com with ESMTPSA id z19-20020a1709063ad300b009a1a653770bsm11971992ejd.87.2023.09.28.22.40.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Sep 2023 22:40:13 -0700 (PDT)
-From:   Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea@bp.renesas.com>
-To:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
-        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 27/28] arm64: dts: renesas: r9a08g045s33-smarc: add initial device tree for RZ/G3S SMARC EVK board
-Date:   Fri, 29 Sep 2023 08:39:14 +0300
-Message-Id: <20230929053915.1530607-28-claudiu.beznea@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com>
-References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com>
+        with ESMTP id S232490AbjI2Hvv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 03:51:51 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C2CB1A7;
+        Fri, 29 Sep 2023 00:51:48 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67638C433C9;
+        Fri, 29 Sep 2023 07:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695973908;
+        bh=iyIPI73TgggZFG6vSBaLbOmkRMMZ6arLpAx8an8tRTQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BdpwaCcdJvBumfQ3WeJkEtODzou/TDJNph1C0slLKec8ISoKLC312jrmBDstUtuLB
+         246SylgFSd6SlTAg2WqtQ5IL77yglU1a5bIEVTTJLjG2Aj1V5zyUYcG6lX7qabJhfz
+         7oJKZidPmkErVJT6b+YDumossOtwbAiE5gAa8JZs7KRIrfaOV3ZCbvL9oVofoEvIdi
+         a8A2V6+XxeQwyb/SeGLQyiktz0sVMaP3sP3DnwN+eV22U1xcgHREEpD1Ic1fNlveky
+         FcRZhq2xvu2UhZqdiGbeWSQJnNjhISS9s6SdydtAfWWYhubMrdr8EDSPvznP7iLGJw
+         gDmks5yiWvlFQ==
+Date:   Fri, 29 Sep 2023 09:51:44 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Wentong Wu <wentong.wu@intel.com>
+Cc:     gregkh@linuxfoundation.org, arnd@arndb.de, mka@chromium.org,
+        oneukum@suse.com, lee@kernel.org, kfting@nuvoton.com,
+        broonie@kernel.org, linus.walleij@linaro.org, hdegoede@redhat.com,
+        maz@kernel.org, brgl@bgdev.pl, linux-usb@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-gpio@vger.kernel.org, andriy.shevchenko@linux.intel.com,
+        heikki.krogerus@linux.intel.com, andi.shyti@linux.intel.com,
+        sakari.ailus@linux.intel.com, bartosz.golaszewski@linaro.org,
+        srinivas.pandruvada@intel.com, zhifeng.wang@intel.com
+Subject: Re: [PATCH v19 2/4] i2c: Add support for Intel LJCA USB I2C driver
+Message-ID: <ZRaCEI5EZuSx5/Lx@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Wentong Wu <wentong.wu@intel.com>, gregkh@linuxfoundation.org,
+        arnd@arndb.de, mka@chromium.org, oneukum@suse.com, lee@kernel.org,
+        kfting@nuvoton.com, broonie@kernel.org, linus.walleij@linaro.org,
+        hdegoede@redhat.com, maz@kernel.org, brgl@bgdev.pl,
+        linux-usb@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com, heikki.krogerus@linux.intel.com,
+        andi.shyti@linux.intel.com, sakari.ailus@linux.intel.com,
+        bartosz.golaszewski@linaro.org, srinivas.pandruvada@intel.com,
+        zhifeng.wang@intel.com
+References: <1694890416-14409-1-git-send-email-wentong.wu@intel.com>
+ <1694890416-14409-3-git-send-email-wentong.wu@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YCx/WuvTs1tSucgW"
+Content-Disposition: inline
+In-Reply-To: <1694890416-14409-3-git-send-email-wentong.wu@intel.com>
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add initial device tree for RZ/G3S SMARC EVK board.
+--YCx/WuvTs1tSucgW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
 
-Changes in v2:
-- modified compatible
-- @Geert: I haven't added you Rb tag as I've added
-  "renesas,rzg3s-smarcm" to the compatible list
+> +static u32 ljca_i2c_func(struct i2c_adapter *adap)
+> +{
+> +	return I2C_FUNC_I2C;
 
- arch/arm64/boot/dts/renesas/Makefile            |  2 ++
- .../boot/dts/renesas/r9a08g045s33-smarc.dts     | 17 +++++++++++++++++
- 2 files changed, 19 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dts
+You could use this here to make the driver way more useful:
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 7114cbbd8713..254983ca56a1 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -86,6 +86,8 @@ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc-cru-csi-ov5645.dtbo
- dtb-$(CONFIG_ARCH_R9A07G054) += r9a07g054l2-smarc.dtb
- dtb-$(CONFIG_ARCH_R9A07G054) += r9a07g054l2-smarc-cru-csi-ov5645.dtbo
- 
-+dtb-$(CONFIG_ARCH_R9A08G045) += r9a08g045s33-smarc.dtb
-+
- dtb-$(CONFIG_ARCH_R9A09G011) += r9a09g011-v2mevk2.dtb
- 
- dtb-$(CONFIG_ARCH_RCAR_GEN3) += draak-ebisu-panel-aa104xd12.dtbo
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dts b/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dts
-new file mode 100644
-index 000000000000..7d775d10a97e
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc.dts
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/G3S SMARC EVK board
-+ *
-+ * Copyright (C) 2023 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+
-+#include "r9a08g045s33.dtsi"
-+#include "rzg3s-smarc-som.dtsi"
-+#include "rzg3s-smarc.dtsi"
-+
-+/ {
-+	model = "Renesas SMARC EVK version 2 based on r9a08g045s33";
-+	compatible = "renesas,smarc2-evk", "renesas,rzg3s-smarcm", "renesas,r9a08g045s33", "renesas,r9a08g045";
-+};
--- 
-2.39.2
+return I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
 
+Except I2C_FUNC_SMBUS_QUICK, emulated SMBUS calls work out of the box.
+
+For I2C_FUNC_SMBUS_QUICK, you need to test zero-length transfers indeed
+('i2cdetect <busnum>' will use it and is a good testcase). Which would
+be good anyway, because if it is not supporting zero-length, we need to
+add an adapter->quirk flag as well.
+
+We could add this incrementally, but it will be better to have this
+correct right away. i2cdetect is a good and simple testcase.
+
+
+--YCx/WuvTs1tSucgW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmUWghAACgkQFA3kzBSg
+KbY/ixAAowr8Fus+jYGKBQQGDqTL5HX4MCFiPibs8Uq0yRLrqiArAdwf0ERVpM4s
+1mXpq4mA3W2cF8r1p5IrzbIsA1Zo31EmESC3KbqtPyNxvV5yOP6tqXsleODQ1fv3
+eABFlCftQLjgvY6hYSaP7yjmSpQ9xiLhXUNl3CGH43kyKrJ7O4VXHR130NrDpC0q
+YBbalXxrtY1M2zDBDjVznMF401w7KgGw345x93W0XztZG+queVmSKlzXK9ereUZ5
+1jI9rW+2T94PwDEp/H7i2+ACbnIoPfIam/iSkwg+Myr7E7erpUBHy1kWRRbtOgVV
+8Egk78ynig4pRSCplfVx4qQX9D8sC2m2NJrtY6dpWXE2K1Eka6HE+CcfDqbhoXT0
+Ig4geaTomjVDdHR3/48uvu3ArEtM9OJi0EPnmXefhvoEKwmVaBEoTt96HIXYL7YN
+28FYmrlZQFK7W7CK9AegOgQZp15Ghi45syaA8zsA6Qea8p4LEUK7bV+6QCfllwlI
+BQpPVnqd7uqbshDGXFyhLMB/fQkDarM9nOy1Qs4D/Endva9deUz2Jo4V0vYxoDtJ
+igjeYqG+ZEflIbEDa7PmeU6S+SarpC0aqcnOzaYB1T0Ohta8d88Gv5UkfYkmkjTW
+uBTMWcZOfyaqqg7uLNENi0uXPSFWZzmWnieoB6c/cq9iB+j7a0A=
+=+eIl
+-----END PGP SIGNATURE-----
+
+--YCx/WuvTs1tSucgW--
