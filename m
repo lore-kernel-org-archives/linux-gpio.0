@@ -2,738 +2,208 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B9E2E728C0
-	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 15:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83FA3E728C6
+	for <linux-gpio@archiver.kernel.org>; Fri, 29 Sep 2023 16:11:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233742AbjI2PnJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 29 Sep 2023 11:43:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52898 "EHLO
+        id S233620AbjI2QLf (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 29 Sep 2023 12:11:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233731AbjI2PnC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 11:43:02 -0400
-Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 502841AC;
-        Fri, 29 Sep 2023 08:42:56 -0700 (PDT)
-Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id D16C584797;
-        Fri, 29 Sep 2023 17:42:54 +0200 (CEST)
-From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Fri, 29 Sep 2023 17:42:03 +0200
-Subject: [PATCH RESEND v5 7/8] arm64: dts: Add DTS for Marvell PXA1908 and
- samsung,coreprimevelte
+        with ESMTP id S233301AbjI2QLd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Sep 2023 12:11:33 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA1EF1A7;
+        Fri, 29 Sep 2023 09:11:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1696003888; x=1727539888;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=yBVXLrEyDuxi4AbykKT37WA0TpNW4VWy31j417LZp7g=;
+  b=QF4CLTVGusRwP9xgQd2AVltIadmhhvD8xQhdviUxJik9QEOYdWL/e0b/
+   OSr9vQhIPbUntVDmRnaua9CA2rJ7ublY5SVNJHW0o6XN/Nkp2bDHnAF5N
+   nj/JxGWlZC0CCqLX3D4qgi7ktNhfhl5Y5gfpT6Oq1z6boh3VIyEKRdXkX
+   +acdmX41d1isJn5yBZFbGfVkf1YW3iBlxuaJvIIRWY/sFEnYCXFfX5BjF
+   Zy61j/bvSMdEsMT7sfR7vvhY+a5mtt7buzY031aodTFcIp3bf+W/d3uyZ
+   xKfPCEXurfvi1uAkVxBi2NLA6T3nP5RDOwVsyLWggPgRDjQ8cZXM9R6Xm
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10848"; a="386195230"
+X-IronPort-AV: E=Sophos;i="6.03,187,1694761200"; 
+   d="scan'208";a="386195230"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2023 09:11:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10848"; a="873723219"
+X-IronPort-AV: E=Sophos;i="6.03,187,1694761200"; 
+   d="scan'208";a="873723219"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orsmga004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Sep 2023 09:11:27 -0700
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.32; Fri, 29 Sep 2023 09:11:26 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.32 via Frontend Transport; Fri, 29 Sep 2023 09:11:26 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.101)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.32; Fri, 29 Sep 2023 09:11:24 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QnemYvdPBzH3UhIBtXMGEXag3baXxlqjlP9HQMiJOMGPSBVdu4Ya62ogwLFobVMLa/+V7sIIm9y/NOepCa3Dj5YqrcQhIzz+JYDqinbFK1Qipv58kl1R5i4bibWO/yzwF5IjqKwZATcDEHuTAQGqO3cmsUx7O+sX89Pbot3x5WDRvbEztQv8jgKMUl8i3xLKrXuj7zbiLWxrR4W5USmdhME122zNdqRoLX3B3Ek/WQ0npDwQOJD/2TsAS23JyaXOLKcpJCfYl1mK3fpsX7+c2sM7bsDenBkeYbvUhDSkDfJ3dKWHQiOPv5DbVQTZdHV8f8TsnnEa8hsRD1T5j3mWcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fr2tzhnv1i+7yOxyiNrdtPn8Sjq1/zrWZVzpVKovwnM=;
+ b=i+cU8S4i77pHxSbAPwvMo1z6+Io2kkPUSm1TtidTlRg56K9snIzyhG5j7nTtH07FPNyUaNKXtvDadiEe15LItV/Qbl2YApidfxY312I7NFufBTsUmARjGGp+hMy3oFNjqyLsiVUFyjmtYJrl2Jg2HC/gQfCicNGvyNYzdhMzqO9wdh07tfFaUwB7/xvqsIWC5mFFXaoMIPtrv+1rsbkftWfsMDp60I1U8ogCz4AHItaBtik/cA51M90Ppy8zusIP5kt59NmFkyg/0QBl+EmN30iYr7cirk5vRLybLkAQbhw74McY9KBQKXA/AiV+2/u1sF9/GSpPCXhR5b61bHk64Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4316.namprd11.prod.outlook.com (2603:10b6:5:205::16)
+ by MN0PR11MB6109.namprd11.prod.outlook.com (2603:10b6:208:3cf::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.24; Fri, 29 Sep
+ 2023 16:11:22 +0000
+Received: from DM6PR11MB4316.namprd11.prod.outlook.com
+ ([fe80::e836:4003:6244:2466]) by DM6PR11MB4316.namprd11.prod.outlook.com
+ ([fe80::e836:4003:6244:2466%7]) with mapi id 15.20.6813.027; Fri, 29 Sep 2023
+ 16:11:22 +0000
+From:   "Wu, Wentong" <wentong.wu@intel.com>
+To:     Wolfram Sang <wsa@kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "mka@chromium.org" <mka@chromium.org>,
+        "oneukum@suse.com" <oneukum@suse.com>,
+        "lee@kernel.org" <lee@kernel.org>,
+        "kfting@nuvoton.com" <kfting@nuvoton.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "maz@kernel.org" <maz@kernel.org>, "brgl@bgdev.pl" <brgl@bgdev.pl>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
+        "andi.shyti@linux.intel.com" <andi.shyti@linux.intel.com>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "bartosz.golaszewski@linaro.org" <bartosz.golaszewski@linaro.org>,
+        "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>,
+        "Wang, Zhifeng" <zhifeng.wang@intel.com>
+Subject: RE: [PATCH v19 2/4] i2c: Add support for Intel LJCA USB I2C driver
+Thread-Topic: [PATCH v19 2/4] i2c: Add support for Intel LJCA USB I2C driver
+Thread-Index: AQHZ6M8pHucFYlFBH0KHbEw9mT3Pn7AxgfYAgABfa4A=
+Date:   Fri, 29 Sep 2023 16:11:21 +0000
+Message-ID: <DM6PR11MB4316B740D57D4E9EFE4D5B608DC0A@DM6PR11MB4316.namprd11.prod.outlook.com>
+References: <1694890416-14409-1-git-send-email-wentong.wu@intel.com>
+ <1694890416-14409-3-git-send-email-wentong.wu@intel.com>
+ <ZRaCEI5EZuSx5/Lx@ninjato>
+In-Reply-To: <ZRaCEI5EZuSx5/Lx@ninjato>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4316:EE_|MN0PR11MB6109:EE_
+x-ms-office365-filtering-correlation-id: 95c65afb-e01a-444b-8727-08dbc106b8ee
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: drFYLmU7nBFIXVAZb9mS8ikB98iWNc2CDn8zK66ium4FODitumckjh2yzy6Ro7/2VEzQZuPmNTpKtSion/1V4CmpqvCgVRc7ys2dH+XXkoFEfGohH3icf2y9Rw/d7Yt0a8svCys1SsOGc4ktRIlCuuSFrVfBAARPu+3cjEEgs0UVleC1TgAITiYC6OAk0f2XjJOxvlPxJp0e6fW5NBO2P0sP0KnVztHZFeagdTuK/mvxF6IjPkTq2mYpjOveRWXX4OKMmAnWfD39zje+SrjJbHTcjFh6m2OmQXV+8y8pSLK3kcWrUnBBPm0GKFIzJ2w0jy0hCFCfdYkIMQRT/2GkVh9Tasi0RO+5s/bAh4xWUkH6LM6HBUAxtNyZOkS07ZirMKy1B5IvmlexzhXSChquXVXLyeavthWydqFctyUT6vahpKsN50iQUt3dc1mqtx2oA1ybV0LXEIkalBZZ9sDg1pTNHDktJyf+ewb+CWdSlD2L0uVZFj7rOz2M9h0FH7t6N68KaFBHVsuPRN7BmjPUJtQIQcpfHPQ3zkTBbubsw01/af/AeNN5zUudBM5OzNUKnx/MR3rvxopGGKShOwqei978LudGsRJWtMy8TCFPXpodpyhIjVvafnCL1hFPxWFt
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4316.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(376002)(366004)(346002)(396003)(136003)(230922051799003)(1800799009)(186009)(64100799003)(451199024)(71200400001)(6506007)(7696005)(478600001)(83380400001)(26005)(9686003)(7416002)(2906002)(41300700001)(66476007)(316002)(76116006)(6916009)(66556008)(5660300002)(66946007)(54906003)(4326008)(8676002)(8936002)(52536014)(64756008)(66446008)(33656002)(38070700005)(38100700002)(122000001)(86362001)(82960400001)(55016003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?DFPbiMNMcjuZ2I3WSE5dvx4T9k/RGka9AbbkVcUg5yOmXHpQWuwmSbjzxluj?=
+ =?us-ascii?Q?JMetsKYvUBExMZGByvAto27PUngNemKwXBogRRp4nh5pBrTXenJlQdsTgaKW?=
+ =?us-ascii?Q?GGbF+Z6W9jwU5ExNH577/it5tKO0UtURR5OUAEIoytZo/Q33ul62OyGhxmI4?=
+ =?us-ascii?Q?qkmgwUV7qAajRtgpiV2ihhpj0KrJvU35rnUWRJF4oIU8qwB9fzW2N/6PXG2q?=
+ =?us-ascii?Q?JxDghierLmCxATJTtMfo0P3UKYCglFQQv2Pt8iWOj3E6GINoCxKbnSlwFve1?=
+ =?us-ascii?Q?TfD3vwDcKXXVvKB5ijbCnm+CyflvTGGpeK5CZ4RO17wHLdMHlQQCAyPtHIy3?=
+ =?us-ascii?Q?seDAS/zpNGop26vw6+0MHU96kd2pZggr+4oc4NX7hvnXu85s4lmkts03NL/P?=
+ =?us-ascii?Q?fYWSdkd8ZC0ZnLRz9lFWxD429MamBnAqsupFckjCZWSRt8Bo3KEJr7eXsbX5?=
+ =?us-ascii?Q?38vMDxiycvdc8sXGdsEMfHnw5CVck9SJz6rgTvJ+hW4J/HtTOPxHRxBsFTJw?=
+ =?us-ascii?Q?1cSYYuCXsx9IADaH0L0IQtya7CCC8BbKIdbrbU5gsbBSKCME0vt/GltlJwSL?=
+ =?us-ascii?Q?9SISBEK2RuFglPzCdP0riD0I9bLJoMZnYmrp5qQkIsmaUU/wkd40DXxG7wMY?=
+ =?us-ascii?Q?nPaaDOi7oU7xPxUnoei8c9bs0z9v3Ys+32RTZCBnmdgsrOTamIBhxlUpdjfc?=
+ =?us-ascii?Q?bDbFqYpsRaoMJ7ESuceDxM7KYOYo8OHschDZE2sQQo4DDJQpsrsFHx8XHRv5?=
+ =?us-ascii?Q?Bhv3Ov5gHucAoOrgJJqBlfabl1M603OYRbSPGxErCCDKuFcuC3XGSzvgQ6Gr?=
+ =?us-ascii?Q?a+7usfeIYbsXP2CgmWS+/b15ZFiIFWKiy1mQY7KqYaDgjxOI9Q+lf3SoRrXg?=
+ =?us-ascii?Q?YSU4+RJZKCklvajW++ewfCDDa5QLCVK7Xd/wsoS/r0pK+y+A13K6tBE1M8jD?=
+ =?us-ascii?Q?ghgzoW/aySm2uH7BBl71DeX6NANUB3EcrE/IG904i6t3l5os0TSx0dyl9l4n?=
+ =?us-ascii?Q?1wUMEtOn4t70Lc4wnq8/e8uKpejYHd5+zP7V2vppvmtqVBO7zS00uxO2DHGB?=
+ =?us-ascii?Q?fZs/l6nMIQK5gl07lB8SVYSOLIQZEkfTockAx4ZJRIQkJWFyc3gZbnne8GpC?=
+ =?us-ascii?Q?4DwWyCR/vHNXOWokudr63z9s0i+RUL1Vij2zpBhx6K/+XStn/NlVnkuc4ZZd?=
+ =?us-ascii?Q?ZQOqspnnILHIXVB1akunS684jg9xUGtjtCC9vq4NiXQ7DnfOdCMUXwXt/o9G?=
+ =?us-ascii?Q?fm1uW4k2oEJ5mjpildID/OmmGbMDRqU6NThwxXeVmTVKkM1yt6nGhx/rKYCP?=
+ =?us-ascii?Q?g150M6pxQOSib485B6PlQzrbf80JSuE6RJSMkgcU/a9JOV5Z9iFY8ocso2KC?=
+ =?us-ascii?Q?sdKDkiJxJVnee3yiHFrWDwpMS2+0Vfx90xq0e4XijEQQkORi5JdCnDtUNKWw?=
+ =?us-ascii?Q?L1D49KY9KNDeP5BfFKtp8N7wBqXl5+vHwMIAbCoTiNZohA0TxDqFombqUsCY?=
+ =?us-ascii?Q?2krwH0ytWDjWt53ySGpYNYGECRG9MIW2kJHAckyGAHDx1ZMLL+rst8CBaZds?=
+ =?us-ascii?Q?ule4pCSPdhNU+kzFMlbJj/7VLbP7rXHZyYhnCb3W?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20230929-pxa1908-lkml-v5-7-5aa5a1109c5f@skole.hr>
-References: <20230929-pxa1908-lkml-v5-0-5aa5a1109c5f@skole.hr>
-In-Reply-To: <20230929-pxa1908-lkml-v5-0-5aa5a1109c5f@skole.hr>
-To:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hardening@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        afaerber@suse.de, balejk@matfyz.cz
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=16631;
- i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=2c0hb5LBLXsrVFv04ue9K/qoyIKoDb9fUmDQ4Od8x/w=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlFvBzv0ymFecw4ompNSIC35srYz7OK2u3d0k0k
- KDtt9ee1R+JAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZRbwcwAKCRCaEZ6wQi2W
- 4RyDEACMJMT/zaTT5CMslaCbzkgf2fBvDNa6KNXJMdzI/mnkARq7YkNV4bR2mY+GywxRv5dx+RL
- hEetNWcE9TUqq1WO9eaZjA7iQ9x4nZv/V0EJ5BBbzquMPahdiGwBB5HaIR6rS/YNVPWeUlEFBdi
- KmZMjb3hV4HgbJ+dSqY0pSiR3wc6ZCVm+2Xd6LUDYlwZH6G7KB3WMi2bZgRVCzW9TZxOQ3PGtVV
- qs3qEYuHnQYx/SIYBv5X77eVvJSCemKa7Vew8E4HvmpomDuHK+KfCLgKcV9YHwzYx1tlGv8EIyK
- Evbb/lbwbYpI58rqigSnvVCdGeq+P5mWlmB/bM3NdDxVCLqm0h95zSkW3RB+UDFYUAqqphFGEBe
- bUg79pWctt4I6P6TE/JRCl0NJp4ZIEVanKMydK+wUzpAsLS5IdBM3fvi4EwgKYJhLVkt5IL03rs
- zecI9sn5vABZm/tYEYz1jMYuSJk4m8b8/sWZAxa8f8RZetu8uyLF9rFoEBT4jwMytSyT5mAGzkk
- ddjS/VJQpfg9fsQnfO6TCFR0N0mH+3u+tPMX+24NvpMGX4gZcaqSzce9N+NwOuznqDRZssKJjKa
- 7kZSxxjJ7xlxx2poOPVwNsWP15fgqqWg4xt8QjGjZbtQmk0V6YkTUyBN/bD5+1vy+RHL5Nzt1nc
- GZ5jQ7zZCGlgBJA==
-X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
- fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4316.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95c65afb-e01a-444b-8727-08dbc106b8ee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2023 16:11:21.9092
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gwtFD5f/OtxWWtqMkYU5TVuoREcvvVg9GJW9duWr6t8cxZtvV1mKlH6oSm1gCgyIw3b4zydYFLWTq0wuOqBgRg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6109
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add DTS for Marvell PXA1908 SoC and Samsung Galaxy Core Prime Value
-Edition LTE, a smartphone based on said SoC.
+> From: Wolfram Sang <wsa@kernel.org>
+>=20
+> > +static u32 ljca_i2c_func(struct i2c_adapter *adap) {
+> > +	return I2C_FUNC_I2C;
+>=20
+> You could use this here to make the driver way more useful:
+>=20
+> return I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL &
+> ~I2C_FUNC_SMBUS_QUICK);
+>=20
+> Except I2C_FUNC_SMBUS_QUICK, emulated SMBUS calls work out of the box.
+>=20
+> For I2C_FUNC_SMBUS_QUICK, you need to test zero-length transfers indeed
+> ('i2cdetect <busnum>' will use it and is a good testcase). Which would be=
+ good
+> anyway, because if it is not supporting zero-length, we need to add an ad=
+apter-
+> >quirk flag as well.
 
-Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
----
- arch/arm64/boot/dts/marvell/Makefile               |   3 +
- .../dts/marvell/pxa1908-samsung-coreprimevelte.dts | 333 +++++++++++++++++++++
- arch/arm64/boot/dts/marvell/pxa1908.dtsi           | 295 ++++++++++++++++++
- 3 files changed, 631 insertions(+)
+Thanks.
 
-diff --git a/arch/arm64/boot/dts/marvell/Makefile b/arch/arm64/boot/dts/marvell/Makefile
-index 79ac09b58a89..263be6ec7567 100644
---- a/arch/arm64/boot/dts/marvell/Makefile
-+++ b/arch/arm64/boot/dts/marvell/Makefile
-@@ -27,3 +27,6 @@ dtb-$(CONFIG_ARCH_MVEBU) += cn9132-db-B.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += cn9130-crb-A.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += cn9130-crb-B.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += ac5-98dx35xx-rd.dtb
-+
-+# MMP SoC Family
-+dtb-$(CONFIG_ARCH_MMP) += pxa1908-samsung-coreprimevelte.dtb
-diff --git a/arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dts b/arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dts
-new file mode 100644
-index 000000000000..e3c863d517a8
---- /dev/null
-+++ b/arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dts
-@@ -0,0 +1,333 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include "pxa1908.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/linux-event-codes.h>
-+
-+/ {
-+	model = "Samsung Galaxy Core Prime VE LTE";
-+	compatible = "samsung,coreprimevelte", "marvell,pxa1908";
-+
-+	aliases {
-+		mmc0 = &sdh2; /* eMMC */
-+		mmc1 = &sdh0; /* SD card */
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		stdout-path = "serial0:115200n8";
-+
-+		fb0: framebuffer@17177000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0 0x17177000 0 (480 * 800 * 4)>;
-+			width = <480>;
-+			height = <800>;
-+			stride = <(480 * 4)>;
-+			format = "a8r8g8b8";
-+		};
-+	};
-+
-+	/* Bootloader fills this in */
-+	memory {
-+		device_type = "memory";
-+		reg = <0 0 0 0>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		framebuffer@17000000 {
-+			reg = <0 0x17000000 0 0x1800000>;
-+			no-map;
-+		};
-+
-+		gpu@9000000 {
-+			reg = <0 0x9000000 0 0x1000000>;
-+		};
-+
-+		/* Communications processor, aka modem */
-+		cp@3000000 {
-+			reg = <0 0x3000000 0 0x5000000>;
-+		};
-+
-+		cm3@a000000 {
-+			reg = <0 0xa000000 0 0x80000>;
-+		};
-+
-+		seclog@8000000 {
-+			reg = <0 0x8000000 0 0x100000>;
-+		};
-+
-+		ramoops@8100000 {
-+			compatible = "ramoops";
-+			reg = <0 0x8100000 0 0x40000>;
-+			record-size = <0x8000>;
-+			console-size = <0x20000>;
-+			max-reason = <5>;
-+		};
-+	};
-+
-+
-+	i2c-muic {
-+		compatible = "i2c-gpio";
-+		sda-gpios = <&gpio 30 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
-+		scl-gpios = <&gpio 29 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <3>;
-+		i2c-gpio,timeout-ms = <100>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c_muic_pins>;
-+
-+		muic: extcon@14 {
-+			compatible = "siliconmitus,sm5504-muic";
-+			reg = <0x14>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio_keys_pins>;
-+		autorepeat;
-+
-+		key-home {
-+			label = "Home";
-+			linux,code = <KEY_HOME>;
-+			gpios = <&gpio 50 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		key-volup {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&gpio 16 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		key-voldown {
-+			label = "Volume Down";
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+};
-+
-+&smmu {
-+	status = "okay";
-+};
-+
-+&pmx {
-+	pinctrl-single,gpio-range = <&range 55 55 0>,
-+				    <&range 110 32 0>,
-+				    <&range 52 1 0>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&board_pins_1 &board_pins_2 &board_pins_3>;
-+
-+	board_pins_1: pinmux-board-1 {
-+		pinctrl-single,pins = <
-+			0x160 0
-+			0x164 0
-+			0x168 0
-+			0x16c 0
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0x8000 0x8000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0x8000 0x8000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0x288 0x388>;
-+	};
-+
-+	board_pins_2: pinmux-board-2 {
-+		pinctrl-single,pins = <
-+			0x44 1
-+			0x48 1
-+			0x20 1
-+			0x18 1
-+			0x14 1
-+			0x10 1
-+			0xc 1
-+			0x8 1
-+			0x68 1
-+			0x58 0
-+			0x54 0
-+			0x7c 0
-+			0x6c 0
-+			0x70 0
-+			0x4c 1
-+			0x50 1
-+			0xac 0
-+			0x90 0
-+			0x8c 0
-+			0x88 0
-+			0x84 0
-+			0xc8 0
-+			0x128 0
-+			0x190 0
-+			0x194 0
-+			0x1a0 0
-+			0x114 0
-+			0x118 0
-+			0x1d8 0
-+			0x1e4 0
-+			0xe8 0
-+			0x100 0
-+			0x204 0
-+			0x210 0
-+			0x218 0
-+		>;
-+		pinctrl-single,bias-pullup = <0xc000 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0x8000 0xa000 0x8000 0xc000>;
-+		pinctrl-single,low-power-mode = <0x288 0x388>;
-+	};
-+
-+	board_pins_3: pinmux-board-3 {
-+		pinctrl-single,pins = <
-+			0x260 0
-+			0x264 0
-+			0x268 0
-+			0x26c 0
-+			0x270 0
-+			0x274 0
-+			0x78 0
-+			0x74 0
-+			0xb0 1
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0 0x388>;
-+	};
-+
-+	uart0_pins: pinmux-uart0 {
-+		pinctrl-single,pins = <
-+			0x198 6
-+			0x19c 6
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0 0x388>;
-+	};
-+
-+	gpio_keys_pins: pinmux-gpio-keys {
-+		pinctrl-single,pins = <
-+			0x11c 0
-+			0x120 0
-+			0x1a4 0
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0xc000 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0x8000 0xa0000 0x8000 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0 0x388>;
-+	};
-+
-+	i2c_muic_pins: pinmux-i2c-muic {
-+		pinctrl-single,pins = <
-+			0x154 0
-+			0x150 0
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0x288 0x388>;
-+	};
-+
-+	sdh0_pins_1: pinmux-sdh0-1 {
-+		pinctrl-single,pins = <
-+			0x108 0
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0xc000 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0x8000 0xa000 0x8000 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0 0x388>;
-+	};
-+
-+	sdh0_pins_2: pinmux-sdh0-2 {
-+		pinctrl-single,pins = <
-+			0x94 0
-+			0x98 0
-+			0x9c 0
-+			0xa0 0
-+			0xa4 0
-+		>;
-+		pinctrl-single,drive-strength = <0x800 0x1800>;
-+		pinctrl-single,bias-pullup = <0xc000 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0x8000 0xa000 0x8000 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0 0x388>;
-+	};
-+
-+	sdh0_pins_3: pinmux-sdh0-3 {
-+		pinctrl-single,pins = <
-+			0xa8 0
-+		>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0x208 0x388>;
-+	};
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins>;
-+};
-+
-+&twsi0 {
-+	status = "okay";
-+};
-+
-+&twsi1 {
-+	status = "okay";
-+};
-+
-+&twsi2 {
-+	status = "okay";
-+};
-+
-+&twsi3 {
-+	status = "okay";
-+};
-+
-+&usb {
-+	extcon = <&muic>, <&muic>;
-+};
-+
-+&sdh2 {
-+	/* Disabled for now because initialization fails with -ETIMEDOUT. */
-+	status = "disabled";
-+	bus-width = <8>;
-+	non-removable;
-+	broken-cd;
-+	mmc-ddr-1_8v;
-+};
-+
-+&sdh0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sdh0_pins_1 &sdh0_pins_2 &sdh0_pins_3>;
-+	cd-gpios = <&gpio 11 0>;
-+	cd-inverted;
-+	bus-width = <4>;
-+	wp-inverted;
-+};
-diff --git a/arch/arm64/boot/dts/marvell/pxa1908.dtsi b/arch/arm64/boot/dts/marvell/pxa1908.dtsi
-new file mode 100644
-index 000000000000..cc322b9a0e9e
---- /dev/null
-+++ b/arch/arm64/boot/dts/marvell/pxa1908.dtsi
-@@ -0,0 +1,295 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/dts-v1/;
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/marvell,pxa1908.h>
-+
-+/ {
-+	model = "Marvell Armada PXA1908";
-+	compatible = "marvell,pxa1908";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+	interrupt-parent = <&gic>;
-+
-+	cpus {
-+		#address-cells = <2>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0 0>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0 1>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0 2>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0 3>;
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		smmu: iommu@c0010000 {
-+			compatible = "arm,mmu-400";
-+			reg = <0 0xc0010000 0 0x10000>;
-+			#global-interrupts = <1>;
-+			#iommu-cells = <1>;
-+			interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		gic: interrupt-controller@d1df9000 {
-+			compatible = "arm,gic-400";
-+			reg = <0 0xd1df9000 0 0x1000>,
-+				<0 0xd1dfa000 0 0x2000>,
-+				/* The subsequent registers are guesses. */
-+				<0 0xd1dfc000 0 0x2000>,
-+				<0 0xd1dfe000 0 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+		};
-+
-+		apb@d4000000 {
-+			compatible = "simple-bus";
-+			reg = <0 0xd4000000 0 0x200000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0 0xd4000000 0x200000>;
-+
-+			pdma: dma-controller@0 {
-+				compatible = "marvell,pdma-1.0";
-+				reg = <0 0x10000>;
-+				interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
-+				dma-channels = <30>;
-+				#dma-cells = <2>;
-+			};
-+
-+			twsi1: i2c@10800 {
-+				compatible = "mrvl,mmp-twsi";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0x10800 0x64>;
-+				interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbc PXA1908_CLK_TWSI1>;
-+				mrvl,i2c-fast-mode;
-+				status = "disabled";
-+			};
-+
-+			twsi0: i2c@11000 {
-+				compatible = "mrvl,mmp-twsi";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0x11000 0x64>;
-+				interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbc PXA1908_CLK_TWSI0>;
-+				mrvl,i2c-fast-mode;
-+				status = "disabled";
-+			};
-+
-+			twsi3: i2c@13800 {
-+				compatible = "mrvl,mmp-twsi";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0x13800 0x64>;
-+				interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbc PXA1908_CLK_TWSI3>;
-+				mrvl,i2c-fast-mode;
-+				status = "disabled";
-+			};
-+
-+			apbc: clock-controller@15000 {
-+				compatible = "marvell,pxa1908-apbc";
-+				reg = <0x15000 0x1000>;
-+				#clock-cells = <1>;
-+			};
-+
-+			uart0: serial@17000 {
-+				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
-+				reg = <0x17000 0x1000>;
-+				interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbc PXA1908_CLK_UART0>;
-+				reg-shift = <2>;
-+			};
-+
-+			uart1: serial@18000 {
-+				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
-+				reg = <0x18000 0x1000>;
-+				interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbc PXA1908_CLK_UART1>;
-+				reg-shift = <2>;
-+			};
-+
-+			gpio: gpio@19000 {
-+				compatible = "marvell,mmp-gpio";
-+				reg = <0x19000 0x800>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				clocks = <&apbc PXA1908_CLK_GPIO>;
-+				interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-names = "gpio_mux";
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				ranges = <0 0x19000 0x800>;
-+
-+				gpio@0 {
-+					reg = <0x0 0x4>;
-+				};
-+
-+				gpio@4 {
-+					reg = <0x4 0x4>;
-+				};
-+
-+				gpio@8 {
-+					reg = <0x8 0x4>;
-+				};
-+
-+				gpio@100 {
-+					reg = <0x100 0x4>;
-+				};
-+			};
-+
-+			pmx: pinmux@1e000 {
-+				compatible = "pinconf-single";
-+				reg = <0x1e000 0x330>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				#gpio-range-cells = <3>;
-+				ranges;
-+
-+				#pinctrl-cells = <1>;
-+				pinctrl-single,register-width = <32>;
-+				pinctrl-single,function-mask = <7>;
-+
-+				range: gpio-range {
-+					#pinctrl-single,gpio-range-cells = <3>;
-+				};
-+			};
-+
-+			uart2: serial@36000 {
-+				compatible = "mrvl,mmp-uart", "intel,xscale-uart";
-+				reg = <0x36000 0x1000>;
-+				interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbcp PXA1908_CLK_UART2>;
-+				reg-shift = <2>;
-+			};
-+
-+			twsi2: i2c@37000 {
-+				compatible = "mrvl,mmp-twsi";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0x37000 0x64>;
-+				interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apbcp PXA1908_CLK_TWSI2>;
-+				mrvl,i2c-fast-mode;
-+				status = "disabled";
-+			};
-+
-+			apbcp: clock-controller@3b000 {
-+				compatible = "marvell,pxa1908-apbcp";
-+				reg = <0x3b000 0x1000>;
-+				#clock-cells = <1>;
-+			};
-+
-+			mpmu: clock-controller@50000 {
-+				compatible = "marvell,pxa1908-mpmu";
-+				reg = <0x50000 0x1000>;
-+				#clock-cells = <1>;
-+			};
-+		};
-+
-+		axi@d4200000 {
-+			compatible = "simple-bus";
-+			reg = <0 0xd4200000 0 0x200000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0 0xd4200000 0x200000>;
-+
-+			usbphy: phy@7000 {
-+				compatible = "marvell,pxa1928-usb-phy";
-+				reg = <0x7000 0x200>;
-+				clocks = <&apmu PXA1908_CLK_USB>;
-+				#phy-cells = <0>;
-+			};
-+
-+			usb: usb@8000 {
-+				compatible = "chipidea,usb2";
-+				reg = <0x8000 0x200>;
-+				interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apmu PXA1908_CLK_USB>;
-+				phys = <&usbphy>;
-+				phy-names = "usb-phy";
-+			};
-+
-+			sdh0: mmc@80000 {
-+				compatible = "mrvl,pxav3-mmc";
-+				reg = <0x80000 0x120>;
-+				interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apmu PXA1908_CLK_SDH0>;
-+				clock-names = "io";
-+				mrvl,clk-delay-cycles = <31>;
-+			};
-+
-+			sdh1: mmc@80800 {
-+				compatible = "mrvl,pxav3-mmc";
-+				reg = <0x80800 0x120>;
-+				interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apmu PXA1908_CLK_SDH1>;
-+				clock-names = "io";
-+				mrvl,clk-delay-cycles = <31>;
-+			};
-+
-+			sdh2: mmc@81000 {
-+				compatible = "mrvl,pxav3-mmc";
-+				reg = <0x81000 0x120>;
-+				interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&apmu PXA1908_CLK_SDH2>;
-+				clock-names = "io";
-+				mrvl,clk-delay-cycles = <31>;
-+			};
-+
-+			apmu: clock-controller@82800 {
-+				compatible = "marvell,pxa1908-apmu";
-+				reg = <0x82800 0x400>;
-+				#clock-cells = <1>;
-+			};
-+		};
-+	};
-+};
+And with i2cdetect -q busnum, I see error on driver side which enable
+I2C_FUNC_SMBUS_EMUL and not disable I2C_FUNC_SMBUS_QUICK, I think
+it means we don't support zero-length transfer if I understand correctly.
 
--- 
-2.42.0
+>=20
+> We could add this incrementally, but it will be better to have this corre=
+ct right
+> away. i2cdetect is a good and simple testcase.
 
+So the code will be like below, please help take a look, thanks.
 
+static u32 ljca_i2c_func(struct i2c_adapter *adap)
+{
+	return I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
+}
+
+static const struct i2c_adapter_quirks ljca_i2c_quirks =3D {
+	.flags =3D I2C_AQ_NO_ZERO_LEN,
+	.max_read_len =3D LJCA_I2C_MAX_XFER_SIZE,
+	.max_write_len =3D LJCA_I2C_MAX_XFER_SIZE,
+};
+
+BR,
+Wentong
