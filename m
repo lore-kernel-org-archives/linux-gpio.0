@@ -2,90 +2,76 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F11E75436
-	for <linux-gpio@archiver.kernel.org>; Tue,  3 Oct 2023 09:05:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CA8E75436
+	for <linux-gpio@archiver.kernel.org>; Tue,  3 Oct 2023 09:08:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239476AbjJCJFo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 3 Oct 2023 05:05:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46532 "EHLO
+        id S231439AbjJCJI1 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 3 Oct 2023 05:08:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239475AbjJCJFn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Oct 2023 05:05:43 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58FFFA9;
-        Tue,  3 Oct 2023 02:05:40 -0700 (PDT)
+        with ESMTP id S231416AbjJCJI0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Oct 2023 05:08:26 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA4979E;
+        Tue,  3 Oct 2023 02:08:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1696323938; x=1727859938;
+  t=1696324103; x=1727860103;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=3A4Xsgt2ENTV3OdXZZCuv0qf+6Y37EwvUrpqsTmdJmI=;
-  b=QvC2kg/Dhx5oQOxLn66dJRpDYgEh+wgATBfDQnVZGBexbIiJXmeUby88
-   7nv0t6MQlGFrJPLL6PtCI9gSaISXKgLb7xwBy7ke4zPaEmdPhD+L6JtTP
-   qFjAN8WP4AnzD8QA6p4dsJimj4WU7I0bVJSWn0p6kBtqgxASLIJtFpG+6
-   wU4P3vsKS+RHxno6FeIy/ijL7qapnmxAdxM2w+duIlAZkjgGsOJQ24olq
-   f6PDXVW12eZ42ylI4ogOmyM/knCeExC33/QfeLkeiylmVL6Qo9PL18x5I
-   0qMrcgTSkmR8pj2vUYGuDzmnCTIBzUcmCBbUZmjU5iFiV89waTZcGxh9N
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10851"; a="373170450"
+  bh=GNdDkE0295DLsorKWTDOi5Sj8aKZsui3/WlnS5ZyMJI=;
+  b=gm5LQ/zwyWcEFCLRw43vdFbiC2aS2rchGoXYZm+K17QNcmErB/2F4vk9
+   2KDw6pCqr6fiHssjUPG61WNveyrWzlEPqv0DQ42i+EU/k9YBq/3XPZ+8c
+   YEKOuV4adiIoXWF7VfwilhXRWkn8II1oqwsTPcQWVx6UARQJjT3vHw6YI
+   GDyEoWWxMlGmpRSbqlsw1WDuCsiPW0Gpys0Es69EnbBnMapDQU+fh6/Gn
+   Qco8X8BcFagXQNpvQq6peoQHY6ckzU9tbFtiN4kIOkJK72+sLNncFOEW4
+   EH2iWhB7b4Imr8a5sGpp/Ghf8L+l5A+IQ14JYOi53eKRUwPOFe96J8yxT
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10851"; a="367876985"
 X-IronPort-AV: E=Sophos;i="6.03,196,1694761200"; 
-   d="scan'208";a="373170450"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2023 02:05:38 -0700
+   d="scan'208";a="367876985"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2023 02:08:23 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10851"; a="841272903"
+X-IronPort-AV: E=McAfee;i="6600,9927,10851"; a="816615399"
 X-IronPort-AV: E=Sophos;i="6.03,196,1694761200"; 
-   d="scan'208";a="841272903"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2023 02:05:37 -0700
-Date:   Tue, 3 Oct 2023 12:05:34 +0300
-From:   Raag Jadav <raag.jadav@intel.com>
-To:     linus.walleij@linaro.org, mika.westerberg@linux.intel.com,
-        andriy.shevchenko@linux.intel.com
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+   d="scan'208";a="816615399"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2023 02:08:21 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC1)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qnbO6-00000002RQC-1J8S;
+        Tue, 03 Oct 2023 12:08:18 +0300
+Date:   Tue, 3 Oct 2023 12:08:18 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Raag Jadav <raag.jadav@intel.com>
+Cc:     linus.walleij@linaro.org, mika.westerberg@linux.intel.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         mallikarjunappa.sangannavar@intel.com, bala.senthil@intel.com
-Subject: Re: [PATCH v1 1/2] pinctrl: baytrail: drop runtime PM support
-Message-ID: <ZRvZXlmHOqU8RcGv@black.fi.intel.com>
-References: <20231003081519.27524-1-raag.jadav@intel.com>
+Subject: Re: [PATCH v1] pinctrl: intel: refine intel_config_set_pull()
+ function
+Message-ID: <ZRvaAhpMEypapy26@smile.fi.intel.com>
+References: <20231003081824.28810-1-raag.jadav@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231003081519.27524-1-raag.jadav@intel.com>
+In-Reply-To: <20231003081824.28810-1-raag.jadav@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 03, 2023 at 01:45:18PM +0530, Raag Jadav wrote:
-> Since Baytrail pinctrl device is not attached to acpi_lpss_pm_domain,
-> runtime PM serves no purpose here. Drop it and switch to pm_sleep_ptr()
-> as now we only have suspend and resume handles in place.
+On Tue, Oct 03, 2023 at 01:48:24PM +0530, Raag Jadav wrote:
+> Improve intel_config_set_pull() implementation in Intel pinctrl driver by:
 > 
-> No functional impact.
-> 
-> TODO:
-> Consider moving to DEFINE_LATE_DEV_PM_OPS() in the future once we have
-> enough users to account for its introduction.
-> 
-> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-baytrail.c | 18 +-----------------
->  1 file changed, 1 insertion(+), 17 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> index ec76e43527c5..14a61a262be1 100644
-> --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-> +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> @@ -16,7 +16,6 @@
->  #include <linux/module.h>
->  #include <linux/types.h>
->  #include <linux/platform_device.h>
-> -#include <linux/pm_runtime.h>
->  #include <linux/property.h>
->  #include <linux/seq_file.h>
->  #include <linux/string_helpers.h>
+> - Reducing scope of spinlock by moving unneeded operations out of it.
+> - Utilizing temporary variables for common operations.
+> - Limiting IO operations to positive cases.
 
-I just realized I forgot to add pm.h here.
-I'll send out a v2.
+Pushed to my review and testing queue, thanks!
 
-Raag
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
