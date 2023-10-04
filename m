@@ -2,197 +2,268 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5F7E7C4CE
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Oct 2023 14:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7147E7C4E2
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Oct 2023 16:24:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243169AbjJDO5J (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Oct 2023 10:57:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60480 "EHLO
+        id S243320AbjJDQYZ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Oct 2023 12:24:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243145AbjJDO4y (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Oct 2023 10:56:54 -0400
-Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04B97C1;
-        Wed,  4 Oct 2023 07:56:49 -0700 (PDT)
-Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-        by mx.skole.hr (mx.skole.hr) with ESMTP id 84E2384CBD;
-        Wed,  4 Oct 2023 16:56:48 +0200 (CEST)
-From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Date:   Wed, 04 Oct 2023 16:56:30 +0200
-Subject: [PATCH RFC v5 6/6] input: ads7846: Move wait_for_sync() logic to
- driver
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20231004-pxa-gpio-v5-6-d99ae6fceea8@skole.hr>
-References: <20231004-pxa-gpio-v5-0-d99ae6fceea8@skole.hr>
-In-Reply-To: <20231004-pxa-gpio-v5-0-d99ae6fceea8@skole.hr>
-To:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Russell King <linux@armlinux.org.uk>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        with ESMTP id S243299AbjJDQYY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Oct 2023 12:24:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1A59BF
+        for <linux-gpio@vger.kernel.org>; Wed,  4 Oct 2023 09:23:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1696436617;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=J0Q3pxIDzFsfY5Eql/yJyfiJ1oiF174RjtJFIu9b6eY=;
+        b=NfPjArNCv1JtTcT4PNHLX4fgQ0TmMtt2ZpzomLOHdbKPj30e2NwzxFBwBNM+1bxNOuOlgY
+        2j7FYnalXAw8WdqUADXH80w9RWw3pLTGS55sSdltmtHZABAbdJ1pAi9Mn0/JuKnfhQ/e+4
+        5LcMl6JvKx6hdsmTDag0OwAV/x7IbpQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-25-neTCiqYPMmKuAQXD6_B5rg-1; Wed, 04 Oct 2023 12:23:33 -0400
+X-MC-Unique: neTCiqYPMmKuAQXD6_B5rg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F0B3B98B727;
+        Wed,  4 Oct 2023 16:23:32 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.39.192.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8246440C2015;
+        Wed,  4 Oct 2023 16:23:31 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-spi@vger.kernel.org,
-        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4268;
- i=duje.mihanovic@skole.hr; h=from:subject:message-id;
- bh=mfGlDLCki8NV8tuIB3jWgW4BpAW+ImMtQkJ8rvZ0eFs=;
- b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlHX0ko6QF0tV1IpOHpld/KlsqWZMXejAlxwX4p
- RioSchfOkqJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZR19JAAKCRCaEZ6wQi2W
- 4UDJEACL1rzW0OK+OZlq0VZP+NcIBMKUVlmXswhE+c4fqQzKRHdfqVHJ+HNX/f5un7+vbog19mN
- ghkrHhQ3na+v7tbB2lKBHQfIkfqt8Lpzo4yxZoj/xheHAaTNmC95iIzDcDejfXhn1RFqiCyg8f2
- b1/VcmMwKpw881LCL3rBkpws3D6d7E9E8p1Iv62fMYRXgHsm9SJdGxCLx649Z1XT+cw63ERxQAc
- 9CO8OfRrwX0q2ip4aToA8AjddXA3MPIIfOn61sJh+k6xC/18IuQ5CMeF+R1pmMI4BBELNM0HWPt
- 4C9GwnRQFfLR2q1IgIuSYYOwKP6xizY6fYWOGeI+oXLqEjpe9yAz+xo+AV3k8SHdrTJfA5wO+Fm
- 2qZ50mDe3kerUqoOWAsSBf3aejym2q3i84DPemXqPkfk1Gog8R/0LyJtNh/SbP6F3zsmo58N4oo
- xdxemvjNCm64z0s5l+RJYxZTPB006qGhmS6UReKLHSR7GeV7mm78+y88WQ49BadsUCNol5i5nEH
- hEJdwUnulJII8uLcsjyGEMJMSK4j+szRDYFuxVo2eaT+cVTDsja40QF3WUhK8qBiCfQHAYeaSZl
- jqXP36EKy0W8BZkP9wqRrtlYzTa74nY/n4Xw2C4T6g6zXwQzfXyg5HxYpH0xmh2Cbr733QVkoKv
- JVBGQIlAgoCRiaw==
-X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
- fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        platform-driver-x86@vger.kernel.org,
+        Daniel Scally <djrscally@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: [PATCH v3 3/5] platform/x86: int3472: Stop using gpiod_toggle_active_low()
+Date:   Wed,  4 Oct 2023 18:23:15 +0200
+Message-ID: <20231004162317.163488-4-hdegoede@redhat.com>
+In-Reply-To: <20231004162317.163488-1-hdegoede@redhat.com>
+References: <20231004162317.163488-1-hdegoede@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-If this code is left in the board file, the sync GPIO would have to be
-separated into another lookup table during conversion to the GPIO
-descriptor API (which is also done in this patch).
+Use the new skl_int3472_gpiod_get_from_temp_lookup() helper to get
+a gpio to pass to register_gpio_clock(), skl_int3472_register_regulator()
+and skl_int3472_register_pled().
 
-The only user of this code (Sharp Spitz) is also converted in this
-patch.
+This removes all use of the deprecated gpiod_toggle_active_low() and
+acpi_get_and_request_gpiod() functions.
 
-Suggested-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+Suggested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- arch/arm/mach-pxa/spitz.c           | 12 ++----------
- drivers/input/touchscreen/ads7846.c | 22 +++++++++++++++-------
- include/linux/spi/ads7846.h         |  1 -
- 3 files changed, 17 insertions(+), 18 deletions(-)
+ .../x86/intel/int3472/clk_and_regulator.c     | 31 ++-----------
+ drivers/platform/x86/intel/int3472/common.h   |  7 ++-
+ drivers/platform/x86/intel/int3472/discrete.c | 43 +++++++++++++------
+ drivers/platform/x86/intel/int3472/led.c      | 17 ++------
+ 4 files changed, 40 insertions(+), 58 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
-index 26ec29c9cd1b..e8bc0249b503 100644
---- a/arch/arm/mach-pxa/spitz.c
-+++ b/arch/arm/mach-pxa/spitz.c
-@@ -520,22 +520,12 @@ static inline void spitz_leds_init(void) {}
-  * SSP Devices
-  ******************************************************************************/
- #if defined(CONFIG_SPI_PXA2XX) || defined(CONFIG_SPI_PXA2XX_MODULE)
--static void spitz_ads7846_wait_for_hsync(void)
--{
--	while (gpio_get_value(SPITZ_GPIO_HSYNC))
--		cpu_relax();
--
--	while (!gpio_get_value(SPITZ_GPIO_HSYNC))
--		cpu_relax();
--}
--
- static struct ads7846_platform_data spitz_ads7846_info = {
- 	.model			= 7846,
- 	.vref_delay_usecs	= 100,
- 	.x_plate_ohms		= 419,
- 	.y_plate_ohms		= 486,
- 	.pressure_max		= 1024,
--	.wait_for_sync		= spitz_ads7846_wait_for_hsync,
- };
- 
- static struct gpiod_lookup_table spitz_ads7846_gpio_table = {
-@@ -543,6 +533,8 @@ static struct gpiod_lookup_table spitz_ads7846_gpio_table = {
- 	.table = {
- 		GPIO_LOOKUP("gpio-pxa", SPITZ_GPIO_TP_INT,
- 			    "pendown", GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP("gpio-pxa", SPITZ_GPIO_HSYNC,
-+			    "sync", GPIO_ACTIVE_LOW),
- 		{ }
- 	},
- };
-diff --git a/drivers/input/touchscreen/ads7846.c b/drivers/input/touchscreen/ads7846.c
-index faea40dd66d0..139b0f3735d0 100644
---- a/drivers/input/touchscreen/ads7846.c
-+++ b/drivers/input/touchscreen/ads7846.c
-@@ -138,8 +138,7 @@ struct ads7846 {
- 	void			*filter_data;
- 	int			(*get_pendown_state)(void);
- 	struct gpio_desc	*gpio_pendown;
--
--	void			(*wait_for_sync)(void);
-+	struct gpio_desc	*sync;
- };
- 
- enum ads7846_filter {
-@@ -636,9 +635,15 @@ static const struct attribute_group ads784x_attr_group = {
- };
- 
- /*--------------------------------------------------------------------------*/
--
--static void null_wait_for_sync(void)
-+static void ads7846_wait_for_sync_gpio(struct ads7846 *ts)
- {
-+	if (!ts->sync)
-+		return;
-+	while (!gpiod_get_value(ts->sync))
-+		cpu_relax();
-+
-+	while (gpiod_get_value(ts->sync))
-+		cpu_relax();
+diff --git a/drivers/platform/x86/intel/int3472/clk_and_regulator.c b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
+index ef4b3141efcd..459f96c04ca1 100644
+--- a/drivers/platform/x86/intel/int3472/clk_and_regulator.c
++++ b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
+@@ -162,9 +162,8 @@ int skl_int3472_register_dsm_clock(struct int3472_discrete_device *int3472)
  }
  
- static int ads7846_debounce_filter(void *ads, int data_idx, int *val)
-@@ -803,7 +808,7 @@ static void ads7846_read_state(struct ads7846 *ts)
- 	packet->last_cmd_idx = 0;
+ int skl_int3472_register_gpio_clock(struct int3472_discrete_device *int3472,
+-				    struct acpi_resource_gpio *agpio, u32 polarity)
++				    struct gpio_desc *gpio)
+ {
+-	char *path = agpio->resource_source.string_ptr;
+ 	struct clk_init_data init = {
+ 		.ops = &skl_int3472_clock_ops,
+ 		.flags = CLK_GET_RATE_NOCACHE,
+@@ -174,19 +173,7 @@ int skl_int3472_register_gpio_clock(struct int3472_discrete_device *int3472,
+ 	if (int3472->clock.cl)
+ 		return -EBUSY;
  
- 	while (true) {
--		ts->wait_for_sync();
-+		ads7846_wait_for_sync_gpio(ts);
- 
- 		m = &ts->msg[msg_idx];
- 		error = spi_sync(ts->spi, m);
-@@ -1261,8 +1266,6 @@ static int ads7846_probe(struct spi_device *spi)
- 		ts->penirq_recheck_delay_usecs =
- 				pdata->penirq_recheck_delay_usecs;
- 
--	ts->wait_for_sync = pdata->wait_for_sync ? : null_wait_for_sync;
+-	int3472->clock.ena_gpio = acpi_get_and_request_gpiod(path, agpio->pin_table[0],
+-							     "int3472,clk-enable");
+-	if (IS_ERR(int3472->clock.ena_gpio)) {
+-		ret = PTR_ERR(int3472->clock.ena_gpio);
+-		int3472->clock.ena_gpio = NULL;
+-		return dev_err_probe(int3472->dev, ret, "getting clk-enable GPIO\n");
+-	}
 -
- 	snprintf(ts->phys, sizeof(ts->phys), "%s/input0", dev_name(dev));
- 	snprintf(ts->name, sizeof(ts->name), "ADS%d Touchscreen", ts->model);
+-	if (polarity == GPIO_ACTIVE_LOW)
+-		gpiod_toggle_active_low(int3472->clock.ena_gpio);
+-
+-	/* Ensure the pin is in output mode and non-active state */
+-	gpiod_direction_output(int3472->clock.ena_gpio, 0);
++	int3472->clock.ena_gpio = gpio;
  
-@@ -1361,6 +1364,11 @@ static int ads7846_probe(struct spi_device *spi)
- 	if (err)
- 		return err;
- 
-+	ts->sync = devm_gpiod_get_optional(dev, "sync", GPIOD_IN);
-+	if (IS_ERR(ts->sync))
-+		return dev_err_probe(dev, PTR_ERR(ts->sync),
-+				"Failed to get sync GPIO");
-+
- 	err = input_register_device(input_dev);
- 	if (err)
- 		return err;
-diff --git a/include/linux/spi/ads7846.h b/include/linux/spi/ads7846.h
-index a04c1c34c344..fa7c4f119023 100644
---- a/include/linux/spi/ads7846.h
-+++ b/include/linux/spi/ads7846.h
-@@ -38,7 +38,6 @@ struct ads7846_platform_data {
- 	int	gpio_pendown_debounce;	/* platform specific debounce time for
- 					 * the gpio_pendown */
- 	int	(*get_pendown_state)(void);
--	void	(*wait_for_sync)(void);
- 	bool	wakeup;
- 	unsigned long irq_flags;
+ 	init.name = kasprintf(GFP_KERNEL, "%s-clk",
+ 			      acpi_dev_name(int3472->adev));
+@@ -273,9 +260,8 @@ static const struct dmi_system_id skl_int3472_regulator_second_sensor[] = {
  };
-
+ 
+ int skl_int3472_register_regulator(struct int3472_discrete_device *int3472,
+-				   struct acpi_resource_gpio *agpio)
++				   struct gpio_desc *gpio)
+ {
+-	char *path = agpio->resource_source.string_ptr;
+ 	struct regulator_init_data init_data = { };
+ 	struct regulator_config cfg = { };
+ 	const char *second_sensor = NULL;
+@@ -314,16 +300,7 @@ int skl_int3472_register_regulator(struct int3472_discrete_device *int3472,
+ 						int3472->regulator.supply_name,
+ 						&int3472_gpio_regulator_ops);
+ 
+-	int3472->regulator.gpio = acpi_get_and_request_gpiod(path, agpio->pin_table[0],
+-							     "int3472,regulator");
+-	if (IS_ERR(int3472->regulator.gpio)) {
+-		ret = PTR_ERR(int3472->regulator.gpio);
+-		int3472->regulator.gpio = NULL;
+-		return dev_err_probe(int3472->dev, ret, "getting regulator GPIO\n");
+-	}
+-
+-	/* Ensure the pin is in output mode and non-active state */
+-	gpiod_direction_output(int3472->regulator.gpio, 0);
++	int3472->regulator.gpio = gpio;
+ 
+ 	cfg.dev = &int3472->adev->dev;
+ 	cfg.init_data = &init_data;
+diff --git a/drivers/platform/x86/intel/int3472/common.h b/drivers/platform/x86/intel/int3472/common.h
+index 9f29baa13860..145dec66df64 100644
+--- a/drivers/platform/x86/intel/int3472/common.h
++++ b/drivers/platform/x86/intel/int3472/common.h
+@@ -117,16 +117,15 @@ int skl_int3472_get_sensor_adev_and_name(struct device *dev,
+ 					 const char **name_ret);
+ 
+ int skl_int3472_register_gpio_clock(struct int3472_discrete_device *int3472,
+-				    struct acpi_resource_gpio *agpio, u32 polarity);
++				    struct gpio_desc *gpio);
+ int skl_int3472_register_dsm_clock(struct int3472_discrete_device *int3472);
+ void skl_int3472_unregister_clock(struct int3472_discrete_device *int3472);
+ 
+ int skl_int3472_register_regulator(struct int3472_discrete_device *int3472,
+-				   struct acpi_resource_gpio *agpio);
++				   struct gpio_desc *gpio);
+ void skl_int3472_unregister_regulator(struct int3472_discrete_device *int3472);
+ 
+-int skl_int3472_register_pled(struct int3472_discrete_device *int3472,
+-			      struct acpi_resource_gpio *agpio, u32 polarity);
++int skl_int3472_register_pled(struct int3472_discrete_device *int3472, struct gpio_desc *gpio);
+ void skl_int3472_unregister_pled(struct int3472_discrete_device *int3472);
+ 
+ #endif
+diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/platform/x86/intel/int3472/discrete.c
+index b69ef63f75ab..0bc7cbefd9ae 100644
+--- a/drivers/platform/x86/intel/int3472/discrete.c
++++ b/drivers/platform/x86/intel/int3472/discrete.c
+@@ -194,6 +194,7 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
+ 	struct acpi_resource_gpio *agpio;
+ 	u8 active_value, pin, type;
+ 	union acpi_object *obj;
++	struct gpio_desc *gpio;
+ 	const char *err_msg;
+ 	const char *func;
+ 	u32 polarity;
+@@ -244,22 +245,38 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
+ 
+ 		break;
+ 	case INT3472_GPIO_TYPE_CLK_ENABLE:
+-		ret = skl_int3472_register_gpio_clock(int3472, agpio, polarity);
+-		if (ret)
+-			err_msg = "Failed to register clock\n";
+-
+-		break;
+ 	case INT3472_GPIO_TYPE_PRIVACY_LED:
+-		ret = skl_int3472_register_pled(int3472, agpio, polarity);
+-		if (ret)
+-			err_msg = "Failed to register LED\n";
+-
+-		break;
+ 	case INT3472_GPIO_TYPE_POWER_ENABLE:
+-		ret = skl_int3472_register_regulator(int3472, agpio);
+-		if (ret)
+-			err_msg = "Failed to map regulator to sensor\n";
++		gpio = skl_int3472_gpiod_get_from_temp_lookup(int3472, agpio, func, polarity);
++		if (IS_ERR(gpio)) {
++			ret = PTR_ERR(gpio);
++			err_msg = "Failed to get GPIO\n";
++			break;
++		}
+ 
++		switch (type) {
++		case INT3472_GPIO_TYPE_CLK_ENABLE:
++			ret = skl_int3472_register_gpio_clock(int3472, gpio);
++			if (ret)
++				err_msg = "Failed to register clock\n";
++
++			break;
++		case INT3472_GPIO_TYPE_PRIVACY_LED:
++			ret = skl_int3472_register_pled(int3472, gpio);
++			if (ret)
++				err_msg = "Failed to register LED\n";
++
++			break;
++		case INT3472_GPIO_TYPE_POWER_ENABLE:
++			ret = skl_int3472_register_regulator(int3472, gpio);
++			if (ret)
++				err_msg = "Failed to map regulator to sensor\n";
++
++			break;
++		default: /* Never reached */
++			ret = -EINVAL;
++			break;
++		}
+ 		break;
+ 	default:
+ 		dev_warn(int3472->dev,
+diff --git a/drivers/platform/x86/intel/int3472/led.c b/drivers/platform/x86/intel/int3472/led.c
+index bca1ce7d0d0c..476cd637fc51 100644
+--- a/drivers/platform/x86/intel/int3472/led.c
++++ b/drivers/platform/x86/intel/int3472/led.c
+@@ -16,26 +16,15 @@ static int int3472_pled_set(struct led_classdev *led_cdev,
+ 	return 0;
+ }
+ 
+-int skl_int3472_register_pled(struct int3472_discrete_device *int3472,
+-			      struct acpi_resource_gpio *agpio, u32 polarity)
++int skl_int3472_register_pled(struct int3472_discrete_device *int3472, struct gpio_desc *gpio)
+ {
+-	char *p, *path = agpio->resource_source.string_ptr;
++	char *p;
+ 	int ret;
+ 
+ 	if (int3472->pled.classdev.dev)
+ 		return -EBUSY;
+ 
+-	int3472->pled.gpio = acpi_get_and_request_gpiod(path, agpio->pin_table[0],
+-							     "int3472,privacy-led");
+-	if (IS_ERR(int3472->pled.gpio))
+-		return dev_err_probe(int3472->dev, PTR_ERR(int3472->pled.gpio),
+-				     "getting privacy LED GPIO\n");
+-
+-	if (polarity == GPIO_ACTIVE_LOW)
+-		gpiod_toggle_active_low(int3472->pled.gpio);
+-
+-	/* Ensure the pin is in output mode and non-active state */
+-	gpiod_direction_output(int3472->pled.gpio, 0);
++	int3472->pled.gpio = gpio;
+ 
+ 	/* Generate the name, replacing the ':' in the ACPI devname with '_' */
+ 	snprintf(int3472->pled.name, sizeof(int3472->pled.name),
 -- 
-2.42.0
-
+2.41.0
 
