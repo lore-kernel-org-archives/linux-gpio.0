@@ -2,184 +2,160 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF86E7C4E5
-	for <linux-gpio@archiver.kernel.org>; Wed,  4 Oct 2023 16:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78EAFE7C4E4
+	for <linux-gpio@archiver.kernel.org>; Wed,  4 Oct 2023 16:30:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243287AbjJDQZJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Wed, 4 Oct 2023 12:25:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52192 "EHLO
+        id S243374AbjJDQa6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Wed, 4 Oct 2023 12:30:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243347AbjJDQZI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Oct 2023 12:25:08 -0400
+        with ESMTP id S243357AbjJDQa5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Oct 2023 12:30:57 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CE3595
-        for <linux-gpio@vger.kernel.org>; Wed,  4 Oct 2023 09:23:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE4AC10F
+        for <linux-gpio@vger.kernel.org>; Wed,  4 Oct 2023 09:30:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1696436620;
+        s=mimecast20190719; t=1696437005;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=EDAbJtC3kcIoy3rYY6n3QxcRo3gjBVP/HkKRIxL6zt8=;
-        b=byke5kzLI3xZcBq7DasDHn610IfcWUYyybyTxiN/1IOJd4xYvRc3LMYpbCXqQdzgkCwCzP
-        LBEfYvAbXMPoM+rCFf9kr4+LOJqzLSNKJyW8Dk4ohJFwQDoUNL6h5R3SuD2nI3nqboj/5g
-        hbTADvgQsU7alo3br2syoKaSd+4MR4Q=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-287-HD7C8yVVPK-Az9-tXUum6Q-1; Wed, 04 Oct 2023 12:23:35 -0400
-X-MC-Unique: HD7C8yVVPK-Az9-tXUum6Q-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9A55718811A7;
-        Wed,  4 Oct 2023 16:23:34 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.39.192.89])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E07340C2015;
-        Wed,  4 Oct 2023 16:23:33 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        bh=lI0tHuKQm3hza7SJ8Hfos0tclaGBNnEY+R8qHgZutNg=;
+        b=Xc6w/dnfGvPAeCGnYQXzw/9rIEatwTRocPDfNGzXWYrMTy+O9eB5uIdEW0/UdsSryKf5dI
+        1bAlcPJMeU1iPgpms/VTKZNmHEhrioQVWrvTmYCMwjTgVRsCqO42G4PAHzERiNl9zBE/Pb
+        O6hUx49kv9F6TYe3WfTMALuOZL8lklA=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-131-KflVD_SYNkyhb8g7S5zekA-1; Wed, 04 Oct 2023 12:30:03 -0400
+X-MC-Unique: KflVD_SYNkyhb8g7S5zekA-1
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-534543af820so2316860a12.2
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Oct 2023 09:30:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696437001; x=1697041801;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lI0tHuKQm3hza7SJ8Hfos0tclaGBNnEY+R8qHgZutNg=;
+        b=fWNDBjeHByxcBZrCEoGwRkmRlwcCnc992si+bPBRTiH2IDbzRrfFkLJ1sJX0cIsPKa
+         bRKnbRCwDoSmEnxfKNdjQjRsaYJuPlieT55bvxQ6MnncEYm7vAl9o6YrgiaQM/r0+ZWi
+         uL6wFng1vJawmmGAFvsxYV2HNeBKVwBvmpw1hnkGWOQnIVks13YS0YcvJNcy+zRRrWhQ
+         +UFII9Gzh58qHV7GwcKWgWw4J+0+aPZlbbi8tqQbmNymEky2J5cLgxlhWKzLBH1zI2/m
+         5dpzOxi2wrrZhFaI1rJmXwIO+Pmwk6IKXrrON79k4yLKZZyhWTm6sLeVgAN3kjA3idbA
+         fHfg==
+X-Gm-Message-State: AOJu0Yzd/hVBEWzbR2q5/Bm0KxpwvAzULFwAeERjblmoCWb0MHRu5zut
+        B3/ZNox7DxW+zW8bkgNx+kHausbfuLKwNWZZicth/HjC5yvHJIPwS9kmulWFuNQTM2ghjQDxJzZ
+        /5C6R79JXpyPgKJ3TZRzOsw==
+X-Received: by 2002:a17:906:7382:b0:9ae:284:c93d with SMTP id f2-20020a170906738200b009ae0284c93dmr2244821ejl.5.1696437001589;
+        Wed, 04 Oct 2023 09:30:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IElkl1GzNocfc8JqmyUzDxej18jix4NEB50qQW6aI4r9SQHJwYmjjgCrxLNlGo7Q0rxgU8BSw==
+X-Received: by 2002:a17:906:7382:b0:9ae:284:c93d with SMTP id f2-20020a170906738200b009ae0284c93dmr2244800ejl.5.1696437001198;
+        Wed, 04 Oct 2023 09:30:01 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id gr11-20020a170906e2cb00b0099ccee57ac2sm3063899ejb.194.2023.10.04.09.29.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Oct 2023 09:30:00 -0700 (PDT)
+Message-ID: <29764d46-8d3d-9794-bbde-d7928a91cbb5@redhat.com>
+Date:   Wed, 4 Oct 2023 18:29:59 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 0/5] platform/x86: int3472: don't use
+ gpiod_toggle_active_low()
+Content-Language: en-US, nl
+To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        platform-driver-x86@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
         Daniel Scally <djrscally@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: [PATCH v3 4/5] platform/x86: int3472: Switch to devm_get_gpiod()
-Date:   Wed,  4 Oct 2023 18:23:16 +0200
-Message-ID: <20231004162317.163488-5-hdegoede@redhat.com>
-In-Reply-To: <20231004162317.163488-1-hdegoede@redhat.com>
-References: <20231004162317.163488-1-hdegoede@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+        Mark Gross <markgross@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+References: <20230926145943.42814-1-brgl@bgdev.pl>
+ <e6817d30-b443-1a73-efae-84415604b19f@redhat.com>
+ <CACMJSetWH=Z5ubHb33W0mYvpqkU7vv=nKNBSa9eLmAi94NyrgA@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <CACMJSetWH=Z5ubHb33W0mYvpqkU7vv=nKNBSa9eLmAi94NyrgA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Switch to devm_get_gpiod() for discrete GPIOs for clks / regulators / LEDs
-and let devm do the cleanup for us.
+Hi Bart,
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- .../x86/intel/int3472/clk_and_regulator.c     | 23 ++++---------------
- drivers/platform/x86/intel/int3472/discrete.c |  2 +-
- drivers/platform/x86/intel/int3472/led.c      |  7 +-----
- 3 files changed, 6 insertions(+), 26 deletions(-)
+On 9/28/23 20:40, Bartosz Golaszewski wrote:
+> On Thu, 28 Sept 2023 at 14:40, Hans de Goede <hdegoede@redhat.com> wrote:
+>>
+>> Hi All,
+>>
+>> Here is a v2 of Bartosz' "don't use gpiod_toggle_active_low()" series.
+>>
+>> New in v2:
+>> - Rework to deal with ACPI path vs gpiod_lookup.key differences:
+>>   acpi_get_handle(path) -> acpi_fetch_acpi_dev(handle) -> acpi_dev_name(adev)
+>>
+>> Regards,
+>>
+>> Hans
+>>
+>>
+>> Bartosz Golaszewski (2):
+>>   platform/x86: int3472: Add new
+>>     skl_int3472_gpiod_get_from_temp_lookup() helper
+>>   gpio: acpi: remove acpi_get_and_request_gpiod()
+>>
+>> Hans de Goede (3):
+>>   platform/x86: int3472: Add new skl_int3472_fill_gpiod_lookup() helper
+>>   platform/x86: int3472: Stop using gpiod_toggle_active_low()
+>>   platform/x86: int3472: Switch to devm_get_gpiod()
+>>
+>>  drivers/gpio/gpiolib-acpi.c                   |  28 -----
+>>  .../x86/intel/int3472/clk_and_regulator.c     |  54 ++--------
+>>  drivers/platform/x86/intel/int3472/common.h   |   7 +-
+>>  drivers/platform/x86/intel/int3472/discrete.c | 101 ++++++++++++++----
+>>  drivers/platform/x86/intel/int3472/led.c      |  24 +----
+>>  include/linux/gpio/consumer.h                 |   8 --
+>>  6 files changed, 93 insertions(+), 129 deletions(-)
+>>
+>> --
+>> 2.41.0
+>>
+> 
+> Thanks Hans, this looks good to me. I'd let it sit on the list for a
+> week. After that, do you want to take patches 1-4 and provide me with
+> another tag?
 
-diff --git a/drivers/platform/x86/intel/int3472/clk_and_regulator.c b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-index 459f96c04ca1..16e36ac0a7b4 100644
---- a/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-+++ b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-@@ -177,10 +177,8 @@ int skl_int3472_register_gpio_clock(struct int3472_discrete_device *int3472,
- 
- 	init.name = kasprintf(GFP_KERNEL, "%s-clk",
- 			      acpi_dev_name(int3472->adev));
--	if (!init.name) {
--		ret = -ENOMEM;
--		goto out_put_gpio;
--	}
-+	if (!init.name)
-+		return -ENOMEM;
- 
- 	int3472->clock.frequency = skl_int3472_get_clk_frequency(int3472);
- 
-@@ -206,8 +204,6 @@ int skl_int3472_register_gpio_clock(struct int3472_discrete_device *int3472,
- 	clk_unregister(int3472->clock.clk);
- out_free_init_name:
- 	kfree(init.name);
--out_put_gpio:
--	gpiod_put(int3472->clock.ena_gpio);
- 
- 	return ret;
- }
-@@ -219,7 +215,6 @@ void skl_int3472_unregister_clock(struct int3472_discrete_device *int3472)
- 
- 	clkdev_drop(int3472->clock.cl);
- 	clk_unregister(int3472->clock.clk);
--	gpiod_put(int3472->clock.ena_gpio);
- }
- 
- /*
-@@ -266,7 +261,7 @@ int skl_int3472_register_regulator(struct int3472_discrete_device *int3472,
- 	struct regulator_config cfg = { };
- 	const char *second_sensor = NULL;
- 	const struct dmi_system_id *id;
--	int i, j, ret;
-+	int i, j;
- 
- 	id = dmi_first_match(skl_int3472_regulator_second_sensor);
- 	if (id)
-@@ -309,21 +304,11 @@ int skl_int3472_register_regulator(struct int3472_discrete_device *int3472,
- 	int3472->regulator.rdev = regulator_register(int3472->dev,
- 						     &int3472->regulator.rdesc,
- 						     &cfg);
--	if (IS_ERR(int3472->regulator.rdev)) {
--		ret = PTR_ERR(int3472->regulator.rdev);
--		goto err_free_gpio;
--	}
- 
--	return 0;
--
--err_free_gpio:
--	gpiod_put(int3472->regulator.gpio);
--
--	return ret;
-+	return PTR_ERR_OR_ZERO(int3472->regulator.rdev);
- }
- 
- void skl_int3472_unregister_regulator(struct int3472_discrete_device *int3472)
- {
- 	regulator_unregister(int3472->regulator.rdev);
--	gpiod_put(int3472->regulator.gpio);
- }
-diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/platform/x86/intel/int3472/discrete.c
-index 0bc7cbefd9ae..07b302e09340 100644
---- a/drivers/platform/x86/intel/int3472/discrete.c
-+++ b/drivers/platform/x86/intel/int3472/discrete.c
-@@ -119,7 +119,7 @@ skl_int3472_gpiod_get_from_temp_lookup(struct int3472_discrete_device *int3472,
- 		return ERR_PTR(ret);
- 
- 	gpiod_add_lookup_table(lookup);
--	desc = gpiod_get(int3472->dev, func, GPIOD_OUT_LOW);
-+	desc = devm_gpiod_get(int3472->dev, func, GPIOD_OUT_LOW);
- 	gpiod_remove_lookup_table(lookup);
- 
- 	return desc;
-diff --git a/drivers/platform/x86/intel/int3472/led.c b/drivers/platform/x86/intel/int3472/led.c
-index 476cd637fc51..9cbed694e2ca 100644
---- a/drivers/platform/x86/intel/int3472/led.c
-+++ b/drivers/platform/x86/intel/int3472/led.c
-@@ -39,7 +39,7 @@ int skl_int3472_register_pled(struct int3472_discrete_device *int3472, struct gp
- 
- 	ret = led_classdev_register(int3472->dev, &int3472->pled.classdev);
- 	if (ret)
--		goto err_free_gpio;
-+		return ret;
- 
- 	int3472->pled.lookup.provider = int3472->pled.name;
- 	int3472->pled.lookup.dev_id = int3472->sensor_name;
-@@ -47,10 +47,6 @@ int skl_int3472_register_pled(struct int3472_discrete_device *int3472, struct gp
- 	led_add_lookup(&int3472->pled.lookup);
- 
- 	return 0;
--
--err_free_gpio:
--	gpiod_put(int3472->pled.gpio);
--	return ret;
- }
- 
- void skl_int3472_unregister_pled(struct int3472_discrete_device *int3472)
-@@ -60,5 +56,4 @@ void skl_int3472_unregister_pled(struct int3472_discrete_device *int3472)
- 
- 	led_remove_lookup(&int3472->pled.lookup);
- 	led_classdev_unregister(&int3472->pled.classdev);
--	gpiod_put(int3472->pled.gpio);
- }
--- 
-2.41.0
+I have just send out a v3 to address Andy's remark about me
+somehow resetting the authorship to me on 2 patches from Bartosz.
+
+While working on this I noticed (and fixed) a bug in:
+
+[RFT PATCH 1/4] platform/x86: int3472: provide a helper for getting GPIOs from lookups
+https://lore.kernel.org/all/20230926145943.42814-2-brgl@bgdev.pl/
+
+	struct gpiod_lookup_table *lookup __free(kfree) =
+			kzalloc(struct_size(lookup, table, 1), GFP_KERNEL);
+
+You are allocating an entry for the temp lookup, but the gpiolib
+core expects lookup tables to be terminated with an entry lookup,
+so this should alloc space for 2 entries:
+
+	struct gpiod_lookup_table *lookup __free(kfree) =
+			kzalloc(struct_size(lookup, table, 2), GFP_KERNEL);
+
+Despite this already being fixed now I wanted to explicitly point
+this out in case you have used the same construct elsewhere during
+your recent gpiolib cleanup efforts ?
+
+As for your request for a tag for the 4st 4 patches for you to merge
+into gpiolib. I'll go and work work on that. I need to coordinate
+this with Ilpo, with whom I now co-maintain pdx86 .
+
+Regards,
+
+Hans
+
 
