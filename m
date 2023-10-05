@@ -2,245 +2,146 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 039D6E92702
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 14:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FA9E92705
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 14:35:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235538AbjJEOfn (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:35:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38568 "EHLO
+        id S236147AbjJEOfy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Oct 2023 10:35:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235330AbjJEOeQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 10:34:16 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A8DA3581
-        for <linux-gpio@vger.kernel.org>; Wed,  4 Oct 2023 21:24:35 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-53447d0241eso860764a12.3
-        for <linux-gpio@vger.kernel.org>; Wed, 04 Oct 2023 21:24:35 -0700 (PDT)
+        with ESMTP id S235745AbjJEOeW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 10:34:22 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BFB37DA0
+        for <linux-gpio@vger.kernel.org>; Thu,  5 Oct 2023 00:42:32 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-522bd411679so1020930a12.0
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Oct 2023 00:42:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1696479874; x=1697084674; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1FDosmr4pTB4y3KlQsf5VlEUdTtkvwPO8SEeca8pbEI=;
-        b=hX0m0BamELUggdQn39+7vtvWTGBxZchWqIskXYXn0EsJhWiMfZG57nQmTBttxulXPY
-         Xp9GzqCPQRHEHQFrus/zUMu0smuaM4t7G5UDobUNAgHoZUpvQN7S7UFluwh367KmRreo
-         DqT8hXm9WcmWoysGWdYnzJaKgSuu3hGmQQeOvEdijxo1Naa3DOsZEXk8s8TxHmPIsEnP
-         ugJPDN4Fc3n8ceZW0Ko8UWenQn82/RHit9ogb2jacfS1BnaysYHyrwrWLEVKLHObJvMP
-         UWtgKtpPaAJgRiPZtcjXOae2bJDRFAwUYEHyfjwZlQ6YzRtDv+fcB6lltK0jxowXi4k0
-         k61A==
+        d=linaro.org; s=google; t=1696491750; x=1697096550; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tLnTS38DyxCuIhZvuKF6L9larEXjV5fmGyQF7glUG0Y=;
+        b=K9/1Q1hBGvxvyRrPc7s7sdOSATAEVgNETEmG8wFJwI+mklunDFLlQLNWCEsveNZRND
+         cwXEpRpx9Lm4G+ZVHYywGwyS3pdaz8VnePofCi4UtS4L91bbXYURYtxh4zrcBaR9HCWB
+         WyNywMSNyVwe4IWOx5eGQlfR0e2gWd8HqsTyu8NzSgHID2cr57zisf1+8/15EdGEG5ga
+         koNvPjDdlznVuAJcSofJctISPazoCUt1uUxH/ohIVxI4azdstzjEuGEYgL9JzXhH9mpa
+         MGLVlhYBRVZoZUeoxSExbPomF9Dh3VPlgeAOVJpGUlGPkErwrGvg7R78NookwaCzK9gE
+         JLww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696479874; x=1697084674;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1FDosmr4pTB4y3KlQsf5VlEUdTtkvwPO8SEeca8pbEI=;
-        b=u96TGIP0q0TPUpRtTvm7O3ot+UZ3QXNQdk307HcspCQp5XbFvaeJNuoWvivr7Hwfvi
-         F8ZPb/jLw8CF21vXN2zp8Gh6EldHWlge9hlJaEFqFDqoJkVd3fjCeSQAeCLmEJl4yxow
-         gszhpT1rELQp1xN5Eqi9mg0XkCTrTUKfZDIVEwk+XExFhr6q7J4Myn41+JNHq/i95zCF
-         6Hb6oSZ8zoVrJ3mISr1jbBmP8renHH8UnTZJpL51+c8SnNiU4L2W/A5f8LzSKPdktfXM
-         fuwhsqW0CFn/03ZKwaqVe/tZ86n42nDwWLgPM5R7C6SRUuO3QOGeUF6u5ZBjEkDO6kvI
-         gE3A==
-X-Gm-Message-State: AOJu0YwlqiicJFE5LuKF6RxLvDcmmGN1+p/SUDDOhnC4YT07H+jmc/TL
-        ENLmb6/rwIdFY6Sqh/r+vmWxhA==
-X-Google-Smtp-Source: AGHT+IHa/5RZ0/NvxslXh1L0yV6vSI7aQFJL/Ac85bcm5Do80CLgawrfw75osdtTrQOTg2Bt7hM+iQ==
-X-Received: by 2002:aa7:da83:0:b0:533:d81b:36d5 with SMTP id q3-20020aa7da83000000b00533d81b36d5mr3553479eds.15.1696479873654;
-        Wed, 04 Oct 2023 21:24:33 -0700 (PDT)
-Received: from [192.168.32.2] ([147.161.130.252])
-        by smtp.gmail.com with ESMTPSA id w25-20020a056402071900b00537fd4abdc5sm388339edx.54.2023.10.04.21.24.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Oct 2023 21:24:33 -0700 (PDT)
-Message-ID: <0d0448c7-c33b-8960-d2ed-0a22e2f7fb3d@tuxon.dev>
-Date:   Thu, 5 Oct 2023 07:24:30 +0300
+        d=1e100.net; s=20230601; t=1696491750; x=1697096550;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tLnTS38DyxCuIhZvuKF6L9larEXjV5fmGyQF7glUG0Y=;
+        b=geK+YKE7+VhOGwDU8xi0O7AW5McU4b3ih1us/4NoZSXOivL8Th3QJyaViUNz/FVDQC
+         cTkei2Hq47jhrBsV8j93qXHGNJQdk6OXKrC97v+Tp87Mi1tU99IRobSllrCJVN9CHrOQ
+         acmd9wDutNOYFu02dv3gfWjMrRnEEAG+r2BG165le/5wQ5Sxmax9W+o/G2GZCGni61s3
+         5o4H1stRFfC4PniqmF75b1688EfHuWXknO/3N+hiGiuIQkUcoL480N1Wl2X3siwwfGOV
+         fN9UjXSoICDljwCDX9RahgZz91tbUKsaYzaPeME5JfXRv7GzHXE+fM+rH/rDiKHDICkv
+         7G6w==
+X-Gm-Message-State: AOJu0YzuCKtU6GtzbAAvxGO/D99c2pEKTA6J0fC+CrnAnwjTTixM2OeJ
+        RNEnULFi1dguwX83CCmJPaMpfQtnHcupC4gzin0=
+X-Google-Smtp-Source: AGHT+IHeIgFTHZM8RR3g4H3e4AyuL0snoCMYCvPeDynUm+dCNqvZTx30FCkTvR093izRXceXggqfZQ==
+X-Received: by 2002:aa7:db45:0:b0:533:520:a5a8 with SMTP id n5-20020aa7db45000000b005330520a5a8mr4001115edt.29.1696491750662;
+        Thu, 05 Oct 2023 00:42:30 -0700 (PDT)
+Received: from [192.168.1.149] (i5C743835.versanet.de. [92.116.56.53])
+        by smtp.gmail.com with ESMTPSA id n10-20020a056402060a00b0053447d022f9sm649014edv.18.2023.10.05.00.42.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Oct 2023 00:42:30 -0700 (PDT)
+From:   Erik Schilling <erik.schilling@linaro.org>
+Date:   Thu, 05 Oct 2023 09:42:23 +0200
+Subject: [libgpiod][PATCH] bindings: rust: libgpiod: release 0.2.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 10/28] clk: renesas: rzg2l: refactor sd mux driver
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, magnus.damm@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        quic_bjorande@quicinc.com, konrad.dybcio@linaro.org, arnd@arndb.de,
-        neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20230929053915.1530607-1-claudiu.beznea@bp.renesas.com>
- <20230929053915.1530607-11-claudiu.beznea@bp.renesas.com>
- <CAMuHMdUJj+h5LfhQXTNkN3Cp2wP62SX6fY3frzytJQBcKXDJJQ@mail.gmail.com>
-From:   claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdUJj+h5LfhQXTNkN3Cp2wP62SX6fY3frzytJQBcKXDJJQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20231005-b4-rust-release-0_2_0-v1-1-0fab05c09962@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAN5oHmUC/x3M0QqCQBBG4VeRuW5gdt0KepUIWddfGxCVmYpAf
+ PeWLr+Lc3ZymMLp1uxk+KjrulSEU0PlmZcJrEM1RYltEDlzn9je/mLDjOxg6WInHNqUcMnjtZR
+ Itd0Mo37/3zvN2k+brgM9juMHXs+0qHEAAAA=
+To:     Linux-GPIO <linux-gpio@vger.kernel.org>, brgl@bgdev.pl
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+        Kent Gibson <warthog618@gmail.com>,
+        Erik Schilling <erik.schilling@linaro.org>
+X-Mailer: b4 0.13-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1696491749; l=2898;
+ i=erik.schilling@linaro.org; s=20230523; h=from:subject:message-id;
+ bh=AVJt5L0DbnfcwDUAdZyqyPAbvqncCt8e8r5ky7wbYDU=;
+ b=CQ9DMBAQaDJwYh7LOgCYYRUg7LPmPC7hgobVHhHu50XjVef43lysljoTpyh+NmJriTegBxIIT
+ 0C1ER0jn3PwD38G30wW5IFHG4G27/N8zdIT5Vu7VKRyITy3gDLILY1Z
+X-Developer-Key: i=erik.schilling@linaro.org; a=ed25519;
+ pk=/nNqy8/YOEdthj1epXl5FgwCTKEiVqTqqnVN1jVal7s=
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi, Geert,
+Since we had some (potentially-)breaking changes, we bump the major for
+the next release of the crate.
 
-On 04.10.2023 14:30, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Fri, Sep 29, 2023 at 7:39 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Refactor SD MUX driver to be able to reuse the same code on RZ/G3S.
->> RZ/G2{L, UL} has a limitation with regards to switching the clock source
->> for SD MUX (MUX clock source has to be switched to 266MHz before switching
->> b/w 533MHz and 400MHz). This limitation has been introduced as a clock
->> notifier that is registered on platform based initialization data thus the
->> SD MUX code could be reused on RZ/G3S.
->>
->> As both RZ/G2{L, UL} and RZ/G3S has specific bits in specific registers
->> to check if the clock switching has been done, this configuration (register
->> offset, register bits and bits width) is now passed though
->> struct cpg_core_clk::sconf (status configuration) from platform specific
->> initialization code.
->>
->> Along with struct cpg_core_clk::sconf the mux table indices are also
->> passed from platform specific initialization code.
->>
->> Also, mux flags are now passed to DEF_SD_MUX() as they will be later
->> used by RZ/G3S.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v2:
->> - s/indexes/indices in commit description
->> - mentioned in commit description that mux flags can now be passed to
->>   driver though DEF_SD_MUX() macro
->> - removed SoC specific names from macros' names
->> - added spaces after { and before } when initializing arrays
->> - preserved the order of .[gs]set_parent() API definitions for simpler
->>   diff b/w versions
->> - removed SD_MUX_NOTIF macro
-> 
-> Thanks for the update!
-> 
->> --- a/drivers/clk/renesas/rzg2l-cpg.c
->> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> 
->> @@ -142,6 +146,77 @@ static void rzg2l_cpg_del_clk_provider(void *data)
->>         of_clk_del_provider(data);
->>  }
->>
->> +/* Must be called in atomic context. */
->> +static int rzg2l_cpg_wait_clk_update_done(void __iomem *base, u32 conf)
->> +{
->> +       u32 bitmask = GENMASK(GET_WIDTH(conf) - 1, 0) << GET_SHIFT(conf);
->> +       u32 off = GET_REG_OFFSET(conf);
->> +       u32 val;
->> +
->> +       return readl_poll_timeout_atomic(base + off, val, !(val & bitmask), 10, 200);
->> +}
->> +
->> +int rzg2l_cpg_sd_mux_clk_notifier(struct notifier_block *nb, unsigned long event,
->> +                                 void *data)
->> +{
->> +       struct clk_notifier_data *cnd = data;
->> +       struct clk_hw *hw = __clk_get_hw(cnd->clk);
->> +       struct clk_hw_data *clk_hw_data = to_clk_hw_data(hw);
->> +       struct rzg2l_cpg_priv *priv = clk_hw_data->priv;
->> +       u32 off = GET_REG_OFFSET(clk_hw_data->conf);
->> +       u32 shift = GET_SHIFT(clk_hw_data->conf);
->> +       const u32 clk_src_266 = 3;
->> +       unsigned long flags;
->> +       u32 bitmask;
->> +       int ret;
->> +
->> +       if (event != PRE_RATE_CHANGE || (cnd->new_rate / MEGA == 266))
->> +               return 0;
-> 
-> include/linux/clk.h:
-> 
->  * PRE_RATE_CHANGE - called immediately before the clk rate is changed,
->  *     to indicate that the rate change will proceed.  Drivers must
->  *     immediately terminate any operations that will be affected by the
->  *     rate change.  Callbacks may either return NOTIFY_DONE, NOTIFY_OK,
->  *     NOTIFY_STOP or NOTIFY_BAD.
+Note:
+I am using the term "major" as defined in the Rust SemVer compatibility
+guide [1], where the first non-zero digit is considered as "major".
 
-Indeed I missed these.
+[1] https://doc.rust-lang.org/cargo/reference/semver.html
 
-> 
->> +
->> +       spin_lock_irqsave(&priv->rmw_lock, flags);
->> +
->> +       /*
->> +        * As per the HW manual, we should not directly switch from 533 MHz to
->> +        * 400 MHz and vice versa. To change the setting from 2’b01 (533 MHz)
->> +        * to 2’b10 (400 MHz) or vice versa, Switch to 2’b11 (266 MHz) first,
->> +        * and then switch to the target setting (2’b01 (533 MHz) or 2’b10
->> +        * (400 MHz)).
->> +        * Setting a value of '0' to the SEL_SDHI0_SET or SEL_SDHI1_SET clock
->> +        * switching register is prohibited.
->> +        * The clock mux has 3 input clocks(533 MHz, 400 MHz, and 266 MHz), and
->> +        * the index to value mapping is done by adding 1 to the index.
->> +        */
->> +       bitmask = (GENMASK(GET_WIDTH(clk_hw_data->conf) - 1, 0) << shift) << 16;
->> +       writel(bitmask | (clk_src_266 << shift), priv->base + off);
->> +
->> +       /* Wait for the update done. */
->> +       ret = rzg2l_cpg_wait_clk_update_done(priv->base, clk_hw_data->sconf);
->> +
->> +       spin_unlock_irqrestore(&priv->rmw_lock, flags);
->> +
->> +       if (ret)
->> +               dev_err(priv->dev, "failed to switch to safe clk source\n");
->> +
->> +       return ret;
-> 
-> Likewise.
-> 
->> +}
-> 
->>
->>  static const struct clk_ops rzg2l_cpg_sd_clk_mux_ops = {
->>         .determine_rate = __clk_mux_determine_rate_closest,
->> -       .set_parent     = rzg2l_cpg_sd_clk_mux_set_parent,
->> -       .get_parent     = rzg2l_cpg_sd_clk_mux_get_parent,
->> +       .set_parent     = rzg2l_cpg_sd_mux_clk_set_parent,
->> +       .get_parent     = rzg2l_cpg_sd_mux_clk_get_parent,
-> 
-> Please keep the old names, for consistency with
-> __clk_mux_determine_rate_closest() and drivers/clk/clk-mux.c, and to
-> reduce the diff.
-> 
-> Any existing inconsistent use of "clk_mux" vs. "mux_clk" can be resolved
-> later with a separate patch, if anyone cares.
+Changelog:
+=========
 
-ok
+(potentially-)breaking changes:
+  a29f3e6 (bindings: rust: rename {event,settings}_clone to try_clone, 2023-10-04)
+  b290348 (bindings: rust: fix soundness of line_info modeling, 2023-10-03)
+  d04639d (bindings: rust: bump MSRV to 1.60, 2023-06-16)
 
-> 
->> --- a/drivers/clk/renesas/rzg2l-cpg.h
->> +++ b/drivers/clk/renesas/rzg2l-cpg.h
-> 
->> @@ -272,4 +276,6 @@ extern const struct rzg2l_cpg_info r9a07g044_cpg_info;
->>  extern const struct rzg2l_cpg_info r9a07g054_cpg_info;
->>  extern const struct rzg2l_cpg_info r9a09g011_cpg_info;
->>
->> +int rzg2l_cpg_sd_mux_clk_notifier(struct notifier_block *nb, unsigned long event, void *data);
-> 
-> rzg2l_cpg_sd_clk_mux_notifier()?
+new functionality:
+  808d15e (bindings: rust: allow cloning line::InfoRef -> line::Info, 2023-10-03)
+  64aac85 (bindings: rust: mark all owning types as `Send`, 2023-09-28)
+  d12ce74 (bindings: rust: provide LineRequest::chip_name(), 2023-07-20)
+  53226d5 (bindings: rust: examples: add dedicated examples, 2023-06-14)
 
-ok
+other changes:
+  0a570b6 (bindings: rust: drop unneeded Arc within Chip, 2023-09-27)
+  a97fe96 (bindings: rust: construct chip infos by reference, 2023-09-27)
+  27afa47 (bindings: rust: remove useless clone, 2023-09-28)
+  3f6e0bf (bindings: rust: add README.md for libgpiod crate, 2023-07-03)
+  4b8357b (bindings: rust: clippy: silence false-positive on iterator, 2023-06-30)
+  39189f0 (bindings: rust: clippy: drop unneeded conversions, 2023-06-30)
+  46115fd (bindings: rust: clippy: silence false-positives on casts, 2023-06-30)
+  901104e (bindings: rust: clippy: drop unnecessary casts, 2023-06-30)
+  46ecbe0 (rust: examples: file comment consistency, 2023-06-24)
+  aaed0f2 (bindings: rust: examples: replace tools examples with use case examples, 2023-06-23)
+  b37bd9e (bindings: rust: examples: consistency cleanup, 2023-06-23)
+  06c8ad9 (bindings: rust: package new examples in the distro tarball, 2023-06-15)
 
-> 
->> +
->>  #endif
-> 
-> The rest LGTM.
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Signed-off-by: Erik Schilling <erik.schilling@linaro.org>
+---
+After merging a couple of important soundness fixes and threading API
+adjustments, I suggest doing a new release for the Rust bindings.
+
+Once this is merged, I will publish the tree of this commit to
+https://crates.io/crates/libgpiod/.
+---
+ bindings/rust/libgpiod/Cargo.toml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bindings/rust/libgpiod/Cargo.toml b/bindings/rust/libgpiod/Cargo.toml
+index 518e5e5..3be4aa0 100644
+--- a/bindings/rust/libgpiod/Cargo.toml
++++ b/bindings/rust/libgpiod/Cargo.toml
+@@ -4,7 +4,7 @@
+ 
+ [package]
+ name = "libgpiod"
+-version = "0.1.0"
++version = "0.2.0"
+ authors = ["Viresh Kumar <viresh.kumar@linaro.org>"]
+ description = "libgpiod wrappers"
+ repository = "https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git"
+
+---
+base-commit: a29f3e6957914dc564c723a8fc405cd99e407fd2
+change-id: 20231005-b4-rust-release-0_2_0-1344e6af7cc2
+
+Best regards,
+-- 
+Erik Schilling <erik.schilling@linaro.org>
+
