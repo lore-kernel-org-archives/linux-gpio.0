@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C2DE93712
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F197AE93716
 	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 16:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232388AbjJEQFJ (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:05:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37964 "EHLO
+        id S239810AbjJEQFK (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Oct 2023 12:05:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237001AbjJEQDs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 12:03:48 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7DC886812
-        for <linux-gpio@vger.kernel.org>; Thu,  5 Oct 2023 08:57:28 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-40537481094so10222095e9.0
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Oct 2023 08:57:28 -0700 (PDT)
+        with ESMTP id S237066AbjJEQDw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 12:03:52 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 696EC8682D
+        for <linux-gpio@vger.kernel.org>; Thu,  5 Oct 2023 08:57:31 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3215f19a13aso1140629f8f.3
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Oct 2023 08:57:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696521446; x=1697126246; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696521449; x=1697126249; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xm1Xoms6oZd6xtVAii0x+Ehd7QscBFZjC7N/3rM4L+E=;
-        b=AbQZamJfp1IPbiUPXSmmAsLLQmEA3T1t7xh+w7asSiyjfiE0qjoH4Fs3u1UeeohUq9
-         Czuk9yuTlYjzysGOe1Dv2pJJDCwqk+bnkU3KxitfjpRolhLh96/upJYn0QjqTaI2UT+0
-         yNWNKTIeVxp+JvfjMGhxjyWY7+kXbXJmNejWwM5ScUD3Ac3fhRSW6hz4HN6C7bmIMpsa
-         A9LaTEeTK2NEMwyD0SGk0BaVHaKFygv/QObVt5C8Ck4GObzbPCFw9fKvNtPHprgOfZ6j
-         mmDCpjq1nQE6DpAsz4oGQ64JH9DbjDx8MBEvMw+xWQ9y6oX8d3dmsqm3d3MMKWaA7MFg
-         uA4A==
+        bh=+WotVRIx4IfQWLl7bsIqhgSrhHJCYtM2efkzCcXjlJ0=;
+        b=fKN0FNxZQsnaKhU8KpZohEQIexiyaLjkt2O8JHVuY7/rXBtmgp3DFt7ZxA0wRpyq5b
+         AuEruZGCxhuOFpECFlxMjvVYAxLQfeUWE/RB86KG13uiKAQYpWJ76kTIVA2MytD/TlnV
+         1nRdb/Y9JepnHmfTfIxzx9TJlhQRXRoq11GNI1fK59ETXEI4RIzTHSG9PSH6GS5K+ekz
+         u0YLO8grA92CM82ZjQ4HEfd0Hw0ArC28hrC9XdFCkqR2t3OQuMCJfyvFs9ZsQu3RH9n6
+         U6LSF1g+6XbMis2C9W7lVPCGzxoOrTEsVEL0CX80rtx/5ctxE/LPwqra+9vOh9w7EDLA
+         C1EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696521446; x=1697126246;
+        d=1e100.net; s=20230601; t=1696521449; x=1697126249;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xm1Xoms6oZd6xtVAii0x+Ehd7QscBFZjC7N/3rM4L+E=;
-        b=r1jCW1f2JymBR28OcqrOGSbnO5w7p2uVt8Ghp+IlnjB9Gu8AFe84brDnhof1FlBmlK
-         vRLe0NufZ1sVUiD10QQOBG7XtR9HkCZk0XYDKROyVUf8qZcDjdPNuxCM9qU1EPqRkwlw
-         n+Dxd5ycOnYohUE6h2ZCZ2UCwziMuThZQHr8UDA3pvGn1yHPQaMleCpSdpN9yijSp8Fd
-         OOVUhW6AI1CaJ1AUdj4L6xmY1xMftiW9yYrO/TK0mJeUPNXVwyNARNiBeq3a8e/Gg0sK
-         uogqZWltaPIbz+V8d4mxnbsxo3o9FBX9wiestPpeOq3p276DBIbrskQr2/eYNw3gyW1X
-         +MOw==
-X-Gm-Message-State: AOJu0Yzlj9HmzC4CgiuRyFoP+mweK7keK/thdT60gfT8qFs/3oJQ5/WD
-        WC5h9X2sZb/ZTITahtAP0lmj8A==
-X-Google-Smtp-Source: AGHT+IEMvnjwfd4IeLtIJsxbXTd4pMr2IsgDm+E4xxpemwktFFHqJeH+cuxPlOWDyzgeNbQFbEBaMA==
-X-Received: by 2002:a5d:4c4a:0:b0:322:478b:2be9 with SMTP id n10-20020a5d4c4a000000b00322478b2be9mr5294165wrt.25.1696521446692;
-        Thu, 05 Oct 2023 08:57:26 -0700 (PDT)
+        bh=+WotVRIx4IfQWLl7bsIqhgSrhHJCYtM2efkzCcXjlJ0=;
+        b=BoPDUqIxQwYH2n81qV2rOEKh6H9t8nCen7jDc/U9yZnykhuJ5zcmXRykcZI3ZSuPpC
+         N2d8XUIjdNASNkUQgxwGT3ywIER2AVujuq5OErST5nJ6YPI7GttjnOsxZCSUiVKV6XMr
+         gKXb1Fxx7RwVpD4W6G3Mhf6KsNmIQOrDSHYB3TI+xgCiBRLqfbPqHOx1yvpfT9LeMFwM
+         07UP/8wPzhDvX+AUF6LEP5PPuFyYIXa4I3cAQrJhdXbw+s45NSpR/uaKCGsydNNkf9xO
+         oArmtQWzPdMJ4BVFSpomKgyhpyOjpDQ68tqsEAjxPh/kbLVOTu9v7egx2pNn3pJa/KO9
+         sVHA==
+X-Gm-Message-State: AOJu0Yy3o4ac4C0F9I38ec9zc34LRdd/VfVL3hv3Og1fL/2tfyDRunuF
+        YKds9/hmOwofUPDHdejDvIZHdg==
+X-Google-Smtp-Source: AGHT+IHb0s500PrFGOrLeuuBwpGQ7OFg+clB+5dsL7CoXu4v4IuKDCuex94QNDTzGTMDp0JcDuLSUg==
+X-Received: by 2002:adf:cc81:0:b0:321:5971:23a5 with SMTP id p1-20020adfcc81000000b00321597123a5mr5355332wrj.20.1696521449677;
+        Thu, 05 Oct 2023 08:57:29 -0700 (PDT)
 Received: from gpeter-l.lan (host-92-12-225-146.as13285.net. [92.12.225.146])
-        by smtp.gmail.com with ESMTPSA id t9-20020a5d4609000000b0031f8a59dbeasm2084336wrq.62.2023.10.05.08.57.25
+        by smtp.gmail.com with ESMTPSA id t9-20020a5d4609000000b0031f8a59dbeasm2084336wrq.62.2023.10.05.08.57.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 08:57:26 -0700 (PDT)
+        Thu, 05 Oct 2023 08:57:29 -0700 (PDT)
 From:   Peter Griffin <peter.griffin@linaro.org>
 To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
@@ -62,9 +62,9 @@ Cc:     peter.griffin@linaro.org, tudor.ambarus@linaro.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [PATCH 05/21] dt-bindings: watchdog: Document Google gs101 & gs201 watchdog bindings
-Date:   Thu,  5 Oct 2023 16:56:02 +0100
-Message-ID: <20231005155618.700312-6-peter.griffin@linaro.org>
+Subject: [PATCH 07/21] dt-bindings: pinctrl: samsung: add google,gs101-pinctrl compatible
+Date:   Thu,  5 Oct 2023 16:56:04 +0100
+Message-ID: <20231005155618.700312-8-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.42.0.582.g8ccd20d70d-goog
 In-Reply-To: <20231005155618.700312-1-peter.griffin@linaro.org>
 References: <20231005155618.700312-1-peter.griffin@linaro.org>
@@ -74,67 +74,36 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add the "google,gs101-wdt" and "google,gs201-wdt" compatibles to the
-dt-schema documentation.
+Add the "google,gs101-pinctrl" compatible to the dt-schema bindings
+documentation.
 
-gs101 SoC has two CPU clusters and each cluster has its own dedicated
-watchdog timer (similar to exynos850 and exynosautov9 SoCs).
-
-These WDT instances are controlled using different bits in PMU
-registers.
+Add maxItems of 50 for the interrupts property as gs101 can have
+multiple irqs.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- .../devicetree/bindings/watchdog/samsung-wdt.yaml      | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/pinctrl/samsung,pinctrl.yaml          | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-index 8fb6656ba0c2..30f5949037fc 100644
---- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-+++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-@@ -24,6 +24,8 @@ properties:
-       - samsung,exynos7-wdt                   # for Exynos7
-       - samsung,exynos850-wdt                 # for Exynos850
-       - samsung,exynosautov9-wdt              # for Exynosautov9
-+      - google,gs101-wdt                      # for Google gs101
-+      - google,gs201-wdt                      # for Google gs101
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+index 26614621774a..e0f37f8ae8e7 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+@@ -54,11 +54,13 @@ properties:
+       - samsung,exynos850-pinctrl
+       - samsung,exynosautov9-pinctrl
+       - tesla,fsd-pinctrl
++      - google,gs101-pinctrl
  
-   reg:
+   interrupts:
+     description:
+       Required for GPIO banks supporting external GPIO interrupts.
+-    maxItems: 1
++    minItems: 1
++    maxItems: 50
+ 
+   power-domains:
      maxItems: 1
-@@ -42,13 +44,13 @@ properties:
-   samsung,cluster-index:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     description:
--      Index of CPU cluster on which watchdog is running (in case of Exynos850)
-+      Index of CPU cluster on which watchdog is running (in case of Exynos850 or Google gsx01)
- 
-   samsung,syscon-phandle:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description:
-       Phandle to the PMU system controller node (in case of Exynos5250,
--      Exynos5420, Exynos7 and Exynos850).
-+      Exynos5420, Exynos7, Exynos850 and gsx01).
- 
- required:
-   - compatible
-@@ -69,6 +71,8 @@ allOf:
-               - samsung,exynos7-wdt
-               - samsung,exynos850-wdt
-               - samsung,exynosautov9-wdt
-+              - google,gs101-wdt
-+              - google,gs201-wdt
-     then:
-       required:
-         - samsung,syscon-phandle
-@@ -79,6 +83,8 @@ allOf:
-             enum:
-               - samsung,exynos850-wdt
-               - samsung,exynosautov9-wdt
-+              - google,gs101-wdt
-+              - google,gs201-wdt
-     then:
-       properties:
-         clocks:
 -- 
 2.42.0.582.g8ccd20d70d-goog
 
