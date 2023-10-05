@@ -2,69 +2,101 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4E4E92714
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 14:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C2DE92708
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 14:47:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233576AbjJEOpc (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:45:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51836 "EHLO
+        id S238717AbjJEOqa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Oct 2023 10:46:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237385AbjJEOm1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 10:42:27 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CD688CBCC;
-        Thu,  5 Oct 2023 07:18:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1696515513; x=1728051513;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RDXA4Czy4/VC9pIOKgODdkItFXMtu5oF9F4uaFy5xwY=;
-  b=iFzmnfBgapNqZZCc9g2EBcNTXJz48PAaJ4f7geOXPGt9BSS9zdMF6qnP
-   2nEAUdVMYAwauFdbpMjTVZ3E4DZpusU7G1AdGos4mxjOl4dTTCmrLdpdI
-   icPhdKZKCDKs1tewlWyjY5KFsNpubxzY0ckDnrIWxs/EWht4Z1D8x+9VK
-   M1v1qwTeYFCFIEcQ8f2aoW7JceKWHzKBc71/ZZGmFwqMkanKDteLTRSbs
-   g3l8ANVYCdfKXyyazirib1BGsMMCg2SiNuAhqDWnw5SN3stj8lZ734jHu
-   DiUAPTP4FFRBZWZqjev3i0vzSlvyVi0uNo600BY8QJeHV/TAkGSHVCdRN
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="387388267"
-X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
-   d="scan'208";a="387388267"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 07:18:32 -0700
+        with ESMTP id S231547AbjJEOoJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 10:44:09 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5CE313B70;
+        Thu,  5 Oct 2023 07:21:41 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10853"; a="363727183"
+X-IronPort-AV: E=Sophos;i="6.03,202,1694761200"; 
+   d="scan'208";a="363727183"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 01:42:39 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="817603846"
-X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
-   d="scan'208";a="817603846"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 05 Oct 2023 07:18:29 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 7879C345; Thu,  5 Oct 2023 17:18:29 +0300 (EEST)
-Date:   Thu, 5 Oct 2023 17:18:29 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+X-IronPort-AV: E=McAfee;i="6600,9927,10853"; a="701588130"
+X-IronPort-AV: E=Sophos;i="6.03,202,1694761200"; 
+   d="scan'208";a="701588130"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 01:42:37 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC1)
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1qoJwI-00000002yg3-2o0k;
+        Thu, 05 Oct 2023 11:42:34 +0300
+Date:   Thu, 5 Oct 2023 11:42:34 +0300
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v1 1/1] pinctrl: denverton: Replace MODULE_ALIAS() with
- MODULE_DEVICE_TABLE()
-Message-ID: <20231005141829.GV3208943@black.fi.intel.com>
-References: <20231005135945.3672438-1-andriy.shevchenko@linux.intel.com>
+        Takashi Iwai <tiwai@suse.com>
+Subject: Re: [PATCH v1 1/1] pinctrl: denverton: Enable platform device in the
+ absence of ACPI enumeration
+Message-ID: <ZR52+s1qrYTuE4IF@smile.fi.intel.com>
+References: <20230926190818.931951-1-andriy.shevchenko@linux.intel.com>
+ <76d1e643-9b81-4c23-8f46-73fe59913600@kernel.org>
+ <CAHp75VdKF+QfSsUwVSrSEng_xY_2ZW_0t0kBuXYPPcBi3_6LxQ@mail.gmail.com>
+ <cac56745-f611-48c2-bb1b-e86a3694fa59@kernel.org>
+ <CAHp75VeNG3cE5XmnhPyVQmR4Ppfk7CarSahU8-5Kpgg7TwLMjg@mail.gmail.com>
+ <a244d004-e354-4917-b83d-d51158ba896d@kernel.org>
+ <ZR52DZDCVEV3My5T@smile.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20231005135945.3672438-1-andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZR52DZDCVEV3My5T@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Oct 05, 2023 at 04:59:45PM +0300, Andy Shevchenko wrote:
-> As Krzysztof pointed out the better is to use MODULE_DEVICE_TABLE()
-> as it will be consistent with the content of the real ID table of
-> the platform devices.
-> 
-> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Thu, Oct 05, 2023 at 11:38:38AM +0300, Andy Shevchenko wrote:
+> On Thu, Oct 05, 2023 at 09:53:51AM +0200, Krzysztof Kozlowski wrote:
+> > On 04/10/2023 21:42, Andy Shevchenko wrote:
+> > > On Wed, Oct 4, 2023 at 4:20 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > >> On 04/10/2023 15:09, Andy Shevchenko wrote:
+> > >>> On Wed, Oct 4, 2023 at 11:18 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > >>>> On 26/09/2023 21:08, Andy Shevchenko wrote:
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+...
+
+> > >>>>> +MODULE_ALIAS("platform:denverton-pinctrl");
+> > >>>>
+> > >>>> Why do you need the alias? It's the same as ID table. You most likely
+> > >>>> miss MODULE_DEVICE_TABLE() or your table is just wrong.
+> > >>>
+> > >>> This is cargo cult from pinctrl-broxton.c. If we want to fix, we need
+> > >>> to fix both.
+> > >>> Care to send patches?
+> > >>
+> > >> I don't understand how some other file affects this. Why do you exactly
+> > >> need module alias here? Which use-case does not work without it (after
+> > >> adding proper MODULE_DEVICE_TABLE())?
+> > > 
+> > > We try to keep these drivers uniform. So, if something should be done
+> > > differently, it should be done for all affected drivers.
+> > > Since patch is applied, now we have two drivers to improve.
+> > 
+> > Awesome reason. So if you add accidentally bug to one driver, it should
+> > be copied to other file as well.
+> 
+> I'm not sure where it's a bug, it works. The problem is implementation
+> and I believe Mika and certainly me agree with your points that
+> MODULE_DEVICE_TABLE() is a right way to go.
+
+The initial implementation was done by 0c3013bbe1d8 ("pinctrl/broxton:
+enable platform device in the absence of ACPI enumeration"). It was
+ACKed by the driver maintainer as this one. But again, we agree that
+your way is better.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
