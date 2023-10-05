@@ -2,59 +2,59 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F25DE71D4F
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 16:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AEF3E7AD44
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 16:42:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229695AbjJEQji (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:39:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40616 "EHLO
+        id S231720AbjJEQmL (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Oct 2023 12:42:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233948AbjJEQie (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 12:38:34 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AE25AFB1
-        for <linux-gpio@vger.kernel.org>; Thu,  5 Oct 2023 09:07:53 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-533d9925094so2045255a12.2
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Oct 2023 09:07:52 -0700 (PDT)
+        with ESMTP id S231991AbjJEQkS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 12:40:18 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C00A1FED
+        for <linux-gpio@vger.kernel.org>; Thu,  5 Oct 2023 09:32:40 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-536071e79deso2701995a12.1
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Oct 2023 09:32:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696522071; x=1697126871; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696523558; x=1697128358; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=A9d7j0cYZDsIK9/MC/sZKybXO+oQ0zJyvFJ3Yr4FRco=;
-        b=N3tWq/5w6PYkmVxLN0+/E4dQ+Ch2UbQy8drKpdpMv/BS/DhIaZ+cs2rD//GrgjxczL
-         zKGJWr2yzYZyDOwAQtkZTKflAYBuCOovDBRbjG1ODUGBKB9FQVM9pEyTCQDo7jQn8QZI
-         C51OkE1Pmk+bRR9hxGPL4A5hpLpbOvMrzPF68b3SRBFbCQil9OAhvQZZ758vxwsnh7ag
-         XBCoaR+0qI9EgbEIO4q254iLlylBSbBdvWWn6Mr6nBd9VTBV+703aL7I8ExeH3qFSKti
-         0DW37XBjoENo8Ot1buflEVmHJYj2UfH5ulcB4cLeF0qb6RDVbgVeFf7hEwthhlc4uVsu
-         7qaw==
+        bh=Ys4Rn9sDoKGLwbwHx69SQsJVl2W8HKJketH4+P2llm4=;
+        b=s7tv75jd+0inYLVeAoANn1ZqVBVkU9qGAxHIihZEBqqCx73/1pUYdCec6CWPV2Uk9+
+         LgoKwMeGHva/rTH6V7ZtJHPpBSnK/oua0mFrI1Wyxcqnp40EDEl/skd2jJ99QyIkVsnR
+         0Jfx+3o9SQorO7gRPFFfrCc2Dda1RwDcFSfFaYV8wDdG8zXfPwtazP7afINUYCmluDqB
+         SiJXa87HWRB1N7FNMOVl4WpOCgo8AGr1UDF2/G+c09gf3xpow6yZt1CqklF711RmKVoE
+         sm34M5/O0fhFHNwk8h021JNh4xaO4IW4IaqZhzSYgYc1x2cQ7JtO/P1YgDrLz8SsQ9aD
+         46ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696522071; x=1697126871;
+        d=1e100.net; s=20230601; t=1696523558; x=1697128358;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A9d7j0cYZDsIK9/MC/sZKybXO+oQ0zJyvFJ3Yr4FRco=;
-        b=SXvqY+jlDHZqU0vLzUOSvuY7k29zELpLXrw0g6aNEhVj0UtSb2ZfHTxm5m6MkXlqEZ
-         AMOfUDa7oHPvAcQMOxtPoKJRgkSzsaqbWnSj3TIWIJ6rOewNaQSVO/TOz9iatSuF+Wh1
-         AM5sIoeihiN3DcQV1IjGqTfVfpqEScO1X6rhUgZ5so7bXIQE2PpQjoeSbjWWWEeG0z4Q
-         fgDK16OaVjpFB+QE7Tz/OlMVgCcp5p1k7JeVUfR8ujS4+S+m9fYmO5yM8/pQ+AM19m8m
-         JnQAYrPpwZ7wtyeaJug9XQnvZ3eNPiOU2ZeTI383XkMKT7Ub7tmzhmCsN6AKSPG0YdJ5
-         T4VQ==
-X-Gm-Message-State: AOJu0Yxh97sjudtTEoyWc+xPSrMG/BOgc9jOdBajZ+wbCqWWz3O9IZnp
-        kYoPGUs/hTDlmaXRUxMLNqVuPg==
-X-Google-Smtp-Source: AGHT+IFnG+SZs3IDSCXOJSAJ+vJQT9juwlVzYZDKjmMBVRNUOXbrO3Ff4JPb47IziseOqAiusbxhTQ==
-X-Received: by 2002:aa7:c6c4:0:b0:532:ec54:bfff with SMTP id b4-20020aa7c6c4000000b00532ec54bfffmr4972794eds.16.1696522071287;
-        Thu, 05 Oct 2023 09:07:51 -0700 (PDT)
+        bh=Ys4Rn9sDoKGLwbwHx69SQsJVl2W8HKJketH4+P2llm4=;
+        b=KNeY34OLMOvWsxpIGP4gZX3WGI2B3HXh5juKFNqxKCGJfriF1gRJKIZYtKSagvKBPc
+         5EHjNcmJP/fDIUGEjRETX4PRtIcQGz2BSl/Er9ayts0CoHTxp7nh1R8JdxS0014WSbJS
+         O3FohqnE26vl1jV29lmeIHGB9ba41ib4eh6E5CoDLCeqH+N3bq/Uw1HGn4Y4uOBCvaXy
+         9sPLHAVXwtCwSNx4JAzKTGCmUh1RtucbxpAAqtgo5cdxeng3vIkS+8z04EWXfHFGTf6S
+         nttmD7tP8FK4Ow4muYIVTQFwILDpwpSnWUvNq8v/JKAnbsCytbDBWe5hJ6rMBoULlEQC
+         KtBQ==
+X-Gm-Message-State: AOJu0YzLkLfPI0NRZRF+OIB7PJoVn+3Mb3ljWXyBgcHKmU58sAm2EaQv
+        7VeIO1SJmk4eTETru4DU88Qcog==
+X-Google-Smtp-Source: AGHT+IHkIVXrSP+A9S4CtovH+/G5fq5stJEIfgvDH0uUnlUH6PBq543HITeATGsKpGI38se8HqfNNw==
+X-Received: by 2002:aa7:d44d:0:b0:523:2e23:a0bf with SMTP id q13-20020aa7d44d000000b005232e23a0bfmr3029730edr.11.1696523558539;
+        Thu, 05 Oct 2023 09:32:38 -0700 (PDT)
 Received: from [192.168.1.197] (5-157-101-10.dyn.eolo.it. [5.157.101.10])
-        by smtp.gmail.com with ESMTPSA id n19-20020a056402515300b0053495596f42sm1278344edd.30.2023.10.05.09.07.49
+        by smtp.gmail.com with ESMTPSA id b6-20020a056402138600b00536031525e5sm1277462edv.91.2023.10.05.09.32.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Oct 2023 09:07:50 -0700 (PDT)
-Message-ID: <f997c21d-d85b-4ad1-ad5b-999524fc72ac@linaro.org>
-Date:   Thu, 5 Oct 2023 18:07:48 +0200
+        Thu, 05 Oct 2023 09:32:37 -0700 (PDT)
+Message-ID: <b1598405-b01f-426a-aaba-89f2d2dc9c2e@linaro.org>
+Date:   Thu, 5 Oct 2023 18:32:35 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/21] dt-bindings: soc: google: exynos-sysreg: add
- dedicated SYSREG compatibles to GS101
+Subject: Re: [PATCH 00/21] Add minimal Tensor/GS101 SoC support and
+ Oriole/Pixel6 board
 Content-Language: en-US
 To:     Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
@@ -69,7 +69,6 @@ Cc:     tudor.ambarus@linaro.org, andre.draszik@linaro.org,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
 References: <20231005155618.700312-1-peter.griffin@linaro.org>
- <20231005155618.700312-5-peter.griffin@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -115,48 +114,39 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231005155618.700312-5-peter.griffin@linaro.org>
+In-Reply-To: <20231005155618.700312-1-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On 05/10/2023 17:56, Peter Griffin wrote:
-> GS101 has three different SYSREG controllers, add dedicated
-> compatibles for them to the documentation.
+On 05/10/2023 17:55, Peter Griffin wrote:
+> Hi folks,
 > 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml        | 7 +++++++
->  1 file changed, 7 insertions(+)
+> This series adds initial SoC support for the GS101 SoC and also initial board
+> support for Pixel 6 phone (Oriole).
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> index 163e912e9cad..02f580d6489b 100644
-> --- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> @@ -50,6 +50,13 @@ properties:
->                - samsung,exynosautov9-peric1-sysreg
->            - const: samsung,exynosautov9-sysreg
->            - const: syscon
-> +      - items:
-> +          - enum:
-> +              - google,gs101-peric0-sysreg
-> +              - google,gs101-peric1-sysreg
-> +              - google,gs101-apm-sysreg
-> +          - const: google,gs101-sysreg
+> The gs101 / Tensor SoC is also used in Pixel6a (bluejay) and Pixel 6 Pro (raven).
+> Currently DT is just added for the gs101 SoC and Oriole.
 
-Please drop this one compatible. Exynos has it only for backwards
-compatibility.
+Thanks for submitting the patches. Nice work!
 
-Also, please put entire list ("items") before such entry for
-samsung,exynos5433-sysreg, so everything is more-or-less ordered
-alphabetically, by the fallback compatible.
+This is basically a custom-made variant of Exynos made by Samsung for
+Google. Something similar what is with Tesla FSD (and Axis Artpec-8
+which was not upstreamed, AFAIR). Many, many drivers and bindings will
+be re-used. I want to be sure that GS101 fits into existing Samsung
+Exynos support, re-uses it as much as possible and extend when necessary
+without breaking anything. Therefore, when the patches are ready, I
+would like to be the one applying entire set and future submissions
+through Samsung SoC tree, just like I am doing it with Tesla FSD, so I
+keep entire Samsung-ecosystem in shape.
 
-> +          - const: syscon
->  
->    reg:
->      maxItems: 1
+This also means that you are lucky to be selected to:
+https://elixir.bootlin.com/linux/v6.6-rc4/source/Documentation/process/maintainer-soc-clean-dts.rst
+joining there Tesla FSD and entire Samsung Exynos family :)
+
+I hope that's ok.
 
 Best regards,
 Krzysztof
