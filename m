@@ -2,151 +2,109 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 882C0E92703
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 13:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A09E92701
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 13:59:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231703AbjJEN5B (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Oct 2023 09:57:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58274 "EHLO
+        id S231882AbjJEN7L convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Oct 2023 09:59:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243693AbjJENy7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 09:54:59 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DD8B28117;
-        Thu,  5 Oct 2023 06:45:01 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 395AbQC7004548;
-        Thu, 5 Oct 2023 11:44:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=Jgbx4tka3I/uXlQify+yAv1leWqWyj6lyTl8wspgTLU=;
- b=O5B/LJistzFm3uCwIM9aow5ui4IG9XCXaw3WPNOLg1KNy10XGUpdKx49k8CSxHQgNG86
- 0rlHkFaY4pR0xEWTXBeVzpg9oZo386qSdIwu0FM+AAJJMg/tkK8hBu+azAT1iujtTDgg
- VFJYrskw24r9JWvhkQ7YllBGu8Y7lgQ6dZ7oBT88yf4gxkHdqpwd2DThEs9QvLaypU2f
- iVsbXnztklfXMwjbvx0rgPLhEtESkYcBTMTDhcS9TNEkyOj9VDgmgaQDmhooljd81o52
- 4C18xxRYwaHVoe6td3P0yhIRjQ2gtYsrteS04guMJzktGKfEp7w5Z5VT7QiUwqUTwxGN fQ== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3thq18rnkc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Oct 2023 11:44:56 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 395BiVpt022075
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 5 Oct 2023 11:44:31 GMT
-Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Thu, 5 Oct 2023 04:44:18 -0700
-Date:   Thu, 5 Oct 2023 17:14:15 +0530
-From:   Pavan Kondeti <quic_pkondeti@quicinc.com>
-To:     Mukesh Ojha <quic_mojha@quicinc.com>
-CC:     Kees Cook <keescook@chromium.org>, Will Deacon <will@kernel.org>,
-        <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
-        <mathieu.poirier@linaro.org>, <catalin.marinas@arm.com>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
-        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
-        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
-Subject: Re: [REBASE PATCH v5 08/17] arm64: mm: Add dynamic ramoops region
- support through command line
-Message-ID: <0120ea7e-e9cc-4955-81dd-6801b56068dc@quicinc.com>
-References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
- <1694429639-21484-9-git-send-email-quic_mojha@quicinc.com>
- <20230912101820.GA10884@willie-the-truck>
- <202309131613.C0E12D0D14@keescook>
- <3273977a-be7d-85f6-6754-52a3dd9b784a@quicinc.com>
+        with ESMTP id S232005AbjJEN5K (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 09:57:10 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2934672BC;
+        Thu,  5 Oct 2023 00:10:56 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5a21ea6baccso7249477b3.1;
+        Thu, 05 Oct 2023 00:10:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696489853; x=1697094653;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kyrdbpuLHB24ipYr+nJjPhE8QlUpRf2FnFEE0De7zV4=;
+        b=YRIXubiyCCYR+2uM9V/2Sia6j+a1A4F2bIEJeGmq5XHkbFFhHA5C5b2e9xQ7R20vPO
+         zPxzp+++293nE5O2QVXLmt2t6ffFPlBEAliMau8tmgEE9rENuJ84nSIzeceUO3bYqlfl
+         zK0T31Pem5qAkVNVVnj0BDcp0/MhndIfCZSqWVpkAx9793+5Uow1ftNBexLNZm0qmKKP
+         sQ3R/5Np7PJYQjsdR/MdpFUxPQQ6HqOEngaInbcc2/HQ/mkVorj01fFMf+3zxhBNmLDZ
+         Dh62QTwnsRRROs+XkU3X1lLmBCWYXXEygq8slnCG5W1YQQmYzZ3LxYKNHVc+TPlKqPOq
+         67LA==
+X-Gm-Message-State: AOJu0YwFQskM8Fbhy5dOqeGln67r0we60BBM1W7YXYOaNCGmJLiNgSe5
+        aEv7YlYbNyb99OM/S6KxnInJJe8jPuytmA==
+X-Google-Smtp-Source: AGHT+IFdTKrKPAls6e1+0i2Og0vYKYUs57GQzTcJHaJMr4Onqg9GWE95nwBg2jAzKiXQbzzLSFB4Dg==
+X-Received: by 2002:a0d:cbd3:0:b0:578:5e60:dcc9 with SMTP id n202-20020a0dcbd3000000b005785e60dcc9mr4462229ywd.10.1696489853207;
+        Thu, 05 Oct 2023 00:10:53 -0700 (PDT)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id n184-20020a0de4c1000000b005a4d922cf77sm315914ywe.119.2023.10.05.00.10.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Oct 2023 00:10:52 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-5a21ea6baccso7249337b3.1;
+        Thu, 05 Oct 2023 00:10:52 -0700 (PDT)
+X-Received: by 2002:a81:a187:0:b0:59b:f152:8998 with SMTP id
+ y129-20020a81a187000000b0059bf1528998mr4833243ywg.19.1696489852617; Thu, 05
+ Oct 2023 00:10:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <3273977a-be7d-85f6-6754-52a3dd9b784a@quicinc.com>
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: kzyI8JYkdaVqRWszYrYmRjktNQDws0aI
-X-Proofpoint-ORIG-GUID: kzyI8JYkdaVqRWszYrYmRjktNQDws0aI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-10-05_08,2023-10-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- suspectscore=0 clxscore=1011 mlxlogscore=999 priorityscore=1501 mlxscore=0
- phishscore=0 adultscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2309180000
- definitions=main-2310050092
+References: <20231004200008.1306798-1-ralph.siemsen@linaro.org>
+In-Reply-To: <20231004200008.1306798-1-ralph.siemsen@linaro.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 5 Oct 2023 09:10:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVEhVX8bcCVNYRuzdOpiW64dBELJp0ncdYsZUg4LLFLeA@mail.gmail.com>
+Message-ID: <CAMuHMdVEhVX8bcCVNYRuzdOpiW64dBELJp0ncdYsZUg4LLFLeA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: renesas: rzn1: enable PINMUX
+To:     Ralph Siemsen <ralph.siemsen@linaro.org>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Thu, Oct 05, 2023 at 04:52:20PM +0530, Mukesh Ojha wrote:
-> Sorry for the late reply, was on a long vacation.
-> 
-> On 9/14/2023 4:47 AM, Kees Cook wrote:
-> > On Tue, Sep 12, 2023 at 11:18:20AM +0100, Will Deacon wrote:
-> > > On Mon, Sep 11, 2023 at 04:23:50PM +0530, Mukesh Ojha wrote:
-> > > > The reserved memory region for ramoops is assumed to be at a fixed
-> > > > and known location when read from the devicetree. This may not be
-> > > > required for something like Qualcomm's minidump which is interested
-> > > > in knowing addresses of ramoops region but it does not put hard
-> > > > requirement of address being fixed as most of it's SoC does not
-> > > > support warm reset and does not use pstorefs at all instead it has
-> > > > firmware way of collecting ramoops region if it gets to know the
-> > > > address and register it with apss minidump table which is sitting
-> > > > in shared memory region in DDR and firmware will have access to
-> > > > these table during reset and collects it on crash of SoC.
-> > > > 
-> > > > So, add the support of reserving ramoops region to be dynamically
-> > > > allocated early during boot if it is request through command line
-> > > > via 'dyn_ramoops_size=' and fill up reserved resource structure and
-> > > > export the structure, so that it can be read by ramoops driver.
-> > > > 
-> > > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> > > > ---
-> > > >   arch/arm64/mm/init.c       | 94 ++++++++++++++++++++++++++++++++++++++++++++++
-> > > 
-> > > Why does this need to be in the arch code? There's absolutely nothing
-> > > arm64-specific here.
-> > 
-> > I would agree: this needs to be in ramoops itself, IMO. It should be a
-> > ramoops module argument, too.
-> > 
-> > It being unhelpful for systems that don't have an external consumer is
-> > certainly true, but I think it would still make more sense for this
-> > change to live entirely within ramoops. Specifically: you're
-> > implementing a pstore backend behavioral change. In the same way that
-> > patch 10 is putting the "output" side of this into pstore/, I'd expect
-> > the "input" side also in pstore/
-> 
-> How do we reserve memory? are you suggesting to use dma api's for
-> dynamic ramoops ?
-> 
-Sharing my thoughts:
+Hi Ralph,
 
-Your patch is inspired from how kexec allocate memory for crash kernel
-right? There is a series [1] which moved arch code (ARM64/x86) to
-generic kexec core. Something we should also do as the feedback
-received here.
+On Wed, Oct 4, 2023 at 10:00 PM Ralph Siemsen <ralph.siemsen@linaro.org> wrote:
+> Enable pin muxing (eg. programmable function), so that the RZN1 GPIO
+> pins will be configured as specified by the pinmux in the DTS.
+>
+> This used to be enabled implicitly via CONFIG_GENERIC_PINMUX_FUNCTIONS,
+> however that was removed in 308fb4e4eae14e6189dece3b7cf5b5f453c5d02
 
-Coming to how part, we still have to use memblock API to increase the chance
-of allocating contiguous memory. Since PSTORE_RAM can also be
-compiled as a module, we probably need another pstore layer that needs to
-be built statically in kernel to allocate memory using memblock API.
-once slab is available, all memblock API will re-direct to slab
-allocations. This layer can be enabled via ARCH_WANTS_PSTORE_xxx or 
-another config that only supports 'y'. PSTORE_RAM can still be a module but 
-when this layer is available, it supports dynamic ramoops. Another option 
-would be just including this layer in PSTORE RAM module but take away module 
-option  when this layer is enabled.
+You missed the first character of the commit ID.
 
+> since the rzn1 driver does not call any of the generic pinmux functions.
+>
+> Signed-off-by: Ralph Siemsen <ralph.siemsen@linaro.org>
 
-[1]
-https://lore.kernel.org/all/20211020020317.1220-6-thunder.leizhen@huawei.com/
+Fixes: 1308fb4e4eae14e6 ("pinctrl: rzn1: Do not select
+GENERIC_PIN{CTRL_GROUPS,MUX_FUNCTIONS}")
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl-fixes-for-v6.6...
+
+> --- a/drivers/pinctrl/renesas/Kconfig
+> +++ b/drivers/pinctrl/renesas/Kconfig
+> @@ -234,6 +234,7 @@ config PINCTRL_RZN1
+>         bool "pin control support for RZ/N1"
+>         depends on OF
+>         depends on ARCH_RZN1 || COMPILE_TEST
+> +       select PINMUX
+>         select GENERIC_PINCONF
+
+... with alphabetical sort order restored.
+No need to resend.
+
+>         help
+>           This selects pinctrl driver for Renesas RZ/N1 devices.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
