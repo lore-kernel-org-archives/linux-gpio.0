@@ -2,53 +2,53 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A9BE92732
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 16:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62048E92735
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 16:05:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237489AbjJEQFD (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:05:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57558 "EHLO
+        id S237294AbjJEQFB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Oct 2023 12:05:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235303AbjJEQED (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 12:04:03 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80DCBB2B0
-        for <linux-gpio@vger.kernel.org>; Thu,  5 Oct 2023 08:57:53 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-3247cefa13aso1122512f8f.1
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Oct 2023 08:57:53 -0700 (PDT)
+        with ESMTP id S236767AbjJEQDd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 12:03:33 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB28185DA8
+        for <linux-gpio@vger.kernel.org>; Thu,  5 Oct 2023 08:57:23 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-3247cefa13aso1121935f8f.1
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Oct 2023 08:57:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696521472; x=1697126272; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696521442; x=1697126242; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JZcQdif16KIsV/1ocyIAmtjZ1yEW/jfAGT5DH5ZGevU=;
-        b=ydfAtw60OWL+MeRlKNROR1ncikbGd18YQDLHq8VqCl0/mgP9xq9u1/kUFAcACinLyu
-         Dv0SJp8uqDPzbRuPO4oxImaFN+fVg0mU3WQXCC8Q6ozSh9Ci5ah7inxI6928b4TRyC1Y
-         xqiOUkEcYhbRsZMMzsThmEvldu23ufg0ykUg3ijrIWLcdQ1hdysyufsCAgJGfbbQjLap
-         RvCY+RfgJRRQrMi7Zvz3G1M63nAEA/a4t8jsatmPap9u0d1sJzBt7q1votYjDlpCoVSP
-         lVm+j4YYERYkFLUee53glOWD1yJwzk9Ko3NC7YLVCsJipvWmYKuXvFemee+o12lMvSWz
-         wp/A==
+        bh=UG/bg5G9/fDNb2RLAmV1TJrt5LfCg6WF+hEcmIIxqnc=;
+        b=jiqyH7cunnf/JEabZwEZDd2O4nj2wMEE0hzmpjkxFr2yFyQ9nhrtaD5cJO+7m6yshj
+         Y7UX86aWK77koJE6+G3liLTywsaOtlSEPIM7ZG5+eA3bfyNbrQqMKwLmHvrY4XHc/gHf
+         Elj2KC0cDFmbyge3Y6gSlsNwqNQJLKkk5UbU8hEY95hTIzB0gl26Ssh5BzYC1cZBbYB9
+         JB5U6cKDO06fn8/VT0ArBwFZZ8cB2YFR3OyG/2PopIvR06dM3cP4tZjG4YDdbkb9FV6G
+         gqH1DuEddV7vvLzaDKcUD4DKOyZ2cIP6QxAq2lLarC0spE9GQUldGVoYy9k1C4y1OrHX
+         Gc9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696521472; x=1697126272;
+        d=1e100.net; s=20230601; t=1696521442; x=1697126242;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JZcQdif16KIsV/1ocyIAmtjZ1yEW/jfAGT5DH5ZGevU=;
-        b=jwbNWN++AbnWBhXIcHzXHHahJOaSGFbaILMI667kxaNESKY1rrW70z402C3dCat3GJ
-         AXPUyGLe7yS5iblSZPYZFeALXP8BKPFCAN2xj1PyFWQDKhz6ktk1Dq4g4TpPnRZxsZuw
-         iH3rf26/a0mpBKbS0/46bJrkdSZwRwQjC0Nuwf9l9LUTqjkWYNSTOHvexf8wI9gB8ssC
-         f80653Gujd50fQWLsKA2PU+qzPS0T4OmPwRBYhZkOvvTYUzqy4utu0xSptDq/yLjX+Ac
-         6SdMrDIc102eNn2cbUVrjAIo18kC4PWCdxS+XwfZS0cK5uko6GZGXkILGXfcDQK+no/x
-         XzNQ==
-X-Gm-Message-State: AOJu0Yx8CyVqmD75ngeDpgW9HKCYB0sFRhk0E8JXGmzU4gP0io+bW3Uf
-        YBgs9K0FmaAD5iryn+EOZJ1/tA==
-X-Google-Smtp-Source: AGHT+IHj3KgFg4X3Xr+ezMStBQo1fMmV89Ktlr/kyhx9iyz1eOIitC1QjlqKnhb/zdCiKAYFtNDLWg==
-X-Received: by 2002:adf:e9d0:0:b0:31f:f432:b541 with SMTP id l16-20020adfe9d0000000b0031ff432b541mr5241309wrn.69.1696521471952;
-        Thu, 05 Oct 2023 08:57:51 -0700 (PDT)
+        bh=UG/bg5G9/fDNb2RLAmV1TJrt5LfCg6WF+hEcmIIxqnc=;
+        b=Ws+rfsN5qgOyhKLpAAMUAcyimV0DmA9YSIlLS9Bllt8qH+hOTf/TYIxsKAJLCaajzt
+         kFQQbET2yd4i1hK0BnlCJfLinBNUhWtOkejxW8kz2Po70tq925DY24OOJ1HVqznQlMnb
+         B7crjC3XI4tZwFfIBKQFhz3Oh42s+RABamAciewPuB7uedJgIxqFTbzRMtKSMZQdPBTb
+         sATwzNe9WOyhuN7tNx2QjpEsoDh+0FdpwjBsdPpGZerMIS1rlWAm2iGRcrjQbUvm5MfB
+         Rf6wK8GCWgqGP/oZMzz6J/RBlk/tnE84Ap5eETBdVM+uF8ofnAvmszGlejfFm7cVXnLv
+         pvWA==
+X-Gm-Message-State: AOJu0Yx+B3P29pMkEhi1OyKJgoBAeNHwmR8/S1VtDs/FPyIje4BCeAyH
+        ogEf1srJeFI3qkvCRyx02NnVwA==
+X-Google-Smtp-Source: AGHT+IHDCU4B/onZx0tGuUNfz7neahjevgz/cbddvl2YQ0egs2QVaDB52giQXOGLKKgxCDABFc/Ptw==
+X-Received: by 2002:adf:f182:0:b0:321:589b:bcb5 with SMTP id h2-20020adff182000000b00321589bbcb5mr5475234wro.57.1696521442234;
+        Thu, 05 Oct 2023 08:57:22 -0700 (PDT)
 Received: from gpeter-l.lan (host-92-12-225-146.as13285.net. [92.12.225.146])
-        by smtp.gmail.com with ESMTPSA id t9-20020a5d4609000000b0031f8a59dbeasm2084336wrq.62.2023.10.05.08.57.50
+        by smtp.gmail.com with ESMTPSA id t9-20020a5d4609000000b0031f8a59dbeasm2084336wrq.62.2023.10.05.08.57.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 08:57:51 -0700 (PDT)
+        Thu, 05 Oct 2023 08:57:20 -0700 (PDT)
 From:   Peter Griffin <peter.griffin@linaro.org>
 To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
@@ -62,9 +62,9 @@ Cc:     peter.griffin@linaro.org, tudor.ambarus@linaro.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [PATCH 21/21] MAINTAINERS: add entry for Google Tensor SoC
-Date:   Thu,  5 Oct 2023 16:56:18 +0100
-Message-ID: <20231005155618.700312-22-peter.griffin@linaro.org>
+Subject: [PATCH 02/21] dt-bindings: soc: samsung: exynos-pmu: Add gs101 compatible
+Date:   Thu,  5 Oct 2023 16:55:59 +0100
+Message-ID: <20231005155618.700312-3-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.42.0.582.g8ccd20d70d-goog
 In-Reply-To: <20231005155618.700312-1-peter.griffin@linaro.org>
 References: <20231005155618.700312-1-peter.griffin@linaro.org>
@@ -74,36 +74,33 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Add maintainers entry for the Google tensor SoC based
-platforms.
+Add gs101-pmu compatible to the bindings documentation.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 90f13281d297..23cfc0799c04 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8836,6 +8836,17 @@ S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git
- F:	drivers/firmware/google/
+diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+index e1d716df5dfa..e6abf7b55909 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+@@ -27,6 +27,7 @@ select:
+           - samsung,exynos7-pmu
+           - samsung,exynos850-pmu
+           - samsung-s5pv210-pmu
++          - google,gs101-pmu
+   required:
+     - compatible
  
-+GOOGLE TENSOR SoC SUPPORT
-+M:	Peter Griffin <peter.griffin@linaro.org>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-samsung-soc@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-+F:	arch/arm64/boot/dts/google/
-+F:	drivers/clk/samsung/clk-gs101.c
-+F:	include/dt-bindings/clock/clk-gs101.h
-+F:	include/dt-bindings/interrupt-controller/gs101.h
-+
- GPD POCKET FAN DRIVER
- M:	Hans de Goede <hdegoede@redhat.com>
- L:	platform-driver-x86@vger.kernel.org
+@@ -47,6 +48,7 @@ properties:
+               - samsung,exynos7-pmu
+               - samsung,exynos850-pmu
+               - samsung-s5pv210-pmu
++              - google,gs101-pmu
+           - const: syscon
+       - items:
+           - enum:
 -- 
 2.42.0.582.g8ccd20d70d-goog
 
