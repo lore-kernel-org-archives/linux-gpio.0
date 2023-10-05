@@ -2,131 +2,134 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FBA6E92711
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA58E92713
 	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 14:42:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236112AbjJEOm2 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:42:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46446 "EHLO
+        id S236824AbjJEOm3 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Oct 2023 10:42:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236163AbjJEOgo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 10:36:44 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A31E0497AD
-        for <linux-gpio@vger.kernel.org>; Thu,  5 Oct 2023 07:01:54 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-406402933edso8891855e9.2
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Oct 2023 07:01:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696514489; x=1697119289; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=W8BwQ3IP0CHV2dHAgfr58wuL/lxT2QhMZVJPK4cP22Q=;
-        b=QoXjL6YaDoXHL2lQQOvKosMu0kfGoVZSVPT0sX5GHS2MtaFJ5LUJ8wp53hgnC5qs1E
-         SuJa23cI8sZ0VkyctyQ/8j15aAKu4f2QcRNECK39exkZCUDPZJ4SRbxchoPE0Pb897PK
-         849c+dxzGSAh+zH2BgQWw4qlRH2a/vuAetGsN0m3oqBanHk30i3lamPN5ZqBq2G0tKrq
-         Y7Llzgg1dNZOba3+k+d9O3g5N/u1E6lbv6DCaI6z2R3BgbjFQkT3vzZcmApE8XiK+bxR
-         GAlsFvnm1G3jo+B7cebveLASuzUulM7fD2UOL+CasrDnBWmtQ/NzSFeDR7qoBktXfIK2
-         mvwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696514489; x=1697119289;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W8BwQ3IP0CHV2dHAgfr58wuL/lxT2QhMZVJPK4cP22Q=;
-        b=dLXz7/b+Y0SIP81Gi/3UI20vwKc7ZNEGgWEsV26XfiK+Y1xjeb9gP6F84f+umVgujy
-         VFJl5ttWdTTe4SzQC7YBAKHbGUZvncEV4xU04xC6OqCZUa2pGjGM0UBcMNDqVtRzeKLq
-         7I9PkSdyUToaHatLHGUyUz81T3B5SPHwJoW5EXdMyqmdtxG8dt+yX/psGCdQ+V/K9XbS
-         fkrjiGQ+QXqALzWsjbRq94hlxcEPnD3JMTJLK426utF4WI7tee64kdD2+JNzPN+60umc
-         gcHDVerK8w8AhtMl/KjDbTAJE4ZdwySASFMmaKaBd/9p7IBwmIuXdHrrDa1kSu0LF22r
-         svCA==
-X-Gm-Message-State: AOJu0YyMPQjLATjeekmv1sfudMoXFtcIzixYDxjJprHAaZgtzFM9pzx8
-        AlhyY+JQM55HyggX268emsLrT8qfLeb3U70dVUo=
-X-Google-Smtp-Source: AGHT+IG0ZEP6rYEhZohaIubCmSt7nEhccGbk/yon9cOa/OMeRwiJeM+DhepxTXfUwcJtiWkWOHLS3Q==
-X-Received: by 2002:a5d:40c6:0:b0:31f:dcbb:f81c with SMTP id b6-20020a5d40c6000000b0031fdcbbf81cmr4388076wrq.10.1696514488977;
-        Thu, 05 Oct 2023 07:01:28 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id b15-20020a5d4d8f000000b0031f300a4c26sm1854246wru.93.2023.10.05.07.01.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 07:01:28 -0700 (PDT)
-Date:   Thu, 5 Oct 2023 17:01:25 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Tzuyi Chang <tychang@realtek.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] pinctrl: realtek: Fix error handling in probe()
-Message-ID: <590b337a-13ce-4391-a09d-d2b06fbc912d@moroto.mountain>
+        with ESMTP id S236986AbjJEOhh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 10:37:37 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C42C34F6CF;
+        Thu,  5 Oct 2023 07:02:50 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3959mP2d016206;
+        Thu, 5 Oct 2023 11:23:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=AStgfaaTWIWjtJNJOJxciXIDBBRnSo68KvO+i7k27lU=;
+ b=ggk4UX5n75YzD4YsFD4zLDhSuQydWWKsE4Qv8PgwqD+GoRRjC7toHCPS/mkyI4wW2CbW
+ r0c/BMZzMWqhY1e4ft9nbPA47sNserFtmyue086NlFl++7Qnzcv9iHEWrsRQPtgdlxLR
+ ibMgyI1+Nn/IaBjmkVm2g4ieaQysibX7v2QsQlRQCmP7BCbpV74rNqvUL1ZgVmE9g3Rf
+ Zf2JzPDbHQizL88V6DlzQL2+S30y4n4YDUv4fPJlB/3sN912+gWQX5PaFsSiJOoWSKEQ
+ T65rzenwyoApz9Vh42qef3YNXbz5tPZluzGDsSjn6/qPn/aXWFYeEkT+TSjEzKIANc/O Jg== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3th8ck2nn9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Oct 2023 11:23:56 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 395BNtw3002316
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 5 Oct 2023 11:23:55 GMT
+Received: from [10.216.26.22] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.36; Thu, 5 Oct
+ 2023 04:23:05 -0700
+Message-ID: <3273977a-be7d-85f6-6754-52a3dd9b784a@quicinc.com>
+Date:   Thu, 5 Oct 2023 16:52:20 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [REBASE PATCH v5 08/17] arm64: mm: Add dynamic ramoops region
+ support through command line
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>, Will Deacon <will@kernel.org>
+CC:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <mathieu.poirier@linaro.org>, <catalin.marinas@arm.com>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <vigneshr@ti.com>, <nm@ti.com>, <matthias.bgg@gmail.com>,
+        <kgene@kernel.org>, <alim.akhtar@samsung.com>,
+        <bmasney@redhat.com>, <quic_tsoni@quicinc.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>
+References: <1694429639-21484-1-git-send-email-quic_mojha@quicinc.com>
+ <1694429639-21484-9-git-send-email-quic_mojha@quicinc.com>
+ <20230912101820.GA10884@willie-the-truck> <202309131613.C0E12D0D14@keescook>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <202309131613.C0E12D0D14@keescook>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tYP2aPd8wLHqCtbdfy0OmUbx-TMAVFMI
+X-Proofpoint-ORIG-GUID: tYP2aPd8wLHqCtbdfy0OmUbx-TMAVFMI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-05_08,2023-10-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 mlxscore=0 impostorscore=0 malwarescore=0
+ mlxlogscore=999 adultscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
+ suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2309180000 definitions=main-2310050088
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-There are several issues in the probe function:
-1) of_iomap() return NULL on error but the code checks for error
-   pointers.
-2) pinctrl_register() is the reverse.  It returns error pointers
-   but the code checks for NULL.
-3) The error paths need to call iounmap(data->base) before returning
-   to avoid a resource leak.
+Sorry for the late reply, was on a long vacation.
 
-Fixes: e99ce78030db ("pinctrl: realtek: Add common pinctrl driver for Realtek DHC RTD SoCs")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/pinctrl/realtek/pinctrl-rtd.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+On 9/14/2023 4:47 AM, Kees Cook wrote:
+> On Tue, Sep 12, 2023 at 11:18:20AM +0100, Will Deacon wrote:
+>> On Mon, Sep 11, 2023 at 04:23:50PM +0530, Mukesh Ojha wrote:
+>>> The reserved memory region for ramoops is assumed to be at a fixed
+>>> and known location when read from the devicetree. This may not be
+>>> required for something like Qualcomm's minidump which is interested
+>>> in knowing addresses of ramoops region but it does not put hard
+>>> requirement of address being fixed as most of it's SoC does not
+>>> support warm reset and does not use pstorefs at all instead it has
+>>> firmware way of collecting ramoops region if it gets to know the
+>>> address and register it with apss minidump table which is sitting
+>>> in shared memory region in DDR and firmware will have access to
+>>> these table during reset and collects it on crash of SoC.
+>>>
+>>> So, add the support of reserving ramoops region to be dynamically
+>>> allocated early during boot if it is request through command line
+>>> via 'dyn_ramoops_size=' and fill up reserved resource structure and
+>>> export the structure, so that it can be read by ramoops driver.
+>>>
+>>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+>>> ---
+>>>   arch/arm64/mm/init.c       | 94 ++++++++++++++++++++++++++++++++++++++++++++++
+>>
+>> Why does this need to be in the arch code? There's absolutely nothing
+>> arm64-specific here.
+> 
+> I would agree: this needs to be in ramoops itself, IMO. It should be a
+> ramoops module argument, too.
+> 
+> It being unhelpful for systems that don't have an external consumer is
+> certainly true, but I think it would still make more sense for this
+> change to live entirely within ramoops. Specifically: you're
+> implementing a pstore backend behavioral change. In the same way that
+> patch 10 is putting the "output" side of this into pstore/, I'd expect
+> the "input" side also in pstore/
 
-diff --git a/drivers/pinctrl/realtek/pinctrl-rtd.c b/drivers/pinctrl/realtek/pinctrl-rtd.c
-index bafe27face80..6c6aa9c3c567 100644
---- a/drivers/pinctrl/realtek/pinctrl-rtd.c
-+++ b/drivers/pinctrl/realtek/pinctrl-rtd.c
-@@ -535,14 +535,15 @@ static struct regmap_config rtd_pinctrl_regmap_config = {
- int rtd_pinctrl_probe(struct platform_device *pdev, const struct rtd_pinctrl_desc *desc)
- {
- 	struct rtd_pinctrl *data;
-+	int ret;
- 
- 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
- 	data->base = of_iomap(pdev->dev.of_node, 0);
--	if (IS_ERR(data->base))
--		return PTR_ERR(data->base);
-+	if (!data->base)
-+		return -ENOMEM;
- 
- 	data->dev = &pdev->dev;
- 	data->info = desc;
-@@ -561,18 +562,25 @@ int rtd_pinctrl_probe(struct platform_device *pdev, const struct rtd_pinctrl_des
- 	if (IS_ERR(data->regmap_pinctrl)) {
- 		dev_err(data->dev, "failed to init regmap: %ld\n",
- 			PTR_ERR(data->regmap_pinctrl));
--		return PTR_ERR(data->regmap_pinctrl);
-+		ret = PTR_ERR(data->regmap_pinctrl);
-+		goto unmap;
- 	}
- 
- 	data->pcdev = pinctrl_register(&data->desc, &pdev->dev, data);
--	if (!data->pcdev)
--		return -ENOMEM;
-+	if (IS_ERR(data->pcdev)) {
-+		ret = PTR_ERR(data->pcdev);
-+		goto unmap;
-+	}
- 
- 	platform_set_drvdata(pdev, data);
- 
- 	dev_dbg(&pdev->dev, "probed\n");
- 
- 	return 0;
-+
-+unmap:
-+	iounmap(data->base);
-+	return ret;
- }
- EXPORT_SYMBOL(rtd_pinctrl_probe);
- 
--- 
-2.39.2
+How do we reserve memory? are you suggesting to use dma api's for
+dynamic ramoops ?
 
+-Mukesh
+> 
+> More comments there, though.
+> 
