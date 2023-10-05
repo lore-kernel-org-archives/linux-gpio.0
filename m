@@ -2,230 +2,104 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7391DE92705
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 14:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E08C9E92706
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 14:29:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233696AbjJEO06 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:26:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52712 "EHLO
+        id S231326AbjJEO3H (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Oct 2023 10:29:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235180AbjJEOYe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 10:24:34 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18EF31A1
-        for <linux-gpio@vger.kernel.org>; Thu,  5 Oct 2023 06:48:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1696513710; x=1728049710;
-  h=date:from:to:cc:subject:message-id;
-  bh=6ZR0YTx0Mksrm3CgptSaoFHwuc3/+Fuh1s5PUPsea3o=;
-  b=la7GDP8igZwGmXRGp61soz42RcB0AohOaC6Rd2azsVGQJx5CmxcqrxED
-   +mLx54S/40KlJ+3Jb7InAcdHfTQNStFypUzJzMQavyTdv61VOzhegvWYo
-   YEU37I0VKuSp+NIQVjXV7f5HJz9zwRXjw9Kb+kx3bhjjDSv5Ypd5wzaPz
-   cL6MNqJqL+4A6YqpWxx/CxdPJ0sG9aYZPgTj49ydbf0pHJ+eD8TxOueov
-   4pue5WQk86nr3ZnUAnpwAEIbXensTp1+GUW6zC2t+H9eDTY+/he7iOtOh
-   rTMte2R1YiuxTnqVzL42lf4RuAy+CLrgARhKGbUNJ0pzV8KE/jM01VAyF
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10853"; a="469656017"
-X-IronPort-AV: E=Sophos;i="6.03,201,1694761200"; 
-   d="scan'208";a="469656017"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2023 20:12:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10853"; a="728282880"
-X-IronPort-AV: E=Sophos;i="6.03,201,1694761200"; 
-   d="scan'208";a="728282880"
-Received: from lkp-server02.sh.intel.com (HELO c3b01524d57c) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 04 Oct 2023 20:12:41 -0700
-Received: from kbuild by c3b01524d57c with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qoEn0-000Kvg-2a;
-        Thu, 05 Oct 2023 03:12:38 +0000
-Date:   Thu, 05 Oct 2023 11:11:41 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc:     linux-gpio@vger.kernel.org
-Subject: [brgl:gpio/for-next] BUILD SUCCESS
- 0c42fc96cc020b7879b38c8e8597ffbbf34e0eda
-Message-ID: <202310051139.AkxQNAEG-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+        with ESMTP id S234108AbjJEO13 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 10:27:29 -0400
+Received: from mail-vk1-xa36.google.com (mail-vk1-xa36.google.com [IPv6:2607:f8b0:4864:20::a36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F9F6EAF
+        for <linux-gpio@vger.kernel.org>; Wed,  4 Oct 2023 23:43:05 -0700 (PDT)
+Received: by mail-vk1-xa36.google.com with SMTP id 71dfb90a1353d-48feedb90d2so260385e0c.1
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Oct 2023 23:43:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1696488185; x=1697092985; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YGoaC1Wcp6rYPnjGJSe6VARj9bzOCTTk06EKi9+Z3hA=;
+        b=ToicOkGbMDRzKJjS+3Of1B+rRcvxnOkRWFF//ulW62YXlpewLPYH7qTE5l3srgrcz9
+         ogBlik5CC69N1xiChCHA1BxOTh3Y6xZjYwrY0CPqnrwYweDxPFmSszLv1mXuALHVuD6R
+         /aCxVvBOG2kR165AeP3Bgayfmy7owV+OVl8oNBuuxtVhoU/X5yBS+cxd4UXNKET7Jg5H
+         8F2rt8LFjSn2ADFp7QeAjkEDmPxPLkWYkyfLaQk6K6YknMr7J8kE+5NObp1EFJ1KwSRG
+         Iwy2l1sSoMJPzlR8w98Q/vJvxyRUUxpHsc1Pvrgnr7lnnDMfpqBQNIZ+SmW7a9eIt7TM
+         oqSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696488185; x=1697092985;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YGoaC1Wcp6rYPnjGJSe6VARj9bzOCTTk06EKi9+Z3hA=;
+        b=P247xOXTPBzKbhHfKddVRyYlauFj21XkvObMYvOYEtPfGIw2tenm6ZusSrqD9rFeah
+         u0Wt5S6VLBx/G83op8F2Fvjgp+YV426DRv2b3tMItmtgyRWxgCaVrNleyZnG4Fd4CaqR
+         o8qbohboaPzg+c6qnpRaVCX//uxDBu0Y0jgeGowXpC+ZSvMtULGuxdg/88EF0E/vHvI9
+         0IOFMYCnauSnT2d6UaAZPDhwytNfZ+DO5yn7o/98pdm2E6wodyA7jMY/KkLGO6fQVTaK
+         RCtf/1K4gGXnbNnzQL4yVxkyt+AhfRMGT8BaCdGy2tQEE6+EemDGLHdwMUyD3cYW5oi0
+         O0yQ==
+X-Gm-Message-State: AOJu0Yx1fzSXoGiLXWp77C+IQg/ToTYNnFu44ROaheR1QDQvzmhzLVRT
+        R2TZtb+F6DijglzUMzI0m7vHr1VoeJLHrF1Vz9kyjA==
+X-Google-Smtp-Source: AGHT+IF9AStF08LnnmPoyECeA01wkoJtydwGXomw/31OD+TyB0QeLcMuubWOdNucB26fwKEGuoDDyaTTHksIsQIEO8k=
+X-Received: by 2002:a1f:cb42:0:b0:49b:289a:cc3f with SMTP id
+ b63-20020a1fcb42000000b0049b289acc3fmr3946166vkg.3.1696488184932; Wed, 04 Oct
+ 2023 23:43:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <20231003073926.10771-1-brgl@bgdev.pl>
+In-Reply-To: <20231003073926.10771-1-brgl@bgdev.pl>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 5 Oct 2023 08:42:54 +0200
+Message-ID: <CAMRc=Me9QjuM41iRJ9NjQ8kZUJ_yJ5MKXmMhViOka6j71+jVfw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: aspeed: fix the GPIO number passed to pinctrl_gpio_set_config()
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy@kernel.org>,
+        Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>
+Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-branch HEAD: 0c42fc96cc020b7879b38c8e8597ffbbf34e0eda  arm: omap1: ams-delta: stop using gpiochip_find()
+On Tue, Oct 3, 2023 at 9:39=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> pinctrl_gpio_set_config() expects the GPIO number from the global GPIO
+> numberspace, not the controller-relative offset, which needs to be added
+> to the chip base.
+>
+> Fixes: 5ae4cb94b313 ("gpio: aspeed: Add debounce support")
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/gpio/gpio-aspeed.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+> index da33bbbdacb9..58f107194fda 100644
+> --- a/drivers/gpio/gpio-aspeed.c
+> +++ b/drivers/gpio/gpio-aspeed.c
+> @@ -973,7 +973,7 @@ static int aspeed_gpio_set_config(struct gpio_chip *c=
+hip, unsigned int offset,
+>         else if (param =3D=3D PIN_CONFIG_BIAS_DISABLE ||
+>                         param =3D=3D PIN_CONFIG_BIAS_PULL_DOWN ||
+>                         param =3D=3D PIN_CONFIG_DRIVE_STRENGTH)
+> -               return pinctrl_gpio_set_config(offset, config);
+> +               return pinctrl_gpio_set_config(chip->base + offset, confi=
+g);
+>         else if (param =3D=3D PIN_CONFIG_DRIVE_OPEN_DRAIN ||
+>                         param =3D=3D PIN_CONFIG_DRIVE_OPEN_SOURCE)
+>                 /* Return -ENOTSUPP to trigger emulation, as per datashee=
+t */
+> --
+> 2.39.2
+>
 
-elapsed time: 879m
+Queued for fixes.
 
-configs tested: 159
-configs skipped: 2
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                          axs101_defconfig   gcc  
-arc                                 defconfig   gcc  
-arc                 nsimosci_hs_smp_defconfig   gcc  
-arc                   randconfig-001-20231004   gcc  
-arc                   randconfig-001-20231005   gcc  
-arm                              alldefconfig   clang
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   gcc  
-arm                              allyesconfig   gcc  
-arm                         bcm2835_defconfig   clang
-arm                                 defconfig   gcc  
-arm                      footbridge_defconfig   gcc  
-arm                         lpc32xx_defconfig   clang
-arm                         orion5x_defconfig   clang
-arm                          pxa168_defconfig   clang
-arm                          pxa3xx_defconfig   gcc  
-arm                   randconfig-001-20231004   gcc  
-arm                   randconfig-001-20231005   gcc  
-arm                         s5pv210_defconfig   clang
-arm                           spitz_defconfig   clang
-arm                           sunxi_defconfig   gcc  
-arm                         vf610m4_defconfig   gcc  
-arm64                            allmodconfig   gcc  
-arm64                             allnoconfig   gcc  
-arm64                            allyesconfig   gcc  
-arm64                               defconfig   gcc  
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20231004   gcc  
-i386         buildonly-randconfig-001-20231005   gcc  
-i386         buildonly-randconfig-002-20231004   gcc  
-i386         buildonly-randconfig-002-20231005   gcc  
-i386         buildonly-randconfig-003-20231004   gcc  
-i386         buildonly-randconfig-003-20231005   gcc  
-i386         buildonly-randconfig-004-20231004   gcc  
-i386         buildonly-randconfig-004-20231005   gcc  
-i386         buildonly-randconfig-005-20231004   gcc  
-i386         buildonly-randconfig-005-20231005   gcc  
-i386         buildonly-randconfig-006-20231004   gcc  
-i386         buildonly-randconfig-006-20231005   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                  randconfig-001-20231004   gcc  
-i386                  randconfig-001-20231005   gcc  
-i386                  randconfig-002-20231004   gcc  
-i386                  randconfig-002-20231005   gcc  
-i386                  randconfig-003-20231004   gcc  
-i386                  randconfig-003-20231005   gcc  
-i386                  randconfig-004-20231004   gcc  
-i386                  randconfig-004-20231005   gcc  
-i386                  randconfig-005-20231004   gcc  
-i386                  randconfig-005-20231005   gcc  
-i386                  randconfig-006-20231004   gcc  
-i386                  randconfig-006-20231005   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                        allyesconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20231004   gcc  
-loongarch             randconfig-001-20231005   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                             allmodconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                  decstation_64_defconfig   gcc  
-mips                          malta_defconfig   clang
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-openrisc                         alldefconfig   gcc  
-openrisc                         allmodconfig   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                           allmodconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   gcc  
-powerpc                      bamboo_defconfig   gcc  
-powerpc                      ep88xc_defconfig   gcc  
-powerpc                    klondike_defconfig   gcc  
-powerpc                     mpc5200_defconfig   clang
-powerpc                     skiroot_defconfig   clang
-powerpc                  storcenter_defconfig   gcc  
-powerpc                         wii_defconfig   gcc  
-powerpc                 xes_mpc85xx_defconfig   clang
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   clang
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   gcc  
-riscv                               defconfig   gcc  
-riscv                    nommu_virt_defconfig   clang
-riscv                          rv32_defconfig   gcc  
-s390                             alldefconfig   clang
-s390                             allmodconfig   gcc  
-s390                              allnoconfig   gcc  
-s390                             allyesconfig   gcc  
-s390                                defconfig   gcc  
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                   rts7751r2dplus_defconfig   gcc  
-sh                          sdk7780_defconfig   gcc  
-sh                             sh03_defconfig   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                            allyesconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   clang
-um                                  defconfig   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64                              defconfig   gcc  
-x86_64                randconfig-001-20231004   gcc  
-x86_64                randconfig-001-20231005   gcc  
-x86_64                randconfig-002-20231004   gcc  
-x86_64                randconfig-002-20231005   gcc  
-x86_64                randconfig-003-20231004   gcc  
-x86_64                randconfig-003-20231005   gcc  
-x86_64                randconfig-004-20231004   gcc  
-x86_64                randconfig-004-20231005   gcc  
-x86_64                randconfig-005-20231004   gcc  
-x86_64                randconfig-005-20231005   gcc  
-x86_64                randconfig-006-20231004   gcc  
-x86_64                randconfig-006-20231005   gcc  
-x86_64                          rhel-8.3-rust   clang
-x86_64                               rhel-8.3   gcc  
-xtensa                            allnoconfig   gcc  
-xtensa                           allyesconfig   gcc  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Bart
