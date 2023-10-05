@@ -2,109 +2,121 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A09E92701
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 13:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 603EFE92704
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 14:08:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231882AbjJEN7L convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Oct 2023 09:59:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54748 "EHLO
+        id S232279AbjJEOIb (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Oct 2023 10:08:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232005AbjJEN5K (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 09:57:10 -0400
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2934672BC;
-        Thu,  5 Oct 2023 00:10:56 -0700 (PDT)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5a21ea6baccso7249477b3.1;
-        Thu, 05 Oct 2023 00:10:56 -0700 (PDT)
+        with ESMTP id S232376AbjJEOGd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 10:06:33 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9372D18F
+        for <linux-gpio@vger.kernel.org>; Wed,  4 Oct 2023 19:59:27 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id 5614622812f47-3af59a017a5so73487b6e.1
+        for <linux-gpio@vger.kernel.org>; Wed, 04 Oct 2023 19:59:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1696474767; x=1697079567; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TSbRKsYb8q8GitmB/U1RL+XJyPpceXOp7I/10Xz1sb8=;
+        b=XueE8YDI+5wUzH/Y/c1ekq0JHsfG0iDJZ0DZKAYcl8g1xl0cXcnsOXRfnBYI5z+5Sp
+         uF0woHMq1a2m8jg1QEBPTkidp0l3V1+YLRG2+beaqk85481HjmHmdleil1b1Lv9CB5yk
+         YsuvkOClIFGfkf1921MjtShKipa4prN2W2nG+GHHnyDn/7TkB6trSsIL5iq70+GweTJC
+         Qvu/yMW1TvG0Oe2qsAXjcPw/T8Yjx/sKhLJuGHrvsRXxDClu2FjNL65wzgb/7jknu+P+
+         aXE0i4n55uHxxZ0p4BgDhenLVIowkX0VJphrfNg8z8rLfG0RW6GE9FmtviA1tQ4ttg4X
+         UJAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696489853; x=1697094653;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1696474767; x=1697079567;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kyrdbpuLHB24ipYr+nJjPhE8QlUpRf2FnFEE0De7zV4=;
-        b=YRIXubiyCCYR+2uM9V/2Sia6j+a1A4F2bIEJeGmq5XHkbFFhHA5C5b2e9xQ7R20vPO
-         zPxzp+++293nE5O2QVXLmt2t6ffFPlBEAliMau8tmgEE9rENuJ84nSIzeceUO3bYqlfl
-         zK0T31Pem5qAkVNVVnj0BDcp0/MhndIfCZSqWVpkAx9793+5Uow1ftNBexLNZm0qmKKP
-         sQ3R/5Np7PJYQjsdR/MdpFUxPQQ6HqOEngaInbcc2/HQ/mkVorj01fFMf+3zxhBNmLDZ
-         Dh62QTwnsRRROs+XkU3X1lLmBCWYXXEygq8slnCG5W1YQQmYzZ3LxYKNHVc+TPlKqPOq
-         67LA==
-X-Gm-Message-State: AOJu0YwFQskM8Fbhy5dOqeGln67r0we60BBM1W7YXYOaNCGmJLiNgSe5
-        aEv7YlYbNyb99OM/S6KxnInJJe8jPuytmA==
-X-Google-Smtp-Source: AGHT+IFdTKrKPAls6e1+0i2Og0vYKYUs57GQzTcJHaJMr4Onqg9GWE95nwBg2jAzKiXQbzzLSFB4Dg==
-X-Received: by 2002:a0d:cbd3:0:b0:578:5e60:dcc9 with SMTP id n202-20020a0dcbd3000000b005785e60dcc9mr4462229ywd.10.1696489853207;
-        Thu, 05 Oct 2023 00:10:53 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id n184-20020a0de4c1000000b005a4d922cf77sm315914ywe.119.2023.10.05.00.10.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Oct 2023 00:10:52 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-5a21ea6baccso7249337b3.1;
-        Thu, 05 Oct 2023 00:10:52 -0700 (PDT)
-X-Received: by 2002:a81:a187:0:b0:59b:f152:8998 with SMTP id
- y129-20020a81a187000000b0059bf1528998mr4833243ywg.19.1696489852617; Thu, 05
- Oct 2023 00:10:52 -0700 (PDT)
+        bh=TSbRKsYb8q8GitmB/U1RL+XJyPpceXOp7I/10Xz1sb8=;
+        b=XvlnJc9pyYp/w/1ybrklTs/rMAExW4boJXCmozJZKrzFplBJoG5MN71L7398DMalc/
+         jiD1wHx9ao4gpLnUfZdCwZJUwRGKfxi42BdMq2JvBh6HDlDvdZ/mbW5L1Z8E2I7O69wH
+         oNrjL8xh0Wa1pLq9w5Lb3xfFaDbBuiU5a413CtYQ6X2kZ88lSBQ6M0x6ZSMtsdY+D+CJ
+         qTX1VfinsfeoHTpH1jtbXAhwLNWjWGz0Jvrp1Fr97x8AprJqwkMcTwRN1KNaDRrwzthu
+         8xfswazptsuangUmLUfIcAO645mjzGva5yGyMTSTJzMTphBsRVgQUgCKciHEkxuTYcnB
+         hnSQ==
+X-Gm-Message-State: AOJu0Yy4aW5oOqRMNPGKa2sEF80O//IpGc1KJIcmp2rsqrTTNIw6OTCT
+        U9F7yUJnuSQrsTdo1MVvj/3/+g==
+X-Google-Smtp-Source: AGHT+IEvgr4xZLoO3AM+An1x16yJUdYmGeTqCDtyfPw8q8eOIK+ezaH2/Gf3R2hl6ENX1z8p9dBrGw==
+X-Received: by 2002:a05:6808:1a27:b0:3ae:5e6a:5693 with SMTP id bk39-20020a0568081a2700b003ae5e6a5693mr4930128oib.0.1696474766819;
+        Wed, 04 Oct 2023 19:59:26 -0700 (PDT)
+Received: from octopus.. ([2400:4050:c3e1:100:a16d:fce2:497:afb7])
+        by smtp.gmail.com with ESMTPSA id b18-20020a637152000000b005782ad723casm269265pgn.27.2023.10.04.19.59.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Oct 2023 19:59:26 -0700 (PDT)
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     sudeep.holla@arm.com, cristian.marussi@arm.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linus.walleij@linaro.org
+Cc:     Oleksii_Moisieiev@epam.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        kernel test robot <lkp@intel.com>
+Subject: [RFC v2 2/5] pinctrl: always export pin_config_get_for_pin()
+Date:   Thu,  5 Oct 2023 11:58:40 +0900
+Message-Id: <20231005025843.508689-3-takahiro.akashi@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231005025843.508689-1-takahiro.akashi@linaro.org>
+References: <20231005025843.508689-1-takahiro.akashi@linaro.org>
 MIME-Version: 1.0
-References: <20231004200008.1306798-1-ralph.siemsen@linaro.org>
-In-Reply-To: <20231004200008.1306798-1-ralph.siemsen@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 5 Oct 2023 09:10:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVEhVX8bcCVNYRuzdOpiW64dBELJp0ncdYsZUg4LLFLeA@mail.gmail.com>
-Message-ID: <CAMuHMdVEhVX8bcCVNYRuzdOpiW64dBELJp0ncdYsZUg4LLFLeA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: renesas: rzn1: enable PINMUX
-To:     Ralph Siemsen <ralph.siemsen@linaro.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Hi Ralph,
+This function will be used to implement a new pinctrl_gpio_get_config()
+outside pinconf.c in a succeeding commit.
+So make it always visible to avoid a kernel test bot error.
 
-On Wed, Oct 4, 2023 at 10:00 PM Ralph Siemsen <ralph.siemsen@linaro.org> wrote:
-> Enable pin muxing (eg. programmable function), so that the RZN1 GPIO
-> pins will be configured as specified by the pinmux in the DTS.
->
-> This used to be enabled implicitly via CONFIG_GENERIC_PINMUX_FUNCTIONS,
-> however that was removed in 308fb4e4eae14e6189dece3b7cf5b5f453c5d02
+Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202310021320.gYfm1nLQ-lkp@intel.com/
+---
+RFC v2 (Oct 5, 2023)
+* new
+---
+ drivers/pinctrl/pinconf.h | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-You missed the first character of the commit ID.
-
-> since the rzn1 driver does not call any of the generic pinmux functions.
->
-> Signed-off-by: Ralph Siemsen <ralph.siemsen@linaro.org>
-
-Fixes: 1308fb4e4eae14e6 ("pinctrl: rzn1: Do not select
-GENERIC_PIN{CTRL_GROUPS,MUX_FUNCTIONS}")
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl-fixes-for-v6.6...
-
-> --- a/drivers/pinctrl/renesas/Kconfig
-> +++ b/drivers/pinctrl/renesas/Kconfig
-> @@ -234,6 +234,7 @@ config PINCTRL_RZN1
->         bool "pin control support for RZ/N1"
->         depends on OF
->         depends on ARCH_RZN1 || COMPILE_TEST
-> +       select PINMUX
->         select GENERIC_PINCONF
-
-... with alphabetical sort order restored.
-No need to resend.
-
->         help
->           This selects pinctrl driver for Renesas RZ/N1 devices.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/pinctrl/pinconf.h b/drivers/pinctrl/pinconf.h
+index 694bfc9961fa..068089b199e4 100644
+--- a/drivers/pinctrl/pinconf.h
++++ b/drivers/pinctrl/pinconf.h
+@@ -31,13 +31,13 @@ int pinconf_apply_setting(const struct pinctrl_setting *setting);
+ 
+ int pinconf_set_config(struct pinctrl_dev *pctldev, unsigned pin,
+ 		       unsigned long *configs, size_t nconfigs);
++int pin_config_get_for_pin(struct pinctrl_dev *pctldev, unsigned pin,
++			   unsigned long *config);
+ 
+ /*
+  * You will only be interested in these if you're using PINCONF
+  * so don't supply any stubs for these.
+  */
+-int pin_config_get_for_pin(struct pinctrl_dev *pctldev, unsigned pin,
+-			   unsigned long *config);
+ int pin_config_group_get(const char *dev_name, const char *pin_group,
+ 			 unsigned long *config);
+ 
+@@ -74,6 +74,12 @@ static inline int pinconf_set_config(struct pinctrl_dev *pctldev, unsigned pin,
+ 	return -ENOTSUPP;
+ }
+ 
++static inline int pin_config_get_for_pin(struct pinctrl_dev *pctldev,
++					 unsigned pin, unsigned long *config)
++{
++	return -ENOTSUPP;
++}
++
+ #endif
+ 
+ #if defined(CONFIG_PINCONF) && defined(CONFIG_DEBUG_FS)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
