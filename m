@@ -2,44 +2,44 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 938CFE92726
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 15:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB3BE92729
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 15:58:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237923AbjJEP6E (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Oct 2023 11:58:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50920 "EHLO
+        id S237936AbjJEP6G (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Oct 2023 11:58:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234805AbjJEP46 (ORCPT
+        with ESMTP id S234043AbjJEP46 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 11:56:58 -0400
 Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADCA8662C;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADFC2662D;
         Thu,  5 Oct 2023 07:04:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1696514686; x=1728050686;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=v3qwi4Il0uHXyU4Gb6XPvF3wdo1K10RCU84IBPX9PAY=;
-  b=FLhOYnH7C3pauGeZRfVHa7cH9JXHSYA+mnwV09U1YsqRuEzBjG2ZsYUu
-   locsd1v8C+Duf6bpjkMQssfsrqiaMB7aIXS3CNu2TFhxaPNuX3kYv9Cwe
-   NCtltdvrjA4aM7GzGeOKwj7RYh0W8IzCZNj0PhiAGVhrBfi2npa70TpMF
-   kuvY3L2ymRQ2zFYO2h7MGQ5CqG+rYojbO24Pf3VxstMCq8GRRZSe6yqwW
-   8/e+9AaH+tJwszDcPuLJUdlfooe2SwVooJSZwg+vRkImo4ijyq5IpZlF1
-   BiYur3qCFJbi6NaOdzZcQ6LR7ABxgF2TsqgXQ2wAwV7xsMNbLqp/SqAji
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="386336355"
+  bh=c+EU5e+VJU8NEVpBuRP3uooNbGb9G1Bmp+k4isAZ9oI=;
+  b=I+UJ/siUQ4NNEvZvMFM+fu+j3Zde+8FnOxc+4xbQV44TcbJG52vUAalj
+   pincitIqljuR3R97lFBesOhePP4hk0H2lnVZ29umAndFCvRwS/q3HTgPx
+   bFa4+NY+PgwUvrA7IW412Op74moxVxgY7C8vc2CDunDOkc/B5pmciE8LR
+   inqru4Qz6/m8WInJT80osxIvSfNfhihCIiMTCpwnc9zLYqWed/+/X8mfl
+   n//KofCiin9AIVZ7lGWTS218c4M/mISSRwd66aEDqtM6hZbsZKqek7fal
+   a5Fcr1eeM0LI7Uz1giRwLGxc6HfiXOdyWTD7ycGkUq7rRwzudKwnfwgK0
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="386336382"
 X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
-   d="scan'208";a="386336355"
+   d="scan'208";a="386336382"
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 06:59:44 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2023 06:59:55 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="1083047490"
+X-IronPort-AV: E=McAfee;i="6600,9927,10854"; a="1083047510"
 X-IronPort-AV: E=Sophos;i="6.03,203,1694761200"; 
-   d="scan'208";a="1083047490"
+   d="scan'208";a="1083047510"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 05 Oct 2023 06:59:42 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 05 Oct 2023 06:59:52 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id A1E02345; Thu,  5 Oct 2023 16:59:40 +0300 (EEST)
+        id 666BD345; Thu,  5 Oct 2023 16:59:51 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -47,9 +47,9 @@ Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andy@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v1 1/1] pinctrl: broxton: Replace MODULE_ALIAS() with MODULE_DEVICE_TABLE()
-Date:   Thu,  5 Oct 2023 16:39:49 +0300
-Message-Id: <20231005133949.3613943-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] pinctrl: denverton: Replace MODULE_ALIAS() with MODULE_DEVICE_TABLE()
+Date:   Thu,  5 Oct 2023 16:59:45 +0300
+Message-Id: <20231005135945.3672438-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -64,27 +64,26 @@ the platform devices.
 Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-broxton.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/pinctrl/intel/pinctrl-denverton.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-broxton.c b/drivers/pinctrl/intel/pinctrl-broxton.c
-index 4d5ddb297909..3118c7c8842f 100644
---- a/drivers/pinctrl/intel/pinctrl-broxton.c
-+++ b/drivers/pinctrl/intel/pinctrl-broxton.c
-@@ -998,6 +998,7 @@ static const struct platform_device_id bxt_pinctrl_platform_ids[] = {
- 	{ "broxton-pinctrl", (kernel_ulong_t)bxt_pinctrl_soc_data },
+diff --git a/drivers/pinctrl/intel/pinctrl-denverton.c b/drivers/pinctrl/intel/pinctrl-denverton.c
+index a1a7242e0451..562a4f9188e4 100644
+--- a/drivers/pinctrl/intel/pinctrl-denverton.c
++++ b/drivers/pinctrl/intel/pinctrl-denverton.c
+@@ -261,6 +261,7 @@ static const struct platform_device_id dnv_pinctrl_platform_ids[] = {
+ 	{ "denverton-pinctrl", (kernel_ulong_t)&dnv_soc_data },
  	{ }
  };
-+MODULE_DEVICE_TABLE(platform, bxt_pinctrl_platform_ids);
++MODULE_DEVICE_TABLE(platform, dnv_pinctrl_platform_ids);
  
- static INTEL_PINCTRL_PM_OPS(bxt_pinctrl_pm_ops);
- 
-@@ -1026,6 +1027,4 @@ module_exit(bxt_pinctrl_exit);
+ static struct platform_driver dnv_pinctrl_driver = {
+ 	.probe = intel_pinctrl_probe_by_hid,
+@@ -287,5 +288,4 @@ module_exit(dnv_pinctrl_exit);
  MODULE_AUTHOR("Mika Westerberg <mika.westerberg@linux.intel.com>");
- MODULE_DESCRIPTION("Intel Broxton SoC pinctrl/GPIO driver");
+ MODULE_DESCRIPTION("Intel Denverton SoC pinctrl/GPIO driver");
  MODULE_LICENSE("GPL v2");
--MODULE_ALIAS("platform:apollolake-pinctrl");
--MODULE_ALIAS("platform:broxton-pinctrl");
+-MODULE_ALIAS("platform:denverton-pinctrl");
  MODULE_IMPORT_NS(PINCTRL_INTEL);
 -- 
 2.40.0.1.gaa8946217a0b
