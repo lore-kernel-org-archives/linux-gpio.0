@@ -2,146 +2,229 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FA9E92705
-	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 14:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E1CE92709
+	for <linux-gpio@archiver.kernel.org>; Thu,  5 Oct 2023 14:38:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236147AbjJEOfy (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:35:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38946 "EHLO
+        id S235556AbjJEOiY (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Thu, 5 Oct 2023 10:38:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235745AbjJEOeW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 10:34:22 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BFB37DA0
-        for <linux-gpio@vger.kernel.org>; Thu,  5 Oct 2023 00:42:32 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-522bd411679so1020930a12.0
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Oct 2023 00:42:32 -0700 (PDT)
+        with ESMTP id S235656AbjJEOfx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2023 10:35:53 -0400
+Received: from mail-ua1-x929.google.com (mail-ua1-x929.google.com [IPv6:2607:f8b0:4864:20::929])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA8B6171C
+        for <linux-gpio@vger.kernel.org>; Thu,  5 Oct 2023 06:48:43 -0700 (PDT)
+Received: by mail-ua1-x929.google.com with SMTP id a1e0cc1a2514c-79df12ff0f0so404842241.3
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Oct 2023 06:48:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696491750; x=1697096550; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tLnTS38DyxCuIhZvuKF6L9larEXjV5fmGyQF7glUG0Y=;
-        b=K9/1Q1hBGvxvyRrPc7s7sdOSATAEVgNETEmG8wFJwI+mklunDFLlQLNWCEsveNZRND
-         cwXEpRpx9Lm4G+ZVHYywGwyS3pdaz8VnePofCi4UtS4L91bbXYURYtxh4zrcBaR9HCWB
-         WyNywMSNyVwe4IWOx5eGQlfR0e2gWd8HqsTyu8NzSgHID2cr57zisf1+8/15EdGEG5ga
-         koNvPjDdlznVuAJcSofJctISPazoCUt1uUxH/ohIVxI4azdstzjEuGEYgL9JzXhH9mpa
-         MGLVlhYBRVZoZUeoxSExbPomF9Dh3VPlgeAOVJpGUlGPkErwrGvg7R78NookwaCzK9gE
-         JLww==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1696513722; x=1697118522; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gHY/ZQQzp7Eh1tubbFWWOn2NxVKU0m/orXkn9/Odof0=;
+        b=c1xWPf3/mvf8/i/TrzUZOuGMDYM91CxU4gozBvzeOu2ANTQu3NigwJHRxAYRlObQqp
+         mGf1s0ZoZDZNFUmlPKqBXHnqYT7LXulZN9+sfdJJmqJCFjEgs92Vk0yBa3G/q8oMJ+QZ
+         Zb9QHMuDZbGpMOJo6qUE14TZZBs7zp8GACSN4MIQ877omaJeiqg49MfpeuVURa5DIQUW
+         hH6U04Vo1CtUk7GClCSandDXKRDybCuxZFCy9bdFwGUHJ4UA8Yjqn71+CRQadgPARLBf
+         +1wfv4PZ3iKh2/U6NgKpv95dm+FfiACztMxZUqS0ZZtENf16EiKUaqeRGxGMO2p+1EHd
+         dc8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696491750; x=1697096550;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tLnTS38DyxCuIhZvuKF6L9larEXjV5fmGyQF7glUG0Y=;
-        b=geK+YKE7+VhOGwDU8xi0O7AW5McU4b3ih1us/4NoZSXOivL8Th3QJyaViUNz/FVDQC
-         cTkei2Hq47jhrBsV8j93qXHGNJQdk6OXKrC97v+Tp87Mi1tU99IRobSllrCJVN9CHrOQ
-         acmd9wDutNOYFu02dv3gfWjMrRnEEAG+r2BG165le/5wQ5Sxmax9W+o/G2GZCGni61s3
-         5o4H1stRFfC4PniqmF75b1688EfHuWXknO/3N+hiGiuIQkUcoL480N1Wl2X3siwwfGOV
-         fN9UjXSoICDljwCDX9RahgZz91tbUKsaYzaPeME5JfXRv7GzHXE+fM+rH/rDiKHDICkv
-         7G6w==
-X-Gm-Message-State: AOJu0YzuCKtU6GtzbAAvxGO/D99c2pEKTA6J0fC+CrnAnwjTTixM2OeJ
-        RNEnULFi1dguwX83CCmJPaMpfQtnHcupC4gzin0=
-X-Google-Smtp-Source: AGHT+IHeIgFTHZM8RR3g4H3e4AyuL0snoCMYCvPeDynUm+dCNqvZTx30FCkTvR093izRXceXggqfZQ==
-X-Received: by 2002:aa7:db45:0:b0:533:520:a5a8 with SMTP id n5-20020aa7db45000000b005330520a5a8mr4001115edt.29.1696491750662;
-        Thu, 05 Oct 2023 00:42:30 -0700 (PDT)
-Received: from [192.168.1.149] (i5C743835.versanet.de. [92.116.56.53])
-        by smtp.gmail.com with ESMTPSA id n10-20020a056402060a00b0053447d022f9sm649014edv.18.2023.10.05.00.42.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 00:42:30 -0700 (PDT)
-From:   Erik Schilling <erik.schilling@linaro.org>
-Date:   Thu, 05 Oct 2023 09:42:23 +0200
-Subject: [libgpiod][PATCH] bindings: rust: libgpiod: release 0.2.0
+        d=1e100.net; s=20230601; t=1696513722; x=1697118522;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gHY/ZQQzp7Eh1tubbFWWOn2NxVKU0m/orXkn9/Odof0=;
+        b=DxGJ1wSDqopgeOvot6/KALDC5ZO789lt0e7kO9x/yhduGGtN8In79Lfts4wZuRfl6i
+         lj/iu8jc0OICL0mtPhd9dqbjaNGBlMYkAPtyyq6/CS4WpgAaqICIvmzA66R6JqXc8gpr
+         8DqjyUs7YV0dmrbbutQgXXBmhXX+Zd2AZYdPdb7m+cufh5pPVlUsoKz4mVThSj/V8xGi
+         wVYm+eJMIyHxKQ0+govUQrMJd72tPtcBcAE6kVbZCOUIOUfRaJDncHxPCoMmg74amWGw
+         tzNDj2xMaMm3DCPg2bgXg7CPZzAtGtEoAyZdzDOQZRd7UTCMKjzRICNcecJqpDqU3hnd
+         pHmA==
+X-Gm-Message-State: AOJu0YyRaIKn4oOFNaSeVBTInevxw1MpjHcX7vPkKCEOKOyr246v1GE6
+        V2PGFEwDXTBsEw6UrUnuoKzluiscAlJsQQRzCCbzhA==
+X-Google-Smtp-Source: AGHT+IEs24zy6ibJecOnCN0EfrO6wFAW3J5eW9qxeqqcBUsb4ootHwEPnzV2453v5/6B/ux1FD3fv13iIIuy1J493K0=
+X-Received: by 2002:a1f:e2c3:0:b0:49c:37a1:2358 with SMTP id
+ z186-20020a1fe2c3000000b0049c37a12358mr4560513vkg.14.1696513722632; Thu, 05
+ Oct 2023 06:48:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231005-b4-rust-release-0_2_0-v1-1-0fab05c09962@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAN5oHmUC/x3M0QqCQBBG4VeRuW5gdt0KepUIWddfGxCVmYpAf
- PeWLr+Lc3ZymMLp1uxk+KjrulSEU0PlmZcJrEM1RYltEDlzn9je/mLDjOxg6WInHNqUcMnjtZR
- Itd0Mo37/3zvN2k+brgM9juMHXs+0qHEAAAA=
-To:     Linux-GPIO <linux-gpio@vger.kernel.org>, brgl@bgdev.pl
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-        Kent Gibson <warthog618@gmail.com>,
-        Erik Schilling <erik.schilling@linaro.org>
-X-Mailer: b4 0.13-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1696491749; l=2898;
- i=erik.schilling@linaro.org; s=20230523; h=from:subject:message-id;
- bh=AVJt5L0DbnfcwDUAdZyqyPAbvqncCt8e8r5ky7wbYDU=;
- b=CQ9DMBAQaDJwYh7LOgCYYRUg7LPmPC7hgobVHhHu50XjVef43lysljoTpyh+NmJriTegBxIIT
- 0C1ER0jn3PwD38G30wW5IFHG4G27/N8zdIT5Vu7VKRyITy3gDLILY1Z
-X-Developer-Key: i=erik.schilling@linaro.org; a=ed25519;
- pk=/nNqy8/YOEdthj1epXl5FgwCTKEiVqTqqnVN1jVal7s=
+References: <20230905185309.131295-1-brgl@bgdev.pl> <20230905185309.131295-15-brgl@bgdev.pl>
+ <CACRpkda9=VULj4Cy_sit-UpUQnVEbS-RJKAeULVCw8ZCRTq1sw@mail.gmail.com>
+ <CAMRc=MdTk1B4MEh9C624Upm_EcaQgJd9OU-AGfU0G-DU1+qk6A@mail.gmail.com>
+ <36b17290-c643-8d8e-e82b-49afa6b34fbb@nvidia.com> <3624e973-d09a-d211-c6d0-d0ffb8c20c4b@nvidia.com>
+ <90b5f887-8af4-a80d-ea4d-cf2199752de4@nvidia.com> <0e7cae42-0b81-c038-8beb-49102feea8a6@nvidia.com>
+In-Reply-To: <0e7cae42-0b81-c038-8beb-49102feea8a6@nvidia.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 5 Oct 2023 15:48:31 +0200
+Message-ID: <CAMRc=McSG6qajxt6P3vWQEeT63Pk5tggD05pUoMD1zd5ApZxgA@mail.gmail.com>
+Subject: Re: [RFT PATCH 14/21] hte: tegra194: don't access struct gpio_chip
+To:     Dipen Patel <dipenp@nvidia.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, timestamp@lists.linux.dev,
+        linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-Since we had some (potentially-)breaking changes, we bump the major for
-the next release of the crate.
+On Thu, Oct 5, 2023 at 1:52=E2=80=AFAM Dipen Patel <dipenp@nvidia.com> wrot=
+e:
+>
+> On 10/4/23 3:54 PM, Dipen Patel wrote:
+> > On 10/4/23 1:33 PM, Dipen Patel wrote:
+> >> On 10/4/23 1:30 PM, Dipen Patel wrote:
+> >>> On 10/4/23 5:00 AM, Bartosz Golaszewski wrote:
+> >>>> On Thu, Sep 7, 2023 at 9:28=E2=80=AFAM Linus Walleij <linus.walleij@=
+linaro.org> wrote:
+> >>>>>
+> >>>>> On Tue, Sep 5, 2023 at 8:53=E2=80=AFPM Bartosz Golaszewski <brgl@bg=
+dev.pl> wrote:
+> >>>>>
+> >>>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >>>>>>
+> >>>>>> Using struct gpio_chip is not safe as it will disappear if the
+> >>>>>> underlying driver is unbound for any reason. Switch to using refer=
+ence
+> >>>>>> counted struct gpio_device and its dedicated accessors.
+> >>>>>>
+> >>>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org=
+>
+> >>>>>
+> >>>>> As Andy points out add <linux/cleanup.h>, with that fixed:
+> >>>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> >>>>>
+> >>>>> I think this can be merged into the gpio tree after leaving some
+> >>>>> slack for the HTE maintainer to look at it, things look so much
+> >>>>> better after this.
+> >>>>>
+> >>>>> Yours,
+> >>>>> Linus Walleij
+> >>>>
+> >>>> Dipen,
+> >>>>
+> >>>> if you could give this patch a test and possibly ack it for me to ta=
+ke
+> >>>> it through the GPIO tree (or go the immutable tag from HTE route) th=
+en
+> >>>> it would be great. This is the last user of gpiochip_find() treewide=
+,
+> >>>> so with it we could remove it entirely for v6.7.
+> >>>
+> >>> Progress so far for the RFT...
+> >>>
+> >>> I tried applying the patch series on 6.6-rc1 and it did not apply cle=
+anly,
+> >>> some patches I needed to manually apply and correct. With all this, i=
+t failed
+> >>> compilation at some spi/spi-bcm2835 driver. I disabled that and was a=
+ble to
+> >>> compile. I thought I should let you know this part.
+> >>>
+> >>> Now, I tried to test the hte and it seems to fail finding the gpio de=
+vice,
+> >>> roughly around this place [1]. I thought it would be your patch serie=
+s so
+> >>> tried to just use 6.6rc1 without your patches and it still failed at =
+the
+> >>> same place. I have to trace back now from which kernel version it bro=
+ke.
+> >>
+> >> [1].
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/pateldipen1984/linux.g=
+it/tree/drivers/hte/hte-tegra194.c?h=3Dfor-next#n781
+> >>
+> >> of course with your patches it would fail for the gdev instead of the =
+chip.
+> >
+> > Small update:
+> >
+> > I put some debugging prints in the gpio match function in the hte-tegra=
+194.c as
+> > below:
+> >
+> > static int tegra_gpiochip_match(struct gpio_chip *chip, void *data)
+> >  {
+> > +       struct device_node *node =3D data;
+> > +       struct fwnode_handle *fw =3D of_node_to_fwnode(data);
+> > +       if (!fw || !chip->fwnode)
+> > +               pr_err("dipen patel: fw is null\n");
+> >
+> > -       pr_err("%s:%d\n", __func__, __LINE__);
+> > +       pr_err("dipen patel, %s:%d: %s, %s, %s, match?:%d, fwnode name:=
+%s\n",
+> > __func__, __LINE__, chip->label, node->name, node->full_name, (chip->fw=
+node =3D=3D
+> > fw), fw->dev->init_name);
+> >         return chip->fwnode =3D=3D of_node_to_fwnode(data);
+> >  }
+> >
+> > The output of the printfs looks like below:
+> > [    3.955194] dipen patel: fw is null -----> this message started appe=
+aring
+> > when I added !chip->fwnode test in the if condition line.
+> >
+> > [    3.958864] dipen patel, tegra_gpiochip_match:689: tegra234-gpio, gp=
+io,
+> > gpio@c2f0000, match?:0, fwnode name:(null)
+> >
+> > I conclude that chip->fwnode is empty. Any idea in which conditions tha=
+t node
+> > would be empty?
+>
+> sorry for spamming, one last message before I sign off for the day....
+>
+> Seems, adding below in the tegra gpio driver resolved the issue I am faci=
+ng, I
+> was able to verify your patch series.
+>
+> diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+> index d87dd06db40d..a56c159d7136 100644
+> --- a/drivers/gpio/gpio-tegra186.c
+> +++ b/drivers/gpio/gpio-tegra186.c
+> @@ -989,6 +989,8 @@ static int tegra186_gpio_probe(struct platform_device=
+ *pdev)
+>                 offset +=3D port->pins;
+>         }
+>
+> +       gpio->gpio.fwnode =3D of_node_to_fwnode(pdev->dev.of_node);
+> +
+>         return devm_gpiochip_add_data(&pdev->dev, &gpio->gpio, gpio);
+>  }
+>
+> Now, few follow up questions:
+> 1) is this the correct way of setting the chip fwnode in the gpio driver?
 
-Note:
-I am using the term "major" as defined in the Rust SemVer compatibility
-guide [1], where the first non-zero digit is considered as "major".
+You shouldn't need this. This driver already does:
 
-[1] https://doc.rust-lang.org/cargo/reference/semver.html
+    gpio->gpio.parent =3D &pdev->dev;
 
-Changelog:
-=========
+so fwnode should be assigned in gpiochip_add_data_with_key(). Can you
+check why this doesn't happen?
 
-(potentially-)breaking changes:
-  a29f3e6 (bindings: rust: rename {event,settings}_clone to try_clone, 2023-10-04)
-  b290348 (bindings: rust: fix soundness of line_info modeling, 2023-10-03)
-  d04639d (bindings: rust: bump MSRV to 1.60, 2023-06-16)
+Bart
 
-new functionality:
-  808d15e (bindings: rust: allow cloning line::InfoRef -> line::Info, 2023-10-03)
-  64aac85 (bindings: rust: mark all owning types as `Send`, 2023-09-28)
-  d12ce74 (bindings: rust: provide LineRequest::chip_name(), 2023-07-20)
-  53226d5 (bindings: rust: examples: add dedicated examples, 2023-06-14)
-
-other changes:
-  0a570b6 (bindings: rust: drop unneeded Arc within Chip, 2023-09-27)
-  a97fe96 (bindings: rust: construct chip infos by reference, 2023-09-27)
-  27afa47 (bindings: rust: remove useless clone, 2023-09-28)
-  3f6e0bf (bindings: rust: add README.md for libgpiod crate, 2023-07-03)
-  4b8357b (bindings: rust: clippy: silence false-positive on iterator, 2023-06-30)
-  39189f0 (bindings: rust: clippy: drop unneeded conversions, 2023-06-30)
-  46115fd (bindings: rust: clippy: silence false-positives on casts, 2023-06-30)
-  901104e (bindings: rust: clippy: drop unnecessary casts, 2023-06-30)
-  46ecbe0 (rust: examples: file comment consistency, 2023-06-24)
-  aaed0f2 (bindings: rust: examples: replace tools examples with use case examples, 2023-06-23)
-  b37bd9e (bindings: rust: examples: consistency cleanup, 2023-06-23)
-  06c8ad9 (bindings: rust: package new examples in the distro tarball, 2023-06-15)
-
-Signed-off-by: Erik Schilling <erik.schilling@linaro.org>
----
-After merging a couple of important soundness fixes and threading API
-adjustments, I suggest doing a new release for the Rust bindings.
-
-Once this is merged, I will publish the tree of this commit to
-https://crates.io/crates/libgpiod/.
----
- bindings/rust/libgpiod/Cargo.toml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/bindings/rust/libgpiod/Cargo.toml b/bindings/rust/libgpiod/Cargo.toml
-index 518e5e5..3be4aa0 100644
---- a/bindings/rust/libgpiod/Cargo.toml
-+++ b/bindings/rust/libgpiod/Cargo.toml
-@@ -4,7 +4,7 @@
- 
- [package]
- name = "libgpiod"
--version = "0.1.0"
-+version = "0.2.0"
- authors = ["Viresh Kumar <viresh.kumar@linaro.org>"]
- description = "libgpiod wrappers"
- repository = "https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git"
-
----
-base-commit: a29f3e6957914dc564c723a8fc405cd99e407fd2
-change-id: 20231005-b4-rust-release-0_2_0-1344e6af7cc2
-
-Best regards,
--- 
-Erik Schilling <erik.schilling@linaro.org>
-
+> 2) Or should I use something else in hte matching function instead of fwn=
+ode so
+> to avoid adding above line in the gpio driver?
+>
+> >
+> >>>
+> >>>>
+> >>>> Bart
+> >>>
+> >>
+> >
+>
