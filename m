@@ -2,124 +2,128 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B4AE81DFB
-	for <linux-gpio@archiver.kernel.org>; Fri,  6 Oct 2023 13:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAAB8E81DFD
+	for <linux-gpio@archiver.kernel.org>; Fri,  6 Oct 2023 13:45:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232364AbjJFN1R (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Fri, 6 Oct 2023 09:27:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47020 "EHLO
+        id S232425AbjJFNpO (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Fri, 6 Oct 2023 09:45:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232082AbjJFN1Q (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Oct 2023 09:27:16 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29372AC;
-        Fri,  6 Oct 2023 06:27:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1696598835; x=1728134835;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=2cc26gFKLWV1zohqFQ9a2XIcjoRWt0n03Xemi9o+UVA=;
-  b=QB5+Gr8lpX+N+lwZkP1bGdyfHOl4uvAFIFG2KuouxAQObNXVvo414EHd
-   Kx89qb3T0SGaQO6c4LGGfr6he7Pfx9HMVOY3NnW0RX+2DBxdtpiAOosmY
-   9Kqkt6byhXr90lYIKeOU8/d93+4mP7xlDoguYn4xlR3Pm+Mpd7xZM8bNG
-   hkpcML+nT7y1pbWSfJo9ePVSHlm+7iRIqf08l+Vk3dNqLO3SZwV5NbtBO
-   EH64HgkPDWqBHm60+wj1isIjKGerbgZS4HWflaSL+nNjQl3y5LByc383z
-   /LG8Gvi/K3C37Y2tin6bcoJPf71ZMbuO3TaVKO7PVSUq3kC5EhHFRnqLu
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10855"; a="383641043"
-X-IronPort-AV: E=Sophos;i="6.03,204,1694761200"; 
-   d="scan'208";a="383641043"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2023 06:27:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10855"; a="999328555"
-X-IronPort-AV: E=Sophos;i="6.03,204,1694761200"; 
-   d="scan'208";a="999328555"
-Received: from srab-mobl1.ger.corp.intel.com ([10.252.43.69])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2023 06:27:11 -0700
-Date:   Fri, 6 Oct 2023 16:27:09 +0300 (EEST)
-From:   =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-cc:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Mark Gross <markgross@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] platform/x86: int3472: don't use
- gpiod_toggle_active_low()
-In-Reply-To: <29764d46-8d3d-9794-bbde-d7928a91cbb5@redhat.com>
-Message-ID: <2e9621e7-59e-dc20-71a-9da6f367557e@linux.intel.com>
-References: <20230926145943.42814-1-brgl@bgdev.pl> <e6817d30-b443-1a73-efae-84415604b19f@redhat.com> <CACMJSetWH=Z5ubHb33W0mYvpqkU7vv=nKNBSa9eLmAi94NyrgA@mail.gmail.com> <29764d46-8d3d-9794-bbde-d7928a91cbb5@redhat.com>
+        with ESMTP id S232340AbjJFNpO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Oct 2023 09:45:14 -0400
+Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30D5E95;
+        Fri,  6 Oct 2023 06:45:13 -0700 (PDT)
+Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+        by mx.skole.hr (mx.skole.hr) with ESMTP id B304383F67;
+        Fri,  6 Oct 2023 15:45:11 +0200 (CEST)
+From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Date:   Fri, 06 Oct 2023 15:44:26 +0200
+Subject: [PATCH RFT v6 2/6] ARM: pxa: Convert Spitz LEDs to GPIO
+ descriptors
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20231006-pxa-gpio-v6-2-981b4910d599@skole.hr>
+References: <20231006-pxa-gpio-v6-0-981b4910d599@skole.hr>
+In-Reply-To: <20231006-pxa-gpio-v6-0-981b4910d599@skole.hr>
+To:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Russell King <linux@armlinux.org.uk>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-spi@vger.kernel.org,
+        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1884;
+ i=duje.mihanovic@skole.hr; h=from:subject:message-id;
+ bh=c8SAwr7yUIDYfzBg54shArsrK1UPy+9oOW4+fo5KjpU=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlIA9dUqdcLA8NnEHUdf4WtT55qUDp3bAYkuWDY
+ OJlpoomz8+JAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZSAPXQAKCRCaEZ6wQi2W
+ 4fuyD/91ZkszojargU21+2IAfmhklB/mbaaCM63yK7Bd6T4E0vyzsDQOj3618sH7IKQI5lcNOP5
+ lVBS0BnGpVqawos5mG27ZzdBRWmalDs7HGlCnE0unzjuRiTzXJmHrUsgn0JnXqIbX8BJw4vsAJu
+ yi7A5WXOabjeOmU9SxkQ5LJY4c9nwdae2X7CJ6UKK1rfx6DKYSct2Cj+rUxAM8c21Vsu9xUUg+h
+ 8jInzpAy0N9qTbviAJ01dQHF/U0qHsjrNHyJDK9XNslY4o5DiNXq4ZpClvf7yBqddHjarYzH3vN
+ cROX55E2Qhi//b1TzPI1rmLCxMdxiem4cIE78m/vMbc2mv2wmABEZqoIYxyTTocEKG+e4MquKuk
+ kTb2rhhh5rVkTAjozzsVib/46/Iw0Vll+D0Zs/ebl1q4p3+ZV7X8+adGJIOJMQMFmRPVWyiqsqs
+ N9X0IW9mCLyUUnbxWBj2hjIO7Gc4MG8BEGqMz0/C03wLciP49ICXexkEYy9+LWUdOBU9ebhhRB0
+ KZlbk1dQ7r13nzSCyThkJ203sLewu+ajIn/q4p7sBmipBLyyNSnqvnt4rf9x3+DEbenjigWYUIZ
+ qp9lYwna9PzrfRIEHdRivj8CfQF3iUgE+EA1HI/Qec6J5/JoZmCS9atkoNNkIuRp+jpDlXb3YkW
+ ypPAJO70pXTd77A==
+X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
+ fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Wed, 4 Oct 2023, Hans de Goede wrote:
+Sharp's Spitz board still uses the legacy GPIO interface for configuring
+its two onboard LEDs.
 
-> Hi Bart,
-> 
-> On 9/28/23 20:40, Bartosz Golaszewski wrote:
-> > On Thu, 28 Sept 2023 at 14:40, Hans de Goede <hdegoede@redhat.com> wrote:
-> >>
-> >> Hi All,
-> >>
-> >> Here is a v2 of Bartosz' "don't use gpiod_toggle_active_low()" series.
-> >>
-> >> New in v2:
-> >> - Rework to deal with ACPI path vs gpiod_lookup.key differences:
-> >>   acpi_get_handle(path) -> acpi_fetch_acpi_dev(handle) -> acpi_dev_name(adev)
-> >>
-> >> Regards,
-> >>
-> >> Hans
-> >>
-> >>
-> >> Bartosz Golaszewski (2):
-> >>   platform/x86: int3472: Add new
-> >>     skl_int3472_gpiod_get_from_temp_lookup() helper
-> >>   gpio: acpi: remove acpi_get_and_request_gpiod()
-> >>
-> >> Hans de Goede (3):
-> >>   platform/x86: int3472: Add new skl_int3472_fill_gpiod_lookup() helper
-> >>   platform/x86: int3472: Stop using gpiod_toggle_active_low()
-> >>   platform/x86: int3472: Switch to devm_get_gpiod()
-> >>
-> >>  drivers/gpio/gpiolib-acpi.c                   |  28 -----
-> >>  .../x86/intel/int3472/clk_and_regulator.c     |  54 ++--------
-> >>  drivers/platform/x86/intel/int3472/common.h   |   7 +-
-> >>  drivers/platform/x86/intel/int3472/discrete.c | 101 ++++++++++++++----
-> >>  drivers/platform/x86/intel/int3472/led.c      |  24 +----
-> >>  include/linux/gpio/consumer.h                 |   8 --
-> >>  6 files changed, 93 insertions(+), 129 deletions(-)
-> >>
-> >> --
-> >> 2.41.0
-> >>
-> > 
-> > Thanks Hans, this looks good to me. I'd let it sit on the list for a
-> > week. After that, do you want to take patches 1-4 and provide me with
-> > another tag?
-> 
-> I have just send out a v3 to address Andy's remark about me
-> somehow resetting the authorship to me on 2 patches from Bartosz.
+Convert them to use the GPIO descriptor interface.
 
-> As for your request for a tag for the 4st 4 patches for you to merge
-> into gpiolib. I'll go and work work on that. I need to coordinate
-> this with Ilpo, with whom I now co-maintain pdx86 .
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+---
+ arch/arm/mach-pxa/spitz.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-Thanks all. I've applied patches 1-4 into platform-drivers-x86-int3472 and 
-merged that into review-ilpo.
-
-I'll send the IB PR once LKP has done its thing for the branch.
-
+diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
+index 535e2b2e997b..1fb4102ea39e 100644
+--- a/arch/arm/mach-pxa/spitz.c
++++ b/arch/arm/mach-pxa/spitz.c
+@@ -452,16 +452,25 @@ static inline void spitz_keys_init(void) {}
+  * LEDs
+  ******************************************************************************/
+ #if defined(CONFIG_LEDS_GPIO) || defined(CONFIG_LEDS_GPIO_MODULE)
++static struct gpiod_lookup_table spitz_led_gpio_table = {
++	.dev_id = "leds-gpio",
++	.table = {
++		GPIO_LOOKUP_IDX("pxa-gpio", SPITZ_GPIO_LED_ORANGE, NULL, 0,
++				GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("pxa-gpio", SPITZ_GPIO_LED_GREEN, NULL, 1,
++				GPIO_ACTIVE_HIGH),
++		{ }
++	}
++};
++
+ static struct gpio_led spitz_gpio_leds[] = {
+ 	{
+ 		.name			= "spitz:amber:charge",
+ 		.default_trigger	= "sharpsl-charge",
+-		.gpio			= SPITZ_GPIO_LED_ORANGE,
+ 	},
+ 	{
+ 		.name			= "spitz:green:hddactivity",
+ 		.default_trigger	= "disk-activity",
+-		.gpio			= SPITZ_GPIO_LED_GREEN,
+ 	},
+ };
+ 
+@@ -480,7 +489,14 @@ static struct platform_device spitz_led_device = {
+ 
+ static void __init spitz_leds_init(void)
+ {
++	struct gpio_descs *leds;
++
++	gpiod_add_lookup_table(&spitz_led_gpio_table);
+ 	platform_device_register(&spitz_led_device);
++	leds = gpiod_get_array_optional(&spitz_led_device.dev,
++			NULL, GPIOD_ASIS);
++	spitz_gpio_leds[0].gpiod = leds->desc[0];
++	spitz_gpio_leds[1].gpiod = leds->desc[1];
+ }
+ #else
+ static inline void spitz_leds_init(void) {}
 
 -- 
- i.
+2.42.0
+
 
