@@ -2,30 +2,30 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2415E95A85
-	for <linux-gpio@archiver.kernel.org>; Sun,  8 Oct 2023 00:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 315FCE95A87
+	for <linux-gpio@archiver.kernel.org>; Sun,  8 Oct 2023 01:17:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234199AbjJHAxF (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 7 Oct 2023 20:53:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57822 "EHLO
+        id S1344279AbjJHBRS (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 7 Oct 2023 21:17:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234244AbjJHAxC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Oct 2023 20:53:02 -0400
+        with ESMTP id S234215AbjJHBRO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Oct 2023 21:17:14 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4BA02D64;
-        Sat,  7 Oct 2023 17:51:23 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACB24C43140;
-        Sun,  8 Oct 2023 00:51:01 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27003212A;
+        Sat,  7 Oct 2023 17:50:25 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E648C433BD;
+        Sun,  8 Oct 2023 00:50:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696726262;
-        bh=Dhp40pBNB2ucCb+P1yiF8uzZMj2aodKJXYogWqXroCw=;
+        s=k20201202; t=1696726220;
+        bh=ZxLTp2cbLb9eo1xQ5FrKJgFWIe79ItBd51kd3aNbBl8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MVaISciGppl7EtXYtGmJlVkjtImvnk8d4xtBcty4GaB7Nwt8X9IzU5Ek2z7q4pbYe
-         UxYzuKfbSmx3JaD+g0VgMTzpX+H9AUukq3n336lT+ETZ+lztFCVEf11PXLQvWGFSkq
-         6zePvBDh88OXo/5bGIjzNBKHpPeWBDEhXOn+tqf/rd5J99bMlUcdqghsAxgnGY7YF7
-         +WZUQOMK8LO4vatHnHGiwbsjhM3CZz8XF6YfXvhnqLjl2vwY6ngNBx84T75f8DOiSM
-         tZIqC9ZVo904PAYKQbZmIueDilZL5+k5qJt79l13J0RXJ8tdxXS5vMaRMk7cTRQzfo
-         DK3rrVbYEVVJA==
+        b=fQuKEsGHSsO8tMKT3uikQV86LHSy8rSrbi/vc239cz8MErKnvkELNfQJCDC6CLPcX
+         Bmmc2d4Legka0dlI8Rlk5R6PbQm5dFuDmxsLJnqa3gi+hz6iqAKRVixsUdZW+Obctn
+         AoV9IWCATxcPBljITmfLloi7NF6EhCDJBtQ/vEhpFZxGDzcvQOd+IhepsXTeCMeDP5
+         x+dC9nfGoT7e7KtLSSAzoYSmiw7Xs/HyrmDkNh35eHab/AoFtuTUXLPm3ccL5ORKsM
+         Wuw6qiYGp6fvG8CiRW8NzPo8B0pQ/1K0vFI2HNITeQn1wAHqAzEgDkdMg+AAI3gnf9
+         4G+HyWQKktpoA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Chengfeng Ye <dg573847474@gmail.com>,
@@ -33,16 +33,16 @@ Cc:     Chengfeng Ye <dg573847474@gmail.com>,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linus.walleij@linaro.org,
         brgl@bgdev.pl, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 5/7] gpio: timberdale: Fix potential deadlock on &tgpio->lock
-Date:   Sat,  7 Oct 2023 20:50:51 -0400
-Message-Id: <20231008005053.3768625-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 6/8] gpio: timberdale: Fix potential deadlock on &tgpio->lock
+Date:   Sat,  7 Oct 2023 20:50:07 -0400
+Message-Id: <20231008005009.3768314-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20231008005053.3768625-1-sashal@kernel.org>
-References: <20231008005053.3768625-1-sashal@kernel.org>
+In-Reply-To: <20231008005009.3768314-1-sashal@kernel.org>
+References: <20231008005009.3768314-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.14.326
+X-stable-base: Linux 5.10.197
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
@@ -80,10 +80,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
-index 181f86ce00cd4..639c8daaeb310 100644
+index de14949a3fe5a..92c1f2baa4bff 100644
 --- a/drivers/gpio/gpio-timberdale.c
 +++ b/drivers/gpio/gpio-timberdale.c
-@@ -55,9 +55,10 @@ static int timbgpio_update_bit(struct gpio_chip *gpio, unsigned index,
+@@ -43,9 +43,10 @@ static int timbgpio_update_bit(struct gpio_chip *gpio, unsigned index,
  	unsigned offset, bool enabled)
  {
  	struct timbgpio *tgpio = gpiochip_get_data(gpio);
@@ -95,7 +95,7 @@ index 181f86ce00cd4..639c8daaeb310 100644
  	reg = ioread32(tgpio->membase + offset);
  
  	if (enabled)
-@@ -66,7 +67,7 @@ static int timbgpio_update_bit(struct gpio_chip *gpio, unsigned index,
+@@ -54,7 +55,7 @@ static int timbgpio_update_bit(struct gpio_chip *gpio, unsigned index,
  		reg &= ~(1 << index);
  
  	iowrite32(reg, tgpio->membase + offset);
