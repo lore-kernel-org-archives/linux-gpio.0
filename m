@@ -2,30 +2,30 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF15E95A85
-	for <linux-gpio@archiver.kernel.org>; Sun,  8 Oct 2023 00:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A4BE95A67
+	for <linux-gpio@archiver.kernel.org>; Sun,  8 Oct 2023 00:52:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234346AbjJHAvM (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Sat, 7 Oct 2023 20:51:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40806 "EHLO
+        id S234477AbjJHAwT (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Sat, 7 Oct 2023 20:52:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234458AbjJHAus (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Oct 2023 20:50:48 -0400
+        with ESMTP id S234488AbjJHAvp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Oct 2023 20:51:45 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8293CD48;
-        Sat,  7 Oct 2023 17:50:07 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E760C433CC;
-        Sun,  8 Oct 2023 00:50:02 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E4B8189;
+        Sat,  7 Oct 2023 17:50:56 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09A5AC433BF;
+        Sun,  8 Oct 2023 00:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696726203;
+        s=k20201202; t=1696726235;
         bh=ZxLTp2cbLb9eo1xQ5FrKJgFWIe79ItBd51kd3aNbBl8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d5TC818npIwT/2pHDAqnqjIZnXiYQa49wvh4p5VhmHACilT5kBfJevHSkwqXQC92W
-         /Nd9cv6RbDxbKtRrPVT6EazZoIa7yT/bR4ACNaCbnXzh9j1c9U4cTWKKJ65i8Ch1WE
-         yTNkjl6esecyZoeHL4jR60AD/a/C8rdC7nZUd92se/qw/yh4sdtmlXtt10F8CrKFpT
-         SNy97J/xwgBJMk5f8ACl9EHgf31ueEX8oD3hzg260WzsJ8AcbRPOojbovxY//F8b3/
-         W2Y51rW/oAlhXxG3QGAKY7u+rG0x88vlv/aR11LOuXix6HJqiiUBlTHIBn88b40sw5
-         yw+qsLeI3v4Qw==
+        b=XLjcdrfl+aQ0KHsJsthbPGnj+PKvyYIvKH6+ivOzvW8fxCTdzHyuh5daNwcvhWP2r
+         FnMSK4KyyTanztTeE/UPHXVGYXTVeNeteKMlDxut0fyjueWPU7xrjXv8z3EKfxu25n
+         s/DMHmMe4g0RSJi/jsJcDpE8/Cmb+EeoAnqXu8ZDkbIQHjnHI9AIeQ/CyrLs1qgETK
+         8XS5/pZ2MUBpF+Cyj6QFT3DO2bQ8is5WjP2Ei1sh6aFrbX7OpuYKyzp1+BIKEDCqJ1
+         y5hogdDS8ytB/le4we9BIn0MgkGzFz/5KzeDNtJ+X45J0J2rjF/xV+9v0+NaTm6FBZ
+         HiMV1gWRfPh0w==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Chengfeng Ye <dg573847474@gmail.com>,
@@ -33,16 +33,16 @@ Cc:     Chengfeng Ye <dg573847474@gmail.com>,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linus.walleij@linaro.org,
         brgl@bgdev.pl, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 07/10] gpio: timberdale: Fix potential deadlock on &tgpio->lock
-Date:   Sat,  7 Oct 2023 20:49:46 -0400
-Message-Id: <20231008004950.3768189-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 6/8] gpio: timberdale: Fix potential deadlock on &tgpio->lock
+Date:   Sat,  7 Oct 2023 20:50:22 -0400
+Message-Id: <20231008005024.3768418-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20231008004950.3768189-1-sashal@kernel.org>
-References: <20231008004950.3768189-1-sashal@kernel.org>
+In-Reply-To: <20231008005024.3768418-1-sashal@kernel.org>
+References: <20231008005024.3768418-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.134
+X-stable-base: Linux 5.4.257
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
