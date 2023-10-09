@@ -2,46 +2,46 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA7BE95A91
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Oct 2023 09:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 052A8E95A8E
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Oct 2023 09:22:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345697AbjJIJWo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Oct 2023 05:22:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51592 "EHLO
+        id S1345802AbjJIJWs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Oct 2023 05:22:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345758AbjJIJWl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2023 05:22:41 -0400
+        with ESMTP id S1345777AbjJIJWn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2023 05:22:43 -0400
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A6E097
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99DEAB9
         for <linux-gpio@vger.kernel.org>; Mon,  9 Oct 2023 02:22:40 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qpmTD-0006sZ-By; Mon, 09 Oct 2023 11:22:35 +0200
+        id 1qpmTE-0006tB-3J; Mon, 09 Oct 2023 11:22:36 +0200
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qpmTC-000NWT-JS; Mon, 09 Oct 2023 11:22:34 +0200
+        id 1qpmTD-000NWm-MM; Mon, 09 Oct 2023 11:22:35 +0200
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qpmTC-00C4ox-AX; Mon, 09 Oct 2023 11:22:34 +0200
+        id 1qpmTD-00C4pH-DG; Mon, 09 Oct 2023 11:22:35 +0200
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Yangtao Li <frank.li@vivo.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+Cc:     Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 03/20] pinctrl: ti: ti-iodelay: Drop if block with always false condition
-Date:   Mon,  9 Oct 2023 10:38:39 +0200
-Message-Id: <20231009083856.222030-4-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 08/20] pinctrl: amd: Convert to platform remove callback returning void
+Date:   Mon,  9 Oct 2023 10:38:44 +0200
+Message-Id: <20231009083856.222030-9-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20231009083856.222030-1-u.kleine-koenig@pengutronix.de>
 References: <20231009083856.222030-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=917; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=ADcuWWwkM5/gkoFp6FtBWjwsKB9USL1JlIZt0PCZ89o=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlI7wC2UY8AHx4VUIV+FUuHGT44H9qCxr8Sw/dU 8c6tnLh2GmJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZSO8AgAKCRCPgPtYfRL+ TurFB/4kLIvktU36dHpqh45SEy0RA6rK+k31xiIn3waWC0qcGft0HgOWYcEVNw2TagvASbL80vz 4E0xrh2Op0jCl7twlM2P1nZvBV+9w26vr9EaVmSsjmfFEp5Grbde0adN03TW7CRCatfAmZsHDEm USTx3+8PNV537PLm8qrQ8bDHlTSdvaRsHd4Wa5caZ7+m9Y7kJLkqKddC7XASpiqY0J2zqOtdNk2 Bzk6lQLrMgZluxPjOJHU6hDq/hE/hJrRkbM1m0YZxm2PxIZoNdoBv1mnJZTGojOBhGJS+MYUVq3 0G0piGTFwOmz0p8cvRXZqjXs579tszkrgkXAg/A20Uub/e2M
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1768; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=V7AnU5mBt80bO3f/bU7N6FqQ85j+a4pI1X5vE/2OSgI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlI7wI1+nZs515nJnjZmZdqHxhOhVNRVBbcm892 LSzhWR+GvSJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZSO8CAAKCRCPgPtYfRL+ Ttf7CACi6wQsY9DE8xhf2gF61QGcptRTb8H5D+pStx06n6zNcoRco2+PjJF/HNZLUjDok4IzKX2 8DI/1L7yRW3qkHLxoNRi1z0zce0ceVr+TuATh7388F8TrHbv4AbYmw0hOqsiUuXlzZmBxCqzDdG 9inVO+L0dGBOTU0+pv0WUCi7kD/SK7+wZX4NI/pKmkt4q+lc4R2geO6dB+OunvBfV863gD0uraX 5fPv/KpusCfa6MH+qqmzfF2W2T5wtMIbL1v1QiixCXkw2wOhaz0nsDgdSojQAlGlonoH6aQ0g98 yxLQF4/pjNT18Y9Y8O/2GwgEEUKDkJiM5lziHxMEUu/hf5NH
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -52,31 +52,55 @@ Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-ti_iodelay_remove() is only called after ti_iodelay_probe() completed
-successfully. In this case platform_set_drvdata() was called with a
-non-NULL argument and so platform_get_drvdata() won't return NULL.
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
 
-Simplify by removing the if block with the always false condition.
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new(), which already returns void. Eventually after all drivers
+are converted, .remove_new() will be renamed to .remove().
+
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/pinctrl/pinctrl-amd.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-index c1477f657839..f3a273562095 100644
---- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-+++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-@@ -903,9 +903,6 @@ static int ti_iodelay_remove(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 74241b2ff21e..fb58acb843d9 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -1166,7 +1166,7 @@ static int amd_gpio_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int amd_gpio_remove(struct platform_device *pdev)
++static void amd_gpio_remove(struct platform_device *pdev)
  {
- 	struct ti_iodelay_device *iod = platform_get_drvdata(pdev);
+ 	struct amd_gpio *gpio_dev;
  
--	if (!iod)
--		return 0;
+@@ -1174,8 +1174,6 @@ static int amd_gpio_remove(struct platform_device *pdev)
+ 
+ 	gpiochip_remove(&gpio_dev->gc);
+ 	acpi_unregister_wakeup_handler(amd_gpio_check_wake, gpio_dev);
 -
- 	if (iod->pctl)
- 		pinctrl_unregister(iod->pctl);
+-	return 0;
+ }
  
+ #ifdef CONFIG_ACPI
+@@ -1197,7 +1195,7 @@ static struct platform_driver amd_gpio_driver = {
+ #endif
+ 	},
+ 	.probe		= amd_gpio_probe,
+-	.remove		= amd_gpio_remove,
++	.remove_new	= amd_gpio_remove,
+ };
+ 
+ module_platform_driver(amd_gpio_driver);
 -- 
 2.40.1
 
