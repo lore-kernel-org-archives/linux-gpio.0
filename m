@@ -2,46 +2,46 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 052A8E95A8E
-	for <linux-gpio@archiver.kernel.org>; Mon,  9 Oct 2023 09:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BB4E95A97
+	for <linux-gpio@archiver.kernel.org>; Mon,  9 Oct 2023 09:22:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345802AbjJIJWs (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Mon, 9 Oct 2023 05:22:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36382 "EHLO
+        id S1345891AbjJIJW6 (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Mon, 9 Oct 2023 05:22:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345777AbjJIJWn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2023 05:22:43 -0400
+        with ESMTP id S1345798AbjJIJWs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2023 05:22:48 -0400
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99DEAB9
-        for <linux-gpio@vger.kernel.org>; Mon,  9 Oct 2023 02:22:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41D5697
+        for <linux-gpio@vger.kernel.org>; Mon,  9 Oct 2023 02:22:42 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qpmTE-0006tB-3J; Mon, 09 Oct 2023 11:22:36 +0200
+        id 1qpmTD-0006sf-Fw; Mon, 09 Oct 2023 11:22:35 +0200
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qpmTD-000NWm-MM; Mon, 09 Oct 2023 11:22:35 +0200
+        id 1qpmTD-000NWa-1L; Mon, 09 Oct 2023 11:22:35 +0200
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1qpmTD-00C4pH-DG; Mon, 09 Oct 2023 11:22:35 +0200
+        id 1qpmTC-00C4p5-Oh; Mon, 09 Oct 2023 11:22:34 +0200
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 08/20] pinctrl: amd: Convert to platform remove callback returning void
-Date:   Mon,  9 Oct 2023 10:38:44 +0200
-Message-Id: <20231009083856.222030-9-u.kleine-koenig@pengutronix.de>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 05/20] pinctrl: intel: cherryview: Convert to platform remove callback returning void
+Date:   Mon,  9 Oct 2023 10:38:41 +0200
+Message-Id: <20231009083856.222030-6-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20231009083856.222030-1-u.kleine-koenig@pengutronix.de>
 References: <20231009083856.222030-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1768; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=V7AnU5mBt80bO3f/bU7N6FqQ85j+a4pI1X5vE/2OSgI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlI7wI1+nZs515nJnjZmZdqHxhOhVNRVBbcm892 LSzhWR+GvSJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZSO8CAAKCRCPgPtYfRL+ Ttf7CACi6wQsY9DE8xhf2gF61QGcptRTb8H5D+pStx06n6zNcoRco2+PjJF/HNZLUjDok4IzKX2 8DI/1L7yRW3qkHLxoNRi1z0zce0ceVr+TuATh7388F8TrHbv4AbYmw0hOqsiUuXlzZmBxCqzDdG 9inVO+L0dGBOTU0+pv0WUCi7kD/SK7+wZX4NI/pKmkt4q+lc4R2geO6dB+OunvBfV863gD0uraX 5fPv/KpusCfa6MH+qqmzfF2W2T5wtMIbL1v1QiixCXkw2wOhaz0nsDgdSojQAlGlonoH6aQ0g98 yxLQF4/pjNT18Y9Y8O/2GwgEEUKDkJiM5lziHxMEUu/hf5NH
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2108; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=S4F/Ao6mCu0ElcleKD+S+Fk5DRAS/72HcfKe390NuvY=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlI7wE53vDr7UBK47ldXgIYZev2MHpu1X7uKNaB LRlAJOCz5qJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZSO8BAAKCRCPgPtYfRL+ TrrlB/0cybM0pgGOwafLmSvV1Kuw38n2Xm2s8vDDjzm6cesAP4fVfeiXo7xwu1xOdRy45Xwr+G5 abP4ExhcNV8VZ1jdoZmBLZ5CIDHWJsRY2bJ6h3qKCEsZlp7ykzhAuxjqkyHR7INf++qDqNup8T+ h/pBWAIGXSlW+KZV1kxBC8Y0sLNrqc1omys7HzYK8a9KXu2TliWtA0oQ83JTOTVMemXygIke9B6 ZWFPGYI/CNF2Xis/9Z1xD1D4urmYWN/vvFapXov3kVisLWVrvOfbMm5qkOK4uJgaJ96Mqfiecbg zg2HkJf3RLXXXNK+DMLN5dvoHOtZ55iyU6wIy17EN5Iwy/n9
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -67,40 +67,40 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/pinctrl/pinctrl-amd.c | 6 ++----
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 74241b2ff21e..fb58acb843d9 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -1166,7 +1166,7 @@ static int amd_gpio_probe(struct platform_device *pdev)
- 	return ret;
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index 81ee949b946d..1f923a895987 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1728,7 +1728,7 @@ static int chv_pinctrl_probe(struct platform_device *pdev)
+ 	return 0;
  }
  
--static int amd_gpio_remove(struct platform_device *pdev)
-+static void amd_gpio_remove(struct platform_device *pdev)
+-static int chv_pinctrl_remove(struct platform_device *pdev)
++static void chv_pinctrl_remove(struct platform_device *pdev)
  {
- 	struct amd_gpio *gpio_dev;
- 
-@@ -1174,8 +1174,6 @@ static int amd_gpio_remove(struct platform_device *pdev)
- 
- 	gpiochip_remove(&gpio_dev->gc);
- 	acpi_unregister_wakeup_handler(amd_gpio_check_wake, gpio_dev);
+ 	struct intel_pinctrl *pctrl = platform_get_drvdata(pdev);
+ 	const struct intel_community *community = &pctrl->communities[0];
+@@ -1736,8 +1736,6 @@ static int chv_pinctrl_remove(struct platform_device *pdev)
+ 	acpi_remove_address_space_handler(ACPI_HANDLE(&pdev->dev),
+ 					  community->acpi_space_id,
+ 					  chv_pinctrl_mmio_access_handler);
 -
 -	return 0;
  }
  
- #ifdef CONFIG_ACPI
-@@ -1197,7 +1195,7 @@ static struct platform_driver amd_gpio_driver = {
- #endif
- 	},
- 	.probe		= amd_gpio_probe,
--	.remove		= amd_gpio_remove,
-+	.remove_new	= amd_gpio_remove,
- };
+ static int chv_pinctrl_suspend_noirq(struct device *dev)
+@@ -1835,7 +1833,7 @@ MODULE_DEVICE_TABLE(acpi, chv_pinctrl_acpi_match);
  
- module_platform_driver(amd_gpio_driver);
+ static struct platform_driver chv_pinctrl_driver = {
+ 	.probe = chv_pinctrl_probe,
+-	.remove = chv_pinctrl_remove,
++	.remove_new = chv_pinctrl_remove,
+ 	.driver = {
+ 		.name = "cherryview-pinctrl",
+ 		.pm = pm_sleep_ptr(&chv_pinctrl_pm_ops),
 -- 
 2.40.1
 
