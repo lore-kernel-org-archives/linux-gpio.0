@@ -2,86 +2,83 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC264CD80DE
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Oct 2023 13:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A86A7CD8C82
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Oct 2023 14:14:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232276AbjJJNwq (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Oct 2023 09:52:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51978 "EHLO
+        id S232663AbjJJOOB (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Oct 2023 10:14:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232442AbjJJNwk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Oct 2023 09:52:40 -0400
-Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1867710EA
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 06:42:33 -0700 (PDT)
-Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-5a7af20c488so15736877b3.1
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 06:42:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696945352; x=1697550152; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NHv90yeM59s0sxqLXofNmRkQi512BP/YIHCc5n2XRV8=;
-        b=vxZEcFScrsEJDK9tv1BoX3DsLYmBSFnmWQoUZH9HVgZWR23OyV7MpwptRhkemKUt/x
-         phtaodpmmAPfMORdd72oCDzQ+ork9hngSy+CKbTHgRXEaqbTMKKrsd8T47QRtIthx0mE
-         rbc2jxDzMtw7EPptU9e7TkHIfIZnz3KCfImR5k0MQ0mEp0N6Rh2pXx1zJElsmHHSzVZl
-         asU9M7XSwyHVYwDhG/vHUiFl07+Qi5A8lQ1xzZxGFEnCaZ0fFge6Rmkxyq4XnMZhsxAj
-         OOag22wF4MQ7EXz8qGVHgD0iUParlwHmdbvj7++W88E0N0q61VCK/qBpxDIXl8dU0gZP
-         Jh6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696945352; x=1697550152;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NHv90yeM59s0sxqLXofNmRkQi512BP/YIHCc5n2XRV8=;
-        b=MV5w4SAeki2brj1Wyf7GbHX1+ghCQHgZTHSSH0Qf+FN0GExXbEMuXq1PyaMImnFmo8
-         IC/t57UpiXAurUAapfHFDCMsiywSd/WpjJa+vUPB6YqzXLEVljk34vOI4SUdQW8Du1Yd
-         T3OB+j9dx0B3+enhxmva1Pgx1Ehms/WBPmmufzoqFc3jw3X6s20FdYUCVlR5hAYTbyc3
-         +UKsKhxzojFY+VWiQM/4BVtKL6TMRDJH2Qadc401CuLNNGW8OAdoZMtNd7eWVLw+fCyQ
-         bA83IhHQoGKDHgbScT1+fWRVI4EWFdZXXNCGl6e/P0VsK8+0/LaQwAbilj2M23n3uwiq
-         SIUw==
-X-Gm-Message-State: AOJu0YzH0vTA/7bU3rej3EutIgIzwLkuOMr/fMxEekHMlCIpXIZU73EQ
-        ESDLIypZ/GXAUU3GGFUTaO+hSLKC4TsRj0IJyik97Q==
-X-Google-Smtp-Source: AGHT+IGNsJwnmmQA/OwxH8sKScOWP6t0fKFBGj5+E+gCuKw12wtPXcVUQL2NZqdH7G1/OZrUzycv/Tf44RgjgCeFxdY=
-X-Received: by 2002:a81:5e0a:0:b0:59b:bed9:9a3a with SMTP id
- s10-20020a815e0a000000b0059bbed99a3amr20112991ywb.41.1696945352241; Tue, 10
- Oct 2023 06:42:32 -0700 (PDT)
+        with ESMTP id S232778AbjJJONx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Oct 2023 10:13:53 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C582B6;
+        Tue, 10 Oct 2023 07:13:52 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="381661659"
+X-IronPort-AV: E=Sophos;i="6.03,212,1694761200"; 
+   d="scan'208";a="381661659"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2023 07:13:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10859"; a="823792959"
+X-IronPort-AV: E=Sophos;i="6.03,212,1694761200"; 
+   d="scan'208";a="823792959"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2023 07:13:45 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC1)
+        (envelope-from <andy@kernel.org>)
+        id 1qqDUU-00000004MQX-2aIe;
+        Tue, 10 Oct 2023 17:13:42 +0300
+Date:   Tue, 10 Oct 2023 17:13:42 +0300
+From:   Andy Shevchenko <andy@kernel.org>
+To:     Dipen Patel <dipenp@nvidia.com>
+Cc:     linus.walleij@linaro.org, brgl@bgdev.pl, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] gpio: tegra186: Set fwnode of the GPIO chip
+Message-ID: <ZSVcFo2sDVbMCW3Z@smile.fi.intel.com>
+References: <20231009173858.723686-1-dipenp@nvidia.com>
+ <ZSVN73ffDkGBzmmI@smile.fi.intel.com>
+ <ZSVWKSVNsBqDcOFS@smile.fi.intel.com>
 MIME-Version: 1.0
-References: <20231009083856.222030-1-u.kleine-koenig@pengutronix.de> <20231009083856.222030-15-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20231009083856.222030-15-u.kleine-koenig@pengutronix.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 10 Oct 2023 15:42:21 +0200
-Message-ID: <CACRpkdaf5PeW8G-WHFFfBUG4VnsJjss1f0NkF-V5SZW7QfBzYA@mail.gmail.com>
-Subject: Re: [PATCH 14/20] pinctrl: tb10x: Convert to platform remove callback
- returning void
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZSVWKSVNsBqDcOFS@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Oct 9, 2023 at 11:22=E2=80=AFAM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+On Tue, Oct 10, 2023 at 04:48:25PM +0300, Andy Shevchenko wrote:
+> On Tue, Oct 10, 2023 at 04:13:19PM +0300, Andy Shevchenko wrote:
+> > On Mon, Oct 09, 2023 at 10:38:58AM -0700, Dipen Patel wrote:
 
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is ignored (apart
-> from emitting a warning) and this typically results in resource leaks.
->
-> To improve here there is a quest to make the remove callback return
-> void. In the first step of this quest all drivers are converted to
-> .remove_new(), which already returns void. Eventually after all drivers
-> are converted, .remove_new() will be renamed to .remove().
->
-> Trivially convert this driver from always returning zero in the remove
-> callback to the void returning variant.
->
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+...
 
-Patch applied.
+> > > +	/*
+> > > +	 * This is needed for driver using gpio device matching where it
+> > > +	 * has to use gpio_chip fwnode to match the gpio controller.
+> > > +	 */
+> > > +	gpio->gpio.fwnode = of_node_to_fwnode(pdev->dev.of_node);
+> > 
+> > of_node_to_fwnode() is specific to IRQ, in other places we use generic
+> > of_fwnode_handle(). That's why better just to use dev_fwnode().
+> 
+> On the second thought is there any parent assigned?
+> At least I see that in tegra186_gpio_probe(). Are you saying
+> it is not working? Or is it (matching) called _before_ we
+> add a GPIO device?
 
-Yours,
-Linus Walleij
+Okay, I think I got it. There is a function called tegra_gpiochip_match()
+in drivers/hte/hte-tegra194.c which fails after my patch. Yeah, if provider
+doesn't set fwnode, it can't match. But, since the driver sets the parent
+properly it means that the matching function should be done against the
+device.
+
+Seems to me that in HTE code the matching function is broken.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
