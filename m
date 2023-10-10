@@ -2,114 +2,106 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 006EECD8CB7
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Oct 2023 20:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D73AFCD98CF
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Oct 2023 22:49:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234756AbjJJUGw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Oct 2023 16:06:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35484 "EHLO
+        id S1343880AbjJJWtw (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Oct 2023 18:49:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234253AbjJJUEw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Oct 2023 16:04:52 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77257D58
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 13:04:27 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-5a7c08b7744so13405487b3.3
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 13:04:27 -0700 (PDT)
+        with ESMTP id S230363AbjJJWtv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Oct 2023 18:49:51 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F89FB6
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 15:49:49 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-406650da82bso57633155e9.3
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 15:49:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696968266; x=1697573066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1696978187; x=1697582987; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Dsgx0xQPge+9HmU8GeSr2i19e9kEWopqk+L20TkvvHU=;
-        b=jYRDHubkHHeppyz50JJbbaZ8vgaSUrCsB5PS5zWtcfTY0UmBwGsKq1Xl0sY6zrhQqg
-         O2u01L10tDfCLqUokrv372DGqDCMM/wrwEbQ3zHLml30+JXdWaIlqBTyEdsmgeniEnbq
-         oEvIVjtpLK0LmAse6TsnBEbAjc2MZNMW31B5tymVrnYpyqHLq7hunLvl4lD4Jauhg4Px
-         scOpNYWhfEVmbaJ5s1dqQcyrbAlc4UBGUrhEpIm/tQkKI7P/Qk8WNphImqdUS1IsP5xA
-         jBL7dntbchvV7YlpdYsSkMsaiMsXn/wrZ6tTFkHMk0CevyRr5MXns8TW530aFsH5oMdD
-         HtIw==
+        bh=PfXAqV1pyqFtMV/UH+Un6VZ7ftSnQ6lOtRR1W2sjfGg=;
+        b=al+VRbYRJRz9idIz4YM+RbMhUnDVdhZ7iJKSVzpedXqf4f7rvTH02P468vL+eUNcAb
+         0pan5rk5nxEmNZv0pPFvo/xVxVsUyHmD5SmAuYFJZSVrJDRvMKTQ+Fgu1Qrpw1JdBUQ5
+         COBv0ZSoLS14Uqk40eEdGJmbrr40pidfUsSwhozySBdxEkaponSyziHOYtQok9O+hYW5
+         K5qcpIOb3rSHLS2H8JeWT0haxs9YRmK5DCuUQE2WcV7mlX5zPBUAXkJ37g+0hugNT1ib
+         MszP1oQ6A6Pz9Ckjl/AKYIHFVb4UEmBvr77YTG8rB/8iPpDxwFVvv5u51GZ+tLyX9NyD
+         Ighw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696968266; x=1697573066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1696978188; x=1697582988;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Dsgx0xQPge+9HmU8GeSr2i19e9kEWopqk+L20TkvvHU=;
-        b=e3oOCRk6J375RemNl4Utl+w+6rmDkaq5xLYzUfbKgqLYmQ+d3KxgMT4E469IWnjDZ7
-         CnMuRYZrQLtSd8wyD4zcD0ELn6SKFiHdvSH2q4m5pj5vmMf7CIPpxQc8kDmhQ4w93S8G
-         r60dJqr+J8lhwRbyWc58xjACyEgaf3rs0mG2dag+GgfYXLJkbHbCmJ8IN1lSP3OLzYkl
-         EOZEkYy9dUIIhmv11qWhPpDfcUUNG4N/9QXfnsiKcaNrhlnb7a2G/kFjH18V7TsvuGWI
-         fHxpBO8s8Qx/4GQwb8YlYWjF6akMkojvGS2KIYcyzdLl9FPpe4Ce06hHgmeG2nu8U4Tt
-         VyRw==
-X-Gm-Message-State: AOJu0Ywal7CIHxm2hw6DH2ij4Mu24+2pFhucUTVpwzobl7jq8sVIZV4f
-        r31KqXhHKlwthINZn+Br0aAN4XQCQvoYNDCyIhyM9Q==
-X-Google-Smtp-Source: AGHT+IGzom/ReBeggPYaQh3ululPlpooeQvd3UU+g9vhHJOk+VetQr2sXUXYcWmIJ7V4FJosqHhUU7LLH1jqvS0oyO0=
-X-Received: by 2002:a81:b71f:0:b0:5a7:aa83:9fb with SMTP id
- v31-20020a81b71f000000b005a7aa8309fbmr4756178ywh.0.1696968266581; Tue, 10 Oct
- 2023 13:04:26 -0700 (PDT)
+        bh=PfXAqV1pyqFtMV/UH+Un6VZ7ftSnQ6lOtRR1W2sjfGg=;
+        b=iPo6bokhqyer3tACRh2LiCHf6P+y8TZECezxBJzey+ouluaYoHTOueBzPmqxgcVzel
+         LkU2u09WEFcWQuMhR30bhdFGXnua8Q08gdDh2uaF9T6nE2LDBAJ7K+Zv+XMKDlP3IhtG
+         KgeHmJcBefw3lDkO3jtI8tgp7Z96FGnp6sKi1Y5kQo0or1YoYtG3p35dkxTWD5H+ujBE
+         a8uSB54wG6wRil/zTxGGpsZ5aFuR9bmbkwfNoPRupy/LFRcFZs6Yj7tZuZqnK5PVeS1V
+         pFCtbCSsnW4yj68gBghAp+llDAETkKQ5NHYyK2tty2OKqOXQHbxiyTplBNUg23IzwCcs
+         ijug==
+X-Gm-Message-State: AOJu0Yxwi/mFa6XdsvNeFpRo+yOmgSkvOQ7PgO6QHw64KCV9BAixjcGL
+        eJAkBMaH7TfJcyC95sAmL6yrRA==
+X-Google-Smtp-Source: AGHT+IEP2zxTpzOtUkFiPwRcOFsFqoBVvQ/ZCYKp0kk0nhdPzn6bCsAwihOCSclOVBe2WDi/PfNAUQ==
+X-Received: by 2002:a7b:cbd4:0:b0:401:b76d:3b8b with SMTP id n20-20020a7bcbd4000000b00401b76d3b8bmr17968520wmi.16.1696978187754;
+        Tue, 10 Oct 2023 15:49:47 -0700 (PDT)
+Received: from gpeter-l.lan (host-92-12-225-146.as13285.net. [92.12.225.146])
+        by smtp.gmail.com with ESMTPSA id j13-20020adfe50d000000b003196b1bb528sm13689547wrm.64.2023.10.10.15.49.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Oct 2023 15:49:47 -0700 (PDT)
+From:   Peter Griffin <peter.griffin@linaro.org>
+To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org,
+        tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, wim@linux-watchdog.org,
+        linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org,
+        arnd@arndb.de, olof@lixom.net, cw00.choi@samsung.com
+Cc:     peter.griffin@linaro.org, tudor.ambarus@linaro.org,
+        andre.draszik@linaro.org, semen.protsenko@linaro.org,
+        saravanak@google.com, willmcvicker@google.com, soc@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        kernel-team@android.com, linux-serial@vger.kernel.org
+Subject: [PATCH v2 01/20] dt-bindings: soc: samsung: exynos-pmu: Add gs101 compatible
+Date:   Tue, 10 Oct 2023 23:49:09 +0100
+Message-ID: <20231010224928.2296997-2-peter.griffin@linaro.org>
+X-Mailer: git-send-email 2.42.0.609.gbb76f46606-goog
+In-Reply-To: <20231010224928.2296997-1-peter.griffin@linaro.org>
+References: <20231010224928.2296997-1-peter.griffin@linaro.org>
 MIME-Version: 1.0
-References: <20231009-pxa-gpio-v7-0-c8f5f403e856@skole.hr> <20231009-pxa-gpio-v7-2-c8f5f403e856@skole.hr>
- <CAMRc=Mc7=E9bMQgiUM8qqk7UD4+exhJZqw2DucTcsnqHcttR3Q@mail.gmail.com>
- <12313687.O9o76ZdvQC@radijator> <CAMRc=MdWYNmBkJ6Nw6V_FzJKQw--g02tjLSztMYW_atNhisVpw@mail.gmail.com>
-In-Reply-To: <CAMRc=MdWYNmBkJ6Nw6V_FzJKQw--g02tjLSztMYW_atNhisVpw@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 10 Oct 2023 22:04:14 +0200
-Message-ID: <CACRpkda4ZeQ8eYKqXBR7XmWj9jJF58C+PLeRWqx2m7aSf2FWQw@mail.gmail.com>
-Subject: Re: [PATCH RFT v7 2/6] ARM: pxa: Convert Spitz LEDs to GPIO descriptors
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Russell King <linux@armlinux.org.uk>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-spi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Tue, Oct 10, 2023 at 7:39=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
+Add gs101-pmu compatible to the bindings documentation.
 
-> It doesn't seem like anyone is using these GPIOs once they're
-> requested? Wouldn't the above definitios be analogous to:
->
-> GPIO_HOG("pxa-gpio", SPITZ_GPIO_LED_ORANGE, NULL, GPIO_ACTIVE_HIGH, GPIOD=
-_ASIS)
-> GPIO_HOG("pxa-gpio", SPITZ_GPIO_LED_GREEN, NULL, GPIO_ACTIVE_HIGH, GPIOD_=
-ASIS)
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+ Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-They are used:
-+       spitz_gpio_leds[0].gpiod =3D leds->desc[0];
-+       spitz_gpio_leds[1].gpiod =3D leds->desc[1];
+diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+index e1d716df5dfa..9e497c310532 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+@@ -15,6 +15,7 @@ select:
+     compatible:
+       contains:
+         enum:
++          - google,gs101-pmu
+           - samsung,exynos3250-pmu
+           - samsung,exynos4210-pmu
+           - samsung,exynos4212-pmu
+@@ -35,6 +36,7 @@ properties:
+     oneOf:
+       - items:
+           - enum:
++              - google,gs101-pmu
+               - samsung,exynos3250-pmu
+               - samsung,exynos4210-pmu
+               - samsung,exynos4212-pmu
+-- 
+2.42.0.609.gbb76f46606-goog
 
-The descriptors are passed to the leds-gpio driver.
-
-But wait: no.
-
-This whole thing:
-
-+static struct gpio_descs *leds;
-+
-(...)
-+       leds =3D gpiod_get_array_optional(&spitz_led_device.dev,
-+                       NULL, GPIOD_ASIS);
-+       spitz_gpio_leds[0].gpiod =3D leds->desc[0];
-+       spitz_gpio_leds[1].gpiod =3D leds->desc[1];
-
-Just delete all that.
-
-The leds-gpio driver will request and use the lines.
-
-It was just so unorthodox that I missed it. Adding the descriptor
-table is enough.
-
-Yours,
-Linus Walleij
