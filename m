@@ -2,71 +2,72 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F18CECD80D5
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Oct 2023 13:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6363BCD80D4
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Oct 2023 13:44:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232942AbjJJNoa (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Oct 2023 09:44:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37208 "EHLO
+        id S232326AbjJJNov (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Oct 2023 09:44:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233536AbjJJNoO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Oct 2023 09:44:14 -0400
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DBB02720
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 06:41:24 -0700 (PDT)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5a7c95b8d14so4738077b3.3
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 06:41:24 -0700 (PDT)
+        with ESMTP id S232328AbjJJNoe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Oct 2023 09:44:34 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 097A810F9
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 06:43:32 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-579de633419so69454717b3.3
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 06:43:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696945283; x=1697550083; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696945411; x=1697550211; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ueK8SG+a7FTCY6O4EvQZ3DF32rOrkudVS05yOM+rm8Q=;
-        b=pALrOtvUiukdglMyGsRr3uThX2dEh2snupInYNwlD2ewY0tTT6GLziyOUhO5/1Hrc6
-         tgsfPxT0bLxpEDNMH9EshqkjJ9VweTRXAryRym748OFx8h0B3AL+QrCmw+7I0O7CQU2K
-         isPz561MXCyShw1qOqdKMXZ1VkFz3j+lUFlbXJuKt8W6AAJYUAEMo/qjCkJv50/51AzR
-         TentqMIUEmo+biSZQUUd3E/EZs8u/MO0Y1hgOMQ89+RbFbyIDhuVIugeCidfI2Eblq+i
-         YPBICmDq0qqd8xzwU0vBnwxcNrguXMJuj/ruoGPhlDm0/5wC8xfZBkUL04F0nY1AdpuY
-         VE3w==
+        bh=NHv90yeM59s0sxqLXofNmRkQi512BP/YIHCc5n2XRV8=;
+        b=bDsg4HyBxnQj9BsGh73No5c+i+SJcn+iAla/q4BV25JQKEFfZ7rnoTHF9k/2+GtiiF
+         2pR40bmpI1/bh84IPDsZ75U1PXjyoWvbTbLRZG4OTol2XMpRHkifWfKSTkjxJOTdqGjN
+         E0etK0PPePZQaTTJtVYRItiErhQrEpTC1LQxqmmrm6216uH7G7nNcsBHwgGPJJSpsIlx
+         fNItgE0FmXR05l96oHgz80jhWQb9zylbjTFEj3r2hMQlSW+UpVHJao0SyBdF3fb37qlG
+         RMwS0JSLdr+lxlYmuLA4EUQDncD1/0e/wp0NSZn7PLk9UlXDcN09uut2G56354l1aQjc
+         7JeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696945283; x=1697550083;
+        d=1e100.net; s=20230601; t=1696945411; x=1697550211;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ueK8SG+a7FTCY6O4EvQZ3DF32rOrkudVS05yOM+rm8Q=;
-        b=Nzg+61taTJ9URbouToBALDzndwQ3YUTpGBYS/6h4Eel8a4hyHlR6rbWC48oeyeMP5y
-         AGLnOIzBDeZhm8Sh2EBdh/HZp2T2K2F1BaONrIk7Ve+t8qutoK2/7r4CQTU+1TQ3FuA8
-         PsovfwKhDz2aqp8ATsZ60Q1q0rZpMjHEHA8CJPBxpQC3Bwv2NN2H0mtHL51afDlc3r5r
-         k3lrMLQZyl9PiEgQYv3F+D6npza6xZJAwcMmS3Ch5vRZmqR+rj6uLycSmNKn3UKoBZjD
-         VD7cidqmRBxIsHw25+gKByvvmbPm1cWcvJLeJgpWKyItL5NWM/oXS4/ipFuXlVw+u8ma
-         dRGQ==
-X-Gm-Message-State: AOJu0YwyOH+SRzT45qSNohId407oqIgybnzyoy4kO4fhM7ZQw+TbFwWu
-        ruMqotVBjjjoQGg50VRiawCTxFroADYH7KGJbU9tsHzndi54xAKRcZ4=
-X-Google-Smtp-Source: AGHT+IFeF565XnMjdeGlwpA7Qpbln3q9KjwdSHBRpi1ETaQ6I7jQT4GcmMxVkkfUJJiXKQ/CDEsXHIM5K+82riuMrBo=
-X-Received: by 2002:a81:a0d2:0:b0:59f:6cbf:8902 with SMTP id
- x201-20020a81a0d2000000b0059f6cbf8902mr18245533ywg.33.1696945283469; Tue, 10
- Oct 2023 06:41:23 -0700 (PDT)
+        bh=NHv90yeM59s0sxqLXofNmRkQi512BP/YIHCc5n2XRV8=;
+        b=ERJ1PLrfyCcAg4tfKvibgdu0CPsMdLHv2KPgF6I8h5nRylol2N6p91x4T8ahhO71tO
+         oVjFcW3Zza9VgxVODkM/KwWEFhKQdHzC+gSnWmutkyEUDnDINroZGYxW6H6GWApF3f/b
+         R3LqwYmyrUizLyIzAHfUzv73GJZTpWxYxk9gEfvI0Wf0kDeA+5DK+dlSBzTnjEvV9eMi
+         RWegiHgGpewWfo1d7q/HeXJ0umIP6qx3WKQo1h4Gm2NoZi4AQ441UPZqXjLLKPv31Zfp
+         YTVQnMTUy+s1f2VN8DbpFFB4eBqAuVcbesSQMIOIRgDlB0SIuq3qGMs3SjD5sOjhxZi1
+         vMPw==
+X-Gm-Message-State: AOJu0Yw9FgdqZEfaBDARA/h5DHN/NCI24ddAGku8iPg/1fEDI88Fo9zM
+        TM4iqOyQpgVKlwSKLmta+JrCkVgj/Kejq9NYZlWv/Q==
+X-Google-Smtp-Source: AGHT+IEItpd8Q6wOYAjPFdQpKLuERjEAHoKQbqX7i9cE5Qkc0YMMTS2uOTDXaJ61JHWygvuQCrqKQkHPSdQvXnj78pQ=
+X-Received: by 2002:a81:5b02:0:b0:583:a3ab:b950 with SMTP id
+ p2-20020a815b02000000b00583a3abb950mr16262239ywb.50.1696945411098; Tue, 10
+ Oct 2023 06:43:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20231009083856.222030-1-u.kleine-koenig@pengutronix.de> <20231009083856.222030-13-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20231009083856.222030-13-u.kleine-koenig@pengutronix.de>
+References: <20231009083856.222030-1-u.kleine-koenig@pengutronix.de> <20231009083856.222030-17-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20231009083856.222030-17-u.kleine-koenig@pengutronix.de>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 10 Oct 2023 15:41:12 +0200
-Message-ID: <CACRpkdaK=gk7oeg6U7dcE7oJ0KhM5_FSpGo8Zv_87Fc-nRkyWQ@mail.gmail.com>
-Subject: Re: [PATCH 12/20] pinctrl: single: Convert to platform remove
+Date:   Tue, 10 Oct 2023 15:43:20 +0200
+Message-ID: <CACRpkdafp2Ha50jkXWVo4JYeuReKOcy8vH5eqGqsuD7d6u511A@mail.gmail.com>
+Subject: Re: [PATCH 16/20] pinctrl: qcom: spmi-mpp: Convert to platform remove
  callback returning void
 To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Oct 9, 2023 at 11:23=E2=80=AFAM Uwe Kleine-K=C3=B6nig
+On Mon, Oct 9, 2023 at 11:22=E2=80=AFAM Uwe Kleine-K=C3=B6nig
 <u.kleine-koenig@pengutronix.de> wrote:
 
 > The .remove() callback for a platform driver returns an int which makes
