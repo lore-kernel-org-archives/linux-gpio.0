@@ -2,87 +2,90 @@ Return-Path: <linux-gpio-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B8CCD80D4
-	for <linux-gpio@archiver.kernel.org>; Tue, 10 Oct 2023 13:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11093CD80DB
+	for <linux-gpio@archiver.kernel.org>; Tue, 10 Oct 2023 13:52:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233352AbjJJNtW (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
-        Tue, 10 Oct 2023 09:49:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50522 "EHLO
+        id S232593AbjJJNwo (ORCPT <rfc822;linux-gpio@archiver.kernel.org>);
+        Tue, 10 Oct 2023 09:52:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232505AbjJJNst (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Oct 2023 09:48:49 -0400
-Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC80E6
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 06:48:48 -0700 (PDT)
-Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-5a7ab31fb8bso16741377b3.1
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 06:48:48 -0700 (PDT)
+        with ESMTP id S232599AbjJJNwk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Oct 2023 09:52:40 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 171001AA
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 06:43:03 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-5a7ba0828efso12089637b3.3
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Oct 2023 06:43:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696945727; x=1697550527; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696945382; x=1697550182; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=awE6efcM38jnk5pss6ok2os1ERWX17UeRfoc3ts5j1U=;
-        b=a4VMKn7CtaJkRMTJPP2bl4sVPwjm1HspHXtJ6vzJj/ksqNlK8IraTtEmtFHfPphUaL
-         oTEkhgnaRMhs3AE1aKVne12cZ3XaYx6omzZZ+gj0VaY0NxAbyblmWJwr4LumMHXuQdam
-         XejE5R73Ky/zo7L2IKZ9TXxjkyBSKdfTJCgdBKtl8r/7F02zICIrRsUt/bzKokAAIJPn
-         X0ZiyNB1PPVShffqKJSwZtr7JbiwFNpJf3EXf1vDkkYMY+GyZaY8GUGpPkvcvPmIiIZT
-         x1YV83B8s6uREV/xC/5LEZ9vwDqEExRN5b7t6vzzDAYXbOGQp0EtPZiSjZ28fwGb7N07
-         zy+g==
+        bh=NHv90yeM59s0sxqLXofNmRkQi512BP/YIHCc5n2XRV8=;
+        b=WRFEmVFsknlCGJv2ck7WavA3XMp6eliKBgx+Lq2kq3w8M2mUcxcETJNKOGDauQX2XX
+         +xWmDcjoYlq/3cNWgC7l0YB+pDWuCTSnhDzffnroS0HJ/pf59/Ns+kOe/WgpP1944CYp
+         os8SH02WNTT93fqghJz4apm6Il4IQbWIMNAhmMQkOm7O+okL6oZ572ydkNxyIuu48GRq
+         4yHYM9uWawQraJyEizwGE/RJC3ZtQk2pv/IM2QFBPynt6qJsTHyPRHslk0nJQ/1P/IhM
+         a7M6ZcvaZN+OlYLOeJKcPDDMP1hzoErv2yNdNWcqwpeGPmRwU4Sd2D+EWGAo5IbDpi4U
+         I82Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696945727; x=1697550527;
+        d=1e100.net; s=20230601; t=1696945382; x=1697550182;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=awE6efcM38jnk5pss6ok2os1ERWX17UeRfoc3ts5j1U=;
-        b=pX6sr30290Ps/A5exH+N3AC+HiAq4cOKmY7m53EPXKRu+5tzXjlyoOjMB6hiNRQvGE
-         B5sz/dK6mYM6gmXL/r1Z3WB/vwEGRo4NDFNXDB+t2DWdGpjcqO5xahIImeCYNrQW6hnz
-         DDS7gmIwk+GmJZjjcVchetq49qy9PDYPIUzQId2ufpoB61S2ygf9hJ6IoTzQbCQ9BU19
-         Y0ytZj47uAa0ftyuUL/MhikgB1kgzFqifdjlwkzsEbV7fU27lPIfMsWRXOPfRhNsuh7S
-         haKPJ8z+LtlnkohoX9F6DTLW2KkXtsyUcNLPBtoPwhY2f3aF0cylIj1VUYaA2mBh+1K3
-         LM/Q==
-X-Gm-Message-State: AOJu0Ywghh5dzOaJnxCYOPR8PRSh4p6pYJY5Y/L4cSypKRnQNEqD+MBg
-        oeRGckXDVynNKHLY63S+1MHYLIf4DUYJhZ5kC4784g==
-X-Google-Smtp-Source: AGHT+IFKtXQ7bowPMrDeuE2Rh0fL5KWLiYWWmyhnmgM1tPzY9nRlUoBS+z1BtLRNVgWPQl2RE7/tMM4693wyr8IBlk8=
-X-Received: by 2002:a0d:d856:0:b0:59f:687c:fb39 with SMTP id
- a83-20020a0dd856000000b0059f687cfb39mr21626344ywe.14.1696945727397; Tue, 10
- Oct 2023 06:48:47 -0700 (PDT)
+        bh=NHv90yeM59s0sxqLXofNmRkQi512BP/YIHCc5n2XRV8=;
+        b=c1ZAoFMIyQ40DJPGAVbwUoIBJvUtCrn2+Ov9kvpWHH2EeOSEBU6DueFtRsp2tKlTii
+         K3cFSk1HoaoK9cyq6QM9tgaml1IEOu1It1jrrBUnmjG1oqKXjs1KM1duilz+clA12eV1
+         jOc65ljy+oMzs3aVHcYw3cnMsYUb2c+egPilvVGOSvfPK7UF9yk/ia2hDLxDAICfMSbp
+         DATXd/OOyrMW6odH7cICJNmrwQgGzbM1zNgBWih387gXfVCAtqchWoYHOmD+KBZca/q2
+         wswQFhDc2SuQNI6Eynji2/uxjoAbBssbbdhvl5GmsqHB9SVpsoimdjDJMxp5+XtR7/2p
+         5/yQ==
+X-Gm-Message-State: AOJu0YwQLh/ZAxOu/nC60436lWpqOj3jxdDPZ1v1tV7ZcAjpVBmci1Nz
+        izLJn0cktxVCAAN3rCIl2qOklUtNv7R+q6Gqw77VgA==
+X-Google-Smtp-Source: AGHT+IF3/Oc+ZMdiZnISZs3ojNA1/qjGKd9ter8xI5PkhihVk+K7E1PuGuRajQjSiV73X4edO0mK80JDDKm5xBon1GA=
+X-Received: by 2002:a05:690c:4813:b0:5a5:65e:b847 with SMTP id
+ hc19-20020a05690c481300b005a5065eb847mr15101159ywb.34.1696945382211; Tue, 10
+ Oct 2023 06:43:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20231009162510.335208-1-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20231009162510.335208-1-u.kleine-koenig@pengutronix.de>
+References: <20231009083856.222030-1-u.kleine-koenig@pengutronix.de> <20231009083856.222030-16-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20231009083856.222030-16-u.kleine-koenig@pengutronix.de>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 10 Oct 2023 15:48:36 +0200
-Message-ID: <CACRpkdYxjZd+_7jdSg3e1MfE4zcdAJAAYfGPToRZ5cygdffePQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] pinctrl: Convert to platform remove callback
- returning void (take #2)
+Date:   Tue, 10 Oct 2023 15:42:51 +0200
+Message-ID: <CACRpkdaP09Df=i4dtrKFtZmhN1EVX7OqxddRjHXMggPt4T3W8g@mail.gmail.com>
+Subject: Re: [PATCH 15/20] pinctrl: qcom: spmi-gpio: Convert to platform
+ remove callback returning void
 To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Rob Herring <robh@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-gpio.vger.kernel.org>
 X-Mailing-List: linux-gpio@vger.kernel.org
 
-On Mon, Oct 9, 2023 at 6:25=E2=80=AFPM Uwe Kleine-K=C3=B6nig
+On Mon, Oct 9, 2023 at 11:22=E2=80=AFAM Uwe Kleine-K=C3=B6nig
 <u.kleine-koenig@pengutronix.de> wrote:
 
-> Uwe Kleine-K=C3=B6nig (3):
->   pinctrl: qcom/lpi: Convert to platform remove callback returning void
->   pinctrl: qcom/msm: Convert to platform remove callback returning void
->   pinctrl: sprd-sc9860: Convert to platform remove callback returning
->     void
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is ignored (apart
+> from emitting a warning) and this typically results in resource leaks.
+>
+> To improve here there is a quest to make the remove callback return
+> void. In the first step of this quest all drivers are converted to
+> .remove_new(), which already returns void. Eventually after all drivers
+> are converted, .remove_new() will be renamed to .remove().
+>
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 
-All patches applied!
+Patch applied.
 
 Yours,
 Linus Walleij
